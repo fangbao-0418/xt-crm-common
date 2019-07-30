@@ -17,6 +17,7 @@ for (const key in MemberTypeTextMap) {
 
 @connect(state => ({
   currentData: state['user.userinfo'].currentData,
+  inviteInfo: state['user.userinfo'].inviteInfo,
   visible: state['user.userinfo'].visible,
 }))
 @Form.create()
@@ -27,13 +28,17 @@ export default class extends Component {
     console.log('props', props)
   }
 
-  setMemberType() {
-
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (nextProps.currentData.id)
+    if (nextProps.currentData.id) {
       console.log('nextProps', nextProps)
+    }
+    console.log(this.parentPhone != nextProps.inviteInfo.parentPhone)
+    if (nextProps.inviteInfo.parentPhone && this.parentPhone != nextProps.inviteInfo.parentPhone) {
+      const { form } = this.props;
+      this.parentPhone = nextProps.inviteInfo.parentPhone;
+      form.setFieldsValue({parentPhone:this.parentPhone})
+      
+    }
   }
 
   onOk = () => {
@@ -48,15 +53,16 @@ export default class extends Component {
   }
 
   onCancel = () => {
+    this.parentPhone = '';
     this.props.dispatch({
       type: 'user.userinfo/saveDefault',
       payload: {
-        visible: false
+        visible: false,
+        inviteInfo: {}
       }
     })
   }
   renderHeadImage = (data) => {
-
     if (data.headImage) {
       const src = data.headImage.indexOf('http') === 0 ? `${data.headImage}` : `https://assets.hzxituan.com/${data.headImage}`;
       return <img alt="头像" src={src} style={{ width: '25px', borderRadius: '50%' }} />
@@ -64,6 +70,14 @@ export default class extends Component {
       return '暂无'
     }
   }
+
+  search(value) {
+    const { dispatch } = this.props;
+    dispatch['user.userinfo'].checkInvited({
+      phone: value
+    });
+  }
+
   renderForm = () => {
     const { form: { getFieldDecorator }, currentData } = this.props;
     let memberType = 0;
@@ -134,8 +148,8 @@ export default class extends Component {
           <Col span={12}>
             <FormItem label="上级手机">
               {
-                getFieldDecorator('userName', {
-                  initialValue: currentData.userName
+                getFieldDecorator('parentPhone', {
+                  initialValue: currentData.parentPhone
                 })(
                   <Input />
                 )
@@ -145,13 +159,13 @@ export default class extends Component {
           <Col span={12}>
             <FormItem label="邀请人手机">
               {
-                getFieldDecorator('idCard', {
-                  initialValue: currentData.idCard
+                getFieldDecorator('invitedPhone', {
+                  initialValue: currentData.invitedPhone
                 })(
                   // <Input />
                   <Search
                     enterButton="校验"
-                    onSearch={value => console.log(value)}
+                    onSearch={value => this.search(value)}
                   />
                 )
               }
