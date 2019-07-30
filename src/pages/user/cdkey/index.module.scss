@@ -1,0 +1,31 @@
+.source {
+    :global {
+        .ant-select {
+            width: 100px;
+        }
+    }
+}
+
+.level {
+    :global {
+        .ant-select {
+            width: 120px;
+        }
+    }
+}
+
+.detail-button {
+    color: #1890ff;
+    cursor: pointer;
+}
+
+.more-button {
+    color: #1890ff;
+    cursor: pointer;
+}
+
+.headImage {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+}

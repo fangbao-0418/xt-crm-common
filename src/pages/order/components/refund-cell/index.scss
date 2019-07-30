@@ -1,0 +1,13 @@
+.refund-cell {
+    display: flex;
+    align-items: center;
+
+    .refund-img-wrapper{
+        display: flex;
+        flex-direction: column;
+        img {
+            width: 100px;
+            height: 100px;
+        }
+    }
+}

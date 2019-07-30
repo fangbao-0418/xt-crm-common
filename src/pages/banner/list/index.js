@@ -1,0 +1,181 @@
+import React from 'react';
+import { Table, Card, Button, Modal, message } from 'antd';
+import { queryBannerList, updateBannerStatus, deleteBanner } from '../api';
+import BannerModal from '../banner-modal';
+import { formatDate } from '../../helper';
+import { TextMapPosition } from '../constant';
+import Image from '../../../components/Image';
+
+const replaceHttpUrl = imgUrl => {
+  if (imgUrl.indexOf('http') !== 0) {
+    imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
+  }
+  return imgUrl;
+}
+
+class OrderList extends React.Component {
+  static defaultProps = {};
+
+  state = {
+    selectedRowKeys: [],
+    list: [],
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  };
+
+  componentDidMount() {
+    this.query();
+  }
+
+  query = () => {
+    let params = {
+      page: this.state.current,
+      pageSize: this.state.pageSize,
+    };
+    queryBannerList(params).then(res => {
+      this.setState({
+        list: res.records,
+        pageSize: res.size,
+        total: res.total,
+      });
+    });
+  };
+
+  toggleStatus = (id, status) => {
+    updateBannerStatus({
+      id,
+      status,
+    }).then((res) => {
+      res && message.success('操作成功');
+      this.query();
+    });
+  };
+
+  handlePageChange = (page, pageSize) => {
+    this.setState(
+      {
+        current: page,
+        pageSize,
+      },
+      this.query,
+    );
+  };
+  delete = id => {
+    Modal.confirm({
+      title: '确认',
+      content: '确认删除吗？',
+      okText: '删除',
+      okType: 'danger',
+      onOk: () => {
+        return deleteBanner({ id }).then(() => {
+          this.query();
+        });
+      },
+    });
+  };
+
+  render() {
+    const { current, total, pageSize } = this.state;
+
+    const columns = [
+      {
+        title: '排序',
+        dataIndex: 'sort',
+      },
+      {
+        title: 'banner图',
+        dataIndex: 'imgUrlWap',
+        render(imgUrlWap) {
+          return <Image src={replaceHttpUrl(imgUrlWap)} alt="banner图" style={{ maxWidth: 150, maxHeight: 150 }} />;
+        },
+      },
+      {
+        title: 'banner名称 ',
+        dataIndex: 'title',
+      },
+      {
+        title: '上线时间',
+        dataIndex: 'onlineTime',
+        render(onlineTime) {
+          return formatDate(onlineTime);
+        },
+      },
+      {
+        title: '下线时间',
+        dataIndex: 'offlineTime',
+        render(offlineTime) {
+          return formatDate(offlineTime);
+        },
+      },
+      {
+        title: '链接地址',
+        dataIndex: 'jumpUrlWap',
+      },
+      {
+        title: '位置',
+        dataIndex: 'seat',
+        render(seat) {
+          return TextMapPosition[seat];
+        },
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        render(status) {
+          return status ? '开启' : '关闭';
+        },
+      },
+      {
+        title: '操作',
+        render: (operator, { id, status }) => {
+          return (
+            <>
+              <BannerModal onSuccess={this.query} isEdit id={id} /> &nbsp;
+              <Button
+                onClick={() => {
+                  this.toggleStatus(id, status ? 0 : 1);
+                }}
+              >
+                {status ? '关闭' : '开启'}
+              </Button>
+              &nbsp;
+              <Button
+                type="danger"
+                onClick={() => {
+                  this.delete(id);
+                }}
+              >
+                删除
+              </Button>
+            </>
+          );
+        },
+      },
+    ].filter(column => !column.hide);
+    return (
+      <>
+        <Card title="">
+          {/* <Button onClick={this.query}>查询</Button> &nbsp; */}
+          <BannerModal onSuccess={this.query} isEdit={false} />
+        </Card>
+        <Card style={{ marginTop: 10 }}>
+          <Table
+            bordered
+            columns={columns}
+            dataSource={this.state.list}
+            pagination={{
+              current,
+              total,
+              pageSize,
+              onChange: this.handlePageChange,
+            }}
+            rowKey={record => record.id}
+          />
+        </Card>
+      </>
+    );
+  }
+}
+
+export default OrderList;

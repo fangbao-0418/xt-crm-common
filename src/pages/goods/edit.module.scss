@@ -1,0 +1,19 @@
+.spulist {
+  display: flex;
+  flex-wrap: wrap;
+
+  .spuitem {
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    padding: 10px;
+    width: 160px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    flex: 0 0 160px;
+
+    .spubtn {
+      margin-top: 10px;
+      width: 100%;
+    }
+  }
+}

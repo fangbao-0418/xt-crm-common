@@ -1,0 +1,54 @@
+.intf-cat-box{
+
+}
+.intf-cat-list{
+  
+}
+.intf-cat-list .ant-col{
+  text-align: center;
+  cursor: pointer;
+  margin: 0 10px 10px 0;
+  border: 1px solid #ccc;
+  margin: 0 10px 10px 0;
+}
+.intf-cat-list .ant-col.act{
+  background: rgba(0,160,233,1);
+  border: 1px solid rgba(0,160,233,1);
+  color: #fff;
+}
+
+.intf-cat-list .ant-col:last-child{
+  background: #fff;
+  border: none;
+  color:  rgba(0,160,233,1);
+}
+.intf-cat-rebox{
+
+}
+.intf-cat-reitem{
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  line-height: 32px;
+  color: #000;
+  padding: 0 10px;
+  position: relative;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.intf-cat-reitem .close{
+  display: inline-block;
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  background: #909090;
+  color: #dfdfdf;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 14px;
+}
+.intf-cat-tree-box .ant-modal-body {
+  height: 400px;
+  overflow-y: auto;
+}

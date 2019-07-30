@@ -1,0 +1,42 @@
+.box {
+    border: 1px solid #C0C0C0;
+    border-radius: 10px;
+    background: #ffffff;
+
+    .header {
+        padding: 8px;
+        border-bottom: 1px solid #C0C0C0;
+        display: flex;
+    }
+
+    .button {
+        width: 100%;
+        height: 50px;
+        border-top: 1px dashed black;
+        border-bottom: 1px dashed black;
+    }
+
+    .content {
+        max-height: 85vh;
+        overflow-y: auto;
+        .item {
+            padding: 5px 10px;
+            display: flex;
+
+            .name {
+                cursor: pointer;
+                flex: 1;
+            }
+        }
+        .activity {
+            background: #e6f7ff;
+        }
+
+        .actions {
+            float: right;
+            i {
+                margin: 0 5px;
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+.description {
+    width: 70%;
+    margin-bottom: 20px;
+
+    img {
+        widows: 25px;
+        height: 25px;
+        border-radius: 50%;
+    }
+}
+
+
+.authentication {
+    width: 70%;
+}
+
+.income {
+    display: flex;
+    .content {
+        padding: 0 10px;
+        text-align: center;
+        span {
+            display: block;
+        }
+        .key {
+            font-weight: 600;
+        }
+    }
+}
