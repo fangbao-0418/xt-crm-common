@@ -142,7 +142,7 @@ export default class extends Component {
             </FormItem>
           </Col>
           <Col span={12}>
-            <Form.Item label="注册来源">{currentData.createTime ? moment(currentData.createTime).format(timeFormat) : ''}</Form.Item>
+            <Form.Item label="注册来源">{currentData.registerForm || '暂无'}</Form.Item>
           </Col>
           <Col span={24}>团队信息</Col>
           <Col span={12}>
