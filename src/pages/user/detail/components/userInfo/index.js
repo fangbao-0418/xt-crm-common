@@ -75,7 +75,7 @@ export default class extends Component {
                    headStyle={{
                        fontWeight: 900
                    }}
-                   extra={<a href="javascript:;" onClick={this.showModal}>编辑</a>}
+                   extra={<div><a href="javascript:;" onClick={this.showModal}>修改邀请人</a>&nbsp;&nbsp;<a href="javascript:;" onClick={this.showModal}>用户信息编辑</a></div>}
                    loading={loading}
                 >
                     <Descriptions column={2} className={styles.description}>

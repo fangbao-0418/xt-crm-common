@@ -115,7 +115,7 @@ export default class extends Component {
               }
             </FormItem>
           </Col>
-          <Col span={12}>
+          {/* <Col span={12}>
             <FormItem label="等级">
               {
                 getFieldDecorator('memberType', {
@@ -129,7 +129,7 @@ export default class extends Component {
                 )
               }
             </FormItem>
-          </Col>
+          </Col> */}
           <Col span={12}>
             <FormItem label="微信">
               {
@@ -144,7 +144,7 @@ export default class extends Component {
           <Col span={12}>
             <Form.Item label="注册来源">{currentData.registerForm || '暂无'}</Form.Item>
           </Col>
-          <Col span={24}>团队信息</Col>
+          {/* <Col span={24}>团队信息</Col>
           <Col span={12}>
             <FormItem label="上级手机">
               {
@@ -170,7 +170,7 @@ export default class extends Component {
                 )
               }
             </FormItem>
-          </Col>
+          </Col> */}
           <Col span={24}>基本信息</Col>
           <Col span={12}>
             <FormItem label="姓名">
