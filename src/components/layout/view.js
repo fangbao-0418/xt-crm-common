@@ -22,10 +22,11 @@ export default class extends Component {
     this.state = {
       collapsed: false,
       prePathName: pathname,
+      mwidth: 200,
       hasPermission: false
     }
   }
-  
+
   componentDidMount() {
     const { history } = this.props;
     this.gotoAuth(history.location.pathname);
@@ -65,7 +66,8 @@ export default class extends Component {
 
   setCollapsed = () => {
     this.setState({
-      collapsed: !this.state.collapsed
+      collapsed: !this.state.collapsed,
+      mwidth: this.state.collapsed ? 200 : 80
     })
   }
 
@@ -79,19 +81,21 @@ export default class extends Component {
   }
 
   render() {
-    const { collapsed, hasPermission } = this.state;
+    const { collapsed, hasPermission, mwidth } = this.state;
     return (
-    <Layout style={{ height: '100vh' }}>
-      <Sidebar collapsed={collapsed} data={this.props.tree} />
       <Layout>
-        <Header>
-          <XHeader collapsed={collapsed} setCollapsed={this.setCollapsed} logout={this.logout} />
-        </Header>
-        {
-          true ? <Content style={{ margin: 20 }}>{this.props.children}</Content> : '暂无权限'
-        }
+        <Sidebar collapsed={collapsed} data={this.props.tree} />
+        <Layout style={{ marginLeft: mwidth,overflow: 'auto', height: '100vh'}}>
+          <div style={{  minWidth: '1200px'}}>
+            <Header>
+              <XHeader collapsed={collapsed} setCollapsed={this.setCollapsed} logout={this.logout} />
+            </Header>
+            {
+              true ? <Content style={{ margin: 20 }}>{this.props.children}</Content> : '暂无权限'
+            }
+            </div>
+        </Layout>
       </Layout>
-    </Layout>
     );
   }
 }
