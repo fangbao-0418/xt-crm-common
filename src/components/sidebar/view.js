@@ -12,7 +12,12 @@ const Sidebar = props => {
   const { collapsed } = props;
   const [current, setCurrent] = useState(selectedMenu);
   return (
-    <Sider collapsed={collapsed}>
+    <Sider collapsed={collapsed} style={{
+      overflow: 'auto',
+      height: '100vh',
+      position: 'fixed',
+      left: 0,
+    }}>
       <div className={styles.logo}>
         <a href="/">
           <img src={logo} alt="logo" />

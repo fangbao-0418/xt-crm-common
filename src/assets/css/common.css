@@ -83,3 +83,47 @@ ol, ul {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+.i-search-form .ant-form-item {
+  display: flex;
+}
+
+.i-search-form .ant-form-item-control-wrapper {
+  flex: 1;
+}
+
+::-webkit-scrollbar {
+  height: 5px;
+  width: 5px;
+  background-color: #fff
+}
+
+::-webkit-scrollbar-button {
+  height: 0;
+  width: 0;
+  display: none
+}
+
+::-webkit-scrollbar-track,::-webkit-scrollbar-thumb {
+  border: 0
+}
+
+::-webkit-scrollbar-track {
+  background-color: #fff
+}
+
+::-webkit-scrollbar-thumb {
+  padding-top: 100px;
+  -webkit-box-shadow: inset 1px 1px 0 rgba(0,0,0,.1),inset -1px -1px 0 rgba(0,0,0,.07);
+  background-color: #dadada;
+  min-height: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  -webkit-box-shadow: inset 1px 1px 1px rgba(0,0,0,.25);
+  background-color: rgba(0,0,0,.4)
+}
+
+::-webkit-scrollbar-thumb:active {
+  -webkit-box-shadow: inset 1px 1px 3px rgba(0,0,0,.35);
+  background-color: rgba(0,0,0,.5)
+}
