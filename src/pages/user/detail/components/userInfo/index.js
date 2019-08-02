@@ -66,6 +66,7 @@ export default class extends Component {
         unlisten();
     }
     render() {
+        // <a href="javascript:;" onClick={this.showModal}>修改邀请人</a>&nbsp;&nbsp;
         const { data, loading } = this.props;
         return (
             <div>
@@ -75,7 +76,7 @@ export default class extends Component {
                    headStyle={{
                        fontWeight: 900
                    }}
-                   extra={<div><a href="javascript:;" onClick={this.showModal}>修改邀请人</a>&nbsp;&nbsp;<a href="javascript:;" onClick={this.showModal}>用户信息编辑</a></div>}
+                   extra={<div><a href="javascript:;" onClick={this.showModal}>用户信息编辑</a></div>}
                    loading={loading}
                 >
                     <Descriptions column={2} className={styles.description}>

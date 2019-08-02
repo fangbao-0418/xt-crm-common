@@ -217,7 +217,7 @@ class ActivityDetail extends React.Component {
                   value={activityImage}
                   onChange={this.handleActivityImage}
                   listNum={1}
-                  size={0.2}
+                  size={0.5}
                   placeholder="添加活动图片"
                 />
               </FormItem>
