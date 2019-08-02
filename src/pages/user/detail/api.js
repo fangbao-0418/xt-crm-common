@@ -5,8 +5,12 @@ export function getUserInfo(params) {
     return Fetch.request(`/member/detail?${qs.stringify(params)}`);
 }
 
+export function updateInviteUser(params) {
+    return Fetch.post('/member/invited/update', params);
+}
+
 export function checkInvited(params) {
-    return Fetch.request(`/member/check/invited?${qs.stringify(params)}`);
+    return Fetch.request(`/member/invited/info?${qs.stringify(params)}`);
 }
 
 // 推荐

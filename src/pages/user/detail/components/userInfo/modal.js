@@ -115,21 +115,6 @@ export default class extends Component {
               }
             </FormItem>
           </Col>
-          {/* <Col span={12}>
-            <FormItem label="等级">
-              {
-                getFieldDecorator('memberType', {
-                  initialValue: memberType
-                })(
-                  <Select>
-                    {memberTypes.map(val => {
-                      return <Select.Option value={val.key} key={val.key}>{val.val}</Select.Option>
-                    })}
-                  </Select>
-                )
-              }
-            </FormItem>
-          </Col> */}
           <Col span={12}>
             <FormItem label="微信">
               {
@@ -144,33 +129,6 @@ export default class extends Component {
           <Col span={12}>
             <Form.Item label="注册来源">{currentData.registerForm || '暂无'}</Form.Item>
           </Col>
-          {/* <Col span={24}>团队信息</Col>
-          <Col span={12}>
-            <FormItem label="上级手机">
-              {
-                getFieldDecorator('parentPhone', {
-                  initialValue: currentData.parentPhone
-                })(
-                  <Input />
-                )
-              }
-            </FormItem>
-          </Col>
-          <Col span={12}>
-            <FormItem label="邀请人手机">
-              {
-                getFieldDecorator('invitedPhone', {
-                  initialValue: currentData.invitedPhone
-                })(
-                  // <Input />
-                  <Search
-                    enterButton="校验"
-                    onSearch={value => this.search(value)}
-                  />
-                )
-              }
-            </FormItem>
-          </Col> */}
           <Col span={24}>基本信息</Col>
           <Col span={12}>
             <FormItem label="姓名">

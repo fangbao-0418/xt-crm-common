@@ -32,6 +32,7 @@ export default {
 
     },
     visible: false,
+    visibleInvit: false,
   },
   effects: dispatch => ({
     async getUserInfo(payload) {
@@ -107,6 +108,21 @@ export default {
         });
         dispatch['user.userinfo'].getUserInfo({
           memberId: payload.id
+        });
+        message.success('编辑成功!');
+      }
+    },
+    async updateInviteUser(payload) {
+      const res = await api.updateInviteUser(payload);
+      if (res) { // true为成功
+        dispatch({
+          type: 'user.userinfo/saveDefault',
+          payload: {
+            visibleInvit: false
+          }
+        });
+        dispatch['user.userinfo'].getUserInfo({
+          memberId: payload.memberId
         });
         message.success('编辑成功!');
       }
