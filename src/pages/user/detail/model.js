@@ -118,7 +118,8 @@ export default {
         dispatch({
           type: 'user.userinfo/saveDefault',
           payload: {
-            visibleInvit: false
+            visibleInvit: false,
+            inviteInfo: {}
           }
         });
         dispatch['user.userinfo'].getUserInfo({
