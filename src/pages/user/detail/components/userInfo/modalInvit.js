@@ -23,8 +23,8 @@ for (const key in MemberTypeTextMap) {
 export default class extends Component {
 
   onOk = () => {
-    const {  dispatch, currentData, inviteInfo } = this.props;
-    if(!inviteInfo.id) return;
+    const { dispatch, currentData, inviteInfo } = this.props;
+    if (!inviteInfo.id) return;
     dispatch['user.userinfo'].updateInviteUser({
       memberId: currentData.id,
       invitedId: inviteInfo.id
@@ -58,22 +58,27 @@ export default class extends Component {
     return (
       <Form layout="horizontal" {...formItemLayout} className={styles['user-edit-box']}>
         <Row>
-          <Col span={8}>
+          <Col span={12}>
             <FormItem label="邀请人ID">
-            {currentData.inviteId}
+              {currentData.inviteId}
             </FormItem>
           </Col>
-          <Col span={8}>
+          <Col span={12}>
             <FormItem label="手机">
-            {currentData.invitedPhone}
+              {currentData.invitedPhone}
             </FormItem>
           </Col>
-          <Col span={8}>
-          <FormItem label="姓名">
-            {currentData.inviteName}
+          <Col span={12}>
+            <FormItem label="姓名">
+              {currentData.inviteName}
             </FormItem>
-            </Col>
-          <Col span={10}>
+          </Col>
+          <Col span={12}>
+            <FormItem label="用户等级">
+            {currentData.memberTypeDO && currentData.memberTypeDO.value}
+            </FormItem>
+          </Col>
+          <Col span={12}>
             <FormItem label="邀请人手机">
               <Search
                 enterButton="校验"
@@ -82,8 +87,8 @@ export default class extends Component {
             </FormItem>
           </Col>
           {inviteInfo.id ? (<Col span={24}>
-            ID: {inviteInfo.id}&nbsp;&nbsp;&nbsp;
-            手机号：{inviteInfo.phone}&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邀请人ID: {inviteInfo.id}&nbsp;&nbsp;&nbsp;
+            手机：{inviteInfo.phone}&nbsp;&nbsp;&nbsp;
             用户名：{inviteInfo.userName}&nbsp;&nbsp;&nbsp;
             昵称：{inviteInfo.nickName}&nbsp;&nbsp;&nbsp;
             用户等级：{memberType.getValue(inviteInfo.memberType)}
