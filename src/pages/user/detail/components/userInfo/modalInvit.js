@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Modal, Form, Input, Col, Row, Select } from 'antd';
-import { connect, parseQuery } from '@/util/utils';
+import { connect } from '@/util/utils';
 import { MemberTypeTextMap } from '../../../../order/constant'
 import styles from './index.module.scss';
-import moment from 'moment';
+import memberType from '@/enum/memberType';
 const FormItem = Form.Item;
-const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 const { Search } = Input;
 const memberTypes = [];
 for (const key in MemberTypeTextMap) {
@@ -87,6 +86,7 @@ export default class extends Component {
             手机号：{inviteInfo.phone}&nbsp;&nbsp;&nbsp;
             用户名：{inviteInfo.userName}&nbsp;&nbsp;&nbsp;
             昵称：{inviteInfo.nickName}&nbsp;&nbsp;&nbsp;
+            用户等级：{memberType.getValue(inviteInfo.memberType)}
           </Col>) : ''}
         </Row>
       </Form>
