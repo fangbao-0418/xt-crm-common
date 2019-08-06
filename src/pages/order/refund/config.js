@@ -12,19 +12,17 @@ export const formFields = function () {
     {
       type: 'input',
       id: 'mainOrderCode',
-      placeholder: '请输入订单编号',
       label: '订单编号'
     }, {
       type: 'input',
       id: 'orderCode',
-      placeholder: '请输入售后单编号',
       label: '售后单编号'
     }, {
       type: 'select',
       id: 'refundType',
     //  placeholder: '请',
       label: '售后类型',
-      options: refundType.getArray()
+      options: refundType.getArray('all')
     }, {
       type: 'input',
       id: 'orderPhone',

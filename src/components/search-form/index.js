@@ -17,8 +17,9 @@ export default class extends PureComponent {
   }
 
   renderInput = (item) => {
+    const placeholder = '请输入' + item.label;
     return (
-      <Input />
+      <Input placeholder={placeholder}/>
     )
   }
 
@@ -30,8 +31,9 @@ export default class extends PureComponent {
 
   renderSelect = (item) => {
     const { options } = item;
+    const placeholder = '请选择' + item.label;
     return (
-      <Select>
+      <Select placeholder={placeholder}>
         {
           options.map(({ key, val }) => (<Option value={key} key={key}>{val}</Option>))
         }
