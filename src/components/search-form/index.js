@@ -95,8 +95,8 @@ export default class extends PureComponent {
               )
             })
           }
-          <Col span={6}>
-            <FormItem>
+          <Col span={6} style={{float:'right'}}>
+            <FormItem className='i-search-btns'>
               <Button onClick={this.resetFields}>重置</Button>
               <Button type="primary" onClick={this.handleSearch}>查询</Button>
               {children}

@@ -86,7 +86,15 @@ ol, ul {
 .i-search-form .ant-form-item {
   display: flex;
 }
-
+.i-search-form .i-search-btns{
+  float: right;
+}
+.i-search-form .i-search-btns .ant-btn{
+  margin-left: 10px;
+}
+.i-search-form .i-search-btns .ant-btn:first-child{
+  margin-left: 0;
+}
 .i-search-form .ant-form-item-control-wrapper {
   flex: 1;
 }

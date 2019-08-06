@@ -37,19 +37,19 @@ export const formFields = function () {
       type: 'input',
       id: 'storeId',
       label: '供应商'
-    // }, {
-    //   type: 'input',
-    //   id: 'productId',
-    //   label: '商品ID'
-    // }, {
-    //   type: 'input',
-    //   id: 'handler',
-    //   label: '处理人'
-    // }, {
-    //   type: 'date',
-    //   id: 'apply',
-    //   ids: ['applyStartTime', 'applyEndTime'],
-    //   label: '售后时间'
+    }, {
+      type: 'input',
+      id: 'productId',
+      label: '商品ID'
+    }, {
+      type: 'input',
+      id: 'handler',
+      label: '处理人'
+    }, {
+      type: 'date',
+      id: 'apply',
+      ids: ['applyStartTime', 'applyEndTime'],
+      label: '售后时间'
     }
   ];
 }
