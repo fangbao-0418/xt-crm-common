@@ -1,14 +1,16 @@
 import React from 'react';
-import { Card, Form, Input, Button, message, Select, DatePicker, Spin, Col, Row } from 'antd';
-
+import {  Button, Spin } from 'antd';
 import { refundList, exportRefund } from '../api';
-import SuppilerSelect from '../../../components/suppiler-select';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
-import { columns, formFields } from './config';
-const { RangePicker } = DatePicker;
-const FormItem = Form.Item;
+import { getListColumns, formFields } from './config';
+import {withRouter} from 'react-router-dom';
+const formatFields = (range) => {
+  range = range || [];
+  return range.map(v => v && v.format('YYYY-MM-DD HH:mm'))
+}
 
+@withRouter
 export default class extends React.Component {
   static defaultProps = {};
 
@@ -27,17 +29,21 @@ export default class extends React.Component {
   }
 
   query = (isExport = false) => {
-    // let fieldsValues = this.props.form.getFieldsValue();
-    // let rangePickerValue = fieldsValues['rangePicker']
-    // delete fieldsValues['rangePicker'];
-    // let params = {
-    //   ...fieldsValues,
-    //   applyStartTime: rangePickerValue && rangePickerValue[0] && rangePickerValue[0].format('YYYY-MM-DD HH:mm'),
-    //   applyEndTime: rangePickerValue && rangePickerValue[1] && rangePickerValue[1].format('YYYY-MM-DD HH:mm'),
-    //   refundStatus: this.props.refundStatus,
-    //   page: this.state.current,
-    //   pageSize: this.state.pageSize,
-    // };
+    const fieldsValues = this.SearchForm.props.form.getFieldsValue();
+    const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
+    const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
+    delete fieldsValues['apply'];
+    delete fieldsValues['handle'];
+    const params = {
+      ...fieldsValues,
+      applyStartTime,
+      applyEndTime,
+      handleStartTime,
+      handleEndTime,
+      refundStatus: this.props.refundStatus,
+      page: this.state.current,
+      pageSize: this.state.pageSize,
+    };
     // if (isExport) {
     //   this.setState({
     //     loading: true
@@ -50,14 +56,13 @@ export default class extends React.Component {
     //     })
     //   })
     // } else {
-    //   refundList(params).then(res => {
-    //     this.setState({
-    //       tableConfig: res.data || {}
-    //     });
-    //   });
+      refundList(params).then(res => {
+        this.setState({
+          tableConfig: res.data || {}
+        })
+      })
     // }
   };
-
   handleSearch = () => {
     this.query();
   };
@@ -79,11 +84,7 @@ export default class extends React.Component {
       this.query,
     );
   };
-
-  handleSearch = (data) => {
-    console.log(data)
-  }
-
+  
   handleFormat = (data) => {
     console.log(data);
     return data;
@@ -95,6 +96,7 @@ export default class extends React.Component {
     return (
       <Spin tip="操作处理中..." spinning={this.state.loading}>
         <SearchForm
+          wrappedComponentRef={ref => this.SearchForm = ref}
           format={this.handleFormat}
           search={this.handleSearch}
           clear={this.handleSearch}
@@ -104,7 +106,7 @@ export default class extends React.Component {
         </SearchForm>
         <CommonTable
           bordered
-          columns={columns({ query: this.query })}
+          columns={getListColumns({ query: this.query, history: this.props.history })}
           dataSource={records}
           current={current}
           total={total}

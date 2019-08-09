@@ -161,6 +161,9 @@ export function refundList(data) {
   });
 }
 
+export function refundDetail(params) {
+  return fetch(`/order/afterSale/afterSalesInfo?${qs.stringify(params)}`)
+}
 export function exportOrder(data) {
   return exportFile('/order/export', data);
 }

@@ -15,7 +15,6 @@ export default class extends PureComponent {
       initParams: parseQuery()
     }
   }
-
   renderInput = (item) => {
     const placeholder = '请输入' + item.label;
     return (
@@ -54,7 +53,7 @@ export default class extends PureComponent {
         //   startTime: customTime[0] && customTime[0].unix(),
         //   endTime: customTime[1] && customTime[1].unix(),
         // }
-        setQuery(data);
+        // setQuery(data);
         search(data);
       }
     });
