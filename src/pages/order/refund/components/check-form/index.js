@@ -108,4 +108,4 @@ class CheckForm extends Component {
   }
 }
 
-export default Form.create({ name: 'detail' })(CheckForm);
+export default Form.create({ name: 'check-form' })(CheckForm);
