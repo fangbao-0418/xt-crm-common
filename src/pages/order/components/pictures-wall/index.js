@@ -33,7 +33,8 @@ class PicturesWall extends Component {
   handleChange = ({ fileList }) => this.setState({ fileList });
 
   render() {
-    let { imgUrl = '' } = this.props;
+    let { imgUrl = '', readOnly = false} = this.props;
+    console.log('readOnly=>', readOnly);
     let uid = -1;
     imgUrl = imgUrl.split(',').map(url => {
       return ({
@@ -59,7 +60,7 @@ class PicturesWall extends Component {
           onPreview={this.handlePreview}
           onChange={this.handleChange}
         >
-          {imgUrl.length >= 8 ? null : uploadButton}
+          {readOnly || (imgUrl.length >= 8) ? null : uploadButton}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />

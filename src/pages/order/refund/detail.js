@@ -3,12 +3,10 @@ import { Steps, Card, Menu, Table, Row, Col, Form, Select, Input, Button } from 
 import { refundDetail, refundOperate } from '../api';
 import { getDetailColumns, expressColumns } from './config';
 import refundType from '@/enum/refundType';
-import PicturesWall from '../components/pictures-wall'
+import PicturesWall from '../components/pictures-wall';
+import {CheckForm, CheckDetail} from './components';
 import moment from 'moment';
-import { Message } from 'antd';
-const { Option } = Select;
 const { Step } = Steps;
-const { TextArea } = Input;
 class Detail extends Component {
   state = {
     current: 'detail',
@@ -20,8 +18,7 @@ class Detail extends Component {
     })
   }
   handleSubmit = () => { }
-  handleSelectChange = () => { }
-  getDetail() {
+  getDetail = () => {
     refundDetail({ id: this.props.match.params.id }).then(res => {
       this.setState({ data: res.data || {} })
     })
@@ -29,27 +26,7 @@ class Detail extends Component {
   componentWillMount() {
     this.getDetail();
   }
-  handleAuditOperate = async (status) => {
-    const { OrderServerCheckVO = {}, OrderServerDetailVO = {} } = this.state.data;
-    const { getFieldsValue } = this.props.form;
-    const fields = getFieldsValue();
-    const res = await refundOperate({
-      id: this.props.match.params.id,
-      status,
-      returnContact: OrderServerDetailVO.returnContact,
-      returnPhone: OrderServerCheckVO.returnPhone,
-      returnAddress: OrderServerDetailVO.returnAddress,
-      ...fields
-    });
-    if (res.success) {
-      Message.info('审核成功');
-    } else {
-      Message.info('审核失败');
-    }
-    this.getDetail();
-  }
   render() {
-    const { getFieldDecorator } = this.props.form;
     const { checkVO = {}, orderInfoVO = {}, orderServerVO = {}, refundStatus } = this.state.data;
     let current = 0;
     if (refundStatus === 10) {
@@ -87,7 +64,7 @@ class Detail extends Component {
           <Row>
             <Col>
               图片凭证：
-              <PicturesWall imgUrl={orderServerVO.imgUrl}></PicturesWall>
+              <PicturesWall readOnly={true} imgUrl={orderServerVO.imgUrl}></PicturesWall>
             </Col>
           </Row>
         </Card>
@@ -117,7 +94,7 @@ class Detail extends Component {
             <Table dataSource={orderInfoVO.expressVO} columns={expressColumns}></Table>
           </Row>
         </Card>
-        <Card title="客服审核">
+        {/* <Card>
           <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
             <Form.Item label="售后类型">
               {getFieldDecorator('refundType', {
@@ -159,9 +136,98 @@ class Detail extends Component {
               </Button>
             </Form.Item>
           </Form>
+        </Card> */}
+        {/* <Card>
+          <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
+            <Form.Item label="物流公司">
+              {getFieldDecorator('refundType', {
+                initialValue: orderServerVO.refundType
+              })(
+                <Select
+                  placeholder="请选择售后类型"
+                  onChange={this.handleSelectChange}
+                >
+                  {
+                    refundType.getArray().map(v => <Option value={v.key} key={v.key}>{v.val}</Option>)
+                  }
+                </Select>
+              )}
+            </Form.Item>
+            <Form.Item label="物流单号">
+              {getFieldDecorator('refundAmount', {
+                initialValue: checkVO.refundAmount
+              })(<Input />)}
+            </Form.Item>
+            <Form.Item label="说明">
+              {getFieldDecorator('info', {
+              })(<TextArea
+                placeholder=""
+                autosize={{ minRows: 2, maxRows: 6 }}
+              />)}
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{
+                xs: { span: 24, offset: 0 },
+                sm: { span: 16, offset: 8 },
+              }}
+            >
+              <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
+                同意
+              </Button>
+              <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>
+                拒绝
+              </Button>
+            </Form.Item>
+          </Form>
         </Card>
+        */}
+        {/* <Card> 
+          <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
+            <Form.Item label="售后类型">
+              {getFieldDecorator('refundType', {
+                initialValue: orderServerVO.refundType
+              })(
+                <Select
+                  placeholder="请选择售后类型"
+                  onChange={this.handleSelectChange}
+                >
+                  {
+                    refundType.getArray().map(v => <Option value={v.key} key={v.key}>{v.val}</Option>)
+                  }
+                </Select>
+              )}
+            </Form.Item>
+            <Form.Item label="退款金额">
+              {getFieldDecorator('refundAmount', {
+                initialValue: checkVO.refundAmount
+              })(<Input />)}
+            </Form.Item>
+            <Form.Item label="说明">
+              {getFieldDecorator('info', {
+              })(<TextArea
+                placeholder=""
+                autosize={{ minRows: 2, maxRows: 6 }}
+              />)}
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{
+                xs: { span: 24, offset: 0 },
+                sm: { span: 16, offset: 8 },
+              }}
+            >
+              <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
+                同意
+              </Button>
+              <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>
+                拒绝
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card> */}
+        {current === 1 && <CheckForm {...this.state.data} refresh={this.getDetail} onAuditOperate={this.handleAuditOperate}/>}
+        {current === 2 && <CheckDetail {...this.state.data}/>}
       </>
     )
   }
 }
-export default Form.create({ name: 'detail' })(Detail);
+export default Detail;

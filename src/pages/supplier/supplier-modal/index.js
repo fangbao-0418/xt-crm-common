@@ -124,8 +124,18 @@ class SupplierModal extends Component {
                 <Input placeholder="" />,
               )}
             </FormItem>
-            <FormItem label="送货地址">
-              {getFieldDecorator('consigneeAddress', { initialValue: data.consigneeAddress })(
+            <FormItem label="退货收件人">
+              {getFieldDecorator('address', { initialValue: data.address, rules: [{required: true}] })(
+                <Input placeholder="" />,
+              )}
+            </FormItem>
+            <FormItem label="退货电话">
+              {getFieldDecorator('address', { initialValue: data.address, rules: [{required: true}] })(
+                <Input placeholder="" />,
+              )}
+            </FormItem>
+            <FormItem label="退货地址">
+              {getFieldDecorator('consigneeAddress', { initialValue: data.consigneeAddress, rules: [{required: true}] })(
                 <Input placeholder="" />,
               )}
             </FormItem>
