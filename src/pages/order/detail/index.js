@@ -108,6 +108,11 @@ class Detail extends Component {
     this.setState({modalInfo});
     this.toggleModal(true);
   }
+  handleOk = () => {
+    const {form} = this.afterSaleForm.props;
+    console.log(form.getFieldsValue())
+  }
+  handleCancel = () => {}
   render() {
     const { data, childOrderList } = this.state;
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
@@ -115,8 +120,9 @@ class Detail extends Component {
 
     return (
       <>
-        <Modal width='50%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.toggleModal(false)}>
-          <AfterSaleForm info={this.state.modalInfo} modalInfo={this.state.modalInfo}/>
+        <Modal width='50%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.toggleModal(false)} onOk={this.handleOk}
+          onCancel={this.handleCancel}>
+          <AfterSaleForm wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo}/>
         </Modal>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
         <OrderInfo

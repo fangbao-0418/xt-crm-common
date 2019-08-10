@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Form, Input, Select, InputNumber, Card } from 'antd';
+import { Table, Form, Input, InputNumber, Card } from 'antd';
 import { goodsTableColumn } from "../constant";
-import refundType from '@/enum/refundType';
+import { refundType, returnReason } from '@/enum';
 import { formatPrice } from '@/util/format';
 import PicturesWall from '../components/pictures-wall';
-const { Option } = Select;
+import { XtSelect } from '@/components'
 const { TextArea } = Input;
 const formItemLayout = {
   labelCol: {
@@ -20,25 +20,23 @@ const formItemLayout = {
 const onChange = () => { }
 class AfterSaleForm extends Component {
   render() {
-    const { modalInfo } = this.props;
+    const { modalInfo, form: { getFieldDecorator } } = this.props;
     const price = formatPrice(modalInfo.buyPrice)
     console.log('modalInfo =>', modalInfo);
     return (
       <>
         <Table dataSource={[modalInfo]} columns={goodsTableColumn} pagination={false}></Table>
-        <Card bordered={false} bodyStyle={{paddingBottom: 0}}>
+        <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
             <Form.Item label="售后类型">
-              <Select placeholder="请选择">
-                {refundType.getArray().map(v => <Option key={v.key} value={v.key}>{v.val}</Option>)}
-              </Select>
+              {getFieldDecorator('refundType', { rules: [{ required: true }] })(<XtSelect data={refundType.getArray()} />)}
             </Form.Item>
             <Form.Item label="售后原因">
-              <Input placeholder="请输入售后原因" />
+              {getFieldDecorator('returnReason', { rules: [{ required: true }] })(<XtSelect data={returnReason.getArray()} />)}
             </Form.Item>
             <Form.Item label="退款金额">
-              <InputNumber min={0} max={price} defaultValue={price} onChange={onChange} />
-              <span class="ml10">最多可退（{price}）</span>
+              {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额'}], initialValue: price})(<InputNumber min={0} max={price} onChange={onChange} />)}
+              <span class="ml10">（最多可退￥{price}）</span>
             </Form.Item>
             <Form.Item label="售后凭证">
               <PicturesWall />
