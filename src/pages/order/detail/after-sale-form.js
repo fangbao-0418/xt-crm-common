@@ -38,7 +38,7 @@ class AfterSaleForm extends Component {
             </Form.Item>
             <Form.Item label="退款金额">
               <InputNumber min={0} max={price} defaultValue={price} onChange={onChange} />
-              <span>最多可退（{price}）</span>
+              <span class="ml10">最多可退（{price}）</span>
             </Form.Item>
             <Form.Item label="售后凭证">
               <PicturesWall />
