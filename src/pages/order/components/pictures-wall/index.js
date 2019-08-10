@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Upload, Icon, Modal } from 'antd';
+import './index.scss';
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -34,7 +35,6 @@ class PicturesWall extends Component {
 
   render() {
     let { imgUrl = '', readOnly = false} = this.props;
-    console.log('readOnly=>', readOnly);
     let uid = -1;
     imgUrl = imgUrl.split(',').map(url => {
       return ({

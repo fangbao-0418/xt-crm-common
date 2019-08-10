@@ -1,8 +1,8 @@
 import React from 'react';
-import { Table, Card, Row } from 'antd';
+import { Table, Card } from 'antd';
 import { MemberTypeTextMap } from '../constant';
-import MoneyRender from '../../../components/money-render';
-import { formatMoneyWithSign } from '../../helper';
+import MoneyRender from '@/components/money-render'
+// import { formatMoneyWithSign } from '../../helper';
 
 const BenefitInfo = ({
   data = {
@@ -44,10 +44,9 @@ const BenefitInfo = ({
   ];
 
   return (
-    <Card>
-      <Row>预计盈利信息</Row>
-      <Row>成交金额：{formatMoneyWithSign(data.totalPrice)}</Row>
-      <Row>成本金额：{formatMoneyWithSign(data.costPrice)}</Row>
+    <Card title="预估收益">
+      {/* <Row>成交金额：{formatMoneyWithSign(data.totalPrice)}</Row>
+      <Row>成本金额：{formatMoneyWithSign(data.costPrice)}</Row> */}
       <Table
         columns={columns}
         dataSource={data.memberYieldVOList}
