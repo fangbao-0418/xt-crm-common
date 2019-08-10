@@ -9,6 +9,7 @@ import BenefitInfo from './benefit-info';
 import LogisticsInfo from './logistics-info';
 import StepInfo from './step-info';
 import { enumOrderStatus, OrderStatusTextMap } from '../constant';
+import { formatDate } from '../../helper';
 import DeliveryModal from './components/delivery-modal';
 
 import { formatMoneyWithSign } from '../../helper';
@@ -98,74 +99,76 @@ class Detail extends Component {
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
 
     return (
-      <Card title="订单详情">
-        <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
+      <>
+        <Card>
+          <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
+        </Card>
         <OrderInfo
           orderInfo={data.orderInfo}
+          buyerInfo={data.buyerInfo}
           refresh={this.query}
-          payType={data.buyerInfo && data.buyerInfo.payType}
         />
+        <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo}/>
+        <Card title="详细信息">
+          {map(childOrderList, (item, index) => {
+            return (
+              <div style={{ margin: '30px 0' }} key={index}>
+                <Card>
+                  <Row gutter={24}>
+                    <Col className="gutter-row" span={9}>
+                      <div className="gutter-box">
+                        子订单号{index + 1}: {item.childOrder.orderCode}
+                      </div>
+                    </Col>
+                    <Col className="gutter-row" span={9}>
+                      <div className="gutter-box">
+                        {payTypeList[data.buyerInfo && data.buyerInfo.payType]}支付流水号：
+                        {item.childOrder.paymentNumber}
+                      </div>
+                    </Col>
+                    <Col className="gutter-row" span={6}>
+                      {/* {item.canProtocolPay ? <Button
+                        type="link"
+                        style={{margin:'0 10px 10px 0'}}
+                        onClick={() => this.withhold(item.childOrder.id)}
+                      >发起代扣</Button> : ''}
+                      {item.canPush ? <Button
+                        style={{margin:'0 10px 10px 0'}}
+                        type="link"
+                        onClick={() => this.push1688(item.childOrder.id)}
+                      > 推送1688 </Button> : ''} */}
+                      {(orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
+                        <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics}/>
+                      ) : ''}
+                    </Col>
+                    <Col className="gutter-row" span={9}>
+                      <div className="gutter-box">
+                        供应商订单号: {item.childOrder.storeOrderId}
+                      </div>
+                    </Col>
+                    <Col className="gutter-row" span={9}>
+                      <div className="gutter-box">供应商：{item.childOrder.storeName}， 分类： {storeType[item.childOrder.category]}</div>
+                    </Col>
+                    <Col className="gutter-row" span={9}>
+                      <div className="gutter-box">订单状态：{OrderStatusTextMap[item.childOrder.orderStatus]}</div>
+                    </Col>
+                  </Row>
+                  <LogisticsInfo mainorderInfo={data.orderInfo} logistics={item.logistics} onSuccess={this.query} orderInfo={item.childOrder} />
+                <GoodsTable list={item.skuList} />
+                </Card>
+                
+              </div>
+            );
+          })}
 
-        <BuyerInfo buyerInfo={data.buyerInfo} />
-
-        {map(childOrderList, (item, index) => {
-          return (
-            <div style={{ margin: '30px 0' }} key={index}>
-              <Card>
-                <Row gutter={24}>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">
-                      子订单号{index + 1}: {item.childOrder.orderCode}
-                    </div>
-                  </Col>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">
-                      {payTypeList[data.buyerInfo && data.buyerInfo.payType]}支付流水号：
-                      {item.childOrder.paymentNumber}
-                    </div>
-                  </Col>
-                  <Col className="gutter-row" span={6}>
-                    {/* {item.canProtocolPay ? <Button
-                      type="link"
-                      style={{margin:'0 10px 10px 0'}}
-                      onClick={() => this.withhold(item.childOrder.id)}
-                    >发起代扣</Button> : ''}
-                    {item.canPush ? <Button
-                      style={{margin:'0 10px 10px 0'}}
-                      type="link"
-                      onClick={() => this.push1688(item.childOrder.id)}
-                    > 推送1688 </Button> : ''} */}
-                    {(orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
-                      <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics}/>
-                    ) : ''}
-                  </Col>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">
-                      供应商订单号: {item.childOrder.storeOrderId}
-                    </div>
-                  </Col>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">供应商：{item.childOrder.storeName}， 分类： {storeType[item.childOrder.category]}</div>
-                  </Col>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">订单状态：{OrderStatusTextMap[item.childOrder.orderStatus]}</div>
-                  </Col>
-                </Row>
-                <LogisticsInfo mainorderInfo={data.orderInfo} logistics={item.logistics} onSuccess={this.query} orderInfo={item.childOrder} />
-              <GoodsTable list={item.skuList} />
-              </Card>
-              
-            </div>
-          );
-        })}
-
-        <Row style={{ margin: '30px' }}>
-          <Col span={4}>实际收款：{formatMoneyWithSign(data.totalPrice)}</Col>
-          <Col span={4}>含税费：{formatMoneyWithSign(data.taxPrice)}</Col>
-          <Col span={4}>含运费：{formatMoneyWithSign(data.freight)}</Col>
-        </Row>
-        <BenefitInfo data={data.orderYield} />
-      </Card>
+          <Row style={{ margin: '30px' }}>
+            <Col span={4}>实际收款：{formatMoneyWithSign(data.totalPrice)}</Col>
+            <Col span={4}>含税费：{formatMoneyWithSign(data.taxPrice)}</Col>
+            <Col span={4}>含运费：{formatMoneyWithSign(data.freight)}</Col>
+          </Row>
+          <BenefitInfo data={data.orderYield} />
+        </Card>
+      </>
     );
   }
 }

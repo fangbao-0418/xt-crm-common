@@ -20,6 +20,7 @@ class DealForm extends Component {
         sm: { span: 12 },
       },
     };
+    console.log('orderServerVO.refundType=>', orderServerVO.refundType, typeof orderServerVO.refundType);
     return (
       <>
         <Card>
@@ -69,7 +70,7 @@ class DealForm extends Component {
                 </Form.Item>
               </Form>
             </TabPane>}
-            {orderServerVO.refundType === '30 ' && <TabPane tab="发货信息" key="4">
+            {orderServerVO.refundType === '30' &&  <TabPane tab="发货信息" key="4">
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
                 <Form.Item label="物流公司">
                   {getFieldDecorator('refundType', {
@@ -108,12 +109,8 @@ class DealForm extends Component {
                 sm: { span: 16, offset: 8 },
               }}
             >
-              <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
-                同意
-            </Button>
-              <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>
-                拒绝
-            </Button>
+              <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
+              <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
             </Form.Item>
           </Form>
         </Card>

@@ -8,7 +8,7 @@ class CheckDetail extends Component {
   render() {
     const { checkVO = {}, orderServerVO = {} } = this.props;
     const callback = () => { }
-    if (orderServerVO.refundType === '10') {
+    if (orderServerVO.refundType === '20') {
       return (
         <Card>
           <Tabs defaultActiveKey="1" onChange={callback}>
@@ -42,19 +42,19 @@ class CheckDetail extends Component {
                 <Col span={8}>提交时间：{formatTime(checkVO.returnExpressTime)}</Col>
               </Row>
             </TabPane>
-            {orderServerVO.refundType === '20' && <TabPane tab="发货信息" key="3">
-              <Row gutter={24}>
-                <Col span={8}>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
-                <Col span={8}>退款金额：{checkVO.refundAmount}</Col>
-                <Col span={8}>说明：{checkVO.serverDescribe}</Col>
-              </Row>
-            </TabPane>}
-            {orderServerVO.refundType === '30' && <TabPane tab="退款信息" key="4">
+            {orderServerVO.refundType === '10' && <TabPane tab="退款信息" key="4">
               <Row gutter={24}>
                 <Col span={8}>物流公司：{checkVO.sendExpressName}</Col>
                 <Col span={8}>物流单号：{checkVO.sendExpressCode}</Col>
                 <Col span={8}>说明：{checkVO.serverDescribe}</Col>
                 <Col span={8}>提交时间：{ formatTime(checkVO.sendExpressTime)}</Col>
+              </Row>
+            </TabPane>}
+            {orderServerVO.refundType === '30' && <TabPane tab="发货信息" key="3">
+              <Row gutter={24}>
+                <Col span={8}>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
+                <Col span={8}>退款金额：{checkVO.refundAmount}</Col>
+                <Col span={8}>说明：{checkVO.serverDescribe}</Col>
               </Row>
             </TabPane>}
           </Tabs>

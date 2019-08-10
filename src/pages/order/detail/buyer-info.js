@@ -20,44 +20,36 @@ const memberTypes = {
 }
 
 const BuyerInfo = props => {
-  const { buyerInfo = {} } = props;
+  const { buyerInfo = {}, orderInfo = {} } = props;
   const { userName, phone, payType, idCard, nickname, contact, memberAddress = {} } = buyerInfo;
   return (
-    <Card>
-      <Row>买家信息</Row>
+    <Card title="支付信息">
       <Row>
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">姓名：{contact}</div>
-        </Col>
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">付款方式：{payTypeList[payType]}</div>
-        </Col>
-
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">身份证号:{idCard}</div>
-        </Col>
-        <Col className="gutter-row" span={6}>
+        <Col className="gutter-row" span={6}>支付方式: {payTypeList[payType] || '未支付'}</Col>
+        <Col className="gutter-row" span={6}>支付时间：{orderInfo.payDate || ''}</Col>
+        <Col className="gutter-row" span={6}>交易流水号：{orderInfo.paymentNumber}</Col>
+        <Col className="gutter-row" span={6}>实付金额：￥{orderInfo.payMoney}</Col>
+        {/* <Col className="gutter-row" span={6}>
           <div className="gutter-box">手机号：{phone}</div>
         </Col>
         <Col className="gutter-row" span={6}>
           <div className="gutter-box">用户名:{userName}</div>
         </Col>
-
         <Col className="gutter-row" span={6}>
           <div className="gutter-box">微信昵称:{nickname}</div>
         </Col>
         <Col className="gutter-row" span={6}>
           <div className="gutter-box">会员等级:{memberTypes[buyerInfo.memberType]}</div>
-        </Col>
+        </Col> */}
       </Row>
-      <Row>收货信息</Row>
+      {/* <Row>收货信息</Row>
       <Row gutter={16}>
         <Col className="gutter-row" span={12}>
           <div className="gutter-box">
             收货地址:{unionAddress(memberAddress)}，{memberAddress.consignee},{memberAddress.phone}
           </div>
         </Col>
-      </Row>
+      </Row> */}
     </Card>
   );
 };

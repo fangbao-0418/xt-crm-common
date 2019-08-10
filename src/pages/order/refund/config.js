@@ -219,3 +219,25 @@ export const expressColumns = [{
 }]
 
 export const refundTypes = refundType.getArray()
+
+export const logColumns = [{
+  title: '前操作状态',
+  dataIndex: '',
+  key: ''
+}, {
+  title: '后操作状态',
+  dataIndex: '',
+  key: ''
+}, {
+  title: '操作时间',
+  dataIndex: '',
+  key: ''
+}, {
+  title: '备注',
+  dataIndex: '',
+  key: ''
+}, {
+  title: '操作人',
+  dataIndex: '',
+  key: ''
+}]
