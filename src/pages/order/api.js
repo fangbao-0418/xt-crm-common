@@ -154,6 +154,12 @@ export function refundOperate(data) {
   });
 }
 
+export function customerAdd(data) {
+  return fetch('/order/afterSale/customerAdd', {
+    method: 'POST',
+    data
+  })
+}
 export function refundList(data) {
   return fetch('/order/afterSale/list', {
     method: 'POST',

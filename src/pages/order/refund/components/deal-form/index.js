@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Tabs, Form, Button, Card, Row, Col, Input, Select } from 'antd';
 import refundType from '@/enum/refundType';
+import { XtSelect } from '@/components'
 import moment from 'moment';
 const formatTime = v => moment(v).format('YYYY-MM-DD HH:mm:ss');
 const { TabPane } = Tabs;
@@ -8,7 +9,7 @@ const { Option } = Select;
 const { TextArea } = Input;
 class DealForm extends Component {
   render() {
-    const { checkVO = {}, orderServerVO = {} } = this.props;
+    const { checkVO = {}, orderServerVO = {}, onAuditOperate } = this.props;
     const { form: { getFieldDecorator }, checkType } = this.props;
     const formItemLayout = {
       labelCol: {
@@ -46,15 +47,7 @@ class DealForm extends Component {
                 <Form.Item label="退款类型">
                   {getFieldDecorator('refundType', {
                     initialValue: orderServerVO.refundType
-                  })(
-                    <Select
-                      placeholder="请选择退款类型"
-                    >
-                      {
-                        refundType.getArray().map(v => <Option value={v.key} key={v.key}>{v.val}</Option>)
-                      }
-                    </Select>
-                  )}
+                  })(<XtSelect placeholder="请选择退款类型" data={refundType.getArray()}/>)}
                 </Form.Item>
                 {checkType !== '30' && <Form.Item label="退款金额">
                   {getFieldDecorator('refundAmount', {
@@ -70,25 +63,13 @@ class DealForm extends Component {
                 </Form.Item>
               </Form>
             </TabPane>}
-            {orderServerVO.refundType === '30' &&  <TabPane tab="发货信息" key="4">
+            {orderServerVO.refundType === '30' && <TabPane tab="发货信息" key="4">
               <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
                 <Form.Item label="物流公司">
-                  {getFieldDecorator('refundType', {
-                    initialValue: orderServerVO.refundType
-                  })(
-                    <Select
-                      placeholder="请选择退款类型"
-                    >
-                      {
-                        refundType.getArray().map(v => <Option value={v.key} key={v.key}>{v.val}</Option>)
-                      }
-                    </Select>
-                  )}
+                  {getFieldDecorator('expressName', {})(<XtSelect placeholder="请选择" data={[{key: '', val: '天天快递'}]}/>)}
                 </Form.Item>
                 {checkType !== '30' && <Form.Item label="物流单号">
-                  {getFieldDecorator('refundAmount', {
-                    initialValue: checkVO.refundAmount
-                  })(<Input />)}
+                  {getFieldDecorator('expressCode', {})(<Input />)}
                 </Form.Item>}
                 <Form.Item label="说明">
                   {getFieldDecorator('info', {
@@ -97,22 +78,18 @@ class DealForm extends Component {
                     autosize={{ minRows: 2, maxRows: 6 }}
                   />)}
                 </Form.Item>
+                <Form.Item
+                  wrapperCol={{
+                    xs: { span: 24, offset: 0 },
+                    sm: { span: 16, offset: 8 },
+                  }}
+                >
+                  <Button type="primary" onClick={() => onAuditOperate(1)}>提交</Button>
+                  <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => onAuditOperate(0)}>拒绝</Button>
+                </Form.Item>
               </Form>
             </TabPane>}
           </Tabs>
-        </Card>
-        <Card>
-          <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
-            <Form.Item
-              wrapperCol={{
-                xs: { span: 24, offset: 0 },
-                sm: { span: 16, offset: 8 },
-              }}
-            >
-              <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
-              <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
-            </Form.Item>
-          </Form>
         </Card>
       </>
     )

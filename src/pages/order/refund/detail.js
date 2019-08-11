@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Steps, Card, Table, Row, Col, Tabs } from 'antd';
-import { refundDetail } from '../api';
+import { Steps, Card, Table, Row, Col, Tabs, Message } from 'antd';
+import { refundDetail, refundOperate } from '../api';
 import { getDetailColumns, expressColumns } from './config';
 import refundType from '@/enum/refundType';
 import PicturesWall from '../components/pictures-wall';
@@ -13,13 +13,36 @@ class Detail extends Component {
   state = {
     data: {}
   }
-  handleSubmit = () => { }
   getDetail = () => {
     refundDetail({ id: this.props.match.params.id }).then(res => {
       this.setState({ data: res.data || {} })
     })
   }
-  componentWillMount() {
+  auditOperate = async (status, getFieldsValue) => {
+    const { OrderServerCheckVO = {}, OrderServerDetailVO = {} } = this.state.data;
+    const fields = getFieldsValue();
+    const res = await refundOperate({
+      id: this.props.match.params.id,
+      status,
+      returnContact: OrderServerDetailVO.returnContact,
+      returnPhone: OrderServerCheckVO.returnPhone,
+      returnAddress: OrderServerDetailVO.returnAddress,
+      ...fields
+    });
+    if (res.success) {
+      Message.info('审核成功');
+    } else {
+      Message.info('审核失败');
+    }
+    this.getDetail();
+  }
+  auditCheckOperate = (status) => {
+    this.auditOperate(status, this.checkForm.props.form.getFieldsValue)
+  }
+  auditDealOperate = (status) => {
+    this.auditOperate(status, this.dealForm.props.form.getFieldsValue)
+  }
+  componentWillMount(status) {
     this.getDetail();
   }
   render() {
@@ -64,7 +87,7 @@ class Detail extends Component {
                 </Row>
               </Card>
               <Card title="商品信息">
-                <Table columns={getDetailColumns()} dataSource={orderServerVO.productVO || []} />
+                <Table pagination={false} columns={getDetailColumns()} dataSource={orderServerVO.productVO || []} />
               </Card>
               <Card title="订单信息">
                 <Row gutter={24}>
@@ -89,8 +112,8 @@ class Detail extends Component {
                   <Table dataSource={orderInfoVO.expressVO} columns={expressColumns}></Table>
                 </Row>
               </Card>
-              {current === 0 && <CheckForm {...this.state.data} refresh={this.getDetail} onAuditOperate={this.handleAuditOperate} />}
-              {current === 1 && <DealForm {...this.state.data} />}
+              {current === 0 && <CheckForm {...this.state.data} onAuditOperate={this.auditCheckOperate} wrappedComponentRef={ref => this.checkForm = ref}/>}
+              {current === 1 && <DealForm {...this.state.data}  onAuditOperate={this.auditDealOperate} wrappedComponentRef={ref => this.dealForm = ref}/>}
               {current === 2 && <CheckDetail {...this.state.data} />}
             </TabPane>
             <TabPane tab="操作日志" key="2">

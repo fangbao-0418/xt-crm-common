@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Card, Form, Select, Input, Button, Radio, Message } from 'antd';
+import { Card, Form, Select, Input, Button, Radio } from 'antd';
 import refundType from '@/enum/refundType'
-import { refundOperate } from '../../../api'
 const { Option } = Select;
 const { TextArea } = Input;
 class CheckForm extends Component {
@@ -11,41 +10,18 @@ class CheckForm extends Component {
     returnAddress: '',
     checkType: ''
   }
-  handleInput = (event) => {
+  handleChange = (event) => {
     this.setState({
       [event.target.name]: event.target.value
     })
   }
-  // hanleChange = (event) => {
-  //   console.log('event=>', event.target.value);
-  // }
   handleSelectChange = (val) => {
-    console.log('val =>', val);
     this.setState({
       checkType: val
     })
   }
-  handleAuditOperate = async (status) => {
-    const { OrderServerCheckVO = {}, OrderServerDetailVO = {} } = this.props;
-    const { getFieldsValue } = this.props.form;
-    const fields = getFieldsValue();
-    const res = await refundOperate({
-      id: this.props.match.params.id,
-      status,
-      returnContact: OrderServerDetailVO.returnContact,
-      returnPhone: OrderServerCheckVO.returnPhone,
-      returnAddress: OrderServerDetailVO.returnAddress,
-      ...fields
-    });
-    if (res.success) {
-      Message.info('审核成功');
-    } else {
-      Message.info('审核失败');
-    }
-    this.props.refresh();
-  }
   render() {
-    const { orderServerVO = {}, checkVO = {} } = this.props;
+    const { orderServerVO = {}, checkVO = {}, onAuditOperate } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { returnContact, returnPhone, returnAddress, checkType} = this.state;
     return (
@@ -82,9 +58,9 @@ class CheckForm extends Component {
               <Radio value={1}>{checkVO.returnContact + ' ' + checkVO.returnPhone + ' ' + checkVO.returnAddress}</Radio>
               <Radio value={2}>
                 <Input.Group>
-                  <input name="returnContact" value={returnContact} placeholder="收货人姓名" onInput={this.handleInput}/>
-                  <input name="returnPhone" value={returnPhone} placeholder="收货人电话" onInput={this.handleInput}/>
-                  <input name="returnAddress" value={returnAddress} placeholder="收货人详细地址" onInput={this.handleInput}/>
+                  <input name="returnContact" value={returnContact} placeholder="收货人姓名" onChange={this.handleChange}/>
+                  <input name="returnPhone" value={returnPhone} placeholder="收货人电话" onChange={this.handleChange}/>
+                  <input name="returnAddress" value={returnAddress} placeholder="收货人详细地址" onChange={this.handleChange}/>
                 </Input.Group>
               </Radio>
             </Radio.Group>
@@ -95,10 +71,10 @@ class CheckForm extends Component {
               sm: { span: 16, offset: 8 },
             }}
           >
-            <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
+            <Button type="primary" onClick={() => onAuditOperate(1)}>
               同意
             </Button>
-            <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>
+            <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => onAuditOperate(0)}>
               拒绝
             </Button>
           </Form.Item>

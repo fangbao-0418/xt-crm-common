@@ -12,7 +12,7 @@ import { enumOrderStatus, OrderStatusTextMap } from '../constant';
 import DeliveryModal from './components/delivery-modal';
 import AfterSaleForm from './after-sale-form';
 import { formatMoneyWithSign } from '../../helper';
-
+import { customerAdd } from '../api';
 // const payTypeList = {
 //   100: '微信APP',
 //   101: '微信小程序',
@@ -105,14 +105,24 @@ class Detail extends Component {
   }
   showModal = (record) => {
     const modalInfo = Object.assign({}, record);
+    console.log('modalInfo=>', modalInfo);
     this.setState({modalInfo});
     this.toggleModal(true);
   }
-  handleOk = () => {
+  handleOk = async () => {
     const {form} = this.afterSaleForm.props;
+    const {modalInfo} = this.state;
     console.log(form.getFieldsValue())
+    const fields = form.getFieldsValue();
+    customerAdd({
+      childOrderId: modalInfo.childOrderId,
+      createType: '',
+      mainOrderId: modalInfo.mainOrderId,
+      memberId: modalInfo.memberId,
+      skuId: modalInfo.skuId,
+      ...fields
+    })
   }
-  handleCancel = () => {}
   render() {
     const { data, childOrderList } = this.state;
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
@@ -120,8 +130,7 @@ class Detail extends Component {
 
     return (
       <>
-        <Modal width='50%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.toggleModal(false)} onOk={this.handleOk}
-          onCancel={this.handleCancel}>
+        <Modal width='50%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.toggleModal(false)} onOk={this.handleOk}>
           <AfterSaleForm wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo}/>
         </Modal>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
@@ -151,6 +160,7 @@ class Detail extends Component {
                   logistics={item.logistics}
                   query={this.query}
                   orderLogs={item.orderLogs}
+                  memberId={data.buyerInfo.memberAddress.memberId}
                   showModal={this.showModal}
                 />
               </div>

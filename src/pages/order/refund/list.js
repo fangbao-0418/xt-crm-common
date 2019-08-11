@@ -1,6 +1,6 @@
 import React from 'react';
 import {  Button, Spin } from 'antd';
-import { refundList, exportRefund } from '../api';
+import { refundList } from '../api';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
 import { getListColumns, formFields } from './config';

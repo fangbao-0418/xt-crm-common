@@ -3,7 +3,7 @@ import { Table, Form, Input, InputNumber, Card } from 'antd';
 import { goodsTableColumn } from "../constant";
 import { refundType, returnReason } from '@/enum';
 import { formatPrice } from '@/util/format';
-import PicturesWall from '../components/pictures-wall';
+import UploadView from '@/components/upload';
 import { XtSelect } from '@/components'
 const { TextArea } = Input;
 const formItemLayout = {
@@ -21,8 +21,7 @@ const onChange = () => { }
 class AfterSaleForm extends Component {
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
-    const price = formatPrice(modalInfo.buyPrice)
-    console.log('modalInfo =>', modalInfo);
+    const price = parseFloat(formatPrice(modalInfo.buyPrice))
     return (
       <>
         <Table dataSource={[modalInfo]} columns={goodsTableColumn} pagination={false}></Table>
@@ -39,10 +38,16 @@ class AfterSaleForm extends Component {
               <span class="ml10">（最多可退￥{price}）</span>
             </Form.Item>
             <Form.Item label="售后凭证">
-              <PicturesWall />
+            {getFieldDecorator('imgUrl',{})(
+              <UploadView
+                placeholder=""
+                listType="picture-card"
+                listNum={4}
+                size={2}/>
+            )}
             </Form.Item>
             <Form.Item label="售后说明">
-              <TextArea></TextArea>
+            {getFieldDecorator('info',{})(<TextArea/>)}
             </Form.Item>
           </Form>
         </Card>
