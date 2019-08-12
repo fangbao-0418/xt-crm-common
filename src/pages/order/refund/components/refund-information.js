@@ -22,8 +22,18 @@ class RefundInformation extends Component {
       ...fields
     });
   }
+  // 重新退款
+  handleAgainRefund = async () => {
+    const { dispatch, match: { params } } = this.props;
+    dispatch['refund.model'].againRefund(params);
+  }
+  // 关闭订单
+  async handleCloseOrder() {
+    const { dispatch, match: { params } } = this.props;
+    dispatch['refund.model'].closeOrder(params);
+  }
   render() {
-    const { form: { getFieldDecorator }, data: { orderServerVO, checkType, checkVO }, readOnly = true } = this.props;
+    const { form: { getFieldDecorator }, data: { orderServerVO, checkType, checkVO, refundStatus }, readOnly = true } = this.props;
     if (readOnly) {
       return <Row gutter={24}>
         <Col span={8}>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
@@ -49,10 +59,21 @@ class RefundInformation extends Component {
             autosize={{ minRows: 2, maxRows: 6 }}
           />)}
         </Form.Item>
-        <Form.Item wrapperCol={formButtonLayout} style={{ marginBottom: 0 }}>
-          <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
-          <Button type="danger ml20" onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
-        </Form.Item>
+        {refundStatus === 20 &&
+          <Form.Item wrapperCol={formButtonLayout} style={{ marginBottom: 0 }}>
+            <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
+            <Button type="danger ml20" onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
+          </Form.Item>}
+        {
+          refundStatus === 21 && <Form.Item wrapperCol={formButtonLayout}>
+            <Button type="primary" onClick={this.handleAgainRefund}>
+              重新退款
+              </Button>
+            <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>
+              关闭订单
+            </Button>
+          </Form.Item>
+        }
       </Form>
     }
   }

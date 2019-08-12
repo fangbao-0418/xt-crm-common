@@ -54,12 +54,12 @@ class CheckForm extends Component {
   }
   // 重新退款
   handleAgainRefund = async () => {
-    const {dispatch, match: {params}} = this.props;
+    const { dispatch, match: { params } } = this.props;
     dispatch['refund.model'].againRefund(params);
   }
   // 关闭订单
   async handleCloseOrder() {
-    const {dispatch, match: {params}} = this.props;
+    const { dispatch, match: { params } } = this.props;
     dispatch['refund.model'].closeOrder(params);
   }
   render() {
