@@ -43,7 +43,6 @@ class UploadView extends Component {
   }
 
   beforeUpload = size => (file, fileList) => {
-    debugger
     const isLtM = file.size / 1024 / 1024 < size;
     if (!isLtM) {
       message.error(`请上传小于${size*1000}kB的文件`);
