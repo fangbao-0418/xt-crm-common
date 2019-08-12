@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Steps, Card, Table, Row, Col, Tabs, Message } from 'antd';
-import { refundDetail, refundOperate } from '../api';
+import { Steps, Card, Table, Row, Col, Tabs } from 'antd';
 import { getDetailColumns, expressColumns } from './config';
 import refundType from '@/enum/refundType';
 import PicturesWall from '../components/pictures-wall';
@@ -8,6 +7,7 @@ import { CheckForm, DealForm, CheckDetail } from './components';
 import { logColumns } from './config';
 import moment from 'moment';
 import { connect } from '@/util/utils';
+import { calcCurrent } from '@/pages/helper'
 const { Step } = Steps;
 const { TabPane } = Tabs;
 
@@ -19,53 +19,20 @@ class Detail extends Component {
     const { dispatch } = this.props;
     dispatch['refund.model'].getDetail({ id: this.props.match.params.id })
   }
-  auditOperate = async (status, getFieldsValue) => {
-    const { OrderServerCheckVO = {}, OrderServerDetailVO = {} } = this.props.data;
-    const fields = getFieldsValue();
-    const res = await refundOperate({
-      id: this.props.match.params.id,
-      status,
-      returnContact: OrderServerDetailVO.returnContact,
-      returnPhone: OrderServerCheckVO.returnPhone,
-      returnAddress: OrderServerDetailVO.returnAddress,
-      ...fields
-    });
-    if (res.success) {
-      Message.info('审核成功');
-    } else {
-      Message.info('审核失败');
-    }
-    this.getDetail();
-  }
-  auditCheckOperate = (status) => {
-    this.auditOperate(status, this.checkForm.props.form.getFieldsValue)
-  }
-  auditDealOperate = (status) => {
-    this.auditOperate(status, this.dealForm.props.form.getFieldsValue)
-  }
   componentWillMount(status) {
     this.getDetail();
   }
   render() {
-    console.log(this.props, '-------------')
     const { orderInfoVO = {}, orderServerVO = {}, refundStatus } = this.props.data;
-    let current = 0;
-    if (refundStatus === 10) {
-      current = 0;
-    }
-    if (refundStatus >= 20 && refundStatus < 30) {
-      current = 1;
-    }
-    if (refundStatus === 30) {
-      current = 2;
-    }
+    let current = calcCurrent(refundStatus)
     return (
       <>
         <Card>
           <Steps current={current}>
             <Step title="待审核" />
             <Step title="处理中" />
-            <Step title="完成" />
+            {refundStatus === 30 && <Step status="finish" title="完成" />}
+            {refundStatus === 40 && <Step status="error" title="关闭" />}
           </Steps>
         </Card>
         <Card>
@@ -114,12 +81,12 @@ class Detail extends Component {
                   <Table dataSource={orderInfoVO.expressVO} columns={expressColumns}></Table>
                 </Row>
               </Card>
-              {current === 0 && <CheckForm {...this.props.data} onAuditOperate={this.auditCheckOperate} wrappedComponentRef={ref => this.checkForm = ref}/>}
-              {current === 1 && <DealForm {...this.props.data}  onAuditOperate={this.auditDealOperate} wrappedComponentRef={ref => this.dealForm = ref}/>}
+              {current === 0 && <CheckForm {...this.props.data} />}
+              {current === 1 && <DealForm {...this.props.data} />}
               {current === 2 && <CheckDetail {...this.props.data} />}
             </TabPane>
             <TabPane tab="操作日志" key="2">
-              <Table dataSource={[]} columns={logColumns}/>
+              <Table dataSource={[]} columns={logColumns} />
             </TabPane>
           </Tabs>
         </Card>

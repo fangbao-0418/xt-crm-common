@@ -30,3 +30,18 @@ export const formatMoneyBeforeRequest = price => {
 
   return (pasred * 100).toFixed();
 };
+
+
+export const calcCurrent = refundStatus => {
+  let current = 0;
+  if (refundStatus === 10) {
+    current = 0;
+  }
+  if (refundStatus >= 20 && refundStatus < 30) {
+    current = 1;
+  }
+  if (refundStatus === 30 || refundStatus === 40) {
+    current = 2;
+  }
+  return current;
+}

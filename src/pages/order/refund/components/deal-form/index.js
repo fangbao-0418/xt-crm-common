@@ -13,8 +13,7 @@ class DealForm extends Component {
     this.setState({ [type]: key });
   };
   render() {
-    const { checkVO = {}, orderServerVO = {}, onAuditOperate } = this.props;
-    const { checkType } = this.props;
+    const { checkVO = {}, refundStatus, orderServerVO = {}, checkType } = this.props;
     const tabList = [{
       key: 'customer-service-review',
       tab: '客服审核'
@@ -23,7 +22,7 @@ class DealForm extends Component {
       tab: '退货信息'
     }]
     const contentList = {
-      'customer-service-review': <CustomerServiceReview checkVO={checkVO} />,
+      'customer-service-review': <CustomerServiceReview checkVO={checkVO} refundStatus={refundStatus}/>,
       'return-information': <ReturnInformation checkVO={checkVO} />
     }
     // 退货退款
@@ -32,7 +31,7 @@ class DealForm extends Component {
         key: 'refund-information',
         tab: '退款信息'
       })
-      contentList['refund-information'] = <RefundInformation readOnly={false} checkVO={checkVO} orderServerVO={orderServerVO} checkType={checkType} onAuditOperate={onAuditOperate} />;
+      contentList['refund-information'] = <RefundInformation readOnly={false}/>;
     }
     // 仅换货
     else if (orderServerVO.refundType === '30') {
@@ -40,9 +39,8 @@ class DealForm extends Component {
         key: 'delivery-information',
         tab: '发货信息'
       })
-      contentList['delivery-information'] = <DeliveryInformation readOnly={false} checkType={checkType} onAuditOperate={onAuditOperate} refundType={orderServerVO.refundType} />;
+      contentList['delivery-information'] = <DeliveryInformation readOnly={false} checkType={checkType} refundType={orderServerVO.refundType} />;
     }
-    console.log('key=>', this.state.key);
     return (
       <Card
         style={{ width: '100%', minHeight: '352px' }}

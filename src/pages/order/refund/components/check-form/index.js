@@ -1,80 +1,98 @@
 import React, { Component } from 'react';
-import { Card, Form, Select, Input, Button, Radio } from 'antd';
-import refundType from '@/enum/refundType'
-const { Option } = Select;
-const { TextArea } = Input;
+import { Card, Form, Input, InputNumber, Button, Radio } from 'antd';
+import { formButtonLayout } from '@/config';
+import { withRouter } from 'react-router-dom';
+import refundType from '@/enum/refundType';
+import { XtSelect } from '@/components'
+import { connect } from '@/util/utils';
+import { formatMoney } from '@/pages/helper';
+@connect()
+@withRouter
 class CheckForm extends Component {
   state = {
-    returnContact: '',
-    returnPhone: '',
-    returnAddress: '',
-    checkType: ''
+    checkType: '',
+    radioKey: 1,
+    returnObj: {
+      returnContact: '',
+      returnPhone: '',
+      returnAddress: ''
+    }
   }
-  handleChange = (event) => {
+  hanleRadioChange = (event) => {
+    console.log(event.target.value)
     this.setState({
-      [event.target.name]: event.target.value
+      radioKey: event.target.value
     })
   }
-  handleSelectChange = (val) => {
+  hangdleInputChange = (event) => {
+    const { name, value } = event.target;
+    const { returnObj } = this.state
+    returnObj[name] = value;
     this.setState({
-      checkType: val
+      returnObj
+    })
+  }
+  handleAuditOperate = (status) => {
+    const { props } = this;
+    const fieldsValue = props.form.getFieldsValue();
+    let returnObj;
+    fieldsValue.refundAmount = fieldsValue.refundAmount * 100;
+    if (this.state.radioKey === 1) {
+      const { returnContact, returnPhone, returnAddress } = this.props.checkVO
+      returnObj = { returnContact, returnPhone, returnAddress }
+    } else {
+      returnObj = this.state.returnObj
+    }
+    props.dispatch['refund.model'].auditOperate({
+      id: props.match.params.id,
+      status,
+      ...returnObj,
+      ...fieldsValue
     })
   }
   render() {
-    const { orderServerVO = {}, checkVO = {}, onAuditOperate } = this.props;
+    const { orderServerVO = {}, checkVO = {} } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { returnContact, returnPhone, returnAddress, checkType} = this.state;
+    const { checkType } = this.state;
     return (
       <Card title="客服审核">
         <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
           <Form.Item label="售后类型">
             {getFieldDecorator('refundType', {
               initialValue: orderServerVO.refundType
-            })(
-              <Select
-                placeholder="请选择售后类型"
-                onChange={this.handleSelectChange}
-              >
-                {
-                  refundType.getArray().map(v => <Option value={v.key} key={v.key}>{v.val}</Option>)
-                }
-              </Select>
-            )}
+            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleSelectChange} />)}
           </Form.Item>
           {checkType !== '30' && <Form.Item label="退款金额">
             {getFieldDecorator('refundAmount', {
-              initialValue: checkVO.refundAmount
-            })(<Input />)}
+              initialValue: formatMoney(checkVO.refundAmount)
+            })(<InputNumber formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{width: '100%'}}/>)}
           </Form.Item>}
           <Form.Item label="说明">
             {getFieldDecorator('info', {
-            })(<TextArea
+            })(<Input.TextArea
               placeholder=""
               autosize={{ minRows: 2, maxRows: 6 }}
             />)}
           </Form.Item>
           {checkType !== '20' && <Form.Item label="退货地址">
-            <Radio.Group defaultValue={1} onChange={this.hanleChange}>
+            <Radio.Group value={this.state.radioKey} onChange={this.hanleRadioChange}>
               <Radio value={1}>{checkVO.returnContact + ' ' + checkVO.returnPhone + ' ' + checkVO.returnAddress}</Radio>
               <Radio value={2}>
-                <Input.Group>
-                  <input name="returnContact" value={returnContact} placeholder="收货人姓名" onChange={this.handleChange}/>
-                  <input name="returnPhone" value={returnPhone} placeholder="收货人电话" onChange={this.handleChange}/>
-                  <input name="returnAddress" value={returnAddress} placeholder="收货人详细地址" onChange={this.handleChange}/>
+                <Input.Group compact={true}>
+                  <input placeholder="收货人姓名" name="returnContact" value={this.state.returnObj.returnContact} onChange={this.hangdleInputChange} />
+                  <input placeholder="收货人电话" name="returnPhone" value={this.state.returnObj.returnPhone} onChange={this.hangdleInputChange} />
+                  <input placeholder="收货人详细地址" name="returnAddress" value={this.state.returnObj.returnAddress} onChange={this.hangdleInputChange} />
                 </Input.Group>
               </Radio>
             </Radio.Group>
           </Form.Item>}
           <Form.Item
-            wrapperCol={{
-              xs: { span: 24, offset: 0 },
-              sm: { span: 16, offset: 8 },
-            }}
+            wrapperCol={formButtonLayout}
           >
-            <Button type="primary" onClick={() => onAuditOperate(1)}>
+            <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
               同意
             </Button>
-            <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => onAuditOperate(0)}>
+            <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>
               拒绝
             </Button>
           </Form.Item>

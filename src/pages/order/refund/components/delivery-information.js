@@ -6,22 +6,24 @@ import { withRouter } from 'react-router-dom';
 import ExpressCompanySelect from '@/components/express-company-select';
 import { formatDate } from '@/pages/helper';
 
-@connect()
+@connect(state => ({
+  data: state['refund.model'].data || {}
+}))
 @withRouter
 @Form.create({ name: 'delivery-information' })
 class DeliveryInformation extends Component {
   handleAuditOperate = (status) => {
-    const { dispatch, match: { params: { id } }, form: { getFieldsValue }, refundType } = this.props;
-    const fields = getFieldsValue();
-    dispatch['refund.model'].auditOperate({
-      id,
+    const { props } = this;
+    const fields = props.form.getFieldsValue();
+    props.dispatch['refund.model'].auditOperate({
+      id: props.match.params.id,
       status,
-      refundType,
+      refundType: props.data.orderServerVO.refundType,
       ...fields
     });
   }
   render() {
-    const { form: { getFieldDecorator }, checkType, checkVO, readOnly = true } = this.props;
+    const { form: { getFieldDecorator }, data: { checkType, checkVO = {} }, readOnly = true } = this.props;
     if (readOnly) {
       return <Row gutter={24}>
         <Col span={8}>物流公司：{checkVO.sendExpressName}</Col>
