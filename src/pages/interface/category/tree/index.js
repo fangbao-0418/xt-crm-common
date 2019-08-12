@@ -41,6 +41,7 @@ export default class extends Component {
     if(check) {
       const _data = {
         id: data[0].id,
+        level: data[0].level,
         name: ''
       };
       data.reverse().forEach(val => {

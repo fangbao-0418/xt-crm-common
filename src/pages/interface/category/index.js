@@ -177,6 +177,7 @@ class InterFaceCategory extends Component {
         this.state.checkCate && this.state.cateText.forEach(val => {
           list.push({
             id: val.id,
+            level: val.level,
             name: val.name,
             type: 1
           })
@@ -188,7 +189,7 @@ class InterFaceCategory extends Component {
         }
         if (this.state.currId) data.id = this.state.currId;
         (this.state.currId ? updateFrontCategory : saveFrontCategory)(data).then(data => {
-          if(data.id) {
+          if (data && data.id) {
             message.success('保存成功');
             this.getCategorys(data.id);
           }
@@ -201,8 +202,8 @@ class InterFaceCategory extends Component {
     params = params || {}
     const { modalPage } = this.state;
     // page.current += 1;
-    getPromotionList({ 
-      page: modalPage.current, 
+    getPromotionList({
+      page: modalPage.current,
       pageSize: modalPage.pageSize,
       ...params
     }).then(res => {
@@ -210,7 +211,7 @@ class InterFaceCategory extends Component {
 
       this.setState({
         actList: res.records,
-      //  selectedRowKeys: [],
+        //  selectedRowKeys: [],
         modalPage,
       });
     });

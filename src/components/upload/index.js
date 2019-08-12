@@ -42,35 +42,33 @@ class UploadView extends Component {
     }
   }
 
-  beforeUpload = size => file => {
+  beforeUpload = size => (file, fileList) => {
     const isLtM = file.size / 1024 / 1024 < size;
     if (!isLtM) {
-      message.error(`请上传小于${size}M的文件`);
+      message.error(`请上传小于${size*1000}kB的文件`);
+      return false;
     }
+    return true;
+  };
 
-    // TODO: 这里还需要优化一下
 
+  customRequest = e => {
+    const file = e.file;
     ossUpload(file).then(urlList => {
       const { fileList } = this.state;
       const { onChange } = this.props;
-      const newUploadedFileList = fileList.map(item => {
-        if (item.uid === file.uid) {
-          item.url = urlList && urlList[0];
-        }
-        return item;
-      });
-
+      file.url = urlList && urlList[0];
+      fileList.push(file)
       this.setState({
-        fileList: newUploadedFileList,
+        fileList: fileList,
       });
-      isFunction(onChange) && onChange(newUploadedFileList);
+      isFunction(onChange) && onChange(fileList);
     });
-    return false;
-  };
-
+  }
   handleRemove = e => {
+    console.log(e)
     const { fileList } = this.state;
-    this.setState({ fileList: filter(fileList, item => item.uid === e.uid) });
+    this.setState({ fileList: filter(fileList, item => item.uid !== e.uid) });
   };
   render() {
     const {
@@ -87,22 +85,13 @@ class UploadView extends Component {
     return (
       <>
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
           listType={listType}
           fileList={fileList}
           showUploadList={showUploadList}
           // onPreview={this.handlePreview}
           beforeUpload={this.beforeUpload(size)}
-          onChange={({ fileList }) => {
-            console.log('upload-inner-fileList', fileList);
-            // setFileList(fileList);
-            this.setState({
-              fileList,
-            });
-
-            isFunction(onChange) && onChange(fileList);
-          }}
           onRemove={this.handleRemove}
+          customRequest={this.customRequest}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>
