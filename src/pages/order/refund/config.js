@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import GoodCell from '../../../components/good-cell';
 import RemarkModal from '../components/remark-modal';
-import RefundModal from '../components/refund-modal';
 import { formatMoneyWithSign } from '@/pages/helper';
 import { dateFormat } from '@/util/utils';
 import { enumRefundStatus } from '../constant';
@@ -9,6 +8,9 @@ import refundType from '@/enum/refundType';
 import createType from '@/enum/createType';
 import moment from 'moment';
 import { Button } from 'antd';
+import MoneyRender from '@/components/money-render'
+import {formatDate} from '@/pages/helper';
+import {orderRefunds} from '@/config';
 export const formFields = function () {
   return [
     {
@@ -147,25 +149,8 @@ export const getListColumns = ({ query, history }) => [
         {[enumRefundStatus.Complete, enumRefundStatus.Rejected].includes( // 已完成，已取消（isDelete === 1），已驳回的展示查看
             Number(refundStatus)
           ) || isDelete === 1 ? (
-              // <RefundModal
-              //   onSuccess={query}
-              //   orderCode={orderCode}
-              //   refundId={refundId}
-              //   childOrderId={childOrderId}
-              //   skuId={skuId}
-              //   id={id}
-              //   readOnly={true}
-              // />
               <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看</Button>
             ) :
-            //  <RefundModal
-            //   onSuccess={query}
-            //   orderCode={orderCode}
-            //   refundId={refundId}
-            //   childOrderId={childOrderId}
-            //   skuId={skuId}
-            //   id={id}
-            // />
             <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>审核</Button>
           }
         </div>
@@ -190,6 +175,7 @@ export const getDetailColumns = () => [
     title: '单价',
     dataIndex: 'salePrice',
     key: 'salePrice',
+    render: MoneyRender
   },
   {
     title: '数量',
@@ -200,11 +186,13 @@ export const getDetailColumns = () => [
     title: '商品总价（元）',
     dataIndex: 'saleTotalPrice',
     key: 'saleTotalPrice',
+    render: MoneyRender
   },
   {
     title: '实付金额',
     dataIndex: 'dealTotalPrice',
     key: 'dealTotalPrice',
+    render: MoneyRender
   }
 ];
 
@@ -222,22 +210,25 @@ export const refundTypes = refundType.getArray()
 
 export const logColumns = [{
   title: '前操作状态',
-  dataIndex: '',
-  key: ''
+  dataIndex: 'beforeStatus',
+  key: 'beforeStatus',
+  render: code => orderRefunds[code]
 }, {
   title: '后操作状态',
-  dataIndex: '',
-  key: ''
+  dataIndex: 'afterStatus',
+  key: 'afterStatus',
+  render: code => orderRefunds[code]
 }, {
   title: '操作时间',
-  dataIndex: '',
-  key: ''
+  dataIndex: 'createTime',
+  key: 'createTime',
+  render: text => formatDate(text)
 }, {
   title: '备注',
-  dataIndex: '',
-  key: ''
+  dataIndex: 'info',
+  key: 'info'
 }, {
   title: '操作人',
-  dataIndex: '',
-  key: ''
+  dataIndex: 'operator',
+  key: 'operator'
 }]

@@ -117,14 +117,19 @@ class Detail extends Component {
     const { modalInfo } = this.state;
     const fields = form.getFieldsValue();
     fields.imgUrl = fields.imgUrl.map(v => v.url);
+    fields.amount = fields.amount * 100;
     console.log('modalInfo=>', modalInfo)
-    customerAdd({
+    const res = await customerAdd({
       childOrderId: modalInfo.childOrderId,
       mainOrderId: modalInfo.mainOrderId,
       memberId: modalInfo.memberId,
       skuId: modalInfo.skuId,
       ...fields
-    })
+    });
+    if (res.success) {
+      message.success('申请售后成功');
+    }
+    this.setState({visible: true})
   }
   handleAddNotes = () => {
     const { modalInfo } = this.state;
@@ -148,6 +153,7 @@ class Detail extends Component {
   }
   render() {
     const { data, childOrderList } = this.state;
+    console.log('childOrderList=>', childOrderList)
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
 
@@ -195,7 +201,6 @@ class Detail extends Component {
                   orderInfo={data.orderInfo}
                   logistics={item.logistics}
                   query={this.query}
-                  orderLogs={item.orderLogs}
                   memberId={data.buyerInfo && data.buyerInfo.memberAddress && data.buyerInfo.memberAddress.memberId}
                   showModal={this.showModal}
                 />

@@ -5,8 +5,8 @@ import { withRouter } from 'react-router-dom';
 import refundType from '@/enum/refundType';
 import { XtSelect } from '@/components'
 import { connect } from '@/util/utils';
-import { formatMoney } from '@/pages/helper';
-import { againRefund } from '../../../api'
+import { formatMoney, joinFilterEmpty } from '@/pages/helper';
+
 @connect()
 @withRouter
 class CheckForm extends Component {
@@ -52,16 +52,18 @@ class CheckForm extends Component {
       ...fieldsValue
     })
   }
+  // 重新退款
   handleAgainRefund = async () => {
-    const {id} = this.props.match.params;
-    const res = await againRefund(id);
-    if (res.succuss) {
-      Message.info('退款完成')
-    }
-    this.props.dispatch['refund.model'].getDetail(id)
+    const {dispatch, match: {params}} = this.props;
+    dispatch['refund.model'].againRefund(params);
+  }
+  // 关闭订单
+  async handleCloseOrder() {
+    const {dispatch, match: {params}} = this.props;
+    dispatch['refund.model'].closeOrder(params);
   }
   render() {
-    const { orderServerVO = {}, checkVO = {} } = this.props;
+    const { orderServerVO = {}, checkVO = {}, refundStatus } = this.props;
     const { getFieldDecorator } = this.props.form;
     const refundTypeForm = this.props.form.getFieldsValue(['refundType']);
     return (
@@ -70,12 +72,12 @@ class CheckForm extends Component {
           <Form.Item label="售后类型">
             {getFieldDecorator('refundType', {
               initialValue: orderServerVO.refundType
-            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型"/>)}
+            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" />)}
           </Form.Item>
           {refundTypeForm.refundType !== '30' && <Form.Item label="退款金额">
             {getFieldDecorator('refundAmount', {
               initialValue: formatMoney(checkVO.refundAmount)
-            })(<InputNumber formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{width: '100%'}}/>)}
+            })(<InputNumber formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
           </Form.Item>}
           <Form.Item label="说明">
             {getFieldDecorator('info', {
@@ -86,33 +88,42 @@ class CheckForm extends Component {
           </Form.Item>
           {refundTypeForm.refundType !== '20' && <Form.Item label="退货地址">
             <Radio.Group value={this.state.radioKey} onChange={this.hanleRadioChange}>
-              <Radio value={1}>{checkVO.returnContact + ' ' + checkVO.returnPhone + ' ' + checkVO.returnAddress}</Radio>
+              <Radio value={1}>{joinFilterEmpty([checkVO.returnContact, checkVO.returnPhone, checkVO.returnAddress]) || '暂无'}</Radio>
               <Radio value={2}>
-                <Input.Group compact={true}>
+                <Input.Group>
                   <input placeholder="收货人姓名" name="returnContact" value={this.state.returnObj.returnContact} onChange={this.hangdleInputChange} />
-                  <input placeholder="收货人电话" type="tel" name="returnPhone" maxlength={11} value={this.state.returnObj.returnPhone} onChange={this.hangdleInputChange} />
+                  <input placeholder="收货人电话" type="tel" name="returnPhone" maxLength={11} value={this.state.returnObj.returnPhone} onChange={this.hangdleInputChange} />
                   <input placeholder="收货人详细地址" name="returnAddress" value={this.state.returnObj.returnAddress} onChange={this.hangdleInputChange} />
                 </Input.Group>
               </Radio>
             </Radio.Group>
           </Form.Item>}
-          <Form.Item
-            wrapperCol={formButtonLayout}
-          >
-            <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
-              同意
+          {
+            refundStatus === 10 && <Form.Item
+              wrapperCol={formButtonLayout}
+            >
+              <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
+                同意
             </Button>
-            <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>
-              拒绝
+              <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>
+                拒绝
             </Button>
-          </Form.Item>
-          {/* <Form.Item
-            wrapperCol={formButtonLayout}
-          >
-            <Button type="primary" onClick={this.handleAgainRefund}>
-              重新退款
+            </Form.Item>
+          }
+          {
+            refundStatus === 21 && (
+              <Form.Item
+                wrapperCol={formButtonLayout}
+              >
+                <Button type="primary" onClick={this.handleAgainRefund}>
+                  重新退款
             </Button>
-          </Form.Item> */}
+                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>
+                  关闭订单
+            </Button>
+              </Form.Item>
+            )
+          }
         </Form>
       </Card>
     )

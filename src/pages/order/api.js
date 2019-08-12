@@ -1,4 +1,4 @@
-import { post, exportFile, prefix, get, fetch } from '../../util/fetch';
+import { post, exportFile, prefix, get, put, fetch } from '../../util/fetch';
 const debug = false;
 var qs = require('qs');
 
@@ -92,7 +92,10 @@ const detail = {
 };
 
 export function againRefund(id) {
-  return post(`/order/afterSale/againRefund/{id}`)
+  return put(`/order/afterSale/againRefund/{id}`);
+}
+export function closeOrder(id) {
+  return put(`/order/afterSale/close/{id}`);
 }
 export function saveRefundInfo(data) {
   return post('/order/afterSale/saveRefundInfo', data)

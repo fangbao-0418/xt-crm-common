@@ -4,7 +4,8 @@ import { goodsTableColumn, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
 import { formatDate } from '../../helper';
 
-const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, orderLogs = [], showModal, memberId, showNotes}) => {
+const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, showModal, memberId, showNotes}) => {
+  console.log('orderLogs=>', childOrder.orderLogs)
   const columns = [
     ...goodsTableColumn,
     {
@@ -13,7 +14,7 @@ const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, orderL
       key: 'operate',
       render: (text, record, index) => (
         <>
-          <Button type="link" size="small" onClick={() => showModal({ ...record, mainOrderId: orderLogs[0] && orderLogs[0].mainOrderId, memberId })}>申请售后</Button>
+          <Button type="link" size="small" onClick={() => showModal({ ...record, mainOrderId: orderInfo.id, memberId })}>申请售后</Button>
           <Button type="link" size="small" onClick={() => showNotes(record)}>添加备注</Button>
         </>
       )
@@ -32,7 +33,7 @@ const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, orderL
         <Col span={2} style={{ minWidth: '7em' }}>客服备注：</Col>
         <Col span={22}>
           <Row>
-            {orderLogs.map(v => <Col>{v.info} （{formatDate(v.createTime)}</Col>)}
+            {childOrder.orderLogs.map(v => <Col>{v.info} （{formatDate(v.createTime)}）</Col>)}
           </Row>
         </Col>
       </Row>

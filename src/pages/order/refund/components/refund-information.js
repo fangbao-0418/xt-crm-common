@@ -16,7 +16,6 @@ class RefundInformation extends Component {
     const { dispatch, match: { params: { id } }, form: { getFieldsValue } } = this.props;
     const fields = getFieldsValue();
     fields.refundAmount = fields.refundAmount * 100;
-    console.log('fields=>', fields);
     dispatch['refund.model'].auditOperate({
       id,
       status,

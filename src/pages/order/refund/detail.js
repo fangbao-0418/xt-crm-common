@@ -8,7 +8,6 @@ import { logColumns } from './config';
 import moment from 'moment';
 import { connect } from '@/util/utils';
 import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
-import { saveRefundInfo } from '../api';
 
 @connect(state => ({
   data: state['refund.model'].data || {}
@@ -18,18 +17,12 @@ class Detail extends Component {
     const { dispatch } = this.props;
     dispatch['refund.model'].getDetail({ id: this.props.match.params.id })
   }
-  getRefundInfo = () => {
-    saveRefundInfo({
-      refundId: this.props.match.params.id,
-      info: ''
-    })
-  }
   componentWillMount(status) {
     this.getDetail();
   }
   
   render() {
-    const { orderInfoVO = {}, orderServerVO = {}, refundStatus } = this.props.data;
+    const { orderInfoVO = {}, orderServerVO = {}, refundStatus, skuServerLogVO = [] } = this.props.data;
     console.log(this.props.data)
     let current = calcCurrent(refundStatus)
     const status = refundStatus === 30 ? 'finish' : refundStatus === 40 ? 'error': '';
@@ -94,7 +87,7 @@ class Detail extends Component {
               {current === 2 && <CheckDetail {...this.props.data} />}
             </Tabs.TabPane>
             <Tabs.TabPane tab="操作日志" key="2">
-              <Table dataSource={[]} columns={logColumns} />
+              <Table dataSource={skuServerLogVO} columns={logColumns} />
             </Tabs.TabPane>
           </Tabs>
         </Card>
