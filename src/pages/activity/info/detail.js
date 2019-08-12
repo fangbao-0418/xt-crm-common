@@ -169,7 +169,7 @@ class ActivityDetail extends React.Component {
       },
     ];
 
-    const { detailData, selectedRowKeys, sort, activityImage, newuserExclusive } = this.state;
+    const { detailData, selectedRowKeys, sort, activityImage, newuserExclusive, memberExclusive } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
@@ -183,17 +183,13 @@ class ActivityDetail extends React.Component {
             商品主图: <Image src={detailData.coverUrl} width={60} height={60} alt="" />
           </div>
           <Row style={{ height: 60 }}>
-            <Col span={8}>活动商品: {detailData.productName}</Col>
-            <Col span={8}>市场价: {formatMoneyWithSign(detailData.marketPrice)}</Col>
-            <Col span={8}>销售价: {formatMoneyWithSign(detailData.salePrice)}</Col>
+            <Col span={6}>活动商品: {detailData.productName}</Col>
+            <Col span={6}>市场价: {formatMoneyWithSign(detailData.marketPrice)}</Col>
+            <Col span={6}>销售价: {formatMoneyWithSign(detailData.salePrice)}</Col>
+            <Col span={6}>成本价: {formatMoneyWithSign(detailData.costPrice)}</Col>
           </Row>
           <Row style={{ marginTop: 20, height: 60 }}>
-            <Col span={8}>成本价: {formatMoneyWithSign(detailData.costPrice)}</Col>
-            <Col span={8} />
-            <Col span={8} />
-          </Row>
-          <Row style={{ marginTop: 20, height: 60 }}>
-            <Col span={8}>
+            <Col span={6}>
               新人专享:{' '}
               <Checkbox
                 checked={!!newuserExclusive}
@@ -202,7 +198,16 @@ class ActivityDetail extends React.Component {
                 是
               </Checkbox>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
+              会员专享:{' '}
+              <Checkbox
+                checked={!!memberExclusive}
+                onChange={e => this.setState({ memberExclusive: e.target.checked ? 1 : 0 })}
+              >
+                是
+              </Checkbox>
+            </Col>
+            <Col span={6}>
               排序:{' '}
               <Input
                 style={{ width: 80 }}
@@ -210,7 +215,7 @@ class ActivityDetail extends React.Component {
                 onChange={e => this.setState({ sort: e.target.value })}
               />
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <FormItem label="活动图片">
                 <UploadView
                   listType="picture-card"

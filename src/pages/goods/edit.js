@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Switch  } from 'antd';
+import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox  } from 'antd';
 import UploadView from '../../components/upload';
 import {
   map,
@@ -349,6 +349,8 @@ class GoodsEdit extends React.Component {
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
     validateFields((err, vals) => {
       if (!err) {
+        debugger;
+        return;
         if (size(speSelect) === 0) {
           message.error('请添加规格');
           return false;
@@ -643,7 +645,7 @@ class GoodsEdit extends React.Component {
                   required: true,
                   message: '请输入商品简介',
                 },
-              ],
+              ],  
             })(<Input placeholder="请输入商品简介" />)}
           </FormItem>
           <FormItem label="供货商">
@@ -661,7 +663,7 @@ class GoodsEdit extends React.Component {
                 filterOption={(inputValue, option) =>{
                   return option.props.children.indexOf(inputValue) > -1;
                 }}
-              >
+              > 
                 {map(supplier, item => (
                   <Option value={item.id} key={item.id}>
                     {item.name}
@@ -672,6 +674,22 @@ class GoodsEdit extends React.Component {
           </FormItem>
           <FormItem label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
+          </FormItem>
+          <FormItem label="是否新人专享">
+            {getFieldDecorator('newuserExclusive')(<Checkbox>是</Checkbox>)}
+          </FormItem>
+          <FormItem label="是否会员专享">
+            {getFieldDecorator('memberExclusive')(<Checkbox>是</Checkbox>)}
+          </FormItem>
+          <FormItem label="最少购买数量">
+            {getFieldDecorator('minBuy',{
+               initialValue: 0
+            })(<Input placeholder="请填写供货商商品ID"  type="number"/>)}
+          </FormItem>
+          <FormItem label="最多购买数量">
+            {getFieldDecorator('maxBuy',{
+              initialValue: 0
+          })(<Input placeholder="请填写供货商商品ID" type="number"/>)}
           </FormItem>
           <FormItem label="商品主图" required={true}>
             {getFieldDecorator('coverUrl', {
