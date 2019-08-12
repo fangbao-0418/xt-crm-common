@@ -27,8 +27,8 @@ class RefundInformation extends Component {
     const { form: { getFieldDecorator }, data: { orderServerVO, checkType, checkVO }, readOnly = true } = this.props;
     if (readOnly) {
       return <Row gutter={24}>
-        <Col span={8}>退款类型：{checkVO.refundType}</Col>
-        <Col span={8}>退款金额：￥{checkVO.refundAmount}</Col>
+        <Col span={8}>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
+        <Col span={8}>退款金额：￥{formatMoney(checkVO.refundAmount)}</Col>
         <Col span={8}>说明{checkVO.info}</Col>
       </Row>
     } else {

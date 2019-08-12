@@ -90,6 +90,13 @@ const detail = {
   taxPrice: 0,
   totalPrice: 0,
 };
+
+export function againRefund(id) {
+  return post(`/order/afterSale/againRefund/{id}`)
+}
+export function saveRefundInfo(data) {
+  return post('/order/afterSale/saveRefundInfo', data)
+}
 export function queryOrderDetail(data) {
   if (debug) {
     return Promise.resolve(detail);

@@ -82,14 +82,6 @@ ol, ul {
     line-height: 32px;
 }
 
-.ant-card {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.i-search-form .ant-form-item {
-    display: flex;
-}
 .ant-card{
   margin-top: 10px;
   margin-bottom: 10px;

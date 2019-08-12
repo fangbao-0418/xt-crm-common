@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import { Card, Form, Input, InputNumber, Button, Radio } from 'antd';
+import { Card, Form, Input, InputNumber, Button, Radio, Message } from 'antd';
 import { formButtonLayout } from '@/config';
 import { withRouter } from 'react-router-dom';
 import refundType from '@/enum/refundType';
 import { XtSelect } from '@/components'
 import { connect } from '@/util/utils';
 import { formatMoney } from '@/pages/helper';
+import { againRefund } from '../../../api'
 @connect()
 @withRouter
 class CheckForm extends Component {
   state = {
-    checkType: '',
     radioKey: 1,
     returnObj: {
       returnContact: '',
@@ -36,7 +36,9 @@ class CheckForm extends Component {
     const { props } = this;
     const fieldsValue = props.form.getFieldsValue();
     let returnObj;
-    fieldsValue.refundAmount = fieldsValue.refundAmount * 100;
+    if (fieldsValue.refundAmount) {
+      fieldsValue.refundAmount = fieldsValue.refundAmount * 100;
+    }
     if (this.state.radioKey === 1) {
       const { returnContact, returnPhone, returnAddress } = this.props.checkVO
       returnObj = { returnContact, returnPhone, returnAddress }
@@ -50,19 +52,27 @@ class CheckForm extends Component {
       ...fieldsValue
     })
   }
+  handleAgainRefund = async () => {
+    const {id} = this.props.match.params;
+    const res = await againRefund(id);
+    if (res.succuss) {
+      Message.info('退款完成')
+    }
+    this.props.dispatch['refund.model'].getDetail(id)
+  }
   render() {
     const { orderServerVO = {}, checkVO = {} } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { checkType } = this.state;
+    const refundTypeForm = this.props.form.getFieldsValue(['refundType']);
     return (
       <Card title="客服审核">
         <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
           <Form.Item label="售后类型">
             {getFieldDecorator('refundType', {
               initialValue: orderServerVO.refundType
-            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleSelectChange} />)}
+            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型"/>)}
           </Form.Item>
-          {checkType !== '30' && <Form.Item label="退款金额">
+          {refundTypeForm.refundType !== '30' && <Form.Item label="退款金额">
             {getFieldDecorator('refundAmount', {
               initialValue: formatMoney(checkVO.refundAmount)
             })(<InputNumber formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{width: '100%'}}/>)}
@@ -74,13 +84,13 @@ class CheckForm extends Component {
               autosize={{ minRows: 2, maxRows: 6 }}
             />)}
           </Form.Item>
-          {checkType !== '20' && <Form.Item label="退货地址">
+          {refundTypeForm.refundType !== '20' && <Form.Item label="退货地址">
             <Radio.Group value={this.state.radioKey} onChange={this.hanleRadioChange}>
               <Radio value={1}>{checkVO.returnContact + ' ' + checkVO.returnPhone + ' ' + checkVO.returnAddress}</Radio>
               <Radio value={2}>
                 <Input.Group compact={true}>
                   <input placeholder="收货人姓名" name="returnContact" value={this.state.returnObj.returnContact} onChange={this.hangdleInputChange} />
-                  <input placeholder="收货人电话" name="returnPhone" value={this.state.returnObj.returnPhone} onChange={this.hangdleInputChange} />
+                  <input placeholder="收货人电话" type="tel" name="returnPhone" maxlength={11} value={this.state.returnObj.returnPhone} onChange={this.hangdleInputChange} />
                   <input placeholder="收货人详细地址" name="returnAddress" value={this.state.returnObj.returnAddress} onChange={this.hangdleInputChange} />
                 </Input.Group>
               </Radio>
@@ -96,6 +106,13 @@ class CheckForm extends Component {
               拒绝
             </Button>
           </Form.Item>
+          {/* <Form.Item
+            wrapperCol={formButtonLayout}
+          >
+            <Button type="primary" onClick={this.handleAgainRefund}>
+              重新退款
+            </Button>
+          </Form.Item> */}
         </Form>
       </Card>
     )

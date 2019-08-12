@@ -19,16 +19,6 @@ const formItemLayout = {
 
 const onChange = () => { }
 class AfterSaleForm extends Component {
-
-  state = {
-    activityImage: [],
-  };
-
-  handleActivityImage = e => {
-    this.setState({
-      activityImage: e,
-    });
-  };
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
     const price = parseFloat(formatPrice(modalInfo.buyPrice))
@@ -44,20 +34,20 @@ class AfterSaleForm extends Component {
               {getFieldDecorator('returnReason', { rules: [{ required: true }] })(<XtSelect data={returnReason.getArray()} />)}
             </Form.Item>
             <Form.Item label="退款金额">
-              {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额'}], initialValue: price})(<InputNumber min={0} max={price} onChange={onChange} />)}
+              {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={price} onChange={onChange} />)}
               <span className="ml10">（最多可退￥{price}）</span>
             </Form.Item>
             <Form.Item label="售后凭证">
-              <UploadView
-                placeholder=""
-                listType="picture-card"
-                value={this.state.activityImage}
-                onChange={this.handleActivityImage}
-                listNum={4}
-                size={2}/>
+              {getFieldDecorator('imgUrl')(
+                <UploadView
+                  placeholder=""
+                  listType="picture-card"
+                  listNum={4}
+                  size={2} />
+              )}
             </Form.Item>
             <Form.Item label="售后说明">
-            {getFieldDecorator('info',{})(<TextArea/>)}
+              {getFieldDecorator('info', {})(<TextArea />)}
             </Form.Item>
           </Form>
         </Card>

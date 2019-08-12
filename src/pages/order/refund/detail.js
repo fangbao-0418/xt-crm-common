@@ -7,9 +7,8 @@ import { CheckForm, DealForm, CheckDetail } from './components';
 import { logColumns } from './config';
 import moment from 'moment';
 import { connect } from '@/util/utils';
-import { calcCurrent } from '@/pages/helper'
-const { Step } = Steps;
-const { TabPane } = Tabs;
+import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
+import { saveRefundInfo } from '../api';
 
 @connect(state => ({
   data: state['refund.model'].data || {}
@@ -19,9 +18,16 @@ class Detail extends Component {
     const { dispatch } = this.props;
     dispatch['refund.model'].getDetail({ id: this.props.match.params.id })
   }
+  getRefundInfo = () => {
+    saveRefundInfo({
+      refundId: this.props.match.params.id,
+      info: ''
+    })
+  }
   componentWillMount(status) {
     this.getDetail();
   }
+  
   render() {
     const { orderInfoVO = {}, orderServerVO = {}, refundStatus } = this.props.data;
     console.log(this.props.data)
@@ -32,14 +38,14 @@ class Detail extends Component {
       <>
         <Card>
           <Steps current={current}>
-            <Step title="待审核" />
-            <Step title="处理中" />
-            <Step status={status} title={title} />
+            <Steps.Step title="待审核" />
+            <Steps.Step title="处理中" />
+            <Steps.Step status={status} title={title} />
           </Steps>
         </Card>
         <Card>
           <Tabs>
-            <TabPane tab="售后详情" key="1">
+            <Tabs.TabPane tab="售后详情" key="1">
               <Card title="售后信息" style={{ marginTop: '0' }}>
                 <Row gutter={24}>
                   <Col span={8}>售后单编号：{orderServerVO.orderCode}</Col>
@@ -53,7 +59,7 @@ class Detail extends Component {
                 <Row>
                   <Col>
                     图片凭证：
-                <PicturesWall readOnly={true} imgUrl={orderServerVO.imgUrl}></PicturesWall>
+                    <PicturesWall disabled={true} readOnly={true} imgUrl={orderServerVO.imgUrl}/>
                   </Col>
                 </Row>
               </Card>
@@ -69,7 +75,7 @@ class Detail extends Component {
                   <Col span={8}>联系电话：{orderInfoVO.phone}</Col>
                 </Row>
                 <Row gutter={24}>
-                  <Col span={8}>收货信息：{orderInfoVO.consignee + ' ' + orderInfoVO.consigneePhone + ' ' + orderInfoVO.address}</Col>
+                  <Col span={8}>收货信息：{joinFilterEmpty([orderInfoVO.consignee,orderInfoVO.consigneePhone,orderInfoVO.address])}</Col>
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>用户备注：{orderInfoVO.remark}</Col>
@@ -86,10 +92,10 @@ class Detail extends Component {
               {current === 0 && <CheckForm {...this.props.data} />}
               {current === 1 && <DealForm {...this.props.data} />}
               {current === 2 && <CheckDetail {...this.props.data} />}
-            </TabPane>
-            <TabPane tab="操作日志" key="2">
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="操作日志" key="2">
               <Table dataSource={[]} columns={logColumns} />
-            </TabPane>
+            </Tabs.TabPane>
           </Tabs>
         </Card>
       </>

@@ -4,7 +4,7 @@ import { goodsTableColumn, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
 import { formatDate } from '../../helper';
 
-const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, orderLogs = [], showModal, memberId}) => {
+const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, orderLogs = [], showModal, memberId, toggleNotesVisible}) => {
   const columns = [
     ...goodsTableColumn,
     {
@@ -13,8 +13,8 @@ const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, orderL
       key: 'operate',
       render: (text, record, index) => (
         <>
-          <Button type="link" size="small" onClick={() => showModal({...record, mainOrderId: orderLogs[0] && orderLogs[0].mainOrderId, memberId})}>申请售后</Button>
-          {/* <Button type="link" size="small">添加备注</Button> */}
+          <Button type="link" size="small" onClick={() => showModal({ ...record, mainOrderId: orderLogs[0] && orderLogs[0].mainOrderId, memberId })}>申请售后</Button>
+          <Button type="link" size="small" onClick={() => toggleNotesVisible(true)}>添加备注</Button>
         </>
       )
     }
@@ -29,7 +29,7 @@ const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, orderL
       </Row>
       <Table columns={columns} dataSource={list} pagination={false} />
       <Row>
-        <Col span={2} style={{minWidth: '7em'}}>客服备注：</Col>
+        <Col span={2} style={{ minWidth: '7em' }}>客服备注：</Col>
         <Col span={22}>
           <Row>
             {orderLogs.map(v => <Col>{v.info} （{formatDate(v.createTime)}</Col>)}

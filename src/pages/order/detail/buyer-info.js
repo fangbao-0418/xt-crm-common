@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Row, Col } from 'antd';
+import { formatPrice } from '@/util/format';
 const payTypeList = {
   100: '微信APP',
   101: '微信小程序',
@@ -17,7 +18,7 @@ const BuyerInfo = props => {
         <Col className="gutter-row" span={6}>支付方式: {payTypeList[payType] || '未支付'}</Col>
         <Col className="gutter-row" span={6}>支付时间：{orderInfo.payDate || ''}</Col>
         <Col className="gutter-row" span={6}>交易流水号：{orderInfo.paymentNumber}</Col>
-        <Col className="gutter-row" span={6}>实付金额：￥{orderInfo.payMoney}</Col>
+        <Col className="gutter-row" span={6}>实付金额：￥{formatPrice(orderInfo.payMoney)}</Col>
       </Row>
     </Card>
   );

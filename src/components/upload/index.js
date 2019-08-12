@@ -83,82 +83,21 @@ class UploadView extends Component {
     } = this.props;
     const { fileList } = this.state;
     return (
-      <>
-        <Upload
-          listType={listType}
-          fileList={fileList}
-          showUploadList={showUploadList}
-          // onPreview={this.handlePreview}
-          beforeUpload={this.beforeUpload(size)}
-          onRemove={this.handleRemove}
-          customRequest={this.customRequest}
-        >
-          {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
-        </Upload>
-      </>
+      <Upload
+        listType={listType}
+        fileList={fileList}
+        showUploadList={showUploadList}
+        // onPreview={this.handlePreview}
+        beforeUpload={this.beforeUpload(size)}
+        onRemove={this.handleRemove}
+        customRequest={this.customRequest}
+      >
+        {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
+      </Upload>
     );
   }
 }
 
-// const UploadView = props => {
-//   const {
-//     placeholder,
-//     listType,
-//     listNum = 1,
-//     onChange,
-//     size = 10,
-//     showUploadList,
-//     children,
-//     value,
-//   } = props;
-//   const [fileList, setFileList] = useState(value || []);
-//   console.log('upload value', value);
-//   console.log('upload fileList', fileList);
-//   const beforeUpload = size => file => {
-//     const isLtM = file.size / 1024 / 1024 < size;
-//     if (!isLtM) {
-//       message.error(`请上传小于${size}M的文件`);
-//     }
-//     // TODO: 这里还需要优化一下
-//     debugger;
-//     ossUpload(file).then(urlList => {
-//       const newUploadedFileList = fileList.map(item => {
-//         if (item.uid === file.uid) {
-//           item.url = urlList && urlList[0];
-//         }
-//         return item;
-//       });
-
-//       setFileList(newUploadedFileList);
-//       isFunction(onChange) && onChange(fileList);
-//     });
-//     return false;
-//   };
-
-//   // const
-//   return (
-//     <>
-//       <Upload
-//         action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-//         listType={listType}
-//         fileList={fileList}
-//         showUploadList={showUploadList}
-//         // onPreview={this.handlePreview}
-//         beforeUpload={beforeUpload(size)}
-//         onChange={({ fileList }) => {
-//           console.log('upload-inner-fileList', fileList);
-//           setFileList(fileList);
-//           isFunction(onChange) && onChange(fileList);
-//         }}
-//         onRemove={e => {
-//           setFileList(filter(fileList, item => item.uid === e.uid));
-//         }}
-//       >
-//         {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
-//       </Upload>
-//     </>
-//   );
-// };
 
 UploadView.propTypes = {
   onChange: PropTypes.func,

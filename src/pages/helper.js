@@ -32,6 +32,7 @@ export const formatMoneyBeforeRequest = price => {
 };
 
 
+// 计算steps组件第几步了
 export const calcCurrent = refundStatus => {
   let current = 0;
   if (refundStatus === 10) {
@@ -44,4 +45,10 @@ export const calcCurrent = refundStatus => {
     current = 2;
   }
   return current;
+}
+
+
+// 格式化退货信息
+export const joinFilterEmpty = (arr) => {
+  return arr.filter(Boolean).join(' ');
 }

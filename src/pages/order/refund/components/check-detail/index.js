@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Row, Col, Tabs } from 'antd';
-import refundType from '@/enum/refundType';
+import { Card, Tabs } from 'antd';
 import CustomerServiceReview from '../customer-service-review';
 import ReturnInformation from '../return-information';
 import DeliveryInformation from '../delivery-information';
@@ -16,17 +15,13 @@ class CheckDetail extends Component {
   };
   render() {
     const { checkVO = {}, orderServerVO = {}, checkType } = this.props;
+    // 仅退款
     if (orderServerVO.refundType === '20') {
       return (
         <Card>
-          <Tabs defaultActiveKey="1">
-            <TabPane tab="客服审核" key="1">
-              <Row gutter={24}>
-                <Col span={8}>审核意见：{checkVO.firstRefundStatusStr + ' ' + checkVO.refundStatusStr}</Col>
-                <Col span={8}>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
-                <Col span={8}>退款金额：{checkVO.refundAmount}</Col>
-                <Col span={8}>说明：{checkVO.firstServerDescribe}</Col>
-              </Row>
+          <Tabs>
+            <TabPane tab="客服审核">
+              <CustomerServiceReview checkVO={checkVO} orderServerVO={orderServerVO}/>
             </TabPane>
           </Tabs>
         </Card>

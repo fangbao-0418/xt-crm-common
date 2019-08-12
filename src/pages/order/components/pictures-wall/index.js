@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Upload, Icon, Modal } from 'antd';
-import './index.scss';
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -59,6 +58,7 @@ class PicturesWall extends Component {
           fileList={imgUrl}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
+          disabled={this.props.disabled}
         >
           {readOnly || (imgUrl.length >= 8) ? null : uploadButton}
         </Upload>
