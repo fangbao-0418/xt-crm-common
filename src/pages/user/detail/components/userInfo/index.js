@@ -4,6 +4,7 @@ import moment from 'moment';
 import { connect, parseQuery, setQuery } from '@/util/utils';
 import styles from './index.module.scss';
 import Modal from './modal';
+import ModalInvit from './modalInvit';
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 let unlisten = '';
@@ -41,6 +42,16 @@ export default class extends Component {
     dispatch['user.userinfo'].getUserInfo(payload);
   }
 
+  showModalInvit = () => {
+    this.props.dispatch({
+      type: 'user.userinfo/saveDefault',
+      payload: {
+        visibleInvit: true,
+        currentData: this.props.data
+      }
+    })
+  }
+
   showModal = () => {
     this.props.dispatch({
       type: 'user.userinfo/saveDefault',
@@ -75,7 +86,7 @@ export default class extends Component {
           headStyle={{
             fontWeight: 900
           }}
-          extra={<a href="javascript:;" onClick={this.showModal}>编辑</a>}
+          extra={<div><a href="javascript:;" onClick={this.showModalInvit}>修改邀请人</a>&nbsp;&nbsp;<a href="javascript:;" onClick={this.showModal}>用户信息编辑</a></div>}
           loading={loading}
         >
           <Descriptions column={2} className={styles.description}>
@@ -134,6 +145,7 @@ export default class extends Component {
           </div>
         </Card>
         <Modal />
+        <ModalInvit />
       </div>
     )
   }
