@@ -126,7 +126,7 @@ class BannerModal extends Component {
               {getFieldDecorator('imgList', {
                 initialValue: initImgList(data.imgUrlWap),
               })(
-                <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={2} />,
+                <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.5} />,
               )}
             </FormItem>
             <FormItem label="跳转地址">
