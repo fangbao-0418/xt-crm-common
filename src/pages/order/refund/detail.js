@@ -24,15 +24,17 @@ class Detail extends Component {
   }
   render() {
     const { orderInfoVO = {}, orderServerVO = {}, refundStatus } = this.props.data;
+    console.log(this.props.data)
     let current = calcCurrent(refundStatus)
+    const status = refundStatus === 30 ? 'finish' : refundStatus === 40 ? 'error': '';
+    const title = refundStatus === 30 ? '完成' : refundStatus === 40 ? '关闭': '完成';
     return (
       <>
         <Card>
           <Steps current={current}>
             <Step title="待审核" />
             <Step title="处理中" />
-            {refundStatus === 30 && <Step status="finish" title="完成" />}
-            {refundStatus === 40 && <Step status="error" title="关闭" />}
+            <Step status={status} title={title} />
           </Steps>
         </Card>
         <Card>
