@@ -11,8 +11,7 @@ import { enumOrderStatus, OrderStatusTextMap } from '../constant';
 import DeliveryModal from './components/delivery-modal';
 import AfterSaleForm from './after-sale-form';
 import { formatMoneyWithSign } from '../../helper';
-import { customerAdd } from '../api';
-
+import { customerAdd, setOrderRemark, setRefundOrderRemark } from '../api';
 const styleObj = {
   display: 'flex',
   flexDirection: 'column',
@@ -104,9 +103,14 @@ class Detail extends Component {
   }
   showModal = (record) => {
     const modalInfo = Object.assign({}, record);
-    console.log('modalInfo=>', modalInfo);
     this.setState({ modalInfo });
     this.toggleModal(true);
+  }
+  showNotes = (record) => {
+    const modalInfo = Object.assign({}, record);
+    console.log('modalInfo=>', modalInfo)
+    this.setState({ modalInfo });
+    this.toggleNotesVisible(true)
   }
   handleOk = async () => {
     const { form } = this.afterSaleForm.props;
@@ -123,22 +127,21 @@ class Detail extends Component {
     })
   }
   handleAddNotes = () => {
-    alert(0)
-    // const { onSuccess, orderCode, refundId, childOrderId } = this.props;
-    // const params = {
-    //   orderCode: orderCode,
-    //   refundId,
-    //   childOrderId,
-    //   info: this.state.remark,
-    // };
-    // const apiFunc = refundId ? setRefundOrderRemark : setOrderRemark;
-    // apiFunc(params).then((res) => {
-    //   res && message.success('添加备注成功');
-    //   onSuccess && onSuccess();
-    //   this.setState({
-    //     visible: false,
-    //   });
-    // });
+    const { modalInfo } = this.state;
+    const params = {
+      orderCode: this.props.match.params.id,
+      refundId: modalInfo.refundId,
+      childOrderId: modalInfo.childOrderId,
+      info: this.state.remark,
+    };
+    const apiFunc = modalInfo.refundId ? setRefundOrderRemark : setOrderRemark;
+    apiFunc(params).then((res) => {
+      res && message.success('添加备注成功');
+      this.query();
+      this.setState({
+        notesVisible: false,
+      });
+    });
   }
   toggleNotesVisible = (notesVisible) => {
     this.setState({ notesVisible });
@@ -186,7 +189,7 @@ class Detail extends Component {
                   </Col>
                 </Row>
                 <GoodsTable
-                  toggleNotesVisible={this.toggleNotesVisible}
+                  showNotes={this.showNotes}
                   list={item.skuList}
                   childOrder={item.childOrder}
                   orderInfo={data.orderInfo}
