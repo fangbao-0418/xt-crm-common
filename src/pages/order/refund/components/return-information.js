@@ -1,7 +1,7 @@
 import React from "react";
 import {formatDate} from '@/pages/helper';
 import { Row, Col } from 'antd';
-function ReturnInformation({checkVO}) {
+function ReturnInformation({checkVO = {}}) {
   return (
     <Row gutter={24}>
       <Col span={8}>物流公司：{checkVO.returnExpressName}</Col>

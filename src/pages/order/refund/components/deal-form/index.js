@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Card } from 'antd';
-import CustomerServiceReview from './customer-service-review';
-import ReturnInformation from './return-information';
-import RefundInformation from './refund-information';
-import DeliveryInformation from './delivery-information';
+import CustomerServiceReview from '../customer-service-review';
+import ReturnInformation from '../return-information';
+import DeliveryInformation from '../delivery-information';
+import RefundInformation from '../refund-information';
 
 class DealForm extends Component {
   state = {
@@ -32,7 +32,7 @@ class DealForm extends Component {
         key: 'refund-information',
         tab: '退款信息'
       })
-      contentList['refund-information'] = <RefundInformation checkVO={checkVO} orderServerVO={orderServerVO} checkType={checkType} onAuditOperate={onAuditOperate} />;
+      contentList['refund-information'] = <RefundInformation readOnly={false} checkVO={checkVO} orderServerVO={orderServerVO} checkType={checkType} onAuditOperate={onAuditOperate} />;
     }
     // 仅换货
     else if (orderServerVO.refundType === '30') {
@@ -40,12 +40,12 @@ class DealForm extends Component {
         key: 'delivery-information',
         tab: '发货信息'
       })
-      contentList['delivery-information'] = <DeliveryInformation checkType={checkType} onAuditOperate={onAuditOperate} refundType={orderServerVO.refundType}/>;
+      contentList['delivery-information'] = <DeliveryInformation readOnly={false} checkType={checkType} onAuditOperate={onAuditOperate} refundType={orderServerVO.refundType} />;
     }
     console.log('key=>', this.state.key);
     return (
       <Card
-        style={{ width: '100%', minHeight: '352px'}}
+        style={{ width: '100%', minHeight: '352px' }}
         tabList={tabList}
         activeTabKey={this.state.key}
         onTabChange={key => {

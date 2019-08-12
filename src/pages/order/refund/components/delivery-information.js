@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Row, Col } from 'antd';
 import { formItemLayout, formButtonLayout } from '@/config'
 import { connect } from '@/util/utils';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import ExpressCompanySelect from '@/components/express-company-select';
+import { formatDate } from '@/pages/helper';
 
 @connect()
 @withRouter
 @Form.create({ name: 'delivery-information' })
 class DeliveryInformation extends Component {
   handleAuditOperate = (status) => {
-    const { dispatch, match: {params: {id}}, form: { getFieldsValue }, refundType } = this.props;
+    const { dispatch, match: { params: { id } }, form: { getFieldsValue }, refundType } = this.props;
     const fields = getFieldsValue();
     dispatch['refund.model'].auditOperate({
       id,
@@ -20,9 +21,16 @@ class DeliveryInformation extends Component {
     });
   }
   render() {
-    const { form: { getFieldDecorator }, checkType } = this.props;
-    return (
-      <Form {...formItemLayout}>
+    const { form: { getFieldDecorator }, checkType, checkVO, readOnly = true } = this.props;
+    if (readOnly) {
+      return <Row gutter={24}>
+        <Col span={8}>物流公司：{checkVO.sendExpressName}</Col>
+        <Col span={8}>物流单号：{checkVO.sendExpressCode}</Col>
+        <Col span={8}>提交时间：{checkVO.sendExpressTime === 0 ? '' : formatDate(checkVO.sendExpressTime)}</Col>
+      </Row>
+    }
+    else {
+      return <Form {...formItemLayout}>
         <Form.Item label="物流公司">
           {getFieldDecorator('expressName', {})(<ExpressCompanySelect style={{ width: '100%' }} placeholder="请选择物流公司" />)}
         </Form.Item>
@@ -41,7 +49,7 @@ class DeliveryInformation extends Component {
           <Button type="danger ml20" onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
         </Form.Item>
       </Form>
-    );
+    }
   }
 }
 export default DeliveryInformation;

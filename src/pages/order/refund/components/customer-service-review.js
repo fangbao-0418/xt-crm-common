@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col } from 'antd';
 import refundType from '@/enum/refundType';
 import { formatMoney } from '@/pages/helper'
-function CustomerServiceReview({ checkVO }) {
+function CustomerServiceReview({ checkVO = {}}) {
   return (
     <Row gutter={24}>
       <Col span={8}>审核意见：{checkVO.firstRefundStatusStr + ' ' + checkVO.refundStatusStr}</Col>
