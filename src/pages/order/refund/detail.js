@@ -7,19 +7,20 @@ import PicturesWall from '../components/pictures-wall';
 import { CheckForm, DealForm, CheckDetail } from './components';
 import { logColumns } from './config';
 import moment from 'moment';
+import { connect } from '@/util/utils';
 const { Step } = Steps;
 const { TabPane } = Tabs;
+
+@connect(state => ({
+  data: state['refund.model'].data || {}
+}))
 class Detail extends Component {
-  state = {
-    data: {}
-  }
   getDetail = () => {
-    refundDetail({ id: this.props.match.params.id }).then(res => {
-      this.setState({ data: res.data || {} })
-    })
+    const { dispatch } = this.props;
+    dispatch['refund.model'].getDetail({ id: this.props.match.params.id })
   }
   auditOperate = async (status, getFieldsValue) => {
-    const { OrderServerCheckVO = {}, OrderServerDetailVO = {} } = this.state.data;
+    const { OrderServerCheckVO = {}, OrderServerDetailVO = {} } = this.props.data;
     const fields = getFieldsValue();
     const res = await refundOperate({
       id: this.props.match.params.id,
@@ -46,7 +47,8 @@ class Detail extends Component {
     this.getDetail();
   }
   render() {
-    const { orderInfoVO = {}, orderServerVO = {}, refundStatus } = this.state.data;
+    console.log(this.props, '-------------')
+    const { orderInfoVO = {}, orderServerVO = {}, refundStatus } = this.props.data;
     let current = 0;
     if (refundStatus === 10) {
       current = 0;
@@ -112,9 +114,9 @@ class Detail extends Component {
                   <Table dataSource={orderInfoVO.expressVO} columns={expressColumns}></Table>
                 </Row>
               </Card>
-              {current === 0 && <CheckForm {...this.state.data} onAuditOperate={this.auditCheckOperate} wrappedComponentRef={ref => this.checkForm = ref}/>}
-              {current === 1 && <DealForm {...this.state.data}  onAuditOperate={this.auditDealOperate} wrappedComponentRef={ref => this.dealForm = ref}/>}
-              {current === 2 && <CheckDetail {...this.state.data} />}
+              {current === 0 && <CheckForm {...this.props.data} onAuditOperate={this.auditCheckOperate} wrappedComponentRef={ref => this.checkForm = ref}/>}
+              {current === 1 && <DealForm {...this.props.data}  onAuditOperate={this.auditDealOperate} wrappedComponentRef={ref => this.dealForm = ref}/>}
+              {current === 2 && <CheckDetail {...this.props.data} />}
             </TabPane>
             <TabPane tab="操作日志" key="2">
               <Table dataSource={[]} columns={logColumns}/>

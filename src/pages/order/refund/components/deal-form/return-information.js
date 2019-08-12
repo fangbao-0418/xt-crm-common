@@ -6,7 +6,7 @@ function ReturnInformation({checkVO}) {
     <Row gutter={24}>
       <Col span={8}>物流公司：{checkVO.returnExpressName}</Col>
       <Col span={8}>物流单号：{checkVO.returnExpressCode}</Col>
-      <Col span={8}>提交时间：{formatDate(checkVO.returnExpressTime)}</Col>
+      <Col span={8}>提交时间：{checkVO.returnExpressTime === 0 ? '': formatDate(checkVO.returnExpressTime)}</Col>
     </Row>
   )
 }

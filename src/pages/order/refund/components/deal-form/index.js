@@ -40,7 +40,7 @@ class DealForm extends Component {
         key: 'delivery-information',
         tab: '发货信息'
       })
-      contentList['delivery-information'] = <DeliveryInformation checkType={checkType} onAuditOperate={onAuditOperate} />;
+      contentList['delivery-information'] = <DeliveryInformation checkType={checkType} onAuditOperate={onAuditOperate} refundType={orderServerVO.refundType}/>;
     }
     console.log('key=>', this.state.key);
     return (
