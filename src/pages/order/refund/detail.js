@@ -85,7 +85,7 @@ class Detail extends Component {
                 </Row>
               </Card>
               {current === 0 && <CheckForm {...this.props.data} />}
-              {current === 1 && <DealForm {...this.props.data} />}
+              {current === 1 && <DealForm />}
               {current === 2 && <CheckDetail {...this.props.data} />}
             </Tabs.TabPane>
             <Tabs.TabPane tab="操作日志" key="2">

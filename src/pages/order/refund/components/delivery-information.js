@@ -22,18 +22,6 @@ class DeliveryInformation extends Component {
       ...fields
     });
   }
-  // 重新退款
-  handleAgainRefund = async () => {
-    const { dispatch, match: { params }, form: { getFieldsValue } } = this.props;
-    const fields = getFieldsValue(['info'])
-    dispatch['refund.model'].againRefund({ ...params, ...fields });
-  }
-  // 关闭订单
-  handleCloseOrder = async () => {
-    const { dispatch, match: { params }, form: { getFieldsValue } } = this.props;
-    const fields = getFieldsValue(['info']);
-    dispatch['refund.model'].closeOrder({ ...params, ...fields });
-  }
   render() {
     const { form: { getFieldDecorator }, data: { checkVO = {}, refundStatus }, readOnly = true } = this.props;
     if (readOnly) {
@@ -49,33 +37,25 @@ class DeliveryInformation extends Component {
     }
     else {
       return <Form {...formItemLayout}>
-        {refundStatus !== 21 && (
-          <>
-            <Form.Item label="物流公司">
-              {getFieldDecorator('expressName', {})(<ExpressCompanySelect style={{ width: '100%' }} placeholder="请选择物流公司" />)}
-            </Form.Item>
-            <Form.Item label="物流单号">
-              {getFieldDecorator('expressCode', {})(<Input placeholder="请输入物流单号" />)}
-            </Form.Item>}
+        <Form.Item label="物流公司">
+          {getFieldDecorator('expressName', {})(<ExpressCompanySelect style={{ width: '100%' }} placeholder="请选择物流公司" />)}
+        </Form.Item>
+        <Form.Item label="物流单号">
+          {getFieldDecorator('expressCode', {})(<Input placeholder="请输入物流单号" />)}
+        </Form.Item>}
               <Form.Item label="说明">
-              {getFieldDecorator('info', {
-              })(<Input.TextArea
-                placeholder=""
-                autosize={{ minRows: 2, maxRows: 6 }}
-              />)}
-            </Form.Item>
-          </>
-        )}
+          {getFieldDecorator('info', {
+          })(<Input.TextArea
+            placeholder=""
+            autosize={{ minRows: 2, maxRows: 6 }}
+          />)}
+        </Form.Item>
         {refundStatus === 24 && (
           < Form.Item wrapperCol={formButtonLayout} style={{ marginBottom: 0 }}>
             <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
             <Button type="danger ml20" onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
           </Form.Item>
         )}
-        {refundStatus === 21 && (<Form.Item wrapperCol={formButtonLayout}>
-          <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
-          <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>关闭订单</Button>
-        </Form.Item>)}
       </Form >
     }
   }

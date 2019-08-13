@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Spin, Row, Col } from 'antd';
-import { refundList } from '../api';
+import { Message, Button, Spin, Row, Col } from 'antd';
+import { refundList, exportRefund } from '../api';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
 import { getListColumns, formFields } from './config';
@@ -23,6 +23,7 @@ export default class extends React.Component {
     total: 0,
     loading: false,
     tableConfig: {},
+    expands: []
   };
 
   componentDidMount() {
@@ -45,24 +46,26 @@ export default class extends React.Component {
       page: this.state.current,
       pageSize: this.state.pageSize,
     };
-    // if (isExport) {
-    //   this.setState({
-    //     loading: true
-    //   })
-    //   exportRefund(params).then((res) => {
-    //     res && message.success('导出成功');
-    //   }).finally(() => {
-    //     this.setState({
-    //       loading: false
-    //     })
-    //   })
-    // } else {
-    refundList(params).then(res => {
+    if (isExport) {
       this.setState({
-        tableConfig: res.data || {}
+        loading: true
       })
-    })
-    // }
+      exportRefund(params).then((res) => {
+        res && Message.success('导出成功');
+      }).finally(() => {
+        this.setState({
+          loading: false
+        })
+      })
+    } else {
+      refundList(params).then(res => {
+        const records = (res.data && res.data.records) || [];
+        this.setState({
+          tableConfig: res.data || {},
+          expands: records.map(v => v.orderCode)
+        })
+      })
+    }
   };
   handleSearch = () => {
     this.query();
@@ -87,7 +90,6 @@ export default class extends React.Component {
   };
 
   handleFormat = (data) => {
-    console.log(data);
     return data;
   }
 
@@ -118,9 +120,18 @@ export default class extends React.Component {
               <Col span={6}>申请时间：{formatDate(record.createTime)}</Col>
             </Row>
           )}
-          defaultExpandAllRows={true}
+          expandedRowKeys={this.state.expands}
+          onExpand={(expanded, record) => {
+            let expands = this.state.expands;
+            if (expanded) {
+                expands.push(record.orderCode);
+            } else {
+                expands = expands.filter(v => v !== record.orderCode);
+            }
+            this.setState({expands});
+        }}
           onChange={this.handlePageChange}
-          rowKey={record => record.id}
+          rowKey={record => record.orderCode}
           scroll={{ x: 1.5 }}
         />: null}
       </Spin>
