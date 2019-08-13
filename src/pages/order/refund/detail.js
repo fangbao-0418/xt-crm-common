@@ -57,7 +57,7 @@ class Detail extends Component {
                 </Row>
                 <Row>
                   <h4>商品信息</h4>
-                  <Table pagination={false} columns={getDetailColumns()} dataSource={orderServerVO.productVO || []} />
+                  <Table rowKey={record => record.productId} pagination={false} columns={getDetailColumns()} dataSource={orderServerVO.productVO || []} />
                 </Row>
               </Card>
               <Card title="订单信息">
@@ -81,7 +81,7 @@ class Detail extends Component {
                 </Row>
                 <Row>
                   <h4>物流信息</h4>
-                  <Table style={{width: '400px'}} pagination={false} columns={logisticsInformationColumns} dataSource={orderInfoVO.expressVO || []} />
+                  <Table rowKey={record => record.id} style={{ width: '400px' }} pagination={false} columns={logisticsInformationColumns} dataSource={orderInfoVO.expressVO || []} />
                 </Row>
               </Card>
               {current === 0 && <CheckForm {...this.props.data} />}
