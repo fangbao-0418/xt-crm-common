@@ -182,3 +182,10 @@ export function closeRefund(data) {
 export function exportRefund(data) {
   return exportFile('/order/afterSale/export', data);
 }
+
+export function profitRecal(data) {
+  return fetch('/order/profit/recal', {
+    method: 'POST',
+    data
+  });
+}
