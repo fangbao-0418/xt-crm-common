@@ -33,7 +33,7 @@ const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, showMo
         <Col span={2} style={{ minWidth: '7em' }}>客服备注：</Col>
         <Col span={22}>
           <Row>
-            {childOrder.orderLogs.map(v => <Col>{v.info} （{formatDate(v.createTime)}）</Col>)}
+            {childOrder.orderLogs.map(v => <Col>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>)}
           </Row>
         </Col>
       </Row>

@@ -24,13 +24,15 @@ class RefundInformation extends Component {
   }
   // 重新退款
   handleAgainRefund = async () => {
-    const { dispatch, match: { params } } = this.props;
-    dispatch['refund.model'].againRefund(params);
+    const { dispatch, match: { params }, form: { getFieldsValue } } = this.props;
+    const fields = getFieldsValue(['info'])
+    dispatch['refund.model'].againRefund({...params, ...fields});
   }
   // 关闭订单
-  async handleCloseOrder() {
-    const { dispatch, match: { params } } = this.props;
-    dispatch['refund.model'].closeOrder(params);
+  handleCloseOrder = async () => {
+    const { dispatch, match: { params }, form: { getFieldsValue }  } = this.props;
+    const fields = getFieldsValue(['info']);
+    dispatch['refund.model'].closeOrder({...params, ...fields});
   }
   render() {
     const { form: { getFieldDecorator }, data: { orderServerVO, checkVO, refundStatus }, readOnly = true } = this.props;
@@ -46,16 +48,20 @@ class RefundInformation extends Component {
       )
     } else {
       return <Form {...formItemLayout}>
-        <Form.Item label="退款类型">
-          {getFieldDecorator('refundType', {
-            initialValue: orderServerVO.refundType
-          })(<XtSelect placeholder="请选择退款类型" data={refundType.getArray()} />)}
-        </Form.Item>
-        {<Form.Item label="退款金额">
-          {getFieldDecorator('refundAmount', {
-            initialValue: formatMoney(checkVO.refundAmount)
-          })(<InputNumber formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} max={formatMoney(checkVO.refundAmount)} />)}
-        </Form.Item>}
+        {refundStatus !== 21 && (
+          <>
+            <Form.Item label="退款类型">
+              {getFieldDecorator('refundType', {
+                initialValue: orderServerVO.refundType
+              })(<XtSelect placeholder="请选择退款类型" data={refundType.getArray()} />)}
+            </Form.Item>
+            <Form.Item label="退款金额">
+              {getFieldDecorator('refundAmount', {
+                initialValue: formatMoney(checkVO.refundAmount)
+              })(<InputNumber formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} max={formatMoney(checkVO.refundAmount)} />)}
+            </Form.Item>
+            </>
+        )}
         <Form.Item label="说明">
           {getFieldDecorator('info', {
           })(<Input.TextArea

@@ -91,11 +91,11 @@ const detail = {
   totalPrice: 0,
 };
 
-export function againRefund(id) {
-  return put(`/order/afterSale/againRefund/{id}`);
+export function againRefund(id, info) {
+  return put(`/order/afterSale/againRefund/${id}`, {info});
 }
-export function closeOrder(id) {
-  return put(`/order/afterSale/close/{id}`);
+export function closeOrder(id, info) {
+  return put(`/order/afterSale/close/${id}`, {info});
 }
 export function saveRefundInfo(data) {
   return post('/order/afterSale/saveRefundInfo', data)

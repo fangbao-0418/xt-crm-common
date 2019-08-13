@@ -203,6 +203,7 @@ class Detail extends Component {
                   query={this.query}
                   memberId={data.buyerInfo && data.buyerInfo.memberAddress && data.buyerInfo.memberAddress.memberId}
                   showModal={this.showModal}
+                  rowKey = {record => record.id}
                 />
               </div>
             );

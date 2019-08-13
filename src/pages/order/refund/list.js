@@ -118,6 +118,7 @@ export default class extends React.Component {
               <Col span={6}>申请时间：{formatDate(record.createTime)}</Col>
             </Row>
           )}
+          defaultExpandAllRows={true}
           onChange={this.handlePageChange}
           rowKey={record => record.id}
           scroll={{ x: 1.5 }}

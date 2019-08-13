@@ -14,10 +14,8 @@ export default {
     // 售后审核
     auditOperate: async (payload = {}) => {
       const res = await refundOperate(payload);
-      if (res.success) {
+      if (res && res.success) {
         Message.info('审核成功');
-      } else {
-        Message.info('审核失败');
       }
       dispatch({
         type: 'refund.model/getDetail',
@@ -26,8 +24,8 @@ export default {
     },
     // 重新付款
     againRefund: async (payload = {}) => {
-      const res = await againRefund(payload.id);
-      if (res.succuss) {
+      const res = await againRefund(payload.id, payload.info);
+      if (res && res.success) {
         Message.success('退款完成')
       }
       dispatch({
@@ -37,7 +35,7 @@ export default {
     },
     // 关闭订单
     closeOrder: async (payload = {}) => {
-      const res = await againRefund(payload.id);
+      const res = await closeOrder(payload.id, payload.info);
       if (res.succuss) {
         Message.success('退款完成')
       }
