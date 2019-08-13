@@ -10,7 +10,7 @@ function CustomerServiceReview({ checkVO = {}, orderServerVO = {}, refundStatus 
         <Col>审核意见：{current === 1 ? checkVO.firstRefundStatusStr : checkVO.refundStatusStr}</Col>
         <Col>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
         <Col>退款金额：￥{formatMoney(checkVO.refundAmount)}</Col>
-        <Col>说明：{checkVO.firstServerDescribe}</Col>
+        <Col>说明：{current === 1 ? checkVO.firstServerDescribe: checkVO.serverDescribe}</Col>
         {orderServerVO.refundType !== '20' && <Col>退货信息：{joinFilterEmpty([checkVO.returnContact, checkVO.returnPhone, checkVO.returnAddress])}</Col>}
       </Row>
     </Card>

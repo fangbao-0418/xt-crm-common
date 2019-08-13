@@ -52,7 +52,7 @@ export const formFields = function () {
       type: 'date',
       id: 'apply',
       ids: ['applyStartTime', 'applyEndTime'],
-      label: '售后时间'
+      label: '申请时间'
     }, {
       type: 'date',
       id: 'handle',
@@ -69,7 +69,7 @@ export const formFields = function () {
 export const getListColumns = ({ query, history }) => [
   {
     title: '商品ID',
-    dataIndex: 'id'
+    dataIndex: 'productId'
   },
   {
     title: '商品',

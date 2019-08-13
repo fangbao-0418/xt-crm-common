@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { Card, Tabs } from 'antd';
 import CustomerServiceReview from '../customer-service-review';
 import ReturnInformation from '../return-information';
 import DeliveryInformation from '../delivery-information';
 import RefundInformation from '../refund-information';
-const { TabPane } = Tabs;
 
 class CheckDetail extends Component {
   state = {
@@ -17,54 +15,15 @@ class CheckDetail extends Component {
     const { checkVO = {}, orderServerVO = {}, checkType } = this.props;
     // 仅退款
     if (orderServerVO.refundType === '20') {
-      return (
-        <Card>
-          <Tabs>
-            <TabPane tab="客服审核">
-              <CustomerServiceReview checkVO={checkVO} orderServerVO={orderServerVO}/>
-            </TabPane>
-          </Tabs>
-        </Card>
-      );
+      return <CustomerServiceReview checkVO={checkVO} orderServerVO={orderServerVO}/>
     } else {
-      const tabList = [{
-        key: 'customer-service-review',
-        tab: '客服审核'
-      }, {
-        key: 'return-information',
-        tab: '退货信息'
-      }]
-      const contentList = {
-        'customer-service-review': <CustomerServiceReview checkVO={checkVO} />,
-        'return-information': <ReturnInformation checkVO={checkVO} />
-      }
-      /* 退货退款 */
-      if (orderServerVO.refundType === '10') {
-        tabList.push({
-          key: 'refund-information',
-          tab: '退款信息'
-        })
-        contentList['refund-information'] = <RefundInformation checkVO={checkVO} orderServerVO={orderServerVO} checkType={checkType} />;
-      }
-      /* 仅换货 */
-      else if (orderServerVO.refundType === '30') {
-        tabList.push({
-          key: 'delivery-information',
-          tab: '发货信息'
-        })
-        contentList['delivery-information'] = <DeliveryInformation checkVO= {checkVO} checkType={checkType} refundType={orderServerVO.refundType} />;
-      }
       return (
-        <Card
-          style={{ width: '100%', minHeight: '352px' }}
-          tabList={tabList}
-          activeTabKey={this.state.key}
-          onTabChange={key => {
-            this.onTabChange(key, 'key');
-          }}
-        >
-          {contentList[this.state.key]}
-        </Card>
+        <>
+          <CustomerServiceReview checkVO={checkVO} orderServerVO={orderServerVO}/>
+          <ReturnInformation checkVO={checkVO} />
+          {orderServerVO.refundType === '10' && <RefundInformation checkVO={checkVO} orderServerVO={orderServerVO} checkType={checkType} />}
+          {orderServerVO.refundType === '30' && <DeliveryInformation checkVO= {checkVO} checkType={checkType} refundType={orderServerVO.refundType} />}
+        </>
       );
     }
   }

@@ -89,7 +89,7 @@ class Detail extends Component {
               {current === 2 && <CheckDetail {...this.props.data} />}
             </Tabs.TabPane>
             <Tabs.TabPane tab="操作日志" key="2">
-              <Table dataSource={skuServerLogVO} pagination={false} columns={logColumns} />
+              <Table rowkey={record => record.uniqueKey} dataSource={skuServerLogVO.map((v, i) => ({...v, uniqueKey: i}))} pagination={false} columns={logColumns} />
             </Tabs.TabPane>
           </Tabs>
         </Card>

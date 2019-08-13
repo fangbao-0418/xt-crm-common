@@ -7,7 +7,10 @@ import RefundInformation from '../refund-information';
 import { formButtonLayout } from '@/config';
 import { connect } from "@/util/utils";
 
-@connect()
+@connect(state => ({
+  data: state['refund.model'].data || {}
+}))
+@Form.create({'name': 'deal-form'})
 class DealForm extends Component {
   // 重新退款
   handleAgainRefund = async () => {

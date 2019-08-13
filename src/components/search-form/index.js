@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Input, Select, DatePicker, Form, Button, Row, Col } from 'antd';
+import { AutoComplete, Input, Select, DatePicker, Form, Button, Row, Col } from 'antd';
 import { firstLetterToUpperCase, setQuery, parseQuery } from '@/util/utils';
 
 const FormItem = Form.Item;
@@ -39,7 +39,11 @@ export default class extends PureComponent {
       </Select>
     )
   }
-
+  renderAutoComplete = (item) => {
+    return (
+      <AutoComplete dataSource={item.dataSource} />
+    );
+  }
   handleSearch = () => {
     const { form: { validateFields }, search, format } = this.props;
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Form, Input, InputNumber, Button, Radio, Message } from 'antd';
+import { Card, Form, Input, InputNumber, Button, Radio } from 'antd';
 import { formButtonLayout } from '@/config';
 import { withRouter } from 'react-router-dom';
 import refundType from '@/enum/refundType';
@@ -66,6 +66,7 @@ class CheckForm extends Component {
     const { orderServerVO = {}, checkVO = {}, refundStatus } = this.props;
     const { getFieldDecorator } = this.props.form;
     const refundTypeForm = this.props.form.getFieldsValue(['refundType']);
+    refundTypeForm.refundType = refundTypeForm.refundType || orderServerVO.refundType;
     return (
       <Card title="客服审核">
         <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
@@ -112,15 +113,9 @@ class CheckForm extends Component {
           }
           {
             refundStatus === 21 && (
-              <Form.Item
-                wrapperCol={formButtonLayout}
-              >
-                <Button type="primary" onClick={this.handleAgainRefund}>
-                  重新退款
-            </Button>
-                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>
-                  关闭订单
-            </Button>
+              <Form.Item wrapperCol={formButtonLayout}>
+                <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
+                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>关闭订单</Button>
               </Form.Item>
             )
           }
