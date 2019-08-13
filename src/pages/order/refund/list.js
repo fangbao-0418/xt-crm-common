@@ -105,7 +105,7 @@ export default class extends React.Component {
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>
-        <CommonTable
+        {records && records.length? <CommonTable
           bordered
           columns={getListColumns({ query: this.query, history: this.props.history })}
           dataSource={records}
@@ -122,7 +122,7 @@ export default class extends React.Component {
           onChange={this.handlePageChange}
           rowKey={record => record.id}
           scroll={{ x: 1.5 }}
-        />
+        />: null}
       </Spin>
     );
   }
