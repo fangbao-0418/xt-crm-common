@@ -44,10 +44,10 @@ class Detail extends Component {
                   <Col span={8}>售后单编号：{orderServerVO.orderCode}</Col>
                   <Col span={8}>申请时间：{moment(orderServerVO.createTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
                   <Col span={8}>售后类型：{refundType.getValue(orderServerVO.refundType)}</Col>
-                </Row>
-                <Row gutter={24}>
                   <Col span={8}>售后原因：{orderServerVO.returnReasonStr}</Col>
                   <Col span={8}>售后说明：{orderServerVO.info}</Col>
+                  <Col span={8}>售后状态：{orderServerVO.refundStatusStr}</Col>
+                  {orderServerVO.refundErrorMsg && <Col span={8}>退款失败原因：{orderServerVO.refundErrorMsg}</Col>}
                 </Row>
                 <Row>
                   <Col>
