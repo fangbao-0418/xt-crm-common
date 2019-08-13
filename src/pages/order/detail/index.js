@@ -186,9 +186,9 @@ class Detail extends Component {
             return (
               <div key={index}>
                 <Row gutter={24}>
-                  <Col span={6}>子订单号{index + 1}: {item.childOrder.orderCode}</Col>
-                  <Col span={6}>订单状态：{OrderStatusTextMap[item.childOrder.orderStatus]}</Col>
-                  <Col className="gutter-row" span={6}>
+                  <Col span={8}>子订单号{index + 1}: {item.childOrder.orderCode}</Col>
+                  <Col span={8}>订单状态：{OrderStatusTextMap[item.childOrder.orderStatus]}</Col>
+                  <Col className="gutter-row" span={8}>
                     {(orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
                       <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics} />
                     ) : ''}

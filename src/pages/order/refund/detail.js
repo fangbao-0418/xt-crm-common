@@ -69,7 +69,7 @@ class Detail extends Component {
                   <Col span={8}>联系电话：{orderInfoVO.phone}</Col>
                 </Row>
                 <Row gutter={24}>
-                  <Col span={8}>收货信息：{joinFilterEmpty([orderInfoVO.consignee, orderInfoVO.consigneePhone, orderInfoVO.address])}</Col>
+                  <Col>收货信息：{joinFilterEmpty([orderInfoVO.consignee, orderInfoVO.consigneePhone, orderInfoVO.address])}</Col>
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>用户备注：{orderInfoVO.remark}</Col>

@@ -4,7 +4,7 @@ import { goodsTableColumn, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
 import { formatDate } from '../../helper';
 
-const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, showModal, memberId, showNotes}) => {
+const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, showModal, memberId, showNotes }) => {
   console.log('orderLogs=>', childOrder.orderLogs)
   const columns = [
     ...goodsTableColumn,
@@ -14,7 +14,7 @@ const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, showMo
       key: 'operate',
       render: (text, record, index) => (
         <>
-          <Button type="link" size="small" onClick={() => showModal({ ...record, mainOrderId: orderInfo.id, memberId })}>申请售后</Button>
+          {[30, 40, 50].includes(orderInfo.orderStatus) && <Button type="link" size="small" onClick={() => showModal({ ...record, mainOrderId: orderInfo.id, memberId })}>申请售后</Button>}
           <Button type="link" size="small" onClick={() => showNotes(record)}>添加备注</Button>
         </>
       )

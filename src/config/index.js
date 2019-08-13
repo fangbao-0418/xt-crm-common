@@ -24,3 +24,12 @@ export const orderRefunds = {
   '30': '已完成',
   '40': '驳回'
 }
+
+export const orderStatusEnums = {
+  '10': '未付款',
+  '20': '待发货',
+  '30': '已发货',
+  '40': '已收货',
+  '50': '完成',
+  '60': '关闭'
+}
