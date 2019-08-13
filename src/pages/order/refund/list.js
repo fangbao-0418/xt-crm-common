@@ -1,10 +1,11 @@
 import React from 'react';
-import {  Button, Spin } from 'antd';
+import { Button, Spin, Row, Col } from 'antd';
 import { refundList } from '../api';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
 import { getListColumns, formFields } from './config';
-import {withRouter} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+import { formatDate } from '@/pages/helper';
 const formatFields = (range) => {
   range = range || [];
   return range.map(v => v && v.format('YYYY-MM-DD HH:mm'))
@@ -56,11 +57,11 @@ export default class extends React.Component {
     //     })
     //   })
     // } else {
-      refundList(params).then(res => {
-        this.setState({
-          tableConfig: res.data || {}
-        })
+    refundList(params).then(res => {
+      this.setState({
+        tableConfig: res.data || {}
       })
+    })
     // }
   };
   handleSearch = () => {
@@ -84,12 +85,12 @@ export default class extends React.Component {
       this.query,
     );
   };
-  
+
   handleFormat = (data) => {
     console.log(data);
     return data;
   }
-  
+
   render() {
     const { tableConfig: { records = [], total = 0, current = 0 } } = this.state;
 
@@ -110,6 +111,13 @@ export default class extends React.Component {
           dataSource={records}
           current={current}
           total={total}
+          expandedRowRender={record => (
+            <Row className="expanded-row-wrapped" gutter={24}>
+              <Col span={6}>售后单编号：{record.orderCode}</Col>
+              <Col span={6}>订单编号：{record.mainOrderCode}</Col>
+              <Col span={6}>申请时间：{formatDate(record.createTime)}</Col>
+            </Row>
+          )}
           onChange={this.handlePageChange}
           rowKey={record => record.id}
           scroll={{ x: 1.5 }}

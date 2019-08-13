@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Row, Col } from 'antd';
+import { Form, Card, Input, Button, Row, Col } from 'antd';
 import { formItemLayout, formButtonLayout } from '@/config'
 import { connect } from '@/util/utils';
 import { withRouter } from 'react-router-dom';
@@ -25,11 +25,15 @@ class DeliveryInformation extends Component {
   render() {
     const { form: { getFieldDecorator }, data: { checkType, checkVO = {} }, readOnly = true } = this.props;
     if (readOnly) {
-      return <Row gutter={24}>
-        <Col span={8}>物流公司：{checkVO.sendExpressName}</Col>
-        <Col span={8}>物流单号：{checkVO.sendExpressCode}</Col>
-        <Col span={8}>提交时间：{checkVO.sendExpressTime === 0 ? '' : formatDate(checkVO.sendExpressTime)}</Col>
-      </Row>
+      return (
+        <Card title="发货信息">
+          <Row>
+            <Col>物流公司：{checkVO.sendExpressName}</Col>
+            <Col>物流单号：{checkVO.sendExpressCode}</Col>
+            <Col>提交时间：{checkVO.sendExpressTime === 0 ? '' : formatDate(checkVO.sendExpressTime)}</Col>
+          </Row>
+        </Card>
+      )
     }
     else {
       return <Form {...formItemLayout}>

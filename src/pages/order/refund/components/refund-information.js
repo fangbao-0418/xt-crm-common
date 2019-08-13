@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, InputNumber, Button, Row, Col } from 'antd';
+import { Card, Form, Input, InputNumber, Button, Row, Col } from 'antd';
 import { formItemLayout, formButtonLayout } from '@/config'
 import { XtSelect } from '@/components'
 import refundType from '@/enum/refundType';
@@ -35,11 +35,15 @@ class RefundInformation extends Component {
   render() {
     const { form: { getFieldDecorator }, data: { orderServerVO, checkType, checkVO, refundStatus }, readOnly = true } = this.props;
     if (readOnly) {
-      return <Row gutter={24}>
-        <Col span={8}>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
-        <Col span={8}>退款金额：￥{formatMoney(checkVO.refundAmount)}</Col>
-        <Col span={8}>说明{checkVO.info}</Col>
-      </Row>
+      return (
+        <Card title="退款信息">
+          <Row>
+            <Col>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
+            <Col>退款金额：￥{formatMoney(checkVO.refundAmount)}</Col>
+            <Col>说明{checkVO.info}</Col>
+          </Row>
+        </Card>
+      )
     } else {
       return <Form {...formItemLayout}>
         <Form.Item label="退款类型">

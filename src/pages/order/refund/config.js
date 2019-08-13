@@ -1,12 +1,9 @@
 import React from 'react';
 import GoodCell from '../../../components/good-cell';
-import RemarkModal from '../components/remark-modal';
 import { formatMoneyWithSign } from '@/pages/helper';
-import { dateFormat } from '@/util/utils';
 import { enumRefundStatus } from '../constant';
 import refundType from '@/enum/refundType';
 import createType from '@/enum/createType';
-import moment from 'moment';
 import { Button } from 'antd';
 import MoneyRender from '@/components/money-render'
 import {formatDate} from '@/pages/helper';
@@ -71,30 +68,26 @@ export const formFields = function () {
  */
 export const getListColumns = ({ query, history }) => [
   {
-    title: '商品名称',
+    title: '商品ID',
+    dataIndex: 'id'
+  },
+  {
+    title: '商品',
     dataIndex: 'skuName',
     render(skuName, row) {
       return <GoodCell {...row} />;
     },
   },
   {
-    title: '商品单价',
+    title: '单价',
     dataIndex: 'salePrice',
     render(salePrice) {
       return salePrice ? formatMoneyWithSign(salePrice) : '';
     },
   },
   {
-    title: '商品数量',
+    title: '数量',
     dataIndex: 'num',
-  },
-  {
-    title: '售后单编号',
-    dataIndex: 'orderCode',
-  },
-  {
-    title: '订单编号',
-    dataIndex: 'mainOrderCode',
   },
   {
     title: '供应商',
@@ -112,7 +105,7 @@ export const getListColumns = ({ query, history }) => [
     dataIndex: 'refundTypeStr',
   },
   {
-    title: '退款状态',
+    title: '售后状态',
     dataIndex: 'refundStatusStr',
   },
   {
@@ -122,30 +115,38 @@ export const getListColumns = ({ query, history }) => [
       return v ? formatMoneyWithSign(v) : ''
     }
   },
-  {
-    title: '售后时间',
-    dataIndex: 'createTime',
-    render(v) {
-      return v && moment(v).format(dateFormat)
-    }
-  },
+  // {
+  //   title: '售后时间',
+  //   dataIndex: 'createTime',
+  //   render(v) {
+  //     return v && moment(v).format(dateFormat)
+  //   }
+  // },
   {
     title: '处理人',
     dataIndex: 'operator'
   },
+  // {
+  //   title: '售后单编号',
+  //   dataIndex: 'orderCode',
+  // },
+  // {
+  //   title: '订单编号',
+  //   dataIndex: 'mainOrderCode',
+  // },
   {
     title: '操作',
     dataIndex: 'record',
     render: (_, { id, skuId, refundId, childOrderId, mainOrderCode, orderCode, refundStatus, isDelete }) => {
       return (
         <div style={{ display: 'flex' }}>
-          <RemarkModal
+          {/* <RemarkModal
             onSuccess={query}
             orderCode={mainOrderCode}
             refundId={refundId}
             childOrderId={childOrderId}
           />
-          &nbsp;
+          &nbsp; */}
         {[enumRefundStatus.Complete, enumRefundStatus.Rejected].includes( // 已完成，已取消（isDelete === 1），已驳回的展示查看
             Number(refundStatus)
           ) || isDelete === 1 ? (
@@ -160,6 +161,18 @@ export const getListColumns = ({ query, history }) => [
 ]
 
 
+export const logisticsInformationColumns = [
+  {
+    title: '物流公司',
+    dataIndex: 'expressName',
+    key: 'expressName'
+  },
+  {
+    title: '物流单号',
+    dataIndex: 'expressCode',
+    key: 'expressCode'
+  }
+]
 export const getDetailColumns = () => [
   {
     title: '名称',
@@ -195,16 +208,6 @@ export const getDetailColumns = () => [
     render: MoneyRender
   }
 ];
-
-export const expressColumns = [{
-  title: '物流公司',
-  dataIndex: 'expressName',
-  key: 'expressName',
-}, {
-  title: '物流单号',
-  dataIndex: 'expressCode',
-  key: 'expressCode',
-}]
 
 export const refundTypes = refundType.getArray()
 

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Steps, Card, Table, Row, Col, Tabs } from 'antd';
-import { getDetailColumns, expressColumns } from './config';
+import { getDetailColumns } from './config';
 import refundType from '@/enum/refundType';
 import PicturesWall from '../components/pictures-wall';
 import { CheckForm, DealForm, CheckDetail } from './components';
-import { logColumns } from './config';
+import { logColumns, logisticsInformationColumns } from './config';
 import moment from 'moment';
 import { connect } from '@/util/utils';
 import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
@@ -20,13 +20,13 @@ class Detail extends Component {
   componentWillMount(status) {
     this.getDetail();
   }
-  
+
   render() {
     const { orderInfoVO = {}, orderServerVO = {}, refundStatus, skuServerLogVO = [] } = this.props.data;
     console.log(this.props.data)
     let current = calcCurrent(refundStatus)
-    const status = refundStatus === 30 ? 'finish' : refundStatus === 40 ? 'error': '';
-    const title = refundStatus === 30 ? '完成' : refundStatus === 40 ? '关闭': '完成';
+    const status = refundStatus === 30 ? 'finish' : refundStatus === 40 ? 'error' : '';
+    const title = refundStatus === 30 ? '完成' : refundStatus === 40 ? '关闭' : '完成';
     return (
       <>
         <Card>
@@ -52,12 +52,13 @@ class Detail extends Component {
                 <Row>
                   <Col>
                     图片凭证：
-                    <PicturesWall disabled={true} readOnly={true} imgUrl={orderServerVO.imgUrl}/>
+                    <PicturesWall disabled={true} readOnly={true} imgUrl={orderServerVO.imgUrl} />
                   </Col>
                 </Row>
-              </Card>
-              <Card title="商品信息">
-                <Table pagination={false} columns={getDetailColumns()} dataSource={orderServerVO.productVO || []} />
+                <Row>
+                  <h4>商品信息</h4>
+                  <Table pagination={false} columns={getDetailColumns()} dataSource={orderServerVO.productVO || []} />
+                </Row>
               </Card>
               <Card title="订单信息">
                 <Row gutter={24}>
@@ -68,7 +69,7 @@ class Detail extends Component {
                   <Col span={8}>联系电话：{orderInfoVO.phone}</Col>
                 </Row>
                 <Row gutter={24}>
-                  <Col span={8}>收货信息：{joinFilterEmpty([orderInfoVO.consignee,orderInfoVO.consigneePhone,orderInfoVO.address])}</Col>
+                  <Col span={8}>收货信息：{joinFilterEmpty([orderInfoVO.consignee, orderInfoVO.consigneePhone, orderInfoVO.address])}</Col>
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>用户备注：{orderInfoVO.remark}</Col>
@@ -78,8 +79,9 @@ class Detail extends Component {
                   <Col span={8}>支付时间：{moment(orderInfoVO.payTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
                   <Col span={8}>交易流水号：{orderInfoVO.paymentNumber}</Col>
                 </Row>
-                <Row gutter={24}>
-                  <Table dataSource={orderInfoVO.expressVO} columns={expressColumns}></Table>
+                <Row>
+                  <h4>物流信息</h4>
+                  <Table style={{width: '400px'}} pagination={false} columns={logisticsInformationColumns} dataSource={orderInfoVO.expressVO || []} />
                 </Row>
               </Card>
               {current === 0 && <CheckForm {...this.props.data} />}
