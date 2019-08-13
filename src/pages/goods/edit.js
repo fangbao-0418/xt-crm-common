@@ -349,8 +349,6 @@ class GoodsEdit extends React.Component {
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
     validateFields((err, vals) => {
       if (!err) {
-        debugger;
-        return;
         if (size(speSelect) === 0) {
           message.error('请添加规格');
           return false;
@@ -674,22 +672,6 @@ class GoodsEdit extends React.Component {
           </FormItem>
           <FormItem label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
-          </FormItem>
-          <FormItem label="是否新人专享">
-            {getFieldDecorator('newuserExclusive')(<Checkbox>是</Checkbox>)}
-          </FormItem>
-          <FormItem label="是否会员专享">
-            {getFieldDecorator('memberExclusive')(<Checkbox>是</Checkbox>)}
-          </FormItem>
-          <FormItem label="最少购买数量">
-            {getFieldDecorator('minBuy',{
-               initialValue: 0
-            })(<Input placeholder="请填写供货商商品ID"  type="number"/>)}
-          </FormItem>
-          <FormItem label="最多购买数量">
-            {getFieldDecorator('maxBuy',{
-              initialValue: 0
-          })(<Input placeholder="请填写供货商商品ID" type="number"/>)}
           </FormItem>
           <FormItem label="商品主图" required={true}>
             {getFieldDecorator('coverUrl', {
