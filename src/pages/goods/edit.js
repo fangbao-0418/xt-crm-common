@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Switch  } from 'antd';
+import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox  } from 'antd';
 import UploadView from '../../components/upload';
 import {
   map,
@@ -643,7 +643,7 @@ class GoodsEdit extends React.Component {
                   required: true,
                   message: '请输入商品简介',
                 },
-              ],
+              ],  
             })(<Input placeholder="请输入商品简介" />)}
           </FormItem>
           <FormItem label="供货商">
@@ -661,7 +661,7 @@ class GoodsEdit extends React.Component {
                 filterOption={(inputValue, option) =>{
                   return option.props.children.indexOf(inputValue) > -1;
                 }}
-              >
+              > 
                 {map(supplier, item => (
                   <Option value={item.id} key={item.id}>
                     {item.name}
