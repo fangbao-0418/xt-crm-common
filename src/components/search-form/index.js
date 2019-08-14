@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
-import { AutoComplete, Input, Select, DatePicker, Form, Button, Row, Col } from 'antd';
+import { Input, Select, DatePicker, Form, Button, Row, Col } from 'antd';
+import { isFunction } from 'lodash';
 import { firstLetterToUpperCase, setQuery, parseQuery } from '@/util/utils';
-
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -18,7 +18,7 @@ export default class extends PureComponent {
   renderInput = (item) => {
     const placeholder = '请输入' + item.label;
     return (
-      <Input placeholder={placeholder}/>
+      <Input placeholder={placeholder} />
     )
   }
 
@@ -39,11 +39,6 @@ export default class extends PureComponent {
       </Select>
     )
   }
-  renderAutoComplete = (item) => {
-    return (
-      <AutoComplete dataSource={item.dataSource} />
-    );
-  }
   handleSearch = () => {
     const { form: { validateFields }, search, format } = this.props;
 
@@ -51,7 +46,7 @@ export default class extends PureComponent {
       if (!errors) {
         // const { customTime = [], ...other } = values;
         let data = values;
-        if(format) data = format(data);
+        if (format) data = format(data);
         // const payload = {
         //   ...other,
         //   startTime: customTime[0] && customTime[0].unix(),
@@ -81,9 +76,9 @@ export default class extends PureComponent {
       }} className={"i-search-form" + (className ? " " + className : "")}>
         <Row>
           {
-            options.map((item,i) => {
-              const { type = '', id = '', label = '', config = {} } = item;
-              const renderFun = this[`render${firstLetterToUpperCase(type)}`];
+            options.map((item, i) => {
+              const { type = '', id = '', label = '', config = {}, render } = item;
+              const renderFun = isFunction(render) ? render : this[`render${firstLetterToUpperCase(type)}`];
               return (
                 <Col span={6} key={i}>
                   <FormItem label={label} key={item.id}>
@@ -100,7 +95,7 @@ export default class extends PureComponent {
               )
             })
           }
-          <Col span={6} style={{float:'right'}}>
+          <Col span={6} style={{ float: 'right' }}>
             <FormItem className='i-search-btns'>
               <Button onClick={this.resetFields}>重置</Button>
               <Button type="primary" onClick={this.handleSearch}>查询</Button>

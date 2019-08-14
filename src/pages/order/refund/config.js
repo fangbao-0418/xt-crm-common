@@ -1,13 +1,15 @@
 import React from 'react';
-import GoodCell from '../../../components/good-cell';
+import GoodCell from '@/components/good-cell';
+import SuppilerSelect from '../components/suppiler-select'
 import { formatMoneyWithSign } from '@/pages/helper';
 import { enumRefundStatus } from '../constant';
 import refundType from '@/enum/refundType';
 import createType from '@/enum/createType';
 import { Button } from 'antd';
 import MoneyRender from '@/components/money-render'
-import {formatDate} from '@/pages/helper';
-import {orderRefunds} from '@/config';
+import { formatDate } from '@/pages/helper';
+import { orderRefunds } from '@/config';
+
 export const formFields = function () {
   return [
     {
@@ -34,8 +36,9 @@ export const formFields = function () {
     }, {
       type: 'input',
       id: 'storeId',
-      label: '供应商'
-    }, {
+      label: '供应商',
+      render: () => <SuppilerSelect />
+    } , {
       type: 'input',
       id: 'productId',
       label: '商品ID'
@@ -147,7 +150,7 @@ export const getListColumns = ({ query, history }) => [
             childOrderId={childOrderId}
           />
           &nbsp; */}
-        {[enumRefundStatus.Complete, enumRefundStatus.Rejected].includes( // 已完成，已取消（isDelete === 1），已驳回的展示查看
+          {[enumRefundStatus.Complete, enumRefundStatus.Rejected].includes( // 已完成，已取消（isDelete === 1），已驳回的展示查看
             Number(refundStatus)
           ) || isDelete === 1 ? (
               <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看</Button>

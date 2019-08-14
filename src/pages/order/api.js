@@ -164,6 +164,12 @@ export function refundOperate(data) {
   });
 }
 
+export function getStoreList(data) {
+  return fetch('/store/list', {
+    method: 'POST',
+    data
+  });
+}
 export function customerAdd(data) {
   return fetch('/order/afterSale/customerAdd', {
     method: 'POST',
