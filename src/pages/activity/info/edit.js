@@ -14,6 +14,7 @@ import {
 } from '../api';
 import { size, filter } from 'lodash';
 import { parseQuery, gotoPage } from '@/util/utils';
+import Add from '../add';
 import { formatMoneyWithSign } from '../../helper';
 import moment from 'moment';
 import Image from '../../../components/Image';
@@ -25,6 +26,7 @@ class List extends React.Component {
   state = {
     goodsList: '',
     visible: false,
+    visibleAct: false,
     selectedRowKeys: [],
     selectedRows: [],
     promotionDetail: {},
@@ -298,17 +300,7 @@ class List extends React.Component {
         <Card
           style={{ marginBottom: 10 }}
           title="活动信息"
-          extra={
-            !isEidt ? (
-              <a href="javacript:void(0);" onClick={() => this.setState({ isEidt: true })}>
-                编辑
-              </a>
-            ) : (
-              <a href="javacript:void(0);" onClick={this.handleSaveBaseInfo}>
-                保存编辑
-              </a>
-            )
-          }
+          extra={<a href="javacript:void(0);" onClick={() => this.setState({ visibleAct: true })}>编辑</a>}
         >
           <Form layout="inline">
             <FormItem layout="inline" label="活动类型">
@@ -409,6 +401,17 @@ class List extends React.Component {
             onChange={this.handleTabChangeModal}
             rowKey={record => record.id}
           />
+        </Modal>
+        <Modal
+          title="活动编辑"
+          visible={this.state.visibleAct}
+          width={1000}
+          footer={null}
+          onCancel={()=>this.setState({
+            visibleAct: false
+          })}
+        >
+          <Add />
         </Modal>
       </>
     );

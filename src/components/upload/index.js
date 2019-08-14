@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { Upload, Icon, message } from 'antd';
+import { Upload, Icon, message, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import { isFunction, filter } from 'lodash';
 import { getStsPolicy } from './api';
 import { createClient, ossUploadBlob } from './oss.js';
+import { resolve } from 'url';
+import { reject } from 'q';
 
 const uploadButton = props => (
   <div>
@@ -30,35 +32,50 @@ class UploadView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fileList: props.value || [],
+      fileList: this.initFileList(props.value || []),
+      visible: false,
+      url: ''
     };
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.value !== this.props.value) {
       this.setState({
-        fileList: this.props.value,
+        fileList: this.initFileList(this.props.value),
       });
     }
+  }
+
+  initFileList(fileList) {
+    const { fileType } = this.props;
+    return fileList.map(val=>{
+      val._url = val.url
+      if (fileType == 'video') {
+        val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+      }
+      return val;
+    });
   }
 
   beforeUpload = size => (file, fileList) => {
     const isLtM = file.size / 1024 / 1024 < size;
     if (!isLtM) {
-      message.error(`请上传小于${size*1000}kB的文件`);
+      message.error(`请上传小于${size * 1000}kB的文件`);
       return false;
     }
     return true;
   };
 
 
-  customRequest = e => {
+  customRequest(e) {
     const file = e.file;
+    
     ossUpload(file).then(urlList => {
       const { fileList } = this.state;
       const { onChange } = this.props;
       file.url = urlList && urlList[0];
-      fileList.push(file)
+      file._url = file.url;
+      fileList.push(file);
       this.setState({
         fileList: fileList,
       });
@@ -69,6 +86,12 @@ class UploadView extends Component {
     console.log(e)
     const { fileList } = this.state;
     this.setState({ fileList: filter(fileList, item => item.uid !== e.uid) });
+  };
+  onPreview = file => {
+    this.setState({
+      url: file._url,
+      visible: true,
+    })
   };
   render() {
     const {
@@ -91,10 +114,20 @@ class UploadView extends Component {
           // onPreview={this.handlePreview}
           beforeUpload={this.beforeUpload(size)}
           onRemove={this.handleRemove}
-          customRequest={this.customRequest}
+          customRequest={(e) => this.customRequest(e)}
+          onPreview={this.onPreview}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>
+        <Modal
+          title="预览"
+          style={{ textAlign: 'center' }}
+          visible={this.state.visible}
+          onOk={() => this.setState({visible:false})}
+          onCancel={() => this.setState({visible:false})}
+        >
+          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video>: <img src={this.state.url} />}
+        </Modal>
       </>
     );
   }
