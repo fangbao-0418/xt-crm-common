@@ -5,7 +5,7 @@ import { map } from 'lodash';
 import UploadView from '../../../components/upload';
 import { setPromotionAddSKu } from '../api';
 import Image from '../../../components/Image';
-import {Decimal} from 'decimal.js';
+import { Decimal } from 'decimal.js';
 const FormItem = Form.Item;
 
 const replaceHttpUrl = imgUrl => {
@@ -35,6 +35,9 @@ class ActivityDetail extends React.Component {
     selectedRowKeys: [],
     selectedRows: [],
     newuserExclusive: 0,
+    memberExclusive: 0,
+    minBuy: 0,
+    maxBuy: 0,
     sort: 0,
     activityImage: [],
   };
@@ -54,6 +57,9 @@ class ActivityDetail extends React.Component {
       detailData: data,
       selectedRowKeys,
       newuserExclusive: data.newuserExclusive,
+      memberExclusive: data.memberExclusive,
+      minBuy: data.minBuy,
+      maxBuy: data.maxBuy,
       sort: data.sort,
       activityImage: initImgList(data.banner),
     });
@@ -75,16 +81,16 @@ class ActivityDetail extends React.Component {
   };
 
   handleSavae = () => {
-    if(this.loading) return;
+    if (this.loading) return;
     this.loading = true;
-    const { detailData, selectedRows, newuserExclusive, sort, activityImage } = this.state;
+    const { detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
     if (activityImage.length === 0) {
       message.error('请上传活动商品图');
       this.loading = false;
       return false;
     }
     for (let index = 0; index < activityImage.length; index++) {
-      if(!activityImage[index].url) {
+      if (!activityImage[index].url) {
         this.loading = false;
         return message.error('图片正在上传,请稍后...');
       }
@@ -92,10 +98,12 @@ class ActivityDetail extends React.Component {
     map(selectedRows, item => {
       item.buyingPrice = new Decimal(item.buyingPrice).mul(100).toNumber();
     });
-
     const params = {
       id: detailData.id,
       newuserExclusive,
+      minBuy,
+      maxBuy,
+      memberExclusive,
       promotionSkuAdd: selectedRows,
       sort,
       banner: activityImage && replaceHttpUrl(activityImage[0].url),
@@ -169,7 +177,7 @@ class ActivityDetail extends React.Component {
       },
     ];
 
-    const { detailData, selectedRowKeys, sort, activityImage, newuserExclusive } = this.state;
+    const { detailData, selectedRowKeys, sort, activityImage, newuserExclusive, memberExclusive, minBuy, maxBuy } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
@@ -183,17 +191,13 @@ class ActivityDetail extends React.Component {
             商品主图: <Image src={detailData.coverUrl} width={60} height={60} alt="" />
           </div>
           <Row style={{ height: 60 }}>
-            <Col span={8}>活动商品: {detailData.productName}</Col>
-            <Col span={8}>市场价: {formatMoneyWithSign(detailData.marketPrice)}</Col>
-            <Col span={8}>销售价: {formatMoneyWithSign(detailData.salePrice)}</Col>
+            <Col span={6}>活动商品: {detailData.productName}</Col>
+            <Col span={6}>市场价: {formatMoneyWithSign(detailData.marketPrice)}</Col>
+            <Col span={6}>销售价: {formatMoneyWithSign(detailData.salePrice)}</Col>
+            <Col span={6}>成本价: {formatMoneyWithSign(detailData.costPrice)}</Col>
           </Row>
           <Row style={{ marginTop: 20, height: 60 }}>
-            <Col span={8}>成本价: {formatMoneyWithSign(detailData.costPrice)}</Col>
-            <Col span={8} />
-            <Col span={8} />
-          </Row>
-          <Row style={{ marginTop: 20, height: 60 }}>
-            <Col span={8}>
+            <Col span={6}>
               新人专享:{' '}
               <Checkbox
                 checked={!!newuserExclusive}
@@ -202,13 +206,32 @@ class ActivityDetail extends React.Component {
                 是
               </Checkbox>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
+              会员专享:{' '}
+              <Checkbox
+                checked={!!memberExclusive}
+                onChange={e => this.setState({ memberExclusive: e.target.checked ? 1 : 0 })}
+              >
+                是
+              </Checkbox>
+            </Col>
+            <Col span={6}>
               排序:{' '}
               <Input
                 style={{ width: 80 }}
                 value={sort}
                 onChange={e => this.setState({ sort: e.target.value })}
               />
+            </Col>
+          </Row>
+          <Row style={{ marginTop: 20, height: 60 }}>
+            <Col span={8}>
+              最少购买量:{' '}
+              <Input value={minBuy} style={{ width: 160 }} placeholder="请填写最少购买量" type="number" onChange={e => this.setState({ minBuy: e.target.value })}/>
+            </Col>
+            <Col span={8}>
+              最大购买量:{' '}
+              <Input value={maxBuy} style={{ width: 160 }} placeholder="请填写最大购买量" type="number"  onChange={e => this.setState({ maxBuy: e.target.value })}/>
             </Col>
             <Col span={8}>
               <FormItem label="活动图片">
@@ -222,7 +245,6 @@ class ActivityDetail extends React.Component {
                 />
               </FormItem>
             </Col>
-            <Col span={8} />
           </Row>
         </Card>
         <Card style={{ marginTop: 10 }}>
