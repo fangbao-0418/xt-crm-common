@@ -5,125 +5,143 @@ import { createHashHistory } from 'history';
 const History = createHashHistory();
 
 function defaultMapStateToProps() {
-    return { dispatch, history: History };
+  return { dispatch, history: History };
 }
 
 // 包装redux.connect, 默认引入dispatch函数和history对象
 export function connect(mapStateToProps = defaultMapStateToProps) {
-    return redux.connect(state => {
-        const base = mapStateToProps(state);
-        return { ...base, dispatch, history: History }
-    });
+  return redux.connect(state => {
+    const base = mapStateToProps(state);
+    return { ...base, dispatch, history: History }
+  });
 }
 
 
 export function parseQuery() {
-    const search = window.location.hash.split('?')[1] || '';
-    const reslover = new URLSearchParams(search);
-    const obj = reslover.entries();
-    const results = {};
-    for (const item of obj) {
-        const [key, value] = item;
-        value && (results[key] = value);
-    }
-    return results;
+  const search = window.location.hash.split('?')[1] || '';
+  const reslover = new URLSearchParams(search);
+  const obj = reslover.entries();
+  const results = {};
+  for (const item of obj) {
+    const [key, value] = item;
+    value && (results[key] = value);
+  }
+  return results;
 }
 
 export function setQuery(params = {}, force = false) {
-    const str = decodeURIComponent(window.location.hash); // 对中文解码
-    const [ baseLoc, baseQueryStr = '' ] = str.split('?');
-    const baseQuery = {};
-    !force && baseQueryStr && baseQueryStr.split('&').forEach(item => {
-        const [key, value] = item.split('=');
-        baseQuery[key] = value;
-    });
-    const filters = {};
-    for (const k in params) {
-        if (Object.prototype.hasOwnProperty.call(params, k)) {
-            filters[k] = params[k] || '';
-        }
+  const str = decodeURIComponent(window.location.hash); // 对中文解码
+  const [baseLoc, baseQueryStr = ''] = str.split('?');
+  const baseQuery = {};
+  !force && baseQueryStr && baseQueryStr.split('&').forEach(item => {
+    const [key, value] = item.split('=');
+    baseQuery[key] = value;
+  });
+  const filters = {};
+  for (const k in params) {
+    if (Object.prototype.hasOwnProperty.call(params, k)) {
+      filters[k] = params[k] || '';
     }
-    const reslover = new URLSearchParams({ ...baseQuery, ...filters });
-    const search = reslover.toString();
-    window.location.hash = `${baseLoc}?${search}`;
+  }
+  const reslover = new URLSearchParams({ ...baseQuery, ...filters });
+  const search = reslover.toString();
+  window.location.hash = `${baseLoc}?${search}`;
 }
 
 export function saveDefault(state, payload) {
-    return {
-        ...state,
-        ...payload
-    };
+  return {
+    ...state,
+    ...payload
+  };
 }
 
-export function arrToTree (list = [], pid = null, key = 'parentId') {
-    let tree = [];
-    Array.isArray(list) && list.forEach(item => {
-        let tmp = deepClone(item);
-        if (item[key] === pid) {
-            tmp['subMenus'] = arrToTree(list, item.id, key);
-            tree.push(tmp);
-        }
-    });
-    return tree;
+export function arrToTree(list = [], pid = null, key = 'parentId') {
+  let tree = [];
+  Array.isArray(list) && list.forEach(item => {
+    let tmp = deepClone(item);
+    if (item[key] === pid) {
+      tmp['subMenus'] = arrToTree(list, item.id, key);
+      tree.push(tmp);
+    }
+  });
+  return tree;
 };
 
 export function deepClone(obj) {
-    let str = '';
-    let newobj = obj.constructor === Array ? [] : {};
-    if (typeof obj !== 'object') {
-        return;
-    } else if (window.JSON) {
-        str = JSON.stringify(obj); // 系列化对象
-        newobj = JSON.parse(str); // 还原
-    } else {
-        for (var i in obj) {
-            newobj[i] = typeof obj[i] === 'object' ? deepClone(obj[i]) : obj[i];
-        }
+  let str = '';
+  let newobj = obj.constructor === Array ? [] : {};
+  if (typeof obj !== 'object') {
+    return;
+  } else if (window.JSON) {
+    str = JSON.stringify(obj); // 系列化对象
+    newobj = JSON.parse(str); // 还原
+  } else {
+    for (var i in obj) {
+      newobj[i] = typeof obj[i] === 'object' ? deepClone(obj[i]) : obj[i];
     }
-    return newobj;
+  }
+  return newobj;
 };
 
 export function getPidById(arr = [], id, key = 'parentId') {
-    const item = arr.find(item => item.id === id) || {};
-    return item[key];
+  const item = arr.find(item => item.id === id) || {};
+  return item[key];
 }
 
 export function getItemById(arr = [], id) {
-    return arr.find(item => item.id === id) || [];
+  return arr.find(item => item.id === id) || [];
 }
 
 export function getAllId(base = [], list = [], key = 'parentId') {
-    let tree = [];
-    list.forEach(id => {
-        tree.push(id)
-        let pid = getPidById(base, id, key)
-        while(pid) {
-            tree.push(pid)
-            pid = getPidById(base, pid, key)
-        }
-    });
-    return tree;
+  let tree = [];
+  list.forEach(id => {
+    tree.push(id)
+    let pid = getPidById(base, id, key)
+    while (pid) {
+      tree.push(pid)
+      pid = getPidById(base, pid, key)
+    }
+  });
+  return tree;
 }
 
 export const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 export function firstLetterToUpperCase(str = '') {
-    return str.substring(0,1).toUpperCase()+str.substring(1);
+  return str.substring(0, 1).toUpperCase() + str.substring(1);
 }
 
 export function gotoPage(path) {
-    const str = decodeURIComponent(window.location.hash); // 对中文解码
-    const [ _, baseQueryStr = '' ] = str.split('?');
-    History.push(`${path}?${baseQueryStr}`);
+  const str = decodeURIComponent(window.location.hash); // 对中文解码
+  const [_, baseQueryStr = ''] = str.split('?');
+  History.push(`${path}?${baseQueryStr}`);
 }
 
 // 拼接日志信息
 export function formatData(data) {
-    let str = '', q = '';
-    for (let i in data) {
-      q = data[i];
-      if (typeof data[i] === 'object') q = JSON.stringify(data[i])
-      if(q) str += '&' + i + '=' + encodeURIComponent(q)
-    }
-    return str.substr(1)
+  let str = '', q = '';
+  for (let i in data) {
+    q = data[i];
+    if (typeof data[i] === 'object') q = JSON.stringify(data[i])
+    if (q) str += '&' + i + '=' + encodeURIComponent(q)
   }
+  return str.substr(1)
+}
+
+export function initImgList(imgUrlWap) {
+  if (imgUrlWap) {
+    if (imgUrlWap.indexOf('http') !== 0) {
+      imgUrlWap = 'https://assets.hzxituan.com/' + imgUrlWap;
+    }
+    return [
+      {
+        uid: `${-parseInt(Math.random() * 1000)}`,
+        url: imgUrlWap,
+        status: 'done',
+        thumbUrl: imgUrlWap,
+        name: imgUrlWap,
+      },
+    ];
+  }
+  return [];
+};
