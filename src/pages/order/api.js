@@ -189,3 +189,9 @@ export function profitRecal(data) {
     data
   });
 }
+export function profitRecycl(data) {
+  return fetch('/order/profit/recycling', {
+    method: 'POST',
+    data
+  });
+}

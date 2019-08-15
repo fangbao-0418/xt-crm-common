@@ -3,7 +3,7 @@ import { Table, Card, Row, Button, Modal,message } from 'antd';
 import { MemberTypeTextMap } from '../constant';
 import MoneyRender from '../../../components/money-render';
 import { formatMoneyWithSign } from '../../helper';
-import { profitRecal } from '../api';
+import { profitRecal, profitRecycl } from '../api';
 const BenefitInfo = ({
   data = {
     costPrice: 0,
@@ -45,14 +45,14 @@ const BenefitInfo = ({
     },
   ];
 
-  const handleClick = function() {
+  const handleClick = function(type) {
     Modal.confirm({
       title: '系统提示',
-      content: '确定要收益重跑吗？',
+      content: '确定要收益'+ (type == 'recycl' ? '回收' : '重跑')+'吗？',
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        profitRecal({orderCode: orderInfo.orderCode}).then(res => {
+        (type == 'recycl' ? profitRecycl : profitRecal)({orderCode: orderInfo.orderCode}).then(res => {
           if(res.success) {
             message.success('操作成功');
             refresh();
@@ -66,7 +66,7 @@ const BenefitInfo = ({
   console.log(orderInfo)
   return (
     <Card>
-      <Row>预计盈利信息 <Button type="primary" style={{ float: 'right' }} onClick={()=>handleClick()}>收益重跑</Button></Row>
+      <Row>预计盈利信息 <Button type="primary" style={{ float: 'right'}} onClick={()=>handleClick('recycl')}>收益回收</Button><Button type="primary" style={{ float: 'right', marginRight:'10px' }} onClick={()=>handleClick('recal')}>收益重跑</Button></Row>
       <Row>成交金额：{formatMoneyWithSign(data.totalPrice)}</Row>
       <Row>成本金额：{formatMoneyWithSign(data.costPrice)}</Row>
       <Table
