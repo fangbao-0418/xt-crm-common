@@ -24,7 +24,7 @@ class List extends React.Component {
         pageSize: 20,
       },
       initParams: params,
-      visible: true
+      visible: false
     };
   }
 
