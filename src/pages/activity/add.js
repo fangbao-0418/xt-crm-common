@@ -83,8 +83,8 @@ class Add extends React.Component {
       if (!err) {
         const params = {
           ...vals,
-          startTime: vals.time && +new Date(vals.time[0]),
-          endTime: vals.time && +new Date(vals.time[1]),
+          startTime: +new Date(vals.startTime),
+          endTime: +new Date(vals.endTime),
           tagUrl: vals.tagUrl && replaceHttpUrl(vals.tagUrl[0].url)
         };
         delete params.time;
@@ -103,11 +103,6 @@ class Add extends React.Component {
     this.handleSave(id => {
       history.push(`/activity/info/edit/${id}`);
     });
-  };
-
-  handleReturn = () => {
-    const { history } = this.props;
-    history.push('/activity/list');
   };
 
   disabledStartDate = startTime => {
@@ -143,8 +138,13 @@ class Add extends React.Component {
       })
     }
   }
-  tagUrlChange = (e) => {
-    console.log(e)
+  tagUrlChange = (files) => {
+    if(files.length == 0) this.setState({
+      tagUrl: ''
+    })
+    else this.setState({
+      tagUrl: files[0].url
+    })
   }
   tagPositionChange = (e) => {
     this.setState({
@@ -161,7 +161,7 @@ class Add extends React.Component {
           <FormItem label="活动类型">
             {getFieldDecorator('type', {
             })(
-              <Select placeholder="请选择活动类型" style={{ width: 120 }} onChange={this.typeChange}>
+              <Select placeholder="请选择活动类型" style={{ width: 120 }} onChange={this.typeChange} disabled={!!this.state.id}>
                 {activityType.getArray().map((val, i) => <Option value={val.key} key={i}>{val.val}</Option>)}
               </Select>,
             )}
@@ -202,7 +202,7 @@ class Add extends React.Component {
           </FormItem>
           <FormItem label="活动标签">
             {getFieldDecorator('tagUrl', {
-            })(<UploadView fileType='png' placeholder="上传活动标签" listType="picture-card" listNum={1} size={0.015} />)}
+            })(<UploadView fileType='png' onChange={this.tagUrlChange} placeholder="上传活动标签" listType="picture-card" listNum={1} size={0.015} />)}
           </FormItem>
           <Form.Item label="标签位置">
             {getFieldDecorator('tagPosition',{

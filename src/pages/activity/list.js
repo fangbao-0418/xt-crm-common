@@ -81,11 +81,6 @@ class List extends React.Component {
     });
   };
 
-  handleAddActivity = () => {
-    const { history } = this.props;
-    history.push('/activity/add');
-  };
-
   handleTabChange = e => {
     this.setState(
       {
@@ -273,7 +268,7 @@ class List extends React.Component {
               visible: false
             });
             this.handleSearch();
-          }}/>
+          }} history={this.props.history}/>
         </Modal>
       </>
     );

@@ -379,7 +379,7 @@ class List extends React.Component {
             visibleAct: false
           })}
         >
-          <Add data={this.state.promotionDetail} onOk={()=>{
+          <Add history={this.props.history} data={this.state.promotionDetail} onOk={()=>{
             this.setState({
               visibleAct: false
             });

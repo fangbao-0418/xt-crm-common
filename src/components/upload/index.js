@@ -47,9 +47,10 @@ class UploadView extends Component {
   initFileList(fileList) {
     const { fileType } = this.props;
     return fileList.map(val => {
-      val._url = val.url
+      val.durl = val.url
       if (fileType == 'video') {
         val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+        val.thumbUrl = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
       }
       return val;
     });
@@ -77,7 +78,7 @@ class UploadView extends Component {
       const { fileList } = this.state;
       const { onChange } = this.props;
       file.url = urlList && urlList[0];
-      file._url = file.url;
+      file.durl = file.url;
       fileList.push(file);
       this.setState({
         fileList: fileList,
@@ -94,7 +95,7 @@ class UploadView extends Component {
   };
   onPreview = file => {
     this.setState({
-      url: file._url,
+      url: file.durl,
       visible: true,
     })
   };
