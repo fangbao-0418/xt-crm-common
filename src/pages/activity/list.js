@@ -268,7 +268,12 @@ class List extends React.Component {
             visible: false
           })}
         >
-          <Add />
+          <Add onOk={()=>{
+            this.setState({
+              visible: false
+            });
+            this.handleSearch();
+          }}/>
         </Modal>
       </>
     );

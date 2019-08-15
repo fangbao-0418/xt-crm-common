@@ -8,7 +8,6 @@ import {
   setPromotionOperatorSpuList,
   getPromotionDetail,
   setPromotionAddSpu,
-  updateBasePromotion,
   delSpuPromotion,
   refreshPromtion
 } from '../api';
@@ -110,14 +109,6 @@ class List extends React.Component {
     });
   };
 
-  updateBasePromotion = params => {
-    updateBasePromotion(params).then((res) => {
-      if (res) {
-        message.success('更新活动基础信息成功');
-        this.setState({ isEidt: false });
-      }
-    });
-  };
 
   handleSearchModal = e => {
     this.getProductList({ productName: e, page: 1 });
@@ -220,28 +211,6 @@ class List extends React.Component {
       }
     });
   }
-  handleSaveBaseInfo = () => {
-    const {
-      form,
-      match: {
-        params: { id },
-      },
-    } = this.props;
-    form.validateFields(['title', 'sort', 'startTime', 'endTime'], (err, vals) => {
-      if (!err) {
-        debugger;
-        const params = {
-          ...vals,
-          startTime: vals.startTime && +new Date(vals.startTime),
-          endTime: vals.endTime && +new Date(vals.endTime),
-          isOnlyUpateBase: 1,
-          id,
-        };
-        delete params.time;
-        this.updateBasePromotion(params);
-      }
-    });
-  };
 
   handleRemove = id => () => {
      Modal.confirm({
@@ -410,7 +379,12 @@ class List extends React.Component {
             visibleAct: false
           })}
         >
-          <Add data={this.state.promotionDetail} />
+          <Add data={this.state.promotionDetail} onOk={()=>{
+            this.setState({
+              visibleAct: false
+            });
+            this.getPromotionDetail();
+          }}/>
         </Modal>
       </>
     );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Select, DatePicker, Card, Button, message, Radio } from 'antd';
-import { setBasePromotion } from './api';
+import { setBasePromotion, updateBasePromotion } from './api';
 import { isFunction } from 'lodash';
 import UploadView from '../../components/upload'
 import activityType from '../../enum/activityType'
@@ -32,36 +32,41 @@ class Add extends React.Component {
 
   constructor(props) {
     super(props);
+    this.data = {
+      type : 1,
+      tagPosition: 0,
+      tagUrl: []
+    }
+    if(this.props.data) {
+      this.data = this.props.data;
+      this.data.startTime = moment(this.data.startTime);
+      this.data.endTime = moment(this.data.endTime);
+      this.data.tagUrl = initImgList(this.data.tagUrl);
+    }
     this.state = {
       loading: false, // 保存活动按钮
-      tagUrl: '',
+      tagUrl: this.data.tagUrl.length ?  this.data.tagUrl[0].url : '',
       tagImg: activityTagSImg,
-      tagWidth: 117,
-      place: ''
+      tagClass: 'img_sm',
+      place: this.data.tagPosition,
+      id: this.props.data ? this.props.data.id : 0
     }
   }
 
   componentDidMount() {
-    let data = {
-      type : 1
-    }
-    if(this.props.data) {
-      data = this.props.data;
-      data.startTime = moment(data.startTime);
-      data.endTime = moment(data.endTime);
-      data.tagUrl = initImgList(data.tagUrl);
-    }
-    this.props.form.setFieldsValue(data);
-    this.typeChange(data.type);
+
+    this.props.form.setFieldsValue(this.data);
+    this.typeChange(this.data.type);
   }
 
   setBasePromotion = (params, callback) => {
-    setBasePromotion(params).then((res) => {
+    if(this.state.id) params.id = this.state.id;
+    (params.id ? updateBasePromotion : setBasePromotion)(params).then((res) => {
       this.setState({
         loading: false
       })
       if (res) {
-        message.success('添加活动基础信息成功');
+        message.success('活动基础信息保存成功');
       }
       if (isFunction(callback)) {
         callback(res);
@@ -69,17 +74,13 @@ class Add extends React.Component {
     });
   };
 
-  handleSave = (callback, only) => {
+  handleSave = (callback) => {
     const {
       form: { validateFields },
+      onOk
     } = this.props;
     validateFields((err, vals) => {
       if (!err) {
-        if (only) {
-          this.setState({
-            loading: true
-          })
-        }
         const params = {
           ...vals,
           startTime: vals.time && +new Date(vals.time[0]),
@@ -91,6 +92,7 @@ class Add extends React.Component {
           if (isFunction(callback)) {
             id && callback(id);
           }
+          onOk();
         });
       }
     });
@@ -132,12 +134,12 @@ class Add extends React.Component {
     if (val == 1 || val == 5) {
       this.setState({
         tagImg: activityTagSImg,
-        tagWidth: 115
+        tagClass: 'img_sm'
       })
     } else {
       this.setState({
         tagImg: activityTagBImg,
-        tagWidth: 375
+        tagClass: 'img_bg'
       })
     }
   }
@@ -145,7 +147,9 @@ class Add extends React.Component {
     console.log(e)
   }
   tagPositionChange = (e) => {
-    console.log(e)
+    this.setState({
+      place: e.target.value
+    })
   }
   render() {
     const {
@@ -212,19 +216,13 @@ class Add extends React.Component {
             )}
           </Form.Item>
           <FormItem wrapperCol={{ offset: 9 }}>
-            <Button type="primary" onClick={this.handleSave.bind(this, this.handleReturn, true)} loading={this.state.loading}>
-              保存活动
-            </Button>
-            <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSaveNext}>
-              保存并添加商品
-            </Button>
+            <Button type="primary" onClick={this.handleSave} loading={this.state.loading}>保存</Button>
+            {!this.state.id && <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSaveNext}>保存并添加商品</Button>}
           </FormItem>
         </Form>
-        <div
-          className="activity-tag-preview"
-        >
-          <div className="activity-tag-preimgs" style={{ width: this.state.tagWidth }} >
-            {this.state.tagUrl && <img className={'tag' + this.state.place} src={this.state.tagUrl} />}
+        <div className="activity-tag-preview">
+          <div className={"activity-tag-preimgs " + this.state.tagClass} >
+            {this.state.tagUrl && <img className={'tag tag-p' + this.state.place} src={this.state.tagUrl} />}
             <img alt="example" className='main' src={this.state.tagImg} />
           </div>
           <div className="activity-tag-pretip">

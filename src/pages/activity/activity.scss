@@ -16,4 +16,34 @@
   .tag{
     position: absolute; 
   }
+  .tag-p5{
+    left: 0;
+    top: 0;
+  }
+  .tag-p10{
+    left: 0;
+    bottom: 0;
+  }
+  .tag-p15{
+    right: 0;
+    top: 0;
+  }
+  .tag-p20{
+    right: 0;
+    bottom: 0;
+  }
+}
+.activity-tag-preimgs.img_sm{
+  width: 115px;
+  .tag{
+    width: 50px;
+    height: 30px;
+  }
+}
+.activity-tag-preimgs.img_bg{
+  width: 350px;
+  .tag{
+    width: 85px;
+    height: 60px;
+  }
 }
