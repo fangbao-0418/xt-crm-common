@@ -51,23 +51,19 @@ class DealForm extends Component {
     }
     // 仅换货、退款换货
     else {
-      // 平台同意退货，待买家发货，20 处理中
-      if (refundStatus === 20) {
-        return null;
-      }
-      // 买家已发货，待平台确认
-      else {
-        return (
-          <>
-            <CustomerServiceReview checkVO={checkVO} refundStatus={refundStatus} />
-            <ReturnInformation checkVO={checkVO} />
-            {/* 退货退款 */}
-            {orderServerVO.refundType === '10' && <RefundInformation readOnly={false} />}
-            {/* 仅换货 */}
-            {orderServerVO.refundType === '30' && <DeliveryInformation readOnly={false} />}
-          </>
-        )
-      }
+      console.log('refundStatus~~~~~~~~~', refundStatus);
+      return (
+        <>
+          <CustomerServiceReview checkVO={checkVO} refundStatus={refundStatus} />
+          <ReturnInformation checkVO={checkVO} refundStatus={refundStatus} />
+          {refundStatus != 20 && (
+            <>
+              {/* 退货退款 */ orderServerVO.refundType === '10' && <RefundInformation readOnly={false} />}
+              {/* 仅换货 */ orderServerVO.refundType === '30' && <DeliveryInformation readOnly={false} />}
+            </>
+          )}
+        </>
+      )
     }
   }
 }
