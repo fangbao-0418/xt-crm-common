@@ -8,6 +8,8 @@ import { logColumns, logisticsInformationColumns } from './config';
 import moment from 'moment';
 import { connect } from '@/util/utils';
 import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
+import createType from '@/enum/createType';
+import memberType from '@/enum/memberType';
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
@@ -48,7 +50,7 @@ class Detail extends Component {
                   {orderServerVO.refundErrorMsg && <Col span={8}>退款失败原因：{orderServerVO.refundErrorMsg}</Col>}
                 </Row>
                 <Row>
-                  <Col span={8}>申请人类型：{refundType.getValue(orderServerVO.createType)}</Col>
+                  <Col span={8}>申请人类型：{createType.getValue(orderServerVO.createType + '')}</Col>
                 </Row>
                 <Row>
                   <Col>
@@ -74,7 +76,7 @@ class Detail extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>用户备注：{orderInfoVO.remark}</Col>
-                  <Col span={8}>会员等级：{orderInfoVO.orderMemberType}</Col>
+                  <Col span={8}>会员等级：{memberType.getValue(orderInfoVO.orderMemberType)}</Col>
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>支付方式：{orderInfoVO.platform}</Col>
