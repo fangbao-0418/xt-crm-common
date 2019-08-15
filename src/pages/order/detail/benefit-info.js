@@ -56,8 +56,6 @@ const BenefitInfo = ({
           if(res.success) {
             message.success('操作成功');
             refresh();
-          }else{
-            message.error(res.message);
           }
         });
       }
