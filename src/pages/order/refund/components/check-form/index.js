@@ -1,54 +1,30 @@
 import React, { Component } from 'react';
-import { Card, Form, Input, InputNumber, Button, Radio } from 'antd';
+import { Card, Form, Input, InputNumber, Button } from 'antd';
 import { formButtonLayout } from '@/config';
 import { withRouter } from 'react-router-dom';
 import refundType from '@/enum/refundType';
 import { XtSelect } from '@/components'
 import { connect } from '@/util/utils';
-import { formatMoney, joinFilterEmpty } from '@/pages/helper';
-
+import ReturnAddress from '../return-address';
+import { formatPrice } from '@/util/format';
+import { formatMoney } from '@/pages/helper';
+import returnShipping from '../return-shipping';
 @connect()
 @withRouter
 class CheckForm extends Component {
   state = {
-    radioKey: 1,
-    returnObj: {
-      returnContact: '',
-      returnPhone: '',
-      returnAddress: ''
-    }
-  }
-  hanleRadioChange = (event) => {
-    console.log(event.target.value)
-    this.setState({
-      radioKey: event.target.value
-    })
-  }
-  hangdleInputChange = (event) => {
-    const { name, value } = event.target;
-    const { returnObj } = this.state
-    returnObj[name] = value;
-    this.setState({
-      returnObj
-    })
+    returnAddress: {}
   }
   handleAuditOperate = (status) => {
     const { props } = this;
     const fieldsValue = props.form.getFieldsValue();
-    let returnObj;
     if (fieldsValue.refundAmount) {
       fieldsValue.refundAmount = fieldsValue.refundAmount * 100;
-    }
-    if (this.state.radioKey === 1) {
-      const { returnContact, returnPhone, returnAddress } = this.props.checkVO
-      returnObj = { returnContact, returnPhone, returnAddress }
-    } else {
-      returnObj = this.state.returnObj
     }
     props.dispatch['refund.model'].auditOperate({
       id: props.match.params.id,
       status,
-      ...returnObj,
+      ...this.state.returnAddress,
       ...fieldsValue
     })
   }
@@ -61,6 +37,9 @@ class CheckForm extends Component {
   async handleCloseOrder() {
     const { dispatch, match: { params } } = this.props;
     dispatch['refund.model'].closeOrder(params);
+  }
+  setReturnAddress = (returnAddress) => {
+    this.setState({ returnAddress })
   }
   render() {
     const { orderServerVO = {}, checkVO = {}, refundStatus } = this.props;
@@ -77,28 +56,22 @@ class CheckForm extends Component {
           </Form.Item>
           {refundTypeForm.refundType !== '30' && <Form.Item label="退款金额">
             {getFieldDecorator('refundAmount', {
-              initialValue: formatMoney(checkVO.refundAmount)
-            })(<InputNumber formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
+              initialValue: formatPrice(checkVO.refundAmount)
+            })(<InputNumber min={0.01} max={formatMoney(checkVO.refundAmount)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
           </Form.Item>}
+          {
+            checkVO.isRefundFreight === 1 && <Form.Item label="退运费">
+              {getFieldDecorator('isRefundFreight', {
+                initialValue: checkVO.isRefundFreight
+              })(returnShipping(checkVO))}
+            </Form.Item>
+          }
           <Form.Item label="说明">
             {getFieldDecorator('info', {
-            })(<Input.TextArea
-              placeholder=""
-              autosize={{ minRows: 2, maxRows: 6 }}
-            />)}
+            })(<Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
           </Form.Item>
-          {refundTypeForm.refundType !== '20' && <Form.Item label="退货地址">
-            <Radio.Group value={this.state.radioKey} onChange={this.hanleRadioChange}>
-              <Radio value={1}>{joinFilterEmpty([checkVO.returnContact, checkVO.returnPhone, checkVO.returnAddress]) || '暂无'}</Radio>
-              <Radio value={2}>
-                <Input.Group>
-                  <input placeholder="收货人姓名" name="returnContact" value={this.state.returnObj.returnContact} onChange={this.hangdleInputChange} />
-                  <input placeholder="收货人电话" type="tel" name="returnPhone" maxLength={11} value={this.state.returnObj.returnPhone} onChange={this.hangdleInputChange} />
-                  <input placeholder="收货人详细地址" name="returnAddress" value={this.state.returnObj.returnAddress} onChange={this.hangdleInputChange} />
-                </Input.Group>
-              </Radio>
-            </Radio.Group>
-          </Form.Item>}
+          {/* 退货退款、换货才有退货地址 refundType： 10 30*/}
+          {refundTypeForm.refundType !== '20' && <Form.Item label="退货地址"><ReturnAddress {...checkVO} setReturnAddress={this.setReturnAddress}/></Form.Item>}
           {
             refundStatus === 10 && <Form.Item
               wrapperCol={formButtonLayout}

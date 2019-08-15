@@ -15,10 +15,10 @@ const BuyerInfo = props => {
   return (
     <Card title="支付信息">
       <Row gutter={24}>
-        <Col className="gutter-row" span={6}>支付方式: {payTypeList[payType] || '未支付'}</Col>
-        <Col className="gutter-row" span={6}>支付时间：{orderInfo.payDate || ''}</Col>
-        <Col className="gutter-row" span={6}>交易流水号：{orderInfo.paymentNumber}</Col>
-        <Col className="gutter-row" span={6}>实付金额：￥{formatPrice(orderInfo.payMoney)}</Col>
+        <Col span={8}>支付方式: {payTypeList[payType] || '未支付'}</Col>
+        <Col span={8}>支付时间：{orderInfo.payDate || ''}</Col>
+        <Col span={8}>交易流水号：{orderInfo.paymentNumber}</Col>
+        <Col span={8}>实付金额：￥{formatPrice(orderInfo.payMoney)}</Col>
       </Row>
     </Card>
   );

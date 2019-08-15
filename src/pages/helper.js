@@ -7,6 +7,7 @@ export function formatDate(date, dateFormat = 'YYYY-MM-DD HH:mm:ss') {
 }
 
 export function formatMoney(money) {
+  if (!money) return 0;
   return money / 100;
 }
 

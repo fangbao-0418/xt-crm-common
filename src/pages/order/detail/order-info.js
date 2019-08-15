@@ -24,16 +24,18 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
   return (
     <Card title="订单信息">
       <Row gutter={24}>
-        <Col span={6}>订单编号：{orderCode}</Col>
-        <Col span={6}>创建时间：{formatDate(orderInfo.createTime)}</Col>
-        <Col span={6}>订单状态：{OrderStatusTextMap[orderStatus]}</Col>
-        <Col span={6}>买家名称：{contact}</Col>
+        <Col span={8}>订单编号：{orderCode}</Col>
+        <Col span={8}>创建时间：{formatDate(orderInfo.createTime)}</Col>
+        <Col span={8}>订单状态：{OrderStatusTextMap[orderStatus]}</Col>
+        <Col span={8}>买家名称：{contact}</Col>
+        <Col span={8}>联系电话：{phone}</Col>
+        <Col span={8}>订单来源：{platform}</Col>
       </Row>
-      <Row gutter={24}>
-        <Col span={6}>联系电话：{phone}</Col>
-        <Col span={6}>订单来源：{platform}</Col>
-        <Col span={6}>收货信息：{unionAddress(memberAddress)}，{memberAddress.consignee}，{memberAddress.phone}</Col>
-        <Col span={6}>买家备注：{remark}</Col>
+      <Row>
+        <Col span={8}>收货信息：{unionAddress(memberAddress)}，{memberAddress.consignee}，{memberAddress.phone}</Col>
+      </Row>
+      <Row>
+        <Col span={8}>买家备注：{remark}</Col>
       </Row>
     </Card>
   );

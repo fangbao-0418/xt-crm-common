@@ -23,7 +23,6 @@ class Detail extends Component {
 
   render() {
     const { orderInfoVO = {}, orderServerVO = {}, refundStatus, skuServerLogVO = [] } = this.props.data;
-    console.log(this.props.data)
     let current = calcCurrent(refundStatus)
     const status = refundStatus === 30 ? 'finish' : refundStatus === 40 ? 'error' : '';
     const title = refundStatus === 30 ? '完成' : refundStatus === 40 ? '关闭' : '完成';
