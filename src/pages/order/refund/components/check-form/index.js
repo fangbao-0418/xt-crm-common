@@ -61,9 +61,7 @@ class CheckForm extends Component {
           </Form.Item>}
           {
             checkVO.isRefundFreight === 1 && <Form.Item label="退运费">
-              {getFieldDecorator('isRefundFreight', {
-                initialValue: checkVO.isRefundFreight
-              })(returnShipping(checkVO))}
+              {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}
             </Form.Item>
           }
           <Form.Item label="说明">

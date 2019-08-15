@@ -28,7 +28,7 @@ const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, showMo
         <Col span={8}>分类： {storeType[childOrder.category]}</Col>
         <Col span={8}>供应商订单号：{childOrder.storeOrderId}</Col>
       </Row>
-      <Table columns={columns} dataSource={list} pagination={false} />
+      <Table rowKey={record => record.skuId} columns={columns} dataSource={list} pagination={false} />
       <Row>
         <Col span={2} style={{ minWidth: '7em' }}>客服备注：</Col>
         <Col span={22}>
