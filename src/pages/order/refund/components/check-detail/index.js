@@ -4,19 +4,21 @@ import ReturnInformation from '../return-information';
 import DeliveryInformation from '../delivery-information';
 import RefundInformation from '../refund-information';
 
-function CheckDetail({checkVO = {}, orderServerVO = {}, checkType}) {
-  // 仅退款
-  if (orderServerVO.refundType === '20') {
-    return <CustomerServiceReview checkVO={checkVO} orderServerVO={orderServerVO}/>
-  } else {
-    return (
-      <>
-        <CustomerServiceReview checkVO={checkVO} orderServerVO={orderServerVO}/>
-        <ReturnInformation checkVO={checkVO} />
-        {orderServerVO.refundType === '10' && <RefundInformation checkVO={checkVO} orderServerVO={orderServerVO} checkType={checkType} />}
-        {orderServerVO.refundType === '30' && <DeliveryInformation checkVO= {checkVO} checkType={checkType} refundType={orderServerVO.refundType} />}
-      </>
-    );
-  }
+function CheckDetail({ checkVO = {}, orderServerVO = {}, checkType }) {
+  return (
+    <>
+      <CustomerServiceReview checkVO={checkVO} orderServerVO={orderServerVO} />
+      {/* 退货退款、仅换货 */}
+      {
+        orderServerVO.refundType !== '20' && (
+          <>
+            <ReturnInformation checkVO={checkVO} />
+            {orderServerVO.refundType === '10' && <RefundInformation checkVO={checkVO} orderServerVO={orderServerVO} checkType={checkType} />}
+            {orderServerVO.refundType === '30' && <DeliveryInformation checkVO={checkVO} checkType={checkType} refundType={orderServerVO.refundType} />}
+          </>
+        )
+      }
+    </>
+  );
 }
 export default CheckDetail;

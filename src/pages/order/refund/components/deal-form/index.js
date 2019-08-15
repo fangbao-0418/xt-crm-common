@@ -10,7 +10,7 @@ import { connect } from "@/util/utils";
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
-@Form.create({'name': 'deal-form'})
+@Form.create({ 'name': 'deal-form' })
 class DealForm extends Component {
   // 重新退款
   handleAgainRefund = async () => {
@@ -25,9 +25,10 @@ class DealForm extends Component {
     dispatch['refund.model'].closeOrder({ ...params, ...fields });
   }
   render() {
-    const { checkVO = {}, form: {getFieldDecorator}, data: {refundStatus, orderServerVO = {}} } = this.props;
+    const { form: { getFieldDecorator }, data: { refundStatus, orderServerVO = {}, checkVO = {} } } = this.props;
     // 仅退款
     if (orderServerVO.refundType === '20') {
+      // 退款失败
       if (refundStatus === '21') {
         return (
           <Form>
@@ -47,17 +48,26 @@ class DealForm extends Component {
       } else {
         return null;
       }
-    } else {
-      return (
-        <>
-          <CustomerServiceReview checkVO={checkVO} refundStatus={refundStatus} />
-          <ReturnInformation checkVO={checkVO} />
-          {/* 退货退款 */}
-          {orderServerVO.refundType === '10' && <RefundInformation readOnly={false} />}
-          {/* 仅换货 */}
-          {orderServerVO.refundType === '30' && <DeliveryInformation readOnly={false} />}
-        </>
-      )
+    }
+    // 仅换货、退款换货
+    else {
+      // 平台同意退货，待买家发货，20 处理中
+      if (refundStatus === 20) {
+        return null;
+      }
+      // 买家已发货，待平台确认
+      else {
+        return (
+          <>
+            <CustomerServiceReview checkVO={checkVO} refundStatus={refundStatus} />
+            <ReturnInformation checkVO={checkVO} />
+            {/* 退货退款 */}
+            {orderServerVO.refundType === '10' && <RefundInformation readOnly={false} />}
+            {/* 仅换货 */}
+            {orderServerVO.refundType === '30' && <DeliveryInformation readOnly={false} />}
+          </>
+        )
+      }
     }
   }
 }

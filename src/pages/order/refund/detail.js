@@ -8,7 +8,6 @@ import { logColumns, logisticsInformationColumns } from './config';
 import moment from 'moment';
 import { connect } from '@/util/utils';
 import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
-
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
@@ -49,6 +48,9 @@ class Detail extends Component {
                   {orderServerVO.refundErrorMsg && <Col span={8}>退款失败原因：{orderServerVO.refundErrorMsg}</Col>}
                 </Row>
                 <Row>
+                  <Col span={8}>申请人类型：{refundType.getValue(orderServerVO.createType)}</Col>
+                </Row>
+                <Row>
                   <Col>
                     图片凭证：
                     <PicturesWall disabled={true} readOnly={true} imgUrl={orderServerVO.imgUrl} />
@@ -72,6 +74,7 @@ class Detail extends Component {
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>用户备注：{orderInfoVO.remark}</Col>
+                  <Col span={8}>会员等级：{orderInfoVO.orderMemberType}</Col>
                 </Row>
                 <Row gutter={24}>
                   <Col span={8}>支付方式：{orderInfoVO.platform}</Col>
@@ -84,7 +87,7 @@ class Detail extends Component {
                 </Row>
               </Card>
               {current === 0 && <CheckForm {...this.props.data} />}
-              {current === 1 && <DealForm />}
+              {current === 1 && <DealForm {...this.props.data} />}
               {current === 2 && <CheckDetail {...this.props.data} />}
             </Tabs.TabPane>
             <Tabs.TabPane tab="操作日志" key="2">

@@ -36,27 +36,28 @@ class DeliveryInformation extends Component {
       )
     }
     else {
-      return <Form {...formItemLayout}>
-        <Form.Item label="物流公司">
-          {getFieldDecorator('expressName', {})(<ExpressCompanySelect style={{ width: '100%' }} placeholder="请选择物流公司" />)}
-        </Form.Item>
-        <Form.Item label="物流单号">
-          {getFieldDecorator('expressCode', {})(<Input placeholder="请输入物流单号" />)}
-        </Form.Item>}
-              <Form.Item label="说明">
-          {getFieldDecorator('info', {
-          })(<Input.TextArea
-            placeholder=""
-            autosize={{ minRows: 2, maxRows: 6 }}
-          />)}
-        </Form.Item>
-        {refundStatus === 24 && (
-          < Form.Item wrapperCol={formButtonLayout} style={{ marginBottom: 0 }}>
-            <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
-            <Button type="danger ml20" onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
-          </Form.Item>
-        )}
-      </Form >
+      return (
+        <Card title="发货信息">
+          <Form {...formItemLayout}>
+            <Form.Item label="物流公司">
+              {getFieldDecorator('expressName', {})(<ExpressCompanySelect style={{ width: '100%' }} placeholder="请选择物流公司" />)}
+            </Form.Item>
+            <Form.Item label="物流单号">
+              {getFieldDecorator('expressCode', {})(<Input placeholder="请输入物流单号" />)}
+            </Form.Item>
+            <Form.Item label="说明">
+              {getFieldDecorator('info', {
+              })(<Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
+            </Form.Item>
+            {refundStatus === 24 && (
+              < Form.Item wrapperCol={formButtonLayout} style={{ marginBottom: 0 }}>
+                <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
+                <Button type="danger ml20" onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
+              </Form.Item>
+            )}
+          </Form>
+        </Card>
+      )
     }
   }
 }
