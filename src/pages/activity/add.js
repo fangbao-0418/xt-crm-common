@@ -4,7 +4,8 @@ import { setBasePromotion } from './api';
 import { isFunction } from 'lodash';
 import UploadView from '../../components/upload'
 import activityType from '../../enum/activityType'
-import activityTagImg from '../../assets/images/activity-tag-img.png'
+import activityTagBImg from '../../assets/images/activity-tag-bigimg.png'
+import activityTagSImg from '../../assets/images/activity-tag-smimg.jpg'
 import './activity.scss'
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -28,7 +29,10 @@ const replaceHttpUrl = imgUrl => {
 class Add extends React.Component {
   state = {
     loading: false, // 保存活动按钮
-    tagUrl: ''
+    tagUrl: '',
+    tagImg: activityTagSImg,
+    tagWidth: 117,
+    place: ''
   }
   setBasePromotion = (params, callback) => {
     setBasePromotion(params).then((res) => {
@@ -83,6 +87,26 @@ class Add extends React.Component {
     history.push('/activity/list');
   };
 
+  
+  typeChange = (val) => {
+    if(val == 1 || val == 5 ) {
+      this.setState({
+        tagImg: activityTagSImg,
+        tagWidth: 115
+      })
+    } else {
+      this.setState({
+        tagImg: activityTagBImg,
+        tagWidth: 375
+      })
+    }
+  }
+  tagUrlChange = (e) => {
+    console.log(e)
+  }
+  tagPositionChange = (e) => {
+    console.log(e)
+  }
   render() {
     const {
       form: { getFieldDecorator },
@@ -94,7 +118,7 @@ class Add extends React.Component {
             {getFieldDecorator('type', {
               initialValue: 1,
             })(
-              <Select placeholder="请选择活动类型" style={{ width: 100 }}>
+              <Select placeholder="请选择活动类型" style={{ width: 120 }} onChange={this.typeChange}>
                 {activityType.getArray().map((val, i) => <Option value={val.key} key={i}>{val.val}</Option>)}
               </Select>,
             )}
@@ -123,11 +147,11 @@ class Add extends React.Component {
             {getFieldDecorator('sort')(<Input placeholder="请设置活动排序" />)}
           </FormItem>
           <FormItem label="活动标签">
-            {getFieldDecorator('tagUrl')(<UploadView placeholder="上传活动标签" listType="picture-card" listNum={1} size={0.2} />)}
+            {getFieldDecorator('tagUrl')(<UploadView  onChange={this.tagUrlChange} placeholder="上传活动标签" listType="picture-card" listNum={1} size={0.2} />)}
           </FormItem>
           <Form.Item label="标签位置">
             {getFieldDecorator('tagPosition')(
-              <Radio.Group>
+              <Radio.Group onChange={this.tagPositionChange}>
                 <Radio value="5">左上角</Radio>
                 <Radio value="10">左下角</Radio>
                 <Radio value="15">右上角</Radio>
@@ -144,17 +168,17 @@ class Add extends React.Component {
             </Button>
           </FormItem>
         </Form>
-        <Card
-          hoverable
+        <div
           className="activity-tag-preview"
-          style={{ width: 375 }}
-          cover={<div >
-            {this.state.tagUrl && <img src={this.state.tagUrl} />}
-            <img alt="example" src={activityTagImg} />
-          </div>}
-        >
-          <p>角标实际填充内容尺寸， 宽≤170px ，高≤120px 。当角标为 吸顶类型时，角标填充内容需离侧 边的距离为≥10px</p>
-        </Card>
+        > 
+          <div className="activity-tag-preimgs" style={{ width: this.state.tagWidth }} >
+            {this.state.tagUrl && <img className={'tag' + this.state.place} src={this.state.tagUrl} />}
+            <img alt="example" className='main' src={this.state.tagImg} />
+          </div>
+          <div className="activity-tag-pretip">
+            <span style={{fontWeight: 'bold'}}>注意事项：</span>角标实际填充内容尺寸， 宽≤170px ，高≤120px 。当角标为 吸顶类型时，角标填充内容需离侧 边的距离为≥10px, 保存格式为png格式
+          </div>
+        </div>
       </Card>
     );
   }
