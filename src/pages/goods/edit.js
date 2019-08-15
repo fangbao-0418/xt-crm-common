@@ -188,8 +188,8 @@ class GoodsEdit extends React.Component {
         weight: res.weight,
         withShippingFree: res.withShippingFree,
         coverUrl: initImgList(res.coverUrl),
-        videoCoverUrl: initImgList(res.videoCoverUrl),
-        videoUrl: initImgList(res.videoUrl),
+        // videoCoverUrl: initImgList(res.videoCoverUrl),
+        // videoUrl: initImgList(res.videoUrl),
         bannerUrl: initImgList(res.bannerUrl),
         listImage,
         productImage,
@@ -378,8 +378,8 @@ class GoodsEdit extends React.Component {
           property2: speSelect[1] && speSelect[1].title,
           skuAddList,
           coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].durl),
-          videoCoverUrl: vals.videoCoverUrl && vals.videoCoverUrl[0] && replaceHttpUrl(vals.videoCoverUrl[0].durl),
-          videoUrl: vals.videoUrl && vals.videoUrl[0] && replaceHttpUrl(vals.videoUrl[0].durl),
+          // videoCoverUrl: vals.videoCoverUrl && vals.videoCoverUrl[0] && replaceHttpUrl(vals.videoCoverUrl[0].durl),
+          // videoUrl: vals.videoUrl && vals.videoUrl[0] && replaceHttpUrl(vals.videoUrl[0].durl),
           listImage: listImage.join(','),
           productImage: productImage.join(','),
           ...property,
@@ -661,12 +661,12 @@ class GoodsEdit extends React.Component {
           <FormItem label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
           </FormItem>
-          <FormItem label="商品视频封面">
+          {/* <FormItem label="商品视频封面">
             {getFieldDecorator('videoCoverUrl')(<UploadView placeholder="上传视频封面" listType="picture-card" listNum={1} size={0.5} />)}
           </FormItem>
           <FormItem label="商品视频">
             {getFieldDecorator('videoUrl')(<UploadView placeholder="上传视频" fileType='video' listType="picture-card" listNum={1} size={5} />)}
-          </FormItem>
+          </FormItem> */}
           <FormItem label="商品主图" required={true}>
             {getFieldDecorator('coverUrl', {
               rules: [
