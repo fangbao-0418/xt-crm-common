@@ -46,7 +46,7 @@ class UploadView extends Component {
 
   initFileList(fileList) {
     const { fileType } = this.props;
-    return fileList.map(val=>{
+    return fileList.map(val => {
       val._url = val.url
       if (fileType == 'video') {
         val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
@@ -55,8 +55,13 @@ class UploadView extends Component {
     });
   }
 
-  beforeUpload = size => (file, fileList) => {
+  beforeUpload = (file, fileList) => {
+    const { fileType, size } = this.props;
     const isLtM = file.size / 1024 / 1024 < size;
+    if (fileType && file.type.indexOf(fileType) < 0) {
+      message.error(`请上传正确${fileType}格式文件`);
+      return false;
+    }
     if (!isLtM) {
       message.error(`请上传小于${size * 1000}kB的文件`);
       return false;
@@ -67,7 +72,7 @@ class UploadView extends Component {
 
   customRequest(e) {
     const file = e.file;
-    
+
     ossUpload(file).then(urlList => {
       const { fileList } = this.state;
       const { onChange } = this.props;
@@ -110,7 +115,7 @@ class UploadView extends Component {
           fileList={fileList}
           showUploadList={showUploadList}
           // onPreview={this.handlePreview}
-          beforeUpload={this.beforeUpload(size)}
+          beforeUpload={this.beforeUpload}
           onRemove={this.handleRemove}
           customRequest={(e) => this.customRequest(e)}
           onPreview={this.onPreview}
@@ -121,10 +126,10 @@ class UploadView extends Component {
           title="预览"
           style={{ textAlign: 'center' }}
           visible={this.state.visible}
-          onOk={() => this.setState({visible:false})}
-          onCancel={() => this.setState({visible:false})}
+          onOk={() => this.setState({ visible: false })}
+          onCancel={() => this.setState({ visible: false })}
         >
-          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video>: <img src={this.state.url} />}
+          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video> : <img src={this.state.url} />}
         </Modal>
       </>
     );

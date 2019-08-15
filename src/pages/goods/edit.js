@@ -20,7 +20,7 @@ import styles from './edit.module.scss';
 import descartes from '../../util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api';
 // import BraftEditor from 'braft-editor';
-import { getAllId, parseQuery, gotoPage } from '@/util/utils';
+import { getAllId, parseQuery, gotoPage, initImgList } from '@/util/utils';
 
 const formatMoneyBeforeRequest = price => {
   if (isNil(price)) {
@@ -38,23 +38,7 @@ const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
 
-const initImgList = imgUrlWap => {
-  if (imgUrlWap) {
-    if (imgUrlWap.indexOf('http') !== 0) {
-      imgUrlWap = 'https://assets.hzxituan.com/' + imgUrlWap;
-    }
-    return [
-      {
-        uid: `${-parseInt(Math.random() * 1000)}`,
-        url: imgUrlWap,
-        status: 'done',
-        thumbUrl: imgUrlWap,
-        name: imgUrlWap,
-      },
-    ];
-  }
-  return [];
-};
+
 
 function treeToarr(list = [], arr) {
   const results = arr || [];

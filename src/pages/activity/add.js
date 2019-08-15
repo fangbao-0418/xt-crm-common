@@ -4,8 +4,10 @@ import { setBasePromotion } from './api';
 import { isFunction } from 'lodash';
 import UploadView from '../../components/upload'
 import activityType from '../../enum/activityType'
+import moment from 'moment';
 import activityTagBImg from '../../assets/images/activity-tag-bigimg.png'
 import activityTagSImg from '../../assets/images/activity-tag-smimg.jpg'
+import { initImgList } from '@/util/utils';
 import './activity.scss'
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -27,13 +29,32 @@ const replaceHttpUrl = imgUrl => {
 }
 
 class Add extends React.Component {
-  state = {
-    loading: false, // 保存活动按钮
-    tagUrl: '',
-    tagImg: activityTagSImg,
-    tagWidth: 117,
-    place: ''
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false, // 保存活动按钮
+      tagUrl: '',
+      tagImg: activityTagSImg,
+      tagWidth: 117,
+      place: ''
+    }
   }
+
+  componentDidMount() {
+    let data = {
+      type : 1
+    }
+    if(this.props.data) {
+      data = this.props.data;
+      data.startTime = moment(data.startTime);
+      data.endTime = moment(data.endTime);
+      data.tagUrl = initImgList(data.tagUrl);
+    }
+    this.props.form.setFieldsValue(data);
+    this.typeChange(data.type);
+  }
+
   setBasePromotion = (params, callback) => {
     setBasePromotion(params).then((res) => {
       this.setState({
@@ -87,9 +108,28 @@ class Add extends React.Component {
     history.push('/activity/list');
   };
 
+  disabledStartDate = startTime => {
+    const { form } = this.props;
+    const fieldsValue = form.getFieldsValue();
+    const endTime = fieldsValue.endTime;
+    if (!startTime || !endTime) {
+      return false;
+    }
+    return startTime.valueOf() > endTime.valueOf();
+  };
+
+  disabledEndDate = endTime => {
+    const { form } = this.props;
+    const fieldsValue = form.getFieldsValue();
+    const startTime = fieldsValue.startTime;
+    if (!endTime || !startTime) {
+      return false;
+    }
+    return endTime.valueOf() <= startTime.valueOf();
+  };
   
   typeChange = (val) => {
-    if(val == 1 || val == 5 ) {
+    if (val == 1 || val == 5) {
       this.setState({
         tagImg: activityTagSImg,
         tagWidth: 115
@@ -116,7 +156,6 @@ class Add extends React.Component {
         <Form {...formLayout}>
           <FormItem label="活动类型">
             {getFieldDecorator('type', {
-              initialValue: 1,
             })(
               <Select placeholder="请选择活动类型" style={{ width: 120 }} onChange={this.typeChange}>
                 {activityType.getArray().map((val, i) => <Option value={val.key} key={i}>{val.val}</Option>)}
@@ -133,29 +172,42 @@ class Add extends React.Component {
               ],
             })(<Input placeholder="请输入活动名称" />)}
           </FormItem>
-          <FormItem label="活动时间">
-            {getFieldDecorator('time', {
+          <FormItem label="开始时间">
+            {getFieldDecorator('startTime', {
               rules: [
                 {
                   required: true,
-                  message: '请选择正确的活动时间',
+                  message: '请选择正确的活动开始时间',
                 },
               ],
-            })(<RangePicker format="YYYY-MM-DD HH:mm:ss" showTime />)}
+              })(<DatePicker  format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledStartDate}/>)}
+          </FormItem>
+          <FormItem label="结束时间">
+            {getFieldDecorator('endTime', {
+              rules: [
+                {
+                  required: true,
+                  message: '请选择正确的活动结束时间',
+                },
+              ],
+              })(<DatePicker  format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledEndDate}/>)}
           </FormItem>
           <FormItem label="活动排序">
-            {getFieldDecorator('sort')(<Input placeholder="请设置活动排序" />)}
+            {getFieldDecorator('sort',{
+            })(<Input placeholder="请设置活动排序" />)}
           </FormItem>
           <FormItem label="活动标签">
-            {getFieldDecorator('tagUrl')(<UploadView  onChange={this.tagUrlChange} placeholder="上传活动标签" listType="picture-card" listNum={1} size={0.2} />)}
+            {getFieldDecorator('tagUrl', {
+            })(<UploadView fileType='png' placeholder="上传活动标签" listType="picture-card" listNum={1} size={0.015} />)}
           </FormItem>
           <Form.Item label="标签位置">
-            {getFieldDecorator('tagPosition')(
+            {getFieldDecorator('tagPosition',{
+            })(
               <Radio.Group onChange={this.tagPositionChange}>
-                <Radio value="5">左上角</Radio>
-                <Radio value="10">左下角</Radio>
-                <Radio value="15">右上角</Radio>
-                <Radio value="20">右下角</Radio>
+                <Radio value={5}>左上角</Radio>
+                <Radio value={10}>左下角</Radio>
+                <Radio value={15}>右上角</Radio>
+                <Radio value={20}>右下角</Radio>
               </Radio.Group>
             )}
           </Form.Item>
@@ -170,13 +222,13 @@ class Add extends React.Component {
         </Form>
         <div
           className="activity-tag-preview"
-        > 
+        >
           <div className="activity-tag-preimgs" style={{ width: this.state.tagWidth }} >
             {this.state.tagUrl && <img className={'tag' + this.state.place} src={this.state.tagUrl} />}
             <img alt="example" className='main' src={this.state.tagImg} />
           </div>
           <div className="activity-tag-pretip">
-            <span style={{fontWeight: 'bold'}}>注意事项：</span>角标实际填充内容尺寸， 宽≤170px ，高≤120px 。当角标为 吸顶类型时，角标填充内容需离侧 边的距离为≥10px, 保存格式为png格式
+            <span style={{ fontWeight: 'bold' }}>注意事项：</span>角标实际填充内容尺寸， 宽≤170px ，高≤120px 。当角标为 吸顶类型时，角标填充内容需离侧 边的距离为≥10px, 保存格式为png格式
           </div>
         </div>
       </Card>

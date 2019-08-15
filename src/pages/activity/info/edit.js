@@ -268,7 +268,6 @@ class List extends React.Component {
       promotionDetail: { promotionSpuList, type, title, startTime, endTime, sort },
       isEidt,
     } = this.state;
-
     const rowSelection = {
       selectedRowKeys,
       onChange: this.handlenChanageSelectio,
@@ -411,7 +410,7 @@ class List extends React.Component {
             visibleAct: false
           })}
         >
-          <Add />
+          <Add data={this.state.promotionDetail} />
         </Modal>
       </>
     );
