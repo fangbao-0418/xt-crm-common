@@ -8,12 +8,12 @@ import {
   setPromotionOperatorSpuList,
   getPromotionDetail,
   setPromotionAddSpu,
-  updateBasePromotion,
   delSpuPromotion,
   refreshPromtion
 } from '../api';
 import { size, filter } from 'lodash';
 import { parseQuery, gotoPage } from '@/util/utils';
+import Add from '../add';
 import { formatMoneyWithSign } from '../../helper';
 import moment from 'moment';
 import Image from '../../../components/Image';
@@ -25,6 +25,7 @@ class List extends React.Component {
   state = {
     goodsList: '',
     visible: false,
+    visibleAct: false,
     selectedRowKeys: [],
     selectedRows: [],
     promotionDetail: {},
@@ -108,14 +109,6 @@ class List extends React.Component {
     });
   };
 
-  updateBasePromotion = params => {
-    updateBasePromotion(params).then((res) => {
-      if (res) {
-        message.success('更新活动基础信息成功');
-        this.setState({ isEidt: false });
-      }
-    });
-  };
 
   handleSearchModal = e => {
     this.getProductList({ productName: e, page: 1 });
@@ -218,28 +211,6 @@ class List extends React.Component {
       }
     });
   }
-  handleSaveBaseInfo = () => {
-    const {
-      form,
-      match: {
-        params: { id },
-      },
-    } = this.props;
-    form.validateFields(['title', 'sort', 'startTime', 'endTime'], (err, vals) => {
-      if (!err) {
-        debugger;
-        const params = {
-          ...vals,
-          startTime: vals.startTime && +new Date(vals.startTime),
-          endTime: vals.endTime && +new Date(vals.endTime),
-          isOnlyUpateBase: 1,
-          id,
-        };
-        delete params.time;
-        this.updateBasePromotion(params);
-      }
-    });
-  };
 
   handleRemove = id => () => {
      Modal.confirm({
@@ -266,7 +237,6 @@ class List extends React.Component {
       promotionDetail: { promotionSpuList, type, title, startTime, endTime, sort },
       isEidt,
     } = this.state;
-
     const rowSelection = {
       selectedRowKeys,
       onChange: this.handlenChanageSelectio,
@@ -298,17 +268,7 @@ class List extends React.Component {
         <Card
           style={{ marginBottom: 10 }}
           title="活动信息"
-          extra={
-            !isEidt ? (
-              <a href="javacript:void(0);" onClick={() => this.setState({ isEidt: true })}>
-                编辑
-              </a>
-            ) : (
-              <a href="javacript:void(0);" onClick={this.handleSaveBaseInfo}>
-                保存编辑
-              </a>
-            )
-          }
+          extra={<a href="javacript:void(0);" onClick={() => this.setState({ visibleAct: true })}>编辑</a>}
         >
           <Form layout="inline">
             <FormItem layout="inline" label="活动类型">
@@ -409,6 +369,22 @@ class List extends React.Component {
             onChange={this.handleTabChangeModal}
             rowKey={record => record.id}
           />
+        </Modal>
+        <Modal
+          title="活动编辑"
+          visible={this.state.visibleAct}
+          width={1000}
+          footer={null}
+          onCancel={()=>this.setState({
+            visibleAct: false
+          })}
+        >
+          <Add history={this.props.history} data={this.state.promotionDetail} onOk={()=>{
+            this.setState({
+              visibleAct: false
+            });
+            this.getPromotionDetail();
+          }}/>
         </Modal>
       </>
     );
