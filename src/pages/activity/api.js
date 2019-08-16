@@ -54,5 +54,5 @@ export function refreshPromtion(promotionId) {
 
 // 查询优惠券列表
 export function getCouponList() {
-  return get('/')
+  return get('/api/coupon/list')
 }

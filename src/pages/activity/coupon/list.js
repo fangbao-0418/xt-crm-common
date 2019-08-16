@@ -47,10 +47,10 @@ const columns = [
 
 function CouponList({ form: { getFieldDecorator } }) {
   console.log('getFieldDecorator=>', getFieldDecorator)
-  const [data, setData] = useState({list: []})
+  const [data, setData] = useState({ list: [] })
   useEffect(() => {
     const fetchData = async () => {
-
+      
     }
     fetchData();
   }, [])
@@ -61,8 +61,11 @@ function CouponList({ form: { getFieldDecorator } }) {
           <Form.Item label="优惠券编号">
             {getFieldDecorator('couponCode', {})(<Input placeholder="请输入" />)}
           </Form.Item>
+          <Form.Item label="优惠券名称">
+            {getFieldDecorator('name', {})(<Input placeholder="请输入" />)}
+          </Form.Item>
           <Form.Item label="状态">
-            {getFieldDecorator('couponCode', {})(<XtSelect style={{ width: '174px' }} placeholder="请输入" />)}
+            {getFieldDecorator('receiveStatus', {})(<XtSelect style={{ width: '174px' }} placeholder="请输入" />)}
           </Form.Item>
           <Form.Item>
             <Button type="primary">查询</Button>
