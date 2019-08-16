@@ -47,9 +47,12 @@ const columns = [
 
 function CouponList({ form: { getFieldDecorator } }) {
   console.log('getFieldDecorator=>', getFieldDecorator)
-  const [list, setList] = useState([])
+  const [data, setData] = useState({list: []})
   useEffect(() => {
-    
+    const fetchData = async () => {
+
+    }
+    fetchData();
   })
   return (
     <>
@@ -71,7 +74,7 @@ function CouponList({ form: { getFieldDecorator } }) {
           <Button type="primary" icon="plus">新增优惠券</Button>
           <Button icon="plus">批量发送记录</Button>
         </Row>
-        <Table className="mt15" dataSource={list} columns={columns} />
+        <Table className="mt15" dataSource={data.list} columns={columns} />
       </Card>
     </>
   )

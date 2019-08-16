@@ -51,3 +51,8 @@ export function delSpuPromotion(data) {
 export function refreshPromtion(promotionId) {
   return get('/promotion/refreshPromtion', { promotionId })
 }
+
+// 查询优惠券列表
+export function getCouponList() {
+  return get('/')
+}
