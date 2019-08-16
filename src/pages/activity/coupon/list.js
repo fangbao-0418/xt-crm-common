@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Row, Card, Table, Button, Input } from 'antd';
 import XtSelect from '@/components/xt-select';
 const columns = [
@@ -48,6 +48,9 @@ const columns = [
 function CouponList({ form: { getFieldDecorator } }) {
   console.log('getFieldDecorator=>', getFieldDecorator)
   const [list, setList] = useState([])
+  useEffect(() => {
+    
+  })
   return (
     <>
       <Card>
