@@ -85,7 +85,7 @@ class Add extends React.Component {
           ...vals,
           startTime: +new Date(vals.startTime),
           endTime: +new Date(vals.endTime),
-          tagUrl: vals.tagUrl && vals.tagUrl[0] && replaceHttpUrl(vals.tagUrl[0].url)
+          tagUrl: vals.tagUrl && vals.tagUrl[0] ? replaceHttpUrl(vals.tagUrl[0].url) : ''
         };
         delete params.time;
         this.setBasePromotion(params, id => {
