@@ -1,15 +1,17 @@
 import React, { Component } from "react";
-import { Form, Button, Input } from 'antd';
+import { Card, Form, Button, Input } from 'antd';
+import { withRouter } from 'react-router-dom';
 import CustomerServiceReview from '../customer-service-review';
 import ReturnInformation from '../return-information';
 import DeliveryInformation from '../delivery-information';
 import RefundInformation from '../refund-information';
-import { formButtonLayout } from '@/config';
+import { formItemLayout, formButtonLayout } from '@/config';
 import { connect } from "@/util/utils";
 
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
+@withRouter
 @Form.create({ 'name': 'deal-form' })
 class DealForm extends Component {
   // 重新退款
@@ -29,21 +31,23 @@ class DealForm extends Component {
     // 仅退款
     if (orderServerVO.refundType === '20') {
       // 退款失败
-      if (refundStatus === '21') {
+      if (refundStatus == 21) {
         return (
-          <Form>
-            <Form.Item label="说明">
-              {getFieldDecorator('info', {
-              })(<Input.TextArea
-                placeholder=""
-                autosize={{ minRows: 2, maxRows: 6 }}
-              />)}
-            </Form.Item>
-            <Form.Item wrapperCol={formButtonLayout}>
-              <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
-              <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>关闭订单</Button>
-            </Form.Item>
-          </Form>
+          <Card title="退款信息">
+            <Form {...formItemLayout}>
+              <Form.Item label="说明">
+                {getFieldDecorator('info', {
+                })(<Input.TextArea
+                  placeholder=""
+                  autosize={{ minRows: 2, maxRows: 6 }}
+                />)}
+              </Form.Item>
+              <Form.Item wrapperCol={formButtonLayout}>
+                <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
+                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>关闭订单</Button>
+              </Form.Item>
+            </Form>
+          </Card>
         )
       } else {
         return null;

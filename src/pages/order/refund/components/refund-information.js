@@ -63,7 +63,7 @@ class RefundInformation extends Component {
                   <Form.Item label="退款金额">
                     {getFieldDecorator('refundAmount', {
                       initialValue: formatMoney(checkVO.refundAmount)
-                    })(<InputNumber min={0.01} max={formatMoney(checkVO.refundAmount)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
+                    })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
                   </Form.Item>
                   {checkVO.isRefundFreight === 1 && <Form.Item label="退运费">
                     {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}

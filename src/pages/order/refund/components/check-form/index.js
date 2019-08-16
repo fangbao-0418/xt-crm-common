@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Card, Form, Input, InputNumber, Button } from 'antd';
-import { formButtonLayout } from '@/config';
+import { formItemLayout, formButtonLayout } from '@/config';
 import { withRouter } from 'react-router-dom';
 import refundType from '@/enum/refundType';
 import { XtSelect } from '@/components'
@@ -13,7 +13,8 @@ import returnShipping from '../return-shipping';
 @withRouter
 class CheckForm extends Component {
   state = {
-    returnAddress: {}
+    returnAddress: {},
+    refundType: ''
   }
   handleAuditOperate = (status) => {
     const { props } = this;
@@ -41,23 +42,25 @@ class CheckForm extends Component {
   setReturnAddress = (returnAddress) => {
     this.setState({ returnAddress })
   }
+  handleChange = (val) => {
+    this.setState({refundType: val})
+  }
   render() {
     const { orderServerVO = {}, checkVO = {}, refundStatus } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const refundTypeForm = this.props.form.getFieldsValue(['refundType']);
-    refundTypeForm.refundType = refundTypeForm.refundType || orderServerVO.refundType;
+    const localRefundType = this.state.refundType || orderServerVO.refundType;
     return (
       <Card title="客服审核">
-        <Form labelCol={{ span: 5 }} wrapperCol={{ span: 12 }} onSubmit={this.handleSubmit}>
+        <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Form.Item label="售后类型">
             {getFieldDecorator('refundType', {
               initialValue: orderServerVO.refundType
-            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" />)}
+            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleChange}/>)}
           </Form.Item>
-          {refundTypeForm.refundType !== '30' && <Form.Item label="退款金额">
+          {localRefundType !== '30' && <Form.Item label="退款金额">
             {getFieldDecorator('refundAmount', {
               initialValue: formatPrice(checkVO.refundAmount)
-            })(<InputNumber min={0.01} max={formatMoney(checkVO.refundAmount)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
+            })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
           </Form.Item>}
           {
             checkVO.isRefundFreight === 1 && <Form.Item label="退运费">
@@ -69,7 +72,7 @@ class CheckForm extends Component {
             })(<Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
           </Form.Item>
           {/* 退货退款、换货才有退货地址 refundType： 10 30*/}
-          {refundTypeForm.refundType !== '20' && <Form.Item label="退货地址"><ReturnAddress {...checkVO} setReturnAddress={this.setReturnAddress}/></Form.Item>}
+          {localRefundType !== '20' && <Form.Item label="退货地址"><ReturnAddress {...checkVO} setReturnAddress={this.setReturnAddress}/></Form.Item>}
           {
             refundStatus === 10 && <Form.Item
               wrapperCol={formButtonLayout}
@@ -96,4 +99,4 @@ class CheckForm extends Component {
   }
 }
 
-export default Form.create({ name: 'check-form' })(CheckForm);
+export default Form.create()(CheckForm);
