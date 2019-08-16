@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Switch  } from 'antd';
+import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox  } from 'antd';
 import UploadView from '../../components/upload';
 import {
   map,
@@ -20,7 +20,7 @@ import styles from './edit.module.scss';
 import descartes from '../../util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api';
 // import BraftEditor from 'braft-editor';
-import { getAllId, parseQuery, gotoPage } from '@/util/utils';
+import { getAllId, parseQuery, gotoPage, initImgList } from '@/util/utils';
 
 const formatMoneyBeforeRequest = price => {
   if (isNil(price)) {
@@ -38,23 +38,7 @@ const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
 
-const initImgList = imgUrlWap => {
-  if (imgUrlWap) {
-    if (imgUrlWap.indexOf('http') !== 0) {
-      imgUrlWap = 'https://assets.hzxituan.com/' + imgUrlWap;
-    }
-    return [
-      {
-        uid: `${-parseInt(Math.random() * 1000)}`,
-        url: imgUrlWap,
-        status: 'done',
-        thumbUrl: imgUrlWap,
-        name: imgUrlWap,
-      },
-    ];
-  }
-  return [];
-};
+
 
 function treeToarr(list = [], arr) {
   const results = arr || [];
@@ -204,6 +188,8 @@ class GoodsEdit extends React.Component {
         weight: res.weight,
         withShippingFree: res.withShippingFree,
         coverUrl: initImgList(res.coverUrl),
+        // videoCoverUrl: initImgList(res.videoCoverUrl),
+        // videoUrl: initImgList(res.videoUrl),
         bannerUrl: initImgList(res.bannerUrl),
         listImage,
         productImage,
@@ -391,7 +377,9 @@ class GoodsEdit extends React.Component {
           property1: speSelect[0] && speSelect[0].title,
           property2: speSelect[1] && speSelect[1].title,
           skuAddList,
-          coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].url),
+          coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].durl),
+          // videoCoverUrl: vals.videoCoverUrl && vals.videoCoverUrl[0] && replaceHttpUrl(vals.videoCoverUrl[0].durl),
+          // videoUrl: vals.videoUrl && vals.videoUrl[0] && replaceHttpUrl(vals.videoUrl[0].durl),
           listImage: listImage.join(','),
           productImage: productImage.join(','),
           ...property,
@@ -643,7 +631,7 @@ class GoodsEdit extends React.Component {
                   required: true,
                   message: '请输入商品简介',
                 },
-              ],
+              ],  
             })(<Input placeholder="请输入商品简介" />)}
           </FormItem>
           <FormItem label="供货商">
@@ -661,7 +649,7 @@ class GoodsEdit extends React.Component {
                 filterOption={(inputValue, option) =>{
                   return option.props.children.indexOf(inputValue) > -1;
                 }}
-              >
+              > 
                 {map(supplier, item => (
                   <Option value={item.id} key={item.id}>
                     {item.name}
@@ -673,6 +661,12 @@ class GoodsEdit extends React.Component {
           <FormItem label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
           </FormItem>
+          {/* <FormItem label="商品视频封面">
+            {getFieldDecorator('videoCoverUrl')(<UploadView placeholder="上传视频封面" listType="picture-card" listNum={1} size={0.5} />)}
+          </FormItem>
+          <FormItem label="商品视频">
+            {getFieldDecorator('videoUrl')(<UploadView placeholder="上传视频" fileType='video' listType="picture-card" listNum={1} size={5} />)}
+          </FormItem> */}
           <FormItem label="商品主图" required={true}>
             {getFieldDecorator('coverUrl', {
               rules: [

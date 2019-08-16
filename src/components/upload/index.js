@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Upload, Icon, message } from 'antd';
+import { Upload, Icon, message, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import { isFunction, filter } from 'lodash';
 import { getStsPolicy } from './api';
@@ -30,35 +30,56 @@ class UploadView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fileList: props.value || [],
+      fileList: this.initFileList(props.value || []),
+      visible: false,
+      url: ''
     };
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.value !== this.props.value) {
       this.setState({
-        fileList: this.props.value,
+        fileList: this.initFileList(this.props.value),
       });
     }
   }
 
-  beforeUpload = size => (file, fileList) => {
+  initFileList(fileList) {
+    const { fileType } = this.props;
+    return fileList.map(val => {
+      val.durl = val.url
+      if (fileType == 'video') {
+        val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+        val.thumbUrl = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+      }
+      return val;
+    });
+  }
+
+  beforeUpload = (file, fileList) => {
+    const { fileType, size } = this.props;
     const isLtM = file.size / 1024 / 1024 < size;
+    if (fileType && file.type.indexOf(fileType) < 0) {
+      message.error(`请上传正确${fileType}格式文件`);
+      return false;
+    }
     if (!isLtM) {
-      message.error(`请上传小于${size*1000}kB的文件`);
+      message.error(`请上传小于${size * 1000}kB的文件`);
       return false;
     }
     return true;
   };
 
 
-  customRequest = e => {
+  customRequest(e) {
     const file = e.file;
+
     ossUpload(file).then(urlList => {
       const { fileList } = this.state;
       const { onChange } = this.props;
       file.url = urlList && urlList[0];
-      fileList.push(file)
+      file.durl = file.url;
+      fileList.push(file);
       this.setState({
         fileList: fileList,
       });
@@ -66,38 +87,55 @@ class UploadView extends Component {
     });
   }
   handleRemove = e => {
-    console.log(e)
     const { fileList } = this.state;
-    this.setState({ fileList: filter(fileList, item => item.uid !== e.uid) });
+    const { onChange } = this.props;
+    const newFileList = filter(fileList, item => item.uid !== e.uid);
+    this.setState({ fileList: newFileList });
+    isFunction(onChange) && onChange(newFileList);
+  };
+  onPreview = file => {
+    this.setState({
+      url: file.durl,
+      visible: true,
+    })
   };
   render() {
     const {
       placeholder,
       listType,
       listNum = 1,
-      onChange,
       size = 10,
       showUploadList,
       children,
-      // value,
     } = this.props;
     const { fileList } = this.state;
     return (
-      <Upload
-        listType={listType}
-        fileList={fileList}
-        showUploadList={showUploadList}
-        // onPreview={this.handlePreview}
-        beforeUpload={this.beforeUpload(size)}
-        onRemove={this.handleRemove}
-        customRequest={this.customRequest}
-      >
-        {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
-      </Upload>
+      <>
+        <Upload
+          listType={listType}
+          fileList={fileList}
+          showUploadList={showUploadList}
+          // onPreview={this.handlePreview}
+          beforeUpload={this.beforeUpload}
+          onRemove={this.handleRemove}
+          customRequest={(e) => this.customRequest(e)}
+          onPreview={this.onPreview}
+        >
+          {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
+        </Upload>
+        <Modal
+          title="预览"
+          style={{ textAlign: 'center' }}
+          visible={this.state.visible}
+          onOk={() => this.setState({ visible: false })}
+          onCancel={() => this.setState({ visible: false })}
+        >
+          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video> : <img src={this.state.url} />}
+        </Modal>
+      </>
     );
   }
 }
-
 
 UploadView.propTypes = {
   onChange: PropTypes.func,

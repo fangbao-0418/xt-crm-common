@@ -213,7 +213,7 @@ class Detail extends Component {
             <div>运费：{formatMoneyWithSign(data.freight)}</div>
             <div>实际支付：<span style={{ color: 'red' }}>{formatMoneyWithSign(data.totalPrice)}</span></div>
           </div>
-          <BenefitInfo data={data.orderYield} />
+          <BenefitInfo data={data.orderYield} orderInfo={data.orderInfo} refresh={this.query}/>
         </Card>
       </>
     );
