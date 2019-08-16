@@ -22,10 +22,15 @@ class CheckForm extends Component {
     if (fieldsValue.refundAmount) {
       fieldsValue.refundAmount = fieldsValue.refundAmount * 100;
     }
+    let returnAddress = {}
+    if (status === 1) {
+      returnAddress = this.state.returnAddress;
+    }
+    console.log('this.state.returnAddress => ', this.state.returnAddress);
     props.dispatch['refund.model'].auditOperate({
       id: props.match.params.id,
       status,
-      ...this.state.returnAddress,
+      ...returnAddress,
       ...fieldsValue
     })
   }
@@ -57,7 +62,7 @@ class CheckForm extends Component {
               initialValue: orderServerVO.refundType
             })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleChange}/>)}
           </Form.Item>
-          {localRefundType !== '30' && <Form.Item label="退款金额">
+          {localRefundType === '20' && <Form.Item label="退款金额">
             {getFieldDecorator('refundAmount', {
               initialValue: formatPrice(checkVO.refundAmount)
             })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
@@ -89,7 +94,7 @@ class CheckForm extends Component {
             refundStatus === 21 && (
               <Form.Item wrapperCol={formButtonLayout}>
                 <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
-                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>关闭订单</Button>
+                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>关闭售后单</Button>
               </Form.Item>
             )
           }

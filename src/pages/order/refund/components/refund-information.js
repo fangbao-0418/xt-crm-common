@@ -44,7 +44,7 @@ class RefundInformation extends Component {
             <Col>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
             <Col>退款金额：￥{formatMoney(checkVO.refundAmount)}</Col>
             <Col>退运费：￥{formatMoney(checkVO.freight)	}</Col>
-            <Col>说明：{checkVO.info}</Col>
+            <Col>说明：{checkVO.serverDescribe}</Col>
           </Row>
         </Card>
       )

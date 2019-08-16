@@ -28,9 +28,9 @@ class DeliveryInformation extends Component {
       return (
         <Card title="发货信息">
           <Row>
-            <Col>物流公司：{checkVO.sendExpressName}</Col>
-            <Col>物流单号：{checkVO.sendExpressCode}</Col>
-            <Col>提交时间：{checkVO.sendExpressTime === 0 ? '' : formatDate(checkVO.sendExpressTime)}</Col>
+            <Col>物流公司：{checkVO.sendExpressName || '--'}</Col>
+            <Col>物流单号：{checkVO.sendExpressCode || '--'}</Col>
+            <Col>提交时间：{(checkVO.sendExpressTime === 0 ? '' : formatDate(checkVO.sendExpressTime) || '--')}</Col>
           </Row>
         </Card>
       )
