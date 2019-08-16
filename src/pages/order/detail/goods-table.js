@@ -4,7 +4,7 @@ import { goodsTableColumn, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
 import { formatDate } from '../../helper';
 
-const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, showModal, memberId, showNotes }) => {
+const GoodsTable = ({ list = [], childOrder = {}, orderInfo = {}, logistics, query, showModal, memberId, showNotes }) => {
   console.log('orderLogs=>', childOrder.orderLogs)
   const columns = [
     ...goodsTableColumn,
@@ -33,7 +33,7 @@ const GoodsTable = ({ list = [], childOrder, orderInfo, logistics, query, showMo
         <Col span={2} style={{ minWidth: '7em' }}>客服备注：</Col>
         <Col span={22}>
           <Row>
-            {childOrder.orderLogs.map(v => <Col>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>)}
+            {Array.isArray(childOrder.orderLogs) ? childOrder.orderLogs.map(v => <Col>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>): null}
           </Row>
         </Col>
       </Row>
