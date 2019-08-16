@@ -2,7 +2,7 @@ import React from 'react';
 import Loadable from 'react-loadable';
 import { Route, Switch } from 'react-router-dom';
 import { view as Loader } from '../../components/loader';
-
+import CouponList from './coupon/list';
 const List = Loadable({
   loader: () => import('./list'),
   loading: Loader,
@@ -33,6 +33,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/info/edit/:id?`} component={InfoEdit} />
         <Route path={`${match.url}/info/detail/:id`} component={InfoDetail} />
         <Route path={`${match.url}/add`} component={Add} />
+        <Route path={`${match.url}/coupon/list`} component={CouponList} />
       </Switch>
     );
   }
