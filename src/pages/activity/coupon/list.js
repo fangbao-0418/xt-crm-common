@@ -1,56 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Row, Card, Table, Button, Input } from 'antd';
 import XtSelect from '@/components/xt-select';
-const columns = [
-  {
-    title: '编号',
-    dataIndex: 'couponCode',
-    key: 'couponCode',
-  },
-  {
-    title: '名称',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '领取时间',
-    dataIndex: 'receiveTime',
-    key: 'receiveTime',
-  },
-  {
-    title: '优惠券价值',
-    dataIndex: 'discountAmount',
-    key: 'discountAmount',
-  },
-  {
-    title: '已领取/总量',
-    dataIndex: 'receiveRatio',
-    key: 'receiveRatio',
-  },
-  {
-    title: '已使用|使用率',
-    dataIndex: 'usedRatio',
-    key: 'usedRatio',
-  },
-  {
-    title: '领取状态',
-    dataIndex: 'receiveStatus',
-    key: 'receiveStatus',
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    key: 'action',
-  }
-]
-
+import axios from 'axios';
+import { columns } from './config';
 
 function CouponList({ form: { getFieldDecorator } }) {
-  console.log('getFieldDecorator=>', getFieldDecorator)
   const [data, setData] = useState({ list: [] })
   useEffect(() => {
     const fetchData = async () => {
-      
+      const result = await axios('/api/coupon/list')
+      setData(result.data.data);
     }
     fetchData();
   }, [])
@@ -78,7 +37,7 @@ function CouponList({ form: { getFieldDecorator } }) {
           <Button type="primary" icon="plus">新增优惠券</Button>
           <Button icon="plus">批量发送记录</Button>
         </Row>
-        <Table className="mt15" dataSource={data.list} columns={columns} />
+        <Table rowKey="couponCode" className="mt15" dataSource={data.list} columns={columns} />
       </Card>
     </>
   )
