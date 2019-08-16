@@ -1,3 +1,34 @@
+import React from 'react';
+import GoodCell from '@/components/good-cell';
+import MoneyRender from '@/components/money-render'
+export const goodsTableColumn = [{
+  title: '商品信息',
+  dataIndex: 'skuName',
+  key: 'skuName',
+  render(skuName, row) {
+    return <GoodCell {...row} />;
+  },
+},
+{ title: '商品单价', dataIndex: 'salePrice', key: 'salePrice', render: MoneyRender },
+{
+  title: '购买价格',
+  dataIndex: 'buyPrice',
+  render: MoneyRender,
+  key: 'buyPrice'
+},
+{
+  title: '商品数量',
+  dataIndex: 'num',
+  key: 'num',
+},
+{
+  title: '实际支付',
+  dataIndex: 'totalPrice',
+  render: MoneyRender,
+  key: 'totalPrice'
+}]
+
+export const storeType = ['喜团', '1688', '淘宝联盟'];
 export const enumOrderStatus = {
   Refund: -1,
   Unpaid: 10,
@@ -123,7 +154,7 @@ export const refundType = [
     label: '仅退款',
     value: '20'
   }, {
-    label:　'仅换货',
+    label: '仅换货',
     value: '30'
   }
 ]

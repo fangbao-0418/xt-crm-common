@@ -68,8 +68,9 @@ const BenefitInfo = ({
       <Row>成交金额：{formatMoneyWithSign(data.totalPrice)}</Row>
       <Row>成本金额：{formatMoneyWithSign(data.costPrice)}</Row>
       <Table
+        rowKey={record => record.uniqueId}
         columns={columns}
-        dataSource={data.memberYieldVOList}
+        dataSource={data.memberYieldVOList.map((v, i) => ({...v, uniqueId: i}))}
         pagination={false}
         defaultExpandAllRows
       />

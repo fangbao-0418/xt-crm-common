@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Button, Input, Form, Row, Col } from 'antd';
 import { deliveryChildOrder, updateLogisticsInfo, addLogisticsInfo } from '../../../api';
-import ExpressCompanySelect from '../../../../../components/express-company-select';
+import ExpressCompanySelect from '@/components/express-company-select';
 
 const FormItem = Form.Item;
 

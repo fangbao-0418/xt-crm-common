@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Tabs, Card } from 'antd';
-
 import List from './list';
 import { enumRefundStatus } from '../constant';
 const { TabPane } = Tabs;

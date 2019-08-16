@@ -21,7 +21,7 @@ const ExpressCompanyOptions = {
 
 const LogisticsInfo = ({ logistics = {}, orderInfo = {}, onSuccess, mainorderInfo }) => {
   return (
-    <Card>
+    Array.isArray(logistics.orderPackageList) && logistics.orderPackageList.length > 0 ? <Card>
       <Row gutter={24}>
         <Col className="gutter-row" span={24}>
           <div className="gutter-box">物流信息</div>
@@ -49,7 +49,7 @@ const LogisticsInfo = ({ logistics = {}, orderInfo = {}, onSuccess, mainorderInf
           </Col>
         </Row>
       ))}
-    </Card>
+    </Card>: null
   );
 };
 

@@ -1,9 +1,8 @@
 import React from 'react';
 import { Card, Row, Col } from 'antd';
 import { OrderStatusTextMap } from '../constant';
-// import RemarkDialog from '../components/remark-modal';
-import { formatDate } from '../../helper';
-const demo = {
+import { formatDate, unionAddress } from '../../helper';
+const initOrderInfo = {
   childOrderList: [
     {
       createTime: 0,
@@ -19,52 +18,25 @@ const demo = {
   remark: 'string',
 };
 
-const payTypeList = {
-  100: '微信APP',
-  101: '微信小程序',
-  102: '微信公众号',
-  200: '支付宝APP',
-  201: '支付宝H5',
-};
-const OrderInfo = ({ orderInfo = demo, payType, refresh }) => {
-  const { orderStatus, orderCode, paymentNumber, remark, orderTypeStr } = orderInfo;
+const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
+  const { orderStatus, orderCode, platform, remark } = orderInfo;
+  const { phone, contact, memberAddress = {} } = buyerInfo;
   return (
-    <Card>
-      <Row gutter={16}>
-        <Col className="gutter-row" span={6}>当前订单状态：{OrderStatusTextMap[orderStatus]}</Col>
-        <Col className="gutter-row" span={6}>订单类型：{orderTypeStr}</Col>
-      </Row>
-      <Row gutter={16}>
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">订单号: {orderCode}</div>
-        </Col>
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">
-            {payTypeList[payType]}支付流水号：{paymentNumber}
-          </div>
-        </Col>
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">
-            支付金额：￥{orderInfo.payMoney/100}
-          </div>
-        </Col>
-      </Row>
+    <Card title="订单信息">
       <Row gutter={24}>
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">创建时间: {formatDate(orderInfo.createTime)}</div>
-        </Col>
-        {orderStatus > 10 ? <Col className="gutter-row" span={6}>
-          <div className="gutter-box">支付时间：{formatDate(orderInfo.payDate)}</div>
-        </Col> : ''}
-        {orderStatus == 50 ? <Col className="gutter-row" span={6}>
-          <div className="gutter-box">结束时间：{formatDate(orderInfo.finishTime)}</div>
-        </Col> : ''}
-        {orderStatus == 60 ? <Col className="gutter-row" span={6}>
-          <div className="gutter-box">关闭时间：{formatDate(orderInfo.closeTime)}</div>
-        </Col>: ''}
+        <Col span={8}>订单编号：{orderCode}</Col>
+        <Col span={8}>创建时间：{formatDate(orderInfo.createTime)}</Col>
+        <Col span={8}>订单状态：{OrderStatusTextMap[orderStatus]}</Col>
+        <Col span={8}>买家名称：{contact}</Col>
+        <Col span={8}>联系电话：{phone}</Col>
+        <Col span={8}>订单来源：{platform}</Col>
       </Row>
-      {remark && <Row>{remark}</Row>}
-      {/* <RemarkDialog orderCode={orderCode} onSuccess={refresh} /> */}
+      <Row>
+        <Col span={8}>收货信息：{unionAddress(memberAddress)}，{memberAddress.consignee}，{memberAddress.phone}</Col>
+      </Row>
+      <Row>
+        <Col span={8}>买家备注：{remark}</Col>
+      </Row>
     </Card>
   );
 };

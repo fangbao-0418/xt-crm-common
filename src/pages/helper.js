@@ -7,6 +7,7 @@ export function formatDate(date, dateFormat = 'YYYY-MM-DD HH:mm:ss') {
 }
 
 export function formatMoney(money) {
+  if (!money) return 0;
   return money / 100;
 }
 
@@ -30,3 +31,25 @@ export const formatMoneyBeforeRequest = price => {
 
   return (pasred * 100).toFixed();
 };
+
+
+// 计算steps组件第几步了
+export const calcCurrent = refundStatus => {
+  let current = 0;
+  if (refundStatus === 10) {
+    current = 0;
+  }
+  if (refundStatus >= 20 && refundStatus < 30) {
+    current = 1;
+  }
+  if (refundStatus === 30 || refundStatus === 40) {
+    current = 2;
+  }
+  return current;
+}
+
+
+// 格式化退货信息
+export const joinFilterEmpty = (arr) => {
+  return arr.filter(Boolean).join(' ');
+}

@@ -13,6 +13,9 @@ import RefundStatusCell from '../components/refund-status-cell';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
+const formatRangeDate = (val) => {
+  return Array.isArray(val) ? val.map(v => v.format('YYYY-MM-DD HH:mm')) : []
+}
 class OrderList extends React.Component {
   static defaultProps = {};
 
@@ -32,21 +35,20 @@ class OrderList extends React.Component {
   query = (isExport = false) => {
     let fieldsValues = this.props.form.getFieldsValue();
     let rangePickerValue = fieldsValues['rangePicker']
-    if (rangePickerValue) {
-      if (this.props.type === 'refund') {
-        fieldsValues.skuServerStartDate = rangePickerValue[0].format('YYYY-MM-DD HH:mm');
-        fieldsValues.skuServerEndDate = rangePickerValue[1].format('YYYY-MM-DD HH:mm');
-      }
-      if (this.props.type === 'order') {
-        fieldsValues.orderStartDate = rangePickerValue[0].format('YYYY-MM-DD HH:mm');
-        fieldsValues.orderEndDate = rangePickerValue[1].format('YYYY-MM-DD HH:mm');
-      }
+    if (this.props.type === 'refund') {
+      const [skuServerStartDate, skuServerEndDate] = formatRangeDate(rangePickerValue)
+      fieldsValues.skuServerStartDate = skuServerStartDate;
+      fieldsValues.skuServerEndDate = skuServerEndDate;
+    }
+    if (this.props.type === 'order') {
+      const [orderStartDate, orderEndDate] = formatRangeDate(rangePickerValue)
+      fieldsValues.orderStartDate = orderStartDate;
+      fieldsValues.orderEndDate = orderEndDate;
     }
     let playPickerValue = fieldsValues['playPicker'];
-    if (playPickerValue) {
-      fieldsValues.payStartDate = playPickerValue[0].format('YYYY-MM-DD HH:mm');
-      fieldsValues.payEndDate = playPickerValue[1].format('YYYY-MM-DD HH:mm');
-    }
+    const [payStartDate, payEndDate] = formatRangeDate(playPickerValue)
+    fieldsValues.payStartDate = payStartDate;
+    fieldsValues.payEndDate = payEndDate;
     delete fieldsValues['playPicker'];
     delete fieldsValues['rangePicker'];
     let params = {
@@ -62,7 +64,7 @@ class OrderList extends React.Component {
       })
       exportOrder(params).then((res) => {
         res && message.success('导出成功');
-      }).finally(() =>{
+      }).finally(() => {
         this.setState({
           loading: false
         })

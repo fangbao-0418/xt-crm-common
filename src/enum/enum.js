@@ -28,7 +28,11 @@ Enum.prototype.getKey = function (val) {
   }
 }
 
-Enum.prototype.getArray = function () {
+Enum.prototype.getArray = function (type) {
+  if(type == 'all') return [
+    {key: '', val: '全部'},
+    ...this._array
+  ]
   return this._array
 }
 

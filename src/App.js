@@ -13,7 +13,7 @@ import Settings from './pages/settings';
 import Home from './pages/home';
 import Interface from './pages/interface';
 import CrudPage from './components/crudPage';
-
+import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
 
 const App = props => {

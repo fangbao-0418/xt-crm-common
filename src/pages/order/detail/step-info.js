@@ -1,5 +1,5 @@
 import React from 'react';
-import { Steps } from 'antd';
+import { Steps, Card } from 'antd';
 import { enumOrderStatus } from '../constant';
 import { formatDate } from '../../helper';
 const { Step } = Steps;
@@ -35,28 +35,30 @@ const StepInfo = ({ orderStatus, orderStatusLogList = [] }) => {
   const current = getCurrentIndex(orderStatus);
 
   return (
-    <Steps progressDot current={current}>
-      <Step
-        title="1.买家下单"
-        description={getStatusTime(orderStatusLogList, enumOrderStatus.Unpaid)}
-      />
-      <Step
-        title="2.买家付款"
-        description={getStatusTime(orderStatusLogList, enumOrderStatus.Undelivered)}
-      />
-      <Step
-        title="3.发货"
-        description={getStatusTime(orderStatusLogList, enumOrderStatus.Delivered)}
-      />
-      <Step
-        title="4.确认收货"
-        description={getStatusTime(orderStatusLogList, enumOrderStatus.Received)}
-      />
-      <Step
-        title="5.交易完成"
-        description={getStatusTime(orderStatusLogList, enumOrderStatus.Complete)}
-      />
-    </Steps>
+    <Card>
+      <Steps progressDot current={current}>
+        <Step
+          title="1.买家下单"
+          description={getStatusTime(orderStatusLogList, enumOrderStatus.Unpaid)}
+        />
+        <Step
+          title="2.买家付款"
+          description={getStatusTime(orderStatusLogList, enumOrderStatus.Undelivered)}
+        />
+        <Step
+          title="3.发货"
+          description={getStatusTime(orderStatusLogList, enumOrderStatus.Delivered)}
+        />
+        <Step
+          title="4.确认收货"
+          description={getStatusTime(orderStatusLogList, enumOrderStatus.Received)}
+        />
+        <Step
+          title="5.交易完成"
+          description={getStatusTime(orderStatusLogList, enumOrderStatus.Complete)}
+        />
+      </Steps>
+    </Card>
   );
 };
 
