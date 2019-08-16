@@ -4,7 +4,7 @@ import React from 'react';
 import { Modal, Card, Form, Input, DatePicker, Select, Button, Table, Divider, message } from 'antd';
 import DateFns from 'date-fns';
 import { getPromotionList, disablePromotion, enablePromotion } from './api';
-import { Link } from 'react-router-dom';
+import Add from './add';
 import moment from 'moment';
 import { setQuery, parseQuery, gotoPage } from '@/util/utils';
 import activityType from '../../enum/activityType'
@@ -23,7 +23,8 @@ class List extends React.Component {
         total: 0,
         pageSize: 20,
       },
-      initParams: params
+      initParams: params,
+      visible: false
     };
   }
 
@@ -78,11 +79,6 @@ class List extends React.Component {
         this.getPromotionList(params);
       }
     });
-  };
-
-  handleAddActivity = () => {
-    const { history } = this.props;
-    history.push('/activity/add');
   };
 
   handleTabChange = e => {
@@ -243,7 +239,7 @@ class List extends React.Component {
               <Button type="primary" onClick={this.handleSearch}>
                 查询
               </Button>
-              <Button type="primary" onClick={this.handleAddActivity} style={{ marginLeft: 10 }}>
+              <Button type="primary" onClick={()=>this.setState({visible: true})} style={{ marginLeft: 10 }}>
                 新建活动
               </Button>
             </FormItem>
@@ -258,6 +254,22 @@ class List extends React.Component {
             onChange={this.handleTabChange}
           />
         </Card>
+        <Modal
+          title="活动编辑"
+          visible={this.state.visible}
+          width={1000}
+          footer={null}
+          onCancel={()=>this.setState({
+            visible: false
+          })}
+        >
+          <Add onOk={()=>{
+            this.setState({
+              visible: false
+            });
+            this.handleSearch();
+          }} history={this.props.history}/>
+        </Modal>
       </>
     );
   }

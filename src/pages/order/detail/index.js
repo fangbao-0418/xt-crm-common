@@ -164,7 +164,7 @@ class Detail extends Component {
           <Col span={4}>含税费：{formatMoneyWithSign(data.taxPrice)}</Col>
           <Col span={4}>含运费：{formatMoneyWithSign(data.freight)}</Col>
         </Row>
-        <BenefitInfo data={data.orderYield} />
+        <BenefitInfo data={data.orderYield} orderInfo={data.orderInfo} refresh={this.query}/>
       </Card>
     );
   }
