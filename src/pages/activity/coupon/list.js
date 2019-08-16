@@ -53,7 +53,7 @@ function CouponList({ form: { getFieldDecorator } }) {
 
     }
     fetchData();
-  })
+  }, [])
   return (
     <>
       <Card>
@@ -65,7 +65,8 @@ function CouponList({ form: { getFieldDecorator } }) {
             {getFieldDecorator('couponCode', {})(<XtSelect style={{ width: '174px' }} placeholder="请输入" />)}
           </Form.Item>
           <Form.Item>
-            <Button>查询</Button>
+            <Button type="primary">查询</Button>
+            <Button className="ml10">重置</Button>
           </Form.Item>
         </Form>
       </Card>
