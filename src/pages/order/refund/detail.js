@@ -24,7 +24,7 @@ class Detail extends Component {
 
   render() {
     const { isDelete, orderInfoVO = {}, orderServerVO = {}, refundStatus, skuServerLogVO = [] } = this.props.data;
-    let current = calcCurrent(refundStatus)
+    let current = isDelete === 1 ? 2 : calcCurrent(refundStatus);
     const status = isDelete === 1
      ? 'error'
      : refundStatus === 30 ? 'finish' : refundStatus === 40 ? 'error' : ''
