@@ -102,12 +102,12 @@ export default class extends Component {
 
     componentDidMount() {
         unlisten = this.props.history.listen(() => {
-            // const { form: { resetFields } } = this.props;
-            const params = parseQuery(this.props.history);
-            // resetFields();
-            this.handleSearch(params);
+        //     // const { form: { resetFields } } = this.props;
+        //     const params = parseQuery(this.props.history);
+        //     // resetFields();
+        //     this.handleSearch(params);
         });
-        this.handleSearch(basePayload);
+        // this.handleSearch(basePayload);
     }
 
     onInviteClick = (item) => {
