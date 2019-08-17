@@ -1,12 +1,12 @@
-
-
-const couponMap = new Map();
-couponMap.set({ '0': '未开始' }, ['发券', '查看', '编辑', '结束']);
-couponMap.set({ '1': '进行中' }, ['查看', '编辑', '结束']);
-couponMap.set({ '2': '已结束' }, ['查看']);
-export { couponMap }
-
-console.log([...couponMap.keys()])
+import React from 'react';
+import ActionBtnGroup from './action-btn-group/index';
+import receiveStatus from '@/enum/receiveStatus';
+import { Badge } from 'antd';
+const badgeColors = {
+  '0': 'gray',
+  '1': 'blue',
+  '2': 'green'
+}
 export const columns = [
   {
     title: '编号',
@@ -42,13 +42,18 @@ export const columns = [
     title: '领取状态',
     dataIndex: 'receiveStatus',
     key: 'receiveStatus',
-    render: (text, record, index) => {
-      
-    }
+    render: text => <Badge color={badgeColors[text]} text={receiveStatus.getValue(text)} />
   },
   {
     title: '操作',
     dataIndex: 'action',
     key: 'action',
+    render: (text, record) => <ActionBtnGroup status={record.receiveStatus}/>
   }
 ]
+
+export const pagination = {
+  showSizeChanger: true,
+  showQuickJumper: true,
+  showTotal: (total, range) => `共 ${total} 条记录`
+}

@@ -1,20 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Row, Card, Table, Button, Input } from 'antd';
+import { Modal, Form, Row, Card, Table, Button, Input } from 'antd';
 import XtSelect from '@/components/xt-select';
 import axios from 'axios';
-import { columns } from './config';
-
+import { columns, pagination } from '../config';
+import receiveStatus from '@/enum/receiveStatus';
+import './index.scss';
 function CouponList({ form: { getFieldDecorator } }) {
-  const [data, setData] = useState({ list: [] })
+  const [data, setData] = useState({ list: [] });
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false)
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios('/api/coupon/list')
+      setLoading(true);
+      const result = await axios('/api/coupon/list');
+      setLoading(false);
       setData(result.data.data);
     }
     fetchData();
-  }, [])
+  }, []);
+  const handleOk = () => {}
+  const handleCancel = () => {}
   return (
     <>
+      <Modal
+        title="Basic Modal"
+        visible={visible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        
+      </Modal>
       <Card>
         <Form layout="inline">
           <Form.Item label="优惠券编号">
@@ -24,7 +40,7 @@ function CouponList({ form: { getFieldDecorator } }) {
             {getFieldDecorator('name', {})(<Input placeholder="请输入" />)}
           </Form.Item>
           <Form.Item label="状态">
-            {getFieldDecorator('receiveStatus', {})(<XtSelect style={{ width: '174px' }} placeholder="请输入" />)}
+            {getFieldDecorator('receiveStatus', {})(<XtSelect data={receiveStatus.getArray()} style={{ width: '174px' }} placeholder="请输入" />)}
           </Form.Item>
           <Form.Item>
             <Button type="primary">查询</Button>
@@ -37,7 +53,7 @@ function CouponList({ form: { getFieldDecorator } }) {
           <Button type="primary" icon="plus">新增优惠券</Button>
           <Button icon="plus">批量发送记录</Button>
         </Row>
-        <Table rowKey="couponCode" className="mt15" dataSource={data.list} columns={columns} />
+        <Table loading={loading} pagination={pagination} rowKey="couponCode" className="mt15" dataSource={data.list} columns={columns} />
       </Card>
     </>
   )
