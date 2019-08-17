@@ -1,0 +1,17 @@
+.coupon-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.qr-code {
+  width: 240px;
+  height: 240px;
+  background-color: #f5f5f5;
+  margin-top: 10px;
+}
+.copy-qr-code {
+  width: 300px;
+  margin-top: 10px;
+  display: flex;
+}

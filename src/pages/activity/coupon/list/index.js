@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Card, Table, Button, Input } from 'antd';
 import XtSelect from '@/components/xt-select';
 import axios from 'axios';
-import { columns, pagination } from '../config';
+import { getListColumns, pagination } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
+import CouponCard from '../coupon-card';
 import './index.scss';
 function CouponList({ form: { getFieldDecorator } }) {
   const [data, setData] = useState({ list: [] });
@@ -18,18 +19,24 @@ function CouponList({ form: { getFieldDecorator } }) {
     }
     fetchData();
   }, []);
-  const handleOk = () => {}
-  const handleCancel = () => {}
+  const handleOk = () => { }
   return (
     <>
       <Modal
-        title="Basic Modal"
+        title={null}
         visible={visible}
         onOk={handleOk}
-        onCancel={handleCancel}
+        onCancel={() => {setVisible(false)}}
         footer={null}
       >
-        
+        <div className="coupon-wrapper">
+          <CouponCard/>
+          <div className="qr-code"></div>
+          <div className="copy-qr-code">
+            <Input readOnly value=""/>
+            <Button className="ml10" type="primary">复制</Button>
+          </div>
+        </div>
       </Modal>
       <Card>
         <Form layout="inline">
@@ -53,7 +60,7 @@ function CouponList({ form: { getFieldDecorator } }) {
           <Button type="primary" icon="plus">新增优惠券</Button>
           <Button icon="plus">批量发送记录</Button>
         </Row>
-        <Table loading={loading} pagination={pagination} rowKey="couponCode" className="mt15" dataSource={data.list} columns={columns} />
+        <Table loading={loading} pagination={pagination} rowKey="couponCode" className="mt15" dataSource={data.list} columns={getListColumns(setVisible)} />
       </Card>
     </>
   )

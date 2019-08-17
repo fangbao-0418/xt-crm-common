@@ -7,7 +7,7 @@ const badgeColors = {
   '1': 'blue',
   '2': 'green'
 }
-export const columns = [
+export const getListColumns = (setVisible) => [
   {
     title: '编号',
     dataIndex: 'couponCode',
@@ -48,7 +48,7 @@ export const columns = [
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    render: (text, record) => <ActionBtnGroup status={record.receiveStatus}/>
+    render: (text, record) => <ActionBtnGroup status={record.receiveStatus} setVisible={setVisible}/>
   }
 ]
 

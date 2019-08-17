@@ -1,8 +1,10 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 import { Route, Switch } from 'react-router-dom';
+import BulkIssuing from './coupon/list/bulk-issuing'
 import { view as Loader } from '../../components/loader';
 import CouponList from './coupon/list';
+
 const List = Loadable({
   loader: () => import('./list'),
   loading: Loader,
@@ -34,6 +36,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/info/detail/:id`} component={InfoDetail} />
         <Route path={`${match.url}/add`} component={Add} />
         <Route path={`${match.url}/coupon/list`} component={CouponList} />
+        <Route path={`${match.url}/coupon/list/bulkissuing`} component={BulkIssuing} />
       </Switch>
     );
   }
