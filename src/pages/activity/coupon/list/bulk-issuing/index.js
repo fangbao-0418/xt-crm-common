@@ -20,7 +20,7 @@ function BulkIssuing({ form: { getFieldDecorator } }) {
           <Radio.Group onChange={event => setTargetUsersKey(event.target.value)} value={targetUsersKey}>
             <Radio style={radioStyle} value={1}>全部用户</Radio>
             <Radio style={radioStyle} value={2}>按用户等级<Button type="link">选择等级</Button></Radio>
-            {targetUsersKey === 2 &&　<Checkbox.Group style={{ width: '100%' }}>
+            {targetUsersKey === 2 && <Checkbox.Group style={{ width: '100%' }}>
               <Row>
                 <Col span={8}>
                   <Checkbox value="普通用户">普通用户</Checkbox>
@@ -43,22 +43,27 @@ function BulkIssuing({ form: { getFieldDecorator } }) {
               </Row>
             </Checkbox.Group>}
             <Radio style={radioStyle} value={3}>指定用户</Radio>
-            <Input.TextArea style={{width: '528px'}} rows={4} placeholder="输入用户手机号，以半角逗号隔开，例13928387247,15619237922"/>
-            <Button type="link">上传excel</Button>
+            <Input.TextArea style={{ width: '528px' }} rows={4} placeholder="输入用户手机号，以半角逗号隔开，例13928387247,15619237922" />
+            <div>
+              <Button type="link">上传excel</Button>
+            </div>
           </Radio.Group>
         </Form.Item>
         <Form.Item label="发送时间">
           <Radio.Group onChange={event => setSendingTimeKey(event.target.value)} value={sendingTimeKey}>
-            <Radio style={radioStyle} value={3}>立即发送</Radio>
-            <Radio style={radioStyle} value={4}>定时发送</Radio>
+            <Radio style={radioStyle} value={1}>立即发送</Radio>
+            <Radio style={radioStyle} value={2}>定时发送</Radio>
             <div>
-              选择时间：<DatePicker format="YYYY-MM-DD HH:mm:ss"/>
+              选择时间：<DatePicker showTime />
             </div>
           </Radio.Group>
         </Form.Item>
-        <Form.Item {...formButtonLayout}>
+        <Form.Item wrapperCol={{
+          xs: { span: 24, offset: 0 },
+          sm: { span: 16, offset: 5 },
+        }}>
           <Button type="primary">保存</Button>
-          <Button>取消</Button>
+          <Button className="ml10">取消</Button>
         </Form.Item>
       </Form>
     </Card>

@@ -15,13 +15,10 @@ function ActionBtn({ keyCode, history, setVisible }) {
         <a href="javascript:void(0)" onClick={() => setVisible(true)}>二维码</a>
       </Menu.Item>
       <Menu.Item>
-        <a href="javascript:void(0)">批量发券</a>
+        <a href="javascript:void(0)" onClick={() => history.push({pathname: '/activity/coupon/list/bulkissuing'})}>批量发券</a>
       </Menu.Item>
     </Menu>
   );
-  const handleView = () => {
-    history.push({ pathname: '/activity/coupon/132323' })
-  }
   const handleFinish = () => {
     Modal.confirm({
       title: '系统提示',
@@ -46,7 +43,7 @@ function ActionBtn({ keyCode, history, setVisible }) {
         </Dropdown>
       );
     case 'VIEW':
-      return <Button type="link" onClick={handleView}>查看</Button>
+      return <Button type="link" onClick={() => history.push({ pathname: '/activity/coupon/1'})}>查看</Button>
     case 'EDIT':
       return <Button type="link">编辑</Button>
     case 'FINISH':
