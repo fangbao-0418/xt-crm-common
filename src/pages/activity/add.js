@@ -54,24 +54,32 @@ class Add extends React.Component {
   }
 
   componentDidMount() {
-
     this.props.form.setFieldsValue(this.data);
     this.typeChange(this.data.type);
   }
 
+  loadStatus(status) {
+    this.loading = status;
+    this.setState({
+      loading: status
+    })
+  }
+
   setBasePromotion = (params, callback) => {
+    if(this.loading) return;
+    this.loadStatus(true)
     if(this.state.id) params.id = this.state.id;
     (params.id ? updateBasePromotion : setBasePromotion)(params).then((res) => {
-      this.setState({
-        loading: false
-      })
+      this.loadStatus(false)
       if (res) {
         message.success('活动基础信息保存成功');
       }
       if (isFunction(callback)) {
         callback(res);
       }
-    });
+    }).catch(() => {
+      this.loadStatus(false)
+    })
   };
 
   handleSave = (callback) => {
@@ -217,7 +225,7 @@ class Add extends React.Component {
           </Form.Item>
           <FormItem wrapperCol={{ offset: 9 }}>
             <Button type="primary" onClick={this.handleSave} loading={this.state.loading}>保存</Button>
-            {!this.state.id && <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSaveNext}>保存并添加商品</Button>}
+            {!this.state.id && <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSaveNext} loading={this.state.loading}>保存并添加商品</Button>}
           </FormItem>
         </Form>
         <div className="activity-tag-preview">
