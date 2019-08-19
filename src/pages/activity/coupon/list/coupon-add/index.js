@@ -72,6 +72,9 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
             <Button type="link">排除商品</Button>
           </div>
         </Form.Item>
+        <Form.Item label="选择类目">
+          
+        </Form.Item>
         <Form.Item label="使用门槛">
           {getFieldDecorator('useThreshold')(
             <Radio.Group>
