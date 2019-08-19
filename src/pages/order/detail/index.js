@@ -116,8 +116,10 @@ class Detail extends Component {
     const { form } = this.afterSaleForm.props;
     const { modalInfo } = this.state;
     const fields = form.getFieldsValue();
-    fields.imgUrl = fields.imgUrl.map(v => v.url);
-    fields.amount = fields.amount * 100;
+    fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url): [];
+    if (fields.amount) {
+      fields.amount = fields.amount * 100;
+    }
     console.log('modalInfo=>', modalInfo)
     const res = await customerAdd({
       childOrderId: modalInfo.childOrderId,
@@ -128,8 +130,8 @@ class Detail extends Component {
     });
     if (res.success) {
       message.success('申请售后成功');
+      this.toggleModal(false);
     }
-    this.setState({visible: true})
   }
   handleAddNotes = () => {
     const { modalInfo } = this.state;

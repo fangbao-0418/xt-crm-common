@@ -38,7 +38,7 @@ class AfterSaleForm extends Component {
             </Form.Item>
             {this.isShowRefundAmount() && (
               <Form.Item label="退款金额">
-                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={price} />)}
+                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={formatPrice(modalInfo.totalPrice)} />)}
                 <span className="ml10">（最多可退￥{formatPrice(modalInfo.totalPrice)}）</span>
               </Form.Item>
             )}
