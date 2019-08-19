@@ -20,6 +20,7 @@ class SuppilerSelect extends Component {
   render() {
     const { supplier } = this.state;
     return (<Select
+      value={this.props.value}
       style={this.props.style}
       id={this.props.id}
       onChange={this.props.onChange}

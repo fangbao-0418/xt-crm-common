@@ -285,22 +285,22 @@ class OrderList extends React.Component {
               {getFieldDecorator('orderCode')(<Input placeholder="请输入订单编号" />)}
             </FormItem>
             <FormItem label="快递单号">
-              {getFieldDecorator('expressCode')(<Input placeholder="" />)}
+              {getFieldDecorator('expressCode')(<Input placeholder="请输入快递单号" />)}
             </FormItem>
             <FormItem label="商品ID">
-              {getFieldDecorator('productId')(<Input placeholder="" />)}
+              {getFieldDecorator('productId')(<Input placeholder="请输入商品ID" />)}
             </FormItem>
             <FormItem label="下单人ID">
-              {getFieldDecorator('buyerId')(<Input placeholder="" />)}
+              {getFieldDecorator('buyerId')(<Input placeholder="请输入下单人ID" />)}
             </FormItem>
             <FormItem label="下单人电话">
-              {getFieldDecorator('buyerPhone')(<Input placeholder="" />)}
+              {getFieldDecorator('buyerPhone')(<Input placeholder="请输入下单人电话" />)}
             </FormItem>
             <FormItem label="收货人">
-              {getFieldDecorator('contact')(<Input placeholder="" />)}
+              {getFieldDecorator('contact')(<Input placeholder="请输入收货人" />)}
             </FormItem>
             <FormItem label="收货人电话">
-              {getFieldDecorator('phone')(<Input placeholder="" />)}
+              {getFieldDecorator('phone')(<Input placeholder="请输入收货人电话" />)}
             </FormItem>
             <FormItem label="供应商">
               {getFieldDecorator('storeId', {})(<SuppilerSelect style={{width: '174px'}}/>)}

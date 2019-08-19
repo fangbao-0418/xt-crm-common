@@ -37,7 +37,7 @@ export const formFields = function () {
       type: 'input',
       id: 'storeId',
       label: '供应商',
-      render: () => <SuppilerSelect />
+      render: () => <SuppilerSelect/>
     } , {
       type: 'input',
       id: 'productId',
