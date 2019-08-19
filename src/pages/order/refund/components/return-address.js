@@ -11,7 +11,6 @@ function ReturnAddress({ returnContact, returnPhone, returnAddress, setReturnAdd
   const [radioKey, setRadioKey] = useState(1);
   const textInput = React.createRef();
   useEffect(() => {
-    console.log('a---------------')
     let result =
       radioKey === 1
         ? {
@@ -25,7 +24,7 @@ function ReturnAddress({ returnContact, returnPhone, returnAddress, setReturnAdd
             returnAddress: data.address,
           };
     setReturnAddress(result);
-  }, [radioKey, data]);
+  }, [radioKey, data.contact, data.phone, data.address]);
   const handleChange = event => {
     const { value } = event.target;
     if (value === 0) {
