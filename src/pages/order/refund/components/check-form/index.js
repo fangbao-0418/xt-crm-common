@@ -72,7 +72,7 @@ class CheckForm extends Component {
             })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
           </Form.Item>}
           {
-            (checkVO.isRefundFreight === 1 && this.isReturnShipping(checkVO, orderInfoVO)) && <Form.Item label="退运费">
+            checkVO.freight > 0 && (checkVO.isRefundFreight === 1 || this.isReturnShipping(checkVO, orderInfoVO)) && <Form.Item label="退运费">
               {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}
             </Form.Item>
           }
