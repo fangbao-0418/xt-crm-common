@@ -17,6 +17,9 @@ class RefundInformation extends Component {
     const { dispatch, match: { params: { id } }, form: { getFieldsValue } } = this.props;
     const fields = getFieldsValue();
     fields.refundAmount = fields.refundAmount * 100;
+    if (fields.isRefundFreight === undefined) {
+      fields.isRefundFreight = this.props.data.checkVO.isRefundFreight
+    }
     dispatch['refund.model'].auditOperate({
       id,
       status,
@@ -35,9 +38,9 @@ class RefundInformation extends Component {
     const fields = getFieldsValue(['info']);
     dispatch['refund.model'].closeOrder({ ...params, ...fields });
   }
-  isReturnShipping(checkVO, orderInfoVO) {
+  isReturnShipping(checkVO, orderInfoVO, orderServerVO) {
     const {refundAmount} = this.props.form.getFieldsValue(['refundAmount'])
-    return (refundAmount * 100) + checkVO.freight === orderInfoVO.payMoney;
+    return (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount=== orderInfoVO.payMoney;
   }
   render() {
     const { form: { getFieldDecorator }, data: { orderInfoVO = {}, orderServerVO = {}, checkVO = {}, refundStatus }, readOnly = true } = this.props;
@@ -69,7 +72,7 @@ class RefundInformation extends Component {
                       initialValue: formatMoney(checkVO.refundAmount)
                     })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
                   </Form.Item>
-                  {checkVO.freight > 0 && (checkVO.isRefundFreight === 1 || this.isReturnShipping(checkVO, orderInfoVO)) && <Form.Item label="退运费">
+                  {checkVO.freight > 0 && (this.isReturnShipping(checkVO, orderInfoVO, orderServerVO)) && <Form.Item label="退运费">
                     {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}
                   </Form.Item>}
                   <Form.Item label="说明">

@@ -22,6 +22,9 @@ class CheckForm extends Component {
     if (fieldsValue.refundAmount) {
       fieldsValue.refundAmount = fieldsValue.refundAmount * 100;
     }
+    if (fieldsValue.isRefundFreight === undefined) {
+      fieldsValue.isRefundFreight = this.props.checkVO.isRefundFreight;
+    }
     let returnAddress = {}
     if (status === 1) {
       returnAddress = this.state.returnAddress;
@@ -50,9 +53,9 @@ class CheckForm extends Component {
   handleChange = (val) => {
     this.setState({refundType: val})
   }
-  isReturnShipping(checkVO, orderInfoVO) {
+  isReturnShipping(checkVO, orderInfoVO, orderServerVO) {
     const {refundAmount} = this.props.form.getFieldsValue(['refundAmount'])
-    return (refundAmount * 100) + checkVO.freight === orderInfoVO.payMoney;
+    return (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount=== orderInfoVO.payMoney;
   }
   render() {
     const { orderServerVO = {}, orderInfoVO = {}, checkVO = {}, refundStatus } = this.props;
@@ -72,7 +75,7 @@ class CheckForm extends Component {
             })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
           </Form.Item>}
           {
-            checkVO.freight > 0 && (checkVO.isRefundFreight === 1 || this.isReturnShipping(checkVO, orderInfoVO)) && <Form.Item label="退运费">
+            checkVO.freight > 0 && (this.isReturnShipping(checkVO, orderInfoVO, orderServerVO)) && <Form.Item label="退运费">
               {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}
             </Form.Item>
           }
