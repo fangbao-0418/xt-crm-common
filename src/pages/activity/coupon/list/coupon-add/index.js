@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { DatePicker, Form, Button, Card, Row, Col, Input, Radio } from 'antd';
-import { formItemLayout } from '@/config';
+import { DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, Radio } from 'antd';
+import { formItemLayout, formButtonLayout } from '@/config';
 import moment from 'moment';
 import "../index.scss";
 
@@ -39,8 +39,15 @@ function disabledRangeTime(_, type) {
     disabledSeconds: () => [55, 56],
   };
 }
+const onChange = () => {
 
-function CouponAdd({ form: { getFieldDecorator } }) {
+}
+const plainOptions = ['安卓', 'iOS', 'H5', '小程序'];
+function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
+  const showSelectPlatform = () => {
+    const { platform } = getFieldsValue(['platform']);
+    return platform === 2;
+  }
   return (
     <Card>
       <Form {...formItemLayout}>
@@ -125,20 +132,42 @@ function CouponAdd({ form: { getFieldDecorator } }) {
             </Radio>
           </Radio.Group>
         )}</Form.Item>
+        <Form.Item label="每人限领次数">
+          {getFieldDecorator('limitTimes')(
+            <Row type="flex" style={{ display: 'inline-block' }}>
+              <Checkbox onChange={onChange}>限领<Input />张</Checkbox>
+              
+            </Row>
+          )}
+        </Form.Item>
         <Form.Item label="使用平台">
           {getFieldDecorator('platform')(
             <Radio.Group>
               <Radio style={radioStyle} value={1}>不限制</Radio>
-              <Radio style={radioStyle} value={2}>选则平台</Radio>
+              <Radio style={radioStyle} value={2}>选择平台</Radio>
+            </Radio.Group>
+          )}
+          {showSelectPlatform() && <div>
+            <Checkbox.Group options={plainOptions} onChange={onChange} />
+          </div>}
+        </Form.Item>
+        <Form.Item label="商详显示">
+          {getFieldDecorator('productDetails')(
+            <Radio.Group>
+              <Radio style={radioStyle} value={1}>显示</Radio>
+              <Radio style={radioStyle} value={2}>不显示</Radio>
             </Radio.Group>
           )}
         </Form.Item>
-        <Form.Item label="商详显示"></Form.Item>
         <Form.Item label="优惠券说明">
           {getFieldDecorator('discountAmount')(<TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />)}
         </Form.Item>
         <Form.Item label="优惠券备注">
           {getFieldDecorator('remark')(<TextArea placeholder="备注优惠券信息，不会在用户端显示（选填）" />)}
+        </Form.Item>
+        <Form.Item {...formButtonLayout}>
+          <Button type="primary">保存</Button>
+          <Button>取消</Button>
         </Form.Item>
       </Form>
     </Card>

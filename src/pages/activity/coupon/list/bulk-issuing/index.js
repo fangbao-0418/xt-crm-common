@@ -49,9 +49,11 @@ function BulkIssuing({ form: { getFieldDecorator } }) {
             </Checkbox.Group>}
             <Radio style={radioStyle} value={3}>指定用户</Radio>
             <Input.TextArea style={{ width: '528px' }} rows={4} placeholder="输入用户手机号，以半角逗号隔开，例13928387247,15619237922" />
-            <Upload>
-              <Button type="link">上传excel</Button>
-            </Upload>
+            <div>
+              <Upload>
+                <Button type="link">上传excel</Button>
+              </Upload>
+            </div>
           </Radio.Group>
         </Form.Item>
         <Form.Item label="发送时间">
