@@ -14,7 +14,7 @@ export default class SupplierSelect extends Component {
   query = () => {
     getStoreList({
       page: 1,
-      pageSize: 300,
+      pageSize: 3000,
     }).then((res = {}) => {
       this.setState({
         supplier: res.records,
@@ -24,9 +24,11 @@ export default class SupplierSelect extends Component {
   render() {
     const { supplier } = this.state;
     return (
-      <Select placeholder="全部" style={{ width: 150 }} {...this.props}>
+      <Select placeholder="全部" style={{ width: 300 }} {...this.props} showSearch
+      filterOption={(inputValue, option) =>{
+        return option.props.children.indexOf(inputValue) > -1;
+      }}>
         <Option value="">全部</Option>
-
         {map(supplier, item => (
           <Option value={item.id} key={item.id}>{item.name}</Option>
         ))}
