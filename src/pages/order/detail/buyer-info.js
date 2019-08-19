@@ -26,23 +26,18 @@ const BuyerInfo = props => {
     <Card>
       <Row>买家信息</Row>
       <Row>
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">姓名：{contact}</div>
+      <Col className="gutter-row" span={6}>
+          <div className="gutter-box">用户名:{userName}</div>
         </Col>
         <Col className="gutter-row" span={6}>
           <div className="gutter-box">付款方式：{payTypeList[payType]}</div>
         </Col>
-
         <Col className="gutter-row" span={6}>
           <div className="gutter-box">身份证号:{idCard}</div>
         </Col>
         <Col className="gutter-row" span={6}>
           <div className="gutter-box">手机号：{phone}</div>
         </Col>
-        <Col className="gutter-row" span={6}>
-          <div className="gutter-box">用户名:{userName}</div>
-        </Col>
-
         <Col className="gutter-row" span={6}>
           <div className="gutter-box">微信昵称:{nickname}</div>
         </Col>
@@ -51,7 +46,11 @@ const BuyerInfo = props => {
         </Col>
       </Row>
       <Row>收货信息</Row>
+      
       <Row gutter={16}>
+        <Col className="gutter-row" span={6}>
+            <div className="gutter-box">收货人姓名：{contact}</div>
+        </Col>
         <Col className="gutter-row" span={12}>
           <div className="gutter-box">
             收货地址:{unionAddress(memberAddress)}，{memberAddress.consignee},{memberAddress.phone}
