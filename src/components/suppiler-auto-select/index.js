@@ -20,6 +20,7 @@ class SuppilerSelect extends Component {
   render() {
     const { supplier } = this.state;
     return (<Select
+      style={this.props.style}
       id={this.props.id}
       onChange={this.props.onChange}
       placeholder="请选择供货商"

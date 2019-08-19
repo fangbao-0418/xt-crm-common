@@ -1,6 +1,6 @@
 import React from 'react';
 import GoodCell from '@/components/good-cell';
-import SuppilerSelect from '../components/suppiler-select'
+import SuppilerSelect from '@/components/suppiler-auto-select'
 import { formatMoneyWithSign } from '@/pages/helper';
 import { enumRefundStatus } from '../constant';
 import refundType from '@/enum/refundType';

@@ -5,7 +5,7 @@ import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../consta
 import { formatDate, formatMoneyWithSign } from '../../helper';
 import { getOrderList, exportOrder, importLogistics } from '../api';
 import GoodCell from '../../../components/good-cell';
-import SuppilerSelect from '../../../components/suppiler-select';
+import SuppilerSelect from '@/components/suppiler-auto-select'
 import RefundCell from '../components/refund-cell';
 import RemarkModal from '../components/remark-modal';
 import RefundModal from '../components/refund-modal';
@@ -303,7 +303,7 @@ class OrderList extends React.Component {
               {getFieldDecorator('phone')(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="供应商">
-              {getFieldDecorator('storeId', {})(<SuppilerSelect />)}
+              {getFieldDecorator('storeId', {})(<SuppilerSelect style={{width: '174px'}}/>)}
             </FormItem>
             <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
               {getFieldDecorator('rangePicker', {})(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}
