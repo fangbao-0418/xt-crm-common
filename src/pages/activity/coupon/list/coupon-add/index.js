@@ -132,11 +132,36 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
             </Radio>
           </Radio.Group>
         )}</Form.Item>
+        <Form.Item label="使用平台">
+          {getFieldDecorator('platform')(
+            <Radio.Group>
+              <Radio style={radioStyle} value={1}>不限制</Radio>
+              <Radio style={radioStyle} value={2}>选择平台</Radio>
+            </Radio.Group>
+          )}
+          {showSelectPlatform() && <div>
+            <Checkbox.Group options={plainOptions} onChange={onChange} />
+          </div>}
+        </Form.Item>
         <Form.Item label="每人限领次数">
           {getFieldDecorator('limitTimes')(
-            <Row type="flex" style={{ display: 'inline-block' }}>
-              <Checkbox onChange={onChange}>限领<Input />张</Checkbox>
-              
+            <Row type="flex">
+              <Checkbox onChange={onChange} />
+              <Row type="flex">
+                <Col>限领</Col>
+                <Col><Input /></Col>
+                <Col>张</Col>
+              </Row>
+            </Row>
+          )}
+          {getFieldDecorator('limitTimes')(
+            <Row type="flex">
+              <Checkbox onChange={onChange} />
+              <Row type="flex">
+                <Col>每日限领</Col>
+                <Col><Input /></Col>
+                <Col>张</Col>
+              </Row>
             </Row>
           )}
         </Form.Item>
