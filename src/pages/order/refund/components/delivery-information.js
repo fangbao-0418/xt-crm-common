@@ -14,7 +14,12 @@ import { formatDate } from '@/pages/helper';
 class DeliveryInformation extends Component {
   handleAuditOperate = (status) => {
     const { props } = this;
-    const fields = props.form.getFieldsValue();
+    let fields;
+    if (status === 1) {
+      fields = props.form.getFieldsValue();
+    } else {
+      fields = props.form.getFieldsValue(['info']);
+    }
     props.dispatch['refund.model'].auditOperate({
       id: props.match.params.id,
       status,
