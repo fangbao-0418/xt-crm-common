@@ -17,8 +17,11 @@ const formItemLayout = {
   },
 };
 
-const onChange = () => { }
 class AfterSaleForm extends Component {
+  isShowRefundAmount() {
+    const { refundType } = this.props.form.getFieldsValue(['refundType']);
+    return refundType !== '30'
+  }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
     const price = parseFloat(formatPrice(modalInfo.buyPrice))
@@ -33,10 +36,12 @@ class AfterSaleForm extends Component {
             <Form.Item label="售后原因">
               {getFieldDecorator('returnReason', { rules: [{ required: true }] })(<XtSelect data={returnReason.getArray()} />)}
             </Form.Item>
-            <Form.Item label="退款金额">
-              {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={price} onChange={onChange} />)}
-              <span className="ml10">（最多可退￥{price}）</span>
-            </Form.Item>
+            {this.isShowRefundAmount() && (
+              <Form.Item label="退款金额">
+                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={price} />)}
+                <span className="ml10">（最多可退￥{formatPrice(modalInfo.totalPrice)}）</span>
+              </Form.Item>
+            )}
             <Form.Item label="售后凭证">
               {getFieldDecorator('imgUrl')(
                 <UploadView

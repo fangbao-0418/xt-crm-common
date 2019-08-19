@@ -294,7 +294,10 @@ class OrderList extends React.Component {
               {getFieldDecorator('productId')(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="收货人电话">
-              {getFieldDecorator('phone')(<Input placeholder="" />)}
+              {getFieldDecorator('phone')(<Input maxLength={11} type="tel" placeholder="" />)}
+            </FormItem>
+            <FormItem label="下单人电话">
+              {getFieldDecorator('memberPhone')(<Input maxLength={11} type="tel" placeholder="" />)}
             </FormItem>
             <FormItem label="供应商">
               {getFieldDecorator('storeId', {})(<SuppilerSelect />)}

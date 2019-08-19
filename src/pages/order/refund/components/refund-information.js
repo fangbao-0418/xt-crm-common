@@ -35,8 +35,12 @@ class RefundInformation extends Component {
     const fields = getFieldsValue(['info']);
     dispatch['refund.model'].closeOrder({ ...params, ...fields });
   }
+  isReturnShipping(checkVO, orderInfoVO) {
+    const {refundAmount} = this.props.form.getFieldsValue(['refundAmount'])
+    return (refundAmount * 100) + checkVO.freight === orderInfoVO.payMoney;
+  }
   render() {
-    const { form: { getFieldDecorator }, data: { orderServerVO, checkVO, refundStatus }, readOnly = true } = this.props;
+    const { form: { getFieldDecorator }, data: { orderInfoVO = {}, orderServerVO = {}, checkVO = {}, refundStatus }, readOnly = true } = this.props;
     if (readOnly) {
       return (
         <Card title="退款信息">
@@ -65,7 +69,7 @@ class RefundInformation extends Component {
                       initialValue: formatMoney(checkVO.refundAmount)
                     })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
                   </Form.Item>
-                  {checkVO.isRefundFreight === 1 && <Form.Item label="退运费">
+                  {(checkVO.isRefundFreight === 1 && this.isReturnShipping(checkVO, orderInfoVO)) && <Form.Item label="退运费">
                     {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}
                   </Form.Item>}
                   <Form.Item label="说明">
