@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, Radio } from 'antd';
 import { formItemLayout, formButtonLayout } from '@/config';
 import moment from 'moment';
-import "../index.scss";
+import "./index.scss";
 
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -83,14 +83,14 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
         <Form.Item label="优惠内容（面值）">
           <Row type="flex">
             <Col>减</Col>
-            <Col><Input /></Col>
-            <Col>元</Col>
+            <Col className="ml10 short-input"><Input /></Col>
+            <Col className="ml10">元</Col>
           </Row>
         </Form.Item>
         <Form.Item label="发放总量" help="修改优惠券总量时只能增加不能减少，请谨慎设置">
           <Row type="flex">
-            <Col><Input /></Col>
-            <Col>张</Col>
+            <Col className="short-input"><Input /></Col>
+            <Col className="ml10">张</Col>
           </Row>
         </Form.Item>
         <Row>
@@ -112,7 +112,7 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
         </Form.Item>
         <Form.Item label="使用时间" help="设置为0时则为当日有效">{getFieldDecorator('effectiveTime')(
           <Radio.Group>
-            <Radio style={radioStyle} value={1}>
+            <Radio value={1}>
               <RangePicker
                 disabledDate={disabledDate}
                 disabledTime={disabledRangeTime}
@@ -123,13 +123,15 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
                 format="YYYY-MM-DD HH:mm:ss"
               />
             </Radio>
-            <Radio style={radioStyle} value={2}>
-              <div style={{ display: 'inline-block' }}>
-                <span>领券当日起</span>
-                <span><Input /></span>
-                <span>天内可用</span>
-              </div>
-            </Radio>
+            <Row type="flex" align="middle">
+              <Radio value={2}>
+              </Radio>
+              <Row type="flex">
+                <Col className="ml10">领券当日起</Col>
+                <Col className="ml10 short-input"><Input /></Col>
+                <Col className="ml10">天内可用</Col>
+              </Row>
+            </Row>
           </Radio.Group>
         )}</Form.Item>
         <Form.Item label="使用平台">
@@ -148,9 +150,9 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
             <Row type="flex">
               <Checkbox onChange={onChange} />
               <Row type="flex">
-                <Col>限领</Col>
-                <Col><Input /></Col>
-                <Col>张</Col>
+                <Col className="ml10">限领</Col>
+                <Col className="ml10 short-input"><Input /></Col>
+                <Col className="ml10">张</Col>
               </Row>
             </Row>
           )}
@@ -158,9 +160,9 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
             <Row type="flex">
               <Checkbox onChange={onChange} />
               <Row type="flex">
-                <Col>每日限领</Col>
-                <Col><Input /></Col>
-                <Col>张</Col>
+                <Col className="ml10">每日限领</Col>
+                <Col className="ml10 short-input"><Input /></Col>
+                <Col className="ml10">张</Col>
               </Row>
             </Row>
           )}
