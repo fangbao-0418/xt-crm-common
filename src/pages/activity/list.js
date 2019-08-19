@@ -49,7 +49,7 @@ class List extends React.Component {
 
   getPromotionList = params => {
     const { page } = this.state;
-    getPromotionList({ page: page.current, pageSize: page.pageSize, ...params }).then(res => {
+    getPromotionList({ page: page.current, pageSize: page.pageSize, ...params }).then((res = {}) => {
       page.total = res.total;
 
       this.setState({

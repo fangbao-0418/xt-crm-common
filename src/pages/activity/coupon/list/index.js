@@ -6,7 +6,8 @@ import { getListColumns, pagination } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
 import CouponCard from '../coupon-card';
 import './index.scss';
-function CouponList({ form: { getFieldDecorator } }) {
+
+function CouponList({ form: { getFieldDecorator }, history }) {
   const [data, setData] = useState({ list: [] });
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false)
@@ -20,6 +21,9 @@ function CouponList({ form: { getFieldDecorator } }) {
     fetchData();
   }, []);
   const handleOk = () => { }
+  const handleAddCoupon = () => {
+    history.push({pathname: '/activity/coupon/list/couponadd'})
+  }
   return (
     <>
       <Modal
@@ -57,7 +61,7 @@ function CouponList({ form: { getFieldDecorator } }) {
       </Card>
       <Card>
         <Row type="flex" justify="space-between">
-          <Button type="primary" icon="plus">新增优惠券</Button>
+          <Button type="primary" icon="plus" onClick={handleAddCoupon}>新增优惠券</Button>
           <Button icon="plus">批量发送记录</Button>
         </Row>
         <Table loading={loading} pagination={pagination} rowKey="couponCode" className="mt15" dataSource={data.list} columns={getListColumns(setVisible)} />
