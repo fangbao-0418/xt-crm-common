@@ -11,6 +11,7 @@ import { enumOrderStatus, OrderStatusTextMap } from '../constant';
 import DeliveryModal from './components/delivery-modal';
 import AfterSaleForm from './after-sale-form';
 import { formatMoneyWithSign } from '../../helper';
+import { Decimal } from 'decimal.js';
 import { customerAdd, setOrderRemark, setRefundOrderRemark } from '../api';
 const styleObj = {
   display: 'flex',
@@ -121,9 +122,9 @@ class Detail extends Component {
     fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
     console.log('fields.imgUrl=>', fields.imgUrl)
     if (fields.amount) {
-      fields.amount = fields.amount * 100;
+      fields.amount = new Decimal(fields.amount).mul(100).toNumber();
     }
-    console.log('modalInfo=>', modalInfo)
+    console.log('modalInfo=>', modalInfo) 
     const res = await customerAdd({
       childOrderId: modalInfo.childOrderId,
       mainOrderId: modalInfo.mainOrderId,
