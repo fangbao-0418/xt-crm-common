@@ -9,6 +9,7 @@ import ReturnAddress from '../return-address';
 import { formatPrice } from '@/util/format';
 import { formatMoney } from '@/pages/helper';
 import returnShipping from '../return-shipping';
+import { Decimal } from 'decimal.js';
 @connect()
 @withRouter
 class CheckForm extends Component {
@@ -20,7 +21,7 @@ class CheckForm extends Component {
     const { props } = this;
     const fieldsValue = props.form.getFieldsValue();
     if (fieldsValue.refundAmount) {
-      fieldsValue.refundAmount = fieldsValue.refundAmount * 100;
+      fieldsValue.refundAmount = new Decimal(fieldsValue.refundAmount).mul(100).toNumber();
     }
     if (fieldsValue.isRefundFreight === undefined) {
       fieldsValue.isRefundFreight = this.props.checkVO.isRefundFreight;
