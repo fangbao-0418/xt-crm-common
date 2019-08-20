@@ -1,2 +1,3 @@
-export { default as XtSelect} from './xt-select';
-export { default as TreeSelectGoods} from './tree-select-goods'
+export { default as XtSelect } from './xt-select';
+export { default as ProductTreeSelect } from './product-tree-select';
+export { default as ProductSelector } from './product-selector';

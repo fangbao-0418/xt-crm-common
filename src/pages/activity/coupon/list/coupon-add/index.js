@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, Radio } from 'antd';
-import { formItemLayout, formButtonLayout } from '@/config';
+import { Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, Radio } from 'antd';
+import { formItemLayout, formLeftButtonLayout } from '@/config';
 import { getCategoryList } from '@/pages/activity/api';
-import { TreeSelectGoods } from '@/components';
+import { ProductTreeSelect, ProductSelector } from '@/components';
+import { unionArray } from '@/util/utils';
 import moment from 'moment';
 import "./index.scss";
-
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 const radioStyle = {
@@ -41,25 +41,49 @@ function disabledRangeTime(_, type) {
     disabledSeconds: () => [55, 56],
   };
 }
-const onChange = () => {
-
-}
 const plainOptions = ['安卓', 'iOS', 'H5', '小程序'];
 function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
   const [treeData, setTreeData] = useState([]);
+  const [excludeProduct, setExcludeProduct] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const onChange = (selectedRowKeys, selectedRows) => {
+    setExcludeProduct(unionArray(excludeProduct, selectedRows));
+  }
   const showSelectPlatform = () => {
     const { platform } = getFieldsValue(['platform']);
     return platform === 2;
   }
+  const removeCurrentRow = (id) => {
+    setExcludeProduct(excludeProduct.filter(v => v.id !== id));
+  }
   useEffect(() => {
     async function getTreeData() {
-      const { data } = await getCategoryList();
+      const data = await getCategoryList();
       setTreeData(data);
     }
     getTreeData();
   }, [])
+  const excludeColumns = [{
+    title: '商品ID',
+    dataIndex: 'id',
+    key: 'id'
+  }, {
+    title: '商品名称',
+    dataIndex: 'productName',
+    key: 'productName'
+  }, {
+    title: '操作',
+    dataIndex: 'action',
+    key: 'action',
+    render: (text, record) => <Button type="link" onClick={() => removeCurrentRow(record.id)}>移除</Button>
+  }]
+  const hasExclude = () => {
+    const { type } = getFieldsValue(['type'])
+    return type !== 3;
+  }
   return (
     <Card>
+      <ProductSelector visible={visible} onCancel={() => setVisible(false)} onChange={onChange} />
       <Form {...formItemLayout}>
         <Row>
           <Col offset={3}>
@@ -70,21 +94,30 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
           {getFieldDecorator('name')(<Input placeholder="例：国庆优惠券，最多20个字" />)}
         </Form.Item>
         <Form.Item label="适用范围">
-          {getFieldDecorator('type')(
+          {getFieldDecorator('type', {
+            initialValue: 1
+          })(
             <Radio.Group>
               <Radio style={radioStyle} value={1}>全场通用</Radio>
               <Radio style={radioStyle} value={2}>分类商品</Radio>
-              <Radio style={radioStyle} value={3}>指定商品</Radio>
+              <Radio style={radioStyle} value={3}>指定商品 <Button type="link" onClick={() => setVisible(true)}>选择商品</Button></Radio>
               <Radio style={radioStyle} value={4}>指定活动</Radio>
             </Radio.Group>
           )}
-          <div>
-            <Button type="link">排除商品</Button>
-          </div>
+          {hasExclude() && (
+            <div>
+              <Button type="link" onClick={() => setVisible(true)}>排除商品</Button>
+            </div>
+          )}
         </Form.Item>
         <Form.Item label="选择类目">
-          <TreeSelectGoods treeData={treeData}/>
+          <ProductTreeSelect treeData={treeData} />
         </Form.Item>
+        {hasExclude() && excludeProduct.length > 0 && (
+          <Form.Item label="排除商品">
+            <Table pagination={false} rowKey="id" columns={excludeColumns} dataSource={excludeProduct} />
+          </Form.Item>
+        )}
         <Form.Item label="使用门槛">
           {getFieldDecorator('useThreshold')(
             <Radio.Group>
@@ -205,9 +238,9 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
         <Form.Item label="优惠券备注">
           {getFieldDecorator('remark')(<TextArea placeholder="备注优惠券信息，不会在用户端显示（选填）" />)}
         </Form.Item>
-        <Form.Item {...formButtonLayout}>
+        <Form.Item wrapperCol={formLeftButtonLayout}>
           <Button type="primary">保存</Button>
-          <Button>取消</Button>
+          <Button className="ml20">取消</Button>
         </Form.Item>
       </Form>
     </Card>

@@ -13,6 +13,11 @@ export const formButtonLayout = {
   sm: { span: 16, offset: 8 },
 }
 
+export const formLeftButtonLayout = {
+  xs: { span: 24, offset: 0 },
+  sm: { span: 19, offset: 5 },
+}
+
 export const orderRefunds = {
   '0': '无售后',
   '10': '待审核',
