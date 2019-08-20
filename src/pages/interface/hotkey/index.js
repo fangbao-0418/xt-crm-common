@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect, parseQuery, setQuery } from '@/util/utils';
-import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table, Modal } from 'antd';
+import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table, Modal, message } from 'antd';
 import { getList, deleteById } from './api';
-import iModal from './modal';
+import IModal from './modal';
 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -115,7 +115,10 @@ export default class extends Component {
       cancelText: '取消',
       onOk: () => {
         deleteById(item.id).then(data => {
-          console.log(data);
+          if(data) {
+            message.success('删除成功');
+            this.query();
+          }
         });
       }
     });
@@ -134,7 +137,7 @@ export default class extends Component {
           <Button style={{ marginRight: 10 }} onClick={() => this.setState({
             searchKey: ''
           })}>重 置</Button>
-          <Button type="primary" onClick={() => this.add()}>新增热词</Button>
+          <Button type="primary" onClick={() => this.edit()}>新增热词</Button>
         </FormItem>
       </Form>
     )
@@ -175,7 +178,9 @@ export default class extends Component {
               loading={loading}
             />
           </Col>
-          <iModal visible={this.state.visible} data={this.state.item} />
+          <IModal close={()=>this.setState({
+            visible: false
+          })} visible={this.state.visible} data={this.state.item} />
         </Row>
       </Card>
     )

@@ -12,16 +12,45 @@ const formItemLayout = {
   },
 };
 
-export default class extends Component {
-  onCancel = () => {
+class Edit extends Component {
 
+  componentWillReceiveProps(nextProps) {
+    if(this.id != nextProps.data.id) {
+      this.id = nextProps.data.id;
+      const { form: {setFieldsValue} } = this.props;
+      setFieldsValue({
+        name: nextProps.data.name || '',
+        sort: nextProps.data.sort || ''
+      })
+    }
+  }
+
+  onCancel = () => {
+    this.props.close();
   }
 
   onOk = () => {
-
+    const {
+      form: { validateFields }
+    } = this.props;
+    validateFields((err, vals) => {
+      if (!err) {
+        const params = {
+          ...vals,
+        };
+        if(this.id) params.id = this.id;
+        (this.id ? updateInfo : saveInfo)(params, id => {
+         
+        });
+      }
+    });
   }
 
   render() {
+    const {
+      form: { getFieldDecorator },
+    } = this.props;
+
     return (
       <Modal
         visible={this.props.visible}
@@ -30,14 +59,30 @@ export default class extends Component {
         destroyOnClose
       >
         <Form {...formItemLayout}>
-          <FormItem label="会员名称">
-            <Input disabled />
+          <FormItem label="热词名称">
+            {getFieldDecorator('name', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入热词名称',
+                },
+              ]
+            })(<Input />)}
           </FormItem>
-          <FormItem label="会员账号">
-            <Input disabled />
+          <FormItem label="排序">
+            {getFieldDecorator('sort', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入排序',
+                },
+              ]
+            })(<Input type="number" />)}
           </FormItem>
         </Form>
       </Modal>
     )
   }
 }
+
+export default Form.create()(Edit);
