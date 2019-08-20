@@ -99,7 +99,7 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
       setChosenProduct(unionArray(chosenProduct, selectedRows));
     }
   }
-  const onChange = () => {}
+  const onChange = () => { }
   return (
     <Card>
       <ProductSelector visible={visible} onCancel={() => setVisible(false)} onChange={onProductSelectorChange} />
@@ -110,7 +110,7 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
           </Col>
         </Row>
         <Form.Item label="优惠券名称">
-          {getFieldDecorator('name')(<Input placeholder="例：国庆优惠券，最多20个字" />)}
+          {getFieldDecorator('name', { rules: [{ required: true, message: '请输入优惠券名称' }] })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
         </Form.Item>
         <Form.Item label="适用范围">
           {getFieldDecorator('type', {
@@ -118,7 +118,7 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
           })(
             <Radio.Group>
               <Radio style={radioStyle} value={1}>全场通用</Radio>
-              <Radio style={radioStyle} value={2}>分类商品</Radio>
+              <Radio style={radioStyle} value={2}>类目商品</Radio>
               <Radio style={radioStyle} value={3}>指定商品 {hasChosen() && <Button type="link" onClick={() => setVisible(true)}>选择商品</Button>}</Radio>
               <Radio style={radioStyle} value={4}>指定活动</Radio>
             </Radio.Group>
@@ -129,9 +129,9 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
             </div>
           )}
         </Form.Item>
-        <Form.Item label="选择类目">
+        {<Form.Item label="选择类目">
           <ProductTreeSelect treeData={treeData} />
-        </Form.Item>
+        </Form.Item>}
         {hasExcludeList() && (
           <Form.Item label="已排除商品">
             <Table pagination={false} rowKey="id" columns={excludeColumns} dataSource={excludeProduct} />
