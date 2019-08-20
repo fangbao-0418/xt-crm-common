@@ -39,8 +39,8 @@ class RefundInformation extends Component {
     dispatch['refund.model'].closeOrder({ ...params, ...fields });
   }
   isReturnShipping(checkVO, orderInfoVO, orderServerVO) {
-    const {refundAmount} = this.props.form.getFieldsValue(['refundAmount'])
-    return (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount=== orderInfoVO.payMoney;
+    const { refundAmount } = this.props.form.getFieldsValue(['refundAmount'])
+    return (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount === orderInfoVO.payMoney;
   }
   render() {
     const { form: { getFieldDecorator }, data: { orderInfoVO = {}, orderServerVO = {}, checkVO = {}, refundStatus }, readOnly = true } = this.props;
@@ -50,7 +50,7 @@ class RefundInformation extends Component {
           <Row>
             <Col>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
             <Col>退款金额：￥{formatMoney(checkVO.refundAmount)}</Col>
-            <Col>退运费：￥{formatMoney(checkVO.freight)	}</Col>
+            <Col>退运费：￥{formatMoney(checkVO.freight)}</Col>
             <Col>说明：{checkVO.serverDescribe}</Col>
           </Row>
         </Card>
@@ -88,10 +88,21 @@ class RefundInformation extends Component {
                   </Form.Item>
                 </>
               )}
-              {refundStatus === 21 && <Form.Item wrapperCol={formButtonLayout}>
-                <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
-                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>关闭订单</Button>
-              </Form.Item>}
+              {refundStatus === 21 && (
+                <>
+                  <Form.Item label="说明">
+                    {getFieldDecorator('info', {
+                    })(<Input.TextArea
+                      placeholder=""
+                      autosize={{ minRows: 2, maxRows: 6 }}
+                    />)}
+                  </Form.Item>
+                  <Form.Item wrapperCol={formButtonLayout}>
+                    <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
+                    <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>售后完成</Button>
+                  </Form.Item>
+                </>
+              )}
             </Form>
           </Card>
         );

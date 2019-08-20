@@ -44,7 +44,7 @@ class DealForm extends Component {
               </Form.Item>
               <Form.Item wrapperCol={formButtonLayout}>
                 <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
-                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>关闭售后单</Button>
+                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>售后完成</Button>
               </Form.Item>
             </Form>
           </Card>
