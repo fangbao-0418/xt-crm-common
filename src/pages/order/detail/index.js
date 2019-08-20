@@ -117,6 +117,9 @@ class Detail extends Component {
     const { modalInfo } = this.state;
     const fields = form.getFieldsValue();
     fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url): [];
+    console.log('fields.imgUrl=>', fields.imgUrl)
+    fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
+    console.log('fields.imgUrl=>', fields.imgUrl)
     if (fields.amount) {
       fields.amount = fields.amount * 100;
     }

@@ -70,7 +70,7 @@ const BenefitInfo = ({
       <Table
         rowKey={record => record.uniqueId}
         columns={columns}
-        dataSource={data.memberYieldVOList.map((v, i) => ({...v, uniqueId: i}))}
+        dataSource={Array.isArray(data.memberYieldVOList) ? data.memberYieldVOList.map((v, i) => ({...v, uniqueId: i})) : []}
         pagination={false}
         defaultExpandAllRows
       />

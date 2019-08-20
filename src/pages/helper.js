@@ -15,7 +15,8 @@ export function formatMoneyWithSign(money, decimal = 2, sign = '￥') {
   return `￥${formatMoney(money).toFixed(decimal)}`;
 }
 
-export function unionAddress({ province = '', city = '', area = '', street = '' }) {
+export function unionAddress(args) {
+  const { province = '', city = '', area = '', street = '' } = args || {};
   return `${province}${city}${area}${street}`;
 }
 

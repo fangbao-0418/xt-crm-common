@@ -33,7 +33,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
         <Col span={8}>订单来源：{platform}</Col>
       </Row>
       <Row>
-        <Col span={8}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress.phone}</Col>
+        <Col span={8}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress &&　memberAddress.phone}</Col>
       </Row>
       <Row>
         <Col span={8}>买家备注：{remark}</Col>

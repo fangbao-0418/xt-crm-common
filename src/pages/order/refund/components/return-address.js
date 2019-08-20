@@ -24,7 +24,7 @@ function ReturnAddress({ returnContact, returnPhone, returnAddress, setReturnAdd
             returnAddress: data.address,
           };
     setReturnAddress(result);
-  }, [radioKey, data.contact, data.phone, data.address]);
+  }, [radioKey, returnContact, returnPhone, returnAddress, data.contact, data.phone, data.address]);
   const handleChange = event => {
     const { value } = event.target;
     if (value === 0) {

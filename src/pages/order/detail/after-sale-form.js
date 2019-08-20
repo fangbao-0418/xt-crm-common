@@ -25,20 +25,27 @@ class AfterSaleForm extends Component {
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
     const price = parseFloat(formatPrice(modalInfo.buyPrice))
+    console.log('modalInfo.childOrder.orderStatus==============================================>>>>>>>>>', modalInfo.childOrder.orderStatus)
+    const initialObj = {}
+    const disabledObj = {}
+    if (modalInfo.childOrder.orderStatus === 20) {
+      initialObj.initialValue = '20'
+      disabledObj.disabled = true
+    }
     return (
       <>
         <Table dataSource={[modalInfo]} columns={goodsTableColumn} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
             <Form.Item label="售后类型">
-              {getFieldDecorator('refundType', { rules: [{ required: true }] })(<XtSelect data={refundType.getArray()} />)}
+              {getFieldDecorator('refundType', {...initialObj,rules: [{ required: true }] })(<XtSelect {...disabledObj} data={refundType.getArray()} />)}
             </Form.Item>
             <Form.Item label="售后原因">
               {getFieldDecorator('returnReason', { rules: [{ required: true }] })(<XtSelect data={returnReason.getArray()} />)}
             </Form.Item>
             {this.isShowRefundAmount() && (
               <Form.Item label="退款金额">
-                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={formatPrice(modalInfo.totalPrice)} />)}
+                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={+formatPrice(modalInfo.totalPrice)} />)}
                 <span className="ml10">（最多可退￥{formatPrice(modalInfo.totalPrice)}）</span>
               </Form.Item>
             )}

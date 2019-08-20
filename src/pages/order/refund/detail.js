@@ -6,7 +6,7 @@ import PicturesWall from '../components/pictures-wall';
 import { CheckForm, DealForm, CheckDetail } from './components';
 import { logColumns, logisticsInformationColumns } from './config';
 import moment from 'moment';
-import { connect } from '@/util/utils';
+import { connect, replaceHttpUrl } from '@/util/utils';
 import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
 import createType from '@/enum/createType';
 import memberType from '@/enum/memberType';
@@ -59,7 +59,7 @@ class Detail extends Component {
                 <Row>
                   <Col>
                     图片凭证：
-                    <PicturesWall disabled={true} readOnly={true} imgUrl={orderServerVO.imgUrl} />
+                    {orderServerVO.imgUrl && <PicturesWall disabled={true} readOnly={true} imgUrl={replaceHttpUrl(orderServerVO.imgUrl)} />}
                   </Col>
                 </Row>
                 <Row>
