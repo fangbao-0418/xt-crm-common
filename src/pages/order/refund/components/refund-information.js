@@ -7,6 +7,7 @@ import { connect } from '@/util/utils';
 import { withRouter } from 'react-router-dom';
 import { formatMoney } from '@/pages/helper';
 import returnShipping from './return-shipping';
+import { Decimal } from 'decimal.js';
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
@@ -16,7 +17,7 @@ class RefundInformation extends Component {
   handleAuditOperate = (status) => {
     const { dispatch, match: { params: { id } }, form: { getFieldsValue } } = this.props;
     const fields = getFieldsValue();
-    fields.refundAmount = fields.refundAmount * 100;
+    fields.refundAmount = new Decimal(fields.refundAmount).mul(100).toNumber();
     if (fields.isRefundFreight === undefined) {
       fields.isRefundFreight = this.props.data.checkVO.isRefundFreight
     }
