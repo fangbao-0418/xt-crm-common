@@ -56,3 +56,7 @@ export function refreshPromtion(promotionId) {
 export function getCouponList() {
   return get('/api/coupon/list')
 }
+
+export function getCategoryList() {
+  return post('/category/treeCategory');
+}

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, Radio } from 'antd';
 import { formItemLayout, formButtonLayout } from '@/config';
+import { getCategoryList } from '@/pages/activity/api';
+import { TreeSelectGoods } from '@/components';
 import moment from 'moment';
 import "./index.scss";
 
@@ -44,10 +46,18 @@ const onChange = () => {
 }
 const plainOptions = ['安卓', 'iOS', 'H5', '小程序'];
 function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
+  const [treeData, setTreeData] = useState([]);
   const showSelectPlatform = () => {
     const { platform } = getFieldsValue(['platform']);
     return platform === 2;
   }
+  useEffect(() => {
+    async function getTreeData() {
+      const treeData = await getCategoryList();
+      setTreeData(treeData)
+    }
+    getTreeData();
+  }, [])
   return (
     <Card>
       <Form {...formItemLayout}>
@@ -73,7 +83,7 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
           </div>
         </Form.Item>
         <Form.Item label="选择类目">
-          
+          <TreeSelectGoods treeData={treeData}/>
         </Form.Item>
         <Form.Item label="使用门槛">
           {getFieldDecorator('useThreshold')(
