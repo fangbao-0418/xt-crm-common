@@ -64,31 +64,18 @@ export default class extends Component {
       pageSize: 10,
       name: this.state.searchKey
     }).then(data => {
-      if(data)
-      this.setState({
-        records: data.records,
-        total: data.total,
-        current: data.current,
-      })
+      if (data)
+        this.setState({
+          records: data.records,
+          total: data.total,
+          current: data.current,
+        })
     })
   }
 
   onInviteClick = (item) => {
     const { history } = this.props;
     history.push(`/user/detail?memberId=${item.inviteId}`);
-  }
-
-  onMore = item => {
-    const { form: { resetFields } } = this.props;
-    const params = parseQuery(this.props.history);
-    resetFields();
-    if (item.id === +params.parentMemberId) {
-      const random = Math.random();
-      setQuery({ parentMemberId: item.id, random, ...basePayload }, true);
-    } else {
-      setQuery({ parentMemberId: item.id, ...basePayload }, true);
-    }
-
   }
 
   onDetail = (item) => {
@@ -115,7 +102,7 @@ export default class extends Component {
       cancelText: '取消',
       onOk: () => {
         deleteById(item.id).then(data => {
-          if(data) {
+          if (data) {
             message.success('删除成功');
             this.query();
           }
@@ -178,9 +165,12 @@ export default class extends Component {
               loading={loading}
             />
           </Col>
-          <IModal close={()=>this.setState({
-            visible: false
-          })} visible={this.state.visible} data={this.state.item} />
+          <IModal close={(type) => {
+            this.setState({
+              visible: false
+            });
+            if (type == 'reload') this.query()
+          }} visible={this.state.visible} data={this.state.item} />
         </Row>
       </Card>
     )

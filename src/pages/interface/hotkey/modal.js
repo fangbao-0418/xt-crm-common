@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Form, Modal, InputNumber } from 'antd';
+import { Input, Form, Modal, InputNumber, message } from 'antd';
 import { saveInfo, updateInfo } from './api';
 const FormItem = Form.Item;
 
@@ -14,16 +14,29 @@ const formItemLayout = {
 
 class Edit extends Component {
 
+  state = {
+    name: '',
+    sort: ''
+  }
+
   componentWillReceiveProps(nextProps) {
-    if(this.id != nextProps.data.id) {
+    if (this.id != nextProps.data.id) {
       this.id = nextProps.data.id;
-      const { form: {setFieldsValue} } = this.props;
-      setFieldsValue({
-        name: nextProps.data.name || '',
-        sort: nextProps.data.sort || ''
+      this.data = nextProps.data;
+      this.setState({
+        name: nextProps.data.name,
+        sort: nextProps.data.sort
       })
     }
   }
+
+  // componentDidMount() {
+  //   const { form: {setFieldsValue} } = this.props;
+  //   setFieldsValue({
+  //     name: this.data.name || '',
+  //     sort: this.data.sort || ''
+  //   })
+  // }
 
   onCancel = () => {
     this.props.close();
@@ -38,9 +51,12 @@ class Edit extends Component {
         const params = {
           ...vals,
         };
-        if(this.id) params.id = this.id;
-        (this.id ? updateInfo : saveInfo)(params, id => {
-         
+        if (this.id) params.id = this.id;
+        (this.id ? updateInfo : saveInfo)(params).then(data => {
+          if (data && data.id) {
+            message.success('保存成功');
+            this.props.close('reload');
+          }
         });
       }
     });
@@ -61,6 +77,7 @@ class Edit extends Component {
         <Form {...formItemLayout}>
           <FormItem label="热词名称">
             {getFieldDecorator('name', {
+              initialValue: this.state.name,
               rules: [
                 {
                   required: true,
@@ -71,6 +88,7 @@ class Edit extends Component {
           </FormItem>
           <FormItem label="排序">
             {getFieldDecorator('sort', {
+              initialValue: this.state.sort,
               rules: [
                 {
                   required: true,
