@@ -53,8 +53,8 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
   }
   useEffect(() => {
     async function getTreeData() {
-      const treeData = await getCategoryList();
-      setTreeData(treeData)
+      const { data } = await getCategoryList();
+      setTreeData(data);
     }
     getTreeData();
   }, [])
