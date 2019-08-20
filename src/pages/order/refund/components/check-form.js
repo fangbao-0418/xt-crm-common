@@ -5,10 +5,10 @@ import { withRouter } from 'react-router-dom';
 import refundType from '@/enum/refundType';
 import { XtSelect } from '@/components'
 import { connect } from '@/util/utils';
-import ReturnAddress from '../return-address';
+import ReturnAddress from './return-address';
 import { formatPrice } from '@/util/format';
-import { formatMoney } from '@/pages/helper';
-import returnShipping from '../return-shipping';
+import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/helper';
+import returnShipping from './return-shipping';
 import { Decimal } from 'decimal.js';
 @connect()
 @withRouter
@@ -52,11 +52,11 @@ class CheckForm extends Component {
     this.setState({ returnAddress })
   }
   handleChange = (val) => {
-    this.setState({refundType: val})
+    this.setState({ refundType: val })
   }
   isReturnShipping(checkVO, orderInfoVO, orderServerVO) {
-    const {refundAmount} = this.props.form.getFieldsValue(['refundAmount'])
-    return (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount=== orderInfoVO.payMoney;
+    const { refundAmount } = this.props.form.getFieldsValue(['refundAmount'])
+    return (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount === orderInfoVO.payMoney;
   }
   render() {
     const { orderServerVO = {}, orderInfoVO = {}, checkVO = {}, refundStatus } = this.props;
@@ -68,7 +68,7 @@ class CheckForm extends Component {
           <Form.Item label="售后类型">
             {getFieldDecorator('refundType', {
               initialValue: orderServerVO.refundType
-            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleChange}/>)}
+            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleChange} />)}
           </Form.Item>
           {localRefundType === '20' && <Form.Item label="退款金额">
             {getFieldDecorator('refundAmount', {
@@ -85,21 +85,19 @@ class CheckForm extends Component {
             })(<Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
           </Form.Item>
           {/* 退货退款、换货才有退货地址 refundType： 10 30*/}
-          {localRefundType !== '20' && <Form.Item label="退货地址"><ReturnAddress {...checkVO} setReturnAddress={this.setReturnAddress}/></Form.Item>}
+          {localRefundType !== '20' && <Form.Item label="退货地址"><ReturnAddress {...checkVO} setReturnAddress={this.setReturnAddress} /></Form.Item>}
           {
-            refundStatus === 10 && <Form.Item
-              wrapperCol={formButtonLayout}
-            >
-              <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
-                同意
-            </Button>
-              <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>
-                拒绝
-            </Button>
-            </Form.Item>
+            // 待审核状态显示同意和拒绝按钮
+            isPendingStatus(refundStatus) && (
+              <Form.Item wrapperCol={formButtonLayout}>
+                <Button type="primary" onClick={() => this.handleAuditOperate(1)}>同意</Button>
+                <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>拒绝</Button>
+              </Form.Item>
+            )
           }
           {
-            refundStatus === 21 && (
+            // 退款失败状态下显示重新退款和售后完成按钮
+            isRefundFailedStatus(refundStatus) && (
               <Form.Item wrapperCol={formButtonLayout}>
                 <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
                 <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>售后完成</Button>
