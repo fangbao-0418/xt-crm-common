@@ -45,10 +45,8 @@ const plainOptions = ['安卓', 'iOS', 'H5', '小程序'];
 function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
   const [treeData, setTreeData] = useState([]);
   const [excludeProduct, setExcludeProduct] = useState([]);
+  const [chosenProduct, setChosenProduct] = useState([]);
   const [visible, setVisible] = useState(false);
-  const onChange = (selectedRowKeys, selectedRows) => {
-    setExcludeProduct(unionArray(excludeProduct, selectedRows));
-  }
   const showSelectPlatform = () => {
     const { platform } = getFieldsValue(['platform']);
     return platform === 2;
@@ -77,13 +75,34 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
     key: 'action',
     render: (text, record) => <Button type="link" onClick={() => removeCurrentRow(record.id)}>移除</Button>
   }]
+  // 是否显示排除商品按钮
   const hasExclude = () => {
-    const { type } = getFieldsValue(['type'])
-    return type !== 3;
+    return getFieldsValue(['type']).type !== 3;
   }
+  // 是否显示排除商品列表
+  const hasExcludeList = () => {
+    return hasExclude() && excludeProduct.length > 0;
+  }
+  // 是否显示选择商品按钮
+  const hasChosen = () => {
+    return !hasExclude();
+  }
+  // 是否显示已选择商品列表
+  const hasChosenList = () => {
+    return hasChosen() && chosenProduct.length > 0;
+  }
+  // 选择商品添加数据到已排除商品或者已选择商品列表
+  const onProductSelectorChange = (selectedRowKeys, selectedRows) => {
+    if (hasExclude()) {
+      setExcludeProduct(unionArray(excludeProduct, selectedRows));
+    } else {
+      setChosenProduct(unionArray(chosenProduct, selectedRows));
+    }
+  }
+  const onChange = () => {}
   return (
     <Card>
-      <ProductSelector visible={visible} onCancel={() => setVisible(false)} onChange={onChange} />
+      <ProductSelector visible={visible} onCancel={() => setVisible(false)} onChange={onProductSelectorChange} />
       <Form {...formItemLayout}>
         <Row>
           <Col offset={3}>
@@ -100,7 +119,7 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
             <Radio.Group>
               <Radio style={radioStyle} value={1}>全场通用</Radio>
               <Radio style={radioStyle} value={2}>分类商品</Radio>
-              <Radio style={radioStyle} value={3}>指定商品 <Button type="link" onClick={() => setVisible(true)}>选择商品</Button></Radio>
+              <Radio style={radioStyle} value={3}>指定商品 {hasChosen() && <Button type="link" onClick={() => setVisible(true)}>选择商品</Button>}</Radio>
               <Radio style={radioStyle} value={4}>指定活动</Radio>
             </Radio.Group>
           )}
@@ -113,11 +132,14 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue } }) {
         <Form.Item label="选择类目">
           <ProductTreeSelect treeData={treeData} />
         </Form.Item>
-        {hasExclude() && excludeProduct.length > 0 && (
-          <Form.Item label="排除商品">
+        {hasExcludeList() && (
+          <Form.Item label="已排除商品">
             <Table pagination={false} rowKey="id" columns={excludeColumns} dataSource={excludeProduct} />
           </Form.Item>
         )}
+        {hasChosenList() && <Form.Item label="已选择商品">
+          <Table pagination={false} rowKey="id" columns={excludeColumns} dataSource={chosenProduct} />
+        </Form.Item>}
         <Form.Item label="使用门槛">
           {getFieldDecorator('useThreshold')(
             <Radio.Group>
