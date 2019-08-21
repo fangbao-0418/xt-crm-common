@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { queryOrderDetail, push1688, withhold } from '../api';
 import { get, map } from 'lodash';
-import { Row, Card, Col, message, Modal, Input } from 'antd';
+import { Button, Row, Card, Col, message, Modal, Input } from 'antd';
 import BuyerInfo from './buyer-info';
 import OrderInfo from './order-info';
 import GoodsTable from './goods-table';
@@ -19,7 +19,7 @@ const styleObj = {
   alignItems: 'flex-end',
   padding: '0 24px'
 }
-
+const { confirm } = Modal;
 class Detail extends Component {
   constructor(props) {
     super(props);
@@ -117,14 +117,14 @@ class Detail extends Component {
     const { form } = this.afterSaleForm.props;
     const { modalInfo } = this.state;
     const fields = form.getFieldsValue();
-    fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url): [];
+    fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
     console.log('fields.imgUrl=>', fields.imgUrl)
     fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
     console.log('fields.imgUrl=>', fields.imgUrl)
     if (fields.amount) {
       fields.amount = new Decimal(fields.amount).mul(100).toNumber();
     }
-    console.log('modalInfo=>', modalInfo) 
+    console.log('modalInfo=>', modalInfo)
     const res = await customerAdd({
       childOrderId: modalInfo.childOrderId,
       mainOrderId: modalInfo.mainOrderId,
@@ -152,6 +152,22 @@ class Detail extends Component {
       this.setState({
         notesVisible: false,
       });
+    });
+  }
+  comfirmWithhold = (id) => {
+    confirm({
+      title: '确认重新发起代扣?',
+      onOk() {
+        this.withhold(id)
+      }
+    });
+  }
+  comfirmPush1688 = (id) => {
+    confirm({
+      title: '确认重新推送1688?',
+      onOk() {
+        this.push1688(id)
+      }
     });
   }
   toggleNotesVisible = (notesVisible) => {
@@ -198,6 +214,16 @@ class Detail extends Component {
                     {(orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
                       <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics} />
                     ) : ''}
+                    {item.canProtocolPay ? <Button
+                      type="link"
+                      style={{ margin: '0 10px 10px 0' }}
+                      onClick={() => this.comfirmWithhold(item.childOrder.id)}
+                    >重新发起代扣</Button> : ''}
+                    {item.canPush ? <Button
+                      style={{ margin: '0 10px 10px 0' }}
+                      type="link"
+                      onClick={() => this.comfirmPush1688(item.childOrder.id)}
+                    >重新推送1688 </Button> : ''}
                   </Col>
                 </Row>
                 <GoodsTable
@@ -209,7 +235,7 @@ class Detail extends Component {
                   query={this.query}
                   memberId={data.buyerInfo && data.buyerInfo.memberAddress && data.buyerInfo.memberAddress.memberId}
                   showModal={this.showModal}
-                  rowKey = {record => record.id}
+                  rowKey={record => record.id}
                 />
               </div>
             );
@@ -219,7 +245,7 @@ class Detail extends Component {
             <div>运费：{formatMoneyWithSign(data.freight)}</div>
             <div>实际支付：<span style={{ color: 'red' }}>{formatMoneyWithSign(data.totalPrice)}</span></div>
           </div>
-          <BenefitInfo data={data.orderYield} orderInfo={data.orderInfo} refresh={this.query}/>
+          <BenefitInfo data={data.orderYield} orderInfo={data.orderInfo} refresh={this.query} />
         </Card>
       </>
     );

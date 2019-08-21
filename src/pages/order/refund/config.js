@@ -9,7 +9,7 @@ import { Button } from 'antd';
 import MoneyRender from '@/components/money-render'
 import { formatDate } from '@/pages/helper';
 import { orderRefunds } from '@/config';
-
+import RemarkModal from '../components/remark-modal'
 export const formFields = function () {
   return [
     {
@@ -143,13 +143,13 @@ export const getListColumns = ({ query, history }) => [
     render: (_, { id, skuId, refundId, childOrderId, mainOrderCode, orderCode, refundStatus, isDelete }) => {
       return (
         <div style={{ display: 'flex' }}>
-          {/* <RemarkModal
+          <RemarkModal
             onSuccess={query}
             orderCode={mainOrderCode}
             refundId={refundId}
             childOrderId={childOrderId}
           />
-          &nbsp; */}
+          &nbsp;
           {[enumRefundStatus.Complete, enumRefundStatus.Rejected].includes( // 已完成，已取消（isDelete === 1），已驳回的展示查看
             Number(refundStatus)
           ) || isDelete === 1 ? (
