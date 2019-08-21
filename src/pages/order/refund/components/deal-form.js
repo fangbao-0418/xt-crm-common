@@ -43,7 +43,9 @@ class DealForm extends Component {
   handleAuditOperate = (status) => {
     const { dispatch, match: { params: { id } }, form: { getFieldsValue } } = this.props;
     const fields = getFieldsValue();
-    fields.refundAmount = new Decimal(fields.refundAmount).mul(100).toNumber();
+    if (fields.refundAmount) {
+      fields.refundAmount = new Decimal(fields.refundAmount).mul(100).toNumber();
+    }
     if (fields.isRefundFreight === undefined) {
       fields.isRefundFreight = this.props.data.checkVO.isRefundFreight
     }
