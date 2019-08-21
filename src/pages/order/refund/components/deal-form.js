@@ -41,10 +41,15 @@ class DealForm extends Component {
   }
   // 第二次审核
   handleAuditOperate = (status) => {
-    const { dispatch, match: { params: { id } }, form: { getFieldsValue } } = this.props;
+    const { dispatch, data: {checkVO = {}}, match: { params: { id } }, form: { getFieldsValue } } = this.props;
     const fields = getFieldsValue();
     if (fields.refundAmount) {
       fields.refundAmount = new Decimal(fields.refundAmount).mul(100).toNumber();
+    }
+
+    // 换货流程需要上传refundType字段供后台判断退款类型
+    if (isOnlyExchange(checkVO.refundType)) {
+      fields.refundType = checkVO.refundType
     }
     if (fields.isRefundFreight === undefined) {
       fields.isRefundFreight = this.props.data.checkVO.isRefundFreight
