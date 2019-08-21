@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { TreeSelect } from 'antd';
 const { SHOW_PARENT } = TreeSelect;
-function ProductTreeSelect({ treeData }) {
-  const [value, setValue] = useState([]);
-  const onChange = value => {
-    console.log('onChange ', value);
-    setValue(value);
-  };
+function ProductTreeSelect({ treeData, value, onChange }) {
+  // const [value, setValue] = useState([]);
+  // const onChange = value => {
+  //   console.log('onChange ', value);
+  //   setValue(value);
+  // };
   const transformTreeData = (treeData) => {
     if (!Array.isArray(treeData)) return []
     return treeData.map(v => {
@@ -29,9 +29,6 @@ function ProductTreeSelect({ treeData }) {
       width: 300,
     },
   };
-  useEffect(() => {
-
-  })
   return <TreeSelect {...tProps} />
 }
 export default ProductTreeSelect;
