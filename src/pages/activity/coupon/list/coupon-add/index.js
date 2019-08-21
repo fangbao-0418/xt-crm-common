@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 import { getCategoryList } from '@/pages/activity/api';
-import { ProductTreeSelect, ProductSelector } from '@/components';
+import { actColumns } from '@/components/activity-selector/config';
+import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
 import { unionArray } from '@/util/utils';
 import moment from 'moment';
 import "./index.scss";
@@ -58,10 +59,15 @@ const useIdentityOptions = [
 function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue } }) {
   const [treeData, setTreeData] = useState([]);
   const [excludeProduct, setExcludeProduct] = useState([]);
+  const [activityList, setActivityList] = useState([]);
   const [chosenProduct, setChosenProduct] = useState([]);
-  const [visible, setVisible] = useState(false);
-  const removeCurrentRow = (id) => {
+  const [productSelectorVisible, setProductSelectorVisible] = useState(false);
+  const [activitySelectorVisible, setActivitySelectorVisible] = useState(false);
+  const removeExcludeCurrentRow = (id) => {
     setExcludeProduct(excludeProduct.filter(v => v.id !== id));
+  }
+  const removeActivityCurrentRow = (id) => {
+    setActivityList(activityList.filter(v => v.id !== id));
   }
   useEffect(() => {
     async function getTreeData() {
@@ -82,7 +88,13 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    render: (text, record) => <Button type="link" onClick={() => removeCurrentRow(record.id)}>移除</Button>
+    render: (text, record) => <Button type="link" onClick={() => removeExcludeCurrentRow(record.id)}>移除</Button>
+  }]
+  const activityColumns = [...actColumns(), {
+    title: '操作',
+    dataIndex: 'action',
+    key: 'action',
+    render: (text, record) => <Button type="link" onClick={() => removeActivityCurrentRow(record.id)}>移除</Button>
   }]
   // 是否显示排除商品按钮
   const hasExclude = () => {
@@ -95,6 +107,10 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
   // 是否显示选择商品按钮
   const hasChosen = () => {
     return !hasExclude();
+  }
+  // 是否显示选择活动列表
+  const hasActivity = () => {
+    return getFieldsValue(['type']).type === 4;
   }
   // 是否显示已选择商品列表
   const hasChosenList = () => {
@@ -112,6 +128,11 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
       setChosenProduct(unionArray(chosenProduct, selectedRows));
     }
   }
+  // 选择活动添加数据到已选择活动列表里
+  const onActivitySelectorChange = (selectedRowKeys, selectedRows) => {
+    console.log(selectedRowKeys, selectedRows);
+    setActivityList(unionArray(activityList, selectedRows));
+  } 
   // 是否显示使用平台
   const showSelectPlatform = () => {
     return getFieldsValue(['platform']).platform === 2;
@@ -127,7 +148,8 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
   }
   return (
     <Card>
-      <ProductSelector visible={visible} onCancel={() => setVisible(false)} onChange={onProductSelectorChange} />
+      <ProductSelector visible={productSelectorVisible} onCancel={() => setProductSelectorVisible(false)} onChange={onProductSelectorChange} />
+      <ActivitySelector visible={activitySelectorVisible}  onCancel={() => setActivitySelectorVisible(false)} onChange={onActivitySelectorChange} />
       <Form {...formItemLayout}>
         <Row>
           <Col offset={3}>
@@ -144,13 +166,13 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
             <Radio.Group>
               <Radio style={radioStyle} value={1}>全场通用</Radio>
               <Radio style={radioStyle} value={2}>类目商品</Radio>
-              <Radio style={radioStyle} value={3}>指定商品 {hasChosen() && <Button type="link" onClick={() => setVisible(true)}>选择商品</Button>}</Radio>
-              <Radio style={radioStyle} value={4}>指定活动</Radio>
+              <Radio style={radioStyle} value={3}>指定商品 {hasChosen() && <Button type="link" onClick={() => setProductSelectorVisible(true)}>选择商品</Button>}</Radio>
+              <Radio style={radioStyle} value={4}>指定活动 {hasActivity() && <Button type="link" onClick={() => setActivitySelectorVisible(true)}>选择活动</Button>}</Radio>
             </Radio.Group>
           )}
           {hasExclude() && (
             <div>
-              <Button type="link" onClick={() => setVisible(true)}>排除商品</Button>
+              <Button type="link" onClick={() => setProductSelectorVisible(true)}>排除商品</Button>
             </div>
           )}
         </Form.Item>
@@ -167,6 +189,9 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
         {hasChosenList() && <Form.Item label="已选择商品">
           <Table pagination={false} rowKey="id" columns={excludeColumns} dataSource={chosenProduct} />
         </Form.Item>}
+        <Form.Item label="已选择活动">
+          <Table pagination={false} rowKey="id" columns={activityColumns} dataSource={activityList} />
+        </Form.Item>
         <Form.Item label="使用门槛">
           {getFieldDecorator('useThreshold', { initialValue: 2, rules: [{ required: true }] })(
             <Radio.Group>
@@ -192,7 +217,7 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
           )}
         </Form.Item>
         <Form.Item label="发放总量">
-          {getFieldDecorator('amount', { rules: [{ required: true }] })(
+          {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入发放总量' }] })(
             <Row type="flex">
               <Col><InputNumber /></Col>
               <Col className="ml10">张</Col>

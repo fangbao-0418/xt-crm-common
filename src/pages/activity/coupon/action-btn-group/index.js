@@ -8,14 +8,14 @@ const coupons = {
   '2': ['VIEW']
 }
 
-function ActionBtn({ keyCode, history, setVisible }) {
+function ActionBtn({ keyCode, history, setVisible, couponCode }) {
   const menu = (
     <Menu>
       <Menu.Item>
         <a href="javascript:void(0)" onClick={() => setVisible(true)}>二维码</a>
       </Menu.Item>
       <Menu.Item>
-        <a href="javascript:void(0)" onClick={() => history.push({pathname: '/activity/coupon/list/bulkissuing'})}>批量发券</a>
+        <a href="javascript:void(0)" onClick={() => history.push({ pathname: '/activity/coupon/list/bulkissuing' })}>批量发券</a>
       </Menu.Item>
     </Menu>
   );
@@ -43,7 +43,7 @@ function ActionBtn({ keyCode, history, setVisible }) {
         </Dropdown>
       );
     case 'VIEW':
-      return <Button type="link" onClick={() => history.push({ pathname: '/activity/coupon/1'})}>查看</Button>
+      return <Button type="link" onClick={() => history.push({ pathname: `/activity/coupon/list/detail/${couponCode}` })}>查看</Button>
     case 'EDIT':
       return <Button type="link">编辑</Button>
     case 'FINISH':
@@ -53,9 +53,15 @@ function ActionBtn({ keyCode, history, setVisible }) {
   }
 }
 const WithActionBtn = withRouter(ActionBtn);
-function ActionBtnGroup({ status, setVisible }) {
+function ActionBtnGroup({ record, setVisible }) {
   return (
-    <div className="action-btn-group">{Array.isArray(coupons[status]) ? coupons[status].map(v => <WithActionBtn key={v} keyCode={v} setVisible={setVisible} />) : null}</div>
+    <div className="action-btn-group">
+      {
+        Array.isArray(coupons[record.receiveStatus])
+          ? coupons[record.receiveStatus].map(v => <WithActionBtn key={v} keyCode={v} setVisible={setVisible} couponCode={record.couponCode} />)
+          : null
+      }
+    </div>
   )
 }
 

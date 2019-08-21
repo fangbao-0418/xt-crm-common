@@ -1,5 +1,10 @@
 import { post, get } from '../../util/fetch';
 
+// 失效优惠券
+export function invalidCoupon() {
+
+}
+
 export function getPromotionList(data) {
   return post('/promotion/list', data);
 }

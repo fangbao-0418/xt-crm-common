@@ -48,7 +48,7 @@ export const getListColumns = (setVisible) => [
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    render: (text, record) => <ActionBtnGroup status={record.receiveStatus} setVisible={setVisible}/>
+    render: (text, record) => <ActionBtnGroup record={record} setVisible={setVisible}/>
   }
 ]
 
