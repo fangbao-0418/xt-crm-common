@@ -69,21 +69,29 @@ class DealForm extends Component {
       // 退款失败
       if (isRefundFailedStatus(refundStatus)) {
         return (
-          <Card title="退款信息">
-            <Form {...formItemLayout}>
-              <Form.Item label="说明">
-                {getFieldDecorator('info', {
-                })(<Input.TextArea
-                  placeholder=""
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                />)}
-              </Form.Item>
-              <Form.Item wrapperCol={formButtonLayout}>
-                <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
-                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>售后完成</Button>
-              </Form.Item>
-            </Form>
-          </Card>
+          <>
+            <Card title="审核信息">
+              <Row>
+                <Col>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
+                <Col>说明：{checkVO.firstServerDescribe}</Col>
+              </Row>
+            </Card>
+            <Card title="退款信息">
+              <Form {...formItemLayout}>
+                <Form.Item label="说明">
+                  {getFieldDecorator('info', {
+                  })(<Input.TextArea
+                    placeholder=""
+                    autosize={{ minRows: 2, maxRows: 6 }}
+                  />)}
+                </Form.Item>
+                <Form.Item wrapperCol={formButtonLayout}>
+                  <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
+                  <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>售后完成</Button>
+                </Form.Item>
+              </Form>
+            </Card>
+          </>
         )
       } else {
         return null;
@@ -95,12 +103,7 @@ class DealForm extends Component {
         <>
           <Card title="审核信息">
             <Row>
-              <Col>审核意见：{checkVO.firstRefundStatusStr || checkVO.refundStatusStr}</Col>
               <Col>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
-
-              {/* {checkVO.refundType == '20' && <Col>退款金额：￥{formatMoney(checkVO.refundAmount)}</Col>}
-              {checkVO.refundType == '20' && orderServerVO.refundType !== '30' && <Col>退运费：￥{formatMoney(checkVO.freight)}</Col>} */}
-
               <Col>说明：{checkVO.firstServerDescribe}</Col>
               {/* 退货退款和换货流程才有退款信息 */}
               {!isOnlyRefund(checkVO.refundType) && <Col>退货信息：{joinFilterEmpty([checkVO.returnContact, checkVO.returnPhone, checkVO.returnAddress])}</Col>}

@@ -10,7 +10,9 @@ import { formatPrice } from '@/util/format';
 import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/helper';
 import returnShipping from './return-shipping';
 import { Decimal } from 'decimal.js';
-@connect()
+@connect(state => ({
+  data: state['refund.model'].data || {}
+}))
 @withRouter
 class CheckForm extends Component {
   state = {
@@ -54,12 +56,17 @@ class CheckForm extends Component {
   handleChange = (val) => {
     this.setState({ refundType: val })
   }
-  isReturnShipping(checkVO, orderInfoVO, orderServerVO) {
+  // 是否退运费
+  isReturnShipping() {
+    const { data: { checkVO = {}, orderServerVO = {}, orderInfoVO = {} } } = this.props;
     const { refundAmount } = this.props.form.getFieldsValue(['refundAmount'])
-    return (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount === orderInfoVO.payMoney;
+    const hasFreight = checkVO.freight > 0;
+    // 是否触发退运费的逻辑
+    const isTrigger = (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount === orderInfoVO.payMoney
+    return hasFreight && isTrigger;
   }
   render() {
-    const { orderServerVO = {}, orderInfoVO = {}, checkVO = {}, refundStatus } = this.props;
+    const { orderServerVO = {}, checkVO = {}, refundStatus } = this.props;
     const { getFieldDecorator } = this.props.form;
     const localRefundType = this.state.refundType || orderServerVO.refundType;
     return (
@@ -76,7 +83,7 @@ class CheckForm extends Component {
             })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
           </Form.Item>}
           {
-            checkVO.freight > 0 && (this.isReturnShipping(checkVO, orderInfoVO, orderServerVO)) && <Form.Item label="退运费">
+            this.isReturnShipping() && <Form.Item label="退运费">
               {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}
             </Form.Item>
           }
