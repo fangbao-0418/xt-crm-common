@@ -29,7 +29,7 @@ class OrderList extends React.Component {
   };
 
   componentDidMount() {
-    this.query();
+    // this.query();
   }
 
   query = (isExport = false) => {
