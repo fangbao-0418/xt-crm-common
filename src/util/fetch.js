@@ -82,6 +82,32 @@ export const post = (url, data, config) => {
   });
 };
 
+// POST请求
+export const newPost = (url, data, config) => {
+  return request(url, {
+    data: data,
+    method: 'POST',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    ...config,
+  });
+};
+
+// put请求
+export const newPut = (url, data, config) => {
+  return request(url, {
+    data: data,
+    method: 'put',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    ...config,
+  });
+};
+
 function getFileName(disposition) {
   if (!disposition) {
     return '';
