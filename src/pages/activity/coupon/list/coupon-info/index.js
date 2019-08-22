@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
-import { getCategoryList } from '@/pages/activity/api';
+import { getCategoryList, saveCouponInfo } from '@/pages/activity/api';
 import { actColumns } from '@/components/activity-selector/config';
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
 import { unionArray } from '@/util/utils';
@@ -43,20 +43,24 @@ function disabledRangeTime(_, type) {
   };
 }
 const plainOptions = [
-  {label: '安卓', value: 'Android'},
-  {label: 'iOS', value: 'iOS'},
-  {label: 'H5', value: 'H5'},
-  {label: '小程序', value: 'mini'}
+  { label: '安卓', value: '2' },
+  { label: 'iOS', value: '4' },
+  { label: 'H5', value: '8' },
+  { label: '小程序', value: '16' }
 ]
 const useIdentityOptions = [
-  {label: '普通用户', value: '0'},
-  {label: '体验团长', value: '10', disabled: true},
-  {label: '普通团长', value: '20'},
-  {label: '星级团长', value: '30', disabled: true},
-  {label: '社区管理员', value: '40'},
-  {label: '城市合伙人', value: '50'},
+  { label: '普通用户', value: 0 },
+  { label: '普通团长', value: 10 },
+  { label: '星级团长', value: 12, disabled: true },
+  { label: '体验团长', value: 11, disabled: true },
+  { label: '社区管理员', value: 40 },
+  { label: '城市合伙人', value: 30 },
 ]
 function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue } }) {
+  const [receiveRestrictValues, setReceiveRestrictValues] = useState([])
+  const [platformRestrictValues, setPlatformRestrictValues] = useState([])
+  const [availableDays, setAvailableDays] = useState('');
+  const [useTimeRange, setUseTimeRange] = useState('');
   const [treeData, setTreeData] = useState([]);
   const [excludeProduct, setExcludeProduct] = useState([]);
   const [activityList, setActivityList] = useState([]);
@@ -68,6 +72,13 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
   }
   const removeActivityCurrentRow = (id) => {
     setActivityList(activityList.filter(v => v.id !== id));
+  }
+  // 使用平台 -> 选择平台
+  const onChangePlatform = (checkedValue) => {
+    const platformType = checkedValue.length === 4 ? 0 : 1;
+    setFieldsValue({ platformType });
+    setPlatformRestrictValues(checkedValue);
+    console.log('checkedValue=>', checkedValue)
   }
   useEffect(() => {
     async function getTreeData() {
@@ -132,24 +143,77 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
   const onActivitySelectorChange = (selectedRowKeys, selectedRows) => {
     console.log(selectedRowKeys, selectedRows);
     setActivityList(unionArray(activityList, selectedRows));
-  } 
+  }
   // 是否显示使用平台
   const showSelectPlatform = () => {
-    return getFieldsValue(['platform']).platform === 2;
+    return getFieldsValue(['platformType']).platformType === 1;
   }
   // 显示指定身份可用
   const showRecipientLimit = () => {
-    return getFieldsValue(['recipientLimit']).recipientLimit === 2;
+    return getFieldsValue(['recipientLimit']).recipientLimit === 1;
+  }
+  const getPlatformRestrictValues = (platformType) => {
+    console.log('platformType=>', platformType);
+    // 不限制
+    if (platformType === 0) {
+      return 'all';
+    }
+    // 选择平台
+    else {
+      return platformRestrictValues.join(',')
+    }
+  }
+  const getReceiveRestrictValues = (recipientLimit) => {
+    // 不限制
+    if (recipientLimit === 0) {
+      return 'all';
+    } else {
+      return receiveRestrictValues.join(',')
+    }
   }
   const onChange = () => { }
   const onUseIdentityChange = (checkedValue) => {
     console.log('checkedValue=>', checkedValue)
-    setFieldsValue({recipientLimit: checkedValue.length === 4 ? 1: 2})
+    setReceiveRestrictValues(checkedValue)
+    setFieldsValue({ recipientLimit: checkedValue.length === 4 ? 1 : 2 })
+  }
+  const getUseTimeValue = (fields) => {
+    if (fields.useTimeType === 0) {
+      console.log('useTimeRange=>', useTimeRange);
+      return Array.isArray(useTimeRange) ? useTimeRange.map(v => v && v.valueOf()) : []
+    } else {
+      return availableDays;
+    }
+  }
+  const handleSave = () => {
+    const fields = getFieldsValue();
+    const [startReceiveTime, overReceiveTime] = fields.receiveTime ? fields.receiveTime.map(v => v && v.valueOf()) : []
+    const useTimeValue = getUseTimeValue(fields)
+    const platformRestrictValues = getPlatformRestrictValues(fields.platformType);
+    const receiveRestrictValues = getReceiveRestrictValues(fields.recipientLimit);
+    console.log('platformRestrictValues=>', platformRestrictValues);
+    Reflect.deleteProperty(fields, 'receiveTime');
+    Reflect.deleteProperty(fields, 'platformType');
+    console.log('fields=>', fields);
+    // saveCouponInfo({
+    //   name: fields.name,
+    //   describe: fields.describe,
+    //   remark: fields.remark,
+    //   // 适用时间类型
+    //   useTimeType: fields.useTimeType,
+    //   // 使用时间值
+    //   useTimeValue,
+    //   // 开始领取时间
+    //   startReceiveTime,
+    //   // 结束领取时间
+    //   overReceiveTime,
+    //   platformRestrictValues
+    // })
   }
   return (
     <Card>
       <ProductSelector visible={productSelectorVisible} onCancel={() => setProductSelectorVisible(false)} onChange={onProductSelectorChange} />
-      <ActivitySelector visible={activitySelectorVisible}  onCancel={() => setActivitySelectorVisible(false)} onChange={onActivitySelectorChange} />
+      <ActivitySelector visible={activitySelectorVisible} onCancel={() => setActivitySelectorVisible(false)} onChange={onActivitySelectorChange} />
       <Form {...formItemLayout}>
         <Row>
           <Col offset={3}>
@@ -242,9 +306,10 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
           />)
           }
         </Form.Item>
-        <Form.Item label="使用时间" help="设置为0时则为当日有效">{getFieldDecorator('effectiveTime', { initialValue: 1, rules: [{ required: true }] })(
+        <Form.Item label="使用时间">{getFieldDecorator('useTimeType', { initialValue: 1, rules: [{ required: true }] })(
           <Radio.Group>
-            <Radio value={1}>
+            <Row type="flex" align="middle">
+              <Radio value={0}></Radio>
               <RangePicker
                 disabledDate={disabledDate}
                 disabledTime={disabledRangeTime}
@@ -253,81 +318,78 @@ function CouponAdd({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }
                   defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
                 }}
                 format="YYYY-MM-DD HH:mm:ss"
+                onChange={date => setUseTimeRange(date)}
               />
-            </Radio>
+            </Row>
             <Row type="flex" align="middle">
-              <Radio value={2}>
-              </Radio>
+              <Radio value={1}></Radio>
               <Row type="flex">
                 <Col>领券当日起</Col>
-                <Col className="ml10 short-input"><Input /></Col>
+                <Col className="ml10 short-input"><Input value={availableDays} onChange={event => setAvailableDays(event.target.value)} /></Col>
                 <Col className="ml10">天内可用</Col>
               </Row>
             </Row>
+            <p>设置为0时则为当日有效</p>
           </Radio.Group>
         )}</Form.Item>
         <Form.Item label="领取人(使用人)限制">
           {getFieldDecorator('recipientLimit')(
             <Radio.Group>
-              <Radio style={radioStyle} value={1}>不限制</Radio>
-              <Radio style={radioStyle} value={2}>指定身份可用</Radio>
+              <Radio style={radioStyle} value={0}>不限制</Radio>
+              <Radio style={radioStyle} value={1}>指定身份可用</Radio>
             </Radio.Group>
           )}
           {showRecipientLimit() && <div>
-            <Checkbox.Group options={useIdentityOptions} onChange={onUseIdentityChange} />
+            <Checkbox.Group options={useIdentityOptions} value={receiveRestrictValues} onChange={onUseIdentityChange} />
           </div>}
         </Form.Item>
         <Form.Item label="每人限领次数">
-          {getFieldDecorator('limitTimes')(
+          <Row type="flex">
+            <Checkbox onChange={onChange} />
             <Row type="flex">
-              <Checkbox onChange={onChange} />
-              <Row type="flex">
-                <Col className="ml10">限领</Col>
-                <Col className="ml10 short-input"><Input /></Col>
-                <Col className="ml10">张</Col>
-              </Row>
+              <Col className="ml10">限领</Col>
+              <Col className="ml10 short-input">{getFieldDecorator('restrict')(<InputNumber />)}</Col>
+              <Col className="ml10">张</Col>
             </Row>
-          )}
-          {getFieldDecorator('limitTimes')(
+          </Row>
+          <Row type="flex">
+            <Checkbox onChange={onChange} />
             <Row type="flex">
-              <Checkbox onChange={onChange} />
-              <Row type="flex">
-                <Col className="ml10">每日限领</Col>
-                <Col className="ml10 short-input"><Input /></Col>
-                <Col className="ml10">张</Col>
-              </Row>
+              <Col className="ml10">每日限领</Col>
+              <Col className="ml10 short-input">{getFieldDecorator('dailyRestrict')(<InputNumber />)}</Col>
+              <Col className="ml10">张</Col>
             </Row>
-          )}
+          </Row>
         </Form.Item>
         <Form.Item label="使用平台">
-          {getFieldDecorator('platform', {initialValue: 1, rules: [{ required: true }]})(
+          {getFieldDecorator('platformType', { initialValue: 0, rules: [{ required: true }] })(
             <Radio.Group>
-              <Radio style={radioStyle} value={1}>不限制</Radio>
-              <Radio style={radioStyle} value={2}>选择平台</Radio>
+              <Radio style={radioStyle} value={0}>不限制</Radio>
+              <Radio style={radioStyle} value={1}>选择平台</Radio>
             </Radio.Group>
           )}
           {showSelectPlatform() && (
             <div>
-              <Checkbox.Group options={plainOptions} onChange={onChange} />
+              <Checkbox.Group options={plainOptions} value={platformRestrictValues} onChange={onChangePlatform} />
             </div>
           )}
         </Form.Item>
         <Form.Item label="商详显示">
-          {getFieldDecorator('productDetails', { rules: [{ required: true }] })(
+          {getFieldDecorator('showFlag', { rules: [{ required: true }] })(
             <Radio.Group>
-              <Radio style={radioStyle} value={1}>显示</Radio>
-              <Radio style={radioStyle} value={2}>不显示</Radio>
+              <Radio style={radioStyle} value={0}>显示</Radio>
+              <Radio style={radioStyle} value={1}>不显示</Radio>
             </Radio.Group>
           )}
         </Form.Item>
         <Form.Item label="优惠券说明">
-          {getFieldDecorator('discountAmount')(<TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />)}
+          {getFieldDecorator('describe')(<TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />)}
         </Form.Item>
         <Form.Item label="优惠券备注">
           {getFieldDecorator('remark')(<TextArea placeholder="备注优惠券信息，不会在用户端显示（选填）" />)}
         </Form.Item>
         <Form.Item wrapperCol={formLeftButtonLayout}>
-          <Button type="primary">保存</Button>
+          <Button type="primary" onClick={handleSave}>保存</Button>
           <Button className="ml20">取消</Button>
         </Form.Item>
       </Form>

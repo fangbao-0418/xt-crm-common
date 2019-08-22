@@ -1,41 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, Form, Card, Button, Modal, Table } from 'antd';
 import { formLeftButtonLayout, formItemLayout } from '@/config'
-import { invalidCoupon, getCouponDetail } from '@/pages/activity/api';
+import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/activity/api';
+import { releaseRecordsColumns } from '../../config';
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 function callback(key) {
   console.log(key);
 }
-const releaseRecordsColumns = [{
-  title: '编号',
-  dataIndex: 'couponCode',
-  key: 'couponCode',
-}, {
-  title: '优惠券名称',
-  dataIndex: 'name',
-  key: 'name',
-}, {
-  title: '目标用户',
-  dataIndex: 'target',
-  key: 'target',
-}, {
-  title: '发送时间',
-  dataIndex: 'receiveTime',
-  key: 'receiveTime',
-}, {
-  title: '领取状态',
-  dataIndex: 'receiveStatus',
-  key: 'receiveStatus',
-}, {
-  title: '操作',
-  dataIndex: 'action',
-  key: 'action',
-  render: () => {
 
-  }
-}]
 function CouponDetail({ match }) {
+  const [couponTasks, setCouponTasks] = useState([]);
+  const [loading, setLoading] = useState(false);
   const handleInvalidCoupon = () => {
     confirm({
       title: '系统提示',
@@ -45,8 +21,19 @@ function CouponDetail({ match }) {
       }
     });
   }
+  const fetchCouponTasks = async () => {
+    try {
+      setLoading(true);
+      const res = await getCouponTasks();
+      setCouponTasks(res.data.data);
+      setLoading(false);
+    } catch (err) {
+      setLoading(true);
+    }
+  }
   useEffect(() => {
-    getCouponDetail(match.params.id)
+    getCouponDetail(match.params.id);
+    fetchCouponTasks();
   }, [])
   return (
     <Card>
@@ -71,7 +58,7 @@ function CouponDetail({ match }) {
           </Form>
         </TabPane>
         <TabPane tab="批量发送记录" key="2">
-          <Table columns={releaseRecordsColumns}></Table>
+          <Table rowKey="code" columns={releaseRecordsColumns} dataSource={couponTasks.list}></Table>
         </TabPane>
       </Tabs>
     </Card>
