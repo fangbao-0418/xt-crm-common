@@ -40,7 +40,7 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "mock": "node mock/server.js",
+    "mock": "nodemon mock/server.js",
     "i18n": "gulp i18n-json-merge",
     "dev": "react-app-rewired start"
   },

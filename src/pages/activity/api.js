@@ -1,8 +1,19 @@
 import { post, get } from '../../util/fetch';
+import axios from 'axios';
 
 // 失效优惠券
 export function invalidCoupon() {
 
+}
+
+// 获取优惠券详情
+export function getCouponDetail(id) {
+  return axios(`/api/coupon/detail/${id}`);
+}
+
+// 获取优惠券列表
+export function getCouponlist() {
+  return axios('/api/coupon/list');
 }
 
 export function getPromotionList(data) {

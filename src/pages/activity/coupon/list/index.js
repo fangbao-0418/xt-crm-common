@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Card, Table, Button, Input } from 'antd';
 import XtSelect from '@/components/xt-select';
-import axios from 'axios';
+import { getCouponlist } from '../../api';
 import { getListColumns, pagination } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
 import CouponCard from '../coupon-card';
@@ -14,7 +14,7 @@ function CouponList({ form: { getFieldDecorator }, history }) {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const result = await axios('/api/coupon/list');
+      const result = await getCouponlist('/api/coupon/list');
       setLoading(false);
       setData(result.data.data);
     }

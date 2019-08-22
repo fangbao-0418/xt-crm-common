@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, Form, Card, Button, Modal, Table } from 'antd';
 import { formLeftButtonLayout, formItemLayout } from '@/config'
-import { invalidCoupon } from '@/pages/activity/api';
+import { invalidCoupon, getCouponDetail } from '@/pages/activity/api';
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 function callback(key) {
@@ -32,19 +32,22 @@ const releaseRecordsColumns = [{
   dataIndex: 'action',
   key: 'action',
   render: () => {
-    
+
   }
 }]
-function CouponDetail() {
+function CouponDetail({ match }) {
   const handleInvalidCoupon = () => {
     confirm({
       title: '系统提示',
       content: '优惠券失效后将不能使用是否失效所有优惠券？',
       onOk() {
-        invalidCoupon();
+        invalidCoupon(match.params.id);
       }
     });
   }
+  useEffect(() => {
+    getCouponDetail(match.params.id)
+  }, [])
   return (
     <Card>
       <Tabs onChange={callback}>
