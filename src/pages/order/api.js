@@ -126,7 +126,7 @@ export function setRefundOrderRemark(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return post('/order/saveRefundInfo', data);
+  return post('/order/afterSale/saveRefundInfo', data);
 }
 
 export function deliveryOrder(data) {
