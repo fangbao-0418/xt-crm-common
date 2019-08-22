@@ -1,7 +1,7 @@
 import React from 'react';
+import MoneyRender from '@/components/money-render'
 import { Table, Card, Row, Button, Modal,message } from 'antd';
 import { MemberTypeTextMap } from '../constant';
-import MoneyRender from '../../../components/money-render';
 import { formatMoneyWithSign } from '../../helper';
 import { profitRecal, profitRecycl } from '../api';
 const BenefitInfo = ({
@@ -68,8 +68,9 @@ const BenefitInfo = ({
       <Row>成交金额：{formatMoneyWithSign(data.totalPrice)}</Row>
       <Row>成本金额：{formatMoneyWithSign(data.costPrice)}</Row>
       <Table
+        rowKey={record => record.uniqueId}
         columns={columns}
-        dataSource={data.memberYieldVOList}
+        dataSource={Array.isArray(data.memberYieldVOList) ? data.memberYieldVOList.map((v, i) => ({...v, uniqueId: i})) : []}
         pagination={false}
         defaultExpandAllRows
       />

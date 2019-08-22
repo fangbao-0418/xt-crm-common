@@ -1,4 +1,4 @@
-import { post, exportFile, prefix, get, fetch } from '../../util/fetch';
+import { post, exportFile, prefix, get, put, fetch } from '../../util/fetch';
 const debug = false;
 var qs = require('qs');
 
@@ -90,6 +90,16 @@ const detail = {
   taxPrice: 0,
   totalPrice: 0,
 };
+
+export function againRefund(id, info) {
+  return put(`/order/afterSale/againRefund/${id}`, {info});
+}
+export function closeOrder(id, info) {
+  return put(`/order/afterSale/close/${id}`, {info});
+}
+export function saveRefundInfo(data) {
+  return post('/order/afterSale/saveRefundInfo', data)
+}
 export function queryOrderDetail(data) {
   if (debug) {
     return Promise.resolve(detail);
@@ -116,7 +126,7 @@ export function setRefundOrderRemark(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return post('/order/saveRefundInfo', data);
+  return post('/order/afterSale/saveRefundInfo', data);
 }
 
 export function deliveryOrder(data) {
@@ -154,6 +164,18 @@ export function refundOperate(data) {
   });
 }
 
+export function getStoreList(data) {
+  return fetch('/store/list', {
+    method: 'POST',
+    data
+  });
+}
+export function customerAdd(data) {
+  return fetch('/order/afterSale/customerAdd', {
+    method: 'POST',
+    data
+  })
+}
 export function refundList(data) {
   return fetch('/order/afterSale/list', {
     method: 'POST',
@@ -161,6 +183,9 @@ export function refundList(data) {
   });
 }
 
+export function refundDetail(params) {
+  return fetch(`/order/afterSale/afterSalesInfo?${qs.stringify(params)}`)
+}
 export function exportOrder(data) {
   return exportFile('/order/export', data);
 }

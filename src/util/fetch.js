@@ -195,12 +195,12 @@ instance.interceptors.response.use(res => {
   return res.data;
 }, error => {
   // 非2xx状态处理，返回{}
-  if (error.response.status === 401) { // 未登录的重定向到登陆页
+  if (error.response && error.response.status === 401) { // 未登录的重定向到登陆页
     setTimeout(() => {
       window.location = '/#/login';
     }, 1500);
   }
-  message.error(messageMap[error.response.status] || '内部错误，请等待响应...')
+  message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...')
   return {};
 })
 export function fetch(url, config = {}) {

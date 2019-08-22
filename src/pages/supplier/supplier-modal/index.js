@@ -10,7 +10,7 @@ const formItemLayout = {
 };
 class SupplierModal extends Component {
   static defaultProps = {
-    onSuccess: () => {},
+    onSuccess: () => { },
     id: '',
     isEdit: false,
     renderKey: 0,
@@ -47,11 +47,13 @@ class SupplierModal extends Component {
           id,
           ...form.getFieldsValue(),
         }).then((res) => {
-          onSuccess && onSuccess();
-          res && message.success('操作成功');
-          this.setState({
-            visible: false,
-          });
+          if (res) {
+            onSuccess && onSuccess();
+            res && message.success('操作成功');
+            this.setState({
+              visible: false,
+            });
+          }
         });
       }
     });
@@ -124,11 +126,50 @@ class SupplierModal extends Component {
                 <Input placeholder="" />,
               )}
             </FormItem>
-            <FormItem label="送货地址">
+            <FormItem label="退货收件人">
+              {getFieldDecorator('returnContact', {
+                initialValue: data.returnContact,
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入退货收件人',
+                  },
+                ]
+              })(
+                <Input placeholder="" maxlength="20" />,
+              )}
+            </FormItem>
+            <FormItem label="退货电话">
+              {getFieldDecorator('returnPhone', {
+                initialValue: data.returnPhone,
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入退货电话',
+                  },
+                ]
+              })(
+                <Input placeholder="" maxlength="12" />,
+              )}
+            </FormItem>
+            <FormItem label="退货地址">
+              {getFieldDecorator('returnAddress', {
+                initialValue: data.returnAddress,
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入退货地址',
+                  },
+                ]
+              })(
+                <Input placeholder="" maxlength="60" />,
+              )}
+            </FormItem>
+            {/* <FormItem label="送货地址">
               {getFieldDecorator('consigneeAddress', { initialValue: data.consigneeAddress })(
                 <Input placeholder="" />,
               )}
-            </FormItem>
+            </FormItem> */}
             <FormItem key={this.state.renderKey} label="供应商分类">
               {getFieldDecorator('category', { initialValue: data.category })(
                 <SupplierTypeSelect placeholder="" />,

@@ -5,7 +5,7 @@ import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../consta
 import { formatDate, formatMoneyWithSign } from '../../helper';
 import { getOrderList, exportOrder, importLogistics } from '../api';
 import GoodCell from '../../../components/good-cell';
-import SuppilerSelect from '../../../components/suppiler-select';
+import SuppilerSelect from '@/components/suppiler-auto-select'
 import RefundCell from '../components/refund-cell';
 import RemarkModal from '../components/remark-modal';
 import RefundModal from '../components/refund-modal';
@@ -13,6 +13,9 @@ import RefundStatusCell from '../components/refund-status-cell';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
+const formatRangeDate = (val) => {
+  return Array.isArray(val) ? val.map(v => v.format('YYYY-MM-DD HH:mm')) : []
+}
 class OrderList extends React.Component {
   static defaultProps = {};
 
@@ -32,21 +35,20 @@ class OrderList extends React.Component {
   query = (isExport = false) => {
     let fieldsValues = this.props.form.getFieldsValue();
     let rangePickerValue = fieldsValues['rangePicker']
-    if (rangePickerValue) {
-      if (this.props.type === 'refund') {
-        fieldsValues.skuServerStartDate = rangePickerValue[0].format('YYYY-MM-DD HH:mm');
-        fieldsValues.skuServerEndDate = rangePickerValue[1].format('YYYY-MM-DD HH:mm');
-      }
-      if (this.props.type === 'order') {
-        fieldsValues.orderStartDate = rangePickerValue[0].format('YYYY-MM-DD HH:mm');
-        fieldsValues.orderEndDate = rangePickerValue[1].format('YYYY-MM-DD HH:mm');
-      }
+    if (this.props.type === 'refund') {
+      const [skuServerStartDate, skuServerEndDate] = formatRangeDate(rangePickerValue)
+      fieldsValues.skuServerStartDate = skuServerStartDate;
+      fieldsValues.skuServerEndDate = skuServerEndDate;
+    }
+    if (this.props.type === 'order') {
+      const [orderStartDate, orderEndDate] = formatRangeDate(rangePickerValue)
+      fieldsValues.orderStartDate = orderStartDate;
+      fieldsValues.orderEndDate = orderEndDate;
     }
     let playPickerValue = fieldsValues['playPicker'];
-    if (playPickerValue) {
-      fieldsValues.payStartDate = playPickerValue[0].format('YYYY-MM-DD HH:mm');
-      fieldsValues.payEndDate = playPickerValue[1].format('YYYY-MM-DD HH:mm');
-    }
+    const [payStartDate, payEndDate] = formatRangeDate(playPickerValue)
+    fieldsValues.payStartDate = payStartDate;
+    fieldsValues.payEndDate = payEndDate;
     delete fieldsValues['playPicker'];
     delete fieldsValues['rangePicker'];
     let params = {
@@ -62,7 +64,7 @@ class OrderList extends React.Component {
       })
       exportOrder(params).then((res) => {
         res && message.success('导出成功');
-      }).finally(() =>{
+      }).finally(() => {
         this.setState({
           loading: false
         })
@@ -283,25 +285,25 @@ class OrderList extends React.Component {
               {getFieldDecorator('orderCode')(<Input placeholder="请输入订单编号" />)}
             </FormItem>
             <FormItem label="快递单号">
-              {getFieldDecorator('expressCode')(<Input placeholder="" />)}
+              {getFieldDecorator('expressCode')(<Input placeholder="请输入快递单号" />)}
             </FormItem>
             <FormItem label="商品ID">
-              {getFieldDecorator('productId')(<Input placeholder="" />)}
+              {getFieldDecorator('productId')(<Input placeholder="请输入商品ID" />)}
             </FormItem>
             <FormItem label="下单人ID">
-              {getFieldDecorator('buyerId')(<Input placeholder="" />)}
+              {getFieldDecorator('buyerId')(<Input placeholder="请输入下单人ID" />)}
             </FormItem>
             <FormItem label="下单人电话">
-              {getFieldDecorator('buyerPhone')(<Input placeholder="" />)}
+              {getFieldDecorator('buyerPhone')(<Input placeholder="请输入下单人电话" />)}
             </FormItem>
             <FormItem label="收货人">
-              {getFieldDecorator('contact')(<Input placeholder="" />)}
+              {getFieldDecorator('contact')(<Input placeholder="请输入收货人" />)}
             </FormItem>
             <FormItem label="收货人电话">
-              {getFieldDecorator('phone')(<Input placeholder="" />)}
+              {getFieldDecorator('phone')(<Input placeholder="请输入收货人电话" />)}
             </FormItem>
             <FormItem label="供应商">
-              {getFieldDecorator('storeId', {})(<SuppilerSelect />)}
+              {getFieldDecorator('storeId', {})(<SuppilerSelect style={{width: '174px'}}/>)}
             </FormItem>
             <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
               {getFieldDecorator('rangePicker', {})(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}

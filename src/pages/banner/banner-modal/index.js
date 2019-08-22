@@ -60,7 +60,6 @@ class BannerModal extends Component {
   };
 
   handleOk = () => {
-    console.log(this.props, 'propsssssssssss');
     const { onSuccess, id, form, isEdit } = this.props;
     form.validateFields(err => {
       if (!err) {

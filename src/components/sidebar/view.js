@@ -18,7 +18,6 @@ const Sidebar = props => {
       position: 'fixed',
       left: 0,
     }}>
-
       <div className={styles.logo}>
         <a href="/">
           <img src={logo} alt="logo" />
