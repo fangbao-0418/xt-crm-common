@@ -84,7 +84,7 @@ export default class extends PureComponent {
                   <FormItem label={label} key={item.id}>
                     {
                       getFieldDecorator(id, {
-                        initialValue: initParams[id] || '',
+                        initialValue: initParams[id],
                         ...config
                       })(
                         renderFun && renderFun(item)

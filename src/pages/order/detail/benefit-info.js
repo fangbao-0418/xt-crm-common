@@ -1,7 +1,7 @@
 import React from 'react';
+import MoneyRender from '@/components/money-render'
 import { Table, Card, Row, Button, Modal,message } from 'antd';
 import { MemberTypeTextMap } from '../constant';
-import MoneyRender from '../../../components/money-render';
 import { formatMoneyWithSign } from '../../helper';
 import { profitRecal, profitRecycl } from '../api';
 const BenefitInfo = ({
@@ -70,7 +70,7 @@ const BenefitInfo = ({
       <Table
         rowKey={record => record.uniqueId}
         columns={columns}
-        dataSource={data.memberYieldVOList.map((v, i) => ({...v, uniqueId: i}))}
+        dataSource={Array.isArray(data.memberYieldVOList) ? data.memberYieldVOList.map((v, i) => ({...v, uniqueId: i})) : []}
         pagination={false}
         defaultExpandAllRows
       />
