@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
-import { getCategoryList, saveCouponInfo } from '@/pages/activity/api';
+import { getCategoryList, saveCouponInfo } from '@/pages/coupon/api';
 import { actColumns } from '@/components/activity-selector/config';
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
 import { unionArray } from '@/util/utils';

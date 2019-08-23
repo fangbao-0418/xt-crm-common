@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Form, Card, Button, Modal, Table } from 'antd';
 import { formLeftButtonLayout, formItemLayout } from '@/config'
-import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/activity/api';
+import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/coupon/api';
 import { releaseRecordsColumns } from '../../config';
 const { TabPane } = Tabs;
 const { confirm } = Modal;

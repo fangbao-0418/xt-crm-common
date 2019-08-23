@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Card, Table, Button, Input } from 'antd';
 import XtSelect from '@/components/xt-select';
-import { getCouponlist } from '../../api';
+import { getCouponlist } from '../api';
 import { getListColumns, pagination } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
 import CouponCard from '../coupon-card';

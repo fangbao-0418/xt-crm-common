@@ -15,7 +15,7 @@ import Interface from './pages/interface';
 import CrudPage from './components/crudPage';
 import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
-
+import Coupon from './pages/coupon';
 const App = props => {
   return (
     <>
@@ -28,6 +28,7 @@ const App = props => {
           <Route path="/goods" component={Goods} />
           <Route path="/order" component={Order} />
           <Route path="/activity" component={Activity} />
+          <Route exact path={`/coupon`} component={Coupon} />
           <Route path="/user" component={User} />
           <Route path="/supplier" component={Supplier} />
           <Route path="/banner" component={Banner} />
