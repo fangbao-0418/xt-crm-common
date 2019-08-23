@@ -82,6 +82,19 @@ export const post = (url, data, config) => {
   });
 };
 
+// GET请求
+export const newGet = (url, data, config) => {
+  return request(url, {
+    params: data,
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    ...config,
+  });
+};
+
 // POST请求
 export const newPost = (url, data, config) => {
   return request(url, {

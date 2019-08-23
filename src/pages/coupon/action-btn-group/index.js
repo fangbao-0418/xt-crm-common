@@ -8,7 +8,7 @@ const coupons = {
   '2': ['VIEW']
 }
 
-function ActionBtn({ keyCode, history, setVisible, code }) {
+function ActionBtn({ keyCode, history, setVisible, id, match }) {
   const menu = (
     <Menu>
       <Menu.Item>
@@ -43,7 +43,7 @@ function ActionBtn({ keyCode, history, setVisible, code }) {
         </Dropdown>
       );
     case 'VIEW':
-      return <Button type="link" onClick={() => history.push({ pathname: `/activity/coupon/list/detail/${code}` })}>查看</Button>
+      return <Button type="link" onClick={() => history.push({ pathname: `${match.url}/detail/${id}` })}>查看</Button>
     case 'EDIT':
       return <Button type="link">编辑</Button>
     case 'FINISH':
@@ -58,7 +58,7 @@ function ActionBtnGroup({ record, setVisible }) {
     <div className="action-btn-group">
       {
         Array.isArray(coupons[record.status])
-          ? coupons[record.status].map(v => <WithActionBtn key={v} keyCode={v} setVisible={setVisible} code={record.code} />)
+          ? coupons[record.status].map(v => <WithActionBtn key={v} keyCode={v} setVisible={setVisible} id={record.id} />)
           : null
       }
     </div>

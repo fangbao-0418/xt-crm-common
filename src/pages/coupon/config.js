@@ -94,7 +94,6 @@ export const getListColumns = (setVisible) => [
     key: 'discountAmount',
     render: (text, record) => {
       let result = [];
-      console.log(record.faceValue + '--------')
       switch (record.useSill) {
         // 无门槛
         case 0:

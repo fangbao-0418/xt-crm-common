@@ -1,4 +1,4 @@
-import { newPost, post, get } from '../../util/fetch';
+import { newPost, newGet, post, get } from '../../util/fetch';
 import axios from 'axios';
 
 // 失效优惠券
@@ -11,7 +11,7 @@ export function getCouponTasks() {
 }
 // 获取优惠券详情
 export function getCouponDetail(id) {
-  return axios(`/api/coupon/detail/${id}`);
+  return newGet(`/coupon/get/couponDetail/${id}`);
 }
 
 // 获取优惠券列表
@@ -26,9 +26,9 @@ export function saveCouponInfo(data) {
 
 // 查询优惠券列表
 export function getCouponList() {
-    return get('/api/coupon/list')
-  }
-  
-  export function getCategoryList() {
-    return post('/category/treeCategory');
-  }
+  return get('/api/coupon/list')
+}
+
+export function getCategoryList() {
+  return post('/category/treeCategory');
+}

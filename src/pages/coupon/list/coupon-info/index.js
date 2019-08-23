@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
+import { message, Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 import { getCategoryList, saveCouponInfo } from '@/pages/coupon/api';
 import { actColumns } from '@/components/activity-selector/config';
@@ -248,7 +248,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
         inventory: fields.inventory,
         // 备注
         remark: fields.remark,
-        cDescribe: fields.cDescribe
+        description: fields.description
       },
       ruleVO: {
         // 限领
@@ -283,6 +283,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
     };
     console.log('params=>', params);
     const data = await saveCouponInfo(params)
+    console.log('data=>', data);
+    message.success('新增优惠券成功');
     history.goBack();
   }
   return (
@@ -455,7 +457,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
           )}
         </Form.Item>
         <Form.Item label="优惠券说明">
-          {getFieldDecorator('cDescribe')(<TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />)}
+          {getFieldDecorator('description')(<TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />)}
         </Form.Item>
         <Form.Item label="优惠券备注">
           {getFieldDecorator('remark')(<TextArea placeholder="备注优惠券信息，不会在用户端显示（选填）" />)}

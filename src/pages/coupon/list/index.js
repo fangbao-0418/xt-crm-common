@@ -75,7 +75,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
           <Button type="primary" icon="plus" onClick={handleAddCoupon}>新增优惠券</Button>
           {/* <Button icon="plus">批量发送记录</Button> */}
         </Row>
-        <Table loading={loading} pagination={pagination} rowKey="couponCode" className="mt15" dataSource={records} columns={getListColumns(setVisible)} />
+        <Table rowKey="id" loading={loading} pagination={pagination} rowKey="couponCode" className="mt15" dataSource={records} columns={getListColumns(setVisible)} />
       </Card>
     </>
   )
