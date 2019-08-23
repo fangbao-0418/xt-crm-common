@@ -1,35 +1,36 @@
 import React, { Component } from 'react';
 import { queryOrderDetail, push1688, withhold } from '../api';
 import { get, map } from 'lodash';
-import { Row, Card, Col, Button, message } from 'antd';
+import { Button, Row, Card, Col, message, Modal, Input } from 'antd';
 import BuyerInfo from './buyer-info';
-import OrderInfo from './order-info.js';
+import OrderInfo from './order-info';
 import GoodsTable from './goods-table';
 import BenefitInfo from './benefit-info';
-import LogisticsInfo from './logistics-info';
 import StepInfo from './step-info';
 import { enumOrderStatus, OrderStatusTextMap } from '../constant';
 import DeliveryModal from './components/delivery-modal';
-
+import AfterSaleForm from './after-sale-form';
 import { formatMoneyWithSign } from '../../helper';
-
-const payTypeList = {
-  100: '微信APP',
-  101: '微信小程序',
-  102: '微信公众号',
-  200: '支付宝APP',
-  201: '支付宝H5',
-};
-
-const storeType = ['喜团', '1688','淘宝联盟'];
-
+import { Decimal } from 'decimal.js';
+import { customerAdd, setOrderRemark, setRefundOrderRemark } from '../api';
+const styleObj = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
+  padding: '0 24px'
+}
+const { confirm } = Modal;
 class Detail extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: {},
+      visible: false,
       childOrderList: [],
+      data: {},
+      modalInfo: {},
+      remark: '',
+      notesVisible: false
     };
     this.query();
   }
@@ -65,107 +66,188 @@ class Detail extends Component {
       });
     });
   }
-
-  push1688(id){
-    if(this.pushload) return;
+  handleInputChange = e => {
+    this.setState({
+      remark: e.target.value,
+    });
+  };
+  toggleModal = (visible) => {
+    this.setState({
+      visible
+    })
+  }
+  push1688(id) {
+    if (this.pushload) return;
     this.pushload = true;
     push1688(id).then(res => {
-      if(res.success) {
+      if (res.success) {
         message.success('操作成功');
-      }else{
+      } else {
         message.error(res.message)
       }
-    }).finally(()=>{
+    }).finally(() => {
       this.pushload = false;
     })
   }
   withhold(id) {
-    if(this.holdload) return;
+    if (this.holdload) return;
     this.holdload = true;
     withhold(id).then(res => {
-      if(res && res.success) {
+      if (res && res.success) {
         message.success('操作成功');
-      }else{
+      } else {
         message.error(res.message)
       }
-    }).finally(()=>{
+    }).finally(() => {
       this.holdload = false;
     })
   }
+  showModal = (record) => {
+    const modalInfo = Object.assign({}, record);
+    this.setState({ modalInfo });
+    this.toggleModal(true);
+  }
+  showNotes = (record) => {
+    const modalInfo = Object.assign({}, record);
+    console.log('modalInfo=>', modalInfo)
+    this.setState({ modalInfo });
+    this.toggleNotesVisible(true)
+  }
+  handleOk = async () => {
+    const { form } = this.afterSaleForm.props;
+    const { modalInfo } = this.state;
+    const fields = form.getFieldsValue();
+    fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
+    console.log('fields.imgUrl=>', fields.imgUrl)
+    fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
+    console.log('fields.imgUrl=>', fields.imgUrl)
+    if (fields.amount) {
+      fields.amount = new Decimal(fields.amount).mul(100).toNumber();
+    }
+    console.log('modalInfo=>', modalInfo)
+    const res = await customerAdd({
+      childOrderId: modalInfo.childOrderId,
+      mainOrderId: modalInfo.mainOrderId,
+      memberId: modalInfo.memberId,
+      skuId: modalInfo.skuId,
+      ...fields
+    });
+    if (res.success) {
+      message.success('申请售后成功');
+      this.toggleModal(false);
+    }
+  }
+  handleAddNotes = () => {
+    const { modalInfo } = this.state;
+    const params = {
+      orderCode: this.props.match.params.id,
+      refundId: modalInfo.refundId,
+      childOrderId: modalInfo.childOrderId,
+      info: this.state.remark,
+    };
+    const apiFunc = modalInfo.refundId ? setRefundOrderRemark : setOrderRemark;
+    apiFunc(params).then((res) => {
+      res && message.success('添加备注成功');
+      this.query();
+      this.setState({
+        notesVisible: false,
+      });
+    });
+  }
+  comfirmWithhold = (id) => {
+    confirm({
+      title: '确认重新发起代扣?',
+      onOk() {
+        this.withhold(id)
+      }
+    });
+  }
+  comfirmPush1688 = (id) => {
+    confirm({
+      title: '确认重新推送1688?',
+      onOk() {
+        this.push1688(id)
+      }
+    });
+  }
+  toggleNotesVisible = (notesVisible) => {
+    this.setState({ notesVisible });
+  }
   render() {
     const { data, childOrderList } = this.state;
+    console.log('childOrderList=>', childOrderList)
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
 
     return (
-      <Card title="订单详情">
+      <>
+        <Modal width='50%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.toggleModal(false)} onOk={this.handleOk}>
+          <AfterSaleForm wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
+        </Modal>
+        <Modal
+          title="添加备注"
+          visible={this.state.notesVisible}
+          onOk={this.handleAddNotes}
+          onCancel={() => this.toggleNotesVisible(false)}
+        >
+          <Input
+            value={this.state.remark}
+            placeholder="请输入备注"
+            onChange={this.handleInputChange}
+          />
+        </Modal>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
         <OrderInfo
           orderInfo={data.orderInfo}
+          buyerInfo={data.buyerInfo}
           refresh={this.query}
-          payType={data.buyerInfo && data.buyerInfo.payType}
         />
-
-        <BuyerInfo buyerInfo={data.buyerInfo} />
-
-        {map(childOrderList, (item, index) => {
-          return (
-            <div style={{ margin: '30px 0' }} key={index}>
-              <Card>
+        <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} />
+        <Card title="详细信息">
+          {map(childOrderList, (item, index) => {
+            return (
+              <div key={index}>
                 <Row gutter={24}>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">
-                      子订单号{index + 1}: {item.childOrder.orderCode}
-                    </div>
-                  </Col>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">
-                      {payTypeList[data.buyerInfo && data.buyerInfo.payType]}支付流水号：
-                      {item.childOrder.paymentNumber}
-                    </div>
-                  </Col>
-                  <Col className="gutter-row" span={6}>
-                    {/* {item.canProtocolPay ? <Button
-                      type="link"
-                      style={{margin:'0 10px 10px 0'}}
-                      onClick={() => this.withhold(item.childOrder.id)}
-                    >发起代扣</Button> : ''}
-                    {item.canPush ? <Button
-                      style={{margin:'0 10px 10px 0'}}
-                      type="link"
-                      onClick={() => this.push1688(item.childOrder.id)}
-                    > 推送1688 </Button> : ''} */}
+                  <Col span={8}>子订单号{index + 1}: {item.childOrder.orderCode}</Col>
+                  <Col span={8}>订单状态：{OrderStatusTextMap[item.childOrder.orderStatus]}</Col>
+                  <Col className="gutter-row" span={8}>
                     {(orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
-                      <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics}/>
+                      <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics} />
                     ) : ''}
-                  </Col>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">
-                      供应商订单号: {item.childOrder.storeOrderId}
-                    </div>
-                  </Col>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">供应商：{item.childOrder.storeName}， 分类： {storeType[item.childOrder.category]}</div>
-                  </Col>
-                  <Col className="gutter-row" span={9}>
-                    <div className="gutter-box">订单状态：{OrderStatusTextMap[item.childOrder.orderStatus]}</div>
+                    {item.canProtocolPay ? <Button
+                      type="link"
+                      style={{ margin: '0 10px 10px 0' }}
+                      onClick={() => this.comfirmWithhold(item.childOrder.id)}
+                    >重新发起代扣</Button> : ''}
+                    {item.canPush ? <Button
+                      style={{ margin: '0 10px 10px 0' }}
+                      type="link"
+                      onClick={() => this.comfirmPush1688(item.childOrder.id)}
+                    >重新推送1688 </Button> : ''}
                   </Col>
                 </Row>
-                <LogisticsInfo mainorderInfo={data.orderInfo} logistics={item.logistics} onSuccess={this.query} orderInfo={item.childOrder} />
-              <GoodsTable list={item.skuList} />
-              </Card>
-              
-            </div>
-          );
-        })}
-
-        <Row style={{ margin: '30px' }}>
-          <Col span={4}>实际收款：{formatMoneyWithSign(data.totalPrice)}</Col>
-          <Col span={4}>含税费：{formatMoneyWithSign(data.taxPrice)}</Col>
-          <Col span={4}>含运费：{formatMoneyWithSign(data.freight)}</Col>
-        </Row>
-        <BenefitInfo data={data.orderYield} orderInfo={data.orderInfo} refresh={this.query}/>
-      </Card>
+                <GoodsTable
+                  showNotes={this.showNotes}
+                  list={item.skuList}
+                  childOrder={item.childOrder}
+                  orderInfo={data.orderInfo}
+                  logistics={item.logistics}
+                  query={this.query}
+                  memberId={data.buyerInfo && data.buyerInfo.memberAddress && data.buyerInfo.memberAddress.memberId}
+                  showModal={this.showModal}
+                  rowKey={record => record.id}
+                />
+              </div>
+            );
+          })}
+          <div style={styleObj}>
+            {/* <Col span={4}>含税费：{formatMoneyWithSign(data.taxPrice)}</Col> */}
+            <div>运费：{formatMoneyWithSign(data.freight)}</div>
+            <div>实际支付：<span style={{ color: 'red' }}>{formatMoneyWithSign(data.totalPrice)}</span></div>
+          </div>
+          <BenefitInfo data={data.orderYield} orderInfo={data.orderInfo} refresh={this.query} />
+        </Card>
+      </>
     );
   }
 }

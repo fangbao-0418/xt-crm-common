@@ -6,7 +6,7 @@ import PicturesWall from '../components/pictures-wall';
 import { CheckForm, DealForm, CheckDetail } from './components';
 import { logColumns, logisticsInformationColumns } from './config';
 import moment from 'moment';
-import { connect } from '@/util/utils';
+import { connect, replaceHttpUrl } from '@/util/utils';
 import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
 import createType from '@/enum/createType';
 import memberType from '@/enum/memberType';
@@ -23,10 +23,14 @@ class Detail extends Component {
   }
 
   render() {
-    const { orderInfoVO = {}, orderServerVO = {}, refundStatus, skuServerLogVO = [] } = this.props.data;
-    let current = calcCurrent(refundStatus)
-    const status = refundStatus === 30 ? 'finish' : refundStatus === 40 ? 'error' : '';
-    const title = refundStatus === 30 ? '完成' : refundStatus === 40 ? '关闭' : '完成';
+    const { isDelete, orderInfoVO = {}, orderServerVO = {}, refundStatus, skuServerLogVO = [] } = this.props.data;
+    let current = isDelete === 1 ? 2 : calcCurrent(refundStatus);
+    const status = isDelete === 1
+     ? 'error'
+     : refundStatus === 30 ? 'finish' : refundStatus === 40 ? 'error' : ''
+    const title = isDelete === 1
+    ? '关闭'
+    : refundStatus === 30 ? '完成' : refundStatus === 40 ? '关闭' : '完成'
     return (
       <>
         <Card>
@@ -55,7 +59,7 @@ class Detail extends Component {
                 <Row>
                   <Col>
                     图片凭证：
-                    <PicturesWall disabled={true} readOnly={true} imgUrl={orderServerVO.imgUrl} />
+                    {orderServerVO.imgUrl && <PicturesWall disabled={true} readOnly={true} imgUrl={replaceHttpUrl(orderServerVO.imgUrl)} />}
                   </Col>
                 </Row>
                 <Row>

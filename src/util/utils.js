@@ -161,3 +161,9 @@ export function unionArray(target, source) {
   }
   return result;
 }
+export function replaceHttpUrl(imgUrl = '') {
+  if (imgUrl.indexOf('https') !== 0) {
+    imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
+  }
+  return imgUrl;
+}

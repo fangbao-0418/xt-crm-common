@@ -135,6 +135,15 @@ ol, ul {
 }
 
 ::-webkit-scrollbar-thumb:active {
-  -webkit-box-shadow: inset 1px 1px 3px rgba(0,0,0,.35);
-  background-color: rgba(0,0,0,.5)
+    -webkit-box-shadow: inset 1px 1px 3px rgba(0,0,0,.35);
+    background-color: rgba(0,0,0,.5)
+}
+
+.item-detail-btn{
+    color: #1890ff;
+    cursor: pointer;
+}
+.item-del-btn{
+    color: red;
+    cursor: pointer;
 }

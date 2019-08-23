@@ -19,23 +19,26 @@ const initOrderInfo = {
 };
 
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
-  const { orderStatus, orderCode, platform, remark } = orderInfo;
-  const { phone, contact, memberAddress = {} } = buyerInfo;
+  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime } = orderInfo;
+  const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
   return (
     <Card title="订单信息">
       <Row gutter={24}>
         <Col span={8}>订单编号：{orderCode}</Col>
-        <Col span={8}>创建时间：{formatDate(orderInfo.createTime)}</Col>
+        <Col span={8}>创建时间：{formatDate(createTime)}</Col>
         <Col span={8}>订单状态：{OrderStatusTextMap[orderStatus]}</Col>
-        <Col span={8}>买家名称：{contact}</Col>
+        <Col span={8}>买家名称：{userName}</Col>
+        <Col span={8}>微信昵称：{nickname}</Col>
         <Col span={8}>联系电话：{phone}</Col>
         <Col span={8}>订单来源：{platform}</Col>
+        <Col span={8}>订单类型：{orderTypeStr}</Col>
+        <Col span={8}>完成时间：{formatDate(finishTime)}</Col>
       </Row>
       <Row>
-        <Col span={8}>收货信息：{unionAddress(memberAddress)}，{memberAddress.consignee}，{memberAddress.phone}</Col>
+        <Col>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress &&　memberAddress.phone}</Col>
       </Row>
       <Row>
-        <Col span={8}>买家备注：{remark}</Col>
+        <Col>买家备注：{remark}</Col>
       </Row>
     </Card>
   );
