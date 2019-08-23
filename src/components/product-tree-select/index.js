@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { forwardRef } from 'react';
 import { TreeSelect } from 'antd';
 const { SHOW_PARENT } = TreeSelect;
-function ProductTreeSelect({ treeData, value, onChange }) {
-  // const [value, setValue] = useState([]);
-  // const onChange = value => {
-  //   console.log('onChange ', value);
-  //   setValue(value);
-  // };
+function ProductTreeSelect({ treeData, value, onChange }, ref) {
   const transformTreeData = (treeData) => {
     if (!Array.isArray(treeData)) return []
     return treeData.map(v => {
@@ -29,6 +24,6 @@ function ProductTreeSelect({ treeData, value, onChange }) {
       width: 300,
     },
   };
-  return <TreeSelect {...tProps} />
+  return <TreeSelect {...tProps} ref={ref}/>
 }
-export default ProductTreeSelect;
+export default forwardRef(ProductTreeSelect);

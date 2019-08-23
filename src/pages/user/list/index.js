@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect, parseQuery, setQuery } from '@/util/utils';
-import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table } from 'antd';
+import { Menu, Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table } from 'antd';
 import { levelArr, sourceArr } from './config';
 import styles from './index.module.scss';
 import Modal from './modal';
@@ -283,7 +283,16 @@ export default class extends Component {
     render() {
         const { tableConfig, loading } = this.props;
         return (
-            <Card>
+            <>
+                <Menu mode="horizontal">
+                    <Menu.Item>用户信息</Menu.Item>
+                    <Menu.Item>推荐的人</Menu.Item>
+                    <Menu.Item>我的团队</Menu.Item>
+                    <Menu.Item>收益列表</Menu.Item>
+                    <Menu.Item>提现记录</Menu.Item>
+                    <Menu.Item>我的资产</Menu.Item>                    
+                </Menu>
+                <Card>
                 <Row>
                     <Col style={{ marginBottom: 20 }}>
                         {
@@ -309,6 +318,7 @@ export default class extends Component {
                     <Modal />
                 </Row>
             </Card>
+            </>
         )
     }
 }
