@@ -1,4 +1,4 @@
-import { post, get } from '../../util/fetch';
+import { newPost, post, get } from '../../util/fetch';
 import axios from 'axios';
 
 // 失效优惠券
@@ -16,7 +16,7 @@ export function getCouponDetail(id) {
 
 // 获取优惠券列表
 export function getCouponlist(data) {
-  return post('/coupon/get/couponList', data);
+  return newPost('/coupon/get/couponList', data);
 }
 
 // 新增优惠券
