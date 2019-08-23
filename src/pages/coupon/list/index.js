@@ -7,7 +7,7 @@ import receiveStatus from '@/enum/receiveStatus';
 import CouponCard from '../coupon-card';
 import './index.scss';
 
-function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, history }) {
+function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, history, match }) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false)
@@ -27,7 +27,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
   const handleOk = () => { }
   const handleAddCoupon = () => {
     history.push({
-      pathname: '/activity/coupon/list/couponinfo',
+      pathname: `${match.url}/couponinfo`,
       search: `type=add`
     })
   }

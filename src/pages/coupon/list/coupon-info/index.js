@@ -56,7 +56,7 @@ const useIdentityOptions = [
   { label: '社区管理员', value: 20 },
   { label: '城市合伙人', value: 30 },
 ]
-function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue } }) {
+function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }, history }) {
   const [dailyRestrictChecked, setDailyRestrictChecked] = useState(false)
   const [receiveRestrictValues, setReceiveRestrictValues] = useState([])
   const [platformRestrictValues, setPlatformRestrictValues] = useState([])
@@ -231,7 +231,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
   const getDailyRestrict = (fields) => {
     return fields.dailyRestrictChecked ? fields.dailyRestrict : '';
   }
-  const handleSave = () => {
+  const handleSave = async () => {
     const fields = getFieldsValue();
     const [startReceiveTime, overReceiveTime] = fields.receiveTime ? fields.receiveTime.map(v => v && v.valueOf()) : []
     const useTimeValue = getUseTimeValue(fields)
@@ -282,7 +282,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
       }
     };
     console.log('params=>', params);
-    saveCouponInfo(params)
+    const data = await saveCouponInfo(params)
+    history.goBack();
   }
   return (
     <Card>

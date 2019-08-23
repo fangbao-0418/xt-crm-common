@@ -21,7 +21,7 @@ export function getCouponlist(data) {
 
 // 新增优惠券
 export function saveCouponInfo(data) {
-  return post('/coupon/save/couponInfo', data)
+  return newPost('/coupon/save/couponInfo', data)
 }
 
 // 查询优惠券列表
