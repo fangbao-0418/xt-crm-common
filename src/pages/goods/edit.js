@@ -662,7 +662,7 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
           </FormItem>
           {/* <FormItem label="商品视频封面">
-            {getFieldDecorator('videoCoverUrl')(<UploadView placeholder="上传视频封面" listType="picture-card" listNum={1} size={0.5} />)}
+            {getFieldDecorator('videoCoverUrl')(<UploadView placeholder="上传视频封面" listType="picture-card" listNum={1} size={0.3} />)}
           </FormItem>
           <FormItem label="商品视频">
             {getFieldDecorator('videoUrl')(<UploadView placeholder="上传视频" fileType='video' listType="picture-card" listNum={1} size={5} />)}
@@ -675,7 +675,7 @@ class GoodsEdit extends React.Component {
                   message: '请设置商品主图',
                 },
               ],
-            })(<UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.5} />)}
+            })(<UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />)}
           </FormItem>
           <FormItem
             label="商品图片"
@@ -699,7 +699,7 @@ class GoodsEdit extends React.Component {
                 placeholder="上传商品图片"
                 listType="picture-card"
                 listNum={5}
-                size={.5}
+                size={.3}
               />,
             )}
           </FormItem>
@@ -711,7 +711,7 @@ class GoodsEdit extends React.Component {
                   message: '请设置banner图片',
                 },
               ],
-            })(<UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.5} />)}
+            })(<UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />)}
           </FormItem>
         </Card>
         <Card
@@ -805,7 +805,7 @@ class GoodsEdit extends React.Component {
         <Card style={{ marginTop: 10 }}>
           <FormItem label="商品详情页">
             {getFieldDecorator('listImage')(
-              <UploadView showUploadList={true} size={0.5}>
+              <UploadView showUploadList={true} size={0.3}>
                 <Button type="dashed">上传商品详情页</Button>
               </UploadView>,
             )}
