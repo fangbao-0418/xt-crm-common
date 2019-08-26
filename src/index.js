@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { HashRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ConfigProvider } from 'antd';
+import 'url-search-params-polyfill';
 import App from './App';
 import './assets/css/common.css';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';

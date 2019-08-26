@@ -13,6 +13,7 @@ function callback(key) {
 
 function CouponDetail({ match }) {
   const [couponTasks, setCouponTasks] = useState([]);
+  console.log('couponTasks=>',couponTasks)
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const { baseVO = {}, ruleVO = {} } = data;
@@ -36,7 +37,7 @@ function CouponDetail({ match }) {
   const fetchCouponTasks = async () => {
     try {
       setLoading(true);
-      const res = await getCouponTasks();
+      const res = await getCouponTasks(match.params.id);
       setCouponTasks(res.data.data);
       setLoading(false);
     } catch (err) {

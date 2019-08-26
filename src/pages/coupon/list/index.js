@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Card, Table, Button, Input } from 'antd';
 import XtSelect from '@/components/xt-select';
 import { getCouponlist } from '../api';
-import { getListColumns, pagination } from '../config';
+import { pagination, getListColumns } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
+import emitter from '@/util/events';
 import CouponCard from '../coupon-card';
 import './index.scss';
 
@@ -21,8 +22,14 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
       setLoading(false);
     }
   }
-  useEffect(() => { 
+  useEffect(() => {
     fetchData();
+    emitter.addListener('coupon.list.setVisible', setVisible)
+    emitter.addListener('coupon.list.fetchData', fetchData)
+    return () => {
+      emitter.removeListener('coupon.list.setVisible', setVisible);
+      emitter.removeListener('coupon.list.fetchData', fetchData);
+    }
   }, []);
   const handleOk = () => { }
   const handleAddCoupon = () => {
@@ -75,7 +82,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
           <Button type="primary" icon="plus" onClick={handleAddCoupon}>新增优惠券</Button>
           {/* <Button icon="plus">批量发送记录</Button> */}
         </Row>
-        <Table rowKey="id" loading={loading} pagination={pagination} className="mt15" dataSource={records} columns={getListColumns(setVisible, fetchData)} />
+        <Table rowKey="id" loading={loading} pagination={pagination} className="mt15" dataSource={records} columns={getListColumns()} />
       </Card>
     </>
   )

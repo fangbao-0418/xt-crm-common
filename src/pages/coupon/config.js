@@ -92,7 +92,7 @@ export const releaseRecordsColumns = [{
   }
 }]
 
-export const getListColumns = (setVisible, fetchData) => [
+export const getListColumns = () => [
   {
     title: '编号',
     dataIndex: 'code',
@@ -141,7 +141,7 @@ export const getListColumns = (setVisible, fetchData) => [
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    render: (text, record) => <ActionBtnGroup record={record} setVisible={setVisible} fetchData={fetchData}/>
+    render: (text, record) => <ActionBtnGroup record={record}/>
   }
 ]
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Message, Modal, Menu, Dropdown, Button, Icon } from 'antd';
 import { withRouter } from 'react-router-dom';
+import emitter from '@/util/events'
 import { overReciveCoupon } from '../api';
 import './index.scss';
 const coupons = {
@@ -9,14 +10,20 @@ const coupons = {
   '2': ['VIEW']
 }
 
-function ActionBtn({ keyCode, history, setVisible, id, match, fetchData }) {
+function ActionBtn({ keyCode, history, record, match }) {
+  const openQrCode = () => {
+    emitter.emit('coupon.list.setVisible', true);
+  }
   const menu = (
     <Menu>
       <Menu.Item>
-        <a href="javascript:void(0)" onClick={() => setVisible(true)}>二维码</a>
+        <span onClick={openQrCode}>二维码</span>
       </Menu.Item>
       <Menu.Item>
-        <a href="javascript:void(0)" onClick={() => history.push({ pathname: '/activity/coupon/list/bulkissuing' })}>批量发券</a>
+        <span onClick={() => history.push({
+          pathname: `/coupon/get/couponList/bulkissuing/${record.id}`,
+          search: `name=${record.name}`
+        })}>批量发券</span>
       </Menu.Item>
     </Menu>
   );
@@ -27,10 +34,10 @@ function ActionBtn({ keyCode, history, setVisible, id, match, fetchData }) {
       cancelText: '取消',
       okText: '确定',
       onOk: async () => {
-        const res = await overReciveCoupon(id);
+        const res = await overReciveCoupon(record.id);
         if (res) {
           Message.success('结束优惠券发放成功');
-          fetchData();
+          emitter.emit('coupon.list.fetchData');
         }
       },
       onCancel() { }
@@ -46,11 +53,11 @@ function ActionBtn({ keyCode, history, setVisible, id, match, fetchData }) {
         </Dropdown>
       );
     case 'VIEW':
-      return <Button type="link" onClick={() => history.push({ pathname: `${match.url}/detail/${id}` })}>查看</Button>
+      return <Button type="link" onClick={() => history.push({ pathname: `${match.url}/detail/${record.id}` })}>查看</Button>
     case 'EDIT':
       return <Button type="link" onClick={() => history.push({
         pathname: `${match.url}/couponinfo`,
-        search: `type=edit&id=${id}`
+        search: `type=edit&id=${record.id}`
       })}>编辑</Button>
     case 'FINISH':
       return <Button type="link" onClick={handleFinish}>结束</Button>
@@ -59,12 +66,12 @@ function ActionBtn({ keyCode, history, setVisible, id, match, fetchData }) {
   }
 }
 const WithActionBtn = withRouter(ActionBtn);
-function ActionBtnGroup({ record, setVisible, fetchData }) {
+function ActionBtnGroup({ record }) {
   return (
     <div className="action-btn-group">
       {
         Array.isArray(coupons[record.status])
-          ? coupons[record.status].map(v => <WithActionBtn key={v} keyCode={v} setVisible={setVisible} id={record.id} fetchData={fetchData}/>)
+          ? coupons[record.status].map(v => <WithActionBtn key={v} keyCode={v} record={record}/>)
           : null
       }
     </div>

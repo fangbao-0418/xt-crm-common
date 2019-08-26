@@ -1,5 +1,9 @@
 import { newPost, newGet, newPut, post, get } from '../../util/fetch';
-import axios from 'axios';
+
+// 新增发券信息
+export function saveCouponTaskInfo(data) {
+  return newPost('/coupon/save/saveCouponTaskInfo', data);
+}
 
 // 结束领取优惠券
 export function overReciveCoupon(couponId) {
@@ -16,8 +20,8 @@ export function invalidCoupon(couponId) {
   return newPut(`/coupon/modify/invalidCoupon/${couponId}`)
 }
 // 获取批量发送记录
-export function getCouponTasks() {
-  return axios('/api/coupon/tasklist')
+export function getCouponTasks(couponId) {
+  return newGet(`/coupon/get/couponTaskList/${couponId}`)
 }
 // 获取优惠券详情
 export function getCouponDetail(id) {
