@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { message, Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
+import { plainOptions, useIdentityOptions } from '../../config';
 import { getCategoryList, saveCouponInfo } from '@/pages/coupon/api';
 import { actColumns } from '@/components/activity-selector/config';
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
@@ -42,20 +43,6 @@ function disabledRangeTime(_, type) {
     disabledSeconds: () => [55, 56],
   };
 }
-const plainOptions = [
-  { label: '安卓', value: '2' },
-  { label: 'iOS', value: '4' },
-  { label: 'H5', value: '8' },
-  { label: '小程序', value: '16' }
-]
-const useIdentityOptions = [
-  { label: '普通用户', value: 0 },
-  { label: '普通团长', value: 10 },
-  { label: '星级团长', value: 12, disabled: true },
-  { label: '体验团长', value: 11, disabled: true },
-  { label: '社区管理员', value: 20 },
-  { label: '城市合伙人', value: 30 },
-]
 function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }, history }) {
   const [dailyRestrictChecked, setDailyRestrictChecked] = useState(false)
   const [receiveRestrictValues, setReceiveRestrictValues] = useState([])

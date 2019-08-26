@@ -1,9 +1,9 @@
 import React from 'react';
 import ActionBtnGroup from './action-btn-group/index';
 import receiveStatus from '@/enum/receiveStatus';
-import { formatDate } from '@/pages/helper';
+import { formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
 import { Badge } from 'antd';
-import moment from 'moment';
+
 const listBadgeColors = {
   '0': 'gray',
   '1': 'blue',
@@ -29,17 +29,29 @@ export const taskStatus = {
   '3': '停止',
   '4': '失败'
 }
+export const plainOptions = [
+  { label: '安卓', value: '2' },
+  { label: 'iOS', value: '4' },
+  { label: 'H5', value: '8' },
+  { label: '小程序', value: '16' }
+]
+export const useIdentityOptions = [
+  { label: '普通用户', value: 0 },
+  { label: '普通团长', value: 10 },
+  { label: '星级团长', value: 12, disabled: true },
+  { label: '体验团长', value: 11, disabled: true },
+  { label: '社区管理员', value: 20 },
+  { label: '城市合伙人', value: 30 },
+]
 const calcRatio = ({ useCount, receiveCount }) => {
   const result = useCount / receiveCount;
   return (100 * result).toFixed(1) + '%';
 }
-const formatDateRange = ({ startReceiveTime, overReceiveTime }) => {
-  return [startReceiveTime, overReceiveTime].map(v => moment(v).format('YYYY-MM-DD HH:mm:ss')).join(' ~ ')
-}
+
 export const releaseRecordsColumns = [{
   title: '编号',
   dataIndex: 'code',
-  key: 'couponCode',
+  key: 'code',
 }, {
   title: '优惠券名称',
   dataIndex: 'name',
@@ -65,10 +77,11 @@ export const releaseRecordsColumns = [{
   title: '操作',
   dataIndex: 'action',
   key: 'action',
-  render: () => {
+  render: (text, record) => {
 
   }
 }]
+
 export const getListColumns = (setVisible) => [
   {
     title: '编号',
@@ -84,32 +97,13 @@ export const getListColumns = (setVisible) => [
     title: '领取时间',
     dataIndex: 'receiveTime',
     key: 'receiveTime',
-    render: (text, record) => {
-      return formatDateRange(record);
-    }
+    render: (text, record) => formatDateRange(record)
   },
   {
     title: '优惠券价值',
     dataIndex: 'discountAmount',
     key: 'discountAmount',
-    render: (text, record) => {
-      let result = [];
-      switch (record.useSill) {
-        // 无门槛
-        case 0:
-          return `无门槛${record.faceValue}`;
-        // 满减
-        case 1:
-          result = record.faceValue.split(':');
-          return `满${result[0]}减${result[1]}`;
-        // 折顶(打折,限制最多优惠金额))
-        case 2:
-          return;
-        default:
-          result = record.faceValue.split(':');
-          return `满${result[0]}减${result[1]}`;
-      }
-    }
+    render: (text, record) => formatFaceValue(record)
   },
   {
     title: '已领取/总量',

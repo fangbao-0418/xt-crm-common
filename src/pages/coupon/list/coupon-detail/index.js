@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Tabs, Form, Card, Button, Modal, Table } from 'antd';
 import { formLeftButtonLayout, formItemLayout } from '@/config'
 import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/coupon/api';
-import { releaseRecordsColumns } from '../../config';
+import { releaseRecordsColumns, applicationScope } from '../../config';
+import { formatFaceValue, formatDateRange, formatUseTime, formatAvlRange } from '@/pages/helper';
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 function callback(key) {
@@ -47,12 +48,12 @@ function CouponDetail({ match }) {
         <TabPane tab="优惠详情" key="1">
           <Form {...formItemLayout}>
             <Form.Item label="优惠券名称">{baseVO.name}</Form.Item>
-            <Form.Item label="适用范围"></Form.Item>
+            <Form.Item label="适用范围">{formatAvlRange(ruleVO.avlRange)}</Form.Item>
             <Form.Item label="已选商品"></Form.Item>
-            <Form.Item label="优惠券价值"></Form.Item>
+            <Form.Item label="优惠券价值">{formatFaceValue(ruleVO)}</Form.Item>
             <Form.Item label="发放总量">{baseVO.inventory}</Form.Item>
-            <Form.Item label="领取时间"></Form.Item>
-            <Form.Item label="用券时间"></Form.Item>
+            <Form.Item label="领取时间">{formatDateRange(ruleVO)}</Form.Item>
+            <Form.Item label="用券时间">{formatUseTime(ruleVO)}</Form.Item>
             <Form.Item label="领取人限制"></Form.Item>
             <Form.Item label="每人限领次数">{ruleVO.dailyRestrict}</Form.Item>
             <Form.Item label="使用平台">{ruleVO.platformRestrictValues}</Form.Item>

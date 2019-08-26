@@ -1,8 +1,9 @@
 import format from 'date-fns/format';
+import moment from 'moment';
 import { isNil } from 'lodash';
 
 export function formatDate(date, dateFormat = 'YYYY-MM-DD HH:mm:ss') {
-  if(!date) return '';
+  if (!date) return '';
   return format(date, dateFormat);
 }
 
@@ -94,4 +95,57 @@ export function isReturnOfGoodsAndMoneyStatus(orderRefunds) {
 // 换货中
 export function isInExchangeStatus(orderRefunds) {
   return orderRefunds === 24;
+}
+
+
+// 格式化面值
+export function formatFaceValue(record) {
+  let result = [];
+  switch (record.useSill) {
+    // 无门槛
+    case 0:
+      return `无门槛${record.faceValue}`;
+    // 满减
+    case 1:
+      result = record.faceValue.split(':');
+      return `满${result[0]}减${result[1]}`;
+    // 折顶(打折,限制最多优惠金额))
+    case 2:
+      return;
+    default:
+      result = record.faceValue ? record.faceValue.split(':') : [];
+      return `满${result[0]}减${result[1]}`;
+  }
+}
+
+function formatRangeTime(val = []) {
+  return val.map(v => moment(+v).format('YYYY-MM-DD HH:mm:ss')).join(' ~ ')
+}
+
+// 领取时间
+export function formatDateRange({ startReceiveTime, overReceiveTime }) {
+  return formatRangeTime([startReceiveTime, overReceiveTime])
+}
+
+// 用券时间
+export function formatUseTime({ useTimeType, useTimeValue }) {
+  switch (useTimeType) {
+    case 0:
+      return formatRangeTime(useTimeValue.split(','));
+    case 1:
+      break;
+    default:
+      break;
+  }
+}
+
+// 格式化适用范围
+export function formatAvlRange(val = 0) {
+  const applicationScope = {
+    0: '全场通用',
+    1: '类目商品',
+    2: '指定商品',
+    4: '指定活动'
+  }
+  return applicationScope[val];
 }
