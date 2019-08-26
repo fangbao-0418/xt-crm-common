@@ -27,7 +27,7 @@ export const formFields = function () {
       options: refundType.getArray('all')
     }, {
       type: 'input',
-      id: 'orderPhone',
+      id: 'memberPhone',
       label: '下单人电话'
     }, {
       type: 'input',
