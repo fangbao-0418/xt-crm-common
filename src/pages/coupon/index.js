@@ -17,6 +17,11 @@ const CouponInfo = Loadable({
   loading: Loader,
 });
 
+const CouponEdit = Loadable({
+  loader: () => import('./list/coupon-info/edit'),
+  loading: Loader,
+});
+
 const CouponDetail = Loadable({
   loader: () => import('./list/coupon-detail'),
   loading: Loader,
@@ -31,6 +36,7 @@ export default class RouteApp extends React.Component {
         <Route exact path={`${match.url}/get/couponList`} component={CouponList} />
         <Route path={`${match.url}/get/couponList/bulkissuing/:id`} component={BulkIssuing} />
         <Route path={`${match.url}/get/couponList/couponinfo`} component={CouponInfo} />
+        <Route path={`${match.url}/get/couponList/couponedit`} component={CouponEdit} />
         <Route path={`${match.url}/get/couponList/detail/:id`} component={CouponDetail} />
       </Switch>
     );

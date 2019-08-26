@@ -1,9 +1,11 @@
 import React from 'react';
-import { Button } from 'antd';
+import { Button, Message } from 'antd';
 import ActionBtnGroup from './action-btn-group/index';
 import receiveStatus from '@/enum/receiveStatus';
 import { formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
+import { stopCouponTask } from './api';
 import { Badge } from 'antd';
+import emitter from '@/util/events';
 
 const listBadgeColors = {
   '0': 'gray',
@@ -59,8 +61,13 @@ const calcRatio = ({ useCount, receiveCount }) => {
   return (100 * result).toFixed(1) + '%';
 }
 
-const handleStop = (taskId) => {
-
+const handleStop = async (taskId) => {
+  console.log('taskId=>', taskId);
+  const res = await stopCouponTask(taskId);
+  if (res) {
+    Message.success('停止发券成功');
+    emitter.emit('list.coupon-detail.fetchCouponTasks');
+  }
 }
 export const releaseRecordsColumns = [{
   title: '目标用户',

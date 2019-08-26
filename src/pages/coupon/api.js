@@ -1,5 +1,9 @@
 import { newPost, newGet, newPut, post, get } from '../../util/fetch';
 
+export function modifyCouponBaseInfo(data) {
+  return newPut('/coupon/modify/couponBaseInfo', data);
+}
+
 // 新增发券信息
 export function saveCouponTaskInfo(data) {
   return newPost('/coupon/save/saveCouponTaskInfo', data);

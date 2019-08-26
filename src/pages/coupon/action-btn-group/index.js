@@ -12,7 +12,7 @@ const coupons = {
 
 function ActionBtn({ keyCode, history, record, match }) {
   const openQrCode = () => {
-    emitter.emit('coupon.list.setVisible', true);
+    emitter.emit('coupon.list.setVisible', {visible: true, id: record.id});
   }
   const menu = (
     <Menu>
@@ -56,7 +56,7 @@ function ActionBtn({ keyCode, history, record, match }) {
       return <Button type="link" onClick={() => history.push({ pathname: `${match.url}/detail/${record.id}` })}>查看</Button>
     case 'EDIT':
       return <Button type="link" onClick={() => history.push({
-        pathname: `${match.url}/couponinfo`,
+        pathname: `${match.url}/couponedit`,
         search: `type=edit&id=${record.id}`
       })}>编辑</Button>
     case 'FINISH':

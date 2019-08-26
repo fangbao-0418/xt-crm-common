@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Card, Table, Button, Input } from 'antd';
 import XtSelect from '@/components/xt-select';
-import { getCouponlist } from '../api';
+import { getCouponlist, getCouponDetail } from '../api';
 import { pagination, getListColumns } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
 import emitter from '@/util/events';
+import ClipboardJS from "clipboard";
 import CouponCard from '../coupon-card';
+import QRCode from 'qrcode.react';
 import './index.scss';
 
 function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, history, match }) {
   const [records, setRecords] = useState([]);
+  const [info, setInfo] = useState({});
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false)
   const fetchData = async (data = {}) => {
@@ -22,12 +25,17 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
       setLoading(false);
     }
   }
+  const setModalVisible = async ({ visible, id }) => {
+    const info = await getCouponDetail(id);
+    setInfo(info);
+    setVisible(visible)
+  }
   useEffect(() => {
     fetchData();
-    emitter.addListener('coupon.list.setVisible', setVisible)
+    emitter.addListener('coupon.list.setVisible', setModalVisible)
     emitter.addListener('coupon.list.fetchData', fetchData)
     return () => {
-      emitter.removeListener('coupon.list.setVisible', setVisible);
+      emitter.removeListener('coupon.list.setVisible', setModalVisible);
       emitter.removeListener('coupon.list.fetchData', fetchData);
     }
   }, []);
@@ -42,6 +50,9 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
     const data = getFieldsValue()
     fetchData(data)
   }
+  const copyLink = () => {
+    new ClipboardJS('.copy-input');
+  }
   return (
     <>
       <Modal
@@ -52,11 +63,11 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
         footer={null}
       >
         <div className="coupon-wrapper">
-          <CouponCard />
-          <div className="qr-code"></div>
+          <CouponCard info={info} />
+          <QRCode className="qr-code" size={240} value="http://facebook.github.io/react/" />
           <div className="copy-qr-code">
-            <Input readOnly value="" />
-            <Button className="ml10" type="primary">复制</Button>
+            <Input className="copy-input" readOnly value="http://facebook.github.io/react/" />
+            <Button className="ml10" type="primary" onClick={copyLink}>复制</Button>
           </div>
         </div>
       </Modal>

@@ -120,7 +120,7 @@ export function formatFaceValue(record) {
 }
 
 function formatRangeTime(val = []) {
-  return val.map(v => moment(+v).format('YYYY-MM-DD HH:mm:ss')).join(' ~ ')
+  return val.map(v => moment(+v).format('YYYY-MM-DD HH:mm')).join(' ~ ')
 }
 
 // 领取时间

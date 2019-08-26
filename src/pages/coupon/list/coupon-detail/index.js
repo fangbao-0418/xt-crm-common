@@ -5,6 +5,8 @@ import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/coupon/a
 import { releaseRecordsColumns } from '../../config';
 import platformType from '@/enum/platformType';
 import { formatFaceValue, formatDateRange, formatUseTime, formatAvlRange, formatReceiveRestrict } from '@/pages/helper';
+import emitter from '@/util/events';
+
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 const columns = [{
@@ -58,6 +60,10 @@ function CouponDetail({ match }) {
   useEffect(() => {
     fetchDetail();
     fetchCouponTasks();
+    emitter.addListener('list.coupon-detail.fetchCouponTasks', fetchCouponTasks);
+    return () => {
+      emitter.removeListener('list.coupon-detail.fetchCouponTasks', fetchCouponTasks);
+    }
   }, [])
   return (
     <Card>

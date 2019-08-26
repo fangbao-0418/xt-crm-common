@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { message, Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 import { platformOptions, useIdentityOptions } from '../../config';
-import { getCategoryList, saveCouponInfo, getCouponDetail } from '@/pages/coupon/api';
+import { getCategoryList, saveCouponInfo, getCouponDetail, modifyCouponBaseInfo } from '@/pages/coupon/api';
 import { actColumns } from '@/components/activity-selector/config';
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
 import { unionArray } from '@/util/utils';
@@ -56,7 +56,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
   const [chosenProduct, setChosenProduct] = useState([]);
   const [productSelectorVisible, setProductSelectorVisible] = useState(false);
   const [activitySelectorVisible, setActivitySelectorVisible] = useState(false);
-  const { baseVO = {}, ruleVO = {} } = detail;
+  const { baseVO = {}, ruleVO = {} } = detail || {};
   const removeExcludeCurrentRow = (id) => {
     setExcludeProduct(excludeProduct.filter(v => v.id !== id));
   }
@@ -256,61 +256,75 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
     }
   }
   const handleSave = async () => {
+    // const fields = getFieldsValue();
+    // const [startReceiveTime, overReceiveTime] = fields.receiveTime ? fields.receiveTime.map(v => v && v.valueOf()) : []
+    // const useTimeValue = getUseTimeValue(fields)
+    // const platformRestrictValues = getPlatformRestrictValues(fields.platformType);
+    // const receiveRestrictValues = getReceiveRestrictValues(fields.recipientLimit);
+    // const avlValues = getAvlValues(fields);
+    // const params = {
+    //   baseVO: {
+    //     // 名称
+    //     name: fields.name,
+    //     // 总量
+    //     inventory: fields.inventory,
+    //     // 备注
+    //     remark: fields.remark,
+    //     description: fields.description
+    //   },
+    //   ruleVO: {
+    //     // 限领
+    //     restrictNum: fields.restrictNum,
+    //     // 适用范围
+    //     avlRange: fields.avlRange,
+    //     // 范围值
+    //     avlValues,
+    //     // 排除商品
+    //     excludeValues: getExcludeValues(fields),
+    //     // 优惠券类型
+    //     useSill: fields.useSill,
+    //     // 优惠券价值
+    //     faceValue: getFaceValue(fields),
+    //     // 领取/使用用户级别限制
+    //     receiveRestrictValues,
+    //     // 平台限制
+    //     platformRestrictValues,
+    //     // 每日限领
+    //     dailyRestrict: getDailyRestrict(fields),
+    //     // 开始领取时间
+    //     startReceiveTime,
+    //     // 结束领取时间
+    //     overReceiveTime,
+    //     // 商详显示
+    //     showFlag: fields.showFlag,
+    //     // 适用时间类型
+    //     useTimeType: fields.useTimeType,
+    //     // 使用时间值
+    //     useTimeValue
+    //   }
+    // };
+    // console.log('params=>', params);
+    // const data = await saveCouponInfo(params)
+    // console.log('data=>', data);
+    // message.success('新增优惠券成功');
+    // history.goBack();
     const fields = getFieldsValue();
-    const [startReceiveTime, overReceiveTime] = fields.receiveTime ? fields.receiveTime.map(v => v && v.valueOf()) : []
-    const useTimeValue = getUseTimeValue(fields)
-    const platformRestrictValues = getPlatformRestrictValues(fields.platformType);
-    const receiveRestrictValues = getReceiveRestrictValues(fields.recipientLimit);
-    const avlValues = getAvlValues(fields);
+    const urlSearch = new URLSearchParams(history.location.search)
     const params = {
-      baseVO: {
-        // 名称
-        name: fields.name,
-        // 总量
-        inventory: fields.inventory,
-        // 备注
-        remark: fields.remark,
-        description: fields.description
-      },
-      ruleVO: {
-        // 限领
-        restrictNum: fields.restrictNum,
-        // 适用范围
-        avlRange: fields.avlRange,
-        // 范围值
-        avlValues,
-        // 排除商品
-        excludeValues: getExcludeValues(fields),
-        // 优惠券类型
-        useSill: fields.useSill,
-        // 优惠券价值
-        faceValue: getFaceValue(fields),
-        // 领取/使用用户级别限制
-        receiveRestrictValues,
-        // 平台限制
-        platformRestrictValues,
-        // 每日限领
-        dailyRestrict: getDailyRestrict(fields),
-        // 开始领取时间
-        startReceiveTime,
-        // 结束领取时间
-        overReceiveTime,
-        // 商详显示
-        showFlag: fields.showFlag,
-        // 适用时间类型
-        useTimeType: fields.useTimeType,
-        // 使用时间值
-        useTimeValue
-      }
+      ...fields,
+      id: +urlSearch.get('id')
     };
-    console.log('params=>', params);
-    const res = await saveCouponInfo(params)
+    const res = await modifyCouponBaseInfo(params)
     if (res) {
-      message.success('新增优惠券成功');
+      message.success('编辑优惠券成功');
       history.goBack();
     }
   }
   console.log(baseVO.name, '---------------')
+  // 取消
+  const handleCancel = () => {
+    history.goBack();
+  }
   return (
     <Card>
       <ProductSelector visible={productSelectorVisible} onCancel={() => setProductSelectorVisible(false)} onChange={onProductSelectorChange} />
@@ -324,7 +338,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
         <Form.Item label="优惠券名称">
           {getFieldDecorator('name', { initialValue: baseVO.name, rules: [{ required: true, message: '请输入优惠券名称' }] })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
         </Form.Item>
-        <Form.Item label="适用范围">
+        {/* <Form.Item label="适用范围">
           {getFieldDecorator('avlRange', {
             initialValue: ruleVO.avlRange
           })(
@@ -340,8 +354,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
               <Button type="link" onClick={() => setProductSelectorVisible(true)}>排除商品</Button>
             </div>
           )}
-        </Form.Item>
-        {hasProductTreeSelect() && (
+        </Form.Item> */}
+        {/* {hasProductTreeSelect() && (
           <Form.Item label="选择类目">
             {getFieldDecorator('categorys', { rules: [{ required: true, message: '请选择类目' }] })(<ProductTreeSelect treeData={treeData} />)}
           </Form.Item>
@@ -356,8 +370,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
         </Form.Item>}
         {hasActivityList() && <Form.Item label="已选择活动">
           <Table pagination={false} rowKey="id" columns={activityColumns} dataSource={activityList} />
-        </Form.Item>}
-        <Form.Item label="使用门槛">
+        </Form.Item>} */}
+        {/* <Form.Item label="使用门槛">
           {getFieldDecorator('useSill', { initialValue: 1, rules: [{ required: true }] })(
             <Radio.Group>
               <Radio disabled style={radioStyle} value={0}>无门槛（暂未开放）</Radio>
@@ -373,28 +387,28 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
               </Row>
             </Radio.Group>
           )}
-        </Form.Item>
-        <Form.Item label="优惠内容（面值）">
+        </Form.Item> */}
+        {/* <Form.Item label="优惠内容（面值）">
           <Row type="flex">
             <Col>减</Col>
             <Col className="ml10 short-input">{getFieldDecorator('discountPrice', { initialValue: getDiscountPrice(ruleVO), rules: [{ required: true, message: '请输入优惠面值' }] })(<Input />)}</Col>
             <Col className="ml10">元</Col>
           </Row>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="发放总量">
           <Row type="flex">
-            <Col>{getFieldDecorator('inventory', { initialValue: baseVO.inventory, rules: [{ required: true, message: '请输入发放总量' }] })(<InputNumber />)}</Col>
+            <Col>{getFieldDecorator('inventory', { initialValue: baseVO.inventory, rules: [{ required: true, message: '请输入发放总量' }] })(<InputNumber min={baseVO.inventory}/>)}</Col>
             <Col className="ml10">张</Col>
           </Row>
           <p>修改优惠券总量时只能增加不能减少，请谨慎设置</p>
         </Form.Item>
-        <Row>
+        {/* <Row>
           <Col offset={3}>
             <h2 className="form-title">基本信息</h2>
           </Col>
-        </Row>
-        <Form.Item label="领取时间">
-          {getFieldDecorator('receiveTime', { initialValue: /*ruleVO.overReceiveTime*/'', rules: [{ required: true }] })(<RangePicker
+        </Row> */}
+        {/* <Form.Item label="领取时间">
+          {getFieldDecorator('receiveTime', { initialValue: '', rules: [{ required: true }] })(<RangePicker
             disabledDate={disabledDate}
             disabledTime={disabledRangeTime}
             showTime={{
@@ -404,8 +418,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
             format="YYYY-MM-DD HH:mm:ss"
           />)
           }
-        </Form.Item>
-        <Form.Item label="使用时间">{getFieldDecorator('useTimeType', { initialValue: 1, rules: [{ required: true }] })(
+        </Form.Item> */}
+        {/* <Form.Item label="使用时间">{getFieldDecorator('useTimeType', { initialValue: 1, rules: [{ required: true }] })(
           <Radio.Group>
             <Row type="flex" align="middle">
               <Radio value={0}></Radio>
@@ -430,8 +444,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
             </Row>
             <p>设置为0时则为当日有效</p>
           </Radio.Group>
-        )}</Form.Item>
-        <Form.Item label="领取人(使用人)限制">
+        )}</Form.Item> */}
+        {/* <Form.Item label="领取人(使用人)限制">
           {getFieldDecorator('recipientLimit')(
             <Radio.Group>
               <Radio style={radioStyle} value={0}>不限制</Radio>
@@ -441,8 +455,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
           {showRecipientLimit() && <div>
             <Checkbox.Group options={useIdentityOptions} value={receiveRestrictValues} onChange={onUseIdentityChange} />
           </div>}
-        </Form.Item>
-        <Form.Item label="每人限领次数">
+        </Form.Item> */}
+        {/* <Form.Item label="每人限领次数">
           <Row type="flex">
             <Col>限领</Col>
             <Col className="ml10 short-input">{getFieldDecorator('restrictNum', { initialValue: ruleVO.restrictNum, rules: [{ required: true, message: '请输入每人限领次数' }] })(<InputNumber />)}</Col>
@@ -458,8 +472,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
               <Col className="ml10">张</Col>
             </Row>
           </Row>
-        </Form.Item>
-        <Form.Item label="使用平台">
+        </Form.Item> */}
+        {/* <Form.Item label="使用平台">
           {getFieldDecorator('platformType', { initialValue: 0, rules: [{ required: true }] })(
             <Radio.Group>
               <Radio style={radioStyle} value={0}>不限制</Radio>
@@ -471,15 +485,15 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
               <Checkbox.Group options={platformOptions} value={platformRestrictValues} onChange={onChangePlatform} />
             </div>
           )}
-        </Form.Item>
-        <Form.Item label="商详显示">
+        </Form.Item> */}
+        {/* <Form.Item label="商详显示">
           {getFieldDecorator('showFlag', { initialValue: ruleVO.showFlag, rules: [{ required: true, message: '请选择商详显示' }] })(
             <Radio.Group>
               <Radio style={radioStyle} value={0}>显示</Radio>
               <Radio style={radioStyle} value={1}>不显示</Radio>
             </Radio.Group>
           )}
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="优惠券说明">
           {getFieldDecorator('description', {initialValue: baseVO.description})(<TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />)}
         </Form.Item>
@@ -488,7 +502,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
         </Form.Item>
         <Form.Item wrapperCol={formLeftButtonLayout}>
           <Button type="primary" onClick={handleSave}>保存</Button>
-          <Button className="ml20">取消</Button>
+          <Button className="ml20" onClick={handleCancel}>取消</Button>
         </Form.Item>
       </Form>
     </Card>
