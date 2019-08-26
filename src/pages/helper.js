@@ -1,5 +1,6 @@
 import format from 'date-fns/format';
 import moment from 'moment';
+import receiveRestrictType from '@/enum/receiveRestrictType';
 import { isNil } from 'lodash';
 
 export function formatDate(date, dateFormat = 'YYYY-MM-DD HH:mm:ss') {
@@ -152,5 +153,5 @@ export function formatAvlRange(val = 0) {
 
 // 领取人限制
 export function formatReceiveRestrict(val = '') {
-  return val
+  return val.split(',').map(v => receiveRestrictType.getValue(v)).join('，');
 }

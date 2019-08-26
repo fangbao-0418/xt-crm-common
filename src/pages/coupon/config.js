@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'antd';
 import ActionBtnGroup from './action-btn-group/index';
 import receiveStatus from '@/enum/receiveStatus';
 import { formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
@@ -29,7 +30,7 @@ export const taskStatus = {
   '3': '停止',
   '4': '失败'
 }
-export const plainOptions = [
+export const platformOptions = [
   { label: '安卓', value: '2' },
   { label: 'iOS', value: '4' },
   { label: 'H5', value: '8' },
@@ -58,15 +59,10 @@ const calcRatio = ({ useCount, receiveCount }) => {
   return (100 * result).toFixed(1) + '%';
 }
 
+const handleStop = (taskId) => {
+
+}
 export const releaseRecordsColumns = [{
-  title: '编号',
-  dataIndex: 'code',
-  key: 'code',
-}, {
-  title: '优惠券名称',
-  dataIndex: 'name',
-  key: 'name',
-}, {
   title: '目标用户',
   dataIndex: 'receiveUserGroup',
   key: 'receiveUserGroup',
@@ -88,7 +84,11 @@ export const releaseRecordsColumns = [{
   dataIndex: 'action',
   key: 'action',
   render: (text, record) => {
-
+    if (record.status === 0) {
+      return <Button type="link" onClick={() => handleStop(record.id)}>停止</Button>;
+    } else {
+      return '-';
+    }
   }
 }]
 
@@ -141,7 +141,7 @@ export const getListColumns = () => [
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    render: (text, record) => <ActionBtnGroup record={record}/>
+    render: (text, record) => <ActionBtnGroup record={record} />
   }
 ]
 

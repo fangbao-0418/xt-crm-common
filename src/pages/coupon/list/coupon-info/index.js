@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { message, Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
-import { plainOptions, useIdentityOptions } from '../../config';
+import { platformOptions, useIdentityOptions } from '../../config';
 import { getCategoryList, saveCouponInfo, getCouponDetail } from '@/pages/coupon/api';
 import { actColumns } from '@/components/activity-selector/config';
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
@@ -467,7 +467,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
           )}
           {showSelectPlatform() && (
             <div>
-              <Checkbox.Group options={plainOptions} value={platformRestrictValues} onChange={onChangePlatform} />
+              <Checkbox.Group options={platformOptions} value={platformRestrictValues} onChange={onChangePlatform} />
             </div>
           )}
         </Form.Item>
