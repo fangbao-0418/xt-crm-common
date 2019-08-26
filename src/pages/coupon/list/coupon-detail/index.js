@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Tabs, Form, Card, Button, Modal, Table } from 'antd';
+import { Tabs, Form, Card, Button, Modal, Table, Message } from 'antd';
 import { formLeftButtonLayout, formItemLayout } from '@/config'
 import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/coupon/api';
-import { releaseRecordsColumns, applicationScope } from '../../config';
-import { formatFaceValue, formatDateRange, formatUseTime, formatAvlRange } from '@/pages/helper';
+import { releaseRecordsColumns, productColumns, applicationScope } from '../../config';
+import { actColumns } from '@/components/activity-selector/config';
+import { formatFaceValue, formatDateRange, formatUseTime, formatAvlRange, formatReceiveRestrict } from '@/pages/helper';
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 function callback(key) {
@@ -15,12 +16,20 @@ function CouponDetail({ match }) {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const { baseVO = {}, ruleVO = {} } = data;
+  const fetchDetail = async () => {
+    const data = await getCouponDetail(match.params.id);
+    setData(data || {});
+  }
   const handleInvalidCoupon = () => {
     confirm({
       title: '系统提示',
       content: '优惠券失效后将不能使用是否失效所有优惠券？',
-      onOk() {
-        invalidCoupon(match.params.id);
+      onOk: async () => {
+        const res = await invalidCoupon(match.params.id);
+        if (res) {
+          Message.info('失效优惠券成功');
+        }
+        fetchDetail();
       }
     });
   }
@@ -35,10 +44,6 @@ function CouponDetail({ match }) {
     }
   }
   useEffect(() => {
-    const fetchDetail = async () => {
-      const data = await getCouponDetail(match.params.id);
-      setData(data || {});
-    }
     fetchDetail();
     fetchCouponTasks();
   }, [])
@@ -49,12 +54,17 @@ function CouponDetail({ match }) {
           <Form {...formItemLayout}>
             <Form.Item label="优惠券名称">{baseVO.name}</Form.Item>
             <Form.Item label="适用范围">{formatAvlRange(ruleVO.avlRange)}</Form.Item>
-            <Form.Item label="已选商品"></Form.Item>
+            <Form.Item label="已选商品">
+              <Table pagination={false} rowKey="id" columns={productColumns} dataSource={[]} />
+            </Form.Item>
+            <Form.Item label="已选活动">
+              <Table pagination={false} rowKey="id" columns={actColumns()} dataSource={[]} />
+            </Form.Item>
             <Form.Item label="优惠券价值">{formatFaceValue(ruleVO)}</Form.Item>
             <Form.Item label="发放总量">{baseVO.inventory}</Form.Item>
             <Form.Item label="领取时间">{formatDateRange(ruleVO)}</Form.Item>
             <Form.Item label="用券时间">{formatUseTime(ruleVO)}</Form.Item>
-            <Form.Item label="领取人限制"></Form.Item>
+            <Form.Item label="领取人限制">{formatReceiveRestrict(ruleVO.receiveRestrict)}</Form.Item>
             <Form.Item label="每人限领次数">{ruleVO.dailyRestrict}</Form.Item>
             <Form.Item label="使用平台">{ruleVO.platformRestrictValues}</Form.Item>
             <Form.Item label="优惠券说明">{baseVO.description}</Form.Item>

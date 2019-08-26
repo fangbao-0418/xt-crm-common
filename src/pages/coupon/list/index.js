@@ -62,7 +62,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
             {getFieldDecorator('name', {})(<Input placeholder="请输入" />)}
           </Form.Item>
           <Form.Item label="状态">
-            {getFieldDecorator('status', {})(<XtSelect data={receiveStatus.getArray()} style={{ width: '174px' }} placeholder="请输入" />)}
+            {getFieldDecorator('status', {})(<XtSelect data={receiveStatus.getArray('all')} style={{ width: '174px' }} placeholder="请输入" />)}
           </Form.Item>
           <Form.Item>
             <Button type="primary" onClick={handleSearch}>查询</Button>
@@ -75,7 +75,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
           <Button type="primary" icon="plus" onClick={handleAddCoupon}>新增优惠券</Button>
           {/* <Button icon="plus">批量发送记录</Button> */}
         </Row>
-        <Table rowKey="id" loading={loading} pagination={pagination} className="mt15" dataSource={records} columns={getListColumns(setVisible)} />
+        <Table rowKey="id" loading={loading} pagination={pagination} className="mt15" dataSource={records} columns={getListColumns(setVisible, fetchData)} />
       </Card>
     </>
   )

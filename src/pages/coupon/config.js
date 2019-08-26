@@ -43,6 +43,16 @@ export const useIdentityOptions = [
   { label: '社区管理员', value: 20 },
   { label: '城市合伙人', value: 30 },
 ]
+
+export const productColumns = [{
+  title: '商品ID',
+  dataIndex: 'id',
+  key: 'id'
+}, {
+  title: '商品名称',
+  dataIndex: 'productName',
+  key: 'productName'
+}]
 const calcRatio = ({ useCount, receiveCount }) => {
   const result = useCount / receiveCount;
   return (100 * result).toFixed(1) + '%';
@@ -82,7 +92,7 @@ export const releaseRecordsColumns = [{
   }
 }]
 
-export const getListColumns = (setVisible) => [
+export const getListColumns = (setVisible, fetchData) => [
   {
     title: '编号',
     dataIndex: 'code',
@@ -131,7 +141,7 @@ export const getListColumns = (setVisible) => [
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    render: (text, record) => <ActionBtnGroup record={record} setVisible={setVisible} />
+    render: (text, record) => <ActionBtnGroup record={record} setVisible={setVisible} fetchData={fetchData}/>
   }
 ]
 

@@ -11,5 +11,5 @@ if (host.indexOf('daily-xt-crmadmin') >= 0) {
 }
 
 baseHost = 'http://192.168.10.114:8080';
-
+// baseHost = 'http://192.168.10.52:8081';
 export default baseHost;

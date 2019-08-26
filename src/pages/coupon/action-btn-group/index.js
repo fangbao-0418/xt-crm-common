@@ -1,6 +1,7 @@
 import React from 'react';
-import { Modal, Menu, Dropdown, Button, Icon } from 'antd';
+import { Message, Modal, Menu, Dropdown, Button, Icon } from 'antd';
 import { withRouter } from 'react-router-dom';
+import { overReciveCoupon } from '../api';
 import './index.scss';
 const coupons = {
   '0': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH'],
@@ -8,7 +9,7 @@ const coupons = {
   '2': ['VIEW']
 }
 
-function ActionBtn({ keyCode, history, setVisible, id, match }) {
+function ActionBtn({ keyCode, history, setVisible, id, match, fetchData }) {
   const menu = (
     <Menu>
       <Menu.Item>
@@ -25,10 +26,12 @@ function ActionBtn({ keyCode, history, setVisible, id, match }) {
       content: '结束优惠券发放，已领取优惠券可以继续使用，是否结束？',
       cancelText: '取消',
       okText: '确定',
-      onOk() {
-        return new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'));
+      onOk: async () => {
+        const res = await overReciveCoupon(id);
+        if (res) {
+          Message.success('结束优惠券发放成功');
+          fetchData();
+        }
       },
       onCancel() { }
     })
@@ -45,7 +48,10 @@ function ActionBtn({ keyCode, history, setVisible, id, match }) {
     case 'VIEW':
       return <Button type="link" onClick={() => history.push({ pathname: `${match.url}/detail/${id}` })}>查看</Button>
     case 'EDIT':
-      return <Button type="link">编辑</Button>
+      return <Button type="link" onClick={() => history.push({
+        pathname: `${match.url}/couponinfo`,
+        search: `type=edit&id=${id}`
+      })}>编辑</Button>
     case 'FINISH':
       return <Button type="link" onClick={handleFinish}>结束</Button>
     default:
@@ -53,12 +59,12 @@ function ActionBtn({ keyCode, history, setVisible, id, match }) {
   }
 }
 const WithActionBtn = withRouter(ActionBtn);
-function ActionBtnGroup({ record, setVisible }) {
+function ActionBtnGroup({ record, setVisible, fetchData }) {
   return (
     <div className="action-btn-group">
       {
         Array.isArray(coupons[record.status])
-          ? coupons[record.status].map(v => <WithActionBtn key={v} keyCode={v} setVisible={setVisible} id={record.id} />)
+          ? coupons[record.status].map(v => <WithActionBtn key={v} keyCode={v} setVisible={setVisible} id={record.id} fetchData={fetchData}/>)
           : null
       }
     </div>

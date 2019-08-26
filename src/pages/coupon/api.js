@@ -1,9 +1,19 @@
-import { newPost, newGet, post, get } from '../../util/fetch';
+import { newPost, newGet, newPut, post, get } from '../../util/fetch';
 import axios from 'axios';
 
-// 失效优惠券
-export function invalidCoupon() {
+// 结束领取优惠券
+export function overReciveCoupon(couponId) {
+  return newPut(`/coupon/modify/overReciveCoupon/${couponId}`)
+}
 
+// 停止发券
+export function stopCouponTask(taskId) {
+  return newPut(`/coupon/modify/stopCouponTask/${taskId}`)
+}
+
+// 失效优惠券
+export function invalidCoupon(couponId) {
+  return newPut(`/coupon/modify/invalidCoupon/${couponId}`)
 }
 // 获取批量发送记录
 export function getCouponTasks() {

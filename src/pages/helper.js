@@ -149,3 +149,8 @@ export function formatAvlRange(val = 0) {
   }
   return applicationScope[val];
 }
+
+// 领取人限制
+export function formatReceiveRestrict(val = '') {
+  return val
+}

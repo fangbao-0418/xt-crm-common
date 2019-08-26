@@ -43,7 +43,7 @@ function disabledRangeTime(_, type) {
     disabledSeconds: () => [55, 56],
   };
 }
-function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }, history }) {
+function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }, history, match }) {
   const [dailyRestrictChecked, setDailyRestrictChecked] = useState(false)
   const [receiveRestrictValues, setReceiveRestrictValues] = useState([])
   const [platformRestrictValues, setPlatformRestrictValues] = useState([])
@@ -74,6 +74,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
       setTreeData(data);
     }
     getTreeData();
+    
+    console.log('match=>', match)
   }, [])
   const excludeColumns = [{
     title: '商品ID',
