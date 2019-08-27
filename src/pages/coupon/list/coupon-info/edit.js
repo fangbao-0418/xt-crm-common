@@ -5,7 +5,7 @@ import { getCouponDetail, modifyCouponBaseInfo } from '@/pages/coupon/api';
 import { ProductSelector, ActivitySelector } from '@/components';
 import platformType from '@/enum/platformType';
 import { unionArray } from '@/util/utils';
-import { formatAvlRange, formatFaceValue, formatReceiveRestrict, formatDateRange, formatUseTime } from '@/pages/helper';
+import { formatAvlRange, formatFaceValue, formatReceiveRestrict, formatDateRange, formatUseTime, formatPlatformRestrict } from '@/pages/helper';
 import "./index.scss";
 const { TextArea } = Input;
 
@@ -66,10 +66,6 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
   // 取消
   const handleCancel = () => {
     history.goBack();
-  }
-  // 格式化使用平台
-  const formatPlatformRestrict = (val = '') => {
-    return val.split(',').map(v => platformType.getValue(v)).join('，');
   }
   return (
     <Card>

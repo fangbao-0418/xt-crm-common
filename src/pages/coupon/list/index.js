@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Row, Card, Table, Button, Input } from 'antd';
-import XtSelect from '@/components/xt-select';
+import {XtSelect, CommonTable} from '@/components';
 import { getCouponlist, getCouponDetail } from '../api';
 import { pagination, getListColumns } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
@@ -8,9 +8,15 @@ import emitter from '@/util/events';
 import ClipboardJS from "clipboard";
 import CouponCard from '../coupon-card';
 import QRCode from 'qrcode.react';
+import { h5Host } from '@/util/baseHost';
 import './index.scss';
 
 function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, history, match }) {
+  const [pagination, setPagination] = useState({
+    page: 1,
+    total: 0,
+    pageSize: 10
+  })
   const [records, setRecords] = useState([]);
   const [info, setInfo] = useState({});
   const [loading, setLoading] = useState(false);
@@ -18,9 +24,18 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
   const fetchData = async (data = {}) => {
     try {
       setLoading(true);
-      const res = await getCouponlist(data);
+      const res = await getCouponlist({
+        ...pagination,
+        ...data
+      });
+      console.log('res=>', res);
       setLoading(false);
       setRecords(res.records);
+      setPagination({
+        ...pagination,
+        page: res.current,
+        total: res.total
+      })
     } catch (err) {
       setLoading(false);
     }
@@ -62,9 +77,9 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
       >
         <div className="coupon-wrapper">
           <CouponCard info={info} />
-          <QRCode className="qr-code" size={240} value={`/coupon/${info.baseVO && info.baseVO.id}/share`} />
+          <QRCode className="qr-code" size={240} value={`${h5Host}/#/coupon/${info.baseVO && info.baseVO.id}/share`} />
           <div className="copy-qr-code">
-            <Input id="copy-input" readOnly value={`/coupon/${info.baseVO && info.baseVO.id}/share`} />
+            <Input id="copy-input" readOnly value={`${h5Host}/#/coupon/${info.baseVO && info.baseVO.id}/share`} />
             <Button id="copy-btn" data-clipboard-target="#copy-input" className="ml10" type="primary">复制</Button>
           </div>
         </div>
@@ -89,9 +104,8 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
       <Card>
         <Row type="flex" justify="space-between">
           <Button type="primary" icon="plus" onClick={handleAddCoupon}>新增优惠券</Button>
-          {/* <Button icon="plus">批量发送记录</Button> */}
         </Row>
-        <Table rowKey="id" loading={loading} pagination={pagination} className="mt15" dataSource={records} columns={getListColumns()} />
+        <CommonTable loading={loading} onChange={fetchData} rowKey="id" current={pagination.page} pageSize={pagination.pageSize} total={pagination.total} className="mt15" columns={getListColumns()} dataSource={records || []} />
       </Card>
     </>
   )

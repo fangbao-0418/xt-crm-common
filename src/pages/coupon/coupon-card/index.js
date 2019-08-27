@@ -11,12 +11,12 @@ function CouponCard({ info }) {
     // 无门槛
     case 0:
       msg = '无门槛';
-      price = faceValue[0];
+      price = faceValue[0] / 100;
       break;
     // 满减
     case 1:
-      msg = `满${faceValue[0]}元可用`;
-      price = faceValue[1];
+      msg = `满${faceValue[0] / 100}元可用`;
+      price = faceValue[1] / 100;
       break;
     default:
       break;

@@ -1,6 +1,62 @@
 import React from 'react';
 import GoodCell from '@/components/good-cell';
 import MoneyRender from '@/components/money-render'
+export const getDetailColumns = () => [
+  {
+    title: '名称',
+    dataIndex: 'skuName',
+    key: 'skuName',
+    render(skuName, row) {
+      return <GoodCell {...row} />;
+    }
+  },
+  {
+    title: '属性',
+    dataIndex: 'properties',
+    key: 'properties',
+  },
+  {
+    title: '单价',
+    dataIndex: 'salePrice',
+    key: 'salePrice',
+    render: MoneyRender
+  },
+  {
+    title: '数量',
+    dataIndex: 'quantity',
+    key: 'quantity',
+  },
+  {
+    title: '商品总价（元）',
+    dataIndex: 'saleTotalPrice',
+    key: 'saleTotalPrice',
+    render: MoneyRender
+  },
+  {
+    title: '优惠券',
+    dataIndex: 'faceValue',
+    key: 'faceValue'
+  },
+  {
+    title: '应付金额',
+    dataIndex: 'dealTotalPrice',
+    key: 'dealTotalPrice',
+    render: MoneyRender
+  },
+  {
+    title: '优惠金额',
+    dataIndex: 'discountPrice',
+    key: 'discountPrice',
+    render: MoneyRender
+  },
+  {
+    title: '实付金额',
+    dataIndex: 'preferentialTotalPrice',
+    key: 'preferentialTotalPrice',
+    render: MoneyRender
+  }
+];
+
 export const goodsTableColumn = [{
   title: '商品信息',
   dataIndex: 'skuName',
@@ -18,14 +74,20 @@ export const goodsTableColumn = [{
 },
 {
   title: '商品数量',
-  dataIndex: 'num',
-  key: 'num',
+  dataIndex: 'quantity',
+  key: 'quantity',
+},
+{
+  title: '优惠',
+  dataIndex: 'discountPrice',
+  key: 'discountPrice',
+  render: text => text || '-'
 },
 {
   title: '实际支付',
-  dataIndex: 'totalPrice',
+  dataIndex: 'preferentialTotalPrice',
   render: MoneyRender,
-  key: 'totalPrice'
+  key: 'preferentialTotalPrice'
 }]
 
 export const storeType = ['喜团', '1688', '淘宝联盟'];

@@ -38,44 +38,46 @@ const columns = [
     dataIndex: 'status',
     key: 'status',
     render: text => memberCouponStatus[text]
+  },
+  {
+    title: '是否生效',
+    dataIndex: 'isDelete',
+    render: text => text === 1 ? '失效' : '可用'
   }
 ];
 
 function coupon({ history }) {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
+    page: 1,
     total: 0,
-    current: 1
+    pageSize: 10
   })
   const [records, setRecords] = useState([]);
-  useEffect(() => {
+  const fetchList = async (pagination) => {
     const searchParams = new URLSearchParams(history.location.search);
     const memberId = searchParams.get('memberId');
-    const fetchList = async () => {
-      try {
-        setLoading(true);
-        const res = await getCouponList(memberId, {
-          page: 1,
-          pageSize: 10
-        });
-        setLoading(false);
-        console.log('res=>', res);
-        setRecords(res.records);
-        setPagination({
-          ...pagination,
-          current: res.current,
-          total: res.total
-        })
-      } catch(err) {
-        setLoading(true);
-      }
+    try {
+      setLoading(true);
+      const res = await getCouponList(memberId, pagination);
+      setLoading(false);
+      console.log('res=>', res);
+      setRecords(res.records);
+      setPagination({
+        ...pagination,
+        page: res.current,
+        total: res.total
+      })
+    } catch (err) {
+      setLoading(true);
     }
-    fetchList()
+  }
+  useEffect(() => {
+    fetchList(pagination)
   }, [])
-  console.log('pagination=>', pagination)
   return (
     <Card>
-      <CommonTable loading={loading} rowKey="id" {...pagination} className="mt20" columns={columns} dataSource={records}/>
+      <CommonTable loading={loading} onChange={fetchList} rowKey="id" current={pagination.page} pageSize={pagination.pageSize} total={pagination.total} className="mt15" columns={columns} dataSource={records || []} />
     </Card>
   );
 }

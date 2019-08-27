@@ -2,7 +2,7 @@ import { message } from 'antd';
 import axios from 'axios';
 import { omitBy, isNil, isPlainObject, get as lodashGet } from 'lodash';
 import { formatData } from './utils';
-import baseHost from './baseHost';
+import { baseHost } from './baseHost';
 var qs = require('qs');
 
 // const prod = true;

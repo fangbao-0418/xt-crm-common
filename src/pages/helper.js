@@ -1,6 +1,7 @@
 import format from 'date-fns/format';
 import moment from 'moment';
 import receiveRestrictType from '@/enum/receiveRestrictType';
+import platformType from '@/enum/platformType';
 import { isNil } from 'lodash';
 
 export function formatDate(date, dateFormat = 'YYYY-MM-DD HH:mm:ss') {
@@ -109,13 +110,13 @@ export function formatFaceValue(record) {
     // 满减
     case 1:
       result = record.faceValue.split(':');
-      return `满${result[0]}减${result[1]}`;
+      return `满${result[0] / 100}减${result[1] / 100}`;
     // 折顶(打折,限制最多优惠金额))
     case 2:
       return;
     default:
       result = record.faceValue ? record.faceValue.split(':') : [];
-      return `满${result[0]}减${result[1]}`;
+      return `满${result[0] / 100}减${result[1] / 100}`;
   }
 }
 
@@ -134,7 +135,7 @@ export function formatUseTime({ useTimeType, useTimeValue }) {
     case 0:
       return formatRangeTime(useTimeValue.split(','));
     case 1:
-      break;
+      return `领取当日起${useTimeValue}天内可用`;
     default:
       break;
   }
@@ -153,5 +154,12 @@ export function formatAvlRange(val = 0) {
 
 // 领取人限制
 export function formatReceiveRestrict(val = '') {
+  if (val === 'all') return '不限制';
   return val.split(',').map(v => receiveRestrictType.getValue(v)).join('，');
+}
+
+// 格式化使用平台
+export const formatPlatformRestrict = (val = '') => {
+  if (val === 'all') return '不限制';
+  return val.split(',').map(v =>　platformType.getValue(v)).join('，');
 }

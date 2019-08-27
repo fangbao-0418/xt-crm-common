@@ -6,7 +6,7 @@ import { overReciveCoupon } from '../api';
 import './index.scss';
 const coupons = {
   '0': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH'],
-  '1': ['VIEW', 'EDIT', 'FINISH'],
+  '1': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH'],
   '2': ['VIEW']
 }
 

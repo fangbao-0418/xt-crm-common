@@ -205,9 +205,26 @@ export const getDetailColumns = () => [
     render: MoneyRender
   },
   {
-    title: '实付金额',
+    title: '优惠券',
+    dataIndex: 'faceValue',
+    key: 'faceValue'
+  },
+  {
+    title: '应付金额',
     dataIndex: 'dealTotalPrice',
     key: 'dealTotalPrice',
+    render: MoneyRender
+  },
+  {
+    title: '优惠金额',
+    dataIndex: 'discountPrice',
+    key: 'discountPrice',
+    render: MoneyRender
+  },
+  {
+    title: '实付金额',
+    dataIndex: 'preferentialTotalPrice',
+    key: 'preferentialTotalPrice',
     render: MoneyRender
   }
 ];

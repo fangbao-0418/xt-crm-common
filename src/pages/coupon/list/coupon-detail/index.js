@@ -3,8 +3,7 @@ import { Tabs, Form, Card, Button, Modal, Table, Message } from 'antd';
 import { formLeftButtonLayout, formItemLayout } from '@/config'
 import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/coupon/api';
 import { releaseRecordsColumns } from '../../config';
-import platformType from '@/enum/platformType';
-import { formatFaceValue, formatDateRange, formatUseTime, formatAvlRange, formatReceiveRestrict } from '@/pages/helper';
+import { formatFaceValue, formatDateRange, formatUseTime, formatAvlRange, formatReceiveRestrict, formatPlatformRestrict } from '@/pages/helper';
 import emitter from '@/util/events';
 
 const { TabPane } = Tabs;
@@ -43,10 +42,6 @@ function CouponDetail({ match }) {
       }
     });
   }
-  // 格式化使用平台
-  const formatPlatformRestrict = (val = '') => {
-    return val.split(',').map(v =>　platformType.getValue(v)).join('，');
-  }
   const fetchCouponTasks = async () => {
     try {
       setLoading(true);
@@ -72,9 +67,9 @@ function CouponDetail({ match }) {
           <Form {...formItemLayout}>
             <Form.Item label="优惠券名称">{baseVO.name}</Form.Item>
             <Form.Item label="适用范围">{formatAvlRange(ruleVO.avlRange)}</Form.Item>
-            <Form.Item wrapperCol={formLeftButtonLayout}>
+            {ruleVO.rangeVOList && ruleVO.rangeVOList.length > 0 && <Form.Item wrapperCol={formLeftButtonLayout}>
               <Table style={{width: '400px'}}　pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.rangeVOList} />
-            </Form.Item>
+            </Form.Item>}
             {ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0 && (
               <Form.Item label="以排除商品">
                 <Table style={{width: '400px'}}　pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.excludeProductVOList} />
@@ -89,9 +84,9 @@ function CouponDetail({ match }) {
             <Form.Item label="使用平台">{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item>
             <Form.Item label="优惠券说明">{baseVO.description}</Form.Item>
             <Form.Item label="优惠券备注">{baseVO.remark}</Form.Item>
-            <Form.Item wrapperCol={formLeftButtonLayout}>
+            {baseVO.status === 2 && <Form.Item wrapperCol={formLeftButtonLayout}>
               {baseVO.isDelete === 1 ? <Button disabled>已失效</Button> : <Button type="danger" onClick={handleInvalidCoupon}>失效优惠券</Button>}
-            </Form.Item>
+            </Form.Item>}
           </Form>
         </TabPane>
         <TabPane tab="批量发送记录" key="2">

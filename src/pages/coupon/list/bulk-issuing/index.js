@@ -85,6 +85,9 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
     setFieldsValue({receiveUserGroup: 3})
     setFileList(fileList);
   }
+  const handleCancel = () => {
+    history.goBack();
+  }
   useEffect(() => {
     const urlSearch = new URLSearchParams(history.location.search);
     const name = urlSearch.get('name');
@@ -140,8 +143,9 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
                 )
               )}
               <div>
-                <Upload size={2} onChange={handleChange} value={fileList}>
+                <Upload size={5} onChange={handleChange} value={fileList}>
                   <Button type="link">上传excel</Button>
+                  <span>(文件最大上传5M)</span>
                 </Upload>
               </div>
             </Radio.Group>
@@ -165,7 +169,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
           sm: { span: 16, offset: 5 },
         }}>
           <Button type="primary" onClick={handleSave}>保存</Button>
-          <Button className="ml10">取消</Button>
+          <Button className="ml10" onClick={handleCancel}>取消</Button>
         </Form.Item>
       </Form>
     </Card>
