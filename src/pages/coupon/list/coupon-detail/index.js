@@ -75,6 +75,11 @@ function CouponDetail({ match }) {
             <Form.Item wrapperCol={formLeftButtonLayout}>
               <Table style={{width: '400px'}}　pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.rangeVOList} />
             </Form.Item>
+            {ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0 && (
+              <Form.Item label="以排除商品">
+                <Table style={{width: '400px'}}　pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.excludeProductVOList} />
+              </Form.Item>
+            )}
             <Form.Item label="优惠券价值">{formatFaceValue(ruleVO)}</Form.Item>
             <Form.Item label="发放总量">{baseVO.inventory}</Form.Item>
             <Form.Item label="领取时间">{formatDateRange(ruleVO)}</Form.Item>

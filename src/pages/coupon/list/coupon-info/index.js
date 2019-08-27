@@ -383,14 +383,14 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue 
         </Form.Item>
         <Form.Item label="发放总量">
           <Row type="flex">
-            <Col>{getFieldDecorator('inventory', { initialValue: baseVO.inventory, rules: [{ required: true, message: '请输入发放总量' }] })(<InputNumber />)}</Col>
+            <Col>{getFieldDecorator('inventory', { initialValue: baseVO.inventory, rules: [{ required: true, message: '请输入发放总量' }] })(<InputNumber min={1} max={10000000}/>)}</Col>
             <Col className="ml10">张</Col>
           </Row>
-          <p>修改优惠券总量时只能增加不能减少，请谨慎设置</p>
+          {/* <p>修改优惠券总量时只能增加不能减少，请谨慎设置</p> */}
         </Form.Item>
         <Row>
           <Col offset={3}>
-            <h2 className="form-title">基本信息</h2>
+            <h2 className="form-title">使用规则</h2>
           </Col>
         </Row>
         <Form.Item label="领取时间">

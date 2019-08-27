@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Message } from 'antd';
 import { formItemLayout } from '@/config';
-import { DatePicker, Row, Col, Card, Form, Checkbox, Input, Button, Radio, Upload } from 'antd';
+import { DatePicker, Row, Col, Card, Form, Checkbox, Input, Button, Radio } from 'antd';
 import { saveCouponTaskInfo } from '../../api';
+import Upload from '@/components/upload';
 import '../index.scss'
 // 批量发券
-function BulkIssuing({ form: { getFieldDecorator, getFieldsValue }, match, history }) {
+function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }, match, history }) {
   const [name, setName] = useState('');
+  const [fileList, setFileList] = useState([]);
+  const [fileUrl, setFileUrl] = useState('');
   const radioStyle = {
     display: 'block',
     height: '30px',
@@ -24,7 +27,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue }, match, histo
         result = fields.userPhones;
         return result;
       case 3:
-        break;
+        return fileUrl;
       default:
         break;
     }
@@ -67,6 +70,20 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue }, match, histo
   const isUserPhones = () => {
     const { receiveUserGroup } = getFieldsValue(['receiveUserGroup']);
     return receiveUserGroup === 2;
+  }
+  const handleChange = (fileList) => {
+    fileList = fileList.slice(-1);
+    console.log('fileList=>', fileList)
+    fileList = fileList.map(file => {
+      if (file.response) {
+        // Component will show file.url as link
+        file.url = file.response.url;
+      }
+      return file;
+    });
+    setFileUrl(fileList[0] && fileList[0].url);
+    setFieldsValue({receiveUserGroup: 3})
+    setFileList(fileList);
   }
   useEffect(() => {
     const urlSearch = new URLSearchParams(history.location.search);
@@ -123,7 +140,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue }, match, histo
                 )
               )}
               <div>
-                <Upload>
+                <Upload size={2} onChange={handleChange} value={fileList}>
                   <Button type="link">上传excel</Button>
                 </Upload>
               </div>

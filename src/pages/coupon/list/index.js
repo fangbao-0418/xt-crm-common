@@ -31,6 +31,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
     setVisible(visible)
   }
   useEffect(() => {
+    new ClipboardJS('#copy-btn');
     fetchData();
     emitter.addListener('coupon.list.setVisible', setModalVisible)
     emitter.addListener('coupon.list.fetchData', fetchData)
@@ -50,9 +51,6 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
     const data = getFieldsValue()
     fetchData(data)
   }
-  const copyLink = () => {
-    new ClipboardJS('.copy-input');
-  }
   return (
     <>
       <Modal
@@ -64,10 +62,10 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
       >
         <div className="coupon-wrapper">
           <CouponCard info={info} />
-          <QRCode className="qr-code" size={240} value="http://facebook.github.io/react/" />
+          <QRCode className="qr-code" size={240} value={`/coupon/${info.baseVO && info.baseVO.id}/share`} />
           <div className="copy-qr-code">
-            <Input className="copy-input" readOnly value="http://facebook.github.io/react/" />
-            <Button className="ml10" type="primary" onClick={copyLink}>复制</Button>
+            <Input id="copy-input" readOnly value={`/coupon/${info.baseVO && info.baseVO.id}/share`} />
+            <Button id="copy-btn" data-clipboard-target="#copy-input" className="ml10" type="primary">复制</Button>
           </div>
         </div>
       </Modal>
