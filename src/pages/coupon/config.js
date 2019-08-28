@@ -4,7 +4,7 @@ import ActionBtnGroup from './action-btn-group/index';
 import receiveStatus from '@/enum/receiveStatus';
 import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
 import { stopCouponTask } from './api';
-import { Badge } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import emitter from '@/util/events';
 
 const listBadgeColors = {
@@ -102,8 +102,16 @@ export const releaseRecordsColumns = [{
   title: '领取状态',
   dataIndex: 'status',
   key: 'status',
-  render: (text) => {
-    return <Badge color={releaseRecordsBadgeColors[text]} text={taskStatus[text]} />
+  render: (text, record) => {
+    if (text === 4) {
+      return (
+        <Tooltip placement="topLeft" title={record.remark}>
+          <Badge color={releaseRecordsBadgeColors[text]} text={taskStatus[text]}/>
+        </Tooltip>
+      )
+    } else {
+      return <Badge color={releaseRecordsBadgeColors[text]} text={taskStatus[text]}/>
+    }
   }
 }, {
   title: '操作',
