@@ -22,6 +22,6 @@ else if (host.indexOf('xt-crmadmin') >= 0) {
   h5Host = 'https://myouxuan.hzxituan.com';
 }
 
-baseHost = 'http://192.168.10.114:8080';
+// baseHost = 'http://192.168.10.114:8080';
 // baseHost = 'http://192.168.10.52:8081';
 export { baseHost, h5Host };
