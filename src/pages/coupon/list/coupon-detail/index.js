@@ -90,7 +90,7 @@ function CouponDetail({ match }) {
           </Form>
         </TabPane>
         <TabPane tab="批量发送记录" key="2">
-          <Table rowKey="id" columns={releaseRecordsColumns} dataSource={couponTasks}></Table>
+          <Table loading={loading} rowKey="id" columns={releaseRecordsColumns} dataSource={couponTasks}></Table>
         </TabPane>
       </Tabs>
     </Card>

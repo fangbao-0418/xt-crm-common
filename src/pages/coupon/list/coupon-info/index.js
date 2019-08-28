@@ -4,17 +4,13 @@ import { formItemLayout, formLeftButtonLayout } from '@/config';
 import { platformOptions, useIdentityOptions } from '../../config';
 import { getCategoryList, saveCouponInfo, getCouponDetail } from '@/pages/coupon/api';
 import { actColumns } from '@/components/activity-selector/config';
+import { disabledDate } from '@/pages/helper';
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
 import { unionArray } from '@/util/utils';
 import moment from 'moment';
 import "./index.scss";
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
-
-function disabledDate(current) {
-  // Can not select days before today and today
-  return current && current < moment().endOf('day').subtract(1, 'days');
-}
 
 function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue, validateFields }, history }) {
   const [detail, setDetail] = useState({});
@@ -207,7 +203,6 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
 
   const handleSave = () => {
     validateFields(async (err, fields) => {
-      console.log('~~~~~~~~~~~~~~~~~~~', fields)
       if (!err) {
         const [startReceiveTime, overReceiveTime] = fields.receiveTime ? fields.receiveTime.map(v => v && v.valueOf()) : []
         const useTimeValue = getUseTimeValue(fields)
@@ -262,6 +257,10 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         }
       }
     })
+  }
+
+  const handleCancel = () => {
+    history.goBack();
   }
   // 校验优惠券
   const validateName = (rule, value, callback) => {
@@ -394,7 +393,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             disabledDate={disabledDate}
             showTime={{
               hideDisabledOptions: true,
-              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
             }}
             format="YYYY-MM-DD HH:mm:ss"
           />)
@@ -408,7 +407,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
                   disabledDate={disabledDate}
                   showTime={{
                     hideDisabledOptions: true,
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
                   }}
                   format="YYYY-MM-DD HH:mm:ss"
                   onChange={date => setUseTimeRange(date)}
@@ -481,7 +480,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         </Form.Item>
         <Form.Item wrapperCol={formLeftButtonLayout}>
           <Button type="primary" onClick={handleSave}>保存</Button>
-          <Button className="ml20">取消</Button>
+          <Button className="ml20" onClick={handleCancel}>取消</Button>
         </Form.Item>
       </Form>
     </Card>

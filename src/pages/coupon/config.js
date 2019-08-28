@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Message } from 'antd';
 import ActionBtnGroup from './action-btn-group/index';
 import receiveStatus from '@/enum/receiveStatus';
-import { formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
+import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
 import { stopCouponTask } from './api';
 import { Badge } from 'antd';
 import emitter from '@/util/events';
@@ -70,10 +70,29 @@ const handleStop = async (taskId) => {
   }
 }
 export const releaseRecordsColumns = [{
-  title: '目标用户',
+  title: '目标用户类型',
   dataIndex: 'receiveUserGroup',
   key: 'receiveUserGroup',
   render: (text, record) => userType[text]
+}, {
+  title: '用户群体值',
+  dataIndex: 'userGroupValue',
+  key: 'userGroupValue',
+  render: (text, record) => {
+    switch(record.receiveUserGroup) {
+      case 0:
+        return '全部用户';
+      case 1:
+        return formatReceiveRestrict(record.userGroupValue);
+      case 2:
+        return record.userGroupValue;
+      case 3:
+        const [href, name] = record.userGroupValue.split(',')
+        return <a href={href}>{name}</a>;
+      default:
+        return '全部用户';
+    }
+  }
 }, {
   title: '发送时间',
   dataIndex: 'executionTime',

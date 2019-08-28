@@ -4,12 +4,14 @@ import { formItemLayout } from '@/config';
 import { DatePicker, Row, Col, Card, Form, Checkbox, Input, Button, Radio } from 'antd';
 import { saveCouponTaskInfo } from '../../api';
 import Upload from '@/components/upload';
+import moment from 'moment';
+import { disabledDate } from '@/pages/helper';
 import '../index.scss'
 // 批量发券
-function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue }, match, history }) {
+function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields }, match, history }) {
   const [name, setName] = useState('');
   const [fileList, setFileList] = useState([]);
-  const [fileUrl, setFileUrl] = useState('');
+  const [fileValues, setFileValues] = useState('');
   const radioStyle = {
     display: 'block',
     height: '30px',
@@ -19,7 +21,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
     let result;
     switch (fields.receiveUserGroup) {
       case 0:
-        return 0;
+        return 'all';
       case 1:
         result = fields.userLevel.join(',')
         return result;
@@ -27,7 +29,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
         result = fields.userPhones;
         return result;
       case 3:
-        return fileUrl;
+        return fileValues;
       default:
         break;
     }
@@ -38,25 +40,28 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
       case 0:
         return 0;
       case 1:
-        result = fields.timedTransmissionTime.valueOf();
+        result = fields.timedTransmissionTime && fields.timedTransmissionTime.valueOf();
         return result;
       default:
         return 0;
     }
   }
-  const handleSave = async () => {
-    const fields = getFieldsValue();
-    const params = {
-      ...fields,
-      executionTime: getExecutionTime(fields),
-      userGroupValue: getUserGroupValue(fields),
-      couponId: +match.params.id
-    };
-    const res = await saveCouponTaskInfo(params);
-    if (res) {
-      Message.success('批量发券成功');
-      history.goBack();
-    }
+  const handleSave = () => {
+    validateFields(async (err, fields) => {
+      if (!err) {
+        const params = {
+          ...fields,
+          executionTime: getExecutionTime(fields),
+          userGroupValue: getUserGroupValue(fields),
+          couponId: +match.params.id
+        };
+        const res = await saveCouponTaskInfo(params);
+        if (res) {
+          Message.success('批量发券成功');
+          history.goBack();
+        }
+      }
+    })
   }
   // 是否定时发送
   const isTimedTransmission = () => {
@@ -71,18 +76,21 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
     const { receiveUserGroup } = getFieldsValue(['receiveUserGroup']);
     return receiveUserGroup === 2;
   }
+  const isExcelUpload = () => {
+    const { receiveUserGroup } = getFieldsValue(['receiveUserGroup']);
+    return receiveUserGroup === 3;
+  }
   const handleChange = (fileList) => {
     fileList = fileList.slice(-1);
     console.log('fileList=>', fileList)
     fileList = fileList.map(file => {
       if (file.response) {
-        // Component will show file.url as link
         file.url = file.response.url;
       }
       return file;
     });
-    setFileUrl(fileList[0] && fileList[0].url);
-    setFieldsValue({receiveUserGroup: 3})
+    const { url, name } = fileList[0] || {};
+    setFileValues(url + ',' + name);
     setFileList(fileList);
   }
   const handleCancel = () => {
@@ -138,16 +146,19 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
               )}
               <Radio style={radioStyle} value={2}>指定用户</Radio>
               {isUserPhones() && (
-                getFieldDecorator('userPhones')(
-                  <Input.TextArea style={{ width: '528px' }} rows={4} placeholder="输入用户手机号，以半角逗号隔开，例13928387247,15619237922" />
-                )
+                <Form.Item>
+                  {getFieldDecorator('userPhones', { rules: [{ required: true, message: '请输入用户手机号' }] })(
+                    <Input.TextArea style={{ width: '528px' }} rows={4} placeholder="输入用户手机号，以半角逗号隔开，例13928387247,15619237922" />
+                  )}
+                </Form.Item>
               )}
-              <div>
-                <Upload size={5} onChange={handleChange} value={fileList}>
+              <Radio style={radioStyle} value={3}>Excel文件上传</Radio>
+              {isExcelUpload() && (
+                <Upload accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" size={5} onChange={handleChange} value={fileList}>
                   <Button type="link">上传excel</Button>
                   <span>(文件最大上传5M)</span>
                 </Upload>
-              </div>
+              )}
             </Radio.Group>
           )}
         </Form.Item>
@@ -157,9 +168,11 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
               <Radio style={radioStyle} value={0}>立即发送</Radio>
               <Radio style={radioStyle} value={1}>定时发送</Radio>
               {isTimedTransmission() && (
-                <div>
-                  选择时间：{getFieldDecorator('timedTransmissionTime')(<DatePicker showTime />)}
-                </div>
+                <Row type="flex">
+                  <span>选择时间：</span>
+                  <Form.Item>{getFieldDecorator('timedTransmissionTime', { rules: [{ required: true, message: '请选择时间' }] })(<DatePicker showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} disabledDate={disabledDate} />)}
+                  </Form.Item>
+                </Row>
               )}
             </Radio.Group>
           )}

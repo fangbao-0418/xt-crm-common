@@ -3,7 +3,6 @@ import { message, Form, Button, Card, Row, Col, Input, InputNumber } from 'antd'
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 import { getCouponDetail, modifyCouponBaseInfo } from '@/pages/coupon/api';
 import { ProductSelector, ActivitySelector } from '@/components';
-import platformType from '@/enum/platformType';
 import { unionArray } from '@/util/utils';
 import { formatAvlRange, formatFaceValue, formatReceiveRestrict, formatDateRange, formatUseTime, formatPlatformRestrict } from '@/pages/helper';
 import "./index.scss";

@@ -163,3 +163,8 @@ export const formatPlatformRestrict = (val = '') => {
   if (val === 'all') return '不限制';
   return val.split(',').map(v =>　platformType.getValue(v)).join('，');
 }
+
+// 今天之前不可选
+export function disabledDate(current) {
+  return current && current < moment().endOf('day').subtract(1, 'days');
+}

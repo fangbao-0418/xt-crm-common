@@ -47,9 +47,9 @@ function ActionBtn({ keyCode, history, record, match }) {
     case 'ISSUE_COUPON':
       return (
         <Dropdown type="link" overlay={menu}>
-          <a className="ant-dropdown-link" href="javascript:void(0)">
+          <Button type="link">
             发券 <Icon type="down" />
-          </a>
+          </Button>
         </Dropdown>
       );
     case 'VIEW':
