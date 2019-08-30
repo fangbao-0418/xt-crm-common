@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Input, Table } from 'antd';
+import React, { Component } from 'react';
+import { Modal, Input } from 'antd';
 import { formatMoneyWithSign } from '../../pages/helper';
 import { isFunction } from 'lodash';
-import Image from '@/components/Image';
+import { Image, CommonTable } from '@/components';
 import { getProductList } from './api';
 const goodsColumns = (data = []) => {
   return [
@@ -51,79 +51,112 @@ const goodsColumns = (data = []) => {
     ...data,
   ];
 };
-function ProductSelector({ visible, onCancel, onChange }) {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [goodsList, setGoodsList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [modalPage, setModalPage] = useState({
-    current: 1,
-    total: 0,
-    pageSize: 10,
-  })
-  const handleTabChangeModal = pagination => {
-    setModalPage(pagination)
+class ProductSelector extends Component{
+  state = {
+    selectedRowKeys: [],
+    selectedRows: [],
+    val: '',
+    goodsList: [],
+    loading: false,
+    pagination: {
+      page: 1,
+      total: 0,
+      pageSize: 10,
+    }
+  }
+  // 页码改变的回调
+  handleChangePagination = (params) => {
+    this.setState(state => {
+      return {
+        pagination: Object.assign(state.pagination, params)
+      }
+    })
   };
-  const fetchData = async (params) => {
+  // 获取商品数据
+  fetchData = async (params) => {
     try {
-      setLoading(true)
+      this.setState({loading: true})
       const res = await getProductList({
         status: 0,
-        pageSize: modalPage.pageSize,
-        page: modalPage.current,
+        productName: this.state.val.trim(),
+        ...this.state.pagination,
         ...params
       })
-      setLoading(false)
-      setGoodsList(res.records)
+      console.log('res=>', res);
+      // 设置表格数据
+      this.setState({
+        loading: false,
+        goodsList: res.records,
+        total: res.total,
+        pageSize: res.size
+      })
     } catch (err) {
-      setLoading(true)
+      this.setState({loading: true})
     }
   }
-  const handleSearchModal = (val) => {
-    fetchData({ productName: val.trim(), page: 1 })
+  // 条件查询商品名称
+  handleSearch = (val) => {
+    this.setState({
+      val,
+      page: 1
+    }, this.fetchData);
   }
-  const handleCancel = () => {
-    isFunction(onCancel) && onCancel();
+  // 取消对话框
+  handleCancel = () => {
+    isFunction(this.props.onCancel) && this.props.onCancel();
   }
-  const handleOkModal = () => {
-    isFunction(onChange) && onChange(selectedRowKeys, selectedRows)
-    handleCancel()
+  // 确认对话框
+  handleOkModal = () => {
+    isFunction(this.props.onChange) && this.props.onChange(this.state.electedRowKeys, this.state.selectedRows)
+    this.handleCancel()
   }
-  useEffect(() => {
-    fetchData();
-  }, [])
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log('selectedRowKeys=>', selectedRowKeys);
-      console.log('selectedRows=>', selectedRows);
-      setSelectedRowKeys(selectedRowKeys);
-      setSelectedRows(selectedRows);
+  handleInputChange = (event) => {
+    // this.setVal(event.target.value)
+    this.setState({
+      val: event.target.value
+    })
+    console.log(this.state.val)
+  }
+  componentDidMount() {
+    this.fetchData();
+  }
+  render() {
+    const rowSelection = {
+      selectedRowKeys: this.state.selectedRowKeys,
+      onChange: (selectedRowKeys, selectedRows) => {
+        this.setState({
+          selectedRowKeys,
+          selectedRows
+        });
+      }
     }
+    return (
+      <Modal
+        title="选择商品"
+        visible={this.props.visible}
+        width="60%"
+        onCancel={this.handleCancel}
+        onOk={this.handleOkModal}
+      >
+        <Input.Search
+          placeholder="请输入需要搜索的商品"
+          value={this.state.val}
+          onChange={this.handleInputChange}
+          style={{ marginBottom: 10 }}
+          onSearch={this.handleSearch}
+        />
+        <CommonTable
+          loading={this.state.loading}
+          rowSelection={rowSelection}
+          columns={goodsColumns()}
+          dataSource={this.state.goodsList}
+          onChange={this.handleChangePagination}
+          rowKey={record => record.id}
+          current={this.state.pagination.page}
+          total={this.state.pagination.total}
+        />
+      </Modal>
+    ) 
   }
-  return (
-    <Modal
-      title="选择商品"
-      visible={visible}
-      width={800}
-      onCancel={handleCancel}
-      onOk={handleOkModal}
-    >
-      <Input.Search
-        placeholder="请输入需要搜索的商品"
-        style={{ marginBottom: 10 }}
-        onSearch={handleSearchModal}
-      />
-      <Table
-        loading={loading}
-        rowSelection={rowSelection}
-        columns={goodsColumns()}
-        dataSource={goodsList}
-        pagination={modalPage}
-        onChange={handleTabChangeModal}
-        rowKey={record => record.id}
-      />
-    </Modal>
-  )
 }
 export default ProductSelector;

@@ -1,7 +1,7 @@
 .coupon-card {
-  width  : 358px;
-  height : 113px;
-  display: flex;
+  width     : 358px;
+  height    : 113px;
+  display   : flex;
   background: url('~@/assets/images/coupon_card.png');
 
   &__amount {
@@ -30,31 +30,44 @@
       font-weight: 600;
     }
   }
+
   &__info {
-    flex: 1;
-    padding: 10px 14px 0;
+    flex       : 1;
+    padding    : 10px 14px 0;
     line-height: 21px;
-    font-size: 13px;
-    color: #333;
+    font-size  : 13px;
+    color      : #333;
   }
 }
+
 .coupon-rule {
-  font-size: 12px;
-  padding: 2px 5px;
-  line-height: 12px;
-  border-radius: 8px;
+  font-size       : 12px;
+  padding         : 2px 5px;
+  line-height     : 12px;
+  border-radius   : 8px;
   background-color: #FF737E;
-  color: #fff;
-  margin-right: 7px;
-  display: inline-block;
+  color           : #fff;
+  margin-right    : 7px;
+  display         : inline-block;
 }
+
 .coupon-date {
-  color: #999;
-  font-size: 12px;
-  margin-top: 10px;
+  color             : #999;
+  font-size         : 12px;
+  margin-top        : 10px;
+  display           : -webkit-box;
+  width             : 192px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow          : hidden;
 }
+
 .coupon-range {
-  color: #999;
-  font-size: 12px;
-  border-top: 1px dashed #F0F0F0;
+  color        : #999;
+  font-size    : 12px;
+  border-top   : 1px dashed #F0F0F0;
+  width        : 192px;
+  overflow     : hidden;
+  white-space  : nowrap;
+  text-overflow: ellipsis;
 }

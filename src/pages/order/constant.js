@@ -57,39 +57,6 @@ export const getDetailColumns = () => [
   }
 ];
 
-export const goodsTableColumn = [{
-  title: '商品信息',
-  dataIndex: 'skuName',
-  key: 'skuName',
-  render(skuName, row) {
-    return <GoodCell {...row} />;
-  },
-},
-{ title: '商品单价', dataIndex: 'salePrice', key: 'salePrice', render: MoneyRender },
-{
-  title: '购买价格',
-  dataIndex: 'buyPrice',
-  render: MoneyRender,
-  key: 'buyPrice'
-},
-{
-  title: '商品数量',
-  dataIndex: 'quantity',
-  key: 'quantity',
-},
-{
-  title: '优惠',
-  dataIndex: 'discountPrice',
-  key: 'discountPrice',
-  render: text => text || '-'
-},
-{
-  title: '实际支付',
-  dataIndex: 'preferentialTotalPrice',
-  render: MoneyRender,
-  key: 'preferentialTotalPrice'
-}]
-
 export const storeType = ['喜团', '1688', '淘宝联盟'];
 export const enumOrderStatus = {
   Refund: -1,

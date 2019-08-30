@@ -19,6 +19,10 @@ export function stopCouponTask(taskId) {
   return newPut(`/coupon/modify/stopCouponTask/${taskId}`)
 }
 
+// 失效任务优化券
+export function invalidTaskCoupon(taskId, couponId) {
+  return newPut(`/coupon/modify/invalidTaskCoupon/${taskId}/${couponId}`)
+}
 // 失效优惠券
 export function invalidCoupon(couponId) {
   return newPut(`/coupon/modify/invalidCoupon/${couponId}`)

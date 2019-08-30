@@ -3,7 +3,7 @@ import { Button, Message } from 'antd';
 import ActionBtnGroup from './action-btn-group/index';
 import receiveStatus from '@/enum/receiveStatus';
 import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
-import { stopCouponTask } from './api';
+import { stopCouponTask, invalidTaskCoupon } from './api';
 import { Badge, Tooltip } from 'antd';
 import emitter from '@/util/events';
 
@@ -19,18 +19,18 @@ const releaseRecordsBadgeColors = {
   '3': 'orange',
   '4': 'red'
 }
-export const userType = {
-  '0': '全部',
-  '1': '用户等级',
-  '2': '指定用户',
-  '3': '文件'
-}
 export const taskStatus = {
   '0': '未执行',
   '1': '执行中',
   '2': '已执行',
   '3': '停止',
   '4': '失败'
+}
+export const userType = {
+  '0': '全部',
+  '1': '用户等级',
+  '2': '指定用户',
+  '3': '文件'
 }
 export const platformOptions = [
   { label: '安卓', value: '2' },
@@ -69,6 +69,14 @@ const handleStop = async (taskId) => {
     emitter.emit('list.coupon-detail.fetchCouponTasks');
   }
 }
+
+const handleInvalid = async (record) => {
+  const res = await invalidTaskCoupon(record.id, record.couponId);
+  if (res) {
+    Message.success('失效优惠券成功');
+    emitter.emit('list.coupon-detail.fetchCouponTasks');
+  }
+}
 export const releaseRecordsColumns = [{
   title: '目标用户类型',
   dataIndex: 'receiveUserGroup',
@@ -99,6 +107,17 @@ export const releaseRecordsColumns = [{
   key: 'executionTime',
   render: (text) => formatDate(text)
 }, {
+  title: '发券状态',
+  dataIndex: 'operateBehavior',
+  key: 'operateBehavior',
+  render: (text, record) => {
+    const status = {
+      1: '发券',
+      2: '失效优惠券'
+    }
+    return status[text];
+  }
+}, {
   title: '领取状态',
   dataIndex: 'status',
   key: 'status',
@@ -118,8 +137,11 @@ export const releaseRecordsColumns = [{
   dataIndex: 'action',
   key: 'action',
   render: (text, record) => {
-    if (record.status === 0) {
+    if (record.operateBehavior === 1 && record.status === 0) {
       return <Button type="link" onClick={() => handleStop(record.id)}>停止</Button>;
+    }
+    else if (record.operateBehavior === 1 && [2, 4].includes(record.status)) {
+      return <Button type="link" onClick={() => handleInvalid(record)}>失效</Button>;
     } else {
       return '-';
     }

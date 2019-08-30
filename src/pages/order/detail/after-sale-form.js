@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Form, Input, InputNumber, Card } from 'antd';
-import { goodsTableColumn } from "../constant";
+import { getDetailColumns } from "../constant";
 import { refundType, returnReason } from '@/enum';
 import { formatPrice } from '@/util/format';
 import UploadView from '@/components/upload';
@@ -24,17 +24,17 @@ class AfterSaleForm extends Component {
   }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
-    const price = parseFloat(formatPrice(modalInfo.buyPrice))
-    console.log('modalInfo.childOrder.orderStatus==============================================>>>>>>>>>', modalInfo.childOrder.orderStatus)
+    const price = parseFloat(formatPrice(modalInfo.preferentialTotalPrice))
     const initialObj = {}
     const disabledObj = {}
     if (modalInfo.childOrder.orderStatus === 20) {
       initialObj.initialValue = '20'
       disabledObj.disabled = true
     }
+    console.log('modalInfo=>', modalInfo);
     return (
       <>
-        <Table dataSource={[modalInfo]} columns={goodsTableColumn} pagination={false}></Table>
+        <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
             <Form.Item label="售后类型">
@@ -45,8 +45,8 @@ class AfterSaleForm extends Component {
             </Form.Item>
             {this.isShowRefundAmount() && (
               <Form.Item label="退款金额">
-                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={+formatPrice(modalInfo.totalPrice)} />)}
-                <span className="ml10">（最多可退￥{formatPrice(modalInfo.totalPrice)}）</span>
+                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={+formatPrice(modalInfo.preferentialTotalPrice)} />)}
+                <span className="ml10">（最多可退￥{formatPrice(modalInfo.preferentialTotalPrice)}）</span>
               </Form.Item>
             )}
             <Form.Item label="售后凭证">

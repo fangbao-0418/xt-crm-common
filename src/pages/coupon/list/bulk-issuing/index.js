@@ -23,6 +23,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
       case 0:
         return 'all';
       case 1:
+        fields.userLevel = fields.userLevel.include(30) ? [...fields.userLevel, 40] : fields.userLevel;
         result = fields.userLevel.join(',')
         return result;
       case 2:
@@ -47,6 +48,11 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
     }
   }
   const handleSave = () => {
+    const { receiveUserGroup } = getFieldsValue(['receiveUserGroup']);
+    if (receiveUserGroup === 3 && Array.isArray(fileList) && fileList.length === 0) {
+      Message.error('请上传Excel文件');
+      return;
+    }
     validateFields(async (err, fields) => {
       if (!err) {
         const params = {
