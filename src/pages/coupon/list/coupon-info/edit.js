@@ -87,7 +87,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
           </Col>
         </Row>
         <Form.Item label="优惠券名称">
-          {getFieldDecorator('name', { initialValue: baseVO.name, rules: [{ required: true, message: '请输入优惠券名称', validator: validateName }] })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
+          {getFieldDecorator('name', { initialValue: baseVO.name, rules: [{ required: true, message: '请输入优惠券名称' }, { validator: validateName }] })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
         </Form.Item>
         <Form.Item label="适用范围">{formatAvlRange(ruleVO.avlRange)}</Form.Item>
         <Form.Item label="优惠券价值">{formatFaceValue(ruleVO)}</Form.Item>
@@ -107,6 +107,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         <Form.Item label="使用时间">{formatUseTime(ruleVO)}</Form.Item>
         <Form.Item label="领取人(使用人)限制">{formatReceiveRestrict(ruleVO.receiveRestrict)}</Form.Item>
         <Form.Item label="每人限领次数">{ruleVO.restrictNum}张</Form.Item>
+        <Form.Item label="每日限领次数">{ruleVO.dailyRestrict ? `${ruleVO.dailyRestrict}张` : '无'}</Form.Item>
         <Form.Item label="使用平台">{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item>
         <Form.Item label="商详显示">{ruleVO.showFlag === 1 ? '显示' : '不显示'}</Form.Item>
         <Form.Item label="优惠券说明">

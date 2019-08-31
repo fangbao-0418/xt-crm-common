@@ -72,7 +72,7 @@ function CouponDetail({ match }) {
               <Table style={{width: '400px'}}　pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.rangeVOList} />
             </Form.Item>}
             {ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0 && (
-              <Form.Item label="以排除商品">
+              <Form.Item label="已排除商品">
                 <Table style={{width: '400px'}}　pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.excludeProductVOList} />
               </Form.Item>
             )}
@@ -82,6 +82,7 @@ function CouponDetail({ match }) {
             <Form.Item label="用券时间">{formatUseTime(ruleVO)}</Form.Item>
             <Form.Item label="领取人限制">{formatReceiveRestrict(ruleVO.receiveRestrict)}</Form.Item>
             <Form.Item label="每人限领次数">{ruleVO.restrictNum}张</Form.Item>
+            <Form.Item label="每日限领次数">{ruleVO.dailyRestrict ? `${ruleVO.dailyRestrict}张`: '无'}</Form.Item>
             <Form.Item label="使用平台">{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item>
             <Form.Item label="商详显示">{ruleVO.showFlag === 1 ? '显示' : '不显示'}</Form.Item>
             <Form.Item label="优惠券说明">{baseVO.description || '无'}</Form.Item>
