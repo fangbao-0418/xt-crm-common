@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Row, Card, Table, Button, Input } from 'antd';
+import { Modal, Form, Row, Card, Button, Input } from 'antd';
 import {XtSelect, CommonTable} from '@/components';
 import { getCouponlist, getCouponDetail } from '../api';
-import { pagination, getListColumns } from '../config';
+import { getListColumns } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
 import emitter from '@/util/events';
 import ClipboardJS from "clipboard";

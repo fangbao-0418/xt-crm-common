@@ -33,11 +33,31 @@
 
   &__info {
     flex       : 1;
-    padding    : 10px 14px 0;
+    padding    : 8px 14px 0;
     line-height: 21px;
     font-size  : 13px;
     color      : #333;
   }
+}
+
+.coupon-title {
+  color    : #999;
+  font-size: 12px;
+}
+
+.coupon-date {
+  font-size  : 12px;
+  line-height: 18px;
+  color      : #999;
+}
+
+.coupon-title,
+.coupon-date {
+  display           : -webkit-box;
+  width             : 192px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow          : hidden;
 }
 
 .coupon-rule {
@@ -49,17 +69,6 @@
   color           : #fff;
   margin-right    : 7px;
   display         : inline-block;
-}
-
-.coupon-date {
-  color             : #999;
-  font-size         : 12px;
-  margin-top        : 10px;
-  display           : -webkit-box;
-  width             : 192px;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow          : hidden;
 }
 
 .coupon-range {

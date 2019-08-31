@@ -66,11 +66,8 @@ class ProductSelector extends Component{
   }
   // 页码改变的回调
   handleChangePagination = (params) => {
-    this.setState(state => {
-      return {
-        pagination: Object.assign(state.pagination, params)
-      }
-    })
+    console.log('params=>', params);
+    this.setState(state => ({ pagination: Object.assign(state.pagination, params) }), this.fetchData)
   };
   // 获取商品数据
   fetchData = async (params) => {
@@ -87,8 +84,11 @@ class ProductSelector extends Component{
       this.setState({
         loading: false,
         goodsList: res.records,
-        total: res.total,
-        pageSize: res.size
+        pagination: {
+          ...this.state.pagination,
+          total: res.total,
+          pageSize: res.size
+        }
       })
     } catch (err) {
       this.setState({loading: true})
@@ -98,7 +98,10 @@ class ProductSelector extends Component{
   handleSearch = (val) => {
     this.setState({
       val,
-      page: 1
+      pagination: {
+        ...this.state.pagination,
+        page: 1
+      }
     }, this.fetchData);
   }
   // 取消对话框
