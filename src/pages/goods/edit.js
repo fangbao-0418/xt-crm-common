@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox  } from 'antd';
+import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox } from 'antd';
 import UploadView from '../../components/upload';
 import {
   map,
@@ -38,8 +38,6 @@ const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
 
-
-
 function treeToarr(list = [], arr) {
   const results = arr || [];
   for (const item of list) {
@@ -66,13 +64,13 @@ const formLayout = {
   },
 };
 
-function mapTree (org) {
+function mapTree(org) {
   const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
   return {
-      label: org.name,
-      value: org.id,
-      data: {...org},
-      children: haveChildren ? org.childList.map(i => mapTree(i)) : []
+    label: org.name,
+    value: org.id,
+    data: { ...org },
+    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
   };
 };
 
@@ -231,7 +229,7 @@ class GoodsEdit extends React.Component {
     const { speSelect } = this.state;
     speSelect.splice(e, 1);
     let data = [];
-    if(speSelect.length == 0) {
+    if (speSelect.length == 0) {
       return this.setState({ speSelect, data });
     }
     map(descartes(speSelect), (item, key) => {
@@ -321,7 +319,7 @@ class GoodsEdit extends React.Component {
         item[text] = e.target.value
       })
     }
-    
+
     this.setState({ data });
   };
 
@@ -384,11 +382,11 @@ class GoodsEdit extends React.Component {
           productImage: productImage.join(','),
           ...property,
           bannerUrl: vals.bannerUrl && replaceHttpUrl(vals.bannerUrl[0].url),
-          categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '', 
+          categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
         };
 
         setProduct({ productId: id, ...params }).then((res) => {
-          if(!res) return;
+          if (!res) return;
           if (id) {
             res && message.success('编辑数据成功');
           } else {
@@ -602,7 +600,7 @@ class GoodsEdit extends React.Component {
                   },
                 }
               ],
-            })(<Cascader options={this.state.categoryList}  placeholder="请输入商品类目" />)}
+            })(<Cascader options={this.state.categoryList} placeholder="请输入商品类目" />)}
           </FormItem>
           <FormItem label="商品简称">
             {getFieldDecorator('productShortName', {
@@ -631,7 +629,7 @@ class GoodsEdit extends React.Component {
                   required: true,
                   message: '请输入商品简介',
                 },
-              ],  
+              ],
             })(<Input placeholder="请输入商品简介" />)}
           </FormItem>
           <FormItem label="供货商">
@@ -646,10 +644,10 @@ class GoodsEdit extends React.Component {
               <Select
                 placeholder="请选择供货商"
                 showSearch
-                filterOption={(inputValue, option) =>{
+                filterOption={(inputValue, option) => {
                   return option.props.children.indexOf(inputValue) > -1;
                 }}
-              > 
+              >
                 {map(supplier, item => (
                   <Option value={item.id} key={item.id}>
                     {item.name}
@@ -698,6 +696,7 @@ class GoodsEdit extends React.Component {
               <UploadView
                 placeholder="上传商品图片"
                 listType="picture-card"
+                showUploadList={false}
                 listNum={5}
                 size={.3}
               />,
