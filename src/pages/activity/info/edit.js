@@ -169,14 +169,14 @@ class List extends React.Component {
     return endTime.valueOf() <= startTime.valueOf();
   };
 
-  handleEditsku = record => () => {
+  handleEditsku = (record, type) => () => {
     const {
       history,
       match: {
         params: { id },
       },
     } = this.props;
-    localStorage.setItem('editsku', JSON.stringify(record));
+    localStorage.setItem('editsku', JSON.stringify({type, ...record}));
     history.push(`/activity/info/detail/${id}`);
   };
 
@@ -322,7 +322,7 @@ class List extends React.Component {
                 title: '操作',
                 render: record => (
                   <>
-                    <a href="javascript:void(0);" onClick={this.handleEditsku(record)}>
+                    <a href="javascript:void(0);" onClick={this.handleEditsku(record, type)}>
                       编辑
                     </a>
                     <Divider type="vertical" />

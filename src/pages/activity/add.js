@@ -33,11 +33,11 @@ class Add extends React.Component {
   constructor(props) {
     super(props);
     this.data = {
-      type : 1,
+      type: 1,
       tagPosition: 0,
       tagUrl: []
     }
-    if(this.props.data) {
+    if (this.props.data) {
       this.data = this.props.data;
       this.data.startTime = moment(this.data.startTime);
       this.data.endTime = moment(this.data.endTime);
@@ -45,7 +45,7 @@ class Add extends React.Component {
     }
     this.state = {
       loading: false, // 保存活动按钮
-      tagUrl: this.data.tagUrl.length ?  this.data.tagUrl[0].url : '',
+      tagUrl: this.data.tagUrl.length ? this.data.tagUrl[0].url : '',
       tagImg: activityTagSImg,
       tagClass: 'img_sm',
       place: this.data.tagPosition,
@@ -66,9 +66,9 @@ class Add extends React.Component {
   }
 
   setBasePromotion = (params, callback) => {
-    if(this.loading) return;
+    if (this.loading) return;
     this.loadStatus(true)
-    if(this.state.id) params.id = this.state.id;
+    if (this.state.id) params.id = this.state.id;
     (params.id ? updateBasePromotion : setBasePromotion)(params).then((res) => {
       this.loadStatus(false)
       if (res) {
@@ -132,9 +132,9 @@ class Add extends React.Component {
     }
     return endTime.valueOf() <= startTime.valueOf();
   };
-  
+
   typeChange = (val) => {
-    if (val == 1 || val == 5) {
+    if ([1, 5, 6].includes(val)) {
       this.setState({
         tagImg: activityTagSImg,
         tagClass: 'img_sm'
@@ -147,7 +147,7 @@ class Add extends React.Component {
     }
   }
   tagUrlChange = (files) => {
-    if(files.length == 0) this.setState({
+    if (files.length == 0) this.setState({
       tagUrl: ''
     })
     else this.setState({
@@ -192,7 +192,7 @@ class Add extends React.Component {
                   message: '请选择正确的活动开始时间',
                 },
               ],
-              })(<DatePicker  format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledStartDate}/>)}
+            })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledStartDate} />)}
           </FormItem>
           <FormItem label="结束时间">
             {getFieldDecorator('endTime', {
@@ -202,10 +202,10 @@ class Add extends React.Component {
                   message: '请选择正确的活动结束时间',
                 },
               ],
-              })(<DatePicker  format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledEndDate}/>)}
+            })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledEndDate} />)}
           </FormItem>
           <FormItem label="活动排序">
-            {getFieldDecorator('sort',{
+            {getFieldDecorator('sort', {
             })(<Input placeholder="请设置活动排序" />)}
           </FormItem>
           <FormItem label="活动标签">
@@ -213,7 +213,7 @@ class Add extends React.Component {
             })(<UploadView fileType='png' onChange={this.tagUrlChange} placeholder="上传活动标签" listType="picture-card" listNum={1} size={0.015} />)}
           </FormItem>
           <Form.Item label="标签位置">
-            {getFieldDecorator('tagPosition',{
+            {getFieldDecorator('tagPosition', {
             })(
               <Radio.Group onChange={this.tagPositionChange}>
                 <Radio value={5}>左上角</Radio>
