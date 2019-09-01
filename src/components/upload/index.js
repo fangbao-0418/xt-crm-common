@@ -57,12 +57,12 @@ class UploadView extends Component {
   }
 
   beforeUpload = (file, fileList) => {
-    const { fileType, size } = this.props;
-    const isLtM = file.size / 1024 / 1024 < size;
+    const { fileType, size = 10 } = this.props;
     if (fileType && file.type.indexOf(fileType) < 0) {
       message.error(`请上传正确${fileType}格式文件`);
       return false;
     }
+    const isLtM = file.size / 1024 / 1024 < size;
     if (!isLtM) {
       message.error(`请上传小于${size * 1000}kB的文件`);
       return false;
@@ -104,7 +104,6 @@ class UploadView extends Component {
       placeholder,
       listType,
       listNum = 1,
-      size = 10,
       showUploadList,
       children,
     } = this.props;

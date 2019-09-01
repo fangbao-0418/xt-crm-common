@@ -1,9 +1,11 @@
 {
     "compilerOptions": {
-      "experimentalDecorators": true,
-      "target": "es2017",
-      "allowSyntheticDefaultImports": false,
       "baseUrl": ".",
+      "jsx": "react",
+      "experimentalDecorators": true,
+      "target": "es5",
+      "allowSyntheticDefaultImports": true,
+      "moduleResolution": "node",
       "paths": {
         "@/*": ["./src/*"]
       }

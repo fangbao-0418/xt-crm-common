@@ -1,4 +1,5 @@
-let baseHost = 'http://daily-crm-test.hzxituan.com';
+// let baseHost = 'http://daily-crm-test.hzxituan.com';
+let baseHost = 'https://testapi-crmadmin.hzxituan.com';
 const host = window.location.host;
 if (host.indexOf('daily-xt-crmadmin') >= 0) {
   baseHost = 'http://daily-crm-test.hzxituan.com';
