@@ -296,6 +296,14 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       callback();
     }
   }
+  // 领取时间校验
+  const receiveTimeValidator = (rule, value = [], callback) => {
+    if (value[0] && useTimeRange[0] && (value[0] > useTimeRange[0])) {
+      callback('领取起始时间必须小于等于使用起始时间');
+    } else {
+      callback();
+    }
+  }
   // 校验优惠券面值
   const validateDiscountPrice = (rule, value, callback) => {
     const { discountConditions, useSill } = getFieldsValue(['discountConditions', 'useSill']);
@@ -308,10 +316,6 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
     } else {
       callback()
     }
-  }
-  // 领取时间
-  const receiveTimeDisabledDate = (current) => {
-    return current && (current < moment().endOf('day').subtract(1, 'days') || (useTimeRange && current > useTimeRange[0]))
   }
   // 使用时间不可选
   const useTimeTypeDisabledDate = (current) => {
@@ -416,8 +420,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
           </Col>
         </Row>
         <Form.Item label="领取时间">
-          {getFieldDecorator('receiveTime', { rules: [{ required: true, message: '请选择领取时间' }] })(<RangePicker
-            disabledDate={receiveTimeDisabledDate}
+          {getFieldDecorator('receiveTime', { rules: [{ required: true, message: '请选择领取时间' }, {validator: receiveTimeValidator}] })(<RangePicker
+            disabledDate={disabledDate}
             showTime={{
               hideDisabledOptions: true
             }}
