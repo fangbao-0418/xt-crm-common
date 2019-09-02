@@ -168,3 +168,8 @@ export const formatPlatformRestrict = (val = '') => {
 export function disabledDate(current) {
   return current && current < moment().endOf('day').subtract(1, 'days');
 }
+
+// 一个月之后不可选
+export function afterDisabledDate(current) {
+  return current && current > moment().startOf('day').add(31, 'days');
+}

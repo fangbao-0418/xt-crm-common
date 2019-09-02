@@ -5,8 +5,12 @@ import { DatePicker, Row, Col, Card, Form, Checkbox, Input, Button, Radio } from
 import { saveCouponTaskInfo } from '../../api';
 import Upload from '@/components/upload';
 import moment from 'moment';
-import { disabledDate } from '@/pages/helper';
+import { disabledDate as beforeDisabledDate, afterDisabledDate } from '@/pages/helper';
 import '../index.scss'
+
+const rangeDisabledDate = (current) => {
+  return beforeDisabledDate(current) || afterDisabledDate(current);
+}
 // 批量发券
 function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields }, match, history }) {
   const [name, setName] = useState('');
@@ -176,8 +180,9 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
               {isTimedTransmission() && (
                 <Row type="flex">
                   <span>选择时间：</span>
-                  <Form.Item>{getFieldDecorator('timedTransmissionTime', { rules: [{ required: true, message: '请选择时间' }] })(<DatePicker showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} disabledDate={disabledDate} />)}
+                  <Form.Item>{getFieldDecorator('timedTransmissionTime', { rules: [{ required: true, message: '请选择时间' }] })(<DatePicker showTime disabledDate={rangeDisabledDate} />)}
                   </Form.Item>
+                  <span class="ml10">（定时发送最多30天）</span>
                 </Row>
               )}
             </Radio.Group>

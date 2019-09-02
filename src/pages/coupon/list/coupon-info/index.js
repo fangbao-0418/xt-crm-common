@@ -309,6 +309,15 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       callback()
     }
   }
+  // 领取时间
+  const receiveTimeDisabledDate = (current) => {
+    return current && (current < moment().endOf('day').subtract(1, 'days') || (useTimeRange && current > useTimeRange[0]))
+  }
+  // 使用时间不可选
+  const useTimeTypeDisabledDate = (current) => {
+    const { receiveTime } = getFieldsValue(['receiveTime']);
+    return current && current < (receiveTime && receiveTime[0] ||　moment().endOf('day').subtract(1, 'days'));
+  }
   return (
     <Card>
       {/* 已选择商品 */}
@@ -408,10 +417,9 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         </Row>
         <Form.Item label="领取时间">
           {getFieldDecorator('receiveTime', { rules: [{ required: true, message: '请选择领取时间' }] })(<RangePicker
-            disabledDate={disabledDate}
+            disabledDate={receiveTimeDisabledDate}
             showTime={{
-              hideDisabledOptions: true,
-              defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+              hideDisabledOptions: true
             }}
             format="YYYY-MM-DD HH:mm:ss"
           />)
@@ -422,10 +430,9 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             <Form.Item>
               <Radio value={0}>
                 <RangePicker
-                  disabledDate={disabledDate}
+                  disabledDate={useTimeTypeDisabledDate}
                   showTime={{
-                    hideDisabledOptions: true,
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                    hideDisabledOptions: true
                   }}
                   format="YYYY-MM-DD HH:mm:ss"
                   onChange={date => setUseTimeRange(date)}
