@@ -1,85 +1,98 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Input, Table } from 'antd';
+import React, { Component } from 'react';
+import { Modal, Input } from 'antd';
 import { isFunction } from 'lodash';
 import { getPromotionList } from './api';
 import { actColumns } from './config';
+import CommonTable from '@/components/common-table';
 
-function ProductSelector({ visible, onCancel, onChange }) {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [actList, setActList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [modalPage, setModalPage] = useState({
-    current: 1,
-    total: 0,
-    pageSize: 10,
-  })
-  const handleTabChangeModal = pagination => {
-    setModalPage(pagination)
-  };
-  const fetchData = async (params) => {
+class ProductSelector extends Component {
+  state = {
+    selectedRowKeys: [],
+    selectedRows: [],
+    activityList: [],
+    val: '',
+    loading: false,
+    pagination: {
+      page: 1,
+      total: 0,
+      pageSize: 10
+    }
+  }
+  handleChangePagination = pagination => {
+    this.setState({ pagination }, this.fetchData)
+  }
+  fetchData = async () => {
+    this.setState({ loading: true });
     try {
-      setLoading(true)
       const res = await getPromotionList({
-        page: modalPage.current,
-        pageSize: modalPage.pageSize,
-        ...params
+        ...this.state.pagination,
+        name: this.state.val.trim()
       })
-      setLoading(false);
-      setModalPage({
-        ...modalPage,
-        total: res.total
-      });
-      setActList(res.records);
+      console.log('res=>', res);
+      this.setState(state => ({
+        loading: false,
+        pagination: { ...state.pagination, total: res.total },
+        activityList: res.records
+      }));
     } catch (err) {
-      setLoading(true)
+      this.setState({ loading: true });
     }
   }
-  const handleSearchModal = (val) => {
-    fetchData({ productName: val.trim(), page: 1 })
+  handleSearch = (val) => {
+    this.setState(state => ({
+      val,
+      pagination: { ...state.pagination, page: 1 }
+    }), this.fetchData)
   }
-  const handleCancel = () => {
-    isFunction(onCancel) && onCancel();
+  handleCancel = () => {
+    this.setState({
+      selectedRowKeys: [],
+      selectedRows: []
+    })
+    isFunction(this.props.onCancel) && this.props.onCancel();
   }
-  const handleOkModal = () => {
-    isFunction(onChange) && onChange(selectedRowKeys, selectedRows)
-    handleCancel()
+  handleOkModal = () => {
+    isFunction(this.props.onChange) && this.props.onChange(this.state.selectedRowKeys, this.state.selectedRows);
+    this.handleCancel()
   }
-  useEffect(() => {
-    fetchData();
-  }, [])
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log('selectedRowKeys=>', selectedRowKeys);
-      console.log('selectedRows=>', selectedRows);
-      setSelectedRowKeys(selectedRowKeys);
-      setSelectedRows(selectedRows);
+  componentDidMount() {
+    this.fetchData();
+  }
+  render() {
+    const rowSelection = {
+      selectedRowKeys: this.state.selectedRowKeys,
+      onChange: (selectedRowKeys, selectedRows) => {
+        console.log('selectedRowKeys=>', selectedRowKeys);
+        console.log('selectedRows=>', selectedRows);
+        this.setState({ selectedRowKeys, selectedRows })
+      }
     }
+    return (
+      <Modal
+        title="选择活动"
+        visible={this.props.visible}
+        width="60%"
+        onCancel={this.handleCancel}
+        onOk={this.handleOkModal}
+      >
+        <Input.Search
+          placeholder="请输入需要搜索的活动"
+          style={{ marginBottom: 10 }}
+          onSearch={this.handleSearch}
+        />
+        <CommonTable
+          loading={this.state.loading}
+          rowSelection={rowSelection}
+          columns={actColumns()}
+          dataSource={this.state.activityList}
+          pagination={this.state.pagination}
+          onChange={this.handleChangePagination}
+          rowKey={record => record.id}
+          current={this.state.pagination.page}
+          total={this.state.pagination.total}
+        />
+      </Modal>
+    )
   }
-  return (
-    <Modal
-      title="选择活动"
-      visible={visible}
-      width={800}
-      onCancel={handleCancel}
-      onOk={handleOkModal}
-    >
-      <Input.Search
-        placeholder="请输入需要搜索的活动"
-        style={{ marginBottom: 10 }}
-        onSearch={handleSearchModal}
-      />
-      <Table
-        loading={loading}
-        rowSelection={rowSelection}
-        columns={actColumns()}
-        dataSource={actList}
-        pagination={modalPage}
-        onChange={handleTabChangeModal}
-        rowKey={record => record.id}
-      />
-    </Modal>
-  )
 }
 export default ProductSelector;

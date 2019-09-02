@@ -106,6 +106,11 @@ class ProductSelector extends Component{
   }
   // 取消对话框
   handleCancel = () => {
+    console.log('cancel called')
+    this.setState({
+      selectedRowKeys: [],
+      selectedRows: []
+    })
     isFunction(this.props.onCancel) && this.props.onCancel();
   }
   // 确认对话框

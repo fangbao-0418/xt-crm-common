@@ -24,9 +24,13 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
   const [activityList, setActivityList] = useState([]);
   const [chosenProduct, setChosenProduct] = useState([]);
   const [productSelectorVisible, setProductSelectorVisible] = useState(false);
+  const [excludeProductSelectorVisible, setExcludeProductSelectorVisible] = useState(false);
   const [activitySelectorVisible, setActivitySelectorVisible] = useState(false);
   const removeExcludeCurrentRow = (id) => {
     setExcludeProduct(excludeProduct.filter(v => v.id !== id));
+  }
+  const removeProductCurrentRow = (id) => {
+    setChosenProduct(chosenProduct.filter(v => v.id !== id));
   }
   const removeActivityCurrentRow = (id) => {
     setActivityList(activityList.filter(v => v.id !== id));
@@ -36,7 +40,6 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
     const platformType = checkedValue.length === 4 ? 0 : 1;
     setFieldsValue({ platformType });
     setPlatformRestrictValues(checkedValue);
-    console.log('checkedValue=>', checkedValue)
   }
   useEffect(() => {
     async function getTreeData() {
@@ -45,7 +48,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
     }
     getTreeData();
   }, [])
-  const excludeColumns = [{
+  const getColumns = (type) => [{
     title: '商品ID',
     dataIndex: 'id',
     key: 'id'
@@ -57,7 +60,13 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    render: (text, record) => <Button type="link" onClick={() => removeExcludeCurrentRow(record.id)}>移除</Button>
+    render: (text, record) => {
+      if (type === 'exclude') {
+        return <Button type="link" onClick={() => removeExcludeCurrentRow(record.id)}>移除</Button>
+      } else {
+        return <Button type="link" onClick={() => removeProductCurrentRow(record.id)}>移除</Button>
+      }
+    }
   }]
   const activityColumns = [...actColumns(), {
     title: '操作',
@@ -92,13 +101,14 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
   const hasActivityList = () => {
     return hasActivity() && activityList.length > 0;
   }
-  // 选择商品添加数据到已排除商品或者已选择商品列表
+  // 选择商品添加数据到已选择商品列表
   const onProductSelectorChange = (selectedRowKeys, selectedRows) => {
-    if (hasExclude()) {
-      setExcludeProduct(unionArray(excludeProduct, selectedRows));
-    } else {
-      setChosenProduct(unionArray(chosenProduct, selectedRows));
-    }
+    setChosenProduct(unionArray(chosenProduct, selectedRows));
+  }
+  //选择商品添加数据到已排除商品列表
+  const onExcludeProductSelectorChange = (selectedRowKeys, selectedRows) => {
+    console.log('ExcludeProduct=>', unionArray(excludeProduct, selectedRows))
+    setExcludeProduct(unionArray(excludeProduct, selectedRows));
   }
   // 选择活动添加数据到已选择活动列表里
   const onActivitySelectorChange = (selectedRowKeys, selectedRows) => {
@@ -194,7 +204,20 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
 
   const handleSave = () => {
     validateFields(async (err, fields) => {
-      console.log('fields=>', fields);
+      if (fields.avlRange === 2) {
+        console.log('chosenProduct=>', chosenProduct);
+        if (chosenProduct.length === 0) {
+          message.error('请选择商品');
+          return;
+        }
+      }
+      if (fields.avlRange === 4) {
+        console.log('activityList=>', activityList);
+        if (activityList.length === 0) {
+          message.error('请选择活动');
+          return;
+        }
+      }
       if (!err) {
         const [startReceiveTime, overReceiveTime] = fields.receiveTime ? fields.receiveTime.map(v => v && v.valueOf()) : []
         const useTimeValue = getUseTimeValue(fields)
@@ -288,7 +311,10 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
   }
   return (
     <Card>
+      {/* 已选择商品 */}
       <ProductSelector visible={productSelectorVisible} onCancel={() => setProductSelectorVisible(false)} onChange={onProductSelectorChange} />
+      {/* 排除商品 */}
+      <ProductSelector visible={excludeProductSelectorVisible} onCancel={() => setExcludeProductSelectorVisible(false)} onChange={onExcludeProductSelectorChange} />
       <ActivitySelector visible={activitySelectorVisible} onCancel={() => setActivitySelectorVisible(false)} onChange={onActivitySelectorChange} />
       <Form {...formItemLayout}>
         <Row>
@@ -315,7 +341,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
           )}
           {hasExclude() && (
             <div>
-              <Button type="link" onClick={() => setProductSelectorVisible(true)}>排除商品</Button>
+              <Button type="link" onClick={() => setExcludeProductSelectorVisible(true)}>排除商品</Button>
             </div>
           )}
         </Form.Item>
@@ -330,11 +356,11 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         )}
         {hasExcludeList() && (
           <Form.Item label="已排除商品">
-            <Table pagination={false} rowKey="id" columns={excludeColumns} dataSource={excludeProduct} />
+            <Table pagination={false} rowKey="id" columns={getColumns('exclude')} dataSource={excludeProduct} />
           </Form.Item>
         )}
         {hasChosenList() && <Form.Item label="已选择商品">
-          <Table pagination={false} rowKey="id" columns={excludeColumns} dataSource={chosenProduct} />
+          <Table pagination={false} rowKey="id" columns={getColumns('product')} dataSource={chosenProduct} />
         </Form.Item>}
         {hasActivityList() && <Form.Item label="已选择活动">
           <Table pagination={false} rowKey="id" columns={activityColumns} dataSource={activityList} />
@@ -371,7 +397,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         </Form.Item>
         <Form.Item label="发放总量">
           <Row type="flex">
-            <Col>{getFieldDecorator('inventory', { rules: [{ required: true, message: '请输入发放总量' }] })(<InputNumber min={1} max={10000000} />)}</Col>
+            <Col>{getFieldDecorator('inventory', { rules: [{ required: true, message: '请输入发放总量' }] })(<InputNumber placeholder="最多10000000" style={{ width: '120px' }} min={1} max={10000000} />)}</Col>
             <Col className="ml10">张</Col>
           </Row>
         </Form.Item>
@@ -429,7 +455,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         <Form.Item label="每人限领次数">
           <Row type="flex">
             <Col>限领</Col>
-            <Col className="ml10 short-input">{getFieldDecorator('restrictNum', { rules: [{ required: true, message: '请输入每人限领次数' }] })(<InputNumber min={1} max={10} />)}</Col>
+            <Col className="ml10 short-input">{getFieldDecorator('restrictNum', { rules: [{ required: true, message: '请输入每人限领次数' }] })(<InputNumber placeholder="最多10" min={1} max={10} />)}</Col>
             <Col className="ml10">张</Col>
           </Row>
         </Form.Item>
@@ -438,7 +464,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             <Checkbox checked={dailyRestrictChecked} onChange={e => setDailyRestrictChecked(e.target.checked)} />
             <Row type="flex">
               <Col className="ml10">每日限领</Col>
-              <Col className="ml10 short-input">{getFieldDecorator('dailyRestrict')(<InputNumber min={1} max={10} />)}</Col>
+              <Col className="ml10 short-input">{getFieldDecorator('dailyRestrict')(<InputNumber placeholder="最多10" min={1} max={10} />)}</Col>
               <Col className="ml10">张</Col>
             </Row>
           </Row>
