@@ -118,8 +118,8 @@ class OrderList extends React.Component {
       {
         title: '位置',
         dataIndex: 'seat',
-        render(seat) {
-          return TextMapPosition[seat];
+        render(seat, record) {
+          return <span>{record.newSeatStr}/{record.childSeatStr}</span>
         },
       },
       {

@@ -29,7 +29,7 @@ export const request = (url, config) => {
   })
   .then(res => {
     if (res.status === 401) {
-      APP.history.push('/login')
+      window.location.href = '/#/login'
       return Promise.reject(res);
     }
     if (res.status === 200 && res.data.success) {
@@ -43,7 +43,7 @@ export const request = (url, config) => {
     if (httpCode === 401 || httpCode === 502) {
       message.error('未登录');
       setTimeout(() => {
-        APP.history.push('/login');
+        window.location.href = '/#/login'
       }, 1500);
       return Promise.reject(error);
     }
