@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Button } from 'antd'
+import { Table, Button, Popconfirm } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import Search from './components/Search'
 import styles from './style.module.sass'
@@ -34,11 +34,27 @@ class Main extends React.Component<{}, State> {
     align: 'center',
     width: 200,
     render: (text, record) => {
+      const status = record.status
+      const statusText = status === 0 ? '生效' : '失效'
       return (
         <div className={styles.operate}>
           <span className='href' onClick={() => {APP.history.push(`/interface/special/${record.id}`)}}>编辑</span>
-          <span className='href' onClick={() => this.changeSpecialStatus([record.id])}>失效</span>
-          <span className='href' onClick={() => this.deleteSpecial([record.id])}>删除</span>
+          <Popconfirm
+            title={`确定要${statusText}该专题吗?`}
+            onConfirm={() => this.changeSpecialStatus([record.id])}
+          >
+            <span
+              className='href'
+            >
+              {statusText}
+            </span>
+          </Popconfirm>
+          <Popconfirm
+            title="确定要删除该专题吗?"
+            onConfirm={() => this.deleteSpecial([record.id])}
+          >
+            {status === 0 && <span className='href' >删除</span>}
+          </Popconfirm>
         </div>
       )
     }

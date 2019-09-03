@@ -8,6 +8,14 @@ export default {
     }
   },
   reducers: {
+    '@@init': () => {
+      console.log('init')
+      return {
+        detail: {
+          list: []
+        }
+      }
+    },
     changeDetail: (state, payload) => {
       return {
         ...state,

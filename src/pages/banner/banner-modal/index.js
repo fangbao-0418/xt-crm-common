@@ -5,6 +5,7 @@ import { getBannerDetail, updateBanner, addBanner } from '../api';
 import { TextMapPosition } from '../constant';
 // import { formatDate } from '../../helper';
 import moment from 'moment';
+import BannerPostion from '@/components/banner-position'
 const FormItem = Form.Item;
 
 const formItemLayout = {
@@ -135,6 +136,7 @@ class BannerModal extends Component {
             </FormItem>
             <FormItem label="位置">
               {getFieldDecorator('seat', { initialValue: data.seat })(
+                // <BannerPostion />
                 <Select>
                   {Object.keys(TextMapPosition).map(value => {
                     return <Select.Option value={+value} key={value}>{TextMapPosition[value]}</Select.Option>;

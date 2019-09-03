@@ -8,6 +8,7 @@ interface Props {
   selectedRowKeys?: any[]
   onOk?: (ids: any[], rows: Shop.ShopItemProps[]) => void
   onSelect?: (record: Shop.ShopItemProps, selected: boolean) => void
+  onSelectAll?: (selected: boolean, selectedRows: Shop.ShopItemProps[], changeRows: Shop.ShopItemProps[]) => void
 }
 interface State extends PageProps<Shop.ShopItemProps> {
   records: Shop.ShopItemProps[]
@@ -87,6 +88,7 @@ class Main extends React.Component<Props, State> {
     this.onSearch = this.onSearch.bind(this)
     this.onSelect = this.onSelect.bind(this)
     this.onrowSelectionChange = this.onrowSelectionChange.bind(this)
+    this.onSelectAll = this.onSelectAll.bind(this)
   }
   public componentDidMount () {
     this.fetchData()
@@ -131,11 +133,17 @@ class Main extends React.Component<Props, State> {
       this.props.onSelect(record, selected)
     }
   }
+  public onSelectAll (selected: boolean, selectedRows: Shop.ShopItemProps[], changeRows: Shop.ShopItemProps[]) {
+    if (this.props.onSelectAll) {
+      this.props.onSelectAll(selected, selectedRows, changeRows)
+    }
+  }
   public render () {
     const { selectedRowKeys, visible } = this.state;
     const rowSelection = {
       onSelect: this.onSelect,
       onChange: this.onrowSelectionChange,
+      onSelectAll: this.onSelectAll,
       selectedRowKeys
     }
     return (

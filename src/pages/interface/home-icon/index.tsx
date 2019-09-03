@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Form, Input, Button, Icon } from 'antd'
+import { Form, Input, Button, Popconfirm } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import * as api from './api'
 import Upload from '@/components/upload'
@@ -9,11 +9,13 @@ interface Props extends FormComponentProps {}
 interface State {
   dataSource:  HomeIcon.ItemProps[]
   selectIndex: number
+  loading: boolean
 }
 class Main extends React.Component<Props, State> {
   public state: State = {
     dataSource: [],
-    selectIndex: -2
+    selectIndex: -2,
+    loading: false
   }
   public constructor (props: Props) {
     super(props)
@@ -51,17 +53,30 @@ class Main extends React.Component<Props, State> {
         if (result.imgUrl instanceof Array) {
           result.imgUrl = result.imgUrl[0].url
         }
+        this.setState({
+          loading: true
+        })
         if (result.id) {
           api.saveIcon(result).then(() => {
             dataSource[selectIndex].title = result.title
             this.setState({
               dataSource
             })
+            APP.success('保存icon成功')
+          }).finally(() => {
+            this.setState({
+              loading: false
+            })
           })
         } else {
           api.addIcon(result).then(() => {
             this.fetchList(false)
             this.resetForm()
+            APP.success('新增icon成功')
+          }).finally(() => {
+            this.setState({
+              loading: false
+            })
           })
         }
       }
@@ -105,7 +120,9 @@ class Main extends React.Component<Props, State> {
     }
   }
   public toPublish () {
-    api.publishIcon()
+    api.publishIcon().then(() => {
+      APP.success('发布icon成功')
+    })
   }
   public render () {
     const { getFieldDecorator } = this.props.form
@@ -139,13 +156,17 @@ class Main extends React.Component<Props, State> {
             >
               +新增icon
             </div>}
-            <Button
-              type="primary"
-              className={styles.release}
-              onClick={this.toPublish}
+            <Popconfirm
+              title='确认发布icon吗'
+              onConfirm={this.toPublish}
             >
-              发布
-            </Button>
+              <Button
+                type="primary"
+                className={styles.release}
+              >
+                发布
+              </Button>
+            </Popconfirm>
           </div>
         </div>
         {
@@ -174,15 +195,6 @@ class Main extends React.Component<Props, State> {
                     <Upload
                       listType="picture-card"
                       style={{width: 100, height: 100}}
-                      // onChange={(value: any) => {
-                      //   // detail.imgUrl = value[0] && value[0].url
-                      //   // this.setState({
-                      //   //   dataSource
-                      //   // })
-                      //   this.props.form.setFieldsValue({
-                      //     imgUrl: detail.imgUrl
-                      //   })
-                      // }}
                     >
                     </Upload>
                   )}
@@ -205,18 +217,25 @@ class Main extends React.Component<Props, State> {
                 </Form.Item>
                 <div className={styles.footer}>
                   <Button
+                    loading={this.state.loading}
                     type="primary"
                     onClick={this.toSave}
                   >
                     保存
                   </Button>
-                  <Button
-                    ghost
-                    type="danger"
-                    onClick={this.toDelete}
+                  <Popconfirm
+                    disabled={selectIndex <= -1}
+                    title='确认删除icon吗'
+                    onConfirm={this.toDelete}
                   >
-                    删除
-                  </Button>
+                    <Button
+                      disabled={selectIndex <= -1}
+                      ghost
+                      type="danger"
+                    >
+                      删除
+                    </Button>
+                  </Popconfirm>
                 </div>
               </Form>
             </div>

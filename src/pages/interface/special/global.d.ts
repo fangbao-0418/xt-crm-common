@@ -4,7 +4,7 @@ declare module Special {
     type: 1 | 2 | 3
     sort: number
     /** 排列样式 1=1*1，2=1*2 */
-    css: 1 | 2
+    css?: 1 | 2
     /** 商品列表 */
     list: Shop.ShopItemProps[]
     /** 广告图 */
@@ -12,7 +12,7 @@ declare module Special {
   }
   export interface DetailItem {
     backgroundColor: string
-    imgUrl: string
+    imgUrl: string | {uid: string, url: string}[]
     shareTitle: string
     subjectName: string
     status: 0 | 1 | undefined

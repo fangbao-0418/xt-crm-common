@@ -33,7 +33,7 @@ class Main extends React.Component<Props> {
           <Form.Item
             label='banner名称'
           >
-            {getFieldDecorator('a')(
+            {getFieldDecorator('title')(
               <Input placeholder='请输入banner名称' />
             )}
           </Form.Item>

@@ -1,5 +1,4 @@
 import React from 'react'
-import classNames from 'classnames'
 import { Form, Input, Button, Icon, Card, Radio, Row, Col } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { withRouter, RouteComponentProps } from 'react-router'
@@ -12,19 +11,28 @@ import { namespace } from './model'
 interface Props extends FormComponentProps, RouteComponentProps<{id: any}> {
   detail: Special.DetailItem
 }
-class Main extends React.Component<Props> {
+interface State {
+  loading: boolean
+}
+class Main extends React.Component<Props, State> {
+  public state = {
+    loading: false
+  }
+  public id = '-1'
   public constructor (props: Props) {
     super(props)
     this.addContent = this.addContent.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
   public componentDidMount () {
+    APP.dispatch({
+      type: `${namespace}/@@init`
+    })
     this.fetchData()
   }
   public addContent (type: 1 | 2 | 3) {
     const { detail } = this.props
     detail.list.push({
-      css: 1,
       type,
       sort: 0,
       list: []
@@ -36,7 +44,7 @@ class Main extends React.Component<Props> {
   }
   public fetchData() {
     const id = this.props.match.params.id
-    console.log(id === '-1', 'id')
+    this.id = id
     if (id === '-1') {
       return
     }
@@ -44,7 +52,15 @@ class Main extends React.Component<Props> {
       type: `${namespace}/fetchDetail`,
       payload: {
         id,
-        cb: (res: any) => {
+        cb: (res: Special.DetailItem) => {
+          if (typeof res.imgUrl === 'string') {
+            res.imgUrl = [
+              {
+                uid: 'imgUrl0',
+                url: res.imgUrl
+              }
+            ]
+          }
           this.props.form.setFieldsValue(res)
         }
       }
@@ -57,16 +73,29 @@ class Main extends React.Component<Props> {
         return
       }
       const detail = this.props.detail
-      console.log(value, detail)
+      this.setState({
+        loading: true
+      })
+      if (value.imgUrl instanceof Array) {
+        value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
+      }
       api.saveSpecial({
         ...detail,
         ...value
+      }).then((res: any) => {
+        if (res !== undefined) {
+          APP.success(`专题${this.id === '-1' ? '新增' : '修改'}成功`)
+          APP.history.push('/interface/special')
+        }
+      }).finally(() => {
+        this.setState({
+          loading: false
+        })
       })
     })
   }
   public render () {
     const { getFieldDecorator } = this.props.form
-    const { detail } = this.props
     const formItemLayout = {
       labelCol: {
         span: 6
@@ -125,26 +154,17 @@ class Main extends React.Component<Props> {
               label='banner图片'
               required
             >
-              <Upload
-                listType="picture-card"
-                value={detail.imgUrl && [
-                  {
-                    uid: 'imgUrl0',
-                    url: detail.imgUrl
-                  }
-                ]}
-                onChange={(value: any) => {
-                  if (value[0] && value[0].url) {
-                    console.log( value[0].url, 'imgurl change')
-                    detail.imgUrl =  value[0].url
-                    APP.dispatch({
-                      type: `${namespace}/changeDetail`,
-                      payload: {...detail}
-                    })
-                  }
-                }}
-              >
-              </Upload>
+              {getFieldDecorator('imgUrl', {
+                rules: [{
+                  required: true,
+                  message: 'banner图片不能为空'
+                }]
+              })(
+                <Upload
+                  listType="picture-card"
+                >
+                </Upload>
+              )}
             </Form.Item>
             <Form.Item
               label='添加楼层'
@@ -167,6 +187,7 @@ class Main extends React.Component<Props> {
             <Content />
             <div className={styles.footer}>
               <Button
+                loading={this.state.loading}
                 type="primary"
                 htmlType="submit"
                 style={{marginRight: 20}}

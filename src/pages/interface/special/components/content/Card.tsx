@@ -29,6 +29,7 @@ class Main extends React.Component<Props> {
   public renderShop (): React.ReactNode {
     const { detail } = this.props
     const selectedRowKeys = this.getSelectedRowKeys()
+    this.tempList = Array.prototype.concat(detail.list)
     return (
       <div>
         <Row gutter={12}>
@@ -61,8 +62,20 @@ class Main extends React.Component<Props> {
             <ShopModal
               selectedRowKeys={selectedRowKeys}
               ref='shopmodal'
+              onSelectAll={(selected, selectedRows, changeRows) => {
+                if (selected) {
+                  changeRows.map((item) => {
+                    this.tempList.push(item)
+                  })
+                } else {
+                  const ids = changeRows.map(val => val.id)
+                  this.tempList = this.tempList.filter((item) => {
+                    return ids.indexOf(item.id) === -1
+                  })
+                }
+                console.log(this.tempList, 'tempList')
+              }}
               onSelect={(record, selected) => {
-                this.tempList = Array.prototype.concat(detail.list)
                 if (selected) {
                   this.tempList.push(record)
                 } else {
