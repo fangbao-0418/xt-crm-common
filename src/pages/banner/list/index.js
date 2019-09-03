@@ -5,7 +5,7 @@ import BannerModal from '../banner-modal';
 import { formatDate } from '../../helper';
 import { TextMapPosition } from '../constant';
 import Image from '../../../components/Image';
-
+import Search from './Search'
 const replaceHttpUrl = imgUrl => {
   if (imgUrl.indexOf('http') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
@@ -158,6 +158,7 @@ class OrderList extends React.Component {
         <Card title="">
           {/* <Button onClick={this.query}>查询</Button> &nbsp; */}
           <BannerModal onSuccess={this.query} isEdit={false} />
+          <Search className='ml10' />
         </Card>
         <Card style={{ marginTop: 10 }}>
           <Table

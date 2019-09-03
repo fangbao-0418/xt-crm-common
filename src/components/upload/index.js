@@ -44,7 +44,7 @@ class UploadView extends Component {
     }
   }
 
-  initFileList(fileList) {
+  initFileList(fileList = []) {
     const { fileType } = this.props;
     return fileList.map(val => {
       val.durl = val.url

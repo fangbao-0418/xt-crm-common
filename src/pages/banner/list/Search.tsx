@@ -1,11 +1,9 @@
 import React from 'react'
 import { Form, Input, Button, Select } from 'antd'
-import classNames from 'classnames'
 import { FormComponentProps } from 'antd/lib/form'
-import styles from './style.module.sass'
 interface Props extends FormComponentProps {
   className?: string
-  onChange?: (value?: Special.SearchProps) => void
+  onChange?: (value: any) => void
 }
 class Main extends React.Component<Props> {
   public constructor (props: Props) {
@@ -24,42 +22,37 @@ class Main extends React.Component<Props> {
   public render () {
     const { getFieldDecorator } = this.props.form
     return (
-      <div className={classNames(styles.search, this.props.className)}>
-        <Form
-          layout="inline"
-        >
+      <div
+        style={{
+          display: 'inline-block',
+          verticalAlign: 'middle'
+        }}
+        className={this.props.className}
+      >
+        <Form layout="inline">
           <Form.Item
-            label='专题ID'
+            label='banner名称'
           >
-            {
-              getFieldDecorator('subjectId', {})(
-                <Input placeholder='请输入专题ID'/>
-              )
-            }
+            {getFieldDecorator('a')(
+              <Input placeholder='请输入banner名称' />
+            )}
           </Form.Item>
           <Form.Item
-            label='专题名称'
+            label='位置'
           >
-            {
-              getFieldDecorator('title', {})(
-                <Input  placeholder='请输入专题名称' />
-              )
-            }
+            {getFieldDecorator('b')(
+              <Input placeholder='请选择位置' />
+            )}
           </Form.Item>
           <Form.Item
             label='状态'
           >
-            {
-              getFieldDecorator('status', {
-                initialValue: -1
-              })(
-                <Select style={{width: 100}}>
-                  <Select.Option value={-1}>全部</Select.Option>
-                  <Select.Option value={1}>生效</Select.Option>
-                  <Select.Option value={0}>已失效</Select.Option>
-                </Select>
-              )
-            }
+            {getFieldDecorator('status')(
+              <Select style={{width: 100}}>
+                <Select.Option value={1}>开启</Select.Option>
+                <Select.Option value={0}>关闭</Select.Option>
+              </Select>
+            )}
           </Form.Item>
           <Form.Item>
             <Button
@@ -82,4 +75,4 @@ class Main extends React.Component<Props> {
     )
   }
 }
-export default Form.create<Props>()(Main)
+export default Form.create()(Main)
