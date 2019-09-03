@@ -8,6 +8,7 @@ class Data {
   position: DOMRect[] = []
   wrapClassName: string = ''
   movedIndex = -1
+  currentIndex: number = 0
   public constructor (props: Props) {
     this.props = props
     this.wrapClassName = (props.className || '-draggabled') + '-wrapper'
@@ -22,7 +23,6 @@ class Data {
     }
     e.preventDefault()
     const target = e.target
-    console.log(this, 'this')
     this.pressedEl = this.getSelectEl(target)
     this.pressed = true
     if (this.pressedEl) {
@@ -30,6 +30,7 @@ class Data {
       this.pressedEl.className = ((this.pressedEl.className || '') + ' dragging').replace(/dragging/g, 'dragging')
       this.createTempEl()
     }
+    return e
   }
   public handleMouseUp () {
     this.pressed = false
@@ -39,6 +40,9 @@ class Data {
     this.pressedEl.className = this.pressedEl.className && this.pressedEl.className.replace(/dragging/g, '')
     if (this.tempEl && document.body.contains(this.tempEl)) {
       document.body.removeChild(this.tempEl)
+      if (this.props.onMouseUp) {
+        this.props.onMouseUp(this.movedIndex, this.currentIndex)
+      }
     }
   }
   /**
@@ -75,14 +79,16 @@ class Data {
     const draggabledElements = document.querySelectorAll(selector)
     this.position = []
     draggabledElements.forEach((item, index) => {
+      if (this.pressedEl === item) {
+        this.currentIndex = index
+      }
       this.position.push(item.getBoundingClientRect() as DOMRect)
     })
   }
   public getMovedIndex (x: number, y: number) {
     let isBefore = true
-    // console.log(x, y, this.position, 'position')
     let tempIndex = -1
-    let index = this.position.findIndex((item, I) => {
+    let index = this.position.findIndex((item, i) => {
       const cx = item.x + item.width / 2
       const cy = item.y
       if (y > cy && y < cy + item.height) {
@@ -90,7 +96,7 @@ class Data {
           isBefore = true
           return true
         } else {
-          tempIndex = I
+          tempIndex = i
           isBefore = false
         }
       }
@@ -103,9 +109,7 @@ class Data {
       for (let j = 0; j < this.pressedEl.parentElement.children.length; j++) {
         const child =  this.pressedEl.parentElement.children[j] as HTMLElement
         const { top, left} = child.getBoundingClientRect() as DOMRect
-        console.log(left, top, 'xxxx', child, 'xxxx')
         child.setAttribute('data-style', `${top}px;left:${left}px;`)
-        // child.setAttribute('style', child.getAttribute('style')+`position:fixed;top:${top}px;left:${left}px;`)
       }
     }
 

@@ -26,5 +26,8 @@ declare module Special {
     status?: 0 | 1 | undefined
     pageNo?: number
     pageSize?: number
+    newSeat?: any
+    childSeat?: any
+    seat?: any
   }
 }

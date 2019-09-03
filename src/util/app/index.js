@@ -1,11 +1,13 @@
+const http = require('./http')
 const { message } = require('antd')
 const APP = {
   history: {},
-  success: (text, duration = 1) => {
+  success: function (text, duration = 1) {
     message.success(text, duration)
   },
-  error: (text, duration = 1) => {
+  error: function (text, duration = 1) {
     message.error(text, duration)
-  }
+  },
+  http
 }
 module.exports = APP

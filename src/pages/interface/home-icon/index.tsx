@@ -57,12 +57,15 @@ class Main extends React.Component<Props, State> {
           loading: true
         })
         if (result.id) {
-          api.saveIcon(result).then(() => {
-            dataSource[selectIndex].title = result.title
-            this.setState({
-              dataSource
-            })
-            APP.success('保存icon成功')
+          api.saveIcon(result).then((res: any) => {
+            console.log(res, 'res')
+            if (res) {
+              dataSource[selectIndex].title = result.title
+              this.setState({
+                dataSource
+              })
+              APP.success('保存icon成功')
+            }
           }).finally(() => {
             this.setState({
               loading: false
@@ -136,26 +139,30 @@ class Main extends React.Component<Props, State> {
     };
     const { dataSource, selectIndex } = this.state
     return (
-      <div>
+      <div style={{minHeight: 400, background: 'white'}}>
         <div className={styles.header}>
           <div className={styles.tbtns}>
-            { dataSource.map((item, index) => (
-              <div
-                key={index}
-                className={classNames(styles.tbtn, {[styles.active]: selectIndex === index })}
-                onClick={() => {
-                  this.initValue(index)
-                }}
-              >
-                {item.title}
-              </div>)
+            {
+              dataSource.map((item, index) => (
+                <div
+                  key={index}
+                  className={classNames(styles.tbtn, {[styles.active]: selectIndex === index })}
+                  onClick={() => {
+                    this.initValue(index)
+                  }}
+                >
+                  {item.title}
+                </div>
+              )
             )}
-            {dataSource.length < 8 && <div
-              className={classNames(styles.tbtn, styles.add)}
-              onClick={this.addIconItem}
-            >
-              +新增icon
-            </div>}
+            {
+              dataSource.length < 8 && <div
+                className={classNames(styles.tbtn, styles.add)}
+                onClick={this.addIconItem}
+              >
+                +新增icon
+              </div>
+            }
             <Popconfirm
               title='确认发布icon吗'
               onConfirm={this.toPublish}
@@ -180,6 +187,9 @@ class Main extends React.Component<Props, State> {
                   label='icon名称'
                 >
                   {getFieldDecorator('title', {
+                    rules: [
+                      {required: true, message: 'icon名称不能为空'}
+                    ]
                   })(
                     <Input />
                   )}

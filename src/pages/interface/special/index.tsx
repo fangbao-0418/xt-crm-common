@@ -41,7 +41,7 @@ class Main extends React.Component<{}, State> {
           <span className='href' onClick={() => {APP.history.push(`/interface/special/${record.id}`)}}>编辑</span>
           <Popconfirm
             title={`确定要${statusText}该专题吗?`}
-            onConfirm={() => this.changeSpecialStatus([record.id])}
+            onConfirm={() => this.changeSpecialStatus([record.id], status)}
           >
             <span
               className='href'
@@ -76,8 +76,8 @@ class Main extends React.Component<{}, State> {
       this.fetchData()
     })
   }
-  public changeSpecialStatus (ids: number[]) {
-    api.changeSpecialStatus(ids).then(() => {
+  public changeSpecialStatus (ids: number[], status: 0 | 1 | undefined) {
+    api.changeSpecialStatus(ids, status).then(() => {
       this.fetchData()
     })
   }

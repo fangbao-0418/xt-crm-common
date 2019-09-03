@@ -1,4 +1,5 @@
-import { post, get } from '@/util/fetch';
+const { post, get } = APP.http
+
 export function getIconList () {
   return get('/homeicon/list')
 }

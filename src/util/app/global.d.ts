@@ -6,9 +6,14 @@ declare module APP {
     type: string,
     payload?: T
   }
+  interface HttpProps {
+    get: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
+    post: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
+  }
   type DispatchProps = (action: ReduxActionProps) => void
   export var history: History
   export var dispatch: DispatchProps
   export const success: (text: string, duration?: number) => void
   export const error: (text: string, duration?: number) => void
+  export const http: HttpProps
 }

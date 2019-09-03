@@ -23,8 +23,10 @@ export function deleteSpecial (subjectIds: number[]) {
 	})
 }
 
-export function changeSpecialStatus (subjectIds: number[]) {
-	return newPost(`/crm/subject/inactive`, {
+export function changeSpecialStatus (subjectIds: number[], status: 0 | 1 | undefined) {
+	 return status === 1 ? newPost(`/crm/subject/inactive`, {
+		ids: subjectIds
+	}) : newPost(`/crm/subject/active`, {
 		ids: subjectIds
 	})
 }

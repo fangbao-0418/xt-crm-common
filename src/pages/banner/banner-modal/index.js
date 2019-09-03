@@ -75,6 +75,10 @@ class BannerModal extends Component {
           params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url;
           params.imgList = undefined;
         }
+        const seat = params.seat
+        params.newSeat = seat[0]
+        params.childSeat = seat[1]
+        params.seat = seat[1]
         api(params).then((res) => {
           onSuccess && onSuccess();
           res && message.success('操作成功');
@@ -135,13 +139,13 @@ class BannerModal extends Component {
               )}
             </FormItem>
             <FormItem label="位置">
-              {getFieldDecorator('seat', { initialValue: data.seat })(
-                // <BannerPostion />
-                <Select>
-                  {Object.keys(TextMapPosition).map(value => {
-                    return <Select.Option value={+value} key={value}>{TextMapPosition[value]}</Select.Option>;
-                  })}
-                </Select>,
+              {getFieldDecorator('seat', { initialValue: [data.newSeat, data.childSeat] })(
+                <BannerPostion />
+                // <Select>
+                //   {Object.keys(TextMapPosition).map(value => {
+                //     return <Select.Option value={+value} key={value}>{TextMapPosition[value]}</Select.Option>;
+                //   })}
+                // </Select>,
               )}
             </FormItem>
             <FormItem label="上线时间">

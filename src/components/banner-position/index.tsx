@@ -1,38 +1,55 @@
 import React from 'react'
 import { Cascader } from 'antd'
-
-const options = [
-  {
-    value: 'zhejiang',
-    label: 'Zhejiang',
-    isLeaf: false,
-  },
-  {
-    value: 'jiangsu',
-    label: 'Jiangsu',
-    isLeaf: false,
-  },
-];
-class Main extends React.Component {
-  public state = {
-    options,
+import * as api from './api'
+interface ItemProps {
+  children: ItemProps[]
+  key: any
+  value: string
+}
+interface Props {
+  value?: any[]
+  onChange?: (value?: any[]) => void
+}
+interface State {
+  options: ItemProps[]
+}
+class Main extends React.Component<Props> {
+  public state: State = {
+    options: []
   };
   public componentDidMount () {
-
+    api.getSeatList().then((res: ItemProps[]) => {
+      this.fetchCategory(res)
+    })
   }
-  public onChange = (value: any, selectedOptions: any) => {
-    console.log(value, selectedOptions);
+  public fetchCategory (options: ItemProps[]) {
+    api.getCategory().then((res: any) => {
+      if (res.records) {
+        options[1].children = res.records.map((item: {id: any, name: string}) => {
+          return {
+            key: item.id,
+            value: item.name
+          }
+        })
+        this.setState({
+          options
+        })
+      }
+    })
+  }
+  public onChange = (value: any[], selectedOptions: any) => {
+    if (this.props.onChange) {
+      this.props.onChange(value)
+    }
   };
-  public loadData (selectedOptions: any) {
-    const targetOption = selectedOptions[selectedOptions.length - 1];
-    targetOption.loading = true;
-  }
   public render () {
     return (
       <Cascader
+        placeholder='请选择位置'
         options={this.state.options}
-        loadData={this.loadData}
+        fieldNames={{label: 'value', value: 'key', children: 'children'}}
         onChange={this.onChange}
+        value={this.props.value}
         changeOnSelect
       />
     )
