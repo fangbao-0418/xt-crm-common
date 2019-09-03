@@ -1,5 +1,6 @@
-const http = require('./http')
-const { message } = require('antd')
+var http = require('./http')
+var { message } = require('antd')
+var fn = require('./fn')
 const APP = {
   history: {},
   success: function (text, duration = 1) {
@@ -8,6 +9,7 @@ const APP = {
   error: function (text, duration = 1) {
     message.error(text, duration)
   },
-  http
+  http,
+  fn
 }
 module.exports = APP

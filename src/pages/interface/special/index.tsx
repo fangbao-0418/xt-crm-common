@@ -21,7 +21,11 @@ class Main extends React.Component<{}, State> {
     dataIndex: 'subjectName',
     title: '专题名称'
   }, {
-    title: '链接'
+    title: '链接',
+    render: (text, record) => {
+      const url = APP.fn.getH5Origin() + `/#/activity/${record.id}`
+      return <a target="_blank" href={url} title={record.subjectName}>{url}</a>
+    }
   }, {
     dataIndex: 'status',
     title: '状态',
@@ -59,9 +63,6 @@ class Main extends React.Component<{}, State> {
       )
     }
   }]
-  public constructor () {
-    super({})
-  }
   public componentDidMount () {
     this.fetchData()
   }
@@ -104,6 +105,7 @@ class Main extends React.Component<{}, State> {
             </Button>
           </div>
           <Table
+            rowKey='id'
             columns={this.columns}
             dataSource={this.state.records}
             pagination={{
