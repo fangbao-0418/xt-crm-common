@@ -43,7 +43,11 @@ class BannerModal extends Component {
   };
 
   showModal = () => {
-    this.props.isEdit && this.query();
+    if (this.props.isEdit) {
+      this.query() 
+    } else {
+      this.props.form.resetFields()
+    }
     this.setState({
       visible: true,
     });
@@ -124,7 +128,13 @@ class BannerModal extends Component {
         >
           <Form {...formItemLayout}>
             <FormItem label="Banner名称">
-              {getFieldDecorator('title', { initialValue: data.title })(<Input placeholder="" />)}
+              {getFieldDecorator('title', {
+                initialValue: data.title,
+                rules: [{
+                  required: true,
+                  message: 'banner名称不能为空'
+                }]
+              })(<Input placeholder="" />)}
             </FormItem>
             <FormItem key={renderKey} label="Banner图片" required={true}>
               {getFieldDecorator('imgList', {
@@ -138,14 +148,23 @@ class BannerModal extends Component {
                 <Input placeholder="" />,
               )}
             </FormItem>
-            <FormItem label="位置">
-              {getFieldDecorator('seat', { initialValue: [data.newSeat, data.childSeat] })(
+            <FormItem required label="位置">
+              {getFieldDecorator('seat', {
+                initialValue: [data.newSeat, data.childSeat],
+                rules: [
+                  {
+                    validator: (rule, value, cb) => {
+                      console.log(value, 'data')
+                      if (value[1] !== undefined) {
+                        cb()
+                      } else {
+                        cb('位置不能为空')
+                      }
+                    }
+                  }
+                ]
+              })(
                 <BannerPostion />
-                // <Select>
-                //   {Object.keys(TextMapPosition).map(value => {
-                //     return <Select.Option value={+value} key={value}>{TextMapPosition[value]}</Select.Option>;
-                //   })}
-                // </Select>,
               )}
             </FormItem>
             <FormItem label="上线时间">
