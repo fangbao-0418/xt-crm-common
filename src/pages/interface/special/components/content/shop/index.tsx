@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Input } from 'antd'
+import { Table, Input, Popconfirm } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import styles from './style.module.sass'
 interface Props {
@@ -36,14 +36,16 @@ class Main extends React.Component<Props> {
       align: 'center',
       render: (text, record, index) => {
         const { dataSource } = this.props
-        const tIndex = this.pageSize * (this.page - 1) + index
-        text = text || 0
-        dataSource[tIndex].sort = dataSource[tIndex].sort || 0
+        // const tIndex = this.pageSize * (this.page - 1) + index
+        // text = text || 0
+        // if ( dataSource[tIndex]) {
+        //   dataSource[tIndex].sort = dataSource[tIndex].sort || 0
+        // }
         return (
           <Input
             value={text}
             onChange={(e) => {
-              dataSource[tIndex].sort = Number(e.target.value || 0) || 0
+              record.sort = Number(e.target.value || 0) || 0
               if (this.props.onChange) {
                 this.props.onChange(dataSource)
               }
@@ -52,6 +54,30 @@ class Main extends React.Component<Props> {
         )
       }
     },
+    {
+      title: '操作',
+      align: 'center',
+      width: 80,
+      render: (text, record, index) => {
+        const { dataSource } = this.props
+        return (
+          <div>
+            <Popconfirm
+              title="确定删除该商品吗？"
+              onConfirm={() => {
+                if (this.props.onChange) {
+                  this.props.onChange(dataSource.filter((item) => item.id !== record.id))
+                }
+              }}
+            >
+              <span
+                className="href"
+              >删除</span>
+            </Popconfirm>
+          </div>
+        )
+      }
+    }
   ]
   public render () {
     return (
@@ -67,6 +93,7 @@ class Main extends React.Component<Props> {
             return <span>共计{total}条</span>
           },
           onChange: (page) =>  {
+            console.log(page, 'page')
             this.page = page
           }
         }}

@@ -75,7 +75,7 @@ class BannerModal extends Component {
           params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url;
           params.imgList = undefined;
         }
-        const seat = params.seat
+        const seat = params.seat || []
         params.newSeat = seat[0]
         params.childSeat = seat[1]
         params.seat = seat[1]

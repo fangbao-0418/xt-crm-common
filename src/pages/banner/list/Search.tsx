@@ -15,11 +15,10 @@ class Main extends React.Component<Props> {
     this.props.form.validateFields((err, value: Special.SearchProps) => {
       if (this.props.onChange) {
         value.status = [0, 1].indexOf(value.status as number) === -1 ? undefined : value.status
-        if (value.seat) {
-          value.newSeat = value.seat[0]
-          value.childSeat = value.seat[1]
-          delete value.seat
-        }
+        value.seat =  value.seat || []
+        value.newSeat = value.seat[0]
+        value.childSeat = value.seat[1]
+        delete value.seat
         this.props.onChange(value)
       }
     })
