@@ -74,6 +74,12 @@ class Main extends React.Component<Props, State> {
         } else {
           api.addIcon(result).then(() => {
             this.fetchList(false)
+            if (this.state.dataSource.length >= 7) {
+              this.setState({
+                selectIndex: -2
+              })
+              return
+            }
             this.resetForm()
             APP.success('新增icon成功')
           }).finally(() => {
@@ -214,6 +220,9 @@ class Main extends React.Component<Props, State> {
                   label='排序'
                 >
                   {getFieldDecorator('sort', {
+                    rules: [
+                      {required: true, message: '排序不能为空'}
+                    ]
                   })(
                     <Input />
                   )}
@@ -222,6 +231,9 @@ class Main extends React.Component<Props, State> {
                   label='内容配置'
                 >
                   {getFieldDecorator('jumpUrl', {
+                    rules: [
+                      {required: true, message: '内容配置不能为空'}
+                    ]
                   })(
                     <Input />
                   )}

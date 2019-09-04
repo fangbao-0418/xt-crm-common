@@ -36,6 +36,10 @@ export const request = (url, config) => {
       const data = res.data.data;
       return isPlainObject(data) ? omitBy(data, isNil) : data;
     } else {
+      console.log(res, 'res')
+      if (res.data && res.data.message) {
+        message.error(res.data.message || '内部错误，请等待响应...');
+      }
       return Promise.reject(res.data);
     }
   }, (error) => {
