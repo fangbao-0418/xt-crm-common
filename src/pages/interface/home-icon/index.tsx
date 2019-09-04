@@ -60,7 +60,7 @@ class Main extends React.Component<Props, State> {
           api.saveIcon(result).then((res: any) => {
             console.log(res, 'res')
             if (res) {
-              dataSource[selectIndex].title = result.title
+              dataSource[selectIndex] = result
               this.setState({
                 dataSource
               })
