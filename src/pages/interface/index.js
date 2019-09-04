@@ -5,6 +5,7 @@ import Hotkey from './hotkey';
 import HomeIcon from './home-icon'
 import Special from './special'
 import SpecialDetail from './special/Detail'
+import HomeConfig from './config'
 export default class extends Component {
     render() {
         return (
@@ -14,6 +15,7 @@ export default class extends Component {
                 <Route path="/interface/home-icon" component={HomeIcon} />
                 <Route path="/interface/special" exact component={Special} />
                 <Route path="/interface/special/:id" component={SpecialDetail} />
+                <Route path="/interface/config" component={HomeConfig} />
             </Switch>
         );
     }
