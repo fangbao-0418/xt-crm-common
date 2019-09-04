@@ -30,6 +30,7 @@ class Main extends React.Component<Props> {
     const { detail } = this.props
     const selectedRowKeys = this.getSelectedRowKeys()
     this.tempList = Array.prototype.concat(detail.list)
+    detail.css = detail.css || 1
     return (
       <div>
         <Row gutter={12}>
@@ -120,6 +121,7 @@ class Main extends React.Component<Props> {
               url: detail.advertisementUrl,
             }
           ]}
+          size={0.3}
           listType="picture-card"
           onChange={(value: any) => {
             const detail = this.props.detail

@@ -203,6 +203,7 @@ class Main extends React.Component<Props, State> {
                     ]
                   })(
                     <Upload
+                      size={0.02}
                       listType="picture-card"
                       style={{width: 100, height: 100}}
                     >

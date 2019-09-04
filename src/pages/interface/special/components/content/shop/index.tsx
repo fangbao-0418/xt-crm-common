@@ -7,6 +7,8 @@ interface Props {
   onChange: (dataSource: Shop.ShopItemProps[]) => void
 }
 class Main extends React.Component<Props> {
+  public pageSize = 5
+  public page = 1
   public columns: ColumnProps<Shop.ShopItemProps>[] = [
     {
       title: '商品ID',
@@ -34,11 +36,14 @@ class Main extends React.Component<Props> {
       align: 'center',
       render: (text, record, index) => {
         const { dataSource } = this.props
+        const tIndex = this.pageSize * (this.page - 1) + index
+        text = text || 0
+        dataSource[tIndex].sort = dataSource[tIndex].sort || 0
         return (
           <Input
             value={text}
             onChange={(e) => {
-              dataSource[index].sort = e.target.value
+              dataSource[tIndex].sort = Number(e.target.value || 0) || 0
               if (this.props.onChange) {
                 this.props.onChange(dataSource)
               }
@@ -56,8 +61,12 @@ class Main extends React.Component<Props> {
         columns={this.columns}
         dataSource={this.props.dataSource}
         pagination={{
+          pageSize: this.pageSize,
           showTotal: (total) => {
             return <span>共计{total}条</span>
+          },
+          onChange: (page) =>  {
+            this.page = page
           }
         }}
       >
