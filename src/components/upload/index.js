@@ -46,14 +46,14 @@ class UploadView extends Component {
 
   initFileList(fileList) {
     const { fileType } = this.props;
-    return fileList.map(val => {
+    return Array.isArray(fileList) ? fileList.map(val => {
       val.durl = val.url
       if (fileType == 'video') {
         val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
         val.thumbUrl = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
       }
       return val;
-    });
+    }): [];
   }
 
   beforeUpload = (file, fileList) => {
@@ -107,6 +107,7 @@ class UploadView extends Component {
       size = 10,
       showUploadList,
       children,
+      ...attributes
     } = this.props;
     const { fileList } = this.state;
     return (
@@ -120,6 +121,7 @@ class UploadView extends Component {
           onRemove={this.handleRemove}
           customRequest={(e) => this.customRequest(e)}
           onPreview={this.onPreview}
+          {...attributes}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>

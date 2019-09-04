@@ -9,7 +9,7 @@ if (host.indexOf('daily-xt-crmadmin') >= 0) {
 } else if (host.indexOf('xt-crmadmin') >= 0) {
   baseHost = 'https://youxuan-crm-api.hzxituan.com';
 }
-
+baseHost = 'https://testapi-crmadmin.hzxituan.com'
 // baseHost = 'http://192.168.10.52:8081';
 
 export default baseHost;
