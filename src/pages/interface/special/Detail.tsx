@@ -8,6 +8,7 @@ import Content from './components/content'
 import * as api from './api'
 import styles from './style.module.sass'
 import { namespace } from './model'
+import detail from '@/pages/activity/info/detail';
 interface Props extends FormComponentProps, RouteComponentProps<{id: any}> {
   detail: Special.DetailItem
 }
@@ -51,18 +52,7 @@ class Main extends React.Component<Props, State> {
     APP.dispatch({
       type: `${namespace}/fetchDetail`,
       payload: {
-        id,
-        cb: (res: Special.DetailItem) => {
-          if (typeof res.imgUrl === 'string') {
-            res.imgUrl = [
-              {
-                uid: 'imgUrl0',
-                url: res.imgUrl
-              }
-            ]
-          }
-          this.props.form.setFieldsValue(res)
-        }
+        id
       }
     })
   }
@@ -104,6 +94,14 @@ class Main extends React.Component<Props, State> {
         span: 18
       },
     };
+    const { detail } = this.props
+    detail.imgUrl = typeof detail.imgUrl === 'string' ? [
+      {
+        uid: 'imgUrl0',
+        url: detail.imgUrl
+      }
+    ] : detail.imgUrl
+
     return (
       <div className={styles.detail}>
         <div className={styles.content}>
@@ -116,17 +114,19 @@ class Main extends React.Component<Props, State> {
               label='名称'
             >
               {getFieldDecorator('subjectName', {
+                initialValue: detail.subjectName,
                 rules: [
                   {required: true, message: '名称不能为空'}
                 ]
               })(
-                <Input />
+                <Input placeholder='请输入专题名称' />
               )}
             </Form.Item>
             <Form.Item
               label='分享标题'
             >
               {getFieldDecorator('shareTitle', {
+                initialValue: detail.shareTitle,
                 rules: [
                   {required: true, message: '分享标题不能为空'},
                   {
@@ -135,19 +135,19 @@ class Main extends React.Component<Props, State> {
                   }
                 ]
               })(
-                <Input />
+                <Input placeholder='请输入分享标题' />
               )}
             </Form.Item>
             <Form.Item
               label='专题背景色'
             >
               {getFieldDecorator('backgroundColor', {
-                initialValue: '#FFFFFF',
+                initialValue: detail.backgroundColor,
                 rules: [
                   {required: true, message: '专题背景色不能为空'}
                 ]
               })(
-                <Input />
+                <Input placeholder='请输入背景色，如#FFFFFF' />
               )}
             </Form.Item>
             <Form.Item
@@ -155,6 +155,7 @@ class Main extends React.Component<Props, State> {
               required
             >
               {getFieldDecorator('imgUrl', {
+                initialValue: detail.imgUrl,
                 rules: [{
                   required: true,
                   message: 'banner图片不能为空'

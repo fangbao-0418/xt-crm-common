@@ -56,6 +56,7 @@ class Main extends React.Component<Props> {
   public render () {
     return (
       <Table
+        rowKey='id'
         size={'small'}
         style={{width: '100%'}}
         columns={this.columns}

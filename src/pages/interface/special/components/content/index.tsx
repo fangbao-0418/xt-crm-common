@@ -10,7 +10,6 @@ interface Props {
 class Main extends React.Component<Props> {
   public render () {
     const { detail } = this.props
-    console.log(detail, 'render')
     return (
       <div>
         {
