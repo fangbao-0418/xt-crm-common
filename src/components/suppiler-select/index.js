@@ -14,7 +14,7 @@ export default class SupplierSelect extends Component {
   query = () => {
     getStoreList({
       page: 1,
-      pageSize: 3000,
+      pageSize: 5000,
     }).then((res = {}) => {
       this.setState({
         supplier: res.records,

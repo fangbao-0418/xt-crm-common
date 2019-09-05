@@ -199,7 +199,7 @@ class GoodsEdit extends React.Component {
     });
   };
   getStoreList = params => {
-    getStoreList({ pageSize: 500, ...params }).then((res = {}) => {
+    getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
       this.setState({
         supplier: res.records,
       });
