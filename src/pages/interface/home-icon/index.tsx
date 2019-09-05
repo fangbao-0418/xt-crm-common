@@ -1,58 +1,138 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Form, Input, Button, Upload, Icon } from 'antd'
+import { Form, Input, Button, Popconfirm } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
+import * as api from './api'
+import Upload from '@/components/upload'
 import styles from './style.module.sass'
 interface Props extends FormComponentProps {}
-function getBase64 (img: File, callback?: (result?: any) => void) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => {
-    if (callback) {
-      callback(reader.result)
-    }
-  });
-  reader.readAsDataURL(img);
+interface State {
+  dataSource:  HomeIcon.ItemProps[]
+  selectIndex: number
+  loading: boolean
 }
-class Main extends React.Component<Props> {
-  public state = {
-    imageUrl: '',
-    loading: false,
-    items: [
-      {title: '体验团长'},
-      {title: '喜团优选'},
-      {title: '新人专享'},
-    ]
+class Main extends React.Component<Props, State> {
+  public state: State = {
+    dataSource: [],
+    selectIndex: -2,
+    loading: false
   }
   public constructor (props: Props) {
     super(props)
     this.addIconItem = this.addIconItem.bind(this)
+    this.toSave = this.toSave.bind(this)
+    this.toDelete = this.toDelete.bind(this)
+    this.toPublish = this.toPublish.bind(this)
   }
   public componentDidMount () {
-    //
+    this.fetchList()
   }
-  public mapper (fn: any): any {
-    return 
-  }
-  public addIconItem () {
-    this.setState({
-      items: this.state.items.concat([{title: ''}])
+  public fetchList (init = true) {
+    api.getIconList().then((res: any = []) => {
+      this.setState({
+        dataSource: res || []
+      })
+      if (init) {
+        const item = res[0] || {}
+        this.props.form.setFieldsValue(item)
+      }
     })
   }
-  public handleChange = (info: any) => {
-    if (info.file.status === 'uploading') {
-      this.setState({ loading: true });
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, imageUrl =>
+  public toSave () {
+    this.props.form.validateFields((err, value: any) => {
+      if (err) {
+        return
+      }
+      const { dataSource, selectIndex } = this.state
+      if (selectIndex < dataSource.length) {
+        const detail = dataSource[selectIndex]
+        const result = {
+          ...detail,
+          ...value
+        }
+        if (result.imgUrl instanceof Array) {
+          result.imgUrl = result.imgUrl[0].url
+        }
         this.setState({
-          imageUrl,
-          loading: false,
-        }),
-      );
+          loading: true
+        })
+        if (result.id) {
+          api.saveIcon(result).then((res: any) => {
+            console.log(res, 'res')
+            if (res) {
+              dataSource[selectIndex] = result
+              this.setState({
+                dataSource
+              })
+              APP.success('保存icon成功')
+            }
+          }).finally(() => {
+            this.setState({
+              loading: false
+            })
+          })
+        } else {
+          api.addIcon(result).then(() => {
+            this.fetchList(false)
+            if (this.state.dataSource.length >= 7) {
+              this.setState({
+                selectIndex: -2
+              })
+              return
+            }
+            this.resetForm()
+            APP.success('新增icon成功')
+          }).finally(() => {
+            this.setState({
+              loading: false
+            })
+          })
+        }
+      }
+    })
+  }
+  public addIconItem () {
+    this.resetForm()
+  }
+  public resetForm () {
+    this.props.form.resetFields()
+    this.setState({
+      selectIndex: -1
+    })
+  }
+  public initValue (index: number) {
+    const { dataSource } = this.state
+    this.setState({
+      selectIndex: index
+    }, () => {
+      const result = dataSource[index]
+      if (typeof result.imgUrl === 'string') {
+        result.imgUrl = [{
+          uid: 'imgurl',
+          url: result.imgUrl
+        }]
+      }
+      this.props.form.setFieldsValue(dataSource[index])
+    })
+  }
+  public toDelete () {
+    const { dataSource, selectIndex } = this.state
+    if (selectIndex > -1) {
+      api.deleteIcon(dataSource[selectIndex].id).then(() => {
+        dataSource.splice(selectIndex, 1)
+        this.setState({
+          dataSource
+        }, () => {
+          this.resetForm()
+        })
+      })
     }
-  };
+  }
+  public toPublish () {
+    api.publishIcon().then(() => {
+      APP.success('发布icon成功')
+    })
+  }
   public render () {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
@@ -63,95 +143,127 @@ class Main extends React.Component<Props> {
         span: 10
       },
     };
-    const uploadButton = (
-      <div>
-        <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">Upload</div>
-      </div>
-    );
-    const { imageUrl } = this.state
+    const { dataSource, selectIndex } = this.state
     return (
-      <div>
+      <div style={{minHeight: 400, background: 'white'}}>
         <div className={styles.header}>
           <div className={styles.tbtns}>
-            {this.state.items.map((item) => <div className={styles.tbtn}>{item.title}</div>)}
-            {this.state.items.length < 8 && <div
-              className={classNames(styles.tbtn, styles.add)}
-              onClick={this.addIconItem}
-            >
-              +新增icon
-            </div>}
-            <Button
-              type="primary"
-              className={styles.release}
-              onClick={this.addIconItem}
-            >
-              发布
-            </Button>
-          </div>
-        </div>
-        <div className={styles.content}>
-          <Form
-            className={styles.form}
-            {...formItemLayout}
-          >
-            <Form.Item
-              label='icon名称'
-            >
-              {getFieldDecorator('name', {
-              })(
-                <Input />
-              )}
-            </Form.Item>
-            <Form.Item
-              label='上传图片'
-            >
-              {getFieldDecorator('imageUrl', {
-              })(
-                <Upload
-                  listType="picture-card"
-                  // className="avatar-uploader"
-                  style={{width: 100, height: 100}}
-                  showUploadList={false}
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  // beforeUpload={beforeUpload}
-                  onChange={this.handleChange}
+            {
+              dataSource.map((item, index) => (
+                <div
+                  key={index}
+                  className={classNames(styles.tbtn, {[styles.active]: selectIndex === index })}
+                  onClick={() => {
+                    this.initValue(index)
+                  }}
                 >
-                  {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                </Upload>
-              )}
-            </Form.Item>
-            <Form.Item
-              label='排序'
+                  {item.title}
+                </div>
+              )
+            )}
+            {
+              dataSource.length < 8 && <div
+                className={classNames(styles.tbtn, styles.add)}
+                onClick={this.addIconItem}
+              >
+                +新增icon
+              </div>
+            }
+            <Popconfirm
+              title='确认发布icon吗'
+              onConfirm={this.toPublish}
             >
-              {getFieldDecorator('sort', {
-              })(
-                <Input />
-              )}
-            </Form.Item>
-            <Form.Item
-              label='内容配置'
-            >
-              {getFieldDecorator('content', {
-              })(
-                <Input />
-              )}
-            </Form.Item>
-            <div className={styles.footer}>
               <Button
                 type="primary"
+                className={styles.release}
               >
-                保存
+                发布
               </Button>
-              <Button
-                ghost
-                type="danger"
-              >
-                删除
-              </Button>
-            </div>
-          </Form>
+            </Popconfirm>
+          </div>
         </div>
+        {
+          selectIndex > -2 && (
+            <div className={styles.content}>
+              <Form
+                className={styles.form}
+                {...formItemLayout}
+              >
+                <Form.Item
+                  label='icon名称'
+                >
+                  {getFieldDecorator('title', {
+                    rules: [
+                      {required: true, message: 'icon名称不能为空'}
+                    ]
+                  })(
+                    <Input />
+                  )}
+                </Form.Item>
+                <Form.Item
+                  label='上传图片'
+                >
+                  {getFieldDecorator('imgUrl', {
+                    rules: [
+                      {required: true, message: '上传图片不能为空'}
+                    ]
+                  })(
+                    <Upload
+                      size={0.02}
+                      listType="picture-card"
+                      style={{width: 100, height: 100}}
+                    >
+                    </Upload>
+                  )}
+                </Form.Item>
+                <Form.Item
+                  label='排序'
+                >
+                  {getFieldDecorator('sort', {
+                    rules: [
+                      {required: true, message: '排序不能为空'}
+                    ]
+                  })(
+                    <Input />
+                  )}
+                </Form.Item>
+                <Form.Item
+                  label='内容配置'
+                >
+                  {getFieldDecorator('jumpUrl', {
+                    rules: [
+                      {required: true, message: '内容配置不能为空'}
+                    ]
+                  })(
+                    <Input />
+                  )}
+                </Form.Item>
+                <div className={styles.footer}>
+                  <Button
+                    loading={this.state.loading}
+                    type="primary"
+                    onClick={this.toSave}
+                  >
+                    保存
+                  </Button>
+                  <Popconfirm
+                    disabled={selectIndex <= -1}
+                    title='确认删除icon吗'
+                    onConfirm={this.toDelete}
+                  >
+                    <Button
+                      disabled={selectIndex <= -1}
+                      ghost
+                      type="danger"
+                    >
+                      删除
+                    </Button>
+                  </Popconfirm>
+                </div>
+              </Form>
+            </div>
+          )
+        }
       </div>
     )
   }

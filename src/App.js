@@ -1,5 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router'
+import { connect } from 'react-redux'
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { view as Layout } from './components/layout';
 import Order from './pages/order';
@@ -18,6 +19,7 @@ import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
 
 const Main = props => {
+  APP.dispatch = props.dispatch
   APP.history = props.history
   return (
     <>
@@ -43,4 +45,4 @@ const Main = props => {
   );
 };
 
-export default withRouter(Main);
+export default withRouter(connect()(Main));

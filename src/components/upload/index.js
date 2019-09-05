@@ -44,7 +44,7 @@ class UploadView extends Component {
     }
   }
 
-  initFileList(fileList) {
+  initFileList(fileList = []) {
     const { fileType } = this.props;
     return fileList.map(val => {
       val.durl = val.url
@@ -57,6 +57,7 @@ class UploadView extends Component {
   }
 
   beforeUpload = (file, fileList) => {
+    console.log(file, 'file')
     const { fileType, size = 10 } = this.props;
     if (fileType && file.type.indexOf(fileType) < 0) {
       message.error(`请上传正确${fileType}格式文件`);

@@ -81,16 +81,24 @@ ol, ul {
   color: #40a9ff;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .mt10 {
-  margin-top: 10px
+  margin-top: 10px;
 }
 
 .mb10 {
-  margin-bottom: 10px
+  margin-bottom: 10px;
+}
+
+.ml10 {
+  margin-left: 10px;
 }
 
 .mr10 {
-  margin-right: 10px
+  margin-right: 10px;
 }
 
 .ant-dropdown-menu-item {

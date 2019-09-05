@@ -3,6 +3,25 @@
   padding: 20px
   .search
     margin-bottom: 20px
+  .operate
+    span 
+      margin-right: 10px
+      &:last-child
+        margin: 0
+  .valid, .invalid
+    display: inline-block
+    cursor: pointer
+    &:before
+      display: block
+      content: ''
+      width: 4px
+      height: 4px
+      background: #1890ff
+      border-radius: 50%
+      float: left
+      margin: 10px 5px 0 0
+  .invalid:before
+    background: #ccc
 .detail
   .content
     background: white
