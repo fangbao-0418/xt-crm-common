@@ -100,7 +100,7 @@ class Main extends React.Component<Props> {
                 ref.setState({visible: true})
               }}
             >
-              添加商品
+              选择商品
             </span>
           </Col>
         </Row>
@@ -125,10 +125,16 @@ class Main extends React.Component<Props> {
           listType="picture-card"
           onChange={(value: any) => {
             const detail = this.props.detail
+            console.log(value, 'picture change')
             if (value[0] && value[0].url) {
               this.onChange({
                 ...detail,
                 advertisementUrl: value[0].url
+              })
+            } else {
+              this.onChange({
+                ...detail,
+                advertisementUrl: undefined
               })
             }
           }}
