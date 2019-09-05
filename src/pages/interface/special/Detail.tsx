@@ -74,14 +74,16 @@ class Main extends React.Component<Props, State> {
         ...detail,
         ...value
       }).then((res: any) => {
-        if (res !== undefined) {
-          APP.success(`专题${this.id === '-1' ? '新增' : '修改'}成功`)
-        }
-      }).finally(() => {
         this.setState({
           loading: false
-        }, () => {
+        })
+        if (res !== undefined) {
+          APP.success(`专题${this.id === '-1' ? '新增' : '修改'}成功`)
           APP.history.push('/interface/special')
+        }
+      }, () => {
+        this.setState({
+          loading: false
         })
       })
     })
