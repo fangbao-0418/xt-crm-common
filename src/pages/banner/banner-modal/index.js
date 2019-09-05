@@ -17,7 +17,7 @@ const initImgList = imgUrlWap => {
   if (imgUrlWap) {
     return [
       {
-        uid: `${-parseInt(Math.random() * 1000)}`,
+        uid: `imgUrl0`,
         url: imgUrlWap,
         status: 'done',
         thumbUrl: imgUrlWap,
@@ -140,7 +140,12 @@ class BannerModal extends Component {
               {getFieldDecorator('imgList', {
                 initialValue: initImgList(data.imgUrlWap),
               })(
-                <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />,
+                <UploadView
+                  placeholder="上传主图"
+                  listType="picture-card"
+                  listNum={1}
+                  size={.3}
+                />,
               )}
             </FormItem>
             <FormItem label="跳转地址">

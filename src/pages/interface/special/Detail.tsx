@@ -8,7 +8,6 @@ import Content from './components/content'
 import * as api from './api'
 import styles from './style.module.sass'
 import { namespace } from './model'
-import detail from '@/pages/activity/info/detail';
 interface Props extends FormComponentProps, RouteComponentProps<{id: any}> {
   detail: Special.DetailItem
 }
@@ -26,10 +25,12 @@ class Main extends React.Component<Props, State> {
     this.handleSubmit = this.handleSubmit.bind(this)
   }
   public componentDidMount () {
+    this.fetchData()
+  }
+  public componentWillUnmount () {
     APP.dispatch({
       type: `${namespace}/@@init`
     })
-    this.fetchData()
   }
   public addContent (type: 1 | 2 | 3) {
     const { detail } = this.props
@@ -102,7 +103,7 @@ class Main extends React.Component<Props, State> {
         url: detail.imgUrl
       }
     ] : detail.imgUrl
-
+    console.log(detail.imgUrl, 'imgUrl')
     return (
       <div className={styles.detail}>
         <div className={styles.content}>
