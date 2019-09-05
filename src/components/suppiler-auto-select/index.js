@@ -11,7 +11,7 @@ class SuppilerSelect extends Component {
     this.getStoreList();
   }
   getStoreList = params => {
-    getStoreList({ pageSize: 500, ...params }).then((res = {}) => {
+    getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
       this.setState({
         supplier: res.records,
       });
