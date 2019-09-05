@@ -181,7 +181,7 @@ class OrderList extends React.Component {
             dataSource={this.state.list}
             pagination={{
               current,
-              total: 9,
+              total,
               pageSize,
               onChange: this.handlePageChange,
             }}
