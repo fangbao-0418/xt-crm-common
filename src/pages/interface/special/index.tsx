@@ -23,7 +23,7 @@ class Main extends React.Component<{}, State> {
   }, {
     title: '链接',
     render: (text, record) => {
-      const url = APP.fn.getH5Origin() + `/#/activity/${record.id}`
+      const url = APP.fn.getH5Origin() + `#/activity/${record.id}`
       return <a target="_blank" href={url} title={record.subjectName}>{url}</a>
     }
   }, {
