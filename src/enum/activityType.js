@@ -6,5 +6,6 @@ export default new Enum([
   { key: 3, val: '礼包' },
   { key: 4, val: '激活码' },
   { key: 5, val: '线下专区' },
-  { key: 7, val: '地推采购' }
+  { key: 6, val: '体验团长专区' },
+  { key: 7, val: '采购专区' }
 ])
