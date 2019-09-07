@@ -176,7 +176,7 @@ class List extends React.Component {
         params: { id },
       },
     } = this.props;
-    localStorage.setItem('editsku', JSON.stringify({type, ...record}));
+    localStorage.setItem('editsku', JSON.stringify({ type, ...record }));
     history.push(`/activity/info/detail/${id}`);
   };
 
@@ -213,7 +213,7 @@ class List extends React.Component {
   }
 
   handleRemove = id => () => {
-     Modal.confirm({
+    Modal.confirm({
       title: '系统提示',
       content: '确定要删除该信息吗？',
       okText: '确认',
@@ -242,13 +242,13 @@ class List extends React.Component {
       onChange: this.handlenChanageSelectio,
     };
 
-    const skuColumns = [
+    const getSkuColumns = () => [
       {
         title: 'sku名称',
         dataIndex: 'property',
       },
       {
-        title: '活动价',
+        title: `${type === 6 ? '助力分' : '活动价'}`,
         dataIndex: 'buyingPrice',
         render: text => formatMoneyWithSign(text),
       },
@@ -282,12 +282,12 @@ class List extends React.Component {
             <FormItem layout="inline" label="开始时间">
               {getFieldDecorator('startTime', {
                 initialValue: moment(startTime),
-              })(<DatePicker  format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledStartDate}/>)}
+              })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledStartDate} />)}
             </FormItem>
             <FormItem layout="inline" label="结束时间">
               {getFieldDecorator('endTime', {
                 initialValue: moment(endTime),
-              })(<DatePicker  format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledEndDate}/>)}
+              })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledEndDate} />)}
             </FormItem>
             <FormItem layout="inline" label="活动排序">
               {getFieldDecorator('sort', {
@@ -310,13 +310,16 @@ class List extends React.Component {
             columns={goodsColumns([
               {
                 title: '规格信息',
-                render: record => (
-                  <Table
-                    columns={skuColumns}
-                    dataSource={filter(record.promotionSkuList, item => item.selected)}
-                    pagination={false}
-                  />
-                ),
+                render: record => {
+                  console.log('record=>', record)
+                  return (
+                    <Table
+                      columns={getSkuColumns(record)}
+                      dataSource={filter(record.promotionSkuList, item => item.selected)}
+                      pagination={false}
+                    />
+                  );
+                },
               },
               {
                 title: '操作',
@@ -342,7 +345,7 @@ class List extends React.Component {
           />
         </Card>
         <Card style={{ marginTop: 10 }}>
-          <Button type="danger" onClick={this.handleReturn} style={{marginRight:'10px'}}>
+          <Button type="danger" onClick={this.handleReturn} style={{ marginRight: '10px' }}>
             返回
           </Button>
           <Button type="primary" onClick={this.updateSync}>
@@ -375,16 +378,16 @@ class List extends React.Component {
           visible={this.state.visibleAct}
           width={1000}
           footer={null}
-          onCancel={()=>this.setState({
+          onCancel={() => this.setState({
             visibleAct: false
           })}
         >
-          <Add history={this.props.history} data={this.state.promotionDetail} onOk={()=>{
+          <Add history={this.props.history} data={this.state.promotionDetail} onOk={() => {
             this.setState({
               visibleAct: false
             });
             this.getPromotionDetail();
-          }}/>
+          }} />
         </Modal>
       </>
     );
