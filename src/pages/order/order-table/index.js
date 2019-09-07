@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin } from 'antd';
 import { isNil } from 'lodash';
+import moment from 'moment'
 import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant';
 import { formatDate, formatMoneyWithSign } from '../../helper';
 import { getOrderList, exportOrder, importLogistics } from '../api';
@@ -18,7 +19,7 @@ const formatRangeDate = (val) => {
 }
 class OrderList extends React.Component {
   static defaultProps = {};
-
+  payload = APP.fn.getPayload('order') || {}
   state = {
     selectedRowKeys: [],
     list: [],
@@ -32,7 +33,7 @@ class OrderList extends React.Component {
     // this.query();
   }
 
-  query = (isExport = false) => {
+  query = (isExport = false, noFetch = false) => {
     let fieldsValues = this.props.form.getFieldsValue();
     let rangePickerValue = fieldsValues['rangePicker']
     if (this.props.type === 'refund') {
@@ -58,6 +59,12 @@ class OrderList extends React.Component {
       page: this.state.current,
       pageSize: this.state.pageSize,
     };
+    this.payload = this.payload || {}
+    this.payload[this.props.pathname] = params
+    APP.fn.setPayload('order', this.payload)
+    if (noFetch) {
+      return
+    }
     if (isExport) {
       this.setState({
         loading: true
@@ -101,7 +108,10 @@ class OrderList extends React.Component {
   };
 
   reset = () => {
+    this.payload[this.props.pathname] = {}
+    APP.fn.setPayload('order', this.payload)
     this.props.form.resetFields();
+    this.forceUpdate()
   };
 
   onSelectChange = selectedRowKeys => {
@@ -276,40 +286,47 @@ class OrderList extends React.Component {
         />
       );
     };
-
+    const values = this.payload[this.props.pathname] || {}
+    values.rangePicker = values.orderStartDate && [moment(values.orderStartDate), moment(values.orderEndDate)]
+    values.playPicker = values.payStartDate && [moment(values.payStartDate), moment(values.payEndDate)]
     return (
       <Spin tip="操作处理中..." spinning={this.state.loading}>
         <Card title="筛选">
-          <Form layout="inline">
+          <Form
+            layout="inline"
+            onChange={() => {
+              this.query(false, true)
+            }}
+          >
             <FormItem label="订单编号">
-              {getFieldDecorator('orderCode')(<Input placeholder="请输入订单编号" />)}
+              {getFieldDecorator('orderCode', {initialValue: values.orderCode})(<Input placeholder="请输入订单编号" />)}
             </FormItem>
             <FormItem label="快递单号">
-              {getFieldDecorator('expressCode')(<Input placeholder="请输入快递单号" />)}
+              {getFieldDecorator('expressCode', {initialValue: values.expressCode})(<Input placeholder="请输入快递单号" />)}
             </FormItem>
             <FormItem label="商品ID">
-              {getFieldDecorator('productId')(<Input placeholder="请输入商品ID" />)}
+              {getFieldDecorator('productId', {initialValue: values.productId})(<Input placeholder="请输入商品ID" />)}
             </FormItem>
             <FormItem label="下单人ID">
-              {getFieldDecorator('buyerId')(<Input placeholder="请输入下单人ID" />)}
+              {getFieldDecorator('buyerId', {initialValue: values.buyerId})(<Input placeholder="请输入下单人ID" />)}
             </FormItem>
             <FormItem label="下单人电话">
-              {getFieldDecorator('buyerPhone')(<Input placeholder="请输入下单人电话" />)}
+              {getFieldDecorator('buyerPhone', {initialValue: values.buyerPhone})(<Input placeholder="请输入下单人电话" />)}
             </FormItem>
             <FormItem label="收货人">
-              {getFieldDecorator('contact')(<Input placeholder="请输入收货人" />)}
+              {getFieldDecorator('contact', {initialValue: values.contact})(<Input placeholder="请输入收货人" />)}
             </FormItem>
             <FormItem label="收货人电话">
-              {getFieldDecorator('phone')(<Input placeholder="请输入收货人电话" />)}
+              {getFieldDecorator('phone', {initialValue: values.phone})(<Input placeholder="请输入收货人电话" />)}
             </FormItem>
             <FormItem label="供应商">
-              {getFieldDecorator('storeId', {})(<SuppilerSelect style={{width: '174px'}}/>)}
+              {getFieldDecorator('storeId', {initialValue: values.storeId})(<SuppilerSelect style={{width: '174px'}}/>)}
             </FormItem>
             <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
-              {getFieldDecorator('rangePicker', {})(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}
+              {getFieldDecorator('rangePicker', {initialValue: values.rangePicker})(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}
             </FormItem>
             {this.props.type === 'order' ? <FormItem label="支付时间">
-              {getFieldDecorator('playPicker', {})(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}
+              {getFieldDecorator('playPicker', {initialValue: values.playPicker})(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}
             </FormItem> : ''}
             <FormItem>
               <Button type="default" onClick={this.reset}>

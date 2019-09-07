@@ -7,7 +7,9 @@ interface Props extends FormComponentProps {
   className?: string
   onChange?: (value?: Special.SearchProps) => void
 }
+const namespace = '/special/list'
 class Main extends React.Component<Props> {
+  public payload: Special.SearchProps = APP.fn.getPayload(namespace) || {}
   public constructor (props: Props) {
     super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -23,6 +25,7 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { getFieldDecorator } = this.props.form
+    const values = this.payload
     return (
       <div className={classNames(styles.search, this.props.className)}>
         <Form
@@ -32,7 +35,7 @@ class Main extends React.Component<Props> {
             label='专题ID'
           >
             {
-              getFieldDecorator('subjectId', {})(
+              getFieldDecorator('subjectId', {initialValue: values.subjectId})(
                 <Input placeholder='请输入专题ID'/>
               )
             }
@@ -41,7 +44,7 @@ class Main extends React.Component<Props> {
             label='专题名称'
           >
             {
-              getFieldDecorator('title', {})(
+              getFieldDecorator('title', {initialValue: values.title})(
                 <Input  placeholder='请输入专题名称' />
               )
             }
@@ -51,7 +54,7 @@ class Main extends React.Component<Props> {
           >
             {
               getFieldDecorator('status', {
-                initialValue: -1
+                initialValue: values.status !== undefined ? values.status : -1
               })(
                 <Select style={{width: 100}}>
                   <Select.Option value={-1}>全部</Select.Option>
@@ -71,7 +74,10 @@ class Main extends React.Component<Props> {
             </Button>
             <Button
               onClick={() => {
+                this.payload = {}
+                APP.fn.setPayload(namespace, {})
                 this.props.form.resetFields()
+                this.forceUpdate()
               }}
             >
               重置
@@ -82,4 +88,8 @@ class Main extends React.Component<Props> {
     )
   }
 }
-export default Form.create<Props>()(Main)
+export default Form.create<Props>({
+  onValuesChange: (props, changeValues, allValues) => {
+    APP.fn.setPayload(namespace, allValues)
+  }
+})(Main)

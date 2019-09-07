@@ -101,13 +101,19 @@ function getColumns(scope) {
 }
 
 let unlisten = null;
+const namespace = '/user/cdkey';
 
 @connect(state => ({
   tableConfig: state['user.cdkey'].tableConfig,
   loading: state.loading.effects['user.cdkey'].getData,
 }))
-@Form.create()
+@Form.create({
+  onValuesChange: (props, changeValues, allValues) => {
+    APP.fn.setPayload(namespace, allValues)
+  }
+})
 export default class extends Component {
+  payload = APP.fn.getPayload(namespace) || {}
   componentDidMount() {
     unlisten = this.props.history.listen(() => {
       const params = parseQuery(this.props.history);
@@ -183,12 +189,13 @@ export default class extends Component {
     const {
       form: { getFieldDecorator },
     } = this.props;
+    const values = this.payload
     return (
       <Form layout="inline">
-        <FormItem label="订单号">{getFieldDecorator('orderCode')(<Input />)}</FormItem>
+        <FormItem label="订单号">{getFieldDecorator('orderCode', {initialValue: values.orderCode})(<Input />)}</FormItem>
         <FormItem label="类型" className={styles.level}>
           {getFieldDecorator('type', {
-            initialValue: '',
+            initialValue: values.type,
           })(
             <Select>
               {Object.keys(typeMap).reverse().map(item => (
@@ -199,11 +206,15 @@ export default class extends Component {
             </Select>,
           )}
         </FormItem>
-        <FormItem label="领取人">{getFieldDecorator('receiveMemberPhone')(<Input placeholder="请填写手机号" />)}</FormItem>
-        <FormItem label="使用人">{getFieldDecorator('activeMemberPhone')(<Input placeholder="请填写手机号" />)}</FormItem>
+        <FormItem label="领取人">{getFieldDecorator('receiveMemberPhone', {
+            initialValue: values.receiveMemberPhone,
+          })(<Input placeholder="请填写手机号" />)}</FormItem>
+        <FormItem label="使用人">{getFieldDecorator('activeMemberPhone', {
+            initialValue: values.activeMemberPhone,
+          })(<Input placeholder="请填写手机号" />)}</FormItem>
         <FormItem label="使用状态" className={styles.level}>
           {getFieldDecorator('status', {
-            initialValue: '',
+            initialValue: values.status,
           })(
             <Select>
               {usedStatus.map(item => (
@@ -218,7 +229,11 @@ export default class extends Component {
           <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch()}>
             查询
           </Button>
-          <Button type="primary" onClick={() => this.handleReset()}>
+          <Button type="primary" onClick={() => {
+            APP.fn.setPayload(this.payload = {})
+            this.handleReset()
+            this.forceUpdate()
+          }}>
             重置
           </Button>
         </FormItem>

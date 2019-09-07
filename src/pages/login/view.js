@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form, Icon, Input } from 'antd';
 import logo from '@/assets/images/logo.svg';
 import styles from './login.module.scss';
@@ -14,7 +14,9 @@ const LoginPage = (props) => {
     userNameInput.focus();
     setUserName('');
   };
-
+  useEffect(() => {
+    APP.fn.setPayload(null)
+  })
   const gotoLogin = e => {
     e.preventDefault();
     props.dispatch({

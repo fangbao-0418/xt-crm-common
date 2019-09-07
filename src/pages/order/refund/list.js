@@ -1,5 +1,6 @@
 import React from 'react';
 import { Message, Button, Spin, Row, Col } from 'antd';
+import moment from 'moment'
 import { refundList, exportRefund } from '../api';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
@@ -14,7 +15,7 @@ const formatFields = (range) => {
 @withRouter
 export default class extends React.Component {
   static defaultProps = {};
-
+  payload = APP.fn.getPayload('order') || {}
   state = {
     selectedRowKeys: [],
     list: [],
@@ -30,7 +31,7 @@ export default class extends React.Component {
     this.query();
   }
 
-  query = (isExport = false) => {
+  query = (isExport = false, noFetch = false) => {
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
@@ -46,6 +47,14 @@ export default class extends React.Component {
       page: this.state.current,
       pageSize: this.state.pageSize,
     };
+    console.log(params, 'params')
+    this.payload = this.payload || {}
+    this.payload.refundOrder = this.payload.refundOrder || {}
+    this.payload.refundOrder[this.props.refundStatus || 'all'] = params
+    APP.fn.setPayload('order', this.payload)
+    if (noFetch) {
+      return
+    }
     if (isExport) {
       this.setState({
         loading: true
@@ -95,15 +104,27 @@ export default class extends React.Component {
 
   render() {
     const { tableConfig: { records = [], total = 0, current = 0 } } = this.state;
+    let values = this.payload.refundOrder && this.payload.refundOrder[this.props.refundStatus || 'all'] || {}
 
+    values.apply = values.applyEndTime && [moment(values.applyEndTime), moment(values.applyStartTime)]
+    values.handle = values.handleStartTime && [moment(values.handleStartTime), moment(values.handleEndTime)]
     return (
       <Spin tip="操作处理中..." spinning={this.state.loading}>
         <SearchForm
+          values={values}
           wrappedComponentRef={ref => this.SearchForm = ref}
           format={this.handleFormat}
           search={this.handleSearch}
-          clear={this.handleSearch}
+          clear={() => {
+            values = {}
+            this.query(false)
+            this.forceUpdate()
+          }}
           options={formFields()}
+          onChange={() => {
+            console.log('change')
+            this.query(false, true)
+          }}
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>

@@ -1,4 +1,5 @@
-import { exportFile, post } from '../../util/fetch';
+import { exportFile } from '../../util/fetch';
+const { post } = APP.http
 const debug = false;
 
 const mockData = {

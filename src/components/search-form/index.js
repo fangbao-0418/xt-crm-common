@@ -6,13 +6,19 @@ const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 // const dateFormat = 'YYYY-MM-DD HH:mm:ss';
-@Form.create()
+@Form.create({
+  onFieldsChange: (props) => {
+    if (props.onChange) {
+      props.onChange()
+    }
+  }
+})
 export default class extends PureComponent {
 
   constructor(props) {
     super(props);
     this.state = {
-      initParams: parseQuery()
+      initParams: props.values
     }
   }
   renderInput = (item) => {
@@ -60,20 +66,27 @@ export default class extends PureComponent {
 
   resetFields = () => {
     const { form: { resetFields }, clear } = this.props;
-    resetFields();
-    clear();
+    this.setState({
+      initParams: {}
+    }, () => {
+      resetFields();
+      clear();
+    })
   }
 
   render() {
     const { options = [], form: { getFieldDecorator }, className, children } = this.props;
     const { initParams } = this.state;
     return (
-      <Form {...{
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 8 },
-        }
-      }} className={"i-search-form" + (className ? " " + className : "")}>
+      <Form
+        {...{
+          labelCol: {
+            xs: { span: 24 },
+            sm: { span: 8 },
+          }
+        }}
+        className={"i-search-form" + (className ? " " + className : "")}
+      >
         <Row>
           {
             options.map((item, i) => {

@@ -73,18 +73,25 @@ const basePayload = {
 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
-
+const namespace = '/finance/log'
 @connect(state => ({
   data: state['finance.log'].tableConfig,
   loading: state.loading.effects['finance.log'].getData
 }))
-@Form.create()
+@Form.create({
+  onValuesChange: (props, changeValues, allValues) => {
+    const time = allValues.time || []
+    allValues.withdrawalStartDate = time[0] && time[0].format(timeFormat)
+    allValues.withdrawalEndDate = time[1] && time[1].format(timeFormat)
+    APP.fn.setPayload(namespace, allValues)
+  }
+})
 export default class extends Component {
 
   state = {
     loading: false
   }
-
+  payload = APP.fn.getPayload(namespace) || {}
   componentDidMount() {
     this.handleSearch();
   }
@@ -131,39 +138,41 @@ export default class extends Component {
   }
   renderForm = () => {
     const { form: { getFieldDecorator, resetFields } } = this.props;
+    const values = this.payload
+    values.time = values.withdrawalStartDate && [moment(values.withdrawalStartDate), moment(values.withdrawalEndDate)]
     return (
       <Form layout="inline">
         <FormItem label="提现单号">
           {
-            getFieldDecorator('withdrawalCode')(
+            getFieldDecorator('withdrawalCode', { initialValue: values.withdrawalCode })(
               <Input />
             )
           }
         </FormItem>
         <FormItem label="手机号">
           {
-            getFieldDecorator('phone')(
+            getFieldDecorator('phone', { initialValue: values.phone })(
               <Input />
             )
           }
         </FormItem>
         <FormItem label="姓名">
           {
-            getFieldDecorator('userName')(
+            getFieldDecorator('userName', { initialValue: values.userName })(
               <Input />
             )
           }
         </FormItem>
         <FormItem label="支付流水号">
           {
-            getFieldDecorator('payOrderNo')(
+            getFieldDecorator('payOrderNo', { initialValue: values.payOrderNo })(
               <Input />
             )
           }
         </FormItem>
         <FormItem label="申请时间">
           {
-            getFieldDecorator('time')(
+            getFieldDecorator('time', { initialValue: values.time })(
               <RangePicker
                 showTime
               />
@@ -172,7 +181,16 @@ export default class extends Component {
         </FormItem>
         <FormItem>
           <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch()}>查询</Button>
-          <Button type="primary" style={{ marginRight: 10 }} onClick={() => resetFields()}>清除条件</Button>
+          <Button
+            type="primary"
+            style={{ marginRight: 10 }}
+            onClick={() => {
+              this.payload = {}
+              APP.fn.setPayload(namespace, {})
+              resetFields()
+              this.forceUpdate()
+            }}
+          >清除条件</Button>
           <Button type="primary" onClick={() => this.exportFile()}>导出</Button>
         </FormItem>
       </Form>

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect, parseQuery, setQuery } from '@/util/utils';
 import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table } from 'antd';
+import moment from 'moment';
+
 import { levelArr, sourceArr } from './config';
 import styles from './index.module.scss';
 import Modal from './modal';
@@ -91,15 +93,23 @@ function getColumns(scope) {
 }
 
 let unlisten = null;
+const namespace = '/user/userlist'
 
 @connect(state => ({
     tableConfig: state['user.userlist'].tableConfig,
     loading: state.loading.effects['user.userlist'].getData,
 }))
-@Form.create()
+@Form.create({
+    onValuesChange: (props, changeValues, allValues) => {
+        const time = allValues.time || []
+        allValues.registerStartDate = time[0] && time[0].format(timeFormat)
+        allValues.registerEndDate = time[1] && time[1].format(timeFormat)
+        APP.fn.setPayload(namespace, allValues)
+    }
+})
 export default class extends Component {
 
-
+    payload = APP.fn.getPayload(namespace) || {}
     componentDidMount() {
         unlisten = this.props.history.listen(() => {
         //     // const { form: { resetFields } } = this.props;
@@ -168,11 +178,14 @@ export default class extends Component {
 
     renderForm = () => {
         const { form: { getFieldDecorator, resetFields } } = this.props;
+        const values = this.payload
+        values.time = values.registerStartDate && [moment(values.registerStartDate), moment(values.registerEndDate)]
         return (
             <Form layout="inline">
                 <FormItem label="用户ID">
                     {
                         getFieldDecorator('id', {
+                            initialValue: values.id,
                             rules: [{
                                 
                                 message: '请输入数字类型',
@@ -185,21 +198,27 @@ export default class extends Component {
                 </FormItem>
                 <FormItem label="昵称">
                     {
-                        getFieldDecorator('nickName')(
+                        getFieldDecorator('nickName', {
+                            initialValue: values.nickName,
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="姓名">
                     {
-                        getFieldDecorator('userName')(
+                        getFieldDecorator('userName', {
+                            initialValue: values.userName,
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="注册时间">
                     {
-                        getFieldDecorator('time')(
+                        getFieldDecorator('time', {
+                            initialValue: values.time,
+                        })(
                             <RangePicker
                                 showTime
                             />
@@ -209,7 +228,7 @@ export default class extends Component {
                 <FormItem label="等级" className={styles.level}>
                     {
                         getFieldDecorator('memberType', {
-                            initialValue: ''
+                            initialValue: values.memberType
                         })(
                             <Select>
                                 {
@@ -221,14 +240,18 @@ export default class extends Component {
                 </FormItem>
                 <FormItem label="手机号">
                     {
-                        getFieldDecorator('phone')(
+                        getFieldDecorator('phone', {
+                            initialValue: values.phone 
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="邀请人手机号">
                     {
-                        getFieldDecorator('invitePhone')(
+                        getFieldDecorator('invitePhone', {
+                            initialValue: values.invitePhone 
+                        })(
                             <Input />
                         )
                     }
@@ -236,7 +259,7 @@ export default class extends Component {
                 <FormItem label="注册来源" className={styles.source}>
                     {
                         getFieldDecorator('registerFrom', {
-                            initialValue: ''
+                            initialValue: values.registerFrom
                         })(
                             <Select>
                                 {
@@ -248,7 +271,15 @@ export default class extends Component {
                 </FormItem>
                 <FormItem>
                     <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch()}>查询</Button>
-                    <Button type="primary" onClick={() => resetFields()}>清除条件</Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            this.payload = {}
+                            APP.fn.setPayload(namespace, {})
+                            resetFields()
+                            this.forceUpdate()
+                        }}
+                    >清除条件</Button>
                 </FormItem>
             </Form>
         )

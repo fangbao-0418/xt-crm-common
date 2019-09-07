@@ -11,7 +11,9 @@ declare module APP {
     post: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
   }
   interface FnProps {
-    getH5Origin
+    getH5Origin: () => string
+    setPayload: (name: string | null, value?: any) => void
+    getPayload: <T = any>(name: string) => T
   }
   type DispatchProps = (action: ReduxActionProps) => void
   export var history: History
