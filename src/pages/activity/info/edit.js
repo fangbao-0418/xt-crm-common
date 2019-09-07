@@ -14,7 +14,7 @@ import {
 import { size, filter } from 'lodash';
 import { parseQuery, gotoPage } from '@/util/utils';
 import Add from '../add';
-import { formatMoneyWithSign } from '../../helper';
+import { formatMoney, formatMoneyWithSign } from '../../helper';
 import moment from 'moment';
 import Image from '../../../components/Image';
 import activityType from '../../../enum/activityType'
@@ -250,7 +250,7 @@ class List extends React.Component {
       {
         title: `${type === 6 ? '助力分' : '活动价'}`,
         dataIndex: 'buyingPrice',
-        render: text => formatMoneyWithSign(text),
+        render: text => type === 6 ? formatMoney(text) : formatMoneyWithSign(text),
       },
       {
         title: '活动库存',
