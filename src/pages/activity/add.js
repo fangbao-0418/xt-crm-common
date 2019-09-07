@@ -134,7 +134,7 @@ class Add extends React.Component {
   };
 
   typeChange = (val) => {
-    if ([1, 5, 6].includes(val)) {
+    if ([1, 5, 6, 7].includes(val)) {
       this.setState({
         tagImg: activityTagSImg,
         tagClass: 'img_sm'

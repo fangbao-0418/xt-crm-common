@@ -73,7 +73,7 @@ class GoodsList extends React.Component {
   }
 
   getStoreList = params => {
-    getStoreList({ pageSize: 60, ...params }).then((res = {}) => {
+    getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
       this.setState({
         supplier: res.records,
       });
@@ -305,8 +305,10 @@ class GoodsList extends React.Component {
                 <Select
                   placeholder="请选择供货商"
                   showSearch
-                  style={{ width: 100 }}
-                  onSearch={this.onSearch}
+                  filterOption={(inputValue, option) =>{
+                    return option.props.children.indexOf(inputValue) > -1;
+                  }}
+                  style={{ width: 300 }}
                 >
                   {map(supplier, item => (
                     <Option value={item.id} key={item.id}>{item.name}</Option>

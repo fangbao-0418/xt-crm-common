@@ -5,7 +5,7 @@ import BannerModal from '../banner-modal';
 import { formatDate } from '../../helper';
 import { TextMapPosition } from '../constant';
 import Image from '../../../components/Image';
-
+import Search from './Search'
 const replaceHttpUrl = imgUrl => {
   if (imgUrl.indexOf('http') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
@@ -15,7 +15,10 @@ const replaceHttpUrl = imgUrl => {
 
 class OrderList extends React.Component {
   static defaultProps = {};
-
+  payload = {
+    page: 1,
+    pageSize: 10
+  }
   state = {
     selectedRowKeys: [],
     list: [],
@@ -29,14 +32,13 @@ class OrderList extends React.Component {
   }
 
   query = () => {
-    let params = {
-      page: this.state.current,
-      pageSize: this.state.pageSize,
-    };
-    queryBannerList(params).then(res => {
+    this.setState({
+      page: this.payload.page,
+      pageSize: this.payload.pageSize
+    })
+    queryBannerList(this.payload).then(res => {
       this.setState({
         list: res.records,
-        pageSize: res.size,
         total: res.total,
       });
     });
@@ -53,6 +55,7 @@ class OrderList extends React.Component {
   };
 
   handlePageChange = (page, pageSize) => {
+    this.payload.page = page
     this.setState(
       {
         current: page,
@@ -115,8 +118,8 @@ class OrderList extends React.Component {
       {
         title: '位置',
         dataIndex: 'seat',
-        render(seat) {
-          return TextMapPosition[seat];
+        render(seat, record) {
+          return <span>{record.newSeatStr}/{record.childSeatStr}</span>
         },
       },
       {
@@ -153,11 +156,23 @@ class OrderList extends React.Component {
         },
       },
     ].filter(column => !column.hide);
+    console.log(this.state, 'state')
     return (
       <>
         <Card title="">
           {/* <Button onClick={this.query}>查询</Button> &nbsp; */}
           <BannerModal onSuccess={this.query} isEdit={false} />
+          <Search
+            className='ml10'
+            onChange={(value) => {
+              this.payload = {
+                ...this.payload,
+                ...value,
+                page: 1
+              }
+              this.query()
+            }}
+          />
         </Card>
         <Card style={{ marginTop: 10 }}>
           <Table

@@ -4,6 +4,7 @@ import { Table, Card, Row, Button, Modal,message } from 'antd';
 import { MemberTypeTextMap } from '../constant';
 import { formatMoneyWithSign } from '../../helper';
 import { profitRecal, profitRecycl } from '../api';
+import { formatDate } from '@/pages/helper';
 const BenefitInfo = ({
   data = {
     costPrice: 0,
@@ -31,7 +32,7 @@ const BenefitInfo = ({
     {
       title: '收益类型', dataIndex: 'incomeType',
       render(incomeType) {
-        // Rebate 平推奖励 +  Spread +  Refund 退款退还收益       
+        // Rebate 平推奖励 +  Spread +  Refund 退款退还收益
         if (incomeType == 'Rebate') return '平推奖励';
         if (incomeType == 'Spread') return '价差收益';
         if (incomeType == 'Refund') return '退款退还收益';
@@ -42,6 +43,20 @@ const BenefitInfo = ({
       title: '收益',
       dataIndex: 'yield',
       render: MoneyRender,
+    },
+    {
+      title: '到账时间',
+      dataIndex: 'incomeTime',
+      render(incomeTime){
+        return formatDate(incomeTime)
+      },
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      render(status) {
+        return status ? '已到账' : '待到账'
+      },
     },
   ];
 
