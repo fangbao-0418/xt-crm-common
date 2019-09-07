@@ -5,6 +5,7 @@ import { getBannerDetail, updateBanner, addBanner } from '../api';
 import { TextMapPosition } from '../constant';
 // import { formatDate } from '../../helper';
 import moment from 'moment';
+import BannerPostion from '@/components/banner-position'
 const FormItem = Form.Item;
 
 const formItemLayout = {
@@ -16,7 +17,7 @@ const initImgList = imgUrlWap => {
   if (imgUrlWap) {
     return [
       {
-        uid: `${-parseInt(Math.random() * 1000)}`,
+        uid: `imgUrl0`,
         url: imgUrlWap,
         status: 'done',
         thumbUrl: imgUrlWap,
@@ -42,7 +43,11 @@ class BannerModal extends Component {
   };
 
   showModal = () => {
-    this.props.isEdit && this.query();
+    if (this.props.isEdit) {
+      this.query() 
+    } else {
+      this.props.form.resetFields()
+    }
     this.setState({
       visible: true,
     });
@@ -74,6 +79,10 @@ class BannerModal extends Component {
           params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url;
           params.imgList = undefined;
         }
+        const seat = params.seat || []
+        params.newSeat = seat[0]
+        params.childSeat = seat[1]
+        params.seat = seat[1]
         api(params).then((res) => {
           onSuccess && onSuccess();
           res && message.success('操作成功');
@@ -119,13 +128,24 @@ class BannerModal extends Component {
         >
           <Form {...formItemLayout}>
             <FormItem label="Banner名称">
-              {getFieldDecorator('title', { initialValue: data.title })(<Input placeholder="" />)}
+              {getFieldDecorator('title', {
+                initialValue: data.title,
+                rules: [{
+                  required: true,
+                  message: 'banner名称不能为空'
+                }]
+              })(<Input placeholder="" />)}
             </FormItem>
             <FormItem key={renderKey} label="Banner图片" required={true}>
               {getFieldDecorator('imgList', {
                 initialValue: initImgList(data.imgUrlWap),
               })(
-                <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />,
+                <UploadView
+                  placeholder="上传主图"
+                  listType="picture-card"
+                  listNum={1}
+                  size={.3}
+                />,
               )}
             </FormItem>
             <FormItem label="跳转地址">
@@ -133,13 +153,23 @@ class BannerModal extends Component {
                 <Input placeholder="" />,
               )}
             </FormItem>
-            <FormItem label="位置">
-              {getFieldDecorator('seat', { initialValue: data.seat })(
-                <Select>
-                  {Object.keys(TextMapPosition).map(value => {
-                    return <Select.Option value={+value} key={value}>{TextMapPosition[value]}</Select.Option>;
-                  })}
-                </Select>,
+            <FormItem required label="位置">
+              {getFieldDecorator('seat', {
+                initialValue: [data.newSeat, data.childSeat],
+                rules: [
+                  {
+                    validator: (rule, value, cb) => {
+                      console.log(value, 'data')
+                      if (value[1] !== undefined) {
+                        cb()
+                      } else {
+                        cb('位置不能为空')
+                      }
+                    }
+                  }
+                ]
+              })(
+                <BannerPostion />
               )}
             </FormItem>
             <FormItem label="上线时间">

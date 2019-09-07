@@ -70,6 +70,37 @@ ol, ul {
     padding-left: 2em;
 }
 
+.href {
+  color: #1890ff;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.href:hover {
+  color: #40a9ff;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.mt10 {
+  margin-top: 10px;
+}
+
+.mb10 {
+  margin-bottom: 10px;
+}
+
+.ml10 {
+  margin-left: 10px;
+}
+
+.mr10 {
+  margin-right: 10px;
+}
+
 .ant-dropdown-menu-item {
     min-width: 160px;
 }
