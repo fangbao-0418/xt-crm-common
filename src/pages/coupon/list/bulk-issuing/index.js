@@ -4,7 +4,6 @@ import { formItemLayout } from '@/config';
 import { DatePicker, Row, Col, Card, Form, Checkbox, Input, Button, Radio } from 'antd';
 import { saveCouponTaskInfo } from '../../api';
 import Upload from '@/components/upload';
-import moment from 'moment';
 import { disabledDate as beforeDisabledDate, afterDisabledDate } from '@/pages/helper';
 import '../index.scss'
 
@@ -22,12 +21,13 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
     lineHeight: '30px',
   }
   const getUserGroupValue = (fields) => {
+    fields.userLevel = fields.userLevel || [];
     let result;
     switch (fields.receiveUserGroup) {
       case 0:
         return 'all';
       case 1:
-        fields.userLevel = fields.userLevel.include(30) ? [...fields.userLevel, 40] : fields.userLevel;
+        fields.userLevel = fields.userLevel.includes(30) ? [...fields.userLevel, 40] : fields.userLevel;
         result = fields.userLevel.join(',')
         return result;
       case 2:
@@ -67,8 +67,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
         };
         const res = await saveCouponTaskInfo(params);
         if (res) {
-          Message.success('批量发券成功');
-          history.goBack();
+          history.push(`/coupon/get/couponList/detail/${match.params.id}?activeKey=2`)
         }
       }
     })
@@ -182,7 +181,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
                   <span>选择时间：</span>
                   <Form.Item>{getFieldDecorator('timedTransmissionTime', { rules: [{ required: true, message: '请选择时间' }] })(<DatePicker showTime disabledDate={rangeDisabledDate} />)}
                   </Form.Item>
-                  <span class="ml10">（定时发送最多30天）</span>
+                  <span className="ml10">（定时发送最多30天）</span>
                 </Row>
               )}
             </Radio.Group>

@@ -120,20 +120,20 @@ export function formatFaceValue(record) {
   }
 }
 
-export function formatRangeTime(val = []) {
-  return val.map(v => moment(+v).format('YYYY-MM-DD HH:mm')).join(' ~ ')
+export function formatRangeTime(val = [], pattern = 'YYYY-MM-DD HH:mm', separator = ' ~ ') {
+  return val.map(v => moment(+v).format(pattern)).join(separator)
 }
 
 // 领取时间
-export function formatDateRange({ startReceiveTime, overReceiveTime }) {
-  return formatRangeTime([startReceiveTime, overReceiveTime])
+export function formatDateRange({ startReceiveTime, overReceiveTime }, pattern, separator) {
+  return formatRangeTime([startReceiveTime, overReceiveTime], pattern, separator)
 }
 
 // 用券时间
-export function formatUseTime({ useTimeType, useTimeValue }) {
+export function formatUseTime({ useTimeType, useTimeValue }, pattern, separator) {
   switch (useTimeType) {
     case 0:
-      return formatRangeTime(useTimeValue.split(','));
+      return formatRangeTime(useTimeValue.split(','), pattern, separator);
     case 1:
       return `领取当日起${useTimeValue}天内可用`;
     default:
@@ -161,7 +161,7 @@ export function formatReceiveRestrict(val = '') {
 // 格式化使用平台
 export const formatPlatformRestrict = (val = '') => {
   if (val === 'all') return '不限制';
-  return val.split(',').map(v =>　platformType.getValue(v)).join('，');
+  return val.split(',').map(v => platformType.getValue(v)).join('，');
 }
 
 // 今天之前不可选

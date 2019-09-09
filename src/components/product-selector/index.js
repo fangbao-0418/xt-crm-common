@@ -132,6 +132,7 @@ class ProductSelector extends Component{
     const rowSelection = {
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
+        console.log(selectedRowKeys, selectedRows)
         this.setState({
           selectedRowKeys,
           selectedRows

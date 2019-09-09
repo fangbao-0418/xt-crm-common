@@ -34,8 +34,11 @@ function CouponCard({ info }) {
         <div className="coupon-title">
           <span className="coupon-rule">{formatAvlRange(info.ruleVO.avlRange)}</span>{info.baseVO.name.slice(0, 20)}
         </div>
-        <div className="coupon-date">{formatUseTime(info.ruleVO)}</div>
-        <div className="coupon-range">{info.baseVO.description.slice(0, 12)}</div>
+        <div className="coupon-date">{formatUseTime(info.ruleVO, 'YYYY.MM.DD', '-')}</div>
+        <div className="coupon-range">
+        {info.baseVO.description}
+        <span class="arrow-bottom"></span>
+        </div>
       </div>
     </div>
   );
