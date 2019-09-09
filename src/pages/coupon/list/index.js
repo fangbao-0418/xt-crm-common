@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Row, Card, Button, Input } from 'antd';
+import { Form, Row, Card, Button, Input } from 'antd';
 import {XtSelect, CommonTable} from '@/components';
 import { getCouponlist, getCouponDetail } from '../api';
 import { getListColumns } from '../config';
 import receiveStatus from '@/enum/receiveStatus';
 import emitter from '@/util/events';
-import ClipboardJS from "clipboard";
-import CouponCard from '../coupon-card';
-import QRCode from 'qrcode.react';
-import { h5Host } from '@/util/baseHost';
+import CouponCardModal from '../coupon-card-modal';
 import './index.scss';
 
 function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, history, match }) {
@@ -18,7 +15,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
     pageSize: 10
   })
   const [records, setRecords] = useState([]);
-  const [info, setInfo] = useState({});
+  const [info, setInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false)
   const fetchData = async (data = {}) => {
@@ -48,7 +45,6 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
   }
   useEffect(() => {
     console.log('pagination变了=>', pagination.page, pagination.pageSize)
-    new ClipboardJS('#copy-btn');
     fetchData();
     emitter.addListener('coupon.list.setVisible', setModalVisible)
     emitter.addListener('coupon.list.fetchData', fetchData)
@@ -57,7 +53,6 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
       emitter.removeListener('coupon.list.fetchData', fetchData);
     }
   }, [pagination.page, pagination.pageSize]);
-  const handleOk = () => { }
   const handleAddCoupon = () => {
     history.push({
       pathname: `${match.url}/couponinfo`,
@@ -74,22 +69,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
   }
   return (
     <>
-      <Modal
-        title={null}
-        visible={visible}
-        onOk={handleOk}
-        onCancel={() => { setVisible(false) }}
-        footer={null}
-      >
-        <div className="coupon-wrapper">
-          <CouponCard info={info} />
-          <QRCode className="qr-code" size={240} value={`${h5Host}/#/coupon/${info.baseVO && info.baseVO.id}/share`} />
-          <div className="copy-qr-code">
-            <Input id="copy-input" readOnly value={`${h5Host}/#/coupon/${info.baseVO && info.baseVO.id}/share`} />
-            <Button id="copy-btn" data-clipboard-target="#copy-input" className="ml10" type="primary">复制</Button>
-          </div>
-        </div>
-      </Modal>
+      {info && <CouponCardModal info={info} visible={visible} setVisible={setVisible}/>}
       <Card>
         <Form layout="inline">
           <Form.Item label="优惠券编号">
