@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Message } from 'antd';
+import { Modal, Button, Message } from 'antd';
 import ActionBtnGroup from './action-btn-group/index';
 import receiveStatus from '@/enum/receiveStatus';
 import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
@@ -71,11 +71,17 @@ const handleStop = async (taskId) => {
 }
 
 const handleInvalid = async (record) => {
-  const res = await invalidTaskCoupon(record.id, record.couponId);
-  if (res) {
-    Message.success('失效优惠券成功');
-    emitter.emit('list.coupon-detail.fetchCouponTasks');
-  }
+  Modal.confirm({
+    title: '系统提示',
+    content: '是否失效掉任务中已发送的优惠券，回收优惠券库存？',
+    onOk: async () => {
+      const res = await invalidTaskCoupon(record.id, record.couponId);
+      if (res) {
+        Message.success('失效优惠券成功');
+        emitter.emit('list.coupon-detail.fetchCouponTasks');
+      }
+    }
+  })
 }
 export const releaseRecordsColumns = [{
   title: '目标用户类型',
@@ -87,7 +93,7 @@ export const releaseRecordsColumns = [{
   dataIndex: 'userGroupValue',
   key: 'userGroupValue',
   render: (text, record) => {
-    switch(record.receiveUserGroup) {
+    switch (record.receiveUserGroup) {
       case 0:
         return '全部用户';
       case 1:
@@ -125,11 +131,11 @@ export const releaseRecordsColumns = [{
     if (text === 4) {
       return (
         <Tooltip placement="topLeft" title={record.remark}>
-          <Badge color={releaseRecordsBadgeColors[text]} text={taskStatus[text]}/>
+          <Badge color={releaseRecordsBadgeColors[text]} text={taskStatus[text]} />
         </Tooltip>
       )
     } else {
-      return <Badge color={releaseRecordsBadgeColors[text]} text={taskStatus[text]}/>
+      return <Badge color={releaseRecordsBadgeColors[text]} text={taskStatus[text]} />
     }
   }
 }, {

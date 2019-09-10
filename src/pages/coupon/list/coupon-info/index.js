@@ -435,7 +435,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         </Form.Item>
         <Form.Item label="发放总量">
           <Row type="flex">
-            <Col>{getFieldDecorator('inventory', { rules: [{ required: true, message: '请输入发放总量' }] })(<InputNumber placeholder="最多10000000" style={{ width: '120px' }} min={1} max={10000000} />)}</Col>
+            <Col>{getFieldDecorator('inventory', { rules: [{ required: true, message: '请输入发放总量' }] })(<InputNumber placeholder="最多10000000" style={{ width: '160px' }} min={1} max={10000000} />)}</Col>
             <Col className="ml10">张</Col>
           </Row>
         </Form.Item>
