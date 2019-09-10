@@ -107,7 +107,7 @@ export const releaseRecordsColumns = [{
   key: 'executionTime',
   render: (text) => formatDate(text)
 }, {
-  title: '发券状态',
+  title: '发送类型',
   dataIndex: 'operateBehavior',
   key: 'operateBehavior',
   render: (text, record) => {
@@ -118,7 +118,7 @@ export const releaseRecordsColumns = [{
     return status[text];
   }
 }, {
-  title: '领取状态',
+  title: '发送状态',
   dataIndex: 'status',
   key: 'status',
   render: (text, record) => {
