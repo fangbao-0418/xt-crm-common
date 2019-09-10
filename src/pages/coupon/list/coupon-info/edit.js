@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { message, Form, Button, Card, Row, Col, Input, InputNumber } from 'antd';
+import { message, Form, Button, Card, Row, Col, Input, InputNumber, Table } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 import { getCouponDetail, modifyCouponBaseInfo } from '@/pages/coupon/api';
 import { ProductSelector, ActivitySelector } from '@/components';
@@ -16,6 +16,15 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
   const [productSelectorVisible, setProductSelectorVisible] = useState(false);
   const [activitySelectorVisible, setActivitySelectorVisible] = useState(false);
   const { baseVO = {}, ruleVO = {} } = detail || {};
+  const columns = [{
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id'
+  }, {
+    title: '名称',
+    dataIndex: 'name',
+    key: 'name'
+  }];
 
   // 获取详情
   const fetchDetail = async (id) => {
@@ -90,6 +99,9 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
           {getFieldDecorator('name', { initialValue: baseVO.name, rules: [{ required: true, message: '请输入优惠券名称' }, { validator: validateName }] })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
         </Form.Item>
         <Form.Item label="适用范围">{formatAvlRange(ruleVO.avlRange)}</Form.Item>
+        {ruleVO.rangeVOList && ruleVO.rangeVOList.length > 0 && <Form.Item wrapperCol={formLeftButtonLayout}>
+          <Table style={{ width: '400px' }} pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.rangeVOList} />
+        </Form.Item>}
         <Form.Item label="优惠券价值">{formatFaceValue(ruleVO)}</Form.Item>
         <Form.Item label="发放总量">
           <Row type="flex">

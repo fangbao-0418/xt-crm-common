@@ -27,7 +27,7 @@ class ProductSelector extends Component {
       const res = await getPromotionList({
         ...this.state.pagination,
         name: this.state.val.trim()
-      })
+      }) || {};
       console.log('res=>', res);
       this.setState(state => ({
         loading: false,

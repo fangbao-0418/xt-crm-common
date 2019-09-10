@@ -13,10 +13,11 @@ import "./index.scss";
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
-function CouponInfo({ form: { getFieldDecorator, getFieldsValue, getFieldValue, setFieldsValue, validateFields }, history }) {
+function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue, validateFields }, history }) {
   const [dailyRestrictChecked, setDailyRestrictChecked] = useState(false);
   const [receiveRestrictValues, setReceiveRestrictValues] = useState([]);
   const [platformRestrictValues, setPlatformRestrictValues] = useState([]);
+  const [availableDays, setAvailableDays] = useState('');
   const [useTimeRange, setUseTimeRange] = useState('');
   const [treeData, setTreeData] = useState([]);
   const [excludeProduct, setExcludeProduct] = useState([]);
@@ -153,7 +154,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, getFieldValue, 
       let result = Array.isArray(useTimeRange) ? useTimeRange.map(v => v && v.valueOf()) : [];
       return result.join(',')
     } else {
-      return fields.availableDays;
+      return availableDays;
     }
   }
   // 根据适用范围获取范围值
@@ -203,6 +204,12 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, getFieldValue, 
 
   const handleSave = () => {
     validateFields(async (err, fields) => {
+      if (fields.recipientLimit === 1) {
+        if (receiveRestrictValues.length === 0) {
+          message.error('请选择平台');
+          return;
+        }
+      }
       if (fields.avlRange === 2) {
         console.log('chosenProduct=>', chosenProduct);
         if (chosenProduct.length === 0) {
@@ -217,8 +224,31 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, getFieldValue, 
           return;
         }
       }
+      if (fields.useTimeType === 1) {
+        if (!availableDays) {
+          message.error('请输入领券当日起多少天内可用');
+          return;
+        }
+      }
+      if (dailyRestrictChecked) {
+        if (!fields.dailyRestrict) {
+          message.error('请输入每日限领多少张');
+          return;
+        }
+      }
+      if (fields.platformType === 1) {
+        if (getPlatformRestrictValues(fields.platformType) == '') {
+          message.error('请选择使用平台');
+          return;
+        }
+      }
       if (!err) {
         const [startReceiveTime, overReceiveTime] = fields.receiveTime ? fields.receiveTime.map(v => v && v.valueOf()) : []
+        if (fields.useTimeType === 1) {
+          if (!availableDays) {
+            return message.error('请输入领券到日起多少天内可用');
+          }
+        }
         const useTimeValue = getUseTimeValue(fields)
         const platformRestrictValues = getPlatformRestrictValues(fields.platformType);
         const receiveRestrictValues = getReceiveRestrictValues(fields.recipientLimit);
@@ -316,15 +346,10 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, getFieldValue, 
       callback()
     }
   }
-  // 校验领取当日起多少天内可用
-  const availableDaysValidator = (rule, value, callback) => {
-    const useTimeType = getFieldValue('useTimeType')
-    callback();
-  }
   // 使用时间不可选
   const useTimeTypeDisabledDate = (current) => {
     const { receiveTime } = getFieldsValue(['receiveTime']);
-    return current && current < (receiveTime && receiveTime[0] || moment().endOf('day').subtract(1, 'days'));
+    return current && current < (receiveTime && receiveTime[0] ||　moment().endOf('day').subtract(1, 'days'));
   }
   return (
     <Card>
@@ -424,7 +449,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, getFieldValue, 
           </Col>
         </Row>
         <Form.Item label="领取时间">
-          {getFieldDecorator('receiveTime', { rules: [{ required: true, message: '请选择领取时间' }, { validator: receiveTimeValidator }] })(<RangePicker
+          {getFieldDecorator('receiveTime', { rules: [{ required: true, message: '请选择领取时间' }, {validator: receiveTimeValidator}] })(<RangePicker
             disabledDate={disabledDate}
             showTime={{
               hideDisabledOptions: true
@@ -433,7 +458,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, getFieldValue, 
           />)
           }
         </Form.Item>
-        <Form.Item label="使用时间">{getFieldDecorator('useTimeType', { rules: [{ required: true, message: '请选择使用时间' }] })(
+        <Form.Item label="使用时间">{getFieldDecorator('useTimeType')(
           <Radio.Group>
             <Form.Item>
               <Radio value={0}>
@@ -450,11 +475,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, getFieldValue, 
             <Form.Item>
               <Radio value={1}>
                 <span>领券当日起</span>
-                {
-                  getFieldDecorator('availableDays', { rules: [{validator: availableDaysValidator}]})(
-                    <InputNumber className="ml10 short-input" min={0} />
-                  )
-                }
+                <InputNumber className="ml10 short-input" min={0} value={availableDays} onChange={value => setAvailableDays(value)} />
                 <span className="ml10">天内可用（设置为0时则为当日有效）</span>
               </Radio>
             </Form.Item>
