@@ -833,7 +833,7 @@ class GoodsEdit extends React.Component {
             )}
           </FormItem>
           <FormItem label="退货地址">
-            <Input.Group style={{ display: 'flex' }}>
+            <Input.Group>
               <input
                 name="returnContact"
                 placeholder="收货人姓名"
