@@ -70,7 +70,7 @@ class SupplierModal extends Component {
     const { data } = this.state;
 
     return (
-      <div>
+      <>
         <Button type="primary" onClick={this.showModal}>
           {isEdit ? '编辑' : '新增供应商'}
         </Button>
@@ -177,7 +177,7 @@ class SupplierModal extends Component {
             </FormItem>
           </Form>
         </Modal>
-      </div>
+      </>
     );
   }
 }

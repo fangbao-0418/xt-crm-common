@@ -124,7 +124,13 @@ class OrderList extends React.Component {
       {
         title: '操作',
         render: (operator, { id }) => {
-          return <SupplierModal onSuccess={this.query} isEdit id={id} />;
+          return (
+            <>
+              <SupplierModal onSuccess={this.query} isEdit id={id} />
+              <Button className="ml10" type="primary">创建账号</Button>
+              <Button className="ml10" type="primary">查看账号</Button>
+            </>
+          );
         },
       },
     ].filter(column => !column.hide);
