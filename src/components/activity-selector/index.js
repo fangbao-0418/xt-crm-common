@@ -4,7 +4,7 @@ import { isFunction } from 'lodash';
 import { getPromotionList } from './api';
 import { actColumns } from './config';
 import CommonTable from '@/components/common-table';
-
+import { unionArray } from '@/util/utils';
 class ProductSelector extends Component {
   state = {
     selectedRowKeys: [],
@@ -62,9 +62,10 @@ class ProductSelector extends Component {
     const rowSelection = {
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log('selectedRowKeys=>', selectedRowKeys);
-        console.log('selectedRows=>', selectedRows);
-        this.setState({ selectedRowKeys, selectedRows })
+        console.log('selectedRowKeys=>', selectedRowKeys)
+        const unionArrs = unionArray(this.state.selectedRows, selectedRows);
+        console.log('selectedRows=>', unionArrs.filter(v => selectedRowKeys.includes(v.id)))
+        this.setState({ selectedRowKeys, selectedRows: unionArrs.filter(v => selectedRowKeys.includes(v.id)) })
       }
     }
     return (

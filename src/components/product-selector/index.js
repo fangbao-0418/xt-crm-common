@@ -4,6 +4,7 @@ import { formatMoneyWithSign } from '../../pages/helper';
 import { isFunction } from 'lodash';
 import { Image, CommonTable } from '@/components';
 import { getProductList } from './api';
+import { unionArray } from '@/util/utils';
 const goodsColumns = (data = []) => {
   return [
     {
@@ -132,11 +133,10 @@ class ProductSelector extends Component{
     const rowSelection = {
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(selectedRowKeys, selectedRows)
-        this.setState({
-          selectedRowKeys,
-          selectedRows
-        });
+        console.log('selectedRowKeys=>', selectedRowKeys)
+        const unionArrs = unionArray(this.state.selectedRows, selectedRows);
+        console.log('selectedRows=>', unionArrs.filter(v => selectedRowKeys.includes(v.id)))
+        this.setState({ selectedRowKeys, selectedRows: unionArrs.filter(v => selectedRowKeys.includes(v.id)) })
       }
     }
     return (
