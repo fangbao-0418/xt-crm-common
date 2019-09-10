@@ -102,6 +102,11 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         {ruleVO.rangeVOList && ruleVO.rangeVOList.length > 0 && <Form.Item wrapperCol={formLeftButtonLayout}>
           <Table style={{ width: '400px' }} pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.rangeVOList} />
         </Form.Item>}
+        {ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0 && (
+          <Form.Item label="已排除商品">
+            <Table style={{ width: '400px' }} pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.excludeProductVOList} />
+          </Form.Item>
+        )}
         <Form.Item label="优惠券价值">{formatFaceValue(ruleVO)}</Form.Item>
         <Form.Item label="发放总量">
           <Row type="flex">

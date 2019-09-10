@@ -206,7 +206,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
     validateFields(async (err, fields) => {
       if (fields.recipientLimit === 1) {
         if (receiveRestrictValues.length === 0) {
-          message.error('请选择平台');
+          message.error('请选择指定身份');
           return;
         }
       }
@@ -225,7 +225,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         }
       }
       if (fields.useTimeType === 1) {
-        if (!availableDays) {
+        console.log(availableDays === '', '~~~~~~~~~~~~~~~~~~~~~~')
+        if (availableDays === '') {
           message.error('请输入领券当日起多少天内可用');
           return;
         }
@@ -244,11 +245,6 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       }
       if (!err) {
         const [startReceiveTime, overReceiveTime] = fields.receiveTime ? fields.receiveTime.map(v => v && v.valueOf()) : []
-        if (fields.useTimeType === 1) {
-          if (!availableDays) {
-            return message.error('请输入领券到日起多少天内可用');
-          }
-        }
         const useTimeValue = getUseTimeValue(fields)
         const platformRestrictValues = getPlatformRestrictValues(fields.platformType);
         const receiveRestrictValues = getReceiveRestrictValues(fields.recipientLimit);
@@ -458,7 +454,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
           />)
           }
         </Form.Item>
-        <Form.Item label="使用时间">{getFieldDecorator('useTimeType')(
+        <Form.Item label="使用时间">{getFieldDecorator('useTimeType', { rules: [{required: true, message: '请选择使用时间类型'}]})(
           <Radio.Group>
             <Form.Item>
               <Radio value={0}>
