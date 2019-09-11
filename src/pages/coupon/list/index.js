@@ -17,7 +17,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
   const [records, setRecords] = useState([]);
   const [info, setInfo] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
   const fetchData = async () => {
     const data = getFieldsValue();
     console.log('data=>', data);
