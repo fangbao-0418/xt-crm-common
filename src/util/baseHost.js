@@ -9,12 +9,12 @@ if (host.indexOf('daily-xt-crmadmin') >= 0) {
 // 预发
 else if (host.indexOf('pre-xt-crmadmin') >= 0) {
   baseHost = 'https://pre-xt-crm-api.hzxituan.com';
-  h5Host = 'https://pre-xt-myouxuan.hzxituan.com/pre/index.html';
+  h5Host = 'https://pre-xt-myouxuan.hzxituan.com/pre/v0909_coupon/index.html';
 }
 // 测试
 else if (host.indexOf('test-crmadmin') >= 0) {
   baseHost = 'https://testapi-crmadmin.hzxituan.com';
-  h5Host = 'https://testing.hzxituan.com';
+  h5Host = 'https://testing.hzxituan.com/v0909_coupon/index.html';
 }
 // 正式
 else if (host.indexOf('xt-crmadmin') >= 0) {
