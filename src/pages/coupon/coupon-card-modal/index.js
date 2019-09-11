@@ -65,9 +65,9 @@ function CouponCard({ info = {}, visible, setVisible }) {
           </div>
           {isOpen && info.baseVO.description && <div className="coupon-card__bottom">{info.baseVO.description}</div>}
         </div>
-        <QRCode className="qr-code" size={240} value={`${h5Host}/#/coupon/${info.baseVO && info.baseVO.id}/share`} />
+        <QRCode className="qr-code" size={240} value={`${h5Host}#/coupon/${info.baseVO && info.baseVO.id}/share`} />
         <div className="copy-qr-code">
-          <Input id="copy-input" readOnly value={`${h5Host}/#/coupon/${info.baseVO && info.baseVO.id}/share`} />
+          <Input id="copy-input" readOnly value={`${h5Host}#/coupon/${info.baseVO && info.baseVO.id}/share`} />
           <Button id="copy-btn" data-clipboard-target="#copy-input" className="ml10" type="primary">复制</Button>
         </div>
       </div>
