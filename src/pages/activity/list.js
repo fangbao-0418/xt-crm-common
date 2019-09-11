@@ -255,7 +255,7 @@ class List extends React.Component {
           />
         </Card>
         <Modal
-          title="活动编辑"
+          title="活动新增"
           visible={this.state.visible}
           width={1000}
           footer={null}
