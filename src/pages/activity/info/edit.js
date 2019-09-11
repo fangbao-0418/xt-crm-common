@@ -402,7 +402,7 @@ const goodsColumns = (data = []) => {
     },
     {
       title: '商品ID',
-      dataIndex: 'productId',
+      dataIndex: 'id',
       width: 100,
     },
     {

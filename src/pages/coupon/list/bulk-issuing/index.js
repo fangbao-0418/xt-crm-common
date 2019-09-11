@@ -138,10 +138,10 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
                         <Checkbox value={10}>普通团长</Checkbox>
                       </Col>
                       <Col span={8}>
-                        <Checkbox value={11}>体验团长</Checkbox>
+                        <Checkbox value={11} disabled>体验团长</Checkbox>
                       </Col>
                       <Col span={8}>
-                        <Checkbox value={12}>星级团长</Checkbox>
+                        <Checkbox value={12} disabled>星级团长</Checkbox>
                       </Col>
                       <Col span={8}>
                         <Checkbox value={20}>社区管理员</Checkbox>
