@@ -18,7 +18,8 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
   const [info, setInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false)
-  const fetchData = async (data = {}) => {
+  const fetchData = async () => {
+    const data = getFieldsValue();
     console.log('data=>', data);
     try {
       setLoading(true);
@@ -59,14 +60,6 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
       search: `type=add`
     })
   }
-  const handleSearch = () => {
-    const data = getFieldsValue()
-    fetchData(data)
-  }
-  const handleChangePagination = (pagination) => {
-    console.log('pagination=>', pagination)
-    setPagination(pagination)
-  }
   return (
     <>
       {info && <CouponCardModal info={info} visible={visible} setVisible={setVisible}/>}
@@ -82,7 +75,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
             {getFieldDecorator('status', {})(<XtSelect data={receiveStatus.getArray('all')} style={{ width: '174px' }} placeholder="请输入" />)}
           </Form.Item>
           <Form.Item>
-            <Button type="primary" onClick={handleSearch}>查询</Button>
+            <Button type="primary" onClick={fetchData}>查询</Button>
             <Button className="ml10" onClick={() => resetFields()}>重置</Button>
           </Form.Item>
         </Form>
@@ -91,7 +84,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
         <Row type="flex" justify="space-between">
           <Button type="primary" icon="plus" onClick={handleAddCoupon}>新增优惠券</Button>
         </Row>
-        <CommonTable loading={loading} onChange={handleChangePagination} rowKey="id" current={pagination.page} pageSize={pagination.pageSize} total={pagination.total} className="mt15" columns={getListColumns()} dataSource={records || []} />
+        <CommonTable loading={loading} onChange={setPagination} rowKey="id" current={pagination.page} pageSize={pagination.pageSize} total={pagination.total} className="mt15" columns={getListColumns()} dataSource={records || []} />
       </Card>
     </>
   )
