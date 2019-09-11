@@ -4,7 +4,7 @@ const host = window.location.host;
 // 日常
 if (host.indexOf('daily-xt-crmadmin') >= 0) {
   baseHost = 'http://daily-crm-test.hzxituan.com';
-  h5Host = 'https://xtyouxuan.hzxituan.com';
+  h5Host = 'https://xtyouxuan.hzxituan.com/v0909_coupon/index.html';
 }
 // 预发
 else if (host.indexOf('pre-xt-crmadmin') >= 0) {
