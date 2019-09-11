@@ -2,6 +2,7 @@ import React from 'react';
 import { Table, Card, Form, Input, Button, DatePicker } from 'antd';
 import { querySupplierList, exportSupplier } from '../api';
 import SupplierModal from '../supplier-modal';
+import AccoutModal from '../accout-modal';
 const FormItem = Form.Item;
 
 const { RangePicker } = DatePicker;
@@ -90,6 +91,10 @@ class OrderList extends React.Component {
       this.query,
     );
   };
+  // 创建账号
+  createAccount = () => {
+
+  }
   render() {
     const { total, pageSize, current } = this.state;
     const {
@@ -127,8 +132,7 @@ class OrderList extends React.Component {
           return (
             <>
               <SupplierModal onSuccess={this.query} isEdit id={id} />
-              <Button className="ml10" type="primary">创建账号</Button>
-              <Button className="ml10" type="primary">查看账号</Button>
+              <AccoutModal id={id} createable name="河南希美辰网络科技有限公司"/>
             </>
           );
         },
