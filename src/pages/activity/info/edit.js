@@ -405,7 +405,7 @@ const goodsColumns = (data = []) => {
     },
     {
       title: '商品ID',
-      dataIndex: 'id',
+      dataIndex: 'productId',
       width: 100,
     },
     {
