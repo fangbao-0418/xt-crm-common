@@ -146,6 +146,21 @@ export function initImgList(imgUrlWap) {
   return [];
 };
 
+
+/**
+ * 
+ * @param { 目标数组 } target 
+ * @param { 需要比较的数组 } source 
+ */
+export function unionArray(target, source) {
+  const result = [...target];
+  for (let item of source) {
+    if (!result.some(v => v.id === item.id)) {
+      result.push(item);
+    }
+  }
+  return result;
+}
 export function replaceHttpUrl(imgUrl = '') {
   if (imgUrl.indexOf('https') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;

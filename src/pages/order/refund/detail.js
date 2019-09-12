@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Steps, Card, Table, Row, Col, Tabs } from 'antd';
-import { getDetailColumns } from './config';
+import { getDetailColumns } from '../constant';
 import refundType from '@/enum/refundType';
 import PicturesWall from '../components/pictures-wall';
 import { CheckForm, DealForm, CheckDetail } from './components';

@@ -9,7 +9,7 @@ import {
   get as lodashGet
 } from 'lodash';
 
-import baseHost from '@/util/baseHost';
+import {baseHost} from '@/util/baseHost';
 var qs = require('qs');
 
 // const prod = true;
