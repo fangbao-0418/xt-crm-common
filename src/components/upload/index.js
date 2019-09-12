@@ -107,11 +107,13 @@ class UploadView extends Component {
       listNum = 1,
       showUploadList,
       children,
+      accept,
     } = this.props;
     const { fileList } = this.state;
     return (
       <>
         <Upload
+          accept={accept}
           listType={listType}
           fileList={fileList}
           showUploadList={showUploadList}

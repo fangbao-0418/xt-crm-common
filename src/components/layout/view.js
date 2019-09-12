@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { view as XHeader } from '../../components/header';
-import { view as Sidebar } from '../../components/sidebar';
+import { view as XHeader } from '@/components/header';
+import { view as Sidebar } from '@/components/sidebar';
 import { Layout, Message } from 'antd';
 import { connect } from '@/util/utils';
 import * as LocalStorage from '@/util/localstorage';

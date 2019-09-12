@@ -181,7 +181,7 @@ class Detail extends Component {
 
     return (
       <>
-        <Modal width='50%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.toggleModal(false)} onOk={this.handleOk}>
+        <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.toggleModal(false)} onOk={this.handleOk}>
           <AfterSaleForm wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
         </Modal>
         <Modal

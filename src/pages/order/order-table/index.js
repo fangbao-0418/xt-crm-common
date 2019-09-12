@@ -10,6 +10,7 @@ import RefundCell from '../components/refund-cell';
 import RemarkModal from '../components/remark-modal';
 import RefundModal from '../components/refund-modal';
 import RefundStatusCell from '../components/refund-status-cell';
+import moment from 'moment';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
@@ -306,10 +307,10 @@ class OrderList extends React.Component {
               {getFieldDecorator('storeId', {})(<SuppilerSelect style={{width: '174px'}}/>)}
             </FormItem>
             <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
-              {getFieldDecorator('rangePicker', {})(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}
+              {getFieldDecorator('rangePicker', {})(<RangePicker format="YYYY-MM-DD HH:mm"  showTime={{defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}} />)}
             </FormItem>
             {this.props.type === 'order' ? <FormItem label="支付时间">
-              {getFieldDecorator('playPicker', {})(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}
+              {getFieldDecorator('playPicker', {})(<RangePicker format="YYYY-MM-DD HH:mm"  showTime={{defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}} />)}
             </FormItem> : ''}
             <FormItem>
               <Button type="default" onClick={this.reset}>
