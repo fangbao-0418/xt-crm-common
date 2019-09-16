@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Modal, Button, Input } from 'antd';
-import { addSupplierAccount } from '../api';
+import { Form, Modal, Button, Input, message } from 'antd';
+import { addSupplierAccount, resetStore } from '../api';
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -14,48 +14,88 @@ const formItemLayout = {
 @Form.create({ name: 'accout-modal' })
 class AccoutModal extends Component {
   state = {
-    visible: false
+    visible: false,
+    loading: false
   }
-  handleOk = () => {
-    const params = this.props.form.getFieldsValue();
-    if (!this.isFetch) {
-      addSupplierAccount({
-        ...params,
-        supplierId: this.props.id
-      })
+  toggleVisible = (visible) => {
+    this.setState({ visible })
+  }
+  // 重置密码
+  resetAccount = async () => {
+    this.setState({loading: true})
+    const res = await resetStore({
+      id: this.props.supplierAccountId,
+      supplierId: this.props.id
+    });
+    if (res) {
+      this.successCb('重置密码成功');
     }
-    this.isFetch = true;
+    this.setState({loading: false})
   }
-  handleCancel = () => {
-    this.setState({visible: false})
+  // 创建供应商账号
+  createAccount = async () => {
+    this.setState({loading: true})
+    const params = this.props.form.getFieldsValue();
+    const res = await addSupplierAccount({
+      ...params,
+      supplierId: this.props.id
+    });
+    if (res) {
+      this.successCb('创建账号成功');
+    }
+    this.setState({loading: false})
   }
-  createAccount = () => {
-    this.setState({ visible: true });
+
+  successCb(msg) {
+    this.props.onSuccess();
+    message.success(msg);
+    this.setState({ visible: false });
   }
+
   render() {
-    const { createable, name, initialValue, form: { getFieldDecorator } } = this.props;
+    const { supplierAccountId, supplierAccount, name, form: { getFieldDecorator } } = this.props;
     return (
       <>
-        <Modal
-          title={createable ? '创建账号' : '查看账号'}
-          visible={this.state.visible}
-          okText="保存"
-          cancelText="取消"
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <Form {...formItemLayout}>
-            <Form.Item label="供应商名称">{name}</Form.Item>
-            <Form.Item label="账号">
-              {getFieldDecorator('supplierAccount', { initialValue, rules: [{ required: true }] })(<Input placeholder="请输入账号，仅支持数字及英文"/>)}
-            </Form.Item>
-            <Form.Item label="初始密码">
-              {getFieldDecorator('password', { initialValue, rules: [{ required: true }] })(<Input placeholder="请输入6-16位初始密码"/>)}
-            </Form.Item>
-          </Form>
-        </Modal>
-        <Button className="ml10" type="primary" onClick={this.createAccount}>创建账号</Button>
-        <Button className="ml10" type="primary">查看账号</Button>
+        {supplierAccountId ?
+          [<Modal
+            title="查看账号"
+            visible={this.state.visible}
+            footer={null}
+            onCancel={() => this.toggleVisible(false)}
+          >
+            <Form {...formItemLayout}>
+              <Form.Item label="供应商名称">{name}</Form.Item>
+              <Form.Item label="账号">{supplierAccount}</Form.Item>
+              <Form.Item label="密码">
+                <Button type="primary" loading={this.state.loading} onClick={this.resetAccount}>重置</Button>
+                <p>（密码重置以后将以短信形式发送至联系人手机）</p>
+              </Form.Item>
+            </Form>
+          </Modal>,
+          <Button className="ml10" type="primary" onClick={() => this.toggleVisible(true)}>查看账号</Button>]
+          :
+          [<Modal
+            title="创建账号"
+            visible={this.state.visible}
+            footer={[
+              <Button key="back" onClick={() => this.toggleVisible(false)}>
+                取消
+              </Button>,
+              <Button key="submit" type="primary" loading={this.state.loading} onClick={this.createAccount}>
+                保存
+              </Button>,
+            ]}
+          >
+            <Form {...formItemLayout}>
+              <Form.Item label="供应商名称">{name}</Form.Item>
+              <Form.Item label="账号">{getFieldDecorator('supplierAccount', { rules: [{ required: true, message: '请您输入账号' }] })(<Input placeholder="请输入账号，仅支持数字及英文" />)}</Form.Item>
+              <Form.Item label="初始密码">
+                {getFieldDecorator('password', { rules: [{ required: true, message: '请您输入初始密码' }] })(<Input.Password placeholder="请输入6-16位初始密码" />)}
+              </Form.Item>
+            </Form>
+          </Modal>,
+          <Button className="ml10" type="primary" onClick={() => this.toggleVisible(true)}>创建账号</Button>]
+        }
       </>
     );
   }

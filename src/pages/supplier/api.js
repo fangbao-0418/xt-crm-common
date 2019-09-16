@@ -25,9 +25,12 @@ export function addSupplierAccount(data) {
   return post('/store/add/supplier', data)
 }
 
+// 重置供应商账号
+export function resetStore(data) {
+  return post('/store/reset', data)
+}
 export function querySupplierList(data) {
   console.log('querySupplierList- params', data, new Date());
-
   if (debug) {
     return Promise.resolve(mockData);
   }

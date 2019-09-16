@@ -91,10 +91,6 @@ class OrderList extends React.Component {
       this.query,
     );
   };
-  // 创建账号
-  createAccount = () => {
-
-  }
   render() {
     const { total, pageSize, current } = this.state;
     const {
@@ -128,11 +124,11 @@ class OrderList extends React.Component {
       },
       {
         title: '操作',
-        render: (operator, { id }) => {
+        render: (operator, record) => {
           return (
             <>
-              <SupplierModal onSuccess={this.query} isEdit id={id} />
-              <AccoutModal id={id} createable name="河南希美辰网络科技有限公司"/>
+              <SupplierModal onSuccess={this.query} isEdit id={record.id} />
+              <AccoutModal onSuccess={this.query} {...record}/>
             </>
           );
         },
