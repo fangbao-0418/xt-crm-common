@@ -21,7 +21,7 @@ import descartes from '../../util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api';
 // import BraftEditor from 'braft-editor';
 import { getAllId, parseQuery, gotoPage, initImgList } from '@/util/utils';
-
+import deliveryModeType from '@/enum/deliveryModeType';
 const formatMoneyBeforeRequest = price => {
   if (isNil(price)) {
     return price;
@@ -190,6 +190,8 @@ class GoodsEdit extends React.Component {
         coverUrl: initImgList(res.coverUrl),
         // videoCoverUrl: initImgList(res.videoCoverUrl),
         // videoUrl: initImgList(res.videoUrl),
+        deliveryMode: res.deliveryMode,
+        barCode: res.barCode,
         bannerUrl: initImgList(res.bannerUrl),
         listImage,
         productImage,
@@ -405,6 +407,17 @@ class GoodsEdit extends React.Component {
   };
 
   handleMainImage = fileList => { };
+  barCodeValidator = (rule, value, callback) => {
+    if (value) {
+      if (/^\d{0,20}$/.test(value)) {
+        callback()
+      } else {
+        callback('仅支持数字，20个字符以内')
+      }
+    } else {
+      callback();
+    }
+  }
 
   // renderTitle = (text, id) => {
   //   return (
@@ -634,6 +647,33 @@ class GoodsEdit extends React.Component {
               ],  
             })(<Input placeholder="请输入商品简介" />)}
           </FormItem>
+          <FormItem label="商品条码">
+            {getFieldDecorator('barCode', {
+              rules: [
+                {
+                  validator: this.barCodeValidator
+                },
+              ],
+            })(<Input placeholder="请输入商品条码" />)}
+          </FormItem>
+
+          <FormItem label="发货方式">
+            {getFieldDecorator('deliveryMode', {
+              rules: [
+                {
+                  required: true,
+                  message: '请选择发货方式',
+                }
+              ],
+            })(
+              <Select placeholder="请选择">
+                {
+                  deliveryModeType.getArray().map(item => (<Option value={item.key} key={item.key}>{item.val}</Option>))
+                }
+              </Select>
+            )}
+          </FormItem>
+
           <FormItem label="供货商">
             {getFieldDecorator('storeId', {
               rules: [
