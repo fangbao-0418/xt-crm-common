@@ -44,7 +44,7 @@ class UploadView extends Component {
     }
   }
 
-  initFileList(fileList) {
+  initFileList(fileList = []) {
     const { fileType } = this.props;
     return Array.isArray(fileList) ? fileList.map(val => {
       val.durl = val.url
@@ -57,12 +57,13 @@ class UploadView extends Component {
   }
 
   beforeUpload = (file, fileList) => {
-    const { fileType, size } = this.props;
-    const isLtM = file.size / 1024 / 1024 < size;
+    console.log(file, 'file')
+    const { fileType, size = 10 } = this.props;
     if (fileType && file.type.indexOf(fileType) < 0) {
       message.error(`请上传正确${fileType}格式文件`);
       return false;
     }
+    const isLtM = file.size / 1024 / 1024 < size;
     if (!isLtM) {
       message.error(`请上传小于${size * 1000}kB的文件`);
       return false;
@@ -104,15 +105,16 @@ class UploadView extends Component {
       placeholder,
       listType,
       listNum = 1,
-      size = 10,
       showUploadList,
       children,
+      accept,
       ...attributes
     } = this.props;
     const { fileList } = this.state;
     return (
       <>
         <Upload
+          accept={accept}
           listType={listType}
           fileList={fileList}
           showUploadList={showUploadList}
@@ -132,7 +134,7 @@ class UploadView extends Component {
           onOk={() => this.setState({ visible: false })}
           onCancel={() => this.setState({ visible: false })}
         >
-          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video> : <img src={this.state.url} />}
+          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video> : <img src={this.state.url} alt=""/>}
         </Modal>
       </>
     );

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Steps, Card, Table, Row, Col, Tabs } from 'antd';
-import { getDetailColumns } from './config';
+import { getDetailColumns } from '../constant';
 import refundType from '@/enum/refundType';
 import PicturesWall from '../components/pictures-wall';
 import { CheckForm, DealForm, CheckDetail } from './components';
@@ -10,6 +10,7 @@ import { connect, replaceHttpUrl } from '@/util/utils';
 import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
 import createType from '@/enum/createType';
 import memberType from '@/enum/memberType';
+import { ORDER_TYPE } from '@/config';
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
@@ -53,8 +54,9 @@ class Detail extends Component {
                   <Col span={8}>售后状态：{orderServerVO.refundStatusStr}</Col>
                   {orderServerVO.refundErrorMsg && <Col span={8}>退款失败原因：{orderServerVO.refundErrorMsg}</Col>}
                 </Row>
-                <Row>
+                <Row gutter={24}>
                   <Col span={8}>申请人类型：{createType.getValue(orderServerVO.createType + '')}</Col>
+                  <Col span={8}>订单类型：{ORDER_TYPE[orderInfoVO.orderType]}</Col>
                 </Row>
                 <Row>
                   <Col>

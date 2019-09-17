@@ -1,12 +1,12 @@
 import React from 'react';
 import { Table, Row, Col, Card, Button } from 'antd';
-import { goodsTableColumn, storeType } from '../constant';
+import { getDetailColumns, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
 import { formatDate } from '../../helper';
 
 const GoodsTable = ({ list = [], childOrder = {}, orderInfo = {}, logistics, query, showModal, memberId, showNotes }) => {
   const columns = [
-    ...goodsTableColumn,
+    ...getDetailColumns(),
     {
       title: '操作',
       dataIndex: 'operate',

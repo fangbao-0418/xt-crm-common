@@ -13,6 +13,11 @@ export const formButtonLayout = {
   sm: { span: 16, offset: 8 },
 }
 
+export const formLeftButtonLayout = {
+  xs: { span: 24, offset: 0 },
+  sm: { span: 19, offset: 5 },
+}
+
 export const orderRefunds = {
   '0': '无售后',
   '10': '待审核',
@@ -32,4 +37,12 @@ export const orderStatusEnums = {
   '40': '已收货',
   '50': '完成',
   '60': '关闭'
+}
+
+export const ORDER_TYPE = {
+  '0': '普通订单',
+  '10': '激活码订单',
+  '20': '地推订单',
+  '30': '助力分兑换订单',
+  '40': '采购订单'
 }
