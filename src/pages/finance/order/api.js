@@ -5,7 +5,7 @@ export function exportFile(data) {
 /**
  * 
 import * as Fetch from '@/util/fetch';
-import baseHost from '@/util/baseHost';
+import {baseHost} from '@/util/baseHost';
 import { formatData } from '@/util/utils';
 export function exportFile(data) {
   window.open(baseHost + '/order/orderReport/export?' + formatData(data));

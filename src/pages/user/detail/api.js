@@ -1,6 +1,9 @@
 import * as Fetch from '@/util/fetch';
 var qs = require('qs');
 
+export function getCouponList(memberId, data) {
+    return Fetch.post(`/member/get/getCouponList/${memberId}`, data);
+}
 export function getUserInfo(params) {
     return Fetch.request(`/member/detail?${qs.stringify(params)}`);
 }

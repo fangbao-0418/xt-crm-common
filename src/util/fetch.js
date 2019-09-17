@@ -2,7 +2,7 @@ import { message } from 'antd';
 import axios from 'axios';
 import { omitBy, isNil, isPlainObject, get as lodashGet } from 'lodash';
 import { formatData } from './utils';
-import baseHost from './baseHost';
+import { baseHost } from './baseHost';
 var qs = require('qs');
 
 // const prod = true;
@@ -78,6 +78,19 @@ export const post = (url, data, config) => {
   return request(url, {
     data: qs.stringify(data),
     method: 'POST',
+    ...config,
+  });
+};
+
+// GET请求
+export const newGet = (url, data, config) => {
+  return request(url, {
+    params: data,
+    method: 'GET',
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
     ...config,
   });
 };
