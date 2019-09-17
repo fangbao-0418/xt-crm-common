@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Card, Form, Input, Button, DatePicker } from 'antd';
 import { querySupplierList, exportSupplier } from '../api';
 import SupplierModal from '../supplier-modal';
-import AccoutModal from '../accout-modal';
+import AccountModal from '../account-modal';
 const FormItem = Form.Item;
 
 const { RangePicker } = DatePicker;
@@ -37,7 +37,7 @@ class OrderList extends React.Component {
       endTime: endTime ? +new Date(endTime) : undefined,
     };
 
-    querySupplierList(params).then(res => {
+    querySupplierList(params).then((res = {}) => {
       this.setState({
         list: res.records,
         pageSize: res.size,
@@ -128,7 +128,7 @@ class OrderList extends React.Component {
           return (
             <>
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
-              <AccoutModal onSuccess={this.query} {...record}/>
+              <AccountModal onSuccess={this.query} {...record}/>
             </>
           );
         },
