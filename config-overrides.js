@@ -9,6 +9,7 @@ const {
 const webpack = require('webpack')
 const path = require("path");
 
+console.log('PUB_ENV => ', process.env.PUB_ENV);
 module.exports = override(
   fixBabelImports('import', {
     libraryName: 'antd',
@@ -22,7 +23,12 @@ module.exports = override(
   addDecoratorsLegacy(),
   addWebpackPlugin(new webpack.ProvidePlugin({
     APP: path.resolve(__dirname, 'src/util/app')
-  }),),
+  })),
+  addWebpackPlugin(new webpack.DefinePlugin({
+    'process.env': {
+      PUB_ENV: '"'+(process.env.PUB_ENV || 'serve')+'"'
+    }
+  })),
   useEslintRc(),
   addWebpackAlias({
     '@': path.resolve(__dirname, 'src/'),
