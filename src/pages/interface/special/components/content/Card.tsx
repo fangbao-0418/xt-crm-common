@@ -10,7 +10,7 @@ import * as api from '../../api'
 import { typeConfig } from '../../constant'
 import styles from './style.module.sass'
 interface State {
-  /** 优惠券心音 */
+  /** 优惠券显隐 */
   couponVisible: boolean
 }
 interface Props {
@@ -150,6 +150,7 @@ class Main extends React.Component<Props, State> {
     const { detail } = this.props;
     detail.css = detail.css || 1;
     const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons)
+    console.log('selectedRowKeys=>', selectedRowKeys);
     this.tempCrmCoupons =  Array.prototype.concat(detail.crmCoupons);
     return (
       <div>

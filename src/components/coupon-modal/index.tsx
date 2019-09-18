@@ -108,7 +108,8 @@ class CouponModal extends React.Component<Props, State> {
   }
   public componentWillReceiveProps(props: Props) {
     this.setState({
-      visible: props.visible || false
+      visible: props.visible || false,
+      selectedRowKeys: props.selectedRowKeys || []
     })
   }
   public onOk() {
