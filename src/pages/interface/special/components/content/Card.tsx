@@ -34,8 +34,7 @@ class Main extends React.Component<Props, State> {
   public renderShop(): React.ReactNode {
     const { detail } = this.props
     const selectedRowKeys = this.getSelectedRowKeys(detail.list)
-    // this.tempList = Array.prototype.concat(detail.list)
-    // console.log('tempList=>', this.tempList);
+    this.tempList = Array.prototype.concat(detail.list)
     detail.css = detail.css || 1
     return (
       <div>
@@ -151,7 +150,7 @@ class Main extends React.Component<Props, State> {
     const { detail } = this.props;
     detail.css = detail.css || 1
     const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons)
-    // this.tempCrmCoupons = Array.isArray(detail.crmCoupons) ? [...detail.crmCoupons]: [];
+    this.tempCrmCoupons = Array.isArray(detail.crmCoupons) ? [...detail.crmCoupons]: [];
     return (
       <div>
         <Row gutter={12}>
