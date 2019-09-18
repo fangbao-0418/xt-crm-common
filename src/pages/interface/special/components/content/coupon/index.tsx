@@ -21,6 +21,7 @@ class CouponTable extends React.Component<Props> {
     {
       title: '排序',
       dataIndex: 'sort',
+      width: 100,
       align: 'center',
       render: (text, record, index) => {
         const { dataSource } = this.props
@@ -85,8 +86,7 @@ class CouponTable extends React.Component<Props> {
             this.page = page
           }
         }}
-      >
-      </Table>
+      />
     )
   }
 }

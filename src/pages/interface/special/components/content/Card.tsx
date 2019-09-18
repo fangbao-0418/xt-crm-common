@@ -28,18 +28,14 @@ class Main extends React.Component<Props, State> {
       this.props.onChange(detail)
     }
   }
-  public getSelectedRowKeys() {
-    const { detail } = this.props
-    const ids: any[] = [];
-    (detail.list || []).map((item) => {
-      ids.push(item.id)
-    })
-    return ids
+  public getSelectedRowKeys(list: any) {
+    return (list || []).map((item: any) => item.id)
   }
   public renderShop(): React.ReactNode {
     const { detail } = this.props
-    const selectedRowKeys = this.getSelectedRowKeys()
-    this.tempList = Array.prototype.concat(detail.list)
+    const selectedRowKeys = this.getSelectedRowKeys(detail.list)
+    // this.tempList = Array.prototype.concat(detail.list)
+    // console.log('tempList=>', this.tempList);
     detail.css = detail.css || 1
     return (
       <div>
@@ -154,7 +150,8 @@ class Main extends React.Component<Props, State> {
   public renderCoupon(): React.ReactNode {
     const { detail } = this.props;
     detail.css = detail.css || 1
-    this.tempCrmCoupons = Array.prototype.concat(detail.crmCoupons);
+    const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons)
+    // this.tempCrmCoupons = Array.isArray(detail.crmCoupons) ? [...detail.crmCoupons]: [];
     return (
       <div>
         <Row gutter={12}>
@@ -185,13 +182,36 @@ class Main extends React.Component<Props, State> {
             />}
             <CouponModal
               visible={this.state.couponVisible}
+              selectedRowKeys={selectedRowKeys}
               onCancel={() => {
                 this.setState({ couponVisible: false })
               }}
-              onOk={(selectedRowKeys: string[], selectedRows: Coupon.CouponItemProps[]) => {
-                detail.crmCoupons = selectedRows;
-                this.onChange(detail);
-                this.setState({couponVisible: false});
+              onSelectAll={(selected, selectedRows, changeRows) => {
+                console.log('onSelectAll=>', selected, selectedRows, changeRows)
+                if (selected) {
+                  changeRows.map((item) => {
+                    this.tempCrmCoupons.push(item)
+                  })
+                } else {
+                  const ids = changeRows.map(val => val.id)
+                  this.tempCrmCoupons = this.tempCrmCoupons.filter((item) => {
+                    return ids.indexOf(item.id) === -1
+                  })
+                }
+              }}
+              onSelect={(record, selected) => {
+                console.log('onSelect=>', record, selected)
+                if (selected) {
+                  this.tempCrmCoupons.push(record)
+                } else {
+                  this.tempCrmCoupons = this.tempCrmCoupons.filter((item) => item.id !== record.id)
+                }
+              }}
+              onOk={() => {
+                console.log('onOk=>', this.tempCrmCoupons);
+                detail.crmCoupons = this.tempCrmCoupons
+                this.onChange(detail)
+                this.setState({ couponVisible: false })
               }}
             />
             <span

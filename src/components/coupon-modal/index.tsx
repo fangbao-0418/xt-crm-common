@@ -23,6 +23,8 @@ export interface Props extends FormComponentProps {
   onOk?: (ids: any[], rows: Coupon.CouponItemProps[]) => void
   onCancel: () => void
   form: any
+  onSelect?: (record: Coupon.CouponItemProps, selected: boolean) => void
+  onSelectAll?: (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) => void
 }
 export interface State extends PageProps<Coupon.CouponItemProps> {
   selectedRowKeys: any[]
@@ -101,6 +103,8 @@ class CouponModal extends React.Component<Props, State> {
     this.onOk = this.onOk.bind(this)
     this.onSearch = this.onSearch.bind(this)
     this.onrowSelectionChange = this.onrowSelectionChange.bind(this)
+    this.onSelect = this.onSelect.bind(this)
+    this.onSelectAll = this.onSelectAll.bind(this)
   }
   public componentWillReceiveProps(props: Props) {
     this.setState({
@@ -129,11 +133,20 @@ class CouponModal extends React.Component<Props, State> {
       this.setState({ ...res })
     })
   }
-  public onrowSelectionChange(selectedRowKeys: any[], selectedRows: any[]) {
-    const unionArrs = unionArray(this.selectedRows, selectedRows);
-    this.selectedRows = unionArrs.filter(v => selectedRowKeys.includes(v.id));
-    console.log('selectedRows=>', this.selectedRows)
-    this.setState({ selectedRowKeys })
+  public onrowSelectionChange(selectedRowKeys: any[]) {
+    this.setState({
+      selectedRowKeys
+    })
+  }
+  public onSelect (record: Coupon.CouponItemProps, selected: boolean) {
+    if (this.props.onSelect) {
+      this.props.onSelect(record, selected)
+    }
+  }
+  public onSelectAll (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) {
+    if (this.props.onSelectAll) {
+      this.props.onSelectAll(selected, selectedRows, changeRows)
+    }
   }
   public onSearch(e: any) {
     this.payload.page = 1
@@ -144,7 +157,9 @@ class CouponModal extends React.Component<Props, State> {
     const { selectedRowKeys, visible } = this.state;
     const { getFieldDecorator, resetFields } = this.props.form;
     const rowSelection = {
+      onSelect: this.onSelect,
       onChange: this.onrowSelectionChange,
+      onSelectAll: this.onSelectAll,
       selectedRowKeys
     }
     return (
