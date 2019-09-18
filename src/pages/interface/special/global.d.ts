@@ -9,6 +9,7 @@ declare module Special {
     list: Shop.ShopItemProps[]
     /** 广告图 */
     advertisementUrl?: string
+    crmCoupons?: Coupon.CouponItemProps[]
   }
   export interface DetailItem {
     backgroundColor: string
