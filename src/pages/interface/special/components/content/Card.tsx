@@ -148,9 +148,9 @@ class Main extends React.Component<Props, State> {
   }
   public renderCoupon(): React.ReactNode {
     const { detail } = this.props;
-    detail.css = detail.css || 1
+    detail.css = detail.css || 1;
     const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons)
-    this.tempCrmCoupons = Array.isArray(detail.crmCoupons) ? [...detail.crmCoupons]: [];
+    this.tempCrmCoupons =  Array.prototype.concat(detail.crmCoupons);
     return (
       <div>
         <Row gutter={12}>
@@ -176,6 +176,7 @@ class Main extends React.Component<Props, State> {
               dataSource={detail.crmCoupons}
               onChange={(value) => {
                 detail.crmCoupons = value
+                console.log('crmCoupons=>', detail.crmCoupons);
                 this.onChange(detail)
               }}
             />}

@@ -37,7 +37,8 @@ class Main extends React.Component<Props, State> {
     detail.list.push({
       type,
       sort: 0,
-      list: []
+      list: [],
+      crmCoupons:[]
     })
     APP.dispatch({
       type: `${namespace}/changeDetail`,
