@@ -113,6 +113,10 @@ class Detail extends Component {
     this.setState({ modalInfo });
     this.toggleNotesVisible(true)
   }
+  lookForHistory = ({orderCode, productId}) => {
+    const { history } = this.props;
+    history.push(`/order/refundOrder?mainOrderCode=${orderCode}&productId=${productId}`);
+  }
   handleOk = async () => {
     const { form } = this.afterSaleForm.props;
     const { modalInfo } = this.state;
@@ -228,6 +232,7 @@ class Detail extends Component {
                 </Row>
                 <GoodsTable
                   showNotes={this.showNotes}
+                  lookForHistory={this.lookForHistory}
                   list={item.skuList}
                   childOrder={item.childOrder}
                   orderInfo={data.orderInfo}
