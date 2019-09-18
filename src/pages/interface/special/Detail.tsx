@@ -59,7 +59,7 @@ class Main extends React.Component<Props, State> {
   }
   public handleSubmit (e: any) {
     e.preventDefault()
-    this.props.form.validateFields((err, value) => {
+    this.props.form.validateFields((err:any, value) => {
       if (err) {
         return
       }
