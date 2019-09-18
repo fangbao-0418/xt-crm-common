@@ -188,8 +188,8 @@ class GoodsEdit extends React.Component {
         weight: res.weight,
         withShippingFree: res.withShippingFree,
         coverUrl: initImgList(res.coverUrl),
-        // videoCoverUrl: initImgList(res.videoCoverUrl),
-        // videoUrl: initImgList(res.videoUrl),
+        videoCoverUrl: initImgList(res.videoCoverUrl),
+        videoUrl: initImgList(res.videoUrl),
         bannerUrl: initImgList(res.bannerUrl),
         listImage,
         productImage,
@@ -321,7 +321,7 @@ class GoodsEdit extends React.Component {
         item[text] = e.target.value
       })
     }
-    
+
     this.setState({ data });
   };
 
@@ -378,13 +378,13 @@ class GoodsEdit extends React.Component {
           property2: speSelect[1] && speSelect[1].title,
           skuAddList,
           coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].durl),
-          // videoCoverUrl: vals.videoCoverUrl && vals.videoCoverUrl[0] && replaceHttpUrl(vals.videoCoverUrl[0].durl),
-          // videoUrl: vals.videoUrl && vals.videoUrl[0] && replaceHttpUrl(vals.videoUrl[0].durl),
+          videoCoverUrl: vals.videoCoverUrl && vals.videoCoverUrl[0] && replaceHttpUrl(vals.videoCoverUrl[0].durl),
+          videoUrl: vals.videoUrl && vals.videoUrl[0] && replaceHttpUrl(vals.videoUrl[0].durl),
           listImage: listImage.join(','),
           productImage: productImage.join(','),
           ...property,
           bannerUrl: vals.bannerUrl && replaceHttpUrl(vals.bannerUrl[0].url),
-          categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '', 
+          categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
         };
 
         setProduct({ productId: id, ...params }).then((res) => {
@@ -631,7 +631,7 @@ class GoodsEdit extends React.Component {
                   required: true,
                   message: '请输入商品简介',
                 },
-              ],  
+              ],
             })(<Input placeholder="请输入商品简介" />)}
           </FormItem>
           <FormItem label="供货商">
@@ -649,7 +649,7 @@ class GoodsEdit extends React.Component {
                 filterOption={(inputValue, option) =>{
                   return option.props.children.indexOf(inputValue) > -1;
                 }}
-              > 
+              >
                 {map(supplier, item => (
                   <Option value={item.id} key={item.id}>
                     {item.name}
@@ -661,12 +661,12 @@ class GoodsEdit extends React.Component {
           <FormItem label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
           </FormItem>
-          {/* <FormItem label="商品视频封面">
+          <FormItem label="商品视频封面">
             {getFieldDecorator('videoCoverUrl')(<UploadView placeholder="上传视频封面" listType="picture-card" listNum={1} size={0.3} />)}
           </FormItem>
           <FormItem label="商品视频">
             {getFieldDecorator('videoUrl')(<UploadView placeholder="上传视频" fileType='video' listType="picture-card" listNum={1} size={5} />)}
-          </FormItem> */}
+          </FormItem>
           <FormItem label="商品主图" required={true}>
             {getFieldDecorator('coverUrl', {
               rules: [
