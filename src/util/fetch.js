@@ -7,7 +7,9 @@ var qs = require('qs');
 
 // const prod = true;
 export const prefix = url => {
-  return `${baseHost}${url}`;
+  let apiDomain = baseHost;
+  if(!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = sessionStorage.getItem('apidomain') || baseHost;
+  return `${apiDomain}${url}`;
 };
 
 export const request = (url, config) => {

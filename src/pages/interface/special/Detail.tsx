@@ -93,7 +93,7 @@ class Main extends React.Component<Props, State> {
   public handleSubmit(e: any) {
     e.preventDefault()
     console.log('detail=>', this.mapDetailToRequestParams(this.props.detail))
-    this.props.form.validateFields((err, value) => {
+    this.props.form.validateFields((err:any, value) => {
       if (err) {
         return
       }
