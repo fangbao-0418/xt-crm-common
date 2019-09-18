@@ -4,7 +4,8 @@ export default {
   namespace,
   state: {
     detail: {
-      list: []
+      list: [],
+      crmCoupons: []
     }
   },
   reducers: {
@@ -12,7 +13,8 @@ export default {
       console.log('init')
       return {
         detail: {
-          list: []
+          list: [],
+          crmCoupons: []
         }
       }
     },
