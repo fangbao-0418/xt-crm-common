@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox  } from 'antd';
+import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox } from 'antd';
 import UploadView from '../../components/upload';
 import {
   map,
@@ -21,7 +21,7 @@ import descartes from '../../util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api';
 // import BraftEditor from 'braft-editor';
 import { getAllId, parseQuery, gotoPage, initImgList } from '@/util/utils';
-
+import deliveryModeType from '@/enum/deliveryModeType';
 const formatMoneyBeforeRequest = price => {
   if (isNil(price)) {
     return price;
@@ -66,13 +66,13 @@ const formLayout = {
   },
 };
 
-function mapTree (org) {
+function mapTree(org) {
   const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
   return {
-      label: org.name,
-      value: org.id,
-      data: {...org},
-      children: haveChildren ? org.childList.map(i => mapTree(i)) : []
+    label: org.name,
+    value: org.id,
+    data: { ...org },
+    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
   };
 };
 
@@ -119,6 +119,7 @@ class GoodsEdit extends React.Component {
     if (!id) return;
     let { speSelect } = this.state;
     getGoodsDetial({ productId: id }).then((res = {}) => {
+      console.log('res.skuList=>', res.skuList);
       speSelect.push({
         title: res.property1,
         fixed: 'left',
@@ -190,6 +191,8 @@ class GoodsEdit extends React.Component {
         coverUrl: initImgList(res.coverUrl),
         // videoCoverUrl: initImgList(res.videoCoverUrl),
         // videoUrl: initImgList(res.videoUrl),
+        deliveryMode: res.deliveryMode,
+        barCode: res.barCode,
         bannerUrl: initImgList(res.bannerUrl),
         listImage,
         productImage,
@@ -231,7 +234,7 @@ class GoodsEdit extends React.Component {
     const { speSelect } = this.state;
     speSelect.splice(e, 1);
     let data = [];
-    if(speSelect.length == 0) {
+    if (speSelect.length == 0) {
       return this.setState({ speSelect, data });
     }
     map(descartes(speSelect), (item, key) => {
@@ -283,6 +286,7 @@ class GoodsEdit extends React.Component {
   };
 
   handleClickChange = key => () => {
+    // const deliveryMode = this.props.form.getFieldValue('deliveryMode');
     const { speSelect, spuName, data } = this.state;
     if (indexOf(speSelect[key].data, spuName[key]) === -1) {
       speSelect[key].data.push(spuName[key]);
@@ -294,8 +298,9 @@ class GoodsEdit extends React.Component {
     map(descartes(speSelect), (item, key) => {
       // if (key === 0) {
       const skuList = concat([], item);
-
       data[key] = {
+        ...data[key],
+        // deliveryMode: (data[key] && data[key]['deliveryMode-dirty']) ? data[key].deliveryMode : deliveryMode,
         spuName: skuList,
         propertyValue1: size(skuList) > 0 && skuList[0],
         propertyValue2: (size(skuList) > 1 && skuList[1]) || '',
@@ -315,13 +320,15 @@ class GoodsEdit extends React.Component {
     const { data, noSyncList } = this.state;
     const nosync = noSyncList.includes(text);
     if (!nosync) {
-      data[index][text] = e.target.value;
+      data[index][text] = e.target ? e.target.value: e;
+      // data[index][`${text}-dirty`] = true;
     } else {
       data.forEach(item => {
-        item[text] = e.target.value
+        item[text] = e.target ? e.target.value: e
+        // item[`${text}-dirty`] = true;
       })
     }
-    
+
     this.setState({ data });
   };
 
@@ -362,7 +369,6 @@ class GoodsEdit extends React.Component {
           item.areaMemberPrice = formatMoneyBeforeRequest(item.areaMemberPrice);
           item.headPrice = formatMoneyBeforeRequest(item.headPrice);
         });
-
         const productImage = [];
         map(vals.productImage, item => {
           productImage.push(replaceHttpUrl(item.url));
@@ -384,11 +390,11 @@ class GoodsEdit extends React.Component {
           productImage: productImage.join(','),
           ...property,
           bannerUrl: vals.bannerUrl && replaceHttpUrl(vals.bannerUrl[0].url),
-          categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '', 
+          categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
         };
 
         setProduct({ productId: id, ...params }).then((res) => {
-          if(!res) return;
+          if (!res) return;
           if (id) {
             res && message.success('编辑数据成功');
           } else {
@@ -405,6 +411,17 @@ class GoodsEdit extends React.Component {
   };
 
   handleMainImage = fileList => { };
+  barCodeValidator = (rule, value, callback) => {
+    if (value) {
+      if (/^\d{0,20}$/.test(value)) {
+        callback()
+      } else {
+        callback('仅支持数字，20个字符以内')
+      }
+    } else {
+      callback();
+    }
+  }
 
   // renderTitle = (text, id) => {
   //   return (
@@ -458,6 +475,20 @@ class GoodsEdit extends React.Component {
             />
           );
         },
+      },
+      {
+        title: '发货方式',
+        dataIndex: 'deliveryMode',
+        width: 100,
+        render: (text, record, index) => {
+          return (
+            <Select value={text} placeholder="请选择" onChange={this.handleChangeValue('deliveryMode', record, index)}>
+              {
+                deliveryModeType.getArray().map(item => (<Option value={item.key} key={item.key}>{item.val}</Option>))
+              }
+            </Select>
+          )
+        }
       },
       {
         title: '成本价',
@@ -602,7 +633,7 @@ class GoodsEdit extends React.Component {
                   },
                 }
               ],
-            })(<Cascader options={this.state.categoryList}  placeholder="请输入商品类目" />)}
+            })(<Cascader options={this.state.categoryList} placeholder="请输入商品类目" />)}
           </FormItem>
           <FormItem label="商品简称">
             {getFieldDecorator('productShortName', {
@@ -631,9 +662,36 @@ class GoodsEdit extends React.Component {
                   required: true,
                   message: '请输入商品简介',
                 },
-              ],  
+              ],
             })(<Input placeholder="请输入商品简介" />)}
           </FormItem>
+          <FormItem label="商品条码">
+            {getFieldDecorator('barCode', {
+              rules: [
+                {
+                  validator: this.barCodeValidator
+                },
+              ],
+            })(<Input placeholder="请输入商品条码" />)}
+          </FormItem>
+
+          {/* <FormItem label="发货方式">
+            {getFieldDecorator('deliveryMode', {
+              rules: [
+                {
+                  required: true,
+                  message: '请选择发货方式',
+                }
+              ],
+            })(
+              <Select placeholder="请选择">
+                {
+                  deliveryModeType.getArray().map(item => (<Option value={item.key} key={item.key}>{item.val}</Option>))
+                }
+              </Select>
+            )}
+          </FormItem> */}
+
           <FormItem label="供货商">
             {getFieldDecorator('storeId', {
               rules: [
@@ -646,10 +704,10 @@ class GoodsEdit extends React.Component {
               <Select
                 placeholder="请选择供货商"
                 showSearch
-                filterOption={(inputValue, option) =>{
+                filterOption={(inputValue, option) => {
                   return option.props.children.indexOf(inputValue) > -1;
                 }}
-              > 
+              >
                 {map(supplier, item => (
                   <Option value={item.id} key={item.id}>
                     {item.name}
