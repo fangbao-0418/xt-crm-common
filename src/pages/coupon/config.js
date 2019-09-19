@@ -92,6 +92,7 @@ export const releaseRecordsColumns = [{
   title: '用户群体值',
   dataIndex: 'userGroupValue',
   key: 'userGroupValue',
+  width: 600,
   render: (text, record) => {
     switch (record.receiveUserGroup) {
       case 0:
@@ -99,7 +100,7 @@ export const releaseRecordsColumns = [{
       case 1:
         return formatReceiveRestrict(record.userGroupValue);
       case 2:
-        return record.userGroupValue;
+        return <div className="wrap">{record.userGroupValue}</div>
       case 3:
         const [href, name] = record.userGroupValue.split(',')
         return <a href={href}>{name}</a>;
