@@ -34,17 +34,21 @@ export default class extends React.Component {
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
+    const [payStartTime, payEndTime] = formatFields(fieldsValues['payTime']);
     delete fieldsValues['apply'];
     delete fieldsValues['handle'];
+    delete fieldsValues['payTime'];
     const params = {
       ...fieldsValues,
       applyStartTime,
       applyEndTime,
       handleStartTime,
       handleEndTime,
+      payStartTime,
+      payEndTime,
       refundStatus: this.props.refundStatus,
       page: this.state.current,
-      pageSize: this.state.pageSize,
+      pageSize: this.state.pageSize
     };
     if (isExport) {
       this.setState({
