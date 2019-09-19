@@ -286,7 +286,7 @@ class GoodsEdit extends React.Component {
   };
 
   handleClickChange = key => () => {
-    const deliveryMode = this.props.form.getFieldValue('deliveryMode');
+    // const deliveryMode = this.props.form.getFieldValue('deliveryMode');
     const { speSelect, spuName, data } = this.state;
     if (indexOf(speSelect[key].data, spuName[key]) === -1) {
       speSelect[key].data.push(spuName[key]);
@@ -300,7 +300,7 @@ class GoodsEdit extends React.Component {
       const skuList = concat([], item);
       data[key] = {
         ...data[key],
-        deliveryMode: (data[key] && data[key]['deliveryMode-dirty']) ? data[key].deliveryMode : deliveryMode,
+        // deliveryMode: (data[key] && data[key]['deliveryMode-dirty']) ? data[key].deliveryMode : deliveryMode,
         spuName: skuList,
         propertyValue1: size(skuList) > 0 && skuList[0],
         propertyValue2: (size(skuList) > 1 && skuList[1]) || '',
@@ -321,11 +321,11 @@ class GoodsEdit extends React.Component {
     const nosync = noSyncList.includes(text);
     if (!nosync) {
       data[index][text] = e.target ? e.target.value: e;
-      data[index][`${text}-dirty`] = true;
+      // data[index][`${text}-dirty`] = true;
     } else {
       data.forEach(item => {
         item[text] = e.target ? e.target.value: e
-        item[`${text}-dirty`] = true;
+        // item[`${text}-dirty`] = true;
       })
     }
 
@@ -675,7 +675,7 @@ class GoodsEdit extends React.Component {
             })(<Input placeholder="请输入商品条码" />)}
           </FormItem>
 
-          <FormItem label="发货方式">
+          {/* <FormItem label="发货方式">
             {getFieldDecorator('deliveryMode', {
               rules: [
                 {
@@ -690,7 +690,7 @@ class GoodsEdit extends React.Component {
                 }
               </Select>
             )}
-          </FormItem>
+          </FormItem> */}
 
           <FormItem label="供货商">
             {getFieldDecorator('storeId', {

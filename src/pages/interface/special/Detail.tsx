@@ -8,7 +8,7 @@ import Content from './components/content'
 import * as api from './api'
 import styles from './style.module.sass'
 import { namespace } from './model'
-interface Props extends FormComponentProps, RouteComponentProps<{id: any}> {
+interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   detail: Special.DetailItem
 }
 interface State {
@@ -19,29 +19,30 @@ class Main extends React.Component<Props, State> {
     loading: false
   }
   public id = '-1'
-  public constructor (props: Props) {
+  public constructor(props: Props) {
     super(props)
     this.addContent = this.addContent.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
-  public componentDidMount () {
+  public componentDidMount() {
     this.fetchData()
   }
-  public componentWillUnmount () {
+  public componentWillUnmount() {
     APP.dispatch({
       type: `${namespace}/@@init`
     })
   }
-  public addContent (type: 1 | 2 | 3) {
+  public addContent(type: 1 | 2 | 3) {
     const { detail } = this.props
     detail.list.push({
       type,
       sort: 0,
-      list: []
+      list: [],
+      crmCoupons:[]
     })
     APP.dispatch({
       type: `${namespace}/changeDetail`,
-      payload: {...detail}
+      payload: { ...detail }
     })
   }
   public fetchData() {
@@ -57,9 +58,43 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
-  public handleSubmit (e: any) {
+  // 新增详情转换成入参
+  public mapDetailToRequestParams(detail: Special.DetailItem) {
+    const list = detail.list.map((column: Special.DetailContentProps) => {
+      let items = [];
+      switch (column.type) {
+        case 1:
+          items = (column.list || []).map(v => {
+            return {
+              id: v.id,
+              sort: v.sort
+            }
+          })
+          return { type: column.type, css: column.css, sort: column.sort, items }
+          break;
+        case 2:
+          items = (column.crmCoupons || []).map(v => {
+            return {
+              id: v.id,
+              sort: v.sort
+            }
+          })
+          return { type: column.type, css: column.css, sort: column.sort, items }
+        case 3:
+          return { type: column.type, sort: column.sort, advertisementUrl: column.advertisementUrl };
+        default:
+          return {};
+      }
+    })
+    return {
+      ...detail,
+      list
+    }
+  }
+  public handleSubmit(e: any) {
     e.preventDefault()
-    this.props.form.validateFields((err, value) => {
+    console.log('detail=>', this.mapDetailToRequestParams(this.props.detail))
+    this.props.form.validateFields((err:any, value) => {
       if (err) {
         return
       }
@@ -71,7 +106,7 @@ class Main extends React.Component<Props, State> {
         value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
       }
       api.saveSpecial({
-        ...detail,
+        ...this.mapDetailToRequestParams(detail),
         ...value
       }).then((res: any) => {
         this.setState({
@@ -88,7 +123,7 @@ class Main extends React.Component<Props, State> {
       })
     })
   }
-  public render () {
+  public render() {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
       labelCol: {
@@ -120,7 +155,7 @@ class Main extends React.Component<Props, State> {
               {getFieldDecorator('subjectName', {
                 initialValue: detail.subjectName,
                 rules: [
-                  {required: true, message: '名称不能为空'}
+                  { required: true, message: '名称不能为空' }
                 ]
               })(
                 <Input placeholder='请输入专题名称' />
@@ -132,7 +167,7 @@ class Main extends React.Component<Props, State> {
               {getFieldDecorator('shareTitle', {
                 initialValue: detail.shareTitle,
                 rules: [
-                  {required: true, message: '分享标题不能为空'},
+                  { required: true, message: '分享标题不能为空' },
                   {
                     max: 30,
                     message: '分享标题不能超过30个字符'
@@ -148,7 +183,7 @@ class Main extends React.Component<Props, State> {
               {getFieldDecorator('backgroundColor', {
                 initialValue: detail.backgroundColor,
                 rules: [
-                  {required: true, message: '专题背景色不能为空'}
+                  { required: true, message: '专题背景色不能为空' }
                 ]
               })(
                 <Input placeholder='请输入背景色，如#FFFFFF' />
@@ -182,7 +217,7 @@ class Main extends React.Component<Props, State> {
               >
                 广告
               </Button>
-              {/* <Button type="primary" className={styles.mr10}>优惠券</Button> */}
+              <Button type="primary" className={styles.mr10} onClick={() => this.addContent(2)}>优惠券</Button>
               <Button
                 type="primary"
                 onClick={() => this.addContent(1)}
@@ -196,7 +231,7 @@ class Main extends React.Component<Props, State> {
                 loading={this.state.loading}
                 type="primary"
                 htmlType="submit"
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
               >
                 保存
               </Button>
