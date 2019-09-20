@@ -22,10 +22,10 @@ export const request = (url, config) => {
     url: prefix(url),
     method: 'get',
     withCredentials: true,
+    ...config,
     headers: getHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
-    }),
-    ...config,
+    })
   })
     .then(res => {
       if (res.status === 401) {
@@ -102,11 +102,11 @@ export const newPost = (url, data, config) => {
   return request(url, {
     data: data,
     method: 'POST',
+    ...config,
     headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=UTF-8',
     }),
-    ...config,
   });
 };
 
@@ -115,11 +115,11 @@ export const newPut = (url, data, config) => {
   return request(url, {
     data: data,
     method: 'put',
+    ...config,
     headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=UTF-8',
-    }),
-    ...config,
+    })
   });
 };
 
