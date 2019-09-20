@@ -104,7 +104,7 @@ class GoodsTable extends Component {
           <>
             {this.showApplyBtn(orderInfo.orderStatus) && <Button type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
             <Button type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: {...record} })}>添加备注</Button>
-            <Button type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>
+            {record.canShowHistoryBtn && <Button type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>}
           </>
         )
       }
