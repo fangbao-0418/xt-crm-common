@@ -1,24 +1,20 @@
 import { message } from 'antd';
 import axios from 'axios';
 import { omitBy, isNil, isPlainObject, get as lodashGet } from 'lodash';
-import { formatData, getHeaders } from './utils';
-import { baseHost } from './baseHost';
+import { formatData, getHeaders, prefix } from './utils';
 var qs = require('qs');
 // const prod = true;
-export const prefix = url => {
-  let apiDomain = baseHost;
-  if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = sessionStorage.getItem('apidomain') || baseHost;
-  return `${apiDomain}${url}`;
-};
 
 export const request = (url, config) => {
-  return axios({
+  const _config = {
     url: prefix(url),
     method: 'get',
     withCredentials: true,
-    ...config,
-    headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-  })
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    ...config
+  }
+  _config.headers = getHeaders(_config.headers);
+  return axios(_config)
     .then(res => {
       if (res.status === 401) {
         window.location = '/#/login';
@@ -132,7 +128,7 @@ export const newPut = (url, data, config) => {
 // exportHelper
 export const exportFile = (url, data, config) => {
   return new Promise((resolve, reject) => {
-    window.open(baseHost + url + '?' + formatData(data));
+    window.open(prefix('') + url + '?' + formatData(data));
     resolve()
   })
 
@@ -198,7 +194,7 @@ const messageMap = {
   500: '服务端错误'
 };
 const instance = axios.create({
-  baseURL: baseHost,
+  baseURL: prefix(''),
   withCredentials: true,
   headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
 });

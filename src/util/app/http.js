@@ -8,25 +8,23 @@ import {
   isPlainObject,
   get as lodashGet
 } from 'lodash';
-import { getHeaders } from '../utils';
-import { baseHost } from '@/util/baseHost';
+import { getHeaders, prefix } from '../utils';
 var qs = require('qs');
 
 // const prod = true;
-export const prefix = url => {
-  return `${baseHost}${url}`;
-};
 
 export const request = (url, config) => {
-  return axios({
+  const _config = {
     url: prefix(url),
     method: 'get',
     withCredentials: true,
-    ...config,
     headers: getHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
-    })
-  })
+    }),
+    ...config,
+  }
+  _config.headers = getHeaders(_config.headers);
+  return axios(_config)
     .then(res => {
       if (res.status === 401) {
         window.location.href = '/#/login'
@@ -129,7 +127,7 @@ const messageMap = {
   500: '服务端错误'
 };
 const instance = axios.create({
-  baseURL: baseHost,
+  baseURL: prefix(''),
   withCredentials: true,
   headers: getHeaders({
     'Content-Type': 'application/x-www-form-urlencoded'
