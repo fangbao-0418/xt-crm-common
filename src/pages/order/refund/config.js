@@ -61,6 +61,11 @@ export const formFields = function () {
       id: 'handle',
       ids: ['handleStartTime', 'handleEndTime'],
       label: '处理时间'
+    }, {
+      type: 'date',
+      id: 'payTime',
+      ids: ['payStartTime', 'payEndTime'],
+      label: '支付时间'
     }
   ];
 }
