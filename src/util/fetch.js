@@ -8,16 +8,21 @@ var qs = require('qs');
 // const prod = true;
 export const prefix = url => {
   let apiDomain = baseHost;
-  if(!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = sessionStorage.getItem('apidomain') || baseHost;
+  if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = sessionStorage.getItem('apidomain') || baseHost;
   return `${apiDomain}${url}`;
 };
 
 export const request = (url, config) => {
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+  const token = sessionStorage.getItem('token');
+  if (token) headers.Authorization = token;
   return axios({
     url: prefix(url),
     method: 'get',
     withCredentials: true,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers,
     ...config,
   })
     .then(res => {
@@ -137,58 +142,58 @@ export const exportFile = (url, data, config) => {
     resolve()
   })
 
-  return axios({
-    url: prefix(url),
-    data: qs.stringify(data),
-    method: 'post',
-    withCredentials: true,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    responseType: 'blob',
-  })
-    .then(function (res) {
-      debugger
-      if (res.data.type === 'application/json') {
-        return Promise.reject(res.data);
-      }
-      var blob = new Blob([res.data], { type: res.headers['content-type'] });
-      const fileName = getFileName(res.headers['content-disposition']);
+  // return axios({
+  //   url: prefix(url),
+  //   data: qs.stringify(data),
+  //   method: 'post',
+  //   withCredentials: true,
+  //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  //   responseType: 'blob',
+  // })
+  //   .then(function (res) {
+  //     debugger
+  //     if (res.data.type === 'application/json') {
+  //       return Promise.reject(res.data);
+  //     }
+  //     var blob = new Blob([res.data], { type: res.headers['content-type'] });
+  //     const fileName = getFileName(res.headers['content-disposition']);
 
-      var downloadElement = document.createElement('a');
-      var href = window.URL.createObjectURL(blob); //创建下载的链接
-      downloadElement.href = href;
-      downloadElement.target = '_blank';
-      fileName && (downloadElement.download = fileName); //下载后文件名
-      document.body.appendChild(downloadElement);
-      downloadElement.click(); //点击下载
-      document.body.removeChild(downloadElement); //下载完成移除元素
-      window.URL.revokeObjectURL(href); //释放掉blob对象
-    })
-    .catch(function (error) {
-      if (error.type === 'application/json') {
-        var reader = new FileReader();
-        reader.addEventListener("loadend", function () {
-          const obj = JSON.parse(reader.result);
-          message.error(obj.message);
-        });
-        return reader.readAsText(error);
-      }
-      const httpCode = lodashGet(error, 'response.status');
-      if (httpCode === 401) {
-        message.error('未登录');
-        setTimeout(() => {
-          window.location = '/#/login';
-        }, 1500);
-        return Promise.reject();
-      }
+  //     var downloadElement = document.createElement('a');
+  //     var href = window.URL.createObjectURL(blob); //创建下载的链接
+  //     downloadElement.href = href;
+  //     downloadElement.target = '_blank';
+  //     fileName && (downloadElement.download = fileName); //下载后文件名
+  //     document.body.appendChild(downloadElement);
+  //     downloadElement.click(); //点击下载
+  //     document.body.removeChild(downloadElement); //下载完成移除元素
+  //     window.URL.revokeObjectURL(href); //释放掉blob对象
+  //   })
+  //   .catch(function (error) {
+  //     if (error.type === 'application/json') {
+  //       var reader = new FileReader();
+  //       reader.addEventListener("loadend", function () {
+  //         const obj = JSON.parse(reader.result);
+  //         message.error(obj.message);
+  //       });
+  //       return reader.readAsText(error);
+  //     }
+  //     const httpCode = lodashGet(error, 'response.status');
+  //     if (httpCode === 401) {
+  //       message.error('未登录');
+  //       setTimeout(() => {
+  //         window.location = '/#/login';
+  //       }, 1500);
+  //       return Promise.reject();
+  //     }
 
-      // 公共错误处理
-      if (httpCode === 403) {
-        message.error('权限不足');
-      } else {
-        message.error(error.message || '内部错误，请等待响应...');
-      }
-      return Promise.reject();
-    });
+  //     // 公共错误处理
+  //     if (httpCode === 403) {
+  //       message.error('权限不足');
+  //     } else {
+  //       message.error(error.message || '内部错误，请等待响应...');
+  //     }
+  //     return Promise.reject();
+  //   });
 };
 
 
@@ -198,10 +203,15 @@ const messageMap = {
   403: '权限不足',
   500: '服务端错误'
 };
+const token = sessionStorage.getItem('token');
+const headers = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+}
+if (token) headers.Authorization = token;
 const instance = axios.create({
   baseURL: baseHost,
   withCredentials: true,
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  headers,
 });
 instance.interceptors.response.use(res => {
   if (res.status === 200 && !res.data.success) { // 请求成功返回但是后台未返回成功数据，则给提示
