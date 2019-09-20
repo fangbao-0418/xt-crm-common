@@ -196,8 +196,15 @@ const messageMap = {
 const instance = axios.create({
   baseURL: prefix(''),
   withCredentials: true,
-  headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
+instance.interceptors.request.use((config) => {
+  config.headers = getHeaders(config.headers);
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+})
+
 instance.interceptors.response.use(res => {
   if (res.status === 200 && !res.data.success) { // 请求成功返回但是后台未返回成功数据，则给提示
     message.error(res.data.message);
