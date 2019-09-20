@@ -146,7 +146,11 @@ export function initImgList(imgUrlWap) {
   return [];
 };
 
-
+export function getHeaders(headers) {
+  const token = sessionStorage.getItem('token');
+  if (token) headers.Authorization = token;
+  return headers;
+}
 /**
  * 
  * @param { 目标数组 } target 

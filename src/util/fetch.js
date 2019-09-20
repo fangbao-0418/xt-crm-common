@@ -1,10 +1,9 @@
 import { message } from 'antd';
 import axios from 'axios';
 import { omitBy, isNil, isPlainObject, get as lodashGet } from 'lodash';
-import { formatData } from './utils';
+import { formatData, getHeaders } from './utils';
 import { baseHost } from './baseHost';
 var qs = require('qs');
-
 // const prod = true;
 export const prefix = url => {
   let apiDomain = baseHost;
@@ -13,16 +12,11 @@ export const prefix = url => {
 };
 
 export const request = (url, config) => {
-  const headers = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  }
-  const token = sessionStorage.getItem('token');
-  if (token) headers.Authorization = token;
   return axios({
     url: prefix(url),
     method: 'get',
     withCredentials: true,
-    headers,
+    headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
     ...config,
   })
     .then(res => {
@@ -94,10 +88,10 @@ export const newGet = (url, data, config) => {
   return request(url, {
     params: data,
     method: 'GET',
-    headers: {
+    headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=UTF-8',
-    },
+    }),
     ...config,
   });
 };
@@ -107,10 +101,10 @@ export const newPost = (url, data, config) => {
   return request(url, {
     data: data,
     method: 'POST',
-    headers: {
+    headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=UTF-8',
-    },
+    }),
     ...config,
   });
 };
@@ -120,21 +114,21 @@ export const newPut = (url, data, config) => {
   return request(url, {
     data: data,
     method: 'put',
-    headers: {
+    headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=UTF-8',
-    },
+    }),
     ...config,
   });
 };
 
-function getFileName(disposition) {
-  if (!disposition) {
-    return '';
-  }
-  const idx = disposition.lastIndexOf('=');
-  return decodeURI(disposition.slice(idx + 1));
-}
+// function getFileName(disposition) {
+//   if (!disposition) {
+//     return '';
+//   }
+//   const idx = disposition.lastIndexOf('=');
+//   return decodeURI(disposition.slice(idx + 1));
+// }
 // exportHelper
 export const exportFile = (url, data, config) => {
   return new Promise((resolve, reject) => {
@@ -203,15 +197,10 @@ const messageMap = {
   403: '权限不足',
   500: '服务端错误'
 };
-const token = sessionStorage.getItem('token');
-const headers = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-}
-if (token) headers.Authorization = token;
 const instance = axios.create({
   baseURL: baseHost,
   withCredentials: true,
-  headers,
+  headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
 });
 instance.interceptors.response.use(res => {
   if (res.status === 200 && !res.data.success) { // 请求成功返回但是后台未返回成功数据，则给提示
