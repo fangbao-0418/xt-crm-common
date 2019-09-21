@@ -138,6 +138,13 @@ export const getListColumns = ({ query, history }) => [
   //   dataIndex: 'mainOrderCode',
   // },
   {
+    title: '供应商操作',
+    dataIndex: 'supplierOperate',
+    render: (text) => {
+      return text === 10 ? '同意': '-';
+    }
+  },
+  {
     title: '操作',
     dataIndex: 'record',
     render: (_, { id, skuId, refundId, childOrderId, mainOrderCode, orderCode, refundStatus, isDelete }) => {

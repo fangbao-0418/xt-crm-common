@@ -52,12 +52,13 @@ class OrderList extends React.Component {
   handleSearch = () => {
     const {
       form: { validateFields },
-      orderStatus,
+      // orderStatus,
     } = this.props;
-    console.log('orderStatus', orderStatus);
+    // console.log('orderStatus', orderStatus);
+
     validateFields((err, vals) => {
       if (!err) {
-        this.query();
+        this.setState({current: 1}, this.query);
       }
     });
   };
@@ -124,6 +125,7 @@ class OrderList extends React.Component {
       },
       {
         title: '操作',
+        width: 200,
         render: (operator, record) => {
           return (
             <>
