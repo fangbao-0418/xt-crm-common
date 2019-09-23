@@ -118,72 +118,71 @@ export const newPut = (url, data, config) => {
   });
 };
 
-// function getFileName(disposition) {
-//   if (!disposition) {
-//     return '';
-//   }
-//   const idx = disposition.lastIndexOf('=');
-//   return decodeURI(disposition.slice(idx + 1));
-// }
+function getFileName(disposition) {
+  if (!disposition) {
+    return '';
+  }
+  const idx = disposition.lastIndexOf('=');
+  return decodeURI(disposition.slice(idx + 1));
+}
 // exportHelper
 export const exportFile = (url, data, config) => {
-  return new Promise((resolve, reject) => {
-    window.open(prefix('') + url + '?' + formatData(data));
-    resolve()
-  })
-
-  // return axios({
-  //   url: prefix(url),
-  //   data: qs.stringify(data),
-  //   method: 'post',
-  //   withCredentials: true,
-  //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-  //   responseType: 'blob',
+  // return new Promise((resolve, reject) => {
+  //   window.open(prefix('') + url + '?' + formatData(data));
+  //   resolve()
   // })
-  //   .then(function (res) {
-  //     debugger
-  //     if (res.data.type === 'application/json') {
-  //       return Promise.reject(res.data);
-  //     }
-  //     var blob = new Blob([res.data], { type: res.headers['content-type'] });
-  //     const fileName = getFileName(res.headers['content-disposition']);
 
-  //     var downloadElement = document.createElement('a');
-  //     var href = window.URL.createObjectURL(blob); //创建下载的链接
-  //     downloadElement.href = href;
-  //     downloadElement.target = '_blank';
-  //     fileName && (downloadElement.download = fileName); //下载后文件名
-  //     document.body.appendChild(downloadElement);
-  //     downloadElement.click(); //点击下载
-  //     document.body.removeChild(downloadElement); //下载完成移除元素
-  //     window.URL.revokeObjectURL(href); //释放掉blob对象
-  //   })
-  //   .catch(function (error) {
-  //     if (error.type === 'application/json') {
-  //       var reader = new FileReader();
-  //       reader.addEventListener("loadend", function () {
-  //         const obj = JSON.parse(reader.result);
-  //         message.error(obj.message);
-  //       });
-  //       return reader.readAsText(error);
-  //     }
-  //     const httpCode = lodashGet(error, 'response.status');
-  //     if (httpCode === 401) {
-  //       message.error('未登录');
-  //       setTimeout(() => {
-  //         window.location = '/#/login';
-  //       }, 1500);
-  //       return Promise.reject();
-  //     }
+  return axios({
+    url: prefix(url),
+    data: qs.stringify(data),
+    method: 'post',
+    withCredentials: true,
+    headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
+    responseType: 'blob',
+  })
+    .then(function (res) {
+      if (res.data.type === 'application/json') {
+        return Promise.reject(res.data);
+      }
+      var blob = new Blob([res.data], { type: res.headers['content-type'] });
+      const fileName = getFileName(res.headers['content-disposition']);
 
-  //     // 公共错误处理
-  //     if (httpCode === 403) {
-  //       message.error('权限不足');
-  //     } else {
-  //       message.error(error.message || '内部错误，请等待响应...');
-  //     }
-  //     return Promise.reject();
-  //   });
+      var downloadElement = document.createElement('a');
+      var href = window.URL.createObjectURL(blob); //创建下载的链接
+      downloadElement.href = href;
+      downloadElement.target = '_blank';
+      fileName && (downloadElement.download = fileName); //下载后文件名
+      document.body.appendChild(downloadElement);
+      downloadElement.click(); //点击下载
+      document.body.removeChild(downloadElement); //下载完成移除元素
+      window.URL.revokeObjectURL(href); //释放掉blob对象
+    })
+    .catch(function (error) {
+      if (error.type === 'application/json') {
+        var reader = new FileReader();
+        reader.addEventListener("loadend", function () {
+          const obj = JSON.parse(reader.result);
+          message.error(obj.message);
+        });
+        return reader.readAsText(error);
+      }
+      const httpCode = lodashGet(error, 'response.status');
+      if (httpCode === 401) {
+        message.error('未登录');
+        setTimeout(() => {
+          window.location = '/#/login';
+        }, 1500);
+        return Promise.reject();
+      }
+
+      // 公共错误处理
+      if (httpCode === 403) {
+        message.error('权限不足');
+      } else {
+        message.error(error.message || '内部错误，请等待响应...');
+      }
+      return Promise.reject();
+    });
 };
 
 
