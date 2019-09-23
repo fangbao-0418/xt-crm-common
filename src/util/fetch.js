@@ -134,10 +134,10 @@ export const exportFile = (url, data, config) => {
 
   return axios({
     url: prefix(url),
-    data: qs.stringify(data),
+    data,
     method: 'post',
     withCredentials: true,
-    headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
+    headers: getHeaders({ 'Content-Type': 'application/json' }),
     responseType: 'blob',
   })
     .then(function (res) {
