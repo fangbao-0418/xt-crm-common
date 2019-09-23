@@ -11,9 +11,14 @@ else if (host.indexOf('pre-xt-crmadmin') >= 0) {
   baseHost = 'https://pre-xt-crm-api.hzxituan.com';
   h5Host = 'https://pre-xt-myouxuan.hzxituan.com/v0909_coupon/index.html';
 }
-// 测试
+// 测试1
 else if (host.indexOf('test-crmadmin') >= 0) {
   baseHost = 'https://testapi-crmadmin.hzxituan.com';
+  h5Host = 'https://testing.hzxituan.com/v0909_coupon/index.html';
+}
+// 测试2
+else if (host.indexOf('test2-crmadmin') >= 0) {
+  baseHost = 'https://test2api-crmadmin.hzxituan.com';
   h5Host = 'https://testing.hzxituan.com/v0909_coupon/index.html';
 }
 // 正式
