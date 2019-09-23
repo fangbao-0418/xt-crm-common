@@ -22,7 +22,7 @@ class GoodsTable extends Component {
     return [20, 30, 40, 50].includes(orderStatus)
   }
   handleApply = (record) => {
-    const {orderInfo = {}, childOrder={}, memberId } = this.props;
+    const { orderInfo = {}, childOrder = {}, memberId } = this.props;
     if (record.canApply) {
       this.setState({ modalInfo: { ...record, mainOrderId: orderInfo.id, memberId, childOrder } });
       this.setState({
@@ -45,33 +45,37 @@ class GoodsTable extends Component {
       remark: e.target.value,
     });
   };
-  handleOk = async () => {
-    const { form } = this.afterSaleForm.props;
-    const { modalInfo } = this.state;
-    const fields = form.getFieldsValue();
-    fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
-    console.log('fields.imgUrl=>', fields.imgUrl)
-    fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
-    console.log('fields.imgUrl=>', fields.imgUrl)
-    if (fields.amount) {
-      fields.amount = new Decimal(fields.amount).mul(100).toNumber();
-    }
-    console.log('modalInfo=>', modalInfo)
-    const res = await customerAdd({
-      childOrderId: modalInfo.childOrderId,
-      mainOrderId: modalInfo.mainOrderId,
-      memberId: modalInfo.memberId,
-      skuId: modalInfo.skuId,
-      ...fields
-    });
-    if (res.success) {
-      message.success('申请售后成功');
-      this.setState({
-        visible: false
-      }, this.props.query)
-    }
+  handleOk = () => {
+    const { form: { getFieldsValue, validateFields } } = this.afterSaleForm.props;
+    validateFields(async (errors, values) => {
+      if (!errors) {
+        const { modalInfo } = this.state;
+        const fields = getFieldsValue();
+        fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
+        console.log('fields.imgUrl=>', fields.imgUrl)
+        fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
+        console.log('fields.imgUrl=>', fields.imgUrl)
+        if (fields.amount) {
+          fields.amount = new Decimal(fields.amount).mul(100).toNumber();
+        }
+        console.log('modalInfo=>', modalInfo)
+        const res = await customerAdd({
+          childOrderId: modalInfo.childOrderId,
+          mainOrderId: modalInfo.mainOrderId,
+          memberId: modalInfo.memberId,
+          skuId: modalInfo.skuId,
+          ...fields
+        });
+        if (res.success) {
+          message.success('申请售后成功');
+          this.setState({
+            visible: false
+          }, this.props.query)
+        }
+      }
+    })
   }
-  lookForHistory = ({orderCode, productId}) => {
+  lookForHistory = ({ orderCode, productId }) => {
     const { history } = this.props;
     history.push(`/order/refundOrder?mainOrderCode=${orderCode}&productId=${productId}`);
   }
@@ -103,7 +107,7 @@ class GoodsTable extends Component {
         render: (text, record, index) => (
           <>
             {this.showApplyBtn(orderInfo.orderStatus) && <Button type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
-            <Button type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: {...record} })}>添加备注</Button>
+            <Button type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: { ...record } })}>添加备注</Button>
             {record.canShowHistoryBtn && <Button type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>}
           </>
         )
@@ -142,7 +146,7 @@ class GoodsTable extends Component {
             </Col>
           </Row>
           <LogisticsInfo mainorderInfo={orderInfo} logistics={logistics} onSuccess={this.props.query} orderInfo={childOrder} />
-      </Card>
+        </Card>
       </>
     );
   }
