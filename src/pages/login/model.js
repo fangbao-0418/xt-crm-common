@@ -21,8 +21,8 @@ export default {
     effects: dispatch => ({
         async login(payload, state) {
             const response = await login(payload.params) || {};
-            sessionStorage.setItem('token', response.token);
             if (response && response.username) {
+                LocalStorage.put('token', response.token);
                 LocalStorage.put('user', response);
                 response.role && LocalStorage.put('role', response.role);
                 dispatch.login.saveDefault({

@@ -4,6 +4,7 @@ import logo from '@/assets/images/logo.svg';
 import styles from './login.module.scss';
 import { connect } from '@/util/utils';
 import domains from "./domain";
+import * as LocalStorage from '@/util/localstorage';
 const FormItem = Form.Item;
 
 const LoginPage = (props) => {
@@ -18,7 +19,7 @@ const LoginPage = (props) => {
 
   const gotoLogin = e => {
     e.preventDefault();
-    if(domain) sessionStorage.setItem('apidomain', domain);
+    if(domain) LocalStorage.put('apidomain', domain);
     props.dispatch({
       type: 'login/login',
       payload: {
