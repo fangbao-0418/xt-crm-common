@@ -51,7 +51,7 @@ class AfterSaleForm extends Component {
   }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
-    const price = parseFloat(formatPrice(modalInfo.preferentialTotalPrice))
+    const price = parseFloat(formatPrice(modalInfo.ableRefundAmount))
     const initialObj = {}
     const disabledObj = {}
     if (modalInfo.childOrder.orderStatus === 20) {
@@ -74,7 +74,7 @@ class AfterSaleForm extends Component {
             {this.isShowRefundAmount() && (
               <Form.Item label="退款金额">
                 {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={+formatPrice(modalInfo.preferentialTotalPrice)} />)}
-                <span className="ml10">（最多可退￥{formatPrice(modalInfo.preferentialTotalPrice)}）</span>
+                <span className="ml10">（最多可退￥{formatPrice(modalInfo.ableRefundAmount)}）</span>
               </Form.Item>
             )}
             <Form.Item label="售后凭证">

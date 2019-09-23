@@ -68,7 +68,7 @@ class GoodsTable extends Component {
       message.success('申请售后成功');
       this.setState({
         visible: false
-      })
+      }, this.props.query)
     }
   }
   lookForHistory = ({orderCode, productId}) => {
