@@ -1,4 +1,4 @@
-import { post, exportFile, prefix, get, put, fetch } from '../../util/fetch';
+import { post, exportFile, prefix, get, put, newPut, fetch } from '../../util/fetch';
 const debug = false;
 var qs = require('qs');
 
@@ -90,7 +90,14 @@ const detail = {
   taxPrice: 0,
   totalPrice: 0,
 };
-
+// 获取售后原因
+export function customerUpdate(data) {
+  return newPut('/order/afterSale/customerUpdate', data);
+}
+// 获取售后原因
+export function getRefundReason() {
+  return get('/order/afterSale/getRefundReason');
+}
 export function againRefund(id, info) {
   return put(`/order/afterSale/againRefund/${id}`, {info});
 }

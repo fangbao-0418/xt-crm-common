@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Row, Col, Form, Button, Input, InputNumber } from 'antd';
+import { Card, Row, Col, Form, Button, Input, InputNumber, Modal, message } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { XtSelect } from '@/components'
 import refundType from '@/enum/refundType';
@@ -17,7 +17,8 @@ import {
   joinFilterEmpty,
   formatDate
 } from '@/pages/helper';
-import ExpressCompanySelect from '@/components/express-company-select';
+import { customerUpdate } from '../../api';
+import ExpressCompanySelect, {ExpressCompanyOptions} from '@/components/express-company-select';
 import returnShipping from './return-shipping';
 import { Decimal } from 'decimal.js';
 
@@ -27,6 +28,10 @@ import { Decimal } from 'decimal.js';
 @withRouter
 @Form.create({ 'name': 'deal-form' })
 class DealForm extends Component {
+  state = {
+    modalVisible: false,
+    modalTitle: ''
+  }
   // 重新退款
   handleAgainRefund = async () => {
     const { dispatch, match: { params }, form: { getFieldsValue } } = this.props;
@@ -41,7 +46,7 @@ class DealForm extends Component {
   }
   // 第二次审核
   handleAuditOperate = (status) => {
-    const { dispatch, data: {checkVO = {}}, match: { params: { id } }, form: { getFieldsValue } } = this.props;
+    const { dispatch, data: { checkVO = {} }, match: { params: { id } }, form: { getFieldsValue } } = this.props;
     const fields = getFieldsValue();
     if (fields.refundAmount) {
       fields.refundAmount = new Decimal(fields.refundAmount).mul(100).toNumber();
@@ -68,6 +73,34 @@ class DealForm extends Component {
     // 是否触发退运费的逻辑
     const isTrigger = (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount === orderInfoVO.payMoney
     return hasFreight && isTrigger;
+  }
+  // 更改物流信息
+  updateLogisticsInfo = () => {
+    const { data: {checkVO = {}}, form: { setFieldsValue } } = this.props;
+    // 修改
+    if (checkVO.returnExpressCode) {
+      this.setState({ modalVisible: true, modalTitle: '物流信息修改' })
+      setFieldsValue({ returnExpressName: checkVO.returnExpressName, returnExpressCode: checkVO.returnExpressCode})
+    }
+    // 更改
+    else {
+      this.setState({ modalVisible: true, modalTitle: '物流信息新增' })
+    }
+  }
+  handleOk = async () => {
+    const { dispatch, data: {checkVO = {}} } = this.props;
+    const params = this.props.form.getFieldsValue(['returnExpressCode', 'returnExpressName'])
+    const res = await customerUpdate({
+      id: this.props.match.params.id,
+      ...params
+    })
+    console.log('res => ', res);
+    if (res) {
+      const msg = checkVO.returnExpressCode ? '物流信息修改成功': '物流信息上传成功';
+      message.success(msg)
+      dispatch['refund.model'].getDetail({id: this.props.match.params.id})
+    }
+    this.setState({modalVisible: false})
   }
   render() {
     const { form: { getFieldDecorator }, data: { refundStatus, orderServerVO = {}, checkVO = {} } } = this.props;
@@ -106,8 +139,38 @@ class DealForm extends Component {
     }
     // 仅换货、退款换货
     else {
+      const { checkVO = {} } = this.props.data;
       return (
         <>
+          <Modal
+            title={this.state.modalTitle}
+            visible={this.state.modalVisible}
+            onOk={this.handleOk}
+            onCancel={() => this.setState({modalVisible: false})}
+          >
+            <Form {...formItemLayout} onSubmit={this.handleSubmit} className="login-form">
+              <Form.Item label="物流公司">
+                {getFieldDecorator('returnExpressName', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入物流公司',
+                    }
+                  ],
+                })(<ExpressCompanySelect style={{ width: '100%' }} placeholder="请选择物流公司" />)}
+              </Form.Item>
+              <Form.Item label="物流单号 ">
+                {getFieldDecorator('returnExpressCode', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入物流单号',
+                    }
+                  ],
+                })(<Input placeholder="请输入物流单号"/>)}
+              </Form.Item>
+            </Form>
+          </Modal>
           <Card title="审核信息">
             <Row>
               <Col>退款类型：{refundType.getValue(checkVO.refundType)}</Col>
@@ -116,7 +179,12 @@ class DealForm extends Component {
               {!isOnlyRefund(checkVO.refundType) && <Col>退货信息：{joinFilterEmpty([checkVO.returnContact, checkVO.returnPhone, checkVO.returnAddress])}</Col>}
             </Row>
           </Card>
-          <Card title={<div>退货信息{isProcessingStatus(refundStatus) && <span style={{ color: '#999' }}>（待买家上传物流信息）</span>}</div>}>
+          <Card title={
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>退货信息{isProcessingStatus(refundStatus) && <span style={{ color: '#999' }}>（待买家上传物流信息）</span>}</div>
+              <Button type="link" onClick={this.updateLogisticsInfo}>{checkVO.returnExpressCode? '修改物流信息': '上传物流信息'}</Button>
+            </div>
+          }>
             <Row>
               <Col>物流公司：{checkVO.returnExpressName || '--'}</Col>
               <Col>物流单号：{checkVO.returnExpressCode || '--'}</Col>

@@ -80,7 +80,7 @@ class CheckForm extends Component {
           {localRefundType === '20' && <Form.Item label="退款金额">
             {getFieldDecorator('refundAmount', {
               initialValue: formatPrice(checkVO.refundAmount)
-            })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].dealTotalPrice)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
+            })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].ableRefundAmount)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
           </Form.Item>}
           {
             this.isReturnShipping() && <Form.Item label="退运费">

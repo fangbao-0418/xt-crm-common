@@ -61,6 +61,11 @@ export const formFields = function () {
       id: 'handle',
       ids: ['handleStartTime', 'handleEndTime'],
       label: '处理时间'
+    }, {
+      type: 'date',
+      id: 'payTime',
+      ids: ['payStartTime', 'payEndTime'],
+      label: '支付时间'
     }
   ];
 }
@@ -115,7 +120,14 @@ export const getListColumns = ({ query, history }) => [
     title: '实付金额（元）',
     dataIndex: 'buyPrice',
     render(v) {
-      return v ? formatMoneyWithSign(v) : ''
+      return v ? formatMoneyWithSign(v) : '-'
+    }
+  },
+  {
+    title: '退款金额（元）',
+    dataIndex: 'refundAmount',
+    render(v) {
+      return v ? formatMoneyWithSign(v) : '-'
     }
   },
   // {
