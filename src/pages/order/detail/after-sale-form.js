@@ -51,7 +51,7 @@ class AfterSaleForm extends Component {
   }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
-    const price = parseFloat(formatPrice(modalInfo.preferentialTotalPrice))
+    const price = parseFloat(formatPrice(modalInfo.ableRefundAmount))
     const initialObj = {}
     const disabledObj = {}
     if (modalInfo.childOrder.orderStatus === 20) {
@@ -66,15 +66,15 @@ class AfterSaleForm extends Component {
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
             <Form.Item label="售后类型">
-              {getFieldDecorator('refundType', {...initialObj,rules: [{ required: true }] })(<XtSelect {...disabledObj} data={refundType.getArray()} />)}
+              {getFieldDecorator('refundType', {...initialObj,rules: [{ required: true, message: '请选择售后类型' }] })(<XtSelect {...disabledObj} data={refundType.getArray()} />)}
             </Form.Item>
             <Form.Item label="售后原因">
-              {getFieldDecorator('returnReason', { rules: [{ required: true }] })(<XtSelect data={this.getRefundReason()} />)}
+              {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<XtSelect data={this.getRefundReason()} />)}
             </Form.Item>
             {this.isShowRefundAmount() && (
               <Form.Item label="退款金额">
                 {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={+formatPrice(modalInfo.preferentialTotalPrice)} />)}
-                <span className="ml10">（最多可退￥{formatPrice(modalInfo.preferentialTotalPrice)}）</span>
+                <span className="ml10">（最多可退￥{formatPrice(modalInfo.ableRefundAmount)}）</span>
               </Form.Item>
             )}
             <Form.Item label="售后凭证">
