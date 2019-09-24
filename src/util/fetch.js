@@ -125,17 +125,37 @@ function getFileName(disposition) {
   const idx = disposition.lastIndexOf('=');
   return decodeURI(disposition.slice(idx + 1));
 }
+
+function cleanArray(actual) {
+  const newArray = []
+  for (let i = 0; i < actual.length; i++) {
+    if (actual[i]) {
+      newArray.push(actual[i])
+    }
+  }
+  return newArray
+}
+
+function param(json) {
+  if (!json) return ''
+  return cleanArray(Object.keys(json).map(key => {
+    if (json[key] === undefined) return ''
+    return encodeURIComponent(key) + '=' +
+           encodeURIComponent(json[key])
+  })).join('&')
+}
+
 // exportHelper
 export const exportFile = (url, data, config) => {
   // return new Promise((resolve, reject) => {
   //   window.open(prefix('') + url + '?' + formatData(data));
   //   resolve()
   // })
-
+  
+  url = param(data) ? `${prefix(url)}?${param(data)}` : prefix(url);
   return axios({
-    url: prefix(url),
-    data,
-    method: 'post',
+    url,
+    method: 'get',
     withCredentials: true,
     headers: getHeaders({ 'Content-Type': 'application/json' }),
     responseType: 'blob',

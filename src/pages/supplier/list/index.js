@@ -78,7 +78,6 @@ class OrderList extends React.Component {
 
     exportSupplier(params).then(res => {
       console.log(1111);
-      debugger;
     });
   };
 
