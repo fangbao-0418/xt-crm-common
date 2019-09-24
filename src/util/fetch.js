@@ -157,17 +157,20 @@ export const exportFile = (url, data, config) => {
     url,
     method: 'get',
     withCredentials: true,
-    headers: getHeaders({ 'Content-Type': 'application/json' }),
+    headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
     responseType: 'blob',
   })
-    .then(function (res) {
+    .then(async function (res) {
       if (res.data.type === 'application/json') {
         return Promise.reject(res.data);
       }
       var blob = new Blob([res.data], { type: res.headers['content-type'] });
-      const fileName = getFileName(res.headers['content-disposition']);
-
+      const text = await blob.text();
+      const [fileName, blobText] = text.split('/attachment/')
+      // const fileName = getFileName(res.headers['content-disposition']);
       var downloadElement = document.createElement('a');
+      blob = new Blob([blobText], {type: 'text/plain'})
+      console.log('blob==>', blob);
       var href = window.URL.createObjectURL(blob); //创建下载的链接
       downloadElement.href = href;
       downloadElement.target = '_blank';
