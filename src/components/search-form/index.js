@@ -11,12 +11,9 @@ const { Option } = Select;
 // const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 @Form.create()
 export default class extends PureComponent {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      initParams: parseQuery()
-    }
+  componentDidMount() {
+    const { form: { setFieldsValue } } = this.props
+    setFieldsValue(parseQuery())
   }
   renderInput = (item) => {
     const placeholder = '请输入' + item.label;
@@ -27,7 +24,7 @@ export default class extends PureComponent {
 
   renderDate = (item) => {
     return (
-      <RangePicker showTime={{defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}}/>
+      <RangePicker showTime={{ defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')] }} />
     )
   }
 
@@ -69,7 +66,6 @@ export default class extends PureComponent {
 
   render() {
     const { options = [], form: { getFieldDecorator }, className, children } = this.props;
-    const { initParams } = this.state;
     return (
       <Form {...{
         labelCol: {
@@ -87,7 +83,6 @@ export default class extends PureComponent {
                   <FormItem label={label} key={item.id}>
                     {
                       getFieldDecorator(id, {
-                        initialValue: initParams[id],
                         ...config
                       })(
                         renderFun && renderFun(item)

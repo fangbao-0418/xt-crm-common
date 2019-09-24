@@ -14,7 +14,7 @@ const { Option } = Select;
 // DEBANGWULIU("debangwuliu", "德邦"),
 // JD("jd", "京东"),
 
-const ExpressCompanyOptions = {
+export const ExpressCompanyOptions = {
   ems: 'EMS',
   shunfeng: '顺丰',
   shentong: '申通',

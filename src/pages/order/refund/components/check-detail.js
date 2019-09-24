@@ -3,7 +3,7 @@ import { Card, Row, Col } from 'antd';
 import { formatMoney, joinFilterEmpty } from '@/pages/helper'
 import refundType from '@/enum/refundType';
 import { formatDate, isOnlyRefund, isReturnOfGoodsAndMoney, isOnlyExchange } from '@/pages/helper';
-
+import {ExpressCompanyOptions} from '@/components/express-company-select';
 function CheckDetail({ checkVO = {} }) {
   return (
     <>
@@ -48,7 +48,7 @@ function CheckDetail({ checkVO = {} }) {
         <Card title="发货信息">
           <Row>
             <Col>审核意见：{checkVO.refundStatusStr}</Col>
-            <Col>物流公司：{checkVO.sendExpressName || '--'}</Col>
+            <Col>物流公司：{ExpressCompanyOptions[checkVO.sendExpressName] || '--'}</Col>
             <Col>物流单号：{checkVO.sendExpressCode || '--'}</Col>
             <Col>提交时间：{(checkVO.sendExpressTime === 0 ? '' : formatDate(checkVO.sendExpressTime) || '--')}</Col>
             <Col>说明：{checkVO.serverDescribe}</Col>
