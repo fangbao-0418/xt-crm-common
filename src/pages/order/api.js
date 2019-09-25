@@ -1,4 +1,5 @@
-import { post, exportFile, prefix, get, put, newPut, fetch } from '../../util/fetch';
+import { post, exportFile, get, put, newPut, fetch } from '../../util/fetch';
+import { prefix } from '../../util/utils';
 const debug = false;
 var qs = require('qs');
 

@@ -20,8 +20,9 @@ export default {
     },
     effects: dispatch => ({
         async login(payload, state) {
-            const response = await login(payload.params);
+            const response = await login(payload.params) || {};
             if (response && response.username) {
+                LocalStorage.put('token', response.token);
                 LocalStorage.put('user', response);
                 response.role && LocalStorage.put('role', response.role);
                 dispatch.login.saveDefault({
