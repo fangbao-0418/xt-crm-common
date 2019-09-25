@@ -10,7 +10,80 @@ import MoneyRender from '@/components/money-render'
 import { formatDate } from '@/pages/helper';
 import { orderRefunds } from '@/config';
 import RemarkModal from '../components/remark-modal'
-export const formFields = function () {
+
+const OrderRefundStatusEnums = {
+  NOT_REFUND: {
+    value: 0,
+    description: '无售后',
+    cDescription: '无售后'
+  },
+  TO_BE_AUDIT: {
+    value: 10,
+    description: '待审核',
+    cDescription: '待审核'
+  },
+  TO_BE_C_SEND: {
+    value: 20,
+    description: '待用户发货',
+    cDescription: '处理中'
+  },
+  REFUND_MONEY_FAILURE: {
+    value: 21,
+    description: '退款失败',
+    cDescription: '处理中'
+  },
+  REFUND_MONEY_OF: {
+    value: 23,
+    description: '退款中',
+    cDescription: '处理中'
+  },
+  TO_BE_B_RECEIVE: {
+    value: 24,
+    description: '待平台收货',
+    cDescription: '处理中'
+  },
+  TO_BE_B_SEND: {
+    value: 25,
+    description: '待平台发货',
+    cDescription: '处理中'
+  },
+  TO_BE_C_RECEIVE: {
+    value: 26,
+    description: '待用户收货',
+    cDescription: '处理中'
+  },
+  TO_BE_B_FOLLOW: {
+    value: 27,
+    description: '等待客服跟进',
+    cDescription: '处理中'
+  },
+  FINISH: {
+    value: 30,
+    description: '完成',
+    cDescription: '售后完成'
+  },
+  REJECT: {
+    value: 40,
+    description: '驳回',
+    cDescription: '售后关闭'
+  }
+}
+
+const filterAndMapRefundOrder = cDescription => Object.values(OrderRefundStatusEnums).filter(v => v.cDescription === cDescription).map(v => ({ key: v.value, val: v.description }));
+const waitConfirm = filterAndMapRefundOrder('待审核');
+const operating = filterAndMapRefundOrder('处理中');
+const complete = filterAndMapRefundOrder('售后完成');
+const rejected = filterAndMapRefundOrder('售后关闭');
+export const orderRefundStatus = {
+  [enumRefundStatus.All]: [{key: '', val: '全部'}, ...waitConfirm, ...operating, ...complete, ...rejected],
+  [enumRefundStatus.WaitConfirm]: waitConfirm,
+  [enumRefundStatus.Operating]: operating,
+  [enumRefundStatus.Complete]: complete,
+  [enumRefundStatus.Rejected]: rejected
+}
+
+
+export const formFields = function (refundStatus) {
   return [
     {
       type: 'input',
@@ -37,8 +110,8 @@ export const formFields = function () {
       type: 'input',
       id: 'storeId',
       label: '供应商',
-      render: () => <SuppilerSelect/>
-    } , {
+      render: () => <SuppilerSelect />
+    }, {
       type: 'input',
       id: 'productId',
       label: '商品ID'
@@ -66,6 +139,15 @@ export const formFields = function () {
       id: 'payTime',
       ids: ['payStartTime', 'payEndTime'],
       label: '支付时间'
+    }, {
+      type: 'input',
+      id: 'shipmentNumber',
+      label: '物流单号'
+    }, {
+      type: 'select',
+      id: 'orderRefundStatusEnums',
+      label: '售后单状态',
+      options: orderRefundStatus[refundStatus]
     }
   ];
 }
