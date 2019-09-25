@@ -107,7 +107,7 @@ export default class extends React.Component {
           format={this.handleFormat}
           search={this.handleSearch}
           clear={this.handleSearch}
-          options={formFields()}
+          options={formFields(this.props.refundStatus)}
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>
