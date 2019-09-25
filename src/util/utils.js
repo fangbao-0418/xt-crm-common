@@ -1,7 +1,8 @@
 import * as redux from 'react-redux';
 import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
-
+import { baseHost } from './baseHost';
+import * as LocalStorage from '@/util/localstorage';
 const History = createHashHistory();
 
 function defaultMapStateToProps() {
@@ -146,7 +147,17 @@ export function initImgList(imgUrlWap) {
   return [];
 };
 
+export function getHeaders(headers) {
+  const token = LocalStorage.get('token');
+  if (token) headers.Authorization = token;
+  return headers;
+}
 
+export const prefix = url => {
+  let apiDomain = baseHost;
+  if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
+  return `${apiDomain}${url}`;
+};
 /**
  * 
  * @param { 目标数组 } target 

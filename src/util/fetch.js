@@ -1,25 +1,20 @@
 import { message } from 'antd';
 import axios from 'axios';
 import { omitBy, isNil, isPlainObject, get as lodashGet } from 'lodash';
-import { formatData } from './utils';
-import { baseHost } from './baseHost';
+import { formatData, getHeaders, prefix } from './utils';
 var qs = require('qs');
-
 // const prod = true;
-export const prefix = url => {
-  let apiDomain = baseHost;
-  if(!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = sessionStorage.getItem('apidomain') || baseHost;
-  return `${apiDomain}${url}`;
-};
 
 export const request = (url, config) => {
-  return axios({
+  const _config = {
     url: prefix(url),
     method: 'get',
     withCredentials: true,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    ...config,
-  })
+    ...config
+  }
+  _config.headers = getHeaders(_config.headers);
+  return axios(_config)
     .then(res => {
       if (res.status === 401) {
         window.location = '/#/login';
@@ -89,11 +84,11 @@ export const newGet = (url, data, config) => {
   return request(url, {
     params: data,
     method: 'GET',
-    headers: {
+    ...config,
+    headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=UTF-8',
-    },
-    ...config,
+    }),
   });
 };
 
@@ -102,11 +97,11 @@ export const newPost = (url, data, config) => {
   return request(url, {
     data: data,
     method: 'POST',
-    headers: {
+    ...config,
+    headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=UTF-8',
-    },
-    ...config,
+    }),
   });
 };
 
@@ -115,11 +110,11 @@ export const newPut = (url, data, config) => {
   return request(url, {
     data: data,
     method: 'put',
-    headers: {
+    ...config,
+    headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=UTF-8',
-    },
-    ...config,
+    }),
   });
 };
 
@@ -130,30 +125,52 @@ function getFileName(disposition) {
   const idx = disposition.lastIndexOf('=');
   return decodeURI(disposition.slice(idx + 1));
 }
+
+function cleanArray(actual) {
+  const newArray = []
+  for (let i = 0; i < actual.length; i++) {
+    if (actual[i]) {
+      newArray.push(actual[i])
+    }
+  }
+  return newArray
+}
+
+function param(json) {
+  if (!json) return ''
+  return cleanArray(Object.keys(json).map(key => {
+    if (json[key] === undefined) return ''
+    return encodeURIComponent(key) + '=' +
+           encodeURIComponent(json[key])
+  })).join('&')
+}
+
 // exportHelper
 export const exportFile = (url, data, config) => {
-  return new Promise((resolve, reject) => {
-    window.open(baseHost + url + '?' + formatData(data));
-    resolve()
-  })
-
+  // return new Promise((resolve, reject) => {
+  //   window.open(prefix('') + url + '?' + formatData(data));
+  //   resolve()
+  // })
+  
+  url = param(data) ? `${prefix(url)}?${param(data)}` : prefix(url);
   return axios({
-    url: prefix(url),
-    data: qs.stringify(data),
-    method: 'post',
+    url,
+    method: 'get',
     withCredentials: true,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
     responseType: 'blob',
   })
-    .then(function (res) {
-      debugger
+    .then(async function (res) {
       if (res.data.type === 'application/json') {
         return Promise.reject(res.data);
       }
       var blob = new Blob([res.data], { type: res.headers['content-type'] });
-      const fileName = getFileName(res.headers['content-disposition']);
-
+      const text = await blob.text();
+      const [fileName, blobText] = text.split('/attachment/')
+      // const fileName = getFileName(res.headers['content-disposition']);
       var downloadElement = document.createElement('a');
+      blob = new Blob([blobText], {type: 'text/plain'})
+      console.log('blob==>', blob);
       var href = window.URL.createObjectURL(blob); //创建下载的链接
       downloadElement.href = href;
       downloadElement.target = '_blank';
@@ -199,10 +216,17 @@ const messageMap = {
   500: '服务端错误'
 };
 const instance = axios.create({
-  baseURL: baseHost,
+  baseURL: prefix(''),
   withCredentials: true,
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
+instance.interceptors.request.use((config) => {
+  config.headers = getHeaders(config.headers);
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+})
+
 instance.interceptors.response.use(res => {
   if (res.status === 200 && !res.data.success) { // 请求成功返回但是后台未返回成功数据，则给提示
     message.error(res.data.message);

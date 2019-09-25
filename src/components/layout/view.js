@@ -73,7 +73,8 @@ export default class extends Component {
 
   logout = () => {
     LocalStorage.clear()
-    this.props.dispatch['layout'].logout();
+    Message.success('退出成功')
+    // this.props.dispatch['layout'].logout();
   }
 
   componentWillUnmount() {

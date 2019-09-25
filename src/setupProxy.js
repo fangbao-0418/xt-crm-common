@@ -11,7 +11,7 @@ module.exports = function(app) {
         // 'http://daily-crm-test.hzxituan.com',
         // "http://192.168.10.44:8080",
         // "http://192.168.10.60:8080",
-        'http://localhost:8889',
+        'http://daily-crm-test.hzxituan.com',
       secure: false,
       changeOrigin: true,
       pathRewrite: {
