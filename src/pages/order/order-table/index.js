@@ -10,6 +10,7 @@ import RefundCell from '../components/refund-cell';
 import RemarkModal from '../components/remark-modal';
 import RefundModal from '../components/refund-modal';
 import RefundStatusCell from '../components/refund-status-cell';
+import { getHeaders } from '@/util/utils';
 import moment from 'moment';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
@@ -329,6 +330,7 @@ class OrderList extends React.Component {
                   showUploadList={false}
                   withCredentials={true}
                   action={importLogistics}
+                  headers={getHeaders({})}
                   onChange={this.handleImportChange}
                   style={{ margin: '0 10px' }}
                 >
