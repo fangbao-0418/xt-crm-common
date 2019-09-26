@@ -164,104 +164,49 @@ export const getListColumns = ({ query, history }) => [
   {
     title: '商品',
     dataIndex: 'skuName',
-    // render(skuName, row) {
-    //   return <GoodCell {...row} />;
-    // },
-  },
-  {
-    title: '单价',
-    dataIndex: 'salePrice',
-    render(salePrice) {
-      return salePrice ? formatMoneyWithSign(salePrice) : '';
+    render(skuName, row) {
+      return <GoodCell {...row} />;
     },
   },
   {
-    title: '数量',
-    dataIndex: 'num',
+    title: '售后状态',
+    dataIndex: 'refundStatusStr',
   },
   {
-    title: '供应商',
-    dataIndex: 'storeName',
-  },
-  {
-    title: '买家 (手机号)',
-    dataIndex: 'userName',
-    render(v, record) {
-      return `${v ? v : ''} ${record.phone ? `(${record.phone})` : ''}`
-    }
-  },
-  {
-    title: '类型',
+    title: '售后类型',
     dataIndex: 'refundTypeStr',
   },
   {
     title: '申请售后数目',
     dataIndex: 'serverNum'
   },
-  // {
-  //   title: '申请售后金额',
-  //   dataIndex: 'amount'
-  // },
   {
-    title: '售后状态',
-    dataIndex: 'refundStatusStr',
+    title: '申请售后金额',
+    dataIndex: 'amount'
   },
   {
-    title: '实付金额（元）',
-    dataIndex: 'buyPrice',
-    render(v) {
-      return v ? formatMoneyWithSign(v) : '-'
+    title: '供应商',
+    dataIndex: 'storeName',
+  },
+  {
+    title: '买家信息',
+    dataIndex: 'userName',
+    render(v, record) {
+      return `${v ? v : ''} ${record.phone ? `(${record.phone})` : ''}`
     }
   },
-  {
-    title: '退款金额（元）',
-    dataIndex: 'refundAmount',
-    render(v) {
-      return v ? formatMoneyWithSign(v) : '-'
-    }
-  },
-  // {
-  //   title: '售后时间',
-  //   dataIndex: 'createTime',
-  //   render(v) {
-  //     return v && moment(v).format(dateFormat)
-  //   }
-  // },
   {
     title: '处理人',
     dataIndex: 'operator'
   },
-  // {
-  //   title: '售后单编号',
-  //   dataIndex: 'orderCode',
-  // },
-  // {
-  //   title: '订单编号',
-  //   dataIndex: 'mainOrderCode',
-  // },
+  {
+    title: '最后处理时间',
+    dataIndex: 'handleTime'
+  },
   {
     title: '操作',
     dataIndex: 'record',
-    render: (_, { id, skuId, refundId, childOrderId, mainOrderCode, orderCode, refundStatus, isDelete }) => {
-      return (
-        <div style={{ display: 'flex' }}>
-          <RemarkModal
-            onSuccess={query}
-            orderCode={mainOrderCode}
-            refundId={refundId}
-            childOrderId={childOrderId}
-          />
-          &nbsp;
-          {[enumRefundStatus.Complete, enumRefundStatus.Rejected].includes( // 已完成，已取消（isDelete === 1），已驳回的展示查看
-            Number(refundStatus)
-          ) || isDelete === 1 ? (
-              <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看</Button>
-            ) :
-            <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>审核</Button>
-          }
-        </div>
-      );
-    },
+    render: (_, { id }) => <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看详情</Button>
   },
 ]
 
