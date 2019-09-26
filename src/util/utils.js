@@ -158,6 +158,7 @@ export const prefix = url => {
   if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
   return `${apiDomain}${url}`;
 };
+
 /**
  * 
  * @param { 目标数组 } target 

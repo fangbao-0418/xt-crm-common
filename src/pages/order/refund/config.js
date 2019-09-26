@@ -141,11 +141,11 @@ export const formFields = function (refundStatus) {
       label: '支付时间'
     }, {
       type: 'input',
-      id: 'shipmentNumber',
+      id: 'expressCode',
       label: '物流单号'
     }, {
       type: 'select',
-      id: 'orderRefundStatusEnums',
+      id: 'refundStatus',
       label: '售后单状态',
       options: orderRefundStatus[refundStatus]
     }
@@ -164,9 +164,9 @@ export const getListColumns = ({ query, history }) => [
   {
     title: '商品',
     dataIndex: 'skuName',
-    render(skuName, row) {
-      return <GoodCell {...row} />;
-    },
+    // render(skuName, row) {
+    //   return <GoodCell {...row} />;
+    // },
   },
   {
     title: '单价',
@@ -194,6 +194,14 @@ export const getListColumns = ({ query, history }) => [
     title: '类型',
     dataIndex: 'refundTypeStr',
   },
+  {
+    title: '申请售后数目',
+    dataIndex: 'serverNum'
+  },
+  // {
+  //   title: '申请售后金额',
+  //   dataIndex: 'amount'
+  // },
   {
     title: '售后状态',
     dataIndex: 'refundStatusStr',
