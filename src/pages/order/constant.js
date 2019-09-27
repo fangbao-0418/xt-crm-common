@@ -3,6 +3,11 @@ import GoodCell from '@/components/good-cell';
 import MoneyRender from '@/components/money-render'
 export const getDetailColumns = () => [
   {
+    title: '商品ID',
+    dataIndex: 'productId',
+    key: 'productId'
+  },
+  {
     title: '名称',
     dataIndex: 'skuName',
     key: 'skuName',
