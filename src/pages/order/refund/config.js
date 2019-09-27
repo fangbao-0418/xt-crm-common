@@ -277,24 +277,13 @@ export const getDetailColumns = () => [
 export const refundTypes = refundType.getArray()
 
 export const logColumns = [{
-  title: '前操作状态',
-  dataIndex: 'beforeStatus',
-  key: 'beforeStatus',
-  render: code => orderRefunds[code]
+  title: '内容',
+  dataIndex: 'content',
+  key: 'content'
 }, {
-  title: '后操作状态',
-  dataIndex: 'afterStatus',
-  key: 'afterStatus',
-  render: code => orderRefunds[code]
-}, {
-  title: '操作时间',
-  dataIndex: 'createTime',
-  key: 'createTime',
-  render: text => formatDate(text)
-}, {
-  title: '备注',
-  dataIndex: 'info',
-  key: 'info'
+  title: '时间',
+  dataIndex: 'datetime',
+  key: 'datetime'
 }, {
   title: '操作人',
   dataIndex: 'operator',

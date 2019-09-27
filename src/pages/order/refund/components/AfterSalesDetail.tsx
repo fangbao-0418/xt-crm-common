@@ -17,6 +17,8 @@ function AfterSalesDetail(props: any) {
   let current = isDelete === 1 ? 2 : calcCurrent(refundStatus);
   return (
     <>
+      {/* 售后完成 */}
+      {current === 2 && <CheckDetail {...props.data} />}
       <Card
         title={
           <div>
@@ -56,7 +58,6 @@ function AfterSalesDetail(props: any) {
       </Card>
       {current === 0 && <CheckForm {...props.data} />}
       {current === 1 && <DealForm {...props.data} />}
-      {current === 2 && <CheckDetail {...props.data} />}
       <Card title="订单信息">
         <Row gutter={24}>
           <Col span={8}>子订单号：{orderInfoVO.mainOrderCode}</Col>

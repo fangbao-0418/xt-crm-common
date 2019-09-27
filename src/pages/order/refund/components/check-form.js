@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { Card, Form, Input, InputNumber, Button, Row, Select } from 'antd';
+import { Card, Form, Input, InputNumber, Button, Row, Modal } from 'antd';
 import { withRouter } from 'react-router-dom';
 import refundType from '@/enum/refundType';
 import { XtSelect } from '@/components'
 import { connect } from '@/util/utils';
-import ReturnAddress from './return-address';
 import { formatPrice } from '@/util/format';
 import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/helper';
 import returnShipping from './return-shipping';
 import { Decimal } from 'decimal.js';
-const { Option } = Select;
+import AfterSaleSelect from '../../components/after-sale-select';
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
@@ -17,7 +16,8 @@ const { Option } = Select;
 class CheckForm extends Component {
   state = {
     returnAddress: {},
-    refundType: ''
+    refundType: '',
+    addressVisible: false
   }
   handleAuditOperate = (status) => {
     const { props } = this;
@@ -65,66 +65,91 @@ class CheckForm extends Component {
     const isTrigger = (refundAmount * 100) + checkVO.freight + orderServerVO.alreadyRefundAmount === orderInfoVO.payMoney
     return hasFreight && isTrigger;
   }
+  getRefundType() {
+    return this.props.form.getFieldValue('refundType')
+  }
+  // 修改地址
+  modifyAddress() {
+
+  }
   render() {
     const { orderServerVO = {}, checkVO = {}, refundStatus } = this.props;
     const { getFieldDecorator } = this.props.form;
     const localRefundType = this.state.refundType || orderServerVO.refundType;
+    const formLayout = {
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
+    }
     return (
-      <Card title="客服审核">
-        <Form layout="inline" onSubmit={this.handleSubmit}>
-          <Form.Item label="售后类型">
-            {getFieldDecorator('refundType', {
-              initialValue: orderServerVO.refundType
-            })(<XtSelect data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleChange} />)}
-          </Form.Item>
-          <Form.Item label="售后原因">
-            <Select defaultValue="lucy">
-              <Option value="lucy">Lucy</Option>
-            </Select>
-          </Form.Item>
-          <Row>
-            <Form.Item label="售后数目">
-              <InputNumber min={0} max={10}/>（可选择数目：0-10）
+      <>
+        <Modal
+          title="修改地址"
+          style={{ top: 20 }}
+          visible={this.state.addressVisible}
+          onOk={() => this.setModal1Visible(false)}
+          onCancel={() => this.setModal1Visible(false)}
+        >
+          
+        </Modal>
+        <Card title="客服审核">
+          <Form style={{ width: '60%' }} {...formLayout} onSubmit={this.handleSubmit}>
+            <Form.Item label="售后类型">
+              {getFieldDecorator('refundType', {
+                initialValue: orderServerVO.refundType
+              })(<XtSelect style={{ width: 200 }} data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleChange} />)}
             </Form.Item>
-          </Row>
-          {localRefundType === '20' && <Form.Item label="退款金额">
-            {getFieldDecorator('refundAmount', {
-              initialValue: formatPrice(checkVO.refundAmount)
-            })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].ableRefundAmount)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
-          </Form.Item>}
-          {
-            this.isReturnShipping() && <Form.Item label="退运费">
-              {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}
+            <Form.Item label="售后原因">
+              <AfterSaleSelect refundType={this.getRefundType()} />
             </Form.Item>
-          }
-          {/* 退货退款、换货才有退货地址 refundType： 10 30*/}
-          {localRefundType !== '20' && <Form.Item label="退货地址"><ReturnAddress {...checkVO} setReturnAddress={this.setReturnAddress} /></Form.Item>}
-          <Row>
-            <Form.Item label="说明">
-              {getFieldDecorator('info', {
-              })(<Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
-            </Form.Item>
-          </Row>
-          {
-            // 待审核状态显示同意和拒绝按钮
-            isPendingStatus(refundStatus) && (
-              <Form.Item>
-                <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
-                <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>拒绝请求</Button>
+            <Row>
+              <Form.Item label="售后数目">
+                <InputNumber min={0} max={10} />（可选择数目：0-10）
               </Form.Item>
-            )
-          }
-          {
-            // 退款失败状态下显示重新退款和售后完成按钮
-            isRefundFailedStatus(refundStatus) && (
-              <Form.Item>
-                <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
-                <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>售后完成</Button>
+            </Row>
+            {localRefundType === '20' && <Form.Item label="退款金额">
+              {getFieldDecorator('refundAmount', {
+                initialValue: formatPrice(checkVO.refundAmount)
+              })(<InputNumber min={0.01} max={formatMoney(orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].ableRefundAmount)} formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} style={{ width: '100%' }} />)}
+            </Form.Item>}
+            {
+              this.isReturnShipping() && <Form.Item label="退运费">
+                {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(returnShipping(checkVO))}
               </Form.Item>
-            )
-          }
-        </Form>
-      </Card>
+            }
+            {/* 退货退款、换货才有退货地址 refundType： 10 30*/}
+            {localRefundType !== '20' && (
+              <>
+                <Form.Item label="退货地址">八宝  13644445555 杭州市余杭区欧美金融中心美国中心南楼</Form.Item>
+                <Button type="primary" onClick={this.modifyAddress}>修改</Button>
+              </>
+            )}
+            <Row>
+              <Form.Item label="说明">
+                {getFieldDecorator('info', {
+                })(<Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />)}
+              </Form.Item>
+            </Row>
+            {
+              // 待审核状态显示同意和拒绝按钮
+              isPendingStatus(refundStatus) && (
+                <Form.Item>
+                  <Button type="primary" onClick={() => this.handleAuditOperate(1)}>提交</Button>
+                  <Button type="danger" style={{ marginLeft: '20px' }} onClick={() => this.handleAuditOperate(0)}>拒绝请求</Button>
+                </Form.Item>
+              )
+            }
+            {
+              // 退款失败状态下显示重新退款和售后完成按钮
+              isRefundFailedStatus(refundStatus) && (
+                <Form.Item>
+                  <Button type="primary" onClick={this.handleAgainRefund}>重新退款</Button>
+                  <Button type="danger" style={{ marginLeft: '20px' }} onClick={this.handleCloseOrder}>售后完成</Button>
+                </Form.Item>
+              )
+            }
+          </Form>
+        </Card>
+      </>
     )
   }
 }
