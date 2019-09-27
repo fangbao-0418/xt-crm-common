@@ -184,6 +184,14 @@ export function customerAdd(data) {
     data
   })
 }
+
+export function customerAddCheck(data) {
+  return fetch('/order/afterSale/check/downgrade', {
+    method: 'POST',
+    data
+  });
+}
+
 export function refundList(data) {
   return fetch('/order/afterSale/list', {
     method: 'POST',
@@ -228,3 +236,5 @@ export function profitRecycl(data) {
     data
   });
 }
+
+
