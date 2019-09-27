@@ -9,6 +9,7 @@ import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/help
 import returnShipping from './return-shipping';
 import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../../components/after-sale-select';
+import ModifyAddress from './modal/modify-address';
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
@@ -17,8 +18,15 @@ class CheckForm extends Component {
   state = {
     returnAddress: {},
     refundType: '',
-    addressVisible: false
+    addressVisible: false,
+    selectedValues: []
   }
+  // 获取选择值
+  getSelectedValues = selectedValues => {
+    this.setState({
+      selectedValues
+    });
+  };
   handleAuditOperate = (status) => {
     const { props } = this;
     const fieldsValue = props.form.getFieldsValue();
@@ -69,30 +77,24 @@ class CheckForm extends Component {
     return this.props.form.getFieldValue('refundType')
   }
   // 修改地址
-  modifyAddress() {
+  modifyAddress = () => {
+    this.setState({ addressVisible: true })
+  }
+  handleModifyAddress = () => {
 
   }
   render() {
     const { orderServerVO = {}, checkVO = {}, refundStatus } = this.props;
     const { getFieldDecorator } = this.props.form;
     const localRefundType = this.state.refundType || orderServerVO.refundType;
-    const formLayout = {
+    const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
     }
     return (
       <>
-        <Modal
-          title="修改地址"
-          style={{ top: 20 }}
-          visible={this.state.addressVisible}
-          onOk={() => this.setModal1Visible(false)}
-          onCancel={() => this.setModal1Visible(false)}
-        >
-          
-        </Modal>
         <Card title="客服审核">
-          <Form style={{ width: '60%' }} {...formLayout} onSubmit={this.handleSubmit}>
+          <Form style={{ width: '60%' }} {...formItemLayout} onSubmit={this.handleSubmit}>
             <Form.Item label="售后类型">
               {getFieldDecorator('refundType', {
                 initialValue: orderServerVO.refundType
@@ -117,12 +119,8 @@ class CheckForm extends Component {
               </Form.Item>
             }
             {/* 退货退款、换货才有退货地址 refundType： 10 30*/}
-            {localRefundType !== '20' && (
-              <>
-                <Form.Item label="退货地址">八宝  13644445555 杭州市余杭区欧美金融中心美国中心南楼</Form.Item>
-                <Button type="primary" onClick={this.modifyAddress}>修改</Button>
-              </>
-            )}
+            {localRefundType !== '20' && <Form.Item label="退货地址"><ModifyAddress /></Form.Item>}
+            {localRefundType === '30' && <Form.Item label="用户收货地址"><ModifyAddress /></Form.Item>}
             <Row>
               <Form.Item label="说明">
                 {getFieldDecorator('info', {
