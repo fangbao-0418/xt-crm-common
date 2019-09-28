@@ -1,16 +1,18 @@
 import React from 'react';
 import { Card, Row, Col, Steps, Table } from 'antd';
-import { getDetailColumns } from '../../constant';
+import { getDetailColumns } from '../constant';
 import refundType from '@/enum/refundType';
-import PicturesWall from '../../components/pictures-wall';
-import { logisticsInformationColumns } from '../config';
-import { CheckForm, DealForm, CheckDetail } from '../components';
+import PicturesWall from '../components/pictures-wall';
+import { logisticsInformationColumns } from './config';
+import CheckForm from './check-form';
+import DealForm from './deal-form';
+import CheckDetail from './check-detail';
 import { replaceHttpUrl } from '@/util/utils';
 import { calcCurrent, joinFilterEmpty } from '@/pages/helper'
 import createType from '@/enum/createType';
 import memberType from '@/enum/memberType';
 import { ORDER_TYPE } from '@/config';
-import RemarkModal from '../../components/remark-modal'
+import RemarkModal from '../components/remark-modal'
 import moment from 'moment';
 function AfterSalesDetail(props: any) {
   const { isDelete, orderInfoVO = {}, orderServerVO = {}, refundStatus } = props.data;

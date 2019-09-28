@@ -17,9 +17,9 @@ import {
   joinFilterEmpty,
   formatDate
 } from '@/pages/helper';
-import { customerUpdate } from '../../api';
-import ExpressCompanySelect, {ExpressCompanyOptions} from '@/components/express-company-select';
-import returnShipping from './return-shipping';
+import { customerUpdate } from '../api';
+import ExpressCompanySelect from '@/components/express-company-select';
+import returnShipping from './components/return-shipping';
 import { Decimal } from 'decimal.js';
 
 @connect(state => ({

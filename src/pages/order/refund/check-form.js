@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { Card, Form, Input, InputNumber, Button, Row, Modal } from 'antd';
+import { Card, Form, Input, InputNumber, Button, Row } from 'antd';
 import { withRouter } from 'react-router-dom';
 import refundType from '@/enum/refundType';
 import { XtSelect } from '@/components'
 import { connect } from '@/util/utils';
 import { formatPrice } from '@/util/format';
 import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/helper';
-import returnShipping from './return-shipping';
+import returnShipping from './components/return-shipping';
 import { Decimal } from 'decimal.js';
-import AfterSaleSelect from '../../components/after-sale-select';
-import ModifyAddress from './modal/modify-address';
+// import AfterSaleSelect from '@/components/after-sale-select';
+import ModifyAddressModal from './components/modal/ModifyAddressModal';
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))
@@ -21,12 +21,6 @@ class CheckForm extends Component {
     addressVisible: false,
     selectedValues: []
   }
-  // 获取选择值
-  getSelectedValues = selectedValues => {
-    this.setState({
-      selectedValues
-    });
-  };
   handleAuditOperate = (status) => {
     const { props } = this;
     const fieldsValue = props.form.getFieldsValue();
@@ -80,9 +74,6 @@ class CheckForm extends Component {
   modifyAddress = () => {
     this.setState({ addressVisible: true })
   }
-  handleModifyAddress = () => {
-
-  }
   render() {
     const { orderServerVO = {}, checkVO = {}, refundStatus } = this.props;
     const { getFieldDecorator } = this.props.form;
@@ -101,7 +92,7 @@ class CheckForm extends Component {
               })(<XtSelect style={{ width: 200 }} data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleChange} />)}
             </Form.Item>
             <Form.Item label="售后原因">
-              <AfterSaleSelect refundType={this.getRefundType()} />
+              {/* <AfterSaleSelect refundType={this.getRefundType()} /> */}
             </Form.Item>
             <Row>
               <Form.Item label="售后数目">
@@ -119,8 +110,8 @@ class CheckForm extends Component {
               </Form.Item>
             }
             {/* 退货退款、换货才有退货地址 refundType： 10 30*/}
-            {localRefundType !== '20' && <Form.Item label="退货地址"><ModifyAddress /></Form.Item>}
-            {localRefundType === '30' && <Form.Item label="用户收货地址"><ModifyAddress /></Form.Item>}
+            {localRefundType !== '20' && <Form.Item label="退货地址"><ModifyAddressModal name="八宝" phone="13644445555" address="杭州市余杭区欧美金融中心美国中心南楼"/></Form.Item>}
+            {localRefundType === '30' && <Form.Item label="用户收货地址"><ModifyAddressModal name="七宝" phone="13644449999" address="杭州市余杭区欧美金融中心美国中心南楼" /></Form.Item>}
             <Row>
               <Form.Item label="说明">
                 {getFieldDecorator('info', {
