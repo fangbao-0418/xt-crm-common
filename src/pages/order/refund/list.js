@@ -46,7 +46,7 @@ export default class extends React.Component {
       handleEndTime,
       payStartTime,
       payEndTime,
-      refundStatus: this.props.refundStatus,
+      refundStatus: fieldsValues.refundStatus || this.props.refundStatus,
       page: this.state.current,
       pageSize: this.state.pageSize
     };

@@ -11,7 +11,7 @@ export const getDetailColumns = () => [
     title: '名称',
     dataIndex: 'skuName',
     key: 'skuName',
-    render(skuName, row) {
+    render(skuName: any, row: any) {
       return <GoodCell {...row} />;
     }
   },

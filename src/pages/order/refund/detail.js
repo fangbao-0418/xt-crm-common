@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Card, Table, Tabs } from 'antd';
 import { logColumns } from './config';
 import { connect } from '@/util/utils';
-import AfterSalesDetail from './AfterSalesDetail'
-// import Step from './components/Step';
+import AfterSalesDetail from './AfterSalesDetail';
 
 @connect(state => ({
   data: state['refund.model'].data || {}

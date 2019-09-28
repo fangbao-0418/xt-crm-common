@@ -17,6 +17,8 @@ import ProcessResultModal from './components/modal/ProcessResultModal';
 import moment from 'moment';
 interface AfterSalesDetailProps {
   data: any
+  getDetail: any
+  refundId: string | number
 }
 interface AfterSalesDetailState {
   visible: boolean
@@ -30,20 +32,22 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     let current = isDelete === 1 ? 2 : calcCurrent(refundStatus);
     return (
       <>
-        <ProcessResultModal visible={this.state.visible} handleCancel={() => this.setState({visible: false})}/>
+        <ProcessResultModal visible={this.state.visible} handleCancel={() => this.setState({ visible: false })} />
         <Row type="flex" justify="space-between" align="middle" className="mb10">
           <Col>
-            <span>售后单编号：{orderInfoVO.mainOrderCode}</span>
-            <span className="ml20">售后状态：{orderInfoVO.orderStatusStr}</span>
+            <h3>
+              <span>售后单编号：{orderInfoVO.mainOrderCode}</span>
+              <span className="ml20">售后状态：{orderInfoVO.orderStatusStr}</span>
+            </h3>
           </Col>
           <Col>
-            {/* <RemarkModal
-              onSuccess={props.getDetail}
+            <RemarkModal
+              onSuccess={this.props.getDetail}
               orderCode={orderInfoVO.mainOrderCode}
-              refundId={props.refundId}
+              refundId={this.props.refundId}
               childOrderId={orderInfoVO.childOrderId}
-            /> */}
-            <Button type="primary" onClick={() => this.setState({visible: true})}>处理结果</Button>
+            />
+            <Button type="primary" onClick={() => this.setState({ visible: true })}>处理结果</Button>
           </Col>
         </Row>
         {/* 售后完成 */}
@@ -103,7 +107,7 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
           </Row>
         </Card>
       </>
-    ) 
+    )
   }
 }
 export default AfterSalesDetail;

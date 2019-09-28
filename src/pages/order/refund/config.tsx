@@ -7,7 +7,6 @@ import createType from '@/enum/createType';
 import { Button } from 'antd';
 import MoneyRender from '@/components/money-render'
 import { formatDate } from '@/pages/helper';
-import { orderRefunds } from '@/config';
 
 const OrderRefundStatusEnums = {
   NOT_REFUND: {
@@ -67,13 +66,13 @@ const OrderRefundStatusEnums = {
   }
 }
 
-const filterAndMapRefundOrder = cDescription => Object.values(OrderRefundStatusEnums).filter(v => v.cDescription === cDescription).map(v => ({ key: v.value, val: v.description }));
+const filterAndMapRefundOrder = (cDescription: any) => Object.values(OrderRefundStatusEnums).filter(v => v.cDescription === cDescription).map(v => ({ key: v.value, val: v.description }));
 const waitConfirm = filterAndMapRefundOrder('待审核');
 const operating = filterAndMapRefundOrder('处理中');
 const complete = filterAndMapRefundOrder('售后完成');
 const rejected = filterAndMapRefundOrder('售后关闭');
 export const orderRefundStatus = {
-  [enumRefundStatus.All]: [{key: '', val: '全部'}, ...waitConfirm, ...operating, ...complete, ...rejected],
+  [enumRefundStatus.All]: [{ key: '', val: '全部' }, ...waitConfirm, ...operating, ...complete, ...rejected],
   [enumRefundStatus.WaitConfirm]: waitConfirm,
   [enumRefundStatus.Operating]: operating,
   [enumRefundStatus.Complete]: complete,
@@ -81,7 +80,14 @@ export const orderRefundStatus = {
 }
 
 
-export const formFields = function (refundStatus) {
+export const formFields = function (refundStatus: any) {
+  let options = orderRefundStatus[refundStatus];
+  let selectRefundStatus = options.length > 1 ? [{
+    type: 'select',
+    id: 'refundStatus',
+    label: '售后单状态',
+    options: orderRefundStatus[refundStatus]
+  }] : []
   return [
     {
       type: 'input',
@@ -141,12 +147,8 @@ export const formFields = function (refundStatus) {
       type: 'input',
       id: 'expressCode',
       label: '物流单号'
-    }, {
-      type: 'select',
-      id: 'refundStatus',
-      label: '售后单状态',
-      options: orderRefundStatus[refundStatus]
-    }
+    },
+    ...selectRefundStatus
   ];
 }
 
@@ -154,7 +156,7 @@ export const formFields = function (refundStatus) {
  * 列表属性
  * @param {*} param0 
  */
-export const getListColumns = ({ query, history }) => [
+export const getListColumns = ({ query, history }: any) => [
   {
     title: '商品ID',
     dataIndex: 'productId'
@@ -162,7 +164,7 @@ export const getListColumns = ({ query, history }) => [
   {
     title: '商品',
     dataIndex: 'skuName',
-    render(skuName, row) {
+    render(skuName: any, row: any) {
       return <GoodCell {...row} />;
     },
   },
@@ -180,7 +182,8 @@ export const getListColumns = ({ query, history }) => [
   },
   {
     title: '申请售后金额',
-    dataIndex: 'amount'
+    dataIndex: 'amount',
+    render: MoneyRender
   },
   {
     title: '供应商',
@@ -189,22 +192,24 @@ export const getListColumns = ({ query, history }) => [
   {
     title: '买家信息',
     dataIndex: 'userName',
-    render(v, record) {
+    render(v: any, record: any) {
       return `${v ? v : ''} ${record.phone ? `(${record.phone})` : ''}`
     }
   },
   {
     title: '处理人',
-    dataIndex: 'operator'
+    dataIndex: 'operator',
+    render: (text: any) => text || '-'
   },
   {
     title: '最后处理时间',
-    dataIndex: 'handleTime'
+    dataIndex: 'handleTime',
+    render: (text: any) => text ? formatDate(text) : '-'
   },
   {
     title: '操作',
     dataIndex: 'record',
-    render: (_, { id }) => <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看详情</Button>
+    render: (_: any, { id }: any) => <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看详情</Button>
   },
 ]
 
