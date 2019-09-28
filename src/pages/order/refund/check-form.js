@@ -8,7 +8,7 @@ import { formatPrice } from '@/util/format';
 import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/helper';
 import returnShipping from './components/return-shipping';
 import { Decimal } from 'decimal.js';
-// import AfterSaleSelect from '@/components/after-sale-select';
+import AfterSaleSelect from '../components/after-sale-select';
 import ModifyAddressModal from './components/modal/ModifyAddressModal';
 @connect(state => ({
   data: state['refund.model'].data || {}
@@ -92,7 +92,7 @@ class CheckForm extends Component {
               })(<XtSelect style={{ width: 200 }} data={refundType.getArray()} placeholder="请选择售后类型" onChange={this.handleChange} />)}
             </Form.Item>
             <Form.Item label="售后原因">
-              {/* <AfterSaleSelect refundType={this.getRefundType()} /> */}
+              <AfterSaleSelect refundType={this.getRefundType()} />
             </Form.Item>
             <Row>
               <Form.Item label="售后数目">

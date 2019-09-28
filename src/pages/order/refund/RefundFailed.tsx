@@ -3,23 +3,25 @@ import { FormComponentProps } from 'antd/lib/form';
 import CustomerProcessInfo from './components/CustomerProcessInfo';
 import LogisticsInformation from './components/LogisticsInformation';
 import SupplierProcessInfo from './components/SupplierProcessInfo';
-interface WaitCustomerInterventionState {
+import RefundInformation from './components/RefundInformation';
+interface RefundFailedState {
 }
-interface WaitCustomerInterventionProps extends FormComponentProps {
+interface RefundFailedProps extends FormComponentProps {
 
 }
 /**
- * 待客服介入
+ * @description 退款失败
  */
-class WaitCustomerIntervention extends React.Component<WaitCustomerInterventionProps, WaitCustomerInterventionState>{
+class RefundFailed extends React.Component<RefundFailedProps, RefundFailedState> {
   render() {
     return (
       <>
-        <CustomerProcessInfo /> 
+        <CustomerProcessInfo />
         <LogisticsInformation />
         <SupplierProcessInfo />
+        <RefundInformation />
       </>
     )
   }
 }
-export default WaitCustomerIntervention;
+export default RefundFailed;
