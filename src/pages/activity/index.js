@@ -22,6 +22,16 @@ const InfoDetail = Loadable({
   loading: Loader,
 });
 
+const Marketing = Loadable({
+  loader: () => import('./marketing'),
+  loading: Loader,
+});
+
+const MarketingDetail = Loadable({
+  loader: () => import('./marketing/detail'),
+  loading: Loader,
+});
+
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -32,6 +42,8 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/info/edit/:id?`} component={InfoEdit} />
         <Route path={`${match.url}/info/detail/:id`} component={InfoDetail} />
         <Route path={`${match.url}/add`} component={Add} />
+        <Route path={`${match.url}/marketing`} exact component={Marketing} />
+        <Route path={`${match.url}/marketing/:id`} component={MarketingDetail} />
       </Switch>
     );
   }
