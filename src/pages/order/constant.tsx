@@ -3,11 +3,6 @@ import GoodCell from '@/components/good-cell';
 import MoneyRender from '@/components/money-render'
 export const getDetailColumns = () => [
   {
-    title: '商品ID',
-    dataIndex: 'productId',
-    key: 'productId'
-  },
-  {
     title: '名称',
     dataIndex: 'skuName',
     key: 'skuName',
@@ -16,9 +11,19 @@ export const getDetailColumns = () => [
     }
   },
   {
+    title: '商品ID',
+    dataIndex: 'productId',
+    key: 'productId'
+  },
+  {
     title: '属性',
     dataIndex: 'properties',
     key: 'properties',
+  },
+  {
+    title: '供应商',
+    dataIndex: 'storeName',
+    key: 'storeName'
   },
   {
     title: '单价',
@@ -38,7 +43,7 @@ export const getDetailColumns = () => [
     render: MoneyRender
   },
   {
-    title: '优惠券',
+    title: '使用优惠券',
     dataIndex: 'faceValue',
     key: 'faceValue'
   },
@@ -80,11 +85,11 @@ export enum enumRefundStatus {
   All = '',
   NoRefund = 0,
   WaitConfirm = 10, // 待审核
-  Operating =  20, // 处理中
+  Operating = 20, // 处理中
   OperatingFailed = 21, // 退款失败
   OperatingAll = 22, // 退款退货
   OperatingOfMoney = 23, // 退款中
-  OperatingOfGoods =  24, // 换货中
+  OperatingOfGoods = 24, // 换货中
   Complete = 30, //完成
   Rejected = 40 // 驳回
 };

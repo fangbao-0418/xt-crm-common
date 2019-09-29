@@ -24,7 +24,7 @@ const columns: ColumnProps<Logger>[] = [{
   key: 'operator'
 }]
 interface DetailProps extends RouteComponentProps<{id: any}> {
-  data: any
+  data: AfterSalesInfo.data
 }
 interface DetailState {}
 class Detail extends Component<DetailProps, DetailState> {
@@ -44,8 +44,8 @@ class Detail extends Component<DetailProps, DetailState> {
     this.getDetail();
   }
   render(): React.ReactNode {
-    const { skuServerLogVO = [] } = this.props.data;
-    const dataSource: any = skuServerLogVO.map((v: any, i: any) => ({...v, uniqueKey: i}));
+    const { skuServerLogVO } = this.props.data;
+    const dataSource: any = skuServerLogVO && skuServerLogVO.map((v: any, i: any) => ({...v, uniqueKey: i}));
     return (
       <>
         <Card>
@@ -54,7 +54,7 @@ class Detail extends Component<DetailProps, DetailState> {
               <AfterSalesDetail data={this.props.data} getDetail={this.getDetail} refundId={this.refundId}/>
             </Tabs.TabPane>
             <Tabs.TabPane tab="信息记录" key="2">
-              <Table rowKey={(record: any, index:number) => record.uniqueKey +''} dataSource={dataSource} pagination={false} columns={columns} />
+              <Table rowKey={(record: any, index:number) => String(record.uniqueKey)} dataSource={dataSource} pagination={false} columns={columns} />
             </Tabs.TabPane>
           </Tabs>
         </Card>

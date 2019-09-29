@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Row, Col, Card, Button, Modal, Input, message } from 'antd';
-import AfterSaleForm from './after-sale-form';
+import ApplyAfterSaleModal from '../components/modal/ApplyAfterSaleModal';
 import { withRouter } from 'react-router'
 import { getDetailColumns, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
@@ -116,7 +116,7 @@ class GoodsTable extends Component {
     return (
       <>
         <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.setState({ visible: false })} onOk={this.handleOk}>
-          <AfterSaleForm wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
+          <ApplyAfterSaleModal wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
         </Modal>
         <Modal
           title="添加备注"

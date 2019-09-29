@@ -9,7 +9,7 @@ import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/help
 import returnShipping from './components/return-shipping';
 import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../components/after-sale-select';
-import ModifyAddressModal from './components/modal/ModifyAddressModal';
+import ModifyAddressModal from '../components/modal/ModifyAddressModal';
 @connect(state => ({
   data: state['refund.model'].data || {}
 }))

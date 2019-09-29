@@ -13,11 +13,12 @@ import createType from '@/enum/createType';
 import memberType from '@/enum/memberType';
 import { ORDER_TYPE } from '@/config';
 import RemarkModal from '../components/remark-modal'
-import ProcessResultModal from './components/modal/ProcessResultModal';
+import ProcessResultModal from '../components/modal/ProcessResultModal';
+import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import { enumRefundStatus } from '../constant';
 import moment from 'moment';
 interface AfterSalesDetailProps {
-  data: any
+  data: AfterSalesInfo.data
   getDetail: any
   refundId: string | number
 }
@@ -29,7 +30,9 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     visible: false
   }
   render() {
-    const { isDelete, orderInfoVO = {}, orderServerVO = {}, refundStatus } = this.props.data;
+    let { isDelete, orderInfoVO, orderServerVO, refundStatus } = this.props.data;
+    orderServerVO = Object.assign({}, orderServerVO)
+    orderInfoVO = Object.assign({}, orderInfoVO)
     let current = isDelete === 1 ? 2 : calcCurrent(refundStatus);
     return (
       <>
@@ -59,28 +62,9 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
         {current === 2 && <CheckDetail {...this.props.data} />}
         <Card
           style={{ marginTop: '0' }}>
-          <h4>售后申请信息</h4>
-          <Row gutter={24}>
-            <Col span={8}>售后类型：{refundType.getValue(orderServerVO.refundType)}</Col>
-            <Col span={8}>售后原因：{orderServerVO.returnReasonStr}</Col>
-            <Col span={8}>申请时间：{moment(orderServerVO.createTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
-            <Col span={8}>最后处理时间：{orderServerVO.handleTime ? moment(orderServerVO.handleTime).format('YYYY-MM-DD HH:mm:ss'): '-'}</Col>
-            <Col span={8}>处理人：{orderServerVO.operator}</Col>
-            <Col span={8}>申请人类型：{createType.getValue(orderServerVO.createType)}</Col>
-            <Col span={8}>售后说明：{orderServerVO.info || '-'}</Col>
-          </Row>
-          <Row>
-            <Col>
-              图片凭证：
-            {orderServerVO.imgUrl && <PicturesWall disabled={true} readOnly={true} imgUrl={replaceHttpUrl(orderServerVO.imgUrl)} />}
-            </Col>
-          </Row>
-          <Row>
-            <h4>售后商品</h4>
-            <Table rowKey={record => record.productId} pagination={false} columns={getDetailColumns()} dataSource={orderServerVO.productVO || []} />
-          </Row>
+          <AfterSaleApplyInfo orderServerVO={orderServerVO}/>
         </Card>
-        {current === 0 && <CheckForm {...this.props.data} />}
+        {current === 0 && <CheckForm {...(this.props.data as any)} />}
         {current === 1 && <DealForm {...this.props.data} />}
         <Card title="订单信息">
           <Row gutter={24}>

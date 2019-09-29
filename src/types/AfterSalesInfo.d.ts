@@ -1,4 +1,59 @@
 declare module AfterSalesInfo {
+  export interface data {
+    id: number;
+    refundStatus: number;
+    refundType: number;
+    isDelete: number;
+    orderServerVO: OrderServerVO;
+    orderInfoVO: OrderInfoVO;
+    checkVO: CheckVO;
+    skuServerLogVO: any[]
+  }
+  export interface CheckVO {
+    amount: number;
+    refundAmount: number;
+    refundType: number;
+    refundStatus: number;
+    firstRefundStatusStr: null;
+    refundStatusStr: null;
+    serverDescribe: string;
+    firstServerDescribe: string;
+    returnContact: string;
+    returnPhone: string;
+    returnAddress: string;
+    returnExpressName: null;
+    returnExpressCode: null;
+    returnExpressTime: number;
+    sendExpressName: null;
+    sendExpressCode: null;
+    sendExpressTime: null;
+    isRefundFreight: number;
+    freight: number;
+  }
+  export interface OrderInfoVO {
+    mainOrderId: number;
+    mainOrderCode: string;
+    childOrderId: number;
+    childOrderCode: string;
+    orderStatusStr: string;
+    name: null;
+    phone: string;
+    platform: string;
+    consignee: string;
+    consigneePhone: string;
+    address: string;
+    remark: string;
+    orderTime: number;
+    finishTime: number;
+    payTypeStr: string;
+    payTime: number;
+    paymentNumber: string;
+    expressVO: any[];
+    orderMemberType: number;
+    payMoney: number;
+    freight: number;
+    orderType: number;
+  }
   export interface OrderServerVO {
     id: number;
     orderCode: string;

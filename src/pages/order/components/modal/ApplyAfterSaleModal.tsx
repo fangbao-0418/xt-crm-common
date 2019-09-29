@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Table, Form, Input, InputNumber, Card } from 'antd';
-import { getDetailColumns } from "../constant";
+import { FormComponentProps } from 'antd/lib/form'
+import { getDetailColumns } from "../../constant";
 import { refundType } from '@/enum';
 import { formatPrice } from '@/util/format';
 import UploadView from '@/components/upload';
 import { XtSelect } from '@/components'
-import { getRefundReason } from '../api';
+import { getRefundReason } from '../../api';
 const { TextArea } = Input;
 const formItemLayout = {
   labelCol: {
@@ -18,20 +19,27 @@ const formItemLayout = {
   },
 };
 
-class AfterSaleForm extends Component {
-  state = {
+
+interface Props extends FormComponentProps {
+  modalInfo: any
+}
+interface State {
+  refundReason: any
+}
+class ApplyAfterSaleModal extends React.Component<Props, State> {
+  state: State = {
     refundReason: {}
   }
   isShowRefundAmount() {
     const refundType = this.props.form.getFieldValue('refundType');
     return refundType !== '30'
   }
-  filterReason(obj) {
+  filterReason(obj: any) {
     return Object.entries(obj).map(([key, val]) => ({key, val}));
   }
   async fetchReason() {
     const refundReason = await getRefundReason();
-    const result = {}
+    const result: any = {}
     for (let key in refundReason) {
       result[key] = this.filterReason(refundReason[key])
     }
@@ -52,8 +60,8 @@ class AfterSaleForm extends Component {
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
     const price = parseFloat(formatPrice(modalInfo.ableRefundAmount))
-    const initialObj = {}
-    const disabledObj = {}
+    const initialObj: any = {}
+    const disabledObj: any = {}
     if (modalInfo.childOrder.orderStatus === 20) {
       initialObj.initialValue = '20'
       disabledObj.disabled = true
@@ -70,6 +78,12 @@ class AfterSaleForm extends Component {
             </Form.Item>
             <Form.Item label="售后原因">
               {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<XtSelect data={this.getRefundReason()} />)}
+            </Form.Item>
+            <Form.Item label="售后数目">
+              {getFieldDecorator('serverNum')(<InputNumber min={0} max={10} placeholder="请输入"/>)}
+            </Form.Item>
+            <Form.Item label="用户收货地址">
+              
             </Form.Item>
             {this.isShowRefundAmount() && (
               <Form.Item label="退款金额">
@@ -95,4 +109,4 @@ class AfterSaleForm extends Component {
     )
   }
 }
-export default Form.create({ name: 'after_sale_form' })(AfterSaleForm);
+export default Form.create()(ApplyAfterSaleModal)
