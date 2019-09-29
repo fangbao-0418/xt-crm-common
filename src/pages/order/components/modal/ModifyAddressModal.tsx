@@ -7,9 +7,12 @@ interface State {
   selectedValues: any[];
 }
 interface Props extends FormComponentProps {
-  name: string;
-  phone: string;
-  address: string;
+  name?: string;
+  phone?: string;
+  province?: string;
+  city?: string;
+  district?: string;
+  street?: string;
 }
 class ModifyAddress extends React.Component<Props, State> {
   public state = {
@@ -31,7 +34,7 @@ class ModifyAddress extends React.Component<Props, State> {
     });
   };
   public render() {
-    const { form: { getFieldDecorator }, name, phone, address } = this.props;
+    const { form: { getFieldDecorator }, name, phone, province, city, district, street } = this.props;
     const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
@@ -62,13 +65,15 @@ class ModifyAddress extends React.Component<Props, State> {
               })(<CitySelect getSelectedValues={this.getSelectedValues} />)}
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 4 }}>
-              <Input placeholder="请输入详细地址" />
+              {getFieldDecorator("phone", {
+                initialValue: street
+              })(<Input placeholder="请输入详细地址" />)}
             </Form.Item>
           </Form>
         </Modal>
-        {name + ' ' + phone + ' ' + address} <Button type="link" onClick={() => this.setState({ addressVisible: true })}> 修改</Button>
+        {`${name} ${phone} ${province}${city}${district}${street}`} <Button type="link" onClick={() => this.setState({ addressVisible: true })}> 修改</Button>
       </>
     )
   }
 }
-export default Form.create()(ModifyAddress);
+export default Form.create<Props>()(ModifyAddress);

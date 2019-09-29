@@ -18,7 +18,6 @@ class GoodsTable extends Component {
   }
   // 是否显示申请售后按钮
   showApplyBtn = (orderStatus) => {
-    console.log('orderStatus=>', orderStatus)
     return [20, 30, 40, 50].includes(orderStatus)
   }
   handleApply = (record) => {

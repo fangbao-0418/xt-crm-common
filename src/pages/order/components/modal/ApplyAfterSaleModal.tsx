@@ -6,56 +6,35 @@ import { refundType } from '@/enum';
 import { formatPrice } from '@/util/format';
 import UploadView from '@/components/upload';
 import { XtSelect } from '@/components'
-import { getRefundReason } from '../../api';
+import { formItemLayout } from '@/config';
+import ModifyAddressModal from './ModifyAddressModal';
+import AfterSaleSelect from '../after-sale-select';
+import { getProductDetail } from '../../api'
 const { TextArea } = Input;
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 5 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 12 },
-  },
-};
 
-
-interface Props extends FormComponentProps {
-  modalInfo: any
+interface ApplyAfterSaleModalProps extends FormComponentProps {
+  modalInfo: any;
 }
-interface State {
-  refundReason: any
+interface ApplyAfterSaleModalState {
+  skuDetail?: ApplyOrderSkuDetail.data;
 }
-class ApplyAfterSaleModal extends React.Component<Props, State> {
-  state: State = {
-    refundReason: {}
+class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, ApplyAfterSaleModalState> {
+  state: ApplyAfterSaleModalState = {
   }
   isShowRefundAmount() {
     const refundType = this.props.form.getFieldValue('refundType');
     return refundType !== '30'
   }
-  filterReason(obj: any) {
-    return Object.entries(obj).map(([key, val]) => ({key, val}));
-  }
-  async fetchReason() {
-    const refundReason = await getRefundReason();
-    const result: any = {}
-    for (let key in refundReason) {
-      result[key] = this.filterReason(refundReason[key])
-    }
-    console.log('result=>', result);
-    this.setState({refundReason: result})
+  async fetchDetail() {
+    const skuDetail: ApplyOrderSkuDetail.data = await getProductDetail(this.props.modalInfo);
+    this.setState({ skuDetail });
+    console.log('this.state.skuDetail => ', this.state.skuDetail);
   }
   componentDidMount() {
-    this.fetchReason();
+    this.fetchDetail();
   }
-  getRefundReason() {
-    const refundType = this.props.form.getFieldValue('refundType');
-    let result = []
-    if (refundType && this.state.refundReason) {
-      result = this.state.refundReason[refundType];
-    }
-    return result;
+  getRefundType() {
+    return this.props.form.getFieldValue('refundType')
   }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
@@ -66,8 +45,9 @@ class ApplyAfterSaleModal extends React.Component<Props, State> {
       initialObj.initialValue = '20'
       disabledObj.disabled = true
     }
-    console.log('modalInfo=>', modalInfo);
-    
+    let { skuDetail } =  this.state
+    skuDetail = Object.assign({}, skuDetail)
+    const {returnContact, returnPhone, province, city, district, street} = skuDetail;
     return (
       <>
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
@@ -77,13 +57,13 @@ class ApplyAfterSaleModal extends React.Component<Props, State> {
               {getFieldDecorator('refundType', {...initialObj,rules: [{ required: true, message: '请选择售后类型' }] })(<XtSelect {...disabledObj} data={refundType.getArray()} />)}
             </Form.Item>
             <Form.Item label="售后原因">
-              {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<XtSelect data={this.getRefundReason()} />)}
+              {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<AfterSaleSelect refundType={this.getRefundType()} />)}
             </Form.Item>
             <Form.Item label="售后数目">
               {getFieldDecorator('serverNum')(<InputNumber min={0} max={10} placeholder="请输入"/>)}
             </Form.Item>
             <Form.Item label="用户收货地址">
-              
+              <ModifyAddressModal name={returnContact} phone={returnPhone} province={province} city={city} district={district} street={street}/>
             </Form.Item>
             {this.isShowRefundAmount() && (
               <Form.Item label="退款金额">

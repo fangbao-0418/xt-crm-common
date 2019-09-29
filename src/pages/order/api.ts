@@ -3,7 +3,7 @@ import { prefix } from '../../util/utils';
 const debug = false;
 var qs = require('qs');
 
-export function getOrderList(data) {
+export function getOrderList(data: any) {
   return post('/order/list', data);
 }
 
@@ -91,53 +91,58 @@ const detail = {
   taxPrice: 0,
   totalPrice: 0,
 };
+
+// 客服代申请售后单个商品详情
+export function getProductDetail({mainOrderId, skuId}: any) {
+  return get(`/order/afterSale/applyOrderSKuDetail/${mainOrderId}/${skuId}`)
+}
 // 获取售后原因
-export function customerUpdate(data) {
+export function customerUpdate(data: any) {
   return newPut('/order/afterSale/customerUpdate', data);
 }
 // 获取售后原因
 export function getRefundReason() {
   return get('/order/afterSale/getRefundReason');
 }
-export function againRefund(id, info) {
+export function againRefund(id: number, info: any) {
   return put(`/order/afterSale/againRefund/${id}`, {info});
 }
-export function closeOrder(id, info) {
+export function closeOrder(id: number, info: any) {
   return put(`/order/afterSale/close/${id}`, {info});
 }
-export function saveRefundInfo(data) {
+export function saveRefundInfo(data: any) {
   return post('/order/afterSale/saveRefundInfo', data)
 }
-export function queryOrderDetail(data) {
+export function queryOrderDetail(data: any) {
   if (debug) {
     return Promise.resolve(detail);
   }
   return post('/order/detail', data);
 }
 
-export function push1688(childOrderId) {
+export function push1688(childOrderId: number) {
   return get('/order/push1688', { childOrderId: childOrderId })
 }
 
-export function withhold(childOrderId) {
+export function withhold(childOrderId: number) {
   return get('/order/protocolPay', { childOrderId: childOrderId })
 }
 
-export function setOrderRemark(data) {
+export function setOrderRemark(data: any) {
   if (debug) {
     return Promise.resolve(true);
   }
   return post('/order/saveInfo', data);
 }
 
-export function setRefundOrderRemark(data) {
+export function setRefundOrderRemark(data: any) {
   if (debug) {
     return Promise.resolve(true);
   }
   return post('/order/afterSale/saveRefundInfo', data);
 }
 
-export function deliveryOrder(data) {
+export function deliveryOrder(data: any) {
   console.log('deliveryOrder', data);
   if (debug) {
     return Promise.resolve(true);
@@ -145,7 +150,7 @@ export function deliveryOrder(data) {
   return post('/order/delivery', data);
 }
 
-export function deliveryChildOrder(data) {
+export function deliveryChildOrder(data: any) {
   console.log('deliveryChildOrder', data);
   if (debug) {
     return Promise.resolve(true);
@@ -153,76 +158,76 @@ export function deliveryChildOrder(data) {
   return post(`/order/${data.orderId}/delivery`, data);
 }
 
-export function updateLogisticsInfo(data) {
+export function updateLogisticsInfo(data: any) {
   return post('/order/updateOrderExpress', data);
 }
 
-export function addLogisticsInfo(data) {
+export function addLogisticsInfo(data: any) {
   return post('/order/addOrderExpress', data);
 }
 
-export function getRefundOrderDetail(data) {
+export function getRefundOrderDetail(data: any) {
   return post('/order/afterSalesInfo', data);
 }
 
-export function refundOperate(data) {
+export function refundOperate(data: any) {
   return fetch('/order/afterSale/auditOperate', {
     method: 'POST',
     data
   });
 }
 
-export function getStoreList(data) {
+export function getStoreList(data: any) {
   return fetch('/store/list', {
     method: 'POST',
     data
   });
 }
-export function customerAdd(data) {
+export function customerAdd(data: any) {
   return fetch('/order/afterSale/customerAdd', {
     method: 'POST',
     data
   })
 }
-export function refundList(data) {
+export function refundList(data: any) {
   return fetch('/order/afterSale/list', {
     method: 'POST',
     data
   });
 }
 
-export function refundDetail(params) {
+export function refundDetail(params: any) {
   return fetch(`/order/afterSale/afterSalesInfo?${qs.stringify(params)}`)
 }
-export function exportOrder(data) {
+export function exportOrder(data: any) {
   return exportFile('/order/export', data);
 }
 
 export const importLogistics = prefix('/order/logistics/import');
 
-export function getRefundOrderInfo(params) {
+export function getRefundOrderInfo(params: any) {
   return fetch(`/order/afterSalesInfo?${qs.stringify(params)}`);
 }
 
-export function refundAgain(data) {
+export function refundAgain(data: any) {
   return post(`/order/afterSale/againRefund/${data.id}`);
 }
 
-export function closeRefund(data) {
+export function closeRefund(data: any) {
   return post(`/order/afterSale/close/${data.id}`);
 }
 
-export function exportRefund(data) {
+export function exportRefund(data: any) {
   return exportFile('/order/afterSale/export', data);
 }
 
-export function profitRecal(data) {
+export function profitRecal(data: any) {
   return fetch('/order/profit/recal', {
     method: 'POST',
     data
   });
 }
-export function profitRecycl(data) {
+export function profitRecycl(data: any) {
   return fetch('/order/profit/recycling', {
     method: 'POST',
     data
