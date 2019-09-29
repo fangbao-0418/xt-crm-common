@@ -71,7 +71,7 @@ const waitConfirm = filterAndMapRefundOrder('待审核');
 const operating = filterAndMapRefundOrder('处理中');
 const complete = filterAndMapRefundOrder('售后完成');
 const rejected = filterAndMapRefundOrder('售后关闭');
-export const orderRefundStatus = {
+export const orderRefundStatus: any = {
   [enumRefundStatus.All]: [{ key: '', val: '全部' }, ...waitConfirm, ...operating, ...complete, ...rejected],
   [enumRefundStatus.WaitConfirm]: waitConfirm,
   [enumRefundStatus.Operating]: operating,
@@ -280,17 +280,3 @@ export const getDetailColumns = () => [
 ];
 
 export const refundTypes = refundType.getArray()
-
-export const logColumns = [{
-  title: '内容',
-  dataIndex: 'content',
-  key: 'content'
-}, {
-  title: '时间',
-  dataIndex: 'datetime',
-  key: 'datetime'
-}, {
-  title: '操作人',
-  dataIndex: 'operator',
-  key: 'operator'
-}]

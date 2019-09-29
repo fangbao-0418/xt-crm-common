@@ -1,5 +1,6 @@
 import { Message } from 'antd';
 import { refundOperate, refundDetail, againRefund, closeOrder } from '../api'
+export const namespace = 'refund.model';
 export default {
   namespace: 'refund.model',
   state: {},

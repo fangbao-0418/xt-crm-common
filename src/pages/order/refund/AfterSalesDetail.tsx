@@ -14,6 +14,7 @@ import memberType from '@/enum/memberType';
 import { ORDER_TYPE } from '@/config';
 import RemarkModal from '../components/remark-modal'
 import ProcessResultModal from './components/modal/ProcessResultModal';
+import { enumRefundStatus } from '../constant';
 import moment from 'moment';
 interface AfterSalesDetailProps {
   data: any
@@ -36,18 +37,22 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
         <Row type="flex" justify="space-between" align="middle" className="mb10">
           <Col>
             <h3>
-              <span>售后单编号：{orderInfoVO.mainOrderCode}</span>
-              <span className="ml20">售后状态：{orderInfoVO.orderStatusStr}</span>
+              <span>售后单编号：{orderServerVO.orderCode}</span>
+              <span className="ml20">售后状态：{orderServerVO.refundStatusStr}</span>
             </h3>
           </Col>
           <Col>
-            <RemarkModal
-              onSuccess={this.props.getDetail}
-              orderCode={orderInfoVO.mainOrderCode}
-              refundId={this.props.refundId}
-              childOrderId={orderInfoVO.childOrderId}
-            />
-            <Button type="primary" onClick={() => this.setState({ visible: true })}>处理结果</Button>
+            {enumRefundStatus.WaitConfirm == refundStatus && (
+              <RemarkModal
+                onSuccess={this.props.getDetail}
+                orderCode={orderInfoVO.mainOrderCode}
+                refundId={this.props.refundId}
+                childOrderId={orderInfoVO.childOrderId}
+              />
+            )}
+            {
+              enumRefundStatus.Operating == refundStatus && <Button type="primary" onClick={() => this.setState({ visible: true })}>处理结果</Button>
+            }
           </Col>
         </Row>
         {/* 售后完成 */}
@@ -59,10 +64,10 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
             <Col span={8}>售后类型：{refundType.getValue(orderServerVO.refundType)}</Col>
             <Col span={8}>售后原因：{orderServerVO.returnReasonStr}</Col>
             <Col span={8}>申请时间：{moment(orderServerVO.createTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
-            <Col span={8}>最后处理时间：{moment(orderServerVO.handleTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
+            <Col span={8}>最后处理时间：{orderServerVO.handleTime ? moment(orderServerVO.handleTime).format('YYYY-MM-DD HH:mm:ss'): '-'}</Col>
             <Col span={8}>处理人：{orderServerVO.operator}</Col>
-            <Col span={8}>申请人类型：{orderServerVO.createType}</Col>
-            <Col span={8}>售后说明：{orderServerVO.info}</Col>
+            <Col span={8}>申请人类型：{createType.getValue(orderServerVO.createType)}</Col>
+            <Col span={8}>售后说明：{orderServerVO.info || '-'}</Col>
           </Row>
           <Row>
             <Col>

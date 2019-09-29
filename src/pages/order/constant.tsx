@@ -76,17 +76,17 @@ export const enumOrderStatus = {
 //0:无售后，10待审核，20售后中，30售后完成，40审核被驳回
 // '' 所有
 // 当前售后状态
-export const enumRefundStatus = {
-  All: '',
-  NoRefund: 0,
-  WaitConfirm: 10,
-  Operating: 20,
-  OperatingFailed: 21, // 退款失败
-  OperatingAll: 22, // 退款退货
-  OperatingOfMoney: 23, // 退款中
-  OperatingOfGoods: 24, // 换货中
-  Complete: 30,
-  Rejected: 40,
+export enum enumRefundStatus {
+  All = '',
+  NoRefund = 0,
+  WaitConfirm = 10, // 待审核
+  Operating =  20, // 处理中
+  OperatingFailed = 21, // 退款失败
+  OperatingAll = 22, // 退款退货
+  OperatingOfMoney = 23, // 退款中
+  OperatingOfGoods =  24, // 换货中
+  Complete = 30, //完成
+  Rejected = 40 // 驳回
 };
 
 //售后类型（10 退款退货 20 退款 30 换货）
