@@ -36,7 +36,7 @@ class AfterSaleSelect extends React.Component<Props, State>{
     return result;
   }
   public render() {
-    return <XtSelect data={this.getRefundReason()} style={{width: 200}}/>
+    return <XtSelect {...this.props} data={this.getRefundReason()} style={{width: 200}}/>
   }
 }
 export default AfterSaleSelect;

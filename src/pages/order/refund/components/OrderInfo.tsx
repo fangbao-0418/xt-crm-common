@@ -1,9 +1,7 @@
 import React from 'react';
 import { Card, Row, Col, Table } from 'antd';
-import { createType, refundType } from '@/enum';
 import { getDetailColumns } from '../../constant';
-import { replaceHttpUrl } from '@/util/utils';
-import { formatMoneyWithSign, joinFilterEmpty } from '@/pages/helper';
+import { joinFilterEmpty } from '@/pages/helper';
 import { ColumnProps } from 'antd/es/table';
 import { logisticsInformationColumns } from '../config';
 import memberType from '@/enum/memberType';
@@ -14,7 +12,7 @@ const columns: ColumnProps<ProductVO>[] = getDetailColumns();
 interface Props extends React.Props<{}> {
   orderInfoVO: OrderInfoVO
 }
-const OrderInfo = (props: Props) => {
+const OrderInfo: React.FC<Props> = (props: Props) => {
   const { orderInfoVO } = props
   return (
     <Card title="订单信息">

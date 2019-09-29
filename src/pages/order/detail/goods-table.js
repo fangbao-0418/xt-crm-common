@@ -21,8 +21,8 @@ class GoodsTable extends Component {
   handleApply = (record) => {
     const { orderInfo = {}, childOrder = {}, memberId } = this.props;
     if (record.canApply) {
-      this.setState({ modalInfo: { ...record, mainOrderId: orderInfo.id, memberId, childOrder } });
       this.setState({
+        modalInfo: { ...record, mainOrderId: orderInfo.id, memberId, childOrder },
         visible: true
       })
     } else {
@@ -82,7 +82,13 @@ class GoodsTable extends Component {
     ];
     return (
       <>
-        <ApplyAfterSaleModal query={this.props.query} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
+        {this.state.modalInfo.mainOrderId &&
+          this.state.modalInfo.skuId &&
+          <ApplyAfterSaleModal
+            onCancel={() => this.setState({ visible: false })}
+            successCb={() => this.setState({ visible: false }, this.props.query)}
+            visible={this.state.visible}
+            modalInfo={this.state.modalInfo} />}
         <Modal
           title="添加备注"
           visible={this.state.notesVisible}

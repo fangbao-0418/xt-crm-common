@@ -16,20 +16,19 @@ const { TextArea } = Input;
 
 interface ApplyAfterSaleModalProps extends FormComponentProps {
   modalInfo: any;
-  query: any;
+  successCb: () => void;
+  onCancel: () => void;
+  visible: boolean;
 }
 interface ApplyAfterSaleModalState {
   skuDetail?: ApplyOrderSkuDetail.data;
-  visible: boolean;
 }
 class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, ApplyAfterSaleModalState> {
   state: ApplyAfterSaleModalState = {
-    visible: false
-  }
+  };
   async fetchDetail() {
     const skuDetail: ApplyOrderSkuDetail.data = await getProductDetail(this.props.modalInfo);
     this.setState({ skuDetail });
-    console.log('this.state.skuDetail => ', this.state.skuDetail);
   }
   componentDidMount() {
     this.fetchDetail();
@@ -60,9 +59,7 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
         });
         if (res.success) {
           message.success('申请售后成功');
-          this.setState({
-            visible: false
-          }, this.props.query)
+          this.props.successCb();
         }
       }
     })
@@ -80,7 +77,7 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
     skuDetail = Object.assign({}, skuDetail)
     const { returnContact, returnPhone, province, city, district, street } = skuDetail;
     return (
-      <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.setState({ visible: false })} onOk={this.handleOk}>
+      <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.props.visible} onCancel={this.props.onCancel} onOk={this.handleOk}>
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>

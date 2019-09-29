@@ -28,11 +28,11 @@ interface DetailProps extends RouteComponentProps<{id: any}> {
 }
 interface DetailState {}
 class Detail extends Component<DetailProps, DetailState> {
-  public refundId: number | string;
+  public refundId: number;
   constructor(props: DetailProps) {
     super(props);
     this.getDetail = this.getDetail.bind(this);
-    this.refundId = this.props.match.params.id;
+    this.refundId = Number(this.props.match.params.id);
   }
   private getDetail () {
     APP.dispatch({
