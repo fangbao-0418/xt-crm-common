@@ -4,9 +4,7 @@ import ApplyAfterSaleModal from '../components/modal/ApplyAfterSaleModal';
 import { withRouter } from 'react-router'
 import { getDetailColumns, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
-import { Decimal } from 'decimal.js';
 import { formatDate } from '../../helper';
-import { customerAdd } from '../api';
 import { setOrderRemark, setRefundOrderRemark } from '../api';
 
 @withRouter
@@ -44,36 +42,6 @@ class GoodsTable extends Component {
       remark: e.target.value,
     });
   };
-  handleOk = () => {
-    const { form: { getFieldsValue, validateFields } } = this.afterSaleForm.props;
-    validateFields(async (errors, values) => {
-      if (!errors) {
-        const { modalInfo } = this.state;
-        const fields = getFieldsValue();
-        fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
-        console.log('fields.imgUrl=>', fields.imgUrl)
-        fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
-        console.log('fields.imgUrl=>', fields.imgUrl)
-        if (fields.amount) {
-          fields.amount = new Decimal(fields.amount).mul(100).toNumber();
-        }
-        console.log('modalInfo=>', modalInfo)
-        const res = await customerAdd({
-          childOrderId: modalInfo.childOrderId,
-          mainOrderId: modalInfo.mainOrderId,
-          memberId: modalInfo.memberId,
-          skuId: modalInfo.skuId,
-          ...fields
-        });
-        if (res.success) {
-          message.success('申请售后成功');
-          this.setState({
-            visible: false
-          }, this.props.query)
-        }
-      }
-    })
-  }
   lookForHistory = ({ orderCode, productId }) => {
     const { history } = this.props;
     history.push(`/order/refundOrder?mainOrderCode=${orderCode}&productId=${productId}`);
@@ -114,9 +82,7 @@ class GoodsTable extends Component {
     ];
     return (
       <>
-        <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.setState({ visible: false })} onOk={this.handleOk}>
-          <ApplyAfterSaleModal wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
-        </Modal>
+        <ApplyAfterSaleModal query={this.props.query} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
         <Modal
           title="添加备注"
           visible={this.state.notesVisible}

@@ -95,10 +95,10 @@ export enum enumRefundStatus {
 };
 
 //售后类型（10 退款退货 20 退款 30 换货）
-export const enumRefundType = {
-  Both: '10',
-  Refund: '20',
-  Exchange: '30',
+export enum enumRefundType {
+  Both = '10',
+  Refund = '20',
+  Exchange = '30',
 };
 
 export const TextMapRefundStatus = {
