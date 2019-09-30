@@ -1,4 +1,12 @@
 declare namespace Marketing {
+  /** 赠品内容value属性 */
+  interface PresentContentValueProps {
+    type: 0 | 1
+    chooseCount: number
+    couponList: Shop.CouponProps[]
+    skuList: Shop.SkuProps[]
+    spuIds: {[spuId: number]: number[]}
+  }
   interface ActivityListPayloadProps {
     name?: string
     startTime?: number

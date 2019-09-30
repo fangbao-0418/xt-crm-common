@@ -29,6 +29,7 @@ const spuIdsExchangeObj = (source: string) => {
   for (const key in data) {
     result[key] = data[key].split(',').map((val) => Number(val))
   }
+  console.log(result, 'result')
   return result
 }
 

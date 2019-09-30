@@ -4,13 +4,7 @@ import Form, { FormItem, FormInstance } from '@/components/form'
 import styles from './style.module.sass'
 import CouponList from '../coupon/List'
 import SkuList from '../shop/SkuList'
-interface ValueProps {
-  type: 0 | 1
-  chooseCount: number
-  couponList: Shop.CouponProps[]
-  skuList: Shop.SkuProps[]
-  spuIds: {[spuId: number]: number[]}
-}
+type ValueProps = Marketing.PresentContentValueProps
 interface Props {
   name?: string
   /** 选择0 商品、1 优惠券 */

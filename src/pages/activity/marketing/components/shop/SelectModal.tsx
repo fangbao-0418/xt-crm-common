@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Table, Button } from 'antd'
-import { ColumnProps } from 'antd/lib/table'
+import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import * as api from '../../api'
 import Form, { FormItem, FormInstance } from '@/components/form'
 import CategoryCascader from '@/components/category-cascader'
@@ -117,6 +117,8 @@ class Main extends React.Component<Props, State> {
   public constructor (props: Props) {
     super(props)
     this.onSelectChange = this.onSelectChange.bind(this)
+    this.onSelect = this.onSelect.bind(this)
+    this.onSelectAll = this.onSelectAll.bind(this)
     this.onOk = this.onOk.bind(this)
   }
   public componentWillMount () {
@@ -141,14 +143,35 @@ class Main extends React.Component<Props, State> {
       item.skuList = this.allSkuSelectedRows[item.id] || []
       return item
     })
+    console.log(this.selectRows, 'onok')
     if (this.props.onOk) {
       this.props.onOk([
         ...this.selectRows
       ])
     }
   }
-  public open (value?: any) {
-    console.log(value, 'xxxxx')
+  public open (value?: Marketing.PresentContentValueProps) {
+    console.log(value, 'value')
+    this.allSkuSelectedRows = {}
+    this.selectRows = []
+    value.skuList.map((item) => {
+      if (!(this.allSkuSelectedRows[item.productId] instanceof Array)) {
+        this.allSkuSelectedRows[item.productId] = []
+      }
+      this.allSkuSelectedRows[item.productId].push(item)
+    })
+    console.log(this.allSkuSelectedRows, 'this.allSkuSelectedRows')
+    for (const key in this.allSkuSelectedRows) {
+      let id = Number(key)
+      const item = Object.assign({}, this.allSkuSelectedRows[id][0]);
+      (this.selectRows as any[]).push({
+        id: Number(id),
+        productName: item.productName,
+        coverUrl: item.coverUrl,
+        skuList: this.allSkuSelectedRows[id]
+      })
+    }
+    // console.log()
     this.setState({
       selectedRowKeys: Object.keys(value.spuIds).map(val => Number(val)),
       allSkuSelectedRowKeys: value.spuIds,
@@ -161,40 +184,57 @@ class Main extends React.Component<Props, State> {
     })
   }
   public onSelectChange (selectedRowKeys: any[], selectedRows: Shop.ShopItemProps[]) {
-    const allSkuSelectedRowKeys = this.state.allSkuSelectedRowKeys
-    const newAllSkuSelectedRowKeys: {[spuId: number]: number[]} = {}
-    const newAllSkuSelectedRows: {
-      [spuId: number]: Shop.SkuProps[];
-    } = {}
-    this.selectRows = []
-    selectedRows.map((item) => {
-      newAllSkuSelectedRowKeys[item.id] = []
-      // 存在选择的sku不作处理，不存在默认全部选择
-      if (allSkuSelectedRowKeys[item.id]) {
-        this.selectRows.push({
-          ...item,
-          skuList: this.allSkuSelectedRows[item.id]
-        })
-        newAllSkuSelectedRowKeys[item.id] = allSkuSelectedRowKeys[item.id]
-        newAllSkuSelectedRows[item.id] = this.allSkuSelectedRows[item.id]
-      } else {
-        this.selectRows.push(item)
-        newAllSkuSelectedRows[item.id] = [...item.skuList]
-        item.skuList && item.skuList.map((skuItem) => {
-          newAllSkuSelectedRowKeys[item.id].push(skuItem.skuId)
-        })
-      }
-    })
-    this.allSkuSelectedRows = newAllSkuSelectedRows
     this.setState({
-      selectedRowKeys,
-      allSkuSelectedRowKeys: newAllSkuSelectedRowKeys
+      selectedRowKeys: selectedRowKeys
     })
+  }
+  public onSelect (record: Shop.ShopItemProps, selected: boolean, selectedRows: any[]) {
+    console.log(record, selected, selectedRows, 'onSelect')
+    const allSkuSelectedRowKeys = this.state.allSkuSelectedRowKeys
+    if (selected) {
+      if (!this.allSkuSelectedRows[record.id]) {
+        this.selectRows.push(record)
+      }
+      this.allSkuSelectedRows[record.id] = record.skuList
+      allSkuSelectedRowKeys[record.id] = record.skuList.map((item) => item.skuId)
+    } else {
+      this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
+      delete allSkuSelectedRowKeys[record.id]
+      delete this.allSkuSelectedRows[record.id]
+    }
+    console.log(this.selectRows, 'onSelect')
+    // this.selectRows = []
+    // selectedRows.map((item) => {
+    //   newAllSkuSelectedRowKeys[item.id] = []
+    //   // 存在选择的sku不作处理，不存在默认全部选择
+    //   if (allSkuSelectedRowKeys[item.id]) {
+    //     this.selectRows.push({
+    //       ...item,
+    //       skuList: this.allSkuSelectedRows[item.id]
+    //     })
+    //     newAllSkuSelectedRowKeys[item.id] = allSkuSelectedRowKeys[item.id]
+    //     newAllSkuSelectedRows[item.id] = this.allSkuSelectedRows[item.id]
+    //   } else {
+    //     this.selectRows.push(item)
+    //     newAllSkuSelectedRows[item.id] = [...item.skuList]
+    //     item.skuList && item.skuList.map((skuItem) => {
+    //       newAllSkuSelectedRowKeys[item.id].push(skuItem.skuId)
+    //     })
+    //   }
+    // })
+    this.setState({
+      allSkuSelectedRowKeys: allSkuSelectedRowKeys
+    })
+  }
+  public onSelectAll (selected: boolean, selectedRows: Shop.ShopItemProps[],  changeRows: Shop.ShopItemProps[]) {
+    console.log(selected, selectedRows, 'onSelectAll')
   }
   public render () {
     const { visible, dataSource, selectedRowKeys } = this.state
-    const rowSelection = {
+    const rowSelection: TableRowSelection<Shop.ShopItemProps> = {
       selectedRowKeys,
+      onSelect: this.onSelect,
+      onSelectAll: this.onSelectAll,
       onChange: this.onSelectChange
     }
     return (
