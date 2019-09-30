@@ -17,7 +17,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
   return (
     <Card title="订单信息">
       <Row gutter={24}>
-        <Col span={8}>子订单号：{orderInfoVO.mainOrderCode}</Col>
+        <Col span={8}>子订单号：{orderInfoVO.childOrderCode}</Col>
         <Col span={8}>订单状态：{orderInfoVO.orderStatusStr}</Col>
         <Col span={8}>订单来源：{orderInfoVO.payTypeStr}</Col>
         <Col span={8}>买家名称：{orderInfoVO.name}</Col>
@@ -34,10 +34,6 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>支付方式：{orderInfoVO.platform}</Col>
         <Col span={8}>支付时间：{moment(orderInfoVO.payTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
         <Col span={8}>交易流水号：{orderInfoVO.paymentNumber}</Col>
-      </Row>
-      <Row>
-        <h4>商品信息：</h4>
-        <Table></Table>
       </Row>
       <Row>
         <h4>物流信息</h4>

@@ -28,7 +28,7 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
         <AfterSaleDetailTitle refundId={refundId} orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} refundStatus={refundStatus} getDetail={getDetail} />
         {current === 2 && <CheckDetail {...this.props.data} />}
         <AfterSaleApplyInfo orderServerVO={orderServerVO} />
-        {current === 0 && <CheckForm {...(this.props.data as any)} />}
+        {current === 0 && <CheckForm />}
         {current === 1 && <DealForm {...this.props.data} />}
         <OrderInfo orderInfoVO={orderInfoVO} />
       </>
