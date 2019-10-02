@@ -18,7 +18,6 @@ const calcRatio = ({ useCount, receiveCount }: any) => {
 }
 export interface Props extends FormComponentProps {
   getInstance?: (ref?: Main) => void
-  visible?: boolean
   selectedRowKeys?: any[],
   onOk?: (ids: any[], rows: Coupon.CouponItemProps[]) => void
   onCancel?: () => void
@@ -49,7 +48,7 @@ class Main extends React.Component<Props, State> {
     records: [],
     total: 0,
     selectedRowKeys: this.props.selectedRowKeys || [],
-    visible: this.props.visible || false
+    visible: false
   }
   public selectedRows: Coupon.CouponItemProps[] = []
   public columns: ColumnProps<Coupon.CouponItemProps>[] = [
@@ -106,12 +105,11 @@ class Main extends React.Component<Props, State> {
     this.onSelect = this.onSelect.bind(this)
     this.onSelectAll = this.onSelectAll.bind(this)
   }
-  public componentWillReceiveProps(props: Props) {
-    this.setState({
-      visible: props.visible || false,
-      selectedRowKeys: props.selectedRowKeys || []
-    })
-  }
+  // public componentWillReceiveProps(props: Props) {
+  //   this.setState({
+  //     selectedRowKeys: props.selectedRowKeys || []
+  //   })
+  // }
   public onOk() {
     if (this.props.onOk) {
       this.props.onOk(this.state.selectedRowKeys, this.selectedRows)
@@ -155,7 +153,6 @@ class Main extends React.Component<Props, State> {
     }
   }
   public onSelectAll (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) {
-    console.log(selected, selectedRows, changeRows, 'all')
     if (selected) {
       this.selectedRows = this.selectedRows.concat(changeRows)
     } else {
@@ -175,8 +172,11 @@ class Main extends React.Component<Props, State> {
     this.payload.page = 1
     this.debounceFetch()
   }
-  public open () {
+  public open (value?: Marketing.PresentContentValueProps) {
+    const couponList: any[] = value.couponList || []
+    this.selectedRows = couponList
     this.setState({
+      selectedRowKeys: couponList.map((item) => item.id),
       visible: true
     })
   }

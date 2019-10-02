@@ -1,6 +1,7 @@
 import React from 'react'
 import { Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
+import { formatFaceValue, formatDateRange } from '@/pages/helper';
 interface State {
   dataSource?: Shop.CouponProps[]
 }
@@ -13,7 +14,10 @@ class Main extends React.Component<Props, State> {
     {title: '优惠券ID', dataIndex: 'id'},
     {title: '优惠券名称', dataIndex: 'name'},
     {title: '每人限领次数', dataIndex: 'receiveCount'},
-    {title: '面值', dataIndex: 'faceValue'},
+    {
+      title: '面值', dataIndex: 'faceValue',
+      render: (text, record) => formatFaceValue(record)
+    },
     {
       title: '操作',
       render: (text, record) => {

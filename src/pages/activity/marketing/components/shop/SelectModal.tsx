@@ -129,7 +129,7 @@ class Main extends React.Component<Props, State> {
     if (this.props.getInstance) {
       this.props.getInstance(this)
     }
-    this.fetchData()
+    // this.fetchData()
   }
   public fetchData () {
     this.setState({
@@ -151,6 +151,14 @@ class Main extends React.Component<Props, State> {
     }
   }
   public open (value?: Marketing.PresentContentValueProps) {
+    this.payload = {
+      page: 1,
+      pageSize: 10
+    }
+    if (this.form) {
+      this.form.props.form.resetFields()
+    }
+    this.fetchData()
     value = Object.assign({
       skuList: [],
       spuIds: {}

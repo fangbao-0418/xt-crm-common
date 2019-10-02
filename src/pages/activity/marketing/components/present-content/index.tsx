@@ -6,7 +6,7 @@ import CouponList from '../coupon/List'
 import SkuList from '../shop/SkuList'
 type ValueProps = Marketing.PresentContentValueProps
 interface Props {
-  name?: string
+  name: string
   /** 选择0 商品、1 优惠券 */
   onSelect?: (type: 0 | 1) => void
   value?: ValueProps
@@ -15,20 +15,22 @@ interface Props {
 interface State {
   value: ValueProps
 }
+const defaultValue: ValueProps = {
+  type: 0,
+  chooseCount: 0,
+  couponList: [],
+  skuList: [],
+  spuIds: {}
+}
 /** 赠送内容 */
 class Main extends React.Component<Props, State> {
-  public value: ValueProps = {
-    type: 0,
-    chooseCount: 1,
-    couponList: [],
-    skuList: [],
-    spuIds: {}
-  }
+  public value: ValueProps =  Object.assign({}, defaultValue, this.props.value)
   public state: State = {
     value: this.value
   }
   public componentWillReceiveProps (props: Props) {
-    const value = props.value || this.value
+    const value = Object.assign({}, defaultValue, props.value)
+    console.log(value, 'value')
     this.setState({
       value
     })
@@ -39,7 +41,9 @@ class Main extends React.Component<Props, State> {
       value: this.value
     })
     if (this.props.onChange) {
-      this.props.onChange(this.value)
+      this.props.onChange({
+        ...this.value
+      })
     }
   }
   public render () {
@@ -47,6 +51,7 @@ class Main extends React.Component<Props, State> {
     const skuList = value && value.skuList || []
     const couponList = value && value.couponList || []
     const type = value.type || 0
+    const { name } = this.props
     return (
       <div>
         <FormItem
@@ -90,7 +95,7 @@ class Main extends React.Component<Props, State> {
           wrapperCol={{span: 20}}
           addonAfterCol={{span: 4}}
           type='input'
-          name='stageCount'
+          name={`${name}-stageCount`}
           placeholder=''
           addonAfter={(
             <span>件</span>
@@ -126,14 +131,13 @@ class Main extends React.Component<Props, State> {
               wrapperCol={{span: 14}}
               addonAfterCol={{span: 4}}
               type='input'
-              name='chooseCount'
+              name={`${name}-chooseCount`}
               fieldDecoratorOptions={{
                 initialValue: value.chooseCount
               }}
               controlProps={{
                 onChange: (e: any) => {
                   this.value.chooseCount = e.target.value
-                  console.log(this.value, 'onchange')
                   this.onChange()
                 }
               }}

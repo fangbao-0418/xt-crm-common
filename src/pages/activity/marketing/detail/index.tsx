@@ -6,19 +6,26 @@ import ShopList from '../components/shop/List'
 import ShopSelectModal, { ShopModalInstance } from '../components/shop/SelectModal'
 import CouponSelectModal, { CouponModalInstance } from '../components/coupon/SelectModal'
 import PresentContent from '../components/present-content'
-import Card from '../components/card'
+import Ladder from '../components/Ladder'
 import * as api from '../api'
 import styles from './style.module.sass'
 
 interface Props extends RouteComponentProps<{id: string}> {}
-
-class Main extends React.Component<Props> {
+interface State {
+  ladderCount: number
+}
+class Main extends React.Component<Props, State> {
   public shopModalInstance: ShopModalInstance
   public couponModalInstance: CouponModalInstance
   public form: FormInstance
   /** 当前选择赠品内容key */
   public presentContentSelectedKey: string
+   /** 当前选择赠品内容索引 */
+  public currentSelectIndex: number = 0
   public id: string = this.props.match.params.id
+  public state: State = {
+    ladderCount: 0
+  }
   public constructor (props: any) {
     super(props)
     this.save = this.save.bind(this)
@@ -32,17 +39,26 @@ class Main extends React.Component<Props> {
     api.fetchActivityDetail(this.id).then((res: any) => {
       if (res) {
         this.form.setValues(res)
+        this.setState({
+          ladderCount: res.rank.ruleList.length
+        })
       }
     })
   }
   /** 选择 0-商品、1-优惠券 */
   public select (type: 0 | 1) {
     // this.presentContentSelectedKey
-    const value = this.form.getValues()
-    if (type === 0) {
-      this.shopModalInstance.open(value[this.presentContentSelectedKey])
+    const values = this.form.getValues()
+    let value
+    if (this.presentContentSelectedKey === 'rank.ruleList') {
+      value = values.rank.ruleList[this.currentSelectIndex]
     } else {
-      this.couponModalInstance.open()
+      value = values[this.presentContentSelectedKey]
+    }
+    if (type === 0) {
+      this.shopModalInstance.open(value)
+    } else {
+      this.couponModalInstance.open(value)
     }
   }
   public save () {
@@ -156,36 +172,49 @@ class Main extends React.Component<Props> {
                   {label: '可叠加', value: '1'}
                 ]}
               />
-              <Card
-                rightContent={(
-                  <span
-                    className='href'
-                    onClick={() => {
-
-                    }}
-                  >
-                    删除
-                  </span>
-                )}
-              >
+            
                 <FormItem
                   labelCol={{span: 0}}
                   inner={(form) => {
-                    return form.getFieldDecorator('stair')(
-                      <PresentContent
-                        name='stair'
-                        onSelect={(type) => {
-                          this.presentContentSelectedKey = 'stair'
-                          this.select(type)
-                        }}
-                      />
+                    return (
+                      form.getFieldDecorator('rank.ruleList')(
+                        <Ladder
+                          name='rank.ruleList'
+                          onSelect={(type, index) => {
+                            this.presentContentSelectedKey = 'rank.ruleList'
+                            this.currentSelectIndex = index
+                            this.select(type)
+                          }}
+                          onChange={(values) => {
+                            this.setState({
+                              ladderCount: values.length
+                            })
+                          }}
+                        />
+                      )
                     )
                   }}
                 >
                 </FormItem>
-              </Card>
               <div>
-                <span className='href'>+新增阶梯优惠</span>
+                {this.state.ladderCount < 5 && (
+                  <span
+                    className='href'
+                    onClick={() => {
+                      const values = this.form.getValues()
+                      let value = values.rank.ruleList
+                      value.push({})
+                      this.form.setValues({
+                        'rank.ruleList': value
+                      })
+                      this.setState({
+                        ladderCount: value.length
+                      })
+                    }}
+                  >
+                    +新增阶梯优惠
+                  </span>
+                )}
               </div>
               <FormItem
                 labelCol={{span: 0}}
@@ -248,13 +277,27 @@ class Main extends React.Component<Props> {
               })
             })
             const values = this.form.getValues()
-            this.form.setValues({
-              loop: {
-                ...values.loop,
+            const field = this.presentContentSelectedKey
+            if (field === 'rank.ruleList') {
+              let value = values.rank.ruleList
+              value[this.currentSelectIndex] = {
+                ...value[this.currentSelectIndex],
                 skuList,
                 spuIds: spuIds
               }
-            })
+              this.form.setValues({
+                [field]: value
+              })
+            } else {
+              let value = {
+                ...values[field],
+                skuList,
+                spuIds: spuIds
+              }
+              this.form.setValues({
+                [field]: value
+              })
+            }
             this.shopModalInstance.hide()
           }}
         />
@@ -264,13 +307,24 @@ class Main extends React.Component<Props> {
           }}
           onOk={(selectedRowKeys, selectedRows) => {
             const values = this.form.getValues()
-            console.log(selectedRowKeys, selectedRows, 'selectedRows')
-            this.form.setValues({
-              loop: {
-                ...values.loop,
+            const field = this.presentContentSelectedKey
+            if (field === 'rank.ruleList') {
+              let value = values.rank.ruleList
+              value[this.currentSelectIndex] = {
+                ...value[this.currentSelectIndex],
                 couponList: selectedRows
               }
-            })
+              this.form.setValues({
+                [field]: value
+              })
+            } else {
+              this.form.setValues({
+                [field]: {
+                  ...values[field],
+                  couponList: selectedRows
+                }
+              })
+            }
           }}
         />
       </div>

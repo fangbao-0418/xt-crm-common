@@ -6,7 +6,10 @@ interface State {
   isUnfold: boolean
 }
 interface Props {
+  title?: React.ReactNode
   rightContent?: React.ReactNode
+  className?: string
+  style?: React.CSSProperties
 }
 class Main extends React.Component<Props, State> {
   public state: State = {
@@ -14,11 +17,15 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { isUnfold } = this.state
+    const { className, style, title } = this.props
     return (
-      <div className={styles.card}>
+      <div
+        style={style}
+        className={classNames(styles.card, className)}
+      >
         <div className={styles.title}>
           <div className={styles['title-left']}>
-            第一阶梯优惠
+            {title}
           </div>
           <div className={styles['title-right']}>
             {this.props.rightContent}

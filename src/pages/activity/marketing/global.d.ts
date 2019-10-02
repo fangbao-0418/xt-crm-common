@@ -42,6 +42,7 @@ declare namespace Marketing {
     rank: {
       /** 阶梯规则：0-不可叠加，1-可叠加 */
       ladderRule: 0 | 1
+      ruleList: PresentContentValueProps[]
     }
   }
 }

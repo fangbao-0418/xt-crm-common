@@ -11,17 +11,17 @@ export const handleDetailReturnData = (payload: {
     type: 0 | 1
   }
 }) => {
-  console.log(payload, 'payload')
+  // console.log(payload, 'payload')
   const data = {
     ...payload,
     strategyType: payload.ruleJson.type,
-    loop: {
-      ...payload.ruleJson.loop,
-      skuList: filterinvalidData(payload.ruleJson.loop.promotionDiscountsSkuVOList),
-      couponList: payload.ruleJson.loop.couponListVOList,
-      spuIds: spuIdsExchangeObj(payload.ruleJson.loop.giftSkuJson)
-    },
-    rank: payload.ruleJson.rank,
+    loop: parsePresentContentData(payload.ruleJson.loop),
+    rank: Object.assign({}, 
+      {
+        ladderRule: payload.ruleJson.rank.ladderRule,
+        ruleList: payload.ruleJson.rank.ruleList.map((item: any) => parsePresentContentData(item))
+      }
+    ),
     userScope: payload.userScope.split(',')
   }
   console.log(data, 'data')
@@ -63,27 +63,10 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
     id: Number(payload.id),
     productIds: '1148',
     ruleJson: {
-      loop: {
-        chooseCount: loop.chooseCount,
-        giftSkuJson: spuIdsExchangeJson(loop.spuIds),
-        giftCouponIds: (loop.couponList && loop.couponList.map((item) => item.id) || []).join(','),
-        stageCount: loop.stageCount,
-        type: loop.type
-      },
+      loop: handlePresentContentData(loop),
       rank: {
         ladderRule: payload.rank.ladderRule,
-        ruleList: [
-          {
-            chooseCount: 2,
-            giftSkuJson: JSON.stringify({
-              1149: [6420, 6421].join(','),
-              1145: [6411, 6412].join(',')
-            }),
-            // giftCouponIds: '223,232,231',
-            stageCount: 3,
-            type: 0
-          }
-        ]
+        ruleList: payload.rank.ruleList.map((item) => handlePresentContentData(item))
       },
       /** 0-循环规则，1-阶梯规则 */
       type: payload.strategyType
@@ -91,4 +74,27 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
   }
   console.log(data, 'data')
   return data
+}
+
+const handlePresentContentData = (data: Marketing.PresentContentValueProps) => {
+  return {
+    chooseCount: data.chooseCount || 0,
+    giftSkuJson: spuIdsExchangeJson(data.spuIds),
+    giftCouponIds: (data.couponList && data.couponList.map((item) => item.id) || []).join(','),
+    stageCount: data.stageCount || 0,
+    type: data.type || 0
+  }
+}
+
+const parsePresentContentData = (data: {
+  promotionDiscountsSkuVOList: any[]
+  couponListVOList: any[]
+  giftSkuJson: string
+}) => {
+  return {
+    ...data,
+    skuList: filterinvalidData(data.promotionDiscountsSkuVOList),
+    couponList: data.couponListVOList,
+    spuIds: spuIdsExchangeObj(data.giftSkuJson)
+  }
 }
