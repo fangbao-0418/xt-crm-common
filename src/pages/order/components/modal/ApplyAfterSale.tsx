@@ -7,7 +7,7 @@ import { formatPrice } from '@/util/format';
 import UploadView from '@/components/upload';
 import { XtSelect } from '@/components'
 import { formItemLayout } from '@/config';
-import ModifyAddressModal from './ModifyAddressModal';
+import ModifyAddressModal from './ModifyAddress';
 import AfterSaleSelect from '../after-sale-select';
 import { Decimal } from 'decimal.js';
 import { getProductDetail, customerAdd } from '../../api'

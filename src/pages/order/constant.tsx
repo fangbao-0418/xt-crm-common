@@ -77,21 +77,35 @@ export const enumOrderStatus = {
   Complete: 50,
   Closed: 60,
 };
-//0所有，10待审核，20处理中，30完成
-//0:无售后，10待审核，20售后中，30售后完成，40审核被驳回
-// '' 所有
+/**
+ * 待审核/10
+ * 处理中
+ *  - 换货
+ *    - 待平台发货/25
+ *    - 待用户收货/26
+ *  - 仅退款
+ *    - 等待客服跟进/27
+ *  - 退货，换货
+ *    - 待用户发货/20
+ *    - 待平台收货/24
+ *  - 退货退款，仅退款
+ *    - 退款中/23
+ *    - 退款失败/21
+ * 售后完成/30
+ * 售后关闭/40
+ */
 // 当前售后状态
 export enum enumRefundStatus {
   All = '',
   NoRefund = 0,
-  WaitConfirm = 10, // 待审核
-  Operating = 20, // 处理中
-  OperatingFailed = 21, // 退款失败
-  OperatingAll = 22, // 退款退货
-  OperatingOfMoney = 23, // 退款中
-  OperatingOfGoods = 24, // 换货中
-  Complete = 30, //完成
-  Rejected = 40 // 驳回
+  WaitConfirm = 10,
+  Operating = 20,
+  OperatingFailed = 21,
+  OperatingAll = 22,
+  OperatingOfMoney = 23,
+  OperatingOfGoods = 24,
+  Complete = 30,
+  Rejected = 40
 };
 
 //售后类型（10 退款退货 20 退款 30 换货）

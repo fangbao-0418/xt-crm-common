@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Row, Col, Card, Button, Modal, Input, message } from 'antd';
-import ApplyAfterSaleModal from '../components/modal/ApplyAfterSaleModal';
+import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale';
 import { withRouter } from 'react-router'
 import { getDetailColumns, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';

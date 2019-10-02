@@ -61,7 +61,7 @@ const OrderRefundStatusEnums = {
   },
   REJECT: {
     value: 40,
-    description: '驳回',
+    description: '关闭',
     cDescription: '售后关闭'
   }
 }

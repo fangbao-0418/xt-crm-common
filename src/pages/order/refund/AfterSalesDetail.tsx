@@ -25,7 +25,7 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     let current = isDelete === 1 ? 2 : calcCurrent(refundStatus);
     return (
       <>
-        <AfterSaleDetailTitle refundId={refundId} orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} refundStatus={refundStatus} getDetail={getDetail} />
+        <AfterSaleDetailTitle refundId={refundId} orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} getDetail={getDetail} />
         {current === 2 && <CheckDetail {...this.props.data} />}
         <AfterSaleApplyInfo orderServerVO={orderServerVO} />
         {current === 0 && <CheckForm />}

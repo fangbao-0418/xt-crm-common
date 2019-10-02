@@ -2,19 +2,22 @@ import React, {useState} from 'react';
 import { Row, Col, Button } from 'antd';
 import { enumRefundStatus } from '../../constant';
 import RemarkModal from '../../components/modal/remark-modal';
-import ProcessResultModal from '../../components/modal/ProcessResultModal';
+import ProcessResultModal from '../../components/modal/ProcessResult';
 interface props extends React.Props<{}> {
   orderServerVO: AfterSalesInfo.OrderServerVO;
   orderInfoVO: AfterSalesInfo.OrderInfoVO;
-  refundStatus: number;
   getDetail: () => void;
   refundId: number;
 }
 type Dispatch<A> = (value: A) => void;
 type SetStateAction<S> = S | ((prevState: S) => S);
+
 const AfterSaleDetailTitle: React.FC<props> = (props) => {
-  const { refundId, orderServerVO, refundStatus, orderInfoVO, getDetail } = props;
+  const { refundId, orderServerVO, orderInfoVO, getDetail } = props;
   const [visible, setVisible]: [boolean, Dispatch<SetStateAction<boolean>>] = useState<boolean>(false);
+  const isRefundStatusOf = (status: number): boolean => {
+    return orderServerVO.refundStatus == status;
+  }
   return (
     <>
       <ProcessResultModal visible={visible} handleCancel={() => setVisible(false)} />
@@ -26,7 +29,7 @@ const AfterSaleDetailTitle: React.FC<props> = (props) => {
           </h3>
         </Col>
         <Col>
-          {enumRefundStatus.WaitConfirm == refundStatus && (
+          {isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
             <RemarkModal
               onSuccess={getDetail}
               orderCode={orderInfoVO.mainOrderCode}
@@ -34,9 +37,9 @@ const AfterSaleDetailTitle: React.FC<props> = (props) => {
               childOrderId={orderInfoVO.childOrderId}
             />
           )}
-          {
-            enumRefundStatus.Operating == refundStatus && <Button type="primary" onClick={() => setVisible(true)}>处理结果</Button>
-          }
+          {isRefundStatusOf(enumRefundStatus.Operating) && <Button type="primary">上传物流信息</Button>}
+          {isRefundStatusOf(enumRefundStatus.OperatingOfGoods)
+            && <Button type="primary" onClick={() => setVisible(true)}>处理结果</Button>}
         </Col>
       </Row>
     </>
