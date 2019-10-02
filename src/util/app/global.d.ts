@@ -7,10 +7,10 @@ declare module APP {
     payload?: T
   }
   interface HttpProps {
-    get: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
-    post: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
-    newPost: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
-    newPut: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
+    get: <T = any>(url: string, data?: any, config?: AxiosRequestConfig) => Promise<T>
+    post: <T = any>(url: string, data?: any, config?: AxiosRequestConfig) => Promise<T>
+    newPost: <T = any>(url: string, data?: any, config?: AxiosRequestConfig) => Promise<T>
+    newPut: <T = any>(url: string, data?: any, config?: AxiosRequestConfig) => Promise<T>
   }
   interface FnProps {
     getH5Origin: () => string

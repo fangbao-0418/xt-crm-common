@@ -1,6 +1,6 @@
 import React from 'react'
 import { Table } from 'antd'
-import { ColumnProps } from 'antd/lib/table'
+import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import styles from './style.module.sass'
 interface State {
   selectedRowKeys: number[]
@@ -71,19 +71,9 @@ class Main extends React.Component<Props, State> {
     this.setState({
       selectedRowKeys: props.selectedRowKeys
     })
-    // if (this.state.selectedRowKeys.length === 0 && props.allSelected) {
-    //   this.setState({
-    //     selectedRowKeys: props.dataSource && props.dataSource.map((item) => {
-    //       return item.skuId
-    //     }) || []
-    //   })
-    // } else if (props.allSelected === false) {
-    //   this.setState({
-    //     selectedRowKeys: []
-    //   })
-    // }
   }
   public onSelectChange (selectedRowKeys: any[], selectedRows: Shop.SkuProps[]) {
+    console.log(selectedRows, 'selectedRows')
     this.setState({
       selectedRowKeys
     }, () => {
@@ -94,13 +84,14 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { dataSource } = this.props
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys } = this.state
+    const rowSelection: TableRowSelection<Shop.SkuProps> = {
+      selectedRowKeys,
+      onChange: this.onSelectChange
+    }
     return (
       <Table
-        rowSelection={{
-          selectedRowKeys,
-          onChange: this.onSelectChange
-        }}
+        rowSelection={rowSelection}
         bordered
         className={styles['sku-table']}
         rowKey='skuId'

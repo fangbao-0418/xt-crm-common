@@ -1,11 +1,17 @@
 declare namespace Marketing {
   /** 赠品内容value属性 */
   interface PresentContentValueProps {
+    /** 赠品内容类型：0-赠品，1-优惠券 */
     type: 0 | 1
     chooseCount: number
     couponList: Shop.CouponProps[]
     skuList: Shop.SkuProps[]
     spuIds: {[spuId: number]: number[]}
+    /** 赠送商品数 */
+    chooseCount?: number
+    /** 满赠条件购买商品数 */
+    stageCount?: number
+    giftSkuJson?: string
   }
   interface ActivityListPayloadProps {
     name?: string
@@ -29,12 +35,13 @@ declare namespace Marketing {
     /** 活动规则描述 */
     activityDescribe: string
     id: number
+    /** 赠品策略类型 0-循环规则，1-阶梯规则 */
+    strategyType: 0 | 1
     /** 循环规则 */
-    loop: {
-      spuIds: {[spuId: number]: number[]}
-      giftSkuJson: string
-      type: 0 | 1
-      couponList: Shop.CouponProps[]
+    loop: PresentContentValueProps
+    rank: {
+      /** 阶梯规则：0-不可叠加，1-可叠加 */
+      ladderRule: 0 | 1
     }
   }
 }

@@ -249,9 +249,9 @@ function Main (props: Props) {
   const { required, labelCol, wrapperCol, addonAfterCol, colon } = formItemProps
   const children = props.children || props.inner && props.inner(form) || renderItem(option, context)
   const hidden = props.hidden || false
-  if (!children) {
-    return null
-  }
+  // if (!children) {
+  //   return null
+  // }
   return (
     <div
       hidden={hidden}
@@ -273,37 +273,39 @@ function Main (props: Props) {
             {label}
           </label>
         </Col>
-        <Col
-          {...wrapperCol}
-          className={styles['form-item-control-wrapper']}
-        >
-          <Item
-            {...formItemProps}
-            wrapperCol={{span: 24}}
+        { children && (
+          <Col
+            {...wrapperCol}
+            className={styles['form-item-control-wrapper']}
           >
-            {
-              name ? (type === 'text' ? children : form.getFieldDecorator(
-                name,
-                {
-                  ...fieldDecoratorOptions
-                }
-              )(
-                children
-              )) : children
-            }
-          </Item>
-          <Item
-            style={{display: 'none'}}
-          >
-            {
-              type === 'text' && form.getFieldDecorator(
-                name
-              )(
-                <Input />
-              )
-            }
-          </Item>
-        </Col>
+            <Item
+              {...formItemProps}
+              wrapperCol={{span: 24}}
+            >
+              {
+                name ? (type === 'text' ? children : form.getFieldDecorator(
+                  name,
+                  {
+                    ...fieldDecoratorOptions
+                  }
+                )(
+                  children
+                )) : children
+              }
+            </Item>
+            <Item
+              style={{display: 'none'}}
+            >
+              {
+                type === 'text' && form.getFieldDecorator(
+                  name
+                )(
+                  <Input />
+                )
+              }
+            </Item>
+          </Col>
+        )}
         { addonAfter && (
           <Col {...addonAfterCol} className={styles['form-item-addon-after']}>
             {addonAfter}

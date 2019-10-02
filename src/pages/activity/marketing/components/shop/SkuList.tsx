@@ -26,7 +26,7 @@ class Main extends React.Component<Props> {
             </div>
             <div className={styles['shop-right']} >
               <div>{record.productName}</div>
-              <div>库存：{record.stock}</div>
+              <div>{record.properties}</div>
             </div>
           </div>
         )

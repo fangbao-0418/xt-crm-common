@@ -24,14 +24,6 @@ class Main extends React.Component<Props> {
     this.save = this.save.bind(this)
   }
   public componentDidMount () {
-    this.form.setValues({
-      loop: {
-        type: '1'
-      },
-      spuJson: [
-        {id: 1, productName: '222'}
-      ]
-    })
     if (this.id !== '-1') {
       this.fetchData()
     }
@@ -54,14 +46,16 @@ class Main extends React.Component<Props> {
     }
   }
   public save () {
+    const value = this.form.getValues()
+    console.log(value, 'save')
     if (this.id === '-1') {
-      api.addActivity(this.form.getValues()).then(() => {
+      api.addActivity(value).then(() => {
         APP.success('保存成功')
       })
     } else {
       api.editActivity({
         id: this.id,
-        ...this.form.getValues()
+        ...value
       }).then(() => {
         APP.success('修改成功')
       })
@@ -149,17 +143,17 @@ class Main extends React.Component<Props> {
                 labelCol={{span: 0}}
                 type='radio'
                 name='strategyType'
-                options={[{label: '阶梯规则', value: '1'}]}
+                options={[{label: '阶梯规则', value: 1}]}
               />
               <FormItem
                 labelCol={{span: 4}}
                 wrapperCol={{span: 20}}
                 type='radio'
-                name='stairType'
+                name='rank.ladderRule'
                 label='阶梯是否可以叠加'
                 options={[
-                  {label: '不可叠加', value: '1'},
-                  {label: '可叠加', value: '2'}
+                  {label: '不可叠加', value: '0'},
+                  {label: '可叠加', value: '1'}
                 ]}
               />
               <Card
@@ -174,50 +168,21 @@ class Main extends React.Component<Props> {
                   </span>
                 )}
               >
-                <div>
-                  <FormItem
-                    style={{
-                      display: 'inline-block'
-                    }}
-                    labelCol={{span: 0}}
-                  >
-                    门槛：
-                  </FormItem>
-                  <FormItem
-                    style={{
-                      display: 'inline-block'
-                    }}
-                    labelCol={{span: 0}}
-                  >
-                    每件
-                  </FormItem>
-                  <FormItem
-                    style={{
-                      display: 'inline-block',
-                      width: 80,
-                      margin: '0 5px'
-                    }}
-                    labelCol={{span: 0}}
-                    wrapperCol={{span: 24}}
-                    type='input'
-                    name='jtgz2'
-                    placeholder=''
-                  />
-                  <FormItem
-                    style={{
-                      display: 'inline-block'
-                    }}
-                    labelCol={{span: 0}}
-                  >
-                    件
-                  </FormItem>
-                </div>
-                <PresentContent
-                  name='stair'
-                  onSelect={(type) => {
-                    this.select(type)
+                <FormItem
+                  labelCol={{span: 0}}
+                  inner={(form) => {
+                    return form.getFieldDecorator('stair')(
+                      <PresentContent
+                        name='stair'
+                        onSelect={(type) => {
+                          this.presentContentSelectedKey = 'stair'
+                          this.select(type)
+                        }}
+                      />
+                    )
                   }}
-                />
+                >
+                </FormItem>
               </Card>
               <div>
                 <span className='href'>+新增阶梯优惠</span>
@@ -226,45 +191,9 @@ class Main extends React.Component<Props> {
                 labelCol={{span: 0}}
                 type='radio'
                 name='strategyType'
-                options={[{label: '循环规则', value: '0'}]}
+                options={[{label: '循环规则', value: 0}]}
               />
               <div>
-                <FormItem
-                  style={{
-                    display: 'inline-block'
-                  }}
-                  labelCol={{span: 0}}
-                >
-                  门槛：
-                </FormItem>
-                <FormItem
-                  style={{
-                    display: 'inline-block'
-                  }}
-                  labelCol={{span: 0}}
-                >
-                  每满
-                </FormItem>
-                <FormItem
-                  style={{
-                    display: 'inline-block',
-                    width: 80,
-                    margin: '0 5px'
-                  }}
-                  labelCol={{span: 0}}
-                  wrapperCol={{span: 24}}
-                  type='input'
-                  name='jtgz2'
-                  placeholder=''
-                />
-                <FormItem
-                  style={{
-                    display: 'inline-block'
-                  }}
-                  labelCol={{span: 0}}
-                >
-                  件
-                </FormItem>
                 <FormItem
                   labelCol={{span: 0}}
                   inner={(form) => {
@@ -280,13 +209,6 @@ class Main extends React.Component<Props> {
                   }}
                 >
                 </FormItem>
-                {/* <PresentContent
-                  name='loop'
-                  onSelect={(type) => {
-                    this.select(type)
-                    this.presentContentSelectedKey = 'loop'
-                  }}
-                /> */}
               </div>
             </Col>
           </Row>

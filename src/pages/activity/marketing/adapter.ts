@@ -6,30 +6,39 @@ export const handleDetailReturnData = (payload: {
       promotionDiscountsSkuVOList: Shop.SkuProps[]
       couponListVOList: Shop.CouponProps[]
       giftSkuJson: string
-    }
+    },
+    rank: any
+    type: 0 | 1
   }
 }) => {
   console.log(payload, 'payload')
   const data = {
     ...payload,
+    strategyType: payload.ruleJson.type,
     loop: {
       ...payload.ruleJson.loop,
-      skuList: payload.ruleJson.loop.promotionDiscountsSkuVOList,
+      skuList: filterinvalidData(payload.ruleJson.loop.promotionDiscountsSkuVOList),
       couponList: payload.ruleJson.loop.couponListVOList,
       spuIds: spuIdsExchangeObj(payload.ruleJson.loop.giftSkuJson)
     },
+    rank: payload.ruleJson.rank,
     userScope: payload.userScope.split(',')
   }
+  console.log(data, 'data')
   return data
 }
-
+const filterinvalidData = (data: any[]) => {
+  if (!(data instanceof Array)) {
+    return []
+  }
+  return data.filter((item) => item)
+}
 const spuIdsExchangeObj = (source: string) => {
   const data: {[id: number]: string} = JSON.parse(source)
   const result: {[id: number]: number[]} = {}
   for (const key in data) {
     result[key] = data[key].split(',').map((val) => Number(val))
   }
-  console.log(result, 'result')
   return result
 }
 
@@ -41,6 +50,7 @@ const spuIdsExchangeJson = (source: {[spuIds: number]: number[]}) => {
   return JSON.stringify(data)
 }
 
+/** 满赠详情入参处理 */
 export const handleFormData = (payload: Marketing.FormDataProps) => {
   console.log(payload, 'payload')
   const loop = payload.loop
@@ -54,14 +64,14 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
     productIds: '1148',
     ruleJson: {
       loop: {
-        chooseCount: 2,
+        chooseCount: loop.chooseCount,
         giftSkuJson: spuIdsExchangeJson(loop.spuIds),
         giftCouponIds: (loop.couponList && loop.couponList.map((item) => item.id) || []).join(','),
-        stageCount: 3,
+        stageCount: loop.stageCount,
         type: loop.type
       },
       rank: {
-        ladderRule: true,
+        ladderRule: payload.rank.ladderRule,
         ruleList: [
           {
             chooseCount: 2,
@@ -76,7 +86,7 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
         ]
       },
       /** 0-循环规则，1-阶梯规则 */
-      type: 0
+      type: payload.strategyType
     }
   }
   console.log(data, 'data')
