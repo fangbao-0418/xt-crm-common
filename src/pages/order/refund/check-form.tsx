@@ -134,10 +134,10 @@ class CheckForm extends React.Component<Props, State> {
               </Form.Item>
             }
             {/* 退货退款、换货才有退货地址 refundType： 10 30*/}
-            {localRefundType !== enumRefundType.Refund && <Form.Item label="退货地址">
+            {localRefundType !== String(enumRefundType.Refund) && <Form.Item label="退货地址">
               <ModifyAddressModal name={checkVO.returnContact} phone={checkVO.returnPhone} province="" city="" district="" street={checkVO.returnAddress}/>
               </Form.Item>}
-            {localRefundType === enumRefundType.Exchange && <Form.Item label="用户收货地址">
+            {localRefundType === String(enumRefundType.Exchange) && <Form.Item label="用户收货地址">
               <ModifyAddressModal name={orderInfoVO.consignee} phone={orderInfoVO.consigneePhone} province="" city="" district="" street={orderInfoVO.address}/>
             </Form.Item>}
             <Row>

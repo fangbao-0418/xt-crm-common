@@ -1,26 +1,31 @@
 import React, {useState} from 'react';
 import { Row, Col, Button } from 'antd';
 import { enumRefundStatus } from '../../constant';
-import RemarkModal from '../../components/modal/remark-modal';
-import ProcessResultModal from '../../components/modal/ProcessResult';
+import {RemarkModal, ModifyLogisticsInfo, ProcessResult} from '../../components/modal';
 interface props extends React.Props<{}> {
   orderServerVO: AfterSalesInfo.OrderServerVO;
   orderInfoVO: AfterSalesInfo.OrderInfoVO;
+  checkVO: AfterSalesInfo.CheckVO;
   getDetail: () => void;
   refundId: number;
 }
-type Dispatch<A> = (value: A) => void;
-type SetStateAction<S> = S | ((prevState: S) => S);
 
 const AfterSaleDetailTitle: React.FC<props> = (props) => {
-  const { refundId, orderServerVO, orderInfoVO, getDetail } = props;
-  const [visible, setVisible]: [boolean, Dispatch<SetStateAction<boolean>>] = useState<boolean>(false);
+  const { refundId, orderServerVO, orderInfoVO, checkVO, getDetail } = props;
+  const [processResultVisible, setProcessResultVisible]: useStateType = useState<boolean>(false);
+  const [logisticsInfoVisible, setLogisticsInfoVisible]: useStateType = useState<boolean>(false);
+
   const isRefundStatusOf = (status: number): boolean => {
     return orderServerVO.refundStatus == status;
   }
   return (
     <>
-      <ProcessResultModal visible={visible} handleCancel={() => setVisible(false)} />
+      <ModifyLogisticsInfo
+        title="物流信息上传"
+        visible={logisticsInfoVisible}
+        onCancel={() => setLogisticsInfoVisible(false)}
+        checkVO={checkVO}/>
+      <ProcessResult visible={processResultVisible} handleCancel={() => setProcessResultVisible(false)} />
       <Row type="flex" justify="space-between" align="middle" className="mb10">
         <Col>
           <h3>
@@ -37,9 +42,9 @@ const AfterSaleDetailTitle: React.FC<props> = (props) => {
               childOrderId={orderInfoVO.childOrderId}
             />
           )}
-          {isRefundStatusOf(enumRefundStatus.Operating) && <Button type="primary">上传物流信息</Button>}
+          {isRefundStatusOf(enumRefundStatus.Operating) && <Button type="primary" onClick={() => setLogisticsInfoVisible(true)}>上传物流信息</Button>}
           {isRefundStatusOf(enumRefundStatus.OperatingOfGoods)
-            && <Button type="primary" onClick={() => setVisible(true)}>处理结果</Button>}
+            && <Button type="primary" onClick={() => setProcessResultVisible(true)}>处理结果</Button>}
         </Col>
       </Row>
     </>

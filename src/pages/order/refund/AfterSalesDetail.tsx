@@ -1,11 +1,11 @@
 import React from 'react';
-import CheckForm from './check-form';
-import DealForm from './deal-form';
-import CheckDetail from './check-detail';
 import { calcCurrent } from '@/pages/helper'
 import AfterSaleDetailTitle from './components/AfterSaleDetailTitle';
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import OrderInfo from './components/OrderInfo';
+import CustomerProcessInfo from './components/CustomerProcessInfo';
+import LogisticsInformation from './components/LogisticsInformation';
+import SupplierProcessInfo from './components/SupplierProcessInfo';
 interface AfterSalesDetailProps {
   data: AfterSalesInfo.data
   getDetail: () => void
@@ -19,17 +19,17 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     visible: false
   }
   render() {
-    let { data: { isDelete, orderInfoVO, orderServerVO, refundStatus }, refundId, getDetail } = this.props;
+    let { data: { isDelete, orderInfoVO, orderServerVO, refundStatus, checkVO }, refundId, getDetail } = this.props;
     orderServerVO = Object.assign({}, orderServerVO)
     orderInfoVO = Object.assign({}, orderInfoVO)
     let current = isDelete === 1 ? 2 : calcCurrent(refundStatus);
     return (
       <>
-        <AfterSaleDetailTitle refundId={refundId} orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} getDetail={getDetail} />
-        {current === 2 && <CheckDetail {...this.props.data} />}
+        <AfterSaleDetailTitle refundId={refundId} checkVO={checkVO} orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} getDetail={getDetail} />
+        <CustomerProcessInfo />
+        <LogisticsInformation />
+        <SupplierProcessInfo />
         <AfterSaleApplyInfo orderServerVO={orderServerVO} />
-        {current === 0 && <CheckForm />}
-        {current === 1 && <DealForm {...this.props.data} />}
         <OrderInfo orderInfoVO={orderInfoVO} />
       </>
     )
