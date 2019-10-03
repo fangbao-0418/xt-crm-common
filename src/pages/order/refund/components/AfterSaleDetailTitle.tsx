@@ -1,53 +1,91 @@
-import React, {useState} from 'react';
+import React from 'react';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { connect } from 'react-redux';
 import { Row, Col, Button } from 'antd';
 import { enumRefundStatus } from '../../constant';
-import {RemarkModal, ModifyLogisticsInfo, ProcessResult} from '../../components/modal';
-interface props extends React.Props<{}> {
-  orderServerVO: AfterSalesInfo.OrderServerVO;
-  orderInfoVO: AfterSalesInfo.OrderInfoVO;
-  checkVO: AfterSalesInfo.CheckVO;
-  getDetail: () => void;
-  refundId: number;
+import { namespace } from '../model';
+import { RemarkModal, ModifyLogisticsInfo, ProcessResult } from '../../components/modal';
+interface Props extends RouteComponentProps<{id: any}>{
+  data: AfterSalesInfo.data;
 }
-
-const AfterSaleDetailTitle: React.FC<props> = (props) => {
-  const { refundId, orderServerVO, orderInfoVO, checkVO, getDetail } = props;
-  const [processResultVisible, setProcessResultVisible]: useStateType = useState<boolean>(false);
-  const [logisticsInfoVisible, setLogisticsInfoVisible]: useStateType = useState<boolean>(false);
-
-  const isRefundStatusOf = (status: number): boolean => {
+interface State {
+  processResultVisible: boolean;
+  logisticsInfoVisible: boolean;
+}
+class AfterSaleDetailTitle extends React.Component<Props, State> {
+  state: State = {
+    processResultVisible: false,
+    logisticsInfoVisible: false
+  }
+  constructor(props: Props) {
+    super(props);
+    this.onSuccess = this.onSuccess.bind(this);
+  }
+  onSuccess() {
+    APP.dispatch({
+      type: `${namespace}/getDetail`,
+      payload: {
+        id: this.props.match.params.id
+      }
+    })
+  }
+  isRefundStatusOf(status: number) {
+    let orderServerVO = this.props.data.orderServerVO || {};
     return orderServerVO.refundStatus == status;
   }
-  return (
-    <>
-      <ModifyLogisticsInfo
-        title="物流信息上传"
-        visible={logisticsInfoVisible}
-        onCancel={() => setLogisticsInfoVisible(false)}
-        checkVO={checkVO}/>
-      <ProcessResult visible={processResultVisible} handleCancel={() => setProcessResultVisible(false)} />
-      <Row type="flex" justify="space-between" align="middle" className="mb10">
-        <Col>
-          <h3>
-            <span>售后单编号：{orderServerVO.orderCode}</span>
-            <span className="ml20">售后状态：{orderServerVO.refundStatusStr}</span>
-          </h3>
-        </Col>
-        <Col>
-          {isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
-            <RemarkModal
-              onSuccess={getDetail}
-              orderCode={orderInfoVO.mainOrderCode}
-              refundId={refundId}
-              childOrderId={orderInfoVO.childOrderId}
-            />
-          )}
-          {isRefundStatusOf(enumRefundStatus.Operating) && <Button type="primary" onClick={() => setLogisticsInfoVisible(true)}>上传物流信息</Button>}
-          {isRefundStatusOf(enumRefundStatus.OperatingOfGoods)
-            && <Button type="primary" onClick={() => setProcessResultVisible(true)}>处理结果</Button>}
-        </Col>
-      </Row>
-    </>
-  )
+  render() {
+    let { orderServerVO, orderInfoVO, checkVO } = this.props.data;
+    orderServerVO = Object.assign({}, orderServerVO);
+    orderInfoVO = Object.assign({}, orderInfoVO);
+    checkVO =Object.assign({}, checkVO);
+    const { logisticsInfoVisible, processResultVisible } = this.state;
+    return (
+      <>
+        <ModifyLogisticsInfo
+          title="物流信息上传"
+          visible={logisticsInfoVisible}
+          onCancel={() => this.setState({logisticsInfoVisible: false})}
+          checkVO={checkVO}
+        />
+        <ProcessResult
+          visible={processResultVisible}
+          handleCancel={() => this.setState({processResultVisible: false})}
+        />
+        <Row type="flex" justify="space-between" align="middle">
+          <Col>
+            <h3 style={{margin: 0}}>
+              <span>售后单编号：{orderServerVO.orderCode}</span>
+              <span className="ml20">售后状态：{orderServerVO.refundStatusStr}</span>
+            </h3>
+          </Col>
+          <Col>
+            {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
+              <RemarkModal
+                onSuccess={this.onSuccess}
+                orderCode={orderInfoVO.mainOrderCode}
+                refundId={this.props.match.params.id}
+                childOrderId={orderInfoVO.childOrderId}
+              />
+            )}
+            {this.isRefundStatusOf(enumRefundStatus.Operating) && (
+              <Button type="primary" onClick={() => this.setState({logisticsInfoVisible: true})}>
+                上传物流信息
+              </Button>
+            )}
+            {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && (
+              <Button type="primary" onClick={() => this.setState({processResultVisible: true})}>
+                处理结果
+              </Button>
+            )}
+          </Col>
+        </Row>
+      </>
+    );
+  }
 }
-export default AfterSaleDetailTitle;
+
+export default connect((state: any) => {
+  return {
+    data: state[namespace].data || {},
+  };
+})(withRouter(AfterSaleDetailTitle));

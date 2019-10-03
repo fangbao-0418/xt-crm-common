@@ -7,6 +7,8 @@ import { namespace } from '../../refund/model';
 import { customerUpdate } from '../../api';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   title: string;
+  returnExpressName?: string;
+  returnExpressCode?: string;
   visible: boolean;
   onCancel: () => void;
   checkVO: AfterSalesInfo.CheckVO
@@ -33,6 +35,7 @@ class ModifyLogisticsInfo extends React.Component<Props, {}> {
     this.props.onCancel();
   };
   render(): React.ReactNode {
+    const { returnExpressName, returnExpressCode } = this.props;
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -46,6 +49,7 @@ class ModifyLogisticsInfo extends React.Component<Props, {}> {
         <Form {...formItemLayout} className="login-form">
           <Form.Item label="物流公司">
             {getFieldDecorator('returnExpressName', {
+              initialValue: returnExpressName,
               rules: [
                 {
                   required: true,
@@ -56,6 +60,7 @@ class ModifyLogisticsInfo extends React.Component<Props, {}> {
           </Form.Item>
           <Form.Item label="物流单号 ">
             {getFieldDecorator('returnExpressCode', {
+              initialValue: returnExpressCode,
               rules: [
                 {
                   required: true,

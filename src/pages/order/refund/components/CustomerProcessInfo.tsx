@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Card, Row } from 'antd';
+import { Row } from 'antd';
 import { enumRefundType } from '../../constant';
 import { refundType } from '@/enum';
-import { namespace } from '../model';
 interface Props {
   data: AfterSalesInfo.data;
 }
@@ -22,7 +21,8 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
     return checkVO.refundType === refundType;
   }
   return (
-    <Card title="客服处理信息">
+    <div>
+      <h4>客服处理信息</h4>
       <Row>售后类型：{refundType.getValue(checkVO.refundType)}</Row>
       <Row>售后数目：{checkVO.refundAmount}</Row>
       {/* 退货退款/仅退款 */}
@@ -31,11 +31,7 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
       {/* 换货 */}
       {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{returnAddress(checkVO)}</Row>}
       <Row>说 明：{checkVO.firstServerDescribe}</Row>
-    </Card>
+    </div>
   );
 };
-export default connect((state: any) => {
-  return {
-    data: state[namespace].data || {},
-  };
-})(CustomerProcessInfo);
+export default CustomerProcessInfo;

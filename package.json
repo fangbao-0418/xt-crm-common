@@ -5,6 +5,7 @@
   "dependencies": {
     "@rematch/core": "^1.1.0",
     "@rematch/loading": "^1.1.3",
+    "@types/clipboard": "^2.0.1",
     "@types/node": "^12.7.8",
     "ali-oss": "^6.1.1",
     "antd": "^3.10.8",

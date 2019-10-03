@@ -1,17 +1,26 @@
 import React from 'react';
-import { Card, Row, Col } from 'antd';
-
-const LogisticsInformation: React.FC = () => {
-  return (
-    <Card title="供应商处理信息">
-      <Row>
-        <Col>供应商名称：喜团义乌自营仓</Col>
-        <Col>供应商类型：自营仓/大供应商/小供应商</Col>
-        <Col>供应商收货状态：  未收货</Col>
-        <Col>收货数目：2</Col>
-        <Col>说明：货品已收货，可以进行售后</Col>
-      </Row>
-    </Card>
-  )
+import { Row } from 'antd';
+import { storeType, supplierOperate, enumSupplierOperate } from '../../constant';
+interface Props {
+  data: AfterSalesInfo.data;
 }
-export default LogisticsInformation;
+type OrderServerVO = AfterSalesInfo.OrderServerVO;
+const SupplierProcessInfo: React.FC<Props> = ({ data }: Props) => {
+  let orderServerVO: OrderServerVO = data.orderServerVO || {};
+  return (
+    <div>
+      <h4>供应商处理信息</h4>
+      <Row>供应商名称：{orderServerVO.storeName}</Row>
+      <Row>供应商类型：{storeType[orderServerVO.storeType]}</Row>
+      <Row>供应商收货状态：{supplierOperate[orderServerVO.supplierOperate]}</Row>
+      {orderServerVO.supplierOperate === enumSupplierOperate.ACCEPTED && (
+        <>
+          <Row>收货数目：{orderServerVO.serverNum}</Row>
+          <Row>说明：{orderServerVO.supplierInfo}</Row>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default SupplierProcessInfo;

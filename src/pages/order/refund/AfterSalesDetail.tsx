@@ -1,11 +1,8 @@
 import React from 'react';
-import { calcCurrent } from '@/pages/helper'
-import AfterSaleDetailTitle from './components/AfterSaleDetailTitle';
+import AfterSalesProcessing from './AfterSalesProcessing';
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import OrderInfo from './components/OrderInfo';
-import CustomerProcessInfo from './components/CustomerProcessInfo';
-import LogisticsInformation from './components/LogisticsInformation';
-import SupplierProcessInfo from './components/SupplierProcessInfo';
+
 interface AfterSalesDetailProps {
   data: AfterSalesInfo.data
   getDetail: () => void
@@ -19,16 +16,12 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     visible: false
   }
   render() {
-    let { data: { isDelete, orderInfoVO, orderServerVO, refundStatus, checkVO }, refundId, getDetail } = this.props;
+    let { data: { orderInfoVO, orderServerVO, checkVO }, refundId, getDetail } = this.props;
     orderServerVO = Object.assign({}, orderServerVO)
     orderInfoVO = Object.assign({}, orderInfoVO)
-    let current = isDelete === 1 ? 2 : calcCurrent(refundStatus);
     return (
       <>
-        <AfterSaleDetailTitle refundId={refundId} checkVO={checkVO} orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} getDetail={getDetail} />
-        <CustomerProcessInfo />
-        <LogisticsInformation />
-        <SupplierProcessInfo />
+        <AfterSalesProcessing />
         <AfterSaleApplyInfo orderServerVO={orderServerVO} />
         <OrderInfo orderInfoVO={orderInfoVO} />
       </>

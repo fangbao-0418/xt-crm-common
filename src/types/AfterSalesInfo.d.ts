@@ -21,12 +21,12 @@ declare module AfterSalesInfo {
     returnContact: string;
     returnPhone: string;
     returnAddress: string;
-    returnExpressName: null;
-    returnExpressCode: null;
+    returnExpressName: string;
+    returnExpressCode: string;
     returnExpressTime: number;
-    sendExpressName: null;
-    sendExpressCode: null;
-    sendExpressTime: null;
+    sendExpressName: string;
+    sendExpressCode: string;
+    sendExpressTime: number;
     isRefundFreight: number;
     freight: number;
   }

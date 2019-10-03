@@ -68,14 +68,23 @@ export const getDetailColumns = () => [
 ];
 
 export const storeType = ['喜团', '1688', '淘宝联盟'];
-export const enumOrderStatus = {
-  Refund: -1,
-  Unpaid: 10,
-  Undelivered: 20,
-  Delivered: 30,
-  Received: 40,
-  Complete: 50,
-  Closed: 60,
+export const supplierOperate: any = {
+  0: '未验收',
+  10: '已验收'
+}
+export enum enumSupplierOperate {
+  UNACCEPTED = 0,
+  ACCEPTED = 10
+}
+
+export enum enumOrderStatus {
+  Refund = -1,
+  Unpaid = 10,
+  Undelivered = 20,
+  Delivered = 30,
+  Received = 40,
+  Complete = 50,
+  Closed = 60,
 };
 /**
  * 待审核/10
