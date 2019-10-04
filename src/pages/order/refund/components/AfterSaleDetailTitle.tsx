@@ -4,17 +4,15 @@ import { connect } from 'react-redux';
 import { Row, Col, Button } from 'antd';
 import { enumRefundStatus } from '../../constant';
 import { namespace } from '../model';
-import { RemarkModal, ModifyLogisticsInfo, ProcessResult } from '../../components/modal';
+import { RemarkModal, ModifyLogisticsInfo, CheckExchange } from '../../components/modal';
 interface Props extends RouteComponentProps<{id: any}>{
   data: AfterSalesInfo.data;
 }
 interface State {
-  processResultVisible: boolean;
   logisticsInfoVisible: boolean;
 }
 class AfterSaleDetailTitle extends React.Component<Props, State> {
   state: State = {
-    processResultVisible: false,
     logisticsInfoVisible: false
   }
   constructor(props: Props) {
@@ -38,7 +36,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     orderServerVO = Object.assign({}, orderServerVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
     checkVO =Object.assign({}, checkVO);
-    const { logisticsInfoVisible, processResultVisible } = this.state;
+    const { logisticsInfoVisible } = this.state;
     return (
       <>
         <ModifyLogisticsInfo
@@ -46,10 +44,6 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
           visible={logisticsInfoVisible}
           onCancel={() => this.setState({logisticsInfoVisible: false})}
           checkVO={checkVO}
-        />
-        <ProcessResult
-          visible={processResultVisible}
-          handleCancel={() => this.setState({processResultVisible: false})}
         />
         <Row type="flex" justify="space-between" align="middle">
           <Col>
@@ -72,11 +66,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                 上传物流信息
               </Button>
             )}
-            {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && (
-              <Button type="primary" onClick={() => this.setState({processResultVisible: true})}>
-                处理结果
-              </Button>
-            )}
+            {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && <CheckExchange />}
           </Col>
         </Row>
       </>
@@ -86,6 +76,6 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
 
 export default connect((state: any) => {
   return {
-    data: state[namespace].data || {},
+    data: state[namespace] && state[namespace].data || {},
   };
 })(withRouter(AfterSaleDetailTitle));

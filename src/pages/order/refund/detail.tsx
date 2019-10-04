@@ -64,6 +64,6 @@ class Detail extends Component<DetailProps, DetailState> {
 }
 export default connect((state: any) => {
   return {
-    data: state[namespace].data || {}
+    data: state[namespace] && state[namespace].data || {}
   }
 })(Detail);
