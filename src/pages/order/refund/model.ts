@@ -1,14 +1,14 @@
 import { message } from 'antd';
 import { refundOperate, refundDetail, againRefund, closeOrder } from '../api'
-export const namespace = 'refund.model';
+export const namespace: string = 'refund.model';
 export default {
-  namespace: 'refund.model',
+  namespace,
   state: {},
   effects: (dispatch: APP.DispatchProps) => ({
-    getDetail: async (payload = {}) => {
+    getDetail: async (payload: any = {}) => {
       const res = await refundDetail(payload)
       dispatch({
-        type: 'refund.model/saveDefault',
+        type: `${namespace}/saveDefault`,
         payload: { data: res.data || {} },
       })
     },
@@ -19,7 +19,7 @@ export default {
         message.info('审核成功');
       }
       dispatch({
-        type: 'refund.model/getDetail',
+        type: `${namespace}/getDetail`,
         payload: {id: payload.id},
       })
     },
@@ -30,7 +30,7 @@ export default {
         message.success('退款完成')
       }
       dispatch({
-        type: 'refund.model/getDetail',
+        type: `${namespace}/getDetail`,
         payload: {id: payload.id},
       })
     },
@@ -41,7 +41,7 @@ export default {
         message.success('退款完成')
       }
       dispatch({
-        type: 'refund.model/getDetail',
+        type: `${namespace}/getDetail`,
         payload: {id: payload.id},
       })
     }
