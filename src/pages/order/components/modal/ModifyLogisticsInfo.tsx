@@ -34,7 +34,7 @@ class ModifyLogisticsInfo extends React.Component<Props, {}> {
     }
     this.props.onCancel();
   };
-  render(): React.ReactNode {
+  render() {
     const { returnExpressName, returnExpressCode } = this.props;
     const {
       form: { getFieldDecorator },

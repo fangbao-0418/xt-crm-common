@@ -10,9 +10,9 @@ interface Props {
 type CheckVO = AfterSalesInfo.CheckVO;
 
 // 退货地址
-const returnAddress = (checkVO: CheckVO) => {
-  return checkVO.returnContact + ' ' + checkVO.returnPhone + ' ' + checkVO.returnAddress;
-}
+// const returnAddress = (checkVO: CheckVO) => {
+//   return checkVO.returnContact + ' ' + checkVO.returnPhone + ' ' + checkVO.returnAddress;
+// }
 
 const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {  
   let checkVO: CheckVO = data.checkVO || {};
@@ -29,7 +29,7 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
       {!isRefundTypeOf(enumRefundType.Exchange) && <Row>退款金额：</Row>}
       <Row>退货地址：{orderInfoVO.address}</Row>
       {/* 换货 */}
-      {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{returnAddress(checkVO)}</Row>}
+      {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{orderInfoVO.address}</Row>}
       <Row>说 明：{checkVO.firstServerDescribe}</Row>
     </div>
   );

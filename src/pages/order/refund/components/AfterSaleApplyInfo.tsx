@@ -15,7 +15,7 @@ interface Props extends React.Props<{}> {
 }
 
 const AfterSaleApplyInfo = (props: Props) => {
-  const { orderServerVO } = props
+  const orderServerVO = props.orderServerVO || {};
   const logColumns: any[] = []
   return (
     <Card

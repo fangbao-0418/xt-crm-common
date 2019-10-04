@@ -89,14 +89,14 @@ export enum enumOrderStatus {
 /**
  * 待审核/10
  * 处理中
- *  - 换货
- *    - 待平台发货/25
- *    - 待用户收货/26
  *  - 仅退款
  *    - 等待客服跟进/27
  *  - 退货，换货
  *    - 待用户发货/20
  *    - 待平台收货/24
+ *  - 换货
+ *    - 待平台发货/25
+ *    - 待用户收货/26
  *  - 退货退款，仅退款
  *    - 退款中/23
  *    - 退款失败/21
@@ -113,6 +113,8 @@ export enum enumRefundStatus {
   OperatingAll = 22,
   OperatingOfMoney = 23,
   OperatingOfGoods = 24,
+  WaitPlatformDelivery = 25,
+  WaitUserReceipt = 26,
   Complete = 30,
   Rejected = 40
 };

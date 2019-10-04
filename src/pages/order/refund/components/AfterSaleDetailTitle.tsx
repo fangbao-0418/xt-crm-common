@@ -5,16 +5,16 @@ import { Row, Col, Button } from 'antd';
 import { enumRefundStatus } from '../../constant';
 import { namespace } from '../model';
 import { RemarkModal, ModifyLogisticsInfo, CheckExchange } from '../../components/modal';
-interface Props extends RouteComponentProps<{id: any}>{
+interface Props extends RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
 interface State {
-  logisticsInfoVisible: boolean;
+  visible: boolean;
 }
 class AfterSaleDetailTitle extends React.Component<Props, State> {
   state: State = {
-    logisticsInfoVisible: false
-  }
+    visible: false,
+  };
   constructor(props: Props) {
     super(props);
     this.onSuccess = this.onSuccess.bind(this);
@@ -23,9 +23,9 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     APP.dispatch({
       type: `${namespace}/getDetail`,
       payload: {
-        id: this.props.match.params.id
-      }
-    })
+        id: this.props.match.params.id,
+      },
+    });
   }
   isRefundStatusOf(status: number) {
     let orderServerVO = this.props.data.orderServerVO || {};
@@ -35,24 +35,19 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     let { orderServerVO, orderInfoVO, checkVO } = this.props.data;
     orderServerVO = Object.assign({}, orderServerVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
-    checkVO =Object.assign({}, checkVO);
-    const { logisticsInfoVisible } = this.state;
+    checkVO = Object.assign({}, checkVO);
+    const { visible } = this.state;
     return (
       <>
-        <ModifyLogisticsInfo
-          title="物流信息上传"
-          visible={logisticsInfoVisible}
-          onCancel={() => this.setState({logisticsInfoVisible: false})}
-          checkVO={checkVO}
-        />
         <Row type="flex" justify="space-between" align="middle">
           <Col>
-            <h3 style={{margin: 0}}>
+            <h3 style={{ margin: 0 }}>
               <span>售后单编号：{orderServerVO.orderCode}</span>
               <span className="ml20">售后状态：{orderServerVO.refundStatusStr}</span>
             </h3>
           </Col>
           <Col>
+            {/* 待审核 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
               <RemarkModal
                 onSuccess={this.onSuccess}
@@ -61,12 +56,37 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                 childOrderId={orderInfoVO.childOrderId}
               />
             )}
+            {/* 待用户发货 */}
             {this.isRefundStatusOf(enumRefundStatus.Operating) && (
-              <Button type="primary" onClick={() => this.setState({logisticsInfoVisible: true})}>
-                上传物流信息
-              </Button>
+              <>
+                <ModifyLogisticsInfo
+                  title="物流信息上传"
+                  visible={visible}
+                  onCancel={() => this.setState({ visible: false })}
+                  checkVO={checkVO}
+                />
+                <Button
+                  type="primary"
+                  onClick={() => this.setState({ visible: true })}
+                >
+                  上传物流信息
+                </Button>
+              </>
             )}
+            {/* 待平台收货 */}
             {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && <CheckExchange />}
+            {/* 待平台发货 */}
+            {this.isRefundStatusOf(enumRefundStatus.WaitPlatformDelivery) && (
+              <>
+                <ModifyLogisticsInfo
+                  title="待平台发货"
+                  visible={visible}
+                  onCancel={() => this.setState({ visible: false })}
+                  checkVO={checkVO}
+                />
+                <Button type="primary" onClick={() => this.setState({visible: true})}>发货</Button>
+              </>
+            )}
           </Col>
         </Row>
       </>
@@ -76,6 +96,6 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
 
 export default connect((state: any) => {
   return {
-    data: state[namespace] && state[namespace].data || {},
+    data: (state[namespace] && state[namespace].data) || {},
   };
 })(withRouter(AfterSaleDetailTitle));

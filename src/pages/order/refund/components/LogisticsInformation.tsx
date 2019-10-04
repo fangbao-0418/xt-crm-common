@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import ClipboardJS from "clipboard";
-import { Row, Card, Button } from 'antd';
-import ModifyLogisticsInfo from '../../components/modal/ModifyLogisticsInfo';
+import ClipboardJS from 'clipboard';
+import { Row, Button } from 'antd';
+import { ModifyLogisticsInfo } from '../../components/modal';
+import { enumRefundStatus } from '../../constant'
 interface Props {
   data: AfterSalesInfo.data;
 }
@@ -29,12 +30,20 @@ const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
           <span className="ml20">
             物流单号：<span id="copy-text">{checkVO.returnExpressCode}</span>
           </span>
-          <Button id="copy-btn" type="primary" className="ml20" data-clipboard-target="#copy-text">
-            复制
-          </Button>
-          <Button type="primary" className="ml10" onClick={() => setVisible(true)}>
-            修改
-          </Button>
+
+          <>
+            <Button
+              id="copy-btn"
+              type="primary"
+              className="ml20"
+              data-clipboard-target="#copy-text"
+            >
+              复制
+            </Button>
+            <Button type="primary" className="ml10" onClick={() => setVisible(true)}>
+              修改
+            </Button>
+          </>
         </Row>
       </div>
     </>

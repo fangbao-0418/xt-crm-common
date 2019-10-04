@@ -21,8 +21,4 @@ class AfterSalesProcessing extends React.Component<Props, {}> {
   }
 }
 
-export default connect((state: any) => {
-  return {
-    data: state[namespace] && state[namespace].data || {},
-  };
-})(AfterSalesProcessing);
+export default AfterSalesProcessing;

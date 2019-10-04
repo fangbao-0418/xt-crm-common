@@ -1,12 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import AfterSalesProcessing from './AfterSalesProcessing';
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import OrderInfo from './components/OrderInfo';
-
+import { namespace } from './model';
 interface AfterSalesDetailProps {
   data: AfterSalesInfo.data
-  getDetail: () => void
-  refundId: number
 }
 interface AfterSalesDetailState {
   visible: boolean
@@ -16,16 +15,19 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     visible: false
   }
   render() {
-    let { data: { orderInfoVO, orderServerVO, checkVO }, refundId, getDetail } = this.props;
-    orderServerVO = Object.assign({}, orderServerVO)
-    orderInfoVO = Object.assign({}, orderInfoVO)
+    let { data } = this.props;
     return (
       <>
-        <AfterSalesProcessing />
-        <AfterSaleApplyInfo orderServerVO={orderServerVO} />
-        <OrderInfo orderInfoVO={orderInfoVO} />
+        <AfterSalesProcessing data={data}/>
+        <AfterSaleApplyInfo orderServerVO={data.orderServerVO} />
+        <OrderInfo orderInfoVO={data.orderInfoVO} />
       </>
     )
   }
 }
-export default AfterSalesDetail;
+export default connect((state: any) => {
+  return {
+    data: state[namespace] && state[namespace].data || {}
+  }
+})(AfterSalesDetail);;
+

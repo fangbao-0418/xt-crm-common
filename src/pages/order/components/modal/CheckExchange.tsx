@@ -1,21 +1,36 @@
 import React from 'react';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { Form, Modal, Radio, Button, InputNumber, Input } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { formItemLayout, radioStyle } from '@/config';
 import { namespace } from '../../refund/model';
+import { enumRefundType } from '../../constant';
+interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {}
 interface State {
   visible: boolean;
 }
-class CheckExchange extends React.Component<FormComponentProps, State> {
+class CheckExchange extends React.Component<Props, State> {
   state: State = {
     visible: false,
   };
-  constructor(props: FormComponentProps) {
+  constructor(props: Props) {
     super(props);
     this.onOk = this.onOk.bind(this);
   }
   onOk() {
-    APP.dispatch
+    this.props.form.validateFields((errors, values) => {
+      if (!errors) {
+        APP.dispatch({
+          type: `${namespace}/auditOperate`,
+          payload: {
+            id: this.props.match.params.id,
+            status: 1,
+            refundType: enumRefundType.Exchange,
+            ...values
+          },
+        });  
+      }
+    })
   }
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -35,6 +50,7 @@ class CheckExchange extends React.Component<FormComponentProps, State> {
                 rules: [
                   {
                     required: true,
+                    message: '请选择处理方式'
                   },
                 ],
               })(
@@ -53,12 +69,13 @@ class CheckExchange extends React.Component<FormComponentProps, State> {
                 rules: [
                   {
                     required: true,
+                    message: '请输入换货数目'
                   },
                 ],
               })(<InputNumber min={1} placeholder="请输入" />)}
             </Form.Item>
             <Form.Item label="说    明">
-              <Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />
+              {getFieldDecorator('returnReason')(<Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />)}
             </Form.Item>
           </Form>
         </Modal>
@@ -69,4 +86,4 @@ class CheckExchange extends React.Component<FormComponentProps, State> {
     );
   }
 }
-export default Form.create()(CheckExchange);
+export default Form.create()(withRouter(CheckExchange));

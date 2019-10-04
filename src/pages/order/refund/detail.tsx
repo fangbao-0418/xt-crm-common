@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Card, Table, Tabs } from 'antd';
 import { ColumnProps } from 'antd/es/table';
-import { connect } from 'react-redux'
-import { RouteComponentProps } from 'react-router'
+import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router';
 import AfterSalesDetail from './AfterSalesDetail';
 import { namespace } from './model';
 interface Logger {
@@ -10,21 +10,25 @@ interface Logger {
   datetime: number;
   operator: string;
 }
-const columns: ColumnProps<Logger>[] = [{
-  title: '内容',
-  dataIndex: 'content',
-  key: 'content'
-}, {
-  title: '时间',
-  dataIndex: 'datetime',
-  key: 'datetime'
-}, {
-  title: '操作人',
-  dataIndex: 'operator',
-  key: 'operator'
-}]
-interface DetailProps extends RouteComponentProps<{id: any}> {
-  data: AfterSalesInfo.data
+const columns: ColumnProps<Logger>[] = [
+  {
+    title: '内容',
+    dataIndex: 'content',
+    key: 'content',
+  },
+  {
+    title: '时间',
+    dataIndex: 'datetime',
+    key: 'datetime',
+  },
+  {
+    title: '操作人',
+    dataIndex: 'operator',
+    key: 'operator',
+  },
+];
+interface DetailProps extends RouteComponentProps<{ id: any }> {
+  data: AfterSalesInfo.data;
 }
 interface DetailState {}
 class Detail extends Component<DetailProps, DetailState> {
@@ -34,36 +38,42 @@ class Detail extends Component<DetailProps, DetailState> {
     this.getDetail = this.getDetail.bind(this);
     this.refundId = Number(this.props.match.params.id);
   }
-  private getDetail () {
+  private getDetail() {
     APP.dispatch({
       type: `${namespace}/getDetail`,
-      payload: { id: this.refundId }
-    })
+      payload: { id: this.refundId },
+    });
   }
   componentWillMount() {
     this.getDetail();
   }
   render(): React.ReactNode {
     const { skuServerLogVO } = this.props.data;
-    const dataSource: any = skuServerLogVO && skuServerLogVO.map((v: any, i: any) => ({...v, uniqueKey: i}));
+    const dataSource: any =
+      skuServerLogVO && skuServerLogVO.map((v: any, i: any) => ({ ...v, uniqueKey: i }));
     return (
       <>
         <Card>
           <Tabs>
             <Tabs.TabPane tab="售后详情" key="1">
-              <AfterSalesDetail data={this.props.data} getDetail={this.getDetail} refundId={this.refundId}/>
+              <AfterSalesDetail />
             </Tabs.TabPane>
             <Tabs.TabPane tab="信息记录" key="2">
-              <Table rowKey={(record: any, index:number) => String(record.uniqueKey)} dataSource={dataSource} pagination={false} columns={columns} />
+              <Table
+                rowKey={(record: any, index: number) => String(record.uniqueKey)}
+                dataSource={dataSource}
+                pagination={false}
+                columns={columns}
+              />
             </Tabs.TabPane>
           </Tabs>
         </Card>
       </>
-    )
+    );
   }
 }
 export default connect((state: any) => {
   return {
-    data: state[namespace] && state[namespace].data || {}
-  }
+    data: (state[namespace] && state[namespace].data) || {},
+  };
 })(Detail);
