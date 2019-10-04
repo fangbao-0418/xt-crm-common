@@ -2,14 +2,12 @@ import React from 'react';
 import { Form, Modal, Radio, InputNumber, Input } from 'antd';
 import { FormComponentProps } from 'antd/lib/form'
 import { formItemLayout, radioStyle } from '@/config';
-interface ProcessResultState { }
-interface ProcessResultProps extends FormComponentProps {
+interface Props extends FormComponentProps {
   visible?: boolean
   handleCancel: any
 }
-class ProcessResultModal extends React.Component<ProcessResultProps, ProcessResultState> {
-  state: ProcessResultState = {}
-  constructor(props: ProcessResultProps) {
+class CheckExchange extends React.Component<Props, {}> {
+  constructor(props: Props) {
     super(props);
     this.handleOk = this.handleOk.bind(this);
   }
@@ -62,4 +60,4 @@ class ProcessResultModal extends React.Component<ProcessResultProps, ProcessResu
     );
   }
 }
-export default Form.create<ProcessResultProps>()(ProcessResultModal);
+export default Form.create<Props>()(CheckExchange);
