@@ -4,16 +4,23 @@ import { connect } from 'react-redux';
 import { Row, Col, Button } from 'antd';
 import { enumRefundStatus } from '../../constant';
 import { namespace } from '../model';
-import { RemarkModal, ModifyLogisticsInfo, CheckExchange } from '../../components/modal';
+import {
+  RemarkModal,
+  ModifyLogisticsInfo,
+  CheckExchange,
+  PlatformDelivery,
+} from '../../components/modal';
 interface Props extends RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
 interface State {
-  visible: boolean;
+  modifyLogisticsInfoVisible: boolean;
+  platformDeliveryVisible: boolean;
 }
 class AfterSaleDetailTitle extends React.Component<Props, State> {
   state: State = {
-    visible: false,
+    modifyLogisticsInfoVisible: false,
+    platformDeliveryVisible: false,
   };
   constructor(props: Props) {
     super(props);
@@ -36,7 +43,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     orderServerVO = Object.assign({}, orderServerVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
     checkVO = Object.assign({}, checkVO);
-    const { visible } = this.state;
+    const { modifyLogisticsInfoVisible, platformDeliveryVisible } = this.state;
     return (
       <>
         <Row type="flex" justify="space-between" align="middle">
@@ -61,13 +68,13 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
               <>
                 <ModifyLogisticsInfo
                   title="物流信息上传"
-                  visible={visible}
-                  onCancel={() => this.setState({ visible: false })}
+                  visible={modifyLogisticsInfoVisible}
+                  onCancel={() => this.setState({ modifyLogisticsInfoVisible: false })}
                   checkVO={checkVO}
                 />
                 <Button
                   type="primary"
-                  onClick={() => this.setState({ visible: true })}
+                  onClick={() => this.setState({ modifyLogisticsInfoVisible: true })}
                 >
                   上传物流信息
                 </Button>
@@ -78,13 +85,18 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             {/* 待平台发货 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitPlatformDelivery) && (
               <>
-                <ModifyLogisticsInfo
-                  title="待平台发货"
-                  visible={visible}
-                  onCancel={() => this.setState({ visible: false })}
+                <PlatformDelivery
+                  visible={platformDeliveryVisible}
+                  onCancel={() => this.setState({ platformDeliveryVisible: false })}
                   checkVO={checkVO}
+                  title="待平台发货"
                 />
-                <Button type="primary" onClick={() => this.setState({visible: true})}>发货</Button>
+                <Button
+                  type="primary"
+                  onClick={() => this.setState({ platformDeliveryVisible: true })}
+                >
+                  发货
+                </Button>
               </>
             )}
           </Col>

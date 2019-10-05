@@ -26,8 +26,8 @@ export const ExpressCompanyOptions = {
   debangwuliu: '德邦',
   jd: '京东',
   tiantian: '天天快递',
-  youzhengbk: "邮政标准快递",
-  youzhengguonei: "邮政快递包裹"
+  youzhengbk: '邮政标准快递',
+  youzhengguonei: '邮政快递包裹',
 };
 
 const valueArray = Object.keys(ExpressCompanyOptions);
@@ -37,7 +37,9 @@ export default class SupplierSelect extends Component {
     return (
       <Select placeholder="请选择快递公司" style={{ width: 150 }} {...this.props}>
         {valueArray.map((v, index) => (
-          <Option value={v} key={index}>{ExpressCompanyOptions[v]}</Option>
+          <Option value={v} key={index}>
+            {ExpressCompanyOptions[v]}
+          </Option>
         ))}
       </Select>
     );

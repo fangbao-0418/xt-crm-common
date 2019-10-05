@@ -115,6 +115,7 @@ export enum enumRefundStatus {
   OperatingOfGoods = 24,
   WaitPlatformDelivery = 25,
   WaitUserReceipt = 26,
+  WaitCustomerServiceOperating = 27,
   Complete = 30,
   Rejected = 40
 };
