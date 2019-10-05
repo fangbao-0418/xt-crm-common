@@ -2,7 +2,7 @@ import React from 'react';
 import { getRefundReason } from '../../api';
 import { XtSelect } from '@/components'
 interface Props {
-  refundType: 10 | 20 | 30
+  refundType: string
 }
 interface State {
   refundReason: any

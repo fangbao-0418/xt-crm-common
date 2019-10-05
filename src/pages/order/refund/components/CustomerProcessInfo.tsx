@@ -17,8 +17,8 @@ type CheckVO = AfterSalesInfo.CheckVO;
 const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {  
   let checkVO: CheckVO = data.checkVO || {};
   let orderInfoVO = data.orderInfoVO || {};
-  const isRefundTypeOf = (refundType: number) => {
-    return checkVO.refundType === refundType;
+  const isRefundTypeOf = (refundType: number | string) => {
+    return checkVO.refundType == refundType;
   }
   return (
     <div>

@@ -87,6 +87,7 @@ export enum enumOrderStatus {
   Closed = 60,
 };
 /**
+ * @description
  * 待审核/10
  * 处理中
  *  - 仅退款
@@ -120,11 +121,17 @@ export enum enumRefundStatus {
   Rejected = 40
 };
 
-//售后类型（10 退款退货 20 退款 30 换货）
+/**
+ * @description
+ * 售后类型
+ * 退货退款 Both {string} 10
+ * 退款 Refund {string} 20
+ * 换货 Exchange {string} 30
+ */
 export enum enumRefundType {
-  Both = 10,
-  Refund = 20,
-  Exchange = 30,
+  Both = '10',
+  Refund = '20',
+  Exchange = '30',
 };
 
 export const TextMapRefundStatus = {
