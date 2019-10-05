@@ -25,6 +25,8 @@ const AfterSaleApplyInfo = (props: Props) => {
         <Col span={8}>售后类型：{refundType.getValue(orderServerVO.refundType)}</Col>
         <Col span={8}>售后原因：{orderServerVO.returnReasonStr}</Col>
         <Col span={8}>申请时间：{moment(orderServerVO.createTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
+        {orderServerVO.handleTime > 0 && <Col span={8}>最后处理时间:{moment(orderServerVO.handleTime).format('YYYY-MM-DD HH:mm:ss')}</Col>}
+        {orderServerVO.operator && <Col span={8}>处理人:{orderServerVO.operator}</Col>}
         <Col span={8}>申请人类型：{createType.getValue(orderServerVO.createType)}</Col>
         <Col span={8}>申请售后数目：{orderServerVO.serverNum}</Col>
         <Col span={8}>申请售后金额：{formatMoneyWithSign(orderServerVO.amount)}</Col>
@@ -41,7 +43,6 @@ const AfterSaleApplyInfo = (props: Props) => {
       </Row>
       <Row>
         {(orderServerVO.commentListVO || []).map(v => <Col key={v.createTime}>{v.info['操作'] + ' ' + v.info['备注内容']}（{formatDate(v.createTime)} {v.name}）</Col>)}
-        <Col></Col>
       </Row>
     </Card>
   )

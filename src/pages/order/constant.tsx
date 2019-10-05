@@ -87,24 +87,25 @@ export enum enumOrderStatus {
   Closed = 60,
 };
 /**
- * @description
- * 待审核/10
- * 处理中
- *  - 仅退款
- *    - 等待客服跟进/27
- *  - 退货，换货
- *    - 待用户发货/20
- *    - 待平台收货/24
- *  - 换货
- *    - 待平台发货/25
- *    - 待用户收货/26
- *  - 退货退款，仅退款
- *    - 退款中/23
- *    - 退款失败/21
- * 售后完成/30
- * 售后关闭/40
+ * 当前售后状态
+ * @readonly
+ * @enum {number}
+ * @property 待审核/10
+ * @description 处理中
+ * 仅退款
+ * @property 等待客服跟进/27
+ * 退货，换货
+ * @property 待用户发货/20
+ * @property 待平台收货/24
+ * 换货
+ * @property 待平台发货/25
+ * @property 待用户收货/26
+ * @description 退货退款，仅退款
+ * @property 退款中/23
+ * @property 退款失败/21
+ * @property 售后完成/30
+ * @property 售后关闭/40
  */
-// 当前售后状态
 export enum enumRefundStatus {
   All = '',
   NoRefund = 0,
@@ -122,11 +123,10 @@ export enum enumRefundStatus {
 };
 
 /**
- * @description
  * 售后类型
- * 退货退款 Both {string} 10
- * 退款 Refund {string} 20
- * 换货 Exchange {string} 30
+ * @property Both {string} 退货退款:10
+ * @property Refund {string} 退款:20
+ * @property Exchange {string} 换货:30
  */
 export enum enumRefundType {
   Both = '10',

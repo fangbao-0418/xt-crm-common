@@ -2,7 +2,7 @@ declare module AfterSalesInfo {
   export interface data {
     id: number;
     refundStatus: number;
-    refundType: number;
+    refundType: any;
     isDelete: number;
     orderServerVO: OrderServerVO;
     orderInfoVO: OrderInfoVO;
@@ -12,7 +12,7 @@ declare module AfterSalesInfo {
   export interface CheckVO {
     amount: number;
     refundAmount: number;
-    refundType: number;
+    refundType: any;
     refundStatus: number;
     firstRefundStatusStr: null;
     refundStatusStr: null;
@@ -61,7 +61,7 @@ declare module AfterSalesInfo {
     finishTime: number;
     handleTime: number;
     operator: string;
-    refundType: string;
+    refundType: any;
     refundTypeStr: string;
     returnReason: number;
     returnReasonStr: string;
