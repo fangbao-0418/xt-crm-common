@@ -90,21 +90,25 @@ export enum enumOrderStatus {
  * 当前售后状态
  * @readonly
  * @enum {number}
- * @property 待审核/10
- * @description 处理中
- * 仅退款
- * @property 等待客服跟进/27
- * 退货，换货
- * @property 待用户发货/20
- * @property 待平台收货/24
- * 换货
- * @property 待平台发货/25
- * @property 待用户收货/26
+ * @property WaitConfirm {number} 待审核:10
+ * 
+ * @description 退货，换货
+ * @description Operating {number} 处理中:20
+ * @property OperatingOfGoods{number} 待平台收货:24
+ * 
+ * @property OperatingOfMoney {number} 待用户发货:23
+ * @property OperatingFailed {number} 退款失败:21
+ * 
+ * @description 换货
+ * @property WaitPlatformDelivery {number} 待平台发货:25
+ * @property WaitUserReceipt {number} 待用户收货:26
+ * 
+ * @description 仅退款
+ * @property WaitCustomerServiceOperating {number} 等待客服跟进:27
  * @description 退货退款，仅退款
- * @property 退款中/23
- * @property 退款失败/21
- * @property 售后完成/30
- * @property 售后关闭/40
+ *
+ * @property Complete {number} 售后完成:30
+ * @property Rejected {number} 售后关闭:40
  */
 export enum enumRefundStatus {
   All = '',
@@ -214,19 +218,3 @@ export const MemberTypeTextMap = {
   [enumMemberType.Manager]: '管理员',
   [enumMemberType.Company]: '公司',
 };
-
-export const refundType = [
-  {
-    label: '全部',
-    value: ''
-  }, {
-    label: '退货退款',
-    value: '10'
-  }, {
-    label: '仅退款',
-    value: '20'
-  }, {
-    label: '仅换货',
-    value: '30'
-  }
-]

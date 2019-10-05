@@ -7,7 +7,7 @@ import { refundType, customerFollowType } from '@/enum';
 import { XtSelect } from '@/components';
 import { formatPrice } from '@/util/format';
 import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/helper';
-import returnShipping from './components/return-shipping';
+import ReturnShippingSelect from '../components/ReturnShippingSelect';
 import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../components/after-sale-select';
 import ModifyAddressModal from '../components/modal/ModifyAddress';
@@ -200,7 +200,7 @@ class PendingReview extends React.Component<Props, State> {
             {this.isReturnShipping() && (
               <Form.Item label="退运费">
                 {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(
-                  returnShipping(checkVO),
+                  <ReturnShippingSelect checkVO={checkVO}/>,
                 )}
               </Form.Item>
             )}

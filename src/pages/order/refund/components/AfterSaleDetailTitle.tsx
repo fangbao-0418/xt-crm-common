@@ -8,6 +8,7 @@ import {
   RemarkModal,
   ModifyLogisticsInfo,
   CheckExchange,
+  CheckRefund,
   PlatformDelivery,
 } from '../../components/modal';
 interface Props extends RouteComponentProps<{ id: any }> {
@@ -99,6 +100,8 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                 </Button>
               </>
             )}
+            {/* 等待客服跟进 */}
+            {this.isRefundStatusOf(enumRefundStatus.WaitCustomerServiceOperating) && <CheckRefund data={this.props.data}/>}
           </Col>
         </Row>
       </>

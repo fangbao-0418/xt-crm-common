@@ -4,4 +4,5 @@ export {default as ModifyAddress} from './ModifyAddress';
 export {default as ModifyLogisticsInfo} from './ModifyLogisticsInfo';
 export {default as ProcessResult} from './ProcessResult';
 export {default as CheckExchange} from './CheckExchange';
+export {default as CheckRefund} from './CheckRefund';
 export {default as PlatformDelivery} from './PlatformDelivery';

@@ -19,7 +19,7 @@ import {
 } from '@/pages/helper';
 import { customerUpdate } from '../api';
 import ExpressCompanySelect from '@/components/express-company-select';
-import returnShipping from './components/return-shipping';
+import returnShipping from '../components/ReturnShippingSelect';
 import { Decimal } from 'decimal.js';
 
 @connect(state => ({
