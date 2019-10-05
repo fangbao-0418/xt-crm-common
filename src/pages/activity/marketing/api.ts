@@ -1,11 +1,25 @@
 import { SearchPayload } from './components/coupon/SelectModal'
-import { handleFormData, handleDetailReturnData } from './adapter'
+import { handleListData, handleFormData, handleDetailReturnData } from './adapter'
 const { post, get, newPost } = APP.http
 
 /** 获取满赠列表 */
 export const fetchActivityList = (payload: Marketing.ActivityListPayloadProps) => {
   payload.type = 8
-  return post('/promotion/list', payload)
+  return post('/promotion/list', payload).then((res) => {
+    res.records = handleListData(res.records)
+    return res
+  })
+}
+
+/** 关闭开启活动 0-关闭 1-开启 */
+export const changeActivityStatus = (ids: number[], type: 0 | 1 = 0) => {
+  let url = '/promotion/disable'
+  if (type === 1) {
+    url = '/promotion/enable'
+  }
+  return newPost(url, {
+    promotionIds: ids
+  })
 }
 
 /** 获取满赠详情 */

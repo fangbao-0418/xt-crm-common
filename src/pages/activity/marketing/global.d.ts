@@ -2,10 +2,11 @@ declare namespace Marketing {
   /** 赠品内容value属性 */
   interface PresentContentValueProps {
     /** 赠品内容类型：0-赠品，1-优惠券 */
-    type: 0 | 1
-    chooseCount: number
-    couponList: Shop.CouponProps[]
-    skuList: Shop.SkuProps[]
+    type?: 0 | 1
+    chooseCount?: number
+    couponList?: Shop.CouponProps[]
+    skuList?: Shop.SkuProps[]
+    spuList?: Shop.ShopItemProps[]
     spuIds: {[spuId: number]: number[]}
     /** 赠送商品数 */
     chooseCount?: number
@@ -37,6 +38,7 @@ declare namespace Marketing {
     id: number
     /** 赠品策略类型 0-循环规则，1-阶梯规则 */
     strategyType: 0 | 1
+    product: PresentContentValueProps
     /** 循环规则 */
     loop: PresentContentValueProps
     rank: {

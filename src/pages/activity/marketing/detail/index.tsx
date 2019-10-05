@@ -33,7 +33,16 @@ class Main extends React.Component<Props, State> {
   public componentDidMount () {
     if (this.id !== '-1') {
       this.fetchData()
+    } else {
+      this.initFormValue()
     }
+  }
+  public initFormValue () {
+    this.form.setValues({
+      rank: {
+        ruleList: [{}]
+      }
+    })
   }
   public fetchData () {
     api.fetchActivityDetail(this.id).then((res: any) => {
@@ -43,6 +52,8 @@ class Main extends React.Component<Props, State> {
           ladderCount: res.rank.ruleList.length
         })
       }
+    }, () => {
+      this.initFormValue()
     })
   }
   /** 选择 0-商品、1-优惠券 */
@@ -123,27 +134,29 @@ class Main extends React.Component<Props, State> {
                 <label className={styles.label}>活动商品：</label>
               </Col>
               <Col span={20}>
-                {/* <FormItem
-                  labelCol={{span: 0}}
-                  type='radio'
-                  name='abc'
-                  options={[{label: '指定商品', value: '1'}]}
-                /> */}
+                <div>
+                  <FormItem
+                    labelCol={{span: 0}}
+                  >
+                    <span
+                      className='href'
+                      onClick={() => {
+                        this.presentContentSelectedKey = 'product'
+                        this.select(0)
+                      }}
+                    >
+                      请选择商品
+                    </span>
+                  </FormItem>
+                </div>
                 <FormItem
                   labelCol={{span: 0}}
                   inner={(form) => {
-                    return form.getFieldDecorator('spuJson')(
+                    return form.getFieldDecorator('product')(
                       <ShopList />
                     )
                   }}
                 />
-                {/* <FormItem
-                  labelCol={{span: 0}}
-                  type='radio'
-                  name='abc'
-                  options={[{label: '指定商品不可参与', value: '2'}]}
-                />
-                <Shop /> */}
               </Col>
             </Row>
           </div>
@@ -283,6 +296,7 @@ class Main extends React.Component<Props, State> {
               value[this.currentSelectIndex] = {
                 ...value[this.currentSelectIndex],
                 skuList,
+                spuList: rows,
                 spuIds: spuIds
               }
               this.form.setValues({
@@ -291,9 +305,11 @@ class Main extends React.Component<Props, State> {
             } else {
               let value = {
                 ...values[field],
+                spuList: rows,
                 skuList,
                 spuIds: spuIds
               }
+              console.log(value, 'value')
               this.form.setValues({
                 [field]: value
               })

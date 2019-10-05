@@ -20,7 +20,8 @@ const defaultValue: ValueProps = {
   chooseCount: 0,
   couponList: [],
   skuList: [],
-  spuIds: {}
+  spuIds: {},
+  spuList: []
 }
 /** 赠送内容 */
 class Main extends React.Component<Props, State> {
@@ -30,7 +31,6 @@ class Main extends React.Component<Props, State> {
   }
   public componentWillReceiveProps (props: Props) {
     const value = Object.assign({}, defaultValue, props.value)
-    console.log(value, 'value')
     this.setState({
       value
     })

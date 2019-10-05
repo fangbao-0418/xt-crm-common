@@ -98,7 +98,6 @@ class Main extends React.Component<Props, State> {
                 this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
                 delete this.state.spuSelectedRowKeys[record.id]
               }
-              console.log(this.selectRows, 'on select')
               this.setState({
                 selectedRowKeys: selectedRowKeys,
                 spuSelectedRowKeys: this.state.spuSelectedRowKeys
@@ -143,7 +142,6 @@ class Main extends React.Component<Props, State> {
     })
   }
   public onOk () {
-    console.log(this.selectRows, 'onok')
     if (this.props.onOk) {
       this.props.onOk([
         ...this.selectRows
@@ -181,6 +179,7 @@ class Main extends React.Component<Props, State> {
         skuList: allSkuSelectedRows[id]
       } as Shop.ShopItemProps)
     }
+    this.selectRows = value.spuList || this.selectRows
     this.setState({
       selectedRowKeys: Object.keys(value.spuIds).map(val => Number(val)),
       spuSelectedRowKeys: value.spuIds,
@@ -323,6 +322,7 @@ class Main extends React.Component<Props, State> {
                 >
                   <Button
                     type='primary'
+                    className='mr10'
                     onClick={() => {
                       const value = this.form.props.form.getFieldsValue()
                       value.categoryIds = value.categoryIds && value.categoryIds.join(',')
@@ -336,6 +336,18 @@ class Main extends React.Component<Props, State> {
                     }}
                   >
                     查询
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const value = this.form.props.form.resetFields()
+                      this.payload =  {
+                        page: 1,
+                        pageSize: this.payload.pageSize
+                      }
+                      this.fetchData()
+                    }}
+                  >
+                    重置
                   </Button>
                 </FormItem>
               </Form>

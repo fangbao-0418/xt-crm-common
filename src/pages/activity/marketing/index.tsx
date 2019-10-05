@@ -4,10 +4,6 @@ import { ColumnProps } from 'antd/lib/table'
 import * as api from './api'
 import Search from './Search'
 
-enum activityEnum {
-  '下架' = 0,
-  '上架' = 1
-}
 interface State {
   dataSource: any[]
   total: number
@@ -59,10 +55,7 @@ class Main extends React.Component<{}, State> {
     {title: '最后操作人'},
     {
       title: '活动状态',
-      dataIndex: 'status',
-      render: (text) => {
-        return activityEnum[text]
-      }
+      dataIndex: 'statusText'
     },
     {
       title: '操作',
@@ -70,22 +63,32 @@ class Main extends React.Component<{}, State> {
       render: (text, record) => {
         return (
           <div>
-            <span
-              className='href'
+            {record.canEdit && <span
+              className='href mr10'
               onClick={() => {
                 APP.history.push(`/activity/marketing/${record.id}`)
               }}
             >
-              修改
-            </span>
-            <span
-              className='href'
+              编辑
+            </span>}
+            {record.canShow && <span
+              className='href mr10'
               onClick={() => {
-                //
+                APP.history.push(`/activity/marketing/${record.id}`)
               }}
             >
-              删除
-            </span>
+              查看
+            </span>}
+            {record.canClose && <span
+              className='href'
+              onClick={() => {
+                api.changeActivityStatus([record.id], record.status === 0 ? 1 : 0).then(() => [
+                  this.fetchData()
+                ])
+              }}
+            >
+              {record.status === 0 ? '开启' : '关闭'}
+            </span>}
           </div>
         )
       }

@@ -1,3 +1,36 @@
+/** 处理活动列表数据 */
+export const handleListData = (data: any[]) => {
+  data.map((item) => {
+    let statusText = '已关闭'
+    let canClose = true
+    let canShow = false
+    let canEdit = true
+    const now = new Date().getTime()
+    if (item.status !== 0) {
+      statusText = '未开始'
+      if (item.startTime >= now) {
+        statusText = '进行中'
+        canShow = true
+      }
+      if (item.endTime > now) {
+        canClose = false
+        statusText = '已结束'
+        canEdit = false
+      }
+    } else {
+      canClose = false
+      canShow = true
+      canEdit = false
+    }
+    item.statusText = statusText
+    item.canShow = canShow
+    item.canClose = canClose
+    item.canEdit = canEdit
+    return item
+  })
+  return data
+}
+
 /** 处理满赠详情接口返参 */
 export const handleDetailReturnData = (payload: {
   userScope: string
@@ -9,11 +42,12 @@ export const handleDetailReturnData = (payload: {
     },
     rank: any
     type: 0 | 1
-  }
+  },
+  promotionDiscountsSpuVOS: any[]
 }) => {
-  // console.log(payload, 'payload')
   const data = {
     ...payload,
+    product: getProductData(payload.promotionDiscountsSpuVOS),
     strategyType: payload.ruleJson.type,
     loop: parsePresentContentData(payload.ruleJson.loop),
     rank: Object.assign({}, 
@@ -27,6 +61,21 @@ export const handleDetailReturnData = (payload: {
   console.log(data, 'data')
   return data
 }
+/** 选择商品数据转换 */
+const getProductData = (data: Shop.ShopItemProps[]) => {
+  data = data || []
+  const spuIds: {[spuId: number]: number[]} = {}
+  data.map((item) => {
+    item.skuList = item.skuList || []
+    spuIds[item.id] = []
+  })
+  return {
+    spuList: data,
+    spuIds
+  }
+}
+
+/** 过滤无效数据 */
 const filterinvalidData = (data: any[]) => {
   if (!(data instanceof Array)) {
     return []
@@ -54,14 +103,16 @@ const spuIdsExchangeJson = (source: {[spuIds: number]: number[]}) => {
 export const handleFormData = (payload: Marketing.FormDataProps) => {
   console.log(payload, 'payload')
   const loop = payload.loop
-  // loop.couponList && loop.couponList
+  const product = payload.product || {
+    spuIds: {}
+  }
   const data = {
     activityDescribe: payload.activityDescribe,
     title: payload.title,
     startTime: payload.startTime * 1000,
     endTime: payload.endTime * 1000,
-    id: Number(payload.id),
-    productIds: '1148',
+    id: payload.id !== undefined ? Number(payload.id) : '',
+    productIds: Object.keys(product.spuIds).join(','),
     ruleJson: {
       loop: handlePresentContentData(loop),
       rank: {
@@ -76,7 +127,14 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
   return data
 }
 
+/** 处理赠品内容数据 */
 const handlePresentContentData = (data: Marketing.PresentContentValueProps) => {
+  data = Object.assign({
+    chooseCount: 0,
+    couponList: [],
+    stageCount: 0,
+    type: 0
+  }, data)
   return {
     chooseCount: data.chooseCount || 0,
     giftSkuJson: spuIdsExchangeJson(data.spuIds),
@@ -86,6 +144,7 @@ const handlePresentContentData = (data: Marketing.PresentContentValueProps) => {
   }
 }
 
+/** 解析接口返回赠品内容数据 */
 const parsePresentContentData = (data: {
   promotionDiscountsSkuVOList: any[]
   couponListVOList: any[]
