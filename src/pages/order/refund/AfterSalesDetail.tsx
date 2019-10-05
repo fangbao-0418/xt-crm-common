@@ -3,31 +3,38 @@ import { connect } from 'react-redux';
 import AfterSalesProcessing from './AfterSalesProcessing';
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import OrderInfo from './components/OrderInfo';
+import PendingReview from './PendingReview';
 import { namespace } from './model';
+import { enumRefundStatus } from '../constant';
 interface AfterSalesDetailProps {
-  data: AfterSalesInfo.data
+  data: AfterSalesInfo.data;
 }
 interface AfterSalesDetailState {
-  visible: boolean
+  visible: boolean;
 }
 class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSalesDetailState> {
   state: AfterSalesDetailState = {
-    visible: false
+    visible: false,
+  };
+  isRefundStatusOf(refundStatus: number) {
+    let orderServerVO = this.props.data.orderServerVO || {};
+    return orderServerVO.refundStatus === refundStatus;
   }
   render() {
     let { data } = this.props;
+    let orderServerVO = data.orderServerVO || {};
     return (
       <>
-        <AfterSalesProcessing data={data}/>
-        <AfterSaleApplyInfo orderServerVO={data.orderServerVO} />
+        {!this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && <AfterSalesProcessing data={data} />}
+        <AfterSaleApplyInfo orderServerVO={orderServerVO} />
+        {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && <PendingReview />}
         <OrderInfo orderInfoVO={data.orderInfoVO} />
       </>
-    )
+    );
   }
 }
 export default connect((state: any) => {
   return {
-    data: state[namespace] && state[namespace].data || {}
-  }
-})(AfterSalesDetail);;
-
+    data: (state[namespace] && state[namespace].data) || {},
+  };
+})(AfterSalesDetail);

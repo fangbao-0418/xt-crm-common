@@ -179,3 +179,18 @@ export function replaceHttpUrl(imgUrl = '') {
   }
   return imgUrl;
 }
+
+/**
+ * @description 去掉多余的属性
+ * @param {需要过滤的对象} obj 
+ * @param {对于的属性名称} prop 
+ */
+export function dissoc(obj, prop) {
+  let result = {};
+  for (let p in obj) {
+    if (p !== prop) {
+      result[p] = obj[p];
+    }
+  }
+  return result;
+}

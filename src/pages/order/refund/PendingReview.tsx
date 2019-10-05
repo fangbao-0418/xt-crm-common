@@ -22,7 +22,7 @@ interface State {
   addressVisible: boolean,
   selectedValues: any[]
 }
-class CheckForm extends React.Component<Props, State> {
+class PendingReview extends React.Component<Props, State> {
   state = {
     returnAddress: {},
     refundType: '',
@@ -42,7 +42,6 @@ class CheckForm extends React.Component<Props, State> {
     if (status === 1) {
       returnAddress = this.state.returnAddress;
     }
-    console.log('this.state.returnAddress => ', this.state.returnAddress);
     APP.dispatch({
       type: `${namespace}/auditOperate`,
       payload: {
@@ -174,4 +173,4 @@ class CheckForm extends React.Component<Props, State> {
 
 export default Form.create()(connect((state: any) => ({
   data: state[namespace].data || {}
-}))(withRouter(CheckForm)));
+}))(withRouter(PendingReview)));
