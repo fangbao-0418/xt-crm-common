@@ -13,8 +13,9 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
   const isRefundTypeOf = (refundType: enumRefundType): boolean => {
     return data.refundType == refundType;
   };
-  const isRefundStatusOf = (refundStatus: number): boolean => {
-    return data.refundStatus == refundStatus;
+  const isRefundStatusOf = (refundStatus: enumRefundStatus | enumRefundStatus[]): boolean => {
+    const equalAs = (refundStatus: enumRefundStatus) => data.refundStatus === refundStatus;
+    return Array.isArray(refundStatus) ? refundStatus.some(equalAs) : equalAs(refundStatus);
   };
   /**
    * 仅当退货退款或者换货且不是待用户发货状态
@@ -30,7 +31,14 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
           <SupplierProcessInfo data={data} />
         </>
       )}
-      {/* <RefundInformation /> */}
+      {!isRefundTypeOf(enumRefundType.Exchange) &&
+        !(
+          isRefundStatusOf([
+            enumRefundStatus.OperatingOfMoney,
+            enumRefundStatus.OperatingOfGoods,
+            enumRefundStatus.WaitCustomerServiceOperating
+          ])
+        ) && <RefundInformation />}
     </Card>
   );
 };

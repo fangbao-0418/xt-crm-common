@@ -6,12 +6,12 @@ import { connect } from 'react-redux';
 import { refundType, customerFollowType } from '@/enum';
 import { XtSelect } from '@/components';
 import { formatPrice } from '@/util/format';
-import { formatMoney, isPendingStatus, isRefundFailedStatus } from '@/pages/helper';
+import { formatMoney } from '@/pages/helper';
 import ReturnShippingSelect from '../components/ReturnShippingSelect';
 import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../components/after-sale-select';
 import ModifyAddressModal from '../components/modal/ModifyAddress';
-import { enumRefundType } from '../constant';
+import { enumRefundType, enumRefundStatus } from '../constant';
 import { namespace } from './model';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
@@ -100,12 +100,18 @@ class PendingReview extends React.Component<Props, State> {
   get refundType(): string {
     return this.props.form.getFieldValue('refundType');
   }
-  // 修改地址
+  /**
+   * 修改地址
+   */
   modifyAddress = () => {
     this.setState({ addressVisible: true });
   };
-  isRefundTypeOf(refundType: string): boolean {
+  isRefundTypeOf(refundType: string) {
     return this.refundType === refundType;
+  }
+  isRefundStatusOf(refundStatus: number) {
+    let orderServerVO = this.props.data.orderServerVO || {};
+    return orderServerVO.refundStatus === refundStatus;
   }
   render() {
     let {
@@ -114,12 +120,13 @@ class PendingReview extends React.Component<Props, State> {
     orderServerVO = Object.assign({}, orderServerVO);
     checkVO = Object.assign({}, checkVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
-    const quantity = orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].quantity
+    const quantity =
+      orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].quantity;
     const { getFieldDecorator } = this.props.form;
     return (
       <>
         <Card title="客服审核">
-          <Form {...formItemLayout} style={{width: '80%'}}>
+          <Form {...formItemLayout} style={{ width: '80%' }}>
             <Form.Item label="售后类型">
               {getFieldDecorator('refundType', {
                 initialValue: orderServerVO.refundType,
@@ -202,7 +209,7 @@ class PendingReview extends React.Component<Props, State> {
             {this.isReturnShipping() && (
               <Form.Item label="退运费">
                 {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(
-                  <ReturnShippingSelect checkVO={checkVO}/>,
+                  <ReturnShippingSelect checkVO={checkVO} />,
                 )}
               </Form.Item>
             )}
@@ -237,8 +244,10 @@ class PendingReview extends React.Component<Props, State> {
                 )}
               </Form.Item>
             </Row>
-            {// 待审核状态显示同意和拒绝按钮
-            isPendingStatus(refundStatus) && (
+            {/**
+             * 待审核状态显示同意和拒绝按钮
+             */
+            this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
               <Form.Item wrapperCol={formLeftButtonLayout}>
                 <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
                   提交
@@ -252,8 +261,10 @@ class PendingReview extends React.Component<Props, State> {
                 </Button>
               </Form.Item>
             )}
-            {// 退款失败状态下显示重新退款和售后完成按钮
-            isRefundFailedStatus(refundStatus) && (
+            {/**
+             *退款失败状态下显示重新退款和售后完成按钮
+             */
+            this.isRefundStatusOf(enumRefundStatus.OperatingFailed) && (
               <Form.Item wrapperCol={formLeftButtonLayout}>
                 <Button type="primary" onClick={this.handleAgainRefund}>
                   重新退款
