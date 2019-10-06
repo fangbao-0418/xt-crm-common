@@ -20,6 +20,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         fieldDecoratorOptions: {
           rules: [
             {
+              // min: 1,
+              required: true,
+              message: '活动名称不能为空'
+            },
+            {
+              // min: 1,
               max: 20,
               message: '最多20个字符'
             }
@@ -38,7 +44,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       activeTime: {
-        type: 'rangepicker', label: '创建时间'
+        type: 'rangepicker', label: '活动时间'
       },
       userScope: {
         type: 'checkbox', label: '目标用户',
@@ -50,7 +56,15 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '团长', value: '10'},
           {label: '普通用户老用户', value: '5'},
           {label: '普通用户新用户', value: '6'}
-        ]
+        ],
+        fieldDecoratorOptions: {
+          rules: [
+            {
+              required: true,
+              message: '请选择目标用户'
+            }
+          ]
+        }
       },
       activeNo: {
         type: 'input', label: '活动编号'

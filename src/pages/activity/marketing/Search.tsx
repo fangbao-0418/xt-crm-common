@@ -2,12 +2,18 @@ import React from 'react'
 import { Row, Col, Button } from 'antd'
 import Form, { FormItem, FormInstance } from '@/components/form'
 interface Props {
-  //
+  onSearch?: (value: any) => void
 }
 class Main extends React.Component<Props> {
   public form: FormInstance
   public componentDidMount () {
 
+  }
+  public onSearch () {
+    if (this.props.onSearch) {
+      const values = this.form.getValues()
+      this.props.onSearch(values)
+    }
   }
   public render () {
     return (
@@ -49,12 +55,19 @@ class Main extends React.Component<Props> {
               type='primary'
               className='mr10'
               onClick={() => {
-                console.log(this.form.getValues())
+                this.onSearch()
               }}
             >
               查询
             </Button>
-            <Button>重置</Button>
+            <Button
+              onClick={() => {
+                this.form.props.form.resetFields()
+                this.onSearch()
+              }}
+            >
+              重置
+            </Button>
           </FormItem>
         </Form>
       </div>

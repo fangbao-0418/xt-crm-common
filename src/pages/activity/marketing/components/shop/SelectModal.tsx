@@ -15,6 +15,7 @@ interface State {
   pageSize: number
   /** spu下所选的skuId集合 */
   spuSelectedRowKeys: {[spuId: number]: number[]}
+  type: 'sku' | 'spu'
 }
 interface Props {
   getInstance?: (ref?: Main) => void
@@ -66,10 +67,12 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: '类目',
-      width: 100
+      width: 100,
+      dataIndex: 'productCategoryAllName'
     },
     {
       title: '价格',
+      width: 0,
       render: (text, record) => {
         let skuSelectedRowKeys = this.state.spuSelectedRowKeys[record.id] || []
         return (
@@ -115,7 +118,8 @@ class Main extends React.Component<Props, State> {
     page: this.payload.page,
     pageSize: this.payload.pageSize,
     spuSelectedRowKeys: [],
-    total: 0
+    total: 0,
+    type: 'sku'
   }
   public constructor (props: Props) {
     super(props)
@@ -148,7 +152,7 @@ class Main extends React.Component<Props, State> {
       ])
     }
   }
-  public open (value?: Marketing.PresentContentValueProps) {
+  public open (value?: Marketing.PresentContentValueProps, type: 'sku' | 'spu' = 'sku') {
     this.payload = {
       page: 1,
       pageSize: 10
@@ -183,7 +187,8 @@ class Main extends React.Component<Props, State> {
     this.setState({
       selectedRowKeys: Object.keys(value.spuIds).map(val => Number(val)),
       spuSelectedRowKeys: value.spuIds,
-      visible: true
+      visible: true,
+      type
     })
   }
   public hide () {
@@ -248,6 +253,7 @@ class Main extends React.Component<Props, State> {
       onSelectAll: this.onRowSelectionSelectAll,
       onChange: this.onRowSelectionChange
     }
+    const columns = this.state.type === 'spu' ? this.columns.filter((item) => item.title !== '价格') : this.columns
     return (
       <div>
         <Modal
@@ -356,7 +362,7 @@ class Main extends React.Component<Props, State> {
               rowSelection={rowSelection}
               bordered
               rowKey='id'
-              columns={this.columns}
+              columns={columns}
               dataSource={dataSource}
               pagination={{
                 total: this.state.total,

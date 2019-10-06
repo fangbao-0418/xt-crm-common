@@ -46,5 +46,6 @@ declare namespace Marketing {
       ladderRule: 0 | 1
       ruleList: PresentContentValueProps[]
     }
+    userScope: any[]
   }
 }

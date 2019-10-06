@@ -40,7 +40,7 @@ class Main extends React.Component<{}, State> {
     },
     {
       title: '创建时间',
-      dataIndex: 'endTime',
+      dataIndex: 'createTime',
       render: (text) => {
         return APP.fn.formatDate(text)
       }
@@ -120,6 +120,14 @@ class Main extends React.Component<{}, State> {
     return (
       <div>
         <Search
+          onSearch={(value) => {
+            this.payload = {
+              ...this.payload,
+              ...value,
+              page: 1
+            }
+            this.fetchData()
+          }}
         />
         <div
           style={{
@@ -141,6 +149,7 @@ class Main extends React.Component<{}, State> {
             </Button>
           </div>
           <Table
+            rowKey='id'
             dataSource={dataSource}
             columns={this.columns}
             pagination={{

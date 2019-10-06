@@ -17,7 +17,8 @@ interface State {
 }
 const defaultValue: ValueProps = {
   type: 0,
-  chooseCount: 0,
+  chooseCount: 1,
+  stageCount: 1,
   couponList: [],
   skuList: [],
   spuIds: {},
@@ -104,7 +105,7 @@ class Main extends React.Component<Props, State> {
         <Row
           className={styles['present-content']}
         >
-          <Col span={2}>
+          <Col span={3}>
             <label className={styles.label}>赠品内容：</label>
           </Col>
           <Col span={20}>

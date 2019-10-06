@@ -121,9 +121,9 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
       },
       /** 0-循环规则，1-阶梯规则 */
       type: payload.strategyType
-    }
+    },
+    userScope: payload.userScope && payload.userScope.join(',')
   }
-  console.log(data, 'data')
   return data
 }
 

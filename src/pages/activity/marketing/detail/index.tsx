@@ -40,8 +40,10 @@ class Main extends React.Component<Props, State> {
   public initFormValue () {
     this.form.setValues({
       rank: {
+        ladderRule: 0,
         ruleList: [{}]
-      }
+      },
+      strategyType: 1
     })
   }
   public fetchData () {
@@ -58,8 +60,8 @@ class Main extends React.Component<Props, State> {
   }
   /** 选择 0-商品、1-优惠券 */
   public select (type: 0 | 1) {
-    // this.presentContentSelectedKey
     const values = this.form.getValues()
+    const field = this.presentContentSelectedKey
     let value
     if (this.presentContentSelectedKey === 'rank.ruleList') {
       value = values.rank.ruleList[this.currentSelectIndex]
@@ -67,27 +69,31 @@ class Main extends React.Component<Props, State> {
       value = values[this.presentContentSelectedKey]
     }
     if (type === 0) {
-      this.shopModalInstance.open(value)
+      this.shopModalInstance.open(value, field === 'product' ? 'spu' : 'sku')
     } else {
       this.couponModalInstance.open(value)
     }
   }
   public save () {
     const value = this.form.getValues()
-    console.log(value, 'save')
-    if (this.id === '-1') {
-      api.addActivity(value).then(() => {
-        APP.success('保存成功')
-      })
-    } else {
-      api.editActivity({
-        id: this.id,
-        ...value
-      }).then(() => {
-        APP.success('修改成功')
-      })
-    }
-    
+    this.form.props.form.validateFields((err) => {
+      if (err) {
+        APP.error('请检查输入项是否正确')
+        return
+      }
+      if (this.id === '-1') {
+        api.addActivity(value).then(() => {
+          APP.success('保存成功')
+        })
+      } else {
+        api.editActivity({
+          id: this.id,
+          ...value
+        }).then(() => {
+          APP.success('修改成功')
+        })
+      }
+    })
   }
   public render () {
     return (
@@ -119,10 +125,26 @@ class Main extends React.Component<Props, State> {
             >
             </FormItem>
             <FormItem
+              verifiable
+              fieldDecoratorOptions={{
+                rules: [
+                  {
+                    validator: (rule, value, cb) => {
+                      console.log(value, 'value')
+                      if (!value[0] && !value[0]) {
+                        cb('请选择活动时间')
+                        return
+                      }
+                      cb()
+                    }
+                  }
+                ]
+              }}
               name='activeTime'
             />
             <FormItem
               name='userScope'
+              verifiable
             />
           </div>
           <div className={styles.title}>
@@ -152,7 +174,22 @@ class Main extends React.Component<Props, State> {
                 <FormItem
                   labelCol={{span: 0}}
                   inner={(form) => {
-                    return form.getFieldDecorator('product')(
+                    return form.getFieldDecorator(
+                      'product',
+                      {
+                        rules: [
+                          {
+                            validator: (rules, value, cb) => {
+                              if (value && value.spuList && value.spuList.length > 0) {
+                                cb()
+                              } else {
+                                cb('请选择活动商品')
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    )(
                       <ShopList />
                     )
                   }}
@@ -175,14 +212,15 @@ class Main extends React.Component<Props, State> {
                 options={[{label: '阶梯规则', value: 1}]}
               />
               <FormItem
+                required
                 labelCol={{span: 4}}
                 wrapperCol={{span: 20}}
                 type='radio'
                 name='rank.ladderRule'
                 label='阶梯是否可以叠加'
                 options={[
-                  {label: '不可叠加', value: '0'},
-                  {label: '可叠加', value: '1'}
+                  {label: '不可叠加', value: 0},
+                  {label: '可叠加', value: 1}
                 ]}
               />
             
