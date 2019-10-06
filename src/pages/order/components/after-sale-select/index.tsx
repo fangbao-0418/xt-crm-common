@@ -8,17 +8,17 @@ interface State {
   refundReason: any
 }
 class AfterSaleSelect extends React.Component<Props, State>{
-  public state: State = {
+  state: State = {
     refundReason: {}
   }
-  public constructor(props: Props) {
+  constructor(props: Props) {
     super(props)
     this.fetchReason();
   }
   private filterReason(obj: any) {
-    return Object.entries(obj).map(([key, val]) => ({key, val}));
+    return Object.entries(obj).map(([key, val]) => ({key: +key, val}));
   }
-  public async fetchReason() {
+  async fetchReason() {
     const refundReason = await getRefundReason();
     const result: any = {}
     for (let key in refundReason) {
@@ -26,7 +26,7 @@ class AfterSaleSelect extends React.Component<Props, State>{
     }
     this.setState({refundReason: result})
   }
-  public getRefundReason() {
+  get refundReason() {
     const refundType = this.props.refundType;
     let result = []
     if (refundType && this.state.refundReason) {
@@ -34,8 +34,8 @@ class AfterSaleSelect extends React.Component<Props, State>{
     }
     return result;
   }
-  public render() {
-    return <XtSelect {...this.props} data={this.getRefundReason()} style={{width: 200}}/>
+  render() {
+    return <XtSelect {...this.props} data={this.refundReason} style={{width: 200}}/>
   }
 }
 export default AfterSaleSelect;

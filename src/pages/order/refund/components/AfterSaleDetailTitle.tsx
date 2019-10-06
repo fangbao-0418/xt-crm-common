@@ -60,9 +60,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
               <RemarkModal
                 onSuccess={this.onSuccess}
-                orderCode={orderInfoVO.mainOrderCode}
                 refundId={this.props.match.params.id}
-                childOrderId={orderInfoVO.childOrderId}
               />
             )}
             {/* 待用户发货 */}

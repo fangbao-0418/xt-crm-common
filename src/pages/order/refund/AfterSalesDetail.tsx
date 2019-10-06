@@ -24,8 +24,11 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     let orderServerVO = data.orderServerVO || {};
     return (
       <>
-        {!this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && <AfterSalesProcessing data={data} />}
-        {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && <PendingReview />}
+        {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (
+          <PendingReview />
+        ) : (
+          <AfterSalesProcessing data={data} />
+        )}
         <OrderInfo orderInfoVO={data.orderInfoVO} />
       </>
     );
