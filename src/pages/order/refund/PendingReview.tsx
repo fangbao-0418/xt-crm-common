@@ -11,9 +11,11 @@ import ReturnShippingSelect from '../components/ReturnShippingSelect';
 import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../components/after-sale-select';
 import ModifyAddressModal from '../components/modal/ModifyAddress';
+import AfterSaleDetailTitle from './components/AfterSaleDetailTitle';
 import { enumRefundType, enumRefundStatus } from '../constant';
 import { namespace } from './model';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
+import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
@@ -125,6 +127,9 @@ class PendingReview extends React.Component<Props, State> {
     const { getFieldDecorator } = this.props.form;
     return (
       <>
+        <Card title={<AfterSaleDetailTitle />}>
+          <AfterSaleApplyInfo orderServerVO={orderServerVO} />
+        </Card>
         <Card title="客服审核">
           <Form {...formItemLayout} style={{ width: '80%' }}>
             <Form.Item label="售后类型">

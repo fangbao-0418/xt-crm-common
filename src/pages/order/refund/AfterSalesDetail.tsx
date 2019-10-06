@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import AfterSalesProcessing from './AfterSalesProcessing';
-import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import OrderInfo from './components/OrderInfo';
 import PendingReview from './PendingReview';
 import { namespace } from './model';
@@ -26,7 +25,6 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     return (
       <>
         {!this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && <AfterSalesProcessing data={data} />}
-        <AfterSaleApplyInfo orderServerVO={orderServerVO} />
         {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && <PendingReview />}
         <OrderInfo orderInfoVO={data.orderInfoVO} />
       </>

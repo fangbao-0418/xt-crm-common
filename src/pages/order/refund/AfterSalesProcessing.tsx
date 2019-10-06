@@ -1,10 +1,13 @@
 import React from 'react';
 import { Card } from 'antd';
-import AfterSaleDetailTitle from './components/AfterSaleDetailTitle';
-import CustomerProcessInfo from './components/CustomerProcessInfo';
-import LogisticsInformation from './components/LogisticsInformation';
-import SupplierProcessInfo from './components/SupplierProcessInfo';
-import RefundInformation from './components/RefundInformation';
+import {
+  AfterSaleDetailTitle,
+  CustomerProcessInfo,
+  LogisticsInformation,
+  SupplierProcessInfo,
+  RefundInformation,
+  AfterSaleApplyInfo,
+} from './components';
 import { enumRefundType, enumRefundStatus } from '../constant';
 interface Props {
   data: AfterSalesInfo.data;
@@ -23,23 +26,24 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
   const isShowShippingLogisticsOrSupplierInfo =
     !isRefundTypeOf(enumRefundType.Refund) && !isRefundStatusOf(enumRefundStatus.Operating);
   return (
-    <Card title={<AfterSaleDetailTitle />}>
-      <CustomerProcessInfo data={data} />
-      {isShowShippingLogisticsOrSupplierInfo && (
-        <>
-          <LogisticsInformation data={data} />
-          <SupplierProcessInfo data={data} />
-        </>
-      )}
-      {!isRefundTypeOf(enumRefundType.Exchange) &&
-        !(
-          isRefundStatusOf([
+    <>
+      <Card title={<AfterSaleDetailTitle />}>
+        <CustomerProcessInfo data={data} />
+        {isShowShippingLogisticsOrSupplierInfo && (
+          <>
+            <LogisticsInformation data={data} />
+            <SupplierProcessInfo data={data} />
+          </>
+        )}
+        {!isRefundTypeOf(enumRefundType.Exchange) &&
+          !isRefundStatusOf([
             enumRefundStatus.OperatingOfMoney,
             enumRefundStatus.OperatingOfGoods,
-            enumRefundStatus.WaitCustomerServiceOperating
-          ])
-        ) && <RefundInformation />}
-    </Card>
+            enumRefundStatus.WaitCustomerServiceOperating,
+          ]) && <RefundInformation />}
+      </Card>
+      <AfterSaleApplyInfo orderServerVO={data.orderServerVO} />
+    </>
   );
 };
 

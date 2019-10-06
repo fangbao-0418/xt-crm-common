@@ -1,10 +1,15 @@
 import { message } from 'antd';
-import { refundOperate, refundDetail, againRefund, closeOrder } from '../api'
+import { refundOperate, refundDetail, againRefund, closeOrder, getRefundReason } from '../api'
 export const namespace: string = 'refund.model';
 export default {
   namespace,
-  state: {},
+  state: {
+    refundReason: {}
+  },
   effects: (dispatch: APP.DispatchProps) => ({
+    /**
+     * 获取售后单详情
+     */
     getDetail: async (payload: any = {}) => {
       const res = await refundDetail(payload)
       dispatch({

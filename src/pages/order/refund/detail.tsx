@@ -30,8 +30,7 @@ const columns: ColumnProps<Logger>[] = [
 interface DetailProps extends RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
-interface DetailState {}
-class Detail extends Component<DetailProps, DetailState> {
+class Detail extends Component<DetailProps, {}> {
   public refundId: number;
   constructor(props: DetailProps) {
     super(props);
@@ -47,7 +46,7 @@ class Detail extends Component<DetailProps, DetailState> {
   componentWillMount() {
     this.getDetail();
   }
-  render(): React.ReactNode {
+  render() {
     const { skuServerLogVO } = this.props.data;
     const dataSource: any =
       skuServerLogVO && skuServerLogVO.map((v: any, i: any) => ({ ...v, uniqueKey: i }));
