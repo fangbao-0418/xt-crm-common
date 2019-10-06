@@ -88,7 +88,7 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
               {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<AfterSaleSelect refundType={this.refundType} />)}
             </Form.Item>
             <Form.Item label="售后数目">
-              {getFieldDecorator('serverNum', { rules: [{ required: true, message: '请填写售后数目' }] })(<InputNumber min={1} max={10} placeholder="请输入" />)}（可选择数目：1-10）
+              {getFieldDecorator('serverNum', { rules: [{ required: true, message: '请填写售后数目' }] })(<InputNumber min={1} max={modalInfo.quantity} placeholder="请输入" />)}（最多可售后数目：{modalInfo.quantity}）
             </Form.Item>
             {this.refundType === enumRefundType.Exchange ?
               <Form.Item label="用户收货地址">

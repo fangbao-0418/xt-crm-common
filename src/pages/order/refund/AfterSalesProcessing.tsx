@@ -4,6 +4,7 @@ import AfterSaleDetailTitle from './components/AfterSaleDetailTitle';
 import CustomerProcessInfo from './components/CustomerProcessInfo';
 import LogisticsInformation from './components/LogisticsInformation';
 import SupplierProcessInfo from './components/SupplierProcessInfo';
+import RefundInformation from './components/RefundInformation';
 import { enumRefundType, enumRefundStatus } from '../constant';
 interface Props {
   data: AfterSalesInfo.data;
@@ -29,6 +30,7 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
           <SupplierProcessInfo data={data} />
         </>
       )}
+      <RefundInformation />
     </Card>
   );
 };

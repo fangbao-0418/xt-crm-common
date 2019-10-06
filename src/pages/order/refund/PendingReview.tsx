@@ -114,6 +114,7 @@ class PendingReview extends React.Component<Props, State> {
     orderServerVO = Object.assign({}, orderServerVO);
     checkVO = Object.assign({}, checkVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
+    const quantity = orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].quantity
     const { getFieldDecorator } = this.props.form;
     return (
       <>
@@ -138,6 +139,7 @@ class PendingReview extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="售后原因">
               {getFieldDecorator('returnReason', {
+                initialValue: orderServerVO.returnReason,
                 rules: [
                   {
                     required: true,
@@ -169,8 +171,8 @@ class PendingReview extends React.Component<Props, State> {
                       message: '请输入售后数目',
                     },
                   ],
-                })(<InputNumber min={1} max={10} placeholder="请输入" />)}
-                <span>（可选择数目：1-10）</span>
+                })(<InputNumber min={1} max={quantity} placeholder="请输入" />)}
+                <span>（最多可售后数目：{quantity}）</span>
               </Form.Item>
             </Row>
             {this.isRefundTypeOf(enumRefundType.Refund) && (

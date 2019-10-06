@@ -8,6 +8,7 @@ import { enumRefundType } from '../../constant';
 import ReturnShippingSelect from '../ReturnShippingSelect';
 import { formatPrice } from '@/util/format';
 import { formatMoney } from '@/pages/helper';
+import { Decimal } from 'decimal.js';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
@@ -54,13 +55,16 @@ class CheckRefund extends React.Component<Props, State> {
   }
   onOk() {
     this.props.form.validateFields((errors, values) => {
+      if (values.refundAmount) {
+        values.refundAmount = new Decimal(values.refundAmount).mul(100).toNumber();
+      }
       if (!errors) {
         APP.dispatch({
           type: `${namespace}/auditOperate`,
           payload: {
             id: this.props.match.params.id,
             status: 1,
-            refundType: enumRefundType.Exchange,
+            refundType: enumRefundType.Refund,
             ...values,
           },
         });

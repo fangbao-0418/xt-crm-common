@@ -2,7 +2,7 @@ import React from 'react';
 import { getRefundReason } from '../../api';
 import { XtSelect } from '@/components'
 interface Props {
-  refundType: string
+  refundType: string,
 }
 interface State {
   refundReason: any
@@ -24,7 +24,6 @@ class AfterSaleSelect extends React.Component<Props, State>{
     for (let key in refundReason) {
       result[key] = this.filterReason(refundReason[key])
     }
-    console.log('result=>', result);
     this.setState({refundReason: result})
   }
   public getRefundReason() {
