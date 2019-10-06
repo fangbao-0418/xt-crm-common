@@ -68,6 +68,7 @@ class CheckRefund extends React.Component<Props, State> {
             ...values,
           },
         });
+        this.setState({visible: false});
       }
     });
   }
@@ -145,7 +146,7 @@ class CheckRefund extends React.Component<Props, State> {
               </Form.Item>
             )}
             <Form.Item label="说    明">
-              {getFieldDecorator('returnReason')(
+              {getFieldDecorator('info')(
                 <Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />,
               )}
             </Form.Item>

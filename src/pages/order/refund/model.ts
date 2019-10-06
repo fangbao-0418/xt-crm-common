@@ -12,7 +12,9 @@ export default {
         payload: { data: res.data || {} },
       })
     },
-    // 售后审核
+    /**
+     * 售后审核
+     */
     auditOperate: async (payload: any = {}) => {
       const res: any = await refundOperate(payload);
       if (res && res.success) {
@@ -23,7 +25,9 @@ export default {
         payload: {id: payload.id},
       })
     },
-    // 重新付款
+    /**
+     * 重新付款
+     */
     againRefund: async (payload: any = {}) => {
       const res = await againRefund(payload.id, payload.info);
       if (res && res.success) {
@@ -34,7 +38,9 @@ export default {
         payload: {id: payload.id},
       })
     },
-    // 关闭订单
+    /**
+     * 关闭订单
+     */
     closeOrder: async (payload: any = {}) => {
       const res = await closeOrder(payload.id, payload.info);
       if (res.succuss) {

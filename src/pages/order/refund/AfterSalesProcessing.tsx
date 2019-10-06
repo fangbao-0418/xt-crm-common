@@ -30,7 +30,7 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
           <SupplierProcessInfo data={data} />
         </>
       )}
-      <RefundInformation />
+      {/* <RefundInformation /> */}
     </Card>
   );
 };

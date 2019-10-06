@@ -10,6 +10,7 @@ import {
   CheckExchange,
   CheckRefund,
   PlatformDelivery,
+  ComplateAfterSale
 } from '../../components/modal';
 interface Props extends RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
@@ -100,6 +101,8 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                 </Button>
               </>
             )}
+            {/* 待用户收货 */}
+            {this.isRefundStatusOf(enumRefundStatus.WaitUserReceipt) && <ComplateAfterSale />}
             {/* 等待客服跟进 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitCustomerServiceOperating) && <CheckRefund data={this.props.data}/>}
           </Col>

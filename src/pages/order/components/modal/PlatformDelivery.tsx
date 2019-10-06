@@ -26,7 +26,7 @@ class PlatformDelivery extends React.Component<Props, {}> {
           type: `${namespace}/auditOperate`,
           payload: {
             id: this.props.match.params.id,
-            refund: enumRefundType.Exchange,
+            refundType: enumRefundType.Exchange,
             status: 1,
             ...values
           }
