@@ -15,7 +15,8 @@ interface Props extends React.Props<{}> {
 const OrderInfo: React.FC<Props> = (props: Props) => {
   const orderInfoVO = props.orderInfoVO || {};
   return (
-    <Card title="订单信息">
+    <Card>
+      <h4 style={{marginTop: 0}}>订单信息</h4>
       <Row gutter={24}>
         <Col span={8}>子订单号：{orderInfoVO.childOrderCode}</Col>
         <Col span={8}>订单状态：{orderInfoVO.orderStatusStr}</Col>

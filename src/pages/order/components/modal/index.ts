@@ -7,3 +7,4 @@ export {default as CheckExchange} from './CheckExchange';
 export {default as CheckRefund} from './CheckRefund';
 export {default as ComplateAfterSale} from './ComplateAfterSale';
 export {default as PlatformDelivery} from './PlatformDelivery';
+export {default as OperatingFailed} from './OperatingFailed';

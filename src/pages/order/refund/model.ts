@@ -31,7 +31,7 @@ export default {
       })
     },
     /**
-     * 重新付款
+     * 重新退款
      */
     againRefund: async (payload: any = {}) => {
       const res = await againRefund(payload.id, payload.info);
