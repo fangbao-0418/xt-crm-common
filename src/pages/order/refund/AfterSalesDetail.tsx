@@ -21,7 +21,6 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
   }
   render() {
     let { data } = this.props;
-    let orderServerVO = data.orderServerVO || {};
     return (
       <>
         {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (

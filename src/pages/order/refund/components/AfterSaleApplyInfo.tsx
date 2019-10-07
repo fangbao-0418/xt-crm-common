@@ -1,25 +1,47 @@
 import React from 'react';
-import { Row, Col, Table } from 'antd';
+import { Button, Row, Col, Table } from 'antd';
 import { createType, refundType } from '@/enum';
 import PicturesWall from '../../components/pictures-wall';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { getDetailColumns } from '../../constant';
 import { replaceHttpUrl } from '@/util/utils';
 import { formatMoneyWithSign, formatDate } from '@/pages/helper';
 import { ColumnProps } from 'antd/es/table';
 import moment from 'moment';
+import { namespace } from '../../refund/model';
+import { RemarkModal } from '../../components/modal';
+import { enumRefundStatus } from '../../constant';
 type OrderServerVO = AfterSalesInfo.OrderServerVO;
 type ProductVO = AfterSalesInfo.ProductVO;
 const columns: ColumnProps<ProductVO>[] = getDetailColumns();
-interface Props extends React.Props<{}> {
+interface Props extends RouteComponentProps<{id: any}> {
   orderServerVO: OrderServerVO;
 }
 
 const AfterSaleApplyInfo = (props: Props) => {
   const orderServerVO = props.orderServerVO || {};
   const logColumns: any[] = [];
+  const onSuccess = () => {
+    APP.dispatch({
+      type: `${namespace}/getDetail`,
+      payload: {
+        id: props.match.params.id,
+      },
+    });
+  }
+  const isRefundStatusOf = (status: number) => {
+    let orderServerVO = props.orderServerVO || {};
+    return orderServerVO.refundStatus == status;
+  }
   return (
     <>
-      <h4>售后申请信息</h4>
+      <Row type="flex" justify="space-between" align="middle">
+        <h4>售后申请信息</h4>
+        {!isRefundStatusOf(enumRefundStatus.WaitConfirm) && <RemarkModal
+          onSuccess={onSuccess}
+          refundId={props.match.params.id}
+        />}
+      </Row>
       <Row gutter={24}>
         <Col span={8}>售后类型：{refundType.getValue(orderServerVO.refundType)}</Col>
         <Col span={8}>售后原因：{orderServerVO.returnReasonStr}</Col>
@@ -68,4 +90,4 @@ const AfterSaleApplyInfo = (props: Props) => {
     </>
   );
 };
-export default AfterSaleApplyInfo;
+export default withRouter(AfterSaleApplyInfo);

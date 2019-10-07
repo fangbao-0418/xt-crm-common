@@ -23,7 +23,7 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
   };
   return (
     <div>
-      <h4>客服处理信息</h4>
+      <h4 style={{marginTop: 0}}>客服处理信息</h4>
       <Row>售后类型：{refundType.getValue(checkVO.refundType)}</Row>
       <Row>售后数目：{checkVO.refundAmount}</Row>
       {/* 退货退款/仅退款 */}

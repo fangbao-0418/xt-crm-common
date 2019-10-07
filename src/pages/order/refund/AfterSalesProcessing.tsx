@@ -35,14 +35,16 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
             <SupplierProcessInfo data={data} />
           </>
         )}
-        {!isRefundTypeOf(enumRefundType.Exchange) &&
+        {/* {!isRefundTypeOf(enumRefundType.Exchange) &&
           !isRefundStatusOf([
             enumRefundStatus.OperatingOfMoney,
             enumRefundStatus.OperatingOfGoods,
             enumRefundStatus.WaitCustomerServiceOperating,
-          ]) && <RefundInformation />}
+          ]) && <RefundInformation />} */}
       </Card>
-      <AfterSaleApplyInfo orderServerVO={data.orderServerVO} />
+      <Card bodyStyle={{paddingTop: 0}}>
+        <AfterSaleApplyInfo orderServerVO={data.orderServerVO} />
+      </Card>
     </>
   );
 };
