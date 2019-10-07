@@ -1,27 +1,24 @@
-interface CityData {
+interface City {
   value: string;
   name: string;
   parent?: string;
-  children?: CityData[]
+  children?: City[]
 }
-function transform(addressData: CityData[]): any[] {
-  let result: any[] = []
-  addressData.forEach((cityData: CityData) => {
-    if (cityData.parent) {
-      addressData.forEach((item: CityData) => {
-        if (item.value === cityData.parent) {
-          if (!item.children) {
-            item.children = []
-          }
-          item.children.push(cityData)
-        }
-      })
-      result.push(cityData)
+function convert(list: City[], parentId?: string): City[] {
+  const result: any[] = []
+  // let parents: City[] = list.filter(v => !v.parent);
+  list.forEach((item: City) => {
+    if (item.parent === undefined && !parentId || item.parent === parentId) {
+      const children = convert(list, item.value)
+      result.push(children.length > 0 ? {
+        ...item,
+        children
+      } : item)
     }
   })
   return result;
 }
-const addressData: CityData[] = [
+const addressData: City[] = [
   { value: '110000', name: '北京' },
   { value: '120000', name: '天津' },
   { value: '130000', name: '河北省' },
@@ -3945,4 +3942,4 @@ const addressData: CityData[] = [
   { value: '697899', name: '图木舒克市', parent: '697874' },
   { value: '489799', name: '五家渠市', parent: '489797' },
 ]
-export default transform(addressData);
+export default convert(addressData);

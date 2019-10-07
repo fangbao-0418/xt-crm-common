@@ -4,8 +4,7 @@ import { Cascader } from "antd";
 import city from "./data"; //  数据见上提示
 import addressData from './addressData';
 import PropTypes from "prop-types";
-console.log(addressData)
-
+console.log(addressData);
 
 //先配置修饰器 没有配置的话用把 @createForm()删掉 
 //然后把最后一行 export default CitySelect;  换成 export default createForm()(CitySelect)

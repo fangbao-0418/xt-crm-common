@@ -7,12 +7,17 @@ import AfterSalesDetail from './AfterSalesDetail';
 import { namespace } from './model';
 import { getSkuServerProcessDetailList } from '../api';
 import moment from "moment";
-interface Logger {
-  info: string;
-  createTime: number;
-  operator: string;
-  name: string;
+
+export interface Logger {
+  skuServerId:  number;
+  beforeStatus: string;
+  afterStatus:  string;
+  createTime:   number;
+  info:         any;
+  operator:     string;
+  name:         string;
 }
+
 const columns: ColumnProps<Logger>[] = [
   {
     title: '内容',
