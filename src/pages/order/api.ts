@@ -104,11 +104,30 @@ export function customerUpdate(data: any) {
 export function getRefundReason() {
   return get('/order/afterSale/getRefundReason');
 }
+// 重新退款
 export function againRefund(id: number, info: any) {
   return put(`/order/afterSale/againRefund/${id}`, {info});
 }
+/**
+ * 更新物流信息接口
+ */
+export function updateOrderExpress(data: any) {
+  return post('/order/afterSale/updateOrderExpress', data)
+}
+/**
+ * 完成订单
+ * @param id 
+ * @param info 
+ */
 export function closeOrder(id: number, info: any) {
   return put(`/order/afterSale/close/${id}`, {info});
+}
+/**
+ * 售后轨迹详情
+ * @param skuServerId 
+ */
+export function getSkuServerProcessDetailList(skuServerId: number) {
+  return get(`/order/afterSale/getSkuServerProcessDetailList/${skuServerId}`)
 }
 export function saveRefundInfo(data: any) {
   return post('/order/afterSale/saveRefundInfo', data)

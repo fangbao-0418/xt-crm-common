@@ -7,7 +7,7 @@ import { formatPrice } from '@/util/format';
 import UploadView from '@/components/upload';
 import { XtSelect } from '@/components'
 import { formItemLayout } from '@/config';
-import ModifyAddressModal from './ModifyAddress';
+import ModifyAddress from './ModifyAddress';
 import AfterSaleSelect from '../after-sale-select';
 import { Decimal } from 'decimal.js';
 import { getProductDetail, customerAdd } from '../../api'
@@ -92,7 +92,7 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
             </Form.Item>
             {this.refundType === enumRefundType.Exchange ?
               <Form.Item label="用户收货地址">
-                <ModifyAddressModal name={returnContact} phone={returnPhone} province={province} city={city} district={district} street={street} />
+                <ModifyAddress onModifyAddress={() => {}} name={returnContact} phone={returnPhone} province={province} city={city} district={district} street={street} />
               </Form.Item>
               :
               <Form.Item label="退款金额">

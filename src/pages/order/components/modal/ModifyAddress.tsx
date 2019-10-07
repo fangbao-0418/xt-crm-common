@@ -13,6 +13,7 @@ interface Props extends FormComponentProps {
   city?: string;
   district?: string;
   street?: string;
+  onModifyAddress(): void
 }
 class ModifyAddress extends React.Component<Props, State> {
   public state = {
@@ -21,11 +22,8 @@ class ModifyAddress extends React.Component<Props, State> {
   }
   public constructor(props: Props) {
     super(props);
-    this.handleModifyAddress = this.handleModifyAddress.bind(this);
     this.getSelectedValues = this.getSelectedValues.bind(this);
-  }
-  public handleModifyAddress() {
-
+    this.handleOk = this.handleOk.bind(this);
   }
   // 获取选择值
   public getSelectedValues(selectedValues: any[]) {
@@ -33,6 +31,9 @@ class ModifyAddress extends React.Component<Props, State> {
       selectedValues
     });
   };
+  handleOk() {
+    this.props.onModifyAddress();
+  }
   public render() {
     const { form: { getFieldDecorator }, name, phone, province, city, district, street } = this.props;
     const formItemLayout = {
@@ -45,7 +46,7 @@ class ModifyAddress extends React.Component<Props, State> {
           title="修改地址"
           style={{ top: 20 }}
           visible={this.state.addressVisible}
-          onOk={() => this.handleModifyAddress()}
+          onOk={this.handleOk}
           onCancel={() => this.setState({ addressVisible: false })}
         >
           <Form  {...formItemLayout}>

@@ -5,39 +5,64 @@ import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import AfterSalesDetail from './AfterSalesDetail';
 import { namespace } from './model';
+import { getSkuServerProcessDetailList } from '../api';
+import moment from "moment";
 interface Logger {
-  content: string;
-  datetime: number;
+  info: string;
+  createTime: number;
   operator: string;
+  name: string;
 }
 const columns: ColumnProps<Logger>[] = [
   {
     title: '内容',
-    dataIndex: 'content',
-    key: 'content',
+    dataIndex: 'info',
+    key: 'info',
+    render(text: any, record: Logger, index: number) {
+      return Object.entries(text).map(([key, val]) => <p>{key}:{val}</p>)
+    }
   },
   {
     title: '时间',
-    dataIndex: 'datetime',
-    key: 'datetime',
+    dataIndex: 'createTime',
+    key: 'createTime',
+    render(text: any, record: Logger, index: number) {
+      return moment(text).format('YYYY-MM-DD HH:mm:ss');
+    }
   },
   {
     title: '操作人',
     dataIndex: 'operator',
     key: 'operator',
+    render(text: any, record: Logger, index: number) {
+      return `${record.operator}:${record.name}`
+    }
   },
 ];
 interface DetailProps extends RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
-class Detail extends Component<DetailProps, {}> {
-  public refundId: number;
+interface State {
+  logs: any[]
+}
+class Detail extends Component<DetailProps, State> {
+  state: State = {
+    logs: []
+  }
   constructor(props: DetailProps) {
     super(props);
     this.getDetail = this.getDetail.bind(this);
-    this.refundId = Number(this.props.match.params.id);
   }
-  private getDetail() {
+  get refundId() {
+    return Number(this.props.match.params.id)
+  }
+  async fetchLog() {
+    let logs = await getSkuServerProcessDetailList(Number(this.props.match.params.id));
+    this.setState({
+      logs
+    })
+  }
+  getDetail() {
     APP.dispatch({
       type: `${namespace}/getDetail`,
       payload: { id: this.refundId },
@@ -45,11 +70,10 @@ class Detail extends Component<DetailProps, {}> {
   }
   componentWillMount() {
     this.getDetail();
+    this.fetchLog();
   }
   render() {
-    const { skuServerLogVO } = this.props.data;
-    const dataSource: any =
-      skuServerLogVO && skuServerLogVO.map((v: any, i: any) => ({ ...v, uniqueKey: i }));
+    const dataSource: any = (this.state.logs || []).map((v: any, i: any) => ({ ...v, uniqueKey: i }));
     return (
       <>
         <Card>

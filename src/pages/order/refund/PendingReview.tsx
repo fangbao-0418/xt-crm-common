@@ -10,7 +10,7 @@ import { formatMoney } from '@/pages/helper';
 import ReturnShippingSelect from '../components/ReturnShippingSelect';
 import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../components/after-sale-select';
-import ModifyAddressModal from '../components/modal/ModifyAddress';
+import ModifyAddress from '../components/modal/ModifyAddress';
 import AfterSaleDetailTitle from './components/AfterSaleDetailTitle';
 import { enumRefundType, enumRefundStatus } from '../constant';
 import { namespace } from './model';
@@ -220,24 +220,26 @@ class PendingReview extends React.Component<Props, State> {
             )}
             {!this.isRefundTypeOf(enumRefundType.Refund) && (
               <Form.Item label="退货地址">
-                <ModifyAddressModal
+                <ModifyAddress
                   name={checkVO.returnContact}
                   phone={checkVO.returnPhone}
                   province=""
                   city=""
                   district=""
+                  onModifyAddress={() => {}}
                   street={checkVO.returnAddress}
                 />
               </Form.Item>
             )}
             {this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="用户收货地址">
-                <ModifyAddressModal
+                <ModifyAddress
                   name={orderInfoVO.consignee}
                   phone={orderInfoVO.consigneePhone}
                   province=""
                   city=""
                   district=""
+                  onModifyAddress={() => {}}
                   street={orderInfoVO.address}
                 />
               </Form.Item>
