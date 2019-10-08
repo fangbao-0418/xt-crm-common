@@ -45,13 +45,15 @@ class PendingReview extends React.Component<Props, State> {
         let payload = {
           id: this.props.match.params.id,
           status,
-          ...values,
+          ...values
         };
-        let checkVO = this.props.data.checkVO || {}
+        let checkVO = this.props.data.checkVO || {};
+        let orderServerVO = this.props.data.orderServerVO || {};
         if (status === 1) {
           payload.returnContact = checkVO.returnContact;
           payload.returnPhone = checkVO.returnPhone;
           payload.returnAddress = checkVO.returnAddress;
+          Object.assign(payload, orderServerVO.contactVO)
         }
         APP.dispatch({
           type: `${namespace}/auditOperate`,
@@ -60,20 +62,6 @@ class PendingReview extends React.Component<Props, State> {
       }
     });
   };
-  // 重新退款
-  handleAgainRefund = async () => {
-    APP.dispatch({
-      type: `${namespace}/againRefund`,
-      payload: this.props.match.params,
-    });
-  };
-  // 关闭订单
-  async handleCloseOrder() {
-    APP.dispatch({
-      type: `${namespace}/closeOrder`,
-      payload: this.props.match.params,
-    });
-  }
   get refundAmount() {
     return this.props.form.getFieldValue('refundAmount');
   }
@@ -133,11 +121,12 @@ class PendingReview extends React.Component<Props, State> {
         data: {
           ...this.props.data,
           orderServerVO: {
+            ...orderServerVO,
             contactVO: {
               ...orderServerVO.contactVO,
               ...values,
-              returnContact: values.contact,
-              returnPhone: values.phone
+              contact: values.returnContact,
+              phone: values.returnPhone
             }
           }
         }
