@@ -14,18 +14,23 @@ import { getProductDetail, customerAdd } from '../../api'
 import { enumRefundType } from '../../constant';
 const { TextArea } = Input;
 
-interface ApplyAfterSaleModalProps extends FormComponentProps {
+interface Props extends FormComponentProps {
   modalInfo: any;
   successCb: () => void;
   onCancel: () => void;
   visible: boolean;
 }
-interface ApplyAfterSaleModalState {
-  skuDetail?: ApplyOrderSkuDetail.data;
+interface State {
+  skuDetail?: any;
 }
-class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, ApplyAfterSaleModalState> {
-  state: ApplyAfterSaleModalState = {
-  };
+class ApplyAfterSale extends React.Component<Props, State> {
+  state: State = {
+    skuDetail: {}
+  }
+  constructor(props: Props) {
+    super(props);
+    this.onSuccess = this.onSuccess.bind(this);
+  }
   async fetchDetail() {
     const skuDetail: ApplyOrderSkuDetail.data = await getProductDetail(this.props.modalInfo);
     this.setState({ skuDetail });
@@ -43,18 +48,22 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
         const { modalInfo } = this.props;
         const fields = getFieldsValue();
         fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
-        console.log('fields.imgUrl=>', fields.imgUrl)
         fields.imgUrl = fields.imgUrl.map((urlStr: string) => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
-        console.log('fields.imgUrl=>', fields.imgUrl)
         if (fields.amount) {
           fields.amount = new Decimal(fields.amount).mul(100).toNumber();
         }
-        console.log('modalInfo=>', modalInfo)
+        const skuDetail = this.state.skuDetail;
         const res: any = await customerAdd({
           childOrderId: modalInfo.childOrderId,
           mainOrderId: modalInfo.mainOrderId,
           memberId: modalInfo.memberId,
           skuId: modalInfo.skuId,
+          province: skuDetail.province,
+          provinceId: skuDetail.provinceId,
+          city: skuDetail.city,
+          cityId: skuDetail.cityId,
+          district: skuDetail.district,
+          districtId: skuDetail.districtId,
           ...fields
         });
         if (res.success) {
@@ -64,9 +73,13 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
       }
     })
   }
+  onSuccess(data: any) {
+    this.setState({
+      skuDetail: Object.assign(this.state.skuDetail, data)
+    })
+  }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
-    const price = parseFloat(formatPrice(modalInfo.ableRefundAmount))
     const initialObj: any = {}
     const disabledObj: any = {}
     if (modalInfo.childOrder && modalInfo.childOrder.orderStatus === 20) {
@@ -75,7 +88,8 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
     }
     let { skuDetail } = this.state
     skuDetail = Object.assign({}, skuDetail)
-    const { returnContact, returnPhone, province, city, district, street } = skuDetail;
+    const price = skuDetail.amount ? parseFloat(formatPrice(skuDetail.amount)): 0;
+    console.log('price=>', price)
     return (
       <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.props.visible} onCancel={this.props.onCancel} onOk={this.handleOk}>
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
@@ -88,16 +102,16 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
               {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<AfterSaleSelect refundType={this.refundType} />)}
             </Form.Item>
             <Form.Item label="售后数目">
-              {getFieldDecorator('serverNum', { rules: [{ required: true, message: '请填写售后数目' }] })(<InputNumber min={1} max={modalInfo.quantity} placeholder="请输入" />)}（最多可售后数目：{modalInfo.quantity}）
+              {getFieldDecorator('serverNum', { rules: [{ required: true, message: '请填写售后数目' }], initialValue: skuDetail.serverNum })(<InputNumber min={1} max={skuDetail.serverNum} placeholder="请输入" />)}（最多可售后数目：{skuDetail.serverNum}）
             </Form.Item>
             {this.refundType === enumRefundType.Exchange ?
               <Form.Item label="用户收货地址">
-                <ModifyAddress onModifyAddress={() => {}} name={returnContact} phone={returnPhone} province={province} city={city} district={district} street={street} />
+                <ModifyAddress detail={skuDetail} onSuccess={this.onSuccess}/>
               </Form.Item>
               :
               <Form.Item label="退款金额">
-                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={+formatPrice(modalInfo.preferentialTotalPrice)} />)}
-                <span className="ml10">（最多可退￥{formatPrice(modalInfo.ableRefundAmount)}）</span>
+                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={+formatPrice(skuDetail.amount)} />)}
+                <span className="ml10">（最多可退￥{formatPrice(skuDetail.amount)}）</span>
               </Form.Item>
             }
             <Form.Item label="售后凭证">
@@ -118,4 +132,4 @@ class ApplyAfterSaleModal extends React.Component<ApplyAfterSaleModalProps, Appl
     )
   }
 }
-export default Form.create()(ApplyAfterSaleModal)
+export default Form.create()(ApplyAfterSale)

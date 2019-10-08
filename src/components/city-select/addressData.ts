@@ -2,14 +2,15 @@ interface City {
   value: string;
   name: string;
   parent?: string;
-  children?: City[]
+  children?: City[];
+  label?: string;
 }
 function convert(list: City[], parentId?: string): City[] {
   const result: any[] = []
-  // let parents: City[] = list.filter(v => !v.parent);
   list.forEach((item: City) => {
     if (item.parent === undefined && !parentId || item.parent === parentId) {
       const children = convert(list, item.value)
+      item.label = item.name;
       result.push(children.length > 0 ? {
         ...item,
         children

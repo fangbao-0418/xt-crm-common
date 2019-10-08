@@ -16,17 +16,16 @@ import { enumRefundType, enumRefundStatus } from '../constant';
 import { namespace } from './model';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
+import ModifyReturnAddress from '../components/modal/ModifyReturnAddress';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
 interface State {
-  returnAddress: {};
   addressVisible: boolean;
   selectedValues: any[];
 }
 class PendingReview extends React.Component<Props, State> {
   state = {
-    returnAddress: {},
     addressVisible: false,
     selectedValues: [],
   };
@@ -43,18 +42,20 @@ class PendingReview extends React.Component<Props, State> {
         if (values.isRefundFreight === undefined) {
           values.isRefundFreight = this.props.data.checkVO.isRefundFreight;
         }
-        let returnAddress = {};
+        let payload = {
+          id: this.props.match.params.id,
+          status,
+          ...values,
+        };
+        let checkVO = this.props.data.checkVO || {}
         if (status === 1) {
-          returnAddress = this.state.returnAddress;
+          payload.returnContact = checkVO.returnContact;
+          payload.returnPhone = checkVO.returnPhone;
+          payload.returnAddress = checkVO.returnAddress;
         }
         APP.dispatch({
           type: `${namespace}/auditOperate`,
-          payload: {
-            id: this.props.match.params.id,
-            status,
-            ...returnAddress,
-            ...values,
-          },
+          payload,
         });
       }
     });
@@ -73,9 +74,6 @@ class PendingReview extends React.Component<Props, State> {
       payload: this.props.match.params,
     });
   }
-  setReturnAddress = (returnAddress: {}) => {
-    this.setState({ returnAddress });
-  };
   get refundAmount() {
     return this.props.form.getFieldValue('refundAmount');
   }
@@ -115,9 +113,20 @@ class PendingReview extends React.Component<Props, State> {
     let orderServerVO = this.props.data.orderServerVO || {};
     return orderServerVO.refundStatus === refundStatus;
   }
+  onSuccess = (values: any) => {
+    APP.dispatch({
+      type: `${namespace}/saveDefault`,
+      payload: {
+        data: {
+          ...this.props.data,
+          checkVO: Object.assign(this.props.data.checkVO, values)
+        }
+      },
+    })
+  }
   render() {
     let {
-      data: { orderServerVO, checkVO, orderInfoVO, refundStatus },
+      data: { orderServerVO, checkVO, orderInfoVO },
     } = this.props;
     orderServerVO = Object.assign({}, orderServerVO);
     checkVO = Object.assign({}, checkVO);
@@ -202,8 +211,8 @@ class PendingReview extends React.Component<Props, State> {
                     min={0.01}
                     max={formatMoney(
                       orderServerVO.productVO &&
-                        orderServerVO.productVO[0] &&
-                        orderServerVO.productVO[0].ableRefundAmount,
+                      orderServerVO.productVO[0] &&
+                      orderServerVO.productVO[0].ableRefundAmount,
                     )}
                     formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                     style={{ width: '100%' }}
@@ -220,20 +229,12 @@ class PendingReview extends React.Component<Props, State> {
             )}
             {!this.isRefundTypeOf(enumRefundType.Refund) && (
               <Form.Item label="退货地址">
-                <ModifyAddress
-                  name={checkVO.returnContact}
-                  phone={checkVO.returnPhone}
-                  province=""
-                  city=""
-                  district=""
-                  onModifyAddress={() => {}}
-                  street={checkVO.returnAddress}
-                />
+                <ModifyReturnAddress detail={checkVO} onSuccess={this.onSuccess} />
               </Form.Item>
             )}
             {this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="用户收货地址">
-                <ModifyAddress
+                {/* <ModifyAddress
                   name={orderInfoVO.consignee}
                   phone={orderInfoVO.consigneePhone}
                   province=""
@@ -241,7 +242,7 @@ class PendingReview extends React.Component<Props, State> {
                   district=""
                   onModifyAddress={() => {}}
                   street={orderInfoVO.address}
-                />
+                /> */}
               </Form.Item>
             )}
             <Row>
@@ -254,37 +255,20 @@ class PendingReview extends React.Component<Props, State> {
             {/**
              * 待审核状态显示同意和拒绝按钮
              */
-            this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
-              <Form.Item wrapperCol={formLeftButtonLayout}>
-                <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
-                  提交
+              this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
+                <Form.Item wrapperCol={formLeftButtonLayout}>
+                  <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
+                    提交
                 </Button>
-                <Button
-                  type="danger"
-                  style={{ marginLeft: '20px' }}
-                  onClick={() => this.handleAuditOperate(0)}
-                >
-                  拒绝请求
+                  <Button
+                    type="danger"
+                    style={{ marginLeft: '20px' }}
+                    onClick={() => this.handleAuditOperate(0)}
+                  >
+                    拒绝请求
                 </Button>
-              </Form.Item>
-            )}
-            {/**
-             *退款失败状态下显示重新退款和售后完成按钮
-             */
-            this.isRefundStatusOf(enumRefundStatus.OperatingFailed) && (
-              <Form.Item wrapperCol={formLeftButtonLayout}>
-                <Button type="primary" onClick={this.handleAgainRefund}>
-                  重新退款
-                </Button>
-                <Button
-                  type="danger"
-                  style={{ marginLeft: '20px' }}
-                  onClick={this.handleCloseOrder}
-                >
-                  售后完成
-                </Button>
-              </Form.Item>
-            )}
+                </Form.Item>
+              )}
           </Form>
         </Card>
       </>

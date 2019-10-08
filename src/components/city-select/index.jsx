@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { createForm } from "rc-form";
 import { Cascader } from "antd";
-import city from "./data"; //  数据见上提示
-import addressData from './addressData';
+import city from './addressData';
 import PropTypes from "prop-types";
-console.log(addressData);
 
 //先配置修饰器 没有配置的话用把 @createForm()删掉 
 //然后把最后一行 export default CitySelect;  换成 export default createForm()(CitySelect)
@@ -26,9 +24,9 @@ class CitySelect extends Component {
     // 递归查询城市所有数据
     function findCityData(city) {
       city.forEach(item => {
-        const { id, label, value, children } = item;
+        const { label, value, children } = item;
         if (selectedValues.includes(value)) {
-          result.push({ id, label, value });
+          result.push({ label, value });
         }
         if (children && children.length) {
           findCityData(children);
@@ -80,15 +78,18 @@ class CitySelect extends Component {
   }
 
   render() {
-    const { getFieldProps } = this.props.form;
+    // const { getFieldProps } = this.props.form;
     return (
       <div>
         <Cascader
           options={city}
-          {...getFieldProps("city", {
-            onChange: this.onCascaderChange,
-            rules: [{ required: true }]
-          })}
+          // {...getFieldProps("city", {
+          //   initialValue: this.props.value,
+          //   onChange: this.onCascaderChange,
+          //   rules: [{ required: true }]
+          // })}
+          value={ this.props.value }
+          onChange = {this.onCascaderChange}
           placeholder="请选择城市"
         />
       </div>
