@@ -23,8 +23,8 @@ const columns: ColumnProps<Logger>[] = [
     title: '内容',
     dataIndex: 'info',
     key: 'info',
-    render(text: any, record: Logger, index: number) {
-      return Object.entries(text).map(([key, val]) => <p>{key}:{val}</p>)
+    render(list: any, record: Logger, index: number) {
+      return (list || []).map((item: any) => <p>{item.key}:{item.value}</p>)
     }
   },
   {

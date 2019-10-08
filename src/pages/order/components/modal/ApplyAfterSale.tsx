@@ -54,16 +54,18 @@ class ApplyAfterSale extends React.Component<Props, State> {
         }
         const skuDetail = this.state.skuDetail;
         const res: any = await customerAdd({
-          childOrderId: modalInfo.childOrderId,
-          mainOrderId: modalInfo.mainOrderId,
-          memberId: modalInfo.memberId,
-          skuId: modalInfo.skuId,
+          childOrderId: skuDetail.childOrderId,
+          mainOrderId: skuDetail.orderId,
+          skuId: skuDetail.skuId,
           province: skuDetail.province,
           provinceId: skuDetail.provinceId,
           city: skuDetail.city,
           cityId: skuDetail.cityId,
           district: skuDetail.district,
           districtId: skuDetail.districtId,
+          contact: skuDetail.returnContact,
+          phone: skuDetail.returnPhone,
+          street: skuDetail.street,
           ...fields
         });
         if (res.success) {
@@ -78,6 +80,10 @@ class ApplyAfterSale extends React.Component<Props, State> {
       skuDetail: Object.assign(this.state.skuDetail, data)
     })
   }
+  get amount() {
+    const serverNum = this.props.form.getFieldValue('serverNum');
+    return serverNum * this.state.skuDetail.unitPrice;
+  }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
     const initialObj: any = {}
@@ -88,8 +94,6 @@ class ApplyAfterSale extends React.Component<Props, State> {
     }
     let { skuDetail } = this.state
     skuDetail = Object.assign({}, skuDetail)
-    const price = skuDetail.amount ? parseFloat(formatPrice(skuDetail.amount)): 0;
-    console.log('price=>', price)
     return (
       <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.props.visible} onCancel={this.props.onCancel} onOk={this.handleOk}>
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
@@ -102,7 +106,19 @@ class ApplyAfterSale extends React.Component<Props, State> {
               {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<AfterSaleSelect refundType={this.refundType} />)}
             </Form.Item>
             <Form.Item label="售后数目">
-              {getFieldDecorator('serverNum', { rules: [{ required: true, message: '请填写售后数目' }], initialValue: skuDetail.serverNum })(<InputNumber min={1} max={skuDetail.serverNum} placeholder="请输入" />)}（最多可售后数目：{skuDetail.serverNum}）
+              {getFieldDecorator('serverNum', { rules: [{ required: true, message: '请填写售后数目' }], initialValue: skuDetail.serverNum })(
+                <InputNumber
+                  min={1}
+                  max={skuDetail.serverNum}
+                  placeholder="请输入"
+                  onChange={(value) => {
+                    const amount = (value || 0) * this.state.skuDetail.unitPrice;
+                    this.props.form.setFieldsValue({
+                      amount: (amount / 100) || 0
+                    })
+                  }}
+                />
+              )}（最多可售后数目：{skuDetail.serverNum}）
             </Form.Item>
             {this.refundType === enumRefundType.Exchange ?
               <Form.Item label="用户收货地址">
@@ -110,8 +126,8 @@ class ApplyAfterSale extends React.Component<Props, State> {
               </Form.Item>
               :
               <Form.Item label="退款金额">
-                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: price })(<InputNumber min={0} max={+formatPrice(skuDetail.amount)} />)}
-                <span className="ml10">（最多可退￥{formatPrice(skuDetail.amount)}）</span>
+                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: (this.amount || 0) / 100})(<InputNumber min={0} max={+formatPrice(this.amount)} />)}
+                <span className="ml10">（最多可退￥{formatPrice(this.amount)}）</span>
               </Form.Item>
             }
             <Form.Item label="售后凭证">

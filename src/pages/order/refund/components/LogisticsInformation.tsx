@@ -16,7 +16,7 @@ const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
     new ClipboardJS('#copy-btn');
   }, []);
   return (
-    <>
+    (checkVO.returnExpressName || checkVO.returnExpressCode) ? <>
       <ModifyLogisticsInfo
         checkVO={checkVO}
         title="物流信息修改"
@@ -49,7 +49,7 @@ const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
           )}
         </Row>
       </div>
-    </>
+    </>: null
   );
 };
 

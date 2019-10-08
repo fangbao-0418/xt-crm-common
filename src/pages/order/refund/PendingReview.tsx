@@ -124,6 +124,26 @@ class PendingReview extends React.Component<Props, State> {
       },
     })
   }
+  modifyAddressCb = (values: any) => {
+    console.log('values=>', values);
+    const orderServerVO = this.props.data.orderServerVO || {}
+    APP.dispatch({
+      type: `${namespace}/saveDefault`,
+      payload: {
+        data: {
+          ...this.props.data,
+          orderServerVO: {
+            contactVO: {
+              ...orderServerVO.contactVO,
+              ...values,
+              returnContact: values.contact,
+              returnPhone: values.phone
+            }
+          }
+        }
+      },
+    })
+  }
   render() {
     let {
       data: { orderServerVO, checkVO, orderInfoVO },
@@ -131,6 +151,7 @@ class PendingReview extends React.Component<Props, State> {
     orderServerVO = Object.assign({}, orderServerVO);
     checkVO = Object.assign({}, checkVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
+    let contactVO = orderServerVO.contactVO || {};
     const quantity =
       orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].quantity;
     const { getFieldDecorator } = this.props.form;
@@ -234,15 +255,7 @@ class PendingReview extends React.Component<Props, State> {
             )}
             {this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="用户收货地址">
-                {/* <ModifyAddress
-                  name={orderInfoVO.consignee}
-                  phone={orderInfoVO.consigneePhone}
-                  province=""
-                  city=""
-                  district=""
-                  onModifyAddress={() => {}}
-                  street={orderInfoVO.address}
-                /> */}
+                <ModifyAddress detail={{ ...contactVO, returnContact: contactVO.contact, returnPhone: contactVO.phone }} onSuccess={this.modifyAddressCb} />
               </Form.Item>
             )}
             <Row>
