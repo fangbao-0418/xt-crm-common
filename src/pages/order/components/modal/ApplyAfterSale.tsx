@@ -122,11 +122,17 @@ class ApplyAfterSale extends React.Component<Props, State> {
             </Form.Item>
             {this.refundType === enumRefundType.Exchange ?
               <Form.Item label="用户收货地址">
-                <ModifyAddress detail={skuDetail} onSuccess={this.onSuccess}/>
+                <ModifyAddress detail={skuDetail} onSuccess={this.onSuccess} />
               </Form.Item>
               :
               <Form.Item label="退款金额">
-                {getFieldDecorator('amount', { rules: [{ required: true, message: '请输入退款金额' }], initialValue: (this.amount || 0) / 100})(<InputNumber min={0} max={+formatPrice(this.amount)} />)}
+                {getFieldDecorator('amount',
+                  {
+                    rules: [
+                      { required: true, message: '请输入退款金额' }
+                    ],
+                    initialValue: (this.amount || 0) / 100 }
+                  )(<InputNumber min={0} max={+formatPrice(this.amount)} />)}
                 <span className="ml10">（最多可退￥{formatPrice(this.amount)}）</span>
               </Form.Item>
             }

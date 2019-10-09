@@ -49,6 +49,7 @@ class PendingReview extends React.Component<Props, State> {
         };
         let checkVO = this.props.data.checkVO || {};
         let orderServerVO = this.props.data.orderServerVO || {};
+        let contactVO = orderServerVO.contactVO || {};
         if (status === 1) {
           payload.returnContact = checkVO.returnContact;
           payload.returnPhone = checkVO.returnPhone;
@@ -115,6 +116,7 @@ class PendingReview extends React.Component<Props, State> {
   modifyAddressCb = (values: any) => {
     console.log('values=>', values);
     const orderServerVO = this.props.data.orderServerVO || {}
+    let {returnContact, returnPhone, ...rest} = values;
     APP.dispatch({
       type: `${namespace}/saveDefault`,
       payload: {
@@ -124,9 +126,9 @@ class PendingReview extends React.Component<Props, State> {
             ...orderServerVO,
             contactVO: {
               ...orderServerVO.contactVO,
-              ...values,
-              contact: values.returnContact,
-              phone: values.returnPhone
+              ...rest,
+              contact: returnContact,
+              phone: returnPhone
             }
           }
         }

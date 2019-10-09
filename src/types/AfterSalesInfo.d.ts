@@ -29,6 +29,9 @@ declare module AfterSalesInfo {
     sendExpressTime: number;
     isRefundFreight: number;
     freight: number;
+    serverNum: number;
+    unitPrice: number;
+    maxServerNum?:number;
   }
   export interface OrderInfoVO {
     mainOrderId: number;

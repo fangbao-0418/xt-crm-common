@@ -5,7 +5,9 @@ import { FormComponentProps } from 'antd/lib/form';
 import { formItemLayout, radioStyle } from '@/config';
 import { namespace } from '../../refund/model';
 import { enumRefundType } from '../../constant';
-interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {}
+interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
+  checkVO: AfterSalesInfo.CheckVO;
+}
 interface State {
   visible: boolean;
 }
@@ -34,6 +36,7 @@ class CheckExchange extends React.Component<Props, State> {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
+    const checkVO = this.props.checkVO || {};
     return (
       <>
         <Modal
@@ -66,16 +69,17 @@ class CheckExchange extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="换货数目">
               {getFieldDecorator('serverNum', {
+                initialValue: checkVO.serverNum,
                 rules: [
                   {
                     required: true,
                     message: '请输入换货数目'
                   },
                 ],
-              })(<InputNumber min={1} placeholder="请输入" />)}
+              })(<InputNumber min={1} max={checkVO.serverNum} placeholder="请输入" />)}
             </Form.Item>
             <Form.Item label="说    明">
-              {getFieldDecorator('returnReason')(<Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />)}
+              {getFieldDecorator('info')(<Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />)}
             </Form.Item>
           </Form>
         </Modal>
@@ -86,4 +90,4 @@ class CheckExchange extends React.Component<Props, State> {
     );
   }
 }
-export default Form.create()(withRouter(CheckExchange));
+export default withRouter(Form.create<Props>()(CheckExchange));

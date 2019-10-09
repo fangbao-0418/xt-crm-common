@@ -24,7 +24,7 @@ const columns: ColumnProps<Logger>[] = [
     dataIndex: 'info',
     key: 'info',
     render(list: any, record: Logger, index: number) {
-      return (list || []).map((item: any) => <p>{item.key}:{item.value}</p>)
+      return (list || []).map((item: any) => <p key={item.createTime}>{item.key}:{item.value}</p>)
     }
   },
   {

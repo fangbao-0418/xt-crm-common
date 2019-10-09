@@ -82,7 +82,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
               </>
             )}
             {/* 待平台收货 */}
-            {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && <CheckExchange />}
+            {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && <CheckExchange checkVO={checkVO}/>}
             {/* 待平台发货 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitPlatformDelivery) && (
               <>

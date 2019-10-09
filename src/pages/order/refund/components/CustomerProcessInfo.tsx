@@ -25,7 +25,7 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
     <div>
       <h4 style={{marginTop: 0}}>客服处理信息</h4>
       <Row>售后类型：{refundType.getValue(checkVO.refundType)}</Row>
-      <Row>售后数目：{checkVO.refundAmount}</Row>
+      <Row>售后数目：{checkVO.serverNum}</Row>
       {/* 退货退款/仅退款 */}
       {!isRefundTypeOf(enumRefundType.Exchange) && (
         <Row>退款金额：{formatMoneyWithSign(checkVO.refundAmount)}</Row>
