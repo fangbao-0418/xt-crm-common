@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Form, Modal, Radio, Button, InputNumber, Input } from 'antd';
+import { Form, Modal, Radio, Button, InputNumber, Input, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { formItemLayout, radioStyle } from '@/config';
 import { namespace } from '../../refund/model';
@@ -66,6 +66,10 @@ class CheckRefund extends React.Component<Props, State> {
       if (values.refundAmount) {
         values.refundAmount = new Decimal(values.refundAmount).mul(100).toNumber();
       }
+      if (values.serverNum == 0) {
+        message.error('售后数目必须大于0');
+        return;
+      }
       if (!errors) {
         APP.dispatch({
           type: `${namespace}/auditOperate`,
@@ -83,7 +87,6 @@ class CheckRefund extends React.Component<Props, State> {
   render() {
     const { getFieldDecorator } = this.props.form;
     let checkVO = this.data.checkVO || {};
-    let orderServerVO = this.data.orderServerVO || {};
     return (
       <>
         <Modal

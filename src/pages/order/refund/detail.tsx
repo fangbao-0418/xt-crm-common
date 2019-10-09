@@ -9,13 +9,13 @@ import { getSkuServerProcessDetailList } from '../api';
 import moment from "moment";
 
 export interface Logger {
-  skuServerId:  number;
+  skuServerId: number;
   beforeStatus: string;
-  afterStatus:  string;
-  createTime:   number;
-  info:         any;
-  operator:     string;
-  name:         string;
+  afterStatus: string;
+  createTime: number;
+  info: any;
+  operator: string;
+  name: string;
 }
 
 const columns: ColumnProps<Logger>[] = [
@@ -24,7 +24,7 @@ const columns: ColumnProps<Logger>[] = [
     dataIndex: 'info',
     key: 'info',
     render(list: any, record: Logger, index: number) {
-      return (list || []).map((item: any) => <p key={item.createTime}>{item.key}:{item.value}</p>)
+      return (list || []).map((item: any) => <p key={item.createTime}>{item.key}：{item.value}</p>)
     }
   },
   {
@@ -40,7 +40,7 @@ const columns: ColumnProps<Logger>[] = [
     dataIndex: 'operator',
     key: 'operator',
     render(text: any, record: Logger, index: number) {
-      return `${record.operator}:${record.name}`
+      return `${record.operator}：${record.name}`;
     }
   },
 ];

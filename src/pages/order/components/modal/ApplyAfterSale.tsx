@@ -42,15 +42,17 @@ class ApplyAfterSale extends React.Component<Props, State> {
     return this.props.form.getFieldValue('refundType')
   }
   handleOk = () => {
-    const { form: { getFieldsValue, validateFields } } = this.props;
+    const { form: { validateFields } } = this.props;
     validateFields(async (errors, values) => {
       if (!errors) {
-        const { modalInfo } = this.props;
-        const fields = getFieldsValue();
-        fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
-        fields.imgUrl = fields.imgUrl.map((urlStr: string) => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
-        if (fields.amount) {
-          fields.amount = new Decimal(fields.amount).mul(100).toNumber();
+        if (values.serverNum == 0) {
+          message.error('售后数目必须大于0');
+          return;
+        }
+        values.imgUrl = Array.isArray(values.imgUrl) ? values.imgUrl.map((v: any) => v.url) : [];
+        values.imgUrl = values.imgUrl.map((urlStr: string) => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
+        if (values.amount) {
+          values.amount = new Decimal(values.amount).mul(100).toNumber();
         }
         const skuDetail = this.state.skuDetail;
         const res: any = await customerAdd({
@@ -66,7 +68,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
           contact: skuDetail.returnContact,
           phone: skuDetail.returnPhone,
           street: skuDetail.street,
-          ...fields
+          ...values
         });
         if (res.success) {
           message.success('申请售后成功');

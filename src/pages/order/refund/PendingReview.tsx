@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, Input, InputNumber, Button, Row } from 'antd';
+import { Card, Form, Input, InputNumber, Button, Row, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
@@ -36,6 +36,11 @@ class PendingReview extends React.Component<Props, State> {
   handleAuditOperate = (status: number) => {
     this.props.form.validateFields((errors, values) => {
       if (!errors) {
+        console.log(values)
+        if (values.serverNum == 0) {
+          message.error('售后数目必须大于0');
+          return;
+        }
         if (values.refundAmount) {
           values.refundAmount = new Decimal(values.refundAmount).mul(100).toNumber();
         }
@@ -49,7 +54,6 @@ class PendingReview extends React.Component<Props, State> {
         };
         let checkVO = this.props.data.checkVO || {};
         let orderServerVO = this.props.data.orderServerVO || {};
-        let contactVO = orderServerVO.contactVO || {};
         if (status === 1) {
           payload.returnContact = checkVO.returnContact;
           payload.returnPhone = checkVO.returnPhone;
@@ -114,7 +118,6 @@ class PendingReview extends React.Component<Props, State> {
     })
   }
   modifyAddressCb = (values: any) => {
-    console.log('values=>', values);
     const orderServerVO = this.props.data.orderServerVO || {}
     let {returnContact, returnPhone, ...rest} = values;
     APP.dispatch({
@@ -143,8 +146,6 @@ class PendingReview extends React.Component<Props, State> {
     checkVO = Object.assign({}, checkVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
     let contactVO = orderServerVO.contactVO || {};
-    const quantity =
-      orderServerVO.productVO && orderServerVO.productVO[0] && orderServerVO.productVO[0].quantity;
     const { getFieldDecorator } = this.props.form;
     return (
       <>
@@ -204,8 +205,8 @@ class PendingReview extends React.Component<Props, State> {
                       message: '请输入售后数目',
                     },
                   ],
-                })(<InputNumber min={1} max={quantity} placeholder="请输入" />)}
-                <span>（最多可售后数目：{quantity}）</span>
+                })(<InputNumber min={1} max={orderServerVO.serverNum} placeholder="请输入" />)}
+                <span>（最多可售后数目：{orderServerVO.serverNum}）</span>
               </Form.Item>
             </Row>
             {this.isRefundTypeOf(enumRefundType.Refund) && (
