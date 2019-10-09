@@ -18,6 +18,8 @@ type CheckVO = AfterSalesInfo.CheckVO;
 const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
   let checkVO: CheckVO = data.checkVO || {};
   let orderInfoVO = data.orderInfoVO || {};
+  let orderServerVO = data.orderServerVO || {};
+  let contactVO = orderServerVO.contactVO || {};
   const isRefundTypeOf = (refundType: number | string) => {
     return checkVO.refundType == refundType;
   };
@@ -33,7 +35,7 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
       {!isRefundTypeOf(enumRefundType.Refund) && <Row>退货地址：{`${checkVO.returnContact} ${checkVO.returnPhone} ${checkVO.returnAddress}`}</Row>}
       {isRefundTypeOf(enumRefundType.Refund) && <Row>退运费：{formatMoneyWithSign(checkVO.freight)}</Row>}
       {/* 换货 */}
-      {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{orderInfoVO.address}</Row>}
+      {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{`${contactVO.contact} ${contactVO.phone} ${contactVO.province}${contactVO.city}${contactVO.district}${contactVO.street}`}</Row>}
       <Row>说 明：{checkVO.firstServerDescribe}</Row>
     </div>
   );
