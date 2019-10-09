@@ -14,7 +14,7 @@ class Main extends React.Component<Props, State> {
   public columns: ColumnProps<Shop.CouponProps>[] = [
     {title: '优惠券ID', dataIndex: 'id'},
     {title: '优惠券名称', dataIndex: 'name'},
-    {title: '每人限领次数', dataIndex: 'receiveCount'},
+    // {title: '每人限领次数', dataIndex: 'receiveCount'},
     {
       title: '面值', dataIndex: 'faceValue',
       render: (text, record) => formatFaceValue(record)

@@ -17,7 +17,21 @@ enum ShopStatusEnum {
 class Main extends React.Component<Props> {
   public columns: ColumnProps<Marketing.ItemProps>[] = [
     {title: '活动ID', dataIndex: 'id'},
-    {title: '活动名称', dataIndex: 'title'},
+    {
+      title: '活动名称', dataIndex: 'title',
+      render: (text, record) => {
+        return (
+          <span
+            className='href'
+            onClick={() => {
+              APP.href(`/activity/info/edit/${record.id}?page=1&pageSize=20`, '_blank')
+            }}
+          >
+            {text}
+          </span>
+        )
+      }
+    },
     {
       title: '开始时间',
       width: 180,

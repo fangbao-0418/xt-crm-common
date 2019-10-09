@@ -10,6 +10,16 @@ const APP = {
     message.error(text, duration)
   },
   http,
-  fn
+  fn,
+  href: function (url, target) {
+    url = /^(https?|#)/.test(url) ? url : '#' + url
+    let el = document.createElement('a')
+    el.setAttribute('href', url)
+    if (target) {
+      el.setAttribute('target', target)
+    }
+    el.click()
+    el = null
+  }
 }
 module.exports = APP

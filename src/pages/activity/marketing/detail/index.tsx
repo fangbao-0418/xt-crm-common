@@ -44,6 +44,9 @@ class Main extends React.Component<Props, State> {
     if (this.id !== '-1') {
       this.fetchData()
     } else {
+      this.setState({
+        disabled: false
+      })
       this.initFormValue()
     }
   }

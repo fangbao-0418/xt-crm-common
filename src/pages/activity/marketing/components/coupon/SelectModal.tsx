@@ -19,12 +19,12 @@ const calcRatio = ({ useCount, receiveCount }: any) => {
 export interface Props extends FormComponentProps {
   getInstance?: (ref?: Main) => void
   selectedRowKeys?: any[],
-  onOk?: (ids: any[], rows: Coupon.CouponItemProps[]) => void
+  onOk?: (ids: any[], rows: Shop.CouponProps[]) => void
   onCancel?: () => void
-  onSelect?: (record: Coupon.CouponItemProps, selected: boolean) => void
-  onSelectAll?: (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) => void
+  onSelect?: (record: Shop.CouponProps, selected: boolean) => void
+  onSelectAll?: (selected: boolean, selectedRows: Shop.CouponProps[], changeRows: Shop.CouponProps[]) => void
 }
-export interface State extends PageProps<Coupon.CouponItemProps> {
+export interface State extends PageProps<Shop.CouponProps> {
   selectedRowKeys: any[]
   visible: boolean
 }
@@ -50,29 +50,43 @@ class Main extends React.Component<Props, State> {
     selectedRowKeys: this.props.selectedRowKeys || [],
     visible: false
   }
-  public selectedRows: Coupon.CouponItemProps[] = []
-  public columns: ColumnProps<Coupon.CouponItemProps>[] = [
+  public selectedRows: Shop.CouponProps[] = []
+  public columns: ColumnProps<Shop.CouponProps>[] = [
     {
       title: '编号',
       dataIndex: 'code',
       key: 'code',
     },
     {
-      title: '名称',
+      title: '优惠券名称',
       dataIndex: 'name',
       key: 'name',
     },
+    // {
+    //   title: '领取时间',
+    //   dataIndex: 'receiveTime',
+    //   key: 'receiveTime',
+    //   render: (text, record) => formatDateRange(record)
+    // },
     {
-      title: '领取时间',
-      dataIndex: 'receiveTime',
-      key: 'receiveTime',
-      render: (text, record) => formatDateRange(record)
-    },
-    {
-      title: '优惠券价值',
+      title: '面值',
       dataIndex: 'discountAmount',
       key: 'discountAmount',
       render: (text, record) => formatFaceValue(record)
+    },
+    {
+      title: '每人限领次数',
+      dataIndex: 'restrictNum'
+    },
+    {
+      title: '使用时间',
+      render: (text, record) => {
+        const useTimeValue = record.useTimeValue || ''
+        const str = record.useTimeType === 0 ? APP.fn.formatDate(record.useTimeValue.split(',')[0]) + '至' + APP.fn.formatDate(record.useTimeValue.split(',')[1]) : `限${record.useTimeValue}天内使用`
+        return (
+          <span>{str}</span>
+        )
+      }
     },
     {
       title: '已领取/总量',
@@ -81,21 +95,6 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         return `${record.receiveCount}/${record.inventory}`
       }
-    },
-    {
-      title: '已使用|使用率',
-      dataIndex: 'usedRatio',
-      key: 'usedRatio',
-      render: (text, record) => {
-        return record.receiveCount ? `${record.useCount} | ${calcRatio(record)}` : '-'
-      }
-    },
-    {
-      title: '领取状态',
-      dataIndex: 'status',
-      key: 'status',
-      width: 100,
-      render: text => <Badge color={listBadgeColors[text]} text={receiveStatus.getValue(text)} />
     }
   ]
   public constructor(props: Props) {
@@ -124,9 +123,6 @@ class Main extends React.Component<Props, State> {
       this.props.getInstance(this)
     }
   }
-  public componentDidMount() {
-    this.fetchData()
-  }
   public fetchData() {
     const fields = this.props.form.getFieldsValue();
     api.fetchCouponList({
@@ -137,12 +133,12 @@ class Main extends React.Component<Props, State> {
       this.setState({ ...res })
     })
   }
-  public onrowSelectionChange(selectedRowKeys: any[], selectedRows: Coupon.CouponItemProps[]) {
+  public onrowSelectionChange(selectedRowKeys: any[], selectedRows: Shop.CouponProps[]) {
     this.setState({
       selectedRowKeys
     })
   }
-  public onSelect (record: Coupon.CouponItemProps, selected: boolean) {
+  public onSelect (record: Shop.CouponProps, selected: boolean) {
     const isExist = this.selectedRows.find((item) => item.id === record.id)
     if (selected && !isExist) {
       this.selectedRows = this.selectedRows.concat([record])
@@ -153,7 +149,7 @@ class Main extends React.Component<Props, State> {
       this.props.onSelect(record, selected)
     }
   }
-  public onSelectAll (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) {
+  public onSelectAll (selected: boolean, selectedRows: Shop.CouponProps[], changeRows: Shop.CouponProps[]) {
     if (selected) {
       this.selectedRows = this.selectedRows.concat(changeRows)
     } else {
@@ -174,6 +170,15 @@ class Main extends React.Component<Props, State> {
     this.debounceFetch()
   }
   public open (value?: Marketing.PresentContentValueProps) {
+    value = Object.assign({
+      couponList: []
+    }, value)
+    this.payload = {
+      isDelete: this.payload.isDelete,
+      page: 1,
+      pageSize: this.payload.pageSize
+    }
+    this.fetchData()
     const couponList: any[] = value.couponList || []
     this.selectedRows = couponList
     this.setState({
@@ -221,9 +226,9 @@ class Main extends React.Component<Props, State> {
               <Form.Item label="优惠券名称">
                 {getFieldDecorator('name', {})(<Input placeholder="请输入" />)}
               </Form.Item>
-              <Form.Item label="状态">
+              {/* <Form.Item label="状态">
                 {getFieldDecorator('status', {})(<XtSelect data={receiveStatus.getArray('all')} style={{ width: '174px' }} placeholder="请输入" />)}
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item>
                 <Button type="primary" onClick={this.onSearch}>查询</Button>
                 <Button

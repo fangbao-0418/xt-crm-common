@@ -143,7 +143,7 @@ class Main extends React.Component<{}, State> {
             <Button
               type='primary'
               onClick={() => {
-                APP.history.push('/activity/marketing/-1')
+                APP.history.push('/activity/marketing/edit/-1')
               }}
             >
               新增活动

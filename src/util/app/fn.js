@@ -17,6 +17,9 @@ export function getH5Origin () {
 }
 
 export function formatDate (date, format = 'YYYY-MM-DD HH:mm:ss') {
+  if (/^\d+$/.test(date)) {
+    date = Number(date)
+  }
   return date && moment(date).format(format)
 }
 

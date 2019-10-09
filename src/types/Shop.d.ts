@@ -61,6 +61,10 @@ declare module Shop {
     inventory: number
     /** 领取数 */
     receiveCount: number
+    /** 日限领数 */
+    dailyRestrict: number
+    /** 总限领数 */
+    restrictNum: number
     /** 使用数 */
     useCount: number
     isDelete: number
@@ -71,5 +75,9 @@ declare module Shop {
     startReceiveTime: number
     /** 领取状态 0 未开始 1 进行中 2 已结束 */
     status: 0 | 1 | 2
+    /** 使用时间类型(0: 指定时间段, 1: 领券当日起几天内可用) */
+    useTimeType: 0 | 1
+    /** 使用时间值(例:useTimeType-0:1567267200000,1567612800000 或 useTimeType-1:5) */
+    useTimeValue: string
   }
 }
