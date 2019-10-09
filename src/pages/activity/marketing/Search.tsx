@@ -12,6 +12,10 @@ class Main extends React.Component<Props> {
   public onSearch () {
     if (this.props.onSearch) {
       const values = this.form.getValues()
+      values.createStartTime = values.createStartTime && values.createStartTime * 1000
+      values.createEndTime = values.createEndTime && values.createEndTime * 1000
+      values.startTime = values.startTime && values.startTime * 1000
+      values.endTime = values.endTime && values.endTime * 1000
       this.props.onSearch(values)
     }
   }
@@ -29,6 +33,14 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => {
             this.form = ref
           }}
+          rangeMap={{
+            createTime: {
+              fields: ['createStartTime', 'createEndTime']
+            },
+            startTime: {
+              fields: ['startTime', 'endTime']
+            }
+          }}
         >
           <FormItem
             name='startTime'
@@ -43,7 +55,7 @@ class Main extends React.Component<Props> {
           >
           </FormItem>
           <FormItem
-            name='activeNo'
+            name='id'
           >
           </FormItem>
           <FormItem

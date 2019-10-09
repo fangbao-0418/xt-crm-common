@@ -1,12 +1,20 @@
 import { SearchPayload } from './components/coupon/SelectModal'
-import { handleListData, handleFormData, handleDetailReturnData } from './adapter'
+import * as adapter from './adapter'
 const { post, get, newPost } = APP.http
 
 /** 获取满赠列表 */
-export const fetchActivityList = (payload: Marketing.ActivityListPayloadProps) => {
+export const fetchMarketingList = (payload: Marketing.ActivityListPayloadProps) => {
   payload.type = 8
+  return post('/promotion/queryDiscounts', payload).then((res) => {
+    res.records = adapter.handleMarketingListData(res.records)
+    return res
+  })
+}
+
+/** 获取活动列表 */
+export const fetchActivityList = (payload: Marketing.ActivityListPayloadProps) => {
   return post('/promotion/list', payload).then((res) => {
-    res.records = handleListData(res.records)
+    res.records = adapter.handleActivityListData(res.records)
     return res
   })
 }
@@ -27,18 +35,18 @@ export const fetchActivityDetail = (id: any) => {
   return get('/promotion/detailDiscounts', {
     promotionId: id
   }).then((res: any) => {
-    return handleDetailReturnData(res)
+    return adapter.handleDetailReturnData(res)
   })
 }
 
 /** 新增买赠活动 */
 export const addActivity = (payload: Marketing.FormDataProps) => {
-  return newPost(`/promotion/addDiscounts`, handleFormData(payload))
+  return newPost(`/promotion/addDiscounts`, adapter.handleFormData(payload))
 }
 
 /** 修改买赠活动 */
 export const editActivity = (payload: Marketing.FormDataProps) => {
-  return newPost(`/promotion/updateDiscounts`, handleFormData(payload))
+  return newPost(`/promotion/updateDiscounts`, adapter.handleFormData(payload))
 }
 
 /** 获取商品列表 */

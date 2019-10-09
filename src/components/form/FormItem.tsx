@@ -38,8 +38,15 @@ interface Props extends OptionProps, FormItemProps {
   verifiable?: boolean
 }
 
+const ReadOnlyValue = React.forwardRef((props: React.Props<{}>, ref: any) => {
+  return (
+    <span ref={ref}>{props.children}</span>
+  )
+})
+
 function renderItem (option: Props, context: ContextProps) {
   const form = context.props.form
+  const disabled = context.props.disabled
   const {
     name,
     type,
@@ -51,24 +58,26 @@ function renderItem (option: Props, context: ContextProps) {
   case 'input':
     node = (() => {
       controlProps.placeholder = controlProps.placeholder as string
-      const placeholder = controlProps.placeholder === undefined ? `请输入${option.label}` : controlProps.placeholder
-      return (
+      let placeholder = controlProps.placeholder === undefined ? `请输入${option.label}` : controlProps.placeholder
+      let value = form.getFieldValue(name)
+      return !disabled ? (
         <Input
           {...controlProps}
           placeholder={placeholder}
         />
-      )
+      ) : <ReadOnlyValue>{value}</ReadOnlyValue>
     })()
     break
   case 'textarea':
     node = (() => {
-      const placeholder = controlProps.placeholder as string || `请输入${option.label}`
-      return (
+      let placeholder = controlProps.placeholder as string || `请输入${option.label}`
+      let value = form.getFieldValue(name)
+      return !disabled ? (
         <Input.TextArea
           {...controlProps}
           placeholder={placeholder}
         />
-      )
+      ) : <ReadOnlyValue>{value}</ReadOnlyValue>
     })()
     break
   case 'radio':

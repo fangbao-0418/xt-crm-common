@@ -1,31 +1,32 @@
-/** 处理活动列表数据 */
-export const handleListData = (data: any[]) => {
+/** 处理满赠活动列表数据 */
+export const handleMarketingListData = (data: any[]) => {
+  enum statusEnum {
+    关闭 = 0,
+    未开始 = 1,
+    进行中 = 2,
+    已结束 = 3
+  }
   data.map((item) => {
-    let statusText = '已关闭'
-    let canClose = true
-    let canShow = false
-    let canEdit = true
-    const now = new Date().getTime()
-    if (item.status !== 0) {
-      statusText = '未开始'
-      if (item.startTime >= now) {
-        statusText = '进行中'
-        canShow = true
-      }
-      if (item.endTime > now) {
-        canClose = false
-        statusText = '已结束'
-        canEdit = false
-      }
-    } else {
-      canClose = false
-      canShow = true
-      canEdit = false
-    }
-    item.statusText = statusText
-    item.canShow = canShow
-    item.canClose = canClose
-    item.canEdit = canEdit
+    item.statusText = statusEnum[item.discountsStatus]
+    return item
+  })
+  return data
+}
+
+/** 处理活动列表数据 */
+export const handleActivityListData = (data: Marketing.ItemProps[]) => {
+  enum activityTypeEnum {
+    限时秒杀 = 1,
+    今日拼团 = 2,
+    礼包 = 3,
+    激活码 = 4,
+    地推专区= 5,
+    体验团长专区 = 6,
+    采购专区 = 7,
+    买赠 = 8
+  }
+  data.map((item) => {
+    item.activityTypeName = activityTypeEnum[item.type]
     return item
   })
   return data
@@ -35,31 +36,46 @@ export const handleListData = (data: any[]) => {
 export const handleDetailReturnData = (payload: {
   userScope: string
   ruleJson: {
-    loop: {
-      promotionDiscountsSkuVOList: Shop.SkuProps[]
-      couponListVOList: Shop.CouponProps[]
-      giftSkuJson: string
-    },
-    rank: any
-    type: 0 | 1
+    loop: Marketing.PresentContentValueProps,
+    rank: {
+      ruleList: Marketing.PresentContentValueProps[],
+      ladderRule: 0 | 1
+    }
   },
-  promotionDiscountsSpuVOS: any[]
+  /** 赠品策略类型 0-阶梯规则, 1-循环规则 */
+  ruleType: 0 | 1
+  /** 活动 */
+  referencePromotionVO: Marketing.ItemProps
+  promotionDiscountsSpuVOS: Shop.ShopItemProps[]
 }) => {
+  const userScope = payload.userScope.split(',')
+  if (userScopeIsAll(userScope)) {
+    userScope.unshift('all')
+  }
   const data = {
     ...payload,
     product: getProductData(payload.promotionDiscountsSpuVOS),
-    strategyType: payload.ruleJson.type,
+    activity: getActivityData(payload.referencePromotionVO),
+    strategyType: payload.ruleType,
     loop: parsePresentContentData(payload.ruleJson.loop),
     rank: Object.assign({}, 
       {
-        ladderRule: payload.ruleJson.rank.ladderRule,
-        ruleList: payload.ruleJson.rank.ruleList.map((item: any) => parsePresentContentData(item))
+        sort: 0,
+        ladderRule: Number(payload.ruleJson.rank.ladderRule) || 0,
+        ruleList: payload.ruleJson.rank.ruleList.map((item) => parsePresentContentData(item))
       }
     ),
-    userScope: payload.userScope.split(',')
+    userScope
   }
-  console.log(data, 'data')
   return data
+}
+/** 目标用户是否全选 */
+const userScopeIsAll = (data: string[]) => {
+  const all = ['40', '30', '20', '10', '2', '1']
+  const index = all.findIndex((item) => {
+    return data.indexOf(item) > -1
+  })
+  return index > -1
 }
 /** 选择商品数据转换 */
 const getProductData = (data: Shop.ShopItemProps[]) => {
@@ -75,6 +91,13 @@ const getProductData = (data: Shop.ShopItemProps[]) => {
   }
 }
 
+/** 选择活动数据转换 */
+const getActivityData = (data: Marketing.ItemProps) => {
+  return {
+    activityList: handleActivityListData(data ? [data] : [])
+  }
+}
+
 /** 过滤无效数据 */
 const filterinvalidData = (data: any[]) => {
   if (!(data instanceof Array)) {
@@ -83,7 +106,7 @@ const filterinvalidData = (data: any[]) => {
   return data.filter((item) => item)
 }
 const spuIdsExchangeObj = (source: string) => {
-  const data: {[id: number]: string} = JSON.parse(source)
+  const data: {[id: number]: string} = JSON.parse(source || '{}')
   const result: {[id: number]: number[]} = {}
   for (const key in data) {
     result[key] = data[key].split(',').map((val) => Number(val))
@@ -106,23 +129,25 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
   const product = payload.product || {
     spuIds: {}
   }
+  const activity = payload.activity
   const data = {
     activityDescribe: payload.activityDescribe,
     title: payload.title,
     startTime: payload.startTime * 1000,
     endTime: payload.endTime * 1000,
     id: payload.id !== undefined ? Number(payload.id) : '',
-    productIds: Object.keys(product.spuIds).join(','),
+    referencePromotionId: (activity && activity.activityList || []).map((item) => item.id).join(','),
+    // productIds: Object.keys(product.spuIds).join(','),
     ruleJson: {
       loop: handlePresentContentData(loop),
       rank: {
         ladderRule: payload.rank.ladderRule,
-        ruleList: payload.rank.ruleList.map((item) => handlePresentContentData(item))
-      },
-      /** 0-循环规则，1-阶梯规则 */
-      type: payload.strategyType
+        ruleList: payload.rank.ruleList.map((item, index) => handlePresentContentData(item))
+      }
     },
-    userScope: payload.userScope && payload.userScope.join(',')
+    ruleType: payload.strategyType,
+    userScope: payload.userScope && payload.userScope.filter((code) => code !== 'all').join(','),
+    sort: 0
   }
   return data
 }
@@ -132,12 +157,14 @@ const handlePresentContentData = (data: Marketing.PresentContentValueProps) => {
   data = Object.assign({
     chooseCount: 0,
     couponList: [],
+    activityList: [],
     stageCount: 0,
     type: 0
   }, data)
   return {
     chooseCount: data.chooseCount || 0,
     giftSkuJson: spuIdsExchangeJson(data.spuIds),
+    giftPromotionId: data.activityList.map(item => item.id).join(','),
     giftCouponIds: (data.couponList && data.couponList.map((item) => item.id) || []).join(','),
     stageCount: data.stageCount || 0,
     type: data.type || 0
@@ -145,15 +172,12 @@ const handlePresentContentData = (data: Marketing.PresentContentValueProps) => {
 }
 
 /** 解析接口返回赠品内容数据 */
-const parsePresentContentData = (data: {
-  promotionDiscountsSkuVOList: any[]
-  couponListVOList: any[]
-  giftSkuJson: string
-}) => {
+const parsePresentContentData = (data: Marketing.PresentContentValueProps) => {
   return {
     ...data,
     skuList: filterinvalidData(data.promotionDiscountsSkuVOList),
     couponList: data.couponListVOList,
+    activityList: handleActivityListData(data.promotionVO ? [data.promotionVO] : []),
     spuIds: spuIdsExchangeObj(data.giftSkuJson)
   }
 }

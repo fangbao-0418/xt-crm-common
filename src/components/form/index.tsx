@@ -44,6 +44,7 @@ export type NamespaceProps = 'common' | 'marketing'
 
 export interface Props extends FormComponentProps {
   config?: FieldsConfig
+  disabled?: boolean
   size?: 'small' | 'middle'
   layout?: 'inline' | 'horizontal' | 'vertical'
   onChange?: (field?: string, value?: any, values?: any) => void
@@ -108,13 +109,20 @@ class Main extends React.Component<Props> {
       if (field in rangeMap) {
         const rangeFields = rangeMap[field]
         const rangeValue: any[] = []
+        /** 是否存在日期字段 */
+        let isExistField = false
         rangeFields.fields.map((rangeField) => {
           rangeValue.push(
             values[rangeField] && moment(values[rangeField])
           )
-          delete values[rangeField]
+          if (values.hasOwnProperty(rangeField)) {
+            isExistField = true
+            delete values[rangeField]
+          }
         })
-        values[field] = rangeValue
+        if (isExistField) {
+          values[field] = rangeValue 
+        }
       }
     }
     /** 过滤掉未注册form数据 */

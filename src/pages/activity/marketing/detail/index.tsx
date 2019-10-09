@@ -2,8 +2,8 @@ import React from 'react'
 import Form, { FormItem, FormInstance } from '@/components/form'
 import { Row, Col, Button } from 'antd'
 import { withRouter, RouteComponentProps } from 'react-router'
-import ShopList from '../components/shop/List'
-import ShopSelectModal, { ShopModalInstance } from '../components/shop/SelectModal'
+import ActivityList from '../components/activity/List'
+import ActivitySelectModal, { ShopModalInstance } from '../components/activity/SelectModal'
 import CouponSelectModal, { CouponModalInstance } from '../components/coupon/SelectModal'
 import PresentContent from '../components/present-content'
 import Ladder from '../components/Ladder'
@@ -13,9 +13,11 @@ import styles from './style.module.sass'
 interface Props extends RouteComponentProps<{id: string}> {}
 interface State {
   ladderCount: number
+  loading: boolean
+  disabled: boolean
 }
 class Main extends React.Component<Props, State> {
-  public shopModalInstance: ShopModalInstance
+  public ActivityModalInstance: ShopModalInstance
   public couponModalInstance: CouponModalInstance
   public form: FormInstance
   /** 当前选择赠品内容key */
@@ -24,7 +26,9 @@ class Main extends React.Component<Props, State> {
   public currentSelectIndex: number = 0
   public id: string = this.props.match.params.id
   public state: State = {
-    ladderCount: 0
+    ladderCount: 0,
+    loading: false,
+    disabled: false
   }
   public constructor (props: any) {
     super(props)
@@ -51,11 +55,15 @@ class Main extends React.Component<Props, State> {
       if (res) {
         this.form.setValues(res)
         this.setState({
-          ladderCount: res.rank.ruleList.length
+          ladderCount: res.rank.ruleList.length,
+          disabled: [1, 2].indexOf(res.discountsStatus) === -1
         })
       }
-    }, () => {
+    }, (e) => {
       this.initFormValue()
+      this.setState({
+        disabled: true
+      })
     })
   }
   /** 选择 0-商品、1-优惠券 */
@@ -69,7 +77,7 @@ class Main extends React.Component<Props, State> {
       value = values[this.presentContentSelectedKey]
     }
     if (type === 0) {
-      this.shopModalInstance.open(value, field === 'product' ? 'spu' : 'sku')
+      this.ActivityModalInstance.open(value)
     } else {
       this.couponModalInstance.open(value)
     }
@@ -81,9 +89,18 @@ class Main extends React.Component<Props, State> {
         APP.error('请检查输入项是否正确')
         return
       }
+      this.setState({
+        loading: true
+      })
       if (this.id === '-1') {
         api.addActivity(value).then(() => {
           APP.success('保存成功')
+        }).finally(() => {
+          this.setState({
+            loading: false
+          }, () => {
+            APP.history.push('/activity/marketing')
+          })
         })
       } else {
         api.editActivity({
@@ -91,6 +108,10 @@ class Main extends React.Component<Props, State> {
           ...value
         }).then(() => {
           APP.success('修改成功')
+        }).finally(() => {
+          this.setState({
+            loading: false
+          })
         })
       }
     })
@@ -101,6 +122,7 @@ class Main extends React.Component<Props, State> {
         className={styles.detail}
       >
         <Form
+          disabled={this.state.disabled}
           namespace='marketing'
           getInstance={(ref) => {
             this.form = ref
@@ -145,6 +167,32 @@ class Main extends React.Component<Props, State> {
             <FormItem
               name='userScope'
               verifiable
+              controlProps={{
+                onChange: (value: string[]) => {
+                  const values = this.form.getValues()
+                  const allSelected = (values.userScope || []).indexOf('all') > -1
+                  const newAllSelected = value.indexOf('all') > -1
+                  if (!allSelected && newAllSelected || !allSelected && value.length === 6) {
+                    setTimeout(() => {
+                      this.form.props.form.setFieldsValue({
+                        userScope: ['all', '40', '30', '20', '10', '2', '1']
+                      })
+                    }, 0)
+                  } else if (allSelected && !newAllSelected) {
+                    setTimeout(() => {
+                      this.form.setValues({
+                        userScope: []
+                      }) 
+                    }, 0)
+                  } else if (allSelected && value.length <= 6) {
+                    setTimeout(() => {
+                      this.form.setValues({
+                        userScope: value.filter((item) => item !== 'all')
+                      }) 
+                    }, 0)
+                  }
+                }
+              }}
             />
           </div>
           <div className={styles.title}>
@@ -163,11 +211,11 @@ class Main extends React.Component<Props, State> {
                     <span
                       className='href'
                       onClick={() => {
-                        this.presentContentSelectedKey = 'product'
+                        this.presentContentSelectedKey = 'activity'
                         this.select(0)
                       }}
                     >
-                      请选择商品
+                      请选择活动
                     </span>
                   </FormItem>
                 </div>
@@ -175,12 +223,12 @@ class Main extends React.Component<Props, State> {
                   labelCol={{span: 0}}
                   inner={(form) => {
                     return form.getFieldDecorator(
-                      'product',
+                      'activity',
                       {
                         rules: [
                           {
                             validator: (rules, value, cb) => {
-                              if (value && value.spuList && value.spuList.length > 0) {
+                              if (value && value.activityList && value.activityList.length > 0) {
                                 cb()
                               } else {
                                 cb('请选择活动商品')
@@ -190,7 +238,7 @@ class Main extends React.Component<Props, State> {
                         ]
                       }
                     )(
-                      <ShopList />
+                      <ActivityList />
                     )
                   }}
                 />
@@ -297,45 +345,35 @@ class Main extends React.Component<Props, State> {
             name='activityDescribe'
             type='textarea'
             placeholder=''
+            verifiable
           >
           </FormItem>
           <div
             className='text-center mt20'
           >
-            <Button
-              type='primary'
-              onClick={this.save}
-            >
-              保存
-            </Button>
+            {!this.state.disabled && (
+              <Button
+                type='primary'
+                onClick={this.save}
+                loading={this.state.loading}
+              >
+                保存
+              </Button>
+            )}
           </div>
         </Form>
-        <ShopSelectModal
+        <ActivitySelectModal
           getInstance={(ref) => {
-            this.shopModalInstance = ref
+            this.ActivityModalInstance = ref
           }}
           onOk={(rows) => {
-            const skuList: Shop.SkuProps[] = []
-            const spuIds: {[spuId: number]: number[]} = {}
-            rows.map((item) => {
-              spuIds[item.id] = []
-              item.skuList.map((sku) => {
-                spuIds[item.id].push(sku.skuId)
-                sku.productName = item.productName
-                sku.coverUrl = item.coverUrl
-                sku.properties = `${item.property1 || ''}:${sku.propertyValue1 || ''} ${item.property2 || ''}:${sku.propertyValue2 || ''}`
-                skuList.push(sku)
-              })
-            })
             const values = this.form.getValues()
             const field = this.presentContentSelectedKey
             if (field === 'rank.ruleList') {
               let value = values.rank.ruleList
               value[this.currentSelectIndex] = {
                 ...value[this.currentSelectIndex],
-                skuList,
-                spuList: rows,
-                spuIds: spuIds
+                activityList: rows
               }
               this.form.setValues({
                 [field]: value
@@ -343,16 +381,14 @@ class Main extends React.Component<Props, State> {
             } else {
               let value = {
                 ...values[field],
-                spuList: rows,
-                skuList,
-                spuIds: spuIds
+                activityList: rows
               }
               console.log(value, 'value')
               this.form.setValues({
                 [field]: value
               })
             }
-            this.shopModalInstance.hide()
+            this.ActivityModalInstance.hide()
           }}
         />
         <CouponSelectModal

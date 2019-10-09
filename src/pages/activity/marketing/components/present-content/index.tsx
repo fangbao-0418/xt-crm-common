@@ -4,6 +4,7 @@ import Form, { FormItem, FormInstance } from '@/components/form'
 import styles from './style.module.sass'
 import CouponList from '../coupon/List'
 import SkuList from '../shop/SkuList'
+import ActivityList from '../activity/List'
 type ValueProps = Marketing.PresentContentValueProps
 interface Props {
   name: string
@@ -51,6 +52,7 @@ class Main extends React.Component<Props, State> {
     const { value } = this.state
     const skuList = value && value.skuList || []
     const couponList = value && value.couponList || []
+    const activityList = value && value.activityList || []
     const type = value.type || 0
     const { name } = this.props
     return (
@@ -156,10 +158,17 @@ class Main extends React.Component<Props, State> {
                   }
                 }}
               >
-                请选择商品
+                请选择活动
               </span>
             </div>
-            <SkuList
+            <ActivityList
+              value={value}
+              onChange={(value) => {
+                this.value = value
+                this.onChange()
+              }}
+            />
+            {/* <SkuList
               value={skuList}
               onChange={(value) => {
                 this.value.skuList = value
@@ -171,7 +180,7 @@ class Main extends React.Component<Props, State> {
                 this.value.spuIds = spuIds
                 this.onChange()
               }}
-            />
+            /> */}
             <FormItem
               labelCol={{span: 0}}
             >

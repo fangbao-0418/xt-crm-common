@@ -94,6 +94,7 @@ class Main extends React.Component<Props, State> {
       title: '领取状态',
       dataIndex: 'status',
       key: 'status',
+      width: 100,
       render: text => <Badge color={listBadgeColors[text]} text={receiveStatus.getValue(text)} />
     }
   ]
@@ -194,7 +195,7 @@ class Main extends React.Component<Props, State> {
       <Modal
         title='选择优惠券'
         visible={visible}
-        width="60%"
+        width={1000}
         onOk={this.onOk}
         onCancel={() => {
           if (this.props.onCancel) {
@@ -207,7 +208,12 @@ class Main extends React.Component<Props, State> {
         }}
       >
         <div>
-          <Card bordered={false}>
+          <Card
+            bordered={false}
+            bodyStyle={{
+              padding: 0
+            }}
+          >
             <Form layout="inline">
               <Form.Item label="优惠券编号">
                 {getFieldDecorator('code', {})(<Input placeholder="请输入" />)}
@@ -220,7 +226,15 @@ class Main extends React.Component<Props, State> {
               </Form.Item>
               <Form.Item>
                 <Button type="primary" onClick={this.onSearch}>查询</Button>
-                <Button className="ml10" onClick={() => resetFields()}>重置</Button>
+                <Button
+                  className="ml10"
+                  onClick={() => {
+                    resetFields()
+                    this.fetchData()
+                  }}
+                >
+                  重置
+                </Button>
               </Form.Item>
             </Form>
           </Card>

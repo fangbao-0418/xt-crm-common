@@ -15,7 +15,7 @@ class Main extends React.Component<{}, State> {
     page: 1,
     pageSize: 10
   }
-  public columns: ColumnProps<any>[] = [
+  public columns: ColumnProps<Marketing.ItemProps>[] = [
     {
       title: '活动编号',
       dataIndex: 'id'
@@ -52,18 +52,19 @@ class Main extends React.Component<{}, State> {
         return APP.fn.formatDate(text)
       }
     },
-    {title: '最后操作人'},
+    {title: '最后操作人', dataIndex: 'operator'},
     {
       title: '活动状态',
       dataIndex: 'statusText'
     },
     {
       title: '操作',
-      width: 100,
+      width: 160,
+      align: 'center',
       render: (text, record) => {
         return (
           <div>
-            {record.canEdit && <span
+            {[1, 2].indexOf(record.discountsStatus) > -1 &&  <span
               className='href mr10'
               onClick={() => {
                 APP.history.push(`/activity/marketing/${record.id}`)
@@ -71,7 +72,7 @@ class Main extends React.Component<{}, State> {
             >
               编辑
             </span>}
-            {record.canShow && <span
+            {[1].indexOf(record.discountsStatus) === -1 && <span
               className='href mr10'
               onClick={() => {
                 APP.history.push(`/activity/marketing/${record.id}`)
@@ -79,15 +80,15 @@ class Main extends React.Component<{}, State> {
             >
               查看
             </span>}
-            {record.canClose && <span
+            {[1, 2].indexOf(record.discountsStatus) > -1 && <span
               className='href'
               onClick={() => {
-                api.changeActivityStatus([record.id], record.status === 0 ? 1 : 0).then(() => [
+                api.changeActivityStatus([record.id], 0).then(() => [
                   this.fetchData()
                 ])
               }}
             >
-              {record.status === 0 ? '开启' : '关闭'}
+              关闭
             </span>}
           </div>
         )
@@ -107,7 +108,7 @@ class Main extends React.Component<{}, State> {
     this.setState({
       page: this.payload.page
     })
-    api.fetchActivityList(this.payload).then((res: any) => {
+    api.fetchMarketingList(this.payload).then((res: any) => {
       console.log(res)
       this.setState({
         dataSource: res.records || [],

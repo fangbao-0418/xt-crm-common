@@ -1,4 +1,29 @@
 declare namespace Marketing {
+  /** 活动列表属性 */
+  interface ItemProps {
+    id: number
+    /** 活动名称 */
+    title: string
+    /** 活动创建时间 */
+    createTime: number
+    /** 活动开始时间 */
+    startTime: number 
+    /** 活动结束时间 */
+    endTime: number
+    /** 活动状态 0-关闭, 1-未开始, 2-进行中, 3-已结束 */
+    discountsStatus: number
+    /** 状态 0下架，1上架 */
+    status: number
+    /** 变更时间 */
+    modifyTime: number
+    /** 操作人   */
+    operator: string
+    /** 活动类型，1-限时秒杀，2-今日拼团，3-礼包，4-激活码，5-地推专区，6-体验团长专区，7-采购专区，8-买赠 */
+    type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+    /** 活动类型文本 */
+    activityTypeName?: string
+  }
+
   /** 赠品内容value属性 */
   interface PresentContentValueProps {
     /** 赠品内容类型：0-赠品，1-优惠券 */
@@ -13,6 +38,12 @@ declare namespace Marketing {
     /** 满赠条件购买商品数 */
     stageCount?: number
     giftSkuJson?: string
+    promotionDiscountsSkuVOList?: any[]
+    couponListVOList?: any[]
+    /** 活动列表 */
+    activityList?: Marketing.ItemProps[]
+    /** 活动对象 */
+    promotionVO?: Marketing.ItemProps
   }
   interface ActivityListPayloadProps {
     name?: string
@@ -38,6 +69,8 @@ declare namespace Marketing {
     id: number
     /** 赠品策略类型 0-循环规则，1-阶梯规则 */
     strategyType: 0 | 1
+    /** 选择活动 */
+    activity: PresentContentValueProps
     product: PresentContentValueProps
     /** 循环规则 */
     loop: PresentContentValueProps
@@ -46,6 +79,7 @@ declare namespace Marketing {
       ladderRule: 0 | 1
       ruleList: PresentContentValueProps[]
     }
+    /** 目标用户 40-管理员, 30-合伙人, 20-区长, 10-团长, 2-普通用户老用户, 1-普通用户新用户 */
     userScope: any[]
   }
 }
