@@ -36,6 +36,7 @@ interface Props extends OptionProps, FormItemProps {
   placeholder?: string | string[]
   /** 控件是否校验 默认false，不进行校验 */
   verifiable?: boolean
+  disabled?: boolean
 }
 
 const ReadOnlyValue = React.forwardRef((props: React.Props<{}>, ref: any) => {
@@ -46,7 +47,7 @@ const ReadOnlyValue = React.forwardRef((props: React.Props<{}>, ref: any) => {
 
 function renderItem (option: Props, context: ContextProps) {
   const form = context.props.form
-  const disabled = context.props.disabled
+  const disabled = option.disabled || context.props.disabled
   const {
     name,
     type,
@@ -84,6 +85,7 @@ function renderItem (option: Props, context: ContextProps) {
     node = (() => {
       return (
         <Radio.Group
+          disabled={disabled}
           {...controlProps}
         >
           {options.map((item, index) => {
@@ -104,6 +106,7 @@ function renderItem (option: Props, context: ContextProps) {
     node = (() => {
       return (
         <Checkbox.Group
+          disabled={disabled}
           {...controlProps}
           options={options}
         >
@@ -126,6 +129,7 @@ function renderItem (option: Props, context: ContextProps) {
           {...controlProps}
           placeholder={placeholder}
           allowClear
+          disabled={disabled}
         >
           {
             options.map((item, index) => {
@@ -148,6 +152,7 @@ function renderItem (option: Props, context: ContextProps) {
       const placeholder = controlProps.placeholder as string || `请选择日期`
       return (
         <DatePicker
+          disabled={disabled}
           {...controlProps}
           placeholder={placeholder}
         />
@@ -163,6 +168,7 @@ function renderItem (option: Props, context: ContextProps) {
           className={styles['range-picker']}
         >
           <DatePicker
+            disabled={disabled}
             showToday={false}
             {...controlProps}
             placeholder={placeholder[0]}
@@ -179,6 +185,7 @@ function renderItem (option: Props, context: ContextProps) {
           />
           <span className={styles['range-picker-separator']}>-</span>
           <DatePicker
+            disabled={disabled}
             showToday={false}
             {...controlProps}
             placeholder={placeholder[1]}
@@ -258,9 +265,7 @@ function Main (props: Props) {
   const { required, labelCol, wrapperCol, addonAfterCol, colon } = formItemProps
   const children = props.children || props.inner && props.inner(form) || renderItem(option, context)
   const hidden = props.hidden || false
-  // if (!children) {
-  //   return null
-  // }
+
   return (
     <div
       hidden={hidden}

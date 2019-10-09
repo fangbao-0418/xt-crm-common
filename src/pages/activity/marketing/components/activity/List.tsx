@@ -8,6 +8,7 @@ interface State {
 interface Props {
   value?: Marketing.PresentContentValueProps
   onChange?: (value?: Marketing.PresentContentValueProps) => void
+  disabled?: boolean
 }
 enum ShopStatusEnum {
   下架 = 0,
@@ -50,7 +51,8 @@ class Main extends React.Component<Props> {
       title: '操作',
       width: 50,
       render: (text, record) => {
-        return (
+        const disabled = this.props.disabled
+        return !disabled && (
           <span
             className='href'
             onClick={() => {

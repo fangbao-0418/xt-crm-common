@@ -8,6 +8,7 @@ interface State {
 interface Props {
   value?: Shop.CouponProps[]
   onChange?: (value?: Shop.CouponProps[]) => void
+  disabled?: boolean
 }
 class Main extends React.Component<Props, State> {
   public columns: ColumnProps<Shop.CouponProps>[] = [
@@ -21,17 +22,20 @@ class Main extends React.Component<Props, State> {
     {
       title: '操作',
       render: (text, record) => {
+        const disabled = this.props.disabled
         return (
           <div>
-            <span
-              className='href'
-              onClick={() => {
-                const { dataSource } = this.state
-                this.onChange(dataSource.filter((item) => item.id !== record.id))
-              }}
-            >
-              删除
-            </span>
+            {!disabled && (
+              <span
+                className='href'
+                onClick={() => {
+                  const { dataSource } = this.state
+                  this.onChange(dataSource.filter((item) => item.id !== record.id))
+                }}
+              >
+                删除
+              </span>
+            )}
           </div>
         )
       }

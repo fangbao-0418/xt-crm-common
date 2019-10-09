@@ -59,27 +59,27 @@ declare namespace Marketing {
   /** 满赠详情新增/修改传参属性 */
   interface FormDataProps {
     /** 活动名称 */
-    title: string
+    title?: string
     /** 活动开始时间 */
-    startTime: number
+    startTime?: number
     /** 活动结束时间 */
-    endTime: number
+    endTime?: number
     /** 活动规则描述 */
-    activityDescribe: string
-    id: number
+    activityDescribe?: string
+    id?: number
     /** 赠品策略类型 0-循环规则，1-阶梯规则 */
-    strategyType: 0 | 1
+    strategyType?: 0 | 1
     /** 选择活动 */
-    activity: PresentContentValueProps
-    product: PresentContentValueProps
+    activity?: PresentContentValueProps
+    product?: PresentContentValueProps
     /** 循环规则 */
-    loop: PresentContentValueProps
-    rank: {
+    loop?: PresentContentValueProps
+    rank?: {
       /** 阶梯规则：0-不可叠加，1-可叠加 */
       ladderRule: 0 | 1
       ruleList: PresentContentValueProps[]
     }
     /** 目标用户 40-管理员, 30-合伙人, 20-区长, 10-团长, 2-普通用户老用户, 1-普通用户新用户 */
-    userScope: any[]
+    userScope?: any[]
   }
 }

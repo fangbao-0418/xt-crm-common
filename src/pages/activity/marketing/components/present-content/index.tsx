@@ -12,6 +12,10 @@ interface Props {
   onSelect?: (type: 0 | 1) => void
   value?: ValueProps
   onChange?: (value?: ValueProps) => void
+  disabled?: boolean
+  /** 活动状态 0-关闭, 1-未开始, 2-进行中, 3-已结束 */
+  status?: 0 | 1 | 2 | 3
+  giftCanEdit?: boolean
 }
 interface State {
   value: ValueProps
@@ -54,7 +58,11 @@ class Main extends React.Component<Props, State> {
     const couponList = value && value.couponList || []
     const activityList = value && value.activityList || []
     const type = value.type || 0
-    const { name } = this.props
+    const { name, giftCanEdit } = this.props
+    const disabled = this.props.disabled === undefined ? true : this.props.disabled
+    let disabledFields = type === 1 ? ['stageCount', 'chooseCount', 'type', 'activityList'] : ['stageCount', 'chooseCount', 'type', 'couponList'] 
+    disabledFields = disabled && !giftCanEdit ? ['stageCount', 'chooseCount', 'type', 'activityList', 'couponList'] : disabledFields
+    disabledFields = disabled ? disabledFields : []
     return (
       <div>
         <FormItem
@@ -98,6 +106,7 @@ class Main extends React.Component<Props, State> {
           wrapperCol={{span: 20}}
           addonAfterCol={{span: 4}}
           type='input'
+          disabled={disabledFields.indexOf('stageCount') > -1}
           name={`${name}-stageCount`}
           placeholder=''
           addonAfter={(
@@ -116,6 +125,7 @@ class Main extends React.Component<Props, State> {
               style={{display: 'inline-block'}}
             >
               <Radio
+                disabled={disabledFields.indexOf('type') > -1}
                 checked={String(type) === '0'}
                 onChange={() => {
                   this.value.type = 0
@@ -133,6 +143,7 @@ class Main extends React.Component<Props, State> {
               labelCol={{span: 0}}
               wrapperCol={{span: 14}}
               addonAfterCol={{span: 4}}
+              disabled={disabledFields.indexOf('chooseCount') > -1}
               type='input'
               name={`${name}-chooseCount`}
               fieldDecoratorOptions={{
@@ -150,6 +161,7 @@ class Main extends React.Component<Props, State> {
               )}
             />
             <div>
+            {(disabledFields.indexOf('activityList') === -1) && (
               <span
                 className='href'
                 onClick={() => {
@@ -160,8 +172,10 @@ class Main extends React.Component<Props, State> {
               >
                 请选择活动
               </span>
+            )}
             </div>
             <ActivityList
+              disabled={disabledFields.indexOf('activityList') > -1}
               value={value}
               onChange={(value) => {
                 this.value = value
@@ -185,6 +199,7 @@ class Main extends React.Component<Props, State> {
               labelCol={{span: 0}}
             >
               <Radio
+                disabled={disabledFields.indexOf('type') > -1}
                 checked={String(type) === '1'}
                 onChange={() => {
                   this.value.type = 1
@@ -195,18 +210,21 @@ class Main extends React.Component<Props, State> {
               </Radio>
             </FormItem>
             <div>
-              <span
-                className='href'
-                onClick={() => {
-                  if (this.props.onSelect) {
-                    this.props.onSelect(1)
-                  }
-                }}
-              >
-                请选择优惠券
-              </span>
+              {disabledFields.indexOf('couponList') === -1 && (
+                <span
+                  className='href'
+                  onClick={() => {
+                    if (this.props.onSelect) {
+                      this.props.onSelect(1)
+                    }
+                  }}
+                >
+                  请选择优惠券
+                </span>
+              )}
             </div>
             <CouponList
+              disabled={disabledFields.indexOf('couponList') > -1}
               value={couponList}
               onChange={(value) => {
                 this.value.couponList = value

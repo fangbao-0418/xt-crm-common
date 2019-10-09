@@ -51,7 +51,7 @@ class Main extends React.Component<Props> {
           >
           </FormItem>
           <FormItem
-            name='status'
+            name='discountsStatus'
           >
           </FormItem>
           <FormItem

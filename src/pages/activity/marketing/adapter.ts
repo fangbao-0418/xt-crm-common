@@ -72,10 +72,10 @@ export const handleDetailReturnData = (payload: {
 /** 目标用户是否全选 */
 const userScopeIsAll = (data: string[]) => {
   const all = ['40', '30', '20', '10', '2', '1']
-  const index = all.findIndex((item) => {
+  const result = all.every((item) => {
     return data.indexOf(item) > -1
   })
-  return index > -1
+  return result
 }
 /** 选择商品数据转换 */
 const getProductData = (data: Shop.ShopItemProps[]) => {

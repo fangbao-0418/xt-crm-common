@@ -88,7 +88,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       id: {
         type: 'input', label: '活动编号'
       },
-      status: {
+      discountsStatus: {
         type: 'select', label: '状态',
         options: [
           {label: '未开始', value: '1'},

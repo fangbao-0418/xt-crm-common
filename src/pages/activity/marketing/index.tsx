@@ -67,7 +67,7 @@ class Main extends React.Component<{}, State> {
             {[1, 2].indexOf(record.discountsStatus) > -1 &&  <span
               className='href mr10'
               onClick={() => {
-                APP.history.push(`/activity/marketing/${record.id}`)
+                APP.history.push(`/activity/marketing/edit/${record.id}`)
               }}
             >
               编辑
@@ -75,7 +75,7 @@ class Main extends React.Component<{}, State> {
             {[1].indexOf(record.discountsStatus) === -1 && <span
               className='href mr10'
               onClick={() => {
-                APP.history.push(`/activity/marketing/${record.id}`)
+                APP.history.push(`/activity/marketing/view/${record.id}`)
               }}
             >
               查看

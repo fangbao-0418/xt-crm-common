@@ -10,11 +10,14 @@ import Ladder from '../components/Ladder'
 import * as api from '../api'
 import styles from './style.module.sass'
 
-interface Props extends RouteComponentProps<{id: string}> {}
+interface Props extends RouteComponentProps<{id: string, type: 'view' | 'edit'}> {}
 interface State {
   ladderCount: number
   loading: boolean
   disabled: boolean
+  values: Marketing.FormDataProps
+  /** 赠品是否可编辑 */
+  giftCanEdit: boolean
 }
 class Main extends React.Component<Props, State> {
   public ActivityModalInstance: ShopModalInstance
@@ -25,10 +28,13 @@ class Main extends React.Component<Props, State> {
    /** 当前选择赠品内容索引 */
   public currentSelectIndex: number = 0
   public id: string = this.props.match.params.id
+  public type: 'view' | 'edit' = this.props.match.params.type
   public state: State = {
     ladderCount: 0,
     loading: false,
-    disabled: false
+    disabled: true,
+    values: {},
+    giftCanEdit: false
   }
   public constructor (props: any) {
     super(props)
@@ -55,8 +61,10 @@ class Main extends React.Component<Props, State> {
       if (res) {
         this.form.setValues(res)
         this.setState({
+          values: res,
           ladderCount: res.rank.ruleList.length,
-          disabled: [1, 2].indexOf(res.discountsStatus) === -1
+          disabled: [1].indexOf(res.discountsStatus) === -1,
+          giftCanEdit: this.type === 'edit'
         })
       }
     }, (e) => {
@@ -208,15 +216,17 @@ class Main extends React.Component<Props, State> {
                   <FormItem
                     labelCol={{span: 0}}
                   >
-                    <span
-                      className='href'
-                      onClick={() => {
-                        this.presentContentSelectedKey = 'activity'
-                        this.select(0)
-                      }}
-                    >
-                      请选择活动
-                    </span>
+                    {!this.state.disabled && (
+                      <span
+                        className='href'
+                        onClick={() => {
+                          this.presentContentSelectedKey = 'activity'
+                          this.select(0)
+                        }}
+                      >
+                        请选择活动
+                      </span>
+                    )}
                   </FormItem>
                 </div>
                 <FormItem
@@ -238,7 +248,9 @@ class Main extends React.Component<Props, State> {
                         ]
                       }
                     )(
-                      <ActivityList />
+                      <ActivityList
+                        disabled={this.state.disabled}
+                      />
                     )
                   }}
                 />
@@ -254,6 +266,7 @@ class Main extends React.Component<Props, State> {
             </Col>
             <Col span={20}>
               <FormItem
+                disabled={this.state.disabled}
                 labelCol={{span: 0}}
                 type='radio'
                 name='strategyType'
@@ -278,6 +291,8 @@ class Main extends React.Component<Props, State> {
                     return (
                       form.getFieldDecorator('rank.ruleList')(
                         <Ladder
+                          disabled={this.state.disabled}
+                          giftCanEdit={this.state.values.strategyType === 1 && this.state.giftCanEdit}
                           name='rank.ruleList'
                           onSelect={(type, index) => {
                             this.presentContentSelectedKey = 'rank.ruleList'
@@ -296,7 +311,7 @@ class Main extends React.Component<Props, State> {
                 >
                 </FormItem>
               <div>
-                {this.state.ladderCount < 5 && (
+                {(this.state.ladderCount < 5 && !this.state.disabled) && (
                   <span
                     className='href'
                     onClick={() => {
@@ -316,6 +331,7 @@ class Main extends React.Component<Props, State> {
                 )}
               </div>
               <FormItem
+                disabled={this.state.disabled}
                 labelCol={{span: 0}}
                 type='radio'
                 name='strategyType'
@@ -327,6 +343,8 @@ class Main extends React.Component<Props, State> {
                   inner={(form) => {
                     return form.getFieldDecorator('loop')(
                       <PresentContent
+                        disabled={this.state.disabled}
+                        giftCanEdit={this.state.values.strategyType === 0 && this.state.giftCanEdit}
                         name='loop'
                         onSelect={(type) => {
                           this.presentContentSelectedKey = 'loop'

@@ -8,6 +8,8 @@ interface Props {
   value?: any[]
   onChange?: (value: ValueProps[]) => void
   onSelect?: (type: 0 | 1, index?: number) => void
+  disabled?: boolean
+  giftCanEdit?: boolean
 }
 const mapper = ['一', '二', '三', '四', '五'] 
 class Main extends React.Component<Props> {
@@ -18,7 +20,7 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const value = this.props.value || []
-    const { name } = this.props
+    const { name, disabled } = this.props
     return (
       value.map((item, index) => {
         const field = `${name}-${index}`
@@ -28,17 +30,21 @@ class Main extends React.Component<Props> {
             title={`第${mapper[index]}阶梯优惠`}
             className='mb20'
             rightContent={(
-              <span
-                className='href'
-                onClick={() => {
-                  this.onChange(value.filter((item, currentIndex) => currentIndex !== index))
-                }}
-              >
-                删除
-              </span>
+              !disabled && (
+                <span
+                  className='href'
+                  onClick={() => {
+                    this.onChange(value.filter((item, currentIndex) => currentIndex !== index))
+                  }}
+                >
+                  删除
+                </span>
+              )
             )}
           >
             <PresentContent
+              disabled={disabled}
+              giftCanEdit={this.props.giftCanEdit}
               value={value[index]}
               name={field}
               onChange={(val) => {
