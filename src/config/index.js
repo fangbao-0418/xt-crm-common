@@ -60,5 +60,10 @@ export const ExpressCompanyOptions = {
   jd: '京东',
   tiantian: '天天快递',
   youzhengbk: "邮政标准快递",
-  youzhengguonei: "邮政快递包裹"
+  youzhengguonei: "邮政快递包裹",
+  annengwuliu: "安能物流",
+  zhaijisong: "宅急送",
+  lbex: "龙邦物流",
+  youshuwuliu: "优速物流",
+  pjbest: "品骏"
 };
