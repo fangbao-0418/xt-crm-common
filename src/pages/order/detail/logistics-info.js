@@ -3,22 +3,7 @@ import { Card, Row, Col, Button } from 'antd';
 import { map } from 'lodash';
 import DeliveryModal from './components/delivery-modal';
 import { formatDate } from '@/pages/helper';
-
-const ExpressCompanyOptions = {
-  ems: 'EMS',
-  shunfeng: '顺丰',
-  shentong: '申通',
-  yuantong: '圆通',
-  zhongtong: '中通',
-  huitongkuaidi: '汇通',
-  yunda: '韵达',
-  guotongkuaidi: '国通',
-  debangwuliu: '德邦',
-  jd: '京东',
-  tiantian: '天天快递',
-  youzhengbk: "邮政标准快递",
-  youzhengguonei: "邮政快递包裹"
-};
+import { ExpressCompanyOptions } from '@/config';
 
 const LogisticsInfo = ({ logistics = {}, orderInfo = {}, onSuccess, mainorderInfo }) => {
   return (
