@@ -1,61 +1,69 @@
 import React from 'react';
 import GoodCell from '@/components/good-cell';
 import MoneyRender from '@/components/money-render'
-export const getDetailColumns = () => [
-  {
-    title: '名称',
-    dataIndex: 'skuName',
-    key: 'skuName',
-    render(skuName, row) {
-      return <GoodCell {...row} />;
+
+/**
+ * 返回订单、售后订单table columns
+ * @param {0 | 1} type - 订单类型 0-订单，1-售后订单
+ * @returns object[]
+ */
+export function getDetailColumns (type = 0) {
+  return [
+    {
+      title: '名称',
+      dataIndex: 'skuName',
+      key: 'skuName',
+      render(skuName, row) {
+        return <GoodCell {...row} isRefund={type === 1} />;
+      }
+    },
+    {
+      title: '属性',
+      dataIndex: 'properties',
+      key: 'properties',
+    },
+    {
+      title: '单价',
+      dataIndex: 'salePrice',
+      key: 'salePrice',
+      render: MoneyRender
+    },
+    {
+      title: '数量',
+      dataIndex: 'quantity',
+      key: 'quantity',
+    },
+    {
+      title: '商品总价（元）',
+      dataIndex: 'saleTotalPrice',
+      key: 'saleTotalPrice',
+      render: MoneyRender
+    },
+    {
+      title: '优惠券',
+      dataIndex: 'faceValue',
+      key: 'faceValue'
+    },
+    {
+      title: '应付金额',
+      dataIndex: 'dealTotalPrice',
+      key: 'dealTotalPrice',
+      render: MoneyRender
+    },
+    {
+      title: '优惠金额',
+      dataIndex: 'discountPrice',
+      key: 'discountPrice',
+      render: MoneyRender
+    },
+    {
+      title: '实付金额',
+      dataIndex: 'preferentialTotalPrice',
+      key: 'preferentialTotalPrice',
+      render: MoneyRender
     }
-  },
-  {
-    title: '属性',
-    dataIndex: 'properties',
-    key: 'properties',
-  },
-  {
-    title: '单价',
-    dataIndex: 'salePrice',
-    key: 'salePrice',
-    render: MoneyRender
-  },
-  {
-    title: '数量',
-    dataIndex: 'quantity',
-    key: 'quantity',
-  },
-  {
-    title: '商品总价（元）',
-    dataIndex: 'saleTotalPrice',
-    key: 'saleTotalPrice',
-    render: MoneyRender
-  },
-  {
-    title: '优惠券',
-    dataIndex: 'faceValue',
-    key: 'faceValue'
-  },
-  {
-    title: '应付金额',
-    dataIndex: 'dealTotalPrice',
-    key: 'dealTotalPrice',
-    render: MoneyRender
-  },
-  {
-    title: '优惠金额',
-    dataIndex: 'discountPrice',
-    key: 'discountPrice',
-    render: MoneyRender
-  },
-  {
-    title: '实付金额',
-    dataIndex: 'preferentialTotalPrice',
-    key: 'preferentialTotalPrice',
-    render: MoneyRender
-  }
-];
+  ]
+};
 
 export const storeType = ['喜团', '1688', '淘宝联盟'];
 export const enumOrderStatus = {

@@ -66,7 +66,7 @@ class Detail extends Component {
                 </Row>
                 <Row>
                   <h4>商品信息</h4>
-                  <Table rowKey={record => record.productId} pagination={false} columns={getDetailColumns()} dataSource={orderServerVO.productVO || []} />
+                  <Table rowKey={record => record.productId} pagination={false} columns={getDetailColumns(1)} dataSource={orderServerVO.productVO || []} />
                 </Row>
               </Card>
               <Card title="订单信息">

@@ -17,9 +17,9 @@ class GoodsTable extends Component {
     modalInfo: {}
   }
   // 是否显示申请售后按钮
-  showApplyBtn = (orderStatus) => {
+  showApplyBtn = (orderStatus, orderType) => {
     console.log('orderStatus=>', orderStatus)
-    return [20, 30, 40, 50].includes(orderStatus)
+    return orderType !== 50 && [20, 30, 40, 50].includes(orderStatus)
   }
   handleApply = (record) => {
     const { orderInfo = {}, childOrder = {}, memberId } = this.props;
@@ -106,7 +106,7 @@ class GoodsTable extends Component {
         key: 'operate',
         render: (text, record, index) => (
           <>
-            {this.showApplyBtn(orderInfo.orderStatus) && <Button type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
+            {this.showApplyBtn(orderInfo.orderStatus, orderInfo.orderType) && <Button type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
             <Button type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: { ...record } })}>添加备注</Button>
             {record.canShowHistoryBtn && <Button type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>}
           </>
