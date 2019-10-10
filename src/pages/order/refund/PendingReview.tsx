@@ -170,6 +170,11 @@ class PendingReview extends React.Component<Props, State> {
                   style={{ width: 200 }}
                   data={refundType.getArray()}
                   placeholder="请选择售后类型"
+                  onChange={(value: any) => {
+                    this.props.form.setFieldsValue({
+                      returnReason: undefined
+                    })
+                  }}
                 />,
               )}
             </Form.Item>

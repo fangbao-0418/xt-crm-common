@@ -27,7 +27,7 @@ class AfterSaleSelect extends React.Component<Props, State>{
     this.setState({refundReason: result})
   }
   get refundReason() {
-    const refundType = this.props.refundType;
+    const refundType = String(this.props.refundType);
     let result = []
     if (refundType && this.state.refundReason) {
       result = this.state.refundReason[refundType];
