@@ -1,4 +1,4 @@
-import { post, exportFile, get, put, newPut, fetch } from '../../util/fetch';
+import { post, exportFile, get, put, newPut, newPost, fetch } from '../../util/fetch';
 import { prefix } from '../../util/utils';
 const debug = false;
 var qs = require('qs');
@@ -190,10 +190,7 @@ export function getRefundOrderDetail(data: any) {
 }
 
 export function refundOperate(data: any) {
-  return fetch('/order/afterSale/auditOperate', {
-    method: 'POST',
-    data
-  });
+  return newPost('/order/afterSale/auditOperate', data);
 }
 
 export function getStoreList(data: any) {

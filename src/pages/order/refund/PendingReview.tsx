@@ -58,8 +58,10 @@ class PendingReview extends React.Component<Props, State> {
           payload.returnContact = checkVO.returnContact;
           payload.returnPhone = checkVO.returnPhone;
           payload.returnAddress = checkVO.returnAddress;
-          Object.assign(payload, orderServerVO.contactVO)
+          payload.contactVO = orderServerVO.contactVO;
+          // Object.assign(payload, orderServerVO.contactVO)
         }
+        console.log('payload=>', payload);
         APP.dispatch({
           type: `${namespace}/auditOperate`,
           payload,
