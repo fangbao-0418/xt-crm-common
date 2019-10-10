@@ -10,7 +10,7 @@ import {
   ModifyLogisticsInfo,
   CheckExchange,
   CheckRefund,
-  CheckBox,
+  CheckBoth,
   PlatformDelivery,
   ComplateAfterSale,
   OperatingFailed
@@ -88,7 +88,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             {/* 待平台收货 */}
             {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && (
               <>
-                {this.isRefundTypeOf(enumRefundType.Both) && <CheckBox data={this.props.data}/>}
+                {this.isRefundTypeOf(enumRefundType.Both) && <CheckBoth data={this.props.data}/>}
                 {this.isRefundTypeOf(enumRefundType.Exchange) && <CheckExchange checkVO={checkVO} />}
               </>
               
@@ -116,7 +116,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             {/* 等待客服跟进 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitCustomerServiceOperating) && (
               <>
-                {this.isRefundTypeOf(enumRefundType.Refund) && <CheckRefund data={this.props.data} />}
+                {this.isRefundTypeOf(enumRefundType.Both) && <CheckBoth data={this.props.data} />}
                 {this.isRefundTypeOf(enumRefundType.Exchange) && <CheckExchange checkVO={checkVO} />}
               </>
             )}

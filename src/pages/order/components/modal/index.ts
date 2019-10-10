@@ -5,7 +5,7 @@ export {default as ModifyLogisticsInfo} from './ModifyLogisticsInfo';
 export {default as ProcessResult} from './ProcessResult';
 export {default as CheckExchange} from './CheckExchange';
 export {default as CheckRefund} from './CheckRefund';
-export {default as CheckBox} from './CheckBox';
+export {default as CheckBoth} from './CheckBoth';
 export {default as ComplateAfterSale} from './ComplateAfterSale';
 export {default as PlatformDelivery} from './PlatformDelivery';
 export {default as OperatingFailed} from './OperatingFailed';

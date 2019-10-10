@@ -14,7 +14,7 @@ interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
 interface State {
   visible: boolean;
 }
-class CheckExchange extends React.Component<Props, State> {
+class CheckBoth extends React.Component<Props, State> {
   state: State = {
     visible: false,
   };
@@ -74,7 +74,10 @@ class CheckExchange extends React.Component<Props, State> {
   get isReturnShipping() {
     return this.freight > 0 && this.isTrigger;
   }
-
+  get showRefundBoth() {
+    let isAllow = this.props.form.getFieldValue('isAllow')
+    return isAllow === 1;
+  }
   render() {
     const { getFieldDecorator } = this.props.form;
     const checkVO = this.data.checkVO || {};
@@ -108,57 +111,60 @@ class CheckExchange extends React.Component<Props, State> {
                 </Radio.Group>,
               )}
             </Form.Item>
-            <Form.Item label="退货数目">
-              {getFieldDecorator('serverNum', {
-                initialValue: checkVO.serverNum,
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入退货数目'
-                  },
-                ],
-              })(
-                <InputNumber
-                  min={0}
-                  max={checkVO.maxServerNum}
-                  placeholder="请输入"
-                  onChange={(value: any) => {
-                    let refundAmount = (value || 0) * checkVO.unitPrice;
-                    this.props.form.setFieldsValue({
-                      refundAmount: (refundAmount / 100) || 0
-                    })
-                  }}
-                />
-              )}
-              <span>（最多可售后数目{checkVO.maxServerNum}）</span>
-            </Form.Item>
-            <Form.Item label="退款金额">
-              {getFieldDecorator('refundAmount', {
-                initialValue: formatPrice(this.refundAmount),
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入退款金额',
-                  },
-                ],
-              })(
-                <InputNumber
-                  min={0.01}
-                  max={+formatPrice(this.refundAmount)}
-                  formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                  style={{ width: '100%' }}
-                />,
-              )}
-              <span>（最多可退￥{formatPrice(this.refundAmount)}）</span>
-            </Form.Item>
-            {this.isReturnShipping &&
-              <Form.Item label="退运费">
-                {getFieldDecorator('isRefundFreight', {
-                  initialValue: checkVO.isRefundFreight
-                })(
-                  <ReturnShippingSelect checkVO={checkVO} />,
-                )}
-              </Form.Item>
+            {this.showRefundBoth &&
+              <>
+                <Form.Item label="退货数目">
+                  {getFieldDecorator('serverNum', {
+                    initialValue: checkVO.serverNum,
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入退货数目'
+                      },
+                    ],
+                  })(
+                    <InputNumber
+                      min={0}
+                      max={checkVO.maxServerNum}
+                      placeholder="请输入"
+                      onChange={(value: any) => {
+                        let refundAmount = (value || 0) * checkVO.unitPrice;
+                        this.props.form.setFieldsValue({
+                          refundAmount: (refundAmount / 100) || 0
+                        })
+                      }}
+                    />
+                  )}
+                  <span>（最多可售后数目{checkVO.maxServerNum}）</span>
+                </Form.Item>
+                <Form.Item label="退款金额">
+                  {getFieldDecorator('refundAmount', {
+                    initialValue: formatPrice(this.refundAmount),
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入退款金额',
+                      },
+                    ],
+                  })(
+                    <InputNumber
+                      min={0.01}
+                      max={+formatPrice(this.refundAmount)}
+                      formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    />,
+                  )}
+                  <span>（最多可退￥{formatPrice(this.refundAmount)}）</span>
+                </Form.Item>
+                {this.isReturnShipping &&
+                  <Form.Item label="退运费">
+                    {getFieldDecorator('isRefundFreight', {
+                      initialValue: checkVO.isRefundFreight
+                    })(
+                      <ReturnShippingSelect checkVO={checkVO} />,
+                    )}
+                  </Form.Item>
+                }
+              </>
             }
             <Form.Item label="说    明">
               {getFieldDecorator('info')(<Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />)}
@@ -172,4 +178,4 @@ class CheckExchange extends React.Component<Props, State> {
     );
   }
 }
-export default withRouter(Form.create<Props>()(CheckExchange));
+export default withRouter(Form.create<Props>()(CheckBoth));

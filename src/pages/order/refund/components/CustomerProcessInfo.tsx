@@ -8,16 +8,8 @@ interface Props {
   data: AfterSalesInfo.data;
 }
 
-type CheckVO = AfterSalesInfo.CheckVO;
-
-// 退货地址
-// const returnAddress = (checkVO: CheckVO) => {
-//   return checkVO.returnContact + ' ' + checkVO.returnPhone + ' ' + checkVO.returnAddress;
-// }
-
 const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
-  let checkVO: CheckVO = data.checkVO || {};
-  let orderInfoVO = data.orderInfoVO || {};
+  let checkVO = data.checkVO || {};
   let orderServerVO = data.orderServerVO || {};
   let contactVO = orderServerVO.contactVO || {};
   const isRefundTypeOf = (refundType: number | string) => {
@@ -36,7 +28,7 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
       {isRefundTypeOf(enumRefundType.Refund) && <Row>退运费：{formatMoneyWithSign(checkVO.freight)}</Row>}
       {/* 换货 */}
       {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{`${contactVO.contact} ${contactVO.phone} ${contactVO.province}${contactVO.city}${contactVO.district}${contactVO.street}`}</Row>}
-      <Row>说 明：{checkVO.firstServerDescribe}</Row>
+      <Row>说 明：{checkVO.serverDescribe}</Row>
     </div>
   );
 };
