@@ -88,7 +88,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             {/* 待平台收货 */}
             {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && (
               <>
-                {this.isRefundTypeOf(enumRefundType.Both) && <CheckBox checkVO={checkVO}/>}
+                {this.isRefundTypeOf(enumRefundType.Both) && <CheckBox data={this.props.data}/>}
                 {this.isRefundTypeOf(enumRefundType.Exchange) && <CheckExchange checkVO={checkVO} />}
               </>
               

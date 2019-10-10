@@ -91,7 +91,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
     const initialObj: any = {}
     const disabledObj: any = {}
     if (modalInfo.childOrder && modalInfo.childOrder.orderStatus === 20) {
-      initialObj.initialValue = '20'
+      initialObj.initialValue = 20
       disabledObj.disabled = true
     }
     let { skuDetail } = this.state

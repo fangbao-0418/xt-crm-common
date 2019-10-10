@@ -221,7 +221,7 @@ class PendingReview extends React.Component<Props, State> {
                 <span>（最多可售后数目：{checkVO.maxServerNum}）</span>
               </Form.Item>
             </Row>
-            {this.isRefundTypeOf(enumRefundType.Refund) && (
+            {!this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="退款金额">
                 {getFieldDecorator('refundAmount', {
                   initialValue: formatPrice(this.refundAmount),
@@ -236,7 +236,6 @@ class PendingReview extends React.Component<Props, State> {
                     min={0.01}
                     max={+formatPrice(this.refundAmount)}
                     formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    style={{ width: '100%' }}
                   />,
                 )}
                 <span>（最多可退￥{formatPrice(this.refundAmount)}）</span>

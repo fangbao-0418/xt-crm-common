@@ -20,7 +20,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
       <Row gutter={24}>
         <Col span={8}>子订单号：{orderInfoVO.childOrderCode}</Col>
         <Col span={8}>订单状态：{orderInfoVO.orderStatusStr}</Col>
-        <Col span={8}>订单来源：{orderInfoVO.payTypeStr}</Col>
+        <Col span={8}>订单来源：{orderInfoVO.platform}</Col>
         <Col span={8}>买家名称：{orderInfoVO.name}</Col>
         <Col span={8}>联系电话：{orderInfoVO.phone}</Col>
       </Row>
@@ -32,7 +32,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>会员等级：{memberType.getValue(orderInfoVO.orderMemberType)}</Col>
       </Row>
       <Row gutter={24}>
-        <Col span={8}>支付方式：{orderInfoVO.platform}</Col>
+        <Col span={8}>支付方式：{orderInfoVO.payTypeStr}</Col>
         <Col span={8}>支付时间：{moment(orderInfoVO.payTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
         <Col span={8}>交易流水号：{orderInfoVO.paymentNumber}</Col>
       </Row>
