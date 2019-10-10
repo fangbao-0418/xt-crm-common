@@ -2,7 +2,7 @@ import React, { Component, PureComponent, useState, useEffect } from 'react';
 import { Modal, Checkbox, Icon, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import * as api from './api';
-import { isEqual } from 'lodash';
+import { isEqual, omitBy, isNil,filter } from 'lodash';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -10,12 +10,12 @@ const CheckboxGroup = Checkbox.Group;
  * 省组件
  */
 const Group = (props) => {
-    const { source,checkedSource:{children=[]} } = props;
+    const { source, checkedSource: { children = [] } } = props;
     const [status, setStatus] = useState(false);
     const [indeterminate, setIndeterminate] = useState(!!children.length && children.length < source.children.length);
     const [checkAll, setCheckAll] = useState(children.length === source.children.length);
     const [checkedList, setCheckedList] = useState(children);
-    
+
     const onCheckAllChange = (e) => {
         const { checked } = e.target;
         setIndeterminate(false);
@@ -35,10 +35,10 @@ const Group = (props) => {
 
     useEffect(() => {
         if (status) {
-            props.changeChecked({
+            props.changeChecked(omitBy({
                 ...source,
                 children: checkedList
-            });
+            }, isNil));
         } else {
             setStatus(true);
         }
@@ -93,12 +93,12 @@ class CascaderCity extends (PureComponent || Component) {
         super(props);
         this.state = {
             sourceData: [],
-            checkedSourceData: props.defaultValue||[]
+            checkedSourceData: props.defaultValue || []
         }
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.value&&!isEqual(nextProps.value, prevState.checkedSourceData)) {
+        if (nextProps.value && !isEqual(nextProps.value, prevState.checkedSourceData)) {
             return {
                 checkedSourceData: nextProps.value
             }
@@ -121,7 +121,7 @@ class CascaderCity extends (PureComponent || Component) {
                 {
                     sourceData.map(item => {
                         const checkedItem = checkedSourceData.find(checkedItem => checkedItem.id === item.id);
-                        return <Group key={item.id} source={item} checkedSource={checkedItem||{}} changeChecked={this.changeChecked} />
+                        return <Group key={item.id} source={item} checkedSource={checkedItem || {}} changeChecked={this.changeChecked} />
                     })
                 }
             </div>
@@ -129,7 +129,6 @@ class CascaderCity extends (PureComponent || Component) {
     }
 
     changeChecked = ((checkedData) => {
-        console.log(checkedData);
         const { checkedSourceData } = this.state;
         const existItem = checkedSourceData.find(item => item.id === checkedData.id);
         if (existItem) {
@@ -146,7 +145,7 @@ class CascaderCity extends (PureComponent || Component) {
 
     onOk = () => {
         const { checkedSourceData } = this.state;
-        this.props.onOk(checkedSourceData);
+        this.props.onOk(filter(checkedSourceData, item => item.children.length));
     }
 
     onCancel = () => {
@@ -160,9 +159,9 @@ CascaderCity.propTypes = {
     // 显示状态
     visible: PropTypes.bool,
     // 默认选中数据
-    defaultValue:PropTypes.array,
+    defaultValue: PropTypes.array,
     // 选中数据
-    value:PropTypes.array,
+    value: PropTypes.array,
     // 确定事件
     onOk: PropTypes.func,
     // 取消事件
