@@ -46,3 +46,24 @@ export const ORDER_TYPE = {
   '30': '助力分兑换订单',
   '40': '采购订单'
 }
+
+export const ExpressCompanyOptions = {
+  ems: 'EMS',
+  shunfeng: '顺丰',
+  shentong: '申通',
+  yuantong: '圆通',
+  zhongtong: '中通',
+  huitongkuaidi: '汇通',
+  yunda: '韵达',
+  guotongkuaidi: '国通',
+  debangwuliu: '德邦',
+  jd: '京东',
+  tiantian: '天天快递',
+  youzhengbk: "邮政标准快递",
+  youzhengguonei: "邮政快递包裹",
+  annengwuliu: "安能物流",
+  zhaijisong: "宅急送",
+  lbex: "龙邦物流",
+  youshuwuliu: "优速物流",
+  pjbest: "品骏"
+};
