@@ -83,8 +83,9 @@ class ApplyAfterSale extends React.Component<Props, State> {
     })
   }
   get amount() {
-    const serverNum = this.props.form.getFieldValue('serverNum');
-    return serverNum * this.state.skuDetail.unitPrice;
+    let serverNum = this.props.form.getFieldValue('serverNum');
+    let skuDetail = this.state.skuDetail;
+    return serverNum === skuDetail.serverNum ? skuDetail.amount: serverNum * skuDetail.unitPrice;
   }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;

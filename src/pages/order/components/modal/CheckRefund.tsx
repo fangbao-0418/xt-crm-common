@@ -23,10 +23,10 @@ class CheckRefund extends React.Component<Props, State> {
     super(props);
     this.onOk = this.onOk.bind(this);
   }
-  get refundAmount(): number {
+  get refundAmount() {
     const serverNum = this.props.form.getFieldValue('serverNum');
     let checkVO = this.data.checkVO || {};
-    return serverNum * checkVO.unitPrice;
+    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : serverNum * checkVO.unitPrice;
   }
   get data() {
     return this.props.data || {};

@@ -50,7 +50,7 @@ class CheckBoth extends React.Component<Props, State> {
   get refundAmount() {
     let serverNum = this.props.form.getFieldValue('serverNum');
     let checkVO = this.data.checkVO || {};
-    return serverNum * checkVO.unitPrice;
+    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : serverNum * checkVO.unitPrice;
   }
   get freight() {
     let checkVO = this.data.checkVO || {};

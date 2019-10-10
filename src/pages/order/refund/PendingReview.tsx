@@ -36,7 +36,6 @@ class PendingReview extends React.Component<Props, State> {
   handleAuditOperate = (status: number) => {
     this.props.form.validateFields((errors, values) => {
       if (!errors) {
-        console.log(values)
         if (values.serverNum == 0) {
           message.error('售后数目必须大于0');
           return;
@@ -48,7 +47,7 @@ class PendingReview extends React.Component<Props, State> {
           values.isRefundFreight = this.props.data.checkVO.isRefundFreight;
         }
         let payload = {
-          id: this.props.match.params.id,
+          id: +this.props.match.params.id,
           status,
           ...values
         };
@@ -72,7 +71,7 @@ class PendingReview extends React.Component<Props, State> {
   get refundAmount() {
     let checkVO = this.props.data.checkVO || {};
     let serverNum = this.props.form.getFieldValue('serverNum');
-    return serverNum * checkVO.unitPrice;
+    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount: serverNum * checkVO.unitPrice;
   }
   // 是否退运费
   isReturnShipping() {
@@ -82,7 +81,7 @@ class PendingReview extends React.Component<Props, State> {
     orderServerVO = Object.assign({}, orderServerVO);
     checkVO = Object.assign({}, checkVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
-    const refundAmount = this.refundAmount;
+    const refundAmount = this.props.form.getFieldValue('refundAmount');
     const hasFreight = checkVO.freight > 0;
     // 是否触发退运费的逻辑
     const isTrigger =
