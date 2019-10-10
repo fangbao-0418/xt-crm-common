@@ -6,7 +6,6 @@ declare module AfterSalesInfo {
     isDelete: number;
     orderServerVO: OrderServerVO;
     orderInfoVO: OrderInfoVO;
-    orderSkuServerParamVO: OrderSkuServerParamVO;
     checkVO: CheckVO;
     skuServerLogVO: any[]
   }
@@ -32,7 +31,8 @@ declare module AfterSalesInfo {
     freight: number;
     serverNum: number;
     unitPrice: number;
-    maxServerNum?:number;
+    maxServerNum:number;
+    maxRefundAmount: number;
   }
   export interface OrderInfoVO {
     mainOrderId: number;
@@ -116,31 +116,6 @@ declare module AfterSalesInfo {
     canShowHistoryBtn: boolean;
     ableRefundAmount: number;
     alreadyRefundSkuAmount: number;
-  }
-
-  export interface OrderSkuServerParamVO {
-    mainOrderId:       number;
-    childOrderId:      number;
-    info:              string;
-    skuId:             number;
-    refundType:        number;
-    imgUrl:            string[];
-    returnReason:      number;
-    amount:            number;
-    createType:        number;
-    serverNum:         number;
-    returnExpressName: null;
-    returnExpressCode: null;
-    returnExpressTime: null;
-    contact:           string;
-    phone:             string;
-    provinceId:        number;
-    province:          string;
-    cityId:            number;
-    city:              string;
-    districtId:        number;
-    district:          string;
-    street:            string;
   }
 }
 

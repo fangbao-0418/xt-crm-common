@@ -156,7 +156,7 @@ class PendingReview extends React.Component<Props, State> {
           <Form {...formItemLayout} style={{ width: '80%' }}>
             <Form.Item label="售后类型">
               {getFieldDecorator('refundType', {
-                initialValue: orderServerVO.refundType,
+                initialValue: checkVO.refundType,
                 rules: [
                   {
                     required: true,
@@ -198,15 +198,15 @@ class PendingReview extends React.Component<Props, State> {
             <Row>
               <Form.Item label="售后数目">
                 {getFieldDecorator('serverNum', {
-                  initialValue: orderServerVO.serverNum,
+                  initialValue: checkVO.serverNum,
                   rules: [
                     {
                       required: true,
                       message: '请输入售后数目',
                     },
                   ],
-                })(<InputNumber min={1} max={orderServerVO.serverNum} placeholder="请输入" />)}
-                <span>（最多可售后数目：{orderServerVO.serverNum}）</span>
+                })(<InputNumber min={1} max={checkVO.maxServerNum} placeholder="请输入" />)}
+                <span>（最多可售后数目：{checkVO.maxServerNum}）</span>
               </Form.Item>
             </Row>
             {this.isRefundTypeOf(enumRefundType.Refund) && (
@@ -222,11 +222,7 @@ class PendingReview extends React.Component<Props, State> {
                 })(
                   <InputNumber
                     min={0.01}
-                    max={formatMoney(
-                      orderServerVO.productVO &&
-                      orderServerVO.productVO[0] &&
-                      orderServerVO.productVO[0].ableRefundAmount,
-                    )}
+                    max={formatMoney()}
                     formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                     style={{ width: '100%' }}
                   />,
