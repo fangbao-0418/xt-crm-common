@@ -3,7 +3,7 @@ import { Card, Row, Col } from 'antd';
 import { formatMoney, joinFilterEmpty } from '@/pages/helper'
 import refundType from '@/enum/refundType';
 import { formatDate, isOnlyRefund, isReturnOfGoodsAndMoney, isOnlyExchange } from '@/pages/helper';
-import {ExpressCompanyOptions} from '@/components/express-company-select';
+import {ExpressCompanyOptions} from '@/config';
 function CheckDetail({ checkVO = {} }) {
   return (
     <>

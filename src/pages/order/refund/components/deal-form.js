@@ -18,7 +18,7 @@ import {
   formatDate
 } from '@/pages/helper';
 import { customerUpdate } from '../../api';
-import ExpressCompanySelect, {ExpressCompanyOptions} from '@/components/express-company-select';
+import ExpressCompanySelect from '@/components/express-company-select';
 import returnShipping from './return-shipping';
 import { Decimal } from 'decimal.js';
 
