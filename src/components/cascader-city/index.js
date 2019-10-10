@@ -6,13 +6,16 @@ import { isEqual } from 'lodash';
 
 const CheckboxGroup = Checkbox.Group;
 
+/**
+ * 省组件
+ */
 const Group = (props) => {
     const { source,checkedSource:{children=[]} } = props;
     const [status, setStatus] = useState(false);
     const [indeterminate, setIndeterminate] = useState(!!children.length && children.length < source.children.length);
     const [checkAll, setCheckAll] = useState(children.length === source.children.length);
     const [checkedList, setCheckedList] = useState(children);
-
+    
     const onCheckAllChange = (e) => {
         const { checked } = e.target;
         setIndeterminate(false);
@@ -62,6 +65,9 @@ const Group = (props) => {
     </span>
 }
 
+/**
+ * 市组件
+ */
 const CityGroup = (props) => {
     const { source } = props;
     return <div style={{ maxHeight: 210, overflow: 'auto' }}>
@@ -110,7 +116,6 @@ class CascaderCity extends (PureComponent || Component) {
     render() {
         const { ...props } = this.props;
         const { sourceData, checkedSourceData } = this.state;
-        console.log(checkedSourceData);
         return <Modal {...props} width={700} onOk={this.onOk}>
             <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
                 {
@@ -141,7 +146,6 @@ class CascaderCity extends (PureComponent || Component) {
 
     onOk = () => {
         const { checkedSourceData } = this.state;
-        console.log("result",checkedSourceData);
         this.props.onOk(checkedSourceData);
     }
 
@@ -151,11 +155,17 @@ class CascaderCity extends (PureComponent || Component) {
 }
 
 CascaderCity.propTypes = {
+    // 标题
     title: PropTypes.string,
+    // 显示状态
     visible: PropTypes.bool,
+    // 默认选中数据
     defaultValue:PropTypes.array,
+    // 选中数据
     value:PropTypes.array,
+    // 确定事件
     onOk: PropTypes.func,
+    // 取消事件
     onCancel: PropTypes.func
 }
 
