@@ -4,11 +4,13 @@ import { connect } from 'react-redux';
 import { Row, Col, Button } from 'antd';
 import { enumRefundStatus } from '../../constant';
 import { namespace } from '../model';
+import { enumRefundType } from '../../constant';
 import {
   RemarkModal,
   ModifyLogisticsInfo,
   CheckExchange,
   CheckRefund,
+  CheckBox,
   PlatformDelivery,
   ComplateAfterSale,
   OperatingFailed
@@ -38,8 +40,10 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     });
   }
   isRefundStatusOf(status: number) {
-    let orderServerVO = this.props.data.orderServerVO || {};
-    return orderServerVO.refundStatus == status;
+    return this.props.data.refundStatus === status;
+  }
+  isRefundTypeOf(type: number) {
+    return this.props.data.refundType === type;
   }
   render() {
     let { orderServerVO, orderInfoVO, checkVO } = this.props.data;
@@ -82,7 +86,13 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
               </>
             )}
             {/* 待平台收货 */}
-            {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && <CheckExchange checkVO={checkVO}/>}
+            {this.isRefundStatusOf(enumRefundStatus.OperatingOfGoods) && (
+              <>
+                {this.isRefundTypeOf(enumRefundType.Both) && <CheckBox checkVO={checkVO}/>}
+                {this.isRefundTypeOf(enumRefundType.Exchange) && <CheckExchange checkVO={checkVO} />}
+              </>
+              
+            )}
             {/* 待平台发货 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitPlatformDelivery) && (
               <>
@@ -102,9 +112,14 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             )}
             {/* 待用户收货 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitUserReceipt) && <ComplateAfterSale />}
-            {this.isRefundStatusOf(enumRefundStatus.OperatingFailed) && <OperatingFailed/>}
+            {this.isRefundStatusOf(enumRefundStatus.OperatingFailed) && <OperatingFailed />}
             {/* 等待客服跟进 */}
-            {this.isRefundStatusOf(enumRefundStatus.WaitCustomerServiceOperating) && <CheckRefund data={this.props.data}/>}
+            {this.isRefundStatusOf(enumRefundStatus.WaitCustomerServiceOperating) && (
+              <>
+                {this.isRefundTypeOf(enumRefundType.Refund) && <CheckRefund data={this.props.data} />}
+                {this.isRefundTypeOf(enumRefundType.Exchange) && <CheckExchange checkVO={checkVO} />}
+              </>
+            )}
           </Col>
         </Row>
       </>
