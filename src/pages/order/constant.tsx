@@ -133,9 +133,9 @@ export enum enumRefundStatus {
  * @property Exchange {string} 换货:30
  */
 export enum enumRefundType {
-  Both = '10',
-  Refund = '20',
-  Exchange = '30',
+  Both = 10,
+  Refund = 20,
+  Exchange = 30,
 };
 
 export const TextMapRefundStatus = {

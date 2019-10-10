@@ -76,7 +76,8 @@ class CheckExchange extends React.Component<Props, State> {
                     message: '请输入换货数目'
                   },
                 ],
-              })(<InputNumber min={1} max={checkVO.serverNum} placeholder="请输入" />)}
+              })(<InputNumber min={0} max={checkVO.maxServerNum} placeholder="请输入" />)}
+              <span>（最多可售后数目{checkVO.maxServerNum}）</span>
             </Form.Item>
             <Form.Item label="说    明">
               {getFieldDecorator('info')(<Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />)}

@@ -68,7 +68,9 @@ class PendingReview extends React.Component<Props, State> {
     });
   };
   get refundAmount() {
-    return this.props.form.getFieldValue('refundAmount');
+    let checkVO = this.props.data.checkVO || {};
+    let serverNum = this.props.form.getFieldValue('serverNum');
+    return serverNum * checkVO.unitPrice;
   }
   // 是否退运费
   isReturnShipping() {
@@ -90,7 +92,7 @@ class PendingReview extends React.Component<Props, State> {
    * 获取售后类型
    * @returns {string|*}
    */
-  get refundType(): string {
+  get refundType(): number {
     return this.props.form.getFieldValue('refundType');
   }
   /**
@@ -99,7 +101,7 @@ class PendingReview extends React.Component<Props, State> {
   modifyAddress = () => {
     this.setState({ addressVisible: true });
   };
-  isRefundTypeOf(refundType: string) {
+  isRefundTypeOf(refundType: number) {
     return this.refundType === refundType;
   }
   isRefundStatusOf(refundStatus: number) {
@@ -185,7 +187,7 @@ class PendingReview extends React.Component<Props, State> {
             {this.isRefundTypeOf(enumRefundType.Refund) && (
               <Form.Item label="是否需要客服跟进">
                 {getFieldDecorator('isCustomerFollow', {
-                  initialValue: 1,
+                  initialValue: 0,
                   rules: [
                     {
                       required: true,
@@ -205,14 +207,24 @@ class PendingReview extends React.Component<Props, State> {
                       message: '请输入售后数目',
                     },
                   ],
-                })(<InputNumber min={1} max={checkVO.maxServerNum} placeholder="请输入" />)}
+                })(<InputNumber
+                    min={1}
+                    max={checkVO.maxServerNum}
+                    placeholder="请输入"
+                    onChange={(value: any) => {
+                      let refundAmount = (value || 0) * checkVO.unitPrice;
+                      this.props.form.setFieldsValue({
+                        refundAmount: (refundAmount / 100) || 0
+                      })
+                    }}
+                  />)}
                 <span>（最多可售后数目：{checkVO.maxServerNum}）</span>
               </Form.Item>
             </Row>
             {this.isRefundTypeOf(enumRefundType.Refund) && (
               <Form.Item label="退款金额">
                 {getFieldDecorator('refundAmount', {
-                  initialValue: formatPrice(checkVO.refundAmount),
+                  initialValue: formatPrice(this.refundAmount),
                   rules: [
                     {
                       required: true,
@@ -222,11 +234,12 @@ class PendingReview extends React.Component<Props, State> {
                 })(
                   <InputNumber
                     min={0.01}
-                    max={formatMoney()}
+                    max={+formatPrice(this.refundAmount)}
                     formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                     style={{ width: '100%' }}
                   />,
                 )}
+                <span>（最多可退￥{formatPrice(this.refundAmount)}）</span>
               </Form.Item>
             )}
             {this.isReturnShipping() && (

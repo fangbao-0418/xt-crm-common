@@ -83,7 +83,7 @@ const AfterSaleApplyInfo = (props: Props) => {
       <Row>
         {(orderServerVO.commentListVO || []).map(v => (
           <Col key={v.createTime}>
-            {v.info['操作'] + ' ' + v.info['备注内容']}（{formatDate(v.createTime)} {v.name}）
+            备注：{(Array.isArray(v.info) && v.info.length > 0) ? v.info[v.info.length -1].value: ''}（{formatDate(v.createTime)} {v.name}）
           </Col>
         ))}
       </Row>
