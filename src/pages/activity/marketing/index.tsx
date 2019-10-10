@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Button } from 'antd'
+import { Table, Button, Popconfirm } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import * as api from './api'
 import Search from './Search'
@@ -80,16 +80,24 @@ class Main extends React.Component<{}, State> {
             >
               查看
             </span>}
-            {[1, 2].indexOf(record.discountsStatus) > -1 && <span
-              className='href'
-              onClick={() => {
-                api.changeActivityStatus([record.id], 0).then(() => [
-                  this.fetchData()
-                ])
-              }}
-            >
-              关闭
-            </span>}
+            {[1, 2].indexOf(record.discountsStatus) > -1 && (
+              <Popconfirm
+                title="确定关闭该活动吗"
+                onConfirm={() => {
+                  api.changeActivityStatus([record.id], 0).then(() => [
+                    this.fetchData()
+                  ])
+                }}
+                okText="确定"
+                cancelText="取消"
+              >
+                <span
+                  className='href'
+                >
+                  关闭
+                </span>
+              </Popconfirm>
+            )}
           </div>
         )
       }
