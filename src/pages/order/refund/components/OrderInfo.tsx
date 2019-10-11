@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Row, Col, Table } from 'antd';
 import { getDetailColumns } from '../../constant';
-import { joinFilterEmpty } from '@/pages/helper';
+import { joinFilterEmpty, formatMoneyWithSign } from '@/pages/helper';
 import { ColumnProps } from 'antd/es/table';
 import { logisticsInformationColumns } from '../config';
 import memberType from '@/enum/memberType';
@@ -23,6 +23,8 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>订单来源：{orderInfoVO.platform}</Col>
         <Col span={8}>买家名称：{orderInfoVO.name}</Col>
         <Col span={8}>联系电话：{orderInfoVO.phone}</Col>
+        <Col span={8}>实付金额: {formatMoneyWithSign(orderInfoVO.payMoney)}</Col>
+        <Col span={8}>运费: {formatMoneyWithSign(orderInfoVO.freight)}</Col>
       </Row>
       <Row gutter={24}>
         <Col>收货信息：{joinFilterEmpty([orderInfoVO.consignee, orderInfoVO.consigneePhone, orderInfoVO.address])}</Col>

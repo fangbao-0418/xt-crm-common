@@ -19,6 +19,10 @@ class CheckExchange extends React.Component<Props, State> {
     super(props);
     this.onOk = this.onOk.bind(this);
   }
+  get showExchange() {
+    let isAllow = this.props.form.getFieldValue('isAllow');
+    return isAllow === 1;
+  }
   onOk() {
     this.props.form.validateFields((errors, values) => {
       if (values.serverNum == 0) {
@@ -71,18 +75,20 @@ class CheckExchange extends React.Component<Props, State> {
                 </Radio.Group>,
               )}
             </Form.Item>
-            <Form.Item label="换货数目">
-              {getFieldDecorator('serverNum', {
-                initialValue: checkVO.serverNum,
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入换货数目'
-                  },
-                ],
-              })(<InputNumber min={0} max={checkVO.maxServerNum} placeholder="请输入" />)}
-              <span>（最多可售后数目{checkVO.maxServerNum}）</span>
-            </Form.Item>
+            {this.showExchange &&
+              <Form.Item label="换货数目">
+                {getFieldDecorator('serverNum', {
+                  initialValue: checkVO.serverNum,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入换货数目'
+                    },
+                  ],
+                })(<InputNumber min={0} max={checkVO.maxServerNum} placeholder="请输入" />)}
+                <span>（最多可售后数目{checkVO.maxServerNum}）</span>
+              </Form.Item>
+            }
             <Form.Item label="说    明">
               {getFieldDecorator('info')(<Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />)}
             </Form.Item>

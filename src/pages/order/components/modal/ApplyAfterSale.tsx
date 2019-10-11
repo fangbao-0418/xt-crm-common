@@ -133,7 +133,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
                     rules: [
                       { required: true, message: '请输入退款金额' }
                     ],
-                    initialValue: (this.amount || 0) / 100 }
+                    initialValue: +formatPrice(this.amount) }
                   )(<InputNumber min={0} max={+formatPrice(this.amount)} />)}
                 <span className="ml10">（最多可退￥{formatPrice(this.amount)}）</span>
               </Form.Item>
