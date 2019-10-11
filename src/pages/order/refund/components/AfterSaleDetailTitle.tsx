@@ -118,6 +118,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
               <>
                 {this.isRefundTypeOf(enumRefundType.Both) && <CheckBoth data={this.props.data} />}
                 {this.isRefundTypeOf(enumRefundType.Exchange) && <CheckExchange checkVO={checkVO} />}
+                {this.isRefundTypeOf(enumRefundType.Refund) && <CheckRefund data={this.props.data} />}
               </>
             )}
           </Col>
