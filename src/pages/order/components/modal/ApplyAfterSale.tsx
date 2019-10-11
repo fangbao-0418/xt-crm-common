@@ -112,7 +112,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
             <Form.Item label="售后数目">
               {getFieldDecorator('serverNum', { rules: [{ required: true, message: '请填写售后数目' }], initialValue: skuDetail.serverNum })(
                 <InputNumber
-                  min={1}
+                  min={0}
                   max={skuDetail.serverNum}
                   placeholder="请输入"
                   onChange={(value: any = 0) => {

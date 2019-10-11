@@ -56,7 +56,7 @@ const AfterSaleApplyInfo = (props: Props) => {
         {orderServerVO.operator && <Col span={8}>处理人:{orderServerVO.operator}</Col>}
         <Col span={8}>申请人类型：{createType.getValue(orderServerVO.createType)}</Col>
         <Col span={8}>申请售后数目：{orderServerVO.serverNum}</Col>
-        <Col span={8}>申请售后金额：{formatMoneyWithSign(orderServerVO.amount)}</Col>
+        <Col span={8}>申请售后金额：{orderServerVO.amount && formatMoneyWithSign(orderServerVO.amount)}</Col>
         <Col span={8}>售后说明：{orderServerVO.info}</Col>
       </Row>
       <Row>

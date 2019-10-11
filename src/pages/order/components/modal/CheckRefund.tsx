@@ -133,7 +133,7 @@ class CheckRefund extends React.Component<Props, State> {
                       },
                     ],
                   })(<InputNumber
-                      min={1}
+                      min={0}
                       max={checkVO.maxServerNum}
                       placeholder="请输入"
                       onChange={(value: any = 0) => {
