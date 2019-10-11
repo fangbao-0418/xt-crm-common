@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox } from 'antd';
+import { Modal, Card, Form, Input, Tabs, Button, message, Table, Popover, Radio, Select, Cascader, Checkbox } from 'antd';
 import UploadView from '../../components/upload';
 import {
   map,
@@ -37,8 +37,6 @@ const formatMoneyBeforeRequest = price => {
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
-
-
 
 function treeToarr(list = [], arr) {
   const results = arr || [];
@@ -86,7 +84,10 @@ class GoodsEdit extends React.Component {
     propertyId1: '',
     propertyId2: '',
     productCategoryVO: {},
-    noSyncList: [] // 供应商skuID，商品编码, 库存，警戒库存，
+    noSyncList: [], // 供应商skuID，商品编码, 库存，警戒库存，
+    returnContact: '',
+    returnPhone: '',
+    returnAddress: ''
   };
 
   componentDidMount() {
@@ -174,6 +175,9 @@ class GoodsEdit extends React.Component {
         speSelect,
         propertyId1: res.propertyId1,
         propertyId2: res.propertyId2,
+        returnContact: res.returnContact,
+        returnPhone: res.returnPhone,
+        returnAddress: res.returnAddress
       });
       setFieldsValue({
         description: res.description,
@@ -380,6 +384,9 @@ class GoodsEdit extends React.Component {
         });
         const params = {
           ...vals,
+          returnContact: this.state.returnContact,
+          returnPhone: this.state.returnPhone,
+          returnAddress: this.state.returnAddress,
           property1: speSelect[0] && speSelect[0].title,
           property2: speSelect[1] && speSelect[1].title,
           skuAddList,
@@ -422,6 +429,16 @@ class GoodsEdit extends React.Component {
       callback();
     }
   }
+  handleDeleteAll = () => {
+    Modal.confirm({
+      title: '提示',
+      content: '确认要删除全部图片吗?',
+      onOk: () => {
+        this.props.form.setFieldsValue({ 'listImage': [] })
+      }
+    });
+  }
+  // handleMainImage = fileList => { };
 
   // renderTitle = (text, id) => {
   //   return (
@@ -444,7 +461,16 @@ class GoodsEdit extends React.Component {
   //     noSyncList
   //   })
   // }
-
+  isShowDeleteAll = () => {
+    const listImage = this.props.form.getFieldValue('listImage');
+    return listImage && listImage.length > 0;
+  }
+  handleInput = (event) => {
+    const { name, value } = event.target;
+    this.setState({
+      [name]: value
+    })
+  }
   render() {
     const columns = [
       {
@@ -800,10 +826,16 @@ class GoodsEdit extends React.Component {
           <Tabs type="editable-card" onEdit={this.handleTabsEdit} hideAdd={true}>
             {map(speSelect, (item, key) => (
               <TabsPane tab={item.title} key={key}>
+                <div className="mb10">
+                  <span>颜色</span>
+                  <Checkbox className="ml10">添加规格</Checkbox>
+                  <span>（建议尺寸：200*200，100kb）</span>
+                </div>
                 <div className={styles.spulist}>
                   {map(item.data, (data, index) => (
                     <div className={styles.spuitem} key={`d-${index}`}>
                       <Input placeholder="请设置规格名称" value={data} disabled />
+                      <UploadView className={styles["sku-upload"]} listType="picture-card" size={2} />
                       <Button
                         className={styles.spubtn}
                         type="danger"
@@ -820,6 +852,7 @@ class GoodsEdit extends React.Component {
                         value={spuName[key]}
                         onChange={this.handleChangeSpuName(key)}
                       />
+                      <UploadView className={styles["sku-upload"]} listType="picture-card" size={2} />
                       <Button
                         className={styles.spubtn}
                         type="primary"
@@ -859,14 +892,42 @@ class GoodsEdit extends React.Component {
               </Radio.Group>,
             )}
           </FormItem>
+          <FormItem label="退货地址">
+            <Input.Group>
+              <input
+                name="returnContact"
+                placeholder="收货人姓名"
+                value={this.state.returnContact}
+                onChange={this.handleInput}
+              />
+              <input
+                placeholder="收货人电话"
+                name="returnPhone"
+                value={this.state.returnPhone}
+                type="tel"
+                maxLength={11}
+                onChange={this.handleInput}
+              />
+              <input
+                style={{ flex: 1 }}
+                name="returnAddress"
+                value={this.state.returnAddress}
+                placeholder="收货人详细地址"
+                onChange={this.handleInput}
+              />
+            </Input.Group>
+          </FormItem>
         </Card>
         <Card style={{ marginTop: 10 }}>
           <FormItem label="商品详情页">
-            {getFieldDecorator('listImage')(
-              <UploadView showUploadList={true} size={0.3}>
-                <Button type="dashed">上传商品详情页</Button>
-              </UploadView>,
-            )}
+            <div className="mb20">
+              {getFieldDecorator('listImage')(
+                <UploadView showUploadList={true} size={0.3}>
+                  <Button type="dashed">上传商品详情页</Button>
+                </UploadView>,
+              )}
+            </div>
+            {this.isShowDeleteAll() && <Button type="primary" onClick={this.handleDeleteAll}>一键删除</Button>}
           </FormItem>
           <FormItem label="上架状态">
             {getFieldDecorator('status', {

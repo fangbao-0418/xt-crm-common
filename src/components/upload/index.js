@@ -46,14 +46,14 @@ class UploadView extends Component {
 
   initFileList(fileList = []) {
     const { fileType } = this.props;
-    return fileList.map(val => {
+    return Array.isArray(fileList) ? fileList.map(val => {
       val.durl = val.url
       if (fileType == 'video') {
         val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
         val.thumbUrl = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
       }
       return val;
-    });
+    }): [];
   }
 
   beforeUpload = (file, fileList) => {
@@ -108,6 +108,7 @@ class UploadView extends Component {
       showUploadList,
       children,
       accept,
+      ...attributes
     } = this.props;
     const { fileList } = this.state;
     return (
@@ -122,6 +123,7 @@ class UploadView extends Component {
           onRemove={this.handleRemove}
           customRequest={(e) => this.customRequest(e)}
           onPreview={this.onPreview}
+          {...attributes}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>
@@ -132,7 +134,7 @@ class UploadView extends Component {
           onOk={() => this.setState({ visible: false })}
           onCancel={() => this.setState({ visible: false })}
         >
-          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video> : <img src={this.state.url} />}
+          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video> : <img src={this.state.url} alt=""/>}
         </Modal>
       </>
     );

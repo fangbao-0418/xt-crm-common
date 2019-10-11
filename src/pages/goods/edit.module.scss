@@ -17,3 +17,17 @@
     }
   }
 }
+
+.sku-upload {
+  margin: 10px auto 0;
+  width: 104px;
+  display: block;
+  :global(.ant-upload.ant-upload-select-picture-card),
+  :global(.ant-upload-list-picture-card .ant-upload-list-item) {
+    margin: 0 !important;
+  }
+}
+
+.ant-input-group {
+
+}
