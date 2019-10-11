@@ -30,7 +30,8 @@ class CheckRefund extends React.Component<Props, State> {
     const serverNum = this.props.form.getFieldValue('serverNum');
     let checkVO = this.data.checkVO || {};
     let result = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber(): 0;
-    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : result;
+    let amount = serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : result;
+    return Math.min(amount, result);
   }
   get data() {
     return this.props.data || {};

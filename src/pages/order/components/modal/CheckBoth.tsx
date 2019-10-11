@@ -54,7 +54,8 @@ class CheckBoth extends React.Component<Props, State> {
     let serverNum = this.props.form.getFieldValue('serverNum');
     let checkVO = this.data.checkVO || {};
     let result = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber() : 0;
-    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : result;
+    let amount = serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : result;
+    return Math.min(amount, result);
   }
   get freight() {
     let checkVO = this.data.checkVO || {};

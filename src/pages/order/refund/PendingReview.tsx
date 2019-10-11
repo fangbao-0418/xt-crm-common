@@ -72,7 +72,8 @@ class PendingReview extends React.Component<Props, State> {
     let checkVO = this.props.data.checkVO || {};
     let serverNum = this.props.form.getFieldValue('serverNum');
     let result = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber(): 0;
-    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount: result;
+    let amount = serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount: result
+    return Math.min(result, amount);
   }
   // 是否退运费
   isReturnShipping() {
@@ -231,7 +232,7 @@ class PendingReview extends React.Component<Props, State> {
             {!this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="退款金额">
                 {getFieldDecorator('refundAmount', {
-                  initialValue: formatPrice(this.refundAmount),
+                  initialValue: +formatPrice(this.refundAmount),
                   rules: [
                     {
                       required: true,
