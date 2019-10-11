@@ -45,6 +45,7 @@ export type NamespaceProps = 'common' | 'marketing'
 export interface Props extends FormComponentProps {
   config?: FieldsConfig
   disabled?: boolean
+  readonly?: boolean
   size?: 'small' | 'middle'
   layout?: 'inline' | 'horizontal' | 'vertical'
   onChange?: (field?: string, value?: any, values?: any) => void

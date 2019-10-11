@@ -102,6 +102,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         fieldDecoratorOptions: {
           rules: [
             {
+              required: true,
+              message: '活动说明不能为空'
+            },
+            {
               max: 140,
               message: '活动说明，最多140个字符'
             }

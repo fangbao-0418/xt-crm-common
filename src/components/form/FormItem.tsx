@@ -37,6 +37,7 @@ interface Props extends OptionProps, FormItemProps {
   /** 控件是否校验 默认false，不进行校验 */
   verifiable?: boolean
   disabled?: boolean
+  readonly?: boolean
 }
 
 const ReadOnlyValue = React.forwardRef((props: React.Props<{}>, ref: any) => {
@@ -48,6 +49,7 @@ const ReadOnlyValue = React.forwardRef((props: React.Props<{}>, ref: any) => {
 function renderItem (option: Props, context: ContextProps) {
   const form = context.props.form
   const disabled = option.disabled || context.props.disabled
+  const readonly = option.readonly || context.props.readonly
   const {
     name,
     type,
@@ -61,8 +63,9 @@ function renderItem (option: Props, context: ContextProps) {
       controlProps.placeholder = controlProps.placeholder as string
       let placeholder = controlProps.placeholder === undefined ? `请输入${option.label}` : controlProps.placeholder
       let value = form.getFieldValue(name)
-      return !disabled ? (
+      return !readonly ? (
         <Input
+          disabled={disabled}
           {...controlProps}
           placeholder={placeholder}
         />
@@ -72,13 +75,14 @@ function renderItem (option: Props, context: ContextProps) {
   case 'textarea':
     node = (() => {
       let placeholder = controlProps.placeholder as string || `请输入${option.label}`
-      let value = form.getFieldValue(name)
-      return !disabled ? (
+      // let value = form.getFieldValue(name)
+      return (
         <Input.TextArea
+          disabled={disabled}
           {...controlProps}
           placeholder={placeholder}
         />
-      ) : <ReadOnlyValue>{value}</ReadOnlyValue>
+      )
     })()
     break
   case 'radio':

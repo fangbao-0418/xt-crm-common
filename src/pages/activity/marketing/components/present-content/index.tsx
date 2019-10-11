@@ -22,8 +22,8 @@ interface State {
 }
 const defaultValue: ValueProps = {
   type: 0,
-  chooseCount: 1,
-  stageCount: 1,
+  chooseCount: 0,
+  stageCount: 0,
   couponList: [],
   skuList: [],
   spuIds: {},
@@ -43,6 +43,7 @@ class Main extends React.Component<Props, State> {
     this.value = value
   }
   public onChange () {
+    console.log(this.value, 'onchange')
     this.setState({
       value: this.value
     })
@@ -54,9 +55,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { value } = this.state
-    const skuList = value && value.skuList || []
     const couponList = value && value.couponList || []
-    const activityList = value && value.activityList || []
     const type = value.type || 0
     const { name, giftCanEdit } = this.props
     const disabled = this.props.disabled === undefined ? true : this.props.disabled
@@ -94,11 +93,12 @@ class Main extends React.Component<Props, State> {
           }}
           controlProps={{
             style: {
-              width: 50,
-              marginRight: 5
+              width: 80,
+              marginRight: 15
             },
+            type: 'number',
             onChange: (e: any) => {
-              this.value.stageCount = e.target.value
+              this.value.stageCount = Number(e.target.value) || 0
               this.onChange()
             }
           }}
@@ -138,7 +138,7 @@ class Main extends React.Component<Props, State> {
             <FormItem
               style={{
                 display: 'inline-block',
-                width: 80,
+                width: 140,
               }}
               labelCol={{span: 0}}
               wrapperCol={{span: 14}}
@@ -150,8 +150,9 @@ class Main extends React.Component<Props, State> {
                 initialValue: value.chooseCount
               }}
               controlProps={{
+                type: 'number',
                 onChange: (e: any) => {
-                  this.value.chooseCount = e.target.value
+                  this.value.chooseCount = Number(e.target.value) || 0
                   this.onChange()
                 }
               }}

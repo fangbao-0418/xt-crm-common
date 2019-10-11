@@ -14,6 +14,7 @@ interface Props {
 const mapper = ['一', '二', '三', '四', '五'] 
 class Main extends React.Component<Props> {
   public onChange (value: ValueProps[]) {
+    console.log(value, 'ladder change')
     if (this.props.onChange) {
       this.props.onChange([...value])
     }

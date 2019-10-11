@@ -66,7 +66,7 @@ class Main extends React.Component<Props, State> {
         this.setState({
           values: res,
           ladderCount: res.rank.ruleList.length,
-          disabled: [1].indexOf(res.discountsStatus) === -1,
+          disabled: (this.type !== 'edit' || [1].indexOf(res.discountsStatus) === -1),
           giftCanEdit: this.type === 'edit'
         })
       }
@@ -93,9 +93,55 @@ class Main extends React.Component<Props, State> {
       this.couponModalInstance.open(value)
     }
   }
+  public validatePresent (data: Marketing.FormDataProps) {
+    let arr: Marketing.PresentContentValueProps[] = []
+    const ruleType = data.strategyType
+    let message = ''
+    let type = ''
+    if (ruleType === 0) {
+      type = '循环规则'
+      arr = [data.loop]
+    } else {
+      arr = data.rank.ruleList
+    }
+    const index = arr.findIndex((item, index) => {
+      if (ruleType !== 0) {
+        const nums = ['一', '二', '三', '四', '五']
+        type = `第${nums[index]}阶梯规则`
+      } else {
+        type = '循环规则'
+      }
+      if (!item.stageCount) {
+        message = '请输入满足门槛件数'
+        return true
+      }
+      if (item.type === 0) {
+        if (!item.chooseCount) {
+          message = '请输入实物商品件数'
+          return true
+        } else if (!item.activityList || item.activityList && item.activityList.length === 0) {
+          message = '请选择活动商品'
+          return true
+        }
+      } else if (item.type === 1) {
+        if (!item.couponList || item.couponList && item.couponList.length === 0) {
+          message = '请选择优惠券'
+          return true
+        }
+      }
+    })
+    if (index > -1) {
+      APP.error(type + message)
+    }
+    return index === -1
+  }
   public save () {
     const value = this.form.getValues()
     this.form.props.form.validateFields((err) => {
+      console.log(value, 'err')
+      if (!this.validatePresent(value)) {
+        return
+      }
       if (err) {
         APP.error('请检查输入项是否正确')
         return
@@ -106,11 +152,14 @@ class Main extends React.Component<Props, State> {
       if (this.id === '-1') {
         api.addActivity(value).then(() => {
           APP.success('保存成功')
-        }).finally(() => {
           this.setState({
             loading: false
           }, () => {
             APP.history.push('/activity/marketing')
+          })
+        }, () => {
+          this.setState({
+            loading: false
           })
         })
       } else {
@@ -164,11 +213,12 @@ class Main extends React.Component<Props, State> {
                   {
                     validator: (rule, value, cb) => {
                       console.log(value, 'value')
-                      if (!value[0] && !value[0]) {
+                      if (!value || value && !(value[0] && value[1])) {
                         cb('请选择活动时间')
-                        return
+                        // return
+                      } else {
+                        cb()
                       }
-                      cb()
                     }
                   }
                 ]
