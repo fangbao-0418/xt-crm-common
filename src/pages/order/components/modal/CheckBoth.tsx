@@ -47,10 +47,14 @@ class CheckBoth extends React.Component<Props, State> {
   get data() {
     return this.props.data || {};
   }
+  /**
+   * 售后金额
+   */
   get refundAmount() {
     let serverNum = this.props.form.getFieldValue('serverNum');
     let checkVO = this.data.checkVO || {};
-    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : serverNum * checkVO.unitPrice;
+    let result = new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber();
+    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : result;
   }
   get freight() {
     let checkVO = this.data.checkVO || {};
@@ -127,11 +131,9 @@ class CheckBoth extends React.Component<Props, State> {
                       min={0}
                       max={checkVO.maxServerNum}
                       placeholder="请输入"
-                      onChange={(value: any) => {
-                        let refundAmount = (value || 0) * checkVO.unitPrice;
-                        this.props.form.setFieldsValue({
-                          refundAmount: (refundAmount / 100) || 0
-                        })
+                      onChange={(value: any = 0) => {
+                        let refundAmount = new Decimal(checkVO.unitPrice).mul(value).ceil().div(100).toNumber();
+                        this.props.form.setFieldsValue({ refundAmount })
                       }}
                     />
                   )}

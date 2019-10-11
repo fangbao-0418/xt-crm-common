@@ -71,7 +71,8 @@ class PendingReview extends React.Component<Props, State> {
   get refundAmount() {
     let checkVO = this.props.data.checkVO || {};
     let serverNum = this.props.form.getFieldValue('serverNum');
-    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount: serverNum * checkVO.unitPrice;
+    let result = new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber();
+    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount: result;
   }
   // 是否退运费
   isReturnShipping() {
@@ -217,10 +218,10 @@ class PendingReview extends React.Component<Props, State> {
                     min={1}
                     max={checkVO.maxServerNum}
                     placeholder="请输入"
-                    onChange={(value: any) => {
-                      let refundAmount = (value || 0) * checkVO.unitPrice;
+                    onChange={(value: any = 0) => {
+                      let refundAmount = new Decimal(checkVO.unitPrice).mul(value).ceil().div(100).toNumber();
                       this.props.form.setFieldsValue({
-                        refundAmount: (refundAmount / 100) || 0
+                        refundAmount
                       })
                     }}
                   />)}

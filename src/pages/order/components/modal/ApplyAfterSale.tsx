@@ -85,7 +85,8 @@ class ApplyAfterSale extends React.Component<Props, State> {
   get amount() {
     let serverNum = this.props.form.getFieldValue('serverNum');
     let skuDetail = this.state.skuDetail;
-    return serverNum === skuDetail.serverNum ? skuDetail.amount: serverNum * skuDetail.unitPrice;
+    let result = new Decimal(skuDetail.unitPrice).mul(serverNum).ceil().toNumber()
+    return serverNum === skuDetail.serverNum ? skuDetail.amount: result;
   }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
@@ -114,11 +115,9 @@ class ApplyAfterSale extends React.Component<Props, State> {
                   min={1}
                   max={skuDetail.serverNum}
                   placeholder="请输入"
-                  onChange={(value) => {
-                    const amount = (value || 0) * this.state.skuDetail.unitPrice;
-                    this.props.form.setFieldsValue({
-                      amount: (amount / 100) || 0
-                    })
+                  onChange={(value: any = 0) => {
+                    let amount = new Decimal(skuDetail.unitPrice).mul(value).ceil().div(100).toNumber();
+                    this.props.form.setFieldsValue({ amount });
                   }}
                 />
               )}（最多可售后数目：{skuDetail.serverNum}）

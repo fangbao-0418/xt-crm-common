@@ -23,10 +23,14 @@ class CheckRefund extends React.Component<Props, State> {
     super(props);
     this.onOk = this.onOk.bind(this);
   }
+  /**
+   * 售后金额
+   */
   get refundAmount() {
     const serverNum = this.props.form.getFieldValue('serverNum');
     let checkVO = this.data.checkVO || {};
-    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : serverNum * checkVO.unitPrice;
+    let result = new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber();
+    return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : result;
   }
   get data() {
     return this.props.data || {};
@@ -132,11 +136,9 @@ class CheckRefund extends React.Component<Props, State> {
                       min={1}
                       max={checkVO.maxServerNum}
                       placeholder="请输入"
-                      onChange={(value: any) => {
-                        let refundAmount = (checkVO.unitPrice || 0) * value 
-                        this.props.form.setFieldsValue({
-                          refundAmount: (refundAmount / 100) || 0 
-                        })
+                      onChange={(value: any = 0) => {
+                        let refundAmount = new Decimal(checkVO.unitPrice).mul(value).ceil().div(100).toNumber();
+                        this.props.form.setFieldsValue({ refundAmount })
                       }}
                   />)}
                   <span className="ml10">最多可售后数目：{checkVO.maxServerNum}</span>
