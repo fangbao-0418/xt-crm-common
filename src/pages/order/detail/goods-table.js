@@ -6,7 +6,7 @@ import { getDetailColumns, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
 import { Decimal } from 'decimal.js';
 import { formatDate } from '../../helper';
-import { customerAdd } from '../api';
+import { customerAdd, customerAddCheck } from '../api';
 import { setOrderRemark, setRefundOrderRemark } from '../api';
 
 @withRouter
@@ -58,22 +58,38 @@ class GoodsTable extends Component {
         if (fields.amount) {
           fields.amount = new Decimal(fields.amount).mul(100).toNumber();
         }
-        console.log('modalInfo=>', modalInfo)
-        const res = await customerAdd({
+        console.log('modalInfo=>', modalInfo);
+        const data = {
           childOrderId: modalInfo.childOrderId,
           mainOrderId: modalInfo.mainOrderId,
           memberId: modalInfo.memberId,
           skuId: modalInfo.skuId,
           ...fields
-        });
-        if (res.success) {
-          message.success('申请售后成功');
-          this.setState({
-            visible: false
-          }, this.props.query)
+        };
+        const res = await customerAddCheck(data);
+        if (res.success) this.customerAdd(data);
+        else {
+          Modal.confirm({
+            title: '系统提示',
+            content: res.message,
+            okText: '确定',
+            cancelText: '取消',
+            onOk: () => {
+              this.customerAdd(data);
+            }
+          });
         }
       }
     })
+  }
+  async customerAdd(data) {
+    const res = await customerAdd(data);
+    if (res.success) {
+      message.success('申请售后成功');
+      this.setState({
+        visible: false
+      }, this.props.query)
+    }
   }
   lookForHistory = ({ orderCode, productId }) => {
     const { history } = this.props;

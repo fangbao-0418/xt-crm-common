@@ -57,6 +57,7 @@ class Detail extends Component {
                 <Row gutter={24}>
                   <Col span={8}>申请人类型：{createType.getValue(orderServerVO.createType + '')}</Col>
                   <Col span={8}>订单类型：{ORDER_TYPE[orderInfoVO.orderType]}</Col>
+                  <Col span={8}>供应商操作：{orderServerVO.supplierOperate === 10 ? '同意': '-'}</Col>
                 </Row>
                 <Row>
                   <Col>
