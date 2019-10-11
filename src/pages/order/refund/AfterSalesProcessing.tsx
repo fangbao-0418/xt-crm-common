@@ -5,7 +5,6 @@ import {
   CustomerProcessInfo,
   LogisticsInformation,
   SupplierProcessInfo,
-  // RefundInformation,
   AfterSaleApplyInfo,
   CloseInfo
 } from './components';

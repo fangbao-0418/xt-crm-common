@@ -123,6 +123,13 @@ export function closeOrder(id: number, info: any) {
   return put(`/order/afterSale/close/${id}`, {info});
 }
 /**
+ * 确认收货
+ * @param skuServerId 
+ */
+export function confirmReceipt(skuServerId: number) {
+  return newPost(`/order/afterSale/confirm/${skuServerId}`)
+}
+/**
  * 售后轨迹详情
  * @param skuServerId 
  */

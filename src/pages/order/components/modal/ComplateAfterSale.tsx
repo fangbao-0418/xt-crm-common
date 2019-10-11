@@ -13,7 +13,7 @@ class ComplateAfterSale extends React.Component<RouteComponentProps<{id: any}>, 
       content: '是否完成售后？',
       onOk: () => {
         APP.dispatch({
-          type: `${namespace}/closeOrder`,
+          type: `${namespace}/confirmReceipt`,
           payload: {
             id: this.props.match.params.id
           }
