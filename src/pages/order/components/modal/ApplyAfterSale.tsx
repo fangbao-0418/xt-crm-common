@@ -85,7 +85,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
   get amount() {
     let serverNum = this.props.form.getFieldValue('serverNum');
     let skuDetail = this.state.skuDetail;
-    let result = new Decimal(skuDetail.unitPrice).mul(serverNum).ceil().toNumber()
+    let result = skuDetail.unitPrice ? new Decimal(skuDetail.unitPrice).mul(serverNum).ceil().toNumber(): 0;
     return serverNum === skuDetail.serverNum ? skuDetail.amount: result;
   }
   render() {
@@ -116,7 +116,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
                   max={skuDetail.serverNum}
                   placeholder="请输入"
                   onChange={(value: any = 0) => {
-                    let amount = new Decimal(skuDetail.unitPrice).mul(value).ceil().div(100).toNumber();
+                    let amount = skuDetail.unitPrice ? new Decimal(skuDetail.unitPrice).mul(value).ceil().div(100).toNumber(): 0;
                     this.props.form.setFieldsValue({ amount });
                   }}
                 />

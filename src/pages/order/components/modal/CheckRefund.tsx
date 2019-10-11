@@ -29,7 +29,7 @@ class CheckRefund extends React.Component<Props, State> {
   get refundAmount() {
     const serverNum = this.props.form.getFieldValue('serverNum');
     let checkVO = this.data.checkVO || {};
-    let result = new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber();
+    let result = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber(): 0;
     return serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : result;
   }
   get data() {
@@ -137,7 +137,7 @@ class CheckRefund extends React.Component<Props, State> {
                       max={checkVO.maxServerNum}
                       placeholder="请输入"
                       onChange={(value: any = 0) => {
-                        let refundAmount = new Decimal(checkVO.unitPrice).mul(value).ceil().div(100).toNumber();
+                        let refundAmount = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(value).ceil().div(100).toNumber(): 0;
                         this.props.form.setFieldsValue({ refundAmount })
                       }}
                   />)}
