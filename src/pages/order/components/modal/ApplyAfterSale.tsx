@@ -23,6 +23,10 @@ interface Props extends FormComponentProps {
 interface State {
   skuDetail?: any;
 }
+
+function mul(unitPrice: number, serverNum: number = 0): number {
+  return new Decimal(unitPrice).mul(serverNum).toNumber()
+}
 class ApplyAfterSale extends React.Component<Props, State> {
   state: State = {
     skuDetail: {}
@@ -52,7 +56,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
         values.imgUrl = Array.isArray(values.imgUrl) ? values.imgUrl.map((v: any) => v.url) : [];
         values.imgUrl = values.imgUrl.map((urlStr: string) => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
         if (values.amount) {
-          values.amount = new Decimal(values.amount).mul(100).toNumber();
+          values.amount = mul(values.amount, 100);
         }
         const skuDetail = this.state.skuDetail;
         const res: any = await customerAdd({
@@ -104,7 +108,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
   /**
    * 最终退款金额
    */
-  get amount() {
+  get maxRefundAmount() {
     let { skuDetail } = this.state;
     let result = this.serverNum === skuDetail.serverNum ? skuDetail.amount : this.relatedAmount;
     return result;
@@ -156,8 +160,8 @@ class ApplyAfterSale extends React.Component<Props, State> {
                     ],
                     initialValue: formatPrice(skuDetail.amount)
                   }
-                )(<InputNumber min={0} max={formatPrice(this.amount)} />)}
-                <span className="ml10">（最多可退￥{formatPrice(this.amount)}）</span>
+                )(<InputNumber min={0} max={formatPrice(this.maxRefundAmount)} />)}
+                <span className="ml10">（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
               </Form.Item>
             }
             <Form.Item label="售后凭证">

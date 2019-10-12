@@ -5,7 +5,7 @@ import { FormComponentProps } from 'antd/lib/form';
 import { formItemLayout, radioStyle } from '@/config';
 import { namespace } from '../../refund/model';
 import { enumRefundType } from '../../constant';
-import { formatPrice } from '@/util/format';
+import { formatPrice, formatRMB } from '@/util/format';
 import { Decimal } from 'decimal.js';
 import ReturnShippingSelect from '../ReturnShippingSelect';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
@@ -13,6 +13,9 @@ interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
 }
 interface State {
   visible: boolean;
+}
+function mul(unitPrice: number, serverNum: number = 0): number {
+  return new Decimal(unitPrice).mul(serverNum).toNumber()
 }
 class CheckBoth extends React.Component<Props, State> {
   state: State = {
@@ -47,37 +50,90 @@ class CheckBoth extends React.Component<Props, State> {
   get data() {
     return this.props.data || {};
   }
-  /**
-   * 售后金额
-   */
-  get refundAmount() {
-    let serverNum = this.props.form.getFieldValue('serverNum');
-    let checkVO = this.data.checkVO || {};
-    let result = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber() : 0;
-    let amount = serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount : result;
-    return Math.min(amount, result);
+  get serverNum() {
+    return this.props.form.getFieldValue('serverNum');
   }
+  /**
+ * 输入框输入的售后金额
+ */
+  get refundAmount(): number {
+    let result = this.props.form.getFieldValue('refundAmount');
+    return mul(result, 100);
+  }
+  /**
+ * 运费是否大于0
+ */
+  get hasFreight(): boolean {
+    return this.checkVO.freight > 0;
+  }
+  /**
+* 售后申请信息对象
+*/
+  get orderServerVO(): AfterSalesInfo.OrderServerVO {
+    return this.props.data.orderServerVO || {};
+  }
+  /**
+* 是否退运费
+* @param 退款金额
+* @param alreadyRefundAmount 已经退款金额
+* @param freight 运费
+*/
+  get isReturnShipping(): boolean {
+    let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    return this.hasFreight && result;
+  }
+  /**
+  * 售后单价
+  */
+  get unitPrice(): number {
+    return this.checkVO.unitPrice || 0;
+  }
+  /**
+  * 根据售后数目计算退款金额
+  */
+  get relatedAmount(): number {
+    let result = mul(this.unitPrice, this.serverNum);
+    return Math.min(result, this.checkVO.maxRefundAmount);
+  }
+  /**
+   * 最终售后金额
+   */
+  get maxRefundAmount(): number {
+    return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount : this.relatedAmount;
+  }
+  /**
+   * 审核信息对象
+   */
+  get checkVO(): AfterSalesInfo.CheckVO {
+    return this.data.checkVO || {};
+  }
+  /**
+   * 订单信息对象
+   */
+  get orderInfoVO(): AfterSalesInfo.OrderInfoVO {
+    return this.data.orderInfoVO || {};
+  }
+  /**
+  * 修改售后数目
+  */
+  handleChangeServerNum = (value: any = 0) => {
+    let result = mul(this.unitPrice, value)
+    this.props.form.setFieldsValue({
+      refundAmount: formatPrice(result)
+    })
+  }
+  /**
+   * 获取运费
+   */
   get freight() {
-    let checkVO = this.data.checkVO || {};
-    return checkVO.freight;
+    return this.checkVO.freight;
   }
   get payMoney() {
-    let orderInfoVO = this.data.orderInfoVO || {};
-    return orderInfoVO.payMoney;
+    return this.orderInfoVO.payMoney;
   }
   get alreadyRefundAmount() {
     let orderServerVO = this.data.orderServerVO || {};
     return orderServerVO.alreadyRefundAmount;
-  }
-  get isTrigger() {
-    let refundAmount = this.props.form.getFieldValue('refundAmount');
-    return refundAmount * 100 + this.freight + this.alreadyRefundAmount === this.payMoney;
-  }
-  /**
-   * 是否退运费
-   */
-  get isReturnShipping() {
-    return this.freight > 0 && this.isTrigger;
   }
   get showRefundBoth() {
     let isAllow = this.props.form.getFieldValue('isAllow')
@@ -132,17 +188,14 @@ class CheckBoth extends React.Component<Props, State> {
                       min={0}
                       max={checkVO.maxServerNum}
                       placeholder="请输入"
-                      onChange={(value: any = 0) => {
-                        let refundAmount = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(value).ceil().div(100).toNumber() : 0;
-                        this.props.form.setFieldsValue({ refundAmount })
-                      }}
+                      onChange={this.handleChangeServerNum}
                     />
                   )}
                   <span>（最多可售后数目{checkVO.maxServerNum}）</span>
                 </Form.Item>
                 <Form.Item label="退款金额">
                   {getFieldDecorator('refundAmount', {
-                    initialValue: formatPrice(this.refundAmount),
+                    initialValue: formatPrice(checkVO.refundAmount),
                     rules: [
                       {
                         required: true,
@@ -152,11 +205,11 @@ class CheckBoth extends React.Component<Props, State> {
                   })(
                     <InputNumber
                       min={0.01}
-                      max={+formatPrice(this.refundAmount)}
-                      formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      max={formatPrice(this.maxRefundAmount)}
+                      formatter={formatRMB}
                     />,
                   )}
-                  <span>（最多可退￥{formatPrice(this.refundAmount)}）</span>
+                  <span>（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
                 </Form.Item>
                 {this.isReturnShipping &&
                   <Form.Item label="退运费">
