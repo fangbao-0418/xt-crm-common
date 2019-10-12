@@ -5,8 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
 import { refundType, customerFollowType } from '@/enum';
 import { XtSelect } from '@/components';
-import { formatPrice } from '@/util/format';
-import { formatMoney } from '@/pages/helper';
+import { formatPrice, formatRMB } from '@/util/format';
 import ReturnShippingSelect from '../components/ReturnShippingSelect';
 import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../components/after-sale-select';
@@ -17,6 +16,7 @@ import { namespace } from './model';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import ModifyReturnAddress from '../components/modal/ModifyReturnAddress';
+
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
@@ -58,9 +58,7 @@ class PendingReview extends React.Component<Props, State> {
           payload.returnPhone = checkVO.returnPhone;
           payload.returnAddress = checkVO.returnAddress;
           payload.contactVO = orderServerVO.contactVO;
-          // Object.assign(payload, orderServerVO.contactVO)
         }
-        console.log('payload=>', payload);
         APP.dispatch({
           type: `${namespace}/auditOperate`,
           payload,
@@ -68,12 +66,40 @@ class PendingReview extends React.Component<Props, State> {
       }
     });
   };
+  /**
+   * 输入框输入的售后数目
+   */
+  get serverNum(): number {
+    return this.props.form.getFieldValue('serverNum');
+  }
+  /**
+   * 审核信息对象
+   */
+  get checkVO() {
+    return this.props.data.checkVO || {};
+  }
+  /**
+   * 售后单价
+   */
+  get unitPrice(): number {
+    return this.checkVO.unitPrice || 0;
+  }
+  /**
+   * 根据售后数目计算退款金额，serverNum * unitPrice
+   */
+  get amount() {
+    return new Decimal(this.unitPrice).mul(this.serverNum).ceil().toNumber();
+
+  }
+  /**
+   * 售后金额
+   */
   get refundAmount() {
-    let checkVO = this.props.data.checkVO || {};
-    let serverNum = this.props.form.getFieldValue('serverNum');
-    let result = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(serverNum).ceil().toNumber(): 0;
-    let amount = serverNum === checkVO.maxServerNum ? checkVO.maxRefundAmount: result
-    return Math.min(result, amount);
+    let result = 0;
+    if (this.amount > this.checkVO.maxRefundAmount) {
+      result = Math.min(result, this.checkVO.maxRefundAmount);
+    }
+    return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount: result;
   }
   // 是否退运费
   isReturnShipping() {
@@ -232,7 +258,7 @@ class PendingReview extends React.Component<Props, State> {
             {!this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="退款金额">
                 {getFieldDecorator('refundAmount', {
-                  initialValue: +formatPrice(this.refundAmount),
+                  initialValue: formatPrice(checkVO.refundAmount),
                   rules: [
                     {
                       required: true,
@@ -242,8 +268,8 @@ class PendingReview extends React.Component<Props, State> {
                 })(
                   <InputNumber
                     min={0.01}
-                    max={+formatPrice(this.refundAmount)}
-                    formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    max={formatPrice(this.refundAmount)}
+                    formatter={formatRMB}
                   />,
                 )}
                 <span>（最多可退￥{formatPrice(this.refundAmount)}）</span>
@@ -263,7 +289,10 @@ class PendingReview extends React.Component<Props, State> {
             )}
             {this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="用户收货地址">
-                <ModifyAddress detail={{ ...contactVO, returnContact: contactVO.contact, returnPhone: contactVO.phone }} onSuccess={this.modifyAddressCb} />
+                <ModifyAddress
+                  detail={{ ...contactVO, returnContact: contactVO.contact, returnPhone: contactVO.phone }}
+                  onSuccess={this.modifyAddressCb}
+                />
               </Form.Item>
             )}
             <Row>
@@ -280,7 +309,7 @@ class PendingReview extends React.Component<Props, State> {
                 <Form.Item wrapperCol={formLeftButtonLayout}>
                   <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
                     提交
-                </Button>
+                  </Button>
                   <Button
                     type="danger"
                     style={{ marginLeft: '20px' }}

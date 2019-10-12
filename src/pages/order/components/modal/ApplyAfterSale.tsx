@@ -82,12 +82,32 @@ class ApplyAfterSale extends React.Component<Props, State> {
       skuDetail: Object.assign(this.state.skuDetail, data)
     })
   }
+  /**
+   * 输入框输入的售后数目
+   */
+  get serverNum() {
+    return this.props.form.getFieldValue('serverNum');
+  }
+  /**
+   * 售后商品单价
+   */
+  get unitPrice() {
+    return this.state.skuDetail.unitPrice || 0;
+  }
+  /**
+   * 相关金额
+   */
+  get relatedAmount() {
+    let result = new Decimal(this.unitPrice).mul(this.serverNum).ceil().toNumber();
+    return Math.min(result, this.state.skuDetail.amount);
+  }
+  /**
+   * 最终退款金额
+   */
   get amount() {
-    let serverNum = this.props.form.getFieldValue('serverNum');
-    let skuDetail = this.state.skuDetail;
-    let result = skuDetail.unitPrice ? new Decimal(skuDetail.unitPrice).mul(serverNum).ceil().toNumber(): 0;
-    let amount = serverNum === skuDetail.serverNum ? skuDetail.amount: result;
-    return Math.min(amount, result);
+    let { skuDetail } = this.state;
+    let result = this.serverNum === skuDetail.serverNum ? skuDetail.amount : this.relatedAmount;
+    return result;
   }
   render() {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
@@ -117,7 +137,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
                   max={skuDetail.serverNum}
                   placeholder="请输入"
                   onChange={(value: any = 0) => {
-                    let amount = skuDetail.unitPrice ? new Decimal(skuDetail.unitPrice).mul(value).ceil().div(100).toNumber(): 0;
+                    let amount = skuDetail.unitPrice ? new Decimal(skuDetail.unitPrice).mul(value).ceil().div(100).toNumber() : 0;
                     this.props.form.setFieldsValue({ amount });
                   }}
                 />
@@ -134,8 +154,9 @@ class ApplyAfterSale extends React.Component<Props, State> {
                     rules: [
                       { required: true, message: '请输入退款金额' }
                     ],
-                    initialValue: +formatPrice(this.amount) }
-                  )(<InputNumber min={0} max={+formatPrice(this.amount)} />)}
+                    initialValue: formatPrice(skuDetail.amount)
+                  }
+                )(<InputNumber min={0} max={formatPrice(this.amount)} />)}
                 <span className="ml10">（最多可退￥{formatPrice(this.amount)}）</span>
               </Form.Item>
             }
