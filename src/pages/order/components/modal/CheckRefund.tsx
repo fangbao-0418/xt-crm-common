@@ -121,7 +121,7 @@ class CheckRefund extends React.Component<Props, State> {
   onOk() {
     this.props.form.validateFields((errors, values) => {
       if (values.refundAmount) {
-        values.refundAmount = new Decimal(values.refundAmount).mul(100).toNumber();
+        values.refundAmount = mul(values.refundAmount, 100);
       }
       if (values.serverNum == 0) {
         message.error('售后数目必须大于0');

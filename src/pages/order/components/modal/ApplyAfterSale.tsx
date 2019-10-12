@@ -102,8 +102,17 @@ class ApplyAfterSale extends React.Component<Props, State> {
    * 相关金额
    */
   get relatedAmount() {
-    let result = new Decimal(this.unitPrice).mul(this.serverNum).ceil().toNumber();
+    let result = mul(this.unitPrice, this.serverNum);
     return Math.min(result, this.state.skuDetail.amount);
+  }
+  /**
+  * 修改售后数目
+  */
+  handleChangeServerNum = (value: any = 0) => {
+    let result = mul(this.unitPrice, value)
+    this.props.form.setFieldsValue({
+      amount: formatPrice(result)
+    });
   }
   /**
    * 最终退款金额
@@ -140,10 +149,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
                   min={0}
                   max={skuDetail.serverNum}
                   placeholder="请输入"
-                  onChange={(value: any = 0) => {
-                    let amount = skuDetail.unitPrice ? new Decimal(skuDetail.unitPrice).mul(value).ceil().div(100).toNumber() : 0;
-                    this.props.form.setFieldsValue({ amount });
-                  }}
+                  onChange={this.handleChangeServerNum}
                 />
               )}（最多可售后数目：{skuDetail.serverNum}）
             </Form.Item>
