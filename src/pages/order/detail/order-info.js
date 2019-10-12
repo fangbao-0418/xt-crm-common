@@ -3,6 +3,7 @@ import { Card, Row, Col } from 'antd';
 import { OrderStatusTextMap } from '../constant';
 import { formatDate, unionAddress } from '../../helper';
 import memberType from '@/enum/memberType';
+import { levelName } from '../../user/utils';
 const initOrderInfo = {
   childOrderList: [
     {
@@ -20,7 +21,7 @@ const initOrderInfo = {
 };
 
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
-  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType } = orderInfo;
+  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
   return (
     <Card title="订单信息">
@@ -36,7 +37,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
         <Col span={8}>完成时间：{formatDate(finishTime)}</Col>
       </Row>
       <Row gutter={24}>
-        <Col span={8}>下单会员类型：{memberType.getValue(orderMemberType)}</Col>
+        <Col span={8}>下单会员类型：{levelName({memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel})}</Col>
         <Col span={16}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress &&　memberAddress.phone}</Col>
       </Row>
       <Row>
