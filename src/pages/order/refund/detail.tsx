@@ -62,7 +62,7 @@ class Detail extends Component<DetailProps, State> {
     return Number(this.props.match.params.id)
   }
   async fetchLog() {
-    let logs = await getSkuServerProcessDetailList(Number(this.props.match.params.id));
+    let logs = await getSkuServerProcessDetailList(this.refundId);
     this.setState({
       logs
     })

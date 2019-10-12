@@ -9,7 +9,7 @@ import { formatPrice, formatRMB } from '@/util/format';
 import ReturnShippingSelect from '../components/ReturnShippingSelect';
 import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../components/after-sale-select';
-import ModifyAddress from '../components/modal/ModifyAddress';
+import ModifyShippingAddress from '../components/modal/ModifyShippingAddress';
 import AfterSaleDetailTitle from './components/AfterSaleDetailTitle';
 import { enumRefundType, enumRefundStatus } from '../constant';
 import { namespace } from './model';
@@ -23,6 +23,10 @@ interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
 interface State {
   addressVisible: boolean;
   selectedValues: any[];
+}
+
+function mul(unitPrice: number, serverNum: number = 0): number {
+  return new Decimal(unitPrice).mul(serverNum).toNumber()
 }
 class PendingReview extends React.Component<Props, State> {
   state = {
@@ -41,7 +45,7 @@ class PendingReview extends React.Component<Props, State> {
           return;
         }
         if (values.refundAmount) {
-          values.refundAmount = new Decimal(values.refundAmount).mul(100).toNumber();
+          values.refundAmount = mul(values.refundAmount, 100);
         }
         if (values.isRefundFreight === undefined) {
           values.isRefundFreight = this.props.data.checkVO.isRefundFreight;
@@ -85,37 +89,40 @@ class PendingReview extends React.Component<Props, State> {
     return this.checkVO.unitPrice || 0;
   }
   /**
-   * 根据售后数目计算退款金额，serverNum * unitPrice
+   * 根据售后数目计算退款金额
    */
-  get amount() {
-    return new Decimal(this.unitPrice).mul(this.serverNum).ceil().toNumber();
-
+  get relatedAmount(): number {
+    let result = mul(this.unitPrice, this.serverNum);
+    return Math.min(result, this.checkVO.maxRefundAmount);
   }
   /**
-   * 售后金额
+   * 输入框输入的售后金额
    */
-  get refundAmount() {
-    let result = 0;
-    if (this.amount > this.checkVO.maxRefundAmount) {
-      result = Math.min(result, this.checkVO.maxRefundAmount);
-    }
-    return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount: result;
+  get refundAmount(): number {
+    let result = this.props.form.getFieldValue('refundAmount');
+    return mul(result, 100);
   }
-  // 是否退运费
-  isReturnShipping() {
-    let {
-      data: { checkVO, orderServerVO, orderInfoVO },
-    } = this.props;
-    orderServerVO = Object.assign({}, orderServerVO);
-    checkVO = Object.assign({}, checkVO);
-    orderInfoVO = Object.assign({}, orderInfoVO);
-    const refundAmount = this.props.form.getFieldValue('refundAmount');
-    const hasFreight = checkVO.freight > 0;
-    // 是否触发退运费的逻辑
-    const isTrigger =
-      refundAmount * 100 + checkVO.freight + orderServerVO.alreadyRefundAmount ===
-      orderInfoVO.payMoney;
-    return hasFreight && isTrigger;
+  /**
+   * 最终售后金额
+   */
+  get maxRefundAmount(): number {
+    return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount: this.relatedAmount;
+  }
+  /**
+   * 运费是否大于0
+   */
+  get hasFreight(): boolean {
+    return this.checkVO.freight > 0;
+  }
+  /**
+   * 是否退运费
+   * @param 退款金额
+   * @param alreadyRefundAmount 已经退款金额
+   * @param freight 运费
+   */
+  get isReturnShipping(): boolean {
+    let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    return this.hasFreight && result;
   }
   /**
    * 获取售后类型
@@ -125,19 +132,41 @@ class PendingReview extends React.Component<Props, State> {
     return this.props.form.getFieldValue('refundType');
   }
   /**
-   * 修改地址
+   * 售后申请信息对象
    */
-  modifyAddress = () => {
-    this.setState({ addressVisible: true });
-  };
+  get orderServerVO(): AfterSalesInfo.OrderServerVO {
+    return this.props.data.orderServerVO || {};
+  }
+  /**
+   * 订单信息对象
+   */
+  get orderInfoVO(): AfterSalesInfo.OrderInfoVO {
+    return this.props.data.orderInfoVO || {};
+  }
+  /**
+   * 联系方式对象
+   */
+  get contactVO() {
+    return this.orderServerVO.contactVO || {};
+  }
+  /**
+   * 校验售后类型
+   * @param refundType 
+   */
   isRefundTypeOf(refundType: number) {
     return this.refundType === refundType;
   }
+  /**
+   * 校验售后状态
+   * @param refundStatus 
+   */
   isRefundStatusOf(refundStatus: number) {
-    let orderServerVO = this.props.data.orderServerVO || {};
-    return orderServerVO.refundStatus === refundStatus;
+    return this.orderServerVO.refundStatus === refundStatus;
   }
-  onSuccess = (values: any) => {
+  /**
+   * 修改退货地址
+   */
+  handleChangeReturnAddress = (values: any) => {
     APP.dispatch({
       type: `${namespace}/saveDefault`,
       payload: {
@@ -148,8 +177,10 @@ class PendingReview extends React.Component<Props, State> {
       },
     })
   }
-  modifyAddressCb = (values: any) => {
-    const orderServerVO = this.props.data.orderServerVO || {}
+  /**
+   * 修改收货地址
+   */
+  handleChangeShippingAddress = (values: any) => {
     let {returnContact, returnPhone, ...rest} = values;
     APP.dispatch({
       type: `${namespace}/saveDefault`,
@@ -157,9 +188,9 @@ class PendingReview extends React.Component<Props, State> {
         data: {
           ...this.props.data,
           orderServerVO: {
-            ...orderServerVO,
+            ...this.orderServerVO,
             contactVO: {
-              ...orderServerVO.contactVO,
+              ...this.contactVO,
               ...rest,
               contact: returnContact,
               phone: returnPhone
@@ -169,25 +200,27 @@ class PendingReview extends React.Component<Props, State> {
       },
     })
   }
+  /**
+   * 修改售后数目
+   */
+  handleChangeServerNum = (value: any = 0) => {
+    let result = mul(this.unitPrice, value)
+    this.props.form.setFieldsValue({
+      refundAmount: formatPrice(result)
+    })
+  }
   render() {
-    let {
-      data: { orderServerVO, checkVO, orderInfoVO },
-    } = this.props;
-    orderServerVO = Object.assign({}, orderServerVO);
-    checkVO = Object.assign({}, checkVO);
-    orderInfoVO = Object.assign({}, orderInfoVO);
-    let contactVO = orderServerVO.contactVO || {};
     const { getFieldDecorator } = this.props.form;
     return (
       <>
         <Card title={<AfterSaleDetailTitle />}>
-          <AfterSaleApplyInfo orderServerVO={orderServerVO} />
+          <AfterSaleApplyInfo orderServerVO={this.orderServerVO} />
         </Card>
         <Card title="客服审核">
           <Form {...formItemLayout} style={{ width: '80%' }}>
             <Form.Item label="售后类型">
               {getFieldDecorator('refundType', {
-                initialValue: checkVO.refundType,
+                initialValue: this.checkVO.refundType,
                 rules: [
                   {
                     required: true,
@@ -209,7 +242,7 @@ class PendingReview extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="售后原因">
               {getFieldDecorator('returnReason', {
-                initialValue: orderServerVO.returnReason,
+                initialValue: this.orderServerVO.returnReason,
                 rules: [
                   {
                     required: true,
@@ -234,7 +267,7 @@ class PendingReview extends React.Component<Props, State> {
             <Row>
               <Form.Item label="售后数目">
                 {getFieldDecorator('serverNum', {
-                  initialValue: checkVO.serverNum,
+                  initialValue: this.checkVO.serverNum,
                   rules: [
                     {
                       required: true,
@@ -243,22 +276,17 @@ class PendingReview extends React.Component<Props, State> {
                   ],
                 })(<InputNumber
                     min={0}
-                    max={checkVO.maxServerNum}
+                    max={this.checkVO.maxServerNum}
                     placeholder="请输入"
-                    onChange={(value: any = 0) => {
-                      let refundAmount = checkVO.unitPrice ? new Decimal(checkVO.unitPrice).mul(value).ceil().div(100).toNumber(): 0;
-                      this.props.form.setFieldsValue({
-                        refundAmount
-                      })
-                    }}
+                    onChange={this.handleChangeServerNum}
                   />)}
-                <span>（最多可售后数目：{checkVO.maxServerNum}）</span>
+                <span>（最多可售后数目：{this.checkVO.maxServerNum}）</span>
               </Form.Item>
             </Row>
             {!this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="退款金额">
                 {getFieldDecorator('refundAmount', {
-                  initialValue: formatPrice(checkVO.refundAmount),
+                  initialValue: formatPrice(this.checkVO.refundAmount),
                   rules: [
                     {
                       required: true,
@@ -268,30 +296,36 @@ class PendingReview extends React.Component<Props, State> {
                 })(
                   <InputNumber
                     min={0.01}
-                    max={formatPrice(this.refundAmount)}
+                    max={formatPrice(this.maxRefundAmount)}
                     formatter={formatRMB}
                   />,
                 )}
-                <span>（最多可退￥{formatPrice(this.refundAmount)}）</span>
+                <span>（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
               </Form.Item>
             )}
-            {this.isReturnShipping() && (
+            {this.isReturnShipping && (
               <Form.Item label="退运费">
-                {getFieldDecorator('isRefundFreight', { initialValue: checkVO.isRefundFreight })(
-                  <ReturnShippingSelect checkVO={checkVO} />,
+                {getFieldDecorator('isRefundFreight', {
+                  initialValue: this.checkVO.isRefundFreight
+                })(
+                  <ReturnShippingSelect checkVO={this.checkVO} />,
                 )}
               </Form.Item>
             )}
             {!this.isRefundTypeOf(enumRefundType.Refund) && (
               <Form.Item label="退货地址">
-                <ModifyReturnAddress detail={checkVO} onSuccess={this.onSuccess} />
+                <ModifyReturnAddress detail={this.checkVO} onSuccess={this.handleChangeReturnAddress} />
               </Form.Item>
             )}
             {this.isRefundTypeOf(enumRefundType.Exchange) && (
               <Form.Item label="用户收货地址">
-                <ModifyAddress
-                  detail={{ ...contactVO, returnContact: contactVO.contact, returnPhone: contactVO.phone }}
-                  onSuccess={this.modifyAddressCb}
+                <ModifyShippingAddress
+                  detail={{
+                    ...this.contactVO,
+                    returnContact: this.contactVO.contact,
+                    returnPhone: this.contactVO.phone
+                  }}
+                  onSuccess={this.handleChangeShippingAddress}
                 />
               </Form.Item>
             )}
@@ -307,7 +341,8 @@ class PendingReview extends React.Component<Props, State> {
              */
               this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
                 <Form.Item wrapperCol={formLeftButtonLayout}>
-                  <Button type="primary" onClick={() => this.handleAuditOperate(1)}>
+                  <Button type="primary"
+                    onClick={() => this.handleAuditOperate(1)}>
                     提交
                   </Button>
                   <Button

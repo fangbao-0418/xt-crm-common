@@ -9,7 +9,7 @@ interface Props extends FormComponentProps {
   detail: any;
   onSuccess(data: any): void;
 }
-class ModifyAddress extends React.Component<Props, State> {
+class ModifyShippingAddress extends React.Component<Props, State> {
   state: State = {
     visible: false
   }
@@ -100,4 +100,4 @@ class ModifyAddress extends React.Component<Props, State> {
     )
   }
 }
-export default Form.create<Props>()(ModifyAddress);
+export default Form.create<Props>()(ModifyShippingAddress);
