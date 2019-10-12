@@ -7,15 +7,12 @@ import { namespace } from '../../refund/model';
 import { enumRefundType } from '../../constant';
 import ReturnShippingSelect from '../ReturnShippingSelect';
 import { formatPrice, formatRMB } from '@/util/format';
-import { Decimal } from 'decimal.js';
+import { mul } from '@/util/utils';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
 interface State {
   visible: boolean;
-}
-function mul(unitPrice: number, serverNum: number = 0): number {
-  return new Decimal(unitPrice).mul(serverNum).toNumber()
 }
 class CheckRefund extends React.Component<Props, State> {
   state: State = {

@@ -2,6 +2,7 @@ import * as redux from 'react-redux';
 import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
 import { baseHost } from './baseHost';
+import { Decimal } from 'decimal.js';
 import * as LocalStorage from '@/util/localstorage';
 const History = createHashHistory();
 
@@ -193,4 +194,8 @@ export function dissoc(obj, prop) {
     }
   }
   return result;
+}
+
+export function mul(unitPrice = 0, serverNum = 0) {
+  return new Decimal(unitPrice).mul(serverNum).toNumber()
 }

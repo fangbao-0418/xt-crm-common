@@ -9,7 +9,7 @@ import { XtSelect } from '@/components'
 import { formItemLayout } from '@/config';
 import ModifyAddress from './ModifyShippingAddress';
 import AfterSaleSelect from '../after-sale-select';
-import { Decimal } from 'decimal.js';
+import { mul } from '@/util/utils';
 import { getProductDetail, customerAdd } from '../../api'
 import { enumRefundType } from '../../constant';
 const { TextArea } = Input;
@@ -24,9 +24,6 @@ interface State {
   skuDetail?: any;
 }
 
-function mul(unitPrice: number, serverNum: number = 0): number {
-  return new Decimal(unitPrice).mul(serverNum).toNumber()
-}
 class ApplyAfterSale extends React.Component<Props, State> {
   state: State = {
     skuDetail: {}

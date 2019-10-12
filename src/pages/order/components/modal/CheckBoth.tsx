@@ -6,16 +6,13 @@ import { formItemLayout, radioStyle } from '@/config';
 import { namespace } from '../../refund/model';
 import { enumRefundType } from '../../constant';
 import { formatPrice, formatRMB } from '@/util/format';
-import { Decimal } from 'decimal.js';
+import { mul } from '@/util/utils';
 import ReturnShippingSelect from '../ReturnShippingSelect';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
 interface State {
   visible: boolean;
-}
-function mul(unitPrice: number, serverNum: number = 0): number {
-  return new Decimal(unitPrice).mul(serverNum).toNumber()
 }
 class CheckBoth extends React.Component<Props, State> {
   state: State = {
@@ -32,7 +29,7 @@ class CheckBoth extends React.Component<Props, State> {
         return;
       }
       if (values.refundAmount) {
-        values.refundAmount = new Decimal(values.refundAmount).mul(100).toNumber()
+        values.refundAmount = mul(values.refundAmount, 100)
       }
       if (!errors) {
         APP.dispatch({
@@ -132,8 +129,7 @@ class CheckBoth extends React.Component<Props, State> {
     return this.orderInfoVO.payMoney;
   }
   get alreadyRefundAmount() {
-    let orderServerVO = this.data.orderServerVO || {};
-    return orderServerVO.alreadyRefundAmount;
+    return this.orderServerVO.alreadyRefundAmount;
   }
   get showRefundBoth() {
     let isAllow = this.props.form.getFieldValue('isAllow')

@@ -7,7 +7,6 @@ import { refundType, customerFollowType } from '@/enum';
 import { XtSelect } from '@/components';
 import { formatPrice, formatRMB } from '@/util/format';
 import ReturnShippingSelect from '../components/ReturnShippingSelect';
-import { Decimal } from 'decimal.js';
 import AfterSaleSelect from '../components/after-sale-select';
 import ModifyShippingAddress from '../components/modal/ModifyShippingAddress';
 import AfterSaleDetailTitle from './components/AfterSaleDetailTitle';
@@ -16,6 +15,7 @@ import { namespace } from './model';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import ModifyReturnAddress from '../components/modal/ModifyReturnAddress';
+import { mul } from '@/util/utils';
 
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
@@ -25,9 +25,6 @@ interface State {
   selectedValues: any[];
 }
 
-function mul(unitPrice: number, serverNum: number = 0): number {
-  return new Decimal(unitPrice).mul(serverNum).toNumber()
-}
 class PendingReview extends React.Component<Props, State> {
   state = {
     addressVisible: false,
