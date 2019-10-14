@@ -240,7 +240,7 @@ export function getRefundOrderInfo(params: any) {
 }
 
 export function refundAgain(data: any) {
-  return post(`/order/afterSale/againRefund/${data.id}`);
+  return put(`/order/afterSale/againRefund/${data.id}`);
 }
 
 export function closeRefund(data: any) {
