@@ -2,6 +2,7 @@ import * as redux from 'react-redux';
 import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
 import { baseHost } from './baseHost';
+import { isNil } from 'lodash';
 import * as LocalStorage from '@/util/localstorage';
 const History = createHashHistory();
 
@@ -177,4 +178,39 @@ export function replaceHttpUrl(imgUrl = '') {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
   }
   return imgUrl;
+}
+
+export function mapTree(org) {
+  const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
+  return {
+    label: org.name,
+    value: org.id,
+    data: { ...org },
+    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
+  };
+};
+
+export const formatMoneyBeforeRequest = price => {
+  if (isNil(price)) {
+    return price;
+  }
+
+  const pasred = parseFloat(price);
+  if (isNaN(pasred)) {
+    return undefined;
+  }
+
+  return (pasred * 100).toFixed();
+};
+
+
+export function treeToarr(list = [], arr) {
+  const results = arr || [];
+  for (const item of list) {
+    results.push(item);
+    if (Array.isArray(item.childList)) {
+      treeToarr(item.childList, results)
+    }
+  }
+  return results;
 }
