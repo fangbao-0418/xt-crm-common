@@ -106,7 +106,7 @@ export function getRefundReason() {
 }
 // 重新退款
 export function againRefund(id: number, info: any) {
-  return put(`/order/afterSale/againRefund/${id}`, {info});
+  return post(`/order/afterSale/againRefund/${id}`, {info});
 }
 /**
  * 更新物流信息接口
@@ -120,7 +120,7 @@ export function updateOrderExpress(data: any) {
  * @param info 
  */
 export function closeOrder(id: number, info: any) {
-  return put(`/order/afterSale/close/${id}`, {info});
+  return post(`/order/afterSale/close/${id}`, {info});
 }
 /**
  * 确认收货
@@ -240,7 +240,7 @@ export function getRefundOrderInfo(params: any) {
 }
 
 export function refundAgain(data: any) {
-  return put(`/order/afterSale/againRefund/${data.id}`);
+  return post(`/order/afterSale/againRefund/${data.id}`);
 }
 
 export function closeRefund(data: any) {
