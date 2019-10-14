@@ -22,6 +22,11 @@ const InfoDetail = Loadable({
   loading: Loader,
 });
 
+const CreaditPay = Loadable({
+  loader: () => import('./credit_pay'),
+  loading: Loader,
+});
+
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -32,6 +37,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/info/edit/:id?`} component={InfoEdit} />
         <Route path={`${match.url}/info/detail/:id`} component={InfoDetail} />
         <Route path={`${match.url}/add`} component={Add} />
+        <Route path={`${match.url}/credit_pay`} component={CreaditPay} />
       </Switch>
     );
   }

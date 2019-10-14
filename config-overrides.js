@@ -4,13 +4,15 @@ const {
   addDecoratorsLegacy,
   useEslintRc,
   addWebpackAlias,
-  addWebpackPlugin
+  addWebpackPlugin,
+  removeModuleScopePlugin
 } = require('customize-cra');
 const webpack = require('webpack')
 const path = require("path");
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
 module.exports = override(
+  removeModuleScopePlugin(),
   fixBabelImports('import', {
     libraryName: 'antd',
     style: 'css',
@@ -31,6 +33,7 @@ module.exports = override(
   })),
   useEslintRc(),
   addWebpackAlias({
-    '@': path.resolve(__dirname, 'src/'),
+    'packages': path.resolve(__dirname, 'packages/'),
+    '@': path.resolve(__dirname, 'src/')
   })
 );
