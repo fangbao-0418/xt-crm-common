@@ -3,17 +3,6 @@ import { Select } from 'antd';
 import { dissoc } from '@/util/utils';
 
 const { Option } = Select;
-// EMS("ems", "EMS"),
-// SHUNFENG("shunfeng", "顺丰"),
-// SHENTONG("shentong", "申通"),
-// YUANTONG("yuantong", "圆通"),
-// ZHONGTONG("zhongtong", "中通"),
-// HUITONGKUAIDI("huitongkuaidi", "汇通"),
-// YUNDA("yunda", "韵达"),
-// GUOTONGKUAIDI("guotongkuaidi", "国通"),
-// DEBANGWULIU("debangwuliu", "德邦"),
-// JD("jd", "京东"),
-
 export const ExpressCompanyOptions = {
   ems: 'EMS',
   shunfeng: '顺丰',

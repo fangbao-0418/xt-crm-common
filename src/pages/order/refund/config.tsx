@@ -207,6 +207,13 @@ export const getListColumns = ({ query, history }: any) => [
     render: (text: any) => text ? formatDate(text) : '-'
   },
   {
+    title: '供应商操作',
+    dataIndex: 'supplierOperate',
+    render: (text: number) => {
+      return text === 10 ? '同意': '-';
+    }
+  },
+  {
     title: '操作',
     dataIndex: 'record',
     render: (_: any, { id }: any) => <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看详情</Button>

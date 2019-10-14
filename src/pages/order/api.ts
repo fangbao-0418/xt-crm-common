@@ -212,6 +212,13 @@ export function customerAdd(data: any) {
     data
   })
 }
+export function customerAddCheck(data: any) {
+  return fetch('/order/afterSale/check/downgrade', {
+    method: 'POST',
+    data
+  });
+}
+
 export function refundList(data: any) {
   return fetch('/order/afterSale/list', {
     method: 'POST',
@@ -256,3 +263,5 @@ export function profitRecycl(data: any) {
     data
   });
 }
+
+

@@ -19,8 +19,8 @@ export function formatMoneyWithSign(money, decimal = 2, sign = '￥') {
 }
 
 export function unionAddress(args) {
-  const { province = '', city = '', area = '', street = '' } = args || {};
-  return `${province}${city}${area}${street}`;
+  const { province = '', city = '', district = '', street = '' } = args || {};
+  return `${province}${city}${district}${street}`;
 }
 
 export const formatMoneyBeforeRequest = price => {
