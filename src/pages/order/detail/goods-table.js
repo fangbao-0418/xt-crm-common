@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { Table, Row, Col, Card, Button, Modal, Input, message } from 'antd';
-import AfterSaleForm from './after-sale-form';
+import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale';
 import { withRouter } from 'react-router'
 import { getDetailColumns, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
-import { Decimal } from 'decimal.js';
 import { formatDate } from '../../helper';
-import { customerAdd, customerAddCheck } from '../api';
 import { setOrderRemark, setRefundOrderRemark } from '../api';
 
 @withRouter
@@ -18,14 +16,13 @@ class GoodsTable extends Component {
   }
   // 是否显示申请售后按钮
   showApplyBtn = (orderStatus) => {
-    console.log('orderStatus=>', orderStatus)
     return [20, 30, 40, 50].includes(orderStatus)
   }
   handleApply = (record) => {
     const { orderInfo = {}, childOrder = {}, memberId } = this.props;
     if (record.canApply) {
-      this.setState({ modalInfo: { ...record, mainOrderId: orderInfo.id, memberId, childOrder } });
       this.setState({
+        modalInfo: { ...record, mainOrderId: orderInfo.id, memberId, childOrder },
         visible: true
       })
     } else {
@@ -45,52 +42,6 @@ class GoodsTable extends Component {
       remark: e.target.value,
     });
   };
-  handleOk = () => {
-    const { form: { getFieldsValue, validateFields } } = this.afterSaleForm.props;
-    validateFields(async (errors, values) => {
-      if (!errors) {
-        const { modalInfo } = this.state;
-        const fields = getFieldsValue();
-        fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
-        console.log('fields.imgUrl=>', fields.imgUrl)
-        fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
-        console.log('fields.imgUrl=>', fields.imgUrl)
-        if (fields.amount) {
-          fields.amount = new Decimal(fields.amount).mul(100).toNumber();
-        }
-        console.log('modalInfo=>', modalInfo);
-        const data = {
-          childOrderId: modalInfo.childOrderId,
-          mainOrderId: modalInfo.mainOrderId,
-          memberId: modalInfo.memberId,
-          skuId: modalInfo.skuId,
-          ...fields
-        };
-        const res = await customerAddCheck(data);
-        if (res.success) this.customerAdd(data);
-        else {
-          Modal.confirm({
-            title: '系统提示',
-            content: res.message,
-            okText: '确定',
-            cancelText: '取消',
-            onOk: () => {
-              this.customerAdd(data);
-            }
-          });
-        }
-      }
-    })
-  }
-  async customerAdd(data) {
-    const res = await customerAdd(data);
-    if (res.success) {
-      message.success('申请售后成功');
-      this.setState({
-        visible: false
-      }, this.props.query)
-    }
-  }
   lookForHistory = ({ orderCode, productId }) => {
     const { history } = this.props;
     history.push(`/order/refundOrder?mainOrderCode=${orderCode}&productId=${productId}`);
@@ -131,9 +82,13 @@ class GoodsTable extends Component {
     ];
     return (
       <>
-        <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.setState({ visible: false })} onOk={this.handleOk}>
-          <AfterSaleForm wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
-        </Modal>
+        {this.state.modalInfo.mainOrderId &&
+          this.state.modalInfo.skuId &&
+          <ApplyAfterSaleModal
+            onCancel={() => this.setState({ visible: false })}
+            successCb={() => this.setState({ visible: false }, this.props.query)}
+            visible={this.state.visible}
+            modalInfo={this.state.modalInfo} />}
         <Modal
           title="添加备注"
           visible={this.state.notesVisible}
