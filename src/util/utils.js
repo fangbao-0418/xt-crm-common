@@ -196,6 +196,9 @@ export function dissoc(obj, prop) {
   return result;
 }
 
-export function mul(unitPrice = 0, serverNum = 0) {
-  return new Decimal(unitPrice).mul(serverNum).toNumber()
+export function mul(unitPrice, serverNum) {
+  if (unitPrice && serverNum) {
+    return new Decimal(unitPrice).mul(serverNum).toNumber()
+  }
+  return 0;
 }
