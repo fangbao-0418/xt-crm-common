@@ -44,11 +44,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         options: [
           {label: '限时秒杀', value: '1'},
           {label: '今日拼团', value: '2'},
-          {label: '礼包', value: '3'},
-          {label: '激活码', value: '4'},
-          {label: '地推专区', value: '5'},
-          {label: '体验团长专区', value: '6'},
-          {label: '采购专区', value: '7'}
+          {label: '礼包', value: '3'}
         ],
       },
       name: {

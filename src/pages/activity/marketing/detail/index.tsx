@@ -15,6 +15,7 @@ interface State {
   ladderCount: number
   loading: boolean
   disabled: boolean
+  canSave: boolean
   values: Marketing.FormDataProps
   /** 赠品是否可编辑 */
   giftCanEdit: boolean
@@ -33,6 +34,7 @@ class Main extends React.Component<Props, State> {
     ladderCount: 0,
     loading: false,
     disabled: true,
+    canSave: false,
     values: {},
     giftCanEdit: false
   }
@@ -67,6 +69,7 @@ class Main extends React.Component<Props, State> {
           values: res,
           ladderCount: res.rank.ruleList.length,
           disabled: (this.type !== 'edit' || [1].indexOf(res.discountsStatus) === -1),
+          canSave: (this.type === 'edit' && [1, 2].indexOf(res.discountsStatus) > -1),
           giftCanEdit: this.type === 'edit'
         })
       }
@@ -422,7 +425,7 @@ class Main extends React.Component<Props, State> {
           <div
             className='text-center mt20'
           >
-            {!this.state.disabled && (
+            {this.state.canSave && (
               <Button
                 type='primary'
                 onClick={this.save}

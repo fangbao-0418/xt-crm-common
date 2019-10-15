@@ -6,7 +6,7 @@ interface Props {
 }
 type OrderServerVO = AfterSalesInfo.OrderServerVO;
 const SupplierProcessInfo: React.FC<Props> = ({ data }: Props) => {
-  let orderServerVO: OrderServerVO = data.orderServerVO || {};
+  let orderServerVO: OrderServerVO = Object.assign({}, data.orderServerVO);
   return (
     <div>
       <h4>供应商处理信息</h4>

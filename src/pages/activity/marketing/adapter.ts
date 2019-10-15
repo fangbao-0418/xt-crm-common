@@ -124,7 +124,7 @@ const spuIdsExchangeJson = (source: {[spuIds: number]: number[]}) => {
 
 /** 满赠详情入参处理 */
 export const handleFormData = (payload: Marketing.FormDataProps) => {
-  console.log(payload, 'payload')
+  // console.log(payload, 'payload')
   const loop = payload.loop
   const product = payload.product || {
     spuIds: {}

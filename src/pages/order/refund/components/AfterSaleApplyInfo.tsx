@@ -13,13 +13,13 @@ import { RemarkModal } from '../../components/modal';
 import { enumRefundStatus } from '../../constant';
 type OrderServerVO = AfterSalesInfo.OrderServerVO;
 type ProductVO = AfterSalesInfo.ProductVO;
-const columns: ColumnProps<ProductVO>[] = getDetailColumns();
+const columns: ColumnProps<ProductVO>[] = getDetailColumns(1);
 interface Props extends RouteComponentProps<{id: any}> {
   orderServerVO: OrderServerVO;
 }
 
 const AfterSaleApplyInfo = (props: Props) => {
-  const orderServerVO = props.orderServerVO || {};
+  const orderServerVO = Object.assign({}, props.orderServerVO);
   const logColumns: any[] = [];
   const onSuccess = () => {
     APP.dispatch({
@@ -30,7 +30,7 @@ const AfterSaleApplyInfo = (props: Props) => {
     });
   }
   const isRefundStatusOf = (status: number) => {
-    let orderServerVO = props.orderServerVO || {};
+    let orderServerVO = Object.assign({}, props.orderServerVO);
     return orderServerVO.refundStatus == status;
   }
   return (

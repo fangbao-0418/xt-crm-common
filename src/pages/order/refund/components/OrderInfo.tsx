@@ -13,7 +13,7 @@ interface Props extends React.Props<{}> {
   orderInfoVO: OrderInfoVO
 }
 const OrderInfo: React.FC<Props> = (props: Props) => {
-  const orderInfoVO = props.orderInfoVO || {};
+  const orderInfoVO = Object.assign({}, props.orderInfoVO);
   return (
     <Card>
       <h4 style={{marginTop: 0}}>订单信息</h4>

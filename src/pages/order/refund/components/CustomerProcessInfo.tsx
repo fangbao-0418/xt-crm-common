@@ -9,9 +9,9 @@ interface Props {
 }
 
 const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
-  let checkVO = data.checkVO || {};
-  let orderServerVO = data.orderServerVO || {};
-  let contactVO = orderServerVO.contactVO || {};
+  let checkVO = Object.assign({}, data.checkVO);
+  let orderServerVO = Object.assign({}, data.orderServerVO);
+  let contactVO = Object.assign({}, orderServerVO.contactVO);
   const isRefundTypeOf = (refundType: number | string) => {
     return checkVO.refundType == refundType;
   };
