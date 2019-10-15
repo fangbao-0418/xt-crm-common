@@ -208,6 +208,18 @@ class Main extends React.Component<Props, State> {
               )}
             </Form.Item>
             <Form.Item
+              label='链接'
+            >
+              {getFieldDecorator('jumpUrl', {
+                initialValue: detail.jumpUrl,
+                rules: [
+                  { required: true, message: '请输入正确的链接地址' }
+                ]
+              })(
+                <Input placeholder='请输入正确的链接一致' />
+              )}
+            </Form.Item>
+            <Form.Item
               label='添加楼层'
             >
               <Button

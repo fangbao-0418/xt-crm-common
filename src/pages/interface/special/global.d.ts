@@ -20,6 +20,7 @@ declare module Special {
     id: number
     list: DetailContentProps[]
     items: string
+    jumpUrl: string
   }
   export interface SearchProps {
     subjectId?: number
