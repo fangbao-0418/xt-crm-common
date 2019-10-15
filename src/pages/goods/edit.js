@@ -1,15 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Modal, Card, Form, Input, Button, message, Table, Popover, Radio, Select, Cascader } from 'antd';
+import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader } from 'antd';
 import UploadView from '../../components/upload';
-import { getColumns } from './constant';
-import CardTitle from './CardTitle';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
 import {
   map,
   size,
-  indexOf,
   concat,
   filter,
   assign,
@@ -17,11 +14,10 @@ import {
   cloneDeep,
   split
 } from 'lodash';
-import styles from './edit.module.scss';
 import descartes from '../../util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api';
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
-import SkuUploadItem from './SkuUploadItem';
+import SkuList from './SkuList';
 
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
@@ -159,7 +155,7 @@ class GoodsEdit extends React.Component {
         returnAddress: res.returnAddress
       });
       setFieldsValue({
-        showNum: res.showNum,
+        showNum: res.showNum || 1,
         description: res.description,
         productCode: res.productCode,
         productId: res.productId,
@@ -193,16 +189,6 @@ class GoodsEdit extends React.Component {
     });
   };
 
-  handleTabsAdd = () => {
-    const { GGName } = this.state;
-    if (!GGName) {
-      message.error('请输入正确的规格名称');
-      return false;
-    }
-
-    this.handleAdd(GGName);
-  };
-
   handleTabsEdit = (e, action) => {
     if (action === 'remove') {
       this.handleRemove(e);
@@ -230,91 +216,6 @@ class GoodsEdit extends React.Component {
     speSelect[0] && (speSelect[0].render = record => <>{size(record.spuName) > 0 && record.spuName[0]}</>);
     speSelect[1] && (speSelect[1].render = record => <>{size(record.spuName) > 1 && record.spuName[1]}</>);
     this.setState({ speSelect, data: data });
-  };
-
-  /**
-   * 添加规格
-   */
-  handleAdd = title => {
-    const { speSelect } = this.state;
-    if (size(speSelect) >= 0 && size(speSelect) < 2) {
-      speSelect.push({
-        title,
-        data: [],
-      });
-    }
-
-    this.setState({
-      speSelect,
-      GGName: '',
-    });
-  };
-
-  handleRemoveChange = (key, index) => () => {
-    const { speSelect } = this.state;
-    speSelect[key].data.splice(index, 1);
-
-    const delData = [];
-    map(descartes(speSelect), (item, $1) => {
-      const skuList = concat([], item);
-      delData[$1] = {
-        spuName: skuList,
-        propertyValue1: size(skuList) > 0 && skuList[0],
-        propertyValue2: (size(skuList) > 1 && skuList[1]) || '',
-      };
-    });
-
-    this.setState({ speSelect, data: delData });
-  };
-
-  handleClickChange = key => () => {
-    const { speSelect, spuName, data } = this.state;
-    if (indexOf(speSelect[key].data, spuName[key]) === -1) {
-      speSelect[key].data.push(spuName[key]);
-      speSelect[key].render = record => <>{size(record.spuName) > key && record.spuName[key]}</>;
-    } else {
-      message.error('请不要填写相同的规格');
-      return false;
-    }
-    map(descartes(speSelect), (item, key) => {
-      const skuList = concat([], item);
-      data[key] = {
-        ...data[key],
-        spuName: skuList,
-        propertyValue1: size(skuList) > 0 && skuList[0],
-        propertyValue2: (size(skuList) > 1 && skuList[1]) || '',
-      };
-    });
-
-    this.setState({ speSelect, data });
-  };
-
-  handleChangeSpuName = key => e => {
-    const { spuName } = this.state;
-    spuName[key] = e.target.value;
-    this.setState({ spuName });
-  };
-
-
-  handleChangeSpuPicture = key => fileList => {
-    const { spuPicture } = this.state;
-    console.log(fileList[0] && fileList[0].url)
-    spuPicture[key] = fileList[0] && fileList[0].url;
-    this.setState({ spuPicture })
-  }
-
-  handleChangeValue = (text, record, index) => e => {
-    const { data, noSyncList } = this.state;
-    const nosync = noSyncList.includes(text);
-    if (!nosync) {
-      data[index][text] = e.target ? e.target.value : e;
-    } else {
-      data.forEach(item => {
-        item[text] = e.target ? e.target.value : e
-      })
-    }
-
-    this.setState({ data });
   };
 
   handleSave = () => {
@@ -415,7 +316,7 @@ class GoodsEdit extends React.Component {
   render() {
 
     const { getFieldDecorator } = this.props.form;
-    const { speSelect, spuName, GGName, data, supplier } = this.state;
+    const { supplier } = this.state;
 
     return (
       <Form {...formLayout}>
@@ -583,94 +484,7 @@ class GoodsEdit extends React.Component {
             )}
           </Form.Item>
         </Card>
-        <Card
-          title="添加规格项"
-          style={{ marginTop: 10 }}
-          extra={
-            <Popover
-              trigger="click"
-              content={
-                <div style={{ display: 'flex' }}>
-                  <Input
-                    placeholder="请添加规格名称"
-                    value={GGName}
-                    onChange={e => {
-                      this.setState({ GGName: e.target.value });
-                    }}
-                  />
-                  <Button type="primary" style={{ marginLeft: 5 }} onClick={this.handleTabsAdd}>
-                    确定
-                  </Button>
-                </div>
-              }
-            >
-              <a href="javascript:void(0);">添加规格</a>
-            </Popover>
-          }
-        >
-          {speSelect.map((item, key) => {
-            return (
-              <Card
-                key={key}
-                type="inner"
-                title={<CardTitle
-                  title={item.title}
-                  index={key}
-                  onChange={(e) => {
-                    this.setState({ showImage: e.target.checked })
-                  }
-                  }
-                />}
-                extra={
-                  <a href="javascript:void(0);" onClick={() => this.handleTabsEdit(key, 'remove')}>删除</a>
-                }>
-                <div className={styles.spulist}>
-                  {map(item.data, (data, index) => (
-                    <SkuUploadItem
-                      value={data}
-                      key={`d-${index}`}
-                      disabled
-                      index={key}
-                      showImage={this.state.showImage}
-                    >
-                      <Button
-                        className={styles.spubtn}
-                        type="danger"
-                        onClick={this.handleRemoveChange(key, index)}
-                      >
-                        删除规格
-                        </Button>
-                    </SkuUploadItem>
-                  ))}
-                  {size(item.data) < 10 && (
-                    <SkuUploadItem
-                      value={spuName[key]}
-                      index={key}
-                      onChangeSpuName={this.handleChangeSpuName(key)}
-                      onChangeSpuPicture={this.handleChangeSpuPicture(key)}
-                      showImage={this.state.showImage}
-                    >
-                      <Button
-                        className={styles.spubtn}
-                        type="primary"
-                        onClick={this.handleClickChange(key)}>
-                        添加规格
-                      </Button>
-                    </SkuUploadItem>
-                  )}
-                </div>
-              </Card>
-            )
-          })}
-          <Table
-            rowKey={record => record.id}
-            style={{ marginTop: 10 }}
-            scroll={{ x: 1650, y: 600 }}
-            columns={[...speSelect, ...getColumns(this.handleChangeValue)]}
-            dataSource={data}
-            pagination={false}
-          />
-        </Card>
+        <SkuList />
         <Card title="物流信息" style={{ marginTop: 10 }}>
           <Form.Item label="物流体积">
             {getFieldDecorator('bulk')(<Input placeholder="请设置物流体积" />)}
