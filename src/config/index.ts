@@ -1,7 +1,7 @@
 export const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 5 },
+    sm: { span: 6 },
   },
   wrapperCol: {
     xs: { span: 24 },
@@ -15,7 +15,13 @@ export const formButtonLayout = {
 
 export const formLeftButtonLayout = {
   xs: { span: 24, offset: 0 },
-  sm: { span: 19, offset: 5 },
+  sm: { span: 18, offset: 6 },
+}
+
+export const radioStyle = {
+  display: 'block',
+  height: '30px',
+  lineHeight: '30px',
 }
 
 export const orderRefunds = {

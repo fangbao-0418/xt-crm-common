@@ -1,6 +1,6 @@
 import { saveDefault } from '@/util/utils.js';
 
-const context = require.context('./', true, /model.js/);
+const context = require.context('./', true, /model.js|model.ts/);
 const keys = context.keys();
 const models = keys.map(item => context(item).default);
 const results = {};
