@@ -81,7 +81,12 @@ class Main extends React.Component<Props, State> {
           })
           return { type: column.type, css: column.css, sort: column.sort, items }
         case 3:
-          return { type: column.type, sort: column.sort, advertisementUrl: column.advertisementUrl };
+          return {
+            type: column.type,
+            sort: column.sort,
+            advertisementUrl: column.advertisementUrl,
+            advertisementJumpUrl: column.advertisementJumpUrl
+          };
         default:
           return {};
       }

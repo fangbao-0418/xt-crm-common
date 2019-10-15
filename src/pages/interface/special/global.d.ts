@@ -10,6 +10,8 @@ declare module Special {
     /** 广告图 */
     advertisementUrl?: string
     crmCoupons?: Coupon.CouponItemProps[]
+    /** 广告链接 */
+    advertisementJumpUrl?: string
   }
   export interface DetailItem {
     backgroundColor: string
