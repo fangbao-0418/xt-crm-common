@@ -19,7 +19,7 @@ const initOrderInfo = {
   remark: 'string',
 };
 
-const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
+const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {} }) => {
   const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
   return (
