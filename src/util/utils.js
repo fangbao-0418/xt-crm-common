@@ -2,6 +2,7 @@ import * as redux from 'react-redux';
 import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
 import { baseHost } from './baseHost';
+import { Decimal } from 'decimal.js';
 import * as LocalStorage from '@/util/localstorage';
 const History = createHashHistory();
 
@@ -158,6 +159,7 @@ export const prefix = url => {
   if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
   return `${apiDomain}${url}`;
 };
+
 /**
  * 
  * @param { 目标数组 } target 
@@ -177,4 +179,26 @@ export function replaceHttpUrl(imgUrl = '') {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
   }
   return imgUrl;
+}
+
+/**
+ * @description 去掉多余的属性
+ * @param {需要过滤的对象} obj 
+ * @param {对于的属性名称} prop 
+ */
+export function dissoc(obj, prop) {
+  let result = {};
+  for (let p in obj) {
+    if (p !== prop) {
+      result[p] = obj[p];
+    }
+  }
+  return result;
+}
+
+export function mul(unitPrice, serverNum) {
+  if (unitPrice && serverNum) {
+    return new Decimal(unitPrice).mul(serverNum).toNumber()
+  }
+  return 0;
 }

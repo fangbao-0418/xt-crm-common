@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Message } from 'antd';
-import { formItemLayout } from '@/config';
+import { formItemLayout, radioStyle } from '@/config';
 import { DatePicker, Row, Col, Card, Form, Checkbox, Input, Button, Radio } from 'antd';
 import { saveCouponTaskInfo } from '../../api';
 import Upload from '@/components/upload';
@@ -15,11 +15,6 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
   const [name, setName] = useState('');
   const [fileList, setFileList] = useState([]);
   const [fileValues, setFileValues] = useState('');
-  const radioStyle = {
-    display: 'block',
-    height: '30px',
-    lineHeight: '30px',
-  }
   const getUserGroupValue = (fields) => {
     fields.userLevel = fields.userLevel || [];
     let result;
