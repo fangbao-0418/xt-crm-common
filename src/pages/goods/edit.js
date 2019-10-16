@@ -160,6 +160,7 @@ class GoodsEdit extends React.Component {
         deliveryMode: res.deliveryMode,
         barCode: res.barCode,
         bannerUrl: initImgList(res.bannerUrl),
+        returnPhone: res.returnPhone,
         listImage,
         productImage,
         storeProductId: res.storeProductId,
