@@ -94,39 +94,35 @@ class GoodsEdit extends React.Component {
       },
     } = this.props;
     if (!id) return;
-    let { speSelect } = this.state;
     getGoodsDetial({ productId: id }).then((res = {}) => {
-      speSelect.push({
-        title: res.property1,
-        fixed: 'left',
-        width: 100,
-        data: [],
-      });
-      speSelect.push({
-        title: res.property2,
-        fixed: 'left',
-        width: 100,
-        data: [],
-      });
+      let specs = [
+        {
+          title: res.property1,
+          content: []
+        },
+        {
+          title: res.property2,
+          content: []
+        }
+      ]
       const arr2 = treeToarr(list);
       const categoryId = res.productCategoryVO && res.productCategoryVO.id ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse() : [];
 
       map(res.skuList, (item, key) => {
-        item.spuName = [];
-        item.propertyValue1 && item.spuName.push(item.propertyValue1);
-        item.propertyValue2 && item.spuName.push(item.propertyValue2);
-        if (speSelect[0].data.indexOf(item.propertyValue1) === -1) {
-          speSelect[0].data.push(item.propertyValue1);
-          speSelect[0].render = record => <>{size(record.spuName) > 0 && record.spuName[0]}</>;
+        if (item.propertyValue1 && specs[0].content.findIndex(val => val.specName === item.propertyValue1) === -1) {
+          specs[0].content.push({
+            specName: item.propertyValue1,
+            specPicture: item.imageUrl1
+          })
         }
-        if (speSelect[1].data.indexOf(item.propertyValue2) === -1) {
-          speSelect[1].data.push(item.propertyValue2);
-          speSelect[1].render = record => <>{size(record.spuName) > 1 && record.spuName[1]}</>;
+        if (item.propertyValue2 && specs[1].content.findIndex(val => val.specName === item.propertyValue2) === -1) {
+          specs[1].content.push({
+            specName: item.propertyValue2
+          })
         }
       });
-
-      speSelect = filter(speSelect, item => !!item.title);
-
+      specs = filter(specs, item => !!item.title);
+      console.log(specs, 'specs')
       map(res.skuList, item => {
         item.costPrice = Number(item.costPrice / 100);
         item.salePrice = Number(item.salePrice / 100);
@@ -147,7 +143,7 @@ class GoodsEdit extends React.Component {
       });
       this.setState({
         data: res.skuList || [],
-        speSelect,
+        speSelect: specs,
         propertyId1: res.propertyId1,
         propertyId2: res.propertyId2,
         returnContact: res.returnContact,
@@ -155,7 +151,7 @@ class GoodsEdit extends React.Component {
         returnAddress: res.returnAddress
       });
       setFieldsValue({
-        showNum: res.showNum || 1,
+        showNum: res.showNum !== undefined ? res.showNum : 1,
         description: res.description,
         productCode: res.productCode,
         productId: res.productId,
@@ -247,6 +243,7 @@ class GoodsEdit extends React.Component {
         }
 
         const skuAddList = forEach(cloneDeep(data), item => {
+          item.imageUrl1 = 'https://xituan.oss-cn-shenzhen.aliyuncs.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551571145793869.png'
           item.costPrice = formatMoneyBeforeRequest(item.costPrice);
           item.salePrice = formatMoneyBeforeRequest(item.salePrice);
           item.marketPrice = formatMoneyBeforeRequest(item.marketPrice);
@@ -469,7 +466,7 @@ class GoodsEdit extends React.Component {
           </Form.Item>
           <Form.Item label="累计销量" required={true}>
             {getFieldDecorator('showNum', {
-              initialValue: 1,
+              // initialValue: 1,
               rules: [
                 {
                   required: true,
@@ -484,7 +481,15 @@ class GoodsEdit extends React.Component {
             )}
           </Form.Item>
         </Card>
-        <SkuList />
+        <SkuList
+          specs={this.state.speSelect}
+          dataSource={this.state.data}
+          onChange={(value) => {
+            this.setState({
+              data: value
+            })
+          }}
+        />
         <Card title="物流信息" style={{ marginTop: 10 }}>
           <Form.Item label="物流体积">
             {getFieldDecorator('bulk')(<Input placeholder="请设置物流体积" />)}
