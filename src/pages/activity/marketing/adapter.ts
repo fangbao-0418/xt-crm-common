@@ -52,20 +52,28 @@ export const handleDetailReturnData = (payload: {
   if (userScopeIsAll(userScope)) {
     userScope.unshift('all')
   }
-  const data = {
-    ...payload,
-    product: getProductData(payload.promotionDiscountsSpuVOS),
-    activity: getActivityData(payload.referencePromotionVO),
-    strategyType: payload.ruleType,
-    loop: parsePresentContentData(payload.ruleJson.loop),
-    rank: Object.assign({}, 
-      {
-        sort: 0,
-        ladderRule: Number(payload.ruleJson.rank.ladderRule) || 0,
-        ruleList: payload.ruleJson.rank.ruleList.map((item) => parsePresentContentData(item))
-      }
-    ),
-    userScope
+  let data
+  try {
+    data = {
+      ...payload,
+      product: getProductData(payload.promotionDiscountsSpuVOS),
+      activity: getActivityData(payload.referencePromotionVO),
+      strategyType: payload.ruleType,
+      loop: parsePresentContentData(payload.ruleJson.loop),
+      rank: Object.assign({
+        ladderRule: 0,
+        ruleList: [{}]
+      }, 
+        payload.ruleJson.rank && {
+          sort: 0,
+          ladderRule: Number(payload.ruleJson.rank.ladderRule) || 0,
+          ruleList: payload.ruleJson.rank.ruleList.map((item) => parsePresentContentData(item))
+        }
+      ),
+      userScope
+    }
+  } catch (E) {
+    console.error(E)
   }
   return data
 }
@@ -140,10 +148,10 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
     // productIds: Object.keys(product.spuIds).join(','),
     ruleJson: {
       loop: handlePresentContentData(loop),
-      rank: {
+      rank: payload.rank ? {
         ladderRule: payload.rank.ladderRule,
         ruleList: payload.rank.ruleList.map((item, index) => handlePresentContentData(item))
-      }
+      } : null
     },
     ruleType: payload.strategyType,
     userScope: payload.userScope && payload.userScope.filter((code) => code !== 'all').join(','),
