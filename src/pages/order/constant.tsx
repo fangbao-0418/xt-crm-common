@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import GoodCell from '@/components/good-cell';
 import MoneyRender from '@/components/money-render'
 export const getDetailColumns = () => [
@@ -13,7 +14,10 @@ export const getDetailColumns = () => [
   {
     title: '商品ID',
     dataIndex: 'productId',
-    key: 'productId'
+    key: 'productId',
+    render(text: any) {
+      return <Link to={`/goods/edit/${text}?page=1&pageSize=10`}>{text}</Link>
+    }
   },
   {
     title: '属性',

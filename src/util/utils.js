@@ -3,6 +3,7 @@ import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
 import { baseHost } from './baseHost';
 import { Decimal } from 'decimal.js';
+import { ExpressCompanyOptions } from '@/config';
 import * as LocalStorage from '@/util/localstorage';
 const History = createHashHistory();
 
@@ -201,4 +202,12 @@ export function mul(unitPrice, serverNum) {
     return new Decimal(unitPrice).mul(serverNum).toNumber()
   }
   return 0;
+}
+
+export function getExpressCode(name) {
+  for (let key in ExpressCompanyOptions) {
+    if (ExpressCompanyOptions[key] === name) {
+      return key;
+    }
+  }
 }
