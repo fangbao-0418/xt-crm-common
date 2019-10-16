@@ -20,7 +20,6 @@ interface Props extends RouteComponentProps<{id: any}> {
 
 const AfterSaleApplyInfo = (props: Props) => {
   const orderServerVO = props.orderServerVO || {};
-  const logColumns: any[] = [];
   const onSuccess = () => {
     APP.dispatch({
       type: `${namespace}/getDetail`,

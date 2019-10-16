@@ -18,6 +18,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
     <Card>
       <h4 style={{marginTop: 0}}>订单信息</h4>
       <Row gutter={24}>
+        <Col span={8}>主订单号：{orderInfoVO.mainOrderCode}</Col>
         <Col span={8}>子订单号：{orderInfoVO.childOrderCode}</Col>
         <Col span={8}>订单状态：{orderInfoVO.orderStatusStr}</Col>
         <Col span={8}>订单来源：{orderInfoVO.platform}</Col>

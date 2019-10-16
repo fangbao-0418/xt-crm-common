@@ -75,7 +75,6 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                   title="物流信息上传"
                   visible={modifyLogisticsInfoVisible}
                   onCancel={() => this.setState({ modifyLogisticsInfoVisible: false })}
-                  checkVO={checkVO}
                 />
                 <Button
                   type="primary"
