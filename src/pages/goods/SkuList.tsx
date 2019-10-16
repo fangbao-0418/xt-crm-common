@@ -42,7 +42,7 @@ export interface SkuProps {
 interface Props {
   specs: Spec[]
   dataSource: SkuProps[]
-  onChange?: (value: SkuProps[]) => void
+  onChange?: (value: SkuProps[], specs: Spec[]) => void
 }
 interface SpecItem {
   specName: string;
@@ -141,7 +141,7 @@ class SkuList extends React.Component<Props, State>{
     let specs = this.state.specs
     const { content } = specs[key]
     const { tempSpecInfo, showImage } = this.state
-    const specName = tempSpecInfo[key] && tempSpecInfo[key].specName
+    const specName = (tempSpecInfo[key] && tempSpecInfo[key].specName || '').trim()
     const specPicture = tempSpecInfo[key] && tempSpecInfo[key].specPicture
     if (!specName) {
       message.error('请设置规格名称');
@@ -222,7 +222,7 @@ class SkuList extends React.Component<Props, State>{
     this.onChange(dataSource)
   };
   handleTabsAdd = () => {
-    const { GGName } = this.state;
+    const GGName = this.state.GGName
     if (!GGName) {
       message.error('请输入正确的规格名称');
       return false;
@@ -273,7 +273,6 @@ class SkuList extends React.Component<Props, State>{
     if (!isExistSpec || specs[key].content.length === 0) {
       dataSource = []
     }
-    console.log(dataSource, 'remove')
     this.setState({ specs, dataSource: dataSource });
     this.onChange(dataSource)
   };
@@ -293,21 +292,28 @@ class SkuList extends React.Component<Props, State>{
   }
   public onChange (dataSource: SkuProps[]) {
     if (this.props.onChange) {
-      this.props.onChange(dataSource)
+      this.props.onChange(dataSource, this.state.specs)
     }
   }
   /** 替换图片 */
   public replaceImage (value: SpecItem) {
-    const dataSource = this.state.dataSource
+    const { dataSource, specs } = this.state
     dataSource.map((item) => {
       if (item.propertyValue1 === value.specName) {
         item.imageUrl1 = value.specPicture
       }
     })
-    this.setState({
-      dataSource
+    specs[0].content.map((item) => {
+      if (item.specName === value.specName) {
+        item.specPicture = value.specPicture
+      }
     })
-    this.onChange(dataSource)
+    this.setState({
+      dataSource,
+      specs
+    }, () => {
+      this.onChange(dataSource)
+    })
   }
   render() {
     return (
@@ -325,7 +331,7 @@ class SkuList extends React.Component<Props, State>{
                   value={this.state.GGName}
                   onChange={e => {
                     this.setState({
-                      GGName: e.target.value
+                      GGName: (e.target.value || '').trim()
                     });
                   }}
                 />

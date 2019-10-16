@@ -362,10 +362,10 @@ class GoodsEdit extends React.Component {
                 },
                 {
                   validator(rule, value, callback) {
-                    if (!value || value && value.length !== 3) {
-                      callback('请选择三级类目')
+                    if (!value || value.length === 0) {
+                      callback('请选择类目')
                     }
-                    callback('')
+                    callback()
                   },
                 }
               ],
@@ -491,7 +491,6 @@ class GoodsEdit extends React.Component {
           </Form.Item>
           <Form.Item label="累计销量" required={true}>
             {getFieldDecorator('showNum', {
-              // initialValue: 1,
               rules: [
                 {
                   required: true,
@@ -509,10 +508,11 @@ class GoodsEdit extends React.Component {
         <SkuList
           specs={this.state.speSelect}
           dataSource={this.state.data}
-          onChange={(value) => {
+          onChange={(value, specs) => {
+            console.log(specs, 'skulist change')
             this.setState({
               data: value,
-              speSelect: this.getSpecs(value)
+              speSelect: specs
             })
           }}
         />

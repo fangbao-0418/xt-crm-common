@@ -44,6 +44,9 @@ class UploadView extends Component {
     }
   }
   replaceUrl (url) {
+    if (!url) {
+      return url
+    }
     url = url.replace(/^https?:\/\/.+?\//, '')
     return url
   }
