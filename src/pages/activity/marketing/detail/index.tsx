@@ -47,7 +47,8 @@ class Main extends React.Component<Props, State> {
       this.fetchData()
     } else {
       this.setState({
-        disabled: false
+        disabled: false,
+        canSave: true
       })
       this.initFormValue()
     }
