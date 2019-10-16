@@ -1,8 +1,10 @@
 import React from 'react';
 import { Select, Input } from 'antd';
 import { deliveryModeType } from '@/enum';
+import ArrowContain from './components/arrow-contain'
+import { SkuProps } from './SkuList'
 const { Option } = Select;
-export const getColumns = (cb: any) => [
+export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '供应商skuID',
     dataIndex: 'storeProductSkuId',
@@ -46,6 +48,18 @@ export const getColumns = (cb: any) => [
     }
   },
   {
+    title: '市场价',
+    dataIndex: 'marketPrice',
+    width: 100,
+    render: (text: any, record: any, index: any) => (
+      <Input
+        value={text}
+        placeholder="请输入市场价"
+        onChange={cb('marketPrice', record, index)}
+      />
+    ),
+  },
+  {
     title: '成本价',
     dataIndex: 'costPrice',
     width: 100,
@@ -58,15 +72,33 @@ export const getColumns = (cb: any) => [
     ),
   },
   {
-    title: '市场价',
-    dataIndex: 'marketPrice',
+    title: '库存',
+    dataIndex: 'stock',
     width: 100,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入市场价"
-        onChange={cb('marketPrice', record, index)}
-      />
+      <ArrowContain
+        type={(index === 0 && 'down' || index === dataSource.length - 1 && 'up' || undefined)}
+        onClick={(type) => {
+          
+          const stock = text
+          let current = 0
+          let end = index
+          if (type === 'down') {
+            current = index
+            end = dataSource.length - 1
+          }
+          while (current <= end) {
+            cb('stock', dataSource[current], current)(stock)
+            current++
+          }
+        }}
+      >
+        <Input
+          value={text}
+          placeholder="请输入库存"
+          onChange={cb('stock', record, index)}
+        />
+      </ArrowContain>
     ),
   },
   {
@@ -126,18 +158,6 @@ export const getColumns = (cb: any) => [
         value={text}
         placeholder="请输入公司管理员价"
         onChange={cb('managerMemberPrice', record, index)}
-      />
-    ),
-  },
-  {
-    title: '库存',
-    dataIndex: 'stock',
-    width: 100,
-    render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入库存"
-        onChange={cb('stock', record, index)}
       />
     ),
   },

@@ -49,6 +49,7 @@ const formLayout = {
 
 
 class GoodsEdit extends React.Component {
+  specs = []
   state = {
     speSelect: [],
     spuName: [],
@@ -65,7 +66,6 @@ class GoodsEdit extends React.Component {
     returnAddress: '',
     showImage: false
   };
-
   componentDidMount() {
     this.getStoreList();
     this.getCategoryList();
@@ -93,9 +93,16 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
-    if (!id) return;
+    if (!id) {
+      setFieldsValue({
+        showNum: 1
+      })
+      return
+    };
     getGoodsDetial({ productId: id }).then((res = {}) => {
-      let specs = [
+      const arr2 = treeToarr(list);
+      const categoryId = res.productCategoryVO && res.productCategoryVO.id ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse() : [];
+      this.specs = [
         {
           title: res.property1,
           content: []
@@ -105,24 +112,6 @@ class GoodsEdit extends React.Component {
           content: []
         }
       ]
-      const arr2 = treeToarr(list);
-      const categoryId = res.productCategoryVO && res.productCategoryVO.id ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse() : [];
-
-      map(res.skuList, (item, key) => {
-        if (item.propertyValue1 && specs[0].content.findIndex(val => val.specName === item.propertyValue1) === -1) {
-          specs[0].content.push({
-            specName: item.propertyValue1,
-            specPicture: item.imageUrl1
-          })
-        }
-        if (item.propertyValue2 && specs[1].content.findIndex(val => val.specName === item.propertyValue2) === -1) {
-          specs[1].content.push({
-            specName: item.propertyValue2
-          })
-        }
-      });
-      specs = filter(specs, item => !!item.title);
-      console.log(specs, 'specs')
       map(res.skuList, item => {
         item.costPrice = Number(item.costPrice / 100);
         item.salePrice = Number(item.salePrice / 100);
@@ -141,9 +130,10 @@ class GoodsEdit extends React.Component {
       map(res.listImage ? res.listImage.split(',') : [], (item, key) => {
         listImage = listImage.concat(initImgList(item));
       });
+      this.specs = this.getSpecs(res.skuList)
       this.setState({
         data: res.skuList || [],
-        speSelect: specs,
+        speSelect: this.specs,
         propertyId1: res.propertyId1,
         propertyId2: res.propertyId2,
         returnContact: res.returnContact,
@@ -177,6 +167,28 @@ class GoodsEdit extends React.Component {
       });
     });
   };
+  /** 获取规格结婚 */
+  getSpecs (skuList = []) {
+    const specs = this.specs
+    specs.map((item) => {
+      item.content = []
+    })
+    map(skuList, (item, key) => {
+      if (item.propertyValue1 && specs[0].content.findIndex(val => val.specName === item.propertyValue1) === -1) {
+        specs[0].content.push({
+          specName: item.propertyValue1,
+          specPicture: item.imageUrl1
+        })
+      }
+      if (item.propertyValue2 && specs[1].content.findIndex(val => val.specName === item.propertyValue2) === -1) {
+        specs[1].content.push({
+          specName: item.propertyValue2
+        })
+      }
+    });
+    this.specs = filter(specs, item => !!item.title)
+    return this.specs
+  }
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
       this.setState({
@@ -241,7 +253,15 @@ class GoodsEdit extends React.Component {
             propertyId2: speSelect[1] && propertyId2
           });
         }
+        let isExistImg = true
+        let isNotExistImg = true
         const skuAddList = forEach(cloneDeep(data), item => {
+          if (item.imageUrl1) {
+            isNotExistImg = false
+          }
+          if (!item.imageUrl1) {
+            isExistImg = false
+          }
           item.costPrice = formatMoneyBeforeRequest(item.costPrice);
           item.salePrice = formatMoneyBeforeRequest(item.salePrice);
           item.marketPrice = formatMoneyBeforeRequest(item.marketPrice);
@@ -250,6 +270,11 @@ class GoodsEdit extends React.Component {
           item.areaMemberPrice = formatMoneyBeforeRequest(item.areaMemberPrice);
           item.headPrice = formatMoneyBeforeRequest(item.headPrice);
         });
+        /** isNotExistImg为false存在图片上传, isExistImg为false存在未上传图片*/
+        if (!isNotExistImg && !isExistImg) {
+          APP.error('存在未上传的商品图')
+          return
+        }
         const productImage = [];
         map(vals.productImage, item => {
           productImage.push(replaceHttpUrl(item.url));
@@ -483,9 +508,9 @@ class GoodsEdit extends React.Component {
           specs={this.state.speSelect}
           dataSource={this.state.data}
           onChange={(value) => {
-            console.log(value, 'skulist change')
             this.setState({
-              data: value
+              data: value,
+              speSelect: this.getSpecs(value)
             })
           }}
         />

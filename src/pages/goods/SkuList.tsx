@@ -8,7 +8,9 @@ import descartes from '../../util/descartes';
 import styles from './edit.module.scss';
 import { size, map, concat } from 'lodash';
 
-interface SkuProps {
+export interface SkuProps {
+  /** 供应商id */
+  storeProductSkuId?: number
   /** 商品编码 */
   skuCode: string
   /** 发货方式 1-仓库发货, 2-供货商发货, 3-其他 */
@@ -92,7 +94,6 @@ class SkuList extends React.Component<Props, State>{
     if (props.specs[0]) {
       showImage = props.specs[0].content.findIndex(item => !!item.specPicture) > -1
     }
-    console.log(props.specs, showImage, 'showImage')
     this.setState({
       showImage,
       specs: props.specs,
@@ -161,6 +162,7 @@ class SkuList extends React.Component<Props, State>{
     }
     const addData: SkuProps[] = []
     const defaultItem: SkuProps = {
+      imageUrl1: specPicture,
       skuCode: '',
       stock: 0,
       areaMemberPrice: 0,
@@ -275,28 +277,6 @@ class SkuList extends React.Component<Props, State>{
     this.setState({ specs, dataSource: dataSource });
     this.onChange(dataSource)
   };
-  /**
-   * 每个规格临时名称
-   */
-  // withChangeSpuNameCb = (key: number) => (spuName: string) => {
-  //   const { tempSpecInfo } = this.state;
-  //   if (tempSpecInfo[key]) {
-  //     tempSpecInfo[key].tempSpuName = spuName;
-  //   }
-  //   this.setState({
-  //     tempSpecInfo
-  //   })
-  // };
-  /**
-   * 每个规格临时图片
-   */
-  // withChangeSpuPictureCb = (key: number) => (spuPicture: any[]) => {
-  //   const { tempSpecInfo } = this.state;
-  //   if (tempSpecInfo[key]) {
-  //     tempSpecInfo[key].tempSpuPicture = spuPicture;
-  //   }
-  //   this.setState({ tempSpecInfo })
-  // }
   public getCustomColumns () {
     const columns: ColumnProps<any>[] = []
     const keys = ['propertyValue1', 'propertyValue2']
@@ -316,6 +296,7 @@ class SkuList extends React.Component<Props, State>{
       this.props.onChange(dataSource)
     }
   }
+  /** 替换图片 */
   public replaceImage (value: SpecItem) {
     const dataSource = this.state.dataSource
     dataSource.map((item) => {
@@ -378,12 +359,23 @@ class SkuList extends React.Component<Props, State>{
                   title={spec.title}
                   index={key}
                   onChange={(e: any) => {
-                    this.setState({ showImage: e.target.checked })
+                    const dataSource = this.state.dataSource
+                    const checked = e.target.checked 
+                    this.setState({ showImage: checked })
+                    if (!checked) {
+                      dataSource.map((item) => {
+                        item.imageUrl1 = ''
+                      })
+                      this.setState({
+                        dataSource
+                      })
+                      this.onChange(dataSource)
+                    }
                   }}
                 />
               )}
               extra={
-                <a href="javascript:void(0);" onClick={() => this.handleRemoveSpec(key)}>删除</a>
+                <span className='href' onClick={() => this.handleRemoveSpec(key)}>删除</span>
               }>
               <div className={styles.spulist}>
                 {map(spec.content, (item, index: number) => (
@@ -411,7 +403,6 @@ class SkuList extends React.Component<Props, State>{
                     value={this.state.tempSpecInfo[key]}
                     showImage={this.state.showImage && key === 0}
                     onChange={(value) => {
-                      console.log(value, 'xxxxxxxxxxx')
                       const tempSpecInfo = this.state.tempSpecInfo
                       tempSpecInfo[key] = value
                       this.setState({
@@ -437,7 +428,7 @@ class SkuList extends React.Component<Props, State>{
           scroll={{ x: 1650, y: 600 }}
           columns={[
             ...this.getCustomColumns(),
-            ...getColumns(this.handleChangeValue)
+            ...getColumns(this.handleChangeValue, this.state.dataSource)
           ]}
           dataSource={this.state.dataSource}
           pagination={false}
