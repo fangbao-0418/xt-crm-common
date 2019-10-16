@@ -3,6 +3,7 @@ import { Card, Row, Col, Table } from 'antd';
 import { getDetailColumns } from '../../constant';
 import { joinFilterEmpty, formatMoneyWithSign } from '@/pages/helper';
 import { ColumnProps } from 'antd/es/table';
+import { Link } from 'react-router-dom';
 import { logisticsInformationColumns } from '../config';
 import memberType from '@/enum/memberType';
 import moment from 'moment';
@@ -18,7 +19,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
     <Card>
       <h4 style={{marginTop: 0}}>订单信息</h4>
       <Row gutter={24}>
-        <Col span={8}>主订单号：{orderInfoVO.mainOrderCode}</Col>
+        <Col span={8}>主订单号：<Link to={`/order/detail/${orderInfoVO.mainOrderCode}`}>{orderInfoVO.mainOrderCode}</Link></Col>
         <Col span={8}>子订单号：{orderInfoVO.childOrderCode}</Col>
         <Col span={8}>订单状态：{orderInfoVO.orderStatusStr}</Col>
         <Col span={8}>订单来源：{orderInfoVO.platform}</Col>
