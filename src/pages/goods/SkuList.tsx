@@ -161,7 +161,7 @@ class SkuList extends React.Component<Props, State>{
     }
     const addData: SkuProps[] = []
     const defaultItem: SkuProps = {
-      skuCode: '100',
+      skuCode: '',
       stock: 0,
       areaMemberPrice: 0,
       cityMemberPrice: 0,
@@ -196,7 +196,7 @@ class SkuList extends React.Component<Props, State>{
           propertyValue1: '',
           propertyValue2: specName
         })
-      } else if (specs[0] && specs[0].content.length >= 1 && specs[1].content.length === 1) {
+      } else if (specs[0] && specs[0].content.length >= 1 && specs[1].content.length === 1 && dataSource.length > 0) {
         dataSource = dataSource.map((item) => {
           item.propertyValue2 = specName
           return item
@@ -236,12 +236,9 @@ class SkuList extends React.Component<Props, State>{
   handleRemoveSpec = (index: number) => {
     const { specs } = this.state
     specs.splice(index, 1)
-    let dataSource = this.state.dataSource
-    // dataSource = dataSource.filter((item) => {
-    //   return item.
-    // })
     this.setState({
-      specs
+      specs,
+      dataSource: []
     })
   };
 
@@ -271,7 +268,7 @@ class SkuList extends React.Component<Props, State>{
         isExistSpec = true
       })
     })
-    if (!isExistSpec) {
+    if (!isExistSpec || specs[key].content.length === 0) {
       dataSource = []
     }
     console.log(dataSource, 'remove')
