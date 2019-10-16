@@ -43,7 +43,16 @@ class UploadView extends Component {
       });
     }
   }
-
+  replaceUrl (url) {
+    url = url.replace(/^https?:\/\/.+?\//, '')
+    return url
+  }
+  getViewUrl (url) {
+    if (!url) {
+      return url
+    }
+    return 'https://assets.hzxituan.com/' + url.replace(/^https?:\/\/.+?\//, '')
+  }
   initFileList(fileList = []) {
     const { fileType } = this.props;
     return Array.isArray(fileList) ? fileList.map(val => {
@@ -52,6 +61,9 @@ class UploadView extends Component {
         val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
         val.thumbUrl = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
       }
+      val.durl = this.getViewUrl(val.durl)
+      val.url = this.getViewUrl(val.url)
+      val.thumbUrl = this.getViewUrl(val.thumbUrl)
       return val;
     }): [];
   }
@@ -70,8 +82,6 @@ class UploadView extends Component {
     }
     return true;
   };
-
-
   customRequest(e) {
     const file = e.file;
 
@@ -84,7 +94,14 @@ class UploadView extends Component {
       this.setState({
         fileList: fileList,
       });
-      isFunction(onChange) && onChange(fileList);
+      const value = fileList.map((item) => {
+        return {
+          ...item,
+          url: this.replaceUrl(item.url),
+          durl: this.replaceUrl(item.durl)
+        }
+      })
+      isFunction(onChange) && onChange(value);
     });
   }
   handleRemove = e => {

@@ -18,7 +18,7 @@ import descartes from '../../util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api';
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
 import SkuList from './SkuList';
-
+import styles from './edit.module.scss'
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
@@ -172,15 +172,17 @@ class GoodsEdit extends React.Component {
     const specs = this.specs
     specs.map((item) => {
       item.content = []
+      return item
     })
+    console.log(specs, skuList, 'xxxxx')
     map(skuList, (item, key) => {
-      if (item.propertyValue1 && specs[0].content.findIndex(val => val.specName === item.propertyValue1) === -1) {
+      if (item.propertyValue1 && specs[0] && specs[0].content.findIndex(val => val.specName === item.propertyValue1) === -1) {
         specs[0].content.push({
           specName: item.propertyValue1,
           specPicture: item.imageUrl1
         })
       }
-      if (item.propertyValue2 && specs[1].content.findIndex(val => val.specName === item.propertyValue2) === -1) {
+      if (item.propertyValue2 && specs[1] && specs[1].content.findIndex(val => val.specName === item.propertyValue2) === -1) {
         specs[1].content.push({
           specName: item.propertyValue2
         })
@@ -360,10 +362,10 @@ class GoodsEdit extends React.Component {
                 },
                 {
                   validator(rule, value, callback) {
-                    if (value.length !== 3) {
+                    if (!value || value && value.length !== 3) {
                       callback('请选择三级类目')
                     }
-                    callback()
+                    callback('')
                   },
                 }
               ],
@@ -531,30 +533,49 @@ class GoodsEdit extends React.Component {
               </Radio.Group>,
             )}
           </Form.Item>
-          <Form.Item label="退货地址">
-            <Input.Group>
-              <input
+          <Form.Item
+            label="退货地址"
+            wrapperCol={{
+              span: 18
+            }}
+          >
+            <div>
+              <Input
+                style={{width: 160, marginRight: 10}}
+                className={styles['no-error']}
                 name="returnContact"
                 placeholder="收货人姓名"
                 value={this.state.returnContact}
                 onChange={this.handleInput}
               />
-              <input
-                placeholder="收货人电话"
-                name="returnPhone"
-                value={this.state.returnPhone}
-                type="tel"
-                maxLength={11}
-                onChange={this.handleInput}
-              />
-              <input
-                style={{ flex: 1 }}
+              {getFieldDecorator('returnPhone', {
+                rules: [
+                  {required: true, message: '收货人电话不能为空'},
+                  {
+                    pattern: APP.regular.phone,
+                    message: '收货人电话格式不正确'
+                  }
+                ]
+              })(
+                <Input
+                  style={{width: 160, marginRight: 10}}
+                  placeholder="收货人电话"
+                  name="returnPhone"
+                  value={this.state.returnPhone}
+                  type="tel"
+                  maxLength={11}
+                  onChange={this.handleInput}
+                />
+              )}
+              <Input
+                style={{width: 250}}
+                className={styles['no-error']}
                 name="returnAddress"
                 value={this.state.returnAddress}
                 placeholder="收货人详细地址"
                 onChange={this.handleInput}
               />
-            </Input.Group>
+            </div>
           </Form.Item>
         </Card>
         <Card style={{ marginTop: 10 }}>
