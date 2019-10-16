@@ -19,12 +19,9 @@ export const fetchActivityList = (payload: Marketing.ActivityListPayloadProps) =
   })
 }
 
-/** 关闭开启活动 0-关闭 1-开启 */
-export const changeActivityStatus = (ids: number[], type: 0 | 1 = 0) => {
-  let url = '/promotion/disable'
-  if (type === 1) {
-    url = '/promotion/enable'
-  }
+/** 关闭开启活动 */
+export const changeActivityStatus = (ids: number[]) => {
+  let url = '/promotion/disableDiscounts'
   return newPost(url, {
     promotionIds: ids
   })

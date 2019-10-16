@@ -84,7 +84,7 @@ class Main extends React.Component<{}, State> {
               <Popconfirm
                 title="确定关闭该活动吗"
                 onConfirm={() => {
-                  api.changeActivityStatus([record.id], 0).then(() => [
+                  api.changeActivityStatus([record.id]).then(() => [
                     this.fetchData()
                   ])
                 }}
