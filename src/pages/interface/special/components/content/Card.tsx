@@ -114,36 +114,53 @@ class Main extends React.Component<Props, State> {
   public renderAd(): React.ReactNode {
     const { detail } = this.props
     return (
-      <Draggable
-        className={styles['shop-draggable']}
-        dragElement=".ant-upload-list-item"
-      >
-        <Upload
-          value={detail.advertisementUrl && [
-            {
-              uid: 'advertisementUrl0',
-              url: detail.advertisementUrl,
-            }
-          ]}
-          size={0.3}
-          listType="picture-card"
-          onChange={(value: any) => {
-            const detail = this.props.detail
-            console.log(value, 'picture change')
-            if (value[0] && value[0].url) {
-              this.onChange({
-                ...detail,
-                advertisementUrl: value[0].url
-              })
-            } else {
-              this.onChange({
-                ...detail,
-                advertisementUrl: undefined
-              })
-            }
-          }}
-        />
-      </Draggable>
+      // <Draggable
+      //   className={styles['shop-draggable']}
+      //   dragElement=".ant-upload-list-item"
+      // >
+        <div>
+          <Upload
+            value={detail.advertisementUrl && [
+              {
+                uid: 'advertisementUrl0',
+                url: detail.advertisementUrl,
+              }
+            ]}
+            size={0.3}
+            listType="picture-card"
+            onChange={(value: any) => {
+              const detail = this.props.detail
+              console.log(value, 'picture change')
+              if (value[0] && value[0].url) {
+                this.onChange({
+                  ...detail,
+                  advertisementUrl: value[0].url
+                })
+              } else {
+                this.onChange({
+                  ...detail,
+                  advertisementUrl: undefined
+                })
+              }
+            }}
+          />
+          <div>
+            <Input
+              name='advertisementJumpUrl'
+              style={{width: 200}}
+              placeholder='请输入正确的链接地址'
+              value={detail.advertisementJumpUrl}
+              onChange={(e) => {
+                const value = e.target.value
+                this.onChange({
+                  ...detail,
+                  advertisementJumpUrl: value
+                })
+              }}
+            />
+          </div>
+        </div>
+      // </Draggable>
     )
   }
   public renderCoupon(): React.ReactNode {

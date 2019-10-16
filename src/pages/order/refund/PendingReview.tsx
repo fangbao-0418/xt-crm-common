@@ -37,7 +37,7 @@ class PendingReview extends React.Component<Props, State> {
   handleAuditOperate = (status: number) => {
     this.props.form.validateFields((errors, values) => {
       if (!errors) {
-        if (values.serverNum == 0) {
+        if (status === 1 && values.serverNum == 0) {
           message.error('售后数目必须大于0');
           return;
         }

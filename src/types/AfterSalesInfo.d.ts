@@ -27,6 +27,7 @@ declare module AfterSalesInfo {
     sendExpressName: string;
     sendExpressCode: string;
     sendExpressTime: number;
+    sendExpressId: string;
     isRefundFreight: number;
     freight: number;
     serverNum: number;

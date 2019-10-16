@@ -81,7 +81,12 @@ class Main extends React.Component<Props, State> {
           })
           return { type: column.type, css: column.css, sort: column.sort, items }
         case 3:
-          return { type: column.type, sort: column.sort, advertisementUrl: column.advertisementUrl };
+          return {
+            type: column.type,
+            sort: column.sort,
+            advertisementUrl: column.advertisementUrl,
+            advertisementJumpUrl: column.advertisementJumpUrl
+          };
         default:
           return {};
       }
@@ -205,6 +210,18 @@ class Main extends React.Component<Props, State> {
                   listType="picture-card"
                 >
                 </Upload>
+              )}
+            </Form.Item>
+            <Form.Item
+              label='链接'
+            >
+              {getFieldDecorator('jumpUrl', {
+                initialValue: detail.jumpUrl,
+                rules: [
+                  { required: true, message: '请输入正确的链接地址' }
+                ]
+              })(
+                <Input placeholder='请输入正确的链接地址' />
               )}
             </Form.Item>
             <Form.Item
