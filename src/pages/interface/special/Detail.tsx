@@ -221,7 +221,7 @@ class Main extends React.Component<Props, State> {
                   { required: true, message: '请输入正确的链接地址' }
                 ]
               })(
-                <Input placeholder='请输入正确的链接一致' />
+                <Input placeholder='请输入正确的链接地址' />
               )}
             </Form.Item>
             <Form.Item
