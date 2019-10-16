@@ -5,7 +5,13 @@ interface Props {
   type?: 'up' | 'down'
   onClick?: (dict: 'up' | 'down') => void
 }
-class Main extends React.Component<Props> {
+interface State {
+  visible: boolean
+}
+class Main extends React.Component<Props, State> {
+  public state: State = {
+    visible: false
+  }
   public handleClick (dict: 'up' | 'down') {
     if (this.props.onClick) {
       this.props.onClick(dict)
@@ -14,11 +20,29 @@ class Main extends React.Component<Props> {
   public render () {
     const type = this.props.type
     return (
-      <div className={styles['arrow-contain']}>
-        <div>
+      <div
+        className={styles['arrow-contain']}
+        onMouseEnter={() => {
+          this.setState({
+            visible: true
+          })
+        }}
+        onMouseLeave={() => {
+          this.setState({
+            visible: false
+          })
+        }}
+      >
+        <div
+        >
           {this.props.children}
         </div>
-        <div className={styles.arrows}>
+        <div
+          className={styles.arrows}
+          style={{
+            visibility: !this.state.visible ? 'hidden' : 'unset'
+          }}
+        >
           {type !== 'down' && (
             <Icon
               type="arrow-up"

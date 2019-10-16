@@ -4,6 +4,29 @@ import { deliveryModeType } from '@/enum';
 import ArrowContain from './components/arrow-contain'
 import { SkuProps } from './SkuList'
 const { Option } = Select;
+
+function speedyInput (field: string, text: any, record: SkuProps, index: number, dataSource: SkuProps[], cb: any) {
+  return (node: React.ReactNode) => (
+    <ArrowContain
+      type={(index === 0 && 'down' || index === dataSource.length - 1 && 'up' || undefined)}
+      onClick={(type) => {   
+        const stock = text
+        let current = 0
+        let end = index
+        if (type === 'down') {
+          current = index
+          end = dataSource.length - 1
+        }
+        while (current <= end) {
+          cb(field, dataSource[current], current)(stock)
+          current++
+        }
+      }}
+    >
+      {node}
+    </ArrowContain>
+  )
+}
 export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '供应商skuID',
@@ -52,11 +75,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'marketPrice',
     width: 100,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入市场价"
-        onChange={cb('marketPrice', record, index)}
-      />
+      speedyInput('marketPrice', text, record, index, dataSource, cb)(
+        <Input
+          value={text}
+          placeholder="请输入市场价"
+          onChange={cb('marketPrice', record, index)}
+        />
+      )
     ),
   },
   {
@@ -64,11 +89,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'costPrice',
     width: 100,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入成本价"
-        onChange={cb('costPrice', record, index)}
-      />
+      speedyInput('costPrice', text, record, index, dataSource, cb)(
+        <Input
+          value={text}
+          placeholder="请输入成本价"
+          onChange={cb('costPrice', record, index)}
+        />
+      )
     ),
   },
   {
@@ -76,29 +103,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'stock',
     width: 100,
     render: (text: any, record: any, index: any) => (
-      <ArrowContain
-        type={(index === 0 && 'down' || index === dataSource.length - 1 && 'up' || undefined)}
-        onClick={(type) => {
-          
-          const stock = text
-          let current = 0
-          let end = index
-          if (type === 'down') {
-            current = index
-            end = dataSource.length - 1
-          }
-          while (current <= end) {
-            cb('stock', dataSource[current], current)(stock)
-            current++
-          }
-        }}
-      >
+      speedyInput('stock', text, record, index, dataSource, cb)(
         <Input
           value={text}
           placeholder="请输入库存"
           onChange={cb('stock', record, index)}
         />
-      </ArrowContain>
+      )
     ),
   },
   {
@@ -106,11 +117,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'salePrice',
     width: 100,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入销售价"
-        onChange={cb('salePrice', record, index)}
-      />
+      speedyInput('salePrice', text, record, index, dataSource, cb)(
+        <Input
+          value={text}
+          placeholder="请输入销售价"
+          onChange={cb('salePrice', record, index)}
+        />
+      )
     ),
   },
   {
@@ -118,11 +131,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'headPrice',
     width: 100,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入团长价"
-        onChange={cb('headPrice', record, index)}
-      />
+      speedyInput('headPrice', text, record, index, dataSource, cb)(
+        <Input
+          value={text}
+          placeholder="请输入团长价"
+          onChange={cb('headPrice', record, index)}
+        />
+      )
     ),
   },
   {
@@ -130,11 +145,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'areaMemberPrice',
     width: 150,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入社区管理员价"
-        onChange={cb('areaMemberPrice', record, index)}
-      />
+      speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
+        <Input
+          value={text}
+          placeholder="请输入社区管理员价"
+          onChange={cb('areaMemberPrice', record, index)}
+        />
+      )
     ),
   },
   {
@@ -142,11 +159,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'cityMemberPrice',
     width: 150,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入合伙人价"
-        onChange={cb('cityMemberPrice', record, index)}
-      />
+      speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
+        <Input
+          value={text}
+          placeholder="请输入合伙人价"
+          onChange={cb('cityMemberPrice', record, index)}
+        />
+      )
     ),
   },
   {
@@ -154,11 +173,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'managerMemberPrice',
     width: 150,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入公司管理员价"
-        onChange={cb('managerMemberPrice', record, index)}
-      />
+      speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
+        <Input
+          value={text}
+          placeholder="请输入公司管理员价"
+          onChange={cb('managerMemberPrice', record, index)}
+        />
+      )
     ),
   },
   {
@@ -166,11 +187,13 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
     dataIndex: 'stockAlert',
     width: 100,
     render: (text: any, record: any, index: any) => (
-      <Input
-        value={text}
-        placeholder="请输入警戒库存"
-        onChange={cb('stockAlert', record, index)}
-      />
+      speedyInput('stockAlert', text, record, index, dataSource, cb)(
+        <Input
+          value={text}
+          placeholder="请输入警戒库存"
+          onChange={cb('stockAlert', record, index)}
+        />
+      )
     ),
   },
 ];
