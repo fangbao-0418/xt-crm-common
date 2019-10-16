@@ -6,3 +6,7 @@ interface PageProps<Item = any> {
   size: number
   records?: Item[]
 }
+
+type Dispatch<A> = (value: A) => void;
+type SetStateAction<S> = S | ((prevState: S) => S);
+type useStateType = [boolean, Dispatch<SetStateAction<boolean>>];

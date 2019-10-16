@@ -7,6 +7,8 @@
 _roadhog-api-doc
 
 # production
+./src/util/baseHost.js
+./src/pages/login/domain.js
 /build
 /dist
 /.vscode

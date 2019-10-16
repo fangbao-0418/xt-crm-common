@@ -8,12 +8,12 @@ const replaceHttpUrl = (imgUrl = '') => {
   return imgUrl;
 }
 
-const GoodCell = ({ productImage, skuName, properties, coverUrl }) => {
+const GoodCell = ({ productImage, skuName, properties, coverUrl, showImage = true}) => {
   return (
     <div className="good-cell">
-      <div className="good-image">
+      {showImage && <div className="good-image">
         <img alt={'商品图片'} src={replaceHttpUrl(coverUrl || productImage)} style={{ maxHeight: 100, maxWidth: 100 }} />
-      </div>
+      </div>}
       <div className="good-title">
         {skuName} {properties ? `(${properties})` : ''}
       </div>
