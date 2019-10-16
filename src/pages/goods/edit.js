@@ -112,6 +112,7 @@ class GoodsEdit extends React.Component {
           content: []
         }
       ]
+      let showImage = false
       map(res.skuList, item => {
         item.costPrice = Number(item.costPrice / 100);
         item.salePrice = Number(item.salePrice / 100);
@@ -120,6 +121,9 @@ class GoodsEdit extends React.Component {
         item.managerMemberPrice = Number(item.managerMemberPrice / 100);
         item.areaMemberPrice = Number(item.areaMemberPrice / 100);
         item.headPrice = Number(item.headPrice / 100);
+        if (item.imageUrl1) {
+          showImage = true
+        }
       });
       let productImage = [];
       map(split(res.productImage, ','), (item, key) => {
@@ -138,7 +142,8 @@ class GoodsEdit extends React.Component {
         propertyId2: res.propertyId2,
         returnContact: res.returnContact,
         returnPhone: res.returnPhone,
-        returnAddress: res.returnAddress
+        returnAddress: res.returnAddress,
+        showImage
       });
       setFieldsValue({
         showNum: res.showNum !== undefined ? res.showNum : 1,
@@ -175,7 +180,6 @@ class GoodsEdit extends React.Component {
       item.content = []
       return item
     })
-    console.log(specs, skuList, 'xxxxx')
     map(skuList, (item, key) => {
       if (item.propertyValue1 && specs[0] && specs[0].content.findIndex(val => val.specName === item.propertyValue1) === -1) {
         specs[0].content.push({
@@ -507,13 +511,15 @@ class GoodsEdit extends React.Component {
           </Form.Item>
         </Card>
         <SkuList
+          showImage={this.state.showImage}
           specs={this.state.speSelect}
           dataSource={this.state.data}
-          onChange={(value, specs) => {
+          onChange={(value, specs, showImage) => {
             console.log(specs, 'skulist change')
             this.setState({
               data: value,
-              speSelect: specs
+              speSelect: specs,
+              showImage
             })
           }}
         />

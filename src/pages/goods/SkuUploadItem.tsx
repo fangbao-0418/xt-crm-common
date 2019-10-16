@@ -20,9 +20,11 @@ function SkuUploadItem(props: Props) {
     }
   }
   const [value, setValue] = useState(Object.assign({}, props.value))
+  const { specName, specPicture } = Object.assign({}, props.value)
   useEffect(() => {
+    console.log(props.value, 'value')
     setValue(Object.assign({}, props.value))
-  }, [props.value])
+  }, [specName, specPicture])
   return (
     <div className={styles.spuitem}>
       <Input
@@ -46,12 +48,10 @@ function SkuUploadItem(props: Props) {
             url: value.specPicture
           }]}
           onChange={(val: any) => {
-            console.log(val, 'val')
             const newValue = {
               ...value,
               specPicture: val[0] && val[0].url
             }
-            console.log(newValue, 'val')
             onChange(newValue)
             setValue(newValue)
           }}

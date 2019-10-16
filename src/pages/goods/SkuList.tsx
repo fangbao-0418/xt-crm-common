@@ -42,7 +42,8 @@ export interface SkuProps {
 interface Props {
   specs: Spec[]
   dataSource: SkuProps[]
-  onChange?: (value: SkuProps[], specs: Spec[]) => void
+  showImage: boolean
+  onChange?: (value: SkuProps[], specs: Spec[], showImage: boolean) => void
 }
 interface SpecItem {
   specName: string;
@@ -90,12 +91,9 @@ class SkuList extends React.Component<Props, State>{
     dataSource: this.props.dataSource
   }
   public componentWillReceiveProps (props: Props) {
-    let showImage = false
-    if (props.specs[0]) {
-      showImage = props.specs[0].content.findIndex(item => !!item.specPicture) > -1
-    }
+    console.log(props.specs, 'will receive')
     this.setState({
-      showImage,
+      showImage: props.showImage,
       specs: props.specs,
       dataSource: props.dataSource
     })
@@ -142,7 +140,7 @@ class SkuList extends React.Component<Props, State>{
     const { content } = specs[key]
     const { tempSpecInfo, showImage } = this.state
     const specName = (tempSpecInfo[key] && tempSpecInfo[key].specName || '').trim()
-    const specPicture = tempSpecInfo[key] && tempSpecInfo[key].specPicture
+    const specPicture = tempSpecInfo[0] && tempSpecInfo[0].specPicture
     if (!specName) {
       message.error('请设置规格名称');
       return
@@ -176,37 +174,41 @@ class SkuList extends React.Component<Props, State>{
     }
     let dataSource = this.state.dataSource
     if (key === 0) {
-      if (!specs[1] || specs[1] && specs[1].content.length <= 1) {
-        addData.push({
-          ...defaultItem,
-          propertyValue1: specName,
-          propertyValue2: specs[1] && specs[1].content[0] && specs[1].content[0].specName
-        })
-      } else if (specs[1] && specs[1].content.length > 1) {
-        specs[1] && specs[1].content.map((item) => {
+      if (specs[1] && specs[1].content && specs[1].content.length > 1) {
+        specs[1].content.map((item) => {
           addData.push({
             ...defaultItem,
+            imageUrl1: specPicture,
             propertyValue1: specName,
             propertyValue2: item.specName
           })
         })
+      } else {
+        addData.push({
+          ...defaultItem,
+          propertyValue1: specName,
+          propertyValue2: specs[1] && specs[1].content && specs[1].content[0] && specs[1].content[0].specName
+        })
       }
     } else {
-      if (!specs[0] || specs[0] && specs[0].content.length === 0) {
+      /** 第一规格不存在 */
+      if (!specs[0] || specs[0] && specs[0].content && specs[0].content.length === 0) {
         addData.push({
           ...defaultItem,
           propertyValue1: '',
           propertyValue2: specName
         })
+      /** 第一规格有多项，第二规格只有一项，每组propertyValue2进行赋值 */
       } else if (specs[0] && specs[0].content.length >= 1 && specs[1].content.length === 1 && dataSource.length > 0) {
         dataSource = dataSource.map((item) => {
           item.propertyValue2 = specName
           return item
         })
-      } else {
-        specs[0] && specs[0].content.map((item) => {
+      } else if (specs[0] && specs[0].content) {
+        specs[0].content.map((item) => {
           addData.push({
             ...defaultItem,
+            imageUrl1: item.specPicture,
             propertyValue1: item.specName ,
             propertyValue2: specName
           })
@@ -241,6 +243,8 @@ class SkuList extends React.Component<Props, State>{
     this.setState({
       specs,
       dataSource: []
+    }, () => {
+      this.onChange([])
     })
   };
 
@@ -292,7 +296,7 @@ class SkuList extends React.Component<Props, State>{
   }
   public onChange (dataSource: SkuProps[]) {
     if (this.props.onChange) {
-      this.props.onChange(dataSource, this.state.specs)
+      this.props.onChange(dataSource, this.state.specs, this.state.showImage)
     }
   }
   /** 替换图片 */
@@ -327,6 +331,7 @@ class SkuList extends React.Component<Props, State>{
             content={
               <div style={{ display: 'flex' }}>
                 <Input
+                  style={{width: 150}}
                   placeholder="请添加规格名称"
                   value={this.state.GGName}
                   onChange={e => {
@@ -365,18 +370,23 @@ class SkuList extends React.Component<Props, State>{
                   title={spec.title}
                   index={key}
                   onChange={(e: any) => {
-                    const dataSource = this.state.dataSource
+                    const { dataSource, specs } = this.state
                     const checked = e.target.checked 
-                    this.setState({ showImage: checked })
                     if (!checked) {
                       dataSource.map((item) => {
                         item.imageUrl1 = ''
                       })
-                      this.setState({
-                        dataSource
+                      specs[0].content.map((item) => {
+                        item.specPicture = ''
                       })
-                      this.onChange(dataSource)
                     }
+                    this.setState({
+                      showImage: checked,
+                      dataSource,
+                      specs
+                    }, () => {
+                      this.onChange(dataSource)
+                    })
                   }}
                 />
               )}
