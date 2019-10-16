@@ -40,7 +40,7 @@ function SkuUploadItem(props: Props) {
       />
       {props.showImage &&
         <UploadView
-          disabled={props.disabled}
+          // disabled={props.disabled}
           value={value.specPicture && [{
             uid: 1,
             url: value.specPicture

@@ -316,6 +316,18 @@ class SkuList extends React.Component<Props, State>{
       this.props.onChange(dataSource)
     }
   }
+  public replaceImage (value: SpecItem) {
+    const dataSource = this.state.dataSource
+    dataSource.map((item) => {
+      if (item.propertyValue1 === value.specName) {
+        item.imageUrl1 = value.specPicture
+      }
+    })
+    this.setState({
+      dataSource
+    })
+    this.onChange(dataSource)
+  }
   render() {
     return (
       <Card
@@ -381,6 +393,9 @@ class SkuList extends React.Component<Props, State>{
                     disabled
                     index={key}
                     showImage={this.state.showImage && key === 0}
+                    onChange={(value) => {
+                      this.replaceImage(value)
+                    }}
                   >
                     <Button
                       className={styles.spubtn}

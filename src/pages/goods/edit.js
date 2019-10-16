@@ -241,9 +241,7 @@ class GoodsEdit extends React.Component {
             propertyId2: speSelect[1] && propertyId2
           });
         }
-
         const skuAddList = forEach(cloneDeep(data), item => {
-          item.imageUrl1 = 'https://xituan.oss-cn-shenzhen.aliyuncs.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551571145793869.png'
           item.costPrice = formatMoneyBeforeRequest(item.costPrice);
           item.salePrice = formatMoneyBeforeRequest(item.salePrice);
           item.marketPrice = formatMoneyBeforeRequest(item.marketPrice);
@@ -485,6 +483,7 @@ class GoodsEdit extends React.Component {
           specs={this.state.speSelect}
           dataSource={this.state.data}
           onChange={(value) => {
+            console.log(value, 'skulist change')
             this.setState({
               data: value
             })
