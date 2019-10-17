@@ -145,10 +145,10 @@ class SkuList extends React.Component<Props, State>{
       message.error('请设置规格名称');
       return
     }
-    if (showImage && !specPicture && key === 0) {
-      message.error('请设置规格商品图');
-      return
-    }
+    // if (showImage && !specPicture && key === 0) {
+    //   message.error('请设置规格商品图');
+    //   return
+    // }
     if (content.find((v) => v.specName === specName)) {
       message.error('请不要填写相同的规格');
       return

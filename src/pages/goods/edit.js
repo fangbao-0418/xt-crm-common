@@ -260,15 +260,15 @@ class GoodsEdit extends React.Component {
             propertyId2: speSelect[1] && propertyId2
           });
         }
-        let isExistImg = true
-        let isNotExistImg = true
+        // let isExistImg = true
+        // let isNotExistImg = true
         const skuAddList = forEach(cloneDeep(data), item => {
-          if (item.imageUrl1) {
-            isNotExistImg = false
-          }
-          if (!item.imageUrl1) {
-            isExistImg = false
-          }
+          // if (item.imageUrl1) {
+          //   isNotExistImg = false
+          // }
+          // if (!item.imageUrl1) {
+          //   isExistImg = false
+          // }
           item.costPrice = formatMoneyBeforeRequest(item.costPrice);
           item.salePrice = formatMoneyBeforeRequest(item.salePrice);
           item.marketPrice = formatMoneyBeforeRequest(item.marketPrice);
@@ -278,10 +278,10 @@ class GoodsEdit extends React.Component {
           item.headPrice = formatMoneyBeforeRequest(item.headPrice);
         });
         /** isNotExistImg为false存在图片上传, isExistImg为false存在未上传图片*/
-        if (!isNotExistImg && !isExistImg) {
-          APP.error('存在未上传的商品图')
-          return
-        }
+        // if (!isNotExistImg && !isExistImg) {
+        //   APP.error('存在未上传的商品图')
+        //   return
+        // }
         const productImage = [];
         map(vals.productImage, item => {
           productImage.push(replaceHttpUrl(item.url));
