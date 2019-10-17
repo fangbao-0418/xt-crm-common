@@ -160,7 +160,7 @@ class SkuList extends React.Component<Props, State>{
     }
     const addData: SkuProps[] = []
     const defaultItem: SkuProps = {
-      imageUrl1: specPicture,
+      imageUrl1: '',
       skuCode: '',
       stock: 0,
       areaMemberPrice: 0,
@@ -173,6 +173,7 @@ class SkuList extends React.Component<Props, State>{
       managerMemberPrice: 0
     }
     let dataSource = this.state.dataSource
+    /** 第一规格输入时 */
     if (key === 0) {
       if (specs[1] && specs[1].content && specs[1].content.length > 1) {
         specs[1].content.map((item) => {
@@ -183,6 +184,16 @@ class SkuList extends React.Component<Props, State>{
             propertyValue2: item.specName
           })
         })
+      /** 如果dataSource为空，补充规格 */
+      } else if (dataSource.length === 0 && specs[0] && specs[0].content && specs[0].content.length >= 1) {
+        specs[0].content.map((item) => {
+          addData.push({
+            ...defaultItem,
+            imageUrl1: item.specPicture,
+            propertyValue1: item.specName,
+            propertyValue2: ''
+          })
+        })
       } else {
         addData.push({
           ...defaultItem,
@@ -190,9 +201,19 @@ class SkuList extends React.Component<Props, State>{
           propertyValue2: specs[1] && specs[1].content && specs[1].content[0] && specs[1].content[0].specName
         })
       }
+    /** 第二项规格输入时 */
     } else {
-      /** 第一规格不存在 */
-      if (!specs[0] || specs[0] && specs[0].content && specs[0].content.length === 0) {
+      /** 如果dataSource为空，规格2至少有一项，补充规格 */
+      if (dataSource.length === 0 && specs[1] && specs[1].content && specs[1].content.length >= 1) {
+        specs[1].content.map((item) => {
+          addData.push({
+            ...defaultItem,
+            propertyValue1: '',
+            propertyValue2: item.specName
+          })
+        })
+      /** 第一规格不存在, 正常新增一个规格 */
+      } else if (!specs[0] || specs[0] && specs[0].content && specs[0].content.length === 0) {
         addData.push({
           ...defaultItem,
           propertyValue1: '',
@@ -204,12 +225,12 @@ class SkuList extends React.Component<Props, State>{
           item.propertyValue2 = specName
           return item
         })
-      } else if (specs[0] && specs[0].content) {
+      } else if (specs[0] && specs[0].content && specs[0].content.length >= 1) {
         specs[0].content.map((item) => {
           addData.push({
             ...defaultItem,
             imageUrl1: item.specPicture,
-            propertyValue1: item.specName ,
+            propertyValue1: item.specName,
             propertyValue2: specName
           })
         })
