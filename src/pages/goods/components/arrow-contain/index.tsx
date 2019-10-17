@@ -4,6 +4,7 @@ import styles from './style.module.sass'
 interface Props {
   type?: 'up' | 'down'
   onClick?: (dict: 'up' | 'down') => void
+  disabled?: boolean
 }
 interface State {
   visible: boolean
@@ -19,6 +20,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const type = this.props.type
+    const disabled = this.props.disabled
     return (
       <div
         className={styles['arrow-contain']}
@@ -40,7 +42,7 @@ class Main extends React.Component<Props, State> {
         <div
           className={styles.arrows}
           style={{
-            visibility: !this.state.visible ? 'hidden' : 'unset'
+            visibility: (disabled || !this.state.visible) ? 'hidden' : 'unset'
           }}
         >
           {type !== 'down' && (

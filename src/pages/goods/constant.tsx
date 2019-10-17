@@ -8,6 +8,7 @@ const { Option } = Select;
 function speedyInput (field: string, text: any, record: SkuProps, index: number, dataSource: SkuProps[], cb: any) {
   return (node: React.ReactNode) => (
     <ArrowContain
+      disabled={dataSource.length <= 1}
       type={(index === 0 && 'down' || index === dataSource.length - 1 && 'up' || undefined)}
       onClick={(type) => {   
         const stock = text
