@@ -49,8 +49,14 @@ export const handleDetailReturnData = (payload: {
   promotionDiscountsSpuVOS: Shop.ShopItemProps[]
 }) => {
   const userScope = payload.userScope.split(',')
+  const ruleList =  payload.ruleJson.rank && payload.ruleJson.rank.ruleList || []
   if (userScopeIsAll(userScope)) {
     userScope.unshift('all')
+  }
+  if (ruleList.length === 0) {
+    ruleList.push({
+      spuIds: {}
+    })
   }
   let data
   try {
@@ -67,7 +73,7 @@ export const handleDetailReturnData = (payload: {
         payload.ruleJson.rank && {
           sort: 0,
           ladderRule: Number(payload.ruleJson.rank.ladderRule) || 0,
-          ruleList: payload.ruleJson.rank.ruleList.map((item) => parsePresentContentData(item))
+          ruleList: ruleList.map((item) => parsePresentContentData(item))
         }
       ),
       userScope
@@ -181,6 +187,14 @@ const handlePresentContentData = (data: Marketing.PresentContentValueProps) => {
 
 /** 解析接口返回赠品内容数据 */
 const parsePresentContentData = (data: Marketing.PresentContentValueProps) => {
+  if (!data) {
+    return {
+      skuList: [],
+      couponList: [],
+      activityList: [],
+      spuIds: {}
+    } as  Marketing.PresentContentValueProps
+  }
   return {
     ...data,
     skuList: filterinvalidData(data.promotionDiscountsSkuVOList),
