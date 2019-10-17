@@ -9,7 +9,7 @@ interface Props {
 type CheckVO = AfterSalesInfo.CheckVO;
 type OrderServerVO = AfterSalesInfo.OrderServerVO;
 const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
-  const [visible, setVisible]: useStateType = useState<boolean>(false);
+  const [visible, setVisible]: useStateType<boolean> = useState<boolean>(false);
   let checkVO: CheckVO = data.checkVO || {};
   let orderServerVO: OrderServerVO = data.orderServerVO || {};
   useEffect(() => {

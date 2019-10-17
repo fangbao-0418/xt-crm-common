@@ -2,7 +2,8 @@ import React, { Component, PureComponent, useState, useEffect } from 'react';
 import { Modal, Checkbox, Icon, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import * as api from './api';
-import { isEqual, omitBy, isNil,filter } from 'lodash';
+import { isEqual, omitBy, isNil, filter, cloneDeep } from 'lodash';
+import { isThisYear } from 'date-fns';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -85,6 +86,7 @@ class CascaderCity extends (PureComponent || Component) {
     static defaultProps = {
         title: '选择区域',
         visible: false,
+        onChange: (checkedResult) => { },
         onOk: () => { },
         onCancel: () => { }
     }
@@ -93,14 +95,14 @@ class CascaderCity extends (PureComponent || Component) {
         super(props);
         this.state = {
             sourceData: [],
-            checkedSourceData: props.defaultValue || []
+            checkedSourceData: []
         }
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.value && !isEqual(nextProps.value, prevState.checkedSourceData)) {
+        if (nextProps.value) {
             return {
-                checkedSourceData: nextProps.value
+                checkedSourceData:cloneDeep(nextProps.value)
             }
         }
         return null;
@@ -114,18 +116,24 @@ class CascaderCity extends (PureComponent || Component) {
         })
     }
     render() {
-        const { ...props } = this.props;
+        const { visible, ...props } = this.props;
         const { sourceData, checkedSourceData } = this.state;
-        return <Modal {...props} width={700} onOk={this.onOk}>
-            <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
-                {
-                    sourceData.map(item => {
-                        const checkedItem = checkedSourceData.find(checkedItem => checkedItem.id === item.id);
-                        return <Group key={item.id} source={item} checkedSource={checkedItem || {}} changeChecked={this.changeChecked} />
-                    })
-                }
-            </div>
-        </Modal>
+        return <>
+            {
+                visible ?
+                    <Modal {...props} visible={true} width={700} onOk={this.onOk}>
+                        <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
+                            {
+                                sourceData.map(item => {
+                                    const checkedItem = checkedSourceData.find(checkedItem => checkedItem.id === item.id);
+                                    return <Group key={item.id} source={item} checkedSource={checkedItem || {}} changeChecked={this.changeChecked} />
+                                })
+                            }
+                        </div>
+                    </Modal> :
+                    null
+            }
+        </>
     }
 
     changeChecked = ((checkedData) => {
@@ -135,17 +143,27 @@ class CascaderCity extends (PureComponent || Component) {
             existItem.children = checkedData.children;
             this.setState({
                 checkedSourceData
+            }, () => {
+                const { checkedSourceData } = this.state;
+                this.props.onChange(cloneDeep(checkedSourceData));
             });
         } else {
             this.setState({
                 checkedSourceData: [...checkedSourceData, checkedData]
+            }, () => {
+                const { checkedSourceData } = this.state;
+                this.props.onChange(cloneDeep(checkedSourceData));
             });
         }
     })
 
     onOk = () => {
         const { checkedSourceData } = this.state;
-        this.props.onOk(filter(checkedSourceData, item => item.children.length));
+        this.setState({
+            checkedSourceData: []
+        }, () => {
+            this.props.onOk(filter(checkedSourceData, item => item.children.length));
+        })
     }
 
     onCancel = () => {
@@ -162,6 +180,8 @@ CascaderCity.propTypes = {
     defaultValue: PropTypes.array,
     // 选中数据
     value: PropTypes.array,
+    //组件值更改
+    onChange: PropTypes.func,
     // 确定事件
     onOk: PropTypes.func,
     // 取消事件

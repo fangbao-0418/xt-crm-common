@@ -1,8 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { Button, Radio } from 'antd';
-import { ColumnProps } from 'antd/es/table';
-import FareSelector from './FareSelector';
+import { Button } from 'antd';
 export const listColumns = [
   {
     title: '序号',
@@ -43,37 +41,6 @@ export const listColumns = [
     title: '操作',
     render() {
       return <Button type="link">编辑</Button>;
-    },
-  },
-];
-
-export const editColumns: ColumnProps<any>[] = [
-  {
-    title: '编号',
-    key: 'id',
-    render(text: any, record: any, index: number) {
-      return index + 1;
-    },
-  },
-  {
-    title: '目的地',
-    key: 'areas',
-    render(text: any) {
-      return <>11</>;
-    },
-  },
-  {
-    title: '运费/元',
-    key: 'fare',
-    render() {
-      return <FareSelector />
-    },
-  },
-  {
-    title: '操作',
-    key: 'operate',
-    render() {
-      return <Button type="link">删除</Button>;
     },
   },
 ];
