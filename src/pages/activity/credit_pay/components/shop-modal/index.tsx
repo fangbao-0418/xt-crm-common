@@ -1,0 +1,323 @@
+import React from 'react'
+import { Modal, Table, Button } from 'antd'
+import { ColumnProps, TableRowSelection } from 'antd/lib/table'
+import * as api from './api'
+import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import styles from './style.module.sass'
+interface State {
+  visible: boolean
+  dataSource: Shop.ShopItemProps[]
+  selectedRowKeys: number[]
+  total: number
+  page: number
+  pageSize: number
+}
+interface Props {
+  getInstance?: (ref?: Main) => void
+  onOk?: (rows: Shop.ShopItemProps[], hide: () => void) => void
+}
+export type ShopModalInstance = Main
+interface PayloadProps {
+  productId?: any
+  productName?: string
+  status?: number
+  categoryIds?: string
+  page: number
+  pageSize: number
+}
+class Main extends React.Component<Props, State> {
+  public payload: PayloadProps = {
+    page: 1,
+    pageSize: 10
+  }
+  public selectRows: Shop.ShopItemProps[] = []
+  public form: FormInstance
+  public columns: ColumnProps<Shop.ShopItemProps>[] = [
+    {
+      title: '商品ID',
+      dataIndex: 'id',
+      width: 50
+    },
+    {
+      title: '主图',
+      dataIndex: 'coverUrl',
+      width: 100,
+      render: (text) => {
+        return (
+          <div>
+            <img
+              src={text}
+              width={80}
+              height={80}
+            />
+          </div>
+        )
+      }
+    },
+    {
+      title: '商品名称',
+      width: 240,
+      dataIndex: 'productName'
+    },
+    {
+      title: '上架状态',
+      width: 100,
+      dataIndex: 'productCategoryAllName'
+    },
+    {
+      title: '供应商',
+      dataIndex: 'storeName',
+      width: 0,
+
+    },
+    {
+      title: '销售价',
+      dataIndex: 'salePrice',
+      width: 0
+    }
+  ]
+  public state: State = {
+    visible: false,
+    dataSource: [],
+    selectedRowKeys: [],
+    page: this.payload.page,
+    pageSize: this.payload.pageSize,
+    total: 0
+  }
+  public constructor (props: Props) {
+    super(props)
+    this.onRowSelectionChange = this.onRowSelectionChange.bind(this)
+    this.onRowSelectionSelect = this.onRowSelectionSelect.bind(this)
+    this.onRowSelectionSelectAll = this.onRowSelectionSelectAll.bind(this)
+    this.onOk = this.onOk.bind(this)
+  }
+  public componentWillMount () {
+    if (this.props.getInstance) {
+      this.props.getInstance(this)
+    }
+  }
+  public fetchData () {
+    this.setState({
+      page: this.payload.page
+    })
+    api.fetchSelectShopList(this.payload).then((res: any) => {
+      this.setState({
+        dataSource: res.records || [],
+        total: res.total
+      })
+    })
+  }
+  public onOk () {
+    if (this.props.onOk) {
+      this.props.onOk([
+        ...this.selectRows
+      ], this.hide)
+    }
+  }
+  public open (value?: any) {
+    this.payload = {
+      page: 1,
+      pageSize: 10
+    }
+    if (this.form) {
+      this.form.props.form.resetFields()
+    }
+    this.fetchData()
+    // value = Object.assign({
+    //   skuList: [],
+    //   spuIds: {}
+    // }, value)
+    // const allSkuSelectedRows: {[spuId: number]: any[]} = {}
+    // this.selectRows = []
+    // value.skuList.map((item) => {
+    //   if (!(allSkuSelectedRows[item.productId] instanceof Array)) {
+    //     allSkuSelectedRows[item.productId] = []
+    //   }
+    //   allSkuSelectedRows[item.productId].push(item)
+    // })
+    // for (const key in allSkuSelectedRows) {
+    //   let id = Number(key)
+    //   const item = Object.assign({}, allSkuSelectedRows[id][0]);
+    //   this.selectRows.push({
+    //     id: Number(id),
+    //     productName: item.productName,
+    //     coverUrl: item.coverUrl,
+    //     skuList: allSkuSelectedRows[id]
+    //   } as Shop.ShopItemProps)
+    // }
+    // this.selectRows = value.spuList || this.selectRows
+    this.setState({
+      // selectedRowKeys: Object.keys(value.spuIds).map(val => Number(val)),
+      // spuSelectedRowKeys: value.spuIds,
+      visible: true
+    })
+  }
+  public hide () {
+    this.setState({
+      visible: false
+    })
+  }
+  public onRowSelectionChange (selectedRowKeys: any[], selectedRows: Shop.ShopItemProps[]) {
+    this.setState({
+      selectedRowKeys: selectedRowKeys
+    })
+  }
+  public onRowSelectionSelect (record: Shop.ShopItemProps, selected: boolean) {
+    const isExist = this.selectRows.find((item) => item.id === record.id)
+    if (selected && !isExist) {
+      this.selectRows.push(record)
+    } else if (!selected && isExist) {
+      this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
+    }
+  }
+  public onRowSelectionSelectAll (selected: boolean, selectedRows: Shop.ShopItemProps[],  changeRows: Shop.ShopItemProps[]) {
+    if (selected) {
+      changeRows.map((item) => {
+        this.selectRows.push(item)
+      })
+    } else {
+      this.selectRows = this.selectRows.filter((item) => {
+        return !changeRows.find(val => val.id === item.id)
+      })
+    }
+    this.filterRows()
+  }
+  public filterRows () {
+    const spuSelectedRowKeys: {[spuId: number]: boolean} = {}
+    const selectRows: Shop.ShopItemProps[] = []
+    this.selectRows.map((item) => {
+      const id = item.id
+      if (!(spuSelectedRowKeys[id])) {
+        spuSelectedRowKeys[id] = true
+        selectRows.push(item)
+      }
+    })
+    this.selectRows = selectRows
+  }
+  public render () {
+    const { visible, dataSource, selectedRowKeys } = this.state
+    const rowSelection: TableRowSelection<Shop.ShopItemProps> = {
+      selectedRowKeys,
+      onSelect: this.onRowSelectionSelect,
+      onSelectAll: this.onRowSelectionSelectAll,
+      onChange: this.onRowSelectionChange
+    }
+    const columns = this.columns
+    return (
+      <div>
+        <Modal
+          width={1200}
+          visible={visible}
+          title='请选择商品'
+          onOk={this.onOk}
+          onCancel={() => {
+            this.setState({
+              visible: false
+            })
+          }}
+        >
+          <div className={styles['shop-select-modal']}>
+            <div>
+              <Form
+                className='mb10'
+                layout='inline'
+                getInstance={(ref) => {
+                  this.form = ref
+                }}
+              >
+                <FormItem
+                  label='商品ID'
+                  name='productId'
+                  placeholder='请输入商品ID'
+                  controlProps={{
+                    style: {
+                      width: 120
+                    }
+                  }}
+                />
+                <FormItem
+                  label='商品名称'
+                  name='productName'
+                  placeholder='请输入商品名称'
+                  controlProps={{
+                    style: {
+                      width: 130
+                    }
+                  }}
+                />
+                {/* <FormItem
+                  label='供应商'
+                  name='productName'
+                  placeholder='请输入供应商'
+                  controlProps={{
+                    style: {
+                      width: 130
+                    }
+                  }}
+                /> */}
+                <FormItem
+                  label='状态'
+                  name='status'
+                  type='select'
+                  options={[
+                    {label: '已上架', value: '0'},
+                    {label: '已下架', value: '1'},
+                  ]}
+                />
+                <FormItem
+                >
+                  <Button
+                    type='primary'
+                    className='mr10'
+                    onClick={() => {
+                      const value = this.form.props.form.getFieldsValue()
+                      value.categoryIds = value.categoryIds && value.categoryIds.join(',')
+                      this.payload = Object.assign(
+                        {},
+                        this.payload,
+                        value,
+                        {page: 1}
+                      )
+                      this.fetchData()
+                    }}
+                  >
+                    查询
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const value = this.form.props.form.resetFields()
+                      this.payload =  {
+                        page: 1,
+                        pageSize: this.payload.pageSize
+                      }
+                      this.fetchData()
+                    }}
+                  >
+                    重置
+                  </Button>
+                </FormItem>
+              </Form>
+            </div>
+            <Table
+              rowSelection={rowSelection}
+              bordered
+              rowKey='id'
+              columns={columns}
+              dataSource={dataSource}
+              pagination={{
+                total: this.state.total,
+                pageSize: this.state.pageSize,
+                current: this.state.page,
+                onChange: (current) => {
+                  this.payload.page = current
+                  this.fetchData()
+                }
+              }}
+            />
+          </div>
+        </Modal>
+      </div>
+    )
+  }
+}
+export default Main

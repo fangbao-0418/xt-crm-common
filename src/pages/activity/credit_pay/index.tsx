@@ -4,6 +4,8 @@ import { ColumnProps } from 'antd/lib/table'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import malert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { getFieldsConfig } from './config'
+import ShopModal from './components/shop-modal'
+import * as api from './api'
 interface State {
   dataSource: any[]
 }
@@ -86,6 +88,12 @@ class Main extends React.Component<AlertComponentProps, State> {
       id: '1'
     }]
   }
+  public componentDidMount () {
+    this.fetchData()
+  }
+  public fetchData () {
+    api.fetchList()
+  }
   public render () {
     return (
       <div
@@ -152,12 +160,8 @@ class Main extends React.Component<AlertComponentProps, State> {
             <Button
               type='primary'
               onClick={() => {
-                this.props.alert({
-                  content: '新增分期商品',
-                  onOk: (hide) => {
-                    hide()
-                  }
-                })
+                const showmodal: any =  this.refs.shopmodal
+                showmodal.open()
               }}
             >
               新增分期商品
@@ -169,6 +173,12 @@ class Main extends React.Component<AlertComponentProps, State> {
             dataSource={this.state.dataSource}
           />
         </div>
+        <ShopModal
+          ref='shopmodal'
+          onOk={(value, hide) => {
+            console.log(value, 'xxxx')
+          }}
+        />
       </div>
     )
   }

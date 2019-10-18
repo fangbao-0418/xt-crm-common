@@ -155,8 +155,8 @@ export function getHeaders(headers) {
 
 export const prefix = url => {
   let apiDomain = baseHost;
-  if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
-  return `${apiDomain}${url}`;
+  if (!(process.env.PUB_ENV === 'prod' || process.env.PUB_ENV === 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
+  return /https?/.test(url) ? url : `${apiDomain}${url}`;
 };
 /**
  * 
