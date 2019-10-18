@@ -1,10 +1,11 @@
 import React from 'react';
-import { Form, Card, Input, InputNumber, Radio, Button, Table } from 'antd';
+import { Form, Card, Input, InputNumber, Radio, Button, Table, message } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import CascaderCity from '@/components/cascader-city';
 import classnames from 'classnames';
 import styles from './style.module.scss';
 import { FormComponentProps } from 'antd/es/form';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { radioStyle } from '@/config';
 import { templateAdd } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
@@ -13,6 +14,7 @@ interface State {
   templateData: any[];
   areas: any[];
 }
+interface Props extends RouteComponentProps, FormComponentProps<Fields> {}
 interface Fields {
   templateName: string;
   commonCost: number;
@@ -35,21 +37,25 @@ const map = (list: any[]) => {
     }
   })
 }
-class edit extends React.Component<FormComponentProps<Fields>, State> {
+class edit extends React.Component<Props, State> {
   state: State = {
     visible: false,
     templateData: [],
     areas: []
   };
   haveSave = () => {
-    this.props.form.validateFields((errors, values) => {
+    this.props.form.validateFields(async (errors, values) => {
       if (!errors) {
         const params = {
           templateName: values.templateName,
           commonCost: values.commonCost * 100,
           rankList: map(this.state.templateData)
         };
-        templateAdd(params)
+        const res = await templateAdd(params);
+        if (res.success) {
+          message.success('保存成功');
+          this.props.history.push('/template/page');
+        }
       }
     })
   }
@@ -96,6 +102,7 @@ class edit extends React.Component<FormComponentProps<Fields>, State> {
             }} value={record.rankType}>
               <Radio value={1} style={radioStyle}>
                 <InputNumber
+                  placeholder="请输入"
                   value={record.cost}
                   onChange={(value: any) => {
                     const { templateData } = this.state;
@@ -153,7 +160,7 @@ class edit extends React.Component<FormComponentProps<Fields>, State> {
                   required: true,
                   message: '请输入模板名称'
                 }]
-              })(<Input style={{ width: 200 }} />)}
+              })(<Input placeholder="请输入模板名称" style={{ width: 200 }} />)}
             </Form.Item>
             <Form.Item label="运费设置">
               <Card
@@ -166,7 +173,7 @@ class edit extends React.Component<FormComponentProps<Fields>, State> {
                         required: true,
                         message: '请输入默认运费'
                       }]
-                    })(<InputNumber min={0.01} style={{ width: 80 }} />)}
+                    })(<InputNumber placeholder="请输入" min={0.01} style={{ width: 80 }} />)}
                     <span className="ml10">元</span>
                   </Form.Item>
                 }
@@ -196,4 +203,4 @@ class edit extends React.Component<FormComponentProps<Fields>, State> {
     );
   }
 }
-export default Form.create()(edit);
+export default Form.create()(withRouter(edit));

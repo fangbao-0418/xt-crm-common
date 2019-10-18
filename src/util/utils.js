@@ -5,6 +5,7 @@ import { baseHost } from './baseHost';
 import { Decimal } from 'decimal.js';
 import { ExpressCompanyOptions } from '@/config';
 import * as LocalStorage from '@/util/localstorage';
+import moment from 'moment';
 const History = createHashHistory();
 
 function defaultMapStateToProps() {
@@ -210,4 +211,8 @@ export function getExpressCode(name) {
       return key;
     }
   }
+}
+
+export function momentRangeValueof(values = []) {
+  return values.map(v => moment(v).valueOf())
 }

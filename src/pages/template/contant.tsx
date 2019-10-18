@@ -1,22 +1,24 @@
 import React from 'react';
 import moment from 'moment';
 import { Button } from 'antd';
+import MoneyRender from '@/components/money-render';
 export const listColumns = [
   {
     title: '序号',
     render(text: any, record: any, index: number) {
-      return index;
+      return index + 1;
     },
   },
   {
     title: '模板名称',
-    dataIndex: 'name',
-    key: 'name',
+    dataIndex: 'templateName',
+    key: 'templateName',
   },
   {
     title: '默认运费/元',
-    dataIndex: 'freight',
-    key: 'freight',
+    dataIndex: 'commonCost',
+    key: 'commonCost',
+    render: MoneyRender
   },
   {
     title: '指定运费地区',
