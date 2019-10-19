@@ -1,11 +1,12 @@
 import React from 'react';
-import { listColumns } from './contant';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FormComponentProps } from 'antd/es/form';
 import { Card, Form, Input, DatePicker, Button } from 'antd';
 import { templatePage } from './api';
 import { CommonTable } from '@/components';
 import { momentRangeValueof } from '@/util/utils';
+import moment from 'moment';
+import MoneyRender from '@/components/money-render';
 const { RangePicker } = DatePicker;
 interface State {
   records: []
@@ -40,6 +41,52 @@ class Page extends React.Component<Props, State> {
   }
   render() {
     const { form: { getFieldDecorator } } = this.props;
+    const listColumns = [
+      {
+        title: '序号',
+        render(text: any, record: any, index: number) {
+          return index + 1;
+        },
+      },
+      {
+        title: '模板名称',
+        dataIndex: 'templateName',
+        key: 'templateName',
+      },
+      {
+        title: '默认运费/元',
+        dataIndex: 'commonCost',
+        key: 'commonCost',
+        render: MoneyRender
+      },
+      {
+        title: '指定运费地区',
+        dataIndex: 'area',
+        key: 'area',
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render(text: any) {
+          return moment(text).format('YYYY-MM-DD HH:mm:ss');
+        },
+      },
+      {
+        title: '修改时间',
+        dataIndex: 'modifyTime',
+        render(text: any) {
+          return moment(text).format('YYYY-MM-DD HH:mm:ss');
+        },
+      },
+      {
+        title: '操作',
+        render: (text: any, record: any) => {
+          return <Button type="link" onClick={() => {
+            this.props.history.push(`/template/edit/${record.freightTemplateId}`);
+          }}>编辑</Button>;
+        },
+      },
+    ];
     return (
       <Card>
         <Card title="筛选">

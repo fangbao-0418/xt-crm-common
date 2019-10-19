@@ -1,4 +1,4 @@
-import { newPost } from '@/util/fetch';
+import { newPost, get } from '@/util/fetch';
 
 /**
  * 创建运费模板
@@ -14,4 +14,12 @@ export function templateAdd(data: any) {
  */
 export function templatePage(data: any) {
     return newPost('/template/page', data)
+}
+
+/**
+ * 查看单个运费模板
+ * @param freightTemplateId 
+ */
+export function getDetail(freightTemplateId: number) {
+  return get(`/template/${freightTemplateId}`)
 }
