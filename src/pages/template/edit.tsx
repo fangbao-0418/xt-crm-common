@@ -4,39 +4,25 @@ import { ColumnProps } from 'antd/es/table';
 import CascaderCity from '@/components/cascader-city';
 import classnames from 'classnames';
 import styles from './style.module.scss';
-import { FormComponentProps } from 'antd/es/form';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter } from 'react-router';
 import { radioStyle } from '@/config';
 import { templateAdd, templateModify } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { getDetail } from './api';
 import { formatPrice } from '@/util/format';
-interface State {
-  visible: boolean;
-  templateData: any[];
-  areas: any[];
-}
-interface Props extends RouteComponentProps<{ id: any }>, FormComponentProps<Fields> {}
-interface Fields {
-  templateName: string;
-  commonCost: number;
-}
+import { rankItem, Props, State } from './interface';
 
-interface rankItem {
-  rankNo: number;
-  destination: string;
-  rankType: number;
-  cost: number;
-}
 
 const mapReqRankList = (list: rankItem[]) => {
   return list.map((item: any) => {
-    let { areas, ...rest } = item;
+    let { destinationList, ...rest } = item;
     return {
       ...rest,
       cost: item.cost * 100,
-      destination: areas && areas.map((v: any) => v.id).join(','),
-      describe: areas && areas.map((v: any) => `${v.name}（${v.children.length})`).join(' '),
+      destinationList,
+      describe:
+        destinationList &&
+        destinationList.map((v: any) => `${v.name}（${v.children.length})`).join(' '),
     };
   });
 };
@@ -55,10 +41,10 @@ class edit extends React.Component<Props, State> {
   state: State = {
     visible: false,
     templateData: [],
-    areas: []
+    destinationList: [],
   };
   async getDetail() {
-    const res = await getDetail(this.props.match.params.id);
+    const res = (await getDetail(this.props.match.params.id)) || {};
     this.props.form.setFieldsValue({
       templateName: res.templateName,
       commonCost: formatPrice(res.commonCost),
@@ -117,13 +103,13 @@ class edit extends React.Component<Props, State> {
       },
       {
         title: '目的地',
-        dataIndex: 'areas',
-        key: 'areas',
-        render: (areas: any = [], record: rankItem, index: number) => {
+        dataIndex: 'destinationList',
+        key: 'destinationList',
+        render: (destinationList: any = [], record: rankItem, index: number) => {
           return (
             <div className={styles.areas}>
               <div style={{ maxWidth: '90%' }}>
-                {areas.map((v: any) => (
+                {destinationList.map((v: any) => (
                   <span key={v.id}>
                     {v.name}（{v.children.length}）
                   </span>
@@ -134,8 +120,8 @@ class edit extends React.Component<Props, State> {
                   type="link"
                   onClick={() => {
                     this.setState({
-                      areas,
-                      visible: true
+                      destinationList,
+                      visible: true,
                     });
                     this.editIndex = index;
                   }}
@@ -209,16 +195,16 @@ class edit extends React.Component<Props, State> {
       <>
         <CascaderCity
           visible={this.state.visible}
+          // value={this.state.destinationList}
           onChange={(checkedResult: any) => {
             console.log('result', checkedResult);
           }}
-          onOk={(areas: any) => {
-            console.log('areas=>', areas);
+          onOk={(destinationList: any) => {
             let { templateData } = this.state;
             if (this.editIndex > -1) {
-              templateData[this.editIndex].areas = areas;
+              templateData[this.editIndex].destinationList = destinationList;
             } else {
-              templateData = [...templateData, { areas, rankNo: this.rankNo++, rankType: 1 }]
+              templateData = [...templateData, { destinationList, rankNo: this.rankNo++, rankType: 1 }];
             }
             this.setState({
               templateData,

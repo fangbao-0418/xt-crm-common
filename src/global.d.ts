@@ -3,7 +3,7 @@ interface PageProps<Item = any> {
   pages?: number
   current?: number
   total: number
-  size: number
+  size?: number
   records?: Item[]
 }
 
