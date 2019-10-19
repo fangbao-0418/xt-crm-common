@@ -7,7 +7,7 @@ import styles from './style.module.scss';
 import { FormComponentProps } from 'antd/es/form';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { radioStyle } from '@/config';
-import { templateAdd } from './api';
+import { templateAdd, templateModify } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { getDetail } from './api';
 import { formatPrice } from '@/util/format';
@@ -35,8 +35,8 @@ const mapReqRankList = (list: rankItem[]) => {
     return {
       ...rest,
       cost: item.cost * 100,
-      destination: item.areas.map((v: any) => v.id).join(','),
-      describe: item.areas.map((v: any) => `${v.name}（${v.children.length})`).join(' '),
+      destination: areas && areas.map((v: any) => v.id).join(','),
+      describe: areas && areas.map((v: any) => `${v.name}（${v.children.length})`).join(' '),
     };
   });
 };
@@ -44,26 +44,30 @@ const mapResRankList = (list: rankItem[] = []) => {
   return list.map((item: rankItem) => {
     return {
       ...item,
-      cost: formatPrice(item.cost / 100),
+      cost: item.cost && formatPrice(item.cost),
     };
   });
 };
-let rankNo = 1;
 class edit extends React.Component<Props, State> {
+  // editIndex等于-1为添加
+  editIndex: number = -1;
+  rankNo: number = 1;
   state: State = {
     visible: false,
     templateData: [],
-    areas: [],
+    areas: []
   };
   async getDetail() {
     const res = await getDetail(this.props.match.params.id);
     this.props.form.setFieldsValue({
       templateName: res.templateName,
-      commonCost: formatPrice(res.commonCost / 100)
+      commonCost: formatPrice(res.commonCost),
     });
-    // this.setState({
-    //   templateData: mapResRankList(res.rankList)
-    // })
+    let templateData = mapResRankList(res.rankList);
+    this.rankNo = templateData.length + 1;
+    this.setState({
+      templateData,
+    });
   }
   componentDidMount() {
     if (this.props.match.params.id) {
@@ -83,7 +87,16 @@ class edit extends React.Component<Props, State> {
           commonCost: values.commonCost * 100,
           rankList: mapReqRankList(templateData),
         };
-        const res = await templateAdd(params);
+        let res = false;
+        let { id } = this.props.match.params;
+        if (id) {
+          res = await templateModify({
+            freightTemplateId: id,
+            ...params,
+          });
+        } else {
+          res = await templateAdd(params);
+        }
         if (res) {
           message.success('保存成功');
           this.props.history.push('/template/page');
@@ -106,7 +119,7 @@ class edit extends React.Component<Props, State> {
         title: '目的地',
         dataIndex: 'areas',
         key: 'areas',
-        render: (areas: any) => {
+        render: (areas: any = [], record: rankItem, index: number) => {
           return (
             <div className={styles.areas}>
               <div style={{ maxWidth: '90%' }}>
@@ -122,8 +135,9 @@ class edit extends React.Component<Props, State> {
                   onClick={() => {
                     this.setState({
                       areas,
-                      visible: true,
+                      visible: true
                     });
+                    this.editIndex = index;
                   }}
                 >
                   编辑
@@ -200,9 +214,14 @@ class edit extends React.Component<Props, State> {
           }}
           onOk={(areas: any) => {
             console.log('areas=>', areas);
-            const { templateData } = this.state;
+            let { templateData } = this.state;
+            if (this.editIndex > -1) {
+              templateData[this.editIndex].areas = areas;
+            } else {
+              templateData = [...templateData, { areas, rankNo: this.rankNo++, rankType: 1 }]
+            }
             this.setState({
-              templateData: [...templateData, { areas, rankNo: rankNo++, rankType: 1 }],
+              templateData,
               visible: false,
             });
           }}
@@ -245,6 +264,7 @@ class edit extends React.Component<Props, State> {
                 <Button
                   type="primary"
                   onClick={() => {
+                    this.editIndex = -1;
                     this.setState({ visible: true });
                   }}
                 >

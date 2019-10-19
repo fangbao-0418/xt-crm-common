@@ -23,3 +23,11 @@ export function templatePage(data: any) {
 export function getDetail(freightTemplateId: number) {
   return get(`/template/${freightTemplateId}`)
 }
+
+/**
+ * 编辑运费模板
+ * @param data 
+ */
+export function templateModify(data: any) {
+  return newPost('/template/modify', data)
+}

@@ -44,6 +44,7 @@ class Page extends React.Component<Props, State> {
     const listColumns = [
       {
         title: '序号',
+        key: 'index',
         render(text: any, record: any, index: number) {
           return index + 1;
         },
