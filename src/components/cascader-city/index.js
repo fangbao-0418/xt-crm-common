@@ -2,8 +2,7 @@ import React, { Component, PureComponent, useState, useEffect } from 'react';
 import { Modal, Checkbox, Icon, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import * as api from './api';
-import { isEqual, omitBy, isNil, filter, cloneDeep } from 'lodash';
-import { isThisYear } from 'date-fns';
+import { omitBy, isNil, filter, cloneDeep } from 'lodash';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -113,6 +112,11 @@ class CascaderCity extends (PureComponent || Component) {
     };
   }
 
+  /**
+   * 传入的props映射到state
+   * @param {*} nextProps 
+   * @param {*} prevState 
+   */
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.value) {
       return {
@@ -121,7 +125,9 @@ class CascaderCity extends (PureComponent || Component) {
     }
     return null;
   }
-
+  /**
+   * 获取数据源 
+   */
   componentDidMount() {
     api.getProvinces().then(result => {
       this.setState({
@@ -130,30 +136,24 @@ class CascaderCity extends (PureComponent || Component) {
     });
   }
   render() {
-    const { visible, ...props } = this.props;
     const { sourceData, checkedSourceData } = this.state;
     return (
-      <>
-        {visible ? (
-          <Modal {...props} visible={true} width={700} onOk={this.onOk}>
-            <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
-              {sourceData.map(item => {
-                const checkedItem = checkedSourceData.find(
-                  checkedItem => checkedItem.id === item.id,
-                );
-                return (
-                  <Group
-                    key={item.id}
-                    source={item}
-                    checkedSource={checkedItem || {}}
-                    changeChecked={this.changeChecked}
-                  />
-                );
-              })}
-            </div>
-          </Modal>
-        ) : null}
-      </>
+      <Modal {...this.props} width={700} onOk={this.onOk}>
+        <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
+          {sourceData.map(item => {
+            const checkedItem = checkedSourceData.find(checkedItem => checkedItem.id === item.id);
+            console.log('checkedItem=>', checkedItem)
+            return (
+              <Group
+                key={item.id}
+                source={item}
+                checkedSource={checkedItem || {}}
+                changeChecked={this.changeChecked}
+              />
+            );
+          })}
+        </div>
+      </Modal>
     );
   }
 
@@ -186,11 +186,15 @@ class CascaderCity extends (PureComponent || Component) {
 
   onOk = () => {
     const { checkedSourceData } = this.state;
-    this.setState({
-      checkedSourceData: [],
-    }, () => {
-      this.props.onOk(filter(checkedSourceData, item => item.children.length));
-    })
+    this.setState(
+      {
+        checkedSourceData: [],
+      },
+      () => {
+        console.log('checkedSourceData=>', checkedSourceData)
+        this.props.onOk(filter(checkedSourceData, item => item.children.length));
+      },
+    );
   };
 
   onCancel = () => {

@@ -195,7 +195,7 @@ class edit extends React.Component<Props, State> {
       <>
         <CascaderCity
           visible={this.state.visible}
-          // value={this.state.destinationList}
+          value={this.state.destinationList}
           onChange={(checkedResult: any) => {
             console.log('result', checkedResult);
           }}
