@@ -106,6 +106,7 @@ class Main extends React.Component<Props, State> {
       type = '循环规则'
       arr = [data.loop]
     } else {
+      type = '阶梯规则'
       arr = data.rank.ruleList
     }
     const index = arr.findIndex((item, index) => {
@@ -137,12 +138,15 @@ class Main extends React.Component<Props, State> {
     if (index > -1) {
       APP.error(type + message)
     }
+    if (arr.length === 0) {
+      APP.error(type + '不能为空')
+      return false
+    }
     return index === -1
   }
   public save () {
     const value = this.form.getValues()
     this.form.props.form.validateFields((err) => {
-      console.log(value, 'err')
       if (!this.validatePresent(value)) {
         return
       }
