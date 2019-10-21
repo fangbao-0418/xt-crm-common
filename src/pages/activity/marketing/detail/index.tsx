@@ -172,6 +172,11 @@ class Main extends React.Component<Props, State> {
           ...value
         }).then(() => {
           APP.success('修改成功')
+          this.setState({
+            loading: false
+          }, () => {
+            APP.history.push('/activity/marketing')
+          })
         }).finally(() => {
           this.setState({
             loading: false
@@ -419,7 +424,7 @@ class Main extends React.Component<Props, State> {
             className='mt10'
             name='activityDescribe'
             type='textarea'
-            placeholder=''
+            placeholder='此处活动说明不能超过160个字符'
             verifiable
           >
           </FormItem>
