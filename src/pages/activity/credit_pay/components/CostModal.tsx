@@ -4,33 +4,41 @@ import { ColumnProps } from 'antd/lib/table'
 interface Props {
   visible?: boolean
   dataSource?: any[]
+  onCancel?: () => void
 }
 type State = Props
 class Main extends React.Component<Props, State> {
   public columns: ColumnProps<any>[] = [
     {
-      dataIndex: 'A',
-      title: ''
+      dataIndex: 'title',
+      title: '',
+      width: 120,
+      align: 'center'
     },
     {
-      dataIndex: 'A1',
-      title: '普通用户'
+      dataIndex: 'generalUser',
+      title: '普通用户',
+      align: 'center'
     },
     {
-      dataIndex: 'A2',
-      title: '团长'
+      dataIndex: 'head',
+      title: '团长',
+      align: 'center'
     },
     {
-      dataIndex: 'A3',
-      title: '区长'
+      dataIndex: 'areaMember',
+      title: '区长',
+      align: 'center'
     },
     {
-      dataIndex: 'A4',
-      title: '城市合伙人'
+      dataIndex: 'cityMember',
+      title: '城市合伙人',
+      align: 'center'
     },
     {
-      dataIndex: 'A5',
-      title: '管理员'
+      dataIndex: 'managerMember',
+      title: '管理员',
+      align: 'center'
     }
   ]
   public state: State = {
@@ -46,12 +54,16 @@ class Main extends React.Component<Props, State> {
     return (
       <div>
         <Modal
+          width={1000}
           visible={this.state.visible}
           title='费用查看'
           onCancel={() => {
             this.setState({
               visible: false
             })
+            if (this.props.onCancel) {
+              this.props.onCancel()
+            }
           }}
           footer={false}
         >

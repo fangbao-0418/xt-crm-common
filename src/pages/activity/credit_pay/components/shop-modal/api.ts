@@ -8,6 +8,7 @@ export function fetchSelectShopList (payload: {
   page?: number
   pageSize?: number
 }) {
+  console.log(payload, 'payload')
 	return post(`/product/list`, payload).then((res: any) => {
     return res
   })

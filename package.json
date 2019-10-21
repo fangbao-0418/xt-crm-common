@@ -45,7 +45,7 @@
     "build-dev": "cross-env PUB_ENV=dev npm run build",
     "build-pre": "cross-env PUB_ENV=pre npm run build",
     "build-prod": "cross-env PUB_ENV=prod npm run build",
-    "build": "react-app-rewired build",
+    "build": "yarn submodule && react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
     "mock": "nodemon mock/server.js",

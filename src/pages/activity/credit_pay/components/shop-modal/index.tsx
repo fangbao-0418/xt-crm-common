@@ -2,7 +2,9 @@ import React from 'react'
 import { Modal, Table, Button } from 'antd'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import * as api from './api'
+import Image from '@/components/Image'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import { formatDate, formatMoneyWithSign } from '@/pages/helper';
 import styles from './style.module.sass'
 interface State {
   visible: boolean
@@ -24,11 +26,16 @@ interface PayloadProps {
   categoryIds?: string
   page: number
   pageSize: number
+  enableStatus?: 0 | 1
+  enableHb?: 0 | 1
 }
 class Main extends React.Component<Props, State> {
   public payload: PayloadProps = {
     page: 1,
-    pageSize: 10
+    pageSize: 10,
+    status: 0,
+    enableHb: 0,
+    enableStatus: 0
   }
   public selectRows: Shop.ShopItemProps[] = []
   public form: FormInstance
@@ -41,14 +48,12 @@ class Main extends React.Component<Props, State> {
     {
       title: '主图',
       dataIndex: 'coverUrl',
-      width: 100,
+      width: 120,
       render: (text) => {
         return (
           <div>
-            <img
+            <Image
               src={text}
-              width={80}
-              height={80}
             />
           </div>
         )
@@ -56,24 +61,27 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: '商品名称',
-      width: 240,
+      width: 100,
       dataIndex: 'productName'
     },
     {
       title: '上架状态',
       width: 100,
-      dataIndex: 'productCategoryAllName'
+      dataIndex: 'status',
+      render: (text) => {
+        const statusEnum = ['已下架', '已上架']
+        return statusEnum[text]
+      }
     },
     {
       title: '供应商',
       dataIndex: 'storeName',
-      width: 0,
 
     },
     {
       title: '销售价',
       dataIndex: 'salePrice',
-      width: 0
+      render: (text) => formatMoneyWithSign(text)
     }
   ]
   public state: State = {
@@ -100,7 +108,7 @@ class Main extends React.Component<Props, State> {
     this.setState({
       page: this.payload.page
     })
-    api.fetchSelectShopList(this.payload).then((res: any) => {
+    return api.fetchSelectShopList(this.payload).then((res: any) => {
       this.setState({
         dataSource: res.records || [],
         total: res.total
@@ -108,48 +116,28 @@ class Main extends React.Component<Props, State> {
     })
   }
   public onOk () {
+    console.log(this.selectRows, 'on ok')
     if (this.props.onOk) {
       this.props.onOk([
         ...this.selectRows
-      ], this.hide)
+      ], this.hide.bind(this))
     }
   }
-  public open (value?: any) {
+  public open (value?: any[]) {
+    this.selectRows = []
     this.payload = {
+      ...this.payload,
       page: 1,
-      pageSize: 10
+      pageSize: 10,
     }
     if (this.form) {
       this.form.props.form.resetFields()
     }
-    this.fetchData()
-    // value = Object.assign({
-    //   skuList: [],
-    //   spuIds: {}
-    // }, value)
-    // const allSkuSelectedRows: {[spuId: number]: any[]} = {}
-    // this.selectRows = []
-    // value.skuList.map((item) => {
-    //   if (!(allSkuSelectedRows[item.productId] instanceof Array)) {
-    //     allSkuSelectedRows[item.productId] = []
-    //   }
-    //   allSkuSelectedRows[item.productId].push(item)
-    // })
-    // for (const key in allSkuSelectedRows) {
-    //   let id = Number(key)
-    //   const item = Object.assign({}, allSkuSelectedRows[id][0]);
-    //   this.selectRows.push({
-    //     id: Number(id),
-    //     productName: item.productName,
-    //     coverUrl: item.coverUrl,
-    //     skuList: allSkuSelectedRows[id]
-    //   } as Shop.ShopItemProps)
-    // }
-    // this.selectRows = value.spuList || this.selectRows
-    this.setState({
-      // selectedRowKeys: Object.keys(value.spuIds).map(val => Number(val)),
-      // spuSelectedRowKeys: value.spuIds,
-      visible: true
+    this.fetchData().then(() => {
+      this.setState({
+        selectedRowKeys: [],
+        visible: true
+      })
     })
   }
   public hide () {
@@ -271,7 +259,11 @@ class Main extends React.Component<Props, State> {
                     className='mr10'
                     onClick={() => {
                       const value = this.form.props.form.getFieldsValue()
-                      value.categoryIds = value.categoryIds && value.categoryIds.join(',')
+                      if (value.status === undefined) {
+                        value.enableStatus = 0
+                      } else {
+                        value.enableStatus = 1
+                      }
                       this.payload = Object.assign(
                         {},
                         this.payload,
@@ -287,6 +279,7 @@ class Main extends React.Component<Props, State> {
                     onClick={() => {
                       const value = this.form.props.form.resetFields()
                       this.payload =  {
+                        enableStatus: 0,
                         page: 1,
                         pageSize: this.payload.pageSize
                       }

@@ -1,3 +1,4 @@
+/// <reference types="axios" />
 declare module APP {
   interface History {
     push: (url: string) => void
@@ -7,8 +8,9 @@ declare module APP {
     payload?: T
   }
   interface HttpProps {
-    get: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
-    post: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
+    get: <T = any>(url: string, data?: any, config?: any) => Promise<T>
+    post: <T = any>(url: string, data?: any, config?: any) => Promise<T>
+    newPost: <T = any>(url: string, data?: any, config?: any) => Promise<T>
   }
   interface FnProps {
     getH5Origin
