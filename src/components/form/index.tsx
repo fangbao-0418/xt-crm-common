@@ -91,7 +91,9 @@ function handleValues <T = any> (rangeMap: {[field: string]: {fields: string[], 
           rangeFields.format ? rangeValue[index].format(rangeFields.format) : rangeValue[index].unix()
         )
       })
-      delete rawValues[field]
+      if (rangeFields.fields.indexOf(field) === -1) {
+        delete rawValues[field]
+      }
     }
   }
   return rawValues
