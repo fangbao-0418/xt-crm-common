@@ -2,7 +2,7 @@ import React, { Component, PureComponent, useState, useEffect } from 'react';
 import { Modal, Checkbox, Icon, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import * as api from './api';
-import { omitBy, isNil, filter, cloneDeep } from 'lodash';
+import { filter, cloneDeep } from 'lodash';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -14,7 +14,7 @@ const Group = props => {
     source,
     checkedSource: { children = [] },
   } = props;
-  const [status, setStatus] = useState(false);
+
   const [indeterminate, setIndeterminate] = useState(
     !!children.length && children.length < source.children.length,
   );
@@ -26,6 +26,13 @@ const Group = props => {
     setIndeterminate(false);
     setCheckAll(checked);
     setCheckedList(checked ? source.children : []);
+    if (props.onChange) {
+      console.log(props, 'onCheckAllChange')
+      props.onChange({
+        ...props.source,
+        children: checked ? source.children : []
+      })
+    }
   };
 
   const childrenChange = checkedList => {
@@ -39,21 +46,9 @@ const Group = props => {
   };
 
   useEffect(() => {
-    if (status) {
-      props.changeChecked(
-        omitBy(
-          {
-            ...source,
-            children: checkedList,
-          },
-          isNil,
-        ),
-      );
-    } else {
-      setStatus(true);
-    }
-  }, [checkedList]);
-
+    setCheckAll(children.length === source.children.length);
+    setCheckedList(children)
+  }, [props.checkedSource]);
   return (
     <span style={{ display: 'inline-block', width: 190, paddingTop: '20px' }}>
       <Popover
@@ -111,20 +106,6 @@ class CascaderCity extends (PureComponent || Component) {
       checkedSourceData: [],
     };
   }
-
-  /**
-   * 传入的props映射到state
-   * @param {*} nextProps 
-   * @param {*} prevState 
-   */
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.value) {
-      return {
-        checkedSourceData: cloneDeep(nextProps.value),
-      };
-    }
-    return null;
-  }
   /**
    * 获取数据源 
    */
@@ -135,20 +116,25 @@ class CascaderCity extends (PureComponent || Component) {
       });
     });
   }
+  componentWillReceiveProps (props) {
+    this.setState({
+      checkedSourceData: cloneDeep(props.value),
+    })
+  }
   render() {
     const { sourceData, checkedSourceData } = this.state;
+    console.log(this.props.value, checkedSourceData, 'render')
     return (
       <Modal {...this.props} width={700} onOk={this.onOk}>
         <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
           {sourceData.map(item => {
             const checkedItem = checkedSourceData.find(checkedItem => checkedItem.id === item.id);
-            console.log('checkedItem=>', checkedItem)
             return (
               <Group
                 key={item.id}
                 source={item}
                 checkedSource={checkedItem || {}}
-                changeChecked={this.changeChecked}
+                onChange={this.changeChecked}
               />
             );
           })}
@@ -158,32 +144,32 @@ class CascaderCity extends (PureComponent || Component) {
   }
 
   changeChecked = checkedData => {
-    const { checkedSourceData } = this.state;
-    const existItem = checkedSourceData.find(item => item.id === checkedData.id);
-    if (existItem) {
-      existItem.children = checkedData.children;
+    // console.log(checkedData, 'checkedData')
+    let { checkedSourceData } = this.state;
+    const index = checkedSourceData.findIndex(item => item.id === checkedData.id);
+    if (index !== -1) {
+      checkedSourceData[index].children = checkedData.children;
       this.setState(
         {
           checkedSourceData,
-        },
-        () => {
-          const { checkedSourceData } = this.state;
-          this.props.onChange(cloneDeep(checkedSourceData));
-        },
+        }
       );
     } else {
+      checkedSourceData =  [...checkedSourceData, checkedData]
       this.setState(
         {
-          checkedSourceData: [...checkedSourceData, checkedData],
-        },
-        () => {
-          const { checkedSourceData } = this.state;
-          this.props.onChange(cloneDeep(checkedSourceData));
-        },
-      );
+          checkedSourceData
+        }
+      )
     }
+    this.onChange(checkedSourceData)
   };
-
+  onChange (checkedSourceData) {
+    console.log(checkedSourceData, 'on change xxxxxxxx')
+    if (this.props.onChange) {
+      this.props.onChange(cloneDeep(checkedSourceData));
+    }
+  }
   onOk = () => {
     const { checkedSourceData } = this.state;
     this.setState(

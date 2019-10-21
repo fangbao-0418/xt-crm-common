@@ -196,9 +196,6 @@ class edit extends React.Component<Props, State> {
         <CascaderCity
           visible={this.state.visible}
           value={this.state.destinationList}
-          onChange={(checkedResult: any) => {
-            console.log('result', checkedResult);
-          }}
           onOk={(destinationList: any) => {
             let { templateData } = this.state;
             if (this.editIndex > -1) {
@@ -207,8 +204,15 @@ class edit extends React.Component<Props, State> {
               templateData = [...templateData, { destinationList, rankNo: this.rankNo++, rankType: 1 }];
             }
             this.setState({
+              destinationList,
               templateData,
               visible: false,
+            });
+          }}
+          onChange={(checkedValue: any) => {
+            console.log(checkedValue, 'on xxxxxxxxxxxxxx')
+            this.setState({
+              destinationList: checkedValue
             });
           }}
           onCancel={() => {
@@ -251,7 +255,10 @@ class edit extends React.Component<Props, State> {
                   type="primary"
                   onClick={() => {
                     this.editIndex = -1;
-                    this.setState({ visible: true });
+                    this.setState({
+                      destinationList: [],
+                      visible: true
+                    });
                   }}
                 >
                   为指定地区添加运费
