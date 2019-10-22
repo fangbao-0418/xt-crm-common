@@ -80,7 +80,7 @@ class DeliveryDialog extends Component {
     }
     return (
       <>
-        <Button type="link" onClick={this.showModal}>{this.props.title}</Button>
+        <Button type='primary' onClick={this.showModal}>{this.props.title}</Button>
         <Modal
           title={this.props.title}
           visible={this.state.visible}

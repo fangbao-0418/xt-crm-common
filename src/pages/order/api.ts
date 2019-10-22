@@ -7,91 +7,6 @@ export function getOrderList(data: any) {
   return post('/order/list', data);
 }
 
-const detail = {
-  buyerInfo: {
-    buyerWords: 'string',
-    contact: 'string',
-    idCard: 'string',
-    memberAddress: {
-      city: 'string',
-      cityId: 0,
-      consignee: 'string',
-      defaultAddress: 0,
-      district: 'string',
-      districtId: 0,
-      freight: 0,
-      id: 0,
-      phone: 'string',
-      province: 'string',
-      provinceId: 0,
-      street: 'string',
-    },
-    nickname: 'string',
-    payType: 'string',
-    phone: 'string',
-    userName: 'string',
-  },
-  orderStatusLogList: [
-    {
-      createTime: Date.now(),
-      orderStatus: 10,
-    },
-  ],
-  freight: 0,
-  logisticsList: [
-    {
-      expressCode: 'string',
-      expressCompanyName: 'string',
-      expressName: 'string',
-      orderCode: 'string',
-      productImg: 'string',
-      status: 0,
-      storeName: 'string',
-    },
-  ],
-  orderInfo: {
-    childOrderList: [
-      {
-        createTime: 0,
-        orderCode: 'string',
-        paymentNumber: 'string',
-        storeName: 'string',
-      },
-    ],
-    createTime: 0,
-    orderCode: 'string',
-    orderStatus: 60,
-    paymentNumber: 'string',
-    remark: 'string',
-  },
-  orderYield: {
-    costPrice: 0,
-    memberYieldVOList: [
-      {
-        memberType: 0,
-        userName: 'yugan',
-        yield: 99,
-      },
-    ],
-    totalPrice: 0,
-  },
-  skuList: [
-    {
-      barCode: 'string',
-      coverUrl: 'string',
-      id: 0,
-      marketPrice: 0,
-      num: 0,
-      productId: 0,
-      skuCode: 'string',
-      skuName: 'string',
-      totalPrice: 0,
-    },
-  ],
-  taxPrice: 0,
-  totalPrice: 0,
-};
-
 // 客服代申请售后单个商品详情
 export function getProductDetail({mainOrderId, skuId}: any) {
   return get(`/order/afterSale/applyOrderSKuDetail/${mainOrderId}/${skuId}`)
@@ -264,4 +179,35 @@ export function profitRecycl(data: any) {
   });
 }
 
+/**
+ * 根据订单号获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderId(param) {
+  return get(`/crm/member/settlement/v1/order/summary`, param);
+}
+
+/**
+ * 根据订单Id和会员Id获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderIdAndMemberId(param) {
+  return get(`/crm/member/settlement/v1/order/skuSummaryByMember`, param);
+}
+
+/**
+ * 根据订单Id和会员Id和SkuId获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderIdAndMemberIdAndSkuId(param) {
+  return get(`/crm/member/settlement/v1/detail`, param);
+}
+
+/**
+ * 根据订单Id和skuId获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderIdAndSkuId(param) {
+  return get(`/crm/member/settlement/v1/order/skuSummary`, param);
+}
 
