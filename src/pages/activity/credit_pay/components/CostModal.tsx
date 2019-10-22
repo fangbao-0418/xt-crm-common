@@ -68,6 +68,7 @@ class Main extends React.Component<Props, State> {
           footer={false}
         >
           <Table
+            rowKey='id'
             columns={this.columns}
             dataSource={this.state.dataSource}
             pagination={false}

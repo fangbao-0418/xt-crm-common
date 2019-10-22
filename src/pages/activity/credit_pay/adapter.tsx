@@ -1,5 +1,20 @@
 import React from 'react'
 import { formatDate, formatMoneyWithSign } from '@/pages/helper'
+/** 花呗分期明细 */
+interface CostDetailProps {
+  id: number
+  title: React.ReactNode,
+  /** 普通用户 */
+  generalUser: React.ReactNode,
+  /** 团长 */
+  head: React.ReactNode,
+  /** 区长 */
+  areaMember: React.ReactNode,
+  /** 城市合伙人 */
+  cityMember: React.ReactNode,
+  /** 管理员 */
+  managerMember: React.ReactNode
+}
 export const handleCostDetailData = (data: {
   price: {
     areaMemberPrice: number
@@ -16,22 +31,11 @@ export const handleCostDetailData = (data: {
     sellerPercent: number
     totalHandlingFee: number
   }}[]
-}): {
-  title: React.ReactNode,
-  /** 普通用户 */
-  generalUser: React.ReactNode,
-  /** 团长 */
-  head: React.ReactNode,
-  /** 区长 */
-  areaMember: React.ReactNode,
-  /** 城市合伙人 */
-  cityMember: React.ReactNode,
-  /** 管理员 */
-  managerMember: React.ReactNode
-}[] => {
+}): CostDetailProps[] => {
   const { costList, price } = data
-  const first: any = [
+  const first: CostDetailProps[] = [
     {
+      id: 0,
       title: '商品售价',
       /** 普通用户 */
       generalUser: formatMoneyWithSign(price.salePrice),
@@ -61,8 +65,9 @@ export const handleCostDetailData = (data: {
       </div>
     )
   }
-  const second = costList.map((item, index) => {
+  const second: CostDetailProps[] = costList.map((item, index) => {
     return {
+      id: index + 1,
       title: mapper[index],
       /** 普通用户 */
       generalUser: getNode(item.generalUser),

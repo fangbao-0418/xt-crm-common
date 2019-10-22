@@ -16,6 +16,11 @@ interface State {
   dataSource: any[]
   selectedRowKeys: any[]
 }
+enum periodEnum {
+  '三期' = 3,
+  '六期' = 6,
+  '十二期' = 12
+}
 class Main extends React.Component<AlertComponentProps, State> {
   public payload: CreditPay.PayloadProps = {
     page: 1,
@@ -33,6 +38,8 @@ class Main extends React.Component<AlertComponentProps, State> {
     {
       dataIndex: 'coverUrl',
       title: '主图',
+      width: 120,
+      align: 'center',
       render: (text) => {
         return (
           <Image
@@ -43,7 +50,8 @@ class Main extends React.Component<AlertComponentProps, State> {
     },
     {
       dataIndex: 'productName',
-      title: '商品名称'
+      title: '商品名称',
+      width: 150,
     },
     {
       dataIndex: 'status',
@@ -64,11 +72,13 @@ class Main extends React.Component<AlertComponentProps, State> {
     },
     {
       dataIndex: 'maxFqNum',
-      title: '最大分期期数'
+      title: '最大分期期数',
+      render: (text) => periodEnum[text]
     },
     {
       dataIndex: 'maxFqSellerPercent',
-      title: '最大免息期数'
+      title: '最大免息期数',
+      render: (text) => periodEnum[text]
     },
     {
       title: '操作',

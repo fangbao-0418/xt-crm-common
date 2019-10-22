@@ -31,6 +31,7 @@ class Main extends React.Component<Props> {
   public columns: ColumnProps<any>[] = [
     {
       title: '规格名',
+      dataIndex: 'property1',
       render: (text, record) => {
         const detail = Object.assign({
           skuList: []
@@ -153,9 +154,12 @@ class Main extends React.Component<Props> {
         value={value}
       >
         {
-          options.map((item) => {
+          options.map((item, index) => {
             return (
-              <Select.Option value={item.value}>
+              <Select.Option
+                key={index}
+                value={item.value}
+              >
                 {item.label}
               </Select.Option>
             )
@@ -230,6 +234,7 @@ class Main extends React.Component<Props> {
               rowKey='skuId'
               columns={this.columns}
               dataSource={detail.skuList}
+              pagination={false}
             />
           </div>
           <FormItem
