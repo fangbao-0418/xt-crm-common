@@ -85,10 +85,12 @@ export enum enumOrderStatus {
   Refund = -1,
   Unpaid = 10,
   Undelivered = 20,
+  //待拦截发货
+  Intercept = 21,
   Delivered = 30,
   Received = 40,
   Complete = 50,
-  Closed = 60,
+  Closed = 60
 };
 /**
  * 当前售后状态
@@ -169,6 +171,7 @@ export const OrderStatusTextMap = {
   [enumOrderStatus.Received]: '已收货',
   [enumOrderStatus.Undelivered]: '待发货',
   [enumOrderStatus.Unpaid]: '待付款',
+  [enumOrderStatus.Intercept]: '待拦截发货'
 };
 
 export const TabList = [
