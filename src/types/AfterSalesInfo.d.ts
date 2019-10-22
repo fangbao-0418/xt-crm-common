@@ -1,5 +1,6 @@
 declare module AfterSalesInfo {
   export interface data {
+    cancel: boolean;
     id: number;
     refundStatus: number;
     refundType: any;

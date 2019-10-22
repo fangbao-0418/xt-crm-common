@@ -108,6 +108,14 @@ export function getRefundReason() {
 export function againRefund(id: number, info: any) {
   return post(`/order/afterSale/againRefund/${id}`, {info});
 }
+
+/**
+ * 取消售后
+ * @param skuServerId 
+ */
+export function cancelRefund(skuServerId: number) {
+  return post(`/order/afterSale/cancelRefund/${skuServerId}`)
+}
 /**
  * 更新物流信息接口
  */

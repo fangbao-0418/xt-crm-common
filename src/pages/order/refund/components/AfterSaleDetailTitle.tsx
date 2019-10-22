@@ -13,7 +13,8 @@ import {
   CheckBoth,
   PlatformDelivery,
   ComplateAfterSale,
-  OperatingFailed
+  OperatingFailed,
+  CancelAfterSale
 } from '../../components/modal';
 interface Props extends RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
@@ -61,9 +62,15 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             </h3>
           </Col>
           <Col>
+            {/* 取消售后 */}
+            <CancelAfterSale cancel={this.props.data.cancel}/>
             {/* 待审核 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
               <RemarkModal
+                wrapperStyle={{
+                  display: 'inline-block',
+                  marginLeft: '10px'
+                }}
                 onSuccess={this.onSuccess}
                 refundId={this.props.match.params.id}
               />

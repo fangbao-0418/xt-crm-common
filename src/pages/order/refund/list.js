@@ -72,7 +72,9 @@ export default class extends React.Component {
     }
   };
   handleSearch = () => {
-    this.query();
+    this.setState({
+      current: 1
+    }, this.query)
   };
 
   export = () => {

@@ -8,3 +8,4 @@ export {default as CheckBoth} from './CheckBoth';
 export {default as ComplateAfterSale} from './ComplateAfterSale';
 export {default as PlatformDelivery} from './PlatformDelivery';
 export {default as OperatingFailed} from './OperatingFailed';
+export {default as CancelAfterSale} from './CancelAfterSale';
