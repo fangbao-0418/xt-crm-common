@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import GoodCell from '@/components/good-cell';
 import MoneyRender from '@/components/money-render'
 
@@ -18,9 +19,22 @@ export function getDetailColumns (type = 0) {
       }
     },
     {
+      title: '商品ID',
+      dataIndex: 'productId',
+      key: 'productId',
+      render(text: any) {
+        return <Link to={`/goods/edit/${text}?page=1&pageSize=10`}>{text}</Link>
+      }
+    },
+    {
       title: '属性',
       dataIndex: 'properties',
       key: 'properties',
+    },
+    {
+      title: '供应商',
+      dataIndex: 'storeName',
+      key: 'storeName'
     },
     {
       title: '单价',
@@ -40,7 +54,7 @@ export function getDetailColumns (type = 0) {
       render: MoneyRender
     },
     {
-      title: '优惠券',
+      title: '使用优惠券',
       dataIndex: 'faceValue',
       key: 'faceValue'
     },
@@ -62,8 +76,8 @@ export function getDetailColumns (type = 0) {
       key: 'preferentialTotalPrice',
       render: MoneyRender
     }
-  ]
-};
+  ];
+}
 
 export const storeType = ['喜团', '1688', '淘宝联盟'];
 export const supplierOperate: any = {

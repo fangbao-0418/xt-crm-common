@@ -3,12 +3,13 @@ import ClipboardJS from 'clipboard';
 import { Row, Button } from 'antd';
 import { ModifyLogisticsInfo } from '../../components/modal';
 import { enumRefundStatus } from '../../constant';
+import { getExpressCode } from '@/util/utils';
 interface Props {
   data: AfterSalesInfo.data;
 }
 type CheckVO = AfterSalesInfo.CheckVO;
 type OrderServerVO = AfterSalesInfo.OrderServerVO;
-const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
+const LogisticsShippingInfo: React.FC<Props> = ({ data }: Props) => {
   const [visible, setVisible]: useStateType = useState<boolean>(false);
   let checkVO: CheckVO = Object.assign({}, data.checkVO);
   let orderServerVO: OrderServerVO = Object.assign({}, data.orderServerVO);
@@ -16,28 +17,30 @@ const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
     new ClipboardJS('#copy-btn');
   }, []);
   return (
-    (checkVO.returnExpressName || checkVO.returnExpressCode) ? <>
+    (checkVO.sendExpressName || checkVO.sendExpressCode) ? <>
       <ModifyLogisticsInfo
         title="物流信息修改"
         visible={visible}
-        expressName={checkVO.returnExpressName}
-        expressCode={checkVO.returnExpressCode}
+        type="platform"
+        expressName={getExpressCode(checkVO.sendExpressName)}
+        expressCode={checkVO.sendExpressCode}
         onCancel={() => setVisible(false)}
+        sendExpressId={checkVO.sendExpressId}
       />
       <div>
-        <h4>用户发货物流信息</h4>
+        <h4>平台发货物流信息</h4>
         <Row>
-          <span>物流公司：{checkVO.returnExpressName}</span>
+          <span>物流公司：{checkVO.sendExpressName}</span>
           <span className="ml20">
-            物流单号：<span id="copy-text">{checkVO.returnExpressCode}</span>
+            物流单号：<span id="copy-shiptext">{checkVO.sendExpressCode}</span>
           </span>
-          {orderServerVO.refundStatus === enumRefundStatus.OperatingOfGoods && (
+          {orderServerVO.refundStatus === enumRefundStatus.WaitUserReceipt  && (
             <>
               <Button
                 id="copy-btn"
                 type="primary"
                 className="ml20"
-                data-clipboard-target="#copy-text"
+                data-clipboard-target="#copy-shiptext"
               >
                 复制
               </Button>
@@ -52,4 +55,4 @@ const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
   );
 };
 
-export default LogisticsInformation;
+export default LogisticsShippingInfo;

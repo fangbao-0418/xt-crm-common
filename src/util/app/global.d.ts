@@ -27,4 +27,9 @@ declare module APP {
   export const http: HttpProps
   export const fn: FnProps
   export const href: (url: string, target?: '_blank' | '_self' | '_parent' | '_top' | string) => void
+  /** 正则校验 */
+  export const regular: {
+    /** 手机号校验 */
+    phone: RegExp
+  }
 }

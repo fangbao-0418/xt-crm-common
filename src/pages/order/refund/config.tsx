@@ -165,7 +165,7 @@ export const getListColumns = ({ query, history }: any) => [
     title: '商品',
     dataIndex: 'skuName',
     render(skuName: any, row: any) {
-      return <GoodCell {...row} />;
+      return <GoodCell {...row} showImage={false}/>;
     },
   },
   {

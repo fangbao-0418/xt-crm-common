@@ -8,6 +8,7 @@ import {
   AfterSaleApplyInfo,
   CloseInfo
 } from './components';
+import LogisticsShippingInfo from './components/LogisticsShippingInfo';
 import { enumRefundType, enumRefundStatus } from '../constant';
 interface Props {
   data: AfterSalesInfo.data;
@@ -43,6 +44,9 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
             {isShowShippingLogisticsOrSupplierInfo && (
               <>
                 <LogisticsInformation data={data} />
+                {isRefundStatusOf([enumRefundStatus.WaitUserReceipt, enumRefundStatus.Complete]) &&
+                  isRefundTypeOf(enumRefundType.Exchange) &&
+                  <LogisticsShippingInfo data={data} />}
                 <SupplierProcessInfo data={data} />
               </>
             )}
