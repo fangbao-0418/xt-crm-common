@@ -7,6 +7,7 @@ export const getDetailColumns = () => [
     title: '名称',
     dataIndex: 'skuName',
     key: 'skuName',
+    width: '15%',
     render(skuName: any, row: any) {
       return <GoodCell {...row} />;
     }
@@ -15,6 +16,7 @@ export const getDetailColumns = () => [
     title: '商品ID',
     dataIndex: 'productId',
     key: 'productId',
+    width: '5%',
     render(text: any) {
       return <Link to={`/goods/edit/${text}?page=1&pageSize=10`}>{text}</Link>
     }
@@ -23,6 +25,7 @@ export const getDetailColumns = () => [
     title: '属性',
     dataIndex: 'properties',
     key: 'properties',
+    width: '10%'
   },
   {
     title: '供应商',
