@@ -93,6 +93,8 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
+
+    let { supplier } = this.state;
     if (!id) {
       setFieldsValue({
         showNum: 1
@@ -177,7 +179,7 @@ class GoodsEdit extends React.Component {
     });
   };
   /** 获取规格结婚 */
-  getSpecs (skuList = []) {
+  getSpecs(skuList = []) {
     const specs = this.specs
     specs.map((item) => {
       item.content = []
@@ -343,8 +345,8 @@ class GoodsEdit extends React.Component {
       [name]: value
     })
   }
-  
-   supplierChange = (value) => {
+
+  supplierChange = (value) => {
     const { supplier } = this.state;
     const { form: { resetFields } } = this.props;
     const currentSupplier = supplier.find(item => item.id === value) || {};
@@ -360,11 +362,11 @@ class GoodsEdit extends React.Component {
       })
     }
   }
-  
+
   render() {
 
     const { getFieldDecorator } = this.props.form;
-    const { supplier,interceptionVisible } = this.state;
+    const { supplier, interceptionVisible } = this.state;
 
     return (
       <Form {...formLayout}>
@@ -464,9 +466,9 @@ class GoodsEdit extends React.Component {
           <Form.Item label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
           </Form.Item>
-           {
+          {
             interceptionVisible ?
-              <FormItem label="是否可拦截发货">
+              <Form.Item label="是否可拦截发货">
                 {getFieldDecorator('interception', {
                   initialValue: 0,
                 })(
@@ -475,7 +477,7 @@ class GoodsEdit extends React.Component {
                     <Radio value={0}>否</Radio>
                   </Radio.Group>,
                 )}
-              </FormItem> :
+              </Form.Item> :
               null
           }
           <Form.Item label="商品视频封面">
