@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import GoodCell from '@/components/good-cell';
 import MoneyRender from '@/components/money-render'
 export const getDetailColumns = () => [
@@ -6,14 +7,27 @@ export const getDetailColumns = () => [
     title: '名称',
     dataIndex: 'skuName',
     key: 'skuName',
-    render(skuName, row) {
+    render(skuName: any, row: any) {
       return <GoodCell {...row} />;
+    }
+  },
+  {
+    title: '商品ID',
+    dataIndex: 'productId',
+    key: 'productId',
+    render(text: any) {
+      return <Link to={`/goods/edit/${text}?page=1&pageSize=10`}>{text}</Link>
     }
   },
   {
     title: '属性',
     dataIndex: 'properties',
     key: 'properties',
+  },
+  {
+    title: '供应商',
+    dataIndex: 'storeName',
+    key: 'storeName'
   },
   {
     title: '单价',
@@ -33,7 +47,7 @@ export const getDetailColumns = () => [
     render: MoneyRender
   },
   {
-    title: '优惠券',
+    title: '使用优惠券',
     dataIndex: 'faceValue',
     key: 'faceValue'
   },
@@ -58,37 +72,74 @@ export const getDetailColumns = () => [
 ];
 
 export const storeType = ['喜团', '1688', '淘宝联盟'];
-export const enumOrderStatus = {
-  Refund: -1,
-  Unpaid: 10,
-  Undelivered: 20,
-  Delivered: 30,
-  Received: 40,
-  Complete: 50,
-  Closed: 60,
+export const supplierOperate: any = {
+  0: '未验收',
+  10: '已验收'
+}
+export enum enumSupplierOperate {
+  UNACCEPTED = 0,
+  ACCEPTED = 10
+}
+
+export enum enumOrderStatus {
+  Refund = -1,
+  Unpaid = 10,
+  Undelivered = 20,
+  Delivered = 30,
+  Received = 40,
+  Complete = 50,
+  Closed = 60,
 };
-//0所有，10待审核，20处理中，30完成
-//0:无售后，10待审核，20售后中，30售后完成，40审核被驳回
-// '' 所有
-// 当前售后状态
-export const enumRefundStatus = {
-  All: '',
-  NoRefund: 0,
-  WaitConfirm: 10,
-  Operating: 20,
-  OperatingFailed: 21, // 退款失败
-  OperatingAll: 22, // 退款退货
-  OperatingOfMoney: 23, // 退款中
-  OperatingOfGoods: 24, // 换货中
-  Complete: 30,
-  Rejected: 40,
+/**
+ * 当前售后状态
+ * @readonly
+ * @enum {number}
+ * @property WaitConfirm {number} 待审核:10
+ * 
+ * @description 退货，换货
+ * @description Operating {number} 处理中:20
+ * @property OperatingOfGoods{number} 待平台收货:24
+ * 
+ * @property OperatingOfMoney {number} 待用户发货:23
+ * @property OperatingFailed {number} 退款失败:21
+ * 
+ * @description 换货
+ * @property WaitPlatformDelivery {number} 待平台发货:25
+ * @property WaitUserReceipt {number} 待用户收货:26
+ * 
+ * @description 仅退款
+ * @property WaitCustomerServiceOperating {number} 等待客服跟进:27
+ * @description 退货退款，仅退款
+ *
+ * @property Complete {number} 售后完成:30
+ * @property Rejected {number} 售后关闭:40
+ */
+export enum enumRefundStatus {
+  All = '',
+  NoRefund = 0,
+  WaitConfirm = 10,
+  Operating = 20,
+  OperatingFailed = 21,
+  OperatingAll = 22,
+  OperatingOfMoney = 23,
+  OperatingOfGoods = 24,
+  WaitPlatformDelivery = 25,
+  WaitUserReceipt = 26,
+  WaitCustomerServiceOperating = 27,
+  Complete = 30,
+  Rejected = 40
 };
 
-//售后类型（10 退款退货 20 退款 30 换货）
-export const enumRefundType = {
-  Both: '10',
-  Refund: '20',
-  Exchange: '30',
+/**
+ * 售后类型
+ * @property Both {string} 退货退款:10
+ * @property Refund {string} 退款:20
+ * @property Exchange {string} 换货:30
+ */
+export enum enumRefundType {
+  Both = 10,
+  Refund = 20,
+  Exchange = 30,
 };
 
 export const TextMapRefundStatus = {
@@ -171,19 +222,3 @@ export const MemberTypeTextMap = {
   [enumMemberType.Manager]: '管理员',
   [enumMemberType.Company]: '公司',
 };
-
-export const refundType = [
-  {
-    label: '全部',
-    value: ''
-  }, {
-    label: '退货退款',
-    value: '10'
-  }, {
-    label: '仅退款',
-    value: '20'
-  }, {
-    label: '仅换货',
-    value: '30'
-  }
-]

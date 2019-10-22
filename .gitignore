@@ -7,6 +7,8 @@
 _roadhog-api-doc
 
 # production
+./src/util/baseHost.js
+./src/pages/login/domain.js
 /build
 /dist
 /.vscode
@@ -18,8 +20,7 @@ yarn-error.log
 
 /coverage
 .idea
-yarn.lock
-package-lock.json
+# package-lock.json
 *bak
 .vscode
 

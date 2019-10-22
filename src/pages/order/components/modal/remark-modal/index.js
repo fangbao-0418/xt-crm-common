@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import { Modal, Button, Input, message } from 'antd';
-import { setOrderRemark, setRefundOrderRemark } from '../../api';
+import { setOrderRemark, setRefundOrderRemark } from '../../../api';
 
 class RemarkModal extends Component {
-  // static defaultProps = {
-  //   // onSuccess: () => {},
-  //   orderCode: '',
-  // };
   state = {
     visible: false,
     remark: '',

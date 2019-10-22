@@ -7,7 +7,7 @@ import { getOrderList, exportOrder, importLogistics } from '../api';
 import GoodCell from '../../../components/good-cell';
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import RefundCell from '../components/refund-cell';
-import RemarkModal from '../components/remark-modal';
+import RemarkModal from '../components/modal/remark-modal';
 import RefundModal from '../components/refund-modal';
 import RefundStatusCell from '../components/refund-status-cell';
 import { getHeaders } from '@/util/utils';

@@ -46,7 +46,7 @@ export default class extends React.Component {
       handleEndTime,
       payStartTime,
       payEndTime,
-      refundStatus: this.props.refundStatus,
+      refundStatus: fieldsValues.refundStatus || this.props.refundStatus,
       page: this.state.current,
       pageSize: this.state.pageSize
     };
@@ -107,7 +107,7 @@ export default class extends React.Component {
           format={this.handleFormat}
           search={this.handleSearch}
           clear={this.handleSearch}
-          options={formFields()}
+          options={formFields(this.props.refundStatus)}
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>

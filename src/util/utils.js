@@ -3,6 +3,8 @@ import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
 import { baseHost } from './baseHost';
 import { isNil } from 'lodash';
+import { Decimal } from 'decimal.js';
+import { ExpressCompanyOptions } from '@/config';
 import * as LocalStorage from '@/util/localstorage';
 const History = createHashHistory();
 
@@ -159,6 +161,7 @@ export const prefix = url => {
   if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
   return `${apiDomain}${url}`;
 };
+
 /**
  * 
  * @param { 目标数组 } target 
@@ -213,4 +216,33 @@ export function treeToarr(list = [], arr) {
     }
   }
   return results;
+}
+/**
+ * @description 去掉多余的属性
+ * @param {需要过滤的对象} obj 
+ * @param {对于的属性名称} prop 
+ */
+export function dissoc(obj, prop) {
+  let result = {};
+  for (let p in obj) {
+    if (p !== prop) {
+      result[p] = obj[p];
+    }
+  }
+  return result;
+}
+
+export function mul(unitPrice, serverNum) {
+  if (unitPrice && serverNum) {
+    return new Decimal(unitPrice).mul(serverNum).toNumber()
+  }
+  return 0;
+}
+
+export function getExpressCode(name) {
+  for (let key in ExpressCompanyOptions) {
+    if (ExpressCompanyOptions[key] === name) {
+      return key;
+    }
+  }
 }
