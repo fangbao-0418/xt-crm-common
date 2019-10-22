@@ -10,6 +10,10 @@ import StepInfo from './step-info';
 import { enumOrderStatus, OrderStatusTextMap } from '../constant';
 import DeliveryModal from './components/delivery-modal';
 import { formatMoneyWithSign } from '../../helper';
+import { dateFormat } from '@/util/utils';
+import moment from 'moment';
+import { orderStatusEnums } from '@/config';
+
 const styleObj = {
   display: 'flex',
   flexDirection: 'column',
@@ -122,8 +126,24 @@ class Detail extends Component {
             return (
               <div key={index}>
                 <Row gutter={24}>
-                  <Col span={8}>子订单号{index + 1}: {item.childOrder.orderCode}</Col>
-                  <Col span={8}>订单状态：{OrderStatusTextMap[item.childOrder.orderStatus]}</Col>
+                  <Col span={8}>
+                    <span>子订单号{index + 1}: </span>
+                    <span>{item.childOrder.orderCode}</span>
+                    <span> {item.childOrder.interceptorType == 10 ? '(拦截订单)' : ''}</span>
+                  </Col>
+                  <Col span={8}>
+                    <span>订单状态：</span>
+                    <span>
+                      {OrderStatusTextMap[item.childOrder.orderStatus]}
+                    </span>
+                    <span>
+                      {
+                        (item.childOrder.orderStatus == enumOrderStatus.Intercept && item.childOrder.interceptorTimeOut) ?
+                          `(${moment(item.childOrder.interceptorTimeOut).format(dateFormat)})` :
+                          ''
+                      }
+                    </span>
+                  </Col>
                   <Col className="gutter-row" span={8}>
                     {(orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
                       <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics} />

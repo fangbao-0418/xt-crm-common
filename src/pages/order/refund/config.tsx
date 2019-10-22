@@ -80,14 +80,15 @@ export const orderRefundStatus: any = {
 }
 
 
-export const formFields = function (refundStatus: any) {
+export const formFields = function (refundStatus: any, intercept: any) {
   let options = orderRefundStatus[refundStatus];
-  let selectRefundStatus = options.length > 1 ? [{
-    type: 'select',
-    id: 'refundStatus',
-    label: '售后单状态',
-    options: orderRefundStatus[refundStatus]
-  }] : []
+  let selectRefundStatus = options.length > 1 ?
+    [{
+      type: 'select',
+      id: 'refundStatus',
+      label: '售后单状态',
+      options: orderRefundStatus[refundStatus]
+    }] : [];
   return [
     {
       type: 'input',
@@ -148,8 +149,20 @@ export const formFields = function (refundStatus: any) {
       id: 'expressCode',
       label: '物流单号'
     },
-    ...selectRefundStatus
-  ];
+    ...selectRefundStatus,
+    , {
+      type: 'select',
+      id: 'interception',
+      label: '拦截订单',
+      options: [{ val: '全部', key: '' }, { val: '拦截订单', key: '1' }, { val: '非拦截订单', key: '0' }]
+    }, {
+      type: 'input',
+      id: 'interceptionMemberPhone',
+      label: '拦截人电话'
+    }
+  ].filter((item: any) => {
+    return intercept ? (item.id !== 'interception' && item.id !== 'interceptionMemberPhone') : true;
+  })
 }
 
 /**
@@ -165,7 +178,7 @@ export const getListColumns = ({ query, history }: any) => [
     title: '商品',
     dataIndex: 'skuName',
     render(skuName: any, row: any) {
-      return <GoodCell {...row} showImage={false}/>;
+      return <GoodCell {...row} showImage={false} />;
     },
   },
   {
@@ -210,7 +223,7 @@ export const getListColumns = ({ query, history }: any) => [
     title: '供应商操作',
     dataIndex: 'supplierOperate',
     render: (text: number) => {
-      return text === 10 ? '同意': '-';
+      return text === 10 ? '同意' : '-';
     }
   },
   {

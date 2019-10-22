@@ -202,7 +202,7 @@ class GoodsList extends React.Component {
   };
 
   render() {
-    
+
     const { selectedRowKeys, supplier, dataSource, page, initParams } = this.state;
     const columns = [
       {
@@ -305,7 +305,7 @@ class GoodsList extends React.Component {
                 <Select
                   placeholder="请选择供货商"
                   showSearch
-                  filterOption={(inputValue, option) =>{
+                  filterOption={(inputValue, option) => {
                     return option.props.children.indexOf(inputValue) > -1;
                   }}
                   style={{ width: 300 }}
@@ -313,7 +313,18 @@ class GoodsList extends React.Component {
                   {map(supplier, item => (
                     <Option value={item.id} key={item.id}>{item.name}</Option>
                   ))}
-                </Select>,
+                </Select>
+              )}
+            </FormItem>
+            <FormItem label="拦截状态">
+              {getFieldDecorator('interceptor', {
+                initialValue: ''
+              })(
+                <Select placeholder="请选择拦截状态" style={{ width: 300 }}>
+                  <Option value={''}>全部</Option>
+                  <Option value={'1'}>是</Option>
+                  <Option value={'0'}>否</Option>
+                </Select>
               )}
             </FormItem>
             <FormItem label="创建时间">{getFieldDecorator('goodsTime')(<RangePicker showTime />)}</FormItem>

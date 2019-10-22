@@ -106,6 +106,14 @@ class GoodsTable extends Component {
             <Col span={8}>供应商：{childOrder.storeName}</Col>
             <Col span={8}>分类： {storeType[childOrder.category]}</Col>
             <Col span={8}>供应商订单号：{childOrder.storeOrderId}</Col>
+            {
+              childOrder.interceptorType == 10 ?
+                <>
+                  <Col span={8}>拦截人：{childOrder.interceptorMemberName}</Col>
+                  <Col span={8}>拦截人手机号：{childOrder.interceptorMemberPhone}</Col>
+                </> :
+                null
+            }
           </Row>
           <Table rowKey={record => record.skuId} columns={columns} dataSource={list} pagination={false} />
           <Row>
