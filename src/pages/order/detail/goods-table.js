@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Row, Col, Card, Button, Modal, Input, message,Divider} from 'antd';
+import { Table, Row, Col, Card, Button, Modal, Input, message, Divider } from 'antd';
 import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale';
 import { withRouter } from 'react-router'
 import { getDetailColumns, storeType } from '../constant';
@@ -68,6 +68,28 @@ class GoodsTable extends Component {
       });
     });
   }
+
+  /**
+   * 展示/收起子订单收益列表
+   */
+  childOrderProceeds = (skuInfo, currentVisible) => {
+    const { orderInfo = {} } = this.props;
+    const { skuId } = skuInfo;
+    if (currentVisible) {
+      this.setState({
+        proceedsVisible: false
+      })
+    } else {
+      getProceedsListByOrderIdAndSkuId({ orderCode: orderInfo.orderCode, skuId }).then((result) => {
+        this.setState({
+          skuInfo,
+          proceedsVisible: true,
+          childOrderProceeds: result || []
+        })
+      })
+    }
+  }
+
   render() {
     const { list = [], childOrder = {}, orderInfo = {}, logistics, tableTitle } = this.props;
     const { proceedsVisible, childOrderProceeds, skuInfo } = this.state;
