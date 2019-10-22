@@ -6,6 +6,7 @@ import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } f
 import { stopCouponTask, invalidTaskCoupon } from './api';
 import { Badge, Tooltip } from 'antd';
 import emitter from '@/util/events';
+import { download } from '@/util/utils';
 
 const listBadgeColors = {
   '0': 'gray',
@@ -103,7 +104,9 @@ export const releaseRecordsColumns = [{
         return <div className="wrap">{record.userGroupValue}</div>
       case 3:
         const [href, name] = record.userGroupValue.split(',')
-        return <a href={href}>{name}</a>;
+        return <Button type="link" onClick={() => {
+          download(href, name);
+        }}>{name}</Button>;
       default:
         return '全部用户';
     }

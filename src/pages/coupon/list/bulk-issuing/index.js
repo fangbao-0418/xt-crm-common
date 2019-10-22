@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Message } from 'antd';
+import { message } from 'antd';
 import { formItemLayout, radioStyle } from '@/config';
 import { DatePicker, Row, Col, Card, Form, Checkbox, Input, Button, Radio } from 'antd';
 import { saveCouponTaskInfo } from '../../api';
+import { download } from '@/util/utils';
 import Upload from '@/components/upload';
 import { disabledDate as beforeDisabledDate, afterDisabledDate } from '@/pages/helper';
 import '../index.scss'
@@ -46,27 +47,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
         return 0;
     }
   }
-  const handleSave = () => {
-    const { receiveUserGroup } = getFieldsValue(['receiveUserGroup']);
-    if (receiveUserGroup === 3 && Array.isArray(fileList) && fileList.length === 0) {
-      Message.error('请上传Excel文件');
-      return;
-    }
-    validateFields(async (err, fields) => {
-      if (!err) {
-        const params = {
-          ...fields,
-          executionTime: getExecutionTime(fields),
-          userGroupValue: getUserGroupValue(fields),
-          couponId: +match.params.id
-        };
-        const res = await saveCouponTaskInfo(params);
-        if (res) {
-          history.push(`/coupon/get/couponList/detail/${match.params.id}?activeKey=2`)
-        }
-      }
-    })
-  }
+
   // 是否定时发送
   const isTimedTransmission = () => {
     const { sendingTimeKey } = getFieldsValue(['sendingTimeKey']);
@@ -84,6 +65,33 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
     const { receiveUserGroup } = getFieldsValue(['receiveUserGroup']);
     return receiveUserGroup === 3;
   }
+
+  const handleSave = () => {
+    validateFields(async (err, fields) => {
+      const userLevelChecked =  Array.isArray(fields.userLevel) && fields.userLevel.length === 0;
+      if (isUserLevel() && (!fields.userLevel || userLevelChecked)) {
+        message.error('请选择用户等级');
+        return;
+      }
+      if (isExcelUpload() && Array.isArray(fileList) && fileList.length === 0) {
+        message.error('请上传Excel文件');
+        return;
+      }
+      if (!err) {
+        const params = {
+          ...fields,
+          executionTime: getExecutionTime(fields),
+          userGroupValue: getUserGroupValue(fields),
+          couponId: +match.params.id
+        };
+        const res = await saveCouponTaskInfo(params);
+        if (res) {
+          history.push(`/coupon/get/couponList/detail/${match.params.id}?activeKey=2`)
+        }
+      }
+    })
+  }
+
   const handleChange = (fileList) => {
     fileList = fileList.slice(-1);
     console.log('fileList=>', fileList)
@@ -97,6 +105,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
     setFileValues(url + ',' + name);
     setFileList(fileList);
   }
+  
   const handleCancel = () => {
     history.goBack();
   }
@@ -151,12 +160,14 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
               <Radio style={radioStyle} value={2}>指定用户</Radio>
               {isUserPhones() && (
                 <Form.Item>
-                  {getFieldDecorator('userPhones', { rules: [{ required: true, message: '请输入用户手机号' }] })(
+                  {getFieldDecorator('userPhones', { rules: [{ required: true, message: '请输入用户手机号', whitespace: true }] })(
                     <Input.TextArea style={{ width: '528px' }} rows={4} placeholder="输入用户手机号，以半角逗号隔开，例13928387247,15619237922" />
                   )}
                 </Form.Item>
               )}
-              <Radio style={radioStyle} value={3}>Excel文件上传</Radio>
+              <Radio style={radioStyle} value={3}>Excel文件上传<Button type="link" onClick={() => {
+                download('https://xituan.oss-cn-shenzhen.aliyuncs.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551571728654649.xlsx', '批量发券模板')
+              }}>（点击下载模板）</Button></Radio>
               {isExcelUpload() && (
                 <Upload accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" size={5} onChange={handleChange} value={fileList}>
                   <Button type="link">上传excel</Button>
