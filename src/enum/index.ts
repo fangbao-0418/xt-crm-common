@@ -8,4 +8,4 @@ export {default as receiveRestrictType} from './receiveRestrictType'
 export {default as receiveStatus} from './receiveStatus'
 export {default as refundType} from './refundType'
 export {default as returnReason} from './returnReason'
-export {default as customerFollowType} from './customerFollowType';
+export {default as customerFollowType } from './customerFollowType';
