@@ -8,7 +8,7 @@ export function getOrderList(data: any) {
 }
 
 // 客服代申请售后单个商品详情
-export function getProductDetail({mainOrderId, skuId}: any) {
+export function getProductDetail({ mainOrderId, skuId }: any) {
   return get(`/order/afterSale/applyOrderSKuDetail/${mainOrderId}/${skuId}`)
 }
 // 获取售后原因
@@ -21,7 +21,7 @@ export function getRefundReason() {
 }
 // 重新退款
 export function againRefund(id: number, info: any) {
-  return post(`/order/afterSale/againRefund/${id}`, {info});
+  return post(`/order/afterSale/againRefund/${id}`, { info });
 }
 /**
  * 更新物流信息接口
@@ -35,7 +35,7 @@ export function updateOrderExpress(data: any) {
  * @param info 
  */
 export function closeOrder(id: number, info: any) {
-  return post(`/order/afterSale/close/${id}`, {info});
+  return post(`/order/afterSale/close/${id}`, { info });
 }
 /**
  * 确认收货
@@ -55,9 +55,6 @@ export function saveRefundInfo(data: any) {
   return post('/order/afterSale/saveRefundInfo', data)
 }
 export function queryOrderDetail(data: any) {
-  if (debug) {
-    return Promise.resolve(detail);
-  }
   return post('/order/detail', data);
 }
 
@@ -183,7 +180,7 @@ export function profitRecycl(data: any) {
  * 根据订单号获取用户收益列表
  * @param {object} data  
  */
-export function getProceedsListByOrderId(param) {
+export function getProceedsListByOrderId(param: any) {
   return get(`/crm/member/settlement/v1/order/summary`, param);
 }
 
@@ -191,7 +188,7 @@ export function getProceedsListByOrderId(param) {
  * 根据订单Id和会员Id获取用户收益列表
  * @param {object} data  
  */
-export function getProceedsListByOrderIdAndMemberId(param) {
+export function getProceedsListByOrderIdAndMemberId(param: any) {
   return get(`/crm/member/settlement/v1/order/skuSummaryByMember`, param);
 }
 
@@ -199,7 +196,7 @@ export function getProceedsListByOrderIdAndMemberId(param) {
  * 根据订单Id和会员Id和SkuId获取用户收益列表
  * @param {object} data  
  */
-export function getProceedsListByOrderIdAndMemberIdAndSkuId(param) {
+export function getProceedsListByOrderIdAndMemberIdAndSkuId(param: any) {
   return get(`/crm/member/settlement/v1/detail`, param);
 }
 
@@ -207,7 +204,7 @@ export function getProceedsListByOrderIdAndMemberIdAndSkuId(param) {
  * 根据订单Id和skuId获取用户收益列表
  * @param {object} data  
  */
-export function getProceedsListByOrderIdAndSkuId(param) {
+export function getProceedsListByOrderIdAndSkuId(param: any) {
   return get(`/crm/member/settlement/v1/order/skuSummary`, param);
 }
 
