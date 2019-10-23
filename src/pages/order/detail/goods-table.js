@@ -94,12 +94,12 @@ class GoodsTable extends Component {
     const { list = [], childOrder = {}, orderInfo = {}, logistics, tableTitle } = this.props;
     const { proceedsVisible, childOrderProceeds, skuInfo } = this.state;
     const columns = [
-      ...getDetailColumns(),
+      ...(getDetailColumns().filter(item => item.key !== 'storeName')),
       {
         title: '操作',
         dataIndex: 'operate',
         key: 'operate',
-        width: 150,
+        width: 130,
         render: (text, record, index) => (
           <>
             <div>

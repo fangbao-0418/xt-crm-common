@@ -6,6 +6,12 @@ const FormItem = Form.Item;
 
 const namespace = 'intercept.detail.stock';
 
+const STATUSENUM = {
+    1: '拦截中',
+    2: '可配置',
+    3: '失效'
+}
+
 @connect(state => ({
     sourceData: state[namespace].sourceData
 }))
@@ -74,7 +80,10 @@ export default class extends Component {
             }, {
                 title: '状态',
                 dataIndex: 'status',
-                key: 'status'
+                key: 'status',
+                render: (status) => {
+                    return STATUSENUM[status];
+                }
             }, {
                 title: '库存',
                 dataIndex: 'skuInventory',

@@ -7,7 +7,7 @@ export const getDetailColumns = () => [
     title: '名称',
     dataIndex: 'skuName',
     key: 'skuName',
-    width: '15%',
+    width: '20%',
     render(skuName: any, row: any) {
       return <GoodCell {...row} />;
     }
@@ -16,16 +16,10 @@ export const getDetailColumns = () => [
     title: '商品ID',
     dataIndex: 'productId',
     key: 'productId',
-    width: '5%',
+    width: '8%',
     render(text: any) {
       return <Link to={`/goods/edit/${text}?page=1&pageSize=10`}>{text}</Link>
     }
-  },
-  {
-    title: '属性',
-    dataIndex: 'properties',
-    key: 'properties',
-    width: '10%'
   },
   {
     title: '供应商',
@@ -34,18 +28,21 @@ export const getDetailColumns = () => [
   },
   {
     title: '单价',
+    width: '8%',
     dataIndex: 'salePrice',
     key: 'salePrice',
     render: MoneyRender
   },
   {
     title: '数量',
+    width: '8%',
     dataIndex: 'quantity',
     key: 'quantity',
   },
   {
     title: '商品总价（元）',
     dataIndex: 'saleTotalPrice',
+    width: '8%',
     key: 'saleTotalPrice',
     render: MoneyRender
   },
@@ -57,6 +54,7 @@ export const getDetailColumns = () => [
   {
     title: '应付金额',
     dataIndex: 'dealTotalPrice',
+    width: '8%',
     key: 'dealTotalPrice',
     render: MoneyRender
   },
@@ -64,12 +62,14 @@ export const getDetailColumns = () => [
     title: '优惠金额',
     dataIndex: 'discountPrice',
     key: 'discountPrice',
+    width: '8%',
     render: MoneyRender
   },
   {
     title: '实付金额',
     dataIndex: 'preferentialTotalPrice',
     key: 'preferentialTotalPrice',
+    width: '8%',
     render: MoneyRender
   }
 ];
@@ -84,17 +84,6 @@ export enum enumSupplierOperate {
   ACCEPTED = 10
 }
 
-export enum enumOrderStatus {
-  Refund = -1,
-  Unpaid = 10,
-  Undelivered = 20,
-  //待拦截发货
-  Intercept = 21,
-  Delivered = 30,
-  Received = 40,
-  Complete = 50,
-  Closed = 60
-};
 /**
  * 当前售后状态
  * @readonly
@@ -164,6 +153,19 @@ export const TextMapRefundType = {
   [enumRefundType.Both]: '退款退货',
   [enumRefundType.Refund]: '退款',
   [enumRefundType.Exchange]: '换货',
+};
+
+
+export enum enumOrderStatus {
+  Refund = -1,
+  Unpaid = 10,
+  Undelivered = 20,
+  //待拦截发货
+  Intercept = 21,
+  Delivered = 30,
+  Received = 40,
+  Complete = 50,
+  Closed = 60
 };
 
 export const OrderStatusTextMap = {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { queryOrderDetail, push1688, withhold, getProceedsListByOrderId } from '../api';
+import { queryOrderDetail, push1688, withhold, getProceedsListByOrderId, cancelIntercept } from '../api';
 import { get, map } from 'lodash';
 import { Button, Row, Card, Col, message, Modal, Divider } from 'antd';
 import BuyerInfo from './buyer-info';
@@ -9,17 +9,9 @@ import BenefitInfo from './benefit-info';
 import StepInfo from './step-info';
 import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant';
 import DeliveryModal from './components/delivery-modal';
-import { formatMoneyWithSign } from '../../helper';
 import { dateFormat } from '@/util/utils';
 import moment from 'moment';
-import { orderStatusEnums } from '@/config';
 
-const styleObj = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-end',
-  padding: '0 24px'
-}
 const { confirm } = Modal;
 class Detail extends Component {
   get id() {
@@ -45,7 +37,6 @@ class Detail extends Component {
 
   componentDidMount() {
     this.query();
-    this.queryProceeds();
   }
 
   /**
@@ -74,6 +65,7 @@ class Detail extends Component {
         childOrderList: Object.values(childOrderMap),
       });
     });
+    this.queryProceeds();
   }
 
   /**
@@ -194,9 +186,16 @@ class Detail extends Component {
                           </span>
                         </Col>
                         <Col className="gutter-row" span={8} style={{ textAlign: 'right' }}>
-                          {(orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
-                            <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics} />
-                          ) : ''}
+                          {
+                            (orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
+                              <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics} />
+                            ) : ''
+                          }
+                          {
+                            (item.childOrder.interceptorType == 10 && item.childOrder.orderStatus == enumOrderStatus.Intercept) ?
+                              <Button type='primary' style={{ marginLeft: 8 }} onClick={() => this.cancelInterceptor(item)}>取消拦截发货</Button> :
+                              null
+                          }
                           {item.canProtocolPay ? <Button
                             type='primary'
                             style={{ margin: '0 10px 10px 0' }}
@@ -235,6 +234,18 @@ class Detail extends Component {
         </Card>
       </>
     );
+  }
+
+  cancelInterceptor = ({
+    childOrder
+  }) => {
+    console.log(childOrder);
+    cancelIntercept({ interceptOrderId: childOrder.interceptorOrderRecordId, memberId: childOrder.interceptorMemberId }).then((res) => {
+      if (res) {
+        message.success('取消成功');
+        this.query();
+      }
+    })
   }
 }
 

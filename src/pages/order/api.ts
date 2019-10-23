@@ -208,3 +208,11 @@ export function getProceedsListByOrderIdAndSkuId(param: any) {
   return get(`/crm/member/settlement/v1/order/skuSummary`, param);
 }
 
+/**
+ * 
+ * @param param 取消订单拦截
+ */
+export function cancelIntercept(param: any) {
+  return post('/order/intercept/cancelIntercept', param);
+}
+
