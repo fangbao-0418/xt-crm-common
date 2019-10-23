@@ -1,92 +1,61 @@
 import React from 'react';
 import GoodCell from '@/components/good-cell';
 import SuppilerSelect from '@/components/suppiler-auto-select'
-import { enumRefundStatus } from '../constant';
 import refundType from '@/enum/refundType';
 import createType from '@/enum/createType';
 import { Button } from 'antd';
 import MoneyRender from '@/components/money-render'
 import { formatDate } from '@/pages/helper';
 
-const OrderRefundStatusEnums = {
-  NOT_REFUND: {
-    value: 0,
-    description: '无售后',
-    cDescription: '无售后'
-  },
-  TO_BE_AUDIT: {
-    value: 10,
-    description: '待审核',
-    cDescription: '待审核'
-  },
-  TO_BE_C_SEND: {
-    value: 20,
-    description: '待用户发货',
-    cDescription: '处理中'
-  },
-  REFUND_MONEY_FAILURE: {
-    value: 21,
-    description: '退款失败',
-    cDescription: '处理中'
-  },
-  REFUND_MONEY_OF: {
-    value: 23,
-    description: '退款中',
-    cDescription: '处理中'
-  },
-  TO_BE_B_RECEIVE: {
-    value: 24,
-    description: '待平台收货',
-    cDescription: '处理中'
-  },
-  TO_BE_B_SEND: {
-    value: 25,
-    description: '待平台发货',
-    cDescription: '处理中'
-  },
-  TO_BE_C_RECEIVE: {
-    value: 26,
-    description: '待用户收货',
-    cDescription: '处理中'
-  },
-  TO_BE_B_FOLLOW: {
-    value: 27,
-    description: '等待客服跟进',
-    cDescription: '处理中'
-  },
-  FINISH: {
-    value: 30,
-    description: '完成',
-    cDescription: '售后完成'
-  },
-  REJECT: {
-    value: 40,
-    description: '关闭',
-    cDescription: '售后关闭'
-  }
+export const refundStatusOptions: any = {
+  ALL: [
+    { key: '', val: '全部' },
+    { key: 10, val: '待审核' },
+    { key: 20, val: '待用户发货' },
+    { key: 21, val: '退款失败' },
+    { key: 23, val: '退款中'},
+    { key: 24, val: '待平台收货'},
+    { key: 25, val: '待平台发货' },
+    { key: 26, val: '待用户收货' },
+    { key: 27, val: '等待客服跟进' },
+    { key: 30, val: '售后完成' },
+    { key: 40, val: '售后关闭' }
+  ],
+  WAITCONFIRM: [
+    { key: 10, val: '待审核' }
+  ],
+  OPERATING: [
+    { key: 20, val: '待用户发货' },
+    { key: 21, val: '退款失败' },
+    { key: 23, val: '退款中'},
+    { key: 24, val: '待平台收货'},
+    { key: 25, val: '待平台发货' },
+    { key: 26, val: '待用户收货' },
+    { key: 27, val: '等待客服跟进' },
+  ],
+  COMPLETE: [
+    { key: 30, val: '售后完成' }
+  ],
+  REJECTED: [
+    { key: 40, val: '售后关闭' }
+  ]
 }
 
-const filterAndMapRefundOrder = (cDescription: any) => Object.values(OrderRefundStatusEnums).filter(v => v.cDescription === cDescription).map(v => ({ key: v.value, val: v.description }));
-const waitConfirm = filterAndMapRefundOrder('待审核');
-const operating = filterAndMapRefundOrder('处理中');
-const complete = filterAndMapRefundOrder('售后完成');
-const rejected = filterAndMapRefundOrder('售后关闭');
-export const orderRefundStatus: any = {
-  [enumRefundStatus.All]: [{ key: '', val: '全部' }, ...waitConfirm, ...operating, ...complete, ...rejected],
-  [enumRefundStatus.WaitConfirm]: waitConfirm,
-  [enumRefundStatus.Operating]: operating,
-  [enumRefundStatus.Complete]: complete,
-  [enumRefundStatus.Rejected]: rejected
+export const typeMapRefundStatus = {
+  ALL: null,
+  WAITCONFIRM: [10],
+  OPERATING: [20, 21, 23, 24, 25, 26, 27],
+  COMPLETE: [30],
+  REJECTED: [40]
 }
 
-
-export const formFields = function (refundStatus: any) {
-  let options = orderRefundStatus[refundStatus];
+export const formFields = function (type: string) {
+  let options = refundStatusOptions[type];
   let selectRefundStatus = options.length > 1 ? [{
     type: 'select',
     id: 'refundStatus',
     label: '售后单状态',
-    options: orderRefundStatus[refundStatus]
+    options
   }] : []
   return [
     {
@@ -165,7 +134,7 @@ export const getListColumns = ({ query, history }: any) => [
     title: '商品',
     dataIndex: 'skuName',
     render(skuName: any, row: any) {
-      return <GoodCell {...row} showImage={false}/>;
+      return <GoodCell {...row} showImage={false} />;
     },
   },
   {
@@ -210,7 +179,7 @@ export const getListColumns = ({ query, history }: any) => [
     title: '供应商操作',
     dataIndex: 'supplierOperate',
     render: (text: number) => {
-      return text === 10 ? '同意': '-';
+      return text === 10 ? '同意' : '-';
     }
   },
   {
