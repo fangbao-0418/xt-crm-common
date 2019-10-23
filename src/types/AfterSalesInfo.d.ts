@@ -90,8 +90,9 @@ declare module AfterSalesInfo {
     supplierOperate: number;
     supplierInfo: null;
     serverNum: number;
-    contactVO: any,
-    beforeStatus: number
+    contactVO: any;
+    beforeStatus: number;
+    reply: string;
   }
 
   export interface ProductVO {
