@@ -11,9 +11,9 @@ import * as api from './api'
 import { formatDate, formatMoneyWithSign } from '@/pages/helper'
 interface State {
   total: number
-  pageSize: number
-  page: number
-  dataSource: any[]
+  pageSize?: number
+  page?: number
+  dataSource: CreditPay.ItemProps[]
   selectedRowKeys: any[]
 }
 enum periodEnum {
@@ -124,11 +124,11 @@ class Main extends React.Component<AlertComponentProps, State> {
   public state: State = {
     total: 0,
     page: 1,
-    pageSize: this.payload.pageSize,
+    pageSize: this.payload.pageSize || 10,
     dataSource: [],
     selectedRowKeys: []
   }
-  public constructor (props: {}) {
+  public constructor (props: any) {
     super(props)
     this.onRowSelectionChange = this.onRowSelectionChange.bind(this)
   }

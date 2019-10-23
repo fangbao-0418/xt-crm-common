@@ -59,10 +59,10 @@ class Main extends React.Component<Props> {
           options: fqOptions,
           value: record.maxHbFqNum,
           onChange: (value) => {
-            const detail = Object.assign({
-              skuList: []
-            }, this.state.detail)
-            detail.skuList[index].maxHbFqNum = value
+            const detail =this.state.detail
+            if (detail && detail.skuList && detail.skuList[index]) {
+              detail.skuList[index].maxHbFqNum = value
+            }
             this.setState({
               detail
             })
@@ -79,10 +79,10 @@ class Main extends React.Component<Props> {
           value: record.maxFqSellerPercent,
           options: mxOptions,
           onChange: (value) => {
-            const detail = Object.assign({
-              skuList: []
-            }, this.state.detail)
-            detail.skuList[index].maxFqSellerPercent = value
+            const detail = this.state.detail
+            if (detail && detail.skuList && detail.skuList[index]) {
+              detail.skuList[index].maxFqSellerPercent = value
+            }
             this.setState({
               detail
             })
@@ -143,7 +143,7 @@ class Main extends React.Component<Props> {
     })
   }
   public renderSelect (payload: {
-    options?: {label: string, value: number}[]
+    options: {label: string, value: number}[]
     onChange?: (value: any) => void
     value: any
   }) {
@@ -169,9 +169,10 @@ class Main extends React.Component<Props> {
     )
   }
   public save () {
-    const detail = Object.assign({
-      skuList: []
-    }, this.state.detail)
+    const detail = this.state.detail
+    if (!detail) {
+      return
+    }
     const { skuList } = detail
     const skuInfos = skuList.map((item) => {
       return {

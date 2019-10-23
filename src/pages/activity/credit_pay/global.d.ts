@@ -70,7 +70,7 @@ namespace CreditPay {
     maxFqSellerPercent: -1 | 3 | 6 | 12
     /** 是否允许花呗 1: 花呗， 0: 不支持花呗，undefined代表全部 */
     enableHb: 0 | 1
-    skuList?: SkuProps[]
+    skuList: SkuProps[]
     property1: string
     property2: string
   }

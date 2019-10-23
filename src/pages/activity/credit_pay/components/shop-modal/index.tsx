@@ -38,7 +38,7 @@ class Main extends React.Component<Props, State> {
     enableStatus: 0
   }
   public selectRows: Shop.ShopItemProps[] = []
-  public form: FormInstance
+  public form: any
   public columns: ColumnProps<Shop.ShopItemProps>[] = [
     {
       title: '商品ID',

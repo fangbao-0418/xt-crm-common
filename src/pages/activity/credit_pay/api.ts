@@ -3,7 +3,7 @@ import * as adapter from './adapter'
 
 /** 获取分期商品列表 */
 export const fetchList = (payload: CreditPay.PayloadProps) => {
-  return post<PageProps>(`/product/list`, payload)
+  return post<PageProps<CreditPay.ItemProps>>(`/product/list`, payload)
 }
 /** 添加花呗分期商品 */
 export const addCreditPayShop = (ids: number[]) => {
