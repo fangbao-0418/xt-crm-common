@@ -167,7 +167,7 @@ class SkuList extends React.Component<Props, State>{
       cityMemberPrice: 0,
       costPrice: 0,
       headPrice: 0,
-      deliveryMode: 1,
+      deliveryMode: 2,
       marketPrice: 0,
       salePrice: 0,
       managerMemberPrice: 0

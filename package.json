@@ -57,7 +57,7 @@
     "eject": "react-app-rewired eject",
     "mock": "nodemon mock/server.js",
     "i18n": "gulp i18n-json-merge",
-    "dev": "yarn submodule && react-app-rewired start",
+    "dev": "yarn run remove && yarn submodule && react-app-rewired start",
     "submodule": "git submodule update --init"
   },
   "eslintConfig": {
