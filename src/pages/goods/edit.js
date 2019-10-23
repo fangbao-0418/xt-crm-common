@@ -559,7 +559,7 @@ class GoodsEdit extends React.Component {
                 rules: [
                   // {required: true, message: '收货人电话不能为空'},
                   {
-                    pattern: APP.regular.phone,
+                    max: 12,
                     message: '收货人电话格式不正确'
                   }
                 ]
