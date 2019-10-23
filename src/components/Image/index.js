@@ -12,14 +12,17 @@ const replaceHttpUrl = imgUrl => {
 }
 
 const protocol = /https?:\/\//;
-const Image = ({ src, alt = '图片', style, ...otherProps }) => {
+const Image = (props) => {
+  const { src, className, alt = '图片', style, ...otherProps } = props
   let realSrc = src;
   if (!protocol.test(src)) {
     realSrc = 'https://assets.hzxituan.com/' + src;
   }
 
   return (
+    src ? (
     <img
+      className={className}
       src={replaceHttpUrl(realSrc)}
       alt={alt}
       style={{
@@ -30,7 +33,7 @@ const Image = ({ src, alt = '图片', style, ...otherProps }) => {
       }}
       onClick={onClick(realSrc)}
       {...otherProps}
-    />
+    />) : null
   );
 };
 
