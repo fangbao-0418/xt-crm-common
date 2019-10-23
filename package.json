@@ -57,7 +57,7 @@
     "eject": "react-app-rewired eject",
     "mock": "nodemon mock/server.js",
     "i18n": "gulp i18n-json-merge",
-    "dev": "react-app-rewired start"
+    "dev": "npm run remove && react-app-rewired start"
   },
   "eslintConfig": {
     "extends": "react-app"
