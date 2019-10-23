@@ -557,7 +557,7 @@ class GoodsEdit extends React.Component {
               />
               {getFieldDecorator('returnPhone', {
                 rules: [
-                  {required: true, message: '收货人电话不能为空'},
+                  // {required: true, message: '收货人电话不能为空'},
                   {
                     pattern: APP.regular.phone,
                     message: '收货人电话格式不正确'
