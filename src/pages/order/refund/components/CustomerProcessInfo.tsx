@@ -28,7 +28,7 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
       {isRefundTypeOf(enumRefundType.Refund) && <Row>退运费：{formatMoneyWithSign(checkVO.freight)}</Row>}
       {/* 换货 */}
       {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{`${contactVO.contact} ${contactVO.phone} ${contactVO.province}${contactVO.city}${contactVO.district}${contactVO.street}`}</Row>}
-      <Row>说 明：{checkVO.serverDescribe}</Row>
+      <Row>说 明：{checkVO.reply}</Row>
     </div>
   );
 };

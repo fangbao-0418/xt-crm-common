@@ -35,6 +35,7 @@ declare module AfterSalesInfo {
     unitPrice: number;
     maxServerNum:number;
     maxRefundAmount: number;
+    reply: string;
   }
   export interface OrderInfoVO {
     mainOrderId: number;
