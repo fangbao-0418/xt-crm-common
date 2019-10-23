@@ -1,0 +1,273 @@
+[1mdiff --cc src/pages/login/domain.js[m
+[1mindex 5c0e483,ad48416..0000000[m
+[1m--- a/src/pages/login/domain.js[m
+[1m+++ b/src/pages/login/domain.js[m
+[1mdiff --git a/src/components/search-form/index.js b/src/components/search-form/index.js[m
+[1mindex 3879871..3fd0f08 100644[m
+[1m--- a/src/components/search-form/index.js[m
+[1m+++ b/src/components/search-form/index.js[m
+[36m@@ -30,6 +30,7 @@[m [mexport default class extends PureComponent {[m
+ [m
+   renderSelect = (item) => {[m
+     const { options } = item;[m
+[32m+[m[32m    console.log('options=>', options);[m
+     const placeholder = '请选择' + item.label;[m
+     return ([m
+       <Select placeholder={placeholder}>[m
+[1mdiff --git a/src/pages/order/refund/config.tsx b/src/pages/order/refund/config.tsx[m
+[1mindex fdad4f6..d40c86e 100644[m
+[1m--- a/src/pages/order/refund/config.tsx[m
+[1m+++ b/src/pages/order/refund/config.tsx[m
+[36m@@ -1,92 +1,61 @@[m
+ import React from 'react';[m
+ import GoodCell from '@/components/good-cell';[m
+ import SuppilerSelect from '@/components/suppiler-auto-select'[m
+[31m-import { enumRefundStatus } from '../constant';[m
+ import refundType from '@/enum/refundType';[m
+ import createType from '@/enum/createType';[m
+ import { Button } from 'antd';[m
+ import MoneyRender from '@/components/money-render'[m
+ import { formatDate } from '@/pages/helper';[m
+ [m
+[31m-const OrderRefundStatusEnums = {[m
+[31m-  NOT_REFUND: {[m
+[31m-    value: 0,[m
+[31m-    description: '无售后',[m
+[31m-    cDescription: '无售后'[m
+[31m-  },[m
+[31m-  TO_BE_AUDIT: {[m
+[31m-    value: 10,[m
+[31m-    description: '待审核',[m
+[31m-    cDescription: '待审核'[m
+[31m-  },[m
+[31m-  TO_BE_C_SEND: {[m
+[31m-    value: 20,[m
+[31m-    description: '待用户发货',[m
+[31m-    cDescription: '处理中'[m
+[31m-  },[m
+[31m-  REFUND_MONEY_FAILURE: {[m
+[31m-    value: 21,[m
+[31m-    description: '退款失败',[m
+[31m-    cDescription: '处理中'[m
+[31m-  },[m
+[31m-  REFUND_MONEY_OF: {[m
+[31m-    value: 23,[m
+[31m-    description: '退款中',[m
+[31m-    cDescription: '处理中'[m
+[31m-  },[m
+[31m-  TO_BE_B_RECEIVE: {[m
+[31m-    value: 24,[m
+[31m-    description: '待平台收货',[m
+[31m-    cDescription: '处理中'[m
+[31m-  },[m
+[31m-  TO_BE_B_SEND: {[m
+[31m-    value: 25,[m
+[31m-    description: '待平台发货',[m
+[31m-    cDescription: '处理中'[m
+[31m-  },[m
+[31m-  TO_BE_C_RECEIVE: {[m
+[31m-    value: 26,[m
+[31m-    description: '待用户收货',[m
+[31m-    cDescription: '处理中'[m
+[31m-  },[m
+[31m-  TO_BE_B_FOLLOW: {[m
+[31m-    value: 27,[m
+[31m-    description: '等待客服跟进',[m
+[31m-    cDescription: '处理中'[m
+[31m-  },[m
+[31m-  FINISH: {[m
+[31m-    value: 30,[m
+[31m-    description: '完成',[m
+[31m-    cDescription: '售后完成'[m
+[31m-  },[m
+[31m-  REJECT: {[m
+[31m-    value: 40,[m
+[31m-    description: '关闭',[m
+[31m-    cDescription: '售后关闭'[m
+[31m-  }[m
+[32m+[m[32mexport const refundStatusOptions: any = {[m
+[32m+[m[32m  ALL: [[m
+[32m+[m[32m    { key: '', val: '全部' },[m
+[32m+[m[32m    { key: 10, val: '待审核' },[m
+[32m+[m[32m    { key: 20, val: '处理中' },[m
+[32m+[m[32m    { key: 21, val: '退款失败' },[m
+[32m+[m[32m    { key: 23, val: '待用户发货'},[m
+[32m+[m[32m    { key: 24, val: '待平台收货'},[m
+[32m+[m[32m    { key: 25, val: '待平台发货' },[m
+[32m+[m[32m    { key: 26, val: '待用户收货' },[m
+[32m+[m[32m    { key: 27, val: '等待客服跟进' },[m
+[32m+[m[32m    { key: 30, val: '售后完成' },[m
+[32m+[m[32m    { key: 40, val: '售后关闭' }[m
+[32m+[m[32m  ],[m
+[32m+[m[32m  WAITCONFIRM: [[m
+[32m+[m[32m    { key: 10, val: '待审核' }[m
+[32m+[m[32m  ],[m
+[32m+[m[32m  OPERATING: [[m
+[32m+[m[32m    { key: 20, val: '处理中' },[m
+[32m+[m[32m    { key: 21, val: '退款失败' },[m
+[32m+[m[32m    { key: 23, val: '待用户发货' },[m
+[32m+[m[32m    { key: 24, val: '待平台收货'},[m
+[32m+[m[32m    { key: 25, val: '待平台发货' },[m
+[32m+[m[32m    { key: 26, val: '待用户收货' },[m
+[32m+[m[32m    { key: 27, val: '等待客服跟进' }[m
+[32m+[m[32m  ],[m
+[32m+[m[32m  COMPLETE: [[m
+[32m+[m[32m    { key: 30, val: '售后完成' }[m
+[32m+[m[32m  ],[m
+[32m+[m[32m  REJECTED: [[m
+[32m+[m[32m    { key: 40, val: '售后关闭' }[m
+[32m+[m[32m  ][m
+ }[m
+ [m
+[31m-const filterAndMapRefundOrder = (cDescription: any) => Object.values(OrderRefundStatusEnums).filter(v => v.cDescription === cDescription).map(v => ({ key: v.value, val: v.description }));[m
+[31m-const waitConfirm = filterAndMapRefundOrder('待审核');[m
+[31m-const operating = filterAndMapRefundOrder('处理中');[m
+[31m-const complete = filterAndMapRefundOrder('售后完成');[m
+[31m-const rejected = filterAndMapRefundOrder('售后关闭');[m
+[31m-export const orderRefundStatus: any = {[m
+[31m-  [enumRefundStatus.All]: [{ key: '', val: '全部' }, ...waitConfirm, ...operating, ...complete, ...rejected],[m
+[31m-  [enumRefundStatus.WaitConfirm]: waitConfirm,[m
+[31m-  [enumRefundStatus.Operating]: operating,[m
+[31m-  [enumRefundStatus.Complete]: complete,[m
+[31m-  [enumRefundStatus.Rejected]: rejected[m
+[32m+[m[32mexport const typeMapRefundStatus = {[m
+[32m+[m[32m  ALL: null,[m
+[32m+[m[32m  WAITCONFIRM: [10],[m
+[32m+[m[32m  OPERATING: [20, 21, 23, 24, 25, 26, 27],[m
+[32m+[m[32m  COMPLETE: [30],[m
+[32m+[m[32m  REJECTED: [40][m
+ }[m
+ [m
+[31m-[m
+[31m-export const formFields = function (refundStatus: any) {[m
+[31m-  let options = orderRefundStatus[refundStatus];[m
+[32m+[m[32mexport const formFields = function (type: string) {[m
+[32m+[m[32m  let options = refundStatusOptions[type];[m
+   let selectRefundStatus = options.length > 1 ? [{[m
+     type: 'select',[m
+     id: 'refundStatus',[m
+     label: '售后单状态',[m
+[31m-    options: orderRefundStatus[refundStatus][m
+[32m+[m[32m    options[m
+   }] : [][m
+   return [[m
+     {[m
+[36m@@ -165,7 +134,7 @@[m [mexport const getListColumns = ({ query, history }: any) => [[m
+     title: '商品',[m
+     dataIndex: 'skuName',[m
+     render(skuName: any, row: any) {[m
+[31m-      return <GoodCell {...row} showImage={false}/>;[m
+[32m+[m[32m      return <GoodCell {...row} showImage={false} />;[m
+     },[m
+   },[m
+   {[m
+[36m@@ -210,7 +179,7 @@[m [mexport const getListColumns = ({ query, history }: any) => [[m
+     title: '供应商操作',[m
+     dataIndex: 'supplierOperate',[m
+     render: (text: number) => {[m
+[31m-      return text === 10 ? '同意': '-';[m
+[32m+[m[32m      return text === 10 ? '同意' : '-';[m
+     }[m
+   },[m
+   {[m
+[1mdiff --git a/src/pages/order/refund/index.js b/src/pages/order/refund/index.js[m
+[1mindex ad033cb..11182f7 100644[m
+[1m--- a/src/pages/order/refund/index.js[m
+[1m+++ b/src/pages/order/refund/index.js[m
+[36m@@ -1,37 +1,35 @@[m
+ import React, { Component } from 'react';[m
+ import { Tabs, Card } from 'antd';[m
+ import List from './list';[m
+[31m-import { enumRefundStatus } from '../constant';[m
+ const { TabPane } = Tabs;[m
+ [m
+ class Order extends Component {[m
+   constructor(props) {[m
+     super(props);[m
+     this.state = {[m
+[31m-      refundStatus: enumRefundStatus.All,[m
+[32m+[m[32m      type: "ALL",[m
+     };[m
+   }[m
+[31m-  handleTabChange = refundStatus => {[m
+[32m+[m[32m  handleTabChange = type => {[m
+     this.setState({[m
+[31m-      refundStatus,[m
+[32m+[m[32m      type,[m
+     });[m
+   };[m
+   render() {[m
+[31m-    const { refundStatus } = this.state;[m
+[32m+[m[32m    const { type } = this.state;[m
+     return ([m
+       <div>[m
+         <Card>[m
+[31m-          <Tabs activeKey={`${refundStatus}`} onChange={this.handleTabChange}>[m
+[31m-            <TabPane tab="所有售后订单" key={enumRefundStatus.All} />[m
+[31m-            <TabPane tab="待审核" key={enumRefundStatus.WaitConfirm} />[m
+[31m-            <TabPane tab="处理中" key={enumRefundStatus.Operating} />[m
+[31m-            <TabPane tab="已完成" key={enumRefundStatus.Complete} />[m
+[31m-            <TabPane tab="已关闭" key={enumRefundStatus.Rejected} />[m
+[32m+[m[32m          <Tabs activeKey={`${type}`} onChange={this.handleTabChange}>[m
+[32m+[m[32m            <TabPane tab="所有售后订单" key="ALL" />[m
+[32m+[m[32m            <TabPane tab="待审核" key="WAITCONFIRM" />[m
+[32m+[m[32m            <TabPane tab="处理中" key="OPERATING" />[m
+[32m+[m[32m            <TabPane tab="已完成" key="COMPLETE" />[m
+[32m+[m[32m            <TabPane tab="已关闭" key="REJECTED" />[m
+           </Tabs>[m
+           <List[m
+[31m-            type="refund"[m
+[31m-            key={refundStatus}[m
+[31m-            refundStatus={refundStatus}[m
+[32m+[m[32m            key={type}[m
+[32m+[m[32m            type={type}[m
+           />[m
+         </Card>[m
+       </div>[m
+[1mdiff --git a/src/pages/order/refund/list.js b/src/pages/order/refund/list.js[m
+[1mindex 345fff7..f69a81c 100644[m
+[1m--- a/src/pages/order/refund/list.js[m
+[1m+++ b/src/pages/order/refund/list.js[m
+[36m@@ -6,6 +6,7 @@[m [mimport SearchForm from '@/components/search-form';[m
+ import { getListColumns, formFields } from './config';[m
+ import { withRouter } from 'react-router-dom';[m
+ import { formatDate } from '@/pages/helper';[m
+[32m+[m[32mimport { typeMapRefundStatus } from './config';[m
+ const formatFields = (range) => {[m
+   range = range || [];[m
+   return range.map(v => v && v.format('YYYY-MM-DD HH:mm'))[m
+[36m@@ -25,7 +26,7 @@[m [mexport default class extends React.Component {[m
+     tableConfig: {},[m
+     expands: [][m
+   };[m
+[31m-[m
+[32m+[m[41m  [m
+   componentDidMount() {[m
+     this.query();[m
+   }[m
+[36m@@ -38,6 +39,7 @@[m [mexport default class extends React.Component {[m
+     delete fieldsValues['apply'];[m
+     delete fieldsValues['handle'];[m
+     delete fieldsValues['payTime'];[m
+[32m+[m[32m    let refundStatus = (fieldsValues.refundStatus ? [fieldsValues.refundStatus]: null) || typeMapRefundStatus[this.props.type];[m
+     const params = {[m
+       ...fieldsValues,[m
+       applyStartTime,[m
+[36m@@ -46,7 +48,7 @@[m [mexport default class extends React.Component {[m
+       handleEndTime,[m
+       payStartTime,[m
+       payEndTime,[m
+[31m-      refundStatus: fieldsValues.refundStatus || this.props.refundStatus,[m
+[32m+[m[32m      refundStatus,[m
+       page: this.state.current,[m
+       pageSize: this.state.pageSize[m
+     };[m
+[36m@@ -109,7 +111,7 @@[m [mexport default class extends React.Component {[m
+           format={this.handleFormat}[m
+           search={this.handleSearch}[m
+           clear={this.handleSearch}[m
+[31m-          options={formFields(this.props.refundStatus)}[m
+[32m+[m[32m          options={formFields(this.props.type)}[m
+         >[m
+           <Button type="primary" onClick={this.export}>导出订单</Button>[m
+         </SearchForm>[m
