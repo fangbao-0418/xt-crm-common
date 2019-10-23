@@ -12,16 +12,22 @@ const payTypeList = {
 };
 /** 获取花呗分期文案 */
 const getCreditPayText = (memberPayHuabeiLogDO) => {
-  const hbFqNum = String(memberPayHuabeiLogDO.memberPayHuabeiLogDO || -1)
+  const preriodEnum = {
+    3: '三期',
+    6: '六期',
+    12: '十二期'
+  }
+  const hbFqNum = String(memberPayHuabeiLogDO.hbFqNum || -1)
   const { sellerPercent } = memberPayHuabeiLogDO
   if (hbFqNum === '-1') {
     return `花呗`
   }
-  return `花呗分期-${memberPayHuabeiLogDO.hbFqNum}期` + (sellerPercent === 100 ? '免息' : '')
+  return `花呗分期-${preriodEnum[hbFqNum] || ''}` + (sellerPercent === 100 ? '免息' : '')
 }
 const BuyerInfo = props => {
-  const { buyerInfo = {}, orderInfo = {} } = props;
-  const { payType, memberPayHuabeiLogDO = {} } = buyerInfo;
+  const { buyerInfo = {}, orderInfo = {}, memberPayHuabeiLogDO = {} } = props;
+  const { payType } = buyerInfo;
+  console.log(props, 'props')
   return (
     <Card title="支付信息">
       <Row gutter={24}>

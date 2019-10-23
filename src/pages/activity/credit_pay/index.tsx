@@ -71,7 +71,7 @@ class Main extends React.Component<AlertComponentProps, State> {
       render: (text) => formatMoneyWithSign(text)
     },
     {
-      dataIndex: 'maxFqNum',
+      dataIndex: 'maxHbFqNum',
       title: '最大分期期数',
       render: (text) => periodEnum[text]
     },
