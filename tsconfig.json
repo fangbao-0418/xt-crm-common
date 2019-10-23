@@ -1,6 +1,6 @@
 {
+  "extends": "./paths.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "es5",
     "lib": [
       "dom",
@@ -19,11 +19,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "strict": true
   },
   "include": [
     "src"
