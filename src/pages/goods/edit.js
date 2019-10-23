@@ -570,7 +570,7 @@ class GoodsEdit extends React.Component {
                   name="returnPhone"
                   value={this.state.returnPhone}
                   type="tel"
-                  maxLength={11}
+                  maxLength={12}
                   onChange={this.handleInput}
                 />
               )}
