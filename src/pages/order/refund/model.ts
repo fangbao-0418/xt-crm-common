@@ -73,7 +73,7 @@ export default {
      * 取消售后
      */
     cancelRefund: async (payload: any = {}) => {
-      const res = await cancelRefund(payload.id);
+      const res = await cancelRefund(payload.id, payload.info);
       if (res) {
         message.success('取消售后成功');
       }

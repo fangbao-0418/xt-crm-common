@@ -1,28 +1,54 @@
 import React from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Modal, Form, Input } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { namespace } from '../../refund/model';
-interface Props extends RouteComponentProps<{id: any}> {
-  cancel: boolean
+import { FormComponentProps } from 'antd/es/form';
+interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
+  cancel: boolean,
+  style: any
 }
-class CancelAfterSale extends React.Component<Props, {}> {
+interface State {
+  visible: boolean
+}
+const { TextArea } = Input;
+class CancelAfterSale extends React.Component<Props, State> {
+  state: State = {
+    visible: false
+  }
   handleCancel = () => {
-    Modal.confirm({
-      title: '系统提示',
-      content: '是否确认取消售后',
-      onOk: () => {
-        APP.dispatch({
-          type: `${namespace}/cancelRefund`,
-          payload: {
-            id: this.props.match.params.id
-          }
-        })
+    APP.dispatch({
+      type: `${namespace}/cancelRefund`,
+      payload: {
+        id: this.props.match.params.id,
+        info: this.props.form.getFieldValue('info')
       }
     })
   }
+  showModal = () => {
+    this.setState({
+      visible: true
+    })
+  }
+  hideModal = () => {
+    this.setState({
+      visible: false
+    })
+  }
   render() {
-    return this.props.cancel ? <Button type="danger" onClick={this.handleCancel}>取消售后</Button>: null;
+    const {getFieldDecorator} = this.props.form;
+    return this.props.cancel ? (
+      <>
+        <Modal title="取消售后" onCancel={this.hideModal} onOk={this.handleCancel} visible={this.state.visible}>
+          <Form>
+            <Form.Item label="说明">
+              {getFieldDecorator('info')(<TextArea />)}
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Button type="danger" style={this.props.style} onClick={this.showModal}>取消售后</Button>
+      </>
+    ) : null;
   }
 }
 
-export default withRouter(CancelAfterSale);
+export default withRouter(Form.create<Props>({})(CancelAfterSale));

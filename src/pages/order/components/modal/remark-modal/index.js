@@ -46,7 +46,7 @@ class RemarkModal extends Component {
 
   render() {
     return (
-      <div style={this.props.wrapperStyle}>
+      <div>
         <Button type="primary" onClick={this.showModal}>
           添加备注
         </Button>
