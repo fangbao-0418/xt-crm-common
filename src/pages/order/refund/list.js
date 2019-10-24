@@ -28,10 +28,13 @@ export default class extends React.Component {
   };
 
   componentDidMount() {
-    this.query();
+    // this.query();
   }
 
   query = (isExport = false, noFetch = false) => {
+    // if (!this.SearchForm) {
+    //   return
+    // }
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
@@ -116,7 +119,7 @@ export default class extends React.Component {
       <Spin tip="操作处理中..." spinning={this.state.loading}>
         <SearchForm
           values={values}
-          wrappedComponentRef={ref => this.SearchForm = ref}
+          getInstance={ref => this.SearchForm = ref}
           format={this.handleFormat}
           search={this.handleSearch}
           clear={() => {

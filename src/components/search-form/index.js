@@ -24,6 +24,11 @@ export default class extends PureComponent {
       initParams: props.values
     }
   }
+  componentWillMount () {
+    if (this.props.getInstance) {
+      this.props.getInstance(this)
+    }
+  }
   componentDidMount() {
     const { form: { setFieldsValue } } = this.props
     setFieldsValue(parseQuery())

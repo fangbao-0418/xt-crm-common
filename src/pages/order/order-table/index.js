@@ -12,7 +12,6 @@ import RemarkModal from '../components/modal/remark-modal';
 import RefundModal from '../components/refund-modal';
 import RefundStatusCell from '../components/refund-status-cell';
 import { getHeaders } from '@/util/utils';
-import moment from 'moment';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
