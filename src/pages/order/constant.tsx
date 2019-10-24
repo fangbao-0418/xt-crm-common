@@ -20,6 +20,14 @@ export const getDetailColumns = () => [
     }
   },
   {
+    title: '实名认证',
+    dataIndex: 'verified',
+    key: 'verified',
+    render(text: any) {
+      return text === 1 ? '是': '否'
+    }
+  },
+  {
     title: '属性',
     dataIndex: 'properties',
     key: 'properties',
