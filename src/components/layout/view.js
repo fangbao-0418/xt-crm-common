@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { view as XHeader } from '../../components/header';
-import { view as Sidebar } from '../../components/sidebar';
+import { view as XHeader } from '@/components/header';
+import { view as Sidebar } from '@/components/sidebar';
 import { Layout, Message } from 'antd';
 import { connect } from '@/util/utils';
 import * as LocalStorage from '@/util/localstorage';
@@ -73,7 +73,8 @@ export default class extends Component {
 
   logout = () => {
     LocalStorage.clear()
-    this.props.dispatch['layout'].logout();
+    Message.success('退出成功')
+    // this.props.dispatch['layout'].logout();
   }
 
   componentWillUnmount() {

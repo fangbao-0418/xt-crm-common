@@ -9,6 +9,9 @@ declare module Special {
     list: Shop.ShopItemProps[]
     /** 广告图 */
     advertisementUrl?: string
+    crmCoupons?: Coupon.CouponItemProps[]
+    /** 广告链接 */
+    advertisementJumpUrl?: string
   }
   export interface DetailItem {
     backgroundColor: string
@@ -19,6 +22,7 @@ declare module Special {
     id: number
     list: DetailContentProps[]
     items: string
+    jumpUrl: string
   }
   export interface SearchProps {
     subjectId?: number

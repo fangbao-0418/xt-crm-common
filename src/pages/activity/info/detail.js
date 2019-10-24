@@ -142,13 +142,13 @@ class ActivityDetail extends React.Component {
   };
 
   render() {
-    const columns = [
+    const getColumns = (detailData) => [
       {
         title: '规格名称',
         dataIndex: 'property',
       },
       {
-        title: '活动价',
+        title: `${detailData.type === 6 ? '助力分': '活动价'}`,
         dataIndex: 'buyingPrice',
         render: (text, record, index) => (
           <Input value={text} onChange={this.handleChangeValue('buyingPrice', index)} />
@@ -250,7 +250,7 @@ class ActivityDetail extends React.Component {
         <Card style={{ marginTop: 10 }}>
           <Table
             rowSelection={rowSelection}
-            columns={columns}
+            columns={getColumns(detailData)}
             dataSource={detailData.promotionSkuList}
             pagination={false}
           />

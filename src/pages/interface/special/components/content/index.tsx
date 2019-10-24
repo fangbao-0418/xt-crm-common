@@ -19,6 +19,7 @@ class Main extends React.Component<Props> {
                 key={index}
                 detail={item}
                 onChange={(value) => {
+                  console.log('value=>', value)
                   if (value) {
                     detail.list[index] = value
                   } else {

@@ -112,12 +112,12 @@ export default class extends Component {
     payload = APP.fn.getPayload(namespace) || {}
     componentDidMount() {
         unlisten = this.props.history.listen(() => {
-        //     // const { form: { resetFields } } = this.props;
-        //     const params = parseQuery(this.props.history);
-        //     // resetFields();
-        //     this.handleSearch(params);
+            // const { form: { resetFields } } = this.props;
+            const params = parseQuery(this.props.history);
+            // resetFields();
+            this.handleSearch(params);
         });
-        // this.handleSearch(basePayload);
+        this.handleSearch(basePayload);
     }
 
     onInviteClick = (item) => {
@@ -314,7 +314,8 @@ export default class extends Component {
     render() {
         const { tableConfig, loading } = this.props;
         return (
-            <Card>
+            <>
+                <Card>
                 <Row>
                     <Col style={{ marginBottom: 20 }}>
                         {
@@ -340,6 +341,7 @@ export default class extends Component {
                     <Modal />
                 </Row>
             </Card>
+            </>
         )
     }
 }

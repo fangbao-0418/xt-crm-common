@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Icon, Input } from 'antd';
+import { Button, Form, Icon, Input, Select } from 'antd';
 import logo from '@/assets/images/logo.svg';
 import styles from './login.module.scss';
 import { connect } from '@/util/utils';
+import domains from "./domain";
+import * as LocalStorage from '@/util/localstorage';
 const FormItem = Form.Item;
 
 const LoginPage = (props) => {
   let userNameInput = null;
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
-
+  const [domain, setDomain] = useState('');
   const emitEmptyUserName = () => {
     userNameInput.focus();
     setUserName('');
@@ -19,6 +21,7 @@ const LoginPage = (props) => {
   })
   const gotoLogin = e => {
     e.preventDefault();
+    if(domain) LocalStorage.put('apidomain', domain);
     props.dispatch({
       type: 'login/login',
       payload: {
@@ -64,19 +67,17 @@ const LoginPage = (props) => {
               size="large"
             />
           </FormItem>
-          {/* <FormItem>
-            <Input
-              placeholder="验证码"
-              prefix={<Icon type="lock" />}
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              size="large"
-            />
-            <image src='' />
-          </FormItem> */}
+          {!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre') && <FormItem>
+            <Select 
+              placeholder="选择环境域名"
+              onChange={e => setDomain(e)}
+            >
+              {domains.map((val, i) => {
+                return <Select.Option value={val[1]} key={i}>{val[0]}</Select.Option>
+              })}
+            </Select>
+          </FormItem>}
           <FormItem>
-            {/* <Checkbox>记住</Checkbox> */}
-            {/* <a className={styles['login-form-forgot']} href="/">忘记密码</a> */}
             <Button type="primary" htmlType="submit" className={styles['login-form-button']}>
               登录
             </Button>

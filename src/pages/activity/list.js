@@ -49,7 +49,7 @@ class List extends React.Component {
 
   getPromotionList = params => {
     const { page } = this.state;
-    getPromotionList({ page: page.current, pageSize: page.pageSize, ...params }).then(res => {
+    getPromotionList({ page: page.current, pageSize: page.pageSize, ...params }).then((res = {}) => {
       page.total = res.total;
 
       this.setState({
@@ -213,7 +213,7 @@ class List extends React.Component {
                 initParams.startTime ? moment(+initParams.startTime) : '',
                 initParams.endTime ? moment(+initParams.endTime) : ''
               ]
-            })(<RangePicker format="YYYY-MM-DD HH:mm" showTime />)}</FormItem>
+            })(<RangePicker format="YYYY-MM-DD HH:mm" showTime={{defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}}/>)}</FormItem>
             <FormItem label="活动类型">
               {getFieldDecorator('type', {
                 initialValue: Number(initParams.type) || ''
@@ -255,7 +255,7 @@ class List extends React.Component {
           />
         </Card>
         <Modal
-          title="活动编辑"
+          title="活动新增"
           visible={this.state.visible}
           width={1000}
           footer={null}

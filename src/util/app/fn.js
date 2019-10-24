@@ -9,7 +9,7 @@ export function getH5Origin () {
     origin = 'https://testing.hzxituan.com/';
   } else if (host.indexOf('xt-crmadmin') >= 0) {
     /** 正式 */
-    origin = 'https://myouxuan.hzxituan.com/ ';
+    origin = 'https://myouxuan.hzxituan.com/';
   }
   return origin
 }

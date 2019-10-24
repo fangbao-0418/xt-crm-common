@@ -3,9 +3,10 @@
 
 ## Installation
 ```
-npm install
+npm config set registry http://registry-npm-ued.hzxituan.com/
+yarn install
 npm run mock
-npm dev
+yarn dev
 ```  
 ## Dependencies
 * React 16.7      --hooks

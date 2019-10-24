@@ -22,4 +22,9 @@ declare module APP {
   export const error: (text: string, duration?: number) => void
   export const http: HttpProps
   export const fn: FnProps
+  /** 正则校验 */
+  export const regular: {
+    /** 手机号校验 */
+    phone: RegExp
+  }
 }

@@ -2,9 +2,12 @@ import React, { PureComponent } from 'react';
 import { Input, Select, DatePicker, Form, Button, Row, Col } from 'antd';
 import { isFunction } from 'lodash';
 import { firstLetterToUpperCase, setQuery, parseQuery } from '@/util/utils';
+import moment from "moment";
+import "./index.scss";
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+
 // const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 @Form.create({
   onFieldsChange: (props) => {
@@ -21,6 +24,10 @@ export default class extends PureComponent {
       initParams: props.values
     }
   }
+  componentDidMount() {
+    const { form: { setFieldsValue } } = this.props
+    setFieldsValue(parseQuery())
+  }
   renderInput = (item) => {
     const placeholder = '请输入' + item.label;
     return (
@@ -30,7 +37,7 @@ export default class extends PureComponent {
 
   renderDate = (item) => {
     return (
-      <RangePicker />
+      <RangePicker showTime={{ defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')] }} />
     )
   }
 
@@ -76,7 +83,6 @@ export default class extends PureComponent {
 
   render() {
     const { options = [], form: { getFieldDecorator }, className, children } = this.props;
-    const { initParams } = this.state;
     return (
       <Form
         {...{
@@ -97,7 +103,6 @@ export default class extends PureComponent {
                   <FormItem label={label} key={item.id}>
                     {
                       getFieldDecorator(id, {
-                        initialValue: initParams[id],
                         ...config
                       })(
                         renderFun && renderFun(item)

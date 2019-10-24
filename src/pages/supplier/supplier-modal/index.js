@@ -70,7 +70,7 @@ class SupplierModal extends Component {
     const { data } = this.state;
 
     return (
-      <div>
+      <>
         <Button type="primary" onClick={this.showModal}>
           {isEdit ? '编辑' : '新增供应商'}
         </Button>
@@ -105,7 +105,7 @@ class SupplierModal extends Component {
               {getFieldDecorator('name', { initialValue: data.name })(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="联系电话">
-              {getFieldDecorator('phone', { initialValue: data.phone })(<Input placeholder="" />)}
+              {getFieldDecorator('phone', { initialValue: data.phone })(<Input placeholder="" maxLength={11}/>)}
             </FormItem>
             <FormItem label="供应商简称">
               {getFieldDecorator('shortName', { initialValue: data.shortName })(
@@ -136,7 +136,7 @@ class SupplierModal extends Component {
                   },
                 ]
               })(
-                <Input placeholder="" maxlength="20" />,
+                <Input placeholder="" maxLength={20} />,
               )}
             </FormItem>
             <FormItem label="退货电话">
@@ -149,7 +149,7 @@ class SupplierModal extends Component {
                   },
                 ]
               })(
-                <Input placeholder="" maxlength="12" />,
+                <Input placeholder="" maxLength={12} />,
               )}
             </FormItem>
             <FormItem label="退货地址">
@@ -162,7 +162,7 @@ class SupplierModal extends Component {
                   },
                 ]
               })(
-                <Input placeholder="" maxlength="60" />,
+                <Input placeholder="" maxLength={60} />,
               )}
             </FormItem>
             {/* <FormItem label="送货地址">
@@ -177,7 +177,7 @@ class SupplierModal extends Component {
             </FormItem>
           </Form>
         </Modal>
-      </div>
+      </>
     );
   }
 }

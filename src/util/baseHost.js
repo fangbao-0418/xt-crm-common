@@ -1,19 +1,33 @@
 let baseHost = 'http://daily-crm-test.hzxituan.com';
-// let baseHost = 'https://testapi-crmadmin.hzxituan.com';
-// let baseHost = 'http://192.168.10.123:8080';
-// let baseHost = 'http://192.168.10.126:8080';
-// let baseHost = 'http://192.168.0.148:8081';
+let h5Host = 'https://myouxuan.hzxituan.com';
 const host = window.location.host;
+// 日常
 if (host.indexOf('daily-xt-crmadmin') >= 0) {
   baseHost = 'http://daily-crm-test.hzxituan.com';
-} else if (host.indexOf('pre-xt-crmadmin') >= 0) {
+  h5Host = 'https://xtyouxuan.hzxituan.com/v0909_coupon/index.html';
+}
+// 预发
+else if (host.indexOf('pre-xt-crmadmin') >= 0) {
   baseHost = 'https://pre-xt-crm-api.hzxituan.com';
-} else if (host.indexOf('test-crmadmin') >= 0) {
+  h5Host = 'https://pre-xt-myouxuan.hzxituan.com/v0909_coupon/index.html';
+}
+// 测试1
+else if (host.indexOf('test-crmadmin') >= 0) {
   baseHost = 'https://testapi-crmadmin.hzxituan.com';
-} else if (host.indexOf('xt-crmadmin') >= 0) {
+  h5Host = 'https://testing.hzxituan.com/v0909_coupon/index.html';
+}
+// 测试2
+else if (host.indexOf('test2-crmadmin') >= 0) {
+  baseHost = 'https://test2api-crmadmin.hzxituan.com';
+  h5Host = 'https://testing.hzxituan.com/v0909_coupon/index.html';
+}
+// 正式
+else if (host.indexOf('xt-crmadmin') >= 0) {
   baseHost = 'https://youxuan-crm-api.hzxituan.com';
+  h5Host = 'https://myouxuan.hzxituan.com';
 }
 
-// baseHost = 'http://192.168.10.49:8080';
-
-export default baseHost;
+// baseHost = 'http://192.168.10.114:8080';
+// baseHost = 'http://192.168.10.52:8081';
+// baseHost = 'http://192.168.10.60:8081';
+export { baseHost, h5Host };

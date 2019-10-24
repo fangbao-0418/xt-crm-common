@@ -1,7 +1,11 @@
 import * as redux from 'react-redux';
 import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
-
+import { baseHost } from './baseHost';
+import { isNil } from 'lodash';
+import { Decimal } from 'decimal.js';
+import { ExpressCompanyOptions } from '@/config';
+import * as LocalStorage from '@/util/localstorage';
 const History = createHashHistory();
 
 function defaultMapStateToProps() {
@@ -146,9 +150,99 @@ export function initImgList(imgUrlWap) {
   return [];
 };
 
+export function getHeaders(headers) {
+  const token = LocalStorage.get('token');
+  if (token) headers.Authorization = token;
+  return headers;
+}
+
+export const prefix = url => {
+  let apiDomain = baseHost;
+  if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
+  return `${apiDomain}${url}`;
+};
+
+/**
+ * 
+ * @param { 目标数组 } target 
+ * @param { 需要比较的数组 } source 
+ */
+export function unionArray(target, source) {
+  const result = [...target];
+  for (let item of source) {
+    if (!result.some(v => v.id === item.id)) {
+      result.push(item);
+    }
+  }
+  return result;
+}
 export function replaceHttpUrl(imgUrl = '') {
   if (imgUrl.indexOf('https') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
   }
   return imgUrl;
+}
+
+export function mapTree(org) {
+  const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
+  return {
+    label: org.name,
+    value: org.id,
+    data: { ...org },
+    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
+  };
+};
+
+export const formatMoneyBeforeRequest = price => {
+  if (isNil(price)) {
+    return price;
+  }
+
+  const pasred = parseFloat(price);
+  if (isNaN(pasred)) {
+    return undefined;
+  }
+
+  return (pasred * 100).toFixed();
+};
+
+
+export function treeToarr(list = [], arr) {
+  const results = arr || [];
+  for (const item of list) {
+    results.push(item);
+    if (Array.isArray(item.childList)) {
+      treeToarr(item.childList, results)
+    }
+  }
+  return results;
+}
+/**
+ * @description 去掉多余的属性
+ * @param {需要过滤的对象} obj 
+ * @param {对于的属性名称} prop 
+ */
+export function dissoc(obj, prop) {
+  let result = {};
+  for (let p in obj) {
+    if (p !== prop) {
+      result[p] = obj[p];
+    }
+  }
+  return result;
+}
+
+export function mul(unitPrice, serverNum) {
+  if (unitPrice && serverNum) {
+    return new Decimal(unitPrice).mul(serverNum).toNumber()
+  }
+  return 0;
+}
+
+export function getExpressCode(name) {
+  for (let key in ExpressCompanyOptions) {
+    if (ExpressCompanyOptions[key] === name) {
+      return key;
+    }
+  }
 }

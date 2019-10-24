@@ -35,17 +35,21 @@ export default class extends React.Component {
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
+    const [payStartTime, payEndTime] = formatFields(fieldsValues['payTime']);
     delete fieldsValues['apply'];
     delete fieldsValues['handle'];
+    delete fieldsValues['payTime'];
     const params = {
       ...fieldsValues,
       applyStartTime,
       applyEndTime,
       handleStartTime,
       handleEndTime,
-      refundStatus: this.props.refundStatus,
+      payStartTime,
+      payEndTime,
+      refundStatus: fieldsValues.refundStatus || this.props.refundStatus,
       page: this.state.current,
-      pageSize: this.state.pageSize,
+      pageSize: this.state.pageSize
     };
     console.log(params, 'params')
     this.payload = this.payload || {}
@@ -120,11 +124,10 @@ export default class extends React.Component {
             this.query(false)
             this.forceUpdate()
           }}
-          options={formFields()}
           onChange={() => {
-            console.log('change')
             this.query(false, true)
           }}
+          options={formFields(this.props.refundStatus)}
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { queryOrderDetail, push1688, withhold } from '../api';
 import { get, map } from 'lodash';
-import { Button, Row, Card, Col, message, Modal, Input } from 'antd';
+import { Button, Row, Card, Col, message, Modal } from 'antd';
 import BuyerInfo from './buyer-info';
 import OrderInfo from './order-info';
 import GoodsTable from './goods-table';
@@ -9,10 +9,7 @@ import BenefitInfo from './benefit-info';
 import StepInfo from './step-info';
 import { enumOrderStatus, OrderStatusTextMap } from '../constant';
 import DeliveryModal from './components/delivery-modal';
-import AfterSaleForm from './after-sale-form';
 import { formatMoneyWithSign } from '../../helper';
-import { Decimal } from 'decimal.js';
-import { customerAdd, setOrderRemark, setRefundOrderRemark } from '../api';
 const styleObj = {
   display: 'flex',
   flexDirection: 'column',
@@ -23,14 +20,11 @@ const { confirm } = Modal;
 class Detail extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       visible: false,
       childOrderList: [],
       data: {},
-      modalInfo: {},
-      remark: '',
-      notesVisible: false
+      remark: ''
     };
     this.query();
   }
@@ -66,16 +60,6 @@ class Detail extends Component {
       });
     });
   }
-  handleInputChange = e => {
-    this.setState({
-      remark: e.target.value,
-    });
-  };
-  toggleModal = (visible) => {
-    this.setState({
-      visible
-    })
-  }
   push1688(id) {
     if (this.pushload) return;
     this.pushload = true;
@@ -102,58 +86,6 @@ class Detail extends Component {
       this.holdload = false;
     })
   }
-  showModal = (record) => {
-    const modalInfo = Object.assign({}, record);
-    this.setState({ modalInfo });
-    this.toggleModal(true);
-  }
-  showNotes = (record) => {
-    const modalInfo = Object.assign({}, record);
-    console.log('modalInfo=>', modalInfo)
-    this.setState({ modalInfo });
-    this.toggleNotesVisible(true)
-  }
-  handleOk = async () => {
-    const { form } = this.afterSaleForm.props;
-    const { modalInfo } = this.state;
-    const fields = form.getFieldsValue();
-    fields.imgUrl = Array.isArray(fields.imgUrl) ? fields.imgUrl.map(v => v.url) : [];
-    console.log('fields.imgUrl=>', fields.imgUrl)
-    fields.imgUrl = fields.imgUrl.map(urlStr => urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
-    console.log('fields.imgUrl=>', fields.imgUrl)
-    if (fields.amount) {
-      fields.amount = new Decimal(fields.amount).mul(100).toNumber();
-    }
-    console.log('modalInfo=>', modalInfo)
-    const res = await customerAdd({
-      childOrderId: modalInfo.childOrderId,
-      mainOrderId: modalInfo.mainOrderId,
-      memberId: modalInfo.memberId,
-      skuId: modalInfo.skuId,
-      ...fields
-    });
-    if (res.success) {
-      message.success('申请售后成功');
-      this.toggleModal(false);
-    }
-  }
-  handleAddNotes = () => {
-    const { modalInfo } = this.state;
-    const params = {
-      orderCode: this.props.match.params.id,
-      refundId: modalInfo.refundId,
-      childOrderId: modalInfo.childOrderId,
-      info: this.state.remark,
-    };
-    const apiFunc = modalInfo.refundId ? setRefundOrderRemark : setOrderRemark;
-    apiFunc(params).then((res) => {
-      res && message.success('添加备注成功');
-      this.query();
-      this.setState({
-        notesVisible: false,
-      });
-    });
-  }
   comfirmWithhold = (id) => {
     confirm({
       title: '确认重新发起代扣?',
@@ -170,9 +102,6 @@ class Detail extends Component {
       }
     });
   }
-  toggleNotesVisible = (notesVisible) => {
-    this.setState({ notesVisible });
-  }
   render() {
     const { data, childOrderList } = this.state;
     console.log('childOrderList=>', childOrderList)
@@ -181,21 +110,6 @@ class Detail extends Component {
 
     return (
       <>
-        <Modal width='50%' style={{ top: 20 }} title="代客申请售后" visible={this.state.visible} onCancel={() => this.toggleModal(false)} onOk={this.handleOk}>
-          <AfterSaleForm wrappedComponentRef={ref => this.afterSaleForm = ref} info={this.state.modalInfo} modalInfo={this.state.modalInfo} />
-        </Modal>
-        <Modal
-          title="添加备注"
-          visible={this.state.notesVisible}
-          onOk={this.handleAddNotes}
-          onCancel={() => this.toggleNotesVisible(false)}
-        >
-          <Input
-            value={this.state.remark}
-            placeholder="请输入备注"
-            onChange={this.handleInputChange}
-          />
-        </Modal>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
         <OrderInfo
           orderInfo={data.orderInfo}
@@ -227,7 +141,6 @@ class Detail extends Component {
                   </Col>
                 </Row>
                 <GoodsTable
-                  showNotes={this.showNotes}
                   list={item.skuList}
                   childOrder={item.childOrder}
                   orderInfo={data.orderInfo}
