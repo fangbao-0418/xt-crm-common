@@ -4,7 +4,7 @@ interface PageProps<Item = any> {
   current?: number
   total: number
   size: number
-  records?: Item[]
+  records: Item[]
 }
 
 type Dispatch<A> = (value: A) => void;
