@@ -53,12 +53,6 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
           </>
         )}
         {isRefundStatusOf(enumRefundStatus.Rejected) && <CloseInfo orderServerVO={orderServerVO} />}
-        {/* {!isRefundTypeOf(enumRefundType.Exchange) &&
-          !isRefundStatusOf([
-            enumRefundStatus.OperatingOfMoney,
-            enumRefundStatus.OperatingOfGoods,
-            enumRefundStatus.WaitCustomerServiceOperating,
-          ]) && <RefundInformation />} */}
       </Card>
       <Card bodyStyle={{ paddingTop: 0 }}>
         <AfterSaleApplyInfo orderServerVO={orderServerVO} />

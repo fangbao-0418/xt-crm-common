@@ -1,3 +1,5 @@
+/// <reference path="./http.d.ts"  />
+
 declare module APP {
   interface History {
     push: (url: string) => void
@@ -5,10 +7,6 @@ declare module APP {
   interface ReduxActionProps<T = any> {
     type: string,
     payload?: T
-  }
-  interface HttpProps {
-    get: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
-    post: (url: string, data?: any, config?: AxiosRequestConfig) => AxiosPromise<any>
   }
   interface FnProps {
     getH5Origin: () => string
