@@ -290,7 +290,7 @@ class OrderList extends React.Component {
               {getFieldDecorator('expressCode')(<Input placeholder="请输入快递单号" />)}
             </FormItem>
             <FormItem label="商品ID">
-              {getFieldDecorator('productId')(<Input placeholder="请输入商品ID" />)}
+              {getFieldDecorator('productId')(<Input type='number' placeholder="请输入商品ID" />)}
             </FormItem>
             <FormItem label="下单人ID">
               {getFieldDecorator('buyerId')(<Input placeholder="请输入下单人ID" />)}
