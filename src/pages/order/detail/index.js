@@ -192,7 +192,10 @@ class Detail extends Component {
                             ) : ''
                           }
                           {
-                            (item.childOrder.interceptorType == 10 && item.childOrder.orderStatus == enumOrderStatus.Intercept) ?
+                            (item.childOrder.interceptorType == 10 && (
+                              item.childOrder.orderStatus == enumOrderStatus.Intercept ||
+                              item.childOrder.orderStatus == enumOrderStatus.Delivered)
+                            ) ?
                               <Button type='primary' style={{ marginLeft: 8 }} onClick={() => this.cancelInterceptor(item)}>取消拦截发货</Button> :
                               null
                           }
