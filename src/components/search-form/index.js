@@ -21,7 +21,7 @@ export default class extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      initParams: props.values
+      initParams: props.values || parseQuery()
     }
   }
   componentWillMount () {
@@ -29,10 +29,10 @@ export default class extends PureComponent {
       this.props.getInstance(this)
     }
   }
-  componentDidMount() {
-    const { form: { setFieldsValue } } = this.props
-    setFieldsValue(parseQuery())
-  }
+  // componentDidMount() {
+  //   const { form: { setFieldsValue } } = this.props
+  //   setFieldsValue(parseQuery())
+  // }
   renderInput = (item) => {
     const placeholder = '请输入' + item.label;
     return (
@@ -89,6 +89,7 @@ export default class extends PureComponent {
 
   render() {
     const { options = [], form: { getFieldDecorator }, className, children } = this.props;
+    const { initParams } = this.state
     return (
       <Form
         {...{
@@ -109,6 +110,7 @@ export default class extends PureComponent {
                   <FormItem label={label} key={item.id}>
                     {
                       getFieldDecorator(id, {
+                        initialValue: initParams[id] || '',
                         ...config
                       })(
                         renderFun && renderFun(item)

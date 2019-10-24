@@ -29,7 +29,7 @@ export default class extends React.Component {
   };
   
   componentDidMount() {
-    // this.query();
+    this.query();
   }
 
   query = (isExport = false, noFetch = false) => {
@@ -53,7 +53,6 @@ export default class extends React.Component {
       page: this.state.current,
       pageSize: this.state.pageSize
     };
-    console.log(params, 'params')
     this.payload = this.payload || {}
     this.payload.refundOrder = this.payload.refundOrder || {}
     this.payload.refundOrder[this.props.refundStatus || 'all'] = params
@@ -116,6 +115,7 @@ export default class extends React.Component {
 
     values.apply = values.applyEndTime && [moment(values.applyEndTime), moment(values.applyStartTime)]
     values.handle = values.handleStartTime && [moment(values.handleStartTime), moment(values.handleEndTime)]
+    console.log(values, 'values')
     return (
       <Spin tip="操作处理中..." spinning={this.state.loading}>
         <SearchForm
@@ -129,7 +129,7 @@ export default class extends React.Component {
             this.forceUpdate()
           }}
           onChange={() => {
-            this.query(false, true)
+            // this.query(false, true)
           }}
           options={formFields(this.props.type)}
         >
