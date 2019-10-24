@@ -73,7 +73,7 @@ class GoodsTable extends Component {
         key: 'operate',
         render: (text, record, index) => (
           <>
-            {this.showApplyBtn(orderInfo.orderStatus, orderInfo.orderType) && <Button type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
+            {this.showApplyBtn(orderInfo.orderStatus, record.orderType) && <Button type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
             <Button type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: { ...record } })}>添加备注</Button>
             {record.canShowHistoryBtn && <Button type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>}
           </>
