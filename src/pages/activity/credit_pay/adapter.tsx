@@ -60,7 +60,7 @@ export const handleCostDetailData = (data: {
     return (
       <div>
         <div>每期支付{formatMoneyWithSign(data.paymentMoney)}</div>
-        <div>手续费合计{formatMoneyWithSign(data.handlingFee)}</div>
+        <div>每期手续费{formatMoneyWithSign(data.handlingFee)}</div>
         <div>{data.sellerPercent === 100 ? (<span style={{color: 'red'}}>(喜团补贴)</span>) : ''}</div>
       </div>
     )
