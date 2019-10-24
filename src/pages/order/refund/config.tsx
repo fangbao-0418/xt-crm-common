@@ -87,7 +87,10 @@ export const formFields = function (type: string) {
     }, {
       type: 'input',
       id: 'productId',
-      label: '商品ID'
+      label: '商品ID',
+      sourceProps: {
+        type: 'number'
+      }
     }, {
       type: 'input',
       id: 'operator',

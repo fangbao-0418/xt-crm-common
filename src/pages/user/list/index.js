@@ -179,7 +179,7 @@ export default class extends Component {
                                 pattern: /^[0-9]*$/
                             }]
                         })(
-                            <Input />
+                            <Input type='number'/>
                         )
                     }
                 </FormItem>

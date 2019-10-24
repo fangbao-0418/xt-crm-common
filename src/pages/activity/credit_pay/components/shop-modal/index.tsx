@@ -218,6 +218,7 @@ class Main extends React.Component<Props, State> {
                   name='productId'
                   placeholder='请输入商品ID'
                   controlProps={{
+                    type: 'number',
                     style: {
                       width: 120
                     }
