@@ -9,7 +9,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input', label: '商品名称'
       },
       productId: {
-        type: 'input', label: '商品ID'
+        type: 'input', label: '商品ID',
+        controlProps: {
+          type: 'number'
+        }
       },
       status: {
         type: 'select', label: '状态',
