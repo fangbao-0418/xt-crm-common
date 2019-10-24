@@ -293,13 +293,13 @@ class OrderList extends React.Component {
               {getFieldDecorator('productId')(<Input type='number' placeholder="请输入商品ID" />)}
             </FormItem>
             <FormItem label="下单人ID">
-              {getFieldDecorator('buyerId')(<Input placeholder="请输入下单人ID" />)}
+              {getFieldDecorator('buyerId')(<Input type='number' placeholder="请输入下单人ID" />)}
             </FormItem>
             <FormItem label="下单人电话">
               {getFieldDecorator('buyerPhone')(<Input placeholder="请输入下单人电话" />)}
             </FormItem>
             <FormItem label="收货人">
-              {getFieldDecorator('contact')(<Input placeholder="请输入收货人" />)}
+              {getFieldDecorator('contact')(<Input placeholder="请输入收货人" />)}  
             </FormItem>
             <FormItem label="收货人电话">
               {getFieldDecorator('phone')(<Input placeholder="请输入收货人电话" />)}
