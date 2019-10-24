@@ -1,7 +1,8 @@
+import { message } from 'antd'
+import * as regular from './regular'
 var http = require('./http')
-var { message } = require('antd')
 var fn = require('./fn')
-const APP = {
+Object.assign(APP, {
   history: {},
   success: function (text, duration = 1) {
     message.success(text, duration)
@@ -10,6 +11,6 @@ const APP = {
     message.error(text, duration)
   },
   http,
-  fn
-}
-module.exports = APP
+  fn,
+  regular
+})

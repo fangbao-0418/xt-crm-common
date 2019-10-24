@@ -8,6 +8,11 @@ interface Props extends FormComponentProps {
   detail: any;
   onSuccess(data: any): void;
 }
+
+const makeAdress = (detail: any) => {
+  let result = [detail.returnContact, detail.returnPhone, detail.returnAddress].filter(Boolean).join(' ');
+  return result || '暂无';
+}
 class ModifyReturnAddress extends React.Component<Props, State> {
   state: State = {
     visible: false
@@ -70,7 +75,7 @@ class ModifyReturnAddress extends React.Component<Props, State> {
             </Form.Item>
           </Form>
         </Modal>
-        {`${returnContact} ${returnPhone} ${returnAddress}`}<Button type="link" onClick={() => this.setState({ visible: true })}> 修改</Button>
+        {makeAdress(this.props.detail)}<Button type="link" onClick={() => this.setState({ visible: true })}> 修改</Button>
       </>
     )
   }
