@@ -250,7 +250,10 @@ export default class extends Component {
             phone: mobilePhone,
             detailAddress: street,
             addressVisible: true,
-            addressLoading: true
+            addressLoading: true,
+            currentProvince: {},
+            currentCity: {},
+            currentDistrict: {},
         }, (() => {
             getBaseAddress().then((baseAddress) => {
                 const { provinceId, cityId, districtId } = address || {};
