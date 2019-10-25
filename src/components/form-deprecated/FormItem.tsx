@@ -19,7 +19,7 @@ import {
   FormInstance
 } from './index'
 import FormContext, { ContextProps } from './Context'
-import styles from './style/index.module.sass'
+import styles from '@/packages/common/components/form/style/index.module.styl'
 
 const Item = Form.Item
 
@@ -32,7 +32,7 @@ interface Props extends OptionProps, FormItemProps {
   /** 设置后置标签 */
   addonAfter?: React.ReactNode
   children?: React.ReactNode
-  inner?: (form?: WrappedFormUtils) => React.ReactNode
+  inner?: (form: WrappedFormUtils) => React.ReactNode
   placeholder?: string | string[]
   /** 控件是否校验 默认false，不进行校验 */
   verifiable?: boolean
@@ -51,18 +51,21 @@ function renderItem (option: Props, context: ContextProps) {
   const disabled = option.disabled || context.props.disabled
   const readonly = option.readonly || context.props.readonly
   const {
-    name,
     type,
     controlProps,
     options = []
-  } = option
+  } = Object.assign({
+    controlProps: {}
+  }, option)
+  const name = option.name as string
   let node: React.ReactNode
   switch (type) {
   case 'input':
     node = (() => {
       controlProps.placeholder = controlProps.placeholder as string
       let placeholder = controlProps.placeholder === undefined ? `请输入${option.label}` : controlProps.placeholder
-      let value = form.getFieldValue(name)
+      let value = name && form.getFieldValue(name) 
+      console.log(readonly, 'readonly')
       return !readonly ? (
         <Input
           disabled={disabled}
@@ -75,7 +78,6 @@ function renderItem (option: Props, context: ContextProps) {
   case 'textarea':
     node = (() => {
       let placeholder = controlProps.placeholder as string || `请输入${option.label}`
-      // let value = form.getFieldValue(name)
       return (
         <Input.TextArea
           disabled={disabled}
@@ -121,7 +123,7 @@ function renderItem (option: Props, context: ContextProps) {
   case 'text':
     node = (
       <span className={styles['form-item-text']}>
-        {form.getFieldValue(name)}
+        {name && form.getFieldValue(name)}
       </span>
     )
     break
@@ -166,7 +168,7 @@ function renderItem (option: Props, context: ContextProps) {
   case 'rangepicker':
     node = (() => {
       const placeholder = controlProps.placeholder as string[] || [`请选择开始时间`, `请选择结束时间`]
-      const value: any[] = form.getFieldValue(name) instanceof Array && form.getFieldValue(name) || []
+      const value: any[] = (name ? (form.getFieldValue(name) instanceof Array && form.getFieldValue(name) || []) : [])
       return (
         <span
           className={styles['range-picker']}
@@ -178,7 +180,7 @@ function renderItem (option: Props, context: ContextProps) {
             placeholder={placeholder[0]}
             value={value[0]}
             disabledDate={(currentDate) => {
-              return value[1] && currentDate > value[1]
+              return (value[1] && currentDate) ? currentDate > value[1] : false
             }}
             onChange={(date, dateString) => {
               value[0] = date
@@ -195,7 +197,7 @@ function renderItem (option: Props, context: ContextProps) {
             placeholder={placeholder[1]}
             value={value[1]}
             disabledDate={(currentDate) => {
-              return value[0] && currentDate < value[0]
+              return (value[0] && currentDate) ? currentDate < value[0] : false
             }}
             onChange={(date, dateString) => {
               value[1] = date
@@ -215,10 +217,10 @@ function renderItem (option: Props, context: ContextProps) {
 function Main (props: Props) {
   const context = useContext(FormContext)
   const { name, addonAfter, className, style } = props
-  const namespace = props.namespace || context.props.namespace || 'common'
-  const form = context.props.form
-  const config = context.props.config || getFieldsConfig()
-  const layout = context.props.layout || 'horizontal'
+  const namespace = props.namespace || context && context.props && context.props.namespace || 'common'
+  const form = context && context.props && context.props.form
+  const config = context.props && context.props.config || getFieldsConfig()
+  const layout = context.props && context.props.layout || 'horizontal'
   const option = useMemo(() => {
     const data = _.mergeWith(
       {
@@ -227,13 +229,13 @@ function Main (props: Props) {
         formItemProps: {},
         fieldDecoratorOptions: { rules: [] }
       },
-      config[namespace] && config[namespace][name],
+      config && config[namespace] && name && config[namespace][name],
       props
-    ) as Props
+    )
     data.options = props.options && props.options.length > 0 ? props.options : data.options
-    const optionFieldexchange = data.optionFieldexchange
+    const optionFieldexchange = Object.assign({}, data.optionFieldexchange)
     if (data.options instanceof Array) {
-      data.options = data.options.map((item) => {
+      data.options = data.options.map((item: any) => {
         return {
           ...item,
           label: item[optionFieldexchange.label],
@@ -301,14 +303,16 @@ function Main (props: Props) {
               wrapperCol={{span: 24}}
             >
               {
-                name ? (type === 'text' ? children : form.getFieldDecorator(
-                  name,
-                  {
-                    ...fieldDecoratorOptions
-                  }
-                )(
-                  children
-                )) : children
+                name ? ((type === 'text' || !form) ? children : (
+                  form.getFieldDecorator(
+                    name,
+                    {
+                      ...fieldDecoratorOptions
+                    }
+                  )(
+                    children
+                  ))
+                ) : children
               }
             </Item>
             <Item

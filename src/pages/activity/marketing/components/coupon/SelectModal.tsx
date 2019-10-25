@@ -17,7 +17,7 @@ const calcRatio = ({ useCount, receiveCount }: any) => {
   return (100 * result).toFixed(1) + '%';
 }
 export interface Props extends FormComponentProps {
-  getInstance?: (ref?: Main) => void
+  getInstance?: (ref: Main) => void
   selectedRowKeys?: any[],
   onOk?: (ids: any[], rows: Shop.CouponProps[]) => void
   onCancel?: () => void

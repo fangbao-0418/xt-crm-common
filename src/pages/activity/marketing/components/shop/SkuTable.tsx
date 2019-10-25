@@ -61,7 +61,7 @@ class Main extends React.Component<Props, State> {
     }
   ]
   public state: State = {
-    selectedRowKeys: this.props.selectedRowKeys
+    selectedRowKeys: this.props.selectedRowKeys || []
   }
   public constructor (props: Props) {
     super(props)
@@ -69,7 +69,7 @@ class Main extends React.Component<Props, State> {
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({
-      selectedRowKeys: props.selectedRowKeys
+      selectedRowKeys: props.selectedRowKeys || []
     })
   }
   public onSelectChange (selectedRowKeys: any[], selectedRows: Shop.SkuProps[]) {

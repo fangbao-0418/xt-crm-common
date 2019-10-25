@@ -1,6 +1,6 @@
 import React from 'react'
 import { Row, Col, Radio, Input } from 'antd'
-import Form, { FormItem, FormInstance } from '@/components/form'
+import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import styles from './style.module.sass'
 import CouponList from '../coupon/List'
 import SkuList from '../shop/SkuList'

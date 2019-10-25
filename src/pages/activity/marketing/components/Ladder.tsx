@@ -7,7 +7,7 @@ interface Props {
   name: string
   value?: any[]
   onChange?: (value: ValueProps[]) => void
-  onSelect?: (type: 0 | 1, index?: number) => void
+  onSelect?: (type: 0 | 1, index: number) => void
   disabled?: boolean
   giftCanEdit?: boolean
 }

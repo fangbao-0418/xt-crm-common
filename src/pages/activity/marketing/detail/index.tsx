@@ -1,5 +1,5 @@
 import React from 'react'
-import Form, { FormItem, FormInstance } from '@/components/form'
+import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { Row, Col, Button } from 'antd'
 import { withRouter, RouteComponentProps } from 'react-router'
 import ActivityList from '../components/activity/List'
@@ -104,9 +104,9 @@ class Main extends React.Component<Props, State> {
     let type = ''
     if (ruleType === 0) {
       type = '循环规则'
-      arr = [data.loop]
+      arr = data.loop ? [data.loop] : []
     } else {
-      arr = data.rank.ruleList
+      arr = data.rank ? data.rank.ruleList : []
     }
     const index = arr.findIndex((item, index) => {
       if (ruleType !== 0) {

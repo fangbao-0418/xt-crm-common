@@ -3,7 +3,7 @@ import { Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import styles from './style.module.sass'
 interface State {
-  dataSource?: Shop.SkuProps[]
+  dataSource: Shop.SkuProps[]
 }
 interface Props {
   value?: Shop.SkuProps[]
@@ -54,7 +54,7 @@ class Main extends React.Component<Props> {
     }
   ]
   public state: State = {
-    dataSource: this.props.value
+    dataSource: this.props.value || []
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({

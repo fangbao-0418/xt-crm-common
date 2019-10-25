@@ -113,13 +113,13 @@ const getActivityData = (data: Marketing.ItemProps) => {
 }
 
 /** 过滤无效数据 */
-const filterinvalidData = (data: any[]) => {
+const filterinvalidData = (data?: any[]) => {
   if (!(data instanceof Array)) {
     return []
   }
   return data.filter((item) => item)
 }
-const spuIdsExchangeObj = (source: string) => {
+const spuIdsExchangeObj = (source?: string) => {
   const data: {[id: number]: string} = JSON.parse(source || '{}')
   const result: {[id: number]: number[]} = {}
   for (const key in data) {
@@ -138,7 +138,6 @@ const spuIdsExchangeJson = (source: {[spuIds: number]: number[]}) => {
 
 /** 满赠详情入参处理 */
 export const handleFormData = (payload: Marketing.FormDataProps) => {
-  // console.log(payload, 'payload')
   const loop = payload.loop
   const product = payload.product || {
     spuIds: {}
@@ -147,8 +146,8 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
   const data = {
     activityDescribe: payload.activityDescribe,
     title: payload.title,
-    startTime: payload.startTime * 1000,
-    endTime: payload.endTime * 1000,
+    startTime: payload.startTime && payload.startTime * 1000,
+    endTime: payload.endTime && payload.endTime * 1000,
     id: payload.id !== undefined ? Number(payload.id) : '',
     referencePromotionId: (activity && activity.activityList || []).map((item) => item.id).join(','),
     // productIds: Object.keys(product.spuIds).join(','),
@@ -167,7 +166,7 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
 }
 
 /** 处理赠品内容数据 */
-const handlePresentContentData = (data: Marketing.PresentContentValueProps) => {
+const handlePresentContentData = (data?: Marketing.PresentContentValueProps) => {
   data = Object.assign({
     chooseCount: 0,
     couponList: [],
@@ -178,7 +177,7 @@ const handlePresentContentData = (data: Marketing.PresentContentValueProps) => {
   return {
     chooseCount: data.chooseCount || 0,
     giftSkuJson: spuIdsExchangeJson(data.spuIds),
-    giftPromotionId: data.activityList.map(item => item.id).join(','),
+    giftPromotionId: data.activityList ? data.activityList.map(item => item.id).join(',') : '',
     giftCouponIds: (data.couponList && data.couponList.map((item) => item.id) || []).join(','),
     stageCount: data.stageCount || 0,
     type: data.type || 0

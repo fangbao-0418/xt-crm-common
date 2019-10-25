@@ -30,7 +30,7 @@ class Main extends React.Component<Props, State> {
                 className='href'
                 onClick={() => {
                   const { dataSource } = this.state
-                  this.onChange(dataSource.filter((item) => item.id !== record.id))
+                  this.onChange((dataSource || []).filter((item) => item.id !== record.id))
                 }}
               >
                 删除

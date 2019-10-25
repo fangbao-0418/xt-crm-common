@@ -1,6 +1,6 @@
 import React from 'react'
 import { Row, Col, Button } from 'antd'
-import Form, { FormItem, FormInstance } from '@/components/form'
+import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 interface Props {
   onSearch?: (value: any) => void
 }

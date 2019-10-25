@@ -2,7 +2,7 @@ import React from 'react'
 import { Modal, Table, Button } from 'antd'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import * as api from '../../api'
-import Form, { FormItem, FormInstance } from '@/components/form'
+import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import CategoryCascader from '@/components/category-cascader'
 import SkuTable from './SkuTable'
 import styles from './style.module.sass'
@@ -27,8 +27,8 @@ interface PayloadProps {
   productName?: string
   status?: number
   categoryIds?: string
-  page?: number
-  pageSize?: number
+  page: number
+  pageSize: number
 }
 class Main extends React.Component<Props, State> {
   public payload: PayloadProps = {
@@ -81,7 +81,7 @@ class Main extends React.Component<Props, State> {
             dataSource={record.skuList}
             allSelected={this.state.selectedRowKeys.indexOf(record.id) > -1}
             selectedRowKeys={skuSelectedRowKeys}
-            onSelect={(rowKeys, rows) => {
+            onSelect={(rowKeys, rows = []) => {
               let { selectedRowKeys } = this.state
               const index = this.selectRows.findIndex((item) => item.id === record.id)
               const isExist = index > -1
@@ -166,13 +166,13 @@ class Main extends React.Component<Props, State> {
       spuIds: {}
     }, value)
     const allSkuSelectedRows: {[spuId: number]: Shop.SkuProps[]} = {}
-    this.selectRows = []
-    value.skuList.map((item) => {
+    this.selectRows = [];
+    (value.skuList || []).map((item) => {
       if (!(allSkuSelectedRows[item.productId] instanceof Array)) {
         allSkuSelectedRows[item.productId] = []
       }
       allSkuSelectedRows[item.productId].push(item)
-    })
+    });
     for (const key in allSkuSelectedRows) {
       let id = Number(key)
       const item = Object.assign({}, allSkuSelectedRows[id][0]);

@@ -7,7 +7,7 @@ interface State {
 }
 interface Props {
   value?: Marketing.PresentContentValueProps
-  onChange?: (value?: Marketing.PresentContentValueProps) => void
+  onChange?: (value: Marketing.PresentContentValueProps) => void
   disabled?: boolean
 }
 enum ShopStatusEnum {
@@ -71,7 +71,7 @@ class Main extends React.Component<Props> {
             className='href'
             onClick={() => {
               const { dataSource } = this.state
-              this.onChange(dataSource.filter((item) => item.id !== record.id))
+              this.onChange((dataSource || []).filter((item) => item.id !== record.id))
             }}
           >
             删除
@@ -89,7 +89,7 @@ class Main extends React.Component<Props> {
     })
   }
   public onChange (row: Marketing.ItemProps[]) {
-    const value = this.props.value
+    const value = this.props.value as Marketing.PresentContentValueProps
     if (this.props.onChange) {
       this.props.onChange({
         ...value,
