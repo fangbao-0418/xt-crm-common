@@ -32,7 +32,8 @@ class Detail extends Component {
       remark: '',
       userProceedsListByOrderId: [],
       goodsTableKey: 0,
-      deliveryVisible: false
+      deliveryVisible: false,
+      deliveryData: {}
     };
   }
 
@@ -144,7 +145,7 @@ class Detail extends Component {
     });
   }
   render() {
-    let { data, childOrderList, userProceedsListByOrderId, goodsTableKey,deliveryVisible } = this.state;
+    let { data, childOrderList, userProceedsListByOrderId, goodsTableKey, deliveryVisible, deliveryData } = this.state;
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
 
@@ -190,19 +191,7 @@ class Detail extends Component {
                         <Col className="gutter-row" span={8} style={{ textAlign: 'right' }}>
                           {
                             (orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
-                              <>
-                                <Button type='primary' onClick={() => this.changeModal(true)}>发货</Button>
-                                <DeliveryModal 
-                                type='add'
-                                title="发货" 
-                                visible={deliveryVisible} 
-                                mainorderInfo={data.orderInfo} 
-                                onSuccess={this.query} 
-                                orderId={item.childOrder.id} 
-                                logistics={item.logistics} 
-                                onCancel={()=>this.changeModal(false)}
-                                />
-                              </>
+                              <Button type='primary' onClick={() => this.changeModal(true, item)}>发货</Button>
                             ) : ''
                           }
                           {
@@ -249,6 +238,16 @@ class Detail extends Component {
         <Card title="整单收益信息">
           <BenefitInfo key={`benefit-${goodsTableKey}`} data={data.orderYield} orderInfo={data.orderInfo} proceedsList={userProceedsListByOrderId} refresh={this.queryProceeds} />
         </Card>
+        <DeliveryModal
+          type='add'
+          title="发货"
+          visible={deliveryVisible}
+          mainorderInfo={data.orderInfo}
+          onSuccess={this.onOk}
+          orderId={(deliveryData.childOrder || {}).id}
+          logistics={deliveryData.logistics}
+          onCancel={() => this.changeModal(false)}
+        />
       </>
     );
   }
@@ -265,9 +264,18 @@ class Detail extends Component {
     })
   }
 
-  changeModal = (visible) => {
+  onOk = () => {
     this.setState({
-      deliveryVisible: visible
+      deliveryVisible: false
+    }, () => {
+      this.query();
+    })
+  }
+
+  changeModal = (visible, data) => {
+    this.setState({
+      deliveryVisible: visible,
+      deliveryData: data || {}
     })
   }
 }

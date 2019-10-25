@@ -5,21 +5,6 @@ import { deliveryChildOrder, updateLogisticsInfo, addLogisticsInfo, deliveryInte
 import ExpressCompanySelect from '@/components/express-company-select';
 
 class DeliveryDialog extends Component {
-  static defaultProps = {
-    orderId: '',
-    onSuccess: () => { },
-    buttonType: 'link',
-  };
-  state = {
-    visible: false,
-  };
-
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-
   handleOk = e => {
     const { onSuccess, orderId, data, logistics, type, mainorderInfo, form: { validateFields } } = this.props;
     validateFields((errors, values) => {
@@ -30,42 +15,30 @@ class DeliveryDialog extends Component {
             logisticsCode: values.expressCode,
             logisticsName: values.expressCompanyName
           }).then(() => {
-            this.setState({
-              visible: false
-            }, () => {
-              onSuccess && onSuccess();
-            });
+            onSuccess && onSuccess();
           })
           return;
         }
-
-
         if (data && data.id) {
-          return updateLogisticsInfo({
+          updateLogisticsInfo({
             id: data.id,
             expressCompanyName: values.expressCompanyName,
             expressCode: values.expressCode,
           }).then(() => {
-            this.setState({
-              visible: false,
-            }, () => {
-              onSuccess && onSuccess();
-            });
+            onSuccess && onSuccess();
           });
+          return;
         }
 
         if (logistics.orderPackageList && mainorderInfo.orderStatus > 20) {
-          return addLogisticsInfo({
+          addLogisticsInfo({
             childOrderId: orderId,
             expressCompanyName: values.expressCompanyName,
             expressCode: values.expressCode,
           }).then(() => {
-            this.setState({
-              visible: false,
-            }, () => {
-              onSuccess && onSuccess();
-            });
+            onSuccess && onSuccess();
           });
+          return;
         }
 
         const delivery = [values.expressCompanyName + ',' + values.expressCode];
@@ -75,9 +48,6 @@ class DeliveryDialog extends Component {
           delivery,
         }).then(() => {
           onSuccess && onSuccess();
-          this.setState({
-            visible: false,
-          });
         });
       }
     })
