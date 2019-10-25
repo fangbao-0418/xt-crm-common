@@ -173,8 +173,8 @@ class Main extends React.Component<Props, State> {
     const { detail } = this.props;
     detail.css = detail.css || 1;
     const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons)
-    console.log('selectedRowKeys=>', selectedRowKeys);
-    this.tempCrmCoupons =  Array.prototype.concat(detail.crmCoupons);
+    this.tempCrmCoupons =  Array.prototype.concat(detail.crmCoupons || []);
+    console.log(this.tempCrmCoupons, 'this.tempCrmCoupons')
     return (
       <div>
         <Row gutter={12}>
