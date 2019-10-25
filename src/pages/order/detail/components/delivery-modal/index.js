@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Button, Input, Form } from 'antd';
 import { formItemLayout } from '@/config';
-import { deliveryChildOrder, updateLogisticsInfo, addLogisticsInfo } from '../../../api';
+import { deliveryChildOrder, updateLogisticsInfo, addLogisticsInfo, deliveryInterceptOrder } from '../../../api';
 import ExpressCompanySelect from '@/components/express-company-select';
 
 class DeliveryDialog extends Component {
@@ -21,18 +21,35 @@ class DeliveryDialog extends Component {
   };
 
   handleOk = e => {
-    const { onSuccess, orderId, data, logistics, mainorderInfo, form: { validateFields } } = this.props;
+    const { onSuccess, orderId, data, logistics, type, mainorderInfo, form: { validateFields } } = this.props;
     validateFields((errors, values) => {
       if (!errors) {
+        if (type == 'add' && logistics.interceptorType == 10) {
+          deliveryInterceptOrder({
+            interceptOrderId: logistics.interceptorOrderRecordId,
+            logisticsCode: values.expressCode,
+            logisticsName: values.expressCompanyName
+          }).then(() => {
+            this.setState({
+              visible: false
+            }, () => {
+              onSuccess && onSuccess();
+            });
+          })
+          return;
+        }
+
+
         if (data && data.id) {
           return updateLogisticsInfo({
             id: data.id,
             expressCompanyName: values.expressCompanyName,
             expressCode: values.expressCode,
           }).then(() => {
-            onSuccess && onSuccess();
             this.setState({
               visible: false,
+            }, () => {
+              onSuccess && onSuccess();
             });
           });
         }
@@ -43,9 +60,10 @@ class DeliveryDialog extends Component {
             expressCompanyName: values.expressCompanyName,
             expressCode: values.expressCode,
           }).then(() => {
-            onSuccess && onSuccess();
             this.setState({
               visible: false,
+            }, () => {
+              onSuccess && onSuccess();
             });
           });
         }
@@ -72,7 +90,7 @@ class DeliveryDialog extends Component {
   };
 
   render() {
-    let data = this.props.data;
+    let { title, visible, onCancel, data } = this.props;
     const { getFieldDecorator } = this.props.form;
     if (!data) data = {
       expressCompanyName: '',
@@ -80,12 +98,11 @@ class DeliveryDialog extends Component {
     }
     return (
       <>
-        <Button type='primary' onClick={this.showModal}>{this.props.title}</Button>
         <Modal
-          title={this.props.title}
-          visible={this.state.visible}
+          title={title}
+          visible={visible}
           onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          onCancel={onCancel}
         >
           <Form {...formItemLayout}>
             <Form.Item label="快递公司">
@@ -96,7 +113,7 @@ class DeliveryDialog extends Component {
                   message: '请选择快递公司'
                 }]
               })(
-                <ExpressCompanySelect style={{width: '100%'}} placeholder="请选择快递公司" />,
+                <ExpressCompanySelect style={{ width: '100%' }} placeholder="请选择快递公司" />,
               )}
             </Form.Item>
             <Form.Item label="快递单号">

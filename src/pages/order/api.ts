@@ -209,10 +209,19 @@ export function getProceedsListByOrderIdAndSkuId(param: any) {
 }
 
 /**
- * 
- * @param param 取消订单拦截
+ * 取消订单拦截
+ * @param {object}  param
  */
 export function cancelIntercept(param: any) {
   return post('/order/intercept/cancelIntercept', param);
 }
+
+/**
+ * 对拦截订单发货
+ * @param {object}  param
+ */
+export function deliveryInterceptOrder(param: any) {
+  return post('/order/intercept/interceptDeliver', param);
+}
+
 

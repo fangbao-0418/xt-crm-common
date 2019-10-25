@@ -31,7 +31,8 @@ class Detail extends Component {
       data: {},
       remark: '',
       userProceedsListByOrderId: [],
-      goodsTableKey: 0
+      goodsTableKey: 0,
+      deliveryVisible: false
     };
   }
 
@@ -143,7 +144,7 @@ class Detail extends Component {
     });
   }
   render() {
-    let { data, childOrderList, userProceedsListByOrderId, goodsTableKey } = this.state;
+    let { data, childOrderList, userProceedsListByOrderId, goodsTableKey,deliveryVisible } = this.state;
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
 
@@ -157,6 +158,7 @@ class Detail extends Component {
             return (
               <div key={goodsTableKey}>
                 <GoodsTable
+                  key={index}
                   list={item.skuList}
                   childOrder={item.childOrder}
                   orderInfo={data.orderInfo}
@@ -188,12 +190,24 @@ class Detail extends Component {
                         <Col className="gutter-row" span={8} style={{ textAlign: 'right' }}>
                           {
                             (orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
-                              <DeliveryModal mainorderInfo={data.orderInfo} title="发货" onSuccess={this.query} orderId={item.childOrder.id} logistics={item.logistics} />
+                              <>
+                                <Button type='primary' onClick={() => this.changeModal(true)}>发货</Button>
+                                <DeliveryModal 
+                                type='add'
+                                title="发货" 
+                                visible={deliveryVisible} 
+                                mainorderInfo={data.orderInfo} 
+                                onSuccess={this.query} 
+                                orderId={item.childOrder.id} 
+                                logistics={item.logistics} 
+                                onCancel={()=>this.changeModal(false)}
+                                />
+                              </>
                             ) : ''
                           }
                           {
                             (item.childOrder.interceptorType == 10 && (
-                              item.childOrder.orderStatus == enumOrderStatus.Intercept ||
+                              item.childOrder.orderStatus == enumOrderStatus.Undelivered ||
                               item.childOrder.orderStatus == enumOrderStatus.Delivered)
                             ) ?
                               <Button type='primary' style={{ marginLeft: 8 }} onClick={() => this.cancelInterceptor(item)}>取消拦截发货</Button> :
@@ -248,6 +262,12 @@ class Detail extends Component {
         message.success('取消成功');
         this.query();
       }
+    })
+  }
+
+  changeModal = (visible) => {
+    this.setState({
+      deliveryVisible: visible
     })
   }
 }
