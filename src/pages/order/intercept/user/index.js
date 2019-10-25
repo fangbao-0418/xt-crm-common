@@ -92,7 +92,7 @@ export default class extends Component {
                     return <div>
                         <a onClick={() => this.togglePrivilege(record)}>{orderInterception == 1 ? '关闭权限' : '开启权限'}</a>
                         <Divider type="vertical" />
-                        <a onClick={this.onDetail.bind(this, record)}>查看详情</a>
+                        <a href={`/#/order/intercept/detail?id=${record.id}&iphone=${record.phone}`} target="_blank">查看详情</a>
                     </div>
                 }
             }
@@ -423,10 +423,6 @@ export default class extends Component {
             level,
             choiceVisible: true
         })
-    }
-
-    onDetail = (record) => {
-        APP.history.push(`/order/intercept/detail?id=${record.id}&iphone=${record.phone}`);
     }
 
     onCancel = () => {

@@ -16,7 +16,7 @@ const GoodCell = ({ productImage, skuName, properties, coverUrl, showImage = tru
           <img alt={'商品图片'} src={replaceHttpUrl(coverUrl || productImage)} style={{ maxHeight: 100, maxWidth: 100 }} />
         </div>
       }
-      <div style={{ marginLeft: 116 }}>
+      <div style={showImage?{ marginLeft:116}:{marginLeft:0,textAlign:'left'}}>
         <div>{skuName}</div>
         <div style={{ marginTop: 8 }}>{properties ? `${properties}` : ''}</div>
       </div>
