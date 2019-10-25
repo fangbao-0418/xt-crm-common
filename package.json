@@ -82,6 +82,9 @@
     "customize-cra": "0.8.0",
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
+    "del": "^5.1.0",
+    "simple-git": "^1.126.0",
     "typescript": "^3.6.2"
-  }
+  },
+  "homepage": "./"
 }
