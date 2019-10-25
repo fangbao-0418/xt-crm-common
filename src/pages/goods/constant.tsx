@@ -32,7 +32,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '供应商skuID',
     dataIndex: 'storeProductSkuId',
-    width: 300,
+    width: 200,
     render: (text: any, record: any, index: any) => {
       return (
         <Input
@@ -46,7 +46,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '商品编码',
     dataIndex: 'skuCode',
-    width: 100,
+    width: 200,
     render: (text: any, record: any, index: any) => {
       return (
         <Input
@@ -74,7 +74,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '市场价',
     dataIndex: 'marketPrice',
-    width: 100,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('marketPrice', text, record, index, dataSource, cb)(
         <Input
@@ -88,7 +88,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '成本价',
     dataIndex: 'costPrice',
-    width: 100,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('costPrice', text, record, index, dataSource, cb)(
         <Input
@@ -102,7 +102,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '库存',
     dataIndex: 'stock',
-    width: 100,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('stock', text, record, index, dataSource, cb)(
         <Input
@@ -116,7 +116,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '销售价',
     dataIndex: 'salePrice',
-    width: 100,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('salePrice', text, record, index, dataSource, cb)(
         <Input
@@ -130,7 +130,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '团长价',
     dataIndex: 'headPrice',
-    width: 100,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('headPrice', text, record, index, dataSource, cb)(
         <Input
@@ -144,7 +144,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '社区管理员价',
     dataIndex: 'areaMemberPrice',
-    width: 150,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
         <Input
@@ -158,7 +158,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '城市合伙人价',
     dataIndex: 'cityMemberPrice',
-    width: 150,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
         <Input
@@ -172,7 +172,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '公司管理员价',
     dataIndex: 'managerMemberPrice',
-    width: 150,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
         <Input
@@ -186,7 +186,7 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
   {
     title: '警戒库存',
     dataIndex: 'stockAlert',
-    width: 100,
+    width: 200,
     render: (text: any, record: any, index: any) => (
       speedyInput('stockAlert', text, record, index, dataSource, cb)(
         <Input
