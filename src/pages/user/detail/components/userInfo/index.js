@@ -15,8 +15,8 @@ function formatTime(text) {
 const columns = [
   {
     title: '编号',
-    dataIndex: 'index',
-    render: (text, index) => {
+    dataIndex: 'id',
+    render: (text, record, index) => {
       return index + 1;
     }
   },
@@ -26,7 +26,7 @@ const columns = [
   },
   {
     title: '身份证号',
-    dataIndex: 'idCard'
+    dataIndex: 'idNo'
   },
   {
     title: '创建时间',
@@ -35,7 +35,7 @@ const columns = [
   },
   {
     title: '最近操作时间',
-    dataIndex: 'lastModifyTime',
+    dataIndex: 'modifyTime',
     render: formatTime
   }
 ];
@@ -109,6 +109,7 @@ export default class extends Component {
   }
   render() {
     const { data, loading } = this.props;
+    console.log(this.props, 'render')
     return (
       <div>
         <Card
@@ -149,7 +150,10 @@ export default class extends Component {
           title="实名认证信息"
           style={{ marginBottom: 20 }}
           headStyle={{ fontWeight: 900 }}>
-            <Table columns={columns}/>
+            <Table
+              columns={columns}
+              dataSource={data.authenticationVOList}
+            />
         </Card>
         <Card
           title="用户收益"

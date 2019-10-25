@@ -43,8 +43,8 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {} }) => {
         <Col>买家备注：{remark}</Col>
       </Row>
       <Row gutter={24}>
-        <Col span={8}>真实姓名：</Col>
-        <Col span={8}>身份证号：</Col>
+        <Col span={8}>真实姓名：{buyerInfo.realName}</Col>
+        <Col span={8}>身份证号：{buyerInfo.idNo}</Col>
       </Row>
     </Card>
   );

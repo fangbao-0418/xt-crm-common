@@ -169,7 +169,8 @@ class GoodsEdit extends React.Component {
         listImage,
         productImage,
         storeProductId: res.storeProductId,
-        categoryId
+        categoryId,
+        isAuthentication: res.isAuthentication
       });
     });
   };
@@ -443,7 +444,7 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
           </Form.Item>
           <Form.Item label="实名认证" required>
-            {getFieldDecorator('verified', {
+            {getFieldDecorator('isAuthentication', {
               initialValue: 0,
               rules: [
                 {
