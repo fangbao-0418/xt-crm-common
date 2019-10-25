@@ -51,6 +51,8 @@ const CascaderByArea = ({ value, onChange, baseAddress }) => {
         })
     }
 
+
+
     return <div>
         <Select value={currentProvince.id} placeholder="选择省" style={{ width: 130 }} onChange={changeProvince}>
             {(baseAddress || []).map(province => (
@@ -195,7 +197,7 @@ export default class extends Component {
                                         required: true,
                                         message: '请选择省市区',
                                     }],
-                                    initialValue: { currentProvince, currentDistrict, currentCity }
+                                    initialValue: (currentProvince || currentDistrict || currentCity) ? { currentProvince, currentDistrict, currentCity } : undefined
                                 })(
                                     <CascaderByArea baseAddress={baseAddress} />
                                 )}
