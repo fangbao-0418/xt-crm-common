@@ -6,6 +6,7 @@ interface State {
 }
 interface Props extends FormComponentProps {
   detail: any;
+  intercept: any;
   onSuccess(data: any): void;
 }
 class ModifyReturnAddress extends React.Component<Props, State> {
@@ -25,12 +26,18 @@ class ModifyReturnAddress extends React.Component<Props, State> {
     })
   }
   render() {
-    const { returnContact, returnPhone, returnAddress } = this.props.detail;
+    const { detail, intercept } = this.props;
+    const { returnContact, returnPhone, returnAddress } = detail;
+    const { memberName, memberPhone, address } = intercept || {};
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
     }
+
+    const currentName = intercept ? memberName : returnContact;
+    const currentPhone = intercept ? memberPhone : returnPhone;
+    const currentAddress = intercept ? address : returnAddress;
     return (
       <>
         <Modal
@@ -43,7 +50,7 @@ class ModifyReturnAddress extends React.Component<Props, State> {
           <Form  {...formItemLayout}>
             <Form.Item label="姓名">
               {getFieldDecorator("returnContact", {
-                initialValue: returnContact,
+                initialValue: currentName,
                 rules: [{
                   required: true,
                   message: '请输入姓名'
@@ -52,7 +59,7 @@ class ModifyReturnAddress extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="手机号">
               {getFieldDecorator("returnPhone", {
-                initialValue: returnPhone,
+                initialValue: currentPhone,
                 rules: [{
                   required: true,
                   message: '请输入手机号'
@@ -61,7 +68,7 @@ class ModifyReturnAddress extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="地址">
               {getFieldDecorator("returnAddress", {
-                initialValue: returnAddress,
+                initialValue: currentAddress,
                 rules: [{
                   required: true,
                   message: '请输入详细地址'
@@ -70,7 +77,8 @@ class ModifyReturnAddress extends React.Component<Props, State> {
             </Form.Item>
           </Form>
         </Modal>
-        {`${returnContact} ${returnPhone} ${returnAddress}`}<Button type="link" onClick={() => this.setState({ visible: true })}> 修改</Button>
+        {`${currentName} ${currentPhone} ${currentAddress}`}
+        <Button type="link" onClick={() => this.setState({ visible: true })}> 修改</Button>
       </>
     )
   }
