@@ -29,7 +29,13 @@ class Main extends React.Component<Props, State> {
     }
   }
   public getSelectedRowKeys(list: any) {
-    return (list || []).map((item: any) => item.id)
+    const ids: any[] = [];
+    (list || []).map((item: any) => {
+      if (item && item.id !== undefined && ids.indexOf(item.id) === -1) {
+        ids.push(item.id)
+      }
+    })
+    return ids
   }
   public renderShop(): React.ReactNode {
     const { detail } = this.props
