@@ -12,6 +12,11 @@ const webpack = require('webpack')
 const path = require("path");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
+const paths = require('react-scripts/config/paths');
+const pubconfig = require('./pubconfig.json');
+
+console.log('PUB_ENV => ', process.env.PUB_ENV);
+paths.appBuild = path.resolve(pubconfig.outputDir);
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
 // const dev = process.env.PUB_ENV !== 'prod'
