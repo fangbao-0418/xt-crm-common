@@ -224,15 +224,19 @@ class Main extends React.Component<Props, State> {
                 }
               }}
               onSelect={(record, selected) => {
-                console.log('onSelect=>', record, selected)
+                if (!record) {
+                  return
+                }
                 if (selected) {
-                  this.tempCrmCoupons.push(record)
+                  if (record) {
+                    this.tempCrmCoupons.push(record)
+                  }
                 } else {
-                  this.tempCrmCoupons = this.tempCrmCoupons.filter((item) => item.id !== record.id)
+                  this.tempCrmCoupons = this.tempCrmCoupons.filter((item) => item && (item.id !== record.id))
                 }
               }}
               onOk={() => {
-                console.log('onOk=>', this.tempCrmCoupons);
+                this.tempCrmCoupons = this.tempCrmCoupons.filter((item) => !!item)
                 detail.crmCoupons = this.tempCrmCoupons
                 this.onChange(detail)
                 this.setState({ couponVisible: false })
