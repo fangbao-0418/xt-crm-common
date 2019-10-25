@@ -12,7 +12,7 @@ interface State {
 }
 interface Props {
   placeholder?: string
-  onChange?: (value?: any[], selectedOptions?: any[]) => void
+  onChange?: (value: any[], selectedOptions: any[]) => void
   value?: any
 }
 class Main extends React.Component<Props> {
@@ -53,7 +53,7 @@ class Main extends React.Component<Props> {
       <Cascader
         fieldNames={{label: 'name', value: 'id', children: 'childList'}}
         options={this.state.options}
-        onChange={this.onChange}
+        // onChange={this.onChange}
         placeholder={placeholder}
         value={this.state.value}
       />
