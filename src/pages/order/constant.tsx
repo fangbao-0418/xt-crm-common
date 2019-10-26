@@ -21,10 +21,10 @@ export const getDetailColumns = () => [
   },
   {
     title: '实名认证',
-    dataIndex: 'verified',
-    key: 'verified',
+    dataIndex: 'isAuthentication',
+    key: 'isAuthentication',
     render(text: any) {
-      return text === 1 ? '是': '否'
+      return String(text) === '1' ? '是': '否'
     }
   },
   {
