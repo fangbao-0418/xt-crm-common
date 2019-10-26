@@ -96,6 +96,7 @@ class UploadView extends Component {
       fileList.push({
         ...file
       });
+      console.log(fileList, 'fileList')
       this.setState({
         fileList: fileList,
       });
@@ -103,7 +104,8 @@ class UploadView extends Component {
         return {
           ...item,
           url: this.replaceUrl(item.url),
-          durl: this.replaceUrl(item.durl)
+          durl: this.replaceUrl(item.durl),
+          name: this.getViewUrl(item.url)
         }
       })
       isFunction(onChange) && onChange(value);
@@ -149,6 +151,9 @@ class UploadView extends Component {
           customRequest={(e) => this.customRequest(e)}
           onPreview={this.onPreview}
           {...attributes}
+          // onChange={(e) => {
+          //   console.log(e, 'onchange')
+          // }}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>
