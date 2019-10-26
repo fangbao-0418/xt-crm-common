@@ -37,6 +37,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: 'push', value: '1'},
           {label: '站内信', value: '2'}
         ] 
+      },
+      content: {
+        type: 'textarea', label: '内容'
+      },
+      jumpUrl: {
+        type: 'input', label: '跳转链接'
       }
     }
   }

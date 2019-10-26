@@ -1,66 +1,82 @@
 import React from 'react'
 import { Button } from 'antd'
-import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig } from './config'
+import ListPage from '@/packages/common/components/list-page'
+import * as api from './api'
 class Main extends React.Component {
-  public form: FormInstance
   public payload: any = {
     //
   }
-  public fetchData () {
-
-  }
-  public reset () {
-
-  }
+  public columns: ColumnProps<any>[] = [
+    {
+      title: '序号',
+      dataIndex: 'id',
+      render: (text, record, index) => {
+        return index + 1
+      }
+    },
+    {
+      title: '消息标题',
+      dataIndex: 'field1'
+    },
+    {
+      title: '消息通道',
+      dataIndex: 'field2'
+    },
+    {
+      title: '消息类型',
+      dataIndex: 'field3'
+    },
+    {
+      title: '状态',
+      dataIndex: 'field4'
+    },
+    {
+      title: '发送时间',
+      dataIndex: 'field5'
+    },
+    {
+      title: '创建人',
+      dataIndex: 'field6'
+    },
+    {
+      title: '操作',
+      render: () => {
+        return (
+          <div>
+            <span>取消发送</span>
+            <span
+              className='href'
+              onClick={() => {
+                APP.history.push('/message/detail/22')
+              }}
+            >
+              查看
+            </span>
+            <span>删除</span>
+          </div>
+        )
+      }
+    }
+  ]
   public render () {
     return (
       <div>
-        <Form
-          layout='inline'
-          config={getFieldsConfig()}
-          getInstance={(ref) => {
-            this.form = ref
-          }}
-          addonAfter={(
-            <div
-              style={{
-                display: 'inline-block',
-                lineHeight: '40px',
-                verticalAlign: 'top'
-              }}
-            >
+        <ListPage
+          formConfig={getFieldsConfig()}
+          columns={this.columns}
+          api={api.getList}
+          addonAfterSearch={(
+            <div>
               <Button
                 type='primary'
-                className='mr10'
-                onClick={() => {
-                  const value = this.form.getValues()
-                  if (value.status === undefined) {
-                    value.enableStatus = 0
-                  } else {
-                    value.enableStatus = 1
-                  }
-                  this.payload = {
-                    ...this.payload,
-                    ...value,
-                    page: 1
-                  }
-                  // this.fetchData()
-                }}
               >
-                查询
-              </Button>
-              <Button
-                onClick={() => {
-                  this.reset()
-                }}
-              >
-                清除
+                发送消息
               </Button>
             </div>
           )}
-        >
-        </Form>
+        />
       </div>
     )
   }
