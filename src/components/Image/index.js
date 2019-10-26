@@ -18,9 +18,9 @@ let srcUrl = null;
 
 const Image = (props) => {
   const { src, className, alt = '图片', style, ...otherProps } = props
-  let realSrc = src;
-  if (!protocol.test(src)) {
-    realSrc = `https://assets.hzxituan.com/${src}`.trim();
+  let realSrc = src.trim();
+  if (!protocol.test(realSrc)) {
+    realSrc = `https://assets.hzxituan.com/${realSrc}`;
   }
   srcUrl = src ? replaceHttpUrl(realSrc) : zwtPic;
   return (
