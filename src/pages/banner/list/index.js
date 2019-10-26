@@ -10,7 +10,7 @@ const replaceHttpUrl = imgUrl => {
   if (imgUrl.trim().indexOf('http') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
   }
-  return imgUrl;
+  return imgUrl.trim();
 }
 
 class OrderList extends React.Component {
