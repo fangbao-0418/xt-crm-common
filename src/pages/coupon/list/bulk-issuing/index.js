@@ -166,6 +166,24 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
             </Radio.Group>
           )}
         </Form.Item>
+        <Form.Item label="优惠券弹窗样式">
+          {getFieldDecorator('displayStyle', { initialValue: 1 })(
+            <Radio.Group>
+              <div style={{ display: "inline-block", marginRight: 30 }} >
+                <Radio  value={1}>普通</Radio>
+                <div>
+                  <img  style={{width:130,height:200}} src={(require('@/assets/images/putong.png'))}></img>
+                </div>
+              </div>
+              <div style={{ display: "inline-block" }} >
+                <Radio  value={2}>定制</Radio>
+                <div>
+                  <img  style={{width:130,height:200}} src={(require('@/assets/images/dingzhi.png'))}></img>
+                </div>
+              </div>
+            </Radio.Group>
+          )}
+        </Form.Item>
         <Form.Item label="发送时间">
           {getFieldDecorator('sendingTimeKey', { initialValue: 0 })(
             <Radio.Group>
