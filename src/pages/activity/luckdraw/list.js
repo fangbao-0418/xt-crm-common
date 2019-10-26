@@ -4,108 +4,186 @@ import { Modal, Card, Form, Input, DatePicker, Select, Button, Table, Divider, m
 import { parseQuery } from '@/util/utils';
 import DateFns from 'date-fns';
 import Add from './add';
+import DisableModal from './disable-modal';
+import { getLotteryList, lotteryDisable, lotteryEnable } from '../api';
+import lotteryType from '@/enum/lotteryType';
+
 const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
 const { Option } = Select;
+//中奖类型
+const awardStatus = [
+    {key:'0', value:'特等奖'},
+    {key:'1', value:'一等奖'},
+    {key:'2', value:'二等奖'},
+    {key:'3', value:'三等奖'},
+    {key:'4', value:'四等奖'},
+    {key:'5', value:'待抽奖'}
+]
+const lotteryStatus = [
+    {key:'0', value:'已失效'},
+    {key:'1', value:'待抽奖'},
+    {key:'2', value:'已中奖'}
+]
+// 数组转枚举
+const arrToEnum = (arr) => {
+    var result = {}
+    arr.map((item) => {
+        result[item.key] = item.value
+        result[item.value] = item.key
+    })
+    return result
+}
+
 class List extends React.Component {
     constructor(props) {
         super(props);
         const params = parseQuery();
         this.state = {
             listData: [],
-            page: {
-                current: +params.page || 1,
-                total: 0,
-                pageSize: 20,
-            },
+            current: +params.page || 1,
+            total: 0,
+            pageSize: 3,
             initParams: params,
-            visible: false
+            visible: false,
+            selectedRows: [], //选中行内容
+            detail: {}
         };
     }
-    componentDidMount(){
-        const params = parseQuery();
+ 
+    componentDidMount() {
+        this.handleSearch()
     }
+    // 批量失效
+    handleBatchDisable = () => {
+        console.log('批量失效',this.state.selectedRows)
+        lotteryDisable(this.state.selectedRows).then(res => {
+            console.log('批量失效res', res);
+        })
+    }
+    // 批量生效
+    handleBatchEnable = () => {
+        console.log('批量生效',this.state.selectedRows)
+        lotteryEnable(this.state.selectedRows).then(res => {
+            console.log('批量生效res', res);
+        })
+    }
+    // 重置
     handleReset = () => {
         this.props.form.resetFields();
     };
+    // 查询
     handleSearch = () => {
-        debugger
-        const { form: { validateFields },} = this.props;
+        const { form: { validateFields }} = this.props;
         validateFields((err, vals) => {
             if (!err) {
               const params = {
                 ...vals,
-                startTime: vals.time && vals.time[0] && +new Date(vals.time[0]),
-                endTime: vals.time && vals.time[1] && +new Date(vals.time[1]),
-                page: 1,
-                pageSize: 20
+                page: this.state.current,
+                pageSize: this.state.pageSize
               };
-      
-              delete params.time;
-      
-            //   this.getPromotionList(params);
+              console.log('params', params)
+              getLotteryList(params).then(res => {
+                console.log('res', res)
+                if (res) {
+                    this.setState({
+                        listData: res.records,
+                        total: res.total
+                    })
+                }
+              })
             }
           });
     }
+    handlePageChange = (page, pageSize) => {
+        this.setState(
+          {
+            current: page,
+            pageSize,
+          },
+          this.handleSearch,
+        );
+      };
 
     render(h) {
-        const { listData, page } = this.state;
+        const { listData, total, pageSize, current } = this.state;
+        console.log('renderState',this.state)
         const columns = [
             {
                 title: '抽奖码',
-                dataIndex: 'number',
+                dataIndex: 'ticketCode',
             },
             {
                 title: '主订单号',
-                dataIndex: 'number1',
-                render: text=><a>{text}</a>
+                dataIndex: 'mainOrderCode',
+                render: (text, record) => {
+                    return (
+                        <a href={'#/order/detail/15719961174722014125'} target="_blank">{text}</a>
+                    )
+                }
             },
             {
                 title: '抽奖码状态',
-                dataIndex: 'status',
+                dataIndex: 'lotteryStatus',
+                render: (text, record) => {
+                    return (
+                         <span>{arrToEnum(lotteryStatus)[text]}</span>
+                    )
+                }
             },
             {
                 title: '中奖类型',
-                dataIndex: 'type',
+                dataIndex: 'award',
+                render: text => <>{lotteryType.getValue(text)}</>
             },
             {
                 title: '支付时间',
-                dataIndex: 'addtime',
+                dataIndex: 'payDate',
                 render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>
             },
             {
                 title: '发放时间',
-                dataIndex: 'pushtime',
+                dataIndex: 'createTime',
                 render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>
             },
             {
                 title: '操作',
-                render: (text, record) => (
-                    <><Button type="primary">生效</Button></>
-                )
+                render(text, record) {
+                    console.log('record', record)
+                    return (
+                        <><DisableModal></DisableModal></>
+                    )
+                }
             }
         ];
         const data = [
             {
-              key: '1',
-              name: 'John Brown',
-              jiang: 0,
-              address: 'New York No. 1 Lake Park',
+                ticketCode: '1123123132',
+                mainOrderCode: '15720011106952095084',
+                lotteryStatus: 0,
+                award: 1,
+                payDate: 1,
+                createTime: 1,
             },
+            {
+                ticketCode: '1123123132',
+                mainOrderCode: '15719961174722014125',
+                lotteryStatus: 0,
+                award: 1,
+                payDate: 1,
+                createTime: 1,
+              },
         ]
         const rowSelection = {
             onChange: (selectedRowKeys, selectedRows) => {
-              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
-            getCheckboxProps: record => ({
-            //   name: record.name,
-            }),
+                this.setState({
+                    selectedRows: selectedRows
+                })
+              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', this.state.selectedRows);
+            }
           };
         const {
             form: { getFieldDecorator },
           } = this.props;
-      
-          const { initParams } = this.state;
 
           return(
               <>
@@ -113,43 +191,41 @@ class List extends React.Component {
                   <Form layout="inline">
                       <FormItem label="抽奖码编号">
                           {
-                              getFieldDecorator('number')
+                              getFieldDecorator('lotteryTicketCode')
                               (<Input placeholder="请输入抽奖码编号"/>)
                           }
                       </FormItem>
                       <FormItem label="主订单号">
                           {
-                              getFieldDecorator('number1')
+                              getFieldDecorator('mainOrderCode')
                               (<Input placeholder="请输入主订单号编号"/>)
                           }
                       </FormItem>
                       <FormItem label="下单手机号">
                           {
-                              getFieldDecorator('phone')
+                              getFieldDecorator('buyerPhone')
                               (<Input placeholder="请输入下单手机号"/>)
                           }
                       </FormItem>
                       <FormItem label="抽奖码状态">
                           {
-                              getFieldDecorator('status')
+                              getFieldDecorator('lotteryStatus')
                               (<Select  style={{width: 100}}>
                                   <Option value="">全部</Option>
-                                  <Option value="1">带抽奖</Option>
-                                  <Option value="2">已中奖</Option>
-                                  <Option value="3">已失效</Option>
+                                  {
+                                    lotteryStatus.map(item => <Option value={item.key} key={item.key}>{item.value}</Option>)
+                                  }
                               </Select>)
                           }
                       </FormItem>
                       <FormItem label="中奖类型">
                           {
-                              getFieldDecorator('jiang')
+                              getFieldDecorator('award')
                               (<Select style={{width: 100}}>
-                                <Option value="0">全部</Option>
-                                <Option value="1">特等奖</Option>
-                                <Option value="2">一等奖</Option>
-                                <Option value="3">二等奖</Option>
-                                <Option value="4">三等奖</Option>
-                                <Option value="5">四等奖</Option>
+                                <Option value="">全部</Option>
+                                {
+                                    awardStatus.map(item => <Option value={item.key} key={item.key}>{item.value}</Option>)
+                                }
                             </Select>)
                           }
                       </FormItem>
@@ -167,10 +243,10 @@ class List extends React.Component {
                   <div>
                       <Row>
                           <Col span={12}>
-                            <Button type="primary" onClick={this.handleSearch}>
+                            <Button type="primary" disabled={!this.state.selectedRows.length} onClick={this.handleBatchDisable}>
                                 批量失效
                             </Button>
-                            <Button type="primary" onClick={this.handleReset} style={{ marginLeft: 10 }}>
+                            <Button type="primary" disabled={!this.state.selectedRows.length} onClick={this.handleBatchEnable} style={{ marginLeft: 10 }}>
                                 批量生效
                             </Button>
                           </Col>
@@ -184,9 +260,21 @@ class List extends React.Component {
               </Card>
               {/* 表格展示 */}
               <Card>
-              <Table rowSelection={rowSelection} columns={columns} dataSource={data} />,
+                  {
+                      listData && listData.length > 0 ? (
+                        <Table rowSelection={rowSelection} columns={columns} dataSource={listData} 
+                        pagination={{
+                            current,
+                            total,
+                            pageSize,
+                            onChange: this.handlePageChange,
+                        }}
+                      />
+                      ) : (
+                          '暂无数据'
+                      )
+                  }
               </Card>
-
               <Modal
                 title="手动发码"
                 visible={this.state.visible}

@@ -51,3 +51,25 @@ export function delSpuPromotion(data) {
 export function refreshPromtion(promotionId) {
   return get('/promotion/refreshPromtion', { promotionId })
 }
+
+/************** 抽奖接口 start***************/
+
+
+// 用户抽奖码列表
+export function getLotteryList(data) {
+  return post('/lottery/list', data)
+}
+// 抽奖码失效 data:[]
+export function lotteryDisable(data) {
+  return post('/lottery/disable', data)
+}
+// 抽奖券码生效 data:[]
+export function lotteryEnable(data) {
+  return post('/lottery/enable', data)
+}
+// 手工发码 data:[]
+export function lotteryManualGive(data) {
+  return post('/lottery/manualGive', data)
+}
+
+/************** 抽奖接口 end***************/

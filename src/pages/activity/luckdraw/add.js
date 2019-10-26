@@ -1,8 +1,13 @@
 // 手动发码
 import React from 'react';
-import { Modal, Card, Form, Input, DatePicker, Select, Button, Table, Divider, message, Row, Col } from 'antd';
+import { Card, Form, Input, DatePicker, Button, Table, Divider } from 'antd';
 import { parseQuery } from '@/util/utils';
+import { formatDate, formatMoneyWithSign } from '../../helper';
 import DateFns from 'date-fns';
+import orderStatus from '@/enum/orderStatus';
+import { lotteryManualGive } from './../api'
+import { getOrderList } from './../../order/api'
+
 const FormItem = Form.Item;
 class Add extends React.Component {
     constructor(props) {
@@ -10,92 +15,136 @@ class Add extends React.Component {
         const params = parseQuery();
         this.state = {
             listData: [],
-            page: {
-                current: +params.page || 1,
-                total: 0,
-                pageSize: 20,
-            },
+            current: +params.page || 1,
+            total: 0,
+            pageSize: 3,
             initParams: params,
+            selectedRows: [], // 选中行
         }
+    }
+    componentDidMount() {
+        this.handleSearch()
     }
     handleReset = () => {
         this.props.form.resetFields();
     };
     handleSearch = () => {
-        debugger
         const { form: { validateFields },} = this.props;
         validateFields((err, vals) => {
             if (!err) {
+              // 只查询10月25日-11月11日的订单
               const params = {
                 ...vals,
-                startTime: vals.time && vals.time[0] && +new Date(vals.time[0]),
-                endTime: vals.time && vals.time[1] && +new Date(vals.time[1]),
-                page: 1,
-                pageSize: 20
+                payStartDate: "2019-10-25 00:00",
+                payEndDate: "2019-11-11 23:59",
+                page: this.state.current,
+                pageSize: this.state.pageSize
               };
       
               delete params.time;
+
+              getOrderList(params).then(res => {
+                  console.log('getOrderList', res)
+                  if (res.records) {
+                    this.setState({
+                        listData: res.records,
+                        total: res.total
+                    })
+                  }
+              })
             }
           });
     }
+    // 确定添加
+    handleAdd = () => {
+        console.log('确定添加',this.state.selectedRows)
+        let lotteryMemberTicketManualAddVOList = []
 
+        // let lotteryMemberTicketManualAddVOList = {
+        //     memberId: 'item.memberId',
+        //         mainOrderId: 'item.id',
+        //         mainOrderCode: 'item.orderCode',
+        //         buyerPhone: 'item.buyerPhone',
+        //         payDate: 'item.payDate'
+        // }
+        this.state.selectedRows.map((item, index) => {
+            lotteryMemberTicketManualAddVOList.push({
+                memberId: item.memberId,
+                mainOrderId: item.id,
+                mainOrderCode: item.orderCode,
+                buyerPhone: item.buyerPhone,
+                payDate: item.payDate,
+            })
+        })
+        lotteryManualGive({lotteryMemberTicketManualAddVOList}).then(res => {
+            console.log('确定添加', res)
+        })
+    }
+    handlePageChange = (page, pageSize) => {
+        this.setState(
+          {
+            current: page,
+            pageSize,
+          },
+          this.handleSearch,
+        );
+      };
     render(h) {
-        const { listData, page} = this.state;
+        const { listData, total, pageSize, current } = this.state;
 
         const columns = [
             {
                 title: '订单号码',
-                dataIndex: 'number',
+                dataIndex: 'orderCode',
             },
             {
                 title: '订单状态',
-                dataIndex: 'status',
-                render: text=><a>{text}</a>
+                dataIndex: 'orderStatus',
+                render: text => <>{orderStatus.getValue(text)}</>
             },
             {
-                title: '下单时间',
-                dataIndex: 'addtime',
+                title: '支付时间',
+                dataIndex: 'payDate',
                 render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>
             },
             {
                 title: '实付金额',
-                dataIndex: 'jine',
-                render: text => <>￥{text}</>
+                dataIndex: 'totalMoney',
+                render: text => <>{formatMoneyWithSign(text)}</>
             },
             {
                 title: '下单人手机',
-                dataIndex: 'phone',
+                dataIndex: 'buyerPhone',
             },
         ]
 
         const data = [
             {
               key: '1',
-              number: '221121212',
-              status: 0,
-              jine: '188',
-              phone: '1301581313'
+              orderCode: '221121212',
+              orderStatus: 0,
+              totalMoney: '188',
+              buyerPhone: '1301581313'
             },
             {
                 key: '2',
-                number: '221121212',
-                status: 0,
-                jine: '188',
-                phone: '1301581313'
+                orderCode: '221121212',
+                orderStatus: 0,
+                totalMoney: '188',
+                buyerPhone: '1301581313'
             },
         ]
         const rowSelection = {
             onChange: (selectedRowKeys, selectedRows) => {
+                this.setState({
+                    selectedRows: selectedRows
+                })
               console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
-            getCheckboxProps: record => ({
-            //   name: record.name,
-            }),
+            }
           };
         const {
             form: { getFieldDecorator },
           } = this.props;
-        const { initParams } = this.state;
 
         return (
             <>
@@ -103,13 +152,13 @@ class Add extends React.Component {
             <Form layout="inline">
                       <FormItem label="主订单号">
                           {
-                              getFieldDecorator('number1')
+                              getFieldDecorator('orderCode')
                               (<Input placeholder="请输入主订单号编号"/>)
                           }
                       </FormItem>
                       <FormItem label="下单手机号">
                           {
-                              getFieldDecorator('phone')
+                              getFieldDecorator('buyerPhone')
                               (<Input placeholder="请输入下单手机号"/>)
                           }
                       </FormItem>
@@ -125,13 +174,20 @@ class Add extends React.Component {
             </Card>
             <div>只可以查询10月25日-11月11日的订单 </div>
             <Card>
-                <Table rowSelection={rowSelection} columns={columns} dataSource={data} />,
+                <Table rowSelection={rowSelection} columns={columns} dataSource={listData} 
+                pagination={{
+                    current,
+                    total,
+                    pageSize,
+                    onChange: this.handlePageChange,
+                }}
+                />,
             </Card>
             <div style={{textAlign:"right"}}>
-            <Button onClick={this.handleReset}>
+            <Button>
                 取消
             </Button>
-            <Button type="primary" onClick={this.handleReset} style={{ marginLeft: 30 }}>
+            <Button type="primary" disabled={!this.state.selectedRows.length} onClick={this.handleAdd} style={{ marginLeft: 30 }}>
                 确定
             </Button>
             </div>

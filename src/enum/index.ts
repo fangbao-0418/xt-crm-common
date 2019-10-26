@@ -9,3 +9,5 @@ export {default as receiveStatus} from './receiveStatus'
 export {default as refundType} from './refundType'
 export {default as returnReason} from './returnReason'
 export {default as customerFollowType } from './customerFollowType';
+export {default as orderStatus } from './orderStatus'; // 订单状态
+export {default as lotteryType } from './lotteryType'; // 抽奖类型
