@@ -43,6 +43,7 @@ class Main extends React.Component<Props, State> {
       if (err) {
         return
       }
+      value.jumpUrl = (value.jumpUrl || '').trim()
       const { dataSource, selectIndex } = this.state
       if (selectIndex < dataSource.length) {
         const detail = dataSource[selectIndex]
