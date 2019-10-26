@@ -212,9 +212,10 @@ class GoodsList extends React.Component {
       {
         title: '主图',
         dataIndex: 'coverUrl',
+        width:120,
         render: record => (
           <>
-            <Image style={{ height: 60, width: 60 }} src={replaceHttpUrl(record)} alt="主图" />
+            <Image style={{ height: 100, width: 100,minWidth:100 }} src={replaceHttpUrl(record)} alt="主图" />
           </>
         ),
       },
