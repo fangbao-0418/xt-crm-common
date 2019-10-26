@@ -180,7 +180,7 @@ export default class extends Component {
                                         message: '请输入姓名',
                                     }],
                                     initialValue: name
-                                })(<Input placeholder="请输入姓名" style={{ width: 200 }} />)}
+                                })(<Input placeholder="请输入姓名" style={{ width: 200 }} maxLength={20} />)}
                             </Form.Item>
                             <Form.Item label="手机号">
                                 {getFieldDecorator('mobilePhone', {
@@ -189,7 +189,7 @@ export default class extends Component {
                                         message: '请输入手机号',
                                     }],
                                     initialValue: phone,
-                                })(<Input placeholder="请输入手机号" style={{ width: 200 }} />)}
+                                })(<Input placeholder="请输入手机号" style={{ width: 200 }} maxLength={11} />)}
                             </Form.Item>
                             <Form.Item label="省市区">
                                 {getFieldDecorator('area', {
