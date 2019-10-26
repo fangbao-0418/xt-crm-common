@@ -97,7 +97,6 @@ class UploadView extends Component {
       fileList.push({
         ...file
       });
-      console.log(fileList, 'fileList')
       this.setState({
         fileList: fileList,
       });
