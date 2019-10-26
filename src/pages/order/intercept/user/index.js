@@ -433,7 +433,7 @@ export default class extends Component {
         const { dispatch } = this.props;
         const { idsByLevel, blockList } = this.state;
         const payload = idsByLevel.map((item) => {
-            const currentBlockList = blockList.find(obj => obj.level == item.level)
+            const currentBlockList = blockList.find(obj => obj.memberType == item.memberType)
             return {
                 ...item,
                 orderInteception: currentBlockList.privileged
@@ -441,7 +441,16 @@ export default class extends Component {
         })
         dispatch[namespace].setPrivilegeByLevel(payload).then((res) => {
             if (res) {
-                this.setState({ visible: false, idsByLevel: [] })
+                this.setState({
+                    visible: false,
+                    idsByLevel: [{
+                        memberType: 10,
+                    }, {
+                        memberType: 20
+                    }, {
+                        memberType: 30
+                    }]
+                })
             }
         })
     }
