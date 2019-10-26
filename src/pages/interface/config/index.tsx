@@ -102,14 +102,14 @@ class Main extends React.Component<Props, State> {
           </Form.Item>
           <Form.Item label="导航栏背景图" required={true}>
             {getFieldDecorator('navigationBackgroudImg', {
-              initialValue: initImgList(navigationBackgroudImg),
+              initialValue: initImgList(navigationBackgroudImg, 'img'),
               rules: [
                 {
                   required: true,
                   message: '请上传导航栏背景图'
                 },
               ],
-            })(<UploadView accept=".jpg, .jpeg, .png" placeholder="上传背景图图" listType="picture-card" listNum={1} size={.3} />)}
+            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传背景图图" listType="picture-card" listNum={1} size={.3} />)}
             <div>
               1、该背景图主要用在首页顶部导航栏，必填项。<br/>
               2、图片格式支持png、jpg、gif格式。<br/>
@@ -118,14 +118,14 @@ class Main extends React.Component<Props, State> {
           </Form.Item>
           <Form.Item label="icon背景图" >
             {getFieldDecorator('iconBackgroudImg', {
-              initialValue: initImgList(iconBackgroudImg),
+              initialValue: initImgList(iconBackgroudImg, 'img'),
               rules: [
                 {
                   required: false,
                   message: '图片格式不正确'
                 },
               ],
-            })(<UploadView accept=".jpg, .jpeg, .png" placeholder="上传icon图" listType="picture-card" listNum={1} size={.3} />)}
+            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传icon图" listType="picture-card" listNum={1} size={.3} />)}
             <div>
               1、该背景图主要用在首页icon区域，非必填项，默认白色背景图<br/>
               2、图片格式支持png、jpg、gif格式。。<br/>

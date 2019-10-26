@@ -36,13 +36,12 @@ class UploadView extends Component {
     this.handleRemove = this.handleRemove.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({
-        fileList: this.initFileList(this.props.value),
-      });
-    }
+  componentWillReceiveProps (props) {
+    this.setState({
+      fileList: this.initFileList(props.value)
+    });
   }
+
   replaceUrl (url) {
     if (!url) {
       return url

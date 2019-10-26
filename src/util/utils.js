@@ -132,14 +132,14 @@ export function formatData(data) {
   return str.substr(1)
 }
 
-export function initImgList(imgUrlWap) {
+export function initImgList(imgUrlWap, uid) {
   if (imgUrlWap) {
     if (imgUrlWap.indexOf('http') !== 0) {
       imgUrlWap = 'https://assets.hzxituan.com/' + imgUrlWap;
     }
     return [
       {
-        uid: `${-parseInt(Math.random() * 1000)}`,
+        uid: uid || `${-parseInt(Math.random() * 1000)}`,
         url: imgUrlWap,
         status: 'done',
         thumbUrl: imgUrlWap,
