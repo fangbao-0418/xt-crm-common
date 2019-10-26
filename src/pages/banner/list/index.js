@@ -7,7 +7,7 @@ import { TextMapPosition } from '../constant';
 import Image from '../../../components/Image';
 import Search from './Search'
 const replaceHttpUrl = imgUrl => {
-  if (imgUrl.indexOf('http') !== 0) {
+  if (imgUrl.trim().indexOf('http') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
   }
   return imgUrl;
