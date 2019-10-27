@@ -32,35 +32,37 @@ class Main extends React.Component<Props, State> {
   }
   public state: State = {
     title: '', 
-    iconBackgroudImg: 'string',
-    iconColor: 'string',
-    navigationBackgroudImg: 'string'
+    iconBackgroudImg: '',
+    iconColor: '#333333',
+    navigationBackgroudImg: ''
   }
   public componentDidMount () {
     //获取详情信息
     api.getHomeStyle().then((res: any) => {
       console.log('getHomeStyle', res)
-      this.setState({
-        title: res.title,
-        iconBackgroudImg: res.iconBackgroudImg,
-        iconColor: res.iconColor,
-        navigationBackgroudImg: res.navigationBackgroudImg
-      })
+      if (res) {
+        this.setState({
+          title: res.title,
+          iconBackgroudImg: res.iconBackgroudImg,
+          iconColor: res.iconColor,
+          navigationBackgroudImg: res.navigationBackgroudImg
+        }) 
+      }
     })
   }
   //提交
   public onSubmit () {
     this.props.form.validateFields((err, value) => {
       if (err) {
+        APP.error('保存失败')
         return
       }
-    
       
       const params = {
         title: value.title,
-        iconBackgroudImg: value.iconBackgroudImg && replaceHttpUrl(value.iconBackgroudImg[0].durl),
+        iconBackgroudImg: value.iconBackgroudImg.length && replaceHttpUrl(value.iconBackgroudImg[0].durl) || "",
         iconColor: value.iconColor,
-        navigationBackgroudImg: value.navigationBackgroudImg && replaceHttpUrl(value.navigationBackgroudImg[0].durl),
+        navigationBackgroudImg: value.navigationBackgroudImg.length && replaceHttpUrl(value.navigationBackgroudImg[0].durl) || "",
       }
       console.log('params', params)
       
@@ -113,7 +115,7 @@ class Main extends React.Component<Props, State> {
             <div>
               1、该背景图主要用在首页顶部导航栏，必填项。<br/>
               2、图片格式支持png、jpg、gif格式。<br/>
-              3、图片尺寸为XX，大小不超过Xkb。
+              3、图片尺寸为828*266像素，大小不超过300kb。
             </div>
           </Form.Item>
           <Form.Item label="icon背景图" >
@@ -127,9 +129,9 @@ class Main extends React.Component<Props, State> {
               ],
             })(<UploadView accept=".jpg, .gif, .png" placeholder="上传icon图" listType="picture-card" listNum={1} size={.3} />)}
             <div>
-              1、该背景图主要用在首页icon区域，非必填项，默认白色背景图<br/>
-              2、图片格式支持png、jpg、gif格式。。<br/>
-              3、图片尺寸为XX，大小不超过Xkb。
+              1、该背景图主要用在首页icon区域，非必填项，默认白色背景图。<br/>
+              2、图片格式支持png、jpg、gif格式。<br/>
+              3、一行图标背景图片尺寸为750*180像素；二行图标背景图片尺寸为750*360像素；大小不超过300kb。
             </div>
           </Form.Item>
           <Form.Item label='icon名称色值：'>
