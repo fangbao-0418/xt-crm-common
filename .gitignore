@@ -5,6 +5,7 @@
 # roadhog-api-doc ignore
 /src/utils/request-temp.js
 _roadhog-api-doc
+src/packages
 
 # production
 ./src/util/baseHost.js
@@ -37,3 +38,4 @@ functions/*
 # screenshot
 screenshot
 .firebase
+pubconfig.json

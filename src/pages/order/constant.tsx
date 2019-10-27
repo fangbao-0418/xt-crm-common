@@ -105,11 +105,11 @@ export enum enumOrderStatus {
  * @property WaitConfirm {number} 待审核:10
  * 
  * @description 退货，换货
- * @description Operating {number} 处理中:20
+ * @description Operating {number} 待用户发货:20
+ * @property OperatingFailed {number} 退款失败:21
+ * @property OperatingOfMoney {number} 退款中:23
  * @property OperatingOfGoods{number} 待平台收货:24
  * 
- * @property OperatingOfMoney {number} 待用户发货:23
- * @property OperatingFailed {number} 退款失败:21
  * 
  * @description 换货
  * @property WaitPlatformDelivery {number} 待平台发货:25

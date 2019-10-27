@@ -5,6 +5,7 @@ import { connect, parseQuery, setQuery } from '@/util/utils';
 import styles from './index.module.scss';
 import Modal from './modal';
 import ModalInvit from './modalInvit';
+import { levelName } from '../../../utils';
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 let unlisten = '';
@@ -131,14 +132,14 @@ export default class extends Component {
             <Descriptions.Item label="用户名">{data.nickName || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="注册时间">{formatTime(data.createTime)}</Descriptions.Item>
             <Descriptions.Item label="手机号">{data.phone}</Descriptions.Item>
-            <Descriptions.Item label="等级">{data.memberTypeDO ? data.memberTypeDO.value : ''}</Descriptions.Item>
-            <Descriptions.Item label=" 微信">{data.wechat || '暂无'}</Descriptions.Item>
+            <Descriptions.Item label="等级">{levelName(data.memberTypeVO)}</Descriptions.Item>
+            <Descriptions.Item label="微信">{data.wechat || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="上级">
-              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName}</span> {data.parentMemberTypeDO ? data.parentMemberTypeDO.value : ''}
+              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName}</span> {levelName(data.parentMemberTypeVO)}
             </Descriptions.Item>
             <Descriptions.Item label="邀请人">
-              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.inviteId })}>{data.inviteName}</span> {data.inviteMemberTypeDO ? data.inviteMemberTypeDO.value : ''}
+              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.inviteId })}>{data.inviteName}</span>  {levelName(data.inviteMemberTypeVO)}
             </Descriptions.Item>
           </Descriptions>
           <Descriptions title="实名认证" column={2} className={styles.authentication}>
