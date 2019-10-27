@@ -22,7 +22,7 @@ const formLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 8 },
+    sm: { span: 10 },
   },
 };
 class Main extends React.Component<Props, State> {
@@ -111,8 +111,10 @@ class Main extends React.Component<Props, State> {
                   message: '请上传导航栏背景图'
                 },
               ],
-            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传背景图图" listType="picture-card" listNum={1} size={.3} />)}
-            <div>
+            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传背景图" listType="picture-card" listNum={1} size={.3} />)}
+          </Form.Item>
+          <Form.Item label="注意事项">
+            <div style={{lineHeight: 1.5}}>
               1、该背景图主要用在首页顶部导航栏，必填项。<br/>
               2、图片格式支持png、jpg、gif格式。<br/>
               3、图片尺寸为828*266像素，大小不超过300kb。
@@ -128,10 +130,13 @@ class Main extends React.Component<Props, State> {
                 },
               ],
             })(<UploadView accept=".jpg, .gif, .png" placeholder="上传icon图" listType="picture-card" listNum={1} size={.3} />)}
-            <div>
+          </Form.Item>
+          <Form.Item label="注意事项">
+            <div style={{lineHeight: 1.5}}>
               1、该背景图主要用在首页icon区域，非必填项，默认白色背景图。<br/>
               2、图片格式支持png、jpg、gif格式。<br/>
-              3、一行图标背景图片尺寸为750*180像素；二行图标背景图片尺寸为750*360像素；大小不超过300kb。
+              3、一行图标背景图片尺寸为750*180像素；<br/>
+              二行图标背景图片尺寸为750*360像素；大小不超过300kb。
             </div>
           </Form.Item>
           <Form.Item label='icon名称色值：'>
@@ -146,9 +151,11 @@ class Main extends React.Component<Props, State> {
                 <Input maxLength={7} placeholder="请输入首页icon名称的色值，如#333333" />
               )
             }
-            <div>
-                <p>1.该色值主要用在首页icon名称，必填项，默认黑色#333333。</p>
-                <p>2.色值范围是#000000~#FFFFFF。</p>
+          </Form.Item>
+          <Form.Item label="注意事项">
+            <div style={{lineHeight: 1.5}}>
+              1.该色值主要用在首页icon名称，必填项，默认黑色#333333。<br/>
+              2.色值范围是#000000~#FFFFFF。<br/>
             </div>
           </Form.Item>
           <Form.Item>
