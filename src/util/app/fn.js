@@ -7,6 +7,8 @@ export function getH5Origin () {
     origin = 'https://pre-xt-myouxuan.hzxituan.com/pre/index.html';
   } else if (host.indexOf('test-crmadmin') >= 0) {
     origin = 'https://testing.hzxituan.com/';
+  } else if (host.indexOf('test2-crmadmin') >= 0) {
+    origin = 'https://testing2.hzxituan.com/';
   } else if (host.indexOf('xt-crmadmin') >= 0) {
     /** 正式 */
     origin = 'https://myouxuan.hzxituan.com/';
