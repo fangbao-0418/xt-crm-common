@@ -162,7 +162,7 @@ export default class extends Component {
                         <Order type="order" intercept={true} />
                     </TabPane>
                     <TabPane tab="相关售后" key='after'>
-                        <Refund type="refund" refundStatus={''} intercept={true} />
+                        <Refund key="ALL" type="ALL" intercept={true} />
                     </TabPane>
                 </Tabs>
                 <Modal
