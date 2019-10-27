@@ -296,7 +296,7 @@ class GoodsList extends React.Component {
             <FormItem label="商品ID">
               {getFieldDecorator('productId', {
                 initialValue: initParams.productId || ''
-              })(<Input placeholder="请输入商品ID" />)}
+              })(<Input type='number' placeholder="请输入商品ID" />)}
             </FormItem>
             <FormItem label="供应商">
               {getFieldDecorator('storeId', {

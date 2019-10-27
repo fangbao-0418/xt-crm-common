@@ -184,7 +184,7 @@ export const prefix = url => {
       apiDomain = LocalStorage.get('apidomain') || baseHost;
     }
   }
-  return `${apiDomain}${url}`;
+  return /https?/.test(url) ? url : `${apiDomain}${url}`;
 };
 
 /**

@@ -578,7 +578,7 @@ class GoodsEdit extends React.Component {
               </Radio.Group>,
             )}
           </Form.Item>
-          {/* <Form.Item
+          <Form.Item
             label="退货地址"
             wrapperCol={{
               span: 18
@@ -595,9 +595,9 @@ class GoodsEdit extends React.Component {
               />
               {getFieldDecorator('returnPhone', {
                 rules: [
-                  {required: true, message: '收货人电话不能为空'},
+                  // {required: true, message: '收货人电话不能为空'},
                   {
-                    pattern: APP.regular.phone,
+                    max: 12,
                     message: '收货人电话格式不正确'
                   }
                 ]
@@ -608,7 +608,7 @@ class GoodsEdit extends React.Component {
                   name="returnPhone"
                   value={this.state.returnPhone}
                   type="tel"
-                  maxLength={11}
+                  maxLength={12}
                   onChange={this.handleInput}
                 />
               )}
@@ -621,7 +621,7 @@ class GoodsEdit extends React.Component {
                 onChange={this.handleInput}
               />
             </div>
-          </Form.Item> */}
+          </Form.Item>
         </Card>
         <Card style={{ marginTop: 10 }}>
           <Form.Item label="商品详情页">

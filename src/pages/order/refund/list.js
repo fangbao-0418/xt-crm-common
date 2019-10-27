@@ -6,6 +6,7 @@ import SearchForm from '@/components/search-form';
 import { getListColumns, formFields } from './config';
 import { withRouter } from 'react-router-dom';
 import { formatDate } from '@/pages/helper';
+import { typeMapRefundStatus } from './config';
 import { parseQuery } from '@/util/utils';
 const formatFields = (range) => {
   range = range || [];
@@ -26,7 +27,7 @@ export default class extends React.Component {
     tableConfig: {},
     expands: []
   };
-
+  
   componentDidMount() {
     this.query();
   }
@@ -41,6 +42,7 @@ export default class extends React.Component {
     delete fieldsValues['apply'];
     delete fieldsValues['handle'];
     delete fieldsValues['payTime'];
+    let refundStatus = (fieldsValues.refundStatus ? [fieldsValues.refundStatus]: null) || typeMapRefundStatus[this.props.type];
     const params = {
       ...fieldsValues,
       applyStartTime,
@@ -49,7 +51,7 @@ export default class extends React.Component {
       handleEndTime,
       payStartTime,
       payEndTime,
-      refundStatus: fieldsValues.refundStatus || this.props.refundStatus,
+      refundStatus,
       page: this.state.current,
       pageSize: this.state.pageSize,
     };
@@ -79,7 +81,9 @@ export default class extends React.Component {
     }
   };
   handleSearch = () => {
-    this.query();
+    this.setState({
+      current: 1
+    }, this.query)
   };
 
   export = () => {
@@ -115,7 +119,7 @@ export default class extends React.Component {
           format={this.handleFormat}
           search={this.handleSearch}
           clear={this.handleSearch}
-          options={formFields(this.props.refundStatus,intercept)}
+          options={formFields(this.props.type,intercept)}
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>

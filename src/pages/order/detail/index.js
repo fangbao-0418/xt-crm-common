@@ -11,6 +11,13 @@ import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant';
 import DeliveryModal from './components/delivery-modal';
 import { dateFormat } from '@/util/utils';
 import moment from 'moment';
+import { formatMoneyWithSign } from '../../helper';
+const styleObj = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
+  padding: '0 24px'
+}
 
 const { confirm } = Modal;
 class Detail extends Component {
