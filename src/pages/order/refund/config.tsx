@@ -52,13 +52,13 @@ export const typeMapRefundStatus = {
 
 
 export const formFields = function (refundStatus: any, intercept: any) {
-  let options = orderRefundStatus[refundStatus];
+  let options = refundStatusOptions[refundStatus];
   let selectRefundStatus = options.length > 1 ?
     [{
       type: 'select',
       id: 'refundStatus',
       label: '售后单状态',
-      options: orderRefundStatus[refundStatus]
+      options: options
     }] : [];
   return [
     {
