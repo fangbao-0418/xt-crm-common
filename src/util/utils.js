@@ -2,6 +2,7 @@ import * as redux from 'react-redux';
 import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
 import { baseHost } from './baseHost';
+import { isNil } from 'lodash';
 import { Decimal } from 'decimal.js';
 import { ExpressCompanyOptions } from '@/config';
 import * as LocalStorage from '@/util/localstorage';
@@ -157,8 +158,8 @@ export function getHeaders(headers) {
 
 export const prefix = url => {
   let apiDomain = baseHost;
-  if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
-  return `${apiDomain}${url}`;
+  if (!(process.env.PUB_ENV === 'prod' || process.env.PUB_ENV === 'pre')) apiDomain = LocalStorage.get('apidomain') || baseHost;
+  return /https?/.test(url) ? url : `${apiDomain}${url}`;
 };
 
 /**
@@ -182,6 +183,40 @@ export function replaceHttpUrl(imgUrl = '') {
   return imgUrl;
 }
 
+export function mapTree(org) {
+  const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
+  return {
+    label: org.name,
+    value: org.id,
+    data: { ...org },
+    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
+  };
+};
+
+export const formatMoneyBeforeRequest = price => {
+  if (isNil(price)) {
+    return price;
+  }
+
+  const pasred = parseFloat(price);
+  if (isNaN(pasred)) {
+    return undefined;
+  }
+
+  return (pasred * 100).toFixed();
+};
+
+
+export function treeToarr(list = [], arr) {
+  const results = arr || [];
+  for (const item of list) {
+    results.push(item);
+    if (Array.isArray(item.childList)) {
+      treeToarr(item.childList, results)
+    }
+  }
+  return results;
+}
 /**
  * @description 去掉多余的属性
  * @param {需要过滤的对象} obj 

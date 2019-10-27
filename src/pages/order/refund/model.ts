@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { refundOperate, refundDetail, againRefund, closeOrder, confirmReceipt } from '../api'
+import { refundOperate, refundDetail, againRefund, closeOrder, confirmReceipt, cancelRefund } from '../api'
 export const namespace: string = 'refund.model';
 export default {
   namespace,
@@ -63,6 +63,19 @@ export default {
       const res = await confirmReceipt(payload.id);
       if (res) {
         message.success('完成售后成功');
+      }
+      dispatch({
+        type: `${namespace}/getDetail`,
+        payload: {id: payload.id},
+      })
+    },
+    /**
+     * 取消售后
+     */
+    cancelRefund: async (payload: any = {}) => {
+      const res = await cancelRefund(payload.id, payload.info);
+      if (res) {
+        message.success('取消售后成功');
       }
       dispatch({
         type: `${namespace}/getDetail`,

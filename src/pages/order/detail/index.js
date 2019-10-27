@@ -116,7 +116,7 @@ class Detail extends Component {
           buyerInfo={data.buyerInfo}
           refresh={this.query}
         />
-        <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} />
+        <BuyerInfo memberPayHuabeiLogDO={data.memberPayHuabeiLogDO} buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} />
         <Card title="详细信息">
           {map(childOrderList, (item, index) => {
             return (
