@@ -135,7 +135,8 @@ const BenefitInfo = ({
     }, {
       title: '收益金额',
       width: '15%',
-      dataIndex: 'amount'
+      dataIndex: 'amount',
+      render: MoneyRender
     }, {
       title: '结算状态',
       width: '20%',
