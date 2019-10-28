@@ -3,6 +3,7 @@ import { message } from 'antd';
 import { formItemLayout, radioStyle } from '@/config';
 import { DatePicker, Row, Col, Card, Form, Checkbox, Input, Button, Radio } from 'antd';
 import { saveCouponTaskInfo } from '../../api';
+import { replaceHttpUrl } from '@/util/utils';
 import { download } from '@/util/utils';
 import Upload from '@/components/upload';
 import { disabledDate as beforeDisabledDate, afterDisabledDate } from '@/pages/helper';
@@ -21,19 +22,22 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
     let result;
     switch (fields.receiveUserGroup) {
       case 0:
-        return 'all';
+        result = 'all';
+        break;
       case 1:
         fields.userLevel = fields.userLevel.includes(30) ? [...fields.userLevel, 40] : fields.userLevel;
         result = fields.userLevel.join(',')
-        return result;
+        break;
       case 2:
         result = fields.userPhones;
-        return result;
+        break;
       case 3:
-        return fileValues;
+        result = fileValues;
+        break;
       default:
         break;
     }
+    return result;
   }
   const getExecutionTime = (fields) => {
     let result;
@@ -68,7 +72,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
 
   const handleSave = () => {
     validateFields(async (err, fields) => {
-      const userLevelChecked =  Array.isArray(fields.userLevel) && fields.userLevel.length === 0;
+      const userLevelChecked = Array.isArray(fields.userLevel) && fields.userLevel.length === 0;
       if (isUserLevel() && (!fields.userLevel || userLevelChecked)) {
         message.error('请选择用户等级');
         return;
@@ -93,7 +97,6 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
   }
 
   const handleChange = (fileList) => {
-    console.log('fileList=>', fileList);
     fileList = fileList.slice(-1);
     fileList = fileList.map(file => {
       if (file.response) {
@@ -102,10 +105,10 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
       return file;
     });
     const { url, name } = fileList[0] || {};
-    setFileValues(url + ',' + name);
+    setFileValues(replaceHttpUrl(url) + ',' + name);
     setFileList(fileList);
   }
-  
+
   const handleCancel = () => {
     history.goBack();
   }
@@ -181,15 +184,15 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
           {getFieldDecorator('displayStyle', { initialValue: 1 })(
             <Radio.Group>
               <div style={{ display: "inline-block", marginRight: 30 }} >
-                <Radio  value={1}>普通</Radio>
+                <Radio value={1}>普通</Radio>
                 <div>
-                  <img  style={{width:130,height:200}} src={(require('@/assets/images/putong.png'))}></img>
+                  <img style={{ width: 130, height: 200 }} src={(require('@/assets/images/putong.png'))}></img>
                 </div>
               </div>
               <div style={{ display: "inline-block" }} >
-                <Radio  value={2}>定制</Radio>
+                <Radio value={2}>定制</Radio>
                 <div>
-                  <img  style={{width:130,height:200}} src={(require('@/assets/images/dingzhi.png'))}></img>
+                  <img style={{ width: 130, height: 200 }} src={(require('@/assets/images/dingzhi.png'))}></img>
                 </div>
               </div>
             </Radio.Group>
