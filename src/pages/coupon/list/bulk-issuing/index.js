@@ -93,8 +93,8 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
   }
 
   const handleChange = (fileList) => {
+    console.log('fileList=>', fileList);
     fileList = fileList.slice(-1);
-    console.log('fileList=>', fileList)
     fileList = fileList.map(file => {
       if (file.response) {
         file.url = file.response.url;

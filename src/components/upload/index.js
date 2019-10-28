@@ -94,8 +94,10 @@ class UploadView extends Component {
       file.url = urlList && urlList[0];
       file.durl = file.url;
       fileList.push({
-        ...file
+        ...file,
+        name: file.name
       });
+      console.log(file, fileList, 'fileList')
       this.setState({
         fileList: fileList,
       });
@@ -104,7 +106,7 @@ class UploadView extends Component {
           ...item,
           url: this.replaceUrl(item.url),
           durl: this.replaceUrl(item.durl),
-          name: this.getViewUrl(item.url)
+          // name: file.name
         }
       })
       isFunction(onChange) && onChange(value);
