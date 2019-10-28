@@ -30,7 +30,8 @@ const LogisticsInfo = ({ logistics = {}, orderInfo = {}, onSuccess, mainorderInf
             <Button
               type="link"
               target="_blank"
-              href={`http://cha.chawuliu.cn/?stype=kd&q=${data.expressCode || ''}`}
+              // href={`http://cha.chawuliu.cn/?stype=kd&q=${data.expressCode || ''}`}
+              href={`https://www.kuaidi100.com/chaxun?com=${data.expressCompanyName}&nu=${data.expressCode || ''}`}
             >
               查询物流信息
             </Button>
