@@ -4,8 +4,12 @@ import { omitBy, isNil, isPlainObject, get as lodashGet } from 'lodash';
 import { formatData, getHeaders, prefix } from './utils';
 var qs = require('qs');
 // const prod = true;
-
+let ajaxCount = 0;
+const handleLoading = () => {
+  ajaxCount++
+}
 export const request = (url, config) => {
+  handleLoading()
   const _config = {
     url: prefix(url),
     method: 'get',
@@ -16,6 +20,7 @@ export const request = (url, config) => {
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
+      handleLoading()
       if (res.status === 401) {
         window.location = '/#/login';
         return;
@@ -27,8 +32,8 @@ export const request = (url, config) => {
         return Promise.reject(res.data);
       }
     })
-
     .catch(error => {
+      handleLoading()
       const httpCode = lodashGet(error, 'response.status');
       if (httpCode === 401 || httpCode === 502) {
         message.error('未登录');
