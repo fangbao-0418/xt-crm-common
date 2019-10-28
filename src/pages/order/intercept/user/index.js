@@ -130,29 +130,27 @@ export default class extends Component {
                 </Card>
 
                 <Card>
-                    <Spin spinning={loading}>
-                        <div style={{ display: 'flex', marginBottom: 8 }}>
-                            <div style={{ flex: 'auto' }}>
-                                <Button type='primary' onClick={this.setPrivilegeByLevel}>按等级设置</Button>
-                            </div>
-                            <Button type='primary' style={{ marginRight: 8 }} onClick={this.batchOpenPrivilege}>批量开启</Button>
-                            <Button type='primary' onClick={this.batchClosePrivilege}>批量关闭</Button>
+                    <div style={{ display: 'flex', marginBottom: 8 }}>
+                        <div style={{ flex: 'auto' }}>
+                            <Button type='primary' onClick={this.setPrivilegeByLevel}>按等级设置</Button>
                         </div>
-                        <Table
-                            rowKey={(record) => record.id}
-                            columns={columns}
-                            dataSource={data['records']}
-                            rowSelection={rowSelection}
-                            pagination={{
-                                current: data['current'] || 1,
-                                pageSize: data['size'] || 10,
-                                total: data['total'],
-                                showQuickJumper: true,
-                                showSizeChanger: true
-                            }}
-                            onChange={(pagination) => { this.handleSearch(pagination) }}
-                        />
-                    </Spin>
+                        <Button type='primary' style={{ marginRight: 8 }} onClick={this.batchOpenPrivilege}>批量开启</Button>
+                        <Button type='primary' onClick={this.batchClosePrivilege}>批量关闭</Button>
+                    </div>
+                    <Table
+                        rowKey={(record) => record.id}
+                        columns={columns}
+                        dataSource={data['records']}
+                        rowSelection={rowSelection}
+                        pagination={{
+                            current: data['current'] || 1,
+                            pageSize: data['size'] || 10,
+                            total: data['total'],
+                            showQuickJumper: true,
+                            showSizeChanger: true
+                        }}
+                        onChange={(pagination) => { this.handleSearch(pagination) }}
+                    />
                 </Card>
 
                 <Modal

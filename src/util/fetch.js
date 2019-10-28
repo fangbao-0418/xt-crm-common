@@ -245,12 +245,17 @@ instance.interceptors.response.use(res => {
 })
 export function fetch(url, config = {}) {
   const { method = 'get', data = {}, ...others } = config;
+  APP.fn.handleLoading('start')
   return instance.request({
     url: prefix(url),
     data: qs.stringify(data),
     method,
     ...others
   }).then(res => {
+    APP.fn.handleLoading('end')
     return res;
+  }, (err) => {
+    APP.fn.handleLoading('end')
+    return Promise.reject(err)
   })
 };
