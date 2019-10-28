@@ -124,7 +124,7 @@ export default class extends React.Component {
     values.handle = values.handleStartTime && [moment(values.handleStartTime), moment(values.handleEndTime)]
     console.log(values, 'values')
     return (
-      <Spin tip="操作处理中..." spinning={this.state.loading}>
+      <Spin tip="操作处理中..." spinning={false}>
         <SearchForm
           values={values}
           getInstance={ref => this.SearchForm = ref}

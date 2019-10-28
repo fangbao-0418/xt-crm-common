@@ -319,7 +319,7 @@ class OrderList extends React.Component {
       },
     }
     return (
-      <Spin tip="操作处理中..." spinning={this.state.loading}>
+      <Spin tip="操作处理中..." spinning={false}>
         <Card title="筛选">
           <Form {...formItemLayout}>
             <Row gutter={24}>
@@ -396,7 +396,7 @@ class OrderList extends React.Component {
                     <Col span={4}>
                       <FormItem label="拦截订单">
                         {getFieldDecorator('interceptorFlag', {
-                          initialValue: ''
+                          initialValue: values.interceptorFlag
                         })(
                           <Select>
                             <Select.Option value={''}>全部</Select.Option>
@@ -408,7 +408,9 @@ class OrderList extends React.Component {
                     </Col>
                     <Col span={4}>
                       <FormItem label="拦截人电话">
-                        {getFieldDecorator('interceptorPhone')(<Input placeholder="请输入拦截人手机号" />)}
+                        {getFieldDecorator('interceptorPhone', {
+                          initialValue: values.interceptorPhone
+                        })(<Input placeholder="请输入拦截人手机号" />)}
                       </FormItem>
                     </Col>
                   </>
