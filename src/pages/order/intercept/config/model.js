@@ -1,4 +1,4 @@
-import { Message } from 'antd';
+import { message } from 'antd';
 import * as api from './api';
 
 export default {
@@ -10,17 +10,25 @@ export default {
     effects: dispatch => ({
         async getConfig() {
             const res = await api.getConfig();
-            return res;
+            if (res && res.success) {
+                message.destroy();
+                message.success('设置成功');
+                dispatch['order.intercept.config']['saveDefault']({
+                    switchOn: res.data === -1 ? false : true,
+                    rule: res.data
+                })
+            }
         },
         async setConfig(payload) {
-            await api.setConfig({ disposeRule: payload }).then((res) => {
-                if (res) {
-                    dispatch['order.intercept.config']['saveDefault']({
-                        switchOn: payload === -1 ? false : true,
-                        rule: payload
-                    })
-                }
-            });
+            const res = await api.setConfig({ disposeRule: payload });
+            if (res) {
+                message.destroy();
+                message.success('设置成功');
+                dispatch['order.intercept.config']['saveDefault']({
+                    switchOn: payload === -1 ? false : true,
+                    rule: payload
+                })
+            }
         }
     })
 }

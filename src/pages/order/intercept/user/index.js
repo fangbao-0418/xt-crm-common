@@ -38,7 +38,8 @@ const namespace = "order.intercept.user"
 
 @connect((state) => {
     return {
-        dataSource: state[namespace]
+        dataSource: state[namespace],
+        loading: state.loading.models[namespace]
     }
 })
 @Form.create()
@@ -46,7 +47,6 @@ export default class extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: false,
             visible: false,
             choiceVisible: false,
             selectedRowKeys: [],
@@ -98,9 +98,9 @@ export default class extends Component {
             }
         ];
 
-
+        const { loading } = this.props;
         const { data } = this.props.dataSource;
-        const { visible, level, choiceVisible, loading, selectedRowKeys, blockList, idsByLevel } = this.state;
+        const { visible, level, choiceVisible, selectedRowKeys, blockList, idsByLevel } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: (selectedRowKeys) => {
@@ -296,7 +296,7 @@ export default class extends Component {
         )
     }
 
-    handleSearch = (param = {}) => {
+    handleSearch = (param = {}, holdSelectedRowKeys) => {
         const { dispatch } = this.props;
         setQuery({
             current: param.current || 1,
@@ -309,22 +309,16 @@ export default class extends Component {
                     page: param.current || 1,
                     pageSize: param.pageSize || 10
                 }, (val) => (val === '' || isNil(val)));
-                this.setState({
-                    loading: true,
-                    selectedRowKeys: []
-                }, () => {
-                    dispatch[namespace].getUserList(payload).then(res => {
-                        if (res) {
-                            dispatch[namespace]['saveDefault']({
-                                data: res
-                            }).then(() => {
-                                this.setState({
-                                    loading: false
-                                })
-                            })
-                        }
-                    });
-                })
+                if (holdSelectedRowKeys) {
+                    dispatch[namespace].getUserList(payload);
+                }
+                else {
+                    this.setState({
+                        selectedRowKeys: []
+                    }, () => {
+                        dispatch[namespace].getUserList(payload);
+                    })
+                }
             }
         })
     }
@@ -339,7 +333,7 @@ export default class extends Component {
                     this.handleSearch({
                         current: obj.current,
                         pageSize: obj.pageSize
-                    });
+                    },true);
 
                 }
             })
@@ -352,7 +346,7 @@ export default class extends Component {
                     this.handleSearch({
                         current: obj.current,
                         pageSize: obj.pageSize
-                    });
+                    },true);
                 }
             })
 
@@ -382,7 +376,7 @@ export default class extends Component {
                 this.handleSearch({
                     current: obj.current,
                     pageSize: obj.pageSize
-                });
+                }, true);
             }
         })
 
@@ -402,7 +396,7 @@ export default class extends Component {
                 this.handleSearch({
                     current: obj.current,
                     pageSize: obj.pageSize
-                });
+                }, true);
             }
         })
     }
@@ -450,6 +444,9 @@ export default class extends Component {
                     }, {
                         memberType: 30
                     }]
+                }, () => {
+                    message.destroy();
+                    message.success('按等级设置拦截权限成功');
                 })
             }
         })

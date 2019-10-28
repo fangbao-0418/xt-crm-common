@@ -1,15 +1,20 @@
 import * as api from './api';
 import { message } from 'antd';
 
+const namespace='order.intercept.user';
 export default {
-    namespace: 'order.intercept.user',
+    namespace,
     state: {
         data: {}
     },
     effects: dispatch => ({
         async getUserList(param) {
             const res = await api.getUserList(param);
-            return res;
+            if (res) {
+                dispatch[namespace]['saveDefault']({
+                    data: res
+                });
+            }
         },
         async closePrivilege(param) {
             const res = await api.closePrivilege(param);
