@@ -36,7 +36,10 @@ export default class extends PureComponent {
   renderInput = (item) => {
     const placeholder = '请输入' + item.label;
     return (
-      <Input placeholder={placeholder} />
+      <Input
+        placeholder={placeholder}
+        {...item.sourceProps}
+      />
     )
   }
 

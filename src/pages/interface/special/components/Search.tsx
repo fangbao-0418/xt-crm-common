@@ -36,7 +36,7 @@ class Main extends React.Component<Props> {
           >
             {
               getFieldDecorator('subjectId', {initialValue: values.subjectId})(
-                <Input placeholder='请输入专题ID'/>
+                <Input type='number' placeholder='请输入专题ID'/>
               )
             }
           </Form.Item>

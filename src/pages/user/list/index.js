@@ -3,7 +3,9 @@ import { connect, parseQuery, setQuery } from '@/util/utils';
 import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table } from 'antd';
 import moment from 'moment';
 
-import { levelArr, sourceArr } from './config';
+// import { levelArr, sourceArr } from './config';
+import { levelArr, sourceArr } from '../config';
+import { levelName } from '../utils';
 import styles from './index.module.scss';
 import Modal from './modal';
 
@@ -36,7 +38,10 @@ function getColumns(scope) {
             dataIndex: 'phone'
         }, {
             title: '等级',
-            dataIndex: 'memberTypeDO.value'
+            dataIndex: 'memberLevel',
+            render(v, rec) {
+                return <span>{levelName({memberType:rec.memberTypeDO.key, memberTypeLevel:rec.memberTypeLevel})}</span>
+            }
         }, {
             title: '邀请人手机号',
             dataIndex: 'invitePhone',
@@ -156,6 +161,11 @@ export default class extends Component {
                     time: undefined, // 覆盖values.time
                     ...params
                 };
+                if(payload.memberType.indexOf('-') > -1) {
+                    const types = payload.memberType.split('-');
+                    payload.memberType = types[0];
+                    payload.memberTypeLevel = types[1];
+                }
                 dispatch['user.userlist'].getData(payload);
             }
         })
@@ -192,7 +202,7 @@ export default class extends Component {
                                 pattern: /^[0-9]*$/
                             }]
                         })(
-                            <Input />
+                            <Input type='number'/>
                         )
                     }
                 </FormItem>
@@ -335,7 +345,7 @@ export default class extends Component {
                             }}
                             onChange={this.onChange}
                             rowKey={record => record.id}
-                            loading={loading}
+                            // loading={loading}
                         />
                     </Col>
                     <Modal />

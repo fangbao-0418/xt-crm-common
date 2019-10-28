@@ -84,7 +84,7 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
         <Row type="flex" justify="space-between">
           <Button type="primary" icon="plus" onClick={handleAddCoupon}>新增优惠券</Button>
         </Row>
-        <CommonTable loading={loading} onChange={setPagination} rowKey="id" current={pagination.page} pageSize={pagination.pageSize} total={pagination.total} className="mt15" columns={getListColumns()} dataSource={records || []} />
+        <CommonTable onChange={setPagination} rowKey="id" current={pagination.page} pageSize={pagination.pageSize} total={pagination.total} className="mt15" columns={getListColumns()} dataSource={records || []} />
       </Card>
     </>
   )

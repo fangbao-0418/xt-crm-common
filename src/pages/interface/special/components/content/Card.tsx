@@ -29,7 +29,13 @@ class Main extends React.Component<Props, State> {
     }
   }
   public getSelectedRowKeys(list: any) {
-    return (list || []).map((item: any) => item.id)
+    const ids: any[] = [];
+    (list || []).map((item: any) => {
+      if (item && item.id !== undefined && ids.indexOf(item.id) === -1) {
+        ids.push(item.id)
+      }
+    })
+    return ids
   }
   public renderShop(): React.ReactNode {
     const { detail } = this.props
@@ -167,8 +173,8 @@ class Main extends React.Component<Props, State> {
     const { detail } = this.props;
     detail.css = detail.css || 1;
     const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons)
-    console.log('selectedRowKeys=>', selectedRowKeys);
-    this.tempCrmCoupons =  Array.prototype.concat(detail.crmCoupons);
+    this.tempCrmCoupons =  Array.prototype.concat(detail.crmCoupons || []);
+    console.log(this.tempCrmCoupons, 'this.tempCrmCoupons')
     return (
       <div>
         <Row gutter={12}>
@@ -218,15 +224,19 @@ class Main extends React.Component<Props, State> {
                 }
               }}
               onSelect={(record, selected) => {
-                console.log('onSelect=>', record, selected)
+                if (!record) {
+                  return
+                }
                 if (selected) {
-                  this.tempCrmCoupons.push(record)
+                  if (record) {
+                    this.tempCrmCoupons.push(record)
+                  }
                 } else {
-                  this.tempCrmCoupons = this.tempCrmCoupons.filter((item) => item.id !== record.id)
+                  this.tempCrmCoupons = this.tempCrmCoupons.filter((item) => item && (item.id !== record.id))
                 }
               }}
               onOk={() => {
-                console.log('onOk=>', this.tempCrmCoupons);
+                this.tempCrmCoupons = this.tempCrmCoupons.filter((item) => !!item)
                 detail.crmCoupons = this.tempCrmCoupons
                 this.onChange(detail)
                 this.setState({ couponVisible: false })

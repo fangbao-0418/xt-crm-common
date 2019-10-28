@@ -8,6 +8,7 @@ import { getListColumns, formFields } from './config';
 import { withRouter } from 'react-router-dom';
 import { formatDate } from '@/pages/helper';
 import { typeMapRefundStatus } from './config';
+import { parseQuery } from '@/util/utils';
 const formatFields = (range) => {
   range = range || [];
   return range.map(v => v && v.format('YYYY-MM-DD HH:mm'))
@@ -33,6 +34,8 @@ export default class extends React.Component {
   }
 
   query = (isExport = false, noFetch = false) => {
+    const { intercept } = this.props;
+    const obj = parseQuery();
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
@@ -51,15 +54,16 @@ export default class extends React.Component {
       payEndTime,
       refundStatus,
       page: this.state.current,
-      pageSize: this.state.pageSize
+      pageSize: this.state.pageSize,
     };
     this.payload = this.payload || {}
     this.payload.refundOrder = this.payload.refundOrder || {}
     this.payload.refundOrder[this.props.refundStatus || 'all'] = params
-    APP.fn.setPayload('order', this.payload)
-    if (noFetch) {
-      return
+    if (intercept) {
+      params.interception = 1;
+      params.interceptionMemberPhone = obj.iphone;
     }
+    APP.fn.setPayload('order', this.payload)
     if (isExport) {
       this.setState({
         loading: true
@@ -72,6 +76,9 @@ export default class extends React.Component {
         })
       })
     } else {
+      if (noFetch) {
+        return
+      }
       refundList(params).then(res => {
         const records = (res.data && res.data.records) || [];
         this.setState({
@@ -112,7 +119,7 @@ export default class extends React.Component {
   render() {
     const { tableConfig: { records = [], total = 0, current = 0 } } = this.state;
     let values = this.payload.refundOrder && this.payload.refundOrder[this.props.refundStatus || 'all'] || {}
-
+    const { intercept } = this.props;
     values.apply = values.applyEndTime && [moment(values.applyEndTime), moment(values.applyStartTime)]
     values.handle = values.handleStartTime && [moment(values.handleStartTime), moment(values.handleEndTime)]
     console.log(values, 'values')
@@ -123,19 +130,20 @@ export default class extends React.Component {
           getInstance={ref => this.SearchForm = ref}
           format={this.handleFormat}
           search={this.handleSearch}
-          clear={() => {
-            values = {}
-            this.query(false)
-            this.forceUpdate()
-          }}
+          // clear={() => {
+          //   values = {}
+          //   this.query(false)
+          //   this.forceUpdate()
+          // }}
           onChange={() => {
             // this.query(false, true)
           }}
-          options={formFields(this.props.type)}
+          clear={this.handleSearch}
+          options={formFields(this.props.type, intercept)}
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>
-        {records && records.length? <CommonTable
+        {records && records.length ? <CommonTable
           bordered
           columns={getListColumns({ query: this.query, history: this.props.history })}
           dataSource={records}
@@ -152,16 +160,16 @@ export default class extends React.Component {
           onExpand={(expanded, record) => {
             let expands = this.state.expands;
             if (expanded) {
-                expands.push(record.orderCode);
+              expands.push(record.orderCode);
             } else {
-                expands = expands.filter(v => v !== record.orderCode);
+              expands = expands.filter(v => v !== record.orderCode);
             }
-            this.setState({expands});
-        }}
+            this.setState({ expands });
+          }}
           onChange={this.handlePageChange}
           rowKey={record => record.orderCode}
           scroll={{ x: 1.5 }}
-        />: null}
+        /> : null}
       </Spin>
     );
   }

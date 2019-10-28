@@ -14,6 +14,7 @@ export function getH5Origin () {
   return origin
 }
 
+<<<<<<< HEAD
 export function setPayload (name, value) {
   if (name === null && value === undefined) {
     localStorage.setItem('payload', null)
@@ -28,3 +29,25 @@ export function getPayload (name) {
   const payload = JSON.parse(localStorage.getItem('payload'))
   return name ? payload && payload[name] : payload
 }
+=======
+export const handleLoading = (function () {
+  let ajaxCount = 0
+  return (loading = 'end') => {
+    if (loading === 'start') {
+      ajaxCount++
+    } else {
+      ajaxCount--
+    }
+    console.log(ajaxCount, 'ajaxCount')
+    const el = document.querySelector('#loading')
+    const display = getComputedStyle(el).display
+    if (ajaxCount > 0 && display === 'none') {
+      el.setAttribute('style','display:block')
+    } 
+    if (ajaxCount <= 0 && display !== 'none') {
+      el.setAttribute('style','display:none')
+      ajaxCount = 0
+    }
+  }
+})()
+>>>>>>> release/issue13

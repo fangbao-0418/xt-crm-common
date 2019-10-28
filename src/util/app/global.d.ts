@@ -1,5 +1,5 @@
 /// <reference path="./http.d.ts"  />
-
+/// <reference path="./fn.d.ts"  />
 declare module APP {
   interface History {
     push: (url: string) => void
@@ -7,11 +7,6 @@ declare module APP {
   interface ReduxActionProps<T = any> {
     type: string,
     payload?: T
-  }
-  interface FnProps {
-    getH5Origin: () => string
-    setPayload: (name: string | null, value?: any) => void
-    getPayload: <T = any>(name: string) => T
   }
   type DispatchProps = (action: ReduxActionProps) => void
   export var history: History

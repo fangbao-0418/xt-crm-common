@@ -1,6 +1,7 @@
 import React from 'react';
 import GoodCell from '@/components/good-cell';
 import SuppilerSelect from '@/components/suppiler-auto-select'
+import { enumRefundStatus } from '../constant';
 import refundType from '@/enum/refundType';
 import createType from '@/enum/createType';
 import { Button } from 'antd';
@@ -49,14 +50,16 @@ export const typeMapRefundStatus = {
   REJECTED: [40]
 }
 
-export const formFields = function (type: string) {
-  let options = refundStatusOptions[type];
-  let selectRefundStatus = options.length > 1 ? [{
-    type: 'select',
-    id: 'refundStatus',
-    label: '售后单状态',
-    options
-  }] : []
+
+export const formFields = function (refundStatus: any, intercept: any) {
+  let options = refundStatusOptions[refundStatus];
+  let selectRefundStatus = options.length > 1 ?
+    [{
+      type: 'select',
+      id: 'refundStatus',
+      label: '售后单状态',
+      options: options
+    }] : [];
   return [
     {
       type: 'input',
@@ -87,7 +90,10 @@ export const formFields = function (type: string) {
     }, {
       type: 'input',
       id: 'productId',
-      label: '商品ID'
+      label: '商品ID',
+      sourceProps: {
+        type: 'number'
+      }
     }, {
       type: 'input',
       id: 'operator',
@@ -117,8 +123,20 @@ export const formFields = function (type: string) {
       id: 'expressCode',
       label: '物流单号'
     },
-    ...selectRefundStatus
-  ];
+    ...selectRefundStatus,
+    , {
+      type: 'select',
+      id: 'interception',
+      label: '拦截订单',
+      options: [{ val: '全部', key: '' }, { val: '拦截订单', key: '1' }, { val: '非拦截订单', key: '0' }]
+    }, {
+      type: 'input',
+      id: 'interceptionMemberPhone',
+      label: '拦截人电话'
+    }
+  ].filter((item: any) => {
+    return intercept ? (item.id !== 'interception' && item.id !== 'interceptionMemberPhone') : true;
+  })
 }
 
 /**

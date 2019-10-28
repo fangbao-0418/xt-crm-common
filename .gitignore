@@ -38,3 +38,4 @@ functions/*
 # screenshot
 screenshot
 .firebase
+pubconfig.json

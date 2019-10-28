@@ -152,7 +152,7 @@ class OrderList extends React.Component {
               {getFieldDecorator('name', {initialValue: values.name})(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="供应商ID">
-              {getFieldDecorator('id', {initialValue: values.id})(<Input placeholder="" />)}
+              {getFieldDecorator('id', {initialValue: values.id})(<Input type='number' placeholder="" />)}
             </FormItem>
             <FormItem label="联系人">
               {getFieldDecorator('contacts', {initialValue: values.contacts})(<Input placeholder="" />)}
