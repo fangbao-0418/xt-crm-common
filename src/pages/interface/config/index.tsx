@@ -161,7 +161,7 @@ class Main extends React.Component<Props, State> {
               2.色值范围是#000000~#FFFFFF。<br/>
             </div>
           </Form.Item>
-          <Form.Item>
+          <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
             <Button type="primary" htmlType="submit">保 存</Button>
           </Form.Item>
         </Form>

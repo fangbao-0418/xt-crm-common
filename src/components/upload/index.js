@@ -108,7 +108,7 @@ class UploadView extends Component {
     if (pxSize) {
       const imgSize = await this.getImgSize(file) || {width:0, height:0}
       console.log('imgSize:pxSize', imgSize, pxSize)
-      if (!(imgSize.width <=  pxSize.width && imgSize.height <= pxSize.height)) {
+      if (!(imgSize.width ==  pxSize.width && imgSize.height == pxSize.height)) {
         message.error(`图片尺寸不正确`);
         return Promise.reject()
       }
