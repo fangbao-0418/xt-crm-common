@@ -14,7 +14,6 @@ var qs = require('qs');
 // const prod = true;
 
 export const request = (url, config) => {
-  APP.fn.handleLoading('start')
   const _config = {
     url: prefix(url),
     method: 'get',
@@ -27,7 +26,6 @@ export const request = (url, config) => {
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
-      APP.fn.handleLoading('end')
       if (res.status === 401) {
         window.location.href = '/#/login'
         return Promise.reject(res);
@@ -43,7 +41,6 @@ export const request = (url, config) => {
         return Promise.reject(res.data);
       }
     }, (error) => {
-      APP.fn.handleLoading('end')
       const httpCode = lodashGet(error, 'response.status');
       if (httpCode === 401 || httpCode === 502) {
         message.error('未登录');
@@ -130,7 +127,7 @@ const messageMap = {
   500: '服务端错误'
 };
 const instance = axios.create({
-  baseURL: prefix(''),
+  // baseURL: prefix(''),
   withCredentials: true,
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
@@ -161,7 +158,7 @@ export function fetch(url, config = {}) {
     method = 'get', data = {}, ...others
   } = config;
   return instance.request({
-    url,
+    url: prefix(url),
     data: qs.stringify(data),
     method,
     ...others
