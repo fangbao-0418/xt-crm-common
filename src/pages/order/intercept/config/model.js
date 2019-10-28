@@ -11,8 +11,6 @@ export default {
         async getConfig() {
             const res = await api.getConfig();
             if (res && res.success) {
-                message.destroy();
-                message.success('设置成功');
                 dispatch['order.intercept.config']['saveDefault']({
                     switchOn: res.data === -1 ? false : true,
                     rule: res.data
