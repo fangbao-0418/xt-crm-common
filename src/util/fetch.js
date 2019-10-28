@@ -249,7 +249,7 @@ instance.interceptors.response.use(res => {
 export function fetch(url, config = {}) {
   const { method = 'get', data = {}, ...others } = config;
   return instance.request({
-    url: prefix(''),
+    url: prefix(url),
     data: qs.stringify(data),
     method,
     ...others
