@@ -6,11 +6,12 @@ import { formatDate } from '../../helper';
 import { TextMapPosition } from '../constant';
 import Image from '../../../components/Image';
 import Search from './Search'
-const replaceHttpUrl = imgUrl => {
-  if (imgUrl.indexOf('http') !== 0) {
-    imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
+const replaceHttpUrl = ( imgUrl = '' ) => {
+  let imgUrlTrim = imgUrl.trim();
+  if (imgUrlTrim.indexOf('http') !== 0) {
+    imgUrl = 'https://assets.hzxituan.com/' + imgUrlTrim;
   }
-  return imgUrl;
+  return imgUrlTrim;
 }
 
 class OrderList extends React.Component {

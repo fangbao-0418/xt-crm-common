@@ -50,10 +50,11 @@ class UploadView extends Component {
     return url
   }
   getViewUrl (url) {
+
     if (!url) {
       return url
     }
-    return 'https://assets.hzxituan.com/' + url.replace(/^https?:\/\/.+?\//, '')
+    return 'https://assets.hzxituan.com/' + url.trim().replace(/^https?:\/\/.+?\//, '')
   }
   initFileList(fileList = []) {
     const { fileType } = this.props;
@@ -95,7 +96,6 @@ class UploadView extends Component {
       fileList.push({
         ...file
       });
-      console.log(fileList, 'fileList')
       this.setState({
         fileList: fileList,
       });

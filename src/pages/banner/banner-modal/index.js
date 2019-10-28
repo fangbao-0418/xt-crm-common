@@ -73,6 +73,7 @@ class BannerModal extends Component {
           id,
           ...form.getFieldsValue(),
         };
+        params.jumpUrlWap =  (params.jumpUrlWap || '').trim()
         params.onlineTime = +new Date(params.onlineTime);
         params.offlineTime = +new Date(params.offlineTime);
         if (params.imgList) {
