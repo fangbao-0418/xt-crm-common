@@ -48,3 +48,26 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   }
   return defaultConfig
 }
+
+export const memberOptions = [
+  {
+    label: '全部',
+    value: 'all'
+  },
+  {
+    label: '普通会员',
+    value: '1'
+  },
+  {
+    label: '团长',
+    value: '2'
+  },
+  {
+    label: '社区管理员',
+    value: '3'
+  },
+  {
+    label: '城市合伙人',
+    value: '4'
+  },
+]

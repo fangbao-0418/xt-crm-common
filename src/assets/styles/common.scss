@@ -38,3 +38,13 @@
   word-wrap : break-word;
   word-break: break-all;
 }
+
+.error {
+  color: red;
+  cursor: pointer;
+}
+
+.line {
+  height: 1px;
+  background: #e8e8e8;
+}
