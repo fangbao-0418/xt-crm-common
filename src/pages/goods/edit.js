@@ -174,7 +174,8 @@ class GoodsEdit extends React.Component {
         listImage,
         productImage,
         storeProductId: res.storeProductId,
-        categoryId
+        categoryId,
+        isAuthentication: res.isAuthentication
       });
     });
   };
@@ -480,6 +481,22 @@ class GoodsEdit extends React.Component {
               </Form.Item> :
               null
           }
+           <Form.Item label="实名认证" required>
+            {getFieldDecorator('isAuthentication', {
+              initialValue: 0,
+              rules: [
+                {
+                  required: true,
+                  message: '请选择实名认证'
+                }
+              ]
+            })(
+              <Radio.Group>
+                <Radio value={0}>否</Radio>
+                <Radio value={1}>是</Radio>
+              </Radio.Group>
+            )}
+          </Form.Item>
           <Form.Item label="商品视频封面">
             {getFieldDecorator('videoCoverUrl')(<UploadView placeholder="上传视频封面" listType="picture-card" listNum={1} size={0.3} />)}
           </Form.Item>

@@ -60,6 +60,8 @@ declare module AfterSalesInfo {
     payMoney: number;
     freight: number;
     orderType: number;
+    realName: string;
+    idNo: number;
   }
   export interface OrderServerVO {
     id: number;

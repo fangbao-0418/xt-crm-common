@@ -31,6 +31,14 @@ export function againRefund(id: number, info: any) {
 export function cancelRefund(skuServerId: number, info: string) {
   return post(`/order/afterSale/cancelRefund/${skuServerId}`, {info})
 }
+
+/**
+ * 取消售后
+ * @param skuServerId 
+ */
+export function cancelRefund(skuServerId: number, info: string) {
+  return post(`/order/afterSale/cancelRefund/${skuServerId}`, {info})
+}
 /**
  * 更新物流信息接口
  */

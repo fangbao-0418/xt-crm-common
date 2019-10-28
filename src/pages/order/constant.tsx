@@ -22,6 +22,19 @@ export const getDetailColumns = () => [
     }
   },
   {
+    title: '实名认证',
+    dataIndex: 'isAuthentication',
+    key: 'isAuthentication',
+    render(text: any) {
+      return String(text) === '1' ? '是': '否'
+    }
+  },
+  {
+    title: '属性',
+    dataIndex: 'properties',
+    key: 'properties',
+  },
+  {
     title: '供应商',
     dataIndex: 'storeName',
     key: 'storeName'

@@ -27,6 +27,7 @@ const getCreditPayText = (memberPayHuabeiLogDO) => {
 const BuyerInfo = props => {
   const { buyerInfo = {}, orderInfo = {}, totalPrice, freight, memberPayHuabeiLogDO = {} } = props;
   const { payType } = buyerInfo;
+  console.log(props, 'props')
   return (
     <Card title="支付信息">
       <Row gutter={24}>
