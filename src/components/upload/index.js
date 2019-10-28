@@ -107,13 +107,12 @@ class UploadView extends Component {
     //pxSize: [{width:100, height:100}] 限制图片上传px大小
     if (pxSize && pxSize.length) {
       const imgSize = await this.getImgSize(file) || {width:0, height:0}
-      for (let index = 0; index < pxSize.length; index++) {
-        const element = pxSize[index];
-        console.log('imgSize:pxSize', imgSize, element)
-        if (!(imgSize.width ==  element.width && imgSize.height == element.height)) {
-          message.error(`图片尺寸不正确`);
-          return Promise.reject()
-        }
+      let result = pxSize.filter((item, index, arr) => {
+        return item.width == imgSize.width && item.height == imgSize.height;
+      })
+      if (result.length === 0 ) {
+        message.error(`图片尺寸不正确`);
+        return Promise.reject()
       }
     }
     return Promise.resolve(file)
