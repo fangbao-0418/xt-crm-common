@@ -1,6 +1,6 @@
 // 手动发码
 import React from 'react';
-import { Card, Form, Input, DatePicker, Button, Table, Divider } from 'antd';
+import { Card, Form, Input, DatePicker, Button, Table, Modal } from 'antd';
 import { parseQuery } from '@/util/utils';
 import { formatDate, formatMoneyWithSign } from '../../helper';
 import DateFns from 'date-fns';
@@ -14,14 +14,30 @@ class Add extends React.Component {
         super(props);
         const params = parseQuery();
         this.state = {
+            visible: false,
             listData: [],
             current: +params.page || 1,
             total: 0,
             pageSize: 3,
             initParams: params,
             selectedRows: [], // 选中行
+            selectedRowKeys: []
         }
     }
+    showModal = () => {
+        this.setState({
+            visible: true,
+        });
+    };
+    handleCancel = e => {
+        
+        this.setState({
+            visible: false,
+            selectedRows: [],
+            selectedRowKeys: []
+        });
+        
+    };
     componentDidMount() {
         this.handleSearch()
     }
@@ -59,16 +75,9 @@ class Add extends React.Component {
     handleAdd = () => {
         console.log('确定添加',this.state.selectedRows)
         let lotteryMemberTicketManualAddVOList = []
-
-        // let lotteryMemberTicketManualAddVOList = {
-        //     memberId: 'item.memberId',
-        //         mainOrderId: 'item.id',
-        //         mainOrderCode: 'item.orderCode',
-        //         buyerPhone: 'item.buyerPhone',
-        //         payDate: 'item.payDate'
-        // }
         this.state.selectedRows.map((item, index) => {
             lotteryMemberTicketManualAddVOList.push({
+                actualPayMoney: item.totalMoney,
                 memberId: item.memberId,
                 mainOrderId: item.id,
                 mainOrderCode: item.orderCode,
@@ -76,8 +85,19 @@ class Add extends React.Component {
                 payDate: item.payDate,
             })
         })
+        console.log('lotteryMemberTicketManualAddVOList', lotteryMemberTicketManualAddVOList)
+        // 添加手动发码
         lotteryManualGive({lotteryMemberTicketManualAddVOList}).then(res => {
-            console.log('确定添加', res)
+            if (res) {
+                APP.success("发布成功")
+                this.setState({
+                    visible: false,
+                    selectedRows: [],
+                    selectedRowKeys: []
+                })
+            } else {
+                APP.error("发布失败")
+            }
         })
     }
     handlePageChange = (page, pageSize) => {
@@ -88,7 +108,7 @@ class Add extends React.Component {
           },
           this.handleSearch,
         );
-      };
+    };
     render(h) {
         const { listData, total, pageSize, current } = this.state;
 
@@ -135,9 +155,11 @@ class Add extends React.Component {
             },
         ]
         const rowSelection = {
+            selectedRowKeys: this.state.selectedRowKeys,
             onChange: (selectedRowKeys, selectedRows) => {
                 this.setState({
-                    selectedRows: selectedRows
+                    selectedRows,
+                    selectedRowKeys
                 })
               console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
             }
@@ -148,8 +170,26 @@ class Add extends React.Component {
 
         return (
             <>
+            <Button type="primary" onClick={this.showModal}>手动发码</Button>
+            <Modal title="手动发码"
+                width={1000}
+                visible={this.state.visible}
+                footer={
+                    <>
+                    <div style={{textAlign:"right"}}>
+                        <Button onClick={this.handleCancel.bind(this)}>
+                            取消
+                        </Button>
+                        <Button type="primary" disabled={!this.state.selectedRows.length} onClick={this.handleAdd} style={{ marginLeft: 30 }}>
+                            确定
+                        </Button>
+                    </div>
+                    </>
+                  }
+                  onCancel={this.handleCancel}
+                >
             <Card>
-            <Form layout="inline">
+                <Form layout="inline">
                       <FormItem label="主订单号">
                           {
                               getFieldDecorator('orderCode')
@@ -183,14 +223,8 @@ class Add extends React.Component {
                 }}
                 />,
             </Card>
-            <div style={{textAlign:"right"}}>
-            <Button>
-                取消
-            </Button>
-            <Button type="primary" disabled={!this.state.selectedRows.length} onClick={this.handleAdd} style={{ marginLeft: 30 }}>
-                确定
-            </Button>
-            </div>
+            
+            </Modal>
             </>
         )
     }

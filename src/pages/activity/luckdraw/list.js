@@ -148,7 +148,6 @@ class List extends React.Component {
             {
                 title: '操作',
                 render(text, record) {
-                    console.log('record', record)
                     return (
                         <><DisableModal></DisableModal></>
                     )
@@ -251,9 +250,10 @@ class List extends React.Component {
                             </Button>
                           </Col>
                           <Col span={2} offset={10}>
-                            <Button type="primary" onClick={()=>this.setState({visible: true})} style={{ marginLeft: 10 }}>
+                            {/* <Button type="primary" onClick={()=>this.setState({visible: true})} style={{ marginLeft: 10 }}>
                                 手动发码
-                            </Button>
+                            </Button> */}
+                            <Add />
                           </Col>
                       </Row>
                   </div>
@@ -275,7 +275,7 @@ class List extends React.Component {
                       )
                   }
               </Card>
-              <Modal
+              {/* <Modal
                 title="手动发码"
                 visible={this.state.visible}
                 width={1000}
@@ -290,7 +290,7 @@ class List extends React.Component {
                     });
                     this.handleSearch();
                 }} history={this.props.history}/>
-                </Modal>
+                </Modal> */}
               </>
           );
     }

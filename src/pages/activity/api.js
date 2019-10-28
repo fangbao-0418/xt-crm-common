@@ -1,4 +1,4 @@
-import { post, get } from '../../util/fetch';
+import { post, get, newPost } from '../../util/fetch';
 
 export function getPromotionList(data) {
   return post('/promotion/list', data);
@@ -57,19 +57,19 @@ export function refreshPromtion(promotionId) {
 
 // 用户抽奖码列表
 export function getLotteryList(data) {
-  return post('/lottery/list', data)
+  return newPost('/lottery/list', data)
 }
 // 抽奖码失效 data:[]
 export function lotteryDisable(data) {
-  return post('/lottery/disable', data)
+  return newPost('/lottery/disable', data)
 }
 // 抽奖券码生效 data:[]
 export function lotteryEnable(data) {
-  return post('/lottery/enable', data)
+  return newPost('/lottery/enable', data)
 }
 // 手工发码 data:[]
 export function lotteryManualGive(data) {
-  return post('/lottery/manualGive', data)
+  return newPost('/lottery/manualGive', data)
 }
 
 /************** 抽奖接口 end***************/
