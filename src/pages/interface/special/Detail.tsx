@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input, Button, Icon, Card, Radio, Row, Col } from 'antd'
+import { Form, Input, Button, Icon, Card, Switch, Radio, Row, Col } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { withRouter, RouteComponentProps } from 'react-router'
 import { connect } from 'react-redux'
@@ -38,7 +38,7 @@ class Main extends React.Component<Props, State> {
       type,
       sort: 0,
       list: [],
-      crmCoupons:[]
+      crmCoupons: []
     })
     APP.dispatch({
       type: `${namespace}/changeDetail`,
@@ -94,7 +94,7 @@ class Main extends React.Component<Props, State> {
   }
   public handleSubmit(e: any) {
     e.preventDefault()
-    this.props.form.validateFields((err:any, value) => {
+    this.props.form.validateFields((err: any, value) => {
       if (err) {
         return
       }
@@ -104,7 +104,9 @@ class Main extends React.Component<Props, State> {
       if (value.imgUrl instanceof Array) {
         value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
       }
-
+      if (value.shareImgUrl instanceof Array) {
+        value.shareImgUrl = value.shareImgUrl[0] &&　value.shareImgUrl[0].url
+      }
       const detail: any = this.mapDetailToRequestParams({
         ...this.props.detail,
         ...value
@@ -124,6 +126,9 @@ class Main extends React.Component<Props, State> {
       })
     })
   }
+  public get shareOpen(): boolean {
+    return this.props.form.getFieldValue('shareOpen');
+  }
   public render() {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
@@ -140,7 +145,13 @@ class Main extends React.Component<Props, State> {
         uid: 'imgUrl0',
         url: detail.imgUrl
       }
-    ] : detail.imgUrl
+    ] : detail.imgUrl;
+    detail.shareImgUrl = typeof detail.shareImgUrl === 'string' ? [
+      {
+        uid: 'imgUrl0',
+        url: detail.shareImgUrl
+      }
+    ]: detail.shareImgUrl;
     console.log(detail.imgUrl, 'imgUrl')
     return (
       <div className={styles.detail}>
@@ -162,22 +173,47 @@ class Main extends React.Component<Props, State> {
                 <Input placeholder='请输入专题名称' />
               )}
             </Form.Item>
-            <Form.Item
-              label='分享标题'
-            >
-              {getFieldDecorator('shareTitle', {
-                initialValue: detail.shareTitle,
-                rules: [
-                  { required: true, message: '分享标题不能为空' },
-                  {
-                    max: 30,
-                    message: '分享标题不能超过30个字符'
-                  }
-                ]
-              })(
-                <Input placeholder='请输入分享标题' />
-              )}
+            <Form.Item label="支持专题分享">
+              <>
+                {getFieldDecorator('shareOpen', {
+                  initialValue: detail.shareOpen || true
+                })(
+                  <Switch defaultChecked/>
+                )}
+                <p>关闭专题分享时，则隐藏专题页面分享按钮，无法分享专题。</p>
+              </>
             </Form.Item>
+            {this.shareOpen && 
+              <>
+                <Form.Item
+                  label='分享标题'
+                >
+                  {getFieldDecorator('shareTitle', {
+                    initialValue: detail.shareTitle,
+                    rules: [
+                      { required: true, message: '分享标题不能为空' },
+                      {
+                        max: 30,
+                        message: '分享标题不能超过30个字符'
+                      }
+                    ]
+                  })(
+                    <Input placeholder='请输入分享标题' />
+                  )}
+                </Form.Item>
+                <Form.Item label="分享图片" required>
+                  {getFieldDecorator('shareImgUrl ', {
+                    initialValue: detail.shareImgUrl,
+                    rules: [
+                      { required: true, message: '请上传专题分享图片' }
+                    ]
+                  })(<Upload accept="image/*,.png,.jpg,.gif" size={0.3} listType="picture-card" />)}
+                  <p>1.专题分享图片主要用于专题分享，包括生成专题海报、分享给好友图片等，必填项。</p>
+                  <p>2、图片格式支持png、jpg、gif格式。</p>
+                  <p>3、图片尺寸为750*1000像素，大小不超过300kb。</p>
+                </Form.Item>
+              </>
+            }
             <Form.Item
               label='专题背景色'
             >
