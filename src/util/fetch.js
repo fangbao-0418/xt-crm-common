@@ -221,7 +221,6 @@ const messageMap = {
   500: '服务端错误'
 };
 const instance = axios.create({
-  baseURL: prefix(''),
   withCredentials: true,
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
@@ -250,7 +249,7 @@ instance.interceptors.response.use(res => {
 export function fetch(url, config = {}) {
   const { method = 'get', data = {}, ...others } = config;
   return instance.request({
-    url,
+    url: prefix(url),
     data: qs.stringify(data),
     method,
     ...others
