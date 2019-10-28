@@ -8,14 +8,17 @@ const replaceHttpUrl = (imgUrl = '') => {
   return imgUrl;
 }
 
-const GoodCell = ({ productImage, skuName, properties, coverUrl, showImage = true}) => {
+const GoodCell = ({ productImage, skuName, properties, coverUrl, showImage = true }) => {
   return (
-    <div className="good-cell">
-      {showImage && <div className="good-image">
-        <img alt={'商品图片'} src={replaceHttpUrl(coverUrl || productImage)} style={{ maxHeight: 100, maxWidth: 100 }} />
-      </div>}
-      <div className="good-title">
-        {skuName} {properties ? `(${properties})` : ''}
+    <div>
+      {
+        showImage && <div style={{ float: 'left' }}>
+          <img alt={'商品图片'} src={replaceHttpUrl(coverUrl || productImage)} style={{ maxHeight: 100, maxWidth: 100 }} />
+        </div>
+      }
+      <div style={showImage?{ marginLeft:116}:{marginLeft:0,textAlign:'left'}}>
+        <div>{skuName}</div>
+        <div style={{ marginTop: 8 }}>{properties ? `${properties}` : ''}</div>
       </div>
     </div>
   );

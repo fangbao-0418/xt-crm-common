@@ -5,6 +5,9 @@ import { view as Loader } from '../../components/loader';
 import Detail from './detail';
 import Refund from './refund';
 import RefundDetail from './refund/detail';
+import Intercept from './intercept';
+import InterceptUserDetail from './intercept/detail'
+
 const Main = Loadable({
   loader: () => import('./main'),
   loading: Loader,
@@ -15,6 +18,8 @@ export default class RouteApp extends React.Component {
     const { match } = this.props;
     return (
       <Switch>
+        <Route path="/order/intercept" exact={true} component={Intercept} />
+        <Route path="/order/intercept/detail" component={InterceptUserDetail} />
         <Route path={`${match.url}/detail/:id`} component={Detail} />
         <Route exact path={`${match.url}/refundOrder`} component={Refund} />
         <Route exact path={`${match.url}/refundOrder/:id`} component={RefundDetail} />

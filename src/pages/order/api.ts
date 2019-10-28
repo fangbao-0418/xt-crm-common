@@ -7,93 +7,8 @@ export function getOrderList(data: any) {
   return post('/order/list', data);
 }
 
-const detail = {
-  buyerInfo: {
-    buyerWords: 'string',
-    contact: 'string',
-    idCard: 'string',
-    memberAddress: {
-      city: 'string',
-      cityId: 0,
-      consignee: 'string',
-      defaultAddress: 0,
-      district: 'string',
-      districtId: 0,
-      freight: 0,
-      id: 0,
-      phone: 'string',
-      province: 'string',
-      provinceId: 0,
-      street: 'string',
-    },
-    nickname: 'string',
-    payType: 'string',
-    phone: 'string',
-    userName: 'string',
-  },
-  orderStatusLogList: [
-    {
-      createTime: Date.now(),
-      orderStatus: 10,
-    },
-  ],
-  freight: 0,
-  logisticsList: [
-    {
-      expressCode: 'string',
-      expressCompanyName: 'string',
-      expressName: 'string',
-      orderCode: 'string',
-      productImg: 'string',
-      status: 0,
-      storeName: 'string',
-    },
-  ],
-  orderInfo: {
-    childOrderList: [
-      {
-        createTime: 0,
-        orderCode: 'string',
-        paymentNumber: 'string',
-        storeName: 'string',
-      },
-    ],
-    createTime: 0,
-    orderCode: 'string',
-    orderStatus: 60,
-    paymentNumber: 'string',
-    remark: 'string',
-  },
-  orderYield: {
-    costPrice: 0,
-    memberYieldVOList: [
-      {
-        memberType: 0,
-        userName: 'yugan',
-        yield: 99,
-      },
-    ],
-    totalPrice: 0,
-  },
-  skuList: [
-    {
-      barCode: 'string',
-      coverUrl: 'string',
-      id: 0,
-      marketPrice: 0,
-      num: 0,
-      productId: 0,
-      skuCode: 'string',
-      skuName: 'string',
-      totalPrice: 0,
-    },
-  ],
-  taxPrice: 0,
-  totalPrice: 0,
-};
-
 // 客服代申请售后单个商品详情
-export function getProductDetail({mainOrderId, skuId}: any) {
+export function getProductDetail({ mainOrderId, skuId }: any) {
   return get(`/order/afterSale/applyOrderSKuDetail/${mainOrderId}/${skuId}`)
 }
 // 获取售后原因
@@ -106,7 +21,7 @@ export function getRefundReason() {
 }
 // 重新退款
 export function againRefund(id: number, info: any) {
-  return post(`/order/afterSale/againRefund/${id}`, {info});
+  return post(`/order/afterSale/againRefund/${id}`, { info });
 }
 
 /**
@@ -116,6 +31,7 @@ export function againRefund(id: number, info: any) {
 export function cancelRefund(skuServerId: number, info: string) {
   return post(`/order/afterSale/cancelRefund/${skuServerId}`, {info})
 }
+
 /**
  * 更新物流信息接口
  */
@@ -128,7 +44,7 @@ export function updateOrderExpress(data: any) {
  * @param info 
  */
 export function closeOrder(id: number, info: any) {
-  return post(`/order/afterSale/close/${id}`, {info});
+  return post(`/order/afterSale/close/${id}`, { info });
 }
 /**
  * 确认收货
@@ -148,9 +64,6 @@ export function saveRefundInfo(data: any) {
   return post('/order/afterSale/saveRefundInfo', data)
 }
 export function queryOrderDetail(data: any) {
-  if (debug) {
-    return Promise.resolve(detail);
-  }
   return post('/order/detail', data);
 }
 
@@ -270,6 +183,54 @@ export function profitRecycl(data: any) {
     method: 'POST',
     data
   });
+}
+
+/**
+ * 根据订单号获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderId(param: any) {
+  return get(`/crm/member/settlement/v1/order/summary`, param);
+}
+
+/**
+ * 根据订单Id和会员Id获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderIdAndMemberId(param: any) {
+  return get(`/crm/member/settlement/v1/order/skuSummaryByMember`, param);
+}
+
+/**
+ * 根据订单Id和会员Id和SkuId获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderIdAndMemberIdAndSkuId(param: any) {
+  return get(`/crm/member/settlement/v1/detail`, param);
+}
+
+/**
+ * 根据订单Id和skuId获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderIdAndSkuId(param: any) {
+  return get(`/crm/member/settlement/v1/order/skuSummary`, param);
+}
+
+/**
+ * 取消订单拦截
+ * @param {object}  param
+ */
+export function cancelIntercept(param: any) {
+  return post('/order/intercept/cancelIntercept', param);
+}
+
+/**
+ * 对拦截订单发货
+ * @param {object}  param
+ */
+export function deliveryInterceptOrder(param: any) {
+  return post('/order/intercept/interceptDeliver', param);
 }
 
 
