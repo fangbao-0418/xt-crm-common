@@ -185,7 +185,7 @@ export default class extends Component {
         return (
             <div>
                 <Icon type="edit" onClick={() => this.onShowEditModal(item)} />
-                <Popconfirm title="类目删除后不可回复，确认删除?" onConfirm={() => this.onConfirm(item)}>
+                <Popconfirm title="类目删除后不可恢复，确认删除?" onConfirm={() => this.onConfirm(item)}>
                     <Icon type="delete" />
                 </Popconfirm>
             </div>
