@@ -12,11 +12,13 @@ interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   detail: Special.DetailItem
 }
 interface State {
-  loading: boolean
+  loading: boolean;
+  shareOpen: boolean;
 }
 class Main extends React.Component<Props, State> {
   public state = {
-    loading: false
+    loading: false,
+    shareOpen: true
   }
   public id = '-1'
   public constructor(props: Props) {
@@ -54,7 +56,12 @@ class Main extends React.Component<Props, State> {
     APP.dispatch({
       type: `${namespace}/fetchDetail`,
       payload: {
-        id
+        id,
+        cb: (result: any) => {
+          this.setState({
+            shareOpen: result.shareOpen !== 0
+          })
+        }
       }
     })
   }
@@ -92,6 +99,9 @@ class Main extends React.Component<Props, State> {
       list
     }
   }
+  handleSwitch = (checked: boolean) => {
+    this.setState({shareOpen: checked});
+  }
   public handleSubmit(e: any) {
     e.preventDefault()
     this.props.form.validateFields((err: any, value) => {
@@ -105,12 +115,15 @@ class Main extends React.Component<Props, State> {
         value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
       }
       if (value.shareImgUrl instanceof Array) {
-        value.shareImgUrl = value.shareImgUrl[0] &&　value.shareImgUrl[0].url
+        value.shareImgUrl = value.shareImgUrl[0] && value.shareImgUrl[0].url
       }
-      const detail: any = this.mapDetailToRequestParams({
+      const params = {
         ...this.props.detail,
-        ...value
-      })
+        ...value,
+        shareOpen: this.state.shareOpen ? 1: 0
+      };
+      console.log('params=>', params);
+      const detail: any = this.mapDetailToRequestParams(params)
       api.saveSpecial(detail).then((res: any) => {
         this.setState({
           loading: false
@@ -126,8 +139,23 @@ class Main extends React.Component<Props, State> {
       })
     })
   }
-  public get shareOpen(): boolean {
-    return this.props.form.getFieldValue('shareOpen');
+  public get imgUrl(): string | {uid: string, url: string}[]{
+    const { detail } = this.props
+    return typeof detail.imgUrl === 'string' ? [
+      {
+        uid: 'imgUrl0',
+        url: detail.imgUrl
+      }
+    ] : detail.imgUrl;
+  }
+  public get shareImgUrl(): string | {uid: string, url: string}[] {
+    const { detail } = this.props
+    return typeof detail.shareImgUrl === 'string' ? [
+      {
+        uid: 'imgUrl0',
+        url: detail.shareImgUrl
+      }
+    ]: detail.shareImgUrl;
   }
   public render() {
     const { getFieldDecorator } = this.props.form
@@ -140,19 +168,6 @@ class Main extends React.Component<Props, State> {
       },
     };
     const { detail } = this.props
-    detail.imgUrl = typeof detail.imgUrl === 'string' ? [
-      {
-        uid: 'imgUrl0',
-        url: detail.imgUrl
-      }
-    ] : detail.imgUrl;
-    detail.shareImgUrl = typeof detail.shareImgUrl === 'string' ? [
-      {
-        uid: 'imgUrl0',
-        url: detail.shareImgUrl
-      }
-    ]: detail.shareImgUrl;
-    console.log(detail.imgUrl, 'imgUrl')
     return (
       <div className={styles.detail}>
         <div className={styles.content}>
@@ -175,15 +190,11 @@ class Main extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="支持专题分享">
               <>
-                {getFieldDecorator('shareOpen', {
-                  initialValue: detail.shareOpen || true
-                })(
-                  <Switch defaultChecked/>
-                )}
+                <Switch checked={this.state.shareOpen} onChange={this.handleSwitch}/>
                 <p>关闭专题分享时，则隐藏专题页面分享按钮，无法分享专题。</p>
               </>
             </Form.Item>
-            {this.shareOpen && 
+            {this.state.shareOpen && 
               <>
                 <Form.Item
                   label='分享标题'
@@ -202,8 +213,8 @@ class Main extends React.Component<Props, State> {
                   )}
                 </Form.Item>
                 <Form.Item label="分享图片" required>
-                  {getFieldDecorator('shareImgUrl ', {
-                    initialValue: detail.shareImgUrl,
+                  {getFieldDecorator('shareImgUrl', {
+                    initialValue: this.shareImgUrl,
                     rules: [
                       { required: true, message: '请上传专题分享图片' }
                     ]
@@ -231,7 +242,7 @@ class Main extends React.Component<Props, State> {
               required
             >
               {getFieldDecorator('imgUrl', {
-                initialValue: detail.imgUrl,
+                initialValue: this.imgUrl,
                 rules: [{
                   required: true,
                   message: 'banner图片不能为空'
