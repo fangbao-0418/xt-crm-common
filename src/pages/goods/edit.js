@@ -525,6 +525,7 @@ class GoodsEdit extends React.Component {
               ],
             })(
               <UploadView
+                multiple
                 placeholder="上传商品图片"
                 listType="picture-card"
                 listNum={5}
@@ -637,7 +638,7 @@ class GoodsEdit extends React.Component {
           <Form.Item label="商品详情页">
             <div className="mb20">
               {getFieldDecorator('listImage')(
-                <UploadView placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
+                <UploadView multiple placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
               )}
             </div>
             {this.isShowDeleteAll() && <Button type="primary" onClick={this.handleDeleteAll}>一键删除</Button>}
