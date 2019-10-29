@@ -525,7 +525,7 @@ class GoodsEdit extends React.Component {
                 },
               ],
             })(
-              <DraggableUpload />
+              <DraggableUpload className={styles['goods-detail-draggable']} listNum={5} size={0.3} placeholder="上传商品图片" />
             )}
           </Form.Item>
           <Form.Item label="banner图片" required={true}>
@@ -536,7 +536,9 @@ class GoodsEdit extends React.Component {
                   message: '请设置banner图片',
                 },
               ],
-            })(<UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />)}
+            })(
+              <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />
+            )}
           </Form.Item>
           <Form.Item label="累计销量" required={true}>
             {getFieldDecorator('showNum', {
@@ -633,7 +635,14 @@ class GoodsEdit extends React.Component {
           <Form.Item label="商品详情页">
             <div className="mb20">
               {getFieldDecorator('listImage')(
-                <UploadView multiple placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
+                <DraggableUpload
+                  className={styles['goods-draggable']}
+                  id={'shop-detail'}
+                  listNum={20}
+                  size={0.3}
+                  placeholder="上传商品详情图"
+                />
+                // <UploadView multiple placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
               )}
             </div>
             {this.isShowDeleteAll() && <Button type="primary" onClick={this.handleDeleteAll}>一键删除</Button>}
