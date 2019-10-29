@@ -88,6 +88,8 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
+
+    let { supplier } = this.state;
     if (!id) {
       setFieldsValue({
         showNum: 1,
@@ -133,7 +135,9 @@ class GoodsEdit extends React.Component {
         listImage = listImage.concat(initImgList(item));
       });
       this.specs = this.getSpecs(res.skuList);
+      const currentSupplier = supplier.find(item => item.id === res.storeId) || {};
       this.setState({
+        interceptionVisible: currentSupplier.category == 1 ? false : true,
         data: res.skuList || [],
         speSelect: this.specs,
         propertyId1: res.propertyId1,
@@ -144,6 +148,7 @@ class GoodsEdit extends React.Component {
         showImage,
       });
       setFieldsValue({
+        interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
         freightTemplateId: res.freightTemplateId,
         description: res.description,
@@ -169,16 +174,17 @@ class GoodsEdit extends React.Component {
         productImage,
         storeProductId: res.storeProductId,
         categoryId,
+        isAuthentication: res.isAuthentication
       });
     });
   };
   /** 获取规格结婚 */
   getSpecs(skuList = []) {
-    const specs = this.specs;
-    specs.map(item => {
-      item.content = [];
-      return item;
-    });
+    const specs = this.specs
+    specs.map((item) => {
+      item.content = []
+      return item
+    })
     map(skuList, (item, key) => {
       if (
         item.propertyValue1 &&
@@ -351,12 +357,30 @@ class GoodsEdit extends React.Component {
   handleInput = event => {
     const { name, value } = event.target;
     this.setState({
-      [name]: value,
-    });
-  };
+      [name]: value
+    })
+  }
+
+  supplierChange = (value) => {
+    const { supplier } = this.state;
+    const { form: { resetFields } } = this.props;
+    const currentSupplier = supplier.find(item => item.id === value) || {};
+    if (currentSupplier.category == 1) {
+      resetFields('interception');
+      this.setState({
+        interceptionVisible: false
+      })
+    } else {
+      resetFields('interception', '0');
+      this.setState({
+        interceptionVisible: true
+      })
+    }
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { supplier } = this.state;
+    const { supplier, interceptionVisible } = this.state;
 
     return (
       <Form {...formLayout}>
@@ -436,6 +460,7 @@ class GoodsEdit extends React.Component {
                   message: '请选择供应商',
                 },
               ],
+              onChange: this.supplierChange
             })(
               <Select
                 placeholder="请选择供货商"
@@ -454,6 +479,36 @@ class GoodsEdit extends React.Component {
           </Form.Item>
           <Form.Item label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
+          </Form.Item>
+          {
+            interceptionVisible ?
+              <Form.Item label="是否可拦截发货">
+                {getFieldDecorator('interception', {
+                  initialValue: 0,
+                })(
+                  <Radio.Group>
+                    <Radio value={1}>是</Radio>
+                    <Radio value={0}>否</Radio>
+                  </Radio.Group>,
+                )}
+              </Form.Item> :
+              null
+          }
+           <Form.Item label="实名认证" required>
+            {getFieldDecorator('isAuthentication', {
+              initialValue: 0,
+              rules: [
+                {
+                  required: true,
+                  message: '请选择实名认证'
+                }
+              ]
+            })(
+              <Radio.Group>
+                <Radio value={0}>否</Radio>
+                <Radio value={1}>是</Radio>
+              </Radio.Group>
+            )}
           </Form.Item>
           <Form.Item label="商品视频封面">
             {getFieldDecorator('videoCoverUrl')(
@@ -593,12 +648,12 @@ class GoodsEdit extends React.Component {
               />
               {getFieldDecorator('returnPhone', {
                 rules: [
-                  { required: true, message: '收货人电话不能为空' },
+                  // {required: true, message: '收货人电话不能为空'},
                   {
-                    pattern: APP.regular.phone,
-                    message: '收货人电话格式不正确',
-                  },
-                ],
+                    max: 12,
+                    message: '收货人电话格式不正确'
+                  }
+                ]
               })(
                 <Input
                   style={{ width: 160, marginRight: 10 }}
@@ -606,7 +661,7 @@ class GoodsEdit extends React.Component {
                   name="returnPhone"
                   value={this.state.returnPhone}
                   type="tel"
-                  maxLength={11}
+                  maxLength={12}
                   onChange={this.handleInput}
                 />,
               )}

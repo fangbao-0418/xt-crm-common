@@ -1,13 +1,45 @@
 import React, { Component } from 'react';
-import { Card, Descriptions } from 'antd';
+import { Card, Descriptions, Table } from 'antd';
 import moment from 'moment';
 import { connect, parseQuery, setQuery } from '@/util/utils';
 import styles from './index.module.scss';
 import Modal from './modal';
 import ModalInvit from './modalInvit';
+import { levelName } from '../../../utils';
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 let unlisten = '';
+function formatTime(text) {
+  return text ? moment(text).format(timeFormat): '';
+}
+
+const columns = [
+  {
+    title: '编号',
+    dataIndex: 'id',
+    render: (text, record, index) => {
+      return index + 1;
+    }
+  },
+  {
+    title: '姓名',
+    dataIndex: 'name'
+  },
+  {
+    title: '身份证号',
+    dataIndex: 'idNo'
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'createTime',
+    render: formatTime
+  },
+  {
+    title: '最近操作时间',
+    dataIndex: 'modifyTime',
+    render: formatTime
+  }
+];
 
 @connect(state => ({
   data: state['user.userinfo'].userinfo,
@@ -78,6 +110,7 @@ export default class extends Component {
   }
   render() {
     const { data, loading } = this.props;
+    console.log(this.props, 'render')
     return (
       <div>
         <Card
@@ -86,7 +119,7 @@ export default class extends Component {
           headStyle={{
             fontWeight: 900
           }}
-          extra={<div><a href="javascript:;" onClick={this.showModalInvit}>修改邀请人</a>&nbsp;&nbsp;<a href="javascript:;" onClick={this.showModal}>用户信息编辑</a></div>}
+          extra={<div><a onClick={this.showModalInvit}>修改邀请人</a>&nbsp;&nbsp;<a onClick={this.showModal}>用户信息编辑</a></div>}
           loading={loading}
         >
           <Descriptions column={2} className={styles.description}>
@@ -97,22 +130,31 @@ export default class extends Component {
               }
             </Descriptions.Item>
             <Descriptions.Item label="用户名">{data.nickName || '暂无'}</Descriptions.Item>
-            <Descriptions.Item label="注册时间">{data.createTime ? moment(data.createTime).format(timeFormat) : ''}</Descriptions.Item>
+            <Descriptions.Item label="注册时间">{formatTime(data.createTime)}</Descriptions.Item>
             <Descriptions.Item label="手机号">{data.phone}</Descriptions.Item>
-            <Descriptions.Item label="等级">{data.memberTypeDO ? data.memberTypeDO.value : ''}</Descriptions.Item>
-            <Descriptions.Item label=" 微信">{data.wechat || '暂无'}</Descriptions.Item>
+            <Descriptions.Item label="等级">{levelName(data.memberTypeVO)}</Descriptions.Item>
+            <Descriptions.Item label="微信">{data.wechat || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="上级">
-              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName}</span> {data.parentMemberTypeDO ? data.parentMemberTypeDO.value : ''}
+              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName}</span> {levelName(data.parentMemberTypeVO)}
             </Descriptions.Item>
             <Descriptions.Item label="邀请人">
-              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.inviteId })}>{data.inviteName}</span> {data.inviteMemberTypeDO ? data.inviteMemberTypeDO.value : ''}
+              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.inviteId })}>{data.inviteName}</span>  {levelName(data.inviteMemberTypeVO)}
             </Descriptions.Item>
           </Descriptions>
           <Descriptions title="实名认证" column={2} className={styles.authentication}>
             <Descriptions.Item label="姓名">{data.userName || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="身份证号">{data.idCard || '暂无'}</Descriptions.Item>
           </Descriptions>
+        </Card>
+        <Card
+          title="实名认证信息"
+          style={{ marginBottom: 20 }}
+          headStyle={{ fontWeight: 900 }}>
+            <Table
+              columns={columns}
+              dataSource={data.authenticationVOList}
+            />
         </Card>
         <Card
           title="用户收益"

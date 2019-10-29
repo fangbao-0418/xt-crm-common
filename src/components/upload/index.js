@@ -18,7 +18,6 @@ async function ossUpload(file) {
     const client = createClient(res);
     try {
       const urlList = await ossUploadBlob(client, file, 'crm');
-      console.log('已上传的url', urlList);
       return urlList;
     } catch (error) {
       message.error('上传失败，请重试', 'middle');
@@ -34,6 +33,7 @@ class UploadView extends Component {
       visible: false,
       url: ''
     };
+    this.handleRemove = this.handleRemove.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -51,14 +51,16 @@ class UploadView extends Component {
     return url
   }
   getViewUrl (url) {
+
     if (!url) {
       return url
     }
-    return 'https://assets.hzxituan.com/' + url.replace(/^https?:\/\/.+?\//, '')
+    return 'https://assets.hzxituan.com/' + url.trim().replace(/^https?:\/\/.+?\//, '')
   }
   initFileList(fileList = []) {
     const { fileType } = this.props;
-    return Array.isArray(fileList) ? fileList.map(val => {
+    fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
+    return fileList.map(val => {
       val.durl = val.url
       if (fileType == 'video') {
         val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
@@ -68,11 +70,10 @@ class UploadView extends Component {
       val.url = this.getViewUrl(val.url)
       val.thumbUrl = this.getViewUrl(val.thumbUrl)
       return val;
-    }): [];
+    });
   }
 
   beforeUpload = (file, fileList) => {
-    console.log(file, 'file')
     const { fileType, size = 10 } = this.props;
     if (fileType && file.type.indexOf(fileType) < 0) {
       message.error(`请上传正确${fileType}格式文件`);
@@ -93,7 +94,9 @@ class UploadView extends Component {
       const { onChange } = this.props;
       file.url = urlList && urlList[0];
       file.durl = file.url;
-      fileList.push(file);
+      fileList.push({
+        ...file
+      });
       this.setState({
         fileList: fileList,
       });
@@ -101,7 +104,8 @@ class UploadView extends Component {
         return {
           ...item,
           url: this.replaceUrl(item.url),
-          durl: this.replaceUrl(item.durl)
+          durl: this.replaceUrl(item.durl),
+          name: this.getViewUrl(item.url)
         }
       })
       isFunction(onChange) && onChange(value);
@@ -112,7 +116,9 @@ class UploadView extends Component {
     const { onChange } = this.props;
     const newFileList = filter(fileList, item => item.uid !== e.uid);
     this.setState({ fileList: newFileList });
-    isFunction(onChange) && onChange(newFileList);
+    if (onChange) {
+      onChange(newFileList);
+    }
   };
   onPreview = file => {
     this.setState({
@@ -131,6 +137,7 @@ class UploadView extends Component {
       ...attributes
     } = this.props;
     const { fileList } = this.state;
+    delete attributes.onChange
     return (
       <>
         <Upload
@@ -144,6 +151,9 @@ class UploadView extends Component {
           customRequest={(e) => this.customRequest(e)}
           onPreview={this.onPreview}
           {...attributes}
+          // onChange={(e) => {
+          //   console.log(e, 'onchange')
+          // }}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>

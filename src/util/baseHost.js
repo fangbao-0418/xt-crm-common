@@ -30,5 +30,4 @@ else if (host.indexOf('xt-crmadmin') >= 0) {
 // baseHost = 'http://192.168.10.114:8080';
 // baseHost = 'http://192.168.10.52:8081';
 // baseHost = 'http://192.168.10.60:8081';
-  // baseHost = 'http://192.168.10.67:8080';
 export { baseHost, h5Host };

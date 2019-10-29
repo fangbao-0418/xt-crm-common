@@ -8,8 +8,11 @@ export const levelArr = [
     }, {
         key: '团长',
         value: '10'
+    },{
+        key: '体验团长',
+        value: '10-101'
     }, {
-        key: '社区管理员',
+        key: '区长',
         value: '20'
     }, {
         key: '城市合伙人',

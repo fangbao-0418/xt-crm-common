@@ -1,4 +1,6 @@
 import React from 'react';
+import zwtPic from '../../assets/images/zw.png';
+
 
 const onClick = src => () => {
   window.open(src);
@@ -12,15 +14,19 @@ const replaceHttpUrl = imgUrl => {
 }
 
 const protocol = /https?:\/\//;
-const Image = ({ src, alt = '图片', style, ...otherProps }) => {
-  let realSrc = src;
-  if (!protocol.test(src)) {
-    realSrc = 'https://assets.hzxituan.com/' + src;
-  }
+let srcUrl = null;
 
+const Image = (props) => {
+  const { src='', className, alt = '图片', style, ...otherProps } = props
+  let realSrc = src.trim();
+  if (!protocol.test(realSrc)) {
+    realSrc = `https://assets.hzxituan.com/${realSrc}`;
+  }
+  srcUrl = src ? replaceHttpUrl(realSrc) : zwtPic;
   return (
     <img
-      src={replaceHttpUrl(realSrc)}
+      className={className}
+      src={srcUrl}
       alt={alt}
       style={{
         width: 100,
@@ -28,7 +34,7 @@ const Image = ({ src, alt = '图片', style, ...otherProps }) => {
         cursor: 'pointer',
         ...style,
       }}
-      onClick={onClick(realSrc)}
+      onClick={onClick(srcUrl)}
       {...otherProps}
     />
   );

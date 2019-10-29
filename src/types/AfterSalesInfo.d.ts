@@ -1,5 +1,6 @@
 declare module AfterSalesInfo {
   export interface data {
+    cancel: boolean;
     id: number;
     refundStatus: number;
     refundType: any;
@@ -34,6 +35,7 @@ declare module AfterSalesInfo {
     unitPrice: number;
     maxServerNum:number;
     maxRefundAmount: number;
+    reply: string;
   }
   export interface OrderInfoVO {
     mainOrderId: number;
@@ -58,6 +60,8 @@ declare module AfterSalesInfo {
     payMoney: number;
     freight: number;
     orderType: number;
+    realName: string;
+    idNo: number;
   }
   export interface OrderServerVO {
     id: number;
@@ -88,8 +92,9 @@ declare module AfterSalesInfo {
     supplierOperate: number;
     supplierInfo: null;
     serverNum: number;
-    contactVO: any,
-    beforeStatus: number
+    contactVO: any;
+    beforeStatus: number;
+    reply: string;
   }
 
   export interface ProductVO {

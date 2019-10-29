@@ -167,7 +167,7 @@ class SkuList extends React.Component<Props, State>{
       cityMemberPrice: 0,
       costPrice: 0,
       headPrice: 0,
-      deliveryMode: 1,
+      deliveryMode: 2,
       marketPrice: 0,
       salePrice: 0,
       managerMemberPrice: 0
@@ -311,6 +311,8 @@ class SkuList extends React.Component<Props, State>{
     this.state.specs.map((item, index) => {
       if (keys[index]) {
         columns.push({
+          width: 100,
+          fixed: 'left',
           title: item.title,
           dataIndex: keys[index]
         }) 
@@ -466,7 +468,7 @@ class SkuList extends React.Component<Props, State>{
         <Table
           rowKey={(record: any) => record.id}
           style={{ marginTop: 10 }}
-          scroll={{ x: 1650, y: 600 }}
+          scroll={{ x: 2500, y: 600 }}
           columns={[
             ...this.getCustomColumns(),
             ...getColumns(this.handleChangeValue, this.state.dataSource)

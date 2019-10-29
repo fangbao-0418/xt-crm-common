@@ -7,6 +7,8 @@ import { ExpressCompanyOptions } from '@/config';
 import * as LocalStorage from '@/util/localstorage';
 import moment from 'moment';
 import { isNil } from 'lodash';
+
+const pathToRegexp = require('path-to-regexp');
 const History = createHashHistory();
 
 function defaultMapStateToProps() {
@@ -162,9 +164,31 @@ export function getHeaders(headers) {
 
 export const prefix = url => {
   let apiDomain = baseHost;
-  if (!(process.env.PUB_ENV == 'prod' || process.env.PUB_ENV == 'pre'))
-    apiDomain = LocalStorage.get('apidomain') || baseHost;
-  return `${apiDomain}${url}`;
+  if (!(process.env.PUB_ENV == 'pre' || process.env.PUB_ENV == 'prod')) {
+    if (!(process.env.PUB_ENV == 'test' || process.env.PUB_ENV == 'dev')) {
+      const mockConfig = require('../mock.json');
+      if (
+        typeof mockConfig == 'object' &&
+        mockConfig['apiList'] instanceof Array
+      ) {
+        const isMock = mockConfig['apiList'].find((item) => {
+          const path = item.replace(/{/g, ':').replace(/}/g, '');
+          return pathToRegexp(path).test(url);
+        })
+        if (isMock) {
+          console.log(url);
+          return `/mock/${url}`;
+        } else {
+          apiDomain = LocalStorage.get('apidomain') || baseHost;
+        }
+      } else {
+        apiDomain = LocalStorage.get('apidomain') || baseHost;
+      }
+    } else {
+      apiDomain = LocalStorage.get('apidomain') || baseHost;
+    }
+  }
+  return /https?/.test(url) ? url : `${apiDomain}${url}`;
 };
 
 /**
@@ -221,6 +245,7 @@ export function getExpressCode(name) {
 export function momentRangeValueof(values = []) {
   return values.map(v => moment(v).valueOf());
 }
+
 export function mapTree(org) {
   const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
   return {
@@ -254,3 +279,4 @@ export function treeToarr(list = [], arr) {
   }
   return results;
 }
+
