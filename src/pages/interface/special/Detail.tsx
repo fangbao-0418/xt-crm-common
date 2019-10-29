@@ -27,7 +27,12 @@ class Main extends React.Component<Props, State> {
     this.handleSubmit = this.handleSubmit.bind(this)
   }
   public componentDidMount() {
-    this.fetchData()
+    const { id } = this.props.match.params;
+    if (id === '-1') {
+      this.setState({ shareOpen: true })
+    } else {
+      this.fetchData()
+    }
   }
   public componentWillUnmount() {
     APP.dispatch({
@@ -59,7 +64,7 @@ class Main extends React.Component<Props, State> {
         id,
         cb: (result: any) => {
           this.setState({
-            shareOpen: result.shareOpen !== 0
+            shareOpen: result.shareOpen === 1
           })
         }
       }
@@ -100,7 +105,7 @@ class Main extends React.Component<Props, State> {
     }
   }
   handleSwitch = (checked: boolean) => {
-    this.setState({shareOpen: checked});
+    this.setState({ shareOpen: checked });
   }
   public handleSubmit(e: any) {
     e.preventDefault()
@@ -120,7 +125,7 @@ class Main extends React.Component<Props, State> {
       const params = {
         ...this.props.detail,
         ...value,
-        shareOpen: this.state.shareOpen ? 1: 0
+        shareOpen: this.state.shareOpen ? 1 : 0
       };
       console.log('params=>', params);
       const detail: any = this.mapDetailToRequestParams(params)
@@ -139,7 +144,7 @@ class Main extends React.Component<Props, State> {
       })
     })
   }
-  public get imgUrl(): string | {uid: string, url: string}[]{
+  public get imgUrl(): string | { uid: string, url: string }[] {
     const { detail } = this.props
     return typeof detail.imgUrl === 'string' ? [
       {
@@ -148,14 +153,14 @@ class Main extends React.Component<Props, State> {
       }
     ] : detail.imgUrl;
   }
-  public get shareImgUrl(): string | {uid: string, url: string}[] {
+  public get shareImgUrl(): string | { uid: string, url: string }[] {
     const { detail } = this.props
     return typeof detail.shareImgUrl === 'string' ? [
       {
         uid: 'imgUrl0',
         url: detail.shareImgUrl
       }
-    ]: detail.shareImgUrl;
+    ] : detail.shareImgUrl;
   }
   public render() {
     const { getFieldDecorator } = this.props.form
@@ -190,11 +195,11 @@ class Main extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="支持专题分享">
               <>
-                <Switch checked={this.state.shareOpen} onChange={this.handleSwitch}/>
+                <Switch checked={this.state.shareOpen} onChange={this.handleSwitch} />
                 <p>关闭专题分享时，则隐藏专题页面分享按钮，无法分享专题。</p>
               </>
             </Form.Item>
-            {this.state.shareOpen && 
+            {this.state.shareOpen &&
               <>
                 <Form.Item
                   label='分享标题'
