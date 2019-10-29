@@ -141,7 +141,7 @@ export function initImgList(imgUrlWap, uid) {
     }
     return [
       {
-        uid: uid || `${-parseInt(Math.random() * 1000)}`,
+        uid: uid || String(Math.random()).slice(2),
         url: imgUrlWap,
         status: 'done',
         thumbUrl: imgUrlWap,

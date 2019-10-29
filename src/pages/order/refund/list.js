@@ -44,6 +44,7 @@ export default class extends React.Component {
     delete fieldsValues['handle'];
     delete fieldsValues['payTime'];
     let refundStatus = (fieldsValues.refundStatus ? [fieldsValues.refundStatus]: null) || typeMapRefundStatus[this.props.type];
+    console.log('refundStatus=>', refundStatus);
     const params = {
       ...fieldsValues,
       applyStartTime,

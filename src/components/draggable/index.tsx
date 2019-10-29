@@ -9,7 +9,7 @@ interface Event extends React.SyntheticEvent {
 export interface Props {
   className?: string
   dragElement: string
-  onMouseUp?: (reachIndex?: number, currentIndex?: number) => void
+  onMouseUp?: (reachIndex: number, currentIndex: number) => void
   children?: React.ReactNode
 }
 
