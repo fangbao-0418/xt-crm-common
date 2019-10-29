@@ -21,7 +21,7 @@ export default class extends (PureComponent || Component) {
   render() {
     const { switchOn, rule, loading } = this.props;
     return (
-      <Spin spinning={loading}>
+      <Spin spinning={false}>
         <div>
           <h3>订单拦截功能开关<Switch style={{ marginLeft: 16 }} checked={switchOn} onChange={this.switchChange} /></h3>
           <Divider />
