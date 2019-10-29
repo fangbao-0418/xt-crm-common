@@ -411,14 +411,7 @@ class GoodsEdit extends React.Component {
             })(<Input placeholder="请输入商品简称" />)}
           </Form.Item>
           <Form.Item label="商品编码">
-          {getFieldDecorator('productCode', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入商品编码',
-                },
-              ],
-            })(<Input placeholder="请输入商品编码" />)}
+            {getFieldDecorator('productCode')(<Input placeholder="请输入商品编码" />)}
             </Form.Item>
             <Form.Item label="商品简介">
             {getFieldDecorator('description', {
