@@ -218,9 +218,9 @@ class Main extends React.Component<Props, State> {
                     rules: [
                       { required: true, message: '请上传专题分享图片' }
                     ]
-                  })(<Upload pxSize={[{width:750, height:1000}]} accept="image/*,.png,.jpg,.gif" size={0.3} listType="picture-card" />)}
+                  })(<Upload accept="image/gif, image/jpeg, image/png" size={0.3} listType="picture-card" />)}
                   <p>1.专题分享图片主要用于专题分享，包括生成专题海报、分享给好友图片等，必填项。</p>
-                  <p>2、图片格式支持png、jpg、gif格式。</p>
+                  <p>2、图片格式支持png、gif、jpg格式（推荐使用png格式）。</p>
                   <p>3、图片尺寸为750*1000像素，大小不超过300kb。</p>
                 </Form.Item>
               </>
