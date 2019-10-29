@@ -4,7 +4,7 @@ import styles from './loader.module.scss';
 
 const loader = () => {
   return (
-    <div className={styles['loader-wrapper']}>
+    <div hidden className={styles['loader-wrapper']}>
       <div className={styles['loader-content']}>
         <Spin tip="加载中..." />
       </div>

@@ -45,13 +45,13 @@ class GoodsList extends React.Component {
         current: +params.page || 1,
         pageSize: 10,
       },
-      status: this.props.status,
-      initParams: params
+      status: this.props.status
     };
   }
 
   componentDidMount() {
     const params = parseQuery();
+    this.props.form.setFieldsValue(params);
     this.getGoodsList(params);
     // this.props.onList(e => {
     //   this.getGoodsList({ status: e });
@@ -200,10 +200,14 @@ class GoodsList extends React.Component {
       selectedRows,
     });
   };
-
+  handleReset = () => {
+    const { resetFields } = this.props.form;
+    const { page } = this.state;
+    setQuery({page: page.current, pageSize: page.pageSize}, true);
+    resetFields();
+  }
   render() {
-    
-    const { selectedRowKeys, supplier, dataSource, page, initParams } = this.state;
+    const { selectedRowKeys, supplier, dataSource, page } = this.state;
     const columns = [
       {
         title: '商品ID',
@@ -278,7 +282,7 @@ class GoodsList extends React.Component {
 
     const {
       status,
-      form: { getFieldDecorator, resetFields },
+      form: { getFieldDecorator },
     } = this.props;
     const rowSelection = {
       selectedRowKeys,
@@ -290,23 +294,17 @@ class GoodsList extends React.Component {
         <Card title="筛选">
           <Form layout="inline">
             <FormItem label="商品名称">
-              {getFieldDecorator('productName', {
-                initialValue: initParams.productName || ''
-              })(<Input placeholder="请输入商品名称" />)}
+              {getFieldDecorator('productName')(<Input placeholder="请输入商品名称" />)}
             </FormItem>
             <FormItem label="商品ID">
-              {getFieldDecorator('productId', {
-                initialValue: initParams.productId || ''
-              })(<Input type='number' placeholder="请输入商品ID" />)}
+              {getFieldDecorator('productId')(<Input type='number' placeholder="请输入商品ID" />)}
             </FormItem>
             <FormItem label="供应商">
-              {getFieldDecorator('storeId', {
-                initialValue: +initParams.storeId || ''
-              })(
+              {getFieldDecorator('storeId')(
                 <Select
                   placeholder="请选择供货商"
                   showSearch
-                  filterOption={(inputValue, option) =>{
+                  filterOption={(inputValue, option) => {
                     return option.props.children.indexOf(inputValue) > -1;
                   }}
                   style={{ width: 300 }}
@@ -314,13 +312,24 @@ class GoodsList extends React.Component {
                   {map(supplier, item => (
                     <Option value={item.id} key={item.id}>{item.name}</Option>
                   ))}
-                </Select>,
+                </Select>
+              )}
+            </FormItem>
+            <FormItem label="拦截状态">
+              {getFieldDecorator('interceptor', {
+                initialValue: ''
+              })(
+                <Select placeholder="请选择拦截状态" style={{ width: 300 }}>
+                  <Option value={''}>全部</Option>
+                  <Option value={'1'}>是</Option>
+                  <Option value={'0'}>否</Option>
+                </Select>
               )}
             </FormItem>
             <FormItem label="创建时间">{getFieldDecorator('goodsTime')(<RangePicker showTime />)}</FormItem>
             <FormItem label="操作时间">{getFieldDecorator('optionTime')(<RangePicker showTime />)}</FormItem>
             <FormItem>
-              <Button type="default" onClick={() => resetFields()}>
+              <Button type="default" onClick={this.handleReset}>
                 清除条件
               </Button>
               <Button
