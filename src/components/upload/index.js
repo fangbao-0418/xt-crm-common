@@ -88,7 +88,7 @@ class UploadView extends Component {
   };
   customRequest(e) {
     const file = e.file;
-
+    console.log(e, 'customRequest')
     ossUpload(file).then(urlList => {
       const { fileList } = this.state;
       const { onChange } = this.props;
