@@ -120,31 +120,22 @@ export const newPut = (url, data, config) => {
   });
 };
 
-function getFileName(disposition) {
-  if (!disposition) {
-    return '';
-  }
-  const idx = disposition.lastIndexOf('=');
-  return decodeURI(disposition.slice(idx + 1));
-}
-
-function cleanArray(actual) {
-  const newArray = []
-  for (let i = 0; i < actual.length; i++) {
-    if (actual[i]) {
-      newArray.push(actual[i])
-    }
-  }
-  return newArray
-}
+// function getFileName(disposition) {
+//   if (!disposition) {
+//     return '';
+//   }
+//   const idx = disposition.lastIndexOf('=');
+//   return decodeURI(disposition.slice(idx + 1));
+// }
 
 function param(json) {
+  console.log('json=>', json);
   if (!json) return ''
-  return cleanArray(Object.keys(json).map(key => {
-    if (json[key] === undefined) return ''
-    return encodeURIComponent(key) + '=' +
-           encodeURIComponent(json[key])
-  })).join('&')
+  let arr = Object.keys(json).map(key => {
+    if (!json[key]) return ''
+    return encodeURIComponent(key) + '=' + encodeURIComponent(json[key])
+  })
+  return arr.filter(Boolean).join('&')
 }
 
 // exportHelper
