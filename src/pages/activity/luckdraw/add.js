@@ -40,7 +40,7 @@ class Add extends React.Component {
         
     };
     componentDidMount() {
-        this.handleSearch()
+        // this.handleSearch() //默认进来不查询
     }
     handleReset = () => {
         this.props.form.resetFields();
