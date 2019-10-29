@@ -9,12 +9,10 @@ interface Props {
 class Main extends React.Component<Props> {
   public onChange (value: any[]) {
     if (this.props.onChange) {
-      console.log([...value], 'onchange')
       this.props.onChange([...value])
     }
   }
   public render () {
-      console.log(this.props.value, 'render')
       return (
         <Draggable
           className={styles['goods-draggable']}
