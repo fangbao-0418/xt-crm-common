@@ -8,6 +8,7 @@ import Content from './components/content'
 import * as api from './api'
 import styles from './style.module.sass'
 import { namespace } from './model'
+import { replaceHttpUrl } from '@/util/utils';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   detail: Special.DetailItem
 }
@@ -92,7 +93,7 @@ class Main extends React.Component<Props, State> {
           return {
             type: column.type,
             sort: column.sort,
-            advertisementUrl: (column.advertisementUrl || '').trim(),
+            advertisementUrl: replaceHttpUrl((column.advertisementUrl || '').trim()),
             advertisementJumpUrl: (column.advertisementJumpUrl || '').trim()
           };
         default:
