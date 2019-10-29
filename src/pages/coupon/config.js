@@ -6,6 +6,7 @@ import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } f
 import { stopCouponTask, invalidTaskCoupon } from './api';
 import { Badge, Tooltip } from 'antd';
 import emitter from '@/util/events';
+import { download } from '@/util/utils';
 
 const listBadgeColors = {
   '0': 'gray',
@@ -94,19 +95,34 @@ export const releaseRecordsColumns = [{
   key: 'userGroupValue',
   width: 600,
   render: (text, record) => {
+    let node
     switch (record.receiveUserGroup) {
       case 0:
-        return '全部用户';
+        node = '全部用户'
+        break
       case 1:
-        return formatReceiveRestrict(record.userGroupValue);
+        node = formatReceiveRestrict(record.userGroupValue)
+        break
       case 2:
-        return <div className="wrap">{record.userGroupValue}</div>
+        node = record.userGroupValue
+        break
       case 3:
         const [href, name] = record.userGroupValue.split(',')
-        return <a href={href}>{name}</a>;
+        node = (
+          <span className="href" onClick={() => {
+            download(href, name);
+          }}>{name}</span>
+        )
+        break
       default:
-        return '全部用户';
+        node = '全部用户'
+        break
     }
+    return (
+      <div className='wrap'>
+        {node}
+      </div>
+    )
   }
 }, {
   title: '发送时间',
