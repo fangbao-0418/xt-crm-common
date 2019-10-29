@@ -213,6 +213,9 @@ export default class extends Component {
           </Col>
           <Col>
             <Table
+              scroll={{
+                x: '100%'
+              }}
               dataSource={data.records}
               columns={getColumns(this)}
               pagination={{
@@ -224,7 +227,6 @@ export default class extends Component {
               }}
               rowKey={records => records.id}
               onChange={this.onChange}
-              loading={loading}
             />
           </Col>
         </Row>
