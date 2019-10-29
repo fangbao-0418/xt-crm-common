@@ -135,6 +135,10 @@ class List extends React.Component {
                 }
             },
             {
+                title: '手机号',
+                dataIndex: 'buyerPhone',
+            },
+            {
                 title: '抽奖码状态',
                 dataIndex: 'lotteryStatus',
                 render: (text, record) => {
