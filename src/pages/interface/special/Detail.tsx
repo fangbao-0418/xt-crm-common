@@ -58,29 +58,24 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+  requestParamsCreator(column: Special.DetailContentProps, list: any) {
+    let items = (list || []).map((v: any) => {
+      return {
+        id: v.id,
+        sort: v.sort
+      }
+    })
+    return { type: column.type, css: column.css, sort: column.sort, items }
+  }
   // 新增详情转换成入参
   public mapDetailToRequestParams(detail: Special.DetailItem) {
     detail.jumpUrl = (detail.jumpUrl || '').trim()
     const list = detail.list.map((column: Special.DetailContentProps) => {
-      let items = [];
       switch (column.type) {
         case 1:
-          items = (column.list || []).map(v => {
-            return {
-              id: v.id,
-              sort: v.sort
-            }
-          })
-          return { type: column.type, css: column.css, sort: column.sort, items }
-          break;
+          return this.requestParamsCreator(column, column.list);
         case 2:
-          items = (column.crmCoupons || []).map(v => {
-            return {
-              id: v.id,
-              sort: v.sort
-            }
-          })
-          return { type: column.type, css: column.css, sort: column.sort, items }
+          return this.requestParamsCreator(column, column.crmCoupons);
         case 3:
           return {
             type: column.type,

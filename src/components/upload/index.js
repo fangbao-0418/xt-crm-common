@@ -36,13 +36,12 @@ class UploadView extends Component {
     this.handleRemove = this.handleRemove.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({
-        fileList: this.initFileList(this.props.value),
-      });
-    }
+  componentWillReceiveProps (props) {
+    this.setState({
+      fileList: this.initFileList(props.value)
+    });
   }
+
   replaceUrl (url) {
     if (!url) {
       return url
@@ -72,19 +71,51 @@ class UploadView extends Component {
       return val;
     });
   }
+  // 获取图片像素大小
+  getImgSize (file) {
+    const el = document.createElement('img')
+    return new Promise((resolve, rejet) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        el.setAttribute('src', e.target.result)
+        el.onload = () => {
+          const width = el.naturalWidth || el.width
+          const height = el.naturalHeight || el.height
+          resolve({
+            width,
+            height
+          })
+        }
+      }
+      reader.readAsDataURL(file)
+    })
+  }
 
-  beforeUpload = (file, fileList) => {
-    const { fileType, size = 10 } = this.props;
+  beforeUpload = async (file, fileList) => {
+    
+    const { fileType, size = 10, pxSize } = this.props;
+    console.log('this.props', this.props)
     if (fileType && file.type.indexOf(fileType) < 0) {
       message.error(`请上传正确${fileType}格式文件`);
-      return false;
+      return Promise.reject()
     }
     const isLtM = file.size / 1024 / 1024 < size;
     if (!isLtM) {
       message.error(`请上传小于${size * 1000}kB的文件`);
-      return false;
+      return Promise.reject()
     }
-    return true;
+    //pxSize: [{width:100, height:100}] 限制图片上传px大小
+    if (pxSize && pxSize.length) {
+      const imgSize = await this.getImgSize(file) || {width:0, height:0}
+      let result = pxSize.filter((item, index, arr) => {
+        return item.width == imgSize.width && item.height == imgSize.height;
+      })
+      if (result.length === 0 ) {
+        message.error(`图片尺寸不正确`);
+        return Promise.reject()
+      }
+    }
+    return Promise.resolve(file)
   };
   customRequest(e) {
     const file = e.file;
@@ -95,8 +126,10 @@ class UploadView extends Component {
       file.url = urlList && urlList[0];
       file.durl = file.url;
       fileList.push({
-        ...file
+        ...file,
+        name: file.name
       });
+      console.log(file, fileList, 'fileList')
       this.setState({
         fileList: fileList,
       });
@@ -105,7 +138,7 @@ class UploadView extends Component {
           ...item,
           url: this.replaceUrl(item.url),
           durl: this.replaceUrl(item.durl),
-          name: this.getViewUrl(item.url)
+          // name: file.name
         }
       })
       isFunction(onChange) && onChange(value);
