@@ -40,9 +40,14 @@ class Data {
     this.pressedEl.className = this.pressedEl.className && this.pressedEl.className.replace(/dragging/g, '')
     if (this.tempEl && document.body.contains(this.tempEl)) {
       document.body.removeChild(this.tempEl)
-      if (this.props.onMouseUp) {
-        this.props.onMouseUp(this.movedIndex, this.currentIndex)
-      }
+      setTimeout(() => {
+        if (this.props.onMouseUp) {
+          this.props.onMouseUp(this.movedIndex, this.currentIndex)
+        }
+      }, 40)
+      // if (this.props.onMouseUp) {
+      //   this.props.onMouseUp(this.movedIndex, this.currentIndex)
+      // }
     }
   }
   /**
