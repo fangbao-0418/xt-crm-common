@@ -533,7 +533,6 @@ class GoodsEdit extends React.Component {
               ],
             })(
               <DraggableUpload />
-              ,
             )}
           </Form.Item>
           <Form.Item label="banner图片" required={true}>
@@ -641,7 +640,7 @@ class GoodsEdit extends React.Component {
           <Form.Item label="商品详情页">
             <div className="mb20">
               {getFieldDecorator('listImage')(
-                <UploadView showUploadList={true} size={0.3}>
+                <UploadView multiple showUploadList={true} size={0.3}>
                   <Button type="dashed">上传商品详情页</Button>
                 </UploadView>,
               )}

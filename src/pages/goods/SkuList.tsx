@@ -91,7 +91,6 @@ class SkuList extends React.Component<Props, State>{
     dataSource: this.props.dataSource
   }
   public componentWillReceiveProps (props: Props) {
-    console.log(props.specs, 'will receive')
     this.setState({
       showImage: props.showImage,
       specs: props.specs,
@@ -145,10 +144,6 @@ class SkuList extends React.Component<Props, State>{
       message.error('请设置规格名称');
       return
     }
-    // if (showImage && !specPicture && key === 0) {
-    //   message.error('请设置规格商品图');
-    //   return
-    // }
     if (content.find((v) => v.specName === specName)) {
       message.error('请不要填写相同的规格');
       return
@@ -204,12 +199,12 @@ class SkuList extends React.Component<Props, State>{
     /** 第二项规格输入时 */
     } else {
       /** 如果dataSource为空，规格2至少有一项，补充规格 */
-      if (dataSource.length === 0 && specs[1] && specs[1].content && specs[1].content.length >= 1) {
-        specs[1].content.map((item) => {
+      if (dataSource.length === 0 && specs[1] && specs[1].content && specs[1].content.length === 1) {
+        specs[0].content.map((item) => {
           addData.push({
             ...defaultItem,
-            propertyValue1: '',
-            propertyValue2: item.specName
+            propertyValue1: item.specName,
+            propertyValue2: specName
           })
         })
       /** 第一规格不存在, 正常新增一个规格 */
@@ -237,12 +232,19 @@ class SkuList extends React.Component<Props, State>{
       }
     }
     dataSource = dataSource.concat(addData)
+    console.log(dataSource, 'dataSource')
+    let result: SkuProps[] = []
+    specs[0].content.map((item) => {
+      console.log(dataSource.filter(item2 => item2.propertyValue1 === item.specName), item.specName, 'item')
+      result = result.concat(dataSource.filter(item2 => item2.propertyValue1 === item.specName)) 
+    })
+    console.log(result, 'result')
     this.setState({
-      dataSource,
+      dataSource: result,
       tempSpecInfo,
       specs
     })
-    this.onChange(dataSource)
+    this.onChange(result)
   };
   handleTabsAdd = () => {
     const GGName = this.state.GGName
