@@ -58,7 +58,7 @@ class UploadView extends Component {
     return 'https://assets.hzxituan.com/' + url.trim().replace(/^https?:\/\/.+?\//, '')
   }
   initFileList(fileList = []) {
-    console.log('initFileList')
+    fileList = fileList || []
     const { fileType } = this.props;
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
     this.count = fileList.length
