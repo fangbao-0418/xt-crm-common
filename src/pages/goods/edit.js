@@ -19,6 +19,7 @@ import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
 import SkuList from './SkuList';
 import styles from './edit.module.scss'
+import DraggableUpload from './components/draggable-upload'
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
@@ -531,12 +532,8 @@ class GoodsEdit extends React.Component {
                 },
               ],
             })(
-              <UploadView
-                placeholder="上传商品图片"
-                listType="picture-card"
-                listNum={5}
-                size={.3}
-              />,
+              <DraggableUpload />
+              ,
             )}
           </Form.Item>
           <Form.Item label="banner图片" required={true}>
