@@ -26,6 +26,7 @@ async function ossUpload(file) {
 }
 
 class UploadView extends Component {
+  count = 0
   constructor(props) {
     super(props);
     this.state = {
@@ -57,8 +58,10 @@ class UploadView extends Component {
     return 'https://assets.hzxituan.com/' + url.trim().replace(/^https?:\/\/.+?\//, '')
   }
   initFileList(fileList = []) {
+    console.log('initFileList')
     const { fileType } = this.props;
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
+    this.count = fileList.length
     return fileList.map(val => {
       val.durl = val.url
       if (fileType == 'video') {
@@ -92,9 +95,7 @@ class UploadView extends Component {
   }
 
   beforeUpload = async (file, fileList) => {
-    
-    const { fileType, size = 10, pxSize } = this.props;
-    console.log('this.props', this.props)
+    const { fileType, size = 10, pxSize, listNum } = this.props;
     if (fileType && file.type.indexOf(fileType) < 0) {
       message.error(`请上传正确${fileType}格式文件`);
       return Promise.reject()
@@ -115,6 +116,13 @@ class UploadView extends Component {
         return Promise.reject()
       }
     }
+    this.count++
+    if (listNum !== undefined && this.count > listNum) {
+      if (this.count === listNum + 1) {
+        message.error(`上传图片超出最大限制`);
+      }
+      return Promise.reject()
+    }
     return Promise.resolve(file)
   };
   customRequest(e) {
@@ -129,7 +137,6 @@ class UploadView extends Component {
         ...file,
         name: file.name
       });
-      console.log(file, fileList, 'fileList')
       this.setState({
         fileList: fileList,
       });
