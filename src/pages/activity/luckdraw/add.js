@@ -7,7 +7,7 @@ import DateFns from 'date-fns';
 import orderStatus from '@/enum/orderStatus';
 import { lotteryManualGive } from './../api'
 import { getOrderList } from './../../order/api'
-
+import './../activity.scss'
 const FormItem = Form.Item;
 class Add extends React.Component {
     constructor(props) {
@@ -18,7 +18,7 @@ class Add extends React.Component {
             listData: [],
             current: +params.page || 1,
             total: 0,
-            pageSize: 3,
+            pageSize: 8,
             initParams: params,
             selectedRows: [], // 选中行
             selectedRowKeys: []
@@ -34,7 +34,8 @@ class Add extends React.Component {
         this.setState({
             visible: false,
             selectedRows: [],
-            selectedRowKeys: []
+            selectedRowKeys: [],
+            current: 0
         });
         
     };
@@ -61,11 +62,13 @@ class Add extends React.Component {
 
               getOrderList(params).then(res => {
                   console.log('getOrderList', res)
-                  if (res.records) {
+                  if (res && res.records) {
                     this.setState({
                         listData: res.records,
                         total: res.total
                     })
+                  } else {
+                      
                   }
               })
             }
@@ -172,6 +175,7 @@ class Add extends React.Component {
             <>
             <Button type="primary" onClick={this.showModal}>手动发码</Button>
             <Modal title="手动发码"
+            className="modalStyle"
                 width={1000}
                 visible={this.state.visible}
                 footer={
@@ -219,9 +223,9 @@ class Add extends React.Component {
                     current,
                     total,
                     pageSize,
-                    onChange: this.handlePageChange,
+                    onChange: this.handlePageChange
                 }}
-                />,
+                />
             </Card>
             
             </Modal>

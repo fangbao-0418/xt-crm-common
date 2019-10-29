@@ -1,11 +1,11 @@
 // 查询抽奖码
 import React from 'react';
-import { Modal, Card, Form, Input, DatePicker, Select, Button, Table, Divider, message, Row, Col } from 'antd';
+import { Card, Form, Input, Select, Button, Table, Row, Col } from 'antd';
 import { parseQuery } from '@/util/utils';
 import DateFns from 'date-fns';
 import Add from './add';
 import DisableModal from './disable-modal';
-import { getLotteryList, lotteryDisable, lotteryEnable } from '../api';
+import { getLotteryList, lotteryEnable } from '../api';
 import lotteryType from '@/enum/lotteryType';
 
 const FormItem = Form.Item;
@@ -19,6 +19,7 @@ const awardStatus = [
     {key:'4', value:'四等奖'},
     {key:'5', value:'待抽奖'}
 ]
+//奖券状态
 const lotteryStatus = [
     {key:'0', value:'已失效'},
     {key:'1', value:'待抽奖'},
@@ -42,7 +43,7 @@ class List extends React.Component {
             listData: [],
             current: +params.page || 1,
             total: 0,
-            pageSize: 3,
+            pageSize: 10,
             initParams: params,
             visible: false,
             selectedRows: [], //选中行内容
@@ -53,23 +54,35 @@ class List extends React.Component {
     componentDidMount() {
         this.handleSearch()
     }
-    // 批量失效
-    handleBatchDisable = () => {
-        console.log('批量失效',this.state.selectedRows)
-        lotteryDisable(this.state.selectedRows).then(res => {
-            console.log('批量失效res', res);
-        })
-    }
+    
     // 批量生效
-    handleBatchEnable = () => {
-        console.log('批量生效',this.state.selectedRows)
-        lotteryEnable(this.state.selectedRows).then(res => {
-            console.log('批量生效res', res);
+    handleBatchEnable = (selrows) => {
+        let rows = []
+        if (selrows && selrows.length) {
+            //操作栏选择
+            rows = selrows.map(item => {
+                return item.ticketCode
+            })
+        } else {
+            //多行选择
+            rows = this.state.selectedRows.map(item => {
+                return item.ticketCode
+            })
+        }
+        console.log('rows', rows)
+        lotteryEnable({ ticketCodes: rows }).then(res => {
+            if (res) {
+                APP.success("操作成功！")
+            } else {
+                APP.error("操作失败！")
+            }
+            this.handleSearch();
         })
     }
     // 重置
     handleReset = () => {
         this.props.form.resetFields();
+        this.handleSearch();
     };
     // 查询
     handleSearch = () => {
@@ -94,6 +107,7 @@ class List extends React.Component {
             }
           });
     }
+    // 分页
     handlePageChange = (page, pageSize) => {
         this.setState(
           {
@@ -106,7 +120,6 @@ class List extends React.Component {
 
     render(h) {
         const { listData, total, pageSize, current } = this.state;
-        console.log('renderState',this.state)
         const columns = [
             {
                 title: '抽奖码',
@@ -117,7 +130,7 @@ class List extends React.Component {
                 dataIndex: 'mainOrderCode',
                 render: (text, record) => {
                     return (
-                        <a href={'#/order/detail/15719961174722014125'} target="_blank">{text}</a>
+                        <a href={'#/order/detail/' + text} target="_blank">{text}</a>
                     )
                 }
             },
@@ -147,17 +160,21 @@ class List extends React.Component {
             },
             {
                 title: '操作',
-                render(text, record) {
-                    return (
-                        <><DisableModal></DisableModal></>
-                    )
+                render: (text, record) => {
+                    if (text.lotteryStatus == 1) {
+                        return <><DisableModal handleSearch={this.handleSearch} selRow={[text]} btntext={"失效"}></DisableModal></>
+                    } else if (text.lotteryStatus == 0) {
+                        return <Button type="primary" onClick={() => this.handleBatchEnable([text])}>
+                            生效
+                        </Button>
+                    }
                 }
             }
         ];
         const data = [
             {
                 ticketCode: '1123123132',
-                mainOrderCode: '15720011106952095084',
+                mainOrderNo: '15720011106952095084',
                 lotteryStatus: 0,
                 award: 1,
                 payDate: 1,
@@ -165,7 +182,7 @@ class List extends React.Component {
             },
             {
                 ticketCode: '1123123132',
-                mainOrderCode: '15719961174722014125',
+                mainOrderNo: '15719961174722014125',
                 lotteryStatus: 0,
                 award: 1,
                 payDate: 1,
@@ -177,7 +194,6 @@ class List extends React.Component {
                 this.setState({
                     selectedRows: selectedRows
                 })
-              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', this.state.selectedRows);
             }
           };
         const {
@@ -190,13 +206,13 @@ class List extends React.Component {
                   <Form layout="inline">
                       <FormItem label="抽奖码编号">
                           {
-                              getFieldDecorator('lotteryTicketCode')
+                              getFieldDecorator('ticketCode')
                               (<Input placeholder="请输入抽奖码编号"/>)
                           }
                       </FormItem>
                       <FormItem label="主订单号">
                           {
-                              getFieldDecorator('mainOrderCode')
+                              getFieldDecorator('mainOrderNo')
                               (<Input placeholder="请输入主订单号编号"/>)
                           }
                       </FormItem>
@@ -208,7 +224,7 @@ class List extends React.Component {
                       </FormItem>
                       <FormItem label="抽奖码状态">
                           {
-                              getFieldDecorator('lotteryStatus')
+                              getFieldDecorator('lotteryStatus', {initialValue: '',})
                               (<Select  style={{width: 100}}>
                                   <Option value="">全部</Option>
                                   {
@@ -219,7 +235,7 @@ class List extends React.Component {
                       </FormItem>
                       <FormItem label="中奖类型">
                           {
-                              getFieldDecorator('award')
+                              getFieldDecorator('award', {initialValue: '',})
                               (<Select style={{width: 100}}>
                                 <Option value="">全部</Option>
                                 {
@@ -242,17 +258,12 @@ class List extends React.Component {
                   <div>
                       <Row>
                           <Col span={12}>
-                            <Button type="primary" disabled={!this.state.selectedRows.length} onClick={this.handleBatchDisable}>
-                                批量失效
-                            </Button>
+                            <DisableModal handleSearch={this.handleSearch} disabled={!this.state.selectedRows.length} selRow={this.state.selectedRows} btntext={"批量失效"}></DisableModal>
                             <Button type="primary" disabled={!this.state.selectedRows.length} onClick={this.handleBatchEnable} style={{ marginLeft: 10 }}>
                                 批量生效
                             </Button>
                           </Col>
                           <Col span={2} offset={10}>
-                            {/* <Button type="primary" onClick={()=>this.setState({visible: true})} style={{ marginLeft: 10 }}>
-                                手动发码
-                            </Button> */}
                             <Add />
                           </Col>
                       </Row>
@@ -275,22 +286,6 @@ class List extends React.Component {
                       )
                   }
               </Card>
-              {/* <Modal
-                title="手动发码"
-                visible={this.state.visible}
-                width={1000}
-                footer={null}
-                onCancel={()=>this.setState({
-                    visible: false
-                })}
-                >
-                <Add onOk={()=>{
-                    this.setState({
-                    visible: false
-                    });
-                    this.handleSearch();
-                }} history={this.props.history}/>
-                </Modal> */}
               </>
           );
     }

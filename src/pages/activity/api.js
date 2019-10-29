@@ -57,17 +57,18 @@ export function refreshPromtion(promotionId) {
 
 // 用户抽奖码列表
 export function getLotteryList(data) {
-  return newPost('/lottery/list', data)
+  return get('/lottery/list', data)
 }
-// 抽奖码失效 data:[]
+// 抽奖码失效 String[] ticketCodes; 奖券码集合
+// String  failureReason;失效原因
 export function lotteryDisable(data) {
   return newPost('/lottery/disable', data)
 }
-// 抽奖券码生效 data:[]
+// 抽奖券码生效 String[] ticketCodes; 奖券码集合
 export function lotteryEnable(data) {
   return newPost('/lottery/enable', data)
 }
-// 手工发码 data:[]
+// 手工发码 lotteryMemberTicketManualAddVOList:[]
 export function lotteryManualGive(data) {
   return newPost('/lottery/manualGive', data)
 }
