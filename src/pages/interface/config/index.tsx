@@ -111,13 +111,13 @@ class Main extends React.Component<Props, State> {
                   message: '请上传导航栏背景图'
                 },
               ],
-            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传背景图"  listType="picture-card" pxSize={[{width: 828, height: 266}]} listNum={1} size={.3} />)}
+            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传背景图"  pxSize={[{width: 828, height: 320}]} listType="picture-card"  listNum={1} size={.3} />)}
           </Form.Item>
           <Form.Item label="注意事项">
             <div style={{lineHeight: 1.5}}>
               1、该背景图主要用在首页顶部导航栏，必填项。<br/>
-              2、图片格式支持png、jpg、gif格式。<br/>
-              3、图片尺寸为828*266像素，大小不超过300kb。
+              2、图片格式支持png、jpg、gif格式。（推荐使用png格式）<br/>
+              3、图片尺寸为828*320像素，大小不超过300kb。
             </div>
           </Form.Item>
           <Form.Item label="icon背景图" >
@@ -129,12 +129,12 @@ class Main extends React.Component<Props, State> {
                   message: '图片格式不正确'
                 },
               ],
-            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传icon图" listType="picture-card" pxSize={[{width: 750, height: 176},{width: 750, height: 320}]} listNum={1} size={.3} />)}
+            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传icon图" pxSize={[{width: 750, height: 176}, {width: 750, height: 320}]} listType="picture-card"  listNum={1} size={.3} />)}
           </Form.Item>
           <Form.Item label="注意事项">
             <div style={{lineHeight: 1.5}}>
               1、该背景图主要用在首页icon区域，非必填项，默认白色背景图。<br/>
-              2、图片格式支持png、jpg、gif格式。<br/>
+              2、图片格式支持png、jpg、gif格式。（推荐使用png格式）<br/>
               3、一行图标背景图片尺寸为750*176像素；<br/>
               二行图标背景图片尺寸为750*320像素；大小不超过300kb。
             </div>
