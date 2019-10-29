@@ -111,7 +111,7 @@ class Main extends React.Component<Props, State> {
                   message: '请上传导航栏背景图'
                 },
               ],
-            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传背景图"  listType="picture-card" pxSize={[{width: 828, height: 266}]} listNum={1} size={.3} />)}
+            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传背景图"  listType="picture-card"  listNum={1} size={.3} />)}
           </Form.Item>
           <Form.Item label="注意事项">
             <div style={{lineHeight: 1.5}}>
@@ -129,7 +129,7 @@ class Main extends React.Component<Props, State> {
                   message: '图片格式不正确'
                 },
               ],
-            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传icon图" listType="picture-card" pxSize={[{width: 750, height: 176},{width: 750, height: 320}]} listNum={1} size={.3} />)}
+            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传icon图" listType="picture-card"  listNum={1} size={.3} />)}
           </Form.Item>
           <Form.Item label="注意事项">
             <div style={{lineHeight: 1.5}}>
