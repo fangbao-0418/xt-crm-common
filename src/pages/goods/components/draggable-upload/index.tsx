@@ -32,6 +32,7 @@ class Main extends React.Component<Props> {
           }}
         >
           <UploadView
+            multiple
             value={this.props.value}
             placeholder="上传商品图片"
             listType="picture-card"
