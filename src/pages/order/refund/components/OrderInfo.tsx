@@ -40,6 +40,14 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>支付时间：{moment(orderInfoVO.payTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
         <Col span={8}>交易流水号：{orderInfoVO.paymentNumber}</Col>
       </Row>
+      <Row gutter={24}>
+        <Col span={8}>
+          姓名：{orderInfoVO.realName}
+        </Col>
+        <Col span={8}>
+          身份证号：{orderInfoVO.idNo}
+        </Col>
+      </Row>
       <Row>
         <h4>物流信息</h4>
         <Table rowKey={(record: any) => record.id} style={{ width: '400px' }} pagination={false} columns={logisticsInformationColumns} dataSource={orderInfoVO.expressVO || []} />

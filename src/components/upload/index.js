@@ -51,10 +51,11 @@ class UploadView extends Component {
     return url
   }
   getViewUrl (url) {
+
     if (!url) {
       return url
     }
-    return 'https://assets.hzxituan.com/' + url.replace(/^https?:\/\/.+?\//, '')
+    return 'https://assets.hzxituan.com/' + url.trim().replace(/^https?:\/\/.+?\//, '')
   }
   initFileList(fileList = []) {
     const { fileType } = this.props;
@@ -103,7 +104,8 @@ class UploadView extends Component {
         return {
           ...item,
           url: this.replaceUrl(item.url),
-          durl: this.replaceUrl(item.durl)
+          durl: this.replaceUrl(item.durl),
+          name: this.getViewUrl(item.url)
         }
       })
       isFunction(onChange) && onChange(value);
@@ -149,6 +151,9 @@ class UploadView extends Component {
           customRequest={(e) => this.customRequest(e)}
           onPreview={this.onPreview}
           {...attributes}
+          // onChange={(e) => {
+          //   console.log(e, 'onchange')
+          // }}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>
