@@ -58,6 +58,7 @@ class UploadView extends Component {
     return 'https://assets.hzxituan.com/' + url.trim().replace(/^https?:\/\/.+?\//, '')
   }
   initFileList(fileList = []) {
+    console.log(fileList, 'initFileList')
     fileList = fileList || []
     const { fileType } = this.props;
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
@@ -119,7 +120,7 @@ class UploadView extends Component {
     this.count++
     if (listNum !== undefined && this.count > listNum) {
       if (this.count === listNum + 1) {
-        message.error(`上传图片超出最大限制`);
+        message.error(`上传图片张数超出最大限制`);
       }
       return Promise.reject()
     }
