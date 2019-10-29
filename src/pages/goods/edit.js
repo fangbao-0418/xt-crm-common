@@ -19,6 +19,7 @@ import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
 import SkuList from './SkuList';
 import styles from './edit.module.scss'
+import DraggableUpload from './components/draggable-upload'
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
@@ -42,7 +43,7 @@ const formLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 8 },
+    sm: { span: 12 },
   },
 };
 
@@ -411,16 +412,9 @@ class GoodsEdit extends React.Component {
             })(<Input placeholder="请输入商品简称" />)}
           </Form.Item>
           <Form.Item label="商品编码">
-            {getFieldDecorator('productCode', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入商品编码',
-                },
-              ],
-            })(<Input placeholder="请输入商品编码" />)}
-          </Form.Item>
-          <Form.Item label="商品简介">
+            {getFieldDecorator('productCode')(<Input placeholder="请输入商品编码" />)}
+            </Form.Item>
+            <Form.Item label="商品简介">
             {getFieldDecorator('description', {
               rules: [
                 {
@@ -531,12 +525,7 @@ class GoodsEdit extends React.Component {
                 },
               ],
             })(
-              <UploadView
-                placeholder="上传商品图片"
-                listType="picture-card"
-                listNum={5}
-                size={.3}
-              />,
+              <DraggableUpload className={styles['goods-detail-draggable']} listNum={5} size={0.3} placeholder="上传商品图片" />
             )}
           </Form.Item>
           <Form.Item label="banner图片" required={true}>
@@ -547,7 +536,9 @@ class GoodsEdit extends React.Component {
                   message: '请设置banner图片',
                 },
               ],
-            })(<UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />)}
+            })(
+              <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />
+            )}
           </Form.Item>
           <Form.Item label="累计销量" required={true}>
             {getFieldDecorator('showNum', {
@@ -644,9 +635,14 @@ class GoodsEdit extends React.Component {
           <Form.Item label="商品详情页">
             <div className="mb20">
               {getFieldDecorator('listImage')(
-                <UploadView showUploadList={true} size={0.3}>
-                  <Button type="dashed">上传商品详情页</Button>
-                </UploadView>,
+                <DraggableUpload
+                  className={styles['goods-draggable']}
+                  id={'shop-detail'}
+                  listNum={20}
+                  size={0.3}
+                  placeholder="上传商品详情图"
+                />
+                // <UploadView multiple placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
               )}
             </div>
             {this.isShowDeleteAll() && <Button type="primary" onClick={this.handleDeleteAll}>一键删除</Button>}
