@@ -42,7 +42,7 @@ const formLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 8 },
+    sm: { span: 12 },
   },
 };
 
@@ -411,7 +411,7 @@ class GoodsEdit extends React.Component {
             })(<Input placeholder="请输入商品简称" />)}
           </Form.Item>
           <Form.Item label="商品编码">
-            {getFieldDecorator('productCode', {
+          {getFieldDecorator('productCode', {
               rules: [
                 {
                   required: true,
@@ -419,8 +419,8 @@ class GoodsEdit extends React.Component {
                 },
               ],
             })(<Input placeholder="请输入商品编码" />)}
-          </Form.Item>
-          <Form.Item label="商品简介">
+            </Form.Item>
+            <Form.Item label="商品简介">
             {getFieldDecorator('description', {
               rules: [
                 {
@@ -644,9 +644,7 @@ class GoodsEdit extends React.Component {
           <Form.Item label="商品详情页">
             <div className="mb20">
               {getFieldDecorator('listImage')(
-                <UploadView showUploadList={true} size={0.3}>
-                  <Button type="dashed">上传商品详情页</Button>
-                </UploadView>,
+                <UploadView placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
               )}
             </div>
             {this.isShowDeleteAll() && <Button type="primary" onClick={this.handleDeleteAll}>一键删除</Button>}
