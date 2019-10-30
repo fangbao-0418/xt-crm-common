@@ -44,7 +44,7 @@ export default class extends React.Component {
     delete fieldsValues['handle'];
     delete fieldsValues['payTime'];
     let refundStatus = (fieldsValues.refundStatus ? [fieldsValues.refundStatus]: null) || typeMapRefundStatus[this.props.type];
-    console.log('refundStatus=>', refundStatus);
+    refundStatus = Array.isArray(refundStatus) ? refundStatus[0] : refundStatus
     const params = {
       ...fieldsValues,
       applyStartTime,
@@ -65,6 +65,7 @@ export default class extends React.Component {
       params.interceptionMemberPhone = obj.iphone;
     }
     APP.fn.setPayload('order', this.payload)
+    params.refundStatus = [undefined, null].indexOf(refundStatus) > -1 ? undefined : [refundStatus]
     if (isExport) {
       this.setState({
         loading: true
