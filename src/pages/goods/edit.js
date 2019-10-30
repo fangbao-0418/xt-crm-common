@@ -241,7 +241,8 @@ class GoodsEdit extends React.Component {
           return {
             ...item,
             stock: item.inventory,
-            storeProductSkuId: item.storeSkuId
+            storeProductSkuId: item.storeSkuId,
+            deliveryMode:2
           }
         })
         this.specs = this.getSpecs(skus);
