@@ -17,7 +17,7 @@ const formatFields = (range) => {
 @withRouter
 export default class extends React.Component {
   static defaultProps = {};
-  payload = APP.fn.getPayload('order') || {}
+  payload = Object.assign({}, APP.fn.getPayload('order') || {})
   state = {
     selectedRowKeys: [],
     list: [],
@@ -36,6 +36,7 @@ export default class extends React.Component {
   query = (isExport = false, noFetch = false) => {
     const { intercept } = this.props;
     const obj = parseQuery();
+    console.log(obj, 'obj query')
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
@@ -56,6 +57,7 @@ export default class extends React.Component {
       refundStatus,
       page: this.state.current,
       pageSize: this.state.pageSize,
+      ...obj
     };
     this.payload = this.payload || {}
     this.payload.refundOrder = this.payload.refundOrder || {}
@@ -124,7 +126,6 @@ export default class extends React.Component {
     const { intercept } = this.props;
     values.apply = values.applyEndTime && [moment(values.applyEndTime), moment(values.applyStartTime)]
     values.handle = values.handleStartTime && [moment(values.handleStartTime), moment(values.handleEndTime)]
-    console.log(values, 'values')
     return (
       <Spin tip="操作处理中..." spinning={false}>
         <SearchForm

@@ -84,7 +84,7 @@ function getColumns(scope) {
                         }
                         <span className={styles['detail-button']} onClick={scope.onDetail.bind(scope, record)}>详情</span>
                         {
-                            record.haveChild ?
+                            !record.haveChild ?
                             <>
                                 <Divider type="vertical" />
                                 <span className={styles['more-button']}  onClick={scope.onMore.bind(scope, record)}>查看下级</span>
@@ -100,6 +100,11 @@ function getColumns(scope) {
 let unlisten = null;
 const namespace = '/user/userlist'
 
+const defaultPayload = {
+    memberType: '',
+    registerFrom: ''
+}
+
 @connect(state => ({
     tableConfig: state['user.userlist'].tableConfig,
     loading: state.loading.effects['user.userlist'].getData,
@@ -114,15 +119,18 @@ const namespace = '/user/userlist'
 })
 export default class extends Component {
 
-    payload = APP.fn.getPayload(namespace) || {}
+    payload = Object.assign({}, defaultPayload, (APP.fn.getPayload(namespace) || {}))
     componentDidMount() {
+        const params = parseQuery(this.props.history);
         unlisten = this.props.history.listen(() => {
             // const { form: { resetFields } } = this.props;
-            const params = parseQuery(this.props.history);
+            // const params = parseQuery(this.props.history);
             // resetFields();
+            console.log('xxxxxxx history')
             this.handleSearch(params);
         });
-        this.handleSearch(basePayload);
+        console.log('did mount')
+        this.handleSearch(params);
     }
 
     onInviteClick = (item) => {
@@ -148,9 +156,12 @@ export default class extends Component {
         history.push(`/user/detail?memberId=${item.id}`);
     }
 
-    handleSearch = (params = {}) => {
+    handleSearch = () => {
+        const params = parseQuery(this.props.history);
+        console.log(params, 'handleSearch')
         const { form: { validateFields }, dispatch } = this.props;
         validateFields((errors, values) => {
+            // console.log(values, 'value')
             if (!errors) {
                 const { time } = values;
                 const payload = {
@@ -161,11 +172,12 @@ export default class extends Component {
                     time: undefined, // 覆盖values.time
                     ...params
                 };
-                if(payload.memberType.indexOf('-') > -1) {
+                if(payload.memberType && payload.memberType.indexOf('-') > -1) {
                     const types = payload.memberType.split('-');
                     payload.memberType = types[0];
                     payload.memberTypeLevel = types[1];
                 }
+                console.log(payload, 'payload')
                 dispatch['user.userlist'].getData(payload);
             }
         })
@@ -284,10 +296,10 @@ export default class extends Component {
                     <Button
                         type="primary"
                         onClick={() => {
-                            this.payload = {}
-                            APP.fn.setPayload(namespace, {})
+                            this.payload = {...defaultPayload}
+                            APP.fn.setPayload(namespace, this.payload)
                             resetFields()
-                            this.forceUpdate()
+                            APP.history.push('/user/userlist')
                         }}
                     >清除条件</Button>
                 </FormItem>
