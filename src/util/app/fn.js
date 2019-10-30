@@ -2,13 +2,16 @@ import moment from 'moment'
 
 export function getH5Origin () {
   let origin = 'https://daily-myouxuan.hzxituan.com/'
+  // const nowTime = new Date().getTime()
   const host = window.location.host;
   if (host.indexOf('daily-xt-crmadmin') >= 0) {
     origin = 'https://daily-myouxuan.hzxituan.com/';
   } else if (host.indexOf('pre-xt-crmadmin') >= 0) {
-    origin = 'https://pre-xt-myouxuan.hzxituan.com/pre/index.html';
+    origin = 'https://pre-xt-myouxuan.hzxituan.com/pre/';
   } else if (host.indexOf('test-crmadmin') >= 0) {
     origin = 'https://testing.hzxituan.com/';
+  } else if (host.indexOf('test2-crmadmin') >= 0) {
+    origin = 'https://testing2.hzxituan.com/';
   } else if (host.indexOf('xt-crmadmin') >= 0) {
     /** 正式 */
     origin = 'https://myouxuan.hzxituan.com/';
@@ -34,3 +37,23 @@ export function formatMoney (money = '0') {
   str = [str.slice(0, len - 2).replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'), str.slice(len - 2)].join('.')
   return '¥' + str
 }
+export const handleLoading = (function () {
+  let ajaxCount = 0
+  return (loading = 'end') => {
+    if (loading === 'start') {
+      ajaxCount++
+    } else {
+      ajaxCount--
+    }
+    console.log(ajaxCount, 'ajaxCount')
+    const el = document.querySelector('#loading')
+    const display = getComputedStyle(el).display
+    if (ajaxCount > 0 && display === 'none') {
+      el.setAttribute('style','display:block')
+    } 
+    if (ajaxCount <= 0 && display !== 'none') {
+      el.setAttribute('style','display:none')
+      ajaxCount = 0
+    }
+  }
+})()

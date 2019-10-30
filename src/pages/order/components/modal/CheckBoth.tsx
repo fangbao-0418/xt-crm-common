@@ -45,7 +45,7 @@ class CheckBoth extends React.Component<Props, State> {
     })
   }
   get data() {
-    return Object.assign({}, this.props.data);
+    return this.props.data || {};
   }
   get serverNum() {
     return this.props.form.getFieldValue('serverNum');
@@ -67,7 +67,7 @@ class CheckBoth extends React.Component<Props, State> {
 * 售后申请信息对象
 */
   get orderServerVO(): AfterSalesInfo.OrderServerVO {
-    return Object.assign({}, this.props.data.orderServerVO);
+    return this.props.data.orderServerVO || {};
   }
   /**
 * 是否退运费
@@ -102,13 +102,13 @@ class CheckBoth extends React.Component<Props, State> {
    * 审核信息对象
    */
   get checkVO(): AfterSalesInfo.CheckVO {
-    return Object.assign({}, this.data.checkVO);
+    return this.data.checkVO || {};
   }
   /**
    * 订单信息对象
    */
   get orderInfoVO(): AfterSalesInfo.OrderInfoVO {
-    return Object.assign({}, this.data.orderInfoVO);
+    return this.data.orderInfoVO || {};
   }
   /**
   * 修改售后数目
@@ -137,7 +137,7 @@ class CheckBoth extends React.Component<Props, State> {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
-    const checkVO = Object.assign({}, this.data.checkVO);
+    const checkVO = this.data.checkVO || {};
     return (
       <>
         <Modal
@@ -200,7 +200,7 @@ class CheckBoth extends React.Component<Props, State> {
                     ],
                   })(
                     <InputNumber
-                      min={0.01}
+                      min={0}
                       max={formatPrice(this.maxRefundAmount)}
                       formatter={formatRMB}
                     />,

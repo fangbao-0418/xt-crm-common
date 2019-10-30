@@ -45,19 +45,19 @@ class CheckRefund extends React.Component<Props, State> {
     return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount : this.relatedAmount;
   }
   get data() {
-    return Object.assign({}, this.props.data);
+    return this.props.data || {};
   }
   /**
    * 审核信息对象
    */
   get checkVO(): AfterSalesInfo.CheckVO {
-    return Object.assign({}, this.data.checkVO);
+    return this.data.checkVO || {};
   }
   /**
    * 订单信息对象
    */
   get orderInfoVO(): AfterSalesInfo.OrderInfoVO {
-    return Object.assign({}, this.data.orderInfoVO);
+    return this.data.orderInfoVO || {};
   }
   /**
    * 获取运费
@@ -69,7 +69,7 @@ class CheckRefund extends React.Component<Props, State> {
     return this.orderInfoVO.payMoney;
   }
   get alreadyRefundAmount() {
-    let orderServerVO = Object.assign({}, this.data.orderServerVO);
+    let orderServerVO = this.data.orderServerVO || {};
     return orderServerVO.alreadyRefundAmount;
   }
   /**
@@ -83,7 +83,7 @@ class CheckRefund extends React.Component<Props, State> {
  * 售后申请信息对象
  */
   get orderServerVO(): AfterSalesInfo.OrderServerVO {
-    return Object.assign({}, this.props.data.orderServerVO);
+    return this.props.data.orderServerVO || {};
   }
   /**
    * 运费是否大于0
@@ -200,7 +200,7 @@ class CheckRefund extends React.Component<Props, State> {
                     ],
                   })(
                     <InputNumber
-                      min={0.01}
+                      min={0}
                       max={formatPrice(this.maxRefundAmount)}
                       formatter={formatRMB}
                       placeholder="请输入"
