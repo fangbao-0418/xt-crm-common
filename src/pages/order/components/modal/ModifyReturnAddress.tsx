@@ -20,7 +20,18 @@ class ModifyReturnAddress extends React.Component<Props, State> {
   }
   constructor(props: Props) {
     super(props)
-    this.handleOk = this.handleOk.bind(this)
+    this.handleOk = this.handleOk.bind(this);
+    const { detail, intercept } = props;
+    const { returnContact, returnPhone, returnAddress } = detail;
+    const { memberName, memberPhone, address } = intercept || {};
+    const currentName = intercept ? memberName : returnContact;
+    const currentPhone = intercept ? memberPhone : returnPhone;
+    const currentAddress = intercept ? address : returnAddress;
+    props.onSuccess({
+      returnContact:currentName,
+      returnPhone:currentPhone,
+      returnAddress:currentAddress
+    })
   }
   handleOk() {
     this.props.form.validateFields((errors, values) => {
@@ -31,18 +42,13 @@ class ModifyReturnAddress extends React.Component<Props, State> {
     })
   }
   render() {
-    const { detail, intercept } = this.props;
+    const { detail } = this.props;
     const { returnContact, returnPhone, returnAddress } = detail;
-    const { memberName, memberPhone, address } = intercept || {};
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
     }
-
-    const currentName = intercept ? memberName : returnContact;
-    const currentPhone = intercept ? memberPhone : returnPhone;
-    const currentAddress = intercept ? address : returnAddress;
     return (
       <>
         <Modal
@@ -55,7 +61,8 @@ class ModifyReturnAddress extends React.Component<Props, State> {
           <Form  {...formItemLayout}>
             <Form.Item label="姓名">
               {getFieldDecorator("returnContact", {
-                initialValue: currentName,
+                initialValue: returnContact,
+                
                 rules: [{
                   required: true,
                   message: '请输入姓名'
@@ -64,7 +71,7 @@ class ModifyReturnAddress extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="手机号">
               {getFieldDecorator("returnPhone", {
-                initialValue: currentPhone,
+                initialValue: returnPhone,
                 rules: [{
                   required: true,
                   message: '请输入手机号'
@@ -73,7 +80,7 @@ class ModifyReturnAddress extends React.Component<Props, State> {
             </Form.Item>
             <Form.Item label="地址">
               {getFieldDecorator("returnAddress", {
-                initialValue: currentAddress,
+                initialValue: returnAddress,
                 rules: [{
                   required: true,
                   message: '请输入详细地址'
