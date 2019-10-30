@@ -41,12 +41,13 @@ class List extends React.Component {
         const params = parseQuery();
         this.state = {
             listData: [],
-            current: +params.page || 1,
+            current: 1,
             total: 0,
             pageSize: 10,
             initParams: params,
             visible: false,
             selectedRows: [], //选中行内容
+            selectedRowKeys: [],
             detail: {}
         };
     }
@@ -99,6 +100,8 @@ class List extends React.Component {
                 console.log('res', res)
                 if (res) {
                     this.setState({
+                        selectedRows: [],
+                        selectedRowKeys: [],
                         listData: res.records,
                         total: res.total
                     })
@@ -194,8 +197,10 @@ class List extends React.Component {
               },
         ]
         const rowSelection = {
+            selectedRowKeys: this.state.selectedRowKeys,
             onChange: (selectedRowKeys, selectedRows) => {
                 this.setState({
+                    selectedRowKeys: selectedRowKeys,
                     selectedRows: selectedRows
                 })
             }
@@ -249,7 +254,11 @@ class List extends React.Component {
                           }
                       </FormItem>
                       <FormItem>
-                        <Button type="primary" onClick={this.handleSearch}>
+                        <Button type="primary" onClick={()=>{
+                            this.setState({
+                                current: 1
+                            }, this.handleSearch)
+                        }}>
                             查询
                         </Button>
                         <Button type="primary" onClick={this.handleReset} style={{ marginLeft: 10 }}>

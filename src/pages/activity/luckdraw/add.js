@@ -64,6 +64,8 @@ class Add extends React.Component {
                   console.log('getOrderList', res)
                   if (res && res.records) {
                     this.setState({
+                        selectedRows: [],
+                        selectedRowKeys: [],
                         listData: res.records,
                         total: res.total
                     })
@@ -207,7 +209,11 @@ class Add extends React.Component {
                           }
                       </FormItem>
                       <FormItem>
-                        <Button type="primary" onClick={this.handleSearch}>
+                        <Button type="primary" onClick={()=>{
+                            this.setState({
+                                current: 1
+                            }, this.handleSearch)
+                        }}>
                             查询
                         </Button>
                         <Button type="primary" onClick={this.handleReset} style={{ marginLeft: 20 }}>
