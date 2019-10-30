@@ -16,7 +16,7 @@ const awardStatus = [
     {key:'1', value:'一等奖'},
     {key:'2', value:'二等奖'},
     {key:'3', value:'三等奖'},
-    {key:'4', value:'四等奖'},
+    {key:'4', value:'幸运奖'},
     {key:'5', value:'待抽奖'}
 ]
 //奖券状态
