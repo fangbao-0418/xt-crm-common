@@ -20,10 +20,10 @@ const awardStatus = [
     {key:'5', value:'待抽奖'}
 ]
 //奖券状态
-const lotteryStatus = [
+const status = [
     {key:'0', value:'已失效'},
-    {key:'1', value:'待抽奖'},
-    {key:'2', value:'已中奖'}
+    {key:'1', value:'已生效'},
+    // {key:'2', value:'已中奖'}
 ]
 // 数组转枚举
 const arrToEnum = (arr) => {
@@ -140,10 +140,10 @@ class List extends React.Component {
             },
             {
                 title: '抽奖码状态',
-                dataIndex: 'lotteryStatus',
+                dataIndex: 'status',
                 render: (text, record) => {
                     return (
-                         <span>{arrToEnum(lotteryStatus)[text]}</span>
+                         <span>{arrToEnum(status)[text]}</span>
                     )
                 }
             },
@@ -165,9 +165,9 @@ class List extends React.Component {
             {
                 title: '操作',
                 render: (text, record) => {
-                    if (text.lotteryStatus == 1) {
+                    if (text.status == 1) {
                         return <><DisableModal handleSearch={this.handleSearch} selRow={[text]} btntext={"失效"}></DisableModal></>
-                    } else if (text.lotteryStatus == 0) {
+                    } else if (text.status == 0) {
                         return <Button type="primary" onClick={() => this.handleBatchEnable([text])}>
                             生效
                         </Button>
@@ -179,7 +179,7 @@ class List extends React.Component {
             {
                 ticketCode: '1123123132',
                 mainOrderNo: '15720011106952095084',
-                lotteryStatus: 0,
+                status: 0,
                 award: 1,
                 payDate: 1,
                 createTime: 1,
@@ -187,7 +187,7 @@ class List extends React.Component {
             {
                 ticketCode: '1123123132',
                 mainOrderNo: '15719961174722014125',
-                lotteryStatus: 0,
+                status: 0,
                 award: 1,
                 payDate: 1,
                 createTime: 1,
@@ -228,11 +228,11 @@ class List extends React.Component {
                       </FormItem>
                       <FormItem label="抽奖码状态">
                           {
-                              getFieldDecorator('lotteryStatus', {initialValue: '',})
+                              getFieldDecorator('status', {initialValue: '',})
                               (<Select  style={{width: 100}}>
                                   <Option value="">全部</Option>
                                   {
-                                    lotteryStatus.map(item => <Option value={item.key} key={item.key}>{item.value}</Option>)
+                                    status.map(item => <Option value={item.key} key={item.key}>{item.value}</Option>)
                                   }
                               </Select>)
                           }

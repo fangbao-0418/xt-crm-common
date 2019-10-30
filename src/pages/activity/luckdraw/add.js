@@ -16,7 +16,7 @@ class Add extends React.Component {
         this.state = {
             visible: false,
             listData: [],
-            current: +params.page || 1,
+            current: 1,
             total: 0,
             pageSize: 8,
             initParams: params,
@@ -35,7 +35,7 @@ class Add extends React.Component {
             visible: false,
             selectedRows: [],
             selectedRowKeys: [],
-            current: 0
+            current: 1
         });
         
     };
