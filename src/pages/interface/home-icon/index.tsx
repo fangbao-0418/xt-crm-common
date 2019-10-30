@@ -43,6 +43,7 @@ class Main extends React.Component<Props, State> {
       if (err) {
         return
       }
+      value.jumpUrl = (value.jumpUrl || '').trim()
       const { dataSource, selectIndex } = this.state
       if (selectIndex < dataSource.length) {
         const detail = dataSource[selectIndex]
@@ -209,7 +210,7 @@ class Main extends React.Component<Props, State> {
                     ]
                   })(
                     <Upload
-                      size={0.02}
+                      size={0.05}
                       listType="picture-card"
                       style={{width: 100, height: 100}}
                     >

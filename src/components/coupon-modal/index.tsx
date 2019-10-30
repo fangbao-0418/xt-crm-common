@@ -125,11 +125,11 @@ class CouponModal extends React.Component<Props, State> {
   }
   public fetchData() {
     const fields = this.props.form.getFieldsValue();
-    api.fetchShopList({
+    api.fetchCouponList({
       ...fields,
       ...this.payload
     }).then((res: any) => {
-      console.log('res=>', res);
+      console.log('coupon=>', res);
       res.current = this.payload.page
       this.setState({ ...res })
     })

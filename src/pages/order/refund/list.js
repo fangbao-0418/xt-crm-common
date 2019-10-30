@@ -7,6 +7,7 @@ import { getListColumns, formFields } from './config';
 import { withRouter } from 'react-router-dom';
 import { formatDate } from '@/pages/helper';
 import { typeMapRefundStatus } from './config';
+import { parseQuery } from '@/util/utils';
 const formatFields = (range) => {
   range = range || [];
   return range.map(v => v && v.format('YYYY-MM-DD HH:mm'))
@@ -32,6 +33,8 @@ export default class extends React.Component {
   }
 
   query = (isExport = false) => {
+    const { intercept } = this.props;
+    const obj = parseQuery();
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
@@ -40,6 +43,7 @@ export default class extends React.Component {
     delete fieldsValues['handle'];
     delete fieldsValues['payTime'];
     let refundStatus = (fieldsValues.refundStatus ? [fieldsValues.refundStatus]: null) || typeMapRefundStatus[this.props.type];
+    console.log('refundStatus=>', refundStatus);
     const params = {
       ...fieldsValues,
       applyStartTime,
@@ -50,8 +54,12 @@ export default class extends React.Component {
       payEndTime,
       refundStatus,
       page: this.state.current,
-      pageSize: this.state.pageSize
+      pageSize: this.state.pageSize,
     };
+    if (intercept) {
+      params.interception = 1;
+      params.interceptionMemberPhone = obj.iphone;
+    }
     if (isExport) {
       this.setState({
         loading: true
@@ -103,6 +111,7 @@ export default class extends React.Component {
 
   render() {
     const { tableConfig: { records = [], total = 0, current = 0 } } = this.state;
+    const { intercept } = this.props;
 
     return (
       <Spin tip="操作处理中..." spinning={this.state.loading}>
@@ -111,11 +120,11 @@ export default class extends React.Component {
           format={this.handleFormat}
           search={this.handleSearch}
           clear={this.handleSearch}
-          options={formFields(this.props.type)}
+          options={formFields(this.props.type,intercept)}
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>
-        {records && records.length? <CommonTable
+        {records && records.length ? <CommonTable
           bordered
           columns={getListColumns({ query: this.query, history: this.props.history })}
           dataSource={records}
@@ -132,16 +141,16 @@ export default class extends React.Component {
           onExpand={(expanded, record) => {
             let expands = this.state.expands;
             if (expanded) {
-                expands.push(record.orderCode);
+              expands.push(record.orderCode);
             } else {
-                expands = expands.filter(v => v !== record.orderCode);
+              expands = expands.filter(v => v !== record.orderCode);
             }
-            this.setState({expands});
-        }}
+            this.setState({ expands });
+          }}
           onChange={this.handlePageChange}
           rowKey={record => record.orderCode}
           scroll={{ x: 1.5 }}
-        />: null}
+        /> : null}
       </Spin>
     );
   }

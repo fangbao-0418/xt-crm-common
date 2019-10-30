@@ -313,7 +313,7 @@ export default class extends Component {
                             }}
                             onChange={this.onChange}
                             rowKey={record => record.id}
-                            loading={loading}
+                            // loading={loading}
                         />
                     </Col>
                     <Modal />

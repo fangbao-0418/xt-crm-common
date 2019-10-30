@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Row, Col } from 'antd';
 import { formatPrice } from '@/util/format';
-import { formatDate } from '@/pages/helper';
+import { formatDate, formatMoneyWithSign } from '@/pages/helper';
 const payTypeList = {
   100: '微信APP',
   101: '微信小程序',
@@ -25,7 +25,7 @@ const getCreditPayText = (memberPayHuabeiLogDO) => {
   return `花呗分期-${preriodEnum[hbFqNum] || ''}` + (sellerPercent === 100 ? '免息' : '')
 }
 const BuyerInfo = props => {
-  const { buyerInfo = {}, orderInfo = {}, memberPayHuabeiLogDO = {} } = props;
+  const { buyerInfo = {}, orderInfo = {}, totalPrice, freight, memberPayHuabeiLogDO = {} } = props;
   const { payType } = buyerInfo;
   console.log(props, 'props')
   return (
@@ -34,7 +34,9 @@ const BuyerInfo = props => {
         <Col span={8}>支付方式: {(String(payType) === '202' ? getCreditPayText(memberPayHuabeiLogDO) : payTypeList[payType]) || '未支付'}</Col>
         <Col span={8}>支付时间：{formatDate(orderInfo.payDate) || ''}</Col>
         <Col span={8}>交易流水号：{orderInfo.paymentNumber}</Col>
-        <Col span={8}>实付金额：￥{formatPrice(orderInfo.payMoney)}</Col>
+        <Col span={8}>实付金额：{formatMoneyWithSign(orderInfo.payMoney)}</Col>
+        <Col span={8}>订单总金额：{formatMoneyWithSign(totalPrice)}</Col>
+        <Col span={8}>运费：{formatMoneyWithSign(freight)}</Col>
       </Row>
     </Card>
   );

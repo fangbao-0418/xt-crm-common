@@ -58,34 +58,30 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+  requestParamsCreator(column: Special.DetailContentProps, list: any) {
+    let items = (list || []).map((v: any) => {
+      return {
+        id: v.id,
+        sort: v.sort
+      }
+    })
+    return { type: column.type, css: column.css, sort: column.sort, items }
+  }
   // 新增详情转换成入参
   public mapDetailToRequestParams(detail: Special.DetailItem) {
+    detail.jumpUrl = (detail.jumpUrl || '').trim()
     const list = detail.list.map((column: Special.DetailContentProps) => {
-      let items = [];
       switch (column.type) {
         case 1:
-          items = (column.list || []).map(v => {
-            return {
-              id: v.id,
-              sort: v.sort
-            }
-          })
-          return { type: column.type, css: column.css, sort: column.sort, items }
-          break;
+          return this.requestParamsCreator(column, column.list);
         case 2:
-          items = (column.crmCoupons || []).map(v => {
-            return {
-              id: v.id,
-              sort: v.sort
-            }
-          })
-          return { type: column.type, css: column.css, sort: column.sort, items }
+          return this.requestParamsCreator(column, column.crmCoupons);
         case 3:
           return {
             type: column.type,
             sort: column.sort,
-            advertisementUrl: column.advertisementUrl,
-            advertisementJumpUrl: column.advertisementJumpUrl
+            advertisementUrl: (column.advertisementUrl || '').trim(),
+            advertisementJumpUrl: (column.advertisementJumpUrl || '').trim()
           };
         default:
           return {};
@@ -98,22 +94,22 @@ class Main extends React.Component<Props, State> {
   }
   public handleSubmit(e: any) {
     e.preventDefault()
-    console.log('detail=>', this.mapDetailToRequestParams(this.props.detail))
     this.props.form.validateFields((err:any, value) => {
       if (err) {
         return
       }
-      const detail = this.props.detail
       this.setState({
         loading: true
       })
       if (value.imgUrl instanceof Array) {
         value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
       }
-      api.saveSpecial({
-        ...this.mapDetailToRequestParams(detail),
+
+      const detail: any = this.mapDetailToRequestParams({
+        ...this.props.detail,
         ...value
-      }).then((res: any) => {
+      })
+      api.saveSpecial(detail).then((res: any) => {
         this.setState({
           loading: false
         })
