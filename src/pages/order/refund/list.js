@@ -1,5 +1,6 @@
 import React from 'react';
 import { Message, Button, Spin, Row, Col } from 'antd';
+import moment from 'moment'
 import { refundList, exportRefund } from '../api';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
@@ -16,7 +17,7 @@ const formatFields = (range) => {
 @withRouter
 export default class extends React.Component {
   static defaultProps = {};
-
+  payload = APP.fn.getPayload('order') || {}
   state = {
     selectedRowKeys: [],
     list: [],
@@ -32,7 +33,7 @@ export default class extends React.Component {
     this.query();
   }
 
-  query = (isExport = false) => {
+  query = (isExport = false, noFetch = false) => {
     const { intercept } = this.props;
     const obj = parseQuery();
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
@@ -56,10 +57,14 @@ export default class extends React.Component {
       page: this.state.current,
       pageSize: this.state.pageSize,
     };
+    this.payload = this.payload || {}
+    this.payload.refundOrder = this.payload.refundOrder || {}
+    this.payload.refundOrder[this.props.refundStatus || 'all'] = params
     if (intercept) {
       params.interception = 1;
       params.interceptionMemberPhone = obj.iphone;
     }
+    APP.fn.setPayload('order', this.payload)
     if (isExport) {
       this.setState({
         loading: true
@@ -72,6 +77,9 @@ export default class extends React.Component {
         })
       })
     } else {
+      if (noFetch) {
+        return
+      }
       refundList(params).then(res => {
         const records = (res.data && res.data.records) || [];
         this.setState({
@@ -111,16 +119,28 @@ export default class extends React.Component {
 
   render() {
     const { tableConfig: { records = [], total = 0, current = 0 } } = this.state;
+    let values = this.payload.refundOrder && this.payload.refundOrder[this.props.refundStatus || 'all'] || {}
     const { intercept } = this.props;
-
+    values.apply = values.applyEndTime && [moment(values.applyEndTime), moment(values.applyStartTime)]
+    values.handle = values.handleStartTime && [moment(values.handleStartTime), moment(values.handleEndTime)]
+    console.log(values, 'values')
     return (
-      <Spin tip="操作处理中..." spinning={this.state.loading}>
+      <Spin tip="操作处理中..." spinning={false}>
         <SearchForm
-          wrappedComponentRef={ref => this.SearchForm = ref}
+          values={values}
+          getInstance={ref => this.SearchForm = ref}
           format={this.handleFormat}
           search={this.handleSearch}
+          // clear={() => {
+          //   values = {}
+          //   this.query(false)
+          //   this.forceUpdate()
+          // }}
+          onChange={() => {
+            // this.query(false, true)
+          }}
           clear={this.handleSearch}
-          options={formFields(this.props.type,intercept)}
+          options={formFields(this.props.type, intercept)}
         >
           <Button type="primary" onClick={this.export}>导出订单</Button>
         </SearchForm>
