@@ -15,7 +15,7 @@ import {
   split
 } from 'lodash';
 import descartes from '../../util/descartes';
-import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api';
+import { getStoreList, setProduct, getGoodsDetial, getCategoryList, get1688Sku } from './api';
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
 import SkuList from './SkuList';
 import styles from './edit.module.scss'
@@ -216,7 +216,42 @@ class GoodsEdit extends React.Component {
       this.handleRemove(e);
     }
   };
-
+  sync1688Sku() {
+    const {
+      form: { validateFields },
+    } = this.props;
+    validateFields((err, vals) => {
+      if(!vals.storeProductId) return;
+      get1688Sku(vals.storeProductId).then(data=>{
+        // showImage={this.state.showImage}
+        if (!data) {
+          return
+        }
+        this.specs = [
+          {
+            title: data.attributeName1,
+            content: []
+          },
+          {
+            title: data.attributeName2,
+            content: []
+          }
+        ]
+        const skus = (data.skus || []).map((item) => {
+          return {
+            ...item,
+            stock: item.inventory,
+            storeProductSkuId: item.storeSkuId
+          }
+        })
+        this.specs = this.getSpecs(skus);
+        this.setState({
+          speSelect: this.specs,
+          data: skus
+        })
+      })
+    })
+  }
   /**
    * 删除规格
    */
@@ -369,7 +404,11 @@ class GoodsEdit extends React.Component {
 
     const { getFieldDecorator } = this.props.form;
     const { supplier, interceptionVisible } = this.state;
-
+    const {
+      match: {
+        params: { id },
+      },
+    } = this.props;
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -460,6 +499,7 @@ class GoodsEdit extends React.Component {
           </Form.Item>
           <Form.Item label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
+            {!id && <Button onClick={()=>this.sync1688Sku()} >同步1688规格信息</Button>}
           </Form.Item>
           {
             interceptionVisible ?
