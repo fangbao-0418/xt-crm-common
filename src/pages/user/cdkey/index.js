@@ -195,7 +195,7 @@ export default class extends Component {
         <FormItem label="订单号">{getFieldDecorator('orderCode', {initialValue: values.orderCode})(<Input />)}</FormItem>
         <FormItem label="类型" className={styles.level}>
           {getFieldDecorator('type', {
-            initialValue: values.type,
+            initialValue: values.type || '',
           })(
             <Select>
               {Object.keys(typeMap).reverse().map(item => (
@@ -214,7 +214,7 @@ export default class extends Component {
           })(<Input placeholder="请填写手机号" />)}</FormItem>
         <FormItem label="使用状态" className={styles.level}>
           {getFieldDecorator('status', {
-            initialValue: values.status,
+            initialValue: values.status || '',
           })(
             <Select>
               {usedStatus.map(item => (
