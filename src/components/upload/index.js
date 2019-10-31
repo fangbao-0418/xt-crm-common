@@ -69,6 +69,9 @@ class UploadView extends Component {
         if (/x-oss-process=video/.test(val.url) === false) {
           val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
           val.thumbUrl = val.url;
+        } else {
+          val.url = val.url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '') + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+          val.thumbUrl = val.url;
         }
       }
       val.durl = this.getViewUrl(val.durl)
