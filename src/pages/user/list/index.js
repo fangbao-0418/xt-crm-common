@@ -142,6 +142,8 @@ export default class extends Component {
         const { form: { resetFields } } = this.props;
         const params = parseQuery(this.props.history);
         resetFields();
+        this.payload = {...defaultPayload}
+        APP.fn.setPayload(namespace, this.payload)
         if (item.id === +params.parentMemberId) {
             const random = Math.random();
             setQuery({ parentMemberId: item.id, random, ...basePayload }, true);
