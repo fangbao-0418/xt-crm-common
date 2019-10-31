@@ -84,7 +84,7 @@ function getColumns(scope) {
                         }
                         <span className={styles['detail-button']} onClick={scope.onDetail.bind(scope, record)}>详情</span>
                         {
-                            !record.haveChild ?
+                            record.haveChild ?
                             <>
                                 <Divider type="vertical" />
                                 <span className={styles['more-button']}  onClick={scope.onMore.bind(scope, record)}>查看下级</span>

@@ -68,6 +68,7 @@ class OrderList extends React.Component {
     };
     this.payload = this.payload || {}
     this.payload[this.props.pathname] = params
+    console.log(this.props.pathname, this.payload, 'order ---------------')
     APP.fn.setPayload('order', this.payload)
     if (noFetch) {
       return
@@ -115,10 +116,13 @@ class OrderList extends React.Component {
   };
 
   reset = () => {
+    this.props.form.resetFields();
     this.payload[this.props.pathname] = {}
     APP.fn.setPayload('order', this.payload)
-    this.props.form.resetFields();
-    this.forceUpdate()
+    this.setState({}, () => {
+      console.log(this.props.form.getFieldsValue(), 'getFieldsValue');
+      this.query();
+    })
   };
 
   onSelectChange = selectedRowKeys => {
@@ -301,6 +305,7 @@ class OrderList extends React.Component {
     const values = this.payload[this.props.pathname] || {}
     values.rangePicker = values.orderStartDate && [moment(values.orderStartDate), moment(values.orderEndDate)]
     values.playPicker = values.payStartDate && [moment(values.payStartDate), moment(values.payEndDate)]
+    console.log(values, 'render -------------')
     const formItemLayout = {
       labelCol: {
         sm: { span: 8 },
@@ -315,7 +320,7 @@ class OrderList extends React.Component {
         sm: { span: 4 },
       },
       wrapperCol: {
-        sm: { span: 20 },
+        sm: { span: 12 },
       },
     }
     return (
@@ -323,47 +328,47 @@ class OrderList extends React.Component {
         <Card title="筛选">
           <Form {...formItemLayout}>
             <Row gutter={24}>
-              <Col span={4}>
+              <Col span={6}>
                 <FormItem label="订单编号">
                   {getFieldDecorator('orderCode', {initialValue: values.orderCode})(<Input placeholder="请输入订单编号" />)}
                 </FormItem>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <FormItem label="快递单号">
                   {getFieldDecorator('expressCode', {initialValue: values.expressCode})(<Input placeholder="请输入快递单号" />)}
                 </FormItem>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <FormItem label="商品ID">
-                  {getFieldDecorator('productId', {initialValue: values.productId})(<Input placeholder="请输入商品ID" />)}
+                  {getFieldDecorator('productId', {initialValue: values.productId})(<Input type="number" placeholder="请输入商品ID" />)}
                 </FormItem>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <FormItem label="下单人ID">
                   {getFieldDecorator('buyerId', {initialValue: values.buyerId})(<Input placeholder="请输入下单人ID" />)}
                 </FormItem>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <FormItem label="下单人电话">
                   {getFieldDecorator('buyerPhone', {initialValue: values.buyerPhone})(<Input placeholder="请输入下单人电话" />)}
                 </FormItem>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <FormItem label="收货人">
                   {getFieldDecorator('contact', {initialValue: values.contact})(<Input placeholder="请输入收货人" />)}
                 </FormItem>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <FormItem label="收货人电话">
                   {getFieldDecorator('phone')(<Input placeholder="请输入收货人电话" />)}
                 </FormItem>
               </Col>
-              <Col span={4}>
+              <Col span={6}>
                 <FormItem label="供应商">
                   {getFieldDecorator('storeId', {initialValue: values.storeId})(<SuppilerSelect />)}
                 </FormItem>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
                 <FormItem {...twoformItemLayout} label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
                   {getFieldDecorator('rangePicker', {initialValue: values.rangePicker})(
                     <RangePicker
@@ -374,7 +379,7 @@ class OrderList extends React.Component {
                   )}
                 </FormItem>
               </Col>
-              <Col span={8}>
+              <Col span={12}>
                 {
                   this.props.type === 'order' ?
                     <FormItem  {...twoformItemLayout} label="支付时间">
@@ -393,10 +398,10 @@ class OrderList extends React.Component {
                 intercept ?
                   null :
                   <>
-                    <Col span={4}>
+                    <Col span={6}>
                       <FormItem label="拦截订单">
                         {getFieldDecorator('interceptorFlag', {
-                          initialValue: values.interceptorFlag
+                          initialValue: values.interceptorFlag || ''
                         })(
                           <Select>
                             <Select.Option value={''}>全部</Select.Option>
@@ -406,7 +411,7 @@ class OrderList extends React.Component {
                         )}
                       </FormItem>
                     </Col>
-                    <Col span={4}>
+                    <Col span={6}>
                       <FormItem label="拦截人电话">
                         {getFieldDecorator('interceptorPhone', {
                           initialValue: values.interceptorPhone
