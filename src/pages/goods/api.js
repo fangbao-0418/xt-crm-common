@@ -1,4 +1,4 @@
-import { post, exportFile } from '../../util/fetch';
+import { post, exportFile, get } from '../../util/fetch';
 
 export function getStoreList(data) {
   return post('/store/list', data);
@@ -31,4 +31,8 @@ export function exportFileList(data) {
 
 export function getCategoryList() {
   return post('/category/treeCategory');
+}
+
+export function get1688Sku(storeProductId) {
+  return get('/product/b2b/'+storeProductId);
 }
