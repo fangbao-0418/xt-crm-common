@@ -121,16 +121,10 @@ export default class extends Component {
 
     payload = Object.assign({}, defaultPayload, (APP.fn.getPayload(namespace) || {}))
     componentDidMount() {
-        const params = parseQuery(this.props.history);
         unlisten = this.props.history.listen(() => {
-            // const { form: { resetFields } } = this.props;
-            // const params = parseQuery(this.props.history);
-            // resetFields();
-            console.log('xxxxxxx history')
-            this.handleSearch(params);
+            this.handleSearch();
         });
-        console.log('did mount')
-        this.handleSearch(params);
+        this.handleSearch();
     }
 
     onInviteClick = (item) => {
@@ -158,9 +152,9 @@ export default class extends Component {
         history.push(`/user/detail?memberId=${item.id}`);
     }
 
-    handleSearch = () => {
-        const params = parseQuery(this.props.history);
-        console.log(params, 'handleSearch')
+    handleSearch = (params) => {
+        console.log(parseQuery(this.props.history), params, '------------')
+        params = Object.assign({}, parseQuery(this.props.history), params)
         const { form: { validateFields }, dispatch } = this.props;
         validateFields((errors, values) => {
             // console.log(values, 'value')
@@ -172,15 +166,14 @@ export default class extends Component {
                     registerStartDate: time && time[0] && time[0].format(timeFormat),
                     registerEndDate: time && time[1] && time[1].format(timeFormat),
                     time: undefined, // 覆盖values.time
-                    ...params,
-                    page: 1
+                    ...params
                 };
                 if(payload.memberType && payload.memberType.indexOf('-') > -1) {
                     const types = payload.memberType.split('-');
                     payload.memberType = types[0];
                     payload.memberTypeLevel = types[1];
                 }
-                console.log(payload, 'payload')
+                console.log(params, payload, 'payload')
                 dispatch['user.userlist'].getData(payload);
             }
         })
@@ -295,7 +288,9 @@ export default class extends Component {
                     }
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch()}>查询</Button>
+                    <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch({
+                        page: 1
+                    })}>查询</Button>
                     <Button
                         type="primary"
                         onClick={() => {
