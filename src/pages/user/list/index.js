@@ -37,7 +37,7 @@ function getColumns(scope) {
             title: '等级',
             dataIndex: 'memberLevel',
             render(v, rec) {
-                return <span>{levelName({memberType:rec.memberTypeDO.key, memberTypeLevel:rec.memberTypeLevel})}</span>
+                return <span>{levelName({ memberType: rec.memberTypeDO.key, memberTypeLevel: rec.memberTypeLevel })}</span>
             }
         }, {
             title: '邀请人手机号',
@@ -54,7 +54,7 @@ function getColumns(scope) {
             title: '个人销售额(¥)',
             dataIndex: 'money',
             render(v) {
-                return <span>{v/100}</span>
+                return <span>{v / 100}</span>
             }
         },
         //  {
@@ -65,7 +65,7 @@ function getColumns(scope) {
             title: '团队销售额(¥)',
             dataIndex: 'countMoney',
             render(v) {
-                return <span>{v/100}</span>
+                return <span>{v / 100}</span>
             }
         }, {
             title: '操作',
@@ -74,18 +74,18 @@ function getColumns(scope) {
                     <>
                         {
                             record.memberTypeDO.key >= 10 ? // 团长以上才可以发码
-                            <>
-                                <span className={styles['detail-button']} onClick={() => scope.onShowCodeModal(record)}>发码</span>
-                                <Divider type="vertical" />
-                            </> : ''
+                                <>
+                                    <span className={styles['detail-button']} onClick={() => scope.onShowCodeModal(record)}>发码</span>
+                                    <Divider type="vertical" />
+                                </> : ''
                         }
                         <span className={styles['detail-button']} onClick={scope.onDetail.bind(scope, record)}>详情</span>
                         {
                             record.haveChild ?
-                            <>
-                                <Divider type="vertical" />
-                                <span className={styles['more-button']}  onClick={scope.onMore.bind(scope, record)}>查看下级</span>
-                            </> : ''
+                                <>
+                                    <Divider type="vertical" />
+                                    <span className={styles['more-button']} onClick={scope.onMore.bind(scope, record)}>查看下级</span>
+                                </> : ''
                         }
                     </>
                 )
@@ -105,13 +105,7 @@ export default class extends Component {
 
 
     componentDidMount() {
-        unlisten = this.props.history.listen(() => {
-            // const { form: { resetFields } } = this.props;
-            const params = parseQuery(this.props.history);
-            // resetFields();
-            this.handleSearch(params);
-        });
-        this.handleSearch(basePayload);
+        this.handleSearch();
     }
 
     onInviteClick = (item) => {
@@ -129,7 +123,7 @@ export default class extends Component {
         } else {
             setQuery({ parentMemberId: item.id, ...basePayload }, true);
         }
-        
+
     }
 
     onDetail = (item) => {
@@ -138,6 +132,12 @@ export default class extends Component {
     }
 
     handleSearch = (params = {}) => {
+        if (!(params.page || params.pageSize)) {
+            setQuery({
+                page: params.page || 1,
+                pageSize: params.pageSize || 10
+            })
+        }
         const { form: { validateFields }, dispatch } = this.props;
         validateFields((errors, values) => {
             if (!errors) {
@@ -150,7 +150,7 @@ export default class extends Component {
                     time: undefined, // 覆盖values.time
                     ...params
                 };
-                if(payload.memberType.indexOf('-') > -1) {
+                if (payload.memberType.indexOf('-') > -1) {
                     const types = payload.memberType.split('-');
                     payload.memberType = types[0];
                     payload.memberTypeLevel = types[1];
@@ -160,21 +160,6 @@ export default class extends Component {
         })
     }
 
-    // onSearch = () => {
-    //     const { form: { validateFields }, dispatch } = this.props;
-    //     validateFields((errors, values) => {
-    //         const { time } = values;
-    //         const payload = {
-    //             ...basePayload,
-    //             ...values,
-    //             registerStartDate: time && time[0] && time[0].format(timeFormat),
-    //             registerEndDate: time && time[1] && time[1].format(timeFormat),
-    //             time: undefined, // 覆盖values.time
-    //         };
-    //         setQuery(payload, true);
-    //     })
-    // }
-
     renderForm = () => {
         const { form: { getFieldDecorator, resetFields } } = this.props;
         return (
@@ -183,12 +168,12 @@ export default class extends Component {
                     {
                         getFieldDecorator('id', {
                             rules: [{
-                                
+
                                 message: '请输入数字类型',
                                 pattern: /^[0-9]*$/
                             }]
                         })(
-                            <Input type='number'/>
+                            <Input type='number' />
                         )
                     }
                 </FormItem>
@@ -269,6 +254,7 @@ export default class extends Component {
             pageSize: pageConfig.pageSize
         };
         setQuery(params);
+        this.handleSearch(params);
     }
 
     showTotal = total => {
@@ -294,31 +280,31 @@ export default class extends Component {
         return (
             <>
                 <Card>
-                <Row>
-                    <Col style={{ marginBottom: 20 }}>
-                        {
-                            this.renderForm()
-                        }
-                    </Col>
-                    <Col>
-                        <Table
-                            dataSource={tableConfig.records}
-                            columns={getColumns(this)}
-                            pagination={{
-                                total: tableConfig.total,
-                                showSizeChanger: true,
-                                showQuickJumper: true,
-                                showTotal: this.showTotal,
-                                current: tableConfig.current
-                            }}
-                            onChange={this.onChange}
-                            rowKey={record => record.id}
+                    <Row>
+                        <Col style={{ marginBottom: 20 }}>
+                            {
+                                this.renderForm()
+                            }
+                        </Col>
+                        <Col>
+                            <Table
+                                dataSource={tableConfig.records}
+                                columns={getColumns(this)}
+                                pagination={{
+                                    total: tableConfig.total,
+                                    showSizeChanger: true,
+                                    showQuickJumper: true,
+                                    showTotal: this.showTotal,
+                                    current: tableConfig.current
+                                }}
+                                onChange={this.onChange}
+                                rowKey={record => record.id}
                             // loading={loading}
-                        />
-                    </Col>
-                    <Modal />
-                </Row>
-            </Card>
+                            />
+                        </Col>
+                        <Modal />
+                    </Row>
+                </Card>
             </>
         )
     }
