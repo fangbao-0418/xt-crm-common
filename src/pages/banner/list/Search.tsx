@@ -2,11 +2,18 @@ import React from 'react'
 import { Form, Input, Button, Select } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BannerPosition from '@/components/banner-position'
+interface PayloadProps {
+  title?: string
+  seat?: any[]
+  status?: number
+}
 interface Props extends FormComponentProps {
   className?: string
   onChange?: (value: any) => void
 }
+const namespace = '/banner/list'
 class Main extends React.Component<Props> {
+  public payload: PayloadProps = APP.fn.getPayload(namespace) || {}
   public constructor (props: Props) {
     super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -25,6 +32,8 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { getFieldDecorator } = this.props.form
+    console.log(this.payload, 'payload')
+    const values = this.payload
     return (
       <div
         style={{
@@ -37,21 +46,21 @@ class Main extends React.Component<Props> {
           <Form.Item
             label='banner名称'
           >
-            {getFieldDecorator('title')(
+            {getFieldDecorator('title', {initialValue: values.title})(
               <Input placeholder='请输入banner名称' />
             )}
           </Form.Item>
           <Form.Item
             label='位置'
           >
-            {getFieldDecorator('seat')(
+            {getFieldDecorator('seat', {initialValue: values.seat})(
               <BannerPosition />
             )}
           </Form.Item>
           <Form.Item
             label='状态'
           >
-            {getFieldDecorator('status')(
+            {getFieldDecorator('status', {initialValue: values.status})(
               <Select allowClear style={{width: 100}}>
                 <Select.Option value={1}>开启</Select.Option>
                 <Select.Option value={0}>关闭</Select.Option>
@@ -68,7 +77,10 @@ class Main extends React.Component<Props> {
             </Button>
             <Button
               onClick={() => {
+                this.payload = {}
+                APP.fn.setPayload(namespace, {})
                 this.props.form.resetFields()
+                this.forceUpdate()
               }}
             >
               重置
@@ -79,4 +91,8 @@ class Main extends React.Component<Props> {
     )
   }
 }
-export default Form.create()(Main)
+export default Form.create({
+  onValuesChange: (props, changeValues, allValues) => {
+    APP.fn.setPayload(namespace, allValues)
+  }
+})(Main)
