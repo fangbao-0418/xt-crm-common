@@ -48,6 +48,8 @@ class List extends React.Component {
         productId: this.payload.productId,
         productName: this.payload.productName
       })
+    } else {
+      this.payload.page = 1
     }
     this.getPromotionDetail();
   }
@@ -59,13 +61,12 @@ class List extends React.Component {
       const { promotionDetail } = this.state
       const payload = {
         promotionId: id,
-        page: promotionDetail.current,
+        page: this.payload.page,
         pageSize: promotionDetail.size,
         ...fields
       }
       APP.fn.setPayload(namespace, payload)
       getOperatorSpuList(payload).then(res => {
-        console.log('res', res)
         this.setState({
           promotionDetail: res || {}
         });
@@ -236,12 +237,8 @@ class List extends React.Component {
     this.getPromotionDetail();
   };
   handleSearch = () => {
-    this.setState({
-      promotionDetail: {
-        ...this.state.promotionDetail,
-        current: 1
-      }
-    }, this.getPromotionDetail)
+    this.payload.page = 1
+    this.getPromotionDetail()
   }
   render() {
     let {
@@ -351,12 +348,8 @@ class List extends React.Component {
               pageSize: size,
               total: total,
               onChange: (page, pageSize) => {
-                this.setState({
-                  promotionDetail: {
-                    ...promotionDetail,
-                    current: page
-                  }
-                }, this.getPromotionDetail)
+                this.payload.page = page
+                this.getPromotionDetail()
               }
             }}
           />
