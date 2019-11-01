@@ -94,7 +94,6 @@ function getColumns(scope) {
     ]
 }
 
-let unlisten = null;
 const namespace = '/user/userlist'
 
 const defaultPayload = {
@@ -141,7 +140,9 @@ export default class extends Component {
         }
         APP.fn.setPayload(namespace, this.payload)
         APP.history.push(`/user/userlist?parentMemberId=${item.id}`)
-        this.handleSearch()
+        this.setState({}, () => {
+           this.handleSearch()
+        })
         // if (item.id === +params.parentMemberId) {
         //     const random = Math.random();
         //     // setQuery({ parentMemberId: item.id, random, ...defaultPayload }, true);
@@ -157,7 +158,7 @@ export default class extends Component {
 
     handleSearch = (params = {}) => {
         let { parentMemberId } = parseQuery(this.props.history)
-        parentMemberId = params.parentMemberId || parentMemberId || this.payload.parentMemberId
+        // parentMemberId = params.parentMemberId || parentMemberId || this.payload.parentMemberId
         params.parentMemberId = parentMemberId
         const { form: { validateFields }, dispatch } = this.props;
         validateFields((errors, values) => {
