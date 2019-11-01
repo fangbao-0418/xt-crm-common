@@ -76,7 +76,9 @@ class ActivityDetail extends React.Component {
 
   handleChangeValue = (text, index) => value => {
     const { detailData } = this.state;
-    detailData.promotionSkuList[index][text] = value;
+    if (detailData.promotionSkuList && detailData.promotionSkuList[index]) {
+      detailData.promotionSkuList[index][text] = value
+    }
     this.setState({ detailData, sort: detailData.sort || 0 });
   };
 
