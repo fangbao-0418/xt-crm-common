@@ -23,6 +23,8 @@ declare module Special {
     list: DetailContentProps[]
     items: string
     jumpUrl: string
+    shareImgUrl: string | {uid: string, url: string}[]
+    shareOpen: number
   }
   export interface SearchProps {
     subjectId?: number
