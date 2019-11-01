@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Row, Col, Form, Table, Input, Button, Checkbox, message } from 'antd';
+import { Card, Row, Col, Form, Table, Input, Button, Checkbox, message, InputNumber } from 'antd';
 import { formatMoneyWithSign } from '../../helper';
 import { map } from 'lodash';
 import UploadView from '../../../components/upload';
@@ -74,9 +74,9 @@ class ActivityDetail extends React.Component {
     });
   };
 
-  handleChangeValue = (text, index) => e => {
+  handleChangeValue = (text, index) => value => {
     const { detailData } = this.state;
-    detailData.promotionSkuList[index][text] = e.target.value;
+    detailData.promotionSkuList[index][text] = value;
     this.setState({ detailData, sort: detailData.sort || 0 });
   };
 
@@ -96,7 +96,7 @@ class ActivityDetail extends React.Component {
       }
     }
     map(selectedRows, item => {
-      item.buyingPrice = new Decimal(item.buyingPrice).mul(100).toNumber();
+      item.buyingPrice = item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0;
     });
     const params = {
       id: detailData.id,
@@ -151,28 +151,28 @@ class ActivityDetail extends React.Component {
         title: `${detailData.type === 6 ? '助力分': '活动价'}`,
         dataIndex: 'buyingPrice',
         render: (text, record, index) => (
-          <Input value={text} onChange={this.handleChangeValue('buyingPrice', index)} />
+          <InputNumber min={0} precision={detailData.type === 6 ? 0: 2} value={text} onChange={this.handleChangeValue('buyingPrice', index)} />
         ),
       },
       {
         title: '活动库存',
         dataIndex: 'inventory',
         render: (text, record, index) => (
-          <Input value={text} onChange={this.handleChangeValue('inventory', index)} />
+          <InputNumber min={0} precision={0} value={text} onChange={this.handleChangeValue('inventory', index)} />
         ),
       },
       {
         title: '最大购买数',
         dataIndex: 'maxBuy',
         render: (text, record, index) => (
-          <Input value={text} onChange={this.handleChangeValue('maxBuy', index)} />
+          <InputNumber min={0} precision={0} value={text} onChange={this.handleChangeValue('maxBuy', index)} />
         ),
       },
       {
         title: '最小购买数',
         dataIndex: 'minBuy',
         render: (text, record, index) => (
-          <Input value={text} onChange={this.handleChangeValue('minBuy', index)} />
+          <InputNumber min={0} precision={0} value={text} onChange={this.handleChangeValue('minBuy', index)} />
         ),
       },
     ];
