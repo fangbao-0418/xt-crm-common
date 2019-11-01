@@ -295,9 +295,9 @@ class List extends React.Component {
           }
         >
           <Form layout="inline">
-            <Form.Item label="商品id">
+            <Form.Item label="商品ID">
               {getFieldDecorator('productId')(
-                <InputNumber style={{width: '200px'}} placeholder="请输入商品id"/>
+                <InputNumber style={{width: '200px'}} placeholder="请输入商品ID"/>
               )}
             </Form.Item>
             <Form.Item label="商品名称">
