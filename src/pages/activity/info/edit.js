@@ -315,7 +315,23 @@ class List extends React.Component {
             </>
           }
         >
+          <Form layout="inline">
+            <Form.Item label="商品id">
+              {getFieldDecorator('productId')(
+                <Input placeholder="请输入商品id"/>
+              )}
+            </Form.Item>
+            <Form.Item label="商品名称">
+              {getFieldDecorator('productName')(
+                <Input placeholder="请输入商品名称"/>
+              )}
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary">查询</Button>
+            </Form.Item>
+          </Form>
           <Table
+            className="mt20"
             columns={goodsColumns([
               {
                 title: '规格信息',
