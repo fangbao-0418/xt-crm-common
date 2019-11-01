@@ -37,7 +37,7 @@ class Order extends Component {
             })}
           </Tabs>
           {/* <UploadView /> */}
-          <List orderStatus={orderStatus} type="order" />
+          <List orderStatus={orderStatus} pathname={pathname} type="order" />
         </Card>
       </div>
     );
