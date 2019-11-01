@@ -107,7 +107,7 @@ export default class extends Component {
 
                 <Table
                     bordered
-                    rowKey={(item) => item.id}
+                    rowKey={(item) => item.skuId + item.id}
                     columns={columns}
                     dataSource={sourceData['records']}
                     pagination={{
