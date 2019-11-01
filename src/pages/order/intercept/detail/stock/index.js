@@ -111,10 +111,11 @@ export default class extends Component {
                     columns={columns}
                     dataSource={sourceData['records']}
                     pagination={{
-                        current: sourceData.page || 1,
-                        pageSize: sourceData.pageSize || 10,
-                        showSizeChanger: true,
+                        current: sourceData['current'] || 1,
+                        pageSize: sourceData['size'] || 10,
+                        total: sourceData['total'],
                         showQuickJumper: true,
+                        showSizeChanger: true,
                         onChange: this.pageChange,
                         onShowSizeChange: this.pageChange
                     }}
