@@ -1,25 +1,20 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
-import { Card, Form, Input, DatePicker, message, Button, Table, Modal, Divider } from 'antd';
+import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd';
 import {
   getProductList,
   setPromotionAddSKu,
-  setPromotionOperatorSpuList,
-  getPromotionDetail,
   setPromotionAddSpu,
   delSpuPromotion,
-  refreshPromtion
+  refreshPromtion,
+  getOperatorSpuList
 } from '../api';
+import ActivityInfo from './ActivityInfo';
 import { size, filter } from 'lodash';
-import { parseQuery, gotoPage } from '@/util/utils';
-import Add from '../add';
+import { gotoPage } from '@/util/utils';
 import { formatMoney, formatMoneyWithSign } from '../../helper';
-import moment from 'moment';
-import activityType from '../../../enum/activityType'
 import { goodsColumns } from './goodsColumns';
-
-const FormItem = Form.Item;
 
 class List extends React.Component {
   state = {
@@ -29,13 +24,13 @@ class List extends React.Component {
     selectedRowKeys: [],
     selectedRows: [],
     promotionDetail: {
-      promotionSpuListPage: {
-        current: 1,
-        size: 10,
-        total: 0
-      }
+      current: 1,
+      size: 10,
+      total: 0,
+      records: []
     },
     addList: [],
+    type: -1,
     modalPage: {
       current: 1,
       total: 0,
@@ -55,9 +50,15 @@ class List extends React.Component {
       },
     } = this.props;
     if (id !== 'undefined') {
-      const {promotionDetail: { promotionSpuListPage }} = this.state
-      let {current, size} = promotionSpuListPage || {current: 1, size: 10}
-      getPromotionDetail({ promotionId: id, page: current, pageSize: size}).then(res => {
+      const fields = this.props.form.getFieldsValue()
+      const { promotionDetail } = this.state
+      getOperatorSpuList({
+        promotionId: id,
+        page: promotionDetail.current,
+        pageSize: promotionDetail.size,
+        ...fields
+      }).then(res => {
+        console.log('res', res)
         this.setState({
           promotionDetail: res || {}
         });
@@ -106,17 +107,6 @@ class List extends React.Component {
   setPromotionAddSKu = promotionId => {
     setPromotionAddSKu({ promotionId }).then(res => []);
   };
-
-  setPromotionOperatorSpuList = params => {
-    setPromotionOperatorSpuList(params).then(res => {
-      if (res) {
-        message.success('设置商品列表成功');
-        this.handleCancelModal();
-        this.getPromotionDetail();
-      }
-    });
-  };
-
 
   handleSearchModal = e => {
     this.getProductList({ productName: e, page: 1 });
@@ -233,9 +223,19 @@ class List extends React.Component {
         });
       }
     });
-
   };
-
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.getPromotionDetail();
+  };
+  handleSearch = () => {
+    this.setState({
+      promotionDetail: {
+        ...this.state.promotionDetail,
+        current: 1
+      }
+    }, this.getPromotionDetail)
+  }
   render() {
     let {
       goodsList,
@@ -243,10 +243,14 @@ class List extends React.Component {
       modalPage,
       selectedRowKeys,
       promotionDetail,
-      promotionDetail: { promotionSpuListPage, type, title, startTime, endTime, sort },
-      isEidt,
+      promotionDetail: {
+        records,   
+        current,
+        size,
+        total
+      },
+      type
     } = this.state;
-    promotionSpuListPage = promotionSpuListPage || {};
     const rowSelection = {
       selectedRowKeys,
       onChange: this.handlenChanageSelectio,
@@ -267,44 +271,12 @@ class List extends React.Component {
         dataIndex: 'inventory',
       },
     ];
-
-
     const {
       form: { getFieldDecorator },
     } = this.props;
     return (
       <>
-        <Card
-          style={{ marginBottom: 10 }}
-          title="活动信息"
-          extra={<a href="javacript:void(0);" onClick={() => this.setState({ visibleAct: true })}>编辑</a>}
-        >
-          <Form layout="inline">
-            <FormItem layout="inline" label="活动类型">
-              {activityType.getValue(type)}
-            </FormItem>
-            <FormItem layout="inline" label="活动名称">
-              {getFieldDecorator('title', {
-                initialValue: title,
-              })(<Input placeholder="请输入需要编辑的活动名称" disabled={!isEidt} />)}
-            </FormItem>
-            <FormItem layout="inline" label="开始时间">
-              {getFieldDecorator('startTime', {
-                initialValue: moment(startTime),
-              })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledStartDate} />)}
-            </FormItem>
-            <FormItem layout="inline" label="结束时间">
-              {getFieldDecorator('endTime', {
-                initialValue: moment(endTime),
-              })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledEndDate} />)}
-            </FormItem>
-            <FormItem layout="inline" label="活动排序">
-              {getFieldDecorator('sort', {
-                initialValue: sort,
-              })(<Input placeholder="请输入排序" disabled={!isEidt} />)}
-            </FormItem>
-          </Form>
-        </Card>
+        <ActivityInfo promotionDetail={records} changeType={(type) => { this.setState({ type }) }}/>
         <Card
           title="活动商品列表"
           extra={
@@ -318,7 +290,7 @@ class List extends React.Component {
           <Form layout="inline">
             <Form.Item label="商品id">
               {getFieldDecorator('productId')(
-                <Input placeholder="请输入商品id"/>
+                <InputNumber style={{width: '200px'}} placeholder="请输入商品id"/>
               )}
             </Form.Item>
             <Form.Item label="商品名称">
@@ -327,7 +299,8 @@ class List extends React.Component {
               )}
             </Form.Item>
             <Form.Item>
-              <Button type="primary">查询</Button>
+              <Button onClick={this.handleReset}>重置</Button>
+              <Button className="ml10" type="primary" onClick={this.handleSearch}>查询</Button>
             </Form.Item>
           </Form>
           <Table
@@ -365,19 +338,16 @@ class List extends React.Component {
                 ),
               },
             ])}
-            dataSource={promotionSpuListPage.records}
+            dataSource={records}
             pagination={{
-              current: promotionSpuListPage.current,
-              pageSize: promotionSpuListPage.size,
-              total: promotionSpuListPage.total,
+              current: current,
+              pageSize: size,
+              total: total,
               onChange: (page, pageSize) => {
                 this.setState({
                   promotionDetail: {
                     ...promotionDetail,
-                    promotionSpuListPage: {
-                      ...promotionSpuListPage,
-                      current: page
-                    }
+                    current: page
                   }
                 }, this.getPromotionDetail)
               }
@@ -412,22 +382,6 @@ class List extends React.Component {
             onChange={this.handleTabChangeModal}
             rowKey={record => record.id}
           />
-        </Modal>
-        <Modal
-          title="活动编辑"
-          visible={this.state.visibleAct}
-          width={1000}
-          footer={null}
-          onCancel={() => this.setState({
-            visibleAct: false
-          })}
-        >
-          <Add history={this.props.history} data={this.state.promotionDetail} onOk={() => {
-            this.setState({
-              visibleAct: false
-            });
-            this.getPromotionDetail();
-          }} />
         </Modal>
       </>
     );

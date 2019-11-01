@@ -7,12 +7,10 @@ import activityType from '../../enum/activityType'
 import moment from 'moment';
 import activityTagBImg from '../../assets/images/activity-tag-bigimg.png'
 import activityTagSImg from '../../assets/images/activity-tag-smimg.jpg'
-import { initImgList } from '@/util/utils';
+import { initImgList, replaceHttpUrl as prefixUrl} from '@/util/utils';
 import './activity.scss'
 const FormItem = Form.Item;
 const { Option } = Select;
-const { RangePicker } = DatePicker;
-const { Meta } = Card;
 const formLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -230,7 +228,7 @@ class Add extends React.Component {
         </Form>
         <div className="activity-tag-preview">
           <div className={"activity-tag-preimgs " + this.state.tagClass} >
-            {this.state.tagUrl && <img className={'tag tag-p' + this.state.place} src={this.state.tagUrl} />}
+            {this.state.tagUrl && <img className={'tag tag-p' + this.state.place} src={prefixUrl(this.state.tagUrl)} />}
             <img alt="example" className='main' src={this.state.tagImg} />
           </div>
           <div className="activity-tag-pretip">
