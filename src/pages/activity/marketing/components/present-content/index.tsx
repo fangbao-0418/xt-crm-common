@@ -96,16 +96,17 @@ class Main extends React.Component<Props, State> {
               width: 80,
               marginRight: 15
             },
-            type: 'number',
-            onChange: (e: any) => {
-              this.value.stageCount = Number(e.target.value) || 0
+            min: 1,
+            precision: 0,
+            onChange: (value: number) => {
+              this.value.stageCount = value
               this.onChange()
             }
           }}
           labelCol={{span: 0}}
           wrapperCol={{span: 20}}
           addonAfterCol={{span: 4}}
-          type='input'
+          type='number'
           disabled={disabledFields.indexOf('stageCount') > -1}
           name={`${name}-stageCount`}
           placeholder=''
@@ -144,15 +145,20 @@ class Main extends React.Component<Props, State> {
               wrapperCol={{span: 14}}
               addonAfterCol={{span: 4}}
               disabled={disabledFields.indexOf('chooseCount') > -1}
-              type='input'
+              type='number'
               name={`${name}-chooseCount`}
               fieldDecoratorOptions={{
                 initialValue: value.chooseCount
               }}
               controlProps={{
-                type: 'number',
-                onChange: (e: any) => {
-                  this.value.chooseCount = Number(e.target.value) || 0
+                min: 1,
+                precision: 0,
+                style: {
+                  width: 80,
+                  marginRight: 15
+                },
+                onChange: (value: number) => {
+                  this.value.chooseCount = value;
                   this.onChange()
                 }
               }}
