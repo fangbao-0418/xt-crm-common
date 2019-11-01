@@ -15,8 +15,10 @@ import { size, filter } from 'lodash';
 import { gotoPage } from '@/util/utils';
 import { formatMoney, formatMoneyWithSign } from '../../helper';
 import { goodsColumns } from './goodsColumns';
-
+const namespace = 'activity/info/shoplist'
 class List extends React.Component {
+  id = this.props.match.params.id
+  payload =  APP.fn.getPayload(namespace) || {}
   state = {
     goodsList: '',
     visible: false,
@@ -40,24 +42,29 @@ class List extends React.Component {
   };
 
   componentDidMount() {
+    console.log(this.payload, '-----------------------------------')
+    if (this.payload.promotionId === this.id) {
+      this.props.form.setFieldsValue({
+        productId: this.payload.productId,
+        productName: this.payload.productName
+      })
+    }
     this.getPromotionDetail();
   }
 
   getPromotionDetail = () => {
-    const {
-      match: {
-        params: { id },
-      },
-    } = this.props;
+    const id = this.id
     if (id !== 'undefined') {
       const fields = this.props.form.getFieldsValue()
       const { promotionDetail } = this.state
-      getOperatorSpuList({
+      const payload = {
         promotionId: id,
         page: promotionDetail.current,
         pageSize: promotionDetail.size,
         ...fields
-      }).then(res => {
+      }
+      APP.fn.setPayload(namespace, payload)
+      getOperatorSpuList(payload).then(res => {
         console.log('res', res)
         this.setState({
           promotionDetail: res || {}
@@ -280,11 +287,11 @@ class List extends React.Component {
         <Card
           title="活动商品列表"
           extra={
-            <>
-              <a href="javascript:void(0);" onClick={this.handleClickModal}>
+            (
+              <span className="href" onClick={this.handleClickModal}>
                 添加商品
-              </a>
-            </>
+              </span>
+            )
           }
         >
           <Form layout="inline">
@@ -323,17 +330,17 @@ class List extends React.Component {
                 title: '操作',
                 render: record => (
                   <>
-                    <a href="javascript:void(0);" onClick={this.handleEditsku(record, type)}>
+                    <span className="href" onClick={this.handleEditsku(record, type)}>
                       编辑
-                    </a>
+                    </span>
                     <Divider type="vertical" />
-                    <a
-                      href="javascript:void(0);"
+                    <span
+                      className="href"
                       style={{ color: 'red' }}
                       onClick={this.handleRemove(record.id)}
                     >
                       删除
-                    </a>
+                    </span>
                   </>
                 ),
               },
