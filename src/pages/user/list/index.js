@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { connect, parseQuery, setQuery } from '@/util/utils';
 import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table } from 'antd';
+import moment from 'moment';
+
+// import { levelArr, sourceArr } from './config';
 import { levelArr, sourceArr } from '../config';
 import { levelName } from '../utils';
 import styles from './index.module.scss';
@@ -95,23 +98,39 @@ function getColumns(scope) {
 }
 
 let unlisten = null;
+const namespace = '/user/userlist'
+
+const defaultPayload = {
+    memberType: '',
+    registerFrom: ''
+}
 
 @connect(state => ({
     tableConfig: state['user.userlist'].tableConfig,
     loading: state.loading.effects['user.userlist'].getData,
 }))
-@Form.create()
+@Form.create({
+    onValuesChange: (props, changeValues, allValues) => {
+        const time = allValues.time || []
+        allValues.registerStartDate = time[0] && time[0].format(timeFormat)
+        allValues.registerEndDate = time[1] && time[1].format(timeFormat)
+        APP.fn.setPayload(namespace, allValues)
+    }
+})
 export default class extends Component {
 
-
+    payload = Object.assign({}, defaultPayload, (APP.fn.getPayload(namespace) || {}))
     componentDidMount() {
+        const params = parseQuery(this.props.history);
         unlisten = this.props.history.listen(() => {
             // const { form: { resetFields } } = this.props;
-            const params = parseQuery(this.props.history);
+            // const params = parseQuery(this.props.history);
             // resetFields();
+            console.log('xxxxxxx history')
             this.handleSearch(params);
         });
-        this.handleSearch(basePayload);
+        console.log('did mount')
+        this.handleSearch(params);
     }
 
     onInviteClick = (item) => {
@@ -123,6 +142,8 @@ export default class extends Component {
         const { form: { resetFields } } = this.props;
         const params = parseQuery(this.props.history);
         resetFields();
+        this.payload = {...defaultPayload}
+        APP.fn.setPayload(namespace, this.payload)
         if (item.id === +params.parentMemberId) {
             const random = Math.random();
             setQuery({ parentMemberId: item.id, random, ...basePayload }, true);
@@ -137,9 +158,12 @@ export default class extends Component {
         history.push(`/user/detail?memberId=${item.id}`);
     }
 
-    handleSearch = (params = {}) => {
+    handleSearch = () => {
+        const params = parseQuery(this.props.history);
+        console.log(params, 'handleSearch')
         const { form: { validateFields }, dispatch } = this.props;
         validateFields((errors, values) => {
+            // console.log(values, 'value')
             if (!errors) {
                 const { time } = values;
                 const payload = {
@@ -150,11 +174,12 @@ export default class extends Component {
                     time: undefined, // 覆盖values.time
                     ...params
                 };
-                if(payload.memberType.indexOf('-') > -1) {
+                if(payload.memberType && payload.memberType.indexOf('-') > -1) {
                     const types = payload.memberType.split('-');
                     payload.memberType = types[0];
                     payload.memberTypeLevel = types[1];
                 }
+                console.log(payload, 'payload')
                 dispatch['user.userlist'].getData(payload);
             }
         })
@@ -177,11 +202,14 @@ export default class extends Component {
 
     renderForm = () => {
         const { form: { getFieldDecorator, resetFields } } = this.props;
+        const values = this.payload
+        values.time = values.registerStartDate && [moment(values.registerStartDate), moment(values.registerEndDate)]
         return (
             <Form layout="inline">
                 <FormItem label="用户ID">
                     {
                         getFieldDecorator('id', {
+                            initialValue: values.id,
                             rules: [{
                                 
                                 message: '请输入数字类型',
@@ -194,21 +222,27 @@ export default class extends Component {
                 </FormItem>
                 <FormItem label="昵称">
                     {
-                        getFieldDecorator('nickName')(
+                        getFieldDecorator('nickName', {
+                            initialValue: values.nickName,
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="姓名">
                     {
-                        getFieldDecorator('userName')(
+                        getFieldDecorator('userName', {
+                            initialValue: values.userName,
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="注册时间">
                     {
-                        getFieldDecorator('time')(
+                        getFieldDecorator('time', {
+                            initialValue: values.time,
+                        })(
                             <RangePicker
                                 showTime
                             />
@@ -218,7 +252,7 @@ export default class extends Component {
                 <FormItem label="等级" className={styles.level}>
                     {
                         getFieldDecorator('memberType', {
-                            initialValue: ''
+                            initialValue: values.memberType
                         })(
                             <Select>
                                 {
@@ -230,14 +264,18 @@ export default class extends Component {
                 </FormItem>
                 <FormItem label="手机号">
                     {
-                        getFieldDecorator('phone')(
+                        getFieldDecorator('phone', {
+                            initialValue: values.phone 
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="邀请人手机号">
                     {
-                        getFieldDecorator('invitePhone')(
+                        getFieldDecorator('invitePhone', {
+                            initialValue: values.invitePhone 
+                        })(
                             <Input />
                         )
                     }
@@ -245,7 +283,7 @@ export default class extends Component {
                 <FormItem label="注册来源" className={styles.source}>
                     {
                         getFieldDecorator('registerFrom', {
-                            initialValue: ''
+                            initialValue: values.registerFrom
                         })(
                             <Select>
                                 {
@@ -257,7 +295,15 @@ export default class extends Component {
                 </FormItem>
                 <FormItem>
                     <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch()}>查询</Button>
-                    <Button type="primary" onClick={() => resetFields()}>清除条件</Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            this.payload = {...defaultPayload}
+                            APP.fn.setPayload(namespace, this.payload)
+                            resetFields()
+                            APP.history.push('/user/userlist')
+                        }}
+                    >清除条件</Button>
                 </FormItem>
             </Form>
         )

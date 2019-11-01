@@ -37,6 +37,22 @@ export function formatMoney (money = '0') {
   str = [str.slice(0, len - 2).replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'), str.slice(len - 2)].join('.')
   return '¥' + str
 }
+
+export function setPayload (name, value) {
+  if (name === null && value === undefined) {
+    localStorage.setItem('payload', null)
+    return
+  }
+  const payload = getPayload() || {}
+  payload[name] = value
+  localStorage.setItem('payload', JSON.stringify(payload))
+}
+
+export function getPayload (name) {
+  const payload = JSON.parse(localStorage.getItem('payload'))
+  return name ? payload && payload[name] : payload
+}
+
 export const handleLoading = (function () {
   let ajaxCount = 0
   return (loading = 'end') => {

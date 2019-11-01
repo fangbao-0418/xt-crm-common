@@ -16,8 +16,8 @@ import { parseQuery, gotoPage } from '@/util/utils';
 import Add from '../add';
 import { formatMoney, formatMoneyWithSign } from '../../helper';
 import moment from 'moment';
-import Image from '../../../components/Image';
 import activityType from '../../../enum/activityType'
+import { goodsColumns } from './goodsColumns';
 
 const FormItem = Form.Item;
 
@@ -28,7 +28,13 @@ class List extends React.Component {
     visibleAct: false,
     selectedRowKeys: [],
     selectedRows: [],
-    promotionDetail: {},
+    promotionDetail: {
+      promotionSpuListPage: {
+        current: 1,
+        size: 10,
+        total: 0
+      }
+    },
     addList: [],
     modalPage: {
       current: 1,
@@ -49,9 +55,11 @@ class List extends React.Component {
       },
     } = this.props;
     if (id !== 'undefined') {
-      getPromotionDetail({ promotionId: id }).then(res => {
+      const {promotionDetail: { promotionSpuListPage }} = this.state
+      let {current, size} = promotionSpuListPage || {current: 1, size: 10}
+      getPromotionDetail({ promotionId: id, page: current, pageSize: size}).then(res => {
         this.setState({
-          promotionDetail: res || {},
+          promotionDetail: res || {}
         });
       });
     }
@@ -229,14 +237,16 @@ class List extends React.Component {
   };
 
   render() {
-    const {
+    let {
       goodsList,
       visible,
       modalPage,
       selectedRowKeys,
-      promotionDetail: { promotionSpuList, type, title, startTime, endTime, sort },
+      promotionDetail,
+      promotionDetail: { promotionSpuListPage, type, title, startTime, endTime, sort },
       isEidt,
     } = this.state;
+    promotionSpuListPage = promotionSpuListPage || {};
     const rowSelection = {
       selectedRowKeys,
       onChange: this.handlenChanageSelectio,
@@ -262,7 +272,6 @@ class List extends React.Component {
     const {
       form: { getFieldDecorator },
     } = this.props;
-
     return (
       <>
         <Card
@@ -340,8 +349,23 @@ class List extends React.Component {
                 ),
               },
             ])}
-            dataSource={promotionSpuList}
-            pagination={false}
+            dataSource={promotionSpuListPage.records}
+            pagination={{
+              current: promotionSpuListPage.current,
+              pageSize: promotionSpuListPage.size,
+              total: promotionSpuListPage.total,
+              onChange: (page, pageSize) => {
+                this.setState({
+                  promotionDetail: {
+                    ...promotionDetail,
+                    promotionSpuListPage: {
+                      ...promotionSpuListPage,
+                      current: page
+                    }
+                  }
+                }, this.getPromotionDetail)
+              }
+            }}
           />
         </Card>
         <Card style={{ marginTop: 10 }}>
@@ -355,7 +379,7 @@ class List extends React.Component {
         <Modal
           title="选择商品"
           visible={visible}
-          width={800}
+          width="80%"
           onCancel={this.handleCancelModal}
           onOk={this.handleOkModal}
         >
@@ -393,57 +417,5 @@ class List extends React.Component {
     );
   }
 }
-
-const goodsColumns = (data = []) => {
-  return [
-    {
-      title: '序号',
-      render: (text, row, index) => {
-        return index + 1;
-      },
-      width: 60,
-    },
-    {
-      title: '商品ID',
-      dataIndex: 'productId',
-      width: 100,
-    },
-    {
-      title: '商品名称',
-      dataIndex: 'productName',
-      width: 200,
-    },
-    {
-      title: '商品主图',
-      dataIndex: 'coverUrl',
-      width: 60,
-      render: text => (
-        <>
-          <Image style={{ height: 60, width: 60 }} src={text} alt="主图" />
-        </>
-      ),
-    },
-    {
-      title: '库存',
-      dataIndex: 'stock',
-    },
-    {
-      title: '成本价',
-      dataIndex: 'costPrice',
-      render: text => <>{formatMoneyWithSign(text)}</>,
-    },
-    {
-      title: '市场价',
-      dataIndex: 'marketPrice',
-      render: text => <>{formatMoneyWithSign(text)}</>,
-    },
-    {
-      title: '销售价',
-      dataIndex: 'salePrice',
-      render: text => <>{formatMoneyWithSign(text)}</>,
-    },
-    ...data,
-  ];
-};
 
 export default Form.create()(List);
