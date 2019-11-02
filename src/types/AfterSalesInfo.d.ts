@@ -8,7 +8,9 @@ declare module AfterSalesInfo {
     orderServerVO: OrderServerVO;
     orderInfoVO: OrderInfoVO;
     checkVO: CheckVO;
-    skuServerLogVO: any[]
+    skuServerLogVO: any[];
+    isDemotion: number;
+    demotionInfo: string;
   }
   export interface CheckVO {
     amount: number;

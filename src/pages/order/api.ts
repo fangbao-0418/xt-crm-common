@@ -3,6 +3,12 @@ import { prefix } from '../../util/utils';
 const debug = false;
 var qs = require('qs');
 
+
+// 订单售后校验团长等级是否会降级
+export function verifyDownDgrade(data: any) {
+  return newPost('/order/afterSale/check/downHeadgrade', data);
+}
+
 export function getOrderList(data: any) {
   return post('/order/list', data);
 }
