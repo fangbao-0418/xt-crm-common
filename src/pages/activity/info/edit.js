@@ -1,35 +1,38 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
-import { Card, Form, Input, DatePicker, message, Button, Table, Modal, Divider } from 'antd';
+import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd';
 import {
   getProductList,
   setPromotionAddSKu,
-  setPromotionOperatorSpuList,
-  getPromotionDetail,
   setPromotionAddSpu,
   delSpuPromotion,
-  refreshPromtion
+  refreshPromtion,
+  getOperatorSpuList
 } from '../api';
+import ActivityInfo from './ActivityInfo';
 import { size, filter } from 'lodash';
-import { parseQuery, gotoPage } from '@/util/utils';
-import Add from '../add';
+import { gotoPage } from '@/util/utils';
 import { formatMoney, formatMoneyWithSign } from '../../helper';
-import moment from 'moment';
-import Image from '../../../components/Image';
-import activityType from '../../../enum/activityType'
-
-const FormItem = Form.Item;
-
+import { goodsColumns } from './goodsColumns';
+const namespace = 'activity/info/shoplist'
 class List extends React.Component {
+  id = this.props.match.params.id
+  payload =  APP.fn.getPayload(namespace) || {}
   state = {
     goodsList: '',
     visible: false,
     visibleAct: false,
     selectedRowKeys: [],
     selectedRows: [],
-    promotionDetail: {},
+    promotionDetail: {
+      current: 1,
+      size: 10,
+      total: 0,
+      records: []
+    },
     addList: [],
+    type: -1,
     modalPage: {
       current: 1,
       total: 0,
@@ -39,19 +42,33 @@ class List extends React.Component {
   };
 
   componentDidMount() {
+    console.log(this.payload, '-----------------------------------')
+    if (this.payload.promotionId === this.id) {
+      this.props.form.setFieldsValue({
+        productId: this.payload.productId,
+        productName: this.payload.productName
+      })
+    } else {
+      this.payload.page = 1
+    }
     this.getPromotionDetail();
   }
 
   getPromotionDetail = () => {
-    const {
-      match: {
-        params: { id },
-      },
-    } = this.props;
+    const id = this.id
     if (id !== 'undefined') {
-      getPromotionDetail({ promotionId: id }).then(res => {
+      const fields = this.props.form.getFieldsValue()
+      const { promotionDetail } = this.state
+      const payload = {
+        promotionId: id,
+        page: this.payload.page,
+        pageSize: promotionDetail.size,
+        ...fields
+      }
+      APP.fn.setPayload(namespace, payload)
+      getOperatorSpuList(payload).then(res => {
         this.setState({
-          promotionDetail: res || {},
+          promotionDetail: res || {}
         });
       });
     }
@@ -98,17 +115,6 @@ class List extends React.Component {
   setPromotionAddSKu = promotionId => {
     setPromotionAddSKu({ promotionId }).then(res => []);
   };
-
-  setPromotionOperatorSpuList = params => {
-    setPromotionOperatorSpuList(params).then(res => {
-      if (res) {
-        message.success('设置商品列表成功');
-        this.handleCancelModal();
-        this.getPromotionDetail();
-      }
-    });
-  };
-
 
   handleSearchModal = e => {
     this.getProductList({ productName: e, page: 1 });
@@ -225,17 +231,29 @@ class List extends React.Component {
         });
       }
     });
-
   };
-
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.getPromotionDetail();
+  };
+  handleSearch = () => {
+    this.payload.page = 1
+    this.getPromotionDetail()
+  }
   render() {
-    const {
+    let {
       goodsList,
       visible,
       modalPage,
       selectedRowKeys,
-      promotionDetail: { promotionSpuList, type, title, startTime, endTime, sort },
-      isEidt,
+      promotionDetail,
+      promotionDetail: {
+        records,   
+        current,
+        size,
+        total
+      },
+      type
     } = this.state;
     const rowSelection = {
       selectedRowKeys,
@@ -257,56 +275,40 @@ class List extends React.Component {
         dataIndex: 'inventory',
       },
     ];
-
-
     const {
       form: { getFieldDecorator },
     } = this.props;
-
     return (
       <>
-        <Card
-          style={{ marginBottom: 10 }}
-          title="活动信息"
-          extra={<a href="javacript:void(0);" onClick={() => this.setState({ visibleAct: true })}>编辑</a>}
-        >
-          <Form layout="inline">
-            <FormItem layout="inline" label="活动类型">
-              {activityType.getValue(type)}
-            </FormItem>
-            <FormItem layout="inline" label="活动名称">
-              {getFieldDecorator('title', {
-                initialValue: title,
-              })(<Input placeholder="请输入需要编辑的活动名称" disabled={!isEidt} />)}
-            </FormItem>
-            <FormItem layout="inline" label="开始时间">
-              {getFieldDecorator('startTime', {
-                initialValue: moment(startTime),
-              })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledStartDate} />)}
-            </FormItem>
-            <FormItem layout="inline" label="结束时间">
-              {getFieldDecorator('endTime', {
-                initialValue: moment(endTime),
-              })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledEndDate} />)}
-            </FormItem>
-            <FormItem layout="inline" label="活动排序">
-              {getFieldDecorator('sort', {
-                initialValue: sort,
-              })(<Input placeholder="请输入排序" disabled={!isEidt} />)}
-            </FormItem>
-          </Form>
-        </Card>
+        <ActivityInfo promotionDetail={records} changeType={(type) => { this.setState({ type }) }}/>
         <Card
           title="活动商品列表"
           extra={
-            <>
-              <a href="javascript:void(0);" onClick={this.handleClickModal}>
+            (
+              <span className="href" onClick={this.handleClickModal}>
                 添加商品
-              </a>
-            </>
+              </span>
+            )
           }
         >
+          <Form layout="inline">
+            <Form.Item label="商品ID">
+              {getFieldDecorator('productId')(
+                <InputNumber style={{width: '200px'}} placeholder="请输入商品ID"/>
+              )}
+            </Form.Item>
+            <Form.Item label="商品名称">
+              {getFieldDecorator('productName')(
+                <Input placeholder="请输入商品名称"/>
+              )}
+            </Form.Item>
+            <Form.Item>
+              <Button onClick={this.handleReset}>重置</Button>
+              <Button className="ml10" type="primary" onClick={this.handleSearch}>查询</Button>
+            </Form.Item>
+          </Form>
           <Table
+            className="mt20"
             columns={goodsColumns([
               {
                 title: '规格信息',
@@ -325,23 +327,31 @@ class List extends React.Component {
                 title: '操作',
                 render: record => (
                   <>
-                    <a href="javascript:void(0);" onClick={this.handleEditsku(record, type)}>
+                    <span className="href" onClick={this.handleEditsku(record, type)}>
                       编辑
-                    </a>
+                    </span>
                     <Divider type="vertical" />
-                    <a
-                      href="javascript:void(0);"
+                    <span
+                      className="href"
                       style={{ color: 'red' }}
                       onClick={this.handleRemove(record.id)}
                     >
                       删除
-                    </a>
+                    </span>
                   </>
                 ),
               },
             ])}
-            dataSource={promotionSpuList}
-            pagination={false}
+            dataSource={records}
+            pagination={{
+              current: current,
+              pageSize: size,
+              total: total,
+              onChange: (page, pageSize) => {
+                this.payload.page = page
+                this.getPromotionDetail()
+              }
+            }}
           />
         </Card>
         <Card style={{ marginTop: 10 }}>
@@ -355,7 +365,7 @@ class List extends React.Component {
         <Modal
           title="选择商品"
           visible={visible}
-          width={800}
+          width="80%"
           onCancel={this.handleCancelModal}
           onOk={this.handleOkModal}
         >
@@ -373,77 +383,9 @@ class List extends React.Component {
             rowKey={record => record.id}
           />
         </Modal>
-        <Modal
-          title="活动编辑"
-          visible={this.state.visibleAct}
-          width={1000}
-          footer={null}
-          onCancel={() => this.setState({
-            visibleAct: false
-          })}
-        >
-          <Add history={this.props.history} data={this.state.promotionDetail} onOk={() => {
-            this.setState({
-              visibleAct: false
-            });
-            this.getPromotionDetail();
-          }} />
-        </Modal>
       </>
     );
   }
 }
-
-const goodsColumns = (data = []) => {
-  return [
-    {
-      title: '序号',
-      render: (text, row, index) => {
-        return index + 1;
-      },
-      width: 60,
-    },
-    {
-      title: '商品ID',
-      dataIndex: 'productId',
-      width: 100,
-    },
-    {
-      title: '商品名称',
-      dataIndex: 'productName',
-      width: 200,
-    },
-    {
-      title: '商品主图',
-      dataIndex: 'coverUrl',
-      width: 60,
-      render: text => (
-        <>
-          <Image style={{ height: 60, width: 60 }} src={text} alt="主图" />
-        </>
-      ),
-    },
-    {
-      title: '库存',
-      dataIndex: 'stock',
-    },
-    {
-      title: '成本价',
-      dataIndex: 'costPrice',
-      render: text => <>{formatMoneyWithSign(text)}</>,
-    },
-    {
-      title: '市场价',
-      dataIndex: 'marketPrice',
-      render: text => <>{formatMoneyWithSign(text)}</>,
-    },
-    {
-      title: '销售价',
-      dataIndex: 'salePrice',
-      render: text => <>{formatMoneyWithSign(text)}</>,
-    },
-    ...data,
-  ];
-};
 
 export default Form.create()(List);
