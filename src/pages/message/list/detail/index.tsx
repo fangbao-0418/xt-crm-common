@@ -1,27 +1,54 @@
 import React from 'react'
 import { Button } from 'antd'
+import { withRouter, RouteComponentProps } from 'react-router'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { getFieldsConfig, memberOptions } from '../config'
 import ReceiverWidget from './components/widget/receiver'
 import MultiDateWidget from './components/widget/multi-date'
+import * as api from '../api'
 import styles from './style.module.styl'
-class Main extends React.Component {
+
+interface Props extends RouteComponentProps<{id: string}> {}
+
+class Main extends React.Component<Props> {
   public form: FormInstance
-  public constructor (props: {}) {
+  public id = this.props.match.params.id
+  public constructor (props: Props) {
     super(props)
     this.save = this.save.bind(this)
   }
   public componentDidMount () {
-    this.setValue()
+    this.fetchData()
   }
-  public setValue() {
-    this.form.setValues({
-      muldate: ['2019-1-28 19:24:45', '2019-2-28 19:24:45', '2019-3-28 19:24:45']
-    })
+  public fetchData () {
+    if (this.id === '-1') {
+      // this.setValue({
+      //   regularTime: ['']
+      // })
+    } else {
+      api.fetchDetail(this.id).then((res) => {
+        this.setValue({
+          messageTitle: res.messageTitle,
+          messageContent: res.messageContent,
+          messageType: res.messageType,
+          jumpUrl: res.jumpUrl
+        })
+      })
+    }
+  }
+  public setValue(values: any) {
+    this.form.setValues(values)
+    // this.form.setValues({
+    //   regularTime: ['2019-1-28 19:24:45', '2019-2-28 19:24:45', '2019-3-28 19:24:45']
+    // })
   }
   public save () {
     // this.form
     console.log(this.form.getValues())
+    const values = this.form.getValues()
+    api.saveMessage(values).then((res) => {
+      //
+    })
   }
   public render () {
     return (
@@ -46,22 +73,24 @@ class Main extends React.Component {
           wrapperCol={{
             span: 18
           }}
+          readonly
+          // disabled
         >
           <FormItem
             wrapperCol={{
               span: 4
             }}
-            name='type'
+            name='messageType'
           />
           <FormItem
             label='标题'
-            name='title'
+            name='messageTitle'
             wrapperCol={{
               span: 8
             }}
           />
           <FormItem
-            name='content'
+            name='messageContent'
             wrapperCol={{
               span: 8
             }}
@@ -109,8 +138,8 @@ class Main extends React.Component {
               labelCol={{
                 span: 0
               }}
-              inner={() => {
-                return (
+              inner={(form) => {
+                return form.getFieldDecorator('regularTime')(
                   <ReceiverWidget
                   />
                 )
@@ -121,7 +150,7 @@ class Main extends React.Component {
           <FormItem
             label='定时发送'
             inner={(form) => {
-              return form.getFieldDecorator('muldate')(
+              return form.getFieldDecorator('regularTime')(
                 <MultiDateWidget
                   showTime
                   // format='YYYY-MM-DD HH:mm:ss'
@@ -146,4 +175,4 @@ class Main extends React.Component {
     )
   }
 }
-export default Main
+export default withRouter(Main)

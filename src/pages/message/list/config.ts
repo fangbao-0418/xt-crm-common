@@ -5,7 +5,7 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      title: {
+      messageTitle: {
         type: 'input', label: '消息标题'
       },
       type: {
@@ -15,30 +15,29 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '营销消息', value: '1'}
         ] 
       },
-      status: {
+      messageStatus: {
         type: 'select', label: '状态',
         options: [
           {label: '待发送', value: '0'},
-          {label: '发送失败', value: '1'},
-          {label: '发送成功', value: '2'},
-          {label: '已取消', value: '4'}
+          {label: '已取消', value: '3'},
+          {label: '进行中', value: '2'},
+          {label: '已完成', value: '4'}
         ] 
       },
       sendTime: {
         type: 'rangepicker', label: '发送时间',
         controlProps: {
-          //
+          showTime: true
         }
       },
-      ways: {
-        type: 'select', label: '状态',
+      messageType: {
+        type: 'select', label: '消息通道',
         options: [
-          {label: '短信', value: '0'},
-          {label: 'push', value: '1'},
-          {label: '站内信', value: '2'}
+          {label: 'push', value: '0'},
+          {label: '站内信', value: '10'}
         ] 
       },
-      content: {
+      messageContent: {
         type: 'textarea', label: '内容'
       },
       jumpUrl: {

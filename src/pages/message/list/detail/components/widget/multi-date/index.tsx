@@ -11,21 +11,27 @@ interface State {
   value: any[]
 }
 class Main extends React.Component<Props, State> {
-  public state: State = {
-    value: [undefined]
-  }
+  public state: State
   public ids: any[] = [1]
   public lastId = 1
   public constructor (props: Props) {
     super(props)
     this.operate = this.operate.bind(this)
-    this.setIds(props.value)
+    const value = this.handleValue(props.value)
+    this.state = {
+      value
+    }
+    this.setIds(value)
   }
   public componentWillReceiveProps (props: Props) {
+    const value = this.handleValue(props.value)
     this.setState({
-      value: props.value || []
+      value
     })
-    this.setIds(props.value)
+    this.setIds(value)
+  }
+  public handleValue (value?: any[]) {
+    return value ? value : [undefined]
   }
   public operate (type: 'add' | 'del' = 'add',index: number) {
     let { value } = this.state
