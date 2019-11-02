@@ -97,8 +97,10 @@ class Main extends React.Component<Props, State> {
       this.couponModalInstance.open(value)
     }
   }
+  /** 校验规则内容 返回true校验通过 */
   public validatePresent (data: Marketing.FormDataProps) {
     let arr: Marketing.PresentContentValueProps[] = []
+    const nums = ['一', '二', '三', '四', '五']
     const ruleType = data.strategyType
     let message = ''
     let type = ''
@@ -108,10 +110,23 @@ class Main extends React.Component<Props, State> {
     } else {
       arr = data.rank ? (data.rank.ruleList || []) : []
       type = '阶梯规则'
+      let stageCount = 0
+      const stageIndex = arr.findIndex((item) => {
+        if ((item.stageCount || 0) <= stageCount) {
+          return true
+        } else {
+          stageCount = item.stageCount as number
+          return false
+        }
+      })
+      if (stageIndex > -1) {
+        APP.error(`第${nums[stageIndex]}阶梯门槛不能小于上一阶梯门槛`)
+        return false
+      }
     }
+    console.log(data, arr, ruleType, 'arr')
     const index = arr.findIndex((item, index) => {
       if (ruleType !== 0) {
-        const nums = ['一', '二', '三', '四', '五']
         type = `第${nums[index]}阶梯规则`
       } else {
         type = '循环规则'
@@ -135,6 +150,7 @@ class Main extends React.Component<Props, State> {
         }
       }
     })
+
     if (arr.length === 0) {
       APP.error(type + '不能为空')
       return false
@@ -147,11 +163,11 @@ class Main extends React.Component<Props, State> {
   public save () {
     const value = this.form.getValues()
     this.form.props.form.validateFields((err) => {
-      if (!this.validatePresent(value)) {
-        return
-      }
       if (err) {
         APP.error('请检查输入项是否正确')
+        return
+      }
+      if (!this.validatePresent(value)) {
         return
       }
       this.setState({

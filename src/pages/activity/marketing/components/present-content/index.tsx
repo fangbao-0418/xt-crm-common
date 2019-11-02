@@ -22,8 +22,8 @@ interface State {
 }
 const defaultValue: ValueProps = {
   type: 0,
-  chooseCount: 0,
-  stageCount: 0,
+  chooseCount: 1,
+  stageCount: 1,
   couponList: [],
   skuList: [],
   spuIds: {},
@@ -35,6 +35,9 @@ class Main extends React.Component<Props, State> {
   public state: State = {
     value: this.value
   }
+  public componentDidMount () {
+    this.onChange()
+  }
   public componentWillReceiveProps (props: Props) {
     const value = Object.assign({}, defaultValue, props.value)
     this.setState({
@@ -43,7 +46,7 @@ class Main extends React.Component<Props, State> {
     this.value = value
   }
   public onChange () {
-    console.log(this.value, 'onchange')
+    // console.log(this.value, 'onchange')
     this.setState({
       value: this.value
     })
