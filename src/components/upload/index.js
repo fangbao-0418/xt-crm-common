@@ -133,9 +133,8 @@ class UploadView extends Component {
   };
   customRequest(e) {
     const file = e.file;
-    console.log(e, 'customRequest')
-    ossUpload(file).then(urlList => {
-      const { fileList } = this.state;
+    ossUpload(file).then((urlList) => {
+      let { fileList } = this.state;
       const { onChange } = this.props;
       file.url = urlList && urlList[0];
       file.durl = file.url;
@@ -143,18 +142,19 @@ class UploadView extends Component {
         ...file,
         name: file.name
       });
+      fileList = this.initFileList(fileList)
       this.setState({
         fileList: fileList,
       });
-      const value = fileList.map((item) => {
-        return {
-          ...item,
-          url: this.replaceUrl(item.url),
-          durl: this.replaceUrl(item.durl),
-          // name: file.name
-        }
-      })
-      isFunction(onChange) && onChange(value);
+      // const value = fileList.map((item) => {
+      //   return {
+      //     ...item,
+      //     url: this.replaceUrl(item.url),
+      //     durl: this.replaceUrl(item.durl),
+      //     // name: file.name
+      //   }
+      // })
+      isFunction(onChange) && onChange(fileList);
     });
   }
   handleRemove = e => {
