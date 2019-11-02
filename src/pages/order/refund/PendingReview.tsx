@@ -31,7 +31,7 @@ class PendingReview extends React.Component<Props, State> {
   state: State = {
     addressVisible: false,
     selectedValues: [],
-    isDemotion: 0,
+    isDemotion: this.checkVO.isDemotion,
     demotionInfo: ''
   };
   /**
@@ -379,7 +379,9 @@ class PendingReview extends React.Component<Props, State> {
               this.state.isDemotion > 0 &&
               <Row>
                 <Form.Item label="团长降级">
-                  {getFieldDecorator('isDemotion', {})(
+                  {getFieldDecorator('isDemotion', {
+                    initialValue: this.checkVO.isDemotion,
+                  })(
                     <Radio.Group onChange={this.onChangeJiangji} value={this.state.isDemotion}>
                       <Radio value={1}>是</Radio>
                       <Radio value={2}>否</Radio>
@@ -394,6 +396,7 @@ class PendingReview extends React.Component<Props, State> {
                 <Row>
                   <Form.Item label="不降级原因">
                     {getFieldDecorator('demotionInfo', {
+                      initialValue: this.checkVO.demotionInfo,
                       rules: [
                         {
                           required: true,

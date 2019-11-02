@@ -9,8 +9,6 @@ declare module AfterSalesInfo {
     orderInfoVO: OrderInfoVO;
     checkVO: CheckVO;
     skuServerLogVO: any[];
-    isDemotion: number;
-    demotionInfo: string;
   }
   export interface CheckVO {
     amount: number;
@@ -38,6 +36,8 @@ declare module AfterSalesInfo {
     maxServerNum:number;
     maxRefundAmount: number;
     reply: string;
+    isDemotion: number;
+    demotionInfo: string;
   }
   export interface OrderInfoVO {
     mainOrderId: number;
