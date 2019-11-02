@@ -58,7 +58,7 @@
     "mock": "nodemon mock/server.js",
     "i18n": "gulp i18n-json-merge",
     "dev": "react-app-rewired start",
-    "submodule": "yarn run remove && git submodule update --remote"
+    "submodule": "yarn run remove && git submodule update --init"
   },
   "eslintConfig": {
     "extends": "react-app"
