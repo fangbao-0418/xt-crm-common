@@ -84,7 +84,7 @@ class Main extends React.Component<Props, State> {
           labelCol={{span: 0}}
           required
         >
-          每满
+          满
         </FormItem>
         <FormItem
           style={{
