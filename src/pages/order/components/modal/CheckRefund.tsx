@@ -264,7 +264,7 @@ class CheckRefund extends React.Component<Props, State> {
               )}
             </Form.Item>
             {
-              this.state.isDemotion > 0 &&
+              this.state.isDemotion > 0 && this.showAfterSaleInfo &&
               <Row>
                 <Form.Item label="团长降级">
                   {getFieldDecorator('isDemotion', {
@@ -280,7 +280,7 @@ class CheckRefund extends React.Component<Props, State> {
             }
             
             {
-              this.state.isDemotion === 2 &&
+              this.state.isDemotion === 2 && this.showAfterSaleInfo &&
                 <Row>
                   <Form.Item label="不降级原因">
                     {getFieldDecorator('demotionInfo', {
