@@ -142,6 +142,7 @@ class Main extends React.Component<Props, State> {
               </Radio>
             </FormItem>
             <FormItem
+              hidden={String(type) !== '0'}
               style={{
                 display: 'inline-block',
                 width: 140,
@@ -172,28 +173,30 @@ class Main extends React.Component<Props, State> {
                 <span className='ml10'>件</span>
               )}
             />
-            <div>
-            {(disabledFields.indexOf('activityList') === -1) && (
-              <span
-                className='href'
-                onClick={() => {
-                  if (this.props.onSelect) {
-                    this.props.onSelect(0)
-                  }
+            <div hidden={String(type) !== '0'}>
+              <div>
+                {(disabledFields.indexOf('activityList') === -1) && (
+                  <span
+                    className='href'
+                    onClick={() => {
+                      if (this.props.onSelect) {
+                        this.props.onSelect(0)
+                      }
+                    }}
+                  >
+                    请选择活动
+                  </span>
+                )}
+              </div>
+              <ActivityList
+                disabled={disabledFields.indexOf('activityList') > -1}
+                value={value}
+                onChange={(value) => {
+                  this.value = value
+                  this.onChange()
                 }}
-              >
-                请选择活动
-              </span>
-            )}
+              />
             </div>
-            <ActivityList
-              disabled={disabledFields.indexOf('activityList') > -1}
-              value={value}
-              onChange={(value) => {
-                this.value = value
-                this.onChange()
-              }}
-            />
             {/* <SkuList
               value={skuList}
               onChange={(value) => {
@@ -221,28 +224,30 @@ class Main extends React.Component<Props, State> {
                 优惠券
               </Radio>
             </FormItem>
-            <div>
-              {disabledFields.indexOf('couponList') === -1 && (
-                <span
-                  className='href'
-                  onClick={() => {
-                    if (this.props.onSelect) {
-                      this.props.onSelect(1)
-                    }
-                  }}
-                >
-                  请选择优惠券
-                </span>
-              )}
+            <div hidden={String(type) !== '1'}>
+              <div>
+                {disabledFields.indexOf('couponList') === -1 && (
+                  <span
+                    className='href'
+                    onClick={() => {
+                      if (this.props.onSelect) {
+                        this.props.onSelect(1)
+                      }
+                    }}
+                  >
+                    请选择优惠券
+                  </span>
+                )}
+              </div>
+              <CouponList
+                disabled={disabledFields.indexOf('couponList') > -1}
+                value={couponList}
+                onChange={(value) => {
+                  this.value.couponList = value
+                  this.onChange()
+                }}
+              />
             </div>
-            <CouponList
-              disabled={disabledFields.indexOf('couponList') > -1}
-              value={couponList}
-              onChange={(value) => {
-                this.value.couponList = value
-                this.onChange()
-              }}
-            />
           </Col>
         </Row>
       </div>

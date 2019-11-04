@@ -19,6 +19,8 @@ interface State {
   values: Marketing.FormDataProps
   /** 赠品是否可编辑 */
   giftCanEdit: boolean
+  /** strategyType 阶梯规则:1 循环规则:0 */
+  strategyType: 0 | 1
 }
 class Main extends React.Component<Props, State> {
   public ActivityModalInstance: ShopModalInstance
@@ -36,7 +38,8 @@ class Main extends React.Component<Props, State> {
     disabled: true,
     canSave: false,
     values: {},
-    giftCanEdit: false
+    giftCanEdit: false,
+    strategyType: 1
   }
   public constructor (props: any) {
     super(props)
@@ -67,6 +70,7 @@ class Main extends React.Component<Props, State> {
       if (res) {
         this.form.setValues(res)
         this.setState({
+          strategyType: res.ruleType,
           values: res,
           ladderCount: res.rank.ruleList.length,
           disabled: (this.type !== 'edit' || [1].indexOf(res.discountsStatus) === -1),
@@ -212,6 +216,13 @@ class Main extends React.Component<Props, State> {
       >
         <Form
           disabled={this.state.disabled}
+          onChange={(field, value, values) => {
+            if (field === 'strategyType') {
+              this.setState({
+                strategyType: value
+              })
+            }
+          }}
           namespace='marketing'
           getInstance={(ref) => {
             this.form = ref
@@ -354,19 +365,19 @@ class Main extends React.Component<Props, State> {
                 name='strategyType'
                 options={[{label: '阶梯规则', value: 1}]}
               />
-              <FormItem
-                required
-                labelCol={{span: 4}}
-                wrapperCol={{span: 20}}
-                type='radio'
-                name='rank.ladderRule'
-                label='阶梯是否可以叠加'
-                options={[
-                  {label: '不可叠加', value: 0},
-                  {label: '可叠加', value: 1}
-                ]}
-              />
-            
+              <div hidden={this.state.strategyType !== 1}>
+                <FormItem
+                  required
+                  labelCol={{span: 4}}
+                  wrapperCol={{span: 20}}
+                  type='radio'
+                  name='rank.ladderRule'
+                  label='阶梯是否可以叠加'
+                  options={[
+                    {label: '不可叠加', value: 0},
+                    {label: '可叠加', value: 1}
+                  ]}
+                />
                 <FormItem
                   labelCol={{span: 0}}
                   inner={(form) => {
@@ -392,25 +403,26 @@ class Main extends React.Component<Props, State> {
                   }}
                 >
                 </FormItem>
-              <div>
-                {(this.state.ladderCount < 5 && !this.state.disabled) && (
-                  <span
-                    className='href'
-                    onClick={() => {
-                      const values = this.form.getValues()
-                      let value = values.rank.ruleList
-                      value.push({})
-                      this.form.setValues({
-                        'rank.ruleList': value
-                      })
-                      this.setState({
-                        ladderCount: value.length
-                      })
-                    }}
-                  >
-                    +新增阶梯优惠
-                  </span>
-                )}
+                <div>
+                  {(this.state.ladderCount < 5 && !this.state.disabled) && (
+                    <span
+                      className='href'
+                      onClick={() => {
+                        const values = this.form.getValues()
+                        let value = values.rank.ruleList
+                        value.push({})
+                        this.form.setValues({
+                          'rank.ruleList': value
+                        })
+                        this.setState({
+                          ladderCount: value.length
+                        })
+                      }}
+                    >
+                      +新增阶梯优惠
+                    </span>
+                  )}
+                </div>
               </div>
               <FormItem
                 disabled={this.state.disabled}
@@ -419,7 +431,7 @@ class Main extends React.Component<Props, State> {
                 name='strategyType'
                 options={[{label: '循环规则', value: 0}]}
               />
-              <div>
+              <div hidden={this.state.strategyType !== 0}>
                 <FormItem
                   labelCol={{span: 0}}
                   inner={(form) => {
