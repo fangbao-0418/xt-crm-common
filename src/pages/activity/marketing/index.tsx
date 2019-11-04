@@ -130,6 +130,7 @@ class Main extends React.Component<{}, State> {
       <div>
         <Search
           onSearch={(value) => {
+            console.log(value, '--------')
             this.payload = {
               ...this.payload,
               ...value,

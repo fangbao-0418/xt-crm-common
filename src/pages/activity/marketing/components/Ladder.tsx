@@ -44,6 +44,7 @@ class Main extends React.Component<Props> {
             )}
           >
             <PresentContent
+              type='ladder'
               disabled={disabled}
               giftCanEdit={this.props.giftCanEdit}
               value={value[index]}

@@ -16,6 +16,8 @@ interface Props {
   /** 活动状态 0-关闭, 1-未开始, 2-进行中, 3-已结束 */
   status?: 0 | 1 | 2 | 3
   giftCanEdit?: boolean
+  /** ladder为阶梯规则 */
+  type?: 'ladder'
 }
 interface State {
   value: ValueProps
@@ -84,7 +86,7 @@ class Main extends React.Component<Props, State> {
           labelCol={{span: 0}}
           required
         >
-          满
+          {this.props.type === 'ladder' ? '' : '每'}满
         </FormItem>
         <FormItem
           style={{
