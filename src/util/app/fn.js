@@ -17,6 +17,20 @@ export function getH5Origin () {
   return origin
 }
 
+export function setPayload (name, value) {
+  if (name === null && value === undefined) {
+    localStorage.setItem('payload', null)
+    return
+  }
+  const payload = getPayload() || {}
+  payload[name] = value
+  localStorage.setItem('payload', JSON.stringify(payload))
+}
+
+export function getPayload (name) {
+  const payload = JSON.parse(localStorage.getItem('payload'))
+  return name ? payload && payload[name] : payload
+}
 export const handleLoading = (function () {
   let ajaxCount = 0
   return (loading = 'end') => {
