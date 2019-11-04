@@ -73,6 +73,7 @@ class BannerModal extends Component {
           id,
           ...form.getFieldsValue(),
         };
+        params.jumpUrlWap =  (params.jumpUrlWap || '').trim()
         params.onlineTime = +new Date(params.onlineTime);
         params.offlineTime = +new Date(params.offlineTime);
         if (params.imgList) {
@@ -139,6 +140,12 @@ class BannerModal extends Component {
             <FormItem key={renderKey} label="Banner图片" required={true}>
               {getFieldDecorator('imgList', {
                 initialValue: initImgList(data.imgUrlWap),
+                rules: [
+                  {
+                    required: true,
+                    message: '请上传Banner图片',
+                  },
+                ],
               })(
                 <UploadView
                   placeholder="上传主图"

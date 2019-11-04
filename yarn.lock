@@ -1035,8 +1035,8 @@
   resolved "http://registry-npm-ued.hzxituan.com/@types%2fminimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
 
 "@types/node@*":
-  version "12.11.6"
-  resolved "http://registry-npm-ued.hzxituan.com/@types%2fnode/-/node-12.11.6.tgz#2f8d551aef252de78f42acdccd53f5a8ce0cac4d"
+  version "12.11.7"
+  resolved "http://registry-npm-ued.hzxituan.com/@types%2fnode/-/node-12.11.7.tgz#57682a9771a3f7b09c2497f28129a0462966524a"
 
 "@types/node@^12.7.8":
   version "12.7.12"
@@ -8688,6 +8688,10 @@ path-to-regexp@^1.7.0:
   resolved "http://registry-npm-ued.hzxituan.com/path-to-regexp/-/path-to-regexp-1.7.0.tgz#59fde0f435badacba103a84e9d3bc64e96b9937d"
   dependencies:
     isarray "0.0.1"
+
+path-to-regexp@^3.1.0:
+  version "3.1.0"
+  resolved "http://registry-npm-ued.hzxituan.com/path-to-regexp/-/path-to-regexp-3.1.0.tgz#f45a9cc4dc6331ae8f131e0ce4fde8607f802367"
 
 path-type@^1.0.0:
   version "1.1.0"

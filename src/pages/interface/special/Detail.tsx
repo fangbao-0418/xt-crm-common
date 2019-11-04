@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Input, Button, Icon, Card, Radio, Row, Col } from 'antd'
+import { Form, Input, Button, Icon, Card, Switch, Radio, Row, Col } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { withRouter, RouteComponentProps } from 'react-router'
 import { connect } from 'react-redux'
@@ -8,15 +8,18 @@ import Content from './components/content'
 import * as api from './api'
 import styles from './style.module.sass'
 import { namespace } from './model'
+import { replaceHttpUrl } from '@/util/utils';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   detail: Special.DetailItem
 }
 interface State {
-  loading: boolean
+  loading: boolean;
+  shareOpen: boolean;
 }
 class Main extends React.Component<Props, State> {
   public state = {
-    loading: false
+    loading: false,
+    shareOpen: true
   }
   public id = '-1'
   public constructor(props: Props) {
@@ -25,7 +28,12 @@ class Main extends React.Component<Props, State> {
     this.handleSubmit = this.handleSubmit.bind(this)
   }
   public componentDidMount() {
-    this.fetchData()
+    const { id } = this.props.match.params;
+    if (id === '-1') {
+      this.setState({ shareOpen: true })
+    } else {
+      this.fetchData()
+    }
   }
   public componentWillUnmount() {
     APP.dispatch({
@@ -38,7 +46,7 @@ class Main extends React.Component<Props, State> {
       type,
       sort: 0,
       list: [],
-      crmCoupons:[]
+      crmCoupons: []
     })
     APP.dispatch({
       type: `${namespace}/changeDetail`,
@@ -54,38 +62,39 @@ class Main extends React.Component<Props, State> {
     APP.dispatch({
       type: `${namespace}/fetchDetail`,
       payload: {
-        id
+        id,
+        cb: (result: any) => {
+          this.setState({
+            shareOpen: result.shareOpen === 1
+          })
+        }
       }
     })
   }
+  requestParamsCreator(column: Special.DetailContentProps, list: any) {
+    let items = (list || []).map((v: any) => {
+      return {
+        id: v.id,
+        sort: v.sort
+      }
+    })
+    return { type: column.type, css: column.css, sort: column.sort, items }
+  }
   // 新增详情转换成入参
   public mapDetailToRequestParams(detail: Special.DetailItem) {
+    detail.jumpUrl = (detail.jumpUrl || '').trim()
     const list = detail.list.map((column: Special.DetailContentProps) => {
-      let items = [];
       switch (column.type) {
         case 1:
-          items = (column.list || []).map(v => {
-            return {
-              id: v.id,
-              sort: v.sort
-            }
-          })
-          return { type: column.type, css: column.css, sort: column.sort, items }
-          break;
+          return this.requestParamsCreator(column, column.list);
         case 2:
-          items = (column.crmCoupons || []).map(v => {
-            return {
-              id: v.id,
-              sort: v.sort
-            }
-          })
-          return { type: column.type, css: column.css, sort: column.sort, items }
+          return this.requestParamsCreator(column, column.crmCoupons);
         case 3:
           return {
             type: column.type,
             sort: column.sort,
-            advertisementUrl: column.advertisementUrl,
-            advertisementJumpUrl: column.advertisementJumpUrl
+            advertisementUrl: replaceHttpUrl((column.advertisementUrl || '').trim()),
+            advertisementJumpUrl: (column.advertisementJumpUrl || '').trim()
           };
         default:
           return {};
@@ -96,24 +105,32 @@ class Main extends React.Component<Props, State> {
       list
     }
   }
+  handleSwitch = (checked: boolean) => {
+    this.setState({ shareOpen: checked });
+  }
   public handleSubmit(e: any) {
     e.preventDefault()
-    console.log('detail=>', this.mapDetailToRequestParams(this.props.detail))
-    this.props.form.validateFields((err:any, value) => {
+    this.props.form.validateFields((err: any, value) => {
       if (err) {
         return
       }
-      const detail = this.props.detail
       this.setState({
         loading: true
       })
       if (value.imgUrl instanceof Array) {
         value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
       }
-      api.saveSpecial({
-        ...this.mapDetailToRequestParams(detail),
-        ...value
-      }).then((res: any) => {
+      if (value.shareImgUrl instanceof Array) {
+        value.shareImgUrl = value.shareImgUrl[0] && value.shareImgUrl[0].url
+      }
+      const params = {
+        ...this.props.detail,
+        ...value,
+        shareOpen: this.state.shareOpen ? 1 : 0
+      };
+      console.log('params=>', params);
+      const detail: any = this.mapDetailToRequestParams(params)
+      api.saveSpecial(detail).then((res: any) => {
         this.setState({
           loading: false
         })
@@ -128,6 +145,24 @@ class Main extends React.Component<Props, State> {
       })
     })
   }
+  public get imgUrl(): string | { uid: string, url: string }[] {
+    const { detail } = this.props
+    return typeof detail.imgUrl === 'string' ? [
+      {
+        uid: 'imgUrl0',
+        url: detail.imgUrl
+      }
+    ] : detail.imgUrl;
+  }
+  public get shareImgUrl(): string | { uid: string, url: string }[] {
+    const { detail } = this.props
+    return typeof detail.shareImgUrl === 'string' ? [
+      {
+        uid: 'imgUrl0',
+        url: detail.shareImgUrl
+      }
+    ] : detail.shareImgUrl;
+  }
   public render() {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
@@ -139,13 +174,6 @@ class Main extends React.Component<Props, State> {
       },
     };
     const { detail } = this.props
-    detail.imgUrl = typeof detail.imgUrl === 'string' ? [
-      {
-        uid: 'imgUrl0',
-        url: detail.imgUrl
-      }
-    ] : detail.imgUrl
-    console.log(detail.imgUrl, 'imgUrl')
     return (
       <div className={styles.detail}>
         <div className={styles.content}>
@@ -166,22 +194,43 @@ class Main extends React.Component<Props, State> {
                 <Input placeholder='请输入专题名称' />
               )}
             </Form.Item>
-            <Form.Item
-              label='分享标题'
-            >
-              {getFieldDecorator('shareTitle', {
-                initialValue: detail.shareTitle,
-                rules: [
-                  { required: true, message: '分享标题不能为空' },
-                  {
-                    max: 30,
-                    message: '分享标题不能超过30个字符'
-                  }
-                ]
-              })(
-                <Input placeholder='请输入分享标题' />
-              )}
+            <Form.Item label="支持专题分享">
+              <>
+                <Switch checked={this.state.shareOpen} onChange={this.handleSwitch} />
+                <p>关闭专题分享时，则隐藏专题页面分享按钮，无法分享专题。</p>
+              </>
             </Form.Item>
+            {this.state.shareOpen &&
+              <>
+                <Form.Item
+                  label='分享标题'
+                >
+                  {getFieldDecorator('shareTitle', {
+                    initialValue: detail.shareTitle,
+                    rules: [
+                      { required: true, message: '分享标题不能为空' },
+                      {
+                        max: 30,
+                        message: '分享标题不能超过30个字符'
+                      }
+                    ]
+                  })(
+                    <Input placeholder='请输入分享标题' />
+                  )}
+                </Form.Item>
+                <Form.Item label="分享图片" required>
+                  {getFieldDecorator('shareImgUrl', {
+                    initialValue: this.shareImgUrl,
+                    rules: [
+                      { required: true, message: '请上传专题分享图片' }
+                    ]
+                  })(<Upload accept="image/gif, image/jpeg, image/png" size={0.3} listType="picture-card" />)}
+                  <p>1.专题分享图片主要用于专题分享，包括生成专题海报、分享给好友图片等，必填项。</p>
+                  <p>2、图片格式支持png、gif、jpg格式（推荐使用png格式）。</p>
+                  <p>3、图片尺寸为750*1000像素，大小不超过300kb。</p>
+                </Form.Item>
+              </>
+            }
             <Form.Item
               label='专题背景色'
             >
@@ -199,7 +248,7 @@ class Main extends React.Component<Props, State> {
               required
             >
               {getFieldDecorator('imgUrl', {
-                initialValue: detail.imgUrl,
+                initialValue: this.imgUrl,
                 rules: [{
                   required: true,
                   message: 'banner图片不能为空'

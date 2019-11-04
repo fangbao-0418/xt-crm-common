@@ -363,7 +363,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         <Form.Item label="优惠券名称">
           {getFieldDecorator('name', {
             rules: [
-              { required: true, message: '请输入优惠券名称' },
+              { required: true, message: '请输入优惠券名称', whitespace: true },
               { validator: validateName }
             ]
           })(<Input placeholder="例：国庆优惠券，最多20个字" />)}

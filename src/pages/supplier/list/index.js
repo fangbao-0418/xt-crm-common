@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Card, Form, Input, Button, DatePicker } from 'antd';
+import moment from 'moment'
 import { querySupplierList, exportSupplier } from '../api';
 import SupplierModal from '../supplier-modal';
 import AccountModal from '../account-modal';
@@ -9,7 +10,8 @@ const { RangePicker } = DatePicker;
 
 class OrderList extends React.Component {
   static defaultProps = {};
-
+  pathname = this.props.location.pathname
+  payload = APP.fn.getPayload(this.pathname) || {}
   state = {
     selectedRowKeys: [],
     list: [],
@@ -47,7 +49,10 @@ class OrderList extends React.Component {
   };
 
   reset = () => {
+    this.payload = {}
+    APP.fn.setPayload(this.pathname, this.payload)
     this.props.form.resetFields();
+    this.forceUpdate()
   };
   handleSearch = () => {
     const {
@@ -135,23 +140,27 @@ class OrderList extends React.Component {
         },
       },
     ].filter(column => !column.hide);
+    const values = this.payload
+    values.createTime = values.startTime && [moment(values.startTime), moment(values.endTime)]
     return (
       <>
         <Card title="筛选">
-          <Form layout="inline">
+          <Form
+            layout="inline"
+          >
             <FormItem label="供应商名称">
-              {getFieldDecorator('name')(<Input placeholder="" />)}
+              {getFieldDecorator('name', {initialValue: values.name})(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="供应商ID">
-              {getFieldDecorator('id')(<Input placeholder="" type='number' />)}
+              {getFieldDecorator('id', {initialValue: values.id})(<Input type='number' placeholder="" />)}
             </FormItem>
             <FormItem label="联系人">
-              {getFieldDecorator('contacts')(<Input placeholder="" />)}
+              {getFieldDecorator('contacts', {initialValue: values.contacts})(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="供应商编码">
-              {getFieldDecorator('code')(<Input placeholder="" />)}
+              {getFieldDecorator('code', {initialValue: values.code})(<Input placeholder="" />)}
             </FormItem>
-            <FormItem label="创建时间">{getFieldDecorator('createTime')(<RangePicker showTime />)}</FormItem>
+            <FormItem label="创建时间">{getFieldDecorator('createTime', {initialValue: values.createTime})(<RangePicker showTime />)}</FormItem>
 
             <FormItem>
               <Button type="default" onClick={this.reset}>
@@ -186,4 +195,14 @@ class OrderList extends React.Component {
   }
 }
 
-export default Form.create()(OrderList);
+export default Form.create({
+  onValuesChange: (props, changedValues, allValues) => {
+    const [startTime, endTime] = allValues.createTime || [];
+    const params = {
+      ...allValues,
+      startTime: startTime ? +new Date(startTime) : undefined,
+      endTime: endTime ? +new Date(endTime) : undefined,
+    };
+    APP.fn.setPayload(props.location.pathname, params)
+  }
+})(OrderList);

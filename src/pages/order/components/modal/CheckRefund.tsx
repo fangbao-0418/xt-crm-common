@@ -200,7 +200,7 @@ class CheckRefund extends React.Component<Props, State> {
                     ],
                   })(
                     <InputNumber
-                      min={0.01}
+                      min={0}
                       max={formatPrice(this.maxRefundAmount)}
                       formatter={formatRMB}
                       placeholder="请输入"

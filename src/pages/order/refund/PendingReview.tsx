@@ -103,7 +103,7 @@ class PendingReview extends React.Component<Props, State> {
    * 最终售后金额
    */
   get maxRefundAmount(): number {
-    return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount: this.relatedAmount;
+    return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount : this.relatedAmount;
   }
   /**
    * 运费是否大于0
@@ -178,7 +178,7 @@ class PendingReview extends React.Component<Props, State> {
    * 修改收货地址
    */
   handleChangeShippingAddress = (values: any) => {
-    let {returnContact, returnPhone, ...rest} = values;
+    let { returnContact, returnPhone, ...rest } = values;
     APP.dispatch({
       type: `${namespace}/saveDefault`,
       payload: {
@@ -208,6 +208,7 @@ class PendingReview extends React.Component<Props, State> {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
+    const { orderInterceptRecordVO } = (this.props.data as any)
     return (
       <>
         <Card title={<AfterSaleDetailTitle />}>
@@ -272,11 +273,11 @@ class PendingReview extends React.Component<Props, State> {
                     },
                   ],
                 })(<InputNumber
-                    min={0}
-                    max={this.checkVO.maxServerNum}
-                    placeholder="请输入"
-                    onChange={this.handleChangeServerNum}
-                  />)}
+                  min={0}
+                  max={this.checkVO.maxServerNum}
+                  placeholder="请输入"
+                  onChange={this.handleChangeServerNum}
+                />)}
                 <span>（最多可售后数目：{this.checkVO.maxServerNum}）</span>
               </Form.Item>
             </Row>
@@ -292,7 +293,7 @@ class PendingReview extends React.Component<Props, State> {
                   ],
                 })(
                   <InputNumber
-                    min={0.01}
+                    min={0}
                     max={formatPrice(this.maxRefundAmount)}
                     formatter={formatRMB}
                   />,
@@ -311,7 +312,7 @@ class PendingReview extends React.Component<Props, State> {
             )}
             {!this.isRefundTypeOf(enumRefundType.Refund) && (
               <Form.Item label="退货地址">
-                <ModifyReturnAddress detail={this.checkVO} onSuccess={this.handleChangeReturnAddress} />
+                <ModifyReturnAddress detail={this.checkVO} intercept={orderInterceptRecordVO} onSuccess={this.handleChangeReturnAddress} />
               </Form.Item>
             )}
             {this.isRefundTypeOf(enumRefundType.Exchange) && (

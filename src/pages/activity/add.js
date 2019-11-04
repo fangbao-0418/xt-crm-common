@@ -7,12 +7,10 @@ import activityType from '../../enum/activityType'
 import moment from 'moment';
 import activityTagBImg from '../../assets/images/activity-tag-bigimg.png'
 import activityTagSImg from '../../assets/images/activity-tag-smimg.jpg'
-import { initImgList } from '@/util/utils';
+import { initImgList, replaceHttpUrl as prefixUrl} from '@/util/utils';
 import './activity.scss'
 const FormItem = Form.Item;
 const { Option } = Select;
-const { RangePicker } = DatePicker;
-const { Meta } = Card;
 const formLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -37,8 +35,8 @@ class Add extends React.Component {
       tagPosition: 0,
       tagUrl: []
     }
-    if (this.props.data) {
-      this.data = this.props.data;
+    if (props.data) {
+      this.data = props.data;
       this.data.startTime = moment(this.data.startTime);
       this.data.endTime = moment(this.data.endTime);
       this.data.tagUrl = initImgList(this.data.tagUrl);
@@ -49,13 +47,39 @@ class Add extends React.Component {
       tagImg: activityTagSImg,
       tagClass: 'img_sm',
       place: this.data.tagPosition,
-      id: this.props.data ? this.props.data.id : 0
+      id: props.data ? props.data.id : 0
     }
   }
 
   componentDidMount() {
     this.props.form.setFieldsValue(this.data);
     this.typeChange(this.data.type);
+  }
+
+  componentWillReceiveProps (props) {
+    this.initData(props)
+  }
+
+  initData (props) {
+    this.data = {
+      type: 1,
+      tagPosition: 0,
+      tagUrl: []
+    }
+    if (props.data) {
+      this.data = props.data;
+      this.data.startTime = moment(this.data.startTime);
+      this.data.endTime = moment(this.data.endTime);
+      this.data.tagUrl = initImgList(this.data.tagUrl);
+    }
+    this.setState({
+      loading: false, // 保存活动按钮
+      tagUrl: this.data.tagUrl.length ? this.data.tagUrl[0].url : '',
+      tagImg: activityTagSImg,
+      tagClass: 'img_sm',
+      place: this.data.tagPosition,
+      id: props.data ? props.data.id : 0
+    })
   }
 
   loadStatus(status) {
@@ -230,7 +254,7 @@ class Add extends React.Component {
         </Form>
         <div className="activity-tag-preview">
           <div className={"activity-tag-preimgs " + this.state.tagClass} >
-            {this.state.tagUrl && <img className={'tag tag-p' + this.state.place} src={this.state.tagUrl} />}
+            {this.state.tagUrl && <img className={'tag tag-p' + this.state.place} src={prefixUrl(this.state.tagUrl)} />}
             <img alt="example" className='main' src={this.state.tagImg} />
           </div>
           <div className="activity-tag-pretip">
