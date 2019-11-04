@@ -123,6 +123,9 @@ class Main extends React.Component<Props> {
     return (
       <div>
         <ListPage
+          processPayload={(payload) => {
+            return payload
+          }}
           formConfig={getFieldsConfig()}
           rangeMap={{
             sendTime: {

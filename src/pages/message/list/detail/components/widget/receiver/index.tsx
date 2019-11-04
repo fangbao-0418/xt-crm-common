@@ -2,14 +2,21 @@ import React from 'react'
 import { Input, Button } from 'antd'
 import styles from './style.module.styl'
 const TextArea = Input.TextArea
+
+interface Props {
+  readonly?: boolean
+}
+
 interface State {
   file: File
   text: string
+  len: number
 }
 class Main extends React.Component<{}, State> {
   public state: State = {
     file: new File([], ''),
-    text: ''
+    text: '',
+    len: 0
   }
   public constructor (props: {}) {
     super(props)
@@ -37,10 +44,14 @@ class Main extends React.Component<{}, State> {
     file?: File
   }) {
     const state = Object.assign({}, this.state, value)
-    this.setState(state)
+    this.setState({
+      text: state.text,
+      file: state.file
+    })
   }
   public render () {
     const { file, text } = this.state
+    console.log(this.state.len, 'len render')
     return (
       <div className={styles.container}>
         <TextArea
@@ -49,17 +60,33 @@ class Main extends React.Component<{}, State> {
           }}
           placeholder='请正确输入会员ID，每行一个号码'
           value={text}
+          onPressEnter={(e) => {
+            if (this.state.len >= 4) {
+              e.preventDefault()
+            }
+          }}
           onChange={(e: any) => {
-            const text = e.target.value
-            const len = text.match(/\n/g) ? text.match(/\n/g).length : 1
-            console.log(len, 'len')
-            if (len < 4) {
+            const text = e.target.value || ''
+            let len = text.match(/\n/g) ? text.match(/\n/g).length : 0
+            if (!/\n$/.test(text)) {
+              console.log('0000000000')
+              len++
+            }
+            if (len <= 4) {
+              this.setState({
+                len
+              })
               this.onChange({
                 text
               })
+            } else {
+              e.preventDefault()
             }
           }}
         />
+        <div className='text-right'>
+          <span>共{this.state.len}条</span>
+        </div>
         <div>
           <Button
             type='primary'

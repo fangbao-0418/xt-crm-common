@@ -80,7 +80,6 @@ class Main extends React.Component<Props, State> {
           {
             value.map((item, index) => {
               const val = this.getMomentValue(value[index])
-              console.log(val, 'val')
               return (
                 <div
                   key={this.ids[index]}

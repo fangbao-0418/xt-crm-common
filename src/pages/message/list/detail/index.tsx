@@ -9,10 +9,15 @@ import * as api from '../api'
 import styles from './style.module.styl'
 
 interface Props extends RouteComponentProps<{id: string}> {}
-
-class Main extends React.Component<Props> {
+interface State {
+  readonly: boolean
+}
+class Main extends React.Component<Props, any> {
   public form: FormInstance
   public id = this.props.match.params.id
+  public state = {
+    readonly: this.id === '-1' ? false : true
+  }
   public constructor (props: Props) {
     super(props)
     this.save = this.save.bind(this)
@@ -30,7 +35,8 @@ class Main extends React.Component<Props> {
         this.setValue({
           messageTitle: res.messageTitle,
           messageContent: res.messageContent,
-          messageType: res.messageType,
+          // messageType: res.messageType,
+          messageType: '10',
           jumpUrl: res.jumpUrl
         })
       })
@@ -73,7 +79,7 @@ class Main extends React.Component<Props> {
           wrapperCol={{
             span: 18
           }}
-          readonly
+          readonly={this.state.readonly}
           // disabled
         >
           <FormItem
