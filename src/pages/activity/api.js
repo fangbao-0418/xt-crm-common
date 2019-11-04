@@ -7,10 +7,16 @@ export function getPromotionList(data) {
 export function setBasePromotion(data) {
   return post('/promotion/addBasePromotion', {}, { data, headers: {} });
 }
-
-// 设置活动商品列表
-export function setPromotionOperatorSpuList(data) {
-  return post('/promotion/operatorSpuList', data);
+/**
+ * 获取活动基本信息
+ * @param {*} promotionId 
+ */
+export function getPromotionInfo(promotionId) {
+  return get(`/promotion/${promotionId}`)
+}
+// 获取活动商品列表
+export function getOperatorSpuList(data) {
+  return get('/promotion/operatorSpuList', data);
 }
 
 // 查看活动详情

@@ -95,7 +95,11 @@ class OrderList extends React.Component {
   };
 
   handleSearch = () => {
-    this.query();
+    this.setState({
+      current: 1
+    }, () => {
+      this.query();
+    })
   };
 
   handleImportChange = info => {

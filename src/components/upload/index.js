@@ -66,8 +66,13 @@ class UploadView extends Component {
     return fileList.map(val => {
       val.durl = val.url
       if (fileType == 'video') {
-        val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
-        val.thumbUrl = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+        if (/x-oss-process=video/.test(val.url) === false) {
+          val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+          val.thumbUrl = val.url;
+        } else {
+          val.url = val.url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '') + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+          val.thumbUrl = val.url;
+        }
       }
       val.durl = this.getViewUrl(val.durl)
       val.url = this.getViewUrl(val.url)
@@ -128,9 +133,8 @@ class UploadView extends Component {
   };
   customRequest(e) {
     const file = e.file;
-    console.log(e, 'customRequest')
-    ossUpload(file).then(urlList => {
-      const { fileList } = this.state;
+    ossUpload(file).then((urlList) => {
+      let { fileList } = this.state;
       const { onChange } = this.props;
       file.url = urlList && urlList[0];
       file.durl = file.url;
@@ -138,18 +142,19 @@ class UploadView extends Component {
         ...file,
         name: file.name
       });
+      fileList = this.initFileList(fileList)
       this.setState({
         fileList: fileList,
       });
-      const value = fileList.map((item) => {
-        return {
-          ...item,
-          url: this.replaceUrl(item.url),
-          durl: this.replaceUrl(item.durl),
-          // name: file.name
-        }
-      })
-      isFunction(onChange) && onChange(value);
+      // const value = fileList.map((item) => {
+      //   return {
+      //     ...item,
+      //     url: this.replaceUrl(item.url),
+      //     durl: this.replaceUrl(item.durl),
+      //     // name: file.name
+      //   }
+      // })
+      isFunction(onChange) && onChange(fileList);
     });
   }
   handleRemove = e => {

@@ -12,10 +12,7 @@ import Modal from './modal';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-const basePayload = {
-    page: 1,
-    pageSize: 10
-};
+
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 
 function getColumns(scope) {
@@ -97,10 +94,11 @@ function getColumns(scope) {
     ]
 }
 
-let unlisten = null;
 const namespace = '/user/userlist'
 
 const defaultPayload = {
+    page: 1,
+    pageSize: 10,
     memberType: '',
     registerFrom: ''
 }
@@ -110,27 +108,19 @@ const defaultPayload = {
     loading: state.loading.effects['user.userlist'].getData,
 }))
 @Form.create({
-    onValuesChange: (props, changeValues, allValues) => {
-        const time = allValues.time || []
-        allValues.registerStartDate = time[0] && time[0].format(timeFormat)
-        allValues.registerEndDate = time[1] && time[1].format(timeFormat)
-        APP.fn.setPayload(namespace, allValues)
-    }
+    // onValuesChange: (props, changeValues, allValues) => {
+    //     const time = allValues.time || []
+    //     allValues.registerStartDate = time[0] && time[0].format(timeFormat)
+    //     allValues.registerEndDate = time[1] && time[1].format(timeFormat)
+    //     const payload = Object.assign({}, APP.fn.getPayload(namespace), ...allValues)
+    //     APP.fn.setPayload(namespace, payload)
+    // }
 })
 export default class extends Component {
 
-    payload = Object.assign({}, defaultPayload, (APP.fn.getPayload(namespace) || {}))
+    payload = Object.assign({}, defaultPayload, APP.fn.getPayload(namespace))
     componentDidMount() {
-        const params = parseQuery(this.props.history);
-        unlisten = this.props.history.listen(() => {
-            // const { form: { resetFields } } = this.props;
-            // const params = parseQuery(this.props.history);
-            // resetFields();
-            console.log('xxxxxxx history')
-            this.handleSearch(params);
-        });
-        console.log('did mount')
-        this.handleSearch(params);
+        this.handleSearch();
     }
 
     onInviteClick = (item) => {
@@ -140,17 +130,25 @@ export default class extends Component {
 
     onMore = item => {
         const { form: { resetFields } } = this.props;
-        const params = parseQuery(this.props.history);
+        // const params = parseQuery(this.props.history);
         resetFields();
-        this.payload = {...defaultPayload}
-        APP.fn.setPayload(namespace, this.payload)
-        if (item.id === +params.parentMemberId) {
-            const random = Math.random();
-            setQuery({ parentMemberId: item.id, random, ...basePayload }, true);
-        } else {
-            setQuery({ parentMemberId: item.id, ...basePayload }, true);
+        this.payload = {
+            page: 1,
+            pageSize: 10,
+            memberType: '',
+            registerFrom: ''
         }
-        
+        APP.fn.setPayload(namespace, this.payload)
+        APP.history.push(`/user/userlist?parentMemberId=${item.id}`)
+        this.setState({}, () => {
+           this.handleSearch()
+        })
+        // if (item.id === +params.parentMemberId) {
+        //     const random = Math.random();
+        //     // setQuery({ parentMemberId: item.id, random, ...defaultPayload }, true);
+        // } else {
+        //     // setQuery({ parentMemberId: item.id, ...defaultPayload }, true);
+        // }
     }
 
     onDetail = (item) => {
@@ -158,52 +156,54 @@ export default class extends Component {
         history.push(`/user/detail?memberId=${item.id}`);
     }
 
-    handleSearch = () => {
-        const params = parseQuery(this.props.history);
-        console.log(params, 'handleSearch')
+    handleSearch = (params = {}) => {
+        let { parentMemberId } = parseQuery(this.props.history)
+        // parentMemberId = params.parentMemberId || parentMemberId || this.payload.parentMemberId
+        params.parentMemberId = parentMemberId
         const { form: { validateFields }, dispatch } = this.props;
         validateFields((errors, values) => {
-            // console.log(values, 'value')
             if (!errors) {
                 const { time } = values;
+                const registerStartDate =  (time && time[0] && time[0].format(timeFormat))
+                const registerEndDate = (time && time[1] && time[1].format(timeFormat))
                 const payload = {
-                    ...basePayload,
+                    ...defaultPayload,
                     ...values,
-                    registerStartDate: time && time[0] && time[0].format(timeFormat),
-                    registerEndDate: time && time[1] && time[1].format(timeFormat),
-                    time: undefined, // 覆盖values.time
+                    registerStartDate,
+                    registerEndDate,
                     ...params,
-                    page: 1
                 };
                 if(payload.memberType && payload.memberType.indexOf('-') > -1) {
                     const types = payload.memberType.split('-');
                     payload.memberType = types[0];
                     payload.memberTypeLevel = types[1];
                 }
-                console.log(payload, 'payload')
+                payload.time = undefined
+                this.payload = payload
+                APP.fn.setPayload(namespace, payload)
                 dispatch['user.userlist'].getData(payload);
             }
         })
     }
 
-    // onSearch = () => {
-    //     const { form: { validateFields }, dispatch } = this.props;
-    //     validateFields((errors, values) => {
-    //         const { time } = values;
-    //         const payload = {
-    //             ...basePayload,
-    //             ...values,
-    //             registerStartDate: time && time[0] && time[0].format(timeFormat),
-    //             registerEndDate: time && time[1] && time[1].format(timeFormat),
-    //             time: undefined, // 覆盖values.time
-    //         };
-    //         setQuery(payload, true);
-    //     })
-    // }
-
+    resetSearch () {
+        const { form: { resetFields } } = this.props;
+        this.payload = {
+            page: 1,
+            pageSize: 10,
+            memberType: '',
+            registerFrom: ''
+        }
+        APP.fn.setPayload(namespace, this.payload)
+        resetFields()
+        APP.history.push('/user/userlist')
+        this.setState({}, () => {
+            this.handleSearch()
+        })
+    }
     renderForm = () => {
-        const { form: { getFieldDecorator, resetFields } } = this.props;
-        const values = this.payload
+        const { form: { getFieldDecorator } } = this.props;
+        const values = {...this.payload}
         values.time = values.registerStartDate && [moment(values.registerStartDate), moment(values.registerEndDate)]
         return (
             <Form layout="inline">
@@ -295,14 +295,13 @@ export default class extends Component {
                     }
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch()}>查询</Button>
+                    <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch({
+                        page: 1
+                    })}>查询</Button>
                     <Button
                         type="primary"
                         onClick={() => {
-                            this.payload = {...defaultPayload}
-                            APP.fn.setPayload(namespace, this.payload)
-                            resetFields()
-                            APP.history.push('/user/userlist')
+                            this.resetSearch()
                         }}
                     >清除条件</Button>
                 </FormItem>
@@ -311,11 +310,9 @@ export default class extends Component {
     }
 
     onChange = (pageConfig) => {
-        const params = {
-            page: pageConfig.current,
-            pageSize: pageConfig.pageSize
-        };
-        setQuery(params);
+        this.handleSearch({
+            page: pageConfig.current
+        })
     }
 
     showTotal = total => {
@@ -332,12 +329,8 @@ export default class extends Component {
         })
     }
 
-    componentWillUnmount() {
-        unlisten();
-    }
-
     render() {
-        const { tableConfig, loading } = this.props;
+        const { tableConfig } = this.props;
         return (
             <>
                 <Card>
