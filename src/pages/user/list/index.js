@@ -172,7 +172,8 @@ export default class extends Component {
                     registerStartDate: time && time[0] && time[0].format(timeFormat),
                     registerEndDate: time && time[1] && time[1].format(timeFormat),
                     time: undefined, // 覆盖values.time
-                    ...params
+                    ...params,
+                    page: 1
                 };
                 if(payload.memberType && payload.memberType.indexOf('-') > -1) {
                     const types = payload.memberType.split('-');
