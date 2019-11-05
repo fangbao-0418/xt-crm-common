@@ -11,6 +11,7 @@ import {
   getOperatorSpuList
 } from '../api';
 import ActivityInfo from './ActivityInfo';
+import ActivityList from './ActivityList';
 import { size, filter } from 'lodash';
 import { gotoPage } from '@/util/utils';
 import { formatMoney, formatMoneyWithSign } from '../../helper';
@@ -240,6 +241,9 @@ class List extends React.Component {
     this.payload.page = 1
     this.getPromotionDetail()
   }
+  handleSelectActivity(id) {
+    console.log(id)
+  }
   render() {
     let {
       goodsList,
@@ -248,7 +252,7 @@ class List extends React.Component {
       selectedRowKeys,
       promotionDetail,
       promotionDetail: {
-        records,   
+        records,
         current,
         size,
         total
@@ -285,9 +289,12 @@ class List extends React.Component {
           title="活动商品列表"
           extra={
             (
-              <span className="href" onClick={this.handleClickModal}>
-                添加商品
-              </span>
+              <>
+                <ActivityList confirm={this.handleSelectActivity} />
+                <span className="href" onClick={this.handleClickModal}>
+                  添加商品
+                </span>
+              </>
             )
           }
         >
