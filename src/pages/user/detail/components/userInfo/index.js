@@ -145,6 +145,7 @@ export default class extends Component {
         this.setState({
           visible: false
         })
+        this.handleSearch();
       })
     })
   }
@@ -178,7 +179,7 @@ export default class extends Component {
             <Descriptions.Item label="手机号">{data.phone}</Descriptions.Item>
             <Descriptions.Item label="等级">
               {levelName(data.memberTypeVO)}
-              <Button onClick={()=>this.modifyMemberType(1)} style={{ marginLeft: 20}}>升级</Button><Button onClick={()=>this.modifyMemberType(-1)} style={{ marginLeft: 20}}>降级</Button>
+              <Button disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)} onClick={()=>this.modifyMemberType(1)} style={{ marginLeft: 20}}>升级</Button><Button disabled={!(data.memberTypeVO && (data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))} onClick={()=>this.modifyMemberType(-1)} style={{ marginLeft: 20}}>降级</Button>
             </Descriptions.Item>
             <Descriptions.Item label="微信">{data.wechat || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
