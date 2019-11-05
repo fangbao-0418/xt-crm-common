@@ -86,7 +86,6 @@ class GoodsList extends React.Component {
       content: '确认下架该商品吗?',
       onOk: () => {
         delGoodsDisable({ ids }).then(res => {
-          console.log(res)
           if (res) {
             message.success('下架成功');
             this.getGoodsList();
