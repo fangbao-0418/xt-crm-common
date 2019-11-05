@@ -1,5 +1,5 @@
 export interface ConfigItem {
   label: string,
   name: string,
-  type: string
+  type: "" | "input" | "select" | "textarea" | "text" | "rangepicker" | "radio" | "checkbox" | "date" | undefined
 }

@@ -2,8 +2,8 @@ import React from 'react'
 import { Card, Row, Col, Form } from 'antd'
 import { FormComponentProps } from 'antd/es/form';
 import { ConfigItem } from './interface'
-// import {}
-interface Props extends FormComponentProps {
+import FormItem from '@/packages/common/components/form/FormItem';
+interface Props extends FormComponentProps<any> {
   dataSource: any
   formProps?: any,
   placeholder?: string
@@ -30,6 +30,7 @@ class Main extends React.Component<Props, State>{
   }
   public render() {
     const { dataSource, formProps, layout, form: { getFieldDecorator } } = this.props
+    console.log()
     return (
       <div>
         <Form {...formProps}>
@@ -37,12 +38,13 @@ class Main extends React.Component<Props, State>{
             <Row gutter={layout.gutter}>
               {
                 dataSource.map((config: ConfigItem) => {
-                  const placeholder = this.props.placeholder || `请输入${config.label}`
                   return (
                     <Col span={layout.span}>
-                      <FormItem label={config.label}>
-                        {getFieldDecorator(config.name)(<Input placeholder={placeholder} />)}
-                      </FormItem>
+                      <FormItem
+                        name={config.name}
+                        label={config.label}
+                        type={config.type}
+                      />
                     </Col>
                   )
                 })
@@ -54,4 +56,4 @@ class Main extends React.Component<Props, State>{
     )
   }
 }
-export default Form.create<Props>({ name: 'check-search-form' })(Main);
+export default Main;
