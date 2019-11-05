@@ -179,7 +179,7 @@ export default class extends Component {
             <Descriptions.Item label="手机号">{data.phone}</Descriptions.Item>
             <Descriptions.Item label="等级">
               {levelName(data.memberTypeVO)}
-              <Button disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)} onClick={()=>this.modifyMemberType(1)} style={{ marginLeft: 20}}>升级</Button><Button disabled={!(data.memberTypeVO && (data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))} onClick={()=>this.modifyMemberType(-1)} style={{ marginLeft: 20}}>降级</Button>
+              <Button disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)} onClick={()=>this.modifyMemberType(1)} style={{ marginLeft: 20}}>升级</Button><Button disabled={(data.memberTypeVO && (!data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))} onClick={()=>this.modifyMemberType(-1)} style={{ marginLeft: 20}}>降级</Button>
             </Descriptions.Item>
             <Descriptions.Item label="微信">{data.wechat || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
@@ -238,7 +238,7 @@ export default class extends Component {
         <ModalInvit />
 
         <Modal
-          title="修改用户等级"
+          title={this.state.upOrDwon > 0 ? '提升用户等级':'降低用户等级'}
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={() => {
