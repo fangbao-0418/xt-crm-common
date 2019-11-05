@@ -41,6 +41,7 @@ class Main extends React.Component<Props, State> {
   public payload: SearchPayload = {
     isDelete: 0,
     page: 1,
+    status: 1
   }
   public state: State = {
     current: 1,
@@ -174,9 +175,10 @@ class Main extends React.Component<Props, State> {
       couponList: []
     }, value)
     this.payload = {
-      isDelete: this.payload.isDelete,
+      isDelete: 0,
       page: 1,
-      pageSize: this.payload.pageSize
+      status: 1,
+      pageSize: 10
     }
     this.fetchData()
     const couponList: any[] = value.couponList || []
