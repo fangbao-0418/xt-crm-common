@@ -300,10 +300,10 @@ class SkuList extends React.Component<Props, State>{
       let managerNetProfit = accDiv(accMul(netProfit, managerCommissionRate),100);
       console.log(managerNetProfit, 'managerNetProfit')
       return Object.assign(res, {
-        headPrice: Subtr(salePrice, headNetProfit).toFixed(2),
-        areaMemberPrice: Subtr(Subtr(salePrice, areaNetProfit),headNetProfit).toFixed(2),
-        cityMemberPrice: Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit).toFixed(2),
-        managerMemberPrice:Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit).toFixed(2)
+        headPrice: Math.floor(Subtr(salePrice, headNetProfit)*100) / 100,
+        areaMemberPrice: Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*100) / 100,
+        cityMemberPrice: Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit)*100) / 100,
+        managerMemberPrice: Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*100) / 100
       })
     })
     console.log(newData, 'newData')
