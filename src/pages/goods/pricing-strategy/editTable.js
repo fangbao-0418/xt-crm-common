@@ -33,7 +33,10 @@ export default class extends React.Component {
                   const { value } = item
 
                   if(value)allNum += value
-                  return !value || value === null
+                  
+                  if(value !== 0){
+                    return !value || value === null 
+                  }
                 });
                 console.log()
                 if(!noVal.length && allNum === 100){
