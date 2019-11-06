@@ -61,7 +61,7 @@ export const handleLoading = (function () {
     } else {
       ajaxCount--
     }
-    console.log(ajaxCount, 'ajaxCount')
+    // console.log(ajaxCount, 'ajaxCount')
     const el = document.querySelector('#loading')
     const display = getComputedStyle(el).display
     if (ajaxCount > 0 && display === 'none') {
