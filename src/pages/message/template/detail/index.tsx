@@ -1,26 +1,55 @@
 import React from 'react'
 import { Button } from 'antd'
+import { withRouter, RouteComponentProps } from 'react-router'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { getFieldsConfig, memberOptions } from '../config'
+import * as api from '../api'
 import styles from './style.module.styl'
-interface Props {}
+interface Props extends RouteComponentProps<{id: string}> {}
 class Main extends React.Component<Props> {
   public form: FormInstance
+  public id = this.props.match.params.id
   public constructor (props: Props) {
     super(props)
     this.save = this.save.bind(this)
   }
   public componentDidMount () {
-    this.setValue()
+    // this.setValue()
+    this.fetchData()
   }
-  public setValue() {
+  public fetchData () {
+    if (this.id !== '-1') {
+      api.getDetail(this.id).then((res) => {
+        this.setValue(res)
+      })
+    }
+  }
+  public setValue(values: any) {
+    console.log(values, 'setValue')
     this.form.setValues({
+      ...values,
       muldate: ['2019-1-28 19:24:45', '2019-2-28 19:24:45', '2019-3-28 19:24:45']
     })
   }
   public save () {
     this.form.props.form.validateFields((err, value) => {
-      console.log(this.form.getValues())
+      if (err) {
+        return
+      }
+      if (this.id !== '-1') {
+        api.updateTempate({
+          ...value,
+          id: this.id
+        }).then(() => {
+          APP.success('修改模板成功')
+          APP.history.push('/message/template')
+        })
+      } else {
+        api.addTemplate(value).then(() => {
+          APP.success('添加模板成功')
+          APP.history.push('/message/template')
+        })
+      }
     })
   }
   public render () {
@@ -62,15 +91,14 @@ class Main extends React.Component<Props> {
             }}
           />
           <FormItem
-            name='messageGroup'
+            name='businessGroup'
             verifiable
             wrapperCol={{
-              span: 4
+              span: 8
             }}
           />
           <FormItem
-            label='模板名称'
-            name='businessGroup'
+            name='messageGroup'
             verifiable
             wrapperCol={{
               span: 8
@@ -113,4 +141,4 @@ class Main extends React.Component<Props> {
     )
   }
 }
-export default Main
+export default withRouter(Main)

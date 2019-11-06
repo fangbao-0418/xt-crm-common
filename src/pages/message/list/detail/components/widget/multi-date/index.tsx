@@ -88,7 +88,7 @@ class Main extends React.Component<Props, State> {
                     showTime={showTime}
                     value={val}
                     onChange={(date) => {
-                      value[index] = (format ? date && date.format(format) : date) || undefined
+                      value[index] = (date ? (format ? date.format(format) : date.unix() * 1000) : undefined)
                       this.onChange(value)
                     }}
                   />

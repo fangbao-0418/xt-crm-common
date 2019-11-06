@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export function getH5Origin () {
   let origin = 'https://daily-myouxuan.hzxituan.com/'
   const nowTime = new Date().getTime()
@@ -31,6 +33,7 @@ export function getPayload (name) {
   const payload = JSON.parse(localStorage.getItem('payload'))
   return name ? payload && payload[name] : payload
 }
+
 export const handleLoading = (function () {
   let ajaxCount = 0
   return (loading = 'end') => {
@@ -39,7 +42,6 @@ export const handleLoading = (function () {
     } else {
       ajaxCount--
     }
-    console.log(ajaxCount, 'ajaxCount')
     const el = document.querySelector('#loading')
     const display = getComputedStyle(el).display
     if (ajaxCount > 0 && display === 'none') {
@@ -51,3 +53,38 @@ export const handleLoading = (function () {
     }
   }
 })()
+
+export function fieldConvert (obj, mapper) {
+  const result = {}
+  for (const field in obj) {
+    if (mapper[field]) {
+      result[mapper[field]] = obj[field]
+    } else {
+      result[field] = obj[field]
+    }
+  }
+  return result
+}
+
+export function formatDate (date, format = 'YYYY-MM-DD HH:mm:ss') {
+  return date && moment(date).format(format)
+}
+
+export function formatMoney (money = '0') {
+  let str = String(money || '0')
+  if (!/^\d+$/.test(parseFloat(str))) {
+    str = '0'
+  }
+  let len = str.length
+  str = len <= 2 ? '0'.repeat(3 - len) + str : str
+  len = str.length
+  str = [str.slice(0, len - 2).replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'), str.slice(len - 2)].join('.')
+  return '¥' + str
+}
+
+export function download (url, name) {
+  const el = document.createElement('a')
+  el.setAttribute('download', name)
+  el.setAttribute('href', url)
+  el.click()
+}

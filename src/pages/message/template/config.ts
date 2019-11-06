@@ -14,11 +14,11 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       type: {
         type: 'select', label: '模板类型',
         options: [
-          {label: '短信', value: '0'},
-          {label: 'PUSH', value: '2'},
-          {label: '站内信', value: '3'},
-          {label: '服务号', value: '4'},
-          {label: '小程序', value: '5'}
+          {label: '短信', value: 0},
+          {label: 'PUSH', value: 2},
+          {label: '站内信', value: 3},
+          {label: '服务号', value: 4},
+          {label: '小程序', value: 5}
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -45,10 +45,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       messageGroup: {
         type: 'select', label: '模板分类',
         options: [
-          {label: '交易信息', value: '0'},
-          {label: '团队收益', value: '1'},
-          {label: '活动消息', value: '2'},
-          {label: '系统通知', value: '3'}
+          {label: '交易信息', value: 'transaction'},
+          {label: '团队收益', value: 'teamincome'},
+          {label: '活动消息', value: 'activity'},
+          {label: '系统通知', value: 'system'}
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -78,7 +78,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       templateTitle: {
-        type: 'input', label: '模板标题',
+        type: 'input', label: '模板名称',
         controlProps: {
           placeholder: '请输入模板名称，40个字符'
         },
@@ -142,3 +142,17 @@ export const memberOptions = [
     value: '4'
   },
 ]
+
+export enum statusEnum {
+  启用 = 1,
+  禁用 = 0
+}
+
+/** 模板类型枚举 */
+export enum typeEnum {
+  短信 = 0,
+  PUSH = 2,
+  站内信 = 3,
+  服务号 = 4,
+  小程序 = 5
+}

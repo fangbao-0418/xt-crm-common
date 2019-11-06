@@ -1,36 +1,48 @@
 import React from 'react'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig } from './config'
+import { getFieldsConfig, statusEnum, typeEnum } from './config'
 import { FormItem } from '@/packages/common/components/form';
-import ListPage from '@/packages/common/components/list-page'
+import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import * as api from './api'
 interface Props extends AlertComponentProps {}
 class Main extends React.Component<Props> {
+  public listPage: ListPageInstanceProps
   public columns: ColumnProps<MessageTemplate.ItemProps>[] = [
     {
       title: '模板ID',
-      dataIndex: 'id',
-      render: (text, record, index) => {
-        return index + 1
-      }
+      dataIndex: 'id'
+    },
+    {
+      title: '模板编码',
+      dataIndex: 'businessGroup'
     },
     {
       title: '模板标题',
-      dataIndex: 'templateTitle'
+      dataIndex: 'templateTitle',
+      width: 200
     },
     {
       title: '模板类型',
-      dataIndex: 'type'
+      dataIndex: 'type',
+      render: (text) => {
+        return typeEnum[text]
+      }
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime'
+      dataIndex: 'createTime',
+      render: (text) => {
+        return APP.fn.formatDate(text)
+      }
     },
     {
       title: '状态',
-      dataIndex: 'status'
+      dataIndex: 'status',
+      render: (text) => {
+        return statusEnum[text]
+      }
     },
     {
       title: '操作',
@@ -42,7 +54,7 @@ class Main extends React.Component<Props> {
             <span
               className='href'
               onClick={() => {
-                APP.history.push('/message/template/detail/22')
+                APP.history.push(`/message/template/detail/${record.id}`)
               }}
             >
               编辑
@@ -50,10 +62,10 @@ class Main extends React.Component<Props> {
             <span
               className='ml10 href'
               onClick={() => {
-                this.delete(record.id)
+                this.disabled(record)
               }}
             >
-              禁用
+              {String(record.status) === '1' ? '禁用' : '启用'}
             </span>
             <span
               className='ml10 href'
@@ -68,25 +80,36 @@ class Main extends React.Component<Props> {
       }
     }
   ]
-  public disabled () {
-    console.log('delete')
+  public disabled (record: MessageTemplate.ItemProps) {
+    const message = record.status === 1 ? '禁用模板后，用户将不再收到此模板消息，确认禁用？' : '确认是否启用此模板，确认启用？'
     this.props.alert({
       // title: ''
       width: 400,
+      onOk: (hide) => {
+        api.changeTemplteStatus({
+          id: record.id,
+          status: record.status === 0 ? 1 : 0
+        }).then(() => {
+          hide()
+          this.listPage.refresh()
+        })
+      },
       content: (
         <div>
-          禁用模板后，用户将不再收到此模板消息，确认禁用？
+          {message}
         </div>
       )
     })
   }
-  public delete (id: any) {
+  public delete (id: number) {
     this.props.alert({
       // title: ''
       width: 400,
-      onOk: () => {
-        console.log('on ok')
-        api.deleteTemplte(id)
+      onOk: (hide) => {
+        api.deleteTemplte(id).then(() => {
+          hide()
+          this.listPage.refresh()
+        })
       },
       content: (
         <div>
@@ -99,6 +122,9 @@ class Main extends React.Component<Props> {
     return (
       <div>
         <ListPage
+          getInstance={(ref) => {
+            this.listPage = ref
+          }}
           formConfig={getFieldsConfig()}
           rangeMap={{
             createTime: {
@@ -127,7 +153,7 @@ class Main extends React.Component<Props> {
               >
                 新建模板
               </Button>
-              <Button
+              {/* <Button
                 className='mr10'
                 type='primary'
                 onClick={() => {
@@ -143,7 +169,7 @@ class Main extends React.Component<Props> {
                 }}
               >
                 同步小程序模板消息
-              </Button>
+              </Button> */}
             </div>
           )}
         />

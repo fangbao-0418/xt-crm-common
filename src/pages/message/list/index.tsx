@@ -1,35 +1,15 @@
 import React, { useEffect } from 'react'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig } from './config'
-import ListPage from '@/packages/common/components/list-page'
+import { getFieldsConfig, statusEnum, typeEnum } from './config'
+import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import * as api from './api'
 import { FormItem } from '@/packages/common/components/form';
 interface Props extends AlertComponentProps {}
-let data = {
-  a: 2,
-  b: {
-    a: 2
-  }
-}
-const Demo = () => {
-  useEffect(() => {
-    console.log('useEffect')
-    return () => {
-      console.log('clear effect')
-    }
-  }, [data])
-  console.log(data, 'Demo render')
-  return (
-    <></>
-  )
-}
 
 class Main extends React.Component<Props> {
-  public payload: any = {
-    //
-  }
+  public listpage: ListPageInstanceProps
   public columns: ColumnProps<any>[] = [
     {
       title: '序号',
@@ -40,38 +20,48 @@ class Main extends React.Component<Props> {
     },
     {
       title: '消息标题',
-      dataIndex: 'field1'
+      dataIndex: 'messageTitle'
     },
     {
       title: '消息通道',
-      dataIndex: 'field2'
+      dataIndex: 'messageType',
+      render: (text) => {
+        return typeEnum[text]
+      }
     },
     {
       title: '消息类型',
-      dataIndex: 'field3'
+      dataIndex: 'messageForm'
     },
     {
       title: '状态',
-      dataIndex: 'field4'
+      dataIndex: 'messageStatus',
+      render: (text) => {
+        return statusEnum[text]
+      }
     },
     {
       title: '发送时间',
-      dataIndex: 'field5'
+      dataIndex: 'sendTime',
+      render: (text) => {
+        return APP.fn.formatDate(text)
+      }
     },
     {
       title: '创建人',
-      dataIndex: 'field6'
+      dataIndex: 'createName'
     },
     {
       title: '操作',
-      render: () => {
+      width: 100,
+      align: 'center',
+      render: (text, record) => {
         return (
           <div>
-            <span>取消发送</span>
             <span
-              className='href'
+              className='href mr10'
               onClick={() => {
-                APP.history.push('/message/detail/22')
+                APP.history.push(`/message/detail/${record.id}`)
               }}
             >
               查看
@@ -79,7 +69,7 @@ class Main extends React.Component<Props> {
             <span
               className='href'
               onClick={() => {
-                this.delete()
+                this.delete(record)
               }}
             >
               删除
@@ -89,33 +79,22 @@ class Main extends React.Component<Props> {
       }
     }
   ]
-  static getDerivedStateFromProps (props: any, state: any) {
-    console.log(props, state, 'getDerivedStateFromProps')
-    return {}
-  }
-  public getSnapshotBeforeUpdate (props: any, state: any) {
-    console.log('getSnapshotBeforeUpdate')
-    return {a: 'b'}
-  }
-  public componentWillReceiveProps () {
-    console.log('componentWillReceiveProps')
-  }
-  public shouldComponentUpdate () {
-    console.log('shouldComponentUpdate')
-    return true
-  }
   public componentDidUpdate (props: any, state: any, snapshot: any) {
     console.log(snapshot, 'did update')
   }
-  public delete () {
-    console.log('delete')
+  public delete (record: Message.ItemProps) {
     this.props.alert({
-      // title: ''
       content: (
         <div>
           当前模板正在使用中，删除后将无法继续使用且无法恢复，确认删除？
         </div>
-      )
+      ),
+      onOk: (hide) => {
+        api.deleteMessage(record.id).then(() => {
+          hide()
+          this.listpage.refresh()
+        })
+      }
     })
   }
   public render () {
@@ -123,9 +102,14 @@ class Main extends React.Component<Props> {
     return (
       <div>
         <ListPage
-          processPayload={(payload) => {
-            return payload
+          getInstance={(ref) => {
+            this.listpage = ref
           }}
+          // processPayload={(payload) => {
+          //   return APP.fn.fieldConvert(payload, {
+          //     page: 'pageNo'
+          //   })
+          // }}
           formConfig={getFieldsConfig()}
           rangeMap={{
             sendTime: {
@@ -147,9 +131,7 @@ class Main extends React.Component<Props> {
               <Button
                 type='primary'
                 onClick={() => {
-                  data.a = 3
-                  data = {...data}
-                  this.setState({})
+                  APP.history.push('/message/detail/-1')
                 }}
               >
                 发送消息
@@ -157,7 +139,6 @@ class Main extends React.Component<Props> {
             </div>
           )}
         />
-        <Demo />
       </div>
     )
   }

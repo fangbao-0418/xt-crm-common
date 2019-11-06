@@ -1,10 +1,17 @@
 import React from 'react'
 import { Input, Button } from 'antd'
+import { ossUpload } from '@/components/upload'
 import styles from './style.module.styl'
 const TextArea = Input.TextArea
 
+interface ValueProps {
+  text: string[]
+  path: string
+  filename: string
+}
+
 interface Props {
-  readonly?: boolean
+  onChange?: (value: ValueProps) => void
 }
 
 interface State {
@@ -12,7 +19,12 @@ interface State {
   text: string
   len: number
 }
-class Main extends React.Component<{}, State> {
+class Main extends React.Component<Props, State> {
+  public value: ValueProps = {
+    text: [],
+    path: '',
+    filename: ''
+  }
   public state: State = {
     file: new File([], ''),
     text: '',
@@ -23,14 +35,23 @@ class Main extends React.Component<{}, State> {
     this.uploadFile = this.uploadFile.bind(this)
     this.removeFile = this.removeFile.bind(this)
   }
+  public componentWillMount () {
+    this.onChange(this.value)
+  }
   public uploadFile () {
     const el = document.createElement('input')
     el.setAttribute('type', 'file')
     el.click()
     el.onchange = (e: any) => {
-      console.log(e.target.files)
+      const file = e.target.files[0]
+      ossUpload(file).then((res) => {
+        this.onChange({
+          path: res[0],
+          filename: file.name
+        })
+      })
       this.setState({
-        file: e.target.files[0]
+        file
       })
     }
   }
@@ -38,20 +59,23 @@ class Main extends React.Component<{}, State> {
     this.setState({
       file: new File([], '')
     })
+    this.onChange({
+      path: '',
+      filename: ''
+    })
   }
   public onChange (value: {
-    text?: string
-    file?: File
+    text?: string[]
+    path?: string
+    filename?: string
   }) {
-    const state = Object.assign({}, this.state, value)
-    this.setState({
-      text: state.text,
-      file: state.file
-    })
+    this.value = Object.assign({}, this.value, value)
+    if (this.props.onChange) {
+      this.props.onChange(this.value)
+    }
   }
   public render () {
     const { file, text } = this.state
-    console.log(this.state.len, 'len render')
     return (
       <div className={styles.container}>
         <TextArea
@@ -69,18 +93,16 @@ class Main extends React.Component<{}, State> {
             const text = e.target.value || ''
             let len = text.match(/\n/g) ? text.match(/\n/g).length : 0
             if (!/\n$/.test(text)) {
-              console.log('0000000000')
               len++
             }
             if (len <= 4) {
               this.setState({
-                len
-              })
-              this.onChange({
+                len,
                 text
               })
-            } else {
-              e.preventDefault()
+              this.onChange({
+                text: text.split(/\n/g) || []
+              })
             }
           }}
         />
