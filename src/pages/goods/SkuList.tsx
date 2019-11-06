@@ -282,15 +282,23 @@ class SkuList extends React.Component<Props, State>{
       console.log(grossProfit, 'grossProfit')
       let netProfit : any = Subtr(grossProfit, accDiv(accMul(grossProfit, categoryProfitRate), 100));//去除类目利润比的利润
       console.log(netProfit, 'netProfit')
+      // let headNetProfit = accDiv(accMul(netProfit, headCommissionRate),100);
+      // console.log(netProfit, 'netProfit2')
+      // console.log(headNetProfit, 'headNetProfit')
+      // let areaNetProfit =  accDiv(accMul(Subtr(netProfit, headNetProfit), areaCommissionRate), 100 - headCommissionRate)
+      // console.log(areaNetProfit, 'areaNetProfit')
+      // let cityNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(headNetProfit, areaNetProfit)), cityCommissionRate), 100 - headCommissionRate - areaCommissionRate)
+      // console.log(cityNetProfit, 'cityNetProfit')
+      // let managerNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(accAdd(headNetProfit, areaNetProfit),cityNetProfit)), managerCommissionRate), Subtr(Subtr(Subtr(100,headCommissionRate),cityCommissionRate),areaCommissionRate))
+      // console.log(managerNetProfit, 'managerNetProfit')
       let headNetProfit = accDiv(accMul(netProfit, headCommissionRate),100);
-      console.log(netProfit, 'netProfit2')
-      console.log(headNetProfit, 'managerNetProfit')
-      let areaNetProfit =  accDiv(accMul(Subtr(netProfit, headNetProfit), areaCommissionRate), 100 - headCommissionRate)
+      console.log(headNetProfit, 'headNetProfit')
+      let areaNetProfit = accDiv(accMul(netProfit, areaCommissionRate),100);
       console.log(areaNetProfit, 'areaNetProfit')
-      let cityNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(headNetProfit, areaNetProfit)), cityCommissionRate), 100 - headCommissionRate - areaCommissionRate)
+      let cityNetProfit = accDiv(accMul(netProfit, cityCommissionRate),100);
       console.log(cityNetProfit, 'cityNetProfit')
-      let managerNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(accAdd(headNetProfit, areaNetProfit),cityNetProfit)), managerCommissionRate), Subtr(Subtr(Subtr(100,headCommissionRate),cityCommissionRate),areaCommissionRate))
-      console.log(managerNetProfit, 'headNetProfit')
+      let managerNetProfit = accDiv(accMul(netProfit, managerCommissionRate),100);
+      console.log(managerNetProfit, 'managerNetProfit')
       return Object.assign(res, {
         headPrice: Subtr(salePrice, headNetProfit).toFixed(2),
         areaMemberPrice: Subtr(Subtr(salePrice, areaNetProfit),headNetProfit).toFixed(2),
