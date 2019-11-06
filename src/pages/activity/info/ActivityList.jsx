@@ -14,7 +14,7 @@ class ActivityList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedId: '',
+      selectedRow: undefined,
       listData: [],
       page: {
         current: 1,
@@ -27,9 +27,11 @@ class ActivityList extends React.Component {
 
   getPromotionList = params => {
     const { page } = this.state;
+    if (params && !params.type) {
+      params.types = [1, 2, 3];
+    }
     getPromotionList(params).then((res = {}) => {
       page.total = res.total;
-
       this.setState({
         listData: res.records,
       });
@@ -74,9 +76,10 @@ class ActivityList extends React.Component {
   handleCancel = e => {
     this.setState({
       visible: false,
-      selectedId: '',
+      selectedRow: undefined,
     });
   };
+
   handleReset = () => {
     this.props.form.resetFields();
     this.setState(
@@ -90,20 +93,21 @@ class ActivityList extends React.Component {
       this.handleSearch,
     );
   };
-  render(h) {
-    const { listData, page, selectedId } = this.state;
+
+  render() {
+    const { info = {} } = this.props;
     const columns = [
       {
         title: '',
-        width: 30,
         render: (text, row, index) => (
           <Radio
             onClick={() =>
               this.setState({
-                selectedId: row.id,
+                selectedRow: row,
               })
             }
-            checked={row.id === selectedId}
+            disabled={row.id === info.id}
+            checked={row.id === selectedRow.id}
           ></Radio>
         ),
       },
@@ -115,6 +119,7 @@ class ActivityList extends React.Component {
       {
         title: '活动名称',
         dataIndex: 'title',
+        width: 150,
       },
       {
         title: '开始时间',
@@ -129,15 +134,18 @@ class ActivityList extends React.Component {
       {
         title: '活动类型',
         dataIndex: 'type',
+        width: 100,
         render: text => <>{activityType.getValue(text)}</>,
       },
       {
         title: '活动状态',
         dataIndex: 'status',
+        width: 100,
         render: text => <>{text === 0 ? '关闭' : '开启'}</>,
       },
     ];
 
+    const { listData, page, selectedRow = {} } = this.state;
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -148,7 +156,7 @@ class ActivityList extends React.Component {
           批量转移
         </span>
         <Modal
-          title="选择活动"
+          title="选择转移目标活动"
           className="modalStyle"
           width={1000}
           visible={this.state.visible}
@@ -158,12 +166,12 @@ class ActivityList extends React.Component {
                 <Button onClick={this.handleCancel.bind(this)}>取消</Button>
                 <Button
                   type="primary"
-                  disabled={!selectedId}
+                  disabled={!selectedRow.id}
                   onClick={() => {
-                    this.props.confirm(selectedId)
-                    this.handleCancel()
+                    this.props.confirm(selectedRow);
+                    this.handleCancel();
                   }}
-                  style={{ marginLeft: 30 }}
+                  style={{ marginLeft: 16 }}
                 >
                   确定
                 </Button>
@@ -175,11 +183,39 @@ class ActivityList extends React.Component {
           <Card>
             <Form layout="inline">
               <FormItem label="活动名称">
-                {getFieldDecorator('name')(<Input placeholder="请输入活动名称" />)}
+                {getFieldDecorator('name')(
+                  <Input placeholder="请输入活动名称" style={{ width: 150 }} />,
+                )}
               </FormItem>
-              <FormItem label="有效期">
+              <FormItem label="商品ID">
+                {getFieldDecorator('pid')(
+                  <Input placeholder="请输入商品id" style={{ width: 150 }} />,
+                )}
+              </FormItem>
+              <FormItem label="商品名称">
+                {getFieldDecorator('pname')(
+                  <Input placeholder="请输入商品名称" style={{ width: 150 }} />,
+                )}
+              </FormItem>
+              <FormItem label="活动类型">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择活动类型" style={{ width: 150 }}>
+                    <Option value="">全部</Option>
+                    {activityType
+                      .getArray()
+                      .filter(val => val.key === 1 || val.key === 2 || val.key === 3)
+                      .map((val, i) => (
+                        <Option value={val.key} key={i}>
+                          {val.val}
+                        </Option>
+                      ))}
+                  </Select>,
+                )}
+              </FormItem>
+              <FormItem label="有效时间">
                 {getFieldDecorator('time')(
                   <RangePicker
+                    style={{ width: 372 }}
                     format="YYYY-MM-DD HH:mm"
                     showTime={{
                       defaultValue: [
@@ -190,32 +226,14 @@ class ActivityList extends React.Component {
                   />,
                 )}
               </FormItem>
-              <FormItem label="活动类型">
-                {getFieldDecorator('type')(
-                  <Select placeholder="请选择活动类型" style={{ width: 100 }}>
-                    <Option value="">全部</Option>
-                    {activityType.getArray().map((val, i) => (
-                      <Option value={val.key} key={i}>
-                        {val.val}
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
               <FormItem label="活动状态">
                 {getFieldDecorator('status')(
-                  <Select placeholder="请选择活动类型" style={{ width: 100 }}>
+                  <Select placeholder="请选择活动类型" style={{ width: 150 }}>
                     <Option value="">全部</Option>
                     <Option value="0">关闭</Option>
                     <Option value="1">开启</Option>
                   </Select>,
                 )}
-              </FormItem>
-              <FormItem label="商品id">
-                {getFieldDecorator('pid')(<Input placeholder="请输入商品id" />)}
-              </FormItem>
-              <FormItem label="商品名称">
-                {getFieldDecorator('pname')(<Input placeholder="请输入商品名称" />)}
               </FormItem>
               <FormItem>
                 <Button

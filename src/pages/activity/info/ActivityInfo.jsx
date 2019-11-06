@@ -15,7 +15,7 @@ class ActivityInfo extends React.Component {
   }
   async getPromotionInfo() {
     const info = await getPromotionInfo(this.props.match.params.id) || {};
-    this.props.changeType(info.type);
+    this.props.changeType(info);
     this.setState({ info })
   }
   disabledStartDate = (startTime) => {
