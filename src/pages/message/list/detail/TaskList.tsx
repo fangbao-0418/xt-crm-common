@@ -50,10 +50,14 @@ const Main = React.forwardRef((props: Props, ref) => {
     {
       title: '操作',
       width: 100,
+      align: 'center',
       render: (text, record, index) => {
+        const now = new Date().getTime()
+        const sendTime = record.sendTime
+        const inSendTime = (sendTime - now) > 60 * 30 * 1000
         return (
           <div>
-            {String(record.pushType) === '0' && (
+            {String(record.pushType) === '0' && inSendTime && (
               <span
                 className='href'
                 onClick={() => {
