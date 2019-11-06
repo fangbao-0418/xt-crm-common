@@ -1,5 +1,5 @@
 import * as Fetch from '@/util/fetch';
-import { get, post } from '@/util/app/http';
+import { get, post, newPost } from '@/util/app/http';
 var qs = require('qs');
 
 export function getCouponList(memberId, data) {
@@ -56,4 +56,14 @@ export function getProceedsListByOrderIdAndMemberId(param) {
  */
 export function getProceedsListByOrderIdAndMemberIdAndSkuId(param) {
     return get(`/crm/member/settlement/v1/detail`, param);
+}
+
+//操作会员身份
+export function memberModify(params) {
+    return newPost('/manager/member/modify', params);
+}
+
+//获取通用操作原因列表
+export function getReasonList() {
+    return newPost('/manager/reason/list');
 }
