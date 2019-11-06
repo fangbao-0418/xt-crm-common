@@ -19,10 +19,16 @@ function SkuUploadItem(props: Props) {
       props.onChange(value)
     }
   }
+
+  function removePrefixOfUrl(url: string) {
+    let result = url || '';
+    result = result.replace('https://assets.hzxituan.com/', '');
+    return result; 
+  } 
   const [value, setValue] = useState(Object.assign({}, props.value))
   const { specName, specPicture } = Object.assign({}, props.value)
   useEffect(() => {
-    console.log(props.value, 'value')
+    // console.log(props.value, 'value')
     setValue(Object.assign({}, props.value))
   }, [specName, specPicture])
   return (
@@ -50,8 +56,9 @@ function SkuUploadItem(props: Props) {
           onChange={(val: any) => {
             const newValue = {
               ...value,
-              specPicture: val[0] && val[0].url
+              specPicture: removePrefixOfUrl(val[0] && val[0].url)
             }
+            console.log('newValue', newValue, val)
             onChange(newValue)
             setValue(newValue)
           }}
