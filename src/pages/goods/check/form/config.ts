@@ -1,79 +1,117 @@
-import { ConfigItem } from './form/interface'
-export const formConfigs: ConfigItem[] = [{
-  label: '商品名称',
-  name: 'productName',
-  type: 'input'
-}, {
-  label: '商品ID',
-  name: 'productName',
-  type: 'input'
-}, {
-  label: '一级类目',
-  name: 'productName',
-  type: 'input'  
-}, {
-  label: '供应商名称',
-  name: 'productName',
-  type: 'input'  
-}, {
-  label: '审核状态',
-  name: 'productName',
-  type: 'input'  
-}, {
-  label: '审核人',
-  name: 'productName',
-  type: 'input'  
-}, {
-  label: '创建时间',
-  name: 'productName',
-  type: 'input'  
-}, {
-  label: '审核时间',
-  name: 'productName',
-  type: 'input'  
-}]
-
-
-import { OptionProps } from '@/packages/common/components/form/index'
+import { FieldsConfig, OptionProps } from '@/packages/common/components/form/index'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
 }
-export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
+export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig  {
   const defaultConfig: FieldsConfig = {
     common: {
       productName: {
-        type: 'input', label: '商品名称'
-      },
-      productId: {
-        type: 'input', label: '商品ID',
+        label: '商品名称1',
+        type: 'input',
         controlProps: {
-          type: 'number'
         }
       },
-      status: {
-        type: 'select', label: '状态',
-        options: [
-          {label: '已上架', value: '0'},
-          {label: '已下架', value: '1'}
-        ] 
+      productId: {
+        label: '商品ID',
+        type: 'input',
+        controlProps: {
+        }
       },
-      maxHbFqNum: {
-        type: 'select', label: '最大分期期数',
-        options: [
-          {label: '三期', value: '3'},
-          {label: '六期', value: '6'},
-          {label: '十二期', value: '12'}
-        ] 
+      primaryCategory: {
+        label: '一级类目',
+        type: 'input',
+        controlProps: {
+        }
       },
-      maxFqSellerPercent: {
-        type: 'select', label: '最大免息期数',
-        options: [
-          {label: '三期', value: '3'},
-          {label: '六期', value: '6'},
-          {label: '十二期', value: '12'}
-        ] 
+      supplierName: {
+        label: '供应商名称',
+        type: 'input',
+        controlProps: {
+        }
       },
-    },
+      checkstatus: {
+        label: '审核状态',
+        type: 'select',
+        controlProps: {
+          options: [{
+            label: '全部',
+            value: ''
+          }, {
+            label: '待审核',
+            value: 10
+          }, {
+            label: '审核不通过',
+            value: 20
+          }, {
+            label: '审核通过',
+            value: 30
+          }]
+        }
+      },
+      checkPerson: {
+        label: '审核人',
+        type: 'input',
+        controlProps: {
+        }
+      },
+      createTime: {
+        label: '创建时间',
+        type: 'input',
+        controlProps: {
+        }
+      },
+      checkTime: {
+        label: '审核时间',
+        type: 'input',
+        controlProps: {
+        }
+      }
+    }    
+  }
+  return defaultConfig;
+}
+
+
+
+// export interface FieldsConfig {
+//   [namespace: string]: {[field: string]: OptionProps}
+// }
+// export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
+//   const defaultConfig: FieldsConfig = {
+//     common: {
+//       productName: {
+//         type: 'input', label: '商品名称'
+//       },
+//       productId: {
+//         type: 'input', label: '商品ID',
+//         controlProps: {
+//           type: 'number'
+//         }
+//       },
+//       status: {
+//         type: 'select', label: '状态',
+//         options: [
+//           {label: '已上架', value: '0'},
+//           {label: '已下架', value: '1'}
+//         ] 
+//       },
+//       maxHbFqNum: {
+//         type: 'select', label: '最大分期期数',
+//         options: [
+//           {label: '三期', value: '3'},
+//           {label: '六期', value: '6'},
+//           {label: '十二期', value: '12'}
+//         ] 
+//       },
+//       maxFqSellerPercent: {
+//         type: 'select', label: '最大免息期数',
+//         options: [
+//           {label: '三期', value: '3'},
+//           {label: '六期', value: '6'},
+//           {label: '十二期', value: '12'}
+//         ] 
+//       },
+//     },
     /** 营销 */
     // marketing: {
     //   startTime: {
@@ -180,6 +218,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
     //     }
     //   }
     // }
-  }
-  return defaultConfig
-}
+  // }
+  // return defaultConfig
+// }
