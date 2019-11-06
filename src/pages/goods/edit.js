@@ -452,7 +452,11 @@ class GoodsEdit extends React.Component {
                   },
                 }
               ],
-            })(<Cascader options={this.state.categoryList} placeholder="请输入商品类目" />)}
+            })(<Cascader 
+              onChange={(val) => {
+                this.getStrategyByCategory(val[0])
+              }} 
+            options={this.state.categoryList} placeholder="请输入商品类目" />)}
           </Form.Item>
           <Form.Item label="商品简称">
             {getFieldDecorator('productShortName', {
