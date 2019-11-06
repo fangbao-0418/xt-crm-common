@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, Input, InputNumber, Button, Row, message } from 'antd';
+import { Card, Form, Input, InputNumber, Button, Row, message, Radio } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
@@ -16,19 +16,23 @@ import { formItemLayout, formLeftButtonLayout } from '@/config';
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo';
 import ModifyReturnAddress from '../components/modal/ModifyReturnAddress';
 import { mul } from '@/util/utils';
-
+import { verifyDownDgrade } from './../api';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
 interface State {
   addressVisible: boolean;
   selectedValues: any[];
+  isDemotion: number;
+  demotionInfo: string;
 }
 
 class PendingReview extends React.Component<Props, State> {
   state: State = {
     addressVisible: false,
     selectedValues: [],
+    isDemotion: this.checkVO.isDemotion,
+    demotionInfo: ''
   };
   /**
    * 客服审核
@@ -103,7 +107,9 @@ class PendingReview extends React.Component<Props, State> {
    * 最终售后金额
    */
   get maxRefundAmount(): number {
-    return this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount : this.relatedAmount;
+    let a = this.serverNum === this.checkVO.maxServerNum ? this.checkVO.maxRefundAmount : this.relatedAmount
+    console.log('maxRefundAmount', a)
+    return a;
   }
   /**
    * 运费是否大于0
@@ -198,13 +204,47 @@ class PendingReview extends React.Component<Props, State> {
     })
   }
   /**
+   * 验证是否会降级
+   */
+  verifyMaxRefundAmount = (value: number) => {
+    console.log('最终退款金额', value)
+    console.log('verifyMaxRefundAmount', this.props.data.orderInfoVO)
+    verifyDownDgrade({
+      orderMainId: this.props.data.orderInfoVO.mainOrderId,
+      refundType: this.refundType,
+      amount: value
+    }).then(res => {
+      console.log('verifyMaxRefundAmount', res)
+      this.setState({
+        isDemotion: res ? 1 : 0  //true会降级
+      })
+    })
+  }
+  /**
    * 修改售后数目
    */
   handleChangeServerNum = (value: any = 0) => {
     let result = mul(this.unitPrice, value)
     this.props.form.setFieldsValue({
       refundAmount: formatPrice(result)
+    }, () => {
+      this.verifyMaxRefundAmount(result);
     })
+  }
+  /**
+   * 降级改变
+   */
+  onChangeJiangji = (e: any) => {
+    console.log('onChangeJiangji', e)
+    this.setState({
+      isDemotion: e.target.value
+    })
+  }
+  /**
+   * 退款金额变动
+   */
+  handleChangeMaxRefundAmount = (value: number = 0) => {
+    this.verifyMaxRefundAmount(value*100);
   }
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -296,6 +336,7 @@ class PendingReview extends React.Component<Props, State> {
                     min={0}
                     max={formatPrice(this.maxRefundAmount)}
                     formatter={formatRMB}
+                    onChange={this.handleChangeMaxRefundAmount}
                   />,
                 )}
                 <span>（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
@@ -334,6 +375,40 @@ class PendingReview extends React.Component<Props, State> {
                 )}
               </Form.Item>
             </Row>
+            {
+              this.state.isDemotion > 0 &&
+              <Row>
+                <Form.Item label="团长降级">
+                  {getFieldDecorator('isDemotion', {
+                    initialValue: this.checkVO.isDemotion,
+                  })(
+                    <Radio.Group onChange={this.onChangeJiangji} value={this.state.isDemotion}>
+                      <Radio value={1}>是</Radio>
+                      <Radio value={2}>否</Radio>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
+              </Row>
+            }
+            
+            {
+              this.state.isDemotion === 2 &&
+                <Row>
+                  <Form.Item label="不降级原因">
+                    {getFieldDecorator('demotionInfo', {
+                      initialValue: this.checkVO.demotionInfo,
+                      rules: [
+                        {
+                          required: true,
+                          message: '请输入原因',
+                        },
+                      ],
+                    })(
+                      <Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />,
+                    )}
+                  </Form.Item>
+              </Row>
+            }
             {/**
              * 待审核状态显示同意和拒绝按钮
              */
