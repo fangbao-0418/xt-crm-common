@@ -102,18 +102,18 @@ export enum enumSupplierOperate {
  * @readonly
  * @enum {number}
  * @property WaitConfirm {number} 待审核:10
- * 
+ *
  * @description 退货，换货
  * @description Operating {number} 待用户发货:20
  * @property OperatingFailed {number} 退款失败:21
  * @property OperatingOfMoney {number} 退款中:23
  * @property OperatingOfGoods{number} 待平台收货:24
- * 
- * 
+ *
+ *
  * @description 换货
  * @property WaitPlatformDelivery {number} 待平台发货:25
  * @property WaitUserReceipt {number} 待用户收货:26
- * 
+ *
  * @description 仅退款
  * @property WaitCustomerServiceOperating {number} 等待客服跟进:27
  * @description 退货退款，仅退款
@@ -173,6 +173,7 @@ export enum enumOrderStatus {
   Refund = -1,
   Unpaid = 10,
   Undelivered = 20,
+  PartDelivered = 25,
   Delivered = 30,
   Received = 40,
   Complete = 50,
@@ -183,6 +184,7 @@ export const OrderStatusTextMap = {
   [enumOrderStatus.Refund]: '售后',
   [enumOrderStatus.Closed]: '关闭',
   [enumOrderStatus.Complete]: '完成',
+  [enumOrderStatus.PartDelivered]: '部分发货',
   [enumOrderStatus.Delivered]: '已发货',
   [enumOrderStatus.Received]: '已收货',
   [enumOrderStatus.Undelivered]: '待发货',
@@ -204,6 +206,11 @@ export const TabList = [
     name: OrderStatusTextMap[enumOrderStatus.Undelivered],
     url: '/order/undeliveredOrder',
     status: enumOrderStatus.Undelivered,
+  },
+  {
+    name: OrderStatusTextMap[enumOrderStatus.PartDelivered],
+    url: '/order/partDeliveredOrder',
+    status: enumOrderStatus.PartDelivered,
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Delivered],
