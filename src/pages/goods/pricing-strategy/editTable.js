@@ -19,7 +19,10 @@ export default class extends React.Component {
             defaultValue={record.value || 0}
             min={0}
             max={100}
-            formatter={value => `${value}%`}
+            formatter={value => {
+              value = Number(value) < 0 ? 0 : Number(value) > 100 ? 100 : value;
+              return `${Number(value).toFixed(0)}%`
+            }}
             parser={value => value.replace('%', '')}
             onChange={(value) => {
               record.value = value;

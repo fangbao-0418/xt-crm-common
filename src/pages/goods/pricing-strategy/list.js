@@ -50,13 +50,11 @@ class List extends React.Component {
 
   //设置启用成功
   setEnablePromotion = id => {
-    const params = parseQuery();
     putIsAvailable({ ruleId: id }).then((res) => {
       res && message.success('开启成功');
-      this.getPromotionList(params);
+      this.getPromotionList(parseQuery());
     });
   };
-
   //获取定价策略列表
   getPromotionList = params => {
     const { page, categorys } = this.state;
@@ -319,7 +317,7 @@ class List extends React.Component {
           <Add 
             onCancel={
               ()=>{
-                this.getPromotionList()
+                this.getPromotionList(parseQuery());
                 this.setState({
                   visible: false
                 })

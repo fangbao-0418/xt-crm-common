@@ -191,7 +191,10 @@ class Add extends React.Component {
               <InputNumber
                 min={0}
                 max={100}
-                formatter={value => `${value}%`}
+                formatter={value => {
+                  value = Number(value) < 0 ? 0 : Number(value) > 100 ? 100 : value;
+                  return `${Number(value).toFixed(0)}%`
+                }}
                 parser={value => value.replace('%', '')}
               />
             )}
