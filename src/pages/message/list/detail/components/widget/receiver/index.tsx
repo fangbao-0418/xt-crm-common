@@ -19,6 +19,9 @@ interface State {
   text: string
   len: number
 }
+
+const maxLen = 100
+
 class Main extends React.Component<Props, State> {
   public value: ValueProps = {
     text: [],
@@ -85,7 +88,7 @@ class Main extends React.Component<Props, State> {
           placeholder='请正确输入会员ID，每行一个号码'
           value={text}
           onPressEnter={(e) => {
-            if (this.state.len >= 4) {
+            if (this.state.len >= maxLen) {
               e.preventDefault()
             }
           }}
@@ -95,7 +98,7 @@ class Main extends React.Component<Props, State> {
             if (!/\n$/.test(text)) {
               len++
             }
-            if (len <= 4) {
+            if (len <= maxLen) {
               this.setState({
                 len,
                 text
