@@ -10,7 +10,7 @@ interface Props extends AlertComponentProps {}
 
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
-  public columns: ColumnProps<any>[] = [
+  public columns: ColumnProps<Message.ItemProps>[] = [
     {
       title: '序号',
       dataIndex: 'id',
@@ -66,14 +66,16 @@ class Main extends React.Component<Props> {
             >
               查看
             </span>
-            <span
-              className='href'
-              onClick={() => {
-                this.delete(record)
-              }}
-            >
-              删除
-            </span>
+            {[3, 4].indexOf(record.messageStatus) > -1 && (
+              <span
+                className='href'
+                onClick={() => {
+                  this.delete(record)
+                }}
+              >
+                删除
+              </span>
+            )}
           </div>
         )
       }

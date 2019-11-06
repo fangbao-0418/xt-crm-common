@@ -69,6 +69,15 @@ class Main extends React.Component<Props, State> {
     if (groupType.includes('all')) {
       values.groupType = values.groupType.filter((item: string) => item !== 'all')
     }
+    /** 固定用户 */
+    if (values.receiveType === 1) {
+      values.fileUrl = ''
+      values.fileName = ''
+      values.ossFileName = ''
+      values.memberIdS = []
+    } else {
+      values.groupType = []
+    }
     this.form.props.form.validateFields((err) => {
       if (err) {
         return
