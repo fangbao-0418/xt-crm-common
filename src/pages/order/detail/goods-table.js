@@ -20,8 +20,8 @@ class GoodsTable extends Component {
     skuInfo: {}
   }
   // 是否显示申请售后按钮
-  showApplyBtn = (orderStatus) => {
-    return [20, 30, 40, 50].includes(orderStatus)
+  showApplyBtn = (orderStatus, orderType) => {
+    return orderType !== 50 && [20, 30, 40, 50].includes(orderStatus)
   }
   handleApply = (record) => {
     const { orderInfo = {}, childOrder = {}, memberId } = this.props;
@@ -103,7 +103,7 @@ class GoodsTable extends Component {
         render: (text, record, index) => (
           <>
             <div>
-              {this.showApplyBtn(orderInfo.orderStatus) && <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
+              {this.showApplyBtn(orderInfo.orderStatus, record.orderType) && <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
             </div>
             <div>
               <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: { ...record } })}>添加备注</Button>

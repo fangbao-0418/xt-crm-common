@@ -155,7 +155,7 @@ class Detail extends Component {
     let { data, childOrderList, userProceedsListByOrderId, goodsTableKey, deliveryVisible, deliveryData } = this.state;
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
-
+    console.log(childOrderList, 'childOrderList')
     return (
       <>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
@@ -163,8 +163,11 @@ class Detail extends Component {
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
         <Card title="详细信息">
           {map(childOrderList, (item, index) => {
+            console.log(item.childOrder.orderCode, 'orderCodeorderCodeorderCodeorderCodeorderCode')
             return (
-              <div key={goodsTableKey}>
+              <div
+                key={item.childOrder.orderCode}
+              >
                 <GoodsTable
                   key={index}
                   list={item.skuList}
