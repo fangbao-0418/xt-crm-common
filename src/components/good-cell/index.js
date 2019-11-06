@@ -16,7 +16,7 @@ const replaceHttpUrl = (imgUrl = '') => {
     //   </div>}
 
 const GoodCell = ({ productImage, skuName, properties, coverUrl, showImage = true, orderType, refundType, isRefund }) => {
-  const isGive = isRefund ? String(refundType) === '50' : String(orderType) === '50'
+  const isGive = isRefund ? false : String(orderType) === '50'
   return (
     <div>
       {
