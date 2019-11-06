@@ -1,17 +1,23 @@
-// 手动发码
 import React from 'react';
 import { Modal, Card, Form, Input, DatePicker, Select, Button, Table, Radio } from 'antd';
 import DateFns from 'date-fns';
 import { getPromotionList } from '../api';
 import moment from 'moment';
-import { parseQuery, gotoPage } from '@/util/utils';
 import activityType from '@/enum/activityType';
+import { FormComponentProps } from 'antd/es/form';
+
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-class ActivityList extends React.Component {
-  constructor(props) {
+interface UserFormProps extends FormComponentProps {
+  text?: string;
+  info?: any;
+  confirm: (selectedRow: any) => void;
+}
+
+class ActivityList extends React.Component<UserFormProps, any> {
+  constructor(props: any) {
     super(props);
     this.state = {
       selectedRow: undefined,
@@ -25,7 +31,7 @@ class ActivityList extends React.Component {
     };
   }
 
-  getPromotionList = params => {
+  getPromotionList = (params: any) => {
     const { page } = this.state;
     if (params && !params.type) {
       params.types = [1, 2, 3];
@@ -42,7 +48,7 @@ class ActivityList extends React.Component {
     const {
       form: { validateFields },
     } = this.props;
-    validateFields((err, vals) => {
+    validateFields((err: any, vals: any) => {
       if (!err) {
         const params = {
           ...vals,
@@ -59,7 +65,7 @@ class ActivityList extends React.Component {
     });
   };
 
-  handleTabChange = e => {
+  handleTabChange = (e: any) => {
     this.setState(
       {
         page: e,
@@ -67,13 +73,15 @@ class ActivityList extends React.Component {
       this.handleSearch,
     );
   };
+
   showModal = () => {
     this.setState({
       visible: true,
     });
     this.handleReset();
   };
-  handleCancel = e => {
+
+  handleCancel = (e?: any) => {
     this.setState({
       visible: false,
       selectedRow: undefined,
@@ -99,7 +107,7 @@ class ActivityList extends React.Component {
     const columns = [
       {
         title: '',
-        render: (text, row, index) => (
+        render: (text: any, row: any, index: any) => (
           <Radio
             onClick={() =>
               this.setState({
@@ -124,41 +132,42 @@ class ActivityList extends React.Component {
       {
         title: '开始时间',
         dataIndex: 'startTime',
-        render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
+        render: (text: any) => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
       },
       {
         title: '结束时间',
         dataIndex: 'endTime',
-        render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
+        render: (text: any) => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
       },
       {
         title: '活动类型',
         dataIndex: 'type',
         width: 100,
-        render: text => <>{activityType.getValue(text)}</>,
+        render: (text: any) => <>{activityType.getValue(text)}</>,
       },
       {
         title: '活动状态',
         dataIndex: 'status',
         width: 100,
-        render: text => <>{text === 0 ? '关闭' : '开启'}</>,
+        render: (text: any) => <>{text === 0 ? '关闭' : '开启'}</>,
       },
     ];
 
-    const { listData, page, selectedRow = {} } = this.state;
+    const { listData, page, selectedRow = {} } = this.state as any;
     const {
       form: { getFieldDecorator },
-    } = this.props;
+      text = '批量转移',
+    } = this.props as any;
 
     return (
       <>
         <span className="href" onClick={this.showModal} style={{ marginRight: 20 }}>
-          批量转移
+          {text}
         </span>
         <Modal
           title="选择转移目标活动"
           className="modalStyle"
-          width={1000}
+          width={1030}
           visible={this.state.visible}
           footer={
             <>
@@ -270,4 +279,4 @@ class ActivityList extends React.Component {
     );
   }
 }
-export default Form.create()(ActivityList);
+export default Form.create<UserFormProps>()(ActivityList);

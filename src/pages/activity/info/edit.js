@@ -14,7 +14,7 @@ import {
 } from '../api';
 import ActivityInfo from './ActivityInfo';
 import ActivityList from './ActivityList';
-import { size, filter } from 'lodash';
+import { size, filter, difference } from 'lodash';
 import { gotoPage } from '@/util/utils';
 import { formatMoney, formatMoneyWithSign } from '../../helper';
 import { goodsColumns } from './goodsColumns';
@@ -50,8 +50,8 @@ class List extends React.Component {
     transferActivity: undefined,
     // 转移商品弹框显示状态
     transferGoodsVisible: false,
-    // 当前活动商品列表
-    goodsListByCurrentActivity: [],
+    // 可转移商品列表
+    transferGoodsList: [],
   };
 
   componentDidMount() {
@@ -258,12 +258,14 @@ class List extends React.Component {
   handleSelectActivity = selectedRow => {
     this.setState({ transferActivity: selectedRow }, () => {
       const { info } = this.state;
-      // 获取活动下的所有商品信息
-      getGoodsListByActivityId({ promotionId: info.id }).then(res => {
-        console.log(res);
+      Promise.all([
+        getGoodsListByActivityId({ promotionId: info.id }),
+        getGoodsListByActivityId({ promotionId: this.id }),
+      ]).then(res => {
+        const [transferActivityGoodsList, currentActivityGoodsList] = res;
         this.setState({
           transferGoodsVisible: true,
-          goodsListByCurrentActivity: res,
+          transferGoodsList: difference(currentActivityGoodsList, transferActivityGoodsList),
         });
       });
     });
@@ -333,9 +335,9 @@ class List extends React.Component {
       selectedRowKeys,
       promotionDetail: { records, current, size, total },
       type,
-      info,
-      transferActivity,
-      goodsListByCurrentActivity,
+      info = {},
+      transferActivity = {},
+      transferGoodsList,
       transferGoodsVisible,
     } = this.state;
     const rowSelection = {
@@ -477,9 +479,16 @@ class List extends React.Component {
           />
         </Modal>
         <GoodsTransfer
-          currentActivity={info}
-          transferActivity={transferActivity}
-          dataSource={goodsListByCurrentActivity}
+          title="转移活动商品"
+          header={
+            <div style={{ marginBottom: 8 }}>
+              <span style={{ display: 'inline-block', width: '50%' }}>当前活动：{info.title}</span>
+              <span style={{ display: 'inline-block', width: '50%', paddingLeft: 20 }}>
+                目标活动：{transferActivity.title}
+              </span>
+            </div>
+          }
+          dataSource={transferGoodsList}
           visible={transferGoodsVisible}
           onCancel={this.goodsTransferCancel}
           onOk={this.goodsTransferOk}
