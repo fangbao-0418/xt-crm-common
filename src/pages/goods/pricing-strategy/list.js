@@ -40,17 +40,20 @@ class List extends React.Component {
 
   //设置禁用成功
   setDisablePromotion = id => {
+    const params = parseQuery();
+
     putIsAvailable({ ruleId: id }).then((res) => {
       res && message.success('关闭成功');
-      this.getPromotionList();
+      this.getPromotionList(params);
     });
   };
 
   //设置启用成功
   setEnablePromotion = id => {
+    const params = parseQuery();
     putIsAvailable({ ruleId: id }).then((res) => {
       res && message.success('开启成功');
-      this.getPromotionList();
+      this.getPromotionList(params);
     });
   };
 
@@ -60,7 +63,7 @@ class List extends React.Component {
 
     if(params){
       let category = categorys.filter(item => {
-        return item.name === params.categoryId
+        return item.name === params.categoryId || item.id === Number(params.categoryId) 
       })
       params = Object.assign(params, {categoryId: category[0] && category[0].id})
     }
@@ -100,8 +103,8 @@ class List extends React.Component {
           ...vals,
           startCreateTime: createtime && createtime[0] && +new Date(createtime[0]),
           endCreateTime: createtime && createtime[1] && +new Date(createtime[1]),
-          startModifyTime: operationtime && operationtime[0] && +new Date(createtime[0]),
-          endModifyTime: operationtime && operationtime[1] && +new Date(createtime[1]),
+          startModifyTime: operationtime && operationtime[0] && +new Date(operationtime[0]),
+          endModifyTime: operationtime && operationtime[1] && +new Date(operationtime[1]),
           page: 1,
           pageSize: 20
         };
@@ -112,6 +115,13 @@ class List extends React.Component {
       }
     });
   };
+  //清楚筛选条件
+  handleClearConditions = () => {
+    const { resetFields } = this.props.form;
+    const { page } = this.state;
+    setQuery({page: page.current, pageSize: page.pageSize}, true);
+    resetFields();
+  }
 
   //分页更新数据
   handleTabChange = e => {
@@ -228,7 +238,6 @@ class List extends React.Component {
     } = this.props;
 
     const { initParams, modalTitle, categorys, editSource, type } = this.state;
-    console.log(editSource, 'editSource')
     return (
       <>
         <Card>
@@ -244,8 +253,8 @@ class List extends React.Component {
               })(
                 <Select style={{ width: 100 }}>
                   <Option value="">全部</Option>
-                  <Option value={0}>禁用</Option>
-                  <Option value={1}>启用</Option>
+                  <Option value="0">禁用</Option>
+                  <Option value="1">启用</Option>
                 </Select>,
               )}
             </FormItem>
@@ -276,10 +285,13 @@ class List extends React.Component {
               ]
             })(<RangePicker format="YYYY-MM-DD HH:mm" showTime={{defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}}/>)}</FormItem>
             <FormItem>
-              <Button type="primary" onClick={this.handleSearch}>
+              <Button onClick={this.handleClearConditions}>
+                清楚条件
+              </Button>
+              <Button style={{ margin: '0 10px' }} type="primary" onClick={this.handleSearch}>
                 查询
               </Button>
-              <Button type="primary" onClick={()=>this.setState({visible: true, modalTitle: '新建定价策略', type: 'add', editSource:{}})} style={{ marginLeft: 10 }}>
+              <Button type="primary" onClick={()=>this.setState({visible: true, modalTitle: '新建定价策略', type: 'add', editSource:{}})} >
                 新建策略
               </Button>
             </FormItem>

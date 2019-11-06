@@ -36,6 +36,8 @@ export function parseQuery() {
 }
 
 export function setQuery(params = {}, force = false) {
+  console.log(params, 'params1')
+  console.log(window.location.hash, 'hash')
   const str = decodeURIComponent(window.location.hash); // 对中文解码
   const [baseLoc, baseQueryStr = ''] = str.split('?');
   const baseQuery = {};
@@ -46,9 +48,10 @@ export function setQuery(params = {}, force = false) {
   const filters = {};
   for (const k in params) {
     if (Object.prototype.hasOwnProperty.call(params, k)) {
-      filters[k] = params[k] || '';
+      filters[k] = params[k] === 0 ? 0 : params[k] || '';
     }
   }
+  console.log(baseQuery, 'baseQuery')
   const reslover = new URLSearchParams({ ...baseQuery, ...filters });
   const search = reslover.toString();
   window.location.hash = `${baseLoc}?${search}`;
