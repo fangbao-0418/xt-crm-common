@@ -276,13 +276,52 @@ class List extends React.Component {
   };
 
   goodsTransferOk = transferIds => {
+    const _this = this;
+    const { info, transferActivity } = this.state;
     batchMoveGoodsToOtherActivity({
-      productIds: [93],
-      promotionId: 66,
-      tagetPromotionId: 93,
-    });
-    this.setState({
-      transferGoodsVisible: false,
+      productIds: transferIds,
+      promotionId: info.id,
+      tagetPromotionId: transferActivity.id,
+    }).then(res => {
+      this.setState({ transferGoodsVisible: false }, () => {
+        Modal.info({
+          title: '转移结果',
+          content: (
+            <div>
+              <div>
+                成功转移<span style={{ color: '#40a9ff' }}>{res.successCount}</span>个商品至
+                <span style={{ color: '#40a9ff' }}>{transferActivity.title}</span>
+              </div>
+              <div>
+                <div>
+                  {transferIds.length != res.successCount ? (
+                    <div>
+                      <div>
+                        <span>
+                          转移失败
+                          <span style={{ color: 'red' }}>
+                            {transferIds.length - res.successCount}
+                          </span>
+                          个商品
+                        </span>
+                      </div>
+                      <div>
+                        <a href={res.downloadUrl} target="_blank">
+                          转移失败商品清单
+                        </a>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ),
+          okText: '关闭',
+          onOk: () => {
+            _this.handleSearch();
+          },
+        });
+      });
     });
   };
 
