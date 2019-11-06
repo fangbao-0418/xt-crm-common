@@ -232,13 +232,13 @@ class SkuList extends React.Component<Props, State>{
       }
     }
     dataSource = dataSource.concat(addData)
-    console.log(dataSource, 'dataSource')
+    // console.log(dataSource, 'dataSource')
     let result: SkuProps[] = []
     specs[0].content.map((item) => {
-      console.log(dataSource.filter(item2 => item2.propertyValue1 === item.specName), item.specName, 'item')
+      // console.log(dataSource.filter(item2 => item2.propertyValue1 === item.specName), item.specName, 'item')
       result = result.concat(dataSource.filter(item2 => item2.propertyValue1 === item.specName)) 
     })
-    console.log(result, 'result')
+    // console.log(result, 'result')
     this.setState({
       dataSource: result,
       tempSpecInfo,
