@@ -44,6 +44,7 @@ interface Props {
   dataSource: SkuProps[]
   showImage: boolean
   onChange?: (value: SkuProps[], specs: Spec[], showImage: boolean) => void
+  strategyData: {},
 }
 interface SpecItem {
   specName: string;
@@ -73,7 +74,8 @@ interface State {
   tempSpuPicture: any[];
   /** 添加规格名propover显示状态 */
   dimensionNamePropoverStatus: boolean
-  dataSource: SkuProps[]
+  dataSource: SkuProps[],
+  strategyData: any
 }
 class SkuList extends React.Component<Props, State>{
   state: State = {
@@ -88,13 +90,15 @@ class SkuList extends React.Component<Props, State>{
     tempSpuName: '',
     tempSpuPicture: [],
     dimensionNamePropoverStatus: false,
-    dataSource: this.props.dataSource
+    dataSource: this.props.dataSource,
+    strategyData: {}
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({
       showImage: props.showImage,
       specs: props.specs,
-      dataSource: props.dataSource
+      dataSource: props.dataSource,
+      strategyData: props.strategyData
     })
   }
   handleChangeValue = (text: string, record: any, index: any) => (e: any) => {
@@ -261,6 +265,48 @@ class SkuList extends React.Component<Props, State>{
     })
     this.handleAdd(GGName);
   };
+
+  //计算价格
+  calculatePrice = () => {
+    const { dataSource, strategyData } = this.state;
+    console.log(strategyData, 'strategyData')
+    console.log(dataSource, 'dataSource')
+
+    const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData;
+    const newData = dataSource.map(res => {
+      const { salePrice, costPrice } = res;
+      let grossProfit = salePrice - costPrice;//毛利润
+      let netProfit = grossProfit - (grossProfit * categoryProfitRate / 100);//去除类目利润比的利润
+      console.log(netProfit, 'netProfit')
+      return Object.assign(res, {
+        headPrice: netProfit * headCommissionRate / 100,
+        areaMemberPrice: netProfit * areaCommissionRate / 100,
+        cityMemberPrice: netProfit * cityCommissionRate / 100,
+        managerMemberPrice: netProfit * managerCommissionRate / 100
+      })
+    })
+    console.log(newData, 'newData')
+    this.setState({
+      dataSource: newData
+    })
+  }
+
+  // 重置价格
+  resetPrice = () => {
+    const { dataSource } = this.state;
+    const newData = dataSource.map(res => {
+      return Object.assign(res, {
+        headPrice: 0,
+        areaMemberPrice: 0,
+        cityMemberPrice: 0,
+        managerMemberPrice: 0
+      })
+    })
+
+    this.setState({
+      dataSource: newData
+    })
+  }
   /**
   * 删除规格
   */
@@ -467,6 +513,16 @@ class SkuList extends React.Component<Props, State>{
             </Card>
           )
         })}
+        {
+          this.state.strategyData ? <>
+            <Button type="primary" style={{ marginLeft: 5 }} onClick={this.resetPrice}>
+              重置价格
+            </Button>
+            <Button type="primary" style={{ marginLeft: 5 }} onClick={this.calculatePrice}>
+              计算价格
+            </Button>
+          </> : null
+        }
         <Table
           rowKey={(record: any) => record.id}
           style={{ marginTop: 10 }}
