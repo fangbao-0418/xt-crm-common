@@ -180,7 +180,7 @@ class GoodsEdit extends React.Component {
       });
     });
   };
-  /** 获取规格结婚 */
+  /** 获取规格结果 */
   getSpecs(skuList = []) {
     const specs = this.specs
     specs.map((item) => {
@@ -602,7 +602,7 @@ class GoodsEdit extends React.Component {
           specs={this.state.speSelect}
           dataSource={this.state.data}
           onChange={(value, specs, showImage) => {
-            console.log(specs, 'skulist change')
+            // console.log(specs, 'skulist change')
             this.setState({
               data: value,
               speSelect: specs,
