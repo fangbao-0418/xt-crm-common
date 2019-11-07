@@ -186,7 +186,8 @@ class GoodsEdit extends React.Component {
   //通过类目id查询是否有定价策略
   getStrategyByCategory = (categoryId) => {
     getStrategyByCategory({categoryId: categoryId}).then(strategyData => {
-      strategyData && this.setState({
+      console.log(strategyData, 'strategyData')
+      this.setState({
         strategyData
       })
     })
@@ -423,6 +424,7 @@ class GoodsEdit extends React.Component {
       },
     } = this.props;
     console.log(categoryList, 'categoryList')
+    console.log(this.state, 'state')
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -452,11 +454,11 @@ class GoodsEdit extends React.Component {
                   },
                 }
               ],
-            })(<Cascader 
-              onChange={(val) => {
+              onChange: (val) => {
+                console.log(val, 'val')
                 this.getStrategyByCategory(val[0])
-              }} 
-            options={this.state.categoryList} placeholder="请输入商品类目" />)}
+              }
+            })(<Cascader options={this.state.categoryList} placeholder="请输入商品类目" />)}
           </Form.Item>
           <Form.Item label="商品简称">
             {getFieldDecorator('productShortName', {
