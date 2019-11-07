@@ -58,7 +58,9 @@ class GoodsList extends React.Component {
     // });
     this.getStoreList();
   }
-
+  /**
+   * 获取商品列表 
+   */
   getGoodsList(params = {}) {
     const { status } = this.state;
     const { page } = this.state;
@@ -79,7 +81,7 @@ class GoodsList extends React.Component {
       });
     });
   };
-
+  /** 下架商品 */
   delGoodsDisable = ids => {
     confirm({
       title: '下架提示',
@@ -205,6 +207,18 @@ class GoodsList extends React.Component {
     setQuery({page: page.current, pageSize: page.pageSize}, true);
     resetFields();
   }
+  /**
+   * 推送到仓库中
+   */
+  pushWarehouse() {
+    confirm({
+      title: '系统提示',
+      content: '确认将商品推至仓库中？',
+      onOk: () => {
+        
+      },
+    });
+  }
   render() {
     const { selectedRowKeys, supplier, dataSource, page } = this.state;
     const columns = [
@@ -265,14 +279,19 @@ class GoodsList extends React.Component {
             <a onClick={() => gotoPage(`/goods/edit/${record.id}`)}>编辑</a>
             <Divider type="vertical" />
             {status === '0' && (
-              <a href="javascriput:void(0);" onClick={this.handleDisable(record.id)}>
+              <span className="href" onClick={this.handleDisable(record.id)}>
                 下架
-              </a>
+              </span>
             )}
             {status === '1' && (
-              <a href="javascriput:void(0);" onClick={this.handleEnable(record.id)}>
+              <span className="href" onClick={this.handleEnable(record.id)}>
                 上架
-              </a>
+              </span>
+            )}
+            {status === '2' && (
+              <span className="href" onClick={this.pushWarehouse}>
+                推至仓库中
+              </span>
             )}
           </>
         ),
@@ -289,7 +308,7 @@ class GoodsList extends React.Component {
     };
 
     return (
-      <Card>
+      <>
         <Card title="筛选">
           <Form layout="inline">
             <FormItem label="商品名称">
@@ -364,7 +383,7 @@ class GoodsList extends React.Component {
             {status === 1 && '批量上架'}
           </Button>
         </Card>
-      </Card>
+      </>
     );
   }
 }

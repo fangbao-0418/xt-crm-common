@@ -1,14 +1,20 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Card, Button } from 'antd';
 import SearchForm from './form';
 import { ColumnProps } from 'antd/lib/table';
 import moment from 'moment';
-interface State {}
+import { namespace } from './model';
+interface State {
+  list: any[]
+}
 
 function formatTime(text: any, record: GoodsCheck.ItemProps, index: number) {
   return moment(text).format('YYYY-MM-DD HH:mm:ss');
 }
 class Main extends React.Component<any, State> {
+  public state: State = {
+    list: []
+  }
   public columns: ColumnProps<GoodsCheck.ItemProps>[] = [
     {
       title: 'id',
@@ -66,13 +72,34 @@ class Main extends React.Component<any, State> {
       title: '操作',
       dataIndex: 'operate',
       key: 'operate',
-    },
+      render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
+        return (
+          <>
+            <Button type="primary">编辑</Button>
+            <Button className="ml10">查看</Button>
+          </>
+        )
+      }
+    }
   ];
+  public componentDidMount() {
+    APP.dispatch({
+      type: `${namespace}/fetchList`,
+      payload: {
+        cb: (list: any) => {
+          this.setState({ list })
+          console.log('list=>', list)
+        }
+      }
+    })
+  }
   public render() {
     return (
       <div>
         <SearchForm />
-        <Table columns={this.columns} />
+        <Card>
+          <Table columns={this.columns} dataSource={this.state.list} />
+        </Card>
       </div>
     );
   }

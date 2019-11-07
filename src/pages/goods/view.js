@@ -16,6 +16,7 @@ const goods = props => {
       <Card>
         <Tabs defaultActiveKey="0" onChange={callback}>
           <TabPane tab="出售中" key="0" />
+          <TabPane tab="商品池" key="2" />
           <TabPane tab="仓库中" key="1" />
         </Tabs>
         <List key={listActive} status={listActive} />

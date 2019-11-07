@@ -7,63 +7,53 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig  {
     common: {
       productName: {
         label: '商品名称1',
-        type: 'input',
-        controlProps: {
-        }
+        type: 'input'
       },
       productId: {
         label: '商品ID',
-        type: 'input',
-        controlProps: {
-        }
+        type: 'input'
       },
       primaryCategory: {
         label: '一级类目',
-        type: 'input',
-        controlProps: {
-        }
+        type: 'input'
       },
       supplierName: {
         label: '供应商名称',
-        type: 'input',
-        controlProps: {
-        }
+        type: 'input'
       },
       checkstatus: {
         label: '审核状态',
         type: 'select',
-        controlProps: {
-          options: [{
-            label: '全部',
-            value: ''
-          }, {
-            label: '待审核',
-            value: 10
-          }, {
-            label: '审核不通过',
-            value: 20
-          }, {
-            label: '审核通过',
-            value: 30
-          }]
-        }
+        options: [{
+          label: '全部',
+          value: 0
+        }, {
+          label: '待审核',
+          value: 10
+        }, {
+          label: '审核不通过',
+          value: 20
+        }, {
+          label: '审核通过',
+          value: 30
+        }]
       },
       checkPerson: {
         label: '审核人',
-        type: 'input',
-        controlProps: {
-        }
+        type: 'input'
       },
       createTime: {
         label: '创建时间',
-        type: 'input',
+        type: 'rangepicker',
         controlProps: {
+          showTime: true
         }
       },
       checkTime: {
         label: '审核时间',
-        type: 'input',
+        type: 'rangepicker',
         controlProps: {
+          showTime: true
         }
       }
     }    

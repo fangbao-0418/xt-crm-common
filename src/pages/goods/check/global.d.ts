@@ -6,7 +6,6 @@ namespace GoodsCheck {
   }
   export interface payloadProps {
     pageSize: number,
-    status: number,
     page: number
   }
 }
