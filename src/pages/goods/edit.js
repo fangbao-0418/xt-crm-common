@@ -186,7 +186,6 @@ class GoodsEdit extends React.Component {
   //通过类目id查询是否有定价策略
   getStrategyByCategory = (categoryId) => {
     getStrategyByCategory({categoryId: categoryId}).then(strategyData => {
-      console.log(strategyData, 'strategyData')
       this.setState({
         strategyData
       })
