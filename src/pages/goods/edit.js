@@ -620,7 +620,7 @@ class GoodsEdit extends React.Component {
           dataSource={this.state.data}
           strategyData={this.state.strategyData}
           onChange={(value, specs, showImage) => {
-            console.log(specs, 'skulist change')
+            // console.log(specs, 'skulist change')
             this.setState({
               data: value,
               speSelect: specs,
