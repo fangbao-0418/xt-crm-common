@@ -55,7 +55,6 @@ class List extends React.Component {
   };
 
   componentDidMount() {
-    console.log(this.payload, '-----------------------------------');
     if (this.payload.promotionId === this.id) {
       this.props.form.setFieldsValue({
         productId: this.payload.productId,

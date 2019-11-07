@@ -1,6 +1,3 @@
 {
-    "apiList":[
-        "/promotion/{promotionId}/products",
-        "/promotion/batchmove"
-    ]
+    "apiList":[]
 }

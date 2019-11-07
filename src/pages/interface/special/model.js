@@ -39,7 +39,6 @@ export default {
       }
     },
     async getGoodsListByActivityId(param) {
-      debugger
       const result = await api.getGoodsListByActivityId(param);
       if (result) {
         this.saveDefault({

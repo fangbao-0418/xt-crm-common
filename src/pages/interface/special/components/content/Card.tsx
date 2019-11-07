@@ -11,6 +11,7 @@ import ActivityList from '@/pages/activity/info/ActivityList';
 import { namespace } from '../../model';
 import GoodsTransfer from '@/components/goods-transfer';
 import { concat, filter, includes } from 'lodash';
+import Item from '@/pages/interface/category/tree/item';
 interface State {
   /** 优惠券显隐 */
   couponVisible: boolean;
@@ -62,13 +63,18 @@ class Main extends React.Component<Props, State> {
   };
 
   public goodsTransferOk = (selectedRowKeys: any) => {
-    debugger;
     const { detail, state, dispatch } = this.props;
     const { goodsListByCurrentActivity } = state;
     const selectedRows = filter(goodsListByCurrentActivity, item => {
       return includes(selectedRowKeys, item.productId);
     });
-    detail.list = concat(detail.list, selectedRows);
+    detail.list = concat(
+      detail.list,
+      selectedRows.map(item => {
+        item.id = item.productId;
+        return item;
+      }),
+    );
     dispatch[namespace].saveDefault({ transferGoodsVisible: false }, () => {
       this.onChange(detail);
     });
