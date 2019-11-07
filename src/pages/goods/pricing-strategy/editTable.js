@@ -41,7 +41,6 @@ export default class extends React.Component {
                     return !value || value === null 
                   }
                 });
-                console.log()
                 if(!noVal.length && allNum === 100){
                   onChange(dataSource)
                 } else {
@@ -53,7 +52,6 @@ export default class extends React.Component {
         },
       },
     ];
-    console.log(this.props.value, 'va;')
     this.state = {
       dataSource: [
         {

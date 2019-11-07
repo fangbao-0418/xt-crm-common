@@ -58,7 +58,6 @@ class Add extends React.Component {
 
     validateFields((err, vals) => {
       if (!err) {
-        console.log(vals)
         const { allCommissionRate } = vals
         const { categorys } = this.state
         let params = {
@@ -76,7 +75,6 @@ class Add extends React.Component {
           params = Object.assign(params, {categoryId: category[0] && category[0].id})
         }
         delete params.allCommissionRate;
-        console.log(params, 'params')
         if(type === "edit"){
           params.id = editSource.id;
           editRule({...params}).then(res => {
@@ -143,7 +141,6 @@ class Add extends React.Component {
       type
     } = this.props;
     const { categorys } = this.state;
-    console.log(editSource, 'editSource')
     return (
       <Card className="activity-add">
         <Form {...formLayout}>

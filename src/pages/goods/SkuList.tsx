@@ -270,8 +270,6 @@ class SkuList extends React.Component<Props, State>{
   //计算价格
   calculatePrice = () => {
     const { dataSource, strategyData } = this.state;
-    console.log(strategyData, 'strategyData')
-    console.log(dataSource, 'dataSource')
     let isZero = false;
     // accAdd, Subtr, accMul, accDiv 
     const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData;
@@ -279,9 +277,7 @@ class SkuList extends React.Component<Props, State>{
       const { salePrice, costPrice } = res;
       if(!Number(salePrice) || !Number(costPrice))isZero = true;
       let grossProfit = Subtr(salePrice,costPrice);//毛利润
-      console.log(grossProfit, 'grossProfit')
       let netProfit : any = Subtr(grossProfit, accDiv(accMul(grossProfit, categoryProfitRate), 100));//去除类目利润比的利润
-      console.log(netProfit, 'netProfit')
       // let headNetProfit = accDiv(accMul(netProfit, headCommissionRate),100);
       // console.log(netProfit, 'netProfit2')
       // console.log(headNetProfit, 'headNetProfit')
@@ -307,7 +303,6 @@ class SkuList extends React.Component<Props, State>{
         managerMemberPrice: Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*100) / 100
       })
     })
-    console.log(newData, 'newData')
     if(isZero){
       message.error('价格错误，不能进行计算，请确认成本价及销售价是否正确');
       return false;
