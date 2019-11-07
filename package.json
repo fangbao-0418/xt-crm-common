@@ -6,7 +6,6 @@
     "@rematch/core": "^1.1.0",
     "@rematch/loading": "^1.1.3",
     "@types/clipboard": "^2.0.1",
-    "@types/mathjs": "^6.0.2",
     "@types/node": "^12.7.8",
     "@types/react-router-dom": "^5.1.0",
     "ali-oss": "^6.1.1",

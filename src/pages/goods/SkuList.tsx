@@ -1,5 +1,4 @@
 import React from 'react';
-import {chain, multiply, divide} from 'mathjs';
 import { Table, Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getColumns } from './constant';
@@ -293,23 +292,14 @@ class SkuList extends React.Component<Props, State>{
       // let managerNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(accAdd(headNetProfit, areaNetProfit),cityNetProfit)), managerCommissionRate), Subtr(Subtr(Subtr(100,headCommissionRate),cityCommissionRate),areaCommissionRate))
       // console.log(managerNetProfit, 'managerNetProfit')
 
-      let headNetProfit = chain(netProfit).multiply(headCommissionRate).divide(100);
+      let headNetProfit = accDiv(accMul(netProfit,headCommissionRate),100);
       console.log(headNetProfit, 'headNetProfit')
-      let areaNetProfit = chain(netProfit).multiply(areaCommissionRate).divide(100);
+      let areaNetProfit = accDiv(accMul(netProfit,areaCommissionRate),100);
       console.log(areaNetProfit, 'areaNetProfit')
-      let cityNetProfit = chain(netProfit).multiply(cityCommissionRate).divide(100);
+      let cityNetProfit = accDiv(accMul(netProfit,cityCommissionRate),100);
       console.log(cityNetProfit, 'cityNetProfit')
-      let managerNetProfit = chain(netProfit).multiply(managerCommissionRate).divide(100);
+      let managerNetProfit = accDiv(accMul(netProfit,managerCommissionRate),100);
       console.log(managerNetProfit, 'managerNetProfit')
-
-      // let headNetProfit = netProfit*headCommissionRate/100;
-      // console.log(headNetProfit, 'headNetProfit')
-      // let areaNetProfit = netProfit*areaCommissionRate/100;
-      // console.log(areaNetProfit, 'areaNetProfit')
-      // let cityNetProfit = netProfit*cityCommissionRate/100;
-      // console.log(cityNetProfit, 'cityNetProfit')
-      // let managerNetProfit = netProfit*managerCommissionRate / 100;
-      // console.log(managerNetProfit, 'managerNetProfit')
       return Object.assign(res, {
         headPrice: Math.floor(Subtr(salePrice, headNetProfit)*100) / 100,
         areaMemberPrice: Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*100) / 100,
