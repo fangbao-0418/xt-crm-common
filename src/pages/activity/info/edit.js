@@ -25,7 +25,7 @@ class List extends React.Component {
   id = this.props.match.params.id;
   payload = APP.fn.getPayload(namespace) || {};
   state = {
-    goodsList: '',
+    goodsList: [],
     visible: false,
     visibleAct: false,
     selectedRowKeys: [],
@@ -402,14 +402,17 @@ class List extends React.Component {
             </Form.Item>
           </Form>
           <Table
+            rowKey={record => record.id}
             className="mt20"
             columns={goodsColumns([
               {
                 title: '规格信息',
+                key: 'sku',
                 render: record => {
                   console.log('record=>', record);
                   return (
                     <Table
+                      rowKey={record => record.id}
                       columns={getSkuColumns(record)}
                       dataSource={filter(record.promotionSkuList, item => item.selected)}
                       pagination={false}
@@ -419,6 +422,7 @@ class List extends React.Component {
               },
               {
                 title: '操作',
+                key: 'opt',
                 render: record => (
                   <>
                     <span className="href" onClick={this.handleEditsku(record, type)}>
