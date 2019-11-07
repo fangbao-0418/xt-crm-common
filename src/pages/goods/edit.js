@@ -15,7 +15,7 @@ import {
   split
 } from 'lodash';
 import descartes from '../../util/descartes';
-import { getStoreList, setProduct, getGoodsDetial, getCategoryList, get1688Sku } from './api';
+import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku } from './api';
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
 import SkuList from './SkuList';
 import styles from './edit.module.scss'
@@ -65,7 +65,8 @@ class GoodsEdit extends React.Component {
     returnContact: '',
     returnPhone: '',
     returnAddress: '',
-    showImage: false
+    showImage: false,
+    strategyData: null
   };
   componentDidMount() {
     this.getStoreList();
@@ -148,7 +149,7 @@ class GoodsEdit extends React.Component {
         returnContact: res.returnContact,
         returnPhone: res.returnPhone,
         returnAddress: res.returnAddress,
-        showImage
+        showImage,
       });
       setFieldsValue({
         interception: res.interception,
@@ -178,9 +179,20 @@ class GoodsEdit extends React.Component {
         categoryId,
         isAuthentication: res.isAuthentication
       });
+      this.getStrategyByCategory(categoryId[0])
     });
   };
-  /** 获取规格结果 */
+
+  //通过类目id查询是否有定价策略
+  getStrategyByCategory = (categoryId) => {
+    getStrategyByCategory({categoryId: categoryId}).then(strategyData => {
+      this.setState({
+        strategyData
+      })
+    })
+  }
+
+  /** 获取规格结婚 */
   getSpecs(skuList = []) {
     const specs = this.specs
     specs.map((item) => {
@@ -404,12 +416,14 @@ class GoodsEdit extends React.Component {
   render() {
 
     const { getFieldDecorator } = this.props.form;
-    const { supplier, interceptionVisible } = this.state;
+    const { supplier, interceptionVisible, categoryList } = this.state;
     const {
       match: {
         params: { id },
       },
     } = this.props;
+    console.log(categoryList, 'categoryList')
+    console.log(this.state, 'state')
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -439,6 +453,10 @@ class GoodsEdit extends React.Component {
                   },
                 }
               ],
+              onChange: (val) => {
+                console.log(val, 'val')
+                this.getStrategyByCategory(val[0])
+              }
             })(<Cascader options={this.state.categoryList} placeholder="请输入商品类目" />)}
           </Form.Item>
           <Form.Item label="商品简称">
@@ -601,6 +619,7 @@ class GoodsEdit extends React.Component {
           showImage={this.state.showImage}
           specs={this.state.speSelect}
           dataSource={this.state.data}
+          strategyData={this.state.strategyData}
           onChange={(value, specs, showImage) => {
             // console.log(specs, 'skulist change')
             this.setState({
