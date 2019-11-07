@@ -5,11 +5,17 @@ export default class extends React.PureComponent<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      dataSource: [],
       targetKeys: [],
       selectedKeys: [],
-      disabled: false,
     };
+  }
+  componentWillReceiveProps(nextProps: any) {
+    if (!this.props.visible && nextProps.visible) {
+      this.setState({
+        targetKeys: [],
+        selectedKeys: [],
+      });
+    }
   }
 
   filterOption = (inputValue: any, option: any) => {
@@ -29,14 +35,10 @@ export default class extends React.PureComponent<any, any> {
   };
 
   render() {
-    const {
-      dataSource,
-      header,
-      ...props
-    } = this.props;
+    const { dataSource, header, ...props } = this.props;
     const { targetKeys } = this.state;
     return (
-      <Modal width={688} {...props} onOk={this.onOk}>
+      <Modal width={888} maskClosable={false} {...props} onOk={this.onOk}>
         {header}
         <Transfer
           rowKey={record => record.productId}
@@ -54,7 +56,7 @@ export default class extends React.PureComponent<any, any> {
           targetKeys={targetKeys}
           onChange={this.handleChange}
           listStyle={{
-            width: 300,
+            width: 400,
             height: 500,
           }}
         />

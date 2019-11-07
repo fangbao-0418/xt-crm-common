@@ -289,9 +289,11 @@ class List extends React.Component {
           title: '转移结果',
           content: (
             <div>
-              <div>
-                成功转移<span style={{ color: '#40a9ff' }}>{res.successCount}</span>个商品至
-                <span style={{ color: '#40a9ff' }}>{transferActivity.title}</span>
+              <div style={{ marginBottom: 8 }}>
+                成功转移<span style={{ color: 'red' }}>{res.successCount}</span>个商品至
+                <a href={`/#/activity/info/edit/${transferActivity.id}`} target="_blank">
+                  {transferActivity.title}
+                </a>
               </div>
               <div>
                 <div>
@@ -305,8 +307,6 @@ class List extends React.Component {
                           </span>
                           个商品
                         </span>
-                      </div>
-                      <div>
                         <a href={res.downloadUrl} target="_blank">
                           转移失败商品清单
                         </a>

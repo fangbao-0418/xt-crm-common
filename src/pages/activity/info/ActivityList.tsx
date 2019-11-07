@@ -169,6 +169,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
           className="modalStyle"
           width={1030}
           visible={this.state.visible}
+          maskClosable={false}
           footer={
             <>
               <div style={{ textAlign: 'right' }}>
@@ -258,7 +259,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
                 >
                   查询
                 </Button>
-                <Button type="primary" onClick={this.handleReset} style={{ marginLeft: 20 }}>
+                <Button onClick={this.handleReset} style={{ marginLeft: 20 }}>
                   重置
                 </Button>
               </FormItem>
