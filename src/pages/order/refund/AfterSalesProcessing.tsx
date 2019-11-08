@@ -14,7 +14,7 @@ interface Props {
   data: AfterSalesInfo.data;
 }
 const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
-  const orderServerVO = data.orderServerVO || {};
+  const orderServerVO = Object.assign({}, data.orderServerVO);
   const isRefundTypeOf = (refundType: enumRefundType): boolean => {
     return data.refundType == refundType;
   };
