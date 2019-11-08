@@ -20,11 +20,14 @@ class Main extends React.Component<any, State> {
   }
   public form: FormInstance;
   /**
-   * 查看详情
+   * 跳转到详情页面
    */
   public handleView() {
     APP.history.push('/goods/checkdetail/1191?type=check&readOnly=1&page=1&pageSize=10')
   }
+  /**
+   * 跳转到编辑页面
+   */
   public handleEdit() {
     APP.history.push('/goods/checkedit/1191?type=check&page=1&pageSize=10')
   }
@@ -33,8 +36,12 @@ class Main extends React.Component<any, State> {
     pageSize: 10,
     total: 0
   }
+  /**
+   * 条件查询
+   */
   public handleSearch = () => {
     const value = this.form.getValues();
+    console.log('applyEndTime', value.applyEndTime)
     this.payload = {
       ...this.payload,
       ...value,

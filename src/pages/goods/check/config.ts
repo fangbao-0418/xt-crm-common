@@ -26,6 +26,9 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig  {
         type: 'select',
         options: [{
           label: '全部',
+          value: -1
+        }, {
+          label: '待提交',
           value: 0
         }, {
           label: '待审核',
