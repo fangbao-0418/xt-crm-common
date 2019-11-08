@@ -358,6 +358,16 @@ class List extends React.Component {
         title: '活动库存',
         dataIndex: 'inventory',
       },
+      {
+        title: '销量',
+        key: 'saleCount',
+        dataIndex: 'saleCount',
+      },
+      {
+        title: '剩余库存',
+        key: 'remainInventory',
+        dataIndex: 'remainInventory',
+      },
     ];
     const {
       form: { getFieldDecorator },

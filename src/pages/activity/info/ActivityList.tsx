@@ -251,7 +251,11 @@ class ActivityList extends React.Component<UserFormProps, any> {
                   onClick={() => {
                     this.setState(
                       {
-                        current: 1,
+                        page: {
+                          current: 1,
+                          total: 0,
+                          pageSize: 20,
+                        },
                       },
                       this.handleSearch,
                     );

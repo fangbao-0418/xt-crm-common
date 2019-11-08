@@ -19,6 +19,8 @@ import Add from './add';
 import moment from 'moment';
 import { setQuery, parseQuery, gotoPage } from '@/util/utils';
 import activityType from '../../enum/activityType';
+import { isNil, omitBy } from 'lodash';
+
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -79,16 +81,16 @@ class List extends React.Component {
     } = this.props;
     validateFields((err, vals) => {
       if (!err) {
-        const params = {
+        let params = {
           ...vals,
           startTime: vals.time && vals.time[0] && +new Date(vals.time[0]),
           endTime: vals.time && vals.time[1] && +new Date(vals.time[1]),
           page: 1,
           pageSize: 20,
         };
-
-        delete params.time;
-
+        params = omitBy(params, (val, key) => {
+          return key === 'time' || isNil(val) || val === '';
+        });
         this.getPromotionList(params);
       }
     });
@@ -187,19 +189,11 @@ class List extends React.Component {
             <a onClick={() => gotoPage(`/activity/info/edit/${record.id}`)}>编辑</a>
             <Divider type="vertical" />
             {record.status ? (
-              <a
-                href="javascript:void(0);"
-                style={{ color: '#ff6600' }}
-                onClick={this.hanadleDisablePromotion(record.id)}
-              >
+              <a style={{ color: '#ff6600' }} onClick={this.hanadleDisablePromotion(record.id)}>
                 关闭
               </a>
             ) : (
-              <a
-                href="javascript:void(0);"
-                style={{ color: '#ff6600' }}
-                onClick={this.handleEnablePromotion(record.id)}
-              >
+              <a style={{ color: '#ff6600' }} onClick={this.handleEnablePromotion(record.id)}>
                 开启
               </a>
             )}
@@ -221,39 +215,28 @@ class List extends React.Component {
             <FormItem label="活动名称">
               {getFieldDecorator('name', {
                 initialValue: initParams.name,
-              })(<Input placeholder="请输入活动名称" style={{ width: 140 }} />)}
+              })(<Input placeholder="请输入活动名称" style={{ width: 180 }} />)}
+            </FormItem>
+            <FormItem label="活动ID">
+              {getFieldDecorator('id', {
+                initialValue: initParams.id,
+              })(<Input placeholder="请输入活动ID" style={{ width: 180 }} />)}
             </FormItem>
             <FormItem label="商品名称">
               {getFieldDecorator('productName')(
-                <Input placeholder="请输入商品名称" style={{ width: 140 }} />,
+                <Input placeholder="请输入商品名称" style={{ width: 180 }} />,
               )}
             </FormItem>
             <FormItem label="商品ID">
               {getFieldDecorator('productId')(
-                <Input placeholder="请输入商品ID" style={{ width: 140 }} />,
-              )}
-            </FormItem>
-            <FormItem label="有效期">
-              {getFieldDecorator('time', {
-                initialValue: [
-                  initParams.startTime ? moment(+initParams.startTime) : '',
-                  initParams.endTime ? moment(+initParams.endTime) : '',
-                ],
-              })(
-                <RangePicker
-                  style={{ width: 365 }}
-                  format="YYYY-MM-DD HH:mm"
-                  showTime={{
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                  }}
-                />,
+                <Input placeholder="请输入商品ID" style={{ width: 180 }} />,
               )}
             </FormItem>
             <FormItem label="活动类型">
               {getFieldDecorator('type', {
                 initialValue: Number(initParams.type) || '',
               })(
-                <Select placeholder="请选择活动类型" style={{ width: 140 }}>
+                <Select placeholder="请选择活动类型" style={{ width: 180 }}>
                   <Option value="">全部</Option>
                   {activityType.getArray().map((val, i) => (
                     <Option value={val.key} key={i}>
@@ -267,11 +250,27 @@ class List extends React.Component {
               {getFieldDecorator('status', {
                 initialValue: initParams.status || '',
               })(
-                <Select placeholder="请选择活动类型" style={{ width: 140 }}>
+                <Select placeholder="请选择活动类型" style={{ width: 180 }}>
                   <Option value="">全部</Option>
                   <Option value="0">关闭</Option>
                   <Option value="1">开启</Option>
                 </Select>,
+              )}
+            </FormItem>
+            <FormItem label="有效时间">
+              {getFieldDecorator('time', {
+                initialValue: [
+                  initParams.startTime ? moment(+initParams.startTime) : '',
+                  initParams.endTime ? moment(+initParams.endTime) : '',
+                ],
+              })(
+                <RangePicker
+                  style={{ width: 430 }}
+                  format="YYYY-MM-DD HH:mm"
+                  showTime={{
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                  }}
+                />,
               )}
             </FormItem>
             <div style={{ textAlign: 'right', marginTop: 8 }}>
