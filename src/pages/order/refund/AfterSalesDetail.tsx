@@ -16,7 +16,7 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     visible: false,
   };
   isRefundStatusOf(refundStatus: number) {
-    let orderServerVO = this.props.data.orderServerVO || {};
+    let orderServerVO = Object.assign({}, this.props.data.orderServerVO);
     return orderServerVO.refundStatus === refundStatus;
   }
   render() {
