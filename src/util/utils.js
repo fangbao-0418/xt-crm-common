@@ -167,13 +167,14 @@ export const prefix = url => {
         typeof mockConfig == 'object' &&
         mockConfig['apiList'] instanceof Array
       ) {
+        console.log(url, mockConfig, '-------------')
         const isMock = mockConfig['apiList'].find((item) => {
           const path = item.replace(/{/g, ':').replace(/}/g, '');
           return pathToRegexp(path).test(url);
         })
         if (isMock) {
           console.log(url);
-          return `/mock/${url}`;
+          return `/mock${url}`;
         } else {
           apiDomain = LocalStorage.get('apidomain') || baseHost;
         }

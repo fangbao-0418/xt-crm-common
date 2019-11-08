@@ -8,7 +8,8 @@ const replaceHttpUrl = (imgUrl = '') => {
   return imgUrl;
 }
 
-const GoodCell = ({ productImage, skuName, properties, coverUrl, showImage = true }) => {
+const GoodCell = (props) => {
+  const { productImage, skuName, properties, coverUrl, showImage = true } = props
   return (
     <div>
       {

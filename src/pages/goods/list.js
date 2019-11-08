@@ -346,6 +346,7 @@ class GoodsList extends React.Component {
             </FormItem>
             <FormItem label="创建时间">{getFieldDecorator('goodsTime')(<RangePicker showTime />)}</FormItem>
             <FormItem label="操作时间">{getFieldDecorator('optionTime')(<RangePicker showTime />)}</FormItem>
+            {status === '2' && <FormItem label="一级类目">{getFieldDecorator('primaryCategory')(<Input placeholder="请输入一级类目"/>)}</FormItem>}
             <FormItem>
               <Button type="default" onClick={this.handleReset}>
                 清除条件

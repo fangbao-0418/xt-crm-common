@@ -1,5 +1,5 @@
 {
   "apiList": [
-    "/goods/checklist"
+    "/product/supplier/toAudit/list"
   ]
 }
