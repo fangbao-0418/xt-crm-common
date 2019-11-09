@@ -56,8 +56,8 @@ class PendingReview extends React.Component<Props, State> {
           status,
           ...values
         };
-        let checkVO = this.props.data.checkVO || {};
-        let orderServerVO = this.props.data.orderServerVO || {};
+        let checkVO = Object.assign({}, this.props.data.checkVO);
+        let orderServerVO = Object.assign({}, this.props.data.orderServerVO);
         if (status === 1) {
           payload.returnContact = checkVO.returnContact;
           payload.returnPhone = checkVO.returnPhone;
@@ -81,7 +81,7 @@ class PendingReview extends React.Component<Props, State> {
    * 审核信息对象
    */
   get checkVO() {
-    return this.props.data.checkVO || {};
+    return Object.assign({}, this.props.data.checkVO);
   }
   /**
    * 售后单价
@@ -138,13 +138,13 @@ class PendingReview extends React.Component<Props, State> {
    * 售后申请信息对象
    */
   get orderServerVO(): AfterSalesInfo.OrderServerVO {
-    return this.props.data.orderServerVO || {};
+    return Object.assign({}, this.props.data.orderServerVO);
   }
   /**
    * 订单信息对象
    */
   get orderInfoVO(): AfterSalesInfo.OrderInfoVO {
-    return this.props.data.orderInfoVO || {};
+    return Object.assign({}, this.props.data.orderInfoVO);
   }
   /**
    * 联系方式对象

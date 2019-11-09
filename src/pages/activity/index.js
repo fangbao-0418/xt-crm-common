@@ -22,6 +22,18 @@ const InfoDetail = Loadable({
   loading: Loader,
 });
 
+/** 满赠列表 */
+const Marketing = Loadable({
+  loader: () => import('./marketing'),
+  loading: Loader,
+});
+
+/** 满赠详情 */
+const MarketingDetail = Loadable({
+  loader: () => import('./marketing/detail'),
+  loading: Loader
+})
+
 /** 花呗分期列表 */
 const CreaditPay = Loadable({
   loader: () => import('./credit_pay'),
@@ -53,6 +65,8 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/info/edit/:id?`} component={InfoEdit} />
         <Route path={`${match.url}/info/detail/:id`} component={InfoDetail} />
         <Route path={`${match.url}/add`} component={Add} />
+        <Route path={`${match.url}/marketing`} exact component={Marketing} />
+        <Route path={`${match.url}/marketing/:type/:id`} component={MarketingDetail} />
         <Route path={`${match.url}/credit_pay`} exact component={CreaditPay} />
         <Route path={`${match.url}/credit_pay/:id`} component={CreaditPayDetail} />
         <Route path={`${match.url}/luckdraw/list`} component={LuckDrawList} />
