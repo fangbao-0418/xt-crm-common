@@ -10,12 +10,12 @@
   margin-top: 10px;
 }
 
-.mt20 {
-  margin-top: 20px;
-}
-
 .mt15 {
   margin-top: 15px;
+}
+
+.mt20 {
+  margin-top: 20px;
 }
 
 .mb10 {
@@ -51,6 +51,10 @@
 .line {
   height: 1px;
   background: #e8e8e8;
+}
+
+.hidden {
+  display: none;
 }
 
 .loading {

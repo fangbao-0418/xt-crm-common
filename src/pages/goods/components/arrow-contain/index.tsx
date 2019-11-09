@@ -36,6 +36,7 @@ class Main extends React.Component<Props, State> {
         }}
       >
         <div
+          className={styles.controlWrap}
         >
           {this.props.children}
         </div>
