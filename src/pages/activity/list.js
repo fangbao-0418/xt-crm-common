@@ -218,7 +218,7 @@ class List extends React.Component {
               })(<Input placeholder="请输入活动名称" style={{ width: 180 }} />)}
             </FormItem>
             <FormItem label="活动ID">
-              {getFieldDecorator('id', {
+              {getFieldDecorator('promotionId', {
                 initialValue: initParams.id,
               })(<Input placeholder="请输入活动ID" style={{ width: 180 }} />)}
             </FormItem>
