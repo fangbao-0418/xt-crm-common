@@ -100,8 +100,10 @@ class List extends React.Component {
     const {
       form: { resetFields },
     } = this.props;
-    resetFields();
-    this.handleSearch();
+    this.setState({ initParams: {} }, () => {
+      resetFields();
+      this.handleSearch();
+    });
   };
 
   handleTabChange = e => {
