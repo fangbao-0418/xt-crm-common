@@ -19,13 +19,8 @@ const Check = Loadable({
   loading: Loader
 })
 
-const CheckEdit = Loadable({
-  loader: () => import('./CheckEdit'),
-  loading: Loader
-})
-
-const CheckDetail = Loadable({
-  loader: () => import('./CheckDetail'),
+const detail = Loadable({
+  loader: () => import('./detail'),
   loading: Loader
 })
 
@@ -39,8 +34,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/edit/:id?`} component={Edit} />
         <Route path={`${match.url}/category`} component={Category} />
         <Route path={`${match.url}/check`} component={Check} />
-        <Route path={`${match.url}/checkedit/:id?`} component={CheckEdit} />
-        <Route path={`${match.url}/checkdetail/:id?`} component={CheckDetail} />
+        <Route path={`${match.url}/detail/:id?`} component={detail} />
       </Switch>
     );
   }

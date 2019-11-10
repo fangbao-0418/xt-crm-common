@@ -1,3 +1,4 @@
+import React from 'react'
 import { FieldsConfig, OptionProps } from '@/packages/common/components/form/index'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
@@ -15,7 +16,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig  {
       },
       firstCategoryName: {
         label: '一级类目',
-        type: 'input'
+        type: 'select'
       },
       supplierName: {
         label: '供应商名称',
@@ -62,4 +63,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig  {
     }    
   }
   return defaultConfig;
+}
+
+export const auditStatusConfig = {
+  '-1': '全部',
+  '0': '待提交',
+  '1': '待审核',
+  '2': '审核不通过',
+  '3': '审核通过'
 }

@@ -42,3 +42,24 @@ export function get1688Sku(storeProductId) {
 export function getToAuditList(data) {
   return newPost(`/product/supplier/toAudit/list`, data)
 }
+
+/**
+ * 获取一级类目
+ */
+export function getCategoryTopList () {
+  return post('/category/list', { level: 1}).then((res) => {
+    return (res || []).map((item) => {
+      return {
+        label: item.name,
+        value: item.id
+      }
+    })
+  })
+}
+
+/**
+ * 审核商品
+ */
+export function auditGoods(data) {
+  return newPost('/product/supplier/toAudit/audit', data)
+}
