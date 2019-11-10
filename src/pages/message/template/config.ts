@@ -14,11 +14,11 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       type: {
         type: 'select', label: '模板类型',
         options: [
-          {label: '短信', value: 0},
-          {label: 'PUSH', value: 2},
-          {label: '站内信', value: 3},
-          {label: '服务号', value: 4},
-          {label: '小程序', value: 5}
+          {label: '短信', value: 20},
+          {label: 'PUSH', value: 0},
+          {label: '站内信', value: 10},
+          {label: '服务号', value: 30},
+          {label: '小程序', value: 40}
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -32,8 +32,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       status: {
         type: 'select', label: '状态',
         options: [
-          {label: '已启用', value: '0'},
-          {label: '已禁用', value: '1'}
+          {label: '已启用', value: 1},
+          {label: '已禁用', value: 0}
         ] 
       },
       createTime: {
@@ -46,7 +46,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select', label: '模板分类',
         options: [
           {label: '交易信息', value: 'transaction'},
-          {label: '团队收益', value: 'teamincome'},
+          {label: '团队收益', value: 'teamIncome'},
           {label: '活动消息', value: 'activity'},
           {label: '系统通知', value: 'system'}
         ],

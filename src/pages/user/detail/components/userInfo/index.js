@@ -3,7 +3,7 @@ import { Card, Descriptions, Table, Button, Form, Select, Modal, Input } from 'a
 import moment from 'moment';
 import { connect, parseQuery, setQuery } from '@/util/utils';
 import styles from './index.module.scss';
-// import Modal from './modal';
+import UserModal from './modal';
 import ModalInvit from './modalInvit';
 import { levelName } from '../../../utils';
 import { memberModify, getReasonList } from '../../api'
@@ -234,7 +234,7 @@ export default class extends Component {
             </div>
           </div>
         </Card>
-        <Modal />
+        <UserModal />
         <ModalInvit />
 
         <Modal

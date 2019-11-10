@@ -133,7 +133,7 @@ class Main extends React.Component<Props> {
           }}
           formItemLayout={(
             <>
-              <FormItem name='id' />
+              <FormItem label='模板标题' name='templateTitle' />
               <FormItem name='type' />
               <FormItem name='status' />
               <FormItem name='createTime' />

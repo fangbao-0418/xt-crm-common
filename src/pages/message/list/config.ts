@@ -38,10 +38,11 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       messageStatus: {
         type: 'select', label: '状态',
         options: [
-          {label: '待发送', value: '0'},
-          {label: '已取消', value: '3'},
-          {label: '进行中', value: '2'},
-          {label: '已完成', value: '4'}
+          {label: '待发送', value: 0},
+          {label: '已取消', value: 4},
+          {label: '进行中', value: 2},
+          {label: '发送异常', value: 3},
+          {label: '已完成', value: 1}
         ]
       },
       groupType: {
@@ -49,7 +50,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         options: memberOptions
       },
       sendTime: {
-        type: 'rangepicker', label: '发送时间',
+        type: 'rangepicker', label: '创建时间',
         controlProps: {
           showTime: true
         },
@@ -65,8 +66,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       messageType: {
         type: 'select', label: '消息通道',
         options: [
-          {label: 'push', value: '0'},
-          {label: '站内信', value: '10'}
+          {label: 'push', value: 0},
+          {label: '站内信', value: 10}
         ],
         fieldDecoratorOptions: {
           rules: [
