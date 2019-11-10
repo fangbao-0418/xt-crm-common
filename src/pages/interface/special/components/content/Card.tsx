@@ -161,6 +161,7 @@ class Main extends React.Component<Props, State> {
             <ActivityList text="选择活动商品" confirm={this.handleSelectActivity} />
             <GoodsTransfer
               title="选择商品"
+              currentGoodsList={this.tempList}
               dataSource={goodsListByCurrentActivity}
               visible={transferGoodsVisible}
               onCancel={this.goodsTransferCancel}

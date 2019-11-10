@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Transfer, Modal } from 'antd';
+import { every } from 'lodash';
 
 export default class extends React.PureComponent<any, any> {
   constructor(props: any) {
@@ -35,14 +36,28 @@ export default class extends React.PureComponent<any, any> {
   };
 
   render() {
-    const { dataSource, header, ...props } = this.props;
+    const { dataSource, header, currentGoodsList, ...props } = this.props;
     const { targetKeys } = this.state;
+    let tempDataSource = dataSource;
+    if (currentGoodsList && currentGoodsList.length) {
+      tempDataSource = dataSource.map((item: any) => {
+        const isExist = currentGoodsList.find((goods: any) => {
+          return goods.id === item.id;
+        });
+        if (isExist) {
+          item.disabled = true;
+        } else {
+          item.disabled = false;
+        }
+        return item;
+      });
+    }
     return (
       <Modal width={888} maskClosable={false} {...props} onOk={this.onOk}>
         {header}
         <Transfer
           rowKey={record => record.productId}
-          dataSource={dataSource}
+          dataSource={tempDataSource}
           render={item => {
             return (
               <span>
