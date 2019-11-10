@@ -42,7 +42,7 @@ export default class extends React.PureComponent<any, any> {
     if (currentGoodsList && currentGoodsList.length) {
       tempDataSource = dataSource.map((item: any) => {
         const isExist = currentGoodsList.find((goods: any) => {
-          return goods.id === item.id;
+          return goods.id === item.productId;
         });
         if (isExist) {
           item.disabled = true;
