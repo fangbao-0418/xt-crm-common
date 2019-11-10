@@ -24,6 +24,11 @@ const detail = Loadable({
   loading: Loader
 })
 
+const PricingStrategy = Loadable({
+  loader: () => import('./pricing-strategy'),
+  loading: Loader,
+})
+
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -35,6 +40,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/category`} component={Category} />
         <Route path={`${match.url}/check`} component={Check} />
         <Route path={`${match.url}/detail/:id?`} component={detail} />
+        <Route path={`${match.url}/pricingStrategy`} component={PricingStrategy} />
       </Switch>
     );
   }

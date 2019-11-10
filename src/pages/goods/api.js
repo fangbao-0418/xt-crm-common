@@ -1,4 +1,5 @@
-import { post, newPost, exportFile, get } from '../../util/fetch';
+import { post, exportFile, get, newGet, newPost } from '../../util/fetch';
+
 export function getStoreList(data) {
   return post('/store/list', data);
 }
@@ -62,4 +63,9 @@ export function getCategoryTopList () {
  */
 export function auditGoods(data) {
   return newPost('/product/supplier/toAudit/audit', data)
+}
+
+//获取定价策略列表
+export function getStrategyByCategory(data) {
+  return newGet('/product/price/rule/getByCategoryId', data);
 }

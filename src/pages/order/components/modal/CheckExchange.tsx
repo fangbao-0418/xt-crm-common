@@ -44,7 +44,7 @@ class CheckExchange extends React.Component<Props, State> {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
-    const checkVO = this.props.checkVO || {};
+    const checkVO = Object.assign({}, this.props.checkVO);
     return (
       <>
         <Modal

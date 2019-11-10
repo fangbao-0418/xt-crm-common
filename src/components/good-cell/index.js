@@ -9,7 +9,8 @@ const replaceHttpUrl = (imgUrl = '') => {
 }
 
 const GoodCell = (props) => {
-  const { productImage, skuName, properties, coverUrl, showImage = true } = props
+  const { productImage, skuName, properties, coverUrl, showImage = true, orderType, refundType, isRefund } = props
+  const isGive = isRefund ? false : String(orderType) === '50'
   return (
     <div>
       {
@@ -18,7 +19,10 @@ const GoodCell = (props) => {
         </div>
       }
       <div style={showImage?{ marginLeft:116}:{marginLeft:0,textAlign:'left'}}>
-        <div>{skuName}</div>
+        <div>
+          {isGive && <span style={{border: '1px solid red', fontSize: 12, color: 'red', padding: '0 2px', margin: '0 2px'}}>赠</span>}
+          {skuName}
+        </div>
         <div style={{ marginTop: 8 }}>{properties ? `${properties}` : ''}</div>
       </div>
     </div>
