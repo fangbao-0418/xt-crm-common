@@ -29,9 +29,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig  {
           label: '全部',
           value: -1
         }, {
-          label: '待提交',
-          value: 0
-        }, {
           label: '待审核',
           value: 1
         }, {
@@ -67,7 +64,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig  {
 
 export const auditStatusConfig = {
   '-1': '全部',
-  '0': '待提交',
   '1': '待审核',
   '2': '审核不通过',
   '3': '审核通过'

@@ -7,7 +7,7 @@ import moment from 'moment';
 import * as api from '../api';
 import { auditStatusConfig } from './config';
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form';
-import SelecFetch from '@/components/select-fetch';
+import SelectFetch from '@/components/select-fetch';
 import SuppilerSelect from '@/components/suppiler-select';
 import { getCategoryTopList } from '../api';
 interface State {
@@ -42,7 +42,7 @@ class Main extends React.Component<any, State> {
   };
   public columns: ColumnProps<GoodsCheck.ItemProps>[] = [
     {
-      title: 'id',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
     },
@@ -108,16 +108,24 @@ class Main extends React.Component<any, State> {
       dataIndex: 'operate',
       key: 'operate',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
-        return (
+        return record.auditStatus === 1 ? (
           <Button
-            type="primary"
+            type='primary'
             onClick={() => {
-              APP.history.push(`/goods/detail/${record.id}?page=1&pageSize=10`);
+              APP.history.push(`/goods/detail/${record.id}?auditStatus=${record.auditStatus}`);
             }}
           >
-            {record.auditStatus === 1 ? '审核' : '查看'}
+            审核
           </Button>
-        );
+        ): (
+          <Button
+            onClick={() => {
+              APP.history.push(`/goods/detail/${record.id}?auditStatus=${record.auditStatus}`);
+            }}
+          >
+            查看
+          </Button>
+        )
       },
     },
   ];
@@ -187,12 +195,21 @@ class Main extends React.Component<any, State> {
             }
           >
             <FormItem label="商品名称" name="productName" />
-            <FormItem label="商品ID" name="productId" />
+            <FormItem
+              label="商品ID"
+              name="id"
+              type="number"
+              controlProps={{
+                style: {
+                  width: '167px'
+                }
+              }}
+            />
             <FormItem
               label="一级类目"
               inner={form => {
-                return form.getFieldDecorator('firstCategoryName')(
-                  <SelecFetch
+                return form.getFieldDecorator('firstCategoryId')(
+                  <SelectFetch
                     style={{ width: '174px' }}
                     fetchData={() => {
                       return getCategoryTopList();
@@ -204,7 +221,7 @@ class Main extends React.Component<any, State> {
             <FormItem
               label="供应商名称"
               inner={form => {
-                return form.getFieldDecorator('supplierName')(
+                return form.getFieldDecorator('storeId')(
                   <SuppilerSelect style={{ width: '174px' }} />,
                 );
               }}
@@ -222,10 +239,6 @@ class Main extends React.Component<any, State> {
                 {
                   label: '全部',
                   value: -1,
-                },
-                {
-                  label: '待提交',
-                  value: 0,
                 },
                 {
                   label: '待审核',

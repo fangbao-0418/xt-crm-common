@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, Input, Button, Radio, Table } from 'antd';
+import { Card, Form, Input, Button, Radio, Table, message } from 'antd';
 import {
   map,
   uniqWith,
@@ -10,7 +10,7 @@ import { getStoreList, getGoodsDetial } from './api';
 import SkuUploadItem from './SkuUploadItem'
 import Image from '@/components/Image'
 import styles from './edit.module.scss';
-import { replaceHttpUrl } from '@/util/utils'
+import { replaceHttpUrl, parseQuery } from '@/util/utils'
 import { auditGoods } from './api'
 const { TextArea } = Input
 const formLayout = {
@@ -194,6 +194,7 @@ class GoodsEdit extends React.Component {
   constructor(props) {
     super(props)
     this.productId = props.match.params.id
+    this.auditStatus = parseQuery().auditStatus
   }
   supplier = []
   state = {
@@ -240,12 +241,18 @@ class GoodsEdit extends React.Component {
     });
   };
   handleSave = () => {
-    this.props.form.validateFields((errors, values) => {
+    this.props.form.validateFields(async (errors, values) => {
       if (!errors) {
-        auditGoods({
+        const res = await auditGoods({
           productId: this.productId,
           ...values
         })
+        if (res) {
+          message.success('审核成功')
+          APP.history.go(-1)
+        } else {
+          message.error('审核失败')
+        }
       }
     })
   }
@@ -305,7 +312,11 @@ class GoodsEdit extends React.Component {
         /** 视频地址 */
         videoUrl,
         /** 上下架状态 */
-        status
+        status,
+        /** 审核结果 */
+        auditStatus,
+        /** 审核说明 */
+        auditInfo
       }
     } = this.state;
     const storeItem = (this.supplier || []).find(v => v.id === storeId) || {};
@@ -431,32 +442,63 @@ class GoodsEdit extends React.Component {
           <Form.Item label="上架状态">{status === 1 ? '上架': '下架'}</Form.Item>
         </Card>
         <Card title="审核结果">
-          <Form.Item label="审核结果" required>
-            {getFieldDecorator('auditStatus', {
-              required: true
-            })(
-              <Radio.Group>
-                <Radio value={2}>通过</Radio>
-                <Radio value={3}>不通过</Radio>
-              </Radio.Group>
-            )}
-          </Form.Item>
-          <Form.Item label="审核说明">
-            {getFieldDecorator('auditInfo')(<TextArea placeholder="请输入审核说明"/>)}
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" onClick={this.handleSave} style={{ marginRight: 10 }}>
-              保存
-            </Button>
-            <Button
-              type="danger"
-              onClick={() => {
-                APP.history.go(-1)
-              }}
-            >
-              返回
-            </Button>
-          </Form.Item>
+          {
+            this.auditStatus === '1'? (
+              <>
+                <Form.Item label="审核结果" required>
+                  {getFieldDecorator('auditStatus', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '请选择审核结果'
+                      }
+                    ]
+                  })(
+                    <Radio.Group>
+                      <Radio value={2}>通过</Radio>
+                      <Radio value={3}>不通过</Radio>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
+                <Form.Item label="审核说明">
+                  {getFieldDecorator('auditInfo', {
+                    rules: [{
+                      validator: (rule, value = '', callback) => {
+                        const { getFieldValue } = this.props.form
+                        if (getFieldValue('auditStatus') === 3 && !value.trim()) {
+                          callback('请输入审核说明')
+                        } else {
+                          callback()
+                        }
+                      }
+                    }]
+                  })(<TextArea placeholder="请输入审核说明"/>)}
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    onClick={this.handleSave}
+                    style={{ marginRight: 10 }}
+                  >
+                    保存
+                  </Button>
+                  <Button
+                    type="danger"
+                    onClick={() => {
+                      APP.history.go(-1)
+                    }}
+                  >
+                    返回
+                  </Button>
+                </Form.Item>
+              </>
+            ): (
+              <>
+                <Form.Item label="审核结果">{auditStatus === 2 ? '通过': '不通过'}</Form.Item>
+                <Form.Item label="审核说明">{auditInfo || '无'}</Form.Item>
+              </>
+            )
+          }
         </Card>
       </Form>
     );
