@@ -1,17 +1,17 @@
 import React from 'react';
-import { Card, Form, Input, Button, message, Radio, Table } from 'antd';
+import { Card, Form, Input, Button, Radio, Table } from 'antd';
 import {
   map,
-  uniqWith
+  uniqWith,
+  memoize
 } from 'lodash' 
 import MoneyRender from '@/components/money-render'
-import { mapTree, treeToarr, parseQuery } from '@/util/utils';
-import { getStoreList, getGoodsDetial, getCategoryList } from './api';
-import { gotoPage } from '@/util/utils';
+import { getStoreList, getGoodsDetial } from './api';
 import SkuUploadItem from './SkuUploadItem'
 import Image from '@/components/Image'
 import styles from './edit.module.scss';
 import { replaceHttpUrl } from '@/util/utils'
+import { auditGoods } from './api'
 const { TextArea } = Input
 const formLayout = {
   labelCol: {
@@ -125,6 +125,12 @@ function filterProp(obj) {
   return Object.keys(collection).filter((key) => obj[key])
 }
 
+/** 返回地址 */
+function getAddress(...args) {
+  args = args.filter(Boolean)
+  return args.length > 0 ? args.join(' '): '无'
+}
+
 /**
  * 获取动态列
  * @param {*} obj 
@@ -145,9 +151,10 @@ function getDynamicColumns (obj) {
  * @param {*} obj 
  * @param {*} list 
  */
-function getSpecs(obj) {
+const getSpecs = memoize(function(obj) {
   obj = obj || {}
   return filterProp(obj).map(prop => {
+    console.log('obj=>', obj)
     const item = collection[prop] || {}
     return {
       title: obj[prop],
@@ -161,7 +168,7 @@ function getSpecs(obj) {
       })
     }
   })
-}
+})
 
 /**
  * 去重property
@@ -174,59 +181,53 @@ function uniqWithProp(list, propName) {
   })
 }
 
+/**
+ * 矫正videoUrl
+ * @param {*} url 
+ */
+function normalizeVideoUrl(url) {
+  const index = url.indexOf('?');
+  return url.indexOf('?') !== -1 ? url.slice(0, index): url;
+}
+
 class GoodsEdit extends React.Component {
+  constructor(props) {
+    super(props)
+    this.productId = props.match.params.id
+  }
+  supplier = []
   state = {
-    supplier: [],
     detail: {}
   };
   componentDidMount() {
     this.getStoreList();
-    this.getGoodsDetial();
   }
 
-  // getCategoryList = () => {
-  //   getCategoryList().then(res => {
-  //     const arr = Array.isArray(res) ? res : [];
-  //     const categoryList = arr.map(org => mapTree(org));
-  //     this.setState({
-  //       categoryList
-  //     }, () => {
-  //       this.getGoodsDetial(res)
-  //     });
-
-  //   })
-  // }
   setDefaultValue = (filedValue) => {
     return filedValue || (this.readOnly ? '无' : '');
   }
+  /**
+   * 获取详情数据
+   */
   getGoodsDetial = () => {
-    // const {
-    //   form: { setFieldsValue },
-    // } = this.props;
-    // const {
-    //   match: {
-    //     params: { id },
-    //   },
-    // } = this.props;
-
-    // let { supplier } = this.state;
-    // if (!id) {
-    //   setFieldsValue({
-    //     showNum: 1
-    //   })
-    //   return
-    // };
-    getGoodsDetial({ productId: this.props.match.params.id }).then((res = {}) => {
-      let { supplier } = this.state;
-      const currentSupplier = (supplier || []).find(item => item.id === res.storeId) || {};
-      res.listImage = res.listImage ? res.listImage.split(',') : []
-      res.productImage = res.productImage ? res.productImage.split(','): []
+    getGoodsDetial({ productId: this.productId }).then((res = {}) => {
+      const currentSupplier = (this.supplier || []).find(item => item.id === res.storeId) || {};
       res.combineName = res.productCategoryVO && res.productCategoryVO.combineName
       res.interceptionVisible = currentSupplier.category == 1 ? false : true
       res.barCode = this.setDefaultValue(res.barCode)
-      res.videoCoverUrl = replaceHttpUrl(res.videoCoverUrl) 
+      /** 商品详情页 */
+      res.listImage = res.listImage ? res.listImage.split(',').map(url => replaceHttpUrl(url)) : []
+      /** 商品图片 */
+      res.productImage = res.productImage ? res.productImage.split(',').map(url => replaceHttpUrl(url)): []
+      /** 商品视频封面 */
+      res.videoCoverUrl = replaceHttpUrl(res.videoCoverUrl)
+      /** 商品主图 */
+      res.coverUrl = replaceHttpUrl(res.coverUrl)
+      /** banner图片 */
+      res.bannerUrl = replaceHttpUrl(res.bannerUrl)
+      /** 商品视频 */
+      res.videoUrl = normalizeVideoUrl(res.videoUrl)
       this.setState({
-        showImage: false,
         showNum: res.showNum !== undefined ? res.showNum : 1,
         detail: res
       });
@@ -234,53 +235,80 @@ class GoodsEdit extends React.Component {
   };
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
-      this.setState({
-        supplier: res.records,
-      });
+      this.supplier = res.records 
+      this.getGoodsDetial()
     });
   };
+  handleSave = () => {
+    this.props.form.validateFields((errors, values) => {
+      if (!errors) {
+        auditGoods({
+          productId: this.productId,
+          ...values
+        })
+      }
+    })
+  }
   render() {
     const { getFieldDecorator } = this.props.form;
     const {
-      supplier,
       detail,
       detail: {
+        /** 是否可拦截 */
         interceptionVisible,
+        /** 商品简称 */
         productShortName,
+        /** 商品编码 */
         productCode,
+        /** 商品简介 */
         description,
+        /** 商品条码 */
         barCode,
+        /** 供应商ID */
         storeId,
+        /** 供应商商品ID */
         storeProductId,
+        /** 是否可被拦截发货 */
         interception,
+        /** 是否需要实名认证 */
         isAuthentication,
+        /** 是否展示销量 */
         showNum,
+        /** 视频封面地址 */
         videoCoverUrl,
+        /** 商品名称 */
         productName,
+        /** 商品类目 */
         combineName,
+        /** 商品详情图 */
         listImage,
+        /** 运费设置 */
         withShippingFree,
+        /** 商品主图 */
         coverUrl,
+        /** banner图片 */
         bannerUrl,
+        /** 商品图片 */
         productImage,
+        /** 物流体积 */
         bulk,
+        /** 物流重量 */
         weight,
+        /** 退货联系人 */
         returnContact,
+        /** 退货联系电话 */
         returnPhone,
+        /** 退货地址 */
         returnAddress,
+        /** sku列表 */
         skuList,
-        videoUrl
+        /** 视频地址 */
+        videoUrl,
+        /** 上下架状态 */
+        status
       }
     } = this.state;
-    console.log('detail=>', detail)
-    const storeItem = (supplier || []).find(v => v.id === storeId) || {};
-    const {
-      match: {
-        params: { id },
-      },
-    } = this.props;
-    console.log('DynamicColumns=>', getDynamicColumns(detail))
-    console.log('specs=>', getSpecs(detail))
+    const storeItem = (this.supplier || []).find(v => v.id === storeId) || {};
     return (
       <Form {...formLayout}>
         <Card title="商品审核/详情">
@@ -305,7 +333,7 @@ class GoodsEdit extends React.Component {
             />
           </Form.Item>
           <Form.Item label="商品视频">
-          {videoUrl ? <vidio src={videoUrl} controls="controls" height={102} width={102}></vidio>: '无'}
+          {videoUrl ? <video src={videoUrl} controls="controls" height={102} width={102} />: '无'}
           </Form.Item>
           <Form.Item label="商品主图">
             <Image
@@ -367,7 +395,7 @@ class GoodsEdit extends React.Component {
           )
         })}
           <Table
-            rowKey={(record) => record.id}
+            rowKey="skuId"
             style={{ marginTop: 10 }}
             columns={getDynamicColumns(detail).concat(columns)}
             dataSource={skuList}
@@ -383,7 +411,7 @@ class GoodsEdit extends React.Component {
               span: 18
             }}
           >
-            {[returnContact, returnPhone, returnAddress].filter(Boolean).join(' ')}
+            {getAddress(returnContact, returnPhone, returnAddress)}
           </Form.Item>
         </Card>
         <Card title="商品详情" style={{ marginTop: 10 }}>
@@ -395,15 +423,18 @@ class GoodsEdit extends React.Component {
                   height: '102px',
                   marginRight: '10px'
                 }}
+                key={url}
                 src={url}
               />
             )) : '无'}
           </Form.Item>
-          <Form.Item label="上架状态">{this.state.status === 1 ? '上架': '下架'}</Form.Item>
+          <Form.Item label="上架状态">{status === 1 ? '上架': '下架'}</Form.Item>
         </Card>
         <Card title="审核结果">
-          <Form.Item label="审核结果">
-            {getFieldDecorator('auditStatus')(
+          <Form.Item label="审核结果" required>
+            {getFieldDecorator('auditStatus', {
+              required: true
+            })(
               <Radio.Group>
                 <Radio value={2}>通过</Radio>
                 <Radio value={3}>不通过</Radio>
@@ -417,7 +448,12 @@ class GoodsEdit extends React.Component {
             <Button type="primary" onClick={this.handleSave} style={{ marginRight: 10 }}>
               保存
             </Button>
-            <Button type="danger" onClick={() => gotoPage('/goods/list')}>
+            <Button
+              type="danger"
+              onClick={() => {
+                APP.history.go(-1)
+              }}
+            >
               返回
             </Button>
           </Form.Item>
