@@ -152,6 +152,7 @@ class edit extends React.Component<Props, State> {
                 <InputNumber
                   placeholder="请输入"
                   value={record.cost}
+                  precision={2}
                   onChange={(value: any) => {
                     const { templateData } = this.state;
                     templateData[index].cost = value;
@@ -159,7 +160,7 @@ class edit extends React.Component<Props, State> {
                       templateData,
                     });
                   }}
-                  min={0.01}
+                  min={0}
                   style={{ width: 80 }}
                 />
               </Radio>
@@ -210,7 +211,6 @@ class edit extends React.Component<Props, State> {
             });
           }}
           onChange={(checkedValue: any) => {
-            console.log(checkedValue, 'on xxxxxxxxxxxxxx')
             this.setState({
               destinationList: checkedValue
             });
@@ -246,7 +246,13 @@ class edit extends React.Component<Props, State> {
                           message: '请输入默认运费',
                         },
                       ],
-                    })(<InputNumber placeholder="请输入" min={0.01} style={{ width: 80 }} />)}
+                    })(
+                    <InputNumber
+                      placeholder="请输入"
+                      min={0}
+                      precision={2}
+                      style={{ width: 80 }}
+                    />)}
                     <span className="ml10">元</span>
                   </Form.Item>
                 }
