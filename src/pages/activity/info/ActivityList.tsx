@@ -165,7 +165,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
           {text}
         </span>
         <Modal
-          title="选择转移目标活动"
+          title="选择活动"
           className="modalStyle"
           width={1030}
           visible={this.state.visible}
