@@ -21,7 +21,7 @@ class GoodsTable extends Component {
   }
   // 是否显示申请售后按钮
   showApplyBtn = (orderStatus, orderType) => {
-    return orderType !== 50 && [20, 30, 40, 50].includes(orderStatus)
+    return orderType !== 50 && [20, 25, 30, 40, 50].includes(orderStatus)
   }
   handleApply = (record) => {
     const { orderInfo = {}, childOrder = {}, memberId } = this.props;
