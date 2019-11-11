@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Card, Row, Col, Form, Checkbox, Button, Spin, Input, Icon, Modal, Table, Tree, message } from 'antd';
+import { Card, Row, Col, Form, Checkbox, Button, Switch, Spin, Input, Icon, Modal, Table, Tree, message } from 'antd';
 import './category.scss';
 import DateFns from 'date-fns';
 import { getPromotionList } from '../../activity/api';
 import { getFrontCategorys, getCategorys, getCategory, delCategory, saveFrontCategory, updateFrontCategory } from './api';
 import Ctree from './tree';
+import SecondaryCategory from './secondaryCategory'
 import activityType from '../../../enum/activityType'
 const FormItem = Form.Item;
 const { TreeNode } = Tree;
@@ -41,6 +42,9 @@ class InterFaceCategory extends Component {
     visible2: false,
     cateText: [],
     actText: [],
+    selectedSecondary: [],
+    secondaryIndex: null,
+    secondaryActText: [],
     selectedRows: [],
     cateList: [],
     selectedRowKeys: [],
@@ -53,7 +57,8 @@ class InterFaceCategory extends Component {
     actList: [],
     currId: 0,
     productCategoryVOS: [],
-    checkData: []
+    checkData: [],
+    switchStatus: false
   }
 
   selectedRows = []
@@ -77,13 +82,27 @@ class InterFaceCategory extends Component {
   }
 
 
-  handleClickModal = () => {
+  handleClickModal = (data = {}) => {
+    const { type, index, secondaryActText } = data;
+
     if (this.state.actList.length == 0) this.getPromotionList();
-    this.setState({
-      visible1: true,
-      selectedRowKeys: this.state.actText.map(val => val.id),
-      selectedRows: this.state.actText
-    });
+    
+    if(type === 'secondary'){
+      this.setState({
+        visible1Type: type,
+        visible1: true,
+        secondaryIndex: index,
+        selectedRowKeys: secondaryActText ? secondaryActText.map(val => val.id) : [],
+        selectedSecondary: secondaryActText || []
+      });
+    } else {
+      this.setState({
+        visible1Type: null,
+        visible1: true,
+        selectedRowKeys: this.state.actText.map(val => val.id),
+        selectedRows: this.state.actText
+      });
+    }
   };
   handleClickModalC = () => {
     this.setState({
@@ -218,12 +237,21 @@ class InterFaceCategory extends Component {
   };
 
   handlenChanageSelectio = (selectedRowKeys, selectedRows) => {
+    const { visible1Type, selectedSecondary } = this.state;
+
     const objKeys = {};
     let currSelectedRows = [];
     console.log(this.state.selectedRows)
-    this.state.selectedRows.forEach(val => {
-      objKeys[val.id] = val;
-    })
+    if(visible1Type !== null){
+      selectedSecondary.forEach(val => {
+        objKeys[val.id] = val;
+      })
+    } else {
+      this.state.selectedRows.forEach(val => {
+        objKeys[val.id] = val;
+      })
+    }
+    
     selectedRows.forEach(val => {
       objKeys[val.id] = val;
     })
@@ -233,6 +261,14 @@ class InterFaceCategory extends Component {
     currSelectedRows = currSelectedRows.filter(val => {
       return selectedRowKeys.includes(val.id)
     })
+
+    if(visible1Type !== null){
+      return this.setState({
+        selectedRowKeys,
+        selectedSecondary: currSelectedRows
+      });
+    } 
+
     this.setState({
       selectedRowKeys,
       selectedRows: currSelectedRows
@@ -251,6 +287,17 @@ class InterFaceCategory extends Component {
   };
 
   handleOkModal = e => {
+    const { visible1Type } = this.state;
+    console.log(visible1Type, 'visible1Type')
+    if(visible1Type !== null){
+      return this.setState({
+        secondaryActText: this.state.selectedSecondary,
+        visible1: false
+      }, () => {
+        console.log(this.state.secondaryActText, 'ppp')
+      })
+    }
+
     this.setState({
       actText: this.state.selectedRows,
       productCategoryVOS: [...this.state.cateText, ...this.state.selectedRows],
@@ -261,6 +308,14 @@ class InterFaceCategory extends Component {
   handleSearchModal = e => {
     this.getPromotionList({ name: e, page: 1 });
   };
+
+  //处理二级类目按钮开关
+  handleSwitchChange = (val) => {
+    console.log(val, 'switch')
+    this.setState({
+      switchStatus: val
+    })
+  }
 
   setCateText() {
     this.setState({
@@ -273,13 +328,16 @@ class InterFaceCategory extends Component {
   render() {
 
     const { getFieldDecorator } = this.props.form;
-    const { modalPage, visible1, visible2, selectedRowKeys, actList, productCategoryVOS } = this.state;
+    const { modalPage, visible1, visible2, selectedRowKeys, 
+        actList, productCategoryVOS, switchStatus, secondaryIndex, 
+        secondaryActText 
+      } = this.state;
     return (
       <div className="intf-cat-box">
         <Card>
           <Row className="intf-cat-list">
             {this.state.cateList.map((val, i) => {
-              return <Col className={this.state.currId == val.id ? 'act' : ''} span={3} ke={i} onClick={() => this.getCategory(val.id)}>{val.name}</Col>
+              return <Col className={this.state.currId == val.id ? 'act' : ''} span={3} key={val.id} onClick={() => this.getCategory(val.id)}>{val.name}</Col>
             })}
             <Col span={3} onClick={() => this.addCategory()}>+添加类目</Col>
           </Row>
@@ -348,9 +406,23 @@ class InterFaceCategory extends Component {
                   })}<Button type="link" onClick={this.handleClickModal}>+添加活动</Button></div>) : ''}
               </div>)}
             </FormItem>
+            <FormItem label="二级类目">
+              {getFieldDecorator('sort', {
+                onChange: this.handleSwitchChange,
+                initialValue: switchStatus
+              })(<Switch/>)}
+              <SecondaryCategory 
+                secondaryIndex={secondaryIndex} 
+                secondaryActText={secondaryActText}
+                handleClickModal={this.handleClickModal}
+              ></SecondaryCategory>
+            </FormItem>
             <Form.Item {...tailFormItemLayout}>
-              {this.state.currId ? <Button type="danger" ghost style={{ marginRight: '10px' }} onClick={() => this.delCategory()}>删除</Button> : ''}
-              <Button type="primary" onClick={() => this.handleSave()}>保存</Button>
+              <div style={{textAlign: 'right'}}>
+                {this.state.currId ? <Button type="danger" ghost style={{ marginRight: '10px' }} onClick={() => this.delCategory()}>删除</Button> : ''}
+                <Button type="primary" onClick={() => this.handleSave()}>保存</Button>
+           
+              </div>
             </Form.Item>
           </Form>
         </Card>
