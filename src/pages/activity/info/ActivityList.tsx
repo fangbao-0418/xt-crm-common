@@ -199,7 +199,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
               </FormItem>
               <FormItem label="商品ID">
                 {getFieldDecorator('pid')(
-                  <Input placeholder="请输入商品id" style={{ width: 150 }} />,
+                  <Input placeholder="请输入商品ID" style={{ width: 150 }} />,
                 )}
               </FormItem>
               <FormItem label="商品名称">
