@@ -140,6 +140,7 @@ class edit extends React.Component<Props, State> {
           return (
             <Radio.Group
               onChange={(e: RadioChangeEvent) => {
+                console.log('e=>', e.target.value)
                 const { templateData } = this.state;
                 templateData[index].rankType = e.target.value;
                 this.setState({
