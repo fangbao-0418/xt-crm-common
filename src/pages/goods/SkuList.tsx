@@ -4,9 +4,10 @@ import { ColumnProps } from 'antd/lib/table'
 import { getColumns } from './constant';
 import CardTitle from './CardTitle';
 import SkuUploadItem from './SkuUploadItem';
-import descartes from '../../util/descartes';
 import styles from './edit.module.scss';
-import { size, map, concat } from 'lodash';
+import { size, map } from 'lodash';
+import { accAdd, Subtr, accMul, accDiv } from '@/util/utils';
+
 
 export interface SkuProps {
   /** 供应商id */
@@ -44,6 +45,7 @@ interface Props {
   dataSource: SkuProps[]
   showImage: boolean
   onChange?: (value: SkuProps[], specs: Spec[], showImage: boolean) => void
+  strategyData: {},
 }
 interface SpecItem {
   specName: string;
@@ -73,7 +75,8 @@ interface State {
   tempSpuPicture: any[];
   /** 添加规格名propover显示状态 */
   dimensionNamePropoverStatus: boolean
-  dataSource: SkuProps[]
+  dataSource: SkuProps[],
+  strategyData: any
 }
 class SkuList extends React.Component<Props, State>{
   state: State = {
@@ -88,14 +91,15 @@ class SkuList extends React.Component<Props, State>{
     tempSpuName: '',
     tempSpuPicture: [],
     dimensionNamePropoverStatus: false,
-    dataSource: this.props.dataSource
+    dataSource: this.props.dataSource,
+    strategyData: {}
   }
   public componentWillReceiveProps (props: Props) {
-    console.log(props.specs, 'will receive')
     this.setState({
       showImage: props.showImage,
       specs: props.specs,
-      dataSource: props.dataSource
+      dataSource: props.dataSource,
+      strategyData: props.strategyData
     })
   }
   handleChangeValue = (text: string, record: any, index: any) => (e: any) => {
@@ -145,10 +149,6 @@ class SkuList extends React.Component<Props, State>{
       message.error('请设置规格名称');
       return
     }
-    // if (showImage && !specPicture && key === 0) {
-    //   message.error('请设置规格商品图');
-    //   return
-    // }
     if (content.find((v) => v.specName === specName)) {
       message.error('请不要填写相同的规格');
       return
@@ -204,12 +204,12 @@ class SkuList extends React.Component<Props, State>{
     /** 第二项规格输入时 */
     } else {
       /** 如果dataSource为空，规格2至少有一项，补充规格 */
-      if (dataSource.length === 0 && specs[1] && specs[1].content && specs[1].content.length >= 1) {
-        specs[1].content.map((item) => {
+      if (dataSource.length === 0 && specs[1] && specs[1].content && specs[1].content.length === 1) {
+        specs[0].content.map((item) => {
           addData.push({
             ...defaultItem,
-            propertyValue1: '',
-            propertyValue2: item.specName
+            propertyValue1: item.specName,
+            propertyValue2: specName
           })
         })
       /** 第一规格不存在, 正常新增一个规格 */
@@ -237,12 +237,19 @@ class SkuList extends React.Component<Props, State>{
       }
     }
     dataSource = dataSource.concat(addData)
+    // console.log(dataSource, 'dataSource')
+    let result: SkuProps[] = []
+    specs[0].content.map((item) => {
+      // console.log(dataSource.filter(item2 => item2.propertyValue1 === item.specName), item.specName, 'item')
+      result = result.concat(dataSource.filter(item2 => item2.propertyValue1 === item.specName)) 
+    })
+    // console.log(result, 'result')
     this.setState({
-      dataSource,
+      dataSource: result,
       tempSpecInfo,
       specs
     })
-    this.onChange(dataSource)
+    this.onChange(result)
   };
   handleTabsAdd = () => {
     const GGName = this.state.GGName
@@ -259,6 +266,68 @@ class SkuList extends React.Component<Props, State>{
     })
     this.handleAdd(GGName);
   };
+
+  //计算价格
+  calculatePrice = () => {
+    const { dataSource, strategyData } = this.state;
+    let isZero = false;
+    // accAdd, Subtr, accMul, accDiv 
+    const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData;
+    const newData = dataSource.map(res => {
+      const { salePrice, costPrice } = res;
+      if(!Number(salePrice) || !Number(costPrice))isZero = true;
+      let grossProfit = Subtr(salePrice,costPrice);//毛利润
+      let netProfit : any = Subtr(grossProfit, accDiv(accMul(grossProfit, categoryProfitRate), 100));//去除类目利润比的利润
+      // let headNetProfit = accDiv(accMul(netProfit, headCommissionRate),100);
+      // console.log(netProfit, 'netProfit2')
+      // console.log(headNetProfit, 'headNetProfit')
+      // let areaNetProfit =  accDiv(accMul(Subtr(netProfit, headNetProfit), areaCommissionRate), 100 - headCommissionRate)
+      // console.log(areaNetProfit, 'areaNetProfit')
+      // let cityNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(headNetProfit, areaNetProfit)), cityCommissionRate), 100 - headCommissionRate - areaCommissionRate)
+      // console.log(cityNetProfit, 'cityNetProfit')
+      // let managerNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(accAdd(headNetProfit, areaNetProfit),cityNetProfit)), managerCommissionRate), Subtr(Subtr(Subtr(100,headCommissionRate),cityCommissionRate),areaCommissionRate))
+      // console.log(managerNetProfit, 'managerNetProfit')
+
+      let headNetProfit = accDiv(accMul(netProfit,headCommissionRate),100);
+      console.log(headNetProfit, 'headNetProfit')
+      let areaNetProfit = accDiv(accMul(netProfit,areaCommissionRate),100);
+      console.log(areaNetProfit, 'areaNetProfit')
+      let cityNetProfit = accDiv(accMul(netProfit,cityCommissionRate),100);
+      console.log(cityNetProfit, 'cityNetProfit')
+      let managerNetProfit = accDiv(accMul(netProfit,managerCommissionRate),100);
+      console.log(managerNetProfit, 'managerNetProfit')
+      return Object.assign(res, {
+        headPrice: Math.floor(Subtr(salePrice, headNetProfit)*100) / 100,
+        areaMemberPrice: Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*100) / 100,
+        cityMemberPrice: Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit)*100) / 100,
+        managerMemberPrice: Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*100) / 100
+      })
+    })
+    if(isZero){
+      message.error('价格错误，不能进行计算，请确认成本价及销售价是否正确');
+      return false;
+    } 
+    this.setState({
+      dataSource: newData
+    })
+  }
+
+  // 重置价格
+  resetPrice = () => {
+    const { dataSource } = this.state;
+    const newData = dataSource.map(res => {
+      return Object.assign(res, {
+        headPrice: 0,
+        areaMemberPrice: 0,
+        cityMemberPrice: 0,
+        managerMemberPrice: 0
+      })
+    })
+
+    this.setState({
+      dataSource: newData
+    })
+  }
   /**
   * 删除规格
   */
@@ -465,6 +534,16 @@ class SkuList extends React.Component<Props, State>{
             </Card>
           )
         })}
+        {
+          this.state.strategyData ? <>
+            <Button type="primary" style={{ marginLeft: 5 }} onClick={this.resetPrice}>
+              重置价格
+            </Button>
+            <Button type="primary" style={{ marginLeft: 5 }} onClick={this.calculatePrice}>
+              计算价格
+            </Button>
+          </> : null
+        }
         <Table
           rowKey={(record: any) => record.id}
           style={{ marginTop: 10 }}

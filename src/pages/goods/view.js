@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Tabs, Card } from 'antd';
+import { setQuery } from '@/util/utils';
 import List from './list';
 const { TabPane } = Tabs;
 
 const goods = props => {
   const [listActive, setListActive] = useState('0');
   const callback = e => {
+    setQuery({ page: 1, pageSize: 10}, true);
     setListActive(e);
   };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Form, Modal, Radio, Button, InputNumber, Input, message } from 'antd';
+import { Form, Modal, Radio, Button, InputNumber, Input, message, Row } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { formItemLayout, radioStyle } from '@/config';
 import { namespace } from '../../refund/model';
@@ -8,15 +8,20 @@ import { enumRefundType } from '../../constant';
 import ReturnShippingSelect from '../ReturnShippingSelect';
 import { formatPrice, formatRMB } from '@/util/format';
 import { mul } from '@/util/utils';
+import { verifyDownDgrade } from '@/pages/order/api';
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
 interface State {
   visible: boolean;
+  isDemotion: number;
+  demotionInfo: string;
 }
 class CheckRefund extends React.Component<Props, State> {
   state: State = {
     visible: false,
+    isDemotion: this.checkVO.isDemotion,
+    demotionInfo: ''
   };
   constructor(props: Props) {
     super(props);
@@ -113,7 +118,41 @@ class CheckRefund extends React.Component<Props, State> {
     let result = mul(this.unitPrice, value)
     this.props.form.setFieldsValue({
       refundAmount: formatPrice(result)
+    }, () => {
+      this.verifyMaxRefundAmount(result);
     })
+  }
+    /**
+   * 验证是否会降级
+   */
+  verifyMaxRefundAmount = (value: number) => {
+    console.log('最终退款金额', value)
+    console.log('verifyMaxRefundAmount', this.props.data.orderInfoVO)
+    verifyDownDgrade({
+      orderMainId: this.props.data.orderInfoVO.mainOrderId,
+      refundType: enumRefundType.Refund,
+      amount: value
+    }).then(res => {
+      console.log('verifyMaxRefundAmount', res)
+      this.setState({
+        isDemotion: res ? 1 : 0  //true会降级
+      })
+    })
+  }
+  /**
+   * 降级改变
+   */
+  onChangeJiangji = (e: any) => {
+    console.log('onChangeJiangji', e)
+    this.setState({
+      isDemotion: e.target.value
+    })
+  }
+  /**
+   * 退款金额变动
+   */
+  handleChangeMaxRefundAmount = (value: number = 0) => {
+    this.verifyMaxRefundAmount(value*100);
   }
   onOk() {
     this.props.form.validateFields((errors, values) => {
@@ -200,10 +239,11 @@ class CheckRefund extends React.Component<Props, State> {
                     ],
                   })(
                     <InputNumber
-                      min={0.01}
+                      min={0}
                       max={formatPrice(this.maxRefundAmount)}
                       formatter={formatRMB}
                       placeholder="请输入"
+                      onChange={this.handleChangeMaxRefundAmount}
                     />,
                   )}
                   <span className="ml10">（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
@@ -223,6 +263,40 @@ class CheckRefund extends React.Component<Props, State> {
                 <Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />,
               )}
             </Form.Item>
+            {
+              this.state.isDemotion > 0 && this.showAfterSaleInfo &&
+              <Row>
+                <Form.Item label="团长降级">
+                  {getFieldDecorator('isDemotion', {
+                    initialValue: this.checkVO.isDemotion,
+                  })(
+                    <Radio.Group onChange={this.onChangeJiangji} value={this.state.isDemotion}>
+                      <Radio value={1}>是</Radio>
+                      <Radio value={2}>否</Radio>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
+              </Row>
+            }
+            
+            {
+              this.state.isDemotion === 2 && this.showAfterSaleInfo &&
+                <Row>
+                  <Form.Item label="不降级原因">
+                    {getFieldDecorator('demotionInfo', {
+                      initialValue: this.checkVO.demotionInfo,
+                      rules: [
+                        {
+                          required: true,
+                          message: '请输入原因',
+                        },
+                      ],
+                    })(
+                      <Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />,
+                    )}
+                  </Form.Item>
+              </Row>
+            }
           </Form>
         </Modal>
         <Button type="primary" onClick={() => this.setState({ visible: true })}>

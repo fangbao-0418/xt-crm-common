@@ -43,7 +43,7 @@ export const ossUploadBlob = async (client, blob, path) => {
       blob,
       // , { type: 'text/plain' }
     );
-    console.log(res, 'upload res');
+    // console.log(res, 'upload res');
     return Promise.resolve(res.res.requestUrls);
   } catch (error) {
     return Promise.reject(error);

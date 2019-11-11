@@ -96,7 +96,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
           </Col>
         </Row>
         <Form.Item label="优惠券名称">
-          {getFieldDecorator('name', { initialValue: baseVO.name, rules: [{ required: true, message: '请输入优惠券名称' }, { validator: validateName }] })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
+          {getFieldDecorator('name', { initialValue: baseVO.name, rules: [{ required: true, message: '请输入优惠券名称', whitespace: true }, { validator: validateName }] })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
         </Form.Item>
         <Form.Item label="适用范围">{formatAvlRange(ruleVO.avlRange)}</Form.Item>
         {ruleVO.rangeVOList && ruleVO.rangeVOList.length > 0 && <Form.Item wrapperCol={formLeftButtonLayout}>

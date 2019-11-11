@@ -3,8 +3,10 @@ import { Card, Row, Col, Icon, Radio, Input, Modal } from 'antd'
 import Shop from './shop'
 import Coupon from './coupon'
 import Upload from '@/components/upload'
+// import Draggable from '@/components/draggable'
 import ShopModal from '@/components/shop-modal'
 import CouponModal from '@/components/coupon-modal'
+// import * as api from '../../api'
 import { typeConfig } from '../../constant'
 // import styles from './style.module.sass'
 interface State {
@@ -35,10 +37,14 @@ class Main extends React.Component<Props, State> {
     })
     return ids
   }
+
+  /**
+   * 渲染商品楼层
+   */
   public renderShop(): React.ReactNode {
     const { detail } = this.props
     const selectedRowKeys = this.getSelectedRowKeys(detail.list)
-    this.tempList = Array.prototype.concat(detail.list)
+    this.tempList = Array.prototype.concat(detail.list || [])
     detail.css = detail.css || 1
     return (
       <div>
@@ -115,6 +121,9 @@ class Main extends React.Component<Props, State> {
       </div>
     )
   }
+  /**
+   * 渲染广告楼层
+   */
   public renderAd(): React.ReactNode {
     const { detail } = this.props
     return (
@@ -167,12 +176,14 @@ class Main extends React.Component<Props, State> {
       // </Draggable>
     )
   }
+  /**
+   * 渲染优惠券楼层
+   */
   public renderCoupon(): React.ReactNode {
     const { detail } = this.props;
     detail.css = detail.css || 1;
     const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons)
     this.tempCrmCoupons =  Array.prototype.concat(detail.crmCoupons || []);
-    console.log(this.tempCrmCoupons, 'this.tempCrmCoupons')
     return (
       <div>
         <Row gutter={12}>

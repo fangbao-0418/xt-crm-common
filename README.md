@@ -2,6 +2,10 @@
 
 基于create-react-app搭建的React项目脚手架。
 
+## notice
+
+${name}-`deprecated` - 弃用的文件，暂时不要动
+
 ## Installation
 
 ``` code

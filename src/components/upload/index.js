@@ -26,6 +26,7 @@ async function ossUpload(file) {
 }
 
 class UploadView extends Component {
+  count = 0
   constructor(props) {
     super(props);
     this.state = {
@@ -36,13 +37,12 @@ class UploadView extends Component {
     this.handleRemove = this.handleRemove.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({
-        fileList: this.initFileList(this.props.value),
-      });
-    }
+  componentWillReceiveProps (props) {
+    this.setState({
+      fileList: this.initFileList(props.value)
+    });
   }
+
   replaceUrl (url) {
     if (!url) {
       return url
@@ -58,13 +58,21 @@ class UploadView extends Component {
     return 'https://assets.hzxituan.com/' + url.trim().replace(/^https?:\/\/.+?\//, '')
   }
   initFileList(fileList = []) {
+    // console.log(fileList, 'initFileList')
+    fileList = fileList || []
     const { fileType } = this.props;
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
+    this.count = fileList.length
     return fileList.map(val => {
       val.durl = val.url
       if (fileType == 'video') {
-        val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
-        val.thumbUrl = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+        if (/x-oss-process=video/.test(val.url) === false) {
+          val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+          val.thumbUrl = val.url;
+        } else {
+          val.url = val.url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '') + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+          val.thumbUrl = val.url;
+        }
       }
       val.durl = this.getViewUrl(val.durl)
       val.url = this.getViewUrl(val.url)
@@ -72,43 +80,81 @@ class UploadView extends Component {
       return val;
     });
   }
+  // 获取图片像素大小
+  getImgSize (file) {
+    const el = document.createElement('img')
+    return new Promise((resolve, rejet) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        el.setAttribute('src', e.target.result)
+        el.onload = () => {
+          const width = el.naturalWidth || el.width
+          const height = el.naturalHeight || el.height
+          resolve({
+            width,
+            height
+          })
+        }
+      }
+      reader.readAsDataURL(file)
+    })
+  }
 
-  beforeUpload = (file, fileList) => {
-    const { fileType, size = 10 } = this.props;
+  beforeUpload = async (file, fileList) => {
+    const { fileType, size = 10, pxSize, listNum } = this.props;
     if (fileType && file.type.indexOf(fileType) < 0) {
       message.error(`请上传正确${fileType}格式文件`);
-      return false;
+      return Promise.reject()
     }
     const isLtM = file.size / 1024 / 1024 < size;
     if (!isLtM) {
       message.error(`请上传小于${size * 1000}kB的文件`);
-      return false;
+      return Promise.reject()
     }
-    return true;
+    //pxSize: [{width:100, height:100}] 限制图片上传px大小
+    if (pxSize && pxSize.length) {
+      const imgSize = await this.getImgSize(file) || {width:0, height:0}
+      let result = pxSize.filter((item, index, arr) => {
+        return item.width == imgSize.width && item.height == imgSize.height;
+      })
+      if (result.length === 0 ) {
+        message.error(`图片尺寸不正确`);
+        return Promise.reject()
+      }
+    }
+    this.count++
+    if (listNum !== undefined && this.count > listNum) {
+      if (this.count === listNum + 1) {
+        message.error(`上传图片张数超出最大限制`);
+      }
+      return Promise.reject()
+    }
+    return Promise.resolve(file)
   };
   customRequest(e) {
     const file = e.file;
-
-    ossUpload(file).then(urlList => {
-      const { fileList } = this.state;
+    ossUpload(file).then((urlList) => {
+      let { fileList } = this.state;
       const { onChange } = this.props;
       file.url = urlList && urlList[0];
       file.durl = file.url;
       fileList.push({
-        ...file
+        ...file,
+        name: file.name
       });
+      fileList = this.initFileList(fileList)
       this.setState({
         fileList: fileList,
       });
-      const value = fileList.map((item) => {
-        return {
-          ...item,
-          url: this.replaceUrl(item.url),
-          durl: this.replaceUrl(item.durl),
-          name: this.getViewUrl(item.url)
-        }
-      })
-      isFunction(onChange) && onChange(value);
+      // const value = fileList.map((item) => {
+      //   return {
+      //     ...item,
+      //     url: this.replaceUrl(item.url),
+      //     durl: this.replaceUrl(item.durl),
+      //     // name: file.name
+      //   }
+      // })
+      isFunction(onChange) && onChange(fileList);
     });
   }
   handleRemove = e => {

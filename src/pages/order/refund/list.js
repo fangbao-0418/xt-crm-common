@@ -1,5 +1,6 @@
 import React from 'react';
 import { Message, Button, Spin, Row, Col } from 'antd';
+import moment from 'moment'
 import { refundList, exportRefund } from '../api';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
@@ -16,7 +17,6 @@ const formatFields = (range) => {
 @withRouter
 export default class extends React.Component {
   static defaultProps = {};
-
   state = {
     selectedRowKeys: [],
     list: [],
@@ -32,17 +32,19 @@ export default class extends React.Component {
     this.query();
   }
 
-  query = (isExport = false) => {
-    const { intercept } = this.props;
+  query = (isExport = false, noFetch = false) => {
+    const { intercept, type } = this.props;
+    /** 获取url参数 */
     const obj = parseQuery();
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
+    console.log(type, obj, fieldsValues, 'obj query')
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
     const [payStartTime, payEndTime] = formatFields(fieldsValues['payTime']);
     delete fieldsValues['apply'];
     delete fieldsValues['handle'];
     delete fieldsValues['payTime'];
-    let refundStatus = (fieldsValues.refundStatus ? [fieldsValues.refundStatus]: null) || typeMapRefundStatus[this.props.type];
+    let refundStatus = fieldsValues.refundStatus ? fieldsValues.refundStatus : null
     const params = {
       ...fieldsValues,
       applyStartTime,
@@ -54,11 +56,15 @@ export default class extends React.Component {
       refundStatus,
       page: this.state.current,
       pageSize: this.state.pageSize,
+      ...obj
     };
     if (intercept) {
       params.interception = 1;
       params.interceptionMemberPhone = obj.iphone;
     }
+    refundStatus = refundStatus || typeMapRefundStatus[this.props.type];
+    params.refundStatus = refundStatus && Number.isInteger(refundStatus) ? [refundStatus] : refundStatus
+    console.log(params.refundStatus, 'params.refundStatus')
     if (isExport) {
       this.setState({
         loading: true
@@ -71,6 +77,9 @@ export default class extends React.Component {
         })
       })
     } else {
+      if (noFetch) {
+        return
+      }
       refundList(params).then(res => {
         const records = (res.data && res.data.records) || [];
         this.setState({
@@ -81,6 +90,7 @@ export default class extends React.Component {
     }
   };
   handleSearch = () => {
+    APP.history.push('/order/refundOrder')
     this.setState({
       current: 1
     }, this.query)
@@ -111,9 +121,8 @@ export default class extends React.Component {
   render() {
     const { tableConfig: { records = [], total = 0, current = 0 } } = this.state;
     const { intercept } = this.props;
-
     return (
-      <Spin tip="操作处理中..." spinning={this.state.loading}>
+      <Spin tip="操作处理中..." spinning={false}>
         <SearchForm
           wrappedComponentRef={ref => this.SearchForm = ref}
           format={this.handleFormat}

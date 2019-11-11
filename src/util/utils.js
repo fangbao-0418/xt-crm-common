@@ -36,6 +36,8 @@ export function parseQuery() {
 }
 
 export function setQuery(params = {}, force = false) {
+  console.log(params, 'params1')
+  console.log(window.location.hash, 'hash')
   const str = decodeURIComponent(window.location.hash); // 对中文解码
   const [baseLoc, baseQueryStr = ''] = str.split('?');
   const baseQuery = {};
@@ -48,9 +50,10 @@ export function setQuery(params = {}, force = false) {
   const filters = {};
   for (const k in params) {
     if (Object.prototype.hasOwnProperty.call(params, k)) {
-      filters[k] = params[k] || '';
+      filters[k] = params[k] === 0 ? 0 : params[k] || '';
     }
   }
+  console.log(baseQuery, 'baseQuery')
   const reslover = new URLSearchParams({ ...baseQuery, ...filters });
   const search = reslover.toString();
   window.location.hash = `${baseLoc}?${search}`;
@@ -138,14 +141,14 @@ export function formatData(data) {
   return str.substr(1);
 }
 
-export function initImgList(imgUrlWap) {
+export function initImgList(imgUrlWap, uid) {
   if (imgUrlWap) {
     if (imgUrlWap.indexOf('http') !== 0) {
       imgUrlWap = 'https://assets.hzxituan.com/' + imgUrlWap;
     }
     return [
       {
-        uid: `${-parseInt(Math.random() * 1000)}`,
+        uid: uid || String(Math.random()).slice(2),
         url: imgUrlWap,
         status: 'done',
         thumbUrl: imgUrlWap,
@@ -280,3 +283,142 @@ export function treeToarr(list = [], arr) {
   return results;
 }
 
+/**
+ * 获取 blob
+ * @param  {String} url 目标文件地址
+ * @return {Promise} 
+ */
+function getBlob(url) {
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('GET', url, true);
+    xhr.responseType = 'blob';
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        resolve(xhr.response);
+      }
+    };
+
+    xhr.send();
+  });
+}
+
+/**
+* 保存
+* @param  {Blob} blob     
+* @param  {String} filename 想要保存的文件名称
+*/
+function saveAs(blob, filename) {
+  if (window.navigator.msSaveOrOpenBlob) {
+    navigator.msSaveBlob(blob, filename);
+  } else {
+    const link = document.createElement('a');
+    const body = document.querySelector('body');
+
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+
+    // fix Firefox
+    link.style.display = 'none';
+    body.appendChild(link);
+
+    link.click();
+    body.removeChild(link);
+
+    window.URL.revokeObjectURL(link.href);
+  }
+}
+
+/**
+* 下载
+* @param  {String} url 目标文件地址
+* @param  {String} filename 想要保存的文件名称
+*/
+export function download(url, filename) {
+  getBlob(url).then(blob => {
+    saveAs(blob, filename);
+  });
+}
+
+//唯一key
+export function uuid() {
+  var s = [];
+  var hexDigits = "0123456789abcdef";
+
+  for (var i = 0; i < 36; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+  }
+  s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+  s[8] = s[13] = s[18] = s[23] = "-";
+
+  var uuid = s.join("");
+
+  return uuid+"-"+new Date().getTime();
+}
+
+
+//加法精确计算
+export function accAdd(arg1, arg2) {
+  var r1, r2, m;
+  try {
+      r1 = arg1.toString().split(".")[1].length;
+  }catch (e) {
+            r1 = 0;
+  }
+  try {
+      r2 = arg2.toString().split(".")[1].length;
+  }catch (e) {
+          r2 = 0;
+  }
+  m = Math.pow(10, Math.max(r1, r2));
+  return (arg1 * m + arg2 * m) / m;
+} ;
+//减法精确计算
+export function Subtr(arg1, arg2) {
+      var r1, r2, m, n;
+      try {
+          r1 = arg1.toString().split(".")[1].length;
+      }
+      catch (e) {
+          r1 = 0;
+      }
+      try {
+          r2 = arg2.toString().split(".")[1].length;
+      }
+      catch (e) {
+          r2 = 0;
+      }
+      m = Math.pow(10, Math.max(r1, r2));
+      //last modify by deeka
+      //动态控制精度长度
+      n = (r1 >= r2) ? r1 : r2;
+      return Number(((arg1 * m - arg2 * m) / m).toFixed(n));
+  };
+//乘法精确计算
+export function accMul(arg1, arg2) {
+    var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+    try {
+        m += s1.split(".")[1].length;
+    }
+    catch (e) {
+    }
+    try {
+        m += s2.split(".")[1].length;
+    }
+    catch (e) {
+    }
+    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+};
+//除法精确计算
+export function accDiv(arg1,arg2){     
+    var t1=0,t2=0,r1,r2;     
+    try{t1=arg1.toString().split(".")[1].length}catch(e){}     
+    try{t2=arg2.toString().split(".")[1].length}catch(e){}     
+      
+    r1=Number(arg1.toString().replace(".",""));  
+  
+    r2=Number(arg2.toString().replace(".",""));     
+    return (r1/r2)*Math.pow(10,t2-t1);     
+};
