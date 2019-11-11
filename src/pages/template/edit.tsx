@@ -143,6 +143,9 @@ class edit extends React.Component<Props, State> {
                 console.log('e=>', e.target.value)
                 const { templateData } = this.state;
                 templateData[index].rankType = e.target.value;
+                if (e.target.value === 0) {
+                  templateData[index].cost = ''
+                } 
                 this.setState({
                   templateData,
                 });
@@ -162,6 +165,7 @@ class edit extends React.Component<Props, State> {
                     });
                   }}
                   min={0}
+                  max={9999}
                   style={{ width: 80 }}
                 />
               </Radio>
@@ -251,6 +255,7 @@ class edit extends React.Component<Props, State> {
                     <InputNumber
                       placeholder="请输入"
                       min={0}
+                      max={9999}
                       precision={2}
                       style={{ width: 80 }}
                     />)}

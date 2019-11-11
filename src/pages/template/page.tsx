@@ -15,10 +15,13 @@ interface State extends PageProps<templateColumns> {
 interface Props extends RouteComponentProps, FormComponentProps {}
 class Page extends React.Component<Props, State> {
   state: State = {
-    records: [],
-    current: 1,
-    total: 0
+    records: []
   };
+  payload: any = {
+    current: 1,
+    total: 0,
+    size: 10
+  }
   constructor(props: Props) {
     super(props);
     this.fetchList = this.fetchList.bind(this);
@@ -31,25 +34,34 @@ class Page extends React.Component<Props, State> {
     let [createTimeStart, createTimeEnd] = createTime ? momentRangeValueof(createTime) : [];
     let [modifyTimeStart, modifyTimeEnd] = modifyTime ? momentRangeValueof(modifyTime) : [];
     const { records, current, total } = await templatePage({
-      pageNo: this.state.current,
-      pageSize: this.state.size,
+      pageNo: this.payload.current,
+      pageSize: this.payload.size,
       templateName,
       createTimeStart,
       createTimeEnd,
       modifyTimeStart,
       modifyTimeEnd,
-    });
-    this.setState({
-      records,
+    }) || {}
+    this.payload = Object.assign({}, {
       current,
-      total,
+      total
+    })
+    this.setState({
+      records
     });
   }
   onChange = (current: number) => {
-    this.setState({
-      current
-    }, this.fetchList)
+    this.payload.current = current
+    this.fetchList()
   };
+  handleReset = () => {
+    this.props.form.resetFields()
+    this.payload.current = 1
+    this.fetchList()
+  }
+  handleSearch = () => {
+    this.fetchList();
+  }
   render() {
     const {
       form: { getFieldDecorator },
@@ -125,25 +137,25 @@ class Page extends React.Component<Props, State> {
                 <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />,
               )}
             </Form.Item>
-            <Button
-              type="primary"
-              onClick={() => {
-                this.props.history.push('/template/edit');
-              }}
-            >
-              新增模板
-            </Button>
-            <Button
-              className="ml10"
-              onClick={() => {
-                this.props.form.resetFields();
-              }}
-            >
-              清除
-            </Button>
-            <Button className="ml10" type="primary" onClick={this.fetchList}>
-              查询
-            </Button>
+            <Form.Item>
+              <Button
+                type="primary"
+                onClick={() => {
+                  this.props.history.push('/template/edit');
+                }}
+              >
+                新增模板
+              </Button>
+              <Button
+                className="ml10"
+                onClick={this.handleReset}
+              >
+                清除
+              </Button>
+              <Button className="ml10" type="primary" onClick={this.handleSearch}>
+                查询
+              </Button>
+            </Form.Item>
           </Form>
         </Card>
         <Card>
