@@ -43,7 +43,7 @@ export default {
       if (result) {
         this.saveDefault({
           transferGoodsVisible: true,
-          goodsListByCurrentActivity: result,
+           goodsListByCurrentActivity: result||[]
         });
       }
     },
