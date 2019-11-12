@@ -88,7 +88,8 @@ export function fieldConvert (obj, mapper) {
 
 export function download (url, name) {
   const el = document.createElement('a')
-  el.setAttribute('download', name)
   el.setAttribute('href', url)
+  el.setAttribute('download', name)
+  el.setAttribute('target', '__blank')
   el.click()
 }

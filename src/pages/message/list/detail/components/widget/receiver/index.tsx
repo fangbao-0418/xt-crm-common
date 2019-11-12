@@ -131,7 +131,16 @@ class Main extends React.Component<Props, State> {
             </p>
           )}
           <p>
-            点击 <span className={styles.download}>下载模板</span> 下载正确的会员ID模板，请确保会员ID格式与模板一致，超过<span style={{color: 'red'}}>100</span>条数据时，请使用模板上传
+            点击
+            <span
+              onClick={() => {
+                APP.fn.download(require('./消息中心下载模板.xlsx'), '会员ID模板')
+              }}
+              className={styles.download}
+            >
+              下载模板
+            </span>
+            下载正确的会员ID模板，请确保会员ID格式与模板一致，超过<span style={{color: 'red'}}>100</span>条数据时，请使用模板上传
           </p>
         </div>
       </div>
