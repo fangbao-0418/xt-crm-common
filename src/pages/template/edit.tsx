@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import styles from './style.module.scss';
 import { withRouter } from 'react-router';
 import { radioStyle } from '@/config';
-import { flatten } from 'lodash'
+import { flatten, intersectionWith, isEqual } from 'lodash'
 import { templateAdd, templateModify, getDetail } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { formatPrice } from '@/util/format';
@@ -47,20 +47,19 @@ const mapTemplateData= (list: rankItem[]) => {
   });
 };
 
-const getCityStr = (destinationList: any[]) => {
+const flattenCity = (destinationList: any[]) => {
   const childArr = (destinationList || []).map(v => (v && v.children || []))
-  console.log('flatten(childArr)=>', flatten(childArr))
-  return flatten(childArr).map(v => v.id).sort().join(',')
+  return flatten(childArr)
 }
 
 const mapCitys = (list: rankItem[]) => {
-  return (list || []).map((item: rankItem) => getCityStr(item.destinationList))
+  return (list || []).reduce((prev: any[], item: rankItem) => prev.concat(flattenCity(item.destinationList)), [])
 }
 class edit extends React.Component<Props, State> {
   // editIndex等于-1为添加
   editIndex: number = -1
-  /** 以,分割的排序后的市区组成的数组 */
-  citys: string[] = []
+  /** 所有市区组成的数组 */
+  citys: any[] = []
   state: State = {
     visible: false,
     templateData: [],
@@ -172,7 +171,6 @@ class edit extends React.Component<Props, State> {
           return (
             <Radio.Group
               onChange={(e: RadioChangeEvent) => {
-                console.log('e=>', e.target.value)
                 const { templateData } = this.state;
                 templateData[index].rankType = e.target.value;
                 if (e.target.value === 0) {
@@ -235,41 +233,46 @@ class edit extends React.Component<Props, State> {
           visible={this.state.visible}
           value={this.state.destinationList}
           onOk={(destinationList: any) => {
-            const checkedCityStr = getCityStr(destinationList)
-            /** citys是否包含城市序列 */
-            const isIncludes = this.citys.includes(checkedCityStr)
+            if (Array.isArray(destinationList) && destinationList.length === 0) {
+              message.error('请选择地区')
+              return
+            }
+            const checkedCity = flattenCity(destinationList)
+            /** 求交集 */
+            const intersect = intersectionWith(this.citys, checkedCity, isEqual)
+            const msg = intersect.map(v => v.name).join(',')
+            const isIntersect = intersect.length > 0
             let { templateData } = this.state;
             /** 编辑 */
             if (this.editIndex > -1) {
-              /** 编辑的城市序列 */
-              const editCityStr = getCityStr(templateData[this.editIndex].destinationList)
+              /** 编辑的市区列表 */
+              const editCity = flattenCity(templateData[this.editIndex].destinationList)
               /** 排除自身 */
-              if (checkedCityStr !== editCityStr && isIncludes) {
-                message.error('目的地不能重复，请重新选择')
+              if (isIntersect) {
+                message.error(`${msg}不能重复，请重新选择`)
                 return
               }
-              this.citys = this.citys.filter(cityStr => cityStr !== editCityStr)
+              this.citys = this.citys.filter(city => {
+                return editCity.some(item => {
+                  return item.id !== city.id
+                })
+              })
               templateData[this.editIndex].destinationList = destinationList;
             }
             /** 添加 */
             else {
-              if (isIncludes) {
-                message.error('目的地不能重复，请重新选择')
+              if (isIntersect) {
+                message.error(`${msg}不能重复，请重新选择`)
                 return
               }
               templateData = [...templateData, { destinationList, rankType: 1, cost: '' }];
             }
-            this.citys.push(checkedCityStr)
+            /** 求并集 */
+            this.citys = this.citys.concat(checkedCity)
             this.setState({
               destinationList,
               templateData,
               visible: false,
-            });
-          }}
-          onChange={(checkedValue: any) => {
-            console.log('checkedValue=>', checkedValue)
-            this.setState({
-              destinationList: checkedValue
             });
           }}
           onCancel={() => {

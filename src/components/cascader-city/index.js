@@ -76,8 +76,8 @@ const Group = props => {
    * 选中省数据变化执行什么周期钩子函数
    */
   useEffect(() => {
-    console.log(props.source.name, children.length, source.children.length)
-    console.log(!!children.length, children.length < source.children.length)
+    // console.log(props.source.name, children.length, source.children.length)
+    // console.log(!!children.length, children.length < source.children.length)
     setIndeterminate(!!children.length && (children.length < source.children.length))
     setCheckAll(children.length === source.children.length);
     setCheckedList(children)
@@ -161,7 +161,7 @@ class CascaderCity extends (PureComponent || Component) {
   }
   render() {
     const { sourceData, checkedSourceData } = this.state;
-    console.log(this.props.value, checkedSourceData, 'render')
+    // console.log(this.props.value, checkedSourceData, 'render')
     return (
       <Modal {...this.props} width={700} onOk={this.onOk}>
         <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
