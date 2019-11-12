@@ -24,4 +24,5 @@ export interface rankItem {
   destination: string;
   rankType: number;
   cost: number;
+  destinationList: any[]
 }

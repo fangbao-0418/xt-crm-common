@@ -6,9 +6,9 @@ import classnames from 'classnames';
 import styles from './style.module.scss';
 import { withRouter } from 'react-router';
 import { radioStyle } from '@/config';
+import { flatten } from 'lodash'
 import { templateAdd, templateModify, getDetail } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
-import { isNumber } from 'lodash';
 import { formatPrice } from '@/util/format';
 import { rankItem, Props, State } from './interface';
 
@@ -26,21 +26,45 @@ const mapReqRankList = (list: rankItem[]) => {
     };
   });
 };
-const mapResRankList = (list: rankItem[] = []) => {
-  return list.map((item: rankItem) => {
+/**
+ * 映射特定区域数组
+ * {
+ *  cost, // 金额
+ *  describe,
+ *  destinationList,
+ *  rankNo,
+ *  rankType
+ * }[]
+ * @param list 
+ */
+const mapTemplateData= (list: rankItem[]) => {
+  return (list || []).map((item: rankItem) => {
     return {
       ...item,
       cost: item.cost && formatPrice(item.cost),
     };
   });
 };
+
+const getCityStr = (destinationList: any[]) => {
+  const childArr = (destinationList || []).map(v => (v && v.children || []))
+  console.log('flatten(childArr)=>', flatten(childArr))
+  return flatten(childArr).map(v => v.id).sort().join(',')
+}
+
+const mapCitys = (list: rankItem[]) => {
+  return (list || []).map((item: rankItem) => getCityStr(item.destinationList))
+}
 class edit extends React.Component<Props, State> {
   // editIndex等于-1为添加
-  editIndex: number = -1;
-  rankNo: number = 1;
+  editIndex: number = -1
+  rankNo: number = 1
+  /** 以,分割的排序后的市区组成的数组 */
+  citys: string[] = []
   state: State = {
     visible: false,
     templateData: [],
+    /** 通用省市区 */
     destinationList: [],
   };
   /**
@@ -52,7 +76,9 @@ class edit extends React.Component<Props, State> {
       templateName: res.templateName,
       commonCost: formatPrice(res.commonCost),
     });
-    let templateData = mapResRankList(res.rankList);
+    let templateData = mapTemplateData(res.rankList);
+    console.log('citys =>', this.citys);
+    this.citys = mapCitys(res.rankList)
     this.rankNo = templateData.length + 1;
     this.setState({
       templateData,
@@ -63,6 +89,9 @@ class edit extends React.Component<Props, State> {
       this.getDetail();
     }
   }
+  /**
+   * 新增编辑提交
+   */
   haveSave = () => {
     this.props.form.validateFields(async (errors, values) => {
       let { templateData } = this.state;
@@ -206,15 +235,24 @@ class edit extends React.Component<Props, State> {
           visible={this.state.visible}
           value={this.state.destinationList}
           onOk={(destinationList: any) => {
+            const checkedCityStr = getCityStr(destinationList)
+            console.log('checkedCityStr=>', checkedCityStr)
+            if (this.citys.includes(checkedCityStr)) {
+              message.error('目的地不能重复，请重新选择')
+              return
+            }
             let { templateData } = this.state;
             /** 编辑 */
             if (this.editIndex > -1) {
+              const editCityStr = getCityStr(templateData[this.editIndex].destinationList)
+              this.citys = this.citys.filter(cityStr => cityStr !== editCityStr)
               templateData[this.editIndex].destinationList = destinationList;
             }
             /** 添加 */
             else {
-              templateData = [...templateData, { destinationList, rankNo: this.rankNo++, rankType: 1 }];
+              templateData = [...templateData, { destinationList, rankNo: this.rankNo++, rankType: 1, cost: '' }];
             }
+            this.citys.push(checkedCityStr)
             this.setState({
               destinationList,
               templateData,
@@ -222,6 +260,7 @@ class edit extends React.Component<Props, State> {
             });
           }}
           onChange={(checkedValue: any) => {
+            console.log('checkedValue=>', checkedValue)
             this.setState({
               destinationList: checkedValue
             });
@@ -285,6 +324,7 @@ class edit extends React.Component<Props, State> {
                   rowKey="rankNo"
                   className={classnames('mt10', styles.fare)}
                   columns={editColumns}
+                  pagination={false}
                   dataSource={this.state.templateData}
                 ></Table>
               </Card>
