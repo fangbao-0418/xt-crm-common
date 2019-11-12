@@ -131,9 +131,10 @@ export const memberOptions = [
 /** 消息状态枚举 */
 export enum statusEnum {
   待发送 = 0,
-  已取消 = 3,
+  已取消 = 4,
   进行中 = 2,
-  已完成 = 4
+  已完成 = 1,
+  发送异常 = 3
 }
 
 /** 任务状态枚举 */

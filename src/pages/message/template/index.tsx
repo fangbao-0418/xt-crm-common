@@ -133,10 +133,10 @@ class Main extends React.Component<Props> {
           }}
           formItemLayout={(
             <>
-              <FormItem label='模板标题' name='templateTitle' />
+              <FormItem label='模板标题' placeholder='请输入模版标题' name='templateTitle' />
               <FormItem name='type' />
               <FormItem name='status' />
-              <FormItem name='createTime' />
+              <FormItem label='创建时间' name='createTime' />
               <FormItem name='messageGroup' />
             </>
           )}
