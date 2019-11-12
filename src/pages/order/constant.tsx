@@ -2,82 +2,98 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import GoodCell from '@/components/good-cell';
 import MoneyRender from '@/components/money-render'
-export const getDetailColumns = () => [
-  {
-    title: '名称',
-    dataIndex: 'skuName',
-    key: 'skuName',
-    render(skuName: any, row: any) {
-      return <GoodCell {...row} />;
+
+/**
+ * 返回订单、售后订单table columns
+ * @param {0 | 1} type - 订单类型 0-订单，1-售后订单
+ * @returns object[]
+ */
+export function getDetailColumns (type = 0) {
+  return [
+    {
+      title: '名称',
+      dataIndex: 'skuName',
+      key: 'skuName',
+      width: '20%',
+      render(skuName: string, row: any) {
+        return <GoodCell {...row} isRefund={type === 1} />;
+      }
+    },
+    {
+      title: '商品ID',
+      dataIndex: 'productId',
+      key: 'productId',
+      width: '8%',
+      render(text: any) {
+        return <Link to={`/goods/edit/${text}?page=1&pageSize=10`}>{text}</Link>
+      }
+    },
+    {
+      title: '实名认证',
+      dataIndex: 'isAuthentication',
+      key: 'isAuthentication',
+      render(text: any) {
+        return String(text) === '1' ? '是': '否'
+      }
+    },
+    {
+      title: '属性',
+      dataIndex: 'properties',
+      key: 'properties',
+    },
+    {
+      title: '供应商',
+      dataIndex: 'storeName',
+      key: 'storeName'
+    },
+    {
+      title: '单价',
+      width: '8%',
+      dataIndex: 'salePrice',
+      key: 'salePrice',
+      render: MoneyRender
+    },
+    {
+      title: '数量',
+      width: '8%',
+      dataIndex: 'quantity',
+      key: 'quantity',
+    },
+    {
+      title: '商品总价（元）',
+      dataIndex: 'saleTotalPrice',
+      width: '8%',
+      key: 'saleTotalPrice',
+      render: MoneyRender
+    },
+    {
+      title: '使用优惠券',
+      dataIndex: 'faceValue',
+      key: 'faceValue'
+    },
+    {
+      title: '应付金额',
+      dataIndex: 'dealTotalPrice',
+      width: '8%',
+      key: 'dealTotalPrice',
+      render: MoneyRender
+    },
+    {
+      title: '优惠金额',
+      dataIndex: 'discountPrice',
+      key: 'discountPrice',
+      width: '8%',
+      render: MoneyRender
+    },
+    {
+      title: '实付金额',
+      dataIndex: 'preferentialTotalPrice',
+      key: 'preferentialTotalPrice',
+      width: '8%',
+      render: MoneyRender
     }
-  },
-  {
-    title: '商品ID',
-    dataIndex: 'productId',
-    key: 'productId',
-    render(text: any) {
-      return <Link to={`/goods/edit/${text}?page=1&pageSize=10`}>{text}</Link>
-    }
-  },
-  {
-    title: '实名认证',
-    dataIndex: 'isAuthentication',
-    key: 'isAuthentication',
-    render(text: any) {
-      return String(text) === '1' ? '是': '否'
-    }
-  },
-  {
-    title: '属性',
-    dataIndex: 'properties',
-    key: 'properties',
-  },
-  {
-    title: '供应商',
-    dataIndex: 'storeName',
-    key: 'storeName'
-  },
-  {
-    title: '单价',
-    dataIndex: 'salePrice',
-    key: 'salePrice',
-    render: MoneyRender
-  },
-  {
-    title: '数量',
-    dataIndex: 'quantity',
-    key: 'quantity',
-  },
-  {
-    title: '商品总价（元）',
-    dataIndex: 'saleTotalPrice',
-    key: 'saleTotalPrice',
-    render: MoneyRender
-  },
-  {
-    title: '使用优惠券',
-    dataIndex: 'faceValue',
-    key: 'faceValue'
-  },
-  {
-    title: '应付金额',
-    dataIndex: 'dealTotalPrice',
-    key: 'dealTotalPrice',
-    render: MoneyRender
-  },
-  {
-    title: '优惠金额',
-    dataIndex: 'discountPrice',
-    key: 'discountPrice',
-    render: MoneyRender
-  },
-  {
-    title: '实付金额',
-    dataIndex: 'preferentialTotalPrice',
-    key: 'preferentialTotalPrice',
-    render: MoneyRender
-  }
-];
+  ];
+}
 
 export const storeType = ['喜团', '1688', '淘宝联盟'];
 export const supplierOperate: any = {
@@ -89,15 +105,6 @@ export enum enumSupplierOperate {
   ACCEPTED = 10
 }
 
-export enum enumOrderStatus {
-  Refund = -1,
-  Unpaid = 10,
-  Undelivered = 20,
-  Delivered = 30,
-  Received = 40,
-  Complete = 50,
-  Closed = 60,
-};
 /**
  * 当前售后状态
  * @readonly
@@ -169,6 +176,17 @@ export const TextMapRefundType = {
   [enumRefundType.Exchange]: '换货',
 };
 
+
+export enum enumOrderStatus {
+  Refund = -1,
+  Unpaid = 10,
+  Undelivered = 20,
+  Delivered = 30,
+  Received = 40,
+  Complete = 50,
+  Closed = 60
+};
+
 export const OrderStatusTextMap = {
   [enumOrderStatus.Refund]: '售后',
   [enumOrderStatus.Closed]: '关闭',
@@ -176,7 +194,7 @@ export const OrderStatusTextMap = {
   [enumOrderStatus.Delivered]: '已发货',
   [enumOrderStatus.Received]: '已收货',
   [enumOrderStatus.Undelivered]: '待发货',
-  [enumOrderStatus.Unpaid]: '待付款',
+  [enumOrderStatus.Unpaid]: '待付款'
 };
 
 export const TabList = [

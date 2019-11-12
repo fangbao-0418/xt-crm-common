@@ -15,10 +15,11 @@ import {
   split
 } from 'lodash';
 import descartes from '../../util/descartes';
-import { getStoreList, setProduct, getGoodsDetial, getCategoryList } from './api';
+import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku } from './api';
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
 import SkuList from './SkuList';
 import styles from './edit.module.scss'
+import DraggableUpload from './components/draggable-upload'
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
@@ -42,7 +43,7 @@ const formLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 8 },
+    sm: { span: 12 },
   },
 };
 
@@ -64,7 +65,8 @@ class GoodsEdit extends React.Component {
     returnContact: '',
     returnPhone: '',
     returnAddress: '',
-    showImage: false
+    showImage: false,
+    strategyData: null
   };
   componentDidMount() {
     this.getStoreList();
@@ -93,6 +95,8 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
+
+    let { supplier } = this.state;
     if (!id) {
       setFieldsValue({
         showNum: 1
@@ -134,8 +138,10 @@ class GoodsEdit extends React.Component {
       map(res.listImage ? res.listImage.split(',') : [], (item, key) => {
         listImage = listImage.concat(initImgList(item));
       });
-      this.specs = this.getSpecs(res.skuList)
+      this.specs = this.getSpecs(res.skuList);
+      const currentSupplier = supplier.find(item => item.id === res.storeId) || {};
       this.setState({
+        interceptionVisible: currentSupplier.category == 1 ? false : true,
         data: res.skuList || [],
         speSelect: this.specs,
         propertyId1: res.propertyId1,
@@ -143,9 +149,10 @@ class GoodsEdit extends React.Component {
         returnContact: res.returnContact,
         returnPhone: res.returnPhone,
         returnAddress: res.returnAddress,
-        showImage
+        showImage,
       });
       setFieldsValue({
+        interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
         description: res.description,
         productCode: res.productCode,
@@ -172,10 +179,21 @@ class GoodsEdit extends React.Component {
         categoryId,
         isAuthentication: res.isAuthentication
       });
+      this.getStrategyByCategory(categoryId[0])
     });
   };
+
+  //通过类目id查询是否有定价策略
+  getStrategyByCategory = (categoryId) => {
+    getStrategyByCategory({categoryId: categoryId}).then(strategyData => {
+      this.setState({
+        strategyData
+      })
+    })
+  }
+
   /** 获取规格结婚 */
-  getSpecs (skuList = []) {
+  getSpecs(skuList = []) {
     const specs = this.specs
     specs.map((item) => {
       item.content = []
@@ -210,7 +228,43 @@ class GoodsEdit extends React.Component {
       this.handleRemove(e);
     }
   };
-
+  sync1688Sku() {
+    const {
+      form: { validateFields },
+    } = this.props;
+    validateFields((err, vals) => {
+      if(!vals.storeProductId) return;
+      get1688Sku(vals.storeProductId).then(data=>{
+        // showImage={this.state.showImage}
+        if (!data) {
+          return
+        }
+        this.specs = [
+          {
+            title: data.attributeName1,
+            content: []
+          },
+          {
+            title: data.attributeName2,
+            content: []
+          }
+        ]
+        const skus = (data.skus || []).map((item) => {
+          return {
+            ...item,
+            stock: item.inventory,
+            storeProductSkuId: item.storeSkuId,
+            deliveryMode:2
+          }
+        })
+        this.specs = this.getSpecs(skus);
+        this.setState({
+          speSelect: this.specs,
+          data: skus
+        })
+      })
+    })
+  }
   /**
    * 删除规格
    */
@@ -341,11 +395,35 @@ class GoodsEdit extends React.Component {
       [name]: value
     })
   }
+
+  supplierChange = (value) => {
+    const { supplier } = this.state;
+    const { form: { resetFields } } = this.props;
+    const currentSupplier = supplier.find(item => item.id === value) || {};
+    if (currentSupplier.category == 1) {
+      resetFields('interception');
+      this.setState({
+        interceptionVisible: false
+      })
+    } else {
+      resetFields('interception', '0');
+      this.setState({
+        interceptionVisible: true
+      })
+    }
+  }
+
   render() {
 
     const { getFieldDecorator } = this.props.form;
-    const { supplier } = this.state;
-
+    const { supplier, interceptionVisible, categoryList } = this.state;
+    const {
+      match: {
+        params: { id },
+      },
+    } = this.props;
+    console.log(categoryList, 'categoryList')
+    console.log(this.state, 'state')
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -375,6 +453,10 @@ class GoodsEdit extends React.Component {
                   },
                 }
               ],
+              onChange: (val) => {
+                console.log(val, 'val')
+                this.getStrategyByCategory(val[0])
+              }
             })(<Cascader options={this.state.categoryList} placeholder="请输入商品类目" />)}
           </Form.Item>
           <Form.Item label="商品简称">
@@ -388,16 +470,9 @@ class GoodsEdit extends React.Component {
             })(<Input placeholder="请输入商品简称" />)}
           </Form.Item>
           <Form.Item label="商品编码">
-            {getFieldDecorator('productCode', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入商品编码',
-                },
-              ],
-            })(<Input placeholder="请输入商品编码" />)}
-          </Form.Item>
-          <Form.Item label="商品简介">
+            {getFieldDecorator('productCode')(<Input placeholder="请输入商品编码" />)}
+            </Form.Item>
+            <Form.Item label="商品简介">
             {getFieldDecorator('description', {
               rules: [
                 {
@@ -424,6 +499,7 @@ class GoodsEdit extends React.Component {
                   message: '请选择供应商',
                 },
               ],
+              onChange: this.supplierChange
             })(
               <Select
                 placeholder="请选择供货商"
@@ -442,8 +518,23 @@ class GoodsEdit extends React.Component {
           </Form.Item>
           <Form.Item label="供应商商品ID">
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
+            {!id && <Button onClick={()=>this.sync1688Sku()} >同步1688规格信息</Button>}
           </Form.Item>
-          <Form.Item label="实名认证" required>
+          {
+            interceptionVisible ?
+              <Form.Item label="是否可拦截发货">
+                {getFieldDecorator('interception', {
+                  initialValue: 0,
+                })(
+                  <Radio.Group>
+                    <Radio value={1}>是</Radio>
+                    <Radio value={0}>否</Radio>
+                  </Radio.Group>,
+                )}
+              </Form.Item> :
+              null
+          }
+           <Form.Item label="实名认证" required>
             {getFieldDecorator('isAuthentication', {
               initialValue: 0,
               rules: [
@@ -493,12 +584,7 @@ class GoodsEdit extends React.Component {
                 },
               ],
             })(
-              <UploadView
-                placeholder="上传商品图片"
-                listType="picture-card"
-                listNum={5}
-                size={.3}
-              />,
+              <DraggableUpload className={styles['goods-detail-draggable']} listNum={5} size={0.3} placeholder="上传商品图片" />
             )}
           </Form.Item>
           <Form.Item label="banner图片" required={true}>
@@ -509,7 +595,9 @@ class GoodsEdit extends React.Component {
                   message: '请设置banner图片',
                 },
               ],
-            })(<UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />)}
+            })(
+              <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />
+            )}
           </Form.Item>
           <Form.Item label="累计销量" required={true}>
             {getFieldDecorator('showNum', {
@@ -531,8 +619,9 @@ class GoodsEdit extends React.Component {
           showImage={this.state.showImage}
           specs={this.state.speSelect}
           dataSource={this.state.data}
+          strategyData={this.state.strategyData}
           onChange={(value, specs, showImage) => {
-            console.log(specs, 'skulist change')
+            // console.log(specs, 'skulist change')
             this.setState({
               data: value,
               speSelect: specs,
@@ -606,9 +695,14 @@ class GoodsEdit extends React.Component {
           <Form.Item label="商品详情页">
             <div className="mb20">
               {getFieldDecorator('listImage')(
-                <UploadView showUploadList={true} size={0.3}>
-                  <Button type="dashed">上传商品详情页</Button>
-                </UploadView>,
+                <DraggableUpload
+                  className={styles['goods-draggable']}
+                  id={'shop-detail'}
+                  listNum={20}
+                  size={0.3}
+                  placeholder="上传商品详情图"
+                />
+                // <UploadView multiple placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
               )}
             </div>
             {this.isShowDeleteAll() && <Button type="primary" onClick={this.handleDeleteAll}>一键删除</Button>}

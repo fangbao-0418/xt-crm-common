@@ -17,7 +17,8 @@ const protocol = /https?:\/\//;
 let srcUrl = null;
 
 const Image = (props) => {
-  const { src='', className, alt = '图片', style, ...otherProps } = props
+  const { className, alt = '图片', style, ...otherProps } = props
+  const src = props.src || '';
   let realSrc = src.trim();
   if (!protocol.test(realSrc)) {
     realSrc = `https://assets.hzxituan.com/${realSrc}`;

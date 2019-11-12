@@ -1,10 +1,11 @@
 import React from 'react';
-import { Card, Row, Col, Form, Table, Input, Button, Checkbox, message } from 'antd';
+import { Card, Row, Col, Form, Table, Input, Button, Checkbox, message, InputNumber } from 'antd';
 import { formatMoneyWithSign } from '../../helper';
 import { map } from 'lodash';
 import UploadView from '../../../components/upload';
 import { setPromotionAddSKu } from '../api';
 import Image from '../../../components/Image';
+import ArrowContain from '@/pages/goods/components/arrow-contain'
 import { Decimal } from 'decimal.js';
 const FormItem = Form.Item;
 
@@ -28,6 +29,33 @@ const initImgList = imgUrlWap => {
   }
   return [];
 };
+
+function speedyInput (field, text, record, index, dataSource, cb) {
+  dataSource = dataSource || []
+  return (node) => (
+    <ArrowContain
+      disabled={dataSource.length <= 1}
+      type={((index === 0 && 'down') || (index === dataSource.length - 1 && 'up') || undefined)}
+      onClick={(type) => {   
+        const stock = text
+        let current = 0
+        let end = index
+        if (type === 'down') {
+          current = index
+          end = dataSource.length - 1
+        }
+        console.log(current, cb, stock, '----------------')
+        while (current <= end) {
+          console.log('while -----------')
+          cb(field, current)(stock)
+          current++
+        }
+      }}
+    >
+      {node}
+    </ArrowContain>
+  )
+}
 
 class ActivityDetail extends React.Component {
   state = {
@@ -74,9 +102,12 @@ class ActivityDetail extends React.Component {
     });
   };
 
-  handleChangeValue = (text, index) => e => {
+  handleChangeValue = (text, index) => value => {
     const { detailData } = this.state;
-    detailData.promotionSkuList[index][text] = e.target.value;
+    if (detailData.promotionSkuList && detailData.promotionSkuList[index]) {
+      detailData.promotionSkuList[index][text] = value
+    }
+    console.log(detailData, text, index, value, '------')
     this.setState({ detailData, sort: detailData.sort || 0 });
   };
 
@@ -96,7 +127,7 @@ class ActivityDetail extends React.Component {
       }
     }
     map(selectedRows, item => {
-      item.buyingPrice = new Decimal(item.buyingPrice).mul(100).toNumber();
+      item.buyingPrice = item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0;
     });
     const params = {
       id: detailData.id,
@@ -150,29 +181,62 @@ class ActivityDetail extends React.Component {
       {
         title: `${detailData.type === 6 ? '助力分': '活动价'}`,
         dataIndex: 'buyingPrice',
+        width: 200,
         render: (text, record, index) => (
-          <Input value={text} onChange={this.handleChangeValue('buyingPrice', index)} />
+          speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+            <InputNumber
+              style={{width: 140}}
+              min={0}
+              precision={detailData.type === 6 ? 0: 2}
+              value={text}
+              onChange={this.handleChangeValue('buyingPrice', index)}
+            />
+          )
         ),
       },
       {
         title: '活动库存',
         dataIndex: 'inventory',
         render: (text, record, index) => (
-          <Input value={text} onChange={this.handleChangeValue('inventory', index)} />
+          speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+            <InputNumber
+              style={{width: 140}}
+              min={0}
+              precision={0}
+              value={text}
+              onChange={this.handleChangeValue('inventory', index)}
+            />
+          )
         ),
       },
       {
         title: '最大购买数',
         dataIndex: 'maxBuy',
         render: (text, record, index) => (
-          <Input value={text} onChange={this.handleChangeValue('maxBuy', index)} />
+          speedyInput('maxBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+            <InputNumber
+              style={{width: 140}}
+              min={0}
+              precision={0}
+              value={text}
+              onChange={this.handleChangeValue('maxBuy', index)}
+            />
+          )
         ),
       },
       {
         title: '最小购买数',
         dataIndex: 'minBuy',
         render: (text, record, index) => (
-          <Input value={text} onChange={this.handleChangeValue('minBuy', index)} />
+          speedyInput('minBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+            <InputNumber
+              style={{width: 140}}
+              min={0}
+              precision={0}
+              value={text}
+              onChange={this.handleChangeValue('minBuy', index)}
+            />
+          )
         ),
       },
     ];

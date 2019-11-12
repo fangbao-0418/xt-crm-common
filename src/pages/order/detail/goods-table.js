@@ -1,22 +1,27 @@
 import React, { Component } from 'react';
-import { Table, Row, Col, Card, Button, Modal, Input, message } from 'antd';
+import { Table, Row, Col, Card, Button, Modal, Input, message, Divider } from 'antd';
 import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale';
 import { withRouter } from 'react-router'
 import { getDetailColumns, storeType } from '../constant';
 import LogisticsInfo from './logistics-info';
+import { Decimal } from 'decimal.js';
+import ChildOrderBenefitInfo from './child-order-benefit-info';
 import { formatDate } from '../../helper';
-import { setOrderRemark, setRefundOrderRemark } from '../api';
+import { customerAdd, customerAddCheck, setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId } from '../api';
 
 @withRouter
 class GoodsTable extends Component {
   state = {
     visible: false,
     notesVisible: false,
-    modalInfo: {}
+    modalInfo: {},
+    proceedsVisible: false,
+    childOrderProceeds: [],
+    skuInfo: {}
   }
   // 是否显示申请售后按钮
-  showApplyBtn = (orderStatus) => {
-    return [20, 30, 40, 50].includes(orderStatus)
+  showApplyBtn = (orderStatus, orderType) => {
+    return orderType !== 50 && [20, 30, 40, 50].includes(orderStatus)
   }
   handleApply = (record) => {
     const { orderInfo = {}, childOrder = {}, memberId } = this.props;
@@ -63,19 +68,52 @@ class GoodsTable extends Component {
       });
     });
   }
+
+  /**
+   * 展示/收起子订单收益列表
+   */
+  childOrderProceeds = (skuInfo, currentVisible) => {
+    const { orderInfo = {} } = this.props;
+    const { skuId } = skuInfo;
+    if (currentVisible) {
+      this.setState({
+        proceedsVisible: false
+      })
+    } else {
+      getProceedsListByOrderIdAndSkuId({ orderCode: orderInfo.orderCode, skuId }).then((result) => {
+        this.setState({
+          skuInfo,
+          proceedsVisible: true,
+          childOrderProceeds: result || []
+        })
+      })
+    }
+  }
+
   render() {
-    const { list = [], childOrder = {}, orderInfo = {}, logistics } = this.props;
+    const { list = [], childOrder = {}, orderInfo = {}, logistics, tableTitle } = this.props;
+    const { proceedsVisible, childOrderProceeds, skuInfo } = this.state;
     const columns = [
-      ...getDetailColumns(),
+      ...(getDetailColumns().filter(item => item.key !== 'storeName')),
       {
         title: '操作',
         dataIndex: 'operate',
         key: 'operate',
+        width: 130,
         render: (text, record, index) => (
           <>
-            {this.showApplyBtn(orderInfo.orderStatus) && <Button type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
-            <Button type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: { ...record } })}>添加备注</Button>
-            {record.canShowHistoryBtn && <Button type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>}
+            <div>
+              {this.showApplyBtn(orderInfo.orderStatus, record.orderType) && <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
+            </div>
+            <div>
+              <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: { ...record } })}>添加备注</Button>
+            </div>
+            <div>
+              {record.canShowHistoryBtn && <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>}
+            </div>
+            <div>
+              <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.childOrderProceeds(record, proceedsVisible)}>{proceedsVisible ? "收起收益" : "查看收益"}</Button>
+            </div>
           </>
         )
       }
@@ -101,23 +139,39 @@ class GoodsTable extends Component {
             onChange={this.handleInputChange}
           />
         </Modal>
-        <Card>
-          <Row gutter={24}>
-            <Col span={8}>供应商：{childOrder.storeName}</Col>
-            <Col span={8}>分类： {storeType[childOrder.category]}</Col>
-            <Col span={8}>供应商订单号：{childOrder.storeOrderId}</Col>
-          </Row>
-          <Table rowKey={record => record.skuId} columns={columns} dataSource={list} pagination={false} />
-          <Row>
-            <Col span={2} style={{ minWidth: '7em' }}>客服备注：</Col>
-            <Col span={22}>
-              <Row>
-                {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>)}
-              </Row>
-            </Col>
-          </Row>
-          <LogisticsInfo mainorderInfo={orderInfo} logistics={logistics} onSuccess={this.props.query} orderInfo={childOrder} />
-        </Card>
+        <div>
+          <div>
+            <Table
+              bordered
+              rowKey={record => record.skuId}
+              columns={columns}
+              dataSource={list}
+              pagination={false}
+              title={() => tableTitle}
+              footer={() => {
+                return <>
+                  {
+                    proceedsVisible ?
+                      <Row style={{ marginBottom: 20 }}>
+                        <Col>
+                          <span style={{ fontWeight: 'bold' }}>SKU收益：</span>
+                          <ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />
+                        </Col>
+                      </Row> :
+                      null
+                  }
+                  <Row>
+                    <Col>
+                      <span style={{ fontWeight: 'bold' }}>客服备注：</span>
+                      {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>)}
+                    </Col>
+                  </Row>
+                  <LogisticsInfo mainorderInfo={orderInfo} logistics={logistics} onSuccess={this.props.query} orderInfo={childOrder} />
+                </>
+              }}
+            />
+          </div>
+        </div>
       </>
     );
   }

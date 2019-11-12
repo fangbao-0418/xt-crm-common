@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin } from 'antd';
+import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin, Row, Col, Select } from 'antd';
 import { isNil } from 'lodash';
+import moment from 'moment'
 import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant';
 import { formatDate, formatMoneyWithSign } from '../../helper';
 import { getOrderList, exportOrder, importLogistics } from '../api';
@@ -10,8 +11,7 @@ import RefundCell from '../components/refund-cell';
 import RemarkModal from '../components/modal/remark-modal';
 import RefundModal from '../components/refund-modal';
 import RefundStatusCell from '../components/refund-status-cell';
-import { getHeaders } from '@/util/utils';
-import moment from 'moment';
+import { getHeaders, parseQuery } from '@/util/utils';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
@@ -20,7 +20,7 @@ const formatRangeDate = (val) => {
 }
 class OrderList extends React.Component {
   static defaultProps = {};
-
+  payload = APP.fn.getPayload('order') || {}
   state = {
     selectedRowKeys: [],
     list: [],
@@ -34,7 +34,9 @@ class OrderList extends React.Component {
     // this.query();
   }
 
-  query = (isExport = false) => {
+  query = (isExport = false, noFetch = false) => {
+    const {intercept}=this.props;
+    const obj=parseQuery();
     let fieldsValues = this.props.form.getFieldsValue();
     let rangePickerValue = fieldsValues['rangePicker']
     if (this.props.type === 'refund') {
@@ -46,6 +48,10 @@ class OrderList extends React.Component {
       const [orderStartDate, orderEndDate] = formatRangeDate(rangePickerValue)
       fieldsValues.orderStartDate = orderStartDate;
       fieldsValues.orderEndDate = orderEndDate;
+    }
+    if(intercept){
+      fieldsValues['interceptorFlag']=1;
+      fieldsValues['interceptorPhone']=obj.iphone;
     }
     let playPickerValue = fieldsValues['playPicker'];
     const [payStartDate, payEndDate] = formatRangeDate(playPickerValue)
@@ -60,6 +66,13 @@ class OrderList extends React.Component {
       page: this.state.current,
       pageSize: this.state.pageSize,
     };
+    this.payload = this.payload || {}
+    this.payload[this.props.pathname] = params
+    console.log(this.props.pathname, this.payload, 'order ---------------')
+    APP.fn.setPayload('order', this.payload)
+    if (noFetch) {
+      return
+    }
     if (isExport) {
       this.setState({
         loading: true
@@ -82,7 +95,11 @@ class OrderList extends React.Component {
   };
 
   handleSearch = () => {
-    this.query();
+    this.setState({
+      current: 1
+    }, () => {
+      this.query();
+    })
   };
 
   handleImportChange = info => {
@@ -104,6 +121,12 @@ class OrderList extends React.Component {
 
   reset = () => {
     this.props.form.resetFields();
+    this.payload[this.props.pathname] = {}
+    APP.fn.setPayload('order', this.payload)
+    this.setState({}, () => {
+      console.log(this.props.form.getFieldsValue(), 'getFieldsValue');
+      this.query();
+    })
   };
 
   onSelectChange = selectedRowKeys => {
@@ -124,12 +147,14 @@ class OrderList extends React.Component {
     const { total, pageSize, current, list } = this.state;
     const {
       refundStatus,
+      intercept,
       form: { getFieldDecorator },
     } = this.props;
     const columns = [
       {
         title: '订单编号',
         dataIndex: 'orderCode',
+        width: '400px',
         render: (operate, { orderStatus, orderCode }) => (
           <Button type="link" href={`/#/order/detail/${orderCode}`} target="_blank">
             {orderCode}
@@ -139,6 +164,7 @@ class OrderList extends React.Component {
       {
         title: '下单时间',
         dataIndex: 'createTime',
+        width: '300px',
         render: (createTime, row) => <div>下单时间：{formatDate(createTime)}</div>,
       },
       {
@@ -177,6 +203,7 @@ class OrderList extends React.Component {
       {
         title: '操作',
         hide: !isNil(refundStatus),
+        width: '150px',
         render: (operate, { orderStatus, orderCode }) => (
           <>
             <Button type="link" href={`/#/order/detail/${orderCode}`} target="_blank">
@@ -199,7 +226,7 @@ class OrderList extends React.Component {
         {
           title: '商品名称',
           dataIndex: 'skuName',
-          key: 'skuName',
+          width: '400px',
           render(skuName, row) {
             return <GoodCell {...row} />;
           },
@@ -207,7 +234,7 @@ class OrderList extends React.Component {
         {
           title: '商品单价',
           dataIndex: 'salePrice',
-          key: 'salePrice',
+          width: '300px',
           render(salePrice) {
             return formatMoneyWithSign(salePrice);
           },
@@ -244,6 +271,7 @@ class OrderList extends React.Component {
         {
           title: '操作',
           dataIndex: 'record',
+          width: '150px',
           render: (record, { skuId, refundId, childOrderId }) => (
             <>
               <RemarkModal
@@ -278,66 +306,152 @@ class OrderList extends React.Component {
         />
       );
     };
+    const values = this.payload[this.props.pathname] || {}
+    values.rangePicker = values.orderStartDate && [moment(values.orderStartDate), moment(values.orderEndDate)]
+    values.playPicker = values.payStartDate && [moment(values.payStartDate), moment(values.payEndDate)]
+    console.log(values, 'render -------------')
+    const formItemLayout = {
+      labelCol: {
+        sm: { span: 8 },
+      },
+      wrapperCol: {
+        sm: { span: 16 },
+      },
+    };
 
+    const twoformItemLayout = {
+      labelCol: {
+        sm: { span: 4 },
+      },
+      wrapperCol: {
+        sm: { span: 12 },
+      },
+    }
     return (
-      <Spin tip="操作处理中..." spinning={this.state.loading}>
+      <Spin tip="操作处理中..." spinning={false}>
         <Card title="筛选">
-          <Form layout="inline">
-            <FormItem label="订单编号">
-              {getFieldDecorator('orderCode')(<Input placeholder="请输入订单编号" />)}
-            </FormItem>
-            <FormItem label="快递单号">
-              {getFieldDecorator('expressCode')(<Input placeholder="请输入快递单号" />)}
-            </FormItem>
-            <FormItem label="商品ID">
-              {getFieldDecorator('productId')(<Input type='number' placeholder="请输入商品ID" />)}
-            </FormItem>
-            <FormItem label="下单人ID">
-              {getFieldDecorator('buyerId')(<Input type='number' placeholder="请输入下单人ID" />)}
-            </FormItem>
-            <FormItem label="下单人电话">
-              {getFieldDecorator('buyerPhone')(<Input placeholder="请输入下单人电话" />)}
-            </FormItem>
-            <FormItem label="收货人">
-              {getFieldDecorator('contact')(<Input placeholder="请输入收货人" />)}  
-            </FormItem>
-            <FormItem label="收货人电话">
-              {getFieldDecorator('phone')(<Input placeholder="请输入收货人电话" />)}
-            </FormItem>
-            <FormItem label="供应商">
-              {getFieldDecorator('storeId', {})(<SuppilerSelect style={{width: '174px'}}/>)}
-            </FormItem>
-            <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
-              {getFieldDecorator('rangePicker', {})(<RangePicker format="YYYY-MM-DD HH:mm"  showTime={{defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}} />)}
-            </FormItem>
-            {this.props.type === 'order' ? <FormItem label="支付时间">
-              {getFieldDecorator('playPicker', {})(<RangePicker format="YYYY-MM-DD HH:mm"  showTime={{defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}} />)}
-            </FormItem> : ''}
-            <FormItem>
-              <Button type="default" onClick={this.reset}>
-                清除条件
+          <Form {...formItemLayout}>
+            <Row gutter={24}>
+              <Col span={6}>
+                <FormItem label="订单编号">
+                  {getFieldDecorator('orderCode', {initialValue: values.orderCode})(<Input placeholder="请输入订单编号" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="快递单号">
+                  {getFieldDecorator('expressCode', {initialValue: values.expressCode})(<Input placeholder="请输入快递单号" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="商品ID">
+                  {getFieldDecorator('productId', {initialValue: values.productId})(<Input type="number" placeholder="请输入商品ID" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="下单人ID">
+                  {getFieldDecorator('buyerId', {initialValue: values.buyerId})(<Input placeholder="请输入下单人ID" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="下单人电话">
+                  {getFieldDecorator('buyerPhone', {initialValue: values.buyerPhone})(<Input placeholder="请输入下单人电话" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="收货人">
+                  {getFieldDecorator('contact', {initialValue: values.contact})(<Input placeholder="请输入收货人" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="收货人电话">
+                  {getFieldDecorator('phone')(<Input placeholder="请输入收货人电话" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="供应商">
+                  {getFieldDecorator('storeId', {initialValue: values.storeId})(<SuppilerSelect />)}
+                </FormItem>
+              </Col>
+              <Col span={12}>
+                <FormItem {...twoformItemLayout} label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
+                  {getFieldDecorator('rangePicker', {initialValue: values.rangePicker})(
+                    <RangePicker
+                      style={{ width: '100%' }}
+                      format="YYYY-MM-DD HH:mm"
+                      showTime={{ defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')] }}
+                    />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={12}>
+                {
+                  this.props.type === 'order' ?
+                    <FormItem  {...twoformItemLayout} label="支付时间">
+                      {getFieldDecorator('playPicker', {initialValue: values.playPicker})(
+                        <RangePicker
+                          style={{ width: '100%' }}
+                          format="YYYY-MM-DD HH:mm"
+                          showTime={{ defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')] }}
+                        />
+                      )}
+                    </FormItem> :
+                    ''
+                }
+              </Col>
+              {
+                intercept ?
+                  null :
+                  <>
+                    <Col span={6}>
+                      <FormItem label="拦截订单">
+                        {getFieldDecorator('interceptorFlag', {
+                          initialValue: values.interceptorFlag || ''
+                        })(
+                          <Select>
+                            <Select.Option value={''}>全部</Select.Option>
+                            <Select.Option value={'1'}>拦截订单</Select.Option>
+                            <Select.Option value={'0'}>非拦截订单</Select.Option>
+                          </Select>
+                        )}
+                      </FormItem>
+                    </Col>
+                    <Col span={6}>
+                      <FormItem label="拦截人电话">
+                        {getFieldDecorator('interceptorPhone', {
+                          initialValue: values.interceptorPhone
+                        })(<Input placeholder="请输入拦截人手机号" />)}
+                      </FormItem>
+                    </Col>
+                  </>
+              }
+            </Row>
+            <Row>
+              <Col span={24} style={{ textAlign: 'right' }}>
+                <Button type="default" onClick={this.reset}>
+                  清除条件
+                </Button>
+                <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>
+                  查询订单
               </Button>
-              <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>
-                查询订单
+                <Button type="primary" onClick={this.export}>
+                  导出订单
               </Button>
-              <Button type="primary" onClick={this.export}>
-                导出订单
-              </Button>
-              {this.props.orderStatus === enumOrderStatus.Undelivered && (
-                <Upload
-                  name="file"
-                  accept=".xls,.xlsx"
-                  showUploadList={false}
-                  withCredentials={true}
-                  action={importLogistics}
-                  headers={getHeaders({})}
-                  onChange={this.handleImportChange}
-                  style={{ margin: '0 10px' }}
-                >
-                  <Button type="primary">导入物流单号</Button>
-                </Upload>
-              )}
-            </FormItem>
+                {this.props.orderStatus === enumOrderStatus.Undelivered && (
+                  <Upload
+                    name="file"
+                    accept=".xls,.xlsx"
+                    showUploadList={false}
+                    withCredentials={true}
+                    action={importLogistics}
+                    headers={getHeaders({})}
+                    onChange={this.handleImportChange}
+                    style={{ margin: '0 10px' }}
+                  >
+                    <Button type="primary">导入物流单号</Button>
+                  </Upload>
+                )}
+              </Col>
+            </Row>
           </Form>
         </Card>
         <Card style={{ marginTop: 10 }}>

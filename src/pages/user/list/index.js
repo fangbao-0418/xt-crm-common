@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { connect, parseQuery, setQuery } from '@/util/utils';
 import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table } from 'antd';
+import moment from 'moment';
+
+// import { levelArr, sourceArr } from './config';
 import { levelArr, sourceArr } from '../config';
 import { levelName } from '../utils';
 import styles from './index.module.scss';
@@ -9,10 +12,7 @@ import Modal from './modal';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-const basePayload = {
-    page: 1,
-    pageSize: 10
-};
+
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 
 function getColumns(scope) {
@@ -94,24 +94,33 @@ function getColumns(scope) {
     ]
 }
 
-let unlisten = null;
+const namespace = '/user/userlist'
+
+const defaultPayload = {
+    page: 1,
+    pageSize: 10,
+    memberType: '',
+    registerFrom: ''
+}
 
 @connect(state => ({
     tableConfig: state['user.userlist'].tableConfig,
     loading: state.loading.effects['user.userlist'].getData,
 }))
-@Form.create()
+@Form.create({
+    // onValuesChange: (props, changeValues, allValues) => {
+    //     const time = allValues.time || []
+    //     allValues.registerStartDate = time[0] && time[0].format(timeFormat)
+    //     allValues.registerEndDate = time[1] && time[1].format(timeFormat)
+    //     const payload = Object.assign({}, APP.fn.getPayload(namespace), ...allValues)
+    //     APP.fn.setPayload(namespace, payload)
+    // }
+})
 export default class extends Component {
 
-
+    payload = Object.assign({}, defaultPayload, APP.fn.getPayload(namespace))
     componentDidMount() {
-        unlisten = this.props.history.listen(() => {
-            // const { form: { resetFields } } = this.props;
-            const params = parseQuery(this.props.history);
-            // resetFields();
-            this.handleSearch(params);
-        });
-        this.handleSearch(basePayload);
+        this.handleSearch();
     }
 
     onInviteClick = (item) => {
@@ -121,15 +130,25 @@ export default class extends Component {
 
     onMore = item => {
         const { form: { resetFields } } = this.props;
-        const params = parseQuery(this.props.history);
+        // const params = parseQuery(this.props.history);
         resetFields();
-        if (item.id === +params.parentMemberId) {
-            const random = Math.random();
-            setQuery({ parentMemberId: item.id, random, ...basePayload }, true);
-        } else {
-            setQuery({ parentMemberId: item.id, ...basePayload }, true);
+        this.payload = {
+            page: 1,
+            pageSize: 10,
+            memberType: '',
+            registerFrom: ''
         }
-        
+        APP.fn.setPayload(namespace, this.payload)
+        APP.history.push(`/user/userlist?parentMemberId=${item.id}`)
+        this.setState({}, () => {
+           this.handleSearch()
+        })
+        // if (item.id === +params.parentMemberId) {
+        //     const random = Math.random();
+        //     // setQuery({ parentMemberId: item.id, random, ...defaultPayload }, true);
+        // } else {
+        //     // setQuery({ parentMemberId: item.id, ...defaultPayload }, true);
+        // }
     }
 
     onDetail = (item) => {
@@ -138,50 +157,60 @@ export default class extends Component {
     }
 
     handleSearch = (params = {}) => {
+        let { parentMemberId } = parseQuery(this.props.history)
+        // parentMemberId = params.parentMemberId || parentMemberId || this.payload.parentMemberId
+        params.parentMemberId = parentMemberId
         const { form: { validateFields }, dispatch } = this.props;
         validateFields((errors, values) => {
             if (!errors) {
                 const { time } = values;
+                const registerStartDate =  (time && time[0] && time[0].format(timeFormat))
+                const registerEndDate = (time && time[1] && time[1].format(timeFormat))
                 const payload = {
-                    ...basePayload,
+                    ...defaultPayload,
                     ...values,
-                    registerStartDate: time && time[0] && time[0].format(timeFormat),
-                    registerEndDate: time && time[1] && time[1].format(timeFormat),
-                    time: undefined, // 覆盖values.time
-                    ...params
+                    registerStartDate,
+                    registerEndDate,
+                    ...params,
                 };
-                if(payload.memberType.indexOf('-') > -1) {
+                if(payload.memberType && payload.memberType.indexOf('-') > -1) {
                     const types = payload.memberType.split('-');
                     payload.memberType = types[0];
                     payload.memberTypeLevel = types[1];
                 }
+                payload.time = undefined
+                this.payload = payload
+                APP.fn.setPayload(namespace, payload)
                 dispatch['user.userlist'].getData(payload);
             }
         })
     }
 
-    // onSearch = () => {
-    //     const { form: { validateFields }, dispatch } = this.props;
-    //     validateFields((errors, values) => {
-    //         const { time } = values;
-    //         const payload = {
-    //             ...basePayload,
-    //             ...values,
-    //             registerStartDate: time && time[0] && time[0].format(timeFormat),
-    //             registerEndDate: time && time[1] && time[1].format(timeFormat),
-    //             time: undefined, // 覆盖values.time
-    //         };
-    //         setQuery(payload, true);
-    //     })
-    // }
-
+    resetSearch () {
+        const { form: { resetFields } } = this.props;
+        this.payload = {
+            page: 1,
+            pageSize: 10,
+            memberType: '',
+            registerFrom: ''
+        }
+        APP.fn.setPayload(namespace, this.payload)
+        resetFields()
+        APP.history.push('/user/userlist')
+        this.setState({}, () => {
+            this.handleSearch()
+        })
+    }
     renderForm = () => {
-        const { form: { getFieldDecorator, resetFields } } = this.props;
+        const { form: { getFieldDecorator } } = this.props;
+        const values = {...this.payload}
+        values.time = values.registerStartDate && [moment(values.registerStartDate), moment(values.registerEndDate)]
         return (
             <Form layout="inline">
                 <FormItem label="用户ID">
                     {
                         getFieldDecorator('id', {
+                            initialValue: values.id,
                             rules: [{
                                 
                                 message: '请输入数字类型',
@@ -194,21 +223,27 @@ export default class extends Component {
                 </FormItem>
                 <FormItem label="昵称">
                     {
-                        getFieldDecorator('nickName')(
+                        getFieldDecorator('nickName', {
+                            initialValue: values.nickName,
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="姓名">
                     {
-                        getFieldDecorator('userName')(
+                        getFieldDecorator('userName', {
+                            initialValue: values.userName,
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="注册时间">
                     {
-                        getFieldDecorator('time')(
+                        getFieldDecorator('time', {
+                            initialValue: values.time,
+                        })(
                             <RangePicker
                                 showTime
                             />
@@ -218,7 +253,7 @@ export default class extends Component {
                 <FormItem label="等级" className={styles.level}>
                     {
                         getFieldDecorator('memberType', {
-                            initialValue: ''
+                            initialValue: values.memberType
                         })(
                             <Select>
                                 {
@@ -230,14 +265,18 @@ export default class extends Component {
                 </FormItem>
                 <FormItem label="手机号">
                     {
-                        getFieldDecorator('phone')(
+                        getFieldDecorator('phone', {
+                            initialValue: values.phone 
+                        })(
                             <Input />
                         )
                     }
                 </FormItem>
                 <FormItem label="邀请人手机号">
                     {
-                        getFieldDecorator('invitePhone')(
+                        getFieldDecorator('invitePhone', {
+                            initialValue: values.invitePhone 
+                        })(
                             <Input />
                         )
                     }
@@ -245,7 +284,7 @@ export default class extends Component {
                 <FormItem label="注册来源" className={styles.source}>
                     {
                         getFieldDecorator('registerFrom', {
-                            initialValue: ''
+                            initialValue: values.registerFrom
                         })(
                             <Select>
                                 {
@@ -256,19 +295,24 @@ export default class extends Component {
                     }
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch()}>查询</Button>
-                    <Button type="primary" onClick={() => resetFields()}>清除条件</Button>
+                    <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch({
+                        page: 1
+                    })}>查询</Button>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            this.resetSearch()
+                        }}
+                    >清除条件</Button>
                 </FormItem>
             </Form>
         )
     }
 
     onChange = (pageConfig) => {
-        const params = {
-            page: pageConfig.current,
-            pageSize: pageConfig.pageSize
-        };
-        setQuery(params);
+        this.handleSearch({
+            page: pageConfig.current
+        })
     }
 
     showTotal = total => {
@@ -285,12 +329,8 @@ export default class extends Component {
         })
     }
 
-    componentWillUnmount() {
-        unlisten();
-    }
-
     render() {
-        const { tableConfig, loading } = this.props;
+        const { tableConfig } = this.props;
         return (
             <>
                 <Card>
@@ -313,7 +353,7 @@ export default class extends Component {
                             }}
                             onChange={this.onChange}
                             rowKey={record => record.id}
-                            loading={loading}
+                            // loading={loading}
                         />
                     </Col>
                     <Modal />

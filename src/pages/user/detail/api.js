@@ -1,4 +1,5 @@
 import * as Fetch from '@/util/fetch';
+import { get, post, newPost } from '@/util/app/http';
 var qs = require('qs');
 
 export function getCouponList(memberId, data) {
@@ -27,8 +28,8 @@ export function getTeam(params) {
 }
 
 // 收益
-export function getIncome(params) {
-    return Fetch.request(`/member/incomeList?${qs.stringify(params)}`);
+export function getIncome(param) {
+    return post(`/crm/member/settlement/v1/query`, {}, { data: param, headers: {} });
 }
 
 //提现记录
@@ -39,4 +40,30 @@ export function getLog(params) {
 //编辑用户信息
 export function updateUserInfo(params) {
     return Fetch.post('/member/update', params);
+}
+
+/**
+ * 根据订单Id和会员Id获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderIdAndMemberId(param) {
+    return get(`/crm/member/settlement/v1/order/skuSummaryByMember`, param);
+}
+
+/**
+ * 根据订单Id和会员Id和SKUId获取用户收益列表
+ * @param {object} data  
+ */
+export function getProceedsListByOrderIdAndMemberIdAndSkuId(param) {
+    return get(`/crm/member/settlement/v1/detail`, param);
+}
+
+//操作会员身份
+export function memberModify(params) {
+    return newPost('/manager/member/modify', params);
+}
+
+//获取通用操作原因列表
+export function getReasonList() {
+    return newPost('/manager/reason/list');
 }

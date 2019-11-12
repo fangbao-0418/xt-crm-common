@@ -37,3 +37,24 @@
     border: 1px solid #d9d9d9!important;
   }
 }
+
+
+.goods-draggable, .goods-detail-draggable {
+  z-index: 999;
+  :global(.ant-upload-list-item-actions), :global(.ant-upload-list-item-name) {
+    display: none;
+  }
+  :global(.ant-upload-list-item:hover) {
+    .ant-upload-list-item-info {
+      background: none
+    }
+  }
+  :global(.ant-upload-list-item-image) {
+    width: 86px;
+    height: 86px;
+  }
+}
+
+:global(.ant-upload-list-item.dragging) {
+  opacity: .4;
+}

@@ -6,6 +6,7 @@ interface State {
 }
 interface Props extends FormComponentProps {
   detail: any;
+  intercept: any;
   onSuccess(data: any): void;
 }
 
@@ -19,7 +20,18 @@ class ModifyReturnAddress extends React.Component<Props, State> {
   }
   constructor(props: Props) {
     super(props)
-    this.handleOk = this.handleOk.bind(this)
+    this.handleOk = this.handleOk.bind(this);
+    const { detail, intercept } = props;
+    const { returnContact, returnPhone, returnAddress } = detail;
+    const { memberName, memberPhone, address } = intercept || {};
+    const currentName = intercept ? memberName : returnContact;
+    const currentPhone = intercept ? memberPhone : returnPhone;
+    const currentAddress = intercept ? address : returnAddress;
+    props.onSuccess({
+      returnContact:currentName,
+      returnPhone:currentPhone,
+      returnAddress:currentAddress
+    })
   }
   handleOk() {
     this.props.form.validateFields((errors, values) => {
@@ -30,7 +42,8 @@ class ModifyReturnAddress extends React.Component<Props, State> {
     })
   }
   render() {
-    const { returnContact, returnPhone, returnAddress } = this.props.detail;
+    const { detail } = this.props;
+    const { returnContact, returnPhone, returnAddress } = detail;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -49,6 +62,7 @@ class ModifyReturnAddress extends React.Component<Props, State> {
             <Form.Item label="姓名">
               {getFieldDecorator("returnContact", {
                 initialValue: returnContact,
+                
                 rules: [{
                   required: true,
                   message: '请输入姓名'
@@ -75,7 +89,8 @@ class ModifyReturnAddress extends React.Component<Props, State> {
             </Form.Item>
           </Form>
         </Modal>
-        {makeAdress(this.props.detail)}<Button type="link" onClick={() => this.setState({ visible: true })}> 修改</Button>
+        {makeAdress(this.props.detail)}
+        <Button type="link" onClick={() => this.setState({ visible: true })}> 修改</Button>
       </>
     )
   }

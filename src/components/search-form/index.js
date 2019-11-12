@@ -9,12 +9,30 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 // const dateFormat = 'YYYY-MM-DD HH:mm:ss';
-@Form.create()
-export default class extends PureComponent {
-  componentDidMount() {
-    const { form: { setFieldsValue } } = this.props
-    setFieldsValue(parseQuery())
+@Form.create({
+  onFieldsChange: (props) => {
+    if (props.onChange) {
+      props.onChange()
+    }
   }
+})
+export default class extends PureComponent {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      initParams: props.values || parseQuery()
+    }
+  }
+  componentWillMount () {
+    if (this.props.getInstance) {
+      this.props.getInstance(this)
+    }
+  }
+  // componentDidMount() {
+  //   const { form: { setFieldsValue } } = this.props
+  //   setFieldsValue(parseQuery())
+  // }
   renderInput = (item) => {
     const placeholder = '请输入' + item.label;
     return (
@@ -64,19 +82,27 @@ export default class extends PureComponent {
 
   resetFields = () => {
     const { form: { resetFields }, clear } = this.props;
-    resetFields();
-    clear();
+    this.setState({
+      initParams: {}
+    }, () => {
+      resetFields();
+      clear();
+    })
   }
 
   render() {
     const { options = [], form: { getFieldDecorator }, className, children } = this.props;
+    const { initParams } = this.state
     return (
-      <Form {...{
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 8 },
-        }
-      }} className={"i-search-form" + (className ? " " + className : "")}>
+      <Form
+        {...{
+          labelCol: {
+            xs: { span: 24 },
+            sm: { span: 8 },
+          }
+        }}
+        className={"i-search-form" + (className ? " " + className : "")}
+      >
         <Row>
           {
             options.map((item, i) => {
@@ -87,6 +113,7 @@ export default class extends PureComponent {
                   <FormItem label={label} key={item.id}>
                     {
                       getFieldDecorator(id, {
+                        initialValue: initParams[id] || '',
                         ...config
                       })(
                         renderFun && renderFun(item)

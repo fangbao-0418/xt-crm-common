@@ -71,5 +71,6 @@ export const ExpressCompanyOptions = {
   zhaijisong: "宅急送",
   lbex: "龙邦物流",
   youshuwuliu: "优速物流",
-  pjbest: "品骏"
+  pjbest: "品骏",
+  suning: "苏宁物流"
 };

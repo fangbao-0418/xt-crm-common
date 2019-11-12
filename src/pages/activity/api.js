@@ -1,4 +1,4 @@
-import { post, get } from '../../util/fetch';
+import { post, get, newPost } from '../../util/fetch';
 
 export function getPromotionList(data) {
   return post('/promotion/list', data);
@@ -7,10 +7,16 @@ export function getPromotionList(data) {
 export function setBasePromotion(data) {
   return post('/promotion/addBasePromotion', {}, { data, headers: {} });
 }
-
-// 设置活动商品列表
-export function setPromotionOperatorSpuList(data) {
-  return post('/promotion/operatorSpuList', data);
+/**
+ * 获取活动基本信息
+ * @param {*} promotionId
+ */
+export function getPromotionInfo(promotionId) {
+  return get(`/promotion/${promotionId}`);
+}
+// 获取活动商品列表
+export function getOperatorSpuList(data) {
+  return get('/promotion/operatorSpuList', data);
 }
 
 // 查看活动详情
@@ -49,5 +55,44 @@ export function delSpuPromotion(data) {
 }
 
 export function refreshPromtion(promotionId) {
-  return get('/promotion/refreshPromtion', { promotionId })
+  return get('/promotion/refreshPromtion', { promotionId });
+}
+
+/************** 抽奖接口 start***************/
+// 用户抽奖码列表
+export function getLotteryList(data) {
+  return get('/lottery/list', data);
+}
+
+// 抽奖码失效 String[] ticketCodes; 奖券码集合
+// String  failureReason;失效原因
+export function lotteryDisable(data) {
+  return newPost('/lottery/disable', data);
+}
+
+// 抽奖券码生效 String[] ticketCodes; 奖券码集合
+export function lotteryEnable(data) {
+  return newPost('/lottery/enable', data);
+}
+
+// 手工发码 lotteryMemberTicketManualAddVOList:[]
+export function lotteryManualGive(data) {
+  return newPost('/lottery/manualGive', data);
+}
+/************** 抽奖接口 end***************/
+
+/**
+ * 获取活动下所有商品
+ * @param {*} param
+ */
+export function getGoodsListByActivityId({ promotionId, ...data }) {
+  return get(`/promotion/${promotionId}/products`, data);
+}
+
+/**
+ * 商品批量转移到另一个活动
+ * @param {*} param
+ */
+export function batchMoveGoodsToOtherActivity(param) {
+  return newPost('/promotion/batchmove', param);
 }
