@@ -71,7 +71,7 @@ class Page extends React.Component<Props, State> {
         title: '序号',
         key: 'index',
         render: (text: any, record: any, index: number) => {
-          return ((this.state.current || 1) - 1) * 10 + (index + 1);
+          return ((this.payload.current || 1) - 1) * 10 + (index + 1);
         },
       },
       {
@@ -162,8 +162,8 @@ class Page extends React.Component<Props, State> {
           <Table
             rowKey="createTime"
             pagination={{
-              current: this.state.current,
-              total: this.state.total,
+              current: this.payload.current,
+              total: this.payload.total,
               onChange: this.onChange
             }}
             columns={listColumns}

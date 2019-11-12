@@ -6,9 +6,9 @@ import classnames from 'classnames';
 import styles from './style.module.scss';
 import { withRouter } from 'react-router';
 import { radioStyle } from '@/config';
-import { templateAdd, templateModify } from './api';
+import { templateAdd, templateModify, getDetail } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
-import { getDetail } from './api';
+import { isNumber } from 'lodash';
 import { formatPrice } from '@/util/format';
 import { rankItem, Props, State } from './interface';
 
@@ -43,6 +43,9 @@ class edit extends React.Component<Props, State> {
     templateData: [],
     destinationList: [],
   };
+  /**
+   * 获取运费模板详情
+   */
   async getDetail() {
     const res = (await getDetail(this.props.match.params.id)) || {};
     this.props.form.setFieldsValue({
@@ -64,7 +67,7 @@ class edit extends React.Component<Props, State> {
     this.props.form.validateFields(async (errors, values) => {
       let { templateData } = this.state;
       if (!errors) {
-        if (templateData.some((item: rankItem) => item.rankType === 1 && !item.cost)) {
+        if (templateData.some((item: rankItem) => item.rankType === 1 && item.cost !== 0 && !item.cost)) {
           message.error('发货地区运费是必填项');
           return;
         }
@@ -204,9 +207,12 @@ class edit extends React.Component<Props, State> {
           value={this.state.destinationList}
           onOk={(destinationList: any) => {
             let { templateData } = this.state;
+            /** 编辑 */
             if (this.editIndex > -1) {
               templateData[this.editIndex].destinationList = destinationList;
-            } else {
+            }
+            /** 添加 */
+            else {
               templateData = [...templateData, { destinationList, rankNo: this.rankNo++, rankType: 1 }];
             }
             this.setState({
