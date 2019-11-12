@@ -66,13 +66,8 @@ class UploadView extends Component {
     return fileList.map(val => {
       val.durl = val.url
       if (fileType == 'video') {
-        if (/x-oss-process=video/.test(val.url) === false) {
-          val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
-          val.thumbUrl = val.url;
-        } else {
-          val.url = val.url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '') + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
-          val.thumbUrl = val.url;
-        }
+        val.url = val.url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '');
+        val.thumbUrl = val.url+ '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
       }
       val.durl = this.getViewUrl(val.durl)
       val.url = this.getViewUrl(val.url)
