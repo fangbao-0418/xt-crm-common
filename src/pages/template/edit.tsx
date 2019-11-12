@@ -236,20 +236,27 @@ class edit extends React.Component<Props, State> {
           value={this.state.destinationList}
           onOk={(destinationList: any) => {
             const checkedCityStr = getCityStr(destinationList)
-            console.log('checkedCityStr=>', checkedCityStr)
-            if (this.citys.includes(checkedCityStr)) {
-              message.error('目的地不能重复，请重新选择')
-              return
-            }
+            /** citys是否包含城市序列 */
+            const isIncludes = this.citys.includes(checkedCityStr)
             let { templateData } = this.state;
             /** 编辑 */
             if (this.editIndex > -1) {
+              /** 编辑的城市序列 */
               const editCityStr = getCityStr(templateData[this.editIndex].destinationList)
+              /** 排除自身 */
+              if (checkedCityStr !== editCityStr && isIncludes) {
+                message.error('目的地不能重复，请重新选择')
+                return
+              }
               this.citys = this.citys.filter(cityStr => cityStr !== editCityStr)
               templateData[this.editIndex].destinationList = destinationList;
             }
             /** 添加 */
             else {
+              if (isIncludes) {
+                message.error('目的地不能重复，请重新选择')
+                return
+              }
               templateData = [...templateData, { destinationList, rankType: 1, cost: '' }];
             }
             this.citys.push(checkedCityStr)

@@ -18,37 +18,71 @@ const Group = props => {
   const [indeterminate, setIndeterminate] = useState(
     !!children.length && children.length < source.children.length,
   );
+  /** 省的选中状态 */
   const [checkAll, setCheckAll] = useState(children.length === source.children.length);
+  /** 选中省对应的市区列表 */
   const [checkedList, setCheckedList] = useState(children);
-
-  const onCheckAllChange = e => {
-    const { checked } = e.target;
-    setIndeterminate(false);
-    setCheckAll(checked);
-    setCheckedList(checked ? source.children : []);
+  
+  /**
+   * 修改对应省组件市区列表
+   */
+  const changeChildren = (children) => {
     if (props.onChange) {
       console.log(props, 'onCheckAllChange')
+      /** 改变children的内容 */
       props.onChange({
         ...props.source,
-        children: checked ? source.children : []
+        children
       })
     }
+  }
+  /**
+   * 省选择框改变触发回调
+   * @param {*} e 
+   */
+  const onCheckAllChange = e => {
+    const { checked } = e.target;
+    /**  Indeterminate置为false，要么选中要么选不中 */
+    setIndeterminate(false);
+    /** 设置对应选中状态 */
+    setCheckAll(checked);
+    /** 选中即全选市区列表，选不中即市区列表状态全部置为false */
+    setCheckedList(checked ? source.children : []);
+    changeChildren(checked ? source.children : [])
   };
 
+
+
+  /**
+   * 选中省对应市区列表变化执行相应回调
+   * @param {*} checkedList 
+   */
   const childrenChange = checkedList => {
+    console.log('checkedList=>', checkedList)
+    // 选中省对应市区列表长度不为0且不全选设置Indeterminate状态
     setIndeterminate(!!checkedList.length && checkedList.length < source.children.length);
+    // 选中省对应市区列表长度等于省对应市区列表长度，即为全选状态
     setCheckAll(checkedList.length === source.children.length);
-    setCheckedList(
-      source.children.filter(item => {
-        return checkedList.includes(item.id);
-      }),
-    );
+    // 设置省对应市区列表
+    const checkedChilden = source.children.filter(item => {
+      return checkedList.includes(item.id);
+    })
+  
+    setCheckedList(checkedChilden);
+    changeChildren(checkedChilden)
   };
 
+  /**
+   * 选中省数据变化执行什么周期钩子函数
+   */
   useEffect(() => {
+    console.log(props.source.name, children.length, source.children.length)
+    console.log(!!children.length, children.length < source.children.length)
+    setIndeterminate(!!children.length && (children.length < source.children.length))
     setCheckAll(children.length === source.children.length);
     setCheckedList(children)
   }, [props.checkedSource]);
+
   return (
     <span style={{ display: 'inline-block', width: 190, paddingTop: '20px' }}>
       <Popover
@@ -116,6 +150,10 @@ class CascaderCity extends (PureComponent || Component) {
       });
     });
   }
+  /**
+   * 组件接受数据改变选中项
+   * @param {*} props 
+   */
   componentWillReceiveProps (props) {
     this.setState({
       checkedSourceData: cloneDeep(props.value),
@@ -128,6 +166,7 @@ class CascaderCity extends (PureComponent || Component) {
       <Modal {...this.props} width={700} onOk={this.onOk}>
         <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
           {sourceData.map(item => {
+            /** 遍历找出所有选中项 */
             const checkedItem = checkedSourceData.find(checkedItem => checkedItem.id === item.id);
             return (
               <Group
