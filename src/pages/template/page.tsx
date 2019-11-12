@@ -56,11 +56,11 @@ class Page extends React.Component<Props, State> {
   };
   handleReset = () => {
     this.props.form.resetFields()
-    this.payload.current = 1
-    this.fetchList()
+    this.handleSearch()
   }
   handleSearch = () => {
-    this.fetchList();
+    this.payload.current = 1
+    this.fetchList()
   }
   render() {
     const {

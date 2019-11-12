@@ -14,12 +14,13 @@ import { rankItem, Props, State } from './interface';
 
 
 const mapReqRankList = (list: rankItem[]) => {
-  return list.map((item: any) => {
+  return list.map((item: any, index: number) => {
     let { destinationList, ...rest } = item;
     return {
       ...rest,
       cost: item.cost * 100,
       destinationList,
+      rankNo: index + 1,
       describe:
         destinationList &&
         destinationList.map((v: any) => `${v.name}（${v.children.length})`).join(' '),
@@ -58,7 +59,6 @@ const mapCitys = (list: rankItem[]) => {
 class edit extends React.Component<Props, State> {
   // editIndex等于-1为添加
   editIndex: number = -1
-  rankNo: number = 1
   /** 以,分割的排序后的市区组成的数组 */
   citys: string[] = []
   state: State = {
@@ -77,9 +77,7 @@ class edit extends React.Component<Props, State> {
       commonCost: formatPrice(res.commonCost),
     });
     let templateData = mapTemplateData(res.rankList);
-    console.log('citys =>', this.citys);
     this.citys = mapCitys(res.rankList)
-    this.rankNo = templateData.length + 1;
     this.setState({
       templateData,
     });
@@ -129,9 +127,11 @@ class edit extends React.Component<Props, State> {
     const editColumns: ColumnProps<rankItem>[] = [
       {
         title: '编号',
-        dataIndex: 'rankNo',
         key: 'rankNo',
         width: 80,
+        render: (text: any, record: rankItem, index: number) => {
+          return index + 1;
+        }
       },
       {
         title: '目的地',
@@ -250,7 +250,7 @@ class edit extends React.Component<Props, State> {
             }
             /** 添加 */
             else {
-              templateData = [...templateData, { destinationList, rankNo: this.rankNo++, rankType: 1, cost: '' }];
+              templateData = [...templateData, { destinationList, rankType: 1, cost: '' }];
             }
             this.citys.push(checkedCityStr)
             this.setState({
