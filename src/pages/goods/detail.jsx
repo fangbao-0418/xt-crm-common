@@ -6,7 +6,7 @@ import {
   memoize
 } from 'lodash' 
 import MoneyRender from '@/components/money-render'
-import { getStoreList, getGoodsDetial } from './api';
+import { getStoreList, toAuditDetail } from './api';
 import SkuUploadItem from './SkuUploadItem'
 import Image from '@/components/Image'
 import styles from './edit.module.scss';
@@ -210,8 +210,8 @@ class GoodsEdit extends React.Component {
   /**
    * 获取详情数据
    */
-  getGoodsDetial = () => {
-    getGoodsDetial({ productId: this.productId }).then((res = {}) => {
+  toAuditDetail = () => {
+    toAuditDetail({ productId: this.productId }).then((res = {}) => {
       const currentSupplier = (this.supplier || []).find(item => item.id === res.storeId) || {};
       res.combineName = res.productCategoryVO && res.productCategoryVO.combineName
       res.interceptionVisible = currentSupplier.category == 1 ? false : true
@@ -237,7 +237,7 @@ class GoodsEdit extends React.Component {
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
       this.supplier = res.records 
-      this.getGoodsDetial()
+      this.toAuditDetail()
     });
   };
   handleSave = () => {

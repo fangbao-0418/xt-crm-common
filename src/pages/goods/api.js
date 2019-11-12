@@ -65,7 +65,15 @@ export function auditGoods(data) {
   return newPost('/product/supplier/toAudit/audit', data)
 }
 
-//获取定价策略列表
+/**
+ * 获取定价策略列表
+ */
 export function getStrategyByCategory(data) {
   return newGet('/product/price/rule/getByCategoryId', data);
+}
+/**
+ * 待审核详情 
+ */
+export function toAuditDetail(data) {
+  return get('/product/supplier/toAudit/get', data)
 }
