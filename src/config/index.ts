@@ -50,7 +50,8 @@ export const ORDER_TYPE = {
   '10': '激活码订单',
   '20': '地推订单',
   '30': '助力分兑换订单',
-  '40': '采购订单'
+  '40': '采购订单',
+  '60': '团购会订单'
 }
 
 export const ExpressCompanyOptions = {
