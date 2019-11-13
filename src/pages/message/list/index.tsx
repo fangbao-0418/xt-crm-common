@@ -31,7 +31,10 @@ class Main extends React.Component<Props> {
     },
     {
       title: '消息类型',
-      dataIndex: 'messageForm'
+      dataIndex: 'messageForm',
+      render: () => {
+        return <span>营销消息</span>
+      }
     },
     {
       title: '状态',
