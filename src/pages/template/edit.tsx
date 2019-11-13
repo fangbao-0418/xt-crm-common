@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import styles from './style.module.scss';
 import { withRouter } from 'react-router';
 import { radioStyle } from '@/config';
-import { flatten, intersectionWith, differenceWith, isEqual } from 'lodash'
+import { flatten, intersectionWith, differenceWith, unionWith, isEqual } from 'lodash'
 import { templateAdd, templateModify, getDetail } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { formatPrice } from '@/util/format';
@@ -216,6 +216,9 @@ class edit extends React.Component<Props, State> {
               onClick={() => {
                 this.setState((state) => {
                   const templateData = [...state.templateData]
+                   /** 编辑的市区列表 */
+                  const editCity = flattenCity(record.destinationList)
+                  this.citys = differenceWith(this.citys, editCity, isEqual)
                   templateData.splice(index, 1)
                   return {
                     templateData 
@@ -259,11 +262,7 @@ class edit extends React.Component<Props, State> {
                 message.error(`${errorMsg}不能重复，请重新选择`)
                 return
               }
-              this.citys = this.citys.filter(city => {
-                return editCity.some(item => {
-                  return item.id !== city.id
-                })
-              })
+              this.citys = diffCitys;
               templateData[this.editIndex].destinationList = destinationList;
             }
             /** 添加 */
@@ -275,7 +274,7 @@ class edit extends React.Component<Props, State> {
               templateData = [...templateData, { destinationList, rankType: 1, cost: '' }];
             }
             /** 求并集 */
-            this.citys = this.citys.concat(checkedCity)
+            this.citys = unionWith(this.citys, checkedCity, isEqual)
             this.setState({
               destinationList,
               templateData,
