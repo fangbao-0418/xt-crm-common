@@ -279,8 +279,10 @@ export default class extends Component {
               value={val && val.length ? val : []}  
               onChange={file => this.imgUpload(file, index)} 
               className="secondary-category" 
-              listType="picture-card" 
-              listNum={1} size={0.3}>
+              listType="picture-card"
+              fileType={['jpg', 'jpeg', 'gif', 'png']} 
+              pxSize={[{width:150, height:150}]} 
+              listNum={1}>
             </UploadView>
           </div>
         } 
@@ -300,7 +302,7 @@ export default class extends Component {
         } 
       },
       {
-        title: titleRender('内容'),
+        title: titleRender('内容：提供单选功能：活动和自定义链接'),
         dataIndex: 'productCategoryVOS',
         width: 400,
         render: (val, record, index) => {
@@ -308,8 +310,9 @@ export default class extends Component {
           return <div>
             <Radio.Group onChange={(e) => this.radioChange(e.target.value, record, index)} value={type}>
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <Radio style={radioStyle} value={2}></Radio>
-                <div>
+                <Radio style={radioStyle} value={2}>添加活动</Radio>
+                {
+                  type === 2 ?<div>
                     {
                       val && val.map((item, i) => {
                         return <div className="intf-cat-reitem" key={i}>{item.title || item.name} 
@@ -325,11 +328,14 @@ export default class extends Component {
                       })
                     }
                     <Button type="link" onClick={() => handleClickModal({type: 'secondary', index, secondaryActText: val})}>+添加活动</Button>
-                </div>
+                  </div> : null
+                }
               </div>
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <Radio style={radioStyle} value={4}></Radio>
-                <Input value={url} onChange={(e) => this.updateUrl(e.target.value, index)} style={{ width: '100%', marginLeft: 10 }} />
+                <Radio style={radioStyle} value={4}>自定义链接</Radio>
+                {
+                  type === 4 ? <Input value={url} onChange={(e) => this.updateUrl(e.target.value, index)} style={{ width: '100%', marginLeft: 10 }} /> : null
+                }
               </div>
             </Radio.Group>
           </div>
