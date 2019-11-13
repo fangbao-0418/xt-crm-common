@@ -484,6 +484,9 @@ class InterFaceCategory extends Component {
               {getFieldDecorator('secondStatus', {
                 onChange: this.handleSwitchChange
               })(<Switch checked={secondStatus} />)}
+              <span style={{paddingLeft: '10px',color: 'red'}}>
+                只控制前台是否展示
+              </span>
             </FormItem>
             {
                secondStatus && <FormItem label="二级类目内容"><SecondaryCategory
