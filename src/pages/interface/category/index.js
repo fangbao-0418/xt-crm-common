@@ -480,13 +480,13 @@ class InterFaceCategory extends Component {
                   })}<Button type="link" onClick={this.handleClickModal}>+添加活动</Button></div>) : ''}
               </div>)}
             </FormItem>
-            <FormItem label="二级类目">
+            <FormItem label="二级类目开关">
               {getFieldDecorator('secondStatus', {
                 onChange: this.handleSwitchChange
               })(<Switch checked={secondStatus} />)}
             </FormItem>
             {
-               secondStatus && <FormItem label="二级类目"><SecondaryCategory
+               secondStatus && <FormItem label="二级类目内容"><SecondaryCategory
                   key={currId} 
                   secondaryIndex={secondaryIndex} 
                   secondCategoryVOS={secondCategoryVOS}
