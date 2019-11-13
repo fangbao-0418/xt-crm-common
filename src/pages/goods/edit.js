@@ -4,32 +4,27 @@ import React from 'react';
 import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader } from 'antd';
 import UploadView from '../../components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
-import {
-  map,
-  size,
-  concat,
-  filter,
-  assign,
-  forEach,
-  cloneDeep,
-  split
-} from 'lodash';
+import { map, size, concat, filter, assign, forEach, cloneDeep, split } from 'lodash';
 import descartes from '../../util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku } from './api';
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
+import { radioStyle } from '@/config';
 import SkuList from './SkuList';
+import { TemplateList } from '@/components';
 import styles from './edit.module.scss'
 import DraggableUpload from './components/draggable-upload'
 const replaceHttpUrl = imgUrl => {
-  return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
-}
+  return imgUrl
+    .replace('https://assets.hzxituan.com/', '')
+    .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
+};
 
 function barCodeValidator(rule, value, callback) {
   if (value) {
     if (/^\d{0,20}$/.test(value)) {
-      callback()
+      callback();
     } else {
-      callback('仅支持数字，20个字符以内')
+      callback('仅支持数字，20个字符以内');
     }
   } else {
     callback();
@@ -47,10 +42,8 @@ const formLayout = {
   },
 };
 
-
-
 class GoodsEdit extends React.Component {
-  specs = []
+  specs = [];
   state = {
     speSelect: [],
     spuName: [],
@@ -77,16 +70,18 @@ class GoodsEdit extends React.Component {
     getCategoryList().then(res => {
       const arr = Array.isArray(res) ? res : [];
       const categoryList = arr.map(org => mapTree(org));
-      this.setState({
-        categoryList
-      }, () => {
-        this.getGoodsDetial(res)
-      });
+      this.setState(
+        {
+          categoryList,
+        },
+        () => {
+          this.getGoodsDetial(res);
+        },
+      );
+    });
+  };
 
-    })
-  }
-
-  getGoodsDetial = (list) => {
+  getGoodsDetial = list => {
     const {
       form: { setFieldsValue },
     } = this.props;
@@ -99,24 +94,27 @@ class GoodsEdit extends React.Component {
     let { supplier } = this.state;
     if (!id) {
       setFieldsValue({
-        showNum: 1
-      })
-      return
-    };
+        showNum: 1,
+      });
+      return;
+    }
     getGoodsDetial({ productId: id }).then((res = {}) => {
       const arr2 = treeToarr(list);
-      const categoryId = res.productCategoryVO && res.productCategoryVO.id ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse() : [];
+      const categoryId =
+        res.productCategoryVO && res.productCategoryVO.id
+          ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse()
+          : [];
       this.specs = [
         {
           title: res.property1,
-          content: []
+          content: [],
         },
         {
           title: res.property2,
-          content: []
-        }
-      ]
-      let showImage = false
+          content: [],
+        },
+      ];
+      let showImage = false;
       map(res.skuList, item => {
         item.costPrice = Number(item.costPrice / 100);
         item.salePrice = Number(item.salePrice / 100);
@@ -126,7 +124,7 @@ class GoodsEdit extends React.Component {
         item.areaMemberPrice = Number(item.areaMemberPrice / 100);
         item.headPrice = Number(item.headPrice / 100);
         if (item.imageUrl1) {
-          showImage = true
+          showImage = true;
         }
       });
       let productImage = [];
@@ -154,6 +152,7 @@ class GoodsEdit extends React.Component {
       setFieldsValue({
         interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
+        freightTemplateId: res.freightTemplateId,
         description: res.description,
         productCode: res.productCode,
         productId: res.productId,
@@ -200,20 +199,28 @@ class GoodsEdit extends React.Component {
       return item
     })
     map(skuList, (item, key) => {
-      if (item.propertyValue1 && specs[0] && specs[0].content.findIndex(val => val.specName === item.propertyValue1) === -1) {
+      if (
+        item.propertyValue1 &&
+        specs[0] &&
+        specs[0].content.findIndex(val => val.specName === item.propertyValue1) === -1
+      ) {
         specs[0].content.push({
           specName: item.propertyValue1,
-          specPicture: item.imageUrl1
-        })
+          specPicture: item.imageUrl1,
+        });
       }
-      if (item.propertyValue2 && specs[1] && specs[1].content.findIndex(val => val.specName === item.propertyValue2) === -1) {
+      if (
+        item.propertyValue2 &&
+        specs[1] &&
+        specs[1].content.findIndex(val => val.specName === item.propertyValue2) === -1
+      ) {
         specs[1].content.push({
-          specName: item.propertyValue2
-        })
+          specName: item.propertyValue2,
+        });
       }
     });
-    this.specs = filter(specs, item => !!item.title)
-    return this.specs
+    this.specs = filter(specs, item => !!item.title);
+    return this.specs;
   }
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
@@ -283,8 +290,10 @@ class GoodsEdit extends React.Component {
         propertyValue2: (size(skuList) > 1 && skuList[1]) || '',
       };
     });
-    speSelect[0] && (speSelect[0].render = record => <>{size(record.spuName) > 0 && record.spuName[0]}</>);
-    speSelect[1] && (speSelect[1].render = record => <>{size(record.spuName) > 1 && record.spuName[1]}</>);
+    speSelect[0] &&
+      (speSelect[0].render = record => <>{size(record.spuName) > 0 && record.spuName[0]}</>);
+    speSelect[1] &&
+      (speSelect[1].render = record => <>{size(record.spuName) > 1 && record.spuName[1]}</>);
     this.setState({ speSelect, data: data });
   };
 
@@ -307,12 +316,15 @@ class GoodsEdit extends React.Component {
           message.error('请添加sku项');
           return false;
         }
-
+        if (vals.withShippingFree === 0 && !vals.freightTemplateId) {
+          message.error('请选择运费模板');
+          return;
+        }
         const property = {};
         if (id) {
           assign(property, {
             propertyId1,
-            propertyId2: speSelect[1] && propertyId2
+            propertyId2: speSelect[1] && propertyId2,
           });
         }
         // let isExistImg = true
@@ -355,7 +367,10 @@ class GoodsEdit extends React.Component {
           property2: speSelect[1] && speSelect[1].title,
           skuAddList,
           coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].durl),
-          videoCoverUrl: vals.videoCoverUrl && vals.videoCoverUrl[0] ? replaceHttpUrl(vals.videoCoverUrl[0].durl) : '',
+          videoCoverUrl:
+            vals.videoCoverUrl && vals.videoCoverUrl[0]
+              ? replaceHttpUrl(vals.videoCoverUrl[0].durl)
+              : '',
           videoUrl: vals.videoUrl && vals.videoUrl[0] ? replaceHttpUrl(vals.videoUrl[0].durl) : '',
           listImage: listImage.join(','),
           productImage: productImage.join(','),
@@ -363,8 +378,7 @@ class GoodsEdit extends React.Component {
           bannerUrl: vals.bannerUrl && replaceHttpUrl(vals.bannerUrl[0].url),
           categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
         };
-
-        setProduct({ productId: id, ...params }).then((res) => {
+        setProduct({ productId: id, ...params }).then(res => {
           if (!res) return;
           if (id) {
             res && message.success('编辑数据成功');
@@ -381,15 +395,15 @@ class GoodsEdit extends React.Component {
       title: '提示',
       content: '确认要删除全部图片吗?',
       onOk: () => {
-        this.props.form.setFieldsValue({ 'listImage': [] })
-      }
+        this.props.form.setFieldsValue({ listImage: [] });
+      },
     });
-  }
+  };
   isShowDeleteAll = () => {
     const listImage = this.props.form.getFieldValue('listImage');
     return listImage && listImage.length > 0;
-  }
-  handleInput = (event) => {
+  };
+  handleInput = event => {
     const { name, value } = event.target;
     this.setState({
       [name]: value
@@ -414,7 +428,6 @@ class GoodsEdit extends React.Component {
   }
 
   render() {
-
     const { getFieldDecorator } = this.props.form;
     const { supplier, interceptionVisible, categoryList } = this.state;
     const {
@@ -447,11 +460,11 @@ class GoodsEdit extends React.Component {
                 {
                   validator(rule, value, callback) {
                     if (!value || value.length === 0) {
-                      callback('请选择类目')
+                      callback('请选择类目');
                     }
-                    callback()
+                    callback();
                   },
-                }
+                },
               ],
               onChange: (val) => {
                 console.log(val, 'val')
@@ -486,7 +499,7 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('barCode', {
               rules: [
                 {
-                  validator: barCodeValidator
+                  validator: barCodeValidator,
                 },
               ],
             })(<Input placeholder="请输入商品条码" />)}
@@ -551,10 +564,25 @@ class GoodsEdit extends React.Component {
             )}
           </Form.Item>
           <Form.Item label="商品视频封面">
-            {getFieldDecorator('videoCoverUrl')(<UploadView placeholder="上传视频封面" listType="picture-card" listNum={1} size={0.3} />)}
+            {getFieldDecorator('videoCoverUrl')(
+              <UploadView
+                placeholder="上传视频封面"
+                listType="picture-card"
+                listNum={1}
+                size={0.3}
+              />,
+            )}
           </Form.Item>
           <Form.Item label="商品视频">
-            {getFieldDecorator('videoUrl')(<UploadView placeholder="上传视频" fileType='video' listType="picture-card" listNum={1} size={5} />)}
+            {getFieldDecorator('videoUrl')(
+              <UploadView
+                placeholder="上传视频"
+                fileType="video"
+                listType="picture-card"
+                listNum={1}
+                size={5}
+              />,
+            )}
           </Form.Item>
           <Form.Item label="商品主图" required={true}>
             {getFieldDecorator('coverUrl', {
@@ -564,7 +592,9 @@ class GoodsEdit extends React.Component {
                   message: '请设置商品主图',
                 },
               ],
-            })(<UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />)}
+            })(
+              <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={0.3} />,
+            )}
           </Form.Item>
           <Form.Item
             label="商品图片"
@@ -604,14 +634,14 @@ class GoodsEdit extends React.Component {
               rules: [
                 {
                   required: true,
-                  message: '请选择累计销量'
-                }
-              ]
+                  message: '请选择累计销量',
+                },
+              ],
             })(
               <Radio.Group>
                 <Radio value={1}>展示</Radio>
                 <Radio value={0}>不展示</Radio>
-              </Radio.Group>
+              </Radio.Group>,
             )}
           </Form.Item>
         </Card>
@@ -621,12 +651,11 @@ class GoodsEdit extends React.Component {
           dataSource={this.state.data}
           strategyData={this.state.strategyData}
           onChange={(value, specs, showImage) => {
-            // console.log(specs, 'skulist change')
             this.setState({
               data: value,
               speSelect: specs,
-              showImage
-            })
+              showImage,
+            });
           }}
         />
         <Card title="物流信息" style={{ marginTop: 10 }}>
@@ -641,20 +670,24 @@ class GoodsEdit extends React.Component {
               initialValue: 0,
             })(
               <Radio.Group>
-                <Radio value={1}>包邮</Radio>
-                <Radio value={0}>不包邮</Radio>
+                <Radio style={radioStyle} value={1}>
+                  包邮
+                </Radio>
+                <Radio style={radioStyle} value={0}>
+                  {getFieldDecorator('freightTemplateId')(<TemplateList />)}
+                </Radio>
               </Radio.Group>,
             )}
           </Form.Item>
           <Form.Item
             label="退货地址"
             wrapperCol={{
-              span: 18
+              span: 18,
             }}
           >
             <div>
               <Input
-                style={{width: 160, marginRight: 10}}
+                style={{ width: 160, marginRight: 10 }}
                 className={styles['no-error']}
                 name="returnContact"
                 placeholder="收货人姓名"
@@ -671,17 +704,17 @@ class GoodsEdit extends React.Component {
                 ]
               })(
                 <Input
-                  style={{width: 160, marginRight: 10}}
+                  style={{ width: 160, marginRight: 10 }}
                   placeholder="收货人电话"
                   name="returnPhone"
                   value={this.state.returnPhone}
                   type="tel"
                   maxLength={12}
                   onChange={this.handleInput}
-                />
+                />,
               )}
               <Input
-                style={{width: 250}}
+                style={{ width: 250 }}
                 className={styles['no-error']}
                 name="returnAddress"
                 value={this.state.returnAddress}
@@ -705,7 +738,11 @@ class GoodsEdit extends React.Component {
                 // <UploadView multiple placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
               )}
             </div>
-            {this.isShowDeleteAll() && <Button type="primary" onClick={this.handleDeleteAll}>一键删除</Button>}
+            {this.isShowDeleteAll() && (
+              <Button type="primary" onClick={this.handleDeleteAll}>
+                一键删除
+              </Button>
+            )}
           </Form.Item>
           <Form.Item label="上架状态">
             {getFieldDecorator('status', {

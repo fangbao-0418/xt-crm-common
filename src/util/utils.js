@@ -2,10 +2,11 @@ import * as redux from 'react-redux';
 import { dispatch } from '@rematch/core';
 import { createHashHistory } from 'history';
 import { baseHost } from './baseHost';
-import { isNil } from 'lodash';
 import { Decimal } from 'decimal.js';
 import { ExpressCompanyOptions } from '@/config';
 import * as LocalStorage from '@/util/localstorage';
+import moment from 'moment';
+import { isNil } from 'lodash';
 
 const pathToRegexp = require('path-to-regexp');
 const History = createHashHistory();
@@ -18,10 +19,9 @@ function defaultMapStateToProps() {
 export function connect(mapStateToProps = defaultMapStateToProps) {
   return redux.connect(state => {
     const base = mapStateToProps(state);
-    return { ...base, dispatch, history: History }
+    return { ...base, dispatch, history: History };
   });
 }
-
 
 export function parseQuery() {
   const search = window.location.hash.split('?')[1] || '';
@@ -41,10 +41,12 @@ export function setQuery(params = {}, force = false) {
   const str = decodeURIComponent(window.location.hash); // 对中文解码
   const [baseLoc, baseQueryStr = ''] = str.split('?');
   const baseQuery = {};
-  !force && baseQueryStr && baseQueryStr.split('&').forEach(item => {
-    const [key, value] = item.split('=');
-    baseQuery[key] = value;
-  });
+  !force &&
+    baseQueryStr &&
+    baseQueryStr.split('&').forEach(item => {
+      const [key, value] = item.split('=');
+      baseQuery[key] = value;
+    });
   const filters = {};
   for (const k in params) {
     if (Object.prototype.hasOwnProperty.call(params, k)) {
@@ -60,21 +62,22 @@ export function setQuery(params = {}, force = false) {
 export function saveDefault(state, payload) {
   return {
     ...state,
-    ...payload
+    ...payload,
   };
 }
 
 export function arrToTree(list = [], pid = null, key = 'parentId') {
   let tree = [];
-  Array.isArray(list) && list.forEach(item => {
-    let tmp = deepClone(item);
-    if (item[key] === pid) {
-      tmp['subMenus'] = arrToTree(list, item.id, key);
-      tree.push(tmp);
-    }
-  });
+  Array.isArray(list) &&
+    list.forEach(item => {
+      let tmp = deepClone(item);
+      if (item[key] === pid) {
+        tmp['subMenus'] = arrToTree(list, item.id, key);
+        tree.push(tmp);
+      }
+    });
   return tree;
-};
+}
 
 export function deepClone(obj) {
   let str = '';
@@ -90,7 +93,7 @@ export function deepClone(obj) {
     }
   }
   return newobj;
-};
+}
 
 export function getPidById(arr = [], id, key = 'parentId') {
   const item = arr.find(item => item.id === id) || {};
@@ -104,11 +107,11 @@ export function getItemById(arr = [], id) {
 export function getAllId(base = [], list = [], key = 'parentId') {
   let tree = [];
   list.forEach(id => {
-    tree.push(id)
-    let pid = getPidById(base, id, key)
+    tree.push(id);
+    let pid = getPidById(base, id, key);
     while (pid) {
-      tree.push(pid)
-      pid = getPidById(base, pid, key)
+      tree.push(pid);
+      pid = getPidById(base, pid, key);
     }
   });
   return tree;
@@ -128,13 +131,14 @@ export function gotoPage(path) {
 
 // 拼接日志信息
 export function formatData(data) {
-  let str = '', q = '';
+  let str = '',
+    q = '';
   for (let i in data) {
     q = data[i];
-    if (typeof data[i] === 'object') q = JSON.stringify(data[i])
-    if (q) str += '&' + i + '=' + encodeURIComponent(q)
+    if (typeof data[i] === 'object') q = JSON.stringify(data[i]);
+    if (q) str += '&' + i + '=' + encodeURIComponent(q);
   }
-  return str.substr(1)
+  return str.substr(1);
 }
 
 export function initImgList(imgUrlWap, uid) {
@@ -153,7 +157,7 @@ export function initImgList(imgUrlWap, uid) {
     ];
   }
   return [];
-};
+}
 
 export function getHeaders(headers) {
   const token = LocalStorage.get('token');
@@ -191,9 +195,9 @@ export const prefix = url => {
 };
 
 /**
- * 
- * @param { 目标数组 } target 
- * @param { 需要比较的数组 } source 
+ *
+ * @param { 目标数组 } target
+ * @param { 需要比较的数组 } source
  */
 export function unionArray(target, source) {
   const result = [...target];
@@ -211,15 +215,49 @@ export function replaceHttpUrl(imgUrl = '') {
   return imgUrl;
 }
 
+/**
+ * @description 去掉多余的属性
+ * @param {需要过滤的对象} obj
+ * @param {对于的属性名称} prop
+ */
+export function dissoc(obj, prop) {
+  let result = {};
+  for (let p in obj) {
+    if (p !== prop) {
+      result[p] = obj[p];
+    }
+  }
+  return result;
+}
+
+export function mul(unitPrice, serverNum) {
+  if (unitPrice && serverNum) {
+    return new Decimal(unitPrice).mul(serverNum).toNumber();
+  }
+  return 0;
+}
+
+export function getExpressCode(name) {
+  for (let key in ExpressCompanyOptions) {
+    if (ExpressCompanyOptions[key] === name) {
+      return key;
+    }
+  }
+}
+
+export function momentRangeValueof(values = []) {
+  return values.map(v => moment(v).valueOf());
+}
+
 export function mapTree(org) {
   const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
   return {
     label: org.name,
     value: org.id,
     data: { ...org },
-    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
+    children: haveChildren ? org.childList.map(i => mapTree(i)) : [],
   };
-};
+}
 
 export const formatMoneyBeforeRequest = price => {
   if (isNil(price)) {
@@ -234,7 +272,6 @@ export const formatMoneyBeforeRequest = price => {
   return (pasred * 100).toFixed();
 };
 
-
 export function treeToarr(list = [], arr) {
   const results = arr || [];
   for (const item of list) {
@@ -244,35 +281,6 @@ export function treeToarr(list = [], arr) {
     }
   }
   return results;
-}
-/**
- * @description 去掉多余的属性
- * @param {需要过滤的对象} obj 
- * @param {对于的属性名称} prop 
- */
-export function dissoc(obj, prop) {
-  let result = {};
-  for (let p in obj) {
-    if (p !== prop) {
-      result[p] = obj[p];
-    }
-  }
-  return result;
-}
-
-export function mul(unitPrice, serverNum) {
-  if (unitPrice && serverNum) {
-    return new Decimal(unitPrice).mul(serverNum).toNumber()
-  }
-  return 0;
-}
-
-export function getExpressCode(name) {
-  for (let key in ExpressCompanyOptions) {
-    if (ExpressCompanyOptions[key] === name) {
-      return key;
-    }
-  }
 }
 
 /**
@@ -390,19 +398,19 @@ export function Subtr(arg1, arg2) {
   };
 //乘法精确计算
 export function accMul(arg1, arg2) {
-      var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
-      try {
-          m += s1.split(".")[1].length;
-      }
-      catch (e) {
-      }
-      try {
-          m += s2.split(".")[1].length;
-      }
-      catch (e) {
-      }
-      return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
-  };
+    var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+    try {
+        m += s1.split(".")[1].length;
+    }
+    catch (e) {
+    }
+    try {
+        m += s2.split(".")[1].length;
+    }
+    catch (e) {
+    }
+    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+};
 //除法精确计算
 export function accDiv(arg1,arg2){     
     var t1=0,t2=0,r1,r2;     
