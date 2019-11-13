@@ -254,8 +254,9 @@ class edit extends React.Component<Props, State> {
               /** 再和选中市区做交集比较，如果交集长度大于0，则不可以编辑，因为重复了 */
               const intersectCity = intersectionWith(checkedCity, diffCitys, isEqual)
               /** 排除自身 */
-              if (intersectCity) {
-                message.error(`${msg}不能重复，请重新选择`)
+              if (intersectCity.length > 0) {
+                const errorMsg = intersectCity.map(v => v.name).join(',')
+                message.error(`${errorMsg}不能重复，请重新选择`)
                 return
               }
               this.citys = this.citys.filter(city => {
