@@ -128,7 +128,7 @@ class Main extends React.Component<Props> {
           formConfig={getFieldsConfig()}
           rangeMap={{
             createTime: {
-              fields: ['createStartTime', 'createEndTime']
+              fields: ['startTime', 'endTime']
             }
           }}
           formItemLayout={(

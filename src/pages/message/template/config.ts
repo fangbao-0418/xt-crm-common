@@ -150,9 +150,9 @@ export enum statusEnum {
 
 /** 模板类型枚举 */
 export enum typeEnum {
-  短信 = 0,
-  PUSH = 2,
-  站内信 = 3,
-  服务号 = 4,
-  小程序 = 5
+  短信 = 20,
+  PUSH = 0,
+  站内信 = 10,
+  服务号 = 30,
+  小程序 = 40
 }
