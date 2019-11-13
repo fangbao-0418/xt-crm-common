@@ -309,12 +309,12 @@ class GoodsList extends React.Component {
           <>
             <span className="href" onClick={() => gotoPage(`/goods/edit/${record.id}`)}>编辑</span>
             <Divider type="vertical" />
-            {status === '1' && (
+            {status === '0' && (
               <span className="href" onClick={this.handleDisable(record.id)}>
                 下架
               </span>
             )}
-            {status === '0' && (
+            {status === '1' && (
               <span className="href" onClick={this.handleEnable(record.id)}>
                 上架
               </span>
@@ -404,8 +404,8 @@ class GoodsList extends React.Component {
             onChange={this.handleChangeTable}
             rowKey={record => record.id}
           />
-          {status === '0' && <Button type="danger" onClick={this.putaway}>批量上架</Button>}
-          {status === '1' && <Button type="danger" onClick={this.soldOut}>批量下架</Button>}
+          {status === '1' && <Button type="danger" onClick={this.putaway}>批量上架</Button>}
+          {status === '0' && <Button type="danger" onClick={this.soldOut}>批量下架</Button>}
         </Card>
       </>
     );
