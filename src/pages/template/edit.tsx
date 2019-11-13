@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import styles from './style.module.scss';
 import { withRouter } from 'react-router';
 import { radioStyle } from '@/config';
-import { flatten, intersectionWith, isEqual } from 'lodash'
+import { flatten, intersectionWith, differenceWith, isEqual } from 'lodash'
 import { templateAdd, templateModify, getDetail } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import { formatPrice } from '@/util/format';
@@ -126,7 +126,7 @@ class edit extends React.Component<Props, State> {
     const editColumns: ColumnProps<rankItem>[] = [
       {
         title: '编号',
-        key: 'rankNo',
+        key: 'index',
         width: 80,
         render: (text: any, record: rankItem, index: number) => {
           return index + 1;
@@ -214,10 +214,12 @@ class edit extends React.Component<Props, State> {
             <Button
               type="link"
               onClick={() => {
-                this.setState({
-                  templateData: this.state.templateData.filter(
-                    (v: rankItem) => v.rankNo !== record.rankNo,
-                  ),
+                this.setState((state) => {
+                  const templateData = [...state.templateData]
+                  templateData.splice(index, 1)
+                  return {
+                    templateData 
+                  }
                 });
               }}
             >
@@ -247,8 +249,12 @@ class edit extends React.Component<Props, State> {
             if (this.editIndex > -1) {
               /** 编辑的市区列表 */
               const editCity = flattenCity(templateData[this.editIndex].destinationList)
+              /** 求编辑行选中目的地和citys的差集 */
+              const diffCitys = differenceWith(this.citys, editCity, isEqual)
+              /** 再和选中市区做交集比较，如果交集长度大于0，则不可以编辑，因为重复了 */
+              const intersectCity = intersectionWith(checkedCity, diffCitys, isEqual)
               /** 排除自身 */
-              if (isIntersect) {
+              if (intersectCity) {
                 message.error(`${msg}不能重复，请重新选择`)
                 return
               }
