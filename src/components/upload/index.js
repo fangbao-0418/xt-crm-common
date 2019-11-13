@@ -98,6 +98,7 @@ class UploadView extends Component {
   }
 
   beforeUpload = async (file, fileList) => {
+    console.log(file, 'file')
     const { fileType, size = 10, pxSize, listNum } = this.props;
     if (fileType && file.type.indexOf(fileType) < 0) {
       message.error(`请上传正确${fileType}格式文件`);

@@ -60,8 +60,7 @@ class InterFaceCategory extends Component {
     currId: 0,
     productCategoryVOS: [],
     checkData: [],
-    secondStatus: false,
-    isSubmit: null
+    secondStatus: false
   }
 
   selectedRows = []
@@ -164,7 +163,6 @@ class InterFaceCategory extends Component {
         return item
       }) || []
 
-      console.log(filterIconsecondCategoryVOS, 'filterIconsecondCategoryVOS')
       this.setState({
         checkCate: cateText.length !== 0,
         checkAct: actText.length !== 0,
@@ -175,8 +173,7 @@ class InterFaceCategory extends Component {
         isShow: true,
         secondStatus: secondStatus === 1 ? true : false,
         secondCategoryVOS: filterIconsecondCategoryVOS,
-        secondaryActText: [],
-        isSubmit: null
+        secondaryActText: []
       })
     })
   }
@@ -203,10 +200,8 @@ class InterFaceCategory extends Component {
       form: { validateFields },
     } = this.props;
     validateFields((err, vals) => {
-      console.log(vals, 'vals')
       const { secondStatus, secondCategoryVOS } = this.state;
       const newSecondCategoryVOS = _.cloneDeep(secondCategoryVOS);
-      console.log(secondCategoryVOS, 'secondStatus');
       //开关校验
       if(secondStatus && !secondCategoryVOS.length){
         return message.error('请填写二级类目的所有内容')
@@ -254,7 +249,6 @@ class InterFaceCategory extends Component {
             }
           )
         })
-        console.log(filterSecondCategoryVOS, 'filterSecondCategoryVOS')
         this.state.checkAct && this.state.actText.forEach(val => {
           list.push({
             id: val.id,
@@ -279,7 +273,6 @@ class InterFaceCategory extends Component {
           secondCategoryVOS: filterSecondCategoryVOS
         }
 
-        console.log(data, 'data')
         if (this.state.currId) data.id = this.state.currId;
         (this.state.currId ? updateFrontCategory : saveFrontCategory)(data).then(data => {
           if (data && data.id) {
@@ -315,7 +308,6 @@ class InterFaceCategory extends Component {
 
     const objKeys = {};
     let currSelectedRows = [];
-    console.log(this.state.selectedRows)
     if(visible1Type !== null){
       selectedSecondary.forEach(val => {
         objKeys[val.id] = val;
@@ -367,14 +359,10 @@ class InterFaceCategory extends Component {
       if(secondaryIndex !== null && secondCategoryVOS[secondaryIndex].type !== 4){
         secondCategoryVOS[secondaryIndex].productCategoryVOS =  selectedSecondary;
       }
-      console.log(secondCategoryVOS, 'visible1Type')
-      console.log(visible1Type, 'visible1Type')
       return this.setState({
         secondaryActText: selectedSecondary,
         visible1: false,
         secondCategoryVOS
-      }, () => {
-        console.log(this.state.secondaryActText, 'ppp')
       })
     }
 
@@ -391,7 +379,6 @@ class InterFaceCategory extends Component {
 
   //处理二级类目按钮开关
   handleSwitchChange = (val) => {
-    console.log(val, 'switch')
     this.setState({
       secondStatus: val
     })
@@ -417,9 +404,8 @@ class InterFaceCategory extends Component {
     const { getFieldDecorator } = this.props.form;
     const { modalPage, visible1, visible2, selectedRowKeys, 
         actList, productCategoryVOS, secondStatus, secondaryIndex, 
-        secondaryActText, currId, secondCategoryVOS, isSubmit 
+        secondaryActText, currId, secondCategoryVOS 
       } = this.state;
-      console.log(secondaryActText, 'secondaryActText')
     return (
       <div className="intf-cat-box">
         <Card>

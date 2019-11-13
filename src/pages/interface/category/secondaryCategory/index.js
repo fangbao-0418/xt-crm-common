@@ -110,8 +110,6 @@ export default class extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    console.log(newProps, 'newProps')
-    console.log(this.props, 'nowProps')
     let { dataSource } = this.state;
     const { secondaryIndex, secondaryActText } = newProps;
     if(secondaryIndex !== null && dataSource[secondaryIndex].type !== 4 && !_.isEqual(newProps, this.props)){
@@ -142,7 +140,6 @@ export default class extends Component {
         },
       }),
       () => {
-      console.log(2222323)
       this.submitToForm();
     });
   };
@@ -227,9 +224,7 @@ export default class extends Component {
 
   //删除活动
   deleteActivity = (record, i, index) => {
-    console.log(record, i, index)
     const { dataSource } = this.state;
-    console.log(dataSource)
     record.productCategoryVOS.splice(i, 1);
     dataSource[index] = record;
     this.setState({ 
@@ -280,7 +275,12 @@ export default class extends Component {
             <span style={{cursor: 'pointer', marginRight: '6px'}}>
               <Icon onClick={() => this.deleteRow(index)} type="delete" />
             </span>
-            <UploadView value={val && val.length ? val : []}  onChange={file => this.imgUpload(file, index)} className="secondary-category" listType="picture-card" listNum={1} size={0.3}>
+            <UploadView 
+              value={val && val.length ? val : []}  
+              onChange={file => this.imgUpload(file, index)} 
+              className="secondary-category" 
+              listType="picture-card" 
+              listNum={1} size={0.3}>
             </UploadView>
           </div>
         } 
@@ -291,6 +291,7 @@ export default class extends Component {
         render: (val, record, index) => {
           return <>
             <Input
+              maxLength={5}
               placeholder="请输入类目名称"
               value={val}
               onChange={(e) => this.nameChange(e.target.value, index)}
@@ -304,32 +305,32 @@ export default class extends Component {
         width: 400,
         render: (val, record, index) => {
           const { type, url } = record;
-          console.log(val, 'val')
           return <div>
             <Radio.Group onChange={(e) => this.radioChange(e.target.value, record, index)} value={type}>
-              <Radio style={radioStyle} value={2}></Radio>
-              <div>
-                {
-                  val && val.map((item, i) => {
-                    return <div className="intf-cat-reitem" key={i}>{item.title || item.name} 
-                      <span
-                        className="close" 
-                        onClick={() => {
-                          this.deleteActivity(record,i,index)
-                        }}
-                      >
-                        <Icon type="close" />
-                      </span>
-                    </div>
-                  })
-                }
-                { type === 2 && (<div className="intf-cat-rebox">
-                  <Button type="link" onClick={() => handleClickModal({type: 'secondary', index, secondaryActText: val})}>+添加活动</Button></div>)
-                }
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <Radio style={radioStyle} value={2}></Radio>
+                <div>
+                    {
+                      val && val.map((item, i) => {
+                        return <div className="intf-cat-reitem" key={i}>{item.title || item.name} 
+                          <span
+                            className="close" 
+                            onClick={() => {
+                              this.deleteActivity(record,i,index)
+                            }}
+                          >
+                            <Icon type="close" />
+                          </span>
+                        </div>
+                      })
+                    }
+                    <Button type="link" onClick={() => handleClickModal({type: 'secondary', index, secondaryActText: val})}>+添加活动</Button>
+                </div>
               </div>
-              <Radio style={radioStyle} value={4}></Radio>
-              { type === 4 &&  <Input value={url} onChange={(e) => this.updateUrl(e.target.value, index)} style={{ width: '100%', marginLeft: 10 }} />}
-
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <Radio style={radioStyle} value={4}></Radio>
+                <Input value={url} onChange={(e) => this.updateUrl(e.target.value, index)} style={{ width: '100%', marginLeft: 10 }} />
+              </div>
             </Radio.Group>
           </div>
         } 
