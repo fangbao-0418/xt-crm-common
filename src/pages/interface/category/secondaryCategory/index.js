@@ -4,7 +4,7 @@ import { DndProvider, DragSource, DropTarget } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import update from 'immutability-helper';
 import _ from 'lodash';
-import { Radio, Row, Col, Form, Checkbox, Button, Spin, Input, Icon, Modal, Table, Tree } from 'antd';
+import { Radio, Row, Col, Form, Checkbox, Button, Spin, Input, Icon, Modal, Table, Tree, message } from 'antd';
 import './index.scss'
 
 let dragingIndex = -1;
@@ -85,16 +85,17 @@ export default class extends Component {
       type: 2,
       url: '',
     },
-    dataSource: []
+    dataSource: [],
+    noValue: false
   }
 
   componentDidMount(){
-    const { dataSource } = this.props;
+    const { secondCategoryVOS } = this.props;
     const { initialData } = this.state;
-
-    if(dataSource){
+    // debugger
+    if(secondCategoryVOS && secondCategoryVOS.length){
       this.setState({
-        dataSource: dataSource
+        dataSource: secondCategoryVOS
       })
     } else {
       this.setState({
@@ -111,13 +112,14 @@ export default class extends Component {
   componentWillReceiveProps(newProps){
     console.log(newProps, 'newProps')
     console.log(this.props, 'nowProps')
+    let { dataSource } = this.state;
     const { secondaryIndex, secondaryActText } = newProps;
-    if(secondaryIndex !== null && !_.isEqual(newProps, this.props)){
-      let { dataSource } = this.state;
-
+    if(secondaryIndex !== null && dataSource[secondaryIndex].type !== 4 && !_.isEqual(newProps, this.props)){
       dataSource[secondaryIndex].productCategoryVOS =  secondaryActText;
       this.setState({
         dataSource
+      }, () => {
+        this.submitToForm()
       })
     }
   }
@@ -139,37 +141,36 @@ export default class extends Component {
           $splice: [[dragIndex, 1], [hoverIndex, 0, dragRow]],
         },
       }),
-    );
+      () => {
+      console.log(2222323)
+      this.submitToForm();
+    });
   };
 
   //修改名字
   nameChange = (val, index) => {
     let { dataSource } = this.state
-    console.log(dataSource, '111')
 
     dataSource[index].name = val;
     this.setState({
       dataSource: dataSource
-    })
+    }, () => this.submitToForm())
   }
 
   //更新url
   updateUrl = (val, index) => {
     let { dataSource } = this.state
     dataSource[index].url = val;
-    console.log(dataSource, '2222')
     this.setState({
       dataSource: dataSource
-    })
+    }, () => this.submitToForm())
   }
 
   //单选按钮变化
   radioChange = (val, record, index )=> {
-    console.log('radio checked', val);
     let { dataSource } = this.state
     let { productCategoryVOS } = dataSource[index];
 
-    console.log(val, index, 'readio')
     //单选，需要删除另一项的数据
     if(val === 2){
       dataSource[index].url = '';
@@ -177,7 +178,6 @@ export default class extends Component {
       productCategoryVOS = null;
     }
 
-    console.log(dataSource, 'dataSource')
     //同步productCategoryVOS的type字段
     if(productCategoryVOS){
       productCategoryVOS = productCategoryVOS.map(item => {
@@ -189,11 +189,10 @@ export default class extends Component {
     //更新最外层的type 类型（2：活动，4：链接）
     dataSource[index].type = val;
     dataSource[index].productCategoryVOS = productCategoryVOS;
-    console.log(dataSource, '222')
 
     this.setState({
       dataSource: dataSource
-    });
+    }, () => this.submitToForm());
   };
 
   //新增一个二级类目
@@ -203,7 +202,7 @@ export default class extends Component {
     dataSource.push(_.cloneDeep(initialData))
     this.setState({
       dataSource
-    })
+    }, () => this.submitToForm())
   }
 
   //删除一个二级类目
@@ -213,26 +212,65 @@ export default class extends Component {
       dataSource.splice(index, 1)
       this.setState({
         dataSource
-      })
+      }, () => this.submitToForm())
     }
   }
 
   //图片上传后的回调
   imgUpload = (file, index) => {
-    console.log(file, 'file')
     let { dataSource } = this.state;
-    dataSource[index].icon = file || null;
-    console.log(dataSource, 'dataSource')
+    dataSource[index].icon = file.length ? file : null;
     this.setState({
       dataSource
+    }, () => this.submitToForm())
+  }
+
+  //删除活动
+  deleteActivity = (record, i, index) => {
+    console.log(record, i, index)
+    const { dataSource } = this.state;
+    console.log(dataSource)
+    record.productCategoryVOS.splice(i, 1);
+    dataSource[index] = record;
+    this.setState({ 
+      dataSource 
+    }, () => this.submitToForm())
+  }
+
+  //提交信息到外层form
+  submitToForm = () => {
+    const { updateSecondtegoryVOS } = this.props
+    const { dataSource } = this.state
+    let noValue = dataSource.filter(item => {
+      if(item.type === 2){
+        if(!item.productCategoryVOS || !item.productCategoryVOS.length){
+          return item;
+        }
+      }
+      if(item.type === 4 && !item.url){
+        return item
+      }
+      if(!item.name || !item.icon){
+        return item
+      }
     })
+
+    updateSecondtegoryVOS(dataSource)
+    if(!noValue || !noValue.length){
+      this.setState({
+        noValue: false
+      })
+    } else {
+      this.setState({
+        noValue: true
+      })
+    }
   }
 
   render() {
-    const { handleClickModal, secondaryActText } = this.props;
+    const { handleClickModal } = this.props;
+    const { noValue } = this.state;
 
-    console.log(secondaryActText, 'secondaryActText')
-    console.log(this.state.dataSource, 'dataSource')
     const columns = [
       {
         title: titleRender('图片'),
@@ -242,7 +280,7 @@ export default class extends Component {
             <span style={{cursor: 'pointer', marginRight: '6px'}}>
               <Icon onClick={() => this.deleteRow(index)} type="delete" />
             </span>
-            <UploadView value={val ? [val] : []}  onChange={file => this.imgUpload(file, index)} className="secondary-category" listType="picture-card" listNum={2} size={0.3}>
+            <UploadView value={val && val.length ? val : []}  onChange={file => this.imgUpload(file, index)} className="secondary-category" listType="picture-card" listNum={1} size={0.3}>
             </UploadView>
           </div>
         } 
@@ -265,19 +303,24 @@ export default class extends Component {
         dataIndex: 'productCategoryVOS',
         width: 400,
         render: (val, record, index) => {
-          console.log(val, 'val')
           const { type, url } = record;
+          console.log(val, 'val')
           return <div>
             <Radio.Group onChange={(e) => this.radioChange(e.target.value, record, index)} value={type}>
               <Radio style={radioStyle} value={2}></Radio>
               <div>
                 {
-                  val && val.map((val, i) => {
-                    return <div className="intf-cat-reitem" key={i}>{val.title} <span className="close" onClick={() => {
-                      const actText = this.state.actText;
-                      actText.splice(i, 1);
-                      this.setState({ actText })
-                    }}><Icon type="close" /></span></div>
+                  val && val.map((item, i) => {
+                    return <div className="intf-cat-reitem" key={i}>{item.title || item.name} 
+                      <span
+                        className="close" 
+                        onClick={() => {
+                          this.deleteActivity(record,i,index)
+                        }}
+                      >
+                        <Icon type="close" />
+                      </span>
+                    </div>
                   })
                 }
                 { type === 2 && (<div className="intf-cat-rebox">
@@ -295,6 +338,11 @@ export default class extends Component {
     ];
     return (
       <div>
+        <p style={{color: 'red'}}>
+          1.图片尺寸为150*150px，支持jpg/png/gif<br/>
+          2.二级类目最少配置4个，数量尽量控制为4的倍数<br/>
+          3.可拖动内容模块进行排序
+        </p>
         <DndProvider backend={HTML5Backend}>
           <Table
             columns={columns}
@@ -308,6 +356,9 @@ export default class extends Component {
             pagination={false}
           />
         </DndProvider>
+        {
+          noValue && <p style={{color: 'red'}}>请填写全部规则内容</p>
+        }
         <Button type="primary" onClick={this.addRow}>新增</Button>
       </div>
     )
