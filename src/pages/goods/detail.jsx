@@ -49,7 +49,7 @@ const columns = [
         '2': '供货商发货',
         '3': '其他'
       }
-      return deliveryMode[String(text)]
+      return deliveryMode[String(text)] || '无'
     }
   },
   {
@@ -220,12 +220,6 @@ class GoodsEdit extends React.Component {
       res.listImage = res.listImage ? res.listImage.split(',').map(url => replaceHttpUrl(url)) : []
       /** 商品图片 */
       res.productImage = res.productImage ? res.productImage.split(',').map(url => replaceHttpUrl(url)): []
-      /** 商品视频封面 */
-      res.videoCoverUrl = replaceHttpUrl(res.videoCoverUrl)
-      /** 商品主图 */
-      res.coverUrl = replaceHttpUrl(res.coverUrl)
-      /** banner图片 */
-      res.bannerUrl = replaceHttpUrl(res.bannerUrl)
       /** 商品视频 */
       res.videoUrl = normalizeVideoUrl(res.videoUrl)
       this.setState({
@@ -338,47 +332,66 @@ class GoodsEdit extends React.Component {
           }
            <Form.Item label="实名认证">{isAuthentication === 1 ? '是': '否'}</Form.Item>
           <Form.Item label="商品视频封面">
-            <Image
-              style={{width: '102px', height: '102px'}}
-              src={videoCoverUrl}
-            />
+            {videoCoverUrl ? (
+              <Image
+                style={{width: '102px', height: '102px'}}
+                src={replaceHttpUrl(videoCoverUrl)}
+              />
+            ): '无'}
           </Form.Item>
           <Form.Item label="商品视频">
-          {videoUrl ? <video src={videoUrl} controls="controls" height={102} width={102} />: '无'}
+            {
+              videoUrl ? (
+                <video
+                  src={replaceHttpUrl(videoUrl)}
+                  controls="controls"
+                  height={102}
+                  width={102}
+                />
+              ): '无'
+            }
           </Form.Item>
           <Form.Item label="商品主图">
-            <Image
-              style={{
-                width: '102px',
-                height: '102px',
-                marginRight: '10px'
-              }}
-              src={coverUrl}
-            />
+            {
+              coverUrl ? (
+                <Image
+                  style={{
+                    width: '102px',
+                    height: '102px',
+                    marginRight: '10px'
+                  }}
+                  src={replaceHttpUrl(coverUrl)}
+                />
+              ): '无'
+            }
           </Form.Item>
           <Form.Item
             label="商品图片"
           >
-            {(productImage || []).map(url => (
+            {Array.isArray(productImage) && productImage.length > 0 ?
+              productImage.map(url => (
+                <Image
+                  style={{
+                    width: '102px',
+                    height: '102px',
+                    marginRight: '10px'
+                  }}
+                  key={url}
+                  src={url}
+                />
+              )
+            ): '无'}
+          </Form.Item>
+          <Form.Item label="banner图片">
+            {bannerUrl ? (
               <Image
                 style={{
                   width: '102px',
-                  height: '102px',
-                  marginRight: '10px'
+                  height: '102px'
                 }}
-                key={url}
-                src={url}
+                src={replaceHttpUrl(bannerUrl)}
               />
-            ))}
-          </Form.Item>
-          <Form.Item label="banner图片">
-            <Image
-              style={{
-                width: '102px',
-                height: '102px'
-              }}
-              src={bannerUrl}
-            />
+            ): '无'}
           </Form.Item>
           <Form.Item label="累计销量">{showNum ? '展示': '不展示'}</Form.Item>
         </Card>
