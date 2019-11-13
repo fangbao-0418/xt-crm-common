@@ -221,7 +221,7 @@ class InterFaceCategory extends Component {
         }
       })
   
-      if(noValue && noValue.length){
+      if(secondStatus && noValue && noValue.length){
         return message.error('请填写二级类目的所有内容')
       } 
       if (!err) {
@@ -232,7 +232,7 @@ class InterFaceCategory extends Component {
           const { type, icon } = item;
           let productCategoryVOS = null;
 
-          if(type === 2){
+          if(type === 2 && item.productCategoryVOS){
             productCategoryVOS = item.productCategoryVOS.map(vos => {
               return {
                 id: vos.id,
@@ -245,7 +245,7 @@ class InterFaceCategory extends Component {
             {
               productCategoryVOS: productCategoryVOS ? productCategoryVOS : item.productCategoryVOS,
               sort: vosLength - index,
-              icon: icon[0].url
+              icon: icon ? icon[0].url : ''
             }
           )
         })
