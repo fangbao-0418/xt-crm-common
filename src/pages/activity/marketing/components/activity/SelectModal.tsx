@@ -25,7 +25,7 @@ interface PayloadProps {
   categoryIds?: string
   page: number
   pageSize: number
-  /** 排除查询活动类型，1-限时秒杀，2-今日拼团，3-礼包，4-激活码，5-地推专区，6-体验团长专区，7-采购专区，8-买赠, */
+  /** 排除查询活动类型，1-限时秒杀，2-今日拼团，3-礼包，4-激活码，5-地推专区，6-体验团长专区，7-采购专区，8-买赠, 9-团购*/
   excludTypes?: Marketing.ActivityType[]
 }
 class Main extends React.Component<Props, State> {
@@ -257,7 +257,8 @@ class Main extends React.Component<Props, State> {
                       const value = this.form.props.form.resetFields()
                       this.payload =  {
                         page: 1,
-                        pageSize: this.payload.pageSize
+                        pageSize: this.payload.pageSize,
+                        excludTypes: this.payload.excludTypes
                       }
                       this.fetchData()
                     }}
