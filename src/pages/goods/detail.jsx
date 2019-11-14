@@ -217,9 +217,9 @@ class GoodsEdit extends React.Component {
       res.interceptionVisible = currentSupplier.category == 1 ? false : true
       res.barCode = this.setDefaultValue(res.barCode)
       /** 商品详情页 */
-      res.listImage = res.listImage ? res.listImage.split(',').map(url => replaceHttpUrl(url)) : []
+      res.listImage = res.listImage ? res.listImage.split(',') : []
       /** 商品图片 */
-      res.productImage = res.productImage ? res.productImage.split(',').map(url => replaceHttpUrl(url)): []
+      res.productImage = res.productImage ? res.productImage.split(','): []
       /** 商品视频 */
       res.videoUrl = normalizeVideoUrl(res.videoUrl)
       this.setState({
@@ -335,7 +335,7 @@ class GoodsEdit extends React.Component {
             {videoCoverUrl ? (
               <Image
                 style={{width: '102px', height: '102px'}}
-                src={replaceHttpUrl(videoCoverUrl)}
+                src={videoCoverUrl}
               />
             ): '无'}
           </Form.Item>
@@ -343,7 +343,7 @@ class GoodsEdit extends React.Component {
             {
               videoUrl ? (
                 <video
-                  src={replaceHttpUrl(videoUrl)}
+                  src={videoUrl}
                   controls="controls"
                   height={102}
                   width={102}
@@ -360,7 +360,7 @@ class GoodsEdit extends React.Component {
                     height: '102px',
                     marginRight: '10px'
                   }}
-                  src={replaceHttpUrl(coverUrl)}
+                  src={coverUrl}
                 />
               ): '无'
             }
@@ -389,7 +389,7 @@ class GoodsEdit extends React.Component {
                   width: '102px',
                   height: '102px'
                 }}
-                src={replaceHttpUrl(bannerUrl)}
+                src={bannerUrl}
               />
             ): '无'}
           </Form.Item>
