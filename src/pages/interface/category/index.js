@@ -615,7 +615,7 @@ class GetActivity extends Component {
       visible1, handleTabChangeModal, 
       handlenChanageSelectio, form
     } = this.props;
-    const { getFieldDecorator } = form;
+    const { getFieldDecorator, resetFields } = form;
     return <Modal
         title="选择活动"
         visible={visible1}
@@ -626,24 +626,31 @@ class GetActivity extends Component {
         <Form layout="inline" style={{marginBottom: '20px'}}>
             <FormItem label="活动名称">
               {getFieldDecorator('name', {
+                initialValue: ''
               })(<Input placeholder="请输入活动名称" style={{ width: 180 }} />)}
             </FormItem>
             <FormItem label="活动ID">
               {getFieldDecorator('promotionId', {
+                initialValue: ''
               })(<Input placeholder="请输入活动ID" style={{ width: 180 }} />)}
             </FormItem>
             <FormItem label="商品名称">
-              {getFieldDecorator('productName')(
+              {getFieldDecorator('productName',{
+                initialValue: ''
+              })(
                 <Input placeholder="请输入商品名称" style={{ width: 180 }} />,
               )}
             </FormItem>
             <FormItem label="商品ID">
-              {getFieldDecorator('productId')(
+              {getFieldDecorator('productId', {
+                initialValue: ''
+              })(
                 <Input placeholder="请输入商品ID" style={{ width: 180 }} />,
               )}
             </FormItem>
             <FormItem label="活动类型">
               {getFieldDecorator('type', {
+                initialValue: ""
               })(
                 <Select placeholder="请选择活动类型" style={{ width: 180 }}>
                   <Option value="">全部</Option>
@@ -657,6 +664,7 @@ class GetActivity extends Component {
             </FormItem>
             <FormItem label="活动状态">
               {getFieldDecorator('status', {
+                initialValue: ""
               })(
                 <Select placeholder="请选择活动类型" style={{ width: 180 }}>
                   <Option value="">全部</Option>
@@ -667,6 +675,7 @@ class GetActivity extends Component {
             </FormItem>
             <FormItem label="有效时间">
               {getFieldDecorator('time', {
+                initialValue: ['',''],
               })(
                 <RangePicker
                   style={{ width: 430 }}
@@ -681,7 +690,7 @@ class GetActivity extends Component {
               <Button type="primary" onClick={this.handleSearch}>
                 查询
               </Button>
-              <Button style={{ marginLeft: 10 }} onClick={this.resetSearch}>
+              <Button style={{ marginLeft: 10 }} onClick={() => resetFields()}>
                 重置
               </Button>
             </div>
