@@ -443,9 +443,10 @@ class GoodsEdit extends React.Component {
             {Array.isArray(listImage) && listImage.length > 0 ? listImage.map(url => (
               <Image
                 style={{
-                  width: '102px',
-                  height: '102px',
-                  marginRight: '10px'
+                  width: 102,
+                  height: 102,
+                  marginRight: 10,
+                  marginBottom: 10
                 }}
                 key={url}
                 src={url}

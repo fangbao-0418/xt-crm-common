@@ -14,13 +14,13 @@ import ActivityInfo from './ActivityInfo';
 import { size, filter } from 'lodash';
 import { gotoPage } from '@/util/utils';
 import { formatMoney, formatMoneyWithSign } from '../../helper';
-import { goodsColumns } from './goodsColumns';
+import { getaActivityColumns, goodsColumns } from './columns';
 const namespace = 'activity/info/shoplist'
 class List extends React.Component {
   id = this.props.match.params.id
   payload =  APP.fn.getPayload(namespace) || {}
   state = {
-    goodsList: '',
+    goodsList: [],
     visible: false,
     visibleAct: false,
     selectedRowKeys: [],
@@ -42,7 +42,6 @@ class List extends React.Component {
   };
 
   componentDidMount() {
-    console.log(this.payload, '-----------------------------------')
     if (this.payload.promotionId === this.id) {
       this.props.form.setFieldsValue({
         productId: this.payload.productId,
@@ -308,14 +307,16 @@ class List extends React.Component {
             </Form.Item>
           </Form>
           <Table
+            rowKey="id"
             className="mt20"
-            columns={goodsColumns([
+            columns={getaActivityColumns([
               {
                 title: '规格信息',
                 render: record => {
                   console.log('record=>', record)
                   return (
                     <Table
+                      rowKey="id"
                       columns={getSkuColumns(record)}
                       dataSource={filter(record.promotionSkuList, item => item.selected)}
                       pagination={false}
@@ -376,11 +377,11 @@ class List extends React.Component {
           />
           <Table
             rowSelection={rowSelection}
-            columns={goodsColumns()}
+            columns={goodsColumns}
             dataSource={goodsList}
             pagination={modalPage}
             onChange={this.handleTabChangeModal}
-            rowKey={record => record.id}
+            rowKey="id"
           />
         </Modal>
       </>
