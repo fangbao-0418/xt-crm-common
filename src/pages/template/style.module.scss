@@ -1,0 +1,17 @@
+.fare {
+  :global {
+    .ant-table-tbody>tr>td {
+      vertical-align: middle;
+    }
+  }
+}
+
+.areas {
+  display: flex;
+  align-items: center;
+}
+
+.operate {
+  flex: 1;
+  text-align: right;
+}

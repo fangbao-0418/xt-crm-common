@@ -10,7 +10,7 @@ interface Props {
 type CheckVO = AfterSalesInfo.CheckVO;
 type OrderServerVO = AfterSalesInfo.OrderServerVO;
 const LogisticsShippingInfo: React.FC<Props> = ({ data }: Props) => {
-  const [visible, setVisible]: useStateType = useState<boolean>(false);
+  const [visible, setVisible]: useStateType<boolean> = useState<boolean>(false);
   let checkVO: CheckVO = Object.assign({}, data.checkVO);
   let orderServerVO: OrderServerVO = Object.assign({}, data.orderServerVO);
   useEffect(() => {

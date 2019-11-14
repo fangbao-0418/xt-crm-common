@@ -10,7 +10,7 @@ import SuppilerSelect from '@/components/suppiler-auto-select'
 import * as api from './api'
 import { formatDate, formatMoneyWithSign } from '@/pages/helper'
 interface State {
-  total: number
+  total?: number
   pageSize?: number
   page?: number
   dataSource: CreditPay.ItemProps[]
