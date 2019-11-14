@@ -16,10 +16,12 @@ type ProductVO = AfterSalesInfo.ProductVO;
 const columns: ColumnProps<ProductVO>[] = getDetailColumns(1);
 interface Props extends RouteComponentProps<{id: any}> {
   orderServerVO: OrderServerVO;
+  orderInterceptRecordVO?: any;
 }
 
 const AfterSaleApplyInfo = (props: Props) => {
   const orderServerVO = Object.assign({}, props.orderServerVO);
+  const orderInterceptRecordVO = props.orderInterceptRecordVO ? Object.assign({}, props.orderInterceptRecordVO): void 0;
   const logColumns: any[] = [];
   const onSuccess = () => {
     APP.dispatch({
@@ -31,8 +33,11 @@ const AfterSaleApplyInfo = (props: Props) => {
   }
   const isRefundStatusOf = (status: number) => {
     let orderServerVO = Object.assign({}, props.orderServerVO);
+    
     return orderServerVO.refundStatus == status;
+    
   }
+  console.log('orderInterceptRecordVO', orderInterceptRecordVO)
   return (
     <>
       <Row type="flex" justify="space-between" align="middle">
@@ -71,6 +76,15 @@ const AfterSaleApplyInfo = (props: Props) => {
           )}
         </Col>
       </Row>
+      {orderInterceptRecordVO && orderInterceptRecordVO.interceptId && (
+      <Row gutter={24}>
+        <Col span={8}>是否是拦截订单：是</Col>
+        <Col span={8}>拦截人：{orderInterceptRecordVO.memberName}</Col>
+        <Col span={8}>
+          拦截人手机号：{orderInterceptRecordVO.memberPhone}
+        </Col>
+        <Col span={8}>拦截人地址：{orderInterceptRecordVO.address}</Col>
+      </Row>)}
       <Row className="mb20">
         <h4>售后商品</h4>
         <Table
