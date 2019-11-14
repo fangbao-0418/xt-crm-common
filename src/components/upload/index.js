@@ -29,6 +29,7 @@ class UploadView extends Component {
   count = 0
   constructor(props) {
     super(props);
+    console.log(props.value, 'props.value')
     this.state = {
       fileList: this.initFileList(props.value || []),
       visible: false,
@@ -38,6 +39,7 @@ class UploadView extends Component {
   }
 
   componentWillReceiveProps (props) {
+    // console.log(props, 'props')
     this.setState({
       fileList: this.initFileList(props.value)
     });
@@ -66,13 +68,8 @@ class UploadView extends Component {
     return fileList.map(val => {
       val.durl = val.url
       if (fileType == 'video') {
-        if (/x-oss-process=video/.test(val.url) === false) {
-          val.url = val.url + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
-          val.thumbUrl = val.url;
-        } else {
-          val.url = val.url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '') + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
-          val.thumbUrl = val.url;
-        }
+        val.url = val.url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '');
+        val.thumbUrl = val.url+ '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
       }
       val.durl = this.getViewUrl(val.durl)
       val.url = this.getViewUrl(val.url)
@@ -100,9 +97,27 @@ class UploadView extends Component {
     })
   }
 
+  //检测图片格式是否符合预期
+  checkFileType = (file, fileType) => {
+    let isFileType = true;
+    if(Object.prototype.toString.call(fileType) === '[object Array]'){
+      let checkResults = fileType.filter(item => {
+        return file.type.indexOf(item) > 0
+      });
+      if(!checkResults.length){
+        isFileType = false;
+      }
+    } else {
+      isFileType = file.type.indexOf(fileType) < 0 ? false : true;
+    }
+    return isFileType;
+  }
+
   beforeUpload = async (file, fileList) => {
+    console.log(file, 'file')
     const { fileType, size = 10, pxSize, listNum } = this.props;
-    if (fileType && file.type.indexOf(fileType) < 0) {
+
+    if (fileType && !this.checkFileType(file, fileType)) {
       message.error(`请上传正确${fileType}格式文件`);
       return Promise.reject()
     }

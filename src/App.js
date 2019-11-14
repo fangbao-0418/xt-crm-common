@@ -5,6 +5,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { view as Layout } from './components/layout';
 import Order from './pages/order';
 import Goods from './pages/goods';
+import template from './pages/template'
 import Activity from './pages/activity';
 import User from './pages/user';
 import Supplier from './pages/supplier';
@@ -31,6 +32,7 @@ const Main = props => {
           <Route path="/home" component={Home} />
           <Route path="/settings" component={Settings} />
           <Route path="/goods" component={Goods} />
+          <Route path="/template" component={template} />
           <Route path="/order" component={Order} />
           <Route path="/activity" component={Activity} />
           <Route path="/coupon" component={Coupon} />

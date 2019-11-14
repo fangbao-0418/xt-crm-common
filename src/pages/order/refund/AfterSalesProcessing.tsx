@@ -15,6 +15,7 @@ interface Props {
 }
 const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
   const orderServerVO = Object.assign({}, data.orderServerVO);
+  const orderInterceptRecordVO = Object.assign({}, data.orderInterceptRecordVO);
   const isRefundTypeOf = (refundType: enumRefundType): boolean => {
     return data.refundType == refundType;
   };
@@ -55,7 +56,7 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
         {isRefundStatusOf(enumRefundStatus.Rejected) && <CloseInfo orderServerVO={orderServerVO} />}
       </Card>
       <Card bodyStyle={{ paddingTop: 0 }}>
-        <AfterSaleApplyInfo orderServerVO={orderServerVO} />
+        <AfterSaleApplyInfo orderServerVO={orderServerVO} orderInterceptRecordVO={orderInterceptRecordVO}/>
       </Card>
     </>
   );
