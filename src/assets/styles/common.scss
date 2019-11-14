@@ -27,7 +27,11 @@
 }
 
 .text-center {
-  text-align: center
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
 }
 
 .font12 {
@@ -37,6 +41,16 @@
 .wrap {
   word-wrap : break-word;
   word-break: break-all;
+}
+
+.error {
+  color: red;
+  cursor: pointer;
+}
+
+.line {
+  height: 1px;
+  background: #e8e8e8;
 }
 
 .hidden {

@@ -5,6 +5,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { view as Layout } from './components/layout';
 import Order from './pages/order';
 import Goods from './pages/goods';
+import template from './pages/template'
 import Activity from './pages/activity';
 import User from './pages/user';
 import Supplier from './pages/supplier';
@@ -18,6 +19,7 @@ import CrudPage from './components/crudPage';
 import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
 import Coupon from './pages/coupon';
+import Message from './pages/message';
 const Main = props => {
   APP.dispatch = props.dispatch
   APP.history = props.history
@@ -30,6 +32,7 @@ const Main = props => {
           <Route path="/home" component={Home} />
           <Route path="/settings" component={Settings} />
           <Route path="/goods" component={Goods} />
+          <Route path="/template" component={template} />
           <Route path="/order" component={Order} />
           <Route path="/activity" component={Activity} />
           <Route path="/coupon" component={Coupon} />
@@ -40,6 +43,7 @@ const Main = props => {
           <Route path="/auth" component={Auth} />
           <Route path="/interface" component={Interface} />
           <Route path="/crudpage" component={CrudPage} />
+          <Route path="/message" component={Message} />
         </Layout>
       </Switch>
     </>

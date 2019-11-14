@@ -32,7 +32,8 @@ export const handleCostDetailData = (data: {
     totalHandlingFee: number
   }}[]
 }): CostDetailProps[] => {
-  const { costList, price } = data
+  const { price } = data
+  const costList = data.costList || []
   const first: CostDetailProps[] = [
     {
       id: 0,
