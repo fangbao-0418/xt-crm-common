@@ -204,7 +204,7 @@ class Main extends React.Component<Props, State> {
               >
                 <FormItem
                   label='活动ID'
-                  name='id'
+                  name='promotionId'
                   controlProps={{
                     style: {
                       width: 120
