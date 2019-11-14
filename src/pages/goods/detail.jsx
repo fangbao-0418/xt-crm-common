@@ -485,7 +485,7 @@ class GoodsEdit extends React.Component {
                         }
                       }
                     }]
-                  })(<TextArea placeholder="请输入审核说明"/>)}
+                  })(<TextArea placeholder="请输入审核说明" maxLength={255}/>)}
                 </Form.Item>
                 <Form.Item>
                   <Button
