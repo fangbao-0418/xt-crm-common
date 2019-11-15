@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, Button, Form, Input, InputNumber, Radio, Select, message, DatePicker } from 'antd';
+import { Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd';
 import UploadView from '../../../components/upload';
 import { getBannerDetail, updateBanner, addBanner } from '../api';
 import { TextMapPosition } from '../constant';
+import platformType from '@/enum/platformType';
 // import { formatDate } from '../../helper';
 import moment from 'moment';
 import BannerPostion from '@/components/banner-position'
@@ -12,7 +13,7 @@ const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 },
 };
-
+const _platformType = platformType.getArray({ key: 'value', val: 'label' });
 const initImgList = imgUrlWap => {
   if (imgUrlWap) {
     return [
@@ -28,7 +29,7 @@ const initImgList = imgUrlWap => {
 };
 class BannerModal extends Component {
   static defaultProps = {
-    onSuccess: () => {},
+    onSuccess: () => { },
     id: '',
     isEdit: false,
   };
@@ -36,6 +37,7 @@ class BannerModal extends Component {
     renderKey: 0,
     visible: false,
     data: {
+      platformStr: _platformType.map(val => val.value),
       sort: 0,
       status: 1,
       seat: 1,
@@ -44,7 +46,7 @@ class BannerModal extends Component {
 
   showModal = () => {
     if (this.props.isEdit) {
-      this.query() 
+      this.query()
     } else {
       this.props.form.resetFields()
     }
@@ -57,9 +59,17 @@ class BannerModal extends Component {
     getBannerDetail({
       id: this.props.id,
     }).then(data => {
+      if (data.platform) {
+        let str = data.platform.toString(2);
+        let array = str.split('');
+        data.platformArray = [];
+        array.forEach((val, i) => {
+          if (val * 1 == 1) data.platformArray.push(Math.pow(2, array.length - 1 - i).toString())
+        })
+      } else data.platformArray = _platformType.map(val => val.value)
       this.setState({
         data,
-        renderKey: this.state.renderKey + 1,
+        renderKey: this.state.renderKey + 1
       });
     });
   };
@@ -73,7 +83,7 @@ class BannerModal extends Component {
           id,
           ...form.getFieldsValue(),
         };
-        params.jumpUrlWap =  (params.jumpUrlWap || '').trim()
+        params.jumpUrlWap = (params.jumpUrlWap || '').trim()
         params.onlineTime = +new Date(params.onlineTime);
         params.offlineTime = +new Date(params.offlineTime);
         if (params.imgList) {
@@ -84,6 +94,10 @@ class BannerModal extends Component {
         params.newSeat = seat[0]
         params.childSeat = seat[1]
         params.seat = seat[1]
+        params.platform = 0
+        params.platformArray.forEach((val) => {
+          params.platform += val*1
+        })
         api(params).then((res) => {
           onSuccess && onSuccess();
           res && message.success('操作成功');
@@ -192,6 +206,17 @@ class BannerModal extends Component {
             <FormItem label="排序">
               {getFieldDecorator('sort', { initialValue: data.sort })(
                 <InputNumber placeholder="" />,
+              )}
+            </FormItem>
+            <FormItem label="平台">
+              {getFieldDecorator('platformArray', {
+                initialValue: data.platformArray,
+                rules: [{
+                  required: true,
+                  message: '请选择平台'
+                }]
+              })(
+                <Checkbox.Group options={_platformType}> </Checkbox.Group>
               )}
             </FormItem>
             <FormItem label="状态">
