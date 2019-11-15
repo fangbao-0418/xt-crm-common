@@ -146,8 +146,8 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
   const data = {
     activityDescribe: payload.activityDescribe,
     title: payload.title,
-    startTime: payload.startTime && payload.startTime * 1000,
-    endTime: payload.endTime && payload.endTime * 1000,
+    startTime: payload.startTime && payload.startTime,
+    endTime: payload.endTime && payload.endTime,
     id: payload.id !== undefined ? Number(payload.id) : '',
     referencePromotionId: (activity && activity.activityList || []).map((item) => item.id).join(','),
     // productIds: Object.keys(product.spuIds).join(','),
