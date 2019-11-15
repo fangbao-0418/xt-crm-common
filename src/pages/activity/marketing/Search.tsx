@@ -13,10 +13,10 @@ class Main extends React.Component<Props> {
     if (this.props.onSearch) {
       const values = this.form.getValues()
       console.log(values, 'values--------------')
-      values.createStartTime = values.createStartTime && values.createStartTime * 1000
-      values.createEndTime = values.createEndTime && values.createEndTime * 1000
-      values.startTime = values.startTime && values.startTime * 1000
-      values.endTime = values.endTime && values.endTime * 1000
+      values.createStartTime = values.createStartTime && values.createStartTime
+      values.createEndTime = values.createEndTime && values.createEndTime
+      values.startTime = values.startTime && values.startTime
+      values.endTime = values.endTime && values.endTime
       this.props.onSearch(values)
     }
   }

@@ -12,7 +12,7 @@ const uploadButton = props => (
   </div>
 );
 
-async function ossUpload(file) {
+export async function ossUpload(file) {
   const res = await getStsPolicy();
   if (res) {
     const client = createClient(res);
