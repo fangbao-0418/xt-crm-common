@@ -11,4 +11,8 @@ interface FnProps {
   getPayload: <T = any>(namespace: string) => T
   /** 设置localStorage payload 值 */
   setPayload: <T = any>(namespace: string, value: T) => void
+  fieldConvert: (obj: object, field: object) => any
+  formatDate: (date: string | number, format?: string) => string
+  formatMoney: (money: any) => string
+  download: (url: string, name: string) => void
 }
