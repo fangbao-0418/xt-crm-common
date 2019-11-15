@@ -7,7 +7,6 @@ import {
   DatePicker,
   Select,
   Button,
-  Divider,
   Modal,
   message,
 } from 'antd';
@@ -21,7 +20,6 @@ import SelectFetch from '@/components/select-fetch'
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const Option = Select.Option;
-const { confirm } = Modal;
 
 const replaceHttpUrl = imgUrl => {
   if (imgUrl.indexOf('http') !== 0) {
@@ -29,7 +27,6 @@ const replaceHttpUrl = imgUrl => {
   }
   return imgUrl;
 }
-
 
 class GoodsList extends React.Component {
   constructor(props) {
@@ -50,25 +47,28 @@ class GoodsList extends React.Component {
   componentDidMount() {
     const params = parseQuery();
     this.props.form.setFieldsValue(params);
-    this.getGoodsList(params);
-    // this.props.onList(e => {
-    //   this.getGoodsList({ status: e });
-    // });
+    this.fetchData(params);
     this.getStoreList();
   }
   /**
    * 获取商品列表 
    */
-  getGoodsList(params = {}) {
+  fetchData(params = {}) {
     const { status } = this.props;
     const { page } = this.state;
-    getGoodsList({ status, pageSize: page.pageSize, page: page.current, ...params }).then((res = {}) => {
+    const options = {
+      status,
+      pageSize: page.pageSize,
+      page: page.current,
+      ...params
+    }
+    getGoodsList(options).then((res = {}) => {
       page.total = res.total;
       this.setState({
         dataSource: res.records,
         page,
       });
-      setQuery({ page: page.current, pageSize: page.pageSize, ...params });
+      setQuery(options)
     });
   }
 
@@ -81,7 +81,7 @@ class GoodsList extends React.Component {
   };
   /** 下架商品 */
   delGoodsDisable = ids => {
-    confirm({
+    Modal.confirm({
       title: '下架提示',
       content: '确认下架该商品吗?',
       onOk: () => {
@@ -96,7 +96,7 @@ class GoodsList extends React.Component {
   };
 
   enableGoods = ids => {
-    confirm({
+    Modal.confirm({
       title: '上架提示',
       content: '确认上架该商品吗?',
       onOk: () => {
@@ -216,23 +216,6 @@ class GoodsList extends React.Component {
     resetFields();
     this.getGoodsList(parseQuery())
   }
-  /**
-   * 推送到仓库中
-   */
-  pushWarehouse(id) {
-    confirm({
-      title: '系统提示',
-      content: '确认将商品推至仓库中？',
-      onOk: () => {
-        delGoodsDisable({ ids: [id] }).then(res => {
-          if (res) {
-            message.success('推送至仓库成功');
-            this.getGoodsList(parseQuery());
-          }
-        });
-      },
-    });
-  }
   render() {
     const { selectedRowKeys, supplier, dataSource, page } = this.state;
     const {
@@ -304,25 +287,26 @@ class GoodsList extends React.Component {
       },
       {
         title: '操作',
-        width: 150,
+        width: 160,
         render: record => (
           <>
-            <span className="href" onClick={() => gotoPage(`/goods/edit/${record.id}`)}>编辑</span>
-            <Divider type="vertical" />
+            <Button
+              type="link"
+              onClick={() => {
+                gotoPage(`/goods/edit/${record.id}`)
+              }
+            }>
+                编辑
+            </Button>
             {status === '0' && (
-              <span className="href" onClick={this.handleDisable(record.id)}>
+              <Button type="link" onClick={this.handleDisable(record.id)}>
                 下架
-              </span>
+              </Button>
             )}
             {status === '1' && (
-              <span className="href" onClick={this.handleEnable(record.id)}>
+              <Button type="link" onClick={this.handleEnable(record.id)}>
                 上架
-              </span>
-            )}
-            {status === '2' && (
-              <span className="href" onClick={() => this.pushWarehouse(record.id)}>
-                推至仓库中
-              </span>
+              </Button>
             )}
           </>
         ),

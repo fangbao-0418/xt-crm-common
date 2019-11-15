@@ -343,7 +343,7 @@ class GoodsEdit extends React.Component {
             {
               videoUrl ? (
                 <video
-                  src={videoUrl}
+                  src={replaceHttpUrl(videoUrl)}
                   controls="controls"
                   height={102}
                   width={102}

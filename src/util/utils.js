@@ -23,6 +23,9 @@ export function connect(mapStateToProps = defaultMapStateToProps) {
   });
 }
 
+/**
+ * 转换query字符串为json格式
+ */
 export function parseQuery() {
   const search = window.location.hash.split('?')[1] || '';
   const reslover = new URLSearchParams(search);
@@ -123,10 +126,16 @@ export function firstLetterToUpperCase(str = '') {
   return str.substring(0, 1).toUpperCase() + str.substring(1);
 }
 
-export function gotoPage(path) {
-  const str = decodeURIComponent(window.location.hash); // 对中文解码
-  const [_, baseQueryStr = ''] = str.split('?');
-  History.push(`${path}?${baseQueryStr}`);
+export function gotoPage(path, query) {
+  // const str = decodeURIComponent(window.location.hash); // 对中文解码
+  // const [_, baseQueryStr = ''] = str.split('?');
+  query = Object.assign(parseQuery(), query)
+  const pairs = []
+  for (let key in query) {
+    pairs.push(key + '=' + query[key])
+  }
+  const search = pairs.length > 0 ? `?${pairs.join('&')}`: ''
+  History.push(`${path}${search}`);
 }
 
 // 拼接日志信息
