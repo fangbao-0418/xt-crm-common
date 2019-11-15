@@ -6,6 +6,7 @@ declare module AfterSalesInfo {
     refundType: any;
     isDelete: number;
     orderServerVO: OrderServerVO;
+    orderInterceptRecordVO: any;
     orderInfoVO: OrderInfoVO;
     checkVO: CheckVO;
     skuServerLogVO: any[];

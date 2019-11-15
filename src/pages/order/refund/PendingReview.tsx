@@ -252,7 +252,7 @@ class PendingReview extends React.Component<Props, State> {
     return (
       <>
         <Card title={<AfterSaleDetailTitle />}>
-          <AfterSaleApplyInfo orderServerVO={this.orderServerVO} />
+          <AfterSaleApplyInfo orderServerVO={this.orderServerVO} orderInterceptRecordVO={orderInterceptRecordVO} />
         </Card>
         <Card title="客服审核">
           <Form {...formItemLayout} style={{ width: '80%' }}>
