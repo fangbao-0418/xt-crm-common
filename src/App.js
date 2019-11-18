@@ -19,6 +19,7 @@ import CrudPage from './components/crudPage';
 import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
 import Coupon from './pages/coupon';
+import Message from './pages/message';
 const Main = props => {
   APP.dispatch = props.dispatch
   APP.history = props.history
@@ -42,6 +43,7 @@ const Main = props => {
           <Route path="/auth" component={Auth} />
           <Route path="/interface" component={Interface} />
           <Route path="/crudpage" component={CrudPage} />
+          <Route path="/message" component={Message} />
         </Layout>
       </Switch>
     </>
