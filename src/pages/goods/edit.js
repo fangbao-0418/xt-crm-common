@@ -302,7 +302,7 @@ class GoodsEdit extends React.Component {
   /**
    * 新增/编辑操作
    */
-  handleSave = () => {
+  handleSave = (status) => {
     const {
       form: { validateFields },
       match: {
@@ -365,7 +365,7 @@ class GoodsEdit extends React.Component {
           listImage.push(replaceHttpUrl(item.url));
         });
         /** 推送至仓库中即为下架，详情和列表页状态反了 */
-        vals.status = this.status !== '2' ? vals.status: 0
+        vals.status = this.status !== '2' ? vals.status: status
         const params = {
           ...vals,
           returnContact: this.state.returnContact,
@@ -764,7 +764,7 @@ class GoodsEdit extends React.Component {
             </Form.Item>
           )}
           <Form.Item>
-            <Button className="mr10" type="primary" onClick={this.handleSave}>
+            <Button className="mr10" type="primary" onClick={() => this.handleSave(2)}>
               保存
             </Button>
             <Button
@@ -777,7 +777,7 @@ class GoodsEdit extends React.Component {
               返回
             </Button>
             {this.status === '2' && (
-              <Button onClick={this.handleSave}>
+              <Button onClick={() => this.handleSave(0)}>
                 推送至仓库中
               </Button>
             )}

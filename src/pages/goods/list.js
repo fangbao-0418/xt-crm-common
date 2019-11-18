@@ -88,7 +88,7 @@ class GoodsList extends React.Component {
         delGoodsDisable({ ids }).then(res => {
           if (res) {
             message.success('下架成功');
-            this.getGoodsList();
+            this.fetchData();
           }
         });
       },
@@ -103,7 +103,7 @@ class GoodsList extends React.Component {
         enableGoods({ ids }).then(res => {
           if (res) {
             message.success('上架成功');
-            this.getGoodsList();
+            this.fetchData();
           }
         });
       },
@@ -127,7 +127,7 @@ class GoodsList extends React.Component {
         delete params.goodsTime;
         delete params.optionTime;
         if (type === '搜索') {
-          this.getGoodsList(params);
+          this.fetchData(params);
         }
 
         if (type === '导出') {
@@ -144,7 +144,7 @@ class GoodsList extends React.Component {
       },
       () => {
         const params = parseQuery();
-        this.getGoodsList({
+        this.fetchData({
           ...params,
           page: e.current,
           pageSize: e.pageSize
@@ -214,7 +214,7 @@ class GoodsList extends React.Component {
     const { page } = this.state;
     setQuery({page: page.current, pageSize: page.pageSize}, true);
     resetFields();
-    this.getGoodsList(parseQuery())
+    this.fetchData(parseQuery())
   }
   render() {
     const { selectedRowKeys, supplier, dataSource, page } = this.state;
