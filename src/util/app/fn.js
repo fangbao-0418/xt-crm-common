@@ -56,20 +56,26 @@ export function getPayload (name) {
 export const handleLoading = (function () {
   let ajaxCount = 0
   return (loading = 'end') => {
+    const el = document.querySelector('#loading')
     if (loading === 'start') {
       ajaxCount++
+      console.log(ajaxCount, 'start')
+      const display = getComputedStyle(el).display
+      if (ajaxCount > 0 && display === 'none') {
+        el.setAttribute('style', 'display:block')
+      }
     } else {
-      ajaxCount--
-    }
-    // console.log(ajaxCount, 'ajaxCount')
-    const el = document.querySelector('#loading')
-    const display = getComputedStyle(el).display
-    if (ajaxCount > 0 && display === 'none') {
-      el.setAttribute('style','display:block')
-    } 
-    if (ajaxCount <= 0 && display !== 'none') {
-      el.setAttribute('style','display:none')
-      ajaxCount = 0
+      setTimeout(() => {
+        ajaxCount--
+        console.log(ajaxCount, 'end')
+        if (ajaxCount <= 0) {
+          const display = getComputedStyle(el).display
+          if (display !== 'none') {
+            el.setAttribute('style', 'display:none')
+          }
+          ajaxCount = 0
+        }
+      }, 16 * 3)
     }
   }
 })()
