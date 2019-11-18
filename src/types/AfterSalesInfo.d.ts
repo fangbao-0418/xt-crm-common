@@ -65,6 +65,7 @@ declare module AfterSalesInfo {
     orderType: number;
     realName: string;
     idNo: number;
+    orderCommentListVO: any[];
   }
   export interface OrderServerVO {
     id: number;

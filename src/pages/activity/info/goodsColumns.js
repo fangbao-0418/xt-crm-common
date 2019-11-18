@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatMoneyWithSign } from '../../helper';
 import Image from '../../../components/Image';
-export const goodsColumns = (data = []) => {
+export const goodsColumns = (data = [], id = 'id') => {
   return [
     {
       title: '序号',
@@ -13,8 +13,8 @@ export const goodsColumns = (data = []) => {
     },
     {
       title: '商品ID',
-      key: 'productId',
-      dataIndex: 'productId',
+      key: id,
+      dataIndex: id,
       width: 100,
     },
     {

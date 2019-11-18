@@ -130,7 +130,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
     let { skuDetail } = this.state
     skuDetail = Object.assign({}, skuDetail)
     return (
-      <Modal width='60%' style={{ top: 20 }} title="代客申请售后" visible={this.props.visible} onCancel={this.props.onCancel} onOk={this.handleOk}>
+      <Modal width='80%' style={{ top: 20, minWidth: '900px' }} title="代客申请售后" visible={this.props.visible} onCancel={this.props.onCancel} onOk={this.handleOk}>
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
