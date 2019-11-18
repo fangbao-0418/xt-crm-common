@@ -73,3 +73,23 @@ export const handleLoading = (function () {
     }
   }
 })()
+
+export function fieldConvert (obj, mapper) {
+  const result = {}
+  for (const field in obj) {
+    if (mapper[field]) {
+      result[mapper[field]] = obj[field]
+    } else {
+      result[field] = obj[field]
+    }
+  }
+  return result
+}
+
+export function download (url, name) {
+  const el = document.createElement('a')
+  el.setAttribute('href', url)
+  el.setAttribute('download', name)
+  el.setAttribute('target', '__blank')
+  el.click()
+}
