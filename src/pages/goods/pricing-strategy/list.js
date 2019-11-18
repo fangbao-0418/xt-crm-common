@@ -113,7 +113,7 @@ class List extends React.Component {
       }
     });
   };
-  //清楚筛选条件
+  //清除筛选条件
   handleClearConditions = () => {
     const { resetFields } = this.props.form;
     const { page } = this.state;
@@ -284,7 +284,7 @@ class List extends React.Component {
             })(<RangePicker format="YYYY-MM-DD HH:mm" showTime={{defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}}/>)}</FormItem>
             <FormItem>
               <Button onClick={this.handleClearConditions}>
-                清楚条件
+                清除条件
               </Button>
               <Button style={{ margin: '0 10px' }} type="primary" onClick={this.handleSearch}>
                 查询

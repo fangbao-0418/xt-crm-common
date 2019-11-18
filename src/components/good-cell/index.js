@@ -8,14 +8,8 @@ const replaceHttpUrl = (imgUrl = '') => {
   return imgUrl;
 }
 
-// const GoodCell = ({ productImage, skuName, properties, coverUrl, showImage = true, orderType, refundType, isRefund }) => {
-
-    // <div className="good-cell">
-    //   {showImage && <div className="good-image">
-    //     <img alt={'商品图片'} src={replaceHttpUrl(coverUrl || productImage)} style={{ maxHeight: 100, maxWidth: 100 }} />
-    //   </div>}
-
-const GoodCell = ({ productImage, skuName, properties, coverUrl, showImage = true, orderType, refundType, isRefund }) => {
+const GoodCell = (props) => {
+  const { productImage, skuName, properties, coverUrl, showImage = true, orderType, refundType, isRefund } = props
   const isGive = isRefund ? false : String(orderType) === '50'
   return (
     <div>

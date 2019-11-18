@@ -8,7 +8,7 @@ import Image from '../../../components/Image';
 import ArrowContain from '@/pages/goods/components/arrow-contain'
 import { Decimal } from 'decimal.js';
 const FormItem = Form.Item;
-
+console.log('Image=>', Image)
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 }
