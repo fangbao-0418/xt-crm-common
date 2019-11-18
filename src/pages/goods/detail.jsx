@@ -458,7 +458,7 @@ class GoodsEdit extends React.Component {
               />
             )) : '无'}
           </Form.Item>
-          <Form.Item label="上架状态">{status === 1 ? '上架': '下架'}</Form.Item>
+          {/* <Form.Item label="上架状态">{status === 1 ? '上架': '下架'}</Form.Item> */}
         </Card>
         <Card title="审核结果">
           {
