@@ -52,7 +52,7 @@ export default class extends React.PureComponent<any, any> {
 
     const footer = (
       <div>
-        <Button onClick={props.onCancek}>取消</Button>
+        <Button onClick={props.onCancel}>取消</Button>
         <Button className="xt-delay" type="primary" onClick={onOk}>
           确定
         </Button>
