@@ -2,12 +2,12 @@
 /* eslint-disable no-script-url */
 import React from 'react';
 import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader } from 'antd';
-import UploadView from '../../components/upload';
+import UploadView from '@/components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
 import { map, size, concat, filter, assign, forEach, cloneDeep, split } from 'lodash';
-import descartes from '../../util/descartes';
+import descartes from '@/util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku } from './api';
-import { getAllId, gotoPage, initImgList } from '@/util/utils';
+import { getAllId, gotoPage, initImgList, parseQuery } from '@/util/utils';
 import { radioStyle } from '@/config';
 import SkuList from './SkuList';
 import { TemplateList } from '@/components';
@@ -44,6 +44,7 @@ const formLayout = {
 
 class GoodsEdit extends React.Component {
   specs = [];
+  status = parseQuery().status
   state = {
     speSelect: [],
     spuName: [],
@@ -61,6 +62,7 @@ class GoodsEdit extends React.Component {
     showImage: false,
     strategyData: null
   };
+
   componentDidMount() {
     this.getStoreList();
     this.getCategoryList();
@@ -297,7 +299,10 @@ class GoodsEdit extends React.Component {
     this.setState({ speSelect, data: data });
   };
 
-  handleSave = () => {
+  /**
+   * 新增/编辑操作
+   */
+  handleSave = (status) => {
     const {
       form: { validateFields },
       match: {
@@ -306,6 +311,7 @@ class GoodsEdit extends React.Component {
     } = this.props;
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
     validateFields((err, vals) => {
+      console.log('vals=>', vals)
       if (!err) {
         if (size(speSelect) === 0) {
           message.error('请添加规格');
@@ -358,6 +364,8 @@ class GoodsEdit extends React.Component {
         map(vals.listImage, item => {
           listImage.push(replaceHttpUrl(item.url));
         });
+        /** 推送至仓库中即为下架，详情和列表页状态反了 */
+        vals.status = this.status !== '2' ? vals.status: status
         const params = {
           ...vals,
           returnContact: this.state.returnContact,
@@ -426,7 +434,6 @@ class GoodsEdit extends React.Component {
       })
     }
   }
-
   render() {
     const { getFieldDecorator } = this.props.form;
     const { supplier, interceptionVisible, categoryList } = this.state;
@@ -744,23 +751,36 @@ class GoodsEdit extends React.Component {
               </Button>
             )}
           </Form.Item>
-          <Form.Item label="上架状态">
-            {getFieldDecorator('status', {
-              initialValue: 0,
-            })(
-              <Radio.Group>
-                <Radio value={1}>上架</Radio>
-                <Radio value={0}>下架</Radio>
-              </Radio.Group>,
-            )}
-          </Form.Item>
+          {this.status !== '2' && (
+            <Form.Item label="上架状态">
+              {getFieldDecorator('status', {
+                initialValue: 0,
+              })(
+                <Radio.Group>
+                  <Radio value={1}>上架</Radio>
+                  <Radio value={0}>下架</Radio>
+                </Radio.Group>,
+              )}
+            </Form.Item>
+          )}
           <Form.Item>
-            <Button type="primary" onClick={this.handleSave} style={{ marginRight: 10 }}>
+            <Button className="mr10" type="primary" onClick={() => this.handleSave(2)}>
               保存
             </Button>
-            <Button type="danger" onClick={() => gotoPage('/goods/list')}>
+            <Button
+              className="mr10"
+              type="danger"
+              onClick={() => {
+                APP.history.go(-1)
+              }
+            }>
               返回
             </Button>
+            {this.status === '2' && (
+              <Button onClick={() => this.handleSave(0)}>
+                推送至仓库中
+              </Button>
+            )}
           </Form.Item>
         </Card>
       </Form>

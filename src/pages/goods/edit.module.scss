@@ -28,8 +28,30 @@
   }
 }
 
-.ant-input-group {
+.readOnly {
+  border: none;
+  &:global(.ant-input:focus) {
+    border-color: transparent;
+    border-right-width: 0px !important;
+    outline: 0;
+    -webkit-box-shadow: 0 0 0 2px transparent;
+    box-shadow:  0 0 0 2px transparent;
+  }
+}
 
+.readOnly {
+  :global {
+    .ant-cascader-input.ant-input {
+      border: none;
+      &.ant-cascader-input.ant-input {
+        border-color: transparent;
+        border-right-width: 0px !important;
+        outline: 0;
+        -webkit-box-shadow: 0 0 0 2px transparent;
+        box-shadow:  0 0 0 2px transparent;
+      }
+    }
+  }
 }
 
 :global(.has-error) {

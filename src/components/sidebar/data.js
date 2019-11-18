@@ -43,6 +43,11 @@ const dataList = [
         url: '/order/undeliveredOrder',
       },
       {
+        key: '#/order/partDeliveredOrder',
+        label: '部分发货订单列表',
+        url: '/order/partDeliveredOrder',
+      },
+      {
         key: '#/order/deliveredOrder',
         label: '已发货订单列表',
         url: '/order/deliveredOrder',
