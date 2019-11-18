@@ -59,22 +59,23 @@ export const handleLoading = (function () {
     const el = document.querySelector('#loading')
     if (loading === 'start') {
       ajaxCount++
+      console.log(ajaxCount, 'start')
+      const display = getComputedStyle(el).display
+      if (ajaxCount > 0 && display === 'none') {
+        el.setAttribute('style', 'display:block')
+      }
     } else {
       setTimeout(() => {
         ajaxCount--
-        console.log(ajaxCount, 'ajaxCount')
+        console.log(ajaxCount, 'end')
         if (ajaxCount <= 0) {
+          const display = getComputedStyle(el).display
           if (display !== 'none') {
             el.setAttribute('style', 'display:none')
           }
           ajaxCount = 0
         }
       }, 16 * 3)
-    }
-    console.log(ajaxCount, 'ajaxCount')
-    const display = getComputedStyle(el).display
-    if (ajaxCount > 0 && display === 'none') {
-      el.setAttribute('style', 'display:block')
     }
   }
 })()
