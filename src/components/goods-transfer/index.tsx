@@ -33,7 +33,7 @@ export default class extends React.PureComponent<any, any> {
   };
 
   render() {
-    const { dataSource, header, currentGoodsList, onOk, ...props } = this.props;
+    const { dataSource, header, currentGoodsList, ...props } = this.props;
     const { targetKeys } = this.state;
     let tempDataSource = dataSource;
     if (currentGoodsList && currentGoodsList.length) {
@@ -53,7 +53,7 @@ export default class extends React.PureComponent<any, any> {
     const footer = (
       <div>
         <Button onClick={props.onCancel}>取消</Button>
-        <Button className="xt-delay" type="primary" onClick={onOk}>
+        <Button className="xt-delay" type="primary" onClick={this.onOk}>
           确定
         </Button>
       </div>
