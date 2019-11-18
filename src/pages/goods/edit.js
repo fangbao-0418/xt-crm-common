@@ -393,7 +393,7 @@ class GoodsEdit extends React.Component {
           } else {
             res && message.success('添加数据成功');
           }
-          gotoPage('/goods/list', { status: vals.status === 0 ? '1': '0'});
+          gotoPage('/goods/list');
         });
       }
     });
