@@ -4,7 +4,8 @@ import {
   map,
   uniqWith,
   memoize
-} from 'lodash' 
+} from 'lodash'
+import { TemplateList } from '@/components';
 import MoneyRender from '@/components/money-render'
 import { getStoreList, toAuditDetail } from './api';
 import SkuUploadItem from './SkuUploadItem'
@@ -310,7 +311,9 @@ class GoodsEdit extends React.Component {
         /** 审核结果 */
         auditStatus,
         /** 审核说明 */
-        auditInfo
+        auditInfo,
+        /** 运费模板id */
+        freightTemplateId
       }
     } = this.state;
     const storeItem = (this.supplier || []).find(v => v.id === storeId) || {};
@@ -429,7 +432,9 @@ class GoodsEdit extends React.Component {
         <Card title="物流信息" style={{ marginTop: 10 }}>
           <Form.Item label="物流体积">{bulk || '无'}</Form.Item>
           <Form.Item label="物流重量">{weight || '无'}</Form.Item>
-          <Form.Item label="运费设置">{withShippingFree === 1 ? '包邮': '不包邮'}</Form.Item>
+          <Form.Item label="运费设置">{withShippingFree === 1 ? '包邮': (
+            <TemplateList disabled value={freightTemplateId}/>
+          )}</Form.Item>
           <Form.Item label="退货地址"
             wrapperCol={{
               span: 18
