@@ -11,8 +11,7 @@ import {
   Divider,
   message,
   Modal,
-  Checkbox,
-  Spin
+  Checkbox
 } from 'antd';
 import { connect, setQuery, parseQuery } from '@/util/utils';
 import styles from './index.module.sass';
@@ -120,12 +119,17 @@ export default class extends Component {
         render: (orderInterception, record) => {
           return (
             <div>
-              <a onClick={() => this.togglePrivilege(record)}>
-                {orderInterception == 1 ? '关闭权限' : '开启权限'}
-              </a>
+              <Button
+                type="link"
+                style={{ padding: 0 }}
+                onClick={() => this.togglePrivilege(record)}
+              >
+                {orderInterception === 1 ? '关闭权限' : '开启权限'}
+              </Button>
               <Divider type="vertical" />
               <a
                 href={`/#/user/intercept/detail?id=${record.id}&iphone=${record.phone}`}
+                rel="noreferrer noopener"
                 target="_blank"
               >
                 查看详情
@@ -136,7 +140,6 @@ export default class extends Component {
       }
     ];
 
-    const { loading } = this.props;
     const { data } = this.props.dataSource;
     const { visible, level, choiceVisible, selectedRowKeys, blockList, idsByLevel } = this.state;
     const rowSelection = {
@@ -148,15 +151,15 @@ export default class extends Component {
       }
     };
 
-    const blockListByHead = blockList.find(item => item.memberType == 10) || {};
-    const blockListByDistrict = blockList.find(item => item.memberType == 20) || {};
-    const blockListByPartner = blockList.find(item => item.memberType == 30) || {};
-    const currentBlockList = blockList.find(item => item.memberType == level);
+    const blockListByHead = blockList.find(item => item.memberType === 10) || {};
+    const blockListByDistrict = blockList.find(item => item.memberType === 20) || {};
+    const blockListByPartner = blockList.find(item => item.memberType === 30) || {};
+    const currentBlockList = blockList.find(item => item.memberType === level);
 
-    const idsByLevelByHead = idsByLevel.find(item => item.memberType == 10) || {};
-    const idsByLevelByDistrict = idsByLevel.find(item => item.memberType == 20) || {};
-    const idsByLevelByPartner = idsByLevel.find(item => item.memberType == 30) || {};
-    const currentIdsByLevel = idsByLevel.find(item => item.memberType == level) || {};
+    const idsByLevelByHead = idsByLevel.find(item => item.memberType === 10) || {};
+    const idsByLevelByDistrict = idsByLevel.find(item => item.memberType === 20) || {};
+    const idsByLevelByPartner = idsByLevel.find(item => item.memberType === 30) || {};
+    const currentIdsByLevel = idsByLevel.find(item => item.memberType === level) || {};
 
     const blockListByHeadCount = difference(
       concat(blockListByHead.checkedMemberIds || [], idsByLevelByHead.addIds || []),
@@ -222,7 +225,9 @@ export default class extends Component {
             >
               全部团长
             </Checkbox>
-            <a onClick={this.openChoice.bind(this, 10)}>黑名单({blockListByHeadCount}人)</a>
+            <Button type="link" style={{ padding: 0 }} onClick={this.openChoice.bind(this, 10)}>
+              黑名单({blockListByHeadCount}人)
+            </Button>
           </div>
           <div style={{ paddingBottom: '20px' }}>
             <Checkbox
@@ -233,7 +238,9 @@ export default class extends Component {
             >
               全部社区管理员
             </Checkbox>
-            <a onClick={this.openChoice.bind(this, 20)}>黑名单({blockListByDistrictCount}人)</a>
+            <Button type="link" style={{ padding: 0 }} onClick={this.openChoice.bind(this, 20)}>
+              黑名单({blockListByDistrictCount}人)
+            </Button>
           </div>
           <div style={{ paddingBottom: '20px' }}>
             <Checkbox
@@ -244,7 +251,9 @@ export default class extends Component {
             >
               全部城市合伙人
             </Checkbox>
-            <a onClick={this.openChoice.bind(this, 30)}>黑名单({blockListByPartnerCount}人)</a>
+            <Button type="link" style={{ padding: 0 }} onClick={this.openChoice.bind(this, 30)}>
+              黑名单({blockListByPartnerCount}人)
+            </Button>
           </div>
           <div>提示：勾选后除黑名单外所有选中级别用户都将开启拦截发货权限</div>
         </Modal>
@@ -385,7 +394,7 @@ export default class extends Component {
 
   togglePrivilege = record => {
     const { dispatch } = this.props;
-    if (record.orderInterception == 1) {
+    if (record.orderInterception === 1) {
       dispatch[namespace].closePrivilege({ id: record.id }).then(res => {
         if (res) {
           message.success('关闭成功');
