@@ -104,6 +104,10 @@ class Main extends React.Component<Props, State> {
   }
   public resetForm() {
     this.props.form.resetFields()
+    
+    this.props.form.setFieldsValue({
+      platformArray: _platformType.map(val => val.value)
+    });
     this.setState({
       selectIndex: -1
     })
@@ -200,9 +204,7 @@ class Main extends React.Component<Props, State> {
             </Popconfirm>
           </div>
         </div>
-        {
-          selectIndex > -2 && (
-            <div className={styles.content}>
+        <div className={styles.content} style={{display: selectIndex > -2 ? '' :'none'}}>
               <Form
                 className={styles.form}
                 {...formItemLayout}
@@ -290,8 +292,6 @@ class Main extends React.Component<Props, State> {
                 </div>
               </Form>
             </div>
-          )
-        }
       </div>
     )
   }

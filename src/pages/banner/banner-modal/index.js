@@ -37,7 +37,7 @@ class BannerModal extends Component {
     renderKey: 0,
     visible: false,
     data: {
-      platformStr: _platformType.map(val => val.value),
+      platformArray: _platformType.map(val => val.value),
       sort: 0,
       status: 1,
       seat: 1,
