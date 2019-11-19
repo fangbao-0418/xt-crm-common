@@ -19,7 +19,6 @@ import { gotoPage } from '@/util/utils';
 import { formatMoney, formatMoneyWithSign } from '../../helper';
 import { goodsColumns } from './goodsColumns';
 import GoodsTransfer from '@/components/goods-transfer';
-
 const namespace = 'activity/info/shoplist';
 class List extends React.Component {
   id = this.props.match.params.id;
@@ -449,7 +448,7 @@ class List extends React.Component {
                   </>
                 ),
               },
-            ])}
+            ], 'productId')}
             dataSource={records}
             pagination={{
               current: current,
@@ -488,7 +487,7 @@ class List extends React.Component {
             dataSource={goodsList}
             pagination={modalPage}
             onChange={this.handleTabChangeModal}
-            rowKey={record => record.id}
+            rowKey="id"
           />
         </Modal>
         <GoodsTransfer

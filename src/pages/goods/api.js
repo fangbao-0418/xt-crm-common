@@ -1,4 +1,4 @@
-import { post, exportFile, get, newGet } from '../../util/fetch';
+import { post, exportFile, get, newGet, newPost } from '../../util/fetch';
 
 export function getStoreList(data) {
   return post('/store/list', data);
@@ -37,8 +37,43 @@ export function get1688Sku(storeProductId) {
   return get('/product/b2b/'+storeProductId);
 }
 
-//获取定价策略列表
+/**
+ * 获取待审核商品列表
+ */
+export function getToAuditList(data) {
+  return newPost(`/product/supplier/toAudit/list`, data)
+}
+
+/**
+ * 获取一级类目
+ */
+export function getCategoryTopList () {
+  return post('/category/list', { level: 1}).then((res) => {
+    return (res || []).map((item) => {
+      return {
+        label: item.name,
+        value: item.id
+      }
+    })
+  })
+}
+
+/**
+ * 审核商品
+ */
+export function auditGoods(data) {
+  return newPost('/product/supplier/toAudit/audit', data)
+}
+
+/**
+ * 获取定价策略列表
+ */
 export function getStrategyByCategory(data) {
   return newGet('/product/price/rule/getByCategoryId', data);
 }
-
+/**
+ * 待审核详情 
+ */
+export function toAuditDetail(data) {
+  return get('/product/supplier/toAudit/get', data)
+}

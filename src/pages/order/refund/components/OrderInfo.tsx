@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Row, Col, Table } from 'antd';
 import { getDetailColumns } from '../../constant';
-import { joinFilterEmpty, formatMoneyWithSign } from '@/pages/helper';
+import { formatDate, joinFilterEmpty, formatMoneyWithSign } from '@/pages/helper';
 import { ColumnProps } from 'antd/es/table';
 import { Link } from 'react-router-dom';
 import { logisticsInformationColumns } from '../config';
@@ -51,6 +51,12 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
       <Row>
         <h4>物流信息</h4>
         <Table rowKey={(record: any) => record.id} style={{ width: '400px' }} pagination={false} columns={logisticsInformationColumns} dataSource={orderInfoVO.expressVO || []} />
+      </Row>
+      <Row>
+        <Col>
+          <span style={{ fontWeight: 'bold' }}>客服备注：</span>
+          {Array.isArray(orderInfoVO.orderCommentListVO) && orderInfoVO.orderCommentListVO.map(v => <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>)}
+        </Col>
       </Row>
     </Card>
   )

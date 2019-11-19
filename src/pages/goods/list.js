@@ -7,22 +7,19 @@ import {
   DatePicker,
   Select,
   Button,
-  Divider,
   Modal,
   message,
 } from 'antd';
 import dateFns from 'date-fns';
-import { getGoodsList, getStoreList, delGoodsDisable, enableGoods, exportFileList } from './api';
+import { getGoodsList, getStoreList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList} from './api';
 import { map, size } from 'lodash';
-// import { Link } from 'react-router-dom';
 import { setQuery, parseQuery, gotoPage } from '@/util/utils';
 import { formatMoneyWithSign } from '../helper';
-import Image from '../../components/Image';
-
+import Image from '@/components/Image';
+import SelectFetch from '@/components/select-fetch'
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const Option = Select.Option;
-const { confirm } = Modal;
 
 const replaceHttpUrl = imgUrl => {
   if (imgUrl.indexOf('http') !== 0) {
@@ -30,7 +27,6 @@ const replaceHttpUrl = imgUrl => {
   }
   return imgUrl;
 }
-
 
 class GoodsList extends React.Component {
   constructor(props) {
@@ -44,31 +40,35 @@ class GoodsList extends React.Component {
         total: 0,
         current: +params.page || 1,
         pageSize: 10,
-      },
-      status: this.props.status
+      }
     };
   }
 
   componentDidMount() {
     const params = parseQuery();
     this.props.form.setFieldsValue(params);
-    this.getGoodsList(params);
-    // this.props.onList(e => {
-    //   this.getGoodsList({ status: e });
-    // });
+    this.fetchData(params);
     this.getStoreList();
   }
-
-  getGoodsList(params = {}) {
-    const { status } = this.state;
+  /**
+   * 获取商品列表 
+   */
+  fetchData(params = {}) {
+    const { status } = this.props;
     const { page } = this.state;
-    getGoodsList({ status, pageSize: page.pageSize, page: page.current, ...params }).then((res = {}) => {
+    const options = {
+      status,
+      pageSize: page.pageSize,
+      page: page.current,
+      ...params
+    }
+    getGoodsList(options).then((res = {}) => {
       page.total = res.total;
       this.setState({
         dataSource: res.records,
         page,
       });
-      setQuery({ page: page.current, pageSize: page.pageSize, ...params });
+      setQuery(options)
     });
   }
 
@@ -79,17 +79,16 @@ class GoodsList extends React.Component {
       });
     });
   };
-
+  /** 下架商品 */
   delGoodsDisable = ids => {
-    confirm({
+    Modal.confirm({
       title: '下架提示',
       content: '确认下架该商品吗?',
       onOk: () => {
         delGoodsDisable({ ids }).then(res => {
-          console.log(res)
           if (res) {
             message.success('下架成功');
-            this.getGoodsList();
+            this.fetchData();
           }
         });
       },
@@ -97,14 +96,14 @@ class GoodsList extends React.Component {
   };
 
   enableGoods = ids => {
-    confirm({
+    Modal.confirm({
       title: '上架提示',
       content: '确认上架该商品吗?',
       onOk: () => {
         enableGoods({ ids }).then(res => {
           if (res) {
             message.success('上架成功');
-            this.getGoodsList();
+            this.fetchData();
           }
         });
       },
@@ -113,7 +112,7 @@ class GoodsList extends React.Component {
 
   handleSearch = type => () => {
     const { validateFields } = this.props.form;
-    const { status } = this.state;
+    const { status } = this.props;
     validateFields((err, vals) => {
       if (!err) {
         const params = {
@@ -128,7 +127,7 @@ class GoodsList extends React.Component {
         delete params.goodsTime;
         delete params.optionTime;
         if (type === '搜索') {
-          this.getGoodsList(params);
+          this.fetchData(params);
         }
 
         if (type === '导出') {
@@ -145,7 +144,7 @@ class GoodsList extends React.Component {
       },
       () => {
         const params = parseQuery();
-        this.getGoodsList({
+        this.fetchData({
           ...params,
           page: e.current,
           pageSize: e.pageSize
@@ -155,15 +154,17 @@ class GoodsList extends React.Component {
   };
 
   handleGoHistory = () => {
-    // eslint-disable-next-line no-restricted-globals
-    location.href = '/#/goods/edit';
+    window.location.href = '/#/goods/edit';
   };
 
   handleDisable = id => () => {
     this.delGoodsDisable([].concat(id));
   };
 
-  handleBatchDisable = () => {
+  /**
+   * 批量下架商品
+   */
+  soldOut = () => {
     const { selectedRows } = this.state;
     if (size(selectedRows) <= 0) {
       message.error('请选择需要下架的商品');
@@ -179,8 +180,10 @@ class GoodsList extends React.Component {
   handleEnable = id => () => {
     this.enableGoods([].concat(id));
   };
-
-  handleBatchEnable = () => {
+  /**
+   * 批量上架商品
+   */
+  putaway = () => {
     const { selectedRows } = this.state;
     if (size(selectedRows) <= 0) {
       message.error('请选择需要上架的商品');
@@ -193,6 +196,9 @@ class GoodsList extends React.Component {
     this.enableGoods(selectRowsId);
   };
 
+  /**
+   * 选择项发生变化时的回调
+   */
   onSelectChange = (selectedRowKeys, selectedRows) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
     this.setState({
@@ -200,14 +206,27 @@ class GoodsList extends React.Component {
       selectedRows,
     });
   };
+  /**
+   * 重置条件
+   */
   handleReset = () => {
     const { resetFields } = this.props.form;
     const { page } = this.state;
     setQuery({page: page.current, pageSize: page.pageSize}, true);
     resetFields();
+    this.fetchData(parseQuery())
   }
   render() {
     const { selectedRowKeys, supplier, dataSource, page } = this.state;
+    const {
+      status,
+      form: { getFieldDecorator },
+    } = this.props;
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectChange,
+    };
+    console.log('status=>', status, typeof status);
     const columns = [
       {
         title: '商品ID',
@@ -228,6 +247,10 @@ class GoodsList extends React.Component {
         dataIndex: 'productName',
       },
       {
+        title: '类目',
+        dataIndex: 'categoryName'
+      },
+      {
         title: '成本价',
         dataIndex: 'costPrice',
         render: text => <>{formatMoneyWithSign(text)}</>,
@@ -243,6 +266,7 @@ class GoodsList extends React.Component {
       },
       {
         title: '累计销量',
+        width: 100,
         dataIndex: 'saleCount',
       },
       {
@@ -252,45 +276,44 @@ class GoodsList extends React.Component {
       {
         title: '创建时间',
         dataIndex: 'createTime',
+        width: 200,
         render: record => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>,
       },
       {
         title: '最后操作时间',
         dataIndex: 'modifyTime',
+        width: 200,
         render: record => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>,
       },
       {
         title: '操作',
+        width: 160,
         render: record => (
           <>
-            <a onClick={() => gotoPage(`/goods/edit/${record.id}`)}>编辑</a>
-            <Divider type="vertical" />
+            <Button
+              type="link"
+              onClick={() => {
+                gotoPage(`/goods/edit/${record.id}`)
+              }
+            }>
+                编辑
+            </Button>
             {status === '0' && (
-              <a href="javascriput:void(0);" onClick={this.handleDisable(record.id)}>
+              <Button type="link" onClick={this.handleDisable(record.id)}>
                 下架
-              </a>
+              </Button>
             )}
             {status === '1' && (
-              <a href="javascriput:void(0);" onClick={this.handleEnable(record.id)}>
+              <Button type="link" onClick={this.handleEnable(record.id)}>
                 上架
-              </a>
+              </Button>
             )}
           </>
         ),
       },
     ];
-
-    const {
-      status,
-      form: { getFieldDecorator },
-    } = this.props;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
-
     return (
-      <Card>
+      <>
         <Card title="筛选">
           <Form layout="inline">
             <FormItem label="商品名称">
@@ -320,16 +343,24 @@ class GoodsList extends React.Component {
                 initialValue: ''
               })(
                 <Select placeholder="请选择拦截状态" style={{ width: 300 }}>
-                  <Option value={''}>全部</Option>
-                  <Option value={'1'}>是</Option>
-                  <Option value={'0'}>否</Option>
+                  <Option value=''>全部</Option>
+                  <Option value='1'>是</Option>
+                  <Option value='0'>否</Option>
                 </Select>
               )}
             </FormItem>
             <FormItem label="创建时间">{getFieldDecorator('goodsTime')(<RangePicker showTime />)}</FormItem>
             <FormItem label="操作时间">{getFieldDecorator('optionTime')(<RangePicker showTime />)}</FormItem>
+            <FormItem label="一级类目">{getFieldDecorator('categoryId')(
+              <SelectFetch
+                style={{ width: '174px' }}
+                fetchData={() => {
+                  return getCategoryTopList();
+                }}
+              />
+            )}</FormItem>
             <FormItem>
-              <Button type="default" onClick={this.handleReset}>
+              <Button onClick={this.handleReset}>
                 清除条件
               </Button>
               <Button
@@ -357,15 +388,10 @@ class GoodsList extends React.Component {
             onChange={this.handleChangeTable}
             rowKey={record => record.id}
           />
-          <Button
-            type="danger"
-            onClick={status === 0 ? this.handleBatchDisable : this.handleBatchEnable}
-          >
-            {status === 0 && '批量下架'}
-            {status === 1 && '批量上架'}
-          </Button>
+          {status === '1' && <Button type="danger" onClick={this.putaway}>批量上架</Button>}
+          {status === '0' && <Button type="danger" onClick={this.soldOut}>批量下架</Button>}
         </Card>
-      </Card>
+      </>
     );
   }
 }

@@ -371,7 +371,7 @@ class PendingReview extends React.Component<Props, State> {
             <Row>
               <Form.Item label="说明">
                 {getFieldDecorator('info', {})(
-                  <Input.TextArea autosize={{ minRows: 2, maxRows: 6 }} />,
+                  <Input.TextArea autoSize={{ minRows: 2, maxRows: 6 }} />,
                 )}
               </Form.Item>
             </Row>
