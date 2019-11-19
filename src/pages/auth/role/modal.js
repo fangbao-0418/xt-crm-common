@@ -7,11 +7,11 @@ const FormItem = Form.Item;
 const { TreeNode } = Tree;
 const formItemLayout = {
   labelCol: {
-    sm: { span: 4 },
+    sm: { span: 4 }
   },
   wrapperCol: {
-    sm: { span: 16 },
-  },
+    sm: { span: 16 }
+  }
 };
 
 function getDefaultChecked(arr = []) {
@@ -19,9 +19,7 @@ function getDefaultChecked(arr = []) {
   rootParents.forEach(rootItem => {
     const twoLevel = arr.filter(item => item.parentId === rootItem.id);
     twoLevel.forEach(twoLevelItem => {
-      const unSelected = arr.filter(
-        item => item.parentId === twoLevelItem.id && item.flag === false,
-      );
+      const unSelected = arr.filter(item => item.parentId === twoLevelItem.id && item.flag === false);
       if (unSelected && unSelected.length) {
         twoLevelItem.flag = false;
       }
@@ -37,12 +35,12 @@ function getDefaultChecked(arr = []) {
 @connect(state => ({
   visible: state['auth.role'].visible,
   menuList: state['auth.role'].menuList,
-  currentRoleInfo: state['auth.role'].currentRoleInfo,
+  currentRoleInfo: state['auth.role'].currentRoleInfo
 }))
 @Form.create()
 export default class extends Component {
   state = {
-    menuIds: [],
+    menuIds: []
   };
 
   componentDidMount() {
@@ -57,8 +55,8 @@ export default class extends Component {
     this.props.dispatch({
       type: 'auth.role/saveDefault',
       payload: {
-        visible: false,
-      },
+        visible: false
+      }
     });
     // this.handleSearch();
   };
@@ -82,26 +80,23 @@ export default class extends Component {
     const {
       form: { validateFields },
       dispatch,
-      currentRoleInfo,
+      currentRoleInfo
     } = this.props;
     validateFields((errors, values) => {
       if (!errors) {
-        let parentIds = [];
-        this.props.menuList.map(parentMenu => {
-          const isInclude = this.getParentIds(parentMenu.subMenus, this.state.menuIds, parentIds);
-          if (!isInclude) {
-            parentIds.push(parentMenu.id);
-          }
-        });
+        let ids = [];
+        this.getParentIds(this.props.menuList, this.state.menuIds, ids);
         const payload = {
           ...values,
-          menuIds: concat(this.state.menuIds, parentIds),
+          menuIds: Array.from(new Set(concat(ids)))
         };
+        debugger;
+        console.log(payload);
         if (currentRoleInfo.id) {
           // 编辑
           dispatch['auth.role'].editRole({
             id: currentRoleInfo.id,
-            ...payload,
+            ...payload
           });
         } else {
           // 新增
@@ -111,23 +106,30 @@ export default class extends Component {
     });
   };
 
-  getParentIds = (list, selectedIds, parentIds) => {
-    return list.every(item => {
+  getParentIds = (list, selectedIds, ids) => {
+    return (list || []).filter(item => {
       if (item.subMenus && item.subMenus.length) {
-        const isInclude = this.getParentIds(item.subMenus, selectedIds, parentIds);
-        if (!isInclude) {
-          parentIds.push(item.id);
+        const result = this.getParentIds(item.subMenus, selectedIds, ids);
+        if (result.length) {
+          ids.push(`${item.id}`);
+          return true;
+        } else {
+          return false;
         }
-        return isInclude;
       } else {
-        return !includes(selectedIds, `${item.id}`);
+        if (includes(selectedIds, `${item.id}`)) {
+          ids.push(`${item.id}`);
+          return true;
+        } else {
+          return false;
+        }
       }
     });
   };
 
   onCheck = checkedKeys => {
     this.setState({
-      menuIds: checkedKeys,
+      menuIds: checkedKeys
     });
   };
 
@@ -136,7 +138,7 @@ export default class extends Component {
       if (nextProps.currentRoleInfo && Array.isArray(nextProps.currentRoleInfo.data)) {
         console.log(nextProps.currentRoleInfo.data);
         this.setState({
-          menuIds: getDefaultChecked(nextProps.currentRoleInfo.data),
+          menuIds: getDefaultChecked(nextProps.currentRoleInfo.data)
         });
       }
     }
@@ -147,32 +149,26 @@ export default class extends Component {
       form: { getFieldDecorator },
       menuList,
       visible,
-      currentRoleInfo,
+      currentRoleInfo
     } = this.props;
     const { data = [], id } = currentRoleInfo;
     const defaultCheckedKeys = getDefaultChecked(data);
     return (
-      <Modal
-        visible={visible}
-        onCancel={this.onCancel}
-        onOk={this.onOk}
-        destroyOnClose
-        title={id ? '编辑' : '新增'}
-      >
+      <Modal visible={visible} onCancel={this.onCancel} onOk={this.onOk} destroyOnClose title={id ? '编辑' : '新增'}>
         <Form {...formItemLayout}>
           <FormItem label="角色名称">
             {getFieldDecorator('roleName', {
-              initialValue: currentRoleInfo.roleName,
+              initialValue: currentRoleInfo.roleName
             })(<Input />)}
           </FormItem>
           <FormItem label="权限内容">
             {getFieldDecorator('authlist', {
               valuePropName: 'defaultCheckedKeys',
-              initialValue: defaultCheckedKeys,
+              initialValue: defaultCheckedKeys
             })(
               <Tree checkable onCheck={this.onCheck}>
                 {this.renderTree(menuList)}
-              </Tree>,
+              </Tree>
             )}
           </FormItem>
         </Form>
