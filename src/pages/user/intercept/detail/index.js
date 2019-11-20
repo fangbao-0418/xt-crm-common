@@ -1,19 +1,8 @@
 import React, { Component, useState } from 'react';
-import {
-  Switch,
-  Card,
-  Divider,
-  Tabs,
-  message,
-  Modal,
-  Input,
-  Select,
-  Form,
-  Spin,
-  Button
-} from 'antd';
+import { Switch, Card, Divider, Tabs, message, Modal, Input, Select, Form, Spin, Button } from 'antd';
 import styles from './index.module.sass';
 import Stock from './stock';
+import Log from './log';
 import Order from '@/pages/order/order-table';
 import Refund from '@/pages/order/refund/list';
 import {
@@ -47,7 +36,7 @@ const CascaderByArea = ({ value, onChange, baseAddress }) => {
   }
 
   const changeProvince = value => {
-    const currentProvince = baseAddress.find(item => item.id == value) || {};
+    const currentProvince = baseAddress.find(item => item.id === value) || {};
     useCurrentProvince(currentProvince);
     useCurrentCity({});
     useCurrenDistrict({});
@@ -55,14 +44,14 @@ const CascaderByArea = ({ value, onChange, baseAddress }) => {
   };
 
   const changeCity = value => {
-    const currentCity = (currentProvince.children || []).find(item => item.id == value);
+    const currentCity = (currentProvince.children || []).find(item => item.id === value);
     useCurrentCity(currentCity);
     useCurrenDistrict({});
     onChange();
   };
 
   const changeDistrict = value => {
-    const currentDistrict = (currentCity.children || []).find(item => item.id == value);
+    const currentDistrict = (currentCity.children || []).find(item => item.id === value);
     useCurrenDistrict(currentDistrict);
     onChange({
       currentProvince,
@@ -73,22 +62,12 @@ const CascaderByArea = ({ value, onChange, baseAddress }) => {
 
   return (
     <div>
-      <Select
-        value={currentProvince.id}
-        placeholder="选择省"
-        style={{ width: 130 }}
-        onChange={changeProvince}
-      >
+      <Select value={currentProvince.id} placeholder="选择省" style={{ width: 130 }} onChange={changeProvince}>
         {(baseAddress || []).map(province => (
           <Option key={province.id}>{province.name}</Option>
         ))}
       </Select>
-      <Select
-        value={currentCity.id}
-        placeholder="选择市"
-        style={{ width: 120, marginLeft: 8 }}
-        onChange={changeCity}
-      >
+      <Select value={currentCity.id} placeholder="选择市" style={{ width: 120, marginLeft: 8 }} onChange={changeCity}>
         {(currentProvince.children || []).map(city => (
           <Option key={city.id}>{city.name}</Option>
         ))}
@@ -188,11 +167,7 @@ export default class extends Component {
         <div className={styles['setting']}>
           <span>
             拦截发货权限
-            <Switch
-              style={{ marginLeft: 8 }}
-              checked={isPrivilege}
-              onChange={this.privilegeChange}
-            />
+            <Switch style={{ marginLeft: 8 }} checked={isPrivilege} onChange={this.privilegeChange} />
           </span>
           <span className={styles['address']}>
             <span>售后地址：</span>
@@ -220,6 +195,9 @@ export default class extends Component {
           </TabPane>
           <TabPane tab="相关售后" key="after">
             <Refund key="ALL" type="ALL" intercept={true} />
+          </TabPane>
+          <TabPane tab="信息记录" key="log">
+            <Log />
           </TabPane>
         </Tabs>
         <Modal
@@ -330,12 +308,8 @@ export default class extends Component {
         getBaseAddress().then(baseAddress => {
           const { provinceId, cityId, districtId } = address || {};
           const currentProvince = (baseAddress || []).find(item => item.id == provinceId);
-          const currentCity = ((currentProvince && currentProvince.children) || []).find(
-            item => item.id == cityId
-          );
-          const currentDistrict = ((currentCity && currentCity.children) || []).find(
-            item => item.id == districtId
-          );
+          const currentCity = ((currentProvince && currentProvince.children) || []).find(item => item.id == cityId);
+          const currentDistrict = ((currentCity && currentCity.children) || []).find(item => item.id == districtId);
           this.setState({
             baseAddress,
             currentProvince,
