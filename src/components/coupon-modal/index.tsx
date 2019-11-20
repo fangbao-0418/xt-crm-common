@@ -44,7 +44,7 @@ class CouponModal extends React.Component<Props, State> {
   public payload: SearchPayload = {
     isDelete: 0,
     page: 1,
-    receivePattern: 1
+    receivePattern: 0
   }
   public state: State = {
     current: 1,

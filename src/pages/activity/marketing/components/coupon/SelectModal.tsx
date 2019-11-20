@@ -181,7 +181,7 @@ class Main extends React.Component<Props, State> {
       page: 1,
       status: 1,
       pageSize: 10,
-      receivePattern: 1
+      receivePattern: 0
     }
     this.fetchData()
     const couponList: any[] = value.couponList || []
