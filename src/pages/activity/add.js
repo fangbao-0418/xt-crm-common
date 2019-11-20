@@ -230,6 +230,12 @@ class Add extends React.Component {
           </FormItem>
           <FormItem label="活动排序">
             {getFieldDecorator('sort', {
+              rules: [
+                {
+                  required: true,
+                  message: '请设置活动排序',
+                },
+              ],
             })(<Input placeholder="请设置活动排序" />)}
           </FormItem>
           <FormItem label="活动标签">

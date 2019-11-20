@@ -10,6 +10,8 @@ function getCurrentIndex(orderStatus) {
       return 0;
     case enumOrderStatus.Undelivered:
       return 1;
+    case enumOrderStatus.PartDelivered:
+      return 2;
     case enumOrderStatus.Delivered:
       return 2;
     case enumOrderStatus.Received:

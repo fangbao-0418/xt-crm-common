@@ -1,7 +1,7 @@
 {
   "singleQuote": true,
-  "trailingComma": "all",
-  "printWidth": 100,
+  "trailingComma": "none",
+  "printWidth": 120,
   "proseWrap": "never",
   "overrides": [
     {
