@@ -24,7 +24,7 @@ export default {
       return res;
     },
     async batchOpenPrivilege(param) {
-      const res = await api.batch0penPrivilege(param);
+      const res = await api.batchOpenPrivilege(param);
       return res;
     },
     async batchClosePrivilege(param) {
@@ -36,8 +36,10 @@ export default {
       return res;
     },
     async setPrivilegeByLevel(param) {
-      const res = await api.setPrivilegeByLevel(param);
-      return res;
+      return await api.setPrivilegeByLevel(param);
+    },
+    async batchSetPrivilegeByPhone(param) {
+      return await api.batchSetPrivilegeByPhone(param);
     }
   })
 };

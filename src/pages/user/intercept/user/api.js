@@ -28,7 +28,7 @@ export function openPrivilege(param) {
  * 批量开启订单拦截权限根据用户Ids
  * @param {object} param
  */
-export function batch0penPrivilege(param) {
+export function batchOpenPrivilege(param) {
   return post(`/member/interception/batchAuthorization`, {}, { data: param, headers: {} });
 }
 
@@ -54,4 +54,12 @@ export function getPrivilegeByLevel(param) {
  */
 export function setPrivilegeByLevel(param) {
   return post(`/member/interception/setting`, {}, { data: param, headers: {} });
+}
+
+/**
+ * 批量设置订单拦截权限根据用户手机号
+ * @param {*} param
+ */
+export function batchSetPrivilegeByPhone(param) {
+  return post(`/member/interception/batchoOperation`, {}, { data: param, headers: {} });
 }

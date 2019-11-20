@@ -1,18 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Input,
-  Select,
-  Button,
-  Row,
-  Col,
-  Form,
-  Table,
-  Card,
-  Divider,
-  message,
-  Modal,
-  Checkbox
-} from 'antd';
+import { Input, Select, Button, Row, Col, Form, Table, Card, Divider, message, Modal, Checkbox, Radio } from 'antd';
 import { connect, setQuery, parseQuery } from '@/util/utils';
 import styles from './index.module.sass';
 import BlockList from './block-list';
@@ -20,37 +7,17 @@ import { omitBy, isNil, concat, difference } from 'lodash';
 
 const FormItem = Form.Item;
 const { Option } = Select;
+const { TextArea } = Input;
 const levelList = [
-  {
-    key: '全部',
-    value: ''
-  },
-  {
-    key: '团长',
-    value: 10
-  },
-  {
-    key: '社区管理员',
-    value: 20
-  },
-  {
-    key: '城市合伙人',
-    value: 30
-  }
+  { key: '全部', value: '' },
+  { key: '团长', value: 10 },
+  { key: '社区管理员', value: 20 },
+  { key: '城市合伙人', value: 30 }
 ];
 const permissionList = [
-  {
-    key: '全部',
-    value: ''
-  },
-  {
-    key: '已开启',
-    value: 1
-  },
-  {
-    key: '未开启',
-    value: 0
-  }
+  { key: '全部', value: '' },
+  { key: '已开启', value: 1 },
+  { key: '未开启', value: 0 }
 ];
 const namespace = 'user.intercept.user';
 
@@ -69,17 +36,10 @@ export default class extends Component {
       choiceVisible: false,
       selectedRowKeys: [],
       blockList: [],
-      idsByLevel: [
-        {
-          memberType: 10
-        },
-        {
-          memberType: 20
-        },
-        {
-          memberType: 30
-        }
-      ]
+      idsByLevel: [{ memberType: 10 }, { memberType: 20 }, { memberType: 30 }],
+      phoneVisible: false,
+      valueByPhone: '',
+      switchValueByPhone: '1'
     };
   }
   componentDidMount() {
@@ -119,11 +79,7 @@ export default class extends Component {
         render: (orderInterception, record) => {
           return (
             <div>
-              <Button
-                type="link"
-                style={{ padding: 0 }}
-                onClick={() => this.togglePrivilege(record)}
-              >
+              <Button type="link" style={{ padding: 0 }} onClick={() => this.togglePrivilege(record)}>
                 {orderInterception === 1 ? '关闭权限' : '开启权限'}
               </Button>
               <Divider type="vertical" />
@@ -141,7 +97,17 @@ export default class extends Component {
     ];
 
     const { data } = this.props.dataSource;
-    const { visible, level, choiceVisible, selectedRowKeys, blockList, idsByLevel } = this.state;
+    const {
+      visible,
+      level,
+      choiceVisible,
+      selectedRowKeys,
+      blockList,
+      idsByLevel,
+      phoneVisible,
+      valueByPhone,
+      switchValueByPhone
+    } = this.state;
     const rowSelection = {
       selectedRowKeys,
       onChange: selectedRowKeys => {
@@ -182,6 +148,9 @@ export default class extends Component {
             <div style={{ flex: 'auto' }}>
               <Button type="primary" onClick={this.setPrivilegeByLevel}>
                 按等级设置
+              </Button>
+              <Button type="primary" style={{ marginLeft: 8 }} onClick={this.setPrivilegeByPhone}>
+                按手机号批量设置
               </Button>
             </div>
             <Button type="primary" style={{ marginRight: 8 }} onClick={this.batchOpenPrivilege}>
@@ -257,6 +226,81 @@ export default class extends Component {
           </div>
           <div>提示：勾选后除黑名单外所有选中级别用户都将开启拦截发货权限</div>
         </Modal>
+        <Modal
+          title={'按会员等级设置拦截权限'}
+          visible={visible}
+          style={{ fontSize: 20, fontWeight: 'bold' }}
+          onCancel={this.onCancel}
+          onOk={this.onOk}
+        >
+          <div style={{ paddingBottom: '20px' }}>
+            <Checkbox
+              checked={blockListByHead && blockListByHead.privileged}
+              onClick={() => {
+                this.changePrivileged(blockListByHead);
+              }}
+            >
+              全部团长
+            </Checkbox>
+            <Button type="link" style={{ padding: 0 }} onClick={this.openChoice.bind(this, 10)}>
+              黑名单({blockListByHeadCount}人)
+            </Button>
+          </div>
+          <div style={{ paddingBottom: '20px' }}>
+            <Checkbox
+              checked={blockListByDistrict && blockListByDistrict.privileged}
+              onClick={() => {
+                this.changePrivileged(blockListByDistrict);
+              }}
+            >
+              全部社区管理员
+            </Checkbox>
+            <Button type="link" style={{ padding: 0 }} onClick={this.openChoice.bind(this, 20)}>
+              黑名单({blockListByDistrictCount}人)
+            </Button>
+          </div>
+          <div style={{ paddingBottom: '20px' }}>
+            <Checkbox
+              checked={blockListByPartner && blockListByPartner.privileged}
+              onClick={() => {
+                this.changePrivileged(blockListByPartner);
+              }}
+            >
+              全部城市合伙人
+            </Checkbox>
+            <Button type="link" style={{ padding: 0 }} onClick={this.openChoice.bind(this, 30)}>
+              黑名单({blockListByPartnerCount}人)
+            </Button>
+          </div>
+          <div>提示：勾选后除黑名单外所有选中级别用户都将开启拦截发货权限</div>
+        </Modal>
+
+        <Modal
+          title={'按手机号批量设置拦截权限'}
+          visible={phoneVisible}
+          width={300}
+          onCancel={this.onCancelByPhone}
+          footer={
+            <div>
+              <Button onClick={this.onCancelByPhone}>取消</Button>
+              <Button className="xt-delay" type="primary" onClick={this.onOkByPhone}>
+                确定
+              </Button>
+            </div>
+          }
+        >
+          <TextArea
+            value={valueByPhone}
+            placeholder="请输入批量设置拦截权限的手机号,以换行区分"
+            rows={10}
+            onChange={this.valueByPhoneChange}
+          />
+          <Radio.Group style={{ marginTop: 16 }} onChange={this.switchValueByPhoneChange} value={switchValueByPhone}>
+            <Radio value={'1'}>批量开启</Radio>
+            <Radio value={'0'}>批量关闭</Radio>
+          </Radio.Group>
+        </Modal>
+
         {choiceVisible ? (
           <BlockList
             visible={true}
@@ -287,9 +331,7 @@ export default class extends Component {
       <Form {...formItemLayout} className={styles['search-form']}>
         <Row gutter={48}>
           <Col span={6}>
-            <FormItem label="用户ID">
-              {getFieldDecorator('id')(<Input placeholder="请输入用户ID" />)}
-            </FormItem>
+            <FormItem label="用户ID">{getFieldDecorator('id')(<Input placeholder="请输入用户ID" />)}</FormItem>
           </Col>
           <Col span={6}>
             <FormItem label="昵称">
@@ -297,14 +339,10 @@ export default class extends Component {
             </FormItem>
           </Col>
           <Col span={6}>
-            <FormItem label="姓名">
-              {getFieldDecorator('userName')(<Input placeholder="请输入用户姓名" />)}
-            </FormItem>
+            <FormItem label="姓名">{getFieldDecorator('userName')(<Input placeholder="请输入用户姓名" />)}</FormItem>
           </Col>
           <Col span={6}>
-            <FormItem label="手机号">
-              {getFieldDecorator('phone')(<Input placeholder="请输入用户手机号" />)}
-            </FormItem>
+            <FormItem label="手机号">{getFieldDecorator('phone')(<Input placeholder="请输入用户手机号" />)}</FormItem>
           </Col>
         </Row>
         <Row gutter={48}>
@@ -488,6 +526,15 @@ export default class extends Component {
     });
   };
 
+  /**
+   * 按手机号批量设置拦截权限
+   */
+  setPrivilegeByPhone = () => {
+    this.setState({
+      phoneVisible: true
+    });
+  };
+
   openChoice = level => {
     this.setState({
       level,
@@ -532,6 +579,38 @@ export default class extends Component {
           }
         );
       }
+    });
+  };
+
+  onCancelByPhone = () => {
+    this.setState({ phoneVisible: false, valueByPhone: '', switchValueByPhone: 'true' });
+  };
+
+  onOkByPhone = () => {
+    const { dispatch } = this.props;
+    const { valueByPhone, switchValueByPhone } = this.state;
+    if (!valueByPhone) {
+      message.warn('请输入手机号');
+      return;
+    }
+    debugger;
+    dispatch[namespace]
+      .batchSetPrivilegeByPhone({ phones: valueByPhone.split(/\r|\n|\s/g), isOpen: switchValueByPhone })
+      .then(() => {
+        this.setState({ phoneVisible: false, valueByPhone: '', switchValueByPhone: 'true' }, () => {
+          this.handleSearch();
+        });
+      });
+  };
+  valueByPhoneChange = ({ target }) => {
+    this.setState({
+      valueByPhone: target.value
+    });
+  };
+
+  switchValueByPhoneChange = ({ target }) => {
+    this.setState({
+      switchValueByPhone: target.value
     });
   };
 
