@@ -1,33 +1,27 @@
 import React from 'react';
 import zwtPic from '../../assets/images/zw.png';
+// import { getUserList } from '@/pages/order/intercept/user/api';
 
 
 const onClick = src => () => {
+  console.log(src, 'src')
   window.open(src);
 };
 
-const replaceHttpUrl = imgUrl => {
-  if (imgUrl.indexOf('http') !== 0) {
-    imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
-  }
-  return imgUrl;
+function getUrl (url) {
+  url = /^http/.test(url) ? url : `https://assets.hzxituan.com/${url}`
+  return url
 }
-
-const protocol = /https?:\/\//;
-let srcUrl = null;
 
 const Image = (props) => {
   const { className, alt = '图片', style, ...otherProps } = props
-  const src = props.src || '';
-  let realSrc = src.trim();
-  if (!protocol.test(realSrc)) {
-    realSrc = `https://assets.hzxituan.com/${realSrc}`;
-  }
-  srcUrl = src ? replaceHttpUrl(realSrc) : zwtPic;
+  let src = (props.src || '').trim()
+  src = src ? getUrl(src) : zwtPic
   return (
     <img
       className={className}
-      src={srcUrl}
+      {...otherProps}
+      src={src}
       alt={alt}
       style={{
         width: 100,
@@ -35,8 +29,7 @@ const Image = (props) => {
         cursor: 'pointer',
         ...style,
       }}
-      onClick={onClick(srcUrl)}
-      {...otherProps}
+      onClick={onClick(src)}
     />
   );
 };

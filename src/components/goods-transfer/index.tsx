@@ -1,28 +1,25 @@
 import * as React from 'react';
-import { Transfer, Modal } from 'antd';
-import { every } from 'lodash';
+import { Transfer, Modal, Button } from 'antd';
 
 export default class extends React.PureComponent<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
       targetKeys: [],
-      selectedKeys: [],
+      selectedKeys: []
     };
   }
   componentWillReceiveProps(nextProps: any) {
     if (!this.props.visible && nextProps.visible) {
       this.setState({
         targetKeys: [],
-        selectedKeys: [],
+        selectedKeys: []
       });
     }
   }
 
   filterOption = (inputValue: any, option: any) => {
-    return (
-      option.productName.indexOf(inputValue) > -1 || `${option.productId}`.indexOf(inputValue) > -1
-    );
+    return option.productName.indexOf(inputValue) > -1 || `${option.productId}`.indexOf(inputValue) > -1;
   };
 
   handleChange = (nextTargetKeys: any, direction: any, moveKeys: any) => {
@@ -52,8 +49,17 @@ export default class extends React.PureComponent<any, any> {
         return item;
       });
     }
+
+    const footer = (
+      <div>
+        <Button onClick={props.onCancel}>取消</Button>
+        <Button className="xt-delay" type="primary" onClick={this.onOk}>
+          确定
+        </Button>
+      </div>
+    );
     return (
-      <Modal width={888} maskClosable={false} {...props} onOk={this.onOk}>
+      <Modal getContainer={false} width={888} maskClosable={false} footer={footer} {...props}>
         {header}
         <Transfer
           rowKey={record => record.productId}
@@ -72,7 +78,7 @@ export default class extends React.PureComponent<any, any> {
           onChange={this.handleChange}
           listStyle={{
             width: 400,
-            height: 500,
+            height: 500
           }}
         />
       </Modal>

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
   <head>
-    <meta charset="utf-8">
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="theme-color" content="#000000" />
     <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -38,8 +38,34 @@
     -->
     <div id="loading" class="loading" style="display: none;">
       <main class="wrapper">
-        <div class="loading-wrapper"><div class="ant-spin ant-spin-spinning ant-spin-show-text"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span><div class="ant-spin-text">加载中...</div></div></div>
+        <div class="loading-wrapper">
+          <div class="ant-spin ant-spin-spinning ant-spin-show-text">
+            <span class="ant-spin-dot ant-spin-dot-spin"
+              ><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i
+              ><i class="ant-spin-dot-item"></i
+            ></span>
+            <div class="ant-spin-text">加载中...</div>
+          </div>
+        </div>
       </main>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', event => {
+        document.querySelector('#root').addEventListener('click', function(e) {
+          const target = e.target;
+          if (target.tagName === 'BUTTON' && (' ' + target.className + '  ').indexOf(' xt-delay ') > -1) {
+            const disabled = target.getAttribute('data-disabled');
+            if (disabled) {
+              e.stopPropagation();
+            } else {
+              target.setAttribute('data-disabled', true);
+              setTimeout(function() {
+                target.setAttribute('data-disabled', '');
+              }, 1000);
+            }
+          }
+        });
+      });
+    </script>
   </body>
 </html>

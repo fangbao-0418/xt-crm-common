@@ -12,7 +12,7 @@ function TemplateList(props: any, ref: any) {
   }, []);
   return (
     <Select placeholder="请选择" style={{ width: 200 }} {...props} ref={ref}>
-      {list.map((v: any) => (
+      {(list || []).map((v: any) => (
         <Select.Option key={v.freightTemplateId} value={v.freightTemplateId}>
           {v.templateName}
         </Select.Option>
