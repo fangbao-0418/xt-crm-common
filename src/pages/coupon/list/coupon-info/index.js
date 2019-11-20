@@ -250,7 +250,6 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         const receiveRestrictValues = getReceiveRestrictValues(fields.recipientLimit);
         const avlValues = getAvlValues(fields);
         const dailyRestrict = getDailyRestrict(fields);
-        console.log('dailyRestrict=>', dailyRestrict);
         const params = {
           baseVO: {
             // 名称
@@ -284,8 +283,9 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             startReceiveTime,
             // 结束领取时间
             overReceiveTime,
+            receivePattern: fields.receivePattern ? 1 : 0,
             // 商详显示
-            showFlag: fields.showFlag,
+            showFlag: fields.receivePattern ? 0 : fields.showFlag,
             // 适用时间类型
             useTimeType: fields.useTimeType,
             // 使用时间值
@@ -347,6 +347,8 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
     const { receiveTime } = getFieldsValue(['receiveTime']);
     return current && current < (receiveTime && receiveTime[0] ||　moment().endOf('day').subtract(1, 'days'));
   }
+  const formValue = getFieldsValue()
+  console.log(formValue, 'render')
   return (
     <Card>
       {/* 已选择商品 */}
@@ -354,7 +356,9 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       {/* 排除商品 */}
       <ProductSelector visible={excludeProductSelectorVisible} onCancel={() => setExcludeProductSelectorVisible(false)} onChange={onExcludeProductSelectorChange} />
       <ActivitySelector visible={activitySelectorVisible} onCancel={() => setActivitySelectorVisible(false)} onChange={onActivitySelectorChange} />
-      <Form {...formItemLayout}>
+      <Form
+        {...formItemLayout}
+      >
         <Row>
           <Col offset={3}>
             <h2 className="form-title">基本信息</h2>
@@ -518,14 +522,27 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             </div>
           )}
         </Form.Item>
-        <Form.Item label="商详显示">
-          {getFieldDecorator('showFlag', { rules: [{ required: true, message: '请选择商详显示' }] })(
-            <Radio.Group>
-              <Radio className="block-radio" value={1}>显示</Radio>
-              <Radio className="block-radio" value={0}>不显示</Radio>
-            </Radio.Group>
+        <Form.Item label="发券控制">
+          {getFieldDecorator('receivePattern')(
+            <Checkbox
+              onChange={(e) => {
+                console.log(e, 'eeee')
+              }}
+            >
+              仅支持手动发券
+            </Checkbox>
           )}
         </Form.Item>
+        {!formValue.receivePattern && (
+          <Form.Item label="商详显示">
+            {getFieldDecorator('showFlag', { rules: [{ required: true, message: '请选择商详显示' }] })(
+              <Radio.Group>
+                <Radio className="block-radio" value={1}>显示</Radio>
+                <Radio className="block-radio" value={0}>不显示</Radio>
+              </Radio.Group>
+            )}
+          </Form.Item>
+        )}
         <Form.Item label="优惠券说明">
           {getFieldDecorator('description', { initialValue: '' })(<TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />)}
         </Form.Item>
