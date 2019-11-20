@@ -126,7 +126,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         <Form.Item label="每人限领次数">{ruleVO.restrictNum}张</Form.Item>
         <Form.Item label="每日限领次数">{ruleVO.dailyRestrict ? `${ruleVO.dailyRestrict}张` : '无'}</Form.Item>
         <Form.Item label="使用平台">{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item>
-        {ruleVO.receivePattern === 1 && <Form.Item label="发券控制">仅手动发券</Form.Item>}
+        {ruleVO.receivePattern === 1 && <Form.Item label="发券控制">仅支持手动发券</Form.Item>}
         {ruleVO.receivePattern !== 1 && (<Form.Item label="商详显示">{ruleVO.showFlag === 1 ? '显示' : '不显示'}</Form.Item>)}
         <Form.Item label="优惠券说明">
           {getFieldDecorator('description', { initialValue: baseVO.description })(<TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />)}
