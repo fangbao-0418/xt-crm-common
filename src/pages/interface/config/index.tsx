@@ -1,82 +1,98 @@
-import React from 'react'
-import { Form, Input, Button, Row, Col } from 'antd'
-import { FormComponentProps } from 'antd/lib/form'
-import * as api from './api'
+import React from 'react';
+import { Form, Input, Button, Row, Col, Switch } from 'antd';
+import { FormComponentProps } from 'antd/lib/form';
+import * as api from './api';
 import UploadView from '../../../components/upload';
 import { initImgList } from '@/util/utils';
+import { array } from 'prop-types';
 interface Props extends FormComponentProps {}
 interface State {
-  title: string,//标题
-  iconBackgroudImg: string, //icon背景图
-  iconColor: string, //icon文字颜色
-  navigationBackgroudImg: string //导航栏背景图
+  miniCardWords: string; //标题
+  miniCardImg: any[];
+  posterImg: any[];
+  drogueImg: any[];
 }
-const replaceHttpUrl = (imgUrl: string ) => {
+const replaceHttpUrl = (imgUrl: string) => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
-}
+};
 
 const formLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 6 },
+    sm: { span: 6 }
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 10 },
-  },
+    sm: { span: 10 }
+  }
 };
 class Main extends React.Component<Props, State> {
-  public constructor (props: Props) {
-    super(props)
-    this.onSubmit = this.onSubmit.bind(this)
+  public constructor(props: Props) {
+    super(props);
+    this.onSubmit = this.onSubmit.bind(this);
   }
+
   public state: State = {
-    title: '', 
-    iconBackgroudImg: '',
-    iconColor: '#333333',
-    navigationBackgroudImg: ''
+    miniCardWords: '', 
+    miniCardImg: [],
+    posterImg: [],
+    drogueImg: []
   }
-  public componentDidMount () {
+
+  public componentDidMount() {
+    
     //获取详情信息
     api.getHomeStyle().then((res: any) => {
-      console.log('getHomeStyle', res)
+      console.log('getHomeStyle', res);
       if (res) {
-        this.setState({
+        this.props.form.setFieldsValue({
           title: res.title,
-          iconBackgroudImg: res.iconBackgroudImg,
+          iconBackgroudImg: initImgList(res.iconBackgroudImg, 'img'),
           iconColor: res.iconColor,
-          navigationBackgroudImg: res.navigationBackgroudImg
-        }) 
+          navigationBackgroudImg: initImgList(res.navigationBackgroudImg, 'img'),
+          isOpenDrogue: res.isOpenDrogue === 0 ? false : true,
+        });
+        this.setState({
+          miniCardWords: res.miniCardWords,
+          miniCardImg: initImgList(res.miniCardImg, 'img'),
+          posterImg: initImgList(res.posterImg, 'img'),
+          drogueImg: initImgList(res.drogueImg, 'img'),
+        })
       }
-    })
+    });
   }
   //提交
-  public onSubmit () {
+  public onSubmit() {
     this.props.form.validateFields((err, value) => {
       if (err) {
-        APP.error('保存失败')
-        return
+        APP.error('保存失败');
+        return;
       }
-      
+      console.log(value, 'value')
       const params = {
         title: value.title,
-        iconBackgroudImg: value.iconBackgroudImg.length && replaceHttpUrl(value.iconBackgroudImg[0].durl) || "",
+        iconBackgroudImg: (value.iconBackgroudImg.length && replaceHttpUrl(value.iconBackgroudImg[0].durl)) || '',
         iconColor: value.iconColor,
-        navigationBackgroudImg: value.navigationBackgroudImg.length && replaceHttpUrl(value.navigationBackgroudImg[0].durl) || "",
-      }
-      console.log('params', params)
-      
-      api.editHomeStyle( params ).then((res) => {
-        console.log('保存成功', res)
-        APP.success('保存成功')
-      })
-    })
+        navigationBackgroudImg: (value.navigationBackgroudImg.length && replaceHttpUrl(value.navigationBackgroudImg[0].durl)) || '',
+        isOpenDrogue: value.isOpenDrogue ? 1 : 0,
+        drogueImg: (value.drogueImg && value.drogueImg.length && replaceHttpUrl(value.drogueImg[0].durl)) || '',
+        posterImg: (value.posterImg && value.posterImg.length && replaceHttpUrl(value.posterImg[0].durl)) || '',
+        miniCardImg: (value.miniCardImg && value.miniCardImg.length && replaceHttpUrl(value.miniCardImg[0].durl)) || '',
+        miniCardWords: value.miniCardWords && value.miniCardWords
+      };
+      console.log('params', params);
+
+      api.editHomeStyle(params).then(res => {
+        console.log('保存成功', res);
+        APP.success('保存成功');
+      });
+    });
   }
-  
-  public render () {
-    const { getFieldDecorator } = this.props.form
-    const { title, iconBackgroudImg, iconColor, navigationBackgroudImg } = this.state
-    
+
+  public render() {
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const {  miniCardImg, posterImg, drogueImg, miniCardWords } = this.state;
+    const isOpenDrogue =  getFieldValue('isOpenDrogue');
     return (
       <div
         style={{
@@ -85,88 +101,196 @@ class Main extends React.Component<Props, State> {
           minHeight: 400
         }}
       >
-        <Form
-          {...formLayout}
-          onSubmit={this.onSubmit}
-        >
-          <Form.Item label='标题' required={true}>
-            {
-              getFieldDecorator('title', {
-                initialValue: title,
-                rules: [{
+        <Form {...formLayout} onSubmit={this.onSubmit}>
+          <Form.Item label="标题" required={true}>
+            {getFieldDecorator('title', {
+              rules: [
+                {
                   required: true,
                   message: '标题不能为空'
-                }]
-              })(
-                <Input placeholder="请输入标题" />
-              )
-            }
+                }
+              ]
+            })(<Input placeholder="请输入标题" />)}
           </Form.Item>
           <Form.Item label="导航栏背景图" required={true}>
             {getFieldDecorator('navigationBackgroudImg', {
-              initialValue: initImgList(navigationBackgroudImg, 'img'),
               rules: [
                 {
                   required: true,
                   message: '请上传导航栏背景图'
-                },
-              ],
-            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传背景图"  listType="picture-card"  listNum={1} size={.3} />)}
+                }
+              ]
+            })(
+              <UploadView
+                accept=".jpg, .gif, .png"
+                placeholder="上传背景图"
+                listType="picture-card"
+                listNum={1}
+                size={0.3}
+              />
+            )}
           </Form.Item>
           <Form.Item label="注意事项">
-            <div style={{lineHeight: 1.5}}>
-              1、该背景图主要用在首页顶部导航栏，必填项。<br/>
-              2、图片格式支持png、jpg、gif格式。（推荐使用png格式）<br/>
+            <div style={{ lineHeight: 1.5 }}>
+              1、该背景图主要用在首页顶部导航栏，必填项。
+              <br />
+              2、图片格式支持png、jpg、gif格式。（推荐使用png格式）
+              <br />
               3、图片尺寸为828*320像素，大小不超过300kb。
             </div>
           </Form.Item>
-          <Form.Item label="icon背景图" >
+          <Form.Item label="icon背景图">
             {getFieldDecorator('iconBackgroudImg', {
-              initialValue: initImgList(iconBackgroudImg, 'img'),
               rules: [
                 {
                   required: false,
                   message: '图片格式不正确'
-                },
-              ],
-            })(<UploadView accept=".jpg, .gif, .png" placeholder="上传icon图"  listType="picture-card"  listNum={1} size={.3} />)}
+                }
+              ]
+            })(
+              <UploadView
+                accept=".jpg, .gif, .png"
+                placeholder="上传icon图"
+                listType="picture-card"
+                listNum={1}
+                size={0.3}
+              />
+            )}
           </Form.Item>
           <Form.Item label="注意事项">
-            <div style={{lineHeight: 1.5}}>
-              1、该背景图主要用在首页icon区域，非必填项，默认白色背景图。<br/>
-              2、图片格式支持png、jpg、gif格式。（推荐使用png格式）<br/>
-              3、一行图标背景图片尺寸为750*176像素；<br/>
+            <div style={{ lineHeight: 1.5 }}>
+              1、该背景图主要用在首页icon区域，非必填项，默认白色背景图。
+              <br />
+              2、图片格式支持png、jpg、gif格式。（推荐使用png格式）
+              <br />
+              3、一行图标背景图片尺寸为750*176像素；
+              <br />
               二行图标背景图片尺寸为750*320像素；大小不超过300kb。
             </div>
           </Form.Item>
-          <Form.Item label='icon名称色值：'>
-            {
-              getFieldDecorator('iconColor', {
-                initialValue: iconColor,
-                rules: [{
+          <Form.Item label="icon名称色值：">
+            {getFieldDecorator('iconColor', {
+              rules: [
+                {
                   required: true,
                   message: 'icon名称值不能为空'
-                },{
+                },
+                {
                   pattern: /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/g,
                   message: 'icon名称值不正确'
-                }]
-              })(
-                <Input maxLength={7} placeholder="请输入首页icon名称的色值，如#333333" />
-              )
-            }
+                }
+              ]
+            })(<Input maxLength={7} placeholder="请输入首页icon名称的色值，如#333333" />)}
           </Form.Item>
           <Form.Item label="注意事项">
-            <div style={{lineHeight: 1.5}}>
-              1.该色值主要用在首页icon名称，必填项，默认黑色#333333。<br/>
-              2.色值范围是#000000~#FFFFFF。<br/>
+            <div style={{ lineHeight: 1.5 }}>
+              1.该色值主要用在首页icon名称，必填项，默认黑色#333333。
+              <br />
+              2.色值范围是#000000~#FFFFFF。
+              <br />
             </div>
           </Form.Item>
+          <Form.Item label="是否展示分享浮标">
+            {getFieldDecorator('isOpenDrogue', {
+            })(<Switch checked={isOpenDrogue}/>)}
+          </Form.Item>
+          {
+            isOpenDrogue && <>
+              <Form.Item label="分享图标">
+                {getFieldDecorator('drogueImg', {
+                  initialValue: drogueImg,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请上传分享图标'
+                    }
+                  ]
+                })(
+                  <UploadView
+                    accept=".jpg, .gif, .png"
+                    placeholder="分享图标"
+                    listType="picture-card"
+                    listNum={1}
+                    // pxSize={[{width:180, height:180}]} 
+                  />
+                )}
+                <p>
+                  • 主要用于首页的分享图标样式
+                </p>
+                <p>
+                  • 支持gif图，规格为：180*180像素
+                </p>
+              </Form.Item>
+              <Form.Item label="分享海报">
+                {getFieldDecorator('posterImg', {
+                  initialValue: posterImg,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请上分享海报'
+                    }
+                  ]
+                })(
+                  <UploadView
+                    accept=".jpg, .png"
+                    placeholder="分享海报"
+                    listType="picture-card"
+                    listNum={1}
+                    // pxSize={[{width:750, height:1000}]} 
+                  />
+                )}
+                <p>
+                  • 主要用于首页分享按钮对应的海报图
+                </p>
+                <p>
+                  • 图片格式支持png,jpg，规格为：750*1000像素
+                </p>
+              </Form.Item>
+              <Form.Item label="分享小程序卡片">
+                {getFieldDecorator('miniCardImg', {
+                  initialValue: miniCardImg,
+                  rules: [
+                    {
+                      required: true,
+                      message: '请上传分享小程序卡片'
+                    }
+                  ]
+                })(
+                  <UploadView
+                    accept=".jpg, .png"
+                    placeholder="分享小程序卡片"
+                    listType="picture-card"
+                    listNum={1}
+                  />
+                )}
+                <p>
+                  • 主要用于首页分享按钮对应的小程序卡片样式
+                </p>
+                <p>
+                  • 图片格式支持png,jpg，长宽比为5:4
+                </p>
+              </Form.Item>
+              <Form.Item label="小程序卡片文案">
+                {getFieldDecorator('miniCardWords', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '小程序卡片文案'
+                    }
+                  ],
+                  initialValue: miniCardWords
+                })(<Input placeholder="小程序卡片文案" />)}
+              </Form.Item>
+            </>
+          }
           <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
-            <Button type="primary" htmlType="submit">保 存</Button>
+            <Button type="primary" htmlType="submit">
+              保 存
+            </Button>
           </Form.Item>
         </Form>
       </div>
-    )
+    );
   }
 }
-export default Form.create()(Main)
+export default Form.create()(Main);
