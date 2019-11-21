@@ -358,6 +358,9 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       <ActivitySelector visible={activitySelectorVisible} onCancel={() => setActivitySelectorVisible(false)} onChange={onActivitySelectorChange} />
       <Form
         {...formItemLayout}
+        style={{
+          marginBottom: 200
+        }}
       >
         <Row>
           <Col offset={3}>
@@ -532,6 +535,9 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
               仅支持手动发券
             </Checkbox>
           )}
+          <div style={{color: '#999'}}>
+            勾选后无法在商品详情和专题显示，只支持批量发券
+          </div>
         </Form.Item>
         {!formValue.receivePattern && (
           <Form.Item label="商详显示">
