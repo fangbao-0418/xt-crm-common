@@ -10,6 +10,14 @@ interface Props {
 interface State {
   value: any[]
 }
+function range (start: number, end: number) {
+  const result = []
+  for (let i = start; i < end; i++) {
+    result.push(i)
+  }
+  return result
+}
+
 class Main extends React.Component<Props, State> {
   public state: State
   public ids: any[] = [1]
@@ -49,6 +57,7 @@ class Main extends React.Component<Props, State> {
     this.setState({
       value
     })
+    this.onChange(value)
   }
   public setIds (value: any[] = this.props.value || []) {
     value.map((item, index) => {
@@ -86,6 +95,26 @@ class Main extends React.Component<Props, State> {
                 >
                   <DatePicker
                     showTime={showTime}
+                    disabledDate={(current) => {
+                      return current ? (current.unix() < moment().unix()) : false
+                    }}
+                    disabledTime={(current) => {
+                      const now = moment()
+                      const minHours = now.get('h')
+                      const minMinutes = now.get('m')
+                      const minSecond = now.get('s')
+                      if (current) {        
+                        const disabledMinutes = current.get('h') === minHours ? range(0, minMinutes) : []
+                        const disabledSeconds = current.get('h') === minHours && current.get('m') === minMinutes ? range(0, minSecond) : []
+                        return {
+                          disabledHours: () => range(0, minHours),
+                          disabledMinutes: () => disabledMinutes,
+                          disabledSeconds: () => disabledSeconds,
+                        }
+                      } else {
+                        return {}
+                      }
+                    }}
                     value={val}
                     onChange={(date) => {
                       value[index] = (date ? (format ? date.format(format) : date.unix() * 1000) : undefined)

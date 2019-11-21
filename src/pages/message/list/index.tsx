@@ -44,8 +44,8 @@ class Main extends React.Component<Props> {
       }
     },
     {
-      title: '发送时间',
-      dataIndex: 'sendTime',
+      title: '创建时间',
+      dataIndex: 'createTime',
       render: (text) => {
         return APP.fn.formatDate(text)
       }

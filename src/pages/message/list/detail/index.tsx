@@ -78,6 +78,7 @@ class Main extends React.Component<Props, State> {
     } else {
       values.groupType = []
     }
+    values.regularTime = (values.regularTime || []).filter((item: number) => !!item)
     this.form.props.form.validateFields((err) => {
       if (err) {
         return
@@ -271,8 +272,16 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value = [], callback) => {
-                        if (value.length === 0) {
+                        const nowTime = new Date().getTime()
+                        console.log(value.findIndex((item: number) => item < nowTime) > -1, value, nowTime, '--------')
+                        if (value.length <= 1 && !value[0]) {
+                          callback()
+                          return
+                        } else if (value.findIndex((item: any) => !item) > -1) {
                           callback('请选择定时发送日期')
+                          return
+                        } else if (value.findIndex((item: number) => item < nowTime) > -1) {
+                          callback('存在过期发送时间')
                           return
                         }
                         callback()
