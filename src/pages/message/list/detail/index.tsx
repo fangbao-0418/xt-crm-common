@@ -266,7 +266,7 @@ class Main extends React.Component<Props, State> {
           {!this.state.readonly ? (
             <FormItem
               label='定时发送'
-              required
+              required={false}
               inner={(form) => {
                 return form.getFieldDecorator('regularTime', {
                   rules: [
