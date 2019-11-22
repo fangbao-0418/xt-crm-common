@@ -31,7 +31,7 @@ class Main extends React.Component<Props> {
       <Switch>
         <Route exact path={`${match.url}/list`} component={MessageList} />
         <Route exact path={`${match.url}/detail/:id`} component={MessageDetail} />
-         <Route exact path={`${match.url}/template`} component={TemplateList} />
+        <Route exact path={`${match.url}/template`} component={TemplateList} />
         <Route exact path={`${match.url}/template/detail/:id`} component={TemplateDetail} />
       </Switch>
     )
