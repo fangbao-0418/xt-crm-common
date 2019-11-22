@@ -207,7 +207,7 @@ class GoodsEdit extends React.Component {
     const res = await getDetail(freightTemplateId) || {}
     this.setState({
       templateData: mapTemplateData(res.rankList),
-      commonCost: formatPrice(res.commonCost),
+      commonCost: res.commonCost,
       templateName: res.templateName
     })
   }
