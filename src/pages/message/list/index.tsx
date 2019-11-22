@@ -117,15 +117,15 @@ class Main extends React.Component<Props> {
           // }}
           formConfig={getFieldsConfig()}
           rangeMap={{
-            sendTime: {
-              fields: ['sendStartTime', 'sendEndTime']
+            createTime: {
+              fields: ['startTime', 'endTime']
             }
           }}
           formItemLayout={(
             <>
               <FormItem name='messageTitle' />
               <FormItem name='messageStatus' />
-              <FormItem name='sendTime' />
+              <FormItem name='createTime' />
               <FormItem name='messageType' />
             </>
           )}
