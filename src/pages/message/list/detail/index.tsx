@@ -44,8 +44,8 @@ class Main extends React.Component<Props, State> {
         this.setValue({
           messageTitle: res.messageTitle,
           messageContent: res.messageContent,
-          // messageType: res.messageType,
-          messageType: '10',
+          messageType: res.messageType,
+          // messageType: '10',
           jumpUrl: res.jumpUrl,
           groupJobList: res.groupJobList
         })
