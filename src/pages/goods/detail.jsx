@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import { Card, Form, Input, Button, Radio, Table, message } from 'antd'
 import {
   map,
@@ -10,7 +10,7 @@ import MoneyRender from '@/components/money-render'
 import { getStoreList, toAuditDetail } from './api'
 import SkuUploadItem from './SkuUploadItem'
 import Image from '@/components/Image'
-import styles from './edit.module.scss';
+import styles from './edit.module.scss'
 import { replaceHttpUrl, parseQuery } from '@/util/utils'
 import { formatPrice } from '@/util/format'
 import { auditGoods } from './api'
@@ -44,9 +44,9 @@ const mapTemplateData= (list) => {
     return {
       ...item,
       cost: item.cost && formatPrice(item.cost),
-    };
-  });
-};
+    }
+  })
+}
 
 const collection = {
   property1: {
@@ -128,10 +128,13 @@ function uniqWithProp(list, propName) {
  * @param {*} url 
  */
 function normalizeVideoUrl(url) {
-  const index = url.indexOf('?');
-  return url.indexOf('?') !== -1 ? url.slice(0, index): url;
+  const index = url.indexOf('?')
+  return url.indexOf('?') !== -1 ? url.slice(0, index): url
 }
-
+const styleObject = {
+  backgroundColor: '#fafafa',
+  padding: '0 16px'
+}
 class GoodsEdit extends React.Component {
   constructor(props) {
     super(props)
@@ -142,24 +145,25 @@ class GoodsEdit extends React.Component {
   state = {
     detail: {},
     commonCost: '',
+    templateName: '',
     templateData: [],
     destinationList: []
-  };
+  }
   componentDidMount() {
-    this.getStoreList();
+    this.getStoreList()
   }
 
   setDefaultValue = (filedValue) => {
-    return filedValue || (this.readOnly ? '无' : '');
+    return filedValue || (this.readOnly ? '无' : '')
   }
   /**
    * 获取详情数据
    */
   toAuditDetail = () => {
     toAuditDetail({ productId: this.productId }).then((res = {}) => {
-      const currentSupplier = (this.supplier || []).find(item => item.id === res.storeId) || {};
+      const currentSupplier = (this.supplier || []).find(item => item.id === res.storeId) || {}
       res.combineName = res.productCategoryVO && res.productCategoryVO.combineName
-      res.interceptionVisible = currentSupplier.category == 1 ? false : true
+      res.interceptionVisible = +currentSupplier.category === 1 ? false : true
       res.barCode = this.setDefaultValue(res.barCode)
       /** 商品详情页 */
       res.listImage = res.listImage ? res.listImage.split(',') : []
@@ -171,15 +175,15 @@ class GoodsEdit extends React.Component {
       this.setState({
         showNum: res.showNum !== undefined ? res.showNum : 1,
         detail: res
-      });
-    });
-  };
+      })
+    })
+  }
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
       this.supplier = res.records 
       this.toAuditDetail()
-    });
-  };
+    })
+  }
   handleSave = () => {
     this.props.form.validateFields(async (errors, values) => {
       if (!errors) {
@@ -203,8 +207,9 @@ class GoodsEdit extends React.Component {
     const res = await getDetail(freightTemplateId) || {}
     this.setState({
       templateData: mapTemplateData(res.rankList),
-      commonCost: formatPrice(res.commonCost)
-    });
+      commonCost: formatPrice(res.commonCost),
+      templateName: res.templateName
+    })
   }
   render() {
     const editColumns = [
@@ -213,7 +218,7 @@ class GoodsEdit extends React.Component {
         key: 'index',
         width: 80,
         render: (text, record, index) => {
-          return index + 1;
+          return index + 1
         }
       },
       {
@@ -233,7 +238,7 @@ class GoodsEdit extends React.Component {
               </div>
               <div className={styles.operate}>
                 <Button
-                  type="link"
+                  type='link'
                   onClick={() => {
                     this.setState({
                       destinationList,
@@ -338,7 +343,7 @@ class GoodsEdit extends React.Component {
         key: 'stockAlert'
       }
     ]
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator } = this.props.form
     const {
       detail,
       detail: {
@@ -397,8 +402,8 @@ class GoodsEdit extends React.Component {
         /** 审核说明 */
         auditInfo
       }
-    } = this.state;
-    const storeItem = (this.supplier || []).find(v => v.id === storeId) || {};
+    } = this.state
+    const storeItem = (this.supplier || []).find(v => v.id === storeId) || {}
     return (
       <>
         <CascaderCity
@@ -408,26 +413,26 @@ class GoodsEdit extends React.Component {
           onCancel={() => {
             this.setState({
               visible: false,
-            });
+            })
           }}
         />
         <Form {...formLayout}>
-          <Card title="商品审核/详情">
-            <Form.Item label="商品名称">{productName || '无'}</Form.Item>
-            <Form.Item label="商品类目">{combineName || '无'}</Form.Item>
-            <Form.Item label="商品简称">{productShortName || '无'}</Form.Item>
-            <Form.Item label="商品编码">{productCode || '无'}</Form.Item>
-            <Form.Item label="商品简介">{description || '无'}</Form.Item>
-            <Form.Item label="商品条码">{barCode || '无'}</Form.Item>
-            <Form.Item label="供货商">{storeItem.name}</Form.Item>
-            <Form.Item label="供应商商品ID">{storeProductId || '无'}</Form.Item>
+          <Card title='商品审核/详情'>
+            <Form.Item label='商品名称'>{productName || '无'}</Form.Item>
+            <Form.Item label='商品类目'>{combineName || '无'}</Form.Item>
+            <Form.Item label='商品简称'>{productShortName || '无'}</Form.Item>
+            <Form.Item label='商品编码'>{productCode || '无'}</Form.Item>
+            <Form.Item label='商品简介'>{description || '无'}</Form.Item>
+            <Form.Item label='商品条码'>{barCode || '无'}</Form.Item>
+            <Form.Item label='供货商'>{storeItem.name}</Form.Item>
+            <Form.Item label='供应商商品ID'>{storeProductId || '无'}</Form.Item>
             {
               interceptionVisible ? 
-                <Form.Item label="是否可拦截发货">{interception === 1 ? '是': '否'}</Form.Item> :
+                <Form.Item label='是否可拦截发货'>{interception === 1 ? '是': '否'}</Form.Item> :
                 null
             }
-            <Form.Item label="实名认证">{isAuthentication === 1 ? '是': '否'}</Form.Item>
-            <Form.Item label="商品视频封面">
+            <Form.Item label='实名认证'>{isAuthentication === 1 ? '是': '否'}</Form.Item>
+            <Form.Item label='商品视频封面'>
               {videoCoverUrl ? (
                 <Image
                   style={{width: '102px', height: '102px'}}
@@ -435,19 +440,19 @@ class GoodsEdit extends React.Component {
                 />
               ): '无'}
             </Form.Item>
-            <Form.Item label="商品视频">
+            <Form.Item label='商品视频'>
               {
                 videoUrl ? (
                   <video
                     src={replaceHttpUrl(videoUrl)}
-                    controls="controls"
+                    controls='controls'
                     height={102}
                     width={102}
                   />
                 ): '无'
               }
             </Form.Item>
-            <Form.Item label="商品主图">
+            <Form.Item label='商品主图'>
               {
                 coverUrl ? (
                   <Image
@@ -462,7 +467,7 @@ class GoodsEdit extends React.Component {
               }
             </Form.Item>
             <Form.Item
-              label="商品图片"
+              label='商品图片'
             >
               {Array.isArray(productImage) && productImage.length > 0 ?
                 productImage.map(url => (
@@ -479,7 +484,7 @@ class GoodsEdit extends React.Component {
                 )
               ): '无'}
             </Form.Item>
-            <Form.Item label="banner图片">
+            <Form.Item label='banner图片'>
               {bannerUrl ? (
                 <Image
                   style={{
@@ -490,14 +495,14 @@ class GoodsEdit extends React.Component {
                 />
               ): '无'}
             </Form.Item>
-            <Form.Item label="累计销量">{showNum ? '展示': '不展示'}</Form.Item>
+            <Form.Item label='累计销量'>{showNum ? '展示': '不展示'}</Form.Item>
           </Card>
-          <Card title="商品规格">
+          <Card title='商品规格'>
           {getSpecs(detail).map((spec, key) => {
             return (
               <Card
                 key={key}
-                type="inner"
+                type='inner'
                 title={spec.title}
               >
                 <div className={styles.spulist}>
@@ -516,40 +521,53 @@ class GoodsEdit extends React.Component {
             )
           })}
             <Table
-              rowKey="skuId"
+              rowKey='skuId'
               style={{ marginTop: 10 }}
               columns={getDynamicColumns(detail).concat(columns)}
               dataSource={skuList}
               pagination={false}
             />
           </Card>
-          <Card title="物流信息" style={{ marginTop: 10 }}>
-            <Form.Item label="物流体积">{bulk || '无'}</Form.Item>
-            <Form.Item label="物流重量">{weight || '无'}</Form.Item>
-            <Form.Item label="运费设置">{withShippingFree === 1 ? '包邮': (
-              <Table
-                rowKey="rankNo"
-                className={classnames('mt10', styles.fare)}
-                columns={editColumns}
-                pagination={false}
-                dataSource={(this.state.templateData || []).map((v, index) => {
-                  return {
-                    uniqueKey: index,
-                    ...v
-                  }
-                })}
-              />
-            )}</Form.Item>
-            <Form.Item label="退货地址"
+          <Card title='物流信息' style={{ marginTop: 10 }}>
+            <Form.Item label='物流体积'>{bulk || '无'}</Form.Item>
+            <Form.Item label='物流重量'>{weight || '无'}</Form.Item>
+            <Form.Item label='运费设置'>
+              {
+                withShippingFree === 1 ?
+                '包邮':
+                (
+                  <>
+                    <p style={styleObject}>
+                      <span>模板名称：{this.state.templateName}</span>
+                      <span style={{ marginLeft: 20 }}>默认运费：{APP.fn.formatMoney(this.state.commonCost)}</span>
+                    </p>
+                    <Table
+                      rowKey='uniqueKey'
+                      className={classnames('mt10', styles.fare)}
+                      columns={editColumns}
+                      pagination={false}
+                      dataSource={(this.state.templateData || []).map((v, index) => {
+                        return {
+                          uniqueKey: index,
+                          ...v
+                        }
+                      })}
+                    />
+                  </>
+                )
+              }
+            </Form.Item>
+            <Form.Item label='退货地址'
               wrapperCol={{
                 span: 18
               }}
             >
-              {getAddress(returnContact, returnPhone, returnAddress)}
+              <p>{ getAddress(returnContact, returnPhone) }</p>
+              { returnAddress && <p>{ returnAddress }</p> }
             </Form.Item>
           </Card>
-          <Card title="商品详情" style={{ marginTop: 10 }}>
-            <Form.Item label="商品详情页">
+          <Card title='商品详情' style={{ marginTop: 10 }}>
+            <Form.Item label='商品详情页'>
               {Array.isArray(listImage) && listImage.length > 0 ? listImage.map(url => (
                 <Image
                   style={{
@@ -563,13 +581,13 @@ class GoodsEdit extends React.Component {
                 />
               )) : '无'}
             </Form.Item>
-            {/* <Form.Item label="上架状态">{status === 1 ? '上架': '下架'}</Form.Item> */}
+            {/* <Form.Item label='上架状态'>{status === 1 ? '上架': '下架'}</Form.Item> */}
           </Card>
-          <Card title="审核结果">
+          <Card title='审核结果'>
             {
               this.auditStatus === '1'? (
                 <>
-                  <Form.Item label="审核结果" required>
+                  <Form.Item label='审核结果' required>
                     {getFieldDecorator('auditStatus', {
                       rules: [
                         {
@@ -584,7 +602,7 @@ class GoodsEdit extends React.Component {
                       </Radio.Group>
                     )}
                   </Form.Item>
-                  <Form.Item label="审核说明">
+                  <Form.Item label='审核说明'>
                     {getFieldDecorator('auditInfo', {
                       rules: [{
                         validator: (rule, value = '', callback) => {
@@ -596,18 +614,18 @@ class GoodsEdit extends React.Component {
                           }
                         }
                       }]
-                    })(<TextArea placeholder="请输入审核说明" maxLength={255}/>)}
+                    })(<TextArea placeholder='请输入审核说明' maxLength={255}/>)}
                   </Form.Item>
                   <Form.Item>
                     <Button
-                      type="primary"
+                      type='primary'
                       onClick={this.handleSave}
                       style={{ marginRight: 10 }}
                     >
                       保存
                     </Button>
                     <Button
-                      type="danger"
+                      type='danger'
                       onClick={() => {
                         APP.history.go(-1)
                       }}
@@ -618,16 +636,16 @@ class GoodsEdit extends React.Component {
                 </>
               ): (
                 <>
-                  <Form.Item label="审核结果">{auditStatus === 2 ? '通过': '不通过'}</Form.Item>
-                  <Form.Item label="审核说明">{auditInfo || '无'}</Form.Item>
+                  <Form.Item label='审核结果'>{auditStatus === 2 ? '通过': '不通过'}</Form.Item>
+                  <Form.Item label='审核说明'>{auditInfo || '无'}</Form.Item>
                 </>
               )
             }
           </Card>
         </Form>
       </>
-    );
+    )
   }
 }
 
-export default Form.create()(GoodsEdit);
+export default Form.create()(GoodsEdit)
