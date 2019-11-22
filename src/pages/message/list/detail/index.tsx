@@ -31,6 +31,19 @@ class Main extends React.Component<Props, State> {
   public componentDidMount () {
     this.fetchData()
   }
+  public isRepetition (arr: number[]) {
+    let result = false
+    const tmp: any = {}
+    arr.find((item) => {
+      if (!tmp[item]) {
+        tmp[item] = true
+      } else {
+        result = true
+        return true
+      }
+    })
+    return result
+  }
   public fetchData () {
     if (this.id === '-1') {
       this.setValue({
@@ -282,6 +295,9 @@ class Main extends React.Component<Props, State> {
                           return
                         } else if (value.findIndex((item: number) => item < nowTime) > -1) {
                           callback('存在过期发送时间')
+                          return
+                        } else if (this.isRepetition(value)) {
+                          callback('存在相同的发送时间')
                           return
                         }
                         callback()

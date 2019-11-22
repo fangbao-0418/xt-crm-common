@@ -96,20 +96,30 @@ class Main extends React.Component<Props, State> {
                   <DatePicker
                     showTime={showTime}
                     disabledDate={(current) => {
-                      return current ? (current.unix() < moment().unix()) : false
+                      return current ? (current.unix() < moment().startOf('d').unix()) : false
                     }}
                     disabledTime={(current) => {
                       const now = moment()
                       const minHours = now.get('h')
                       const minMinutes = now.get('m')
                       const minSecond = now.get('s')
-                      if (current) {        
-                        const disabledMinutes = current.get('h') === minHours ? range(0, minMinutes) : []
-                        const disabledSeconds = current.get('h') === minHours && current.get('m') === minMinutes ? range(0, minSecond) : []
-                        return {
-                          disabledHours: () => range(0, minHours),
-                          disabledMinutes: () => disabledMinutes,
-                          disabledSeconds: () => disabledSeconds,
+                      if (current) {
+                        const isCurrentDate = current.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')
+                        // const isCurrentDate = true
+                        // console.log(isCurrentDate, )
+                        if (isCurrentDate) {
+                          console.log(minHours, minMinutes, minSecond, 'min')
+                          console.log(current.format('YYYY-MM-DD HH:mm:ss'), 'xxxxxx')     
+                          const disabledMinutes = current.get('h') === minHours ? range(0, minMinutes) : []
+                          const disabledSeconds = current.get('h') === minHours && current.get('m') === minMinutes ? range(0, minSecond) : []
+                          console.log(range(0, minHours), disabledMinutes, disabledSeconds, 'disabled')
+                          return {
+                            disabledHours: () => range(0, minHours),
+                            disabledMinutes: () => disabledMinutes,
+                            disabledSeconds: () => disabledSeconds,
+                          }
+                        } else {
+                          return {}
                         }
                       } else {
                         return {}
