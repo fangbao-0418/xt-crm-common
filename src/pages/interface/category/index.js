@@ -293,7 +293,7 @@ class InterFaceCategory extends Component {
           name: vals.name,
           sort: vals.sort,
           showType: vals.showType,
-          styleType: vals.styleType,
+          styleType: vals.styleType ? vals.styleType : 1,
           secondName: vals.secondName,
           productCategoryVOS: list,
           secondStatus: secondStatus ? 1 : 0,
