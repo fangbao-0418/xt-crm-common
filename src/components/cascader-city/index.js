@@ -51,8 +51,6 @@ const Group = props => {
     changeChildren(checked ? source.children : [])
   };
 
-
-
   /**
    * 选中省对应市区列表变化执行相应回调
    * @param {*} checkedList 
@@ -89,15 +87,15 @@ const Group = props => {
         placement="bottom"
         content={
           <CheckboxGroup value={checkedList.map(item => item.id)} onChange={childrenChange}>
-            <CityGroup source={source.children} />
+            <CityGroup disabled={props.disabled} source={source.children} />
           </CheckboxGroup>
         }
         getPopupContainer={() => document.getElementById('cascader-city')}
       >
-        <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+        <Checkbox disabled={props.disabled} indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
           <span>
             {source.name}
-            <a>({checkedList.length})</a>
+            <span className="href">({checkedList.length})</span>
           </span>
           <Icon type="down" />
         </Checkbox>
@@ -116,7 +114,7 @@ const CityGroup = props => {
       {source.map(item => {
         return (
           <div key={item.id}>
-            <Checkbox value={item.id}>{item.name}</Checkbox>
+            <Checkbox disabled={props.disabled} value={item.id}>{item.name}</Checkbox>
           </div>
         );
       })}
@@ -131,6 +129,7 @@ class CascaderCity extends (PureComponent || Component) {
     onChange: checkedResult => {},
     onOk: () => {},
     onCancel: () => {},
+    disabled: false
   };
 
   constructor(props) {
@@ -163,13 +162,19 @@ class CascaderCity extends (PureComponent || Component) {
     const { sourceData, checkedSourceData } = this.state;
     // console.log(this.props.value, checkedSourceData, 'render')
     return (
-      <Modal {...this.props} width={700} onOk={this.onOk}>
+      <Modal
+        {...this.props}
+        width={700}
+        onOk={this.onOk}
+        okButtonProps={{ disabled: this.props.disabled }}
+      >
         <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
           {sourceData.map(item => {
             /** 遍历找出所有选中项 */
             const checkedItem = checkedSourceData.find(checkedItem => checkedItem.id === item.id);
             return (
               <Group
+                disabled={this.props.disabled}
                 key={item.id}
                 source={item}
                 checkedSource={checkedItem || {}}
