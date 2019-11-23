@@ -1,15 +1,15 @@
 const { get, post, newPost, del } = APP.http
 
 export const getList = (payload: any) => {
-  return newPost('/msg/template/selectTemplateList', payload)
+  return newPost('::message/msg/template/selectTemplateList', payload)
 }
 
 export const getDetail = (id: string) => {
-  return newPost(`/msg/template/selectByTemplateId/${id}`)
+  return newPost(`::message/msg/template/selectByTemplateId/${id}`)
 }
 
 export const deleteTemplte = (id: any) => {
-  return del(`/msg/template/delete/${id}`)
+  return del(`::message/msg/template/delete/${id}`)
 }
 
 /** 启用禁用模板 */
@@ -19,14 +19,14 @@ export const changeTemplteStatus = (payload: {
   /** 模板id */
   id: any
 }) => {
-  return newPost(`/msg/template/disable`, payload)
+  return newPost(`::message/msg/template/disable`, payload)
 }
 
 export const addTemplate = (payload: any) => {
-  return newPost(`/msg/template/save`, payload)
+  return newPost(`::message/msg/template/save`, payload)
 }
 
 /** 修改模板 */
 export const updateTempate = (payload: any) => {
-  return newPost(`/msg/template/update`, payload)
+  return newPost(`::message/msg/template/update`, payload)
 }
