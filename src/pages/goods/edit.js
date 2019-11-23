@@ -69,6 +69,7 @@ class GoodsEdit extends React.Component {
     this.getCategoryList();
   }
 
+  /** 获取商品类目 */
   getCategoryList = () => {
     getCategoryList().then(res => {
       const arr = Array.isArray(res) ? res : [];
@@ -78,29 +79,30 @@ class GoodsEdit extends React.Component {
           categoryList,
         },
         () => {
-          this.getGoodsDetial(res);
-        },
-      );
-    });
-  };
-
+          const id = this.props.match.params.id
+          /** 编辑 */
+          if (id) {
+            this.getGoodsDetial(res);
+          } else {
+            this.props.form.setFieldsValue({ showNum: 1 })
+            getTemplateList().then(opts => {
+              this.setState({ templateOptions: opts });
+            })
+          }
+        }
+      )
+    })
+  }
+  /** 获取商品详情 */
   getGoodsDetial = list => {
     const {
       form: { setFieldsValue },
-    } = this.props;
-    const {
       match: {
         params: { id },
       },
     } = this.props;
 
     let { supplier } = this.state;
-    if (!id) {
-      setFieldsValue({
-        showNum: 1,
-      });
-      return;
-    }
     getGoodsDetial({ productId: id }).then((res = {}) => {
       const arr2 = treeToarr(list);
       const categoryId =
