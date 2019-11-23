@@ -1,130 +1,130 @@
 import React from 'react'
-import { Card, Row, Col, Checkbox, Button } from 'antd'
-import styles from './index.module.styl'
-import Form, { FormItem } from '@/packages/common/components/form'
-import Upload from '@/components/upload'
-interface options {
-  label: string;
-  value: number;
-}
-const portsOptions: options[] = [
-  { label: 'Android', value: 1 },
-  { label: 'iOS', value: 2 },
-  { label: 'H5', value: 3 },
-  { label: '小程序', value: 4 }
-]
-const memberTypesOptions: options[] = [
-  { label: '未登录用户', value: -1 },
-  { label: '普通会员', value: 0 },
-  { label: '团长', value: 10 },
-  { label: '区长', value: 20 },
-  { label: '合伙人', value: 30 }
-]
+import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import { getFieldsConfig } from './config'
+import * as api from './api'
+import { ColumnProps } from 'antd/lib/table'
+import { Icon, Menu, Dropdown, Button, Modal } from 'antd'
 class Main extends React.Component {
+  public listpage: ListPageInstanceProps
+  public columns: ColumnProps<any>[] = [
+    {
+      title: '版本编号',
+      dataIndex: 'id'
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime'
+    },
+    {
+      title: '发布时间',
+      dataIndex: 'publishTime'
+    },
+    {
+      title: '最后发布人',
+      dataIndex: 'publishTime'
+    },
+    {
+      title: '发布状态',
+      dataIndex: 'status'
+    },
+    {
+      title: '操作',
+      dataIndex: 'operate',
+      width: 300,
+      render: ((text: any, record: any, index: number) => (
+        <>
+          <Dropdown
+            overlay={(
+              <Menu>
+                <Menu.Item>
+                  <span className='href' onClick={() => this.handlePublish('正式环境')}>正式环境</span>
+                </Menu.Item>
+                <Menu.Item>
+                  <span className='href' onClick={() => this.handlePublish('预发环境')}>预发环境</span>
+                </Menu.Item>
+              </Menu>
+            )}>
+            <Button type='link'>发布<Icon type="down" /></Button>
+          </Dropdown>
+          <Button type='link' onClick={this.handleEdit}>编辑</Button>
+          <Button type='link' onClick={() => this.handleCopy(record.id)}>复制</Button>
+          <Button type='link' onClick={() => this.handleDelete(record.id)}>删除</Button>
+        </>
+      ))
+    },
+  ]
   public constructor (props: any) {
     super(props)
+    this.handleCopy = this.handleCopy.bind(this)
+    this.handleAdd = this.handleAdd.bind(this)
+  }
+  /** 复制 */
+  public handleCopy (id: number) {
+    Modal.confirm({
+      title: '系统提示',
+      content: '是否复制草稿',
+      onOk: async () => {
+        const data = await api.copy({ id })
+        if (data) {
+          APP.success('复制成功')
+          this.listpage.refresh()
+        }
+      }
+    })
+  }
+  /** 发布 */
+  public handlePublish (msg: string) {
+    Modal.confirm({
+      title: '系统提示',
+      content: `是否发到${msg}`,
+      onOk: async () => {
+        const data = await api.publish()
+        if (data) {
+          APP.success('发布成功')
+          this.listpage.refresh()
+        }
+      }
+    })
+  }
+  /** 新建配置 */
+  public handleAdd () {
+    APP.history.push('/setting/my/-1')
+  }
+  /** 编辑 */
+  public handleEdit () {
+    APP.history.push('/setting/my/1')
+  }
+  /** 删除 */
+  public handleDelete (id: number) {
+    Modal.confirm({
+      title: '系统提示',
+      content: '是否删除草稿',
+      onOk: async () => {
+        const data = await api.deleteVersion({ id })
+        if (data) {
+          APP.success('删除成功')
+          this.listpage.refresh()
+        }
+      }
+    })
   }
   public render () {
     return (
-      <Card>
-        <Row className={styles.row}>
-          <Col span={12} className={styles.col}>
-            <h2 className={styles.title}>个人中心配置</h2>
-          </Col>
-          <Col span={12} className={styles.col}>
-            <h2 className={styles.title}>icon配置</h2>
-            <Form>
-              <FormItem
-                name='iconName'
-                type='input'
-                label='icon名称'
-                verifiable={true}
-                fieldDecoratorOptions={{
-                  rules: [{
-                    required: true
-                  }]
-                }}
-              />
-              <FormItem
-                label='上传图片'
-                verifiable={true}
-                fieldDecoratorOptions={{
-                  rules: [{
-                    required: true
-                  }]
-                }}
-                inner={(form) => {
-                  return form.getFieldDecorator('iconUrl')(
-                    <Upload
-                      listType='picture-card'
-                      placeholder='上传'
-                      showUploadList={false}
-                    />
-                  )
-                }}
-              />
-              <FormItem
-                name='iconName'
-                type='input'
-                label='排序'
-                verifiable={true}
-                controlProps={{
-                  placeholder: '排序越大越靠前'
-                }}
-                fieldDecoratorOptions={{
-                  rules: [{
-                    required: true
-                  }]
-                }}
-              />
-              <FormItem
-                name='url'
-                type='input'
-                label='地址'
-                verifiable={true}
-                controlProps={{
-                  placeholder: '请输入内容'
-                }}
-                fieldDecoratorOptions={{
-                  rules: [{
-                    required: true
-                  }]
-                }}
-              />
-              <FormItem
-                label='显示端口'
-                inner={(form) => {
-                  return form.getFieldDecorator('ports')(
-                    <Checkbox.Group
-                      options={portsOptions}
-                    />
-                  )
-                }}
-              />
-              <FormItem
-                label='显示用户'
-                inner={(form) => {
-                  return form.getFieldDecorator('memberTypes')(
-                    <Checkbox.Group
-                      options={memberTypesOptions}
-                    />
-                  )
-                }}
-              />
-              <FormItem
-                inner={(form) => {
-                  return (
-                    <>
-                      <Button type='primary'>保存</Button>
-                      <Button type='danger' className='ml10'>删除</Button>
-                    </>
-                  )
-                }}
-              />
-            </Form>
-          </Col>
-        </Row>
-      </Card>
+      <div>
+        <ListPage
+          getInstance={(ref) => {
+            this.listpage = ref
+          }}
+          formConfig={getFieldsConfig()}
+          api={api.getList}
+          columns={this.columns}
+          addonAfterSearch={(
+            <div>
+              <Button icon='plus' type='primary' onClick={this.handleAdd}>新建</Button>
+            </div>
+          )}
+        />
+      </div>
     )
   }
 }
