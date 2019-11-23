@@ -7,7 +7,7 @@ import { ExpressCompanyOptions } from '@/config';
 import * as LocalStorage from '@/util/localstorage';
 import moment from 'moment';
 import { isNil } from 'lodash';
-
+import { handleApiUrl } from './app/config'
 const pathToRegexp = require('path-to-regexp');
 const History = createHashHistory();
 
@@ -175,6 +175,7 @@ export function getHeaders(headers) {
 }
 
 export const prefix = url => {
+  url = handleApiUrl(url)
   let apiDomain = baseHost;
   if (!(process.env.PUB_ENV == 'pre' || process.env.PUB_ENV == 'prod')) {
     if (!(process.env.PUB_ENV == 'test' || process.env.PUB_ENV == 'dev')) {

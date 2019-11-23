@@ -89,7 +89,8 @@ function CouponDetail({ match, history }) {
             <Form.Item label="每人限领次数">{ruleVO.restrictNum}张</Form.Item>
             <Form.Item label="每日限领次数">{ruleVO.dailyRestrict ? `${ruleVO.dailyRestrict}张` : '无'}</Form.Item>
             <Form.Item label="使用平台">{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item>
-            <Form.Item label="商详显示">{ruleVO.showFlag === 1 ? '显示' : '不显示'}</Form.Item>
+            {ruleVO.receivePattern === 1 && <Form.Item label="发券控制">仅支持手动发券</Form.Item>}
+            {ruleVO.receivePattern !== 1 && (<Form.Item label="商详显示">{ruleVO.showFlag === 1 ? '显示' : '不显示'}</Form.Item>)}
             <Form.Item label="优惠券说明">{baseVO.description || '无'}</Form.Item>
             <Form.Item label="优惠券备注">{baseVO.remark || '无'}</Form.Item>
             {baseVO.status === 2 && <Form.Item wrapperCol={formLeftButtonLayout}>
