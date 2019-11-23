@@ -6,7 +6,7 @@ import UploadView from '@/components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
 import { map, size, concat, filter, assign, forEach, cloneDeep, split } from 'lodash';
 import descartes from '@/util/descartes';
-import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku } from './api';
+import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from './api';
 import { getAllId, gotoPage, initImgList, parseQuery } from '@/util/utils';
 import { radioStyle } from '@/config';
 import SkuList from './SkuList';
@@ -47,6 +47,7 @@ class GoodsEdit extends React.Component {
   status = parseQuery().status
   state = {
     speSelect: [],
+    templateOptions: [],
     spuName: [],
     spuPicture: [],
     GGName: '',
@@ -139,7 +140,7 @@ class GoodsEdit extends React.Component {
         listImage = listImage.concat(initImgList(item));
       });
       this.specs = this.getSpecs(res.skuList);
-      const currentSupplier = supplier.find(item => item.id === res.storeId) || {};
+      const currentSupplier = (supplier || []).find(item => item.id === res.storeId) || {};
       this.setState({
         interceptionVisible: currentSupplier.category == 1 ? false : true,
         data: res.skuList || [],
@@ -149,12 +150,12 @@ class GoodsEdit extends React.Component {
         returnContact: res.returnContact,
         returnPhone: res.returnPhone,
         returnAddress: res.returnAddress,
-        showImage,
+        showImage
       });
       setFieldsValue({
         interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
-        freightTemplateId: res.freightTemplateId,
+        freightTemplateId: String(res.freightTemplateId),
         description: res.description,
         productCode: res.productCode,
         productId: res.productId,
@@ -180,9 +181,17 @@ class GoodsEdit extends React.Component {
         categoryId,
         isAuthentication: res.isAuthentication
       });
-      this.getStrategyByCategory(categoryId[0])
-    });
-  };
+      this.getStrategyByCategory(categoryId[0]);
+      getTemplateList().then(opts => {
+        const isRepeat = opts.some(opt => opt.freightTemplateId === res.freightTemplateId)
+        const templateOptions = isRepeat ? opts : opts.concat({
+          freightTemplateId: res.freightTemplateId,
+          templateName: res.freightTemplateName
+        });
+        this.setState({ templateOptions });
+      })
+    })
+  }
 
   //通过类目id查询是否有定价策略
   getStrategyByCategory = (categoryId) => {
@@ -312,6 +321,7 @@ class GoodsEdit extends React.Component {
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
     validateFields((err, vals) => {
       console.log('vals=>', vals)
+      vals.freightTemplateId = +vals.freightTemplateId
       if (!err) {
         if (size(speSelect) === 0) {
           message.error('请添加规格');
@@ -681,7 +691,9 @@ class GoodsEdit extends React.Component {
                   包邮
                 </Radio>
                 <Radio style={radioStyle} value={0}>
-                  {getFieldDecorator('freightTemplateId')(<TemplateList />)}
+                  {getFieldDecorator('freightTemplateId')(
+                    <TemplateList dataSource={this.state.templateOptions} />
+                  )}
                 </Radio>
               </Radio.Group>,
             )}
