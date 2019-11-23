@@ -132,13 +132,7 @@ export default class extends Component {
           }}
         />
 
-        <Modal
-          title="修改库存"
-          width={300}
-          visible={visible}
-          onCancel={this.modalCancel}
-          onOk={this.modalOk}
-        >
+        <Modal title="修改库存" width={300} visible={visible} onCancel={this.modalCancel} onOk={this.modalOk}>
           <div>
             <span>请录入库存数目</span>
             <InputNumber
