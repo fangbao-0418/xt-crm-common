@@ -49,7 +49,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select', label: '',
         options: memberOptions
       },
-      sendTime: {
+      createTime: {
         type: 'rangepicker', label: '创建时间',
         controlProps: {
           showTime: true
