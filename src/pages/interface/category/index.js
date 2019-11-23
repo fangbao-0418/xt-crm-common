@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Row, Col, DatePicker, Form, Checkbox, Button, Switch, Spin, Input, Icon, Modal, Table, Tree, message, Select } from 'antd';
+import { Card, Row, Col, DatePicker, Form, Checkbox, Button, Switch, Radio, Input, Icon, Modal, Table, message, Select } from 'antd';
 import DateFns from 'date-fns';
 import { initImgList } from '@/util/utils';
 import { getPromotionList } from '../../activity/api';
@@ -75,6 +75,7 @@ class InterFaceCategory extends Component {
     //  this.initState();
   }
 
+  //初始化
   initState() {
     this.setState({
       checkCate: false,
@@ -115,12 +116,14 @@ class InterFaceCategory extends Component {
       });
     }
   };
+
   handleClickModalC = () => {
     this.setState({
       visible2: true,
       checkData: this.state.cateText
     });
   };
+
   handleCancelModal = () => {
     this.setState({
       visible1: false,
@@ -139,6 +142,7 @@ class InterFaceCategory extends Component {
       })
     });
   }
+
   //添加新的一级目录
   addCategory() {
     this.props.form.setFieldsValue({
@@ -147,6 +151,8 @@ class InterFaceCategory extends Component {
     });
     this.initState();
   }
+
+  //获取单个类目信息
   getCategory(id) {
     getCategory(id).then(data => {
       const { secondStatus, secondCategoryVOS } = data;
@@ -159,10 +165,21 @@ class InterFaceCategory extends Component {
         })
       })
       const productCategoryVOS = [...actText, ...cateText];
+      let { showType } = data;
+      console.log(typeof(showType), 'showType')
+      if(!showType && showType !== 0){
+        showType = 1;
+      }
+
+      //设置form的默认值
       this.props.form.setFieldsValue({
         name: data.name,
         sort: data.sort,
+        showType: showType,
+        secondName: data.secondName,
+        styleType: !data.styleType ? 1 : data.styleType
       });
+      
       const filterIconsecondCategoryVOS = secondCategoryVOS.map(item => {
         item.icon = initImgList(item.icon)
         return item
@@ -200,11 +217,13 @@ class InterFaceCategory extends Component {
 
   }
 
+  //保持类目信息
   handleSave() {
     const {
       form: { validateFields },
     } = this.props;
     validateFields((err, vals) => {
+      console.log(vals, 'vals')
       const { secondStatus, secondCategoryVOS } = this.state;
       const newSecondCategoryVOS = _.cloneDeep(secondCategoryVOS);
       //开关校验
@@ -273,6 +292,9 @@ class InterFaceCategory extends Component {
         let data = {
           name: vals.name,
           sort: vals.sort,
+          showType: vals.showType,
+          styleType: vals.styleType ? vals.styleType : 1,
+          secondName: vals.secondName,
           productCategoryVOS: list,
           secondStatus: secondStatus ? 1 : 0,
           secondCategoryVOS: filterSecondCategoryVOS
@@ -407,17 +429,21 @@ class InterFaceCategory extends Component {
 
   render() {
 
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
     const { modalPage, visible1, visible2, selectedRowKeys, 
         actList, productCategoryVOS, secondStatus, secondaryIndex, 
         secondaryActText, currId, secondCategoryVOS 
       } = this.state;
+    const showType = getFieldValue('showType');
+    getFieldValue('secondName');
+    getFieldValue('styleType');
+    
     return (
       <div className="intf-cat-box">
         <Card>
           <Row className="intf-cat-list">
             {this.state.cateList.map((val, i) => {
-              return <Col className={this.state.currId == val.id ? 'act' : ''} span={3} key={val.id} onClick={() => this.getCategory(val.id)}>{val.name}</Col>
+            return <Col className={this.state.currId == val.id ? 'act' : ''} span={3} key={val.id} onClick={() => this.getCategory(val.id)}>{val.showType === 0 && <Icon type="home" style={{ paddingRight: '10px',color: 'red'}}/>}{val.name}</Col>
             })}
             <Col span={3} onClick={() => this.addCategory()}>+添加类目</Col>
           </Row>
@@ -438,6 +464,41 @@ class InterFaceCategory extends Component {
                 ],
               })(<Input placeholder="请输入前台类目名称" />)}
             </FormItem>
+            <FormItem label="展示位置">
+              {getFieldDecorator('showType', {
+                  initialValue: 1,
+                })(<Radio.Group>
+                  <Radio value={0}>首页展示</Radio>
+                  <Radio value={1}>行业类目展示</Radio>
+                </Radio.Group>)}
+            </FormItem>
+            {
+              showType === 0 &&
+              <>
+                <FormItem label="副标题" style={{display: showType === 0 ? 'block' : 'none'}}>
+                  {getFieldDecorator('secondName', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入副标题名称',
+                      },
+                      {
+                        max: 5,
+                        message: '最大支持五个字符!'
+                      }
+                    ],
+                  })(<Input placeholder="请输入副标题" />)}
+                </FormItem>
+                <FormItem label="商品展示方式" style={{display: showType === 0 ? 'block' : 'none'}}>
+                  {getFieldDecorator('styleType', {
+                      initialValue: 1,
+                    })(<Radio.Group>
+                      <Radio value={1}>1行1品</Radio>
+                      <Radio value={2}>1行2品</Radio>
+                    </Radio.Group>)}
+                </FormItem>
+              </>
+            }
             <FormItem label="排序">
               {getFieldDecorator('sort', {
                 rules: [
