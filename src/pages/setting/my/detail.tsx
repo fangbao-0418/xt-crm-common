@@ -1,72 +1,115 @@
-import React from 'react';
-import { Card, Row, Col, Checkbox, Button, Icon } from 'antd';
-import styles from './style.module.styl';
+import React from 'react'
+import { Card, Row, Col, Checkbox, Button, Icon, Modal } from 'antd'
+import styles from './style.module.styl'
 import * as api from './api'
-import Form, { FormItem, FormInstance } from '@/packages/common/components/form';
-import Upload from '@/components/upload';
-import homeIcon from '@/assets/images/home.png';
-import yanxuanIcon from '@/assets/images/yanxuan.png';
-import cartIcon from '@/assets/images/cart.png';
-import myIcon from '@/assets/images/my.png';
-import couponIcon from '@/assets/images/coupon.png';
-interface options {
-  label: string;
-  value: number;
-}
-const portsOptions: options[] = [
-  { label: 'Android', value: 1 },
-  { label: 'iOS', value: 2 },
-  { label: 'H5', value: 3 },
-  { label: '小程序', value: 4 }
-];
-const memberTypesOptions: options[] = [
-  { label: '未登录用户', value: -1 },
-  { label: '普通会员', value: 0 },
-  { label: '团长', value: 10 },
-  { label: '区长', value: 20 },
-  { label: '合伙人', value: 30 }
-];
+import { platformCodesOptions, memberTypesOptions } from './config'
+import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import * as adapter from './adapter'
+import RadioButton from './components/RadioButton'
+import Upload from '@/components/upload'
+import homeIcon from '@/assets/images/home.png'
+import yanxuanIcon from '@/assets/images/yanxuan.png'
+import cartIcon from '@/assets/images/cart.png'
+import myIcon from '@/assets/images/my.png'
 interface State {
-  visible: boolean;
+  visible: boolean
+    /** 版本ID */
+  versionID: number,
+  memberType: string,
+  platformCode: string,
+  list: any[],
+  id?: number
 }
 class Main extends React.Component<any, State> {
-  public state: State = {
-    visible: false
-  };
-  public form: FormInstance;
+  public state: State
+  public form: FormInstance
   public constructor(props: any) {
-    super(props);
-    this.handleAdd = this.handleAdd.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    this.fetchData();
+    super(props)
+    this.state = {
+      versionID: Number(props.match.params.id),
+      visible: true,
+      memberType: '',
+      platformCode: '',
+      list: []
+    }
+    this.handleAdd = this.handleAdd.bind(this)
+    this.handleSave = this.handleSave.bind(this)
+    this.handleClose = this.handleClose.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
+  }
+  public componentDidMount() {
+    this.fetchData()
   }
   /**
    * 根据版本号id获取版本详情
    */
   public async fetchData() {
-    const res = await api.getDetail()
-    if (res) {
-      this.form.setValues(res)
+    const list = await api.getIconList({
+      id: this.state.versionID,
+      memberType: this.state.memberType,
+      platformCode: this.state.platformCode,
+    })
+    if (list) {
+      this.setState({ list })
     }
   }
   /** 新增 */
   public handleAdd() {
     this.setState({
-      visible: true
-    });
+      visible: true,
+      id: -1
+    })
   }
   /** 关闭 */
   public handleClose() {
     this.setState({
       visible: false
-    });
+    })
   }
   /** 新增/编辑 */
-  public handleSave () {
-
+  public handleSave() {
+    this.form.props.form.validateFields(async (error, vals) => {
+      if (!error) {
+        let result: boolean
+        vals.personalModuleConfigId = this.state.versionID
+        console.log('vals=>', vals)
+        /** 新增 */
+        if (!!this.state.id) {
+          vals.id =this.state.id
+          result = await api.editIcon(vals)
+        } else {
+          result = await api.addIcon(vals)
+        }
+        if (result) {
+          const operateMsg = !!this.state.id ? '编辑' : '新增'
+          APP.success(`${operateMsg}成功`)
+          this.fetchData()
+        }
+      }
+    })
+  }
+  /** 删除icon配置 */
+  public handleDelete() {
+    Modal.confirm({
+      title: '系统提示',
+      content: '是否确认删除icon',
+      onOk: async () => {
+        const result  = await api.deleteIcon({ id: this.state.id })
+        if (result) {
+          APP.success('删除icon成功')
+          this.fetchData()
+        }
+      }
+    })
+  }
+  /** 编辑icon */
+  public edit (config: any) {
+    console.log('iconconfig=>', config)
+    this.setState({ id: config.id })
+    this.form.setValues(adapter.handleFormData(config))
   }
   public render() {
-    const { visible } = this.state;
+    const { visible, list } = this.state
     return (
       <Card>
         <Row className={styles.row}>
@@ -74,14 +117,16 @@ class Main extends React.Component<any, State> {
             <h2 className={styles.title}>个人中心配置</h2>
             <div className={styles.wrap}>
               <div className={styles.linkBlock}>
+                {list.map(v => (
+                  <div key={v.id} className={styles.link} onClick={() => this.edit(v)}>
+                    <img src={v.iconUrl} alt="" />
+                    <p>{v.iconName}</p>
+                  </div>
+                ))}
                 <div className={styles.linkPlus}>
                   <div className={styles.linkPlusBtn}>
                     <Icon type="plus" onClick={this.handleAdd} />
                   </div>
-                </div>
-                <div className={styles.link}>
-                  <img src={couponIcon} alt=""/>
-                  <p>优惠券</p>
                 </div>
               </div>
               <div className={styles.footer}>
@@ -104,34 +149,31 @@ class Main extends React.Component<any, State> {
               </div>
             </div>
             <div className={styles.search}>
-              <div>
-                <Button.Group>
-                  <Button>Android</Button>
-                  <Button>iOS</Button>
-                  <Button>H5</Button>
-                  <Button>小程序</Button>
-                </Button.Group>
-              </div>
-              <div className="mt10">
-                <Button.Group>
-                  <Button>未注册用户</Button>
-                  <Button>普通用户</Button>
-                  <Button>团长</Button>
-                  <Button>区长</Button>
-                  <Button>合伙人</Button>
-                </Button.Group>
-              </div>
+              <RadioButton
+                dataSource={platformCodesOptions}
+                value={this.state.platformCode}
+                onChange={(platformCode: string) => {
+                  this.setState({ platformCode }, this.fetchData)
+                }}
+              />
+              <RadioButton
+                className="mt10"
+                dataSource={memberTypesOptions}
+                value={this.state.memberType}
+                onChange={(memberType: string) => {
+                  this.setState({ memberType }, this.fetchData)
+                }}
+              />
+              <div className="mt10">版本号：{this.state.versionID}</div>
             </div>
           </Col>
           {visible && (
             <Col span={12} className={styles.col}>
               <h2 className={styles.title}>
-                <span>icon配置</span>
+                <span>{!!this.state.id ? '编辑' : '新增'}icon配置</span>
                 <Icon type="close-circle" className={styles.closeCircle} onClick={this.handleClose} />
               </h2>
-              <Form
-                getInstance={ref => this.form=ref}
-              >
+              <Form getInstance={ref => (this.form = ref)}>
                 <FormItem
                   name="iconName"
                   type="input"
@@ -163,9 +205,7 @@ class Main extends React.Component<any, State> {
                     ]
                   }}
                   inner={form => {
-                    return form.getFieldDecorator('iconUrl')(
-                      <Upload listType="picture-card" placeholder="上传" showUploadList={false} />
-                    );
+                    return form.getFieldDecorator('iconUrl')(<Upload listType="picture-card" placeholder="上传" />)
                   }}
                 />
                 <FormItem
@@ -211,25 +251,30 @@ class Main extends React.Component<any, State> {
                 <FormItem
                   label="显示端口"
                   inner={form => {
-                    return form.getFieldDecorator('ports')(<Checkbox.Group options={portsOptions} />);
+                    return form.getFieldDecorator('platformCodes')(<Checkbox.Group options={platformCodesOptions} />)
                   }}
                 />
                 <FormItem
                   label="显示用户"
                   inner={form => {
-                    return form.getFieldDecorator('memberTypes')(<Checkbox.Group options={memberTypesOptions} />);
+                    return form.getFieldDecorator('memberTypes')(<Checkbox.Group options={memberTypesOptions} />)
                   }}
                 />
                 <FormItem
                   inner={form => {
                     return (
                       <>
-                        <Button type="primary" onClick={this.handleSave}>保存</Button>
-                        <Button type="danger" className="ml10">
-                          删除
+                        <Button type="primary" onClick={this.handleSave}>
+                          保存
                         </Button>
+                        { !!this.state.id && (
+                            <Button type="danger" className="ml10" onClick={this.handleDelete}>
+                              删除
+                            </Button>
+                          )
+                        }
                       </>
-                    );
+                    )
                   }}
                 />
               </Form>
@@ -237,7 +282,7 @@ class Main extends React.Component<any, State> {
           )}
         </Row>
       </Card>
-    );
+    )
   }
 }
-export default Main;
+export default Main

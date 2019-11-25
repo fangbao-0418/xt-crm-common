@@ -4,11 +4,11 @@ declare namespace My {
   }
   interface iconApiPayload {
     iconName: string
-    iconUrl: string
+    iconUrl: any
     id: number
-    memberTypes: '-1' | '0' | '10' | '20' | '30'
+    memberTypes: any
     personalModuleConfigId: number
-    platformCodes: '2' | '3' | '4' | '5'
+    platformCodes: any
     sort: number
     url: string
   }

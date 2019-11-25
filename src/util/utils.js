@@ -38,6 +38,23 @@ export function parseQuery() {
   return results;
 }
 
+/** query序列化 */
+export function queryString(obj) {
+  if (typeof obj !== 'object') return ''
+  let pairs = []
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      pairs.push(`${key}=${obj[key]}`)
+    }
+  }
+  return pairs.length > 0 ? `?${pairs.join('&')}` : ''
+}
+
+/**
+ * 设置路径上的query参数
+ * @param {*} params 
+ * @param {*} force 
+ */
 export function setQuery(params = {}, force = false) {
   console.log(params, 'params1')
   console.log(window.location.hash, 'hash')
@@ -218,6 +235,8 @@ export function unionArray(target, source) {
   }
   return result;
 }
+
+/** 检测imgUrl是否带域名，没有则加上*/
 export function replaceHttpUrl(imgUrl = '') {
   if (imgUrl.indexOf('https') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
@@ -225,6 +244,10 @@ export function replaceHttpUrl(imgUrl = '') {
   return imgUrl;
 }
 
+/** 检测imgUrl是否带域名，有则清除 */
+export function removeURLDomain (imgUrl = '') {
+  return imgUrl.replace(/https:\/\/assets.hzxituan.com\//g, '')
+}
 /**
  * @description 去掉多余的属性
  * @param {需要过滤的对象} obj

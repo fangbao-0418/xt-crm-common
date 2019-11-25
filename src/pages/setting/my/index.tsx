@@ -1,9 +1,10 @@
 import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import { getFieldsConfig } from './config'
+import { getFieldsConfig, environmentTypeOptions, statusEnums, colorEnums, options } from './config'
 import * as api from './api'
 import { ColumnProps } from 'antd/lib/table'
-import { Icon, Menu, Dropdown, Button, Modal } from 'antd'
+import { Icon, Menu, Dropdown, Button, Modal, Badge } from 'antd'
+
 class Main extends React.Component {
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<any>[] = [
@@ -13,19 +14,31 @@ class Main extends React.Component {
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime'
+      dataIndex: 'createTime',
+      render: (text: any, record: any, index: number) => {
+        return APP.fn.formatDate(text)
+      }
     },
     {
       title: '发布时间',
-      dataIndex: 'publishTime'
+      dataIndex: 'publishTime',
+      render: (text: any, record: any, index: number) => {
+        return text ? APP.fn.formatDate(text) : '-'
+      }
     },
     {
       title: '最后发布人',
-      dataIndex: 'publishTime'
+      dataIndex: 'publishTime',
+      render: (text: any, record: any, index: number) => {
+        return text || '-'
+      }
     },
     {
       title: '发布状态',
-      dataIndex: 'status'
+      dataIndex: 'status',
+      render: (text: any, record: any, index: number) => {
+        return  text === 1 ? statusEnums[text] : <Badge color={colorEnums[text]} text={statusEnums[text]} />
+      }
     },
     {
       title: '操作',
@@ -36,19 +49,18 @@ class Main extends React.Component {
           <Dropdown
             overlay={(
               <Menu>
-                <Menu.Item>
-                  <span className='href' onClick={() => this.handlePublish('正式环境')}>正式环境</span>
-                </Menu.Item>
-                <Menu.Item>
-                  <span className='href' onClick={() => this.handlePublish('预发环境')}>预发环境</span>
-                </Menu.Item>
+                {environmentTypeOptions.map((opts: options) => (
+                  <Menu.Item>
+                    <span className='href' onClick={() => this.handlePublish(opts, record.id)}>{opts.label}</span>
+                  </Menu.Item>
+                ))}
               </Menu>
             )}>
             <Button type='link'>发布<Icon type="down" /></Button>
           </Dropdown>
-          <Button type='link' onClick={this.handleEdit}>编辑</Button>
+          <Button type='link' onClick={() => this.handleEdit(record.id)}>编辑</Button>
           <Button type='link' onClick={() => this.handleCopy(record.id)}>复制</Button>
-          <Button type='link' onClick={() => this.handleDelete(record.id)}>删除</Button>
+          {record.status === 1 && <Button type='link' onClick={() => this.handleDelete(record.id)}>删除</Button>}
         </>
       ))
     },
@@ -73,12 +85,15 @@ class Main extends React.Component {
     })
   }
   /** 发布 */
-  public handlePublish (msg: string) {
+  public handlePublish (opts: options, id: number) {
     Modal.confirm({
       title: '系统提示',
-      content: `是否发到${msg}`,
+      content: `是否发到${opts.label}`,
       onOk: async () => {
-        const data = await api.publish()
+        const data = await api.publish({
+          environmentType: opts.value,
+          id
+        })
         if (data) {
           APP.success('发布成功')
           this.listpage.refresh()
@@ -87,12 +102,22 @@ class Main extends React.Component {
     })
   }
   /** 新建配置 */
-  public handleAdd () {
-    APP.history.push('/setting/my/-1')
+  public async handleAdd () {
+    Modal.confirm({
+      title: '系统提示',
+      content: `是否新建版本`,
+      onOk: async () => {
+        const data = await api.addVersion()
+        if (data) {
+          APP.success('新建成功')
+          this.listpage.refresh()
+        }
+      }
+    })
   }
   /** 编辑 */
-  public handleEdit () {
-    APP.history.push('/setting/my/1')
+  public handleEdit (id: number) {
+    APP.history.push(`/setting/my/${id}`)
   }
   /** 删除 */
   public handleDelete (id: number) {
@@ -120,9 +145,14 @@ class Main extends React.Component {
           columns={this.columns}
           addonAfterSearch={(
             <div>
-              <Button icon='plus' type='primary' onClick={this.handleAdd}>新建</Button>
+              <Button icon='plus' type='primary' onClick={this.handleAdd}>新建版本</Button>
             </div>
           )}
+          processData={(data) => {
+            data.records = data.result
+            Reflect.deleteProperty(data, 'result')
+            return data
+          }}
         />
       </div>
     )
