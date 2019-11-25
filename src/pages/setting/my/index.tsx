@@ -48,8 +48,12 @@ class Main extends React.Component {
       width: 300,
       render: ((text: any, record: any, index: number) => (
         <>
+          {
+            record.status === 0 ?
+            <Button type='link' onClick={() => this.handleEdit(record.id)}>编辑</Button> :
+            <Button type='link' onClick={() => this.handleEdit(record.id, 'readOnly')}>查看</Button>
+          }
           {record.status !== 8 && <Button type='link' onClick={() => this.handlePublish(record.id)}>发布</Button>}
-          {record.status === 0 && <Button type='link' onClick={() => this.handleEdit(record.id)}>编辑</Button>}
           <Button type='link' onClick={() => this.handleCopy(record.id)}>复制</Button>
           {record.status === 0 && <Button type='link' onClick={() => this.handleDelete(record.id)}>删除</Button>}
         </>
@@ -104,8 +108,9 @@ class Main extends React.Component {
     })
   }
   /** 编辑 */
-  public handleEdit (id: number) {
-    APP.history.push(`/setting/my/${id}`)
+  public handleEdit (id: number, readOnly?: string) {
+    const search = readOnly ? `?readOnly=${readOnly}` : ''
+    APP.history.push(`/setting/my/${id}${search}`)
   }
   /** 删除 */
   public handleDelete (id: number) {

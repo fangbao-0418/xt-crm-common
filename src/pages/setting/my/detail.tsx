@@ -4,6 +4,7 @@ import styles from './style.module.styl'
 import * as api from './api'
 import { platformCodesOptions, memberTypesOptions } from './config'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import { parseQuery } from '@/util/utils'
 import * as adapter from './adapter'
 import RadioButton from './components/RadioButton'
 import Upload from '@/components/upload'
@@ -23,6 +24,7 @@ interface State {
 class Main extends React.Component<any, State> {
   public state: State
   public form: FormInstance
+  public readonly?: string = (parseQuery() as any).readOnly
   public constructor(props: any) {
     super(props)
     this.state = {
@@ -107,6 +109,7 @@ class Main extends React.Component<any, State> {
   /** 编辑icon */
   public edit (config: any) {
     this.handleReset()
+    console.log('adapter.handleFormData(config)=>', adapter.handleFormData(config))
     this.form.setValues(adapter.handleFormData(config))
     this.setState({
       visible: true,
@@ -128,11 +131,13 @@ class Main extends React.Component<any, State> {
                     <p>{v.iconName}</p>
                   </div>
                 ))}
-                <div className={styles.linkPlus} onClick={this.handleAdd}>
-                  <div className={styles.linkPlusBtn}>
-                    <Icon type="plus" />
+                {!this.readonly && (
+                  <div className={styles.linkPlus} onClick={this.handleAdd}>
+                    <div className={styles.linkPlusBtn}>
+                      <Icon type="plus" />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className={styles.footer}>
                 <div className={styles.item}>
@@ -175,10 +180,13 @@ class Main extends React.Component<any, State> {
           {visible && (
             <Col span={12} className={styles.col}>
               <h2 className={styles.title}>
-                <span>{!!this.state.id ? '编辑' : '新增'}icon配置</span>
+                <span>{!!this.readonly ? '查看' : !!this.state.id ? '编辑' : '新增'}icon配置</span>
                 <Icon type="close-circle" className={styles.closeCircle} onClick={this.handleReset} />
               </h2>
-              <Form getInstance={ref => (this.form = ref)}>
+              <Form
+                readonly={!!this.readonly}
+                getInstance={ref => (this.form = ref)}
+              >
                 <FormItem
                   name="iconName"
                   type="input"
@@ -266,6 +274,7 @@ class Main extends React.Component<any, State> {
                   }}
                 />
                 <FormItem
+                  hidden={!!this.readonly}
                   inner={form => {
                     return (
                       <>
