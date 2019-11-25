@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table } from 'antd';
 import { connect, parseQuery, setQuery } from '@/util/utils';
+import { formatDate } from '@/pages/helper';
 
 const namespace = 'intercept.detail.log';
 
@@ -28,13 +29,16 @@ export default class extends Component {
       },
       {
         title: '时间',
-        dataIndex: 'datetime',
-        key: 'datetime'
+        dataIndex: 'createTime',
+        key: 'createTime',
+        render: date => {
+          return formatDate(date);
+        }
       },
       {
         title: '操作人',
-        dataIndex: 'operName',
-        key: 'operName'
+        dataIndex: 'createUname',
+        key: 'createUname'
       }
     ];
     const { sourceData } = this.props;
