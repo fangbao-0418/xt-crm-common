@@ -211,7 +211,7 @@ class Main extends React.Component<Props, State> {
                     placeholder="上传图标"
                     listType="picture-card"
                     listNum={1}
-                    // pxSize={[{width:180, height:180}]} 
+                    pxSize={[{width:180, height:180}]} 
                   />
                 )}
                 <p>
@@ -236,7 +236,7 @@ class Main extends React.Component<Props, State> {
                     placeholder="上传图片"
                     listType="picture-card"
                     listNum={1}
-                    // pxSize={[{width:750, height:1000}]} 
+                    pxSize={[{width:750, height:1000}]} 
                   />
                 )}
                 <p>
