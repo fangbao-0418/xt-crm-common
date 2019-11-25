@@ -34,8 +34,8 @@ class Main extends React.Component<any, State> {
     }
     this.handleAdd = this.handleAdd.bind(this)
     this.handleSave = this.handleSave.bind(this)
-    this.handleClose = this.handleClose.bind(this)
     this.handleDelete = this.handleDelete.bind(this)
+    this.handleReset = this.handleReset.bind(this)
   }
   public componentDidMount() {
     this.fetchData()
@@ -43,7 +43,8 @@ class Main extends React.Component<any, State> {
   /**
    * 根据版本号id获取版本详情
    */
-  public async fetchData() {
+  public async fetchData(canReset: boolean = true) {
+    if (canReset) this.handleReset()
     const list = await api.getIconList({
       id: this.state.versionID,
       memberType: this.state.memberType,
@@ -55,15 +56,11 @@ class Main extends React.Component<any, State> {
   }
   /** 新增 */
   public handleAdd() {
+    console.log('add -------------')
+    this.handleReset()
     this.setState({
       visible: true,
-      id: -1
-    })
-  }
-  /** 关闭 */
-  public handleClose() {
-    this.setState({
-      visible: false
+      id: undefined
     })
   }
   /** 新增/编辑 */
@@ -88,6 +85,11 @@ class Main extends React.Component<any, State> {
       }
     })
   }
+  /** 重置form配置 */
+  public handleReset() {
+    this.form.props.form.resetFields()
+    this.setState({ visible: false })
+  }
   /** 删除icon配置 */
   public handleDelete() {
     Modal.confirm({
@@ -104,9 +106,12 @@ class Main extends React.Component<any, State> {
   }
   /** 编辑icon */
   public edit (config: any) {
-    console.log('iconconfig=>', config)
-    this.setState({ id: config.id })
+    this.handleReset()
     this.form.setValues(adapter.handleFormData(config))
+    this.setState({
+      visible: true,
+      id: config.id
+    })
   }
   public render() {
     const { visible, list } = this.state
@@ -123,9 +128,9 @@ class Main extends React.Component<any, State> {
                     <p>{v.iconName}</p>
                   </div>
                 ))}
-                <div className={styles.linkPlus}>
+                <div className={styles.linkPlus} onClick={this.handleAdd}>
                   <div className={styles.linkPlusBtn}>
-                    <Icon type="plus" onClick={this.handleAdd} />
+                    <Icon type="plus" />
                   </div>
                 </div>
               </div>
@@ -153,7 +158,7 @@ class Main extends React.Component<any, State> {
                 dataSource={platformCodesOptions}
                 value={this.state.platformCode}
                 onChange={(platformCode: string) => {
-                  this.setState({ platformCode }, this.fetchData)
+                  this.setState({ platformCode }, () => this.fetchData(false))
                 }}
               />
               <RadioButton
@@ -161,7 +166,7 @@ class Main extends React.Component<any, State> {
                 dataSource={memberTypesOptions}
                 value={this.state.memberType}
                 onChange={(memberType: string) => {
-                  this.setState({ memberType }, this.fetchData)
+                  this.setState({ memberType }, () => this.fetchData(false))
                 }}
               />
               <div className="mt10">版本号：{this.state.versionID}</div>
@@ -171,7 +176,7 @@ class Main extends React.Component<any, State> {
             <Col span={12} className={styles.col}>
               <h2 className={styles.title}>
                 <span>{!!this.state.id ? '编辑' : '新增'}icon配置</span>
-                <Icon type="close-circle" className={styles.closeCircle} onClick={this.handleClose} />
+                <Icon type="close-circle" className={styles.closeCircle} onClick={this.handleReset} />
               </h2>
               <Form getInstance={ref => (this.form = ref)}>
                 <FormItem

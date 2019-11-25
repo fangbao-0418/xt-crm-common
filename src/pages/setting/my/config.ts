@@ -2,6 +2,20 @@ import { OptionProps } from '@/packages/common/components/form/index'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
 }
+
+/** env环境发布配置 */
+export const environmentTypeOptions: options[] = [
+  { label: '草稿', value: '0' },
+  { label: '本地环境', value: '1' },
+  { label: '日常环境', value: '2' },
+  { label: '测试环境1', value: '3' },
+  { label: '测试环境2', value: '4' },
+  { label: '预发环境', value: '5' },
+  { label: '线上beta环境', value: '6' },
+  { label: '线上环境', value: '7' },
+  { label: '已下线', value: '8' }
+]
+
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     mySetting: {
@@ -19,15 +33,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
             }
           ]
         }
-      },
-      env: {
-        type: 'select',
-        label: '已发环境',
-        options: [
-          {label: '全部', value: ''},
-          {label: '正式环境', value: 'prod'},
-          {label: '预发环境', value: 'pre-prod'}
-        ]
       }
     }
   }
@@ -57,26 +62,14 @@ export  const memberTypesOptions: options[] = [
 
 /** 发布状态 */
 export enum statusEnums {
-  '草稿' = 1,
-  '预发' = 2,
-  '正式' = 3,
-  '已下线' = 4
+  '草稿' = 0,
+  '已发布' = 1,
+  '已下线' = 2
 }
 
 /** 发布状态对应颜色值 */
 export enum colorEnums {
-  'blue' = 2,
-  'green' = 3,
-  'orange' = 4
+  'gray' = 0,
+  'blue' = 1,
+  'orange' = 2
 }
-
-/** env环境发布配置 */
-export const environmentTypeOptions: options[] = [
-  { label: '本地环境', value: 'localhost' },
-  { label: '日常环境', value: 'dev' },
-  { label: '测试环境1', value: 'testing' },
-  { label: '测试环境2', value: 'testing2' },
-  { label: '预发环境', value: 'staging' },
-  { label: '线上beta环境', value: 'beta' },
-  { label: '线上环境', value: 'production' }
-]

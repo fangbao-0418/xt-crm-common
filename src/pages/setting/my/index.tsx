@@ -10,57 +10,48 @@ class Main extends React.Component {
   public columns: ColumnProps<any>[] = [
     {
       title: '版本编号',
-      dataIndex: 'id'
+      dataIndex: 'id',
+      key: 'id'
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
+      key: 'createTime',
       render: (text: any, record: any, index: number) => {
         return APP.fn.formatDate(text)
       }
     },
     {
       title: '发布时间',
-      dataIndex: 'publishTime',
+      dataIndex: 'lastPublishTime',
+      key: 'lastPublishTime',
       render: (text: any, record: any, index: number) => {
         return text ? APP.fn.formatDate(text) : '-'
       }
     },
     {
       title: '最后发布人',
-      dataIndex: 'publishTime',
+      dataIndex: 'lastPublishName',
+      key: 'lastPublishName',
       render: (text: any, record: any, index: number) => {
         return text || '-'
       }
     },
     {
       title: '发布状态',
-      dataIndex: 'status',
-      render: (text: any, record: any, index: number) => {
-        return  text === 1 ? statusEnums[text] : <Badge color={colorEnums[text]} text={statusEnums[text]} />
-      }
+      dataIndex: 'statusDesc'
     },
     {
       title: '操作',
       dataIndex: 'operate',
+      key: 'operate',
       width: 300,
       render: ((text: any, record: any, index: number) => (
         <>
-          <Dropdown
-            overlay={(
-              <Menu>
-                {environmentTypeOptions.map((opts: options) => (
-                  <Menu.Item>
-                    <span className='href' onClick={() => this.handlePublish(opts, record.id)}>{opts.label}</span>
-                  </Menu.Item>
-                ))}
-              </Menu>
-            )}>
-            <Button type='link'>发布<Icon type="down" /></Button>
-          </Dropdown>
-          <Button type='link' onClick={() => this.handleEdit(record.id)}>编辑</Button>
+          {record.status !== 8 && <Button type='link' onClick={() => this.handlePublish(record.id)}>发布</Button>}
+          {record.status === 0 && <Button type='link' onClick={() => this.handleEdit(record.id)}>编辑</Button>}
           <Button type='link' onClick={() => this.handleCopy(record.id)}>复制</Button>
-          {record.status === 1 && <Button type='link' onClick={() => this.handleDelete(record.id)}>删除</Button>}
+          {record.status === 0 && <Button type='link' onClick={() => this.handleDelete(record.id)}>删除</Button>}
         </>
       ))
     },
@@ -85,15 +76,12 @@ class Main extends React.Component {
     })
   }
   /** 发布 */
-  public handlePublish (opts: options, id: number) {
+  public handlePublish (id: number) {
     Modal.confirm({
       title: '系统提示',
-      content: `是否发到${opts.label}`,
+      content: '是否确认发布',
       onOk: async () => {
-        const data = await api.publish({
-          environmentType: opts.value,
-          id
-        })
+        const data = await api.publish({ id })
         if (data) {
           APP.success('发布成功')
           this.listpage.refresh()
@@ -152,6 +140,12 @@ class Main extends React.Component {
             data.records = data.result
             Reflect.deleteProperty(data, 'result')
             return data
+          }}
+          rangeMap={{
+            publishTime: {
+              fields: ['startLastPublishTime', 'endLastPublishTime'],
+              format: 'YYYY-MM-DD HH:MM:SS'
+            }
           }}
         />
       </div>

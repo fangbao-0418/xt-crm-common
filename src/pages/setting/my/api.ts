@@ -3,11 +3,13 @@ import { queryString } from '@/util/utils'
 const { get, post, newPost } = APP.http
 /** 查询版本列表 */
 export function getList (payload: {
+  page: number,
+  pageSize: number,
   startLastPublishTime: number,
   endLastPublishTime: number,
   status: number
 }) {
-  return get('/personal/config/get_list')
+  return get('/personal/config/get_list', payload)
 }
 
 /** 新建版本 */
@@ -36,10 +38,7 @@ export function addVersion () {
 }
 
 /** 发布版本 */
-export function publish (payload: {
-  environmentType: string,
-  id: number
-}) {
+export function publish (payload: { id: number }) {
   return newPost('/personal/config/publish', payload)
 }
 
