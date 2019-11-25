@@ -10,14 +10,7 @@ const namespace = 'intercept.detail.log';
 }))
 export default class extends Component {
   componentDidMount() {
-    const { dispatch } = this.props;
-    const queryObj = parseQuery();
-    let payload = {
-      memberId: queryObj.id,
-      page: 1,
-      pageSize: 10
-    };
-    dispatch[namespace].getData(payload);
+    this.handleSearch();
   }
 
   render() {
@@ -69,5 +62,16 @@ export default class extends Component {
       pageSize
     });
     this.handleSearch({ page, pageSize });
+  };
+
+  handleSearch = (param = {}) => {
+    const { dispatch } = this.props;
+    const queryObj = parseQuery();
+    const payload = {
+      memberId: queryObj.id,
+      page: param.page || 1,
+      pageSize: param.pageSize || 10
+    };
+    dispatch[namespace].getData(payload);
   };
 }
