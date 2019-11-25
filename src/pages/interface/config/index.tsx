@@ -71,9 +71,9 @@ class Main extends React.Component<Props, State> {
       console.log(value, 'value')
       const params = {
         title: value.title,
-        iconBackgroudImg: (value.iconBackgroudImg.length && replaceHttpUrl(value.iconBackgroudImg[0].durl)) || '',
+        iconBackgroudImg: (value.iconBackgroudImg && value.iconBackgroudImg.length && replaceHttpUrl(value.iconBackgroudImg[0].durl)) || '',
         iconColor: value.iconColor,
-        navigationBackgroudImg: (value.navigationBackgroudImg.length && replaceHttpUrl(value.navigationBackgroudImg[0].durl)) || '',
+        navigationBackgroudImg: (value.navigationBackgroudImg && value.navigationBackgroudImg.length && replaceHttpUrl(value.navigationBackgroudImg[0].durl)) || '',
         isOpenDrogue: value.isOpenDrogue ? 1 : 0,
         drogueImg: (value.drogueImg && value.drogueImg.length && replaceHttpUrl(value.drogueImg[0].durl)) || '',
         posterImg: (value.posterImg && value.posterImg.length && replaceHttpUrl(value.posterImg[0].durl)) || '',
@@ -208,7 +208,7 @@ class Main extends React.Component<Props, State> {
                 })(
                   <UploadView
                     accept=".jpg, .gif, .png"
-                    placeholder="分享图标"
+                    placeholder="上传图标"
                     listType="picture-card"
                     listNum={1}
                     // pxSize={[{width:180, height:180}]} 
@@ -233,7 +233,7 @@ class Main extends React.Component<Props, State> {
                 })(
                   <UploadView
                     accept=".jpg, .png"
-                    placeholder="分享海报"
+                    placeholder="上传图片"
                     listType="picture-card"
                     listNum={1}
                     // pxSize={[{width:750, height:1000}]} 
@@ -258,7 +258,7 @@ class Main extends React.Component<Props, State> {
                 })(
                   <UploadView
                     accept=".jpg, .png"
-                    placeholder="分享小程序卡片"
+                    placeholder="上传图片"
                     listType="picture-card"
                     listNum={1}
                   />
@@ -276,10 +276,14 @@ class Main extends React.Component<Props, State> {
                     {
                       required: true,
                       message: '小程序卡片文案'
+                    },
+                    {
+                      max: 28,
+                      message: '输入字符不能大于28个'
                     }
                   ],
                   initialValue: miniCardWords
-                })(<Input placeholder="小程序卡片文案" />)}
+                })(<Input placeholder="小程序卡片文案" max={28}/>)}
               </Form.Item>
             </>
           }
