@@ -261,13 +261,14 @@ class Main extends React.Component<Props, State> {
                     placeholder="上传图片"
                     listType="picture-card"
                     listNum={1}
+                    pxSize={[{width:250, height:200}]} 
                   />
                 )}
                 <p>
                   • 主要用于首页分享按钮对应的小程序卡片样式
                 </p>
                 <p>
-                  • 图片格式支持png,jpg，长宽比为5:4
+                  • 图片格式支持png,jpg，规格为：250*200像素
                 </p>
               </Form.Item>
               <Form.Item label="小程序卡片文案">
@@ -284,6 +285,7 @@ class Main extends React.Component<Props, State> {
                   ],
                   initialValue: miniCardWords
                 })(<Input placeholder="小程序卡片文案" max={28}/>)}
+                <span>最多28个字符</span>
               </Form.Item>
             </>
           }
