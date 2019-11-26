@@ -8,8 +8,8 @@ export function handleIconRequestParams (payload: My.iconApiPayload) {
   const result = Object.assign({}, payload)
   console.log('handleIconRequestParams before=>', payload)
   result.iconUrl = result.iconUrl && result.iconUrl[0] && removeURLDomain(result.iconUrl[0].url)
-  result.memberTypes = result.memberTypes.join(',')
-  result.platformCodes = result.platformCodes.join(',')
+  result.memberTypes = (result.memberTypes || []).join(',')
+  result.platformCodes = (result.platformCodes || []).join(',')
   console.log('handleIconRequestParams after=>', result)
   return result
 }
