@@ -229,6 +229,7 @@ class Main extends React.Component<any, State> {
                   verifiable={true}
                   controlProps={{
                     placeholder: '排序越大越靠前',
+                    precision: 0,
                     style: {
                       width: 200
                     }
