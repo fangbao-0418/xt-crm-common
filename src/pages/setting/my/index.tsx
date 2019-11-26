@@ -39,7 +39,8 @@ class Main extends React.Component {
     },
     {
       title: '发布状态',
-      dataIndex: 'statusDesc'
+      dataIndex: 'statusDesc',
+      key: 'statusDesc'
     },
     {
       title: '操作',
@@ -55,7 +56,7 @@ class Main extends React.Component {
           }
           {record.status !== 8 && <Button type='link' onClick={() => this.handlePublish(record.id)}>发布</Button>}
           <Button type='link' onClick={() => this.handleCopy(record.id)}>复制</Button>
-          {record.status === 0 && <Button type='link' onClick={() => this.handleDelete(record.id)}>删除</Button>}
+          {record.status === 0 && <Button type='link' onClick={() => this.handleDelete(record.id, index)}>删除</Button>}
         </>
       ))
     },
@@ -112,15 +113,29 @@ class Main extends React.Component {
     const search = readOnly ? `?readOnly=${readOnly}` : ''
     APP.history.push(`/setting/my/${id}${search}`)
   }
+  /**
+   * 删除更新当前页
+   * @param index 
+   * @param page 
+   * @param pageSize 
+   */
+  updatePageByDelete (index: number, page: number, pageSize: number) {
+    /** 影响行 */
+    const affectRow = (page - 1) * pageSize + (index + 1)
+    const result = Math.ceil((affectRow - 1) / pageSize)
+    return Math.max(1, result)
+  }
   /** 删除 */
-  public handleDelete (id: number) {
+  public handleDelete (id: number, index: number) {
     Modal.confirm({
       title: '系统提示',
       content: '是否删除草稿',
       onOk: async () => {
         const data = await api.deleteVersion({ id })
         if (data) {
-          APP.success('删除成功')
+          APP.success('删除成功');
+          const { page, pageSize }: any = (this.listpage as any).payload;
+          (this.listpage as any).payload.page = this.updatePageByDelete(index, page, pageSize)
           this.listpage.refresh()
         }
       }

@@ -110,10 +110,11 @@ class Main extends React.Component<any, State> {
   public edit (config: any) {
     this.handleReset()
     console.log('adapter.handleFormData(config)=>', adapter.handleFormData(config))
-    this.form.setValues(adapter.handleFormData(config))
     this.setState({
       visible: true,
       id: config.id
+    },()=>{
+      this.form.setValues(adapter.handleFormData(config))
     })
   }
   public render() {

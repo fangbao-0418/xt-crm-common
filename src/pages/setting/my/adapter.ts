@@ -37,8 +37,8 @@ export function handleQueryVersionDetailResponse (res: any) {
 export function handleFormData (config: any) {
   const result = Object.assign({}, config)
   result.iconUrl = initImgList(result.iconUrl)
-  result.platformCodes = result.platformCodes.split(',')
-  result.memberTypes = result.memberTypes.split(',')
+  result.platformCodes = (result.platformCodes || '').split(',')
+  result.memberTypes = (result.memberTypes || '').split(',')
   console.log('handleFormData=>', result)
   return result
 }
