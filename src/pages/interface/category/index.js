@@ -467,7 +467,7 @@ class InterFaceCategory extends Component {
             <FormItem label="展示位置">
               {getFieldDecorator('showType', {
                   initialValue: 1,
-                })(<Radio.Group>
+                })(<Radio.Group onChange={this.showTypeChange}> 
                   <Radio value={0}>首页展示</Radio>
                   <Radio value={1}>行业类目展示</Radio>
                 </Radio.Group>)}
@@ -547,16 +547,19 @@ class InterFaceCategory extends Component {
                   })}<Button type="link" onClick={this.handleClickModal}>+添加活动</Button></div>) : ''}
               </div>)}
             </FormItem>
-            <FormItem label="二级类目开关">
-              {getFieldDecorator('secondStatus', {
-                onChange: this.handleSwitchChange
-              })(<Switch checked={secondStatus} />)}
-              <span style={{paddingLeft: '10px',color: 'red'}}>
-                只控制前台是否展示
-              </span>
-            </FormItem>
             {
-               secondStatus && <FormItem label="二级类目内容"><SecondaryCategory
+              showType === 1 && <FormItem label="二级类目开关">
+                {getFieldDecorator('secondStatus', {
+                  onChange: this.handleSwitchChange
+                })(<Switch checked={secondStatus} />)}
+                <span style={{paddingLeft: '10px',color: 'red'}}>
+                  只控制前台是否展示
+                </span>
+              </FormItem> 
+            }
+            
+            {
+               secondStatus && showType === 1 && <FormItem label="二级类目内容"><SecondaryCategory
                   key={currId} 
                   secondaryIndex={secondaryIndex} 
                   secondCategoryVOS={secondCategoryVOS}
