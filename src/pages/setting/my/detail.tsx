@@ -29,7 +29,7 @@ class Main extends React.Component<any, State> {
     super(props)
     this.state = {
       versionID: Number(props.match.params.id),
-      visible: true,
+      visible: !this.readonly,
       memberType: '',
       platformCode: '',
       list: []
@@ -40,7 +40,7 @@ class Main extends React.Component<any, State> {
     this.handleReset = this.handleReset.bind(this)
   }
   public componentDidMount() {
-    this.fetchData()
+    this.fetchData(false)
   }
   /**
    * 根据版本号id获取版本详情
@@ -89,7 +89,7 @@ class Main extends React.Component<any, State> {
   }
   /** 重置form配置 */
   public handleReset() {
-    this.form.props.form.resetFields()
+    this.form && this.form.props.form.resetFields()
     this.setState({ visible: false })
   }
   /** 删除icon配置 */
