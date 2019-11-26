@@ -230,7 +230,8 @@ class Main extends React.Component<any, State> {
                   controlProps={{
                     placeholder: '排序越大越靠前',
                     precision: 0,
-                    min: 1,
+                    min: 0,
+                    max: 255,
                     style: {
                       width: 200
                     }
