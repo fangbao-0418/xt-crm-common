@@ -148,6 +148,7 @@ class InterFaceCategory extends Component {
     this.props.form.setFieldsValue({
       name: '',
       sort: '',
+      showType: 1,
     });
     this.initState();
   }
@@ -557,7 +558,6 @@ class InterFaceCategory extends Component {
                 </span>
               </FormItem> 
             }
-            
             {
                secondStatus && showType === 1 && <FormItem label="二级类目内容"><SecondaryCategory
                   key={currId} 
