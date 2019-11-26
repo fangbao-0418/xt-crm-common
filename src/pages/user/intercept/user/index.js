@@ -583,7 +583,7 @@ export default class extends Component {
   };
 
   onCancelByPhone = () => {
-    this.setState({ phoneVisible: false, valueByPhone: '', switchValueByPhone: 'true' });
+    this.setState({ phoneVisible: false, valueByPhone: '', switchValueByPhone: '1' });
   };
 
   onOkByPhone = () => {
@@ -595,13 +595,13 @@ export default class extends Component {
     }
     const phones = valueByPhone.split(/\r|\n|\s/g);
     dispatch[namespace].batchSetPrivilegeByPhone({ phones, isOpen: switchValueByPhone }).then(res => {
-      this.setState({ phoneVisible: false, valueByPhone: '', switchValueByPhone: 'true' }, () => {
+      this.setState({ phoneVisible: false }, () => {
         Modal.info({
           title: '设置结果',
           content: (
             <div>
               <div style={{ marginBottom: 8 }}>
-                <span>成功{switchValueByPhone ? '开启' : '关闭'}</span>
+                <span>成功{switchValueByPhone === '1' ? '开启' : '关闭'}</span>
                 <span style={{ color: 'red' }}>{res.successNum}</span>
                 <span>个用户的拦截权限</span>
               </div>
@@ -611,7 +611,7 @@ export default class extends Component {
                     <div>
                       <div>
                         <span>
-                          <span>{switchValueByPhone ? '开启' : '关闭'}失败</span>
+                          <span>{switchValueByPhone === '1' ? '开启' : '关闭'}失败</span>
                           <span style={{ color: 'red' }}>{phones.length - Number(res.successNum)}</span>
                           <span>个用户</span>
                         </span>
@@ -627,7 +627,15 @@ export default class extends Component {
           ),
           okText: '确定',
           onOk: () => {
-            this.handleSearch();
+            this.setState(
+              {
+                valueByPhone: '',
+                switchValueByPhone: '1'
+              },
+              () => {
+                this.handleSearch();
+              }
+            );
           }
         });
       });
