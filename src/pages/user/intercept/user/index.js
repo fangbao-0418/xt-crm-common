@@ -593,14 +593,45 @@ export default class extends Component {
       message.warn('请输入手机号');
       return;
     }
-    debugger;
-    dispatch[namespace]
-      .batchSetPrivilegeByPhone({ phones: valueByPhone.split(/\r|\n|\s/g), isOpen: switchValueByPhone })
-      .then(() => {
-        this.setState({ phoneVisible: false, valueByPhone: '', switchValueByPhone: 'true' }, () => {
-          this.handleSearch();
+    const phones = valueByPhone.split(/\r|\n|\s/g);
+    dispatch[namespace].batchSetPrivilegeByPhone({ phones, isOpen: switchValueByPhone }).then(res => {
+      this.setState({ phoneVisible: false, valueByPhone: '', switchValueByPhone: 'true' }, () => {
+        Modal.info({
+          title: '设置结果',
+          content: (
+            <div>
+              <div style={{ marginBottom: 8 }}>
+                <span>成功{switchValueByPhone ? '开启' : '关闭'}</span>
+                <span style={{ color: 'red' }}>{res.successNum}</span>
+                <span>个用户的拦截权限</span>
+              </div>
+              <div>
+                <div>
+                  {(phones || []).length !== Number(res.successNum) ? (
+                    <div>
+                      <div>
+                        <span>
+                          <span>{switchValueByPhone ? '开启' : '关闭'}失败</span>
+                          <span style={{ color: 'red' }}>{phones.length - Number(res.successNum)}</span>
+                          <span>个用户</span>
+                        </span>
+                        <a href={res.excelAddress} target="_blank" rel="noopener noreferrer">
+                          失败用户清单
+                        </a>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ),
+          okText: '确定',
+          onOk: () => {
+            this.handleSearch();
+          }
         });
       });
+    });
   };
   valueByPhoneChange = ({ target }) => {
     this.setState({
