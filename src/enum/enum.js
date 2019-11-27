@@ -28,12 +28,26 @@ Enum.prototype.getKey = function (val) {
   }
 }
 
-Enum.prototype.getArray = function (type) {
-  if(type == 'all') return [
+/**
+ *  { type: '', key: '', val: '' }
+ * 
+ */
+Enum.prototype.getArray = function (config) {
+  if(typeof config !== 'object') config = {type: config};
+  let array = this._array;
+  if(config.type == 'all') array = [
     {key: '', val: '全部'},
     ...this._array
   ]
-  return this._array
+  if(config.key || config.val) {
+    array = array.map(val => {
+      const _val = {}
+      _val[config.key || 'key'] = val.key
+      _val[config.val || 'val'] = val.val
+      return _val
+    })
+  }
+  return array
 }
 
 Enum.prototype.getJson = function () {
