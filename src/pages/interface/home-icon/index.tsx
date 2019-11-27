@@ -1,13 +1,16 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Form, Input, Button, Popconfirm } from 'antd'
+import { Form, Input, Button, Checkbox, Popconfirm } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import * as api from './api'
 import Upload from '@/components/upload'
 import styles from './style.module.sass'
-interface Props extends FormComponentProps {}
+import platformType from '@/enum/platformType'
+const _platformType = platformType.getArray({ key: 'value', val: 'label' })
+
+interface Props extends FormComponentProps { }
 interface State {
-  dataSource:  HomeIcon.ItemProps[]
+  dataSource: HomeIcon.ItemProps[]
   selectIndex: number
   loading: boolean
 }
@@ -17,17 +20,17 @@ class Main extends React.Component<Props, State> {
     selectIndex: -2,
     loading: false
   }
-  public constructor (props: Props) {
+  public constructor(props: Props) {
     super(props)
     this.addIconItem = this.addIconItem.bind(this)
     this.toSave = this.toSave.bind(this)
     this.toDelete = this.toDelete.bind(this)
     this.toPublish = this.toPublish.bind(this)
   }
-  public componentDidMount () {
+  public componentDidMount() {
     this.fetchList()
   }
-  public fetchList (init = true) {
+  public fetchList(init = true) {
     api.getIconList().then((res: any = []) => {
       this.setState({
         dataSource: res || []
@@ -38,7 +41,7 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
-  public toSave () {
+  public toSave() {
     this.props.form.validateFields((err, value: any) => {
       if (err) {
         return
@@ -54,6 +57,10 @@ class Main extends React.Component<Props, State> {
         if (result.imgUrl instanceof Array) {
           result.imgUrl = result.imgUrl[0].url
         }
+        result.platform = 0
+        result.platformArray.forEach((val:any) => {
+          result.platform += val*1
+        })
         this.setState({
           loading: true
         })
@@ -92,16 +99,20 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
-  public addIconItem () {
+  public addIconItem() {
     this.resetForm()
   }
-  public resetForm () {
+  public resetForm() {
     this.props.form.resetFields()
+    
+    this.props.form.setFieldsValue({
+      platformArray: _platformType.map(val => val.value)
+    });
     this.setState({
       selectIndex: -1
     })
   }
-  public initValue (index: number) {
+  public initValue(index: number) {
     const { dataSource } = this.state
     this.setState({
       selectIndex: index
@@ -113,10 +124,20 @@ class Main extends React.Component<Props, State> {
           url: result.imgUrl
         }]
       }
+      if (result.platform) {
+        let str = result.platform.toString(2);
+        let array = str.split('');
+        result.platformArray = [];
+        array.forEach((val: any, i) => {
+          if (val * 1 == 1) result.platformArray.push(Math.pow(2, array.length - 1 - i).toString())
+        })
+      } else result.platformArray = _platformType.map(val => val.value)
+      //   result.platformArray = 
+      //    result.platformStr = result.platformStr ? result.platformStr.split(',') : _platformType.map(val => val.value)
       this.props.form.setFieldsValue(dataSource[index])
     })
   }
-  public toDelete () {
+  public toDelete() {
     const { dataSource, selectIndex } = this.state
     if (selectIndex > -1) {
       api.deleteIcon(dataSource[selectIndex].id).then(() => {
@@ -129,12 +150,12 @@ class Main extends React.Component<Props, State> {
       })
     }
   }
-  public toPublish () {
+  public toPublish() {
     api.publishIcon().then(() => {
       APP.success('发布icon成功')
     })
   }
-  public render () {
+  public render() {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
       labelCol: {
@@ -146,14 +167,14 @@ class Main extends React.Component<Props, State> {
     };
     const { dataSource, selectIndex } = this.state
     return (
-      <div style={{minHeight: 400, background: 'white'}}>
+      <div style={{ minHeight: 400, background: 'white' }}>
         <div className={styles.header}>
           <div className={styles.tbtns}>
             {
               dataSource.map((item, index) => (
                 <div
                   key={index}
-                  className={classNames(styles.tbtn, {[styles.active]: selectIndex === index })}
+                  className={classNames(styles.tbtn, { [styles.active]: selectIndex === index })}
                   onClick={() => {
                     this.initValue(index)
                   }}
@@ -161,7 +182,7 @@ class Main extends React.Component<Props, State> {
                   {item.title}
                 </div>
               )
-            )}
+              )}
             {
               dataSource.length < 8 && <div
                 className={classNames(styles.tbtn, styles.add)}
@@ -183,9 +204,7 @@ class Main extends React.Component<Props, State> {
             </Popconfirm>
           </div>
         </div>
-        {
-          selectIndex > -2 && (
-            <div className={styles.content}>
+        <div className={styles.content} style={{display: selectIndex > -2 ? '' :'none'}}>
               <Form
                 className={styles.form}
                 {...formItemLayout}
@@ -195,7 +214,7 @@ class Main extends React.Component<Props, State> {
                 >
                   {getFieldDecorator('title', {
                     rules: [
-                      {required: true, message: 'icon名称不能为空'}
+                      { required: true, message: 'icon名称不能为空' }
                     ]
                   })(
                     <Input />
@@ -206,13 +225,13 @@ class Main extends React.Component<Props, State> {
                 >
                   {getFieldDecorator('imgUrl', {
                     rules: [
-                      {required: true, message: '上传图片不能为空'}
+                      { required: true, message: '上传图片不能为空' }
                     ]
                   })(
                     <Upload
                       size={0.05}
                       listType="picture-card"
-                      style={{width: 100, height: 100}}
+                      style={{ width: 100, height: 100 }}
                     >
                     </Upload>
                   )}
@@ -222,7 +241,7 @@ class Main extends React.Component<Props, State> {
                 >
                   {getFieldDecorator('sort', {
                     rules: [
-                      {required: true, message: '排序不能为空'}
+                      { required: true, message: '排序不能为空' }
                     ]
                   })(
                     <Input />
@@ -233,10 +252,20 @@ class Main extends React.Component<Props, State> {
                 >
                   {getFieldDecorator('jumpUrl', {
                     rules: [
-                      {required: true, message: '内容配置不能为空'}
+                      { required: true, message: '内容配置不能为空' }
                     ]
                   })(
                     <Input />
+                  )}
+                </Form.Item>
+                <Form.Item label="平台">
+                  {getFieldDecorator('platformArray', {
+                    rules: [{
+                      required: true,
+                      message: '请选择平台'
+                    }]
+                  })(
+                    <Checkbox.Group options={_platformType}> </Checkbox.Group>
                   )}
                 </Form.Item>
                 <div className={styles.footer}>
@@ -263,8 +292,6 @@ class Main extends React.Component<Props, State> {
                 </div>
               </Form>
             </div>
-          )
-        }
       </div>
     )
   }
