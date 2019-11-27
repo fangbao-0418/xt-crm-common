@@ -35,12 +35,14 @@ export interface SearchPayload {
   page: number
   pageSize?: number
   status?: number
+  receivePattern?: 1 | 0
 }
 export type CouponModalInstance = Main
 class Main extends React.Component<Props, State> {
   public payload: SearchPayload = {
     isDelete: 0,
     page: 1,
+    receivePattern: 1,
     status: 1
   }
   public state: State = {
@@ -178,7 +180,8 @@ class Main extends React.Component<Props, State> {
       isDelete: 0,
       page: 1,
       status: 1,
-      pageSize: 10
+      pageSize: 10,
+      receivePattern: 0
     }
     this.fetchData()
     const couponList: any[] = value.couponList || []
