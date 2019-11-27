@@ -1,8 +1,8 @@
 import React from 'react';
 import { Select, Input } from 'antd';
 import { deliveryModeType } from '@/enum';
-import ArrowContain from './components/arrow-contain'
-import { SkuProps } from './SkuList'
+import ArrowContain from '../arrow-contain'
+import { SkuProps } from './index'
 const { Option } = Select;
 
 function speedyInput (field: string, text: any, record: SkuProps, index: number, dataSource: SkuProps[], cb: any) {
@@ -68,6 +68,16 @@ export const getColumns = (cb: any, dataSource: SkuProps[]) => [
             deliveryModeType.getArray().map(item => (<Option value={item.key} key={item.key}>{item.val}</Option>))
           }
         </Select>
+      )
+    }
+  },
+  {
+    title: '备案信息',
+    dataIndex: 'baxx',
+    width: 100,
+    render: (text: any, record: any, index: any) => {
+      return (
+        <div>已完成</div>
       )
     }
   },
