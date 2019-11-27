@@ -157,7 +157,7 @@ class GoodsEdit extends React.Component {
       setFieldsValue({
         interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
-        freightTemplateId: String(res.freightTemplateId),
+        freightTemplateId: String(res.freightTemplateId || ''),
         description: res.description,
         productCode: res.productCode,
         productId: res.productId,
