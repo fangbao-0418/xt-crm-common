@@ -16,9 +16,11 @@ function ActionBtn({ keyCode, history, record, match }) {
   }
   const menu = (
     <Menu>
-      <Menu.Item>
-        <span onClick={openQrCode}>二维码</span>
-      </Menu.Item>
+      {record.receivePattern !== 1 && (
+        <Menu.Item>
+          <span onClick={openQrCode}>二维码</span>
+        </Menu.Item>
+      )}
       <Menu.Item>
         <span onClick={() => history.push({
           pathname: `/coupon/get/couponList/bulkissuing/${record.id}`,
