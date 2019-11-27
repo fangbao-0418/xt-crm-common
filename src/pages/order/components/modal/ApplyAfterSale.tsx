@@ -130,12 +130,26 @@ class ApplyAfterSale extends React.Component<Props, State> {
     let { skuDetail } = this.state
     skuDetail = Object.assign({}, skuDetail)
     return (
-      <Modal width='80%' style={{ top: 20, minWidth: '900px' }} title="代客申请售后" visible={this.props.visible} onCancel={this.props.onCancel} onOk={this.handleOk}>
+      <Modal
+        width='80%'
+        style={{ top: 20, minWidth: '900px' }}
+        title="代客申请售后"
+        visible={this.props.visible}
+        onCancel={this.props.onCancel}
+        onOk={this.handleOk}
+      >
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
             <Form.Item label="售后类型">
-              {getFieldDecorator('refundType', { ...initialObj, rules: [{ required: true, message: '请选择售后类型' }] })(<XtSelect {...disabledObj} data={refundType.getArray()} />)}
+              {/* 海淘子订单售后类型不显示换货 */}
+              {getFieldDecorator('refundType', {
+                ...initialObj,
+                rules: [{
+                  required: true,
+                  message: '请选择售后类型'
+                }]
+              })(<XtSelect {...disabledObj} data={refundType.getArray()} />)}
             </Form.Item>
             <Form.Item label="售后原因">
               {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<AfterSaleSelect refundType={this.refundType} />)}

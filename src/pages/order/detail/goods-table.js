@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
-import { Table, Row, Col, Card, Button, Modal, Input, message, Divider } from 'antd';
-import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale';
+import React, { Component } from 'react'
+import { Table, Row, Col, Button, Modal, Input, message } from 'antd'
+import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale'
 import { withRouter } from 'react-router'
-import { getDetailColumns, storeType } from '../constant';
-import LogisticsInfo from './logistics-info';
-import { Decimal } from 'decimal.js';
-import ChildOrderBenefitInfo from './child-order-benefit-info';
-import { formatDate } from '../../helper';
-import { customerAdd, customerAddCheck, setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId } from '../api';
-
+import { getDetailColumns } from '../constant'
+import LogisticsInfo from './logistics-info'
+import ChildOrderBenefitInfo from './child-order-benefit-info'
+import { formatDate } from '../../helper'
+import { setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId } from '../api'
+import alert from '@/packages/common/components/alert'
 @withRouter
 class GoodsTable extends Component {
   state = {
@@ -23,58 +22,80 @@ class GoodsTable extends Component {
   showApplyBtn = (orderStatus, orderType) => {
     return orderType !== 50 && orderType !== 60 && [20, 25, 30, 40, 50].includes(orderStatus)
   }
+  /**
+   * 如果是海淘订单，需要提示该订单商品为海淘商品，请慎重处理售后
+   */
   handleApply = (record) => {
-    const { orderInfo = {}, childOrder = {}, memberId } = this.props;
-    if (record.canApply) {
-      this.setState({
-        modalInfo: { ...record, mainOrderId: orderInfo.id, memberId, childOrder },
-        visible: true
-      })
+    const handle = () => {
+      const { orderInfo = {}, childOrder = {}, memberId } = this.props
+      if (record.canApply) {
+        this.setState({
+          modalInfo: {
+            ...record,
+            mainOrderId: orderInfo.id,
+            memberId,
+            childOrder
+          },
+          visible: true
+        })
+      } else {
+        Modal.confirm({
+          title: '系统提示',
+          content: record.errormsg,
+          okText: '查看详情',
+          cancelText: '取消',
+          onOk: () => {
+            this.props.history.push(`/order/refundOrder/${record.skuServerId}`)
+          }
+        })
+      }
+    }
+    /** 未完待续 */
+    if (false) {
+      handle()
     } else {
-      Modal.confirm({
-        title: '系统提示',
-        content: record.errormsg,
-        okText: '查看详情',
-        cancelText: '取消',
-        onOk: () => {
-          this.props.history.push(`/order/refundOrder/${record.skuServerId}`);
+      this.props.alert({
+        content: '该订单商品为海淘商品，请慎重处理售后',
+        onOk: (hide) => {
+          hide()
+          handle()
         }
-      });
+      })
     }
   }
   handleInputChange = e => {
     this.setState({
       remark: e.target.value,
-    });
-  };
+    })
+  }
   lookForHistory = ({ orderCode, productId }) => {
-    const { history } = this.props;
-    history.push(`/order/refundOrder?mainOrderCode=${orderCode}&productId=${productId}`);
+    const { history } = this.props
+    history.push(`/order/refundOrder?mainOrderCode=${orderCode}&productId=${productId}`)
   }
   handleAddNotes = () => {
-    const { modalInfo } = this.state;
+    const { modalInfo } = this.state
     const params = {
       orderCode: this.props.match.params.id,
       refundId: modalInfo.refundId,
       childOrderId: modalInfo.childOrderId,
       info: this.state.remark,
-    };
-    const apiFunc = modalInfo.refundId ? setRefundOrderRemark : setOrderRemark;
+    }
+    const apiFunc = modalInfo.refundId ? setRefundOrderRemark : setOrderRemark
     apiFunc(params).then((res) => {
-      res && message.success('添加备注成功');
-      this.props.query();
+      res && message.success('添加备注成功')
+      this.props.query()
       this.setState({
         notesVisible: false,
-      });
-    });
+      })
+    })
   }
 
   /**
    * 展示/收起子订单收益列表
    */
   childOrderProceeds = (skuInfo, currentVisible) => {
-    const { orderInfo = {} } = this.props;
-    const { skuId } = skuInfo;
+    const { orderInfo = {} } = this.props
+    const { skuId } = skuInfo
     if (currentVisible) {
       this.setState({
         proceedsVisible: false
@@ -91,8 +112,8 @@ class GoodsTable extends Component {
   }
 
   render() {
-    const { list = [], childOrder = {}, orderInfo = {}, logistics, tableTitle } = this.props;
-    const { proceedsVisible, childOrderProceeds, skuInfo } = this.state;
+    const { list = [], childOrder = {}, orderInfo = {}, logistics, tableTitle } = this.props
+    const { proceedsVisible, childOrderProceeds, skuInfo } = this.state
     const columns = [
       ...(getDetailColumns().filter(item => item.key !== 'storeName')),
       {
@@ -103,10 +124,27 @@ class GoodsTable extends Component {
         render: (text, record, index) => (
           <>
             <div>
-              {this.showApplyBtn(orderInfo.orderStatus, record.orderType) && <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.handleApply(record)}>申请售后</Button>}
+              {this.showApplyBtn(orderInfo.orderStatus, record.orderType) && (
+                <Button
+                  style={{ padding: 0 }}
+                  type="link"
+                  size="small"
+                  onClick={() => this.handleApply(record)}>
+                  申请售后
+                </Button>
+              )}
             </div>
             <div>
-              <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.setState({ notesVisible: true, modalInfo: { ...record } })}>添加备注</Button>
+              <Button
+                style={{ padding: 0 }}
+                type="link"
+                size="small"
+                onClick={() => this.setState({
+                  notesVisible: true,
+                  modalInfo: { ...record }
+                })}>
+                添加备注
+              </Button>
             </div>
             <div>
               {record.canShowHistoryBtn && <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>}
@@ -117,7 +155,7 @@ class GoodsTable extends Component {
           </>
         )
       }
-    ];
+    ]
     return (
       <>
         {this.state.modalInfo.mainOrderId &&
@@ -173,8 +211,8 @@ class GoodsTable extends Component {
           </div>
         </div>
       </>
-    );
+    )
   }
 }
 
-export default GoodsTable;
+export default alert(GoodsTable)

@@ -155,7 +155,6 @@ function getDynamicColumns (obj) {
 const getSpecs = memoize(function(obj) {
   obj = obj || {}
   return filterProp(obj).map(prop => {
-    console.log('obj=>', obj)
     const item = collection[prop] || {}
     return {
       title: obj[prop],
@@ -306,8 +305,6 @@ class GoodsEdit extends React.Component {
         skuList,
         /** 视频地址 */
         videoUrl,
-        /** 上下架状态 */
-        status,
         /** 审核结果 */
         auditStatus,
         /** 审核说明 */
