@@ -22,6 +22,8 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>主订单号：<Link to={`/order/detail/${orderInfoVO.mainOrderCode}`}>{orderInfoVO.mainOrderCode}</Link></Col>
         <Col span={8}>子订单号：{orderInfoVO.childOrderCode}</Col>
         <Col span={8}>订单状态：{orderInfoVO.orderStatusStr}</Col>
+        <Col span={8}>订单类型：{orderInfoVO.orderType}</Col>
+        <Col span={8}>清关完成时间：{}</Col>
         <Col span={8}>订单来源：{orderInfoVO.platform}</Col>
         <Col span={8}>买家名称：{orderInfoVO.name}</Col>
         <Col span={8}>联系电话：{orderInfoVO.phone}</Col>

@@ -3,8 +3,6 @@ import { Tabs, Card } from 'antd';
 
 import List from '../order-table';
 import { TabList } from '../constant';
-// import UploadView from '../../../components/upload';
-
 const { TabPane } = Tabs;
 
 class Order extends Component {
@@ -36,7 +34,6 @@ class Order extends Component {
               return <TabPane tab={tab.name} key={tab.url} />;
             })}
           </Tabs>
-          {/* <UploadView /> */}
           <List orderStatus={orderStatus} pathname={pathname} type="order" />
         </Card>
       </div>

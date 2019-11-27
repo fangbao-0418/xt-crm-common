@@ -9,7 +9,7 @@ import descartes from '@/util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from './api';
 import { getAllId, gotoPage, initImgList, parseQuery } from '@/util/utils';
 import { radioStyle } from '@/config';
-import SkuList from './SkuList';
+import SkuList from './components/sku';
 import { TemplateList } from '@/components';
 import styles from './edit.module.scss'
 import DraggableUpload from './components/draggable-upload'

@@ -11,13 +11,7 @@ import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant';
 import DeliveryModal from './components/delivery-modal';
 import { dateFormat } from '@/util/utils';
 import moment from 'moment';
-import { formatMoneyWithSign } from '../../helper';
-const styleObj = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-end',
-  padding: '0 24px'
-}
+import WithModal from './components/modal'
 
 const { confirm } = Modal;
 class Detail extends Component {
@@ -159,11 +153,44 @@ class Detail extends Component {
     return (
       <>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
+        {/* 订单信息 */}
         <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} />
+        {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
+        {/* 海关信息 */}
+        <Card title='海关信息'>
+          <Row gutter={24}>
+            <Col span={8}>海淘状态：{}</Col>
+            <Col span={8}>清关完成时间：{}</Col>
+          </Row>
+          <Row gutter={24}>
+            <Col span={8}>订单报文：申报中
+              <Button type='link'
+                onClick={() => {
+                  this.props.modal.show({
+                    type: 'payMessage',
+                    title: '支付单报文详情'
+                  })
+                }}>
+                查看详情
+              </Button>
+            </Col>
+            <Col span={8}>支付单报文：申报中 
+              <Button
+                type='link'
+                onClick={() => {
+                  this.props.modal.show({
+                    type: 'orderMessage',
+                    title: '订单报文详情'
+                  })
+                }}>
+                查看详情
+              </Button>
+            </Col>
+          </Row>
+        </Card>
         <Card title="详细信息">
           {map(childOrderList, (item, index) => {
-            console.log(item.childOrder.orderCode, 'orderCodeorderCodeorderCodeorderCodeorderCode')
             return (
               <div
                 key={item.childOrder.orderCode}
@@ -199,10 +226,10 @@ class Detail extends Component {
                           </span>
                         </Col>
                         <Col className="gutter-row" span={8} style={{ textAlign: 'right' }}>
-                          {
-                            (orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
+                          { /** 海淘子订单的发货按钮去掉 */
+                            (orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) && (
                               <Button type='primary' onClick={() => this.changeModal(true, item)}>发货</Button>
-                            ) : ''
+                            )
                           }
                           {
                             (item.childOrder.interceptorType == 10 && (
@@ -223,18 +250,22 @@ class Detail extends Component {
                             onClick={() => this.comfirmPush1688(item.childOrder.id)}
                           >重新推送1688 </Button> : ''}
                         </Col>
+                        <Col span={8}>订单类型：{}</Col>
                       </Row>
                       <Row gutter={24}>
                         <Col span={8}>供应商：{item.childOrder.storeName}</Col>
                         <Col span={8}>分类：{storeType[item.childOrder.category]}</Col>
                         <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
+                      </Row>
+                      <Row>
                         {
-                          item.childOrder.interceptorType == 10 ?
-                            <>
-                              <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
-                              <Col span={8}>拦截人手机号：{item.childOrder.interceptorMemberPhone}</Col>
-                            </> :
-                            null
+                          item.childOrder.interceptorType == 10 &&
+                            (
+                              <>
+                                <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
+                                <Col span={8}>拦截人手机号：{item.childOrder.interceptorMemberPhone}</Col>
+                              </>
+                            )
                         }
                       </Row>
                     </div>
@@ -290,4 +321,4 @@ class Detail extends Component {
   }
 }
 
-export default Detail;
+export default WithModal(Detail);

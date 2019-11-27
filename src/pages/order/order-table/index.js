@@ -15,6 +15,18 @@ import { getHeaders, parseQuery } from '@/util/utils';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
+/** 订单类型选项 */
+const orderTypeOptions = [
+  { label: '全部', value: '' },
+  { label: '普通订单', value: '0' },
+  { label: '激活码订单', value: '10' },
+  { label: '地推订单', value: '20' },
+  { label: '活动兑换订单', value: '30' },
+  { label: '采购订单', value: '40' },
+  { label: '团购会订单', value: '60' },
+  { label: '海淘订单', value: '70' }
+]
+
 const formatRangeDate = (val) => {
   return Array.isArray(val) ? val.map(v => v.format('YYYY-MM-DD HH:mm')) : []
 }
@@ -68,7 +80,6 @@ class OrderList extends React.Component {
     };
     this.payload = this.payload || {}
     this.payload[this.props.pathname] = params
-    console.log(this.props.pathname, this.payload, 'order ---------------')
     APP.fn.setPayload('order', this.payload)
     if (noFetch) {
       return
@@ -214,7 +225,6 @@ class OrderList extends React.Component {
               <Button type="link" href={`/#/order/detail/${orderCode}`} target="_blank">
                 发货
               </Button>
-              // <DeliveryModal onSuccess={this.query} orderCode={orderCode} />
             )}
           </>
         ),
@@ -309,32 +319,25 @@ class OrderList extends React.Component {
     const values = this.payload[this.props.pathname] || {}
     values.rangePicker = values.orderStartDate && [moment(values.orderStartDate), moment(values.orderEndDate)]
     values.playPicker = values.payStartDate && [moment(values.payStartDate), moment(values.payEndDate)]
-    console.log(values, 'render -------------')
-    const formItemLayout = {
-      labelCol: {
-        sm: { span: 8 },
-      },
-      wrapperCol: {
-        sm: { span: 16 },
-      },
-    };
-
-    const twoformItemLayout = {
-      labelCol: {
-        sm: { span: 4 },
-      },
-      wrapperCol: {
-        sm: { span: 12 },
-      },
-    }
     return (
       <Spin tip="操作处理中..." spinning={false}>
         <Card title="筛选">
-          <Form {...formItemLayout}>
+          <Form labelCol = {{ span: 8 }} wrapperCol={{ span: 16}}>
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label="订单编号">
                   {getFieldDecorator('orderCode', {initialValue: values.orderCode})(<Input placeholder="请输入订单编号" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="订单类型">
+                  {getFieldDecorator('orderType', {initialValue: values.orderType})(
+                    <Select allowClear placeholder='请选择订单类型'>
+                      {orderTypeOptions.map((v) => (
+                        <Select.Option value={v.value}>{v.label}</Select.Option>
+                      ))}
+                    </Select>
+                  )}
                 </FormItem>
               </Col>
               <Col span={6}>
@@ -372,8 +375,32 @@ class OrderList extends React.Component {
                   {getFieldDecorator('storeId', {initialValue: values.storeId})(<SuppilerSelect />)}
                 </FormItem>
               </Col>
-              <Col span={12}>
-                <FormItem {...twoformItemLayout} label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
+              {!intercept && (
+                <>
+                  <Col span={6}>
+                    <FormItem label="拦截订单">
+                      {getFieldDecorator('interceptorFlag', {
+                        initialValue: values.interceptorFlag || ''
+                      })(
+                        <Select>
+                          <Select.Option value={''}>全部</Select.Option>
+                          <Select.Option value={'1'}>拦截订单</Select.Option>
+                          <Select.Option value={'0'}>非拦截订单</Select.Option>
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={6}>
+                    <FormItem label="拦截人电话">
+                      {getFieldDecorator('interceptorPhone', {
+                        initialValue: values.interceptorPhone
+                      })(<Input placeholder="请输入拦截人手机号" />)}
+                    </FormItem>
+                  </Col>
+                </>
+              )}
+              <Col span={6}>
+                <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
                   {getFieldDecorator('rangePicker', {initialValue: values.rangePicker})(
                     <RangePicker
                       style={{ width: '100%' }}
@@ -383,10 +410,10 @@ class OrderList extends React.Component {
                   )}
                 </FormItem>
               </Col>
-              <Col span={12}>
+              <Col span={6}>
                 {
                   this.props.type === 'order' ?
-                    <FormItem  {...twoformItemLayout} label="支付时间">
+                    <FormItem  label="支付时间">
                       {getFieldDecorator('playPicker', {initialValue: values.playPicker})(
                         <RangePicker
                           style={{ width: '100%' }}
@@ -398,32 +425,6 @@ class OrderList extends React.Component {
                     ''
                 }
               </Col>
-              {
-                intercept ?
-                  null :
-                  <>
-                    <Col span={6}>
-                      <FormItem label="拦截订单">
-                        {getFieldDecorator('interceptorFlag', {
-                          initialValue: values.interceptorFlag || ''
-                        })(
-                          <Select>
-                            <Select.Option value={''}>全部</Select.Option>
-                            <Select.Option value={'1'}>拦截订单</Select.Option>
-                            <Select.Option value={'0'}>非拦截订单</Select.Option>
-                          </Select>
-                        )}
-                      </FormItem>
-                    </Col>
-                    <Col span={6}>
-                      <FormItem label="拦截人电话">
-                        {getFieldDecorator('interceptorPhone', {
-                          initialValue: values.interceptorPhone
-                        })(<Input placeholder="请输入拦截人手机号" />)}
-                      </FormItem>
-                    </Col>
-                  </>
-              }
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>

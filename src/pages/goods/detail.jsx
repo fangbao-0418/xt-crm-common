@@ -7,8 +7,8 @@ import {
 } from 'lodash'
 import CascaderCity from '@/components/cascader-city'
 import MoneyRender from '@/components/money-render'
-import { getStoreList, toAuditDetail } from './api'
-import SkuUploadItem from './SkuUploadItem'
+import { getStoreList, toAuditDetail } from './api';
+import SkuUploadItem from './components/sku/SkuUploadItem'
 import Image from '@/components/Image'
 import styles from './edit.module.scss'
 import { replaceHttpUrl, parseQuery } from '@/util/utils'
@@ -96,7 +96,6 @@ function getDynamicColumns (obj) {
 const getSpecs = memoize(function(obj) {
   obj = obj || {}
   return filterProp(obj).map(prop => {
-    console.log('obj=>', obj)
     const item = collection[prop] || {}
     return {
       title: obj[prop],
