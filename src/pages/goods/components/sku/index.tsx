@@ -2,12 +2,28 @@ import React from 'react';
 import { Table, Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getColumns } from './constant';
-import CardTitle from './CardTitle';
+import CardTitle from '../../CardTitle';
 import SkuUploadItem from './SkuUploadItem';
-import styles from './edit.module.scss';
+import styles from './style.module.scss';
 import { size, map } from 'lodash';
 import { accAdd, Subtr, accMul, accDiv } from '@/util/utils';
+import SkuTable from './SkuTable'
+const defaultItem: SkuProps = {
+  imageUrl1: '',
+  skuCode: '',
+  stock: 0,
+  areaMemberPrice: 0,
+  cityMemberPrice: 0,
+  costPrice: 0,
+  headPrice: 0,
+  deliveryMode: 2,
+  marketPrice: 0,
+  salePrice: 0,
+  managerMemberPrice: 0
+}
 
+/** 子规格字段集合 */
+const subSpecFields: Array<keyof SkuProps> = ['propertyValue1', 'propertyValue2']
 
 export interface SkuProps {
   /** 供应商id */
@@ -102,6 +118,44 @@ class SkuList extends React.Component<Props, State>{
       strategyData: props.strategyData
     })
   }
+  public getCombineResult (specs: Spec[], dataSource: SkuProps[]) {
+    console.log(specs, 'specs getCombineResult')
+    console.log(dataSource, 'dataSource getCombineResult')
+    const collection = specs.map((item) => item.content)
+    const combineResutle: SpecItem[][] = APP.fn.mutilCollectionCombine.apply(null, collection)
+    console.log(combineResutle, 'combineResutle getCombineResult')
+    /** 如果合并后只有一组数据切第一项全部都是undefind则数组返回空, */
+    if (combineResutle.length === 1 && combineResutle[0].every((item) => item === undefined)) {
+      return []
+    }
+    // let addNew = false
+    /** 多规格合并 */
+    const result = combineResutle.map((item) => {
+      let val: SkuProps = {...defaultItem}
+      /** 根据原规格查找规格信息 */
+      val = dataSource.find((item2) => {
+        /** item 自定义输入规格序列 规格1，2 */
+        return item.every((item3, index) => {
+          /**
+           * item2[subSpecFields[index]] dataSource里的规格名
+           * item3 输入的规格名
+           * !item2[subSpecFields[index]] 不存在的规格直接过，dataSource必有一个规格名是存在的，对存在的规格进行比对获取已经输入的信息
+           */
+          return !item3 || !item2[subSpecFields[index]] || item2 && item3 && item3.specName === item2[subSpecFields[index]]
+        })
+      }) || val
+      item.map((item2, index) => {
+        const field = subSpecFields[index]
+        val[field] = (item2 && item2.specName) as never
+        if (index === 0) {
+          val.imageUrl1 = item2 && item2.specPicture || val.imageUrl1
+        }
+        val.skuId = undefined
+      })
+      return val
+    })
+    return result
+  }
   handleChangeValue = (text: string, record: any, index: any) => (e: any) => {
     const { dataSource, noSyncList } = this.state;
     const nosync = noSyncList.includes(text);
@@ -137,9 +191,9 @@ class SkuList extends React.Component<Props, State>{
     }
   };
   /**
-   * 添加规格高阶函数
+   * 添加子规格
    */
-  widthAddSpecCb = (key: number) => () => {
+  addSubSpec = (key: number) => () => {
     let specs = this.state.specs
     const { content } = specs[key]
     const { tempSpecInfo, showImage } = this.state
@@ -153,11 +207,24 @@ class SkuList extends React.Component<Props, State>{
       message.error('请不要填写相同的规格');
       return
     }
+
     specs[key].content.push(this.state.tempSpecInfo[key])
     tempSpecInfo[key] = {
       specName: '',
       specPicture: ''
     }
+
+    //////////////////////////////
+    const dataSource1 = this.getCombineResult(specs, this.state.dataSource)
+    this.setState({
+      dataSource: dataSource1,
+      tempSpecInfo,
+      specs
+    })
+    this.onChange(dataSource1)
+    return
+    //////////////////////////////
+
     const addData: SkuProps[] = []
     const defaultItem: SkuProps = {
       imageUrl1: '',
@@ -331,7 +398,7 @@ class SkuList extends React.Component<Props, State>{
   /**
   * 删除规格
   */
-  handleRemoveSpec = (index: number) => {
+  removeSpec = (index: number) => {
     const { specs } = this.state
     specs.splice(index, 1)
     this.setState({
@@ -341,8 +408,8 @@ class SkuList extends React.Component<Props, State>{
       this.onChange([])
     })
   };
-
-  removeSpecWithCb = (key: number, index: number) => () => {
+  /** 删除子规格 */
+  removeSubSpec = (key: number, index: number) => () => {
     /** 另一组索引 */
     const otherKey = key === 0 ? 1 : 0
     const keys = ['propertyValue1', 'propertyValue2']
@@ -350,6 +417,13 @@ class SkuList extends React.Component<Props, State>{
     const specName = specs[key].content[index].specName
     specs[key].content.splice(index, 1)
     let dataSource = this.state.dataSource
+
+    /////////////////////
+    dataSource = this.getCombineResult(specs, dataSource)
+    this.setState({ specs, dataSource: dataSource });
+    this.onChange(dataSource)
+    return
+    /////////////////////
     if (specs[key].content.length > 0) {
       dataSource = dataSource.filter((item) => {
         return item[keys[key]] !== specName
@@ -487,7 +561,7 @@ class SkuList extends React.Component<Props, State>{
                 />
               )}
               extra={
-                <span className='href' onClick={() => this.handleRemoveSpec(key)}>删除</span>
+                <span className='href' onClick={() => this.removeSpec(key)}>删除</span>
               }>
               <div className={styles.spulist}>
                 {map(spec.content, (item, index: number) => (
@@ -504,7 +578,7 @@ class SkuList extends React.Component<Props, State>{
                     <Button
                       className={styles.spubtn}
                       type="danger"
-                      onClick={this.removeSpecWithCb(key, index)}
+                      onClick={this.removeSubSpec(key, index)}
                     >
                       删除规格
                     </Button>
@@ -525,7 +599,7 @@ class SkuList extends React.Component<Props, State>{
                     <Button
                       className={styles.spubtn}
                       type="primary"
-                      onClick={this.widthAddSpecCb(key)}>
+                      onClick={this.addSubSpec(key)}>
                       添加规格
                     </Button>
                   </SkuUploadItem>
@@ -544,7 +618,14 @@ class SkuList extends React.Component<Props, State>{
             </Button>
           </> : null
         }
-        <Table
+        <SkuTable
+          dataSource={this.state.dataSource}
+          extraColumns={this.getCustomColumns()}
+          onChange={(dataSource) => {
+            this.onChange(dataSource)
+          }}
+        />
+        {/* <Table
           rowKey={(record: any) => record.id}
           style={{ marginTop: 10 }}
           scroll={{ x: 2500, y: 600 }}
@@ -554,7 +635,7 @@ class SkuList extends React.Component<Props, State>{
           ]}
           dataSource={this.state.dataSource}
           pagination={false}
-        />
+        /> */}
       </Card>
     )
   }

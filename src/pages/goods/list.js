@@ -153,13 +153,14 @@ class GoodsList extends React.Component {
     );
   };
 
-  handleGoHistory = () => {
-    window.location.href = '/#/goods/edit';
-  };
+  /** 添加商品 */
+  handleAdd = () => {
+    APP.history.push('/goods/edit')
+  }
 
   handleDisable = id => () => {
     this.delGoodsDisable([].concat(id));
-  };
+  }
 
   /**
    * 批量下架商品
@@ -373,7 +374,7 @@ class GoodsList extends React.Component {
               <Button type="primary" style={{ marginRight: 10 }} onClick={this.handleSearch('导出')}>
                 导出商品
               </Button>
-              <Button type="primary" onClick={this.handleGoHistory}>
+              <Button type="primary" onClick={this.handleAdd}>
                 添加商品
               </Button>
             </FormItem>
