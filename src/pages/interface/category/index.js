@@ -172,7 +172,6 @@ class InterFaceCategory extends Component {
         showType = 1;
       }
 
-      //设置form的默认值
       this.props.form.setFieldsValue({
         name: data.name,
         sort: data.sort,
@@ -196,7 +195,8 @@ class InterFaceCategory extends Component {
         isShow: true,
         secondStatus: secondStatus === 1 ? true : false,
         secondCategoryVOS: filterIconsecondCategoryVOS,
-        secondaryActText: []
+        secondaryActText: [],
+        secondName: data.secondName
       })
     })
   }
@@ -436,9 +436,10 @@ class InterFaceCategory extends Component {
         secondaryActText, currId, secondCategoryVOS 
       } = this.state;
     const showType = getFieldValue('showType');
-    getFieldValue('secondName');
-    getFieldValue('styleType');
-    
+    const secondName = getFieldValue('secondName') || this.state.secondName;
+    const styleType = getFieldValue('styleType');
+    console.log(secondName, 'secondName')
+    console.log(styleType, 'styleType')
     return (
       <div className="intf-cat-box">
         <Card>
@@ -478,6 +479,7 @@ class InterFaceCategory extends Component {
               <>
                 <FormItem label="副标题" style={{display: showType === 0 ? 'block' : 'none'}}>
                   {getFieldDecorator('secondName', {
+                    initialValue: secondName,
                     rules: [
                       {
                         required: true,
