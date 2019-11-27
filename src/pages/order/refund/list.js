@@ -1,6 +1,5 @@
 import React from 'react';
 import { Message, Button, Spin, Row, Col } from 'antd';
-import moment from 'moment'
 import { refundList, exportRefund } from '../api';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
