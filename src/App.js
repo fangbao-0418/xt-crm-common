@@ -20,6 +20,7 @@ import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
 import Coupon from './pages/coupon';
 import Message from './pages/message';
+
 const Main = props => {
   APP.dispatch = props.dispatch
   APP.history = props.history
