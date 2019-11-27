@@ -8,7 +8,7 @@ import {
 import { TemplateList } from '@/components';
 import MoneyRender from '@/components/money-render'
 import { getStoreList, toAuditDetail } from './api';
-import SkuUploadItem from './SkuUploadItem'
+import SkuUploadItem from './components/sku/SkuUploadItem'
 import Image from '@/components/Image'
 import styles from './edit.module.scss';
 import { replaceHttpUrl, parseQuery } from '@/util/utils'
