@@ -278,15 +278,6 @@ class SkuList extends React.Component<Props, State>{
       if(!Number(salePrice) || !Number(costPrice))isZero = true;
       let grossProfit = Subtr(salePrice,costPrice);//毛利润
       let netProfit : any = Subtr(grossProfit, accDiv(accMul(grossProfit, categoryProfitRate), 100));//去除类目利润比的利润
-      // let headNetProfit = accDiv(accMul(netProfit, headCommissionRate),100);
-      // console.log(netProfit, 'netProfit2')
-      // console.log(headNetProfit, 'headNetProfit')
-      // let areaNetProfit =  accDiv(accMul(Subtr(netProfit, headNetProfit), areaCommissionRate), 100 - headCommissionRate)
-      // console.log(areaNetProfit, 'areaNetProfit')
-      // let cityNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(headNetProfit, areaNetProfit)), cityCommissionRate), 100 - headCommissionRate - areaCommissionRate)
-      // console.log(cityNetProfit, 'cityNetProfit')
-      // let managerNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(accAdd(headNetProfit, areaNetProfit),cityNetProfit)), managerCommissionRate), Subtr(Subtr(Subtr(100,headCommissionRate),cityCommissionRate),areaCommissionRate))
-      // console.log(managerNetProfit, 'managerNetProfit')
 
       let headNetProfit = accDiv(accMul(netProfit,headCommissionRate),100);
       console.log(headNetProfit, 'headNetProfit')
@@ -297,10 +288,10 @@ class SkuList extends React.Component<Props, State>{
       let managerNetProfit = accDiv(accMul(netProfit,managerCommissionRate),100);
       console.log(managerNetProfit, 'managerNetProfit')
       return Object.assign(res, {
-        headPrice: Math.floor(Subtr(salePrice, headNetProfit)*100) / 100,
-        areaMemberPrice: Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*100) / 100,
-        cityMemberPrice: Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit)*100) / 100,
-        managerMemberPrice: Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*100) / 100
+        headPrice: Math.floor(Subtr(salePrice, headNetProfit)*10) / 10,
+        areaMemberPrice: Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*10) / 10,
+        cityMemberPrice: Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit)*10) / 10,
+        managerMemberPrice: Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*10) / 10
       })
     })
     if(isZero){
