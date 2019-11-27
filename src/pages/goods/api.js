@@ -37,6 +37,11 @@ export function get1688Sku(storeProductId) {
   return get('/product/b2b/'+storeProductId);
 }
 
+/** 运费模板列表 */
+export function getTemplateList() {
+  return post('/template/list')
+}
+
 /**
  * 获取待审核商品列表
  */
