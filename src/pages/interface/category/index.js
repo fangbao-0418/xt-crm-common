@@ -437,9 +437,7 @@ class InterFaceCategory extends Component {
       } = this.state;
     const showType = getFieldValue('showType');
     const secondName = getFieldValue('secondName') || this.state.secondName;
-    const styleType = getFieldValue('styleType');
-    console.log(secondName, 'secondName')
-    console.log(styleType, 'styleType')
+    getFieldValue('styleType');
     return (
       <div className="intf-cat-box">
         <Card>
