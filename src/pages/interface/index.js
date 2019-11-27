@@ -6,6 +6,7 @@ import HomeIcon from './home-icon'
 import Special from './special'
 import SpecialDetail from './special/Detail'
 import HomeConfig from './config'
+import FreeSubsidies from './free-subsidies'
 export default class extends Component {
     render() {
         return (
@@ -16,6 +17,7 @@ export default class extends Component {
                 <Route path="/interface/special" exact component={Special} />
                 <Route path="/interface/special/:id" component={SpecialDetail} />
                 <Route path="/interface/config" component={HomeConfig} />
+                <Route path="/interface/free" component={FreeSubsidies} />
             </Switch>
         );
     }
