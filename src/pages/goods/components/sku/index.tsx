@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table, Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getColumns } from './constant';
 import CardTitle from '../../CardTitle';
 import SkuUploadItem from './SkuUploadItem';
 import styles from './style.module.scss';
@@ -61,7 +60,9 @@ interface Props {
   dataSource: SkuProps[]
   showImage: boolean
   onChange?: (value: SkuProps[], specs: Spec[], showImage: boolean) => void
-  strategyData: {},
+  strategyData: {}
+  /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
+  type?: 0 | 10 | 20
 }
 interface SpecItem {
   specName: string;
@@ -79,19 +80,19 @@ interface TempSpecInfoItem {
  * speSelect 规格项
  */
 interface State {
-  specs: Spec[];
-  specPictures: string[];
-  speSelect: any[];
-  spuName: any[];
-  noSyncList: any[];
-  GGName: string;
-  showImage: boolean;
+  specs: Spec[]
+  specPictures: string[]
+  speSelect: any[]
+  spuName: any[]
+  noSyncList: any[]
+  GGName: string
+  showImage: boolean
   tempSpecInfo: {[key: number]: SpecItem}
-  tempSpuName: string;
-  tempSpuPicture: any[];
+  tempSpuName: string
+  tempSpuPicture: any[]
   /** 添加规格名propover显示状态 */
   dimensionNamePropoverStatus: boolean
-  dataSource: SkuProps[],
+  dataSource: SkuProps[]
   strategyData: any
 }
 class SkuList extends React.Component<Props, State>{
@@ -490,6 +491,7 @@ class SkuList extends React.Component<Props, State>{
     })
   }
   render() {
+    const type = this.props.type !== undefined ? this.props.type : 0
     return (
       <Card
         title="添加规格项"
@@ -619,6 +621,8 @@ class SkuList extends React.Component<Props, State>{
           </> : null
         }
         <SkuTable
+          // type={type}
+          type={10}
           dataSource={this.state.dataSource}
           extraColumns={this.getCustomColumns()}
           onChange={(dataSource) => {

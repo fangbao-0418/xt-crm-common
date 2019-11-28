@@ -2,6 +2,7 @@
 /* eslint-disable no-script-url */
 import React from 'react';
 import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader } from 'antd';
+import { FormItem } from '@/packages/common/components/form'
 import UploadView from '@/components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
 import { map, size, concat, filter, assign, forEach, cloneDeep, split } from 'lodash';
@@ -447,15 +448,14 @@ class GoodsEdit extends React.Component {
     }
   }
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldsValue } = this.props.form;
     const { supplier, interceptionVisible, categoryList } = this.state;
     const {
       match: {
         params: { id },
       },
     } = this.props;
-    console.log(categoryList, 'categoryList')
-    console.log(this.state, 'state')
+    const { productType } = getFieldsValue()
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -566,7 +566,24 @@ class GoodsEdit extends React.Component {
               </Form.Item> :
               null
           }
-           <Form.Item label="实名认证" required>
+          <Form.Item label="商品类型" required>
+            {getFieldDecorator('productType', {
+              initialValue: 0,
+              rules: [
+                {
+                  required: true,
+                  message: '请选择商品类型'
+                }
+              ]
+            })(
+              <Select>
+                <Select.Option value={0}>普通商品</Select.Option>
+                <Select.Option value={10}>一般海淘商品</Select.Option>
+                <Select.Option value={20}>保税仓海淘商品</Select.Option>
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item label="实名认证" required>
             {getFieldDecorator('isAuthentication', {
               initialValue: 0,
               rules: [
@@ -665,6 +682,7 @@ class GoodsEdit extends React.Component {
           </Form.Item>
         </Card>
         <SkuList
+          type={productType}
           showImage={this.state.showImage}
           specs={this.state.speSelect}
           dataSource={this.state.data}
@@ -728,7 +746,7 @@ class GoodsEdit extends React.Component {
                   style={{ width: 160, marginRight: 10 }}
                   placeholder="收货人电话"
                   name="returnPhone"
-                  value={this.state.returnPhone}
+                  // value={this.state.returnPhone}
                   type="tel"
                   maxLength={12}
                   onChange={this.handleInput}

@@ -5,13 +5,17 @@ import { deliveryModeType } from '@/enum';
 import ArrowContain from '../arrow-contain'
 import { SkuProps } from './index'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import InputMoney from '@/packages/common/components/input-money'
 import Record from './Record'
+import Stock from './Stock'
 const { Option } = Select;
 
 interface Props extends Partial<AlertComponentProps> {
   extraColumns?: ColumnProps<any>[]
   dataSource: SkuProps[]
   onChange?: (dataSource: SkuProps[]) => void
+  /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
+  type: 0 | 10 | 20
 }
 
 interface State {
@@ -83,7 +87,7 @@ class Main extends React.Component<Props, State> {
       {
         title: '发货方式',
         dataIndex: 'deliveryMode',
-        width: 100,
+        width: 200,
         render: (text: any, record: any, index: any) => {
           return (
             <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
@@ -100,7 +104,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入市场价"
               onChange={cb('marketPrice', record, index)}
@@ -114,7 +118,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入成本价"
               onChange={cb('costPrice', record, index)}
@@ -142,7 +146,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text, record, index: any) => (
           this.speedyInput('salePrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入销售价"
               onChange={cb('salePrice', record, index)}
@@ -156,7 +160,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('headPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入团长价"
               onChange={cb('headPrice', record, index)}
@@ -170,7 +174,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入社区管理员价"
               onChange={cb('areaMemberPrice', record, index)}
@@ -184,7 +188,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入合伙人价"
               onChange={cb('cityMemberPrice', record, index)}
@@ -198,7 +202,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入公司管理员价"
               onChange={cb('managerMemberPrice', record, index)}
@@ -256,7 +260,7 @@ class Main extends React.Component<Props, State> {
       {
         title: '发货方式',
         dataIndex: 'deliveryMode',
-        width: 100,
+        width: 200,
         render: (text: any, record: any, index: any) => {
           return (
             <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
@@ -273,7 +277,7 @@ class Main extends React.Component<Props, State> {
         width: 100,
         render: (text, record) => {
           return (
-            <div onClick={this.showRecordsInfo.bind(this, record)}>已完成</div>
+            <div onClick={this.showRecordInfo.bind(this, record)}>已完成</div>
           )
         }
       },
@@ -286,15 +290,16 @@ class Main extends React.Component<Props, State> {
         title: '库存',
         dataIndex: 'stock',
         width: 200,
-        render: (text: any, record, index: any) => (
-          this.speedyInput('stock', text, record, index, dataSource, cb)(
-            <Input
-              value={text}
-              placeholder="请输入库存"
-              onChange={cb('stock', record, index)}
-            />
+        render: (text: any, record, index) => {
+          return (
+            <Button
+              size='small'
+              onClick={this.showStockInfo.bind(this, record)}
+            >
+              查看
+            </Button>
           )
-        ),
+        },
       },
       {
         title: '市场价',
@@ -302,7 +307,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入市场价"
               onChange={cb('marketPrice', record, index)}
@@ -316,7 +321,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入成本价"
               onChange={cb('costPrice', record, index)}
@@ -330,7 +335,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text, record, index: any) => (
           this.speedyInput('salePrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入销售价"
               onChange={cb('salePrice', record, index)}
@@ -344,7 +349,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('headPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入团长价"
               onChange={cb('headPrice', record, index)}
@@ -358,7 +363,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入社区管理员价"
               onChange={cb('areaMemberPrice', record, index)}
@@ -372,7 +377,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入合伙人价"
               onChange={cb('cityMemberPrice', record, index)}
@@ -386,7 +391,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入公司管理员价"
               onChange={cb('managerMemberPrice', record, index)}
@@ -418,7 +423,7 @@ class Main extends React.Component<Props, State> {
       this.props.onChange([...dataSource])
     }
   }
-  public showRecordsInfo (id: any) {
+  public showRecordInfo (id: any) {
     console.log(this, 'thi')
     this.props.alert && this.props.alert({
       title: 'xxx',
@@ -427,11 +432,20 @@ class Main extends React.Component<Props, State> {
       )
     })
   }
+  public showStockInfo (id: any) {
+    console.log(this, 'thi')
+    this.props.alert && this.props.alert({
+      title: 'xxx',
+      content: (
+        <div><Stock /></div>
+      )
+    })
+  }
   public render () {
-    const columns = (this.props.extraColumns || []).concat(true ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
+    const columns = (this.props.extraColumns || []).concat(this.props.type !== 0 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <Table
-        rowKey={(record: any) => record.id}
+        // rowKey={(record: any) => record.id}
         style={{ marginTop: 10 }}
         scroll={{ x: 2500, y: 600 }}
         columns={columns}
