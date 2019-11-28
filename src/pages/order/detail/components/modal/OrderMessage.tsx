@@ -2,7 +2,8 @@ import React from 'react'
 import Form, { FormItem } from '@/packages/common/components/form' 
 
 interface Props {
-  hidden?: boolean
+  hidden?: boolean,
+  orderPushCustomsMsg: string
 }
 function Main (props: Props) {
   return (
@@ -11,8 +12,8 @@ function Main (props: Props) {
       labelCol={{span: 8}}
       wrapperCol={{span: 16}}
     >
-      <FormItem type='text' label='支付单报文状态'>申报中/申报成功</FormItem>
-      <FormItem type='text' label='报文申请信息'></FormItem>
+      <FormItem type='text' label='支付单报文状态'>{props.orderPushCustomsMsg}</FormItem>
+      <FormItem type='text' label='报文申请信息'>{}</FormItem>
       <FormItem type='text' label='代扣税款'>2.00</FormItem>
       <FormItem type='text' label='订购人姓名'>张三</FormItem>
       <FormItem type='text' label='订购人身份证号'>230227198707201827</FormItem>
