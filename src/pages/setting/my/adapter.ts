@@ -9,9 +9,10 @@ export function handleIconRequestParams (payload: My.iconApiPayload) {
   console.log('handleIconRequestParams before=>', payload)
   result.iconUrl = result.iconUrl && result.iconUrl[0] && removeURLDomain(result.iconUrl[0].url)
   const platformCodes = result.platformCodes || []
+  const memberTypes = result.memberTypes || []
   result.platformCodes = (platformCodes.includes('2') ? platformCodes.concat('1') : platformCodes).join(',')
-  result.platformCodes = (result.platformCodes || []).join(',')
   console.log('handleIconRequestParams after=>', result)
+  result.memberTypes = memberTypes.join && memberTypes.join(',')
   return result
 }
 
@@ -38,9 +39,11 @@ export function handleQueryVersionDetailResponse (res: any) {
 export function handleFormData (config: any) {
   const result = Object.assign({}, config)
   result.iconUrl = initImgList(result.iconUrl)
-  result.platformCodes = (result.platformCodes || '').split(',')
   const platformCodes = result.platformCodes || ''
-  result.platformCodes = platformCodes.split(',').filter((v: string) => v !== '1')
+  const memberTypes = result.memberTypes || ''
+  console.log(platformCodes, '--------------')
+  result.platformCodes = platformCodes.split && platformCodes.split(',').filter((v: string) => v !== '1')
+  result.memberTypes = memberTypes.split && memberTypes.split(',')
   console.log('handleFormData=>', result)
   return result
 }
