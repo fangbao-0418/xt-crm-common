@@ -331,7 +331,7 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="订单类型">
-                  {getFieldDecorator('orderType', {initialValue: values.orderType})(
+                  {getFieldDecorator('queryOrderType', {initialValue: values.queryOrderType})(
                     <Select allowClear placeholder='请选择订单类型'>
                       {orderTypeOptions.map((v) => (
                         <Select.Option value={v.value}>{v.label}</Select.Option>
