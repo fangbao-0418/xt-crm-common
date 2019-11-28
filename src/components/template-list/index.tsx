@@ -1,23 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { Select } from 'antd';
-import { templateList } from './api';
-function TemplateList(props: any, ref: any) {
-  const [list, setList] = useState([]);
-  const getTemplateList = async () => {
-    const res = await templateList();
-    setList(res);
-  };
-  useEffect(() => {
-    getTemplateList();
-  }, []);
-  return (
-    <Select placeholder="请选择" style={{ width: 200 }} {...props} ref={ref}>
-      {(list || []).map((v: any) => (
-        <Select.Option key={v.freightTemplateId} value={v.freightTemplateId}>
-          {v.templateName}
-        </Select.Option>
-      ))}
-    </Select>
-  );
+import React from 'react';
+import { AutoComplete } from 'antd';
+import { isFunction } from 'lodash';
+const { Option } = AutoComplete;
+interface Item {
+  freightTemplateId: number;
+  templateName: string;
 }
-export default React.forwardRef(TemplateList);
+interface Props {
+  onChange(): void;
+  value: string;
+  dataSource: Item[];
+}
+
+let addItem:any = null;
+class Main extends React.Component<Props, any> {
+  public render() {
+    const { dataSource } = this.props;
+    return (
+      <AutoComplete
+        placeholder="请输入"
+        onChange={this.props.onChange}
+        value={this.props.value}
+        allowClear
+        filterOption={(inputValue: string, option: any) => {
+          const children = option.props.children;
+          return (
+            children &&
+            String(children)
+              .toUpperCase()
+              .indexOf(inputValue && String(inputValue).toUpperCase()) !== -1
+          );
+        }}
+      >
+        {(dataSource || []).map(({ freightTemplateId, templateName }: Item, index: number) => (
+          <Option key={freightTemplateId || index}>{templateName || ''}</Option>
+        ))}
+      </AutoComplete>
+    );
+  }
+}
+export default Main;

@@ -3,6 +3,8 @@ declare module HomeIcon {
     id: any
     title: string
     imgUrl?: string | Array<{uid: string, url: string}>
-    sort: number
+    sort: number,
+    platform: number,
+    platformArray?: Array
   }
 }

@@ -2,5 +2,5 @@ export default [
   ['日常', 'http://daily-crm-test.hzxituan.com'],
   ['测试1','https://testapi-crmadmin.hzxituan.com'],
   ['测试2','https://test2api-crmadmin.hzxituan.com'],
-  ['本地', 'http://192.168.4.200:1002']
+  ['本地', 'http://192.168.4.22:8080']
 ]
