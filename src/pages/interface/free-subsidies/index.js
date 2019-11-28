@@ -43,8 +43,6 @@ class InterFaceCategory extends Component {
     checkCate: false,
     checkAct: false,
     visible1: false,
-    visible2: false,
-    cateText: [],
     actText: [],
     selectedSecondary: [],
     secondaryIndex: null,
@@ -62,12 +60,10 @@ class InterFaceCategory extends Component {
     currId: 0,
     productCategoryVOS: [],
     checkData: [],
-    secondStatus: false,
     activityParams: {}
   }
 
   selectedRows = []
-  cateText = []
   constructor(params) {
     super(params);
     //  this.initState();
@@ -77,48 +73,26 @@ class InterFaceCategory extends Component {
     this.setState({
       checkCate: false,
       checkAct: false,
-      cateText: [],
       actText: [],
       currId: 0,
       productCategoryVOS: [],
       checkData: [],
       isShow: true,
-      secondStatus: false,
-      secondaryActText: [],
-      secondCategoryVOS: [],
-      secondaryIndex: null
     })
   }
 
 
   handleClickModal = (data = {}) => {
-    const { type, index, secondaryActText } = data;
-
     if (this.state.actList.length == 0) this.getPromotionList();
     
-    if(type === 'secondary'){
-      this.setState({
-        visible1Type: type,
-        visible1: true,
-        secondaryIndex: index,
-        selectedRowKeys: secondaryActText ? secondaryActText.map(val => val.id) : [],
-        selectedSecondary: secondaryActText || []
-      });
-    } else {
-      this.setState({
-        visible1Type: null,
-        visible1: true,
-        selectedRowKeys: this.state.actText.map(val => val.id),
-        selectedRows: this.state.actText
-      });
-    }
-  };
-  handleClickModalC = () => {
     this.setState({
-      visible2: true,
-      checkData: this.state.cateText
+      visible1Type: null,
+      visible1: true,
+      selectedRowKeys: this.state.actText.map(val => val.id),
+      selectedRows: this.state.actText
     });
   };
+  
   handleCancelModal = () => {
     this.setState({
       visible1: false,
@@ -147,36 +121,25 @@ class InterFaceCategory extends Component {
   }
   getCategory(id) {
     getCategory(id).then(data => {
-      const { secondStatus, secondCategoryVOS } = data;
-      const actText = [], cateText = [];
+      const actText = [];
       data.productCategoryVOS.forEach(val => {
-        if (val.type == 1) cateText.push(val)
-        else if (val.type == 2) actText.push({
+        actText.push({
           id: val.id,
           title: val.name,
         })
       })
-      const productCategoryVOS = [...actText, ...cateText];
+      const productCategoryVOS = [...actText];
       this.props.form.setFieldsValue({
         name: data.name,
         sort: data.sort,
       });
-      const filterIconsecondCategoryVOS = secondCategoryVOS.map(item => {
-        item.icon = initImgList(item.icon)
-        return item
-      }) || []
 
       this.setState({
-        checkCate: cateText.length !== 0,
         checkAct: actText.length !== 0,
-        cateText,
         actText,
         currId: id,
         productCategoryVOS,
         isShow: true,
-        secondStatus: secondStatus === 1 ? true : false,
-        secondCategoryVOS: filterIconsecondCategoryVOS,
-        secondaryActText: []
       })
     })
   }
@@ -203,56 +166,9 @@ class InterFaceCategory extends Component {
       form: { validateFields },
     } = this.props;
     validateFields((err, vals) => {
-      const { secondStatus, secondCategoryVOS } = this.state;
-      const newSecondCategoryVOS = _.cloneDeep(secondCategoryVOS);
-      //开关校验
-      if(secondStatus && !secondCategoryVOS.length){
-        return message.error('请填写二级类目的所有内容')
-      }
-      //细节校验
-      let noValue = secondCategoryVOS.filter(item => {
-        if(item.type === 2){
-          if(!item.productCategoryVOS || !item.productCategoryVOS.length){
-            return item;
-          }
-        }
-        if(item.type === 4 && !item.url){
-          return item
-        }
-        if(!item.name || !item.icon){
-          return item
-        }
-      })
-  
-      if(secondStatus && noValue && noValue.length){
-        return message.error('请填写二级类目的所有内容')
-      } 
       if (!err) {
         const list = [];
-        const vosLength = newSecondCategoryVOS.length - 1;
-        //过滤所有二级类目数据，对接后端接口
-        let filterSecondCategoryVOS = newSecondCategoryVOS.map((item, index) => {
-          const { type, icon } = item;
-          let productCategoryVOS = null;
-
-          if(type === 2 && item.productCategoryVOS){
-            productCategoryVOS = item.productCategoryVOS.map(vos => {
-              return {
-                id: vos.id,
-                type,
-              }
-            })
-          }
-          return Object.assign(
-            item,
-            {
-              productCategoryVOS: productCategoryVOS ? productCategoryVOS : item.productCategoryVOS,
-              sort: vosLength - index,
-              icon: icon ? icon[0].url : ''
-            }
-          )
-        })
-        this.state.checkAct && this.state.actText.forEach(val => {
+        this.state.actText.forEach(val => {
           list.push({
             id: val.id,
             name: val.title,
@@ -260,20 +176,12 @@ class InterFaceCategory extends Component {
           })
         });
 
-        this.state.checkCate && this.state.cateText.forEach(val => {
-          list.push({
-            id: val.id,
-            level: val.level,
-            name: val.name,
-            type: 1
-          })
-        });
         let data = {
           name: vals.name,
           sort: vals.sort,
           productCategoryVOS: list,
-          secondStatus: secondStatus ? 1 : 0,
-          secondCategoryVOS: filterSecondCategoryVOS
+          secondStatus: 0,
+          showType: 2 //展示位置（0：首页展示，1：行业类目展示 2:免单类目）
         }
 
         if (this.state.currId) data.id = this.state.currId;
@@ -357,22 +265,9 @@ class InterFaceCategory extends Component {
   };
 
   handleOkModal = e => {
-    const { visible1Type, secondCategoryVOS, secondaryIndex, selectedSecondary } = this.state;
-    
-    if(visible1Type !== null){
-      if(secondaryIndex !== null && secondCategoryVOS[secondaryIndex].type !== 4){
-        secondCategoryVOS[secondaryIndex].productCategoryVOS =  selectedSecondary;
-      }
-      return this.setState({
-        secondaryActText: selectedSecondary,
-        visible1: false,
-        secondCategoryVOS
-      })
-    }
-
     this.setState({
       actText: this.state.selectedRows,
-      productCategoryVOS: [...this.state.cateText, ...this.state.selectedRows],
+      productCategoryVOS: [...this.state.selectedRows],
       visible1: false
     })
   }
@@ -380,15 +275,7 @@ class InterFaceCategory extends Component {
   handleSearchModal = e => {
     this.getPromotionList({ name: e, page: 1 });
   };
- 
 
-  setCateText() {
-    this.setState({
-      cateText: this.cateText,
-      productCategoryVOS: [...this.cateText, ...this.state.selectedRowKeys],
-      visible2: false
-    })
-  }
 
   render() {
 
@@ -441,27 +328,20 @@ class InterFaceCategory extends Component {
                     message: '请关联活动',
                   },
                 ],
-              })(<div>
-                <Checkbox checked={this.state.checkAct} onChange={(e) => {
-                  this.setState({
-                    checkAct: e.target.checked,
-                  });
-                }}>关联活动</Checkbox>
-                {this.state.checkAct ? (<div className="intf-cat-rebox">
+              })(<div className="intf-cat-rebox">
                   {this.state.actText.map((val, i) => {
                     return <div className="intf-cat-reitem" key={i}>{val.title} <span className="close" onClick={() => {
                       const actText = this.state.actText;
                       actText.splice(i, 1);
                       this.setState({ actText })
                     }}><Icon type="close" /></span></div>
-                  })}<Button type="link" onClick={this.handleClickModal}>+添加活动</Button></div>) : ''}
+                  })}<Button type="link" onClick={this.handleClickModal}>+添加活动</Button>
               </div>)}
             </FormItem>
             <Form.Item {...tailFormItemLayout}>
               <div style={{textAlign: 'right'}}>
                 {this.state.currId ? <Button type="danger" ghost style={{ marginRight: '10px' }} onClick={() => this.delCategory()}>删除</Button> : ''}
                 <Button type="primary" onClick={() => this.handleSave()}>保存</Button>
-           
               </div>
             </Form.Item>
           </Form>
