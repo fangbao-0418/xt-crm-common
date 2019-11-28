@@ -271,42 +271,34 @@ class SkuList extends React.Component<Props, State>{
   calculatePrice = () => {
     const { dataSource, strategyData } = this.state;
     let isZero = false;
+    let isError = false;
     // accAdd, Subtr, accMul, accDiv 
     const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData;
     const newData = dataSource.map(res => {
+      isZero = false;
       const { salePrice, costPrice } = res;
-      if(!Number(salePrice) || !Number(costPrice))isZero = true;
+      if(!Number(salePrice) || !Number(costPrice) || Number(salePrice) - Number(costPrice) < 0){
+        isZero = true;
+        isError = true
+      }
       let grossProfit = Subtr(salePrice,costPrice);//毛利润
       let netProfit : any = Subtr(grossProfit, accDiv(accMul(grossProfit, categoryProfitRate), 100));//去除类目利润比的利润
-      // let headNetProfit = accDiv(accMul(netProfit, headCommissionRate),100);
-      // console.log(netProfit, 'netProfit2')
-      // console.log(headNetProfit, 'headNetProfit')
-      // let areaNetProfit =  accDiv(accMul(Subtr(netProfit, headNetProfit), areaCommissionRate), 100 - headCommissionRate)
-      // console.log(areaNetProfit, 'areaNetProfit')
-      // let cityNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(headNetProfit, areaNetProfit)), cityCommissionRate), 100 - headCommissionRate - areaCommissionRate)
-      // console.log(cityNetProfit, 'cityNetProfit')
-      // let managerNetProfit =  accDiv(accMul(Subtr(netProfit, accAdd(accAdd(headNetProfit, areaNetProfit),cityNetProfit)), managerCommissionRate), Subtr(Subtr(Subtr(100,headCommissionRate),cityCommissionRate),areaCommissionRate))
-      // console.log(managerNetProfit, 'managerNetProfit')
 
       let headNetProfit = accDiv(accMul(netProfit,headCommissionRate),100);
-      console.log(headNetProfit, 'headNetProfit')
       let areaNetProfit = accDiv(accMul(netProfit,areaCommissionRate),100);
-      console.log(areaNetProfit, 'areaNetProfit')
       let cityNetProfit = accDiv(accMul(netProfit,cityCommissionRate),100);
-      console.log(cityNetProfit, 'cityNetProfit')
       let managerNetProfit = accDiv(accMul(netProfit,managerCommissionRate),100);
-      console.log(managerNetProfit, 'managerNetProfit')
       return Object.assign(res, {
-        headPrice: Math.floor(Subtr(salePrice, headNetProfit)*100) / 100,
-        areaMemberPrice: Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*100) / 100,
-        cityMemberPrice: Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit)*100) / 100,
-        managerMemberPrice: Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*100) / 100
+        headPrice: isZero ? 0 : Math.floor(Subtr(salePrice, headNetProfit)*10) / 10,
+        areaMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*10) / 10,
+        cityMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit)*10) / 10,
+        managerMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*10) / 10
       })
     })
-    if(isZero){
+    if(isError){
       message.error('价格错误，不能进行计算，请确认成本价及销售价是否正确');
-      return false;
     } 
+    
     this.setState({
       dataSource: newData
     })
