@@ -181,6 +181,7 @@ class InterFaceCategory extends Component {
           sort: vals.sort,
           productCategoryVOS: list,
           secondStatus: 0,
+          styleType: 1,
           showType: 2 //展示位置（0：首页展示，1：行业类目展示 2:免单类目）
         }
 
@@ -270,6 +271,7 @@ class InterFaceCategory extends Component {
       productCategoryVOS: [...this.state.selectedRows],
       visible1: false
     })
+    this.props.form.setFieldsValue({productCategoryVOS: [...this.state.selectedRows]})
   }
 
   handleSearchModal = e => {
