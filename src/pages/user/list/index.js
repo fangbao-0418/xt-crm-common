@@ -31,6 +31,9 @@ function getColumns(scope) {
             title: '昵称',
             dataIndex: 'nickName'
         }, {
+            title: '锁粉状态',
+            dataIndex: 'fansTypeDesc'
+        }, {
             title: '手机号',
             dataIndex: 'phone'
         }, {
@@ -49,7 +52,7 @@ function getColumns(scope) {
         //  {
         //     title: '推荐人数',
         //     dataIndex: 'inviteMemberCount'
-        // }, 
+        // },
         {
             title: '个人销售额(¥)',
             dataIndex: 'money',
@@ -60,7 +63,7 @@ function getColumns(scope) {
         //  {
         //     title: '团队人数',
         //     dataIndex: 'count'
-        // }, 
+        // },
         {
             title: '团队销售额(¥)',
             dataIndex: 'countMoney',
@@ -212,7 +215,7 @@ export default class extends Component {
                         getFieldDecorator('id', {
                             initialValue: values.id,
                             rules: [{
-                                
+
                                 message: '请输入数字类型',
                                 pattern: /^[0-9]*$/
                             }]
@@ -266,7 +269,7 @@ export default class extends Component {
                 <FormItem label="手机号">
                     {
                         getFieldDecorator('phone', {
-                            initialValue: values.phone 
+                            initialValue: values.phone
                         })(
                             <Input />
                         )
@@ -275,7 +278,7 @@ export default class extends Component {
                 <FormItem label="邀请人手机号">
                     {
                         getFieldDecorator('invitePhone', {
-                            initialValue: values.invitePhone 
+                            initialValue: values.invitePhone
                         })(
                             <Input />
                         )

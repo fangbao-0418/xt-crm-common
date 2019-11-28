@@ -44,7 +44,7 @@ export function updateUserInfo(params) {
 
 /**
  * 根据订单Id和会员Id获取用户收益列表
- * @param {object} data  
+ * @param {object} data
  */
 export function getProceedsListByOrderIdAndMemberId(param) {
     return get(`/crm/member/settlement/v1/order/skuSummaryByMember`, param);
@@ -52,7 +52,7 @@ export function getProceedsListByOrderIdAndMemberId(param) {
 
 /**
  * 根据订单Id和会员Id和SKUId获取用户收益列表
- * @param {object} data  
+ * @param {object} data
  */
 export function getProceedsListByOrderIdAndMemberIdAndSkuId(param) {
     return get(`/crm/member/settlement/v1/detail`, param);
@@ -66,4 +66,9 @@ export function memberModify(params) {
 //获取通用操作原因列表
 export function getReasonList() {
     return newPost('/manager/reason/list');
+}
+
+// 解绑临时锁粉
+export function setMemberUnlocking(params) {
+    return Fetch.post('/member/unlocking', params);
 }
