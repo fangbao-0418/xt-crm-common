@@ -1,12 +1,14 @@
 import React from 'react';
 import { Table, Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
+import { FormComponentProps } from 'antd/lib/form'
 import CardTitle from '../../CardTitle';
 import SkuUploadItem from './SkuUploadItem';
 import styles from './style.module.scss';
 import { size, map } from 'lodash';
 import { accAdd, Subtr, accMul, accDiv } from '@/util/utils';
 import SkuTable from './SkuTable'
+
 const defaultItem: SkuProps = {
   imageUrl1: '',
   skuCode: '',
@@ -55,7 +57,7 @@ export interface SkuProps {
   [field: string]: any
 }
 
-interface Props {
+interface Props extends FormComponentProps {
   specs: Spec[]
   dataSource: SkuProps[]
   showImage: boolean
@@ -63,6 +65,8 @@ interface Props {
   strategyData: {}
   /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
   type?: 0 | 10 | 20
+  /** sku备案信息 */
+  productCustomsDetailVOList: any[]
 }
 interface SpecItem {
   specName: string;
@@ -151,7 +155,7 @@ class SkuList extends React.Component<Props, State>{
         if (index === 0) {
           val.imageUrl1 = item2 && item2.specPicture || val.imageUrl1
         }
-        val.skuId = undefined
+        // val.skuId = undefined
       })
       return val
     })
@@ -621,8 +625,9 @@ class SkuList extends React.Component<Props, State>{
           </> : null
         }
         <SkuTable
-          // type={type}
-          type={10}
+          type={type}
+          form={this.props.form}
+          productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}
           extraColumns={this.getCustomColumns()}
           onChange={(dataSource) => {

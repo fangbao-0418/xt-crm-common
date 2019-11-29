@@ -1,25 +1,33 @@
 /**
  * 库存信息
  */
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Form, { FormItem,  FormInstance } from '@/packages/common/components/form'
-function Stock () {
-  let form: FormInstance
+import { getStockInfo } from '../../api'
+interface Props {
+  id: any
+}
+
+function Stock (props: Props) {
+  const formRef = useRef<FormInstance>()
+  const id = props.id
   useEffect(() => {
-    form.setValues({
-      sellableQty: 'sellableQty',
-      onwayQty: 'onwayQty',
-      pendingQty: 'pendingQty',
-      reservedQty: 'reservedQty',
-      unsellableQty: 'unsellableQty'
+    getStockInfo(id).then((res) => {
+      console.log(res)
+      const form = formRef.current
+      if (form) {
+        form.setValues(res)
+      }
     })
-  }, [])
+  }, [id])
+  // console.log(stockRef, 'stockRef')
   return (
     <Form
+      // ref={ref}
       labelCol={{span: 10}}
       wrapperCol={{span: 14}}
       getInstance={(ref) => {
-        form = ref
+        formRef.current = ref
       }}
     >
       <FormItem

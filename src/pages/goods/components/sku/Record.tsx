@@ -1,35 +1,47 @@
 /**
  * 库存信息
  */
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Form, { FormItem,  FormInstance } from '@/packages/common/components/form'
-function Record () {
-  let form: FormInstance
+export interface RecordProps {
+  skuId: any
+  skuCode: string
+  skuValue: string
+  productName: string
+  customsStatusInfo: string
+  hsCode: string
+  brand: string
+  hsProductName: string
+  weightInfo: string
+  declaredPriceInfo: string
+  originCountry: string
+  generalTaxRateInfo: string
+  exemptValueInfo: string
+  createTime: number
+  lastUpdateTime: number
+}
+interface Props {
+  detail: RecordProps
+}
+function Record (props: Props) {
+  const formRef = useRef<FormInstance>()
   useEffect(() => {
-    form.setValues({
-      skuId: '222',
-      skuCode: 'skuCode',
-      skuValue: 'skuValue',
-      productName: 'productName',
-      customsStatusInfo: 'customsStatusInfo',
-      hsCode: 'hsCode',
-      brand: 'brand',
-      hsProductName: 'hsProductName',
-      weightInfo: 'weightInfo',
-      declaredPriceInfo: 'declaredPriceInfo',
-      originCountry: 'originCountry',
-      generalTaxRateInfo: 'generalTaxRateInfo',
-      exemptValueInfo: 'exemptValueInfo',
-      createTime: 'createTime',
-      lastUpdateTime: 'lastUpdateTime'
-    })
-  }, [])
+    const form = formRef.current
+    if (form) {
+      const detail = props.detail || {}
+      form.setValues({
+        ...detail,
+        createTime: APP.fn.formatDate(detail.createTime),
+        lastUpdateTime: APP.fn.formatDate(detail.lastUpdateTime)
+      })
+    }
+  }, [props.detail])
   return (
     <Form
       labelCol={{span: 10}}
       wrapperCol={{span: 14}}
       getInstance={(ref) => {
-        form = ref
+        formRef.current = ref
       }}
     >
       <FormItem

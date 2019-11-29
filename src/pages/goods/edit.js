@@ -2,7 +2,6 @@
 /* eslint-disable no-script-url */
 import React from 'react';
 import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader } from 'antd';
-import { FormItem } from '@/packages/common/components/form'
 import UploadView from '@/components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
 import { map, size, concat, filter, assign, forEach, cloneDeep, split } from 'lodash';
@@ -14,6 +13,7 @@ import SkuList from './components/sku';
 import { TemplateList } from '@/components';
 import styles from './edit.module.scss'
 import DraggableUpload from './components/draggable-upload'
+export const FormItem = Form.Item
 const replaceHttpUrl = imgUrl => {
   return imgUrl
     .replace('https://assets.hzxituan.com/', '')
@@ -156,6 +156,7 @@ class GoodsEdit extends React.Component {
         showImage
       });
       setFieldsValue({
+        productType: res.productType,
         interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
         freightTemplateId: String(res.freightTemplateId),
@@ -324,6 +325,10 @@ class GoodsEdit extends React.Component {
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
     validateFields((err, vals) => {
       console.log('vals=>', vals)
+      if (err) {
+        APP.error('请检查输入项')
+        return
+      }
       vals.freightTemplateId = +vals.freightTemplateId
       if (!err) {
         if (size(speSelect) === 0) {
@@ -455,7 +460,7 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
-    const { productType } = getFieldsValue()
+    const { productType, productCustomsDetailVOList } = getFieldsValue()
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -576,14 +581,31 @@ class GoodsEdit extends React.Component {
                 }
               ]
             })(
-              <Select>
+              <Select
+                onChange={(value) => {
+                  if (value === 0) {
+                    this.props.form.setFieldsValue({isAuthentication: 1})
+                    const data = (this.state.data || []).map((item) => {
+                      item.skuCode = ''
+                      item.deliveryMode = 2
+                      return item
+                    })
+                    this.setState({
+                      data
+                    })
+                  }
+                }}
+              >
                 <Select.Option value={0}>普通商品</Select.Option>
                 <Select.Option value={10}>一般海淘商品</Select.Option>
                 <Select.Option value={20}>保税仓海淘商品</Select.Option>
               </Select>
             )}
           </Form.Item>
-          <Form.Item label="实名认证" required>
+          <Form.Item
+            label="实名认证"
+            required
+          >
             {getFieldDecorator('isAuthentication', {
               initialValue: 0,
               rules: [
@@ -593,7 +615,9 @@ class GoodsEdit extends React.Component {
                 }
               ]
             })(
-              <Radio.Group>
+              <Radio.Group
+                disabled={[10, 20].indexOf(productType) > -1}
+              >
                 <Radio value={0}>否</Radio>
                 <Radio value={1}>是</Radio>
               </Radio.Group>
@@ -682,7 +706,9 @@ class GoodsEdit extends React.Component {
           </Form.Item>
         </Card>
         <SkuList
+          form={this.props.form}
           type={productType}
+          productCustomsDetailVOList={productCustomsDetailVOList}
           showImage={this.state.showImage}
           specs={this.state.speSelect}
           dataSource={this.state.data}
