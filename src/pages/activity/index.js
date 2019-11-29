@@ -55,6 +55,19 @@ const LuckDrawAdd = Loadable({
   loader: () => import('./luckdraw/add'),
   loading: Loader,
 });
+
+/** 抽奖活动管理 */
+const Lottery = Loadable({
+  loader: () => import('./lottery'),
+  loading: Loader
+})
+
+/** 抽奖活动 */
+const LotteryForm = Loadable({
+  loader: () => import('./lottery/form'),
+  loading: Loader
+})
+
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -71,6 +84,8 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/credit_pay/:id`} component={CreaditPayDetail} />
         <Route path={`${match.url}/luckdraw/list`} component={LuckDrawList} />
         <Route path={`${match.url}/luckdraw/add`} component={LuckDrawAdd} />
+        <Route path={`${match.url}/lottery`} exact component={Lottery} />
+        <Route path={`${match.url}/lottery/:id`} component={LotteryForm} />
       </Switch>
     );
   }
