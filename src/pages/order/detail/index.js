@@ -13,6 +13,39 @@ import { dateFormat } from '@/util/utils';
 import moment from 'moment';
 import WithModal from './components/modal'
 
+/**
+ * 海淘状态
+ * 10-用户已下单，20-已取消，30-订单申报中，41-订单申报失败，50-支付单申报中，51-支付申报失败，60-海关清关中，61-海关清关失败，70-保税仓准备中，80-保税仓已发货
+ */
+const globalOrderStatusConfig = {
+  '10': '用户已下单',
+  '20': '已取消',
+  '30': '订单申报中',
+  '41': '订单申报失败',
+  '50': '支付单申报中',
+  '51': '支付申报失败',
+  '60': '海关清关中',
+  '61': '海关清关失败',
+  '70': '保税仓准备中',
+  '80': '保税仓已发货'
+}
+
+/**
+ * 订单推送海关状态
+ */
+const orderPushCustomsStatusConfig = {
+  '1': '未推送',
+  '2': '已推送',
+  '3': '处理成功',
+  '4': '处理失败'
+}
+
+/**
+ * 支付单推送状态
+ */
+const paymentPushCustomsStatusMap = {
+  
+}
 const { confirm } = Modal;
 class Detail extends Component {
   get id() {
@@ -64,7 +97,7 @@ class Detail extends Component {
         childOrderMap[id] && childOrderMap[id].skuList && childOrderMap[id].skuList.push(item);
       });
       this.setState({
-        data: data,
+        data,
         childOrderList: Object.values(childOrderMap),
       });
     });
@@ -149,7 +182,7 @@ class Detail extends Component {
     let { data, childOrderList, userProceedsListByOrderId, goodsTableKey, deliveryVisible, deliveryData } = this.state;
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
-    console.log(childOrderList, 'childOrderList')
+    const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
     return (
       <>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
@@ -158,30 +191,32 @@ class Detail extends Component {
         {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
         {/* 海关信息 */}
-        <Card title='海关信息'>
+        <Card title='海关信息' hidden={false}>
           <Row gutter={24}>
-            <Col span={8}>海淘状态：{}</Col>
-            <Col span={8}>清关完成时间：{}</Col>
+            <Col span={8}>海淘状态：{globalOrderStatusConfig[orderGlobalExtendVO.globalOrderStatus]}</Col>
+            <Col span={8}>清关完成时间：{APP.fn.formatDate(orderGlobalExtendVO.customsClearanceTime)}</Col>
           </Row>
           <Row gutter={24}>
-            <Col span={8}>订单报文：申报中
+            <Col span={8}>订单报文：{orderPushCustomsStatusConfig[orderGlobalExtendVO.orderPushCustomsStatus]}
               <Button type='link'
                 onClick={() => {
                   this.props.modal.show({
                     type: 'payMessage',
-                    title: '支付单报文详情'
+                    title: '支付单报文详情',
+                    ...orderGlobalExtendVO
                   })
                 }}>
                 查看详情
               </Button>
             </Col>
-            <Col span={8}>支付单报文：申报中 
+            <Col span={8}>支付单报文：{paymentPushCustomsStatusMap[orderGlobalExtendVO.paymentPushCustomsStatus]}
               <Button
                 type='link'
                 onClick={() => {
                   this.props.modal.show({
                     type: 'orderMessage',
-                    title: '订单报文详情'
+                    title: '订单报文详情',
+                    ...orderGlobalExtendVO
                   })
                 }}>
                 查看详情

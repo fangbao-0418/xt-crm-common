@@ -13,6 +13,7 @@ import SkuList from './components/sku';
 import { TemplateList } from '@/components';
 import styles from './edit.module.scss'
 import DraggableUpload from './components/draggable-upload'
+export const FormItem = Form.Item
 const replaceHttpUrl = imgUrl => {
   return imgUrl
     .replace('https://assets.hzxituan.com/', '')
@@ -155,6 +156,7 @@ class GoodsEdit extends React.Component {
         showImage
       });
       setFieldsValue({
+        productType: res.productType,
         interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
         freightTemplateId: String(res.freightTemplateId),
@@ -323,6 +325,10 @@ class GoodsEdit extends React.Component {
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
     validateFields((err, vals) => {
       console.log('vals=>', vals)
+      if (err) {
+        APP.error('请检查输入项')
+        return
+      }
       vals.freightTemplateId = +vals.freightTemplateId
       if (!err) {
         if (size(speSelect) === 0) {
@@ -447,15 +453,14 @@ class GoodsEdit extends React.Component {
     }
   }
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldsValue } = this.props.form;
     const { supplier, interceptionVisible, categoryList } = this.state;
     const {
       match: {
         params: { id },
       },
     } = this.props;
-    console.log(categoryList, 'categoryList')
-    console.log(this.state, 'state')
+    const { productType, productCustomsDetailVOList } = getFieldsValue()
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -566,7 +571,41 @@ class GoodsEdit extends React.Component {
               </Form.Item> :
               null
           }
-           <Form.Item label="实名认证" required>
+          <Form.Item label="商品类型" required>
+            {getFieldDecorator('productType', {
+              initialValue: 0,
+              rules: [
+                {
+                  required: true,
+                  message: '请选择商品类型'
+                }
+              ]
+            })(
+              <Select
+                onChange={(value) => {
+                  if (value === 0) {
+                    this.props.form.setFieldsValue({isAuthentication: 1})
+                    const data = (this.state.data || []).map((item) => {
+                      item.skuCode = ''
+                      item.deliveryMode = 2
+                      return item
+                    })
+                    this.setState({
+                      data
+                    })
+                  }
+                }}
+              >
+                <Select.Option value={0}>普通商品</Select.Option>
+                <Select.Option value={10}>一般海淘商品</Select.Option>
+                <Select.Option value={20}>保税仓海淘商品</Select.Option>
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item
+            label="实名认证"
+            required
+          >
             {getFieldDecorator('isAuthentication', {
               initialValue: 0,
               rules: [
@@ -576,7 +615,9 @@ class GoodsEdit extends React.Component {
                 }
               ]
             })(
-              <Radio.Group>
+              <Radio.Group
+                disabled={[10, 20].indexOf(productType) > -1}
+              >
                 <Radio value={0}>否</Radio>
                 <Radio value={1}>是</Radio>
               </Radio.Group>
@@ -665,6 +706,9 @@ class GoodsEdit extends React.Component {
           </Form.Item>
         </Card>
         <SkuList
+          form={this.props.form}
+          type={productType}
+          productCustomsDetailVOList={productCustomsDetailVOList}
           showImage={this.state.showImage}
           specs={this.state.speSelect}
           dataSource={this.state.data}
@@ -728,7 +772,7 @@ class GoodsEdit extends React.Component {
                   style={{ width: 160, marginRight: 10 }}
                   placeholder="收货人电话"
                   name="returnPhone"
-                  value={this.state.returnPhone}
+                  // value={this.state.returnPhone}
                   type="tel"
                   maxLength={12}
                   onChange={this.handleInput}

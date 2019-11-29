@@ -18,6 +18,8 @@ const Options = {
   0: '喜团',
   1: '1688',
   2: '淘宝联盟',
+  3: '一般海外供应商',
+  4: '保税仓海外供应商'
 };
 
 const valueArray = Object.keys(Options);
@@ -25,7 +27,12 @@ const valueArray = Object.keys(Options);
 export default class SupplierTypeSelect extends Component {
   render() {
     return (
-      <Select placeholder="请选择供应商分类" style={{ width: 150 }} {...this.props}>
+      <Select
+        allowClear
+        placeholder="请选择供应商分类"
+        style={{ width: 150 }}
+        {...this.props}
+      >
         {valueArray.map(v => (
           <Option value={Number(v)} key={v}>{Options[v]}</Option>
         ))}
