@@ -43,13 +43,11 @@ function Main <T> (WrappedComponent: React.ComponentType<T>) {
             width='700px'
             title={title}
             visible={this.state.visible}
-            onOk={this.handleOk}
             onCancel={this.hideModal}
-            okText="确认"
-            cancelText="取消"
+            footer={null}
           >
-            <OrderMessage hidden={type === 'orderMessage'} {...rest} />
-            <PayMessage hidden={type === 'payMessage'} {...rest}/>
+            {type === 'orderMessage' && <OrderMessage {...rest} />}
+            {type === 'payMessage' && <PayMessage {...rest}/>}
           </Modal>
           <WrappedComponent
             modal={{
