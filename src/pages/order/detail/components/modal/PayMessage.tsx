@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Button } from 'antd'
-import Form, { FormItem } from '@/packages/common/components/form' 
+import Form, { FormInstance, FormItem } from '@/packages/common/components/form' 
 
 /**
  * 订单推送海关状态
@@ -21,19 +21,26 @@ interface Props {
   paymentPushCustomsTime: number
   paymentNo: string
   taxMoney: number,
+  /** 支付单推送海关状态：1-未推送，2-已推送，3-处理成功，4-处理失败 */
   paymentPushCustomsStatus: 1 | 2 | 3 | 4
   paymentPushCustomsMsg: string
 }
 function Main (props: Props) {
-  const paymentChannel = props.paymentChannel === 1 ? '支付宝' : '微信'
+  /** 支付报文类型*/
+  const paymentChannel = useMemo(() => props.paymentChannel === 1 ? '支付宝' : '微信', [props.paymentChannel])
+  /** 是否失败 */
+  const isFailed = useMemo(() => Number(props.paymentPushCustomsStatus) === 4, [props.paymentPushCustomsStatus])
+  let form: FormInstance
   return (
     <Form
+      getInstance={(ref) => form = ref}
       style={{ display: props.hidden ? 'none': 'block'}}
       labelCol={{span: 8}}
       wrapperCol={{span: 16}}
       addonAfter={
         (
           <FormItem
+            hidden={!isFailed}
             formItemProps={{
               wrapperCol: {
                 xs: { span: 24, offset: 0 },
@@ -41,8 +48,21 @@ function Main (props: Props) {
               }
             }}
           >
-            <Button className='mr10'>取消</Button>
-            <Button type='primary' htmlType='submit'>重新提交</Button>
+            <Button
+              className='mr10'
+              onClick={() => {
+                form.props.form.resetFields()
+              }}>
+              取消
+            </Button>
+            <Button
+              type='primary'
+              onClick={() => {
+                
+              }}
+            >
+              重新提交
+            </Button>
           </FormItem>
         )
       }
