@@ -159,8 +159,8 @@ class OrderList extends React.Component {
               {getFieldDecorator('code', {initialValue: values.code})(<Input placeholder="" />)}
             </FormItem>
             <FormItem label='供应商分类'>
-              {getFieldDecorator('supplierType', {
-                initialValue: values.supplierType
+              {getFieldDecorator('category', {
+                initialValue: values.category
               })(<SupplierTypeSelect />)}
             </FormItem>
             <FormItem label="创建时间">

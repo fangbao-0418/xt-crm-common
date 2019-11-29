@@ -15,19 +15,23 @@ import WithModal from './components/modal'
 
 /**
  * 海淘状态
- * 10-用户已下单，20-已取消，30-订单申报中，41-订单申报失败，50-支付单申报中，51-支付申报失败，60-海关清关中，61-海关清关失败，70-保税仓准备中，80-保税仓已发货
+ * 10-用户已下单，20-订单申报中，21-订单申报失败，22-订单申报成功，30-支付单申报中，31-支付申报失败，
+ * 32-支付单申报成功，40-已推送保税仓，41-推送保税仓失败，50-海关清关中，51-海关清关失败，60-保税仓准备中，70-保税仓已发货
  */
 const globalOrderStatusConfig = {
   '10': '用户已下单',
-  '20': '已取消',
-  '30': '订单申报中',
-  '41': '订单申报失败',
-  '50': '支付单申报中',
-  '51': '支付申报失败',
-  '60': '海关清关中',
-  '61': '海关清关失败',
-  '70': '保税仓准备中',
-  '80': '保税仓已发货'
+  '20': '订单申报中',
+  '21': '订单申报失败',
+  '22': '订单申报成功',
+  '30': '支付单申报中',
+  '31': '支付申报失败',
+  '32': '支付单申报成功',
+  '40': '已推送保税仓',
+  '41': '推送保税仓失败',
+  '50': '海关清关中',
+  '51': '海关清关失败',
+  '60': '保税仓准备中',
+  '70': '保税仓已发货'
 }
 
 /**
@@ -179,7 +183,7 @@ class Detail extends Component {
     });
   }
   render() {
-    let { data, childOrderList, userProceedsListByOrderId, goodsTableKey, deliveryVisible, deliveryData } = this.state;
+    let { data, childOrderList, userProceedsListByOrderId, goodsTableKey, deliveryVisible, deliveryData } = this.state
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
     const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
@@ -194,7 +198,7 @@ class Detail extends Component {
         <Card title='海关信息' hidden={false}>
           <Row gutter={24}>
             <Col span={8}>海淘状态：{globalOrderStatusConfig[orderGlobalExtendVO.globalOrderStatus]}</Col>
-            <Col span={8}>清关完成时间：{APP.fn.formatDate(orderGlobalExtendVO.customsClearanceTime)}</Col>
+            <Col span={8}>清关完成时间：{!!orderGlobalExtendVO.customsClearanceTime && APP.fn.formatDate(orderGlobalExtendVO.customsClearanceTime)}</Col>
           </Row>
           <Row gutter={24}>
             <Col span={8}>订单报文：{orderPushCustomsStatusConfig[orderGlobalExtendVO.orderPushCustomsStatus]}

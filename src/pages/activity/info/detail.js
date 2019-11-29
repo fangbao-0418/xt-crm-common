@@ -197,18 +197,21 @@ class ActivityDetail extends React.Component {
       {
         title: '活动库存',
         dataIndex: 'inventory',
-        render: (text, record, index) => (
-          speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
-            <InputNumber
-              style={{width: 140}}
-              min={0}
-              max={record.stock}
-              precision={0}
-              value={text}
-              onChange={this.handleChangeValue('inventory', index)}
-            />
-          )
-        ),
+        render: (text, record, index) => {
+          const props = {
+            style: {
+              width: 140
+            },
+            min: 0,
+            precision: 0,
+            value: text,
+            onChange: this.handleChangeValue('inventory', index)
+          }
+          if (record.sellableQty) {
+            props.max = record.sellableQty
+          }
+          return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
+        },
       },
       {
         title: '可用库存',
@@ -216,7 +219,7 @@ class ActivityDetail extends React.Component {
         render: (text, record, index) => {
           // 1.售后详情中 订单信息模块 需要添加订单类型的属性
           // 海淘商品可用库存需要读取保宏仓的可用库存数量，活动库存不可大于可用库存
-          return <span>{true ? '无限制' : text}</span>
+          return <span>{record.sellableQty || '无限制' }</span>
         }
       },
       {
