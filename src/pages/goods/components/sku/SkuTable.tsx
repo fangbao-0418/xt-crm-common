@@ -1,17 +1,28 @@
 import React from 'react'
-import { Table, Card, Select, Popover, Input, Button, message } from 'antd'
+import { Table, Card, Select, Popover, Input, Button, message, Form } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
+import { FormComponentProps } from 'antd/lib/form'
 import { deliveryModeType } from '@/enum';
 import ArrowContain from '../arrow-contain'
 import { SkuProps } from './index'
+import { FormItem } from '../../edit'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import InputMoney from '@/packages/common/components/input-money'
 import Record from './Record'
+import Stock from './Stock'
+import { RecordEnum } from './constant'
+import styles from './style.module.scss'
+
 const { Option } = Select;
 
-interface Props extends Partial<AlertComponentProps> {
+interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   extraColumns?: ColumnProps<any>[]
   dataSource: SkuProps[]
   onChange?: (dataSource: SkuProps[]) => void
+  /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
+  type: 0 | 10 | 20
+  /** sku备案信息 */
+  productCustomsDetailVOList: any[]
 }
 
 interface State {
@@ -83,7 +94,7 @@ class Main extends React.Component<Props, State> {
       {
         title: '发货方式',
         dataIndex: 'deliveryMode',
-        width: 100,
+        width: 200,
         render: (text: any, record: any, index: any) => {
           return (
             <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
@@ -100,7 +111,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入市场价"
               onChange={cb('marketPrice', record, index)}
@@ -114,7 +125,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入成本价"
               onChange={cb('costPrice', record, index)}
@@ -142,7 +153,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text, record, index: any) => (
           this.speedyInput('salePrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入销售价"
               onChange={cb('salePrice', record, index)}
@@ -156,7 +167,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('headPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入团长价"
               onChange={cb('headPrice', record, index)}
@@ -170,7 +181,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入社区管理员价"
               onChange={cb('areaMemberPrice', record, index)}
@@ -184,7 +195,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入合伙人价"
               onChange={cb('cityMemberPrice', record, index)}
@@ -198,7 +209,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入公司管理员价"
               onChange={cb('managerMemberPrice', record, index)}
@@ -224,6 +235,7 @@ class Main extends React.Component<Props, State> {
   }
   /** 海外列表 */
   public getOverseasColumns (cb: any, dataSource: SkuProps[]): ColumnProps<SkuProps>[] {
+    const { getFieldDecorator } = this.props.form
     return [
       {
         title: '供应商skuID',
@@ -243,58 +255,101 @@ class Main extends React.Component<Props, State> {
         title: '商品编码',
         dataIndex: 'skuCode',
         width: 200,
-        render: (text: any, record: any, index: any) => {
+        render: (text, record, index) => {
           return (
-            <Input
-              value={text}
-              placeholder="请输入商品编码"
-              onChange={cb('skuCode', record, index)}
-            />
+            <FormItem
+              wrapperCol={{span: 24}}
+            > 
+              {
+                getFieldDecorator(`skuCode-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      required: true,
+                      message: 'SKU编码不能为空'
+                    },
+                    {
+                      pattern: /^SKUH[\d]{12}$/,
+                      message: 'SKU编码规则：固定头 + 产品类型 + 创建年月日(2019简写19) + 类目两位数代码 + 流水号, eg:SKUH191126010001'
+                    }
+                  ]
+                })(
+                  <Input
+                    // value={text}
+                    placeholder="请输入商品编码"
+                    onChange={(e) => {
+                      const value = e.target.value
+                      // console.log(!value, value, 'value')
+                      cb('skuCode', record, index)(value)
+                      if (!value) {
+                        setTimeout(() => {
+                          this.forceUpdate()
+                        }, 400)
+                      }
+                      if (/^SKUH\d{12}$/.test(value)) {
+                        
+                      }
+                    }}
+                  />
+                )
+              }
+            </FormItem>
           );
         },
       },
       {
         title: '发货方式',
         dataIndex: 'deliveryMode',
-        width: 100,
+        width: 200,
         render: (text: any, record: any, index: any) => {
           return (
             <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
-              {
-                deliveryModeType.getArray().map(item => (<Option value={item.key} key={item.key}>{item.val}</Option>))
-              }
+              <Option value={4} key='d-4'>保宏保税仓</Option>
             </Select>
           )
         }
       },
       {
         title: '备案信息',
-        dataIndex: 'baxx',
+        dataIndex: 'customsStatusInfo',
         width: 100,
         render: (text, record) => {
-          return (
-            <div onClick={this.showRecordsInfo.bind(this, record)}>已完成</div>
-          )
+          return text ? (
+            <span
+              className={text === 30 ? 'href' : ''}
+              onClick={() => {
+                if (text === 30) {
+                  this.showRecordInfo(record)
+                }
+              }}
+            >
+              {RecordEnum[text]}
+            </span>
+          ) : '-'
         }
       },
       {
         title: '综合税率（读取自备案信息）',
-        dataIndex: 'baxx11',
-        width: 100
+        dataIndex: 'generalTaxRate',
+        width: 100,
+        render: (text) => {
+          return text !== null || '-'
+        }
       },
       {
         title: '库存',
         dataIndex: 'stock',
         width: 200,
-        render: (text: any, record, index: any) => (
-          this.speedyInput('stock', text, record, index, dataSource, cb)(
-            <Input
-              value={text}
-              placeholder="请输入库存"
-              onChange={cb('stock', record, index)}
-            />
+        render: (text: any, record, index) => {
+          return (
+            <Button
+              size='small'
+              onClick={this.showStockInfo.bind(this, record)}
+            >
+              查看
+            </Button>
           )
-        ),
+        },
       },
       {
         title: '市场价',
@@ -302,7 +357,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入市场价"
               onChange={cb('marketPrice', record, index)}
@@ -316,7 +371,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入成本价"
               onChange={cb('costPrice', record, index)}
@@ -330,7 +385,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text, record, index: any) => (
           this.speedyInput('salePrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入销售价"
               onChange={cb('salePrice', record, index)}
@@ -344,7 +399,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('headPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入团长价"
               onChange={cb('headPrice', record, index)}
@@ -358,7 +413,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入社区管理员价"
               onChange={cb('areaMemberPrice', record, index)}
@@ -372,7 +427,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入合伙人价"
               onChange={cb('cityMemberPrice', record, index)}
@@ -386,7 +441,7 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
-            <Input
+            <InputMoney
               value={text}
               placeholder="请输入公司管理员价"
               onChange={cb('managerMemberPrice', record, index)}
@@ -418,22 +473,35 @@ class Main extends React.Component<Props, State> {
       this.props.onChange([...dataSource])
     }
   }
-  public showRecordsInfo (id: any) {
+  public showRecordInfo (id: any) {
     console.log(this, 'thi')
+    const productCustomsDetailVOList = this.props.productCustomsDetailVOList || []
+    const detail = productCustomsDetailVOList.find((item) => {
+      item.skuId = item.skuId
+    })
     this.props.alert && this.props.alert({
-      title: 'xxx',
+      title: '备案信息',
       content: (
-        <div><Record /></div>
+        <div><Record detail={detail} /></div>
+      )
+    })
+  }
+  public showStockInfo (record: SkuProps) {
+    this.props.alert && this.props.alert({
+      title: '库存详情',
+      content: (
+        <Stock id={record.skuId}/>
       )
     })
   }
   public render () {
-    const columns = (this.props.extraColumns || []).concat(true ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
+    const columns = (this.props.extraColumns || []).concat(this.props.type !== 0 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <Table
-        rowKey={(record: any) => record.id}
+        // rowKey={(record: any) => record.id}
+        className={styles['sku-table']}
         style={{ marginTop: 10 }}
-        scroll={{ x: 2500, y: 600 }}
+        scroll={{ x: 2500 }}
         columns={columns}
         dataSource={this.state.dataSource}
         pagination={false}
@@ -441,4 +509,4 @@ class Main extends React.Component<Props, State> {
     )
   }
 }
-export default Alert<Props>(Main)
+export default Alert(Main)

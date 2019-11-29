@@ -80,3 +80,9 @@
 :global(.ant-upload-list-item.dragging) {
   opacity: .4;
 }
+
+.sku-table {
+  :global(.ant-form-item-control) {
+    line-height: 32px;
+  }
+}
