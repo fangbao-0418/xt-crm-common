@@ -171,7 +171,15 @@ class SupplierModal extends Component {
               )}
             </FormItem> */}
             <FormItem key={this.state.renderKey} label="供应商分类">
-              {getFieldDecorator('category', { initialValue: data.category })(
+              {getFieldDecorator('category', {
+                initialValue: data.category,
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择供应商分类'
+                  }
+                ]
+              })(
                 <SupplierTypeSelect placeholder="" />,
               )}
             </FormItem>

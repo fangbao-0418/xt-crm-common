@@ -289,7 +289,6 @@ class Detail extends Component {
                             onClick={() => this.comfirmPush1688(item.childOrder.id)}
                           >重新推送1688 </Button> : ''}
                         </Col>
-                        <Col span={8}>订单类型：{}</Col>
                       </Row>
                       <Row gutter={24}>
                         <Col span={8}>供应商：{item.childOrder.storeName}</Col>
