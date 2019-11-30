@@ -18,7 +18,11 @@ class GoodsTable extends Component {
     childOrderProceeds: [],
     skuInfo: {}
   }
-  // 是否显示申请售后按钮
+  /**
+   * 是否显示申请售后按钮
+   * orderType 订单类型（0：普通订单，10：激活码订单，20：地推订单，30：助力分兑换订单，50：买赠订单，60：线下团购会订单）
+   * orderStatus 订单状态（10：待付款；20：待发货；25：部分发货； 30：已发货；40：已收货; 50完成; 60关闭）
+   */
   showApplyBtn = (orderStatus, orderType) => {
     return orderType !== 50 && orderType !== 60 && [20, 25, 30, 40, 50].includes(orderStatus)
   }
@@ -45,7 +49,7 @@ class GoodsTable extends Component {
           okText: '查看详情',
           cancelText: '取消',
           onOk: () => {
-            this.props.history.push(`/order/refundOrder/${record.skuServerId}`)
+            APP.history.push(`/order/refundOrder/${record.skuServerId}`)
           }
         })
       }
@@ -147,10 +151,24 @@ class GoodsTable extends Component {
               </Button>
             </div>
             <div>
-              {record.canShowHistoryBtn && <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>历史售后</Button>}
+              {record.canShowHistoryBtn && (
+                <Button
+                  style={{ padding: 0 }}
+                  type="link"
+                  size="small"
+                  onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>
+                  历史售后
+                </Button>
+              )}
             </div>
             <div>
-              <Button style={{ padding: 0 }} type="link" size="small" onClick={() => this.childOrderProceeds(record, proceedsVisible)}>{proceedsVisible ? "收起收益" : "查看收益"}</Button>
+              <Button
+                style={{ padding: 0 }}
+                type="link"
+                size="small"
+                onClick={() => this.childOrderProceeds(record, proceedsVisible)}>
+                {proceedsVisible ? "收起收益" : "查看收益"}
+              </Button>
             </div>
           </>
         )
@@ -187,25 +205,32 @@ class GoodsTable extends Component {
               pagination={false}
               title={() => tableTitle}
               footer={() => {
-                return <>
+                return (<>
                   {
-                    proceedsVisible ?
+                    proceedsVisible && (
                       <Row style={{ marginBottom: 20 }}>
                         <Col>
                           <span style={{ fontWeight: 'bold' }}>SKU收益：</span>
                           <ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />
                         </Col>
-                      </Row> :
-                      null
+                      </Row>
+                    )
                   }
                   <Row>
                     <Col>
                       <span style={{ fontWeight: 'bold' }}>客服备注：</span>
-                      {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>)}
+                      {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => {
+                        return <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
+                      })}
                     </Col>
                   </Row>
-                  <LogisticsInfo mainorderInfo={orderInfo} logistics={logistics} onSuccess={this.props.query} orderInfo={childOrder} />
-                </>
+                  <LogisticsInfo
+                    mainorderInfo={orderInfo}
+                    logistics={logistics}
+                    onSuccess={this.props.query}
+                    orderInfo={childOrder}
+                  />
+                </>)
               }}
             />
           </div>
