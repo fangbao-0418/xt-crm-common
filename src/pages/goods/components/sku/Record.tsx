@@ -62,7 +62,7 @@ function Record (props: Props) {
       <FormItem
         type='text'
         label='海关备案状态'
-        name='customsStatusInfoIn fo'
+        name='customsStatusInfo'
       />
       <FormItem
         type='text'
@@ -87,7 +87,7 @@ function Record (props: Props) {
       <FormItem
         type='text'
         label='产品申报价'
-        name='declaredPriceInfoIn fo'
+        name='declaredPriceInfo'
       />
       <FormItem
         type='text'

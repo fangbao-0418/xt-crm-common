@@ -44,6 +44,7 @@ const formLayout = {
 };
 
 class GoodsEdit extends React.Component {
+  id = this.props.match.params.id
   specs = [];
   status = parseQuery().status
   state = {
@@ -62,7 +63,8 @@ class GoodsEdit extends React.Component {
     returnPhone: '',
     returnAddress: '',
     showImage: false,
-    strategyData: null
+    strategyData: null,
+    productCustomsDetailVOList: []
   };
 
   componentDidMount() {
@@ -80,7 +82,7 @@ class GoodsEdit extends React.Component {
           categoryList,
         },
         () => {
-          const id = this.props.match.params.id
+          const id = this.id
           /** 编辑 */
           if (id) {
             this.getGoodsDetial(res);
@@ -153,7 +155,8 @@ class GoodsEdit extends React.Component {
         returnContact: res.returnContact,
         returnPhone: res.returnPhone,
         returnAddress: res.returnAddress,
-        showImage
+        showImage,
+        productCustomsDetailVOList: res.productCustomsDetailVOList || []
       });
       setFieldsValue({
         productType: res.productType,
@@ -454,13 +457,14 @@ class GoodsEdit extends React.Component {
   }
   render() {
     const { getFieldDecorator, getFieldsValue } = this.props.form;
-    const { supplier, interceptionVisible, categoryList } = this.state;
+    const { supplier, interceptionVisible, productCustomsDetailVOList } = this.state;
     const {
       match: {
         params: { id },
       },
     } = this.props;
-    const { productType, productCustomsDetailVOList } = getFieldsValue()
+    const { productType } = getFieldsValue()
+    console.log(productCustomsDetailVOList, 'productCustomsDetailVOList')
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -582,18 +586,21 @@ class GoodsEdit extends React.Component {
               ]
             })(
               <Select
+                disabled={this.id}
                 onChange={(value) => {
-                  if (value === 0) {
+                  if (value !== 0) {
                     this.props.form.setFieldsValue({isAuthentication: 1})
-                    const data = (this.state.data || []).map((item) => {
-                      item.skuCode = ''
-                      item.deliveryMode = 2
-                      return item
-                    })
-                    this.setState({
-                      data
-                    })
+                  } else {
+                    this.props.form.setFieldsValue({isAuthentication: 0})
                   }
+                  const data = (this.state.data || []).map((item) => {
+                    item.skuCode = ''
+                    item.deliveryMode = value === 20 ? 4 : 2
+                    return item
+                  })
+                  this.setState({
+                    data
+                  })
                 }}
               >
                 <Select.Option value={0}>普通商品</Select.Option>

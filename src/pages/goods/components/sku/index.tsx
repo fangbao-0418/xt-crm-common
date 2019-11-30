@@ -31,8 +31,8 @@ export interface SkuProps {
   storeProductSkuId?: number
   /** 商品编码 */
   skuCode: string
-  /** 发货方式 1-仓库发货, 2-供货商发货, 3-其他 */
-  deliveryMode: 1 | 2 | 3
+  /** 发货方式 1-仓库发货, 2-供货商发货, 3-其他, 4-保宏保税仓 */
+  deliveryMode: 1 | 2 | 3 | 4
   /** 成本价 */
   costPrice: number
   /** 市场价 */
@@ -149,6 +149,7 @@ class SkuList extends React.Component<Props, State>{
           return !item3 || !item2[subSpecFields[index]] || item2 && item3 && item3.specName === item2[subSpecFields[index]]
         })
       }) || val
+      val.deliveryMode = this.props.type === 20 ? 4 : val.deliveryMode
       item.map((item2, index) => {
         const field = subSpecFields[index]
         val[field] = (item2 && item2.specName) as never

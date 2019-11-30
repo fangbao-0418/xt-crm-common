@@ -313,23 +313,24 @@ class Main extends React.Component<Props, State> {
         title: '备案信息',
         dataIndex: 'customsStatusInfo',
         width: 100,
+        align: 'center',
         render: (text, record) => {
           return text ? (
             <span
-              className={text === 30 ? 'href' : ''}
+              className={text === '已备案' ? 'href' : ''}
               onClick={() => {
-                if (text === 30) {
+                if (text === '已备案') {
                   this.showRecordInfo(record)
                 }
               }}
             >
-              {RecordEnum[text]}
+              {text}
             </span>
           ) : '-'
         }
       },
       {
-        title: '综合税率（读取自备案信息）',
+        title: '综合税率',
         dataIndex: 'generalTaxRate',
         width: 100,
         render: (text) => {
@@ -339,17 +340,18 @@ class Main extends React.Component<Props, State> {
       {
         title: '库存',
         dataIndex: 'stock',
-        width: 200,
-        render: (text: any, record, index) => {
-          return (
+        align: 'center',
+        width: 100,
+        render: (text, record, index) => {
+          return record.skuId ? (
             <Button
               size='small'
               onClick={this.showStockInfo.bind(this, record)}
             >
               查看
             </Button>
-          )
-        },
+          ) : '-'
+        }
       },
       {
         title: '市场价',
@@ -473,11 +475,10 @@ class Main extends React.Component<Props, State> {
       this.props.onChange([...dataSource])
     }
   }
-  public showRecordInfo (id: any) {
-    console.log(this, 'thi')
+  public showRecordInfo (record: SkuProps) {
     const productCustomsDetailVOList = this.props.productCustomsDetailVOList || []
     const detail = productCustomsDetailVOList.find((item) => {
-      item.skuId = item.skuId
+      return item.skuId === record.skuId
     })
     this.props.alert && this.props.alert({
       title: '备案信息',
@@ -495,7 +496,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const columns = (this.props.extraColumns || []).concat(this.props.type !== 0 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
+    const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <Table
         // rowKey={(record: any) => record.id}
