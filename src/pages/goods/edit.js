@@ -64,7 +64,8 @@ class GoodsEdit extends React.Component {
     returnAddress: '',
     showImage: false,
     strategyData: null,
-    productCustomsDetailVOList: []
+    productCustomsDetailVOList: [],
+    supplierInfo: {}
   };
 
   componentDidMount() {
@@ -156,6 +157,7 @@ class GoodsEdit extends React.Component {
         returnPhone: res.returnPhone,
         returnAddress: res.returnAddress,
         showImage,
+        supplierInfo: currentSupplier,
         productCustomsDetailVOList: res.productCustomsDetailVOList || []
       });
       setFieldsValue({
@@ -441,9 +443,11 @@ class GoodsEdit extends React.Component {
 
   supplierChange = (value) => {
     const { supplier } = this.state;
-    const { form: { resetFields } } = this.props;
+    let data = this.state.data
+    const { form: { resetFields, getFieldsValue, setFieldsValue } } = this.props;
     const currentSupplier = supplier.find(item => item.id === value) || {};
-    if (currentSupplier.category == 1) {
+    let { productType } = getFieldsValue()
+    if (currentSupplier.category === 1) {
       resetFields('interception');
       this.setState({
         interceptionVisible: false
@@ -454,17 +458,40 @@ class GoodsEdit extends React.Component {
         interceptionVisible: true
       })
     }
+    productType = [3, 4].indexOf(currentSupplier.category) > -1 ? productType : 0
+    setFieldsValue({
+      productType
+    })
+    if (currentSupplier.category === 4) {
+      data = data.map((item) => {
+        return {
+          ...item,
+          deliveryMode: productType === 20 ? 4 : (item.deliveryMode === 4 ? 2 : item.deliveryMode)
+        }
+      })
+    } else {
+      data = data.map((item) => {
+        return {
+          ...item,
+          deliveryMode: item.deliveryMode === 4 ? 2 : item.deliveryMode
+        }
+      })
+    }
+    this.setState({
+      data,
+      supplierInfo: currentSupplier
+    })
   }
   render() {
     const { getFieldDecorator, getFieldsValue } = this.props.form;
-    const { supplier, interceptionVisible, productCustomsDetailVOList } = this.state;
+    const { supplier, interceptionVisible, productCustomsDetailVOList, supplierInfo } = this.state;
     const {
       match: {
         params: { id },
       },
     } = this.props;
     const { productType } = getFieldsValue()
-    console.log(productCustomsDetailVOList, 'productCustomsDetailVOList')
+    console.log(productType, supplierInfo, supplierInfo.category === 4, 'productCustomsDetailVOList')
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -561,21 +588,28 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
             {!id && <Button onClick={()=>this.sync1688Sku()} >同步1688规格信息</Button>}
           </Form.Item>
-          {
-            interceptionVisible ?
-              <Form.Item label="是否可拦截发货">
-                {getFieldDecorator('interception', {
-                  initialValue: 0,
-                })(
-                  <Radio.Group>
-                    <Radio value={1}>是</Radio>
-                    <Radio value={0}>否</Radio>
-                  </Radio.Group>,
-                )}
-              </Form.Item> :
-              null
-          }
-          <Form.Item label="商品类型" required>
+          <Form.Item
+            label="是否可拦截发货"
+            style={{
+              display: interceptionVisible ? 'inherit' : 'none'
+            }}
+          >
+            {getFieldDecorator('interception', {
+              initialValue: 0,
+            })(
+              <Radio.Group>
+                <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
+              </Radio.Group>,
+            )}
+          </Form.Item>
+          <Form.Item
+            label="商品类型"
+            required
+            style={{
+              display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
+            }}
+          >
             {getFieldDecorator('productType', {
               initialValue: 0,
               rules: [
