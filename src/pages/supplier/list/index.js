@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Card, Form, Input, Button, DatePicker } from 'antd'
+import { Table, Card, Form, Input, Button, DatePicker, InputNumber } from 'antd'
 import moment from 'moment'
 import { querySupplierList, exportSupplier } from '../api'
 import SupplierModal from '../supplier-modal'
@@ -52,7 +52,7 @@ class OrderList extends React.Component {
     this.payload = {}
     APP.fn.setPayload(this.pathname, this.payload)
     this.props.form.resetFields();
-    this.forceUpdate()
+    this.query()
   };
   handleSearch = () => {
     const {
@@ -147,16 +147,24 @@ class OrderList extends React.Component {
             layout="inline"
           >
             <FormItem label="供应商名称">
-              {getFieldDecorator('name', {initialValue: values.name})(<Input placeholder="" />)}
+              {getFieldDecorator('name', {
+                initialValue: values.name
+              })(<Input placeholder="请输入供应商名称" />)}
             </FormItem>
             <FormItem label="供应商ID">
-              {getFieldDecorator('id', {initialValue: values.id})(<Input type='number' placeholder="" />)}
+              {getFieldDecorator('id', {
+                initialValue: values.id
+              })(<InputNumber style={{width: 172}} placeholder="请输入供应商ID" />)}
             </FormItem>
             <FormItem label="联系人">
-              {getFieldDecorator('contacts', {initialValue: values.contacts})(<Input placeholder="" />)}
+              {getFieldDecorator('contacts', {
+                initialValue: values.contacts
+              })(<Input placeholder="请输入联系人" />)}
             </FormItem>
             <FormItem label="供应商编码">
-              {getFieldDecorator('code', {initialValue: values.code})(<Input placeholder="" />)}
+              {getFieldDecorator('code', {
+                initialValue: values.code
+              })(<Input placeholder="请输入供应商编码" />)}
             </FormItem>
             <FormItem label='供应商分类'>
               {getFieldDecorator('category', {

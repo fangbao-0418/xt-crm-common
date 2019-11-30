@@ -123,12 +123,15 @@ class ApplyAfterSale extends React.Component<Props, State> {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
     const initialObj: any = {}
     const disabledObj: any = {}
+    console.log('modalInfo=>', modalInfo)
     if (modalInfo.childOrder && modalInfo.childOrder.orderStatus === 20) {
       initialObj.initialValue = 20
       disabledObj.disabled = true
     }
     let { skuDetail } = this.state
     skuDetail = Object.assign({}, skuDetail)
+    const refundTypeOptions = refundType.getArray().filter(v => v.key !== 30)
+    console.log('refundTypeOptions =>', refundTypeOptions)
     return (
       <Modal
         width='80%'
@@ -149,7 +152,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
                   required: true,
                   message: '请选择售后类型'
                 }]
-              })(<XtSelect {...disabledObj} data={refundType.getArray()} />)}
+              })(<XtSelect {...disabledObj} data={refundTypeOptions} />)}
             </Form.Item>
             <Form.Item label="售后原因">
               {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<AfterSaleSelect refundType={this.refundType} />)}

@@ -2,12 +2,14 @@ import React from 'react'
 import { Modal } from 'antd'
 import OrderMessage from './OrderMessage'
 import PayMessage from './PayMessage'
+import { namespace } from '../../model'
+import { withRouter, RouteComponentProps } from 'react-router'
 interface State {
   visible: boolean,
   payload: any
 }
-function Main <T> (WrappedComponent: React.ComponentType<T>) {
-  return class extends React.Component<T> {
+function Main (WrappedComponent: React.ComponentType<any>) {
+  class Comp extends React.Component<RouteComponentProps<{id: any}>> {
     public state: State = {
       visible: false,
       payload: {}
@@ -17,6 +19,7 @@ function Main <T> (WrappedComponent: React.ComponentType<T>) {
       this.handleOk = this.handleOk.bind(this)
       this.showModal = this.showModal.bind(this)
       this.hideModal = this.hideModal.bind(this)
+      this.onOk = this.onOk.bind(this)
     }
     public handleOk () {
       this.setState({
@@ -35,6 +38,15 @@ function Main <T> (WrappedComponent: React.ComponentType<T>) {
         visible: false
       })
     }
+    public onOk () {
+      this.hideModal()
+      APP.dispatch({
+        type: `${namespace}/fetchDetail`,
+        payload: {
+          orderCode: this.props.match.params.id
+        }
+      })
+    }
     public render () {
       const { payload: { type, title, ...rest } } = this.state
       return (
@@ -46,8 +58,8 @@ function Main <T> (WrappedComponent: React.ComponentType<T>) {
             onCancel={this.hideModal}
             footer={null}
           >
-            {type === 'orderMessage' && <OrderMessage {...rest} />}
-            {type === 'payMessage' && <PayMessage {...rest}/>}
+            {type === 'orderMessage' && <OrderMessage hideModal={this.hideModal} {...rest} onOk={this.onOk}/>}
+            {type === 'payMessage' && <PayMessage hideModal={this.hideModal} {...rest} onOk={this.onOk}/>}
           </Modal>
           <WrappedComponent
             modal={{
@@ -59,6 +71,7 @@ function Main <T> (WrappedComponent: React.ComponentType<T>) {
       )
     }
   }
+  return withRouter(Comp)
 }
 
 export default Main

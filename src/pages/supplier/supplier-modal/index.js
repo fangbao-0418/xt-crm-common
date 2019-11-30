@@ -180,7 +180,7 @@ class SupplierModal extends Component {
                   }
                 ]
               })(
-                <SupplierTypeSelect placeholder="" />,
+                <SupplierTypeSelect />,
               )}
             </FormItem>
           </Form>

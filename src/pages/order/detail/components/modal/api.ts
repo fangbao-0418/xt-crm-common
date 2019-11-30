@@ -8,9 +8,10 @@ import { newPost } from '@/util/fetch'
  * realCardNo: 身份证号
  */
 export function resubmit (payload: {
-  mainOrderId: string,
+  reissueType: 'reissuePay' | 'reissueOrder'
+  mainOrderId: number,
   realName: string,
   realCardNo: string
 }) {
-  newPost('/order/globalExtend/reissueCustoms', payload)
+  return newPost('/order/globalExtend/reissueCustoms', payload)
 }

@@ -54,8 +54,7 @@ class GoodsTable extends Component {
         })
       }
     }
-    /** 未完待续 */
-    if (false) {
+    if (this.props.childOrder && Number(this.props.childOrder.orderType) !== 70) {
       handle()
     } else {
       this.props.alert({
