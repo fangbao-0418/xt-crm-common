@@ -36,11 +36,10 @@ export const formatMoneyBeforeRequest = price => {
   return (pasred * 100).toFixed();
 };
 
-
 // 格式化退货信息
-export const joinFilterEmpty = (arr) => {
+export const joinFilterEmpty = arr => {
   return arr.filter(Boolean).join(' ');
-}
+};
 
 // 格式化面值
 export function formatFaceValue(record) {
@@ -63,12 +62,12 @@ export function formatFaceValue(record) {
 }
 
 export function formatRangeTime(val = [], pattern = 'YYYY-MM-DD HH:mm', separator = ' ~ ') {
-  return val.map(v => moment(+v).format(pattern)).join(separator)
+  return val.map(v => moment(+v).format(pattern)).join(separator);
 }
 
 // 领取时间
 export function formatDateRange({ startReceiveTime, overReceiveTime }, pattern, separator) {
-  return formatRangeTime([startReceiveTime, overReceiveTime], pattern, separator)
+  return formatRangeTime([startReceiveTime, overReceiveTime], pattern, separator);
 }
 
 // 用券时间
@@ -90,28 +89,49 @@ export function formatAvlRange(val = 0) {
     1: '类目商品',
     2: '指定商品',
     4: '指定活动'
-  }
+  };
   return applicationScope[val];
 }
 
 // 领取人限制
 export function formatReceiveRestrict(val = '') {
   if (val === 'all') return '不限制';
-  return val.split(',').map(v => receiveRestrictType.getValue(v)).join('，');
+  else if (val === '3') {
+    return '平台未下单用户';
+  }
+  return val
+    .split(',')
+    .map(v => receiveRestrictType.getValue(v))
+    .join('，');
 }
 
 // 格式化使用平台
 export const formatPlatformRestrict = (val = '') => {
   if (val === 'all') return '不限制';
-  return val.split(',').map(v => platformType.getValue(v)).join('，');
-}
+  return val
+    .split(',')
+    .map(v => platformType.getValue(v))
+    .join('，');
+};
 
 // 今天之前不可选
 export function disabledDate(current) {
-  return current && current < moment().endOf('day').subtract(1, 'days');
+  return (
+    current &&
+    current <
+      moment()
+        .endOf('day')
+        .subtract(1, 'days')
+  );
 }
 
 // 一个月之后不可选
 export function afterDisabledDate(current) {
-  return current && current > moment().startOf('day').add(31, 'days');
+  return (
+    current &&
+    current >
+      moment()
+        .startOf('day')
+        .add(31, 'days')
+  );
 }

@@ -7,12 +7,12 @@ class Order extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      type: "ALL",
+      type: 'ALL'
     };
   }
   handleTabChange = type => {
     this.setState({
-      type,
+      type
     });
   };
   render() {
@@ -27,10 +27,7 @@ class Order extends Component {
             <TabPane tab="已完成" key="COMPLETE" />
             <TabPane tab="已关闭" key="REJECTED" />
           </Tabs>
-          <List
-            key={type}
-            type={type}
-          />
+          <List key={type} type={type} />
         </Card>
       </div>
     );

@@ -6,7 +6,7 @@ import styles from './index.module.scss';
 import UserModal from './modal';
 import ModalInvit from './modalInvit';
 import { levelName } from '../../../utils';
-import { memberModify, getReasonList } from '../../api'
+import { memberModify, getReasonList, setMemberUnlocking } from '../../api'
 import { FormItem } from '@/packages/common/components/form';
 const { Option } = Select;
 const { TextArea } = Input;
@@ -83,6 +83,22 @@ export default class extends Component {
       upOrDwon: type
     })
   }
+  handleUnlock = (memberId) => {
+    Modal.confirm({
+      title: '系统提示',
+      content: '确定要解锁吗？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        setMemberUnlocking({memberId: memberId}).then(res => {
+          if (res) {
+            APP.success('解锁成功')
+            this.handleSearch();
+          }
+        })
+      },
+    });
+  }
 
   handleSearch = (params = {}) => {
     const { history, dispatch } = this.props;
@@ -130,7 +146,7 @@ export default class extends Component {
         APP.error('修改失败')
         return
       }
-      
+
       let params = {
         phone: this.props.data.phone, // 手机号
         memberType: this.props.data.memberTypeVO.memberType, //当前用户等级
@@ -188,6 +204,10 @@ export default class extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="邀请人">
               <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.inviteId })}>{data.inviteName}</span>  {levelName(data.inviteMemberTypeVO)}
+            </Descriptions.Item>
+            <Descriptions.Item label="锁定状态">
+              {data.fansTypeDesc}
+              <Button disabled={(data.fansType !== 1)} onClick={()=>this.handleUnlock(data.id)} style={{ marginLeft: 20}}>解锁</Button>
             </Descriptions.Item>
           </Descriptions>
           <Descriptions title="实名认证" column={2} className={styles.authentication}>
@@ -265,7 +285,7 @@ export default class extends Component {
                   })(
                     <Select>
                         {reasonList.map(item => <Option value={item.code} key={item.code}>{item.message}</Option>)}
-                    </Select>  
+                    </Select>
                     )
               }
             </FormItem>
@@ -280,7 +300,7 @@ export default class extends Component {
                 })(<TextArea placeholder={'请输入说明内容'}  />)}
             </FormItem>
           </Form>
-          
+
         </Modal>
       </div>
     )
