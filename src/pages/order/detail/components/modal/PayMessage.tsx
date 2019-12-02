@@ -33,7 +33,7 @@ interface Props {
 }
 function Main (props: Props) {
   /** 支付报文类型*/
-  const paymentChannel = useMemo(() => props.paymentChannel === 1 ? '支付宝' : '微信', [props.paymentChannel])
+  const paymentChannel = useMemo(() => props.paymentChannel === 1 ? '微信' : '支付宝', [props.paymentChannel])
   /** 是否失败 */
   const isFailed = useMemo(() => Number(props.paymentPushCustomsStatus) === 4, [props.paymentPushCustomsStatus])
   let form: FormInstance
