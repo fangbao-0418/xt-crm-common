@@ -31,4 +31,5 @@ export interface rankItem {
   renewalNumber: number;
   renewalCost: number;
   destinationList: any[]
+  uid: string
 }

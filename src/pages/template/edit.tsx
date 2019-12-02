@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import styles from './style.module.scss';
 import { withRouter } from 'react-router';
 import { radioStyle } from '@/config';
+import { getUniqueId } from '@/packages/common/utils/index'
 import { flatten, intersectionWith, differenceWith, unionWith, isEqual } from 'lodash'
 import { templateAdd, templateModify, getDetail } from './api';
 import { RadioChangeEvent } from 'antd/lib/radio';
@@ -46,9 +47,10 @@ const mapTemplateData= (list: rankItem[]) => {
     item = Object.assign({}, item)
     return {
       ...item,
+      uid: item.uid || getUniqueId(),
       cost: item.cost && formatPrice(item.cost),
-      firstFeeNumber: formatPrice(item.firstFeeNumber),
-      renewalNumber: formatPrice(item.renewalNumber),
+      firstFeeNumber: item.firstFeeNumber,
+      renewalNumber: item.renewalNumber,
       renewalCost: formatPrice(item.renewalCost),
     };
   });
@@ -82,8 +84,8 @@ class edit extends React.Component<Props, State> {
       templateName: res.templateName,
       commonCost: formatPrice(res.commonCost),
       defaultNumber: res.defaultNumber,
-      increaseNumber: formatPrice(res.increaseNumber),
-      increaseCost: res.increaseCost
+      increaseNumber: res.increaseNumber,
+      increaseCost: formatPrice(res.increaseCost)
     });
     let templateData = mapTemplateData(res.rankList);
     this.citys = mapCitys(res.rankList)
@@ -103,7 +105,7 @@ class edit extends React.Component<Props, State> {
       ...templateData[index],
       ...partialValue
     }
-    console.log(templateData[index], templateData, '----')
+    console.log(templateData, 'edit')
     this.setState({
       templateData
     })
@@ -201,7 +203,10 @@ class edit extends React.Component<Props, State> {
                 const { templateData } = this.state;
                 templateData[index].rankType = e.target.value;
                 if (e.target.value === 0) {
-                  templateData[index].cost = ''
+                  templateData[index].cost = 0
+                  templateData[index].firstFeeNumber = 1
+                  templateData[index].firstFeeNumber = 1
+                  templateData[index].renewalCost = 0
                 } 
                 this.setState({
                   templateData,
@@ -223,10 +228,9 @@ class edit extends React.Component<Props, State> {
         title: '首件数',
         dataIndex: 'firstFeeNumber',
         render: (text, record: rankItem, index: number) => {
-          console.log(text, 'text')
           return record.rankType === 1 ? (
             <Form.Item>
-              {getFieldDecorator(`firstFeeNumber-$index`, {
+              {getFieldDecorator(`firstFeeNumber[${record.uid}]`, {
                 initialValue: text,
                 rules: [
                   {
@@ -237,7 +241,6 @@ class edit extends React.Component<Props, State> {
               })(
                 <InputNumber
                   placeholder="请输入件数"
-                  value={text}
                   precision={0}
                   onChange={(value: any) => {
                     this.handleChange({
@@ -259,7 +262,7 @@ class edit extends React.Component<Props, State> {
         render: (text, record: rankItem, index: number) => {
           return record.rankType === 1 ? (
             <Form.Item>
-              {getFieldDecorator(`cost-$index`, {
+              {getFieldDecorator(`cost[${record.uid}]`, {
                 initialValue: text,
                 rules: [
                   {
@@ -292,7 +295,7 @@ class edit extends React.Component<Props, State> {
         render: (text, record: rankItem, index: number) => {
           return record.rankType === 1 ? (
             <Form.Item>
-              {getFieldDecorator(`renewalNumber-$index`, {
+              {getFieldDecorator(`renewalNumber[${record.uid}]`, {
                 initialValue: text,
                 rules: [
                   {
@@ -322,10 +325,11 @@ class edit extends React.Component<Props, State> {
       {
         title: '续费',
         dataIndex: 'renewalCost',
-        render: (text, record: rankItem, index: number) => {
+        render: (text, record: rankItem, index) => {
+          console.log(index, 'index')
           return record.rankType === 1 ? (
             <Form.Item>
-              {getFieldDecorator(`renewalCost-$index`, {
+              {getFieldDecorator(`renewalCost[${record.uid}]`, {
                 initialValue: text,
                 rules: [
                   {
@@ -367,6 +371,7 @@ class edit extends React.Component<Props, State> {
                   const editCity = flattenCity(record.destinationList)
                   this.citys = differenceWith(this.citys, editCity, isEqual)
                   templateData.splice(index, 1)
+                  console.log(index, templateData, 'templateData')
                   return {
                     templateData 
                   }
@@ -418,10 +423,11 @@ class edit extends React.Component<Props, State> {
                 message.error(`${msg}不能重复，请重新选择`)
                 return
               }
-              templateData = [...templateData, { destinationList, rankType: 1, cost: '' }];
+              templateData = [...templateData, { uid: getUniqueId(), destinationList, rankType: 1, cost: '' }];
             }
             /** 求并集 */
             this.citys = unionWith(this.citys, checkedCity, isEqual)
+            console.log(templateData, 'add')
             this.setState({
               destinationList,
               templateData,
@@ -545,7 +551,7 @@ class edit extends React.Component<Props, State> {
                   为指定地区添加运费
                 </Button>
                 <Table
-                  rowKey="rankNo"
+                  rowKey={'uid'}
                   className={classnames('mt10', styles.fare)}
                   columns={editColumns}
                   pagination={false}
