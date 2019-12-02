@@ -180,8 +180,6 @@ class InterFaceCategory extends Component {
           name: vals.name,
           sort: vals.sort,
           productCategoryVOS: list,
-          secondStatus: 0,
-          styleType: 1,
           showType: 2 //展示位置（0：首页展示，1：行业类目展示 2:免单类目）
         }
 
@@ -198,8 +196,9 @@ class InterFaceCategory extends Component {
   }
   getPromotionList = params => {
     const { activityParams, modalPage } = this.state;
-
     const nowParams = params || activityParams;
+    //只能添加体验团长专区的活动，限制活动type
+    if(!nowParams.type)nowParams.type = 6;
     // page.current += 1;
     getPromotionList({
       ...nowParams,
@@ -471,7 +470,7 @@ class GetActivity extends Component {
               })(
                 <Select placeholder="请选择活动类型" style={{ width: 180 }}>
                   <Option value="">全部</Option>
-                  {activityType.getArray().map((val, i) => (
+                  {activityType.getArray().filter(val => val.val == '体验团长专区').map((val, i) => (
                     <Option value={val.key} key={i}>
                       {val.val}
                     </Option>
