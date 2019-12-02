@@ -330,12 +330,17 @@ class GoodsEdit extends React.Component {
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
     validateFields((err, vals) => {
       console.log('vals=>', vals)
+      console.log(this.state.speSelect, '---------')
       if (err) {
         APP.error('请检查输入项')
         return
       }
       vals.freightTemplateId = +vals.freightTemplateId
       if (!err) {
+        if (speSelect.find((item) => { return item.content.length === 0 })) {
+          APP.error('请添加商品规格')
+          return
+        }
         if (size(speSelect) === 0) {
           message.error('请添加规格');
           return false;

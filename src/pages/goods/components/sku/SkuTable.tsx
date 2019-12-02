@@ -1,7 +1,8 @@
 import React from 'react'
-import { Table, Card, Select, Popover, Input, Button, message, Form } from 'antd'
+import { Table, Card, Select, Popover, Input, Button, message, Form, InputNumber } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
+import { PaginationConfig } from 'antd/lib/pagination'
 import { deliveryModeType } from '@/enum';
 import ArrowContain from '../arrow-contain'
 import { SkuProps } from './index'
@@ -30,6 +31,10 @@ interface State {
 }
 
 class Main extends React.Component<Props, State> {
+  public pagination: PaginationConfig = {
+    current: 1,
+    pageSize: 10
+  }
   public state: State = {
     dataSource: this.props.dataSource || []
   }
@@ -38,23 +43,31 @@ class Main extends React.Component<Props, State> {
       dataSource: props.dataSource
     })
   }
-  public speedyInput (field: string, text: any, record: SkuProps, index: number, dataSource: SkuProps[], cb: any) {
+  public speedyInputCallBack = (dataSource: SkuProps[]) => {
+    if (this.props.onChange) {
+      this.props.onChange([...dataSource])
+    }
+  }
+  public speedyInput (field: string, text: any, record: SkuProps, index: number, dataSource: SkuProps[], cb?: any) {
+    const { pageSize = 10, current = 1 } = this.pagination
+    const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
     return (node: React.ReactNode) => (
       <ArrowContain
         disabled={dataSource.length <= 1}
-        type={(index === 0 && 'down' || index === dataSource.length - 1 && 'up' || undefined)}
+        type={(realIndex === 0 && 'down' || realIndex === dataSource.length - 1 && 'up' || undefined)}
         onClick={(type) => {   
-          const stock = text
-          let current = 0
-          let end = index
+          const value = text
+          let currentIndex = 0
+          let end = realIndex
           if (type === 'down') {
-            current = index
+            currentIndex = realIndex
             end = dataSource.length - 1
           }
-          while (current <= end) {
-            cb(field, dataSource[current], current)(stock)
-            current++
+          while (currentIndex <= end) {
+            dataSource[currentIndex][field] = text as never
+            currentIndex++
           }
+          this.speedyInputCallBack(dataSource)
         }}
       >
         {node}
@@ -112,6 +125,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入市场价"
               onChange={cb('marketPrice', record, index)}
@@ -126,6 +140,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入成本价"
               onChange={cb('costPrice', record, index)}
@@ -139,7 +154,8 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record, index: any) => (
           this.speedyInput('stock', text, record, index, dataSource, cb)(
-            <Input
+            <InputNumber
+              precision={0}
               value={text}
               placeholder="请输入库存"
               onChange={cb('stock', record, index)}
@@ -154,6 +170,7 @@ class Main extends React.Component<Props, State> {
         render: (text, record, index: any) => (
           this.speedyInput('salePrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入销售价"
               onChange={cb('salePrice', record, index)}
@@ -168,6 +185,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('headPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入团长价"
               onChange={cb('headPrice', record, index)}
@@ -182,6 +200,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入社区管理员价"
               onChange={cb('areaMemberPrice', record, index)}
@@ -196,6 +215,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入合伙人价"
               onChange={cb('cityMemberPrice', record, index)}
@@ -210,6 +230,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入公司管理员价"
               onChange={cb('managerMemberPrice', record, index)}
@@ -223,7 +244,8 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('stockAlert', text, record, index, dataSource, cb)(
-            <Input
+            <InputNumber
+              precision={0}
               value={text}
               placeholder="请输入警戒库存"
               onChange={cb('stockAlert', record, index)}
@@ -360,6 +382,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入市场价"
               onChange={cb('marketPrice', record, index)}
@@ -374,6 +397,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入成本价"
               onChange={cb('costPrice', record, index)}
@@ -388,6 +412,7 @@ class Main extends React.Component<Props, State> {
         render: (text, record, index: any) => (
           this.speedyInput('salePrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入销售价"
               onChange={cb('salePrice', record, index)}
@@ -402,6 +427,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('headPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入团长价"
               onChange={cb('headPrice', record, index)}
@@ -416,6 +442,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入社区管理员价"
               onChange={cb('areaMemberPrice', record, index)}
@@ -430,6 +457,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入合伙人价"
               onChange={cb('cityMemberPrice', record, index)}
@@ -444,6 +472,7 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
             <InputMoney
+              precision={2}
               value={text}
               placeholder="请输入公司管理员价"
               onChange={cb('managerMemberPrice', record, index)}
@@ -457,7 +486,8 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('stockAlert', text, record, index, dataSource, cb)(
-            <Input
+            <InputNumber
+              precision={0}
               value={text}
               placeholder="请输入警戒库存"
               onChange={cb('stockAlert', record, index)}
@@ -467,10 +497,12 @@ class Main extends React.Component<Props, State> {
       },
     ]
   }
-  public handleChangeValue = (text: string, record: any, index: any) => (e: any) => {
-    const { dataSource } = this.state;
-    dataSource[index][text] = e.target ? e.target.value : e;
-    this.setState({ dataSource });
+  public handleChangeValue = (field: string, record: any, index: any) => (e: any) => {
+    const { pageSize = 10, current = 1 } = this.pagination
+    const realIndex = current > 1 ? pageSize * (current - 1) + index : index
+    const value = (e && e.target ? e.target.value : e) as never
+    const dataSource = this.props.dataSource
+    dataSource[realIndex][field] = value
     if (this.props.onChange) {
       this.props.onChange([...dataSource])
     }
@@ -505,7 +537,10 @@ class Main extends React.Component<Props, State> {
         scroll={{ x: 2500 }}
         columns={columns}
         dataSource={this.state.dataSource}
-        pagination={false}
+        // pagination={false}
+        onChange={(pagination, fileters) => {
+          this.pagination = pagination
+        }}
       />
     )
   }

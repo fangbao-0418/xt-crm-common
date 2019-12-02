@@ -15,6 +15,7 @@ interface Props extends React.Props<{}> {
 }
 function SkuUploadItem(props: Props) {
   function onChange (value: ValueProps) {
+    setValue(value)
     if (props.onChange) {
       props.onChange(value)
     }
@@ -28,7 +29,7 @@ function SkuUploadItem(props: Props) {
   const [value, setValue] = useState(Object.assign({}, props.value))
   const { specName, specPicture } = Object.assign({}, props.value)
   useEffect(() => {
-    // console.log(props.value, 'value')
+    console.log('--------------------  value')
     setValue(Object.assign({}, props.value))
   }, [specName, specPicture])
   return (
@@ -42,7 +43,6 @@ function SkuUploadItem(props: Props) {
             specName: e.target.value
           }
           onChange(newValue)
-          setValue(newValue)
         }}
         disabled={props.disabled}
       />
@@ -60,7 +60,6 @@ function SkuUploadItem(props: Props) {
             }
             console.log('newValue', newValue, val)
             onChange(newValue)
-            setValue(newValue)
           }}
           className={styles["sku-upload"]}
           listType="picture-card"

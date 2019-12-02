@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "strict": true,
     "strictPropertyInitialization": false,
+    "strictNullChecks": true,
     "paths": {
       "@/*": ["./src/*"]
     }
