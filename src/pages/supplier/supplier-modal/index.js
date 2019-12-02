@@ -94,7 +94,13 @@ class SupplierModal extends Component {
           <Form {...formItemLayout}>
             <Row>基本信息</Row>
             <FormItem label="供应商编码">
-              {getFieldDecorator('code', { initialValue: data.code })(<Input placeholder="" />)}
+              {getFieldDecorator('code', {
+                initialValue: data.code,
+                rules: [{
+                  required: true,
+                  message: '请输入供应商编码'
+                }]
+              })(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="联系人">
               {getFieldDecorator('contacts', { initialValue: data.contacts })(
@@ -102,10 +108,22 @@ class SupplierModal extends Component {
               )}
             </FormItem>
             <FormItem label="供应商名称">
-              {getFieldDecorator('name', { initialValue: data.name })(<Input placeholder="" />)}
+              {getFieldDecorator('name', {
+                initialValue: data.name,
+                rules: [{
+                  required: true,
+                  message: '请输入供应商名称'
+                }]
+              })(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="联系电话">
-              {getFieldDecorator('phone', { initialValue: data.phone })(<Input placeholder="" maxLength={11}/>)}
+              {getFieldDecorator('phone', {
+                initialValue: data.phone,
+                rules: [{
+                  required: true,
+                  message: '请输入联系电话'
+                }]
+              })(<Input placeholder="" maxLength={11}/>)}
             </FormItem>
             <FormItem label="供应商简称">
               {getFieldDecorator('shortName', { initialValue: data.shortName })(
