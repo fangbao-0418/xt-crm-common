@@ -17,6 +17,9 @@ export interface Props extends RouteComponentProps<{ id: any }>, FormComponentPr
 export interface Fields {
   templateName: string;
   commonCost: number;
+  defaultNumber: number;
+  increaseNumber: number;
+  increaseCost: number;
 }
 
 export interface rankItem {
@@ -24,5 +27,8 @@ export interface rankItem {
   destination: string;
   rankType: number;
   cost: number;
+  firstFeeNumber: number;
+  renewalNumber: number;
+  renewalCost: number;
   destinationList: any[]
 }

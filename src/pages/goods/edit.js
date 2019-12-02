@@ -181,7 +181,8 @@ class GoodsEdit extends React.Component {
         productImage,
         storeProductId: res.storeProductId,
         categoryId,
-        isAuthentication: res.isAuthentication
+        isAuthentication: res.isAuthentication,
+        isCalculateFreight: res.isCalculateFreight
       });
       this.getStrategyByCategory(categoryId[0]);
       getTemplateList().then(opts => {
@@ -696,6 +697,20 @@ class GoodsEdit extends React.Component {
                   {getFieldDecorator('freightTemplateId')(
                     <TemplateList dataSource={this.state.templateOptions} />
                   )}
+                </Radio>
+              </Radio.Group>,
+            )}
+          </Form.Item>
+          <Form.Item label="单独计算运费">
+            {getFieldDecorator('isCalculateFreight', {
+              initialValue: 0,
+            })(
+              <Radio.Group>
+                <Radio value={0}>
+                  否
+                </Radio>
+                <Radio value={1}>
+                  是
                 </Radio>
               </Radio.Group>,
             )}

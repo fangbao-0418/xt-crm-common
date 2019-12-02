@@ -9,6 +9,7 @@ import moment from 'moment';
 import { templateColumns } from './interface';
 import MoneyRender from '@/components/money-render';
 const { RangePicker } = DatePicker;
+const namespace = 'freight-template'
 interface State extends PageProps<templateColumns> {
 
 }
@@ -17,7 +18,7 @@ class Page extends React.Component<Props, State> {
   state: State = {
     records: []
   };
-  payload: any = {
+  payload: any = APP.fn.getPayload(namespace) || {
     current: 1,
     total: 0,
     size: 10
@@ -27,25 +28,29 @@ class Page extends React.Component<Props, State> {
     this.fetchList = this.fetchList.bind(this);
   }
   componentDidMount() {
+    this.props.form.setFieldsValue({
+      templateName: this.payload.templateName,
+      createTime: this.payload.createTimeStart && [moment(this.payload.createTimeStart), moment(this.payload.createTimeEnd)],
+      modifyTime: this.payload.modifyTimeStart && [moment(this.payload.modifyTimeStart), moment(this.payload.modifyTimeEnd)]
+    })
     this.fetchList();
   }
   async fetchList() {
     let { templateName, createTime, modifyTime } = this.props.form.getFieldsValue();
     let [createTimeStart, createTimeEnd] = createTime ? momentRangeValueof(createTime) : [];
     let [modifyTimeStart, modifyTimeEnd] = modifyTime ? momentRangeValueof(modifyTime) : [];
-    const { records, current, total } = await templatePage({
-      pageNo: this.payload.current,
+    const payload = {
+      pageNo: this.payload.pageNo,
       pageSize: this.payload.size,
       templateName,
       createTimeStart,
       createTimeEnd,
       modifyTimeStart,
       modifyTimeEnd,
-    }) || {}
-    this.payload = Object.assign({}, {
-      current,
-      total
-    })
+    }
+    const { records, current, total } = await templatePage(payload) || {}
+    this.payload = payload
+    APP.fn.setPayload(namespace, payload)
     this.setState({
       records
     });

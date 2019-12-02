@@ -1,6 +1,8 @@
-export function formatPrice(val: number): number {
+export function formatPrice(val: number, precision: number = 2): number {
     if (!val) return 0;
-    return +`${(val / 100).toFixed(2)}`;
+    val = Number(val) || 0;
+    const radix = Math.pow(10, precision);
+    return Math.round(val * radix) / radix;
 }
 
 export function formatRMB(value: string | number | undefined) {
