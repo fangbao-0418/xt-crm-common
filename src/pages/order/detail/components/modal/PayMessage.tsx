@@ -6,7 +6,7 @@ import * as api from './api'
 /**
  * 订单推送海关状态
  */
-const orderPushCustomsStatusConfig: any = {
+const paymentPushCustomsStatusConifg: any = {
   '1': '未推送',
   '2': '已推送',
   '3': '处理成功',
@@ -21,7 +21,7 @@ interface Props {
   payerIdNumber: string
   paymentPushCustomsTime: number
   paymentNo: string
-  taxMoney: number,
+  customsClearance: number,
   /** 支付单推送海关状态：1-未推送，2-已推送，3-处理成功，4-处理失败 */
   paymentPushCustomsStatus: 1 | 2 | 3 | 4
   paymentPushCustomsMsg: string
@@ -83,11 +83,11 @@ function Main (props: Props) {
       }
     >
       <FormItem name='paymentChannel' type='text' label='支付单报文类型'>{paymentChannel}</FormItem>
-      <FormItem name='paymentPushCustomsStatus' type='text' label='支付单报文状态'>{orderPushCustomsStatusConfig[String(props.paymentPushCustomsStatus)]}</FormItem>
+      <FormItem name='paymentPushCustomsStatus' type='text' label='支付单报文状态'>{paymentPushCustomsStatusConifg[String(props.paymentPushCustomsStatus)]}</FormItem>
       <FormItem type='text' label={<span style={{fontWeight: 'bold'}}>报文申请信息</span>}></FormItem>
       <FormItem name='paymentDeclareNo' type='text' label='报关流水号'>{props.paymentDeclareNo}</FormItem>
       <FormItem name='paymentNo' type='text' label={paymentChannel + '交易号'}>{props.paymentNo}</FormItem>
-      <FormItem name='taxMoney' type='text' label='报关金额'>{APP.fn.formatMoney(props.taxMoney)}</FormItem>
+      <FormItem name='customsClearance' type='text' label='报关金额'>{APP.fn.formatMoney(props.customsClearance)}</FormItem>
       <FormItem name='payerRealName' type={isFailed ? 'input' : 'text'} label='订购人姓名' />
       <FormItem name='payerIdNumber' type={isFailed ? 'input' : 'text'} label='订购人身份证号' />
       <FormItem type='text' label={<span style={{fontWeight: 'bold'}}>报文申请结果</span>}></FormItem>

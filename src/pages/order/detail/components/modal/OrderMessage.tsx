@@ -17,7 +17,7 @@ interface Props {
   orderPushCustomsMsg: string
   /** 订单推送海关状态：1-未推送，2-已推送，3-处理成功，4-处理失败 */
   orderPushCustomsStatus: 1 | 2 | 3 | 4
-  propstaxMoney: number
+  taxMoney: number
   payerRealName: string
   payerIdNumber: string
   orderPushCustomsTime: number
@@ -77,7 +77,7 @@ function Main (props: Props) {
     >
       <FormItem name='orderPushCustomsStatus' type='text' label='订单报文状态'>{orderPushCustomsStatusConfig[String(props.orderPushCustomsStatus)]}</FormItem>
       <FormItem type='text'label={<span style={{fontWeight: 'bold'}}>报文申请信息</span>}></FormItem>
-      <FormItem name='propstaxMoney' type='text' label='代扣税款'>{APP.fn.formatMoney(props.propstaxMoney)}</FormItem>
+      <FormItem name='taxMoney' type='text' label='代扣税款'>{APP.fn.formatMoney(props.taxMoney)}</FormItem>
       <FormItem name='payerRealName' type={isFailed ? 'input' : 'text'} label='订购人姓名' />
       <FormItem name='payerIdNumber' type={isFailed ? 'input' : 'text'} label='订购人身份证号'/>
       <FormItem type='text' label={<span style={{fontWeight: 'bold'}}>报文申请结果</span>}></FormItem>

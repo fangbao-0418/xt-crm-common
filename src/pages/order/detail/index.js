@@ -49,7 +49,7 @@ const orderPushCustomsStatusConfig = {
 /**
  * 支付单推送状态
  */
-const paymentPushCustomsStatusMap = {
+const paymentPushCustomsStatusConifg = {
   '1': '未推送',
   '2': '已推送',
   '3': '处理成功',
@@ -212,7 +212,7 @@ class Detail extends Component {
                 查看详情
               </Button>
             </Col>
-            <Col span={8}>支付单报文：{paymentPushCustomsStatusMap[orderGlobalExtendVO.paymentPushCustomsStatus]}
+            <Col span={8}>支付单报文：{paymentPushCustomsStatusConifg[orderGlobalExtendVO.paymentPushCustomsStatus]}
               <Button
                 type='link'
                 onClick={() => {
@@ -306,6 +306,7 @@ class Detail extends Component {
                       </Row>
                       <Row gutter={24}>
                         <Col span={8}>供应商：{item.childOrder.storeName}</Col>
+                        <Col span={8}>供应商类型：</Col>
                         <Col span={8}>分类：{storeType[item.childOrder.category]}</Col>
                         <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
                       </Row>
