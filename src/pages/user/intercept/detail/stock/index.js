@@ -9,11 +9,11 @@ const namespace = 'intercept.detail.stock';
 const STATUSENUM = {
   1: '拦截中',
   2: '可配置',
-  3: '失效',
+  3: '失效'
 };
 
 @connect(state => ({
-  sourceData: state[namespace].sourceData,
+  sourceData: state[namespace].sourceData
 }))
 @Form.create()
 export default class extends Component {
@@ -21,7 +21,7 @@ export default class extends Component {
     super(props);
     this.state = {
       visible: false,
-      editRecord: {},
+      editRecord: {}
     };
   }
 
@@ -31,7 +31,7 @@ export default class extends Component {
     let payload = {
       memberId: queryObj.id,
       page: 1,
-      pageSize: 10,
+      pageSize: 10
     };
     dispatch[namespace].getData(payload);
   }
@@ -48,7 +48,7 @@ export default class extends Component {
         render: (value, record, index) => {
           const obj = {
             children: value,
-            props: {},
+            props: {}
           };
           if (record.index === 0) {
             obj.props.rowSpan = record.skuCount;
@@ -56,7 +56,7 @@ export default class extends Component {
             obj.props.rowSpan = 0;
           }
           return obj;
-        },
+        }
       },
       {
         title: '商品名称',
@@ -65,7 +65,7 @@ export default class extends Component {
         render: (value, record) => {
           const obj = {
             children: value,
-            props: {},
+            props: {}
           };
           if (record.index === 0) {
             obj.props.rowSpan = record.skuCount;
@@ -73,12 +73,12 @@ export default class extends Component {
             obj.props.rowSpan = 0;
           }
           return obj;
-        },
+        }
       },
       {
         title: 'SKU名称',
         dataIndex: 'skuProperties',
-        key: 'skuProperties',
+        key: 'skuProperties'
       },
       {
         title: '状态',
@@ -86,12 +86,12 @@ export default class extends Component {
         key: 'status',
         render: status => {
           return STATUSENUM[status];
-        },
+        }
       },
       {
         title: '库存',
         dataIndex: 'skuInventory',
-        key: 'skuInventory',
+        key: 'skuInventory'
       },
       {
         title: '操作',
@@ -99,9 +99,13 @@ export default class extends Component {
         key: 'opertion',
         width: 180,
         render: (stock, record) => {
-          return <a onClick={this.showModal.bind(this, record)}>修改</a>;
-        },
-      },
+          return (
+            <Button type="link" style={{ padding: 0 }} onClick={this.showModal.bind(this, record)}>
+              修改
+            </Button>
+          );
+        }
+      }
     ];
 
     return (
@@ -124,17 +128,11 @@ export default class extends Component {
             showQuickJumper: true,
             showSizeChanger: true,
             onChange: this.pageChange,
-            onShowSizeChange: this.pageChange,
+            onShowSizeChange: this.pageChange
           }}
         />
 
-        <Modal
-          title="修改库存"
-          width={300}
-          visible={visible}
-          onCancel={this.modalCancel}
-          onOk={this.modalOk}
-        >
+        <Modal title="修改库存" width={300} visible={visible} onCancel={this.modalCancel} onOk={this.modalOk}>
           <div>
             <span>请录入库存数目</span>
             <InputNumber
@@ -154,7 +152,7 @@ export default class extends Component {
 
   renderForm = () => {
     const {
-      form: { getFieldDecorator },
+      form: { getFieldDecorator }
     } = this.props;
     return (
       <Form layout="inline">
@@ -179,7 +177,7 @@ export default class extends Component {
   handleSearch = param => {
     const {
       form: { validateFields },
-      dispatch,
+      dispatch
     } = this.props;
     const queryObj = parseQuery();
 
@@ -189,7 +187,7 @@ export default class extends Component {
           ...values,
           memberId: queryObj.id,
           page: param.page || 1,
-          pageSize: param.pageSize || 10,
+          pageSize: param.pageSize || 10
         };
         dispatch[namespace].getData(payload);
       }
@@ -198,7 +196,7 @@ export default class extends Component {
 
   resetFields = () => {
     const {
-      form: { resetFields },
+      form: { resetFields }
     } = this.props;
     resetFields();
   };
@@ -206,13 +204,13 @@ export default class extends Component {
   showModal = record => {
     this.setState({
       visible: true,
-      editRecord: { ...record },
+      editRecord: { ...record }
     });
   };
 
   modalCancel = () => {
     this.setState({
-      visible: false,
+      visible: false
     });
   };
 
@@ -226,18 +224,18 @@ export default class extends Component {
         memberId: queryObj.id,
         productId: editRecord.spuId,
         skuId: editRecord.skuId,
-        inventory: editRecord.skuInventory,
+        inventory: editRecord.skuInventory
       };
-      const res = dispatch[namespace].changeStockBySKUId(payload).then(res => {
+      dispatch[namespace].changeStockBySKUId(payload).then(res => {
         if (res) {
           this.setState(
             {
-              visible: false,
+              visible: false
             },
             () => {
               dispatch[namespace].updateSkuList({ ...editRecord });
               message.success('库存修改成功');
-            },
+            }
           );
         }
       });
@@ -247,14 +245,14 @@ export default class extends Component {
   stockChange = val => {
     const { editRecord } = this.state;
     this.setState({
-      editRecord: { ...editRecord, skuInventory: val },
+      editRecord: { ...editRecord, skuInventory: val }
     });
   };
 
   pageChange = (page, pageSize) => {
     setQuery({
       page,
-      pageSize,
+      pageSize
     });
     this.handleSearch({ page, pageSize });
   };
