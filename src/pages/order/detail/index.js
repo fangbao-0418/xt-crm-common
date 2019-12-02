@@ -204,8 +204,8 @@ class Detail extends Component {
               <Button type='link'
                 onClick={() => {
                   this.props.modal.show({
-                    type: 'payMessage',
-                    title: '支付单报文详情',
+                    type: 'orderMessage',
+                    title: '订单报文详情',
                     ...orderGlobalExtendVO
                   })
                 }}>
@@ -217,8 +217,8 @@ class Detail extends Component {
                 type='link'
                 onClick={() => {
                   this.props.modal.show({
-                    type: 'orderMessage',
-                    title: '订单报文详情',
+                    type: 'payMessage',
+                    title: '支付单报文详情',
                     ...orderGlobalExtendVO
                   })
                 }}>

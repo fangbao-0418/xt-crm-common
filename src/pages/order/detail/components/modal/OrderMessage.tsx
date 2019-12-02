@@ -75,7 +75,7 @@ function Main (props: Props) {
         )
       }
     >
-      <FormItem name='orderPushCustomsStatus' type='text' label='支付单报文状态'>{orderPushCustomsStatusConfig[String(props.orderPushCustomsStatus)]}</FormItem>
+      <FormItem name='orderPushCustomsStatus' type='text' label='订单报文状态'>{orderPushCustomsStatusConfig[String(props.orderPushCustomsStatus)]}</FormItem>
       <FormItem type='text'label={<span style={{fontWeight: 'bold'}}>报文申请信息</span>}></FormItem>
       <FormItem name='propstaxMoney' type='text' label='代扣税款'>{APP.fn.formatMoney(props.propstaxMoney)}</FormItem>
       <FormItem name='payerRealName' type={isFailed ? 'input' : 'text'} label='订购人姓名' />
