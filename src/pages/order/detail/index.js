@@ -91,28 +91,6 @@ class Detail extends Component {
    * 查询订单详情信息
    */
   query = () => {
-    // queryOrderDetail({ orderCode: this.id }).then((data = {}) => {
-    //   const childOrderMap = {};
-    //   (data.orderInfo && data.orderInfo.childOrderList || []).forEach(item => {
-    //     childOrderMap[item.id] = {
-    //       childOrder: item,
-    //       logistics: item,
-    //       skuList: item.skuList,
-    //     };
-    //   });
-    //   (data.logisticsList || []).forEach(item => {
-    //     const id = Number(item.childOrderId);
-    //     childOrderMap[id] && (childOrderMap[id].logistics = item);
-    //   });
-    //   (data.skuList || []).forEach(item => {
-    //     const id = Number(item.childOrderId);
-    //     childOrderMap[id] && childOrderMap[id].skuList && childOrderMap[id].skuList.push(item);
-    //   });
-    //   this.setState({
-    //     data,
-    //     childOrderList: Object.values(childOrderMap),
-    //   });
-    // });
     APP.dispatch({
       type: `${namespace}/fetchDetail`,
       payload: {
@@ -251,7 +229,6 @@ class Detail extends Component {
         </Card>
         <Card title="详细信息">
           {map(childOrderList, (item, index) => {
-            console.log('item ~~~~~~~~~~~~~~~~ ', item)
             return (
               <div
                 key={item.childOrder.orderCode}

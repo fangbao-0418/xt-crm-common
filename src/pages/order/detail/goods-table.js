@@ -8,6 +8,7 @@ import ChildOrderBenefitInfo from './child-order-benefit-info'
 import { formatDate } from '../../helper'
 import { setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId } from '../api'
 import alert from '@/packages/common/components/alert'
+import * as adapter from './adapter'
 @withRouter
 class GoodsTable extends Component {
   state = {
@@ -200,7 +201,7 @@ class GoodsTable extends Component {
               bordered
               rowKey={record => record.skuId}
               columns={columns}
-              dataSource={list}
+              dataSource={adapter.filterChildOrderData(list)}
               pagination={false}
               title={() => tableTitle}
               footer={() => {
