@@ -301,16 +301,11 @@ class Main extends React.Component<Props, State> {
                     placeholder="请输入商品编码"
                     onChange={(e) => {
                       const value = e.target.value
-                      // console.log(!value, value, 'value')
                       cb('skuCode', record, index)(value)
-                      if (!value) {
-                        setTimeout(() => {
-                          this.forceUpdate()
-                        }, 400)
-                      }
-                      if (/^SKUH\d{12}$/.test(value)) {
-                        
-                      }
+                      setTimeout(() => {
+                        this.forceUpdate()
+                        console.log('skuCode skuCode')
+                      }, 400)
                     }}
                   />
                 )
