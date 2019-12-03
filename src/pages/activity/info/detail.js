@@ -298,7 +298,7 @@ class ActivityDetail extends React.Component {
               <Input value={maxBuy} style={{ width: 160 }} placeholder="请填写最大购买量" type="number"  onChange={e => this.setState({ maxBuy: e.target.value })}/>
             </Col>
             <Col span={8}>
-              <FormItem label="活动图片">
+              {/* <FormItem label="活动图片">
                 <UploadView
                   listType="picture-card"
                   value={activityImage}
@@ -307,7 +307,7 @@ class ActivityDetail extends React.Component {
                   size={0.3}
                   placeholder="添加活动图片"
                 />
-              </FormItem>
+              </FormItem> */}
             </Col>
           </Row>
         </Card>
