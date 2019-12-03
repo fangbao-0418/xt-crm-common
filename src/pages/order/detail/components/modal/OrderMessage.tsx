@@ -25,6 +25,7 @@ interface Props {
   /** 成功回调 */
   onOk: () => void
   mainOrderId: number
+  customsOrderGuid: number
 }
 function Main (props: Props) {
   /** 是否失败 */
@@ -40,7 +41,7 @@ function Main (props: Props) {
     <Form
       style={{ display: props.hidden ? 'none': 'block'}}
       labelCol={{span: 8}}
-      wrapperCol={{span: 10}}
+      wrapperCol={{span: 12}}
       getInstance={(ref) => form = ref}
       addonAfter={
         (
@@ -87,6 +88,12 @@ function Main (props: Props) {
         label='订单报文状态'
       >
         {orderPushCustomsStatusConfig[String(props.orderPushCustomsStatus)]}
+      </FormItem>
+      <FormItem
+        name='paymentDeclareNo'
+        type='text'
+        label='报关流水号'>
+        {props.customsOrderGuid}
       </FormItem>
       <FormItem
         type='text'

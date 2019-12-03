@@ -17,7 +17,6 @@ const paymentPushCustomsStatusConifg: any = {
 interface Props {
   hidden?: boolean
   paymentChannel: 1 | 2,
-  paymentDeclareNo: number
   payerRealName: string
   payerIdNumber: string
   paymentPushCustomsTime: number
@@ -30,6 +29,8 @@ interface Props {
   onOk: () => void
   /** 主订单ID */
   mainOrderId: number
+  /** 支付单报关流水号 */
+  paymentDeclareNo: number
   hideModal: () => void
 }
 function Main (props: Props) {
@@ -49,7 +50,7 @@ function Main (props: Props) {
       getInstance={(ref) => form = ref}
       style={{ display: props.hidden ? 'none': 'block'}}
       labelCol={{span: 8}}
-      wrapperCol={{span: 10}}
+      wrapperCol={{span: 12}}
       addonAfter={
         (
           <FormItem
@@ -101,15 +102,15 @@ function Main (props: Props) {
         {paymentPushCustomsStatusConifg[String(props.paymentPushCustomsStatus)]}
       </FormItem>
       <FormItem
-        type='text'
-        label={<span style={{fontWeight: 'bold'}}>报文申请信息</span>}
-      />
-      <FormItem
         name='paymentDeclareNo'
         type='text'
         label='报关流水号'>
         {props.paymentDeclareNo}
       </FormItem>
+      <FormItem
+        type='text'
+        label={<span style={{fontWeight: 'bold'}}>报文申请信息</span>}
+      />
       <FormItem
         name='paymentNo'
         type='text'

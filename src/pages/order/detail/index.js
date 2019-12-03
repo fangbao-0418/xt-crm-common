@@ -306,8 +306,7 @@ class Detail extends Component {
                       </Row>
                       <Row gutter={24}>
                         <Col span={8}>供应商：{item.childOrder.storeName}</Col>
-                        <Col span={8}>供应商类型：</Col>
-                        <Col span={8}>分类：{storeType[item.childOrder.category]}</Col>
+                        <Col span={8}>供应商类型：{storeType[item.childOrder.category]}</Col>
                         <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
                       </Row>
                       <Row>

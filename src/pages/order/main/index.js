@@ -11,8 +11,7 @@ class Order extends Component {
     this.state = {};
   }
   handleTabClick = key => {
-    console.log(key, 'key');
-    window.location = '/#' + key;
+    window.location.href = window.location.pathname + '#' + key
   };
   render() {
     const {

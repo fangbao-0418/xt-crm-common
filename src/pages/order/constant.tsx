@@ -96,7 +96,7 @@ export function getDetailColumns (type = 0) {
   ];
 }
 
-export const storeType = ['喜团', '1688', '淘宝联盟'];
+export const storeType = ['喜团', '1688', '淘宝联盟', '一般海外供应商', '保税仓海外供应商'];
 export const supplierOperate: any = {
   0: '未验收',
   10: '已验收'
