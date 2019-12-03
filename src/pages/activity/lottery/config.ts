@@ -17,18 +17,18 @@ export const name: Props = {
     }
   }
 }
-
+export const options: { label: string, value: string}[] = [
+  { label: '所有领域', value: '' },
+  { label: '产品类', value: '1' },
+  { label: '运营类', value: '2' },
+  { label: '设计类', value: '3' },
+  { label: '开发类', value: '4' }
+]
 export const type: Props = {
   name: 'type',
   label: '活动类型',
   type: 'select',
-  options: [
-    { label: '所有领域', value: '' },
-    { label: '产品类', value: '1' },
-    { label: '运营类', value: '2' },
-    { label: '设计类', value: '3' },
-    { label: '开发类', value: '4' }
-  ],
+  options,
   fieldDecoratorOptions: {
     rules: [{
       required: true,

@@ -1,10 +1,137 @@
 import React from 'react'
-import { Button, Card, Table, DatePicker, Icon, Row } from 'antd'
+import { Button, Card, Table, DatePicker, Icon, Row, Input } from 'antd'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
-import { ColumnProps } from 'antd/es/table'
+import styles from './style.module.styl'
+import { options } from './config'
+import SelectFetch from '@/packages/common/components/select-fetch'
 const { Column, ColumnGroup } = Table
+interface Prize {
+
+}
 class Main extends React.Component {
   public form: FormInstance
+  public list: Prize[] = [
+    {
+      No: 1,
+      type: 1,
+      setting: '',
+      alias: '',
+      image: '',
+      riskControlLevel: '',
+      num: '',
+      limit: '',
+      sill: '',
+      user: '',
+      head: '',
+      districtChief: '',
+      partner: ''
+    },
+    {
+      No: 1,
+      type: 1,
+      setting: '',
+      alias: '',
+      image: '',
+      riskControlLevel: '',
+      num: '',
+      limit: '',
+      sill: '',
+      user: '',
+      head: '',
+      districtChief: '',
+      partner: ''
+    },
+    {
+      No: 1,
+      type: 1,
+      setting: '',
+      alias: '',
+      image: '',
+      riskControlLevel: '',
+      num: '',
+      limit: '',
+      sill: '',
+      user: '',
+      head: '',
+      districtChief: '',
+      partner: ''
+    },
+    {
+      No: 1,
+      type: 1,
+      setting: '',
+      alias: '',
+      image: '',
+      riskControlLevel: '',
+      num: '',
+      limit: '',
+      sill: '',
+      user: '',
+      head: '',
+      districtChief: '',
+      partner: ''
+    },
+    {
+      No: 1,
+      type: 1,
+      setting: '',
+      alias: '',
+      image: '',
+      riskControlLevel: '',
+      num: '',
+      limit: '',
+      sill: '',
+      user: '',
+      head: '',
+      districtChief: '',
+      partner: ''
+    },
+    {
+      No: 1,
+      type: 1,
+      setting: '',
+      alias: '',
+      image: '',
+      riskControlLevel: '',
+      num: '',
+      limit: '',
+      sill: '',
+      user: '',
+      head: '',
+      districtChief: '',
+      partner: ''
+    },
+    {
+      No: 1,
+      type: 1,
+      setting: '',
+      alias: '',
+      image: '',
+      riskControlLevel: '',
+      num: '',
+      limit: '',
+      sill: '',
+      user: '',
+      head: '',
+      districtChief: '',
+      partner: ''
+    },
+    {
+      No: 1,
+      type: 1,
+      setting: '',
+      alias: '',
+      image: '',
+      riskControlLevel: '',
+      num: '',
+      limit: '',
+      sill: '',
+      user: '',
+      head: '',
+      districtChief: '',
+      partner: ''
+    }
+  ]
   public render () {
     return (
       <Form
@@ -81,10 +208,108 @@ class Main extends React.Component {
           />
         </Card>
         <Card title='奖品列表'>
-          <Table>
-            <ColumnGroup title="Name">
-              <Column title="First Name" dataIndex="firstName" key="firstName" />
-              <Column title="Last Name" dataIndex="lastName" key="lastName" />
+          <Table dataSource={this.list}>
+            <Column
+              title='序号'
+              dataIndex='No'
+              key='No'
+            />
+            <Column
+              width={158}
+              title={<span className={styles.required}>奖品类型</span>}
+              dataIndex='type'
+              key='type'
+              render={type => (
+                <SelectFetch options={options}/>
+              )}
+            />
+            <Column
+              title={<span className={styles.required}>奖品设置</span>}
+              dataIndex='setting'
+              key='setting'
+            />
+            <Column
+              title='简称'
+              dataIndex='alias'
+              key='alias'
+            />
+            <Column
+              title={<span className={styles.required}>图片</span>}
+              dataIndex='image'
+              key='image'              
+            />
+            <Column
+              width={100}
+              title='风控级别'
+              dataIndex='riskControlLevel'
+              key='riskControlLevel'
+              render={riskControlLevel => (
+                <Input />
+              )}
+            />
+            <Column
+              width={100}
+              title={<span className={styles.required}>奖品库存</span>}
+              dataIndex='stock'
+              key='stock'
+              render={stock => (
+                <Input />
+              )}
+            />
+            <Column
+              title='发出数量'
+              dataIndex='num'
+              key='num'
+            />
+            <Column
+              title='单人限领'
+              dataIndex='limit'
+              key='limit'
+              render={limit => (
+                <Input />
+              )}
+            />
+            <Column
+              title='订单门槛'
+              dataIndex='sill'
+              key='sill'
+              render={sill => (
+                <Input />
+              )}
+            />
+            <ColumnGroup title={<span className={styles.required}>中奖概率%</span>}>
+              <Column
+                title='普通用户'
+                dataIndex='user'
+                key='user'
+                render={user => (
+                  <Input />
+                )}
+              />
+              <Column
+                title='团长'
+                dataIndex='head'
+                key='head'
+                render={head => (
+                  <Input />
+                )}
+              />
+              <Column
+                title='区长'
+                dataIndex='districtChief'
+                key='districtChief'
+                render={districtChief => (
+                  <Input />
+                )}
+              />
+              <Column
+                title='合伙人'
+                dataIndex='partner'
+                key='partner'
+                render={partner => (
+                  <Input />
+                )}
+              />
             </ColumnGroup>
           </Table>
         </Card>
