@@ -45,6 +45,8 @@ const formLayout = {
 
 class GoodsEdit extends React.Component {
   id = this.props.match.params.id
+  supplier = []
+  detail = {}
   specs = [];
   status = parseQuery().status
   state = {
@@ -68,7 +70,7 @@ class GoodsEdit extends React.Component {
     supplierInfo: {}
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     this.getStoreList();
     this.getCategoryList();
   }
@@ -105,10 +107,10 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
-
-    let { supplier } = this.state;
     getGoodsDetial({ productId: id }).then((res = {}) => {
+      const supplier = this.supplier;
       const arr2 = treeToarr(list);
+      this.detail = {...res}
       const categoryId =
         res.productCategoryVO && res.productCategoryVO.id
           ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse()
@@ -193,10 +195,10 @@ class GoodsEdit extends React.Component {
       this.getStrategyByCategory(categoryId[0]);
       getTemplateList().then(opts => {
         const isRepeat = opts.some(opt => opt.freightTemplateId === res.freightTemplateId)
-        const templateOptions = isRepeat ? opts : opts.concat({
+        const templateOptions = (isRepeat ? opts : opts.concat({
           freightTemplateId: res.freightTemplateId,
           templateName: res.freightTemplateName
-        });
+        })) || [];
         this.setState({ templateOptions });
       })
     })
@@ -244,8 +246,13 @@ class GoodsEdit extends React.Component {
   }
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
+      const supplier = res.records || []
+      this.supplier = supplier
+      const currentSupplier = (supplier || []).find(item => item.id === this.detail.storeId) || {};
       this.setState({
-        supplier: res.records,
+        interceptionVisible: currentSupplier.category == 1 ? false : true,
+        supplierInfo: currentSupplier,
+        supplier
       });
     });
   };
@@ -627,7 +634,7 @@ class GoodsEdit extends React.Component {
               ]
             })(
               <Select
-                disabled={this.id}
+                disabled={this.id !== undefined}
                 onChange={(value) => {
                   if (value !== 0) {
                     this.props.form.setFieldsValue({isAuthentication: 1})
