@@ -3,7 +3,7 @@ import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { name, type } from './config'
 import { Card, DatePicker, Icon, Table, Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
-interface Sessions {
+interface Activity {
   No: number
   name: string
   num: number
@@ -16,10 +16,9 @@ class Main extends React.Component {
   public id: number
   public constructor (props: any) {
     super(props)
-    // console.log('this =>', props.match.parmas.id)
-    // this.id = props.match.parmas.id
+    this.id = props.match.params.id
   }
-  public columns: ColumnProps<Sessions>[] = [
+  public columns: ColumnProps<Activity>[] = [
     {
       key: 'No',
       title: '序号',
@@ -49,7 +48,7 @@ class Main extends React.Component {
       key: 'operate',
       title: '操作',
       width: 280,
-      render: (text: any, record: Sessions, index: number) => {
+      render: (text: any, record: Activity, index: number) => {
         return (
           <div>
             <Button type='link'>查看</Button>
@@ -156,7 +155,7 @@ class Main extends React.Component {
             }]}/>
         </Card>
         <div>
-          <Button type='danger' onClick={() =>  APP.history.push(`/lottery/sessions/${this.id}`)}>新建场次</Button>
+          <Button type='danger' onClick={() =>  APP.history.push(`/activity/lottery/sessions/${this.id}`)}>新建场次</Button>
         </div>
       </Form>
     )

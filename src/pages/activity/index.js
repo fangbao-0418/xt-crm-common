@@ -68,6 +68,12 @@ const LotteryForm = Loadable({
   loading: Loader
 })
 
+/** 活动场次 */
+const ActivitySessions = Loadable({
+  loader: () => import('./lottery/sessions'),
+  loading: Loader
+})
+
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -86,7 +92,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/luckdraw/add`} component={LuckDrawAdd} />
         <Route path={`${match.url}/lottery`} exact component={Lottery} />
         <Route path={`${match.url}/lottery/:id`} exact component={LotteryForm} />
-        <Route path={`${match.url}/lottery/sessions/:id`} component={LotteryForm} />
+        <Route path={`${match.url}/lottery/sessions/:id`} component={ActivitySessions} />
       </Switch>
     );
   }
