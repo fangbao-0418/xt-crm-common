@@ -178,7 +178,7 @@ class GoodsEdit extends React.Component {
         status: res.status,
         bulk: res.bulk,
         weight: res.weight,
-        withShippingFree: res.withShippingFree,
+        withShippingFree:  [10, 20].indexOf(res.productType) > -1 ? 1 : res.withShippingFree,
         coverUrl: initImgList(res.coverUrl),
         videoCoverUrl: initImgList(res.videoCoverUrl),
         videoUrl: initImgList(res.videoUrl),
@@ -636,8 +636,12 @@ class GoodsEdit extends React.Component {
               <Select
                 disabled={this.id !== undefined}
                 onChange={(value) => {
-                  if (value !== 0) {
-                    this.props.form.setFieldsValue({isAuthentication: 1})
+                  /** 海淘商品 */
+                  if ([10, 20].indexOf(value) > -1) {
+                    this.props.form.setFieldsValue({
+                      isAuthentication: 1,
+                      withShippingFree: 1
+                    })
                   } else {
                     this.props.form.setFieldsValue({isAuthentication: 0})
                   }
@@ -790,11 +794,20 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('withShippingFree', {
               initialValue: 0,
             })(
-              <Radio.Group>
-                <Radio style={radioStyle} value={1}>
+              <Radio.Group
+                disabled={[10, 20].indexOf(productType) > -1}
+              >
+                <Radio
+                  style={radioStyle} value={1}
+                >
                   包邮
                 </Radio>
-                <Radio style={radioStyle} value={0}>
+                <Radio
+                  style={{
+                    ...radioStyle,
+                    display: [10, 20].indexOf(productType) > -1 ? 'none' : 'inherit'
+                  }} value={0}
+                >
                   {getFieldDecorator('freightTemplateId')(
                     <TemplateList dataSource={this.state.templateOptions} />
                   )}
