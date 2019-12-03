@@ -45,6 +45,8 @@ const formLayout = {
 
 class GoodsEdit extends React.Component {
   id = this.props.match.params.id
+  supplier = []
+  detail = {}
   specs = [];
   status = parseQuery().status
   state = {
@@ -68,7 +70,7 @@ class GoodsEdit extends React.Component {
     supplierInfo: {}
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     this.getStoreList();
     this.getCategoryList();
   }
@@ -105,10 +107,10 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
-
-    let { supplier } = this.state;
     getGoodsDetial({ productId: id }).then((res = {}) => {
+      const supplier = this.supplier;
       const arr2 = treeToarr(list);
+      this.detail = {...res}
       const categoryId =
         res.productCategoryVO && res.productCategoryVO.id
           ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse()
@@ -176,7 +178,7 @@ class GoodsEdit extends React.Component {
         status: res.status,
         bulk: res.bulk,
         weight: res.weight,
-        withShippingFree: res.withShippingFree,
+        withShippingFree:  [10, 20].indexOf(res.productType) > -1 ? 1 : res.withShippingFree,
         coverUrl: initImgList(res.coverUrl),
         videoCoverUrl: initImgList(res.videoCoverUrl),
         videoUrl: initImgList(res.videoUrl),
@@ -193,10 +195,10 @@ class GoodsEdit extends React.Component {
       this.getStrategyByCategory(categoryId[0]);
       getTemplateList().then(opts => {
         const isRepeat = opts.some(opt => opt.freightTemplateId === res.freightTemplateId)
-        const templateOptions = isRepeat ? opts : opts.concat({
+        const templateOptions = (isRepeat ? opts : opts.concat({
           freightTemplateId: res.freightTemplateId,
           templateName: res.freightTemplateName
-        });
+        })) || [];
         this.setState({ templateOptions });
       })
     })
@@ -244,8 +246,13 @@ class GoodsEdit extends React.Component {
   }
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
+      const supplier = res.records || []
+      this.supplier = supplier
+      const currentSupplier = (supplier || []).find(item => item.id === this.detail.storeId) || {};
       this.setState({
-        supplier: res.records,
+        interceptionVisible: currentSupplier.category == 1 ? false : true,
+        supplierInfo: currentSupplier,
+        supplier
       });
     });
   };
@@ -614,7 +621,7 @@ class GoodsEdit extends React.Component {
             label="商品类型"
             required
             style={{
-              display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
+              // display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
             }}
           >
             {getFieldDecorator('productType', {
@@ -627,10 +634,14 @@ class GoodsEdit extends React.Component {
               ]
             })(
               <Select
-                disabled={this.id}
+                disabled={this.id !== undefined}
                 onChange={(value) => {
-                  if (value !== 0) {
-                    this.props.form.setFieldsValue({isAuthentication: 1})
+                  /** 海淘商品 */
+                  if ([10, 20].indexOf(value) > -1) {
+                    this.props.form.setFieldsValue({
+                      isAuthentication: 1,
+                      withShippingFree: 1
+                    })
                   } else {
                     this.props.form.setFieldsValue({isAuthentication: 0})
                   }
@@ -783,11 +794,20 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('withShippingFree', {
               initialValue: 0,
             })(
-              <Radio.Group>
-                <Radio style={radioStyle} value={1}>
+              <Radio.Group
+                disabled={[10, 20].indexOf(productType) > -1}
+              >
+                <Radio
+                  style={radioStyle} value={1}
+                >
                   包邮
                 </Radio>
-                <Radio style={radioStyle} value={0}>
+                <Radio
+                  style={{
+                    ...radioStyle,
+                    display: [10, 20].indexOf(productType) > -1 ? 'none' : 'inherit'
+                  }} value={0}
+                >
                   {getFieldDecorator('freightTemplateId')(
                     <TemplateList dataSource={this.state.templateOptions} />
                   )}
