@@ -175,8 +175,11 @@ class CheckBoth extends React.Component<Props, State> {
     return isAllow === 1;
   }
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const checkVO = this.data.checkVO || {};
+    const { getFieldDecorator } = this.props.form
+    const checkVO = this.data.checkVO || {}
+    /** 是否是海淘订单 */
+    const isHaiTao = Number(this.orderInfoVO.orderType) === 70
+    
     return (
       <>
         <Modal
@@ -241,11 +244,12 @@ class CheckBoth extends React.Component<Props, State> {
                     <InputNumber
                       min={0}
                       max={formatPrice(this.maxRefundAmount)}
+                      disabled={isHaiTao}
                       formatter={formatRMB}
                       onChange={this.handleChangeMaxRefundAmount}
                     />,
                   )}
-                  <span>（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
+                  <span>（最多可退￥{`${formatPrice(this.maxRefundAmount)}${isHaiTao ? '，已包含税费': ''}`}）</span>
                 </Form.Item>
                 {this.isReturnShipping &&
                   <Form.Item label="退运费">

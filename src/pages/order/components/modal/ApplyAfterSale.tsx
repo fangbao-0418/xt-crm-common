@@ -130,8 +130,10 @@ class ApplyAfterSale extends React.Component<Props, State> {
     }
     let { skuDetail } = this.state
     skuDetail = Object.assign({}, skuDetail)
-    const refundTypeOptions = refundType.getArray().filter(v => v.key !== 30)
-    console.log('refundTypeOptions =>', refundTypeOptions)
+    const isHaiTao = Number(modalInfo.orderType) === 70
+    const options = refundType.getArray()
+    /** 海淘订单请选择售后类型没有换货 */
+    const refundTypeOptions = isHaiTao ? options.filter(v => v.key !== 30): options
     return (
       <Modal
         width='80%'
@@ -180,8 +182,14 @@ class ApplyAfterSale extends React.Component<Props, State> {
                     ],
                     initialValue: formatPrice(skuDetail.amount)
                   }
-                )(<InputNumber min={0} max={formatPrice(this.maxRefundAmount)} />)}
-                <span className="ml10">（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
+                )(
+                  <InputNumber
+                    min={0}
+                    disabled={isHaiTao}
+                    max={formatPrice(this.maxRefundAmount)}
+                  />
+                )}
+                <span className="ml10">（最多可退￥{`${formatPrice(this.maxRefundAmount)}${isHaiTao ? '，已包含税费' : ''}`}）</span>
               </Form.Item>
             }
             <Form.Item label="售后凭证">

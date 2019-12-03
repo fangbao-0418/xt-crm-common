@@ -250,6 +250,9 @@ class PendingReview extends React.Component<Props, State> {
     const { getFieldDecorator } = this.props.form;
     const { orderInterceptRecordVO } = (this.props.data as any)
     const isHaiTao = Number(this.orderInfoVO.orderType) === 70
+    const options = refundType.getArray()
+    /** 海淘订单请选择售后类型没有换货 */
+    const refundTypeOptions = isHaiTao ? options.filter(v => v.key !== 30) : options
     return (
       <>
         <Card title={<AfterSaleDetailTitle />}>
@@ -269,7 +272,7 @@ class PendingReview extends React.Component<Props, State> {
               })(
                 <XtSelect
                   style={{ width: 200 }}
-                  data={refundType.getArray()}
+                  data={refundTypeOptions}
                   placeholder="请选择售后类型"
                   onChange={(value: any) => {
                     this.props.form.setFieldsValue({
@@ -362,7 +365,11 @@ class PendingReview extends React.Component<Props, State> {
             )}
             {!this.isRefundTypeOf(enumRefundType.Refund) && (
               <Form.Item label="退货地址">
-                <ModifyReturnAddress detail={this.checkVO} intercept={orderInterceptRecordVO} onSuccess={this.handleChangeReturnAddress} />
+                <ModifyReturnAddress
+                  detail={this.checkVO}
+                  intercept={orderInterceptRecordVO}
+                  onSuccess={this.handleChangeReturnAddress}
+                />
               </Form.Item>
             )}
             {this.isRefundTypeOf(enumRefundType.Exchange) && (
