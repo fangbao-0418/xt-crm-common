@@ -19,7 +19,7 @@ class Page extends React.Component<Props, State> {
     records: []
   };
   payload: any = APP.fn.getPayload(namespace) || {
-    current: 1,
+    pageNo: 1,
     total: 0,
     size: 10
   }
@@ -28,6 +28,7 @@ class Page extends React.Component<Props, State> {
     this.fetchList = this.fetchList.bind(this);
   }
   componentDidMount() {
+    this.payload.pageNo = 1
     this.props.form.setFieldsValue({
       templateName: this.payload.templateName,
       createTime: this.payload.createTimeStart && [moment(this.payload.createTimeStart), moment(this.payload.createTimeEnd)],
@@ -40,7 +41,7 @@ class Page extends React.Component<Props, State> {
     let [createTimeStart, createTimeEnd] = createTime ? momentRangeValueof(createTime) : [];
     let [modifyTimeStart, modifyTimeEnd] = modifyTime ? momentRangeValueof(modifyTime) : [];
     const payload = {
-      pageNo: this.payload.pageNo,
+      pageNo: this.payload.pageNo || 1,
       pageSize: this.payload.size,
       templateName,
       createTimeStart,
@@ -48,15 +49,17 @@ class Page extends React.Component<Props, State> {
       modifyTimeStart,
       modifyTimeEnd,
     }
-    const { records, current, total } = await templatePage(payload) || {}
+    const { records, total } = await templatePage(payload) || {}
     this.payload = payload
+    this.payload.current = payload.pageNo
+    this.payload.total = total
     APP.fn.setPayload(namespace, payload)
     this.setState({
       records
     });
   }
   onChange = (current: number) => {
-    this.payload.current = current
+    this.payload.pageNo = current
     this.fetchList()
   };
   handleReset = () => {
@@ -64,7 +67,7 @@ class Page extends React.Component<Props, State> {
     this.handleSearch()
   }
   handleSearch = () => {
-    this.payload.current = 1
+    this.payload.pageNo = 1
     this.fetchList()
   }
   render() {
@@ -167,7 +170,7 @@ class Page extends React.Component<Props, State> {
           <Table
             rowKey="createTime"
             pagination={{
-              current: this.payload.current,
+              current: this.payload.pageNo,
               total: this.payload.total,
               onChange: this.onChange
             }}
