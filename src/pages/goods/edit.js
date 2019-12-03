@@ -165,7 +165,7 @@ class GoodsEdit extends React.Component {
         productType: res.productType,
         interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
-        freightTemplateId: String(res.freightTemplateId),
+        freightTemplateId: res.freightTemplateId ? String(res.freightTemplateId) : '',
         description: res.description,
         productCode: res.productCode,
         productId: res.productId,

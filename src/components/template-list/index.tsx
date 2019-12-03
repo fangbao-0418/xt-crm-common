@@ -33,7 +33,7 @@ class Main extends React.Component<Props, any> {
         }}
       >
         {(dataSource || []).map(({ freightTemplateId, templateName }: Item, index: number) => (
-          <Option key={freightTemplateId || index}>{templateName}</Option>
+          <Option key={freightTemplateId || index}>{templateName || ''}</Option>
         ))}
       </AutoComplete>
     );

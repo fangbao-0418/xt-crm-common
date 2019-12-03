@@ -8,36 +8,38 @@ const {
   removeModuleScopePlugin,
   addWebpackModuleRule
 } = require('customize-cra');
-const webpack = require('webpack')
-const path = require("path");
+const webpack = require('webpack');
+const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const paths = require('react-scripts/config/paths');
-const fs = require('fs')
-const pubconfig = fs.existsSync('./pubconfig.json') ? require('./pubconfig.json') : {
-  outputDir: 'build'
-};
+const fs = require('fs');
+const pubconfig = fs.existsSync('./pubconfig.json')
+  ? require('./pubconfig.json')
+  : {
+      outputDir: 'build'
+    };
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
 paths.appBuild = path.resolve(pubconfig.outputDir);
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
 // const dev = process.env.PUB_ENV !== 'prod'
-const isEnvDevelopment = ['prod', 'pre'].indexOf(process.env.PUB_ENV) === -1
-const isEnvProduction = !isEnvDevelopment
+const isEnvDevelopment = ['prod', 'pre'].indexOf(process.env.PUB_ENV) === -1;
+const isEnvProduction = !isEnvDevelopment;
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
     isEnvDevelopment && require.resolve('style-loader'),
     isEnvProduction && {
       loader: MiniCssExtractPlugin.loader,
       options: Object.assign(
-        {},
+        {}
         // shouldUseRelativeAssetPaths ? { publicPath: '../../' } : undefined
-      ),
+      )
     },
     {
       loader: require.resolve('css-loader'),
-      options: cssOptions,
+      options: cssOptions
     },
     {
       // Options for PostCSS as we reference these options twice
@@ -52,21 +54,21 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
           require('postcss-flexbugs-fixes'),
           require('postcss-preset-env')({
             autoprefixer: {
-              flexbox: 'no-2009',
+              flexbox: 'no-2009'
             },
-            stage: 3,
-          }),
+            stage: 3
+          })
         ],
-        sourceMap: !isEnvProduction,
-      },
-    },
+        sourceMap: !isEnvProduction
+      }
+    }
   ].filter(Boolean);
   if (preProcessor) {
     loaders.push({
       loader: require.resolve(preProcessor),
       options: {
-        sourceMap: !isEnvProduction,
-      },
+        sourceMap: !isEnvProduction
+      }
     });
   }
   return loaders;
@@ -80,33 +82,37 @@ module.exports = override(
         importLoaders: 2,
         sourceMap: !isEnvProduction,
         modules: true,
-        getLocalIdent: getCSSModuleLocalIdent,
+        getLocalIdent: getCSSModuleLocalIdent
       },
       'stylus-loader'
-    ),
+    )
   }),
   removeModuleScopePlugin(),
   fixBabelImports('import', {
     libraryName: 'antd',
     style: 'css',
-    libraryDirectory: 'es', // change importing css to less
+    libraryDirectory: 'es' // change importing css to less
   }),
   fixBabelImports('lodash', {
     libraryDirectory: '',
-    camel2DashComponentName: false,
+    camel2DashComponentName: false
   }),
   addDecoratorsLegacy(),
-  addWebpackPlugin(new webpack.ProvidePlugin({
-    APP: path.resolve(__dirname, 'src/util/app')
-  })),
-  addWebpackPlugin(new webpack.DefinePlugin({
-    'process.env': {
-      PUB_ENV: '"'+(process.env.PUB_ENV || 'serve')+'"'
-    }
-  })),
+  addWebpackPlugin(
+    new webpack.ProvidePlugin({
+      APP: path.resolve(__dirname, 'src/util/app')
+    })
+  ),
+  addWebpackPlugin(
+    new webpack.DefinePlugin({
+      'process.env': {
+        PUB_ENV: '"' + (process.env.PUB_ENV || 'serve') + '"'
+      }
+    })
+  ),
   useEslintRc(),
   addWebpackAlias({
-    'packages': path.resolve(__dirname, 'packages/'),
+    packages: path.resolve(__dirname, 'packages/'),
     '@': path.resolve(__dirname, 'src/')
   })
 );
