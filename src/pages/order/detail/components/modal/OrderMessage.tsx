@@ -1,8 +1,8 @@
 import React, { useMemo, useEffect } from 'react'
-import { Button } from 'antd'
+import { Button, Modal } from 'antd'
 import * as api from './api'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form' 
-
+import { idcardReg } from '@/util/regexp'
 /**
  * 订单推送海关状态
  */
@@ -54,19 +54,25 @@ function Main (props: Props) {
             </Button>
             <Button
               type='primary'
-              onClick={async () => {
-                const vals = form && form.getValues() || {}
-                console.log('vals =>', vals)
-                const data = await api.resubmit({
-                  mainOrderId: props.mainOrderId,
-                  reissueType: 'reissueOrder',
-                  realName: vals.payerRealName,
-                  realCardNo: vals.payerIdNumber
+              onClick={() => {
+                Modal.confirm({
+                  title: '系统提示',
+                  content: '确认重新提交订单报文',
+                  onOk: async () => {
+                    const vals = form && form.getValues() || {}
+                    console.log('vals =>', vals)
+                    const data = await api.resubmit({
+                      mainOrderId: props.mainOrderId,
+                      reissueType: 'reissueOrder',
+                      realName: vals.payerRealName,
+                      realCardNo: vals.payerIdNumber
+                    })
+                    if (data) {
+                      props.onOk()
+                      APP.success('提交成功')
+                    }
+                  }
                 })
-                if (data) {
-                  props.onOk()
-                  APP.success('提交成功')
-                }
               }}
             >
               重新提交
@@ -75,11 +81,48 @@ function Main (props: Props) {
         )
       }
     >
-      <FormItem name='orderPushCustomsStatus' type='text' label='订单报文状态'>{orderPushCustomsStatusConfig[String(props.orderPushCustomsStatus)]}</FormItem>
-      <FormItem type='text'label={<span style={{fontWeight: 'bold'}}>报文申请信息</span>}></FormItem>
-      <FormItem name='taxMoney' type='text' label='代扣税款'>{APP.fn.formatMoney(props.taxMoney)}</FormItem>
-      <FormItem name='payerRealName' type={isFailed ? 'input' : 'text'} label='订购人姓名' />
-      <FormItem name='payerIdNumber' type={isFailed ? 'input' : 'text'} label='订购人身份证号'/>
+      <FormItem
+        name='orderPushCustomsStatus'
+        type='text'
+        label='订单报文状态'
+      >
+        {orderPushCustomsStatusConfig[String(props.orderPushCustomsStatus)]}
+      </FormItem>
+      <FormItem
+        type='text'
+        label={<span style={{fontWeight: 'bold'}}>报文申请信息</span>}
+      />
+      <FormItem
+        name='taxMoney'
+        type='text'
+        label='代扣税款'
+      >
+        {APP.fn.formatMoney(props.taxMoney)}
+      </FormItem>
+      <FormItem
+        name='payerRealName'
+        type={isFailed ? 'input' : 'text'}
+        label='订购人姓名'
+      />
+      <FormItem
+        name='payerIdNumber'
+        type={isFailed ? 'input' : 'text'}
+        label='订购人身份证号'
+        verifiable
+        required={false}
+        fieldDecoratorOptions={{
+          rules: [{
+            validator: (rule: any, value: any, callback: any) => {
+              if (idcardReg.test(value)) {
+                callback()
+              }
+              else {
+                callback('请输入合法的身份证号')
+              }
+            }
+          }]
+        }}
+      />
       <FormItem type='text' label={<span style={{fontWeight: 'bold'}}>报文申请结果</span>}></FormItem>
       <FormItem name='orderPushCustomsTime' type='text' label='处理时间'>{APP.fn.formatDate(props.orderPushCustomsTime)}</FormItem>
       <FormItem name='orderPushCustomsMsg' type='text' label='详细处理描述'>{props.orderPushCustomsMsg}</FormItem>

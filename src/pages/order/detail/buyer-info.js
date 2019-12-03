@@ -31,7 +31,7 @@ const BuyerInfo = props => {
   return (
     <Card title="支付信息">
       <Row gutter={24}>
-        <Col span={8}>支付方式: {(String(payType) === '202' ? getCreditPayText(memberPayHuabeiLogDO) : payTypeList[payType]) || '未支付'}</Col>
+        <Col span={8}>支付方式：{(String(payType) === '202' ? getCreditPayText(memberPayHuabeiLogDO) : payTypeList[payType]) || '未支付'}</Col>
         <Col span={8}>支付时间：{formatDate(orderInfo.payDate) || ''}</Col>
         <Col span={8}>交易流水号：{orderInfo.paymentNumber}</Col>
         <Col span={8}>实付金额：{formatMoneyWithSign(orderInfo.payMoney)}</Col>
