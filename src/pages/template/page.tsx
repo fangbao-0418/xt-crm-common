@@ -51,7 +51,6 @@ class Page extends React.Component<Props, State> {
     }
     const { records, total } = await templatePage(payload) || {}
     this.payload = payload
-    this.payload.current = payload.pageNo
     this.payload.total = total
     APP.fn.setPayload(namespace, payload)
     this.setState({
@@ -79,7 +78,7 @@ class Page extends React.Component<Props, State> {
         title: '序号',
         key: 'index',
         render: (text: any, record: any, index: number) => {
-          return ((this.payload.current || 1) - 1) * 10 + (index + 1);
+          return ((this.payload.pageNo || 1) - 1) * 10 + (index + 1);
         },
       },
       {
