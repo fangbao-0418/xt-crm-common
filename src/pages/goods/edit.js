@@ -194,11 +194,13 @@ class GoodsEdit extends React.Component {
       this.getStrategyByCategory(categoryId[0]);
       getTemplateList().then(opts => {
         const isRepeat = opts.some(opt => opt.freightTemplateId === res.freightTemplateId)
-        const templateOptions = (isRepeat ? opts : opts.concat({
-          freightTemplateId: res.freightTemplateId,
-          templateName: res.freightTemplateName
-        })) || [];
-        this.setState({ templateOptions });
+        if (!isRepeat && res.freightTemplateId) {
+          opts = opts.concat({
+            freightTemplateId: res.freightTemplateId,
+            templateName: res.freightTemplateName
+          })
+        }
+        this.setState({ templateOptions: opts });
       })
     })
   }
