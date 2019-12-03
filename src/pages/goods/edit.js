@@ -602,7 +602,9 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('interception', {
               initialValue: 0,
             })(
-              <Radio.Group>
+              <Radio.Group
+                disabled={productType === 20}
+              >
                 <Radio value={1}>是</Radio>
                 <Radio value={0}>否</Radio>
               </Radio.Group>,
@@ -631,6 +633,9 @@ class GoodsEdit extends React.Component {
                     this.props.form.setFieldsValue({isAuthentication: 1})
                   } else {
                     this.props.form.setFieldsValue({isAuthentication: 0})
+                  }
+                  if (value === 20) {
+                    this.props.form.setFieldsValue({interception: 0})
                   }
                   const data = (this.state.data || []).map((item) => {
                     item.skuCode = ''
