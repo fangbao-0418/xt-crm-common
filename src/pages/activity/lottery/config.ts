@@ -17,7 +17,11 @@ export const name: Props = {
     }
   }
 }
-export const options: { label: string, value: string}[] = [
+interface Options {
+  label: string
+  value: string
+}
+export const options: Options[] = [
   { label: '所有领域', value: '' },
   { label: '产品类', value: '1' },
   { label: '运营类', value: '2' },
@@ -41,6 +45,13 @@ export const type: Props = {
     }
   }
 }
+
+export const prizeOptions: Options[] = [
+  { label: '现金', value: '1' },
+  { label: '优惠券', value: '2' },
+  { label: '实物', value: '3' },
+  { label: '元宝', value: '4' }
+]
 
 export const status: Props = {
   label: '状态',

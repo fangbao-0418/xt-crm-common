@@ -1,13 +1,15 @@
 import React from 'react'
-import { Button, Card, Table, DatePicker, Icon, Row, Input } from 'antd'
+import { Button, Card, Table, DatePicker, Icon, Row, Input, InputNumber } from 'antd'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import styles from './style.module.styl'
-import { options } from './config'
 import SelectFetch from '@/packages/common/components/select-fetch'
+import { prizeOptions } from './config'
+import Upload from '@/components/upload'
 const { Column, ColumnGroup } = Table
 interface Prize {
 
 }
+
 class Main extends React.Component {
   public form: FormInstance
   public list: Prize[] = [
@@ -27,7 +29,7 @@ class Main extends React.Component {
       partner: ''
     },
     {
-      No: 1,
+      No: 2,
       type: 1,
       setting: '',
       alias: '',
@@ -42,7 +44,7 @@ class Main extends React.Component {
       partner: ''
     },
     {
-      No: 1,
+      No: 3,
       type: 1,
       setting: '',
       alias: '',
@@ -57,7 +59,7 @@ class Main extends React.Component {
       partner: ''
     },
     {
-      No: 1,
+      No: 4,
       type: 1,
       setting: '',
       alias: '',
@@ -72,7 +74,7 @@ class Main extends React.Component {
       partner: ''
     },
     {
-      No: 1,
+      No: 5,
       type: 1,
       setting: '',
       alias: '',
@@ -87,7 +89,7 @@ class Main extends React.Component {
       partner: ''
     },
     {
-      No: 1,
+      No: 6,
       type: 1,
       setting: '',
       alias: '',
@@ -102,7 +104,7 @@ class Main extends React.Component {
       partner: ''
     },
     {
-      No: 1,
+      No: 7,
       type: 1,
       setting: '',
       alias: '',
@@ -117,7 +119,7 @@ class Main extends React.Component {
       partner: ''
     },
     {
-      No: 1,
+      No: '兜底',
       type: 1,
       setting: '',
       alias: '',
@@ -208,7 +210,11 @@ class Main extends React.Component {
           />
         </Card>
         <Card title='奖品列表'>
-          <Table dataSource={this.list}>
+          <Table
+            dataSource={this.list}
+            pagination={false}
+            scroll={{ x: 1300 }}
+          >
             <Column
               title='序号'
               dataIndex='No'
@@ -220,7 +226,7 @@ class Main extends React.Component {
               dataIndex='type'
               key='type'
               render={type => (
-                <SelectFetch options={options}/>
+                <SelectFetch options={prizeOptions}/>
               )}
             />
             <Column
@@ -232,11 +238,17 @@ class Main extends React.Component {
               title='简称'
               dataIndex='alias'
               key='alias'
+              render={alias => (
+                <Input />
+              )}
             />
             <Column
               title={<span className={styles.required}>图片</span>}
               dataIndex='image'
-              key='image'              
+              key='image'
+              render={image => (
+                <Upload listType='picture-card' />
+              )}           
             />
             <Column
               width={100}
@@ -266,7 +278,7 @@ class Main extends React.Component {
               dataIndex='limit'
               key='limit'
               render={limit => (
-                <Input />
+                <InputNumber />
               )}
             />
             <Column
@@ -274,7 +286,7 @@ class Main extends React.Component {
               dataIndex='sill'
               key='sill'
               render={sill => (
-                <Input />
+                <InputNumber />
               )}
             />
             <ColumnGroup title={<span className={styles.required}>中奖概率%</span>}>
@@ -283,7 +295,7 @@ class Main extends React.Component {
                 dataIndex='user'
                 key='user'
                 render={user => (
-                  <Input />
+                  <InputNumber min={0} max={100} />
                 )}
               />
               <Column
@@ -291,7 +303,7 @@ class Main extends React.Component {
                 dataIndex='head'
                 key='head'
                 render={head => (
-                  <Input />
+                  <InputNumber min={0} max={100} />
                 )}
               />
               <Column
@@ -299,7 +311,7 @@ class Main extends React.Component {
                 dataIndex='districtChief'
                 key='districtChief'
                 render={districtChief => (
-                  <Input />
+                  <InputNumber min={0} max={100} />
                 )}
               />
               <Column
@@ -307,7 +319,7 @@ class Main extends React.Component {
                 dataIndex='partner'
                 key='partner'
                 render={partner => (
-                  <Input />
+                  <InputNumber min={0} max={100} />
                 )}
               />
             </ColumnGroup>

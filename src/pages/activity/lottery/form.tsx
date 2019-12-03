@@ -145,6 +145,7 @@ class Main extends React.Component {
           <Table
             columns={this.columns}
             rowKey='id'
+            pagination={false}
             dataSource={[{
               No: 1,
               name: '标题',
