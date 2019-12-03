@@ -47,8 +47,7 @@ class GoodsEdit extends React.Component {
   id = this.props.match.params.id
   supplier = []
   detail = {}
-  specs = [];
-  status = parseQuery().status
+  specs = []
   state = {
     speSelect: [],
     templateOptions: [],
@@ -175,7 +174,7 @@ class GoodsEdit extends React.Component {
         property1: res.property1,
         property2: res.property2,
         storeId: res.storeId,
-        status: res.status,
+        status: Number(res.status),
         bulk: res.bulk,
         weight: res.weight,
         withShippingFree:  [10, 20].indexOf(res.productType) > -1 ? 1 : res.withShippingFree,
@@ -400,7 +399,7 @@ class GoodsEdit extends React.Component {
           listImage.push(replaceHttpUrl(item.url));
         });
         /** 推送至仓库中即为下架，详情和列表页状态反了 */
-        vals.status = this.status !== '2' ? vals.status: status
+        vals.status = status !== void 0 ? status : vals.status  
         const params = {
           ...vals,
           returnContact: this.state.returnContact,
@@ -502,7 +501,7 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
-    const { productType } = getFieldsValue()
+    const { productType, status } = getFieldsValue()
     console.log(productType, supplierInfo, supplierInfo.category === 4, 'productCustomsDetailVOList')
     return (
       <Form {...formLayout}>
@@ -880,20 +879,18 @@ class GoodsEdit extends React.Component {
               </Button>
             )}
           </Form.Item>
-          {this.status !== '2' && (
-            <Form.Item label="上架状态">
-              {getFieldDecorator('status', {
-                initialValue: 0,
-              })(
-                <Radio.Group>
-                  <Radio value={1}>上架</Radio>
-                  <Radio value={0}>下架</Radio>
-                </Radio.Group>,
-              )}
-            </Form.Item>
-          )}
+          <Form.Item label="上架状态" hidden={status === 2}>
+            {getFieldDecorator('status', {
+              initialValue: 0,
+            })(
+              <Radio.Group>
+                <Radio value={1}>上架</Radio>
+                <Radio value={0}>下架</Radio>
+              </Radio.Group>,
+            )}
+          </Form.Item>
           <Form.Item>
-            <Button className="mr10" type="primary" onClick={() => this.handleSave(2)}>
+            <Button className="mr10" type="primary" onClick={() => this.handleSave()}>
               保存
             </Button>
             <Button
@@ -905,7 +902,7 @@ class GoodsEdit extends React.Component {
             }>
               返回
             </Button>
-            {this.status === '2' && (
+            {status === 2 && (
               <Button onClick={() => this.handleSave(0)}>
                 推送至仓库中
               </Button>

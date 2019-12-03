@@ -215,13 +215,13 @@ class OrderList extends React.Component {
         title: '操作',
         hide: !isNil(refundStatus),
         width: '150px',
-        render: (operate, { orderStatus, orderCode }) => (
+        render: (operate, { orderType, orderStatus, orderCode }) => (
           <>
             <Button type="link" href={`/#/order/detail/${orderCode}`} target="_blank">
               查看详情
             </Button>
             <Divider type="vertical" />
-            {orderStatus === enumOrderStatus.Undelivered && (
+            {Number(orderType) !== 70 && orderStatus === enumOrderStatus.Undelivered && (
               <Button type="link" href={`/#/order/detail/${orderCode}`} target="_blank">
                 发货
               </Button>
