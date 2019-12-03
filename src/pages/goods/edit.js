@@ -621,7 +621,7 @@ class GoodsEdit extends React.Component {
             label="商品类型"
             required
             style={{
-              display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
+              // display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
             }}
           >
             {getFieldDecorator('productType', {
