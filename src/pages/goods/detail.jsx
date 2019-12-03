@@ -127,6 +127,7 @@ function uniqWithProp(list, propName) {
  * @param {*} url 
  */
 function normalizeVideoUrl(url) {
+  url = url || ''
   const index = url.indexOf('?')
   return url.indexOf('?') !== -1 ? url.slice(0, index): url
 }

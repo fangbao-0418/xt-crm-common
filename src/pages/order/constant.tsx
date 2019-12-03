@@ -24,8 +24,9 @@ export function getDetailColumns (type = 0) {
       dataIndex: 'productId',
       key: 'productId',
       width: '8%',
-      render(id: any) {
-        return <Link to={`/goods/detail/${id}?page=1&pageSize=10`}>{id}</Link>
+      render(id: any, record: any) {
+        console.log('record => ', record)
+        return <Link to={`/goods/edit/${id}?pageSize=10&page=1`}>{id}</Link>
       }
     },
     {
