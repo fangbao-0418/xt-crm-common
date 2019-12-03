@@ -201,7 +201,7 @@ class GoodsTable extends Component {
               bordered
               rowKey={record => record.skuId}
               columns={columns}
-              dataSource={adapter.filterChildOrderData(list)}
+              dataSource={adapter.filterChildOrderData(list, childOrder.orderStatus)}
               pagination={false}
               title={() => tableTitle}
               footer={() => {
