@@ -459,8 +459,9 @@ class GoodsEdit extends React.Component {
     let data = this.state.data
     const { form: { resetFields, getFieldsValue, setFieldsValue } } = this.props;
     const currentSupplier = supplier.find(item => item.id === value) || {};
+    const { category } = currentSupplier
     let { productType } = getFieldsValue()
-    if (currentSupplier.category === 1) {
+    if (category === 1) {
       resetFields('interception');
       this.setState({
         interceptionVisible: false
@@ -473,6 +474,11 @@ class GoodsEdit extends React.Component {
     }
     // 普通供应商商品类型为0
     productType = [3, 4].indexOf(currentSupplier.category) > -1 ? productType : 0
+    if (category === 4) {
+      productType = 20
+    } else if (category === 3) {
+      productType = productType === 20 ? 0 : productType
+    }
     setFieldsValue({
       productType
     })
@@ -660,9 +666,9 @@ class GoodsEdit extends React.Component {
                   })
                 }}
               >
-                <Select.Option value={0}>普通商品</Select.Option>
-                <Select.Option value={10}>一般海淘商品</Select.Option>
-                <Select.Option value={20}>保税仓海淘商品</Select.Option>
+                {supplierInfo.category !== 4 && <Select.Option value={0}>普通商品</Select.Option>}
+                {supplierInfo.category === 3 && <Select.Option value={10}>一般海淘商品</Select.Option>}
+                {supplierInfo.category === 4 && <Select.Option value={20}>保税仓海淘商品</Select.Option>}
               </Select>
             )}
           </Form.Item>
