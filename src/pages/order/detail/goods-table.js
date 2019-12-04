@@ -150,8 +150,16 @@ class GoodsTable extends Component {
               title={() => tableTitle}
               footer={() => {
                 return <>
+                  <Row style={{ marginBottom: 20 }}>
+                      <Col style={{textAlign: 'right'}}>
+                        <span style={{ fontWeight: 'bold' }}></span>
+                        <span className="mr10">运费合计：<font color="red">¥  9.00</font></span>
+                        <span className="mr10">运费优惠：<font color="red">¥  -9.00</font></span>
+                        <span>运费实付：¥  0.00</span>
+                      </Col>
+                  </Row>
                   {
-                    proceedsVisible ?
+                    !proceedsVisible ?
                       <Row style={{ marginBottom: 20 }}>
                         <Col>
                           <span style={{ fontWeight: 'bold' }}>SKU收益：</span>

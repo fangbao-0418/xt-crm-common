@@ -325,6 +325,10 @@ class GoodsEdit extends React.Component {
     validateFields((err, vals) => {
       console.log('vals=>', vals)
       vals.freightTemplateId = +vals.freightTemplateId
+      if (err) {
+        APP.error('请检查必填项')
+        return
+      }
       if (!err) {
         if (size(speSelect) === 0) {
           message.error('请添加规格');
@@ -701,9 +705,17 @@ class GoodsEdit extends React.Component {
               </Radio.Group>,
             )}
           </Form.Item>
-          <Form.Item label="单独计算运费">
+          <Form.Item
+            label="单独计算运费"
+          >
             {getFieldDecorator('isCalculateFreight', {
               initialValue: 0,
+              rules: [
+                {
+                  required: true,
+                  message: '请选择是否进行单独计算运费'
+                }
+              ]
             })(
               <Radio.Group>
                 <Radio value={0}>
@@ -712,6 +724,7 @@ class GoodsEdit extends React.Component {
                 <Radio value={1}>
                   是
                 </Radio>
+                <span style={{color: 'red'}}>*商品会叠加运费</span>
               </Radio.Group>,
             )}
           </Form.Item>

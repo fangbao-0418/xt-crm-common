@@ -40,16 +40,28 @@ export function formatMoney (money = '0') {
 
 export function setPayload (name, value) {
   if (name === null && value === undefined) {
-    localStorage.setItem('payload', null)
+    localStorage.setItem('payload', '""')
     return
   }
   const payload = getPayload() || {}
   payload[name] = value
-  localStorage.setItem('payload', JSON.stringify(payload))
+  try {
+    localStorage.setItem('payload', JSON.stringify(payload))
+  } catch (e) {
+    localStorage.setItem('payload', JSON.stringify({
+      [name]: value
+    }))
+  }
 }
 
 export function getPayload (name) {
-  const payload = JSON.parse(localStorage.getItem('payload'))
+  const jsonString = localStorage.getItem('payload') || '""'
+  let payload = undefined
+  try {
+    payload = JSON.parse(jsonString)
+  } catch (e) {
+    //
+  }
   return name ? payload && payload[name] : payload
 }
 
