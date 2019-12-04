@@ -590,6 +590,7 @@ class GoodsEdit extends React.Component {
               onChange: this.supplierChange
             })(
               <Select
+                disabled={this.id && supplierInfo.category === 4}
                 placeholder="请选择供货商"
                 showSearch
                 filterOption={(inputValue, option) => {
