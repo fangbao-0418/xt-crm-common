@@ -64,21 +64,24 @@ function Main (props: Props) {
             <Button
               type='primary'
               onClick={async () => {
-                Modal.confirm({
-                  title: '系统提示',
-                  content: '确认重新提交支付单报文',
-                  onOk: async () => {
-                    const vals = form && form.getValues() || {}
-                    const data = await api.resubmit({
-                      mainOrderId: props.mainOrderId,
-                      reissueType: 'reissuePay',
-                      realName: vals.payerRealName,
-                      realCardNo: vals.payerIdNumber
-                    })
-                    if (data) {
-                      props.onOk()
-                      APP.success('提交成功')
-                    }
+                form.props.form.validateFields((err, vals) => {
+                  if (!err) {
+                    Modal.confirm({
+                      title: '系统提示',
+                      content: '确认重新提交支付单报文',
+                      onOk: async () => {
+                        const data = await api.resubmit({
+                          mainOrderId: props.mainOrderId,
+                          reissueType: 'reissuePay',
+                          realName: vals.payerRealName,
+                          realCardNo: vals.payerIdNumber
+                        })
+                        if (data) {
+                          props.onOk()
+                          APP.success('提交成功')
+                        }
+                      }
+                    })  
                   }
                 })
               }}

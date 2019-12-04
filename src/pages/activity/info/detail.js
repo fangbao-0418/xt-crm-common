@@ -48,7 +48,7 @@ function speedyInput (field, text, record, index, dataSource, cb) {
         while (current <= end) {
           const { sellableQty } = dataSource[current]
           if (field === 'inventory') {
-            stock = stock > sellableQty ? sellableQty : stock
+            stock = (sellableQty && stock > sellableQty) ? sellableQty : stock
           }
           cb(field, current)(stock)
           current++

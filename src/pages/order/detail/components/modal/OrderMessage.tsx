@@ -56,22 +56,25 @@ function Main (props: Props) {
             <Button
               type='primary'
               onClick={() => {
-                Modal.confirm({
-                  title: '系统提示',
-                  content: '确认重新提交订单报文',
-                  onOk: async () => {
-                    const vals = form && form.getValues() || {}
-                    console.log('vals =>', vals)
-                    const data = await api.resubmit({
-                      mainOrderId: props.mainOrderId,
-                      reissueType: 'reissueOrder',
-                      realName: vals.payerRealName,
-                      realCardNo: vals.payerIdNumber
+                form.props.form.validateFields((err, vals) => {
+                  if (!err) {
+                    Modal.confirm({
+                      title: '系统提示',
+                      content: '确认重新提交订单报文',
+                      onOk: async () => {
+                        console.log('vals =>', vals)
+                        const data = await api.resubmit({
+                          mainOrderId: props.mainOrderId,
+                          reissueType: 'reissueOrder',
+                          realName: vals.payerRealName,
+                          realCardNo: vals.payerIdNumber
+                        })
+                        if (data) {
+                          props.onOk()
+                          APP.success('提交成功')
+                        }
+                      }
                     })
-                    if (data) {
-                      props.onOk()
-                      APP.success('提交成功')
-                    }
                   }
                 })
               }}
