@@ -3,6 +3,7 @@
 declare module APP {
   interface History {
     push: (url: string) => void
+    go: (url: string | number) => void
   }
   interface ReduxActionProps<T = any> {
     type: string,

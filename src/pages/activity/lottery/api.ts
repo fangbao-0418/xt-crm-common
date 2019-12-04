@@ -1,5 +1,5 @@
-import { get, del, newPost } from '@/util/fetch'
 import { queryString } from '@/util/utils'
+const { get, del, newPost } = APP.http
 /** 抽奖活动列表分页接口 */
 export function getPage (payload: {
   title: string,
@@ -12,7 +12,8 @@ export function getPage (payload: {
   page: number,
   pageSize: number
 }) {
-  return get(`/luckydraw/getPage${queryString}`)
+  console.log('payload => ', payload)
+  return get(`/luckydraw/getPage${queryString(payload)}`)
 }
 
 /** 抽奖活动详情接口 */

@@ -40,10 +40,11 @@ export function parseQuery() {
 
 /** query序列化 */
 export function queryString(obj) {
+  console.log('obj => ', obj)
   if (typeof obj !== 'object') return ''
   let pairs = []
   for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
+    if (obj.hasOwnProperty(key) && (obj[key] || obj[key] === 0)) {
       pairs.push(`${key}=${obj[key]}`)
     }
   }

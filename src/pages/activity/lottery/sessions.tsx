@@ -72,8 +72,7 @@ class Main extends React.Component<any, State> {
         getInstance={ref => this.form = ref}
         addonAfter={(
           <div style={{marginTop: 100}}>
-            <Button type='danger'>确认</Button>
-            <Button className='ml10'>保存</Button>
+            <Button type='danger'>保存</Button>
             <Button className='ml10'>取消</Button>
           </div>
         )}

@@ -4,13 +4,15 @@ import OperateArea from './components/OperateArea'
 import { type, statusConfig } from './config'
 import { Card, DatePicker, Icon, Table, Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
-
+import * as api from './api'
 class Main extends React.Component {
   public form: FormInstance
   public id: number
   public constructor (props: any) {
     super(props)
     this.id = props.match.params.id
+    this.handleSave = this.handleSave.bind(this)
+    this.handleCancel = this.handleCancel.bind(this)
   }
   public columns: ColumnProps<Lottery.LuckyDrawRoundListVo>[] = [
     {
@@ -48,15 +50,40 @@ class Main extends React.Component {
       render: (text: any, records: Lottery.LuckyDrawRoundListVo) => <OperateArea {...records} />
     }
   ]
+  /** 新建或编辑活动 */
+  public handleSave () {
+    this.form.props.form.validateFields(async (err, vals) => {
+      if (!err) {
+        const res = await api.saveActivity(vals)
+        const msg = Number(this.id) === -1 ? '新建活动': '编辑活动'
+        if (res) {
+          APP.success(`${msg}成功`)
+        }
+      }
+    })
+  }
+
+  public handleCancel () {
+    APP.history.go(-1)
+  }
+
   public render () {
     return (
       <Form
         getInstance={ref => this.form = ref}
         addonAfter={(
           <div style={{marginTop: 100}}>
-            <Button type='danger'>确认</Button>
-            <Button className='ml10'>保存</Button>
-            <Button className='ml10'>取消</Button>
+            <Button
+              type='danger'
+              onClick={this.handleSave}>
+              保存
+            </Button>
+            <Button
+              className='ml10'
+              onClick={this.handleCancel}
+            >
+              取消
+            </Button>
           </div>
         )}
       >
@@ -105,7 +132,9 @@ class Main extends React.Component {
             controlProps={{
               style: {
                 width: 195
-              }
+              },
+              min: 0,
+              precision: 0
             }}
           />
           <FormItem
@@ -129,22 +158,26 @@ class Main extends React.Component {
             }}
           />
         </Card>
-        <Card title='场次列表'>
+        <Card
+          title={(
+            <span>
+              <span>场次列表</span>
+              <span style={{ color: '#999'}}>（必须先有活动才能新建场次）</span>
+          </span>
+        )}>
           <Table
             columns={this.columns}
             rowKey='id'
             pagination={false}
-            dataSource={[{
-              id: 1,
-              name: '标题',
-              participationTimes: 6,
-              startTime: Date.now(),
-              endTime: Date.now(),
-              status: 1
-            }]}/>
+            dataSource={[]}/>
         </Card>
         <div>
-          <Button type='danger' onClick={() =>  APP.history.push(`/activity/lottery/sessions/${this.id}`)}>新建场次</Button>
+          <Button
+            type='danger'
+            disabled={Number(this.id) === -1}
+            onClick={() =>  APP.history.push(`/activity/lottery/sessions/${this.id}`)}>
+            新建场次
+          </Button>
         </div>
       </Form>
     )

@@ -4,6 +4,7 @@ import OperateArea from './components/OperateArea'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import { statusConfig, getDefaultConfig } from './config'
+import * as api from './api'
 class Main extends React.Component {
   public listPage: ListPageInstanceProps
   public columns: ColumnProps<Lottery.ListProps>[] = [
@@ -83,18 +84,7 @@ class Main extends React.Component {
             新建活动
           </Button>
         )}
-        api={() => Promise.resolve({
-          records: [{
-            id: 1,
-            title: '双十二',
-            type: 1,
-            createTime: Date.now(),
-            startTime: Date.now(),
-            endTime: Date.now(),
-            participationTimes: 10,
-            status: 2
-          }]
-        })}
+        api={api.getPage}
       />
     )
   }

@@ -17,19 +17,32 @@ export const title: Props = {
     }
   }
 }
+/**
+ * { label: string, value: number | string | null } [] => { [prop: string]: string } 
+ * @param options 
+ */
+export function convert (options: Options[]) {
+  return options.reduce((prev: any, curr: Options) => {
+    curr.value = curr.value || ''
+    prev[curr.value] = curr.label
+    return prev
+  }, {})
+}
 interface Options {
   label: string
-  value: string | number | null
+  value: string | number | null | undefined
 }
+
+export const typeOptions: Options[] = [
+  { label: '红包雨', value: 1 },
+  { label: '九宫格抽奖', value: 2 }
+]
+export const typeConfig = convert(typeOptions)
 export const type: Props = {
   name: 'type',
   label: '活动类型',
   type: 'select',
-  options: [
-    { label: '全部', value: null },
-    { label: '红包雨', value: 1 },
-    { label: '九宫格抽奖', value: 2 }
-  ],
+  options: typeOptions,
   fieldDecoratorOptions: {
     rules: [{
       required: true,
@@ -53,24 +66,12 @@ export const prizeOptions: Options[] = [
 
 /** 抽奖活动状态 */
 export const statusOptions: Options[] = [
-  { label: '全部', value: null },
   { label: '未开始', value: 0 },
   { label: '进行中', value: 1 },
   { label: '已结束', value: 2 },
   { label: '已关闭', value: 3 }
 ]
 
-/**
- * { label: string, value: number | string | null } [] => { [prop: string]: string } 
- * @param options 
- */
-export function convert (options: Options[]) {
-  return options.reduce((prev: any, curr: Options) => {
-    curr.value = curr.value || ''
-    prev[curr.value] = curr.label
-    return prev
-  }, {})
-}
 
 export const statusConfig = convert(statusOptions)
 export const status: Props = {
@@ -92,11 +93,17 @@ export function getDefaultConfig () {
       status,
       createTime: {
         type: 'rangepicker',
-        label: '创建时间'
+        label: '创建时间',
+        controlProps: {
+          showTime: true
+        }
       },
       beginTime: {
         type: 'rangepicker',
-        label: '开始时间'        
+        label: '开始时间',
+        controlProps: {
+          showTime: true
+        }        
       }
     }
   }
