@@ -110,6 +110,20 @@ function Main (props: Props) {
         name='payerRealName'
         type={isFailed ? 'input' : 'text'}
         label='订购人姓名'
+        verifiable
+        required={false}
+        fieldDecoratorOptions={{
+          rules: [{
+            validator: (rule: any, value: any, callback: any) => {
+              if (typeof value === 'string' && value.length > 20) {
+                callback('字符长度超过限制，请输入20个字符以内')
+              }
+              else {
+                callback()
+              }
+            }
+          }]
+        }}
       />
       <FormItem
         name='payerIdNumber'
