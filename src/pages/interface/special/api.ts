@@ -1,26 +1,29 @@
-import { get, newPost, post, request } from '@/util/fetch';
+import { get, newPost, post, request } from '@/util/fetch'
+import * as adapter from './adapter'
 export function saveSpecial(payload: Special.DetailItem) {
-  const data = { ...payload };
-  return newPost('/crm/subject/save', data);
+  const data = { ...payload }
+  return newPost('/crm/subject/save', data)
 }
 
 export function fetchSpecialList(data?: Special.SearchProps) {
-  return get('/crm/subject/pageQuery', data);
+  return get('/crm/subject/pageQuery', data)
 }
 
 /** 通过商品ids获取商品列表 */
 export function fetchShopListByIds(ids: number[]) {
-  return post('/product/listInIds', { ids });
+  return post('/product/listInIds', { ids })
 }
 
-export function fetchSpecialDetial(id: number) {
-  return get(`/crm/subject/detail/${id}`);
+/** 获取专题页详情内容 */
+export async function fetchSpecialDetial(id: number) {
+  const response = await get(`/crm/subject/detail/${id}`)
+  return adapter.conversionDetails(response)
 }
 
 export function deleteSpecial(subjectIds: number[]) {
   return newPost(`/crm/subject/delete`, {
     ids: subjectIds,
-  });
+  })
 }
 
 export function changeSpecialStatus(subjectIds: number[], status: 0 | 1 | undefined) {
@@ -30,7 +33,7 @@ export function changeSpecialStatus(subjectIds: number[], status: 0 | 1 | undefi
       })
     : newPost(`/crm/subject/active`, {
         ids: subjectIds,
-      });
+      })
 }
 
 /**
@@ -38,8 +41,8 @@ export function changeSpecialStatus(subjectIds: number[], status: 0 | 1 | undefi
  * @param {*} param
  */
 export function getGoodsListByActivityId(param: any) {
-  const { promotionId, ...data } = param;
-  return get(`/promotion/${promotionId}/products`, data);
+  const { promotionId, ...data } = param
+  return get(`/promotion/${promotionId}/products`, data)
 }
 
 /**
@@ -47,5 +50,5 @@ export function getGoodsListByActivityId(param: any) {
  * @param {*} param
  */
 export function batchMoveGoodsToOtherActivity(param: any) {
-  return newPost('/promotion/batchmove', param);
+  return newPost('/promotion/batchmove', param)
 }
