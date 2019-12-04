@@ -36,22 +36,22 @@ declare module Lottery {
     /** 图片 */
     awardPicUrl: string
     /** 风控级别 */
-    controlLevel: number
+    controlLevel: 0 | 1 | null
     /** 奖品库存 */
     awardNum: number
     /** 发出数量 */
-    receiveNum: number
+    receiveNum?: number
     /** 单人限领 */
-    restrictNum: number
+    restrictNum?: number
     /** 订单门槛 */
-    restrictOrderAmount: number
+    restrictOrderAmount?: number
     /** 普通用户概率 */
-    normalUserProbability: number
+    normalUserProbability?: number
     /** 团长概率 */
-    headUserProbability: number
+    headUserProbability?: number
     /** 区长概率 */
-    areaUserProbability: number
+    areaUserProbability?: number
     /** 合伙人概率 */
-    cityUserProbability: number
+    cityUserProbability?: number
   }
 }

@@ -6,134 +6,66 @@ import SelectFetch from '@/packages/common/components/select-fetch'
 import { prizeOptions } from './config'
 import Upload from '@/components/upload'
 const { Column, ColumnGroup } = Table
-interface Prize {
-
+interface State {
+  awardList: Lottery.LuckyDrawAwardListVo[]
 }
-
-class Main extends React.Component {
+class Main extends React.Component<any, State> {
   public form: FormInstance
-  public list: Prize[] = [
-    {
-      No: 1,
-      type: 1,
-      setting: '',
-      alias: '',
-      image: '',
-      riskControlLevel: '',
-      num: '',
-      limit: '',
-      sill: '',
-      user: '',
-      head: '',
-      districtChief: '',
-      partner: ''
-    },
-    {
-      No: 2,
-      type: 1,
-      setting: '',
-      alias: '',
-      image: '',
-      riskControlLevel: '',
-      num: '',
-      limit: '',
-      sill: '',
-      user: '',
-      head: '',
-      districtChief: '',
-      partner: ''
-    },
-    {
-      No: 3,
-      type: 1,
-      setting: '',
-      alias: '',
-      image: '',
-      riskControlLevel: '',
-      num: '',
-      limit: '',
-      sill: '',
-      user: '',
-      head: '',
-      districtChief: '',
-      partner: ''
-    },
-    {
-      No: 4,
-      type: 1,
-      setting: '',
-      alias: '',
-      image: '',
-      riskControlLevel: '',
-      num: '',
-      limit: '',
-      sill: '',
-      user: '',
-      head: '',
-      districtChief: '',
-      partner: ''
-    },
-    {
-      No: 5,
-      type: 1,
-      setting: '',
-      alias: '',
-      image: '',
-      riskControlLevel: '',
-      num: '',
-      limit: '',
-      sill: '',
-      user: '',
-      head: '',
-      districtChief: '',
-      partner: ''
-    },
-    {
-      No: 6,
-      type: 1,
-      setting: '',
-      alias: '',
-      image: '',
-      riskControlLevel: '',
-      num: '',
-      limit: '',
-      sill: '',
-      user: '',
-      head: '',
-      districtChief: '',
-      partner: ''
-    },
-    {
-      No: 7,
-      type: 1,
-      setting: '',
-      alias: '',
-      image: '',
-      riskControlLevel: '',
-      num: '',
-      limit: '',
-      sill: '',
-      user: '',
-      head: '',
-      districtChief: '',
-      partner: ''
-    },
-    {
-      No: '兜底',
-      type: 1,
-      setting: '',
-      alias: '',
-      image: '',
-      riskControlLevel: '',
-      num: '',
-      limit: '',
-      sill: '',
-      user: '',
-      head: '',
-      districtChief: '',
-      partner: ''
+  public state: State
+  public constructor (props: any) {
+    super(props)
+    this.initAwardList()
+  }
+  /** 初始化奖品列表 */
+  public initAwardList () {
+    let res: any = []
+    for (let i = 0; i < 7; i++) {
+      res[i] = {
+        id: i + 1,
+        awardType: null,
+        awardValue: '',
+        awardTitle: '',
+        awardPicUrl: '',
+        controlLevel: null,
+        awardNum: null,
+        receiveNum: null,
+        restrictNum: null,
+        restrictOrderAmount: null,
+        normalUserProbability: null,
+        headUserProbability: null,
+        areaUserProbability: null,
+        cityUserProbability: null
+      }
     }
-  ]
+    res[res.length] = {}
+    this.state = {
+      awardList: res
+    }
+  }
+
+  public getFieldDecorator (id: string, index: number) {
+    const { awardList } = this.state
+    const item: any = awardList[index] || {}
+    return (node: any) => {
+      return React.cloneElement(node, {
+        onChange: (e: any) => {
+          console.log('change params =>', e)
+          switch (node.type.name) {
+            case 'Input':
+              item[id] = e.target.value
+              break
+            case 'InputNumber':
+              item[id] = e
+              break
+            default:
+              item[id] = e
+          }
+          this.setState({ awardList })
+        },
+        value: item[id]  
+      })
+    }
+  }
   public render () {
     return (
       <Form
@@ -212,122 +144,128 @@ class Main extends React.Component {
         <Card title='奖品列表'>
           <Table
             className={styles['prize-list']}
-            dataSource={this.list}
+            dataSource={this.state.awardList}
             pagination={false}
-            scroll={{ x: 1300 }}
+            scroll={{ x: true }}
           >
             <Column
               title='序号'
-              dataIndex='No'
-              key='No'
+              dataIndex='id'
+              key='id'
+              width={80}
             />
             <Column
               width={158}
               title={<span className={styles.required}>奖品类型</span>}
-              dataIndex='type'
-              key='type'
-              render={type => (
-                <SelectFetch options={prizeOptions}/>
+              dataIndex='awardType'
+              key='awardType'
+              render={(arg1, arg2, index) => (
+                this.getFieldDecorator('awardType', index)(<SelectFetch options={prizeOptions}/>)
               )}
             />
             <Column
+              width={120}
               title={<span className={styles.required}>奖品设置</span>}
-              dataIndex='setting'
-              key='setting'
-              render={setting => (
-                <div>
-                  <Button type='link'>选择优惠券</Button>
-                  <Button type='link'>选择实物</Button>
-                  <InputNumber />
-                </div>
-              )}
+              dataIndex='awardValue'
+              key='awardValue'
+              render={(awardValue, record: Lottery.LuckyDrawAwardListVo) => {
+                console.log('record => ', record)
+                return (
+                  <div>
+                    {Number(record.awardType) === 1 && <Button type='link'>选择优惠券</Button>}
+                    {Number(record.awardType) === 4 && <Button type='link'>选择实物</Button>}
+                    <InputNumber />
+                  </div>
+                )
+              }}
             />
             <Column
               title='简称'
-              dataIndex='alias'
-              key='alias'
-              render={alias => (
-                <Input />
+              dataIndex='awardTitle'
+              key='awardTitle'
+              render={(arg1, arg2, index) => (
+                this.getFieldDecorator('awardTitle', index)(<Input />)
               )}
             />
             <Column
+              width={120}
               title={<span className={styles.required}>图片</span>}
-              dataIndex='image'
-              key='image'
-              render={image => (
+              dataIndex='awardPicUrl'
+              key='awardPicUrl'
+              render={awardPicUrl => (
                 <Upload listType='picture-card' />
               )}           
             />
             <Column
               width={100}
               title='风控级别'
-              dataIndex='riskControlLevel'
-              key='riskControlLevel'
-              render={riskControlLevel => (
-                <Input />
+              dataIndex='controlLevel'
+              key='controlLevel'
+              render={(arg1, arg2, index) => (
+                this.getFieldDecorator('controlLevel', index)(<InputNumber min={0} max={1}/>)
               )}
             />
             <Column
               width={100}
               title={<span className={styles.required}>奖品库存</span>}
-              dataIndex='stock'
-              key='stock'
-              render={stock => (
-                <Input />
+              dataIndex='awardNum'
+              key='awardNum'
+              render={(arg1, arg2, index) => (
+                this.getFieldDecorator('awardNum', index)(<InputNumber />)
               )}
             />
             <Column
               title='发出数量'
-              dataIndex='num'
-              key='num'
+              dataIndex='receiveNum'
+              key='receiveNum'
             />
             <Column
               title='单人限领'
-              dataIndex='limit'
-              key='limit'
-              render={limit => (
-                <InputNumber />
+              dataIndex='restrictNum'
+              key='restrictNum'
+              render={(arg1, arg2, index) => (
+                this.getFieldDecorator('restrictNum', index)(<InputNumber />)
               )}
             />
             <Column
               title='订单门槛'
-              dataIndex='sill'
-              key='sill'
-              render={sill => (
-                <InputNumber />
+              dataIndex='restrictOrderAmount'
+              key='restrictOrderAmount'
+              render={(arg1, arg2, index) => (
+                this.getFieldDecorator('restrictOrderAmount', index)(<InputNumber />)
               )}
             />
             <ColumnGroup title={<span className={styles.required}>中奖概率%</span>}>
               <Column
                 title='普通用户'
-                dataIndex='user'
-                key='user'
-                render={user => (
-                  <InputNumber min={0} max={100} />
+                dataIndex='normalUserProbability'
+                key='normalUserProbability'
+                render={(arg1, arg2, index) => (
+                  this.getFieldDecorator('normalUserProbability', index)(<InputNumber min={0} max={100} />)
                 )}
               />
               <Column
                 title='团长'
-                dataIndex='head'
-                key='head'
-                render={head => (
-                  <InputNumber min={0} max={100} />
+                dataIndex='headUserProbability'
+                key='headUserProbability'
+                render={(arg1, arg2, index) => (
+                  this.getFieldDecorator('headUserProbability', index)(<InputNumber min={0} max={100} />)
                 )}
               />
               <Column
                 title='区长'
-                dataIndex='districtChief'
-                key='districtChief'
-                render={districtChief => (
-                  <InputNumber min={0} max={100} />
+                dataIndex='areaUserProbability'
+                key='areaUserProbability'
+                render={(arg1, arg2, index) => (
+                  this.getFieldDecorator('areaUserProbability', index)(<InputNumber min={0} max={100} />)
                 )}
               />
               <Column
                 title='合伙人'
-                dataIndex='partner'
-                key='partner'
-                render={partner => (
-                  <InputNumber min={0} max={100} />
+                dataIndex='cityUserProbability'
+                key='cityUserProbability'
+                render={(arg1, arg2, index) => (
+                  this.getFieldDecorator('cityUserProbability', index)(<InputNumber min={0} max={100} />)
                 )}
               />
             </ColumnGroup>

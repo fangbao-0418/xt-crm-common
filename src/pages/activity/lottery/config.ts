@@ -44,10 +44,11 @@ export const type: Props = {
 }
 
 export const prizeOptions: Options[] = [
-  { label: '现金', value: '1' },
-  { label: '优惠券', value: '2' },
-  { label: '实物', value: '3' },
-  { label: '元宝', value: '4' }
+  { label: '无奖品', value: 0 },
+  { label: '优惠券', value: 1 },
+  { label: '元宝', value: 2 },
+  { label: '现金', value: 3 },
+  { label: '实物', value: 4 }
 ]
 
 /** 抽奖活动状态 */

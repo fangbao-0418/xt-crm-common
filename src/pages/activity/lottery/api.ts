@@ -1,4 +1,4 @@
-import { get, newPost } from '@/util/fetch'
+import { get, del, newPost } from '@/util/fetch'
 import { queryString } from '@/util/utils'
 /** 抽奖活动列表分页接口 */
 export function getPage (payload: {
@@ -25,8 +25,18 @@ export function getSessionsDetail (luckyDrawRoundId: number) {
   return get(`/luckydraw/round/getDetail?luckyDrawRoundId=${luckyDrawRoundId}`)
 }
 
+/** 删除抽奖活动接口 */
+export function deleteActivity (luckyDrawId: number) {
+  return del('/luckydraw/delete', { luckyDrawId })
+}
+
+/** 删除抽奖活动场次接口 */
+export function deleteSession (luckyDrawRoundId: number) {
+  return del('/luckydraw/round/delete', { luckyDrawRoundId })
+}
+
 /** 保存抽奖活动接口 */
-export function saveActivityDetail (payload: {
+export function saveActivity (payload: {
   title: string,
   type: number,
   startTime: number,
@@ -38,12 +48,12 @@ export function saveActivityDetail (payload: {
 }
 
 /** 保存抽奖活动场次接口 */
-export function saveSessionDetail (payload: {
+export function saveSession (payload: {
   id: number,
   title: string,
   startTime: number,
   endTime: number,
   awardList: Lottery.LuckyDrawAwardListVo[]
 }) {
-  return get('/luckydraw/round/getDetail', payload)
+  return newPost('/luckydraw/round/save', payload)
 }
