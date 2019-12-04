@@ -1,30 +1,21 @@
 import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import OperateArea from './components/OperateArea'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
-import { getDefaultConfig } from './config'
-interface Lottery {
-  id: number
-  name: string
-  type: number
-  createTime: number
-  beginTime: number
-  endTime: number
-  num: number
-  status: number
-}
+import { statusConfig, getDefaultConfig } from './config'
 class Main extends React.Component {
   public listPage: ListPageInstanceProps
-  public columns: ColumnProps<Lottery>[] = [
+  public columns: ColumnProps<Lottery.ListProps>[] = [
     {
       key: 'id',
       title: '编号',
       dataIndex: 'id'
     },
     {
-      key: 'name',
+      key: 'title',
       title: '活动名称',
-      dataIndex: 'name'
+      dataIndex: 'title'
     },
     {
       key: 'type',
@@ -38,9 +29,9 @@ class Main extends React.Component {
       render: (text: any) => APP.fn.formatDate(text)
     },
     {
-      key: 'beginTime',
+      key: 'startTime',
       title: '开始时间',
-      dataIndex: 'beginTime',
+      dataIndex: 'startTime',
       render: (text: any) => APP.fn.formatDate(text)
     },
     {
@@ -50,27 +41,21 @@ class Main extends React.Component {
       render: (text: any) => APP.fn.formatDate(text)
     },
     {
-      key: 'num',
+      key: 'participationTimes',
       title: '参与人数',
-      dataIndex: 'num'
+      dataIndex: 'participationTimes'
+    },
+    {
+      key: 'status',
+      title: '状态',
+      dataIndex: 'status',
+      render: (status: any) => statusConfig[status]
     },
     {
       key: 'operate',
-      title: '状态',
-      render: (text: any, record: Lottery, index: number) => {
-        return (
-          <div>
-            <Button type='link'>查看</Button>
-            <Button
-              type='link'
-              onClick={() => {
-                APP.history.push(`/activity/lottery/${record.id}`)
-              }}
-            >编辑</Button>
-            <Button type='link'>上线</Button>
-          </div>
-        )
-      }
+      title: '操作',
+      width: 280,
+      render: (text: any, records: Lottery.ListProps) => <OperateArea {...records} />
     }
   ]
   public constructor (props: any) {
@@ -84,22 +69,29 @@ class Main extends React.Component {
         columns={this.columns}
         rangeMap={{
           createTime: {
-            fields: ['createStartTime', 'createEndTime']
+            fields: ['startCreateTime', 'endCreateTime']
           },
-          beginTime: {
-            fields: ['beginStartTime', 'beginEndTime']
+          startTime: {
+            fields: ['startBeginTime', 'endBeginTime']
           }
         }}
-        addonAfterSearch={<Button type='danger'>新建活动</Button>}
+        addonAfterSearch={(
+          <Button
+            type='danger'
+            onClick={() => APP.history.push('/activity/lottery/-1')}
+          >
+            新建活动
+          </Button>
+        )}
         api={() => Promise.resolve({
           records: [{
             id: 1,
-            name: '双十二',
+            title: '双十二',
             type: 1,
             createTime: Date.now(),
-            beginTime: Date.now(),
+            startTime: Date.now(),
             endTime: Date.now(),
-            num: 10,
+            participationTimes: 10,
             status: 2
           }]
         })}

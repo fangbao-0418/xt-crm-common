@@ -1,16 +1,10 @@
 import React from 'react'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
-import { name, type } from './config'
+import OperateArea from './components/OperateArea'
+import { type, statusConfig } from './config'
 import { Card, DatePicker, Icon, Table, Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
-interface Activity {
-  No: number
-  name: string
-  num: number
-  beginTime: number
-  endTime: number
-  status: number
-}
+
 class Main extends React.Component {
   public form: FormInstance
   public id: number
@@ -18,11 +12,11 @@ class Main extends React.Component {
     super(props)
     this.id = props.match.params.id
   }
-  public columns: ColumnProps<Activity>[] = [
+  public columns: ColumnProps<Lottery.LuckyDrawRoundListVo>[] = [
     {
-      key: 'No',
+      key: 'id',
       title: '序号',
-      dataIndex: 'No'
+      dataIndex: 'id'
     },
     {
       key: 'name',
@@ -30,34 +24,28 @@ class Main extends React.Component {
       dataIndex: 'name'
     },
     {
-      key: 'beginTime',
+      key: 'startTime',
       title: '开始时间',
-      dataIndex: 'beginTime'
+      dataIndex: 'startTime',
+      render: (text: any) => APP.fn.formatDate(text)
     },
     {
       key: 'endTime',
       title: '结束时间',
-      dataIndex: 'endTime'
+      dataIndex: 'endTime',
+      render: (text: any) => APP.fn.formatDate(text)
     },
     {
       key: 'status',
       title: '状态',
-      dataIndex: 'status'
+      dataIndex: 'status',
+      render: (text: any) => statusConfig[text] 
     },
     {
       key: 'operate',
       title: '操作',
       width: 280,
-      render: (text: any, record: Activity, index: number) => {
-        return (
-          <div>
-            <Button type='link'>查看</Button>
-            <Button type='link'>编辑</Button>
-            <Button type='link'>删除</Button>
-            <Button type='link'>关闭</Button>
-          </div>
-        )
-      }
+      render: (text: any, records: Lottery.LuckyDrawRoundListVo) => <OperateArea {...records} />
     }
   ]
   public render () {
@@ -111,7 +99,7 @@ class Main extends React.Component {
             }}
           />
           <FormItem
-            name='cap'
+            name='restrictWinningTimes'
             type='number'
             label='单人中奖次数上限'
             controlProps={{
@@ -121,7 +109,7 @@ class Main extends React.Component {
             }}
           />
           <FormItem
-            name='rule'
+            name='remark'
             type='textarea'
             label='活动规则'
             verifiable
@@ -147,10 +135,10 @@ class Main extends React.Component {
             rowKey='id'
             pagination={false}
             dataSource={[{
-              No: 1,
+              id: 1,
               name: '标题',
-              num: 6,
-              beginTime: Date.now(),
+              participationTimes: 6,
+              startTime: Date.now(),
               endTime: Date.now(),
               status: 1
             }]}/>

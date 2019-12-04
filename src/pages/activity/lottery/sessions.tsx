@@ -211,6 +211,7 @@ class Main extends React.Component {
         </Card>
         <Card title='奖品列表'>
           <Table
+            className={styles['prize-list']}
             dataSource={this.list}
             pagination={false}
             scroll={{ x: 1300 }}
@@ -233,6 +234,13 @@ class Main extends React.Component {
               title={<span className={styles.required}>奖品设置</span>}
               dataIndex='setting'
               key='setting'
+              render={setting => (
+                <div>
+                  <Button type='link'>选择优惠券</Button>
+                  <Button type='link'>选择实物</Button>
+                  <InputNumber />
+                </div>
+              )}
             />
             <Column
               title='简称'
