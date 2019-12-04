@@ -296,7 +296,7 @@ class InterFaceCategory extends Component {
         </Card>
         <Card style={{ display: this.state.isShow ? 'block' : 'none' }}>
           <Form {...formLayout}>
-            <FormItem label="前台类目名称">
+            <FormItem label="类目名称">
               {getFieldDecorator('name', {
                 rules: [
                   {
