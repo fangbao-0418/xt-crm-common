@@ -120,12 +120,12 @@ class ActivityDetail extends React.Component {
     //   this.loading = false;
     //   return false;
     // }
-    // for (let index = 0; index < activityImage.length; index++) {
-    //   if (!activityImage[index].url) {
-    //     this.loading = false;
-    //     return message.error('图片正在上传,请稍后...');
-    //   }
-    // }
+    for (let index = 0; index < activityImage.length; index++) {
+      if (!activityImage[index].url) {
+        this.loading = false;
+        return message.error('图片正在上传,请稍后...');
+      }
+    }
     map(selectedRows, item => {
       item.buyingPrice = item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0;
     });
@@ -298,7 +298,7 @@ class ActivityDetail extends React.Component {
               <Input value={maxBuy} style={{ width: 160 }} placeholder="请填写最大购买量" type="number"  onChange={e => this.setState({ maxBuy: e.target.value })}/>
             </Col>
             <Col span={8}>
-              {/* <FormItem label="活动图片">
+              <FormItem label="活动图片">
                 <UploadView
                   listType="picture-card"
                   value={activityImage}
@@ -307,7 +307,7 @@ class ActivityDetail extends React.Component {
                   size={0.3}
                   placeholder="添加活动图片"
                 />
-              </FormItem> */}
+              </FormItem>
             </Col>
           </Row>
         </Card>
