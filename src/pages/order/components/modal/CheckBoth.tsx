@@ -42,7 +42,7 @@ class CheckBoth extends React.Component<Props, State> {
           payload: {
             id: this.props.match.params.id,
             status: 1,
-            refundType: enumRefundType.Exchange,
+            refundType: enumRefundType.Both,
             ...values
           },
         });
@@ -263,7 +263,7 @@ class CheckBoth extends React.Component<Props, State> {
               </>
             }
             <Form.Item label="说    明">
-              {getFieldDecorator('info')(<Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />)}
+              {getFieldDecorator('info')(<Input.TextArea placeholder="请输入说明" autoSize={{ minRows: 3, maxRows: 5 }} />)}
             </Form.Item>
             {
               this.state.isDemotion > 0 && this.showRefundBoth &&
