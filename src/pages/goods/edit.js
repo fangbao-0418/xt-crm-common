@@ -471,6 +471,7 @@ class GoodsEdit extends React.Component {
         interceptionVisible: true
       })
     }
+    // 普通供应商商品类型为0
     productType = [3, 4].indexOf(currentSupplier.category) > -1 ? productType : 0
     setFieldsValue({
       productType
@@ -622,7 +623,7 @@ class GoodsEdit extends React.Component {
             label="商品类型"
             required
             style={{
-              // display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
+              display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
             }}
           >
             {getFieldDecorator('productType', {
@@ -681,8 +682,8 @@ class GoodsEdit extends React.Component {
               <Radio.Group
                 disabled={[10, 20].indexOf(productType) > -1}
               >
-                <Radio value={0}>否</Radio>
                 <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
               </Radio.Group>
             )}
           </Form.Item>
