@@ -56,22 +56,25 @@ function Main (props: Props) {
             <Button
               type='primary'
               onClick={() => {
-                Modal.confirm({
-                  title: '系统提示',
-                  content: '确认重新提交订单报文',
-                  onOk: async () => {
-                    const vals = form && form.getValues() || {}
-                    console.log('vals =>', vals)
-                    const data = await api.resubmit({
-                      mainOrderId: props.mainOrderId,
-                      reissueType: 'reissueOrder',
-                      realName: vals.payerRealName,
-                      realCardNo: vals.payerIdNumber
+                form.props.form.validateFields((err, vals) => {
+                  if (!err) {
+                    Modal.confirm({
+                      title: '系统提示',
+                      content: '确认重新提交订单报文',
+                      onOk: async () => {
+                        console.log('vals =>', vals)
+                        const data = await api.resubmit({
+                          mainOrderId: props.mainOrderId,
+                          reissueType: 'reissueOrder',
+                          realName: vals.payerRealName,
+                          realCardNo: vals.payerIdNumber
+                        })
+                        if (data) {
+                          props.onOk()
+                          APP.success('提交成功')
+                        }
+                      }
                     })
-                    if (data) {
-                      props.onOk()
-                      APP.success('提交成功')
-                    }
                   }
                 })
               }}
@@ -110,6 +113,20 @@ function Main (props: Props) {
         name='payerRealName'
         type={isFailed ? 'input' : 'text'}
         label='订购人姓名'
+        verifiable
+        required={false}
+        fieldDecoratorOptions={{
+          rules: [{
+            validator: (rule: any, value: any, callback: any) => {
+              if (typeof value === 'string' && value.length > 20) {
+                callback('字符长度超过限制，请输入20个字符以内')
+              }
+              else {
+                callback()
+              }
+            }
+          }]
+        }}
       />
       <FormItem
         name='payerIdNumber'
