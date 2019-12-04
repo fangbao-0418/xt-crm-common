@@ -177,7 +177,7 @@ class GoodsEdit extends React.Component {
         status: Number(res.status),
         bulk: res.bulk,
         weight: res.weight,
-        withShippingFree:  [10, 20].indexOf(res.productType) > -1 ? 1 : res.withShippingFree,
+        withShippingFree:  [20].indexOf(res.productType) > -1 ? 1 : res.withShippingFree,
         coverUrl: initImgList(res.coverUrl),
         videoCoverUrl: initImgList(res.videoCoverUrl),
         videoUrl: initImgList(res.videoUrl),
@@ -459,8 +459,9 @@ class GoodsEdit extends React.Component {
     let data = this.state.data
     const { form: { resetFields, getFieldsValue, setFieldsValue } } = this.props;
     const currentSupplier = supplier.find(item => item.id === value) || {};
+    const { category } = currentSupplier
     let { productType } = getFieldsValue()
-    if (currentSupplier.category === 1) {
+    if (category === 1) {
       resetFields('interception');
       this.setState({
         interceptionVisible: false
@@ -471,7 +472,13 @@ class GoodsEdit extends React.Component {
         interceptionVisible: true
       })
     }
+    // 普通供应商商品类型为0
     productType = [3, 4].indexOf(currentSupplier.category) > -1 ? productType : 0
+    if (category === 4) {
+      productType = 20
+    } else if (category === 3) {
+      productType = productType === 20 ? 0 : productType
+    }
     setFieldsValue({
       productType
     })
@@ -622,7 +629,7 @@ class GoodsEdit extends React.Component {
             label="商品类型"
             required
             style={{
-              // display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
+              display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
             }}
           >
             {getFieldDecorator('productType', {
@@ -659,9 +666,9 @@ class GoodsEdit extends React.Component {
                   })
                 }}
               >
-                <Select.Option value={0}>普通商品</Select.Option>
-                <Select.Option value={10}>一般海淘商品</Select.Option>
-                <Select.Option value={20}>保税仓海淘商品</Select.Option>
+                {supplierInfo.category !== 4 && <Select.Option value={0}>普通商品</Select.Option>}
+                {supplierInfo.category === 3 && <Select.Option value={10}>一般海淘商品</Select.Option>}
+                {supplierInfo.category === 4 && <Select.Option value={20}>保税仓海淘商品</Select.Option>}
               </Select>
             )}
           </Form.Item>
@@ -681,8 +688,8 @@ class GoodsEdit extends React.Component {
               <Radio.Group
                 disabled={[10, 20].indexOf(productType) > -1}
               >
-                <Radio value={0}>否</Radio>
                 <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
               </Radio.Group>
             )}
           </Form.Item>
@@ -796,7 +803,7 @@ class GoodsEdit extends React.Component {
               initialValue: 0,
             })(
               <Radio.Group
-                disabled={[10, 20].indexOf(productType) > -1}
+                disabled={[20].indexOf(productType) > -1}
               >
                 <Radio
                   style={radioStyle} value={1}
@@ -806,7 +813,7 @@ class GoodsEdit extends React.Component {
                 <Radio
                   style={{
                     ...radioStyle,
-                    display: [10, 20].indexOf(productType) > -1 ? 'none' : 'inherit'
+                    display: [20].indexOf(productType) > -1 ? 'none' : 'inherit'
                   }} value={0}
                 >
                   {getFieldDecorator('freightTemplateId')(

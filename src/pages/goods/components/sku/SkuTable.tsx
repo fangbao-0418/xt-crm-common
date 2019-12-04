@@ -291,8 +291,8 @@ class Main extends React.Component<Props, State> {
                       message: 'SKU编码不能为空'
                     },
                     {
-                      pattern: /^SKUH[\d]{12}$/,
-                      message: 'SKU编码规则：固定头 + 产品类型 + 创建年月日(2019简写19) + 类目两位数代码 + 流水号, eg:SKUH191126010001'
+                      pattern: /^SH[\d]{6}[\dA-Z]{1}\d{3}$/,
+                      message: 'SKU编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
                     }
                   ]
                 })(

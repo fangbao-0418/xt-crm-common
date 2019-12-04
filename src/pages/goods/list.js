@@ -289,6 +289,7 @@ class GoodsList extends React.Component {
       {
         title: '操作',
         width: 160,
+        align: 'center',
         render: record => (
           <>
             <Button

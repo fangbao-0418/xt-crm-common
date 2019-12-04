@@ -432,6 +432,8 @@ class List extends React.Component {
               {
                 title: '操作',
                 key: 'opt',
+                width: 110,
+                align: 'center',
                 render: record => (
                   <>
                     <span className="href" onClick={this.handleEditsku(record, type)}>
