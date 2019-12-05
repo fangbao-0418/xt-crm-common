@@ -24,6 +24,7 @@ export interface Props extends FormComponentProps {
   form: any
   onSelect?: (record: Coupon.CouponItemProps, selected: boolean) => void
   onSelectAll?: (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) => void
+  type?: 'checkbox' | 'radio'
 }
 export interface State extends PageProps<Coupon.CouponItemProps> {
   selectedRowKeys: any[]
@@ -131,7 +132,7 @@ class CouponModal extends React.Component<Props, State> {
       ...fields,
       ...this.payload
     }).then((res: any) => {
-      console.log('coupon=>', res);
+      res = res || {}
       res.current = this.payload.page
       this.setState({ ...res })
     })
@@ -141,7 +142,8 @@ class CouponModal extends React.Component<Props, State> {
       selectedRowKeys
     })
   }
-  public onSelect (record: Coupon.CouponItemProps, selected: boolean) {
+  public onSelect (record: Coupon.CouponItemProps, selected: boolean, selectedRows: any[]) {
+    this.selectedRows = selectedRows
     if (this.props.onSelect) {
       this.props.onSelect(record, selected)
     }
@@ -160,6 +162,7 @@ class CouponModal extends React.Component<Props, State> {
     const { selectedRowKeys, visible } = this.state;
     const { getFieldDecorator, resetFields } = this.props.form;
     const rowSelection = {
+      type: this.props.type,
       onSelect: this.onSelect,
       onChange: this.onrowSelectionChange,
       onSelectAll: this.onSelectAll,

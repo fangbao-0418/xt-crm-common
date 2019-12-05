@@ -1,6 +1,6 @@
 import React from 'react'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
-import OperateArea from './components/OperateArea'
+import Ribbon from './components/Ribbon'
 import { title, type, statusConfig } from './config'
 import { Card, DatePicker, Icon, Table, Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
@@ -64,7 +64,7 @@ class Main extends React.Component<any, State> {
       key: 'operate',
       title: '操作',
       width: 280,
-      render: (text: any, records: Lottery.LuckyDrawRoundListVo) => <OperateArea {...records} />
+      render: (text: any, records: Lottery.LuckyDrawRoundListVo) => <Ribbon {...records} />
     }
   ]
   /** 新建或编辑活动 */

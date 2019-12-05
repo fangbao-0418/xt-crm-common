@@ -1,6 +1,6 @@
 import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import OperateArea from './components/OperateArea'
+import Ribbon from './components/Ribbon'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import { statusConfig, getDefaultConfig } from './config'
@@ -56,7 +56,7 @@ class Main extends React.Component {
       key: 'operate',
       title: '操作',
       width: 280,
-      render: (text: any, records: Lottery.ListProps) => <OperateArea {...records} />
+      render: (text: any, records: Lottery.ListProps) => <Ribbon {...records} />
     }
   ]
   public constructor (props: any) {

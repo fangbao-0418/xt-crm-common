@@ -5,6 +5,7 @@ import styles from './style.module.styl'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import { prizeOptions } from './config'
 import Upload from '@/components/upload'
+import PrizeSelect from './components/PrizeSelect'
 import * as api from './api'
 const { Column, ColumnGroup } = Table
 interface State {
@@ -42,35 +43,60 @@ class Main extends React.Component<any, State> {
         normalUserProbability: null,
         headUserProbability: null,
         areaUserProbability: null,
-        cityUserProbability: null
+        cityUserProbability: null,
+        defaultAward: 1
       }
     }
-    res[res.length] = {}
+    res[res.length] = {
+      defaultAward: 0
+    }
     this.state = {
       awardList: res
     }
   }
-
-  public getFieldDecorator (id: string, index: number) {
+  /**
+   * 设置单元格值
+   * @param id 
+   * @param index 
+   * @param val 
+   */
+  public setCellValue (id: string, index: number, val: any) {
     const { awardList } = this.state
     const item: any = awardList[index] || {}
+    item[id] = val
+    this.setState({ awardList })
+  }
+  /**
+   * 获取单元格值
+   * @param id 
+   * @param index 
+   */
+  public getCellValue (id: string, index: number) {
+    const { awardList } = this.state
+    const item: any = awardList[index] || {}
+    return item[id]
+  }
+  /**
+   * 绑定组件，注入onchange，value属性
+   * @param id 
+   * @param index 
+   */
+  public getFieldDecorator (id: string, index: number) {
     return (node: any) => {
       return React.cloneElement(node, {
         onChange: (e: any) => {
-          console.log('change params =>', e)
           switch (node.type.name) {
             case 'Input':
-              item[id] = e.target.value
+              this.setCellValue(id, index, e.target.value)
               break
             case 'InputNumber':
-              item[id] = e
+              this.setCellValue(id, index, e)
               break
             default:
-              item[id] = e
+              this.setCellValue(id, index, e)
           }
-          this.setState({ awardList })
         },
-        value: item[id]  
+        value: this.getCellValue(id, index)
       })
     }
   }
@@ -78,18 +104,21 @@ class Main extends React.Component<any, State> {
   public handleSave () {
     this.form.props.form.validateFields(async (err, vals) => {
       if (!err) {
+        const { awardList } = this.state
         let msg, res
         /** 新增场次 */
         if (this.id === -1) {
           msg = '新增场次'
           res = api.saveSession({
             luckyDrawId: this.luckyDrawId,
+            awardList,
             ...vals
           })
         } else {
           msg = '编辑场次'
           res = api.saveSession({
             luckyDrawId: this.luckyDrawId,
+            awardList,
             id: this.id,
             ...vals
           })
@@ -188,6 +217,9 @@ class Main extends React.Component<any, State> {
               dataIndex='id'
               key='id'
               width={80}
+              render={(id: any, record: Lottery.LuckyDrawAwardListVo) => {
+                return record.defaultAward === 1 ? id : '兜底'
+              }}
             />
             <Column
               width={158}
@@ -199,23 +231,16 @@ class Main extends React.Component<any, State> {
               )}
             />
             <Column
-              width={120}
+              width={140}
               title={<span className={styles.required}>奖品设置</span>}
               dataIndex='awardValue'
               key='awardValue'
-              render={(awardValue, record: Lottery.LuckyDrawAwardListVo) => {
-                console.log('record => ', record)
-                return (
-                  <div>
-                    {Number(record.awardType) === 1 && <Button type='link'>选择优惠券</Button>}
-                    {Number(record.awardType) === 4 && <Button type='link'>选择实物</Button>}
-                    <InputNumber />
-                  </div>
-                )
-              }}
+              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+                this.getFieldDecorator('awardValue', index)(<PrizeSelect awardType={record.awardType}/>)
+              )}
             />
             <Column
-              title='简称'
+              title={<span className={styles.required}>简称</span>}
               dataIndex='awardTitle'
               key='awardTitle'
               render={(arg1, arg2, index) => (

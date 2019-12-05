@@ -55,6 +55,8 @@ declare module Lottery {
     controlLevel: 0 | 1 | null
     /** 奖品库存 */
     awardNum: number
+    /** 是否兜底 */
+    defaultAward: 0 | 1
     /** 发出数量 */
     receiveNum?: number
     /** 单人限领 */
