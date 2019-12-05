@@ -68,7 +68,7 @@ class GoodsEdit extends React.Component {
     productCustomsDetailVOList: [],
     supplierInfo: {}
   };
-
+  currentSupplier = {}
   async componentDidMount() {
     this.getStoreList();
     this.getCategoryList();
@@ -148,6 +148,7 @@ class GoodsEdit extends React.Component {
       });
       this.specs = this.getSpecs(res.skuList);
       const currentSupplier = (supplier || []).find(item => item.id === res.storeId) || {};
+      this.currentSupplier = currentSupplier
       this.setState({
         interceptionVisible: currentSupplier.category == 1 ? false : true,
         data: res.skuList || [],
@@ -476,8 +477,10 @@ class GoodsEdit extends React.Component {
     productType = [3, 4].indexOf(currentSupplier.category) > -1 ? productType : 0
     if (category === 4) {
       productType = 20
+      this.props.form.setFieldsValue({isAuthentication: 1})
     } else if (category === 3) {
       productType = productType === 20 ? 0 : productType
+      this.props.form.setFieldsValue({isAuthentication: 1})
     }
     setFieldsValue({
       productType
@@ -590,7 +593,7 @@ class GoodsEdit extends React.Component {
               onChange: this.supplierChange
             })(
               <Select
-                disabled={this.id && supplierInfo.category === 4}
+                disabled={this.id && this.currentSupplier.category === 4}
                 placeholder="请选择供货商"
                 showSearch
                 filterOption={(inputValue, option) => {
