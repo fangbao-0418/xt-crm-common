@@ -5,6 +5,7 @@ import styles from './style.module.styl'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import { prizeOptions } from './config'
 import Upload from '@/components/upload'
+import * as api from './api'
 const { Column, ColumnGroup } = Table
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
@@ -12,8 +13,15 @@ interface State {
 class Main extends React.Component<any, State> {
   public form: FormInstance
   public state: State
+  /** 活动ID */
+  public luckyDrawId: number
+  /** 场次ID */
+  public id: number
   public constructor (props: any) {
     super(props)
+    this.luckyDrawId = +props.match.params.id
+    this.id = +props.match.params.id
+    this.handleSave = this.handleSave.bind(this)
     this.initAwardList()
   }
   /** 初始化奖品列表 */
@@ -66,20 +74,50 @@ class Main extends React.Component<any, State> {
       })
     }
   }
+  /** 新增、编辑活动场次 */
+  public handleSave () {
+    this.form.props.form.validateFields(async (err, vals) => {
+      if (!err) {
+        let msg, res
+        /** 新增场次 */
+        if (this.id === -1) {
+          msg = '新增场次'
+          res = api.saveSession({
+            luckyDrawId: this.luckyDrawId,
+            ...vals
+          })
+        } else {
+          msg = '编辑场次'
+          res = api.saveSession({
+            luckyDrawId: this.luckyDrawId,
+            id: this.id,
+            ...vals
+          })
+        }
+        if (res) {
+          APP.success(`${msg}成功`)
+        }
+      }
+    })
+  }
+  /** 取消 */
+  public handleCancel () {
+    APP.history.go(-1)
+  }
   public render () {
     return (
       <Form
         getInstance={ref => this.form = ref}
         addonAfter={(
           <div style={{marginTop: 100}}>
-            <Button type='danger'>保存</Button>
-            <Button className='ml10'>取消</Button>
+            <Button type='danger' onClick={this.handleSave}>保存</Button>
+            <Button className='ml10' onClick={this.handleCancel}>取消</Button>
           </div>
         )}
       >
         <Card title='场次信息'>
           <FormItem
-            name='name'
+            name='title'
             type='input'
             label='场次名称'
             verifiable
@@ -95,14 +133,12 @@ class Main extends React.Component<any, State> {
             }}
           />
           <FormItem
-            name='beginTime'
-            type='date'
             label='开始时间'
             verifiable
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('beginTime')(
+                  {form.getFieldDecorator('startTime')(
                     <DatePicker showTime/>
                   )}
                   <span className='ml10'>

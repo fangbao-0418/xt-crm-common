@@ -1,18 +1,35 @@
 import React from 'react'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import OperateArea from './components/OperateArea'
-import { type, statusConfig } from './config'
+import { title, type, statusConfig } from './config'
 import { Card, DatePicker, Icon, Table, Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import * as api from './api'
-class Main extends React.Component {
+interface State {
+  roundList: Lottery.LuckyDrawRoundListVo[]
+}
+class Main extends React.Component<any, State> {
   public form: FormInstance
   public id: number
+  public state: State = {
+    roundList: []
+  }
   public constructor (props: any) {
     super(props)
-    this.id = props.match.params.id
+    this.id = +props.match.params.id
     this.handleSave = this.handleSave.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
+  }
+  public componentDidMount () {
+    /** 编辑获取详情 */
+    if (this.id !== -1) {
+      this.fetchData()
+    }
+  }
+  public async fetchData () {
+    const res = await api.getActivityDetail(this.id)
+    this.form.setValues(res)
+    this.setState({ roundList: res.roundList})
   }
   public columns: ColumnProps<Lottery.LuckyDrawRoundListVo>[] = [
     {
@@ -54,8 +71,14 @@ class Main extends React.Component {
   public handleSave () {
     this.form.props.form.validateFields(async (err, vals) => {
       if (!err) {
-        const res = await api.saveActivity(vals)
-        const msg = Number(this.id) === -1 ? '新建活动': '编辑活动'
+        let msg, res
+        if (this.id === -1) {
+          msg = '新建活动'
+          res = await api.saveActivity(vals)
+        } else {
+          msg = '编辑活动'
+          res = await api.updateActivity({id: this.id, ...vals})
+        }
         if (res) {
           APP.success(`${msg}成功`)
         }
@@ -90,7 +113,7 @@ class Main extends React.Component {
         <Card title='活动信息'>
           <FormItem
             verifiable
-            { ...name }
+            { ...title }
           />
           <FormItem
             verifiable
@@ -102,7 +125,12 @@ class Main extends React.Component {
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('beginTime')(
+                  {form.getFieldDecorator('startTime', {
+                    rules: [{
+                      required: true,
+                      message: '请输入开始时间'
+                    }]
+                  })(
                     <DatePicker showTime/>
                   )}
                   <span className='ml10'>
@@ -169,13 +197,13 @@ class Main extends React.Component {
             columns={this.columns}
             rowKey='id'
             pagination={false}
-            dataSource={[]}/>
+            dataSource={this.state.roundList}/>
         </Card>
         <div>
           <Button
             type='danger'
-            disabled={Number(this.id) === -1}
-            onClick={() =>  APP.history.push(`/activity/lottery/sessions/${this.id}`)}>
+            disabled={this.id === -1}
+            onClick={() =>  APP.history.push(`/activity/lottery/${this.id}/-1`)}>
             新建场次
           </Button>
         </div>

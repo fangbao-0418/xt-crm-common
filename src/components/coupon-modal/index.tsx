@@ -6,7 +6,6 @@ import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
 import receiveStatus from '@/enum/receiveStatus';
 import { formatFaceValue, formatDateRange } from '@/pages/helper';
-import { unionArray } from '@/util/utils';
 import * as api from './api'
 const listBadgeColors: any = {
   '0': 'gray',

@@ -1,5 +1,6 @@
 import { queryString } from '@/util/utils'
-const { get, del, newPost } = APP.http
+import * as adapter from './adapter'
+const { get, del, newPut, newPost } = APP.http
 /** 抽奖活动列表分页接口 */
 export function getPage (payload: {
   title: string,
@@ -17,8 +18,9 @@ export function getPage (payload: {
 }
 
 /** 抽奖活动详情接口 */
-export function getActivityDetail (luckyDrawId: number) {
-  return get(`/luckydraw/getDetail?luckyDrawId=${luckyDrawId}`)
+export async function getActivityDetail (luckyDrawId: number) {
+  const res = await get(`/luckydraw/getDetail?luckyDrawId=${luckyDrawId}`)
+  return adapter.activityResponse(res)
 }
 
 /** 抽奖活动场次详情接口 */
@@ -36,21 +38,18 @@ export function deleteSession (luckyDrawRoundId: number) {
   return del('/luckydraw/round/delete', { luckyDrawRoundId })
 }
 
-/** 保存抽奖活动接口 */
-export function saveActivity (payload: {
-  title: string,
-  type: number,
-  startTime: number,
-  restrictWinningTimes: number,
-  remark: string,
-  roundList: Lottery.LuckyDrawRoundListVo[]
-}) {
-  return newPost('/luckydraw/save', payload)
+/** 修改抽奖活动接口 */
+export function saveActivity (payload: Lottery.ActivityParams) {
+  return newPost('/luckydraw/save', adapter.activityParams(payload))
 }
 
+/** 修改抽奖活动接口 */
+export function updateActivity (payload: Lottery.ActivityParams) {
+  return newPut('/luckydraw/update', adapter.activityParams(payload))
+}
 /** 保存抽奖活动场次接口 */
 export function saveSession (payload: {
-  id: number,
+  luckyDrawId: number,
   title: string,
   startTime: number,
   endTime: number,

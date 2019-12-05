@@ -10,6 +10,15 @@ declare module Lottery {
     /** 0：未开始，1：进行中，2：已结束，3：已关闭 */
     status: 0 | 1 | 2 | 3
   }
+  export interface ActivityParams {
+    id?: number
+    title: string,
+    type: number,
+    startTime: number,
+    restrictWinningTimes: number,
+    remark: string,
+    roundList: Lottery.LuckyDrawRoundListVo[]
+  }
   export interface LuckyDrawRoundListVo {
     /** 场次id */
     id: number
@@ -23,6 +32,13 @@ declare module Lottery {
     endTime: number
     /** 状态，0：未开始，1：进行中，2：已结束，3：已关闭 */
     status: 0 | 1 | 2 | 3
+  }
+  export interface SessionsParams {
+    luckyDrawId: number,
+    title: string,
+    startTime: number,
+    endTime: number,
+    awardList: Lottery.LuckyDrawAwardListVo[]
   }
   export interface LuckyDrawAwardListVo {
     /** 奖品id */
