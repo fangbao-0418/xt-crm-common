@@ -3,8 +3,9 @@ import ListPage, { ListPageInstanceProps } from '@/packages/common/components/li
 import Ribbon from './components/Ribbon'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
-import { statusConfig, getDefaultConfig } from './config'
+import { statusConfig, getDefaultConfig, formatDate } from './config'
 import * as api from './api'
+
 class Main extends React.Component {
   public listPage: ListPageInstanceProps
   public columns: ColumnProps<Lottery.ListProps>[] = [
@@ -27,19 +28,19 @@ class Main extends React.Component {
       key: 'createTime',
       title: '创建时间',
       dataIndex: 'createTime',
-      render: (text: any) => APP.fn.formatDate(text)
+      render: formatDate
     },
     {
       key: 'startTime',
       title: '开始时间',
       dataIndex: 'startTime',
-      render: (text: any) => APP.fn.formatDate(text)
+      render: formatDate
     },
     {
       key: 'endTime',
       title: '结束时间',
       dataIndex: 'endTime',
-      render: (text: any) => APP.fn.formatDate(text)
+      render: formatDate
     },
     {
       key: 'participationTimes',
@@ -56,7 +57,16 @@ class Main extends React.Component {
       key: 'operate',
       title: '操作',
       width: 280,
-      render: (text: any, records: Lottery.ListProps) => <Ribbon {...records} />
+      render: (text: any, record: Lottery.ListProps) => {
+        const path = `/activity/lottery/${record.id}`
+        return (
+          <Ribbon
+            {...record}
+            onView={() => APP.history.push(`${path}?readOnly=1`)}
+            onEdit={() => APP.history.push(path)}
+          />
+        )
+      }
     }
   ]
   public constructor (props: any) {

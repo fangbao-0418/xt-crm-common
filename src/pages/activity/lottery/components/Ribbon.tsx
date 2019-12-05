@@ -1,16 +1,19 @@
 import React from 'react'
 import { Button } from 'antd'
 
-function Main ({ status, id }: any) {
+function Main ({ status, onView, onEdit }: any) {
   return (
     <div>
-      <Button type='link'>查看</Button>
+      <Button
+        type='link'
+        onClick={onView}
+      >
+        查看
+      </Button>
       {[0, 1, 3].includes(status) && (
         <Button
           type='link'
-          onClick={() => {
-            APP.history.push(`/activity/lottery/${id}`)
-          }}
+          onClick={onEdit}
         >
           编辑
         </Button>

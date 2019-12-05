@@ -1,16 +1,18 @@
 import React from 'react'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import Ribbon from './components/Ribbon'
-import { title, type, statusConfig } from './config'
+import { title, type, statusConfig, formatDate } from './config'
 import { Card, DatePicker, Icon, Table, Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import * as api from './api'
+import { parseQuery } from '@/util/utils'
 interface State {
   roundList: Lottery.LuckyDrawRoundListVo[]
 }
 class Main extends React.Component<any, State> {
   public form: FormInstance
   public id: number
+  public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public state: State = {
     roundList: []
   }
@@ -46,13 +48,13 @@ class Main extends React.Component<any, State> {
       key: 'startTime',
       title: '开始时间',
       dataIndex: 'startTime',
-      render: (text: any) => APP.fn.formatDate(text)
+      render: formatDate
     },
     {
       key: 'endTime',
       title: '结束时间',
       dataIndex: 'endTime',
-      render: (text: any) => APP.fn.formatDate(text)
+      render: formatDate
     },
     {
       key: 'status',
@@ -64,7 +66,16 @@ class Main extends React.Component<any, State> {
       key: 'operate',
       title: '操作',
       width: 280,
-      render: (text: any, records: Lottery.LuckyDrawRoundListVo) => <Ribbon {...records} />
+      render: (text: any, record: Lottery.LuckyDrawRoundListVo) => {
+        const path = `/activity/lottery/${this.id}/${record.id}`
+        return (
+          <Ribbon
+            {...record}
+            onView={() => APP.history.push(`${path}?readOnly=1`)}
+            onEdit={() => APP.history.push(path)}
+          />
+        )
+      }
     }
   ]
   /** 新建或编辑活动 */
@@ -93,10 +104,12 @@ class Main extends React.Component<any, State> {
   public render () {
     return (
       <Form
+        readonly={this.readOnly}
         getInstance={ref => this.form = ref}
         addonAfter={(
           <div style={{marginTop: 100}}>
             <Button
+              disabled={this.readOnly}
               type='danger'
               onClick={this.handleSave}>
               保存
@@ -123,6 +136,7 @@ class Main extends React.Component<any, State> {
             label='开始时间'
             verifiable
             inner={(form) => {
+              const startTime =form.getFieldValue('startTime')
               return (
                 <div>
                   {form.getFieldDecorator('startTime', {
@@ -131,19 +145,23 @@ class Main extends React.Component<any, State> {
                       message: '请输入开始时间'
                     }]
                   })(
-                    <DatePicker showTime/>
+                    startTime ? (this.readOnly ? <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> : 
+                      (<>
+                        <DatePicker showTime/>
+                        <span className='ml10'>
+                          <Icon
+                            type='info-circle'
+                            theme='filled'
+                            style={{
+                              color: '#1890ff',
+                              marginRight: 4
+                            }}
+                          />
+                          <span>由于场次才是实际活动开始的时间，这里的开始时间相当于预热开始时间。</span>
+                        </span>
+                      </>)
+                    ): <></>
                   )}
-                  <span className='ml10'>
-                    <Icon
-                      type='info-circle'
-                      theme='filled'
-                      style={{
-                        color: '#1890ff',
-                        marginRight: 4
-                      }}
-                    />
-                    <span>由于场次才是实际活动开始的时间，这里的开始时间相当于预热开始时间。</span>
-                  </span>
                 </div>
               )
             }}
@@ -202,7 +220,7 @@ class Main extends React.Component<any, State> {
         <div>
           <Button
             type='danger'
-            disabled={this.id === -1}
+            disabled={this.id === -1 || this.readOnly}
             onClick={() =>  APP.history.push(`/activity/lottery/${this.id}/-1`)}>
             新建场次
           </Button>

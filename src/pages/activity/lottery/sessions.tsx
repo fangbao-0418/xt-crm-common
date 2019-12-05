@@ -6,8 +6,13 @@ import SelectFetch from '@/packages/common/components/select-fetch'
 import { prizeOptions } from './config'
 import Upload from '@/components/upload'
 import PrizeSelect from './components/PrizeSelect'
+import { message } from 'antd'
 import * as api from './api'
 const { Column, ColumnGroup } = Table
+/** 判断假值，过滤undefined，null，NaN，'’，不过滤0*/
+function isFalsly (val: any) {
+  return val == null || val === '' || Number.isNaN(val)
+}
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
 }
@@ -20,15 +25,28 @@ class Main extends React.Component<any, State> {
   public id: number
   public constructor (props: any) {
     super(props)
-    this.luckyDrawId = +props.match.params.id
+    this.luckyDrawId = +props.match.params.luckyDrawId
     this.id = +props.match.params.id
     this.handleSave = this.handleSave.bind(this)
     this.initAwardList()
   }
+  public componentDidMount () {
+    if (this.id !== -1) {
+      this.fetchDetail()
+    }
+  }
+  /** 获取场次详情 */
+  public async fetchDetail () {
+    const res = await api.getSessionsDetail(this.id)
+    this.form.setValues(res)
+    this.setState({
+      awardList: res.awardList
+    })
+  }
   /** 初始化奖品列表 */
   public initAwardList () {
     let res: any = []
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 1; i++) {
       res[i] = {
         id: i + 1,
         awardType: null,
@@ -47,9 +65,9 @@ class Main extends React.Component<any, State> {
         defaultAward: 1
       }
     }
-    res[res.length] = {
-      defaultAward: 0
-    }
+    // res[res.length] = {
+    //   defaultAward: 0
+    // }
     this.state = {
       awardList: res
     }
@@ -93,6 +111,7 @@ class Main extends React.Component<any, State> {
               this.setCellValue(id, index, e)
               break
             default:
+              console.log('e => ', e)
               this.setCellValue(id, index, e)
           }
         },
@@ -100,23 +119,64 @@ class Main extends React.Component<any, State> {
       })
     }
   }
+  /** 校验活动场次配置 */
+  public validate (awardList: Lottery.LuckyDrawAwardListVo[]) {
+    for (let i = 0; i < awardList.length; i++) {
+      const prefixMsg = `奖品列表第${i + 1}行`
+      const v = awardList[i]
+      /** 奖品类型必填 */
+      if (isFalsly(v.awardType)) {
+        return void message.error(`${prefixMsg}奖品类型不能为空`)
+      }
+      /** 奖品设置除奖品类型为无奖品外必填 */
+      if (v.awardType !== 0 && isFalsly(v.awardValue)) {
+        return void message.error(`${prefixMsg}奖品设置不能为空`)
+      }
+
+      /** 简称必填 */
+      if (isFalsly(v.awardTitle)) {
+        return void message.error(`${prefixMsg}简称不能为空`)
+      }
+      /** 图片必填 */
+      if (isFalsly(v.awardPicUrl)) {
+        return void message.error(`${prefixMsg}图片不能为空`)
+      }
+      /** 奖品库存必填 */
+      if (isFalsly(v.awardNum)) {
+        return void message.error(`${prefixMsg}奖品库存不能为空`)
+      }
+      /** 团长中奖概率必填 */
+      if (isFalsly(v.headUserProbability)) {
+        return void message.error(`${prefixMsg}团长中奖概率不能为空`)
+      }
+      /** 区长中奖概率必填 */
+      if (isFalsly(v.areaUserProbability)) {
+        return void message.error(`${prefixMsg}区长中奖概率不能为空`)
+      }
+      /** 合伙人中奖概率必填 */
+      if (isFalsly(v.cityUserProbability)) {
+        return void message.error(`${prefixMsg}合伙人中奖概率不能为空`)
+      }
+    }
+    return true
+  }
   /** 新增、编辑活动场次 */
   public handleSave () {
     this.form.props.form.validateFields(async (err, vals) => {
-      if (!err) {
-        const { awardList } = this.state
+      const { awardList } = this.state
+      if (!err && !!this.validate(awardList)) {
         let msg, res
         /** 新增场次 */
         if (this.id === -1) {
           msg = '新增场次'
-          res = api.saveSession({
+          res = await api.saveSession({
             luckyDrawId: this.luckyDrawId,
             awardList,
             ...vals
           })
         } else {
           msg = '编辑场次'
-          res = api.saveSession({
+          res = await api.updateSession({
             luckyDrawId: this.luckyDrawId,
             awardList,
             id: this.id,
@@ -125,6 +185,7 @@ class Main extends React.Component<any, State> {
         }
         if (res) {
           APP.success(`${msg}成功`)
+          this.fetchDetail()
         }
       }
     })
@@ -152,7 +213,8 @@ class Main extends React.Component<any, State> {
             verifiable
             fieldDecoratorOptions={{
               rules: [{
-                required: true
+                required: true,
+                message: '请输入场次名称'
               }]
             }}
             controlProps={{
@@ -167,7 +229,12 @@ class Main extends React.Component<any, State> {
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('startTime')(
+                  {form.getFieldDecorator('startTime', {
+                    rules: [{
+                      required: true,
+                      message: '请选择开始时间'
+                    }]
+                  })(
                     <DatePicker showTime/>
                   )}
                   <span className='ml10'>
@@ -200,7 +267,8 @@ class Main extends React.Component<any, State> {
             }}
             fieldDecoratorOptions={{
               rules: [{
-                required: true
+                required: true,
+                message: '请选择结束时间'
               }]
             }}
           />
@@ -244,7 +312,7 @@ class Main extends React.Component<any, State> {
               dataIndex='awardTitle'
               key='awardTitle'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardTitle', index)(<Input />)
+                this.getFieldDecorator('awardTitle', index)(<Input maxLength={20}/>)
               )}
             />
             <Column
@@ -252,8 +320,8 @@ class Main extends React.Component<any, State> {
               title={<span className={styles.required}>图片</span>}
               dataIndex='awardPicUrl'
               key='awardPicUrl'
-              render={awardPicUrl => (
-                <Upload listType='picture-card' />
+              render={(arg1, arg2, index) => (
+                this.getFieldDecorator('awardPicUrl', index)(<Upload listType='picture-card' />)
               )}           
             />
             <Column
@@ -271,7 +339,7 @@ class Main extends React.Component<any, State> {
               dataIndex='awardNum'
               key='awardNum'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardNum', index)(<InputNumber />)
+                this.getFieldDecorator('awardNum', index)(<InputNumber min={0} />)
               )}
             />
             <Column
@@ -284,7 +352,7 @@ class Main extends React.Component<any, State> {
               dataIndex='restrictNum'
               key='restrictNum'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('restrictNum', index)(<InputNumber />)
+                this.getFieldDecorator('restrictNum', index)(<InputNumber min={0}/>)
               )}
             />
             <Column

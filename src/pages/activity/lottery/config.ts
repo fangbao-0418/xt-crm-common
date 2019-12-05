@@ -85,6 +85,8 @@ export const status: Props = {
   }
 }
 
+export const formatDate = (text: any) => text ? APP.fn.formatDate(text) : '-'
+
 export function getDefaultConfig () {
   const defaultConfig: FieldsConfig = {
     lottery: {
