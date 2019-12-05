@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Row, Col, Card, Button, Modal, Input, message, Divider } from 'antd';
+import { formatMoney } from '@/packages/common/utils'
 import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale';
 import { withRouter } from 'react-router'
 import { getDetailColumns, storeType } from '../constant';
@@ -91,8 +92,13 @@ class GoodsTable extends Component {
   }
 
   render() {
-    const { list = [], childOrder = {}, orderInfo = {}, logistics, tableTitle } = this.props;
+    const { tableTitle } = this.props;
     const { proceedsVisible, childOrderProceeds, skuInfo } = this.state;
+    const orderInfo = this.props.orderInfo || {}
+    const childOrder = this.props.childOrder || {}
+    const list = this.props.list || []
+    const logistics = this.props.logistics || {}
+    console.log(list, 'list')
     const columns = [
       ...(getDetailColumns().filter(item => item.key !== 'storeName')),
       {
@@ -153,9 +159,9 @@ class GoodsTable extends Component {
                   <Row style={{ marginBottom: 20 }}>
                       <Col style={{textAlign: 'right'}}>
                         <span style={{ fontWeight: 'bold' }}></span>
-                        <span className="mr10">运费合计：<font color="red">¥  9.00</font></span>
-                        <span className="mr10">运费优惠：<font color="red">¥  -9.00</font></span>
-                        <span>运费实付：¥  0.00</span>
+                        <span className="mr10">运费合计：<font color="red">{formatMoney(childOrder.originFreight)}</font></span>
+                        <span className="mr10">运费优惠：<font color="red">{formatMoney(-(childOrder.couponFreight))}</font></span>
+                        <span>运费实付：{formatMoney(childOrder.payFreight)}</span>
                       </Col>
                   </Row>
                   {
