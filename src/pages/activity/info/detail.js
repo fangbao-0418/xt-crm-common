@@ -115,11 +115,11 @@ class ActivityDetail extends React.Component {
     if (this.loading) return;
     this.loading = true;
     const { detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
-    if (activityImage.length === 0) {
-      message.error('请上传活动商品图');
-      this.loading = false;
-      return false;
-    }
+    // if (activityImage.length === 0) {
+    //   message.error('请上传活动商品图');
+    //   this.loading = false;
+    //   return false;
+    // }
     for (let index = 0; index < activityImage.length; index++) {
       if (!activityImage[index].url) {
         this.loading = false;
@@ -137,7 +137,7 @@ class ActivityDetail extends React.Component {
       memberExclusive,
       promotionSkuAdd: selectedRows,
       sort,
-      banner: activityImage && replaceHttpUrl(activityImage[0].url),
+      banner: activityImage && activityImage[0] && replaceHttpUrl(activityImage[0].url),
     };
     setPromotionAddSKu(params).then(res => {
       if (res) {
@@ -298,7 +298,7 @@ class ActivityDetail extends React.Component {
               <Input value={maxBuy} style={{ width: 160 }} placeholder="请填写最大购买量" type="number"  onChange={e => this.setState({ maxBuy: e.target.value })}/>
             </Col>
             <Col span={8}>
-              {/* <FormItem label="活动图片">
+              <FormItem label="活动图片">
                 <UploadView
                   listType="picture-card"
                   value={activityImage}
@@ -307,7 +307,7 @@ class ActivityDetail extends React.Component {
                   size={0.3}
                   placeholder="添加活动图片"
                 />
-              </FormItem> */}
+              </FormItem>
             </Col>
           </Row>
         </Card>
