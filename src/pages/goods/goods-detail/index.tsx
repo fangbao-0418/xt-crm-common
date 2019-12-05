@@ -24,6 +24,8 @@ class Main extends React.Component<any, any> {
     dispatch[nameSpace].getGoodsInfo({
       productId: id
     });
+
+    (document as any).querySelector('section.ant-layout').getElementsByClassName('ant-layout')[0].scrollTop = 0;
   }
 
   render() {
