@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Row, Col, Table, Upload, Button } from 'antd';
+import { Card, Row, Col, Table, Upload, Button, Modal } from 'antd';
 import { connect } from '@/util/utils';
 import styles from './index.module.scss';
 import { formatMoneyWithSign } from '@/util/helper';
@@ -8,6 +8,12 @@ import { compact } from 'lodash';
 const nameSpace = 'goods.goodsDetail';
 
 class Main extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      visible: false
+    };
+  }
   componentDidMount() {
     const {
       dispatch,
@@ -121,11 +127,13 @@ class Main extends React.Component<any, any> {
         key: 'imageUrl1',
         fixed: 'right' as any,
         width: 120,
-        render: (value: any) => {
-          return (
-            <Button type="link" style={{ padding: 0 }}>
+        render: (value: any, skuInfo: any) => {
+          return value ? (
+            <Button type="link" style={{ padding: 0 }} onClick={() => this.viewSKUImg(skuInfo)}>
               规格图片
             </Button>
+          ) : (
+            '-'
           );
         }
       }
@@ -154,6 +162,8 @@ class Main extends React.Component<any, any> {
     const productImageList = compact(
       ((goodsInfo.productImage || '') as String).split(',').map((url: any) => initImgList(url)[0])
     );
+
+    const { visible, skuInfo = {} } = this.state;
     return (
       <>
         <Card title="商品信息">
@@ -356,9 +366,26 @@ class Main extends React.Component<any, any> {
             </Row>
           ) : null}
         </Card>
+        <Modal
+          title={`规格图片(
+            ${skuInfo.propertyValue1 ? skuInfo.propertyValue1 : ''}
+            ${skuInfo.propertyValue1 && skuInfo.propertyValue2 ? '+' : ''}
+            ${skuInfo.propertyValue2 ? skuInfo.propertyValue2 : ''}
+            )`}
+          visible={visible}
+        >
+          <img src={skuInfo.imageUrl1} />
+        </Modal>
       </>
     );
   }
+
+  viewSKUImg = (skuInfo: any) => {
+    this.setState({
+      visible: true,
+      skuInfo
+    });
+  };
 }
 
 export default connect((state: any) => ({
