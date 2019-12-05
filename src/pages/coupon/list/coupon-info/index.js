@@ -558,7 +558,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             </Radio.Group>
           )}
         </Form.Item>
-        <Form.Item label="领取人(使用人)限制">
+        <Form.Item label="领取人限制">
           {getFieldDecorator('recipientLimit', { rules: [{ required: true, message: '请选择领取人限制' }] })(
             <Radio.Group>
               <Radio className="block-radio" value={0}>
