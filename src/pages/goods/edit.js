@@ -643,7 +643,7 @@ class GoodsEdit extends React.Component {
               ]
             })(
               <Select
-                disabled={this.id !== undefined}
+                disabled={this.id !== undefined && supplierInfo.category !== 3}
                 onChange={(value) => {
                   /** 海淘商品 */
                   if ([10, 20].indexOf(value) > -1) {
