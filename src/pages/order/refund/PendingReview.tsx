@@ -25,6 +25,8 @@ interface State {
   selectedValues: any[];
   isDemotion: number;
   demotionInfo: string;
+  /** 是否显示退费 */
+  isReturnShipping: boolean;
 }
 
 class PendingReview extends React.Component<Props, State> {
@@ -32,7 +34,8 @@ class PendingReview extends React.Component<Props, State> {
     addressVisible: false,
     selectedValues: [],
     isDemotion: this.checkVO.isDemotion,
-    demotionInfo: ''
+    demotionInfo: '',
+    isReturnShipping: false
   };
   /**
    * 客服审核

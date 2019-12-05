@@ -114,20 +114,23 @@ class ActivityDetail extends React.Component {
   handleSavae = () => {
     if (this.loading) return;
     this.loading = true;
-    const { detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
-    // if (activityImage.length === 0) {
-    //   message.error('请上传活动商品图');
-    //   this.loading = false;
-    //   return false;
-    // }
+    const { detailData, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
+    if (activityImage.length === 0) {
+      message.error('请上传活动商品图');
+      this.loading = false;
+      return false;
+    }
     for (let index = 0; index < activityImage.length; index++) {
       if (!activityImage[index].url) {
         this.loading = false;
         return message.error('图片正在上传,请稍后...');
       }
     }
-    map(selectedRows, item => {
-      item.buyingPrice = item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0;
+    const selectedRows = (this.state.selectedRows || []).map((item) => {
+      return {
+        ...item,
+        buyingPrice: item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0
+      }
     });
     const params = {
       id: detailData.id,
