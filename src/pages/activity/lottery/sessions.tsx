@@ -8,10 +8,14 @@ import Upload from '@/components/upload'
 import PrizeSelect from './components/PrizeSelect'
 import { message } from 'antd'
 import * as api from './api'
+import { parseQuery } from '@/util/utils'
 const { Column, ColumnGroup } = Table
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0*/
 function isFalsly (val: any) {
   return val == null || val === '' || Number.isNaN(val)
+}
+function disabledDate (current: any) {
+  return current && current < +(parseQuery() as any).startTime
 }
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
@@ -23,6 +27,7 @@ class Main extends React.Component<any, State> {
   public luckyDrawId: number
   /** 场次ID */
   public id: number
+  public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public constructor (props: any) {
     super(props)
     this.luckyDrawId = +props.match.params.luckyDrawId
@@ -185,7 +190,7 @@ class Main extends React.Component<any, State> {
         }
         if (res) {
           APP.success(`${msg}成功`)
-          this.fetchDetail()
+          this.handleCancel()
         }
       }
     })
@@ -195,12 +200,14 @@ class Main extends React.Component<any, State> {
     APP.history.go(-1)
   }
   public render () {
+    const startTime = this.form && this.form.props.form.getFieldValue('startTime')
     return (
       <Form
+        readonly={this.readOnly}
         getInstance={ref => this.form = ref}
         addonAfter={(
           <div style={{marginTop: 100}}>
-            <Button type='danger' onClick={this.handleSave}>保存</Button>
+            <Button disabled={this.readOnly} type='danger' onClick={this.handleSave}>保存</Button>
             <Button className='ml10' onClick={this.handleCancel}>取消</Button>
           </div>
         )}
@@ -232,10 +239,10 @@ class Main extends React.Component<any, State> {
                   {form.getFieldDecorator('startTime', {
                     rules: [{
                       required: true,
-                      message: '请选择开始时间'
+                      message: '请输入开始时间'
                     }]
                   })(
-                    <DatePicker showTime/>
+                    this.readOnly ? (startTime ? <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> : <></>): <DatePicker disabledDate={disabledDate} showTime/>
                   )}
                   <span className='ml10'>
                     <Icon

@@ -64,6 +64,24 @@ class Main extends React.Component {
             {...record}
             onView={() => APP.history.push(`${path}?readOnly=1`)}
             onEdit={() => APP.history.push(path)}
+            onDelete={async () => {
+              const res = await api.deleteActivity(record.id)
+              if (res) {
+                APP.success('删除成功')
+                this.listPage.refresh()
+              }
+            }}
+            onUpdate={async (open: 0 | 1) => {
+              const res = await api.updateActivityStatus({
+                open,
+                luckyDrawId: record.id
+              })
+              if (res) {
+                const msg = open === 1 ? '开启成功' : '关闭成功' 
+                APP.success(msg)
+                this.listPage.refresh()
+              }
+            }}
           />
         )
       }
@@ -75,7 +93,7 @@ class Main extends React.Component {
   public render () {
     return (
       <ListPage
-        getInstance={ref => this.listPage}
+        getInstance={ref => this.listPage = ref}
         formConfig={getDefaultConfig()}
         columns={this.columns}
         rangeMap={{

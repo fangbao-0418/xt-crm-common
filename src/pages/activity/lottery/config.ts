@@ -23,8 +23,7 @@ export const title: Props = {
  */
 export function convert (options: Options[]) {
   return options.reduce((prev: any, curr: Options) => {
-    curr.value = curr.value || ''
-    prev[curr.value] = curr.label
+    prev[curr.value + ''] = curr.label
     return prev
   }, {})
 }

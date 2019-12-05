@@ -40,9 +40,9 @@ class Main extends React.Component<any, State> {
       dataIndex: 'id'
     },
     {
-      key: 'name',
+      key: 'title',
       title: '场次名称',
-      dataIndex: 'name'
+      dataIndex: 'title'
     },
     {
       key: 'startTime',
@@ -60,7 +60,7 @@ class Main extends React.Component<any, State> {
       key: 'status',
       title: '状态',
       dataIndex: 'status',
-      render: (text: any) => statusConfig[text] 
+      render: (text: any) => statusConfig[text]
     },
     {
       key: 'operate',
@@ -73,6 +73,24 @@ class Main extends React.Component<any, State> {
             {...record}
             onView={() => APP.history.push(`${path}?readOnly=1`)}
             onEdit={() => APP.history.push(path)}
+            onDelete={async () => {
+              const res = await api.deleteSession(record.id)
+              if (res) {
+                APP.success('删除成功')
+                this.fetchData()
+              }
+            }}
+            onUpdate={async (open: 0 | 1) => {
+              const res = await api.updateSessionsStatus({
+                open,
+                luckyDrawRoundId: record.id
+              })
+              if (res) {
+                const msg = open === 1 ? '开启成功' : '关闭成功' 
+                APP.success(msg)
+                this.fetchData()
+              }
+            }}
           />
         )
       }
@@ -92,6 +110,7 @@ class Main extends React.Component<any, State> {
         }
         if (res) {
           APP.success(`${msg}成功`)
+          this.handleCancel()
         }
       }
     })
@@ -102,6 +121,11 @@ class Main extends React.Component<any, State> {
   }
 
   public render () {
+    const startTime = this.form && this.form.props.form.getFieldValue('startTime')
+    let timestamp = 0
+    if (startTime) {
+      timestamp = startTime.valueOf()
+    }
     return (
       <Form
         readonly={this.readOnly}
@@ -145,23 +169,19 @@ class Main extends React.Component<any, State> {
                       message: '请输入开始时间'
                     }]
                   })(
-                    startTime ? (this.readOnly ? <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> : 
-                      (<>
-                        <DatePicker showTime/>
-                        <span className='ml10'>
-                          <Icon
-                            type='info-circle'
-                            theme='filled'
-                            style={{
-                              color: '#1890ff',
-                              marginRight: 4
-                            }}
-                          />
-                          <span>由于场次才是实际活动开始的时间，这里的开始时间相当于预热开始时间。</span>
-                        </span>
-                      </>)
-                    ): <></>
+                    this.readOnly ? (startTime ? <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> : <></>): <DatePicker showTime/>
                   )}
+                  <span className='ml10'>
+                    <Icon
+                      type='info-circle'
+                      theme='filled'
+                      style={{
+                        color: '#1890ff',
+                        marginRight: 4
+                      }}
+                    />
+                    <span>由于场次才是实际活动开始的时间，这里的开始时间相当于预热开始时间。</span>
+                  </span>
                 </div>
               )
             }}
@@ -221,7 +241,7 @@ class Main extends React.Component<any, State> {
           <Button
             type='danger'
             disabled={this.id === -1 || this.readOnly}
-            onClick={() =>  APP.history.push(`/activity/lottery/${this.id}/-1`)}>
+            onClick={() =>  APP.history.push(`/activity/lottery/${this.id}/-1?startTime=${timestamp}`)}>
             新建场次
           </Button>
         </div>

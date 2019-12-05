@@ -20,6 +20,10 @@ export function sessionParams (payload: Lottery.SessionsParams) {
   payload.endTime = moment(payload.endTime).valueOf()
   payload.awardList = (payload.awardList || []).map((item: Lottery.LuckyDrawAwardListVo) => {
     const awardPicUrl = ((item.awardPicUrl || []) as any).map((v: any) => removeURLDomain(v.url)).join(',')
+    if (item.awardType === 1) {
+      const awardValue: any = item.awardValue || {}
+      item.awardValue = awardValue.id + ':' + awardValue.code 
+    }
     return {
       ...item,
       awardPicUrl

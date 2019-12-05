@@ -25,12 +25,12 @@ export async function getActivityDetail (luckyDrawId: number) {
 
 /** 删除抽奖活动接口 */
 export function deleteActivity (luckyDrawId: number) {
-  return del('/luckydraw/delete', { luckyDrawId })
+  return del(`/luckydraw/delete?luckyDrawId=${luckyDrawId}`)
 }
 
 /** 删除抽奖活动场次接口 */
 export function deleteSession (luckyDrawRoundId: number) {
-  return del('/luckydraw/round/delete', { luckyDrawRoundId })
+  return del(`/luckydraw/round/delete?luckyDrawRoundId=${luckyDrawRoundId}`)
 }
 
 /** 修改抽奖活动接口 */
@@ -74,6 +74,19 @@ export async function getSessionsDetail (luckyDrawRoundId: number) {
 }
 
 /** 修改抽奖活动场次状态接口 */
-export function updateSessionsStatus(status: number) {
-  return newPost('/luckydraw/round/updateStatus', { status })
+export function updateSessionsStatus(payload: {
+  luckyDrawRoundId: number,
+  /** 1是开启，0是关闭 */
+  open: 1 | 0
+}) {
+  return newPost('/luckydraw/round/updateStatus', payload)
+}
+
+/** 修改抽奖活动状态接口 */
+export function updateActivityStatus (payload: {
+  luckyDrawId: number,
+  /** 1是开启，0是关闭 */
+  open: 1 | 0
+}) {
+  return newPost('/luckydraw/updateStatus', payload)
 }
