@@ -274,7 +274,7 @@ class Main extends React.Component<Props, State> {
         },
       },
       {
-        title: '商品编码',
+        title: <div><span style={{color: 'red'}}>*</span>商品编码</div>,
         dataIndex: 'skuCode',
         width: 200,
         render: (text, record, index) => {
