@@ -25,7 +25,7 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
         <Row>退款金额：{formatMoneyWithSign(checkVO.refundAmount)}</Row>
       )}
       {!isRefundTypeOf(enumRefundType.Refund) && <Row>退货地址：{`${checkVO.returnContact} ${checkVO.returnPhone} ${checkVO.returnAddress}`}</Row>}
-      {(checkVO.isRefundFreight === 1 && checkVO.freight > 0) && <Row>退运费：{formatMoneyWithSign(checkVO.freight)}</Row>}
+      {(checkVO.isRefundFreight === 1 && checkVO.freight > 0 && checkVO.refundStatus === 30) && <Row>退运费：{formatMoneyWithSign(checkVO.freight)}</Row>}
       {/* 换货 */}
       {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{`${contactVO.contact} ${contactVO.phone} ${contactVO.province}${contactVO.city}${contactVO.district}${contactVO.street}`}</Row>}
       <Row>说 明：{checkVO.reply}</Row>
