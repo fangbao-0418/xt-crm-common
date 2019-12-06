@@ -37,18 +37,21 @@ class Main extends React.Component<Props, any> {
       case 1:
       case 4:
         node = (
-          value.code || (<span
-            className='href'
-            onClick={() => {
-              this.props.modal.show({
-                success: (res: any, hide: any) => {
-                  onChange(res[0])
-                  hide()
-                }
-              })
-            }}>
-            {awardType === 1? '选择优惠券': '请选择实物'}
-          </span>)
+          <div>
+            <div>{value.code}</div>
+            <div
+              className='href'
+              onClick={() => {
+                this.props.modal.show({
+                  success: (res: any, hide: any) => {
+                    onChange(res[0])
+                    hide()
+                  }
+                })
+              }}>
+              {awardType === 1? '选择优惠券': '请选择实物'}
+            </div>
+          </div>
         )
         break
       default:
