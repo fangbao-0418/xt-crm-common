@@ -40,10 +40,12 @@
       <main class="wrapper">
         <div class="loading-wrapper">
           <div class="ant-spin ant-spin-spinning ant-spin-show-text">
-            <span class="ant-spin-dot ant-spin-dot-spin"
-              ><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i
-              ><i class="ant-spin-dot-item"></i
-            ></span>
+            <span class="ant-spin-dot ant-spin-dot-spin">
+              <i class="ant-spin-dot-item"></i>
+              <i class="ant-spin-dot-item"></i>
+              <i class="ant-spin-dot-item"></i>
+              <i class="ant-spin-dot-item"></i>
+            </span>
             <div class="ant-spin-text">加载中...</div>
           </div>
         </div>
@@ -66,24 +68,6 @@
           }
         });
       });
-    </script>
-    <script>
-      // https://test-rlcas.hzxituan.com/
-      // https://rlcas.hzxituan.com/
-      (function (a, b) {
-        a._moon_ = {
-          mid: "jw0pzj9nh",
-          domain: 'http://127.0.0.1:2222',
-          file: [],
-          env: "<%= VUE_APP_PRODUCTION_ENV %>",
-          spa: true
-        };
-        var m = b.createElement("script");
-        m.async = true;
-        m.src = "https://cdn.hzxituan.com/npm/moon/v1.0.0/moon.js";
-        var c = b.getElementsByTagName("script")[0];
-        c.parentNode.insertBefore(m, c);
-      })(window, document);
     </script>
   </body>
 </html>
