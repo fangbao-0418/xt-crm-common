@@ -10,6 +10,7 @@ import { message } from 'antd'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
 import { disabledDateTime, disabledDate } from '@/util/antdUtil'
+import { upperFirst } from 'lodash'
 const { Column, ColumnGroup } = Table
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
@@ -21,14 +22,15 @@ function getActivityStartTime () {
 }
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
-  /** 合计普通用户概率 */
+  /** 合计普通用户率 */
   totalNormalUserProbability: number
-  /** 合计团长概率 */
+  /** 合计团长率 */
   totalHeadUserProbability: number
-  /** 合计区长概率 */
+  /** 合计区长率 */
   totalAreaUserProbability: number
-  /** 合计合伙人概率 */
+  /** 合计合伙人率 */
   totalCityUserProbability: number
+  [x: string]: any
 }
 class Main extends React.Component<any, State> {
   public form: FormInstance
@@ -100,9 +102,28 @@ class Main extends React.Component<any, State> {
   public setCellValue (id: string, index: number, val: any) {
     const { awardList } = this.state
     const item: any = awardList[index] || {}
+    const oldVal = item[id]
     item[id] = val
     console.log(awardList, id, 'setCellValue')
-    this.setState({ awardList })
+    const ids = 'normalUserProbability,headUserProbability,areaUserProbability,cityUserProbability'.split(',')
+    if (ids.includes(id)) {
+      let result = awardList.reduce((prev: number, curr: any) => prev + (curr[id] || 0), 0)
+      const name = 'total' + upperFirst(id)
+      if (result > 100 ) {
+        // alert('不能超过100')
+        item[id] = oldVal
+        return
+      }
+      console.log('name => ', name)
+      this.setState({
+        awardList,
+        [name]: result
+      })
+    } else {
+      this.setState({
+        awardList
+      })
+    }
   }
   /**
    * 获取单元格值
@@ -124,19 +145,8 @@ class Main extends React.Component<any, State> {
       return React.cloneElement(node, {
         onChange: (e: any) => {
           console.log(e, node.type.name, 'change')
-          // switch (node.type.name) {
-          //   case 'Input':
-          //     this.setCellValue(id, index, e.target.value)
-          //     break
-          //   case 'InputNumber':
-          //     this.setCellValue(id, index, e)
-          //     break
-          //   default:
-          //     e = e || ''
-          //     console.log('e => ', e)
-          //     this.setCellValue(id, index, e.target ? e.target.value : e)
-          // }
-          this.setCellValue(id, index, e && e.target ? e.target.value : e)
+          const val = e && e.target ? e.target.value : e
+          this.setCellValue(id, index, val)
         },
         value: this.getCellValue(id, index)
       })
@@ -283,8 +293,7 @@ class Main extends React.Component<any, State> {
                       ):
                     <DatePicker
                       disabledDate={(current) => {
-                        const stamp: number = getActivityStartTime() - 24 * 3600 * 1000
-                        return disabledDate(current, stamp)
+                        return disabledDate(current, getActivityStartTime())
                       }}
                       disabledTime={(current: any) => {
                         const stamp: number = getActivityStartTime()
@@ -477,7 +486,7 @@ class Main extends React.Component<any, State> {
                 title={
                   <div style={{textAlign: 'center'}}>
                     <div>团长</div>
-                    <div style={{fontSize: 12, color: '#999'}}>（合计概率）</div>
+                    <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state.totalHeadUserProbability}）</div>
                   </div>
                 }
                 dataIndex='headUserProbability'
@@ -497,7 +506,7 @@ class Main extends React.Component<any, State> {
                 title={
                   <div style={{textAlign: 'center'}}>
                     <div>区长</div>
-                    <div style={{fontSize: 12, color: '#999'}}>（合计概率）</div>
+                    <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state.totalAreaUserProbability}）</div>
                   </div>
                 }
                 dataIndex='areaUserProbability'
@@ -517,7 +526,7 @@ class Main extends React.Component<any, State> {
                 title={
                   <div style={{textAlign: 'center'}}>
                     <div>合伙人</div>
-                    <div style={{fontSize: 12, color: '#999'}}>（合计概率）</div>
+                    <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state.totalCityUserProbability}）</div>
                   </div>
                 }
                 dataIndex='cityUserProbability'
