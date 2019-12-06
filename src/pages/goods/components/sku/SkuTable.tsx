@@ -351,7 +351,7 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'generalTaxRate',
         width: 100,
         render: (text) => {
-          return text !== null || '-'
+          return text !== null ? (text*100 +'%'):''
         }
       },
       {
