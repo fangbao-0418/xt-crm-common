@@ -11,6 +11,7 @@ import * as api from './api'
 import { parseQuery } from '@/util/utils'
 import { disabledDateTime, disabledDate } from '@/util/antdUtil'
 import { upperFirst } from 'lodash'
+import modal, { ModalProps } from './components/modal'
 const { Column, ColumnGroup } = Table
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
@@ -32,7 +33,10 @@ interface State {
   totalCityUserProbability: number
   [x: string]: any
 }
-class Main extends React.Component<any, State> {
+interface Props {
+  modal: ModalProps
+}
+class Main extends React.Component<Props, State> {
   public form: FormInstance
   public state: State
   /** 活动ID */
@@ -382,7 +386,7 @@ class Main extends React.Component<any, State> {
               dataIndex='awardValue'
               key='awardValue'
               render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                this.getFieldDecorator('awardValue', index)(<PrizeSelect awardType={record.awardType}/>)
+                this.getFieldDecorator('awardValue', index)(<PrizeSelect modal={this.props.modal} awardType={record.awardType}/>)
               )}
             />
             <Column
@@ -576,4 +580,4 @@ class Main extends React.Component<any, State> {
     )
   }
 }
-export default Main
+export default modal(Main)

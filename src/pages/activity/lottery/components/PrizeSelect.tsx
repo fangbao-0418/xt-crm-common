@@ -1,12 +1,12 @@
 import React from 'react'
 import { InputNumber } from 'antd'
-import modal, { ModalProps } from './modal'
+import { ModalProps } from './modal'
 
 interface Props {
   modal: ModalProps,
   awardType: number,
-  value: any,
-  onChange: (result: any) => void
+  value?: any,
+  onChange?: (result: any) => void
 }
 /**
  * 奖品选择
@@ -44,7 +44,7 @@ class Main extends React.Component<Props, any> {
               onClick={() => {
                 this.props.modal.show({
                   success: (res: any, hide: any) => {
-                    onChange(res[0])
+                    onChange && onChange(res[0])
                     hide()
                   }
                 })
@@ -69,4 +69,4 @@ class Main extends React.Component<Props, any> {
   }
 }
 
-export default modal(Main)
+export default Main
