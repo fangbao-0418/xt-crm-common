@@ -9,6 +9,11 @@ export function range(start: number, end: number) {
   return result
 }
 
+/** 禁用日期 */
+export function disabledDate (current: any, date: any) {
+  return current && current < date
+}
+
 /** 禁用选中时间 */
 export function disabledDateTime (date: Date) {
   const h = date.getHours()

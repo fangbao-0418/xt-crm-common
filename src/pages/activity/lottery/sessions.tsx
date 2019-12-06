@@ -9,8 +9,7 @@ import PrizeSelect from './components/PrizeSelect'
 import { message } from 'antd'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
-import { range, disabledDateTime } from '@/util/antdUtil'
-import moment from 'moment'
+import { disabledDateTime, disabledDate } from '@/util/antdUtil'
 const { Column, ColumnGroup } = Table
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
@@ -20,11 +19,6 @@ function isFalsly (val: any) {
 function getActivityStartTime () {
   return +(parseQuery() as any).activityStartTime
 }
-/** 禁止选中日期 */
-function disabledDate (current: any) {
-  return current && current < getActivityStartTime() - 24 * 3600 * 1000
-}
-
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
 }
@@ -274,7 +268,10 @@ class Main extends React.Component<any, State> {
                         <></>
                       ):
                     <DatePicker
-                      disabledDate={disabledDate}
+                      disabledDate={(current) => {
+                        const stamp: number = getActivityStartTime() - 24 * 3600 * 1000
+                        return disabledDate(current, stamp)
+                      }}
                       disabledTime={() => {
                         const stamp: number = getActivityStartTime()
                         return disabledDateTime(new Date(stamp))
