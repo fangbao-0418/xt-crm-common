@@ -110,19 +110,20 @@ class Main extends React.Component<any, State> {
     return (node: any) => {
       return React.cloneElement(node, {
         onChange: (e: any) => {
-          console.log(node.type.name, 'change')
-          switch (node.type.name) {
-            case 'Input':
-              this.setCellValue(id, index, e.target.value)
-              break
-            case 'InputNumber':
-              this.setCellValue(id, index, e)
-              break
-            default:
-              e = e || ''
-              console.log('e => ', e)
-              this.setCellValue(id, index, e.target ? e.target.value : e)
-          }
+          console.log(e, node.type.name, 'change')
+          // switch (node.type.name) {
+          //   case 'Input':
+          //     this.setCellValue(id, index, e.target.value)
+          //     break
+          //   case 'InputNumber':
+          //     this.setCellValue(id, index, e)
+          //     break
+          //   default:
+          //     e = e || ''
+          //     console.log('e => ', e)
+          //     this.setCellValue(id, index, e.target ? e.target.value : e)
+          // }
+          this.setCellValue(id, index, e && e.target ? e.target.value : e)
         },
         value: this.getCellValue(id, index)
       })
