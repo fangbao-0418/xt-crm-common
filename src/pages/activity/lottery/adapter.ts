@@ -1,11 +1,13 @@
 import moment from 'moment'
 import { removeURLDomain, initImgList } from '@/util/utils'
+import { typeConfig } from './config'
 
 /** 转换活动列表响应 */
 export function listResponse (res: any) {
   let { records } = res
   if (!Array.isArray(records)) records = []
   records = records.map((item: Lottery.ListProps) => {
+    item.type = typeConfig[item.type]
     return item
   })
   return { ...res, records }

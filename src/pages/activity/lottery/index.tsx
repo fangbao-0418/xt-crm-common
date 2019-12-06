@@ -61,7 +61,8 @@ class Main extends React.Component {
         const path = `/activity/lottery/${record.id}`
         return (
           <Ribbon
-            {...record}
+            moduleId='activity'
+            status={record.status}
             onView={() => APP.history.push(`${path}?readOnly=1`)}
             onEdit={() => APP.history.push(path)}
             onDelete={async () => {
