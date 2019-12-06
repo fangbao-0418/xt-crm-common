@@ -367,7 +367,15 @@ class Main extends React.Component<any, State> {
             />
             <Column
               width={120}
-              title={<span className={styles.required}>图片</span>}
+              align='center'
+              title={(
+                <>
+                  <div className={styles.required}>图片</div>
+                  <div style={{fontSize: 12, color: '#999'}}>
+                    (图片建议上传png格式，大小140px*140px)
+                  </div>
+                </>
+              )}
               dataIndex='awardPicUrl'
               key='awardPicUrl'
               render={(arg1, arg2, index) => (

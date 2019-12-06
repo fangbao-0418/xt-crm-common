@@ -262,7 +262,7 @@ class Main extends React.Component<any, State> {
         <div>
           <Button
             type='danger'
-            disabled={this.id === -1 || this.readOnly}
+            disabled={this.id === -1}
             onClick={() => {
               const type = this.form && this.form.props.form.getFieldValue('type')
               APP.history.push(`/activity/lottery/${this.id}/-1?activityStartTime=${timestamp}&activityType=${type}`)
