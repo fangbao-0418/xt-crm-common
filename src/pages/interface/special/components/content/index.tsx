@@ -12,7 +12,7 @@ class Main extends React.Component<Props> {
     const { detail } = this.props;
     return (
       <div>
-        {detail.list.map((item, index) => {
+        {(detail.list || []).map((item, index) => {
           return (
             <Card
               key={index}

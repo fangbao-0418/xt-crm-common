@@ -6,28 +6,33 @@ import Category from './category/index.js';
 
 const List = Loadable({
   loader: () => import('./view'),
-  loading: Loader,
+  loading: Loader
 });
 
 const Edit = Loadable({
   loader: () => import('./edit'),
-  loading: Loader,
+  loading: Loader
 });
 
 const Check = Loadable({
   loader: () => import('./check'),
   loading: Loader
-})
+});
 
 const detail = Loadable({
   loader: () => import('./detail'),
   loading: Loader
-})
+});
 
 const PricingStrategy = Loadable({
   loader: () => import('./pricing-strategy'),
-  loading: Loader,
-})
+  loading: Loader
+});
+
+const goodsDetail = Loadable({
+  loader: () => import('./goods-detail/index'),
+  loading: Loader
+});
 
 export default class RouteApp extends React.Component {
   render() {
@@ -41,6 +46,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/check`} component={Check} />
         <Route path={`${match.url}/detail/:id?`} component={detail} />
         <Route path={`${match.url}/pricingStrategy`} component={PricingStrategy} />
+        <Route path={`${match.url}/goodsDetail/:id`} component={goodsDetail} />
       </Switch>
     );
   }
