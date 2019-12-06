@@ -12,6 +12,12 @@ interface Props {
  * 奖品选择
  */
 class Main extends React.Component<Props, any> {
+  public onChange (e: any) {
+    const value = e.target ? e.tareget.value : e
+    if (this.props.onChange) {
+      this.props.onChange(value)
+    }
+  }
   public render () {
     const {
       value,
@@ -21,7 +27,11 @@ class Main extends React.Component<Props, any> {
     const awardType = +this.props.awardType
     switch (awardType) {
       case 0:
-        node = <InputNumber disabled/>
+        node = (
+          <InputNumber
+            disabled
+          />
+        )
         break
       /** 优惠券、实物 */
       case 1:
@@ -42,7 +52,15 @@ class Main extends React.Component<Props, any> {
         )
         break
       default:
-        node = <InputNumber min={0} precision={0}/>
+        node = (
+          <InputNumber
+            onChange={(e) => {
+              this.onChange(e)
+            }}
+            min={0}
+            precision={0}
+          />
+        )
     }
     return node
   }
