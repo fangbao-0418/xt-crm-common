@@ -21,6 +21,14 @@ function getActivityStartTime () {
 }
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
+  /** 合计普通用户概率 */
+  totalNormalUserProbability: number
+  /** 合计团长概率 */
+  totalHeadUserProbability: number
+  /** 合计区长概率 */
+  totalAreaUserProbability: number
+  /** 合计合伙人概率 */
+  totalCityUserProbability: number
 }
 class Main extends React.Component<any, State> {
   public form: FormInstance
@@ -76,7 +84,11 @@ class Main extends React.Component<any, State> {
       }
     }
     this.state = {
-      awardList: res
+      awardList: res,
+      totalNormalUserProbability: 0,
+      totalHeadUserProbability: 0,
+      totalAreaUserProbability: 0,
+      totalCityUserProbability: 0
     }
   }
   /**
@@ -442,7 +454,12 @@ class Main extends React.Component<any, State> {
             />
             <ColumnGroup title={<span className={styles.required}>中奖概率%</span>}>
               <Column
-                title='普通用户'
+                title={
+                  <div style={{textAlign: 'center'}}>
+                    <div>普通用户</div>
+                    <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state.totalNormalUserProbability}）</div>
+                  </div>
+                }
                 dataIndex='normalUserProbability'
                 key='normalUserProbability'
                 render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
@@ -457,7 +474,12 @@ class Main extends React.Component<any, State> {
                 )}
               />
               <Column
-                title='团长'
+                title={
+                  <div style={{textAlign: 'center'}}>
+                    <div>团长</div>
+                    <div style={{fontSize: 12, color: '#999'}}>（合计概率）</div>
+                  </div>
+                }
                 dataIndex='headUserProbability'
                 key='headUserProbability'
                 render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
@@ -472,7 +494,12 @@ class Main extends React.Component<any, State> {
                 )}
               />
               <Column
-                title='区长'
+                title={
+                  <div style={{textAlign: 'center'}}>
+                    <div>区长</div>
+                    <div style={{fontSize: 12, color: '#999'}}>（合计概率）</div>
+                  </div>
+                }
                 dataIndex='areaUserProbability'
                 key='areaUserProbability'
                 render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
@@ -487,7 +514,12 @@ class Main extends React.Component<any, State> {
                 )}
               />
               <Column
-                title='合伙人'
+                title={
+                  <div style={{textAlign: 'center'}}>
+                    <div>合伙人</div>
+                    <div style={{fontSize: 12, color: '#999'}}>（合计概率）</div>
+                  </div>
+                }
                 dataIndex='cityUserProbability'
                 key='cityUserProbability'
                 render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
