@@ -83,7 +83,7 @@ class Main extends React.Component<Props, State> {
   // 新增详情转换成入参
   public mapDetailToRequestParams(detail: Special.DetailItem) {
     detail.jumpUrl = (detail.jumpUrl || '').trim()
-    const list = detail.list.map((column: Special.DetailContentProps) => {
+    const list = (detail.list || []).map((column: Special.DetailContentProps) => {
       switch (column.type) {
         case 1:
           return this.requestParamsCreator(column, column.list);
