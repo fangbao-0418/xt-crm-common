@@ -35,6 +35,8 @@ class SupplierModal extends Component {
         data,
         renderKey: this.state.renderKey + 1,
       });
+      
+      this.props.form && this.props.form.setFieldsValue(data);
     });
   };
 
@@ -95,7 +97,6 @@ class SupplierModal extends Component {
             <Row>基本信息</Row>
             <FormItem label="供应商编码">
               {getFieldDecorator('code', {
-                initialValue: data.code,
                 rules: [{
                   required: true,
                   message: '请输入供应商编码'
@@ -103,13 +104,12 @@ class SupplierModal extends Component {
               })(<Input placeholder="" />)}
             </FormItem>
             <FormItem label="联系人">
-              {getFieldDecorator('contacts', { initialValue: data.contacts })(
+              {getFieldDecorator('contacts',)(
                 <Input placeholder="" />,
               )}
             </FormItem>
             <FormItem label="供应商名称">
               {getFieldDecorator('name', {
-                initialValue: data.name,
                 rules: [{
                   required: true,
                   message: '请输入供应商名称'
@@ -118,7 +118,6 @@ class SupplierModal extends Component {
             </FormItem>
             <FormItem label="联系电话">
               {getFieldDecorator('phone', {
-                initialValue: data.phone,
                 rules: [{
                   required: true,
                   message: '请输入联系电话'
@@ -126,27 +125,27 @@ class SupplierModal extends Component {
               })(<Input placeholder="" maxLength={11}/>)}
             </FormItem>
             <FormItem label="供应商简称">
-              {getFieldDecorator('shortName', { initialValue: data.shortName })(
+              {getFieldDecorator('shortName')(
                 <Input placeholder="" />,
               )}
             </FormItem>
             <FormItem label="联系邮箱">
-              {getFieldDecorator('email', { initialValue: data.email })(<Input placeholder="" />)}
+              {getFieldDecorator('email')(<Input placeholder="" />)}
             </FormItem>
             <Row>详细信息</Row>
             <FormItem label="官网链接">
-              {getFieldDecorator('jumpUrl', { initialValue: data.jumpUrl })(
+              {getFieldDecorator('jumpUrl')(
                 <Input placeholder="" />,
               )}
             </FormItem>
             <FormItem label="详细地址">
-              {getFieldDecorator('address', { initialValue: data.address })(
+              {getFieldDecorator('address', )(
                 <Input placeholder="" />,
               )}
             </FormItem>
             <FormItem label="退货收件人">
               {getFieldDecorator('returnContact', {
-                initialValue: data.returnContact,
+                
                 rules: [
                   {
                     required: true,
@@ -159,7 +158,7 @@ class SupplierModal extends Component {
             </FormItem>
             <FormItem label="退货电话">
               {getFieldDecorator('returnPhone', {
-                initialValue: data.returnPhone,
+              
                 rules: [
                   {
                     required: true,
@@ -172,7 +171,7 @@ class SupplierModal extends Component {
             </FormItem>
             <FormItem label="退货地址">
               {getFieldDecorator('returnAddress', {
-                initialValue: data.returnAddress,
+          
                 rules: [
                   {
                     required: true,
@@ -190,7 +189,6 @@ class SupplierModal extends Component {
             </FormItem> */}
             <FormItem key={this.state.renderKey} label="供应商分类">
               {getFieldDecorator('category', {
-                initialValue: data.category,
                 rules: [
                   {
                     required: true,

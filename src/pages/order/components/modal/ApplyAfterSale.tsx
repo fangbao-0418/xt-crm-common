@@ -107,6 +107,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
   */
   handleChangeServerNum = (value: any = 0) => {
     let result = mul(this.unitPrice, value)
+    if(value == this.state.skuDetail.serverNum) result = this.state.skuDetail.amount
     this.props.form.setFieldsValue({
       amount: formatPrice(result)
     });
