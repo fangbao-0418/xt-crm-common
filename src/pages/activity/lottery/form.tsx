@@ -7,20 +7,10 @@ import { ColumnProps } from 'antd/es/table'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
 import moment from 'moment'
+import { disabledDate, disabledDateTime } from '@/util/antdUtil'
 interface State {
   roundList: Lottery.LuckyDrawRoundListVo[]
 }
-
-/** 禁用日期 */
-function disabledDate (current: any) {
-  return current && current < moment().endOf('day').subtract(1, 'days')
-}
-
-/** 禁用时间 */
-function disabledDateTime () {
-  
-}
-
 class Main extends React.Component<any, State> {
   public form: FormInstance
   public id: number
@@ -182,13 +172,19 @@ class Main extends React.Component<any, State> {
                     }]
                   })(
                     this.readOnly ? (
-                      startTime ?
-                        <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
-                        <></>
-                      ) :
+                        startTime ?
+                          <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
+                          <></>
+                        ) :
                       (
                         <DatePicker
-                          disabledDate={disabledDate}
+                          disabledDate={(current) => {
+                            const date = moment().endOf('day').subtract(1, 'days')
+                            return disabledDate(current, date)
+                          }}
+                          disabledTime={() => {
+                            return disabledDateTime(new Date())
+                          }}
                           showTime
                         />
                       )
