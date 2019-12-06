@@ -7,7 +7,7 @@ import { ExpressCompanyOptions } from '@/config';
 import * as LocalStorage from '@/util/localstorage';
 import moment from 'moment';
 import { isNil } from 'lodash';
-import { handleApiUrl } from './app/config'
+import { handleApiUrl } from './app/config';
 const pathToRegexp = require('path-to-regexp');
 const History = createHashHistory();
 
@@ -16,7 +16,8 @@ function defaultMapStateToProps() {
 }
 
 // 包装redux.connect, 默认引入dispatch函数和history对象
-export function connect(mapStateToProps = defaultMapStateToProps) {
+export function connect(mapStateToProps) {
+  mapStateToProps = mapStateToProps || defaultMapStateToProps;
   return redux.connect(state => {
     const base = mapStateToProps(state);
     return { ...base, dispatch, history: History };
@@ -40,24 +41,24 @@ export function parseQuery() {
 
 /** query序列化 */
 export function queryString(obj) {
-  if (typeof obj !== 'object') return ''
-  let pairs = []
+  if (typeof obj !== 'object') return '';
+  let pairs = [];
   for (let key in obj) {
     if (obj.hasOwnProperty(key)) {
-      pairs.push(`${key}=${obj[key]}`)
+      pairs.push(`${key}=${obj[key]}`);
     }
   }
-  return pairs.length > 0 ? `?${pairs.join('&')}` : ''
+  return pairs.length > 0 ? `?${pairs.join('&')}` : '';
 }
 
 /**
  * 设置路径上的query参数
- * @param {*} params 
- * @param {*} force 
+ * @param {*} params
+ * @param {*} force
  */
 export function setQuery(params = {}, force = false) {
-  console.log(params, 'params1')
-  console.log(window.location.hash, 'hash')
+  console.log(params, 'params1');
+  console.log(window.location.hash, 'hash');
   const str = decodeURIComponent(window.location.hash); // 对中文解码
   const [baseLoc, baseQueryStr = ''] = str.split('?');
   const baseQuery = {};
@@ -73,7 +74,7 @@ export function setQuery(params = {}, force = false) {
       filters[k] = params[k] === 0 ? 0 : params[k] || '';
     }
   }
-  console.log(baseQuery, 'baseQuery')
+  console.log(baseQuery, 'baseQuery');
   const reslover = new URLSearchParams({ ...baseQuery, ...filters });
   const search = reslover.toString();
   window.location.hash = `${baseLoc}?${search}`;
@@ -82,7 +83,7 @@ export function setQuery(params = {}, force = false) {
 export function saveDefault(state, payload) {
   return {
     ...state,
-    ...payload,
+    ...payload
   };
 }
 
@@ -146,12 +147,12 @@ export function firstLetterToUpperCase(str = '') {
 export function gotoPage(path, query) {
   // const str = decodeURIComponent(window.location.hash); // 对中文解码
   // const [_, baseQueryStr = ''] = str.split('?');
-  query = Object.assign(parseQuery(), query)
-  const pairs = []
+  query = Object.assign(parseQuery(), query);
+  const pairs = [];
   for (let key in query) {
-    pairs.push(key + '=' + query[key])
+    pairs.push(key + '=' + query[key]);
   }
-  const search = pairs.length > 0 ? `?${pairs.join('&')}`: ''
+  const search = pairs.length > 0 ? `?${pairs.join('&')}` : '';
   History.push(`${path}${search}`);
 }
 
@@ -178,8 +179,8 @@ export function initImgList(imgUrlWap, uid) {
         url: imgUrlWap,
         status: 'done',
         thumbUrl: imgUrlWap,
-        name: imgUrlWap,
-      },
+        name: imgUrlWap
+      }
     ];
   }
   return [];
@@ -192,20 +193,17 @@ export function getHeaders(headers) {
 }
 
 export const prefix = url => {
-  url = handleApiUrl(url)
+  url = handleApiUrl(url);
   let apiDomain = baseHost;
   if (!(process.env.PUB_ENV == 'pre' || process.env.PUB_ENV == 'prod')) {
     if (!(process.env.PUB_ENV == 'test' || process.env.PUB_ENV == 'dev')) {
       const mockConfig = require('../mock.json');
-      if (
-        typeof mockConfig == 'object' &&
-        mockConfig['apiList'] instanceof Array
-      ) {
-        console.log(url, mockConfig, '-------------')
-        const isMock = mockConfig['apiList'].find((item) => {
+      if (typeof mockConfig == 'object' && mockConfig['apiList'] instanceof Array) {
+        console.log(url, mockConfig, '-------------');
+        const isMock = mockConfig['apiList'].find(item => {
           const path = item.replace(/{/g, ':').replace(/}/g, '');
           return pathToRegexp(path).test(url);
-        })
+        });
         if (isMock) {
           console.log(url);
           return `/mock${url}`;
@@ -246,8 +244,8 @@ export function replaceHttpUrl(imgUrl = '') {
 }
 
 /** 检测imgUrl是否带域名，有则清除 */
-export function removeURLDomain (imgUrl = '') {
-  return imgUrl.replace(/https:\/\/assets.hzxituan.com\//g, '')
+export function removeURLDomain(imgUrl = '') {
+  return imgUrl.replace(/https:\/\/assets.hzxituan.com\//g, '');
 }
 /**
  * @description 去掉多余的属性
@@ -289,7 +287,7 @@ export function mapTree(org) {
     label: org.name,
     value: org.id,
     data: { ...org },
-    children: haveChildren ? org.childList.map(i => mapTree(i)) : [],
+    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
   };
 }
 
@@ -311,7 +309,7 @@ export function treeToarr(list = [], arr) {
   for (const item of list) {
     results.push(item);
     if (Array.isArray(item.childList)) {
-      treeToarr(item.childList, results)
+      treeToarr(item.childList, results);
     }
   }
   return results;
@@ -320,7 +318,7 @@ export function treeToarr(list = [], arr) {
 /**
  * 获取 blob
  * @param  {String} url 目标文件地址
- * @return {Promise} 
+ * @return {Promise}
  */
 function getBlob(url) {
   return new Promise(resolve => {
@@ -339,10 +337,10 @@ function getBlob(url) {
 }
 
 /**
-* 保存
-* @param  {Blob} blob     
-* @param  {String} filename 想要保存的文件名称
-*/
+ * 保存
+ * @param  {Blob} blob
+ * @param  {String} filename 想要保存的文件名称
+ */
 function saveAs(blob, filename) {
   if (window.navigator.msSaveOrOpenBlob) {
     navigator.msSaveBlob(blob, filename);
@@ -365,10 +363,10 @@ function saveAs(blob, filename) {
 }
 
 /**
-* 下载
-* @param  {String} url 目标文件地址
-* @param  {String} filename 想要保存的文件名称
-*/
+ * 下载
+ * @param  {String} url 目标文件地址
+ * @param  {String} filename 想要保存的文件名称
+ */
 export function download(url, filename) {
   getBlob(url).then(blob => {
     saveAs(blob, filename);
@@ -378,81 +376,83 @@ export function download(url, filename) {
 //唯一key
 export function uuid() {
   var s = [];
-  var hexDigits = "0123456789abcdef";
+  var hexDigits = '0123456789abcdef';
 
   for (var i = 0; i < 36; i++) {
-      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
   }
-  s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
-  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
-  s[8] = s[13] = s[18] = s[23] = "-";
+  s[14] = '4'; // bits 12-15 of the time_hi_and_version field to 0010
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+  s[8] = s[13] = s[18] = s[23] = '-';
 
-  var uuid = s.join("");
+  var uuid = s.join('');
 
-  return uuid+"-"+new Date().getTime();
+  return uuid + '-' + new Date().getTime();
 }
-
 
 //加法精确计算
 export function accAdd(arg1, arg2) {
   var r1, r2, m;
   try {
-      r1 = arg1.toString().split(".")[1].length;
-  }catch (e) {
-            r1 = 0;
+    r1 = arg1.toString().split('.')[1].length;
+  } catch (e) {
+    r1 = 0;
   }
   try {
-      r2 = arg2.toString().split(".")[1].length;
-  }catch (e) {
-          r2 = 0;
+    r2 = arg2.toString().split('.')[1].length;
+  } catch (e) {
+    r2 = 0;
   }
   m = Math.pow(10, Math.max(r1, r2));
   return (arg1 * m + arg2 * m) / m;
-} ;
+}
 //减法精确计算
 export function Subtr(arg1, arg2) {
-      var r1, r2, m, n;
-      try {
-          r1 = arg1.toString().split(".")[1].length;
-      }
-      catch (e) {
-          r1 = 0;
-      }
-      try {
-          r2 = arg2.toString().split(".")[1].length;
-      }
-      catch (e) {
-          r2 = 0;
-      }
-      m = Math.pow(10, Math.max(r1, r2));
-      //last modify by deeka
-      //动态控制精度长度
-      n = (r1 >= r2) ? r1 : r2;
-      return Number(((arg1 * m - arg2 * m) / m).toFixed(n));
-  };
+  var r1, r2, m, n;
+  try {
+    r1 = arg1.toString().split('.')[1].length;
+  } catch (e) {
+    r1 = 0;
+  }
+  try {
+    r2 = arg2.toString().split('.')[1].length;
+  } catch (e) {
+    r2 = 0;
+  }
+  m = Math.pow(10, Math.max(r1, r2));
+  //last modify by deeka
+  //动态控制精度长度
+  n = r1 >= r2 ? r1 : r2;
+  return Number(((arg1 * m - arg2 * m) / m).toFixed(n));
+}
 //乘法精确计算
 export function accMul(arg1, arg2) {
-    var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
-    try {
-        m += s1.split(".")[1].length;
-    }
-    catch (e) {
-    }
-    try {
-        m += s2.split(".")[1].length;
-    }
-    catch (e) {
-    }
-    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
-};
+  var m = 0,
+    s1 = arg1.toString(),
+    s2 = arg2.toString();
+  try {
+    m += s1.split('.')[1].length;
+  } catch (e) {}
+  try {
+    m += s2.split('.')[1].length;
+  } catch (e) {}
+  return (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) / Math.pow(10, m);
+}
 //除法精确计算
-export function accDiv(arg1,arg2){     
-    var t1=0,t2=0,r1,r2;     
-    try{t1=arg1.toString().split(".")[1].length}catch(e){}     
-    try{t2=arg2.toString().split(".")[1].length}catch(e){}     
-      
-    r1=Number(arg1.toString().replace(".",""));  
-  
-    r2=Number(arg2.toString().replace(".",""));     
-    return (r1/r2)*Math.pow(10,t2-t1);     
-};
+export function accDiv(arg1, arg2) {
+  var t1 = 0,
+    t2 = 0,
+    r1,
+    r2;
+  try {
+    t1 = arg1.toString().split('.')[1].length;
+  } catch (e) {}
+  try {
+    t2 = arg2.toString().split('.')[1].length;
+  } catch (e) {}
+
+  r1 = Number(arg1.toString().replace('.', ''));
+
+  r2 = Number(arg2.toString().replace('.', ''));
+  return (r1 / r2) * Math.pow(10, t2 - t1);
+}

@@ -21,7 +21,8 @@ export function getH5Origin() {
 
 export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
   if (/^\d+$/.test(date)) {
-    date = Number(date);
+    date = Number(date)
+    date = String(date).length === 10 ? date * 1000 : date
   }
   return date && moment(date).format(format);
 }
@@ -98,4 +99,51 @@ export function download(url, name) {
   el.setAttribute('download', name);
   el.setAttribute('target', '__blank');
   el.click();
+}
+
+/**
+ * 多个集合合并
+ * examp1 params ([1, 2], [3, 4]) => [[1, 3], [2, 3], [2, 3], [2, 4]]
+ * examp2 params ([1, 2], []) => [[1, undefined], [2, undefined]]
+ * examp3 params ([], []) => [[undefined, undefined]]
+ * examp4 params ([]) => [[]]
+ * examp5 params ([1]) => [[1]]
+ * examp6 params ([1, 2]) => [[1], [2]]
+ * */
+export const mutilCollectionCombine = (...collection) => {
+  if (collection instanceof Array === false) {
+    return collection
+  }
+  const len = collection.length
+  if (len === 0) {
+    return []
+  }
+  if (len === 1) {
+    return collection[0].map((item) => {
+      return [item]
+    })
+  }
+  const result = []
+  let children = []
+  function loop (arr, index) {
+    if (arr.length === 0) {
+      arr = [undefined]
+    }
+    arr.map((item) => {
+      if (index === 0) {
+        children = []
+      }
+      children = children.concat([item])
+      const nextIndex = index + 1
+      if (nextIndex >= len) {
+        result.push(children)
+      } else if (nextIndex < len) {
+        const nextCollection = collection[nextIndex]
+        loop(nextCollection, nextIndex)
+      }
+      children = children.slice(0, -1)
+    })
+  }
+  loop([...collection[0]], 0)
+  return result
 }

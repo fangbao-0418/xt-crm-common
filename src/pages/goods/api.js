@@ -82,3 +82,9 @@ export function getStrategyByCategory(data) {
 export function toAuditDetail(data) {
   return get('/product/supplier/toAudit/get', data)
 }
+/**
+ * 获取海淘商品库存信息
+ */
+export function getStockInfo (id) {
+  return get(`/product/stock?skuId=${id}`)
+}
