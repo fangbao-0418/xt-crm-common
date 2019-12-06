@@ -29,7 +29,7 @@ function range(start: number, end: number) {
   return result;
 }
 function disabledDateTime () {
-  // const activityStartTime = getActivityStartTime()
+  const activityStartTime = getActivityStartTime()
   return {
     disabledHours: () => range(0, 24).splice(4, 20),
     disabledMinutes: () => range(30, 60),
@@ -269,7 +269,7 @@ class Main extends React.Component<any, State> {
                         <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
                         <></>
                       ):
-                    <DatePicker disabledDate={disabledDate} showTime/>
+                    <DatePicker disabledDate={disabledDate} disabledTime={disabledDateTime} showTime/>
                   )}
                   <span className='ml10'>
                     <Icon
