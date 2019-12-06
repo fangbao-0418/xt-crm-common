@@ -32,14 +32,14 @@ function range(start: number, end: number) {
   return result;
 }
 /** 禁止选中时间 */
-function disabledDateTime () {
-  const activityStartTime = getActivityStartTime()
-  return {
-    disabledHours: () => range(0, 24).splice(4, 20),
-    disabledMinutes: () => range(30, 60),
-    disabledSeconds: () => [55, 56]
-  }
-}
+// function disabledDateTime () {
+//   const activityStartTime = getActivityStartTime()
+//   return {
+//     disabledHours: () => range(0, 24).splice(4, 20),
+//     disabledMinutes: () => range(30, 60),
+//     disabledSeconds: () => [55, 56]
+//   }
+// }
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
 }
@@ -128,7 +128,6 @@ class Main extends React.Component<any, State> {
     return (node: any) => {
       return React.cloneElement(node, {
         onChange: (e: any) => {
-          debugger
           switch (node.type.name) {
             case 'Input':
               this.setCellValue(id, index, e.target.value)
@@ -137,6 +136,7 @@ class Main extends React.Component<any, State> {
               this.setCellValue(id, index, e)
               break
             default:
+              e = e || ''
               console.log('e => ', e)
               this.setCellValue(id, index, e.target ? e.target.value : e)
           }
@@ -274,7 +274,7 @@ class Main extends React.Component<any, State> {
                         <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
                         <></>
                       ):
-                    <DatePicker disabledDate={disabledDate} disabledTime={disabledDateTime} showTime/>
+                    <DatePicker disabledDate={disabledDate} showTime/>
                   )}
                   <span className='ml10'>
                     <Icon

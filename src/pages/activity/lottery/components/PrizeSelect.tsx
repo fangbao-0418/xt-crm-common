@@ -42,7 +42,7 @@ class Main extends React.Component<Props, any> {
         )
         break
       default:
-        node = <InputNumber/>
+        node = <InputNumber min={0}/>
     }
     return node
   }
