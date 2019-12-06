@@ -305,7 +305,15 @@ class Main extends React.Component<any, State> {
             label='结束时间'
             verifiable
             controlProps={{
-              showTime: true
+              showTime: true,
+              disabledDate: (current: any) => {
+                const { startTime } = this.form.getValues()
+                return disabledDate(current, startTime)
+              },
+              disabledTime: () => {
+                const { startTime } = this.form.getValues()
+                return disabledDateTime(new Date(startTime))
+              }
             }}
             fieldDecoratorOptions={{
               rules: [{
