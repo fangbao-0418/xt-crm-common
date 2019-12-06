@@ -6,18 +6,18 @@ var qs = require('qs');
 // const prod = true;
 
 export const request = (url, config) => {
-  APP.fn.handleLoading('start')
+  APP.fn.handleLoading('start');
   const _config = {
     url: prefix(url),
     method: 'get',
     withCredentials: true,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     ...config
-  }
+  };
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
-      APP.fn.handleLoading('end')
+      APP.fn.handleLoading('end');
       if (res.status === 401) {
         window.location = '/#/login';
         return;
@@ -30,7 +30,7 @@ export const request = (url, config) => {
       }
     })
     .catch(error => {
-      APP.fn.handleLoading('end')
+      APP.fn.handleLoading('end');
       const httpCode = lodashGet(error, 'response.status');
       if (httpCode === 401 || httpCode === 502) {
         message.error('未登录');
@@ -60,7 +60,7 @@ export const del = (url, data, config) => {
   return request(url, {
     data: qs.stringify(data),
     method: 'delete',
-    ...config,
+    ...config
   });
 };
 // put请求
@@ -68,7 +68,7 @@ export const put = (url, data, config) => {
   return request(url, {
     data: qs.stringify(data),
     method: 'put',
-    ...config,
+    ...config
   });
 };
 
@@ -77,7 +77,7 @@ export const post = (url, data, config) => {
   return request(url, {
     data: qs.stringify(data),
     method: 'POST',
-    ...config,
+    ...config
   });
 };
 
@@ -89,8 +89,8 @@ export const newGet = (url, data, config) => {
     ...config,
     headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json;charset=UTF-8',
-    }),
+      'Content-Type': 'application/json;charset=UTF-8'
+    })
   });
 };
 
@@ -102,8 +102,8 @@ export const newPost = (url, data, config) => {
     ...config,
     headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json;charset=UTF-8',
-    }),
+      'Content-Type': 'application/json;charset=UTF-8'
+    })
   });
 };
 
@@ -115,8 +115,8 @@ export const newPut = (url, data, config) => {
     ...config,
     headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json;charset=UTF-8',
-    }),
+      'Content-Type': 'application/json;charset=UTF-8'
+    })
   });
 };
 
@@ -130,12 +130,12 @@ export const newPut = (url, data, config) => {
 
 function param(json) {
   console.log('json=>', json);
-  if (!json) return ''
+  if (!json) return '';
   let arr = Object.keys(json).map(key => {
-    if (!json[key]) return ''
-    return encodeURIComponent(key) + '=' + encodeURIComponent(json[key])
-  })
-  return arr.filter(Boolean).join('&')
+    if (!json[key]) return '';
+    return encodeURIComponent(key) + '=' + encodeURIComponent(json[key]);
+  });
+  return arr.filter(Boolean).join('&');
 }
 
 // exportHelper
@@ -144,25 +144,25 @@ export const exportFile = (url, data, config) => {
   //   window.open(prefix('') + url + '?' + formatData(data));
   //   resolve()
   // })
-  
+
   url = param(data) ? `${prefix(url)}?${param(data)}` : prefix(url);
   return axios({
     url,
     method: 'get',
     withCredentials: true,
     headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-    responseType: 'blob',
+    responseType: 'blob'
   })
-    .then(async function (res) {
+    .then(async function(res) {
       if (res.data.type === 'application/json') {
         return Promise.reject(res.data);
       }
       var blob = new Blob([res.data], { type: res.headers['content-type'] });
       const text = await blob.text();
-      const [fileName, blobText] = text.split('/attachment/')
+      const [fileName, blobText] = text.split('/attachment/');
       // const fileName = getFileName(res.headers['content-disposition']);
       var downloadElement = document.createElement('a');
-      blob = new Blob([blobText], {type: 'text/plain'})
+      blob = new Blob([blobText], { type: 'text/plain' });
       console.log('blob==>', blob);
       var href = window.URL.createObjectURL(blob); //创建下载的链接
       downloadElement.href = href;
@@ -173,10 +173,10 @@ export const exportFile = (url, data, config) => {
       document.body.removeChild(downloadElement); //下载完成移除元素
       window.URL.revokeObjectURL(href); //释放掉blob对象
     })
-    .catch(function (error) {
+    .catch(function(error) {
       if (error.type === 'application/json') {
         var reader = new FileReader();
-        reader.addEventListener("loadend", function () {
+        reader.addEventListener('loadend', function() {
           const obj = JSON.parse(reader.result);
           message.error(obj.message);
         });
@@ -201,8 +201,6 @@ export const exportFile = (url, data, config) => {
     });
 };
 
-
-
 const messageMap = {
   401: '未登录',
   403: '权限不足',
@@ -210,43 +208,56 @@ const messageMap = {
 };
 const instance = axios.create({
   withCredentials: true,
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
 });
-instance.interceptors.request.use((config) => {
-  config.headers = getHeaders(config.headers);
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-})
+instance.interceptors.request.use(
+  config => {
+    config.headers = getHeaders(config.headers);
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 
-instance.interceptors.response.use(res => {
-  if (res.status === 200 && !res.data.success) { // 请求成功返回但是后台未返回成功数据，则给提示
-    message.error(res.data.message);
+instance.interceptors.response.use(
+  res => {
+    if (res.status === 200 && !res.data.success) {
+      // 请求成功返回但是后台未返回成功数据，则给提示
+      message.error(res.data.message);
+    }
+    return res.data;
+  },
+  error => {
+    // 非2xx状态处理，返回{}
+    if (error.response && error.response.status === 401) {
+      // 未登录的重定向到登陆页
+      setTimeout(() => {
+        window.location = '/#/login';
+      }, 1500);
+    }
+    message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...');
+    return {};
   }
-  return res.data;
-}, error => {
-  // 非2xx状态处理，返回{}
-  if (error.response && error.response.status === 401) { // 未登录的重定向到登陆页
-    setTimeout(() => {
-      window.location = '/#/login';
-    }, 1500);
-  }
-  message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...')
-  return {};
-})
+);
 export function fetch(url, config = {}) {
   const { method = 'get', data = {}, ...others } = config;
-  APP.fn.handleLoading('start')
-  return instance.request({
-    url: prefix(url),
-    data: qs.stringify(data),
-    method,
-    ...others
-  }).then(res => {
-    APP.fn.handleLoading('end')
-    return res;
-  }, (err) => {
-    APP.fn.handleLoading('end')
-    return Promise.reject(err)
-  })
-};
+  APP.fn.handleLoading('start');
+  return instance
+    .request({
+      url: prefix(url),
+      data: qs.stringify(data),
+      method,
+      ...others
+    })
+    .then(
+      res => {
+        APP.fn.handleLoading('end');
+        return res;
+      },
+      err => {
+        APP.fn.handleLoading('end');
+        return Promise.reject(err);
+      }
+    );
+}
