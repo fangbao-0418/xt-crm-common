@@ -102,7 +102,7 @@ class Main extends React.Component {
           createTime: {
             fields: ['startCreateTime', 'endCreateTime']
           },
-          startTime: {
+          beginTime: {
             fields: ['startBeginTime', 'endBeginTime']
           }
         }}

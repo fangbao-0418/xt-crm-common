@@ -19,14 +19,12 @@ function Main (props: any) {
       >
         查看
       </Button>
-      {[0, 1, 3].includes(props.status) && (
-        <Button
-          type='link'
-          onClick={props.onEdit}
-        >
-          编辑
-        </Button>
-      )}
+      <Button
+        type='link'
+        onClick={props.onEdit}
+      >
+        编辑
+      </Button>
       {props.moduleId === 'sessions' && <Button type='link' onClick={() => {
         Modal.confirm({
           title: '系统提示',
