@@ -241,7 +241,10 @@ class Main extends React.Component<any, State> {
           <Button
             type='danger'
             disabled={this.id === -1 || this.readOnly}
-            onClick={() =>  APP.history.push(`/activity/lottery/${this.id}/-1?activityStartTime=${timestamp}`)}>
+            onClick={() => {
+              const type = this.form && this.form.props.form.getFieldValue('type')
+              APP.history.push(`/activity/lottery/${this.id}/-1?activityStartTime=${timestamp}&activityType=${type}`)
+            }}>
             新建场次
           </Button>
         </div>

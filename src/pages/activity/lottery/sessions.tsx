@@ -56,6 +56,8 @@ class Main extends React.Component<any, State> {
   public luckyDrawId: number
   /** 场次ID */
   public id: number
+  /** 活动类型 */
+  public activityType: number = +(parseQuery() as any).activityType
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public constructor (props: any) {
     super(props)
@@ -169,14 +171,18 @@ class Main extends React.Component<any, State> {
       if (isFalsly(v.awardTitle)) {
         return void message.error(`${prefixMsg}简称不能为空`)
       }
-      /** 图片必填 */
-      if (isFalsly(v.awardPicUrl)) {
-        return void message.error(`${prefixMsg}图片不能为空`)
+      /** 非红包雨必填 */
+      if (this.activityType !== 1) {
+        /** 图片必填 */
+        if (isFalsly(v.awardPicUrl)) {
+          return void message.error(`${prefixMsg}图片不能为空`)
+        }
       }
       /** 奖品库存必填 */
       if (isFalsly(v.awardNum)) {
         return void message.error(`${prefixMsg}奖品库存不能为空`)
       }
+      /** 非兜底必填 */
       if (v.defaultAward === 1) {
         /** 普通用户中奖概率必填 */
         if (isFalsly(v.normalUserProbability)) {
@@ -371,7 +377,7 @@ class Main extends React.Component<any, State> {
               dataIndex='awardPicUrl'
               key='awardPicUrl'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardPicUrl', index)(<Upload listType='picture-card' />)
+                this.getFieldDecorator('awardPicUrl', index)(<Upload listType='picture-card' disabled={this.activityType === 1}/>)
               )}           
             />
             <Column
@@ -410,7 +416,7 @@ class Main extends React.Component<any, State> {
               dataIndex='restrictOrderAmount'
               key='restrictOrderAmount'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('restrictOrderAmount', index)(<InputNumber min={0}/>)
+                this.getFieldDecorator('restrictOrderAmount', index)(<InputNumber min={0} disabled={this.activityType === 1}/>)
               )}
             />
             <ColumnGroup title={<span className={styles.required}>中奖概率%</span>}>
