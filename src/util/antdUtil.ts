@@ -30,7 +30,7 @@ export function disabledDateTime (current: any, date: any) {
     s = 0
   }
   /** 当选择时间大于小时数时，选择分钟数不做限制 */
-  if (current.date() === d && current.hour() > h || current.date() > d) {
+  if (current.date() === d && current.hour() > h) {
     m = 0
   }
   /** 当选择时间等于小时数且选择时间大于分钟数或者选中时间大于小时数，选中秒数不做限制*/
