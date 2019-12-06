@@ -13,7 +13,7 @@ export const title: Props = {
   },
   formItemProps: {
     style: {
-      width: 172
+      // width: 172
     }
   }
 }
