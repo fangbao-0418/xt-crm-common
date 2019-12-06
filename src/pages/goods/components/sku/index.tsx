@@ -228,101 +228,6 @@ class SkuList extends React.Component<Props, State>{
       specs
     })
     this.onChange(dataSource1)
-    return
-    //////////////////////////////
-
-    const addData: SkuProps[] = []
-    const defaultItem: SkuProps = {
-      imageUrl1: '',
-      skuCode: '',
-      stock: 0,
-      areaMemberPrice: 0,
-      cityMemberPrice: 0,
-      costPrice: 0,
-      headPrice: 0,
-      deliveryMode: 2,
-      marketPrice: 0,
-      salePrice: 0,
-      managerMemberPrice: 0
-    }
-    let dataSource = this.state.dataSource
-    /** 第一规格输入时 */
-    if (key === 0) {
-      if (specs[1] && specs[1].content && specs[1].content.length > 1) {
-        specs[1].content.map((item) => {
-          addData.push({
-            ...defaultItem,
-            imageUrl1: specPicture,
-            propertyValue1: specName,
-            propertyValue2: item.specName
-          })
-        })
-      /** 如果dataSource为空，补充规格 */
-      } else if (dataSource.length === 0 && specs[0] && specs[0].content && specs[0].content.length >= 1) {
-        specs[0].content.map((item) => {
-          addData.push({
-            ...defaultItem,
-            imageUrl1: item.specPicture,
-            propertyValue1: item.specName,
-            propertyValue2: ''
-          })
-        })
-      } else {
-        addData.push({
-          ...defaultItem,
-          propertyValue1: specName,
-          propertyValue2: specs[1] && specs[1].content && specs[1].content[0] && specs[1].content[0].specName
-        })
-      }
-    /** 第二项规格输入时 */
-    } else {
-      /** 如果dataSource为空，规格2至少有一项，补充规格 */
-      if (dataSource.length === 0 && specs[1] && specs[1].content && specs[1].content.length === 1) {
-        specs[0].content.map((item) => {
-          addData.push({
-            ...defaultItem,
-            propertyValue1: item.specName,
-            propertyValue2: specName
-          })
-        })
-      /** 第一规格不存在, 正常新增一个规格 */
-      } else if (!specs[0] || specs[0] && specs[0].content && specs[0].content.length === 0) {
-        addData.push({
-          ...defaultItem,
-          propertyValue1: '',
-          propertyValue2: specName
-        })
-      /** 第一规格有多项，第二规格只有一项，每组propertyValue2进行赋值 */
-      } else if (specs[0] && specs[0].content.length >= 1 && specs[1].content.length === 1 && dataSource.length > 0) {
-        dataSource = dataSource.map((item) => {
-          item.propertyValue2 = specName
-          return item
-        })
-      } else if (specs[0] && specs[0].content && specs[0].content.length >= 1) {
-        specs[0].content.map((item) => {
-          addData.push({
-            ...defaultItem,
-            imageUrl1: item.specPicture,
-            propertyValue1: item.specName,
-            propertyValue2: specName
-          })
-        })
-      }
-    }
-    dataSource = dataSource.concat(addData)
-    // console.log(dataSource, 'dataSource')
-    let result: SkuProps[] = []
-    specs[0].content.map((item) => {
-      // console.log(dataSource.filter(item2 => item2.propertyValue1 === item.specName), item.specName, 'item')
-      result = result.concat(dataSource.filter(item2 => item2.propertyValue1 === item.specName)) 
-    })
-    // console.log(result, 'result')
-    this.setState({
-      dataSource: result,
-      tempSpecInfo,
-      specs
-    })
-    this.onChange(result)
   };
   handleTabsAdd = () => {
     const GGName = this.state.GGName
@@ -422,29 +327,6 @@ class SkuList extends React.Component<Props, State>{
     this.onChange(dataSource)
     return
     /////////////////////
-    if (specs[key].content.length > 0) {
-      dataSource = dataSource.filter((item) => {
-        return item[keys[key]] !== specName
-      })
-    } else {
-      dataSource = dataSource.map((item) => {
-        item[keys[0]] = item[keys[otherKey]]
-        item[keys[1]] = ''
-        return item
-      })
-    }
-    /** 是否存在规格商品 */
-    let isExistSpec = false
-    specs.map((item) => {
-      item.content.map((val) => {
-        isExistSpec = true
-      })
-    })
-    if (!isExistSpec || specs[key].content.length === 0) {
-      dataSource = []
-    }
-    this.setState({ specs, dataSource: dataSource });
-    this.onChange(dataSource)
   };
   public getCustomColumns () {
     const columns: ColumnProps<any>[] = []
@@ -627,17 +509,6 @@ class SkuList extends React.Component<Props, State>{
             this.onChange(dataSource)
           }}
         />
-        {/* <Table
-          rowKey={(record: any) => record.id}
-          style={{ marginTop: 10 }}
-          scroll={{ x: 2500, y: 600 }}
-          columns={[
-            ...this.getCustomColumns(),
-            ...getColumns(this.handleChangeValue, this.state.dataSource)
-          ]}
-          dataSource={this.state.dataSource}
-          pagination={false}
-        /> */}
       </Card>
     )
   }
