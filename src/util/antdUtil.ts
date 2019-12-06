@@ -1,3 +1,4 @@
+import moment from "moment"
 
 /** DatePicker工具方法 */
 /** 返回数字范围 */
@@ -15,11 +16,20 @@ export function disabledDate (current: any, date: any) {
 }
 
 /** 禁用选中时间 */
-export function disabledDateTime (date: Date) {
+export function disabledDateTime (current: any, date: any) {
+  current = current || moment()
   const h = date.getHours()
-  const m = date.getMinutes()
-  const s = date.getSeconds()
-  console.log(h, m, s)
+  let m = date.getMinutes()
+  let s = date.getSeconds()
+  console.log(current.hour(), current.minute(), '-----------')
+  /** 当选择时间大于小时数时，选择分钟数不做限制 */
+  if (current.hour() > h) {
+    m = 0
+  }
+  /** 当选择时间等于小时数且选择时间大于分钟数或者选中时间大于小时数，选中秒数不做限制*/
+  if (current.hour() === h && current.minute() > m || current.hour() > h) {
+    s = 0
+  }
   return {
     disabledHours: () => range(0, h),
     disabledMinutes: () => range(0, m),

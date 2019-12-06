@@ -186,8 +186,8 @@ class Main extends React.Component<any, State> {
                             const date = moment().endOf('day').subtract(1, 'days')
                             return disabledDate(current, date)
                           }}
-                          disabledTime={() => {
-                            return disabledDateTime(new Date())
+                          disabledTime={(current) => {
+                            return disabledDateTime(current, new Date())
                           }}
                           showTime
                         />

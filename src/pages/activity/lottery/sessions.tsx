@@ -55,14 +55,15 @@ class Main extends React.Component<any, State> {
   /** 初始化奖品列表 */
   public initAwardList () {
     let res: any = []
-    for (let i = 0; i < 8; i++) {
+    const rows = this.activityType === 1 ? 10 : 8
+    for (let i = 0; i < rows; i++) {
       res[i] = {
         id: i + 1,
         awardType: null,
         awardValue: '',
         awardTitle: '',
         awardPicUrl: '',
-        controlLevel: i === 7 ? 0 : null,
+        controlLevel: i === rows - 1 ? 0 : null,
         awardNum: null,
         receiveNum: null,
         restrictNum: null,
@@ -71,7 +72,7 @@ class Main extends React.Component<any, State> {
         headUserProbability: null,
         areaUserProbability: null,
         cityUserProbability: null,
-        defaultAward: i === 7 ? 0 : 1 
+        defaultAward: i === rows - 1 ? 0 : 1 
       }
     }
     this.state = {
@@ -272,9 +273,9 @@ class Main extends React.Component<any, State> {
                         const stamp: number = getActivityStartTime() - 24 * 3600 * 1000
                         return disabledDate(current, stamp)
                       }}
-                      disabledTime={() => {
+                      disabledTime={(current: any) => {
                         const stamp: number = getActivityStartTime()
-                        return disabledDateTime(new Date(stamp))
+                        return disabledDateTime(current, new Date(stamp))
                       }}
                       showTime
                     />
@@ -310,9 +311,9 @@ class Main extends React.Component<any, State> {
                 const { startTime } = this.form.getValues()
                 return disabledDate(current, startTime)
               },
-              disabledTime: () => {
+              disabledTime: (current: any) => {
                 const { startTime } = this.form.getValues()
-                return disabledDateTime(new Date(startTime))
+                return disabledDateTime(current, new Date(startTime))
               }
             }}
             fieldDecoratorOptions={{
