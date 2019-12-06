@@ -282,7 +282,7 @@ class GoodsList extends React.Component {
         align: 'center',
         render: record => (
           <>
-            <Button
+            {/* <Button
               type="link"
               style={{ padding: 0 }}
               onClick={() => {
@@ -290,8 +290,8 @@ class GoodsList extends React.Component {
               }}
             >
               查看
-            </Button>
-            <Divider type="vertical" />
+            </Button> */}
+            {/* <Divider type="vertical" /> */}
             <Button
               type="link"
               style={{ padding: 0 }}
