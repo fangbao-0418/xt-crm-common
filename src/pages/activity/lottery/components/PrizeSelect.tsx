@@ -53,11 +53,13 @@ class Main extends React.Component<Props, any> {
         break
       default:
         node = (
-        <InputNumber
-          onChange={(e) => {
-            this.onChange(e)
-          }}
-          min={0}/>
+          <InputNumber
+            onChange={(e) => {
+              this.onChange(e)
+            }}
+            min={0}
+            precision={0}
+          />
         )
     }
     return node

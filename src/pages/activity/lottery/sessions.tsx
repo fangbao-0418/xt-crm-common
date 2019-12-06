@@ -398,7 +398,7 @@ class Main extends React.Component<any, State> {
               dataIndex='awardNum'
               key='awardNum'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardNum', index)(<InputNumber min={0} />)
+                this.getFieldDecorator('awardNum', index)(<InputNumber min={0} precision={0}/>)
               )}
             />
             <Column
@@ -411,7 +411,7 @@ class Main extends React.Component<any, State> {
               dataIndex='restrictNum'
               key='restrictNum'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('restrictNum', index)(<InputNumber min={0}/>)
+                this.getFieldDecorator('restrictNum', index)(<InputNumber precision={0} min={0}/>)
               )}
             />
             <Column
@@ -428,7 +428,13 @@ class Main extends React.Component<any, State> {
                 dataIndex='normalUserProbability'
                 key='normalUserProbability'
                 render={(arg1, arg2, index) => (
-                  this.getFieldDecorator('normalUserProbability', index)(<InputNumber min={0} max={100} />)
+                  this.getFieldDecorator('normalUserProbability', index)(
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      precision={0}
+                    />
+                  )
                 )}
               />
               <Column
@@ -436,7 +442,13 @@ class Main extends React.Component<any, State> {
                 dataIndex='headUserProbability'
                 key='headUserProbability'
                 render={(arg1, arg2, index) => (
-                  this.getFieldDecorator('headUserProbability', index)(<InputNumber min={0} max={100} />)
+                  this.getFieldDecorator('headUserProbability', index)(
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      precision={0}
+                    />
+                  )
                 )}
               />
               <Column
@@ -444,7 +456,13 @@ class Main extends React.Component<any, State> {
                 dataIndex='areaUserProbability'
                 key='areaUserProbability'
                 render={(arg1, arg2, index) => (
-                  this.getFieldDecorator('areaUserProbability', index)(<InputNumber min={0} max={100} />)
+                  this.getFieldDecorator('areaUserProbability', index)(
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      precision={0}
+                    />
+                  )
                 )}
               />
               <Column
@@ -452,7 +470,13 @@ class Main extends React.Component<any, State> {
                 dataIndex='cityUserProbability'
                 key='cityUserProbability'
                 render={(arg1, arg2, index) => (
-                  this.getFieldDecorator('cityUserProbability', index)(<InputNumber min={0} max={100} />)
+                  this.getFieldDecorator('cityUserProbability', index)(
+                    <InputNumber
+                      min={0}
+                      max={100}
+                      precision={0}
+                    />
+                  )
                 )}
               />
             </ColumnGroup>
