@@ -25,7 +25,9 @@ export function disabledDateTime (current: any, date: any) {
   console.log(current.date(), current.hour(), current.minute(), '-----------')
   /** 当选择日期大于日期时，选择小时不做限制 */
   if (current.date() > d) {
-    h = 0
+    h = 0,
+    m = 0,
+    s = 0
   }
   /** 当选择时间大于小时数时，选择分钟数不做限制 */
   if (current.date() === d && current.hour() > h || current.date() > d) {
