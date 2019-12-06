@@ -13,7 +13,6 @@ import Record from './Record'
 import Stock from './Stock'
 import { RecordEnum } from './constant'
 import styles from './style.module.scss'
-
 const { Option } = Select;
 
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
@@ -351,7 +350,12 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'generalTaxRate',
         width: 100,
         render: (text) => {
-          return text !== null ? (text*100 +'%'):''
+          if(text === null) return ''
+          text = text.toString()
+          const num = text.indexOf('.')
+          if(num === -1) return text*100 + '%'
+          text = text.substring(0, num) + text.substring(num+1, num+3) + '.' + text.substring(num+3)
+          return text*1 + '%'
         }
       },
       {
