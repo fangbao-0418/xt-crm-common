@@ -9,6 +9,7 @@ import PrizeSelect from './components/PrizeSelect'
 import { message } from 'antd'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
+import { range, disabledDateTime } from '@/util/antdUtil'
 import moment from 'moment'
 const { Column, ColumnGroup } = Table
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
@@ -23,29 +24,7 @@ function getActivityStartTime () {
 function disabledDate (current: any) {
   return current && current < getActivityStartTime() - 24 * 3600 * 1000
 }
-function range(start: number, end: number) {
-  const result = [];
-  for (let i = start; i < end; i++) {
-    result.push(i)
 
-  }
-  return result;
-}
-/** 禁止选中时间 */
-function disabledDateTime () {
-  /** */
-  const stamp = getActivityStartTime()
-  const date = new Date(stamp)
-  const h = date.getHours()
-  const m = date.getMinutes()
-  const s = date.getSeconds()
-  console.log(h, m, s)
-  return {
-    disabledHours: () => range(0, h),
-    disabledMinutes: () => range(0, m),
-    disabledSeconds: () => range(0, s)
-  }
-}
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
 }
@@ -286,7 +265,14 @@ class Main extends React.Component<any, State> {
                         <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
                         <></>
                       ):
-                    <DatePicker disabledDate={disabledDate} disabledTime={disabledDateTime} showTime/>
+                    <DatePicker
+                      disabledDate={disabledDate}
+                      disabledTime={() => {
+                        const stamp: number = getActivityStartTime()
+                        return disabledDateTime(new Date(stamp))
+                      }}
+                      showTime
+                    />
                   )}
                   <span className='ml10'>
                     <Icon

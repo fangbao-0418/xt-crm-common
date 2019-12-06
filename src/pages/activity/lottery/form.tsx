@@ -6,9 +6,21 @@ import { Card, DatePicker, Icon, Table, Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
+import moment from 'moment'
 interface State {
   roundList: Lottery.LuckyDrawRoundListVo[]
 }
+
+/** 禁用日期 */
+function disabledDate (current: any) {
+  return current && current < moment().endOf('day').subtract(1, 'days')
+}
+
+/** 禁用时间 */
+function disabledDateTime () {
+  
+}
+
 class Main extends React.Component<any, State> {
   public form: FormInstance
   public id: number
@@ -169,7 +181,17 @@ class Main extends React.Component<any, State> {
                       message: '请输入开始时间'
                     }]
                   })(
-                    this.readOnly ? (startTime ? <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> : <></>): <DatePicker showTime/>
+                    this.readOnly ? (
+                      startTime ?
+                        <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
+                        <></>
+                      ) :
+                      (
+                        <DatePicker
+                          disabledDate={disabledDate}
+                          showTime
+                        />
+                      )
                   )}
                   <span className='ml10'>
                     <Icon
