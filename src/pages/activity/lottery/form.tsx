@@ -75,7 +75,11 @@ class Main extends React.Component<any, State> {
             status={record.status}
             moduleId='sessions'
             onView={() => APP.history.push(`${path}?readOnly=1`)}
-            onEdit={() => APP.history.push(path)}
+            onEdit={() => {
+              const { startTime, type } = this.form && this.form.getValues() || {}
+              const stamp = startTime ? startTime.valueOf() : 0
+              APP.history.push(`${path}?activityStartTime=${stamp}&activityType=${type}`)
+            }}
             onDelete={async () => {
               const res = await api.deleteSession(record.id)
               if (res) {
