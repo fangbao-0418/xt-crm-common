@@ -70,7 +70,8 @@ class Main extends React.Component<any, State> {
         const path = `/activity/lottery/${this.id}/${record.id}`
         return (
           <Ribbon
-            {...record}
+            status={record.status}
+            moduleId='sessions'
             onView={() => APP.history.push(`${path}?readOnly=1`)}
             onEdit={() => APP.history.push(path)}
             onDelete={async () => {
@@ -160,7 +161,6 @@ class Main extends React.Component<any, State> {
             label='开始时间'
             verifiable
             inner={(form) => {
-              const startTime =form.getFieldValue('startTime')
               return (
                 <div>
                   {form.getFieldDecorator('startTime', {
@@ -241,7 +241,7 @@ class Main extends React.Component<any, State> {
           <Button
             type='danger'
             disabled={this.id === -1 || this.readOnly}
-            onClick={() =>  APP.history.push(`/activity/lottery/${this.id}/-1?startTime=${timestamp}`)}>
+            onClick={() =>  APP.history.push(`/activity/lottery/${this.id}/-1?activityStartTime=${timestamp}`)}>
             新建场次
           </Button>
         </div>

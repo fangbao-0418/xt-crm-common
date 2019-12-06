@@ -10,35 +10,35 @@ function confirmOpen (fn: any, open: number) {
   })    
 }
 
-function Main ({ status, onView, onEdit, onUpdate, onDelete}: any) {
+function Main (props: any) {
   return (
     <div>
       <Button
         type='link'
-        onClick={onView}
+        onClick={props.onView}
       >
         查看
       </Button>
-      {[0, 1, 3].includes(status) && (
+      {[0, 1, 3].includes(props.status) && (
         <Button
           type='link'
-          onClick={onEdit}
+          onClick={props.onEdit}
         >
           编辑
         </Button>
       )}
-      <Button type='link' onClick={() => {
+      {props.moduleId === 'sessions' && <Button type='link' onClick={() => {
         Modal.confirm({
           title: '系统提示',
           content: '是否确认删除',
-          onOk: onDelete
+          onOk: props.onDelete
         })
-      }}>删除</Button>
+      }}>删除</Button>}
       {3 === Number(status) && (
         <Button
           type='link'
           onClick={() => {
-            confirmOpen(onUpdate, 1)
+            confirmOpen(props.onUpdate, 1)
           }}
         >
           开启
@@ -48,7 +48,7 @@ function Main ({ status, onView, onEdit, onUpdate, onDelete}: any) {
         <Button
           type='link'
           onClick={() => {
-            confirmOpen(onUpdate, 0)
+            confirmOpen(props.onUpdate, 0)
           }}
         >
           关闭

@@ -10,12 +10,31 @@ import { message } from 'antd'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
 const { Column, ColumnGroup } = Table
-/** 判断假值，过滤undefined，null，NaN，'’，不过滤0*/
+/** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
   return val == null || val === '' || Number.isNaN(val)
 }
+function getActivityStartTime () {
+  return +(parseQuery() as any).activityStartTime
+}
 function disabledDate (current: any) {
-  return current && current < +(parseQuery() as any).startTime
+  return current && current < getActivityStartTime() - 24 * 3600 * 1000
+}
+function range(start: number, end: number) {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i)
+
+  }
+  return result;
+}
+function disabledDateTime () {
+  // const activityStartTime = getActivityStartTime()
+  return {
+    disabledHours: () => range(0, 24).splice(4, 20),
+    disabledMinutes: () => range(30, 60),
+    disabledSeconds: () => [55, 56]
+  }
 }
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
@@ -51,7 +70,7 @@ class Main extends React.Component<any, State> {
   /** 初始化奖品列表 */
   public initAwardList () {
     let res: any = []
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 8; i++) {
       res[i] = {
         id: i + 1,
         awardType: null,
@@ -67,12 +86,9 @@ class Main extends React.Component<any, State> {
         headUserProbability: null,
         areaUserProbability: null,
         cityUserProbability: null,
-        defaultAward: 1
+        defaultAward: i === 7 ? 0 : 1 
       }
     }
-    // res[res.length] = {
-    //   defaultAward: 0
-    // }
     this.state = {
       awardList: res
     }
@@ -150,17 +166,23 @@ class Main extends React.Component<any, State> {
       if (isFalsly(v.awardNum)) {
         return void message.error(`${prefixMsg}奖品库存不能为空`)
       }
-      /** 团长中奖概率必填 */
-      if (isFalsly(v.headUserProbability)) {
-        return void message.error(`${prefixMsg}团长中奖概率不能为空`)
-      }
-      /** 区长中奖概率必填 */
-      if (isFalsly(v.areaUserProbability)) {
-        return void message.error(`${prefixMsg}区长中奖概率不能为空`)
-      }
-      /** 合伙人中奖概率必填 */
-      if (isFalsly(v.cityUserProbability)) {
-        return void message.error(`${prefixMsg}合伙人中奖概率不能为空`)
+      if (v.defaultAward === 1) {
+        /** 普通用户中奖概率必填 */
+        if (isFalsly(v.normalUserProbability)) {
+          return void message.error(`${prefixMsg}普通用户中奖概率不能为空`)
+        }
+        /** 团长中奖概率必填 */
+        if (isFalsly(v.headUserProbability)) {
+          return void message.error(`${prefixMsg}团长中奖概率不能为空`)
+        }
+        /** 区长中奖概率必填 */
+        if (isFalsly(v.areaUserProbability)) {
+          return void message.error(`${prefixMsg}区长中奖概率不能为空`)
+        }
+        /** 合伙人中奖概率必填 */
+        if (isFalsly(v.cityUserProbability)) {
+          return void message.error(`${prefixMsg}合伙人中奖概率不能为空`)
+        }
       }
     }
     return true
@@ -242,7 +264,12 @@ class Main extends React.Component<any, State> {
                       message: '请输入开始时间'
                     }]
                   })(
-                    this.readOnly ? (startTime ? <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> : <></>): <DatePicker disabledDate={disabledDate} showTime/>
+                    this.readOnly ?
+                      (startTime ?
+                        <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
+                        <></>
+                      ):
+                    <DatePicker disabledDate={disabledDate} showTime/>
                   )}
                   <span className='ml10'>
                     <Icon
@@ -301,9 +328,14 @@ class Main extends React.Component<any, State> {
               title={<span className={styles.required}>奖品类型</span>}
               dataIndex='awardType'
               key='awardType'
-              render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardType', index)(<SelectFetch options={prizeOptions}/>)
-              )}
+              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => {
+                /** 
+                 * 0：兜底，1：不兜底
+                 * 兜底奖品类型才有无奖品
+                 */
+                const options = record.defaultAward === 0 ? prizeOptions : prizeOptions.filter((opt: any) => opt.value !== 0)
+                return this.getFieldDecorator('awardType', index)(<SelectFetch options={options}/>)
+              }}
             />
             <Column
               width={140}
@@ -367,7 +399,7 @@ class Main extends React.Component<any, State> {
               dataIndex='restrictOrderAmount'
               key='restrictOrderAmount'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('restrictOrderAmount', index)(<InputNumber />)
+                this.getFieldDecorator('restrictOrderAmount', index)(<InputNumber min={0}/>)
               )}
             />
             <ColumnGroup title={<span className={styles.required}>中奖概率%</span>}>

@@ -12,18 +12,6 @@ interface Props {
  * 奖品选择
  */
 class Main extends React.Component<Props, any> {
-  public getIdOrCodeValue (value: string) {
-    value = value || ''
-    return value.split(':')
-  }
-  public connectIdOrCode(res: {id: number, code: string}[]) {
-    let result = ''
-    if (res.length === 0) {
-      const { id, code } = res[0]
-      result = id + ':' + code
-    }
-    return result
-  }
   public render () {
     const {
       value,
@@ -38,14 +26,13 @@ class Main extends React.Component<Props, any> {
       /** 优惠券、实物 */
       case 1:
       case 4:
-        const [id, code] = this.getIdOrCodeValue(value)
         node = (
-          code || (<span
+          value.code || (<span
             className='href'
             onClick={() => {
               this.props.modal.show({
                 success: (res: any, hide: any) => {
-                  onChange(this.connectIdOrCode(res))
+                  onChange(res[0])
                   hide()
                 }
               })

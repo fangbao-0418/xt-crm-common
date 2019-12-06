@@ -33,12 +33,14 @@ export function sessionParams (payload: Lottery.SessionsParams) {
   payload.endTime = moment(payload.endTime).valueOf()
   payload.awardList = (payload.awardList || []).map((item: Lottery.LuckyDrawAwardListVo) => {
     const awardPicUrl = ((item.awardPicUrl || []) as any).map((v: any) => removeURLDomain(v.url)).join(',')
+    let awardValue = item.awardValue
     if (item.awardType === 1) {
-      const awardValue: any = item.awardValue || {}
-      item.awardValue = awardValue.id + ':' + awardValue.code 
+      const {id, code}: any = item.awardValue || {}
+      awardValue = id + ':' + code 
     }
     return {
       ...item,
+      awardValue,
       awardPicUrl
     }
   })
