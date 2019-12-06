@@ -32,14 +32,20 @@ function range(start: number, end: number) {
   return result;
 }
 /** 禁止选中时间 */
-// function disabledDateTime () {
-//   const activityStartTime = getActivityStartTime()
-//   return {
-//     disabledHours: () => range(0, 24).splice(4, 20),
-//     disabledMinutes: () => range(30, 60),
-//     disabledSeconds: () => [55, 56]
-//   }
-// }
+function disabledDateTime () {
+  /** */
+  const stamp = getActivityStartTime()
+  const date = new Date(stamp)
+  const h = date.getHours()
+  const m = date.getMinutes()
+  const s = date.getSeconds()
+  console.log(h, m, s)
+  return {
+    disabledHours: () => range(0, h),
+    disabledMinutes: () => range(0, m),
+    disabledSeconds: () => range(0, s)
+  }
+}
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
 }
@@ -274,7 +280,7 @@ class Main extends React.Component<any, State> {
                         <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
                         <></>
                       ):
-                    <DatePicker disabledDate={disabledDate} showTime/>
+                    <DatePicker disabledDate={disabledDate} disabledTime={disabledDateTime} showTime/>
                   )}
                   <span className='ml10'>
                     <Icon
