@@ -56,7 +56,7 @@ export const type: Props = {
 }
 
 export const prizeOptions: Options[] = [
-  { label: '无奖品', value: 0 },
+  { label: '谢谢惠顾', value: '0' },
   { label: '优惠券', value: 1 },
   { label: '元宝', value: 2 },
   { label: '现金', value: 3 },
