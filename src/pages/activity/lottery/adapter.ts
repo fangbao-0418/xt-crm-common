@@ -1,5 +1,16 @@
 import moment from 'moment'
 import { removeURLDomain, initImgList } from '@/util/utils'
+
+/** 转换活动列表响应 */
+export function listResponse (res: any) {
+  let { records } = res
+  if (!Array.isArray(records)) records = []
+  records = records.map((item: Lottery.ListProps) => {
+    return item
+  })
+  return { ...res, records }
+}
+
 /** 转换新增编辑活动入参 */
 export function activityParams (payload: Lottery.ActivityParams) {
   payload.startTime = moment(payload.startTime).valueOf()

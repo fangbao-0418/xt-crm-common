@@ -2,7 +2,7 @@ import { queryString } from '@/util/utils'
 import * as adapter from './adapter'
 const { get, del, newPut, newPost } = APP.http
 /** 抽奖活动列表分页接口 */
-export function getPage (payload: {
+export async function getPage (payload: {
   title: string,
   type: number,
   status: 0 | 1 | 2,
@@ -14,7 +14,8 @@ export function getPage (payload: {
   pageSize: number
 }) {
   console.log('payload => ', payload)
-  return get(`/luckydraw/getPage${queryString(payload)}`)
+  const res = await get(`/luckydraw/getPage${queryString(payload)}`)
+  return adapter.listResponse(res)
 }
 
 /** 抽奖活动详情接口 */
