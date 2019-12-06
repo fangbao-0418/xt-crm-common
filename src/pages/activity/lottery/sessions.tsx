@@ -9,14 +9,17 @@ import PrizeSelect from './components/PrizeSelect'
 import { message } from 'antd'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
+import moment from 'moment'
 const { Column, ColumnGroup } = Table
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
   return val == null || val === '' || Number.isNaN(val)
 }
+/** 获取活动开始时间 */
 function getActivityStartTime () {
   return +(parseQuery() as any).activityStartTime
 }
+/** 禁止选中日期 */
 function disabledDate (current: any) {
   return current && current < getActivityStartTime() - 24 * 3600 * 1000
 }
@@ -28,6 +31,7 @@ function range(start: number, end: number) {
   }
   return result;
 }
+/** 禁止选中时间 */
 function disabledDateTime () {
   const activityStartTime = getActivityStartTime()
   return {
@@ -124,6 +128,7 @@ class Main extends React.Component<any, State> {
     return (node: any) => {
       return React.cloneElement(node, {
         onChange: (e: any) => {
+          debugger
           switch (node.type.name) {
             case 'Input':
               this.setCellValue(id, index, e.target.value)
@@ -133,7 +138,7 @@ class Main extends React.Component<any, State> {
               break
             default:
               console.log('e => ', e)
-              this.setCellValue(id, index, e)
+              this.setCellValue(id, index, e.target ? e.target.value : e)
           }
         },
         value: this.getCellValue(id, index)
