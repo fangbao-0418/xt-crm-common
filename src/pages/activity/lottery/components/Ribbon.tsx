@@ -48,10 +48,10 @@ function Main (props: any) {
         <Button
           type='link'
           onClick={() => {
-            confirmOpen(props.onUpdate, 0)
+            confirmOpen(props.onUpdate, props.status === 3 ? 1: 0)
           }}
         >
-          关闭
+          {props.status === 3 ? '开启' : '关闭'}
         </Button>
       )}
     </div>

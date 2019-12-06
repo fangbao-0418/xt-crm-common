@@ -11,8 +11,10 @@ class Main extends React.Component {
   public columns: ColumnProps<Lottery.ListProps>[] = [
     {
       key: 'id',
-      title: '编号',
-      dataIndex: 'id'
+      title: '活动id',
+      dataIndex: 'id',
+      width: 80,
+      align: 'center'
     },
     {
       key: 'title',

@@ -182,7 +182,12 @@ class Main extends React.Component<any, State> {
   /** 新增、编辑活动场次 */
   public handleSave () {
     this.form.props.form.validateFields(async (err, vals) => {
-      const { awardList } = this.state
+      const awardList = (this.state.awardList || []).map((item) => {
+        return {
+          ...item,
+          awardType: Number(item.awardType) || 0
+        }
+      })
       console.log(awardList, 'awardList')
       if (!err && !!this.validate(awardList)) {
         let msg, res
@@ -336,7 +341,7 @@ class Main extends React.Component<any, State> {
                  * 0：兜底，1：不兜底
                  * 兜底奖品类型才有无奖品
                  */
-                const options = record.defaultAward === 0 ? prizeOptions : prizeOptions.filter((opt: any) => opt.value !== 0)
+                const options = record.defaultAward === 0 ? prizeOptions : prizeOptions.filter((opt: any) => opt.value !== '0')
                 return this.getFieldDecorator('awardType', index)(<SelectFetch options={options}/>)
               }}
             />
