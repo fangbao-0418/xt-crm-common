@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin, Row, Col, Select } from 'antd';
 import { isNil } from 'lodash';
-import moment from 'moment'
+import moment from 'moment';
 import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant';
 import { formatDate, formatMoneyWithSign } from '../../helper';
 import { getOrderList, exportOrder, importLogistics } from '../api';
 import GoodCell from '../../../components/good-cell';
-import SuppilerSelect from '@/components/suppiler-auto-select'
+import SuppilerSelect from '@/components/suppiler-auto-select';
 import RefundCell from '../components/refund-cell';
 import RemarkModal from '../components/modal/remark-modal';
 import RefundModal from '../components/refund-modal';
@@ -32,7 +32,7 @@ const formatRangeDate = (val) => {
 }
 class OrderList extends React.Component {
   static defaultProps = {};
-  payload = APP.fn.getPayload('order') || {}
+  payload = APP.fn.getPayload('order') || {};
   state = {
     selectedRowKeys: [],
     list: [],
@@ -47,26 +47,26 @@ class OrderList extends React.Component {
   }
 
   query = (isExport = false, noFetch = false) => {
-    const {intercept}=this.props;
-    const obj=parseQuery();
+    const { intercept } = this.props;
+    const obj = parseQuery();
     let fieldsValues = this.props.form.getFieldsValue();
-    let rangePickerValue = fieldsValues['rangePicker']
+    let rangePickerValue = fieldsValues['rangePicker'];
     if (this.props.type === 'refund') {
-      const [skuServerStartDate, skuServerEndDate] = formatRangeDate(rangePickerValue)
+      const [skuServerStartDate, skuServerEndDate] = formatRangeDate(rangePickerValue);
       fieldsValues.skuServerStartDate = skuServerStartDate;
       fieldsValues.skuServerEndDate = skuServerEndDate;
     }
     if (this.props.type === 'order') {
-      const [orderStartDate, orderEndDate] = formatRangeDate(rangePickerValue)
+      const [orderStartDate, orderEndDate] = formatRangeDate(rangePickerValue);
       fieldsValues.orderStartDate = orderStartDate;
       fieldsValues.orderEndDate = orderEndDate;
     }
-    if(intercept){
-      fieldsValues['interceptorFlag']=1;
-      fieldsValues['interceptorPhone']=obj.iphone;
+    if (intercept) {
+      fieldsValues['interceptorFlag'] = 1;
+      fieldsValues['interceptorPhone'] = obj.iphone;
     }
     let playPickerValue = fieldsValues['playPicker'];
-    const [payStartDate, payEndDate] = formatRangeDate(playPickerValue)
+    const [payStartDate, payEndDate] = formatRangeDate(playPickerValue);
     fieldsValues.payStartDate = payStartDate;
     fieldsValues.payEndDate = payEndDate;
     delete fieldsValues['playPicker'];
@@ -76,41 +76,46 @@ class OrderList extends React.Component {
       orderStatus: this.props.orderStatus,
       refundStatus: this.props.refundStatus,
       page: this.state.current,
-      pageSize: this.state.pageSize,
+      pageSize: this.state.pageSize
     };
     this.payload = this.payload || {}
     this.payload[this.props.pathname] = params
     APP.fn.setPayload('order', this.payload)
     if (noFetch) {
-      return
+      return;
     }
     if (isExport) {
       this.setState({
         loading: true
-      })
-      exportOrder(params).then((res) => {
-        res && message.success('导出成功');
-      }).finally(() => {
-        this.setState({
-          loading: false
+      });
+      exportOrder(params)
+        .then(res => {
+          res && message.success('导出成功');
         })
-      })
+        .finally(() => {
+          this.setState({
+            loading: false
+          });
+        });
     } else {
       getOrderList(params).then((res = {}) => {
         this.setState({
           list: res.records,
-          total: res.total,
+          total: res.total
         });
       });
     }
   };
 
   handleSearch = () => {
-    this.setState({
-      current: 1
-    }, () => {
-      this.query();
-    })
+    this.setState(
+      {
+        current: 1
+      },
+      () => {
+        this.query();
+      }
+    );
   };
 
   handleImportChange = info => {
@@ -132,12 +137,12 @@ class OrderList extends React.Component {
 
   reset = () => {
     this.props.form.resetFields();
-    this.payload[this.props.pathname] = {}
-    APP.fn.setPayload('order', this.payload)
+    this.payload[this.props.pathname] = {};
+    APP.fn.setPayload('order', this.payload);
     this.setState({}, () => {
       console.log(this.props.form.getFieldsValue(), 'getFieldsValue');
       this.query();
-    })
+    });
   };
 
   onSelectChange = selectedRowKeys => {
@@ -149,9 +154,9 @@ class OrderList extends React.Component {
     this.setState(
       {
         current: page,
-        pageSize,
+        pageSize
       },
-      this.query,
+      this.query
     );
   };
   render() {
@@ -159,7 +164,7 @@ class OrderList extends React.Component {
     const {
       refundStatus,
       intercept,
-      form: { getFieldDecorator },
+      form: { getFieldDecorator }
     } = this.props;
     const columns = [
       {
@@ -167,23 +172,23 @@ class OrderList extends React.Component {
         dataIndex: 'orderCode',
         width: '400px',
         render: (operate, { orderStatus, orderCode }) => (
-          <Button type="link" href={`/#/order/detail/${orderCode}`} target="_blank">
+          <Button type="link" href={window.location.pathname + `#/order/detail/${orderCode}`} target="_blank">
             {orderCode}
           </Button>
-        ),
+        )
       },
       {
         title: '下单时间',
         dataIndex: 'createTime',
         width: '300px',
-        render: (createTime, row) => <div>下单时间：{formatDate(createTime)}</div>,
+        render: (createTime, row) => <div>下单时间：{formatDate(createTime)}</div>
       },
       {
         title: '订单状态',
         dataIndex: 'orderStatus',
         render(orderStatus) {
           return <div>{OrderStatusTextMap[orderStatus]}</div>;
-        },
+        }
       },
       {
         title: '实付金额',
@@ -195,7 +200,7 @@ class OrderList extends React.Component {
               <div>（含运费：{formatMoneyWithSign(freight)}）</div>
             </div>
           );
-        },
+        }
       },
       {
         title: '收货人',
@@ -208,7 +213,7 @@ class OrderList extends React.Component {
               <div>{remark}</div>
             </div>
           );
-        },
+        }
       },
 
       {
@@ -217,18 +222,18 @@ class OrderList extends React.Component {
         width: '150px',
         render: (operate, { orderType, orderStatus, orderCode }) => (
           <>
-            <Button type="link" href={`/#/order/detail/${orderCode}`} target="_blank">
+            <Button type="link" href={window.location.pathname + `#/order/detail/${orderCode}`} target="_blank">
               查看详情
             </Button>
             <Divider type="vertical" />
             {Number(orderType) !== 70 && orderStatus === enumOrderStatus.Undelivered && (
-              <Button type="link" href={`/#/order/detail/${orderCode}`} target="_blank">
+              <Button type="link" href={window.location.pathname + `/#/order/detail/${orderCode}`} target="_blank">
                 发货
               </Button>
             )}
           </>
-        ),
-      },
+        )
+      }
     ].filter(column => !column.hide);
 
     const expandedRowRender = row => {
@@ -239,7 +244,7 @@ class OrderList extends React.Component {
           width: '400px',
           render(skuName, row) {
             return <GoodCell {...row} />;
-          },
+          }
         },
         {
           title: '商品单价',
@@ -247,7 +252,7 @@ class OrderList extends React.Component {
           width: '300px',
           render(salePrice) {
             return formatMoneyWithSign(salePrice);
-          },
+          }
         },
         {
           title: '购买价',
@@ -255,12 +260,12 @@ class OrderList extends React.Component {
           key: 'buyPrice',
           render(buyPrice) {
             return formatMoneyWithSign(buyPrice);
-          },
+          }
         },
         {
           title: '商品数量',
           dataIndex: 'num',
-          key: 'num',
+          key: 'num'
         },
         {
           title: '售后信息',
@@ -268,7 +273,7 @@ class OrderList extends React.Component {
           hide: isNil(refundStatus),
           render(info, row) {
             return <RefundCell {...row} />;
-          },
+          }
         },
         {
           title: '售后状态',
@@ -276,7 +281,7 @@ class OrderList extends React.Component {
           hide: isNil(refundStatus),
           render(refundStatus, row) {
             return <RefundStatusCell refundStatus={refundStatus} />;
-          },
+          }
         },
         {
           title: '操作',
@@ -291,20 +296,18 @@ class OrderList extends React.Component {
                 childOrderId={childOrderId}
               />
               &nbsp;
-              {[enumRefundStatus.Operating, enumRefundStatus.WaitConfirm].indexOf(
-                Number(refundStatus),
-              ) > -1 && (
-                  <RefundModal
-                    onSuccess={this.query}
-                    orderCode={row.orderCode}
-                    refundId={refundId}
-                    childOrderId={childOrderId}
-                    skuId={skuId}
-                  />
-                )}
+              {[enumRefundStatus.Operating, enumRefundStatus.WaitConfirm].indexOf(Number(refundStatus)) > -1 && (
+                <RefundModal
+                  onSuccess={this.query}
+                  orderCode={row.orderCode}
+                  refundId={refundId}
+                  childOrderId={childOrderId}
+                  skuId={skuId}
+                />
+              )}
             </>
-          ),
-        },
+          )
+        }
       ].filter(column => !column.hide);
       return (
         <Table
@@ -326,7 +329,9 @@ class OrderList extends React.Component {
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label="订单编号">
-                  {getFieldDecorator('orderCode', {initialValue: values.orderCode})(<Input placeholder="请输入订单编号" />)}
+                  {getFieldDecorator('orderCode', { initialValue: values.orderCode })(
+                    <Input placeholder="请输入订单编号" />
+                  )}
                 </FormItem>
               </Col>
               <Col span={6}>
@@ -342,27 +347,35 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="快递单号">
-                  {getFieldDecorator('expressCode', {initialValue: values.expressCode})(<Input placeholder="请输入快递单号" />)}
+                  {getFieldDecorator('expressCode', { initialValue: values.expressCode })(
+                    <Input placeholder="请输入快递单号" />
+                  )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label="商品ID">
-                  {getFieldDecorator('productId', {initialValue: values.productId})(<Input type="number" placeholder="请输入商品ID" />)}
+                  {getFieldDecorator('productId', { initialValue: values.productId })(
+                    <Input type="number" placeholder="请输入商品ID" />
+                  )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label="下单人ID">
-                  {getFieldDecorator('buyerId', {initialValue: values.buyerId})(<Input placeholder="请输入下单人ID" />)}
+                  {getFieldDecorator('buyerId', { initialValue: values.buyerId })(
+                    <Input placeholder="请输入下单人ID" />
+                  )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label="下单人电话">
-                  {getFieldDecorator('buyerPhone', {initialValue: values.buyerPhone})(<Input placeholder="请输入下单人电话" />)}
+                  {getFieldDecorator('buyerPhone', { initialValue: values.buyerPhone })(
+                    <Input placeholder="请输入下单人电话" />
+                  )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label="收货人">
-                  {getFieldDecorator('contact', {initialValue: values.contact})(<Input placeholder="请输入收货人" />)}
+                  {getFieldDecorator('contact', { initialValue: values.contact })(<Input placeholder="请输入收货人" />)}
                 </FormItem>
               </Col>
               <Col span={6}>
@@ -372,7 +385,7 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="供应商">
-                  {getFieldDecorator('storeId', {initialValue: values.storeId})(<SuppilerSelect />)}
+                  {getFieldDecorator('storeId', { initialValue: values.storeId })(<SuppilerSelect />)}
                 </FormItem>
               </Col>
               {!intercept && (
@@ -433,10 +446,10 @@ class OrderList extends React.Component {
                 </Button>
                 <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>
                   查询订单
-              </Button>
+                </Button>
                 <Button type="primary" onClick={this.export}>
                   导出订单
-              </Button>
+                </Button>
                 {this.props.orderStatus === enumOrderStatus.Undelivered && (
                   <Upload
                     name="file"
@@ -465,15 +478,15 @@ class OrderList extends React.Component {
                 current,
                 total,
                 pageSize,
-                onChange: this.handlePageChange,
+                onChange: this.handlePageChange
               }}
               defaultExpandAllRows={true}
               expandedRowRender={expandedRowRender}
               rowKey={record => record.orderCode}
             />
           ) : (
-              '暂无数据'
-            )}
+            '暂无数据'
+          )}
         </Card>
       </Spin>
     );

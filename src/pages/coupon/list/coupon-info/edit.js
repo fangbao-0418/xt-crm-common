@@ -122,7 +122,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         </Row>
         <Form.Item label="领取时间">{formatDateRange(ruleVO)}</Form.Item>
         <Form.Item label="使用时间">{formatUseTime(ruleVO)}</Form.Item>
-        <Form.Item label="领取人(使用人)限制">{formatReceiveRestrict(ruleVO.receiveRestrict)}</Form.Item>
+        <Form.Item label="领取人限制">{formatReceiveRestrict(ruleVO.receiveRestrict)}</Form.Item>
         <Form.Item label="每人限领次数">{ruleVO.restrictNum}张</Form.Item>
         <Form.Item label="每日限领次数">{ruleVO.dailyRestrict ? `${ruleVO.dailyRestrict}张` : '无'}</Form.Item>
         <Form.Item label="使用平台">{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item>
