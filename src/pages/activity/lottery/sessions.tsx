@@ -62,7 +62,7 @@ class Main extends React.Component<any, State> {
         awardValue: '',
         awardTitle: '',
         awardPicUrl: '',
-        controlLevel: null,
+        controlLevel: i === 7 ? 0 : null,
         awardNum: null,
         receiveNum: null,
         restrictNum: null,
@@ -393,8 +393,14 @@ class Main extends React.Component<any, State> {
               title='风控级别'
               dataIndex='controlLevel'
               key='controlLevel'
-              render={(arg1, arg2, index) => (
-                this.getFieldDecorator('controlLevel', index)(<InputNumber min={0} max={1}/>)
+              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+                this.getFieldDecorator('controlLevel', index)(
+                  <InputNumber
+                    disabled={record.defaultAward === 0}
+                    min={0}
+                    max={1}
+                  />
+                )
               )}
             />
             <Column
@@ -415,8 +421,14 @@ class Main extends React.Component<any, State> {
               title='单人限领'
               dataIndex='restrictNum'
               key='restrictNum'
-              render={(arg1, arg2, index) => (
-                this.getFieldDecorator('restrictNum', index)(<InputNumber precision={0} min={0}/>)
+              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+                this.getFieldDecorator('restrictNum', index)(
+                  <InputNumber
+                    disabled={record.defaultAward === 0}
+                    precision={0}
+                    min={0}
+                  />
+                )
               )}
             />
             <Column
@@ -432,9 +444,10 @@ class Main extends React.Component<any, State> {
                 title='普通用户'
                 dataIndex='normalUserProbability'
                 key='normalUserProbability'
-                render={(arg1, arg2, index) => (
+                render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                   this.getFieldDecorator('normalUserProbability', index)(
                     <InputNumber
+                      disabled={record.defaultAward === 0}
                       min={0}
                       max={100}
                       precision={0}
@@ -446,9 +459,10 @@ class Main extends React.Component<any, State> {
                 title='团长'
                 dataIndex='headUserProbability'
                 key='headUserProbability'
-                render={(arg1, arg2, index) => (
+                render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                   this.getFieldDecorator('headUserProbability', index)(
                     <InputNumber
+                      disabled={record.defaultAward === 0}
                       min={0}
                       max={100}
                       precision={0}
@@ -460,9 +474,10 @@ class Main extends React.Component<any, State> {
                 title='区长'
                 dataIndex='areaUserProbability'
                 key='areaUserProbability'
-                render={(arg1, arg2, index) => (
+                render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                   this.getFieldDecorator('areaUserProbability', index)(
                     <InputNumber
+                      disabled={record.defaultAward === 0}
                       min={0}
                       max={100}
                       precision={0}
@@ -474,9 +489,10 @@ class Main extends React.Component<any, State> {
                 title='合伙人'
                 dataIndex='cityUserProbability'
                 key='cityUserProbability'
-                render={(arg1, arg2, index) => (
+                render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                   this.getFieldDecorator('cityUserProbability', index)(
                     <InputNumber
+                      disabled={record.defaultAward === 0}
                       min={0}
                       max={100}
                       precision={0}
