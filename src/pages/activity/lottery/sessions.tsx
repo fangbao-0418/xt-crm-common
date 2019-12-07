@@ -12,14 +12,38 @@ import { parseQuery } from '@/util/utils'
 import { disabledDateTime, disabledDate } from '@/util/antdUtil'
 import { upperFirst } from 'lodash'
 import modal, { ModalProps } from './components/modal'
+
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
   return val == null || val === '' || Number.isNaN(val)
 }
+
 /** 获取活动开始时间 */
 function getActivityStartTime () {
   return +(parseQuery() as any).activityStartTime
 }
+
+/** 返回必填标题组件 */
+function requiredTitle (title: string) {
+  return <span className={styles.required}>{title}</span>
+}
+
+/** 计算总价 */
+function calcTotal (collection: any[], iteratee: (res: any) => number) {
+  return (collection || []).reduce((prev: number, curr: any) => {
+    curr = typeof iteratee === 'function' ? iteratee(curr): curr
+    return prev + curr
+  }, 0)
+}
+
+
+/** 返回整数 */
+function getInteger (val: number) {
+  return Number.isInteger(val) ? val : 0
+}
+
+const ids = 'normalUserProbability,headUserProbability,areaUserProbability,cityUserProbability'.split(',')
+
 interface State {
   awardList: Lottery.LuckyDrawAwardListVo[]
   /** 合计普通用户率 */
@@ -62,7 +86,7 @@ class Main extends React.Component<Props, State> {
       }
     },
     {
-      title: <span className={styles.required}>奖品类型</span>,
+      title: requiredTitle('奖品类型'),
       key: 'awardType',
       width: 150,
       render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => {
@@ -75,7 +99,7 @@ class Main extends React.Component<Props, State> {
       }
     },
     {
-      title: '奖品设置',
+      title: requiredTitle('奖品设置'),
       key: 'awardValue',
       width: 150,
       render: (arg1: number, record: Lottery.LuckyDrawAwardListVo, index: number) => (
@@ -89,7 +113,7 @@ class Main extends React.Component<Props, State> {
       )
     },
     {
-      title: '简称',
+      title: requiredTitle('简称'),
       key: 'awardTitle',
       width: 150,
       render: (arg1: any, arg2: any, index: number) => (
@@ -132,7 +156,7 @@ class Main extends React.Component<Props, State> {
       )
     },
     {
-      title: '奖品库存',
+      title: requiredTitle('奖品库存'),
       key: 'awardNum',
       width: 150,
       render: (arg1: any, arg2: any, index: number) => (
@@ -179,10 +203,10 @@ class Main extends React.Component<Props, State> {
       )
     },
     {
-      title: <span className={styles.required}>中奖概率%</span>,
+      title: requiredTitle('中奖概率%'),
       children: [
         {
-          title: () => (
+          title: (res: any) => (
             <div style={{textAlign: 'center'}}>
               <div>普通用户</div>
               <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalNormalUserProbability}）</div>
@@ -272,9 +296,25 @@ class Main extends React.Component<Props, State> {
   /** 获取场次详情 */
   public async fetchDetail () {
     const res = await api.getSessionsDetail(this.id)
+    const awardList = res.awardList
     this.form.setValues(res)
+    let
+      totalNormalUserProbability = 0,
+      totalHeadUserProbability = 0,
+      totalAreaUserProbability = 0,
+      totalCityUserProbability = 0
+    awardList.forEach((item: any) => {
+      totalNormalUserProbability += getInteger(item.normalUserProbability)
+      totalHeadUserProbability += getInteger(item.headUserProbability)
+      totalAreaUserProbability += getInteger(item.areaUserProbability)
+      totalCityUserProbability += getInteger(item.cityUserProbability)
+    })
     this.setState({
-      awardList: res.awardList
+      awardList,
+      totalNormalUserProbability,
+      totalHeadUserProbability,
+      totalAreaUserProbability,
+      totalCityUserProbability
     })
   }
   /** 初始化奖品列表 */
@@ -319,12 +359,10 @@ class Main extends React.Component<Props, State> {
     const item: any = awardList[index] || {}
     const oldVal = item[id]
     item[id] = val
-    const ids = 'normalUserProbability,headUserProbability,areaUserProbability,cityUserProbability'.split(',')
     if (ids.includes(id)) {
-      let result = awardList.reduce((prev: number, curr: any) => prev + (curr[id] || 0), 0)
+      let result = calcTotal(awardList, curr => getInteger(curr[id]))
       const name = 'total' + upperFirst(id)
       if (result > 100 ) {
-        // alert('不能超过100')
         item[id] = oldVal
         return
       }
