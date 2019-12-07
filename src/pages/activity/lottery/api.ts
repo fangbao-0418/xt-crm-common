@@ -70,7 +70,6 @@ export function updateSession (payload: {
 /** 抽奖活动场次详情接口 */
 export async function getSessionsDetail (luckyDrawRoundId: number) {
   const result = await get(`/luckydraw/round/getDetail?luckyDrawRoundId=${luckyDrawRoundId}`)
-  console.log('sessionResponse => ', adapter.sessionResponse(result))
   return adapter.sessionResponse(result)
 }
 

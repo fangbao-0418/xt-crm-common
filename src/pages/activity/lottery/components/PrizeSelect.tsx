@@ -38,7 +38,7 @@ class Main extends React.Component<Props, any> {
       case 4:
         node = (
           <div>
-            <div>{value.code}</div>
+            <div>{value && value.code}</div>
             <div
               className='href'
               onClick={() => {

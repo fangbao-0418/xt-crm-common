@@ -34,7 +34,7 @@ export function sessionParams (payload: Lottery.SessionsParams) {
   payload.awardList = (payload.awardList || []).map((item: Lottery.LuckyDrawAwardListVo) => {
     const awardPicUrl = ((item.awardPicUrl || []) as any).map((v: any) => removeURLDomain(v.url)).join(',')
     let awardValue = item.awardValue
-    if ([1, 4].includes(item.awardType)) {
+    if ([1, 4].includes(+item.awardType)) {
       const {id, code}: any = item.awardValue || {}
       awardValue = id + ':' + code 
     }
@@ -52,10 +52,13 @@ export function sessionResponse (res: any) {
   res.startTime = moment(res.startTime)
   res.endTime = moment(res.endTime)
   const awardList = (res.awardList || []).map((v: any) => {
-    return {
-      ...v,
-      awardPicUrl: initImgList(v.awardPicUrl)
+    if ([1, 4].includes(+v.awardType)) {
+      const [id, code] = (typeof v.awardValue === 'string') && v.awardValue.split(':')
+      v.awardValue = {id, code}
     }
+    v.awardPicUrl = initImgList(v.awardPicUrl)
+    v.awardType = v.awardType || '0'
+    return v
   })
-  return { ...res, awardList } || { awardList: [] }
+  return { ...res, awardList }
 }
