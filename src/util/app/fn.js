@@ -39,20 +39,33 @@ export function formatMoney(money = '0') {
   return '¥' + str;
 }
 
-export function setPayload(name, value) {
+export function setPayload (name, value) {
   if (name === null && value === undefined) {
-    localStorage.setItem('payload', null);
-    return;
+    localStorage.setItem('payload', '""')
+    return
   }
-  const payload = getPayload() || {};
-  payload[name] = value;
-  localStorage.setItem('payload', JSON.stringify(payload));
+  const payload = getPayload() || {}
+  payload[name] = value
+  try {
+    localStorage.setItem('payload', JSON.stringify(payload))
+  } catch (e) {
+    localStorage.setItem('payload', JSON.stringify({
+      [name]: value
+    }))
+  }
 }
 
-export function getPayload(name) {
-  const payload = JSON.parse(localStorage.getItem('payload'));
-  return name ? payload && payload[name] : payload;
+export function getPayload (name) {
+  const jsonString = localStorage.getItem('payload') || '""'
+  let payload = undefined
+  try {
+    payload = JSON.parse(jsonString)
+  } catch (e) {
+    //
+  }
+  return name ? payload && payload[name] : payload
 }
+
 
 export const handleLoading = (function() {
   let ajaxCount = 0;

@@ -144,7 +144,7 @@ class ActivityDetail extends React.Component {
       memberExclusive,
       promotionSkuAdd,
       sort,
-      banner: activityImage && replaceHttpUrl(activityImage[0].url),
+      banner: activityImage && activityImage[0] && replaceHttpUrl(activityImage[0].url),
     };
     setPromotionAddSKu(params).then(res => {
       if (res) {
