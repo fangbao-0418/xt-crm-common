@@ -12,7 +12,6 @@ import { parseQuery } from '@/util/utils'
 import { disabledDateTime, disabledDate } from '@/util/antdUtil'
 import { upperFirst } from 'lodash'
 import modal, { ModalProps } from './components/modal'
-const { Column, ColumnGroup } = Table
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
   return val == null || val === '' || Number.isNaN(val)
@@ -53,6 +52,218 @@ class Main extends React.Component<Props, State> {
     this.handleSave = this.handleSave.bind(this)
     this.initAwardList()
   }
+  public columns: any[] = [
+    {
+      title: '序号',
+      key: 'No',
+      width: 80,
+      render: (id: any, record: Lottery.LuckyDrawAwardListVo, index: number) => {
+        return record.defaultAward === 1 ? index + 1 : '兜底'
+      }
+    },
+    {
+      title: <span className={styles.required}>奖品类型</span>,
+      key: 'awardType',
+      width: 150,
+      render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => {
+        /** 
+         * 0：兜底，1：不兜底
+         * 兜底奖品类型才有无奖品
+         */
+        const options = record.defaultAward === 0 ? prizeOptions : prizeOptions.filter((opt: any) => opt.value !== '0')
+        return this.getFieldDecorator('awardType', index)(<SelectFetch options={options} disabled={this.readOnly}/>)
+      }
+    },
+    {
+      title: '奖品设置',
+      key: 'awardValue',
+      width: 150,
+      render: (arg1: number, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+        this.getFieldDecorator('awardValue', index)(
+          <PrizeSelect
+            modal={this.props.modal}
+            awardType={record.awardType}
+            disabled={this.readOnly}
+          />
+        )
+      )
+    },
+    {
+      title: '简称',
+      key: 'awardTitle',
+      width: 150,
+      render: (arg1: any, arg2: any, index: number) => (
+        this.getFieldDecorator('awardTitle', index)(<Input maxLength={20} disabled={this.readOnly}/>)
+      )
+    },
+    {
+      title: (
+        <>
+          <div className={styles.required}>图片</div>
+          <div style={{fontSize: 12, color: '#999'}}>
+            (图片建议上传png格式，大小140px*140px)
+          </div>
+        </>
+      ),
+      align: 'center',
+      key: 'awardPicUrl',
+      width: 150,
+      render: (arg1: any, arg2: any, index: number) => (
+        this.getFieldDecorator('awardPicUrl', index)(
+          <Upload
+            listType='picture-card'
+            disabled={this.activityType === 1 || this.readOnly}
+          />
+        )
+      )
+    },
+    {
+      title: '风控级别',
+      key: 'controlLevel',
+      width: 150,
+      render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+        this.getFieldDecorator('controlLevel', index)(
+          <InputNumber
+            disabled={record.defaultAward === 0 || this.readOnly}
+            min={0}
+            max={1}
+          />
+        )
+      )
+    },
+    {
+      title: '奖品库存',
+      key: 'awardNum',
+      width: 150,
+      render: (arg1: any, arg2: any, index: number) => (
+        this.getFieldDecorator('awardNum', index)(
+          <InputNumber
+            min={0}
+            precision={0}
+            disabled={this.readOnly}
+          />
+        )
+      )
+    },
+    {
+      title: '发出数量',
+      key: 'receiveNum',
+      width: 150,
+      dataIndex: 'receiveNum'
+    },
+    {
+      title: '单人限领',
+      key: 'restrictNum',
+      width: 150,
+      render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+        this.getFieldDecorator('restrictNum', index)(
+          <InputNumber
+            disabled={record.defaultAward === 0 || this.readOnly}
+            precision={0}
+            min={0}
+          />
+        )
+      )
+    },
+    {
+      title: '订单门槛',
+      key: 'restrictOrderAmount',
+      width: 150,
+      render: (arg1: number, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+        this.getFieldDecorator('restrictOrderAmount', index)(
+          <InputNumber
+            min={0}
+            disabled={this.activityType === 1 || record.defaultAward === 0 || this.readOnly}
+          />
+        )
+      )
+    },
+    {
+      title: <span className={styles.required}>中奖概率%</span>,
+      children: [
+        {
+          title: () => (
+            <div style={{textAlign: 'center'}}>
+              <div>普通用户</div>
+              <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalNormalUserProbability}）</div>
+            </div>
+          ),
+          width: 150,
+          key: 'normalUserProbability',
+          render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+            this.getFieldDecorator('normalUserProbability', index)(
+              <InputNumber
+                disabled={record.defaultAward === 0 || this.readOnly}
+                min={0}
+                max={100}
+                precision={0}
+              />
+            )
+          )
+        },
+        {
+          title: () => (
+            <div style={{textAlign: 'center'}}>
+              <div>团长</div>
+              <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalHeadUserProbability}）</div>
+            </div>
+          ),
+          width: 150,
+          key: 'headUserProbability',
+          render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+            this.getFieldDecorator('headUserProbability', index)(
+              <InputNumber
+                disabled={record.defaultAward === 0 || this.readOnly}
+                min={0}
+                max={100}
+                precision={0}
+              />
+            )
+          )
+        },
+        {
+          title: () => (
+            <div style={{textAlign: 'center'}}>
+              <div>区长</div>
+              <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalAreaUserProbability}）</div>
+            </div>
+          ),
+          width: 150,
+          key: 'areaUserProbability',
+          render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+            this.getFieldDecorator('areaUserProbability', index)(
+              <InputNumber
+                disabled={record.defaultAward === 0 || this.readOnly}
+                min={0}
+                max={100}
+                precision={0}
+              />
+            )
+          )
+        },
+        {
+          title: () => (
+            <div style={{textAlign: 'center'}}>
+              <div>合伙人</div>
+              <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalCityUserProbability}）</div>
+            </div>
+          ),
+          width: 150,
+          key: 'cityUserProbability',
+          render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+            this.getFieldDecorator('cityUserProbability', index)(
+              <InputNumber
+                disabled={record.defaultAward === 0 || this.readOnly}
+                min={0}
+                max={100}
+                precision={0}
+              />
+            )
+          )
+        }
+      ]
+    }
+  ]
   public componentDidMount () {
     if (this.id !== -1) {
       this.fetchDetail()
@@ -117,6 +328,7 @@ class Main extends React.Component<Props, State> {
         item[id] = oldVal
         return
       }
+      console.log('name => ', name)
       this.setState({
         awardList,
         [name]: result
@@ -352,217 +564,12 @@ class Main extends React.Component<Props, State> {
         </Card>
         <Card title='奖品列表'>
           <Table
+            columns={this.columns}
             className={styles['prize-list']}
             dataSource={this.state.awardList}
             pagination={false}
-            scroll={{ x: true }}
-          >
-            <Column
-              title='序号'
-              dataIndex='id'
-              key='id'
-              width={80}
-              render={(id: any, record: Lottery.LuckyDrawAwardListVo) => {
-                return record.defaultAward === 1 ? id : '兜底'
-              }}
-            />
-            <Column
-              width={158}
-              title={<span className={styles.required}>奖品类型</span>}
-              dataIndex='awardType'
-              key='awardType'
-              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => {
-                /** 
-                 * 0：兜底，1：不兜底
-                 * 兜底奖品类型才有无奖品
-                 */
-                const options = record.defaultAward === 0 ? prizeOptions : prizeOptions.filter((opt: any) => opt.value !== '0')
-                return this.getFieldDecorator('awardType', index)(<SelectFetch options={options} disabled={this.readOnly}/>)
-              }}
-            />
-            <Column
-              width={140}
-              title={<span className={styles.required}>奖品设置</span>}
-              dataIndex='awardValue'
-              key='awardValue'
-              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                this.getFieldDecorator('awardValue', index)(<PrizeSelect modal={this.props.modal} awardType={record.awardType} disabled={this.readOnly}/>)
-              )}
-            />
-            <Column
-              title={<span className={styles.required}>简称</span>}
-              dataIndex='awardTitle'
-              key='awardTitle'
-              render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardTitle', index)(<Input maxLength={20} disabled={this.readOnly}/>)
-              )}
-            />
-            <Column
-              width={120}
-              align='center'
-              title={(
-                <>
-                  <div className={styles.required}>图片</div>
-                  <div style={{fontSize: 12, color: '#999'}}>
-                    (图片建议上传png格式，大小140px*140px)
-                  </div>
-                </>
-              )}
-              dataIndex='awardPicUrl'
-              key='awardPicUrl'
-              render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardPicUrl', index)(
-                  <Upload
-                    listType='picture-card'
-                    disabled={this.activityType === 1 || this.readOnly}
-                  />)
-              )}           
-            />
-            <Column
-              width={100}
-              title='风控级别'
-              dataIndex='controlLevel'
-              key='controlLevel'
-              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                this.getFieldDecorator('controlLevel', index)(
-                  <InputNumber
-                    disabled={record.defaultAward === 0 || this.readOnly}
-                    min={0}
-                    max={1}
-                  />
-                )
-              )}
-            />
-            <Column
-              width={100}
-              title={<span className={styles.required}>奖品库存</span>}
-              dataIndex='awardNum'
-              key='awardNum'
-              render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardNum', index)(
-                  <InputNumber
-                    min={0}
-                    precision={0}
-                    disabled={this.readOnly}
-                  />
-                )
-              )}
-            />
-            <Column
-              title='发出数量'
-              dataIndex='receiveNum'
-              key='receiveNum'
-            />
-            <Column
-              title='单人限领'
-              dataIndex='restrictNum'
-              key='restrictNum'
-              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                this.getFieldDecorator('restrictNum', index)(
-                  <InputNumber
-                    disabled={record.defaultAward === 0 || this.readOnly}
-                    precision={0}
-                    min={0}
-                  />
-                )
-              )}
-            />
-            <Column
-              title='订单门槛'
-              dataIndex='restrictOrderAmount'
-              key='restrictOrderAmount'
-              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                this.getFieldDecorator('restrictOrderAmount', index)(
-                  <InputNumber
-                    min={0}
-                    disabled={this.activityType === 1 || record.defaultAward === 0 || this.readOnly}
-                  />
-                )
-              )}
-            />
-            <ColumnGroup title={<span className={styles.required}>中奖概率%</span>}>
-              <Column
-                title={
-                  <div style={{textAlign: 'center'}}>
-                    <div>普通用户</div>
-                    <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state.totalNormalUserProbability}）</div>
-                  </div>
-                }
-                dataIndex='normalUserProbability'
-                key='normalUserProbability'
-                render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                  this.getFieldDecorator('normalUserProbability', index)(
-                    <InputNumber
-                      disabled={record.defaultAward === 0 || this.readOnly}
-                      min={0}
-                      max={100}
-                      precision={0}
-                    />
-                  )
-                )}
-              />
-              <Column
-                title={
-                  <div style={{textAlign: 'center'}}>
-                    <div>团长</div>
-                    <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state.totalHeadUserProbability}）</div>
-                  </div>
-                }
-                dataIndex='headUserProbability'
-                key='headUserProbability'
-                render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                  this.getFieldDecorator('headUserProbability', index)(
-                    <InputNumber
-                      disabled={record.defaultAward === 0 || this.readOnly}
-                      min={0}
-                      max={100}
-                      precision={0}
-                    />
-                  )
-                )}
-              />
-              <Column
-                title={
-                  <div style={{textAlign: 'center'}}>
-                    <div>区长</div>
-                    <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state.totalAreaUserProbability}）</div>
-                  </div>
-                }
-                dataIndex='areaUserProbability'
-                key='areaUserProbability'
-                render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                  this.getFieldDecorator('areaUserProbability', index)(
-                    <InputNumber
-                      disabled={record.defaultAward === 0 || this.readOnly}
-                      min={0}
-                      max={100}
-                      precision={0}
-                    />
-                  )
-                )}
-              />
-              <Column
-                title={
-                  <div style={{textAlign: 'center'}}>
-                    <div>合伙人</div>
-                    <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state.totalCityUserProbability}）</div>
-                  </div>
-                }
-                dataIndex='cityUserProbability'
-                key='cityUserProbability'
-                render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                  this.getFieldDecorator('cityUserProbability', index)(
-                    <InputNumber
-                      disabled={record.defaultAward === 0 || this.readOnly}
-                      min={0}
-                      max={100}
-                      precision={0}
-                    />
-                  )
-                )}
-              />
-            </ColumnGroup>
-          </Table>
+            scroll={{ x: 1930, y: 800 }}
+          />
         </Card>
         <Card type='inner' title='规则说明'>
           <Row type='flex'>
