@@ -373,7 +373,7 @@ class Main extends React.Component<Props, State> {
                  * 兜底奖品类型才有无奖品
                  */
                 const options = record.defaultAward === 0 ? prizeOptions : prizeOptions.filter((opt: any) => opt.value !== '0')
-                return this.getFieldDecorator('awardType', index)(<SelectFetch options={options}/>)
+                return this.getFieldDecorator('awardType', index)(<SelectFetch options={options} disabled={this.readOnly}/>)
               }}
             />
             <Column
@@ -382,7 +382,7 @@ class Main extends React.Component<Props, State> {
               dataIndex='awardValue'
               key='awardValue'
               render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-                this.getFieldDecorator('awardValue', index)(<PrizeSelect modal={this.props.modal} awardType={record.awardType}/>)
+                this.getFieldDecorator('awardValue', index)(<PrizeSelect modal={this.props.modal} awardType={record.awardType} disabled={this.readOnly}/>)
               )}
             />
             <Column
@@ -390,7 +390,7 @@ class Main extends React.Component<Props, State> {
               dataIndex='awardTitle'
               key='awardTitle'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardTitle', index)(<Input maxLength={20}/>)
+                this.getFieldDecorator('awardTitle', index)(<Input maxLength={20} disabled={this.readOnly}/>)
               )}
             />
             <Column
@@ -407,7 +407,11 @@ class Main extends React.Component<Props, State> {
               dataIndex='awardPicUrl'
               key='awardPicUrl'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardPicUrl', index)(<Upload listType='picture-card' disabled={this.activityType === 1}/>)
+                this.getFieldDecorator('awardPicUrl', index)(
+                  <Upload
+                    listType='picture-card'
+                    disabled={this.activityType === 1 || this.readOnly}
+                  />)
               )}           
             />
             <Column
@@ -418,7 +422,7 @@ class Main extends React.Component<Props, State> {
               render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                 this.getFieldDecorator('controlLevel', index)(
                   <InputNumber
-                    disabled={record.defaultAward === 0}
+                    disabled={record.defaultAward === 0 || this.readOnly}
                     min={0}
                     max={1}
                   />
@@ -431,7 +435,13 @@ class Main extends React.Component<Props, State> {
               dataIndex='awardNum'
               key='awardNum'
               render={(arg1, arg2, index) => (
-                this.getFieldDecorator('awardNum', index)(<InputNumber min={0} precision={0}/>)
+                this.getFieldDecorator('awardNum', index)(
+                  <InputNumber
+                    min={0}
+                    precision={0}
+                    disabled={this.readOnly}
+                  />
+                )
               )}
             />
             <Column
@@ -446,7 +456,7 @@ class Main extends React.Component<Props, State> {
               render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                 this.getFieldDecorator('restrictNum', index)(
                   <InputNumber
-                    disabled={record.defaultAward === 0}
+                    disabled={record.defaultAward === 0 || this.readOnly}
                     precision={0}
                     min={0}
                   />
@@ -461,7 +471,7 @@ class Main extends React.Component<Props, State> {
                 this.getFieldDecorator('restrictOrderAmount', index)(
                   <InputNumber
                     min={0}
-                    disabled={this.activityType === 1 || record.defaultAward === 0}
+                    disabled={this.activityType === 1 || record.defaultAward === 0 || this.readOnly}
                   />
                 )
               )}
@@ -479,7 +489,7 @@ class Main extends React.Component<Props, State> {
                 render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                   this.getFieldDecorator('normalUserProbability', index)(
                     <InputNumber
-                      disabled={record.defaultAward === 0}
+                      disabled={record.defaultAward === 0 || this.readOnly}
                       min={0}
                       max={100}
                       precision={0}
@@ -499,7 +509,7 @@ class Main extends React.Component<Props, State> {
                 render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                   this.getFieldDecorator('headUserProbability', index)(
                     <InputNumber
-                      disabled={record.defaultAward === 0}
+                      disabled={record.defaultAward === 0 || this.readOnly}
                       min={0}
                       max={100}
                       precision={0}
@@ -519,7 +529,7 @@ class Main extends React.Component<Props, State> {
                 render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                   this.getFieldDecorator('areaUserProbability', index)(
                     <InputNumber
-                      disabled={record.defaultAward === 0}
+                      disabled={record.defaultAward === 0 || this.readOnly}
                       min={0}
                       max={100}
                       precision={0}
@@ -539,7 +549,7 @@ class Main extends React.Component<Props, State> {
                 render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
                   this.getFieldDecorator('cityUserProbability', index)(
                     <InputNumber
-                      disabled={record.defaultAward === 0}
+                      disabled={record.defaultAward === 0 || this.readOnly}
                       min={0}
                       max={100}
                       precision={0}

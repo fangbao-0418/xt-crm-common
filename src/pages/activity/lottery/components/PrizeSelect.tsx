@@ -1,23 +1,25 @@
 import React from 'react'
-import { InputNumber } from 'antd'
+import { InputNumber, Button } from 'antd'
 import { ModalProps } from './modal'
 
 interface Props {
   modal: ModalProps,
   awardType: number,
   value?: any,
+  disabled: boolean,
   onChange?: (result: any) => void
 }
 /**
  * 奖品选择
  */
 class Main extends React.Component<Props, any> {
-  public onChange (e: any) {
-    const value = e.target ? e.tareget.value : e
-    if (this.props.onChange) {
-      this.props.onChange(value)
-    }
-  }
+  // public onChange (e: any) {
+  //   debugger
+  //   const value = e.target ? e.tareget.value : e
+  //   if (this.props.onChange) {
+  //     this.props.onChange(value)
+  //   }
+  // }
   public render () {
     const {
       value,
@@ -40,6 +42,7 @@ class Main extends React.Component<Props, any> {
           <div>
             <div>{value && value.code}</div>
             <div
+              hidden={this.props.disabled}
               className='href'
               onClick={() => {
                 this.props.modal.show({
@@ -58,9 +61,8 @@ class Main extends React.Component<Props, any> {
         node = (
           <InputNumber
             value={value}
-            onChange={(e) => {
-              this.onChange(e)
-            }}
+            disabled={this.props.disabled}
+            onChange={this.props.onChange}
             min={0}
             precision={0}
           />
