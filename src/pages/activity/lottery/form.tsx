@@ -37,9 +37,9 @@ class Main extends React.Component<any, State> {
   }
   public columns: ColumnProps<Lottery.LuckyDrawRoundListVo>[] = [
     {
-      key: 'id',
+      key: 'No',
       title: '序号',
-      dataIndex: 'id'
+      render: (arg1, arg2, index: number) => index + 1
     },
     {
       key: 'title',
