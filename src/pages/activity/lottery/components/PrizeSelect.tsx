@@ -13,18 +13,8 @@ interface Props {
  * 奖品选择
  */
 class Main extends React.Component<Props, any> {
-  // public onChange (e: any) {
-  //   debugger
-  //   const value = e.target ? e.tareget.value : e
-  //   if (this.props.onChange) {
-  //     this.props.onChange(value)
-  //   }
-  // }
   public render () {
-    const {
-      value,
-      onChange,
-    } = this.props
+    const { onChange, value } = this.props
     let node
     const awardType = +this.props.awardType
     switch (awardType) {

@@ -122,6 +122,10 @@ class Main extends React.Component<Props, State> {
         [name]: result
       })
     } else {
+      /** 修改奖品类型，奖品设置置空 */
+      if (id === 'awardType') {
+        item.awardValue = undefined
+      }
       this.setState({
         awardList
       })
