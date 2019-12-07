@@ -1,15 +1,15 @@
-import React from 'react';
-import { Table, Card, Form, Input, Button, DatePicker } from 'antd';
+import React from 'react'
+import { Table, Card, Form, Input, Button, DatePicker, InputNumber } from 'antd'
 import moment from 'moment'
-import { querySupplierList, exportSupplier } from '../api';
-import SupplierModal from '../supplier-modal';
-import AccountModal from '../account-modal';
-const FormItem = Form.Item;
+import { querySupplierList, exportSupplier } from '../api'
+import SupplierModal from '../supplier-modal'
+import AccountModal from '../account-modal'
+import SupplierTypeSelect from '@/components/supplier-type-select'
+const FormItem = Form.Item
 
-const { RangePicker } = DatePicker;
-
+const { RangePicker } = DatePicker
 class OrderList extends React.Component {
-  static defaultProps = {};
+  static defaultProps = {}
   pathname = this.props.location.pathname
   payload = APP.fn.getPayload(this.pathname) || {}
   state = {
@@ -18,7 +18,7 @@ class OrderList extends React.Component {
     current: 1,
     pageSize: 20,
     total: 0,
-  };
+  }
 
   componentDidMount() {
     this.query();
@@ -52,40 +52,38 @@ class OrderList extends React.Component {
     this.payload = {}
     APP.fn.setPayload(this.pathname, this.payload)
     this.props.form.resetFields();
-    this.forceUpdate()
+    this.query()
   };
   handleSearch = () => {
     const {
       form: { validateFields },
-      // orderStatus,
-    } = this.props;
-    // console.log('orderStatus', orderStatus);
+    } = this.props
 
     validateFields((err, vals) => {
       if (!err) {
-        this.setState({current: 1}, this.query);
+        this.setState({current: 1}, this.query)
       }
-    });
-  };
+    })
+  }
   export = () => {
     let params = {
       ...this.props.form.getFieldsValue(),
       page: this.state.current,
       pageSize: this.state.pageSize,
-    };
-    const [startTime, endTime] = params.createTime || [];
+    }
+    const [startTime, endTime] = params.createTime || []
 
     params = {
       ...params,
       createTime: undefined,
       startTime: startTime ? +new Date(startTime) : undefined,
       endTime: endTime ? +new Date(endTime) : undefined,
-    };
+    }
 
     exportSupplier(params).then(res => {
-      console.log(1111);
-    });
-  };
+      console.log(1111)
+    })
+  }
 
   handlePageChange = (page, pageSize) => {
     this.setState(
@@ -94,13 +92,13 @@ class OrderList extends React.Component {
         pageSize,
       },
       this.query,
-    );
-  };
+    )
+  }
   render() {
-    const { total, pageSize, current } = this.state;
+    const { total, pageSize, current } = this.state
     const {
       form: { getFieldDecorator },
-    } = this.props;
+    } = this.props
 
     const columns = [
       {
@@ -136,10 +134,10 @@ class OrderList extends React.Component {
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
               <AccountModal onSuccess={this.query} {...record}/>
             </>
-          );
+          )
         },
       },
-    ].filter(column => !column.hide);
+    ].filter(column => !column.hide)
     const values = this.payload
     values.createTime = values.startTime && [moment(values.startTime), moment(values.endTime)]
     return (
@@ -149,19 +147,35 @@ class OrderList extends React.Component {
             layout="inline"
           >
             <FormItem label="供应商名称">
-              {getFieldDecorator('name', {initialValue: values.name})(<Input placeholder="" />)}
+              {getFieldDecorator('name', {
+                initialValue: values.name
+              })(<Input placeholder="请输入供应商名称" />)}
             </FormItem>
             <FormItem label="供应商ID">
-              {getFieldDecorator('id', {initialValue: values.id})(<Input type='number' placeholder="" />)}
+              {getFieldDecorator('id', {
+                initialValue: values.id
+              })(<InputNumber style={{width: 172}} placeholder="请输入供应商ID" />)}
             </FormItem>
             <FormItem label="联系人">
-              {getFieldDecorator('contacts', {initialValue: values.contacts})(<Input placeholder="" />)}
+              {getFieldDecorator('contacts', {
+                initialValue: values.contacts
+              })(<Input placeholder="请输入联系人" />)}
             </FormItem>
             <FormItem label="供应商编码">
-              {getFieldDecorator('code', {initialValue: values.code})(<Input placeholder="" />)}
+              {getFieldDecorator('code', {
+                initialValue: values.code
+              })(<Input placeholder="请输入供应商编码" />)}
             </FormItem>
-            <FormItem label="创建时间">{getFieldDecorator('createTime', {initialValue: values.createTime})(<RangePicker showTime />)}</FormItem>
-
+            <FormItem label='供应商分类'>
+              {getFieldDecorator('category', {
+                initialValue: values.category
+              })(<SupplierTypeSelect />)}
+            </FormItem>
+            <FormItem label="创建时间">
+              {getFieldDecorator('createTime', {
+                initialValue: values.createTime
+              })(<RangePicker showTime />)}
+            </FormItem>
             <FormItem>
               <Button type="default" onClick={this.reset}>
                 清除条件
@@ -191,18 +205,18 @@ class OrderList extends React.Component {
           />
         </Card>
       </>
-    );
+    )
   }
 }
 
 export default Form.create({
   onValuesChange: (props, changedValues, allValues) => {
-    const [startTime, endTime] = allValues.createTime || [];
+    const [startTime, endTime] = allValues.createTime || []
     const params = {
       ...allValues,
       startTime: startTime ? +new Date(startTime) : undefined,
       endTime: endTime ? +new Date(endTime) : undefined,
-    };
+    }
     APP.fn.setPayload(props.location.pathname, params)
   }
-})(OrderList);
+})(OrderList)

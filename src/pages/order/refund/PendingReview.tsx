@@ -249,6 +249,10 @@ class PendingReview extends React.Component<Props, State> {
   render() {
     const { getFieldDecorator } = this.props.form;
     const { orderInterceptRecordVO } = (this.props.data as any)
+    const isHaiTao = Number(this.orderInfoVO.orderType) === 70
+    const options = refundType.getArray()
+    /** 海淘订单请选择售后类型没有换货 */
+    const refundTypeOptions = isHaiTao ? options.filter(v => v.key !== 30) : options
     return (
       <>
         <Card title={<AfterSaleDetailTitle />}>
@@ -268,7 +272,7 @@ class PendingReview extends React.Component<Props, State> {
               })(
                 <XtSelect
                   style={{ width: 200 }}
-                  data={refundType.getArray()}
+                  data={refundTypeOptions}
                   placeholder="请选择售后类型"
                   onChange={(value: any) => {
                     this.props.form.setFieldsValue({
@@ -299,7 +303,12 @@ class PendingReview extends React.Component<Props, State> {
                       message: '请选择是否需要客服跟进',
                     },
                   ],
-                })(<XtSelect data={customerFollowType.getArray()} style={{ width: 200 }} />)}
+                })(
+                  <XtSelect
+                    data={customerFollowType.getArray()}
+                    style={{ width: 200 }}
+                  />
+                )}
               </Form.Item>
             )}
             <Row>
@@ -312,12 +321,14 @@ class PendingReview extends React.Component<Props, State> {
                       message: '请输入售后数目',
                     },
                   ],
-                })(<InputNumber
-                  min={0}
-                  max={this.checkVO.maxServerNum}
-                  placeholder="请输入"
-                  onChange={this.handleChangeServerNum}
-                />)}
+                })(
+                  <InputNumber
+                    min={0}
+                    max={this.checkVO.maxServerNum}
+                    placeholder="请输入"
+                    onChange={this.handleChangeServerNum}
+                  />
+                )}
                 <span>（最多可售后数目：{this.checkVO.maxServerNum}）</span>
               </Form.Item>
             </Row>
@@ -333,13 +344,14 @@ class PendingReview extends React.Component<Props, State> {
                   ],
                 })(
                   <InputNumber
+                    disabled={isHaiTao}
                     min={0}
                     max={formatPrice(this.maxRefundAmount)}
                     formatter={formatRMB}
                     onChange={this.handleChangeMaxRefundAmount}
                   />,
                 )}
-                <span>（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
+                <span>（最多可退￥{`${formatPrice(this.maxRefundAmount)}${isHaiTao ? '，已包含税费': ''}`}）</span>
               </Form.Item>
             )}
             {this.isReturnShipping && (
@@ -353,7 +365,11 @@ class PendingReview extends React.Component<Props, State> {
             )}
             {!this.isRefundTypeOf(enumRefundType.Refund) && (
               <Form.Item label="退货地址">
-                <ModifyReturnAddress detail={this.checkVO} intercept={orderInterceptRecordVO} onSuccess={this.handleChangeReturnAddress} />
+                <ModifyReturnAddress
+                  detail={this.checkVO}
+                  intercept={orderInterceptRecordVO}
+                  onSuccess={this.handleChangeReturnAddress}
+                />
               </Form.Item>
             )}
             {this.isRefundTypeOf(enumRefundType.Exchange) && (

@@ -9,10 +9,11 @@ import descartes from '@/util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from './api';
 import { getAllId, gotoPage, initImgList, parseQuery } from '@/util/utils';
 import { radioStyle } from '@/config';
-import SkuList from './SkuList';
+import SkuList from './components/sku';
 import { TemplateList } from '@/components';
 import styles from './edit.module.scss'
 import DraggableUpload from './components/draggable-upload'
+export const FormItem = Form.Item
 const replaceHttpUrl = imgUrl => {
   return imgUrl
     .replace('https://assets.hzxituan.com/', '')
@@ -43,8 +44,10 @@ const formLayout = {
 };
 
 class GoodsEdit extends React.Component {
-  specs = [];
-  status = parseQuery().status
+  id = this.props.match.params.id
+  supplier = []
+  detail = {}
+  specs = []
   state = {
     speSelect: [],
     templateOptions: [],
@@ -61,10 +64,12 @@ class GoodsEdit extends React.Component {
     returnPhone: '',
     returnAddress: '',
     showImage: false,
-    strategyData: null
+    strategyData: null,
+    productCustomsDetailVOList: [],
+    supplierInfo: {}
   };
-
-  componentDidMount() {
+  currentSupplier = {}
+  async componentDidMount() {
     this.getStoreList();
     this.getCategoryList();
   }
@@ -79,7 +84,7 @@ class GoodsEdit extends React.Component {
           categoryList,
         },
         () => {
-          const id = this.props.match.params.id
+          const id = this.id
           /** 编辑 */
           if (id) {
             this.getGoodsDetial(res);
@@ -101,10 +106,10 @@ class GoodsEdit extends React.Component {
         params: { id },
       },
     } = this.props;
-
-    let { supplier } = this.state;
     getGoodsDetial({ productId: id }).then((res = {}) => {
+      const supplier = this.supplier;
       const arr2 = treeToarr(list);
+      this.detail = {...res}
       const categoryId =
         res.productCategoryVO && res.productCategoryVO.id
           ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse()
@@ -143,6 +148,7 @@ class GoodsEdit extends React.Component {
       });
       this.specs = this.getSpecs(res.skuList);
       const currentSupplier = (supplier || []).find(item => item.id === res.storeId) || {};
+      this.currentSupplier = currentSupplier
       this.setState({
         interceptionVisible: currentSupplier.category == 1 ? false : true,
         data: res.skuList || [],
@@ -152,9 +158,12 @@ class GoodsEdit extends React.Component {
         returnContact: res.returnContact,
         returnPhone: res.returnPhone,
         returnAddress: res.returnAddress,
-        showImage
+        showImage,
+        supplierInfo: currentSupplier,
+        productCustomsDetailVOList: res.productCustomsDetailVOList || []
       });
       setFieldsValue({
+        productType: res.productType,
         interception: res.interception,
         showNum: res.showNum !== undefined ? res.showNum : 1,
         freightTemplateId: res.freightTemplateId ? String(res.freightTemplateId) : '',
@@ -166,7 +175,7 @@ class GoodsEdit extends React.Component {
         property1: res.property1,
         property2: res.property2,
         storeId: res.storeId,
-        status: res.status,
+        status: Number(res.status),
         bulk: res.bulk,
         weight: res.weight,
         withShippingFree: res.withShippingFree,
@@ -186,11 +195,13 @@ class GoodsEdit extends React.Component {
       this.getStrategyByCategory(categoryId[0]);
       getTemplateList().then(opts => {
         const isRepeat = opts.some(opt => opt.freightTemplateId === res.freightTemplateId)
-        const templateOptions = isRepeat ? opts : opts.concat({
-          freightTemplateId: res.freightTemplateId,
-          templateName: res.freightTemplateName
-        });
-        this.setState({ templateOptions });
+        if (!isRepeat && res.freightTemplateId) {
+          opts = opts.concat({
+            freightTemplateId: res.freightTemplateId,
+            templateName: res.freightTemplateName
+          })
+        }
+        this.setState({ templateOptions: opts });
       })
     })
   }
@@ -237,8 +248,13 @@ class GoodsEdit extends React.Component {
   }
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
+      const supplier = res.records || []
+      this.supplier = supplier
+      const currentSupplier = (supplier || []).find(item => item.id === this.detail.storeId) || {};
       this.setState({
-        supplier: res.records,
+        interceptionVisible: currentSupplier.category == 1 ? false : true,
+        supplierInfo: currentSupplier,
+        supplier
       });
     });
   };
@@ -323,8 +339,17 @@ class GoodsEdit extends React.Component {
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
     validateFields((err, vals) => {
       console.log('vals=>', vals)
+      console.log(this.state.speSelect, '---------')
+      if (err) {
+        APP.error('请检查输入项')
+        return
+      }
       vals.freightTemplateId = +vals.freightTemplateId
       if (!err) {
+        if (speSelect.find((item) => { return item.content.length === 0 })) {
+          APP.error('请添加商品规格')
+          return
+        }
         if (size(speSelect) === 0) {
           message.error('请添加规格');
           return false;
@@ -377,7 +402,7 @@ class GoodsEdit extends React.Component {
           listImage.push(replaceHttpUrl(item.url));
         });
         /** 推送至仓库中即为下架，详情和列表页状态反了 */
-        vals.status = this.status !== '2' ? vals.status: status
+        vals.status = status !== void 0 ? status : vals.status  
         const params = {
           ...vals,
           returnContact: this.state.returnContact,
@@ -432,9 +457,12 @@ class GoodsEdit extends React.Component {
 
   supplierChange = (value) => {
     const { supplier } = this.state;
-    const { form: { resetFields } } = this.props;
+    let data = this.state.data
+    const { form: { resetFields, getFieldsValue, setFieldsValue } } = this.props;
     const currentSupplier = supplier.find(item => item.id === value) || {};
-    if (currentSupplier.category == 1) {
+    const { category } = currentSupplier
+    let { productType } = getFieldsValue()
+    if (category === 1) {
       resetFields('interception');
       this.setState({
         interceptionVisible: false
@@ -445,17 +473,48 @@ class GoodsEdit extends React.Component {
         interceptionVisible: true
       })
     }
+    // 普通供应商商品类型为0
+    productType = [3, 4].indexOf(currentSupplier.category) > -1 ? productType : 0
+    if (category === 4) {
+      productType = 20
+      this.props.form.setFieldsValue({isAuthentication: 1})
+    } else if (category === 3) {
+      productType = productType === 20 ? 0 : productType
+      this.props.form.setFieldsValue({isAuthentication: 1})
+    }
+    setFieldsValue({
+      productType
+    })
+    if (currentSupplier.category === 4) {
+      data = data.map((item) => {
+        return {
+          ...item,
+          deliveryMode: productType === 20 ? 4 : (item.deliveryMode === 4 ? 2 : item.deliveryMode)
+        }
+      })
+    } else {
+      data = data.map((item) => {
+        return {
+          ...item,
+          deliveryMode: item.deliveryMode === 4 ? 2 : item.deliveryMode
+        }
+      })
+    }
+    this.setState({
+      data,
+      supplierInfo: currentSupplier
+    })
   }
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const { supplier, interceptionVisible, categoryList } = this.state;
+    const { getFieldDecorator, getFieldsValue } = this.props.form;
+    const { supplier, interceptionVisible, productCustomsDetailVOList, supplierInfo } = this.state;
     const {
       match: {
         params: { id },
       },
     } = this.props;
-    console.log(categoryList, 'categoryList')
-    console.log(this.state, 'state')
+    const { productType, status } = getFieldsValue()
+    console.log(productType, supplierInfo, supplierInfo.category === 4, 'productCustomsDetailVOList')
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
@@ -534,6 +593,7 @@ class GoodsEdit extends React.Component {
               onChange: this.supplierChange
             })(
               <Select
+                disabled={this.id && this.currentSupplier.category === 4}
                 placeholder="请选择供货商"
                 showSearch
                 filterOption={(inputValue, option) => {
@@ -552,21 +612,73 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
             {!id && <Button onClick={()=>this.sync1688Sku()} >同步1688规格信息</Button>}
           </Form.Item>
-          {
-            interceptionVisible ?
-              <Form.Item label="是否可拦截发货">
-                {getFieldDecorator('interception', {
-                  initialValue: 0,
-                })(
-                  <Radio.Group>
-                    <Radio value={1}>是</Radio>
-                    <Radio value={0}>否</Radio>
-                  </Radio.Group>,
-                )}
-              </Form.Item> :
-              null
-          }
-           <Form.Item label="实名认证" required>
+          <Form.Item
+            label="是否可拦截发货"
+            style={{
+              display: interceptionVisible ? 'inherit' : 'none'
+            }}
+          >
+            {getFieldDecorator('interception', {
+              initialValue: 0,
+            })(
+              <Radio.Group
+                disabled={productType === 20}
+              >
+                <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
+              </Radio.Group>,
+            )}
+          </Form.Item>
+          <Form.Item
+            label="商品类型"
+            required
+            style={{
+              display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
+            }}
+          >
+            {getFieldDecorator('productType', {
+              initialValue: 0,
+              rules: [
+                {
+                  required: true,
+                  message: '请选择商品类型'
+                }
+              ]
+            })(
+              <Select
+                disabled={this.id !== undefined && supplierInfo.category !== 3}
+                onChange={(value) => {
+                  /** 海淘商品 */
+                  if ([10, 20].indexOf(value) > -1) {
+                    this.props.form.setFieldsValue({
+                      isAuthentication: 1
+                    })
+                  } else {
+                    this.props.form.setFieldsValue({isAuthentication: 0})
+                  }
+                  if (value === 20) {
+                    this.props.form.setFieldsValue({interception: 0})
+                  }
+                  const data = (this.state.data || []).map((item) => {
+                    item.skuCode = ''
+                    item.deliveryMode = value === 20 ? 4 : 2
+                    return item
+                  })
+                  this.setState({
+                    data
+                  })
+                }}
+              >
+                {supplierInfo.category !== 4 && <Select.Option value={0}>普通商品</Select.Option>}
+                {supplierInfo.category === 3 && <Select.Option value={10}>一般海淘商品</Select.Option>}
+                {supplierInfo.category === 4 && <Select.Option value={20}>保税仓海淘商品</Select.Option>}
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item
+            label="实名认证"
+            required
+          >
             {getFieldDecorator('isAuthentication', {
               initialValue: 0,
               rules: [
@@ -576,9 +688,11 @@ class GoodsEdit extends React.Component {
                 }
               ]
             })(
-              <Radio.Group>
-                <Radio value={0}>否</Radio>
+              <Radio.Group
+                disabled={[10, 20].indexOf(productType) > -1}
+              >
                 <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
               </Radio.Group>
             )}
           </Form.Item>
@@ -665,6 +779,9 @@ class GoodsEdit extends React.Component {
           </Form.Item>
         </Card>
         <SkuList
+          form={this.props.form}
+          type={productType}
+          productCustomsDetailVOList={productCustomsDetailVOList}
           showImage={this.state.showImage}
           specs={this.state.speSelect}
           dataSource={this.state.data}
@@ -688,11 +805,20 @@ class GoodsEdit extends React.Component {
             {getFieldDecorator('withShippingFree', {
               initialValue: 0,
             })(
-              <Radio.Group>
-                <Radio style={radioStyle} value={1}>
+              <Radio.Group
+                // disabled={[20].indexOf(productType) > -1}
+              >
+                <Radio
+                  style={radioStyle} value={1}
+                >
                   包邮
                 </Radio>
-                <Radio style={radioStyle} value={0}>
+                <Radio
+                  style={{
+                    ...radioStyle,
+                    // display: [20].indexOf(productType) > -1 ? 'none' : 'inherit'
+                  }} value={0}
+                >
                   {getFieldDecorator('freightTemplateId')(
                     <TemplateList dataSource={this.state.templateOptions} />
                   )}
@@ -728,7 +854,7 @@ class GoodsEdit extends React.Component {
                   style={{ width: 160, marginRight: 10 }}
                   placeholder="收货人电话"
                   name="returnPhone"
-                  value={this.state.returnPhone}
+                  // value={this.state.returnPhone}
                   type="tel"
                   maxLength={12}
                   onChange={this.handleInput}
@@ -765,20 +891,18 @@ class GoodsEdit extends React.Component {
               </Button>
             )}
           </Form.Item>
-          {this.status !== '2' && (
-            <Form.Item label="上架状态">
-              {getFieldDecorator('status', {
-                initialValue: 0,
-              })(
-                <Radio.Group>
-                  <Radio value={1}>上架</Radio>
-                  <Radio value={0}>下架</Radio>
-                </Radio.Group>,
-              )}
-            </Form.Item>
-          )}
+          <Form.Item label="上架状态" hidden={status === 2}>
+            {getFieldDecorator('status', {
+              initialValue: 0,
+            })(
+              <Radio.Group>
+                <Radio value={1}>上架</Radio>
+                <Radio value={0}>下架</Radio>
+              </Radio.Group>,
+            )}
+          </Form.Item>
           <Form.Item>
-            <Button className="mr10" type="primary" onClick={() => this.handleSave(2)}>
+            <Button className="mr10" type="primary" onClick={() => this.handleSave()}>
               保存
             </Button>
             <Button
@@ -790,7 +914,7 @@ class GoodsEdit extends React.Component {
             }>
               返回
             </Button>
-            {this.status === '2' && (
+            {status === 2 && (
               <Button onClick={() => this.handleSave(0)}>
                 推送至仓库中
               </Button>

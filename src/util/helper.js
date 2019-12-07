@@ -96,9 +96,6 @@ export function formatAvlRange(val = 0) {
 // 领取人限制
 export function formatReceiveRestrict(val = '') {
   if (val === 'all') return '不限制';
-  else if (val === '3') {
-    return '平台未下单用户';
-  }
   return val
     .split(',')
     .map(v => receiveRestrictType.getValue(v))
