@@ -133,7 +133,7 @@ class PendingReview extends React.Component<Props, State> {
   get isReturnShipping(): boolean {
     const result = this.refundAmount === this.checkVO.maxRefundAmount && this.checkVO.serverNum === this.serverNum;
     // let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
-    return this.hasFreight && this.checkVO.refundStatus === 10 && result;
+    return this.hasFreight && this.checkVO.isRefundFreight === 1 && result;
   }
   /**
    * 获取售后类型
