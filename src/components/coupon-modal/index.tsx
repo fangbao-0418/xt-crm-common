@@ -153,7 +153,7 @@ class CouponModal extends React.Component<Props, State> {
       this.props.onSelectAll(selected, selectedRows, changeRows)
     }
   }
-  public onSearch(e: any) {
+  public onSearch() {
     this.payload.page = 1
     this.debounceFetch()
   }
@@ -190,7 +190,15 @@ class CouponModal extends React.Component<Props, State> {
               </Form.Item>
               <Form.Item>
                 <Button type="primary" onClick={this.onSearch}>查询</Button>
-                <Button className="ml10" onClick={() => resetFields()}>重置</Button>
+                <Button
+                  className="ml10"
+                  onClick={() => {
+                    resetFields()
+                    this.onSearch()
+                  }}
+                >
+                  重置
+                </Button>
               </Form.Item>
             </Form>
           </Card>

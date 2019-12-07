@@ -108,7 +108,6 @@ class Main extends React.Component<Props, State> {
     const item: any = awardList[index] || {}
     const oldVal = item[id]
     item[id] = val
-    console.log(awardList, id, 'setCellValue')
     const ids = 'normalUserProbability,headUserProbability,areaUserProbability,cityUserProbability'.split(',')
     if (ids.includes(id)) {
       let result = awardList.reduce((prev: number, curr: any) => prev + (curr[id] || 0), 0)
@@ -118,7 +117,6 @@ class Main extends React.Component<Props, State> {
         item[id] = oldVal
         return
       }
-      console.log('name => ', name)
       this.setState({
         awardList,
         [name]: result
@@ -148,7 +146,6 @@ class Main extends React.Component<Props, State> {
     return (node: any) => {
       return React.cloneElement(node, {
         onChange: (e: any) => {
-          console.log(e, node.type.name, 'change')
           const val = e && e.target ? e.target.value : e
           this.setCellValue(id, index, val)
         },
@@ -216,7 +213,6 @@ class Main extends React.Component<Props, State> {
           awardType: Number(item.awardType) || 0
         }
       })
-      console.log(awardList, 'awardList')
       if (!err && !!this.validate(awardList)) {
         let msg, res
         /** 新增场次 */
@@ -461,8 +457,13 @@ class Main extends React.Component<Props, State> {
               title='订单门槛'
               dataIndex='restrictOrderAmount'
               key='restrictOrderAmount'
-              render={(arg1, arg2, index) => (
-                this.getFieldDecorator('restrictOrderAmount', index)(<InputNumber min={0} disabled={this.activityType === 1}/>)
+              render={(arg1, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+                this.getFieldDecorator('restrictOrderAmount', index)(
+                  <InputNumber
+                    min={0}
+                    disabled={this.activityType === 1 || record.defaultAward === 0}
+                  />
+                )
               )}
             />
             <ColumnGroup title={<span className={styles.required}>中奖概率%</span>}>
@@ -566,7 +567,7 @@ class Main extends React.Component<Props, State> {
               <div>奖品类型包括：现金、优惠券、实物、元宝，(兜底商品多一个“谢谢惠顾”)；</div>
               <div>奖品设置：现金、元宝填写非负整数，优惠券和实物选择对应券（实物本期也是使用优惠券）；</div>
               <div>简称：奖品简称，用于前台展示；</div>
-              <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传；</div>
+              <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传（仅限九宫格，红包雨图片置灰）；</div>
               <div>风控级别：0和1，0为无风控基别，1风控级别为高；</div>
               <div>奖品库存：本场次可发放奖品的总量，活动进行中可以调整；</div>
               <div>发出数量：本场次发出商品的数量；</div>

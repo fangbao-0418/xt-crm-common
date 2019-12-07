@@ -57,6 +57,7 @@ class Main extends React.Component<Props, any> {
       default:
         node = (
           <InputNumber
+            value={value}
             onChange={(e) => {
               this.onChange(e)
             }}
