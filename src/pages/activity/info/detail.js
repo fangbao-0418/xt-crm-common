@@ -37,7 +37,7 @@ function speedyInput (field, text, record, index, dataSource, cb) {
       disabled={dataSource.length <= 1}
       type={((index === 0 && 'down') || (index === dataSource.length - 1 && 'up') || undefined)}
       onClick={(type) => {   
-        const stock = text
+        let stock = text
         let current = 0
         let end = index
         if (type === 'down') {
@@ -46,7 +46,10 @@ function speedyInput (field, text, record, index, dataSource, cb) {
         }
         console.log(current, cb, stock, '----------------')
         while (current <= end) {
-          console.log('while -----------')
+          const { sellableQty } = dataSource[current]
+          if (field === 'inventory') {
+            stock = (sellableQty && stock > sellableQty) ? sellableQty : stock
+          }
           cb(field, current)(stock)
           current++
         }
@@ -71,6 +74,7 @@ class ActivityDetail extends React.Component {
   };
 
   componentDidMount() {
+    // console.log(new Decimal(1000).mul(100).toNumber(), '--------')
     const { selectedRowKeys, selectedRows } = this.state;
     const data = JSON.parse(localStorage.getItem('editsku') || {});
     map(data.promotionSkuList, (item, key) => {
@@ -111,10 +115,10 @@ class ActivityDetail extends React.Component {
     this.setState({ detailData, sort: detailData.sort || 0 });
   };
 
-  handleSavae = () => {
+  handleSave = () => {
     if (this.loading) return;
     this.loading = true;
-    const { detailData, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
+    const { detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
     if (activityImage.length === 0) {
       message.error('请上传活动商品图');
       this.loading = false;
@@ -126,7 +130,7 @@ class ActivityDetail extends React.Component {
         return message.error('图片正在上传,请稍后...');
       }
     }
-    const selectedRows = (this.state.selectedRows || []).map((item) => {
+    const promotionSkuAdd = (selectedRows || []).map((item) => {
       return {
         ...item,
         buyingPrice: item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0
@@ -138,7 +142,7 @@ class ActivityDetail extends React.Component {
       minBuy,
       maxBuy,
       memberExclusive,
-      promotionSkuAdd: selectedRows,
+      promotionSkuAdd,
       sort,
       banner: activityImage && activityImage[0] && replaceHttpUrl(activityImage[0].url),
     };
@@ -200,17 +204,30 @@ class ActivityDetail extends React.Component {
       {
         title: '活动库存',
         dataIndex: 'inventory',
-        render: (text, record, index) => (
-          speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
-            <InputNumber
-              style={{width: 140}}
-              min={0}
-              precision={0}
-              value={text}
-              onChange={this.handleChangeValue('inventory', index)}
-            />
-          )
-        ),
+        render: (text, record, index) => {
+          const props = {
+            style: {
+              width: 140
+            },
+            min: 0,
+            precision: 0,
+            value: text,
+            onChange: this.handleChangeValue('inventory', index)
+          }
+          if (record.sellableQty) {
+            props.max = record.sellableQty
+          }
+          return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
+        },
+      },
+      {
+        title: '可用库存',
+        dataIndex: 'stock',
+        render: (text, record, index) => {
+          // 1.售后详情中 订单信息模块 需要添加订单类型的属性
+          // 海淘商品可用库存需要读取保宏仓的可用库存数量，活动库存不可大于可用库存
+          return <span>{record.sellableQty || '无限制' }</span>
+        }
       },
       {
         title: '最大购买数',
@@ -324,7 +341,7 @@ class ActivityDetail extends React.Component {
         </Card>
 
         <Card style={{ marginTop: 10 }}>
-          <Button type="primary" onClick={this.handleSavae}>
+          <Button type="primary" onClick={this.handleSave}>
             确定
           </Button>
           <Button type="danger" style={{ marginLeft: 10 }} onClick={this.handleReturn}>
