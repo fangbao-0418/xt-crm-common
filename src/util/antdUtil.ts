@@ -12,7 +12,7 @@ export function range(start: number, end: number) {
 
 /** 禁用日期 */
 export function disabledDate (current: any, date: any) {
-  return current && current < moment(date).endOf('day')
+  return current && moment(current).endOf('day') < moment(date).endOf('day')
 }
 
 /** 禁用选中时间 */
