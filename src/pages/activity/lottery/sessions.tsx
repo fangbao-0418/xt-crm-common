@@ -125,7 +125,7 @@ class Main extends React.Component<Props, State> {
         <>
           <div className={styles.required}>图片</div>
           <div style={{fontSize: 12, color: '#999'}}>
-            (图片建议上传png格式，大小140px*140px)
+            (图片上传png格式，大小140px*140px)
           </div>
         </>
       ),
@@ -135,6 +135,8 @@ class Main extends React.Component<Props, State> {
       render: (arg1: any, arg2: any, index: number) => (
         this.getFieldDecorator('awardPicUrl', index)(
           <Upload
+            pxSize={[{width:140, height:140}]}
+            fileType='image/png'
             listType='picture-card'
             disabled={this.activityType === 1 || this.readOnly}
           />
