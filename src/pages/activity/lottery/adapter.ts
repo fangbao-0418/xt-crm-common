@@ -54,7 +54,7 @@ export function sessionResponse (res: any) {
   const awardList = (res.awardList || []).map((v: any) => {
     if ([1, 4].includes(+v.awardType)) {
       const [id, code] = (typeof v.awardValue === 'string') && v.awardValue.split(':')
-      v.awardValue = {id, code}
+      v.awardValue = {id, code, couponName: v.couponName}
     }
     v.awardPicUrl = initImgList(v.awardPicUrl)
     v.awardType = v.awardType || '0'
