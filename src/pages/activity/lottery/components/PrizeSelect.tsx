@@ -30,7 +30,7 @@ class Main extends React.Component<Props, any> {
       case 4:
         node = (
           <div>
-            <div>{value && value.code}</div>
+            <div>{value && value.couponName}</div>
             <div
               hidden={this.props.disabled}
               className='href'
