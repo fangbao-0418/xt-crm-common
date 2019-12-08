@@ -59,6 +59,12 @@ class Main extends React.Component<any, State> {
       render: formatDate
     },
     {
+      key: 'participationTimes',
+      title: '参与人数',
+      dataIndex: 'participationTimes',
+      render: (text: any) => text || 0
+    },
+    {
       key: 'status',
       title: '状态',
       dataIndex: 'status',
