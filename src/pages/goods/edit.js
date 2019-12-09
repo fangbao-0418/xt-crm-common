@@ -915,7 +915,7 @@ class GoodsEdit extends React.Component {
             }>
               返回
             </Button>
-            {this.status === '2' && (
+            {status === 2 && (
               <Button onClick={() => this.handleSave(3)}>
                 推送至待上架
               </Button>
