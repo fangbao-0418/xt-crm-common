@@ -466,13 +466,12 @@ class Main extends React.Component<Props, State> {
         return void message.error(`${prefixMsg}奖品库存不能为空`)
       }
 
-      // 九宫格订单门槛必填
-      if (isFalsly(v.restrictOrderAmount) && this.activityType !== 1) {
-        return void message.error(`${prefixMsg}订单门槛不能为空`)
-      }
-
       // 非兜底必填
       if (v.defaultAward === 1) {
+        // 九宫格订单门槛必填
+        if (isFalsly(v.restrictOrderAmount) && this.activityType !== 1) {
+          return void message.error(`${prefixMsg}订单门槛不能为空`)
+        }
         // 普通用户中奖概率必填
         if (isFalsly(v.normalUserProbability)) {
           return void message.error(`${prefixMsg}普通用户中奖概率不能为空`)
