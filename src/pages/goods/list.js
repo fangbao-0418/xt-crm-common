@@ -343,7 +343,7 @@ class GoodsList extends React.Component {
                   style={{ width: 300 }}
                 >
                   {map(supplier, item => (
-                    <Option value={item.id} key={item.id}>
+                    <Option value={String(item.id)} key={item.id}>
                       {item.name}
                     </Option>
                   ))}
@@ -367,8 +367,16 @@ class GoodsList extends React.Component {
               {getFieldDecorator('categoryId')(
                 <SelectFetch
                   style={{ width: '174px' }}
+                  allowClear
                   fetchData={() => {
-                    return getCategoryTopList();
+                    return getCategoryTopList().then((res) => {
+                      return (res || []).map((item) => {
+                        return {
+                          ...item,
+                          value: String(item.value)
+                        }
+                      })
+                    });
                   }}
                 />
               )}
