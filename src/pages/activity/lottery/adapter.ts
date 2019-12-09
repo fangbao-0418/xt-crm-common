@@ -70,7 +70,7 @@ export function sessionResponse (res: any) {
     item.cityUserProbability = item.cityUserProbability / 100
     if ([1, 4].includes(+item.awardType)) {
       const [id, code] = (typeof item.awardValue === 'string') && item.awardValue.split(':')
-      item.awardValue = {id, code}
+      item.awardValue = {id, code, couponName: item.couponName}
     }
     item.awardPicUrl = initImgList(item.awardPicUrl)
     item.awardType = item.awardType || '0'

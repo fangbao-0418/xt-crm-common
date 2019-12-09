@@ -123,9 +123,9 @@ class Main extends React.Component<Props, State> {
     {
       title: (
         <>
-          <div className={styles.required}>图片</div>
+          {this.activityType === 2 ? requiredTitle('图片') : '图片'}
           <div style={{fontSize: 12, color: '#999'}}>
-            (图片建议上传png格式，大小140px*140px)
+            (图片上传png格式，大小140px*140px)
           </div>
         </>
       ),
@@ -135,6 +135,8 @@ class Main extends React.Component<Props, State> {
       render: (arg1: any, arg2: any, index: number) => (
         this.getFieldDecorator('awardPicUrl', index)(
           <Upload
+            pxSize={[{width:140, height:140}]}
+            fileType='image/png'
             listType='picture-card'
             disabled={this.activityType === 1 || this.readOnly}
           />
@@ -159,12 +161,12 @@ class Main extends React.Component<Props, State> {
       title: requiredTitle('奖品库存'),
       key: 'awardNum',
       width: 150,
-      render: (arg1: any, arg2: any, index: number) => (
+      render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
         this.getFieldDecorator('awardNum', index)(
           <InputNumber
             min={0}
             precision={0}
-            disabled={this.readOnly}
+            disabled={this.readOnly || +record.awardType === 0}
           />
         )
       )
@@ -190,7 +192,7 @@ class Main extends React.Component<Props, State> {
       )
     },
     {
-      title: '订单门槛',
+      title: this.activityType === 2 ? requiredTitle('订单门槛') : '订单门槛',
       key: 'restrictOrderAmount',
       width: 150,
       render: (arg1: number, record: Lottery.LuckyDrawAwardListVo, index: number) => (
@@ -627,7 +629,7 @@ class Main extends React.Component<Props, State> {
               <div>奖品设置：现金、元宝填写非负整数，优惠券和实物选择对应券（实物本期也是使用优惠券）；</div>
               <div>简称：奖品简称，用于前台展示；</div>
               <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传（仅限九宫格，红包雨图片置灰）；</div>
-              <div>风控级别：0和1，0为无风控基别，1风控级别为高；</div>
+              <div>风控级别：0和1，0为无风控级别，1风控级别为高；</div>
               <div>奖品库存：本场次可发放奖品的总量，活动进行中可以调整；</div>
               <div>发出数量：本场次发出商品的数量；</div>
               <div>单人限领：本场次活动中，单人最高可中奖数量；</div>

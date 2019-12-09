@@ -30,13 +30,14 @@ class Main extends React.Component<Props, any> {
       case 4:
         node = (
           <div>
-            <div>{value && value.code}</div>
+            <div>{value && value.couponName}</div>
             <div
               hidden={this.props.disabled}
               className='href'
               onClick={() => {
                 this.props.modal.show({
                   success: (res: any, hide: any) => {
+                    res[0].couponName = res[0].name
                     onChange && onChange(res[0])
                     hide()
                   }

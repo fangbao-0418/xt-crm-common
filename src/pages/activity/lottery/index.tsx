@@ -46,7 +46,7 @@ class Main extends React.Component {
     },
     {
       key: 'participationTimes',
-      title: '参与人数',
+      title: '参与人次',
       dataIndex: 'participationTimes'
     },
     {
@@ -58,7 +58,7 @@ class Main extends React.Component {
     {
       key: 'operate',
       title: '操作',
-      width: 280,
+      width: 220,
       render: (text: any, record: Lottery.ListProps) => {
         const path = `/activity/lottery/${record.id}`
         return (
