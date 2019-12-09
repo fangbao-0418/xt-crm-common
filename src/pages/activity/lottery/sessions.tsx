@@ -437,59 +437,59 @@ class Main extends React.Component<Props, State> {
   }
   /** 校验活动场次配置 */
   public validate (awardList: Lottery.LuckyDrawAwardListVo[]) {
-    // for (let i = 0; i < awardList.length; i++) {
-    //   const prefixMsg = `奖品列表第${i + 1}行`
-    //   const v = awardList[i]
+    for (let i = 0; i < awardList.length; i++) {
+      const prefixMsg = `奖品列表第${i + 1}行`
+      const v = awardList[i]
 
-    //   // 奖品类型必填
-    //   if (isFalsly(v.awardType)) {
-    //     return void message.error(`${prefixMsg}奖品类型不能为空`)
-    //   }
+      // 奖品类型必填
+      if (isFalsly(v.awardType)) {
+        return void message.error(`${prefixMsg}奖品类型不能为空`)
+      }
 
-    //   // 奖品设置除奖品类型为无奖品外必填
-    //   if (isFalsly(v.awardValue) && +v.awardType !== 0) {
-    //     return void message.error(`${prefixMsg}奖品设置不能为空`)
-    //   }
+      // 奖品设置除奖品类型为无奖品外必填
+      if (isFalsly(v.awardValue) && +v.awardType !== 0) {
+        return void message.error(`${prefixMsg}奖品设置不能为空`)
+      }
 
-    //   // 简称必填
-    //   if (isFalsly(v.awardTitle)) {
-    //     return void message.error(`${prefixMsg}简称不能为空`)
-    //   }
+      // 简称必填
+      if (isFalsly(v.awardTitle)) {
+        return void message.error(`${prefixMsg}简称不能为空`)
+      }
 
-    //   // 九宫格图片必填
-    //   if (isFalsly(v.awardPicUrl) && this.activityType !== 1) {
-    //     return void message.error(`${prefixMsg}图片不能为空`)
-    //   }
+      // 九宫格图片必填
+      if (isFalsly(v.awardPicUrl) && this.activityType !== 1) {
+        return void message.error(`${prefixMsg}图片不能为空`)
+      }
 
-    //   // 奖品库存必填
-    //   if (isFalsly(v.awardNum) && +v.awardType !== 0) {
-    //     return void message.error(`${prefixMsg}奖品库存不能为空`)
-    //   }
+      // 奖品库存必填
+      if (isFalsly(v.awardNum) && +v.awardType !== 0) {
+        return void message.error(`${prefixMsg}奖品库存不能为空`)
+      }
 
-    //   // 非兜底必填
-    //   if (v.defaultAward === 1) {
-    //     // 九宫格订单门槛必填
-    //     if (isFalsly(v.restrictOrderAmount) && this.activityType !== 1) {
-    //       return void message.error(`${prefixMsg}订单门槛不能为空`)
-    //     }
-    //     // 普通用户中奖概率必填
-    //     if (isFalsly(v.normalUserProbability)) {
-    //       return void message.error(`${prefixMsg}普通用户中奖概率不能为空`)
-    //     }
-    //     // 团长中奖概率必填
-    //     if (isFalsly(v.headUserProbability)) {
-    //       return void message.error(`${prefixMsg}团长中奖概率不能为空`)
-    //     }
-    //     // 区长中奖概率必填
-    //     if (isFalsly(v.areaUserProbability)) {
-    //       return void message.error(`${prefixMsg}区长中奖概率不能为空`)
-    //     }
-    //     // 合伙人中奖概率必填
-    //     if (isFalsly(v.cityUserProbability)) {
-    //       return void message.error(`${prefixMsg}合伙人中奖概率不能为空`)
-    //     }
-    //   }
-    // }
+      // 非兜底必填
+      if (v.defaultAward === 1) {
+        // 九宫格订单门槛必填
+        if (isFalsly(v.restrictOrderAmount) && this.activityType !== 1) {
+          return void message.error(`${prefixMsg}订单门槛不能为空`)
+        }
+        // 普通用户中奖概率必填
+        if (isFalsly(v.normalUserProbability)) {
+          return void message.error(`${prefixMsg}普通用户中奖概率不能为空`)
+        }
+        // 团长中奖概率必填
+        if (isFalsly(v.headUserProbability)) {
+          return void message.error(`${prefixMsg}团长中奖概率不能为空`)
+        }
+        // 区长中奖概率必填
+        if (isFalsly(v.areaUserProbability)) {
+          return void message.error(`${prefixMsg}区长中奖概率不能为空`)
+        }
+        // 合伙人中奖概率必填
+        if (isFalsly(v.cityUserProbability)) {
+          return void message.error(`${prefixMsg}合伙人中奖概率不能为空`)
+        }
+      }
+    }
     return true
   }
   /** 新增、编辑活动场次 */
