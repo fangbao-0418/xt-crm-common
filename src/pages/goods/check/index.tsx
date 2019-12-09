@@ -17,6 +17,9 @@ interface State {
 function formatTime(text: any, record: GoodsCheck.ItemProps, index: number) {
   return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-';
 }
+
+const namespace = 'goods-check'
+
 class Main extends React.Component<any, State> {
   public state: State = {
     list: [],
@@ -32,7 +35,7 @@ class Main extends React.Component<any, State> {
    */
   public handleSearch = () => {
     const value = this.form.getValues();
-    console.log('applyEndTime', value.applyEndTime);
+    console.log(value, 'applyEndTime', value.applyEndTime);
     this.payload = {
       ...this.payload,
       ...value,
@@ -139,12 +142,29 @@ class Main extends React.Component<any, State> {
     this.fetchData();
   }
   public fetchData = async () => {
-    const res = (await api.getToAuditList(this.payload)) || {};
+    APP.fn.setPayload(namespace, {
+      ...this.payload,
+      total: undefined
+    })
+    const res = (await api.getToAuditList({
+      ...this.payload,
+      total: undefined
+    })) || {};
     this.payload.total = res.total;
     this.setState({ list: res.records });
     console.log('res=>', res);
   };
   public componentDidMount() {
+    this.form.setValues({
+      ...APP.fn.getPayload<any>(namespace),
+      ...this.payload,
+      total: undefined
+    })
+    this.payload = {
+      ...this.form.getValues(),
+      pageSize: 10,
+      page: 1
+    }
     this.fetchData();
   }
   public onPaginationChange = (page: number, pageSize?: number) => {

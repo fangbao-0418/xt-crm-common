@@ -125,11 +125,34 @@ export const formFields = function (refundStatus: any, intercept: any) {
       label: '物流单号'
     },
     ...selectRefundStatus,
-    , {
+    {
+      type: 'select',
+      id: 'orderType',
+      label: '订单类型',
+      options: [
+        { val: '全部', key: '' },
+        { val: '普通订单', key: '0' },
+        { val: '激活码订单', key: '10' },
+        { val: '地推订单', key: '20' },
+        { val: '活动兑换订单', key: '30' },
+        { val: '采购订单', key: '40' },
+        { val: '团购会订单', key: '60' },
+        { val: '海淘订单', key: '70' }
+      ]
+    }, {
       type: 'select',
       id: 'interception',
       label: '拦截订单',
-      options: [{ val: '全部', key: '' }, { val: '拦截订单', key: '1' }, { val: '非拦截订单', key: '0' }]
+      options: [{
+        val: '全部',
+        key: ''
+      }, {
+        val: '拦截订单',
+        key: '1'
+      }, {
+        val: '非拦截订单',
+        key: '0'
+      }]
     }, {
       type: 'input',
       id: 'interceptionMemberPhone',

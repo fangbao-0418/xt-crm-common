@@ -84,7 +84,7 @@ export default class extends Component {
               </Button>
               <Divider type="vertical" />
               <a
-                href={`/#/user/intercept/detail?id=${record.id}&iphone=${record.phone}`}
+                href={window.location.pathname + `#/user/intercept/detail?id=${record.id}&iphone=${record.phone}`}
                 rel="noreferrer noopener"
                 target="_blank"
               >

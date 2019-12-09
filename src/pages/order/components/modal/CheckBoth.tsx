@@ -36,13 +36,16 @@ class CheckBoth extends React.Component<Props, State> {
       if (values.refundAmount) {
         values.refundAmount = mul(values.refundAmount, 100)
       }
+      if (!this.isReturnShipping || values.isAllow === 0) {
+        values.isRefundFreight = 0
+      }
       if (!errors) {
         APP.dispatch({
           type: `${namespace}/auditOperate`,
           payload: {
             id: this.props.match.params.id,
             status: 1,
-            refundType: enumRefundType.Exchange,
+            refundType: enumRefundType.Both,
             ...values
           },
         });
@@ -81,8 +84,12 @@ class CheckBoth extends React.Component<Props, State> {
 * @param freight 运费
 */
   get isReturnShipping(): boolean {
-    let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
-    return this.hasFreight && result;
+    // let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    // return this.hasFreight && result;
+
+    const result = this.refundAmount === this.checkVO.maxRefundAmount && this.checkVO.serverNum === this.serverNum;
+    // let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    return this.hasFreight && this.checkVO.isRefundFreight === 1 && result;
   }
   /**
   * 售后单价
@@ -175,8 +182,11 @@ class CheckBoth extends React.Component<Props, State> {
     return isAllow === 1;
   }
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const checkVO = this.data.checkVO || {};
+    const { getFieldDecorator } = this.props.form
+    const checkVO = this.data.checkVO || {}
+    /** 是否是海淘订单 */
+    const isHaiTao = Number(this.orderInfoVO.orderType) === 70
+    
     return (
       <>
         <Modal
@@ -241,11 +251,12 @@ class CheckBoth extends React.Component<Props, State> {
                     <InputNumber
                       min={0}
                       max={formatPrice(this.maxRefundAmount)}
+                      disabled={isHaiTao}
                       formatter={formatRMB}
                       onChange={this.handleChangeMaxRefundAmount}
                     />,
                   )}
-                  <span>（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
+                  <span>（最多可退￥{`${formatPrice(this.maxRefundAmount)}${isHaiTao ? '，已包含税费': ''}`}）</span>
                 </Form.Item>
                 {this.isReturnShipping &&
                   <Form.Item label="退运费">
@@ -259,7 +270,7 @@ class CheckBoth extends React.Component<Props, State> {
               </>
             }
             <Form.Item label="说    明">
-              {getFieldDecorator('info')(<Input.TextArea placeholder="请输入说明" autosize={{ minRows: 3, maxRows: 5 }} />)}
+              {getFieldDecorator('info')(<Input.TextArea placeholder="请输入说明" autoSize={{ minRows: 3, maxRows: 5 }} />)}
             </Form.Item>
             {
               this.state.isDemotion > 0 && this.showRefundBoth &&

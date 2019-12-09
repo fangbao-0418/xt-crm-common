@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { queryOrderDetail, push1688, withhold, getProceedsListByOrderId, cancelIntercept } from '../api';
+import { push1688, withhold, getProceedsListByOrderId, cancelIntercept } from '../api';
 import { get, map } from 'lodash';
 import { Button, Row, Card, Col, message, Modal, Divider } from 'antd';
 import BuyerInfo from './buyer-info';
@@ -11,15 +11,56 @@ import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant';
 import DeliveryModal from './components/delivery-modal';
 import { dateFormat } from '@/util/utils';
 import moment from 'moment';
-import { formatMoneyWithSign } from '../../helper';
-const styleObj = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-end',
-  padding: '0 24px'
+import WithModal from './components/modal'
+import { namespace } from './model'
+import { connect } from 'react-redux'
+
+/**
+ * 海淘状态
+ * 10-用户已下单，20-订单提交中，21-订单提交失败，22-订单提交成功，30-支付单提交中，31-支付提交失败，
+ * 32-支付单提交成功，40-已推送保税仓，41-推送保税仓失败，50-海关清关中，51-海关清关失败，60-保税仓准备中，70-保税仓已发货
+ */
+const globalOrderStatusConfig = {
+  '10': '用户已下单',
+  '20': '订单提交中',
+  '21': '订单提交失败',
+  '22': '订单提交成功',
+  '30': '支付单提交中',
+  '31': '支付提交失败',
+  '32': '支付单提交成功',
+  '40': '已推送保税仓',
+  '41': '推送保税仓失败',
+  '50': '海关清关中',
+  '51': '海关清关失败',
+  '60': '保税仓准备中',
+  '70': '保税仓已发货'
 }
 
+/**
+ * 订单推送海关状态
+ */
+const orderPushCustomsStatusConfig = {
+  '1': '未推送',
+  '2': '已推送',
+  '3': '处理成功',
+  '4': '处理失败'
+}
+
+/**
+ * 支付单推送状态
+ */
+const paymentPushCustomsStatusConifg = {
+  '1': '未推送',
+  '2': '已推送',
+  '3': '处理成功',
+  '4': '处理失败'
+}
 const { confirm } = Modal;
+
+@connect((state) => ({
+  data: state[namespace].data,
+  childOrderList: state[namespace].childOrderList
+}))
 class Detail extends Component {
   get id() {
     const {
@@ -34,8 +75,6 @@ class Detail extends Component {
     super(props);
     this.state = {
       visible: false,
-      childOrderList: [],
-      data: {},
       remark: '',
       userProceedsListByOrderId: [],
       goodsTableKey: 0,
@@ -52,28 +91,12 @@ class Detail extends Component {
    * 查询订单详情信息
    */
   query = () => {
-    queryOrderDetail({ orderCode: this.id }).then((data = {}) => {
-      const childOrderMap = {};
-      (data.orderInfo && data.orderInfo.childOrderList || []).forEach(item => {
-        childOrderMap[item.id] = {
-          childOrder: item,
-          logistics: item,
-          skuList: item.skuList,
-        };
-      });
-      (data.logisticsList || []).forEach(item => {
-        const id = Number(item.childOrderId);
-        childOrderMap[id] && (childOrderMap[id].logistics = item);
-      });
-      (data.skuList || []).forEach(item => {
-        const id = Number(item.childOrderId);
-        childOrderMap[id] && childOrderMap[id].skuList && childOrderMap[id].skuList.push(item);
-      });
-      this.setState({
-        data: data,
-        childOrderList: Object.values(childOrderMap),
-      });
-    });
+    APP.dispatch({
+      type: `${namespace}/fetchDetail`,
+      payload: {
+        orderCode: this.id
+      }
+    })
     this.queryProceeds();
   }
 
@@ -152,18 +175,60 @@ class Detail extends Component {
     });
   }
   render() {
-    let { data, childOrderList, userProceedsListByOrderId, goodsTableKey, deliveryVisible, deliveryData } = this.state;
+    const { data, childOrderList } = this.props
+    let { 
+      userProceedsListByOrderId,
+      goodsTableKey,
+      deliveryVisible,
+      deliveryData
+    } = this.state
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
-    console.log(childOrderList, 'childOrderList')
+    const showFlag = !!data.orderGlobalExtendVO 
+    const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
     return (
       <>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
+        {/* 订单信息 */}
         <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} />
+        {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
+        {/* 海关信息 */}
+        <Card title='海关信息' hidden={!showFlag}>
+          <Row gutter={24}>
+            <Col span={8}>海淘状态：{globalOrderStatusConfig[orderGlobalExtendVO.globalOrderStatus]}</Col>
+            <Col span={8}>清关完成时间：{!!orderGlobalExtendVO.customsClearanceTime && APP.fn.formatDate(orderGlobalExtendVO.customsClearanceTime)}</Col>
+          </Row>
+          <Row gutter={24}>
+            <Col span={8}>订单报文：{orderPushCustomsStatusConfig[orderGlobalExtendVO.orderPushCustomsStatus]}
+              <Button type='link'
+                onClick={() => {
+                  this.props.modal.show({
+                    type: 'orderMessage',
+                    title: '订单报文详情',
+                    ...orderGlobalExtendVO
+                  })
+                }}>
+                查看详情
+              </Button>
+            </Col>
+            <Col span={8}>支付单报文：{paymentPushCustomsStatusConifg[orderGlobalExtendVO.paymentPushCustomsStatus]}
+              <Button
+                type='link'
+                onClick={() => {
+                  this.props.modal.show({
+                    type: 'payMessage',
+                    title: '支付单报文详情',
+                    ...orderGlobalExtendVO
+                  })
+                }}>
+                查看详情
+              </Button>
+            </Col>
+          </Row>
+        </Card>
         <Card title="详细信息">
           {map(childOrderList, (item, index) => {
-            console.log(item.childOrder.orderCode, 'orderCodeorderCodeorderCodeorderCodeorderCode')
             return (
               <div
                 key={item.childOrder.orderCode}
@@ -183,7 +248,7 @@ class Detail extends Component {
                         <Col span={8}>
                           <span>子订单号{index + 1}: </span>
                           <span>{item.childOrder.orderCode}</span>
-                          <span> {item.childOrder.interceptorType == 10 ? '(拦截订单)' : ''}</span>
+                          <span> {Number(item.childOrder.interceptorType) === 10 ? '(拦截订单)' : ''}</span>
                         </Col>
                         <Col span={8}>
                           <span>订单状态：</span>
@@ -199,19 +264,34 @@ class Detail extends Component {
                           </span>
                         </Col>
                         <Col className="gutter-row" span={8} style={{ textAlign: 'right' }}>
-                          {
-                            (orderStatus >= enumOrderStatus.Undelivered && orderStatus <= enumOrderStatus.Complete) ? (
-                              <Button type='primary' onClick={() => this.changeModal(true, item)}>发货</Button>
-                            ) : ''
+                          { /**
+                             * 海淘子订单的发货按钮去掉
+                             * 订单状态（10：待付款；20：待发货；30：已发货；40：已收货; 50完成; 60关闭） 
+                             * 当订单状态orderStatus >= 20 && orderStatus <= 50
+                             */
+                            (Number(item.childOrder.orderType) !== 70 &&
+                            orderStatus >= enumOrderStatus.Undelivered &&
+                            orderStatus <= enumOrderStatus.Complete) && (
+                              <Button
+                                type='primary'
+                                onClick={() => this.changeModal(true, item)}>
+                                发货
+                              </Button>
+                            )
                           }
                           {
                             (item.childOrder.interceptorType == 10 && (
                               item.childOrder.orderStatus == enumOrderStatus.Undelivered ||
                               item.childOrder.orderStatus == enumOrderStatus.Delivered)
-                            ) ?
-                              <Button type='primary' style={{ marginLeft: 8 }} onClick={() => this.cancelInterceptor(item)}>取消拦截发货</Button> :
-                              null
-                          }
+                            ) && (
+                              <Button
+                                type='primary'
+                                style={{ marginLeft: 8 }}
+                                onClick={() => this.cancelInterceptor(item)}
+                              >
+                                取消拦截发货
+                              </Button>
+                            )}
                           {item.canProtocolPay ? <Button
                             type='primary'
                             style={{ margin: '0 10px 10px 0' }}
@@ -226,15 +306,18 @@ class Detail extends Component {
                       </Row>
                       <Row gutter={24}>
                         <Col span={8}>供应商：{item.childOrder.storeName}</Col>
-                        <Col span={8}>分类：{storeType[item.childOrder.category]}</Col>
+                        <Col span={8}>供应商类型：{storeType[item.childOrder.category]}</Col>
                         <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
+                      </Row>
+                      <Row>
                         {
-                          item.childOrder.interceptorType == 10 ?
-                            <>
-                              <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
-                              <Col span={8}>拦截人手机号：{item.childOrder.interceptorMemberPhone}</Col>
-                            </> :
-                            null
+                          item.childOrder.interceptorType == 10 &&
+                            (
+                              <>
+                                <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
+                                <Col span={8}>拦截人手机号：{item.childOrder.interceptorMemberPhone}</Col>
+                              </>
+                            )
                         }
                       </Row>
                     </div>
@@ -290,4 +373,4 @@ class Detail extends Component {
   }
 }
 
-export default Detail;
+export default WithModal(Detail)
