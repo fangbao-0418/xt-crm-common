@@ -33,7 +33,7 @@ function requiredTitle (title: string) {
 function calcTotal (collection: any[], iteratee?: (res: any) => number) {
   return (collection || []).reduce((prev: number, curr: any) => {
     curr = typeof iteratee === 'function' ? iteratee(curr): curr
-    return new Decimal(prev).add(curr).toNumber()
+    return new Decimal(prev || 0).add(curr || 0).toNumber()
   }, 0)
 }
 
@@ -348,14 +348,14 @@ class Main extends React.Component<Props, State> {
   /** 初始化奖品列表 */
   public initAwardList () {
     let res: any = []
-    const rows = this.activityType === 1 ? 9 : 7
+    const rows = this.activityType === 1 ? 10 : 8
     for (let i = 0; i < rows; i++) {
       res.push({
         awardType: null,
         awardValue: '',
         awardTitle: '',
         awardPicUrl: '',
-        controlLevel: null,
+        controlLevel: i === rows - 1 ? 0 : null,
         awardNum: null,
         receiveNum: null,
         restrictNum: null,
@@ -364,26 +364,9 @@ class Main extends React.Component<Props, State> {
         headUserProbability: null,
         areaUserProbability: null,
         cityUserProbability: null,
-        defaultAward: 1 
+        defaultAward: i === rows - 1 ? 0 : 1 
       })
     }
-    // 兜底
-    res.push({
-      awardType: null,
-      awardValue: '',
-      awardTitle: '',
-      awardPicUrl: '',
-      controlLevel: 0,
-      awardNum: null,
-      receiveNum: null,
-      restrictNum: null,
-      restrictOrderAmount: null,
-      normalUserProbability: null,
-      headUserProbability: null,
-      areaUserProbability: null,
-      cityUserProbability: null,
-      defaultAward: 0
-    })
     this.state = {
       awardList: res,
       totalNormalUserProbability: 0,

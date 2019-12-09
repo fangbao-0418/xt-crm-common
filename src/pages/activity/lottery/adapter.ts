@@ -37,12 +37,12 @@ export function sessionParams (payload: Lottery.SessionsParams) {
     let awardValue: any = item.awardValue
     // 奖品类型是现金
     if (+item.awardType === 3) {
-      awardValue = new Decimal(awardValue).mul(100).toNumber()
+      awardValue = new Decimal(awardValue || 0).mul(100).toNumber()
     }
-    item.normalUserProbability = new Decimal(item.normalUserProbability).mul(100).toNumber()
-    item.headUserProbability = new Decimal(item.headUserProbability).mul(100).toNumber()
-    item.areaUserProbability = new Decimal(item.areaUserProbability).mul(100).toNumber()
-    item.cityUserProbability = new Decimal(item.cityUserProbability).mul(100).toNumber()
+    item.normalUserProbability = new Decimal(item.normalUserProbability || 0).mul(100).toNumber()
+    item.headUserProbability = new Decimal(item.headUserProbability || 0).mul(100).toNumber()
+    item.areaUserProbability = new Decimal(item.areaUserProbability || 0).mul(100).toNumber()
+    item.cityUserProbability = new Decimal(item.cityUserProbability || 0).mul(100).toNumber()
     if ([1, 4].includes(+item.awardType)) {
       const {id, code}: any = item.awardValue || {}
       awardValue = id + ':' + code 
