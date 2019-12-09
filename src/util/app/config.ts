@@ -18,6 +18,7 @@ type ApiEnv = 'dev' | 'test1' | 'test2' | 'pre' | 'prod';
 export const serverMapper: any = {
   message: {
     dev: 'https://test01center-bi.hzxituan.com',
+    pre: 'https://pre-center-bi.hzxituan.com',
     prod: 'https://center-bi.hzxituan.com'
   },
   default: {
