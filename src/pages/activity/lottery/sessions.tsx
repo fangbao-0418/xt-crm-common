@@ -214,6 +214,7 @@ class Main extends React.Component<Props, State> {
         this.getFieldDecorator('restrictOrderAmount', index)(
           <InputNumber
             min={0}
+            precision={2}
             disabled={this.activityType === 1 || record.defaultAward === 0 || this.readOnly}
           />
         )
@@ -439,45 +440,52 @@ class Main extends React.Component<Props, State> {
     for (let i = 0; i < awardList.length; i++) {
       const prefixMsg = `奖品列表第${i + 1}行`
       const v = awardList[i]
-      /** 奖品类型必填 */
+
+      // 奖品类型必填
       if (isFalsly(v.awardType)) {
         return void message.error(`${prefixMsg}奖品类型不能为空`)
       }
-      /** 奖品设置除奖品类型为无奖品外必填 */
+
+      // 奖品设置除奖品类型为无奖品外必填
       if (isFalsly(v.awardValue) && +v.awardType !== 0) {
         return void message.error(`${prefixMsg}奖品设置不能为空`)
       }
 
-      /** 简称必填 */
+      // 简称必填
       if (isFalsly(v.awardTitle)) {
         return void message.error(`${prefixMsg}简称不能为空`)
       }
-      /** 非红包雨必填 */
-      if (this.activityType !== 1) {
-        /** 图片必填 */
-        if (isFalsly(v.awardPicUrl)) {
-          return void message.error(`${prefixMsg}图片不能为空`)
-        }
+
+      // 九宫格图片必填
+      if (isFalsly(v.awardPicUrl) && this.activityType !== 1) {
+        return void message.error(`${prefixMsg}图片不能为空`)
       }
-      /** 奖品库存必填 */
+
+      // 奖品库存必填
       if (isFalsly(v.awardNum) && +v.awardType !== 0) {
         return void message.error(`${prefixMsg}奖品库存不能为空`)
       }
-      /** 非兜底必填 */
+
+      // 九宫格订单门槛必填
+      if (isFalsly(v.restrictOrderAmount) && this.activityType !== 1) {
+        return void message.error(`${prefixMsg}订单门槛不能为空`)
+      }
+
+      // 非兜底必填
       if (v.defaultAward === 1) {
-        /** 普通用户中奖概率必填 */
+        // 普通用户中奖概率必填
         if (isFalsly(v.normalUserProbability)) {
           return void message.error(`${prefixMsg}普通用户中奖概率不能为空`)
         }
-        /** 团长中奖概率必填 */
+        // 团长中奖概率必填
         if (isFalsly(v.headUserProbability)) {
           return void message.error(`${prefixMsg}团长中奖概率不能为空`)
         }
-        /** 区长中奖概率必填 */
+        // 区长中奖概率必填
         if (isFalsly(v.areaUserProbability)) {
           return void message.error(`${prefixMsg}区长中奖概率不能为空`)
         }
-        /** 合伙人中奖概率必填 */
+        // 合伙人中奖概率必填
         if (isFalsly(v.cityUserProbability)) {
           return void message.error(`${prefixMsg}合伙人中奖概率不能为空`)
         }
@@ -488,12 +496,7 @@ class Main extends React.Component<Props, State> {
   /** 新增、编辑活动场次 */
   public handleSave () {
     this.form.props.form.validateFields(async (err, vals) => {
-      const awardList = (this.state.awardList || []).map((item) => {
-        return {
-          ...item,
-          awardType: Number(item.awardType) || 0
-        }
-      })
+      const awardList = this.state.awardList || []
       if (!err && !!this.validate(awardList)) {
         let msg, res
         /** 新增场次 */
@@ -690,7 +693,7 @@ class Main extends React.Component<Props, State> {
               <div>发出数量：本场次发出商品的数量；</div>
               <div>单人限领：本场次活动中，单人最高可中奖数量；</div>
               <div>订单门槛：满足订单金额门槛才可以抽中对应奖品（仅限九宫格，红包雨订单门槛置灰）；</div>
-              <div>中奖概率：非负整数，0-100；</div>
+              <div>中奖概率：非负数，保留两位小数，0-100；</div>
             </div>
           </Row>
         </Card>

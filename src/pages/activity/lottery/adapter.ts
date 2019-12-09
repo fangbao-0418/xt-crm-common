@@ -39,6 +39,7 @@ export function sessionParams (payload: Lottery.SessionsParams) {
     if (+item.awardType === 3) {
       awardValue = new Decimal(awardValue || 0).mul(100).toNumber()
     }
+    item.restrictOrderAmount = new Decimal(item.restrictOrderAmount || 0).mul(100).toNumber()
     item.normalUserProbability = new Decimal(item.normalUserProbability || 0).mul(100).toNumber()
     item.headUserProbability = new Decimal(item.headUserProbability || 0).mul(100).toNumber()
     item.areaUserProbability = new Decimal(item.areaUserProbability || 0).mul(100).toNumber()
@@ -65,6 +66,7 @@ export function sessionResponse (res: any) {
     if (+item.awardType === 3) {
       item.awardValue = item.awardValue / 100
     }
+    item.restrictOrderAmount = item.restrictOrderAmount / 100
     item.normalUserProbability = item.normalUserProbability / 100
     item.headUserProbability = item.headUserProbability / 100
     item.areaUserProbability = item.areaUserProbability / 100
