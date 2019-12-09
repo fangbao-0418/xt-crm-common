@@ -39,17 +39,19 @@ export function sessionParams (payload: Lottery.SessionsParams) {
     if (+item.awardType === 3) {
       awardValue = new Decimal(awardValue || 0).mul(100).toNumber()
     }
-    item.restrictOrderAmount = new Decimal(item.restrictOrderAmount || 0).mul(100).toNumber()
-    item.normalUserProbability = new Decimal(item.normalUserProbability || 0).mul(100).toNumber()
-    item.headUserProbability = new Decimal(item.headUserProbability || 0).mul(100).toNumber()
-    item.areaUserProbability = new Decimal(item.areaUserProbability || 0).mul(100).toNumber()
-    item.cityUserProbability = new Decimal(item.cityUserProbability || 0).mul(100).toNumber()
+    const result:any = {}
+    result.restrictOrderAmount = new Decimal(item.restrictOrderAmount || 0).mul(100).toNumber()
+    result.normalUserProbability = new Decimal(item.normalUserProbability || 0).mul(100).toNumber()
+    result.headUserProbability = new Decimal(item.headUserProbability || 0).mul(100).toNumber()
+    result.areaUserProbability = new Decimal(item.areaUserProbability || 0).mul(100).toNumber()
+    result.cityUserProbability = new Decimal(item.cityUserProbability || 0).mul(100).toNumber()
     if ([1, 4].includes(+item.awardType)) {
       const {id, code}: any = item.awardValue || {}
-      awardValue = id + ':' + code 
+      awardValue = id + ':' + code
     }
     return {
       ...item,
+      ...result,
       awardValue,
       awardPicUrl
     }
