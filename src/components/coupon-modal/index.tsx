@@ -6,7 +6,6 @@ import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
 import receiveStatus from '@/enum/receiveStatus';
 import { formatFaceValue, formatDateRange } from '@/pages/helper';
-import { unionArray } from '@/util/utils';
 import * as api from './api'
 const listBadgeColors: any = {
   '0': 'gray',
@@ -25,6 +24,7 @@ export interface Props extends FormComponentProps {
   form: any
   onSelect?: (record: Coupon.CouponItemProps, selected: boolean) => void
   onSelectAll?: (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) => void
+  type?: 'checkbox' | 'radio'
 }
 export interface State extends PageProps<Coupon.CouponItemProps> {
   selectedRowKeys: any[]
@@ -132,7 +132,7 @@ class CouponModal extends React.Component<Props, State> {
       ...fields,
       ...this.payload
     }).then((res: any) => {
-      console.log('coupon=>', res);
+      res = res || {}
       res.current = this.payload.page
       this.setState({ ...res })
     })
@@ -142,7 +142,8 @@ class CouponModal extends React.Component<Props, State> {
       selectedRowKeys
     })
   }
-  public onSelect (record: Coupon.CouponItemProps, selected: boolean) {
+  public onSelect (record: Coupon.CouponItemProps, selected: boolean, selectedRows: any[]) {
+    this.selectedRows = selectedRows
     if (this.props.onSelect) {
       this.props.onSelect(record, selected)
     }
@@ -152,7 +153,7 @@ class CouponModal extends React.Component<Props, State> {
       this.props.onSelectAll(selected, selectedRows, changeRows)
     }
   }
-  public onSearch(e: any) {
+  public onSearch() {
     this.payload.page = 1
     this.debounceFetch()
   }
@@ -161,6 +162,7 @@ class CouponModal extends React.Component<Props, State> {
     const { selectedRowKeys, visible } = this.state;
     const { getFieldDecorator, resetFields } = this.props.form;
     const rowSelection = {
+      type: this.props.type,
       onSelect: this.onSelect,
       onChange: this.onrowSelectionChange,
       onSelectAll: this.onSelectAll,
@@ -188,7 +190,15 @@ class CouponModal extends React.Component<Props, State> {
               </Form.Item>
               <Form.Item>
                 <Button type="primary" onClick={this.onSearch}>查询</Button>
-                <Button className="ml10" onClick={() => resetFields()}>重置</Button>
+                <Button
+                  className="ml10"
+                  onClick={() => {
+                    resetFields()
+                    this.onSearch()
+                  }}
+                >
+                  重置
+                </Button>
               </Form.Item>
             </Form>
           </Card>
