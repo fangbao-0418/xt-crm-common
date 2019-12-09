@@ -33,7 +33,15 @@ export function sessionParams (payload: Lottery.SessionsParams) {
   payload.endTime = moment(payload.endTime).valueOf()
   payload.awardList = (payload.awardList || []).map((item: Lottery.LuckyDrawAwardListVo) => {
     const awardPicUrl = ((item.awardPicUrl || []) as any).map((v: any) => removeURLDomain(v.url)).join(',')
-    let awardValue = item.awardValue
+    let awardValue: any = item.awardValue
+    // 奖品类型是现金
+    if (+item.awardType === 3) {
+      awardValue = awardValue * 100
+    }
+    item.normalUserProbability = item.normalUserProbability * 100
+    item.headUserProbability = item.headUserProbability * 100
+    item.areaUserProbability = item.areaUserProbability * 100
+    item.cityUserProbability = item.cityUserProbability * 100
     if ([1, 4].includes(+item.awardType)) {
       const {id, code}: any = item.awardValue || {}
       awardValue = id + ':' + code 
@@ -51,14 +59,22 @@ export function sessionParams (payload: Lottery.SessionsParams) {
 export function sessionResponse (res: any) {
   res.startTime = moment(res.startTime)
   res.endTime = moment(res.endTime)
-  const awardList = (res.awardList || []).map((v: any) => {
-    if ([1, 4].includes(+v.awardType)) {
-      const [id, code] = (typeof v.awardValue === 'string') && v.awardValue.split(':')
-      v.awardValue = {id, code}
+  const awardList = (res.awardList || []).map((item: any) => {
+    // 奖品类型是现金
+    if (+item.awardType === 3) {
+      item.awardValue = item.awardValue / 100
     }
-    v.awardPicUrl = initImgList(v.awardPicUrl)
-    v.awardType = v.awardType || '0'
-    return v
+    item.normalUserProbability = item.normalUserProbability / 100
+    item.headUserProbability = item.headUserProbability / 100
+    item.areaUserProbability = item.areaUserProbability / 100
+    item.cityUserProbability = item.cityUserProbability / 100
+    if ([1, 4].includes(+item.awardType)) {
+      const [id, code] = (typeof item.awardValue === 'string') && item.awardValue.split(':')
+      item.awardValue = {id, code}
+    }
+    item.awardPicUrl = initImgList(item.awardPicUrl)
+    item.awardType = item.awardType || '0'
+    return item
   })
   return { ...res, awardList }
 }

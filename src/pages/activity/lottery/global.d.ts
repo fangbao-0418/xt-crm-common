@@ -46,7 +46,7 @@ declare module Lottery {
     /** 奖品类型 */
     awardType: number
     /** 奖品设置 */
-    awardValue: string
+    awardValue: string | number
     /** 简称 */
     awardTitle: string
     /** 图片 */
@@ -58,18 +58,18 @@ declare module Lottery {
     /** 是否兜底 */
     defaultAward: 0 | 1
     /** 发出数量 */
-    receiveNum?: number
+    receiveNum: number
     /** 单人限领 */
-    restrictNum?: number
+    restrictNum: number
     /** 订单门槛 */
-    restrictOrderAmount?: number
+    restrictOrderAmount: number
     /** 普通用户概率 */
-    normalUserProbability?: number
+    normalUserProbability: number
     /** 团长概率 */
-    headUserProbability?: number
+    headUserProbability: number
     /** 区长概率 */
-    areaUserProbability?: number
+    areaUserProbability: number
     /** 合伙人概率 */
-    cityUserProbability?: number
+    cityUserProbability: number
   }
 }

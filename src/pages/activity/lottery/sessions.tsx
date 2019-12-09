@@ -220,7 +220,7 @@ class Main extends React.Component<Props, State> {
                 disabled={record.defaultAward === 0 || this.readOnly}
                 min={0}
                 max={100}
-                precision={0}
+                precision={2}
               />
             )
           )
@@ -240,7 +240,7 @@ class Main extends React.Component<Props, State> {
                 disabled={record.defaultAward === 0 || this.readOnly}
                 min={0}
                 max={100}
-                precision={0}
+                precision={2}
               />
             )
           )
@@ -260,7 +260,7 @@ class Main extends React.Component<Props, State> {
                 disabled={record.defaultAward === 0 || this.readOnly}
                 min={0}
                 max={100}
-                precision={0}
+                precision={2}
               />
             )
           )
@@ -280,7 +280,7 @@ class Main extends React.Component<Props, State> {
                 disabled={record.defaultAward === 0 || this.readOnly}
                 min={0}
                 max={100}
-                precision={0}
+                precision={2}
               />
             )
           )
