@@ -43,7 +43,6 @@ export function sessionParams (payload: Lottery.SessionsParams) {
     item.headUserProbability = new Decimal(item.headUserProbability).mul(100).toNumber()
     item.areaUserProbability = new Decimal(item.areaUserProbability).mul(100).toNumber()
     item.cityUserProbability = new Decimal(item.cityUserProbability).mul(100).toNumber()
-    item.restrictNum = new Decimal(item.restrictNum || 0).mul(100).toNumber()
     if ([1, 4].includes(+item.awardType)) {
       const {id, code}: any = item.awardValue || {}
       awardValue = id + ':' + code 
@@ -70,7 +69,6 @@ export function sessionResponse (res: any) {
     item.headUserProbability = item.headUserProbability / 100
     item.areaUserProbability = item.areaUserProbability / 100
     item.cityUserProbability = item.cityUserProbability / 100
-    item.restrictNum = item.restrictNum / 100 
     if ([1, 4].includes(+item.awardType)) {
       const [id, code] = (typeof item.awardValue === 'string') && item.awardValue.split(':')
       item.awardValue = {id, code, couponName: item.couponName}

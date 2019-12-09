@@ -72,25 +72,7 @@ class Main extends React.Component<Props, State> {
   public id: number
   // 活动类型
   public activityType: number = +(parseQuery() as any).activityType
-  // 一行数据
-  public rowData: any = {
-    awardType: null,
-    awardValue: '',
-    awardTitle: '',
-    awardPicUrl: '',
-    controlLevel: null,
-    awardNum: null,
-    receiveNum: null,
-    restrictNum: null,
-    restrictOrderAmount: null,
-    normalUserProbability: null,
-    headUserProbability: null,
-    areaUserProbability: null,
-    cityUserProbability: null,
-    defaultAward: 1 
-  }
-  // 兜底数据
-  public lastRowData: any
+
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public constructor (props: any) {
     super(props)
@@ -100,7 +82,6 @@ class Main extends React.Component<Props, State> {
     this.handleSave = this.handleSave.bind(this)
     this.handleAdd = this.handleAdd.bind(this)
 
-    this.lastRowData = Object.assign({}, this.rowData, {controlLevel: 0, defaultAward: 0})
     this.initAwardList()
   }
   // 删除当前行
@@ -219,7 +200,7 @@ class Main extends React.Component<Props, State> {
         this.getFieldDecorator('restrictNum', index)(
           <InputNumber
             disabled={record.defaultAward === 0 || this.readOnly}
-            precision={2}
+            precision={0}
             min={0}
           />
         )
@@ -369,10 +350,40 @@ class Main extends React.Component<Props, State> {
     let res: any = []
     const rows = this.activityType === 1 ? 9 : 7
     for (let i = 0; i < rows; i++) {
-      res.push(this.rowData)
+      res.push({
+        awardType: null,
+        awardValue: '',
+        awardTitle: '',
+        awardPicUrl: '',
+        controlLevel: null,
+        awardNum: null,
+        receiveNum: null,
+        restrictNum: null,
+        restrictOrderAmount: null,
+        normalUserProbability: null,
+        headUserProbability: null,
+        areaUserProbability: null,
+        cityUserProbability: null,
+        defaultAward: 1 
+      })
     }
     // 兜底
-    res.push(this.lastRowData)
+    res.push({
+      awardType: null,
+      awardValue: '',
+      awardTitle: '',
+      awardPicUrl: '',
+      controlLevel: 0,
+      awardNum: null,
+      receiveNum: null,
+      restrictNum: null,
+      restrictOrderAmount: null,
+      normalUserProbability: null,
+      headUserProbability: null,
+      areaUserProbability: null,
+      cityUserProbability: null,
+      defaultAward: 0
+    })
     this.state = {
       awardList: res,
       totalNormalUserProbability: 0,
@@ -532,9 +543,24 @@ class Main extends React.Component<Props, State> {
   }
   /**  添加新行 */
   public handleAdd () {
-    const { awardList } = this.state
+    const awardList: any = this.state.awardList
     const startIndex: number = Math.max(awardList.length - 2, 0)
-    awardList.splice(startIndex, 0, this.rowData)
+    awardList.splice(startIndex, 0, {
+      awardType: null,
+      awardValue: '',
+      awardTitle: '',
+      awardPicUrl: '',
+      controlLevel: null,
+      awardNum: null,
+      receiveNum: null,
+      restrictNum: null,
+      restrictOrderAmount: null,
+      normalUserProbability: null,
+      headUserProbability: null,
+      areaUserProbability: null,
+      cityUserProbability: null,
+      defaultAward: 1 
+    })
     this.setState({
       awardList
     })

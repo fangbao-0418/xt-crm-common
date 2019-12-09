@@ -55,7 +55,7 @@ class Main extends React.Component<Props, any> {
             disabled={this.props.disabled}
             onChange={this.props.onChange}
             min={0}
-            precision={awardType === 3 ? 2: 0}
+            precision={0}
           />
         )
     }
