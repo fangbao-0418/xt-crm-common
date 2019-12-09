@@ -9,6 +9,7 @@ import moment from 'moment';
 import { templateColumns } from './interface';
 import MoneyRender from '@/components/money-render';
 const { RangePicker } = DatePicker;
+const namespace = 'freight-template'
 interface State extends PageProps<templateColumns> {
 
 }
@@ -17,8 +18,8 @@ class Page extends React.Component<Props, State> {
   state: State = {
     records: []
   };
-  payload: any = {
-    current: 1,
+  payload: any = APP.fn.getPayload(namespace) || {
+    pageNo: 1,
     total: 0,
     size: 10
   }
@@ -27,31 +28,37 @@ class Page extends React.Component<Props, State> {
     this.fetchList = this.fetchList.bind(this);
   }
   componentDidMount() {
+    this.payload.pageNo = 1
+    this.props.form.setFieldsValue({
+      templateName: this.payload.templateName,
+      createTime: this.payload.createTimeStart && [moment(this.payload.createTimeStart), moment(this.payload.createTimeEnd)],
+      modifyTime: this.payload.modifyTimeStart && [moment(this.payload.modifyTimeStart), moment(this.payload.modifyTimeEnd)]
+    })
     this.fetchList();
   }
   async fetchList() {
     let { templateName, createTime, modifyTime } = this.props.form.getFieldsValue();
     let [createTimeStart, createTimeEnd] = createTime ? momentRangeValueof(createTime) : [];
     let [modifyTimeStart, modifyTimeEnd] = modifyTime ? momentRangeValueof(modifyTime) : [];
-    const { records, current, total } = await templatePage({
-      pageNo: this.payload.current,
+    const payload = {
+      pageNo: this.payload.pageNo || 1,
       pageSize: this.payload.size,
       templateName,
       createTimeStart,
       createTimeEnd,
       modifyTimeStart,
       modifyTimeEnd,
-    }) || {}
-    this.payload = Object.assign({}, {
-      current,
-      total
-    })
+    }
+    const { records, total } = await templatePage(payload) || {}
+    this.payload = payload
+    this.payload.total = total
+    APP.fn.setPayload(namespace, payload)
     this.setState({
       records
     });
   }
   onChange = (current: number) => {
-    this.payload.current = current
+    this.payload.pageNo = current
     this.fetchList()
   };
   handleReset = () => {
@@ -59,7 +66,7 @@ class Page extends React.Component<Props, State> {
     this.handleSearch()
   }
   handleSearch = () => {
-    this.payload.current = 1
+    this.payload.pageNo = 1
     this.fetchList()
   }
   render() {
@@ -71,7 +78,7 @@ class Page extends React.Component<Props, State> {
         title: '序号',
         key: 'index',
         render: (text: any, record: any, index: number) => {
-          return ((this.payload.current || 1) - 1) * 10 + (index + 1);
+          return ((this.payload.pageNo || 1) - 1) * 10 + (index + 1);
         },
       },
       {
@@ -162,7 +169,7 @@ class Page extends React.Component<Props, State> {
           <Table
             rowKey="createTime"
             pagination={{
-              current: this.payload.current,
+              current: this.payload.pageNo,
               total: this.payload.total,
               onChange: this.onChange
             }}

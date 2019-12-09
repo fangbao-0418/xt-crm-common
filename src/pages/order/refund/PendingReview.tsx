@@ -40,6 +40,8 @@ class PendingReview extends React.Component<Props, State> {
    */
   handleAuditOperate = (status: number) => {
     this.props.form.validateFields((errors, values) => {
+ 
+      // return
       if (!errors) {
         if (status === 1 && values.serverNum == 0) {
           message.error('售后数目必须大于0');
@@ -51,6 +53,11 @@ class PendingReview extends React.Component<Props, State> {
         if (values.isRefundFreight === undefined) {
           values.isRefundFreight = this.props.data.checkVO.isRefundFreight;
         }
+        if (!this.isReturnShipping) {
+          values.isRefundFreight = 0
+        }
+        // console.log(values.isRefundFreight, 'values')
+        // return
         let payload = {
           id: +this.props.match.params.id,
           status,
@@ -124,8 +131,9 @@ class PendingReview extends React.Component<Props, State> {
    * @param freight 运费
    */
   get isReturnShipping(): boolean {
-    let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
-    return this.hasFreight && result;
+    const result = this.refundAmount === this.checkVO.maxRefundAmount && this.checkVO.serverNum === this.serverNum;
+    // let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    return this.hasFreight && this.checkVO.isRefundFreight === 1 && result;
   }
   /**
    * 获取售后类型
