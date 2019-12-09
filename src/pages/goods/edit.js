@@ -921,11 +921,12 @@ class GoodsEdit extends React.Component {
           </Form.Item>
           <Form.Item label="上架状态" hidden={status === 2}>
             {getFieldDecorator('status', {
-              initialValue: 0,
+              initialValue: 3,
             })(
               <Radio.Group>
                 <Radio value={1}>上架</Radio>
                 <Radio value={0}>下架</Radio>
+                <Radio value={3}>待上架</Radio>
               </Radio.Group>,
             )}
           </Form.Item>
