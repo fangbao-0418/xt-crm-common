@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { removeURLDomain, initImgList } from '@/util/utils'
 import { typeConfig } from './config'
+import { Decimal } from 'decimal.js'
 
 /** 转换活动列表响应 */
 export function listResponse (res: any) {
@@ -36,12 +37,13 @@ export function sessionParams (payload: Lottery.SessionsParams) {
     let awardValue: any = item.awardValue
     // 奖品类型是现金
     if (+item.awardType === 3) {
-      awardValue = awardValue * 100
+      awardValue = new Decimal(awardValue).mul(100).toNumber()
     }
-    item.normalUserProbability = item.normalUserProbability * 100
-    item.headUserProbability = item.headUserProbability * 100
-    item.areaUserProbability = item.areaUserProbability * 100
-    item.cityUserProbability = item.cityUserProbability * 100
+    item.normalUserProbability = new Decimal(item.normalUserProbability).mul(100).toNumber()
+    item.headUserProbability = new Decimal(item.headUserProbability).mul(100).toNumber()
+    item.areaUserProbability = new Decimal(item.areaUserProbability).mul(100).toNumber()
+    item.cityUserProbability = new Decimal(item.cityUserProbability).mul(100).toNumber()
+    item.restrictNum = new Decimal(item.restrictNum || 0).mul(100).toNumber()
     if ([1, 4].includes(+item.awardType)) {
       const {id, code}: any = item.awardValue || {}
       awardValue = id + ':' + code 
@@ -68,6 +70,7 @@ export function sessionResponse (res: any) {
     item.headUserProbability = item.headUserProbability / 100
     item.areaUserProbability = item.areaUserProbability / 100
     item.cityUserProbability = item.cityUserProbability / 100
+    item.restrictNum = item.restrictNum / 100 
     if ([1, 4].includes(+item.awardType)) {
       const [id, code] = (typeof item.awardValue === 'string') && item.awardValue.split(':')
       item.awardValue = {id, code, couponName: item.couponName}

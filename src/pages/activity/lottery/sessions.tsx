@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card, Table, DatePicker, Icon, Row, Input, InputNumber } from 'antd'
+import { Button, Card, Table, DatePicker, Icon, Row, Input, InputNumber, Popconfirm } from 'antd'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import styles from './style.module.styl'
 import SelectFetch from '@/packages/common/components/select-fetch'
@@ -12,6 +12,7 @@ import { parseQuery } from '@/util/utils'
 import { disabledDateTime, disabledDate } from '@/util/antdUtil'
 import { upperFirst } from 'lodash'
 import modal, { ModalProps } from './components/modal'
+import { Decimal } from 'decimal.js'
 
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
@@ -29,17 +30,20 @@ function requiredTitle (title: string) {
 }
 
 /** 计算总价 */
-function calcTotal (collection: any[], iteratee: (res: any) => number) {
+function calcTotal (collection: any[], iteratee?: (res: any) => number) {
   return (collection || []).reduce((prev: number, curr: any) => {
     curr = typeof iteratee === 'function' ? iteratee(curr): curr
-    return prev + curr
+    return new Decimal(prev).add(curr).toNumber()
   }, 0)
 }
 
+/** 获取一列数据指定属性集合 */
+const props = (list: any[], id: string) => list.map(x => x[id] || 0)
 
-/** 返回整数 */
-function getInteger (val: number) {
-  return Number.isInteger(val) ? val : 0
+/** 返回一个数字 */
+function getNumber (val: number) {
+  val = +val
+  return typeof val === 'number' && !Number.isNaN(val)  ? val : 0
 }
 
 const ids = 'normalUserProbability,headUserProbability,areaUserProbability,cityUserProbability'.split(',')
@@ -62,19 +66,48 @@ interface Props {
 class Main extends React.Component<Props, State> {
   public form: FormInstance
   public state: State
-  /** 活动ID */
+  // 活动ID
   public luckyDrawId: number
-  /** 场次ID */
+  // 场次ID
   public id: number
-  /** 活动类型 */
+  // 活动类型
   public activityType: number = +(parseQuery() as any).activityType
+  // 一行数据
+  public rowData: any = {
+    awardType: null,
+    awardValue: '',
+    awardTitle: '',
+    awardPicUrl: '',
+    controlLevel: null,
+    awardNum: null,
+    receiveNum: null,
+    restrictNum: null,
+    restrictOrderAmount: null,
+    normalUserProbability: null,
+    headUserProbability: null,
+    areaUserProbability: null,
+    cityUserProbability: null,
+    defaultAward: 1 
+  }
+  // 兜底数据
+  public lastRowData: any
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public constructor (props: any) {
     super(props)
     this.luckyDrawId = +props.match.params.luckyDrawId
     this.id = +props.match.params.id
+
     this.handleSave = this.handleSave.bind(this)
+    this.handleAdd = this.handleAdd.bind(this)
+
+    this.lastRowData = Object.assign({}, this.rowData, {controlLevel: 0, defaultAward: 0})
     this.initAwardList()
+  }
+  // 删除当前行
+  public handleRemove (index: number) {
+    const { awardList } = this.state
+    awardList.splice(index, 1)
+    this.setState({ awardList })
   }
   public columns: any[] = [
     {
@@ -175,7 +208,8 @@ class Main extends React.Component<Props, State> {
       title: '发出数量',
       key: 'receiveNum',
       width: 150,
-      dataIndex: 'receiveNum'
+      dataIndex: 'receiveNum',
+      render: (text: any) => text || 0
     },
     {
       title: '单人限领',
@@ -185,7 +219,7 @@ class Main extends React.Component<Props, State> {
         this.getFieldDecorator('restrictNum', index)(
           <InputNumber
             disabled={record.defaultAward === 0 || this.readOnly}
-            precision={0}
+            precision={2}
             min={0}
           />
         )
@@ -288,6 +322,28 @@ class Main extends React.Component<Props, State> {
           )
         }
       ]
+    },
+    {
+      title: '操作',
+      key: 'operation',
+      width: 100,
+      fixed: 'right',
+      render: (arg1: number, record: Lottery.LuckyDrawAwardListVo, index: number) => {
+        const disabled = record.defaultAward === 0
+        return (
+          <Popconfirm
+            disabled={disabled}
+            title='确认删除?'
+            onConfirm={() => this.handleRemove(index)}>
+            <Button
+              type='danger'
+              disabled={disabled}
+            >
+              删除
+            </Button>
+          </Popconfirm>
+        )
+      }
     }
   ]
   public componentDidMount () {
@@ -300,48 +356,23 @@ class Main extends React.Component<Props, State> {
     const res = await api.getSessionsDetail(this.id)
     const awardList = res.awardList
     this.form.setValues(res)
-    let
-      totalNormalUserProbability = 0,
-      totalHeadUserProbability = 0,
-      totalAreaUserProbability = 0,
-      totalCityUserProbability = 0
-    awardList.forEach((item: any) => {
-      totalNormalUserProbability += getInteger(item.normalUserProbability)
-      totalHeadUserProbability += getInteger(item.headUserProbability)
-      totalAreaUserProbability += getInteger(item.areaUserProbability)
-      totalCityUserProbability += getInteger(item.cityUserProbability)
-    })
     this.setState({
       awardList,
-      totalNormalUserProbability,
-      totalHeadUserProbability,
-      totalAreaUserProbability,
-      totalCityUserProbability
+      totalNormalUserProbability: calcTotal(props(awardList, 'normalUserProbability')),
+      totalHeadUserProbability: calcTotal(props(awardList, 'headUserProbability')),
+      totalAreaUserProbability: calcTotal(props(awardList, 'areaUserProbability')),
+      totalCityUserProbability: calcTotal(props(awardList, 'cityUserProbability'))
     })
   }
   /** 初始化奖品列表 */
   public initAwardList () {
     let res: any = []
-    const rows = this.activityType === 1 ? 10 : 8
+    const rows = this.activityType === 1 ? 9 : 7
     for (let i = 0; i < rows; i++) {
-      res[i] = {
-        id: i + 1,
-        awardType: null,
-        awardValue: '',
-        awardTitle: '',
-        awardPicUrl: '',
-        controlLevel: i === rows - 1 ? 0 : null,
-        awardNum: null,
-        receiveNum: null,
-        restrictNum: null,
-        restrictOrderAmount: null,
-        normalUserProbability: null,
-        headUserProbability: null,
-        areaUserProbability: null,
-        cityUserProbability: null,
-        defaultAward: i === rows - 1 ? 0 : 1 
-      }
+      res.push(this.rowData)
     }
+    // 兜底
+    res.push(this.lastRowData)
     this.state = {
       awardList: res,
       totalNormalUserProbability: 0,
@@ -362,7 +393,7 @@ class Main extends React.Component<Props, State> {
     const oldVal = item[id]
     item[id] = val
     if (ids.includes(id)) {
-      let result = calcTotal(awardList, curr => getInteger(curr[id]))
+      let result = calcTotal(awardList, curr => getNumber(curr[id]))
       const name = 'total' + upperFirst(id)
       if (result > 100 ) {
         item[id] = oldVal
@@ -499,6 +530,15 @@ class Main extends React.Component<Props, State> {
   public handleCancel () {
     APP.history.go(-1)
   }
+  /**  添加新行 */
+  public handleAdd () {
+    const { awardList } = this.state
+    const startIndex: number = Math.max(awardList.length - 2, 0)
+    awardList.splice(startIndex, 0, this.rowData)
+    this.setState({
+      awardList
+    })
+  }
   public render () {
     const startTime = this.form && this.form.props.form.getFieldValue('startTime')
     return (
@@ -603,7 +643,14 @@ class Main extends React.Component<Props, State> {
           />
         </Card>
         <Card title='奖品列表'>
+          <Button
+            className='mb10'
+            type='primary'
+            onClick={this.handleAdd}>
+            添加一行
+          </Button>
           <Table
+            rowKey='id'
             columns={this.columns}
             className={styles['prize-list']}
             dataSource={this.state.awardList}
