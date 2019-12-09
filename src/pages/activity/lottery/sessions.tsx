@@ -323,28 +323,28 @@ class Main extends React.Component<Props, State> {
         }
       ]
     },
-    {
-      title: '操作',
-      key: 'operation',
-      width: 100,
-      fixed: 'right',
-      render: (arg1: number, record: Lottery.LuckyDrawAwardListVo, index: number) => {
-        const disabled = record.defaultAward === 0
-        return (
-          <Popconfirm
-            disabled={disabled}
-            title='确认删除?'
-            onConfirm={() => this.handleRemove(index)}>
-            <Button
-              type='danger'
-              disabled={disabled}
-            >
-              删除
-            </Button>
-          </Popconfirm>
-        )
-      }
-    }
+    // {
+    //   title: '操作',
+    //   key: 'operation',
+    //   width: 100,
+    //   fixed: 'right',
+    //   render: (arg1: number, record: Lottery.LuckyDrawAwardListVo, index: number) => {
+    //     const disabled = record.defaultAward === 0
+    //     return (
+    //       <Popconfirm
+    //         disabled={disabled}
+    //         title='确认删除?'
+    //         onConfirm={() => this.handleRemove(index)}>
+    //         <Button
+    //           type='danger'
+    //           disabled={disabled}
+    //         >
+    //           删除
+    //         </Button>
+    //       </Popconfirm>
+    //     )
+    //   }
+    // }
   ]
   public componentDidMount () {
     if (this.id !== -1) {
@@ -450,7 +450,7 @@ class Main extends React.Component<Props, State> {
         return void message.error(`${prefixMsg}奖品类型不能为空`)
       }
       /** 奖品设置除奖品类型为无奖品外必填 */
-      if (v.awardType !== 0 && isFalsly(v.awardValue)) {
+      if (isFalsly(v.awardValue) && +v.awardType !== 0) {
         return void message.error(`${prefixMsg}奖品设置不能为空`)
       }
 
@@ -466,7 +466,7 @@ class Main extends React.Component<Props, State> {
         }
       }
       /** 奖品库存必填 */
-      if (isFalsly(v.awardNum)) {
+      if (isFalsly(v.awardNum) && +v.awardType !== 0) {
         return void message.error(`${prefixMsg}奖品库存不能为空`)
       }
       /** 非兜底必填 */
@@ -643,12 +643,12 @@ class Main extends React.Component<Props, State> {
           />
         </Card>
         <Card title='奖品列表'>
-          <Button
+          {/* <Button
             className='mb10'
             type='primary'
             onClick={this.handleAdd}>
             添加一行
-          </Button>
+          </Button> */}
           <Table
             rowKey='id'
             columns={this.columns}
