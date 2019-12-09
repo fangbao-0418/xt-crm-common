@@ -1,21 +1,38 @@
 import React from 'react';
 import { Table, Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getColumns } from './constant';
-import CardTitle from './CardTitle';
+import { FormComponentProps } from 'antd/lib/form'
+import CardTitle from '../../CardTitle';
 import SkuUploadItem from './SkuUploadItem';
-import styles from './edit.module.scss';
+import styles from './style.module.scss';
 import { size, map } from 'lodash';
 import { accAdd, Subtr, accMul, accDiv } from '@/util/utils';
+import SkuTable from './SkuTable'
 
+const defaultItem: SkuProps = {
+  imageUrl1: '',
+  skuCode: '',
+  stock: 0,
+  areaMemberPrice: 0,
+  cityMemberPrice: 0,
+  costPrice: 0,
+  headPrice: 0,
+  deliveryMode: 2,
+  marketPrice: 0,
+  salePrice: 0,
+  managerMemberPrice: 0
+}
+
+/** 子规格字段集合 */
+const subSpecFields: Array<keyof SkuProps> = ['propertyValue1', 'propertyValue2']
 
 export interface SkuProps {
   /** 供应商id */
   storeProductSkuId?: number
   /** 商品编码 */
   skuCode: string
-  /** 发货方式 1-仓库发货, 2-供货商发货, 3-其他 */
-  deliveryMode: 1 | 2 | 3
+  /** 发货方式 1-仓库发货, 2-供货商发货, 3-其他, 4-保宏保税仓 */
+  deliveryMode: 1 | 2 | 3 | 4
   /** 成本价 */
   costPrice: number
   /** 市场价 */
@@ -40,12 +57,16 @@ export interface SkuProps {
   [field: string]: any
 }
 
-interface Props {
+interface Props extends FormComponentProps {
   specs: Spec[]
   dataSource: SkuProps[]
   showImage: boolean
   onChange?: (value: SkuProps[], specs: Spec[], showImage: boolean) => void
-  strategyData: {},
+  strategyData: {}
+  /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
+  type?: 0 | 10 | 20
+  /** sku备案信息 */
+  productCustomsDetailVOList: any[]
 }
 interface SpecItem {
   specName: string;
@@ -63,19 +84,19 @@ interface TempSpecInfoItem {
  * speSelect 规格项
  */
 interface State {
-  specs: Spec[];
-  specPictures: string[];
-  speSelect: any[];
-  spuName: any[];
-  noSyncList: any[];
-  GGName: string;
-  showImage: boolean;
+  specs: Spec[]
+  specPictures: string[]
+  speSelect: any[]
+  spuName: any[]
+  noSyncList: any[]
+  GGName: string
+  showImage: boolean
   tempSpecInfo: {[key: number]: SpecItem}
-  tempSpuName: string;
-  tempSpuPicture: any[];
+  tempSpuName: string
+  tempSpuPicture: any[]
   /** 添加规格名propover显示状态 */
   dimensionNamePropoverStatus: boolean
-  dataSource: SkuProps[],
+  dataSource: SkuProps[]
   strategyData: any
 }
 class SkuList extends React.Component<Props, State>{
@@ -101,6 +122,45 @@ class SkuList extends React.Component<Props, State>{
       dataSource: props.dataSource,
       strategyData: props.strategyData
     })
+  }
+  public getCombineResult (specs: Spec[], dataSource: SkuProps[]) {
+    console.log(specs, 'specs getCombineResult')
+    console.log(dataSource, 'dataSource getCombineResult')
+    const collection = specs.map((item) => item.content)
+    const combineResutle: SpecItem[][] = APP.fn.mutilCollectionCombine.apply(null, collection)
+    console.log(combineResutle, 'combineResutle getCombineResult')
+    /** 如果合并后只有一组数据切第一项全部都是undefind则数组返回空, */
+    if (combineResutle.length === 1 && combineResutle[0].every((item) => item === undefined)) {
+      return []
+    }
+    // let addNew = false
+    /** 多规格合并 */
+    const result = combineResutle.map((item) => {
+      let val: SkuProps = {...defaultItem}
+      /** 根据原规格查找规格信息 */
+      val = dataSource.find((item2) => {
+        /** item 自定义输入规格序列 规格1，2 */
+        return item.every((item3, index) => {
+          /**
+           * item2[subSpecFields[index]] dataSource里的规格名
+           * item3 输入的规格名
+           * !item2[subSpecFields[index]] 不存在的规格直接过，dataSource必有一个规格名是存在的，对存在的规格进行比对获取已经输入的信息
+           */
+          return !item3 || !item2[subSpecFields[index]] || item2 && item3 && item3.specName === item2[subSpecFields[index]]
+        })
+      }) || val
+      val.deliveryMode = this.props.type === 20 ? 4 : val.deliveryMode
+      item.map((item2, index) => {
+        const field = subSpecFields[index]
+        val[field] = (item2 && item2.specName) as never
+        if (index === 0) {
+          val.imageUrl1 = item2 && item2.specPicture || val.imageUrl1
+        }
+        // val.skuId = undefined
+      })
+      return val
+    })
+    return result
   }
   handleChangeValue = (text: string, record: any, index: any) => (e: any) => {
     const { dataSource, noSyncList } = this.state;
@@ -137,9 +197,9 @@ class SkuList extends React.Component<Props, State>{
     }
   };
   /**
-   * 添加规格高阶函数
+   * 添加子规格
    */
-  widthAddSpecCb = (key: number) => () => {
+  addSubSpec = (key: number) => () => {
     let specs = this.state.specs
     const { content } = specs[key]
     const { tempSpecInfo, showImage } = this.state
@@ -153,103 +213,21 @@ class SkuList extends React.Component<Props, State>{
       message.error('请不要填写相同的规格');
       return
     }
+
     specs[key].content.push(this.state.tempSpecInfo[key])
     tempSpecInfo[key] = {
       specName: '',
       specPicture: ''
     }
-    const addData: SkuProps[] = []
-    const defaultItem: SkuProps = {
-      imageUrl1: '',
-      skuCode: '',
-      stock: 0,
-      areaMemberPrice: 0,
-      cityMemberPrice: 0,
-      costPrice: 0,
-      headPrice: 0,
-      deliveryMode: 2,
-      marketPrice: 0,
-      salePrice: 0,
-      managerMemberPrice: 0
-    }
-    let dataSource = this.state.dataSource
-    /** 第一规格输入时 */
-    if (key === 0) {
-      if (specs[1] && specs[1].content && specs[1].content.length > 1) {
-        specs[1].content.map((item) => {
-          addData.push({
-            ...defaultItem,
-            imageUrl1: specPicture,
-            propertyValue1: specName,
-            propertyValue2: item.specName
-          })
-        })
-      /** 如果dataSource为空，补充规格 */
-      } else if (dataSource.length === 0 && specs[0] && specs[0].content && specs[0].content.length >= 1) {
-        specs[0].content.map((item) => {
-          addData.push({
-            ...defaultItem,
-            imageUrl1: item.specPicture,
-            propertyValue1: item.specName,
-            propertyValue2: ''
-          })
-        })
-      } else {
-        addData.push({
-          ...defaultItem,
-          propertyValue1: specName,
-          propertyValue2: specs[1] && specs[1].content && specs[1].content[0] && specs[1].content[0].specName
-        })
-      }
-    /** 第二项规格输入时 */
-    } else {
-      /** 如果dataSource为空，规格2至少有一项，补充规格 */
-      if (dataSource.length === 0 && specs[1] && specs[1].content && specs[1].content.length === 1) {
-        specs[0].content.map((item) => {
-          addData.push({
-            ...defaultItem,
-            propertyValue1: item.specName,
-            propertyValue2: specName
-          })
-        })
-      /** 第一规格不存在, 正常新增一个规格 */
-      } else if (!specs[0] || specs[0] && specs[0].content && specs[0].content.length === 0) {
-        addData.push({
-          ...defaultItem,
-          propertyValue1: '',
-          propertyValue2: specName
-        })
-      /** 第一规格有多项，第二规格只有一项，每组propertyValue2进行赋值 */
-      } else if (specs[0] && specs[0].content.length >= 1 && specs[1].content.length === 1 && dataSource.length > 0) {
-        dataSource = dataSource.map((item) => {
-          item.propertyValue2 = specName
-          return item
-        })
-      } else if (specs[0] && specs[0].content && specs[0].content.length >= 1) {
-        specs[0].content.map((item) => {
-          addData.push({
-            ...defaultItem,
-            imageUrl1: item.specPicture,
-            propertyValue1: item.specName,
-            propertyValue2: specName
-          })
-        })
-      }
-    }
-    dataSource = dataSource.concat(addData)
-    // console.log(dataSource, 'dataSource')
-    let result: SkuProps[] = []
-    specs[0].content.map((item) => {
-      // console.log(dataSource.filter(item2 => item2.propertyValue1 === item.specName), item.specName, 'item')
-      result = result.concat(dataSource.filter(item2 => item2.propertyValue1 === item.specName)) 
-    })
-    // console.log(result, 'result')
+
+    //////////////////////////////
+    const dataSource1 = this.getCombineResult(specs, this.state.dataSource)
     this.setState({
-      dataSource: result,
+      dataSource: dataSource1,
       tempSpecInfo,
       specs
     })
-    this.onChange(result)
+    this.onChange(dataSource1)
   };
   handleTabsAdd = () => {
     const GGName = this.state.GGName
@@ -323,7 +301,7 @@ class SkuList extends React.Component<Props, State>{
   /**
   * 删除规格
   */
-  handleRemoveSpec = (index: number) => {
+  removeSpec = (index: number) => {
     const { specs } = this.state
     specs.splice(index, 1)
     this.setState({
@@ -333,8 +311,8 @@ class SkuList extends React.Component<Props, State>{
       this.onChange([])
     })
   };
-
-  removeSpecWithCb = (key: number, index: number) => () => {
+  /** 删除子规格 */
+  removeSubSpec = (key: number, index: number) => () => {
     /** 另一组索引 */
     const otherKey = key === 0 ? 1 : 0
     const keys = ['propertyValue1', 'propertyValue2']
@@ -342,29 +320,13 @@ class SkuList extends React.Component<Props, State>{
     const specName = specs[key].content[index].specName
     specs[key].content.splice(index, 1)
     let dataSource = this.state.dataSource
-    if (specs[key].content.length > 0) {
-      dataSource = dataSource.filter((item) => {
-        return item[keys[key]] !== specName
-      })
-    } else {
-      dataSource = dataSource.map((item) => {
-        item[keys[0]] = item[keys[otherKey]]
-        item[keys[1]] = ''
-        return item
-      })
-    }
-    /** 是否存在规格商品 */
-    let isExistSpec = false
-    specs.map((item) => {
-      item.content.map((val) => {
-        isExistSpec = true
-      })
-    })
-    if (!isExistSpec || specs[key].content.length === 0) {
-      dataSource = []
-    }
+
+    /////////////////////
+    dataSource = this.getCombineResult(specs, dataSource)
     this.setState({ specs, dataSource: dataSource });
     this.onChange(dataSource)
+    return
+    /////////////////////
   };
   public getCustomColumns () {
     const columns: ColumnProps<any>[] = []
@@ -408,6 +370,7 @@ class SkuList extends React.Component<Props, State>{
     })
   }
   render() {
+    const type = this.props.type !== undefined ? this.props.type : 0
     return (
       <Card
         title="添加规格项"
@@ -479,7 +442,7 @@ class SkuList extends React.Component<Props, State>{
                 />
               )}
               extra={
-                <span className='href' onClick={() => this.handleRemoveSpec(key)}>删除</span>
+                <span className='href' onClick={() => this.removeSpec(key)}>删除</span>
               }>
               <div className={styles.spulist}>
                 {map(spec.content, (item, index: number) => (
@@ -496,7 +459,7 @@ class SkuList extends React.Component<Props, State>{
                     <Button
                       className={styles.spubtn}
                       type="danger"
-                      onClick={this.removeSpecWithCb(key, index)}
+                      onClick={this.removeSubSpec(key, index)}
                     >
                       删除规格
                     </Button>
@@ -517,7 +480,7 @@ class SkuList extends React.Component<Props, State>{
                     <Button
                       className={styles.spubtn}
                       type="primary"
-                      onClick={this.widthAddSpecCb(key)}>
+                      onClick={this.addSubSpec(key)}>
                       添加规格
                     </Button>
                   </SkuUploadItem>
@@ -536,16 +499,15 @@ class SkuList extends React.Component<Props, State>{
             </Button>
           </> : null
         }
-        <Table
-          rowKey={(record: any) => record.id}
-          style={{ marginTop: 10 }}
-          scroll={{ x: 2500, y: 600 }}
-          columns={[
-            ...this.getCustomColumns(),
-            ...getColumns(this.handleChangeValue, this.state.dataSource)
-          ]}
+        <SkuTable
+          type={type}
+          form={this.props.form}
+          productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}
-          pagination={false}
+          extraColumns={this.getCustomColumns()}
+          onChange={(dataSource) => {
+            this.onChange(dataSource)
+          }}
         />
       </Card>
     )
