@@ -1,6 +1,7 @@
-import React, { Component } from 'react'
-import { Table, Row, Col, Button, Modal, Input, message } from 'antd'
-import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale'
+import React, { Component } from 'react';
+import { Table, Row, Col, Card, Button, Modal, Input, message, Divider } from 'antd';
+import { formatMoney } from '@/packages/common/utils'
+import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale';
 import { withRouter } from 'react-router'
 import { getDetailColumns } from '../constant'
 import LogisticsInfo from './logistics-info'
@@ -116,8 +117,12 @@ class GoodsTable extends Component {
   }
 
   render() {
-    const { list = [], childOrder = {}, orderInfo = {}, logistics, tableTitle } = this.props
-    const { proceedsVisible, childOrderProceeds, skuInfo } = this.state
+    const { tableTitle } = this.props;
+    const { proceedsVisible, childOrderProceeds, skuInfo } = this.state;
+    const orderInfo = this.props.orderInfo || {}
+    const childOrder = this.props.childOrder || {}
+    const list = this.props.list || []
+    const logistics = this.props.logistics || {}
     const columns = [
       ...(getDetailColumns().filter(item => item.key !== 'storeName')),
       {
@@ -206,6 +211,14 @@ class GoodsTable extends Component {
               title={() => tableTitle}
               footer={() => {
                 return (<>
+                  <Row style={{ marginBottom: 20 }}>
+                      <Col style={{textAlign: 'right'}}>
+                        <span style={{ fontWeight: 'bold' }}></span>
+                        <span className="mr10">运费合计：<font color="red">{formatMoney(childOrder.originFreight)}</font></span>
+                        <span className="mr10">运费优惠：<font color="red">{formatMoney(-(childOrder.couponFreight))}</font></span>
+                        <span>运费实付：{formatMoney(childOrder.payFreight)}</span>
+                      </Col>
+                  </Row>
                   {
                     proceedsVisible && (
                       <Row style={{ marginBottom: 20 }}>

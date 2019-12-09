@@ -36,6 +36,9 @@ class CheckBoth extends React.Component<Props, State> {
       if (values.refundAmount) {
         values.refundAmount = mul(values.refundAmount, 100)
       }
+      if (!this.isReturnShipping || values.isAllow === 0) {
+        values.isRefundFreight = 0
+      }
       if (!errors) {
         APP.dispatch({
           type: `${namespace}/auditOperate`,
@@ -81,8 +84,12 @@ class CheckBoth extends React.Component<Props, State> {
 * @param freight 运费
 */
   get isReturnShipping(): boolean {
-    let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
-    return this.hasFreight && result;
+    // let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    // return this.hasFreight && result;
+
+    const result = this.refundAmount === this.checkVO.maxRefundAmount && this.checkVO.serverNum === this.serverNum;
+    // let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    return this.hasFreight && this.checkVO.isRefundFreight === 1 && result;
   }
   /**
   * 售后单价
