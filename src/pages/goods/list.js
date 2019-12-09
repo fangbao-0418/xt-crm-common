@@ -336,6 +336,7 @@ class GoodsList extends React.Component {
                 <Select
                   placeholder="请选择供货商"
                   showSearch
+                  allowClear
                   filterOption={(inputValue, option) => {
                     return option.props.children.indexOf(inputValue) > -1;
                   }}

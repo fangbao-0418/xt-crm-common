@@ -45,7 +45,6 @@ const formLayout = {
 
 class GoodsEdit extends React.Component {
   id = this.props.match.params.id
-  status = parseQuery().status
   supplier = []
   detail = {}
   specs = []
