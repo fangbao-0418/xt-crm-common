@@ -41,11 +41,12 @@ export function parseQuery() {
 
 /** query序列化 */
 export function queryString(obj) {
-  if (typeof obj !== 'object') return '';
-  let pairs = [];
+  console.log('obj => ', obj)
+  if (typeof obj !== 'object') return ''
+  let pairs = []
   for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      pairs.push(`${key}=${obj[key]}`);
+    if (obj.hasOwnProperty(key) && (obj[key] || obj[key] === 0)) {
+      pairs.push(`${key}=${obj[key]}`)
     }
   }
   return pairs.length > 0 ? `?${pairs.join('&')}` : '';
