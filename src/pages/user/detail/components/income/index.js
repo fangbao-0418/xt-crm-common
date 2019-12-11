@@ -255,6 +255,11 @@ export default class extends Component {
                         padding: 0,
                         minHeight: 540
                     }}
+                    onCancel={() => { 
+                        this.setState({
+                            visible: false
+                        })
+                    }}
                     footer={[
                         <Button type="primary" key="back" onClick={() => {
                             this.setState({
