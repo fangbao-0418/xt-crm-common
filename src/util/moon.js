@@ -7,6 +7,7 @@
     domain: env !== 'prod' ? 'https://test-rlcas.hzxituan.com' : 'https://rlcas.hzxituan.com',
     file: [],
     env,
+    reqType: 'img',
     spa: true
   };
   var m = b.createElement("script");
