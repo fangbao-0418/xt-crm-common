@@ -351,12 +351,16 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'generalTaxRate',
         width: 100,
         render: (text) => {
-          if(text === null) return ''
-          text = (text || '').toString()
-          const num = text.indexOf('.')
-          if(num === -1) return new Decimal(text).mul(100).toString() + '%'
-          text = text.substring(0, num) + text.substring(num+1, num+3) + '.' + text.substring(num+3)
-          return text*1 + '%'
+          try {
+            text = (text || '').toString()
+            if(!text) return ''
+            const num = text.indexOf('.')
+            if(num === -1) return new Decimal(text || 0).mul(100).toString() + '%'
+            text = text.substring(0, num) + text.substring(num+1, num+3) + '.' + text.substring(num+3)
+            return text*1 + '%'
+          } catch (e) {
+            return ''
+          }
         }
       },
       {
