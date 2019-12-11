@@ -15,4 +15,6 @@ interface FnProps {
   formatDate: (date: string | number, format?: string) => string
   formatMoney: (money: any) => string
   download: (url: string, name: string) => void
+  /** 多个集合合并 */
+  mutilCollectionCombine: (...arg: any[][]) => any[][]
 }

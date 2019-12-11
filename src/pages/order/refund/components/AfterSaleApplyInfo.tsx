@@ -55,7 +55,7 @@ const AfterSaleApplyInfo = (props: Props) => {
         </Col>
         {orderServerVO.handleTime > 0 && (
           <Col span={8}>
-            最后处理时间:{moment(orderServerVO.handleTime).format('YYYY-MM-DD HH:mm:ss')}
+            最后处理时间：{moment(orderServerVO.handleTime).format('YYYY-MM-DD HH:mm:ss')}
           </Col>
         )}
         {orderServerVO.operator && <Col span={8}>处理人:{orderServerVO.operator}</Col>}

@@ -103,8 +103,12 @@ class CheckRefund extends React.Component<Props, State> {
  * @param freight 运费
  */
   get isReturnShipping(): boolean {
-    let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
-    return this.hasFreight && result;
+    // let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    // return this.hasFreight && result;
+
+    const result = this.refundAmount === this.checkVO.maxRefundAmount && this.checkVO.serverNum === this.serverNum;
+    // let result = this.refundAmount + this.orderServerVO.alreadyRefundAmount + this.checkVO.freight === this.orderInfoVO.payMoney;
+    return this.hasFreight && this.checkVO.isRefundFreight === 1 && result;
   }
   // 显示售后数目和售后金额
   get showAfterSaleInfo(): boolean {
@@ -159,6 +163,9 @@ class CheckRefund extends React.Component<Props, State> {
       if (values.refundAmount) {
         values.refundAmount = mul(values.refundAmount, 100);
       }
+      if (!this.isReturnShipping || values.isAllow === 0) {
+        values.isRefundFreight = 0
+      }
       if (values.serverNum == 0) {
         message.error('售后数目必须大于0');
         return;
@@ -178,7 +185,9 @@ class CheckRefund extends React.Component<Props, State> {
     });
   }
   render() {
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator } = this.props.form
+    /** 是否是海淘订单 */
+    const isHaiTao = Number(this.orderInfoVO.orderType) === 70
     return (
       <>
         <Modal
@@ -241,12 +250,13 @@ class CheckRefund extends React.Component<Props, State> {
                     <InputNumber
                       min={0}
                       max={formatPrice(this.maxRefundAmount)}
+                      disabled={isHaiTao}
                       formatter={formatRMB}
                       placeholder="请输入"
                       onChange={this.handleChangeMaxRefundAmount}
                     />,
                   )}
-                  <span className="ml10">（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
+                  <span className="ml10">（最多可退￥{`${formatPrice(this.maxRefundAmount)}${isHaiTao ? '，已包含税费': ''}`}）</span>
                 </Form.Item>
 
                 {this.isReturnShipping && (

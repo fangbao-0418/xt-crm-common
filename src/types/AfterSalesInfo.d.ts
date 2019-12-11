@@ -62,7 +62,9 @@ declare module AfterSalesInfo {
     orderMemberType: number;
     payMoney: number;
     freight: number;
-    orderType: number;
+    /** 0：普通订单，10：激活码订单，20：地推订单，30：活动兑换订单，40：采购订单，60：团购会订单，70：海淘订单*/
+    orderType: 0 | 10 | 20 | 30 | 40 | 60 | 70;
+    customsClearanceTime: number;
     realName: string;
     idNo: number;
     orderCommentListVO: any[];

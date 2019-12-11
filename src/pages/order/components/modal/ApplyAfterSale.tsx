@@ -107,6 +107,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
   */
   handleChangeServerNum = (value: any = 0) => {
     let result = mul(this.unitPrice, value)
+    if(value == this.state.skuDetail.serverNum) result = this.state.skuDetail.amount
     this.props.form.setFieldsValue({
       amount: formatPrice(result)
     });
@@ -123,19 +124,38 @@ class ApplyAfterSale extends React.Component<Props, State> {
     const { modalInfo, form: { getFieldDecorator } } = this.props;
     const initialObj: any = {}
     const disabledObj: any = {}
+    console.log('modalInfo=>', modalInfo)
     if (modalInfo.childOrder && modalInfo.childOrder.orderStatus === 20) {
       initialObj.initialValue = 20
       disabledObj.disabled = true
     }
     let { skuDetail } = this.state
     skuDetail = Object.assign({}, skuDetail)
+    const isHaiTao = Number(modalInfo.orderType) === 70
+    const options = refundType.getArray()
+    /** 海淘订单请选择售后类型没有换货 */
+    const refundTypeOptions = isHaiTao ? options.filter(v => v.key !== 30): options
     return (
-      <Modal width='80%' style={{ top: 20, minWidth: '900px' }} title="代客申请售后" visible={this.props.visible} onCancel={this.props.onCancel} onOk={this.handleOk}>
+      <Modal
+        width='80%'
+        style={{ top: 20, minWidth: '900px' }}
+        title="代客申请售后"
+        visible={this.props.visible}
+        onCancel={this.props.onCancel}
+        onOk={this.handleOk}
+      >
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
             <Form.Item label="售后类型">
-              {getFieldDecorator('refundType', { ...initialObj, rules: [{ required: true, message: '请选择售后类型' }] })(<XtSelect {...disabledObj} data={refundType.getArray()} />)}
+              {/* 海淘子订单售后类型不显示换货 */}
+              {getFieldDecorator('refundType', {
+                ...initialObj,
+                rules: [{
+                  required: true,
+                  message: '请选择售后类型'
+                }]
+              })(<XtSelect {...disabledObj} data={refundTypeOptions} />)}
             </Form.Item>
             <Form.Item label="售后原因">
               {getFieldDecorator('returnReason', { rules: [{ required: true, message: '请选择售后原因' }] })(<AfterSaleSelect refundType={this.refundType} />)}
@@ -163,8 +183,14 @@ class ApplyAfterSale extends React.Component<Props, State> {
                     ],
                     initialValue: formatPrice(skuDetail.amount)
                   }
-                )(<InputNumber min={0} max={formatPrice(this.maxRefundAmount)} />)}
-                <span className="ml10">（最多可退￥{formatPrice(this.maxRefundAmount)}）</span>
+                )(
+                  <InputNumber
+                    min={0}
+                    disabled={isHaiTao}
+                    max={formatPrice(this.maxRefundAmount)}
+                  />
+                )}
+                <span className="ml10">（最多可退￥{`${formatPrice(this.maxRefundAmount)}${isHaiTao ? '，已包含税费' : ''}`}）</span>
               </Form.Item>
             }
             <Form.Item label="售后凭证">
