@@ -25,6 +25,8 @@ export interface Props extends FormComponentProps {
   onSelect?: (record: Coupon.CouponItemProps, selected: boolean) => void
   onSelectAll?: (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) => void
   type?: 'checkbox' | 'radio'
+  /** 优惠券请求参数处理 */
+  processPayload?: (payload: any) => any
 }
 export interface State extends PageProps<Coupon.CouponItemProps> {
   selectedRowKeys: any[]
@@ -32,7 +34,7 @@ export interface State extends PageProps<Coupon.CouponItemProps> {
 }
 export interface SearchPayload {
   code?: string
-  isDelete: 0
+  isDelete?: 0
   name?: string
   page: number
   pageSize?: number
@@ -108,7 +110,9 @@ class CouponModal extends React.Component<Props, State> {
     this.onrowSelectionChange = this.onrowSelectionChange.bind(this)
     this.onSelect = this.onSelect.bind(this)
     this.onSelectAll = this.onSelectAll.bind(this)
-  }
+    const processPayload = props.processPayload 
+    this.payload = typeof processPayload === 'function' ? processPayload(this.payload) : this.payload
+   }
   public componentWillReceiveProps(props: Props) {
     this.setState({
       visible: props.visible || false,
