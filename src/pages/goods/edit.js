@@ -407,7 +407,7 @@ class GoodsEdit extends React.Component {
           listImage.push(replaceHttpUrl(item.url));
         });
         /** 推送至仓库中即为下架，详情和列表页状态反了 */
-        vals.status = status !== void 0 ? status : vals.status  
+        vals.status =  status === undefined ? vals.status : status
         const params = {
           ...vals,
           returnContact: this.state.returnContact,
@@ -921,11 +921,12 @@ class GoodsEdit extends React.Component {
           </Form.Item>
           <Form.Item label="上架状态" hidden={status === 2}>
             {getFieldDecorator('status', {
-              initialValue: 0,
+              initialValue: 3,
             })(
               <Radio.Group>
                 <Radio value={1}>上架</Radio>
                 <Radio value={0}>下架</Radio>
+                <Radio value={3}>待上架</Radio>
               </Radio.Group>,
             )}
           </Form.Item>
@@ -943,8 +944,8 @@ class GoodsEdit extends React.Component {
               返回
             </Button>
             {status === 2 && (
-              <Button onClick={() => this.handleSave(0)}>
-                推送至仓库中
+              <Button onClick={() => this.handleSave(3)}>
+                推送至待上架
               </Button>
             )}
           </Form.Item>
