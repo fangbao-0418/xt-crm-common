@@ -46,6 +46,11 @@ export const request = (url, config) => {
       } else {
         message.error(error.message || '内部错误，请等待响应...');
       }
+      try {
+        window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+      } catch (e) {
+        console.log(e)
+      }
       // return Promise.resolve(error);
     });
 };
@@ -197,6 +202,11 @@ export const exportFile = (url, data, config) => {
       } else {
         message.error(error.message || '内部错误，请等待响应...');
       }
+      try {
+        window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+      } catch (e) {
+        console.log(e)
+      }
       return Promise.reject();
     });
 };
@@ -232,6 +242,11 @@ instance.interceptors.response.use(res => {
     }, 1500);
   }
   message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...')
+  try {
+    window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+  } catch (e) {
+    console.log(e)
+  }
   return {};
 })
 export function fetch(url, config = {}) {
@@ -245,8 +260,8 @@ export function fetch(url, config = {}) {
   }).then(res => {
     APP.fn.handleLoading('end')
     return res;
-  }, (err) => {
+  }, (error) => {
     APP.fn.handleLoading('end')
-    return Promise.reject(err)
+    return Promise.reject(error)
   })
 };

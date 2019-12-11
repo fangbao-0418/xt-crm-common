@@ -13,20 +13,17 @@ class Main extends React.Component<Props, State> {
   }
   
   componentDidCatch(error: any, errorInfo: any) {
-    // Catch errors in any components below and re-render with error message
     Moon.error(error) 
     this.setState({
       error: error,
       errorInfo: errorInfo
     })
-    // You can also log error messages to an error reporting service here
   }
   
   public render () {
     if (this.state.errorInfo) {
-      // Error path
       return (
-        <div>
+        <div style={{margin: 8}}>
           <h2>Something went wrong.</h2>
           <details style={{ whiteSpace: 'pre-wrap' }}>
             {this.state.error && this.state.error.toString()}

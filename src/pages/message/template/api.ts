@@ -1,5 +1,9 @@
-const { get, post, newPost, del } = APP.http
-
+const {
+  get,
+  post,
+  newPost,
+  del
+} = APP.http
 export const getList = (payload: any) => {
   return newPost('::message/msg/template/selectTemplateList', payload)
 }

@@ -4,7 +4,7 @@
   const env = process.env.PUB_ENV
   a._moon_ = {
     mid: "jw0pzj9nh",
-    domain: 'https://test-rlcas.hzxituan.com/',
+    domain: env !== 'prod' ? 'https://test-rlcas.hzxituan.com' : 'https://rlcas.hzxituan.com',
     file: [],
     env,
     spa: true
