@@ -12,6 +12,7 @@ import InputMoney from '@/packages/common/components/input-money'
 import Record from './Record'
 import Stock from './Stock'
 import { RecordEnum } from './constant'
+import Decimal from 'decimal.js'
 import styles from './style.module.scss'
 const { Option } = Select;
 
@@ -351,9 +352,9 @@ class Main extends React.Component<Props, State> {
         width: 100,
         render: (text) => {
           if(text === null) return ''
-          text = text.toString()
+          text = (text || '').toString()
           const num = text.indexOf('.')
-          if(num === -1) return text*100 + '%'
+          if(num === -1) return new Decimal(text).mul(100).toString() + '%'
           text = text.substring(0, num) + text.substring(num+1, num+3) + '.' + text.substring(num+3)
           return text*1 + '%'
         }
