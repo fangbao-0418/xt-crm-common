@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect, parseQuery, setQuery } from '@/util/utils';
+import { connect, parseQuery } from '@/util/utils';
 import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table } from 'antd';
 import moment from 'moment';
 
@@ -8,13 +8,27 @@ import { levelArr, sourceArr } from '../config';
 import { levelName } from '../utils';
 import styles from './index.module.scss';
 import Modal from './modal';
-
+import { namespace } from './model'
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 
+const joinOptions = [
+  {
+    label: '全部',
+    value: ''
+  },
+  {
+    label: '是',
+    value: '1'
+  },
+  {
+    label: '否',
+    value: '0'
+  }
+]
 function getColumns(scope) {
     return [
         {
@@ -96,8 +110,6 @@ function getColumns(scope) {
         },
     ]
 }
-
-const namespace = '/user/userlist'
 
 const defaultPayload = {
     page: 1,
@@ -266,6 +278,19 @@ export default class extends Component {
                         )
                     }
                 </FormItem>
+                <FormItem label="是否参加团购会">
+                    {
+                        getFieldDecorator('phone', {
+                            initialValue: values.phone
+                        })(
+                          <Select placeholder='请输入' style={{ width: 172 }}>
+                            {joinOptions.map((v, i) => (
+                              <Option value={v.value} key={i}>{v.label}</Option>
+                            ))}
+                          </Select>
+                        )
+                    }
+                </FormItem>
                 <FormItem label="手机号">
                     {
                         getFieldDecorator('phone', {
@@ -307,6 +332,19 @@ export default class extends Component {
                             this.resetSearch()
                         }}
                     >清除条件</Button>
+                    <Button
+                      className='ml10'
+                      onClick={() => {
+                        this.props.dispatch({
+                          type: `${namespace}/saveDefault`,
+                          payload: {
+                            excelDialogVisible: true
+                          }
+                        })
+                      }}
+                    >
+                      批量导入
+                    </Button>
                 </FormItem>
             </Form>
         )

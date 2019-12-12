@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Descriptions, Table, Button, Form, Select, Modal, Input } from 'antd';
+import { Card, Descriptions, Table, Button, Form, Select, Modal, Input, Switch } from 'antd';
 import moment from 'moment';
 import { connect, parseQuery, setQuery } from '@/util/utils';
 import styles from './index.module.scss';
@@ -14,6 +14,65 @@ const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 let unlisten = '';
 function formatTime(text) {
   return text ? moment(text).format(timeFormat): '';
+}
+
+function withModal(WrappedComponent) {
+  return class extends React.Component {
+    state = {
+      title: '',
+      visible: false
+    }
+    modal = {
+      showModal: (payload) => {
+        switch (payload.type) {
+          // 保证金
+          case 'bail':
+            this.setState({
+              label: '保证金',
+              visible: true
+            })
+            break
+          // 采购额度
+          case 'purchaseQuota':
+            this.setState({
+              label: '采购额度',
+              visible: true
+            })
+            break
+          default:
+            break
+        }
+        
+      }
+    }
+    onCancel = () => {
+      this.setState({ visible: false })
+    }
+    onOk = () => {
+
+    }
+    render () {
+      const { label, visible } = this.state
+      return (
+        <>
+          <Modal
+            title={`修改${label}`}
+            visible={visible}
+            onCancel={this.onCancel}
+            onOk={this.onOk}
+            okText='提交'
+            cancelText='取消编辑'
+          >
+            <div style={{ paddingLeft: 20 }}>
+              <span>{label}：</span>
+              <Input style={{ width: 172 }} placeholder='请输入'/>
+            </div>
+          </Modal>
+          <WrappedComponent {...this.props} modal={this.modal}/>
+        </>
+      )
+    }
+  }
 }
 
 const columns = [
@@ -48,9 +107,10 @@ let reasonList = [];
   data: state['user.userinfo'].userinfo,
   loading: state.loading.effects['user.userinfo'].getUserInfo
 }))
-@Form.create({})
-export default class extends Component {
+@Form.create()
+class UserInfo extends Component {
   state = {
+    checked: true, //是否开启团购会
     visible: false,
     reasonRemark: "", //升降级说明
     upOrDwon: 0 , //1 升级，-1降级。0 不处理
@@ -169,6 +229,7 @@ export default class extends Component {
     unlisten();
   }
   render() {
+    const { checked } = this.state
     const { data, loading } = this.props;
     console.log(this.props, 'render')
     const { form: { getFieldDecorator } } = this.props;
@@ -180,7 +241,7 @@ export default class extends Component {
           headStyle={{
             fontWeight: 900
           }}
-          extra={<div><a onClick={this.showModalInvit}>修改邀请人</a>&nbsp;&nbsp;<a onClick={this.showModal}>用户信息编辑</a></div>}
+          extra={<div><span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>}
           loading={loading}
         >
           <Descriptions column={2} className={styles.description}>
@@ -214,6 +275,44 @@ export default class extends Component {
             <Descriptions.Item label="姓名">{data.userName || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="身份证号">{data.idCard || '暂无'}</Descriptions.Item>
           </Descriptions>
+        </Card>
+        <Card>
+          <Descriptions column={1}>
+            <Descriptions.Item label='保证金'>
+              <span>1000元</span>
+              <Button
+                type='link'
+                className='ml10'
+                onClick={() => {
+                  this.props.modal.showModal({
+                    type: 'bail'
+                  })
+                }}>
+                修改保证金
+              </Button>
+            </Descriptions.Item>
+            <Descriptions.Item label='开启团购会'>
+              <Switch checked={checked} onChange={(checked) => this.setState({ checked })}/>
+            </Descriptions.Item>
+          </Descriptions>
+          {checked && (
+            <Descriptions column={6}>
+              <Descriptions.Item label='采购额度'>3000元</Descriptions.Item>
+              <Descriptions.Item label='剩余采购额度'>1000元</Descriptions.Item>
+              <Descriptions.Item>
+                <Button
+                  type='link'
+                  onClick={() => {
+                    this.props.modal.showModal({
+                      type: 'purchaseQuota'
+                    })
+                  }}
+                >
+                  修改采购额度
+                </Button>
+              </Descriptions.Item>
+            </Descriptions>
+          )}
         </Card>
         <Card
           title="实名认证信息"
@@ -256,7 +355,6 @@ export default class extends Component {
         </Card>
         <UserModal />
         <ModalInvit />
-
         <Modal
           title={this.state.upOrDwon > 0 ? '提升用户等级':'降低用户等级'}
           visible={this.state.visible}
@@ -306,3 +404,4 @@ export default class extends Component {
     )
   }
 }
+export default withModal(UserInfo)

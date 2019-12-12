@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Col, Row, Select } from 'antd';
-import { connect, parseQuery } from '@/util/utils';
+import { Modal, Form, Input, Col, Row } from 'antd';
+import { connect } from '@/util/utils';
 import { MemberTypeTextMap } from '../../../../order/constant'
 import styles from './index.module.scss';
 import moment from 'moment';
 const FormItem = Form.Item;
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
-const { Search } = Input;
 const memberTypes = [];
 for (const key in MemberTypeTextMap) {
   memberTypes.push({
