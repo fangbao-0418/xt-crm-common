@@ -119,11 +119,11 @@ class ActivityDetail extends React.Component {
     if (this.loading) return;
     this.loading = true;
     const { detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
-    if (activityImage.length === 0) {
-      message.error('请上传活动商品图');
-      this.loading = false;
-      return false;
-    }
+    // if (activityImage.length === 0) {
+    //   message.error('请上传活动商品图');
+    //   this.loading = false;
+    //   return false;
+    // }
     for (let index = 0; index < activityImage.length; index++) {
       if (!activityImage[index].url) {
         this.loading = false;

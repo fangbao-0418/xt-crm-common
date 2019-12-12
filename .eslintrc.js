@@ -2,7 +2,8 @@ module.exports = {
   extends: process.env.PUB_ENV ? ['react-app'] : ['react-app', 'prettier'],
   plugins: process.env.PUB_ENV ? [] : ['prettier'],
   globals: {
-    APP: true
+    APP: true,
+    Moon: true
   },
   rules: process.env.PUB_ENV
     ? {}

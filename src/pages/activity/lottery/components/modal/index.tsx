@@ -38,6 +38,11 @@ function Main (WrappedComponent: React.ComponentType<any>) {
           <CouponModal
             selectedRowKeys={selectedRowKeys}
             type='radio'
+            processPayload={(payload: any) => {
+              payload.isDelete = undefined
+              payload.receivePattern = undefined
+              return payload
+            }}
             visible={visible}
             onCancel={this.modal.hide}
             onOk={(ids, rows) => {
