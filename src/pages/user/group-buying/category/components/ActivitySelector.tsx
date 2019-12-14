@@ -51,6 +51,7 @@ const actColumns = (data = []) => {
 interface Props extends FormComponentProps {
   getPromotionList: (params: any) => void,
   handleCancelModal: (e:any) => void,
+  /** 弹出对话框*/
   handleOkModal: (e:any) => void,
   actList: any[],
   selectedRowKeys: any[],
@@ -60,6 +61,7 @@ interface Props extends FormComponentProps {
   handlenChanageSelectio: any
 }
 class GetActivity extends React.Component<Props, any> {
+  /** 条件查询 */
   handleSearch = () => {
     const {
       form: { validateFields },
@@ -78,8 +80,13 @@ class GetActivity extends React.Component<Props, any> {
         });
         this.props.getPromotionList(params);
       }
-    });
-  };
+    })
+  }
+  /** 重置搜索条件 */
+  handleReset = () => {
+    this.props.form.resetFields()
+    this.handleSearch()
+  }
   render() {
     const { 
       handleCancelModal,
@@ -92,7 +99,7 @@ class GetActivity extends React.Component<Props, any> {
       handlenChanageSelectio,
       form
     } = this.props;
-    const { getFieldDecorator, resetFields } = form;
+    const { getFieldDecorator } = form;
     return <Modal
         title="选择活动"
         visible={visible1}
@@ -167,7 +174,7 @@ class GetActivity extends React.Component<Props, any> {
               <Button type="primary" onClick={this.handleSearch}>
                 查询
               </Button>
-              <Button style={{ marginLeft: 10 }} onClick={() => resetFields()}>
+              <Button style={{ marginLeft: 10 }} onClick={this.handleReset}>
                 重置
               </Button>
             </div>
@@ -207,7 +214,28 @@ class Main extends React.Component {
     secondaryIndex: 0,
     selectedSecondary: []
   }
-  public handleClickModal = () => {}
+  public handleClickModal = (data = {}) => {
+    const { type, index, secondaryActText }: any = data;
+
+    if (this.state.actList.length == 0) this.getPromotionList();
+    
+    if(type === 'secondary'){
+      this.setState({
+        visible1Type: type,
+        visible1: true,
+        secondaryIndex: index,
+        selectedRowKeys: secondaryActText ? secondaryActText.map((val: any) => val.id) : [],
+        selectedSecondary: secondaryActText || []
+      });
+    } else {
+      this.setState({
+        visible1Type: null,
+        visible1: true,
+        selectedRowKeys: this.state.actText.map((val: any) => val.id),
+        selectedRows: this.state.actText
+      });
+    }
+  }
   public handleCancelModal = (e: any) => {
     this.setState({
       visible1: false,
@@ -328,7 +356,7 @@ class Main extends React.Component {
                   this.setState({ actText })
                 }}
               >
-                <Icon type={styles['close']} />
+                <Icon type='close' />
               </span>
             </div>
           )

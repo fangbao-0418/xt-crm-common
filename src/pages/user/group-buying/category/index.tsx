@@ -37,6 +37,7 @@ class Main extends React.Component {
     return (
       <ListPage
         formConfig={{}}
+        showButton={false}
         addonAfterSearch={(
           <Button
             type='danger'
