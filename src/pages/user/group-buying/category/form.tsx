@@ -54,7 +54,10 @@ class Main extends React.Component {
             verifiable
             name='relatedProduct'
             type='checkbox'
-            addonAfter={<ActivitySelector />}
+            addonAfter={(
+              <ActivitySelector />
+            )}
+            addonAfterCol={{ offset: 4 }}
             options={[{
               label: '关联类目',
               value: 1
