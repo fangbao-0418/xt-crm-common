@@ -2,7 +2,7 @@ import { FieldsConfig } from '@/packages/common/components/form'
 export function getDefaultConfig () {
   const defaultConfig: FieldsConfig = {
     groupByStock: {
-      id: {
+      productId: {
         type: 'number',
         label: '商品ID',
         controlProps: {
@@ -11,9 +11,16 @@ export function getDefaultConfig () {
           }
         }
       },
-      name: {
+      productName: {
         type: 'input',
         label: '商品名称'     
+      },
+      pruchaseTime: {
+        type: 'rangepicker',
+        label: '采购时间',
+        controlProps: {
+          showTime: true
+        }
       }
     }
   }
