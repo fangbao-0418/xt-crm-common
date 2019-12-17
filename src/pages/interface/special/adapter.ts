@@ -2,8 +2,12 @@ import { replaceHttpUrl } from '@/util/utils'
 
 /** 转换详情数据 */
 export function conversionDetails (res: any) {
-  res.list = res.list || []
-  return res
+  let result: any = {}
+  result.list = res && res.list || []
+  return {
+    ...res,
+    ...result
+  }
 }
 
 function requestParamsCreator(column: Special.DetailContentProps, list: any) {

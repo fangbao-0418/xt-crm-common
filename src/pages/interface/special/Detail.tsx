@@ -10,17 +10,20 @@ import styles from './style.module.sass'
 import { namespace } from './model'
 import classnames from 'classnames'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   detail: Special.DetailItem
 }
 interface State {
   loading: boolean;
   shareOpen: boolean;
+  type: 1 | 2
 }
 class Main extends React.Component<Props, State> {
-  public state = {
+  public state: State = {
     loading: false,
-    shareOpen: true
+    shareOpen: true,
+    type: 1
   }
   public id = '-1'
   public form: FormInstance
@@ -270,122 +273,145 @@ class Main extends React.Component<Props, State> {
               </Button>
             </FormItem>
             <Content /> */}
-            <Card
-              title={
-                <div>
-                  <span className='mr10'>专题类型</span>
-                  <Radio.Group>
-                    <Radio value={1}>一般类型</Radio>
-                    <Radio value={2}>多类目类型</Radio>
-                  </Radio.Group>
-                </div>
-              }
-            >
-              <p>类目通用优惠券</p>
-              <CouponCard
-                detail={{
-                  type: 2,
-                  sort: '',
-                  list: []
-                }}
-                onChange={(value: any) => {
-                   
-                }}
-              />
-            </Card>
-            <Card>
-              <FormItem
-                name='css'
-                label='类目样式'
-                type='radio'
-                options={[{
-                  label: '横排',
-                  value: 1
-                }, {
-                  label: '竖排',
-                  value: 2
-                }]}
-              />
-              <FormItem
-                label='类目列表'
-              >
-
-              </FormItem>
-              <FormItem
-                name='categoryName'
-                label='类目名称'
-                controlProps={{
-                  style: {
-                    width: 172
-                  }
-                }}
-              />
-              <FormItem
-                name='sort'
-                label='排序'
-                controlProps={{
-                  style: {
-                    width: 172
-                  }
-                }}
-              />
-              <FormItem
-                label='绑定专题内容'
-                inner={(form) => {
-                  return (
-                    <>
-                      {form.getFieldDecorator('specName')(
-                        <AutoComplete
-                          placeholder='请输入专题内容标题关键字'
-                          style={{ width: 172 }}
-                        />
-                      )}
-                      <span className={classnames('ml10', styles['download'])}>专题管理</span>
-                    </>
-                  )
-                }}
-              />
-            </Card>
-            <Card>
-              <FormItem
-                name='categoryName'
-                label='类目名称'
-                controlProps={{
-                  style: {
-                    width: 172
-                  }
-                }}
-              />
-              <FormItem
-                name='sort'
-                type='number'
-                label='排序'
-                controlProps={{
-                  style: {
-                    width: 172
-                  },
-                  min: 0
-                }}
-              />
-              <FormItem
-                label='绑定专题页'
-                inner={(form) => {
-                  return (
-                    <>
-                      {form.getFieldDecorator('specName')(
+            <div className={styles['spec-type-title']}>
+              <span className='mr10'>专题类型</span>
+              <Radio.Group
+                value={this.state.type}
+                onChange={(e) => this.setState({ type: e.target.value})}>
+                <Radio value={1}>一般类型</Radio>
+                <Radio value={2}>多类目类型</Radio>
+              </Radio.Group>
+            </div>
+            {/* 一般类型 */}
+            {this.state.type === 1 && (
+              <Card style={{ marginTop: 0 }}>
+                <FormItem
+                  label='绑定专题内容'
+                  inner={(form) => {
+                    return (
+                      <>
                         <Input
-                          style={{ width: 172 }}
-                          placeholder='请输入专题'
+                          style={{ width: 220 }}
+                          placeholder='请输入专题内容标题关键字'
                         />
-                      )}
-                      <span className={classnames('ml10', styles['download'])}>编辑详情</span>
-                      <span className={classnames('ml10', styles['download'])}>解除绑定</span>
-                      <span className={classnames('ml10', styles['download'])}>专题管理</span>
-                    </>
-                  )
-                }}
-              />
-            </Card>
+                        <span className={classnames('ml10', styles['download'])}>专题管理</span>
+                      </>
+                    )
+                  }}
+                />
+              </Card>
+            )}
+            {/* 多类目类型 */}
+            {this.state.type === 2 && (
+              <>
+                <Card style={{ marginTop: 0 }}>
+                  <p>类目通用优惠券</p>
+                  <CouponCard
+                    detail={{
+                      type: 2,
+                      sort: '',
+                      list: []
+                    }}
+                    onChange={(value: any) => {
+                      
+                    }}
+                  />
+                </Card>
+                <Card>
+                  <FormItem
+                    name='css'
+                    label='类目样式'
+                    type='radio'
+                    options={[{
+                      label: '横排',
+                      value: 1
+                    }, {
+                      label: '竖排',
+                      value: 2
+                    }]}
+                  />
+                  <FormItem
+                    label='类目列表'
+                  >
+
+                  </FormItem>
+                  <FormItem
+                    name='categoryName'
+                    label='类目名称'
+                    controlProps={{
+                      style: {
+                        width: 220
+                      }
+                    }}
+                  />
+                  <FormItem
+                    name='sort'
+                    label='排序'
+                    controlProps={{
+                      style: {
+                        width: 220
+                      }
+                    }}
+                  />
+                  <FormItem
+                    label='绑定专题内容'
+                    inner={(form) => {
+                      return (
+                        <>
+                          {form.getFieldDecorator('specName')(
+                            <AutoComplete
+                              placeholder='请输入专题内容标题关键字'
+                              style={{ width: 220 }}
+                            />
+                          )}
+                          <span className={classnames('ml10', styles['download'])}>专题管理</span>
+                        </>
+                      )
+                    }}
+                  />
+                </Card>
+                <Card>
+                  <FormItem
+                    name='categoryName'
+                    label='类目名称'
+                    controlProps={{
+                      style: {
+                        width: 220
+                      }
+                    }}
+                  />
+                  <FormItem
+                    name='sort'
+                    type='number'
+                    label='排序'
+                    controlProps={{
+                      style: {
+                        width: 220
+                      },
+                      min: 0
+                    }}
+                  />
+                  <FormItem
+                    label='绑定专题页'
+                    inner={(form) => {
+                      return (
+                        <>
+                          {form.getFieldDecorator('specName')(
+                            <Input
+                              style={{ width: 220 }}
+                              placeholder='请输入专题'
+                            />
+                          )}
+                          <span className={classnames('ml10', styles['download'])}>编辑详情</span>
+                          <span className={classnames('ml10', styles['download'])}>解除绑定</span>
+                          <span className={classnames('ml10', styles['download'])}>专题管理</span>
+                        </>
+                      )
+                    }}
+                  />
+                </Card>
+              </>
+            )}
             <div className={styles.footer}>
               <Button
                 loading={this.state.loading}
