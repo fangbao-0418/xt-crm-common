@@ -54,17 +54,19 @@ const LogisticsInfo = ({ logistics = {}, orderInfo = {}, onSuccess, mainorderInf
           </Col>
         </Row>
       ))}
-      <DeliveryModal
-        visible={visible}
-        mainorderInfo={mainorderInfo}
-        logistics={orderInfo}
-        title="修改物流信息"
-        onSuccess={onOk}
-        data={data}
-        onCancel={() => {
-          setVisible(false);
-        }}
-      />
+      {visible && (
+        <DeliveryModal
+          visible={visible}
+          mainorderInfo={mainorderInfo}
+          logistics={orderInfo}
+          title="修改物流信息"
+          onSuccess={onOk}
+          data={data}
+          onCancel={() => {
+            setVisible(false);
+          }}
+        />
+      )}
     </div>
   ) : null;
 };
