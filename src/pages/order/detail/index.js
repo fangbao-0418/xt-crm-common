@@ -51,9 +51,10 @@ const orderPushCustomsStatusConfig = {
  */
 const paymentPushCustomsStatusConifg = {
   '1': '未推送',
-  '2': '已推送',
+  '2': '已推送属地',
   '3': '处理成功',
-  '4': '处理失败'
+  '4': '处理失败',
+  '5': '已推送总署'
 }
 const { confirm } = Modal;
 
