@@ -342,7 +342,7 @@ class Main extends React.Component<Props, State> {
       <Card
         size="small"
         title={typeConfig[detail.type].title}
-        style={{ width: 800 }}
+        // style={{ width: 800 }}
         extra={
           <div>
             序号：
