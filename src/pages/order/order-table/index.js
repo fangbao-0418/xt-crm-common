@@ -227,7 +227,7 @@ class OrderList extends React.Component {
             </Button>
             <Divider type="vertical" />
             {Number(orderType) !== 70 && orderStatus === enumOrderStatus.Undelivered && (
-              <Button type="link" href={window.location.pathname + `/#/order/detail/${orderCode}`} target="_blank">
+              <Button type="link" href={window.location.pathname + `#/order/detail/${orderCode}`} target="_blank">
                 发货
               </Button>
             )}
