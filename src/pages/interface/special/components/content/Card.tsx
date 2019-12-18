@@ -23,8 +23,12 @@ interface Props {
   dispatch: any;
   detail: Special.DetailContentProps;
   onChange?: (value?: Special.DetailContentProps) => void;
+  extra?: boolean
 }
 class Main extends React.Component<Props, State> {
+  public static defaultProps = {
+    extra: true
+  }
   public tempList: Shop.ShopItemProps[] = [];
 
   public tempCrmCoupons: Coupon.CouponItemProps[] = [];
@@ -338,13 +342,13 @@ class Main extends React.Component<Props, State> {
   }
 
   public render() {
-    const detail = this.props.detail;
+    const detail = this.props.detail
     return (
       <Card
         size="small"
         title={typeConfig[detail.type].title}
         // style={{ width: 800 }}
-        extra={
+        extra={!!this.props.extra && (
           <div>
             序号：
             <Input
@@ -368,11 +372,11 @@ class Main extends React.Component<Props, State> {
                   onOk: () => {
                     this.onChange();
                   },
-                });
+                })
               }}
             />
           </div>
-        }
+        )}
       >
         {this.renderLayout()}
       </Card>

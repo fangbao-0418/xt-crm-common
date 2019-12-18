@@ -78,8 +78,9 @@ class Main extends React.Component<Props, State> {
         const params = {
           ...this.props.detail,
           ...value,
-          shareOpen: this.state.shareOpen ? 1 : 0
-        };
+          shareOpen: this.state.shareOpen ? 1 : 0,
+          type: this.state.type
+        }
         api.saveSpecial(params).then((res: any) => {
           if (!!res) {
             APP.success(`专题${this.id === -1 ? '新增' : '修改'}成功`)
@@ -107,9 +108,19 @@ class Main extends React.Component<Props, State> {
       }
     ] : detail.shareImgUrl;
   }
+  /** 弹出选择专题内容  */
   public handleModal () {
+    const { floorId } = this.form.getValues()
     this.props.modal({
-      visible: true
+      visible: true,
+      floorId,
+      cb: (hide: () => void, res?: any) => {
+        console.log(res.floorName, '-------------')
+        this.form.setValues({
+          floorId: res && res.id
+        })
+        hide()
+      }
     })
   }
   public render() {
@@ -250,6 +261,7 @@ class Main extends React.Component<Props, State> {
                         })(
                           <AutoComplateSpec
                             controlProps={{
+                              disabled: true,
                               style: { width: 220 },
                               placeholder: '请输入专题内容标题关键字'
                             }}
@@ -273,9 +285,9 @@ class Main extends React.Component<Props, State> {
                 <Card style={{ marginTop: 0 }}>
                   <p>类目通用优惠券</p>
                   <CouponCard
+                    extra={false}
                     detail={{
                       type: 2,
-                      sort: '',
                       list: []
                     }}
                     onChange={(value: any) => {
