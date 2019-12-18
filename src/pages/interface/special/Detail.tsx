@@ -1,11 +1,10 @@
 import React from 'react'
-import CouponCard from './components/content/Card'
+import CouponCard from './components/CouponCard'
 import { Input, Button, Card, Switch, Radio, Tabs, InputNumber } from 'antd'
 import { withRouter, RouteComponentProps } from 'react-router'
 import Upload from '@/components/upload'
 import * as api from './api'
 import styles from './style.module.sass'
-import { namespace } from './model'
 import classnames from 'classnames'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import AutoComplateSpec from './components/AutoComplateSpec'
@@ -13,7 +12,6 @@ import withModal, { Options } from './components/withModal'
 import { Item } from './components/list'
 
 interface Props extends RouteComponentProps<{ id: any }> {
-  detail: Special.DetailProps
   modal: {
     specContentModal: (opts: Options) => void
     categoryModal: (opts: any) => void
@@ -24,8 +22,10 @@ interface State {
   type: 1 | 2
   categorys: any[],
   activeKey: string
-  subjectCoupons: Special.SubjectCoupons[]
-  couponStyle: 1 | 2
+  detail: {
+    css: 1 | 2,
+    subjectCoupons: Special.SubjectCoupons[]
+  }
 }
 
 @withModal
@@ -35,11 +35,10 @@ class Main extends React.Component<Props, State> {
     type: 1,
     categorys: [],
     activeKey: '1',
-    couponStyle: 1,
-    subjectCoupons: [{
-      code: '',
-      name: ''
-    }]
+    detail: {
+      css: 1,
+      subjectCoupons: []
+    }
   }
   public newTabIndex: number = 1
   public id: number = -1
@@ -79,46 +78,19 @@ class Main extends React.Component<Props, State> {
   }
   /** 新增、编辑专题 */
   public handleSubmit = () => {
-    this.form.props.form.validateFields((err: any, value) => {
+    this.form.props.form.validateFields(async (err: any, value) => {
       if (!err) {
-        if (value.imgUrl instanceof Array) {
-          value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
-        }
-        if (value.shareImgUrl instanceof Array) {
-          value.shareImgUrl = value.shareImgUrl[0] && value.shareImgUrl[0].url
-        }
-        const params = {
-          ...this.props.detail,
+        const res = await api.saveSpecial({
           ...value,
-          shareOpen: this.state.shareOpen ? 1 : 0,
+          shareOpen: this.state.shareOpen,
           type: this.state.type
-        }
-        api.saveSpecial(params).then((res: any) => {
-          if (!!res) {
-            APP.success(`专题${this.id === -1 ? '新增' : '修改'}成功`)
-            APP.history.push('/interface/special')
-          }
         })
+        if (res) {
+          APP.success(`专题${this.id === -1 ? '新增' : '修改'}成功`)
+          APP.history.push('/interface/special')
+        }
       }
     })
-  }
-  public get imgUrl(): string | { uid: string, url: string }[] {
-    const { detail } = this.props
-    return typeof detail.imgUrl === 'string' ? [
-      {
-        uid: 'imgUrl0',
-        url: detail.imgUrl
-      }
-    ] : detail.imgUrl;
-  }
-  public get shareImgUrl (): string | { uid: string, url: string }[] {
-    const { detail } = this.props
-    return typeof detail.shareImgUrl === 'string' ? [
-      {
-        uid: 'imgUrl0',
-        url: detail.shareImgUrl
-      }
-    ] : detail.shareImgUrl;
   }
   /** 弹出选择专题内容  */
   public handleModal = () => {
@@ -168,7 +140,7 @@ class Main extends React.Component<Props, State> {
     this.setState({ shareOpen })
   }
   public render() {
-    const { shareOpen, couponStyle, subjectCoupons } = this.state
+    const { shareOpen, detail } = this.state
     return (
       <Card
         title='新增/编辑专题'
@@ -325,16 +297,11 @@ class Main extends React.Component<Props, State> {
                 <Card style={{ marginTop: 0 }}>
                   <p>类目通用优惠券</p>
                   <CouponCard
-                    detail={{
-                      type: 2,
-                      css: couponStyle,
-                      subjectCoupons
-                    }}
                     extra={false}
-                    onChange={(value: any) => {
-                      this.setState({
-                        couponStyle: value.css
-                      })
+                    detail={detail}
+                    onChange={(detail: any) => {
+                      this.setState({ detail })
+                      console.log('detail => ', detail)
                     }}
                   />
                 </Card>

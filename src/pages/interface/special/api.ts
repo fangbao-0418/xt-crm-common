@@ -2,7 +2,7 @@ import { get, newPost, post, request } from '@/util/fetch'
 import * as adapter from './adapter'
 
 export function saveSpecial(payload: Special.DetailProps) {
-  const data = adapter.mapDetailToRequestParams(payload)
+  const data = adapter.saveSpecialParams(payload)
   return newPost('/crm/subject/save', data)
 }
 

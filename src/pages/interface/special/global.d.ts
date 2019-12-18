@@ -12,6 +12,7 @@ declare module Special {
     coupons?: Coupon.CouponItemProps[]
     /** 广告链接 */
     advertisementJumpUrl?: string
+    crmCoupons: any[]
   }
   export interface DetailProps {
     /** 背景颜色 */
@@ -45,6 +46,7 @@ declare module Special {
     floorId: number
     /** 专题优惠券*/
     subjectCoupons: SubjectCoupons[]
+    crmCoupons: any[]
   }
   interface SubjectCoupons {
     /** 优惠券编号 */
