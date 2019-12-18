@@ -9,7 +9,7 @@ declare module Special {
     list: Shop.ShopItemProps[]
     /** 广告图 */
     advertisementUrl?: string
-    crmCoupons?: Coupon.CouponItemProps[]
+    coupons?: Coupon.CouponItemProps[]
     /** 广告链接 */
     advertisementJumpUrl?: string
   }
@@ -24,7 +24,9 @@ declare module Special {
     items: string
     jumpUrl: string
     shareImgUrl: string | {uid: string, url: string}[]
-    shareOpen: number
+    shareOpen: number,
+    /** 一般类型 楼层ID */
+    floorId: number
   }
   export interface SearchProps {
     subjectId?: number

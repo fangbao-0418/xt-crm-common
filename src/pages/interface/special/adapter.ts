@@ -28,7 +28,7 @@ export function mapDetailToRequestParams(detail: Special.DetailItem) {
       case 1:
         return requestParamsCreator(column, column.list);
       case 2:
-        return requestParamsCreator(column, column.crmCoupons);
+        return requestParamsCreator(column, column.coupons);
       case 3:
         return {
           type: column.type,

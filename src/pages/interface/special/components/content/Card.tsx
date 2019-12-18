@@ -237,8 +237,8 @@ class Main extends React.Component<Props, State> {
   public renderCoupon(): React.ReactNode {
     const { detail } = this.props;
     detail.css = detail.css || 1;
-    const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons);
-    this.tempCrmCoupons = Array.prototype.concat(detail.crmCoupons || []);
+    const selectedRowKeys = this.getSelectedRowKeys(detail.coupons);
+    this.tempCrmCoupons = Array.prototype.concat(detail.coupons || []);
     return (
       <div>
         <Row gutter={12}>
@@ -253,17 +253,18 @@ class Main extends React.Component<Props, State> {
             >
               <Radio value={1}>1*1</Radio>
               <Radio value={2}>1*2</Radio>
+              {detail.type === 1 && <Radio value={3}>1*3</Radio>}
             </Radio.Group>
           </Col>
         </Row>
         <Row gutter={12}>
           <Col span={21} offset={3}>
-            {detail.crmCoupons && (
+            {detail.coupons && (
               <Coupon
-                dataSource={detail.crmCoupons}
+                dataSource={detail.coupons}
                 onChange={value => {
-                  detail.crmCoupons = value;
-                  console.log('crmCoupons=>', detail.crmCoupons);
+                  detail.coupons = value;
+                  console.log('coupons=>', detail.coupons);
                   this.onChange(detail);
                 }}
               />
@@ -303,7 +304,7 @@ class Main extends React.Component<Props, State> {
               }}
               onOk={() => {
                 this.tempCrmCoupons = this.tempCrmCoupons.filter(item => !!item);
-                detail.crmCoupons = this.tempCrmCoupons;
+                detail.coupons = this.tempCrmCoupons;
                 this.onChange(detail);
                 this.setState({ couponVisible: false });
               }}

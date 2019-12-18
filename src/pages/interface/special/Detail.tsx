@@ -1,7 +1,6 @@
 import React from 'react'
 import CouponCard from './components/content/Card'
 import { Input, Button, Card, Switch, Radio, AutoComplete } from 'antd'
-import { FormComponentProps } from 'antd/lib/form'
 import { withRouter, RouteComponentProps } from 'react-router'
 import { connect } from 'react-redux'
 import Upload from '@/components/upload'
@@ -10,64 +9,46 @@ import styles from './style.module.sass'
 import { namespace } from './model'
 import classnames from 'classnames'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import AutoComplateSpec from './components/AutoComplateSpec'
 
-interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
+interface Props extends RouteComponentProps<{ id: any }> {
   detail: Special.DetailItem
 }
 interface State {
-  loading: boolean;
   shareOpen: boolean;
   type: 1 | 2
 }
 class Main extends React.Component<Props, State> {
   public state: State = {
-    loading: false,
     shareOpen: true,
     type: 1
   }
-  public id = '-1'
+  public id: number = -1
   public form: FormInstance
   public constructor(props: Props) {
     super(props)
-    this.addContent = this.addContent.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
   public componentDidMount() {
-    const { id } = this.props.match.params;
-    if (id === '-1') {
+    this.id = +this.props.match.params.id
+    if (this.id === -1) {
       this.setState({ shareOpen: true })
     } else {
       this.fetchData()
     }
   }
+  /** 组件卸载清空状态 */
   public componentWillUnmount() {
     APP.dispatch({
       type: `${namespace}/@@init`
     })
   }
-  public addContent(type: 1 | 2 | 3) {
-    const { detail } = this.props
-    detail.list.push({
-      type,
-      sort: 0,
-      list: [],
-      crmCoupons: []
-    })
-    APP.dispatch({
-      type: `${namespace}/changeDetail`,
-      payload: { ...detail }
-    })
-  }
+  /** crm查看专题活动详情 */
   public fetchData() {
-    const id = this.props.match.params.id
-    this.id = id
-    if (id === '-1') {
-      return
-    }
     APP.dispatch({
       type: `${namespace}/fetchDetail`,
       payload: {
-        id,
+        id: this.id,
         cb: (result: any) => {
           this.setState({
             shareOpen: result.shareOpen === 1
@@ -79,15 +60,13 @@ class Main extends React.Component<Props, State> {
   handleSwitch = (checked: boolean) => {
     this.setState({ shareOpen: checked });
   }
+  /** 新增、编辑专题 */
   public handleSubmit(e: any) {
     e.preventDefault()
-    this.props.form.validateFields((err: any, value) => {
+    this.form.props.form.validateFields((err: any, value) => {
       if (err) {
         return
       }
-      this.setState({
-        loading: true
-      })
       if (value.imgUrl instanceof Array) {
         value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
       }
@@ -100,17 +79,10 @@ class Main extends React.Component<Props, State> {
         shareOpen: this.state.shareOpen ? 1 : 0
       };
       api.saveSpecial(params).then((res: any) => {
-        this.setState({
-          loading: false
-        })
         if (res !== undefined) {
-          APP.success(`专题${this.id === '-1' ? '新增' : '修改'}成功`)
+          APP.success(`专题${this.id === -1 ? '新增' : '修改'}成功`)
           APP.history.push('/interface/special')
         }
-      }, () => {
-        this.setState({
-          loading: false
-        })
       })
     })
   }
@@ -132,16 +104,11 @@ class Main extends React.Component<Props, State> {
       }
     ] : detail.shareImgUrl;
   }
+  /** 跳转到专题管理 */
+  public handleJumpTo () {
+    APP.history.push('/interface/special-content')
+  }
   public render() {
-    const { getFieldDecorator } = this.props.form
-    const formItemLayout = {
-      labelCol: {
-        span: 6
-      },
-      wrapperCol: {
-        span: 18
-      },
-    };
     const { detail } = this.props
     return (
       <div className={styles.detail}>
@@ -149,7 +116,6 @@ class Main extends React.Component<Props, State> {
           <Form
             getInstance={ref => this.form = ref}
             className={styles.form}
-            {...formItemLayout}
             onSubmit={this.handleSubmit}
           >
             <FormItem
@@ -163,12 +129,17 @@ class Main extends React.Component<Props, State> {
                 ]
               }}
             />
-            <FormItem label='支持专题分享'>
-              <>
-                <Switch checked={this.state.shareOpen} onChange={this.handleSwitch} />
-                <p>关闭专题分享时，则隐藏专题页面分享按钮，无法分享专题。</p>
-              </>
-            </FormItem>
+            <FormItem
+              label='支持专题分享'
+              inner={(form) => {
+                return form.getFieldDecorator('shareOpen')(
+                  <>
+                    <Switch checked={this.state.shareOpen} onChange={this.handleSwitch} />
+                    <p>关闭专题分享时，则隐藏专题页面分享按钮，无法分享专题。</p>
+                  </>
+                )
+              }}
+            />
             {this.state.shareOpen &&
               <>
                 <FormItem
@@ -254,25 +225,6 @@ class Main extends React.Component<Props, State> {
                 ]
               }}
             />
-            {/* <FormItem
-              label='添加楼层'
-            >
-              <Button
-                type='primary'
-                className={styles.mr10}
-                onClick={() => this.addContent(3)}
-              >
-                广告
-              </Button>
-              <Button type='primary' className={styles.mr10} onClick={() => this.addContent(2)}>优惠券</Button>
-              <Button
-                type='primary'
-                onClick={() => this.addContent(1)}
-              >
-                商品
-              </Button>
-            </FormItem>
-            <Content /> */}
             <div className={styles['spec-type-title']}>
               <span className='mr10'>专题类型</span>
               <Radio.Group
@@ -290,11 +242,22 @@ class Main extends React.Component<Props, State> {
                   inner={(form) => {
                     return (
                       <>
-                        <Input
-                          style={{ width: 220 }}
-                          placeholder='请输入专题内容标题关键字'
-                        />
-                        <span className={classnames('ml10', styles['download'])}>专题管理</span>
+                        {form.getFieldDecorator('floorId', {
+                          initialValue: detail.floorId
+                        })(
+                          <AutoComplateSpec
+                            controlProps={{
+                              style: { width: 220 },
+                              placeholder: '请输入专题内容标题关键字'
+                            }}
+                          />
+                        )}
+                        <span
+                          className={classnames('ml10', styles['download'])}
+                          onClick={this.handleJumpTo}
+                        >
+                          专题管理
+                        </span>
                       </>
                     )
                   }}
@@ -414,7 +377,6 @@ class Main extends React.Component<Props, State> {
             )}
             <div className={styles.footer}>
               <Button
-                loading={this.state.loading}
                 type='primary'
                 htmlType='submit'
                 style={{ marginRight: 20 }}
@@ -435,8 +397,8 @@ class Main extends React.Component<Props, State> {
     )
   }
 }
-export default Form.create()(connect((state: any) => {
+export default connect((state: any) => {
   return {
     detail: state[namespace].detail
   }
-})(withRouter(Main)))
+})(withRouter(Main))
