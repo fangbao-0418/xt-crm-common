@@ -40,9 +40,21 @@ declare module Special {
     /** 分享图片 */
     shareImgUrl: any
     /** 分享开关，1-开启，0-关闭 */
-    shareOpen: number
+    shareOpen: 1 | 0
     /** 一般类型 楼层ID */
     floorId: number
+    /** 专题优惠券*/
+    subjectCoupons: SubjectCoupons[]
+  }
+  interface SubjectCoupons {
+    /** 优惠券编号 */
+    code: string
+    /** 优惠券ID */
+    id?: number
+    /** 优惠券名称 */
+    name: string
+    /** 排序 */
+    sort?: number
   }
   interface CategorysItem {
     /** 类目关联楼层id */

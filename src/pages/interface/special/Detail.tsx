@@ -22,10 +22,10 @@ interface Props extends RouteComponentProps<{ id: any }> {
 interface State {
   shareOpen: boolean
   type: 1 | 2
-  cateText: any[],
   categorys: any[],
   activeKey: string
-  couponStyle: number
+  subjectCoupons: Special.SubjectCoupons[]
+  couponStyle: 1 | 2
 }
 
 @withModal
@@ -33,10 +33,13 @@ class Main extends React.Component<Props, State> {
   public state: State = {
     shareOpen: true,
     type: 1,
-    cateText: [],
     categorys: [],
     activeKey: '1',
-    couponStyle: 1
+    couponStyle: 1,
+    subjectCoupons: [{
+      code: '',
+      name: ''
+    }]
   }
   public newTabIndex: number = 1
   public id: number = -1
@@ -44,26 +47,15 @@ class Main extends React.Component<Props, State> {
   public componentDidMount() {
     this.id = +this.props.match.params.id
     /** 新增 */
-    if (this.id === -1) {
-      this.setState({ shareOpen: true })
-    } else {
+    if (this.id !== -1) {
       this.fetchData()
     }
   }
   /** crm查看专题活动详情 */
-  public fetchData() {
-    APP.dispatch({
-      type: `${namespace}/fetchDetail`,
-      payload: {
-        id: this.id,
-        cb: (res: any) => {
-          this.setState({
-            shareOpen: res.shareOpen === 1
-          })
-          this.form.setValues(res)
-        }
-      }
-    })
+  public async fetchData() {
+    const res = await api.fetchSpecialDetial(this.id)
+    this.setState({ shareOpen: res.shareOpen })
+    this.form.setValues(res)
   }
   /** 切换面板的回调 */
   public onChange = (activeKey: string) => {
@@ -84,9 +76,6 @@ class Main extends React.Component<Props, State> {
       sort: ''
     })
     this.setState({ categorys });
-  }
-  handleSwitch = (checked: boolean) => {
-    this.setState({ shareOpen: checked });
   }
   /** 新增、编辑专题 */
   public handleSubmit = () => {
@@ -168,24 +157,18 @@ class Main extends React.Component<Props, State> {
     }
     this.setState({ categorys })
   }
-  /** 添加类目 */
-  public handleAddCategory = () => {
-    this.props.modal.categoryModal({
-      categoryVisible: true,
-      cb: (hide: () => void, cateText: any[]) => {
-        this.setState({ cateText })
-        hide()
-      }
-    })
-  }
   /** 解除绑定 */
   public handleClearFloor = () => {
     this.form.setValues({
       floorId: ''
     })
   }
+  /** 开关选择器 */
+  public handleSwitchChange = (shareOpen: boolean) => {
+    this.setState({ shareOpen })
+  }
   public render() {
-    const { cateText } = this.state
+    const { shareOpen, couponStyle, subjectCoupons } = this.state
     return (
       <Card
         title='新增/编辑专题'
@@ -206,17 +189,13 @@ class Main extends React.Component<Props, State> {
                 ]
               }}
             />
-            <FormItem
-              label='支持专题分享'
-              inner={(form) => {
-                return form.getFieldDecorator('shareOpen')(
-                  <>
-                    <Switch checked={this.state.shareOpen} onChange={this.handleSwitch} />
-                    <p>关闭专题分享时，则隐藏专题页面分享按钮，无法分享专题。</p>
-                  </>
-                )
-              }}
-            />
+            <FormItem label='支持专题分享'>
+              <Switch
+                checked={shareOpen}
+                onChange={this.handleSwitchChange}
+              />
+              <p>关闭专题分享时，则隐藏专题页面分享按钮，无法分享专题。</p>
+            </FormItem>
             {this.state.shareOpen &&
               <>
                 <FormItem
@@ -348,7 +327,8 @@ class Main extends React.Component<Props, State> {
                   <CouponCard
                     detail={{
                       type: 2,
-                      css: this.state.couponStyle
+                      css: couponStyle,
+                      subjectCoupons
                     }}
                     extra={false}
                     onChange={(value: any) => {

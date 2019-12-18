@@ -5,10 +5,12 @@ import Content from '../components/content'
 import { namespace } from './model'
 import styles from '../style.module.sass'
 import { RouteComponentProps, withRouter } from 'react-router'
-interface Props extends RouteComponentProps<{ id: any }> {
+import { queryFloorDetail } from './api'
+
+interface States {
   detail: Special.DetailProps
 }
-class Main extends React.Component<Props, any> {
+class Main extends React.Component<RouteComponentProps<any>, any> {
   public form: FormInstance
   public id: number = -1
   public componentDidMount () {
@@ -21,7 +23,7 @@ class Main extends React.Component<Props, any> {
   }
   /** 添加楼层 */
   public addContent = (type: 1 | 2 | 3) => {
-    const { detail } = this.props
+    const { detail } = this.state
     detail.list.push({
       type,
       sort: 0,
@@ -35,15 +37,8 @@ class Main extends React.Component<Props, any> {
   }
   /** 获取楼层详情 */
   public async fetchDetail () {
-    APP.dispatch({
-      type: `${namespace}/fetchDetail`,
-      payload: {
-        id: this.id,
-        cb: (res: any) => {
-          this.form.setValues(res)
-        }
-      }
-    })    
+    const res = queryFloorDetail(this.id)
+    this.form.setValues(res)   
   }
   /** 保存 */
   public handleSave = () => {

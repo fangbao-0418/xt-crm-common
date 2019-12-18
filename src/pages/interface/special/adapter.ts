@@ -1,13 +1,9 @@
 import { replaceHttpUrl } from '@/util/utils'
 
-/** 转换详情数据 */
-export function conversionDetails (res: any) {
-  let result: any = {}
-  result.list = res && res.list || []
-  return {
-    ...res,
-    ...result
-  }
+/** 过滤专题详情响应 */
+export function specDetailResponse (res: any) {
+  res.shareOpen = res.shareOpen === 1
+  return res
 }
 
 function requestParamsCreator(column: Special.DetailContentProps, list: any) {
