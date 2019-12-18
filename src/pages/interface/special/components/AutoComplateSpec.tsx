@@ -27,7 +27,7 @@ class Main extends React.Component<Props, State> {
     const dataSource: DataSourceItemType[] = res.records
       .map((v: any) => ({
         text: v.floorName,
-        value: String(v.id)
+        value: v.id && String(v.id)
       }))
     this.setState({
       dataSource
@@ -35,14 +35,15 @@ class Main extends React.Component<Props, State> {
   }
 
   public render () {
-    const { controlProps, value } = this.props
+    const { controlProps, value, onChange } = this.props
     console.log('floorId => ', value)
     const { dataSource } = this.state
     return (
       <AutoComplete
         {...controlProps}
         dataSource={dataSource}
-        value={String(value)}
+        value={value && String(value)}
+        onChange={onChange}
       />
     )
   }  

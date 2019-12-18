@@ -1,6 +1,6 @@
 import React from 'react'
 import CouponCard from './components/content/Card'
-import { Input, Button, Card, Switch, Radio, AutoComplete } from 'antd'
+import { Input, Button, Card, Switch, Radio } from 'antd'
 import { withRouter, RouteComponentProps } from 'react-router'
 import { connect } from 'react-redux'
 import Upload from '@/components/upload'
@@ -10,14 +10,18 @@ import { namespace } from './model'
 import classnames from 'classnames'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import AutoComplateSpec from './components/AutoComplateSpec'
+import withModal, { Options } from './components/SpecContentModal'
 
 interface Props extends RouteComponentProps<{ id: any }> {
   detail: Special.DetailItem
+  modal: (opts: Options) => void
 }
 interface State {
   shareOpen: boolean;
   type: 1 | 2
 }
+
+@withModal
 class Main extends React.Component<Props, State> {
   public state: State = {
     shareOpen: true,
@@ -28,6 +32,7 @@ class Main extends React.Component<Props, State> {
   public constructor(props: Props) {
     super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleModal = this.handleModal.bind(this)
   }
   public componentDidMount() {
     this.id = +this.props.match.params.id
@@ -61,29 +66,27 @@ class Main extends React.Component<Props, State> {
     this.setState({ shareOpen: checked });
   }
   /** 新增、编辑专题 */
-  public handleSubmit(e: any) {
-    e.preventDefault()
+  public handleSubmit() {
     this.form.props.form.validateFields((err: any, value) => {
-      if (err) {
-        return
-      }
-      if (value.imgUrl instanceof Array) {
-        value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
-      }
-      if (value.shareImgUrl instanceof Array) {
-        value.shareImgUrl = value.shareImgUrl[0] && value.shareImgUrl[0].url
-      }
-      const params = {
-        ...this.props.detail,
-        ...value,
-        shareOpen: this.state.shareOpen ? 1 : 0
-      };
-      api.saveSpecial(params).then((res: any) => {
-        if (res !== undefined) {
-          APP.success(`专题${this.id === -1 ? '新增' : '修改'}成功`)
-          APP.history.push('/interface/special')
+      if (!err) {
+        if (value.imgUrl instanceof Array) {
+          value.imgUrl = value.imgUrl[0] && value.imgUrl[0].url
         }
-      })
+        if (value.shareImgUrl instanceof Array) {
+          value.shareImgUrl = value.shareImgUrl[0] && value.shareImgUrl[0].url
+        }
+        const params = {
+          ...this.props.detail,
+          ...value,
+          shareOpen: this.state.shareOpen ? 1 : 0
+        };
+        api.saveSpecial(params).then((res: any) => {
+          if (!!res) {
+            APP.success(`专题${this.id === -1 ? '新增' : '修改'}成功`)
+            APP.history.push('/interface/special')
+          }
+        })
+      }
     })
   }
   public get imgUrl(): string | { uid: string, url: string }[] {
@@ -95,7 +98,7 @@ class Main extends React.Component<Props, State> {
       }
     ] : detail.imgUrl;
   }
-  public get shareImgUrl(): string | { uid: string, url: string }[] {
+  public get shareImgUrl (): string | { uid: string, url: string }[] {
     const { detail } = this.props
     return typeof detail.shareImgUrl === 'string' ? [
       {
@@ -104,19 +107,19 @@ class Main extends React.Component<Props, State> {
       }
     ] : detail.shareImgUrl;
   }
-  /** 跳转到专题管理 */
-  public handleJumpTo () {
-    APP.history.push('/interface/special-content')
+  public handleModal () {
+    this.props.modal({
+      visible: true
+    })
   }
   public render() {
     const { detail } = this.props
     return (
-      <div className={styles.detail}>
+      <Card title='新增/编辑专题' className={styles.detail}>
         <div className={styles.content}>
           <Form
             getInstance={ref => this.form = ref}
             className={styles.form}
-            onSubmit={this.handleSubmit}
           >
             <FormItem
               name='subjectName'
@@ -254,9 +257,9 @@ class Main extends React.Component<Props, State> {
                         )}
                         <span
                           className={classnames('ml10', styles['download'])}
-                          onClick={this.handleJumpTo}
+                          onClick={this.handleModal}
                         >
-                          专题管理
+                          选择内容
                         </span>
                       </>
                     )
@@ -281,7 +284,7 @@ class Main extends React.Component<Props, State> {
                   />
                 </Card>
                 <Card>
-                  <FormItem
+                  {/* <FormItem
                     name='css'
                     label='类目样式'
                     type='radio'
@@ -292,7 +295,7 @@ class Main extends React.Component<Props, State> {
                       label: '竖排',
                       value: 2
                     }]}
-                  />
+                  /> */}
                   <FormItem
                     label='类目列表'
                   >
@@ -321,13 +324,21 @@ class Main extends React.Component<Props, State> {
                     inner={(form) => {
                       return (
                         <>
-                          {form.getFieldDecorator('specName')(
-                            <AutoComplete
-                              placeholder='请输入专题内容标题关键字'
-                              style={{ width: 220 }}
+                          {form.getFieldDecorator('floorId', {
+                            initialValue: detail.floorId
+                          })(
+                            <AutoComplateSpec
+                              controlProps={{
+                                placeholder: '请输入专题内容标题关键字',
+                                style: { width: 220 }
+                              }}
                             />
                           )}
-                          <span className={classnames('ml10', styles['download'])}>专题管理</span>
+                          <span
+                            className={classnames('ml10', styles['download'])}
+                          >
+                            选择内容
+                          </span>
                         </>
                       )
                     }}
@@ -367,7 +378,7 @@ class Main extends React.Component<Props, State> {
                           )}
                           <span className={classnames('ml10', styles['download'])}>编辑详情</span>
                           <span className={classnames('ml10', styles['download'])}>解除绑定</span>
-                          <span className={classnames('ml10', styles['download'])}>专题管理</span>
+                          <span className={classnames('ml10', styles['download'])}>选择内容</span>
                         </>
                       )
                     }}
@@ -378,7 +389,7 @@ class Main extends React.Component<Props, State> {
             <div className={styles.footer}>
               <Button
                 type='primary'
-                htmlType='submit'
+                onClick={this.handleSubmit}
                 style={{ marginRight: 20 }}
               >
                 保存
@@ -393,7 +404,7 @@ class Main extends React.Component<Props, State> {
             </div>
           </Form>
         </div>
-      </div>
+      </Card>
     )
   }
 }
