@@ -5,11 +5,6 @@ import { getDefaultConfig } from '../content/config'
 import { queryFloor } from '../content/api'
 import { ColumnProps } from 'antd/es/table'
 
-export interface Options {
-  visible: boolean,
-  floorId: number,
-  cb: (res: any, hide: () => void) => void
-}
 interface Props {
   visible: boolean,
   selectedRowKeys: string[] | number[]
@@ -24,14 +19,15 @@ interface FloorProps {
   modifyTime: string
   operator: string
 }
-interface RowSelectionOpts {
+export interface RowSelectionOpts {
   selectedRowKeys: string[] | number[],
   selectedRows: any[]
 }
 interface State {
   selectedRowKeys: string[] | number[]
 }
-class SpecContentModal extends React.Component<Props, State> {
+
+class Main extends React.Component<Props, State> {
   public list: ListPageInstanceProps
   public state: State = {
     selectedRowKeys: []
@@ -125,52 +121,4 @@ class SpecContentModal extends React.Component<Props, State> {
   }
 }
 
-
-/** modal高阶组件 */
-function withModal (WrappedComponent: any): any {
-  return class extends React.Component {
-    public constructor (props: any) {
-      super(props)
-      this.modal = this.modal.bind(this)
-      this.handleCancel = this.handleCancel.bind(this)
-    }
-    public state: any = {
-      visible: false,
-      floorId: -1 // 占位
-    }
-    public handleOk: (res: any) => void
-    public modal ({ visible, floorId, cb }: Options) {
-      this.handleOk = (rowSelectionOpts: RowSelectionOpts) => {
-        cb(this.handleCancel, rowSelectionOpts.selectedRows[0])
-      }
-      this.setState({
-        visible,
-        floorId
-      })
-    }
-    public handleCancel () {
-      this.setState({
-        visible: false
-      })
-    }
-    public render () {
-      const { visible } = this.state
-      return (
-        <>
-          <SpecContentModal
-            visible={visible}
-            selectedRowKeys={[this.state.floorId]}
-            onCancel={this.handleCancel}
-            onOk={this.handleOk}
-          />
-          <WrappedComponent
-            modal={this.modal}
-            {...this.props}
-          />
-        </>
-      )
-    }
-  }
-}
-
-export default withModal
+export default Main

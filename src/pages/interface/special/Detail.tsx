@@ -1,6 +1,6 @@
 import React from 'react'
 import CouponCard from './components/content/Card'
-import { Input, Button, Card, Switch, Radio } from 'antd'
+import { Input, Button, Card, Switch, Radio, Icon, Tabs, Row, Col } from 'antd'
 import { withRouter, RouteComponentProps } from 'react-router'
 import { connect } from 'react-redux'
 import Upload from '@/components/upload'
@@ -8,31 +8,44 @@ import * as api from './api'
 import styles from './style.module.sass'
 import { namespace } from './model'
 import classnames from 'classnames'
+import { cloneDeep } from 'lodash'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import AutoComplateSpec from './components/AutoComplateSpec'
-import withModal, { Options } from './components/SpecContentModal'
+import withModal, { Options } from './components/withModal'
+import List, { Item } from './components/list'
 
 interface Props extends RouteComponentProps<{ id: any }> {
   detail: Special.DetailItem
-  modal: (opts: Options) => void
+  modal: {
+    specContentModal: (opts: Options) => void
+    categoryModal: (opts: any) => void
+  }
 }
 interface State {
-  shareOpen: boolean;
+  shareOpen: boolean
   type: 1 | 2
+  cateText: any[],
+  categorys: any[],
+  activeKey: string
 }
 
 @withModal
 class Main extends React.Component<Props, State> {
   public state: State = {
     shareOpen: true,
-    type: 1
+    type: 1,
+    cateText: [],
+    categorys: [],
+    activeKey: '1'
   }
+  public newTabIndex: number = 1
   public id: number = -1
   public form: FormInstance
   public constructor(props: Props) {
     super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleModal = this.handleModal.bind(this)
+    this.handleAddCategory = this.handleAddCategory.bind(this)
   }
   public componentDidMount() {
     this.id = +this.props.match.params.id
@@ -61,6 +74,27 @@ class Main extends React.Component<Props, State> {
         }
       }
     })
+  }
+  /** 切换面板的回调 */
+  public onChange = (activeKey: string) => {
+    this.setState({ activeKey })
+  }
+  
+  /** 新增编辑的回调 */
+  public handleEdit = () => {
+
+  }
+
+  public handleAdd = () => {
+    const { categorys, activeKey } = this.state
+    categorys.push({
+      floorId: '',
+      id: '',
+      name: `类目${this.newTabIndex++}`,
+      sort: ''
+    })
+    console.log('categorys => ', categorys)
+    this.setState({ categorys });
   }
   handleSwitch = (checked: boolean) => {
     this.setState({ shareOpen: checked });
@@ -111,10 +145,10 @@ class Main extends React.Component<Props, State> {
   /** 弹出选择专题内容  */
   public handleModal () {
     const { floorId } = this.form.getValues()
-    this.props.modal({
+    this.props.modal.specContentModal({
       visible: true,
       floorId,
-      cb: (hide: () => void, res?: any) => {
+      cb: (hide: () => void, res: any) => {
         console.log(res.floorName, '-------------')
         this.form.setValues({
           floorId: res && res.id
@@ -123,8 +157,19 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+  /** 添加类目 */
+  public handleAddCategory () {
+    this.props.modal.categoryModal({
+      categoryVisible: true,
+      cb: (hide: () => void, cateText: any[]) => {
+        this.setState({ cateText })
+        hide()
+      }
+    })
+  }
   public render() {
     const { detail } = this.props
+    const { cateText } = this.state
     return (
       <Card title='新增/编辑专题' className={styles.detail}>
         <div className={styles.content}>
@@ -280,7 +325,7 @@ class Main extends React.Component<Props, State> {
               </Card>
             )}
             {/* 多类目类型 */}
-            {this.state.type === 2 && (
+            {this.state.type === 1 && (
               <>
                 <Card style={{ marginTop: 0 }}>
                   <p>类目通用优惠券</p>
@@ -308,53 +353,87 @@ class Main extends React.Component<Props, State> {
                       value: 2
                     }]}
                   /> */}
-                  <FormItem
+                  {/* <FormItem
                     label='类目列表'
                   >
-
-                  </FormItem>
-                  <FormItem
-                    name='categoryName'
-                    label='类目名称'
-                    controlProps={{
-                      style: {
-                        width: 220
-                      }
-                    }}
-                  />
-                  <FormItem
-                    name='sort'
-                    label='排序'
-                    controlProps={{
-                      style: {
-                        width: 220
-                      }
-                    }}
-                  />
-                  <FormItem
-                    label='绑定专题内容'
-                    inner={(form) => {
-                      return (
-                        <>
-                          {form.getFieldDecorator('floorId', {
-                            initialValue: detail.floorId
-                          })(
-                            <AutoComplateSpec
-                              controlProps={{
-                                placeholder: '请输入专题内容标题关键字',
-                                style: { width: 220 }
+                    <div className={styles['intf-cat-rebox']}>
+                      {cateText.map((item: any, index: number) => {
+                        return (
+                          <div className={styles['intf-cat-reitem']} key={index}>
+                            {item.name}
+                            <span
+                              className={styles['close']}
+                              onClick={() => {
+                                const copyCateText = cloneDeep(cateText)
+                                copyCateText.splice(index, 1)
+                                this.setState({
+                                  cateText: copyCateText
+                                })
                               }}
-                            />
-                          )}
+                            >
+                              <Icon type='close' />
+                            </span>
+                          </div>
+                        )
+                      })}
+                      <Button
+                        type='link'
+                        onClick={this.handleAddCategory}
+                      >
+                        +添加类目
+                      </Button>
+                    </div>
+                  </FormItem> */}
+                  <Tabs
+                    onEdit={this.handleEdit}
+                    tabBarExtraContent={(
+                      <Button
+                        type='link'
+                        size='small'
+                        onClick={this.handleAdd}
+                      >
+                        添加类目
+                      </Button>
+                    )}
+                    type='editable-card'
+                    hideAdd
+                  >
+                    {this.state.categorys.map((item: any) => (
+                      <Tabs.TabPane
+                        tab={item.name}
+                      >
+                        <Item
+                          label='类目名称'
+                        >
+                          <Input
+                            placeholder='请输入类目名称'
+                            style={{ width: 220 }}
+                          />
+                        </Item>
+                        <Item
+                          label='排序'
+                        >
+                          <Input
+                            placeholder='请输入类目名称'
+                            style={{ width: 220 }}
+                          />
+                        </Item>
+                        <Item label='绑定专题内容'>
+                          <AutoComplateSpec
+                            controlProps={{
+                              placeholder: '请输入专题内容标题关键字',
+                              style: { width: 220 }
+                            }}
+                          />
                           <span
                             className={classnames('ml10', styles['download'])}
                           >
                             选择内容
                           </span>
-                        </>
-                      )
-                    }}
-                  />
+                        </Item>
+                      </Tabs.TabPane>
+                    ))}
+                  </Tabs>
                 </Card>
                 <Card>
                   <FormItem
