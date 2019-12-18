@@ -1,21 +1,19 @@
 import React from 'react'
 import CouponCard from './components/content/Card'
-import { Input, Button, Card, Switch, Radio, Icon, Tabs, Row, Col } from 'antd'
+import { Input, Button, Card, Switch, Radio, Tabs, InputNumber } from 'antd'
 import { withRouter, RouteComponentProps } from 'react-router'
-import { connect } from 'react-redux'
 import Upload from '@/components/upload'
 import * as api from './api'
 import styles from './style.module.sass'
 import { namespace } from './model'
 import classnames from 'classnames'
-import { cloneDeep } from 'lodash'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import AutoComplateSpec from './components/AutoComplateSpec'
 import withModal, { Options } from './components/withModal'
-import List, { Item } from './components/list'
+import { Item } from './components/list'
 
 interface Props extends RouteComponentProps<{ id: any }> {
-  detail: Special.DetailItem
+  detail: Special.DetailProps
   modal: {
     specContentModal: (opts: Options) => void
     categoryModal: (opts: any) => void
@@ -27,6 +25,7 @@ interface State {
   cateText: any[],
   categorys: any[],
   activeKey: string
+  couponStyle: number
 }
 
 @withModal
@@ -36,30 +35,20 @@ class Main extends React.Component<Props, State> {
     type: 1,
     cateText: [],
     categorys: [],
-    activeKey: '1'
+    activeKey: '1',
+    couponStyle: 1
   }
   public newTabIndex: number = 1
   public id: number = -1
   public form: FormInstance
-  public constructor(props: Props) {
-    super(props)
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleModal = this.handleModal.bind(this)
-    this.handleAddCategory = this.handleAddCategory.bind(this)
-  }
   public componentDidMount() {
     this.id = +this.props.match.params.id
+    /** 新增 */
     if (this.id === -1) {
       this.setState({ shareOpen: true })
     } else {
       this.fetchData()
     }
-  }
-  /** 组件卸载清空状态 */
-  public componentWillUnmount() {
-    APP.dispatch({
-      type: `${namespace}/@@init`
-    })
   }
   /** crm查看专题活动详情 */
   public fetchData() {
@@ -67,10 +56,11 @@ class Main extends React.Component<Props, State> {
       type: `${namespace}/fetchDetail`,
       payload: {
         id: this.id,
-        cb: (result: any) => {
+        cb: (res: any) => {
           this.setState({
-            shareOpen: result.shareOpen === 1
+            shareOpen: res.shareOpen === 1
           })
+          this.form.setValues(res)
         }
       }
     })
@@ -86,21 +76,20 @@ class Main extends React.Component<Props, State> {
   }
 
   public handleAdd = () => {
-    const { categorys, activeKey } = this.state
+    const { categorys } = this.state
     categorys.push({
       floorId: '',
       id: '',
       name: `类目${this.newTabIndex++}`,
       sort: ''
     })
-    console.log('categorys => ', categorys)
     this.setState({ categorys });
   }
   handleSwitch = (checked: boolean) => {
     this.setState({ shareOpen: checked });
   }
   /** 新增、编辑专题 */
-  public handleSubmit() {
+  public handleSubmit = () => {
     this.form.props.form.validateFields((err: any, value) => {
       if (!err) {
         if (value.imgUrl instanceof Array) {
@@ -143,13 +132,12 @@ class Main extends React.Component<Props, State> {
     ] : detail.shareImgUrl;
   }
   /** 弹出选择专题内容  */
-  public handleModal () {
+  public handleModal = () => {
     const { floorId } = this.form.getValues()
     this.props.modal.specContentModal({
       visible: true,
       floorId,
       cb: (hide: () => void, res: any) => {
-        console.log(res.floorName, '-------------')
         this.form.setValues({
           floorId: res && res.id
         })
@@ -157,8 +145,31 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+  /** 绑定专题内容 */
+  public bindSpecContent (id: string, index: number) {
+    const { categorys } = this.state
+    this.props.modal.specContentModal({
+      visible: true,
+      floorId: categorys[index].floorId,
+      cb: (hide: () => void, res: any) => {
+        categorys[index].floorId = res.id
+        this.setState({
+          categorys
+        })
+        hide()
+      }
+    })
+  }
+  /** 改变list每一项数据 */
+  public onCellChange (id: string, index: number, value: any) {
+    const { categorys } = this.state
+    if (categorys[index]) {
+      categorys[index][id] = value
+    }
+    this.setState({ categorys })
+  }
   /** 添加类目 */
-  public handleAddCategory () {
+  public handleAddCategory = () => {
     this.props.modal.categoryModal({
       categoryVisible: true,
       cb: (hide: () => void, cateText: any[]) => {
@@ -167,11 +178,19 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+  /** 解除绑定 */
+  public handleClearFloor = () => {
+    this.form.setValues({
+      floorId: ''
+    })
+  }
   public render() {
-    const { detail } = this.props
     const { cateText } = this.state
     return (
-      <Card title='新增/编辑专题' className={styles.detail}>
+      <Card
+        title='新增/编辑专题'
+        className={styles.detail}
+      >
         <div className={styles.content}>
           <Form
             getInstance={ref => this.form = ref}
@@ -182,7 +201,6 @@ class Main extends React.Component<Props, State> {
               label='名称'
               verifiable
               fieldDecoratorOptions={{
-                initialValue: detail.subjectName,
                 rules: [
                   { required: true, message: '名称不能为空' }
                 ]
@@ -206,7 +224,6 @@ class Main extends React.Component<Props, State> {
                   label='分享标题'
                   verifiable
                   fieldDecoratorOptions={{
-                    initialValue: detail.shareTitle,
                     rules: [
                       { required: true, message: '分享标题不能为空' },
                       {
@@ -223,7 +240,6 @@ class Main extends React.Component<Props, State> {
                     return (
                       <>
                         {form.getFieldDecorator('shareImgUrl', {
-                          initialValue: this.shareImgUrl,
                           rules: [
                             { required: true, message: '请上传专题分享图片' }
                           ]
@@ -249,7 +265,6 @@ class Main extends React.Component<Props, State> {
               placeholder='请输入背景色，如#FFFFFF'
               verifiable
               fieldDecoratorOptions={{
-                initialValue: detail.backgroundColor,
                 rules: [
                   { required: true, message: '专题背景色不能为空' }
                 ]
@@ -260,7 +275,6 @@ class Main extends React.Component<Props, State> {
               required
               inner={(form) => {
                 return form.getFieldDecorator('imgUrl', {
-                  initialValue: this.imgUrl,
                   rules: [{
                     required: true,
                     message: 'banner图片不能为空'
@@ -278,7 +292,6 @@ class Main extends React.Component<Props, State> {
               label='链接'
               verifiable
               fieldDecoratorOptions={{
-                initialValue: detail.jumpUrl,
                 rules: [
                   { required: true, message: '请输入正确的链接地址' }
                 ]
@@ -301,9 +314,7 @@ class Main extends React.Component<Props, State> {
                   inner={(form) => {
                     return (
                       <>
-                        {form.getFieldDecorator('floorId', {
-                          initialValue: detail.floorId
-                        })(
+                        {form.getFieldDecorator('floorId')(
                           <AutoComplateSpec
                             controlProps={{
                               disabled: true,
@@ -318,6 +329,11 @@ class Main extends React.Component<Props, State> {
                         >
                           选择内容
                         </span>
+                        <span
+                          className={classnames('ml10', styles['download'])}
+                          onClick={this.handleClearFloor}>
+                          解除绑定
+                        </span>
                       </>
                     )
                   }}
@@ -325,65 +341,24 @@ class Main extends React.Component<Props, State> {
               </Card>
             )}
             {/* 多类目类型 */}
-            {this.state.type === 1 && (
+            {this.state.type === 2 && (
               <>
                 <Card style={{ marginTop: 0 }}>
                   <p>类目通用优惠券</p>
                   <CouponCard
-                    extra={false}
                     detail={{
                       type: 2,
-                      list: []
+                      css: this.state.couponStyle
                     }}
+                    extra={false}
                     onChange={(value: any) => {
-                      
+                      this.setState({
+                        couponStyle: value.css
+                      })
                     }}
                   />
                 </Card>
                 <Card>
-                  {/* <FormItem
-                    name='css'
-                    label='类目样式'
-                    type='radio'
-                    options={[{
-                      label: '横排',
-                      value: 1
-                    }, {
-                      label: '竖排',
-                      value: 2
-                    }]}
-                  /> */}
-                  {/* <FormItem
-                    label='类目列表'
-                  >
-                    <div className={styles['intf-cat-rebox']}>
-                      {cateText.map((item: any, index: number) => {
-                        return (
-                          <div className={styles['intf-cat-reitem']} key={index}>
-                            {item.name}
-                            <span
-                              className={styles['close']}
-                              onClick={() => {
-                                const copyCateText = cloneDeep(cateText)
-                                copyCateText.splice(index, 1)
-                                this.setState({
-                                  cateText: copyCateText
-                                })
-                              }}
-                            >
-                              <Icon type='close' />
-                            </span>
-                          </div>
-                        )
-                      })}
-                      <Button
-                        type='link'
-                        onClick={this.handleAddCategory}
-                      >
-                        +添加类目
-                      </Button>
-                    </div>
-                  </FormItem> */}
                   <Tabs
                     onEdit={this.handleEdit}
                     tabBarExtraContent={(
@@ -398,82 +373,53 @@ class Main extends React.Component<Props, State> {
                     type='editable-card'
                     hideAdd
                   >
-                    {this.state.categorys.map((item: any) => (
+                    {this.state.categorys.map((item: any, index: number) => (
                       <Tabs.TabPane
+                        key={index + ''}
                         tab={item.name}
                       >
                         <Item
                           label='类目名称'
                         >
                           <Input
+                            value={item.name}
                             placeholder='请输入类目名称'
                             style={{ width: 220 }}
+                            onChange={(e) => this.onCellChange('name', index, e.target.value)}
                           />
                         </Item>
                         <Item
                           label='排序'
                         >
-                          <Input
-                            placeholder='请输入类目名称'
+                          <InputNumber
+                            value={item.sort}
+                            placeholder='请输入排序'
                             style={{ width: 220 }}
+                            onChange={(value) => this.onCellChange('sort', index, value)}
                           />
                         </Item>
                         <Item label='绑定专题内容'>
                           <AutoComplateSpec
+                            value={item.floorId}
                             controlProps={{
+                              disabled: true,
                               placeholder: '请输入专题内容标题关键字',
                               style: { width: 220 }
                             }}
                           />
                           <span
                             className={classnames('ml10', styles['download'])}
+                            onClick={() => {
+                              this.bindSpecContent('floorId', index)
+                            }}
                           >
                             选择内容
                           </span>
+                          <span className={classnames('ml10', styles['download'])}>解除绑定</span>
                         </Item>
                       </Tabs.TabPane>
                     ))}
                   </Tabs>
-                </Card>
-                <Card>
-                  <FormItem
-                    name='categoryName'
-                    label='类目名称'
-                    controlProps={{
-                      style: {
-                        width: 220
-                      }
-                    }}
-                  />
-                  <FormItem
-                    name='sort'
-                    type='number'
-                    label='排序'
-                    controlProps={{
-                      style: {
-                        width: 220
-                      },
-                      min: 0
-                    }}
-                  />
-                  <FormItem
-                    label='绑定专题页'
-                    inner={(form) => {
-                      return (
-                        <>
-                          {form.getFieldDecorator('specName')(
-                            <Input
-                              style={{ width: 220 }}
-                              placeholder='请输入专题'
-                            />
-                          )}
-                          <span className={classnames('ml10', styles['download'])}>编辑详情</span>
-                          <span className={classnames('ml10', styles['download'])}>解除绑定</span>
-                          <span className={classnames('ml10', styles['download'])}>选择内容</span>
-                        </>
-                      )
-                    }}
-                  />
                 </Card>
               </>
             )}
@@ -499,8 +445,4 @@ class Main extends React.Component<Props, State> {
     )
   }
 }
-export default connect((state: any) => {
-  return {
-    detail: state[namespace].detail
-  }
-})(withRouter(Main))
+export default withRouter(Main)

@@ -21,7 +21,7 @@ function requestParamsCreator(column: Special.DetailContentProps, list: any) {
   }
 }
 /** 新增详情转换成入参 */
-export function mapDetailToRequestParams(detail: Special.DetailItem) {
+export function mapDetailToRequestParams(detail: Special.DetailProps) {
   detail.jumpUrl = (detail.jumpUrl || '').trim()
   const list = (detail.list || []).map((column: Special.DetailContentProps) => {
     switch (column.type) {

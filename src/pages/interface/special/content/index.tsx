@@ -34,6 +34,7 @@ class Main extends React.Component<Props, any> {
           const res = await updateStatus(id)
           if (res) {
             APP.success(`${msg}成功`)
+            this.list && this.list.refresh()
           }
         }
       })

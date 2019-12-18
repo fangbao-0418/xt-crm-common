@@ -23,5 +23,5 @@ export async function queryFloorDetail (floorId: number) {
 
 /** 启用、停用 */
 export function updateStatus (floorId: number) {
-  return newPut('/crm/subject/floor/setStatus/{floorId}')
+  return newPut(`/crm/subject/floor/setStatus/${floorId}`)
 }

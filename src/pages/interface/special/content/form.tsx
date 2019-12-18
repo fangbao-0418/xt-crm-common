@@ -5,18 +5,12 @@ import Content from '../components/content'
 import { namespace } from './model'
 import styles from '../style.module.sass'
 import { RouteComponentProps, withRouter } from 'react-router'
-import { connect } from 'react-redux'
 interface Props extends RouteComponentProps<{ id: any }> {
-  detail: Special.DetailItem
+  detail: Special.DetailProps
 }
 class Main extends React.Component<Props, any> {
   public form: FormInstance
   public id: number = -1
-  public constructor (props: any) {
-    super(props)
-    this.addContent = this.addContent.bind(this)
-    // this.handleDelete = this.handleDelete.bind(this)
-  }
   public componentDidMount () {
     const { id } = this.props.match.params
     this.id = +id
@@ -25,14 +19,8 @@ class Main extends React.Component<Props, any> {
       this.fetchDetail()
     }
   }
-  /** 组件卸载清空状态 */
-  public componentWillUnmount () {
-    APP.dispatch({
-      type: `${namespace}/@@init`
-    })
-  }
   /** 添加楼层 */
-  public addContent(type: 1 | 2 | 3) {
+  public addContent = (type: 1 | 2 | 3) => {
     const { detail } = this.props
     detail.list.push({
       type,
@@ -57,12 +45,10 @@ class Main extends React.Component<Props, any> {
       }
     })    
   }
-  /** 删除 */
-  // public handleDelete () {
-  //   this.props.alert({
-  //     content: '当前已关联活动中的专题，不允许删除'
-  //   })
-  // }
+  /** 保存 */
+  public handleSave = () => {
+
+  }
   public render () {
     return (
       <Card title='新增/编辑专题内容'>
@@ -92,26 +78,20 @@ class Main extends React.Component<Props, any> {
               value: 0
             }]}
           />
-          <FormItem
-            name='modifyTime'
-            label='最后操作时间'
-            type='text'
-          />
-          <FormItem
-            name='operator'
-            label='最后操作人'
-            type='text'
-          />
-          {/* <FormItem
-            name='relativeSpecName'
-            label='已关联的专题'
-            type='text'
-          />
-          <FormItem
-            name='activitySpecName'
-            label='活动中的专题'
-            type='text'
-          /> */}
+          {this.id !== -1 && (
+            <>
+              <FormItem
+                name='modifyTime'
+                label='最后操作时间'
+                type='text'
+              />
+              <FormItem
+                name='operator'
+                label='最后操作人'
+                type='text'
+              />
+            </>
+          )}
           <FormItem
             label='添加楼层'
           >
@@ -134,13 +114,11 @@ class Main extends React.Component<Props, any> {
             <Content style={{ width: 800 }} />
           </FormItem>
           <FormItem style={{marginTop: 100}}>
-            <Button type='primary'>保存</Button>
-            {/* <Button
-              type='danger'
-              className='ml10'
-              onClick={this.handleDelete}>
-              删除
-            </Button> */}
+            <Button
+              type='primary'
+              onClick={this.handleSave}>
+              保存
+            </Button>
           </FormItem>
         </Form>
       </Card>
@@ -148,8 +126,4 @@ class Main extends React.Component<Props, any> {
   }
 }
 
-export default connect((state: any) => {
-  return {
-    detail: state[namespace].detail
-  }
-})(withRouter(Main))
+export default withRouter(Main)

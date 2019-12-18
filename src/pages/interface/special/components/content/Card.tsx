@@ -310,6 +310,7 @@ class Main extends React.Component<Props, State> {
                 this.tempCrmCoupons = this.tempCrmCoupons.filter(item => !!item);
                 detail.coupons = this.tempCrmCoupons;
                 this.onChange(detail);
+                console.log(detail)
                 this.setState({ couponVisible: false });
               }}
             />

@@ -13,20 +13,45 @@ declare module Special {
     /** 广告链接 */
     advertisementJumpUrl?: string
   }
-  export interface DetailItem {
+  export interface DetailProps {
+    /** 背景颜色 */
     backgroundColor: string
-    imgUrl: string | {uid: string, url: string}[]
+    /** 关联类目 */
+    categorys?: CategorysItem[]
+    /** 优惠券样式 */
+    couponStyle?: 1 | 2
+    /** 楼层ID */
+    floorId: number
+    /** 专题ID */
+    id: number
+    /** banner图片url */
+    imgUrl: any
+    /** 分享标题 */
     shareTitle: string
+    /** 专题名称 */
     subjectName: string
     status: 0 | 1 | undefined
-    id: number
     list: DetailContentProps[]
     items: string
+    /** 专题类型，0：一般专题，1：类目专题 */
+    type: number
+    /** banner图片跳转链接 */
     jumpUrl: string
-    shareImgUrl: string | {uid: string, url: string}[]
-    shareOpen: number,
+    /** 分享图片 */
+    shareImgUrl: any
+    /** 分享开关，1-开启，0-关闭 */
+    shareOpen: number
     /** 一般类型 楼层ID */
     floorId: number
+  }
+  interface CategorysItem {
+    /** 类目关联楼层id */
+    floorId: number
+    id: number
+    /** 类目名称 */
+    name: string
+    /** 排序 */
+    sort: number
   }
   export interface SearchProps {
     subjectId?: number
