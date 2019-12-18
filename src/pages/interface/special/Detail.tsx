@@ -83,7 +83,9 @@ class Main extends React.Component<Props, State> {
         const res = await api.saveSpecial({
           ...value,
           shareOpen: this.state.shareOpen,
-          type: this.state.type
+          type: this.state.type,
+          ...this.state.detail,
+          id: this.id
         })
         if (res) {
           APP.success(`专题${this.id === -1 ? '新增' : '修改'}成功`)
