@@ -1,21 +1,12 @@
 import { baseHost, env as apiEnv } from '../baseHost'
-import * as LocalStorage from '@/util/localstorage';
-type ApiEnv = 'dev' | 'test1' | 'test2' | 'pre' | 'prod';
-// export function getApiEnv () {
-//   const origin = LocalStorage.get('apidomain') || baseHost
-//   const mapper = new Map<string, ApiEnv>([
-//     ['http://daily-crm-test.hzxituan.com', 'dev'],
-//     ['https://testapi-crmadmin.hzxituan.com', 'test1'],
-//     ['https://test2api-crmadmin.hzxituan.com', 'test2'],
-//     ['https://pre-xt-crm-api.hzxituan.com', 'pre'],
-//     ['https://youxuan-crm-api.hzxituan.com', 'prod']
-//   ])
-//   return mapper.get(origin)
-// }
-// export const apiEnv = getApiEnv()
 
 /** 后端环境接口映射 */
 export const serverMapper: any = {
+  ulive: {
+    dev: 'http://test01live-center.hzxituan.com',
+    pre: 'http://test01live-center.hzxituan.com',
+    prod: 'http://192.168.4.117:1008'
+  },
   message: {
     dev: 'https://test01center-bi.hzxituan.com',
     pre: 'https://pre-center-bi.hzxituan.com',
@@ -31,13 +22,15 @@ export const serverMapper: any = {
 }
 
 export function handleApiUrl (url: string) {
-  const serverPattern = /^::(message)/
+  const serverPattern = /^::(message|ulive)/
   if (/^https?/.test(url)) {
     return url
   } else if (serverPattern.test(url)) {
     const result = url.match(serverPattern)
     const servername = result && result[1] || 'default'
+    // console.log(servername, 'servername')
     const currentServerEnum: any = serverMapper[servername] || serverMapper.default
+    console.log(servername, currentServerEnum, 'currentServerEnum')
     const apiOrigin = currentServerEnum[apiEnv as any] || currentServerEnum.dev || ''
     return url.replace(serverPattern, apiOrigin)
   } else {

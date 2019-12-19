@@ -16,7 +16,7 @@
     "mock": "nodemon mock/server.js",
     "i18n": "gulp i18n-json-merge",
     "dev": "react-app-rewired start",
-    "submodule": "yarn run remove && git submodule update --init --remote"
+    "submodule": "git submodule update --init --remote"
   },
   "dependencies": {
     "@rematch/core": "^1.1.0",

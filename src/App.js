@@ -21,6 +21,7 @@ import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
 import Coupon from './pages/coupon';
 import Message from './pages/message';
+import ULive from './pages/ulive';
 
 class Main extends React.Component {
   constructor (props) {
@@ -50,6 +51,7 @@ class Main extends React.Component {
           <Route path="/crudpage" component={CrudPage} />
           <Route path="/message" component={Message} />
           <Route path="/setting" component={Setting}/>
+          <Route path="/ulive" component={ULive}/>
         </Layout>
       </Switch>
     );
