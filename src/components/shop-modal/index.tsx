@@ -40,10 +40,6 @@ class Main extends React.Component<Props, State> {
   }
   public columns: ColumnProps<Shop.ShopItemProps>[] = [
     {
-      title: '序号',
-      dataIndex: ''
-    },
-    {
       title: '商品ID',
       dataIndex: 'id'
     },

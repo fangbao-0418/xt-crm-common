@@ -54,6 +54,10 @@ class Main extends React.Component<Props> {
       }
     })   
   }
+  /** 取消 */
+  public handleCancel = () => {
+    APP.history.go(-1)
+  }
   /** 保存 */
   public handleSave = () => {
     const { detail } = this.props
@@ -158,6 +162,11 @@ class Main extends React.Component<Props> {
               type='primary'
               onClick={this.handleSave}>
               保存
+            </Button>
+            <Button
+              className='ml10'
+              onClick={this.handleCancel}>
+              取消
             </Button>
           </FormItem>
         </Form>
