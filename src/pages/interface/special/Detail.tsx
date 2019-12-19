@@ -29,6 +29,9 @@ interface State {
   }
 }
 
+function RenderText (props: any) {
+  return <span>{props.value}</span>
+}
 @withModal
 class Main extends React.Component<Props, State> {
   public state: State = {
@@ -132,25 +135,25 @@ class Main extends React.Component<Props, State> {
       visible: true,
       floorId,
       cb: (hide: () => void, res: any) => {
+        console.log('res => ', res)
         this.form.setValues({
-          floorId: res && res.id
+          floorId: res && res.id,
+          floorName: res && res.floorName
         })
         hide()
       }
     })
   }
   /** 绑定专题内容 */
-  public bindSpecContent (id: string, index: number) {
+  public bindSpecContent (index: number) {
     const { categorys } = this.state
     this.props.modal.specContentModal({
       visible: true,
       floorId: categorys[index].floorId,
       cb: (hide: () => void, res: any) => {
         categorys[index].floorId = res.id
-        this.setState({
-          categorys
-        })
-        hide()
+        categorys[index].floorName = res.floorName
+        this.setState({ categorys }, hide)
       }
     })
   }
@@ -165,13 +168,15 @@ class Main extends React.Component<Props, State> {
   /** 解除绑定 */
   public handleClearFloor = () => {
     this.form.setValues({
-      floorId: ''
+      floorId: '',
+      floorName: ''
     })
   }
-  public unbind = (id: string, index: number) => {
+  public unbind = (index: number) => {
     const { categorys } = this.state
     if (categorys[index]) {
-      categorys[index][id] = ''
+      categorys[index]['floorId'] = ''
+      categorys[index]['floorName'] = ''
     }
     this.setState({ categorys })
   }
@@ -305,15 +310,7 @@ class Main extends React.Component<Props, State> {
                   inner={(form) => {
                     return (
                       <>
-                        {form.getFieldDecorator('floorId')(
-                          <AutoComplateSpec
-                            controlProps={{
-                              disabled: true,
-                              style: { width: 220 },
-                              placeholder: '请输入专题内容标题关键字'
-                            }}
-                          />
-                        )}
+                        {form.getFieldDecorator('floorName')(<RenderText />)}
                         <span
                           className={classnames('ml10', styles['download'])}
                           onClick={this.handleModal}
@@ -388,25 +385,18 @@ class Main extends React.Component<Props, State> {
                           />
                         </Item>
                         <Item label='绑定专题内容'>
-                          <AutoComplateSpec
-                            value={item.floorId}
-                            controlProps={{
-                              disabled: true,
-                              placeholder: '请输入专题内容标题关键字',
-                              style: { width: 220 }
-                            }}
-                          />
+                          {item.floorName}
                           <span
                             className={classnames('ml10', styles['download'])}
                             onClick={() => {
-                              this.bindSpecContent('floorId', index)
+                              this.bindSpecContent(index)
                             }}
                           >
                             选择内容
                           </span>
                           <span
                             className={classnames('ml10', styles['download'])}
-                            onClick={() => this.unbind('floorId', index)}
+                            onClick={() => this.unbind(index)}
                           >
                             解除绑定
                           </span>
