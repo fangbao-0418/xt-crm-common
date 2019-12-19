@@ -1,6 +1,6 @@
 import React from 'react'
 import CouponCard from './components/CouponCard'
-import { Input, Button, Card, Switch, Radio, Tabs, InputNumber } from 'antd'
+import { Input, Button, Card, Switch, Radio, Tabs, InputNumber, message } from 'antd'
 import { withRouter, RouteComponentProps } from 'react-router'
 import Upload from '@/components/upload'
 import * as api from './api'
@@ -111,14 +111,30 @@ class Main extends React.Component<Props, State> {
 
   /** 新增、编辑专题 */
   public handleSubmit = () => {
+    const { categorys, type, shareOpen, detail } = this.state
     this.form.props.form.validateFields(async (err: any, value) => {
       if (!err) {
+        for (let item of categorys) {
+          console.log('item =>', item)
+          if (item.name === '' || item.name == null) {
+            message.error('类目列表类目名称不能为空')
+            return
+          }
+          if (item.sort === '' || item.sort == null) {
+            message.error('类目列表排序不能为空')
+            return
+          }
+          if (item.name && item.name.length > 5) {
+            message.error(`类目列表${item.name}类目名称不能超过5个字符`)
+            return
+          }
+        }
         const res = await api.saveSpecial({
           ...value,
-          shareOpen: this.state.shareOpen,
-          type: this.state.type,
-          categorys: this.state.categorys,
-          ...this.state.detail,
+          shareOpen,
+          type,
+          categorys,
+          ...detail,
           id: this.id !== -1 ? this.id : void 0
         })
         if (res) {
@@ -366,6 +382,7 @@ class Main extends React.Component<Props, State> {
                       >
                         <Item
                           label='类目名称'
+                          required
                         >
                           <Input
                             value={item.name}
@@ -373,9 +390,11 @@ class Main extends React.Component<Props, State> {
                             style={{ width: 220 }}
                             onChange={(e) => this.onCellChange('name', index, e.target.value)}
                           />
+                          <span style={{color: '#f5222d'}}>（最多输入5个字符）</span>
                         </Item>
                         <Item
                           label='排序'
+                          required
                         >
                           <InputNumber
                             value={item.sort}
