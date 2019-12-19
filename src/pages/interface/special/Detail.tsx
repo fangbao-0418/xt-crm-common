@@ -34,15 +34,15 @@ class Main extends React.Component<Props, State> {
     shareOpen: true,
     type: 0,
     categorys: [],
-    activeKey: '',
+    activeKey: '0',
     detail: {
       css: 1,
       subjectCoupons: []
     }
   }
-  public newTabIndex: number = 0
   public id: number = -1
   public form: FormInstance
+  public newTabIndex: number = 0
   public componentDidMount() {
     this.id = +this.props.match.params.id
     /** 新增 */
@@ -58,7 +58,8 @@ class Main extends React.Component<Props, State> {
       detail: {
         css: res.couponStyle,
         subjectCoupons: res.subjectCoupons
-      }
+      },
+      activeKey: res.categorys[0] && String(res.categorys[0].id)
     })
     this.form.setValues(res)
   }
@@ -69,15 +70,13 @@ class Main extends React.Component<Props, State> {
   }
 
   public add = () => {
-    debugger
     const { categorys } = this.state
-    const activeKey = `newTab${this.newTabIndex++}`
+    const activeKey = `${this.newTabIndex++}`
     categorys.push({
       floorId: '',
-      id: '',
+      id: activeKey,
       name: '',
-      sort: '',
-      key: activeKey
+      sort: ''
     })
     this.setState({ categorys, activeKey });
   }
@@ -85,18 +84,18 @@ class Main extends React.Component<Props, State> {
   /** tabs删除 */
   public remove = (targetKey: string | React.MouseEvent<HTMLElement, MouseEvent>) => {
     let { activeKey } = this.state;
-    let lastIndex: number = 0;
-    this.state.categorys.forEach((item: any, i: number) => {
-      if (item.key === targetKey) {
+    let lastIndex = 0;
+    this.state.categorys.forEach((pane, i) => {
+      if (String(pane.id) === targetKey) {
         lastIndex = i - 1;
       }
     });
-    const categorys = this.state.categorys.filter((item: any) => item.key !== targetKey);
+    const categorys = this.state.categorys.filter(pane => String(pane.id) !== targetKey);
     if (categorys.length && activeKey === targetKey) {
       if (lastIndex >= 0) {
-        activeKey = categorys[lastIndex].key;
+        activeKey = String(categorys[lastIndex].id);
       } else {
-        activeKey = categorys[0].key;
+        activeKey = String(categorys[0].id);
       }
     }
     this.setState({ categorys, activeKey });
@@ -364,7 +363,7 @@ class Main extends React.Component<Props, State> {
                   >
                     {this.state.categorys.map((item: any, index: number) => (
                       <Tabs.TabPane
-                        key={item.key}
+                        key={String(item.id)}
                         tab={item.name}
                       >
                         <Item
