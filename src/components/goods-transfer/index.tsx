@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Transfer, Modal, Button } from 'antd';
+import { Transfer, Modal, Button, message } from 'antd';
 
 export default class extends React.PureComponent<any, any> {
   constructor(props: any) {
@@ -29,6 +29,9 @@ export default class extends React.PureComponent<any, any> {
   onOk = () => {
     const { onOk } = this.props;
     const { targetKeys } = this.state;
+    if (!targetKeys || Array.isArray(targetKeys) && targetKeys.length === 0) {
+      return void message.error('请选择商品')
+    }
     onOk && onOk(targetKeys);
   };
 

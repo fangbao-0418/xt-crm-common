@@ -6,13 +6,13 @@ declare module Special {
     /** 排列样式 1=1*1，2=1*2 */
     css?: 1 | 2
     /** 商品列表 */
-    list: Shop.ShopItemProps[]
+    products: Shop.ShopItemProps[]
     /** 广告图 */
     advertisementUrl?: string
     coupons?: Coupon.CouponItemProps[]
     /** 广告链接 */
     advertisementJumpUrl?: string
-    crmCoupons: any[]
+    coupons: any[]
   }
   export interface DetailProps {
     /** 背景颜色 */

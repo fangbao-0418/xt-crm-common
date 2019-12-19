@@ -33,8 +33,8 @@ class Main extends React.Component<Props> {
     detail.list.push({
       type,
       sort: 0,
-      list: [],
-      crmCoupons: []
+      products: [],
+      coupons: []
     })
     APP.dispatch({
       type: `${namespace}/changeDetail`,
