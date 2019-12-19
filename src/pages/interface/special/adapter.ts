@@ -7,6 +7,7 @@ export function specDetailResponse (res: any) {
   res.shareImgUrl = initImgList(res.shareImgUrl)
   res.imgUrl = initImgList(res.imgUrl)
   res.css = res.couponStyle
+  if (!Array.isArray(res.categorys)) res.categorys = []
   return res
 }
 
