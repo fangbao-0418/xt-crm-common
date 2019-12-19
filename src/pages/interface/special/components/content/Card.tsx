@@ -12,6 +12,25 @@ import { namespace } from '../../content/model';
 import GoodsTransfer from '@/components/goods-transfer';
 import { concat, filter, includes } from 'lodash';
 import Image from '@/components/Image'
+
+/**
+ * 样式图片 1*1 1*2 1*3
+ */
+const images: any = {
+  1: {
+    'plainCss': require('@/assets/images/plain1x1.png'),
+    'activityCss': require('@/assets/images/activity1x1.png'),
+  },
+  2: {
+    'plainCss': require('@/assets/images/plain1x2.png'),
+    'activityCss': require('@/assets/images/activity1x2.png'),
+  },
+  3: {
+    'plainCss': require('@/assets/images/plain1x3.png'),
+    'activityCss': require('@/assets/images/activity1x3.png'),
+  }
+}
+
 interface State {
   /** 优惠券显隐 */
   couponVisible: boolean;
@@ -61,7 +80,9 @@ class Main extends React.Component<Props, State> {
       transferGoodsVisible: false,
     });
   };
-
+  public onClick = (src: string) => () => {
+    window.open(src)
+  };
   public goodsTransferOk = (selectedRowKeys: any) => {
     const { detail, state, dispatch } = this.props;
     const { goodsListByCurrentActivity } = state;
@@ -88,7 +109,10 @@ class Main extends React.Component<Props, State> {
     const { transferGoodsVisible, goodsListByCurrentActivity } = state;
     const selectedRowKeys = this.getSelectedRowKeys(detail.products);
     this.tempList = Array.prototype.concat(detail.products || []);
-    detail.css = detail.css || 1;
+    detail.style = detail.style || 1
+    detail.css = detail.css || 1
+    const plainCss = images[detail.css] && images[detail.css].plainCss
+    const activityCss = images[detail.css] && images[detail.css].activityCss
     return (
       <div>
         <Row
@@ -123,12 +147,24 @@ class Main extends React.Component<Props, State> {
               }}
             >
               <div>
-                <Image src=''/>
-                <Radio value={1}>样式1</Radio>
+                <img
+                  width={100}
+                  height={100}
+                  src={plainCss}
+                  onClick={this.onClick(plainCss)}
+                  alt=''
+                />
+                <Radio value={1}>普通样式</Radio>
               </div>
               <div>
-                <Image src=''/>
-                <Radio value={2}>样式2</Radio>
+                <img
+                  width={100}
+                  height={100}
+                  src={activityCss}
+                  onClick={this.onClick(activityCss)}
+                  alt=''
+                />
+                <Radio value={2}>活动样式</Radio>
               </div>
             </Radio.Group>
           </Col>
