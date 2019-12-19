@@ -1,17 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Draggable from '@/components/draggable';
 import { namespace } from '../../content/model';
 import Card from './Card';
-import styles from './style.module.sass';
 interface Props {
   detail: Special.DetailProps;
-  style: any
+  style?: any
 }
 class Main extends React.Component<Props> {
   public render() {
     const { detail, style } = this.props;
-    console.log('detail => ', detail)
     return (
       <div style={style}>
         {(detail.list || []).map((item, index) => {

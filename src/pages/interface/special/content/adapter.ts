@@ -1,6 +1,21 @@
 import { status } from './config'
+import { removeURLDomain } from '@/util/utils'
 
-/** 适配分页查询楼层响应 */
+/** 保存专题内容请求 */
+export function saveSubjectFloorParams (payload: any) {
+  if (!Array.isArray(payload.list)) payload.list = []
+  const result: any = {}
+  result.list = payload.list.map((v: any) => {
+    v.advertisementImgUrl = removeURLDomain(v.advertisementImgUrl)
+    return v
+  })
+  return {
+    ...payload,
+    ...result
+  }
+}
+
+/** 分页查询楼层响应 */
 export function queryFloorRespones (res: any) {
   res.records = Array.isArray(res.records) ? res.records.map((v: any) => {
     v.modifyTime = APP.fn.formatDate(v.modifyTime)
@@ -10,8 +25,9 @@ export function queryFloorRespones (res: any) {
   return res
 }
 
-/** 适配查询楼层详情响应 */
-export function queryFloorDetailRespones (res: any) {
-  res.modifyTime = APP.fn.formatDate(res.modifyTime)
+/** 条件查询楼层信息 */
+export function subjectFloorDetailResponse (res: any) {
+  res.modifyTimeText = APP.fn.formatDate(res.modifyTime)
+  if (!Array.isArray(res.list)) res.list = []
   return res
 }

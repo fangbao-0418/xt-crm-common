@@ -10,20 +10,32 @@ interface Props {
   onChange: (payload: any) => void
 }
 interface State {
-  couponVisible: boolean,
-  selectedRowKeys: any[]
+  couponVisible: boolean
 }
 class Main extends React.Component<Props, State> {
   public state: State = {
-    couponVisible: false,
-    selectedRowKeys: []
+    couponVisible: false
   }
   public tempCrmCoupons: Coupon.CouponItemProps[] = []
+
+  public getSelectedRowKeys(list: any) {
+    const ids: any[] = [];
+    (list || []).map((item: any) => {
+      if (item && item.id !== undefined && ids.indexOf(item.id) === -1) {
+        ids.push(item.id);
+      }
+    });
+    return ids;
+  }
+
   public render () {
     const { detail, extra } = this.props
-    const { couponVisible, selectedRowKeys } = this.state
+    const { couponVisible } = this.state
+    const selectedRowKeys = this.getSelectedRowKeys(detail.subjectCoupons);
+    this.tempCrmCoupons = detail.subjectCoupons || []
+
     return (
-      <Card title='商品' sort={0} extra={extra}>
+      <Card title='优惠券' sort={0} extra={extra}>
         <Row gutter={12}>
           <Col span={3}>样式:</Col>
           <Col span={9}>
@@ -53,13 +65,12 @@ class Main extends React.Component<Props, State> {
               />
             )}
             <CouponModal
-              visible={this.state.couponVisible}
+              visible={couponVisible}
               selectedRowKeys={selectedRowKeys}
               onCancel={() => {
                 this.setState({ couponVisible: false })
               }}
               onSelectAll={(selected, selectedRows, changeRows) => {
-                console.log('onSelectAll=>', selected, selectedRows, changeRows)
                 if (selected) {
                   changeRows.map(item => {
                     this.tempCrmCoupons.push(item)

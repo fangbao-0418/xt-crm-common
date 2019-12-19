@@ -41,6 +41,16 @@ export default {
       if (cb) {
         cb(result)
       }
+    },
+    async getGoodsListByActivityId(param: any) {
+      const result = await api.getGoodsListByActivityId(param);
+      if (result) {
+        (this as any).saveDefault({
+          transferGoodsVisible: true,
+          goodsListByCurrentActivity: result || [],
+        });
+      }
     }
+
   },
 }

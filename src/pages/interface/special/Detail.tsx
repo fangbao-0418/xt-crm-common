@@ -19,7 +19,7 @@ interface Props extends RouteComponentProps<{ id: any }> {
 }
 interface State {
   shareOpen: boolean
-  type: 1 | 2
+  type: 0 | 1
   categorys: any[],
   activeKey: string
   detail: {
@@ -32,15 +32,15 @@ interface State {
 class Main extends React.Component<Props, State> {
   public state: State = {
     shareOpen: true,
-    type: 1,
+    type: 0,
     categorys: [],
-    activeKey: '1',
+    activeKey: '',
     detail: {
       css: 1,
       subjectCoupons: []
     }
   }
-  public newTabIndex: number = 1
+  public newTabIndex: number = 0
   public id: number = -1
   public form: FormInstance
   public componentDidMount() {
@@ -53,29 +53,59 @@ class Main extends React.Component<Props, State> {
   /** crm查看专题活动详情 */
   public async fetchData() {
     const res = await api.fetchSpecialDetial(this.id)
-    this.setState({ shareOpen: res.shareOpen })
+    this.setState({
+      ...res,
+      detail: {
+        css: res.couponStyle,
+        subjectCoupons: res.subjectCoupons
+      }
+    })
     this.form.setValues(res)
-  }
-  /** 切换面板的回调 */
-  public onChange = (activeKey: string) => {
-    this.setState({ activeKey })
   }
   
   /** 新增编辑的回调 */
-  public handleEdit = () => {
-
+  public handleEdit = (targetKey: string | React.MouseEvent<HTMLElement, MouseEvent>, action: 'add' | 'remove') => {
+    (this as any)[action](targetKey)
   }
 
-  public handleAdd = () => {
+  public add = () => {
+    debugger
     const { categorys } = this.state
+    const activeKey = `newTab${this.newTabIndex++}`
     categorys.push({
       floorId: '',
       id: '',
-      name: `类目${this.newTabIndex++}`,
-      sort: ''
+      name: '',
+      sort: '',
+      key: activeKey
     })
-    this.setState({ categorys });
+    this.setState({ categorys, activeKey });
   }
+  
+  /** tabs删除 */
+  public remove = (targetKey: string | React.MouseEvent<HTMLElement, MouseEvent>) => {
+    let { activeKey } = this.state;
+    let lastIndex: number = 0;
+    this.state.categorys.forEach((item: any, i: number) => {
+      if (item.key === targetKey) {
+        lastIndex = i - 1;
+      }
+    });
+    const categorys = this.state.categorys.filter((item: any) => item.key !== targetKey);
+    if (categorys.length && activeKey === targetKey) {
+      if (lastIndex >= 0) {
+        activeKey = categorys[lastIndex].key;
+      } else {
+        activeKey = categorys[0].key;
+      }
+    }
+    this.setState({ categorys, activeKey });
+  }
+  /** Tabs切换回调 */
+  public handleChange = (activeKey: string) => {
+    this.setState({ activeKey })
+  }
+
   /** 新增、编辑专题 */
   public handleSubmit = () => {
     this.form.props.form.validateFields(async (err: any, value) => {
@@ -84,8 +114,9 @@ class Main extends React.Component<Props, State> {
           ...value,
           shareOpen: this.state.shareOpen,
           type: this.state.type,
+          categorys: this.state.categorys,
           ...this.state.detail,
-          id: this.id
+          id: this.id !== -1 ? this.id : void 0
         })
         if (res) {
           APP.success(`专题${this.id === -1 ? '新增' : '修改'}成功`)
@@ -136,6 +167,13 @@ class Main extends React.Component<Props, State> {
     this.form.setValues({
       floorId: ''
     })
+  }
+  public unbind = (id: string, index: number) => {
+    const { categorys } = this.state
+    if (categorys[index]) {
+      categorys[index][id] = ''
+    }
+    this.setState({ categorys })
   }
   /** 开关选择器 */
   public handleSwitchChange = (shareOpen: boolean) => {
@@ -255,12 +293,12 @@ class Main extends React.Component<Props, State> {
               <Radio.Group
                 value={this.state.type}
                 onChange={(e) => this.setState({ type: e.target.value})}>
-                <Radio value={1}>一般类型</Radio>
-                <Radio value={2}>多类目类型</Radio>
+                <Radio value={0}>一般类型</Radio>
+                <Radio value={1}>多类目类型</Radio>
               </Radio.Group>
             </div>
             {/* 一般类型 */}
-            {this.state.type === 1 && (
+            {this.state.type === 0 && (
               <Card style={{ marginTop: 0 }}>
                 <FormItem
                   label='绑定专题内容'
@@ -294,7 +332,7 @@ class Main extends React.Component<Props, State> {
               </Card>
             )}
             {/* 多类目类型 */}
-            {this.state.type === 2 && (
+            {this.state.type === 1 && (
               <>
                 <Card style={{ marginTop: 0 }}>
                   <p>类目通用优惠券</p>
@@ -310,11 +348,13 @@ class Main extends React.Component<Props, State> {
                 <Card>
                   <Tabs
                     onEdit={this.handleEdit}
+                    activeKey={this.state.activeKey}
+                    onChange={this.handleChange}
                     tabBarExtraContent={(
                       <Button
                         type='link'
                         size='small'
-                        onClick={this.handleAdd}
+                        onClick={this.add}
                       >
                         添加类目
                       </Button>
@@ -324,7 +364,7 @@ class Main extends React.Component<Props, State> {
                   >
                     {this.state.categorys.map((item: any, index: number) => (
                       <Tabs.TabPane
-                        key={index + ''}
+                        key={item.key}
                         tab={item.name}
                       >
                         <Item
@@ -364,7 +404,12 @@ class Main extends React.Component<Props, State> {
                           >
                             选择内容
                           </span>
-                          <span className={classnames('ml10', styles['download'])}>解除绑定</span>
+                          <span
+                            className={classnames('ml10', styles['download'])}
+                            onClick={() => this.unbind('floorId', index)}
+                          >
+                            解除绑定
+                          </span>
                         </Item>
                       </Tabs.TabPane>
                     ))}

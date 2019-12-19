@@ -8,10 +8,10 @@ import CouponModal from '@/components/coupon-modal';
 import { typeConfig } from '../../constant';
 import { connect } from 'react-redux';
 import ActivityList from '@/pages/activity/info/ActivityList';
-import { namespace } from '../../model';
+import { namespace } from '../../content/model';
 import GoodsTransfer from '@/components/goods-transfer';
 import { concat, filter, includes } from 'lodash';
-import Item from '@/pages/interface/category/tree/item';
+import Image from '@/components/Image'
 interface State {
   /** 优惠券显隐 */
   couponVisible: boolean;
@@ -21,13 +21,13 @@ interface State {
 interface Props {
   state: any;
   dispatch: any;
-  detail: Special.DetailContentProps;
-  onChange?: (value?: Special.DetailContentProps) => void;
+  detail: any;
+  onChange?: (value?: any) => void;
 }
 class Main extends React.Component<Props, State> {
   public tempList: Shop.ShopItemProps[] = [];
 
-  public tempCrmCoupons: Coupon.CouponItemProps[] = [];
+  public tempCoupons: Coupon.CouponItemProps[] = [];
 
   public state: State = {
     couponVisible: false,
@@ -68,8 +68,8 @@ class Main extends React.Component<Props, State> {
     const selectedRows = filter(goodsListByCurrentActivity, item => {
       return includes(selectedRowKeys, item.productId);
     });
-    detail.list = concat(
-      detail.list,
+    detail.products = concat(
+      detail.products,
       selectedRows.map(item => {
         item.id = item.productId;
         return item;
@@ -86,13 +86,16 @@ class Main extends React.Component<Props, State> {
   public renderShop(): React.ReactNode {
     const { detail, state } = this.props;
     const { transferGoodsVisible, goodsListByCurrentActivity } = state;
-    const selectedRowKeys = this.getSelectedRowKeys(detail.list);
-    this.tempList = Array.prototype.concat(detail.list || []);
+    const selectedRowKeys = this.getSelectedRowKeys(detail.products);
+    this.tempList = Array.prototype.concat(detail.products || []);
     detail.css = detail.css || 1;
     return (
       <div>
-        <Row gutter={12}>
-          <Col span={3}>样式:</Col>
+        <Row
+          gutter={12}
+          className='mb10'
+        >
+          <Col span={3}>排列样式:</Col>
           <Col span={9}>
             <Radio.Group
               value={detail.css}
@@ -103,6 +106,30 @@ class Main extends React.Component<Props, State> {
             >
               <Radio value={1}>1*1</Radio>
               <Radio value={2}>1*2</Radio>
+              <Radio value={3}>1*3</Radio>
+            </Radio.Group>
+          </Col>
+        </Row>
+        <Row gutter={12} className='mb10'>
+          <Col span={3}>展示样式:</Col>
+          <Col span={9}>
+            <Radio.Group
+              value={detail.style}
+              style={{ display: 'flex' }}
+              onChange={e => {
+                console.log('e => ', e)
+                detail.style = e.target.value
+                this.onChange(detail)
+              }}
+            >
+              <div>
+                <Image src=''/>
+                <Radio value={1}>样式1</Radio>
+              </div>
+              <div>
+                <Image src=''/>
+                <Radio value={2}>样式2</Radio>
+              </div>
             </Radio.Group>
           </Col>
         </Row>
@@ -110,9 +137,9 @@ class Main extends React.Component<Props, State> {
           <Col span={3}></Col>
           <Col span={21}>
             <Shop
-              dataSource={detail.list}
+              dataSource={detail.products}
               onChange={value => {
-                detail.list = value;
+                detail.products = value;
                 this.onChange(detail);
               }}
             />
@@ -139,7 +166,7 @@ class Main extends React.Component<Props, State> {
                 }
               }}
               onOk={() => {
-                detail.list = this.tempList;
+                detail.products = this.tempList;
                 this.onChange(detail);
               }}
             />
@@ -186,10 +213,10 @@ class Main extends React.Component<Props, State> {
       <div>
         <Upload
           value={
-            detail.advertisementUrl && [
+            detail.advertisementImgUrl && [
               {
-                uid: 'advertisementUrl0',
-                url: detail.advertisementUrl,
+                uid: 'advertisementImgUrl0',
+                url: detail.advertisementImgUrl,
               },
             ]
           }
@@ -197,16 +224,15 @@ class Main extends React.Component<Props, State> {
           listType="picture-card"
           onChange={(value: any) => {
             const detail = this.props.detail;
-            console.log(value, 'picture change');
             if (value[0] && value[0].url) {
               this.onChange({
                 ...detail,
-                advertisementUrl: value[0].url,
+                advertisementImgUrl: value[0].url,
               });
             } else {
               this.onChange({
                 ...detail,
-                advertisementUrl: undefined,
+                advertisementImgUrl: undefined,
               });
             }
           }}
@@ -237,8 +263,8 @@ class Main extends React.Component<Props, State> {
   public renderCoupon(): React.ReactNode {
     const { detail } = this.props;
     detail.css = detail.css || 1;
-    const selectedRowKeys = this.getSelectedRowKeys(detail.crmCoupons);
-    this.tempCrmCoupons = Array.prototype.concat(detail.crmCoupons || []);
+    const selectedRowKeys = this.getSelectedRowKeys(detail.coupons);
+    this.tempCoupons = Array.prototype.concat(detail.coupons || []);
     return (
       <div>
         <Row gutter={12}>
@@ -258,12 +284,12 @@ class Main extends React.Component<Props, State> {
         </Row>
         <Row gutter={12}>
           <Col span={21} offset={3}>
-            {detail.crmCoupons && (
+            {detail.coupons && (
               <Coupon
-                dataSource={detail.crmCoupons}
+                dataSource={detail.coupons}
                 onChange={value => {
-                  detail.crmCoupons = value;
-                  console.log('crmCoupons=>', detail.crmCoupons);
+                  detail.coupons = value;
+                  console.log('coupons=>', detail.coupons);
                   this.onChange(detail);
                 }}
               />
@@ -278,11 +304,11 @@ class Main extends React.Component<Props, State> {
                 console.log('onSelectAll=>', selected, selectedRows, changeRows);
                 if (selected) {
                   changeRows.map(item => {
-                    this.tempCrmCoupons.push(item);
+                    this.tempCoupons.push(item);
                   });
                 } else {
                   const ids = changeRows.map(val => val.id);
-                  this.tempCrmCoupons = this.tempCrmCoupons.filter(item => {
+                  this.tempCoupons = this.tempCoupons.filter(item => {
                     return ids.indexOf(item.id) === -1;
                   });
                 }
@@ -293,17 +319,17 @@ class Main extends React.Component<Props, State> {
                 }
                 if (selected) {
                   if (record) {
-                    this.tempCrmCoupons.push(record);
+                    this.tempCoupons.push(record);
                   }
                 } else {
-                  this.tempCrmCoupons = this.tempCrmCoupons.filter(
+                  this.tempCoupons = this.tempCoupons.filter(
                     item => item && item.id !== record.id,
                   );
                 }
               }}
               onOk={() => {
-                this.tempCrmCoupons = this.tempCrmCoupons.filter(item => !!item);
-                detail.crmCoupons = this.tempCrmCoupons;
+                this.tempCoupons = this.tempCoupons.filter(item => !!item);
+                detail.coupons = this.tempCoupons;
                 this.onChange(detail);
                 this.setState({ couponVisible: false });
               }}

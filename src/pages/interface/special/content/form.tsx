@@ -2,15 +2,16 @@ import React from 'react'
 import { Card, Button } from 'antd'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import Content from '../components/content'
-import { namespace } from './model'
 import styles from '../style.module.sass'
 import { RouteComponentProps, withRouter } from 'react-router'
-import { queryFloorDetail } from './api'
-
-interface States {
+import { FormComponentProps } from 'antd/es/form'
+import { namespace } from './model'
+import { connect } from 'react-redux'
+import { saveSubjectFloor } from './api'
+interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   detail: Special.DetailProps
 }
-class Main extends React.Component<RouteComponentProps<any>, any> {
+class Main extends React.Component<Props> {
   public form: FormInstance
   public id: number = -1
   public componentDidMount () {
@@ -21,28 +22,54 @@ class Main extends React.Component<RouteComponentProps<any>, any> {
       this.fetchDetail()
     }
   }
+  public componentWillUnmount () {
+    APP.dispatch({
+      type: `${namespace}/@@init`
+    })
+  }
   /** 添加楼层 */
-  public addContent = (type: 1 | 2 | 3) => {
-    const { detail } = this.state
+  public addContent(type: 1 | 2 | 3) {
+    const { detail } = this.props
     detail.list.push({
       type,
       sort: 0,
       list: [],
-      coupons: []
+      crmCoupons: []
     })
     APP.dispatch({
       type: `${namespace}/changeDetail`,
       payload: { ...detail }
     })
   }
+
   /** 获取楼层详情 */
   public async fetchDetail () {
-    const res = queryFloorDetail(this.id)
-    this.form.setValues(res)   
+    APP.dispatch({
+      type: `${namespace}/fetchDetail`,
+      payload: {
+        id: this.id,
+        cb: (res: any) => {
+          this.form.setValues(res)
+        }
+      }
+    })   
   }
   /** 保存 */
   public handleSave = () => {
-
+    const { detail } = this.props
+    this.form.props.form.validateFields(async (err, vals) => {
+      if (!err) {
+        const res = await saveSubjectFloor({
+          ...detail,
+          ...vals,
+          id: this.id !== -1 ? this.id : void 0
+        })
+        if (res) {
+          APP.success(`${this.id === -1 ? '新增' : '编辑'}专题内容成功`)
+          APP.history.go(-1)
+        }
+      }
+    })
   }
   public render () {
     return (
@@ -58,25 +85,41 @@ class Main extends React.Component<RouteComponentProps<any>, any> {
               width: 220
             }
           }}
+          verifiable
+          fieldDecoratorOptions={{
+            rules: [{
+              required: true,
+              message: '请输入名称'
+            }]
+          }}
         />
           <FormItem
             name='status'
             label='启用状态'
+            verifiable
+            fieldDecoratorOptions={{
+              initialValue: 1,
+              rules: [{
+                required: true,
+                message: '请输入启用状态'
+              }]
+            }}
             type='radio'
             options={[{
               label: '启用',
               value: 1
             }, {
-              label: (
-                <>停用<span style={{ color: '#ff4d4f'}}>（活动中的专题内容无法停用）</span></>
-              ),
+              // label: (
+              //   <>停用<span style={{ color: '#ff4d4f'}}>（活动中的专题内容无法停用）</span></>
+              // ),
+              label: '停用',
               value: 0
             }]}
           />
           {this.id !== -1 && (
             <>
               <FormItem
-                name='modifyTime'
+                name='modifyTimeText'
                 label='最后操作时间'
                 type='text'
               />
@@ -106,7 +149,9 @@ class Main extends React.Component<RouteComponentProps<any>, any> {
             </Button>
           </FormItem>
           <FormItem>
-            <Content style={{ width: 800 }} />
+            <Content
+              style={{ width: 800 }}
+            />
           </FormItem>
           <FormItem style={{marginTop: 100}}>
             <Button
@@ -121,4 +166,8 @@ class Main extends React.Component<RouteComponentProps<any>, any> {
   }
 }
 
-export default withRouter(Main)
+export default Form.create()(connect((state: any) => {
+  return {
+    detail: state[namespace].detail
+  }
+})(withRouter(Main)))
