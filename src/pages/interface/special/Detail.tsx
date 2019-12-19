@@ -24,7 +24,8 @@ interface State {
   activeKey: string
   detail: {
     css: 1 | 2,
-    subjectCoupons: Special.SubjectCoupons[]
+    subjectCoupons: Special.SubjectCoupons[],
+    
   }
 }
 

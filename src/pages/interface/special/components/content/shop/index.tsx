@@ -86,7 +86,7 @@ class Main extends React.Component<Props> {
         size={'small'}
         style={{width: '100%'}}
         columns={this.columns}
-        dataSource={this.props.dataSource}
+        dataSource={this.props.dataSource || []}
         pagination={{
           pageSize: this.pageSize,
           showTotal: (total) => {

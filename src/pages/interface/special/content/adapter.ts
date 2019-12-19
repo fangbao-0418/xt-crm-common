@@ -29,5 +29,10 @@ export function queryFloorRespones (res: any) {
 export function subjectFloorDetailResponse (res: any) {
   res.modifyTimeText = APP.fn.formatDate(res.modifyTime)
   if (!Array.isArray(res.list)) res.list = []
+  res.list = res.list.map((v: any) => {
+    if (!Array.isArray(v.products)) v.products = []
+    if (!Array.isArray(v.coupons)) v.coupons = []
+    return v
+  })
   return res
 }
