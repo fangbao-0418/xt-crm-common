@@ -26,7 +26,7 @@ class Main extends React.Component<Props> {
           </div>
           <div className={styles['anchor-column-nickname-info']}>
             <div>
-      <span className={styles['anchor-column-nickname-info-name']}>{record.nickName}</span>
+              <span className={styles['anchor-column-nickname-info-name']}>{record.nickName || '暂无'}</span>
               <Tag style={{margin: '0 5px'}} hidden={record.status !== 1} color='#666'>黑名单</Tag>
             </div>
             <div>

@@ -6,9 +6,34 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
+      phone: {
+        type: 'input',
+        fieldDecoratorOptions: {
+          rules: [
+            {
+              pattern: /^\d{11}$/,
+              message: '格式不正确'
+            }
+          ]
+        }
+      },
+      memberId: {
+        type: 'input',
+        fieldDecoratorOptions: {
+          rules: [
+            {
+              pattern: /^\d+$/,
+              message: '格式不正确'
+            }
+          ]
+        }
+      },
       anchorId: {
-        type: 'input', label: '主播ID',
+        type: 'number', label: '主播ID',
         controlProps: {
+          style: {
+            width: 150
+          },
           placeholder: '主播ID'
         }
       },
@@ -34,13 +59,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '买家', value: 40}
         ]
       },
-      // d: {
-      //   type: 'select', label: '直播状态',
-      //   options: [
-      //     {label: '直播中', value: '1'},
-      //     {label: '未直播', value: '2'}
-      //   ]
-      // },
       anchorLevel: {
         type: 'select', label: '主播等级',
         options: [

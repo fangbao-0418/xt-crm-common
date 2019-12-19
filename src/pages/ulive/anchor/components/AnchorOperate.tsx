@@ -53,6 +53,9 @@ class Main extends React.Component<Props, State> {
   }
   public searchUser () {
     this.form.props.form.validateFields((err, value) => {
+      if (err) {
+        return
+      }
       if (!value.phone && !value.memberId) {
         APP.error('请输入用户手机号或登录ID')
         return
@@ -194,12 +197,14 @@ class Main extends React.Component<Props, State> {
             <FormItem
               label='用户手机号'
               name='phone'
-              type='input'
+              required={false}
+              verifiable
             />
             <FormItem
               label='登录ID'
               name='memberId'
-              type='input'
+              required={false}
+              verifiable
             />
             <div hidden={!this.state.message} style={{position: 'relative', top: -10}}>
               <div className='text-center mb10'>
