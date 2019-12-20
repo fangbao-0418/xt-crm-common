@@ -321,6 +321,7 @@ class Main extends React.Component<Props, State> {
             {/* 一般类型 */}
             {this.state.type === 0 && (
               <Card style={{ marginTop: 0 }}>
+                <FormItem hidden inner={form => form.getFieldDecorator('floorId')}/>
                 <FormItem
                   label='绑定专题内容'
                   inner={(form) => {
