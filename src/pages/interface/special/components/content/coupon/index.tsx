@@ -52,7 +52,7 @@ class CouponTable extends React.Component<Props> {
         return (
           <div>
             <Popconfirm
-              title="确定删除该商品吗？"
+              title="确定删除该优惠券吗？"
               onConfirm={() => {
                 if (this.props.onChange) {
                   this.props.onChange(dataSource.filter((item) => item.id !== record.id))
