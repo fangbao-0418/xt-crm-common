@@ -12,27 +12,31 @@ class Main extends React.Component {
     {
       title: '排序',
       key: 'sort',
-      dataIndex: 'sort'
+      dataIndex: 'sort',
+      width: '15%'
     },
     {
       title: '最近修改时间',
       key: 'modifyTime',
-      dataIndex: 'modifyTime'
+      dataIndex: 'modifyTime',
+      width: '15%'
     },
     {
       title: '修改人',
       key: 'modifyName',
-      dataIndex: 'modifyName'
+      dataIndex: 'modifyName',
+      width: '15%'
     },
     {
       title: '是否显示',
       key: 'status',
-      dataIndex: 'status'
+      dataIndex: 'status',
+      width: '15%'
     },
     {
       title: '操作',
       key: 'operate',
-      width: 180,
+      width: 220,
       render: (text: any, records: any) => {
         return (
           <>
@@ -43,19 +47,14 @@ class Main extends React.Component {
               编辑
             </Button>
             <Popconfirm
+              className='ml10'
               title='你确认删除吗？'
               onConfirm={this.handleConfirm}
               okText="Yes"
               cancelText="No"
             >
-              <a href="#">Delete</a>
+              <Button type='danger'>删除</Button>
             </Popconfirm>
-            <Button
-              type='danger'
-              className='ml10'
-            >
-              删除
-            </Button>
           </>
         )
       }

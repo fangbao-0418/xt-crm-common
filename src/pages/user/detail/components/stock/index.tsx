@@ -23,13 +23,12 @@ class Main extends React.Component<any, State> {
   public columns = [
     {
       title: '采购批次',
-      width: 150,
       key: 'purchaseNo',
       dataIndex: 'purchaseNo'
     },
     {
       title: '采购时间',
-      width: 150,
+      width: 200,
       key: 'createTime',
       dataIndex: 'createTime'
     },
@@ -41,23 +40,25 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '商品名称',
+      width: 150,
       key: 'productName',
       dataIndex: 'productName'
     },
     {
       title: '采购成本(元)',
-      width: 80,
+      width: 120,
       key: 'purchasePrice',
       dataIndex: 'purchasePrice'
     },
     {
       title: '采购量(件)',
+      width: 120,
       key: 'purchaseCount',
       dataIndex: 'purchaseCount'
     },
     {
       title: '剩余库存(件)',
-      width: 80,
+      width: 120,
       key: 'stock',
       dataIndex: 'stock'
     },
@@ -69,25 +70,25 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '团长价',
-      width: 150,
+      width: 100,
       key: 'headPrice',
       dataIndex: 'headPrice'
     },
     {
       title: '区长价',
-      width: 150,
+      width: 100,
       key: 'cityPrice',
       dataIndex: 'cityPrice'
     },
     {
       title: '合伙人价',
-      width: 150,
+      width: 100,
       key: 'areaPrice',
       dataIndex: 'areaPrice'
     },
     {
       title: '管理员价',
-      width: 150,
+      width: 100,
       key: 'managerPrice',
       dataIndex: 'managerPrice'
     },
@@ -185,6 +186,11 @@ class Main extends React.Component<any, State> {
           </Form>
         </Modal>
         <ListPage
+          tableProps={{
+            scroll: {
+              x: true
+            }
+          }}
           getInstance={ref => this.list = ref}
           rangeMap={{
             pruchaseTime: {
