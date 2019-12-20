@@ -1,12 +1,14 @@
 import * as Fetch from '@/util/fetch';
 import { get, post, newPost } from '@/util/app/http';
+import { userInfoResponse } from './components/userInfo/adapter'
 var qs = require('qs');
 
 export function getCouponList(memberId, data) {
     return Fetch.post(`/member/get/getCouponList/${memberId}`, data);
 }
-export function getUserInfo(params) {
-    return Fetch.request(`/member/detail?${qs.stringify(params)}`);
+export async function getUserInfo(params) {
+    const res = await Fetch.request(`/member/detail?${qs.stringify(params)}`)
+    return userInfoResponse(res);
 }
 
 export function updateInviteUser(params) {

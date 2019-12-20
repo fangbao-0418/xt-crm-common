@@ -1,72 +1,89 @@
 import React from 'react'
-import { Card, Checkbox, Button, Icon } from 'antd'
+import { Card, Button, Icon } from 'antd'
 import Form, { FormInstance, FormItem} from '@/packages/common/components/form'
 import styles from './style.module.styl'
 import { cloneDeep } from 'lodash'
-import classnames from 'classnames'
-import CategoryModal from './components/CategorySelector'
 import ActivityModal from './components/ActivitySelector'
+import { processCategory, queryCategoryDetail } from './api'
 interface SelectedRowOpts {
   selectedRowKeys: string[] | number[]
   selectedRows: any[]
 }
 interface State {
-  checkedVals: any[],
   selectedRowOpts: SelectedRowOpts
-  cateText: any[]
-  activityVisible: boolean,
-  categoryVisible: boolean
+  activityVisible: boolean
 }
 class Main extends React.Component<any, State> {
   public form: FormInstance
+  public id: number = -1
   public state: State = {
-    cateText: [],
-    checkedVals: [],
     selectedRowOpts: {
       selectedRowKeys: [],
       selectedRows: []
     },
-    activityVisible: false,
-    categoryVisible: false
-  }
-  public constructor (props: any) {
-    super(props)
-    this.handleSave = this.handleSave.bind(this)
+    activityVisible: false
   }
   public componentDidMount () {
+    this.id = +this.props.match.params.id
+    if (this.id !== -1) {
+      this.fetchData()
+    }
     this.form.setValues({
-      display: 1
+      status: 1
     })
   }
-  public handleSave () {
-    this.form.props.form.validateFields((err, vals) => {
-      if (!err) {
-        console.log(vals)
+
+  /** 获取详情 */
+  public async fetchData () {
+    const res = await queryCategoryDetail(this.id)
+    console.log('detail => ', res)
+    this.form.setValues(res)
+    if (!Array.isArray(res.productCategoryVOS)) res.productCategoryVOS = []
+    this.setState({
+      selectedRowOpts:{
+        selectedRowKeys: res.productCategoryVOS.map((v: any) => v.id),
+        selectedRows: res.productCategoryVOS.map((v: any) => ({id: v.id, title: v.name}))
       }
     })
   }
+  
+  public handleSave = () => {
+    const { selectedRowOpts } = this.state 
+    this.form.props.form.validateFields(async (err, vals) => {
+      if (!err) {
+        const res = await processCategory({
+          ...vals,
+          showType: 3,
+          productCategoryVOS: selectedRowOpts.selectedRows.map((v: any) => ({
+            id: v.id,
+            level: 1,
+            name: v.title,
+            type: 2
+          })),
+          id: this.id !== -1 ? this.id : undefined
+        })
+        if (res) {
+          APP.success(`${this.id !== -1 ? '编辑' : '新建'}分类成功`)
+          this.goback()
+        }
+      }
+    })
+  }
+
+
+  public goback () {
+    APP.history.go(-1)
+  }
+
   public render () {
     const {
-      checkedVals,
       selectedRowOpts,
-      cateText,
-      categoryVisible,
-      activityVisible
+      activityVisible,
     } = this.state 
     return (
       <Card title='编辑分类'>
-        <CategoryModal
-          visible={categoryVisible}
-          cateText={cateText}
-          onOk={(cateText: any[]) => {
-            this.setState({
-              cateText,
-              categoryVisible: false
-            })
-          }}
-          onClose={() => this.setState({ categoryVisible: false})}
-        />
         <ActivityModal
+          processPayload={(payload: any) => Object.assign(payload, { type: 9})}
           selectedRowOpts={selectedRowOpts}
           visible={activityVisible}
           onOk={(selectedRowOpts: SelectedRowOpts) => {
@@ -83,6 +100,7 @@ class Main extends React.Component<any, State> {
           addonAfter={
             <FormItem>
               <Button type='primary' onClick={this.handleSave}>保存</Button>
+              <Button className='ml10' onClick={this.goback}>取消</Button>
             </FormItem>
           }
         >
@@ -121,7 +139,7 @@ class Main extends React.Component<any, State> {
             }}
           />
           <FormItem
-            name='display'
+            name='status'
             type='radio'
             label='是否显示'
             options={[{
@@ -129,95 +147,45 @@ class Main extends React.Component<any, State> {
               value: 1
             }, {
               label: 'B',
-              value: 2
+              value: 0
             }]}
           />
           <FormItem
-            label='关联商品'
+            label='关联活动'
             required
-            inner={(form) => {
-              return form.getFieldDecorator('relatedProduct', {
-                rules: [{
-                  required: true,
-                  message: '请选择关联活动'
-                }]
-              })(
-                <Checkbox.Group
-                  onChange={(checkedVals) => {
-                    console.log('checkedVals => ', checkedVals)
-                    this.setState({
-                      checkedVals
-                    })
-                  }
-                }>
-                  <Checkbox value={1}>关联类目</Checkbox>
-                  {checkedVals.includes(1) && (
-                    <div className={classnames(styles['intf-cat-rebox'], 'mt10')}>
-                      {cateText.map((item: any, index: number) => {
-                        return (
-                          <div className={styles['intf-cat-reitem']} key={index}>
-                            {item.name}
-                            <span
-                              className={styles['close']}
-                              onClick={() => {
-                                const copyCateText = cloneDeep(cateText)
-                                copyCateText.splice(index, 1)
-                                this.setState({
-                                  cateText: copyCateText
-                                })
-                              }}
-                            >
-                              <Icon type='close' />
-                            </span>
-                          </div>
-                        )
-                      })}
-                      <Button
-                        type='link'
-                        onClick={() => this.setState({ categoryVisible: true })}
-                      >
-                        +添加类目
-                      </Button>
-                    </div>
-                  )}
-                  <Checkbox value={2}>关联活动</Checkbox>
-                  {checkedVals.includes(2) && (
-                      <div className={classnames(styles['intf-cat-rebox'], 'mt10')}>
-                        {selectedRowOpts.selectedRows.map((item: any, index: number) => {
-                        return (
-                          <div className={styles['intf-cat-reitem']} key={index}>
-                            {item.title}
-                            <span
-                              className={styles['close']}
-                              onClick={() => {
-                                const copySelectedRowOpts = cloneDeep(selectedRowOpts)
-                                copySelectedRowOpts.selectedRows.splice(index, 1)
-                                copySelectedRowOpts.selectedRowKeys.splice(index, 1)
-                                this.setState({
-                                  selectedRowOpts: copySelectedRowOpts
-                                })
-                              }}
-                            >
-                              <Icon type='close' />
-                            </span>
-                          </div>
-                        )
-                      })}
-                      <Button
-                        type='link'
-                        onClick={() => {
-                          this.setState({
-                            activityVisible: true
-                          })
-                        }}>
-                        +添加活动
-                      </Button>
-                    </div>
-                  )}
-                </Checkbox.Group>
+          >
+            <div className={styles['intf-cat-rebox']}>
+              {selectedRowOpts.selectedRows.map((item: any, index: number) => {
+              return (
+                <div className={styles['intf-cat-reitem']} key={index}>
+                  {item.title}
+                  <span
+                    className={styles['close']}
+                    onClick={() => {
+                      const copySelectedRowOpts = cloneDeep(selectedRowOpts)
+                      copySelectedRowOpts.selectedRows.splice(index, 1)
+                      copySelectedRowOpts.selectedRowKeys.splice(index, 1)
+                      this.setState({
+                        selectedRowOpts: copySelectedRowOpts
+                      })
+                    }}
+                  >
+                    <Icon type='close' />
+                  </span>
+                </div>
               )
-            }}
-          />
+              })}
+              <Button
+              type='link'
+              onClick={() => {
+                this.setState({
+                  activityVisible: true
+                })
+              }}>
+              +添加活动
+              </Button>
+            </div>
+          </FormItem>
         </Form>
       </Card>
     )

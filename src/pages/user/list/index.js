@@ -17,16 +17,12 @@ const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 
 const joinOptions = [
   {
-    label: '全部',
-    value: ''
-  },
-  {
     label: '是',
-    value: '1'
+    value: true
   },
   {
     label: '否',
-    value: '0'
+    value: false
   }
 ]
 function getColumns(scope) {
@@ -280,10 +276,10 @@ export default class extends Component {
                 </FormItem>
                 <FormItem label="是否参加团购会">
                     {
-                        getFieldDecorator('phone', {
-                            initialValue: values.phone
+                        getFieldDecorator('enableGroupBuyPermission', {
+                            initialValue: values.enableGroupBuyPermission
                         })(
-                          <Select placeholder='请输入' style={{ width: 172 }}>
+                          <Select placeholder='请输入' style={{ width: 172 }} allowClear>
                             {joinOptions.map((v, i) => (
                               <Option value={v.value} key={i}>{v.label}</Option>
                             ))}

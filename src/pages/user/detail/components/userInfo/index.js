@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Descriptions, Table, Button, Form, Select, Modal, Input, Switch } from 'antd';
+import { Card, Descriptions, Table, Button, Form, Select, Modal, Input, Switch, InputNumber } from 'antd';
 import moment from 'moment';
 import { connect, parseQuery, setQuery } from '@/util/utils';
 import styles from './index.module.scss';
@@ -7,7 +7,8 @@ import UserModal from './modal';
 import ModalInvit from './modalInvit';
 import { levelName } from '../../../utils';
 import { memberModify, getReasonList, setMemberUnlocking } from '../../api'
-import { FormItem } from '@/packages/common/components/form';
+import { updateDepositAmount, updateCreditAmount, enablePermission } from './api'
+const FormItem = Form.Item
 const { Option } = Select;
 const { TextArea } = Input;
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
@@ -17,42 +18,87 @@ function formatTime(text) {
 }
 
 function withModal(WrappedComponent) {
-  return class extends React.Component {
+  return Form.create({ name: 'userinfo-modal' })(class extends React.Component {
     state = {
       title: '',
-      visible: false
+      visible: false,
+      name: 'depositAmount'
+    }
+    constructor (props) {
+      super(props)
+      this.wrappedCompRef = React.createRef()
     }
     modal = {
       showModal: (payload) => {
+        console.log('payload.creditAmount => ', payload.creditAmount)
         switch (payload.type) {
           // 保证金
           case 'bail':
             this.setState({
               label: '保证金',
-              visible: true
+              visible: true,
+              name: 'depositAmount'
             })
             break
           // 采购额度
           case 'purchaseQuota':
             this.setState({
               label: '采购额度',
-              visible: true
+              visible: true,
+              name: 'creditAmount'
             })
             break
           default:
             break
         }
-        
+        this.forceUpdate(() => {
+          this.props.form.setFieldsValue({
+            depositAmount: payload.depositAmount,
+            creditAmount: payload.creditAmount
+          })
+        })
       }
     }
     onCancel = () => {
       this.setState({ visible: false })
     }
     onOk = () => {
-
+      console.log(this.wrappedCompRef, '========================wrappedCompRef========================')
+      const { name } = this.state
+      const { memberId } = parseQuery()
+      this.props.form.validateFields(async (err, vals) => {
+        console.log(err, vals, '------------')
+        if (!err) {
+          // 保证金
+          if (name === 'depositAmount') {
+            const res = await updateDepositAmount({
+              memberId,
+              depositAmount: vals.depositAmount
+            })
+            if (res) {
+              APP.success('修改保证金成功')
+              this.wrappedCompRef.current.handleSearch()
+              this.onCancel()
+            }
+          }
+          // 采购额度
+          else if (name === 'creditAmount') {
+            const res = await updateCreditAmount({
+              memberId,
+              creditAmount: vals.creditAmount
+            })
+            if (res) {
+              APP.success('修改采购额度成功')
+              this.wrappedCompRef.current.handleSearch()
+              this.onCancel()
+            }
+          }
+        }
+      })
     }
     render () {
-      const { label, visible } = this.state
+      const { label, visible, name } = this.state
+      const { form, ...otherProps } = this.props
       return (
         <>
           <Modal
@@ -63,16 +109,36 @@ function withModal(WrappedComponent) {
             okText='提交'
             cancelText='取消编辑'
           >
-            <div style={{ paddingLeft: 20 }}>
-              <span>{label}：</span>
-              <Input style={{ width: 172 }} placeholder='请输入'/>
-            </div>
+            <Form
+              layout='inline'
+            >
+              <FormItem
+                label={label}
+              >
+                {form.getFieldDecorator(name, {
+                  rules: [{
+                    required: true,
+                    message: `请输入${label}`
+                  }]
+                })(
+                  <InputNumber
+                    min={0}
+                    style={{ width: 172 }}
+                    placeholder='请输入'
+                  />
+                )}
+              </FormItem>
+            </Form>
           </Modal>
-          <WrappedComponent {...this.props} modal={this.modal}/>
+          <WrappedComponent
+            wrappedCompRef = {this.wrappedCompRef}
+            {...otherProps}
+            modal={this.modal}
+          />
         </>
       )
     }
-  }
+  })
 }
 
 const columns = [
@@ -107,11 +173,12 @@ let reasonList = [];
   data: state['user.userinfo'].userinfo,
   loading: state.loading.effects['user.userinfo'].getUserInfo
 }))
-@Form.create()
+@Form.create({ name: 'userinfo' })
 class UserInfo extends Component {
   state = {
-    checked: true, //是否开启团购会
+    enableGroupBuyPermission: false, //是否开启团购会
     visible: false,
+    switchLoading: false,
     reasonRemark: "", //升降级说明
     upOrDwon: 0 , //1 升级，-1降级。0 不处理
   }
@@ -122,6 +189,7 @@ class UserInfo extends Component {
   }
 
   componentDidMount() {
+    this.props.wrappedCompRef.current = this
     this.handleSearch();
     getReasonList().then(res => {
       console.log('getReasonList', res)
@@ -163,10 +231,14 @@ class UserInfo extends Component {
   handleSearch = (params = {}) => {
     const { history, dispatch } = this.props;
     const obj = parseQuery(history);
-    const payload = {
-      memberId: params.memberId || obj.memberId
-    };
-    dispatch['user.userinfo'].getUserInfo(payload);
+    dispatch['user.userinfo'].getUserInfo({
+      memberId: params.memberId || obj.memberId,
+      cb: (res) => {
+        this.setState({
+          enableGroupBuyPermission: res.enableGroupBuyPermission
+        })
+      }
+    })
   }
 
   showModalInvit = () => {
@@ -229,7 +301,7 @@ class UserInfo extends Component {
     unlisten();
   }
   render() {
-    const { checked } = this.state
+    const { enableGroupBuyPermission } = this.state
     const { data, loading } = this.props;
     console.log(this.props, 'render')
     const { form: { getFieldDecorator } } = this.props;
@@ -279,32 +351,63 @@ class UserInfo extends Component {
         <Card>
           <Descriptions column={1}>
             <Descriptions.Item label='保证金'>
-              <span>1000元</span>
+              <span>{data.depositAmount}元</span>
               <Button
                 type='link'
                 className='ml10'
                 onClick={() => {
                   this.props.modal.showModal({
-                    type: 'bail'
+                    type: 'bail',
+                    depositAmount: data.depositAmount
                   })
                 }}>
                 修改保证金
               </Button>
             </Descriptions.Item>
             <Descriptions.Item label='开启团购会'>
-              <Switch checked={checked} onChange={(checked) => this.setState({ checked })}/>
+              <Switch
+                checkedChildren='开'
+                unCheckedChildren='关'
+                loading={this.state.switchLoading}
+                checked={enableGroupBuyPermission}
+                onChange={async (checked) => {
+                  console.log('checked => ', checked)
+                  try {
+                    this.setState({
+                      switchLoading: true
+                    })
+                    const res = await enablePermission({
+                      isOpen: checked,
+                      memberId: parseQuery().memberId
+                    })
+                    this.setState({
+                      switchLoading: false
+                    })
+                    if (res) {
+                      APP.success(`${checked ? '开启' : '关闭'}团购会成功`)
+                      this.setState({ enableGroupBuyPermission: checked })
+                    }
+                  } catch (error) {
+                    this.setState({
+                      switchLoading: false,
+                      enableGroupBuyPermission: !checked
+                    })
+                  }
+                }}
+              />
             </Descriptions.Item>
           </Descriptions>
-          {checked && (
+          {enableGroupBuyPermission && (
             <Descriptions column={6}>
-              <Descriptions.Item label='采购额度'>3000元</Descriptions.Item>
-              <Descriptions.Item label='剩余采购额度'>1000元</Descriptions.Item>
+              <Descriptions.Item label='采购额度'>{data.creditAmount}元</Descriptions.Item>
+              <Descriptions.Item label='剩余采购额度'>{data.remainCreditAmount}元</Descriptions.Item>
               <Descriptions.Item>
                 <Button
                   type='link'
                   onClick={() => {
                     this.props.modal.showModal({
-                      type: 'purchaseQuota'
+                      type: 'purchaseQuota',
+                      creditAmount: data.creditAmount
                     })
                   }}
                 >
@@ -336,7 +439,7 @@ class UserInfo extends Component {
               <span>{data.totalAccount ? data.totalAccount / 100 : 0}</span>
             </div>
             <div className={styles.content}>
-              <span className={styles.key}>已到账：</span>
+              <span className={styles.key}>余额：</span>
               <span>{data.alreadyAccount ? data.alreadyAccount / 100 : 0}</span>
             </div>
             <div className={styles.content}>

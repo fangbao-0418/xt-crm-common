@@ -17,7 +17,9 @@ interface Props {
   selectedRowOpts: SelectedRowOpts
   visible: boolean
   onOk: (payload: SelectedRowOpts) => void
-  onClose: () => void
+  onClose: () => void,
+  /** 列表请求参数处理 */
+  processPayload?: (payload: any) => any
 }
 interface State {
   selectedRowOpts: SelectedRowOpts
@@ -101,6 +103,7 @@ class Main extends React.Component<Props, State> {
           }}
           columns={this.columns}
           formConfig={getDefaultConfig()}
+          processPayload={this.props.processPayload}
           api={getPromotionList}
           tableProps={{
             rowSelection: {
