@@ -1,9 +1,18 @@
 import React from 'react'
-import { Popconfirm} from 'antd'
+import { Modal, InputNumber } from 'antd'
+import Form, { FormItem } from '@/packages/common/components/form'
 import ListPage from '@/packages/common/components/list-page'
 import { getDefaultConfig } from './config'
 import { getPurchaseDetail } from './api'
-class Main extends React.Component {
+import { parseQuery } from '@/util/utils'
+interface State {
+  visible: boolean
+}
+class Main extends React.Component<any, State> {
+  public query: any = parseQuery()
+  public state: State = {
+    visible: false
+  }
   public columns = [
     {
       title: '采购批次',
@@ -12,8 +21,8 @@ class Main extends React.Component {
     },
     {
       title: '采购时间',
-      key: 'purchaseTime',
-      dataIndex: 'purchaseTime'
+      key: 'createTime',
+      dataIndex: 'createTime'
     },
     {
       title: '商品ID',
@@ -71,32 +80,55 @@ class Main extends React.Component {
       width: 80,
       fixed: 'right',
       render: (text: any, records: any) => {
-        return (
-          <Popconfirm
-            title='确认核销该采购批次？'
-            onConfirm={() => {}}
-            onCancel={() => {}}
-            okText='确认'
-            cancelText='取消'
-          >
-            <span className='href'>核销</span>
-          </Popconfirm>
-        )
+        return <span className='href' onClick={this.showModal}>核销</span>
       }
     }
   ]
+  public showModal = () => {
+    this.setState({
+      visible: true
+    })
+  }
+  public handleOk = () => {
+
+  }
+  public handleCancel = () => {
+    this.setState({
+      visible: false
+    })
+  }
   public render () {
+    const { visible } = this.state
     return (
-      <ListPage
-        rangeMap={{
-          pruchaseTime: {
-            fields: ['pruchaseStartTime', 'purchaseEndTime']
-          }
-        }}
-        formConfig={getDefaultConfig()}
-        columns={this.columns}
-        api={getPurchaseDetail}
-      />
+      <>
+        <Modal
+          title='核销库存'
+          visible={visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          okText='确认核销'
+        >
+          <Form>
+            <FormItem>
+              <span className='mr10'>核销</span>
+              <InputNumber style={{ width: 172 }} />
+              <span className='ml10'>件（最多XX件）</span>
+            </FormItem>
+          </Form>
+        </Modal>
+        <ListPage
+          rangeMap={{
+            pruchaseTime: {
+              fields: ['pruchaseStartTime', 'purchaseEndTime']
+            }
+          }}
+          formConfig={getDefaultConfig()}
+          columns={this.columns}
+          api={(payload: any) => getPurchaseDetail(Object.assign(payload, {
+            memberId: this.query.memberId
+          }))}
+        />
+      </>
     )
   }
 }

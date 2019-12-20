@@ -1,14 +1,17 @@
 import { newPost } from '@/util/fetch'
+import * as adapter from './adapter'
 
 /** 查询用户团购会采购库存  */
-export function getPurchaseDetail (payload: {
+export async function getPurchaseDetail (payload: {
   memberId: number,
-  pageNo: number,
+  page: number,
   pageSize: number,
-  productId: number,
-  productName: string,
-  pruchaseStartTime: number,
-  purchaseEndTime: number
+  productId?: number,
+  productName?: string,
+  pruchaseStartTime?: number,
+  purchaseEndTime?: number
 }) {
-  return newPost('/product/member/purchase/detail', payload)
+  const res = await newPost('/product/member/purchase/detail', payload)
+  console.log('adapter getPurchaseDetail =>', adapter.purchaseDetailRespones(res))
+  return adapter.purchaseDetailRespones(res)
 }

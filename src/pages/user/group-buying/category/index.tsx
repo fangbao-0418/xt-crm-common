@@ -1,23 +1,33 @@
 import React from 'react'
 import ListPage from '@/packages/common/components/list-page'
-import { getDefaultConfig } from './config'
-import { Button } from 'antd'
+import { categoryLit } from './api'
+import { Button, Popconfirm } from 'antd'
 class Main extends React.Component {
   public columns = [
     {
-      title: '分类名称'
+      title: '分类名称',
+      key: 'name',
+      dataIndex: 'name'
     },
     {
-      title: '排序'
+      title: '排序',
+      key: 'sort',
+      dataIndex: 'sort'
     },
     {
-      title: '最近修改'
+      title: '最近修改时间',
+      key: 'modifyTime',
+      dataIndex: 'modifyTime'
     },
     {
-      title: '修改人'
+      title: '修改人',
+      key: 'modifyName',
+      dataIndex: 'modifyName'
     },
     {
-      title: '是否显示'
+      title: '是否显示',
+      key: 'status',
+      dataIndex: 'status'
     },
     {
       title: '操作',
@@ -26,13 +36,33 @@ class Main extends React.Component {
       render: (text: any, records: any) => {
         return (
           <>
-            <Button type='primary'>编辑</Button>
-            <Button type='danger' className='ml10'>删除</Button>
+            <Button
+              type='primary'
+              onClick={() => APP.history.push(`/user/group-buying/category/${records.id}`)}
+            >
+              编辑
+            </Button>
+            <Popconfirm
+              title='你确认删除吗？'
+              onConfirm={this.handleConfirm}
+              okText="Yes"
+              cancelText="No"
+            >
+              <a href="#">Delete</a>
+            </Popconfirm>
+            <Button
+              type='danger'
+              className='ml10'
+            >
+              删除
+            </Button>
           </>
         )
       }
     }
   ]
+  public handleConfirm = () => {}
+
   public render () {
     return (
       <ListPage
@@ -48,7 +78,7 @@ class Main extends React.Component {
           </Button>
         )}
         columns={this.columns}
-        api={() => Promise.resolve({ records: [{}]})}
+        api={categoryLit}
       />
     )
   }
