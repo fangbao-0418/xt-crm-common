@@ -4,7 +4,7 @@ import { namespace } from '../../content/model';
 import Card from './Card';
 interface Props {
   detail: Special.DetailProps;
-  style?: any
+  style?: any;
 }
 class Main extends React.Component<Props> {
   public render() {
@@ -17,7 +17,6 @@ class Main extends React.Component<Props> {
               key={index}
               detail={item}
               onChange={(value: any) => {
-                console.log('value=>', value);
                 if (value) {
                   detail.list[index] = value;
                 } else {
@@ -25,7 +24,7 @@ class Main extends React.Component<Props> {
                 }
                 APP.dispatch({
                   type: `${namespace}/changeDetail`,
-                  payload: { ...detail },
+                  payload: { ...detail }
                 });
               }}
             />
@@ -37,6 +36,6 @@ class Main extends React.Component<Props> {
 }
 export default connect((state: any) => {
   return {
-    detail: state[namespace].detail,
+    detail: state[namespace].detail
   };
 })(Main);

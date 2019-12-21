@@ -11,25 +11,24 @@ import ActivityList from '@/pages/activity/info/ActivityList';
 import { namespace } from '../../content/model';
 import GoodsTransfer from '@/components/goods-transfer';
 import { concat, filter, includes } from 'lodash';
-import Image from '@/components/Image'
 
 /**
  * 样式图片 1*1 1*2 1*3
  */
 const images: any = {
   1: {
-    'plainCss': require('@/assets/images/plain1x1.png'),
-    'activityCss': require('@/assets/images/activity1x1.png'),
+    plainCss: require('@/assets/images/plain1x1.png'),
+    activityCss: require('@/assets/images/activity1x1.png')
   },
   2: {
-    'plainCss': require('@/assets/images/plain1x2.png'),
-    'activityCss': require('@/assets/images/activity1x2.png'),
+    plainCss: require('@/assets/images/plain1x2.png'),
+    activityCss: require('@/assets/images/activity1x2.png')
   },
   3: {
-    'plainCss': require('@/assets/images/plain1x3.png'),
-    'activityCss': require('@/assets/images/activity1x3.png'),
+    plainCss: require('@/assets/images/plain1x3.png'),
+    activityCss: require('@/assets/images/activity1x3.png')
   }
-}
+};
 
 interface State {
   /** 优惠券显隐 */
@@ -48,9 +47,11 @@ class Main extends React.Component<Props, State> {
 
   public tempCoupons: Coupon.CouponItemProps[] = [];
 
+  public goodsTransfer: any = null;
+
   public state: State = {
     couponVisible: false,
-    activeityListVisible: false,
+    activeityListVisible: false
   };
 
   public onChange(detail?: Special.DetailContentProps) {
@@ -71,17 +72,18 @@ class Main extends React.Component<Props, State> {
 
   public handleSelectActivity = (selectedRow: any) => {
     const { dispatch } = this.props;
-    dispatch[namespace].getGoodsListByActivityId({ promotionId: selectedRow.id });
+    const result = dispatch[namespace].getGoodsListByActivityId({ promotionId: selectedRow.id });
+    result.then(() => {
+      debugger;
+      this.goodsTransfer.showModal();
+    });
   };
 
   public goodsTransferCancel = () => {
-    const { dispatch } = this.props;
-    dispatch[namespace].saveDefault({
-      transferGoodsVisible: false,
-    });
+    this.goodsTransfer.closeModal();
   };
   public onClick = (src: string) => () => {
-    window.open(src)
+    window.open(src);
   };
   public goodsTransferOk = (selectedRowKeys: any) => {
     const { detail, state, dispatch } = this.props;
@@ -94,31 +96,27 @@ class Main extends React.Component<Props, State> {
       selectedRows.map(item => {
         item.id = item.productId;
         return item;
-      }),
+      })
     );
-    dispatch[namespace].saveDefault({ transferGoodsVisible: false }, () => {
-      this.onChange(detail);
-    });
+    this.goodsTransfer.closeModal();
+    this.onChange(detail);
   };
 
   /**
    * 渲染商品楼层
    */
-  public renderShop(): React.ReactNode {
+  public renderShop() {
     const { detail, state } = this.props;
-    const { transferGoodsVisible, goodsListByCurrentActivity } = state;
+    const { goodsListByCurrentActivity } = state;
     const selectedRowKeys = this.getSelectedRowKeys(detail.products);
     this.tempList = Array.prototype.concat(detail.products || []);
-    detail.style = detail.style || 1
-    detail.css = detail.css || 1
-    const plainCss = images[detail.css] && images[detail.css].plainCss
-    const activityCss = images[detail.css] && images[detail.css].activityCss
+    detail.style = detail.style || 1;
+    detail.css = detail.css || 1;
+    const plainCss = images[detail.css] && images[detail.css].plainCss;
+    const activityCss = images[detail.css] && images[detail.css].activityCss;
     return (
       <div>
-        <Row
-          gutter={12}
-          className='mb10'
-        >
+        <Row gutter={12} className="mb10">
           <Col span={3}>排列样式:</Col>
           <Col span={9}>
             <Radio.Group
@@ -134,36 +132,24 @@ class Main extends React.Component<Props, State> {
             </Radio.Group>
           </Col>
         </Row>
-        <Row gutter={12} className='mb10'>
+        <Row gutter={12} className="mb10">
           <Col span={3}>展示样式:</Col>
           <Col span={9}>
             <Radio.Group
               value={detail.style}
               style={{ display: 'flex' }}
               onChange={e => {
-                console.log('e => ', e)
-                detail.style = e.target.value
-                this.onChange(detail)
+                console.log('e => ', e);
+                detail.style = e.target.value;
+                this.onChange(detail);
               }}
             >
               <div>
-                <img
-                  width={100}
-                  height={100}
-                  src={plainCss}
-                  onClick={this.onClick(plainCss)}
-                  alt=''
-                />
+                <img width={100} height={100} src={plainCss} onClick={this.onClick(plainCss)} alt="" />
                 <Radio value={1}>普通样式</Radio>
               </div>
               <div>
-                <img
-                  width={100}
-                  height={100}
-                  src={activityCss}
-                  onClick={this.onClick(activityCss)}
-                  alt=''
-                />
+                <img width={100} height={100} src={activityCss} onClick={this.onClick(activityCss)} alt="" />
                 <Radio value={2}>活动样式</Radio>
               </div>
             </Radio.Group>
@@ -223,10 +209,12 @@ class Main extends React.Component<Props, State> {
             </span>
             <ActivityList text="选择活动商品" confirm={this.handleSelectActivity} />
             <GoodsTransfer
+              ref={element => {
+                this.goodsTransfer = element;
+              }}
               title="选择商品"
               currentGoodsList={this.tempList}
               dataSource={goodsListByCurrentActivity}
-              visible={transferGoodsVisible}
               onCancel={this.goodsTransferCancel}
               onOk={this.goodsTransferOk}
             />
@@ -252,8 +240,8 @@ class Main extends React.Component<Props, State> {
             detail.advertisementImgUrl && [
               {
                 uid: 'advertisementImgUrl0',
-                url: detail.advertisementImgUrl,
-              },
+                url: detail.advertisementImgUrl
+              }
             ]
           }
           size={0.3}
@@ -263,12 +251,12 @@ class Main extends React.Component<Props, State> {
             if (value[0] && value[0].url) {
               this.onChange({
                 ...detail,
-                advertisementImgUrl: value[0].url,
+                advertisementImgUrl: value[0].url
               });
             } else {
               this.onChange({
                 ...detail,
-                advertisementImgUrl: undefined,
+                advertisementImgUrl: undefined
               });
             }
           }}
@@ -283,7 +271,7 @@ class Main extends React.Component<Props, State> {
               const value = e.target.value;
               this.onChange({
                 ...detail,
-                advertisementJumpUrl: value,
+                advertisementJumpUrl: value
               });
             }}
           />
@@ -358,9 +346,7 @@ class Main extends React.Component<Props, State> {
                     this.tempCoupons.push(record);
                   }
                 } else {
-                  this.tempCoupons = this.tempCoupons.filter(
-                    item => item && item.id !== record.id,
-                  );
+                  this.tempCoupons = this.tempCoupons.filter(item => item && item.id !== record.id);
                 }
               }}
               onOk={() => {
@@ -386,7 +372,7 @@ class Main extends React.Component<Props, State> {
 
   public renderLayout(): React.ReactNode {
     const {
-      detail: { type },
+      detail: { type }
     } = this.props;
     switch (type) {
       case 1:
@@ -415,7 +401,7 @@ class Main extends React.Component<Props, State> {
               onChange={e => {
                 this.onChange({
                   ...detail,
-                  sort: Number(e.target.value),
+                  sort: Number(e.target.value)
                 });
               }}
             />
@@ -428,7 +414,7 @@ class Main extends React.Component<Props, State> {
                   content: '是否删除楼层',
                   onOk: () => {
                     this.onChange();
-                  },
+                  }
                 });
               }}
             />
@@ -443,6 +429,6 @@ class Main extends React.Component<Props, State> {
 
 export default connect((state: any) => {
   return {
-    state: state[namespace],
+    state: state[namespace]
   };
 })(Main) as any;

@@ -9,8 +9,8 @@ export default {
     goodsListByCurrentActivity: [],
     detail: {
       list: [],
-      crmCoupons: [],
-    },
+      crmCoupons: []
+    }
   },
   reducers: {
     '@@init': () => {
@@ -21,16 +21,16 @@ export default {
         goodsListByCurrentActivity: [],
         detail: {
           list: [],
-          crmCoupons: [],
-        },
+          crmCoupons: []
+        }
       };
     },
     changeDetail: (state, payload) => {
       return {
         ...state,
-        detail: payload,
+        detail: payload
       };
-    },
+    }
   },
   effects: {
     async fetchDetail({ id, cb }) {
@@ -44,11 +44,10 @@ export default {
     async getGoodsListByActivityId(param) {
       const result = await api.getGoodsListByActivityId(param);
       if (result) {
-        this.saveDefault({
-          transferGoodsVisible: true,
-          goodsListByCurrentActivity: result || [],
+        return this.saveDefault({
+          goodsListByCurrentActivity: result || []
         });
       }
-    },
-  },
+    }
+  }
 };
