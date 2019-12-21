@@ -1,0 +1,42 @@
+.item
+  label
+    font-size 14px
+    &:after
+      content: ':'
+      position: relative
+      top: -0.5px
+      margin: 0 8px 0 2px
+  label.required:before
+    display: inline-block
+    margin-right: 4px
+    color: #f5222d
+    font-size: 14px
+    font-family: SimSun, sans-serif
+    line-height: 1
+    content: '*'
+  .item-explain
+    clear: both
+    min-height: 22px
+    margin-top: -2px
+    color: rgba(0, 0, 0, 0.45)
+    font-size: 14px
+    line-height: 1.5
+    -webkit-transition: color 0.3s cubic-bezier(0.215, 0.61, 0.355, 1)
+    transition: color 0.3s cubic-bezier(0.215, 0.61, 0.355, 1)
+  .item-control
+    min-height: 40px
+  .item-with-help
+    margin-bottom: 5px
+  .has-error
+    :global
+      .ant-input
+        background-color: #fff
+        border-color: #f5222d
+      .ant-input:focus
+          border-color: #ff4d4f
+          border-right-width: 1px !important
+          outline: 0
+          -webkit-box-shadow: 0 0 0 2px rgba(245, 34, 45, 0.2)
+          box-shadow: 0 0 0 2px rgba(245, 34, 45, 0.2)
+
+

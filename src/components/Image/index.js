@@ -17,6 +17,7 @@ const Image = (props) => {
   const { className, alt = '图片', style, ...otherProps } = props
   let src = (props.src || '').trim()
   src = src ? getUrl(src) : zwtPic
+  console.log('src => ', src)
   return (
     <img
       className={className}

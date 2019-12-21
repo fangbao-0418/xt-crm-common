@@ -40,10 +40,6 @@ class Main extends React.Component<Props, State> {
   }
   public columns: ColumnProps<Shop.ShopItemProps>[] = [
     {
-      title: '序号',
-      dataIndex: ''
-    },
-    {
       title: '商品ID',
       dataIndex: 'id'
     },
@@ -150,7 +146,7 @@ class Main extends React.Component<Props, State> {
       <Modal
         title='选择商品'
         visible={visible}
-        width={800}
+        width='60%'
         onOk={this.onOk}
         onCancel={this.onCancel}
       >
