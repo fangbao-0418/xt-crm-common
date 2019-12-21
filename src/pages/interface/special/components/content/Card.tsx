@@ -74,7 +74,6 @@ class Main extends React.Component<Props, State> {
     const { dispatch } = this.props;
     const result = dispatch[namespace].getGoodsListByActivityId({ promotionId: selectedRow.id });
     result.then(() => {
-      debugger;
       this.goodsTransfer.showModal();
     });
   };
