@@ -30,7 +30,7 @@ interface State {
 }
 
 function RenderText (props: any) {
-  return <span>{props.value}</span>
+  return <span style={{ fontWeight: 600 }}>{props.value}</span>
 }
 @withModal
 class Main extends React.Component<Props, State> {
@@ -405,7 +405,7 @@ class Main extends React.Component<Props, State> {
                           />
                         </Item>
                         <Item label='绑定专题内容'>
-                          {item.floorName}
+                          <span style={{ fontWeight: 600 }}>{item.floorName}</span>
                           <span
                             className={classnames('ml10', styles['download'])}
                             onClick={() => {
