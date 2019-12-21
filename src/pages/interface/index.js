@@ -7,6 +7,8 @@ import Special from './special'
 import SpecialDetail from './special/Detail'
 import HomeConfig from './config'
 import FreeSubsidies from './free-subsidies'
+import GroupBuyingCategory from './group-buying/category'
+import GroupBuyingCategoryForm from './group-buying/category/form'
 export default class extends Component {
     render() {
         return (
@@ -18,6 +20,8 @@ export default class extends Component {
                 <Route path="/interface/special/:id" component={SpecialDetail} />
                 <Route path="/interface/config" component={HomeConfig} />
                 <Route path="/interface/free" component={FreeSubsidies} />
+                <Route path="/interface/group-buying/category" exact component={GroupBuyingCategory} />
+                <Route path="/interface/group-buying/category/:id" component={GroupBuyingCategoryForm} />
             </Switch>
         );
     }
