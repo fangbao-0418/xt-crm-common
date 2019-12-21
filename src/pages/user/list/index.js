@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect, parseQuery } from '@/util/utils';
 import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table } from 'antd';
 import moment from 'moment';
-
 // import { levelArr, sourceArr } from './config';
 import { levelArr, sourceArr } from '../config';
 import { levelName } from '../utils';
@@ -18,11 +17,11 @@ const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 const joinOptions = [
   {
     label: '是',
-    value: true
+    value: 1
   },
   {
     label: '否',
-    value: false
+    value: 0
   }
 ]
 function getColumns(scope) {
@@ -128,8 +127,9 @@ const defaultPayload = {
     // }
 })
 export default class extends Component {
-
+    
     payload = Object.assign({}, defaultPayload, APP.fn.getPayload(namespace))
+
     componentDidMount() {
         this.handleSearch();
     }
@@ -182,7 +182,7 @@ export default class extends Component {
                     ...values,
                     registerStartDate,
                     registerEndDate,
-                    ...params,
+                    ...params
                 };
                 if(payload.memberType && payload.memberType.indexOf('-') > -1) {
                     const types = payload.memberType.split('-');
@@ -319,9 +319,15 @@ export default class extends Component {
                     }
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" style={{ marginRight: 10 }} onClick={() => this.handleSearch({
-                        page: 1
-                    })}>查询</Button>
+                    <Button
+                        type="primary"
+                        style={{ marginRight: 10 }}
+                        onClick={() => this.handleSearch({
+                            page: 1
+                        })}
+                    >
+                        查询
+                    </Button>
                     <Button
                         type="primary"
                         onClick={() => {
@@ -345,7 +351,6 @@ export default class extends Component {
             </Form>
         )
     }
-
     onChange = (pageConfig) => {
         this.handleSearch({
             page: pageConfig.current
