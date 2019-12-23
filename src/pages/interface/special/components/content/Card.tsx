@@ -186,12 +186,12 @@ class Main extends React.Component<Props, State> {
       <div>
         <Upload
           value={
-            detail.advertisementUrl && [
+            detail.advertisementUrl ? [
               {
                 uid: 'advertisementUrl0',
                 url: detail.advertisementUrl,
               },
-            ]
+            ] : undefined
           }
           size={0.3}
           listType="picture-card"

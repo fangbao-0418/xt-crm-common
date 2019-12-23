@@ -45,7 +45,7 @@
     "npm": "^6.12.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
-    "qrcode.react": "^0.9.3",
+    "qrcode.react": "^1.0.0",
     "rc-form": "^2.4.9",
     "react": "^16.8.0",
     "react-dnd": "^9.4.0",

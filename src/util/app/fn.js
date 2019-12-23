@@ -20,6 +20,7 @@ export function getH5Origin() {
 }
 
 export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
+  date = date || 0
   if (/^\d+$/.test(date)) {
     date = Number(date)
     date = String(date).length === 10 ? date * 1000 : date

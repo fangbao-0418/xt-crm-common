@@ -1,6 +1,6 @@
 interface Props {
   className?: string
-  src: string
+  src: string | undefined
   style?: React.CSSProperties
   alt?: string
   title?: string

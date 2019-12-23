@@ -14,6 +14,12 @@ const StudioList = Loadable({
   loading: Loader,
 });
 
+/** 举报详情 */
+const InformDetail = Loadable({
+  loader: () => import('./studio/Inform'),
+  loading: Loader,
+});
+
 interface Props extends RouteComponentProps {}
 class Main extends React.Component<Props> {
   public render () {
@@ -22,6 +28,7 @@ class Main extends React.Component<Props> {
       <Switch>
         <Route exact path={`${match.url}/anchor`} component={AnchorList} />
         <Route exact path={`${match.url}/studio`} component={StudioList} />
+        <Route exact path={`${match.url}/inform/:id`} component={InformDetail} />
       </Switch>
     )
   }
