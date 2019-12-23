@@ -92,7 +92,6 @@ export default class extends Component {
   componentDidMount(){
     const { secondCategoryVOS } = this.props;
     const { initialData } = this.state;
-    // debugger
     if(secondCategoryVOS && secondCategoryVOS.length){
       this.setState({
         dataSource: secondCategoryVOS

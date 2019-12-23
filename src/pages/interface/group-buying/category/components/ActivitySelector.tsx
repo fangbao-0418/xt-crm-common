@@ -1,7 +1,6 @@
-import React, { useState, useCallback } from 'react'
-import { Button, Icon, Modal } from 'antd'
-import styles from './style.module.styl'
-import { union, isEqual, cloneDeep } from 'lodash'
+import React from 'react'
+import { Modal } from 'antd'
+import { unionBy } from 'lodash'
 import { activityType } from '@/enum'
 import ListPage from '@/packages/common/components/list-page'
 import DateFns from 'date-fns'
@@ -109,8 +108,7 @@ class Main extends React.Component<Props, State> {
             rowSelection: {
               selectedRowKeys: selectedRowOpts.selectedRowKeys,
               onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
-                debugger
-                selectedRows = union(selectedRowOpts.selectedRows, selectedRows, isEqual).filter((item: any) =>
+                selectedRows = unionBy(selectedRowOpts.selectedRows, selectedRows, 'id').filter((item: any) =>
                   selectedRowKeys.some((key: string | number) => item.id === key)
                 )
                 this.setState({

@@ -87,7 +87,6 @@ class Main extends React.Component<any, State> {
           selectedRowOpts={selectedRowOpts}
           visible={activityVisible}
           onOk={(selectedRowOpts: SelectedRowOpts) => {
-            debugger
             this.setState({
               activityVisible: false,
               selectedRowOpts
