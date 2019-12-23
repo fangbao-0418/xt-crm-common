@@ -7,7 +7,8 @@ class Main extends React.Component<Props> {
   public componentDidMount () {
     console.log(TcPlayer)
     // const 
-    var player = new TcPlayer('id_test_video', {
+    let config = JSON.parse(localStorage.getItem('tc') || 'null')
+    config = config ? config : {
       // live: true,
       // "m3u8": "http://200002949.vod.myqcloud.com/200002949_b6ffc.f240.m3u8", //请替换成实际可用的播放地址
       "rtmp": "rtmp://xtliveqq.bizlivepush.myqcloud.com/live/1576814947312?txSecret=9742cb0bd7a8d83d0654d51d55684d11&txTime=5DFD9AE6",
@@ -16,12 +17,13 @@ class Main extends React.Component<Props> {
       "poster" : "https://assets.hzxituan.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551572091333939.png",
       "width" :  '480', //视频的显示宽度，请尽量使用视频分辨率宽度
       "height" : '320', //视频的显示高度，请尽量使用视频分辨率高度,
-      "listener": (msg: any) => {
-        // player.play()
-        console.log(msg, player, 'xxxx')
-      },
       "flash": false
-    });
+    }
+    config.listener = (msg: any) => {
+      // player.play()
+      console.log(msg, player, 'xxxx')
+    }
+    var player = new TcPlayer('id_test_video', config);
   }
   public render () {
     return (
