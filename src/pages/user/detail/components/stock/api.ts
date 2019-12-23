@@ -11,7 +11,7 @@ export async function getPurchaseList (payload: {
   pruchaseStartTime?: number,
   purchaseEndTime?: number
 }) {
-  const res = await newPost('/product/member/purchase/list', payload)
+  const res = await newPost('/product/member/purchase/list', payload) || {}
   console.log('adapter getPurchaseList =>', adapter.purchaseListRespones(res))
   return adapter.purchaseListRespones(res)
 }
