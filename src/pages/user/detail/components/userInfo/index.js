@@ -63,11 +63,9 @@ function withModal(WrappedComponent) {
       this.setState({ visible: false })
     }
     onOk = () => {
-      console.log(this.wrappedCompRef, '========================wrappedCompRef========================')
       const { name } = this.state
       const { memberId } = parseQuery()
       this.props.form.validateFields(async (err, vals) => {
-        console.log(err, vals, '------------')
         if (!err) {
           // 保证金
           if (name === 'depositAmount') {

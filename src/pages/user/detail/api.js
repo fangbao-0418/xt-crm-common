@@ -7,7 +7,7 @@ export function getCouponList(memberId, data) {
     return Fetch.post(`/member/get/getCouponList/${memberId}`, data);
 }
 export async function getUserInfo(params) {
-    const res = await Fetch.request(`/member/detail?${qs.stringify(params)}`)
+    const res = await Fetch.request(`/member/detail?${qs.stringify(params)}`) || {}
     return userInfoResponse(res);
 }
 
