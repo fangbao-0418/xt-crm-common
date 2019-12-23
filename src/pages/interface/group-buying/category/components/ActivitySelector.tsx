@@ -109,6 +109,7 @@ class Main extends React.Component<Props, State> {
             rowSelection: {
               selectedRowKeys: selectedRowOpts.selectedRowKeys,
               onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
+                debugger
                 selectedRows = union(selectedRowOpts.selectedRows, selectedRows, isEqual).filter((item: any) =>
                   selectedRowKeys.some((key: string | number) => item.id === key)
                 )

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Button, Icon } from 'antd'
+import { Card, Button, Input, Icon, InputNumber } from 'antd'
 import Form, { FormInstance, FormItem} from '@/packages/common/components/form'
 import styles from './style.module.styl'
 import { cloneDeep } from 'lodash'
@@ -87,6 +87,7 @@ class Main extends React.Component<any, State> {
           selectedRowOpts={selectedRowOpts}
           visible={activityVisible}
           onOk={(selectedRowOpts: SelectedRowOpts) => {
+            debugger
             this.setState({
               activityVisible: false,
               selectedRowOpts
@@ -105,37 +106,51 @@ class Main extends React.Component<any, State> {
           }
         >
           <FormItem
-            name='name'
             label='团购会分类名称'
-            verifiable
-            fieldDecoratorOptions={{
-              rules: [{
-                required: true,
-                message: '请输入团购会分类名称'
-              }]
-            }}
-            controlProps={{
-              style: {
-                width: 172
-              }
+            required
+            inner={(form) => {
+              return (
+                <>
+                  {form.getFieldDecorator('name', {
+                    rules: [{
+                      required: true,
+                      message: '请输入团购会分类名称'
+                    }]
+                  })(
+                    <Input
+                      style={{ width: 172}}
+                      maxLength={4}
+                      placeholder='请输入团购会分类名称'
+                    />
+                  )}
+                  <span className='ml10'>（名称最多4个字符）</span>
+                </>
+              )
             }}
           />
           <FormItem
-            name='sort'
-            type='number'
             label='排序'
-            verifiable
-            fieldDecoratorOptions={{
-              rules: [{
-                required: true,
-                message: '请输入排序'
-              }]
-            }}
-            controlProps={{
-              style: {
-                width: 172
-              },
-              min: 0
+            required
+            inner={(form) => {
+              return (
+                <>
+                  {form.getFieldDecorator('sort', {
+                    rules: [{
+                      required: true,
+                      message: '请输入排序'
+                    }]
+                  })(
+                    <InputNumber
+                      placeholder='请输入排序'
+                      style={{ width: 172 }}
+                      precision={0}
+                      min={0}
+                      max={999}
+                    />
+                  )}
+                  <span className='ml10'>（排序只支持数字格式，0-999，数字越大排最上）</span>
+                </>
+              )
             }}
           />
           <FormItem
@@ -143,10 +158,10 @@ class Main extends React.Component<any, State> {
             type='radio'
             label='是否显示'
             options={[{
-              label: 'A',
+              label: '是',
               value: 1
             }, {
-              label: 'B',
+              label: '否',
               value: 0
             }]}
           />
