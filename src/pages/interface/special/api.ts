@@ -1,7 +1,8 @@
 import { get, newPost, post, request } from '@/util/fetch'
 import * as adapter from './adapter'
-export function saveSpecial(payload: Special.DetailItem) {
-  const data = { ...payload }
+
+export function saveSpecial(payload: Special.DetailProps) {
+  const data = adapter.saveSpecialParams(payload)
   return newPost('/crm/subject/save', data)
 }
 
@@ -17,7 +18,7 @@ export function fetchShopListByIds(ids: number[]) {
 /** 获取专题页详情内容 */
 export async function fetchSpecialDetial(id: number) {
   const response = await get(`/crm/subject/detail/${id}`)
-  return adapter.conversionDetails(response)
+  return adapter.specDetailResponse(response)
 }
 
 export function deleteSpecial(subjectIds: number[]) {
