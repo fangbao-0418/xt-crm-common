@@ -156,20 +156,18 @@ class Main extends React.Component<Props> {
   }
   public showQrcode = (record: UliveStudio.ItemProps) => {
     api.getWxQrcode({
-      page: 'page/home',
+      page: 'pages/home/home',
       scene: '123'
     }).then((res) => {
+      console.log(res, '-------------')
+      if (!res) {
+        return
+      }
       const hide = this.props.alert({
         width: 400,
         content: (
           <div className='text-center'>
-            <QRCode
-              value='http://www.baidu.com'
-              // // detail={item}
-              // hide={() => {
-              //   hide()
-              // }}
-            />
+            <img src={res} />
           </div>
         ),
         footer: null
