@@ -13,6 +13,7 @@ import CloseDown from './components/CloseDown'
 import UploadCover from './components/UploadCover'
 import styles from './style.module.styl'
 import * as api from './api'
+import detail from '@/pages/message/template/detail'
 interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
@@ -20,19 +21,25 @@ class Main extends React.Component<Props> {
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
       title: '场次id',
-      dataIndex: 'planId'
+      dataIndex: 'planId',
+      align: 'center',
+      width: 100,
+      fixed: 'left'
     },
     {
       title: '直播场次标题',
-      dataIndex: 'liveTitle'
+      dataIndex: 'liveTitle',
+      width: 200
     },
     {
       title: '主播',
-      dataIndex: 'anchorNickName'
+      dataIndex: 'anchorNickName',
+      width: 100
     },
     {
       title: '计划开播',
       dataIndex: 'liveAnticipatedStartTime',
+      width: 200,
       render: (text) => {
         return APP.fn.formatDate(text) || ''
       }
@@ -40,26 +47,36 @@ class Main extends React.Component<Props> {
     {
       title: '直播时间',
       dataIndex: 'liveStartTime',
-      render: (text) => {
-        return APP.fn.formatDate(text) || ''
+      width: 200,
+      render: (text, record) => {
+        return (
+          <>
+            <div>{APP.fn.formatDate(text) || ''}</div>
+            <div>{APP.fn.formatDate(record.liveEndTime) || ''}</div>
+          </>
+        )
       }
     },
     {
       title: '直播间',
       width: 200,
       align: 'center',
-      render: () => {
+      render: (text, record) => {
         return (
           <div>
             <img
-              onClick={this.showQrcode}
+              onClick={this.showQrcode.bind(this, record)}
               width={30}
               height={30}
               src="https://axure-file.lanhuapp.com/6c74a568-2a43-4303-b380-de2eec294975__9abb445b2c0c5bfdd5970c937d437273.svg" alt=""
             >
             </img>
-            <Divider type="vertical" />
-            <span onClick={() => this.showVideo()} className='href'>查看</span>
+            {record.playUrl && record.liveStatus === 90 && (
+              <>
+                <Divider type="vertical" />
+                <span onClick={() => this.showVideo(record)} className='href'>查看</span>
+              </>
+            )}
           </div>
         )
       }
@@ -67,6 +84,7 @@ class Main extends React.Component<Props> {
     {
       title: '状态',
       dataIndex: 'liveStatus',
+      width: 150,
       render: (text) => {
         return LiveStatusEnum[text]
       }
@@ -74,6 +92,7 @@ class Main extends React.Component<Props> {
     {
       title: '类型',
       dataIndex: 'type',
+      width: 100,
       render: (text) => {
         return TypeEnum[text]
       }
@@ -81,7 +100,8 @@ class Main extends React.Component<Props> {
     {
       title: '操作',
       align: 'center',
-      width: 350,
+      width: 300,
+      fixed: 'right',
       render: (text, record) => {
         const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
         const canUp = [70, 90].indexOf(record.liveStatus) > -1
@@ -98,9 +118,6 @@ class Main extends React.Component<Props> {
       }
     }
   ]
-  public componentDidMount () {
-    this.showVideo()
-  }
   public changeStatus (record: UliveStudio.ItemProps) {
     const hide = this.props.alert({
       content: (
@@ -137,21 +154,26 @@ class Main extends React.Component<Props> {
       }
     })
   }
-  public showQrcode = () => {
-    const hide = this.props.alert({
-      width: 400,
-      content: (
-        <div className='text-center'>
-          <QRCode
-            value='http://www.baidu.com'
-            // // detail={item}
-            // hide={() => {
-            //   hide()
-            // }}
-          />
-        </div>
-      ),
-      footer: null
+  public showQrcode = (record: UliveStudio.ItemProps) => {
+    api.getWxQrcode({
+      page: 'page/home',
+      scene: '123'
+    }).then((res) => {
+      const hide = this.props.alert({
+        width: 400,
+        content: (
+          <div className='text-center'>
+            <QRCode
+              value='http://www.baidu.com'
+              // // detail={item}
+              // hide={() => {
+              //   hide()
+              // }}
+            />
+          </div>
+        ),
+        footer: null
+      })
     })
   }
   public showMessage = (message: string) => {
@@ -188,11 +210,11 @@ class Main extends React.Component<Props> {
       footer: null
     })
   }
-  public showVideo () {
+  public showVideo (record: UliveStudio.ItemProps) {
     const hide = this.props.alert({
       content: (
         <Video
-          // detail={item}
+          detail={record}
           hide={() => {
             hide()
           }}
@@ -247,6 +269,11 @@ class Main extends React.Component<Props> {
         <ListPage
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
+          tableProps={{
+            scroll: {
+              x: 1200
+            }
+          }}
           rangeMap={{
             liveTime: {
               fields: ['startTime', 'endTime']

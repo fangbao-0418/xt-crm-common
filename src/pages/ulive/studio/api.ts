@@ -48,3 +48,12 @@ export const audit = (payload: {
 }) => {
   return newPut('::ulive/live/plan/audit', payload)
 }
+/** 获取小程序微信太阳码 */
+export const getWxQrcode = (payload: {
+  host?: string
+  linkUrl?: string
+  page: string
+  scene: string
+}) => {
+  return newPost('::ulive/live/plan/code', payload)
+}

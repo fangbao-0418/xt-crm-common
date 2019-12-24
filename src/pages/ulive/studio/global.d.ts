@@ -27,10 +27,14 @@ declare namespace UliveStudio {
     liveAnticipatedStartTime: number
     /** 实际直播开始时间 */
     liveStartTime: number
+    /** 直播结束时间 */
+    liveEndTime: number
     /** 封面 */
     liveBannerUrl: string
     /** 审核原因 */
     auditReason: string
+    /** 直播地址 */
+    playUrl: string
   }
   /** 直播计划详情 */
   interface StatisticsProps {
