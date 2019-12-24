@@ -24,7 +24,17 @@ class Main extends React.Component<any, State> {
     {
       title: '采购批次',
       key: 'purchaseNo',
-      dataIndex: 'purchaseNo'
+      dataIndex: 'purchaseNo',
+      render: (id: any) => {
+        return (
+          <span
+            className='href'
+            onClick={() => APP.history.push(`/order/detail/${id}`)}
+          >
+            {id}
+          </span>
+        )
+      }
     },
     {
       title: '采购时间',
@@ -36,7 +46,16 @@ class Main extends React.Component<any, State> {
       title: '商品ID',
       width: 150,
       key: 'productId',
-      dataIndex: 'productId'
+      dataIndex: 'productId',
+      render: (id: number) => {
+        return (
+          <span
+            className='href'
+            onClick={() => APP.history.push(`/goods/edit/${id}`)}>
+            {id}
+          </span>
+        )
+      }
     },
     {
       title: '商品名称',

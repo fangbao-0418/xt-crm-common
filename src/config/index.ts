@@ -51,7 +51,9 @@ export const ORDER_TYPE = {
   '20': '地推订单',
   '30': '助力分兑换订单',
   '40': '采购订单',
-  '60': '团购会订单'
+  '60': '团购会订单',
+  '70': '海淘订单',
+  '80': '团购会采购订单'
 }
 
 export const ExpressCompanyOptions = {
