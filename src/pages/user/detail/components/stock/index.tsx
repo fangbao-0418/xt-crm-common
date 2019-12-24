@@ -1,10 +1,9 @@
 import React from 'react'
-import { Modal, InputNumber } from 'antd'
-import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { getDefaultConfig } from './config'
 import { getPurchaseList, eliminate } from './api'
 import { parseQuery } from '@/util/utils'
+import OffStockModal, { OffStockModalInstanceProps } from './components/OffStockModal'
 interface State {
   visible: boolean,
   stock?: number
@@ -18,8 +17,8 @@ class Main extends React.Component<any, State> {
   public state: State = {
     visible: false
   }
-  public form: FormInstance
   public list: ListPageInstanceProps
+  public OffStockModal: OffStockModalInstanceProps
   public columns = [
     {
       title: '采购批次',
@@ -145,23 +144,19 @@ class Main extends React.Component<any, State> {
       visible: true
     })
   }
-  public handleOk = () => {
-    this.form.props.form.validateFields(async (err, vals) => {
-      if (!err) {
-        const res = await eliminate({
-          eliminateCount: vals.eliminateCount,
-          purchaseId: this.purchaseId
-        })
-        if (res) {
-          APP.success('核销库存成功')
-          this.list.refresh()
-          this.handleClose()
-        }
-      }
+  public handleOk = async (vals: any) => {
+    const res = await eliminate({
+      eliminateCount: vals.eliminateCount,
+      purchaseId: this.purchaseId
     })
+    if (res) {
+      APP.success('核销库存成功')
+      this.list.refresh()
+      this.handleClose()
+    }
   }
   public handleClose = () => {
-    this.form.props.form.resetFields()
+    this.OffStockModal.resetFields()
     this.setState({
       visible: false,
       stock: undefined
@@ -171,39 +166,14 @@ class Main extends React.Component<any, State> {
     const { visible } = this.state
     return (
       <>
-        <Modal
+        <OffStockModal
+          ref={(modal: any)=> this.OffStockModal = modal}
           title='核销库存'
           visible={visible}
           onOk={this.handleOk}
           onCancel={this.handleClose}
-          okText='确认核销'
-        >
-          <Form getInstance={ref => this.form = ref}>
-            <FormItem
-              label='核销'
-              required
-              inner={(form) => {
-                return (
-                  <>
-                    {form.getFieldDecorator('eliminateCount', {
-                      rules: [{
-                        required: true,
-                        message: '核销数目不能为空'
-                      }]
-                    })(
-                      <InputNumber
-                        min={0}
-                        max={this.state.stock}
-                        style={{ width: 172 }}
-                      />
-                    )}
-                    <span className='ml10'>件（最多{this.state.stock}件）</span>
-                  </>
-                )
-              }}
-            />
-          </Form>
-        </Modal>
+          stockNum={this.state.stock}
+        />
         <ListPage
           tableProps={{
             scroll: {
