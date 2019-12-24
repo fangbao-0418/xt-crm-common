@@ -37,7 +37,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '主播ID'
         }
       },
-      nickName: {
+      anchorNickName: {
         type: 'input', label: '主播昵称',
         controlProps: {
           placeholder: '主播昵称'

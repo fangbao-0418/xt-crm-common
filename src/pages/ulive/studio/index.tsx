@@ -281,7 +281,7 @@ class Main extends React.Component<Props> {
           formItemLayout={(
             <>
               <FormItem name='liveTitle' />
-              <FormItem name='nickName' />
+              <FormItem name='anchorNickName' />
               <FormItem name='liveStatus' />
               <FormItem name='liveTime' />
             </>
