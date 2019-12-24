@@ -222,7 +222,7 @@ class Add extends React.Component {
                        </FormItem>
                   </Form>
             </Card>
-            <div>只可以查询10月25日-11月11日的订单 </div>
+            {/* <div>只可以查询10月25日-11月11日的订单 </div> */}
             <Card>
                 <Table rowSelection={rowSelection} columns={columns} dataSource={listData} 
                 pagination={{
