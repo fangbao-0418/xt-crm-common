@@ -26,7 +26,7 @@ class Main extends React.Component<any, State> {
       key: 'purchaseNo',
       dataIndex: 'purchaseNo',
       render: (id: any) => {
-        return (
+        return /init\d+/.test(id) ? <span style={{ color: 'gray'}}>{id}</span> : (
           <span
             className='href'
             onClick={() => APP.history.push(`/order/detail/${id}`)}
