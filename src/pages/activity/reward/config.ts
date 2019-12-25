@@ -6,7 +6,9 @@ export function getDefaultConfig () {
         label: '活动类型', type: 'select',
         options: [
           {label: '红包雨', value: 1},
-          {label: '九宫格抽奖', value: 2}
+          {label: '九宫格抽奖', value: 2},
+          {label: '砸金蛋', value: 3},
+          {label: '财神拜年', value: 4}
         ]
       },
       title: {
@@ -45,7 +47,9 @@ export function getDefaultConfig () {
 /** 抽奖活动类型 */
 export enum TypeEnum {
   '红包雨' = 1,
-  '九宫格抽奖' = 2
+  '九宫格抽奖' = 2,
+  砸金蛋 = 3,
+  财神拜年 = 4
 }
 
 /** 状态 */

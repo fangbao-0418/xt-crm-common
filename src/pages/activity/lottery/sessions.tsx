@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card, Table, DatePicker, Icon, Row, Input, InputNumber, Popconfirm } from 'antd'
+import { Button, Card, Table, DatePicker, Icon, Row, Col, Input, InputNumber, Popconfirm } from 'antd'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import styles from './style.module.styl'
 import SelectFetch from '@/packages/common/components/select-fetch'
@@ -417,6 +417,7 @@ class Main extends React.Component<Props, State> {
   public getCellValue (id: string, index: number) {
     const { awardList } = this.state
     const item: any = awardList[index] || {}
+    console.log(item[id], '---------')
     return item[id]
   }
   /**
@@ -550,6 +551,41 @@ class Main extends React.Component<Props, State> {
       awardList
     })
   }
+  public generateChance = () => {
+    const expectedNumber = this.form.getValues().expectedNumber || 0
+    let awardList = this.state.awardList || []
+    const inventory: any = awardList.reduce((a: any, b) => {
+      return ((typeof a !== 'number' ? a.awardNum : a) || 0) + (b.awardNum || 0)
+    }) || 0
+    let totalChance = 0
+
+    const ratio = Decimal.div(inventory, expectedNumber).toNumber() || 0
+    // if () a < 0.1
+    awardList = awardList.map((item) => {
+      const awardNum = item.awardNum || 0
+      let chance = inventory === 0 ? 0 : Decimal.div(awardNum, inventory).mul(10000).ceil().div(100).toNumber()
+      // console.log(chance, '------')
+      chance = chance * (ratio > 1 ? 1 : (ratio < 0.1 ? ratio * 10 : ratio))
+      totalChance += chance
+      return {
+        ...item,
+        normalUserProbability: chance,
+        headUserProbability: chance,
+        areaUserProbability: chance,
+        cityUserProbability: chance,
+      }
+    })
+    totalChance = Decimal.mul(totalChance, 100).round().div(100).toNumber()
+    // totalNormalUserProbability  totalHeadUserProbability totalAreaUserProbability totalCityUserProbability
+    this.setState({
+      totalNormalUserProbability: totalChance,
+      totalHeadUserProbability: totalChance,
+      totalAreaUserProbability: totalChance,
+      totalCityUserProbability: totalChance,
+      awardList
+    })
+    console.log(awardList, 'inventory')
+  }
   public render () {
     const startTime = this.form && this.form.props.form.getFieldValue('startTime')
     return (
@@ -629,29 +665,55 @@ class Main extends React.Component<Props, State> {
               }]
             }}
           />
-          <FormItem
-            name='endTime'
-            type='date'
-            label='结束时间'
-            verifiable
-            controlProps={{
-              showTime: true,
-              disabledDate: (current: any) => {
-                const { startTime } = this.form.getValues()
-                return disabledDate(current, startTime)
-              },
-              disabledTime: (current: any) => {
-                const { startTime } = this.form.getValues()
-                return disabledDateTime(current, new Date(startTime))
-              }
-            }}
-            fieldDecoratorOptions={{
-              rules: [{
-                required: true,
-                message: '请选择结束时间'
-              }]
-            }}
-          />
+          <Row>
+            <Col span={2}></Col>
+            <Col span={8}>
+              <FormItem
+                name='endTime'
+                labelCol={{span: 6}}
+                wrapperCol={{span: 10}}
+                type='date'
+                label='结束时间'
+                verifiable
+                controlProps={{
+                  showTime: true,
+                  disabledDate: (current: any) => {
+                    const { startTime } = this.form.getValues()
+                    return disabledDate(current, startTime)
+                  },
+                  disabledTime: (current: any) => {
+                    const { startTime } = this.form.getValues()
+                    return disabledDateTime(current, new Date(startTime))
+                  }
+                }}
+                fieldDecoratorOptions={{
+                  rules: [{
+                    required: true,
+                    message: '请选择结束时间'
+                  }]
+                }}
+              />
+            </Col>
+            <Col span={12}>
+              <FormItem
+                name='expectedNumber'
+                type='number'
+                label='预估参与人数'
+                verifiable
+                controlProps={{
+                  max: 10000000000,
+                  precision: 0,
+                  min: 0
+                }}
+                fieldDecoratorOptions={{
+                  rules: [{
+                    required: true,
+                    message: '请输入预估参与人数'
+                  }]
+                }}
+              />
+              </Col>
+          </Row>
         </Card>
         <Card title='奖品列表'>
           {/* <Button
@@ -668,6 +730,16 @@ class Main extends React.Component<Props, State> {
             pagination={false}
             scroll={{ x: 1930, y: 800 }}
           />
+          <div className='mt20'>
+            <Button
+              className='mr10'
+              type='danger'
+              onClick={this.generateChance}
+            >
+              生成概率
+            </Button>
+            <Button>清空概率</Button>
+          </div>
         </Card>
         <Card type='inner' title='规则说明'>
           <Row type='flex'>
