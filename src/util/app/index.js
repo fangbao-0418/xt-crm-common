@@ -1,5 +1,6 @@
 import { message } from 'antd'
 import * as regular from './regular'
+var contant = require('./constant')
 var http = require('./http')
 var fn = require('./fn')
 Object.assign(APP, {
@@ -12,6 +13,7 @@ Object.assign(APP, {
   },
   http,
   fn,
+  contant,
   href: function (url, target) {
     url = /^(https?|#)/.test(url) ? url : '#' + url
     let el = document.createElement('a')

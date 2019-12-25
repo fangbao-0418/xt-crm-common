@@ -21,12 +21,20 @@ import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
 import Coupon from './pages/coupon';
 import Message from './pages/message';
-
+const { get } = APP.http
 class Main extends React.Component {
   constructor (props) {
     super(props)
     APP.dispatch = props.dispatch
     APP.history = props.history
+    this.fetchConfig()
+  }
+  async fetchConfig () {
+    const list = await get('/express/getList') || []
+    APP.constant.expressList = list.map(item => ({
+      label: item.expressName,
+      value: item.expressCode
+    }))
   }
   render () {
     return (
