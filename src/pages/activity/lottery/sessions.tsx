@@ -13,7 +13,7 @@ import { disabledDateTime, disabledDate } from '@/util/antdUtil'
 import { upperFirst } from 'lodash'
 import modal, { ModalProps } from './components/modal'
 import { Decimal } from 'decimal.js'
-
+import Tips from './components/Tips'
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
 function isFalsly (val: any) {
   return val == null || val === '' || Number.isNaN(val)
@@ -417,7 +417,6 @@ class Main extends React.Component<Props, State> {
   public getCellValue (id: string, index: number) {
     const { awardList } = this.state
     const item: any = awardList[index] || {}
-    console.log(item[id], '---------')
     return item[id]
   }
   /**
@@ -553,6 +552,10 @@ class Main extends React.Component<Props, State> {
   }
   public generateChance = () => {
     const expectedNumber = this.form.getValues().expectedNumber || 0
+    if (!expectedNumber) {
+      APP.error('请输入预估参与人数')
+      return
+    }
     let awardList = this.state.awardList || []
     const inventory: any = awardList.reduce((a: any, b) => {
       return ((typeof a !== 'number' ? a.awardNum : a) || 0) + (b.awardNum || 0)
@@ -563,7 +566,7 @@ class Main extends React.Component<Props, State> {
     // if () a < 0.1
     awardList = awardList.map((item) => {
       const awardNum = item.awardNum || 0
-      let chance = inventory === 0 ? 0 : Decimal.div(awardNum, inventory).mul(10000).ceil().div(100).toNumber()
+      let chance = inventory === 0 ? 0 : Decimal.div(awardNum, inventory).mul(10000).floor().div(100).toNumber()
       // console.log(chance, '------')
       chance = chance * (ratio > 1 ? 1 : (ratio < 0.1 ? ratio * 10 : ratio))
       totalChance += chance
@@ -575,7 +578,8 @@ class Main extends React.Component<Props, State> {
         cityUserProbability: chance,
       }
     })
-    totalChance = Decimal.mul(totalChance, 100).round().div(100).toNumber()
+    // console.log(inventory, expectedNumber, '--------')
+    totalChance = Decimal.mul(totalChance, 100).floor().div(100).toNumber()
     // totalNormalUserProbability  totalHeadUserProbability totalAreaUserProbability totalCityUserProbability
     this.setState({
       totalNormalUserProbability: totalChance,
@@ -584,7 +588,28 @@ class Main extends React.Component<Props, State> {
       totalCityUserProbability: totalChance,
       awardList
     })
-    console.log(awardList, 'inventory')
+  }
+  public clearChance = () => {
+    let awardList = this.state.awardList || []
+    awardList = awardList.map((item) => {
+      const chance = 0
+      return {
+        ...item,
+        normalUserProbability: chance,
+        headUserProbability: chance,
+        areaUserProbability: chance,
+        cityUserProbability: chance,
+      }
+    })
+    const totalChance = 0
+    // totalNormalUserProbability  totalHeadUserProbability totalAreaUserProbability totalCityUserProbability
+    this.setState({
+      totalNormalUserProbability: totalChance,
+      totalHeadUserProbability: totalChance,
+      totalAreaUserProbability: totalChance,
+      totalCityUserProbability: totalChance,
+      awardList
+    })
   }
   public render () {
     const startTime = this.form && this.form.props.form.getFieldValue('startTime')
@@ -645,17 +670,9 @@ class Main extends React.Component<Props, State> {
                       showTime
                     />
                   )}
-                  <span className='ml10'>
-                    <Icon
-                      type='info-circle'
-                      theme='filled'
-                      style={{
-                        color: '#1890ff',
-                        marginRight: 4
-                      }}
-                    />
-                    <span>场次的开始时间默认不能早于活动开始时间和上一场次结束时间。</span>
-                  </span>
+                  <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
+                    场次的开始时间默认不能早于活动开始时间和上一场次结束时间。
+                  </Tips>
                 </div>
               )
             }}
@@ -730,7 +747,7 @@ class Main extends React.Component<Props, State> {
             pagination={false}
             scroll={{ x: 1930, y: 800 }}
           />
-          <div className='mt20'>
+          <div hidden={this.readOnly} className='mt20'>
             <Button
               className='mr10'
               type='danger'
@@ -738,11 +755,19 @@ class Main extends React.Component<Props, State> {
             >
               生成概率
             </Button>
-            <Button>清空概率</Button>
+            <Button
+              onClick={this.clearChance}
+            >
+              清空概率
+            </Button>
+            <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
+              点击生成概率，校验预估参与人数和奖品库存是否填写，<br />
+              如未填写则提示“预估参与人数、奖品库存填写后才能生成概率”的提示
+            </Tips>
           </div>
         </Card>
         <Card type='inner' title='规则说明'>
-          <Row type='flex'>
+          {/* <Row type='flex'>
             <Icon
               type='info-circle'
               theme='filled'
@@ -766,7 +791,23 @@ class Main extends React.Component<Props, State> {
               <div>订单门槛：满足订单金额门槛才可以抽中对应奖品（仅限九宫格，红包雨订单门槛置灰）；</div>
               <div>中奖概率：非负数，保留两位小数，0-100；</div>
             </div>
-          </Row>
+          </Row> */}
+          <Tips>
+            <div>
+              <div>奖品列表根据活动类型固定数量奖品，红包雨10个奖品，九宫格8个奖品；</div>
+              <div>兜底奖品行一直置底；</div>
+              <div>奖品类型包括：现金、优惠券、实物、元宝，(兜底商品多一个“谢谢惠顾”)；</div>
+              <div>奖品设置：现金、元宝填写非负整数，优惠券和实物选择对应券（实物本期也是使用优惠券）；</div>
+              <div>简称：奖品简称，用于前台展示；</div>
+              <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传（仅限九宫格，红包雨图片置灰）；</div>
+              <div>风控级别：0和1，0为无风控级别，1风控级别为高；</div>
+              <div>奖品库存：本场次可发放奖品的总量，活动进行中可以调整；</div>
+              <div>发出数量：本场次发出商品的数量；</div>
+              <div>单人限领：本场次活动中，单人最高可中奖数量；</div>
+              <div>订单门槛：满足订单金额门槛才可以抽中对应奖品（仅限九宫格，红包雨订单门槛置灰）；</div>
+              <div>中奖概率：非负数，保留两位小数，0-100；</div>
+            </div>
+          </Tips>
         </Card>
       </Form>
     )
