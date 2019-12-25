@@ -31,11 +31,18 @@ class Main extends React.Component {
   }
   async fetchConfig () {
     const list = await get('/express/getList') || []
-    console.log(APP.constant, '-----------------------')
-    APP.constant.expressList = list.map(item => ({
+    const expressList = list.map(item => ({
       label: item.expressName,
       value: item.expressCode
     }))
+    APP.constant.expressList = expressList
+    APP.constant.expressConfig = this.convert2Config(expressList)
+  }
+  convert2Config (list) {
+    return list.reduce((config, curr) => {
+      config[curr.value] = curr.label
+      return config
+    }, {})
   }
   render () {
     return (
