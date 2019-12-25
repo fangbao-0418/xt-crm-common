@@ -3,7 +3,7 @@ import { baseHost, env as apiEnv } from '../baseHost'
 /** 后端环境接口映射 */
 export const serverMapper: any = {
   ulive: {
-    dev: 'http://test01live-center.hzxituan.com',
+    dev: 'http://dailylive-center.hzxituan.com',
     pre: 'http://test01live-center.hzxituan.com',
     prod: 'http://192.168.4.117:1008'
   },
