@@ -139,7 +139,7 @@ class Main extends React.Component<any, State> {
               })
             }}
           >
-            {this.getBtnText(this.state.stock)}
+            {this.getBtnText(records.stock)}
           </Button>
         )
       }
