@@ -1,13 +1,14 @@
 import React from 'react'
 import { Modal, InputNumber } from 'antd'
 import { ModalProps } from 'antd/es/modal'
+import { memoize } from 'lodash'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 
 export interface OffStockModalInstanceProps {
   resetFields(): void
 }
 interface Props extends ModalProps {
-  stockNum?: number
+  stockNum: number
   /** 点击确定回调 */
   onOk?: (vals: any) => void;
 }
@@ -25,11 +26,14 @@ class Main extends React.Component<Props, any> {
   public resetFields () {
     this.form.props.form.resetFields()
   }
+  public getBtnText = memoize((stock: number) => {
+    return stock >= 0 ? '核销库存' : '核销负库存'
+  })
   public render () {
-    const { visible, onOk, onCancel, stockNum } = this.props
+    const { visible, onCancel, stockNum } = this.props
     return (
       <Modal
-        title='核销库存'
+        title={this.getBtnText(stockNum)}
         visible={visible}
         onOk={this.handleOk}
         onCancel={onCancel}
@@ -49,29 +53,32 @@ class Main extends React.Component<Props, any> {
                   {form.getFieldDecorator('eliminateCount', {
                     rules: [{
                       required: true,
-                      message: '核销数目不能为空'
+                      message: '请输入核销数目'
                     }]
                   })(
                     <InputNumber
                       min={0}
-                      max={stockNum}
-                      style={{ width: 172 }}
+                      max={Math.abs(stockNum)}
+                      style={{ width: 100 }}
                     />
                   )}
-                  <span className='ml10'>件（最多{stockNum}件）</span>
+                  <span className='ml10'>件（最多{Math.abs(stockNum)}件）</span>
                 </>
               )
             }}
           />
           <FormItem
-            name='reason'
+            name='info'
             type='textarea'
             label='核销原因'
             verifiable
             fieldDecoratorOptions={{
               rules: [{
-                message: '核销原因',
+                message: '请输入核销原因',
                 required: true
+              }, {
+                max: 200,
+                message: '核销原因最长不超过200字符'
               }]
             }}
           />

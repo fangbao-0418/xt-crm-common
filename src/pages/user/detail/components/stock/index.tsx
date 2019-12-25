@@ -1,21 +1,22 @@
 import React from 'react'
+import { Button } from 'antd'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { getDefaultConfig } from './config'
 import { getPurchaseList, eliminate } from './api'
 import { parseQuery } from '@/util/utils'
+import { memoize } from 'lodash'
 import OffStockModal, { OffStockModalInstanceProps } from './components/OffStockModal'
 interface State {
   visible: boolean,
-  stock?: number
+  stock: number
 }
 class Main extends React.Component<any, State> {
   public query: any = parseQuery()
   /** 核销采购ID */
   public purchaseId: number
-  /** 核销库存 */
-  public purchaseStock: number
   public state: State = {
-    visible: false
+    visible: false,
+    stock: 0
   }
   public list: ListPageInstanceProps
   public OffStockModal: OffStockModalInstanceProps
@@ -78,7 +79,10 @@ class Main extends React.Component<any, State> {
       title: '剩余库存(件)',
       width: 120,
       key: 'stock',
-      dataIndex: 'stock'
+      dataIndex: 'stock',
+      render: (stock: number) => {
+        return stock >= 0 ? stock : <span style={{ color: 'red' }}>{stock}</span> 
+      }
     },
     {
       title: 'sku名称',
@@ -118,13 +122,15 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '操作',
+      align: 'center',
       key: 'operate',
       width: 80,
       fixed: 'right',
       render: (text: any, records: any) => {
         return (
-          <span
-            className='href'
+          <Button
+            type='link'
+            disabled={records.stock === 0}
             onClick={() => {
               this.purchaseId = records.id
               this.setState({
@@ -133,8 +139,8 @@ class Main extends React.Component<any, State> {
               })
             }}
           >
-            核销
-          </span>
+            {this.getBtnText(this.state.stock)}
+          </Button>
         )
       }
     }
@@ -146,8 +152,9 @@ class Main extends React.Component<any, State> {
   }
   public handleOk = async (vals: any) => {
     const res = await eliminate({
-      eliminateCount: vals.eliminateCount,
-      purchaseId: this.purchaseId
+      eliminateType: this.state.stock >= 0 ? 1: 0,
+      purchaseId: this.purchaseId,
+      ...vals
     })
     if (res) {
       APP.success('核销库存成功')
@@ -159,16 +166,18 @@ class Main extends React.Component<any, State> {
     this.OffStockModal.resetFields()
     this.setState({
       visible: false,
-      stock: undefined
+      stock: 0
     })
   }
+  public getBtnText = memoize((stock: number) => {
+    return stock >= 0 ? '核销' : <span style={{color: 'red'}}>核销负库存</span>
+  })
   public render () {
     const { visible } = this.state
     return (
       <>
         <OffStockModal
           ref={(modal: any)=> this.OffStockModal = modal}
-          title='核销库存'
           visible={visible}
           onOk={this.handleOk}
           onCancel={this.handleClose}
