@@ -53,5 +53,3 @@ export const ORDER_TYPE = {
   '40': '采购订单',
   '60': '团购会订单'
 }
-
-export const ExpressCompanyOptions = APP.constant && APP.constant.expressConfig
