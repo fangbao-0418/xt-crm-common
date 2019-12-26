@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
+import Loadable from 'react-loadable';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { view as Layout } from './components/layout';
 import Order from './pages/order';
@@ -12,16 +13,26 @@ import Supplier from './pages/supplier';
 import Banner from './pages/banner';
 import Finance from './pages/finance';
 import Auth from './pages/auth';
-import Settings from './pages/settings';
 import Setting from './pages/setting'
-import Home from './pages/home';
 import Interface from './pages/interface';
 import CrudPage from './components/crudPage';
 import "./assets/styles/common.scss";
 import { view as Login } from './pages/login';
 import Coupon from './pages/coupon';
 import Message from './pages/message';
+import { view as Loader } from '@/components/loader';
 const { get } = APP.http
+
+const Home = Loadable({
+  loader: () => import('./pages/home'),
+  loading: Loader,
+})
+
+const Settings = Loadable({
+  loader: () => import('./pages/settings'),
+  loading: Loader,
+})
+
 class Main extends React.Component {
   constructor (props) {
     super(props)
