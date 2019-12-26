@@ -24,7 +24,8 @@ const orderTypeOptions = [
   { label: '活动兑换订单', value: '30' },
   { label: '采购订单', value: '40' },
   { label: '团购会订单', value: '60' },
-  { label: '海淘订单', value: '70' }
+  { label: '海淘订单', value: '70' },
+  { label: '团购会采购订单', value: '80'}
 ]
 
 const formatRangeDate = (val) => {
