@@ -75,10 +75,12 @@ class Main extends React.Component<Props, State> {
     fixed: 'right',
     align: 'center',
     render: (text, record) => {
-      return (
-        <>
-          {record.status === 0 && <span onClick={this.loseEfficacy.bind(this, record.id)} className='href'>失效</span>}
-        </>
+      return [0, 1].includes(record.status) && (
+        <span
+          onClick={this.loseEfficacy.bind(this, record.id)}
+          className='href'>
+          失效
+        </span>
       )
     }
   }]
@@ -107,14 +109,18 @@ class Main extends React.Component<Props, State> {
           </FormItem>
         </Form>
       ),
-      onOk: () => {
+      onOk: (hide) => {
         const ids = id === undefined ? selectedRowKeys : [id]
-        const { invalidReason } = form.getValues()
+        const { invalidReason } = form && form.getValues()
         api.loseEfficacy({
           ids,
           invalidReason
-        }).then(() => {
-          this.refresh()
+        }).then((res) => {
+          if (res) {
+            APP.success('失效成功')
+            hide()
+            this.refresh()
+          }
         })
       }
     })
