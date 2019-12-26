@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from 'antd'
+import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import * as api from './api'
 import { getFieldsConfig, StatusEnum, locationMap, displayFromMap } from './config'
@@ -16,7 +17,8 @@ export interface Item {
   pageSize: number
   status: number
 }
-class Main extends React.Component {
+interface Props extends AlertComponentProps {}
+class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Item>[] = [
     {
@@ -102,8 +104,18 @@ class Main extends React.Component {
     }
   ]
   public disabled (record: Item) {
-    api.disabled(record.id).then(() => {
-      this.listpage.refresh()
+    const hide = this.props.alert({
+      content: (
+        <div>
+          失效后不能恢复，确认失效？
+        </div>
+      ),
+      onOk: () => {
+        api.disabled(record.id).then(() => {
+          this.listpage.refresh()
+          hide()
+        })
+      }
     })
   }
   public render () {
@@ -158,4 +170,4 @@ class Main extends React.Component {
     )
   }
 }
-export default Main
+export default Alert(Main)

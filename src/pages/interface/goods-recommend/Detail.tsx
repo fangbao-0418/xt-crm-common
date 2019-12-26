@@ -109,7 +109,7 @@ class Main extends React.Component<Props, State> {
                   ]
                 }
               )(
-                <RelevanceGoods readonly />
+                <RelevanceGoods readonly={readonly} />
               )
             }}
           />
