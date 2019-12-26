@@ -7,6 +7,7 @@ import Team from './components/team';
 import Income from './components/income';
 import Log from './components/log';
 import Assets from './components/assets';
+import Stock from './components/stock'
 const { TabPane } = Tabs;
 
 @connect(state => ({
@@ -54,6 +55,9 @@ export default class extends Component {
                 </TabPane>
                 <TabPane tab="我的资产" key="assets">
                     <Assets getInstance={scope => this.assets = scope}/>
+                </TabPane>
+                <TabPane tab="团购会库存" key="stock">
+                    <Stock getInstance={scope => this.stock = scope}/>
                 </TabPane>
             </Tabs>
         )

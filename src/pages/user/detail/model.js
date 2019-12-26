@@ -1,6 +1,6 @@
 import * as api from './api.js';
 import { message } from 'antd';
-
+import { isFunction } from 'lodash'
 export default {
   namespace: 'user.userinfo',
   state: {
@@ -42,7 +42,8 @@ export default {
         payload: {
           userinfo: userinfo || {}
         }
-      });
+      })
+      isFunction(payload.cb) && payload.cb(userinfo)
     },
     async getRecommend(payload) {
       const recommenderConfig = await api.getRecommend(payload);
