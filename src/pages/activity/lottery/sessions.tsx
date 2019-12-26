@@ -551,12 +551,19 @@ class Main extends React.Component<Props, State> {
     })
   }
   public generateChance = () => {
+    let awardList = this.state.awardList
+    for (let i = 0; i < awardList.length; i++) {
+      const v = awardList[i]
+      const prefixMsg = `奖品列表第${i + 1}行`
+      if (!isFalsly(v.awardNum)) {
+        return void message.error(`${prefixMsg}奖品库存不能为空`)
+      }
+    }
     const expectedNumber = this.form.getValues().expectedNumber || 0
     if (!expectedNumber) {
       APP.error('请输入预估参与人数')
       return
     }
-    let awardList = this.state.awardList || []
     const inventory: any = awardList.reduce((a: any, b) => {
       return ((typeof a !== 'number' ? a.awardNum : a) || 0) + (b.awardNum || 0)
     }) || 0
@@ -760,10 +767,10 @@ class Main extends React.Component<Props, State> {
             >
               清空概率
             </Button>
-            <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
+            {/* <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
               点击生成概率，校验预估参与人数和奖品库存是否填写，<br />
               如未填写则提示“预估参与人数、奖品库存填写后才能生成概率”的提示
-            </Tips>
+            </Tips> */}
           </div>
         </Card>
         <Card type='inner' title='规则说明'>

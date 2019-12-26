@@ -2,7 +2,7 @@ import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import List, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
-import { Button } from 'antd'
+import { Button, Popover } from 'antd'
 import { getDefaultConfig, StatusEnum, TypeEnum, AwardTypeEnum } from './config'
 import { ColumnProps, TableRowSelection } from 'antd/es/table'
 import Replenish from '../luckdraw/add'
@@ -13,6 +13,7 @@ interface State {
 }
 class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
+  public form: FormInstance
   public state: State = {
     selectedRowKeys: []
   }
@@ -41,7 +42,7 @@ class Main extends React.Component<Props, State> {
     width: 150,
   }, {
     title: '支付时间',
-    dataIndex: 'createTime',
+    dataIndex: 'orderPayDate',
     width: 200,
     render: (text) => {
       return APP.fn.formatDate(text) || ''
@@ -62,6 +63,9 @@ class Main extends React.Component<Props, State> {
       return StatusEnum[text]
     }
   }, {
+    title: '奖品名称',
+    dataIndex: 'awardTitle'
+  }, {
     title: '奖品类型',
     dataIndex: 'awardType',
     width: 100,
@@ -71,16 +75,25 @@ class Main extends React.Component<Props, State> {
     }
   }, {
     title: '操作',
-    width: 100,
+    width: 130,
     fixed: 'right',
     align: 'center',
     render: (text, record) => {
-      return [0, 1].includes(record.status) && (
-        <span
-          onClick={this.loseEfficacy.bind(this, record.id)}
-          className='href'>
-          失效
-        </span>
+      return (
+        <>
+          {[0, 1].includes(record.status) && (
+            <span
+              onClick={this.loseEfficacy.bind(this, record.id)}
+              className='href'>
+              失效
+            </span>
+          )}
+          {record.status === 2 && (
+            <Popover content={record.invalidReason}>
+              <span className='href'>查看失效原因</span>
+            </Popover>
+          )} 
+        </>
       )
     }
   }]
@@ -91,13 +104,12 @@ class Main extends React.Component<Props, State> {
       APP.error('请选择')
       return
     }
-    let form: FormInstance
     this.props.alert({
       title: '失效',
       content: (
         <Form
           getInstance={(ref) => {
-            form = ref
+            this.form = ref
           }}
         >
           {id === undefined && <div className='mb20'>共选中<span style={{color: 'red'}}>{length}</span>条中奖记录</div>}
@@ -111,7 +123,7 @@ class Main extends React.Component<Props, State> {
       ),
       onOk: (hide) => {
         const ids = id === undefined ? selectedRowKeys : [id]
-        const { invalidReason } = form && form.getValues()
+        const { invalidReason } = this.form.getValues()
         api.loseEfficacy({
           ids,
           invalidReason
@@ -119,6 +131,7 @@ class Main extends React.Component<Props, State> {
           if (res) {
             APP.success('失效成功')
             hide()
+            this.form.props.form.resetFields()
             this.refresh()
           }
         })
@@ -154,7 +167,7 @@ class Main extends React.Component<Props, State> {
         formConfig={getDefaultConfig()}
         tableProps={{
           scroll: {
-            x: 1200
+            x: true
           },
           rowKey: 'id',
           rowSelection

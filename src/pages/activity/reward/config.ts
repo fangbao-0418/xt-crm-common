@@ -14,6 +14,9 @@ export function getDefaultConfig () {
       title: {
         label: '活动名称'
       },
+      roundTitle: {
+        label: '场次名称'
+      },
       orderCode: {
         label: '主订单号'
       },
