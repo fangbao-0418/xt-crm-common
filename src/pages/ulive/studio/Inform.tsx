@@ -1,5 +1,6 @@
 import React from 'react'
-import { ListPage, Form, FormItem } from '@/packages/common/components'
+import { Form, FormItem } from '@/packages/common/components'
+import List from '@/packages/common/components/list-page'
 import { FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from './config'
 import { Button } from 'antd'
@@ -46,7 +47,7 @@ class Main extends React.Component {
             <Button type='primary'>停播</Button>
           </Form>
         </div>
-        <ListPage
+        <List
           api={api.getStudioList}
           columns={this.columns}
         />
