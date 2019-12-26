@@ -1,5 +1,5 @@
 import { Item } from './index'
-const { get, newPost } = APP.http
+const { get, newPost, newPut } = APP.http
 export const fetchList = (payload: {
   createStartTime: number
   createEndTime: number
@@ -14,6 +14,10 @@ export const fetchList = (payload: {
 
 export const add = (payload: Item) => {
   return newPost('/product/recommend/add', payload)
+}
+
+export const update = (payload: Item) => {
+  return newPut('/product/recommend/update', payload)
 }
 
 export const fetchGoodsList = (
@@ -33,4 +37,8 @@ export const fetchGoodsList = (
 
 export const fetchDetail = (id: any) => {
   return get(`/product/recommend/detail/${id}`)
+}
+
+export const disabled = (id: any) => {
+  return newPut(`/product/recommend/disable/${id}`)
 }

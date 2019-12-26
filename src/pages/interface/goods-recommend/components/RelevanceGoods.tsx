@@ -5,27 +5,29 @@ import ShopModal, { Item } from './ShopModal'
 import Image from '@/components/Image'
 
 interface Props {
+  readonly?: boolean
   value?: any
   onChange?: (value: any) => void
 }
 interface State {
   selectedRowKeys: any[]
-  dataSouce: Item[]
+  dataSource: Item[]
 }
 
 class Main extends React.Component<Props, State> {
   public state: State = {
     selectedRowKeys: [],
-    dataSouce: this.props.value || []
+    dataSource: this.props.value || []
   }
   public columns: ColumnProps<Item>[] = [
     {
       title: '商品ID',
-      dataIndex: 'id'
+      dataIndex: 'productId'
     },
     {
       title: '商品名称',
-      dataIndex: 'productName'
+      dataIndex: 'productName',
+      width: 200
     },
     {
       title: '商品主图',
@@ -43,14 +45,15 @@ class Main extends React.Component<Props, State> {
     {
       title: '操作',
       render: (text, record, index) => {
-        return (
+        const { readonly } = this.props
+        return readonly ? null : (
           <span
             className='href'
             onClick={() => {
-              const dataSouce = this.state.dataSouce
-              dataSouce.splice(index, 1)
+              const dataSource = this.state.dataSource
+              dataSource.splice(index, 1)
               this.setState({
-                dataSouce
+                dataSource
               })
             }}
           >
@@ -60,23 +63,35 @@ class Main extends React.Component<Props, State> {
       }
     }
   ]
+  public componentWillReceiveProps (props: Props) {
+    this.setState({
+      dataSource: props.value || []
+    })
+  }
   public onChange () {
     if (this.props.onChange) {
-      console.log(this.state.dataSouce, 'xxxxxxxxx')
-      this.props.onChange(this.state.dataSouce)
+      console.log(this.state.dataSource, 'xxxxxxxxx')
+      this.props.onChange(this.state.dataSource)
     }
   }
   public render () {
-    const { selectedRowKeys, dataSouce } = this.state
+    const { selectedRowKeys, dataSource } = this.state
+    const { readonly } = this.props
     return (
       <div>
         <ShopModal
           selectedRowKeys={selectedRowKeys}
           ref="shopmodal"
           onOk={(keys, rows) => {
-            console.log(rows, 'rows')
+            const result = rows.map((item) => {
+              return {
+                ...item,
+                productId: item.id,
+                id: undefined
+              }
+            })
             this.setState({
-              dataSouce: rows
+              dataSource: result
             }, () => {
               this.onChange()
             })
@@ -88,20 +103,22 @@ class Main extends React.Component<Props, State> {
               width: 600
             }}
             columns={this.columns}
-            dataSource={dataSouce}
+            dataSource={dataSource}
           />
         </div>
         <div>
-          <span
-            className='href'
-            onClick={() => {
-              const ref: any = this.refs.shopmodal;
-              // ref.setState({ visible: true });
-              ref.open(selectedRowKeys)
-            }}
-          >
-            +添加商品
-          </span>
+          {!readonly && (
+            <span
+              className='href'
+              onClick={() => {
+                const ref: any = this.refs.shopmodal;
+                // ref.setState({ visible: true });
+                ref.open(selectedRowKeys)
+              }}
+            >
+              +添加商品
+            </span>
+          )}
         </div>
       </div>
     )

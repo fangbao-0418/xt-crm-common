@@ -6,7 +6,8 @@ import * as api from '../api'
 import Image from '@/components/Image'
 
 export interface Item {
-  id: number
+  id?: number
+  productId?: number
   productName: string
   productRecommendId: number
   stock: number
