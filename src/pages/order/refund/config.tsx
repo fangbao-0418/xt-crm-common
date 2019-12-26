@@ -137,7 +137,8 @@ export const formFields = function (refundStatus: any, intercept: any) {
         { val: '活动兑换订单', key: '30' },
         { val: '采购订单', key: '40' },
         { val: '团购会订单', key: '60' },
-        { val: '海淘订单', key: '70' }
+        { val: '海淘订单', key: '70' },
+        { val: '团购会采购订单', key: '80' }
       ]
     }, {
       type: 'select',

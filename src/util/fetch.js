@@ -186,6 +186,7 @@ export const exportFile = (url, data, config) => {
           message.error(obj.message);
         });
         return reader.readAsText(error);
+        
       }
       const httpCode = lodashGet(error, 'response.status');
       if (httpCode === 401) {
