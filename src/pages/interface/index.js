@@ -9,6 +9,8 @@ import HomeConfig from './config'
 import FreeSubsidies from './free-subsidies'
 import SpecialContent from './special/content'
 import SpecialContentForm from './special/content/form'
+import GoodsRecommend from './goods-recommend'
+import GoodsRecommendDetail from './goods-recommend/Detail'
 export default class extends Component {
   render() {
     return (
@@ -22,6 +24,8 @@ export default class extends Component {
         <Route path='/interface/free' component={FreeSubsidies} />
         <Route path='/interface/special-content' exact component={SpecialContent} />
         <Route path='/interface/special-content/:id' exact component={SpecialContentForm} />
+        <Route path='/interface/goods-recommend' exact component={GoodsRecommend} />
+        <Route path='/interface/goods-recommend/:id' component={GoodsRecommendDetail} />
       </Switch>
     )
   }
