@@ -1,16 +1,19 @@
 // 手动发码
 import React from 'react';
-import { Card, Input, DatePicker, Button, Table, Modal } from 'antd';
+import { Card, Row, Button, Table, Modal, Select } from 'antd';
 import Form, { FormItem } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils';
-import { formatDate, formatMoneyWithSign } from '../../helper';
+import { formatMoneyWithSign } from '../../helper';
 import DateFns from 'date-fns';
 import orderStatus from '@/enum/orderStatus';
-import { lotteryManualGive } from './../api';
+import { fillChance } from './api';
 import { getOrderList } from './../../order/api';
 import './../activity.scss';
 class Add extends React.Component {
   form = undefined
+  state = {
+    type: undefined
+  }
   constructor(props) {
     super(props);
     const params = parseQuery();
@@ -69,20 +72,12 @@ class Add extends React.Component {
   // 确定添加
   handleAdd = () => {
     console.log('确定添加', this.state.selectedRows);
-    let lotteryMemberTicketManualAddVOList = [];
-    this.state.selectedRows.map((item, index) => {
-      lotteryMemberTicketManualAddVOList.push({
-        actualPayMoney: item.totalMoney,
-        memberId: item.memberId,
-        mainOrderId: item.id,
-        mainOrderCode: item.orderCode,
-        buyerPhone: item.buyerPhone,
-        payDate: item.payDate
-      });
-    });
-    console.log('lotteryMemberTicketManualAddVOList', lotteryMemberTicketManualAddVOList);
+    const orderIds =this.state.selectedRows.map((item) => item.id)
     // 添加手动发码
-    lotteryManualGive({ lotteryMemberTicketManualAddVOList }).then(res => {
+    fillChance({
+      orderIds,
+      type: this.state.type
+    }).then(res => {
       if (res) {
         APP.success('发布成功');
         this.setState({
@@ -103,7 +98,12 @@ class Add extends React.Component {
       },
       this.handleSearch
     );
-  };
+  }
+  onChange = (type) => {
+    this.setState({
+      type
+    })
+  }
   render(h) {
     const { listData, total, pageSize, current } = this.state;
 
@@ -130,23 +130,6 @@ class Add extends React.Component {
       {
         title: '下单人手机',
         dataIndex: 'buyerPhone'
-      }
-    ];
-
-    const data = [
-      {
-        key: '1',
-        orderCode: '221121212',
-        orderStatus: 0,
-        totalMoney: '188',
-        buyerPhone: '1301581313'
-      },
-      {
-        key: '2',
-        orderCode: '221121212',
-        orderStatus: 0,
-        totalMoney: '188',
-        buyerPhone: '1301581313'
       }
     ];
     const rowSelection = {
@@ -259,6 +242,23 @@ class Add extends React.Component {
               }}
             />
           </Card>
+          <Row
+            style={{
+              textAlign: 'right',
+              marginBottom: 10
+            }}
+          >
+            <Select
+              allowClear
+              placeholder='请选择抽奖类型'
+              style={{ width: 172 }}
+              value={this.state.type}
+              onChange={this.onChange}
+            >
+              <Select.Option value={2}>九宫格抽奖</Select.Option>
+              <Select.Option value={3}>砸金蛋</Select.Option>
+            </Select>
+          </Row>
         </Modal>
       </>
     );
