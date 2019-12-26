@@ -36,7 +36,7 @@ class Main extends React.Component<Props, any> {
               className='href'
               onClick={() => {
                 this.props.modal.show({
-                  success: (res: any, hide: any) => {
+                  success: (res: any, hide?: any) => {
                     res[0].couponName = res[0].name
                     onChange && onChange(res[0])
                     hide()

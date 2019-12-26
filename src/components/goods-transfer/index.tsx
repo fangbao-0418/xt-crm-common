@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Transfer, Modal, Button } from 'antd';
+import { Transfer, Modal, Button, message } from 'antd';
 
 export default class extends React.PureComponent<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
+      visible: false,
       targetKeys: [],
       selectedKeys: []
     };
@@ -29,17 +30,31 @@ export default class extends React.PureComponent<any, any> {
   onOk = () => {
     const { onOk } = this.props;
     const { targetKeys } = this.state;
+    if (!targetKeys || (Array.isArray(targetKeys) && targetKeys.length === 0)) {
+      return void message.error('请选择商品');
+    }
     onOk && onOk(targetKeys);
   };
 
+  showModal = () => {
+    this.setState({
+      visible: true
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      visible: false
+    });
+  };
   render() {
-    const { dataSource, header, currentGoodsList, ...props } = this.props;
-    const { targetKeys } = this.state;
+    const { dataSource, header, currentGoodsList, index, ...props } = this.props;
+    const { targetKeys, visible } = this.state;
     let tempDataSource = dataSource;
     if (currentGoodsList && currentGoodsList.length) {
       tempDataSource = dataSource.map((item: any) => {
         const isExist = currentGoodsList.find((goods: any) => {
-          return goods.id === item.productId;
+          return (goods && goods.id) === item.productId;
         });
         if (isExist) {
           item.disabled = true;
@@ -59,7 +74,7 @@ export default class extends React.PureComponent<any, any> {
       </div>
     );
     return (
-      <Modal getContainer={false} width={888} maskClosable={false} footer={footer} {...props}>
+      <Modal getContainer={false} width={888} maskClosable={false} footer={footer} visible={visible} {...props}>
         {header}
         <Transfer
           rowKey={record => record.productId}

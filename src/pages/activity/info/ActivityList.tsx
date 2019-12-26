@@ -25,9 +25,9 @@ class ActivityList extends React.Component<UserFormProps, any> {
       page: {
         current: 1,
         total: 0,
-        pageSize: 20,
+        pageSize: 20
       },
-      visible: false,
+      visible: false
     };
   }
 
@@ -39,14 +39,14 @@ class ActivityList extends React.Component<UserFormProps, any> {
     getPromotionList(params).then((res = {}) => {
       page.total = res.total;
       this.setState({
-        listData: res.records,
+        listData: res.records
       });
     });
   };
 
   handleSearch = () => {
     const {
-      form: { validateFields },
+      form: { validateFields }
     } = this.props;
     validateFields((err: any, vals: any) => {
       if (!err) {
@@ -55,7 +55,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
           startTime: vals.time && vals.time[0] && +new Date(vals.time[0]),
           endTime: vals.time && vals.time[1] && +new Date(vals.time[1]),
           page: this.state.page.current,
-          pageSize: this.state.page.pageSize,
+          pageSize: this.state.page.pageSize
         };
 
         delete params.time;
@@ -68,15 +68,15 @@ class ActivityList extends React.Component<UserFormProps, any> {
   handleTabChange = (e: any) => {
     this.setState(
       {
-        page: e,
+        page: e
       },
-      this.handleSearch,
+      this.handleSearch
     );
   };
 
   showModal = () => {
     this.setState({
-      visible: true,
+      visible: true
     });
     this.handleReset();
   };
@@ -84,7 +84,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
   handleCancel = (e?: any) => {
     this.setState({
       visible: false,
-      selectedRow: undefined,
+      selectedRow: undefined
     });
   };
 
@@ -95,10 +95,10 @@ class ActivityList extends React.Component<UserFormProps, any> {
         page: {
           current: 1,
           total: 0,
-          pageSize: 20,
-        },
+          pageSize: 20
+        }
       },
-      this.handleSearch,
+      this.handleSearch
     );
   };
 
@@ -111,52 +111,52 @@ class ActivityList extends React.Component<UserFormProps, any> {
           <Radio
             onClick={() =>
               this.setState({
-                selectedRow: row,
+                selectedRow: row
               })
             }
             disabled={row.id === info.id}
             checked={row.id === selectedRow.id}
           ></Radio>
-        ),
+        )
       },
       {
         title: '活动ID',
         dataIndex: 'id',
-        width: 100,
+        width: 100
       },
       {
         title: '活动名称',
         dataIndex: 'title',
-        width: 150,
+        width: 150
       },
       {
         title: '开始时间',
         dataIndex: 'startTime',
-        render: (text: any) => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
+        render: (text: any) => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>
       },
       {
         title: '结束时间',
         dataIndex: 'endTime',
-        render: (text: any) => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
+        render: (text: any) => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>
       },
       {
         title: '活动类型',
         dataIndex: 'type',
         width: 100,
-        render: (text: any) => <>{activityType.getValue(text)}</>,
+        render: (text: any) => <>{activityType.getValue(text)}</>
       },
       {
         title: '活动状态',
         dataIndex: 'status',
         width: 100,
-        render: (text: any) => <>{text === 0 ? '关闭' : '开启'}</>,
-      },
+        render: (text: any) => <>{text === 0 ? '关闭' : '开启'}</>
+      }
     ];
 
     const { listData, page, selectedRow = {} } = this.state as any;
     const {
       form: { getFieldDecorator },
-      text = '批量转移',
+      text = '批量转移'
     } = this.props as any;
 
     return (
@@ -193,19 +193,13 @@ class ActivityList extends React.Component<UserFormProps, any> {
           <Card>
             <Form layout="inline">
               <FormItem label="活动名称">
-                {getFieldDecorator('name')(
-                  <Input placeholder="请输入活动名称" style={{ width: 150 }} />,
-                )}
+                {getFieldDecorator('name')(<Input placeholder="请输入活动名称" style={{ width: 150 }} />)}
               </FormItem>
               <FormItem label="商品ID">
-                {getFieldDecorator('pid')(
-                  <Input placeholder="请输入商品ID" style={{ width: 150 }} />,
-                )}
+                {getFieldDecorator('pid')(<Input placeholder="请输入商品ID" style={{ width: 150 }} />)}
               </FormItem>
               <FormItem label="商品名称">
-                {getFieldDecorator('pname')(
-                  <Input placeholder="请输入商品名称" style={{ width: 150 }} />,
-                )}
+                {getFieldDecorator('pname')(<Input placeholder="请输入商品名称" style={{ width: 150 }} />)}
               </FormItem>
               <FormItem label="活动类型">
                 {getFieldDecorator('type')(
@@ -219,7 +213,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
                           {val.val}
                         </Option>
                       ))}
-                  </Select>,
+                  </Select>
                 )}
               </FormItem>
               <FormItem label="有效时间">
@@ -228,12 +222,9 @@ class ActivityList extends React.Component<UserFormProps, any> {
                     style={{ width: 372 }}
                     format="YYYY-MM-DD HH:mm"
                     showTime={{
-                      defaultValue: [
-                        moment('00:00:00', 'HH:mm:ss'),
-                        moment('23:59:59', 'HH:mm:ss'),
-                      ],
+                      defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]
                     }}
-                  />,
+                  />
                 )}
               </FormItem>
               <FormItem label="活动状态">
@@ -242,7 +233,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
                     <Option value="">全部</Option>
                     <Option value="0">关闭</Option>
                     <Option value="1">开启</Option>
-                  </Select>,
+                  </Select>
                 )}
               </FormItem>
               <FormItem>
@@ -254,10 +245,10 @@ class ActivityList extends React.Component<UserFormProps, any> {
                         page: {
                           current: 1,
                           total: 0,
-                          pageSize: 20,
-                        },
+                          pageSize: 20
+                        }
                       },
-                      this.handleSearch,
+                      this.handleSearch
                     );
                   }}
                 >

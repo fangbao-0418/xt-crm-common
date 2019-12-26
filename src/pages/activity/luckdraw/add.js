@@ -52,8 +52,8 @@ class Add extends React.Component {
               // 只查询10月25日-11月11日的订单
               const params = {
                 ...vals,
-                payStartDate: "2019-10-25 00:00",
-                payEndDate: "2019-11-11 23:59",
+                // payStartDate: "2019-10-25 00:00",
+                // payEndDate: "2019-11-11 23:59",
                 page: this.state.current,
                 pageSize: this.state.pageSize
               };
@@ -222,7 +222,7 @@ class Add extends React.Component {
                        </FormItem>
                   </Form>
             </Card>
-            <div>只可以查询10月25日-11月11日的订单 </div>
+            {/* <div>只可以查询10月25日-11月11日的订单 </div> */}
             <Card>
                 <Table rowSelection={rowSelection} columns={columns} dataSource={listData} 
                 pagination={{
