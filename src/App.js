@@ -1,37 +1,28 @@
-import React from 'react';
+import React from 'react'
 import { withRouter } from 'react-router'
+import { Route, Redirect, Switch } from 'react-router-dom'
+import { view as Layout } from './components/layout'
+import { view as Login } from './pages/login'
+import Loadable from './util/loadable'
 import { connect } from 'react-redux'
-import Loadable from 'react-loadable';
-import { Route, Redirect, Switch } from 'react-router-dom';
-import { view as Layout } from './components/layout';
-import Order from './pages/order';
-import Goods from './pages/goods';
-import template from './pages/template'
-import Activity from './pages/activity';
-import User from './pages/user';
-import Supplier from './pages/supplier';
-import Banner from './pages/banner';
-import Finance from './pages/finance';
-import Auth from './pages/auth';
-import Setting from './pages/setting'
-import Interface from './pages/interface';
-import CrudPage from './components/crudPage';
-import "./assets/styles/common.scss";
-import { view as Login } from './pages/login';
-import Coupon from './pages/coupon';
-import Message from './pages/message';
-import { view as Loader } from '@/components/loader';
+
 const { get } = APP.http
-
-const Home = Loadable({
-  loader: () => import('./pages/home'),
-  loading: Loader,
-})
-
-const Settings = Loadable({
-  loader: () => import('./pages/settings'),
-  loading: Loader,
-})
+const Home = Loadable(() => import('./pages/home'))
+const Settings = Loadable(() => import('./pages/settings'))
+const Goods = Loadable(() => import('./pages/goods'))
+const Template = Loadable(() => import('./pages/template'))
+const Order = Loadable(() => import('./pages/order'))
+const Activity = Loadable(() => import('./pages/activity'))
+const Coupon = Loadable(() => import('./pages/coupon'))
+const User = Loadable(() => import('./pages/user'))
+const Supplier = Loadable(() => import('./pages/supplier'))
+const Banner = Loadable(() => import('./pages/banner'))
+const Finance = Loadable(() => import('./pages/finance'))
+const Auth = Loadable(() => import('./pages/auth'))
+const Interface = Loadable(() => import('./pages/interface'))
+const CrudPage = Loadable(() => import('./components/crudPage'))
+const Message = Loadable(() => import('./pages/message'))
+const Setting = Loadable(() => import('./pages/setting'))
 
 class Main extends React.Component {
   constructor (props) {
@@ -64,7 +55,7 @@ class Main extends React.Component {
           <Route path="/home" component={Home} />
           <Route path="/settings" component={Settings} />
           <Route path="/goods" component={Goods} />
-          <Route path="/template" component={template} />
+          <Route path="/template" component={Template} />
           <Route path="/order" component={Order} />
           <Route path="/activity" component={Activity} />
           <Route path="/coupon" component={Coupon} />
@@ -79,8 +70,8 @@ class Main extends React.Component {
           <Route path="/setting" component={Setting}/>
         </Layout>
       </Switch>
-    );
+    )
   }
-};
+}
 
-export default withRouter(connect()(Main));
+export default withRouter(connect()(Main))
