@@ -20,11 +20,10 @@ class Main extends React.Component<Props, State> {
   }
   public componentDidMount () {
     const query: any = parseQuery()
-    if (query.roundTitle) {
-      this.listpage.form.setValues({
-        roundTitle: query.roundTitle
-      })
-    }
+    this.listpage.form.setValues({
+      roundTitle: query.roundTitle
+    })
+    this.refresh()
   }
   public columns: ColumnProps<any>[] = [{
     title: '中奖号码',
@@ -185,10 +184,14 @@ class Main extends React.Component<Props, State> {
           rowKey: 'id',
           rowSelection
         }}
+        autoFetch={false}
+        onReset={() => {
+          APP.history.push('/activity/reward')
+          this.listpage.form.reset()
+        }}
         addonAfterSearch={(
           <div>
             <ReissueModal><Button type='danger'>补发</Button></ReissueModal>
-            {/* <Button type='danger'>补发</Button> */}
             <Button onClick={this.loseEfficacy.bind(this, undefined)} className='ml10'>失效</Button>
           </div>
         )}
