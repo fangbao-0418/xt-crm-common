@@ -132,6 +132,9 @@ class Main extends React.Component<Props, State> {
             APP.success('失效成功')
             hide()
             this.form.props.form.resetFields()
+            this.setState({
+              selectedRowKeys: []
+            })
             this.refresh()
           }
         })
@@ -155,7 +158,7 @@ class Main extends React.Component<Props, State> {
       onChange: this.onSelectChange,
       getCheckboxProps: (record) => {
         return {
-          disabled: record.status !== 0
+          disabled: [2, 3].includes(record.status)
         }
       }
     };
