@@ -1,12 +1,16 @@
 import React from 'react'
 import { ListPage, Form, FormItem } from '@/packages/common/components'
+import { param } from '@/packages/common/utils'
 import { FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from './config'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import * as api from './api'
-class Main extends React.Component {
+import { withRouter, RouteComponentProps } from 'react-router'
+interface Props extends RouteComponentProps<{id: string}>{}
+class Main extends React.Component<Props> {
   public form: FormInstance
+  public id = this.props.match.params.id
   public columns: ColumnProps<any>[] = [
     {
       dataIndex: 'a',
@@ -18,12 +22,25 @@ class Main extends React.Component {
     }
   ]
   public componentDidMount () {
+    console.log(param({
+      a: 2,
+      b: {
+        a: 2
+      }
+    }), 'ppppppppppppppppppp')
     this.form.setValues({
       nickName: 'xxx',
       homeId: 'xxx',
       title: '2222'
     })
   }
+  // public fetchData () {
+  //   if (this.id) {
+  //     this.form.setValues({
+        
+  //     })
+  //   }
+  // }
   public render () {
     return (
       <div style={{background: '#ffffff', padding: 20}}>
@@ -47,11 +64,17 @@ class Main extends React.Component {
           </Form>
         </div>
         <ListPage
-          api={api.getStudioList}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              livePlanId: this.id
+            }
+          }}
+          api={api.fetchComplainList}
           columns={this.columns}
         />
       </div>
     )
   }
 }
-export default Main
+export default withRouter(Main)

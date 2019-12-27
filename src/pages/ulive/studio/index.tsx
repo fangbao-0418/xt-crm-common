@@ -98,6 +98,19 @@ class Main extends React.Component<Props> {
       }
     },
     {
+      title: '举报数',
+      dataIndex: 'complainNum',
+      width: 80,
+      render: (text, record) => {
+        text = 1
+        return text ? (
+          <span onClick={() => { APP.history.push(`/ulive/inform/${record.planId}`) }} className='href'>
+            {text}
+          </span>
+        ) : null
+      }
+    },
+    {
       title: '操作',
       align: 'center',
       width: 300,

@@ -57,3 +57,11 @@ export const getWxQrcode = (payload: {
 }) => {
   return newPost('::ulive/live/plan/code', payload)
 }
+/** 获取举报列表 */
+export const fetchComplainList = (payload: {
+  livePlanId: any
+  pageSize: number
+  page: number
+}) => {
+  return get('::ulive/live/complain/list', payload)
+}

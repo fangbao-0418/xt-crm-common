@@ -35,6 +35,8 @@ declare namespace UliveStudio {
     auditReason: string
     /** 直播地址 */
     playUrl: string
+    /** 举报数 */
+    complainNum: number
   }
   /** 直播计划详情 */
   interface StatisticsProps {
@@ -52,5 +54,28 @@ declare namespace UliveStudio {
     orderTotalPayMoney: number
     /** 直播时长 */
     totalTime: number
+  }
+  /** 举报信息 */
+  interface ComplainProps {
+    /** 主播ID */
+    anchorId: number
+    /** 违规描述 */
+    description: string
+    /** 直播计划ID */
+    livePlanId: number
+    /** 主播用户ID */
+    memberId: number
+    /** 其他违规内容描述 */
+    otherTypeContent: string
+    /** 举报人联系方式 */
+    phone: string
+    /** 举报人用户ID */
+    reportMemberId: number
+    /** 举报人昵称 */
+    reportNickname: string
+    /** 截图url(多张以逗号分割) */
+    screenshotsUrl: string
+    /** 类型(0-讨论政治内容，10-暴力恐怖血腥, 20-色情,低俗, 30-赌博诈骗, 40-长时间无人直播, 50-头像, 封面内容侵权, 60-其他违规) */
+    type: 0 | 10 | 20 | 30 | 40 | 50 | 60
   }
 }
