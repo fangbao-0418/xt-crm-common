@@ -52,6 +52,14 @@ function Main (props: any) {
           {props.status === 3 ? '开启' : '关闭'}
         </Button>
       )}
+      {props.moduleId === 'sessions' && (
+        <Button
+          type='link'
+          onClick={props.onJumpToReward}
+        >
+          查看用户中奖信息
+        </Button>
+      )}
     </div>
   )
 }

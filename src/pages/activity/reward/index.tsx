@@ -1,20 +1,30 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
-import List, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import List from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
-import { Button } from 'antd'
+import { parseQuery } from '@/util/utils'
+import { Button, Popover } from 'antd'
 import { getDefaultConfig, StatusEnum, TypeEnum, AwardTypeEnum } from './config'
 import { ColumnProps, TableRowSelection } from 'antd/es/table'
-import Replenish from '../luckdraw/add'
+import ReissueModal from './components/ReissueModal'
 import * as api from './api'
 interface Props extends AlertComponentProps {}
 interface State {
   selectedRowKeys: any[]
 }
 class Main extends React.Component<Props, State> {
-  public listpage: ListPageInstanceProps
+  public listpage: any
+  public form: FormInstance
   public state: State = {
     selectedRowKeys: []
+  }
+  public componentDidMount () {
+    const query: any = parseQuery()
+    if (query.roundTitle) {
+      this.listpage.form.setValues({
+        roundTitle: query.roundTitle
+      })
+    }
   }
   public columns: ColumnProps<any>[] = [{
     title: '中奖号码',
@@ -23,6 +33,10 @@ class Main extends React.Component<Props, State> {
   }, {
     title: '活动名称',
     dataIndex: 'title',
+    width: 200
+  }, {
+    title: '场次名称',
+    dataIndex: 'roundTitle',
     width: 200
   }, {
     title: '活动类型',
@@ -41,7 +55,7 @@ class Main extends React.Component<Props, State> {
     width: 150,
   }, {
     title: '支付时间',
-    dataIndex: 'createTime',
+    dataIndex: 'orderPayDate',
     width: 200,
     render: (text) => {
       return APP.fn.formatDate(text) || ''
@@ -62,6 +76,9 @@ class Main extends React.Component<Props, State> {
       return StatusEnum[text]
     }
   }, {
+    title: '奖品名称',
+    dataIndex: 'awardTitle'
+  }, {
     title: '奖品类型',
     dataIndex: 'awardType',
     width: 100,
@@ -71,13 +88,24 @@ class Main extends React.Component<Props, State> {
     }
   }, {
     title: '操作',
-    width: 100,
+    width: 130,
     fixed: 'right',
     align: 'center',
     render: (text, record) => {
       return (
         <>
-          {record.status === 0 && <span onClick={this.loseEfficacy.bind(this, record.id)} className='href'>失效</span>}
+          {[0, 1].includes(record.status) && (
+            <span
+              onClick={this.loseEfficacy.bind(this, record.id)}
+              className='href'>
+              失效
+            </span>
+          )}
+          {record.status === 2 && (
+            <Popover content={record.invalidReason}>
+              <span className='href'>查看失效原因</span>
+            </Popover>
+          )} 
         </>
       )
     }
@@ -89,13 +117,12 @@ class Main extends React.Component<Props, State> {
       APP.error('请选择')
       return
     }
-    let form: FormInstance
     this.props.alert({
       title: '失效',
       content: (
         <Form
           getInstance={(ref) => {
-            form = ref
+            this.form = ref
           }}
         >
           {id === undefined && <div className='mb20'>共选中<span style={{color: 'red'}}>{length}</span>条中奖记录</div>}
@@ -107,14 +134,19 @@ class Main extends React.Component<Props, State> {
           </FormItem>
         </Form>
       ),
-      onOk: () => {
+      onOk: (hide) => {
         const ids = id === undefined ? selectedRowKeys : [id]
-        const { invalidReason } = form.getValues()
+        const { invalidReason } = this.form.getValues()
         api.loseEfficacy({
           ids,
           invalidReason
-        }).then(() => {
-          this.refresh()
+        }).then((res) => {
+          if (res) {
+            APP.success('失效成功')
+            hide()
+            this.form.props.form.resetFields()
+            this.refresh()
+          }
         })
       }
     })
@@ -136,7 +168,7 @@ class Main extends React.Component<Props, State> {
       onChange: this.onSelectChange,
       getCheckboxProps: (record) => {
         return {
-          disabled: record.status !== 0
+          disabled: [2, 3].includes(record.status)
         }
       }
     };
@@ -148,19 +180,30 @@ class Main extends React.Component<Props, State> {
         formConfig={getDefaultConfig()}
         tableProps={{
           scroll: {
-            x: 1200
+            x: true
           },
           rowKey: 'id',
           rowSelection
         }}
         addonAfterSearch={(
           <div>
-            <Replenish><Button type='danger'>补发</Button></Replenish>
+            <ReissueModal><Button type='danger'>补发</Button></ReissueModal>
             {/* <Button type='danger'>补发</Button> */}
             <Button onClick={this.loseEfficacy.bind(this, undefined)} className='ml10'>失效</Button>
           </div>
         )}
         columns={this.columns}
+        processPayload={(payload: any) => {
+          const query = parseQuery()
+          payload = Object.assign({}, payload, query)
+          return payload
+        }}
+        processData={(result: any) => {
+          this.setState({
+            selectedRowKeys: []
+          })
+          return result
+        }}
         api={api.fetchList}
       />
     )
