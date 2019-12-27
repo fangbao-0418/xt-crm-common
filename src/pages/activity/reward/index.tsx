@@ -1,6 +1,6 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
-import List from '@/packages/common/components/list-page'
+import List, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { parseQuery } from '@/util/utils'
 import { Button, Popover } from 'antd'
@@ -13,7 +13,7 @@ interface State {
   selectedRowKeys: any[]
 }
 class Main extends React.Component<Props, State> {
-  public listpage: any
+  public listpage: ListPageInstanceProps
   public form: FormInstance
   public state: State = {
     selectedRowKeys: []
