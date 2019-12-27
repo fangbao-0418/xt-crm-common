@@ -32,7 +32,7 @@ export function handleApiUrl (url: string) {
     const servername = result && result[1] || 'default'
     // console.log(servername, 'servername')
     const currentServerEnum: any = serverMapper[servername] || serverMapper.default
-    console.log(servername, currentServerEnum, 'currentServerEnum')
+    // console.log(servername, currentServerEnum, 'currentServerEnum')
     const apiOrigin = currentServerEnum[apiEnv as any] || currentServerEnum.dev || ''
     return url.replace(serverPattern, apiOrigin)
   } else {

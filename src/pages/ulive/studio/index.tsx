@@ -3,6 +3,7 @@ import Image from '@/components/Image'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
+import { param } from '@/packages/common/utils'
 import { Tag, Divider, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
@@ -101,10 +102,11 @@ class Main extends React.Component<Props> {
       title: '举报数',
       dataIndex: 'complainNum',
       width: 80,
+      align: 'center',
       render: (text, record) => {
         text = 1
         return text ? (
-          <span onClick={() => { APP.history.push(`/ulive/inform/${record.planId}`) }} className='href'>
+          <span onClick={() => { APP.history.push(`/ulive/inform/${record.planId}?${param(record)}`) }} className='href'>
             {text}
           </span>
         ) : null
@@ -199,8 +201,8 @@ class Main extends React.Component<Props> {
   public refresh () {
     this.listpage.refresh()
   }
-  public show (type: 1 | 2 | 3, item?: Anchor.ItemProps) {
-  }
+  // public show (type: 1 | 2 | 3, item?: Anchor.ItemProps) {
+  // }
   public uploadCover (record: UliveStudio.ItemProps) {
     const hide = this.props.alert({
       width: 400,

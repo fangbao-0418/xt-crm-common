@@ -57,6 +57,7 @@ declare namespace UliveStudio {
   }
   /** 举报信息 */
   interface ComplainProps {
+    createTime: number
     /** 主播ID */
     anchorId: number
     /** 违规描述 */
