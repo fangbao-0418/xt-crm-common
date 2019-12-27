@@ -26,6 +26,10 @@ class Main extends React.Component<Props, State> {
     dataIndex: 'title',
     width: 200
   }, {
+    title: '场次名称',
+    dataIndex: 'roundTitle',
+    width: 200
+  }, {
     title: '活动类型',
     dataIndex: 'type',
     width: 150,
@@ -132,9 +136,6 @@ class Main extends React.Component<Props, State> {
             APP.success('失效成功')
             hide()
             this.form.props.form.resetFields()
-            this.setState({
-              selectedRowKeys: []
-            })
             this.refresh()
           }
         })
@@ -183,6 +184,12 @@ class Main extends React.Component<Props, State> {
           </div>
         )}
         columns={this.columns}
+        processData={(result: any) => {
+          this.setState({
+            selectedRowKeys: []
+          })
+          return result
+        }}
         api={api.fetchList}
       />
     )

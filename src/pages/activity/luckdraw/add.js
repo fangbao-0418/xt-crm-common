@@ -1,6 +1,6 @@
 // 手动发码
 import React from 'react';
-import { Card, Row, Button, Table, Modal, Select } from 'antd';
+import { Card, Button, Table, Modal } from 'antd';
 import Form, { FormItem } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils';
 import { formatMoneyWithSign } from '../../helper';
@@ -11,9 +11,7 @@ import { getOrderList } from './../../order/api';
 import './../activity.scss';
 class Add extends React.Component {
   form = undefined
-  state = {
-    type: undefined
-  }
+  fillChanceForm = undefined
   constructor(props) {
     super(props);
     const params = parseQuery();
@@ -71,25 +69,25 @@ class Add extends React.Component {
   };
   // 确定添加
   handleAdd = () => {
-    console.log('确定添加', this.state.selectedRows);
+    console.log('确定添加', this.state.selectedRows)
     const orderIds =this.state.selectedRows.map((item) => item.id)
-    // 添加手动发码
-    fillChance({
-      orderIds,
-      type: this.state.type
-    }).then(res => {
-      if (res) {
-        APP.success('发布成功');
-        this.setState({
-          visible: false,
-          selectedRows: [],
-          selectedRowKeys: []
-        });
-      } else {
-        APP.error('发布失败');
+    this.fillChanceForm.props.form.validateFields((err, vals) => {
+      if (!err) {
+        // 添加手动发码
+        fillChance({
+          orderIds,
+          ...vals
+        }).then((num) => {
+          APP.success(`已补发${num}条订单`);
+          this.setState({
+            visible: false,
+            selectedRows: [],
+            selectedRowKeys: []
+          });
+        })
       }
-    });
-  };
+    })
+  }
   handlePageChange = (page, pageSize) => {
     this.setState(
       {
@@ -99,12 +97,7 @@ class Add extends React.Component {
       this.handleSearch
     );
   }
-  onChange = (type) => {
-    this.setState({
-      type
-    })
-  }
-  render(h) {
+  render() {
     const { listData, total, pageSize, current } = this.state;
 
     const columns = [
@@ -228,7 +221,6 @@ class Add extends React.Component {
               </FormItem>
             </Form>
           </Card>
-          {/* <div>只可以查询10月25日-11月11日的订单 </div> */}
           <Card>
             <Table
               rowSelection={rowSelection}
@@ -241,24 +233,35 @@ class Add extends React.Component {
                 onChange: this.handlePageChange
               }}
             />
-          </Card>
-          <Row
-            style={{
-              textAlign: 'right',
-              marginBottom: 10
-            }}
-          >
-            <Select
-              allowClear
-              placeholder='请选择抽奖类型'
-              style={{ width: 172 }}
-              value={this.state.type}
-              onChange={this.onChange}
+            <Form
+              getInstance={(form) => this.fillChanceForm = form}
+              className='mt10'
+              labelCol={{ span: 19 }}
+              wrapperCol={{ span: 5 }}
             >
-              <Select.Option value={2}>九宫格抽奖</Select.Option>
-              <Select.Option value={3}>砸金蛋</Select.Option>
-            </Select>
-          </Row>
+              <FormItem
+                name='type'
+                type='select'
+                label='活动类型'
+                verifiable
+                fieldDecoratorOptions={{
+                  rules: [{
+                    required: true,
+                    message: '请选择活动类型'
+                  }]
+                }}
+                controlProps={{
+                  style: {
+                    width: 172
+                  }
+                }}
+                options={[
+                  { label: '九宫格抽奖', value: 2 },
+                  { label: '砸金蛋', value: 3}
+                ]}
+              />
+            </Form>
+          </Card>
         </Modal>
       </>
     );
