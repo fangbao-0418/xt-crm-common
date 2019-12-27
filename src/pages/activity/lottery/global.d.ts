@@ -23,7 +23,7 @@ declare module Lottery {
     /** 场次id */
     id: number
     /** 场次名称 */
-    name: string
+    title: string
     /** 参与人次 */
     participationTimes: number
     /** 开始时间 */

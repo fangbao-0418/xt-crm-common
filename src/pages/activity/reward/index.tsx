@@ -1,21 +1,30 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
-import List, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import List from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import { parseQuery } from '@/util/utils'
 import { Button, Popover } from 'antd'
 import { getDefaultConfig, StatusEnum, TypeEnum, AwardTypeEnum } from './config'
 import { ColumnProps, TableRowSelection } from 'antd/es/table'
-import Replenish from '../luckdraw/add'
+import ReissueModal from './components/ReissueModal'
 import * as api from './api'
 interface Props extends AlertComponentProps {}
 interface State {
   selectedRowKeys: any[]
 }
 class Main extends React.Component<Props, State> {
-  public listpage: ListPageInstanceProps
+  public listpage: any
   public form: FormInstance
   public state: State = {
     selectedRowKeys: []
+  }
+  public componentDidMount () {
+    const query: any = parseQuery()
+    if (query.roundTitle) {
+      this.listpage.form.setValues({
+        roundTitle: query.roundTitle
+      })
+    }
   }
   public columns: ColumnProps<any>[] = [{
     title: '中奖号码',
@@ -178,12 +187,17 @@ class Main extends React.Component<Props, State> {
         }}
         addonAfterSearch={(
           <div>
-            <Replenish><Button type='danger'>补发</Button></Replenish>
+            <ReissueModal><Button type='danger'>补发</Button></ReissueModal>
             {/* <Button type='danger'>补发</Button> */}
             <Button onClick={this.loseEfficacy.bind(this, undefined)} className='ml10'>失效</Button>
           </div>
         )}
         columns={this.columns}
+        processPayload={(payload: any) => {
+          const query = parseQuery()
+          payload = Object.assign({}, payload, query)
+          return payload
+        }}
         processData={(result: any) => {
           this.setState({
             selectedRowKeys: []

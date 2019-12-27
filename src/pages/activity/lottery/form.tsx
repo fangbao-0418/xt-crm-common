@@ -73,7 +73,7 @@ class Main extends React.Component<any, State> {
     {
       key: 'operate',
       title: '操作',
-      width: 280,
+      width: 420,
       render: (text: any, record: Lottery.LuckyDrawRoundListVo) => {
         const path = `/activity/lottery/${this.id}/${record.id}`
         return (
@@ -103,6 +103,9 @@ class Main extends React.Component<any, State> {
                 APP.success(msg)
                 this.fetchData()
               }
+            }}
+            onJumpToReward ={() => {
+              APP.history.push(`/activity/reward?luckyDrawRoundId=${record.id}&roundTitle=${record.title}`)
             }}
           />
         )

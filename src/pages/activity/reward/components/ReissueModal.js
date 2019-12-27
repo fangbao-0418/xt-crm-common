@@ -1,16 +1,16 @@
-// 手动发码
 import React from 'react';
 import { Card, Button, Table, Modal } from 'antd';
 import Form, { FormItem } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils';
-import { formatMoneyWithSign } from '../../helper';
+import { formatMoneyWithSign } from '@/pages/helper';
 import DateFns from 'date-fns';
 import orderStatus from '@/enum/orderStatus';
-import { lotteryManualGive } from './../api';
-import { getOrderList } from './../../order/api';
-import './../activity.scss';
-class Add extends React.Component {
+import { fillChance } from '../api';
+import { getOrderList } from '@/pages/order/api';
+import '../../activity.scss';
+class Main extends React.Component {
   form = undefined
+  fillChanceForm = undefined
   constructor(props) {
     super(props);
     const params = parseQuery();
@@ -68,33 +68,25 @@ class Add extends React.Component {
   };
   // 确定添加
   handleAdd = () => {
-    console.log('确定添加', this.state.selectedRows);
-    let lotteryMemberTicketManualAddVOList = [];
-    this.state.selectedRows.map((item, index) => {
-      lotteryMemberTicketManualAddVOList.push({
-        actualPayMoney: item.totalMoney,
-        memberId: item.memberId,
-        mainOrderId: item.id,
-        mainOrderCode: item.orderCode,
-        buyerPhone: item.buyerPhone,
-        payDate: item.payDate
-      });
-    });
-    console.log('lotteryMemberTicketManualAddVOList', lotteryMemberTicketManualAddVOList);
-    // 添加手动发码
-    lotteryManualGive({ lotteryMemberTicketManualAddVOList }).then(res => {
-      if (res) {
-        APP.success('发布成功');
-        this.setState({
-          visible: false,
-          selectedRows: [],
-          selectedRowKeys: []
-        });
-      } else {
-        APP.error('发布失败');
+    console.log('确定添加', this.state.selectedRows)
+    const orderIds =this.state.selectedRows.map((item) => item.id)
+    this.fillChanceForm.props.form.validateFields((err, vals) => {
+      if (!err) {
+        // 添加手动发码
+        fillChance({
+          orderIds,
+          ...vals
+        }).then((num) => {
+          APP.success(`已补发${num}条订单`);
+          this.setState({
+            visible: false,
+            selectedRows: [],
+            selectedRowKeys: []
+          });
+        })
       }
-    });
-  };
+    })
+  }
   handlePageChange = (page, pageSize) => {
     this.setState(
       {
@@ -103,8 +95,8 @@ class Add extends React.Component {
       },
       this.handleSearch
     );
-  };
-  render(h) {
+  }
+  render() {
     const { listData, total, pageSize, current } = this.state;
 
     const columns = [
@@ -132,23 +124,6 @@ class Add extends React.Component {
         dataIndex: 'buyerPhone'
       }
     ];
-
-    const data = [
-      {
-        key: '1',
-        orderCode: '221121212',
-        orderStatus: 0,
-        totalMoney: '188',
-        buyerPhone: '1301581313'
-      },
-      {
-        key: '2',
-        orderCode: '221121212',
-        orderStatus: 0,
-        totalMoney: '188',
-        buyerPhone: '1301581313'
-      }
-    ];
     const rowSelection = {
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
@@ -162,7 +137,7 @@ class Add extends React.Component {
 
     const node = this.props.children || (
       <Button type="primary">
-        手动发码
+        补发
       </Button>
     )
     console.log(this.state.visible, 'node')
@@ -174,7 +149,7 @@ class Add extends React.Component {
           {node}
         </span>
         <Modal
-          title="手动发码"
+          title="补发抽奖次数"
           className="modalStyle"
           width={1000}
           visible={this.state.visible}
@@ -201,11 +176,12 @@ class Add extends React.Component {
                 this.form = ref
               }}
               layout='inline'
-              // rangeMap={{
-              //   payTime: {
-              //     fields: ['payStartDate', 'payEndDate'],
-              //   }
-              // }}
+              rangeMap={{
+                payTime: {
+                  fields: ['payStartDate', 'payEndDate'],
+                  format: 'YYYY-MM-DD HH:mm:ss'
+                }
+              }}
             >
               <FormItem
                 label='主订单号'
@@ -217,14 +193,14 @@ class Add extends React.Component {
                 name='buyerPhone'
                 placeholder='请输入下单手机号'
               />
-              {/* <FormItem
+              <FormItem
                 label='订单时间范围'
                 name='payTime'
                 type='rangepicker'
                 controlProps={{
                   showTime: true
                 }}
-              /> */}
+              />
               <FormItem>
                 <Button
                   type="primary"
@@ -245,7 +221,6 @@ class Add extends React.Component {
               </FormItem>
             </Form>
           </Card>
-          {/* <div>只可以查询10月25日-11月11日的订单 </div> */}
           <Card>
             <Table
               rowSelection={rowSelection}
@@ -258,10 +233,38 @@ class Add extends React.Component {
                 onChange: this.handlePageChange
               }}
             />
+            <Form
+              getInstance={(form) => this.fillChanceForm = form}
+              className='mt10'
+              labelCol={{ span: 19 }}
+              wrapperCol={{ span: 5 }}
+            >
+              <FormItem
+                name='type'
+                type='select'
+                label='活动类型'
+                verifiable
+                fieldDecoratorOptions={{
+                  rules: [{
+                    required: true,
+                    message: '请选择活动类型'
+                  }]
+                }}
+                controlProps={{
+                  style: {
+                    width: 172
+                  }
+                }}
+                options={[
+                  { label: '九宫格抽奖', value: 2 },
+                  { label: '砸金蛋', value: 3}
+                ]}
+              />
+            </Form>
           </Card>
         </Modal>
       </>
     );
   }
 }
-export default Add;
+export default Main;
