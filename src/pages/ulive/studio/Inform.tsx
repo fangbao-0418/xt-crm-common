@@ -1,7 +1,7 @@
 import React from 'react'
-import { ListPage, Form, FormItem } from '@/packages/common/components'
 import { param } from '@/packages/common/utils'
-import { FormInstance } from '@/packages/common/components/form'
+import List from '@/packages/common/components/list-page'
+import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { getFieldsConfig } from './config'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
@@ -63,7 +63,7 @@ class Main extends React.Component<Props> {
             <Button type='primary'>停播</Button>
           </Form>
         </div>
-        <ListPage
+        <List
           processPayload={(payload) => {
             return {
               ...payload,
