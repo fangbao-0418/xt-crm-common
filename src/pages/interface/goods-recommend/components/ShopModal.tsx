@@ -49,7 +49,7 @@ class Main extends React.Component<Props, State> {
   public columns: ColumnProps<Item>[] = [
     {
       title: '商品ID',
-      dataIndex: 'id'
+      dataIndex: 'productId'
     },
     {
       title: '商品名称',
@@ -90,7 +90,16 @@ class Main extends React.Component<Props, State> {
   public fetchData () {
     api.fetchGoodsList(this.payload).then((res: any) => {
       res.current = this.payload.page
-      this.setState({...res})
+      res.records = (res.records || []).map((item: Item) => {
+        return {
+          ...item,
+          productId: item.id,
+          id: undefined
+        }
+      })
+      this.setState({
+        ...res,
+      })
     })
   }
   public open (selectedRows:  Item[]) {
@@ -100,7 +109,7 @@ class Main extends React.Component<Props, State> {
       }
     })
     const selectedRowKeys = this.selectedRows.map((item) => {
-      return item.id
+      return item.productId
     })
     this.setState({
       selectedRowKeys,
@@ -135,7 +144,7 @@ class Main extends React.Component<Props, State> {
     if (selected) {
       this.selectedRows.push(record);
     } else {
-      this.selectedRows = this.selectedRows.filter(item => item.id !== record.id);
+      this.selectedRows = this.selectedRows.filter(item => item.productId !== record.productId);
     }
     if (this.props.onSelect) {
       this.props.onSelect(record, selected)
@@ -147,9 +156,9 @@ class Main extends React.Component<Props, State> {
         this.selectedRows.push(item);
       });
     } else {
-      const ids = changeRows.map(val => val.id);
+      const ids = changeRows.map(val => val.productId);
       this.selectedRows = this.selectedRows.filter(item => {
-        return ids.indexOf(item.id) === -1;
+        return ids.indexOf(item.productId) === -1;
       });
     }
     if (this.props.onSelectAll) {
@@ -180,7 +189,7 @@ class Main extends React.Component<Props, State> {
           />
           <Table
             style={{width: '100%'}}
-            rowKey={'id'}
+            rowKey={'productId'}
             rowSelection={rowSelection}
             columns={this.columns}
             dataSource={this.state.records}

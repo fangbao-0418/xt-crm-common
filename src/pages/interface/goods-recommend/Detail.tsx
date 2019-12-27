@@ -27,7 +27,7 @@ class Main extends React.Component<Props, State> {
         res.productRecommendSpuList = res.productRecommendSpuVOList || []
         this.form.setValues(res)
         this.setState({
-          readonly: res.statue === 0 ? true : false
+          readonly: res.status === 0 ? true : false
         })
       })
     }

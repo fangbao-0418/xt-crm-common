@@ -85,9 +85,7 @@ class Main extends React.Component<Props, State> {
           onOk={(keys, rows) => {
             const result = rows.map((item) => {
               return {
-                ...item,
-                productId: item.id,
-                id: undefined
+                ...item
               }
             })
             this.setState({
@@ -112,8 +110,7 @@ class Main extends React.Component<Props, State> {
               className='href'
               onClick={() => {
                 const ref: any = this.refs.shopmodal;
-                // ref.setState({ visible: true });
-                ref.open(selectedRowKeys)
+                ref.open(this.state.dataSource)
               }}
             >
               +添加商品
