@@ -25,7 +25,7 @@ class Main extends React.Component<Props> {
     }
     config.listener = (msg: any) => {
       // player.play()
-      console.log(msg, player, 'xxxx')
+      // console.log(msg, player, 'xxxx')
     }
     var player = new TcPlayer('id_test_video', config);
   }

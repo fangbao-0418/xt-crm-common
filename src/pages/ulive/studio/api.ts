@@ -4,7 +4,7 @@ export const getStudioList = (payload: any) => {
   return get('::ulive/live/plan/list', payload)
 }
 /** 获取直播计划详情 */
-export const fetchPlanInfo = (planId: number) => {
+export const fetchPlanInfo = (planId: any) => {
   return get<UliveStudio.ItemProps>(`::ulive/live/plan/${planId}`)
 }
 /** 停播 */

@@ -255,6 +255,7 @@ class Main extends React.Component<Props, State> {
             )}
             <FormItem
               name='anchorIdentityType'
+              verifiable
             />
             <FormItem
               name='anchorLevel'

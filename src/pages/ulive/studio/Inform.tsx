@@ -7,13 +7,16 @@ import { getFieldsConfig, ComplainTypeEnum } from './config'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import Image from '@/components/Image'
+import CloseDown from './components/CloseDown'
 import * as api from './api'
 import { withRouter, RouteComponentProps } from 'react-router'
 interface Props extends AlertComponentProps, RouteComponentProps<{id: string}>{}
-class Main extends React.Component<Props> {
+interface State {
+  detail?: UliveStudio.ItemProps
+}
+class Main extends React.Component<Props, State> {
   public form: FormInstance
   public id = this.props.match.params.id
-  public params: UliveStudio.ItemProps = this.getParams()
   public columns: ColumnProps<any>[] = [
     {
       dataIndex: 'reportNickname',
@@ -37,10 +40,16 @@ class Main extends React.Component<Props> {
     {
       dataIndex: 'screenshotsUrl',
       title: '截图',
-      render: () => {
+      align: 'center',
+      render: (text) => {
+        const arr: string[] = text.split(',')
         return (
           <div>
-            <Image src={''}/>
+            {
+              arr.map((item) => {
+                return <Image src={item} width={40} height={40} />
+              })
+            }
           </div>
         )
       }
@@ -55,8 +64,21 @@ class Main extends React.Component<Props> {
       }
     }
   ]
+  public state: State = {
+  }
   public componentDidMount () {
-    this.form.setValues(this.params)
+    this.fetchData()
+  }
+  public fetchData () {
+    api.fetchPlanInfo(this.id).then((res) => {
+      this.setState({
+        detail: res
+      }, () => {
+        if (res) {
+          this.form.setValues(res)
+        }
+      })
+    })
   }
   public getParams () {
     const params = parseQuery()
@@ -65,7 +87,10 @@ class Main extends React.Component<Props> {
     return params
   }
   public changeStatus = () => {
-    const record = this.params
+    const record = this.state.detail
+    if (!record) {
+      return
+    }
     const hide = this.props.alert({
       content: (
         <div className='text-center'>
@@ -74,7 +99,7 @@ class Main extends React.Component<Props> {
       ),
       onOk: () => {
         api.changeStatus({
-          planId: record.planId,
+          planId: record.planId as number,
           status: record.status === 0 ? 1 : 0
         }).then(() => {
           hide()
@@ -82,7 +107,32 @@ class Main extends React.Component<Props> {
       }
     })
   }
+  public closeDown () {
+    const record = this.state.detail
+    if (!record) {
+      return
+    }
+    const hide = this.props.alert({
+      width: 400,
+      content: (
+        <CloseDown
+          detail={record}
+          hide={() => {
+            hide()
+          }}
+        />
+      ),
+      footer: null
+    })
+  }
   public render () {
+    const record = this.state.detail
+    if (!record) {
+      return null
+    }
+    const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
+    const canUp = [70, 90].indexOf(record.liveStatus) > -1
+    const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
     return (
       <div style={{background: '#ffffff', padding: 20}}>
         <div>
@@ -106,10 +156,12 @@ class Main extends React.Component<Props> {
                 float: 'right'
               }}
             >
-              <Button onClick={this.changeStatus} style={{marginRight: 10}} type='primary'>
-                下架
-              </Button>
-              <Button type='primary'>停播</Button>
+              {(canUp || canDown) && (
+                <Button onClick={this.changeStatus} style={{marginRight: 10}} type='primary'>
+                  {record.status === 0 ? '上架' : '下架'}
+                </Button>
+              )}
+              {canStopPlay && <Button onClick={this.closeDown.bind(this, record)} type='primary'>停播</Button>}
             </FormItem>
           </Form>
         </div>

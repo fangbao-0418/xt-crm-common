@@ -57,7 +57,15 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '公司', value: 10},
           {label: '合作网红', value: 30},
           {label: '买家', value: 40}
-        ]
+        ],
+        fieldDecoratorOptions: {
+          rules: [
+            {
+              required: true,
+              message: '请选择主播身份'
+            }
+          ]
+        }
       },
       anchorLevel: {
         type: 'select', label: '主播等级',

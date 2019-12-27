@@ -106,7 +106,7 @@ class Main extends React.Component<Props> {
       render: (text, record) => {
         text = 1
         return text ? (
-          <span onClick={() => { APP.history.push(`/ulive/inform/${record.planId}?${param(record)}`) }} className='href'>
+          <span onClick={() => { APP.history.push(`/ulive/inform/${record.planId}`) }} className='href'>
             {text}
           </span>
         ) : null
@@ -121,13 +121,14 @@ class Main extends React.Component<Props> {
         const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
         const canUp = [70, 90].indexOf(record.liveStatus) > -1
         const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
+        const canSetTop = record.status === 1
         return (
           <div>
             <span onClick={this.showView.bind(this, record.planId)} className='href'>详情</span>&nbsp;&nbsp;
             <span onClick={(canUp || canDown) ? this.changeStatus.bind(this, record) : undefined} className={(canUp || canDown) ? 'href' : ''}>{record.status === 0 ? '上架' : '下架'}</span>&nbsp;&nbsp;
             <span onClick={canStopPlay ? this.closeDown.bind(this, record) : undefined} className={canStopPlay ? 'href' : ''}>停播</span>&nbsp;&nbsp;
-            <span onClick={this.setTop.bind(this, record)} className='href'>{record.liveTop === 0 ? '置顶' : '取消置顶'}</span>&nbsp;&nbsp;
-            <span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>&nbsp;&nbsp;
+            <span onClick={canSetTop ? this.setTop.bind(this, record) : undefined} className={canSetTop ? 'href' : ''}>{record.liveTop === 0 ? '置顶' : '取消置顶'}</span>&nbsp;&nbsp;
+            {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)}
           </div>
         )
       }
