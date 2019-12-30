@@ -29,8 +29,10 @@ declare namespace UliveStudio {
     liveStartTime: number
     /** 直播结束时间 */
     liveEndTime: number
-    /** 封面 */
+    /** 官方封面 */
     liveBannerUrl: string
+    /** 主播封面 */
+    liveCoverUrl: string
     /** 审核原因 */
     auditReason: string
     /** 直播地址 */

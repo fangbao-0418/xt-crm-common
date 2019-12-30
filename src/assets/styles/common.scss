@@ -91,3 +91,7 @@
     background: rgba(255,255,255,.2)
   }
 }
+
+.ant-upload-list-picture-card .ant-upload-list-item-info::before {
+  left: 0
+}

@@ -139,7 +139,7 @@ class Main extends React.Component<Props, State> {
         <div className={classNames(styles['base-info'], 'mb20')}>
           <div className={styles.cover}>
             <Image
-              src={detail.liveBannerUrl}
+              src={detail.liveCoverUrl}
               width={190}
               height={190}
             />

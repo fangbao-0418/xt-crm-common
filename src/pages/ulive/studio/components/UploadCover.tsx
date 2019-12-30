@@ -31,7 +31,9 @@ class Main extends React.Component<Props> {
     const detail = this.props.detail
     return (
       <div>
-        <div className='text-center'>
+        <div
+          className='text-center'
+        >
           <Uplaod
             formatOrigin
             value={this.state.value}
