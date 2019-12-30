@@ -120,22 +120,7 @@ export enum DisplayFromEnum {
 }
 
 export const locationMap: any = {
-  value: {
-    1: [1],
-    2: [2],
-    4: [4],
-    8: [8],
-    3: [1,2],
-    5: [1,4],
-    9: [1,8],
-    7: [1,2,4],
-    11: [1,2,8],
-    6: [2,4],
-    10: [2,8],
-    14: [2,4,8],
-    12: [4,8],
-    15: [1,2,4,8,0]
-  },
+  value: getAllGroupMap([1,2,4,8]),
   get label () {
     const value = this.value
     const result: any = {}
@@ -152,23 +137,58 @@ export const locationMap: any = {
   }
 }
 
+export function getAllGroup (arg: number[]) {
+  const result: number[][] = []
+  function loop (arr: number[], floor = 0, temp: number[] = []) {
+    const max = arr.length
+    floor++
+    arr.map((item) => {
+      temp.push(item)
+      let existNum = 0
+      if (floor === 1) {
+        temp = [item]
+      } else {
+        let tempObj: any = {}
+        temp.map((item2) => {
+          if (tempObj[item2]) {
+            existNum++
+          } else {
+            tempObj[item2] = true
+          }
+          return item2
+        })
+      }
+      if (existNum === 0) {
+        result.push(temp)
+      }
+      if (max < floor + 1) {
+        // result.push(temp)
+      } else {
+        // result.push(temp)
+        loop(arr, floor, [...temp])
+      }
+      temp = temp.slice(0, -1)
+      return item
+    })
+  }
+  loop(arg)
+  return result
+}
+function getAllGroupMap (arr: number[]) {
+  const reusltArr = getAllGroup(arr)
+  let result: any = {}
+  reusltArr.map((item) => {
+    const key = item.reduce((a, b) => a + b)
+    if (item.length === arr.length) {
+      item.unshift(0)
+    }
+    result[key] = item
+  })
+  console.log(result, 'result')
+  return result
+}
 export const displayFromMap: any = {
-  value: {
-    1: [1],
-    2: [2],
-    4: [4],
-    8: [8],
-    3: [1,2],
-    5: [1,4],
-    9: [1,8],
-    7: [1,2,4],
-    11: [1,2,8],
-    6: [2,4],
-    10: [2,8],
-    14: [2,4,8],
-    12: [4,8],
-    15: [1,2,4,8,0]
-  },
+  value: getAllGroupMap([1,2,4,8]),
   get label () {
     const value = this.value
     const result: any = {}
