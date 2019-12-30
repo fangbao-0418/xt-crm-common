@@ -118,7 +118,7 @@ class Main extends React.Component<Props> {
       fixed: 'right',
       render: (text, record) => {
         const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
-        const canUp = [70, 90].indexOf(record.liveStatus) > -1
+        const canUp = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         const canSetTop = record.status === 1 && [70,90].indexOf(record.liveStatus) > -1 && record.type === 0
         return (

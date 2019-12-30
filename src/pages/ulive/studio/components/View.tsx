@@ -13,7 +13,7 @@ interface Props {
   hide?: (refresh?: boolean) => void
 }
 
-/** -1-未知,1-待审核,2-已审核,3-直播结束 */
+/** -1-未知,1-待审核,2-直播中/直播完 ,3-未过审/停播  */
 type ViewType = -1 | 1 | 2 | 3
 
 interface State {
@@ -79,7 +79,8 @@ class Main extends React.Component<Props, State> {
       /** 直播中/直播完 */
       } else if ([60, 90].indexOf(res.liveStatus) > -1) {
         type = 2
-      } else {
+      /** 未过审/停播 */
+      } else if ([20, 50].indexOf(res.liveStatus) > -1) {
         type = 3
       }
       const statistics = liveData ? [
@@ -218,8 +219,14 @@ class Main extends React.Component<Props, State> {
           <div>
             审核原因：
           </div>
-          <div className='mt10'>
+          <div>
             {detail.auditReason || '无审核原因'}
+          </div>
+          <div className='mt10'>
+            停播原因：
+          </div>
+          <div>
+            {detail.stopReson || ''}
           </div>
           <div className='text-center mt20'>
             <Button onClick={this.hide}>关闭</Button>

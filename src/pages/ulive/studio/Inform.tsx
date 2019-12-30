@@ -131,7 +131,7 @@ class Main extends React.Component<Props, State> {
       return null
     }
     const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
-    const canUp = [70, 90].indexOf(record.liveStatus) > -1
+    const canUp = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
     const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
     return (
       <div style={{background: '#ffffff', padding: 20}}>
