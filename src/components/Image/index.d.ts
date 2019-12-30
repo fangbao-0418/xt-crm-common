@@ -4,7 +4,7 @@ interface Props {
   style?: React.CSSProperties
   alt?: string
   title?: string
-  width?: string
-  height?: string
+  width?: number | string
+  height?: number |string
 }
 export default (props: Props) => React.ReactNode
