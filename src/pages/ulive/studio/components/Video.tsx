@@ -1,5 +1,5 @@
 import React from 'react'
-import { TcPlayer } from '@/util/TcPlayer-module-2.3.2'
+// import { TcPlayer } from '@/util/TcPlayer-module-2.3.2'
 interface Props {
   detail: UliveStudio.ItemProps
   hide?: () => void
