@@ -4,6 +4,7 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "strictNullChecks": true,
+    "downlevelIteration": true,
     "paths": {
       "@/*": ["./src/*"]
     }
