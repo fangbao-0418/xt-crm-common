@@ -21,7 +21,7 @@ const initOrderInfo = {
 };
 
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
-  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel } = orderInfo;
+  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
   return (
     <Card title="订单信息">
@@ -29,6 +29,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
         <Col span={8}>订单编号：{orderCode}</Col>
         <Col span={8}>创建时间：{formatDate(createTime)}</Col>
         <Col span={8}>订单状态：{OrderStatusTextMap[orderStatus]}</Col>
+        {orderStatus === 60 && <Col span={8}>关闭原因：{closeReason}</Col>}
         <Col span={8}>买家名称：{userName}</Col>
         <Col span={8}>微信昵称：{nickname}</Col>
         <Col span={8}>联系电话：{phone}</Col>

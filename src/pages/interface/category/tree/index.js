@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Card, Row, Col, Form, Checkbox, Button, Spin, Input, Icon, Modal, Table, Tree } from 'antd';
 import { getCategorys } from '../api'
 import Item from './item';
 
@@ -20,7 +19,6 @@ export default class extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps.checkData', nextProps.checkData)
     if (this.checkData != nextProps.checkData) {
       this.cateText = nextProps.checkData || []
       this.setState({
