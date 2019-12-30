@@ -120,6 +120,8 @@ class Main extends React.Component<Props, State> {
       title: '失效',
       content: (
         <Form
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 18 }}
           getInstance={(ref) => {
             this.form = ref
           }}
@@ -129,22 +131,33 @@ class Main extends React.Component<Props, State> {
             label='失效原因'
             name='invalidReason'
             type='textarea'
+            verifiable
+            fieldDecoratorOptions={{
+              rules: [{
+                required: true,
+                message: '请输入失效原因'
+              }]
+            }}
           >
           </FormItem>
         </Form>
       ),
       onOk: (hide) => {
-        const ids = id === undefined ? selectedRowKeys : [id]
-        const { invalidReason } = this.form.getValues()
-        api.loseEfficacy({
-          ids,
-          invalidReason
-        }).then((res) => {
-          if (res) {
-            APP.success('失效成功')
-            hide()
-            this.form.props.form.resetFields()
-            this.refresh()
+        this.form.props.form.validateFields((err, vals) => {
+          if (!err) {
+            const ids = id === undefined ? selectedRowKeys : [id]
+            const { invalidReason } = vals
+            api.loseEfficacy({
+              ids,
+              invalidReason
+            }).then((res) => {
+              if (res) {
+                APP.success('失效成功')
+                hide()
+                this.form.props.form.resetFields()
+                this.refresh()
+              }
+            })
           }
         })
       }
