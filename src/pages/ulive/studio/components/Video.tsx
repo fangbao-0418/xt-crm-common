@@ -15,8 +15,9 @@ class Main extends React.Component<Props> {
     if (!detail.playUrl) {
       return
     }
+    // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
     config = config ? config : {
-      // live: true,
+      live: true,
       flv: detail.playUrl,
       // autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
       // "poster": '',

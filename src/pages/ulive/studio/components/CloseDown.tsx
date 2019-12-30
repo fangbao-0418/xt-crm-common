@@ -77,6 +77,9 @@ class Main extends React.Component<Props> {
               name='isBlock'
               type='checkbox'
               style={{marginBottom: 0}}
+              fieldDecoratorOptions={{
+                initialValue: [1]
+              }}
               options={[
                 {label: '同时拉黑该主播', value: 1}
               ]}
