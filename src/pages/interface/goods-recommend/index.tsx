@@ -129,7 +129,7 @@ class Main extends React.Component<Props> {
         <ListPage
           rangeMap={{
             date: {
-              fields: ['createEndTime', 'createStartTime']
+              fields: ['createStartTime', 'createEndTime']
             }
           }}
           formItemLayout={(
