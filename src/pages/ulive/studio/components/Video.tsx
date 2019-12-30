@@ -18,6 +18,7 @@ class Main extends React.Component<Props> {
     // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
     config = config ? config : {
       live: true,
+      m3u8: (detail.playUrl || '').replace('.flv', '.m3u8'),
       flv: detail.playUrl,
       // autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
       // "poster": '',
@@ -25,7 +26,7 @@ class Main extends React.Component<Props> {
       height: '320', // 视频的显示高度，请尽量使用视频分辨率高度
     }
     config.listener = (msg: any) => {
-      // player.play()
+      player.play()
       // console.log(msg, player, 'xxxx')
     }
     var player = new TcPlayer('id_test_video', config);
