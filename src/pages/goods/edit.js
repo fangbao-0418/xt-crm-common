@@ -478,6 +478,9 @@ class GoodsEdit extends React.Component {
         interceptionVisible: true
       })
     }
+    if (currentSupplier.category === 3) {
+      productType = 10
+    }
     // 普通供应商商品类型为0
     productType = [3, 4].indexOf(currentSupplier.category) > -1 ? productType : 0
     if (category === 4) {
@@ -485,7 +488,9 @@ class GoodsEdit extends React.Component {
       this.props.form.setFieldsValue({isAuthentication: 1})
     } else if (category === 3) {
       productType = productType === 20 ? 0 : productType
-      this.props.form.setFieldsValue({isAuthentication: 1})
+      this.props.form.setFieldsValue({
+        isAuthentication: 1
+      })
     }
     setFieldsValue({
       productType
