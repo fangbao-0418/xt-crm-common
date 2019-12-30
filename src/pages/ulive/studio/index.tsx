@@ -104,7 +104,6 @@ class Main extends React.Component<Props> {
       width: 80,
       align: 'center',
       render: (text, record) => {
-        text = 1
         return text ? (
           <span onClick={() => { APP.history.push(`/ulive/inform/${record.planId}`) }} className='href'>
             {text}
@@ -121,7 +120,7 @@ class Main extends React.Component<Props> {
         const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
         const canUp = [70, 90].indexOf(record.liveStatus) > -1
         const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
-        const canSetTop = record.status === 1
+        const canSetTop = record.status === 1 && [70,90].indexOf(record.liveStatus) > -1 && record.type === 0
         return (
           <div>
             <span onClick={this.showView.bind(this, record.planId)} className='href'>详情</span>&nbsp;&nbsp;
@@ -284,8 +283,9 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
+            rowKey: 'planId',
             scroll: {
-              x: 1200
+              x: 1630
             }
           }}
           rangeMap={{

@@ -122,6 +122,9 @@ class Main extends React.Component<Props> {
         <ListPage
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
+          tableProps={{
+            rowKey: 'anchorId'
+          }}
           addonAfterSearch={(
             <div>
               <Button
