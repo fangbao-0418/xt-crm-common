@@ -18,11 +18,10 @@ class Main extends React.Component<Props, State> {
   public state: State = {
     selectedRowKeys: []
   }
+  public payload: any = parseQuery()
   public componentDidMount () {
-    const query: any = parseQuery()
-    this.listpage.form.setValues({
-      roundTitle: query.roundTitle
-    })
+    console.log('this.payload', this.payload)
+    this.listpage.form.setValues(this.payload)
     this.refresh()
   }
   public columns: ColumnProps<any>[] = [{
@@ -209,11 +208,7 @@ class Main extends React.Component<Props, State> {
           </div>
         )}
         columns={this.columns}
-        processPayload={(payload: any) => {
-          const query = parseQuery()
-          payload = Object.assign({}, payload, query)
-          return payload
-        }}
+        // pro
         processData={(result: any) => {
           this.setState({
             selectedRowKeys: []

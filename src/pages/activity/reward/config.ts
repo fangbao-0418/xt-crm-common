@@ -14,6 +14,9 @@ export function getDefaultConfig () {
       title: {
         label: '活动名称'
       },
+      luckyDrawRoundId: {
+        label: '场次ID'
+      },
       roundTitle: {
         label: '场次名称'
       },

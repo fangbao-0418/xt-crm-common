@@ -192,8 +192,7 @@ class Main extends React.Component<any, State> {
                       (
                         <DatePicker
                           disabledDate={(current) => {
-                            const date = moment().endOf('day').subtract(1, 'days')
-                            return disabledDate(current, date)
+                            return disabledDate(current, new Date())
                           }}
                           disabledTime={(current) => {
                             return disabledDateTime(current, new Date())
