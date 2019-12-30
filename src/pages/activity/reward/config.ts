@@ -36,10 +36,10 @@ export function getDefaultConfig () {
         label: '奖品类型', type: 'select',
         options: [
           {label: '未领取', value: -1},
-          {label: '实物', value: 1},
-          {label: '现金', value: 2},
-          {label: '元宝', value: 3},
-          {label: '优惠券', value: 4}
+          {label: '优惠券', value: 1},
+          {label: '元宝', value: 2},
+          {label: '现金', value: 3},
+          {label: '实物', value: 4}
         ]
       }
     }
@@ -66,8 +66,8 @@ export enum StatusEnum {
 /** 奖品类型 */
 export enum AwardTypeEnum {
   '未领取' = -1,
-  '实物' = 1,
-  '现金' = 2,
-  '元宝' = 3,
-  '优惠券' = 4
+  '优惠券' = 1,
+  '元宝' = 2,
+  '现金' = 3,
+  '实物' = 4
 }
