@@ -2,6 +2,7 @@ import React from 'react';
 import Loadable from 'react-loadable';
 import { Route, Switch } from 'react-router-dom';
 import { view as Loader } from '../../components/loader';
+
 const List = Loadable({
   loader: () => import('./list'),
   loading: Loader,
@@ -74,6 +75,12 @@ const ActivitySessions = Loadable({
   loading: Loader
 })
 
+/** 活动场次 */
+const ActivityReward = Loadable({
+  loader: () => import('./reward'),
+  loading: Loader
+})
+
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -95,6 +102,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/lottery/:id`} exact component={LotteryForm} />
         {/* luckyDrawId：活动ID，id场次ID */}
         <Route path={`${match.url}/lottery/:luckyDrawId/:id`} component={ActivitySessions} />
+        <Route path={`${match.url}/reward`} exact component={ActivityReward} />
       </Switch>
     );
   }

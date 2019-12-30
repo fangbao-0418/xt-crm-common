@@ -14,10 +14,9 @@ function getUrl (url) {
 }
 
 const Image = (props) => {
-  const { className, alt = '图片', style, ...otherProps } = props
+  const { className, alt = '图片', style, width, height, ...otherProps } = props
   let src = (props.src || '').trim()
   src = src ? getUrl(src) : zwtPic
-  console.log('src => ', src)
   return (
     <img
       className={className}
@@ -25,8 +24,8 @@ const Image = (props) => {
       src={src}
       alt={alt}
       style={{
-        width: 100,
-        height: 100,
+        width: width || 100,
+        height: height || 100,
         cursor: 'pointer',
         ...style,
       }}
