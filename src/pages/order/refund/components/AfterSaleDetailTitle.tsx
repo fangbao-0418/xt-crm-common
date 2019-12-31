@@ -5,6 +5,7 @@ import { Row, Col, Button } from 'antd';
 import { enumRefundStatus } from '../../constant';
 import { namespace } from '../model';
 import { enumRefundType } from '../../constant';
+import Countdown from './countdown'
 import {
   RemarkModal,
   ModifyLogisticsInfo,
@@ -28,11 +29,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     modifyLogisticsInfoVisible: false,
     platformDeliveryVisible: false,
   };
-  constructor(props: Props) {
-    super(props);
-    this.onSuccess = this.onSuccess.bind(this);
-  }
-  onSuccess() {
+  onSuccess = () => {
     APP.dispatch({
       type: `${namespace}/getDetail`,
       payload: {
@@ -59,6 +56,11 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             <h3 style={{ margin: 0 }}>
               <span>售后单编号：{orderServerVO.orderCode}</span>
               <span className="ml20">售后状态：{orderServerVO.refundStatusStr}</span>
+              {enumRefundStatus.Operating === orderServerVO.refundStatus && (
+                <span className='ml20' style={{ color: 'red' }}>
+                  售后关闭倒计时：<Countdown value={24 * 3600} />
+                </span>
+              )}
             </h3>
           </Col>
           <Col style={{display: 'flex'}}>
