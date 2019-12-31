@@ -158,6 +158,26 @@ export const formFields = function (refundStatus: any, intercept: any) {
       type: 'input',
       id: 'interceptionMemberPhone',
       label: '拦截人电话'
+    }, {
+      type: 'select',
+      id: 'storeType',
+      label: '供应商类型',
+      options: [{
+        val: '喜团',
+        key: 0
+      }, {
+        val: '1688',
+        key: 1
+      }, {
+        val: '淘宝联盟',
+        key: 2
+      }, {
+        val: '一般海外供应商',
+        key: 3
+      }, {
+        val: '保税仓海外供应商',
+        key: 4
+      }]
     }
   ].filter((item: any) => {
     return intercept ? (item.id !== 'interception' && item.id !== 'interceptionMemberPhone') : true;
