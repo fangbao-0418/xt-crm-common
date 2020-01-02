@@ -147,14 +147,16 @@ class Main extends React.Component<Props, State> {
       key: 'awardPicUrl',
       width: 150,
       render: (arg1: any, arg2: any, index: number) => (
-        this.getFieldDecorator('awardPicUrl', index)(
-          <Upload
-            pxSize={[{width:140, height:140}]}
-            fileType='image/png'
-            listType='picture-card'
-            disabled={this.activityType === 1 || this.readOnly}
-          />
-        )
+        <div style={{ textAlign: 'left' }}>
+          {this.getFieldDecorator('awardPicUrl', index)(
+            <Upload
+              pxSize={[{width:140, height:140}]}
+              fileType='image/png'
+              listType='picture-card'
+              disabled={this.activityType === 1 || this.readOnly}
+            />
+          )}
+        </div>
       )
     },
     {
@@ -551,12 +553,11 @@ class Main extends React.Component<Props, State> {
     })
   }
   public generateChance = () => {
-    debugger
     let awardList = this.state.awardList
     for (let i = 0; i < awardList.length; i++) {
       const v = awardList[i]
       const prefixMsg = `奖品列表第${i + 1}行`
-      if (isFalsly(v.awardNum)) {
+      if (isFalsly(v.awardNum) && +v.awardType !== 0) {
         return void message.error(`${prefixMsg}奖品库存不能为空`)
       }
     }
