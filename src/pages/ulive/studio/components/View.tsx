@@ -80,7 +80,7 @@ class Main extends React.Component<Props, State> {
       } else if ([60, 90].indexOf(res.liveStatus) > -1) {
         type = 2
       /** 未过审/停播 */
-      } else if ([20, 50].indexOf(res.liveStatus) > -1) {
+      } else if ([20, 40, 50].indexOf(res.liveStatus) > -1) {
         type = 3
       }
       const statistics = liveData ? [
@@ -226,7 +226,7 @@ class Main extends React.Component<Props, State> {
             停播原因：
           </div>
           <div>
-            {detail.stopReson || ''}
+            {detail.stopReason || ''}
           </div>
           <div className='text-center mt20'>
             <Button onClick={this.hide}>关闭</Button>

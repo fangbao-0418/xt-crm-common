@@ -42,7 +42,7 @@ declare namespace UliveStudio {
     /** 主播身份 10-公司, 20-供应商, 30-网红主播, 40-买家 */
     anchorType: Anchor.AnchorIdentityType
     /** 停播原因 */
-    stopReson: string
+    stopReason: string
   }
   /** 直播计划详情 */
   interface StatisticsProps {
