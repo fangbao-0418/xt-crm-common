@@ -7,6 +7,7 @@ export function getPromotionList(data) {
 export function setBasePromotion(data) {
   return post('/promotion/addBasePromotion', {}, { data, headers: {} });
 }
+
 /**
  * 获取活动基本信息
  * @param {*} promotionId
@@ -14,6 +15,7 @@ export function setBasePromotion(data) {
 export function getPromotionInfo(promotionId) {
   return get(`/promotion/${promotionId}`);
 }
+
 // 获取活动商品列表
 export function getOperatorSpuList(data) {
   return get('/promotion/operatorSpuList', data);

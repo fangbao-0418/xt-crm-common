@@ -90,7 +90,6 @@ export default class extends Component {
           ...values,
           menuIds: Array.from(new Set(concat(ids)))
         };
-        debugger;
         console.log(payload);
         if (currentRoleInfo.id) {
           // 编辑

@@ -34,8 +34,11 @@ interface Options {
 
 export const typeOptions: Options[] = [
   { label: '红包雨', value: 1 },
-  { label: '九宫格抽奖', value: 2 }
+  { label: '九宫格抽奖', value: 2 },
+  { label: '砸金蛋', value: 3 },
+  { label: '财神拜年', value: 4 }
 ]
+
 export const typeConfig = convert(typeOptions)
 export const type: Props = {
   name: 'type',

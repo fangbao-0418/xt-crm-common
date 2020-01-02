@@ -52,7 +52,6 @@ class Item extends Component {
     this.setState({
       check
     });
-    console.log(check)
     this.props.setItem([this.props.data], check)
   }
 

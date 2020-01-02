@@ -5,13 +5,14 @@ import * as api from './api'
 import { idcardReg } from '@/util/regexp'
 
 /**
- * 订单推送海关状态
+ * 支付单推送海关状态
  */
 const paymentPushCustomsStatusConifg: any = {
   '1': '未推送',
-  '2': '已推送',
+  '2': '已推送属地',
   '3': '处理成功',
-  '4': '处理失败'
+  '4': '处理失败',
+  '5': '已推送总署'
 }
 
 interface Props {

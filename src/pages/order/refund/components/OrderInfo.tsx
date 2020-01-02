@@ -18,7 +18,8 @@ const orderTypeConifg: any = {
   '30': '活动兑换订单',
   '40': '采购订单',
   '60': '团购会订单',
-  '70': '海淘订单'
+  '70': '海淘订单',
+  '80': '团购会采购订单'
 }
 
 interface Props extends React.Props<{}> {

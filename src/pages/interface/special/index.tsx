@@ -4,7 +4,7 @@ import { ColumnProps } from 'antd/lib/table'
 import Search from './components/Search'
 import styles from './style.module.sass'
 import * as api from './api'
-interface State extends PageProps<Special.DetailItem> {
+interface State extends PageProps<Special.DetailProps> {
 }
 class Main extends React.Component<{}, State> {
   public payload: Special.SearchProps = {}
@@ -14,7 +14,7 @@ class Main extends React.Component<{}, State> {
     size: 10,
     total: 0
   }
-  public columns: ColumnProps<Special.DetailItem>[] = [{
+  public columns: ColumnProps<Special.DetailProps>[] = [{
     dataIndex: 'id',
     title: '专题ID'
   }, {
