@@ -56,7 +56,7 @@ export const ORDER_TYPE = {
   '80': '团购会采购订单'
 }
 
-export const ExpressCompanyOptions = {
+export const ExpressCompanyOptions: any = {
   ems: 'EMS',
   shunfeng: '顺丰',
   shentong: '申通',
@@ -77,5 +77,6 @@ export const ExpressCompanyOptions = {
   pjbest: "品骏",
   suning: "苏宁物流",
   suer: "速尔快递",
-  zhongtongkuaiyun: "中通快运"
+  zhongtongkuaiyun: "中通快运",
+  lntjs: "特急送"
 };
