@@ -11,6 +11,14 @@ declare module AfterSalesInfo {
     checkVO: CheckVO;
     expirationClose: number | null;
     skuServerLogVO: any[];
+    /** 自营仓名称 */
+    warehouseName: string | null;
+    /** 供应商名称 */
+    storeName: string | null;
+    /** 供应商收货状态：10 已收货 20 已发货 30 完成 60 拒绝 */
+    warehouseOperate: 10 | 20 | 30 | 60;
+    /** 类型：0 默认CRM 1供应商 2 自营仓 */
+    handleChannel: 0 | 1 | 2;
   }
   export interface CheckVO {
     amount: number;
