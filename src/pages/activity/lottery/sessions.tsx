@@ -147,14 +147,16 @@ class Main extends React.Component<Props, State> {
       key: 'awardPicUrl',
       width: 150,
       render: (arg1: any, arg2: any, index: number) => (
-        this.getFieldDecorator('awardPicUrl', index)(
-          <Upload
-            pxSize={[{width:140, height:140}]}
-            fileType='image/png'
-            listType='picture-card'
-            disabled={this.activityType === 1 || this.readOnly}
-          />
-        )
+        <div style={{ textAlign: 'left' }}>
+          {this.getFieldDecorator('awardPicUrl', index)(
+            <Upload
+              pxSize={[{width:140, height:140}]}
+              fileType='image/png'
+              listType='picture-card'
+              disabled={this.activityType === 1 || this.readOnly}
+            />
+          )}
+        </div>
       )
     },
     {
