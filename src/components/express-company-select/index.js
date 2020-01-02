@@ -4,6 +4,7 @@ import { dissoc } from '@/util/utils'
 import { unionBy } from 'lodash'
 function SupplierSelect(props, ref) {
   const { expressList } = APP.constant
+  console.log('expressList =>', expressList);
   const textType = props.textType
   const propsWithoutTextType = dissoc(props, 'textType')
 

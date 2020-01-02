@@ -34,8 +34,8 @@ class Main extends React.Component {
   async fetchConfig () {
     const list = await get('/express/getList') || []
     const expressList = list.map(item => ({
-      label: item.expressName,
-      value: item.expressCode
+      label: item.expressCompanyName,
+      value: item.expressCompanyCode
     }))
     APP.constant.expressList = expressList
     APP.constant.expressConfig = this.convert2Config(expressList)
