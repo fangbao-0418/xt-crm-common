@@ -220,6 +220,7 @@ export const getListColumns = () => [
     title: '操作',
     dataIndex: 'action',
     key: 'action',
+    width: 360,
     render: (text, record) => <ActionBtnGroup record={record} />
   }
 ]
