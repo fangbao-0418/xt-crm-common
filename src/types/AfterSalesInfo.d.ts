@@ -9,6 +9,7 @@ declare module AfterSalesInfo {
     orderInterceptRecordVO: any;
     orderInfoVO: OrderInfoVO;
     checkVO: CheckVO;
+    expirationClose: number | null;
     skuServerLogVO: any[];
   }
   export interface CheckVO {
@@ -62,6 +63,8 @@ declare module AfterSalesInfo {
     orderMemberType: number;
     payMoney: number;
     freight: number;
+    /* 供应商订单号 */
+    storeOrderId: number;
     /** 0：普通订单，10：激活码订单，20：地推订单，30：活动兑换订单，40：采购订单，60：团购会订单，70：海淘订单，80：团购会采购订单*/
     orderType: 0 | 10 | 20 | 30 | 40 | 60 | 70 | 80
     customsClearanceTime: number;

@@ -34,7 +34,12 @@ function Countdown ({ value, interval = 1000 }: Props) {
   const [state, set] = useState<number>(value);
   useEffect(() => {
     const timerID = setInterval(() => {
-      set(state => state - 1)
+      if (state > 0) {
+        set(state => state - 1)
+      } else {
+        set(0)
+        clearInterval(timerID)
+      }
     }, interval);
     return () => {
       clearInterval(timerID);
