@@ -2,6 +2,7 @@ import React from 'react'
 import { Row, Col, Button, Input, Tag } from 'antd'
 import classNames from 'classnames'
 import { If } from '@/packages/common/components'
+import { formatDuration } from '@/packages/common/utils'
 import styles from './style.module.styl'
 import * as api from '../api'
 import { TypeEnum, LiveStatusEnum } from '../config'
@@ -90,7 +91,7 @@ class Main extends React.Component<Props, State> {
         },
         {
           label: '直播时长',
-          value: liveData.totalTime
+          value: formatDuration(liveData.totalTime)
         },
         {
           label: '实付订单',

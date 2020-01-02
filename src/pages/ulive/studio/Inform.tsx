@@ -34,13 +34,15 @@ class Main extends React.Component<Props, State> {
       }
     },
     {
-      dataIndex: 'otherTypeContent',
-      title: '内容详情'
+      dataIndex: 'description',
+      title: '内容详情',
+      width: 300
     },
     {
       dataIndex: 'screenshotsUrl',
       title: '截图',
       align: 'center',
+      width: 200,
       render: (text) => {
         const arr: string[] = text.split(',')
         return (
@@ -171,6 +173,9 @@ class Main extends React.Component<Props, State> {
               ...payload,
               livePlanId: this.id
             }
+          }}
+          tableProps={{
+            rowKey: 'complainId'
           }}
           api={api.fetchComplainList}
           columns={this.columns}

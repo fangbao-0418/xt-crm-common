@@ -6,5 +6,6 @@ interface Props {
   title?: string
   width?: string | number
   height?: string | number
+  onClick?: () => void
 }
 export default (props: Props) => React.ReactNode

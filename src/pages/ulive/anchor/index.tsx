@@ -22,7 +22,7 @@ class Main extends React.Component<Props> {
       return (
         <div className={styles['anchor-column-nickname']}>
           <div className={styles['anchor-column-nickname-icon']}>
-            <Image src={record.headUrl} width={50} height={50} />
+            <Image onClick={() => { APP.history.push(`/user/detail?memberId=${record.memberId}`) }} src={record.headUrl} width={50} height={50} />
           </div>
           <div className={styles['anchor-column-nickname-info']}>
             <div>

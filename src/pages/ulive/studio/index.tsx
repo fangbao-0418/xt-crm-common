@@ -35,7 +35,10 @@ class Main extends React.Component<Props> {
     {
       title: '主播',
       dataIndex: 'anchorNickName',
-      width: 100
+      width: 100,
+      render: (text, record) => {
+        return text || record.anchorPhone
+      }
     },
     {
       title: '计划开播',
