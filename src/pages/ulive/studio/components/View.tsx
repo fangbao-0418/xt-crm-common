@@ -157,7 +157,7 @@ class Main extends React.Component<Props, State> {
                 <Col span={24}>计划开播：{APP.fn.formatDate(detail.liveAnticipatedStartTime) || ''}</Col>
               </Row>
               <Row>
-                <Col span={24}>直播时间：{APP.fn.formatDate(detail.liveStartTime) || ''}</Col>
+                <Col span={24}>直播时间：{[(APP.fn.formatDate(detail.liveStartTime) || '--'), (APP.fn.formatDate(detail.liveEndTime) || '--')].join(' 至 ')}</Col>
                 {/* <Col span={24}>结束时间：{APP.fn.formatDate(detail.liveAnticipatedStartTime)}</Col> */}
               </Row>
               <Row>
@@ -198,9 +198,9 @@ class Main extends React.Component<Props, State> {
         <If condition={type === 2}>
           <div className={classNames(styles.statistics)}>
             {
-              statistics.map((item) => {
+              statistics.map((item, index) => {
                 return (
-                  <div className={styles['statistics-item']}>
+                  <div key={index} className={styles['statistics-item']}>
                     <div className={styles['statistics-item-result']}>{item.value}</div>
                     <div className={styles['statistics-item-label']}>{item.label}</div>
                   </div>

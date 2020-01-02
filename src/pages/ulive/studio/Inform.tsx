@@ -47,7 +47,7 @@ class Main extends React.Component<Props, State> {
           <div>
             {
               arr.map((item) => {
-                return <Image src={item} width={40} height={40} />
+                return <span style={{margin: '0 2px'}}><Image src={item} width={40} height={40} /></span>
               })
             }
           </div>

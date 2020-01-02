@@ -62,6 +62,7 @@ class Main extends React.Component<Props> {
       title: '直播间',
       width: 200,
       align: 'center',
+      dataIndex: 'playUrl',
       render: (text, record) => {
         return (
           <div>
