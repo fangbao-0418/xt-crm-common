@@ -47,6 +47,7 @@ const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
             </>
           )}
         </Row>
+        <div>说明：</div>
       </div>
     </>: null
   );
