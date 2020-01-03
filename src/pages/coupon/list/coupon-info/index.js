@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { message, Table, DatePicker, Checkbox, Form, Button, Card, Row, Col, Input, InputNumber, Radio } from 'antd';
 import { formItemLayout, formLeftButtonLayout } from '@/config';
+import { getCouponDetail } from '@/pages/coupon/api';
 import { platformOptions, useIdentityOptions } from '../../config';
 import { getCategoryList, saveCouponInfo } from '@/pages/coupon/api';
 import { actColumns } from '@/components/activity-selector/config';
 import { disabledDate } from '@/pages/helper';
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
-import { unionArray } from '@/util/utils';
-import { Decimal } from 'decimal.js';
+import { unionArray, parseQuery } from '@/util/utils';
+import * as adapter from '../../adapter';
 import moment from 'moment';
 import './index.scss';
 const { TextArea } = Input;
@@ -41,12 +42,22 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
     setFieldsValue({ platformType });
     setPlatformRestrictValues(checkedValue);
   };
+
+  const fetchData = async () => {
+    const { id } = parseQuery();
+    if (id) {
+      const detail = await getCouponDetail(id);
+      const vals = adapter.couponDetailResponse(detail);
+      setFieldsValue(vals);
+    }
+  };
   useEffect(() => {
     async function getTreeData() {
       const data = await getCategoryList();
       setTreeData(data);
     }
     getTreeData();
+    fetchData();
   }, []);
   const getColumns = type => [
     {
@@ -143,7 +154,6 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
     return getFieldsValue(['recipientLimit']).recipientLimit === 1;
   };
   const getPlatformRestrictValues = platformType => {
-    console.log('platformType=>', platformType);
     // 不限制
     if (platformType === 0) {
       return 'all';
@@ -153,76 +163,11 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       return platformRestrictValues.join(',');
     }
   };
-  const getReceiveRestrictValues = recipientLimit => {
-    // 不限制
-    if (recipientLimit === 0) {
-      return 'all';
-    } else if (recipientLimit === 1) {
-      let result = receiveRestrictValues.includes(30) ? [...receiveRestrictValues, 40] : receiveRestrictValues;
-      return result.join(',');
-    } else {
-      return recipientLimit;
-    }
-  };
   const onUseIdentityChange = checkedValue => {
     console.log('checkedValue=>', checkedValue);
     setReceiveRestrictValues(checkedValue);
     setFieldsValue({ recipientLimit: checkedValue.length === 4 ? 0 : 1 });
   };
-  const getUseTimeValue = fields => {
-    if (fields.useTimeType === 0) {
-      console.log('useTimeRange=>', useTimeRange);
-      let result = Array.isArray(useTimeRange) ? useTimeRange.map(v => v && v.valueOf()) : [];
-      return result.join(',');
-    } else {
-      return availableDays;
-    }
-  };
-  // 根据适用范围获取范围值
-  const getAvlValues = fields => {
-    let result = '';
-    switch (fields.avlRange) {
-      case 0:
-        break;
-      // 已选择类目
-      case 1:
-        result = fields.categorys.join(',');
-        break;
-      // 已选择商品id
-      case 2:
-        result = chosenProduct.map(v => v.id).join(',');
-        break;
-      // 已选择活动id
-      case 4:
-        result = activityList.map(v => v.id).join(',');
-        break;
-      default:
-        break;
-    }
-    return result;
-  };
-  const getFaceValue = fields => {
-    fields.discountConditions = new Decimal(fields.discountConditions).mul(100).toNumber();
-    fields.discountPrice = new Decimal(fields.discountPrice).mul(100).toNumber();
-    console.log(`${fields.discountConditions}:${fields.discountPrice}`);
-    switch (fields.useSill) {
-      case 0:
-        return fields.discountPrice;
-      case 1:
-        return `${fields.discountConditions}:${fields.discountPrice}`;
-      default:
-        return '';
-    }
-  };
-  const getExcludeValues = fields => {
-    let avlRangeStr = excludeProduct.map(v => v.id).join(',');
-    return fields.avlRange !== 2 ? avlRangeStr : '';
-  };
-  const getDailyRestrict = fields => {
-    console.log('dailyRestrictChecked=>', dailyRestrictChecked);
-    return dailyRestrictChecked ? fields.dailyRestrict : '';
-  };
-
   const handleSave = () => {
     validateFields(async (err, fields) => {
       if (fields.recipientLimit === 1) {
@@ -265,57 +210,16 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         }
       }
       if (!err) {
-        const [startReceiveTime, overReceiveTime] = fields.receiveTime
-          ? fields.receiveTime.map(v => v && v.valueOf())
-          : [];
-        const useTimeValue = getUseTimeValue(fields);
-        const platformRestrictValues = getPlatformRestrictValues(fields.platformType);
-        const receiveRestrictValues = getReceiveRestrictValues(fields.recipientLimit);
-        const avlValues = getAvlValues(fields);
-        const dailyRestrict = getDailyRestrict(fields);
-        const params = {
-          baseVO: {
-            // 名称
-            name: fields.name,
-            // 总量
-            inventory: fields.inventory,
-            // 备注
-            remark: fields.remark,
-            description: fields.description
-          },
-          ruleVO: {
-            // 限领
-            restrictNum: fields.restrictNum,
-            // 适用范围
-            avlRange: fields.avlRange,
-            // 范围值
-            avlValues,
-            // 排除商品
-            excludeValues: getExcludeValues(fields),
-            // 优惠券类型
-            useSill: fields.useSill,
-            // 优惠券价值
-            faceValue: getFaceValue(fields),
-            // 领取/使用用户级别限制
-            receiveRestrictValues,
-            // 平台限制
-            platformRestrictValues,
-            // 每日限领
-            dailyRestrict,
-            // 开始领取时间
-            startReceiveTime,
-            // 结束领取时间
-            overReceiveTime,
-            receivePattern: fields.receivePattern ? 1 : 0,
-            // 商详显示
-            showFlag: fields.receivePattern ? 0 : fields.showFlag,
-            // 适用时间类型
-            useTimeType: fields.useTimeType,
-            // 使用时间值
-            useTimeValue
-          }
-        };
-        const res = await saveCouponInfo(params);
+        const res = await saveCouponInfo({
+          ...fields,
+          dailyRestrictChecked,
+          chosenProduct,
+          activityList,
+          useTimeRange,
+          availableDays,
+          platformRestrictValues,
+          receiveRestrictValues
+        });
         if (res) {
           message.success('新增优惠券成功');
           history.goBack();
@@ -411,7 +315,16 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
         </Row>
         <Form.Item label="优惠券名称">
           {getFieldDecorator('name', {
-            rules: [{ required: true, message: '请输入优惠券名称', whitespace: true }, { validator: validateName }]
+            rules: [
+              {
+                required: true,
+                message: '请输入优惠券名称',
+                whitespace: true
+              },
+              {
+                validator: validateName
+              }
+            ]
           })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
         </Form.Item>
         <Form.Item label="适用范围">
@@ -494,7 +407,15 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             <Col>减</Col>
             <Col className="ml10 short-input">
               {getFieldDecorator('discountPrice', {
-                rules: [{ required: true, message: '请输入优惠面值' }, { validator: validateDiscountPrice }]
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入优惠面值'
+                  },
+                  {
+                    validator: validateDiscountPrice
+                  }
+                ]
               })(<InputNumber min={0.01} />)}
             </Col>
             <Col className="ml10">元</Col>
