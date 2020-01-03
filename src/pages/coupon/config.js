@@ -230,3 +230,106 @@ export const pagination = {
   showQuickJumper: true,
   showTotal: (total, range) => `共 ${total} 条记录`
 }
+
+
+
+export const defaultConfig = {
+  coupon: {
+    name: {
+      label: '优惠券名称',
+      placeholder: '例：国庆优惠券，最多20个字',
+      fieldDecoratorOptions: {
+        rules: [
+          {
+            required: true,
+            message: '请输入优惠券名称',
+            whitespace: true
+          },
+          {
+            validator: (rule, value, callback) => {
+              if (value && value.length > 20) {
+                callback('优惠券最多20个字');
+              } else {
+                callback();
+              }
+            }
+          }
+        ]
+      }
+    },
+    useTimeType: {
+      label: '使用时间',
+      type: 'radio',
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请选择使用时间类型'
+        }]
+      }
+    },
+    recipientLimit: {
+      label: '领取人限制',
+      type: 'radio',
+      options: [{
+        label: '不限制',
+        value: 0
+      }, {
+        label: '平台未下单用户',
+        value: 3
+      }, {
+        label: '指定身份可用',
+        value: 1
+      }],
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请选择领取人限制'
+        }]
+      }
+    },
+    platformType: {
+      label: '使用平台',
+      type: 'radio',
+      options: [{
+        label: '不限制',
+        value: 0
+      }, {
+        label: '选择平台',
+        value: 1
+      }],
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请选择使用平台'
+        }]
+      }
+    },
+    showFlag: {
+      type: 'radio',
+      label: '商详显示',
+      options: [{
+        label: '显示',
+        value: 1
+      }, {
+        label: '不显示',
+        value: 0
+      }],
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请选择商详显示'
+        }]
+      }
+    },
+    description: {
+      label: '优惠券说明',
+      type: 'textarea',
+      placeholder: '显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）'
+    },
+    remark: {
+      label: '优惠券备注',
+      type: 'textarea',
+      placeholder: '备注优惠券信息，不会在用户端显示（选填）'
+    }
+  }
+}

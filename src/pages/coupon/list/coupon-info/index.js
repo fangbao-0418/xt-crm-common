@@ -9,8 +9,10 @@ import { disabledDate } from '@/pages/helper';
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
 import { unionArray, parseQuery } from '@/util/utils';
 import * as adapter from '../../adapter';
+import { defaultConfig} from '../../config'
 import moment from 'moment';
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import If from '@/packages/common/components/if'
 import './index.scss';
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
@@ -78,13 +80,13 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       render: (text, record) => {
         if (type === 'exclude') {
           return (
-            <Button type="link" onClick={() => removeExcludeCurrentRow(record.id)}>
+            <Button type='link' onClick={() => removeExcludeCurrentRow(record.id)}>
               移除
             </Button>
           );
         } else {
           return (
-            <Button type="link" onClick={() => removeProductCurrentRow(record.id)}>
+            <Button type='link' onClick={() => removeProductCurrentRow(record.id)}>
               移除
             </Button>
           );
@@ -99,7 +101,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       dataIndex: 'action',
       key: 'action',
       render: (text, record) => (
-        <Button type="link" onClick={() => removeActivityCurrentRow(record.id)}>
+        <Button type='link' onClick={() => removeActivityCurrentRow(record.id)}>
           移除
         </Button>
       )
@@ -310,10 +312,10 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
       >
         <Row>
           <Col offset={3}>
-            <h2 className="form-title">基本信息</h2>
+            <h2 className='form-title'>基本信息</h2>
           </Col>
         </Row>
-        <AntdForm.Item label="优惠券名称">
+        <AntdForm.Item label='优惠券名称'>
           {getFieldDecorator('name', {
             rules: [
               {
@@ -325,29 +327,29 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
                 validator: validateName
               }
             ]
-          })(<Input placeholder="例：国庆优惠券，最多20个字" />)}
+          })(<Input placeholder='例：国庆优惠券，最多20个字' />)}
         </AntdForm.Item>
-        <AntdForm.Item label="适用范围">
+        <AntdForm.Item label='适用范围'>
           {getFieldDecorator('avlRange', { rules: [{ required: true, message: '请选择适用范围' }] })(
             <Radio.Group>
-              <Radio className="block-radio" value={0}>
+              <Radio className='block-radio' value={0}>
                 全场通用
               </Radio>
-              <Radio className="block-radio" value={1}>
+              <Radio className='block-radio' value={1}>
                 类目商品
               </Radio>
-              <Radio className="block-radio" value={2}>
+              <Radio className='block-radio' value={2}>
                 指定商品{' '}
                 {hasChosen() && (
-                  <Button type="link" onClick={() => setProductSelectorVisible(true)}>
+                  <Button type='link' onClick={() => setProductSelectorVisible(true)}>
                     选择商品
                   </Button>
                 )}
               </Radio>
-              <Radio className="block-radio" value={4}>
+              <Radio className='block-radio' value={4}>
                 指定活动{' '}
                 {hasActivity() && (
-                  <Button type="link" onClick={() => setActivitySelectorVisible(true)}>
+                  <Button type='link' onClick={() => setActivitySelectorVisible(true)}>
                     选择活动
                   </Button>
                 )}
@@ -356,56 +358,56 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
           )}
           {hasExclude() && (
             <div>
-              <Button type="link" onClick={() => setExcludeProductSelectorVisible(true)}>
+              <Button type='link' onClick={() => setExcludeProductSelectorVisible(true)}>
                 排除商品
               </Button>
             </div>
           )}
         </AntdForm.Item>
         {hasProductTreeSelect() && (
-          <AntdForm.Item label="选择类目">
+          <AntdForm.Item label='选择类目'>
             {getFieldDecorator('categorys', {
               rules: [{ required: true, message: '请选择类目' }]
             })(<ProductTreeSelect treeData={treeData} />)}
           </AntdForm.Item>
         )}
         {hasExcludeList() && (
-          <AntdForm.Item label="已排除商品">
-            <Table pagination={false} rowKey="id" columns={getColumns('exclude')} dataSource={excludeProduct} />
+          <AntdForm.Item label='已排除商品'>
+            <Table pagination={false} rowKey='id' columns={getColumns('exclude')} dataSource={excludeProduct} />
           </AntdForm.Item>
         )}
         {hasChosenList() && (
-          <AntdForm.Item label="已选择商品">
-            <Table pagination={false} rowKey="id" columns={getColumns('product')} dataSource={chosenProduct} />
+          <AntdForm.Item label='已选择商品'>
+            <Table pagination={false} rowKey='id' columns={getColumns('product')} dataSource={chosenProduct} />
           </AntdForm.Item>
         )}
         {hasActivityList() && (
-          <AntdForm.Item label="已选择活动">
-            <Table pagination={false} rowKey="id" columns={activityColumns} dataSource={activityList} />
+          <AntdForm.Item label='已选择活动'>
+            <Table pagination={false} rowKey='id' columns={activityColumns} dataSource={activityList} />
           </AntdForm.Item>
         )}
-        <AntdForm.Item label="使用门槛">
+        <AntdForm.Item label='使用门槛'>
           {getFieldDecorator('useSill', { initialValue: 1, rules: [{ required: true, message: '请选择使用门槛' }] })(
             <Radio.Group>
-              <Radio disabled className="block-radio" value={0}>
+              <Radio disabled className='block-radio' value={0}>
                 无门槛（暂未开放）
               </Radio>
               <AntdForm.Item>
-                <Radio className="block-radio" value={1}>
+                <Radio className='block-radio' value={1}>
                   <span>订单满</span>
                   {getFieldDecorator('discountConditions', {
                     rules: [{ validator: validateConditions }]
-                  })(<InputNumber min={0.01} className="ml10 short-input" />)}
-                  <span className="ml10">元</span>
+                  })(<InputNumber min={0.01} className='ml10 short-input' />)}
+                  <span className='ml10'>元</span>
                 </Radio>
               </AntdForm.Item>
             </Radio.Group>
           )}
         </AntdForm.Item>
-        <AntdForm.Item label="优惠内容（面值）">
-          <Row type="flex">
+        <AntdForm.Item label='优惠内容（面值）'>
+          <Row type='flex'>
             <Col>减</Col>
-            <Col className="ml10 short-input">
+            <Col className='ml10 short-input'>
               {getFieldDecorator('discountPrice', {
                 rules: [
                   {
@@ -418,25 +420,25 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
                 ]
               })(<InputNumber min={0.01} />)}
             </Col>
-            <Col className="ml10">元</Col>
+            <Col className='ml10'>元</Col>
           </Row>
         </AntdForm.Item>
-        <AntdForm.Item label="发放总量">
-          <Row type="flex">
+        <AntdForm.Item label='发放总量'>
+          <Row type='flex'>
             <Col>
               {getFieldDecorator('inventory', { rules: [{ required: true, message: '请输入发放总量' }] })(
-                <InputNumber placeholder="最多10000000" style={{ width: '160px' }} min={1} max={10000000} />
+                <InputNumber placeholder='最多10000000' style={{ width: '160px' }} min={1} max={10000000} />
               )}
             </Col>
-            <Col className="ml10">张</Col>
+            <Col className='ml10'>张</Col>
           </Row>
         </AntdForm.Item>
-        <Row>
+        {/* <Row>
           <Col offset={3}>
-            <h2 className="form-title">使用规则</h2>
+            <h2 className='form-title'>使用规则</h2>
           </Col>
-        </Row>
-        <AntdForm.Item label="领取时间">
+        </Row> */}
+        {/* <AntdForm.Item label='领取时间'>
           {getFieldDecorator('receiveTime', {
             rules: [{ required: true, message: '请选择领取时间' }, { validator: receiveTimeValidator }]
           })(
@@ -445,11 +447,11 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
               showTime={{
                 hideDisabledOptions: true
               }}
-              format="YYYY-MM-DD HH:mm:ss"
+              format='YYYY-MM-DD HH:mm:ss'
             />
           )}
         </AntdForm.Item>
-        <AntdForm.Item label="使用时间">
+        <AntdForm.Item label='使用时间'>
           {getFieldDecorator('useTimeType', { rules: [{ required: true, message: '请选择使用时间类型' }] })(
             <Radio.Group>
               <AntdForm.Item>
@@ -459,7 +461,7 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
                     showTime={{
                       hideDisabledOptions: true
                     }}
-                    format="YYYY-MM-DD HH:mm:ss"
+                    format='YYYY-MM-DD HH:mm:ss'
                     onChange={date => setUseTimeRange(date)}
                   />
                 </Radio>
@@ -468,27 +470,27 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
                 <Radio value={1}>
                   <span>领券当日起</span>
                   <InputNumber
-                    className="ml10 short-input"
+                    className='ml10 short-input'
                     min={0}
                     value={availableDays}
                     onChange={value => setAvailableDays(value)}
                   />
-                  <span className="ml10">天内可用（设置为0时则为当日有效）</span>
+                  <span className='ml10'>天内可用（设置为0时则为当日有效）</span>
                 </Radio>
               </AntdForm.Item>
             </Radio.Group>
           )}
-        </AntdForm.Item>
-        <AntdForm.Item label="领取人限制">
+        </AntdForm.Item> */}
+        {/* <AntdForm.Item label='领取人限制'>
           {getFieldDecorator('recipientLimit', { rules: [{ required: true, message: '请选择领取人限制' }] })(
             <Radio.Group>
-              <Radio className="block-radio" value={0}>
+              <Radio className='block-radio' value={0}>
                 不限制
               </Radio>
-              <Radio className="block-radio" value={3}>
+              <Radio className='block-radio' value={3}>
                 平台未下单用户
               </Radio>
-              <Radio className="block-radio" value={1}>
+              <Radio className='block-radio' value={1}>
                 指定身份可用
               </Radio>
             </Radio.Group>
@@ -503,36 +505,36 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             </div>
           )}
         </AntdForm.Item>
-        <AntdForm.Item label="每人限领次数">
-          <Row type="flex">
+        <AntdForm.Item label='每人限领次数'>
+          <Row type='flex'>
             <Col>限领</Col>
-            <Col className="ml10 short-input">
+            <Col className='ml10 short-input'>
               {getFieldDecorator('restrictNum', { rules: [{ required: true, message: '请输入每人限领次数' }] })(
-                <InputNumber placeholder="最多10" min={1} max={10} />
+                <InputNumber placeholder='最多10' min={1} max={10} />
               )}
             </Col>
-            <Col className="ml10">张</Col>
+            <Col className='ml10'>张</Col>
           </Row>
         </AntdForm.Item>
         <AntdForm.Item wrapperCol={formLeftButtonLayout}>
-          <Row type="flex">
+          <Row type='flex'>
             <Checkbox checked={dailyRestrictChecked} onChange={e => setDailyRestrictChecked(e.target.checked)} />
-            <Row type="flex">
-              <Col className="ml10">每日限领</Col>
-              <Col className="ml10 short-input">
-                {getFieldDecorator('dailyRestrict')(<InputNumber placeholder="最多10" min={1} max={10} />)}
+            <Row type='flex'>
+              <Col className='ml10'>每日限领</Col>
+              <Col className='ml10 short-input'>
+                {getFieldDecorator('dailyRestrict')(<InputNumber placeholder='最多10' min={1} max={10} />)}
               </Col>
-              <Col className="ml10">张</Col>
+              <Col className='ml10'>张</Col>
             </Row>
           </Row>
         </AntdForm.Item>
-        <AntdForm.Item label="使用平台">
+        <AntdForm.Item label='使用平台'>
           {getFieldDecorator('platformType', { rules: [{ required: true, message: '请选择使用平台' }] })(
             <Radio.Group>
-              <Radio className="block-radio" value={0}>
+              <Radio className='block-radio' value={0}>
                 不限制
               </Radio>
-              <Radio className="block-radio" value={1}>
+              <Radio className='block-radio' value={1}>
                 选择平台
               </Radio>
             </Radio.Group>
@@ -543,54 +545,372 @@ function CouponInfo({ form: { getFieldDecorator, getFieldsValue, setFieldsValue,
             </div>
           )}
         </AntdForm.Item>
-        <AntdForm.Item label="发券控制">
+        <AntdForm.Item label='发券控制'>
           {getFieldDecorator('receivePattern')(
-            <Checkbox
-              onChange={e => {
-                console.log(e, 'eeee');
-              }}
-            >
+            <Checkbox>
               仅支持手动发券
             </Checkbox>
           )}
           <div style={{ color: '#999' }}>勾选后无法在商品详情和专题显示，只支持批量发券</div>
         </AntdForm.Item>
         {!formValue.receivePattern && (
-          <AntdForm.Item label="商详显示">
+          <AntdForm.Item label='商详显示'>
             {getFieldDecorator('showFlag', { rules: [{ required: true, message: '请选择商详显示' }] })(
               <Radio.Group>
-                <Radio className="block-radio" value={1}>
+                <Radio className='block-radio' value={1}>
                   显示
                 </Radio>
-                <Radio className="block-radio" value={0}>
+                <Radio className='block-radio' value={0}>
                   不显示
                 </Radio>
               </Radio.Group>
             )}
           </AntdForm.Item>
         )}
-        <AntdForm.Item label="优惠券说明">
+        <AntdForm.Item label='优惠券说明'>
           {getFieldDecorator('description', { initialValue: '' })(
-            <TextArea placeholder="显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）" />
+            <TextArea placeholder='显示在优惠券下方，建议填写限制信息，如美妆个户、食品保健可用，仅团长专区商品可用等等（选填）' />
           )}
         </AntdForm.Item>
-        <AntdForm.Item label="优惠券备注">
+        <AntdForm.Item label='优惠券备注'>
           {getFieldDecorator('remark', { initialValue: '' })(
-            <TextArea placeholder="备注优惠券信息，不会在用户端显示（选填）" />
+            <TextArea placeholder='备注优惠券信息，不会在用户端显示（选填）' />
           )}
         </AntdForm.Item>
-        {/* <FormItem
-          label='优惠券备注'
-        /> */}
         <AntdForm.Item wrapperCol={formLeftButtonLayout}>
-          <Button type="primary" onClick={handleSave}>
+          <Button type='primary' onClick={handleSave}>
             保存
           </Button>
-          <Button className="ml20" onClick={handleCancel}>
+          <Button className='ml20' onClick={handleCancel}>
             取消
           </Button>
-        </AntdForm.Item>
+        </AntdForm.Item> */}
       </AntdForm>
+
+      <Form
+        {...formItemLayout}
+        config={defaultConfig}
+        namespace='coupon'
+      >
+        <FormItem name='name' verifiable />
+        <FormItem
+          label='适用范围'
+          required
+          inner={(form) => {
+            return (
+              <>
+                {
+                  form.getFieldDecorator('avlRange', {
+                    rules: [{
+                      required: true,
+                      message: '请选择适用范围'
+                    }]
+                  })(
+                    <Radio.Group>
+                      <Radio className='block-radio' value={0}>
+                        全场通用
+                      </Radio>
+                      <Radio className='block-radio' value={1}>
+                        类目商品
+                      </Radio>
+                      <Radio className='block-radio' value={2}>
+                        指定商品{' '}
+                        {hasChosen() && (
+                          <Button type='link' onClick={() => setProductSelectorVisible(true)}>
+                            选择商品
+                          </Button>
+                        )}
+                      </Radio>
+                      <Radio className='block-radio' value={4}>
+                        指定活动{' '}
+                        {hasActivity() && (
+                          <Button type='link' onClick={() => setActivitySelectorVisible(true)}>
+                            选择活动
+                          </Button>
+                        )}
+                      </Radio>
+                    </Radio.Group>
+                  )
+                }
+                <If condition={hasExclude()}>
+                  <div>
+                    <Button type='link' onClick={() => setExcludeProductSelectorVisible(true)}>
+                      排除商品
+                    </Button>
+                  </div>
+                </If>
+              </>
+            )
+          }}
+        />
+        <If condition={hasProductTreeSelect()}>
+          <FormItem
+            label='选择类目'
+            inner={(form) => {
+              return form.getFieldDecorator('categorys', {
+                rules: [{
+                  required: true,
+                  message: '请选择类目'
+                }]
+              })(
+              <ProductTreeSelect
+                treeData={treeData}
+              />)
+            }}
+          />
+        </If>
+
+{hasProductTreeSelect() && (
+          <AntdForm.Item label='选择类目'>
+            {getFieldDecorator('categorys', {
+              rules: [{ required: true, message: '请选择类目' }]
+            })(<ProductTreeSelect treeData={treeData} />)}
+          </AntdForm.Item>
+        )}
+        {hasExcludeList() && (
+          <AntdForm.Item label='已排除商品'>
+            <Table pagination={false} rowKey='id' columns={getColumns('exclude')} dataSource={excludeProduct} />
+          </AntdForm.Item>
+        )}
+        {hasChosenList() && (
+          <AntdForm.Item label='已选择商品'>
+            <Table pagination={false} rowKey='id' columns={getColumns('product')} dataSource={chosenProduct} />
+          </AntdForm.Item>
+        )}
+        {hasActivityList() && (
+          <AntdForm.Item label='已选择活动'>
+            <Table pagination={false} rowKey='id' columns={activityColumns} dataSource={activityList} />
+          </AntdForm.Item>
+        )}
+        <FormItem
+          type='radio'
+          label='使用门槛'
+          fieldDecoratorOptions={{
+            initialValue: 1,
+            rules: [{
+              required: true,
+              message: '请选择使用门槛'
+            }]
+          }}
+          options={[{
+            label: '无门槛（暂未开放）',
+            value: 0,
+            disabled: true
+          }]}
+          inner={(form) => {
+            return (
+              <>
+              {form.getFieldDecorator('useSill')(
+                <Radio.Group>
+                  <Radio disabled className='block-radio' value={0}>
+                    无门槛（暂未开放）
+                  </Radio>
+                  <Radio className='block-radio' value={1}>
+                    <span>订单满</span>
+                    {getFieldDecorator('discountConditions', {
+                      rules: [{ validator: validateConditions }]
+                    })(
+                      <InputNumber
+                        min={0.01}
+                        className='ml10 short-input'
+                      />
+                    )}
+                    <span className='ml10'>元</span>
+                  </Radio>
+                </Radio.Group>
+              )}
+              </>
+            )
+          }}
+        />
+        <FormItem
+          label='优惠内容（面值）'
+          required
+          inner={(form) => {
+            return (
+              <>
+                <span>减</span>
+                <span className='ml10 short-input'>
+                  {getFieldDecorator('discountPrice', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入优惠面值'
+                      },
+                      {
+                        validator: validateDiscountPrice
+                      }
+                    ]
+                  })(
+                    <InputNumber
+                      min={0.01}
+                    />
+                  )}
+                </span>
+                <span className='ml10'>元</span>
+              </>
+            )
+          }}
+        />
+        <FormItem
+          label='发放总量'
+          inner={(form) => {
+            return (
+              <>
+                {form.getFieldDecorator('inventory', {
+                  rules: [{
+                    required: true,
+                    message: '请输入发放总量'
+                  }]
+                })(
+                  <InputNumber
+                    placeholder='最多10000000'
+                    style={{ width: '160px' }}
+                    min={1}
+                    max={10000000}
+                  />
+                )}
+                <span className='ml10'>张</span>
+              </>
+            )}}
+        />
+        <Row>
+          <Col offset={3}>
+            <h2 className='form-title'>使用规则</h2>
+          </Col>
+        </Row>
+        <FormItem
+          label='领取时间'
+          name='receiveTime'
+          type='rangepicker'
+          verifiable
+          fieldDecoratorOptions={{
+            rules: [{
+              required: true,
+              message: '请选择领取时间'
+            }, {
+              validator: receiveTimeValidator
+            }]
+          }}
+        />
+        <FormItem
+          name='useTimeType'
+          verifiable
+          options={[{
+            label: (
+              <RangePicker
+                disabledDate={useTimeTypeDisabledDate}
+                showTime={{
+                  hideDisabledOptions: true
+                }}
+                format='YYYY-MM-DD HH:mm:ss'
+                onChange={date => setUseTimeRange(date)}
+              />
+            ),
+            value: 0
+          }, {
+            label: (
+              <>
+                <span>领券当日起</span>
+                <InputNumber
+                  className='ml10 short-input'
+                  min={0}
+                  value={availableDays}
+                  onChange={value => setAvailableDays(value)}
+                />
+                <span className='ml10'>天内可用（设置为0时则为当日有效）</span>
+              </>
+            ),
+            value: 1
+          }]}
+        />
+        <FormItem
+          verifiable
+          name='recipientLimit'
+          addonAfter={(
+            <If condition={showRecipientLimit()}>
+              <Checkbox.Group
+                options={useIdentityOptions}
+                value={receiveRestrictValues}
+                onChange={onUseIdentityChange}
+              />
+            </If>
+          )}
+        />
+        <FormItem
+          label='每人限领次数'
+          required
+          inner={(form) => {
+            return (
+              <>
+                <Row type='flex'>
+                  <Col>限领</Col>
+                  <Col className='ml10 short-input'>
+                    {form.getFieldDecorator('restrictNum', {
+                      rules: [{
+                        required: true,
+                        message: '请输入每人限领次数'
+                      }]
+                    })(
+                      <InputNumber
+                        placeholder='最多10'
+                        min={1}
+                        max={10}
+                      />
+                    )}
+                  </Col>
+                  <Col className='ml10'>张</Col>
+                </Row>
+                <Row type='flex'>
+                  <Checkbox checked={dailyRestrictChecked} onChange={e => setDailyRestrictChecked(e.target.checked)} />
+                  <Row type='flex'>
+                    <Col className='ml10'>每日限领</Col>
+                    <Col className='ml10 short-input'>
+                      {getFieldDecorator('dailyRestrict')(<InputNumber placeholder='最多10' min={1} max={10} />)}
+                    </Col>
+                    <Col className='ml10'>张</Col>
+                  </Row>
+                </Row>
+              </>
+            )
+          }}
+        />
+        <FormItem
+          name='platformType'
+          verifiable
+          addonAfter={(
+            <If condition={showSelectPlatform()}>
+              <Checkbox.Group
+                options={platformOptions}
+                value={platformRestrictValues}
+                onChange={onChangePlatform}
+              />
+            </If>
+          )}
+        />
+        <FormItem
+          label='发券控制'
+          inner={form => {
+            return (
+              <>
+                {form.getFieldDecorator('receivePattern')(
+                  <Checkbox>仅支持手动发券</Checkbox>
+                )}
+                <div
+                  style={{ color: '#999' }}
+                >
+                  勾选后无法在商品详情和专题显示，只支持批量发券
+                </div>
+              </>
+            )
+          }}
+        />
+        <If condition={!formValue.receivePattern}>
+          <FormItem name='showFlag' verifiable/>
+        </If>
+        <FormItem name='description' />
+        <FormItem name='remark' />
+      </Form>
     </Card>
   );
 }
