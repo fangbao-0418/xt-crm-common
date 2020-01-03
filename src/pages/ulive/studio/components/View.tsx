@@ -120,7 +120,7 @@ class Main extends React.Component<Props, State> {
         },
         {
           label: '实付金额',
-          value: liveData.orderTotalPayMoney
+          value: APP.fn.formatMoneyNumber(liveData.orderTotalPayMoney, 'm2u')
         },
         {
           label: '访问UV',

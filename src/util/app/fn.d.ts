@@ -15,4 +15,6 @@ interface FnProps {
   download: (url: string, name: string) => void
   /** 多个集合合并 */
   mutilCollectionCombine: (...arg: any[][]) => any[][]
+  /** 后端金额转换，u2m|元转分，m2u|分转元；默认type = u2m */
+  formatMoneyNumber: (money: number, type?: 'u2m' | 'm2u') => number
 }
