@@ -15,11 +15,13 @@ class Main extends React.Component<Props> {
     if (!detail.playUrl) {
       return
     }
+    const https = /https/.test(window.location.origin) ? true : false
+    const playUrl = (detail.playUrl || '').replace(/https?:\/\//, https ? 'https://' : 'http://')
     // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
     config = config ? config : {
       live: true,
-      m3u8: (detail.playUrl || '').replace('.flv', '.m3u8'),
-      flv: detail.playUrl,
+      m3u8: playUrl.replace('.flv', '.m3u8'),
+      flv: playUrl,
       // autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
       // "poster": '',
       width:  '480', // 视频的显示宽度，请尽量使用视频分辨率宽度

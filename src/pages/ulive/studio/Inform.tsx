@@ -48,8 +48,8 @@ class Main extends React.Component<Props, State> {
         return (
           <div>
             {
-              arr.map((item) => {
-                return <span style={{margin: '0 2px'}}><Image src={item} width={40} height={40} /></span>
+              arr.map((item, index) => {
+                return <span key={index} style={{margin: '0 2px'}}><Image src={item} width={40} height={40} /></span>
               })
             }
           </div>
@@ -104,6 +104,7 @@ class Main extends React.Component<Props, State> {
           planId: record.planId as number,
           status: record.status === 0 ? 1 : 0
         }).then(() => {
+          this.fetchData()
           hide()
         })
       }
@@ -120,6 +121,7 @@ class Main extends React.Component<Props, State> {
         <CloseDown
           detail={record}
           hide={() => {
+            this.fetchData()
             hide()
           }}
         />

@@ -73,7 +73,7 @@ class Main extends React.Component<Props> {
               onClick={this.showQrcode.bind(this, record)}
               width={30}
               height={30}
-              src="https://axure-file.lanhuapp.com/6c74a568-2a43-4303-b380-de2eec294975__9abb445b2c0c5bfdd5970c937d437273.svg" alt=""
+              src={require('@/assets/images/qrcode.svg')}
             >
             </img>
             {record.playUrl && record.liveStatus === 90 && (
@@ -174,9 +174,12 @@ class Main extends React.Component<Props> {
     })
   }
   public showQrcode = (record: UliveStudio.ItemProps) => {
+    // module_live/pages/room/index
     api.getWxQrcode({
-      page: 'pages/home/home',
-      scene: '123'
+      // page: 'module_live/pages/room/index',
+      // scene: 'id=782',
+      page: 'pages/product/product',
+      scene: 'pid=782&index=2'
     }).then((res) => {
       console.log(res, '-------------')
       if (!res) {
