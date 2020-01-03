@@ -5,8 +5,16 @@ interface Props {
   hide?: () => void
 }
 class Main extends React.Component<Props> {
+  public player: any
   public componentDidMount () {
     this.initConfig()
+  }
+  public componentWillUnmount () {
+    if (this.player) {
+      console.log(this.player, '-----')
+      // this.player.pause()
+      this.player.destroy()
+    }
   }
   public initConfig () {
     // const 
@@ -18,20 +26,21 @@ class Main extends React.Component<Props> {
     const https = /https/.test(window.location.origin) ? true : false
     const playUrl = (detail.playUrl || '').replace(/https?:\/\//, https ? 'https://' : 'http://')
     // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
-    config = config ? config : {
+    config = {
+      posterImage: true,
       live: true,
       m3u8: playUrl.replace('.flv', '.m3u8'),
       flv: playUrl,
       // autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
-      // "poster": '',
+      poster: detail.liveCoverUrl,
       width:  '480', // 视频的显示宽度，请尽量使用视频分辨率宽度
       height: '320', // 视频的显示高度，请尽量使用视频分辨率高度
     }
     config.listener = (msg: any) => {
-      player.play()
+      // this.player.play()
       // console.log(msg, player, 'xxxx')
     }
-    var player = new TcPlayer('id_test_video', config);
+    this.player = new TcPlayer('id_test_video', config);
   }
   public render () {
     return (
