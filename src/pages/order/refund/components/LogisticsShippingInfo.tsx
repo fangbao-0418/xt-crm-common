@@ -22,7 +22,7 @@ const LogisticsShippingInfo: React.FC<Props> = ({ data }: Props) => {
         title="物流信息修改"
         visible={visible}
         type="platform"
-        expressName={getExpressCode(checkVO.sendExpressName)}
+        expressName={getExpressCode(APP.constant.expressConfig, checkVO.sendExpressName)}
         expressCode={checkVO.sendExpressCode}
         onCancel={() => setVisible(false)}
         sendExpressId={checkVO.sendExpressId}
