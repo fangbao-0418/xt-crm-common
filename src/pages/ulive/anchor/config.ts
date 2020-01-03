@@ -56,7 +56,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '供应商', value: 20},
           {label: '公司', value: 10},
           {label: '合作网红', value: 30},
-          {label: '买家', value: 40}
+          {label: '代理', value: 40}
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -91,7 +91,7 @@ export enum AnchorIdentityTypeEnum {
   供应商 = 20,
   公司 = 10,
   合作网红 = 30,
-  买家 = 40
+  代理 = 40
 }
 
 export enum AnchorLevelEnum {

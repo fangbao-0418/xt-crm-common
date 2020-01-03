@@ -23,6 +23,27 @@ interface State {
   detail: Partial<UliveStudio.ItemProps>
 }
 
+function Statistics (props: {
+  className?: string
+  dataSource: {value: any, label: string}[]
+}) {
+  const { dataSource, className } = props
+  return (
+    <div className={classNames(styles.statistics, className)}>
+      {
+        dataSource.map((item, index) => {
+          return (
+            <div key={index} className={styles['statistics-item']}>
+              <div className={styles['statistics-item-result']}>{item.value}</div>
+              <div className={styles['statistics-item-label']}>{item.label}</div>
+            </div>
+          )
+        })
+      }
+    </div>
+  )
+}
+
 class Main extends React.Component<Props, State> {
   public state: State = {
     statistics: [
@@ -157,7 +178,7 @@ class Main extends React.Component<Props, State> {
               <Row>
                 <Col span={24}>计划开播：{APP.fn.formatDate(detail.liveAnticipatedStartTime) || ''}</Col>
               </Row>
-              <Row>
+              <Row hidden={[50, 60, 90].indexOf(detail.liveStatus || 0) === -1}>
                 <Col span={24}>直播时间：{[(APP.fn.formatDate(detail.liveStartTime) || '--'), (APP.fn.formatDate(detail.liveEndTime) || '--')].join(' 至 ')}</Col>
                 {/* <Col span={24}>结束时间：{APP.fn.formatDate(detail.liveAnticipatedStartTime)}</Col> */}
               </Row>
@@ -197,18 +218,7 @@ class Main extends React.Component<Props, State> {
           </div>
         </If>
         <If condition={type === 2}>
-          <div className={classNames(styles.statistics)}>
-            {
-              statistics.map((item, index) => {
-                return (
-                  <div key={index} className={styles['statistics-item']}>
-                    <div className={styles['statistics-item-result']}>{item.value}</div>
-                    <div className={styles['statistics-item-label']}>{item.label}</div>
-                  </div>
-                )
-              })
-            }
-          </div>
+          <Statistics dataSource={statistics} />
           <div className='mt10'>
             注：数据统计或有1小时的延迟
           </div>
@@ -217,6 +227,7 @@ class Main extends React.Component<Props, State> {
           </div>
         </If>
         <If condition={type === 3}>
+          <If condition={detail.liveStatus === 50}><Statistics className='mb10' dataSource={statistics} /></If>
           <div>
             审核原因：
           </div>

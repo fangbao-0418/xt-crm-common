@@ -47,11 +47,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select', label: '直播状态',
         options: [
           {label: '直播中', value: 90},
+          {label: '即将开始', value: 80},
           {label: '待审核', value: 10},
           {label: '已结束', value: 60},
           {label: '待开播', value: 70},
           {label: '已过期', value: 30},
-          {label: '禁播', value: 40},
+          {label: '预告禁播', value: 40},
+          {label: '运营停播', value: 50},
           {label: '未过审', value: 20}
         ]
       },
