@@ -4,6 +4,7 @@ import { baseHost, env as apiEnv } from '../baseHost'
 export const serverMapper: any = {
   ulive: {
     dev: 'https://dailylive-center.hzxituan.com',
+    // dev: 'https://test01live-center.hzxituan.com',
     test1: 'https://test01live-center.hzxituan.com',
     test2: 'https://test01live-center.hzxituan.com',
     pre: 'https://test01live-center.hzxituan.com',

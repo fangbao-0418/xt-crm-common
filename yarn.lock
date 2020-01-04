@@ -14996,6 +14996,11 @@ verror@1.6.0:
   dependencies:
     extsprintf "1.2.0"
 
+viewerjs@^1.5.0:
+  version "1.5.0"
+  resolved "http://192.168.20.8:802/viewerjs/-/viewerjs-1.5.0.tgz#debea9492189fa41223cc567de915d79435899d0"
+  integrity sha1-3r6pSSGJ+kEiPMVn3pFdeUNYmdA=
+
 vinyl-fs@^0.3.0:
   version "0.3.14"
   resolved "http://192.168.20.8:802/vinyl-fs/-/vinyl-fs-0.3.14.tgz#9a6851ce1cac1c1cea5fe86c0931d620c2cfa9e6"

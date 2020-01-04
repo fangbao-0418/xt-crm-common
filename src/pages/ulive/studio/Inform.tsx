@@ -10,12 +10,14 @@ import Image from '@/components/Image'
 import CloseDown from './components/CloseDown'
 import * as api from './api'
 import { withRouter, RouteComponentProps } from 'react-router'
+import Viewer from 'viewerjs'
 interface Props extends AlertComponentProps, RouteComponentProps<{id: string}>{}
 interface State {
   detail?: UliveStudio.ItemProps
 }
 class Main extends React.Component<Props, State> {
   public form: FormInstance
+  public viewer: Viewer
   public id = this.props.match.params.id
   public columns: ColumnProps<any>[] = [
     {
@@ -46,10 +48,12 @@ class Main extends React.Component<Props, State> {
       render: (text) => {
         const arr: string[] = text.split(',')
         return (
-          <div>
+          <div
+            onClick={this.initViewer.bind(this)}
+          >
             {
               arr.map((item, index) => {
-                return <span key={index} style={{margin: '0 2px'}}><Image src={item} width={40} height={40} /></span>
+                return <span data-index={index} key={index} style={{margin: '0 2px'}}><Image onClick={undefined} src={item} width={40} height={40} /></span>
               })
             }
           </div>
@@ -70,6 +74,17 @@ class Main extends React.Component<Props, State> {
   }
   public componentDidMount () {
     this.fetchData()
+  }
+  public initViewer (e: any) {
+    const el  = e.currentTarget
+    // const el = document.querySelector<any>('.viewer-crust')
+    const index = e.target.parentNode.dataset.index || 0
+    if (this.viewer) {
+      this.viewer.destroy()
+      // this.viewer = undefined
+    }
+    this.viewer = new Viewer(el)
+    this.viewer.view(index)
   }
   public fetchData () {
     api.fetchPlanInfo(this.id).then((res) => {
@@ -170,6 +185,7 @@ class Main extends React.Component<Props, State> {
           </Form>
         </div>
         <List
+          className='viewer-crust'
           processPayload={(payload) => {
             return {
               ...payload,
