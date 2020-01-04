@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+import moment from 'moment';
 
 type PlainObj = {
   [key: string]: any;
@@ -10,21 +11,53 @@ interface RuleVO {
   ruleVO: PlainObj;
 }
 
+const initialValue = { baseVO: {}, ruleVO: {}}
+
+/** 满减条件 */
+const parseFaceValue = (faceValue: string | null) => {
+  let discountConditions: number | undefined
+  let discountPrice: number | undefined
+  let faceValueArr = (faceValue || '').split(':')
+  if (faceValueArr.length === 2) {
+    [discountConditions, discountPrice] = faceValueArr.map((val: string) => val ? +val / 100 : 0)
+  }
+  return { discountConditions, discountPrice }
+}
+
 /** 优惠券详情响应 */
-export function couponDetailResponse({ baseVO, ruleVO }: BaseVO & RuleVO) {
+export function couponDetailResponse(res: BaseVO & RuleVO) {
+  const { baseVO, ruleVO } = res || initialValue
+  const { discountConditions, discountPrice } = parseFaceValue(ruleVO.faceValue)
+
+  let useTimeRange: any[] | undefined
+  let availableDays: number | undefined
+  if (ruleVO.useTimeType === 1) {
+    availableDays = parseFloat(ruleVO.useTimeValue) 
+    availableDays = isNaN(availableDays) ? undefined : + availableDays
+  } else if (ruleVO.useTimeType === 0) {
+    const useTimeArr = (ruleVO.useTimeValue || '').split(',')
+    // 指定时间段
+    useTimeRange = useTimeArr.map((v: any) => moment(v))
+  }
+
   return {
     name: baseVO.name,
     inventory: baseVO.inventory,
-    useTimeType: baseVO.useTimeType,
     description: baseVO.description,
     remark: baseVO.remark,
     receivePattern: baseVO.receivePattern,
     avlRange: ruleVO.avlRange,
     useSill: ruleVO.useSill,
-    // discountConditions:
-    // discountPrice:
-    // receiveTime:
-    showFlag: ruleVO.showFlag
+    discountConditions,
+    discountPrice,
+    startReceiveTime: ruleVO.startReceiveTime,
+    overReceiveTime: ruleVO.overReceiveTime,
+    showFlag: ruleVO.showFlag,
+    useTimeType: ruleVO.useTimeType,
+    useTimeRange,
+    availableDays,
+    restrictNum: ruleVO.restrictNum,
+    dailyRestrict: ruleVO.dailyRestrict
   };
 }
 
@@ -58,8 +91,8 @@ const getExcludeValues = (vals: any) => {
 };
 
 const getFaceValue = (vals: any) => {
-  vals.discountConditions = new Decimal(vals.discountConditions).mul(100).toNumber();
-  vals.discountPrice = new Decimal(vals.discountPrice).mul(100).toNumber();
+  vals.discountConditions = new Decimal(vals.discountConditions || 0).mul(100).toNumber();
+  vals.discountPrice = new Decimal(vals.discountPrice || 0).mul(100).toNumber();
   console.log(`${vals.discountConditions}:${vals.discountPrice}`);
   switch (vals.useSill) {
     case 0:
@@ -85,21 +118,9 @@ const getReceiveRestrictValues = (vals: any) => {
   }
 };
 
-const getPlatformRestrictValues = (vals: any) => {
-  console.log('platformType=>', vals.platformType);
-  // 不限制
-  if (vals.platformType === 0) {
-    return 'all';
-  }
-  // 选择平台
-  else {
-    return vals.platformRestrictValues.join(',');
-  }
-};
+const getPlatformRestrictValues = (vals: any) => vals.platformType === 0 ? 'all' : vals.platformRestrictValues.join(',')
 
-const getDailyRestrict = (vals: any) => {
-  return vals.dailyRestrictChecked ? vals.dailyRestrict : '';
-};
+const getDailyRestrict = (vals: any) => vals.dailyRestrictChecked ? vals.dailyRestrict : ''
 
 const getUseTimeValue = (vals: any) => {
   if (vals.useTimeType === 0) {
@@ -112,9 +133,6 @@ const getUseTimeValue = (vals: any) => {
 
 /** 优惠券详情入参 */
 export function couponDetailParams(params: any) {
-  const [startReceiveTime, overReceiveTime] = Array.isArray(params.receiveTime)
-    ? params.receiveTime.map((v: any) => v && v.valueOf())
-    : [];
   return {
     baseVO: {
       // 名称
@@ -145,9 +163,9 @@ export function couponDetailParams(params: any) {
       // 每日限领
       dailyRestrict: getDailyRestrict(params),
       // 开始领取时间
-      startReceiveTime,
+      startReceiveTime: params.startReceiveTime,
       // 结束领取时间
-      overReceiveTime,
+      overReceiveTime: params.overReceiveTime,
       receivePattern: params.receivePattern ? 1 : 0,
       // 商详显示
       showFlag: params.receivePattern ? 0 : params.showFlag,

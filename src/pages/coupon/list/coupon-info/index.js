@@ -51,7 +51,7 @@ const formRef = {
   },
   // 使用时间不可选
   useTimeTypeDisabledDate(current) {
-    const receiveTime = this.current.getFieldValue('receiveTime')
+    const receiveTime = this.getFieldValue('receiveTime')
     return (
       current &&
       current <
@@ -63,20 +63,7 @@ const formRef = {
   }
 }
 
-class CouponInfo extends React.Component {
-  // const [dailyRestrictChecked, setDailyRestrictChecked] = useState(false);
-  // const [receiveRestrictValues, setReceiveRestrictValues] = useState([]);
-  // const [platformRestrictValues, setPlatformRestrictValues] = useState([]);
-  // const [availableDays, setAvailableDays] = useState('');
-  // const [useTimeRange, setUseTimeRange] = useState('');
-  // const [treeData, setTreeData] = useState([]);
-  // const [excludeProduct, setExcludeProduct] = useState([]);
-  // const [activityList, setActivityList] = useState([]);
-  // const [chosenProduct, setChosenProduct] = useState([]);
-  // const [productSelectorVisible, setProductSelectorVisible] = useState(false);
-  // const [excludeProductSelectorVisible, setExcludeProductSelectorVisible] = useState(false);
-  // const [activitySelectorVisible, setActivitySelectorVisible] = useState(false);
-  
+class CouponInfo extends React.Component {  
   constructor(props) {
     super(props)
     this.state = {
@@ -91,7 +78,8 @@ class CouponInfo extends React.Component {
       chosenProduct: [],
       productSelectorVisible: false,
       excludeProductSelectorVisible: false,
-      activitySelectorVisible: false
+      activitySelectorVisible: false,
+      receivePattern: false
     }
   } 
 
@@ -115,8 +103,9 @@ class CouponInfo extends React.Component {
   fetchData = async () => {
     const { id } = parseQuery();
     if (id) {
-      const detail = await getCouponDetail(id);
-      const vals = adapter.couponDetailResponse(detail);
+      const detail = await getCouponDetail(id) || {}
+      const vals = adapter.couponDetailResponse(detail)
+      this.setState(vals)
       formRef.setFieldsValue(vals);
     }
   }
@@ -253,7 +242,7 @@ class CouponInfo extends React.Component {
   // 领取时间校验
   receiveTimeValidator = (rule, value = [], callback) => {
     const { useTimeRange } = this.state
-    if (value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
+    if (useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
       callback('领取起始时间必须小于等于使用起始时间');
     } else {
       callback();
@@ -271,7 +260,9 @@ class CouponInfo extends React.Component {
       availableDays,
       receiveRestrictValues,
       dailyRestrictChecked,
-      platformRestrictValues
+      platformRestrictValues,
+      receivePattern,
+      useTimeRange
     } = this.state
     return (
       <Card>
@@ -305,6 +296,11 @@ class CouponInfo extends React.Component {
           }
           config={defaultConfig}
           namespace='coupon'
+          rangeMap={{
+            receiveTime: {
+              fields: ['startReceiveTime', 'overReceiveTime']
+            }
+          }}
           addonAfter={(
             <FormItem {...formItemLayout}>
               <Button type="primary" onClick={this.handleSave}>
@@ -569,6 +565,9 @@ class CouponInfo extends React.Component {
                 validator: this.receiveTimeValidator
               }]
             }}
+            controlProps={{
+              showTime: true
+            }}
           />
           <FormItem
             name='useTimeType'
@@ -581,6 +580,7 @@ class CouponInfo extends React.Component {
                     hideDisabledOptions: true
                   }}
                   format='YYYY-MM-DD HH:mm:ss'
+                  value={useTimeRange}
                   onChange={date => this.setState({useTimeRange: date})}
                 />
               ),
@@ -602,17 +602,32 @@ class CouponInfo extends React.Component {
             }]}
           />
           <FormItem
-            verifiable
-            name='recipientLimit'
-            addonAfter={(
-              <If condition={formRef.getFieldValue('recipientLimit') === 1}>
-                <Checkbox.Group
-                  options={useIdentityOptions}
-                  value={receiveRestrictValues}
-                  onChange={this.onUseIdentityChange}
-                />
-              </If>
-            )}
+            label='领取人限制'
+            inner={(form) => {
+              return (
+                <>
+                  {form.getFieldDecorator('recipientLimit', {
+                    rules: [{
+                      required: true,
+                      message: '请选择领取人限制'
+                    }]
+                  })(
+                    <Radio.Group>
+                      <Radio className='block-radio' value={0}>不限制</Radio>
+                      <Radio className='block-radio' value={3}>平台未下单用户</Radio>
+                      <Radio className='block-radio' value={1}>指定身份可用</Radio>
+                    </Radio.Group>
+                  )}
+                  <If condition={formRef.getFieldValue('recipientLimit') === 1}>
+                    <Checkbox.Group
+                      options={useIdentityOptions}
+                      value={receiveRestrictValues}
+                      onChange={this.onUseIdentityChange}
+                    />
+                  </If>
+                </>
+              )
+            }}
           />
           <FormItem
             label='每人限领次数'
@@ -656,17 +671,29 @@ class CouponInfo extends React.Component {
             }}
           />
           <FormItem
-            name='platformType'
-            verifiable
-            addonAfter={(
-              <If condition={formRef.getFieldValue('platformType') === 1}>
-                <Checkbox.Group
-                  options={platformOptions}
-                  value={platformRestrictValues}
-                  onChange={this.onChangePlatform}
-                />
-              </If>
-            )}
+            label='使用平台'
+            required
+            inner={form => {
+              return (
+                <>
+                  {form.getFieldDecorator('platformType')(
+                    <Radio.Group>
+                      <Radio className='block-radio' value={0}>不限制</Radio>
+                      <Radio className='block-radio' value={1}>选择平台</Radio>
+                    </Radio.Group>
+                  )}
+                  <If condition={formRef.getFieldValue('platformType') === 1}>
+                    <div>
+                      <Checkbox.Group
+                        options={platformOptions}
+                        value={platformRestrictValues}
+                        onChange={this.onChangePlatform}
+                      />
+                    </div>
+                  </If>
+                </>
+              )
+            }}
           />
           <FormItem
             label='发券控制'
@@ -674,7 +701,12 @@ class CouponInfo extends React.Component {
               return (
                 <>
                   {form.getFieldDecorator('receivePattern')(
-                    <Checkbox>仅支持手动发券</Checkbox>
+                    <Checkbox
+                      checked={receivePattern}
+                      onChange={e => this.setState({ receivePattern: e.target.checked })}
+                    >
+                      仅支持手动发券
+                    </Checkbox>
                   )}
                   <div
                     style={{ color: '#999' }}
@@ -685,7 +717,7 @@ class CouponInfo extends React.Component {
               )
             }}
           />
-          <If condition={!formRef.getFieldValue('receivePattern')}>
+          <If condition={!receivePattern}>
             <FormItem name='showFlag' verifiable/>
           </If>
           <FormItem name='description' />

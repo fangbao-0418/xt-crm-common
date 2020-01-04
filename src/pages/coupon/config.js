@@ -267,43 +267,6 @@ export const defaultConfig = {
         }]
       }
     },
-    recipientLimit: {
-      label: '领取人限制',
-      type: 'radio',
-      options: [{
-        label: '不限制',
-        value: 0
-      }, {
-        label: '平台未下单用户',
-        value: 3
-      }, {
-        label: '指定身份可用',
-        value: 1
-      }],
-      fieldDecoratorOptions: {
-        rules: [{
-          required: true,
-          message: '请选择领取人限制'
-        }]
-      }
-    },
-    platformType: {
-      label: '使用平台',
-      type: 'radio',
-      options: [{
-        label: '不限制',
-        value: 0
-      }, {
-        label: '选择平台',
-        value: 1
-      }],
-      fieldDecoratorOptions: {
-        rules: [{
-          required: true,
-          message: '请选择使用平台'
-        }]
-      }
-    },
     showFlag: {
       type: 'radio',
       label: '商详显示',
