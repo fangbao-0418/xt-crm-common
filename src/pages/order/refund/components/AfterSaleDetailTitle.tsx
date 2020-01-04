@@ -56,11 +56,11 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             <h3 style={{ margin: 0 }}>
               <span>售后单编号：{orderServerVO.orderCode}</span>
               <span className="ml20">售后状态：{orderServerVO.refundStatusStr}</span>
-              {enumRefundStatus.Operating === orderServerVO.refundStatus && expirationClose && (
+              {/* {enumRefundStatus.Operating === orderServerVO.refundStatus && expirationClose && (
                 <span className='ml20' style={{ color: 'red' }}>
                   售后关闭倒计时：<Countdown value={expirationClose} />
                 </span>
-              )}
+              )} */}
               {/* {enumRefundStatus.OperatingOfGoods === orderServerVO.refundStatus && (
                 <span className='ml20' style={{ color: 'red' }}>
                   自动确认倒计时：<Countdown value={24 * 3600} />
