@@ -5,6 +5,7 @@ import { view as Layout } from './components/layout'
 import { view as Login } from './pages/login'
 import Loadable from './util/loadable'
 import { connect } from 'react-redux'
+import "./assets/styles/common.scss";
 
 const { get } = APP.http
 const Home = Loadable(() => import('./pages/home'))
