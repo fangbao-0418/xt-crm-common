@@ -29,7 +29,8 @@ interface RangeVOItem {
 function getActivityList(data: RangeVOItem[]) {
   return data.map((item: RangeVOItem) => ({
     id: item.id,
-    title: item.name
+    title: item.name,
+    ...item
   }))
 }
 
