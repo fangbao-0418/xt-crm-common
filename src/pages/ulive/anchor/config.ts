@@ -45,6 +45,9 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       },
       status: {
         type: 'select', label: '状态',
+        fieldDecoratorOptions: {
+          initialValue: 0
+        },
         options: [
           {label: '黑名单主播', value: 1},
           {label: '正常', value: 0}
