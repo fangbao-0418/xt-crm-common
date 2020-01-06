@@ -75,13 +75,13 @@ export function couponDetailResponse(res: Record<DataType, Description>) {
   const { baseVO, ruleVO } = res || initialValue
   const { discountConditions, discountPrice } = parseFaceValue(ruleVO.faceValue)
 
-  let useTimeRange: any[] | undefined
+  let useTimeRange: any[] = []
   let availableDays: number | undefined
   if (ruleVO.useTimeType === 1) {
     availableDays = parseFloat(ruleVO.useTimeValue) 
     availableDays = isNaN(availableDays) ? undefined : + availableDays
   } else if (ruleVO.useTimeType === 0) {
-    const useTimeArr = (ruleVO.useTimeValue || '').split(',')
+    const useTimeArr = (ruleVO.useTimeValue || '').split(',').map((num: string) => +num)
     // 指定时间段
     useTimeRange = useTimeArr.map((v: any) => moment(v))
   }
@@ -113,6 +113,8 @@ export function couponDetailResponse(res: Record<DataType, Description>) {
     activityList,
     categorys
   } = translate(res.ruleVO)
+
+  console.log('useTimeRange ---------------------', useTimeRange)
   return {
     name: baseVO.name,
     inventory: baseVO.inventory,
@@ -202,7 +204,7 @@ const getReceiveRestrictValues = (vals: any) => {
 
 const getPlatformRestrictValues = (vals: any) => vals.platformType === 0 ? 'all' : vals.platformRestrictValues.join(',')
 
-const getDailyRestrict = (vals: any) => vals.dailyRestrictChecked ? vals.dailyRestrict : ''
+const getDailyRestrict = (vals: any) => vals.dailyRestrictChecked ? vals.dailyRestrict : null
 
 const getUseTimeValue = (vals: any) => {
   if (vals.useTimeType === 0) {
