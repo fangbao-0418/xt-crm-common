@@ -15,26 +15,26 @@ export const actColumns = (data = []) => {
     {
       title: '开始时间',
       dataIndex: 'startTime',
-      render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
+      render: text => <>{text ? DateFns.format(text, 'YYYY-MM-DD HH:mm:ss') : '-'}</>,
     },
     {
       title: '结束时间',
       dataIndex: 'endTime',
-      render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
+      render: text => <>{text ? DateFns.format(text, 'YYYY-MM-DD HH:mm:ss') : '-'}</>,
     },
     {
       title: '活动类型',
       dataIndex: 'type',
       render: text => (
         <>
-          {activityType.getValue(text)}
+          {text ? activityType.getValue(text) : '-'}
         </>
       ),
     },
     {
       title: '活动状态',
       dataIndex: 'status',
-      render: text => <>{text === 0 ? '关闭' : '开启'}</>,
+      render: text => <>{text !== undefined ? (text === 0 ? '关闭' : '开启') : '-'}</>,
     }
   ]
 };

@@ -1,17 +1,17 @@
-import React from 'react';
-import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio } from 'antd';
-import { formItemLayout } from '@/config';
-import { getCouponDetail } from '@/pages/coupon/api';
-import { platformOptions, useIdentityOptions } from '../../config';
-import { getCategoryList, saveCouponInfo } from '@/pages/coupon/api';
-import { actColumns } from '@/components/activity-selector/config';
-import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components';
-import { unionArray, parseQuery } from '@/util/utils';
-import * as adapter from '../../adapter';
+import React from 'react'
+import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio } from 'antd'
+import { formItemLayout } from '@/config'
+import { getCouponDetail } from '@/pages/coupon/api'
+import { platformOptions, useIdentityOptions } from '../../config'
+import { getCategoryList, saveCouponInfo } from '@/pages/coupon/api'
+import { actColumns } from '@/components/activity-selector/config'
+import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components'
+import { unionArray, parseQuery } from '@/util/utils'
+import * as adapter from '../../adapter'
 import { defaultConfig} from '../../config'
-import moment from 'moment';
+import moment from 'moment'
 import { If, Form, FormItem } from '@/packages/common/components'
-import './index.scss';
+import './index.scss'
 
 const formRef = {
   current: null,
@@ -27,26 +27,29 @@ const formRef = {
       return form.props.form.getFieldValue(name)
     }
   },
+  getValues() {
+    return formRef.current && formRef.current.getValues()
+  },
   validateFields(cb) {
-    this.current && this.current.props.form.validateFields(cb)
+    this.current && this.current.props.form.validateFields((err) => cb(err, this.getValues()))
   },
   validateConditions(rule, value = 0, callback) {
     if (value <= this.getFieldValue('discountPrice')) {
-      callback('订单使用门槛设置金额必须大于优惠面值');
+      callback('订单使用门槛设置金额必须大于优惠面值')
     } else {
-      callback();
+      callback()
     }
   },
   // 校验优惠券面值
   validateDiscountPrice(rule, value, callback) {
     if (this.getFieldValue('useSill') === 1) {
       if (value >= this.getFieldValue('discountConditions')) {
-        callback('优惠面值必须小于使用门槛设置金额');
+        callback('优惠面值必须小于使用门槛设置金额')
       } else {
-        callback();
+        callback()
       }
     } else {
-      callback();
+      callback()
     }
   },
   // 使用时间不可选
@@ -67,6 +70,7 @@ class CouponInfo extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      avlRange: undefined,
       dailyRestrictChecked: false,
       receiveRestrictValues: [],
       platformRestrictValues: [],
@@ -79,34 +83,36 @@ class CouponInfo extends React.Component {
       productSelectorVisible: false,
       excludeProductSelectorVisible: false,
       activitySelectorVisible: false,
-      receivePattern: false
+      receivePattern: 0
     }
   } 
 
   componentDidMount() {
-    this.getTreeData();
-    this.fetchData();
+    this.getTreeData()
+    this.fetchData()
   }
+
   async getTreeData() {
     const treeData = await getCategoryList()
     this.setState({ treeData })
   }
   // 使用平台 -> 选择平台
   onChangePlatform = checkedValue => {
-    const platformType = checkedValue.length === 4 ? 0 : 1;
-    formRef.setFieldsValue({ platformType });
+    const platformType = checkedValue.length === 4 ? 0 : 1
+    formRef.setFieldsValue({ platformType })
     this.setState({
       platformRestrictValues: checkedValue
     })
   }
 
   fetchData = async () => {
-    const { id } = parseQuery();
+    const { id } = parseQuery()
     if (id) {
       const detail = await getCouponDetail(id) || {}
       const vals = adapter.couponDetailResponse(detail)
+      console.log('优惠券详情=============================>', vals)
       this.setState(vals)
-      formRef.setFieldsValue(vals);
+      formRef.setFieldsValue(vals)
     }
   }
   getColumns = type => [
@@ -138,7 +144,7 @@ class CouponInfo extends React.Component {
             >
               移除
             </Button>
-          );
+          )
         } else {
           return (
             <Button
@@ -151,11 +157,11 @@ class CouponInfo extends React.Component {
               }}>
               移除
             </Button>
-          );
+          )
         }
       }
     }
-  ];
+  ]
 
   // 选择商品添加数据到已选择商品列表
   onProductSelectorChange = (selectedRowKeys, selectedRows) => {
@@ -186,8 +192,8 @@ class CouponInfo extends React.Component {
     this.setState({
       receiveRestrictValues: checkedValue
     })
-    formRef.setFieldsValue({ recipientLimit: checkedValue.length === 4 ? 0 : 1 });
-  };
+    formRef.setFieldsValue({ recipientLimit: checkedValue.length === 4 ? 0 : 1 })
+  }
   handleSave = () => {
     formRef.validateFields(async (err, vals) => {
       const {
@@ -197,7 +203,9 @@ class CouponInfo extends React.Component {
         chosenProduct,
         activityList,
         useTimeRange,
-        platformRestrictValues
+        platformRestrictValues,
+        receivePattern,
+        excludeProduct
       } = this.state
       if (vals.recipientLimit === 1 && receiveRestrictValues.length === 0) {
         return void message.error('请选择指定身份')
@@ -226,15 +234,17 @@ class CouponInfo extends React.Component {
           useTimeRange,
           availableDays,
           platformRestrictValues,
-          receiveRestrictValues
-        });
+          receiveRestrictValues,
+          receivePattern,
+          excludeProduct
+        })
         if (res) {
-          message.success('新增优惠券成功');
+          message.success('新增优惠券成功')
           APP.history.goBack()
         }
       }
-    });
-  };
+    })
+  }
 
   handleCancel = () => {
     APP.history.goBack()
@@ -243,13 +253,14 @@ class CouponInfo extends React.Component {
   receiveTimeValidator = (rule, value = [], callback) => {
     const { useTimeRange } = this.state
     if (useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
-      callback('领取起始时间必须小于等于使用起始时间');
+      callback('领取起始时间必须小于等于使用起始时间')
     } else {
-      callback();
+      callback()
     }
   }
   render() {
     const {
+      avlRange,
       productSelectorVisible,
       excludeProductSelectorVisible,
       activitySelectorVisible,
@@ -331,7 +342,12 @@ class CouponInfo extends React.Component {
                         message: '请选择适用范围'
                       }]
                     })(
-                      <Radio.Group>
+                      <Radio.Group
+                        onChange={e => {
+                          console.log('value =>', e.target.value)
+                          this.setState({ avlRange: e.target.value })
+                        }}
+                      >
                         <Radio className='block-radio' value={0}>
                           全场通用
                         </Radio>
@@ -340,7 +356,7 @@ class CouponInfo extends React.Component {
                         </Radio>
                         <Radio className='block-radio' value={2}>
                           指定商品{' '}
-                          {formRef.avlRange === 2 && (
+                          {avlRange === 2 && (
                             <Button type='link' onClick={() => {
                               this.setState({
                                 productSelectorVisible: true
@@ -352,7 +368,7 @@ class CouponInfo extends React.Component {
                         </Radio>
                         <Radio className='block-radio' value={4}>
                           指定活动{' '}
-                          {formRef.avlRange === 4 && (
+                          {avlRange === 4 && (
                             <Button type='link' onClick={() => {
                               this.setState({
                                 activitySelectorVisible: true
@@ -365,7 +381,7 @@ class CouponInfo extends React.Component {
                       </Radio.Group>
                     )
                   }
-                  <If condition={formRef.avlRange !== 2}>
+                  <If condition={avlRange !== 2}>
                     <div>
                       <Button type='link' onClick={() => {
                         this.setState({
@@ -380,9 +396,10 @@ class CouponInfo extends React.Component {
               )
             }}
           />
-          <If condition={formRef.avlRange === 1}>
+          <If condition={avlRange === 1}>
             <FormItem
               label='选择类目'
+              required
               inner={(form) => {
                 return form.getFieldDecorator('categorys', {
                   rules: [{
@@ -390,25 +407,14 @@ class CouponInfo extends React.Component {
                     message: '请选择类目'
                   }]
                 })(
-                <ProductTreeSelect
-                  treeData={treeData}
-                />)
-              }}
-            />
-          </If>
-          <If condition={formRef.avlRange === 1}>
-            <FormItem
-              label='选择类目'
-              inner={form => {
-                return form.getFieldDecorator('categorys', {
-                  rules: [{ required: true, message: '请选择类目' }]
-                })(
-                  <ProductTreeSelect treeData={treeData} />
+                  <ProductTreeSelect
+                    treeData={treeData}
+                  />
                 )
               }}
             />
           </If>
-          <If condition={formRef.avlRange !== 2 && excludeProduct.length > 0}>
+          <If condition={avlRange !== 2 && excludeProduct.length > 0}>
             <FormItem label='已排除商品'>
               <Table
                 pagination={false}
@@ -418,7 +424,7 @@ class CouponInfo extends React.Component {
               />
             </FormItem>
           </If>
-          <If condition={formRef.avlRange === 2 && chosenProduct.length > 0}>
+          <If condition={avlRange === 2 && chosenProduct.length > 0}>
             <FormItem label='已选择商品'>
               <Table
                 pagination={false}
@@ -428,7 +434,7 @@ class CouponInfo extends React.Component {
               />
             </FormItem>
           </If>
-          <If condition={formRef.avlRange === 4 && activityList.length > 0}>
+          <If condition={avlRange === 4 && activityList.length > 0}>
             <FormItem label='已选择活动'>
               <Table
                 pagination={false}
@@ -458,6 +464,7 @@ class CouponInfo extends React.Component {
           <FormItem
             type='radio'
             label='使用门槛'
+            required
             fieldDecoratorOptions={{
               initialValue: 1,
               rules: [{
@@ -527,6 +534,7 @@ class CouponInfo extends React.Component {
           />
           <FormItem
             label='发放总量'
+            required
             inner={(form) => {
               return (
                 <>
@@ -603,6 +611,7 @@ class CouponInfo extends React.Component {
           />
           <FormItem
             label='领取人限制'
+            required
             inner={(form) => {
               return (
                 <>
@@ -635,37 +644,39 @@ class CouponInfo extends React.Component {
             inner={(form) => {
               return (
                 <>
-                  <Row type='flex'>
-                    <Col>限领</Col>
-                    <Col className='ml10 short-input'>
-                      {form.getFieldDecorator('restrictNum', {
-                        rules: [{
-                          required: true,
-                          message: '请输入每人限领次数'
-                        }]
-                      })(
-                        <InputNumber
-                          placeholder='最多10'
-                          min={1}
-                          max={10}
-                        />
-                      )}
-                    </Col>
-                    <Col className='ml10'>张</Col>
-                  </Row>
-                  <Row type='flex'>
-                    <Checkbox
-                      checked={dailyRestrictChecked}
-                      onChange={e => this.setState({ dailyRestrictChecked: e.target.checked})}
-                    />
-                    <Row type='flex'>
-                      <Col className='ml10'>每日限领</Col>
-                      <Col className='ml10 short-input'>
-                        {form.getFieldDecorator('dailyRestrict')(<InputNumber placeholder='最多10' min={1} max={10} />)}
-                      </Col>
-                      <Col className='ml10'>张</Col>
-                    </Row>
-                  </Row>
+                  <span>限领</span>
+                  <span className='ml10 short-input'>
+                    {form.getFieldDecorator('restrictNum', {
+                      rules: [{
+                        required: true,
+                        message: '请输入每人限领次数'
+                      }]
+                    })(
+                      <InputNumber
+                        placeholder='最多10'
+                        min={1}
+                        max={10}
+                      />
+                    )}
+                  </span>
+                  <span className='ml10'>张</span>
+                </>
+              )
+            }}
+          />
+          <FormItem
+            inner={(form) => {
+              return (
+                <>
+                  <Checkbox
+                    checked={dailyRestrictChecked}
+                    onChange={e => this.setState({ dailyRestrictChecked: e.target.checked})}
+                  />
+                  <span className='ml10'>每日限领</span>
+                  <span className='ml10 short-input'>
+                    {form.getFieldDecorator('dailyRestrict')(<InputNumber placeholder='最多10' min={1} max={10} />)}
+                  </span>
+                  <span className='ml10'>张</span>
                 </>
               )
             }}
@@ -695,28 +706,19 @@ class CouponInfo extends React.Component {
               )
             }}
           />
-          <FormItem
-            label='发券控制'
-            inner={form => {
-              return (
-                <>
-                  {form.getFieldDecorator('receivePattern')(
-                    <Checkbox
-                      checked={receivePattern}
-                      onChange={e => this.setState({ receivePattern: e.target.checked })}
-                    >
-                      仅支持手动发券
-                    </Checkbox>
-                  )}
-                  <div
-                    style={{ color: '#999' }}
-                  >
-                    勾选后无法在商品详情和专题显示，只支持批量发券
-                  </div>
-                </>
-              )
-            }}
-          />
+          <FormItem label='发券控制'>
+            <Checkbox
+              checked={receivePattern}
+              onChange={e => this.setState({ receivePattern: e.target.checked })}
+            >
+              仅支持手动发券
+            </Checkbox>
+            <div
+              style={{ color: '#999' }}
+            >
+              勾选后无法在商品详情和专题显示，只支持批量发券
+            </div>
+          </FormItem>
           <If condition={!receivePattern}>
             <FormItem name='showFlag' verifiable/>
           </If>

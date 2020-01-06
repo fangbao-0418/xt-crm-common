@@ -1,15 +1,12 @@
 import { Decimal } from 'decimal.js';
 import moment from 'moment';
+import { uniq } from 'lodash';
 
-type PlainObj = {
+type Description = {
   [key: string]: any;
-};
-interface BaseVO {
-  baseVO: PlainObj;
 }
-interface RuleVO {
-  ruleVO: PlainObj;
-}
+
+type DataType = 'baseVO' | 'ruleVO'
 
 const initialValue = { baseVO: {}, ruleVO: {}}
 
@@ -24,8 +21,56 @@ const parseFaceValue = (faceValue: string | null) => {
   return { discountConditions, discountPrice }
 }
 
+interface RangeVOItem {
+  id: number;
+  name: string;
+}
+// 指定活动表格数据
+function getActivityList(data: RangeVOItem[]) {
+  return data.map((item: RangeVOItem) => ({
+    id: item.id,
+    title: item.name
+  }))
+}
+
+// 已选择商品/排除商品
+function getProductList(data: RangeVOItem[]) {
+  return (data || []).map((item: RangeVOItem) => ({
+    id: item.id,
+    productName: item.name
+  }))
+}
+
+// 获取类目
+function getCategorys(data: RangeVOItem[]) {
+  return data.map((item: RangeVOItem) => String(item.id))
+}
+
+function translate({ rangeVOList, avlRange }: Description) {
+  let categorys: any[] = [];
+  let chosenProduct: any[] = [];
+  let activityList: any[] = [];
+  if (Array.isArray(!rangeVOList)) rangeVOList = [];
+  switch(avlRange) {
+    case 1:
+      categorys = getCategorys(rangeVOList);
+      break;
+    case 2:
+      chosenProduct = getProductList(rangeVOList);
+      break;
+    case 4:
+      activityList = getActivityList(rangeVOList);
+      break;
+  }
+  return {
+    categorys,
+    chosenProduct,
+    activityList
+  }
+}
+
 /** 优惠券详情响应 */
-export function couponDetailResponse(res: BaseVO & RuleVO) {
+export function couponDetailResponse(res: Record<DataType, Description>) {
   const { baseVO, ruleVO } = res || initialValue
   const { discountConditions, discountPrice } = parseFaceValue(ruleVO.faceValue)
 
@@ -40,12 +85,39 @@ export function couponDetailResponse(res: BaseVO & RuleVO) {
     useTimeRange = useTimeArr.map((v: any) => moment(v))
   }
 
+  let platformType: number
+  let platformRestrictValues: any[] = []
+  if (ruleVO.platformRestrict === 'all') {
+    platformType = 0
+  } else {
+    platformType = 1
+    platformRestrictValues = (ruleVO.platformRestrict || '').split(',')
+  }
+
+  let recipientLimit: number | undefined
+  let receiveRestrictValues: any[] = []
+  if (ruleVO.receiveRestrict === 'all') {
+    recipientLimit = 0
+  } else {
+    const arr = (ruleVO.receiveRestrict || '').split(',').map((num: string) => +num)
+    if (arr.length > 1) {
+      recipientLimit = 1
+      receiveRestrictValues = arr
+    } else {
+      recipientLimit = isNaN(+ruleVO.receiveRestrict) ? undefined : +ruleVO.receiveRestrict
+    }
+  }
+  const {
+    chosenProduct,
+    activityList,
+    categorys
+  } = translate(res.ruleVO)
   return {
     name: baseVO.name,
     inventory: baseVO.inventory,
     description: baseVO.description,
     remark: baseVO.remark,
-    receivePattern: baseVO.receivePattern,
+    receivePattern: ruleVO.receivePattern === 1,
     avlRange: ruleVO.avlRange,
     useSill: ruleVO.useSill,
     discountConditions,
@@ -57,8 +129,17 @@ export function couponDetailResponse(res: BaseVO & RuleVO) {
     useTimeRange,
     availableDays,
     restrictNum: ruleVO.restrictNum,
-    dailyRestrict: ruleVO.dailyRestrict
-  };
+    dailyRestrict: ruleVO.dailyRestrict,
+    dailyRestrictChecked: !!ruleVO.dailyRestrict,
+    platformType,
+    platformRestrictValues,
+    recipientLimit,
+    receiveRestrictValues,
+    excludeProduct: getProductList(ruleVO.excludeProductVOList),
+    chosenProduct,
+    activityList,
+    categorys
+  }
 }
 
 // 根据适用范围获取范围值
@@ -112,7 +193,7 @@ const getReceiveRestrictValues = (vals: any) => {
     let result = vals.receiveRestrictValues.includes(30)
       ? [...vals.receiveRestrictValues, 40]
       : vals.receiveRestrictValues;
-    return result.join(',');
+    return uniq(result).join(',');
   } else {
     return vals.recipientLimit;
   }
