@@ -1,10 +1,11 @@
 import React from 'react'
 import { Row, Col, Radio, Input } from 'antd'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import If from '@/packages/common/components/if'
 import styles from './style.module.sass'
 import CouponList from '../coupon/List'
-import SkuList from '../shop/SkuList'
 import ActivityList from '../activity/List'
+import ShopList from '../shop/List'
 type ValueProps = Marketing.PresentContentValueProps
 interface Props {
   name: string
@@ -18,22 +19,24 @@ interface Props {
   giftCanEdit?: boolean
   /** ladder为阶梯规则 */
   type?: 'ladder'
+  /** 类型 商品或是活动 */
+  shopType: 'shop' | 'activity'
 }
 interface State {
   value: ValueProps
 }
-const defaultValue: ValueProps = {
-  type: 0,
-  chooseCount: 1,
-  stageCount: 1,
-  couponList: [],
-  skuList: [],
-  spuIds: {},
-  spuList: []
-}
 /** 赠送内容 */
 class Main extends React.Component<Props, State> {
-  public value: ValueProps =  Object.assign({}, defaultValue, this.props.value)
+  public defaultValue: ValueProps = {
+    type: 0,
+    chooseCount: 1,
+    stageCount: 1,
+    couponList: [],
+    skuList: [],
+    spuIds: {},
+    spuList: []
+  }
+  public value: ValueProps =  Object.assign({}, this.defaultValue, this.props.value)
   public state: State = {
     value: this.value
   }
@@ -41,7 +44,8 @@ class Main extends React.Component<Props, State> {
     this.onChange()
   }
   public componentWillReceiveProps (props: Props) {
-    const value = Object.assign({}, defaultValue, props.value)
+    const value = Object.assign({}, this.defaultValue, props.value)
+    // console.log(value, 'componentWillReceiveProps')
     this.setState({
       value
     })
@@ -67,11 +71,13 @@ class Main extends React.Component<Props, State> {
     let disabledFields = type === 1 ? ['stageCount', 'chooseCount', 'type', 'activityList'] : ['stageCount', 'chooseCount', 'type', 'couponList'] 
     disabledFields = disabled && !giftCanEdit ? ['stageCount', 'chooseCount', 'type', 'activityList', 'couponList'] : disabledFields
     disabledFields = disabled ? disabledFields : []
+    const shopType = this.props.shopType
     return (
       <div>
         <FormItem
           style={{
-            display: 'inline-block'
+            display: 'inline-block',
+            marginBottom: 0
           }}
           labelCol={{span: 24}}
           wrapperCol={{span: 0}}
@@ -81,7 +87,9 @@ class Main extends React.Component<Props, State> {
         </FormItem>
         <FormItem
           style={{
-            display: 'inline-block'
+            display: 'inline-block',
+            marginBottom: 0,
+            width: 40
           }}
           labelCol={{span: 0}}
           required
@@ -91,7 +99,8 @@ class Main extends React.Component<Props, State> {
         <FormItem
           style={{
             display: 'inline-block',
-            marginLeft: 10
+            marginLeft: 10,
+            marginBottom: 0
           }}
           fieldDecoratorOptions={{
             initialValue: value.stageCount
@@ -128,7 +137,10 @@ class Main extends React.Component<Props, State> {
           <Col span={20}>
             <FormItem
               labelCol={{span: 0}}
-              style={{display: 'inline-block'}}
+              style={{
+                display: 'inline-block',
+                marginBottom: 0
+              }}
             >
               <Radio
                 disabled={disabledFields.indexOf('type') > -1}
@@ -146,6 +158,7 @@ class Main extends React.Component<Props, State> {
               style={{
                 display: 'inline-block',
                 width: 140,
+                marginBottom: 0
               }}
               labelCol={{span: 0}}
               wrapperCol={{span: 14}}
@@ -180,36 +193,41 @@ class Main extends React.Component<Props, State> {
                     className='href'
                     onClick={() => {
                       if (this.props.onSelect) {
-                        this.props.onSelect(2)
+                        this.props.onSelect(shopType === 'activity' ? 0 : 2)
                       }
                     }}
                   >
-                    请选择商品
+                    请选择{shopType === 'activity' ? '活动' : '商品'}
                   </span>
                 )}
               </div>
-              <ActivityList
-                disabled={disabledFields.indexOf('activityList') > -1}
-                value={value}
-                onChange={(value) => {
-                  this.value = value
-                  this.onChange()
-                }}
-              />
+              <If condition={shopType === 'activity'} >
+                <ActivityList
+                  disabled={disabledFields.indexOf('activityList') > -1}
+                  value={value}
+                  onChange={(value) => {
+                    this.value = value
+                    this.onChange()
+                  }}
+                />
+              </If>
+              <If condition={shopType === 'shop'} >
+                <ShopList
+                  value={value}
+                  onChange={(value) => {
+                    // this.value.skuList = value
+                    // const spuIds: {[spuId: number]: number[]} = {}
+                    // value.map((item) => {
+                    //   spuIds[item.productId] = spuIds[item.productId] || []
+                    //   spuIds[item.productId].push(item.skuId)
+                    // })
+                    // this.value.spuIds = spuIds
+                    this.value = value
+                    this.onChange()
+                  }}
+                />
+              </If>
             </div>
-            {/* <SkuList
-              value={skuList}
-              onChange={(value) => {
-                this.value.skuList = value
-                const spuIds: {[spuId: number]: number[]} = {}
-                value.map((item) => {
-                  spuIds[item.productId] = spuIds[item.productId] || []
-                  spuIds[item.productId].push(item.skuId)
-                })
-                this.value.spuIds = spuIds
-                this.onChange()
-              }}
-            /> */}
             <FormItem
               labelCol={{span: 0}}
             >

@@ -7,6 +7,7 @@ import ActivityList from '../components/activity/List'
 import ActivitySelectModal, { ActivityModalInstance } from '../components/activity/SelectModal'
 import CouponSelectModal, { CouponModalInstance } from '../components/coupon/SelectModal'
 import ShopSelectModal, { ShopModalInstance } from '../components/shop/SelectModal'
+import ShopList from '../components/shop/List'
 import PresentContent from '../components/present-content'
 import Ladder from '../components/Ladder'
 import * as api from '../api'
@@ -27,6 +28,8 @@ interface State {
   mainRefType: 0 | 1
 }
 class Main extends React.Component<Props, State> {
+  /** 赠品内容是否是商品 0-否(活动), 1-是，旧数据都是0，新增数据都是1 */
+  public giftRefType: 'shop' | 'activity' = 'activity'
   public activityModalInstance: ActivityModalInstance
   public couponModalInstance: CouponModalInstance
   public shopModalInstance: ShopModalInstance
@@ -55,6 +58,7 @@ class Main extends React.Component<Props, State> {
     if (this.id !== '-1') {
       this.fetchData()
     } else {
+      this.giftRefType = 'shop'
       this.setState({
         disabled: false,
         canSave: true
@@ -64,7 +68,7 @@ class Main extends React.Component<Props, State> {
   }
   public initFormValue () {
     this.form.setValues({
-      mainRefType: 0,
+      mainRefType: 1,
       rank: {
         ladderRule: 0,
         ruleList: [{}]
@@ -75,15 +79,18 @@ class Main extends React.Component<Props, State> {
   public fetchData () {
     api.fetchActivityDetail(this.id).then((res: any) => {
       if (res) {
-        this.form.setValues(res)
+        // res.giftRefType = 0
+        this.giftRefType = res.giftRefType === 1 ? 'shop' : 'activity'
         this.setState({
-          mainRefType: res.mainRefType || 0,
+          mainRefType: res.mainRefType,
           strategyType: res.ruleType,
           values: res,
           ladderCount: res.rank.ruleList.length,
           disabled: (this.type !== 'edit' || [1].indexOf(res.discountsStatus) === -1),
           canSave: (this.type === 'edit' && [1, 2].indexOf(res.discountsStatus) > -1),
           giftCanEdit: this.type === 'edit'
+        }, () => {
+          this.form.setValues(res)
         })
       }
     }, (e) => {
@@ -139,7 +146,7 @@ class Main extends React.Component<Props, State> {
         return false
       }
     }
-    console.log(data, arr, ruleType, 'arr')
+    // console.log(data, arr, ruleType, 'arr')
     const index = arr.findIndex((item, index) => {
       if (ruleType !== 0) {
         type = `第${nums[index]}阶梯规则`
@@ -154,8 +161,11 @@ class Main extends React.Component<Props, State> {
         if (!item.chooseCount) {
           message = '请输入实物商品件数'
           return true
-        } else if (!item.activityList || item.activityList && item.activityList.length === 0) {
+        } else if (this.giftRefType === 'activity' && (!item.activityList || (item.activityList && item.activityList.length === 0))) {
           message = '请选择活动商品'
+          return true
+        } else if (this.giftRefType === 'shop' && (!item.spuList || (item.spuList && item.spuList.length === 0))) {
+          message = '请选择商品'
           return true
         }
       } else if (item.type === 1) {
@@ -177,6 +187,7 @@ class Main extends React.Component<Props, State> {
   }
   public save () {
     const value = this.form.getValues()
+    console.log(value, 'save')
     this.form.props.form.validateFields((err) => {
       if (err) {
         APP.error('请检查输入项是否正确')
@@ -221,6 +232,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
+    console.log(this.giftRefType, '------------')
     return (
       <div
         className={styles.detail}
@@ -323,7 +335,7 @@ class Main extends React.Component<Props, State> {
                     type='radio'
                     options={[{label: '指定活动列表', value: 0}]}
                     labelCol={{span: 0}}
-                    disabled={this.state.disabled}
+                    disabled={this.state.disabled || this.giftRefType === 'activity'}
                   >
                   </FormItem>
                   <If condition={this.state.mainRefType === 0}>
@@ -373,7 +385,7 @@ class Main extends React.Component<Props, State> {
                   options={[{label: '指定商品', value: 1}]}
                   labelCol={{span: 0}}
                   style={{marginBottom: 0}}
-                  disabled={this.state.disabled}
+                  disabled={this.state.disabled || this.giftRefType === 'activity'}
                 >
                 </FormItem>
                 <If condition={this.state.mainRefType === 1}>
@@ -382,7 +394,7 @@ class Main extends React.Component<Props, State> {
                       <span
                         className='href'
                         onClick={() => {
-                          this.presentContentSelectedKey = 'activity'
+                          this.presentContentSelectedKey = 'product'
                           this.select(2)
                         }}
                       >
@@ -390,6 +402,31 @@ class Main extends React.Component<Props, State> {
                       </span>
                     )}
                   </div>
+                  <FormItem
+                    labelCol={{span: 0}}
+                    inner={(form) => {
+                      return form.getFieldDecorator(
+                        'product',
+                        {
+                          rules: [
+                            {
+                              validator: (rules, value, cb) => {
+                                if (value && value.spuList && value.spuList.length > 0) {
+                                  cb()
+                                } else {
+                                  cb('请选择活动商品')
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      )(
+                        <ShopList
+                          disabled={this.state.disabled}
+                        />
+                      )
+                    }}
+                  />
                 </If>
               </Col>
             </Row>
@@ -428,6 +465,7 @@ class Main extends React.Component<Props, State> {
                     return (
                       form.getFieldDecorator('rank.ruleList')(
                         <Ladder
+                          type={this.giftRefType}
                           disabled={this.state.disabled}
                           giftCanEdit={this.state.values.strategyType === 1 && this.state.giftCanEdit}
                           name='rank.ruleList'
@@ -455,6 +493,7 @@ class Main extends React.Component<Props, State> {
                         const values = this.form.getValues()
                         let value = values.rank.ruleList
                         value.push({})
+                        console.log(value, 'value --------')
                         this.form.setValues({
                           'rank.ruleList': value
                         })
@@ -481,6 +520,7 @@ class Main extends React.Component<Props, State> {
                   inner={(form) => {
                     return form.getFieldDecorator('loop')(
                       <PresentContent
+                        shopType={this.giftRefType}
                         disabled={this.state.disabled}
                         giftCanEdit={this.state.values.strategyType === 0 && this.state.giftCanEdit}
                         name='loop'
@@ -579,28 +619,28 @@ class Main extends React.Component<Props, State> {
             this.shopModalInstance = ref
           }}
           onOk={(rows) => {
-            // const values = this.form.getValues()
-            // const field = this.presentContentSelectedKey
-            // if (field === 'rank.ruleList') {
-            //   let value = values.rank.ruleList
-            //   value[this.currentSelectIndex] = {
-            //     ...value[this.currentSelectIndex],
-            //     activityList: rows
-            //   }
-            //   this.form.setValues({
-            //     [field]: value
-            //   })
-            // } else {
-            //   let value = {
-            //     ...values[field],
-            //     activityList: rows
-            //   }
-            //   console.log(value, 'value')
-            //   this.form.setValues({
-            //     [field]: value
-            //   })
-            // }
-            // this.activityModalInstance.hide()
+            const values = this.form.getValues()
+            const field = this.presentContentSelectedKey
+            if (field === 'rank.ruleList') {
+              let value = values.rank.ruleList
+              value[this.currentSelectIndex] = {
+                ...value[this.currentSelectIndex],
+                spuList: rows
+              }
+              this.form.setValues({
+                [field]: value
+              })
+            } else {
+              let value = {
+                ...values[field],
+                spuList: rows
+              }
+              console.log(value, 'value')
+              this.form.setValues({
+                [field]: value
+              })
+            }
+            this.shopModalInstance.hide()
           }}
         />
       </div>

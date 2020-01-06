@@ -68,7 +68,7 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: '库存',
-      dataIndex: 'stock',
+      dataIndex: 'inventory',
       width: 150,
       align: 'center',
       render: (text) => {
@@ -172,6 +172,7 @@ class Main extends React.Component<Props, State> {
     }
     this.fetchData()
     value = Object.assign({
+      spuList: [],
       skuList: [],
       spuIds: {}
     }, value)
@@ -195,7 +196,7 @@ class Main extends React.Component<Props, State> {
     }
     this.selectRows = value.spuList || this.selectRows
     this.setState({
-      selectedRowKeys: Object.keys(value.spuIds).map(val => Number(val)),
+      selectedRowKeys: (value && value.spuList || []).map((item) => item.id),
       spuSelectedRowKeys: value.spuIds,
       visible: true,
       type
@@ -316,7 +317,7 @@ class Main extends React.Component<Props, State> {
                     }
                   }}
                 /> */}
-                <FormItem
+                {/* <FormItem
                   label='状态'
                   name='status'
                   type='select'
@@ -324,7 +325,7 @@ class Main extends React.Component<Props, State> {
                     {label: '已上架', value: '0'},
                     {label: '已下架', value: '1'},
                   ]}
-                />
+                /> */}
                 {/* <FormItem
                   label='类目'
                   inner={(form) => {

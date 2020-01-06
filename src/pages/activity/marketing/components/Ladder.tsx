@@ -4,6 +4,8 @@ import Card from './card'
 import PresentContent from './present-content'
 type ValueProps = Marketing.PresentContentValueProps
 interface Props {
+  /** 类型 商品或是活动 */
+  type: 'shop' | 'activity'
   name: string
   value?: any[]
   onChange?: (value: ValueProps[]) => void
@@ -45,6 +47,7 @@ class Main extends React.Component<Props> {
             )}
           >
             <PresentContent
+              shopType={this.props.type}
               type='ladder'
               disabled={disabled}
               giftCanEdit={this.props.giftCanEdit}
