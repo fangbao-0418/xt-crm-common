@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Row, Col, Form, Table, Input, Button, Checkbox, message, InputNumber } from 'antd';
+import { Card, Row, Col, Form, Table, Input, Icon, Tooltip, Button, Checkbox, message, InputNumber } from 'antd';
 import { formatMoneyWithSign } from '../../helper';
 import { map } from 'lodash';
 import UploadView from '../../../components/upload';
@@ -259,6 +259,25 @@ class ActivityDetail extends React.Component {
           )
         ),
       },
+      {
+        title: (
+          <span>
+            仅倍数购买<Tooltip title="限制采购时spu最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
+          </span>
+        ),
+        dataIndex: 'isMultiple',
+        align: 'center',
+        render: (text, record, index) => {
+          return (
+            <Checkbox
+              checked={!!text}
+              onChange={e => {
+                this.handleChangeValue('isMultiple', index)(e.target.checked ? 1 : 0)
+              }}
+            />
+          )
+        }
+      }
     ];
 
     const { detailData, selectedRowKeys, sort, activityImage, newuserExclusive, memberExclusive, minBuy, maxBuy } = this.state;
@@ -310,8 +329,10 @@ class ActivityDetail extends React.Component {
           </Row>
           <Row style={{ marginTop: 20, height: 60 }}>
             <Col span={8}>
-              最少购买量:{' '}
-              <Input value={minBuy} style={{ width: 160 }} placeholder="请填写最少购买量" type="number" onChange={e => this.setState({ minBuy: e.target.value })}/>
+              <div>
+                最少购买量:{' '}
+                <Input value={minBuy} style={{ width: 160 }} placeholder="请填写最少购买量" type="number" onChange={e => this.setState({ minBuy: e.target.value })}/>
+              </div>
             </Col>
             <Col span={8}>
               最大购买量:{' '}
