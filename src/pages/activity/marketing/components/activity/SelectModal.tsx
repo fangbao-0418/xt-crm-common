@@ -17,7 +17,7 @@ interface Props {
   getInstance?: (ref: Main) => void
   onOk?: (rows: Marketing.ItemProps[]) => void
 }
-export type ShopModalInstance = Main
+export type ActivityModalInstance = Main
 interface PayloadProps {
   productId?: any
   productName?: string

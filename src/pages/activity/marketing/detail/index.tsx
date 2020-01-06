@@ -1,10 +1,12 @@
 import React from 'react'
+import If from '@/packages/common/components/if'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { Row, Col, Button } from 'antd'
 import { withRouter, RouteComponentProps } from 'react-router'
 import ActivityList from '../components/activity/List'
-import ActivitySelectModal, { ShopModalInstance } from '../components/activity/SelectModal'
+import ActivitySelectModal, { ActivityModalInstance } from '../components/activity/SelectModal'
 import CouponSelectModal, { CouponModalInstance } from '../components/coupon/SelectModal'
+import ShopSelectModal, { ShopModalInstance } from '../components/shop/SelectModal'
 import PresentContent from '../components/present-content'
 import Ladder from '../components/Ladder'
 import * as api from '../api'
@@ -21,10 +23,13 @@ interface State {
   giftCanEdit: boolean
   /** strategyType 阶梯规则:1 循环规则:0 */
   strategyType: 0 | 1
+  /** 活动商品类型 0-活动，1-商品 */
+  mainRefType: 0 | 1
 }
 class Main extends React.Component<Props, State> {
-  public ActivityModalInstance: ShopModalInstance
+  public activityModalInstance: ActivityModalInstance
   public couponModalInstance: CouponModalInstance
+  public shopModalInstance: ShopModalInstance
   public form: FormInstance
   /** 当前选择赠品内容key */
   public presentContentSelectedKey: string
@@ -34,6 +39,7 @@ class Main extends React.Component<Props, State> {
   public type: 'view' | 'edit' = this.props.match.params.type
   public state: State = {
     ladderCount: 0,
+    mainRefType: 0,
     loading: false,
     disabled: true,
     canSave: false,
@@ -58,6 +64,7 @@ class Main extends React.Component<Props, State> {
   }
   public initFormValue () {
     this.form.setValues({
+      mainRefType: 0,
       rank: {
         ladderRule: 0,
         ruleList: [{}]
@@ -70,6 +77,7 @@ class Main extends React.Component<Props, State> {
       if (res) {
         this.form.setValues(res)
         this.setState({
+          mainRefType: res.mainRefType || 0,
           strategyType: res.ruleType,
           values: res,
           ladderCount: res.rank.ruleList.length,
@@ -85,8 +93,8 @@ class Main extends React.Component<Props, State> {
       })
     })
   }
-  /** 选择 0-商品、1-优惠券 */
-  public select (type: 0 | 1) {
+  /** 选择 0-活动、1-优惠券、2-商品 */
+  public select (type: 0 | 1 | 2) {
     const values = this.form.getValues()
     const field = this.presentContentSelectedKey
     let value
@@ -96,9 +104,12 @@ class Main extends React.Component<Props, State> {
       value = values[this.presentContentSelectedKey]
     }
     if (type === 0) {
-      this.ActivityModalInstance.open(value)
-    } else {
+      this.activityModalInstance.open(value)
+    } else if (type === 1) {
       this.couponModalInstance.open(value)
+    } else {
+      console.log('-----')
+      this.shopModalInstance.open(value)
     }
   }
   /** 校验规则内容 返回true校验通过 */
@@ -217,9 +228,9 @@ class Main extends React.Component<Props, State> {
         <Form
           disabled={this.state.disabled}
           onChange={(field, value, values) => {
-            if (field === 'strategyType') {
-              this.setState({
-                strategyType: value
+            if (field && ['strategyType', 'mainRefType'].indexOf(field) > -1 ) {
+              this.setState<any>({
+                [field]: value
               })
             }
           }}
@@ -307,46 +318,79 @@ class Main extends React.Component<Props, State> {
               <Col span={20}>
                 <div>
                   <FormItem
+                    style={{marginBottom: 0}}
+                    name='mainRefType'
+                    type='radio'
+                    options={[{label: '指定活动列表', value: 0}]}
                     labelCol={{span: 0}}
+                    disabled={this.state.disabled}
                   >
+                  </FormItem>
+                  <If condition={this.state.mainRefType === 0}>
+                    <div>
+                      {!this.state.disabled && (
+                        <span
+                          className='href'
+                          onClick={() => {
+                            this.presentContentSelectedKey = 'activity'
+                            this.select(0)
+                          }}
+                        >
+                          请选择活动
+                        </span>
+                      )}
+                    </div>
+                    <FormItem
+                      labelCol={{span: 0}}
+                      inner={(form) => {
+                        return form.getFieldDecorator(
+                          'activity',
+                          {
+                            rules: [
+                              {
+                                validator: (rules, value, cb) => {
+                                  if (value && value.activityList && value.activityList.length > 0) {
+                                    cb()
+                                  } else {
+                                    cb('请选择活动商品')
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        )(
+                          <ActivityList
+                            disabled={this.state.disabled}
+                          />
+                        )
+                      }}
+                    />
+                  </If>
+                </div>
+                <FormItem
+                  name='mainRefType'
+                  type='radio'
+                  options={[{label: '指定商品', value: 1}]}
+                  labelCol={{span: 0}}
+                  style={{marginBottom: 0}}
+                  disabled={this.state.disabled}
+                >
+                </FormItem>
+                <If condition={this.state.mainRefType === 1}>
+                  <div>
                     {!this.state.disabled && (
                       <span
                         className='href'
                         onClick={() => {
                           this.presentContentSelectedKey = 'activity'
-                          this.select(0)
+                          this.select(2)
                         }}
                       >
-                        请选择活动
+                        请选择商品
                       </span>
                     )}
-                  </FormItem>
-                </div>
-                <FormItem
-                  labelCol={{span: 0}}
-                  inner={(form) => {
-                    return form.getFieldDecorator(
-                      'activity',
-                      {
-                        rules: [
-                          {
-                            validator: (rules, value, cb) => {
-                              if (value && value.activityList && value.activityList.length > 0) {
-                                cb()
-                              } else {
-                                cb('请选择活动商品')
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    )(
-                      <ActivityList
-                        disabled={this.state.disabled}
-                      />
-                    )
-                  }}
-                />
+                  </div>
+                </If>
               </Col>
             </Row>
           </div>
@@ -477,7 +521,7 @@ class Main extends React.Component<Props, State> {
         </Form>
         <ActivitySelectModal
           getInstance={(ref) => {
-            this.ActivityModalInstance = ref
+            this.activityModalInstance = ref
           }}
           onOk={(rows) => {
             const values = this.form.getValues()
@@ -501,7 +545,7 @@ class Main extends React.Component<Props, State> {
                 [field]: value
               })
             }
-            this.ActivityModalInstance.hide()
+            this.activityModalInstance.hide()
           }}
         />
         <CouponSelectModal
@@ -528,6 +572,35 @@ class Main extends React.Component<Props, State> {
                 }
               })
             }
+          }}
+        />
+        <ShopSelectModal
+          getInstance={(ref) => {
+            this.shopModalInstance = ref
+          }}
+          onOk={(rows) => {
+            // const values = this.form.getValues()
+            // const field = this.presentContentSelectedKey
+            // if (field === 'rank.ruleList') {
+            //   let value = values.rank.ruleList
+            //   value[this.currentSelectIndex] = {
+            //     ...value[this.currentSelectIndex],
+            //     activityList: rows
+            //   }
+            //   this.form.setValues({
+            //     [field]: value
+            //   })
+            // } else {
+            //   let value = {
+            //     ...values[field],
+            //     activityList: rows
+            //   }
+            //   console.log(value, 'value')
+            //   this.form.setValues({
+            //     [field]: value
+            //   })
+            // }
+            // this.activityModalInstance.hide()
           }}
         />
       </div>

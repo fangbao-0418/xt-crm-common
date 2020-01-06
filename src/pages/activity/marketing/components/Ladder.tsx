@@ -7,7 +7,8 @@ interface Props {
   name: string
   value?: any[]
   onChange?: (value: ValueProps[]) => void
-  onSelect?: (type: 0 | 1, index: number) => void
+  /** 选择0-活动、1-优惠券、2-商品 */
+  onSelect?: (type: 0 | 1 | 2, index: number) => void
   disabled?: boolean
   giftCanEdit?: boolean
 }

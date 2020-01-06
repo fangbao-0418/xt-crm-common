@@ -5,6 +5,7 @@ import * as api from '../../api'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import CategoryCascader from '@/components/category-cascader'
 import SkuTable from './SkuTable'
+import Image from '@/components/Image'
 import styles from './style.module.sass'
 interface State {
   visible: boolean
@@ -18,7 +19,7 @@ interface State {
   type: 'sku' | 'spu'
 }
 interface Props {
-  getInstance?: (ref?: Main) => void
+  getInstance?: (ref: Main) => void
   onOk?: (rows: Shop.ShopItemProps[]) => void
 }
 export type ShopModalInstance = Main
@@ -39,19 +40,19 @@ class Main extends React.Component<Props, State> {
   public form: FormInstance
   public columns: ColumnProps<Shop.ShopItemProps>[] = [
     {
-      title: 'ID',
+      title: '商品ID',
       dataIndex: 'id',
-      width: 50
+      width: 150
     },
     {
-      title: '商品',
-      width: 240,
+      title: '商品名称',
+      // width: 240,
       dataIndex: 'productName',
       render: (text, record) => {
         return (
           <div className={styles.shop}>
             <div className={styles['shop-img']}>
-              <img
+              <Image
                 src={record.coverUrl}
                 width={80}
                 height={80}
@@ -59,57 +60,66 @@ class Main extends React.Component<Props, State> {
             </div>
             <div className={styles['shop-right']} >
               <div>{record.productName}</div>
-              <div>库存：{record.stock}</div>
+              {/* <div>库存：{record.stock}</div> */}
             </div>
           </div>
         )
       }
     },
     {
-      title: '类目',
-      width: 100,
-      dataIndex: 'productCategoryAllName'
-    },
-    {
-      title: '价格',
-      width: 0,
-      render: (text, record) => {
-        let skuSelectedRowKeys = this.state.spuSelectedRowKeys[record.id] || []
-        return (
-          <SkuTable
-            key={record.id}
-            dataSource={record.skuList}
-            allSelected={this.state.selectedRowKeys.indexOf(record.id) > -1}
-            selectedRowKeys={skuSelectedRowKeys}
-            onSelect={(rowKeys, rows = []) => {
-              let { selectedRowKeys } = this.state
-              const index = this.selectRows.findIndex((item) => item.id === record.id)
-              const isExist = index > -1
-              this.state.spuSelectedRowKeys[record.id] =  rowKeys
-              if (rowKeys.length > 0) {
-                if (!isExist) {
-                  selectedRowKeys = selectedRowKeys.concat([record.id])
-                  this.selectRows = this.selectRows.concat([{
-                    ...record,
-                    skuList: rows
-                  }])
-                } else {
-                  this.selectRows[index].skuList = rows
-                }
-              } else if (rowKeys.length === 0 && isExist) {
-                selectedRowKeys = selectedRowKeys.filter((id) => id !== record.id)
-                this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
-                delete this.state.spuSelectedRowKeys[record.id]
-              }
-              this.setState({
-                selectedRowKeys: selectedRowKeys,
-                spuSelectedRowKeys: this.state.spuSelectedRowKeys
-              })
-            }}
-          />
-        )
+      title: '库存',
+      dataIndex: 'stock',
+      width: 150,
+      align: 'center',
+      render: (text) => {
+        return text
       }
     }
+    // {
+    //   title: '类目',
+    //   width: 100,
+    //   dataIndex: 'productCategoryAllName'
+    // },
+    // {
+    //   title: '价格',
+    //   width: 0,
+    //   render: (text, record) => {
+    //     let skuSelectedRowKeys = this.state.spuSelectedRowKeys[record.id] || []
+    //     return (
+    //       <SkuTable
+    //         key={record.id}
+    //         dataSource={record.skuList}
+    //         allSelected={this.state.selectedRowKeys.indexOf(record.id) > -1}
+    //         selectedRowKeys={skuSelectedRowKeys}
+    //         onSelect={(rowKeys, rows = []) => {
+    //           let { selectedRowKeys } = this.state
+    //           const index = this.selectRows.findIndex((item) => item.id === record.id)
+    //           const isExist = index > -1
+    //           this.state.spuSelectedRowKeys[record.id] =  rowKeys
+    //           if (rowKeys.length > 0) {
+    //             if (!isExist) {
+    //               selectedRowKeys = selectedRowKeys.concat([record.id])
+    //               this.selectRows = this.selectRows.concat([{
+    //                 ...record,
+    //                 skuList: rows
+    //               }])
+    //             } else {
+    //               this.selectRows[index].skuList = rows
+    //             }
+    //           } else if (rowKeys.length === 0 && isExist) {
+    //             selectedRowKeys = selectedRowKeys.filter((id) => id !== record.id)
+    //             this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
+    //             delete this.state.spuSelectedRowKeys[record.id]
+    //           }
+    //           this.setState({
+    //             selectedRowKeys: selectedRowKeys,
+    //             spuSelectedRowKeys: this.state.spuSelectedRowKeys
+    //           })
+    //         }}
+    //       />
+    //     )
+    //   }
+    // }
   ]
   public state: State = {
     visible: false,
@@ -315,7 +325,7 @@ class Main extends React.Component<Props, State> {
                     {label: '已下架', value: '1'},
                   ]}
                 />
-                <FormItem
+                {/* <FormItem
                   label='类目'
                   inner={(form) => {
                     return form.getFieldDecorator('categoryIds')(
@@ -323,7 +333,7 @@ class Main extends React.Component<Props, State> {
                     )
                   }}
                 >
-                </FormItem>
+                </FormItem> */}
                 <FormItem
                 >
                   <Button

@@ -8,8 +8,8 @@ import ActivityList from '../activity/List'
 type ValueProps = Marketing.PresentContentValueProps
 interface Props {
   name: string
-  /** 选择0 商品、1 优惠券 */
-  onSelect?: (type: 0 | 1) => void
+  /** 选择0-活动、1-优惠券、2-商品 */
+  onSelect?: (type: 0 | 1 | 2) => void
   value?: ValueProps
   onChange?: (value?: ValueProps) => void
   disabled?: boolean
@@ -180,11 +180,11 @@ class Main extends React.Component<Props, State> {
                     className='href'
                     onClick={() => {
                       if (this.props.onSelect) {
-                        this.props.onSelect(0)
+                        this.props.onSelect(2)
                       }
                     }}
                   >
-                    请选择活动
+                    请选择商品
                   </span>
                 )}
               </div>

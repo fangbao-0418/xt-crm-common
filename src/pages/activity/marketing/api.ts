@@ -55,7 +55,8 @@ export function fetchSelectShopList (payload: {
   page?: number
   pageSize?: number
 }) {
-	return get<PageProps<Shop.ShopItemProps>>(`/product/discountpromotion/list`, payload).then((res) => {
+  payload.status = 0
+	return post<PageProps<Shop.ShopItemProps>>(`/product/list`, payload).then((res) => {
     res.records =  (res.records || []).map((item) => {
       item.skuList = item.skuList || []
       item.skuList.map((val) => {
