@@ -147,7 +147,7 @@ export function couponDetailResponse(res: Record<DataType, Description>) {
 
 // 根据适用范围获取范围值
 const getAvlValues = (vals: any) => {
-  let result = '';
+  let result = ''
   switch (vals.avlRange) {
     case 0:
       break;
@@ -157,11 +157,11 @@ const getAvlValues = (vals: any) => {
       break;
     // 已选择商品id
     case 2:
-      result = Array.isArray(vals.chosenProduct) ? vals.chosenProduct.map((v: any) => v.id).join(',') : ''
+      result = Array.isArray(vals.chosenProduct) ? vals.chosenProduct.map((v: any) => v.id).join(',') : null
       break;
     // 已选择活动id
     case 4:
-      result = Array.isArray(vals.activityList) ? vals.activityList.map((v: any) => v.id).join(',') : ''
+      result = Array.isArray(vals.activityList) ? vals.activityList.map((v: any) => v.id).join(',') : null
       break;
     default:
       break;
@@ -170,8 +170,8 @@ const getAvlValues = (vals: any) => {
 };
 
 const getExcludeValues = (vals: any) => {
-  let avlRangeStr = Array.isArray(vals.excludeProduct) ? vals.excludeProduct.map((v: any) => v.id).join(',') : '';
-  return vals.avlRange !== 2 ? avlRangeStr : '';
+  let avlRangeStr = Array.isArray(vals.excludeProduct) ? vals.excludeProduct.map((v: any) => v.id).join(',') : null;
+  return vals.avlRange !== 2 ? avlRangeStr : null;
 };
 
 const getFaceValue = (vals: any) => {
