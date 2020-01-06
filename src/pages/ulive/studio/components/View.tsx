@@ -127,7 +127,7 @@ class Main extends React.Component<Props, State> {
           value: liveData.callOnUv
         },
         {
-          label: '点赞UV',
+          label: '点赞数',
           value: liveData.giveThumbsUpUv
         }
       ] : this.state.statistics
