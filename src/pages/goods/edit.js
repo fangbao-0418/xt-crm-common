@@ -760,7 +760,11 @@ class GoodsEdit extends React.Component {
               <DraggableUpload className={styles['goods-detail-draggable']} listNum={5} size={0.3} placeholder="上传商品图片" />
             )}
           </Form.Item>
-          <Form.Item label="banner图片" required={true}>
+          <Form.Item
+            label="banner图片"
+            required={true}
+            help={<span>(建议尺寸700*320，300kb内)</span>}
+          >
             {getFieldDecorator('bannerUrl', {
               rules: [
                 {
