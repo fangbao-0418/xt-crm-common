@@ -18,13 +18,14 @@ export function disabledDate (current: any, date: any) {
 /** 禁用选中时间 */
 export function disabledDateTime (current: any, date: any) {
   current = current || moment()
+  const y = date.getFullYear()
   const d = date.getDate()
   let h = date.getHours()
   let m = date.getMinutes()
   let s = date.getSeconds()
-  console.log(current.date(), current.hour(), current.minute(), '-----------')
-  /** 当选择日期大于日期时，选择小时不做限制 */
-  if (current.date() > d) {
+  console.log(current.year(), current.date(), current.hour(), current.minute(), '-----------')
+  /** 选择日期年大于年时或选择日期大于日期时, 时分秒不做限制 */
+  if (current.year() > y || current.date() > d) {
     h = 0,
     m = 0,
     s = 0
