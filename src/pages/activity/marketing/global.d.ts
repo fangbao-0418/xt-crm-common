@@ -90,6 +90,6 @@ declare namespace Marketing {
     /** 目标用户 40-管理员, 30-合伙人, 20-区长, 10-团长, 2-普通用户老用户, 1-普通用户新用户 */
     userScope?: any[]
     /** 赠品是否是商品 0-活动。1-商品，旧数据都是活动，新数据都是商品，参数不可改动 */
-    giftRefType: 0 | 1
+    giftRefType?: 0 | 1
   }
 }

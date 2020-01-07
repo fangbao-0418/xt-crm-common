@@ -230,6 +230,7 @@ class Main extends React.Component<Props, State> {
             </div>
             <FormItem
               labelCol={{span: 0}}
+              style={{marginBottom: 0}}
             >
               <Radio
                 disabled={disabledFields.indexOf('type') > -1}
