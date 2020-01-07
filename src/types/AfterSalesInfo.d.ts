@@ -19,6 +19,8 @@ declare module AfterSalesInfo {
     warehouseOperate: 10 | 20 | 30 | 60;
     /** 类型：0 默认CRM 1供应商 2 自营仓 */
     handleChannel: 0 | 1 | 2;
+    /** 物流备注 */
+    returnExpressRemark: string;
   }
   export interface CheckVO {
     amount: number;
