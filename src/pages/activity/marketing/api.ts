@@ -38,6 +38,7 @@ export const fetchActivityDetail = (id: any) => {
 
 /** 新增买赠活动 */
 export const addActivity = (payload: Marketing.FormDataProps) => {
+  payload.giftRefType = 1
   return newPost(`/promotion/addDiscounts`, adapter.handleFormData(payload))
 }
 
