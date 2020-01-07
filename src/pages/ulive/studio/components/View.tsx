@@ -128,7 +128,7 @@ class Main extends React.Component<Props, State> {
         },
         {
           label: '点赞数',
-          value: liveData.giveThumbsUpUv
+          value: liveData.giveThumbsUpPv
         }
       ] : this.state.statistics
       this.setState({

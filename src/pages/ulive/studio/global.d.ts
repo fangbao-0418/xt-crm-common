@@ -52,6 +52,8 @@ declare namespace UliveStudio {
     callOnUv: number
     /** 点赞UV */
     giveThumbsUpUv: number
+    /** 点赞PV */
+    giveThumbsUpPv: number
     /** 立即下单UV */
     immediatelyBuyUv: number
     /** 订单实际支付订单总数 */
