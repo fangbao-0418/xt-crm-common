@@ -156,6 +156,7 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('stock', text, record, index, dataSource, cb)(
             <InputNumber
               precision={0}
+              min={0}
               value={text}
               placeholder="请输入库存"
               onChange={cb('stock', record, index)}
@@ -492,6 +493,7 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('stockAlert', text, record, index, dataSource, cb)(
             <InputNumber
               precision={0}
+              min={0}
               value={text}
               placeholder="请输入警戒库存"
               onChange={cb('stockAlert', record, index)}
