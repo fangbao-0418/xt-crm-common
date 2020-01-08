@@ -3,6 +3,7 @@ import { Modal, Table, Button } from 'antd'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import * as api from '../../api'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import { getFieldsConfig } from '../../config'
 import CategoryCascader from '@/components/category-cascader'
 import styles from './style.module.sass'
 interface State {
@@ -32,7 +33,7 @@ class Main extends React.Component<Props, State> {
   public payload: PayloadProps = {
     page: 1,
     pageSize: 10,
-    excludTypes: [4, 5, 6, 7, 8, 9]
+    excludTypes: [3, 4, 5, 6, 7, 8, 9]
   }
   public selectRows: Marketing.ItemProps[] = []
   public form: FormInstance
@@ -195,6 +196,7 @@ class Main extends React.Component<Props, State> {
           <div className={styles['shop-select-modal']}>
             <div>
               <Form
+                config={getFieldsConfig()}
                 className='mb10'
                 layout='inline'
                 namespace='marketing'
