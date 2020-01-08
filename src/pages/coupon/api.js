@@ -1,4 +1,5 @@
 import { newPost, newGet, newPut, post, get } from '../../util/fetch';
+import * as adapter from './adapter';
 
 export function modifyCouponBaseInfo(data) {
   return newPut('/coupon/modify/couponBaseInfo', data);
@@ -43,7 +44,8 @@ export function getCouponlist(data) {
 
 // 新增优惠券
 export function saveCouponInfo(data) {
-  return newPost('/coupon/save/couponInfo', data)
+  const params = adapter.couponDetailParams(data)
+  return newPost('/coupon/save/couponInfo', params)
 }
 
 // 查询优惠券列表
