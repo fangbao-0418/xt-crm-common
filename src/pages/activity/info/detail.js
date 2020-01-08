@@ -6,6 +6,7 @@ import UploadView from '../../../components/upload';
 import { setPromotionAddSKu } from '../api';
 import Image from '../../../components/Image';
 import ArrowContain from '@/pages/goods/components/arrow-contain'
+import If from '@/packages/common/components/if'
 import { Decimal } from 'decimal.js';
 const FormItem = Form.Item;
 console.log('Image=>', Image)
@@ -138,7 +139,7 @@ class ActivityDetail extends React.Component {
       }
     });
     const params = {
-      isMultiple,
+      isMultiple: detailData.type === 9 ? isMultiple : 0,
       id: detailData.id,
       newuserExclusive,
       minBuy,
@@ -268,13 +269,32 @@ class ActivityDetail extends React.Component {
           </span>
         ),
         dataIndex: 'isMultiple',
+        style: {
+          display: 'none'
+        },
+        onHeaderCell: () => {
+          return {
+            style: {
+              display: this.state.detailData.type === 9 ? '' : 'none'
+            }
+          }
+        },
+        onCell: () => {
+          return {
+            style: {
+              display: this.state.detailData.type === 9 ? '' : 'none'
+            }
+          }
+        },
         align: 'center',
         render: (text, record, index) => {
           return (
             <Checkbox
               checked={!!text}
               onChange={e => {
-                this.handleChangeValue('isMultiple', index)(e.target.checked ? 1 : 0)
+                let isMultiple = e.target.checked ? 1 : 0
+                isMultiple = this.state.detailData.type === 9 ? isMultiple : 0
+                this.handleChangeValue('isMultiple', index)(isMultiple)
               }}
             />
           )
@@ -335,17 +355,19 @@ class ActivityDetail extends React.Component {
                 最少购买量:{' '}
                 <Input value={minBuy} style={{ width: 160 }} placeholder="请填写最少购买量" type="number" onChange={e => this.setState({ minBuy: e.target.value })}/>
               </div>
-              <div style={{marginTop: 40}}>
-                <span>
-                  仅倍数购买<Tooltip title="限制采购时spu最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
-                </span>
-                :&nbsp;
-                <Checkbox
-                  checked={!!isMultiple}
-                  style={{ width: 160 }}
-                  onChange={e => this.setState({ isMultiple: e.target.checked ? 1 : 0 })}
-                />
-              </div>
+              <If condition={detailData.type === 9}>
+                <div style={{marginTop: 40}}>
+                  <span>
+                    仅倍数购买<Tooltip title="限制采购时spu最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
+                  </span>
+                  :&nbsp;
+                  <Checkbox
+                    checked={!!isMultiple}
+                    style={{ width: 160 }}
+                    onChange={e => this.setState({ isMultiple: e.target.checked ? 1 : 0 })}
+                  />
+                </div>
+              </If>
             </Col>
             <Col span={8}>
               最大购买量:{' '}
