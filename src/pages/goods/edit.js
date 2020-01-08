@@ -406,8 +406,8 @@ class GoodsEdit extends React.Component {
         /** 推送至仓库中即为下架，详情和列表页状态反了 */
         vals.status =  status === undefined ? vals.status : status
         for (let item of skuAddList) {
-          if (!+item.marketPrice || !+item.costPrice || !+item.stock || !+item.salePrice || !+item.headPrice || !+item.areaMemberPrice || !+item.cityMemberPrice || !+item.managerMemberPrice) {
-            return void APP.error('市场价，成本价、库存、销售价、团长价、社区管理员价、城市合伙人价、公司管理员价必填且不能为0');
+          if (!+item.marketPrice || !+item.costPrice || !+item.salePrice || !+item.headPrice || !+item.areaMemberPrice || !+item.cityMemberPrice || !+item.managerMemberPrice) {
+            return void APP.error('市场价、成本价、销售价、团长价、社区管理员价、城市合伙人价、公司管理员价必填且不能为0');
           }
         }
         const params = {
