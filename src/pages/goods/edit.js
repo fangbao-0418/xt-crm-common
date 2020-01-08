@@ -15,9 +15,7 @@ import styles from './edit.module.scss'
 import DraggableUpload from './components/draggable-upload'
 export const FormItem = Form.Item
 const replaceHttpUrl = imgUrl => {
-  return imgUrl
-    .replace('https://assets.hzxituan.com/', '')
-    .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
+  return (imgUrl || '').replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
 };
 
 function barCodeValidator(rule, value, callback) {
