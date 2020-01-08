@@ -40,7 +40,7 @@ class Main extends React.Component<Props> {
         )
       }
     },
-    {title: '库存', dataIndex: 'inventory'},
+    {title: '库存', dataIndex: 'stock'},
     // {
     //   title: '商品状态',
     //   dataIndex: 'status',

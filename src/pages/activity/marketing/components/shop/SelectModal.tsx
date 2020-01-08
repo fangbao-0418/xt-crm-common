@@ -68,7 +68,7 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: '库存',
-      dataIndex: 'inventory',
+      dataIndex: 'stock',
       width: 150,
       align: 'center',
       render: (text) => {
