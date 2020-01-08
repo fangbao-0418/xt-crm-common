@@ -88,6 +88,7 @@ class ActivityDetail extends React.Component {
     this.setState({
       detailData: data,
       selectedRowKeys,
+      isMultiple: data.isMultiple,
       newuserExclusive: data.newuserExclusive,
       memberExclusive: data.memberExclusive,
       minBuy: data.minBuy,
@@ -118,7 +119,7 @@ class ActivityDetail extends React.Component {
   handleSave = () => {
     if (this.loading) return;
     this.loading = true;
-    const { detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
+    const { isMultiple, detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
     // if (activityImage.length === 0) {
     //   message.error('请上传活动商品图');
     //   this.loading = false;
@@ -137,6 +138,7 @@ class ActivityDetail extends React.Component {
       }
     });
     const params = {
+      isMultiple,
       id: detailData.id,
       newuserExclusive,
       minBuy,
@@ -280,7 +282,7 @@ class ActivityDetail extends React.Component {
       }
     ];
 
-    const { detailData, selectedRowKeys, sort, activityImage, newuserExclusive, memberExclusive, minBuy, maxBuy } = this.state;
+    const { isMultiple, detailData, selectedRowKeys, sort, activityImage, newuserExclusive, memberExclusive, minBuy, maxBuy } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
@@ -332,6 +334,17 @@ class ActivityDetail extends React.Component {
               <div>
                 最少购买量:{' '}
                 <Input value={minBuy} style={{ width: 160 }} placeholder="请填写最少购买量" type="number" onChange={e => this.setState({ minBuy: e.target.value })}/>
+              </div>
+              <div style={{marginTop: 40}}>
+                <span>
+                  仅倍数购买<Tooltip title="限制采购时spu最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
+                </span>
+                :&nbsp;
+                <Checkbox
+                  checked={!!isMultiple}
+                  style={{ width: 160 }}
+                  onChange={e => this.setState({ isMultiple: e.target.checked ? 1 : 0 })}
+                />
               </div>
             </Col>
             <Col span={8}>
