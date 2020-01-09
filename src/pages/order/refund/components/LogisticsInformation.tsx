@@ -27,7 +27,7 @@ const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
       <div>
         <h4>用户发货物流信息</h4>
         <Row>
-          <span>物流公司：{APP.constant.expressConfig[checkVO.returnExpressName]}</span>
+          <span>物流公司：{checkVO.returnExpressName}</span>
           <span className="ml20">
             物流单号：<span id="copy-text">{checkVO.returnExpressCode}</span>
           </span>
@@ -47,6 +47,7 @@ const LogisticsInformation: React.FC<Props> = ({ data }: Props) => {
             </>
           )}
         </Row>
+          <div>说明：{data.returnExpressRemark}</div>
       </div>
     </>: null
   );

@@ -37,6 +37,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>订单类型：{orderTypeConifg[String(orderInfoVO.orderType)]}</Col>
         <Col hidden={String(orderInfoVO.orderType) !== '70'} span={8}>清关完成时间：{!!orderInfoVO.customsClearanceTime && APP.fn.formatDate(orderInfoVO.customsClearanceTime)}</Col>
         <Col span={8}>订单来源：{orderInfoVO.platform}</Col>
+        <Col span={8}>供应商订单号：{orderInfoVO.storeOrderId}</Col>
         <Col span={8}>买家名称：{orderInfoVO.name}</Col>
         <Col span={8}>联系电话：{orderInfoVO.phone}</Col>
         <Col span={8}>实付金额: {formatMoneyWithSign(orderInfoVO.payMoney)}</Col>
