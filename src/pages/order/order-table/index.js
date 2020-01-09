@@ -444,7 +444,7 @@ class OrderList extends React.Component {
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
-                <Button type='link'>批量查询物流轨迹</Button>
+                <Button type='link' onClick={this.props.modal}>批量查询物流轨迹</Button>
                 <Button type="default" onClick={this.reset}>
                   清除条件
                 </Button>
