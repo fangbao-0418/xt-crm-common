@@ -40,7 +40,7 @@ class LogisticsTrack extends React.Component<LogisticsTrackProps, LogisticsTrack
         <Row className='mb10'>
           <span className='mr10'>快递公司选择</span>
           <ExpressCompanySelect
-            value={}
+            value={expressCompanyCode}
           />
         </Row>
         <TextArea
