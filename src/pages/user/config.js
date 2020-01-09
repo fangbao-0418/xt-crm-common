@@ -55,18 +55,3 @@ export const sourceArr = [
     value: '5'
   }
 ];
-
-export const lockedFormConfig = {
-  locked: {
-    phone: {
-      label: '手机号码'
-    },
-    eventCode: {
-      label: '事件类型'
-    },
-    timeRange: {
-      label: '时间范围',
-      type: 'rangepicker'
-    }
-  }
-};
