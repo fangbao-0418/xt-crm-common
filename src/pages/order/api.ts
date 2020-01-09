@@ -1,14 +1,15 @@
 import { post, exportFile, get, put, newPut, newPost, fetch } from '../../util/fetch';
 import { prefix } from '../../util/utils';
+import { batchExportRequest } from './adapter'
 const debug = false;
 var qs = require('qs');
-
-// 批量轨迹导出
-export function batchExport(payload: {
+export interface batchExportPayload {
   expressCompanyCode: string,
   expressNumbers: string
-}) {
-  return newPost('/expressTracking/batchExport', payload)
+}
+// 批量轨迹导出
+export function batchExport(payload: batchExportPayload) {
+  return newPost('/expressTracking/batchExport', batchExportRequest(payload))
 }
 
 // 订单售后校验团长等级是否会降级
