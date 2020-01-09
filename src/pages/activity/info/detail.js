@@ -265,7 +265,7 @@ class ActivityDetail extends React.Component {
       {
         title: (
           <span>
-            仅倍数购买<Tooltip title="限制采购时spu最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
+            仅倍数购买<Tooltip title="限制采购时sku最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
           </span>
         ),
         dataIndex: 'isMultiple',
