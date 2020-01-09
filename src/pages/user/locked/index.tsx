@@ -29,8 +29,7 @@ class Locked extends React.Component<{}, LockedState> {
       <ListPage
         rangeMap={{
           time: {
-            fields: ['startTime', 'endTime'],
-            format: 'YYYY-MM-DD HH:mm:ss'
+            fields: ['startTime', 'endTime']
           }
         }}
         formConfig={{}}
