@@ -1,4 +1,4 @@
-import { post, exportFile, get, put, newPut, newPost, fetch } from '../../util/fetch';
+import { post, exportFile, exportFileStream, get, put, newPut, newPost, fetch } from '../../util/fetch';
 import { prefix } from '../../util/utils';
 import { batchExportRequest } from './adapter'
 const debug = false;
@@ -9,7 +9,7 @@ export interface batchExportPayload {
 }
 // 批量轨迹导出
 export function batchExport(payload: batchExportPayload) {
-  return newPost('/expressTracking/batchExport', batchExportRequest(payload))
+  return exportFileStream('/expressTracking/batchExport', batchExportRequest(payload))
 }
 
 // 订单售后校验团长等级是否会降级

@@ -144,7 +144,7 @@ function param(json) {
 }
 
 // exportHelper
-export const exportFile = (url, data, config) => {
+export const exportFile = (url, data) => {
   // return new Promise((resolve, reject) => {
   //   window.open(prefix('') + url + '?' + formatData(data));
   //   resolve()
@@ -210,7 +210,67 @@ export const exportFile = (url, data, config) => {
       }
       return Promise.reject();
     });
-};
+}
+
+// 导出文件流
+export const exportFileStream = (url, data) => {
+  return axios({
+    url: prefix(url),
+    method: 'post',
+    data,
+    withCredentials: true,
+    headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
+    responseType: 'blob'
+  }).then(res => {
+    console.log('res=>', res);
+    const content = res.data
+    // const blob = new Blob([content])
+    // const fileName = '导出信息.xlsx'
+    // if ('download' in document.createElement('a')) { // 非IE下载
+    //   const elink = document.createElement('a')
+    //   elink.download = fileName
+    //   elink.style.display = 'none'
+    //   elink.href = URL.createObjectURL(blob)
+    //   document.body.appendChild(elink)
+    //   elink.click()
+    //   URL.revokeObjectURL(elink.href) // 释放URL 对象
+    //   document.body.removeChild(elink)
+    // } else { // IE10+下载
+    //   navigator.msSaveBlob(blob, fileName)
+    // }
+  }).catch(function(error) {
+    if (error.type === 'application/json') {
+      var reader = new FileReader();
+      reader.addEventListener('loadend', function() {
+        const obj = JSON.parse(reader.result);
+        message.error(obj.message);
+      });
+      return reader.readAsText(error);
+      
+    }
+    const httpCode = lodashGet(error, 'response.status');
+    if (httpCode === 401) {
+      message.error('未登录');
+      setTimeout(() => {
+        window.location = '/#/login';
+      }, 1500);
+      return Promise.reject();
+    }
+
+    // 公共错误处理
+    if (httpCode === 403) {
+      message.error('权限不足');
+    } else {
+      message.error(error.message || '内部错误，请等待响应...');
+    }
+    try {
+      window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+    } catch (e) {
+      console.log(e)
+    }
+    return Promise.reject();
+  })
+}
 
 const messageMap = {
   401: '未登录',
