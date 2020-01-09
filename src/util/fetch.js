@@ -134,7 +134,6 @@ export const newPut = (url, data, config) => {
 // }
 
 function param(json) {
-  console.log('json=>', json);
   if (!json) return '';
   let arr = Object.keys(json).map(key => {
     if (!json[key]) return '';
