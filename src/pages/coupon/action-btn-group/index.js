@@ -5,9 +5,9 @@ import emitter from '@/util/events'
 import { overReciveCoupon } from '../api';
 import './index.scss';
 const coupons = {
-  '0': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH'],
-  '1': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH'],
-  '2': ['VIEW']
+  '0': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH', 'COPY'],
+  '1': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH', 'COPY'],
+  '2': ['VIEW', 'COPY']
 }
 
 function ActionBtn({ keyCode, history, record, match }) {
@@ -41,10 +41,15 @@ function ActionBtn({ keyCode, history, record, match }) {
           Message.success('结束优惠券发放成功');
           emitter.emit('coupon.list.fetchData');
         }
-      },
-      onCancel() { }
+      }
     })
   }
+
+  const handleCopy = () => {
+    console.log('record =>', record)
+    APP.history.push(`/coupon/get/couponList/couponinfo?type=add&id=${record.id}`)
+  }
+  
   switch (keyCode) {
     case 'ISSUE_COUPON':
       return (
@@ -63,6 +68,8 @@ function ActionBtn({ keyCode, history, record, match }) {
       })}>编辑</Button>
     case 'FINISH':
       return <Button type="link" onClick={handleFinish}>结束</Button>
+    case 'COPY':
+      return <Button type="link" onClick={handleCopy}>复制</Button>
     default:
       return null;
   }
