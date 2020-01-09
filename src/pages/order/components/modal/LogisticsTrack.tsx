@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Modal, Input, Row, Button } from 'antd';
 import { batchExport } from '../../api';
+import moment from 'moment';
 import ExpressCompanySelect from '@/components/express-company-select';
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 const TextArea = Input.TextArea
 interface LogisticsTrackProps {
   visible?: boolean;
-  onCancel?: (e: React.MouseEvent<HTMLElement>) => void;
+  onCancel?: (e?: React.MouseEvent<HTMLElement>) => void;
 }
 
 /** 物流轨迹弹窗 */
@@ -15,7 +16,15 @@ class LogisticsTrack extends React.Component<LogisticsTrackProps> {
   handleBatchExport = () => {
     this.form && this.form.props.form.validateFields((err, vals) => {
       if (!err) {
-        batchExport(vals)
+        const dateStr = 
+        batchExport({
+          ...vals,
+          fileName: vals.expressCompanyCode  + moment().format('YYYYMMDDHHmmss') + '.xlsx'
+        }).then(res => {
+          if (res) {
+            this.props.onCancel && this.props.onCancel()
+          }
+        })
       }
     })
   }

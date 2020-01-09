@@ -212,31 +212,35 @@ export const exportFile = (url, data) => {
 }
 
 // 导出文件流
-export const exportFileStream = (url, data) => {
+export const exportFileStream = (url, data, fileName = '导出信息.xlsx') => {
+  console.log('fileName => ', fileName)
   return axios({
     url: prefix(url),
     method: 'post',
-    data,
+    data: param(data),
     withCredentials: true,
     headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
     responseType: 'blob'
-  }).then(res => {
-    console.log('res=>', res);
-    const content = res.data
-    // const blob = new Blob([content])
-    // const fileName = '导出信息.xlsx'
-    // if ('download' in document.createElement('a')) { // 非IE下载
-    //   const elink = document.createElement('a')
-    //   elink.download = fileName
-    //   elink.style.display = 'none'
-    //   elink.href = URL.createObjectURL(blob)
-    //   document.body.appendChild(elink)
-    //   elink.click()
-    //   URL.revokeObjectURL(elink.href) // 释放URL 对象
-    //   document.body.removeChild(elink)
-    // } else { // IE10+下载
-    //   navigator.msSaveBlob(blob, fileName)
-    // }
+  }).then(async res => {
+    // console.log('res ~~~~~~~~~~~~~~~~~~', res.text());
+    if (res.data.type === 'application/json') {
+      const errorMsg = await res.data.text();
+      return Promise.reject(new Error(errorMsg));
+    }
+    const blob = res.data;
+    if ('download' in document.createElement('a')) { // 非IE下载
+      const elink = document.createElement('a')
+      elink.download = fileName;
+      elink.style.display = 'none'
+      elink.href = URL.createObjectURL(blob)
+      document.body.appendChild(elink)
+      elink.click()
+      URL.revokeObjectURL(elink.href) // 释放URL 对象
+      document.body.removeChild(elink)
+    } else { // IE10+下载
+      navigator.msSaveBlob(blob, fileName)
+    }
+    return Promise.resolve(true)
   }).catch(function(error) {
     if (error.type === 'application/json') {
       var reader = new FileReader();
