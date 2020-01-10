@@ -458,8 +458,8 @@ class Main extends React.Component<Props, State> {
         return void message.error(`${prefixMsg}简称不能为空`)
       }
 
-      // 九宫格图片必填
-      if (isFalsly(v.awardPicUrl) && this.activityType !== 1) {
+      // 九宫格，砸金蛋图片必填
+      if (isFalsly(v.awardPicUrl) && ![1, 4].includes(this.activityType)) {
         return void message.error(`${prefixMsg}图片不能为空`)
       }
 
