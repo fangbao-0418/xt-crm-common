@@ -1,4 +1,4 @@
 [submodule "common"]
 	path = src/packages/common
 	url = git@192.168.20.7:front-end/xt-youxan/platform-library.git
-	branch = feature/issue1
+	branch = release/v1.0.10
