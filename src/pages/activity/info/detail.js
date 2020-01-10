@@ -1,11 +1,12 @@
 import React from 'react';
-import { Card, Row, Col, Form, Table, Input, Button, Checkbox, message, InputNumber } from 'antd';
+import { Card, Row, Col, Form, Table, Input, Icon, Tooltip, Button, Checkbox, message, InputNumber } from 'antd';
 import { formatMoneyWithSign } from '../../helper';
 import { map } from 'lodash';
 import UploadView from '../../../components/upload';
 import { setPromotionAddSKu } from '../api';
 import Image from '../../../components/Image';
 import ArrowContain from '@/pages/goods/components/arrow-contain'
+import If from '@/packages/common/components/if'
 import { Decimal } from 'decimal.js';
 const FormItem = Form.Item;
 console.log('Image=>', Image)
@@ -88,6 +89,7 @@ class ActivityDetail extends React.Component {
     this.setState({
       detailData: data,
       selectedRowKeys,
+      isMultiple: data.isMultiple,
       newuserExclusive: data.newuserExclusive,
       memberExclusive: data.memberExclusive,
       minBuy: data.minBuy,
@@ -118,7 +120,7 @@ class ActivityDetail extends React.Component {
   handleSave = () => {
     if (this.loading) return;
     this.loading = true;
-    const { detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
+    const { isMultiple, detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state;
     // if (activityImage.length === 0) {
     //   message.error('请上传活动商品图');
     //   this.loading = false;
@@ -137,6 +139,7 @@ class ActivityDetail extends React.Component {
       }
     });
     const params = {
+      isMultiple: detailData.type === 9 ? isMultiple : 0,
       id: detailData.id,
       newuserExclusive,
       minBuy,
@@ -259,9 +262,47 @@ class ActivityDetail extends React.Component {
           )
         ),
       },
+      {
+        title: (
+          <span>
+            仅倍数购买<Tooltip title="限制采购时sku最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
+          </span>
+        ),
+        dataIndex: 'isMultiple',
+        style: {
+          display: 'none'
+        },
+        onHeaderCell: () => {
+          return {
+            style: {
+              display: this.state.detailData.type === 9 ? '' : 'none'
+            }
+          }
+        },
+        onCell: () => {
+          return {
+            style: {
+              display: this.state.detailData.type === 9 ? '' : 'none'
+            }
+          }
+        },
+        align: 'center',
+        render: (text, record, index) => {
+          return (
+            <Checkbox
+              checked={!!text}
+              onChange={e => {
+                let isMultiple = e.target.checked ? 1 : 0
+                isMultiple = this.state.detailData.type === 9 ? isMultiple : 0
+                this.handleChangeValue('isMultiple', index)(isMultiple)
+              }}
+            />
+          )
+        }
+      }
     ];
 
-    const { detailData, selectedRowKeys, sort, activityImage, newuserExclusive, memberExclusive, minBuy, maxBuy } = this.state;
+    const { isMultiple, detailData, selectedRowKeys, sort, activityImage, newuserExclusive, memberExclusive, minBuy, maxBuy } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
@@ -310,8 +351,23 @@ class ActivityDetail extends React.Component {
           </Row>
           <Row style={{ marginTop: 20, height: 60 }}>
             <Col span={8}>
-              最少购买量:{' '}
-              <Input value={minBuy} style={{ width: 160 }} placeholder="请填写最少购买量" type="number" onChange={e => this.setState({ minBuy: e.target.value })}/>
+              <div>
+                最少购买量:{' '}
+                <Input value={minBuy} style={{ width: 160 }} placeholder="请填写最少购买量" type="number" onChange={e => this.setState({ minBuy: e.target.value })}/>
+              </div>
+              <If condition={detailData.type === 9}>
+                <div style={{marginTop: 40}}>
+                  <span>
+                    仅倍数购买<Tooltip title="限制采购时spu最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
+                  </span>
+                  :&nbsp;
+                  <Checkbox
+                    checked={!!isMultiple}
+                    style={{ width: 160 }}
+                    onChange={e => this.setState({ isMultiple: e.target.checked ? 1 : 0 })}
+                  />
+                </div>
+              </If>
             </Col>
             <Col span={8}>
               最大购买量:{' '}
