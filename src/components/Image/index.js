@@ -20,6 +20,7 @@ const Image = (props) => {
   return (
     <img
       className={className}
+      onClick={onClick(src)}
       {...otherProps}
       src={src}
       alt={alt}
@@ -29,7 +30,6 @@ const Image = (props) => {
         cursor: 'pointer',
         ...style,
       }}
-      onClick={onClick(src)}
     />
   );
 };

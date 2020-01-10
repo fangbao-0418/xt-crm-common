@@ -1,5 +1,5 @@
 import moment from 'moment';
-
+import Decimal from 'decimal.js'
 export function getH5Origin() {
   let origin = 'https://daily-myouxuan.hzxituan.com/';
   // const nowTime = new Date().getTime()
@@ -20,6 +20,7 @@ export function getH5Origin() {
 }
 
 export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
+  date = date || 0
   if (/^\d+$/.test(date)) {
     date = Number(date)
     date = String(date).length === 10 ? date * 1000 : date
@@ -159,4 +160,20 @@ export const mutilCollectionCombine = (...collection) => {
   }
   loop([...collection[0]], 0)
   return result
+}
+
+/**
+ * 后端金额转换
+ * @param {number} money - 金额
+ * @param {('u2m' | 'm2u')} type - u2m 元转分；m2u 分转元；default u2m
+ */
+export function formatMoneyNumber (money, type = 'u2m') {
+  money = money || 0
+  if (type === 'u2m') {
+    return new Decimal(money).mul(100).round().toNumber()
+  } else if (type === 'm2u') {
+    return new Decimal(money).round().div(100).toNumber()
+  } else {
+    return money
+  }
 }

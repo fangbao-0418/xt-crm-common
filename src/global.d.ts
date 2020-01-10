@@ -7,3 +7,4 @@ type useStateType = [boolean, Dispatch<SetStateAction<boolean>>];
 declare type ApiEnv = 'dev' | 'test1' | 'test2' | 'pre' | 'prod';
 /** 埋点工具 */
 declare const Moon: any
+declare const TcPlayer: any

@@ -6,6 +6,7 @@ import { ConfigProvider } from 'antd';
 import 'url-search-params-polyfill';
 import App from './App';
 import './assets/css/common.css';
+import 'viewerjs/dist/viewer.css';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
