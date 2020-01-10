@@ -12,7 +12,11 @@ class Locked extends React.Component<{}, LockedState> {
     key: 'eventDescribe',
     dataIndex: 'eventDescribe'
   }, {
-    title: '手机号码',
+    title: '被分享人手机号',
+    key: 'inviteePhone',
+    dataIndex: 'inviteePhone'
+  }, {
+    title: '分享人手机号',
     key: 'phone',
     dataIndex: 'phone'
   }, {
@@ -36,8 +40,12 @@ class Locked extends React.Component<{}, LockedState> {
         formItemLayout={(
           <>
             <FormItem
+              name='inviteePhone'
+              label='被分享人手机号'
+            />
+            <FormItem
               name='phone'
-              label='手机号码'
+              label='分享人手机号'
             />
             <FormItem
               label='事件类型'
