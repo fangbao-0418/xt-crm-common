@@ -176,10 +176,10 @@ class Main extends React.Component<Props> {
   public showQrcode = (record: UliveStudio.ItemProps) => {
     // module_live/pages/room/index
     api.getWxQrcode({
-      // page: 'module_live/pages/room/index',
-      // scene: 'id=782',
-      page: 'pages/product/product',
-      scene: 'pid=782&index=2'
+      page: 'module_live/pages/room/index',
+      scene: `id=${record.planId}`,
+      // page: 'pages/product/product',
+      // scene: 'pid=782&index=2'
     }).then((res) => {
       console.log(res, '-------------')
       if (!res) {
