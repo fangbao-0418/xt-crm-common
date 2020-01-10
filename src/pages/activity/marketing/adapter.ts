@@ -46,6 +46,8 @@ export const handleDetailReturnData = (payload: {
   ruleType: 0 | 1
   /** 活动 */
   referencePromotionVO: Marketing.ItemProps
+  /** 主活动商品 */
+  referenceProductVO: Shop.ShopItemProps[]
   promotionDiscountsSpuVOS: Shop.ShopItemProps[]
 }) => {
   const userScope = payload.userScope.split(',')
@@ -62,7 +64,7 @@ export const handleDetailReturnData = (payload: {
   try {
     data = {
       ...payload,
-      product: getProductData(payload.promotionDiscountsSpuVOS),
+      product: getProductData(payload.referenceProductVO),
       activity: getActivityData(payload.referencePromotionVO),
       strategyType: payload.ruleType,
       loop: parsePresentContentData(payload.ruleJson.loop),
@@ -81,6 +83,7 @@ export const handleDetailReturnData = (payload: {
   } catch (E) {
     console.error(E)
   }
+  console.log(data, 'data')
   return data
 }
 /** 目标用户是否全选 */
@@ -140,10 +143,16 @@ const spuIdsExchangeJson = (source: {[spuIds: number]: number[]}) => {
 export const handleFormData = (payload: Marketing.FormDataProps) => {
   const loop = payload.loop
   const product = payload.product || {
+    spuList: [],
     spuIds: {}
   }
+  const spuIds: any[] = (product.spuList || []).map((item) => {
+    return item.id
+  })
   const activity = payload.activity
+  console.log(product, 'producy')
   const data = {
+    mainRefType: payload.mainRefType,
     activityDescribe: payload.activityDescribe,
     title: payload.title,
     startTime: payload.startTime && payload.startTime,
@@ -151,6 +160,7 @@ export const handleFormData = (payload: Marketing.FormDataProps) => {
     id: payload.id !== undefined ? Number(payload.id) : '',
     referencePromotionId: (activity && activity.activityList || []).map((item) => item.id).join(','),
     // productIds: Object.keys(product.spuIds).join(','),
+    referenceProductIds: spuIds.length === 0 ? null : spuIds,
     ruleJson: {
       loop: handlePresentContentData(loop),
       rank: payload.rank ? {
@@ -171,12 +181,14 @@ const handlePresentContentData = (data?: Marketing.PresentContentValueProps) => 
     chooseCount: 0,
     couponList: [],
     activityList: [],
+    spuList: [],
     stageCount: 0,
     type: 0
   }, data)
   return {
     chooseCount: data.chooseCount || 0,
     giftSkuJson: spuIdsExchangeJson(data.spuIds),
+    giftProductIds: data.spuList ? data.spuList.map(item => item.id).join(',') : '',
     giftPromotionId: data.activityList ? data.activityList.map(item => item.id).join(',') : '',
     giftCouponIds: (data.couponList && data.couponList.map((item) => item.id) || []).join(','),
     stageCount: data.stageCount || 0,
@@ -191,11 +203,14 @@ const parsePresentContentData = (data: Marketing.PresentContentValueProps) => {
       skuList: [],
       couponList: [],
       activityList: [],
-      spuIds: {}
+      spuIds: {},
+      spuList: []
     } as  Marketing.PresentContentValueProps
   }
+  // productListVOList
   return {
     ...data,
+    spuList: data.productListVOList || [],
     skuList: filterinvalidData(data.promotionDiscountsSkuVOList),
     couponList: data.couponListVOList,
     activityList: handleActivityListData(data.promotionVO ? [data.promotionVO] : []),
