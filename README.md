@@ -9,7 +9,7 @@ ${name}-`deprecated` - 弃用的文件，暂时不要动
 ## Installation
 
 ``` code
-npm config set registry http://registry-npm-ued.hzxituan.com/
+npm config set registry http://192.168.20.8:802/
 yarn submodule (注意会先删除packages文件，及时提交)
 yarn install
 yarn dev

@@ -16,7 +16,7 @@
     "mock": "nodemon mock/server.js",
     "i18n": "gulp i18n-json-merge",
     "dev": "react-app-rewired start",
-    "submodule": "yarn run remove && git submodule update --init --remote"
+    "submodule": "git submodule update --init --remote"
   },
   "dependencies": {
     "@rematch/core": "^1.1.0",
@@ -45,7 +45,7 @@
     "npm": "^6.12.0",
     "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
-    "qrcode.react": "^0.9.3",
+    "qrcode.react": "^1.0.0",
     "rc-form": "^2.4.9",
     "react": "^16.8.0",
     "react-dnd": "^9.4.0",
@@ -62,7 +62,8 @@
     "redux-thunk": "^2.3.0",
     "restify": "^7.2.3",
     "run-sequence": "^2.2.1",
-    "url-search-params-polyfill": "^7.0.0"
+    "url-search-params-polyfill": "^7.0.0",
+    "viewerjs": "^1.5.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.4.4",
@@ -72,6 +73,7 @@
     "@types/react-redux": "7.1.2",
     "@types/react-router": "5.0.3",
     "babel-plugin-import": "^1.12.0",
+    "copy-webpack-plugin": "^5.1.1",
     "cross-env": "^5.2.0",
     "customize-cra": "0.8.0",
     "del": "^5.1.0",

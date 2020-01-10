@@ -1,13 +1,15 @@
 import React from 'react'
 import { Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
+import Image from '@/components/Image'
 import styles from './style.module.sass'
 interface State {
   dataSource?: Shop.ShopItemProps[]
 }
 interface Props {
+  disabled?: boolean
   value?: Marketing.PresentContentValueProps
-  onChange?: (value?: Marketing.PresentContentValueProps) => void
+  onChange?: (value: Marketing.PresentContentValueProps) => void
 }
 enum ShopStatusEnum {
   下架 = 0,
@@ -22,7 +24,7 @@ class Main extends React.Component<Props> {
         return (
           <div className={styles.shop}>
             <div className={styles['shop-img']}>
-              <img
+              <Image
                 src={record.coverUrl}
                 width={80}
                 height={80}
@@ -39,17 +41,18 @@ class Main extends React.Component<Props> {
       }
     },
     {title: '库存', dataIndex: 'stock'},
-    {
-      title: '商品状态',
-      dataIndex: 'status',
-      render: (text) => {
-        return ShopStatusEnum[text]
-      }
-    },
+    // {
+    //   title: '商品状态',
+    //   dataIndex: 'status',
+    //   render: (text) => {
+    //     return ShopStatusEnum[text]
+    //   }
+    // },
     {
       title: '操作',
       width: 100,
       render: (text, record) => {
+        if (this.props.disabled === true) { return null }
         return (
           <span
             className='href'

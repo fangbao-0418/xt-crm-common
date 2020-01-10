@@ -38,7 +38,10 @@ export const fetchActivityDetail = (id: any) => {
 
 /** 新增买赠活动 */
 export const addActivity = (payload: Marketing.FormDataProps) => {
-  return newPost(`/promotion/addDiscounts`, adapter.handleFormData(payload))
+  return newPost(`/promotion/addDiscounts`, {
+    ...adapter.handleFormData(payload),
+    giftRefType: 1
+  })
 }
 
 /** 修改买赠活动 */
@@ -55,7 +58,7 @@ export function fetchSelectShopList (payload: {
   page?: number
   pageSize?: number
 }) {
-	return get<PageProps<Shop.ShopItemProps>>(`/product/discountpromotion/list`, payload).then((res) => {
+	return get<PageProps<Shop.ShopItemProps>>(`/promotion/promotionProductList`, payload).then((res) => {
     res.records =  (res.records || []).map((item) => {
       item.skuList = item.skuList || []
       item.skuList.map((val) => {
