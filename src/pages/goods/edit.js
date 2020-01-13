@@ -381,6 +381,7 @@ class GoodsEdit extends React.Component {
           // if (!item.imageUrl1) {
           //   isExistImg = false
           // }
+          item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
           item.costPrice = formatMoneyBeforeRequest(item.costPrice);
           item.salePrice = formatMoneyBeforeRequest(item.salePrice);
           item.marketPrice = formatMoneyBeforeRequest(item.marketPrice);
@@ -418,12 +419,12 @@ class GoodsEdit extends React.Component {
           property1: speSelect[0] && speSelect[0].title,
           property2: speSelect[1] && speSelect[1].title,
           skuAddList,
-          coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].durl),
+          coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].url),
           videoCoverUrl:
             vals.videoCoverUrl && vals.videoCoverUrl[0]
-              ? replaceHttpUrl(vals.videoCoverUrl[0].durl)
+              ? replaceHttpUrl(vals.videoCoverUrl[0].url)
               : '',
-          videoUrl: vals.videoUrl && vals.videoUrl[0] ? replaceHttpUrl(vals.videoUrl[0].durl) : '',
+          videoUrl: vals.videoUrl && vals.videoUrl[0] ? replaceHttpUrl(vals.videoUrl[0].url) : '',
           listImage: listImage.join(','),
           productImage: productImage.join(','),
           ...property,
