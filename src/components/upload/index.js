@@ -77,13 +77,18 @@ class UploadView extends Component {
       durl = this.getViewUrl(durl)
       url = this.getViewUrl(url)
       thumbUrl = this.getViewUrl(thumbUrl)
-      return {
+      const result = {
         ...val,
         uid: val.uid || getUniqueId(),
         durl,
         url,
         thumbUrl
       };
+      val.durl = result.durl;
+      val.uid = result.uid;
+      val.url = result.url;
+      val.thumbUrl = result.thumbUrl
+      return val
     });
   }
   // 获取图片像素大小
