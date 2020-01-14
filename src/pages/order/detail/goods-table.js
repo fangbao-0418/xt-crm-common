@@ -230,12 +230,30 @@ class GoodsTable extends Component {
                     )
                   }
                   <Row>
-                    <Col>
-                      <span style={{ fontWeight: 'bold' }}>客服备注：</span>
-                      {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => {
-                        return <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
-                      })}
-                    </Col>
+                    <Col style={{ fontWeight: 'bold' }}>订单客服备注：</Col>
+                    {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => (
+                      <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
+                    ))}
+                    {Array.isArray(childOrder.orderChildServerVOS) && childOrder.orderChildServerVOS.map(v => (
+                      <Col key={v.orderCode}>
+                        {Array.isArray(v.commentListVO) && v.commentListVO.map(item => (
+                          <div key={item.createTime}>
+                            <span>{(Array.isArray(item.info) && item.info.length > 0) ? item.info[item.info.length -1].value: ''}</span>
+                            <span>（{formatDate(item.createTime)} {item.name}）</span>
+                            <span>
+                              售后单号：(
+                                <span
+                                  className='href'
+                                  onClick={() => APP.history.push(`/order/refundOrder/${v.id}`)}
+                                >
+                                  {v.orderCode}
+                                </span>
+                              )
+                            </span>
+                          </div>
+                        ))}
+                      </Col>
+                    ))}
                   </Row>
                   <LogisticsInfo
                     mainorderInfo={orderInfo}

@@ -24,6 +24,8 @@ declare namespace Marketing {
     type: ActivityType
     /** 活动类型文本 */
     activityTypeName?: string
+    /** 赠品是否是商品 0-活动。1-商品，旧数据都是活动，新数据都是商品，参数不可改动 */
+    giftRefType: 0 | 1
   }
 
   /** 赠品内容value属性 */
@@ -46,6 +48,8 @@ declare namespace Marketing {
     activityList?: Marketing.ItemProps[]
     /** 活动对象 */
     promotionVO?: Marketing.ItemProps
+    /** 接口返回的商品列表 */
+    productListVOList?: Shop.ShopItemProps[]
   }
   interface ActivityListPayloadProps {
     name?: string
@@ -68,6 +72,8 @@ declare namespace Marketing {
     endTime?: number
     /** 活动规则描述 */
     activityDescribe?: string
+    /** 买赠活动主品引用类型(0:活动,1:商品) */
+    mainRefType?: 0 | 1
     id?: number
     /** 赠品策略类型 0-循环规则，1-阶梯规则 */
     strategyType?: 0 | 1
@@ -83,5 +89,7 @@ declare namespace Marketing {
     }
     /** 目标用户 40-管理员, 30-合伙人, 20-区长, 10-团长, 2-普通用户老用户, 1-普通用户新用户 */
     userScope?: any[]
+    /** 赠品是否是商品 0-活动。1-商品，旧数据都是活动，新数据都是商品，参数不可改动 */
+    giftRefType?: 0 | 1
   }
 }

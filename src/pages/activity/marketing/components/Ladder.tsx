@@ -4,10 +4,13 @@ import Card from './card'
 import PresentContent from './present-content'
 type ValueProps = Marketing.PresentContentValueProps
 interface Props {
+  /** 类型 商品或是活动 */
+  type: 'shop' | 'activity'
   name: string
   value?: any[]
   onChange?: (value: ValueProps[]) => void
-  onSelect?: (type: 0 | 1, index: number) => void
+  /** 选择0-活动、1-优惠券、2-商品 */
+  onSelect?: (type: 0 | 1 | 2, index: number) => void
   disabled?: boolean
   giftCanEdit?: boolean
 }
@@ -44,6 +47,7 @@ class Main extends React.Component<Props> {
             )}
           >
             <PresentContent
+              shopType={this.props.type}
               type='ladder'
               disabled={disabled}
               giftCanEdit={this.props.giftCanEdit}

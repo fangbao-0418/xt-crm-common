@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { isFunction, filter } from 'lodash';
 import { getStsPolicy } from './api';
 import { createClient, ossUploadBlob } from './oss.js';
-
+import { getUniqueId } from '@/packages/common/utils/index'
 const uploadButton = props => (
   <div>
     <Icon type="plus" />
@@ -46,18 +46,19 @@ class UploadView extends Component {
   }
 
   replaceUrl (url) {
+    // console.log(url, 'before replaceUrl')
     if (!url) {
       return url
     }
-    url = url.replace(/^https?:\/\/.+?\//, '')
+    url = (url || '').trim().replace(/^https?:\/\/.+?\//, '')
+    // console.log(url, 'after replaceUrl')
     return url
   }
   getViewUrl (url) {
-
     if (!url) {
       return url
     }
-    return 'https://assets.hzxituan.com/' + url.trim().replace(/^https?:\/\/.+?\//, '')
+    return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
   }
   initFileList(fileList = []) {
     // console.log(fileList, 'initFileList')
@@ -66,15 +67,28 @@ class UploadView extends Component {
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
     this.count = fileList.length
     return fileList.map(val => {
-      val.durl = val.url
+      let durl = val.url || ''
+      let url = val.url || ''
+      let thumbUrl = val.url || ''
       if (fileType == 'video') {
-        val.url = val.url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '');
-        val.thumbUrl = val.url+ '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+        url = url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '');
+        thumbUrl = url+ '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
       }
-      val.durl = this.getViewUrl(val.durl)
-      val.url = this.getViewUrl(val.url)
-      val.thumbUrl = this.getViewUrl(val.thumbUrl)
-      return val;
+      durl = this.getViewUrl(durl)
+      url = this.getViewUrl(url)
+      thumbUrl = this.getViewUrl(thumbUrl)
+      const result = {
+        ...val,
+        uid: val.uid || getUniqueId(),
+        durl,
+        url,
+        thumbUrl
+      };
+      val.durl = result.durl;
+      val.uid = result.uid;
+      val.url = result.url;
+      val.thumbUrl = result.thumbUrl
+      return val
     });
   }
   // 获取图片像素大小
@@ -150,7 +164,7 @@ class UploadView extends Component {
     const file = e.file;
     ossUpload(file).then((urlList) => {
       let { fileList } = this.state;
-      const { onChange } = this.props;
+      const { onChange, formatOrigin } = this.props;
       file.url = urlList && urlList[0];
       file.durl = file.url;
       fileList.push({
@@ -161,15 +175,15 @@ class UploadView extends Component {
       this.setState({
         fileList: fileList,
       });
-      // const value = fileList.map((item) => {
-      //   return {
-      //     ...item,
-      //     url: this.replaceUrl(item.url),
-      //     durl: this.replaceUrl(item.durl),
-      //     // name: file.name
-      //   }
-      // })
-      isFunction(onChange) && onChange(fileList);
+      const value = fileList.map((item) => {
+        return formatOrigin ? {
+          ...item,
+          url: this.replaceUrl(item.url),
+          durl: this.replaceUrl(item.durl),
+          thumbUrl: this.replaceUrl(item.thumbUrl),
+        } : item
+      })
+      isFunction(onChange) && onChange([...value]);
     });
   }
   handleRemove = e => {
