@@ -5,6 +5,7 @@ import { view as Layout } from './components/layout'
 import { view as Login } from './pages/login'
 import Loadable from './util/loadable'
 import { connect } from 'react-redux'
+import './assets/styles/common.scss'
 
 const { get } = APP.http
 const Home = Loadable(() => import('./pages/home'))
@@ -23,6 +24,7 @@ const Interface = Loadable(() => import('./pages/interface'))
 const CrudPage = Loadable(() => import('./components/crudPage'))
 const Message = Loadable(() => import('./pages/message'))
 const Setting = Loadable(() => import('./pages/setting'))
+const ULive = Loadable(() => import('./pages/ulive'))
 
 class Main extends React.Component {
   constructor (props) {
@@ -68,6 +70,7 @@ class Main extends React.Component {
           <Route path="/crudpage" component={CrudPage} />
           <Route path="/message" component={Message} />
           <Route path="/setting" component={Setting}/>
+          <Route path="/ulive" component={ULive}/>
         </Layout>
       </Switch>
     )

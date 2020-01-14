@@ -8,6 +8,7 @@ const {
   removeModuleScopePlugin,
   addWebpackModuleRule
 } = require('customize-cra');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -20,7 +21,7 @@ const pubconfig = fs.existsSync('./pubconfig.json')
       outputDir: 'build'
     };
 
-console.log('PUB_ENV => ', process.env.PUB_ENV);
+console.log('PUB_ENV => ', require('./pubconfig.json'), process.env.PUB_ENV);
 paths.appBuild = path.resolve(pubconfig.outputDir);
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
@@ -109,6 +110,13 @@ module.exports = override(
         PUB_ENV: '"' + (process.env.PUB_ENV || 'serve') + '"'
       }
     })
+  ),
+  addWebpackPlugin(
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, 'src/assets/root')
+      },
+    ])
   ),
   useEslintRc(),
   addWebpackAlias({

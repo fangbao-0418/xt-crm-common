@@ -49,10 +49,10 @@ function SkuUploadItem(props: Props) {
       {props.showImage &&
         <UploadView
           // disabled={props.disabled}
-          value={value.specPicture && [{
+          value={value.specPicture ? [{
             uid: 1,
             url: value.specPicture
-          }]}
+          }] : undefined}
           onChange={(val: any) => {
             const newValue = {
               ...value,

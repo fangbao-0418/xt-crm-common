@@ -16,28 +16,20 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
   })
   const [records, setRecords] = useState([]);
   const [info, setInfo] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const fetchData = async () => {
     const data = getFieldsValue();
-    console.log('data=>', data);
-    try {
-      setLoading(true);
-      const res = await getCouponlist({
-        ...pagination,
-        ...data
-      });
-      console.log('res=>', res);
-      setLoading(false);
-      setRecords(res.records);
-      setPagination({
-        ...pagination,
-        page: res.current,
-        total: res.total
-      })
-    } catch (err) {
-      setLoading(false);
-    }
+    const res = await getCouponlist({
+      ...pagination,
+      ...data
+    });
+    console.log('res=>', res);
+    setRecords(res.records);
+    setPagination({
+      ...pagination,
+      page: res.current,
+      total: res.total
+    })
   }
   const setModalVisible = async ({ visible, id }) => {
     const info = await getCouponDetail(id);
@@ -84,7 +76,16 @@ function CouponList({ form: { getFieldDecorator, getFieldsValue, resetFields }, 
         <Row type="flex" justify="space-between">
           <Button type="primary" icon="plus" onClick={handleAddCoupon}>新增优惠券</Button>
         </Row>
-        <CommonTable onChange={setPagination} rowKey="id" current={pagination.page} pageSize={pagination.pageSize} total={pagination.total} className="mt15" columns={getListColumns()} dataSource={records || []} />
+        <CommonTable
+          onChange={setPagination}
+          rowKey="id"
+          current={pagination.page}
+          pageSize={pagination.pageSize}
+          total={pagination.total}
+          className="mt15"
+          columns={getListColumns()}
+          dataSource={records || []}
+        />
       </Card>
     </>
   )

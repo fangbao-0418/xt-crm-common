@@ -6,7 +6,8 @@ import {
   LogisticsInformation,
   SupplierProcessInfo,
   AfterSaleApplyInfo,
-  CloseInfo
+  CloseInfo,
+  SelfOwnedWarehouse
 } from './components';
 import LogisticsShippingInfo from './components/LogisticsShippingInfo';
 import { enumRefundType, enumRefundStatus } from '../constant';
@@ -48,7 +49,8 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
                 {isRefundStatusOf([enumRefundStatus.WaitUserReceipt, enumRefundStatus.Complete]) &&
                   isRefundTypeOf(enumRefundType.Exchange) &&
                   <LogisticsShippingInfo data={data} />}
-                <SupplierProcessInfo data={data} />
+                {data.handleChannel === 1 && <SupplierProcessInfo data={data} />}
+                {data.handleChannel === 2 && <SelfOwnedWarehouse data={data} />}
               </>
             )}
           </>
