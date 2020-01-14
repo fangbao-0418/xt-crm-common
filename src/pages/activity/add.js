@@ -179,6 +179,7 @@ class Add extends React.Component {
     })
   }
   tagPositionChange = (e) => {
+    console.log(e.target.value, '--------------------')
     this.setState({
       place: e.target.value
     })
