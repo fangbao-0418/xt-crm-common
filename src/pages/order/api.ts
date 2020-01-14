@@ -1,8 +1,17 @@
-import { post, exportFile, get, put, newPut, newPost, fetch } from '../../util/fetch';
+import { post, exportFile, exportFileStream, get, put, newPut, newPost, fetch } from '../../util/fetch';
 import { prefix } from '../../util/utils';
+import { batchExportRequest } from './adapter'
 const debug = false;
 var qs = require('qs');
-
+export interface batchExportPayload {
+  expressCompanyCode: string;
+  expressNumbers: string;
+  fileName: string;
+}
+// 批量轨迹导出
+export function batchExport(payload: batchExportPayload) {
+  return exportFileStream('/expressTracking/batchExport', batchExportRequest(payload), payload.fileName)
+}
 
 // 订单售后校验团长等级是否会降级
 export function verifyDownDgrade(data: any) {

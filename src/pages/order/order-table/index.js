@@ -12,6 +12,7 @@ import RemarkModal from '../components/modal/remark-modal';
 import RefundModal from '../components/refund-modal';
 import RefundStatusCell from '../components/refund-status-cell';
 import { getHeaders, parseQuery } from '@/util/utils';
+import withModal from './withModal';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
@@ -31,6 +32,7 @@ const orderTypeOptions = [
 const formatRangeDate = (val) => {
   return Array.isArray(val) ? val.map(v => v.format('YYYY-MM-DD HH:mm')) : []
 }
+@withModal
 class OrderList extends React.Component {
   static defaultProps = {};
   payload = APP.fn.getPayload('order') || {};
@@ -442,6 +444,7 @@ class OrderList extends React.Component {
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
+                <Button type='link' onClick={this.props.modal}>批量查询物流轨迹</Button>
                 <Button type="default" onClick={this.reset}>
                   清除条件
                 </Button>
