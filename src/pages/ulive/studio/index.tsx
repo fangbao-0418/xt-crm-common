@@ -236,9 +236,10 @@ class Main extends React.Component<Props> {
       playUrl: record.playUrl,
       liveCoverUrl: record.liveCoverUrl
     })
-    const url = location.origin.replace(/^https?/, 'http') + '/#/ulive/video?' + query
+    const url = location.origin.replace(/^https?/, 'http') + location.pathname.replace(/index.html/, 'video.html') +  '?' + query
+    // const url = 'http://127.0.0.1:8080/video.html?' + query
     window.open(url, '视频直播', 'top=120,left=150,width=800,height=500')
-    APP.href(url, '__blank')
+    // APP.href(url, '__blank')
     return
     const hide = this.props.alert({
       content: (
