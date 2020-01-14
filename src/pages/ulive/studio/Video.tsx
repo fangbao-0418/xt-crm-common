@@ -25,7 +25,8 @@ class Main extends React.Component<{}> {
       return
     }
     const https = /https/.test(window.location.origin) ? true : false
-    const playUrl = (detail.playUrl || '').replace(/https?:\/\//, https ? 'https://' : 'http://')
+    // const playUrl = (detail.playUrl || '').replace(/https?:\/\//, https ? 'https://' : 'http://')
+    const playUrl = (detail.playUrl || '')
     // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
     config = {
       posterImage: true,
