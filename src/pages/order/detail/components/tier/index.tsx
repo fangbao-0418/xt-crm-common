@@ -27,6 +27,7 @@ class Main extends React.Component<Props> {
         if (index === 1) {
           nodes.push(
             <div
+              key={'line-' + item.memberId}
               className={classNames(styles['tier-item'], styles['tier-item-line'])}
             >
             </div>
@@ -34,6 +35,7 @@ class Main extends React.Component<Props> {
         }
         nodes.push(
           <div
+            key={item.memberId}
             className={classNames(styles['tier-item'], !isInviter && styles['tier-item-right'])}
           >
             <div className={classNames(styles['tier-label'], item.isCurrentMember && styles['tier-label-current'])}>

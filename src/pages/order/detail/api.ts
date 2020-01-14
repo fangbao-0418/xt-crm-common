@@ -18,7 +18,8 @@ export function getEarningsDetail(payload: {
         dealPrice: APP.fn.formatMoneyNumber(res.dealPrice, 'm2u'),
         headPrice: APP.fn.formatMoneyNumber(res.headPrice, 'm2u'),
         areaMemberPrice: APP.fn.formatMoneyNumber(res.areaMemberPrice, 'm2u'),
-        cityMemberPrice: APP.fn.formatMoneyNumber(res.cityMemberPrice, 'm2u')
+        cityMemberPrice: APP.fn.formatMoneyNumber(res.cityMemberPrice, 'm2u'),
+        managerMemberPrice: APP.fn.formatMoneyNumber(res.managerMemberPrice, 'm2u'),
       }
     ]
     return res

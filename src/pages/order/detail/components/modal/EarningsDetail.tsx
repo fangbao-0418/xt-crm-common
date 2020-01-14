@@ -69,9 +69,9 @@ class Main extends React.Component<Props> {
           <FormItem label='主订单号' name='orderCode' />
           <FormItem label='商品名称' name='skuName' />
           <FormItem label='购买数量' name='quantity' />
+          <FormItem label='商品实付金额' name='preferentialTotalPrice' />
           <Row>
             <Col span={12}>
-              <FormItem {...formItemLayout} label='商品实付金额' name='preferentialTotalPrice' />
               <FormItem {...formItemLayout} label='下单人昵称' name='buyerNickName' />
               <FormItem {...formItemLayout} label='下单人用户id' name='buyerId' />
               <FormItem {...formItemLayout} label='下单人手机' name='buyerMobile' />
@@ -86,6 +86,9 @@ class Main extends React.Component<Props> {
           <div>
             <div className='mt10 mb10'><b>层级价格快照</b></div>
             <Table
+              rowKey={(record, index) => {
+                return index + ''
+              }}
               columns={[{
                 dataIndex: 'dealPrice',
                 title: '活动价'
@@ -98,6 +101,9 @@ class Main extends React.Component<Props> {
               },{
                 dataIndex: 'cityMemberPrice',
                 title: '合伙人价'
+              },{
+                dataIndex: 'managerMemberPrice',
+                title: '管理员价'
               }]}
               dataSource={priceDetail}
               pagination={false}
@@ -109,6 +115,9 @@ class Main extends React.Component<Props> {
               <b>售后信息：收益售后扣除比例{APP.fn.formatMoneyNumber(this.props.detail.deductRatio)}%</b>
             </div>
             <Table
+              rowKey={(record, index) => {
+                return index + ''
+              }}
               columns={[{
                 dataIndex: 'orderCode',
                 title: '已完成售后单号'
