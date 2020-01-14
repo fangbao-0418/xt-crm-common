@@ -5,6 +5,8 @@ import Cdkey from './cdkey';
 import Detail from './detail';
 import Intercept from './intercept';
 import InterceptUserDetail from './intercept/detail';
+import Locked from './locked'
+
 export default class RouteApp extends React.Component {
   render() {
     return (
@@ -14,6 +16,7 @@ export default class RouteApp extends React.Component {
         <Route path="/user/cdkey" component={Cdkey} />
         <Route path="/user/intercept" exact={true} component={Intercept} />
         <Route path="/user/intercept/detail" component={InterceptUserDetail} />
+        <Route path='/user/locked/list' component={Locked} />
       </Switch>
     );
   }
