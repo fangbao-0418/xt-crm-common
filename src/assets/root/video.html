@@ -23,17 +23,17 @@
     <script>
       /** 解析url query参数 */
       function parseQuery (url) {
-        url = url || window.location.href
-        var arr = url.split(/^.+?\?/)
-        var paramsString = arr[1] || ''
-        var searchParams = new URLSearchParams(paramsString)
-        var result = {}
+        url = url || window.location.href;
+        var arr = url.split(/^.+?\?/);
+        var paramsString = arr[1] || '';
+        var searchParams = new URLSearchParams(paramsString);
+        var result = {};
         for (var p of searchParams) {
-          var key = p[0]
-          var value = p[1]
-          result[key] = value
+          var key = p[0];
+          var value = p[1];
+          result[key] = value;
         }
-        return result
+        return result;
       }
     </script>
     <script>
@@ -43,12 +43,12 @@
         var detail = {
           playUrl: query.playUrl,
           liveCoverUrl: query.liveCoverUrl
-        }
-        var config = JSON.parse(localStorage.getItem('tc') || 'null')
+        };
+        var config = JSON.parse(localStorage.getItem('tc') || 'null');
         if (detail.playUrl) {
-          var https = /https/.test(window.location.origin) ? true : false
+          var https = /https/.test(window.location.origin) ? true : false;
           // const playUrl = (detail.playUrl || '').replace(/https?:\/\//, https ? 'https://' : 'http://')
-          var playUrl = (detail.playUrl || '')
+          var playUrl = (detail.playUrl || '');
           // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
           config = {
             posterImage: true,
@@ -59,11 +59,11 @@
             poster: detail.liveCoverUrl,
             width:  '100%', // 视频的显示宽度，请尽量使用视频分辨率宽度
             height: '100%', // 视频的显示高度，请尽量使用视频分辨率高度
-          }
-          config.listener = (msg) => {
+          };
+          config.listener = function (msg) {
             // this.player.play()
             // console.log(msg, player, 'xxxx')
-          }
+          };
           new TcPlayer('id_test_video', config);
         }
       }
