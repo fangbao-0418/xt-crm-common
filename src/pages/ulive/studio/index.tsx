@@ -231,6 +231,15 @@ class Main extends React.Component<Props> {
     })
   }
   public showVideo (record: UliveStudio.ItemProps) {
+    console.log(param(record))
+    const query = param({
+      playUrl: record.playUrl,
+      liveCoverUrl: record.liveCoverUrl
+    })
+    const url = location.origin.replace(/^https?/, 'http') + '/#/ulive/video?' + query
+    window.open(url, '视频直播', 'top=120,left=150,width=800,height=500')
+    APP.href(url, '__blank')
+    return
     const hide = this.props.alert({
       content: (
         <Video

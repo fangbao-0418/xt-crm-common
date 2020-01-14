@@ -25,6 +25,7 @@ const CrudPage = Loadable(() => import('./components/crudPage'))
 const Message = Loadable(() => import('./pages/message'))
 const Setting = Loadable(() => import('./pages/setting'))
 const ULive = Loadable(() => import('./pages/ulive'))
+const ULiveVideo = Loadable(() => import('./pages/ulive/studio/Video'))
 
 class Main extends React.Component {
   constructor (props) {
@@ -52,6 +53,7 @@ class Main extends React.Component {
     return (
       <Switch>
         <Route exact={true} path="/login" component={Login} />
+        <Route path="/ulive/video" exact component={ULiveVideo} />
         <Layout>
           <Route path="/" exact={true} render={() => <Redirect to="/home" />} />
           <Route path="/home" component={Home} />
