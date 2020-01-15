@@ -254,20 +254,22 @@ class Main extends React.Component<any, State> {
             }}
           />
         </Card>
-        <Card
-          title={(
-            <span>
-              <span>场次列表</span>
-              <span style={{ color: '#999'}}>（必须先有活动才能新建场次）</span>
-          </span>
-        )}>
-          <Table
-            columns={this.columns}
-            rowKey='id'
-            pagination={false}
-            dataSource={this.state.roundList}/>
-        </Card>
-        <div>
+        <div className='mt10'>
+          <Card
+            title={(
+              <span>
+                <span>场次列表</span>
+                <span style={{ color: '#999'}}>（必须先有活动才能新建场次）</span>
+            </span>
+          )}>
+            <Table
+              columns={this.columns}
+              rowKey='id'
+              pagination={false}
+              dataSource={this.state.roundList}/>
+          </Card>
+        </div>
+        <div className='mt10'>
           <Button
             type='danger'
             disabled={this.id === -1}
