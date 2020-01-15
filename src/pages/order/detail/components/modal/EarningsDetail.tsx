@@ -73,7 +73,7 @@ class Main extends React.Component<Props> {
           <Row>
             <Col span={12}>
               <FormItem {...formItemLayout} label='下单人昵称' name='buyerNickName' />
-              <FormItem {...formItemLayout} label='下单人用户id' name='buyerId' />
+              <FormItem {...formItemLayout} label='下单人用户ID' name='buyerId' />
               <FormItem {...formItemLayout} label='下单人手机' name='buyerMobile' />
             </Col>
             <Col span={12}>
