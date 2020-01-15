@@ -78,17 +78,9 @@ class List extends React.Component {
       };
       APP.fn.setPayload(namespace, payload);
       getOperatorSpuList(payload).then(res => {
-        // 当只剩下一条数据时删除会出bug，此时当前页大于总页数，把总页数作为当前页在请求一次
-        if (res.current > res.pages) {
-          const payload = APP.fn.getPayload(namespace);
-          this.payload.page = payload.page = res.pages;
-          APP.fn.setPayload(namespace, payload);
-          this.getPromotionDetail()
-        } else {
-          this.setState({
-            promotionDetail: res || {}
-          })
-        }
+        this.setState({
+          promotionDetail: res || {}
+        })
       });
     }
   };
@@ -237,7 +229,12 @@ class List extends React.Component {
     });
   };
 
-  handleRemove = id => () => {
+  handleRemove = (id, index) => () => {
+    // 当前页大于1时，点击删除时当前项为最后一项，且index = 0时
+    const { promotionDetail: { current, size, total } } = this.state;
+    if ((current - 1) * size + (index + 1) === total && index === 0 && current > 1) {
+      this.payload.page--;
+    }
     Modal.confirm({
       title: '系统提示',
       content: '确定要删除该信息吗？',
@@ -439,13 +436,13 @@ class List extends React.Component {
                 {
                   title: '操作',
                   key: 'opt',
-                  render: record => (
+                  render: (record, rows, index) => (
                     <>
                       <span className="href" onClick={this.handleEditsku(record, type)}>
                         编辑
                       </span>
                       <Divider type="vertical" />
-                      <span className="href" style={{ color: 'red' }} onClick={this.handleRemove(record.id)}>
+                      <span className="href" style={{ color: 'red' }} onClick={this.handleRemove(record.id, index)}>
                         删除
                       </span>
                     </>
