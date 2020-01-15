@@ -78,9 +78,17 @@ class List extends React.Component {
       };
       APP.fn.setPayload(namespace, payload);
       getOperatorSpuList(payload).then(res => {
-        this.setState({
-          promotionDetail: res || {}
-        });
+        // 当只剩下一条数据时删除会出bug，此时当前页大于总页数，把总页数作为当前页在请求一次
+        if (res.current > res.pages) {
+          const payload = APP.fn.getPayload(namespace);
+          this.payload.page = payload.page = res.pages;
+          APP.fn.setPayload(namespace, payload);
+          this.getPromotionDetail()
+        } else {
+          this.setState({
+            promotionDetail: res || {}
+          })
+        }
       });
     }
   };
