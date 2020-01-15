@@ -181,127 +181,205 @@ class ActivityDetail extends React.Component {
       activityImage: e,
     });
   };
-
-  render() {
-    const getColumns = (detailData) => [
-      {
-        title: '规格名称',
-        dataIndex: 'property',
-      },
-      {
-        title: `${detailData.type === 6 ? '助力分': '活动价'}`,
-        dataIndex: 'buyingPrice',
-        width: 200,
-        render: (text, record, index) => (
-          speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
-            <InputNumber
-              style={{width: 140}}
-              min={0}
-              precision={detailData.type === 6 ? 0: 2}
-              value={text}
-              onChange={this.handleChangeValue('buyingPrice', index)}
-            />
-          )
-        ),
-      },
-      {
-        title: '活动库存',
-        dataIndex: 'inventory',
-        render: (text, record, index) => {
-          const props = {
-            style: {
-              width: 140
-            },
-            min: 0,
-            precision: 0,
-            value: text,
-            onChange: this.handleChangeValue('inventory', index)
-          }
-          if (record.sellableQty) {
-            props.max = record.sellableQty
-          }
-          return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
-        },
-      },
-      {
-        title: '可用库存',
-        dataIndex: 'stock',
-        render: (text, record, index) => {
-          // 1.售后详情中 订单信息模块 需要添加订单类型的属性
-          // 海淘商品可用库存需要读取保宏仓的可用库存数量，活动库存不可大于可用库存
-          return <span>{record.sellableQty || '无限制' }</span>
+  getColumns = (detailData) => [
+    {
+      title: '规格名称',
+      dataIndex: 'property',
+    },
+    {
+      title: `${detailData.type === 6 ? '助力分': '活动价'}`,
+      dataIndex: 'buyingPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={detailData.type === 6 ? 0: 2}
+            value={text}
+            onChange={this.handleChangeValue('buyingPrice', index)}
+          />
+        )
+      ),
+    },
+    {
+      title: '拼团价',
+      dataIndex: 'promotionPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('promotionPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('promotionPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '团长价',
+      dataIndex: 'headPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('headPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('headPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '区长价',
+      dataIndex: 'areaPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('areaPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('areaPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '合伙人价',
+      dataIndex: 'cityPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('cityPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('cityPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '管理员价',
+      dataIndex: 'managerPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('managerPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('managerPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '活动库存',
+      dataIndex: 'inventory',
+      render: (text, record, index) => {
+        const props = {
+          style: {
+            width: 140
+          },
+          min: 0,
+          precision: 0,
+          value: text,
+          onChange: this.handleChangeValue('inventory', index)
         }
-      },
-      {
-        title: '最大购买数',
-        dataIndex: 'maxBuy',
-        render: (text, record, index) => (
-          speedyInput('maxBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
-            <InputNumber
-              style={{width: 140}}
-              min={0}
-              precision={0}
-              value={text}
-              onChange={this.handleChangeValue('maxBuy', index)}
-            />
-          )
-        ),
-      },
-      {
-        title: '最小购买数',
-        dataIndex: 'minBuy',
-        render: (text, record, index) => (
-          speedyInput('minBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
-            <InputNumber
-              style={{width: 140}}
-              min={0}
-              precision={0}
-              value={text}
-              onChange={this.handleChangeValue('minBuy', index)}
-            />
-          )
-        ),
-      },
-      {
-        title: (
-          <span>
-            仅倍数购买<Tooltip title="限制采购时sku最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
-          </span>
-        ),
-        dataIndex: 'isMultiple',
-        style: {
-          display: 'none'
-        },
-        onHeaderCell: () => {
-          return {
-            style: {
-              display: this.state.detailData.type === 9 ? '' : 'none'
-            }
-          }
-        },
-        onCell: () => {
-          return {
-            style: {
-              display: this.state.detailData.type === 9 ? '' : 'none'
-            }
-          }
-        },
-        align: 'center',
-        render: (text, record, index) => {
-          return (
-            <Checkbox
-              checked={!!text}
-              onChange={e => {
-                let isMultiple = e.target.checked ? 1 : 0
-                isMultiple = this.state.detailData.type === 9 ? isMultiple : 0
-                this.handleChangeValue('isMultiple', index)(isMultiple)
-              }}
-            />
-          )
+        if (record.sellableQty) {
+          props.max = record.sellableQty
         }
+        return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
+      },
+    },
+    {
+      title: '可用库存',
+      dataIndex: 'stock',
+      render: (text, record, index) => {
+        // 1.售后详情中 订单信息模块 需要添加订单类型的属性
+        // 海淘商品可用库存需要读取保宏仓的可用库存数量，活动库存不可大于可用库存
+        return <span>{record.sellableQty || '无限制' }</span>
       }
-    ];
-
+    },
+    {
+      title: '最大购买数',
+      dataIndex: 'maxBuy',
+      render: (text, record, index) => (
+        speedyInput('maxBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={0}
+            value={text}
+            onChange={this.handleChangeValue('maxBuy', index)}
+          />
+        )
+      ),
+    },
+    {
+      title: '最小购买数',
+      dataIndex: 'minBuy',
+      render: (text, record, index) => (
+        speedyInput('minBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={0}
+            value={text}
+            onChange={this.handleChangeValue('minBuy', index)}
+          />
+        )
+      ),
+    },
+    {
+      title: (
+        <span>
+          仅倍数购买<Tooltip title="限制采购时sku最少购买量的整倍数购买"><Icon style={{fontSize: 12,margin:'0 2px'}} type="exclamation-circle" /></Tooltip>
+        </span>
+      ),
+      dataIndex: 'isMultiple',
+      style: {
+        display: 'none'
+      },
+      onHeaderCell: () => {
+        return {
+          style: {
+            display: this.state.detailData.type === 9 ? '' : 'none'
+          }
+        }
+      },
+      onCell: () => {
+        return {
+          style: {
+            display: this.state.detailData.type === 9 ? '' : 'none'
+          }
+        }
+      },
+      align: 'center',
+      render: (text, record, index) => {
+        return (
+          <Checkbox
+            checked={!!text}
+            onChange={e => {
+              let isMultiple = e.target.checked ? 1 : 0
+              isMultiple = this.state.detailData.type === 9 ? isMultiple : 0
+              this.handleChangeValue('isMultiple', index)(isMultiple)
+            }}
+          />
+        )
+      }
+    }
+  ];
+  render() {
     const { isMultiple, detailData, selectedRowKeys, sort, activityImage, newuserExclusive, memberExclusive, minBuy, maxBuy } = this.state;
 
     const rowSelection = {
@@ -389,8 +467,9 @@ class ActivityDetail extends React.Component {
         </Card>
         <Card style={{ marginTop: 10 }}>
           <Table
+            scroll={{ x: true }}
             rowSelection={rowSelection}
-            columns={getColumns(detailData)}
+            columns={this.getColumns(detailData)}
             dataSource={detailData.promotionSkuList}
             pagination={false}
           />

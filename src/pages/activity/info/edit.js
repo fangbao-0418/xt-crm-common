@@ -70,18 +70,28 @@ class List extends React.Component {
     if (id !== 'undefined') {
       const fields = this.props.form.getFieldsValue();
       const { promotionDetail } = this.state;
+      console.log('///////////////', this.payload.page)
       const payload = {
         promotionId: id,
         page: this.payload.page,
         pageSize: promotionDetail.size,
         ...fields
       };
+      console.log('payload-------------', payload)
       APP.fn.setPayload(namespace, payload);
       getOperatorSpuList(payload).then(res => {
-        this.setState({
-          promotionDetail: res || {}
-        });
-      });
+        // 当只剩下一条数据时删除会出bug，此时当前页大于总页数，把总页数作为当前页在请求一次
+        if (res.current > res.pages) {
+          const payload = APP.fn.getPayload(namespace);
+          this.payload.page = payload.page = res.pages;
+          APP.fn.setPayload(namespace, payload);
+          this.getPromotionDetail()
+        } else {
+          this.setState({
+            promotionDetail: res || {}
+          })
+        }
+      })
     }
   };
 
