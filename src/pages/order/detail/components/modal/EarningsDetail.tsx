@@ -69,7 +69,14 @@ class Main extends React.Component<Props> {
           <FormItem label='主订单号' name='orderCode' />
           <FormItem label='商品名称' name='skuName' />
           <FormItem label='购买数量' name='quantity' />
-          <FormItem label='商品实付金额' name='preferentialTotalPrice' />
+          <Row>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label='商品实付金额' name='preferentialTotalPrice' />
+            </Col>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label='收益类型' name='incomeTypeDesc' />
+            </Col>
+          </Row>
           <Row>
             <Col span={12}>
               <FormItem {...formItemLayout} label='下单人昵称' name='buyerNickName' />
@@ -80,7 +87,6 @@ class Main extends React.Component<Props> {
               <FormItem {...formItemLayout} label='收益人昵称' name='memberNickName' />
               <FormItem {...formItemLayout} label='收益人用户ID' name='memberId' />
               <FormItem {...formItemLayout} label='收益人手机' name='memberMobile' />
-              <FormItem {...formItemLayout} label='收益类型' name='incomeTypeDesc' />
             </Col>
           </Row>
           <div>
