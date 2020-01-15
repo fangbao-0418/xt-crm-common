@@ -56,32 +56,6 @@ class Add extends React.Component {
     this.typeChange(this.data.type);
   }
 
-  componentWillReceiveProps (props) {
-    this.initData(props)
-  }
-
-  initData (props) {
-    this.data = {
-      type: 1,
-      tagPosition: 0,
-      tagUrl: []
-    }
-    if (props.data) {
-      this.data = props.data;
-      this.data.startTime = moment(this.data.startTime);
-      this.data.endTime = moment(this.data.endTime);
-      this.data.tagUrl = initImgList(this.data.tagUrl);
-    }
-    this.setState({
-      loading: false, // 保存活动按钮
-      tagUrl: this.data.tagUrl.length ? this.data.tagUrl[0].url : '',
-      tagImg: activityTagSImg,
-      tagClass: 'img_sm',
-      place: this.data.tagPosition,
-      id: props.data ? props.data.id : 0
-    })
-  }
-
   loadStatus(status) {
     this.loading = status;
     this.setState({

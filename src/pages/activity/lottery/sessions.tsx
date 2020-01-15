@@ -137,7 +137,7 @@ class Main extends React.Component<Props, State> {
     {
       title: (
         <>
-          {this.activityType === 2 ? requiredTitle('图片') : '图片'}
+          {[2, 3].includes(this.activityType) ? requiredTitle('图片') : '图片'}
           <div style={{fontSize: 12, color: '#999'}}>
             (图片上传png格式，大小140px*140px)
           </div>
@@ -153,7 +153,7 @@ class Main extends React.Component<Props, State> {
               pxSize={[{width:140, height:140}]}
               fileType='image/png'
               listType='picture-card'
-              disabled={this.activityType === 1 || this.readOnly}
+              disabled={[1, 4].includes(this.activityType) || this.readOnly}
             />
           )}
         </div>
@@ -209,7 +209,7 @@ class Main extends React.Component<Props, State> {
       )
     },
     {
-      title: this.activityType === 2 ? requiredTitle('订单门槛') : '订单门槛',
+      title: [2, 3].includes(this.activityType) ? requiredTitle('订单门槛') : '订单门槛',
       key: 'restrictOrderAmount',
       width: 150,
       render: (arg1: number, record: Lottery.LuckyDrawAwardListVo, index: number) => (
@@ -217,7 +217,7 @@ class Main extends React.Component<Props, State> {
           <InputNumber
             min={0}
             precision={2}
-            disabled={this.activityType === 1 || record.defaultAward === 0 || this.readOnly}
+            disabled={[1, 4].includes(this.activityType) || record.defaultAward === 0 || this.readOnly}
           />
         )
       )
@@ -235,14 +235,14 @@ class Main extends React.Component<Props, State> {
           width: 150,
           key: 'normalUserProbability',
           render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-            this.getFieldDecorator('normalUserProbability', index)(
+            this.getFieldDecorator('normalUserProbability', index)(record.defaultAward === 1 ? (
               <InputNumber
-                disabled={record.defaultAward === 0 || this.readOnly}
+                disabled={this.readOnly}
                 min={0}
                 max={100}
                 precision={2}
               />
-            )
+            ): <span />)
           )
         },
         {
@@ -255,14 +255,14 @@ class Main extends React.Component<Props, State> {
           width: 150,
           key: 'headUserProbability',
           render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-            this.getFieldDecorator('headUserProbability', index)(
+            this.getFieldDecorator('headUserProbability', index)(record.defaultAward === 1 ? (
               <InputNumber
-                disabled={record.defaultAward === 0 || this.readOnly}
+                disabled={this.readOnly}
                 min={0}
                 max={100}
                 precision={2}
               />
-            )
+            ): <span />)
           )
         },
         {
@@ -275,14 +275,14 @@ class Main extends React.Component<Props, State> {
           width: 150,
           key: 'areaUserProbability',
           render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-            this.getFieldDecorator('areaUserProbability', index)(
+            this.getFieldDecorator('areaUserProbability', index)(record.defaultAward === 1 ? (
               <InputNumber
-                disabled={record.defaultAward === 0 || this.readOnly}
+                disabled={this.readOnly}
                 min={0}
                 max={100}
                 precision={2}
               />
-            )
+            ): <span />)
           )
         },
         {
@@ -295,14 +295,14 @@ class Main extends React.Component<Props, State> {
           width: 150,
           key: 'cityUserProbability',
           render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-            this.getFieldDecorator('cityUserProbability', index)(
+            this.getFieldDecorator('cityUserProbability', index)(record.defaultAward === 1 ? (
               <InputNumber
-                disabled={record.defaultAward === 0 || this.readOnly}
+                disabled={this.readOnly}
                 min={0}
                 max={100}
                 precision={2}
               />
-            )
+            ): <span />)
           )
         }
       ]
@@ -351,7 +351,7 @@ class Main extends React.Component<Props, State> {
   /** 初始化奖品列表 */
   public initAwardList () {
     let res: any = []
-    const rows = this.activityType === 1 ? 10 : 8
+    const rows = [1, 4].includes(this.activityType) ? 10 : 8
     for (let i = 0; i < rows; i++) {
       res.push({
         awardType: null,
@@ -458,8 +458,8 @@ class Main extends React.Component<Props, State> {
         return void message.error(`${prefixMsg}简称不能为空`)
       }
 
-      // 九宫格图片必填
-      if (isFalsly(v.awardPicUrl) && this.activityType !== 1) {
+      // 九宫格，砸金蛋图片必填
+      if (isFalsly(v.awardPicUrl) && ![1, 4].includes(this.activityType)) {
         return void message.error(`${prefixMsg}图片不能为空`)
       }
 
@@ -471,7 +471,7 @@ class Main extends React.Component<Props, State> {
       // 非兜底必填
       if (v.defaultAward === 1) {
         // 九宫格订单门槛必填
-        if (isFalsly(v.restrictOrderAmount) && this.activityType !== 1) {
+        if (isFalsly(v.restrictOrderAmount) && ![1, 4].includes(this.activityType)) {
           return void message.error(`${prefixMsg}订单门槛不能为空`)
         }
         // 普通用户中奖概率必填
@@ -556,9 +556,11 @@ class Main extends React.Component<Props, State> {
     let awardList = this.state.awardList
     for (let i = 0; i < awardList.length; i++) {
       const v = awardList[i]
-      const prefixMsg = `奖品列表第${i + 1}行`
-      if (isFalsly(v.awardNum) && +v.awardType !== 0) {
-        return void message.error(`${prefixMsg}奖品库存不能为空`)
+      if (v.defaultAward === 1) {
+        const prefixMsg = `奖品列表第${i + 1}行`
+        if (isFalsly(v.awardNum) && +v.awardType !== 0) {
+          return void message.error(`${prefixMsg}奖品库存不能为空`)
+        }
       }
     }
     const expectedNumber = this.form.getValues().expectedNumber || 0
@@ -566,7 +568,7 @@ class Main extends React.Component<Props, State> {
       APP.error('请输入预估参与人数')
       return
     }
-    const inventory: any = awardList.reduce((a: any, b) => {
+    const inventory: any = awardList.filter(item => item.defaultAward === 1).reduce((a: any, b) => {
       return ((typeof a !== 'number' ? a.awardNum : a) || 0) + (b.awardNum || 0)
     }) || 0
     let totalChance = 0
@@ -575,7 +577,8 @@ class Main extends React.Component<Props, State> {
     // if () a < 0.1
     awardList = awardList.map((item) => {
       const awardNum = item.awardNum || 0
-      let chance = inventory === 0 ? 0 : Decimal.div(awardNum, inventory).mul(10000).floor().div(100).toNumber()
+      // 生成概率排除兜底的情况，后端兜底概率不是根据前端传的参数来的，这里传0无影响
+      let chance = (inventory === 0 || item.defaultAward === 0) ? 0 : Decimal.div(awardNum, inventory).mul(10000).floor().div(100).toNumber()
       // console.log(chance, '------')
       chance = chance * (ratio > 1 ? 1 : (ratio < 0.1 ? ratio * 10 : ratio))
       totalChance += chance
@@ -720,7 +723,7 @@ class Main extends React.Component<Props, State> {
                 }}
               />
             </Col>
-            <Col span={12}>
+            <Col span={14}>
               <FormItem
                 name='expectedNumber'
                 type='number'
@@ -741,83 +744,62 @@ class Main extends React.Component<Props, State> {
               </Col>
           </Row>
         </Card>
-        <Card title='奖品列表'>
-          {/* <Button
-            className='mb10'
-            type='primary'
-            onClick={this.handleAdd}>
-            添加一行
-          </Button> */}
-          <Table
-            rowKey='id'
-            columns={this.columns}
-            className={styles['prize-list']}
-            dataSource={this.state.awardList}
-            pagination={false}
-            scroll={{ x: 1930, y: 800 }}
-          />
-          <div hidden={this.readOnly} className='mt20'>
-            <Button
-              className='mr10'
-              type='danger'
-              onClick={this.generateChance}
-            >
-              生成概率
-            </Button>
-            <Button
-              onClick={this.clearChance}
-            >
-              清空概率
-            </Button>
-            {/* <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
-              点击生成概率，校验预估参与人数和奖品库存是否填写，<br />
-              如未填写则提示“预估参与人数、奖品库存填写后才能生成概率”的提示
-            </Tips> */}
-          </div>
-        </Card>
-        <Card type='inner' title='规则说明'>
-          {/* <Row type='flex'>
-            <Icon
-              type='info-circle'
-              theme='filled'
-              style={{
-                color: '#1890ff',
-                marginRight: 4,
-                marginTop: 4
-              }}
+        <div className='mt10'>
+          <Card title='奖品列表'>
+            {/* <Button
+              className='mb10'
+              type='primary'
+              onClick={this.handleAdd}>
+              添加一行
+            </Button> */}
+            <Table
+              rowKey='id'
+              columns={this.columns}
+              className={styles['prize-list']}
+              dataSource={this.state.awardList}
+              pagination={false}
+              scroll={{ x: 1930, y: 800 }}
             />
-            <div>
-              <div>奖品列表根据活动类型固定数量奖品，红包雨10个奖品，九宫格8个奖品；</div>
-              <div>兜底奖品行一直置底；</div>
-              <div>奖品类型包括：现金、优惠券、实物、元宝，(兜底商品多一个“谢谢惠顾”)；</div>
-              <div>奖品设置：现金、元宝填写非负整数，优惠券和实物选择对应券（实物本期也是使用优惠券）；</div>
-              <div>简称：奖品简称，用于前台展示；</div>
-              <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传（仅限九宫格，红包雨图片置灰）；</div>
-              <div>风控级别：0和1，0为无风控级别，1风控级别为高；</div>
-              <div>奖品库存：本场次可发放奖品的总量，活动进行中可以调整；</div>
-              <div>发出数量：本场次发出商品的数量；</div>
-              <div>单人限领：本场次活动中，单人最高可中奖数量；</div>
-              <div>订单门槛：满足订单金额门槛才可以抽中对应奖品（仅限九宫格，红包雨订单门槛置灰）；</div>
-              <div>中奖概率：非负数，保留两位小数，0-100；</div>
+            <div hidden={this.readOnly} className='mt20'>
+              <Button
+                className='mr10'
+                type='danger'
+                onClick={this.generateChance}
+              >
+                生成概率
+              </Button>
+              <Button
+                onClick={this.clearChance}
+              >
+                清空概率
+              </Button>
+              {/* <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
+                点击生成概率，校验预估参与人数和奖品库存是否填写，<br />
+                如未填写则提示“预估参与人数、奖品库存填写后才能生成概率”的提示
+              </Tips> */}
             </div>
-          </Row> */}
-          <Tips>
-            <div>
-              <div>奖品列表根据活动类型固定数量奖品，红包雨10个奖品，九宫格8个奖品；</div>
-              <div>兜底奖品行一直置底；</div>
-              <div>奖品类型包括：现金、优惠券、实物、元宝，(兜底商品多一个“谢谢惠顾”)；</div>
-              <div>奖品设置：现金、元宝填写非负整数，优惠券和实物选择对应券（实物本期也是使用优惠券）；</div>
-              <div>简称：奖品简称，用于前台展示；</div>
-              <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传（仅限九宫格，红包雨图片置灰）；</div>
-              <div>风控级别：0和1，0为无风控级别，1风控级别为高；</div>
-              <div>奖品库存：本场次可发放奖品的总量，活动进行中可以调整；</div>
-              <div>发出数量：本场次发出商品的数量；</div>
-              <div>单人限领：本场次活动中，单人最高可中奖数量；</div>
-              <div>订单门槛：满足订单金额门槛才可以抽中对应奖品（仅限九宫格，红包雨订单门槛置灰）；</div>
-              <div>中奖概率：非负数，保留两位小数，0-100；</div>
-            </div>
-          </Tips>
-        </Card>
+          </Card>
+        </div>
+        <div className='mt10'>
+          <Card type='inner' title='规则说明'>
+            <Tips>
+              <div>
+                <div>奖品列表根据活动类型固定数量奖品，红包雨、财神拜年10个奖品，九宫格、砸金蛋8个奖品；</div>
+                <div>兜底奖品行一直置底；</div>
+                <div>奖品类型包括：现金、优惠券、实物、元宝，(兜底商品多一个“谢谢惠顾”)；</div>
+                <div>奖品设置：现金、元宝填写非负整数，优惠券和实物选择对应券（实物本期也是使用优惠券）；</div>
+                <div>简称：奖品简称，用于前台展示；</div>
+                <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传（仅限九宫格、砸金蛋，红包雨、财神拜年图片置灰）；</div>
+                <div>风控级别：0和1，0为无风控级别，1风控级别为高；</div>
+                <div>奖品库存：本场次可发放奖品的总量，活动进行中可以调整；</div>
+                <div>发出数量：本场次发出商品的数量；</div>
+                <div>单人限领：本场次活动中，单人最高可中奖数量；</div>
+                <div>订单门槛：满足订单金额门槛才可以抽中对应奖品（仅限九宫格、砸金蛋，红包雨、财神拜年订单门槛置灰）；</div>
+                <div>中奖概率：非负数，保留两位小数，0-100；</div>
+              </div>
+            </Tips>
+          </Card>
+        </div>
       </Form>
     )
   }
