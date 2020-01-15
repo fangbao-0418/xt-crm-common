@@ -109,7 +109,7 @@ class Main extends React.Component<Props> {
                 title: '合伙人价'
               },{
                 dataIndex: 'managerMemberPrice',
-                title: '管理员价'
+                title: '***价'
               }]}
               dataSource={priceDetail}
               pagination={false}
