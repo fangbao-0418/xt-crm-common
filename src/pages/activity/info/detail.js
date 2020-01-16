@@ -181,27 +181,7 @@ class ActivityDetail extends React.Component {
       activityImage: e,
     });
   };
-  getColumns = (detailData) => [
-    {
-      title: '规格名称',
-      dataIndex: 'property',
-    },
-    {
-      title: `${detailData.type === 6 ? '助力分': '活动价'}`,
-      dataIndex: 'buyingPrice',
-      width: 200,
-      render: (text, record, index) => (
-        speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
-          <InputNumber
-            style={{width: 140}}
-            min={0}
-            precision={detailData.type === 6 ? 0: 2}
-            value={text}
-            onChange={this.handleChangeValue('buyingPrice', index)}
-          />
-        )
-      ),
-    },
+  getExtendColumns = (detailData) => [
     {
       title: '拼团价',
       dataIndex: 'promotionPrice',
@@ -282,6 +262,29 @@ class ActivityDetail extends React.Component {
         )
       )
     },
+  ]
+  getColumns = (detailData) => [
+    {
+      title: '规格名称',
+      dataIndex: 'property',
+    },
+    {
+      title: `${detailData.type === 6 ? '助力分': '活动价'}`,
+      dataIndex: 'buyingPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          <InputNumber
+            style={{width: 140}}
+            min={0}
+            precision={detailData.type === 6 ? 0: 2}
+            value={text}
+            onChange={this.handleChangeValue('buyingPrice', index)}
+          />
+        )
+      ),
+    },
+    ...(detailData.type === 10 ? this.getExtendColumns(detailData) : []),
     {
       title: '活动库存',
       dataIndex: 'inventory',
