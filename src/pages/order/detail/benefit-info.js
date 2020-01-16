@@ -4,7 +4,9 @@ import { Table, Row, Button, Modal, message } from 'antd';
 import { MemberTypeTextMap } from '../constant';
 import { formatMoneyWithSign } from '../../helper';
 import { profitRecal, profitRecycl, getProceedsListByOrderIdAndMemberId, getProceedsListByOrderIdAndMemberIdAndSkuId } from '../api';
-
+import EarningsDetail from './components/modal/EarningsDetail'
+import Alert from '@/packages/common/components/alert'
+import { getEarningsDetail } from './api'
 const ChildOrderTable = (props) => {
   const { record: { mainOrderNo, memberId } } = props;
   const [isFirstLoaded, useIsFirstLoaded] = useState(true)
@@ -67,22 +69,23 @@ const ChildOrderTable = (props) => {
   </>
 };
 
-const BenefitInfo = ({
-  data = {
-    costPrice: 0,
-    memberYieldVOList: [
-      {
-        memberType: 0,
-        userName: 'string',
-        yield: 0,
-      },
-    ],
-    totalPrice: 0,
-  },
-  orderInfo,
-  proceedsList,
-  refresh
-}) => {
+const BenefitInfo = (props) => {
+  const {
+    data = {
+      costPrice: 0,
+      memberYieldVOList: [
+        {
+          memberType: 0,
+          userName: 'string',
+          yield: 0,
+        },
+      ],
+      totalPrice: 0,
+    },
+    orderInfo,
+    proceedsList,
+    refresh
+  } = props
   const [detailList, useDetailList] = useState([]);
   const [visible, useVisible] = useState(false);
 
@@ -167,11 +170,33 @@ const BenefitInfo = ({
 
   const showModal = (mainOrder, childOrder) => {
     const { mainOrderNo, memberId } = mainOrder;
-    const { skuId } = childOrder;
-    getProceedsListByOrderIdAndMemberIdAndSkuId({ mainOrderNo, memberId, skuId }).then((result) => {
-      useDetailList(result);
-    });
-    useVisible(true);
+    const { skuId, childOrderNo } = childOrder;
+    getEarningsDetail({
+      childOrderNo: childOrderNo,
+      memberId
+    }).then((res) => {
+      props.alert({
+        width: 900,
+        title: '收益详情',
+        content: (
+          <EarningsDetail
+            detail={res}
+          />
+        )
+      })
+    })
+    // getProceedsListByOrderIdAndMemberIdAndSkuId({ mainOrderNo, memberId, skuId }).then((result) => {
+    //   // useDetailList(result);
+    //   console.log(this, 'this')
+    //   props.alert({
+    //     width: 900,
+    //     title: '收益详情',
+    //     content: (
+    //       <EarningsDetail dataSource={result} />
+    //     )
+    //   })
+    // });
+    // useVisible(true);
   }
 
   const expandedRowRenderByChildOrder = (record, index, indent, expanded) => {
@@ -195,32 +220,32 @@ const BenefitInfo = ({
         expandedRowRender={expandedRowRenderByChildOrder}
       />
       {
-        visible ?
-          <Modal
-            title={"收益详细历史记录"}
-            visible={true}
-            width="900px"
-            bodyStyle={{
-              padding: 0,
-              minHeight: 540
-            }}
-            footer={[
-              <Button type="primary" key="back" onClick={() => { useVisible(false); }}>取消</Button>
-            ]}
-            onCancel={() => { useVisible(false) }}
-          >
-            <Table
-              rowKey={record => record.id}
-              columns={detailColumns}
-              dataSource={detailList}
-              pagination={false}
-              scroll={{ y: 540 }}
-            />
-          </Modal> :
-          null
+        // visible ?
+        //   <Modal
+        //     title={"收益详细历史记录"}
+        //     visible={true}
+        //     width="900px"
+        //     bodyStyle={{
+        //       padding: 0,
+        //       minHeight: 540
+        //     }}
+        //     footer={[
+        //       <Button type="primary" key="back" onClick={() => { useVisible(false); }}>取消</Button>
+        //     ]}
+        //     onCancel={() => { useVisible(false) }}
+        //   >
+        //     <Table
+        //       rowKey={record => record.id}
+        //       columns={detailColumns}
+        //       dataSource={detailList}
+        //       pagination={false}
+        //       scroll={{ y: 540 }}
+        //     />
+        //   </Modal> :
+        //   null
       }
     </div>
   );
 };
 
-export default BenefitInfo;
+export default Alert(BenefitInfo);
