@@ -55,7 +55,6 @@ class Add extends React.Component {
     this.typeChange(this.data.type);
   }
 
-  
   loadStatus(status) {
     this.loading = status;
     this.setState({
