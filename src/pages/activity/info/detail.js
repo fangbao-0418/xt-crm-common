@@ -113,7 +113,7 @@ class ActivityDetail extends React.Component {
     if (detailData.promotionSkuList && detailData.promotionSkuList[index]) {
       detailData.promotionSkuList[index][text] = value
     }
-    console.log(detailData, text, index, value, '------')
+    console.log(detailData, text, index, value, '================================')
     this.setState({ detailData, sort: detailData.sort || 0 });
   };
 
