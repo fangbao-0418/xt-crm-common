@@ -3,6 +3,7 @@ import { Card, Row, Col, Modal, Table } from 'antd';
 import { OrderStatusTextMap } from '../constant';
 import { formatDate, unionAddress } from '../../helper';
 import { levelName } from '../../user/utils';
+import { If } from '@/packages/common/components'
 const initOrderInfo = {
   childOrderList: [
     {
@@ -21,7 +22,7 @@ const initOrderInfo = {
 
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
   const [visible, setVisible] = useState(false);
-  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason } = orderInfo;
+  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupBuyCode, groupBuyOrderCodes } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
   return (
     <>
@@ -31,16 +32,19 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
         visible={visible}
         footer={null}
       >
-        <Table columns={[{
-          title: '拼团编号',
-          dataIndex: 'ID'
-        }, {
-          title: '订单编号',
-          dataIndex: 'orderNum'
-        }, {
-          title: '状态',
-          dataIndex: 'status'
-        }]}/>
+        <Table
+          columns={[{
+            title: '拼团编号',
+            dataIndex: 'groupBuyCode'
+          }, {
+            title: '订单编号',
+            dataIndex: 'orderCode'
+          }, {
+            title: '状态',
+            dataIndex: 'groupOrderStatus'
+          }]}
+          dataSource={groupBuyOrderCodes}
+        />
       </Modal>
       <Card title="订单信息">
         <Row gutter={24}>
@@ -61,7 +65,9 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
         </Row>
         <Row gutter={24}>
           <Col span={8}>买家备注：{remark}</Col>
-          <Col span={16}>拼团编号：<span className='href' onClick={() => setVisible(true)}>424214124781278</span></Col>
+          <If condition={!!groupBuyCode}>
+            <Col span={16}>拼团编号：<span className='href' onClick={() => setVisible(true)}>{groupBuyCode}</span></Col>
+          </If>
         </Row>
         <Row gutter={24}>
           <Col span={8}>真实姓名：{buyerInfo.realName}</Col>
