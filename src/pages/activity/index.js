@@ -103,6 +103,7 @@ export default class RouteApp extends React.Component {
         {/* luckyDrawId：活动ID，id场次ID */}
         <Route path={`${match.url}/lottery/:luckyDrawId/:id`} component={ActivitySessions} />
         <Route path={`${match.url}/reward`} exact component={ActivityReward} />
+        <Route path={`${match.url}/sprinkle-cash`}/>
       </Switch>
     );
   }
