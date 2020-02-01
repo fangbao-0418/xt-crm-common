@@ -21,7 +21,7 @@ const pubconfig = fs.existsSync('./pubconfig.json')
       outputDir: 'build'
     };
 
-console.log('PUB_ENV => ', require('./pubconfig.json'), process.env.PUB_ENV);
+console.log('PUB_ENV => ', pubconfig, process.env.PUB_ENV);
 paths.appBuild = path.resolve(pubconfig.outputDir);
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);

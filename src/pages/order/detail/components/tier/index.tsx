@@ -19,11 +19,37 @@ interface Props {
 class Main extends React.Component<Props> {
   public getNodes () {
     const dataSource = this.props.dataSource || []
+    let blockNodes: any[] = []
+    let keyIndex = 0
     function loop (arr: T[]) {
       let nodes: any[] = []
+      if (arr.length === 0) {
+        return
+      }
+      const childrens: T[][] = []
+      if (arr.length < 2) {
+        nodes.push(
+          <div
+            key={`empty-${keyIndex}`}
+            className={classNames(styles['tier-item'])}
+          >
+            <div style={{width: 200}}></div>
+          </div>
+        )
+        nodes.push(
+          <div
+            key={`line-${keyIndex}`}
+            className={classNames(styles['tier-item-line-hidden'], styles['tier-item'], styles['tier-item-line'])}
+          >
+          </div>
+        )
+      }
       arr.map((item, index: number) => {
         /** 是否是平推身份 */
-        let isInviter = !item.children || (item.children && item.children.length === 0)
+        let isInviter = !item.children || item.children && item.children.length === 0
+        if (isInviter) {
+          isInviter = !item.isBuyer
+        }
         if (index === 1) {
           nodes.push(
             <div
@@ -33,28 +59,35 @@ class Main extends React.Component<Props> {
             </div>
           )
         }
+        if (item.children && item.children.length > 0) {
+          childrens.push(item.children)
+        }
+        const name = item.memberNickName || item.memberMobile
         nodes.push(
           <div
             key={item.memberId}
             className={classNames(styles['tier-item'], !isInviter && styles['tier-item-right'])}
           >
             <div className={classNames(styles['tier-label'], item.isCurrentMember && styles['tier-label-current'])}>
-              <div>{item.memberNickName || item.memberMobile}【{MemberType[item.memberType]}】</div>
+              <div title={name}>{name}【{MemberType[item.memberType]}】</div>
               <div>{item.incomeTypeDesc}</div>
             </div>
-            <div><div style={!isInviter ? undefined : {background: 'transparent'}} className={styles['tier-line']}></div></div>
-            {item.children && loop(item.children)}
+            <div><div style={!isInviter && item.children && item.children.length > 0 ? undefined : {background: 'transparent'}} className={styles['tier-line']}></div></div>
           </div>
         )
       })
-      return (
-        <div>
+      keyIndex++
+      blockNodes.push(
+        <div key={keyIndex}>
           <div className={styles.tier}>{nodes}</div>
         </div>
       )
+      childrens.map((children) => {
+        loop(children)
+      })
     }
-    const node = loop(dataSource)
-    return node
+    loop(dataSource)
+    return blockNodes
   }
   public render () {
     return (
