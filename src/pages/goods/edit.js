@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader } from 'antd';
+import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader, AutoComplete } from 'antd';
 import UploadView from '@/components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
-import { map, size, concat, filter, assign, forEach, cloneDeep, split } from 'lodash';
+import { map, size, concat, filter, assign, forEach, cloneDeep, split, debounce } from 'lodash';
 import descartes from '@/util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from './api';
-import { getAllId, gotoPage, initImgList, parseQuery } from '@/util/utils';
+import { getAllId, gotoPage, initImgList } from '@/util/utils';
 import { radioStyle } from '@/config';
 import SkuList from './components/sku';
 import { TemplateList } from '@/components';
@@ -67,8 +67,8 @@ class GoodsEdit extends React.Component {
     supplierInfo: {}
   };
   currentSupplier = {}
-  async componentDidMount() {
-    this.getStoreList();
+  componentDidMount() {
+    // this.getStoreList();
     this.getCategoryList();
   }
 
@@ -105,7 +105,7 @@ class GoodsEdit extends React.Component {
       },
     } = this.props;
     getGoodsDetial({ productId: id }).then((res = {}) => {
-      const supplier = this.supplier;
+      // const supplier = this.supplier;
       const arr2 = treeToarr(list);
       this.detail = {...res}
       const categoryId =
@@ -145,10 +145,11 @@ class GoodsEdit extends React.Component {
         listImage = listImage.concat(initImgList(item));
       });
       this.specs = this.getSpecs(res.skuList);
-      const currentSupplier = (supplier || []).find(item => item.id === res.storeId) || {};
-      this.currentSupplier = currentSupplier
+      this.getSupplierInfo(res.storeId);
+      // const currentSupplier = (supplier || []).find(item => item.id === res.storeId) || {};
+      // this.currentSupplier = currentSupplier
       this.setState({
-        interceptionVisible: currentSupplier.category == 1 ? false : true,
+        // interceptionVisible: currentSupplier.category == 1 ? false : true,
         data: res.skuList || [],
         speSelect: this.specs,
         propertyId1: res.propertyId1,
@@ -157,7 +158,7 @@ class GoodsEdit extends React.Component {
         returnPhone: res.returnPhone,
         returnAddress: res.returnAddress,
         showImage,
-        supplierInfo: currentSupplier,
+        // supplierInfo: currentSupplier,
         productCustomsDetailVOList: res.productCustomsDetailVOList || []
       });
       setFieldsValue({
@@ -245,19 +246,32 @@ class GoodsEdit extends React.Component {
     this.specs = filter(specs, item => !!item.title);
     return this.specs;
   }
-  getStoreList = params => {
-    getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
-      const supplier = res.records || []
-      this.supplier = supplier
-      const currentSupplier = (supplier || []).find(item => item.id === this.detail.storeId) || {};
+  // getStoreList = params => {
+  //   getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
+  //     const supplier = res.records || []
+  //     this.supplier = supplier
+  //     // const currentSupplier = (supplier || []).find(item => item.id === this.detail.storeId) || {};
+  //     this.setState({
+  //       // interceptionVisible: currentSupplier.category == 1 ? false : true,
+  //       // supplierInfo: currentSupplier,
+  //       supplier
+  //     });
+  //   });
+  // };
+  // 根据供应商ID查询供应商信息
+  getSupplierInfo = (id) => {
+    getStoreList({ pageSize: 5000, id }).then(res => {
+      const records = res.records || []
+      let supplierInfo = {}
+      if (records.length >= 1) {
+        supplierInfo = records[0];
+      }
       this.setState({
-        interceptionVisible: currentSupplier.category == 1 ? false : true,
-        supplierInfo: currentSupplier,
-        supplier
-      });
-    });
-  };
-
+        supplierInfo,
+        interceptionVisible: supplierInfo.category == 1 ? false : true,
+      })
+    })
+  }
   handleTabsEdit = (e, action) => {
     if (action === 'remove') {
       this.handleRemove(e);
@@ -463,11 +477,26 @@ class GoodsEdit extends React.Component {
     })
   }
 
+  // 供应商列表条件查询
+  handleSearch = debounce(name => {
+    if (typeof name !== 'string') return;
+    name = name.trim()
+    if (name.length > 0) {
+      getStoreList({ name, pageSize: 5000 }).then(res => {
+        console.log('supplier => ', res.records)
+        this.setState({ supplier: res.records });
+      })
+    } else {
+      this.setState({ supplier: []});
+    }
+  }, 1000)
+
   supplierChange = (value) => {
     const { supplier } = this.state;
     let data = this.state.data
     const { form: { resetFields, getFieldsValue, setFieldsValue } } = this.props;
-    const currentSupplier = supplier.find(item => item.id === value) || {};
+    const currentSupplier = supplier.find(item => String(item.id) === value) || {};
+    console.log('currentSupplier =>', currentSupplier)
     const { category } = currentSupplier
     let { productType } = getFieldsValue()
     if (category === 1) {
@@ -576,7 +605,7 @@ class GoodsEdit extends React.Component {
           <Form.Item label="商品编码">
             {getFieldDecorator('productCode')(<Input placeholder="请输入商品编码" />)}
             </Form.Item>
-            <Form.Item label="商品简介">
+          <Form.Item label="商品简介">
             {getFieldDecorator('description', {
               rules: [
                 {
@@ -595,7 +624,7 @@ class GoodsEdit extends React.Component {
               ],
             })(<Input placeholder="请输入商品条码" />)}
           </Form.Item>
-          <Form.Item label="供货商">
+          {/* <Form.Item label="供货商">
             {getFieldDecorator('storeId', {
               rules: [
                 {
@@ -619,6 +648,30 @@ class GoodsEdit extends React.Component {
                   </Select.Option>
                 ))}
               </Select>,
+            )}
+          </Form.Item> */}
+          <Form.Item label='供应商'>
+            {getFieldDecorator('storeId', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入供应商',
+                }
+              ],
+              onChange: this.supplierChange
+            })(
+              <AutoComplete
+                allowClear
+                disabled={this.id && this.currentSupplier.category === 4}
+                onSearch={this.handleSearch}
+                placeholder='请输入供应商'
+              >
+                {map(supplier, item => (
+                  <AutoComplete.Option value={String(item.id)} key={item.id}>
+                    {item.name}
+                  </AutoComplete.Option>
+                ))}
+              </AutoComplete>
             )}
           </Form.Item>
           <Form.Item label="供应商商品ID">
