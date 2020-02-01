@@ -39,22 +39,13 @@
       }
     </script>
     <script>
-      function simulateClickEvent () {
-        var event = document.createEvent('MouseEvents');
-        event.initMouseEvent('click', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
-        document.body.dispatchEvent(event);
-      }
-    </script>
-    <script>
       function initConfig () {
-        // console.log('onload');
         var query = parseQuery() || {};
-        // console.log(query, '----')
         var detail = {
           playUrl: query.playUrl,
           liveCoverUrl: query.liveCoverUrl
         };
-        var config = JSON.parse(localStorage.getItem('tc') || 'null');
+        var config = undefined;
         if (detail.playUrl) {
           var https = /https/.test(window.location.origin) ? true : false;
           // const playUrl = (detail.playUrl || '').replace(/https?:\/\//, https ? 'https://' : 'http://')
@@ -74,10 +65,10 @@
             // this.player.play()
           };
           var player = new TcPlayer('id_test_video', config);
-          document.body.onclick = function () {
+          player.mute(true);
+          document.body.onload = function () {
             player.play();
           }
-          simulateClickEvent();
         }
       }
       initConfig();
