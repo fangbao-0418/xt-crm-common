@@ -484,7 +484,12 @@ class GoodsEdit extends React.Component {
     if (name.length > 0) {
       getStoreList({ name, pageSize: 5000 }).then(res => {
         console.log('supplier => ', res.records)
-        this.setState({ supplier: res.records });
+        if (Array.isArray(res.records) && res.records.length > 0) {
+          this.setState({ supplier: res.records });
+        } else {
+          this.setState({ supplier: [] });
+          this.props.form.resetFields('storeId', '');
+        }
       })
     } else {
       this.setState({ supplier: []});
