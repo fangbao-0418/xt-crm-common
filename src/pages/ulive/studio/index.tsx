@@ -233,6 +233,7 @@ class Main extends React.Component<Props> {
   public showVideo (record: UliveStudio.ItemProps) {
     console.log(param(record))
     const query = param({
+      version: new Date().getTime(),
       playUrl: record.playUrl,
       liveCoverUrl: record.liveCoverUrl
     })

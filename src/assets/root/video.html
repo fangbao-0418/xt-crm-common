@@ -39,7 +39,15 @@
       }
     </script>
     <script>
+      function simulateClickEvent () {
+        var event = document.createEvent('MouseEvents');
+        event.initMouseEvent('click', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
+        document.body.dispatchEvent(event);
+      }
+    </script>
+    <script>
       function initConfig () {
+        // console.log('onload');
         var query = parseQuery() || {};
         // console.log(query, '----')
         var detail = {
@@ -57,19 +65,22 @@
             live: true,
             m3u8: playUrl.replace('.flv', '.m3u8'),
             flv: playUrl,
-            autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
+            // autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
             poster: detail.liveCoverUrl,
             width:  '100%', // 视频的显示宽度，请尽量使用视频分辨率宽度
             height: '100%', // 视频的显示高度，请尽量使用视频分辨率高度
           };
           config.listener = function (msg) {
             // this.player.play()
-            // console.log(msg, player, 'xxxx')
           };
-          new TcPlayer('id_test_video', config);
+          var player = new TcPlayer('id_test_video', config);
+          document.body.onclick = function () {
+            player.play();
+          }
+          simulateClickEvent();
         }
       }
-      initConfig()
+      initConfig();
     </script>
   </body>
 </html>
