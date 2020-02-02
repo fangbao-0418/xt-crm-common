@@ -1,6 +1,15 @@
+interface Options {
+  label: string;
+  value: string;
+}
+
 interface constantProps {
   // 物流公司
-  expressList: { label: string, value: string }[],
+  expressList: Options[];
   // 物流公司code到name映射
-  expressConfig: { [propName: string]: string}
+  expressConfig: any;
+  // 订单类型
+  orderTypeList: Options[];
+  // 订单类型映射
+  orderTypeConfig: any;
 }
