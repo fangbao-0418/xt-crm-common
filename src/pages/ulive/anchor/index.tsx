@@ -145,6 +145,7 @@ class Main extends React.Component<Props> {
               <FormItem name='anchorIdentityType' />
               <FormItem name='anchorLevel' />
               <FormItem name='status' />
+              <FormItem name='phone' />
             </>
           )}
           api={api.getAnchorList}

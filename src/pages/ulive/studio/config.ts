@@ -17,6 +17,9 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
+      phone: {
+        type: 'input', label: '手机号码'
+      },
       planId: {
         type: 'input', label: '房间ID',
         fieldDecoratorOptions: {

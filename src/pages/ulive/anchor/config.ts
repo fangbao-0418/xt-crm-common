@@ -8,6 +8,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
     common: {
       phone: {
         type: 'input',
+        label: '手机号码',
         fieldDecoratorOptions: {
           rules: [
             {
