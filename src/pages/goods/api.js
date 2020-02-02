@@ -1,7 +1,7 @@
 import { post, exportFile, get, newGet, newPost } from '../../util/fetch';
 
-export function getStoreList(data) {
-  return post('/store/list', data);
+export function getStoreList(data, config) {
+  return post('/store/list', data, config);
 }
 
 export function setProduct(data) {
