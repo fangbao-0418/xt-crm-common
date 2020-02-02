@@ -233,24 +233,28 @@ class Main extends React.Component<Props> {
   public showVideo (record: UliveStudio.ItemProps) {
     console.log(param(record))
     const query = param({
+      version: new Date().getTime(),
       playUrl: record.playUrl,
       liveCoverUrl: record.liveCoverUrl
     })
     const url = location.origin.replace(/^https?/, 'http') + location.pathname.replace(/index.html/, '') +  'video.html?' + query
-    window.open(url, '视频直播', 'top=120,left=150,width=800,height=500,location=0,menubar=0,scrollbars=0,status=0,titlebar=0,toolbar=0')
+    window.open(url, '喜团直播', 'top=120,left=150,width=800,height=500,scrollbars=0,titlebar=1', false)
+    // console.log(myWindow, 'myWindow');
+    // myWindow.focus();
     // APP.href(url, '__blank')
-    return
-    const hide = this.props.alert({
-      content: (
-        <Video
-          detail={record}
-          hide={() => {
-            hide()
-          }}
-        />
-      ),
-      footer: null
-    })
+    // return
+    // const hide = this.props.alert({
+    //   content: (
+    //     <div>
+    //       <iframe
+    //         style={{width: '100%',height: 400}}
+    //         src={url}
+    //       >
+    //       </iframe>
+    //     </div>
+    //   ),
+    //   footer: null
+    // })
   }
   /** 禁播 */
   public closeDown (record: UliveStudio.ItemProps) {
