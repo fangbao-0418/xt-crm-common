@@ -2,7 +2,7 @@ import React from 'react'
 interface Props {
   onChange?: any
   placeholder?: string
-  listType: 'text' | 'picture' | 'picture-card'
+  listType?: 'text' | 'picture' | 'picture-card'
   listNum?: number
   size?: number
   showUploadList?: booelan

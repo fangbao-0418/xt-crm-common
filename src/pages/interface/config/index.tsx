@@ -1,10 +1,13 @@
 import React from 'react';
 import { Form, Input, Button, Row, Col, Switch } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
+import { FormInstance } from '@/packages/common/components/form'
 import * as api from './api';
 import UploadView from '../../../components/upload';
 import { initImgList } from '@/util/utils';
 import { array } from 'prop-types';
+import Live from './Live'
+import { resolve } from 'dns';
 interface Props extends FormComponentProps {}
 interface State {
   miniCardWords: string; //标题
@@ -61,9 +64,26 @@ class Main extends React.Component<Props, State> {
       }
     });
   }
+  public getLiveValues () {
+    const liveForm: FormInstance = (this.refs.live as any).form
+    return new Promise((resolve, reject) => {
+      liveForm.props.form.validateFields((err, values) => {
+        if (err) {
+          reject()
+        } else {
+          resolve(values)
+        }
+      })
+    })
+  }
   //提交
-  public onSubmit() {
+  public async onSubmit() {
+    const liveValues = await this.getLiveValues()
     this.props.form.validateFields((err, value) => {
+      console.log(liveValues, 'liveValues')
+      if (!liveValues) {
+        return
+      }
       if (err) {
         APP.error('保存失败');
         return;
@@ -101,7 +121,7 @@ class Main extends React.Component<Props, State> {
           minHeight: 400
         }}
       >
-        <Form {...formLayout} onSubmit={this.onSubmit}>
+        <Form {...formLayout}>
           <Form.Item label="标题" required={true}>
             {getFieldDecorator('title', {
               rules: [
@@ -289,12 +309,17 @@ class Main extends React.Component<Props, State> {
               </Form.Item>
             </>
           }
-          <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
-            <Button type="primary" htmlType="submit">
-              保 存
-            </Button>
-          </Form.Item>
         </Form>
+        <Live ref='live' />
+        <div>
+          <Button
+            style={{margin: '0px 0px 50px 300px'}}
+            type="primary"
+            onClick={this.onSubmit}
+          >
+            保 存
+          </Button>
+        </div>
       </div>
     );
   }

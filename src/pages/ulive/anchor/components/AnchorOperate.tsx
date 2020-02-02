@@ -12,8 +12,11 @@ interface Props {
   refresh?: () => void
 }
 interface State {
-  type: number
+  /** 1-新增 2-修改 3-拉黑操作 4-错误提示 5-已存在以下用户主播身份为公司 */
+  type: 1 | 2 | 3 | 4 | 5
   message: string
+  /** 添加方式 1-单个 2-批量 */
+  addType: 1 | 2
 }
 
 interface UserInfo {
@@ -29,7 +32,8 @@ class Main extends React.Component<Props, State> {
   public anchorInfo: Anchor.ItemProps | undefined = this.props.detail
   public state: State = {
     type: this.props.type,
-    message: ''
+    message: '',
+    addType: 1
   }
   public componentDidMount () {
     this.init()
@@ -195,17 +199,60 @@ class Main extends React.Component<Props, State> {
         >
           <If condition={this.state.type === 1}>
             <FormItem
-              label='用户手机号'
-              name='phone'
+              label='添加方式'
+              name='type'
               required={false}
               verifiable
+              type='radio'
+              controlProps={{
+                onChange: (e: any) => {
+                  this.setState({
+                    addType: e.target.value
+                  })
+                }
+              }}
+              fieldDecoratorOptions={{
+                initialValue: 1
+              }}
+              options={[
+                {label: '单个添加', value: 1},
+                {label: '批量添加', value: 2}
+              ]}
             />
-            <FormItem
-              label='登录ID'
-              name='memberId'
-              required={false}
-              verifiable
-            />
+            <If condition={this.state.addType === 1}>
+              <FormItem
+                label='用户手机号'
+                name='phone'
+                required={false}
+                verifiable
+              />
+              <FormItem
+                label='登录ID'
+                name='memberId'
+                required={false}
+                verifiable
+              />
+            </If>
+            <If condition={this.state.addType === 2}>
+              <FormItem
+                label='请填入手机号'
+                type='textarea'
+                name='abc'
+                placeholder='请输入用户手机号'
+                controlProps={{
+                  rows: 4
+                }}
+              />
+              <div
+                style={{
+                  margin: '0 60px 30px',
+                  color: '#999',
+                  fontSize: 12
+                }}
+              >
+              提示：仅允许添加手机号，多个手机号请用英文逗号隔开；最多添加1000个手机号
+              </div>
+            </If>
             <div hidden={!this.state.message} style={{position: 'relative', top: -10}}>
               <div className='text-center mb10'>
                 <span style={{color: 'red'}}>{this.state.message}</span>
