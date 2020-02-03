@@ -4,23 +4,25 @@ import { enumOrderStatus } from '../constant';
 import { formatDate } from '../../helper';
 const { Step } = Steps;
 
-function getCurrentIndex(orderStatus) {
-  switch (orderStatus) {
-    case enumOrderStatus.Unpaid:
-      return 0;
-    case enumOrderStatus.Undelivered:
-      return 1;
-    case enumOrderStatus.PartDelivered:
-      return 2;
-    case enumOrderStatus.Delivered:
-      return 2;
-    case enumOrderStatus.Received:
-      return 3;
-    case enumOrderStatus.Complete:
-      return 4;
-    default:
-      break;
+function getCurrentIndex(orderStatus, orderType) {
+  // orderType为90等于拼团订单
+  const orderStatusMap = orderType !== 90 ? {
+    [enumOrderStatus.Unpaid]: 0,
+    [enumOrderStatus.Undelivered]: 1,
+    [enumOrderStatus.PartDelivered]: 2,
+    [enumOrderStatus.Delivered]: 2,
+    [enumOrderStatus.Received]: 3,
+    [enumOrderStatus.Complete]: 4
+  } : {
+    [enumOrderStatus.Unpaid]: 0,
+    [enumOrderStatus.Undelivered]: 1,
+    [enumOrderStatus.Tofight]: 2,
+    [enumOrderStatus.PartDelivered]: 3,
+    [enumOrderStatus.Delivered]: 3,
+    [enumOrderStatus.Received]: 4,
+    [enumOrderStatus.Complete]: 5
   }
+  return orderStatusMap[orderStatus]
 }
 
 function getStatusTime(orderStatusLogList = [], orderStatus) {
@@ -30,33 +32,36 @@ function getStatusTime(orderStatusLogList = [], orderStatus) {
   return found ? formatDate(found.createTime) : '';
 }
 
-const StepInfo = ({ orderStatus, orderStatusLogList = [] }) => {
+const StepInfo = ({ orderType, orderStatus, orderStatusLogList = [] }) => {
   if (orderStatus === enumOrderStatus.Closed) {
     return null;
   }
-  const current = getCurrentIndex(orderStatus);
+  const current = getCurrentIndex(orderStatus, orderType);
 
   return (
     <Card>
       <Steps progressDot current={current}>
         <Step
-          title="1.买家下单"
+          title="买家下单"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Unpaid)}
         />
         <Step
-          title="2.买家付款"
+          title="买家付款"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Undelivered)}
         />
         <Step
-          title="3.发货"
+          title='待成团'
+        />
+        <Step
+          title="发货"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Delivered)}
         />
         <Step
-          title="4.确认收货"
+          title="确认收货"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Received)}
         />
         <Step
-          title="5.交易完成"
+          title="交易完成"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Complete)}
         />
       </Steps>

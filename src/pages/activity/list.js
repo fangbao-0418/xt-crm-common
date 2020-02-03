@@ -238,7 +238,7 @@ class List extends React.Component {
               {getFieldDecorator('type', {
                 initialValue: Number(initParams.type) || '',
               })(
-                <Select placeholder="请选择活动类型" style={{ width: 180 }}>
+                <Select placeholder="请选择活动类型" style={{ width: 180 }} allowClear>
                   <Option value="">全部</Option>
                   {activityType.getArray().map((val, i) => (
                     <Option value={val.key} key={i}>

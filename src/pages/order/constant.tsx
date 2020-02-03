@@ -203,6 +203,7 @@ export enum enumOrderStatus {
 
 export const OrderStatusTextMap = {
   [enumOrderStatus.Refund]: '售后',
+  [enumOrderStatus.Tofight]: '待成团',
   [enumOrderStatus.Closed]: '关闭',
   [enumOrderStatus.Complete]: '完成',
   [enumOrderStatus.PartDelivered]: '部分发货',

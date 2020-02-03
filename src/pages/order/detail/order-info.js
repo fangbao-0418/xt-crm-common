@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Row, Col, Modal, Table } from 'antd';
+import { Card, Row, Col, Modal, Table, Button } from 'antd';
 import { OrderStatusTextMap } from '../constant';
 import { formatDate, unionAddress } from '../../helper';
 import { levelName } from '../../user/utils';
@@ -38,7 +38,10 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
             dataIndex: 'groupBuyCode'
           }, {
             title: '订单编号',
-            dataIndex: 'orderCode'
+            dataIndex: 'orderCode',
+            render: (code) => {
+              return <Button type='link' href={window.location.pathname + `#/order/detail/${code}`} target="_blank">{code}</Button>
+            }
           }, {
             title: '状态',
             dataIndex: 'groupOrderStatus'
@@ -66,7 +69,18 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
         <Row gutter={24}>
           <Col span={8}>买家备注：{remark}</Col>
           <If condition={!!groupBuyCode}>
-            <Col span={16}>拼团编号：<span className='href' onClick={() => setVisible(true)}>{groupBuyCode}</span></Col>
+            <Col span={16}>
+              拼团编号：{
+                groupBuyCode === orderCode ? groupBuyCode : (
+                  <span
+                    className='href'
+                    onClick={() => setVisible(true)}
+                  >
+                    {groupBuyCode}
+                  </span>
+                )
+              }
+            </Col>
           </If>
         </Row>
         <Row gutter={24}>

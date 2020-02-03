@@ -80,6 +80,11 @@ class ActivityDetail extends React.Component {
     const data = JSON.parse(localStorage.getItem('editsku') || {});
     map(data.promotionSkuList, (item, key) => {
       item.buyingPrice = Number(item.buyingPrice / 100);
+      item.promotionPrice = Number(item.promotionPrice / 100);
+      item.headPrice = Number(item.headPrice / 100);
+      item.areaPrice = Number(item.areaPrice / 100);
+      item.cityPrice = Number(item.cityPrice / 100);
+      item.managerPrice = Number(item.managerPrice / 100);
       if (item.selected) {
         selectedRowKeys.push(key);
         selectedRows.push(item);
@@ -135,7 +140,12 @@ class ActivityDetail extends React.Component {
     const promotionSkuAdd = (selectedRows || []).map((item) => {
       return {
         ...item,
-        buyingPrice: item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0
+        buyingPrice: item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0,
+        promotionPrice: item.promotionPrice ? new Decimal(item.promotionPrice).mul(100).toNumber(): 0,
+        headPrice: item.headPrice ? new Decimal(item.headPrice).mul(100).toNumber() : 0,
+        areaPrice: item.areaPrice ? new Decimal(item.areaPrice).mul(100).toNumber() : 0,
+        cityPrice: item.cityPrice ? new Decimal(item.cityPrice).mul(100).toNumber() : 0,
+        managerPrice: item.managerPrice ? new Decimal(item.managerPrice).mul(100).toNumber() : 0,
       }
     });
     const params = {

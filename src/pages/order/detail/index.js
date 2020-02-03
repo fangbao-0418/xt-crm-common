@@ -184,12 +184,17 @@ class Detail extends Component {
       deliveryData
     } = this.state
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
+    const orderType = get(data, 'orderInfo.orderType');
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
     const showFlag = !!data.orderGlobalExtendVO 
     const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
     return (
       <>
-        <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
+        <StepInfo
+          orderType={orderType}
+          orderStatus={orderStatus}
+          orderStatusLogList={orderStatusLogList}
+        />
         {/* 订单信息 */}
         <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} />
         {/* 支付信息 */}

@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd';
 import {
   getProductList,
-  setPromotionAddSKu,
+  // setPromotionAddSKu,
   setPromotionAddSpu,
   delSpuPromotion,
   refreshPromtion,
@@ -70,14 +70,12 @@ class List extends React.Component {
     if (id !== 'undefined') {
       const fields = this.props.form.getFieldsValue();
       const { promotionDetail } = this.state;
-      console.log('///////////////', this.payload.page)
       const payload = {
         promotionId: id,
         page: this.payload.page,
         pageSize: promotionDetail.size,
         ...fields
       };
-      console.log('payload-------------', payload)
       APP.fn.setPayload(namespace, payload);
       getOperatorSpuList(payload).then(res => {
         this.setState({
@@ -88,13 +86,16 @@ class List extends React.Component {
   };
 
   getProductList = params => {
-    const { modalPage } = this.state;
+    // type 活动类型 10为拼团活动
+    const { modalPage, type } = this.state;
     getProductList({
       status: 0,
       pageSize: modalPage.pageSize,
       page: modalPage.current,
+      types: type === 10 ? [0, 10] : undefined,
       ...params
-    }).then(res => {
+    }).then((res) => {
+      res = res || {};
       modalPage.total = res.total;
       this.setState({
         goodsList: res.records,
@@ -125,9 +126,9 @@ class List extends React.Component {
     });
   };
 
-  setPromotionAddSKu = promotionId => {
-    setPromotionAddSKu({ promotionId }).then(res => []);
-  };
+  // setPromotionAddSKu = promotionId => {
+  //   setPromotionAddSKu({ promotionId }).then(res => []);
+  // };
 
   handleSearchModal = e => {
     this.getProductList({ productName: e, page: 1 });
@@ -387,6 +388,7 @@ class List extends React.Component {
         <ActivityInfo
           promotionDetail={records}
           changeType={info => {
+            // 这里改变的type值 =================
             this.setState({ info, type: info.type });
           }}
         />
