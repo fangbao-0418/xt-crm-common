@@ -64,7 +64,7 @@ class ActivityInfo extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { type, title, isEidt, startTime, endTime, sort } = this.state.info;
+    const { type, title, isEidt, startTime, endTime, sort, canUpdate } = this.state.info;
     return (
       <>
         <Card
@@ -84,7 +84,14 @@ class ActivityInfo extends React.Component {
             <FormItem label="开始时间">
               {getFieldDecorator('startTime', {
                 initialValue: moment(startTime),
-              })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledStartDate} />)}
+              })(
+                <DatePicker
+                  format="YYYY-MM-DD HH:mm:ss"
+                  showTime
+                  disabled={!isEidt || !canUpdate}
+                  disabledDate={this.disabledStartDate}
+                />
+              )}
             </FormItem>
             <FormItem label="结束时间">
               {getFieldDecorator('endTime', {
