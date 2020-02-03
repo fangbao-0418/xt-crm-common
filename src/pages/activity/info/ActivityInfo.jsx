@@ -64,7 +64,7 @@ class ActivityInfo extends React.Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
-    const { type, title, isEidt, startTime, endTime, sort, canUpdate } = this.state.info;
+    const { type, title, isEidt, startTime, endTime, sort } = this.state.info;
     return (
       <>
         <Card
@@ -88,7 +88,7 @@ class ActivityInfo extends React.Component {
                 <DatePicker
                   format="YYYY-MM-DD HH:mm:ss"
                   showTime
-                  disabled={!isEidt || !canUpdate}
+                  disabled={!isEidt}
                   disabledDate={this.disabledStartDate}
                 />
               )}

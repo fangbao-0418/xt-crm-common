@@ -46,7 +46,8 @@ class Add extends React.Component {
       tagImg: activityTagSImg,
       tagClass: 'img_sm',
       place: this.data.tagPosition,
-      id: props.data ? props.data.id : 0
+      id: props.data ? props.data.id : 0,
+      canUpdate: this.data.canUpdate
     }
   }
 
@@ -192,7 +193,7 @@ class Add extends React.Component {
                   message: '请选择正确的活动开始时间',
                 },
               ],
-            })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledStartDate} />)}
+            })(<DatePicker disabled={!this.state.canUpdate} format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledStartDate} />)}
           </FormItem>
           <FormItem label="结束时间">
             {getFieldDecorator('endTime', {
