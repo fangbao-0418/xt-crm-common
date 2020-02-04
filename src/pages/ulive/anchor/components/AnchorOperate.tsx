@@ -12,11 +12,27 @@ interface Props {
   refresh?: () => void
 }
 interface State {
-  /** 1-新增 2-修改 3-拉黑操作 4-错误提示 5-已存在以下用户主播身份为公司 */
-  type: 1 | 2 | 3 | 4 | 5
+  /** 1-新增 2-修改 3-拉黑操作 4-错误提示 5-已存在以下用户主播身份为公司 6-批量添加提示 */
+  type: 1 | 2 | 3 | 4 | 5 | 6
   message: string
   /** 添加方式 1-单个 2-批量 */
   addType: 1 | 2
+  /** 批量添加主播信息 */
+  multiInfo: MultiInfo
+}
+
+/** 批量添加主播信息 */
+interface MultiInfo {
+  /** 待添加主播 */
+  waitAdd: {phone: string, id: number}[],
+  /** 已存在 */
+  already: any[]
+  /** 黑名单 */
+  blackList: any[],
+  /** 格式错误 */
+  formatError: any[],
+  /** 非会员 */
+  outsider: any[]
 }
 
 interface UserInfo {
@@ -33,7 +49,14 @@ class Main extends React.Component<Props, State> {
   public state: State = {
     type: this.props.type,
     message: '',
-    addType: 1
+    addType: 1,
+    multiInfo: {
+      waitAdd: [],
+      already: [],
+      blackList: [],
+      formatError: [],
+      outsider: []
+    }
   }
   public componentDidMount () {
     this.init()
@@ -55,8 +78,59 @@ class Main extends React.Component<Props, State> {
       this.props.hide()
     }
   }
+  public validateListPhone (phoneList: string) {
+    api.checkPhoneList(phoneList).then((res) => {
+      const { validUsers, inValidPhone } = res
+      // res.validPhone
+      // res.inValidPhone
+      //
+      const validPhone = validUsers.map((item) => item.phone)
+      api.checkMultiAnchorPhone(validPhone).then((res2) => {
+        this.getMultiInfo(res2, validUsers, inValidPhone )
+        this.setState({
+          type: 6
+        })
+      })
+    })
+  }
+  public getMultiInfo (errorValue: {
+    /** 错误编码(0-手机号错误, 1-已存在, 2-已拉黑, 3-非会员) */
+    errorCode: 0 | 1 | 2 | 3
+    phone: string
+  }[], validUsers: {id: number, phone: string}[], inValidPhone: string[]) {
+    const multiInfo: MultiInfo = {
+      waitAdd: [],
+      already: [],
+      blackList: [],
+      formatError: [],
+      outsider: []
+    }
+    // let waitAdd = []
+    errorValue.map((item) => {
+      if (item.errorCode === 1) {
+        multiInfo.already.push(item)
+      } else if (item.errorCode === 2) {
+        multiInfo.blackList.push(item)
+      } else if (item.errorCode === 0) {
+        multiInfo.formatError.push(item)
+      } else if (item.errorCode === 3) {
+        multiInfo.outsider.push(item)
+      }
+      /** 过滤掉重复、拉黑数据 */
+      validUsers = validUsers.filter((item2) => item.phone !== item2.phone)
+    })
+    multiInfo.waitAdd = validUsers
+    this.setState({
+      multiInfo
+    })
+  }
   public searchUser () {
+    const { addType } = this.state
     this.form.props.form.validateFields((err, value) => {
+      if (addType === 2) {
+        this.validateListPhone(value.phoneList)
+        return
+      }
       if (err) {
         return
       }
@@ -132,13 +206,39 @@ class Main extends React.Component<Props, State> {
         phone: userInfo.phone,
         memberId: userInfo.id
       }
-      api.addAnchore(payload).then(() => {
+      api.addAnchor(payload).then(() => {
         this.setState({
           type: 2
         })
         APP.success('添加主播成功')
         this.hide()
         this.refresh()
+      })
+    })
+  }
+  /** 批量添加 */
+  public multiAddAnchor () {
+    this.form.props.form.validateFields((err, value) => {
+      if (err) {
+        return
+      }
+      const { waitAdd } = this.state.multiInfo
+      const payload = {
+        ...value,
+        users: waitAdd.map((item) => {
+          return {
+            ...item,
+            memberid: item.id
+          }
+        })
+      }
+      api.multiAddAnchor(payload).then(() => {
+        // this.setState({
+        //   type: 2
+        // })
+        APP.success('添加主播成功')
+        // this.hide()
+        // this.refresh()
       })
     })
   }
@@ -183,6 +283,9 @@ class Main extends React.Component<Props, State> {
     if (this.props.refresh) {
       this.props.refresh()
     }
+  }
+  public exportMultiAddError () {
+    //
   }
   public render () {
     const detail = this.props.detail
@@ -237,7 +340,7 @@ class Main extends React.Component<Props, State> {
               <FormItem
                 label='请填入手机号'
                 type='textarea'
-                name='abc'
+                name='phoneList'
                 placeholder='请输入用户手机号'
                 controlProps={{
                   rows: 4
@@ -453,6 +556,65 @@ class Main extends React.Component<Props, State> {
                 }}
               >
                 关闭
+              </Button>
+            </div>
+          </If>
+          <If condition={this.state.type === 6}>
+            <div className='text-center mb20'>
+              共识别到0个用户可添加为主播
+            </div>
+            <FormItem
+              name='anchorIdentityType'
+              verifiable
+              options={[
+                {label: '供应商', value: 20},
+                {label: '合作网红', value: 30},
+                {label: '代理', value: 40}
+              ]}
+            />
+            <FormItem
+              name='anchorLevel'
+              verifiable
+            />
+            <div
+              style={{
+                margin: '0 80px 50px'
+              }}
+            >
+              20个黑名单用户不可添加,12个用户已是主播,12个用户非喜团会员,13段文字格式不正确
+              <span
+                className='href'
+                onClick={this.exportMultiAddError.bind(this)}
+              >
+                &nbsp;&nbsp;导出
+              </span>
+            </div>
+            <div
+              className='text-center mb20'
+              style={{
+                color: '#999',
+                fontSize: 12
+              }}
+            >
+              提示：如有无法识别字符请检查手机号长度或者逗号格式是否英文状态
+            </div>
+            <div className='text-center'>
+              <Button
+                type='primary'
+                onClick={() => {
+                  this.multiAddAnchor()
+                }}
+              >
+                确认添加
+              </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <Button
+                // type='primary'
+                onClick={() => {
+                  this.hide()
+                }}
+              >
+                取消
               </Button>
             </div>
           </If>

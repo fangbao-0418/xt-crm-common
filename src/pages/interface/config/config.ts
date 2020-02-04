@@ -8,18 +8,18 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
     /** 直播 */
     live: {
       /** 直播频道展示 */
-      a1: {
+      liveStyle: {
         type: 'radio', label: '直播频道展示',
         options: [
-          {label: '不展示', value: '1'},
-          {label: '使用默认配置', value: '2'},
-          {label: '自定义配置', value: '3'}
+          {label: '不展示', value: 1},
+          {label: '使用默认配置', value: 2},
+          {label: '自定义配置', value: 3}
         ],
         fieldDecoratorOptions: {
-          initialValue: '1'
+          initialValue: 1
         }
       },
-      e: {
+      liveTitleColor: {
         type: 'input', label: '直播主标题颜色',
         fieldDecoratorOptions: {
           rules: [
@@ -39,7 +39,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           }
         }
       },
-      f: {
+      liveSubTitleColor: {
         type: 'input', label: '直播副标题颜色',
         fieldDecoratorOptions: {
           rules: [
@@ -59,7 +59,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           }
         }
       },
-      g: {
+      liveSubTitle: {
         type: 'input', label: '直播副标题文字',
         fieldDecoratorOptions: {
           rules: [

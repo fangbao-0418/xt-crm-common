@@ -33,7 +33,17 @@ class Main extends React.Component<Props> {
       dataIndex: 'anchorNickName',
       width: 100,
       render: (text, record) => {
-        return text || record.anchorPhone
+        return (
+          <span
+            className='href'
+            onClick={() => {
+              APP.href(`/user/detail?memberId=${record.memberId}`, '__target') }
+            }
+          >
+            {text || record.anchorPhone}
+          </span>
+
+        )
       }
     },
     {
@@ -299,7 +309,7 @@ class Main extends React.Component<Props> {
               <FormItem name='liveTitle' />
               <FormItem name='anchorNickName' />
               <FormItem name='liveStatus' />
-              <FormItem name='phone' />
+              <FormItem name='anchorPhone' />
               <FormItem label='场次ID' name='planId' />
               <FormItem name='liveTime' />
             </>

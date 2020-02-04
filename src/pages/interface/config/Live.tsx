@@ -5,17 +5,17 @@ import { getFieldsConfig } from './config'
 import UploadView from '@/components/upload'
 
 interface State {
-  type: '1' | '2' | '3'
+  /** 直播频道展示类型 1-不展示 2-使用默认配置 3-自定义配置 */
+  type: 1 | 2 | 3
 }
 
 class Main extends React.Component<{}, State> {
-  form: FormInstance
+  public form: FormInstance
   public state: State = {
-    type: '1'
+    type: 1
   }
   public render () {
     const { type } = this.state
-    console.log(type, 'type')
     return (
       <div>
         <Form
@@ -26,24 +26,20 @@ class Main extends React.Component<{}, State> {
           getInstance={(ref) => {
             this.form = ref
           }}
-          onChange={(field, value) => {
-            if (field === 'a1') {
+          onChange={(field, value, values) => {
+            if (values) {
               this.setState({
-                type: value
+                type: values.liveStyle
               })
             }
           }}
+          silent={false}
         >
           <FormItem
-            name='a1'
+            name='liveStyle'
             required
-            controlProps={{
-              onChange: (e: any) => {
-                console.log(e, 'eeeee')
-              }
-            }}
           />
-          <If condition={type === '3'}>
+          <If visible condition={type === 3}>
             <FormItem
               label='直播背景图1'
               required
@@ -52,7 +48,7 @@ class Main extends React.Component<{}, State> {
                   <>
                     <div>
                       {form.getFieldDecorator(
-                        'a',
+                        'liveBackgroudImg1',
                         {
                           rules: [
                             {
@@ -89,7 +85,7 @@ class Main extends React.Component<{}, State> {
                   <>
                     <div>
                       {form.getFieldDecorator(
-                        'b',
+                        'liveBackgroudImg2',
                         {
                           rules: [
                             {
@@ -126,12 +122,11 @@ class Main extends React.Component<{}, State> {
                   <>
                     <div>
                       {form.getFieldDecorator(
-                        'c',
+                        'liveLogo',
                         {
                           rules: [
                             {
                               validator: (rule, value, cb) => {
-                                console.log(value)
                                 if (!value) {
                                   cb('直播logo不能为空')
                                 }
@@ -163,12 +158,11 @@ class Main extends React.Component<{}, State> {
                   <>
                     <div>
                       {form.getFieldDecorator(
-                        'd',
+                        'liveMoreIcon',
                         {
                           rules: [
                             {
                               validator: (rule, value, cb) => {
-                                console.log(value)
                                 if (!value) {
                                   cb('更多直播icon不能为空')
                                 }
@@ -193,15 +187,15 @@ class Main extends React.Component<{}, State> {
               }}
             />
             <FormItem
-              name='e'
+              name='liveTitleColor'
               verifiable
             />
             <FormItem
-              name='f'
+              name='liveSubTitleColor'
               verifiable
             />
             <FormItem
-              name='g'
+              name='liveSubTitle'
               verifiable
             />
           </If>

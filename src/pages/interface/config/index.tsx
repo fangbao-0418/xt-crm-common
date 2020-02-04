@@ -3,7 +3,7 @@ import { Form, Input, Button, Row, Col, Switch } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { FormInstance } from '@/packages/common/components/form'
 import * as api from './api';
-import UploadView from '../../../components/upload';
+import UploadView, { formatValue } from '@/components/upload';
 import { initImgList } from '@/util/utils';
 import { array } from 'prop-types';
 import Live from './Live'
@@ -48,6 +48,7 @@ class Main extends React.Component<Props, State> {
     api.getHomeStyle().then((res: any) => {
       console.log('getHomeStyle', res);
       if (res) {
+        this.setLiveValues(res)
         this.props.form.setFieldsValue({
           title: res.title,
           iconBackgroudImg: initImgList(res.iconBackgroudImg, 'img'),
@@ -64,6 +65,10 @@ class Main extends React.Component<Props, State> {
       }
     });
   }
+  public setLiveValues (values: any) {
+    const liveForm: FormInstance = (this.refs.live as any).form
+    liveForm.setValues(values)
+  }
   public getLiveValues () {
     const liveForm: FormInstance = (this.refs.live as any).form
     return new Promise((resolve, reject) => {
@@ -71,6 +76,10 @@ class Main extends React.Component<Props, State> {
         if (err) {
           reject()
         } else {
+          values.liveBackgroudImg1 = formatValue(values.liveBackgroudImg1)
+          values.liveBackgroudImg2 = formatValue(values.liveBackgroudImg2)
+          values.liveLogo = formatValue(values.liveLogo)
+          values.liveMoreIcon = formatValue(values.liveMoreIcon)
           resolve(values)
         }
       })
@@ -78,9 +87,8 @@ class Main extends React.Component<Props, State> {
   }
   //提交
   public async onSubmit() {
-    const liveValues = await this.getLiveValues()
+    const liveValues: any = await this.getLiveValues()
     this.props.form.validateFields((err, value) => {
-      console.log(liveValues, 'liveValues')
       if (!liveValues) {
         return
       }
@@ -88,8 +96,8 @@ class Main extends React.Component<Props, State> {
         APP.error('保存失败');
         return;
       }
-      console.log(value, 'value')
       const params = {
+        ...liveValues,
         title: value.title,
         iconBackgroudImg: (value.iconBackgroudImg && value.iconBackgroudImg.length && replaceHttpUrl(value.iconBackgroudImg[0].durl)) || '',
         iconColor: value.iconColor,

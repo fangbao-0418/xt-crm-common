@@ -10,7 +10,12 @@ interface Props {
   fileType?: string
   disabled?: boolean
   multiple?: boolean
-  value?: {url: string, uid?: any}[]
+  value?: {
+    url: string,
+    uid?: any,
+    /** 文件相对地址 */
+    rurl?: string
+  }[]
   className?: string
   accept?: string
   style?: React.CSSProperties
@@ -18,6 +23,6 @@ interface Props {
   formatOrigin?: boolean
 }
 export declare const ossUpload: (file: File) => Promise<any>
-
+export function formatValue (value: any[]): string
 class Upload extends React.Component<Props> {}
 export default Upload

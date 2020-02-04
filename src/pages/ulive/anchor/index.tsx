@@ -1,9 +1,10 @@
 import React from 'react'
 import Image from '@/components/Image'
+import classNames from 'classnames'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tag, Divider, Button } from 'antd'
+import { Tag, Popconfirm, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
 import AnchorOperate from './components/AnchorOperate'
@@ -26,7 +27,14 @@ class Main extends React.Component<Props> {
           </div>
           <div className={styles['anchor-column-nickname-info']}>
             <div>
-              <span onClick={() => { APP.history.push(`/user/detail?memberId=${record.memberId}`) }} className={styles['anchor-column-nickname-info-name']}>{record.nickName || record.phone || '暂无'}</span>
+              <span
+                className={classNames(styles['anchor-column-nickname-info-name'], 'href')}
+                onClick={() => {
+                  APP.href(`/user/detail?memberId=${record.memberId}`, '__target') }
+                }
+              >
+                {record.nickName || record.phone || '暂无'}
+              </span>
               <Tag style={{margin: '0 5px'}} hidden={record.status !== 1} color='#666'>黑名单</Tag>
             </div>
             <div>
@@ -74,13 +82,24 @@ class Main extends React.Component<Props> {
       return (
         <div>
           <span onClick={this.operateAnchor.bind(this, 2, record)} className='href'>编辑</span>&nbsp;&nbsp;
-          <span onClick={this.operateAnchor.bind(this, 3, record)} className='href'>{record.status === 0 ? '拉黑' : '取消拉黑'}</span>
+          <span onClick={this.operateAnchor.bind(this, 3, record)} className='href'>{record.status === 0 ? '拉黑' : '取消拉黑'}</span>&nbsp;&nbsp;
+          <Popconfirm
+            title='确定删除改主播吗'
+            onConfirm={this.deleteAnchor.bind(this, record)}
+          >
+            <span className='href'>删除</span>
+          </Popconfirm>
         </div>
       )
     }
   }]
   public refresh () {
     this.listpage.refresh()
+  }
+  public deleteAnchor (record: Anchor.ItemProps) {
+    api.deleteAnchor(record.anchorId).then(() => {
+      this.listpage.refresh()
+    })
   }
   public operateAnchor (type: 1 | 2 | 3, item?: Anchor.ItemProps) {
     const hide = this.props.alert({
