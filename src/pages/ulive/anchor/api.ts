@@ -1,4 +1,5 @@
 const { post, get, newPost, newPut, del } = APP.http
+import { handleApiUrl } from '@/util/app/config'
 export const getAnchorList = (payload: any) => {
   return get('::ulive/live/anchor/list', payload)
 }
@@ -60,4 +61,29 @@ export const checkPhoneList = (phoneList: string) => {
 /** 批量新增主播手机号校验 */
 export const checkMultiAnchorPhone = (phoneList: string[]) => {
   return newPost('::ulive/live/anchor/save/batch/validate', phoneList)
+}
+
+/** 批量新增主播错误信息导出 */
+export const exportMultiAddErrorInfo = (payload: {
+  /** 错误编码(0-手机号错误, 1-已存在, 2-已拉黑, 3-非会员) */
+  errorCode: 0 | 1 | 2 | 3
+  phone: string
+}[]) => {
+  return fetch(handleApiUrl('::ulive/live/anchor/save/batch/export'), {
+    method: 'post',
+    body: JSON.stringify(payload),
+    headers: {
+      'content-type': 'application/json',
+      authorization: JSON.parse(localStorage.getItem('token') || '')
+    }
+  }).then((res) => {
+    // res.headers.get('Content-Disposition')
+    // console.log(res.headers.get('Content-Type'), 'res')
+    res.blob().then((excelBlob) => {
+      var el = document.createElement('a')
+      el.href = URL.createObjectURL(excelBlob)
+      el.download = '主播批量新增异常数据.xlsx'
+      el.click()
+    })
+  })
 }

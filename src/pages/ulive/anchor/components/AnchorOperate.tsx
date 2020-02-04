@@ -26,13 +26,13 @@ interface MultiInfo {
   /** 待添加主播 */
   waitAdd: {phone: string, id: number}[],
   /** 已存在 */
-  already: any[]
+  already: string[]
   /** 黑名单 */
-  blackList: any[],
+  blackList: string[],
   /** 格式错误 */
-  formatError: any[],
+  formatError: string[],
   /** 非会员 */
-  outsider: any[]
+  outsider: string[]
 }
 
 interface UserInfo {
@@ -81,9 +81,6 @@ class Main extends React.Component<Props, State> {
   public validateListPhone (phoneList: string) {
     api.checkPhoneList(phoneList).then((res) => {
       const { validUsers, inValidPhone } = res
-      // res.validPhone
-      // res.inValidPhone
-      //
       const validPhone = validUsers.map((item) => item.phone)
       api.checkMultiAnchorPhone(validPhone).then((res2) => {
         this.getMultiInfo(res2, validUsers, inValidPhone )
@@ -105,21 +102,28 @@ class Main extends React.Component<Props, State> {
       formatError: [],
       outsider: []
     }
-    // let waitAdd = []
     errorValue.map((item) => {
       if (item.errorCode === 1) {
-        multiInfo.already.push(item)
+        multiInfo.already.push(item.phone)
       } else if (item.errorCode === 2) {
-        multiInfo.blackList.push(item)
+        multiInfo.blackList.push(item.phone)
       } else if (item.errorCode === 0) {
-        multiInfo.formatError.push(item)
+        multiInfo.formatError.push(item.phone)
       } else if (item.errorCode === 3) {
-        multiInfo.outsider.push(item)
+        multiInfo.outsider.push(item.phone)
       }
-      /** 过滤掉重复、拉黑数据 */
+      /** 过滤掉已存在、拉黑的主播数据 */
       validUsers = validUsers.filter((item2) => item.phone !== item2.phone)
     })
     multiInfo.waitAdd = validUsers
+    /** 非会员 */
+    inValidPhone.map((item) => {
+      if (!APP.regular.phone.test(item)) {
+        multiInfo.formatError.push(item)
+      } else {
+        multiInfo.outsider.push(item)
+      }
+    })
     this.setState({
       multiInfo
     })
@@ -233,12 +237,9 @@ class Main extends React.Component<Props, State> {
         })
       }
       api.multiAddAnchor(payload).then(() => {
-        // this.setState({
-        //   type: 2
-        // })
         APP.success('添加主播成功')
-        // this.hide()
-        // this.refresh()
+        this.hide()
+        this.refresh()
       })
     })
   }
@@ -285,11 +286,38 @@ class Main extends React.Component<Props, State> {
     }
   }
   public exportMultiAddError () {
-    //
+    const { multiInfo } = this.state
+    /** 错误编码(0-手机号错误, 1-已存在, 2-已拉黑, 3-非会员) */
+    const payload: {errorCode: 0 | 1 | 2 | 3, phone: string}[] = []
+    multiInfo.outsider.map((item) => {
+      payload.push({
+        phone: item,
+        errorCode: 3
+      })
+    })
+    multiInfo.blackList.map((item) => {
+      payload.push({
+        phone: item,
+        errorCode: 2
+      })
+    })
+    multiInfo.formatError.map((item) => {
+      payload.push({
+        phone: item,
+        errorCode: 0
+      })
+    })
+    multiInfo.already.map((item) => {
+      payload.push({
+        phone: item,
+        errorCode: 1
+      })
+    })
+    api.exportMultiAddErrorInfo(payload)
   }
   public render () {
     const detail = this.props.detail
-    const { message } = this.state
+    const { message, multiInfo } = this.state
     return (
       <div>
         <Form
@@ -561,27 +589,32 @@ class Main extends React.Component<Props, State> {
           </If>
           <If condition={this.state.type === 6}>
             <div className='text-center mb20'>
-              共识别到0个用户可添加为主播
+              共识别到{multiInfo.waitAdd.length}个用户可添加为主播
             </div>
-            <FormItem
-              name='anchorIdentityType'
-              verifiable
-              options={[
-                {label: '供应商', value: 20},
-                {label: '合作网红', value: 30},
-                {label: '代理', value: 40}
-              ]}
-            />
-            <FormItem
-              name='anchorLevel'
-              verifiable
-            />
+            <If condition={multiInfo.waitAdd.length > 0}>
+              <FormItem
+                name='anchorIdentityType'
+                verifiable
+                options={[
+                  {label: '供应商', value: 20},
+                  {label: '合作网红', value: 30},
+                  {label: '代理', value: 40}
+                ]}
+              />
+              <FormItem
+                name='anchorLevel'
+                verifiable
+              />
+            </If>
             <div
               style={{
                 margin: '0 80px 50px'
               }}
             >
-              20个黑名单用户不可添加,12个用户已是主播,12个用户非喜团会员,13段文字格式不正确
+              {multiInfo.blackList.length}个黑名单用户不可添加,
+              {multiInfo.already.length}个用户已是主播,
+              {multiInfo.outsider.length}个用户非喜团会员,
+              {multiInfo.formatError.length}段文字格式不正确
               <span
                 className='href'
                 onClick={this.exportMultiAddError.bind(this)}
@@ -599,23 +632,34 @@ class Main extends React.Component<Props, State> {
               提示：如有无法识别字符请检查手机号长度或者逗号格式是否英文状态
             </div>
             <div className='text-center'>
-              <Button
-                type='primary'
-                onClick={() => {
-                  this.multiAddAnchor()
-                }}
-              >
-                确认添加
-              </Button>
-              &nbsp;&nbsp;&nbsp;&nbsp;
-              <Button
-                // type='primary'
-                onClick={() => {
-                  this.hide()
-                }}
-              >
-                取消
-              </Button>
+              <If condition={multiInfo.waitAdd.length > 0}>
+                <Button
+                  type='primary'
+                  onClick={() => {
+                    this.multiAddAnchor()
+                  }}
+                >
+                  确认添加
+                </Button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <Button
+                  // type='primary'
+                  onClick={() => {
+                    this.hide()
+                  }}
+                >
+                  取消
+                </Button>
+              </If>
+              <If condition={multiInfo.waitAdd.length === 0}>
+                <Button
+                  onClick={() => {
+                    this.hide()
+                  }}
+                >
+                  关闭
+                </Button>
+              </If>
             </div>
           </If>
         </Form>
