@@ -193,7 +193,14 @@ class Add extends React.Component {
                   message: '请选择正确的活动开始时间',
                 },
               ],
-            })(<DatePicker disabled={!this.state.canUpdate} format="YYYY-MM-DD HH:mm:ss" showTime disabledDate={this.disabledStartDate} />)}
+            })(
+              <DatePicker
+                disabled={!!this.state.id && !this.state.canUpdate}
+                format="YYYY-MM-DD HH:mm:ss"
+                showTime
+                disabledDate={this.disabledStartDate}
+              />
+            )}
           </FormItem>
           <FormItem label="结束时间">
             {getFieldDecorator('endTime', {
