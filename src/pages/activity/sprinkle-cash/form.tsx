@@ -2,18 +2,23 @@ import React from 'react';
 import { Button, Card, InputNumber, Radio, Row, Col } from 'antd';
 import { defaultConfig } from './config'; 
 import { Form, FormItem } from '@/packages/common/components';
+import { parseQuery } from '@/util/utils';
 import { FormInstance } from '@/packages/common/components/form';
 import { RouteComponentProps } from 'react-router';
 import { getDetail, add, update } from './api';
+import ReadOnlyComponent from '@/components/readonly-component';
+
 class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>, any> {
   id: number;
+  readOnly: boolean; 
   form: FormInstance;
   constructor(props: RouteComponentProps<{id: string}>) {
     super(props);
     this.id = +props.match.params.id;
+    this.readOnly = !!(parseQuery() as any).readOnly;
   }
   componentDidMount() {
-    this.fetchDetail();
+    this.id !== -1 && this.fetchDetail();
   }
   // 获取详情
   fetchDetail = () => {
@@ -40,6 +45,7 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
       <Card>
         <Form
           getInstance={ref => this.form = ref}
+          readonly={this.readOnly}
           config={defaultConfig}
           namespace='sprinkleCash'
           rangeMap={{
@@ -74,10 +80,13 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
                       message: '请输入任务可发起次数上限'
                     }]
                   })(
-                    <InputNumber
-                      style={{width: 200}}
-                      placeholder='任务可发起次数上限'
-                    />
+                    <ReadOnlyComponent readOnly={this.readOnly}>
+                      <InputNumber
+                        style={{width: 200}}
+                        placeholder='任务可发起次数上限'
+                        readOnly={this.readOnly}
+                      />
+                    </ReadOnlyComponent>
                   )}
                   <span className='ml10'>次/天</span>
                 </>
@@ -101,11 +110,13 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
                       message: '请输入任务奖励'
                     }]
                   })(
-                    <InputNumber
-                      placeholder='1到99999'
-                      min={1}
-                      max={99999}
-                    />
+                    <ReadOnlyComponent readOnly={this.readOnly}>
+                      <InputNumber
+                        placeholder='1到99999'
+                        min={1}
+                        max={99999}
+                      />
+                    </ReadOnlyComponent>
                   )}
                   <span className='ml10'>元</span>
                 </>
@@ -133,11 +144,13 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
                       message: '请输入任务助力次数上限'
                     }]
                   })(
-                    <InputNumber
-                      placeholder='1到9999'
-                      min={1}
-                      max={9999}
-                    />
+                    <ReadOnlyComponent readOnly={this.readOnly}>
+                      <InputNumber         
+                        placeholder='1到9999'
+                        min={1}
+                        max={9999}
+                      />
+                    </ReadOnlyComponent>
                   )}
                   <span className='ml10'>次</span>
                   <span className='ml20'>注：达到该次数后将不可被助力</span>
@@ -152,30 +165,35 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
               return (
                 <>
                   <span className='mr10'>新用户</span>
-                  {form.getFieldDecorator('newMemberNum', {
+                  {form.getFieldDecorator('newMemberNumMin', {
                     rules: [{
                       required: true,
                       message: '请输入新用户助力数'
                     }]
                   })(
-                    <InputNumber
-                      placeholder='1到9999'
-                      min={1}
-                      max={9999}
-                    />
+                    <ReadOnlyComponent readOnly={this.readOnly}>
+                      <InputNumber
+                        placeholder='1到9999'
+                        min={1}
+                        max={9999}
+                      />
+                    </ReadOnlyComponent>
                   )}
                   <span className='ml10 mr10'>至</span>
-                  {form.getFieldDecorator('maxHelpNum', {
+                  {form.getFieldDecorator('newMemberNumMax', {
                     rules: [{
                       required: true,
                       message: '请输入任务助力次数上限'
                     }]
                   })(
-                    <InputNumber
-                      placeholder='1到99999'
-                      min={1}
-                      max={99999}
-                    />
+                    <ReadOnlyComponent readOnly={this.readOnly}>
+                      <InputNumber
+                        readOnly={this.readOnly}                    
+                        placeholder='1到99999'
+                        min={1}
+                        max={99999}
+                      />
+                    </ReadOnlyComponent>
                   )}
                   <span className='ml10'>人</span>
                   <span style={{marginLeft: 30}}>注：每次邀新人数在区间取值，整数，两端包括</span>
@@ -189,17 +207,20 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
             inner={(form) => {
               return (
                 <>
-                  {form.getFieldDecorator('maxEveryDayNum', {
+                  {form.getFieldDecorator('maxDailyHelpNum', {
                     rules: [{
                       required: true,
                       message: '请输入每人每天助力上限'
                     }]
                   })(
-                    <InputNumber
-                      placeholder='1到999'
-                      min={1}
-                      max={999}
-                    />
+                    <ReadOnlyComponent readOnly={this.readOnly}>
+                      <InputNumber
+                        readOnly={this.readOnly}
+                        placeholder='1到999'
+                        min={1}
+                        max={999}
+                      />
+                    </ReadOnlyComponent>
                   )}
                   <span className='ml10'>注：该次数含新人首次助力</span>
                 </>
@@ -219,11 +240,13 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
                       message: '请输入助力倍数'
                     }]
                   })(
-                    <InputNumber
-                      min={5}
-                      max={999}
-                      placeholder='5到999'
-                    />
+                    <ReadOnlyComponent readOnly={this.readOnly}>
+                      <InputNumber
+                        min={5}
+                        max={999}
+                        placeholder='5到999'
+                      />
+                    </ReadOnlyComponent>
                   )}
                   <span className='ml10'>倍老用户每次助力</span>
                 </>
