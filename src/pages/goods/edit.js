@@ -426,6 +426,7 @@ class GoodsEdit extends React.Component {
           ...property,
           bannerUrl: vals.bannerUrl && replaceHttpUrl(vals.bannerUrl[0].url),
           categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
+          modifyTime: this.detail.modifyTime
         };
         setProduct({ productId: id, ...params }).then(res => {
           if (!res) return;
