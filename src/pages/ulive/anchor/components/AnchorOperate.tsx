@@ -19,6 +19,8 @@ interface State {
   addType: 1 | 2
   /** 批量添加主播信息 */
   multiInfo: MultiInfo
+  /** 批量新增手机号文本 */
+  phoneList: string
 }
 
 /** 批量添加主播信息 */
@@ -56,7 +58,8 @@ class Main extends React.Component<Props, State> {
       blackList: [],
       formatError: [],
       outsider: []
-    }
+    },
+    phoneList: ''
   }
   public componentDidMount () {
     this.init()
@@ -78,10 +81,18 @@ class Main extends React.Component<Props, State> {
       this.props.hide()
     }
   }
+  /** 批量新增主播手机号校验 */
   public validateListPhone (phoneList: string) {
     api.checkPhoneList(phoneList).then((res) => {
       const { validUsers, inValidPhone } = res
       const validPhone = validUsers.map((item) => item.phone)
+      if (validUsers.length === 0) {
+        this.getMultiInfo([], validUsers, inValidPhone )
+        this.setState({
+          type: 6
+        })
+        return
+      }
       api.checkMultiAnchorPhone(validPhone).then((res2) => {
         this.getMultiInfo(res2, validUsers, inValidPhone )
         this.setState({
@@ -142,7 +153,10 @@ class Main extends React.Component<Props, State> {
         APP.error('请输入用户手机号或登录ID')
         return
       }
-      api.fetchUserInfo(value).then((res) => {
+      api.fetchUserInfo({
+        phone: value.phone,
+        memberId: value.memberId
+      }).then((res) => {
         const [info1, info2] = res
         this.userInfo = info2
         this.anchorInfo = info1
@@ -168,9 +182,10 @@ class Main extends React.Component<Props, State> {
               return
             }
           }
-          if (!info1 && info2.authStatus !== 1) {
-            message = '该用户未进行实名认证，不允许添加为主播！'
-          }
+          /** 添加主播此处不需要进行实名认证 */
+          // if (!info1 && info2.authStatus !== 1) {
+          //   message = '该用户未进行实名认证，不允许添加为主播！'
+          // }
           if (message) {
             this.setState({
               message,
@@ -369,9 +384,21 @@ class Main extends React.Component<Props, State> {
                 label='请填入手机号'
                 type='textarea'
                 name='phoneList'
-                placeholder='请输入用户手机号'
+                placeholder='请输入用户手机号,多个手机号请用英文逗号隔开'
                 controlProps={{
-                  rows: 4
+                  rows: 4,
+                  maxLength: 12000,
+                  onChange: (e: any) => {
+                    let text = e.target.value
+                    setTimeout(() => {
+                      const maxSize = 1000
+                      text = text.replace(/[^\d,]+/, '').replace(/(\d{11})\d+/, '$1')
+                      if (text.split(',').length > maxSize) {
+                        text = text.split(',').slice(0, maxSize).join(',')
+                      }
+                      this.form.setValues({phoneList: text})
+                    }, 0)
+                  }
                 }}
               />
               <div

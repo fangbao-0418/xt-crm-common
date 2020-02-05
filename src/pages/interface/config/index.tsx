@@ -67,6 +67,10 @@ class Main extends React.Component<Props, State> {
   }
   public setLiveValues (values: any) {
     const liveForm: FormInstance = (this.refs.live as any).form
+    values.liveBackgroudImg1 = [{url: values.liveBackgroudImg1}]
+    values.liveBackgroudImg2 = [{url: values.liveBackgroudImg2}]
+    values.liveLogo = [{url: values.liveLogo}]
+    values.liveMoreIcon = [{url: values.liveMoreIcon}]
     liveForm.setValues(values)
   }
   public getLiveValues () {

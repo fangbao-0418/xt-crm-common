@@ -69,9 +69,6 @@ class UploadView extends Component {
     return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
   }
   initFileList(fileList = []) {
-    if (typeof fileList === 'string') {
-      fileList = [{url: fileList}]
-    }
     fileList = fileList || []
     const { fileType } = this.props;
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
@@ -99,6 +96,7 @@ class UploadView extends Component {
       val.url = result.url;
       val.thumbUrl = result.thumbUrl
       val.rurl = this.replaceUrl(result.url)
+      console.log(val, '----------------')
       return val
     });
   }
