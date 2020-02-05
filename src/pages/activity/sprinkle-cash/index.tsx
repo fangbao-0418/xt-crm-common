@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'antd';
 import { ListPage } from '@/packages/common/components'
+import { getPage } from './api';
 class SprinkleCash extends React.Component {
   jumpTo = () => {
     APP.history.push('/activity/sprinkle-cash/form');
@@ -18,16 +19,16 @@ class SprinkleCash extends React.Component {
             dataIndex: 'id'
           }, {
             title: '活动日期',
-            dataIndex: 'date'
+            dataIndex: 'activityDate'
           }, {
             title: '任务可发起次数上限',
-            dataIndex: 'limit'
+            dataIndex: 'maxHelpNum'
           }, {
             title: '任务奖励',
-            dataIndex: 'reward'
+            dataIndex: 'awardValue'
           }, {
             title: '活动规则',
-            dataIndex: 'rules'
+            dataIndex: 'rule'
           }, {
             title: '活动状态',
             dataIndex: 'status'

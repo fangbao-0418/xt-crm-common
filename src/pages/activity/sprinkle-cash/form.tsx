@@ -2,21 +2,31 @@ import React from 'react';
 import { Button, Card, InputNumber, Radio, Row, Col } from 'antd';
 import { defaultConfig } from './config'; 
 import { Form, FormItem } from '@/packages/common/components';
+import { FormInstance } from '@/packages/common/components/form'
 class SprinkleCashForm extends React.Component {
+  form: FormInstance;
+  handleSave = () => {
+    this.form.props.form.validateFields((err, vals) => {
+      if (!err) {
+
+      }
+    })
+  }
   render () {
     return (
       <Card>
         <Form
+          getInstance={ref => this.form = ref}
           config={defaultConfig}
           namespace='sprinkleCash'
           rangeMap={{
-            date: {
-              fields: ['beginDate', 'endDate']
+            activityDate: {
+              fields: ['startTime', 'endTime']
             }
           }}
           addonAfter={(
             <FormItem>
-              <Button type='primary'>保存</Button>
+              <Button type='primary' onClick={this.handleSave}>保存</Button>
             </FormItem>
           )}
         >
@@ -26,7 +36,7 @@ class SprinkleCashForm extends React.Component {
             </Col>
           </Row>
           <FormItem
-            name='date'
+            name='activityDate'
             verifiable
           />
           <FormItem
@@ -35,7 +45,7 @@ class SprinkleCashForm extends React.Component {
             inner={(form) => {
               return (
                 <>
-                  {form.getFieldDecorator('limit', {
+                  {form.getFieldDecorator('maxHelpNum', {
                     rules: [{
                       required: true,
                       message: '请输入任务可发起次数上限'
@@ -55,29 +65,33 @@ class SprinkleCashForm extends React.Component {
             label='任务奖励'
             required
             inner={(form) => {
-              return form.getFieldDecorator('reward', {
-                rules: [{
-                  required: true,
-                  message: '请输入任务奖励'
-                }]
-              })(
-                <Radio.Group>
-                  <Radio>
-                    <span className='mr10'>现金</span>
+              return (
+                <>
+                  <Radio.Group>
+                    <Radio>
+                      <span className='mr10'>现金</span>
+                    </Radio>
+                  </Radio.Group>
+                  {form.getFieldDecorator('awardValue', {
+                    rules: [{
+                      required: true,
+                      message: '请输入任务奖励'
+                    }]
+                  })(
                     <InputNumber
                       placeholder='1到99999'
                       min={1}
                       max={99999}
                     />
-                    <span className='ml10'>元</span>
-                  </Radio>
-                </Radio.Group>
+                  )}
+                  <span className='ml10'>元</span>
+                </>
               )
             }}
-          />
+          />           
           <FormItem
             verifiable
-            name='rules'
+            name='rule'
           />
           <Row>
             <Col offset={2}>
@@ -90,7 +104,12 @@ class SprinkleCashForm extends React.Component {
             inner={(form) => {
               return (
                 <>
-                  {form.getFieldDecorator('helpNums')(
+                  {form.getFieldDecorator('maxHelpNum', {
+                    rules: [{
+                      required: true,
+                      message: '请输入任务助力次数上限'
+                    }]
+                  })(
                     <InputNumber
                       placeholder='1到9999'
                       min={1}
@@ -110,7 +129,12 @@ class SprinkleCashForm extends React.Component {
               return (
                 <>
                   <span className='mr10'>新用户</span>
-                  {form.getFieldDecorator('numsLimit')(
+                  {form.getFieldDecorator('newMemberNum', {
+                    rules: [{
+                      required: true,
+                      message: '请输入新用户助力数'
+                    }]
+                  })(
                     <InputNumber
                       placeholder='1到9999'
                       min={1}
@@ -118,7 +142,12 @@ class SprinkleCashForm extends React.Component {
                     />
                   )}
                   <span className='ml10 mr10'>至</span>
-                  {form.getFieldDecorator('numsLimit')(
+                  {form.getFieldDecorator('maxHelpNum', {
+                    rules: [{
+                      required: true,
+                      message: '请输入任务助力次数上限'
+                    }]
+                  })(
                     <InputNumber
                       placeholder='1到99999'
                       min={1}
@@ -137,7 +166,12 @@ class SprinkleCashForm extends React.Component {
             inner={(form) => {
               return (
                 <>
-                  {form.getFieldDecorator('helpLimit')(
+                  {form.getFieldDecorator('maxEveryDayNum', {
+                    rules: [{
+                      required: true,
+                      message: '请输入每人每天助力上限'
+                    }]
+                  })(
                     <InputNumber
                       placeholder='1到999'
                       min={1}
@@ -156,7 +190,12 @@ class SprinkleCashForm extends React.Component {
               return (
                 <>
                   <span className='mr10'>新用户每次助力等于</span>
-                  {form.getFieldDecorator('multiple')(
+                  {form.getFieldDecorator('newMemberMultiple', {
+                    rules: [{
+                      required: true,
+                      message: '请输入助力倍数'
+                    }]
+                  })(
                     <InputNumber
                       min={5}
                       max={999}

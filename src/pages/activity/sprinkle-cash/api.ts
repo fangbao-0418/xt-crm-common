@@ -1,7 +1,36 @@
-const { get, post } = APP.http;
+import { queryString } from '@/util/utils';
+const { get, newPost } = APP.http;
+
+interface payload {
+  id ?: number,
+  startTime: number,
+  endTime: number,
+  maxTaskNum: number,
+  awardType: number,
+  awardValue: number,
+  rule: string,
+  maxHelpNum: number,
+  newMemberNum: number,
+  maxEveryDayNum: number,
+  newMemberMultiple: number
+}
+
 // 分页列表查看领现金活动
-export function getPage() {
-  return get(`/dailyCash/getPage`);
+export function getPage(payload: {
+  page: number,
+  pageSize: number
+}) {
+  return get(`/dailyCash/getPage${queryString(payload)}`);
+}
+
+// 保存领现金活动
+export function add(payload: payload) {
+  return newPost('/dailyCash/add', payload);
+}
+
+// 编辑领现金活动
+export function update(payload: payload) {
+  return newPost('/dailyCash/update', payload);
 }
 
 // 查看活动配置
@@ -11,5 +40,5 @@ export function getDetail(id: number) {
 
 // 关闭活动
 export function over(payload: { id: number }) {
-  return post('/dailyCash/over', payload);
+  return newPost('/dailyCash/over', payload);
 }

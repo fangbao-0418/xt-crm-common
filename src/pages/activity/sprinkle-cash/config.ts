@@ -1,7 +1,7 @@
 import { FieldsConfig } from '@/packages/common/components/form'
 export const defaultConfig: FieldsConfig = {
   sprinkleCash: {
-    date: {
+    activityDate: {
       label: '活动日期',
       type: 'rangepicker',
       controlProps: {
@@ -14,7 +14,10 @@ export const defaultConfig: FieldsConfig = {
         }]
       }
     },
-    rules: {
+    maxHelpNum: {
+
+    },
+    rule: {
       label: '活动规则',
       type: 'textarea',
       controlProps: {
