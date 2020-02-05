@@ -36,3 +36,10 @@ export const defaultConfig: FieldsConfig = {
     }
   }
 }
+
+export enum statusEnums {
+  未开始 = 0,
+  进行中 = 1,
+  已结束 = 2,
+  已关闭 = 3
+}

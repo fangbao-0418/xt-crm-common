@@ -1,3 +1,4 @@
+import { listResponse } from './adapter';
 import { queryString } from '@/util/utils';
 const { get, newPost } = APP.http;
 
@@ -20,7 +21,7 @@ export function getPage(payload: {
   page: number,
   pageSize: number
 }) {
-  return get(`/dailyCash/getPage${queryString(payload)}`);
+  return get(`/dailyCash/getPage${queryString(payload)}`).then(listResponse);
 }
 
 // 保存领现金活动
@@ -39,6 +40,9 @@ export function getDetail(id: number) {
 }
 
 // 关闭活动
-export function over(payload: { id: number }) {
+export function over(payload: {
+  id: number,
+  isOverTask: 0 | 1
+}) {
   return newPost('/dailyCash/over', payload);
 }

@@ -2,13 +2,36 @@ import React from 'react';
 import { Button, Card, InputNumber, Radio, Row, Col } from 'antd';
 import { defaultConfig } from './config'; 
 import { Form, FormItem } from '@/packages/common/components';
-import { FormInstance } from '@/packages/common/components/form'
-class SprinkleCashForm extends React.Component {
+import { FormInstance } from '@/packages/common/components/form';
+import { RouteComponentProps } from 'react-router';
+import { getDetail, add, update } from './api';
+class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>, any> {
+  id: number;
   form: FormInstance;
+  constructor(props: RouteComponentProps<{id: string}>) {
+    super(props);
+    this.id = +props.match.params.id;
+  }
+  componentDidMount() {
+    this.fetchDetail();
+  }
+  // 获取详情
+  fetchDetail = () => {
+    getDetail(this.id).then(data => {
+      this.form.setValues(data)
+    })
+  }
   handleSave = () => {
     this.form.props.form.validateFields((err, vals) => {
       if (!err) {
+        // 新增
+        if (this.id === -1) {
 
+        }
+        // 编辑
+        else {
+          
+        }
       }
     })
   }

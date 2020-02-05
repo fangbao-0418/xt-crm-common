@@ -1,19 +1,46 @@
 import React from 'react';
-import { Button } from 'antd';
-import { ListPage } from '@/packages/common/components'
-import { getPage } from './api';
+import { Button, Modal } from 'antd';
+import { statusEnums } from './config'
+import { ListPageInstanceProps  } from '@/packages/common/components/list-page';
+import { ListPage, If } from '@/packages/common/components'
+import { getPage, over } from './api';
+
 class SprinkleCash extends React.Component {
-  jumpTo = () => {
-    APP.history.push('/activity/sprinkle-cash/form');
+  list: ListPageInstanceProps;
+  // 跳转
+  jumpTo(id: number, readOnly?: boolean) {
+    let path: string = `/activity/sprinkle-cash/form/${id}`;
+    if (readOnly) {
+      path += '?readOnly=1'
+    }
+    APP.history.push(path);
   }
-  render () {
+
+  // 结束
+  handleOver = (id: number) => {
+    Modal.confirm({
+      title: `确定结束 活动ID：${id} 吗`,
+      okText: '确定结束',
+      onOk: () => {
+        over({ id, isOverTask: 1 }).then(res => {
+          if (res) {
+            APP.success('确定结束成功');
+            this.list.refresh();
+          }
+        })
+      }
+    })
+  }
+
+  render() {
     return (
       <>
         <div className='mb10'>
-          <Button onClick={this.jumpTo}>新增配置</Button>
+          <Button onClick={() => this.jumpTo(-1)}>新增配置</Button>
         </div>
         <ListPage
-          api={() => Promise.resolve({ records: []})}
+          getInstance={ref => this.list = ref}
+          api={getPage}
           columns={[{
             title: '活动ID',
             dataIndex: 'id'
@@ -22,7 +49,7 @@ class SprinkleCash extends React.Component {
             dataIndex: 'activityDate'
           }, {
             title: '任务可发起次数上限',
-            dataIndex: 'maxHelpNum'
+            dataIndex: 'maxDailyTaskNum'
           }, {
             title: '任务奖励',
             dataIndex: 'awardValue'
@@ -31,19 +58,20 @@ class SprinkleCash extends React.Component {
             dataIndex: 'rule'
           }, {
             title: '活动状态',
-            dataIndex: 'status'
+            dataIndex: 'status',
+            render: (value: number) => statusEnums[value]
           }, {
             title: '操作',
-            render: () => {
+            render: (record: any) => {
               return (
                 <>
-                  <div>
-                    <Button type='link'>编辑</Button>
-                    <Button type='link'>结束</Button>
-                  </div>
-                  <div>
-                    <Button type='link'>查看</Button>
-                  </div>
+                  <If condition={[statusEnums['未开始'], statusEnums['进行中']].includes(record.status)}>
+                    <Button type='link' onClick={() => this.jumpTo(record.id)}>编辑</Button>
+                    <Button type='link' onClick={this.handleOver.bind(null, record.id)}>结束</Button>
+                  </If>
+                  <If condition={[statusEnums['已结束'], statusEnums['已关闭']].includes(record.status)}>
+                    <Button type='link' onClick={() => this.jumpTo(record.id, true)}>查看</Button>
+                  </If>
                 </>
               )
             }
