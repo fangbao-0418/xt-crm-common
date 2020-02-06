@@ -7,18 +7,36 @@ import { FormInstance } from '@/packages/common/components/form';
 import { RouteComponentProps } from 'react-router';
 import { getDetail, add, update } from './api';
 import ReadOnlyComponent from '@/components/readonly-component';
-
-class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>, any> {
+import { FormComponentProps } from 'antd/es/form';
+export interface SprinkleCashFormProps extends FormComponentProps, RouteComponentProps<{id: string}> {
+  id ?: number,
+  startTime: number,
+  endTime: number,
+  maxTaskNum: number,
+  awardType: number,
+  awardValue: number,
+  rule: string,
+  maxDailyTaskNum: number,
+  newMemberNumMin: number,
+  newMemberNumMax: number,
+  maxHelpNum: number,
+  maxEveryDayNum: number,
+  newMemberMultiple: number
+}
+class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
   id: number;
   readOnly: boolean; 
   form: FormInstance;
-  constructor(props: RouteComponentProps<{id: string}>) {
+  constructor(props: SprinkleCashFormProps) {
     super(props);
     this.id = +props.match.params.id;
     this.readOnly = !!(parseQuery() as any).readOnly;
   }
   componentDidMount() {
     this.id !== -1 && this.fetchDetail();
+  }
+  get fromFields() {
+    return this.form.getValues<SprinkleCashFormProps>()
   }
   // 获取详情
   fetchDetail = () => {
@@ -27,18 +45,32 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
     })
   }
   handleSave = () => {
-    this.form.props.form.validateFields((err, vals) => {
+    this.form.props.form.validateFields((err) => {
       if (!err) {
-        // 新增
-        if (this.id === -1) {
-
-        }
-        // 编辑
-        else {
-          
-        }
+        const vals = this.form.getValues();
+        const isAdd = this.id === -1;
+        // id为-1是新增
+        const promiseResult =  isAdd ? add(vals) : update({ id: this.id, ...vals })
+        promiseResult.then(res => {
+          if (res) {
+            APP.success(`${isAdd ? '新增': '编辑'}成功`);
+            APP.history.go(-1);
+          }
+        })
       }
     })
+  }
+  checkNewMemverNumMax = async (rule: any, value: number) => {
+    if (this.fromFields.newMemberNumMax < this.fromFields.newMemberNumMin) {
+      throw new Error('助力次数上限不得低于下限');
+    }
+    return value;
+  }
+  checkNewMemverNumMin = async (rule: any, value: number) => {
+    if (this.fromFields.newMemberNumMin > this.fromFields.newMemberNumMax) {
+      throw new Error('助力次数下限不得高于上限');
+    }
+    return value;
   }
   render () {
     return (
@@ -55,7 +87,15 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
           }}
           addonAfter={(
             <FormItem>
-              <Button type='primary' onClick={this.handleSave}>保存</Button>
+              {!this.readOnly && (
+                <Button type='primary'
+                  className='mr10'
+                  onClick={this.handleSave}
+                >
+                  保存
+                </Button>
+              )}
+              <Button onClick={() => APP.history.go(-1)}>返回</Button>
             </FormItem>
           )}
         >
@@ -74,7 +114,7 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
             inner={(form) => {
               return (
                 <>
-                  {form.getFieldDecorator('maxHelpNum', {
+                  {form.getFieldDecorator('maxDailyTaskNum', {
                     rules: [{
                       required: true,
                       message: '请输入任务可发起次数上限'
@@ -112,6 +152,7 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
                   })(
                     <ReadOnlyComponent readOnly={this.readOnly}>
                       <InputNumber
+                        style={{ width: 150 }}
                         placeholder='1到99999'
                         min={1}
                         max={99999}
@@ -161,46 +202,58 @@ class SprinkleCashForm extends React.Component<RouteComponentProps<{id: string}>
           <FormItem
             label='助力人数要求'
             required
-            inner={(form) => {
-              return (
-                <>
-                  <span className='mr10'>新用户</span>
-                  {form.getFieldDecorator('newMemberNumMin', {
-                    rules: [{
-                      required: true,
-                      message: '请输入新用户助力数'
-                    }]
-                  })(
-                    <ReadOnlyComponent readOnly={this.readOnly}>
-                      <InputNumber
-                        placeholder='1到9999'
-                        min={1}
-                        max={9999}
-                      />
-                    </ReadOnlyComponent>
-                  )}
-                  <span className='ml10 mr10'>至</span>
-                  {form.getFieldDecorator('newMemberNumMax', {
-                    rules: [{
-                      required: true,
-                      message: '请输入任务助力次数上限'
-                    }]
-                  })(
-                    <ReadOnlyComponent readOnly={this.readOnly}>
-                      <InputNumber
-                        readOnly={this.readOnly}                    
-                        placeholder='1到99999'
-                        min={1}
-                        max={99999}
-                      />
-                    </ReadOnlyComponent>
-                  )}
-                  <span className='ml10'>人</span>
-                  <span style={{marginLeft: 30}}>注：每次邀新人数在区间取值，整数，两端包括</span>
-                </>
-              )
-            }}
-          />
+          >
+            <Row type='flex'>
+              <span className='mr10'>新用户</span>
+              <FormItem
+                labelCol={{span: 0}}
+                inner={(form) => {
+                return form.getFieldDecorator('newMemberNumMin', {
+                  rules: [{
+                    required: true,
+                    message: '请输入助力人数要求下限'
+                  }, {
+                    validator: this.checkNewMemverNumMin
+                  }]
+                })(
+                  <ReadOnlyComponent readOnly={this.readOnly}>
+                    <InputNumber
+                      style={{ width: 220 }}
+                      placeholder='1到9999'
+                      min={1}
+                      max={9999}
+                    />
+                  </ReadOnlyComponent>
+                )
+              }}>
+              </FormItem>
+              <span className='ml10 mr10'>至</span>
+              <FormItem
+                labelCol={{span: 0}}
+                inner={(form) => {
+                return form.getFieldDecorator('newMemberNumMax', {
+                  rules: [{
+                    required: true,
+                    message: '请输入任务助力次数上限'
+                  }, {
+                    validator: this.checkNewMemverNumMax
+                  }]
+                })(
+                  <ReadOnlyComponent readOnly={this.readOnly}>
+                    <InputNumber
+                      style={{ width: 220 }}
+                      readOnly={this.readOnly}                    
+                      placeholder='1到99999'
+                      min={1}
+                      max={99999}
+                    />
+                  </ReadOnlyComponent>
+                )
+              }}/>
+              <span className='ml10'>人</span>
+              <span style={{marginLeft: 30}}>注：每次邀新人数在区间取值，整数，两端包括</span>
+            </Row>
+          </FormItem>
           <FormItem
             label='每人每天助力上限'
             required

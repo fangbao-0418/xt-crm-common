@@ -1,20 +1,7 @@
-import { listResponse } from './adapter';
+import { listResponse, requestPayload, detailResponse } from './adapter';
 import { queryString } from '@/util/utils';
+import { SprinkleCashFormProps } from './form';
 const { get, newPost } = APP.http;
-
-interface payload {
-  id ?: number,
-  startTime: number,
-  endTime: number,
-  maxTaskNum: number,
-  awardType: number,
-  awardValue: number,
-  rule: string,
-  maxHelpNum: number,
-  newMemberNum: number,
-  maxEveryDayNum: number,
-  newMemberMultiple: number
-}
 
 // 分页列表查看领现金活动
 export function getPage(payload: {
@@ -25,18 +12,18 @@ export function getPage(payload: {
 }
 
 // 保存领现金活动
-export function add(payload: payload) {
-  return newPost('/dailyCash/add', payload);
+export function add(payload: SprinkleCashFormProps) {
+  return newPost('/dailyCash/add', requestPayload(payload));
 }
 
 // 编辑领现金活动
-export function update(payload: payload) {
-  return newPost('/dailyCash/update', payload);
+export function update(payload: SprinkleCashFormProps) {
+  return newPost('/dailyCash/update', requestPayload(payload));
 }
 
 // 查看活动配置
 export function getDetail(id: number) {
-  return get(`/dailyCash/getDetail?id=${id}`);
+  return get(`/dailyCash/getDetail?id=${id}`).then(detailResponse);
 }
 
 // 关闭活动
