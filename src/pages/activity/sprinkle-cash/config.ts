@@ -14,15 +14,13 @@ export const defaultConfig: FieldsConfig = {
         }]
       }
     },
-    maxHelpNum: {
-
-    },
     rule: {
       label: '活动规则',
       type: 'textarea',
       controlProps: {
         placeholder: '200字以内',
         rows: 6,
+        maxLength: 200,
         style: {
           width: 500
         }

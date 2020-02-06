@@ -19,6 +19,7 @@ export interface SprinkleCashFormProps extends FormComponentProps, RouteComponen
   maxDailyTaskNum: number,
   newMemberNumMin: number,
   newMemberNumMax: number,
+  maxDailyHelpNum: number,
   maxHelpNum: number,
   maxEveryDayNum: number,
   newMemberMultiple: number
@@ -60,14 +61,23 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
       }
     })
   }
+  checkMaxHelpNum = async (rule: any, value: number) => {
+    if (value < this.fromFields.newMemberNumMax) {
+      throw new Error('任务助力次数上限不得低于新用户助力次数上限');
+    }
+    return value;
+  }
   checkNewMemverNumMax = async (rule: any, value: number) => {
-    if (this.fromFields.newMemberNumMax < this.fromFields.newMemberNumMin) {
+    if (value > this.fromFields.maxHelpNum) {
+      throw new Error('新用户助力次数上限不得大于任务助力次数上限');
+    }
+    if (value < this.fromFields.newMemberNumMin) {
       throw new Error('助力次数上限不得低于下限');
     }
     return value;
   }
   checkNewMemverNumMin = async (rule: any, value: number) => {
-    if (this.fromFields.newMemberNumMin > this.fromFields.newMemberNumMax) {
+    if (value > this.fromFields.newMemberNumMax) {
       throw new Error('助力次数下限不得高于上限');
     }
     return value;
@@ -122,6 +132,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                   })(
                     <ReadOnlyComponent readOnly={this.readOnly}>
                       <InputNumber
+                        precision={0}
                         style={{width: 200}}
                         placeholder='任务可发起次数上限'
                         readOnly={this.readOnly}
@@ -154,6 +165,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                       <InputNumber
                         style={{ width: 150 }}
                         placeholder='1到99999'
+                        precision={2}
                         min={1}
                         max={99999}
                       />
@@ -183,11 +195,14 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                     rules: [{
                       required: true,
                       message: '请输入任务助力次数上限'
+                    }, {
+                      validator: this.checkMaxHelpNum
                     }]
                   })(
                     <ReadOnlyComponent readOnly={this.readOnly}>
                       <InputNumber         
                         placeholder='1到9999'
+                        precision={0}
                         min={1}
                         max={9999}
                       />
@@ -218,6 +233,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                 })(
                   <ReadOnlyComponent readOnly={this.readOnly}>
                     <InputNumber
+                      precision={0}
                       style={{ width: 220 }}
                       placeholder='1到9999'
                       min={1}
@@ -241,6 +257,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                 })(
                   <ReadOnlyComponent readOnly={this.readOnly}>
                     <InputNumber
+                      precision={0}
                       style={{ width: 220 }}
                       readOnly={this.readOnly}                    
                       placeholder='1到99999'
@@ -268,6 +285,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                   })(
                     <ReadOnlyComponent readOnly={this.readOnly}>
                       <InputNumber
+                        precision={0}
                         readOnly={this.readOnly}
                         placeholder='1到999'
                         min={1}
@@ -295,6 +313,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                   })(
                     <ReadOnlyComponent readOnly={this.readOnly}>
                       <InputNumber
+                        precision={0}
                         min={5}
                         max={999}
                         placeholder='5到999'
