@@ -133,6 +133,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                     <ReadOnlyComponent readOnly={this.readOnly}>
                       <InputNumber
                         precision={0}
+                        min={1}
                         style={{width: 200}}
                         placeholder='任务可发起次数上限'
                         readOnly={this.readOnly}

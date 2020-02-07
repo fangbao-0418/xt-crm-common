@@ -4,7 +4,7 @@ import { statusEnums } from './config'
 import { ListPageInstanceProps  } from '@/packages/common/components/list-page';
 import { ListPage, If } from '@/packages/common/components'
 import { getPage, over } from './api';
-
+import styles from './style.module.styl'
 class SprinkleCash extends React.Component {
   list: ListPageInstanceProps;
   // 跳转
@@ -43,25 +43,34 @@ class SprinkleCash extends React.Component {
           api={getPage}
           columns={[{
             title: '活动ID',
+            width: 100,
             dataIndex: 'id'
           }, {
             title: '活动日期',
+            width: 200,
             dataIndex: 'activityDate'
           }, {
             title: '任务可发起次数上限',
+            width: 160,
             dataIndex: 'maxDailyTaskNum'
           }, {
             title: '任务奖励',
+            width: 100,
             dataIndex: 'awardValue'
           }, {
             title: '活动规则',
-            dataIndex: 'rule'
+            dataIndex: 'rule',
+            render: (text: string) => (
+              <div className={styles['ellipsis-clamp4']}>{text}</div>
+            )
           }, {
             title: '活动状态',
+            width: 100,
             dataIndex: 'status',
             render: (value: number) => statusEnums[value]
           }, {
             title: '操作',
+            width: 180,
             render: (record: any) => {
               return (
                 <>
