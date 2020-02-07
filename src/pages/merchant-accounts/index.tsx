@@ -12,7 +12,11 @@ const AdjusmentList = Loadable({
   loader: () => import('./adjustment'),
   loading: Loader,
 });
-
+/** 结算单列表 */
+const SettlementList = Loadable({
+  loader: () => import('./settlement'),
+  loading: Loader,
+});
 interface Props extends RouteComponentProps {}
 class Main extends React.Component<Props> {
   public render () {
@@ -21,6 +25,7 @@ class Main extends React.Component<Props> {
       <Switch>
         <Route exact path={`${match.url}/checking`} component={CheckingList} />
         <Route exact path={`${match.url}/adjustment`} component={AdjusmentList} />
+        <Route exact path={`${match.url}/settlement`} component={SettlementList} />
       </Switch>
     )
   }
