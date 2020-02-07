@@ -7,6 +7,7 @@ export function listResponse(res: any) {
     const startTimeStr = APP.fn.formatDate(record.startTime);
     const endTimeStr = APP.fn.formatDate(record.endTime)
     record.activityDate = startTimeStr + '~' + endTimeStr;
+    record.awardValue = APP.fn.formatMoneyNumber(record.awardValue, 'm2u');
     return record;
   })
   return res;
