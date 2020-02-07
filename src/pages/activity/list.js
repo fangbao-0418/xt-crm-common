@@ -299,27 +299,21 @@ class List extends React.Component {
             onChange={this.handleTabChange}
           />
         </Card>
-        <Modal
-          title="活动新增"
+        <Add
           visible={this.state.visible}
-          width={1000}
-          footer={null}
+          title='活动新增'
+          onOk={() => {
+            this.setState({
+              visible: false,
+            });
+            this.handleSearch();
+          }}
           onCancel={() =>
             this.setState({
               visible: false,
             })
           }
-        >
-          <Add
-            onOk={() => {
-              this.setState({
-                visible: false,
-              });
-              this.handleSearch();
-            }}
-            history={this.props.history}
-          />
-        </Modal>
+        />
       </>
     );
   }
