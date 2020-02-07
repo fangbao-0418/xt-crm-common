@@ -92,6 +92,14 @@ class Main extends React.Component<Props, State> {
     render: (text, record) => {
       return (
         <>
+        {[5, 6].includes(record.type) ?  (
+          <span
+            onClick={() => APP.history.push(`/activity/reward/${record.luckyDrawRoundId}/${record.memberId}`)}
+            className='href'>
+            查看
+          </span>
+        ) : 
+        <>
           {[0, 1].includes(record.status) && (
             <span
               onClick={this.loseEfficacy.bind(this, record.id)}
@@ -105,6 +113,8 @@ class Main extends React.Component<Props, State> {
             </Popover>
           )} 
         </>
+      }
+      </>
       )
     }
   }]
