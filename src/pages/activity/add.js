@@ -39,7 +39,7 @@ class ActivityForm extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.data) {
-      const { tagUrl, type, title, sort, startTime, endTime, tagPosition } = nextProps.data;
+      const { tagUrl, type, title, sort, startTime, endTime, tagPosition, id, canUpdate } = nextProps.data;
       if (this.props.visible !== nextProps.visible) {
         console.log('nextProps.data =>', nextProps.data)
         this.props.form.setFieldsValue({
@@ -51,11 +51,8 @@ class ActivityForm extends React.Component {
           endTime,
           tagPosition
         });
-        this.setState({
-          id: nextProps.data.id,
-          canUpdate: nextProps.canUpdate
-        })
-        this.typeChange(nextProps.data.type);
+        this.setState({ id, canUpdate });
+        this.typeChange(type);
       }
     }
   }
