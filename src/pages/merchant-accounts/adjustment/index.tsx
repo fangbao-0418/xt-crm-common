@@ -1,98 +1,33 @@
 import React from 'react'
-import { FormItem } from '@/packages/common/components/form'
-import ListPage from '@/packages/common/components/list-page'
-import { getFieldsConfig } from './config'
-import * as api from './api'
+import { Tabs } from 'antd'
+import TabItem from './TabItem'
+const { TabPane } = Tabs
 class Main extends React.Component {
-  public columns = [
-    {
-      dataIndex: 'a',
-      title: 'ID'
-    },
-    {
-      dataIndex: 'a',
-      title: '名称'
-    },
-    {
-      dataIndex: 'a',
-      title: '对账单ID'
-    },
-    {
-      dataIndex: 'a',
-      title: '调整类型'
-    },
-    {
-      dataIndex: 'a',
-      title: '调整原因'
-    },
-    {
-      dataIndex: 'a',
-      title: '金额'
-    },
-    {
-      dataIndex: 'a',
-      title: '状态'
-    },
-    {
-      dataIndex: 'a',
-      title: '创建人'
-    },
-    {
-      dataIndex: 'a',
-      title: '创建人类型'
-    },
-    {
-      dataIndex: 'a',
-      title: '创建时间'
-    },
-    {
-      dataIndex: 'a',
-      title: '采购审核人'
-    },
-    {
-      dataIndex: 'a',
-      title: '采购审核时间'
-    },
-    {
-      dataIndex: 'a',
-      title: '财务审核人'
-    },
-    {
-      dataIndex: 'a',
-      title: '财务审核'
-    },
-    {
-      dataIndex: 'a',
-      title: '操作',
-      width: 300,
-      align: 'center',
-      render: () => {
-        return (
-          <div>
-            <span
-              className='href'
-              onClick={() => { APP.history.push('/merchant-accounts/checking/32323') }}
-            >
-              查看明细
-            </span>&nbsp;&nbsp;
-            <span className='href'>导出</span>&nbsp;&nbsp;
-            <span className='href'>新建调整单</span>
-          </div>
-        )
-      }
-    }
+  public config: {title: string, key: number}[] = [
+    {title: '全部', key: 1},
+    {title: '待采购审核', key: 2},
+    {title: '待财务审核', key: 3},
+    {title: '审核通过', key: 4},
+    {title: '审核不通过', key: 5},
+    {title: '已失效', key: 6}
   ]
   public render () {
     return (
-      <div>
-        <ListPage
-          columns={this.columns}
-          formConfig={getFieldsConfig()}
-          formItemLayout={(
-            <FormItem name='a' />
-          )}
-          api={api.fetchCheckingList}
-        />
+      <div style={{background: '#FFFFFF', padding: 20}}>
+        <Tabs
+          type='card'
+          tabBarStyle={{marginBottom: 0}}
+        >
+          {
+            this.config.map((item) => {
+              return (
+                <TabPane tab={item.title} key={String(item.key)}>
+                  <TabItem />
+                </TabPane>
+              )
+            })
+          }
+        </Tabs>
       </div>
     )
   }

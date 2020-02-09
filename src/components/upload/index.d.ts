@@ -7,7 +7,9 @@ interface Props {
   size?: number
   showUploadList?: booelan
   pxSize?: {width: number, height: number}[]
-  fileType?: string
+  fileType?: string | string[]
+  /** 上传文件格式提示文案 */
+  fileTypeText?: string
   disabled?: boolean
   multiple?: boolean
   value?: {url: string, uid?: any}[]

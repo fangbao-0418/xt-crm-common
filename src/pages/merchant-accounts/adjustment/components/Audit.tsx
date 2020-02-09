@@ -10,29 +10,14 @@ class Main extends React.Component {
         <Form
           config={getFieldsConfig()}
         >
-          <FormItem name='a' type='input' label='对账单ID' />
-          <FormItem name='b' />
-          <FormItem name='c' />
-          <FormItem name='e' />
+          <FormItem name='a11' />
+          <FormItem name='a12' />
           <FormItem
-            name='a5'
-            wrapperCol={{
-              span: 6
-            }}
-            addonAfterCol={{
-              span: 14
-            }}
-            addonAfter={(
-              <span>（仅支持精确到小数点2位）</span>
-            )}
-          />
-          <FormItem name='a6' />
-          <FormItem
-            label='调整文件'
+            label='文件凭证'
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('a7')(
+                  {form.getFieldDecorator('a13')(
                      <Upload
                       listType='text'
                       listNum={3}
@@ -48,11 +33,11 @@ class Main extends React.Component {
             }}
           />
           <FormItem
-            label='图片凭证'
+            label='文件凭证'
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('a8')(
+                  {form.getFieldDecorator('a14')(
                      <Upload
                       listType='picture-card'
                       listNum={5}

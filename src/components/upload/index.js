@@ -132,7 +132,8 @@ class UploadView extends Component {
     const { fileType, size = 10, pxSize, listNum } = this.props;
 
     if (fileType && !this.checkFileType(file, fileType)) {
-      message.error(`请上传正确${fileType}格式文件`);
+      const fileTypeText = this.props.fileTypeText
+      message.error(fileTypeText || `请上传正确${fileType}格式文件`);
       return Promise.reject()
     }
     const isLtM = file.size / 1024 / 1024 < size;
@@ -152,9 +153,10 @@ class UploadView extends Component {
       }
     }
     this.count++
+    const typeName = this.listType !== 'text' ? '图片' : '文件'
     if (listNum !== undefined && this.count > listNum) {
       if (this.count === listNum + 1) {
-        message.error(`上传图片张数超出最大限制`);
+        message.error(`上传${typeName}数量超出最大限制`);
       }
       return Promise.reject()
     }

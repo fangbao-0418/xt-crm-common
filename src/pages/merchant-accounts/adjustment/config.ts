@@ -11,8 +11,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         label: '对账单ID'
       },
       b: {
-        type: 'number',
-        label: '对账单ID'
+        type: 'input',
+        label: '对账单名称 '
       },
       c: {
         type: 'select',
@@ -63,74 +63,34 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input',
         label: '创建人类型'
       },
-      memberId: {
-        type: 'input',
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              pattern: /^\d+$/,
-              message: '格式不正确'
-            }
-          ]
-        }
-      },
-      anchorId: {
-        type: 'number', label: '主播ID',
+      a4: {
+        type: 'rangepicker', label: '创建时间',
         controlProps: {
-          style: {
-            width: 150
-          },
-          placeholder: '主播ID'
+          showTime: true
         }
       },
-      nickName: {
-        type: 'input', label: '主播昵称',
+      a5: {
+        type: 'number', label: '调整金额',
         controlProps: {
-          placeholder: '主播昵称'
+          style: {width: '100%'}
         }
       },
-      status: {
-        type: 'select', label: '状态',
+      a6: {
+        type: 'textarea', label: '调整说明'
+      },
+      a11: {
+        type: 'radio', label: '审核意见',
         fieldDecoratorOptions: {
-          initialValue: 0
+          initialValue: 1
         },
         options: [
-          {label: '黑名单主播', value: 1},
-          {label: '正常', value: 0}
+          {label: '审核通过', value: 1},
+          {label: '审核不通过', value: 2},
         ]
       },
-      anchorIdentityType: {
-        type: 'select', label: '主播身份',
-        options: [
-          {label: '供应商', value: 20},
-          {label: '公司', value: 10},
-          {label: '合作网红', value: 30},
-          {label: '代理', value: 40}
-        ],
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              required: true,
-              message: '请选择主播身份'
-            }
-          ]
-        }
+      a12: {
+        type: 'textarea', label: '审核说明'
       },
-      anchorLevel: {
-        type: 'select', label: '主播等级',
-        options: [
-          {label: '星级主播', value: 10},
-          {label: '普通主播', value: 0}
-        ],
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              required: true,
-              message: '请选择主播等级'
-            }
-          ]
-        }
-      }
     }
   }
   return _.mergeWith(defaultConfig, partial)

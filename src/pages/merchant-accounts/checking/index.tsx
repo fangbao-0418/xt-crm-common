@@ -1,78 +1,34 @@
 import React from 'react'
-import { FormItem } from '@/packages/common/components/form'
-import ListPage from '@/packages/common/components/list-page'
-import { getFieldsConfig } from './config'
-import * as api from './api'
+import { Tabs } from 'antd'
+import TabItem from './TabItem'
+const { TabPane } = Tabs
 class Main extends React.Component {
-  public columns = [
-    {
-      dataIndex: 'a',
-      title: '对账单ID'
-    },
-    {
-      dataIndex: 'a',
-      title: '日期'
-    },
-    {
-      dataIndex: 'a',
-      title: '供应商'
-    },
-    {
-      dataIndex: 'a',
-      title: '收入笔数'
-    },
-    {
-      dataIndex: 'a',
-      title: '收入（元）'
-    },
-    {
-      dataIndex: 'a',
-      title: '支出笔数'
-    },
-    {
-      dataIndex: 'a',
-      title: '支出（元）'
-    },
-    {
-      dataIndex: 'a',
-      title: '本期对对账单金额'
-    },
-    {
-      dataIndex: 'a',
-      title: '状态'
-    },
-    {
-      dataIndex: 'a',
-      title: '操作',
-      width: 300,
-      align: 'center',
-      render: () => {
-        return (
-          <div>
-            <span
-              className='href'
-              onClick={() => { APP.history.push('/merchant-accounts/checking/32323') }}
-            >
-              查看明细
-            </span>&nbsp;&nbsp;
-            <span className='href'>导出</span>&nbsp;&nbsp;
-            <span className='href'>新建调整单</span>
-          </div>
-        )
-      }
-    }
+  public config: {title: string, key: number}[] = [
+    {title: '全部', key: 1},
+    {title: '待确认', key: 2},
+    {title: '未结算', key: 3},
+    {title: '待结算', key: 4},
+    {title: '结算中', key: 5},
+    {title: '已结算', key: 6},
+    {title: '结算异常', key: 7}
   ]
   public render () {
     return (
-      <div>
-        <ListPage
-          columns={this.columns}
-          formConfig={getFieldsConfig()}
-          formItemLayout={(
-            <FormItem name='a' />
-          )}
-          api={api.fetchCheckingList}
-        />
+      <div style={{background: '#FFFFFF', padding: 20}}>
+        <Tabs
+          type='card'
+          tabBarStyle={{marginBottom: 0}}
+        >
+          {
+            this.config.map((item) => {
+              return (
+                <TabPane tab={item.title} key={String(item.key)}>
+                  <TabItem />
+                </TabPane>
+              )
+            })
+          }
+        </Tabs>
       </div>
     )
   }
