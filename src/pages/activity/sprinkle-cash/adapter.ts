@@ -1,5 +1,5 @@
 import { SprinkleCashFormProps } from "./form";
-
+import moment from 'moment';
 
 // 过滤分页接口
 export function listResponse(res: any) {
@@ -16,13 +16,18 @@ export function listResponse(res: any) {
 
 // 过滤新增、编辑接口
 export function requestPayload(payload: SprinkleCashFormProps) {
+  const result: any = {}
   // 元转分
-  payload.awardValue = APP.fn.formatMoneyNumber(payload.awardValue);
-  return payload;
+  result.awardValue = APP.fn.formatMoneyNumber(payload.awardValue);
+  const [ startTime, endTime ] = payload.activityDate.map(m => m && m.valueOf());
+  result.startTime = startTime;
+  result.endTime = endTime;
+  return { ...payload, ...result };
 }
 // 过滤详情接口
 export function detailResponse(res: any) {
   // 分转元
   res.awardValue = APP.fn.formatMoneyNumber(res.awardValue, 'm2u');
+  res.activityDate = [res.startTime ? moment(res.startTime) : null, res.endTime ? moment(res.endTime): null];
   return res;
 }

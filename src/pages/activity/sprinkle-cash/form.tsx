@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, InputNumber, Radio, Row, Col } from 'antd';
+import { Button, Card, DatePicker, InputNumber, Radio, Row, Col } from 'antd';
 import { defaultConfig } from './config'; 
 import { Form, FormItem } from '@/packages/common/components';
 import { parseQuery } from '@/util/utils';
@@ -8,10 +8,11 @@ import { RouteComponentProps } from 'react-router';
 import { getDetail, add, update } from './api';
 import ReadOnlyComponent from '@/components/readonly-component';
 import { FormComponentProps } from 'antd/es/form';
+import { Moment } from 'moment';
+const { RangePicker } = DatePicker;
 export interface SprinkleCashFormProps extends FormComponentProps, RouteComponentProps<{id: string}> {
   id ?: number,
-  startTime: number,
-  endTime: number,
+  activityDate: Moment[]
   maxTaskNum: number,
   awardType: number,
   awardValue: number,
@@ -46,9 +47,8 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
     })
   }
   handleSave = () => {
-    this.form.props.form.validateFields((err) => {
+    this.form.props.form.validateFields((err, vals) => {
       if (!err) {
-        const vals = this.form.getValues();
         const isAdd = this.id === -1;
         // id为-1是新增
         const promiseResult =  isAdd ? add(vals) : update({ id: this.id, ...vals })
@@ -90,11 +90,6 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
           readonly={this.readOnly}
           config={defaultConfig}
           namespace='sprinkleCash'
-          rangeMap={{
-            activityDate: {
-              fields: ['startTime', 'endTime']
-            }
-          }}
           addonAfter={(
             <FormItem>
               {!this.readOnly && (
@@ -115,8 +110,20 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
             </Col>
           </Row>
           <FormItem
-            name='activityDate'
-            verifiable
+            required
+            label='活动日期'
+            inner={(form) => {
+              return form.getFieldDecorator('activityDate', {
+                rules: [{
+                  required: true,
+                  message: '请选择活动日期'
+                }]
+              })(
+                <ReadOnlyComponent readOnly={this.readOnly}>
+                  <RangePicker showTime />
+                </ReadOnlyComponent>
+              )
+            }}
           />
           <FormItem
             required
