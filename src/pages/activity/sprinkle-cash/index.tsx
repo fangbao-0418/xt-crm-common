@@ -61,7 +61,7 @@ class SprinkleCash extends React.Component {
             title: '活动规则',
             dataIndex: 'rule',
             render: (text: string) => (
-              <div className={styles['ellipsis-clamp4']}>{text}</div>
+              <div className={styles['ellipsis-clamp4']} dangerouslySetInnerHTML={{ __html: text }}></div>
             )
           }, {
             title: '活动状态',

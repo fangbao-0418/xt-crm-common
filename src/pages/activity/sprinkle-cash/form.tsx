@@ -63,22 +63,22 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
   }
   checkMaxHelpNum = async (rule: any, value: number) => {
     if (value < this.fromFields.newMemberNumMax) {
-      throw new Error('任务助力次数上限不得低于新用户助力次数上限');
+      throw new Error('任务助力次数上限不得低于助力人数上限');
     }
     return value;
   }
   checkNewMemverNumMax = async (rule: any, value: number) => {
     if (value > this.fromFields.maxHelpNum) {
-      throw new Error('新用户助力次数上限不得大于任务助力次数上限');
+      throw new Error('助力人数上限不得大于任务助力次数上限');
     }
     if (value < this.fromFields.newMemberNumMin) {
-      throw new Error('助力次数上限不得低于下限');
+      throw new Error('助力人数上限不得低于下限');
     }
     return value;
   }
   checkNewMemverNumMin = async (rule: any, value: number) => {
     if (value > this.fromFields.newMemberNumMax) {
-      throw new Error('助力次数下限不得高于上限');
+      throw new Error('助力人数下限不得高于上限');
     }
     return value;
   }
@@ -251,7 +251,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                 return form.getFieldDecorator('newMemberNumMax', {
                   rules: [{
                     required: true,
-                    message: '请输入任务助力次数上限'
+                    message: '请输入助力人数要求上限'
                   }, {
                     validator: this.checkNewMemverNumMax
                   }]
