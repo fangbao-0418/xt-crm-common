@@ -85,7 +85,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
   }
 
   checkActivityDate = async (rule: any, value: [Moment, Moment]) => {
-    value = value || [];
+    value = value || []
     if (!value[0]) {
       throw new Error('请选择活动开始日期');
     }
@@ -127,9 +127,6 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
             inner={(form) => {
               return form.getFieldDecorator('activityDate', {
                 rules: [{
-                  required: true,
-                  message: '请选择活动日期'
-                }, {
                   validator: this.checkActivityDate
                 }]
               })(
