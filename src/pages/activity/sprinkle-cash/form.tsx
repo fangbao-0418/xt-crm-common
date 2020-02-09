@@ -132,6 +132,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
               })(
                 <ReadOnlyComponent readOnly={this.readOnly}>
                   <RangePicker
+                    disabled={this.id !== -1}
                     disabledDate={(current: Moment | null) => disabledDate(current, moment())}
                     showTime={{
                       hideDisabledOptions: true,
@@ -225,7 +226,8 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                     }]
                   })(
                     <ReadOnlyComponent readOnly={this.readOnly}>
-                      <InputNumber         
+                      <InputNumber
+                        onBlur={() => this.form.props.form.validateFields(['newMemberNumMax'], { force: true })}     
                         placeholder='1到9999'
                         precision={0}
                         min={1}
@@ -258,6 +260,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                 })(
                   <ReadOnlyComponent readOnly={this.readOnly}>
                     <InputNumber
+                      onBlur={() => this.form.props.form.validateFields(['newMemberNumMax'], { force: true })}
                       precision={0}
                       style={{ width: 220 }}
                       placeholder='1到9999'
@@ -282,6 +285,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                 })(
                   <ReadOnlyComponent readOnly={this.readOnly}>
                     <InputNumber
+                      onBlur={() => this.form.props.form.validateFields(['newMemberNumMin', 'maxHelpNum'], { force: true })}
                       precision={0}
                       style={{ width: 220 }}
                       readOnly={this.readOnly}                    
