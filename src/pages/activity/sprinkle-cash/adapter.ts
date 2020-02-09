@@ -1,5 +1,6 @@
 import { SprinkleCashFormProps } from "./form";
 import moment from 'moment';
+import omit from "lodash/omit";
 
 // 过滤分页接口
 export function listResponse(res: any) {
@@ -22,7 +23,7 @@ export function requestPayload(payload: SprinkleCashFormProps) {
   const [ startTime, endTime ] = payload.activityDate.map(m => m && m.valueOf());
   result.startTime = startTime;
   result.endTime = endTime;
-  return { ...payload, ...result };
+  return omit({ ...payload, ...result }, 'activityDate');
 }
 // 过滤详情接口
 export function detailResponse(res: any) {

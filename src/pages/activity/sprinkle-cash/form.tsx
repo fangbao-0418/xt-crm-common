@@ -8,7 +8,8 @@ import { RouteComponentProps } from 'react-router';
 import { getDetail, add, update } from './api';
 import ReadOnlyComponent from '@/components/readonly-component';
 import { FormComponentProps } from 'antd/es/form';
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
+import { disabledDate } from '@/util/antdUtil';
 const { RangePicker } = DatePicker;
 export interface SprinkleCashFormProps extends FormComponentProps, RouteComponentProps<{id: string}> {
   id ?: number,
@@ -82,6 +83,17 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
     }
     return value;
   }
+
+  checkActivityDate = async (rule: any, value: [Moment, Moment]) => {
+    value = value || [];
+    if (!value[0]) {
+      throw new Error('请选择活动开始日期');
+    }
+    if (!value[1]) {
+      throw new Error('请选择活动结束日期');
+    }
+    return value;
+  }
   render () {
     return (
       <Card>
@@ -117,10 +129,18 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                 rules: [{
                   required: true,
                   message: '请选择活动日期'
+                }, {
+                  validator: this.checkActivityDate
                 }]
               })(
                 <ReadOnlyComponent readOnly={this.readOnly}>
-                  <RangePicker showTime />
+                  <RangePicker
+                    disabledDate={(current: Moment | null) => disabledDate(current, moment())}
+                    showTime={{
+                      hideDisabledOptions: true,
+                      defaultValue: [moment(), moment('11:59:59', 'HH:mm:ss')]
+                    }}
+                  />
                 </ReadOnlyComponent>
               )
             }}
