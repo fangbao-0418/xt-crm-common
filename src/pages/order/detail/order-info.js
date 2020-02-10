@@ -22,7 +22,7 @@ const initOrderInfo = {
 
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
   const [visible, setVisible] = useState(false);
-  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupBuyCode, groupBuyOrderCodes } = orderInfo;
+  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
   return (
     <>
@@ -35,7 +35,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
         <Table
           columns={[{
             title: '拼团编号',
-            dataIndex: 'groupBuyCode'
+            dataIndex: 'groupCode'
           }, {
             title: '订单编号',
             dataIndex: 'orderCode',
@@ -68,15 +68,15 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
         </Row>
         <Row gutter={24}>
           <Col span={8}>买家备注：{remark}</Col>
-          <If condition={!!groupBuyCode}>
+          <If condition={!!groupCode}>
             <Col span={16}>
               拼团编号：{
-                groupBuyCode === orderCode ? groupBuyCode : (
+                groupCode === orderCode ? groupCode : (
                   <span
                     className='href'
                     onClick={() => setVisible(true)}
                   >
-                    {groupBuyCode}
+                    {groupCode}
                   </span>
                 )
               }
