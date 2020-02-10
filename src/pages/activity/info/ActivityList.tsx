@@ -14,6 +14,7 @@ interface UserFormProps extends FormComponentProps {
   text?: string;
   info?: any;
   confirm: (selectedRow: any) => void;
+  activityType?: number[]
 }
 
 class ActivityList extends React.Component<UserFormProps, any> {
@@ -158,7 +159,6 @@ class ActivityList extends React.Component<UserFormProps, any> {
       form: { getFieldDecorator },
       text = '批量转移'
     } = this.props as any;
-
     return (
       <>
         <span className="href" onClick={this.showModal} style={{ marginRight: 20 }}>
@@ -207,7 +207,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
                     <Option value="">全部</Option>
                     {activityType
                       .getArray()
-                      .filter(val => [1, 2, 3, 10].includes(val.key))
+                      .filter(val => (this.props.activityType || [1, 2, 3]).includes(val.key))
                       .map((val, i) => (
                         <Option value={val.key} key={i}>
                           {val.val}
