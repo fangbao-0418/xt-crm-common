@@ -36,7 +36,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
     if (params && !params.type) {
       params.types = [1, 2, 3];
     }
-    getPromotionList(params).then((res = {}) => {
+    getPromotionList(params).then((res: any = {}) => {
       page.total = res.total;
       this.setState({
         listData: res.records

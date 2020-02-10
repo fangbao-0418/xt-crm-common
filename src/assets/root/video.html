@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="theme-color" content="#000000" />
+    <title>喜团管理平台</title>
+    <style>
+      html, body, #id_test_video {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div style='width:100%;height:100%;'>
+      <div id="id_test_video" style='width:100%;height:100%;'></div>
+    </div>
+    <script src="//imgcache.qq.com/open/qcloud/video/vcplayer/TcPlayer-2.3.2.js" charset="utf-8"></script>
+    <script>
+      /** 解析url query参数 */
+      function parseQuery (url) {
+        url = url || window.location.href;
+        var arr = url.split(/^.+?\?/);
+        var paramsString = arr[1] || '';
+        var searchParams = new URLSearchParams(paramsString);
+        var result = {};
+        for (var p of searchParams) {
+          var key = p[0];
+          var value = p[1];
+          result[key] = value;
+        }
+        return result;
+      }
+    </script>
+    <script>
+      function initConfig () {
+        var query = parseQuery() || {};
+        var detail = {
+          playUrl: query.playUrl,
+          liveCoverUrl: query.liveCoverUrl
+        };
+        var config = undefined;
+        if (detail.playUrl) {
+          var https = /https/.test(window.location.origin) ? true : false;
+          // const playUrl = (detail.playUrl || '').replace(/https?:\/\//, https ? 'https://' : 'http://')
+          var playUrl = (detail.playUrl || '');
+          // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
+          config = {
+            posterImage: true,
+            live: true,
+            m3u8: playUrl.replace('.flv', '.m3u8'),
+            flv: playUrl,
+            // autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
+            poster: detail.liveCoverUrl,
+            width:  '100%', // 视频的显示宽度，请尽量使用视频分辨率宽度
+            height: '100%', // 视频的显示高度，请尽量使用视频分辨率高度
+          };
+          config.listener = function (msg) {
+            // this.player.play()
+          };
+          var player = new TcPlayer('id_test_video', config);
+          player.mute(true);
+          document.body.onload = function () {
+            player.play();
+          }
+        }
+      }
+      initConfig();
+    </script>
+  </body>
+</html>

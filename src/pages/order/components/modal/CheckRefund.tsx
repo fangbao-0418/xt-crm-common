@@ -136,7 +136,7 @@ class CheckRefund extends React.Component<Props, State> {
       orderMainId: this.props.data.orderInfoVO.mainOrderId,
       refundType: enumRefundType.Refund,
       amount: value
-    }).then(res => {
+    }).then((res: any) => {
       console.log('verifyMaxRefundAmount', res)
       this.setState({
         isDemotion: res ? 1 : 0  //true会降级

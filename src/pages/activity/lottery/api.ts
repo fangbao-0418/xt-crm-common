@@ -50,7 +50,7 @@ export function saveSession (payload: {
   title: string,
   startTime: number,
   endTime: number,
-  awardList: Lottery.LuckyDrawAwardListVo[]
+  awardList?: Lottery.LuckyDrawAwardListVo[]
 }) {
   return newPost('/luckydraw/round/save', adapter.sessionParams(payload))
 }
@@ -62,7 +62,7 @@ export function updateSession (payload: {
   title: string,
   startTime: number,
   endTime: number,
-  awardList: Lottery.LuckyDrawAwardListVo[]
+  awardList?: Lottery.LuckyDrawAwardListVo[]
 }) {
   return newPut('/luckydraw/round/update', adapter.sessionParams(payload))
 }
