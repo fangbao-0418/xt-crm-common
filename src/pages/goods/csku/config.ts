@@ -1,0 +1,1 @@
+import { FieldsConfig } from '@/packages/common/components/form'
