@@ -107,6 +107,7 @@ export enum StatusEnum {
 }
 
 export enum LocationEnum {
+  拼团详情 = 16,
   支付结果页 = 8,
   个人中心 = 4,
   购物车 = 2,

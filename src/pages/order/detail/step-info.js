@@ -49,9 +49,9 @@ const StepInfo = ({ orderType, orderStatus, orderStatusLogList = [] }) => {
           title="买家付款"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Undelivered)}
         />
-        <Step
+        {orderType === 90 && <Step
           title='待成团'
-        />
+        />}
         <Step
           title="发货"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Delivered)}
