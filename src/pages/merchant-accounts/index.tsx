@@ -7,6 +7,10 @@ const CheckingList = Loadable({
   loader: () => import('./checking'),
   loading: Loader,
 });
+const CheckingDetail = Loadable({
+  loader: () => import('./checking/Detail'),
+  loading: Loader,
+});
 /** 调整单列表 */
 const AdjusmentList = Loadable({
   loader: () => import('./adjustment'),
@@ -24,6 +28,7 @@ class Main extends React.Component<Props> {
     return (
       <Switch>
         <Route exact path={`${match.url}/checking`} component={CheckingList} />
+        <Route exact path={`${match.url}/checking/:id`} component={CheckingDetail} />
         <Route exact path={`${match.url}/adjustment`} component={AdjusmentList} />
         <Route exact path={`${match.url}/settlement`} component={SettlementList} />
       </Switch>
