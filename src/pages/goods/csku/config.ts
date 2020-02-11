@@ -38,7 +38,50 @@ export const searchFormCondig: FieldsConfig = {
 }
 
 export const formConfig: FieldsConfig = {
-
+  cskuForm: {
+    name: {
+      label: '商品名称',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      },
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true
+        }]
+      }
+    },
+    shortName: {
+      label: '商品简称',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      },
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true
+        }]
+      }
+    },
+    introduction: {
+      label: '商品简介',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      }
+    },
+    code: {
+      label: '商品编码',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      }
+    }
+  }
 }
 
 export enum statusEnums {

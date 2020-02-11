@@ -62,7 +62,7 @@ interface Props extends FormComponentProps {
   dataSource: SkuProps[]
   showImage: boolean
   onChange?: (value: SkuProps[], specs: Spec[], showImage: boolean) => void
-  strategyData: {}
+  strategyData?: {}
   /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
   type?: 0 | 10 | 20
   /** sku备案信息 */

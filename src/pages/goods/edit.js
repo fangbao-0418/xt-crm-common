@@ -732,7 +732,7 @@ class GoodsEdit extends React.Component {
             required={true}
             help={
               <>
-                <div>1.本地上传图片大小不能超过2M</div>
+                <div>1.本地上传图片大小不能超过300kb</div>
                 <div>2.商品图片最多上传5张图片</div>
               </>
             }
@@ -761,7 +761,7 @@ class GoodsEdit extends React.Component {
                 },
               ],
             })(
-              <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={.3} />
+              <UploadView placeholder="上传banner图片" listType="picture-card" listNum={1} size={.3} />
             )}
           </Form.Item>
           <Form.Item label="累计销量" required={true}>
