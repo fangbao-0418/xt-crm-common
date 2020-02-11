@@ -19,7 +19,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       memberId: {
-        type: 'input',
+        type: 'number',
+        controlProps: {
+          style: {
+            width: 150
+          },
+          placeholder: '主播ID'
+        },
         fieldDecoratorOptions: {
           rules: [
             {

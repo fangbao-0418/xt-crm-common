@@ -38,7 +38,7 @@ class Main extends React.Component<Props> {
               <Tag style={{margin: '0 5px'}} hidden={record.status !== 1} color='#666'>黑名单</Tag>
             </div>
             <div>
-              <span>ID : {record.anchorId}</span>
+              <span>ID : {record.memberId}</span>
             </div>
           </div>
         </div>
@@ -84,7 +84,7 @@ class Main extends React.Component<Props> {
           <span onClick={this.operateAnchor.bind(this, 2, record)} className='href'>编辑</span>&nbsp;&nbsp;
           <span onClick={this.operateAnchor.bind(this, 3, record)} className='href'>{record.status === 0 ? '拉黑' : '取消拉黑'}</span>&nbsp;&nbsp;
           <Popconfirm
-            title='确定删除改主播吗'
+            title='确定删除该主播吗'
             onConfirm={this.deleteAnchor.bind(this, record)}
           >
             <span className='href'>删除</span>
@@ -159,7 +159,7 @@ class Main extends React.Component<Props> {
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='anchorId' />
+              <FormItem name='memberId' label='主播ID'/>
               <FormItem name='nickName' />
               <FormItem name='anchorIdentityType' />
               <FormItem name='anchorLevel' />
