@@ -77,8 +77,18 @@ export const exportMultiAddErrorInfo = (payload: {
       authorization: JSON.parse(localStorage.getItem('token') || '')
     }
   }).then((res) => {
-    // res.headers.get('Content-Disposition')
-    // console.log(res.headers.get('Content-Type'), 'res')
+    const resClone = res.clone()
+    return resClone.json().then((res2) => {
+      if (!res2.success) {
+        APP.error(res2.message)
+      } else {
+        APP.error('导出失败')
+      }
+      return Promise.reject(res2)
+    }, (err) => {
+      return res
+    })
+  }).then((res) => {
     res.blob().then((excelBlob) => {
       var el = document.createElement('a')
       el.href = URL.createObjectURL(excelBlob)
