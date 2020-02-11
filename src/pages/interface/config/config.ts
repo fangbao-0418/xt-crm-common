@@ -16,7 +16,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '自定义配置', value: 3}
         ],
         fieldDecoratorOptions: {
-          initialValue: 1
+          initialValue: 2
         }
       },
       liveTitleColor: {
@@ -66,6 +66,26 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
             {
               required: true,
               message: '请输入直播副标题文字',
+            },
+            {
+              max: 8,
+              message: '直播副标题文字字符不得大于8个字符',
+            }
+          ]
+        },
+        controlProps: {
+          style: {
+            width: 300
+          }
+        }
+      },
+      liveTitle: {
+        type: 'input', label: '直播标题文字',
+        fieldDecoratorOptions: {
+          rules: [
+            {
+              required: true,
+              message: '请输入直播标题文字',
             },
             {
               max: 8,

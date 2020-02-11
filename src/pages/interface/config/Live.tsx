@@ -191,6 +191,10 @@ class Main extends React.Component<{}, State> {
               verifiable
             />
             <FormItem
+              name='liveTitle'
+              verifiable
+            />
+            <FormItem
               name='liveSubTitleColor'
               verifiable
             />
