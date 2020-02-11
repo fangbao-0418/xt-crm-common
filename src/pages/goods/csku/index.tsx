@@ -1,7 +1,7 @@
 import React from 'react';
 import { ListPage, If } from '@/packages/common/components';
 import { updateStatus, batchExport } from './api';
-import { defaultConfig, statusEnums } from './config';
+import { searchFormCondig, statusEnums } from './config';
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { Button, Popconfirm } from 'antd';
 type Key = string | number;
@@ -122,7 +122,7 @@ class List extends React.Component<any, ListState> {
           </div>
         )}
         getInstance={ref => this.list = ref}
-        formConfig={defaultConfig}
+        formConfig={searchFormCondig}
         api={() => Promise.resolve({ records: []})}
         columns={this.columns}
       />

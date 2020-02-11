@@ -1,7 +1,7 @@
 import { FieldsConfig } from '@/packages/common/components/form';
 
-export const defaultConfig: FieldsConfig = {
-  csku: {
+export const searchFormCondig: FieldsConfig = {
+  cskuList: {
     id: {
       label: '商品ID'
     },
@@ -37,6 +37,9 @@ export const defaultConfig: FieldsConfig = {
   }
 }
 
+export const formConfig: FieldsConfig = {
+
+}
 
 export enum statusEnums {
   正常 = 0,
