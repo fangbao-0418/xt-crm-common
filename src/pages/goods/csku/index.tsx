@@ -1,23 +1,25 @@
 import React from 'react';
 import { ListPage, If } from '@/packages/common/components';
-import { updateStatus, batchExport } from './api';
+import { effectProduct, invalidProduct, exportProduct } from './api';
 import { searchFormCondig, statusEnums } from './config';
-import { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import { Button, Popconfirm } from 'antd';
+import { Modal, Button, Popconfirm } from 'antd';
 type Key = string | number;
 interface ListState {
   selectedRowKeys: Key[]
 }
 class List extends React.Component<any, ListState> {
-  list: ListPageInstanceProps;
+  list: any;
   state = {
     selectedRowKeys: []
   }
   update(payload: any) {
-    updateStatus(payload).then(res => {
+    // 是否失效
+    const isInvalid = payload.status === statusEnums['失效'];
+    const params = { ids: [payload.id]};
+    const promiseResult = isInvalid ? invalidProduct(params) : effectProduct(params);
+    promiseResult.then(res => {
       if (res) {
-        const msg = payload.status === statusEnums['正常'] ? '生效' : '失效';
-        APP.success(`${msg}成功`);
+        APP.success(`${isInvalid ? '失效': '生效'}成功`);
         this.list.refresh();
       }
     })
@@ -27,19 +29,29 @@ class List extends React.Component<any, ListState> {
     this.setState({ selectedRowKeys });
   }
   columns = [{
-    title: '商品ID'
+    title: '库存商品ID',
+    key: 'id',
+    dataIndex: 'id'
   }, {
-    title: '商品名称'
+    title: '商品名称',
+    key: 'productName',
+    dataIndex: 'productName'
   }, {
-    title: '商品编码'
+    title: '商品编码',
+    key: 'productCode',
+    dataIndex: 'productCode'
   }, {
-    title: '商品条码'
+    title: '商品条码',
+    key: 'barCode',
+    dataIndex: 'barCode'
   }, {
-    title: '总库存'
+    title: '总库存',
+    key: 'stock',
+    dataIndex: 'stock'
   }, {
-    title: '锁定库存'
-  }, {
-    title: '供应商'
+    title: '供应商',
+    key: 'storeName',
+    dataIndex: 'storeName'
   }, {
     title: '状态',
     key: 'statusText',
@@ -88,25 +100,60 @@ class List extends React.Component<any, ListState> {
       )
     }
   }]
-  // 批量操作
-  batchAction(type: 0| 1 | 2) {
-    switch (type) {
-      case 0:
-        batchExport({})
-        break;
-      case 1:
-        break;
-      case 2:
-        break;
-    } 
+  // 批量生效
+  effect = () => {
+    Modal.confirm({
+      title: '是否批量生效勾选库存商品',
+      onOk: () => {
+        effectProduct({ ids: this.state.selectedRowKeys })
+          .then(res => {
+            if (res) {
+              APP.success('批量生效成功');
+              this.list.refresh();
+            }
+          })
+      }
+    })
+  }
+  // 批量失效
+  invalid = () => {
+    Modal.confirm({
+      title: '是否批量失效勾选库存商品',
+      onOk: () => {
+        invalidProduct({ ids: this.state.selectedRowKeys })
+          .then(res => {
+            if (res) {
+              APP.success('批量失效成功');
+              this.list.refresh();
+            }
+          })
+      }
+    })
+  }
+  // 导出商品
+  export = () => {
+    exportProduct(this.list.payload).then(res => {
+      if (res) {
+        APP.success('导出库存商品成功');
+      }
+    })
   }
   handleAdd = () => {
     APP.history.push('/goods/csku/-1');
   }
   render() {
     const { selectedRowKeys } = this.state;
+    const hasSelected = selectedRowKeys.length > 0;
     return (
       <ListPage
+        rangeMap={{
+          createTime: {
+            fields: ['createStartTime', 'createEndTime']
+          },
+          modifyTime: {
+            fields: ['modifyStartTime', 'modifyEndTime']
+          }
+        }}
         tableProps={{
           rowSelection: {
             selectedRowKeys,
@@ -115,10 +162,35 @@ class List extends React.Component<any, ListState> {
         }}
         addonAfterSearch={(
           <div>
-            <Button type='primary' onClick={this.handleAdd}>新增</Button>
-            <Button type='primary' className='ml10' onClick={() => this.batchAction(0)}>批量导出</Button>
-            <Button type='primary' className='ml10' onClick={() => this.batchAction(1)}>批量失效</Button>
-            <Button type='primary' className='ml10' onClick={() => this.batchAction(2)}>批量生效</Button>
+            <Button
+              type='primary'
+              onClick={this.handleAdd}
+            >
+              新增
+            </Button>
+            <Button
+              type='primary'
+              className='ml10'
+              onClick={this.export}
+            >
+              导出商品
+            </Button>
+            <Button
+              type='primary'
+              disabled={!hasSelected}
+              className='ml10'
+              onClick={this.invalid}
+            >
+              批量失效
+            </Button>
+            <Button
+              type='primary'
+              disabled={!hasSelected}
+              className='ml10'
+              onClick={this.effect}
+            >
+              批量生效
+            </Button>
           </div>
         )}
         getInstance={ref => this.list = ref}

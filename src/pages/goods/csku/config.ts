@@ -2,35 +2,46 @@ import { FieldsConfig } from '@/packages/common/components/form';
 
 export const searchFormCondig: FieldsConfig = {
   cskuList: {
-    id: {
-      label: '商品ID'
+    productBasicId: {
+      label: '库存商品ID'
     },
-    code: {
+    productCode: {
       label: '商品编码'
     },
-    name: {
+    productName: {
       label: '商品名称'
     },
-    skucode: {
+    barCode: {
       label: '商品条码' 
     },
-    category: {
+    categoryId: {
       label: '类目'
     },
     status: {
-      label: '在库状态'
+      label: '在库状态',
+      type: 'select',
+      options: [{
+        label: '失效',
+        value: 0
+      }, {
+        label: '正常',
+        value: 1
+      }, {
+        label: '异常',
+        value: 2
+      }, {
+        label: '售罄',
+        value: 3
+      }]
     },
-    operator: {
-      label: '操作人'
-    },
-    supplier: {
+    storeId: {
       label: '供应商'
     },
     createTime: {
       label: '创建时间',
       type: 'rangepicker'
     },
-    operatingTime: {
+    modifyTime: {
       label: '操作时间',
       type: 'rangepicker'
     }
@@ -85,8 +96,8 @@ export const formConfig: FieldsConfig = {
 }
 
 export enum statusEnums {
-  正常 = 0,
-  失效 = 1,
+  失效 = 0,
+  正常 = 1,
   异常 = 2,
   售罄 = 3
 }
