@@ -413,6 +413,7 @@ class SkuList extends React.Component<Props, State>{
         {this.state.specs.map((spec, key) => {
           return (
             <Card
+              style={{ marginBottom: 10 }}
               key={key}
               type="inner"
               title={(

@@ -7,7 +7,7 @@ import SupplierSelect from '../components/supplier-select';
 import DraggableUpload from '../components/draggable-upload';
 import styles from '../edit.module.scss';
 import UploadView from '@/components/upload';
-import SkuList from '../components/sku';
+import SkuList from './components/sku';
 class CSkuForm extends React.Component {
   form: FormInstance;
   handleDeleteAll = () => {
@@ -199,21 +199,7 @@ class CSkuForm extends React.Component {
             }}
           />
         </Card>
-        <SkuList
-          form={this.form && this.form.props.form}
-          type={0}
-          productCustomsDetailVOList={[]}
-          showImage={true}
-          specs={[]}
-          dataSource={[]}
-          onChange={(value, specs, showImage) => {
-            this.setState({
-              data: value,
-              speSelect: specs,
-              showImage,
-            });
-          }}
-        />
+        <SkuList />
         <Card
           style={{ marginTop: 10 }}
           title={(
