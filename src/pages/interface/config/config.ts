@@ -62,14 +62,15 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       liveSubTitle: {
         type: 'input', label: '直播副标题文字',
         fieldDecoratorOptions: {
+          initialValue: '喜团直播',
           rules: [
             // {
             //   required: true,
             //   message: '请输入直播副标题文字',
             // },
             {
-              max: 5,
-              message: '直播副标题文字字符不得大于5个字符',
+              max: 8,
+              message: '直播副标题文字字符不得大于8个字符',
             }
           ]
         },
