@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListPage, If } from '@/packages/common/components';
+import { ListPage, FormItem, If } from '@/packages/common/components';
 import { effectProduct, invalidProduct, exportProduct } from './api';
 import { searchFormCondig, statusEnums } from './config';
 import { Modal, Button, Popconfirm } from 'antd';
@@ -146,6 +146,17 @@ class List extends React.Component<any, ListState> {
     const hasSelected = selectedRowKeys.length > 0;
     return (
       <ListPage
+        namespace='csku'
+        formItemLayout={(
+          <>
+            <FormItem name='productBasicId' />
+            <FormItem name='productCode' />
+            <FormItem name='productName' />
+            <FormItem name='barCode' />
+            <FormItem name='categoryId' />
+            <FormItem name='status' />
+          </>
+        )}
         rangeMap={{
           createTime: {
             fields: ['createStartTime', 'createEndTime']

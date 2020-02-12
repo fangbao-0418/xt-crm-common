@@ -1,9 +1,9 @@
 import React from 'react'
-import Table, { TableInstanceProps } from '@/packages/common/components/table'
+import List, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { categoryLit, deleteCategory } from './api'
 import { Card, Button, Popconfirm } from 'antd'
 class Main extends React.Component {
-  public table: TableInstanceProps
+  public list: ListPageInstanceProps
   public columns = [
     {
       title: '分类名称',
@@ -54,7 +54,7 @@ class Main extends React.Component {
                 const res = await deleteCategory(records.id)
                 if (res) {
                   APP.success('删除分类成功')
-                  this.table.refresh()
+                  this.list.refresh()
                 }
               }}
               okText='确认'
@@ -80,12 +80,10 @@ class Main extends React.Component {
             添加分类
           </Button>
         </div>
-        <Table
-          getInstance={ref => this.table = ref}
-          controlProps={{
-            columns: this.columns,
-            className: 'mt10'
-          }}
+        <List
+          columns={this.columns}
+          className='mt10'
+          getInstance={ref => this.list = ref}
           api={categoryLit}
         />
       </Card>

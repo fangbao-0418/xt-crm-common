@@ -1,7 +1,7 @@
 import { FieldsConfig } from '@/packages/common/components/form';
 
 export const searchFormCondig: FieldsConfig = {
-  cskuList: {
+  csku: {
     productBasicId: {
       label: '库存商品ID'
     },
