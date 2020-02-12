@@ -1,7 +1,8 @@
 import React from 'react';
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form';
 import { Card, Input, Button, Row, Modal } from 'antd';
-import { formConfig } from './config'
+import ProductCategory from '../components/product-category';
+import { defaultConfig } from './config'
 import SupplierSelect from '../components/supplier-select';
 import DraggableUpload from '../components/draggable-upload';
 import styles from '../edit.module.scss';
@@ -24,8 +25,8 @@ class CSkuForm extends React.Component {
   render() {
     return (
       <Form
-        namespace='cskuForm'
-        config={formConfig}
+        namespace='csku'
+        config={defaultConfig}
         getInstance={ref => this.form = ref}
         addonAfter={(
           <FormItem className='mt10'>
@@ -40,7 +41,7 @@ class CSkuForm extends React.Component {
             inner={(form) => {
               return (
                 <>
-                  {form.getFieldDecorator('skuID')(
+                  {form.getFieldDecorator('productId')(
                     <Input
                       placeholder='请输入销售商品ID'
                       style={{ width: 172 }}
@@ -56,7 +57,7 @@ class CSkuForm extends React.Component {
             inner={(form) => {
               return (
                 <>
-                  {form.getFieldDecorator('skuCode')(
+                  {form.getFieldDecorator('barCode')(
                     <Input
                       placeholder='请输入商品条码'
                       style={{ width: 172 }}
@@ -67,26 +68,26 @@ class CSkuForm extends React.Component {
               )
             }}
           />
-          <FormItem verifiable name='name'/>
+          <FormItem verifiable name='productName'/>
           <FormItem
+            required
             label='商品类目'
-            name='category'
-            verifiable
-            controlProps={{
-              style: {
-                width: 172
-              }
-            }}
-            fieldDecoratorOptions={{
-              rules: [{
-                required: true
-              }]
+            name='categoryId'
+            inner={(form) => {
+              return form.getFieldDecorator('ProductCategory', {
+                rules: [{
+                  required: true
+                }]
+              })(
+                <ProductCategory
+                  style={{ width: 250 }}
+                />
+              )
             }}
           />
-          <FormItem verifiable name='name'/>
-          <FormItem verifiable name='shortName'/>
-          <FormItem name='introduction'/>
-          <FormItem name='code'/>
+          <FormItem verifiable name='productShortName'/>
+          <FormItem verifiable name='description'/>
+          <FormItem name='productCode'/>
           <FormItem
             label='供应商'
             inner={(form) => {
@@ -101,8 +102,8 @@ class CSkuForm extends React.Component {
             label='视频封面'
             inner={(form) => {
               return (
-                <Row type='flex'>
-                  <div>
+                <div className={styles['input-wrapper']}>
+                  <div className={styles['input-wrapper-content']}>
                     {form.getFieldDecorator('videoCoverUrl')(
                       <UploadView
                         placeholder="上传视频封面"
@@ -112,8 +113,8 @@ class CSkuForm extends React.Component {
                       />
                     )}
                   </div>
-                  <div>（建议750*750px，300kb以内）</div>
-                </Row>
+                  <span className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内）</span>
+                </div>
               )
             }}
           />
@@ -121,7 +122,7 @@ class CSkuForm extends React.Component {
             label='商品视频'
             inner={(form) => {
               return (
-                <Row type='flex'>
+                <div>
                   <div>
                     {form.getFieldDecorator('videoUrl')(
                       <UploadView
@@ -133,8 +134,7 @@ class CSkuForm extends React.Component {
                       />
                     )}
                   </div>
-                  {/* <div>（建议750*750px，300kb以内）</div> */}
-                </Row>
+                </div>
               )
             }}
           />
@@ -142,8 +142,8 @@ class CSkuForm extends React.Component {
             label='商品主图'
             inner={(form) => {
               return (
-                <Row type='flex'>
-                  <div>
+                <div className={styles['input-wrapper']}>
+                  <div className={styles['input-wrapper-content']}>
                     {form.getFieldDecorator('coverUrl')(
                       <UploadView
                         placeholder="上传主图"
@@ -153,8 +153,8 @@ class CSkuForm extends React.Component {
                       />
                     )}
                   </div>
-                  <div>（建议750*750px，300kb以内）</div>
-                </Row>
+                  <div className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内）</div>
+                </div>
               )
             }}
           />
@@ -162,8 +162,8 @@ class CSkuForm extends React.Component {
             label='商品图片'
             inner={(form) => {
               return (
-                <Row type='flex'>
-                  <div>
+                <div className={styles['input-wrapper']}>
+                  <div className={styles['input-wrapper-content']}>
                     {form.getFieldDecorator('productImage')(
                       <DraggableUpload
                         className={styles['goods-detail-draggable']}
@@ -173,8 +173,8 @@ class CSkuForm extends React.Component {
                       />
                     )}
                   </div>
-                  <div>（建议750*750px，300kb以内，最多可添加5张）</div>
-                </Row>
+                  <div className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内，最多可添加5张）</div>
+                </div>
               )
             }}
           />
@@ -182,8 +182,8 @@ class CSkuForm extends React.Component {
             label='banner图'
             inner={(form) => {
               return (
-                <Row type='flex'>
-                  <div>
+                <div className={styles['input-wrapper']}>
+                  <div className={styles['input-wrapper-content']}>
                     {form.getFieldDecorator('bannerUrl')(
                       <UploadView
                         placeholder="上传banner图"
@@ -193,8 +193,8 @@ class CSkuForm extends React.Component {
                       />
                     )}
                   </div>
-                  <div>（建议700*300px，300kb以内）</div>
-                </Row>
+                  <div className={styles['input-wrapper-placeholder']}>（建议700*300px，300kb以内）</div>
+                </div>
               )
             }}
           />
@@ -238,7 +238,6 @@ class CSkuForm extends React.Component {
                   {form.getFieldDecorator('listImage')(
                     <DraggableUpload
                       className={styles['goods-draggable']}
-                      // id={'shop-detail'}
                       listNum={20}
                       size={0.3}
                       placeholder="上传商品详情图"

@@ -284,12 +284,15 @@ export function momentRangeValueof(values = []) {
 
 export function mapTree(org) {
   const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
-  return {
+  const result = {
     label: org.name,
     value: org.id,
-    data: { ...org },
-    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
-  };
+    data: { ...org }
+  }
+  return haveChildren ? {
+    ...result,
+    children: org.childList.map(mapTree)
+  } : result;
 }
 
 export const formatMoneyBeforeRequest = price => {

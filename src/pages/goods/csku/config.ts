@@ -1,22 +1,26 @@
 import { FieldsConfig } from '@/packages/common/components/form';
 
-export const searchFormCondig: FieldsConfig = {
+export const defaultConfig: FieldsConfig = {
   csku: {
     productBasicId: {
       label: '库存商品ID'
     },
-    productCode: {
-      label: '商品编码'
-    },
     productName: {
-      label: '商品名称'
+      label: '商品名称',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      },
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true
+        }]
+      }
     },
     barCode: {
       label: '商品条码' 
     },
-    // categoryId: {
-    //   label: '类目'
-    // },
     status: {
       label: '在库状态',
       type: 'select',
@@ -39,9 +43,6 @@ export const searchFormCondig: FieldsConfig = {
         value: 3
       }]
     },
-    // storeId: {
-    //   label: '供应商'
-    // },
     createTime: {
       label: '创建时间',
       type: 'rangepicker',
@@ -55,26 +56,8 @@ export const searchFormCondig: FieldsConfig = {
       controlProps: {
         showTime: true
       }
-    }
-  }
-}
-
-export const formConfig: FieldsConfig = {
-  cskuForm: {
-    name: {
-      label: '商品名称',
-      controlProps: {
-        style: {
-          width: 172
-        }
-      },
-      fieldDecoratorOptions: {
-        rules: [{
-          required: true
-        }]
-      }
     },
-    shortName: {
+    productShortName: {
       label: '商品简称',
       controlProps: {
         style: {
@@ -87,7 +70,7 @@ export const formConfig: FieldsConfig = {
         }]
       }
     },
-    introduction: {
+    description: {
       label: '商品简介',
       controlProps: {
         style: {
@@ -95,7 +78,7 @@ export const formConfig: FieldsConfig = {
         }
       }
     },
-    code: {
+    productCode: {
       label: '商品编码',
       controlProps: {
         style: {

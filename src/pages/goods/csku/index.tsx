@@ -3,7 +3,7 @@ import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/component
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import { effectProduct, invalidProduct, exportProduct } from './api';
 import { getCategoryTopList } from '../api';
-import { searchFormCondig, statusEnums } from './config';
+import { defaultConfig, statusEnums } from './config';
 import { Modal, Button, Popconfirm } from 'antd';
 type Key = string | number;
 interface ListState {
@@ -159,7 +159,10 @@ class List extends React.Component<any, ListState> {
               label='一级类目'
               inner={(form) => {
                 return form.getFieldDecorator('categoryId')(
-                  <SelectFetch fetchData={getCategoryTopList} />
+                  <SelectFetch
+                    style={{ width: 172 }}
+                    fetchData={getCategoryTopList}
+                  />
                 )
               }}
             />
@@ -224,7 +227,7 @@ class List extends React.Component<any, ListState> {
           </div>
         )}
         getInstance={ref => this.list = ref}
-        formConfig={searchFormCondig}
+        formConfig={defaultConfig}
         api={() => Promise.resolve({ records: []})}
         columns={this.columns}
       />
