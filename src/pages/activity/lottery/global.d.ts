@@ -38,7 +38,7 @@ declare module Lottery {
     title: string,
     startTime: number,
     endTime: number,
-    awardList: Lottery.LuckyDrawAwardListVo[]
+    awardList?: Lottery.LuckyDrawAwardListVo[]
   }
   export interface LuckyDrawAwardListVo {
     /** 奖品id */

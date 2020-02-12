@@ -15,24 +15,24 @@ import modal, { ModalProps } from './components/modal'
 import { Decimal } from 'decimal.js'
 import Tips from './components/Tips'
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
-function isFalsly (val: any) {
+function isFalsly(val: any) {
   return val == null || val === '' || Number.isNaN(val)
 }
 
 /** 获取活动开始时间 */
-function getActivityStartTime () {
+function getActivityStartTime() {
   return +(parseQuery() as any).activityStartTime
 }
 
 /** 返回必填标题组件 */
-function requiredTitle (title: string) {
+function requiredTitle(title: string) {
   return <span className={styles.required}>{title}</span>
 }
 
 /** 计算总价 */
-function calcTotal (collection: any[], iteratee?: (res: any) => number) {
+function calcTotal(collection: any[], iteratee?: (res: any) => number) {
   return (collection || []).reduce((prev: number, curr: any) => {
-    curr = typeof iteratee === 'function' ? iteratee(curr): curr
+    curr = typeof iteratee === 'function' ? iteratee(curr) : curr
     return new Decimal(prev || 0).add(curr || 0).toNumber()
   }, 0)
 }
@@ -41,9 +41,9 @@ function calcTotal (collection: any[], iteratee?: (res: any) => number) {
 const props = (list: any[], id: string) => list.map(x => x[id] || 0)
 
 /** 返回一个数字 */
-function getNumber (val: number) {
+function getNumber(val: number) {
   val = +val
-  return typeof val === 'number' && !Number.isNaN(val)  ? val : 0
+  return typeof val === 'number' && !Number.isNaN(val) ? val : 0
 }
 
 const ids = 'normalUserProbability,headUserProbability,areaUserProbability,cityUserProbability'.split(',')
@@ -74,7 +74,7 @@ class Main extends React.Component<Props, State> {
   public activityType: number = +(parseQuery() as any).activityType
 
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
-  public constructor (props: any) {
+  public constructor(props: any) {
     super(props)
     this.luckyDrawId = +props.match.params.luckyDrawId
     this.id = +props.match.params.id
@@ -85,7 +85,7 @@ class Main extends React.Component<Props, State> {
     this.initAwardList()
   }
   // 删除当前行
-  public handleRemove (index: number) {
+  public handleRemove(index: number) {
     const { awardList } = this.state
     awardList.splice(index, 1)
     this.setState({ awardList })
@@ -109,7 +109,7 @@ class Main extends React.Component<Props, State> {
          * 兜底奖品类型才有无奖品
          */
         const options = record.defaultAward === 0 ? prizeOptions : prizeOptions.filter((opt: any) => opt.value !== '0')
-        return this.getFieldDecorator('awardType', index)(<SelectFetch options={options} disabled={this.readOnly}/>)
+        return this.getFieldDecorator('awardType', index)(<SelectFetch options={options} disabled={this.readOnly} />)
       }
     },
     {
@@ -131,14 +131,14 @@ class Main extends React.Component<Props, State> {
       key: 'awardTitle',
       width: 150,
       render: (arg1: any, arg2: any, index: number) => (
-        this.getFieldDecorator('awardTitle', index)(<Input maxLength={20} disabled={this.readOnly}/>)
+        this.getFieldDecorator('awardTitle', index)(<Input maxLength={20} disabled={this.readOnly} />)
       )
     },
     {
       title: (
         <>
           {[2, 3].includes(this.activityType) ? requiredTitle('图片') : '图片'}
-          <div style={{fontSize: 12, color: '#999'}}>
+          <div style={{ fontSize: 12, color: '#999' }}>
             (图片上传png格式，大小140px*140px)
           </div>
         </>
@@ -150,7 +150,7 @@ class Main extends React.Component<Props, State> {
         <div style={{ textAlign: 'left' }}>
           {this.getFieldDecorator('awardPicUrl', index)(
             <Upload
-              pxSize={[{width:140, height:140}]}
+              pxSize={[{ width: 140, height: 140 }]}
               fileType='image/png'
               listType='picture-card'
               disabled={[1, 4].includes(this.activityType) || this.readOnly}
@@ -227,9 +227,9 @@ class Main extends React.Component<Props, State> {
       children: [
         {
           title: (res: any) => (
-            <div style={{textAlign: 'center'}}>
+            <div style={{ textAlign: 'center' }}>
               <div>普通用户</div>
-              <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalNormalUserProbability}）</div>
+              <div style={{ fontSize: 12, color: '#999' }}>（合计概率{this.state && this.state.totalNormalUserProbability}）</div>
             </div>
           ),
           width: 150,
@@ -242,14 +242,14 @@ class Main extends React.Component<Props, State> {
                 max={100}
                 precision={2}
               />
-            ): <span />)
+            ) : <span />)
           )
         },
         {
           title: () => (
-            <div style={{textAlign: 'center'}}>
+            <div style={{ textAlign: 'center' }}>
               <div>团长</div>
-              <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalHeadUserProbability}）</div>
+              <div style={{ fontSize: 12, color: '#999' }}>（合计概率{this.state && this.state.totalHeadUserProbability}）</div>
             </div>
           ),
           width: 150,
@@ -262,14 +262,14 @@ class Main extends React.Component<Props, State> {
                 max={100}
                 precision={2}
               />
-            ): <span />)
+            ) : <span />)
           )
         },
         {
           title: () => (
-            <div style={{textAlign: 'center'}}>
+            <div style={{ textAlign: 'center' }}>
               <div>区长</div>
-              <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalAreaUserProbability}）</div>
+              <div style={{ fontSize: 12, color: '#999' }}>（合计概率{this.state && this.state.totalAreaUserProbability}）</div>
             </div>
           ),
           width: 150,
@@ -282,14 +282,14 @@ class Main extends React.Component<Props, State> {
                 max={100}
                 precision={2}
               />
-            ): <span />)
+            ) : <span />)
           )
         },
         {
           title: () => (
-            <div style={{textAlign: 'center'}}>
+            <div style={{ textAlign: 'center' }}>
               <div>合伙人</div>
-              <div style={{fontSize: 12, color: '#999'}}>（合计概率{this.state && this.state.totalCityUserProbability}）</div>
+              <div style={{ fontSize: 12, color: '#999' }}>（合计概率{this.state && this.state.totalCityUserProbability}）</div>
             </div>
           ),
           width: 150,
@@ -302,7 +302,7 @@ class Main extends React.Component<Props, State> {
                 max={100}
                 precision={2}
               />
-            ): <span />)
+            ) : <span />)
           )
         }
       ]
@@ -330,13 +330,13 @@ class Main extends React.Component<Props, State> {
     //   }
     // }
   ]
-  public componentDidMount () {
+  public componentDidMount() {
     if (this.id !== -1) {
       this.fetchDetail()
     }
   }
   /** 获取场次详情 */
-  public async fetchDetail () {
+  public async fetchDetail() {
     const res = await api.getSessionsDetail(this.id)
     const awardList = res.awardList
     this.form.setValues(res)
@@ -349,7 +349,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   /** 初始化奖品列表 */
-  public initAwardList () {
+  public initAwardList() {
     let res: any = []
     const rows = [1, 4].includes(this.activityType) ? 10 : 8
     for (let i = 0; i < rows; i++) {
@@ -384,7 +384,7 @@ class Main extends React.Component<Props, State> {
    * @param index
    * @param val
    */
-  public setCellValue (id: string, index: number, val: any) {
+  public setCellValue(id: string, index: number, val: any) {
     const { awardList } = this.state
     const item: any = awardList[index] || {}
     const oldVal = item[id]
@@ -392,7 +392,7 @@ class Main extends React.Component<Props, State> {
     if (ids.includes(id)) {
       let result = calcTotal(awardList, curr => getNumber(curr[id]))
       const name = 'total' + upperFirst(id)
-      if (result > 100 ) {
+      if (result > 100) {
         item[id] = oldVal
         return
       }
@@ -416,7 +416,7 @@ class Main extends React.Component<Props, State> {
    * @param id
    * @param index
    */
-  public getCellValue (id: string, index: number) {
+  public getCellValue(id: string, index: number) {
     const { awardList } = this.state
     const item: any = awardList[index] || {}
     return item[id]
@@ -426,7 +426,7 @@ class Main extends React.Component<Props, State> {
    * @param id
    * @param index
    */
-  public getFieldDecorator (id: string, index: number) {
+  public getFieldDecorator(id: string, index: number) {
     return (node: any) => {
       return React.cloneElement(node, {
         onChange: (e: any) => {
@@ -438,7 +438,7 @@ class Main extends React.Component<Props, State> {
     }
   }
   /** 校验活动场次配置 */
-  public validate (awardList: Lottery.LuckyDrawAwardListVo[]) {
+  public validate(awardList: Lottery.LuckyDrawAwardListVo[]) {
     for (let i = 0; i < awardList.length; i++) {
       const prefixMsg = `奖品列表第${i + 1}行`
       const v = awardList[i]
@@ -495,27 +495,27 @@ class Main extends React.Component<Props, State> {
     return true
   }
   /** 新增、编辑活动场次 */
-  public handleSave () {
+  public handleSave() {
     this.form.props.form.validateFields(async (err, vals) => {
       const awardList = this.state.awardList || []
-      if (!err && !!this.validate(awardList)) {
+      if(!err) {
+        const data = {
+          luckyDrawId: this.luckyDrawId,
+          ...vals
+        }
+        if(this.activityType <= 4) {
+          if(!this.validate(awardList)) return
+          data.awardList = awardList;
+        }
         let msg, res
         /** 新增场次 */
         if (this.id === -1) {
           msg = '新增场次'
-          res = await api.saveSession({
-            luckyDrawId: this.luckyDrawId,
-            awardList,
-            ...vals
-          })
+          res = await api.saveSession(data)
         } else {
           msg = '编辑场次'
-          res = await api.updateSession({
-            luckyDrawId: this.luckyDrawId,
-            awardList,
-            id: this.id,
-            ...vals
-          })
+          data.id = this.id
+          res = await api.updateSession(data)
         }
         if (res) {
           APP.success(`${msg}成功`)
@@ -525,11 +525,11 @@ class Main extends React.Component<Props, State> {
     })
   }
   /** 取消 */
-  public handleCancel () {
+  public handleCancel() {
     APP.history.go(-1)
   }
   /**  添加新行 */
-  public handleAdd () {
+  public handleAdd() {
     const awardList: any = this.state.awardList
     const startIndex: number = Math.max(awardList.length - 2, 0)
     awardList.splice(startIndex, 0, {
@@ -553,6 +553,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public generateChance = () => {
+    debugger
     let awardList = this.state.awardList
     for (let i = 0; i < awardList.length; i++) {
       const v = awardList[i]
@@ -623,14 +624,14 @@ class Main extends React.Component<Props, State> {
       awardList
     })
   }
-  public render () {
+  public render() {
     const startTime = this.form && this.form.props.form.getFieldValue('startTime')
     return (
       <Form
         readonly={this.readOnly}
         getInstance={ref => this.form = ref}
         addonAfter={(
-          <div style={{marginTop: 100}}>
+          <div style={{ marginTop: 100 }}>
             <Button disabled={this.readOnly} type='danger' onClick={this.handleSave}>保存</Button>
             <Button className='ml10' onClick={this.handleCancel}>取消</Button>
           </div>
@@ -651,7 +652,8 @@ class Main extends React.Component<Props, State> {
             controlProps={{
               style: {
                 width: 172
-              }
+              },
+              maxlength: 10
             }}
           />
           <FormItem
@@ -670,19 +672,19 @@ class Main extends React.Component<Props, State> {
                       (startTime ?
                         <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
                         <></>
-                      ):
-                    <DatePicker
-                      disabledDate={(current) => {
-                        return disabledDate(current, getActivityStartTime())
-                      }}
-                      disabledTime={(current: any) => {
-                        const stamp: number = getActivityStartTime()
-                        return disabledDateTime(current, new Date(stamp))
-                      }}
-                      showTime
-                    />
+                      ) :
+                      <DatePicker
+                        disabledDate={(current) => {
+                          return disabledDate(current, getActivityStartTime())
+                        }}
+                        disabledTime={(current: any) => {
+                          const stamp: number = getActivityStartTime()
+                          return disabledDateTime(current, new Date(stamp))
+                        }}
+                        showTime
+                      />
                   )}
-                  <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
+                  <Tips style={{ display: 'inline-block', verticalAlign: 'middle' }} className='ml10'>
                     场次的开始时间默认不能早于活动开始时间和上一场次结束时间。
                   </Tips>
                 </div>
@@ -694,112 +696,195 @@ class Main extends React.Component<Props, State> {
               }]
             }}
           />
-          <Row>
-            <Col span={2}></Col>
-            <Col span={8}>
-              <FormItem
-                name='endTime'
-                labelCol={{span: 6}}
-                wrapperCol={{span: 10}}
-                type='date'
-                label='结束时间'
-                verifiable
-                controlProps={{
-                  showTime: true,
-                  disabledDate: (current: any) => {
-                    const { startTime } = this.form.getValues()
-                    return disabledDate(current, startTime)
-                  },
-                  disabledTime: (current: any) => {
-                    const { startTime } = this.form.getValues()
-                    return disabledDateTime(current, new Date(startTime))
-                  }
-                }}
-                fieldDecoratorOptions={{
-                  rules: [{
-                    required: true,
-                    message: '请选择结束时间'
-                  }]
-                }}
-              />
-            </Col>
-            <Col span={14}>
-              <FormItem
-                name='expectedNumber'
-                type='number'
-                label='预估参与人数'
-                verifiable
-                controlProps={{
-                  max: 10000000000,
-                  precision: 0,
-                  min: 0
-                }}
-                fieldDecoratorOptions={{
-                  rules: [{
-                    required: true,
-                    message: '请输入预估参与人数'
-                  }]
-                }}
-              />
-              </Col>
-          </Row>
-        </Card>
-        <div className='mt10'>
-          <Card title='奖品列表'>
-            {/* <Button
-              className='mb10'
-              type='primary'
-              onClick={this.handleAdd}>
-              添加一行
-            </Button> */}
-            <Table
-              rowKey='id'
-              columns={this.columns}
-              className={styles['prize-list']}
-              dataSource={this.state.awardList}
-              pagination={false}
-              scroll={{ x: 1930, y: 800 }}
+          <FormItem
+            name='endTime'
+            type='date'
+            label='结束时间'
+            verifiable
+            controlProps={{
+              showTime: true,
+              disabledDate: (current: any) => {
+                const { startTime } = this.form.getValues()
+                return disabledDate(current, startTime)
+              },
+              disabledTime: (current: any) => {
+                const { startTime } = this.form.getValues()
+                return disabledDateTime(current, new Date(startTime))
+              }
+            }}
+            fieldDecoratorOptions={{
+              rules: [{
+                required: true,
+                message: '请选择结束时间'
+              }]
+            }}
+          />
+          {this.activityType <= 4 ? <FormItem
+            name='expectedNumber'
+            type='number'
+            label='预估参与人数'
+            verifiable
+            controlProps={{
+              max: 10000000000,
+              precision: 0,
+              min: 0,
+              style: {
+                width: 172
+              }
+            }}
+            fieldDecoratorOptions={{
+              rules: [{
+                required: true,
+                message: '请输入预估参与人数'
+              }]
+            }}
+          /> : ''}
+          {this.activityType === 5 ? <>
+            <FormItem
+              type='number'
+              label='有效订单数量门槛'
+              name='restrictOrderNum'
+              verifiable
+              controlProps={{
+                max: 10000000000,
+                precision: 0,
+                min: 0,
+                style: {
+                  width: 172
+                }
+              }}
+              fieldDecoratorOptions={{
+                rules: [{
+                  required: true,
+                  message: '请输入有效订单数量门槛'
+                }]
+              }}
             />
-            <div hidden={this.readOnly} className='mt20'>
-              <Button
-                className='mr10'
-                type='danger'
-                onClick={this.generateChance}
-              >
-                生成概率
-              </Button>
-              <Button
-                onClick={this.clearChance}
-              >
-                清空概率
-              </Button>
-              {/* <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
-                点击生成概率，校验预估参与人数和奖品库存是否填写，<br />
-                如未填写则提示“预估参与人数、奖品库存填写后才能生成概率”的提示
-              </Tips> */}
-            </div>
-          </Card>
-        </div>
-        <div className='mt10'>
-          <Card type='inner' title='规则说明'>
-            <Tips>
-              <div>
-                <div>奖品列表根据活动类型固定数量奖品，红包雨、财神拜年10个奖品，九宫格、砸金蛋8个奖品；</div>
-                <div>兜底奖品行一直置底；</div>
-                <div>奖品类型包括：现金、优惠券、实物、元宝，(兜底商品多一个“谢谢惠顾”)；</div>
-                <div>奖品设置：现金、元宝填写非负整数，优惠券和实物选择对应券（实物本期也是使用优惠券）；</div>
-                <div>简称：奖品简称，用于前台展示；</div>
-                <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传（仅限九宫格、砸金蛋，红包雨、财神拜年图片置灰）；</div>
-                <div>风控级别：0和1，0为无风控级别，1风控级别为高；</div>
-                <div>奖品库存：本场次可发放奖品的总量，活动进行中可以调整；</div>
-                <div>发出数量：本场次发出商品的数量；</div>
-                <div>单人限领：本场次活动中，单人最高可中奖数量；</div>
-                <div>订单门槛：满足订单金额门槛才可以抽中对应奖品（仅限九宫格、砸金蛋，红包雨、财神拜年订单门槛置灰）；</div>
-                <div>中奖概率：非负数，保留两位小数，0-100；</div>
+            <FormItem
+              type='number'
+              name='restrictGiftNum'
+              label='礼包数量门槛'
+              verifiable
+              controlProps={{
+                max: 10000000000,
+                precision: 0,
+                min: 0,
+                style: {
+                  width: 172
+                }
+              }}
+              fieldDecoratorOptions={{
+                rules: [{
+                  required: true,
+                  message: '请输入礼包数量门槛'
+                }]
+              }}
+            />
+          </> : ''}
+          {this.activityType === 6 ? <>
+            <FormItem
+              type='number'
+              label='有效订单数量门槛'
+              name='restrictOrderNum'
+              verifiable
+              controlProps={{
+                max: 10000000000,
+                precision: 0,
+                min: 0,
+                style: {
+                  width: 172
+                }
+              }}
+              fieldDecoratorOptions={{
+                rules: [{
+                  required: true,
+                  message: '请输入有效订单数量门槛'
+                }]
+              }}
+            />
+            <FormItem
+              name='auditEndTime'
+              type='date'
+              label='审核发放时间'
+              verifiable
+              controlProps={{
+                showTime: true,
+                disabledDate: (current: any) => {
+                  const { endTime } = this.form.getValues()
+                  return disabledDate(current, endTime)
+                },
+                disabledTime: (current: any) => {
+                  const { endTime } = this.form.getValues()
+                  return disabledDateTime(current, new Date(endTime))
+                }
+              }}
+              fieldDecoratorOptions={{
+                rules: [{
+                  required: true,
+                  message: '请选中审核发放时间'
+                }]
+              }}
+            />
+          </> : ''}
+        </Card>
+        {this.activityType <= 4 ? <>
+          <div className='mt10'>
+            <Card title='奖品列表'>
+              {/* <Button
+                className='mb10'
+                type='primary'
+                onClick={this.handleAdd}>
+                添加一行
+              </Button> */}
+              <Table
+                rowKey='id'
+                columns={this.columns}
+                className={styles['prize-list']}
+                dataSource={this.state.awardList}
+                pagination={false}
+                scroll={{ x: 1930, y: 800 }}
+              />
+              <div hidden={this.readOnly} className='mt20'>
+                <Button
+                  className='mr10'
+                  type='danger'
+                  onClick={this.generateChance}
+                >
+                  生成概率
+                </Button>
+                <Button
+                  onClick={this.clearChance}
+                >
+                  清空概率
+                </Button>
+                {/* <Tips style={{display: 'inline-block', verticalAlign: 'middle'}} className='ml10'>
+                  点击生成概率，校验预估参与人数和奖品库存是否填写，<br />
+                  如未填写则提示“预估参与人数、奖品库存填写后才能生成概率”的提示
+                </Tips> */}
               </div>
-            </Tips>
-          </Card>
-        </div>
+            </Card>
+          </div>
+          <div className='mt10'>
+            <Card type='inner' title='规则说明'>
+              <Tips>
+                <div>
+                  <div>奖品列表根据活动类型固定数量奖品，红包雨、财神拜年10个奖品，九宫格、砸金蛋8个奖品；</div>
+                  <div>兜底奖品行一直置底；</div>
+                  <div>奖品类型包括：现金、优惠券、实物、元宝，(兜底商品多一个“谢谢惠顾”)；</div>
+                  <div>奖品设置：现金、元宝填写非负整数，优惠券和实物选择对应券（实物本期也是使用优惠券）；</div>
+                  <div>简称：奖品简称，用于前台展示；</div>
+                  <div>图片：用于前台展示，规格尺寸根据设计需求而定，可以删除后重新上传（仅限九宫格、砸金蛋，红包雨、财神拜年图片置灰）；</div>
+                  <div>风控级别：0和1，0为无风控级别，1风控级别为高；</div>
+                  <div>奖品库存：本场次可发放奖品的总量，活动进行中可以调整；</div>
+                  <div>发出数量：本场次发出商品的数量；</div>
+                  <div>单人限领：本场次活动中，单人最高可中奖数量；</div>
+                  <div>订单门槛：满足订单金额门槛才可以抽中对应奖品（仅限九宫格、砸金蛋，红包雨、财神拜年订单门槛置灰）；</div>
+                  <div>中奖概率：非负数，保留两位小数，0-100；</div>
+                </div>
+              </Tips>
+            </Card>
+          </div>
+        </> : ''}
       </Form>
     )
   }

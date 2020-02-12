@@ -243,7 +243,9 @@ class Main extends React.Component<Props> {
       playUrl: record.playUrl,
       liveCoverUrl: record.liveCoverUrl
     })
-    const url = location.origin.replace(/^https?/, 'http') + location.pathname.replace(/index.html/, '') +  'video.html?' + query
+    let url = location.pathname.replace(/index.html/, '') +  'video.html?' + query
+    // url = location.origin.replace(/^https?/, 'http') + url
+    url = 'http://test-crmadmin.hzxituan.com/issue23/video.html?' + query
     window.open(url, '喜团直播', 'top=120,left=150,width=800,height=500,scrollbars=0,titlebar=1', false)
   }
   /** 禁播 */

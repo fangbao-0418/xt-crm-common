@@ -12,7 +12,7 @@ function Stock (props: Props) {
   const formRef = useRef<FormInstance>()
   const id = props.id
   useEffect(() => {
-    getStockInfo(id).then((res) => {
+    getStockInfo(id).then((res: any) => {
       console.log(res)
       const form = formRef.current
       if (form) {
