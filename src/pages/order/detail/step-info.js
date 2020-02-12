@@ -15,8 +15,8 @@ function getCurrentIndex(orderStatus, orderType) {
     [enumOrderStatus.Complete]: 4
   } : {
     [enumOrderStatus.Unpaid]: 0,
-    [enumOrderStatus.Undelivered]: 1,
-    [enumOrderStatus.Tofight]: 2,
+    [enumOrderStatus.Tofight]: 1,
+    [enumOrderStatus.Undelivered]: 2,
     [enumOrderStatus.PartDelivered]: 3,
     [enumOrderStatus.Delivered]: 3,
     [enumOrderStatus.Received]: 4,
@@ -45,13 +45,13 @@ const StepInfo = ({ orderType, orderStatus, orderStatusLogList = [] }) => {
           title="买家下单"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Unpaid)}
         />
-        <Step
-          title="买家付款"
-          description={getStatusTime(orderStatusLogList, enumOrderStatus.Undelivered)}
-        />
         {orderType === 90 && <Step
           title='待成团'
         />}
+        <Step
+          title="待发货"
+          description={getStatusTime(orderStatusLogList, enumOrderStatus.Undelivered)}
+        />
         <Step
           title="发货"
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Delivered)}
