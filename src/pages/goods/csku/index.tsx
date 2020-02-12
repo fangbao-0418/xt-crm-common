@@ -1,5 +1,6 @@
 import React from 'react';
 import { ListPage, FormItem, If } from '@/packages/common/components';
+import SuppilerSelect from '@/components/suppiler-auto-select'
 import { effectProduct, invalidProduct, exportProduct } from './api';
 import { searchFormCondig, statusEnums } from './config';
 import { Modal, Button, Popconfirm } from 'antd';
@@ -155,6 +156,16 @@ class List extends React.Component<any, ListState> {
             <FormItem name='barCode' />
             <FormItem name='categoryId' />
             <FormItem name='status' />
+            <FormItem
+              label='供应商'
+              inner={(form) => {
+                return form.getFieldDecorator('storeId')(
+                  <SuppilerSelect />
+                )
+              }}
+            />
+            <FormItem name='createTime' />
+            <FormItem name='modifyTime' />
           </>
         )}
         rangeMap={{

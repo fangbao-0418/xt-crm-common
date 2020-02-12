@@ -34,16 +34,22 @@ export const searchFormCondig: FieldsConfig = {
         value: 3
       }]
     },
-    storeId: {
-      label: '供应商'
-    },
+    // storeId: {
+    //   label: '供应商'
+    // },
     createTime: {
       label: '创建时间',
-      type: 'rangepicker'
+      type: 'rangepicker',
+      controlProps: {
+        showTime: true
+      }
     },
     modifyTime: {
       label: '操作时间',
-      type: 'rangepicker'
+      type: 'rangepicker',
+      controlProps: {
+        showTime: true
+      }
     }
   }
 }

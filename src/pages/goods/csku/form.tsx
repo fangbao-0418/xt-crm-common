@@ -18,6 +18,9 @@ class CSkuForm extends React.Component {
       }
     })
   }
+  goBack = () => {
+    APP.history.go(-1)
+  }
   render() {
     return (
       <Form
@@ -27,7 +30,7 @@ class CSkuForm extends React.Component {
         addonAfter={(
           <FormItem className='mt10'>
             <Button type='primary'>保存</Button>
-            <Button className='ml10'>取消</Button>
+            <Button className='ml10' onClick={this.goBack}>取消</Button>
           </FormItem>
         )}
       >
