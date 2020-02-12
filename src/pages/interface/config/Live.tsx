@@ -200,7 +200,8 @@ class Main extends React.Component<{}, State> {
             />
             <FormItem
               name='liveSubTitle'
-              // verifiable
+              verifiable
+              required={false}
             />
           </If>
         </Form>

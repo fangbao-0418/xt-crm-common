@@ -63,13 +63,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input', label: '直播副标题文字',
         fieldDecoratorOptions: {
           rules: [
+            // {
+            //   required: true,
+            //   message: '请输入直播副标题文字',
+            // },
             {
-              required: true,
-              message: '请输入直播副标题文字',
-            },
-            {
-              max: 8,
-              message: '直播副标题文字字符不得大于8个字符',
+              max: 5,
+              message: '直播副标题文字字符不得大于5个字符',
             }
           ]
         },
@@ -88,8 +88,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               message: '请输入直播标题文字',
             },
             {
-              max: 8,
-              message: '直播副标题文字字符不得大于8个字符',
+              max: 5,
+              message: '直播标题文字字符不得大于5个字符',
             }
           ]
         },
