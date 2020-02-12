@@ -14,12 +14,17 @@ export const searchFormCondig: FieldsConfig = {
     barCode: {
       label: '商品条码' 
     },
-    categoryId: {
-      label: '类目'
-    },
+    // categoryId: {
+    //   label: '类目'
+    // },
     status: {
       label: '在库状态',
       type: 'select',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      },
       options: [{
         label: '失效',
         value: 0

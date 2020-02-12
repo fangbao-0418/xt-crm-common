@@ -1,7 +1,8 @@
 import React from 'react';
-import { ListPage, FormItem, If } from '@/packages/common/components';
+import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components';
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import { effectProduct, invalidProduct, exportProduct } from './api';
+import { getCategoryTopList } from '../api';
 import { searchFormCondig, statusEnums } from './config';
 import { Modal, Button, Popconfirm } from 'antd';
 type Key = string | number;
@@ -154,13 +155,20 @@ class List extends React.Component<any, ListState> {
             <FormItem name='productCode' />
             <FormItem name='productName' />
             <FormItem name='barCode' />
-            <FormItem name='categoryId' />
+            <FormItem
+              label='一级类目'
+              inner={(form) => {
+                return form.getFieldDecorator('categoryId')(
+                  <SelectFetch fetchData={getCategoryTopList} />
+                )
+              }}
+            />
             <FormItem name='status' />
             <FormItem
               label='供应商'
               inner={(form) => {
                 return form.getFieldDecorator('storeId')(
-                  <SuppilerSelect />
+                  <SuppilerSelect style={{ width: 172 }}/>
                 )
               }}
             />
