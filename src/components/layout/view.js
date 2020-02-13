@@ -63,11 +63,6 @@ export default class extends Component {
       this.props.history.push('/login');
       return;
     }
-    // const permissionUrlList = LocalStorage.get('permissionList') || [];
-    // const hasPermission = permissionUrlList.includes(pathname);
-    // this.setState({
-    //   hasPermission
-    // });
   };
 
   setCollapsed = () => {
@@ -80,7 +75,6 @@ export default class extends Component {
   logout = () => {
     LocalStorage.clear();
     Message.success('退出成功');
-    // this.props.dispatch['layout'].logout();
   };
 
   componentWillUnmount() {
@@ -88,7 +82,7 @@ export default class extends Component {
   }
 
   render() {
-    const { collapsed, hasPermission, mwidth } = this.state;
+    const { collapsed, mwidth } = this.state;
     return (
       <Layout>
         <Sidebar collapsed={collapsed} data={this.props.tree} />

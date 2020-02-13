@@ -1,14 +1,16 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Form, Input, Button, Message, Row, Col } from 'antd';
 import * as LocalStorage from '@/util/localstorage';
+import { connect } from '@/util/utils';
 
+const namespace = 'settings';
 const FormItem = Form.Item;
 const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 18 }
 };
 
-const VerificationCode = ({ onChange, placeholder, maxLength }) => {
+const VerificationCode = ({ onChange, placeholder, maxLength, onClick }) => {
   const [disabled, setDisabled] = useState(false);
   const [countDownNum, setCountDownNum] = useState(0);
 
@@ -26,6 +28,7 @@ const VerificationCode = ({ onChange, placeholder, maxLength }) => {
   const sendCode = () => {
     setDisabled(true);
     setCountDownNum(60);
+    onClick();
   };
 
   useEffect(() => {
@@ -51,6 +54,7 @@ const VerificationCode = ({ onChange, placeholder, maxLength }) => {
   );
 };
 
+@connect(state => ({}))
 @Form.create()
 export default class extends Component {
   constructor(props) {
@@ -60,19 +64,6 @@ export default class extends Component {
       user
     };
   }
-
-  handleSearch = () => {
-    const {
-      form: { validateFields }
-    } = this.props;
-    validateFields((errors, values) => {
-      if (!errors) {
-        if (values.password !== values.repassword) {
-          return Message.error('密码不一致，请重新输入');
-        }
-      }
-    });
-  };
 
   render() {
     const {
@@ -118,12 +109,12 @@ export default class extends Component {
                 required: true
               }
             ]
-          })(<VerificationCode maxLength={6} placeholder="请输入验证码" />)}
+          })(<VerificationCode onClick={this.sendCode} maxLength={6} placeholder="请输入验证码" />)}
         </FormItem>
         <Row>
           <Col span={6}></Col>
           <Col span={18}>
-            <Button type="primary" onClick={this.handleSearch}>
+            <Button type="primary" onClick={this.handleSubmit}>
               提交
             </Button>
           </Col>
@@ -139,5 +130,28 @@ export default class extends Component {
     } else {
       callback();
     }
+  };
+
+  sendCode = () => {
+    const { dispatch } = this.props;
+    dispatch[namespace].sendCode();
+  };
+
+  handleSubmit = () => {
+    const {
+      form: { validateFields },
+      dispatch
+    } = this.props;
+    validateFields((errors, values) => {
+      if (!errors) {
+        const { user } = this.state;
+        const { password, code } = values;
+        dispatch[namespace].changePassword({
+          userID: user.id,
+          password,
+          code
+        });
+      }
+    });
   };
 }

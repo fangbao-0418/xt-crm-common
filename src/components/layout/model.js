@@ -30,10 +30,6 @@ export default {
           }
         }
       }
-    },
-    async logout() {
-      const res = await api.logout();
-      if (res === '退出成功') Message.success(res);
     }
   })
 };
