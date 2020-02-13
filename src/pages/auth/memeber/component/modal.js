@@ -90,10 +90,16 @@ export default class extends Component {
               ]
             })(<Input />)}
           </FormItem>
-          {!currentUserInfo.id || currentUserInfo.id === user.id || user.id === 1 ? (
+          {!currentUserInfo.id || currentUserInfo.id === user.id || user.id !== 1 ? (
             <FormItem label="密码">
               {getFieldDecorator('password', {
-                initialValue: currentUserInfo.password
+                initialValue: currentUserInfo.password,
+                rules: [
+                  {
+                    required: currentUserInfo.id ? false : true,
+                    message: '账号必填'
+                  }
+                ]
               })(<Input />)}
             </FormItem>
           ) : null}
