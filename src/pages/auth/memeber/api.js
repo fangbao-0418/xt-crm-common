@@ -40,3 +40,8 @@ export function editUser(params) {
 export function addPermission(params) {
   return Fetch.post('/permission/configUserRole', params);
 }
+
+// 获取用户角色列表
+export function getUserRoles(param) {
+  return Fetch.get('/permission/qryUserRoles', param);
+}

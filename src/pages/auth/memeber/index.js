@@ -85,7 +85,7 @@ export default class extends Component {
 
   onPermission = (currentUserInfo = {}) => {
     const { dispatch } = this.props;
-    debugger;
+    dispatch['auth.member'].getUserRoles(currentUserInfo);
     dispatch['auth.member'].saveDefault({
       permissionVisible: true,
       currentUserInfo

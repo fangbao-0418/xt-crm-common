@@ -16,6 +16,7 @@ export default class extends Component {
     });
   }
   render() {
+    const { selectedRowKeys } = this.props;
     const columns = [
       {
         title: '角色名称',
@@ -26,6 +27,7 @@ export default class extends Component {
     ];
 
     const rowSelection = {
+      selectedRowKeys,
       onChange: selectedRowKeys => {
         console.log(selectedRowKeys);
         const { dispatch } = this.props;

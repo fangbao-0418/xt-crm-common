@@ -51,9 +51,9 @@ export default class extends Component {
   }
 
   getMenuList = () => {
-    const roles = LocalStorage.get('roles') || [];
+    const user = LocalStorage.get('user') || [];
     const { dispatch } = this.props;
-    dispatch['layout'].getMenuList(roles);
+    dispatch['layout'].getMenuList(user);
   };
 
   gotoAuth = pathname => {
