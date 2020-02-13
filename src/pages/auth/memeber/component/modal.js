@@ -90,7 +90,7 @@ export default class extends Component {
               ]
             })(<Input />)}
           </FormItem>
-          {!currentUserInfo.id || currentUserInfo.id === user.id || user.id !== 1 ? (
+          {!currentUserInfo.id || currentUserInfo.id === user.id || user.id === 1 ? (
             <FormItem label="密码">
               {getFieldDecorator('password', {
                 initialValue: currentUserInfo.password,

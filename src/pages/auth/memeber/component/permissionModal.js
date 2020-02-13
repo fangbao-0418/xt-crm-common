@@ -5,7 +5,8 @@ import { Modal, Divider, Table } from 'antd';
 @connect(state => ({
   visible: state['auth.member'].permissionVisible,
   roleConfig: state['auth.member'].roleConfig,
-  selectedRowKeys: state['auth.member'].selectedRowKeys
+  selectedRowKeys: state['auth.member'].selectedRowKeys,
+  currentUserInfo: state['auth.member'].currentUserInfo
 }))
 export default class extends Component {
   componentDidMount() {
@@ -36,12 +37,12 @@ export default class extends Component {
         });
       }
     };
-    const { visible, roleConfig } = this.props;
+    const { visible, roleConfig, currentUserInfo } = this.props;
     return (
       <Modal visible={visible} title="角色分配" destroyOnClose onCancel={this.onCancel} onOk={this.onOk}>
         <div>
-          <span>真实姓名：吕焕</span>
-          <span style={{ marginLeft: 48 }}>账号：lvhuan</span>
+          <span>真实姓名：{currentUserInfo.realname}</span>
+          <span style={{ marginLeft: 48 }}>账号：{currentUserInfo.username}</span>
         </div>
         <Divider style={{ margin: '8px 0' }} />
         <Table
@@ -60,7 +61,8 @@ export default class extends Component {
     this.props.dispatch({
       type: 'auth.member/saveDefault',
       payload: {
-        permissionVisible: false
+        permissionVisible: false,
+        currentUserInfo: {}
       }
     });
   };

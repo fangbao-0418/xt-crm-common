@@ -69,7 +69,8 @@ export default {
       if (res) {
         message.success('权限保存成功!');
         dispatch['auth.member'].saveDefault({
-          permissionVisible: false
+          permissionVisible: false,
+          currentUserInfo: {}
         });
       }
     },
