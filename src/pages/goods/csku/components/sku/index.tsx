@@ -380,6 +380,9 @@ class SkuList extends React.Component<SkuListProps, SkuListState> {
           form={this.props.form}
           dataSource={dataSource}
           extraColumns={this.getCustomColumns()}
+          onChange={(dataSource) => {
+            this.onChange(dataSource)
+          }}
         />
       </Card>
     );
