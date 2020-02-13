@@ -77,7 +77,8 @@ class Main extends React.Component<Props, State> {
     const liveForm: FormInstance = (this.refs.live as any).form
     return new Promise((resolve, reject) => {
       liveForm.props.form.validateFields((err, values) => {
-        if (err) {
+        if (err && values.liveStyle === 3) {
+          APP.error('保存失败，请检查输入项');
           reject()
         } else {
           values.liveBackgroudImg1 = formatValue(values.liveBackgroudImg1)
@@ -93,12 +94,12 @@ class Main extends React.Component<Props, State> {
   public async onSubmit() {
     const liveValues: any = await this.getLiveValues()
     this.props.form.validateFields((err, value) => {
+      if (err) {
+        APP.error('保存失败，请检查输入项');
+        return;
+      }
       if (!liveValues) {
         return
-      }
-      if (err) {
-        APP.error('保存失败');
-        return;
       }
       const params = {
         ...liveValues,
