@@ -5,7 +5,7 @@ import * as LocalStorage from '@/util/localstorage';
 export default {
   namespace: 'settings',
   state: {},
-  effects: dispatch => ({
+  effects: () => ({
     // 角色列表
     async sendCode() {
       await api.sendCode();
@@ -15,7 +15,7 @@ export default {
       if (res) {
         LocalStorage.clear();
         APP.history.push('/login');
-        message.success('退出成功');
+        message.success('密码修改成功,请重新登录');
       }
     }
   })
