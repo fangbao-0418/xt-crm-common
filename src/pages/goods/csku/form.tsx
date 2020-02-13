@@ -199,7 +199,7 @@ class CSkuForm extends React.Component {
             }}
           />
         </Card>
-        <SkuList />
+        <SkuList form={this.form && this.form.props.form}/>
         <Card
           style={{ marginTop: 10 }}
           title={(
@@ -219,6 +219,8 @@ class CSkuForm extends React.Component {
           <FormItem
             label='商品详情页'
             inner={(form) => {
+              const listImage = form.getFieldValue('listImage');
+              const isExist = Array.isArray(listImage) && listImage.length > 0;
               return (
                 <>
                   {form.getFieldDecorator('listImage')(
@@ -232,6 +234,7 @@ class CSkuForm extends React.Component {
                   <div className='mt20'>
                   <Button
                     type='primary'
+                    disabled={!isExist}
                     onClick={this.handleDeleteAll}
                   >
                     一键删除

@@ -1,10 +1,13 @@
 import React from 'react';
-import { Popover, Input, Table, Card, Button, message } from 'antd';
+import { Popover, Input, Card, Button, message } from 'antd';
 import CardTitle from '@/pages/goods/CardTitle';
 import SkuUploadItem from '@/pages/goods/components/sku/SkuUploadItem';
 import styles from '@/pages/goods/components/sku/style.module.scss';
 import { size, map, isFunction } from 'lodash';
+import CSkuTable from './CSkuTable';
 import { If } from '@/packages/common/components'
+import { ColumnProps } from 'antd/lib/table';
+import { FormComponentProps } from 'antd/lib/form';
 interface SpecItem {
   specName: string;
   specPicture?: string;
@@ -13,7 +16,7 @@ interface Spec {
   title: string;
   content: SpecItem[];
 }
-interface SkuProps {
+export interface CSkuProps {
   skuBarCode: string;
   skuCode: string;
   marketPrice: number;
@@ -29,11 +32,11 @@ interface SkuListState {
   GGName: string;
   visible: boolean;
   specs: Spec[];
-  dataSource: SkuProps[];
+  dataSource: CSkuProps[];
   tempSpecInfo: {[key: number]: SpecItem}
 }
 
-const defaultItem: SkuProps = {
+const defaultItem: CSkuProps = {
   skuBarCode: '',
   skuCode: '',
   marketPrice: 0,
@@ -42,10 +45,17 @@ const defaultItem: SkuProps = {
   imageUrl1: ''
 }
 
-/** 子规格字段集合 */
-const subSpecFields: Array<keyof SkuProps> = ['propertyValue1', 'propertyValue2']
+interface SkuListProps extends FormComponentProps {
+  // specs: Spec[]
+  // dataSource: CSkuProps[]
+  // showImage: boolean
+  onChange?: (value: CSkuProps[], specs: Spec[], showImage: boolean) => void
+}
 
-class SkuList extends React.Component<any, SkuListState> {
+/** 子规格字段集合 */
+const subSpecFields: Array<keyof CSkuProps> = ['propertyValue1', 'propertyValue2']
+
+class SkuList extends React.Component<SkuListProps, SkuListState> {
   state: SkuListState = {
     GGName: '',
     visible: false,
@@ -54,27 +64,6 @@ class SkuList extends React.Component<any, SkuListState> {
     dataSource: [],
     tempSpecInfo: {}
   }
-  columns = [{
-    title: '规格条码',
-    dataIndex: 'skuBarCode',
-    key: 'skuBarCode'
-  }, {
-    title: '规格编码',
-    dataIndex: 'skuCode',
-    key: 'skuCode'
-  }, {
-    title: '市场价',
-    dataIndex: 'marketPrice',
-    key: 'marketPrice'
-  }, {
-    title: '成本价',
-    dataIndex: 'costPrice',
-    key: 'costPrice'
-  }, {
-    title: '库存',
-    dataIndex: 'stock',
-    key: 'stock'
-  }]
 
   handleTabsAdd = () => {
     const { GGName, specs } = this.state
@@ -107,7 +96,7 @@ class SkuList extends React.Component<any, SkuListState> {
       });
     }
   }
-  onChange (dataSource: SkuProps[]) {
+  onChange (dataSource: CSkuProps[]) {
     const { onChange } = this.props;
     const { specs, showImage } = this.state;
     if (isFunction(onChange)) {
@@ -127,7 +116,7 @@ class SkuList extends React.Component<any, SkuListState> {
       this.onChange([])
     })
   }
-  getCombineResult (specs: Spec[], dataSource: SkuProps[]) {
+  getCombineResult (specs: Spec[], dataSource: CSkuProps[]) {
     console.log(specs, 'specs getCombineResult')
     console.log(dataSource, 'dataSource getCombineResult')
     const collection = specs.map((item) => item.content)
@@ -140,7 +129,7 @@ class SkuList extends React.Component<any, SkuListState> {
     // let addNew = false
     /** 多规格合并 */
     const result = combineResutle.map((item) => {
-      let val: SkuProps = { ...defaultItem }
+      let val: CSkuProps = { ...defaultItem }
       /** 根据原规格查找规格信息 */
       val = dataSource.find((item2) => {
         /** item 自定义输入规格序列 规格1，2 */
@@ -235,13 +224,29 @@ class SkuList extends React.Component<any, SkuListState> {
     })
     this.onChange(dataSource1)
   }
+  getCustomColumns () {
+    const columns: ColumnProps<any>[] = [];
+    const keys = ['propertyValue1', 'propertyValue2'];
+    this.state.specs.forEach((item, index) => {
+      if (keys[index]) {
+        columns.push({
+          width: 200,
+          fixed: 'left',
+          title: item.title,
+          dataIndex: keys[index]
+        }) 
+      }
+    })
+    return columns
+  }
   render() {
     const { 
       specs,
       GGName,
       visible,
       showImage,
-      tempSpecInfo
+      tempSpecInfo,
+      dataSource
     } = this.state;
     return (
       <Card
@@ -371,9 +376,10 @@ class SkuList extends React.Component<any, SkuListState> {
             </Card>
           )
         })}
-        <Table
-          title={() => '规格明细'}
-          columns={this.columns}
+        <CSkuTable
+          form={this.props.form}
+          dataSource={dataSource}
+          extraColumns={this.getCustomColumns()}
         />
       </Card>
     );
