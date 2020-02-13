@@ -5,12 +5,12 @@ import { Cascader } from 'antd';
 
 interface ProductCategoryProps {
   style?: React.CSSProperties;
-  value?: any;
-  onChange?: (value: any) => void;
+  value?: string[];
+  onChange?: (value: string[]) => void;
 }
 
 interface ProductCategoryState {
-  categoryList: any[]
+  categoryList: any[];
 }
 
 class ProductCategory extends React.Component<ProductCategoryProps, ProductCategoryState> {

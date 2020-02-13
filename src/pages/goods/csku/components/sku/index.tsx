@@ -12,7 +12,7 @@ interface SpecItem {
   specName: string;
   specPicture?: string;
 }
-interface Spec {
+export interface Spec {
   title: string;
   content: SpecItem[];
 }
@@ -46,9 +46,9 @@ const defaultItem: CSkuProps = {
 }
 
 interface SkuListProps extends FormComponentProps {
-  // specs: Spec[]
-  // dataSource: CSkuProps[]
-  // showImage: boolean
+  specs: Spec[]
+  dataSource: CSkuProps[]
+  showImage: boolean
   onChange?: (value: CSkuProps[], specs: Spec[], showImage: boolean) => void
 }
 
@@ -56,15 +56,24 @@ interface SkuListProps extends FormComponentProps {
 const subSpecFields: Array<keyof CSkuProps> = ['propertyValue1', 'propertyValue2']
 
 class SkuList extends React.Component<SkuListProps, SkuListState> {
-  state: SkuListState = {
-    GGName: '',
-    visible: false,
-    showImage: false,
-    specs: [],
-    dataSource: [],
-    tempSpecInfo: {}
+  constructor(props: SkuListProps) {
+    super(props);
+    this.state = {
+      GGName: '',
+      visible: false,
+      showImage: false,
+      specs: props.specs,
+      dataSource: props.dataSource,
+      tempSpecInfo: {}
+    }
   }
-
+  componentWillReceiveProps(nextProps: SkuListProps) {
+    this.setState({
+      showImage: nextProps.showImage,
+      specs: nextProps.specs,
+      dataSource: nextProps.dataSource
+    })
+  }
   handleTabsAdd = () => {
     const { GGName, specs } = this.state
     if (!GGName) {
@@ -378,7 +387,7 @@ class SkuList extends React.Component<SkuListProps, SkuListState> {
         })}
         <CSkuTable
           form={this.props.form}
-          dataSource={dataSource}
+          dataSource={(dataSource || []).map((item, index) => ({ ...item, id: index }))}
           extraColumns={this.getCustomColumns()}
           onChange={(dataSource) => {
             this.onChange(dataSource)

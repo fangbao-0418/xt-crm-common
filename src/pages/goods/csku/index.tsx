@@ -47,6 +47,10 @@ class List extends React.Component<any, ListState> {
     key: 'barCode',
     dataIndex: 'barCode'
   }, {
+    title: '类目',
+    key: 'categoryName',
+    dataIndex: 'categoryName'
+  }, {
     title: '总库存',
     key: 'stock',
     dataIndex: 'stock'

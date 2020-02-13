@@ -1,9 +1,10 @@
 import moment from 'moment';
-import { listResponse } from './adapter';
-import { exportFileStream } from '@/util/fetch';
-const { newPost } = APP.http;
+import { listResponse, requestPayload, detailResponse } from './adapter';
+import { exportFileStream, newPut } from '@/util/fetch';
+import { CSkuFormProps } from './form';
+const { get, newPost } = APP.http;
 
-export interface Payload {
+export interface listPayload {
   barCode: string,
   categoryId: number,
   createEndTime: number,
@@ -21,7 +22,7 @@ export interface Payload {
 }
 
 // 获取库存管理列表
-export function getPages(payload: Payload) {
+export function getPages(payload: listPayload) {
   return newPost('/product/basic/list', payload).then(listResponse);
 }
 
@@ -35,7 +36,23 @@ export function invalidProduct(payload: { ids: number[] }) {
   return newPost('/product/basic/invalid', payload);
 }
 
-// 商品导出
-export function exportProduct(payload: Payload) {
+// 库存商品导出
+export function exportProduct(payload: listPayload) {
   return exportFileStream('/product/basic/export', payload, '库存商品' + moment().format('YYYYMMDDHHmmss') + '.xlsx')
+}
+
+// 新增库存商品
+export function addProduct(payload: CSkuFormProps) {
+  console.log(requestPayload(payload), 'request payload -----------------------')
+  return newPost('/product/basic/add', requestPayload(payload));
+}
+
+// 更新库存商品
+export function updateProduct(payload: CSkuFormProps) {
+  return newPut('/product/basic/update', requestPayload(payload))
+}
+
+// 查询库存商品
+export function getProduct() {
+  return get('').then(detailResponse);
 }

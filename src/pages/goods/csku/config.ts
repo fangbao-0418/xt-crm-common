@@ -14,7 +14,8 @@ export const defaultConfig: FieldsConfig = {
       },
       fieldDecoratorOptions: {
         rules: [{
-          required: true
+          required: true,
+          message: '请输入商品名称'
         }]
       }
     },
@@ -66,7 +67,8 @@ export const defaultConfig: FieldsConfig = {
       },
       fieldDecoratorOptions: {
         rules: [{
-          required: true
+          required: true,
+          message: '请输入商品简称'
         }]
       }
     },

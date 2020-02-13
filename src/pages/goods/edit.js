@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader, Spin } from 'antd';
+import { Modal, Card, Form, Input, Row, Button, message, Radio, Select, Cascader } from 'antd';
 import UploadView from '@/components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
-import { map, size, concat, filter, assign, forEach, cloneDeep, split, debounce, isEmpty } from 'lodash';
+import { map, size, concat, filter, assign, forEach, cloneDeep, split, isEmpty } from 'lodash';
 import descartes from '@/util/descartes';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from './api';
 import { getAllId, gotoPage, initImgList } from '@/util/utils';
@@ -513,6 +513,10 @@ class GoodsEdit extends React.Component {
       supplierInfo: currentSupplier
     })
   }
+  // 校验商品条码
+  checkBarCode = () => {}
+  // 校验库存商品ID
+  checkBaseProductId = () => {}
   render() {
     const { getFieldDecorator, getFieldsValue } = this.props.form;
     const { interceptionVisible, productCustomsDetailVOList, supplierInfo } = this.state;
@@ -526,6 +530,41 @@ class GoodsEdit extends React.Component {
     return (
       <Form {...formLayout}>
         <Card title="添加/编辑商品">
+          <Form.Item label='商品入库类型'>
+          {getFieldDecorator('warehouseType', {
+            initialValue: 1,
+            rules: [{
+              required: true,
+              message: '请选择商品入库类型'
+            }]
+          })(
+            <Radio.Group>
+              <Radio value={1}>入库商品</Radio>
+              <Radio value={0}>非入库商品</Radio>
+            </Radio.Group>
+          )}
+          </Form.Item>
+          <FormItem label='商品条码'>
+            <Row style={{ marginTop: 4 }} type='flex'>
+              {getFieldDecorator('barCode')(
+                <Input style={{ flex: 1 }} placeholder='请输入商品条码'/>
+              )}
+              <Button className='ml10' onClick={this.checkBarCode}>校验</Button>
+            </Row>
+          </FormItem>
+          <Form.Item label='库存商品ID'>
+            <Row style={{ marginTop: 4 }} type='flex'>
+              {getFieldDecorator('baseProductId', {
+                rules: [{
+                  required: true,
+                  message: '请输入库存商品ID'
+                }]
+              })(
+                <Input style={{ flex: 1 }} placeholder='请输入库存商品ID' />
+              )}
+              <Button className='ml10' onClick={this.checkBaseProductId}>校验</Button>
+            </Row>
+          </Form.Item>
           <Form.Item label="商品名称">
             {getFieldDecorator('productName', {
               rules: [

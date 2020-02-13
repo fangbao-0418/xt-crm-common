@@ -1,15 +1,65 @@
 import React from 'react';
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form';
-import { Card, Input, Button, Row, Modal } from 'antd';
+import { Card, Input, Button, Modal } from 'antd';
 import ProductCategory from '../components/product-category';
 import { defaultConfig } from './config'
+import { RouteComponentProps } from 'react-router'
 import SupplierSelect from '../components/supplier-select';
 import DraggableUpload from '../components/draggable-upload';
 import styles from '../edit.module.scss';
 import UploadView from '@/components/upload';
-import SkuList from './components/sku';
-class CSkuForm extends React.Component {
+import SkuList, { CSkuProps, Spec } from './components/sku';
+import { addProduct, updateProduct, getProduct } from './api';
+interface CSkuFormstate {
+  speSelect: Spec[];
+  data: CSkuProps[];
+  showImage: boolean;
+}
+
+export interface CSkuFormProps extends RouteComponentProps<{id: string}> {
+  productId: string;
+  barCode: string;
+  productName: string;
+  categoryId: string;
+  productShortName: string;
+  description: string;
+  productCode: string;
+  storeId: string;
+  videoCoverUrl: any;
+  videoUrl: any;
+  coverUrl: any;
+  productImage: any;
+  bannerUrl: any;
+  listImage: any;
+  skuAddList: CSkuProps[];
+  [key: string]: any;
+}
+class CSkuForm extends React.Component<CSkuFormProps, CSkuFormstate> {
+  id: number;
   form: FormInstance;
+  constructor(props: CSkuFormProps) {
+    super(props);
+    this.id = +props.match.params.id;
+    this.state = {
+      speSelect: [],
+      data: [],
+      showImage: false
+    }
+  }
+  componentDidMount() {
+    this.id !== -1 && this.fetchData();
+  }
+  // 获取库存商品详情
+  fetchData() {
+    getProduct().then(res => {
+      this.form.setValues(res);
+      this.setState({
+        data: res.skuAddList,
+        showImage: res.showImage,
+        speSelect: res.speSelect
+      })
+    })
+  }
   handleDeleteAll = () => {
     Modal.confirm({
       title: '提示',
@@ -22,7 +72,23 @@ class CSkuForm extends React.Component {
   goBack = () => {
     APP.history.go(-1)
   }
+  handleSave = () => {
+    this.form.props.form.validateFields((errs, vals) => {
+      if (!errs) {
+        vals = { ...vals, skuAddList: this.state.data }
+        const isAdd = this.id === -1;
+        const promiseResult = isAdd ? addProduct(vals) : updateProduct(vals);
+        promiseResult.then((res: boolean) => {
+          if (res) {
+            APP.success(`${isAdd ? '新增' : '编辑'}成功`);
+            APP.history.go(-1);
+          }
+        })
+      }
+    })
+  }
   render() {
+    const { speSelect, data, showImage } = this.state;
     return (
       <Form
         namespace='csku'
@@ -30,8 +96,18 @@ class CSkuForm extends React.Component {
         getInstance={ref => this.form = ref}
         addonAfter={(
           <FormItem className='mt10'>
-            <Button type='primary'>保存</Button>
-            <Button className='ml10' onClick={this.goBack}>取消</Button>
+            <Button
+              type='primary'
+              onClick={this.handleSave}
+            >
+              保存
+            </Button>
+            <Button
+              className='ml10'
+              onClick={this.goBack}
+            >
+              取消
+            </Button>
           </FormItem>
         )}
       >
@@ -72,11 +148,11 @@ class CSkuForm extends React.Component {
           <FormItem
             required
             label='商品类目'
-            name='categoryId'
             inner={(form) => {
-              return form.getFieldDecorator('ProductCategory', {
+              return form.getFieldDecorator('categoryId', {
                 rules: [{
-                  required: true
+                  required: true,
+                  message: '请选择商品类目'
                 }]
               })(
                 <ProductCategory
@@ -199,7 +275,19 @@ class CSkuForm extends React.Component {
             }}
           />
         </Card>
-        <SkuList form={this.form && this.form.props.form}/>
+        <SkuList
+          showImage={showImage}
+          specs={speSelect}
+          dataSource={data}
+          form={this.form && this.form.props.form}
+          onChange={(value, specs, showImage) => {
+            this.setState({
+              data: value,
+              speSelect: specs,
+              showImage,
+            });
+          }}
+        />
         <Card
           style={{ marginTop: 10 }}
           title={(
