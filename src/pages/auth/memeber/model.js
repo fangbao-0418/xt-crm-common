@@ -79,7 +79,7 @@ export default {
       const res = await api.getUserRoles({
         id: payload.id
       });
-      if (res && res.length) {
+      if (res) {
         dispatch['auth.member'].saveDefault({
           selectedRowKeys: res.map(item => item.id)
         });
