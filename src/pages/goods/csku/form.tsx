@@ -8,6 +8,7 @@ import SupplierSelect from '../components/supplier-select';
 import DraggableUpload from '../components/draggable-upload';
 import styles from '../edit.module.scss';
 import UploadView from '@/components/upload';
+import If from '@/packages/common/components/if';
 import SkuList, { CSkuProps, Spec } from './components/sku';
 import { addProduct, updateProduct, getProduct } from './api';
 interface CSkuFormstate {
@@ -311,23 +312,25 @@ class CSkuForm extends React.Component<CSkuFormProps, CSkuFormstate> {
               const isExist = Array.isArray(listImage) && listImage.length > 0;
               return (
                 <>
-                  {form.getFieldDecorator('listImage')(
-                    <DraggableUpload
-                      className={styles['goods-draggable']}
-                      listNum={20}
-                      size={0.3}
-                      placeholder="上传商品详情图"
-                    />
-                  )}
-                  <div className='mt20'>
-                  <Button
-                    type='primary'
-                    disabled={!isExist}
-                    onClick={this.handleDeleteAll}
-                  >
-                    一键删除
-                  </Button>
+                  <div className='mb20'>
+                    {form.getFieldDecorator('listImage')(
+                      <DraggableUpload
+                        className={styles['goods-draggable']}
+                        listNum={20}
+                        size={0.3}
+                        placeholder="上传商品详情图"
+                      />
+                    )}
                   </div>
+                  
+                  <If condition={isExist}>
+                    <Button
+                      type='primary'
+                      onClick={this.handleDeleteAll}
+                    >
+                      一键删除
+                    </Button>
+                  </If>
                 </>
               )
             }}

@@ -6,7 +6,6 @@ import { PaginationConfig } from 'antd/lib/pagination'
 import { deliveryModeType } from '@/enum';
 import ArrowContain from '../arrow-contain'
 import { SkuProps } from './index'
-import { FormItem } from '../../edit'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import InputMoney from '@/packages/common/components/input-money'
 import Record from './Record'
@@ -15,7 +14,7 @@ import { RecordEnum } from './constant'
 import Decimal from 'decimal.js'
 import styles from './style.module.scss'
 const { Option } = Select;
-
+const FormItem = Form.Item;
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   extraColumns?: ColumnProps<any>[]
   dataSource: SkuProps[]

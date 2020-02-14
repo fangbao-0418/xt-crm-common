@@ -27,7 +27,12 @@ ReactDOM.render(
   <ErrorBoundary>
     <ConfigProvider
       locale={zh_CN}
-      getPopupContainer={trigger => trigger.parentNode}
+      getPopupContainer={node => {
+        if (node) {
+          return node.parentNode;
+        }
+        return document.body;
+      }}
     >
       <Provider store={store}>
         <HashRouter>

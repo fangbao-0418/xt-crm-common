@@ -1,7 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable no-script-url */
 import React from 'react';
-import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader } from 'antd';
+import { Modal, Card, Input, Button, message, Radio, Select, Cascader } from 'antd';
 import UploadView from '@/components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
 import { map, size, concat, filter, assign, forEach, cloneDeep, split, isEmpty } from 'lodash';
@@ -13,34 +11,13 @@ import SkuList from './components/sku';
 import SupplierSelect from './components/supplier-select';
 import { TemplateList } from '@/components';
 import styles from './edit.module.scss';
+import { Form, FormItem, If } from '@/packages/common/components'
 import { detailResponse } from './sku/adapter';
+import { defaultConfig } from './sku/config';
+import ProductSeletor from './sku/components/product-seletor';
 import DraggableUpload from './components/draggable-upload';
-export const FormItem = Form.Item
 const replaceHttpUrl = imgUrl => {
   return (imgUrl || '').replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
-};
-
-function barCodeValidator(rule, value, callback) {
-  if (value) {
-    if (/^\d{0,20}$/.test(value)) {
-      callback();
-    } else {
-      callback('仅支持数字，20个字符以内');
-    }
-  } else {
-    callback();
-  }
-}
-
-const formLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 4 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 18 },
-  },
 };
 
 class GoodsEdit extends React.Component {
@@ -66,7 +43,8 @@ class GoodsEdit extends React.Component {
     productCustomsDetailVOList: [],
     supplierInfo: {},
     // 供应商列表加载状态
-    fetching: false
+    fetching: false,
+    productSeletorVisible: false
   };
   componentDidMount() {
     this.getCategoryList();
@@ -520,7 +498,7 @@ class GoodsEdit extends React.Component {
   checkBaseProductId = () => {}
   render() {
     const { getFieldDecorator, getFieldsValue } = this.props.form;
-    const { interceptionVisible, productCustomsDetailVOList, supplierInfo } = this.state;
+    const { interceptionVisible, productSeletorVisible, productCustomsDetailVOList, supplierInfo } = this.state;
     const {
       match: {
         params: { id },
@@ -529,50 +507,78 @@ class GoodsEdit extends React.Component {
     const { productType, status } = getFieldsValue()
     console.log(productType, supplierInfo, supplierInfo.category === 4, 'productCustomsDetailVOList')
     return (
-      <Form {...formLayout}>
-        <Card title="添加/编辑商品">
-          <Form.Item label='商品入库类型'>
-          {getFieldDecorator('warehouseType', {
-            initialValue: 1,
-            rules: [{
-              required: true,
-              message: '请选择商品入库类型'
-            }]
-          })(
-            <Radio.Group>
-              <Radio value={1}>入库商品</Radio>
-              <Radio value={0}>非入库商品</Radio>
-            </Radio.Group>
-          )}
-          </Form.Item>
-          <FormItem label='商品条码'>
-            {getFieldDecorator('barCode')(
-              <Input style={{ width: 172 }} placeholder='请输入商品条码'/>
-            )}
-            <Button className='ml10' onClick={this.checkBarCode}>校验</Button>
-          </FormItem>
-          <Form.Item label='库存商品ID'>
-            {getFieldDecorator('baseProductId', {
-              rules: [{
-                required: true,
-                message: '请输入库存商品ID'
-              }]
-            })(
-              <Input style={{ width: 172 }} placeholder='请输入库存商品ID' />
-            )}
-            <Button className='ml10' onClick={this.checkBaseProductId}>校验</Button>
-          </Form.Item>
-          <Form.Item label="商品名称">
-            {getFieldDecorator('productName', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入商品名称',
-                },
-              ],
-            })(<Input style={{ width: 172 }} placeholder="请输入商品名称" />)}
-          </Form.Item>
-          <Form.Item label="商品类目">
+      <Form
+        getInstance={ref => this.form = ref}
+        config={defaultConfig}
+        namespace='sku'
+      >
+        <ProductSeletor visible={productSeletorVisible}/>
+        <Card title='添加/编辑商品'>
+          <FormItem verifiable name='warehouseType' />
+          <FormItem
+            label='商品条码'
+            inner={(form) => {
+              return (
+                <>
+                  {form.getFieldDecorator('barCode', {
+                    rules: [{
+                      validator(rule, value, callback) {
+                        if (value) {
+                          if (/^\d{0,20}$/.test(value)) {
+                            callback();
+                          } else {
+                            callback('仅支持数字，20个字符以内');
+                          }
+                        } else {
+                          callback();
+                        }
+                      }
+                    }]
+                  })(
+                    <Input
+                      style={{ width: 172 }}
+                      placeholder='请输入商品条码'
+                    />
+                  )}
+                  <Button
+                    className='ml10'
+                    onClick={this.checkBarCode}
+                  >
+                    校验
+                  </Button>
+                </>
+              )
+            }}
+          />
+          <FormItem
+            label='库存商品ID'
+            required
+            inner={(form) => {
+              return (
+                <>
+                  {form.getFieldDecorator('baseProductId', {
+                    rules: [{
+                      required: true,
+                      message: '请输入库存商品ID'
+                    }]
+                  })(
+                    <Input
+                      style={{ width: 172 }}
+                      placeholder='请输入库存商品ID'
+                    />
+                  )}
+                  <Button
+                    className='ml10'
+                    onClick={this.checkBaseProductId}
+                  >
+                    校验
+                  </Button>
+                </>
+              );
+            }}
+          />
+          <FormItem verifiable name='productName' />
+          <FormItem label='商品类目'>
             {getFieldDecorator('categoryId', {
               rules: [
                 {
@@ -592,92 +598,64 @@ class GoodsEdit extends React.Component {
                 console.log(val, 'val')
                 this.getStrategyByCategory(val[0])
               }
-            })(<Cascader style={{ width: 250 }} options={this.state.categoryList} placeholder="请输入商品类目" />)}
-          </Form.Item>
-          <Form.Item label="商品简称">
-            {getFieldDecorator('productShortName', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入商品简称',
-                },
-              ],
-            })(<Input style={{ width: 172 }} placeholder="请输入商品简称" />)}
-          </Form.Item>
-          <Form.Item label="商品编码">
-            {getFieldDecorator('productCode')(<Input style={{ width: 172 }} placeholder="请输入商品编码" />)}
-            </Form.Item>
-          <Form.Item label="商品简介">
-            {getFieldDecorator('description', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入商品简介',
-                },
-              ],
-            })(<Input style={{ width: 172 }} placeholder="请输入商品简介" />)}
-          </Form.Item>
-          <Form.Item label="商品条码">
-            {getFieldDecorator('barCode', {
-              rules: [
-                {
-                  validator: barCodeValidator,
-                },
-              ],
-            })(<Input style={{ width: 172 }} placeholder="请输入商品条码" />)}
-          </Form.Item>
-          <Form.Item label='供应商'>
-            {getFieldDecorator('storeId', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入供应商',
-                }
-              ],
-              onChange: this.supplierChange
-            })(
-              <SupplierSelect
-                style={{ width: 172 }}
-                disabled={this.id && supplierInfo.category === 4}
-                options={isEmpty(supplierInfo) ? [] : [supplierInfo]}
-              />
-            )}
-          </Form.Item>
-          <Form.Item label="供应商商品ID">
-            {getFieldDecorator('storeProductId')(
-              <Input
-                style={{ width: 172 }}
-                placeholder='请填写供货商商品ID'
-              />
-              )}
-            {!id && (
-              <Button
-                className='ml10'
-                onClick={this.sync1688Sku}
-              >
-                同步1688规格信息
-              </Button>
-            )}
-          </Form.Item>
-          <Form.Item
-            label="是否可拦截发货"
-            style={{
-              display: interceptionVisible ? 'inherit' : 'none'
+            })(<Cascader style={{ width: 250 }} options={this.state.categoryList} placeholder='请输入商品类目' />)}
+          </FormItem>
+          <FormItem verifiable name='productShortName' />
+          <FormItem name='productCode' />
+          <FormItem verifiable name='description' />
+          <FormItem
+            required
+            label='供应商'
+            inner={(form) => {
+              return form.getFieldDecorator('storeId', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入供应商',
+                  }
+                ],
+                onChange: this.supplierChange
+              })(
+                <SupplierSelect
+                  style={{ width: 172 }}
+                  disabled={this.id && supplierInfo.category === 4}
+                  options={isEmpty(supplierInfo) ? [] : [supplierInfo]}
+                />
+              )
             }}
-          >
-            {getFieldDecorator('interception', {
-              initialValue: 0,
-            })(
-              <Radio.Group
-                disabled={productType === 20}
-              >
-                <Radio value={1}>是</Radio>
-                <Radio value={0}>否</Radio>
-              </Radio.Group>,
-            )}
-          </Form.Item>
-          <Form.Item
-            label="商品类型"
+          />
+          <FormItem
+            label='供应商商品ID'
+            inner={(form) => {
+              return (
+                <>
+                  {form.getFieldDecorator('storeProductId')(
+                    <Input
+                      style={{ width: 172 }}
+                      placeholder='请填写供货商商品ID'
+                    />
+                  )}
+                  <If condition={!id}>
+                    <Button
+                      className='ml10'
+                      onClick={this.sync1688Sku}
+                    >
+                      同步1688规格信息
+                    </Button>
+                  </If>
+                </>
+              );
+            }}
+          />
+          <FormItem
+            name='interception'
+            hidden={!interceptionVisible}
+            controlProps={{
+              disabled: productType === 20
+            }}
+          />
+          <FormItem
+            label='商品类型'
             required
             style={{
               display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
@@ -721,9 +699,9 @@ class GoodsEdit extends React.Component {
                 {supplierInfo.category === 4 && <Select.Option value={20}>保税仓海淘商品</Select.Option>}
               </Select>
             )}
-          </Form.Item>
-          <Form.Item
-            label="实名认证"
+          </FormItem>
+          <FormItem
+            label='实名认证'
             required
           >
             {getFieldDecorator('isAuthentication', {
@@ -742,42 +720,57 @@ class GoodsEdit extends React.Component {
                 <Radio value={0}>否</Radio>
               </Radio.Group>
             )}
-          </Form.Item>
-          <Form.Item label="商品视频封面">
-            {getFieldDecorator('videoCoverUrl')(
-              <UploadView
-                placeholder="上传视频封面"
-                listType="picture-card"
-                listNum={1}
-                size={0.3}
-              />,
-            )}
-          </Form.Item>
-          <Form.Item label="商品视频">
-            {getFieldDecorator('videoUrl')(
-              <UploadView
-                placeholder="上传视频"
-                fileType="video"
-                listType="picture-card"
-                listNum={1}
-                size={5}
-              />,
-            )}
-          </Form.Item>
-          <Form.Item label="商品主图" required={true}>
-            {getFieldDecorator('coverUrl', {
-              rules: [
-                {
-                  required: true,
-                  message: '请设置商品主图',
-                },
-              ],
-            })(
-              <UploadView placeholder="上传主图" listType="picture-card" listNum={1} size={0.3} />,
-            )}
-          </Form.Item>
-          <Form.Item
-            label="商品图片"
+          </FormItem>
+          <FormItem
+            label='商品视频封面'
+            inner={(form) => {
+              return form.getFieldDecorator('videoCoverUrl')(
+                <UploadView
+                  placeholder='上传视频封面'
+                  listType='picture-card'
+                  listNum={1}
+                  size={0.3}
+                />
+              )
+            }}
+          />
+          <FormItem
+            label='商品视频'
+            inner={(form) => {
+              return form.getFieldDecorator('videoUrl')(
+                <UploadView
+                  placeholder='上传视频'
+                  fileType='video'
+                  listType='picture-card'
+                  listNum={1}
+                  size={5}
+                />
+              )
+            }}
+          />
+          <FormItem
+            label='商品主图'
+            required={true}
+            inner={(form) => {
+              return form.getFieldDecorator('coverUrl', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请设置商品主图',
+                  },
+                ],
+              })(
+                <UploadView
+                  placeholder='上传主图'
+                  listType='picture-card'
+                  listNum={1}
+                  size={0.3}
+                />
+              )
+            }}
+          />
+          <FormItem
+            label='商品图片'
             required={true}
             help={
               <>
@@ -794,11 +787,11 @@ class GoodsEdit extends React.Component {
                 },
               ],
             })(
-              <DraggableUpload className={styles['goods-detail-draggable']} listNum={5} size={0.3} placeholder="上传商品图片" />
+              <DraggableUpload className={styles['goods-detail-draggable']} listNum={5} size={0.3} placeholder='上传商品图片' />
             )}
-          </Form.Item>
-          <Form.Item
-            label="banner图片"
+          </FormItem>
+          <FormItem
+            label='banner图片'
             required={true}
             help={<span>(建议尺寸700*320，300kb内)</span>}
           >
@@ -810,24 +803,10 @@ class GoodsEdit extends React.Component {
                 },
               ],
             })(
-              <UploadView placeholder="上传banner图片" listType="picture-card" listNum={1} size={.3} />
+              <UploadView placeholder='上传banner图片' listType='picture-card' listNum={1} size={.3} />
             )}
-          </Form.Item>
-          <Form.Item label="累计销量" required={true}>
-            {getFieldDecorator('showNum', {
-              rules: [
-                {
-                  required: true,
-                  message: '请选择累计销量',
-                },
-              ],
-            })(
-              <Radio.Group>
-                <Radio value={1}>展示</Radio>
-                <Radio value={0}>不展示</Radio>
-              </Radio.Group>,
-            )}
-          </Form.Item>
+          </FormItem>
+          <FormItem name='showNum' />
         </Card>
         <SkuList
           form={this.props.form}
@@ -845,40 +824,43 @@ class GoodsEdit extends React.Component {
             });
           }}
         />
-        <Card title="物流信息" style={{ marginTop: 10 }}>
-          <Form.Item label="物流体积">
-            {getFieldDecorator('bulk')(<Input placeholder="请设置物流体积" />)}
-          </Form.Item>
-          <Form.Item label="物流重量">
-            {getFieldDecorator('weight')(<Input placeholder="请设置物流重量" />)}
-          </Form.Item>
-          <Form.Item label="运费设置">
-            {getFieldDecorator('withShippingFree', {
-              initialValue: 0,
-            })(
-              <Radio.Group
-                // disabled={[20].indexOf(productType) > -1}
-              >
-                <Radio
-                  style={radioStyle} value={1}
-                >
-                  包邮
-                </Radio>
-                <Radio
-                  style={{
-                    ...radioStyle,
-                    // display: [20].indexOf(productType) > -1 ? 'none' : 'inherit'
-                  }} value={0}
-                >
-                  {getFieldDecorator('freightTemplateId')(
-                    <TemplateList dataSource={this.state.templateOptions} />
-                  )}
-                </Radio>
-              </Radio.Group>,
-            )}
-          </Form.Item>
-          <Form.Item
-            label="单独计算运费"
+        <Card
+          title='物流信息'
+          style={{
+            marginTop: 10
+          }}
+        >
+          <FormItem name='bulk' />
+          <FormItem name='weight' />
+          <FormItem
+            label='运费设置'
+            inner={(form) => {
+              return form.getFieldDecorator('withShippingFree', {
+                initialValue: 0
+              })(
+                <Radio.Group>
+                  <Radio
+                    style={radioStyle}
+                    value={1}
+                  >
+                    包邮
+                  </Radio>
+                  <Radio
+                    style={radioStyle}
+                    value={0}
+                  >
+                    {this.form && this.form.props.form.getFieldDecorator('freightTemplateId')(
+                      <TemplateList
+                        dataSource={this.state.templateOptions}
+                      />
+                    )}
+                  </Radio>
+                </Radio.Group>
+              )
+            }}
+          />
+          <FormItem
+            label='单独计算运费'
           >
             {getFieldDecorator('isCalculateFreight', {
               initialValue: 0,
@@ -899,9 +881,9 @@ class GoodsEdit extends React.Component {
                 <span style={{color: 'red'}}>*商品会叠加运费</span>
               </Radio.Group>,
             )}
-          </Form.Item>
-          <Form.Item
-            label="退货地址"
+          </FormItem>
+          <FormItem
+            label='退货地址'
             wrapperCol={{
               span: 18,
             }}
@@ -910,14 +892,13 @@ class GoodsEdit extends React.Component {
               <Input
                 style={{ width: 160, marginRight: 10 }}
                 className={styles['no-error']}
-                name="returnContact"
-                placeholder="收货人姓名"
+                name='returnContact'
+                placeholder='收货人姓名'
                 value={this.state.returnContact}
                 onChange={this.handleInput}
               />
               {getFieldDecorator('returnPhone', {
                 rules: [
-                  // {required: true, message: '收货人电话不能为空'},
                   {
                     max: 12,
                     message: '收货人电话格式不正确'
@@ -926,75 +907,88 @@ class GoodsEdit extends React.Component {
               })(
                 <Input
                   style={{ width: 160, marginRight: 10 }}
-                  placeholder="收货人电话"
-                  name="returnPhone"
-                  // value={this.state.returnPhone}
-                  type="tel"
+                  placeholder='收货人电话'
+                  name='returnPhone'
+                  type='tel'
                   maxLength={12}
                   onChange={this.handleInput}
-                />,
+                />
               )}
+              {/* <FormItem
+                name='returnPhone'
+              /> */}
               <Input
                 style={{ width: 250 }}
                 className={styles['no-error']}
-                name="returnAddress"
+                name='returnAddress'
                 value={this.state.returnAddress}
-                placeholder="收货人详细地址"
+                placeholder='收货人详细地址'
                 onChange={this.handleInput}
               />
             </div>
-          </Form.Item>
+          </FormItem>
         </Card>
         <Card style={{ marginTop: 10 }}>
-          <Form.Item label="商品详情页">
-            <div className="mb20">
-              {getFieldDecorator('listImage')(
-                <DraggableUpload
-                  className={styles['goods-draggable']}
-                  id={'shop-detail'}
-                  listNum={20}
-                  size={0.3}
-                  placeholder="上传商品详情图"
-                />
-                // <UploadView multiple placeholder="上传商品详情图" listType="picture-card" size={0.3} listNum={20} />
-              )}
-            </div>
-            {this.isShowDeleteAll() && (
-              <Button type="primary" onClick={this.handleDeleteAll}>
-                一键删除
-              </Button>
-            )}
-          </Form.Item>
-          <Form.Item label="上架状态" hidden={status === 2}>
-            {getFieldDecorator('status', {
-              initialValue: 3,
-            })(
-              <Radio.Group>
-                <Radio value={1}>上架</Radio>
-                <Radio value={0}>下架</Radio>
-                <Radio value={3}>待上架</Radio>
-              </Radio.Group>,
-            )}
-          </Form.Item>
-          <Form.Item>
-            <Button className="mr10" type="primary" onClick={() => this.handleSave()}>
+          <FormItem
+            label='商品详情页'
+            inner={(form) => {
+              const listImage = form.getFieldValue('listImage');
+              const isExist = Array.isArray(listImage) && listImage.length > 0;
+              return (
+                <>
+                  <div className='mb20'>
+                    {form.getFieldDecorator('listImage')(
+                      <DraggableUpload
+                        className={styles['goods-draggable']}
+                        id={'shop-detail'}
+                        listNum={20}
+                        size={0.3}
+                        placeholder='上传商品详情图'
+                      />
+                    )}
+                  </div>
+                  <If condition={isExist}>
+                    <Button
+                      type='primary'
+                      onClick={this.handleDeleteAll}
+                    >
+                      一键删除
+                    </Button>
+                  </If>
+                </>
+              )
+            }}
+          />
+          <FormItem
+            name='status'
+            hidden={status === 2}
+          />
+          <FormItem>
+            <Button
+              className='mr10'
+              type='primary'
+              onClick={this.handleSave}
+            >
               保存
             </Button>
             <Button
-              className="mr10"
-              type="danger"
+              className='mr10'
+              type='danger'
               onClick={() => {
                 APP.history.go(-1)
               }
             }>
               返回
             </Button>
-            {status === 2 && (
-              <Button onClick={() => this.handleSave(3)}>
+            <If condition={status === 2}>
+              <Button
+                onClick={() => {
+                  this.handleSave(3);
+                }}>
                 推送至待上架
               </Button>
-            )}
-          </Form.Item>
+            </If>
+          </FormItem>
         </Card>
       </Form>
     );
