@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-script-url */
 import React from 'react';
-import { Modal, Card, Form, Input, Row, Button, message, Radio, Select, Cascader } from 'antd';
+import { Modal, Card, Form, Input, Button, message, Radio, Select, Cascader } from 'antd';
 import UploadView from '@/components/upload';
 import { mapTree, treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
 import { map, size, concat, filter, assign, forEach, cloneDeep, split, isEmpty } from 'lodash';
@@ -12,8 +12,9 @@ import { radioStyle } from '@/config';
 import SkuList from './components/sku';
 import SupplierSelect from './components/supplier-select';
 import { TemplateList } from '@/components';
-import styles from './edit.module.scss'
-import DraggableUpload from './components/draggable-upload'
+import styles from './edit.module.scss';
+import { detailResponse } from './sku/adapter';
+import DraggableUpload from './components/draggable-upload';
 export const FormItem = Form.Item
 const replaceHttpUrl = imgUrl => {
   return (imgUrl || '').replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
@@ -34,11 +35,11 @@ function barCodeValidator(rule, value, callback) {
 const formLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 6 },
+    sm: { span: 4 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 12 },
+    sm: { span: 18 },
   },
 };
 
@@ -259,7 +260,7 @@ class GoodsEdit extends React.Component {
       this.handleRemove(e);
     }
   };
-  sync1688Sku() {
+  sync1688Sku = () => {
     const {
       form: { validateFields },
     } = this.props;
@@ -545,25 +546,21 @@ class GoodsEdit extends React.Component {
           )}
           </Form.Item>
           <FormItem label='商品条码'>
-            <Row style={{ marginTop: 4 }} type='flex'>
-              {getFieldDecorator('barCode')(
-                <Input style={{ flex: 1 }} placeholder='请输入商品条码'/>
-              )}
-              <Button className='ml10' onClick={this.checkBarCode}>校验</Button>
-            </Row>
+            {getFieldDecorator('barCode')(
+              <Input style={{ width: 172 }} placeholder='请输入商品条码'/>
+            )}
+            <Button className='ml10' onClick={this.checkBarCode}>校验</Button>
           </FormItem>
           <Form.Item label='库存商品ID'>
-            <Row style={{ marginTop: 4 }} type='flex'>
-              {getFieldDecorator('baseProductId', {
-                rules: [{
-                  required: true,
-                  message: '请输入库存商品ID'
-                }]
-              })(
-                <Input style={{ flex: 1 }} placeholder='请输入库存商品ID' />
-              )}
-              <Button className='ml10' onClick={this.checkBaseProductId}>校验</Button>
-            </Row>
+            {getFieldDecorator('baseProductId', {
+              rules: [{
+                required: true,
+                message: '请输入库存商品ID'
+              }]
+            })(
+              <Input style={{ width: 172 }} placeholder='请输入库存商品ID' />
+            )}
+            <Button className='ml10' onClick={this.checkBaseProductId}>校验</Button>
           </Form.Item>
           <Form.Item label="商品名称">
             {getFieldDecorator('productName', {
@@ -573,7 +570,7 @@ class GoodsEdit extends React.Component {
                   message: '请输入商品名称',
                 },
               ],
-            })(<Input placeholder="请输入商品名称" />)}
+            })(<Input style={{ width: 172 }} placeholder="请输入商品名称" />)}
           </Form.Item>
           <Form.Item label="商品类目">
             {getFieldDecorator('categoryId', {
@@ -595,7 +592,7 @@ class GoodsEdit extends React.Component {
                 console.log(val, 'val')
                 this.getStrategyByCategory(val[0])
               }
-            })(<Cascader options={this.state.categoryList} placeholder="请输入商品类目" />)}
+            })(<Cascader style={{ width: 250 }} options={this.state.categoryList} placeholder="请输入商品类目" />)}
           </Form.Item>
           <Form.Item label="商品简称">
             {getFieldDecorator('productShortName', {
@@ -605,10 +602,10 @@ class GoodsEdit extends React.Component {
                   message: '请输入商品简称',
                 },
               ],
-            })(<Input placeholder="请输入商品简称" />)}
+            })(<Input style={{ width: 172 }} placeholder="请输入商品简称" />)}
           </Form.Item>
           <Form.Item label="商品编码">
-            {getFieldDecorator('productCode')(<Input placeholder="请输入商品编码" />)}
+            {getFieldDecorator('productCode')(<Input style={{ width: 172 }} placeholder="请输入商品编码" />)}
             </Form.Item>
           <Form.Item label="商品简介">
             {getFieldDecorator('description', {
@@ -618,7 +615,7 @@ class GoodsEdit extends React.Component {
                   message: '请输入商品简介',
                 },
               ],
-            })(<Input placeholder="请输入商品简介" />)}
+            })(<Input style={{ width: 172 }} placeholder="请输入商品简介" />)}
           </Form.Item>
           <Form.Item label="商品条码">
             {getFieldDecorator('barCode', {
@@ -627,7 +624,7 @@ class GoodsEdit extends React.Component {
                   validator: barCodeValidator,
                 },
               ],
-            })(<Input placeholder="请输入商品条码" />)}
+            })(<Input style={{ width: 172 }} placeholder="请输入商品条码" />)}
           </Form.Item>
           <Form.Item label='供应商'>
             {getFieldDecorator('storeId', {
@@ -640,14 +637,27 @@ class GoodsEdit extends React.Component {
               onChange: this.supplierChange
             })(
               <SupplierSelect
+                style={{ width: 172 }}
                 disabled={this.id && supplierInfo.category === 4}
                 options={isEmpty(supplierInfo) ? [] : [supplierInfo]}
               />
             )}
           </Form.Item>
           <Form.Item label="供应商商品ID">
-            {getFieldDecorator('storeProductId')(<Input placeholder="请填写供货商商品ID" />)}
-            {!id && <Button onClick={()=>this.sync1688Sku()} >同步1688规格信息</Button>}
+            {getFieldDecorator('storeProductId')(
+              <Input
+                style={{ width: 172 }}
+                placeholder='请填写供货商商品ID'
+              />
+              )}
+            {!id && (
+              <Button
+                className='ml10'
+                onClick={this.sync1688Sku}
+              >
+                同步1688规格信息
+              </Button>
+            )}
           </Form.Item>
           <Form.Item
             label="是否可拦截发货"

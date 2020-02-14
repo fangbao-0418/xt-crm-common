@@ -206,7 +206,11 @@ class GoodsList extends React.Component {
     setQuery({ page: page.current, pageSize: page.pageSize }, true);
     resetFields();
     this.fetchData(parseQuery());
-  };
+  }
+  // 新增组合商品
+  addCommodity = () => {
+    APP.history.push('/goods/edit')
+  }
   render() {
     const { selectedRowKeys, supplier, dataSource, page } = this.state;
     const {
@@ -389,8 +393,18 @@ class GoodsList extends React.Component {
               <Button type="primary" style={{ marginRight: 10 }} onClick={this.handleSearch('导出')}>
                 导出商品
               </Button>
-              <Button type="primary" onClick={this.handleAdd}>
+              <Button
+                className='mr10'
+                type="primary"
+                onClick={this.handleAdd}
+              >
                 添加商品
+              </Button>
+              <Button
+                type='primary'
+                onClick={this.addCommodity}
+              >
+                添加组合商品
               </Button>
             </FormItem>
           </Form>
