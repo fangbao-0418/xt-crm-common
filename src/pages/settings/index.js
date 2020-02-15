@@ -61,6 +61,7 @@ export default class extends Component {
     super(props);
     const user = LocalStorage.get('user');
     this.state = {
+      confirmDirty: false,
       user
     };
   }
@@ -84,6 +85,9 @@ export default class extends Component {
               {
                 min: 6,
                 message: '密码最小长度6位'
+              },
+              {
+                validator: this.validateToNextPassword
               }
             ]
           })(<Input.Password style={{ width: 250 }} maxLength="16" placeholder="请输入密码" />)}
@@ -99,7 +103,14 @@ export default class extends Component {
                 validator: this.compareToFirstPassword
               }
             ]
-          })(<Input.Password style={{ width: 250 }} maxLength="16" placeholder="请输入确认密码" />)}
+          })(
+            <Input.Password
+              style={{ width: 250 }}
+              maxLength="16"
+              placeholder="请输入确认密码"
+              onBlur={this.handleBlur}
+            />
+          )}
         </FormItem>
         <FormItem label="验证码">
           {getFieldDecorator('code', {
@@ -130,6 +141,19 @@ export default class extends Component {
     } else {
       callback();
     }
+  };
+
+  handleBlur = e => {
+    const { value } = e.target;
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  };
+
+  validateToNextPassword = (rule, value, callback) => {
+    const { form } = this.props;
+    if (value && this.state.confirmDirty) {
+      form.validateFields(['repassword'], { force: true });
+    }
+    callback();
   };
 
   sendCode = () => {
