@@ -43,6 +43,7 @@ declare namespace UliveStudio {
     anchorType: Anchor.AnchorIdentityType
     /** 停播原因 */
     stopReason: string
+    memberId: number
   }
   /** 直播计划详情 */
   interface StatisticsProps {
