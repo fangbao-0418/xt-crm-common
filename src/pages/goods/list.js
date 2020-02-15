@@ -145,7 +145,7 @@ class GoodsList extends React.Component {
 
   /** 添加商品 */
   handleAdd = () => {
-    APP.history.push('/goods/edit');
+    APP.history.push('/goods/sku-sale/-1');
   };
 
   handleDisable = id => () => {
@@ -209,7 +209,7 @@ class GoodsList extends React.Component {
   }
   // 新增组合商品
   addCommodity = () => {
-    APP.history.push('/goods/edit')
+    APP.history.push('/goods/sku-sale/-1')
   }
   render() {
     const { selectedRowKeys, supplier, dataSource, page } = this.state;

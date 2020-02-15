@@ -1,3 +1,4 @@
+import { detailResponse, requestPayload } from './sku-sale/adapter';
 import { post, exportFile, get, newGet, newPost } from '../../util/fetch';
 
 export function getStoreList(data, config) {
@@ -6,6 +7,7 @@ export function getStoreList(data, config) {
 
 export function setProduct(data) {
   const url = data.productId ? '/product/update' : '/product/add';
+  data = requestPayload(data);
   return post(url, {}, { data, headers: {} });
 }
 
@@ -14,7 +16,7 @@ export function getGoodsList(data) {
 }
 
 export function getGoodsDetial(data) {
-  return post('/product/detail', data);
+  return post('/product/detail', data).then(detailResponse);
 }
 
 export function delGoodsDisable(data) {

@@ -9,8 +9,9 @@ const Check = loadable(() => import('./check'));
 const Detail = loadable(() => import('./detail'));
 const PricingStrategy = loadable(() => import('./pricing-strategy'));
 const GoodsDetail = loadable(() => import('./goods-detail'));
-const CSku = loadable(() => import('./csku'));
-const CSkuForm = loadable(() => import('./csku/form'));
+const SkuSaleForm = loadable(() => import('./sku-sale/form'));
+const SkuStock = loadable(() => import('./sku-stock'));
+const SkuStockForm = loadable(() => import('./sku-stock/form'));
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -24,8 +25,9 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/detail/:id?`} component={Detail} />
         <Route path={`${match.url}/pricingStrategy`} component={PricingStrategy} />
         <Route path={`${match.url}/goodsDetail/:id`} component={GoodsDetail} />
-        <Route exact path={`${match.url}/csku`} component={CSku} />
-        <Route path={`${match.url}/csku/:id`} component={CSkuForm} />
+        <Route path={`${match.url}/sku-sale/:id`} component={SkuSaleForm} />
+        <Route exact path={`${match.url}/sku-stock`} component={SkuStock} />
+        <Route path={`${match.url}/sku-stock/:id`} component={SkuStockForm} />
       </Switch>
     );
   }

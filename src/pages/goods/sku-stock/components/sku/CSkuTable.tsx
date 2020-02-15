@@ -6,7 +6,7 @@ import { PaginationConfig } from 'antd/lib/pagination'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert';
 import { ArrowContain, InputMoney } from '@/packages/common/components';
 import { isFunction } from 'lodash';
-import { CSkuProps } from '.';
+import { CSkuProps } from '../sku';
 
 interface CSkuTableProps extends Partial<AlertComponentProps>, FormComponentProps {
   extraColumns?: ColumnProps<any>[];

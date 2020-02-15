@@ -6,10 +6,10 @@ import { getCategoryTopList } from '../api';
 import { defaultConfig, statusEnums } from './config';
 import { Modal, Button, Popconfirm } from 'antd';
 type Key = string | number;
-interface ListState {
+interface SkuStockState {
   selectedRowKeys: Key[]
 }
-class List extends React.Component<any, ListState> {
+class SkuStockList extends React.Component<any, SkuStockState> {
   list: any;
   state = {
     selectedRowKeys: []
@@ -77,7 +77,14 @@ class List extends React.Component<any, ListState> {
     render: (records: any) => {
       return (
         <>
-          <Button type='link'>编辑</Button>
+          <Button
+            type='link'
+            onClick={() => {
+              APP.history.push(`/goods/sku-stock/${records.id}`)
+            }}
+          >
+            编辑
+          </Button>
           <If condition={records.status === statusEnums['正常']}>
             <Popconfirm
               title='确定失效吗'
@@ -145,7 +152,7 @@ class List extends React.Component<any, ListState> {
     })
   }
   handleAdd = () => {
-    APP.history.push('/goods/csku/-1');
+    APP.history.push('/goods/sku-stock/-1');
   }
   render() {
     const { selectedRowKeys } = this.state;
@@ -239,4 +246,4 @@ class List extends React.Component<any, ListState> {
   }
 }
 
-export default List;
+export default SkuStockList;

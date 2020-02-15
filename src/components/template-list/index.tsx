@@ -7,8 +7,8 @@ interface Item {
   templateName: string;
 }
 interface Props {
-  onChange(): void;
-  value: string;
+  onChange?: () => void;
+  value?: string;
   dataSource: Item[];
 }
 

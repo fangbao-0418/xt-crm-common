@@ -4,7 +4,7 @@ import debounce from 'lodash/debounce';
 import { getStoreList } from '../../api';
 
 const { Option } = Select;
-interface supplierItem {
+export interface supplierItem {
   id: number;
   name: string;
 }

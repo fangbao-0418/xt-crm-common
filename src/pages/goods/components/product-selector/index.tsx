@@ -5,7 +5,7 @@ import { FormItem, SelectFetch } from '@/packages/common/components';
 import { defaultConfig } from './config';
 import { Modal } from 'antd';
 import { getCategoryTopList } from '../../api';
-import { CSkuProps } from '../../csku/components/sku';
+import { CSkuProps } from '../../sku-stock/components/sku';
 interface ProductSelectorProps {
   visible: boolean
 }

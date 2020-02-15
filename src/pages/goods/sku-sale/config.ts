@@ -105,6 +105,7 @@ export const defaultConfig: FieldsConfig = {
       label: '累计销量',
       type: 'radio',
       fieldDecoratorOptions: {
+        initialValue: 1,
         rules: [{
           required: true,
           message: '请选择累计销量'
@@ -133,6 +134,47 @@ export const defaultConfig: FieldsConfig = {
           width: 172
         }
       }
-    }
+    },
+    isAuthentication: {
+      label: '实名认证',
+      type: 'radio',
+      options: [{
+        value: 1,
+        label: '是'
+      }, {
+        value: 0,
+        label: '否'
+      }],
+      fieldDecoratorOptions: {
+        initialValue: 0,
+        rules: [{
+          required: true,
+          message: '请选择实名认证'
+        }]
+      }
+    },
+    // isCalculateFreight: {
+    //   label: '单独计算运费',
+    //   type: 'select',
+    //   fieldDecoratorOptions: {
+    //     initialValue: 0,
+    //     rules: [{
+    //       required: true,
+    //       message: '请选择是否进行单独计算运费'
+    //     }]
+    //   },
+    //   controlProps: {
+    //     style: {
+    //       width: 172
+    //     }
+    //   },
+    //   options: [{
+    //     label: '否',
+    //     value: 0
+    //   }, {
+    //     label: '是',
+    //     value: 1
+    //   }]
+    // }
   }
 }

@@ -11,13 +11,13 @@ import UploadView from '@/components/upload';
 import If from '@/packages/common/components/if';
 import SkuList, { CSkuProps, Spec } from './components/sku';
 import { addProduct, updateProduct, getProduct } from './api';
-interface CSkuFormstate {
+interface SkuStockFormState {
   speSelect: Spec[];
   data: CSkuProps[];
   showImage: boolean;
 }
 
-export interface CSkuFormProps extends RouteComponentProps<{id: string}> {
+export interface SkuStockFormProps extends RouteComponentProps<{id: string}> {
   productId: string;
   barCode: string;
   productName: string;
@@ -35,10 +35,10 @@ export interface CSkuFormProps extends RouteComponentProps<{id: string}> {
   skuAddList: CSkuProps[];
   [key: string]: any;
 }
-class CSkuForm extends React.Component<CSkuFormProps, CSkuFormstate> {
+class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState> {
   id: number;
   form: FormInstance;
-  constructor(props: CSkuFormProps) {
+  constructor(props: SkuStockFormProps) {
     super(props);
     this.id = +props.match.params.id;
     this.state = {
@@ -341,4 +341,4 @@ class CSkuForm extends React.Component<CSkuFormProps, CSkuFormstate> {
   }
 }
 
-export default CSkuForm;
+export default SkuStockForm;

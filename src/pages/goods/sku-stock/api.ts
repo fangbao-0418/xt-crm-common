@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { listResponse, requestPayload, detailResponse } from './adapter';
 import { exportFileStream, newPut } from '@/util/fetch';
-import { CSkuFormProps } from './form';
+import { SkuStockFormProps } from './form';
 const { get, newPost } = APP.http;
 
 export interface listPayload {
@@ -42,13 +42,13 @@ export function exportProduct(payload: listPayload) {
 }
 
 // 新增库存商品
-export function addProduct(payload: CSkuFormProps) {
+export function addProduct(payload: SkuStockFormProps) {
   console.log(requestPayload(payload), 'request payload -----------------------')
   return newPost('/product/basic/add', requestPayload(payload));
 }
 
 // 更新库存商品
-export function updateProduct(payload: CSkuFormProps) {
+export function updateProduct(payload: SkuStockFormProps) {
   return newPut('/product/basic/update', requestPayload(payload))
 }
 
