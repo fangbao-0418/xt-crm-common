@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Card, Input, Button, message, Radio, Select } from 'antd';
+import { Modal, Card, Input, Button, message, Radio, Select, Row } from 'antd';
 import UploadView from '@/components/upload';
 import { treeToarr } from '@/util/utils';
 import { pick, map, size, filter, assign, isEmpty } from 'lodash';
@@ -804,12 +804,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           />
           <FormItem
             label='退货地址'
-            wrapperCol={{
-              span: 18,
-            }}
             inner={(form) => {
               return (
-                <>
+                <Row
+                  type='flex'
+                  style={{
+                    marginTop: 4,
+                    width: '60%'
+                  }}>
                   <Input
                     style={{ width: 160, marginRight: 10 }}
                     className={styles['no-error']}
@@ -836,14 +838,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                     />
                   )}
                   <Input
-                    style={{ width: 250 }}
+                    style={{ flex: 1 }}
                     className={styles['no-error']}
                     name='returnAddress'
                     value={this.state.returnAddress}
                     placeholder='收货人详细地址'
                     onChange={this.handleInput}
                   />
-                </>
+                </Row>
               )
             }}
           />
