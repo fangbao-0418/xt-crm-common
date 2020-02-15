@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
-import CardTitle from '../../CardTitle';
+import CardTitle from '../CardTitle';
 import SkuUploadItem from './SkuUploadItem';
 import styles from './style.module.scss';
 import { size, map } from 'lodash';

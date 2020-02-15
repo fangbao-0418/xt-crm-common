@@ -9,7 +9,7 @@ import { radioStyle } from '@/config';
 import SkuList from '../components/sku';
 import SupplierSelect, { supplierItem } from '../components/supplier-select';
 import { TemplateList } from '@/components';
-import styles from '../edit.module.scss';
+import styles from '../style.module.scss';
 import { Form, FormItem, If } from '@/packages/common/components';
 import ProductCategory from '../components/product-category';
 import { defaultConfig } from './config';
@@ -29,7 +29,6 @@ interface SkuSaleFormState extends Record<string, any> {
   propertyId1: string,
   propertyId2: string,
   productCategoryVO: any,
-  noSyncList: any[],
   returnContact: string,
   returnPhone: string,
   returnAddress: string,
@@ -45,7 +44,6 @@ interface SkuSaleFormState extends Record<string, any> {
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   form: FormInstance;
-  detail = {};
   specs: any[] = [];
   state: SkuSaleFormState = {
     specs: [],
@@ -57,7 +55,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     propertyId1: '',
     propertyId2: '',
     productCategoryVO: {},
-    noSyncList: [], // 供应商skuID，商品编码, 库存，警戒库存，
     returnContact: '',
     returnPhone: '',
     returnAddress: '',
@@ -87,15 +84,17 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     }
   }
   /** 获取商品详情 */
-  async fetchData() {
-    const res = await getGoodsDetial({ productId: this.id }) || {};
-    const list = await getCategoryList();
-      const arr2 = treeToarr(list);
-      this.detail = {...res}
+  fetchData() {
+    Promise.all([
+      getGoodsDetial({ productId: this.id }),
+      getCategoryList(),
+      getTemplateList()
+    ]).then(([res, list, templateOptions]) => {
       const categoryId =
         res.productCategoryVO && res.productCategoryVO.id
-          ? getAllId(arr2, [res.productCategoryVO.id], 'pid').reverse()
+          ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
           : [];
+      this.getStrategyByCategory(categoryId[0]);
       this.specs = [
         {
           title: res.property1,
@@ -108,21 +107,31 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       ];
       this.specs = this.getSpecs(res.skuList);
       this.getSupplierInfo(res.storeId);
-      this.setState(pick(res, [
-        'freightTemplateId',
-        'skuList',
-        'specs',
-        'propertyId1',
-        'propertyId2',
-        'returnContact',
-        'returnPhone',
-        'returnAddress',
-        'showImage',
-        'productCustomsDetailVOList'
-      ]))
+
+      const isRepeat = templateOptions.some((opt: any) => opt.freightTemplateId === res.freightTemplateId)
+      if (!isRepeat && res.freightTemplateId) {
+        templateOptions = templateOptions.concat({
+          freightTemplateId: res.freightTemplateId,
+          templateName: res.freightTemplateName
+        })
+      }
+
       this.setState({
-        specs: this.specs
-      })
+        templateOptions,
+        specs: this.specs,
+        ...pick(res, [
+          'freightTemplateId',
+          'skuList',
+          'specs',
+          'propertyId1',
+          'propertyId2',
+          'returnContact',
+          'returnPhone',
+          'returnAddress',
+          'showImage',
+          'productCustomsDetailVOList'
+        ])
+      });
       this.form.setValues(pick(res, [
         'productType',
         'interception',
@@ -153,17 +162,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         'isAuthentication',
         'isCalculateFreight'
       ]));
-      this.getStrategyByCategory(categoryId[0]);
-      getTemplateList().then((opts: any[]) => {
-        const isRepeat = opts.some(opt => opt.freightTemplateId === res.freightTemplateId)
-        if (!isRepeat && res.freightTemplateId) {
-          opts = opts.concat({
-            freightTemplateId: res.freightTemplateId,
-            templateName: res.freightTemplateName
-          })
-        }
-        this.setState({ templateOptions: opts });
-      })
+    });
   }
 
   //通过类目id查询是否有定价策略
@@ -297,19 +296,20 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             return void APP.error('市场价、成本价、销售价、团长价、社区管理员价、城市合伙人价、公司管理员价必填且不能为0');
           }
         }
-        const params = {
-          ...vals,
-          freightTemplateId: +freightTemplateId,
-          returnContact: this.state.returnContact,
-          returnPhone: this.state.returnPhone,
-          returnAddress: this.state.returnAddress,
+        setProduct({
+          productId: this.id,
+          freightTemplateId,
           property1: specs[0] && specs[0].title,
           property2: specs[1] && specs[1].title,
-          skuAddList: skuList,
-          ...property,
-          categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
-        };
-        setProduct({ productId: this.id, ...params }).then((res: any) => {
+          skuList,
+          ...vals,
+          ...pick(this.state, [
+            'returnContact',
+            'returnPhone',
+            'returnAddress'
+          ]),
+          ...property
+        }).then((res: any) => {
           if (!res) return;
           if (this.id !== -1) {
             APP.success('编辑数据成功');
@@ -401,7 +401,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       productSeletorVisible,
       productCustomsDetailVOList,
       supplierInfo,
-      freightTemplateId
+      freightTemplateId,
+      templateOptions
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
     return (
@@ -764,7 +765,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                     value={0}
                   >
                     <TemplateList
-                      dataSource={this.state.templateOptions}
+                      dataSource={templateOptions}
                       value={freightTemplateId}
                       onChange={(freightTemplateId) => {
                         this.setState({

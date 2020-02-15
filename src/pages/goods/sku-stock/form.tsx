@@ -6,7 +6,7 @@ import { defaultConfig } from './config'
 import { RouteComponentProps } from 'react-router'
 import SupplierSelect from '../components/supplier-select';
 import DraggableUpload from '../components/draggable-upload';
-import styles from '../edit.module.scss';
+import styles from '../style.module.scss';
 import UploadView from '@/components/upload';
 import If from '@/packages/common/components/if';
 import SkuList, { CSkuProps, Spec } from './components/sku';

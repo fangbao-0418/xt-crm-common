@@ -13,13 +13,15 @@ export function requestPayload(payload: any) {
     item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
     return item;
   });
+  result.freightTemplateId = +payload.freightTemplateId;
+  result.categoryId = Array.isArray(payload.categoryId) ? payload.categoryId[2] : '';
   return { ...payload, ...result };
 }
 
 // 过滤销售商品详情
 export function detailResponse(res: any) {
   const skuList: any[] = res.skuList || [];
-  res = filterUploadFile(res, 'res');
+  res = filterUploadFile(res || {}, 'res');
   res.skuList = skuList.map((item: any) => {
     item = filterMoney(item, 'res', fields);
     return item;

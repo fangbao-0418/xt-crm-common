@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tabs, Card } from 'antd';
 import { setQuery, parseQuery } from '@/util/utils';
-import List from './list';
+import List from './sku-sale/list';
 const { TabPane } = Tabs;
 
 const goods = props => {

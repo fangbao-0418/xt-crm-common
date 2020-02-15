@@ -10,8 +10,6 @@ interface Props {
   value?: string;
   dataSource: Item[];
 }
-
-let addItem:any = null;
 class Main extends React.Component<Props, any> {
   public render() {
     return (
@@ -31,7 +29,7 @@ class Main extends React.Component<Props, any> {
         }}
       >
         {(this.props.dataSource || []).map((item: Item, index: number) => (
-          <Option key={index}>
+          <Option key={index} value={item.freightTemplateId + ''}>
             {item.templateName || ''}
           </Option>
         ))}

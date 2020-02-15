@@ -1,6 +1,6 @@
 import React from 'react';
 import { Popover, Input, Card, Button, message } from 'antd';
-import CardTitle from '@/pages/goods/CardTitle';
+import CardTitle from '@/pages/goods/components/CardTitle';
 import SkuUploadItem from '@/pages/goods/components/sku/SkuUploadItem';
 import styles from '@/pages/goods/components/sku/style.module.scss';
 import { size, map, isFunction } from 'lodash';

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Table, Card, Form, Input, DatePicker, Select, Button, Modal, message, Divider } from 'antd';
 import dateFns from 'date-fns';
-import { getGoodsList, getStoreList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from './api';
+import { getGoodsList, getStoreList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
 import { map, size } from 'lodash';
 import { setQuery, parseQuery, gotoPage } from '@/util/utils';
-import { formatMoneyWithSign } from '../helper';
+import { formatMoneyWithSign } from '../../helper';
 import Image from '@/components/Image';
 import SelectFetch from '@/components/select-fetch';
 const FormItem = Form.Item;
