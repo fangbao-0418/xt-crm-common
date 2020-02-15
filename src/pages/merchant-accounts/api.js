@@ -29,7 +29,7 @@ export function getPaymentList(data) {
 export function getSettlementDetail(id) {
   return get(`/finance/settlement/detail/${id}`);
 }
-// 结算单导出
+// 结算单导出 -> 这期不做
 export function getSettlementExport(id) {
   return get(`/finance/settlement/export/${id}`);
 }
@@ -46,12 +46,12 @@ export function settlementPay(id) {
   return get(`/finance/settlement/pay/${id}`);
 }
 // 结算单驳回--包括待结算的结算单和结算中的结算单
-export function settlementReject(id) {
-  return post(`/finance/settlement/reject/${id}`, id);
+export function settlementReject({id,remark=''}) {
+  return post(`/finance/settlement/reject/${id}`, {remark});
 }
 // 待结算的结算单提交结算
-export function settlementSubmit(id) {
-  return post(`/finance/settlement/submit/${id}`, id);
+export function settlementSubmit({id,payMod=''}) {
+  return post(`/finance/settlement/submit/${id}`, {payMod});
 }
 /** 测试接口 */
 export const fetchCheckingList = payload => {

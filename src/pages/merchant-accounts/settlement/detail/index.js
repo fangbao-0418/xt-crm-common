@@ -3,88 +3,49 @@ import { Tabs, Card } from 'antd';
 import { setQuery, parseQuery } from '@/util/utils';
 import StepInfo from './step-info';
 import List from './list';
+import * as api from '../../api'
 
 class SettleDetial extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: props.match.params.id,
+      // 结算记录
+      dataSource: [],
+      // 结算明细
+      settleDetail: {}
     };
   }
-
-
+  componentDidMount() {
+    let { id } = this.props.match.params;
+    this.fetchData(id)
+  }
+  // 列表数据
+  fetchData(id) {
+    api.getSettlementDetail(id).then((res = {}) => {
+      console.log(res)
+      const { id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, financeSettlementRecordDetailVOList ,financeSettlementRecordLogVOList} = res;
+      this.setState({
+        dataSource: financeSettlementRecordDetailVOList || [],
+        settleDetail: {
+          id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl
+        },
+        operateDetail: financeSettlementRecordLogVOList || []
+      });
+    })
+  }
   render() {
 
-    let stepinfo = [
-      {
-        status: 1,
-        statusText: '待结算',
-        createName: 'aaa',
-        createTime: 1344
-      },
-      {
-        status: 2,
-        statusText: '结算中',
-
-        createName: 'aaa',
-        createTime: 1344
-      },
-      {
-        status: 3,
-        statusText: '已结算',
-        createName: 'ccc',
-        createTime: 1344
-      }
-    ]
-    // let stepinfo = {
-    //   tag: '初审驳回',
-    //   list: [
-    //     {
-    //       status: 1,
-    //       statusText: '待结算',
-    //       createName: 'aaa',
-    //       createTime: 1344
-    //     },
-    //     {
-    //       status: 2,
-    //       statusText: '驳回',
-
-    //       createName: 'aaa',
-    //       createTime: 1344
-    //     }
-    //   ]
-    // }
-
-    // let stepinfo = {
-    //   tag: '复核驳回',
-    //   list: [
-    //     {
-    //       status: 1,
-    //       statusText: '待结算',
-    //       createName: 'aaa',
-    //       createTime: 1344
-    //     },
-    //     {
-    //       status: 2,
-    //       statusText: '结算中',
-
-    //       createName: 'aaa',
-    //       createTime: 1344
-    //     },
-    //     {
-    //       status: 3,
-    //       statusText: '驳回',
-    //       createName: 'ccc',
-    //       createTime: 1344
-    //     }
-    //   ]
-    // }
+    const { settleDetail=[], dataSource=[], operateDetail=[] } = this.state
+    console.log(dataSource)
+   
 
 
 
     return (
       <div>
-        <StepInfo stepinfo={stepinfo} />
-        <List />
+        {operateDetail.length > 0 && <StepInfo stepinfo={operateDetail} />}
+        <List settleDetail={settleDetail} dataSource={dataSource} />
       </div>
     )
   }

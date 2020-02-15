@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, Message } from 'antd';
 import { formItemLayout } from '@/config';
 import * as api from '../api'
 class SettleModal extends React.Component {
@@ -13,13 +13,25 @@ class SettleModal extends React.Component {
     } = this.props;
     validateFields((err, vals) => {
       if (!err) {
-        console.log(vals.reason)
         if (operateType === 'submit') {
-          // api.settlementSubmit(id)
+          console.log(id, vals.payMod)
+          api.settlementSubmit({ id, payMod: vals.payMod }).then(res => {
+            console.log(res)
+            if (res) {
+              Message.success('已提交');
+              handleSucc()
+            }
+          })
         } else if (operateType === 'reject') {
-          // api.settlementReject(id)
+          api.settlementReject({ id, remark: vals.remar }).then(res => {
+            console.log(res)
+            if (res) {
+              Message.success('已提交');
+              handleSucc()
+            }
+          })
         }
-        handleSucc()
+
       }
     });
   }
@@ -36,17 +48,31 @@ class SettleModal extends React.Component {
             {
               operateType === 'submit'
                 ?
-                <Form.Item label="请设置付款次数" required>
-                  {getFieldDecorator('reason', { initialValue: '' })(
+                <Form.Item label="请设置付款次数">
+                  {getFieldDecorator('payMod', {
+                    initialValue: '1', rules: [
+                      {
+                        required: true,
+                        message: '请设置付款次数',
+                      },
+                    ],
+                  })(
                     <Select allowClear placeholder='请设置付款次数'>
-                      <Select.Option key="" value="">一次付清</Select.Option>
-                      <Select.Option key="0" value="0">分两次付清</Select.Option>
-                      <Select.Option key="1" value="1">分三次付清</Select.Option>
+                      <Select.Option key="1" value="1">一次付清</Select.Option>
+                      <Select.Option key="2" value="2">分两次付清</Select.Option>
+                      <Select.Option key="3" value="3">分三次付清</Select.Option>
                     </Select>
                   )}
                 </Form.Item>
                 : <Form.Item label="驳回原因" required>
-                  {getFieldDecorator('reason', {})(<Input.TextArea placeholder="请输入驳回原因" autosize={{ minRows: 3, maxRows: 5 }} />)}
+                  {getFieldDecorator('remark', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入驳回原因',
+                      },
+                    ]
+                  })(<Input.TextArea placeholder="请输入驳回原因" autosize={{ minRows: 3, maxRows: 5 }} />)}
                 </Form.Item>
             }
 

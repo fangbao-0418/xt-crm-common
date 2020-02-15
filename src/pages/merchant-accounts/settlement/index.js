@@ -9,7 +9,7 @@ class SettleMent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      settType:  parseQuery().settType || '0'
+      settType:  parseQuery().settType || ''
     };
     
   }

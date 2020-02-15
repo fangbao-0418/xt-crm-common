@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { Table, Card, Form, Input, Button, Divider, DatePicker, Spin, Row, Col, Select, Modal } from 'antd';
 import SettleModal from './settleModal'
+import MoneyRender from '@/components/money-render'
 import { enumSettleType, TextMapSettleStatus } from '../constant'
 import { setQuery, parseQuery, gotoPage } from '@/util/utils';
 
@@ -26,12 +27,10 @@ class List extends React.Component {
         pageSize: 10
       },
       visible: false,
-      operateType: 'submit'
+      operateType: 'submit',
+      selectId: ''
     }
   }
-  state = {
-
-  };
   componentDidMount() {
     this.fetchData()
   }
@@ -127,11 +126,14 @@ class List extends React.Component {
   handleBtnAction = (id, operateType) => () => {
     if (operateType !== 'topay') {
       this.setState({
+        selectId: id,
         visible: true,
         operateType
       })
     } else {
-      // api.settlementPay(id)
+      api.settlementPay(id).then(res=>{
+        res && gotoPage('/merchant-accounts/payment')
+      })
     }
 
   };
@@ -140,6 +142,8 @@ class List extends React.Component {
     this.setState({
       visible: false
     })
+    // 刷新
+    this.fetchData(parseQuery());
   }
 
   handleCancel = () => {
@@ -162,7 +166,7 @@ class List extends React.Component {
   };
 
   render() {
-    const { page, dataSource, operateType } = this.state;
+    const { page, dataSource, operateType , selectId} = this.state;
 
     const {
       form: { getFieldDecorator }
@@ -176,7 +180,8 @@ class List extends React.Component {
       {
         title: '本期结算对账单金额',
         dataIndex: 'settlementMoney',
-        key: 'settlementMoney'
+        key: 'settlementMoney',
+        render: MoneyRender
       },
       {
         title: '供应商',
@@ -218,7 +223,10 @@ class List extends React.Component {
       {
         title: '创建时间',
         dataIndex: 'createTime',
-        key: 'createTime'
+        key: 'createTime',
+        render: (createTime) => {
+          return APP.fn.formatDate(createTime)
+        }
       },
       {
         title: '操作人',
@@ -228,7 +236,10 @@ class List extends React.Component {
       {
         title: '操作时间',
         dataIndex: 'modifyTime',
-        key: 'modifyTime'
+        key: 'modifyTime',
+        render: (modifyTime) => {
+          return APP.fn.formatDate(modifyTime)
+        }
       },
       {
         title: '操作',
@@ -250,18 +261,17 @@ class List extends React.Component {
                       <Divider type="vertical" />
                       <Button type="primary" onClick={this.handleBtnAction(id, 'reject')} >驳回 </Button>
                     </>
-                    : settStatus === enumSettleType.Abnormal ?
+                    : settStatus === enumSettleType.partSettled ?
                       <Button type="primary" onClick={this.handleBtnAction(id, 'topay')} >去付款</Button>
                       : null
               }
             </div>
             <div>
               <Button type="link" >
-
-                <Link to={`/merchant-accounts/settlement/detail/${id}`}>查看明细</Link>
+                <Link to={`/merchant-accounts/settlement/${id}`}>查看明细</Link>
               </Button>
-              <Divider type="vertical" />
-              <Button type="link" onClick={this.exportFile} >导出</Button>
+              {/* <Divider type="vertical" />
+              <Button type="link" onClick={this.exportFile} >导出</Button> */}
             </div>
           </>
         )
@@ -358,7 +368,7 @@ class List extends React.Component {
             )}
         </Card>
         {/* 提交|驳回提示框 */}
-        <SettleModal operateType={operateType} handleSucc={this.handleSucc} modalProps={{ visible: this.state.visible, onCancel: this.handleCancel }} />
+        <SettleModal id={selectId} operateType={operateType} handleSucc={this.handleSucc} modalProps={{ visible: this.state.visible, onCancel: this.handleCancel }} />
       </Spin>
     )
   }
