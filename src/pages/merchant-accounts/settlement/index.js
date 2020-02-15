@@ -9,33 +9,33 @@ class SettleMent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      status:  parseQuery().status || '0'
+      settType:  parseQuery().settType || '0'
     };
     
   }
   componentDidMount(){
-    this.handleTabClick(this.state.status)
+    this.handleTabClick(this.state.settType)
   }
-  handleTabClick = status => {
-    this.setState({status})
+  handleTabClick = settType => {
+    this.setState({settType})
     setQuery({
       page: 1,
       pageSize: 10,
-      status
+      settType
     }, true);
   };
 
   render () {
-    let {status} = this.state;
+    let {settType} = this.state;
     return (
       <div>
       <Card >
-        <Tabs activeKey={status} onTabClick={this.handleTabClick}>
+        <Tabs activeKey={settType} onTabClick={this.handleTabClick}>
           {Object.values(enumSettleType).map(item=>{
             return <TabPane tab={TextMapSettleStatus[item]} key={item} />
           })}
         </Tabs>
-        <List status={status} />
+        <List settType={settType} />
       </Card>
     </div>
     )

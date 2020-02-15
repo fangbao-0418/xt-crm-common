@@ -4,8 +4,7 @@ import { isNil } from 'lodash';
 import { setQuery, parseQuery, gotoPage } from '@/util/utils';
 import { Table, Card, Form, Input, Button,Divider, message, Upload, DatePicker, Spin, Row, Col, Select, Modal } from 'antd';
 import PayModal from './payModal'
-import { compose } from 'redux';
-// import { getPayList } from '../api';
+import * as api from '../api'
 import {enumPayType, TextMapPayStatus} from '../constant'
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -48,7 +47,22 @@ class List extends React.Component {
   }
   // 获取商品列表
   fetchData(params={}) {
-    
+    const { settType } = this.props;
+    const { page } = this.state;
+    const options = {
+      settType,
+      pageSize: page.pageSize,
+      page: page.current,
+      ...params
+    };
+    api.getPaymentList(options).then((res = {}) => {
+      page.total = res.total;
+      this.setState({
+        dataSource: res.records,
+        page
+      });
+      setQuery(options);
+    })
   }
   handlePageChange = (page, pageSize) => {
     this.setState(
@@ -63,18 +77,19 @@ class List extends React.Component {
   handleSearch = () => {
     const { validateFields } = this.props.form;
  
-    // const { status } = this.props;
+    const { paymentStatus } = this.props;
     validateFields((err, vals) => {
       if (!err) {
         console.log(vals)
         const params = {
           ...vals,
-          createStartTime: vals.goodsTime && vals.goodsTime[0] && +new Date(vals.goodsTime[0]),
-          createEndTime: vals.goodsTime && vals.goodsTime[1] && +new Date(vals.goodsTime[1]),
-          modifyStartTime: vals.optionTime && vals.optionTime[0] && +new Date(vals.optionTime[0]),
-          modifyEndTime: vals.optionTime && vals.optionTime[1] && +new Date(vals.optionTime[1]),
+          startCreateTime: vals.createTime && vals.createTime[0] && +new Date(vals.createTime[0]),
+          endCreateTime: vals.createTime && vals.createTime[1] && +new Date(vals.createTime[1]),
+          startModifyTime: vals.modifyTime && vals.modifyTime[0] && +new Date(vals.modifyTime[0]),
+          endModifyTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
           page: 1,
-          pageSize: 10
+          pageSize: 10,
+          paymentStatus
         };
         delete params.goodsTime;
         delete params.optionTime;
@@ -247,7 +262,7 @@ class List extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="全部">
-                  {getFieldDecorator('paymentStatusInfo', {initialValue: ''})(
+                  {getFieldDecorator('paymentStatus', {initialValue: ''})(
                     <Select placeholder="请选择">
                       {Object.values(enumPayType).map((v) => (
                         <Select.Option key={v} value={v}>{TextMapPayStatus[v]}</Select.Option>

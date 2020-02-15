@@ -19,8 +19,8 @@ export function getPaymentDetail(id) {
 }
 
 // 付款单列表
-export function getPaymentList() {
-  return get('/finance/payment/list');
+export function getPaymentList(data) {
+  return get('/finance/payment/list', data);
 }
 
 /******************************结算单**************************/
@@ -38,8 +38,8 @@ export function createSettlement(data) {
   return post(`/finance/settlement/generate`,data);
 }
 // 结算单列表
-export function getSettlementList() {
-  return get(`/finance/settlement/list`);
+export function getSettlementList(data) {
+  return get(`/finance/settlement/list`, data);
 }
 // 结算单付款
 export function settlementPay(id) {

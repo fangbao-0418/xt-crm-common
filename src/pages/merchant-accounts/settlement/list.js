@@ -17,15 +17,9 @@ class List extends React.Component {
     super(props)
     const params = parseQuery();
     this.state = {
-      status: params.status || 0,
+      settType: params.settType || 0,
       selectedRowKeys: [],
-      dataSource: [
-        { id: 1, createName: 2, createTime: 2, currencyInfo: 5, accountInfo: 'etwtesh', invoiceInfo: 1, modifyName: 1, modifyTime: 1, payType: 1, settStatusInfo: 10, settlementMoney: 1, storeName: 1 },
-        { id: 11, createName: 2, createTime: 2, currencyInfo: 5, accountInfo: '444', invoiceInfo: 0, modifyName: 1, modifyTime: 1, payType: 1, settStatusInfo: 20, settlementMoney: 1, storeName: 1 },
-        { id: 111, createName: 2, createTime: 2, currencyInfo: 5, accountInfo: '445555', invoiceInfo: 1, modifyName: 1, modifyTime: 1, payType: 1, settStatusInfo: 30, settlementMoney: 1, storeName: 1 },
-        { id: 1111, createName: 2, createTime: 2, currencyInfo: 5, accountInfo: '33333', invoiceInfo: 0, modifyName: 1, modifyTime: 1, payType: 1, settStatusInfo: 40, settlementMoney: 1, storeName: 1 },
-
-      ],
+      dataSource: [], // table列表数据
       page: {
         total: 0,
         current: +params.page || 1,
@@ -39,13 +33,13 @@ class List extends React.Component {
 
   };
   componentDidMount() {
-    // this.fetchData()
+    this.fetchData()
   }
   componentDidUpdate(prevProps) {
-    if (this.props.status !== prevProps.status) {
+    if (this.props.settType !== prevProps.settType) {
 
       const options = {
-        status: this.props.status,
+        settType: this.props.settType,
         pageSize: this.state.page.pageSize,
         page: 1
       };
@@ -54,15 +48,15 @@ class List extends React.Component {
   }
   // 列表数据
   fetchData(params = {}) {
-    const { status } = this.props;
+    const { settType } = this.props;
     const { page } = this.state;
     const options = {
-      status,
+      settType,
       pageSize: page.pageSize,
       page: page.current,
       ...params
     };
-    api.fetchCheckingList(options).then((res = {}) => {
+    api.getSettlementList(options).then((res = {}) => {
       page.total = res.total;
       this.setState({
         dataSource: res.records,
@@ -90,19 +84,19 @@ class List extends React.Component {
   // 查询
   handleSearch = () => {
     const { validateFields } = this.props.form;
-    const { status } = this.props;
+    const { settType } = this.props;
     validateFields((err, vals) => {
       if (!err) {
         console.log(vals)
         const params = {
           ...vals,
-          createStartTime: vals.createTime && vals.createTime[0] && +new Date(vals.createTime[0]),
-          createEndTime: vals.createTime && vals.createTime[1] && +new Date(vals.createTime[1]),
-          modifyStartTime: vals.modifyTime && vals.modifyTime[0] && +new Date(vals.modifyTime[0]),
-          modifyEndTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
+          startCreateTime: vals.createTime && vals.createTime[0] && +new Date(vals.createTime[0]),
+          endCreateTime: vals.createTime && vals.createTime[1] && +new Date(vals.createTime[1]),
+          startModifyTime: vals.modifyTime && vals.modifyTime[0] && +new Date(vals.modifyTime[0]),
+          endModifyTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
           page: 1,
           pageSize: 10,
-          status
+          settType
         };
         delete params.createTime;
         delete params.modifyTime;
@@ -168,15 +162,11 @@ class List extends React.Component {
   };
 
   render() {
-    const { page, dataSource, selectedRowKeys, operateType } = this.state;
+    const { page, dataSource, operateType } = this.state;
 
     const {
       form: { getFieldDecorator }
     } = this.props;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange
-    };
     const columns = [
       {
         title: '结算单ID',
@@ -217,8 +207,8 @@ class List extends React.Component {
       {
         title: '状态',
         dataIndex: 'settStatusInfo',
-        key: 'settStatusInfo',
-        render: value => TextMapSettleStatus[value]
+        key: 'settStatusInfo'
+        // render: value => TextMapSettleStatus[value]
       },
       {
         title: '创建人',
@@ -244,23 +234,23 @@ class List extends React.Component {
         title: '操作',
         align: 'center',
         width: '200px',
-        render: (operate, { settStatusInfo, id }) => (
+        render: (operate, { settStatus, id }) => (
           <>
             <div>
               {
-                settStatusInfo === enumSettleType.ToBeSettled ?
+                settStatus === enumSettleType.ToBeSettled ?
                   <>
                     <Button type="primary" onClick={this.handleBtnAction(id, 'submit')} >提交结算</Button>
                     <Divider type="vertical" />
                     <Button type="primary" onClick={this.handleBtnAction(id, 'reject')} >驳回 </Button>
                   </>
-                  : settStatusInfo === enumSettleType.Settling ?
+                  : settStatus === enumSettleType.Settling ?
                     <>
                       <Button type="primary" onClick={this.handleBtnAction(id, 'topay')} >去付款</Button>
                       <Divider type="vertical" />
                       <Button type="primary" onClick={this.handleBtnAction(id, 'reject')} >驳回 </Button>
                     </>
-                    : settStatusInfo === enumSettleType.Abnormal ?
+                    : settStatus === enumSettleType.Abnormal ?
                       <Button type="primary" onClick={this.handleBtnAction(id, 'topay')} >去付款</Button>
                       : null
               }
@@ -284,7 +274,7 @@ class List extends React.Component {
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label="结算单ID">
-                  {getFieldDecorator('anchorId', { initialValue: '' })(
+                  {getFieldDecorator('settId', { initialValue: '' })(
                     <Input placeholder="请输入结算单ID" />
                   )}
                 </FormItem>
@@ -323,11 +313,11 @@ class List extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="发票">
-                  {getFieldDecorator('invoiceInfo', { initialValue: '' })(
+                  {getFieldDecorator('isInvoice', { initialValue: '' })(
                     <Select allowClear placeholder='请选择订单类型'>
                       <Select.Option key="" value="">全部</Select.Option>
-                      <Select.Option key="0" value="0">有</Select.Option>
-                      <Select.Option key="1" value="1">无</Select.Option>
+                      <Select.Option key="0" value="1">有</Select.Option>
+                      <Select.Option key="1" value="0">无</Select.Option>
                     </Select>
                   )}
                 </FormItem>
@@ -355,7 +345,6 @@ class List extends React.Component {
         <Card style={{ marginTop: 10 }}>
           {dataSource && dataSource.length > 0 ? (
             <Table
-              rowSelection={rowSelection}
               bordered
               columns={columns}
               dataSource={dataSource}

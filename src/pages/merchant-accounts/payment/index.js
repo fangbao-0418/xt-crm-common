@@ -8,28 +8,28 @@ class PayMent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      status:  parseQuery().status || '0'
+      paymentStatus:  parseQuery().paymentStatus || '0'
     };
    
   }
   componentDidMount(){
-    this.handleTabClick(parseQuery().status || '0')
+    this.handleTabClick(parseQuery().paymentStatus || '0')
   }
-  handleTabClick = status => {
-    this.setState({status})
+  handleTabClick = paymentStatus => {
+    this.setState({paymentStatus})
     setQuery({
       page: 1,
       pageSize: 10,
-      status
+      paymentStatus
     }, true);
   };
 
   render () {
-    let {status} = this.state;
+    let {paymentStatus} = this.state;
     return (
       <div>
       <Card >
-        <Tabs activeKey={status} onTabClick={this.handleTabClick}>
+        <Tabs activeKey={paymentStatus} onTabClick={this.handleTabClick}>
           {Object.values(enumPayType).map(item=>{
             return <TabPane tab={TextMapPayStatus[item]} key={item} />
           })}

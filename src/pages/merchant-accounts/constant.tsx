@@ -27,8 +27,8 @@ export const enumSettleType = {
   All:0,
   ToBeSettled: 10,
   Settling: 20,
-  Settled: 30,
   Abnormal: 40,
+  Settled: 50
 };
 
 // 付款状态文字
@@ -36,7 +36,8 @@ export const TextMapSettleStatus = {
   [enumSettleType.All]: '全部',
   [enumSettleType.ToBeSettled]: '待结算',
   [enumSettleType.Settling]: '结算中',
+  [enumSettleType.Abnormal]: '结算异常',
   [enumSettleType.Settled]: '已结算',
-  [enumSettleType.Abnormal]: '结算异常'
+
 };
 
