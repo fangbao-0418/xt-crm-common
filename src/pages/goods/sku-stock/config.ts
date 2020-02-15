@@ -9,7 +9,7 @@ export const defaultConfig: FieldsConfig = {
       label: '商品名称',
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       },
       fieldDecoratorOptions: {
@@ -27,7 +27,7 @@ export const defaultConfig: FieldsConfig = {
       type: 'select',
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       },
       options: [{
@@ -62,7 +62,7 @@ export const defaultConfig: FieldsConfig = {
       label: '商品简称',
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       },
       fieldDecoratorOptions: {
@@ -76,7 +76,7 @@ export const defaultConfig: FieldsConfig = {
       label: '商品简介',
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       }
     },
@@ -84,7 +84,7 @@ export const defaultConfig: FieldsConfig = {
       label: '商品编码',
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       }
     }

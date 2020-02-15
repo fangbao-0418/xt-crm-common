@@ -121,7 +121,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
                   {form.getFieldDecorator('productId')(
                     <Input
                       placeholder='请输入销售商品ID'
-                      style={{ width: 172 }}
+                      style={{ width: '60%' }}
                     />
                   )}
                   <Button className='ml10'>校验</Button>
@@ -137,7 +137,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
                   {form.getFieldDecorator('barCode')(
                     <Input
                       placeholder='请输入商品条码'
-                      style={{ width: 172 }}
+                      style={{ width: '60%' }}
                     />
                   )}
                   <Button className='ml10'>校验</Button>
@@ -157,7 +157,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
                 }]
               })(
                 <ProductCategory
-                  style={{ width: 250 }}
+                  style={{ width: '60%' }}
                 />
               )
             }}
@@ -170,7 +170,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
             inner={(form) => {
               return form.getFieldDecorator('storeId')(
                 <SupplierSelect
-                  style={{ width: 172 }}
+                  style={{ width: '60%' }}
                 />
               )
             }}

@@ -30,7 +30,7 @@ export const defaultConfig: FieldsConfig = {
       },
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       }
     },
@@ -44,7 +44,7 @@ export const defaultConfig: FieldsConfig = {
       },
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       }
     },
@@ -52,7 +52,7 @@ export const defaultConfig: FieldsConfig = {
       label: '商品编码',
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       }
     },
@@ -66,7 +66,7 @@ export const defaultConfig: FieldsConfig = {
       },
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       }
     },
@@ -123,7 +123,7 @@ export const defaultConfig: FieldsConfig = {
       label: '物流体积',
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       }
     },
@@ -131,7 +131,7 @@ export const defaultConfig: FieldsConfig = {
       label: '物流重量',
       controlProps: {
         style: {
-          width: 172
+          width: '60%'
         }
       }
     },
@@ -165,7 +165,7 @@ export const defaultConfig: FieldsConfig = {
     //   },
     //   controlProps: {
     //     style: {
-    //       width: 172
+    //       width: '60%'
     //     }
     //   },
     //   options: [{

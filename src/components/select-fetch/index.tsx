@@ -50,7 +50,6 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { options, value } = this.state
-    console.log(options, 'options')
     return (
       <Select
         value={value}

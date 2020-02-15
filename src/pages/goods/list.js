@@ -300,7 +300,7 @@ class GoodsList extends React.Component {
               type="link"
               style={{ padding: 0 }}
               onClick={() => {
-                gotoPage(`/goods/edit/${record.id}`);
+                gotoPage(`/goods/sku-sale/${record.id}`);
               }}
             >
               编辑

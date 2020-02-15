@@ -1,10 +1,10 @@
 import React from 'react';
-import { Modal, Card, Input, Button, message, Radio, Select, Cascader } from 'antd';
+import { Modal, Card, Input, Button, message, Radio, Select } from 'antd';
 import UploadView from '@/components/upload';
-import { treeToarr, formatMoneyBeforeRequest } from '@/util/utils';
-import { pick, map, size, filter, assign, forEach, cloneDeep, split, isEmpty } from 'lodash';
+import { treeToarr } from '@/util/utils';
+import { pick, map, size, filter, assign, isEmpty } from 'lodash';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api';
-import { getAllId, gotoPage, initImgList } from '@/util/utils';
+import { getAllId, gotoPage } from '@/util/utils';
 import { radioStyle } from '@/config';
 import SkuList from '../components/sku';
 import SupplierSelect, { supplierItem } from '../components/supplier-select';
@@ -39,7 +39,8 @@ interface SkuSaleFormState extends Record<string, any> {
   supplierInfo: any,
   fetching: boolean,
   productSeletorVisible: boolean,
-  interceptionVisible: boolean
+  interceptionVisible: boolean,
+  freightTemplateId: string
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
@@ -67,7 +68,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     // 供应商列表加载状态
     fetching: false,
     productSeletorVisible: false,
-    interceptionVisible: false
+    interceptionVisible: false,
+    freightTemplateId: ''
   }
   id: number;
   constructor(props: SkuSaleFormProps) {
@@ -84,31 +86,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       })
     }
   }
-
-  /** 获取商品类目 */
-  // getCategoryList = () => {
-  //   getCategoryList().then(res => {
-  //     const arr = Array.isArray(res) ? res : [];
-  //     const categoryList = arr.map(org => mapTree(org));
-  //     this.setState(
-  //       {
-  //         categoryList,
-  //       },
-  //       () => {
-  //         const id = this.id
-  //         /** 编辑 */
-  //         if (id) {
-  //           this.getGoodsDetial(res);
-  //         } else {
-  //           this.props.form.setFieldsValue({ showNum: 1 })
-  //           getTemplateList().then(opts => {
-  //             this.setState({ templateOptions: opts });
-  //           })
-  //         }
-  //       }
-  //     )
-  //   })
-  // }
   /** 获取商品详情 */
   async fetchData() {
     const res = await getGoodsDetial({ productId: this.id }) || {};
@@ -129,42 +106,10 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           content: [],
         },
       ];
-      // let showImage = false;
-      // map(res.skuList, item => {
-      //   item.costPrice = Number(item.costPrice / 100);
-      //   item.salePrice = Number(item.salePrice / 100);
-      //   item.marketPrice = Number(item.marketPrice / 100);
-      //   item.cityMemberPrice = Number(item.cityMemberPrice / 100);
-      //   item.managerMemberPrice = Number(item.managerMemberPrice / 100);
-      //   item.areaMemberPrice = Number(item.areaMemberPrice / 100);
-      //   item.headPrice = Number(item.headPrice / 100);
-      //   if (item.imageUrl1) {
-      //     showImage = true;
-      //   }
-      // });
-      // let productImage = [];
-      // map(split(res.productImage, ','), (item, key) => {
-      //   productImage = productImage.concat(initImgList(item));
-      // });
-
-      // let listImage = [];
-      // map(res.listImage ? res.listImage.split(',') : [], (item, key) => {
-      //   listImage = listImage.concat(initImgList(item));
-      // });
       this.specs = this.getSpecs(res.skuList);
       this.getSupplierInfo(res.storeId);
-      // this.setState({
-      //   skuList: res.skuList || [],
-      //   specs: this.specs,
-      //   propertyId1: res.propertyId1,
-      //   propertyId2: res.propertyId2,
-      //   returnContact: res.returnContact,
-      //   returnPhone: res.returnPhone,
-      //   returnAddress: res.returnAddress,
-      //   showImage,
-      //   productCustomsDetailVOList: res.productCustomsDetailVOList || []
-      // });
       this.setState(pick(res, [
+        'freightTemplateId',
         'skuList',
         'specs',
         'propertyId1',
@@ -182,7 +127,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         'productType',
         'interception',
         'showNum',
-        'freightTemplateId',
         'description',
         'productCode',
         'productId',
@@ -313,17 +257,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
    * 新增/编辑操作
    */
   handleSave = (status?: number) => {
-    const { specs, skuList, propertyId1, propertyId2 } = this.state;
+    const {
+      specs,
+      skuList,
+      propertyId1,
+      propertyId2,
+      freightTemplateId
+    } = this.state;
     this.form.props.form.validateFields((err, vals) => {
-      if (err) {
-        APP.error('请检查输入项')
-        return
-      }
-      vals.freightTemplateId = +vals.freightTemplateId
-      if (err) {
-        APP.error('请检查必填项')
-        return
-      }
       if (!err) {
         if (specs.find((item) => { return item.content.length === 0 })) {
           APP.error('请添加商品规格')
@@ -338,7 +279,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           message.error('请添加sku项');
           return false;
         }
-        if (vals.withShippingFree === 0 && !vals.freightTemplateId) {
+        if (vals.withShippingFree === 0 && !freightTemplateId) {
           message.error('请选择运费模板');
           return;
         }
@@ -349,38 +290,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             propertyId2: specs[1] && propertyId2,
           });
         }
-        // let isExistImg = true
-        // let isNotExistImg = true
-        // const skuAddList = forEach(cloneDeep(skuList), item => {
-          // if (item.imageUrl1) {
-          //   isNotExistImg = false
-          // }
-          // if (!item.imageUrl1) {
-          //   isExistImg = false
-          // }
-          // item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
-          // item.costPrice = formatMoneyBeforeRequest(item.costPrice);
-          // item.salePrice = formatMoneyBeforeRequest(item.salePrice);
-          // item.marketPrice = formatMoneyBeforeRequest(item.marketPrice);
-          // item.cityMemberPrice = formatMoneyBeforeRequest(item.cityMemberPrice);
-          // item.managerMemberPrice = formatMoneyBeforeRequest(item.managerMemberPrice);
-          // item.areaMemberPrice = formatMoneyBeforeRequest(item.areaMemberPrice);
-          // item.headPrice = formatMoneyBeforeRequest(item.headPrice);
-        // });
-        /** isNotExistImg为false存在图片上传, isExistImg为false存在未上传图片*/
-        // if (!isNotExistImg && !isExistImg) {
-        //   APP.error('存在未上传的商品图')
-        //   return
-        // }
-        // const productImage = [];
-        // map(vals.productImage, item => {
-        //   productImage.push(replaceHttpUrl(item.url));
-        // });
-
-        // const listImage = [];
-        // map(vals.listImage, item => {
-        //   listImage.push(replaceHttpUrl(item.url));
-        // });
         /** 推送至仓库中即为下架，详情和列表页状态反了 */
         vals.status =  status === undefined ? vals.status : status
         for (let item of skuList) {
@@ -390,22 +299,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         }
         const params = {
           ...vals,
+          freightTemplateId: +freightTemplateId,
           returnContact: this.state.returnContact,
           returnPhone: this.state.returnPhone,
           returnAddress: this.state.returnAddress,
           property1: specs[0] && specs[0].title,
           property2: specs[1] && specs[1].title,
           skuAddList: skuList,
-          // coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].url),
-          // videoCoverUrl:
-          //   vals.videoCoverUrl && vals.videoCoverUrl[0]
-          //     ? replaceHttpUrl(vals.videoCoverUrl[0].url)
-          //     : '',
-          // videoUrl: vals.videoUrl && vals.videoUrl[0] ? replaceHttpUrl(vals.videoUrl[0].url) : '',
-          // listImage: listImage.join(','),
-          // productImage: productImage.join(','),
           ...property,
-          // bannerUrl: vals.bannerUrl && replaceHttpUrl(vals.bannerUrl[0].url),
           categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
         };
         setProduct({ productId: this.id, ...params }).then((res: any) => {
@@ -499,7 +400,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       interceptionVisible,
       productSeletorVisible,
       productCustomsDetailVOList,
-      supplierInfo
+      supplierInfo,
+      freightTemplateId
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
     return (
@@ -532,7 +434,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                     }]
                   })(
                     <Input
-                      style={{ width: 172 }}
+                      style={{ width: '60%' }}
                       placeholder='请输入商品条码'
                     />
                   )}
@@ -559,7 +461,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                     }]
                   })(
                     <Input
-                      style={{ width: 172 }}
+                      style={{ width: '60%' }}
                       placeholder='请输入库存商品ID'
                     />
                   )}
@@ -594,7 +496,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 }
               } as GetFieldDecoratorOptions)(
                 <ProductCategory
-                  style={{ width: 250 }}
+                  style={{ width: '60%' }}
                 />
               )
             }}
@@ -616,7 +518,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 onChange: this.supplierChange
               } as GetFieldDecoratorOptions)(
                 <SupplierSelect
-                  style={{ width: 172 }}
+                  style={{ width: '60%' }}
                   disabled={this.id !== -1 && supplierInfo.category === 4}
                   options={isEmpty(supplierInfo) ? [] : [supplierInfo]}
                 />
@@ -630,7 +532,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 <>
                   {form.getFieldDecorator('storeProductId')(
                     <Input
-                      style={{ width: 172 }}
+                      style={{ width: '60%' }}
                       placeholder='请填写供货商商品ID'
                     />
                   )}
@@ -863,12 +765,13 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                   >
                     <TemplateList
                       dataSource={this.state.templateOptions}
+                      value={freightTemplateId}
+                      onChange={(freightTemplateId) => {
+                        this.setState({
+                          freightTemplateId
+                        })
+                      }}
                     />
-                    {/* {this.form && this.form.props.form.getFieldDecorator('freightTemplateId')(
-                      <TemplateList
-                        dataSource={this.state.templateOptions}
-                      />
-                    )} */}
                   </Radio>
                 </Radio.Group>
               )
@@ -957,7 +860,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                     {form.getFieldDecorator('listImage')(
                       <DraggableUpload
                         className={styles['goods-draggable']}
-                        // id={'shop-detail'}
                         listNum={20}
                         size={0.3}
                         placeholder='上传商品详情图'
