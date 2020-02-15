@@ -19,14 +19,20 @@ export function editRole(params) {
 // 角色列表
 
 export function getRoleList(params) {
-  // return Fetch.request(`/role/list?${qs.stringify(params)}`);
   return Fetch.post('/role/list', params);
 }
 
 // 角色详情
 
 export function getRoleInfo(params) {
-  return Fetch.request(`/permission/qryPermissions?${qs.stringify(params)}`);
+  return Fetch.post(
+    `/permission/qryPermissions`,
+    {},
+    {
+      data: params,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+    }
+  );
 }
 
 // 为角色添加权限
