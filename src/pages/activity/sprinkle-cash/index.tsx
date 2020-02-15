@@ -22,7 +22,7 @@ class SprinkleCash extends React.Component {
       title: `确定结束 活动ID：${id} 吗`,
       okText: '确定结束',
       onOk: () => {
-        over({ id, isOverTask: 1 }).then(res => {
+        over({ id }).then(res => {
           if (res) {
             APP.success('确定结束成功');
             this.list.refresh();

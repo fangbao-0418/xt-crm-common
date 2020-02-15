@@ -28,8 +28,7 @@ export function getDetail(id: number) {
 
 // 关闭活动
 export function over(payload: {
-  id: number,
-  isOverTask: 0 | 1
+  id: number
 }) {
   return newPost('/dailyCash/over', payload);
 }

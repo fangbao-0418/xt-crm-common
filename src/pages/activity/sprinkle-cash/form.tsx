@@ -8,12 +8,24 @@ import { RouteComponentProps } from 'react-router';
 import { getDetail, add, update } from './api';
 import ReadOnlyComponent from '@/components/readonly-component';
 import { FormComponentProps } from 'antd/es/form';
-import moment, { Moment } from 'moment';
-import { disabledDate } from '@/util/antdUtil';
+import moment from 'moment';
+import { disabledDate, disabledDateTime } from '@/util/antdUtil';
+import { RangePickerValue, RangePickerProps } from 'antd/lib/date-picker/interface';
 const { RangePicker } = DatePicker;
+
+function disabledTime(current: RangePickerValue, type: string) {
+  if (type === 'start') {
+    return disabledDateTime(moment(), new Date())
+  }
+  return {
+    disabledHours: () => [],
+    disabledMinutes: () => [],
+    disabledSeconds: () => []   
+  }
+}
 export interface SprinkleCashFormProps extends FormComponentProps, RouteComponentProps<{id: string}> {
   id ?: number,
-  activityDate: Moment[]
+  activityDate: moment.Moment[]
   maxTaskNum: number,
   awardType: number,
   awardValue: number,
@@ -84,7 +96,7 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
     return value;
   }
 
-  checkActivityDate = async (rule: any, value: [Moment, Moment]) => {
+  checkActivityDate = async (rule: any, value: [moment.Moment, moment.Moment]) => {
     value = value || []
     if (!value[0]) {
       throw new Error('请选择活动开始日期');
@@ -133,11 +145,9 @@ class SprinkleCashForm extends React.Component<SprinkleCashFormProps, any> {
                 <ReadOnlyComponent readOnly={this.readOnly}>
                   <RangePicker
                     disabled={this.id !== -1}
-                    disabledDate={(current: Moment | null) => disabledDate(current, moment())}
-                    showTime={{
-                      hideDisabledOptions: true,
-                      defaultValue: [moment(), moment('11:59:59', 'HH:mm:ss')]
-                    }}
+                    disabledDate={(current) => disabledDate(current, new Date())}
+                    disabledTime={disabledTime}
+                    showTime
                   />
                 </ReadOnlyComponent>
               )
