@@ -86,9 +86,9 @@ class Main extends React.Component<Props, State> {
               return
             }
           }
-          if (!info1 && info2.authStatus !== 1) {
-            message = '该用户未进行实名认证，不允许添加为主播！'
-          }
+          // if (!info1 && info2.authStatus !== 1) {
+          //   message = '该用户未进行实名认证，不允许添加为主播！'
+          // }
           if (message) {
             this.setState({
               message,
