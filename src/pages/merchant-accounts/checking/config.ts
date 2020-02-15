@@ -6,76 +6,74 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      a: {
-        type: 'number',
-        label: '对账单ID'
-      },
-      memberId: {
-        type: 'input',
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              pattern: /^\d+$/,
-              message: '格式不正确'
-            }
-          ]
-        }
-      },
-      anchorId: {
-        type: 'number', label: '主播ID',
+      accId: {
+        type: 'number', label: '对账单ID',
         controlProps: {
-          style: {
-            width: 150
-          },
-          placeholder: '主播ID'
+          style: {width: 150}
         }
       },
-      nickName: {
-        type: 'input', label: '主播昵称',
-        controlProps: {
-          placeholder: '主播昵称'
-        }
-      },
-      status: {
+      accStatus: {
         type: 'select', label: '状态',
         fieldDecoratorOptions: {
-          initialValue: 0
+          initialValue: 10
         },
         options: [
-          {label: '黑名单主播', value: 1},
-          {label: '正常', value: 0}
+          {label: '可申请结算', value: 10},
+          {label: '结算中', value: 20},
+          {label: '已结算', value: 30},
+          {label: '冻结中', value: 40}
+          // {label: '关闭', value: 60}
+        ]
+      }
+    },
+    statements: {
+      currency: {
+        type: 'select', label: '对账单ID',
+        fieldDecoratorOptions: {
+          initialValue: 1
+        },
+        options: [
+          {label: '人民币', value: 1}
         ]
       },
-      anchorIdentityType: {
-        type: 'select', label: '主播身份',
+      accountType0: {
+        type: 'radio', label: '请选择账户',
         options: [
-          {label: '供应商', value: 20},
-          {label: '公司', value: 10},
-          {label: '合作网红', value: 30},
-          {label: '代理', value: 40}
+          {label: '新账户', value: 1},
+          {label: '已有账户', value: 2}
+        ]
+      },
+      accountType: {
+        type: 'radio', label: '账户类型',
+        options: [
+          {label: '微信', value: 1},
+          {label: '支付宝', value: 2},
+          {label: '个人银行卡', value: 3},
+          {label: '对公银行账户', value: 4}
         ],
         fieldDecoratorOptions: {
+          initialValue: 1,
           rules: [
-            {
-              required: true,
-              message: '请选择主播身份'
-            }
+            {required: true, message: '请选择账户类型'}
           ]
         }
       },
-      anchorLevel: {
-        type: 'select', label: '主播等级',
-        options: [
-          {label: '星级主播', value: 10},
-          {label: '普通主播', value: 0}
-        ],
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              required: true,
-              message: '请选择主播等级'
-            }
-          ]
+      accountName: {
+        type: 'input', label: '账户名',
+        controlProps: {
+          placeholder: '真实姓名或企业名称'
+        }
+      },
+      accountCode: {
+        type: 'input', label: '账号',
+        controlProps: {
+          placeholder: '手机号/邮箱'
+        }
+      },
+      bankName: {
+        type: 'input', label: '银行名称',
+        controlProps: {
+          placeholder: '请选择收款账号银行名称'
         }
       }
     }
@@ -83,14 +81,24 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   return _.mergeWith(defaultConfig, partial)
 }
 
-export enum AnchorIdentityTypeEnum {
-  供应商 = 20,
-  公司 = 10,
-  合作网红 = 30,
-  代理 = 40
+/** @对账单状态（10：待结算；20：部分结算；30：已结清；40：已失效;60关闭） */
+export enum AccStatusEnum {
+  可申请结算 = 10,
+  结算中 = 20,
+  已结算 = 30,
+  冻结中 = 40
 }
 
-export enum AnchorLevelEnum {
-  星级主播 = 10,
-  普通主播 = 0
+/** 交易状态（1：完成 2：未完成 3：出现异常） */
+export enum PaymentStatusEnum {
+  完成 = 1,
+  未完成 = 2,
+  出现异常 = 3
+}
+
+/** 交易类型(1:订单收入 2：售后退款 3：运费收入 4：运费支出 5：优惠券退款) */
+export enum PaymentTypeEnum {
+  完成 = 1,
+  未完成 = 2,
+  出现异常 = 3
 }

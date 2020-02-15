@@ -3,19 +3,53 @@ import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from '../config'
 import Upload from '@/components/upload'
-class Main extends React.Component {
+import { Button } from 'antd'
+
+interface Props {
+  readonly?: boolean
+}
+
+class Main extends React.Component<Props> {
+  public form: FormInstance
+  public validateAccId () {
+
+  }
   public render () {
+    const readonly = this.props.readonly
     return (
       <div>
         <Form
           config={getFieldsConfig()}
+          formItemStyle={{
+            marginBottom: 10
+          }}
+          getInstance={(ref) => { this.form = ref }}
+          readonly={readonly}
         >
-          <FormItem name='a' type='input' label='对账单ID' />
-          <FormItem name='b' />
-          <FormItem name='c' />
-          <FormItem name='e' />
           <FormItem
-            name='a5'
+            name='accId'
+            type='input'
+            label='对账单ID'
+            controlProps={{
+              style: { width: '100%' }
+            }}
+            wrapperCol={{span: 14}}
+            addonAfterCol={{span: 6}}
+            addonAfter={!readonly && (
+              <Button
+                className='ml10'
+                onClick={this.validateAccId.bind(this)}
+              >
+                校验
+              </Button>
+            )}
+          />
+          <FormItem name='accName' />
+          {/* <FormItem name='c' label='供应商' /> */}
+          <FormItem name='trimType' />
+          <FormItem name='trimReason' />
+          <FormItem
+            name='trimMoney'
             wrapperCol={{
               span: 6
             }}
@@ -26,19 +60,20 @@ class Main extends React.Component {
               <span>（仅支持精确到小数点2位）</span>
             )}
           />
-          <FormItem name='a6' />
+          <FormItem name='trimExplain' />
           <FormItem
             label='调整文件'
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('a7')(
-                     <Upload
+                  {form.getFieldDecorator('trimFileUrl')(
+                    <Upload
                       listType='text'
+                      // maxCount={3}
                       listNum={3}
-                      fileType={['spreadsheetml', 'wordprocessingml']}
-                      fileTypeText='请上传正确doc、xls格式文件'
-                     >
+                      // fileType={['spreadsheetml', 'wordprocessingml']}
+                      // fileTypeText='请上传正确doc、xls格式文件'
+                    >
                       <span className='href'>+添加文件</span>
                     </Upload>
                   )}
@@ -52,13 +87,14 @@ class Main extends React.Component {
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('a8')(
-                     <Upload
+                  {form.getFieldDecorator('trimImgUrl')(
+                    <Upload
                       listType='picture-card'
+                      // maxCount={5}
                       listNum={5}
                       multiple
-                      size={2}
-                     >
+                      // size={2}
+                    >
                     </Upload>
                   )}
                   <div style={{fontSize: 12, color: '#999'}}>- 支持png、jipg、jpeg格式，最多可上传5张图片，最大支持2MB</div>

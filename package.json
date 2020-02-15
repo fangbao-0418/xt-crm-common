@@ -16,7 +16,8 @@
     "mock": "nodemon mock/server.js",
     "i18n": "gulp i18n-json-merge",
     "dev": "react-app-rewired start",
-    "submodule": "git submodule update --init --remote"
+    "submodule": "git submodule update --init --remote",
+    "ytt": "node ./node_modules/yapi-to-typescript/lib/cli.js"
   },
   "dependencies": {
     "@rematch/core": "^1.1.0",
@@ -87,7 +88,8 @@
     "simple-git": "^1.126.0",
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
-    "typescript": "^3.6.2"
+    "typescript": "^3.6.2",
+    "yapi-to-typescript": "^2.0.2"
   },
   "browserslist": [
     ">0.2%",

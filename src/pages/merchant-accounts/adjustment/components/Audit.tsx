@@ -4,20 +4,24 @@ import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from '../config'
 import Upload from '@/components/upload'
 class Main extends React.Component {
+  public form: FormInstance
   public render () {
     return (
       <div>
         <Form
           config={getFieldsConfig()}
+          getInstance={(ref) => {
+            this.form = ref
+          }}
         >
-          <FormItem name='a11' />
-          <FormItem name='a12' />
+          <FormItem name='reviewStatus' />
+          <FormItem name='trimExplain' label='审核说明' />
           <FormItem
             label='文件凭证'
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('a13')(
+                  {form.getFieldDecorator('trimFileUrl')(
                      <Upload
                       listType='text'
                       listNum={3}
@@ -37,7 +41,7 @@ class Main extends React.Component {
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('a14')(
+                  {form.getFieldDecorator('trimImgUrl')(
                      <Upload
                       listType='picture-card'
                       listNum={5}

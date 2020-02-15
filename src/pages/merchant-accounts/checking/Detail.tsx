@@ -3,60 +3,144 @@ import { Button } from 'antd'
 import styles from './style.module.styl'
 import { FormItem } from '@/packages/common/components/form'
 import ListPage from '@/packages/common/components/list-page'
-import { getFieldsConfig } from './config'
+import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import { parseQuery } from '@/packages/common/utils'
+import { getFieldsConfig, PaymentStatusEnum, PaymentTypeEnum } from './config'
 import * as api from './api'
-class Main extends React.Component {
-  public columns = [
+import { ColumnProps } from 'antd/lib/table'
+import { GetDetailsListOnPageResponse } from './interface'
+// import Ajustment from './components/Ajustment'
+import { withRouter, RouteComponentProps } from 'react-router'
+
+interface Props extends Partial<AlertComponentProps>, RouteComponentProps<{id: string}> {}
+
+interface State {
+  total: number
+  /** 当前页 */
+  page: number
+  /** 页码 */
+  pageSize: number
+}
+
+class Main extends React.Component<Props, State> {
+  public columns: ColumnProps<GetDetailsListOnPageResponse>[] = [
     {
-      dataIndex: 'a',
-      title: '序号'
+      dataIndex: 'id',
+      title: '序号',
+      width: 80,
+      align: 'center',
+      render: (text, record, index) => {
+        const page = this.state.page
+        const pageSize = this.state.pageSize
+        return (page - 1) * pageSize + index + 1
+      }
     }, {
-      dataIndex: 'a',
+      dataIndex: 'sourceNo',
       title: '交易编号'
     }, {
-      dataIndex: 'a',
-      title: '交易类型'
+      dataIndex: 'paymentType',
+      title: '交易类型',
+      render: (text) => {
+        return PaymentTypeEnum[text]
+      }
     }, {
-      dataIndex: 'a',
-      title: '创建时间'
+      dataIndex: 'createTime',
+      title: '创建时间',
+      render: (text) => {
+        return APP.fn.formatDate(text)
+      }
     }, {
-      dataIndex: 'a',
-      title: '完成时间'
+      dataIndex: 'finishTime',
+      title: '完成时间',
+      render: (text) => {
+        return APP.fn.formatDate(text)
+      }
     }, {
-      dataIndex: 'a',
-      title: '交易金额'
+      dataIndex: 'paymentMoney',
+      title: '交易金额',
+      render: (text) => {
+        return APP.fn.formatMoneyNumber(text, 'm2u')
+      }
     }, {
-      dataIndex: 'a',
-      title: '交易状态'
+      dataIndex: 'paymentStatus',
+      title: '交易状态',
+      render: (text) => {
+        return PaymentStatusEnum[text]
+      }
     }
   ]
+  public query = parseQuery()
+  public id = this.props.match.params.id
+  public state: State = {
+    total: 0,
+    page: 1,
+    pageSize: 10
+  }
+  /** 添加调整单 */
+  public addAdjustment = () => {
+    if (this.props.alert) {
+      // this.props.alert({
+      //   width: 600,
+      //   title: '新建调整单',
+      //   content: <Ajustment />
+      // })
+    }
+  }
   public render () {
+    const query = this.query
+    const bulidDate = APP.fn.formatDate(Number(query.bulidDate), 'YYYYMMDD')
     return (
       <div className={styles.detail}>
         <div className={styles['detail-title']}>
-          20191209对账单明细
+          {bulidDate}对账单明细
         </div>
         <div className={styles['detail-header']}>
-          <div>日期：20191209</div>
+          <div>日期：{bulidDate}</div>
           <div>状态：待结算</div>
-          <div>共计：25条</div>
+          <div>共计：{this.state.total}条</div>
         </div>
         <div className={styles['detail-header2']}>
           <div>
-            <div>收入：<span>998.34</span>元</div>
-            <div>支出：<span>99.8</span>元</div>
-            <div>本期对对账单总额：<span>893.09</span>元</div>
+            <div>收入：<span>{query.incomeMoney || '0.00'}</span>元</div>
+            <div>支出：<span>{query.disburseMoney || '0.00'}</span>元</div>
+            <div>本期对对账单总额：<span>{query.settlementMoney || '0.00'}</span>元</div>
           </div>
           <div>
-            <Button type='primary'>新建调整单</Button>
+            <Button
+              type='primary'
+              onClick={this.addAdjustment}
+            >
+              新建调整单
+            </Button>
           </div>
         </div>
         <ListPage
           columns={this.columns}
-          api={api.fetchCheckingList}
+          api={api.fetchDetailList}
+          processPayload={(payload) => {
+            this.setState({
+              page: payload.page,
+              pageSize: payload.pageSize
+            })
+            return {
+              ...payload,
+              accId: this.id,
+              pageNo: payload.page,
+              page: undefined
+            }
+          }}
+          processData={(data) => {
+            this.setState({
+              total: data.total
+            })
+            return {
+              total: data.total,
+              records: data.result
+            }
+          }}
         />
       </div>
     )
   }
 }
-export default Main
+export default withRouter(Main)

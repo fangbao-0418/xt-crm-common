@@ -23,7 +23,7 @@ class Main extends React.Component {
             this.config.map((item) => {
               return (
                 <TabPane tab={item.title} key={String(item.key)}>
-                  <TabItem />
+                  <TabItem status={item.key} />
                 </TabPane>
               )
             })
