@@ -21,7 +21,6 @@ const pubconfig = fs.existsSync('./pubconfig.json')
       outputDir: 'build'
     };
 
-console.log('PUB_ENV => ', pubconfig, process.env.PUB_ENV);
 paths.appBuild = path.resolve(pubconfig.outputDir);
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
@@ -125,7 +124,6 @@ module.exports = override(
   }),
   (function () {
     return function (config) {
-      console.log(isEnvProduction, 'isEnvProduction')
       if (isEnvProduction) {
         config.devtool = false;
       }

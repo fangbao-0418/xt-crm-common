@@ -8,6 +8,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
     common: {
       phone: {
         type: 'input',
+        label: '手机号码',
         fieldDecoratorOptions: {
           rules: [
             {
@@ -18,7 +19,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       memberId: {
-        type: 'input',
+        type: 'number',
+        controlProps: {
+          style: {
+            width: 150
+          },
+          placeholder: '主播ID'
+        },
         fieldDecoratorOptions: {
           rules: [
             {
