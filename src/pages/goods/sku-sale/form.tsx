@@ -69,6 +69,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     freightTemplateId: ''
   }
   id: number;
+  modifyTime: number;
   constructor(props: SkuSaleFormProps) {
     super(props);
     this.id = +props.match.params.id;
@@ -90,6 +91,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       getCategoryList(),
       getTemplateList()
     ]).then(([res, list, templateOptions]) => {
+      this.modifyTime = res.modifyTime;
       const categoryId =
         res.productCategoryVO && res.productCategoryVO.id
           ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
@@ -297,6 +299,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           }
         }
         setProduct({
+          modifyTime: this.modifyTime,
           productId: this.id,
           freightTemplateId,
           property1: specs[0] && specs[0].title,
@@ -414,6 +417,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         <ProductSeletor visible={productSeletorVisible}/>
         <Card title='添加/编辑商品'>
           <FormItem verifiable name='warehouseType' />
+          <FormItem verifiable name='checkType' />
           <FormItem
             label='商品条码'
             inner={(form) => {

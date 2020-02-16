@@ -1,15 +1,11 @@
+import { typeOptions } from '../lottery/config'
 
 export function getDefaultConfig () {
   const defaultConfig = {
     reward: {
       type: {
         label: '活动类型', type: 'select',
-        options: [
-          {label: '红包雨', value: 1},
-          {label: '九宫格抽奖', value: 2},
-          {label: '砸金蛋', value: 3},
-          {label: '财神拜年', value: 4}
-        ]
+        options: typeOptions
       },
       title: {
         label: '活动名称'
@@ -55,7 +51,9 @@ export enum TypeEnum {
   '红包雨' = 1,
   '九宫格抽奖' = 2,
   砸金蛋 = 3,
-  财神拜年 = 4
+  财神拜年 = 4,
+  '团长特殊晋升活动' = 5,
+  '区长发底薪' = 6
 }
 
 /** 状态 */
