@@ -17,8 +17,20 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
+      phone: {
+        type: 'input', label: '手机号码'
+      },
+      anchorPhone: {
+        type: 'input', label: '手机号码'
+      },
       planId: {
-        type: 'input', label: '房间ID',
+        type: 'number', label: '房间ID',
+        controlProps: {
+          style: {
+            width: 150
+          },
+          placeholder: '房间ID'
+        },
         fieldDecoratorOptions: {
           rules: [
             {

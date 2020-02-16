@@ -5,6 +5,7 @@ import { isFunction, filter } from 'lodash';
 import { getStsPolicy } from './api';
 import { createClient, ossUploadBlob } from './oss.js';
 import { getUniqueId } from '@/packages/common/utils/index'
+
 const uploadButton = props => (
   <div>
     <Icon type="plus" />
@@ -23,6 +24,13 @@ export async function ossUpload(file) {
       message.error('上传失败，请重试', 'middle');
     }
   }
+}
+
+export function formatValue (value) {
+  if (value instanceof Array) {
+    return value.map((item) => (item.rurl || '')).join(',')
+  }
+  return ''
 }
 
 class UploadView extends Component {
@@ -61,7 +69,6 @@ class UploadView extends Component {
     return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
   }
   initFileList(fileList = []) {
-    // console.log(fileList, 'initFileList')
     fileList = fileList || []
     const { fileType } = this.props;
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
@@ -88,6 +95,8 @@ class UploadView extends Component {
       val.uid = result.uid;
       val.url = result.url;
       val.thumbUrl = result.thumbUrl
+      val.rurl = this.replaceUrl(result.url)
+      console.log(val, '----------------')
       return val
     });
   }

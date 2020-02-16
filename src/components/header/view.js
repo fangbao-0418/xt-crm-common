@@ -7,22 +7,24 @@ import * as LocalStorage from '@/util/localstorage';
 function menu(logout) {
   return (
     <Menu>
-    {/* <Menu.Item key="1">
-      <Link to="/settings">
-        <Icon type="setting" />&nbsp;重置密码
-      </Link>
-    </Menu.Item> */}
-    <Menu.Divider />
-    <Menu.Item key="2">
-      <Link to="/login" onClick={() => logout()}>
-        <Icon type="poweroff" />&nbsp;退出登录
-      </Link>
-    </Menu.Item>
-  </Menu>
+      <Menu.Item key="1">
+        <Link to="/settings">
+          <Icon type="setting" />
+          &nbsp;修改密码
+        </Link>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="2">
+        <Link to="/login" onClick={() => logout()}>
+          <Icon type="poweroff" />
+          &nbsp;退出登录
+        </Link>
+      </Menu.Item>
+    </Menu>
   );
 }
 
-const Header = ({collapsed, setCollapsed, logout}) => {
+const Header = ({ collapsed, setCollapsed, logout }) => {
   const user = LocalStorage.get('user') || {};
   return (
     <div className={styles['header-wrapper']}>
