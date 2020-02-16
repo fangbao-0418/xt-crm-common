@@ -21,6 +21,16 @@ const SettlementList = Loadable({
   loader: () => import('./settlement'),
   loading: Loader,
 });
+/** 结算明细 */
+const SettlementDetail = Loadable({
+  loader: () => import('./settlement/detail'),
+  loading: Loader,
+});
+/** 付款单列表 */
+const PaymentList = Loadable({
+  loader: () => import('./payment'),
+  loading: Loader,
+});
 interface Props extends RouteComponentProps {}
 class Main extends React.Component<Props> {
   public render () {
@@ -31,6 +41,8 @@ class Main extends React.Component<Props> {
         <Route exact path={`${match.url}/checking/:id`} component={CheckingDetail} />
         <Route exact path={`${match.url}/adjustment`} component={AdjusmentList} />
         <Route exact path={`${match.url}/settlement`} component={SettlementList} />
+        <Route exact path={`${match.url}/settlement/:id`} component={SettlementDetail} />
+        <Route exact path={`${match.url}/payment`} component={PaymentList} />
       </Switch>
     )
   }
