@@ -41,6 +41,7 @@ class Main extends React.Component<Props, State> {
     }
   }
   public setValues (values: InfoResponse) {
+    values.trimMoney = APP.fn.formatMoneyNumber(values.trimMoney, 'm2u')
     this.adjustmentRef.form.setValues(values)
   }
   public addAdjustment () {
@@ -48,13 +49,17 @@ class Main extends React.Component<Props, State> {
   }
   public validateField () {
     this.adjustmentRef.form.props.form.validateFields((err, value) => {
-      console.log(value, '-------')
+      if (err) {
+        APP.error('请检查输入项')
+        return
+      }
       value = {
         ...value,
         // trimImgUrl: (value.trimImgUrl || []).map((item: {url: string}) => item.url).join(','),
         // trimFileUrl: (value.trimFileUrl || []).map((item: {url: string}) => item.url).join(',')
         trimImgUrl: JSON.stringify(value.trimImgUrl || []),
-        trimFileUrl: JSON.stringify(value.trimFileUrl || [])
+        trimFileUrl: JSON.stringify(value.trimFileUrl || []),
+        trimMoney: APP.fn.formatMoneyNumber(value.trimMoney, 'u2m')
       }
       api.addAdjustment(value).then(() => {
         if (this.props.onOk) {

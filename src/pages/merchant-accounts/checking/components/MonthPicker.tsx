@@ -38,13 +38,20 @@ class Main extends React.Component<Props, State> {
     })
   }
   public onChange (type: 'y' | 'm', e: any) {
-    const selectedValue = Number(e.target.value)
+    const selectedValue = e.target.value ? Number(e.target.value) : e.target.value
     let value = this.state.value
     if (type === 'y') {
       value = [selectedValue]
+      if (!selectedValue) {
+        value = []
+      }
     } else {
       value[1] = selectedValue
+      if (!selectedValue) {
+        value = [value[0]]
+      }
     }
+    console.log(type, selectedValue, '------------')
     if (this.props.onChange) {
       this.props.onChange(value)
     }
@@ -62,9 +69,10 @@ class Main extends React.Component<Props, State> {
         <select
           className='mr10'
           onChange={this.onChange.bind(this, 'y')}
-          value={value[0] || allYears[0]}
+          value={value[0] || ''}
           style={{verticalAlign: 'middle'}}
         >
+          <option value=''>全部</option>
           {allYears.map((item) => {
             return <option value={item} key={item}>{item}</option>
           })}

@@ -41,3 +41,8 @@ export const addAdjustment = (payload: Partial<BuildRequest>) => {
 export const toRevoke = (id: number) => {
   return newPost(`/crm/financeTrimRecord/revoke?id=${id}`)
 }
+
+/** 校验对账单 */
+export const validateAccNo = (id: number) => {
+  return get(`/finance/accountRecord/getSimplifyInfo?accNo=${id}`)
+}

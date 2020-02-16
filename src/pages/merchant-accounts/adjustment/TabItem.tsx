@@ -97,7 +97,7 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'purchaseReviewName',
       title: '采购审核人',
-      width: 100
+      width: 150
     },
     {
       dataIndex: 'purchaseReviewTime',
@@ -110,7 +110,7 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'financeReviewName',
       title: '财务审核人',
-      width: 100
+      width: 150
     },
     {
       dataIndex: 'financeReviewTime',

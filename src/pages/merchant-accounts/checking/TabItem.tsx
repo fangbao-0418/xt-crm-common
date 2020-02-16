@@ -232,7 +232,11 @@ class Main extends React.Component<Props, State> {
               <FormItem
                 label='月份'
                 inner={(form) => {
-                  return form.getFieldDecorator('date')(
+                  const now = new Date()
+                  const initData = [now.getFullYear(), now.getMonth() + 1]
+                  return form.getFieldDecorator('date', {
+                    initialValue: initData
+                  })(
                     <MonthPicker />
                   )
                 }}
@@ -275,9 +279,7 @@ class Main extends React.Component<Props, State> {
           api={api.fetchList}
           processPayload={(payload) => {
             const status = this.props.status
-            const now = new Date()
             const date = payload.date || []
-            // payload.pageSize = 3
             return {
               ...payload,
               pageNo: payload.page,

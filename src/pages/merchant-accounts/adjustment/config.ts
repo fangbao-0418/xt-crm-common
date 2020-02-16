@@ -23,6 +23,17 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
+      accNo: {
+        type: 'number', label: '对账单ID',
+        controlProps: {
+          style: { width: 150 }
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '对账单ID不能为空'}
+          ]
+        }
+      },
       accId: {
         type: 'number', label: '对账单ID',
         controlProps: {

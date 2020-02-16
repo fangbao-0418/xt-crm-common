@@ -4,6 +4,7 @@ import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from '../config'
 import Upload from '@/components/upload'
 import { Button } from 'antd'
+import * as api from '../api'
 
 interface Props {
   readonly?: boolean
@@ -12,7 +13,18 @@ interface Props {
 class Main extends React.Component<Props> {
   public form: FormInstance
   public validateAccId () {
-
+    const values = this.form.getValues()
+    const id = values.accNo
+    if (!id) {
+      APP.error('请输入对账单ID')
+      return
+    }
+    api.validateAccNo(id).then((res) => {
+      APP.success('校验通过')
+      this.form.setValues({
+        accName: res.accName
+      })
+    })
   }
   public render () {
     const readonly = this.props.readonly
@@ -29,14 +41,16 @@ class Main extends React.Component<Props> {
           wrapperCol={{span: 18}}
         >
           <FormItem
-            name='serialNo'
+            name='accNo'
             type='input'
             label='对账单ID'
             verifiable
             controlProps={{
               style: { width: '100%' }
             }}
-            wrapperCol={{span: 10}}
+            wrapperCol={{
+              span: readonly ? 19 : 10
+            }}
             addonAfterCol={{span: 6}}
             addonAfter={!readonly && (
               <Button
@@ -60,7 +74,7 @@ class Main extends React.Component<Props> {
             addonAfterCol={{
               span: 10
             }}
-            addonAfter={(
+            addonAfter={!readonly && (
               <span style={{fontSize: 12, color: '#999'}}>（仅支持精确到小数点2位）</span>
             )}
           />
@@ -76,6 +90,7 @@ class Main extends React.Component<Props> {
                       listType='text'
                       // maxCount={3}
                       listNum={3}
+                      // maxSize={10}
                       // fileType={['spreadsheetml', 'wordprocessingml']}
                       // fileTypeText='请上传正确doc、xls格式文件'
                     >

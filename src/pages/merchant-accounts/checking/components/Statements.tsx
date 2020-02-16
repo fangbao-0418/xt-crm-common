@@ -88,11 +88,18 @@ class Main extends React.Component<Props> {
           <FormItem name='currency' />
           <FormItem
             name='newAccount'
-            label='收款账户'
+            label='请选择账户'
             controlProps={{
               onChange: (e: any) => {
                 this.setState({
                   newAccount: e.target.value
+                }, () => {
+                  this.setState({
+                    type: 2
+                  })
+                  this.form.setValues({
+                    accountType: 2
+                  })
                 })
               }
             }}
@@ -103,12 +110,21 @@ class Main extends React.Component<Props> {
               label='收款账户'
               required
               inner={(form) => {
-                return form.getFieldDecorator('accountId')(
+                return form.getFieldDecorator('accountId', {
+                  rules: [{
+                    required: true, message: '请选择收款账户'
+                  }]
+                })(
                   <SelectFetch
                     fetchData={() => {
                       const { id } = this.props.selectedRows[0]
                       return api.fetchGatheringAccountList(id).then((res) => {
-                        return res
+                        return (res || []).map((item: {accoutName: string, id: number}) => {
+                          return {
+                            label: item.accoutName,
+                            value: item.id
+                          }
+                        })
                       })
                     }}
                   />
@@ -128,8 +144,8 @@ class Main extends React.Component<Props> {
                 }
               }}
             />
-            <FormItem name='accountName' />
-            <FormItem name='accountCode' />
+            <FormItem name='accountName' verifiable />
+            <FormItem name='accountCode' verifiable />
             <If condition={[1, 2].indexOf(type) === -1}>
               <FormItem name='bankName' verifiable />
             </If>
@@ -168,7 +184,7 @@ class Main extends React.Component<Props> {
                     >
                     </Upload>
                   )}
-                  <div style={{fontSize: 12, color: '#999'}}>- 支持png、jipg、jpeg格式，最多可上传5张图片，最大支持2MB</div>
+                  <div style={{fontSize: 12, color: '#999'}}>- 支持png、jpg、jpeg格式，最多可上传5张图片，最大支持2MB</div>
                   <div style={{fontSize: 12, color: '#999'}}>- 添加文件和图片凭证，可提高审核效率哦～</div>
                 </div>
               )

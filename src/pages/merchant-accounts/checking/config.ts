@@ -20,9 +20,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       },
       accStatus: {
         type: 'select', label: '状态',
-        fieldDecoratorOptions: {
-          initialValue: 10
-        },
         options: [
           {label: '可申请结算', value: 10},
           {label: '结算中', value: 20},
@@ -36,7 +33,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       currency: {
         type: 'select', label: '币种',
         fieldDecoratorOptions: {
-          initialValue: 10
+          initialValue: 10,
+          rules: [
+            {required: true, message: '请选择币种'}
+          ]
         },
         options: [
           {label: '人民币', value: 10}
@@ -82,18 +82,33 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input', label: '账户名',
         controlProps: {
           placeholder: '真实姓名或企业名称'
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '请输入真实姓名或企业名称'}
+          ]
         }
       },
       accountCode: {
         type: 'input', label: '账号',
         controlProps: {
           placeholder: '手机号/邮箱'
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '请输入手机号/邮箱'}
+          ]
         }
       },
       bankName: {
         type: 'input', label: '银行名称',
         controlProps: {
           placeholder: '请选择收款账号银行名称'
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '请输入银行名称'}
+          ]
         }
       }
     }
