@@ -4,16 +4,18 @@ import { setQuery, parseQuery } from '@/util/utils';
 import List from './list';
 import {enumPayType, TextMapPayStatus} from '../constant'
 const { TabPane } = Tabs;
+const enumPayTypeIndex = {...enumPayType};
+delete enumPayTypeIndex.Freezing;
 class PayMent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      paymentStatus:  parseQuery().paymentStatus || '0'
+      paymentStatus:  parseQuery().paymentStatus || ''
     };
    
   }
   componentDidMount(){
-    this.handleTabClick(parseQuery().paymentStatus || '0')
+    this.handleTabClick(parseQuery().paymentStatus || '')
   }
   handleTabClick = paymentStatus => {
     this.setState({paymentStatus})
@@ -26,15 +28,16 @@ class PayMent extends React.Component {
 
   render () {
     let {paymentStatus} = this.state;
+
     return (
       <div>
       <Card >
         <Tabs activeKey={paymentStatus} onTabClick={this.handleTabClick}>
-          {Object.values(enumPayType).map(item=>{
+          {Object.values(enumPayTypeIndex).map(item=>{
             return <TabPane tab={TextMapPayStatus[item]} key={item} />
           })}
         </Tabs>
-        <List />
+        <List paymentStatus={paymentStatus} />
       </Card>
     </div>
     )

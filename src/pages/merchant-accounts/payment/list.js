@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { isNil } from 'lodash';
-import { setQuery, parseQuery, gotoPage } from '@/util/utils';
-import { Table, Card, Form, Input, Button,Divider, message, Upload, DatePicker, Spin, Row, Col, Select, Modal } from 'antd';
+import { setQuery, parseQuery } from '@/util/utils';
+import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin, Row, Col, Select, Modal } from 'antd';
 import PayModal from './payModal'
+import MoneyRender from '@/components/money-render'
 import * as api from '../api'
-import {enumPayType, TextMapPayStatus} from '../constant'
+import { enumPayType, TextMapPayStatus } from '../constant'
+
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 class List extends React.Component {
@@ -16,26 +17,18 @@ class List extends React.Component {
       selectedRowKeys: [],
       supplier: [],
       dataSource: [],
-      record: {}, 
+      recordItem: {},
       page: {
         total: 0,
         current: +params.page || 1,
         pageSize: 10
       },
       list: [
-        {id: 'sssssvfg', createName:'水水水水水水水', createTime:1581404208893, modifyName:8000,modifyTime:1581404268893,paymentMoney:987,paymentName:'fgdh',paymentStatusInfo:10,settId:'ddddd',storeName:'vvvvv'},
-        {id: 'aaaaaaaaaa', createName:'啦啦啦啦啦啦啦', createTime:1581404208893, modifyName:8000,modifyTime:1581404268893,paymentMoney:987,paymentName:'fgdh',paymentStatusInfo:20,settId:'ddddd',storeName:'vvvvv'},
-        {id: 'bbbbbbbbbbb', createName:'烦烦烦烦烦烦烦烦烦', createTime:1581404208893, modifyName:8000,modifyTime:1581404268893,paymentMoney:987,paymentName:'fgdh',paymentStatusInfo:30,settId:'ddddd',storeName:'vvvvv'},
-        {id: 'ccccccccc', createName:'踩踩踩踩踩踩踩踩踩', createTime:1581404208893, modifyName:8000,modifyTime:1581404268893,paymentMoney:987,paymentName:'fgdh',paymentStatusInfo:40,settId:'ddddd',storeName:'vvvvv'},
-        {id: 'ddddddddd', createName:'顶顶顶顶顶顶顶顶', createTime:1581404208893, modifyName:8000,modifyTime:1581404268893,paymentMoney:987,paymentName:'fgdh',paymentStatusInfo:20,settId:'ddddd',storeName:'vvvvv'},
-        {id: 'eeeeeeee', createName:'咩咩咩咩咩咩', createTime:1581404208893, modifyName:8000,modifyTime:1581404268893,paymentMoney:987,paymentName:'fgdh',paymentStatusInfo:10,settId:'ddddd',storeName:'vvvvv'},
-
-      
       ],
       loading: false,
       visible: false,
       confirmLoading: false,
-      modalTitle: '确认付款'
+      modalType: 'look' // look | confirm
     };
 
   }
@@ -45,12 +38,22 @@ class List extends React.Component {
 
     this.fetchData(params);
   }
+  componentDidUpdate(prevProps) {
+    if (this.props.paymentStatus !== prevProps.paymentStatus) {
+      const options = {
+        paymentStatus: this.props.paymentStatus,
+        pageSize: this.state.page.pageSize,
+        page: 1
+      };
+      this.fetchData(options);
+    }
+  }
   // 获取商品列表
-  fetchData(params={}) {
-    const { settType } = this.props;
+  fetchData(params = {}) {
+    const { paymentStatus } = this.props;
     const { page } = this.state;
     const options = {
-      settType,
+      paymentStatus,
       pageSize: page.pageSize,
       page: page.current,
       ...params
@@ -64,19 +67,27 @@ class List extends React.Component {
       setQuery(options);
     })
   }
-  handlePageChange = (page, pageSize) => {
+
+  // 翻页
+  handleChangeTable = e => {
     this.setState(
       {
-        current: page,
-        pageSize
+        page: e
       },
-      this.query
+      () => {
+        const params = parseQuery();
+        this.fetchData({
+          ...params,
+          page: e.current,
+          pageSize: e.pageSize
+        });
+      }
     );
   };
   // 查询
   handleSearch = () => {
     const { validateFields } = this.props.form;
- 
+
     const { paymentStatus } = this.props;
     validateFields((err, vals) => {
       if (!err) {
@@ -91,10 +102,10 @@ class List extends React.Component {
           pageSize: 10,
           paymentStatus
         };
-        delete params.goodsTime;
-        delete params.optionTime;
+        delete params.createTime;
+        delete params.modifyTime;
         // 查询列表
-        // this.fetchData(params);
+        this.fetchData(params);
       }
     });
   };
@@ -108,98 +119,101 @@ class List extends React.Component {
     this.fetchData(parseQuery());
   };
   // 确认支付
-  handleConfirm=(record, type) =>() => {
-    // console.log(record)
+  handleConfirm = (record, type) => () => {
+    // 查看明细
+    if (type === 'look') {
+      api.getPaymentDetail(record.id).then(res => {
+        this.setState({
+          recordItem: res,
+          visible: true,
+          modalType: type,
+
+        })
+      })
+    } else {
+      this.setState({
+        visible: true,
+
+        modalType: type,
+        recordItem: record
+      })
+    }
+
+  };
+  handlePayConfirm = () => {
     this.setState({
-      visible: true,
-      modalTitle: type === 'confirm' ? '确认付款':'查看明细',
-      record
+      visible: false
     })
+    this.fetchData()
   };
-  handlePayConfirm=()=> {
-    alert('确认支付确定')
-  };
-  handleRejectCancel=()=> {
+  handleRejectCancel = () => {
     this.setState({
       visible: false
     })
   };
-    /**
-   * 选择项发生变化时的回调
-   */
-  onSelectChange = (selectedRowKeys, selectedRows) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({
-      selectedRowKeys,
-      selectedRows
-    });
-  };
-  query() {
-    
-  }
+
   render() {
-    const { total, pageSize, current, list, selectedRowKeys, record } = this.state;
+    const { total, pageSize, current, dataSource, recordItem, modalType } = this.state;
 
     const {
-      form:{ getFieldDecorator }
+      form: { getFieldDecorator }
     } = this.props;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange
-    };
+
     const columns = [
       {
         title: 'ID',
-        key:'id',
+        key: 'id',
         dataIndex: 'id',
       },
       {
         title: '付款单名称',
-        key:'paymentName',
-        dataIndex: 'paymentName',
+        key: 'paymentName',
+        dataIndex: 'paymentName'
       },
       {
         title: '结算ID',
-        key:'settId',
+        key: 'settId',
         dataIndex: 'settId',
-      
+
       },
       {
         title: '金额',
-        key:'paymentMoney',
+        key: 'paymentMoney',
         dataIndex: 'paymentMoney',
-      
+        render: MoneyRender
       },
       {
         title: '供应商',
-        key:'storeName',
+        key: 'storeName',
         dataIndex: 'storeName',
-       
+
       },
       {
         title: '状态',
-        key:'paymentStatusInfo',
-        dataIndex: 'paymentStatusInfo',
-        render: value => TextMapPayStatus[value]
+        key: 'paymentStatusInfo',
+        dataIndex: 'paymentStatusInfo'
       },
       {
         title: '创建时间',
-        key:'createTime',
+        key: 'createTime',
         dataIndex: 'createTime',
+        render: (createTime) => APP.fn.formatDate(createTime)
       },
       {
         title: '创建人',
-        key:'createName',
+        key: 'createName',
         dataIndex: 'createName',
       },
       {
         title: '操作时间',
-        key:'modifyTime',
+        key: 'modifyTime',
         dataIndex: 'modifyTime',
+        render: (modifyTime) => APP.fn.formatDate(modifyTime)
+
       },
       {
         title: '操作人',
-        key:'modifyName',
+        key: 'modifyName',
         dataIndex: 'modifyName',
       },
       {
@@ -208,22 +222,22 @@ class List extends React.Component {
         render: (operate, record) => (
           <>
             {
-              enumPayType.ToBePaid === record.paymentStatusInfo 
-              ? <Button type="primary" onClick={this.handleConfirm(record, 'confirm')}>确认支付</Button>
-              : enumPayType.Freezing === record.paymentStatusInfo 
-              ? <Button type="primary" disabled>确认支付</Button>
-              : enumPayType.Paid === record.paymentStatusInfo 
-              ? <Button type="link" onClick={this.handleConfirm(record, 'look')}>查看明细</Button>
-              : null 
+              enumPayType.ToBePaid === record.paymentStatus
+                ? <Button type="primary" onClick={this.handleConfirm(record, 'confirm')}>确认支付</Button>
+                : enumPayType.Freezing === record.paymentStatus
+                  ? <Button type="primary" disabled>确认支付</Button>
+                  : enumPayType.Paid === record.paymentStatus
+                    ? <Button type="link" onClick={this.handleConfirm(record, 'look')}>查看明细</Button>
+                    : null
             }
           </>
         )
       }
     ];
-    return(
+    return (
       <Spin tip="操作处理中..." spinning={false}>
         <Card title="筛选">
-          <Form labelCol = {{ span: 8 }} wrapperCol={{ span: 16}}>
+          <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label="结算单ID">
@@ -262,7 +276,7 @@ class List extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="全部">
-                  {getFieldDecorator('paymentStatus', {initialValue: ''})(
+                  {getFieldDecorator('paymentStatus', { initialValue: '' })(
                     <Select placeholder="请选择">
                       {Object.values(enumPayType).map((v) => (
                         <Select.Option key={v} value={v}>{TextMapPayStatus[v]}</Select.Option>
@@ -273,7 +287,7 @@ class List extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="创建时间">
-                  {getFieldDecorator('createTime', {initialValue: ''})(
+                  {getFieldDecorator('createTime', { initialValue: '' })(
                     <RangePicker
                       style={{ width: '100%' }}
                       format="YYYY-MM-DD HH:mm"
@@ -284,7 +298,7 @@ class List extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="操作时间">
-                  {getFieldDecorator('modifyTime', {initialValue: ''})(
+                  {getFieldDecorator('modifyTime', { initialValue: '' })(
                     <RangePicker
                       style={{ width: '100%' }}
                       format="YYYY-MM-DD HH:mm"
@@ -297,47 +311,41 @@ class List extends React.Component {
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>查询</Button>
-                <Button type="default" onClick={this.handleReset}>取消</Button>
+                <Button type="default" onClick={this.handleReset}>清除</Button>
               </Col>
             </Row>
           </Form>
         </Card>
         <Card style={{ marginTop: 10 }}>
-          {list && list.length > 0 ? (
+          {dataSource && dataSource.length > 0 ? (
             <Table
-              rowSelection={rowSelection}
               bordered
               columns={columns}
-              dataSource={this.state.list}
+              dataSource={dataSource}
               pagination={{
                 current,
                 total,
                 pageSize,
-                onChange: this.handlePageChange
+                onChange: this.handleChangeTable
               }}
               defaultExpandAllRows={true}
               rowKey={record => record.id}
             />
           ) : (
-            '暂无数据'
-          )}
+              '暂无数据'
+            )}
         </Card>
         {/* 确认提示弹窗 */}
-        <PayModal 
+        <PayModal
+          modalType={modalType}
           modalProps={{
-            title: this.state.modalTitle,
-            visible: this.state.visible, 
-            onOk: this.handleRejectOk, 
-            onCancel:this.handleRejectCancel, 
+            visible: this.state.visible,
+            onOk: this.handleRejectOk,
+            onCancel: this.handleRejectCancel,
             confirmLoading: this.state.confirmLoading
           }}
           handlePayConfirm={this.handlePayConfirm}
-          record={record}
-          imgList={[
-            'https://pics2.baidu.com/feed/9c16fdfaaf51f3de586b533b0dbbdd193b297974.jpeg?token=e35eb97c153e3c56bc63f950cecd6850&s=96B4EC231D9061EF807111F00300C060',
-            'https://pics2.baidu.com/feed/9c16fdfaaf51f3de586b533b0dbbdd193b297974.jpeg?token=e35eb97c153e3c56bc63f950cecd6850&s=96B4EC231D9061EF807111F00300C060',
-            'https://pics2.baidu.com/feed/9c16fdfaaf51f3de586b533b0dbbdd193b297974.jpeg?token=e35eb97c153e3c56bc63f950cecd6850&s=96B4EC231D9061EF807111F00300C060'
-          ]}
+          record={recordItem}
         />
       </Spin>
     )
