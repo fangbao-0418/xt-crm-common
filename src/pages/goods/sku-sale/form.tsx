@@ -13,12 +13,17 @@ import styles from '../style.module.scss';
 import { Form, FormItem, If } from '@/packages/common/components';
 import ProductCategory from '../components/product-category';
 import { defaultConfig } from './config';
-import ProductSeletor from './components/product-seletor';
 import DraggableUpload from '../components/draggable-upload';
 import { RouteComponentProps } from 'react-router';
 import { FormInstance } from '@/packages/common/components/form';
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
 
+function NumberValidator(rule: any, value: any, callback: any) {
+  if (!(/^\d{0,20}$/.test(value))) {
+    callback('仅支持数字，20个字符以内');
+  }
+  callback();
+}
 interface SkuSaleFormState extends Record<string, any> {
   skuList: any[],
   specs: any[],
@@ -37,7 +42,6 @@ interface SkuSaleFormState extends Record<string, any> {
   productCustomsDetailVOList: any[],
   supplierInfo: any,
   fetching: boolean,
-  productSeletorVisible: boolean,
   interceptionVisible: boolean,
   freightTemplateId: string
 }
@@ -64,7 +68,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     supplierInfo: {},
     // 供应商列表加载状态
     fetching: false,
-    productSeletorVisible: false,
     interceptionVisible: false,
     freightTemplateId: ''
   }
@@ -401,7 +404,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   render() {
     const {
       interceptionVisible,
-      productSeletorVisible,
       productCustomsDetailVOList,
       supplierInfo,
       freightTemplateId,
@@ -414,70 +416,83 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         config={defaultConfig}
         namespace='sku'
       >
-        <ProductSeletor visible={productSeletorVisible}/>
         <Card title='添加/编辑商品'>
-          <FormItem verifiable name='warehouseType' />
-          <FormItem verifiable name='checkType' />
           <FormItem
-            label='商品条码'
-            inner={(form) => {
-              return (
-                <>
-                  {form.getFieldDecorator('barCode', {
-                    rules: [{
-                      validator(rule, value, callback) {
-                        if (value) {
-                          if (/^\d{0,20}$/.test(value)) {
-                            callback();
-                          } else {
-                            callback('仅支持数字，20个字符以内');
-                          }
-                        } else {
-                          callback();
-                        }
-                      }
-                    }]
-                  })(
-                    <Input
-                      style={{ width: '60%' }}
-                      placeholder='请输入商品条码'
-                    />
-                  )}
-                  <Button
-                    className='ml10'
-                    onClick={this.checkBarCode}
-                  >
-                    校验
-                  </Button>
-                </>
-              )
+            verifiable
+            name='warehouseType'
+            controlProps={{
+              disabled: this.id !== -1
             }}
           />
+          <FormItem verifiable name='checkType' />
           <FormItem
-            label='库存商品ID'
-            required
+            style={{ marginBottom: 0 }}
+            labelCol={{ span: 0 }}
+            wrapperCol={{ span: 24 }}
             inner={(form) => {
+              const checkType = form.getFieldValue('checkType')
               return (
                 <>
-                  {form.getFieldDecorator('baseProductId', {
-                    rules: [{
-                      required: true,
-                      message: '请输入库存商品ID'
-                    }]
-                  })(
-                    <Input
-                      style={{ width: '60%' }}
-                      placeholder='请输入库存商品ID'
+                  <If condition={checkType === 0}>
+                    <FormItem
+                      label='商品条码'
+                      inner={(form) => {
+                        return (
+                          <>
+                            {form.getFieldDecorator('barCode', {
+                              rules: [{
+                                validator: NumberValidator
+                              }]
+                            })(
+                              <Input
+                                style={{ width: '60%' }}
+                                placeholder='请输入商品条码'
+                              />
+                            )}
+                            <Button
+                              className='ml10'
+                              onClick={this.checkBarCode}
+                            >
+                              校验
+                            </Button>
+                          </>
+                        )
+                      }}
                     />
-                  )}
-                  <Button
-                    className='ml10'
-                    onClick={this.checkBaseProductId}
-                  >
-                    校验
-                  </Button>
+                  </If>
+                  <If condition={checkType === 1}>
+                    <FormItem
+                      label='库存商品ID'
+                      required
+                      inner={(form) => {
+                        return (
+                          <>
+                            {form.getFieldDecorator('baseProductId', {
+                              rules: [{
+                                required: true,
+                                message: '请输入库存商品ID'
+                              }, {
+                                validator: NumberValidator
+                              }]
+                            })(
+                              <Input
+                                style={{ width: '60%' }}
+                                placeholder='请输入库存商品ID'
+                              />
+                            )}
+                            <Button
+                              className='ml10'
+                              onClick={this.checkBaseProductId}
+                            >
+                              校验
+                            </Button>
+                          </>
+                        );
+                      }}
+                    />
+                </If>
                 </>
-              );
+              )
             }}
           />
           <FormItem verifiable name='productName' />
@@ -814,7 +829,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 <Row
                   type='flex'
                   style={{
-                    marginTop: 4,
+                    marginTop: 5,
                     width: '60%'
                   }}>
                   <Input

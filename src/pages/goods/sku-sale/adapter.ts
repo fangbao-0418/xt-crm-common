@@ -1,12 +1,12 @@
 import { filterMoney, filterUploadFile } from '../sku-stock/adapter';
-import { SkuProps } from '../components/sku';
+import { SkuSaleProps } from '../components/sku';
 import { replaceHttpUrl } from '../sku-stock/adapter';
 
 const fields: string[] = ['costPrice', 'salePrice', 'marketPrice', 'cityMemberPrice', 'managerMemberPrice', 'areaMemberPrice', 'headPrice'];
 
 // 过滤新增、编辑销售商品请求
 export function requestPayload(payload: any) {
-  const skuList: SkuProps[] = payload.skuList || [];
+  const skuList: SkuSaleProps[] = payload.skuList || [];
   let result: Record<string, any> = filterUploadFile(payload)
   result.skuList = skuList.map(item => {
     item = filterMoney(item, 'req', fields);

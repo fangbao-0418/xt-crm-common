@@ -9,7 +9,7 @@ import { size, map } from 'lodash';
 import { accAdd, Subtr, accMul, accDiv } from '@/util/utils';
 import SkuTable from './SkuTable'
 
-const defaultItem: SkuProps = {
+const defaultItem: SkuSaleProps = {
   imageUrl1: '',
   skuCode: '',
   stock: 0,
@@ -24,9 +24,9 @@ const defaultItem: SkuProps = {
 }
 
 /** 子规格字段集合 */
-const subSpecFields: Array<keyof SkuProps> = ['propertyValue1', 'propertyValue2']
+const subSpecFields: Array<keyof SkuSaleProps> = ['propertyValue1', 'propertyValue2']
 
-export interface SkuProps {
+export interface SkuSaleProps {
   /** 供应商id */
   storeProductSkuId?: number
   /** 商品编码 */
@@ -59,9 +59,9 @@ export interface SkuProps {
 
 interface Props extends FormComponentProps {
   specs: Spec[]
-  dataSource: SkuProps[]
+  dataSource: SkuSaleProps[]
   showImage: boolean
-  onChange?: (value: SkuProps[], specs: Spec[], showImage: boolean) => void
+  onChange?: (value: SkuSaleProps[], specs: Spec[], showImage: boolean) => void
   strategyData?: {}
   /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
   type?: 0 | 10 | 20
@@ -96,7 +96,7 @@ interface State {
   tempSpuPicture: any[]
   /** 添加规格名propover显示状态 */
   dimensionNamePropoverStatus: boolean
-  dataSource: SkuProps[]
+  dataSource: SkuSaleProps[]
   strategyData: any
 }
 class SkuList extends React.Component<Props, State>{
@@ -123,7 +123,7 @@ class SkuList extends React.Component<Props, State>{
       strategyData: props.strategyData
     })
   }
-  public getCombineResult (specs: Spec[], dataSource: SkuProps[]) {
+  public getCombineResult (specs: Spec[], dataSource: SkuSaleProps[]) {
     console.log(specs, 'specs getCombineResult')
     console.log(dataSource, 'dataSource getCombineResult')
     const collection = specs.map((item) => item.content)
@@ -136,7 +136,7 @@ class SkuList extends React.Component<Props, State>{
     // let addNew = false
     /** 多规格合并 */
     const result = combineResutle.map((item) => {
-      let val: SkuProps = {...defaultItem}
+      let val: SkuSaleProps = {...defaultItem}
       /** 根据原规格查找规格信息 */
       val = dataSource.find((item2) => {
         /** item 自定义输入规格序列 规格1，2 */
@@ -335,7 +335,6 @@ class SkuList extends React.Component<Props, State>{
       if (keys[index]) {
         columns.push({
           width: 100,
-          fixed: 'left',
           title: item.title,
           dataIndex: keys[index]
         }) 
@@ -344,7 +343,7 @@ class SkuList extends React.Component<Props, State>{
     
     return columns
   }
-  public onChange (dataSource: SkuProps[]) {
+  public onChange (dataSource: SkuSaleProps[]) {
     if (this.props.onChange) {
       this.props.onChange(dataSource, this.state.specs, this.state.showImage)
     }

@@ -1,24 +1,24 @@
 import React from 'react'
-import { Table, Card, Select, Popover, Input, Button, message, Form, InputNumber } from 'antd'
+import { Table, Card, Select, Input, Button, Form, InputNumber } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
 import { PaginationConfig } from 'antd/lib/pagination'
 import { deliveryModeType } from '@/enum';
 import ArrowContain from '../arrow-contain'
-import { SkuProps } from './index'
+import { SkuSaleProps } from './index'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import InputMoney from '@/packages/common/components/input-money'
 import Record from './Record'
 import Stock from './Stock'
-import { RecordEnum } from './constant'
 import Decimal from 'decimal.js'
 import styles from './style.module.scss'
+import ProductSeletor from '../product-selector'
 const { Option } = Select;
 const FormItem = Form.Item;
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   extraColumns?: ColumnProps<any>[]
-  dataSource: SkuProps[]
-  onChange?: (dataSource: SkuProps[]) => void
+  dataSource: SkuSaleProps[]
+  onChange?: (dataSource: SkuSaleProps[]) => void
   /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
   type: 0 | 10 | 20
   /** sku备案信息 */
@@ -26,7 +26,8 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
 }
 
 interface State {
-  dataSource: SkuProps[]
+  dataSource: SkuSaleProps[];
+  visible: boolean;
 }
 
 class Main extends React.Component<Props, State> {
@@ -35,19 +36,20 @@ class Main extends React.Component<Props, State> {
     pageSize: 10
   }
   public state: State = {
-    dataSource: this.props.dataSource || []
+    dataSource: this.props.dataSource || [],
+    visible: false
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({
       dataSource: props.dataSource
     })
   }
-  public speedyInputCallBack = (dataSource: SkuProps[]) => {
+  public speedyInputCallBack = (dataSource: SkuSaleProps[]) => {
     if (this.props.onChange) {
       this.props.onChange([...dataSource])
     }
   }
-  public speedyInput (field: string, text: any, record: SkuProps, index: number, dataSource: SkuProps[], cb?: any) {
+  public speedyInput (field: string, text: any, record: SkuSaleProps, index: number, dataSource: SkuSaleProps[], cb?: any) {
     const { pageSize = 10, current = 1 } = this.pagination
     const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
     return (node: React.ReactNode) => (
@@ -73,31 +75,31 @@ class Main extends React.Component<Props, State> {
       </ArrowContain>
     )
   }
-  public getColumns (cb: any, dataSource: SkuProps[]): ColumnProps<SkuProps>[] {
+  public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     return [
       {
-        title: '供应商skuID',
+        title: '规格条码',
         dataIndex: 'storeProductSkuId',
         width: 200,
         render: (text: any, record: any, index: any) => {
           return (
             <Input
               value={text}
-              placeholder="请输入供应商skuid"
+              placeholder="请输入规格条码"
               onChange={cb('storeProductSkuId', record, index)}
             />
           );
         },
       },
       {
-        title: '商品编码',
+        title: '规格编码',
         dataIndex: 'skuCode',
         width: 200,
         render: (text: any, record: any, index: any) => {
           return (
             <Input
               value={text}
-              placeholder="请输入商品编码"
+              placeholder="请输入规格编码"
               onChange={cb('skuCode', record, index)}
             />
           );
@@ -194,7 +196,7 @@ class Main extends React.Component<Props, State> {
         ),
       },
       {
-        title: '社区管理员价',
+        title: '区长价',
         dataIndex: 'areaMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
@@ -202,14 +204,14 @@ class Main extends React.Component<Props, State> {
             <InputMoney
               precision={2}
               value={text}
-              placeholder="请输入社区管理员价"
+              placeholder="请输入区长价"
               onChange={cb('areaMemberPrice', record, index)}
             />
           )
         ),
       },
       {
-        title: '城市合伙人价',
+        title: '合伙人价',
         dataIndex: 'cityMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
@@ -224,7 +226,7 @@ class Main extends React.Component<Props, State> {
         ),
       },
       {
-        title: '公司管理员价',
+        title: '管理员价',
         dataIndex: 'managerMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
@@ -232,7 +234,7 @@ class Main extends React.Component<Props, State> {
             <InputMoney
               precision={2}
               value={text}
-              placeholder="请输入公司管理员价"
+              placeholder="请输入管理员价"
               onChange={cb('managerMemberPrice', record, index)}
             />
           )
@@ -252,11 +254,11 @@ class Main extends React.Component<Props, State> {
             />
           )
         ),
-      },
+      }
     ]
   }
   /** 海外列表 */
-  public getOverseasColumns (cb: any, dataSource: SkuProps[]): ColumnProps<SkuProps>[] {
+  public getOverseasColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     const { getFieldDecorator } = this.props.form
     return [
       {
@@ -440,7 +442,7 @@ class Main extends React.Component<Props, State> {
         ),
       },
       {
-        title: '社区管理员价',
+        title: '区长价',
         dataIndex: 'areaMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
@@ -448,14 +450,14 @@ class Main extends React.Component<Props, State> {
             <InputMoney
               precision={2}
               value={text}
-              placeholder="请输入社区管理员价"
+              placeholder="请输入区长价"
               onChange={cb('areaMemberPrice', record, index)}
             />
           )
         ),
       },
       {
-        title: '城市合伙人价',
+        title: '合伙人价',
         dataIndex: 'cityMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
@@ -470,7 +472,7 @@ class Main extends React.Component<Props, State> {
         ),
       },
       {
-        title: '公司管理员价',
+        title: '管理员价',
         dataIndex: 'managerMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
@@ -478,7 +480,7 @@ class Main extends React.Component<Props, State> {
             <InputMoney
               precision={2}
               value={text}
-              placeholder="请输入公司管理员价"
+              placeholder="请输入管理员价"
               onChange={cb('managerMemberPrice', record, index)}
             />
           )
@@ -512,7 +514,7 @@ class Main extends React.Component<Props, State> {
       this.props.onChange([...dataSource])
     }
   }
-  public showRecordInfo (record: SkuProps) {
+  public showRecordInfo (record: SkuSaleProps) {
     const productCustomsDetailVOList = this.props.productCustomsDetailVOList || []
     const detail = productCustomsDetailVOList.find((item) => {
       return item.skuId === record.skuId
@@ -524,7 +526,7 @@ class Main extends React.Component<Props, State> {
       )
     })
   }
-  public showStockInfo (record: SkuProps) {
+  public showStockInfo (record: SkuSaleProps) {
     this.props.alert && this.props.alert({
       title: '库存详情',
       content: (
@@ -533,19 +535,83 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
+    const { visible } = this.state;
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
-      <Table
-        rowKey='id'
-        className={styles['sku-table']}
-        style={{ marginTop: 10 }}
-        scroll={{ x: 2500 }}
-        columns={columns}
-        dataSource={this.state.dataSource.map((item, index) => ({ ...item, id: index }))}
-        onChange={(pagination, fileters) => {
-          this.pagination = pagination
-        }}
-      />
+      <>
+        <ProductSeletor
+          visible={visible}
+          onCancel={() => {
+            this.setState({
+              visible: false
+            })
+          }}
+        />
+        <Table
+          rowKey='id'
+          className={styles['sku-table']}
+          style={{ marginTop: 10 }}
+          scroll={{ x: true }}
+          columns={columns}
+          dataSource={this.state.dataSource.map((item, index) => ({ ...item, id: index }))}
+          expandedRowRender={record => {
+            return (
+              <Card title='商品配置'>
+                <Table
+                  footer={() => (
+                    <span
+                      className='href'
+                      onClick={() => {
+                        this.setState({ visible: true })
+                      }}
+                    >
+                      新增商品
+                    </span>
+                  )}
+                  columns={[{
+                    title: '商品ID',
+                    dataIndex: 'productID'
+                  }, {
+                    title: '商品名称',
+                    dataIndex: 'productName'
+                  }, {
+                    title: '商品主图',
+                    dataIndex: 'coverUrl'
+                  }, {
+                    title: '商品规格',
+                    dataIndex: 'sku'
+                  }, {
+                    title: '规格条码',
+                    dataIndex: 'barCode'
+                  }, {
+                    title: '规格编码',
+                    dataIndex: 'skuCode'
+                  }, {
+                    title: '市场价',
+                    dataIndex: 'marketPrice'
+                  }, {
+                    title: '成本价',
+                    dataIndex: 'costPrice'
+                  }, {
+                    title: '总库存',
+                    dataIndex: 'stock'
+                  }, {
+                    title: '数量配置',
+                    dataIndex: 'num'
+                  }, {
+                    title: '操作',
+                    align: 'center',
+                    render: () => <Button type='link'>删除</Button>
+                  }]}
+                />
+              </Card>
+            )
+          }}
+          onChange={(pagination) => {
+            this.pagination = pagination
+          }}
+        />
+      </>
     )
   }
 }
