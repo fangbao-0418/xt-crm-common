@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import moment from 'moment';
 import { setQuery, parseQuery } from '@/util/utils';
-import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin, Row, Col, Select, Modal } from 'antd';
+import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col } from 'antd';
 import PayModal from './payModal'
 import MoneyRender from '@/components/money-render'
+import { enumPayType } from '../constant'
 import * as api from '../api'
-import { enumPayType, TextMapPayStatus } from '../constant'
 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -14,8 +14,6 @@ class List extends React.Component {
     super(props);
     const params = parseQuery();
     this.state = {
-      selectedRowKeys: [],
-      supplier: [],
       dataSource: [],
       recordItem: {},
       page: {
@@ -23,32 +21,23 @@ class List extends React.Component {
         current: +params.page || 1,
         pageSize: 10
       },
-      list: [
-      ],
-      loading: false,
-      visible: false,
-      confirmLoading: false,
+      modalVisible: false,
       modalType: 'look' // look | confirm
     };
 
   }
 
   componentDidMount() {
-    const params = parseQuery();
-
-    this.fetchData(params);
+    this.fetchData();
   }
   componentDidUpdate(prevProps) {
     if (this.props.paymentStatus !== prevProps.paymentStatus) {
-      const options = {
-        paymentStatus: this.props.paymentStatus,
-        pageSize: this.state.page.pageSize,
-        page: 1
-      };
-      this.fetchData(options);
+      const { page } = this.state
+      page.current = 1;
+      this.fetchData();
     }
   }
-  // 获取商品列表
+  // 列表数据
   fetchData(params = {}) {
     const { paymentStatus } = this.props;
     const { page } = this.state;
@@ -87,24 +76,18 @@ class List extends React.Component {
   // 查询
   handleSearch = () => {
     const { validateFields } = this.props.form;
-
-    const { paymentStatus } = this.props;
     validateFields((err, vals) => {
       if (!err) {
-        console.log(vals)
         const params = {
           ...vals,
           startCreateTime: vals.createTime && vals.createTime[0] && +new Date(vals.createTime[0]),
           endCreateTime: vals.createTime && vals.createTime[1] && +new Date(vals.createTime[1]),
           startModifyTime: vals.modifyTime && vals.modifyTime[0] && +new Date(vals.modifyTime[0]),
           endModifyTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
-          page: 1,
-          pageSize: 10,
-          paymentStatus
+          page: 1
         };
         delete params.createTime;
         delete params.modifyTime;
-        // 查询列表
         this.fetchData(params);
       }
     });
@@ -112,11 +95,20 @@ class List extends React.Component {
 
   // 重置条件
   handleReset = () => {
-    const { resetFields } = this.props.form;
+    const { setFieldsValue } = this.props.form;
     const { page } = this.state;
+    setFieldsValue({
+      settId:'',
+      createName: '',
+      createTime: '',
+      id: '',
+      modifyName: '',
+      modifyTime: '',
+      storeName: ''
+    })
+    page.current = 1
     setQuery({ page: page.current, pageSize: page.pageSize }, true);
-    resetFields();
-    this.fetchData(parseQuery());
+    this.fetchData();
   };
   // 确认支付
   handleConfirm = (record, type) => () => {
@@ -125,14 +117,14 @@ class List extends React.Component {
       api.getPaymentDetail(record.id).then(res => {
         this.setState({
           recordItem: res,
-          visible: true,
+          modalVisible: true,
           modalType: type,
 
         })
       })
     } else {
       this.setState({
-        visible: true,
+        modalVisible: true,
 
         modalType: type,
         recordItem: record
@@ -142,13 +134,13 @@ class List extends React.Component {
   };
   handlePayConfirm = () => {
     this.setState({
-      visible: false
+      modalVisible: false
     })
     this.fetchData()
   };
   handleRejectCancel = () => {
     this.setState({
-      visible: false
+      modalVisible: false
     })
   };
 
@@ -219,6 +211,7 @@ class List extends React.Component {
       {
         title: '操作',
         width: '150px',
+        align: 'center',
         render: (operate, record) => (
           <>
             {
@@ -274,7 +267,7 @@ class List extends React.Component {
                   )}
                 </FormItem>
               </Col>
-              <Col span={6}>
+              {/* <Col span={6}>
                 <FormItem label="全部">
                   {getFieldDecorator('paymentStatus', { initialValue: '' })(
                     <Select placeholder="请选择">
@@ -284,7 +277,7 @@ class List extends React.Component {
                     </Select>
                   )}
                 </FormItem>
-              </Col>
+              </Col> */}
               <Col span={6}>
                 <FormItem label="创建时间">
                   {getFieldDecorator('createTime', { initialValue: '' })(
@@ -339,10 +332,9 @@ class List extends React.Component {
         <PayModal
           modalType={modalType}
           modalProps={{
-            visible: this.state.visible,
+            visible: this.state.modalVisible,
             onOk: this.handleRejectOk,
             onCancel: this.handleRejectCancel,
-            confirmLoading: this.state.confirmLoading
           }}
           handlePayConfirm={this.handlePayConfirm}
           record={recordItem}

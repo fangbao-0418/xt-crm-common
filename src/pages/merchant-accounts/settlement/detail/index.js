@@ -24,8 +24,9 @@ class SettleDetial extends React.Component {
   fetchData(id) {
     api.getSettlementDetail(id).then((res = {}) => {
       console.log(res)
-      const { id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, financeSettlementRecordDetailVOList ,financeSettlementRecordLogVOList} = res;
+      const { id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, financeSettlementRecordDetailVOList ,financeSettlementRecordLogVOList, settStatus} = res;
       this.setState({
+        settStatus,
         dataSource: financeSettlementRecordDetailVOList || [],
         settleDetail: {
           id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl
@@ -36,7 +37,7 @@ class SettleDetial extends React.Component {
   }
   render() {
 
-    const { settleDetail=[], dataSource=[], operateDetail=[] } = this.state
+    const { settleDetail=[], dataSource=[], operateDetail=[] ,settStatus} = this.state
     console.log(dataSource)
    
 
@@ -45,7 +46,7 @@ class SettleDetial extends React.Component {
     return (
       <div>
         {operateDetail.length > 0 && <StepInfo stepinfo={operateDetail} />}
-        <List settleDetail={settleDetail} dataSource={dataSource} />
+        <List settleDetail={settleDetail} dataSource={dataSource} settStatus={settStatus} />
       </div>
     )
   }

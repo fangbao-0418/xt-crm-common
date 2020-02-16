@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-
 import moment from 'moment';
-import { Table, Card, Form, Input, Button, Divider, DatePicker, Spin, Row, Col, Select, Modal } from 'antd';
+import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col, Select } from 'antd';
 import SettleModal from './settleModal'
 import MoneyRender from '@/components/money-render'
-import { enumSettleType, TextMapSettleStatus } from '../constant'
+import { enumSettleType } from '../constant'
 import { setQuery, parseQuery, gotoPage } from '@/util/utils';
-
 import * as api from '../api'
 
 const FormItem = Form.Item;
@@ -18,17 +16,15 @@ class List extends React.Component {
     super(props)
     const params = parseQuery();
     this.state = {
-      settType: params.settType || 0,
-      selectedRowKeys: [],
       dataSource: [], // table列表数据
-      page: {
+      page: { // table 分页
         total: 0,
         current: +params.page || 1,
         pageSize: 10
       },
-      visible: false,
-      operateType: 'submit',
-      selectId: ''
+      modalVisible: false, // modal弹框隐藏显示
+      operateType: 'submit', // modal操作类型
+      selectId: '' // 当前选中条目
     }
   }
   componentDidMount() {
@@ -36,13 +32,9 @@ class List extends React.Component {
   }
   componentDidUpdate(prevProps) {
     if (this.props.settType !== prevProps.settType) {
-
-      const options = {
-        settType: this.props.settType,
-        pageSize: this.state.page.pageSize,
-        page: 1
-      };
-      this.fetchData(options);
+      const { page } = this.state
+      page.current = 1;
+      this.fetchData();
     }
   }
   // 列表数据
@@ -83,7 +75,6 @@ class List extends React.Component {
   // 查询
   handleSearch = () => {
     const { validateFields } = this.props.form;
-    const { settType } = this.props;
     validateFields((err, vals) => {
       if (!err) {
         console.log(vals)
@@ -94,8 +85,6 @@ class List extends React.Component {
           startModifyTime: vals.modifyTime && vals.modifyTime[0] && +new Date(vals.modifyTime[0]),
           endModifyTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
           page: 1,
-          pageSize: 10,
-          settType
         };
         delete params.createTime;
         delete params.modifyTime;
@@ -104,21 +93,22 @@ class List extends React.Component {
     });
   };
 
-  // 取消搜索
+  // 重置条件
   handleClear = () => {
     const { form: { setFieldsValue } } = this.props;
     const { page } = this.state;
-    setQuery({ page: page.current, pageSize: page.pageSize }, true);
     setFieldsValue({
       createName: '',
       createTime: '',
       id: '',
       invoiceInfo: '',
       modifyName: '',
-      modifyTime: [],
+      modifyTime: '',
       storeName: ''
     })
-    this.fetchData(parseQuery());
+    page.current = 1
+    setQuery({ page: page.current, pageSize: page.pageSize }, true);
+    this.fetchData();
   }
 
 
@@ -127,11 +117,11 @@ class List extends React.Component {
     if (operateType !== 'topay') {
       this.setState({
         selectId: id,
-        visible: true,
+        modalVisible: true,
         operateType
       })
     } else {
-      api.settlementPay(id).then(res=>{
+      api.settlementPay(id).then(res => {
         res && gotoPage('/merchant-accounts/payment')
       })
     }
@@ -140,7 +130,7 @@ class List extends React.Component {
   // 驳回|提交结算 确定后回调
   handleSucc = () => {
     this.setState({
-      visible: false
+      modalVisible: false
     })
     // 刷新
     this.fetchData(parseQuery());
@@ -148,26 +138,13 @@ class List extends React.Component {
 
   handleCancel = () => {
     this.setState({
-      visible: false
+      modalVisible: false
     })
   };
-  // 导出
-  exportFile = () => {
-    
-  }
-  /**
- * 选择项发生变化时的回调
- */
-  onSelectChange = (selectedRowKeys, selectedRows) => {
-    this.setState({
-      selectedRowKeys,
-      selectedRows
-    });
-  };
+
 
   render() {
-    const { page, dataSource, operateType , selectId} = this.state;
-
+    const { page, dataSource, operateType, selectId, modalVisible } = this.state;
     const {
       form: { getFieldDecorator }
     } = this.props;
@@ -175,55 +152,70 @@ class List extends React.Component {
       {
         title: '结算单ID',
         dataIndex: 'id',
-        key: 'id'
+        key: 'id',
+        width: 150
       },
       {
         title: '本期结算对账单金额',
         dataIndex: 'settlementMoney',
         key: 'settlementMoney',
-        render: MoneyRender
+        render: MoneyRender,
+        width: 150
+
       },
       {
         title: '供应商',
         dataIndex: 'storeName',
-        key: 'storeName'
+        key: 'storeName',
+        width: 150
+
       },
       {
         title: '结算方式',
         dataIndex: 'payType',
-        key: 'payType'
+        key: 'payType',
+        width: 150
+
       },
       {
         title: '收款账户',
         dataIndex: 'accountInfo',
-        key: 'accountInfo'
+        key: 'accountInfo',
+        width: 150
+
       },
       {
         title: '币种',
         dataIndex: 'currencyInfo',
-        key: 'currencyInfo'
+        key: 'currencyInfo',
+        width: 150
+
       },
       {
         title: '发票',
         dataIndex: 'invoiceInfo',
-        key: 'invoiceInfo',
-        render: record => record === 1 ? '有' : '无'
+        width: 150
+
       },
       {
         title: '状态',
         dataIndex: 'settStatusInfo',
-        key: 'settStatusInfo'
-        // render: value => TextMapSettleStatus[value]
+        key: 'settStatusInfo',
+        width: 150
       },
       {
         title: '创建人',
         dataIndex: 'createName',
-        key: 'createName'
+        key: 'createName',
+        width: 150
+
       },
       {
         title: '创建时间',
         dataIndex: 'createTime',
         key: 'createTime',
+        width: 200,
+
         render: (createTime) => {
           return APP.fn.formatDate(createTime)
         }
@@ -231,12 +223,16 @@ class List extends React.Component {
       {
         title: '操作人',
         dataIndex: 'modifyName',
-        key: 'modifyName'
+        key: 'modifyName',
+        width: 150
+
       },
       {
         title: '操作时间',
         dataIndex: 'modifyTime',
         key: 'modifyTime',
+        width: 200,
+
         render: (modifyTime) => {
           return APP.fn.formatDate(modifyTime)
         }
@@ -244,35 +240,28 @@ class List extends React.Component {
       {
         title: '操作',
         align: 'center',
-        width: '200px',
+        width: 200,
         render: (operate, { settStatus, id }) => (
           <>
-            <div>
-              {
-                settStatus === enumSettleType.ToBeSettled ?
+
+            {
+              settStatus === enumSettleType.ToBeSettled ?
+                <>
+                  <Button type="link" onClick={this.handleBtnAction(id, 'submit')} style={{ padding: '0 3px' }}>提交结算</Button>
+                  <Button type="link" onClick={this.handleBtnAction(id, 'reject')} style={{ padding: '0 3px' }}>驳回 </Button>
+                </>
+                : settStatus === enumSettleType.Settling ?
                   <>
-                    <Button type="primary" onClick={this.handleBtnAction(id, 'submit')} >提交结算</Button>
-                    <Divider type="vertical" />
-                    <Button type="primary" onClick={this.handleBtnAction(id, 'reject')} >驳回 </Button>
+                    <Button type="link" onClick={this.handleBtnAction(id, 'topay')} style={{ padding: '0 3px' }}>去付款</Button>
+                    <Button type="link" onClick={this.handleBtnAction(id, 'reject')} style={{ padding: '0 3px' }}>驳回 </Button>
                   </>
-                  : settStatus === enumSettleType.Settling ?
-                    <>
-                      <Button type="primary" onClick={this.handleBtnAction(id, 'topay')} >去付款</Button>
-                      <Divider type="vertical" />
-                      <Button type="primary" onClick={this.handleBtnAction(id, 'reject')} >驳回 </Button>
-                    </>
-                    : settStatus === enumSettleType.partSettled ?
-                      <Button type="primary" onClick={this.handleBtnAction(id, 'topay')} >去付款</Button>
-                      : null
-              }
-            </div>
-            <div>
-              <Button type="link" >
-                <Link to={`/merchant-accounts/settlement/${id}`}>查看明细</Link>
-              </Button>
-              {/* <Divider type="vertical" />
-              <Button type="link" onClick={this.exportFile} >导出</Button> */}
-            </div>
+                  : settStatus === enumSettleType.partSettled ?
+                    <Button type="link" onClick={this.handleBtnAction(id, 'topay')} style={{ padding: '0 3px' }}>去付款</Button>
+                    : null
+            }
+            <Button type="link" style={{ padding: '0 2px' }}>
+              <Link to={`/merchant-accounts/settlement/${id}`}>查看明细</Link>
+            </Button>
           </>
         )
       }
@@ -347,7 +336,7 @@ class List extends React.Component {
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>查询</Button>
-                <Button type="default" onClick={this.handleClear}>取消</Button>
+                <Button type="default" onClick={this.handleClear}>清除</Button>
               </Col>
             </Row>
           </Form>
@@ -355,6 +344,11 @@ class List extends React.Component {
         <Card style={{ marginTop: 10 }}>
           {dataSource && dataSource.length > 0 ? (
             <Table
+              scroll={{
+                x: columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
+                  return a + b
+                })
+              }}
               bordered
               columns={columns}
               dataSource={dataSource}
@@ -368,7 +362,7 @@ class List extends React.Component {
             )}
         </Card>
         {/* 提交|驳回提示框 */}
-        <SettleModal id={selectId} operateType={operateType} handleSucc={this.handleSucc} modalProps={{ visible: this.state.visible, onCancel: this.handleCancel }} />
+        <SettleModal id={selectId} operateType={operateType} handleSucc={this.handleSucc} modalProps={{ visible: modalVisible, onCancel: this.handleCancel }} />
       </Spin>
     )
   }

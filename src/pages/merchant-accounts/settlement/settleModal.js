@@ -43,6 +43,7 @@ class SettleModal extends React.Component {
           {...modalProps}
           onOk={this.handleOk}
           title="提示"
+          destroyOnClose
         >
           <Form {...formItemLayout}>
             {
