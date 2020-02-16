@@ -7,14 +7,10 @@ import { param } from '@/packages/common/utils'
 import { Tag, Divider, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
-import Video from './components/Video'
-var QRCode = require('qrcode.react');
 import View from './components/View'
 import CloseDown from './components/CloseDown'
 import UploadCover from './components/UploadCover'
-import styles from './style.module.styl'
 import * as api from './api'
-import detail from '@/pages/message/template/detail'
 interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
@@ -37,7 +33,17 @@ class Main extends React.Component<Props> {
       dataIndex: 'anchorNickName',
       width: 100,
       render: (text, record) => {
-        return text || record.anchorPhone
+        return (
+          <span
+            className='href'
+            onClick={() => {
+              APP.href(`/user/detail?memberId=${record.memberId}`, '__target') }
+            }
+          >
+            {text || record.anchorPhone}
+          </span>
+
+        )
       }
     },
     {
@@ -241,22 +247,6 @@ class Main extends React.Component<Props> {
     // url = location.origin.replace(/^https?/, 'http') + url
     url = 'http://test-crmadmin.hzxituan.com/issue23/video.html?' + query
     window.open(url, '喜团直播', 'top=120,left=150,width=800,height=500,scrollbars=0,titlebar=1', false)
-    // console.log(myWindow, 'myWindow');
-    // myWindow.focus();
-    // APP.href(url, '__blank')
-    // return
-    // const hide = this.props.alert({
-    //   content: (
-    //     <div>
-    //       <iframe
-    //         style={{width: '100%',height: 400}}
-    //         src={url}
-    //       >
-    //       </iframe>
-    //     </div>
-    //   ),
-    //   footer: null
-    // })
   }
   /** 禁播 */
   public closeDown (record: UliveStudio.ItemProps) {
@@ -321,6 +311,8 @@ class Main extends React.Component<Props> {
               <FormItem name='liveTitle' />
               <FormItem name='anchorNickName' />
               <FormItem name='liveStatus' />
+              <FormItem name='anchorPhone' />
+              <FormItem label='场次ID' name='planId' />
               <FormItem name='liveTime' />
             </>
           )}

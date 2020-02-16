@@ -8,7 +8,7 @@ export default {
     visible: false,
     roleConfig: [],
     menuList: [],
-    currentRoleInfo: {}, //当前被编辑的角色
+    currentRoleInfo: {} //当前被编辑的角色
   },
   effects: dispatch => ({
     async getMenuList(_, state) {
@@ -16,8 +16,8 @@ export default {
       dispatch({
         type: 'auth.role/saveDefault',
         payload: {
-          menuList: Array.isArray(res) ? arrToTree(res) : [],
-        },
+          menuList: Array.isArray(res) ? arrToTree(res) : []
+        }
       });
     },
     async getRoleList(payload) {
@@ -25,15 +25,15 @@ export default {
       dispatch({
         type: 'auth.role/saveDefault',
         payload: {
-          roleConfig,
-        },
+          roleConfig
+        }
       });
     },
     async getRoleInfo(payload, state, callback) {
-      const data = await api.getRoleInfo({ id: payload.id });
+      const data = await api.getRoleInfo({ ids: [payload.id] });
       const currentRoleInfo = {
         ...payload,
-        data: Array.isArray(data) ? data : [],
+        data: Array.isArray(data) ? data : []
       };
       if (callback) callback(currentRoleInfo);
     },
@@ -41,19 +41,19 @@ export default {
     async addRole(payload, state) {
       const params = {
         // roleDesc: payload.roleDesc,
-        roleName: payload.roleName,
+        roleName: payload.roleName
       };
       const res = await api.addRole(params);
       if (res.id) {
         const res2 = await api.addPermisson({
           roleId: res.id,
-          menuIds: payload.menuIds,
+          menuIds: payload.menuIds
         });
         if (res2 === true) {
           Message.success('新增成功!');
           dispatch['auth.role'].getRoleList({
             page: 1,
-            pageSize: 10,
+            pageSize: 10
           });
         }
       }
@@ -63,22 +63,22 @@ export default {
       const params = {
         // roleDesc: payload.roleDesc,
         roleName: payload.roleName,
-        id: payload.id,
+        id: payload.id
       };
       const res = await api.editRole(params);
       if (res) {
         const res2 = await api.addPermisson({
           roleId: payload.id,
-          menuIds: payload.menuIds,
+          menuIds: payload.menuIds
         });
         if (res2 === true) {
           Message.success('更新成功!');
           dispatch['auth.role'].getRoleList({
             page: 1,
-            pageSize: 10,
+            pageSize: 10
           });
         }
       }
-    },
-  }),
+    }
+  })
 };
