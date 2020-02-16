@@ -6,144 +6,189 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      a: {
-        type: 'number',
-        label: '对账单ID'
+      id: {
+        type: 'number', label: '调整单ID',
+        controlProps: {
+          style: { width: 150 }
+        }
       },
-      b: {
-        type: 'number',
-        label: '对账单ID'
+      serialNo: {
+        type: 'number', label: '对账单ID',
+        controlProps: {
+          style: { width: 150 }
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '对账单ID不能为空'}
+          ]
+        }
       },
-      c: {
+      accId: {
+        type: 'number', label: '对账单ID',
+        controlProps: {
+          style: { width: 150 }
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '对账单ID不能为空'}
+          ]
+        }
+      },
+      accName: {
+        type: 'input',
+        label: '对账单名称',
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '对账单名称不能为空'}
+          ]
+        }
+      },
+      trimType: {
         type: 'select',
         label: '调整类型',
         options: [
           {label: '收入', value: 1},
           {label: '支出', value: 2}
-        ]
+        ],
+        fieldDecoratorOptions: {
+          initialValue: 1,
+          rules: [
+            {required: true, message: '调整类型不能为空'}
+          ]
+        }
       },
-      d: {
+      trimStatus: {
         label: '状态',
         type: 'select',
         options: [
-          {label: '代采购审核', value: 1},
-          {label: '待财务审核', value: 2},
-          {label: '审核通过', value: 3},
-          {label: '审核不通过', value: 4},
+          {label: '代采购审核', value: 10},
+          {label: '待财务审核', value: 20},
+          {label: '审核通过', value: 30},
+          {label: '审核不通过', value: 40}
         ]
+        // fieldDecoratorOptions: {
+        //   initialValue: 10,
+        //   rules: [
+        //     {required: true, message: '状态不能为空'}
+        //   ]
+        // }
       },
-      e: {
+      trimReason: {
         label: '调整原因',
         type: 'select',
         options: [
           {label: '订单补发', value: 1},
-          {label: '运费补贴', value: 2},
-          {label: '平台补贴', value: 3},
+          {label: '运费补贴', value: 3},
+          {label: '平台补贴', value: 2},
           {label: '售后扣款', value: 4},
-          {label: '售后补偿', value: 5},
-        ]
-      },
-      f: {
-        type: 'input',
-        label: '财务审核人'
-      },
-      a1: {
-        type: 'rangepicker',
-        label: '创建时间'
-      },
-      a2: {
-        type: 'select',
-        label: '创建人类型',
-        options: [
-          {label: '供应商', value: 1},
-          {lable: '员工', value: 2}
-        ]
-      },
-      a3: {
-        type: 'input',
-        label: '创建人类型'
-      },
-      memberId: {
-        type: 'input',
+          {label: '售后补偿', value: 5}
+        ],
         fieldDecoratorOptions: {
           rules: [
-            {
-              pattern: /^\d+$/,
-              message: '格式不正确'
-            }
+            {required: true, message: '调整原因不能为空'}
           ]
         }
       },
-      anchorId: {
-        type: 'number', label: '主播ID',
+      createdType: {
+        type: 'select',
+        label: '创建人类型',
+        options: [
+          {label: '财务', value: 0},
+          {label: '采购', value: 1},
+          {label: '供应商', value: 3},
+          {label: '员工', value: 2}
+        ]
+      },
+      createName: {
+        type: 'input', label: '创建人',
         controlProps: {
-          style: {
-            width: 150
-          },
-          placeholder: '主播ID'
+          placeholder: '请选择供应商/员工名称'
         }
       },
-      nickName: {
-        type: 'input', label: '主播昵称',
+      createTime: {
+        type: 'rangepicker', label: '创建时间',
         controlProps: {
-          placeholder: '主播昵称'
+          showTime: true
         }
       },
-      status: {
-        type: 'select', label: '状态',
+      trimMoney: {
+        type: 'number', label: '调整金额',
+        controlProps: {
+          precision: 2,
+          style: {width: '100%'}
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '调整金额不能为空'}
+          ]
+        }
+      },
+      /** 调整说明 | 审核说明 */
+      trimExplain: {
+        type: 'textarea', label: '调整说明',
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '调整说明不能为空'}
+          ]
+        }
+      },
+      reviewStatus: {
+        type: 'radio', label: '审核意见',
         fieldDecoratorOptions: {
           initialValue: 0
         },
         options: [
-          {label: '黑名单主播', value: 1},
-          {label: '正常', value: 0}
+          {label: '审核通过', value: 0},
+          {label: '审核不通过', value: 1}
         ]
       },
-      anchorIdentityType: {
-        type: 'select', label: '主播身份',
-        options: [
-          {label: '供应商', value: 20},
-          {label: '公司', value: 10},
-          {label: '合作网红', value: 30},
-          {label: '代理', value: 40}
-        ],
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              required: true,
-              message: '请选择主播身份'
-            }
-          ]
-        }
+      supplierName: {
+        type: 'input', label: '供应商',
       },
-      anchorLevel: {
-        type: 'select', label: '主播等级',
-        options: [
-          {label: '星级主播', value: 10},
-          {label: '普通主播', value: 0}
-        ],
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              required: true,
-              message: '请选择主播等级'
-            }
-          ]
-        }
+      purchaseReviewName: {
+        type: 'input', label: '采购审核人',
+      },
+      financeReviewName: {
+        type: 'input', label: '财务审核人',
       }
     }
   }
   return _.mergeWith(defaultConfig, partial)
 }
 
-export enum AnchorIdentityTypeEnum {
-  供应商 = 20,
-  公司 = 10,
-  合作网红 = 30,
-  代理 = 40
+/**
+ * 创建者类型：0：财务 1：采购：2员工：3供应商
+ */
+export enum CreatedTypeEnum  {
+  财务 = 0,
+  采购 = 1,
+  员工 = 2,
+  供应商 = 3
 }
 
-export enum AnchorLevelEnum {
-  星级主播 = 10,
-  普通主播 = 0
+/**
+ * 调整类型 1-收入，2-支出
+ */
+export enum TrimTypeEnum {
+  收入 = 1,
+  支出 = 2
+}
+
+/**
+ * 调整状态
+ */
+export enum TrimStatusEnum {
+  代采购审核 = 10,
+  待财务审核 = 20,
+  审核通过 = 30,
+  审核不通过 = 40
+}
+
+/** 调整原因 1订单补发、2平台补贴、3运费补贴、4售后扣款、5售后补偿 */
+export enum TrimReasonEnum {
+  订单补发 = 1,
+  平台补贴 = 2,
+  运费补贴 = 3,
+  售后扣款 = 4,
+  售后补偿 = 5
 }
