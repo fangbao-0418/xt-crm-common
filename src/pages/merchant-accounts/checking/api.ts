@@ -15,8 +15,8 @@ export const fetchDetailList = (payload: GetIcExDetailsListOnPageRequest) => {
 }
 
 /** 获取收款账户列表 */
-export const fetchGatheringAccountList = () => {
-  return get('/finance/settlement/account/list')
+export const fetchGatheringAccountList = (id: number) => {
+  return get(`/finance/settlement/account/list?accid=${id}`)
 }
 
 /** 新建结算单 */

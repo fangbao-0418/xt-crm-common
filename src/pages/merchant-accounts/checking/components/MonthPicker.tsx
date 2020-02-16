@@ -1,12 +1,11 @@
 import React from 'react'
-import { max } from 'moment';
 interface Props {
   onChange?: any
   value?: number[]
 }
 function getYears (): number[] {
   let maxYear = new Date().getFullYear()
-  let minYear = 2019
+  const minYear = 2019
   const years = []
   while (minYear <= maxYear) {
     years.push(maxYear)
@@ -33,6 +32,11 @@ class Main extends React.Component<Props, State> {
   public state: State = {
     value: []
   }
+  public componentWillReceiveProps (props: Props) {
+    this.setState({
+      value: props.value || []
+    })
+  }
   public onChange (type: 'y' | 'm', e: any) {
     const selectedValue = Number(e.target.value)
     let value = this.state.value
@@ -50,16 +54,18 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { value } = this.state
+    const allYears = getYears()
+    const allMonth = getMonths()
     return (
       <div
       >
         <select
           className='mr10'
           onChange={this.onChange.bind(this, 'y')}
-          value={value[0]}
+          value={value[0] || allYears[0]}
           style={{verticalAlign: 'middle'}}
         >
-          {getYears().map((item) => {
+          {allYears.map((item) => {
             return <option value={item} key={item}>{item}</option>
           })}
         </select>
@@ -69,7 +75,7 @@ class Main extends React.Component<Props, State> {
           style={{verticalAlign: 'middle'}}
         >
           <option value=''>全部</option>
-          {getMonths().map((item) => {
+          {allMonth.map((item) => {
             return (
               <option value={item} key={item}>
                 {item < 10 ? `0${item}` : item}

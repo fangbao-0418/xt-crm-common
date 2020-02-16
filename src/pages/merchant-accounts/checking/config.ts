@@ -34,12 +34,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
     },
     statements: {
       currency: {
-        type: 'select', label: '对账单ID',
+        type: 'select', label: '币种',
         fieldDecoratorOptions: {
-          initialValue: 1
+          initialValue: 10
         },
         options: [
-          {label: '人民币', value: 1}
+          {label: '人民币', value: 10}
         ]
       },
       newAccount: {

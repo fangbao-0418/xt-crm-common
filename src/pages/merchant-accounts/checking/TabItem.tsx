@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from 'antd'
 import { FormItem } from '@/packages/common/components/form'
-import ListPage from '@/packages/common/components/list-page'
+import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { param } from '@/packages/common/utils'
 import { getFieldsConfig, AccStatusEnum } from './config'
@@ -12,7 +12,7 @@ import { GetListOnPageResponse } from './interface'
 import Statements from './components/Statements'
 
 interface Props extends Partial<AlertComponentProps> {
-  /** 对账单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效 */
+  /** 对账单状态（10：待确认；20：未结算；30：待结算；40：结算中 50:已结算 60:已结清 70:结算异常） */
   status: number
 }
 
@@ -116,6 +116,7 @@ class Main extends React.Component<Props, State> {
     }
   ]
   public selectedRows: GetListOnPageResponse[] = []
+  public listpage: ListPageInstanceProps
   public state: State = {
     selectedRowKeys: []
   }
@@ -125,12 +126,44 @@ class Main extends React.Component<Props, State> {
       APP.error('请选择需要结算的对账单')
       return
     }
+    let notAllow = false
+    /** 是否存在多个供应商 */
+    let existMultiSupplier = false
+    const storeIds: any[] = []
+    this.selectedRows.map((item) => {
+      if (storeIds.indexOf(item.storeId) === -1) {
+        storeIds.push(item.storeId)
+      }
+      if ([20, 70].indexOf(item.accStatus) === -1) {
+        notAllow = true
+      }
+    })
+    // if (notAllow) {
+    //   APP.error('存在不可结算的对账单')
+    //   return
+    // }
+    // console.log(storeIds, '0000000')
+    // if (storeIds.length > 1) {
+    //   APP.error('不能同时对多个供应商的对账单进行结算')
+    //   return
+    // }
+    // if (this.selectedRows.length < 7) {
+    //   APP.error('对账单数量不能小于7条')
+    //   return
+    // }
     if (this.props.alert) {
-      this.props.alert({
+      const hide = this.props.alert({
         width: 600,
         title: '新建结算单',
         content: (
           <Statements
+            onOk={() => {
+              this.listpage.refresh()
+              hide()
+            }}
+            onCancel={() => {
+              hide()
+            }}
             selectedRows={this.selectedRows}
           />
         ),
@@ -177,9 +210,9 @@ class Main extends React.Component<Props, State> {
     }
   }
   public render () {
-    const { selectedRowKeys } = this.state;
     const rowSelection: TableRowSelection<GetListOnPageResponse> = {
       // selectedRowKeys,
+      fixed: true,
       columnWidth: 50,
       onSelect: this.onSelectChange,
       onSelectAll: this.onSelectAll
@@ -189,6 +222,9 @@ class Main extends React.Component<Props, State> {
         <ListPage
           columns={this.columns}
           formConfig={getFieldsConfig()}
+          getInstance={(ref) => {
+            this.listpage = ref
+          }}
           formItemLayout={(
             <>
               <FormItem name='serialNo' />
@@ -205,6 +241,11 @@ class Main extends React.Component<Props, State> {
           )}
           tableProps={{
             rowKey: 'serialNo',
+            scroll: {
+              x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
+                return a + b
+              })
+            },
             rowSelection
           }}
           addonAfterSearch={(
@@ -221,12 +262,14 @@ class Main extends React.Component<Props, State> {
               >
                 全部导出
               </Button> */}
-              <Button
-                type='primary'
-                onClick={this.addStatements}
-              >
-                生成结算单
-              </Button>
+              {/* {[20 , 70].indexOf(this.props.status) > -1 && ( */}
+                <Button
+                  type='primary'
+                  onClick={this.addStatements}
+                >
+                  生成结算单
+                </Button>
+              {/* )} */}
             </div>
           )}
           api={api.fetchList}
@@ -234,7 +277,7 @@ class Main extends React.Component<Props, State> {
             const status = this.props.status
             const now = new Date()
             const date = payload.date || []
-            payload.pageSize = 3
+            // payload.pageSize = 3
             return {
               ...payload,
               pageNo: payload.page,

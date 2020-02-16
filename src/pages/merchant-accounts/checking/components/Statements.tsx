@@ -3,7 +3,8 @@ import React from 'react'
 import { Button } from 'antd'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from '../config'
-import Upload from '@/components/upload'
+import Upload, { formatValue } from '@/components/upload'
+import SelectFetch from '@/packages/common/components/select-fetch'
 import { GetListOnPageResponse } from '../interface'
 import Area from './Area'
 import If from '@/packages/common/components/if'
@@ -16,16 +17,20 @@ interface Props {
 interface State {
   /** 账户类型，2 支付宝，3 个人银行卡，4 对公银行账户 */
   type: 2 | 3 | 4
+  /** 1-新账户 0-已有账户 */
+  newAccount: 0 | 1
 }
 class Main extends React.Component<Props> {
   public form: FormInstance
   public state: State = {
-    type: 2
+    type: 2,
+    newAccount: 1
   }
   public toAdd () {
     this.form.props.form.validateFields((err, values) => {
       if (err) {
-
+        APP.error('请检查输入项')
+        return
       }
       const area = values.area
       if (area) {
@@ -36,16 +41,17 @@ class Main extends React.Component<Props> {
       }
       delete values.area
       values.accIdList = this.props.selectedRows.map((item) => item.id)
-      // values.invoiceUrl = values.invoiceUrl.rurl
-      api.addSettlement(values)
+      values.invoiceUrl = formatValue(values.invoiceUrl)
+      api.addSettlement(values).then(() => {
+        if (this.props.onOk) {
+          this.props.onOk()
+        }
+      })
     })
-    if (this.props.onOk) {
-      this.props.onOk()
-    }
   }
   public render () {
     const selectedRows = this.props.selectedRows
-    const { type } = this.state
+    const { type, newAccount } = this.state
     return (
       <div>
         <Form
@@ -68,51 +74,87 @@ class Main extends React.Component<Props> {
               return (
                 <div
                   title={text}
+                  style={{
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden'
+                  }}
                 >
                   {text}
                 </div>
               )
             }}
           />
-          {/* <FormItem name='currency' /> */}
-          <FormItem name='newAccount' />
+          <FormItem name='currency' />
           <FormItem
-            name='accountType'
-            verifiable
+            name='newAccount'
+            label='收款账户'
             controlProps={{
               onChange: (e: any) => {
                 this.setState({
-                  type: e.target.value
+                  newAccount: e.target.value
                 })
               }
             }}
           />
-          <FormItem name='accountName' />
-          <FormItem name='accountCode' />
-          <If condition={[1, 2].indexOf(type) === -1}>
-            <FormItem name='bankName' verifiable />
-          </If>
-          <If condition={type === 4}>
+          <If condition={newAccount === 0}>
             <FormItem
-              label='银行所在地区'
+              verifiable
+              label='收款账户'
               required
               inner={(form) => {
-                return form.getFieldDecorator('area', {
-                  rules: [{
-                    validator: (rule, value, cb) => {
-                      console.log(value, '-----')
-                      if (!value || value.length < 2) {
-                        cb('请选择省市')
-                      }
-                      cb()
-                    }
-                  }]
-                })(
-                  <Area />
+                return form.getFieldDecorator('accountId')(
+                  <SelectFetch
+                    fetchData={() => {
+                      const { id } = this.props.selectedRows[0]
+                      return api.fetchGatheringAccountList(id).then((res) => {
+                        return res
+                      })
+                    }}
+                  />
                 )
               }}
             />
-            <FormItem name='bankBranchName' verifiable />
+          </If>
+          <If condition={newAccount === 1}>
+            <FormItem
+              name='accountType'
+              verifiable
+              controlProps={{
+                onChange: (e: any) => {
+                  this.setState({
+                    type: e.target.value
+                  })
+                }
+              }}
+            />
+            <FormItem name='accountName' />
+            <FormItem name='accountCode' />
+            <If condition={[1, 2].indexOf(type) === -1}>
+              <FormItem name='bankName' verifiable />
+            </If>
+            <If condition={type === 4}>
+              <FormItem
+                label='银行所在地区'
+                required
+                inner={(form) => {
+                  return form.getFieldDecorator('area', {
+                    rules: [{
+                      validator: (rule, value, cb) => {
+                        console.log(value, '-----')
+                        if (!value || value.length < 2) {
+                          cb('请选择省市')
+                        }
+                        cb()
+                      }
+                    }]
+                  })(
+                    <Area />
+                  )
+                }}
+              />
+              <FormItem name='bankBranchName' verifiable />
+            </If>
           </If>
           <FormItem
             label='发票凭证'

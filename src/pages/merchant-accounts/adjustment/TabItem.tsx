@@ -4,7 +4,13 @@ import { FormItem } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import Detail from './Detail'
-import { getFieldsConfig, TrimTypeEnum, TrimStatusEnum, CreatedTypeEnum } from './config'
+import {
+  getFieldsConfig,
+  TrimTypeEnum,
+  TrimStatusEnum,
+  CreatedTypeEnum,
+  TrimReasonEnum
+} from './config'
 import * as api from './api'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import { ListResponse, ListRequest } from './interface'
@@ -31,9 +37,9 @@ class Main extends React.Component<Props, State> {
       width: 200
     },
     {
-      dataIndex: 'accId',
+      dataIndex: 'serialNo',
       title: '对账单ID',
-      width: 100
+      width: 200
     },
     {
       dataIndex: 'trimType',
@@ -46,12 +52,15 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'trimReason',
       title: '调整原因',
-      width: 200
+      width: 100,
+      render: (text) => {
+        return TrimReasonEnum[text]
+      }
     },
     {
       dataIndex: 'trimMoney',
       title: '金额',
-      width: 100,
+      width: 150,
       render: (text) => {
         return APP.fn.formatMoneyNumber(text, 'm2u')
       }
@@ -59,7 +68,7 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'trimStatus',
       title: '状态',
-      width: 200,
+      width: 100,
       render: (text) => {
         return TrimStatusEnum[text]
       }
@@ -88,7 +97,7 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'purchaseReviewName',
       title: '采购审核人',
-      width: 150
+      width: 100
     },
     {
       dataIndex: 'purchaseReviewTime',
@@ -101,7 +110,7 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'financeReviewName',
       title: '财务审核人',
-      width: 150
+      width: 100
     },
     {
       dataIndex: 'financeReviewTime',
@@ -115,7 +124,7 @@ class Main extends React.Component<Props, State> {
       title: '操作',
       width: 200,
       align: 'center',
-      render: (record) => {
+      render: (text, record) => {
         return (
           <div>
             <span
@@ -131,12 +140,14 @@ class Main extends React.Component<Props, State> {
             >
               审核
             </span>&nbsp;&nbsp;
-            <Popconfirm
-              title='确定是否撤销？'
-              onConfirm={this.toRevoke.bind(this, record)}
-            >
-              <span className='href'>撤销</span>
-            </Popconfirm>
+            {record.trimStatus === 10 && (
+              <Popconfirm
+                title='确定是否撤销？'
+                onConfirm={this.toRevoke.bind(this, record)}
+              >
+                <span className='href'>撤销</span>
+              </Popconfirm>
+            )}
             &nbsp;&nbsp;
             {/* <span className='href'>新建调整单</span> */}
           </div>
