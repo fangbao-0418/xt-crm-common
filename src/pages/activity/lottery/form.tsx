@@ -8,14 +8,16 @@ import * as api from './api'
 import { parseQuery } from '@/util/utils'
 import { disabledDate, disabledDateTime } from '@/util/antdUtil'
 interface State {
-  roundList: Lottery.LuckyDrawRoundListVo[]
+  roundList: Lottery.LuckyDrawRoundListVo[],
+  type: number
 }
 class Main extends React.Component<any, State> {
   public form: FormInstance
   public id: number
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public state: State = {
-    roundList: []
+    roundList: [],
+    type: 0
   }
   public constructor (props: any) {
     super(props)
@@ -32,85 +34,9 @@ class Main extends React.Component<any, State> {
   public async fetchData () {
     const res = await api.getActivityDetail(this.id)
     this.form.setValues(res)
-    this.setState({ roundList: res.roundList})
+    this.setState({ roundList: res.roundList, type: res.type})
   }
-  public columns: ColumnProps<Lottery.LuckyDrawRoundListVo>[] = [
-    {
-      key: 'No',
-      title: '序号',
-      render: (arg1, arg2, index: number) => index + 1
-    },
-    {
-      key: 'title',
-      title: '场次名称',
-      dataIndex: 'title'
-    },
-    {
-      key: 'startTime',
-      title: '开始时间',
-      dataIndex: 'startTime',
-      render: formatDate
-    },
-    {
-      key: 'endTime',
-      title: '结束时间',
-      dataIndex: 'endTime',
-      render: formatDate
-    },
-    {
-      key: 'participationTimes',
-      title: '参与人数',
-      dataIndex: 'participationTimes',
-      render: (text: any) => text || 0
-    },
-    {
-      key: 'status',
-      title: '状态',
-      dataIndex: 'status',
-      render: (text: any) => statusConfig[text]
-    },
-    {
-      key: 'operate',
-      title: '操作',
-      width: 420,
-      render: (text: any, record: Lottery.LuckyDrawRoundListVo) => {
-        const path = `/activity/lottery/${this.id}/${record.id}`
-        return (
-          <Ribbon
-            status={record.status}
-            moduleId='sessions'
-            onView={() => APP.history.push(`${path}?readOnly=1`)}
-            onEdit={() => {
-              const { startTime, type } = this.form && this.form.getValues() || {}
-              const stamp = startTime ? startTime.valueOf() : 0
-              APP.history.push(`${path}?activityStartTime=${stamp}&activityType=${type}`)
-            }}
-            onDelete={async () => {
-              const res = await api.deleteSession(record.id)
-              if (res) {
-                APP.success('删除成功')
-                this.fetchData()
-              }
-            }}
-            onUpdate={async (open: 0 | 1) => {
-              const res = await api.updateSessionsStatus({
-                open,
-                luckyDrawRoundId: record.id
-              })
-              if (res) {
-                const msg = open === 1 ? '开启成功' : '关闭成功' 
-                APP.success(msg)
-                this.fetchData()
-              }
-            }}
-            onJumpToReward ={() => {
-              APP.history.push(`/activity/reward?luckyDrawRoundId=${record.id}&roundTitle=${record.title}`)
-            }}
-          />
-        )
-      }
-    }
-  ]
+
   /** 新建或编辑活动 */
   public handleSave () {
     this.form.props.form.validateFields(async (err, vals) => {
@@ -137,10 +63,89 @@ class Main extends React.Component<any, State> {
 
   public render () {
     const startTime = this.form && this.form.props.form.getFieldValue('startTime')
+    const typeVal = this.form && this.form.props.form.getFieldValue('type')
     let timestamp = 0
     if (startTime) {
       timestamp = startTime.valueOf()
     }
+    const columns: ColumnProps<Lottery.LuckyDrawRoundListVo>[] = [
+      {
+        key: 'No',
+        title: '序号',
+        render: (arg1, arg2, index: number) => index + 1
+      },
+      {
+        key: 'title',
+        title: '场次名称',
+        dataIndex: 'title'
+      },
+      {
+        key: 'startTime',
+        title: '开始时间',
+        dataIndex: 'startTime',
+        render: formatDate
+      },
+      {
+        key: 'endTime',
+        title: '结束时间',
+        dataIndex: 'endTime',
+        render: formatDate
+      },
+      [5, 6].includes(this.state.type) ? {} : {
+        key: 'participationTimes',
+        title: '参与人数',
+        dataIndex: 'participationTimes',
+        render: (text: any) => text || 0
+      },
+      {
+        key: 'status',
+        title: '状态',
+        dataIndex: 'status',
+        render: (text: any) => statusConfig[text]
+      },
+      {
+        key: 'operate',
+        title: '操作',
+        width: 420,
+        render: (text: any, record: Lottery.LuckyDrawRoundListVo) => {
+          const path = `/activity/lottery/${this.id}/${record.id}`
+          return (
+            <Ribbon
+              status={record.status}
+              moduleId='sessions'
+              type={this.state.type}
+              onView={() => APP.history.push(`${path}?readOnly=1&activityType=${this.state.type}`)}
+              onEdit={() => {
+                const { startTime, type } = this.form && this.form.getValues() || {}
+                const stamp = startTime ? startTime.valueOf() : 0
+                APP.history.push(`${path}?activityStartTime=${stamp}&activityType=${type}`)
+              }}
+              onDelete={async () => {
+                const res = await api.deleteSession(record.id)
+                if (res) {
+                  APP.success('删除成功')
+                  this.fetchData()
+                }
+              }}
+              onUpdate={async (open: 0 | 1) => {
+                const res = await api.updateSessionsStatus({
+                  open,
+                  luckyDrawRoundId: record.id
+                })
+                if (res) {
+                  const msg = open === 1 ? '开启成功' : '关闭成功' 
+                  APP.success(msg)
+                  this.fetchData()
+                }
+              }}
+              onJumpToReward ={() => {
+                APP.history.push(`/activity/reward?luckyDrawRoundId=${record.id}&roundTitle=${record.title}`)
+              }}
+            />
+          )
+        }
+      }
+    ]
     return (
       <Form
         readonly={this.readOnly}
@@ -220,6 +225,7 @@ class Main extends React.Component<any, State> {
               }]
             }}
           />
+          <div style={{display: typeVal <= 4 ? 'block': 'none'}}>
           <FormItem
             name='restrictWinningTimes'
             type='number'
@@ -232,6 +238,7 @@ class Main extends React.Component<any, State> {
               precision: 0
             }}
           />
+          </div>
           <FormItem
             name='remark'
             type='textarea'
@@ -262,7 +269,7 @@ class Main extends React.Component<any, State> {
             </span>
           )}>
             <Table
-              columns={this.columns}
+              columns={columns}
               rowKey='id'
               pagination={false}
               dataSource={this.state.roundList}/>

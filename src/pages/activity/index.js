@@ -80,6 +80,11 @@ const ActivityReward = Loadable({
   loader: () => import('./reward'),
   loading: Loader
 })
+/** 活动场次 */
+const ActivityRewardDetail = Loadable({
+  loader: () => import('./reward/detail'),
+  loading: Loader
+})
 
 const SprinkleCash = Loadable({
   loader: () => import('./sprinkle-cash'),
@@ -115,6 +120,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/reward`} exact component={ActivityReward} />
         <Route path={`${match.url}/sprinkle-cash`} exact component={SprinkleCash}/>
         <Route path={`${match.url}/sprinkle-cash/form/:id`} component={SprinkleCashForm}/>
+        <Route path={`${match.url}/reward/:luckyDrawRoundId/:memberId`} exact component={ActivityRewardDetail} />
       </Switch>
     );
   }

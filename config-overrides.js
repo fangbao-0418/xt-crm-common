@@ -21,12 +21,11 @@ const pubconfig = fs.existsSync('./pubconfig.json')
       outputDir: 'build'
     };
 
-console.log('PUB_ENV => ', require('./pubconfig.json'), process.env.PUB_ENV);
 paths.appBuild = path.resolve(pubconfig.outputDir);
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
 // const dev = process.env.PUB_ENV !== 'prod'
-const isEnvDevelopment = ['prod', 'pre'].indexOf(process.env.PUB_ENV) === -1;
+const isEnvDevelopment = ['prod', 'pre', 'test', 'dev'].indexOf(process.env.PUB_ENV) === -1;
 const isEnvProduction = !isEnvDevelopment;
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
@@ -122,5 +121,13 @@ module.exports = override(
   addWebpackAlias({
     packages: path.resolve(__dirname, 'packages/'),
     '@': path.resolve(__dirname, 'src/')
-  })
+  }),
+  (function () {
+    return function (config) {
+      if (isEnvProduction) {
+        config.devtool = false;
+      }
+      return config;
+    }
+  })()
 );

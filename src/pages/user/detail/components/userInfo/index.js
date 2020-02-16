@@ -416,7 +416,7 @@ class UserInfo extends Component {
           )}
         </Card>
         <Card
-          title="实名认证信息"
+          title="全球购收件人"
           style={{ marginBottom: 20 }}
           headStyle={{ fontWeight: 900 }}>
             <Table
