@@ -16,31 +16,37 @@ export interface ListRequest {
   /**
    * 对账单ID
    */
-  accId?: number
+  accId: number
   /**
    * 创建时间开始
    */
-  createTimeBegin?: number
+  createTimeBegin: number
   /**
    * 创建时间借宿
    */
-  createTimeEnd?: number
+  createTimeEnd: number
   /**
    * 自增Id
    */
-  id?: number
+  id: number
   /**
    * 调整原因 1订单补发、2平台补贴、3运费补贴、4售后扣款、5售后补偿
    */
-  trimReason?: number
+  trimReason: number
   /**
    * 对账单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效
    */
-  trimStatus?: number
+  trimStatus: number
   /**
    * 调整类型（1：收入 2：支出）
    */
-  trimType?: number
+  trimType: number
+  pageNum: number
+  pageSize: number
+  /** 采购审核人名称 */
+  purchaseReviewName: string
+  /** 财务审核人名称 */
+  financeReviewName: string
 }
 
 /**
@@ -55,59 +61,59 @@ export interface ListResponse {
   /**
    * 对账单ID
    */
-  accId?: number
+  accId: number
   /**
    * 对账单名称
    */
-  accName?: string
+  accName: string
   /**
    * 关闭原因
    */
-  closeReason?: string
+  closeReason: string
   /**
    * 关闭时间
    */
-  closeTime?: number
+  closeTime: number
   /**
    * 创建人名称
    */
-  createName?: string
+  createName: string
   /**
    * 创建时间
    */
-  createTime?: number
+  createTime: number
   /**
    * 创建人
    */
-  createUid?: number
+  createUid: number
   /**
    * 创建者类型：0：财务 1：采购：2员工：3供应商
    */
-  createdType?: number
+  createdType: number
   /**
    * 财务人调整单附件id
    */
-  financeReviewEnclosureId?: number
+  financeReviewEnclosureId: number
   /**
    * 财务审核人名称
    */
-  financeReviewName?: string
+  financeReviewName: string
   /**
    * 对账单状态（0审核通过 1审核不通过）
    */
-  financeReviewStatus?: number
+  financeReviewStatus: number
   /**
    * 财务审核时间
    */
-  financeReviewTime?: number
+  financeReviewTime: number
   /**
    * 财务审核人
    */
-  financeReviewUid?: number
+  financeReviewUid: number
   /**
    * 完成时间
    */
-  finishTime?: number
+  finishTime: number
   /**
    * 自增Id
    */
@@ -115,71 +121,71 @@ export interface ListResponse {
   /**
    * 是否删除
    */
-  isDelete?: number
+  isDelete: number
   /**
    * 修改时间
    */
-  modifyTime?: number
+  modifyTime: number
   /**
    * 修改人
    */
-  modifyUid?: number
+  modifyUid: number
   /**
    * 采购人调整单附件id
    */
-  purchaseReviewEnclosureId?: number
+  purchaseReviewEnclosureId: number
   /**
    * 采购审核人名称
    */
-  purchaseReviewName?: string
+  purchaseReviewName: string
   /**
    * 对账单状态（0审核通过 1审核不通过）
    */
-  purchaseReviewStatus?: number
+  purchaseReviewStatus: number
   /**
    * 采购审核时间
    */
-  purchaseReviewTime?: number
+  purchaseReviewTime: number
   /**
    * 采购审核人
    */
-  purchaseReviewUid?: number
+  purchaseReviewUid: number
   /**
    * 备注
    */
-  remark?: string
+  remark: string
   /**
    * 序列号
    */
-  serialNo?: string
+  serialNo: string
   /**
    * 供应商id
    */
-  supplierUid?: number
+  supplierUid: number
   /**
    * 调整单附件id
    */
-  trimEnclosureId?: number
+  trimEnclosureId: number
   /**
    * 调整金额
    */
-  trimMoney?: number
+  trimMoney: number
   /**
    * 调整单名称
    */
-  trimName?: string
+  trimName: string
   /**
    * 调整原因 1订单补发、2平台补贴、3运费补贴、4售后扣款、5售后补偿
    */
-  trimReason?: number
+  trimReason: number
   /**
    * 对账单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效
    */
-  trimStatus?: number
+  trimStatus: number
   /**
    * 调整类型（1：收入 2：支出）
    */
-  trimType?: number
+  trimType: number
 }
 
 /**
@@ -194,7 +200,7 @@ export interface RevokeRequest {
   /**
    * id
    */
-  id?: string
+  id: string
 }
 
 /**
@@ -219,131 +225,131 @@ export interface BuildRequest {
   /**
    * 对账单ID
    */
-  accId?: number
+  accId: number
   /**
    * 对账单名称
    */
-  accName?: string
+  accName: string
   /**
    * 关闭原因
    */
-  closeReason?: string
+  closeReason: string
   /**
    * 关闭时间
    */
-  closeTime?: number
+  closeTime: number
   /**
    * 创建人名称
    */
-  createName?: string
+  createName: string
   /**
    * 创建时间
    */
-  createTime?: number
+  createTime: number
   /**
    * 创建人
    */
-  createUid?: number
+  createUid: number
   /**
    * 创建者类型：0：财务 1：采购：2员工：3供应商
    */
-  createdType?: number
+  createdType: number
   /**
    * 财务人调整单附件id
    */
-  financeReviewEnclosureId?: number
+  financeReviewEnclosureId: number
   /**
    * 财务审核人名称
    */
-  financeReviewName?: string
+  financeReviewName: string
   /**
    * 对账单状态（0审核通过 1审核不通过）
    */
-  financeReviewStatus?: number
+  financeReviewStatus: number
   /**
    * 财务审核时间
    */
-  financeReviewTime?: number
+  financeReviewTime: number
   /**
    * 财务审核人
    */
-  financeReviewUid?: number
+  financeReviewUid: number
   /**
    * 完成时间
    */
-  finishTime?: number
+  finishTime: number
   /**
    * 自增Id
    */
-  id?: number
+  id: number
   /**
    * 是否删除
    */
-  isDelete?: number
+  isDelete: number
   /**
    * 修改时间
    */
-  modifyTime?: number
+  modifyTime: number
   /**
    * 修改人
    */
-  modifyUid?: number
+  modifyUid: number
   /**
    * 采购人调整单附件id
    */
-  purchaseReviewEnclosureId?: number
+  purchaseReviewEnclosureId: number
   /**
    * 采购审核人名称
    */
-  purchaseReviewName?: string
+  purchaseReviewName: string
   /**
    * 对账单状态（0审核通过 1审核不通过）
    */
-  purchaseReviewStatus?: number
+  purchaseReviewStatus: number
   /**
    * 采购审核时间
    */
-  purchaseReviewTime?: number
+  purchaseReviewTime: number
   /**
    * 采购审核人
    */
-  purchaseReviewUid?: number
+  purchaseReviewUid: number
   /**
    * 备注
    */
-  remark?: string
+  remark: string
   /**
    * 序列号
    */
-  serialNo?: string
+  serialNo: string
   /**
    * 供应商id
    */
-  supplierUid?: number
+  supplierUid: number
   /**
    * 调整单附件id
    */
-  trimEnclosureId?: number
+  trimEnclosureId: number
   /**
    * 调整金额
    */
-  trimMoney?: number
+  trimMoney: number
   /**
    * 调整单名称
    */
-  trimName?: string
+  trimName: string
   /**
    * 调整原因 1订单补发、2平台补贴、3运费补贴、4售后扣款、5售后补偿
    */
-  trimReason?: number
+  trimReason: number
   /**
    * 对账单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效
    */
-  trimStatus?: number
+  trimStatus: number
   /**
    * 调整类型（1：收入 2：支出）
    */
-  trimType?: number
+  trimType: number
 }
 
 /**
@@ -368,7 +374,7 @@ export interface InfoRequest {
   /**
    * id
    */
-  id?: string
+  id: string
 }
 
 /**
@@ -383,131 +389,131 @@ export interface InfoResponse {
   /**
    * 对账单ID
    */
-  accId?: number
+  accId: number
   /**
    * 对账单名称
    */
-  accName?: string
+  accName: string
   /**
    * 关闭原因
    */
-  closeReason?: string
+  closeReason: string
   /**
    * 关闭时间
    */
-  closeTime?: number
+  closeTime: number
   /**
    * 创建人名称
    */
-  createName?: string
+  createName: string
   /**
    * 创建时间
    */
-  createTime?: number
+  createTime: number
   /**
    * 创建人
    */
-  createUid?: number
+  createUid: number
   /**
    * 创建者类型：0：财务 1：采购：2员工：3供应商
    */
-  createdType?: number
+  createdType: number
   /**
    * 财务人调整单附件id
    */
-  financeReviewEnclosureId?: number
+  financeReviewEnclosureId: number
   /**
    * 财务审核人名称
    */
-  financeReviewName?: string
+  financeReviewName: string
   /**
    * 对账单状态（0审核通过 1审核不通过）
    */
-  financeReviewStatus?: number
+  financeReviewStatus: number
   /**
    * 财务审核时间
    */
-  financeReviewTime?: number
+  financeReviewTime: number
   /**
    * 财务审核人
    */
-  financeReviewUid?: number
+  financeReviewUid: number
   /**
    * 完成时间
    */
-  finishTime?: number
+  finishTime: number
   /**
    * 自增Id
    */
-  id?: number
+  id: number
   /**
    * 是否删除
    */
-  isDelete?: number
+  isDelete: number
   /**
    * 修改时间
    */
-  modifyTime?: number
+  modifyTime: number
   /**
    * 修改人
    */
-  modifyUid?: number
+  modifyUid: number
   /**
    * 采购人调整单附件id
    */
-  purchaseReviewEnclosureId?: number
+  purchaseReviewEnclosureId: number
   /**
    * 采购审核人名称
    */
-  purchaseReviewName?: string
+  purchaseReviewName: string
   /**
    * 对账单状态（0审核通过 1审核不通过）
    */
-  purchaseReviewStatus?: number
+  purchaseReviewStatus: number
   /**
    * 采购审核时间
    */
-  purchaseReviewTime?: number
+  purchaseReviewTime: number
   /**
    * 采购审核人
    */
-  purchaseReviewUid?: number
+  purchaseReviewUid: number
   /**
    * 备注
    */
-  remark?: string
+  remark: string
   /**
    * 序列号
    */
-  serialNo?: string
+  serialNo: string
   /**
    * 供应商id
    */
-  supplierUid?: number
+  supplierUid: number
   /**
    * 调整单附件id
    */
-  trimEnclosureId?: number
+  trimEnclosureId: number
   /**
    * 调整金额
    */
-  trimMoney?: number
+  trimMoney: number
   /**
    * 调整单名称
    */
-  trimName?: string
+  trimName: string
   /**
    * 调整原因 1订单补发、2平台补贴、3运费补贴、4售后扣款、5售后补偿
    */
-  trimReason?: number
+  trimReason: number
   /**
    * 对账单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效
    */
-  trimStatus?: number
+  trimStatus: number
   /**
    * 调整类型（1：收入 2：支出）
    */
-  trimType?: number
+  trimType: number
 }
 
 
@@ -523,15 +529,15 @@ export interface ExamineRequest {
   /**
    * 对账单状态（0审核通过 1审核不通过）
    */
-  reviewStatus?: number
-  trimExplain?: string
-  trimFileUrl?: string
-  trimId?: number
-  trimImgUrl?: string
-  userDTO?: {
-    roleId?: number
-    userId?: number
-    userName?: string
+  reviewStatus: number
+  trimExplain: string
+  trimFileUrl: string
+  trimId: number
+  trimImgUrl: string
+  userDTO: {
+    roleId: number
+    userId: number
+    userName: string
   }
 }
 

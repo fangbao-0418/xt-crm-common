@@ -249,4 +249,90 @@ export interface GetIcExDetailsListOnPageResponse {
   status: number
 }
 
+/**
+ * 生成结算单
+ */
+interface AddSettlementRequest {
+  /** 对账单id */
+  accIdList: number[]
+  /** 发票凭证地址 */
+  invoiceUrl: string
+  /** 是否新建收款账户，0：否，1：是 */
+  newAccount: 0 | 1
+  /**
+   * 户名
+   */
+  accoutName?: string
+  /**
+   * 卡号
+   */
+  accoutNo?: string
+  /**
+   * 支行名称
+   */
+  bankBranchName?: string
+  /**
+   * 银行编码
+   */
+  bankCode?: string
+  /**
+   * 银行名称
+   */
+  bankName?: string
+  /**
+   * 城市
+   */
+  city?: string
+  /**
+   * 城市ID
+   */
+  cityId?: number
+  /**
+   * 创建时间
+   */
+  createTime?: number
+  /**
+   * 创建人
+   */
+  createUid?: number
+  /**
+   * 自增Id
+   */
+  id: number
+  /**
+   * 是否删除
+   */
+  isDelete?: number
+  /**
+   * 修改时间
+   */
+  modifyTime?: number
+  /**
+   * 修改人
+   */
+  modifyUid?: number
+  /**
+   * 1 ：微信 2：支付宝 3：个人银行卡 4：对公账户
+   */
+  payType?: number
+  /**
+   * 省份
+   */
+  province?: string
+  /**
+   * 省份ID
+   */
+  provinceId?: number
+  /**
+   * 供应商id
+   */
+  supplierUid?: number
+  /**
+   * 1.供应商端收款账户 2.crm端收款账户
+   */
+  type?: number
+  /** 省市 */
+  area?: {name: string, value: string}[]
+}
+
 /* prettier-ignore-end */

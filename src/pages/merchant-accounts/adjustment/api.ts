@@ -22,18 +22,19 @@ export const toAudit = (payload: ExamineRequest) => {
   return newPost(`/finance/trimRecord/examine`, payload)
 }
 
-/** 导出 */
-export const toExport = (ids?: number[]) => {
-  if (ids) {
-    return newPost('/finance/trimRecord/exportTrim')
-  } else {
-    return newPost('/finance/trimRecord/exportTrimByTrimIds', ids)
-  }
+/** 根据ID导出 */
+export const toExport = (ids: number[]) => {
+  return newPost('/finance/trimRecord/exportTrimByTrimIds', ids)
+}
+
+/** 根据条件全部导出 */
+export const toSearchExport = (payload: Partial<ListRequest>) => {
+  return newPost('/finance/trimRecord/exportTrim', payload)
 }
 
 /** 新建调整单 */
-export const addAdjustment = (payload: BuildRequest) => {
-  return newPost('/crm/financeTrimRecord/build', payload)
+export const addAdjustment = (payload: Partial<BuildRequest>) => {
+  return newPost('/finance/trimRecord/build', payload)
 }
 
 /** 撤销 */

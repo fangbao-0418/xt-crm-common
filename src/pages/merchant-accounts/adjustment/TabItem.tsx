@@ -7,7 +7,7 @@ import Detail from './Detail'
 import { getFieldsConfig, TrimTypeEnum, TrimStatusEnum, CreatedTypeEnum } from './config'
 import * as api from './api'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
-import { ListResponse } from './interface'
+import { ListResponse, ListRequest } from './interface'
 
 interface Props extends Partial<AlertComponentProps> {
   /** 对账单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效 */
@@ -87,29 +87,33 @@ class Main extends React.Component<Props, State> {
     },
     {
       dataIndex: 'purchaseReviewName',
-      title: '采购审核人'
+      title: '采购审核人',
+      width: 150
     },
     {
       dataIndex: 'purchaseReviewTime',
       title: '采购审核时间',
+      width: 200,
       render: (text) => {
         return APP.fn.formatDate(text)
       }
     },
     {
       dataIndex: 'financeReviewName',
-      title: '财务审核人'
+      title: '财务审核人',
+      width: 150
     },
     {
       dataIndex: 'financeReviewTime',
       title: '财务审核时间',
+      width: 200,
       render: (text) => {
         return APP.fn.formatDate(text)
       }
     },
     {
       title: '操作',
-      width: 300,
+      width: 200,
       align: 'center',
       render: (record) => {
         return (
@@ -141,6 +145,7 @@ class Main extends React.Component<Props, State> {
     }
   ]
   public listpage: ListPageInstanceProps
+  public payload: Partial<ListRequest>
   public state: State = {
     selectedRowKeys: []
   }
@@ -152,6 +157,7 @@ class Main extends React.Component<Props, State> {
         title: record ? '调整单详情' : '新建调整单',
         content: (
           <Detail
+            type={record ? 'audit' : 'add'}
             id={record && record.id}
             onOk={() => {
               this.listpage.refresh()
@@ -170,8 +176,24 @@ class Main extends React.Component<Props, State> {
     api.toRevoke(record.id)
   }
   public toExport (isAll?: boolean) {
-    const value =  this.listpage.form.getValues()
-    api.toExport(value)
+    if (isAll) {
+      api.toSearchExport({
+        ...this.payload,
+        pageNum: undefined,
+        pageSize: undefined
+      }).then((res) => {
+        APP.fn.download(res, '调整单导出')
+      })
+    } else {
+      const { selectedRowKeys } = this.state
+      if (selectedRowKeys.length === 0) {
+        APP.error('请勾选导出ID')
+        return
+      }
+      api.toExport(selectedRowKeys).then((res) => {
+        APP.fn.download(res, '调整单导出')
+      })
+    }
   }
   public onSelectChange = (selectedRowKeys: string[] | number[]) => {
     this.setState({
@@ -183,7 +205,8 @@ class Main extends React.Component<Props, State> {
     const rowSelection: TableRowSelection<ListResponse> = {
       selectedRowKeys,
       onChange: this.onSelectChange,
-      columnWidth: 50
+      columnWidth: 50,
+      fixed: true
     }
     return (
       <div>
@@ -200,6 +223,11 @@ class Main extends React.Component<Props, State> {
           columns={this.columns}
           formConfig={getFieldsConfig()}
           tableProps={{
+            scroll: {
+              x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
+                return a + b
+              })
+            },
             rowSelection
           }}
           formItemLayout={(
@@ -259,12 +287,13 @@ class Main extends React.Component<Props, State> {
           api={api.fetchList}
           processPayload={(payload) => {
             const status = this.props.status
-            return {
+            this.payload = {
               ...payload,
               pageNum: payload.page,
               page: undefined,
               trimStatus: status === 0 ? undefined : status
             }
+            return this.payload
           }}
           processData={(data) => {
             return {

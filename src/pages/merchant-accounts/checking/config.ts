@@ -6,10 +6,16 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      accId: {
+      serialNo: {
         type: 'number', label: '对账单ID',
         controlProps: {
           style: {width: 150}
+        }
+      },
+      storeName: {
+        type: 'input', label: '供应商',
+        controlProps: {
+          placeholder: '请输入供应商名称'
         }
       },
       accStatus: {
@@ -36,25 +42,39 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '人民币', value: 1}
         ]
       },
-      accountType0: {
+      newAccount: {
         type: 'radio', label: '请选择账户',
         options: [
           {label: '新账户', value: 1},
-          {label: '已有账户', value: 2}
-        ]
+          {label: '已有账户', value: 0}
+        ],
+        fieldDecoratorOptions: {
+          initialValue: 1
+        }
       },
       accountType: {
         type: 'radio', label: '账户类型',
         options: [
-          {label: '微信', value: 1},
+          // {label: '微信', value: 1},
           {label: '支付宝', value: 2},
           {label: '个人银行卡', value: 3},
           {label: '对公银行账户', value: 4}
         ],
         fieldDecoratorOptions: {
-          initialValue: 1,
+          initialValue: 2,
           rules: [
             {required: true, message: '请选择账户类型'}
+          ]
+        }
+      },
+      bankBranchName: {
+        type: 'input', label: '银行支行名称',
+        controlProps: {
+          placeholder: '请选择收款账号银行名，例如中国银行杭州高新支行'
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '请输入银行支行名称'}
           ]
         }
       },
@@ -83,10 +103,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 
 /** @对账单状态（10：待结算；20：部分结算；30：已结清；40：已失效;60关闭） */
 export enum AccStatusEnum {
-  可申请结算 = 10,
-  结算中 = 20,
-  已结算 = 30,
-  冻结中 = 40
+  待确认 = 10,
+  未结算 = 20,
+  待结算 = 30,
+  结算中 = 40,
+  已结算 = 50,
+  已结清 = 60,
+  结算异常 = 70
 }
 
 /** 交易状态（1：完成 2：未完成 3：出现异常） */

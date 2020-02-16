@@ -25,15 +25,18 @@ class Main extends React.Component<Props> {
           }}
           getInstance={(ref) => { this.form = ref }}
           readonly={readonly}
+          labelCol={{span: 5}}
+          wrapperCol={{span: 18}}
         >
           <FormItem
-            name='accId'
+            name='serialNo'
             type='input'
             label='对账单ID'
+            verifiable
             controlProps={{
               style: { width: '100%' }
             }}
-            wrapperCol={{span: 14}}
+            wrapperCol={{span: 10}}
             addonAfterCol={{span: 6}}
             addonAfter={!readonly && (
               <Button
@@ -44,23 +47,24 @@ class Main extends React.Component<Props> {
               </Button>
             )}
           />
-          <FormItem name='accName' />
+          <FormItem name='accName' verifiable />
           {/* <FormItem name='c' label='供应商' /> */}
-          <FormItem name='trimType' />
-          <FormItem name='trimReason' />
+          <FormItem name='trimType' verifiable />
+          <FormItem name='trimReason' verifiable />
           <FormItem
+            verifiable
             name='trimMoney'
             wrapperCol={{
               span: 6
             }}
             addonAfterCol={{
-              span: 14
+              span: 10
             }}
             addonAfter={(
-              <span>（仅支持精确到小数点2位）</span>
+              <span style={{fontSize: 12, color: '#999'}}>（仅支持精确到小数点2位）</span>
             )}
           />
-          <FormItem name='trimExplain' />
+          <FormItem name='trimExplain' verifiable />
           <FormItem
             label='调整文件'
             inner={(form) => {
@@ -68,6 +72,7 @@ class Main extends React.Component<Props> {
                 <div>
                   {form.getFieldDecorator('trimFileUrl')(
                     <Upload
+                      disabled={readonly}
                       listType='text'
                       // maxCount={3}
                       listNum={3}
@@ -89,6 +94,7 @@ class Main extends React.Component<Props> {
                 <div>
                   {form.getFieldDecorator('trimImgUrl')(
                     <Upload
+                      disabled={readonly}
                       listType='picture-card'
                       // maxCount={5}
                       listNum={5}

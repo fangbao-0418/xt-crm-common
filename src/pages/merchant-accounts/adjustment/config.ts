@@ -12,15 +12,36 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           style: { width: 150 }
         }
       },
+      serialNo: {
+        type: 'number', label: '对账单ID',
+        controlProps: {
+          style: { width: 150 }
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '对账单ID不能为空'}
+          ]
+        }
+      },
       accId: {
         type: 'number', label: '对账单ID',
         controlProps: {
           style: { width: 150 }
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '对账单ID不能为空'}
+          ]
         }
       },
       accName: {
         type: 'input',
-        label: '对账单名称'
+        label: '对账单名称',
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '对账单名称不能为空'}
+          ]
+        }
       },
       trimType: {
         type: 'select',
@@ -28,7 +49,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         options: [
           {label: '收入', value: 1},
           {label: '支出', value: 2}
-        ]
+        ],
+        fieldDecoratorOptions: {
+          initialValue: 1,
+          rules: [
+            {required: true, message: '调整类型不能为空'}
+          ]
+        }
       },
       trimStatus: {
         label: '状态',
@@ -39,17 +66,28 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '审核通过', value: 30},
           {label: '审核不通过', value: 40}
         ]
+        // fieldDecoratorOptions: {
+        //   initialValue: 10,
+        //   rules: [
+        //     {required: true, message: '状态不能为空'}
+        //   ]
+        // }
       },
       trimReason: {
         label: '调整原因',
         type: 'select',
         options: [
           {label: '订单补发', value: 1},
-          {label: '运费补贴', value: 2},
-          {label: '平台补贴', value: 3},
+          {label: '运费补贴', value: 3},
+          {label: '平台补贴', value: 2},
           {label: '售后扣款', value: 4},
           {label: '售后补偿', value: 5}
-        ]
+        ],
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '调整原因不能为空'}
+          ]
+        }
       },
       createdType: {
         type: 'select',
@@ -78,11 +116,21 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         controlProps: {
           precision: 2,
           style: {width: '100%'}
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '调整金额不能为空'}
+          ]
         }
       },
       /** 调整说明 | 审核说明 */
       trimExplain: {
-        type: 'textarea', label: '调整说明'
+        type: 'textarea', label: '调整说明',
+        fieldDecoratorOptions: {
+          rules: [
+            {required: true, message: '调整说明不能为空'}
+          ]
+        }
       },
       reviewStatus: {
         type: 'radio', label: '审核意见',

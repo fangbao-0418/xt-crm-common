@@ -10,6 +10,7 @@ interface Props {
   id?: number | undefined
   onOk?: () => void
   onCancel?: () => void
+  type: 'add' | 'audit'
 }
 
 interface State {
@@ -50,14 +51,16 @@ class Main extends React.Component<Props, State> {
       console.log(value, '-------')
       value = {
         ...value,
-        trimImgUrl: (value.trimImgUrl || []).map((item: {url: string}) => item.url).join(','),
-        trimFileUrl: (value.trimFileUrl || []).map((item: {url: string}) => item.url).join(',')
+        // trimImgUrl: (value.trimImgUrl || []).map((item: {url: string}) => item.url).join(','),
+        // trimFileUrl: (value.trimFileUrl || []).map((item: {url: string}) => item.url).join(',')
+        trimImgUrl: JSON.stringify(value.trimImgUrl || []),
+        trimFileUrl: JSON.stringify(value.trimFileUrl || [])
       }
-      // api.addAdjustment(value).then(() => {
-      //   if (this.props.onOk) {
-      //     this.props.onOk()
-      //   }
-      // })
+      api.addAdjustment(value).then(() => {
+        if (this.props.onOk) {
+          this.props.onOk()
+        }
+      })
     })
   }
   public toAudit () {
@@ -70,32 +73,43 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
+    const type = this.props.type
     return (
       <div className={styles.detail}>
-        <div className={styles['detail-title']}>调整单信息</div>
-        <Adjustment
-          ref={(ref) => { this.adjustmentRef = ref as Adjustment }}
-          readonly={!!this.props.id}
-        />
-        <If condition={true}>
-          <div className={styles['detail-title']}>采购审核信息</div>
-          <Audit
-            ref={(ref) => { this.audit1Ref = ref as Audit }}
+        <If condition={type === 'add'}>
+          <Adjustment
+            ref={(ref) => { this.adjustmentRef = ref as Adjustment }}
           />
         </If>
-        <If condition={true}>
-          <div className={styles['detail-title']}>财务审核信息</div>
-          <Audit
-            ref={(ref) => { this.audit2Ref = ref as Audit }}
+        <If condition={type === 'audit'}>
+          <div className={styles['detail-title']}>调整单信息</div>
+          <Adjustment
+            ref={(ref) => { this.adjustmentRef = ref as Adjustment }}
+            readonly={!!this.props.id}
           />
+          <If condition={true}>
+            <div className={styles['detail-title']}>采购审核信息</div>
+            <Audit
+              ref={(ref) => { this.audit1Ref = ref as Audit }}
+            />
+          </If>
+          <If condition={true}>
+            <div className={styles['detail-title']}>财务审核信息</div>
+            <Audit
+              ref={(ref) => { this.audit2Ref = ref as Audit }}
+            />
+          </If>
         </If>
         <hr style={{opacity: .3}} />
         <div className='text-right'>
           <Button
             className='mr10'
             onClick={() => {
-              // this.validateField.bind(this)
-              this.toAudit()
+              if (type === 'add') {
+                this.validateField()
+              } else if (type === 'audit') {
+                this.toAudit()
+              }
             }}
             type='primary'
           >
