@@ -42,10 +42,25 @@ class Main extends React.Component<Props, State> {
   }
   public setValues (values: InfoResponse) {
     values.trimMoney = APP.fn.formatMoneyNumber(values.trimMoney, 'm2u')
+    const trimEnclosure = values.trimEnclosure || {
+      trimExplain: '',
+      trimFileUrl: '',
+      trimImgUrl: ''
+    }
+    values.trimExplain = trimEnclosure.trimExplain
+    values.trimFileUrl = this.handleFileValue(trimEnclosure.trimFileUrl)
+    values.trimImgUrl = this.handleFileValue(trimEnclosure.trimImgUrl)
     this.adjustmentRef.form.setValues(values)
   }
-  public addAdjustment () {
-    // api.addAdjustment()
+  public handleFileValue (value: string) {
+    value = value || ''
+    let result: any[]
+    try {
+      result = JSON.parse(value)
+    } catch (e) {
+      result = value.split(',').map((item) => ({url: item}))
+    }
+    return result
   }
   public validateField () {
     this.adjustmentRef.form.props.form.validateFields((err, value) => {

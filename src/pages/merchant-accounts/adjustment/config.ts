@@ -62,7 +62,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '支出', value: 2}
         ],
         fieldDecoratorOptions: {
-          initialValue: 1,
+          // initialValue: 1,
           rules: [
             {required: true, message: '调整类型不能为空'}
           ]
@@ -154,13 +154,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         ]
       },
       supplierName: {
-        type: 'input', label: '供应商',
+        type: 'input', label: '供应商'
       },
       purchaseReviewName: {
-        type: 'input', label: '采购审核人',
+        type: 'input', label: '采购审核人'
       },
       financeReviewName: {
-        type: 'input', label: '财务审核人',
+        type: 'input', label: '财务审核人'
       }
     }
   }

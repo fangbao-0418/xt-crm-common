@@ -514,6 +514,42 @@ export interface InfoResponse {
    * 调整类型（1：收入 2：支出）
    */
   trimType: number
+  /**
+   * 调整说明
+   */
+  trimExplain: string
+  /**
+   * 文件
+   */
+  trimFileUrl: {url: string}[]
+  /**
+   * 图
+   */
+  trimImgUrl: {url: string}[]
+  /**
+   * 调整信息
+   */
+  trimEnclosure: {
+    createTime: number
+    createUid: number
+    id: number
+    isDelete: number
+    modifyTime: number
+    modifyUid: number
+    /**
+     * 调整说明
+     */
+    trimExplain: string
+    /**
+     * 文件
+     */
+    trimFileUrl: string
+    trimId: number
+    /**
+     * 图
+     */
+    trimImgUrl: string
+  }
 }
 
 

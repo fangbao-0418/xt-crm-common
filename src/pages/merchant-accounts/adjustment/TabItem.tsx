@@ -184,7 +184,9 @@ class Main extends React.Component<Props, State> {
     }
   }
   public toRevoke (record: ListResponse) {
-    api.toRevoke(record.id)
+    api.toRevoke(record.id).then(() => {
+      this.listpage.refresh()
+    })
   }
   public toExport (isAll?: boolean) {
     if (isAll) {

@@ -90,6 +90,7 @@ class Main extends React.Component<Props> {
                       listType='text'
                       // maxCount={3}
                       listNum={3}
+                      accept='doc,xls'
                       // maxSize={10}
                       // fileType={['spreadsheetml', 'wordprocessingml']}
                       // fileTypeText='请上传正确doc、xls格式文件'
