@@ -6,15 +6,15 @@ const { Step } = Steps;
 
 
 const StepInfo = ({ stepinfo = [] }) => {
-  const current = 0;
+  const current = stepinfo.filter(o=> o.operateTime).length - 1 
   return (
     <Card>
-      <Steps progressDot current={current}>
+      <Steps progressDot current={current} style={{ width: '90%' }}>
         {
           stepinfo.map((o, index) => <Step
             key={index}
             title={o.operateTypeInfo}
-            description={<div>
+            description={<div style={{ width: '250px', textAlign: 'left' }}>
               <div>{index === 0 ? '创建时间' : '操作时间'}：{APP.fn.formatDate(o.operateTime)}</div>
               <div>{index === 0 ? '创建人' : '操作人'}：{o.operateName}</div>
             </div>}

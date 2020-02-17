@@ -8,12 +8,12 @@ class PayMent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      paymentStatus:  parseQuery().paymentStatus || '0'
+      paymentStatus:  parseQuery().paymentStatus || ''
     };
    
   }
   componentDidMount(){
-    this.handleTabClick(parseQuery().paymentStatus || '0')
+    this.handleTabClick(this.state.paymentStatus || '')
   }
   handleTabClick = paymentStatus => {
     this.setState({paymentStatus})
@@ -26,6 +26,7 @@ class PayMent extends React.Component {
 
   render () {
     let {paymentStatus} = this.state;
+
     return (
       <div>
       <Card >
@@ -34,7 +35,7 @@ class PayMent extends React.Component {
             return <TabPane tab={TextMapPayStatus[item]} key={item} />
           })}
         </Tabs>
-        <List />
+        <List paymentStatus={paymentStatus} />
       </Card>
     </div>
     )

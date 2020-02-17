@@ -1,22 +1,19 @@
-
-
-
 // 付款状态
 export const enumPayType = {
-  All:0,
+  All:'',
   ToBePaid: 10,
-  Freezing: 20,
-  Paid: 30,
-  Closed: 40,
+  Paid: 20,
+  Closed: 30,
+  Freezing: 40
 };
 
 // 付款状态文字
 export const TextMapPayStatus = {
   [enumPayType.All]: '全部',
   [enumPayType.ToBePaid]: '待支付',
-  [enumPayType.Freezing]: '冻结中',
   [enumPayType.Paid]: '已支付',
-  [enumPayType.Closed]: '已关闭'
+  [enumPayType.Closed]: '已关闭',
+  [enumPayType.Freezing]: '冻结中'
 };
 
 
