@@ -74,13 +74,14 @@ class Main extends React.Component<Props, State> {
     values.trimImgUrl = this.handleFileValue(trimEnclosure.trimImgUrl)
     values.purchaseReviewTime = APP.fn.formatDate(values.purchaseReviewTime) as any
     values.financeReviewTime = APP.fn.formatDate(values.financeReviewTime) as any
-    // values.purchaseReviewEnclosure = 
+    /** 调整单信息 */
     this.adjustmentRef.form.setValues(values)
     const trimStatus = values.trimStatus
     if (trimStatus !== 10) {
       const purchaseReviewEnclosure: any = values.purchaseReviewEnclosure || {}
       purchaseReviewEnclosure.trimImgUrl = this.handleFileValue(purchaseReviewEnclosure.trimImgUrl)
       purchaseReviewEnclosure.trimFileUrl = this.handleFileValue(purchaseReviewEnclosure.trimFileUrl)
+      /** 采购审核信息 */
       if (this.audit1Ref) {
         this.audit1Ref.form.setValues({
           ...values,
@@ -93,8 +94,8 @@ class Main extends React.Component<Props, State> {
       const financeReviewEnclosure: any = values.financeReviewEnclosure || {}
       financeReviewEnclosure.trimImgUrl = this.handleFileValue(financeReviewEnclosure.trimImgUrl)
       financeReviewEnclosure.trimFileUrl = this.handleFileValue(financeReviewEnclosure.trimFileUrl)
+      /** 财务审核信息 */
       if (this.audit2Ref) {
-        console.log(values, '-----value')
         this.audit2Ref.form.setValues({
           ...values,
           reviewStatus: values.financeReviewStatus,
@@ -105,11 +106,19 @@ class Main extends React.Component<Props, State> {
   }
   public handleFileValue (value: string) {
     value = value || ''
-    let result: any[]
+    let result: any
     try {
       result = JSON.parse(value)
+      result.map((item: {url: string, rurl: string}) => {
+        /** 处理相对路径 */
+        item.url = item.rurl || item.url
+      })
     } catch (e) {
-      result = value.split(',').map((item) => ({url: item}))
+      try {
+        result = value.split(',').map((item) => ({url: item}))
+      } catch (e) {
+        result = undefined
+      }
     }
     return result
   }
@@ -150,7 +159,7 @@ class Main extends React.Component<Props, State> {
         type = 'finance'
       }
       api.toAudit(value, type).then(() => {
-        APP.success('审核成功')
+        APP.success('操作完成')
         if (this.props.onOk) {
           this.props.onOk()
         }
@@ -180,7 +189,7 @@ class Main extends React.Component<Props, State> {
                 <div className={styles['detail-title']}>采购审核信息</div>
                 <Audit
                   type='purchase'
-                  readonly={type === 'view' || trimStatus !== 10}
+                  // readonly={type === 'view' || trimStatus !== 10}
                   ref={(ref) => { this.audit1Ref = ref as Audit }}
                 />
               </Auth>
@@ -198,18 +207,21 @@ class Main extends React.Component<Props, State> {
                 <div className={styles['detail-title']}>财务审核信息</div>
                 <Audit
                   type='finance'
-                  readonly={type === 'view' || trimStatus !== 20}
+                  // readonly={type === 'view' || trimStatus !== 20}
                   ref={(ref) => { this.audit2Ref = ref as Audit }}
                 />
               </Auth>
             </If>
+            {/** 非审核状态有审核信息就显示审核信息 */}
             <If condition={[10, 20].indexOf(trimStatus) === -1}>
-              <div className={styles['detail-title']}>采购审核信息</div>
-              <Audit
-                type='purchase'
-                readonly={true}
-                ref={(ref) => { this.audit1Ref = ref as Audit }}
-              />
+              <If condition={!!purchaseReviewEnclosure}>
+                <div className={styles['detail-title']}>采购审核信息</div>
+                <Audit
+                  type='purchase'
+                  readonly={true}
+                  ref={(ref) => { this.audit1Ref = ref as Audit }}
+                />
+              </If>
               <If condition={!!financeReviewEnclosure}>
                 <div className={styles['detail-title']}>财务审核信息</div>
                 <Audit

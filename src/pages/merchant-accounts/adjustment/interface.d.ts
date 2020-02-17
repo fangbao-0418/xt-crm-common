@@ -431,7 +431,7 @@ export interface InfoResponse {
    */
   financeReviewName: string
   /**
-   * 对账单状态（0审核通过 1审核不通过）
+   * 财务审核状态（0审核通过 1审核不通过）
    */
   financeReviewStatus: number
   /**
@@ -471,7 +471,7 @@ export interface InfoResponse {
    */
   purchaseReviewName: string
   /**
-   * 对账单状态（0审核通过 1审核不通过）
+   * 采购审核状态（0审核通过 1审核不通过）
    */
   purchaseReviewStatus: number
   /**
