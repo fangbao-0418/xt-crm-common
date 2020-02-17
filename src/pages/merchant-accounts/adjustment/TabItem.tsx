@@ -157,7 +157,7 @@ class Main extends React.Component<Props, State> {
                 )
               }}
             </Auth>
-            {record.trimStatus === 10 && (
+            {/* {record.trimStatus === 10 && (
               <Popconfirm
                 title='确定是否撤销？'
                 onConfirm={this.toRevoke.bind(this, record)}
@@ -165,8 +165,7 @@ class Main extends React.Component<Props, State> {
                 <span className='href'>撤销</span>
               </Popconfirm>
             )}
-            &nbsp;&nbsp;
-            {/* <span className='href'>新建调整单</span> */}
+            &nbsp;&nbsp; */}
           </div>
         )
       }

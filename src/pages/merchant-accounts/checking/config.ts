@@ -116,10 +116,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   return _.mergeWith(defaultConfig, partial)
 }
 
-/** @对账单状态（10：待结算；20：部分结算；30：已结清；40：已失效;60关闭） */
+/** @对账单状态（10：待结算；20：可申请结算；30：已结清；40：已失效;60关闭） */
 export enum AccStatusEnum {
   待确认 = 10,
-  未结算 = 20,
+  可申请结算 = 20,
   待结算 = 30,
   结算中 = 40,
   已结算 = 50,

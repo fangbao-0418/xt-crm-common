@@ -155,10 +155,10 @@ class Main extends React.Component<Props, State> {
       APP.error('不能同时对多个供应商的对账单进行结算')
       return
     }
-    if (this.selectedRows.length < 7) {
-      APP.error('对账单数量不能小于7条')
-      return
-    }
+    // if (this.selectedRows.length < 7) {
+    //   APP.error('对账单数量不能小于7条')
+    //   return
+    // }
     if (this.props.alert) {
       const hide = this.props.alert({
         width: 600,

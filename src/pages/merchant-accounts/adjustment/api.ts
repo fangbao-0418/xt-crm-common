@@ -18,8 +18,12 @@ export const fetchInfo = (id: number) => {
 }
 
 /** 调整单审核 */
-export const toAudit = (payload: ExamineRequest) => {
-  return newPost(`/finance/trimRecord/examine`, payload)
+export const toAudit = (payload: ExamineRequest, type: 'purchase' | 'finance') => {
+  let url = '/finance/trimRecord/purchase/examine'
+  if (type === 'finance') {
+    url = '/finance/trimRecord/finance/examine'
+  }
+  return newPost(url, payload)
 }
 
 /** 根据ID导出 */
@@ -39,7 +43,7 @@ export const addAdjustment = (payload: Partial<BuildRequest>) => {
 
 /** 撤销 */
 export const toRevoke = (id: number) => {
-  return newPost(`/crm/financeTrimRecord/revoke?id=${id}`)
+  return newPost(`/finance/financeTrimRecord/revoke?id=${id}`)
 }
 
 /** 校验对账单 */

@@ -8,7 +8,7 @@ class Main extends React.Component {
   public config: {title: string, key: number}[] = [
     {title: '全部', key: -1},
     {title: '待确认', key: 10},
-    {title: '未结算', key: 20},
+    {title: '可申请结算', key: 20},
     {title: '待结算', key: 30},
     {title: '结算中', key: 40},
     {title: '已结算', key: 50},

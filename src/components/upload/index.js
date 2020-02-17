@@ -37,7 +37,6 @@ class UploadView extends Component {
   count = 0
   constructor(props) {
     super(props);
-    console.log(props.value, 'props.value')
     this.state = {
       fileList: this.initFileList(props.value || []),
       visible: false,
@@ -141,8 +140,8 @@ class UploadView extends Component {
     const { fileType, size = 10, pxSize, listNum } = this.props;
 
     if (fileType && !this.checkFileType(file, fileType)) {
-      const fileTypeText = this.props.fileTypeText
-      message.error(fileTypeText || `请上传正确${fileType}格式文件`);
+      const fileTypeErrorText = this.props.fileTypeErrorText
+      message.error(fileTypeErrorText || `请上传正确${fileType}格式文件`);
       return Promise.reject()
     }
     const isLtM = file.size / 1024 / 1024 < size;

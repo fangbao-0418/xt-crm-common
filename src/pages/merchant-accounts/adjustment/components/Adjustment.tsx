@@ -1,6 +1,7 @@
 /** 调整单 */
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import If from '@/packages/common/components/if'
 import { getFieldsConfig } from '../config'
 import Upload from '@/components/upload'
 import { Button } from 'antd'
@@ -28,7 +29,7 @@ class Main extends React.Component<Props> {
     })
   }
   public render () {
-    const readonly = this.props.readonly
+    const readonly = this.props.readonly || false
     const from = this.props.from || 'self'
     return (
       <div>
@@ -69,7 +70,9 @@ class Main extends React.Component<Props> {
             verifiable
             readonly={readonly || from === 'checking'}
           />
-          {/* <FormItem name='c' label='供应商' /> */}
+          <If condition={readonly}>
+            <FormItem name='storeName' label='供应商' />
+          </If>
           <FormItem name='trimType' verifiable />
           <FormItem name='trimReason' verifiable />
           <FormItem
@@ -98,9 +101,9 @@ class Main extends React.Component<Props> {
                       // maxCount={3}
                       listNum={3}
                       accept='doc,xls'
-                      // maxSize={10}
+                      size={10}
                       // fileType={['spreadsheetml', 'wordprocessingml']}
-                      // fileTypeText='请上传正确doc、xls格式文件'
+                      fileTypeErrorText='请上传正确doc、xls格式文件'
                     >
                       <span className='href'>+添加文件</span>
                     </Upload>
@@ -119,14 +122,14 @@ class Main extends React.Component<Props> {
                     <Upload
                       disabled={readonly}
                       listType='picture-card'
-                      // maxCount={5}
+                      // fileType={['jpg', 'png', 'jpeg']}
                       listNum={5}
                       multiple
-                      // size={2}
+                      size={2}
                     >
                     </Upload>
                   )}
-                  <div style={{fontSize: 12, color: '#999'}}>- 支持png、jipg、jpeg格式，最多可上传5张图片，最大支持2MB</div>
+                  <div style={{fontSize: 12, color: '#999'}}>- 支持png、jpg、jpeg格式，最多可上传5张图片，最大支持2MB</div>
                   <div style={{fontSize: 12, color: '#999'}}>- 添加文件和图片凭证，可提高审核效率哦～</div>
                 </div>
               )

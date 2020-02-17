@@ -67,6 +67,7 @@ class Main extends React.Component<Props, State> {
     values.trimImgUrl = this.handleFileValue(trimEnclosure.trimImgUrl)
     values.purchaseReviewTime = APP.fn.formatDate(values.purchaseReviewTime) as any
     values.financeReviewTime = APP.fn.formatDate(values.financeReviewTime) as any
+    // values.purchaseReviewEnclosure = 
     this.adjustmentRef.form.setValues(values)
     const trimStatus = values.trimStatus
     if (trimStatus !== 10) {
@@ -110,12 +111,20 @@ class Main extends React.Component<Props, State> {
     })
   }
   public toAudit () {
-    this.audit1Ref.form.props.form.validateFields((err, value) => {
+    const { trimStatus } = this.state
+    const auditRef = trimStatus === 10 ? this.audit1Ref : this.audit2Ref
+    auditRef.form.props.form.validateFields((err, value) => {
       value.trimId = this.props.id
       value.trimFileUrl = JSON.stringify(value.trimFileUrl)
       value.trimImgUrl = JSON.stringify(value.trimImgUrl)
-      api.toAudit(value).then(() => {
-        APP.success('新建调整单成功')
+      let type: 'purchase' | 'finance' = 'purchase'
+      if (trimStatus === 10) {
+        type = 'purchase'
+      } else if (trimStatus === 20) {
+        type = 'finance'
+      }
+      api.toAudit(value, type).then(() => {
+        APP.success('审核成功')
         if (this.props.onOk) {
           this.props.onOk()
         }
@@ -139,26 +148,22 @@ class Main extends React.Component<Props, State> {
             ref={(ref) => { this.adjustmentRef = ref as Adjustment }}
             readonly={!!this.props.id}
           />
-          <If condition={true}>
-            <Auth code='adjustment:procurement_audit,adjustment:finance_audit'>
-              <div className={styles['detail-title']}>采购审核信息</div>
-              <Audit
-                type='purchase'
-                readonly={type === 'view' || trimStatus !== 10}
-                ref={(ref) => { this.audit1Ref = ref as Audit }}
-              />
-            </Auth>
-          </If>
-          <If condition={true}>
-            <Auth code='adjustment:finance_audit'>
-              <div className={styles['detail-title']}>财务审核信息</div>
-              <Audit
-                type='finance'
-                readonly={type === 'view' || trimStatus !== 20}
-                ref={(ref) => { this.audit2Ref = ref as Audit }}
-              />
-            </Auth>
-          </If>
+          <Auth code='adjustment:procurement_audit,adjustment:finance_audit'>
+            <div className={styles['detail-title']}>采购审核信息</div>
+            <Audit
+              type='purchase'
+              readonly={type === 'view' || trimStatus !== 10}
+              ref={(ref) => { this.audit1Ref = ref as Audit }}
+            />
+          </Auth>
+          <Auth code='adjustment:finance_audit'>
+            <div className={styles['detail-title']}>财务审核信息</div>
+            <Audit
+              type='finance'
+              readonly={type === 'view' || trimStatus !== 20}
+              ref={(ref) => { this.audit2Ref = ref as Audit }}
+            />
+          </Auth>
         </If>
         <hr style={{opacity: .3}} />
         <div className='text-right'>

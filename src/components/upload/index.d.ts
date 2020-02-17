@@ -9,7 +9,7 @@ interface Props {
   pxSize?: {width: number, height: number}[]
   fileType?: string | string[]
   /** 上传文件格式提示文案 */
-  fileTypeText?: string
+  fileTypeErrorText?: string
   disabled?: boolean
   multiple?: boolean
   value?: {

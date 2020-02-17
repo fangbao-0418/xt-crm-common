@@ -39,8 +39,9 @@ class Main extends React.Component<Props> {
                       listType='text'
                       listNum={3}
                       fileType={['spreadsheetml', 'wordprocessingml']}
-                      fileTypeText='请上传正确doc、xls格式文件'
+                      fileTypeErrorText='请上传正确doc、xls格式文件'
                       disabled={readonly}
+                      size={10}
                      >
                       <span className='href'>+添加文件</span>
                     </Upload>
@@ -59,6 +60,7 @@ class Main extends React.Component<Props> {
                      <Upload
                       listType='picture-card'
                       listNum={5}
+                      // fileType={['jpg', 'png', 'jpeg']}
                       multiple
                       size={2}
                       disabled={readonly}

@@ -181,11 +181,23 @@ class Main extends React.Component<Props> {
                     <Upload
                       listType='picture-card'
                       multiple
+                      fileType={['spreadsheetml']}
+                      fileTypeErrorText='仅支持支持xls\xlsx格式'
+                      size={2}
                     >
                     </Upload>
                   )}
-                  <div style={{fontSize: 12, color: '#999'}}>- 支持png、jpg、jpeg格式，最多可上传5张图片，最大支持2MB</div>
-                  <div style={{fontSize: 12, color: '#999'}}>- 添加文件和图片凭证，可提高审核效率哦～</div>
+                  <div style={{fontSize: 12, color: '#999', lineHeight: '14px'}}>
+                    (请上传开票信息，支持xls\xlsx格式，最大支持2MB，点击此处
+                    <span
+                      className='href'
+                      onClick={() => {
+                        APP.fn.download(require('@/assets/files/进货发票登记模板.xlsx'), '进货发票登记模板')
+                      }}
+                    >
+                      下载模板
+                    </span>)
+                  </div>
                 </div>
               )
             }}
