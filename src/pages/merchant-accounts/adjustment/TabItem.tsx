@@ -250,6 +250,7 @@ class Main extends React.Component<Props, State> {
               fields: ['createTimeBegin', 'createTimeEnd']
             }
           }}
+          reserveKey={`adjustment${this.props.status}`}
           columns={this.columns}
           formConfig={getFieldsConfig()}
           tableProps={{

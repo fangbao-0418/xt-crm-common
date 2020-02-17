@@ -75,7 +75,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '代采购审核', value: 10},
           {label: '待财务审核', value: 20},
           {label: '审核通过', value: 30},
-          {label: '审核不通过', value: 40}
+          {label: '审核不通过', value: 40},
+          {label: '已撤销', value: 50}
         ]
         // fieldDecoratorOptions: {
         //   initialValue: 10,
@@ -193,7 +194,7 @@ export enum TrimStatusEnum {
   待财务审核 = 20,
   审核通过 = 30,
   审核不通过 = 40,
-  已失效 = 50
+  已撤销 = 50
 }
 
 /** 调整原因 1订单补发、2平台补贴、3运费补贴、4售后扣款、5售后补偿 */

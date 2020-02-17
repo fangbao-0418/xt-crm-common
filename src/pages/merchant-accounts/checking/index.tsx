@@ -1,7 +1,9 @@
 import React from 'react'
 import { Tabs } from 'antd'
 import TabItem from './TabItem'
+import { getPayload, setPayload } from '@/packages/common/utils'
 const { TabPane } = Tabs
+const namespace = 'adjustment'
 class Main extends React.Component {
   public config: {title: string, key: number}[] = [
     {title: '全部', key: -1},
@@ -14,10 +16,15 @@ class Main extends React.Component {
     {title: '冻结', key: 80}
   ]
   public render () {
+    const defaultActiveKey = getPayload(namespace) || undefined
     return (
       <div style={{background: '#FFFFFF', padding: 20}}>
         <Tabs
           tabBarStyle={{marginBottom: 0}}
+          defaultActiveKey={defaultActiveKey}
+          onChange={(activeKey) => {
+            setPayload(namespace, activeKey)
+          }}
         >
           {
             this.config.map((item) => {
