@@ -9,7 +9,7 @@ import { getFieldsConfig, PaymentStatusEnum, PaymentTypeEnum } from './config'
 import * as api from './api'
 import { ColumnProps } from 'antd/lib/table'
 import { GetDetailsListOnPageResponse } from './interface'
-// import Ajustment from './components/Ajustment'
+import Adjustment from '../adjustment/Detail'
 import { withRouter, RouteComponentProps } from 'react-router'
 
 interface Props extends Partial<AlertComponentProps>, RouteComponentProps<{id: string}> {}
@@ -78,12 +78,29 @@ class Main extends React.Component<Props, State> {
   }
   /** 添加调整单 */
   public addAdjustment = () => {
+    const query = this.query
+    const record: any = {
+      serialNo: query.serialNo,
+      accName: query.accName
+    }
     if (this.props.alert) {
-      // this.props.alert({
-      //   width: 600,
-      //   title: '新建调整单',
-      //   content: <Ajustment />
-      // })
+      const hide = this.props.alert({
+        width: 600,
+        title: '新建调整单',
+        content: (
+          <Adjustment
+            type={'add'}
+            checkingInfo={record}
+            onOk={() => {
+              hide()
+            }}
+            onCancel={() => {
+              hide()
+            }}
+          />
+        ),
+        footer: null
+      })
     }
   }
   public render () {
@@ -143,4 +160,4 @@ class Main extends React.Component<Props, State> {
     )
   }
 }
-export default withRouter(Main)
+export default withRouter(Alert(Main))
