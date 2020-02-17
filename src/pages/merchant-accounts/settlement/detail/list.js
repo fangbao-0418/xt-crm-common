@@ -51,7 +51,7 @@ class SettleDetialList extends React.Component {
     return (
       <Card style={{ marginTop: '10px' }}>
         <div className={styles['detail']}>
-          <h1 className={styles['detail-title']}>20191209结算单明细11111</h1>
+          <h1 className={styles['detail-title']}>{settleDetail.settName}</h1>
           <div className={styles['detail-header']}>
             <span>结算单ID: {settleDetail.id} </span>
             <span>供应商: {settleDetail.storeName}</span>

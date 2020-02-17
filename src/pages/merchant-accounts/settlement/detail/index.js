@@ -1,6 +1,4 @@
 import React from 'react'
-import { Tabs, Card } from 'antd';
-import { setQuery, parseQuery } from '@/util/utils';
 import StepInfo from './step-info';
 import List from './list';
 import * as api from '../../api'
@@ -24,25 +22,23 @@ class SettleDetial extends React.Component {
   fetchData(id) {
     api.getSettlementDetail(id).then((res = {}) => {
       console.log(res)
-      const { id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, financeSettlementRecordDetailVOList ,financeSettlementRecordLogVOList, settStatus} = res;
+      const { id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, settName, financeSettlementRecordDetailVOList, financeSettlementRecordLogVOList, settStatus, initStatusInfo, createName, createTime } = res;
       this.setState({
         settStatus,
         dataSource: financeSettlementRecordDetailVOList || [],
         settleDetail: {
-          id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl
+          id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, settName
         },
-        operateDetail: financeSettlementRecordLogVOList || []
+        operateDetail: [{
+          operateName: createName,
+          operateTime: createTime,
+          operateTypeInfo: initStatusInfo
+        }].concat(financeSettlementRecordLogVOList || [])
       });
     })
   }
   render() {
-
-    const { settleDetail=[], dataSource=[], operateDetail=[] ,settStatus} = this.state
-    console.log(dataSource)
-   
-
-
-
+    let { settleDetail = [], dataSource = [], operateDetail = [], settStatus } = this.state
     return (
       <div>
         {operateDetail.length > 0 && <StepInfo stepinfo={operateDetail} />}
