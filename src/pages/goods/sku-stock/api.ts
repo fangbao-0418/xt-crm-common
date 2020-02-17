@@ -53,6 +53,6 @@ export function updateProduct(payload: SkuStockFormProps) {
 }
 
 // 查询库存商品
-export function getProduct() {
-  return get('').then(detailResponse);
+export function getProduct(productBasicId: number) {
+  return get(`/product/basic/detail?productBasicId=${productBasicId}`).then(detailResponse);
 }

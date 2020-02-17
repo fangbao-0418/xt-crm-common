@@ -68,10 +68,12 @@ export function requestPayload(payload: SkuStockFormProps) {
 // 过滤详情响应
 export function detailResponse(res: any) {
   let result: Record<string, any> = {};
+  const skuList: any[] = res.skuAddList || []
   result = filterUploadFile(res, 'res');
-  res.skuAddList = (res.skuAddList || []).map((item: any) => {
+  res.skuAddList = skuList.map(item => {
     item = filterMoney(item, 'res');
     return item;
   })
+  res.showImage = skuList.every(v => !!v.imageUrl1);
   return res;
 }

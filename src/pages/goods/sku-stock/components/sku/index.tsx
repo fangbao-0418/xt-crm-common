@@ -17,13 +17,21 @@ export interface Spec {
   content: SpecItem[];
 }
 export interface CSkuProps {
-  skuBarCode: string;
+  // 商品条形码
+  barCode: string;
+  // sku编码
   skuCode: string;
+  // 市场价格(单位分)
   marketPrice: number;
+  // 成本价(单位分)
   costPrice: number;
+  // 库存
   stock: number;
+  // 规格值1
   propertyValue1?: any;
+  // 规格值2
   propertyValue2?: any;
+  // 规格1对应的展示图片
   imageUrl1?: string;
   [field: string]: any;
 }
@@ -37,7 +45,7 @@ interface SkuListState {
 }
 
 const defaultItem: CSkuProps = {
-  skuBarCode: '',
+  barCode: '',
   skuCode: '',
   marketPrice: 0,
   costPrice: 0,
@@ -66,6 +74,9 @@ class SkuList extends React.Component<SkuListProps, SkuListState> {
       dataSource: props.dataSource,
       tempSpecInfo: {}
     }
+  }
+  static defaultProps = {
+    specs: []
   }
   componentWillReceiveProps(nextProps: SkuListProps) {
     this.setState({

@@ -558,6 +558,7 @@ class Main extends React.Component<Props, State> {
             return (
               <Card title='商品配置'>
                 <Table
+                  rowKey='id'
                   footer={() => (
                     <span
                       className='href'

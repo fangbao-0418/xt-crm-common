@@ -30,7 +30,6 @@ interface SkuSaleFormState extends Record<string, any> {
   templateOptions: any[],
   spuName: any[],
   spuPicture: any[],
-  GGName: string,
   propertyId1: string,
   propertyId2: string,
   productCategoryVO: any,
@@ -41,7 +40,6 @@ interface SkuSaleFormState extends Record<string, any> {
   strategyData: any,
   productCustomsDetailVOList: any[],
   supplierInfo: any,
-  fetching: boolean,
   interceptionVisible: boolean,
   freightTemplateId: string
 }
@@ -54,7 +52,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     templateOptions: [],
     spuName: [],
     spuPicture: [],
-    GGName: '',
     skuList: [],
     propertyId1: '',
     propertyId2: '',
@@ -66,8 +63,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     strategyData: null,
     productCustomsDetailVOList: [],
     supplierInfo: {},
-    // 供应商列表加载状态
-    fetching: false,
     interceptionVisible: false,
     freightTemplateId: ''
   }
@@ -100,7 +95,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
           : [];
       this.getStrategyByCategory(categoryId[0]);
-      this.specs = [
+      this.specs = this.getSpecs([
         {
           title: res.property1,
           content: [],
@@ -109,8 +104,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           title: res.property2,
           content: [],
         },
-      ];
-      this.specs = this.getSpecs(res.skuList);
+      ], res.skuList);
       this.getSupplierInfo(res.storeId);
 
       const isRepeat = templateOptions.some((opt: any) => opt.freightTemplateId === res.freightTemplateId)
@@ -181,12 +175,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   }
 
   /** 获取规格结果 */
-  getSpecs(skuList: any[] = []) {
-    const specs = this.specs
-    specs.map((item) => {
-      item.content = []
-      return item
-    })
+  getSpecs(specs: any[], skuList: any[] = []) {
     map(skuList, (item, key) => {
       if (
         item.propertyValue1 &&
@@ -208,8 +197,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         });
       }
     });
-    this.specs = filter(specs, item => !!item.title);
-    return this.specs;
+    return filter(specs, item => !!item.title);
   }
   // 根据供应商ID查询供应商信息
   getSupplierInfo = (id: number) => {
@@ -222,7 +210,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       this.setState({
         supplierInfo,
         interceptionVisible: supplierInfo.category == 1 ? false : true,
-      })
+      });
     })
   }
   sync1688Sku = () => {
@@ -230,16 +218,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       if(!vals.storeProductId) return;
       get1688Sku(vals.storeProductId).then((data: any)=>{
         if (!data) return;
-        this.specs = [
-          {
-            title: data.attributeName1,
-            content: []
-          },
-          {
-            title: data.attributeName2,
-            content: []
-          }
-        ]
         const skus = (data.skus || []).map((item: any) => {
           return {
             ...item,
@@ -248,7 +226,16 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             deliveryMode:2
           }
         })
-        this.specs = this.getSpecs(skus);
+        this.specs = this.getSpecs([
+          {
+            title: data.attributeName1,
+            content: []
+          },
+          {
+            title: data.attributeName2,
+            content: []
+          }
+        ], skus);
         this.setState({
           specs: this.specs,
           skuList: skus
@@ -540,7 +527,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 <SupplierSelect
                   style={{ width: '60%' }}
                   disabled={this.id !== -1 && supplierInfo.category === 4}
-                  options={isEmpty(supplierInfo) ? [] : [supplierInfo]}
+                  options={isEmpty(supplierInfo) ? []: [supplierInfo]}
                 />
               )
             }}
@@ -650,13 +637,20 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem
             label='商品视频封面'
             inner={(form) => {
-              return form.getFieldDecorator('videoCoverUrl')(
-                <UploadView
-                  placeholder='上传视频封面'
-                  listType='picture-card'
-                  listNum={1}
-                  size={0.3}
-                />
+              return (
+                <div className={styles['input-wrapper']}>
+                  <div className={styles['input-wrapper-content']}>
+                    {form.getFieldDecorator('videoCoverUrl')(
+                      <UploadView
+                        placeholder='上传视频封面'
+                        listType='picture-card'
+                        listNum={1}
+                        size={0.3}
+                      />
+                    )}
+                  </div>
+                  <div className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内）</div>
+                </div>
               )
             }}
           />
@@ -678,20 +672,27 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             label='商品主图'
             required={true}
             inner={(form) => {
-              return form.getFieldDecorator('coverUrl', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请设置商品主图',
-                  },
-                ],
-              })(
-                <UploadView
-                  placeholder='上传主图'
-                  listType='picture-card'
-                  listNum={1}
-                  size={0.3}
-                />
+              return (
+                <div className={styles['input-wrapper']}>
+                  <div className={styles['input-wrapper-content']}>
+                    {form.getFieldDecorator('coverUrl', {
+                      rules: [
+                        {
+                          required: true,
+                          message: '请设置商品主图',
+                        },
+                      ],
+                    })(
+                      <UploadView
+                        placeholder='上传主图'
+                        listType='picture-card'
+                        listNum={1}
+                        size={0.3}
+                      />
+                    )}
+                  </div>
+                  <div className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内）</div>
+                </div>
               )
             }}
           />

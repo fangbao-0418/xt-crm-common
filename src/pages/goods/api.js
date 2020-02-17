@@ -1,6 +1,6 @@
 import { detailResponse, requestPayload } from './sku-sale/adapter';
-import { post, exportFile, get, newGet, newPost } from '../../util/fetch';
-
+import { exportFile, newGet } from '../../util/fetch';
+const { post, get, newPost } = APP.http; 
 export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }

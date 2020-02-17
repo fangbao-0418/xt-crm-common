@@ -7,11 +7,6 @@ export const defaultConfig: FieldsConfig = {
     },
     productName: {
       label: '商品名称',
-      controlProps: {
-        style: {
-          width: '60%'
-        }
-      },
       fieldDecoratorOptions: {
         rules: [{
           required: true,
@@ -25,11 +20,6 @@ export const defaultConfig: FieldsConfig = {
     status: {
       label: '在库状态',
       type: 'select',
-      controlProps: {
-        style: {
-          width: '60%'
-        }
-      },
       options: [{
         label: '失效',
         value: 0
@@ -60,11 +50,6 @@ export const defaultConfig: FieldsConfig = {
     },
     productShortName: {
       label: '商品简称',
-      controlProps: {
-        style: {
-          width: '60%'
-        }
-      },
       fieldDecoratorOptions: {
         rules: [{
           required: true,
@@ -82,6 +67,7 @@ export const defaultConfig: FieldsConfig = {
     },
     productCode: {
       label: '商品编码',
+      type: 'text',
       controlProps: {
         style: {
           width: '60%'

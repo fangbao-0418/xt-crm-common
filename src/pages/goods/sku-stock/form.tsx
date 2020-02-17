@@ -8,43 +8,60 @@ import SupplierSelect from '../components/supplier-select';
 import DraggableUpload from '../components/draggable-upload';
 import styles from '../style.module.scss';
 import UploadView from '@/components/upload';
+import { pick, map, filter } from 'lodash';
 import If from '@/packages/common/components/if';
 import SkuList, { CSkuProps, Spec } from './components/sku';
 import { addProduct, updateProduct, getProduct } from './api';
+import { getGoodsDetial } from '../api';
 interface SkuStockFormState {
-  speSelect: Spec[];
-  data: CSkuProps[];
+  specs: Spec[];
+  skuAddList: CSkuProps[];
   showImage: boolean;
+  productId: string;
 }
 
 export interface SkuStockFormProps extends RouteComponentProps<{id: string}> {
-  productId: string;
+  // 条形码
   barCode: string;
+  // 商品名称
   productName: string;
-  categoryId: string;
+  // 分类id
+  categoryId: number;
+  // 商品简称
   productShortName: string;
+  // 商品简介
   description: string;
+  // 商品编码
   productCode: string;
+  // 供应商ID
   storeId: string;
+  // 视频封面地址
   videoCoverUrl: any;
+  // 视频地址
   videoUrl: any;
+  // 封面图片地址
   coverUrl: any;
   productImage: any;
+  // 商品图片，逗号分开
   bannerUrl: any;
+  // 产品详情图
   listImage: any;
+  // 库存商品sku新增参数
   skuAddList: CSkuProps[];
   [key: string]: any;
 }
 class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState> {
+  specs: any[] = [];
   id: number;
   form: FormInstance;
   constructor(props: SkuStockFormProps) {
     super(props);
     this.id = +props.match.params.id;
     this.state = {
-      speSelect: [],
-      data: [],
-      showImage: false
+      specs: [],
+      skuAddList: [],
+      showImage: false,
+      productId: ''
     }
   }
   componentDidMount() {
@@ -52,13 +69,25 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
   }
   // 获取库存商品详情
   fetchData() {
-    getProduct().then(res => {
-      this.form.setValues(res);
-      this.setState({
-        data: res.skuAddList,
-        showImage: res.showImage,
-        speSelect: res.speSelect
-      })
+    getProduct(this.id).then(res => {
+      this.form.setValues(pick(res, [
+        'bannerUrl',
+        'barCode',
+        'coverUrl',
+        'description',
+        'listImage',
+        'productCode',
+        'productImage',
+        'productName',
+        'productShortName',
+        'videoCoverUrl',
+        'videoUrl'
+      ]));
+      this.setState(pick(res, [
+        'skuAddList',
+        'showImage',
+        'specs'
+      ]));
     })
   }
   handleDeleteAll = () => {
@@ -76,7 +105,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
   handleSave = () => {
     this.form.props.form.validateFields((errs, vals) => {
       if (!errs) {
-        vals = { ...vals, skuAddList: this.state.data }
+        vals = { ...vals, skuAddList: this.state.skuAddList }
         const isAdd = this.id === -1;
         const promiseResult = isAdd ? addProduct(vals) : updateProduct(vals);
         promiseResult.then((res: boolean) => {
@@ -88,8 +117,73 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
       }
     })
   }
+   /** 获取规格结果 */
+   getSpecs(specs: any[], skuList: any[] = []) {
+    map(skuList, (item, key) => {
+      if (
+        item.propertyValue1 &&
+        specs[0] &&
+        (specs[0].content as any[]).findIndex(val => val.specName === item.propertyValue1) === -1
+      ) {
+        specs[0].content.push({
+          specName: item.propertyValue1,
+          specPicture: item.imageUrl1,
+        });
+      }
+      if (
+        item.propertyValue2 &&
+        specs[1] &&
+        (specs[1].content as any[]).findIndex(val => val.specName === item.propertyValue2) === -1
+      ) {
+        specs[1].content.push({
+          specName: item.propertyValue2,
+        });
+      }
+    });
+    return filter(specs, item => !!item.title);
+  }
+  // 获取销售商品详情，用于回显
+  fetchSaleProduct = () => {
+    getGoodsDetial({ productId: this.state.productId })
+      .then((res: any) => {
+        this.form.resetValues();
+        this.form.setValues(pick(res, [
+          'bannerUrl',
+          'barCode',
+          'coverUrl',
+          'description',
+          'listImage',
+          'productCode',
+          'productImage',
+          'productName',
+          'productShortName',
+          'videoCoverUrl',
+          'videoUrl'
+        ]));
+        this.specs = this.getSpecs([
+          {
+            title: res.property1,
+            content: [],
+          },
+          {
+            title: res.property2,
+            content: [],
+          },
+        ], res.skuList);
+        this.setState({
+          'skuAddList': res.skuList,
+          'showImage': res.showImage,
+          'specs': this.specs
+        });
+      });
+  }
   render() {
-    const { speSelect, data, showImage } = this.state;
+    const {
+      specs,
+      skuAddList,
+      showImage,
+      productId
+    } = this.state;
     return (
       <Form
         namespace='csku'
@@ -113,22 +207,20 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
         )}
       >
         <Card title='基本信息'>
-          <FormItem
-            label='销售商品ID'
-            inner={(form) => {
-              return (
-                <>
-                  {form.getFieldDecorator('productId')(
-                    <Input
-                      placeholder='请输入销售商品ID'
-                      style={{ width: '60%' }}
-                    />
-                  )}
-                  <Button className='ml10'>校验</Button>
-                </>
-              )
-            }}
-          />
+          <FormItem label='销售商品ID'>
+            <Input
+              value={productId}
+              onChange={e => this.setState({ productId: e.target.value })}
+              placeholder='请输入销售商品ID'
+              style={{ width: '60%' }}
+            />
+            <Button
+              className='ml10'
+              onClick={this.fetchSaleProduct}
+            >
+              校验
+            </Button>
+          </FormItem>
           <FormItem
             label='商品条码'
             inner={(form) => {
@@ -145,7 +237,15 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
               )
             }}
           />
-          <FormItem verifiable name='productName'/>
+          <FormItem
+            verifiable
+            name='productName'
+            controlProps={{
+              style: {
+                width: '60%'
+              }
+            }}
+          />
           <FormItem
             required
             label='商品类目'
@@ -162,9 +262,20 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
               )
             }}
           />
-          <FormItem verifiable name='productShortName'/>
+          <FormItem
+            verifiable
+            controlProps={{
+              style: {
+                width: '60%'
+              }
+            }}
+            name='productShortName'
+          />
           <FormItem verifiable name='description'/>
-          <FormItem name='productCode'/>
+          <FormItem
+            name='productCode'
+            hidden={this.id === -1}
+          />
           <FormItem
             label='供应商'
             inner={(form) => {
@@ -176,7 +287,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
             }}
           />
           <FormItem
-            label='视频封面'
+            label='商品视频封面'
             inner={(form) => {
               return (
                 <div className={styles['input-wrapper']}>
@@ -190,7 +301,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
                       />
                     )}
                   </div>
-                  <span className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内）</span>
+                  <div className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内）</div>
                 </div>
               )
             }}
@@ -221,7 +332,14 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
               return (
                 <div className={styles['input-wrapper']}>
                   <div className={styles['input-wrapper-content']}>
-                    {form.getFieldDecorator('coverUrl')(
+                    {form.getFieldDecorator('coverUrl', {
+                      rules: [
+                        {
+                          required: true,
+                          message: '请设置商品主图',
+                        },
+                      ],
+                    })(
                       <UploadView
                         placeholder="上传主图"
                         listType="picture-card"
@@ -278,13 +396,13 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
         </Card>
         <SkuList
           showImage={showImage}
-          specs={speSelect}
-          dataSource={data}
+          specs={specs}
+          dataSource={skuAddList}
           form={this.form && this.form.props.form}
-          onChange={(value, specs, showImage) => {
+          onChange={(skuAddList, specs, showImage) => {
             this.setState({
-              data: value,
-              speSelect: specs,
+              skuAddList,
+              specs,
               showImage,
             });
           }}

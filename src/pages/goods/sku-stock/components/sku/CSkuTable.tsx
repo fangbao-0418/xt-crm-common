@@ -37,13 +37,13 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
     const cb = this.handleChangeValue;
     return [{
       title: '规格条码',
-      dataIndex: 'skuBarCode',
+      dataIndex: 'barCode',
       render: (text: any, record: any, index: any) => {
         return (
           <Input
             value={text}
             placeholder='请输入规格条码'
-            onChange={cb('skuBarCode', record, index)}
+            onChange={cb('barCode', record, index)}
           />
         )
       }
