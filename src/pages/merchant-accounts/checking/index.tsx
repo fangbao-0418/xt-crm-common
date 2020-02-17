@@ -12,8 +12,8 @@ class Main extends React.Component {
     {title: '待结算', key: 30},
     {title: '结算中', key: 40},
     {title: '已结算', key: 50},
-    {title: '结算异常', key: 70},
-    {title: '冻结', key: 80}
+    {title: '结算异常', key: 70}
+    // {title: '已冻结', key: 80}
   ]
   public render () {
     const defaultActiveKey = getPayload(namespace) || undefined

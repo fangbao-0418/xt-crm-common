@@ -21,11 +21,15 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       accStatus: {
         type: 'select', label: '状态',
         options: [
-          {label: '可申请结算', value: 10},
-          {label: '结算中', value: 20},
-          {label: '已结算', value: 30},
-          {label: '冻结中', value: 40}
-          // {label: '关闭', value: 60}
+          {label: '待确认', value: 10},
+          {label: '可申请结算', value: 20},
+          {label: '待结算', value: 30},
+          {label: '结算中', value: 40},
+          {label: '已结算', value: 50},
+          {label: '已结清', value: 60},
+          {label: '结算异常', value: 70},
+          {label: '冻结中', value: 80},
+          {label: '其他', value: 100}
         ]
       }
     },
@@ -116,7 +120,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   return _.mergeWith(defaultConfig, partial)
 }
 
-/** @对账单状态（10：待结算；20：可申请结算；30：已结清；40：已失效;60关闭） */
+/** @对账单状态（10-待确认；20-可申请结算；30-待结算；40-结算中; 50-已结算；60-已结清；70-结算异常；80-已冻结；100-其他） */
 export enum AccStatusEnum {
   待确认 = 10,
   可申请结算 = 20,
@@ -124,7 +128,9 @@ export enum AccStatusEnum {
   结算中 = 40,
   已结算 = 50,
   已结清 = 60,
-  结算异常 = 70
+  结算异常 = 70,
+  已冻结 = 80,
+  其他 = 100
 }
 
 /** 交易状态（1：完成 2：未完成 3：出现异常） */
