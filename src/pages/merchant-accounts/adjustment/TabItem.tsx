@@ -299,7 +299,7 @@ class Main extends React.Component<Props, State> {
               >
                 新建调整单
               </Button>
-              {/* <Button
+              <Button
                 type='primary'
                 className='mr10'
                 onClick={this.toExport.bind(this, undefined)}
@@ -311,7 +311,7 @@ class Main extends React.Component<Props, State> {
                 onClick={this.toExport.bind(this, true)}
               >
                 全部导出
-              </Button> */}
+              </Button>
             </div>
           )}
           api={api.fetchList}
