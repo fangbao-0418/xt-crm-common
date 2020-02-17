@@ -5,7 +5,7 @@ import Adjustment from './components/Adjustment'
 import Audit from './components/Audit'
 import styles from './style.module.styl'
 import * as api from './api'
-import { InfoResponse } from './interface'
+import { InfoResponse, ReviewEnclosure } from './interface'
 import { GetListOnPageResponse } from '../checking/interface'
 import Auth from '@/components/auth'
 interface Props {
@@ -19,7 +19,11 @@ interface Props {
 
 interface State {
   /** 调整单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效 */
-  trimStatus?: 10 | 20 | 30 | 40 | 50
+  trimStatus: 10 | 20 | 30 | 40 | 50
+  /** 采购审核信息 */
+  purchaseReviewEnclosure?: ReviewEnclosure
+  /** 财务审核信息 */
+  financeReviewEnclosure?: ReviewEnclosure
 }
 
 class Main extends React.Component<Props, State> {
@@ -29,6 +33,7 @@ class Main extends React.Component<Props, State> {
   /** 财务 */
   public audit2Ref: Audit
   public state: State = {
+    trimStatus: 10
   }
   public componentDidMount () {
     this.fetchData()
@@ -40,7 +45,9 @@ class Main extends React.Component<Props, State> {
     if (id) {
       api.fetchInfo(id).then((res) => {
         this.setState({
-          trimStatus: res.trimStatus
+          trimStatus: res.trimStatus,
+          purchaseReviewEnclosure: res.purchaseReviewEnclosure,
+          financeReviewEnclosure: res.financeReviewEnclosure
         })
         this.setValues(res)
       })
@@ -71,13 +78,28 @@ class Main extends React.Component<Props, State> {
     this.adjustmentRef.form.setValues(values)
     const trimStatus = values.trimStatus
     if (trimStatus !== 10) {
+      const purchaseReviewEnclosure: any = values.purchaseReviewEnclosure || {}
+      purchaseReviewEnclosure.trimImgUrl = this.handleFileValue(purchaseReviewEnclosure.trimImgUrl)
+      purchaseReviewEnclosure.trimFileUrl = this.handleFileValue(purchaseReviewEnclosure.trimFileUrl)
       if (this.audit1Ref) {
-        this.audit1Ref.form.setValues(values)
+        this.audit1Ref.form.setValues({
+          ...values,
+          reviewStatus: values.purchaseReviewStatus,
+          ...purchaseReviewEnclosure
+        })
       }
     }
     if ([10, 20].indexOf(trimStatus) === -1) {
+      const financeReviewEnclosure: any = values.financeReviewEnclosure || {}
+      financeReviewEnclosure.trimImgUrl = this.handleFileValue(financeReviewEnclosure.trimImgUrl)
+      financeReviewEnclosure.trimFileUrl = this.handleFileValue(financeReviewEnclosure.trimFileUrl)
       if (this.audit2Ref) {
-        this.audit2Ref.form.setValues(values)
+        console.log(values, '-----value')
+        this.audit2Ref.form.setValues({
+          ...values,
+          reviewStatus: values.financeReviewStatus,
+          ...financeReviewEnclosure
+        })
       }
     }
   }
@@ -112,6 +134,10 @@ class Main extends React.Component<Props, State> {
   }
   public toAudit () {
     const { trimStatus } = this.state
+    if ([10, 20].indexOf(trimStatus) === -1) {
+      APP.error('该状态不能进行审核')
+      return
+    }
     const auditRef = trimStatus === 10 ? this.audit1Ref : this.audit2Ref
     auditRef.form.props.form.validateFields((err, value) => {
       value.trimId = this.props.id
@@ -133,7 +159,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const type = this.props.type
-    const { trimStatus } = this.state
+    const { trimStatus, financeReviewEnclosure, purchaseReviewEnclosure } = this.state
     return (
       <div className={styles.detail}>
         <If condition={type === 'add'}>
@@ -148,22 +174,52 @@ class Main extends React.Component<Props, State> {
             ref={(ref) => { this.adjustmentRef = ref as Adjustment }}
             readonly={!!this.props.id}
           />
-          <Auth code='adjustment:procurement_audit,adjustment:finance_audit'>
-            <div className={styles['detail-title']}>采购审核信息</div>
-            <Audit
-              type='purchase'
-              readonly={type === 'view' || trimStatus !== 10}
-              ref={(ref) => { this.audit1Ref = ref as Audit }}
-            />
-          </Auth>
-          <Auth code='adjustment:finance_audit'>
-            <div className={styles['detail-title']}>财务审核信息</div>
-            <Audit
-              type='finance'
-              readonly={type === 'view' || trimStatus !== 20}
-              ref={(ref) => { this.audit2Ref = ref as Audit }}
-            />
-          </Auth>
+          <If condition={trimStatus !== 50}>
+            <If condition={trimStatus === 10}>
+              <Auth code='adjustment:procurement_audit'>
+                <div className={styles['detail-title']}>采购审核信息</div>
+                <Audit
+                  type='purchase'
+                  readonly={type === 'view' || trimStatus !== 10}
+                  ref={(ref) => { this.audit1Ref = ref as Audit }}
+                />
+              </Auth>
+            </If>
+            <If condition={trimStatus === 20}>
+              <If condition={!!purchaseReviewEnclosure}>
+                <div className={styles['detail-title']}>采购审核信息</div>
+                <Audit
+                  type='purchase'
+                  readonly={true}
+                  ref={(ref) => { this.audit1Ref = ref as Audit }}
+                />
+              </If>
+              <Auth code='adjustment:finance_audit'>
+                <div className={styles['detail-title']}>财务审核信息</div>
+                <Audit
+                  type='finance'
+                  readonly={type === 'view' || trimStatus !== 20}
+                  ref={(ref) => { this.audit2Ref = ref as Audit }}
+                />
+              </Auth>
+            </If>
+            <If condition={[10, 20].indexOf(trimStatus) === -1}>
+              <div className={styles['detail-title']}>采购审核信息</div>
+              <Audit
+                type='purchase'
+                readonly={true}
+                ref={(ref) => { this.audit1Ref = ref as Audit }}
+              />
+              <If condition={!!financeReviewEnclosure}>
+                <div className={styles['detail-title']}>财务审核信息</div>
+                <Audit
+                  type='finance'
+                  readonly={true}
+                  ref={(ref) => { this.audit2Ref = ref as Audit }}
+                />
+              </If>
+            </If>
+          </If>
         </If>
         <hr style={{opacity: .3}} />
         <div className='text-right'>

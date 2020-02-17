@@ -73,7 +73,9 @@ class Main extends React.Component<Props> {
               )
             }}
           />
-          <If condition={readonly}>
+          <If
+            condition={readonly}
+          >
             <If condition={type === 'purchase'}>
               <FormItem
                 name='purchaseReviewName'
@@ -84,7 +86,9 @@ class Main extends React.Component<Props> {
                 label='审核时间'
               />
             </If>
-            <If condition={type === 'finance'}>
+            <If
+              condition={type === 'finance'}
+            >
               <FormItem
                 name='financeReviewName'
                 label='审核人'

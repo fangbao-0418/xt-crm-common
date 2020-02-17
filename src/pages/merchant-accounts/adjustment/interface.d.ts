@@ -554,8 +554,33 @@ export interface InfoResponse {
      */
     trimImgUrl: string
   }
+  /** 采购审核信息 */
+  purchaseReviewEnclosure: ReviewEnclosure
+  /** 财务审核信息 */
+  financeReviewEnclosure: ReviewEnclosure
 }
 
+interface ReviewEnclosure {
+  createTime: number
+  createUid: number
+  id: number
+  isDelete: number
+  modifyTime: number
+  modifyUid: number
+  /**
+   * 调整说明
+   */
+  trimExplain: string
+  /**
+   * 文件
+   */
+  trimFileUrl: string
+  trimId: number
+  /**
+   * 图
+   */
+  trimImgUrl: string
+}
 
 /**
  * 接口 [审核↗](http://192.168.20.21/project/218/interface/api/48908) 的 **请求类型**
