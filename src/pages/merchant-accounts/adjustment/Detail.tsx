@@ -69,11 +69,15 @@ class Main extends React.Component<Props, State> {
     values.financeReviewTime = APP.fn.formatDate(values.financeReviewTime) as any
     this.adjustmentRef.form.setValues(values)
     const trimStatus = values.trimStatus
-    if (trimStatus === 20) {
-      this.audit1Ref && this.audit1Ref.form.setValues(values)
+    if (trimStatus !== 10) {
+      if (this.audit1Ref) {
+        this.audit1Ref.form.setValues(values)
+      }
     }
     if ([10, 20].indexOf(trimStatus) === -1) {
-      this.audit2Ref && this.audit2Ref.form.setValues(values)
+      if (this.audit2Ref) {
+        this.audit2Ref.form.setValues(values)
+      }
     }
   }
   public handleFileValue (value: string) {
@@ -111,6 +115,7 @@ class Main extends React.Component<Props, State> {
       value.trimFileUrl = JSON.stringify(value.trimFileUrl)
       value.trimImgUrl = JSON.stringify(value.trimImgUrl)
       api.toAudit(value).then(() => {
+        APP.success('新建调整单成功')
         if (this.props.onOk) {
           this.props.onOk()
         }
@@ -138,6 +143,7 @@ class Main extends React.Component<Props, State> {
             <Auth code='adjustment:procurement_audit,adjustment:finance_audit'>
               <div className={styles['detail-title']}>采购审核信息</div>
               <Audit
+                type='purchase'
                 readonly={type === 'view' || trimStatus !== 10}
                 ref={(ref) => { this.audit1Ref = ref as Audit }}
               />
@@ -147,6 +153,7 @@ class Main extends React.Component<Props, State> {
             <Auth code='adjustment:finance_audit'>
               <div className={styles['detail-title']}>财务审核信息</div>
               <Audit
+                type='finance'
                 readonly={type === 'view' || trimStatus !== 20}
                 ref={(ref) => { this.audit2Ref = ref as Audit }}
               />

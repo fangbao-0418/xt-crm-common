@@ -6,12 +6,15 @@ import Upload from '@/components/upload'
 import If from '@/packages/common/components/if'
 interface Props {
   readonly?: boolean
+  /** 财务|采购 */
+  type: 'finance' | 'purchase'
 }
 
 class Main extends React.Component<Props> {
   public form: FormInstance
   public render () {
     const readonly = this.props.readonly || false
+    const type = this.props.type
     return (
       <div>
         <Form
@@ -69,14 +72,26 @@ class Main extends React.Component<Props> {
             }}
           />
           <If condition={readonly}>
-            <FormItem
-              name='purchaseReviewName'
-              label='审核人'
-            />
-            <FormItem
-              name='purchaseReviewTime'
-              label='审核时间'
-            />
+            <If condition={type === 'purchase'}>
+              <FormItem
+                name='purchaseReviewName'
+                label='审核人'
+              />
+              <FormItem
+                name='purchaseReviewTime'
+                label='审核时间'
+              />
+            </If>
+            <If condition={type === 'finance'}>
+              <FormItem
+                name='financeReviewName'
+                label='审核人'
+              />
+              <FormItem
+                name='financeReviewTime'
+                label='审核时间'
+              />
+            </If>
           </If>
         </Form>
       </div>
