@@ -5,7 +5,8 @@ import { Message } from 'antd';
 export default {
   namespace: 'layout',
   state: {
-    tree: []
+    tree: [],
+    roleList: []
   },
   effects: dispatch => ({
     async getMenuList(payload) {
@@ -21,10 +22,12 @@ export default {
             const allItemFilted = filterAllId.map(id => getItemById(menuList, id)); // 根据id找对应的item
             const tree = arrToTree(allItemFilted); // 将数组转化为树状结构
             dispatch['layout'].saveDefault({
+              roleList,
               tree
             });
           } else {
             dispatch['layout'].saveDefault({
+              roleList: [],
               tree: []
             });
           }

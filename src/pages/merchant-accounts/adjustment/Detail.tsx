@@ -6,11 +6,15 @@ import Audit from './components/Audit'
 import styles from './style.module.styl'
 import * as api from './api'
 import { InfoResponse } from './interface'
+import { GetListOnPageResponse } from '../checking/interface'
+import Auth from '@/components/auth'
 interface Props {
   id?: number | undefined
   onOk?: () => void
   onCancel?: () => void
-  type: 'add' | 'audit'
+  /** 对账单信息 */
+  checkingInfo?: GetListOnPageResponse
+  type: 'add' | 'audit' | 'view'
 }
 
 interface State {
@@ -31,6 +35,8 @@ class Main extends React.Component<Props, State> {
   }
   public fetchData () {
     const id = this.props.id
+    console.log(this.props)
+    // return
     if (id) {
       api.fetchInfo(id).then((res) => {
         this.setState({
@@ -38,6 +44,14 @@ class Main extends React.Component<Props, State> {
         })
         this.setValues(res)
       })
+    } else {
+      const checkingInfo = this.props.checkingInfo
+      if (checkingInfo) {
+        this.adjustmentRef.form.setValues({
+          accNo: checkingInfo.serialNo,
+          accName: checkingInfo.accName
+        })
+      }
     }
   }
   public setValues (values: InfoResponse) {
@@ -47,10 +61,20 @@ class Main extends React.Component<Props, State> {
       trimFileUrl: '',
       trimImgUrl: ''
     }
+    values.accNo = values.serialNo
     values.trimExplain = trimEnclosure.trimExplain
     values.trimFileUrl = this.handleFileValue(trimEnclosure.trimFileUrl)
     values.trimImgUrl = this.handleFileValue(trimEnclosure.trimImgUrl)
+    values.purchaseReviewTime = APP.fn.formatDate(values.purchaseReviewTime) as any
+    values.financeReviewTime = APP.fn.formatDate(values.financeReviewTime) as any
     this.adjustmentRef.form.setValues(values)
+    const trimStatus = values.trimStatus
+    if (trimStatus === 20) {
+      this.audit1Ref && this.audit1Ref.form.setValues(values)
+    }
+    if ([10, 20].indexOf(trimStatus) === -1) {
+      this.audit2Ref && this.audit2Ref.form.setValues(values)
+    }
   }
   public handleFileValue (value: string) {
     value = value || ''
@@ -70,8 +94,6 @@ class Main extends React.Component<Props, State> {
       }
       value = {
         ...value,
-        // trimImgUrl: (value.trimImgUrl || []).map((item: {url: string}) => item.url).join(','),
-        // trimFileUrl: (value.trimFileUrl || []).map((item: {url: string}) => item.url).join(',')
         trimImgUrl: JSON.stringify(value.trimImgUrl || []),
         trimFileUrl: JSON.stringify(value.trimFileUrl || []),
         trimMoney: APP.fn.formatMoneyNumber(value.trimMoney, 'u2m')
@@ -85,39 +107,50 @@ class Main extends React.Component<Props, State> {
   }
   public toAudit () {
     this.audit1Ref.form.props.form.validateFields((err, value) => {
-      console.log(value, '11111111-------')
       value.trimId = this.props.id
       value.trimFileUrl = JSON.stringify(value.trimFileUrl)
       value.trimImgUrl = JSON.stringify(value.trimImgUrl)
-      api.toAudit(value)
+      api.toAudit(value).then(() => {
+        if (this.props.onOk) {
+          this.props.onOk()
+        }
+      })
     })
   }
   public render () {
     const type = this.props.type
+    const { trimStatus } = this.state
     return (
       <div className={styles.detail}>
         <If condition={type === 'add'}>
           <Adjustment
+            from={this.props.checkingInfo && 'checking'}
             ref={(ref) => { this.adjustmentRef = ref as Adjustment }}
           />
         </If>
-        <If condition={type === 'audit'}>
+        <If condition={type !== 'add'}>
           <div className={styles['detail-title']}>调整单信息</div>
           <Adjustment
             ref={(ref) => { this.adjustmentRef = ref as Adjustment }}
             readonly={!!this.props.id}
           />
           <If condition={true}>
-            <div className={styles['detail-title']}>采购审核信息</div>
-            <Audit
-              ref={(ref) => { this.audit1Ref = ref as Audit }}
-            />
+            <Auth code='adjustment:procurement_audit,adjustment:finance_audit'>
+              <div className={styles['detail-title']}>采购审核信息</div>
+              <Audit
+                readonly={type === 'view' || trimStatus !== 10}
+                ref={(ref) => { this.audit1Ref = ref as Audit }}
+              />
+            </Auth>
           </If>
           <If condition={true}>
-            <div className={styles['detail-title']}>财务审核信息</div>
-            <Audit
-              ref={(ref) => { this.audit2Ref = ref as Audit }}
-            />
+            <Auth code='adjustment:finance_audit'>
+              <div className={styles['detail-title']}>财务审核信息</div>
+              <Audit
+                readonly={type === 'view' || trimStatus !== 20}
+                ref={(ref) => { this.audit2Ref = ref as Audit }}
+              />
+            </Auth>
           </If>
         </If>
         <hr style={{opacity: .3}} />
@@ -129,6 +162,10 @@ class Main extends React.Component<Props, State> {
                 this.validateField()
               } else if (type === 'audit') {
                 this.toAudit()
+              } else {
+                if (this.props.onCancel) {
+                  this.props.onCancel()
+                }
               }
             }}
             type='primary'

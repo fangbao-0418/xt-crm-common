@@ -3,15 +3,25 @@ import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from '../config'
 import Upload from '@/components/upload'
-class Main extends React.Component {
+import If from '@/packages/common/components/if'
+interface Props {
+  readonly?: boolean
+}
+
+class Main extends React.Component<Props> {
   public form: FormInstance
   public render () {
+    const readonly = this.props.readonly || false
     return (
       <div>
         <Form
           config={getFieldsConfig()}
           getInstance={(ref) => {
             this.form = ref
+          }}
+          readonly={readonly}
+          formItemStyle={{
+            marginBottom: 0
           }}
         >
           <FormItem name='reviewStatus' />
@@ -27,6 +37,7 @@ class Main extends React.Component {
                       listNum={3}
                       fileType={['spreadsheetml', 'wordprocessingml']}
                       fileTypeText='请上传正确doc、xls格式文件'
+                      disabled={readonly}
                      >
                       <span className='href'>+添加文件</span>
                     </Upload>
@@ -47,15 +58,26 @@ class Main extends React.Component {
                       listNum={5}
                       multiple
                       size={2}
+                      disabled={readonly}
                      >
                     </Upload>
                   )}
-                  <div style={{fontSize: 12, color: '#999'}}>- 支持png、jipg、jpeg格式，最多可上传5张图片，最大支持2MB</div>
+                  <div style={{fontSize: 12, color: '#999'}}>- 支持png、jpg、jpeg格式，最多可上传5张图片，最大支持2MB</div>
                   <div style={{fontSize: 12, color: '#999'}}>- 添加文件和图片凭证，可提高审核效率哦～</div>
                 </div>
               )
             }}
           />
+          <If condition={readonly}>
+            <FormItem
+              name='purchaseReviewName'
+              label='审核人'
+            />
+            <FormItem
+              name='purchaseReviewTime'
+              label='审核时间'
+            />
+          </If>
         </Form>
       </div>
     )

@@ -8,6 +8,7 @@ import * as api from '../api'
 
 interface Props {
   readonly?: boolean
+  from?: 'checking' | 'self'
 }
 
 class Main extends React.Component<Props> {
@@ -28,6 +29,7 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const readonly = this.props.readonly
+    const from = this.props.from || 'self'
     return (
       <div>
         <Form
@@ -43,6 +45,7 @@ class Main extends React.Component<Props> {
           <FormItem
             name='accNo'
             type='input'
+            readonly={readonly || from === 'checking'}
             label='对账单ID'
             verifiable
             controlProps={{
@@ -52,7 +55,7 @@ class Main extends React.Component<Props> {
               span: readonly ? 19 : 10
             }}
             addonAfterCol={{span: 6}}
-            addonAfter={!readonly && (
+            addonAfter={(!readonly && from === 'self') && (
               <Button
                 className='ml10'
                 onClick={this.validateAccId.bind(this)}
@@ -61,7 +64,11 @@ class Main extends React.Component<Props> {
               </Button>
             )}
           />
-          <FormItem name='accName' verifiable />
+          <FormItem
+            name='accName'
+            verifiable
+            readonly={readonly || from === 'checking'}
+          />
           {/* <FormItem name='c' label='供应商' /> */}
           <FormItem name='trimType' verifiable />
           <FormItem name='trimReason' verifiable />

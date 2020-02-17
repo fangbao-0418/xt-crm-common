@@ -391,6 +391,10 @@ export interface InfoResponse {
    */
   accId: number
   /**
+   * 对账单单号
+   */
+  accNo: string
+  /**
    * 对账单名称
    */
   accName: string

@@ -4,6 +4,7 @@ import { FormItem } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import Detail from './Detail'
+import Auth from '@/components/auth'
 import {
   getFieldsConfig,
   TrimTypeEnum,
@@ -127,19 +128,35 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         return (
           <div>
-            <span
-              className='href'
-              onClick={() => { this.showAdjustment(record) }}
-            >
-              查看明细
-            </span>&nbsp;&nbsp;
+            <Auth code='adjustment:finance_audit'>
+              {(access: boolean, codes: string[]) => {
+                return (record.trimStatus === 20 && codes.indexOf('adjustment:procurement_audit') > -1 || [10, 20].indexOf(record.trimStatus) === -1) && (
+                  <>
+                    <span
+                      className='href'
+                      onClick={() => { this.showAdjustment('view', record) }}
+                    >
+                      查看明细
+                    </span>&nbsp;&nbsp;
+                  </>
+                )
+              }}
+            </Auth>
             {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
-            <span
-              className='href'
-              onClick={() => { this.showAdjustment(record) }}
-            >
-              审核
-            </span>&nbsp;&nbsp;
+            <Auth code='adjustment:finance_audit,adjustment:procurement_audit'>
+              {(access: boolean, codes: string[]) => {
+                return (record.trimStatus === 10 && codes.indexOf('adjustment:procurement_audit') > -1 || record.trimStatus === 20 && codes.indexOf('adjustment:finance_audit') > -1) && (
+                  <>
+                    <span
+                      className='href'
+                      onClick={() => { this.showAdjustment('audit', record) }}
+                    >
+                      审核
+                    </span>&nbsp;&nbsp;
+                  </>
+                )
+              }}
+            </Auth>
             {record.trimStatus === 10 && (
               <Popconfirm
                 title='确定是否撤销？'
@@ -161,14 +178,14 @@ class Main extends React.Component<Props, State> {
     selectedRowKeys: []
   }
   /** 添加调整单 */
-  public showAdjustment (record?: ListResponse) {
+  public showAdjustment (type: 'add' | 'audit' | 'view',record?: ListResponse) {
     if (this.props.alert) {
       const hide = this.props.alert({
         width: 600,
-        title: record ? '调整单详情' : '新建调整单',
+        title: type !== 'add' ? '调整单详情' : '新建调整单',
         content: (
           <Detail
-            type={record ? 'audit' : 'add'}
+            type={type}
             id={record && record.id}
             onOk={() => {
               this.listpage.refresh()
@@ -278,11 +295,11 @@ class Main extends React.Component<Props, State> {
               <Button
                 className='mr10'
                 type='primary'
-                onClick={this.showAdjustment.bind(this, undefined)}
+                onClick={this.showAdjustment.bind(this, 'add', undefined)}
               >
                 新建调整单
               </Button>
-              <Button
+              {/* <Button
                 type='primary'
                 className='mr10'
                 onClick={this.toExport.bind(this, undefined)}
@@ -294,7 +311,7 @@ class Main extends React.Component<Props, State> {
                 onClick={this.toExport.bind(this, true)}
               >
                 全部导出
-              </Button>
+              </Button> */}
             </div>
           )}
           api={api.fetchList}

@@ -10,6 +10,7 @@ import MonthPicker from './components/MonthPicker'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import { GetListOnPageResponse } from './interface'
 import Statements from './components/Statements'
+import Adjustment from '../adjustment/Detail'
 
 interface Props extends Partial<AlertComponentProps> {
   /** 对账单状态（10：待确认；20：未结算；30：待结算；40：结算中 50:已结算 60:已结清 70:结算异常） */
@@ -109,7 +110,14 @@ class Main extends React.Component<Props, State> {
               查看明细
             </span>&nbsp;&nbsp;
             <span className='href'>导出</span>&nbsp;&nbsp;
-            <span className='href'>新建调整单</span>
+            <span
+              className='href'
+              onClick={() => {
+                this.showAdjustment(record)
+              }}
+            >
+              新建调整单
+            </span>
           </div>
         )
       }
@@ -171,8 +179,28 @@ class Main extends React.Component<Props, State> {
       })
     }
   }
-  public componentDidMount () {
-    // this.addStatements()
+  /** 添加调整单 */
+  public showAdjustment (record: GetListOnPageResponse) {
+    if (this.props.alert) {
+      const hide = this.props.alert({
+        width: 600,
+        title: '新建调整单',
+        content: (
+          <Adjustment
+            type={'add'}
+            checkingInfo={record}
+            onOk={() => {
+              this.listpage.refresh()
+              hide()
+            }}
+            onCancel={() => {
+              hide()
+            }}
+          />
+        ),
+        footer: null
+      })
+    }
   }
   public onSelectChange = (record: GetListOnPageResponse, selected: boolean, selectedRows: any[]) => {
     const isExist = this.selectedRows.find((item) => item.id === record.id)
