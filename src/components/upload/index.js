@@ -95,6 +95,7 @@ class UploadView extends Component {
       val.url = result.url;
       val.thumbUrl = result.thumbUrl
       val.rurl = this.replaceUrl(result.url)
+      val.name = result.name || val.url
       console.log(val, '----------------')
       return val
     });
@@ -153,7 +154,7 @@ class UploadView extends Component {
     if (pxSize && pxSize.length) {
       const imgSize = await this.getImgSize(file) || {width:0, height:0}
       let result = pxSize.filter((item, index, arr) => {
-        return item.width == imgSize.width && item.height == imgSize.height;
+        return item.width === imgSize.width && item.height === imgSize.height
       })
       if (result.length === 0 ) {
         message.error(`图片尺寸不正确`);
@@ -206,6 +207,10 @@ class UploadView extends Component {
     }
   };
   onPreview = file => {
+    if (this.props.listType === 'text') {
+      APP.fn.download(file.url)
+      return
+    }
     this.setState({
       url: file.durl,
       visible: true,
@@ -236,9 +241,6 @@ class UploadView extends Component {
           customRequest={(e) => this.customRequest(e)}
           onPreview={this.onPreview}
           {...attributes}
-          // onChange={(e) => {
-          //   console.log(e, 'onchange')
-          // }}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>
