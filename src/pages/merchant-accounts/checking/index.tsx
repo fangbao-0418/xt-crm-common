@@ -3,7 +3,7 @@ import { Tabs } from 'antd'
 import TabItem from './TabItem'
 import { getPayload, setPayload } from '@/packages/common/utils'
 const { TabPane } = Tabs
-const namespace = 'adjustment'
+const namespace = 'checking'
 interface State {
   activeKey: string
 }
@@ -18,7 +18,7 @@ class Main extends React.Component<{}, State> {
     {title: '结算异常', key: 70}
     // {title: '已冻结', key: 80}
   ]
-  public defaultActiveKey = getPayload(namespace) || '0'
+  public defaultActiveKey = getPayload(namespace) || '-1'
   public state: State = {
     activeKey: this.defaultActiveKey
   }
