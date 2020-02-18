@@ -43,7 +43,6 @@ export function exportProduct(payload: listPayload) {
 
 // 新增库存商品
 export function addProduct(payload: SkuStockFormProps) {
-  console.log(requestPayload(payload), 'request payload -----------------------')
   return newPost('/product/basic/add', requestPayload(payload));
 }
 

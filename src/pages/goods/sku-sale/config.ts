@@ -1,7 +1,39 @@
 import { FieldsConfig } from '@/packages/common/components/form';
 
 export const defaultConfig: FieldsConfig = {
-  sku: {
+  skuSale: {
+    productId: {
+      label: '商品ID',
+      type: 'number'
+    },
+    goodsTime: {
+      label: '创建时间',
+      type: 'rangepicker',
+      controlProps: {
+        showTime: true
+      }
+    },
+    optionTime: {
+      label: '操作时间',
+      type: 'rangepicker',
+      controlProps: {
+        showTime: true
+      }
+    },
+    interceptor: {
+      label: '拦截状态',
+      type: 'select',
+      options: [{
+        label: '全部',
+        value: ''
+      }, {
+        label: '是',
+        value: 1
+      }, {
+        label: '否',
+        value: 0
+      }]
+    },
     warehouseType: {
       label: '商品入库类型',
       type: 'radio',

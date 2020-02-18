@@ -401,7 +401,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       <Form
         getInstance={ref => this.form = ref}
         config={defaultConfig}
-        namespace='sku'
+        namespace='skuSale'
       >
         <Card title='添加/编辑商品'>
           <FormItem
@@ -482,7 +482,15 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               )
             }}
           />
-          <FormItem verifiable name='productName' />
+          <FormItem
+            verifiable
+            name='productName'
+            controlProps={{
+              style: {
+                width: '60%'
+              }
+            }}
+          />
           <FormItem
             label='商品类目'
             inner={(form) => {

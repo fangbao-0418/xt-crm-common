@@ -10,6 +10,7 @@ export function replaceHttpUrl(imgUrl?: string) {
 
 // 数组转换到字符串
 function array2String(list: any[]) {
+  console.log('array2String=>', list)
   return (list || []).map((item: any) => replaceHttpUrl(item.url)).join(',');
 }
 
@@ -24,10 +25,13 @@ export function filterUploadFile(
   type: 'req' | 'res' = 'req',
   fields: string[] = ['videoCoverUrl', 'videoUrl', 'coverUrl', 'productImage', 'bannerUrl', 'listImage']
 ) {
+  const result: any = {};
   fields.forEach(name => {
-    data[name] = type === 'req' ? array2String(data[name]) : string2Array(data[name]);
+    result[name] = type === 'req' ?
+      array2String(data[name]) :
+      string2Array(data[name]);
   })
-  return data;
+  return { ...data, ...result};
 }
 
 // 过滤金额
@@ -36,12 +40,13 @@ export function filterMoney(
   type: 'req' | 'res' = 'req',
   fields: string[] = ['marketPrice', 'costPrice']
 ) {
+  let result: any = {};
   fields.forEach(name => {
-    data[name] = type === 'req' ?
+    result[name] = type === 'req' ?
       APP.fn.formatMoneyNumber(data[name]) :
       APP.fn.formatMoneyNumber(data[name], 'm2u');
   })
-  return data;
+  return { ...data, ...result };
 }
 
 // 过滤列表响应
@@ -57,6 +62,8 @@ export function listResponse(res: any) {
 // 过滤新增、编辑表单
 export function requestPayload(payload: SkuStockFormProps) {
   let result: Record<string, any> = {};
+  console.log('payload ==>', payload);
+  debugger
   result = filterUploadFile(payload)
   result.skuAddList = (payload.skuAddList || []).map(item => {
     item = filterMoney(item);
