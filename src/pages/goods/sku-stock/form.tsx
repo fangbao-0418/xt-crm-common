@@ -12,8 +12,9 @@ import { pick, map, filter } from 'lodash';
 import If from '@/packages/common/components/if';
 import SkuList, { CSkuProps, Spec } from './components/sku';
 import { addProduct, updateProduct, getProduct } from './api';
-import { getGoodsDetial } from '../api';
+import { getGoodsDetial, getCategoryList } from '../api';
 import { filterSkuList } from './adapter';
+import { getAllId, treeToarr } from '@/util/utils';
 interface SkuStockFormState {
   specs: Spec[];
   skuAddList: CSkuProps[];
@@ -143,12 +144,19 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
     });
     return filter(specs, item => !!item.title);
   }
-  // 获取销售商品详情，用于回显
+  // 获取销售商品详情，用于回显s
   fetchSaleProduct = () => {
-    getGoodsDetial({ productId: this.state.productId })
-      .then((res: any) => {
-        this.form.resetValues();
-        this.form.setValues(pick(res, [
+    Promise.all([
+      getGoodsDetial({ productId: this.state.productId }),
+      getCategoryList()
+    ]).then(([res, list]: any) => {
+      const categoryId = res.productCategoryVO && res.productCategoryVO.id ?
+        getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse() :
+        [];
+      this.form.resetValues();
+      this.form.setValues({
+        categoryId,
+        ...pick(res, [
           'bannerUrl',
           'barCode',
           'coverUrl',
@@ -160,24 +168,25 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           'productShortName',
           'videoCoverUrl',
           'videoUrl'
-        ]));
-        const skuList = filterSkuList(res.skuList);
-        this.specs = this.getSpecs([
-          {
-            title: res.property1,
-            content: [],
-          },
-          {
-            title: res.property2,
-            content: [],
-          },
-        ], skuList);
-        this.setState({
-          'skuAddList': skuList,
-          'showImage': res.showImage,
-          'specs': this.specs
-        });
+        ])
       });
+      const skuList = filterSkuList(res.skuList);
+      this.specs = this.getSpecs([
+        {
+          title: res.property1,
+          content: [],
+        },
+        {
+          title: res.property2,
+          content: [],
+        },
+      ], skuList);
+      this.setState({
+        'skuAddList': skuList,
+        'showImage': res.showImage,
+        'specs': this.specs
+      });
+    });
   }
   render() {
     const {

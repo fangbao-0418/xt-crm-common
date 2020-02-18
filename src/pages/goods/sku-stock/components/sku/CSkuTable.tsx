@@ -147,7 +147,6 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
   }
   render() {
     const { dataSource } = this.state;
-    console.log('dataSource =>', dataSource);
     const columns = (this.props.extraColumns || []).concat(this.getColumns());
     return (
       <Table

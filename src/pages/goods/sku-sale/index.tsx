@@ -107,7 +107,7 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
       align: 'center',
       width: 120,
       render: (record: any) => (
-        <>
+        <div style={{ marginTop: 40 }}>
           <span
             className='href'
             onClick={() => {
@@ -132,7 +132,7 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
               上架
             </span>
           </If>
-        </>
+        </div>
       )
     }
   ];
@@ -143,7 +143,7 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
       title: '下架提示',
       content: '确认下架该商品吗?',
       onOk: () => {
-        delGoodsDisable({ ids }).then(res => {
+        delGoodsDisable({ ids }).then((res: any) => {
           if (res) {
             message.success('下架成功');
             this.list.refresh();
@@ -159,7 +159,7 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
       title: '上架提示',
       content: '确认上架该商品吗?',
       onOk: () => {
-        enableGoods({ ids }).then(res => {
+        enableGoods({ ids }).then((res: any) => {
           if (res) {
             message.success('上架成功');
             this.list.refresh();
@@ -187,8 +187,7 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
   /**
    * 选择项发生变化时的回调
    */
-  onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
+  onSelectChange = (selectedRowKeys: any) => {
     this.setState({
       selectedRowKeys
     });

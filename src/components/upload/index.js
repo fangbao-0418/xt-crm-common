@@ -37,7 +37,6 @@ class UploadView extends Component {
   count = 0
   constructor(props) {
     super(props);
-    console.log(props.value, 'props.value')
     this.state = {
       fileList: this.initFileList(props.value || []),
       visible: false,
@@ -96,7 +95,6 @@ class UploadView extends Component {
       val.url = result.url;
       val.thumbUrl = result.thumbUrl
       val.rurl = this.replaceUrl(result.url)
-      console.log(val, '----------------')
       return val
     });
   }

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Modal, Card, Input, Button, message, Radio, Select, Row } from 'antd';
 import UploadView from '@/components/upload';
-import { treeToarr } from '@/util/utils';
+import { getAllId, treeToarr } from '@/util/utils';
 import { pick, map, size, filter, assign, isEmpty } from 'lodash';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api';
-import { getAllId, gotoPage } from '@/util/utils';
+import { gotoPage } from '@/util/utils';
 import { radioStyle } from '@/config';
 import SkuList from '../components/sku';
 import SupplierSelect, { supplierItem } from '../components/supplier-select';
@@ -131,36 +131,38 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'productCustomsDetailVOList'
         ])
       });
-      this.form.setValues(pick(res, [
-        'productType',
-        'interception',
-        'showNum',
-        'description',
-        'productCode',
-        'productId',
-        'productName',
-        'productShortName',
-        'property1',
-        'property2',
-        'storeId',
-        'status',
-        'bulk',
-        'weight',
-        'withShippingFree',
-        'coverUrl',
-        'videoCoverUrl',
-        'videoUrl',
-        'deliveryMode',
-        'barCode',
-        'bannerUrl',
-        'returnPhone',
-        'listImage',
-        'productImage',
-        'storeProductId',
-        'categoryId',
-        'isAuthentication',
-        'isCalculateFreight'
-      ]));
+      this.form.setValues({
+        categoryId,
+        ...pick(res, [
+          'productType',
+          'interception',
+          'showNum',
+          'description',
+          'productCode',
+          'productId',
+          'productName',
+          'productShortName',
+          'property1',
+          'property2',
+          'storeId',
+          'status',
+          'bulk',
+          'weight',
+          'withShippingFree',
+          'coverUrl',
+          'videoCoverUrl',
+          'videoUrl',
+          'deliveryMode',
+          'barCode',
+          'bannerUrl',
+          'returnPhone',
+          'listImage',
+          'productImage',
+          'storeProductId',
+          'isAuthentication',
+          'isCalculateFreight'
+        ])
+      });
     });
   }
 
