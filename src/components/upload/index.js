@@ -33,6 +33,57 @@ export function formatValue (value) {
   return ''
 }
 
+/**
+ * @param {number} size - 文件大小 初始单位 1 === 1MB
+ * @returns {string}
+ */
+function computedFileSize (size) {
+  if (size >= 1) {
+    return size + 'MB'
+  } else {
+    return size * 1000 + 'KB'
+  }
+}
+
+/** 获取文件扩展名 */
+export function getFileExtName (url) {
+  const result = url.match(/.+(\.(.+?))(\?.+)?$/)
+  if (result && result[1]) {
+    return (result[1].slice(1) || '').trim().toLocaleLowerCase()
+  } else {
+    throw Error('get the expanded-name of the file error')
+  }
+}
+
+/**
+ * 文件类型是否匹配 true-匹配，false-不匹配
+ * @param {File} file - 文件名
+ * @param {string[]}  list - 匹配的集合
+ * @param {'mime'|'ext'} type - 匹配类型 mime-文件mime类型匹配 ext-文件扩展名匹配
+ * @returns {boolean} true-匹配 false-不匹配
+ */
+function isMatchFileType (file, list, type = 'ext') {
+  const fileType = file.type
+  if (list.length === 0) {
+    return false
+  }
+  let isSupport = false
+  if (type === 'ext') {
+    const extName = getFileExtName(file.name)
+    if (extName) {
+      isSupport = list.findIndex((item) => {
+        return extName === item.toLocaleLowerCase()
+      }) !== -1
+    }
+  } else {
+    isSupport = list.findIndex((item) => {
+      return fileType.indexOf(item) > -1
+    }) !== -1
+  }
+  return isSupport
+}
+
+
 class UploadView extends Component {
   count = 0
   constructor(props) {
@@ -44,7 +95,8 @@ class UploadView extends Component {
     };
     this.handleRemove = this.handleRemove.bind(this);
   }
-
+  /** 支持的文件扩展名集合 */
+  extnameList = !this.props.extname ? [] : this.props.extname.split(',')
   componentWillReceiveProps (props) {
     // console.log(props, 'props')
     this.setState({
@@ -95,6 +147,7 @@ class UploadView extends Component {
       val.url = result.url;
       val.thumbUrl = result.thumbUrl
       val.rurl = this.replaceUrl(result.url)
+      val.name = result.name || val.url
       console.log(val, '----------------')
       return val
     });
@@ -137,23 +190,45 @@ class UploadView extends Component {
 
   beforeUpload = async (file, fileList) => {
     console.log(file, 'file')
-    const { fileType, size = 10, pxSize, listNum } = this.props;
+    const { fileType, size = 10, pxSize, listNum, fileTypeErrorText } = this.props;
 
-    if (fileType && !this.checkFileType(file, fileType)) {
-      const fileTypeErrorText = this.props.fileTypeErrorText
-      message.error(fileTypeErrorText || `请上传正确${fileType}格式文件`);
+    /** 判断文件扩展名是否支持 不传就不限制 */
+    let extNameIsSupport = true
+    /** 判断文件MIMT-TYPE是否支持 不传就不限制 */
+    let mimeTypeIsSupport = true
+    const extnameList = this.extnameList
+    const fileTypeList = fileType instanceof Array ? fileType : fileType ? [fileType] : []
+    if (this.extnameList.length > 0 && !isMatchFileType(file, this.extnameList, 'ext')) {
+      extNameIsSupport = false
+    }
+    if (fileTypeList.length > 0 && !this.checkFileType(file, fileType)) {
+      mimeTypeIsSupport = false
+    }
+    if (extnameList.length === 0 && !mimeTypeIsSupport) {
+      APP.error(fileTypeErrorText || '上传格式不支持')
       return Promise.reject()
     }
-    const isLtM = file.size / 1024 / 1024 < size;
-    if (!isLtM) {
-      message.error(`请上传小于${size * 1000}kB的文件`);
+    if (fileTypeList.length === 0 && !extNameIsSupport) {
+      APP.error(fileTypeErrorText || '上传格式不支持')
+      return Promise.reject()
+    }
+    /** 扩展名和MIME-TYPE同时存在取交集 */
+    if (fileTypeList.length > 0 && extnameList.length > 0 && (!mimeTypeIsSupport || !extNameIsSupport)) {
+      APP.error(fileTypeErrorText || '上传格式不支持')
+       return Promise.reject()
+    }
+
+    /** size为n n小于1的 (n*1000)kb n大于等于1 (n)mb，1000kb-1024kb区间不支持设置 */
+    const sizeOverflow = (file.size / 1024 / 1024) > (size < 1 ? size / 1.024 : size)
+    if (sizeOverflow) {
+      message.error(`请上传小于${computedFileSize(size)}的文件`);
       return Promise.reject()
     }
     //pxSize: [{width:100, height:100}] 限制图片上传px大小
     if (pxSize && pxSize.length) {
       const imgSize = await this.getImgSize(file) || {width:0, height:0}
       let result = pxSize.filter((item, index, arr) => {
-        return item.width == imgSize.width && item.height == imgSize.height;
+        return item.width === imgSize.width && item.height === imgSize.height
       })
       if (result.length === 0 ) {
         message.error(`图片尺寸不正确`);
@@ -206,6 +281,10 @@ class UploadView extends Component {
     }
   };
   onPreview = file => {
+    if (this.props.listType === 'text') {
+      APP.fn.download(file.url)
+      return
+    }
     this.setState({
       url: file.durl,
       visible: true,
@@ -236,9 +315,6 @@ class UploadView extends Component {
           customRequest={(e) => this.customRequest(e)}
           onPreview={this.onPreview}
           {...attributes}
-          // onChange={(e) => {
-          //   console.log(e, 'onchange')
-          // }}
         >
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>

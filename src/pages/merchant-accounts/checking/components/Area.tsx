@@ -67,6 +67,8 @@ class Main extends React.Component<Props> {
     const value = selectedOption.value
     const name = selectedOption.label
     this.getCity(name, value)
+    this.value = [{name, value}]
+    this.onChange()
   }
   public onCityChange (e: any) {
     let selectedOption: any = {}
@@ -85,6 +87,9 @@ class Main extends React.Component<Props> {
     this.onChange()
   }
   public onChange () {
+    this.setState({
+      value: this.value
+    })
     if (this.props.onChange) {
       this.props.onChange(this.value)
     }

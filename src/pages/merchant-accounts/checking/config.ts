@@ -7,7 +7,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       serialNo: {
-        type: 'number', label: '对账单ID',
+        type: 'input', label: '对账单ID',
         controlProps: {
           style: {width: 150}
         }

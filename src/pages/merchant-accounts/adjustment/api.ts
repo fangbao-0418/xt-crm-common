@@ -43,7 +43,7 @@ export const addAdjustment = (payload: Partial<BuildRequest>) => {
 
 /** 撤销 */
 export const toRevoke = (id: number) => {
-  return newPost(`/finance/financeTrimRecord/revoke?id=${id}`)
+  return get(`/finance/trimRecord/purchaseRevoke?id=${id}`)
 }
 
 /** 校验对账单 */

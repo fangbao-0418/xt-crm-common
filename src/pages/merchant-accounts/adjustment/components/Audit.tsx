@@ -38,7 +38,6 @@ class Main extends React.Component<Props> {
                      <Upload
                       listType='text'
                       listNum={3}
-                      fileType={['spreadsheetml', 'wordprocessingml']}
                       fileTypeErrorText='请上传正确doc、xls格式文件'
                       disabled={readonly}
                       size={10}

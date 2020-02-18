@@ -11,6 +11,7 @@ import { ColumnProps } from 'antd/lib/table'
 import { GetDetailsListOnPageResponse } from './interface'
 import Adjustment from '../adjustment/Detail'
 import { withRouter, RouteComponentProps } from 'react-router'
+import Auth from '@/components/auth'
 
 interface Props extends Partial<AlertComponentProps>, RouteComponentProps<{id: string}> {}
 
@@ -123,12 +124,14 @@ class Main extends React.Component<Props, State> {
             <div>本期对对账单总额：<span>{query.settlementMoney || '0.00'}</span>元</div>
           </div>
           <div>
-            <Button
-              type='primary'
-              onClick={this.addAdjustment}
-            >
-              新建调整单
-            </Button>
+            <Auth code='adjustment:procurement_audit'>
+              <Button
+                type='primary'
+                onClick={this.addAdjustment}
+              >
+                新建调整单
+              </Button>
+            </Auth>
           </div>
         </div>
         <ListPage

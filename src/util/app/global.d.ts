@@ -24,4 +24,12 @@ declare module APP {
     /** 手机号校验 */
     phone: RegExp
   }
+  export const user: {
+    id: number
+    username: string
+    realname: string
+    phone: string
+    /** 当前权限code */
+    menuGathers: string[]
+  }
 }

@@ -6,6 +6,8 @@ interface Props {
   listNum?: number
   size?: number
   showUploadList?: booelan
+  /** 支持的扩展名 多个,分割 */
+  extname?: string
   pxSize?: {width: number, height: number}[]
   fileType?: string | string[]
   /** 上传文件格式提示文案 */

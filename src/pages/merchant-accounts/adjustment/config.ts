@@ -7,13 +7,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       id: {
-        type: 'number', label: '调整单ID',
+        type: 'input', label: '调整单ID',
         controlProps: {
           style: { width: 150 }
         }
       },
       serialNo: {
-        type: 'number', label: '对账单ID',
+        type: 'input', label: '对账单ID',
         controlProps: {
           style: { width: 150 }
         },
@@ -24,7 +24,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       accNo: {
-        type: 'number', label: '对账单ID',
+        type: 'input', label: '对账单ID',
         controlProps: {
           style: { width: 150 }
         },
@@ -35,7 +35,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       accId: {
-        type: 'number', label: '对账单ID',
+        type: 'input', label: '对账单ID',
         controlProps: {
           style: { width: 150 }
         },

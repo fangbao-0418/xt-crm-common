@@ -34,7 +34,7 @@ class Main extends React.Component<Props> {
     return (
       <div>
         <Form
-          config={getFieldsConfig()}
+          config={getFieldsConfig.call(this)}
           formItemStyle={{
             marginBottom: 10
           }}
@@ -78,6 +78,26 @@ class Main extends React.Component<Props> {
           <FormItem
             verifiable
             name='trimMoney'
+            fieldDecoratorOptions={{
+              rules: [
+                {required: true, message: '调整金额不能为空'},
+                {validator: (rule, value, cb) => {
+                  const form = this.form
+                  if (form) {
+                    console.log(form, 'form')
+                    const values = form.getValues()
+                    const trimType = values.trimType
+                    if (trimType === 1 && value < 0) {
+                      cb('调整类型为收入时，调整金额不能小于0')
+                    } else if (trimType === 2 && value > 0) {
+                      cb('调整类型为支出时，调整金额不能大于0')
+                    }
+                    console.log(values)
+                  }
+                  cb()
+                }}
+              ]
+            }}
             wrapperCol={{
               span: 6
             }}
@@ -96,13 +116,13 @@ class Main extends React.Component<Props> {
                 <div>
                   {form.getFieldDecorator('trimFileUrl')(
                     <Upload
+                      multiple
                       disabled={readonly}
                       listType='text'
-                      // maxCount={3}
                       listNum={3}
                       accept='doc,xls'
                       size={10}
-                      // fileType={['spreadsheetml', 'wordprocessingml']}
+                      extname='doc,docx,xls,xlsx'
                       fileTypeErrorText='请上传正确doc、xls格式文件'
                     >
                       <span className='href'>+添加文件</span>
@@ -122,10 +142,10 @@ class Main extends React.Component<Props> {
                     <Upload
                       disabled={readonly}
                       listType='picture-card'
-                      // fileType={['jpg', 'png', 'jpeg']}
+                      extname='png,jpg,jpeg'
                       listNum={5}
                       multiple
-                      size={2}
+                      size={1}
                     >
                     </Upload>
                   )}
