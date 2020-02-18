@@ -11,8 +11,8 @@ export function range(start: number, end: number) {
 }
 
 /** 禁用日期 */
-export function disabledDate (current: any, date: any) {
-  return current && moment(current).endOf('day') < moment(date).endOf('day')
+export function disabledDate (current: moment.Moment | null, date: any) {
+  return !!current && current < moment(date).endOf('day').subtract(1, 'day');
 }
 
 /** 禁用选中时间 */
