@@ -292,7 +292,12 @@ class Main extends React.Component<Props, State> {
               >
                 查询
               </Button>
-              <Button className='mr10' onClick={() => { this.listpage.refresh(true) }} >取消</Button>
+              <Button
+                className='mr10'
+                onClick={() => { this.listpage.refresh(true) }}
+              >
+                取消
+              </Button>
               <Auth code='finance:trim_build'>
                 <Button
                   className='mr10'
