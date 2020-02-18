@@ -9,6 +9,14 @@ import { GetListOnPageResponse } from '../interface'
 import Area from './Area'
 import If from '@/packages/common/components/if'
 import * as api from '../api'
+
+/** 支付类型账号文案枚举 */
+enum accoutNoPlaceholderEnum {
+  '手机号/邮箱' = 2,
+  收款人储蓄卡号 = 3,
+  收款方银行账号 = 4
+}
+
 interface Props {
   selectedRows: GetListOnPageResponse[]
   onOk?: () => void
@@ -117,7 +125,7 @@ class Main extends React.Component<Props> {
                 })(
                   <SelectFetch
                     fetchData={() => {
-                      const { id } = this.props.selectedRows[0]
+                      const { id } = this.props.selectedRows[0] || { id: '' }
                       return api.fetchGatheringAccountList(id).then((res) => {
                         return (res || []).map((item: {accoutName: string, id: number}) => {
                           return {
@@ -144,7 +152,16 @@ class Main extends React.Component<Props> {
                 }
               }}
             />
-            <FormItem name='accountName' verifiable />
+            <FormItem
+              name='accountName'
+              verifiable
+              controlProps={{
+                placeholder: accoutNoPlaceholderEnum[type],
+                style: {
+                  width: 200
+                }
+              }}
+            />
             <FormItem name='accountCode' verifiable />
             <If condition={[1, 2].indexOf(type) === -1}>
               <FormItem name='bankName' verifiable />
@@ -179,15 +196,18 @@ class Main extends React.Component<Props> {
                 <div>
                   {form.getFieldDecorator('invoiceUrl')(
                     <Upload
-                      listType='picture-card'
-                      multiple
-                      fileType={['spreadsheetml']}
+                      listType='text'
+                      // multiple
+                      // fileType={['spreadsheetml']}
+                      extname={'xls,xlsx'}
                       fileTypeErrorText='仅支持支持xls\xlsx格式'
                       size={2}
+                      listNum={1}
                     >
+                      <span className='href'>+请选择发票凭证</span>
                     </Upload>
                   )}
-                  <div style={{fontSize: 12, color: '#999', lineHeight: '14px'}}>
+                  <div className='mt10' style={{fontSize: 12, color: '#999', lineHeight: '20px'}}>
                     (请上传开票信息，支持xls\xlsx格式，最大支持2MB，点击此处
                     <span
                       className='href'

@@ -143,7 +143,7 @@ class Main extends React.Component<Props, State> {
       if (storeIds.indexOf(item.storeId) === -1) {
         storeIds.push(item.storeId)
       }
-      if ([20, 70].indexOf(item.accStatus) === -1) {
+      if ([20].indexOf(item.accStatus) === -1) {
         notAllow = true
       }
     })

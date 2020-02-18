@@ -116,13 +116,13 @@ class Main extends React.Component<Props> {
                 <div>
                   {form.getFieldDecorator('trimFileUrl')(
                     <Upload
+                      multiple
                       disabled={readonly}
                       listType='text'
-                      // maxCount={3}
                       listNum={3}
                       accept='doc,xls'
                       size={10}
-                      // fileType={['spreadsheetml', 'wordprocessingml']}
+                      extname='doc,docx,xls,xlsx'
                       fileTypeErrorText='请上传正确doc、xls格式文件'
                     >
                       <span className='href'>+添加文件</span>
@@ -142,10 +142,10 @@ class Main extends React.Component<Props> {
                     <Upload
                       disabled={readonly}
                       listType='picture-card'
-                      fileType={['jpg', 'png', 'jpeg']}
+                      extname='png,jpg,jpeg'
                       listNum={5}
                       multiple
-                      size={2}
+                      size={1}
                     >
                     </Upload>
                   )}
