@@ -295,14 +295,14 @@ class Main extends React.Component<Props, State> {
               >
                 全部导出
               </Button> */}
-              {/* {[20 , 70].indexOf(this.props.status) > -1 && ( */}
+              {[20].indexOf(this.props.status) > -1 && (
                 <Button
                   type='primary'
                   onClick={this.addStatements}
                 >
                   生成结算单
                 </Button>
-              {/* )} */}
+              )}
             </div>
           )}
           api={api.fetchList}
