@@ -20,15 +20,15 @@ class SettleDetialList extends React.Component {
       {
         title: '序号',
         dataIndex: 'index',
-        width: 150,
+        width: 100,
         render: (text, record, index) => `${index + 1}`,
       }, {
         title: '单据ID',
-        width: 200,
+        width: 150,
         dataIndex: 'id'
       }, {
         title: '单据名称',
-        width: 200,
+        width: 250,
         dataIndex: 'billName'
       }, {
         title: '单据类型',
@@ -38,7 +38,9 @@ class SettleDetialList extends React.Component {
         title: '单据金额',
         width: 150,
         dataIndex: 'billMoney',
-        render: MoneyRender,
+        render: (billMoney) => {
+          return <span className='success' style={{color: billMoney >= 0 ? 'green' : 'red'}}>{APP.fn.formatMoneyNumber(billMoney, 'm2u')}</span>
+        },
       }, {
         title: '单据日期',
         width: 150,

@@ -31,7 +31,7 @@ class List extends React.Component {
     this.fetchData()
   }
   componentDidUpdate(prevProps) {
-    if (this.props.settType !== prevProps.settType) {
+    if (this.props.setStatus !== prevProps.setStatus) {
       const { page } = this.state
       page.current = 1;
       this.fetchData();
@@ -39,10 +39,10 @@ class List extends React.Component {
   }
   // 列表数据
   fetchData(params = {}) {
-    const { settType } = this.props;
+    const { setStatus } = this.props;
     const { page } = this.state;
     const options = {
-      settType,
+      setStatus,
       pageSize: page.pageSize,
       page: page.current,
       ...params
@@ -101,7 +101,7 @@ class List extends React.Component {
       createName: '',
       createTime: '',
       id: '',
-      invoiceInfo: '',
+      isInvoice: '',
       modifyName: '',
       modifyTime: '',
       storeName: ''
