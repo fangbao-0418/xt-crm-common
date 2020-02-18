@@ -28,9 +28,9 @@ interface State {
 class Main extends React.Component<Props, State> {
   public columns: ColumnProps<ListResponse>[] = [
     {
-      dataIndex: 'id',
+      dataIndex: 'serialNo',
       title: 'ID',
-      width: 100
+      width: 200
     },
     {
       dataIndex: 'trimName',
@@ -38,7 +38,7 @@ class Main extends React.Component<Props, State> {
       width: 200
     },
     {
-      dataIndex: 'serialNo',
+      dataIndex: 'accNo',
       title: '对账单ID',
       width: 200
     },
@@ -263,8 +263,10 @@ class Main extends React.Component<Props, State> {
           formItemLayout={(
             <>
               <Row>
-                <Col span={6}><FormItem name='id' /></Col>
-                <Col span={6}><FormItem name='accId' /></Col>
+                <Col span={6}>
+                  <FormItem label='调整单ID' name='serialNo' />
+                </Col>
+                <Col span={6}><FormItem name='accNo' /></Col>
                 <Col span={6}><FormItem name='trimType' /></Col>
                 <Col span={6}><FormItem name='purchaseReviewName' /></Col>
               </Row>
@@ -292,13 +294,15 @@ class Main extends React.Component<Props, State> {
                 查询
               </Button>
               <Button className='mr10' onClick={() => { this.listpage.refresh(true) }} >取消</Button>
-              <Button
-                className='mr10'
-                type='primary'
-                onClick={this.showAdjustment.bind(this, 'add', undefined)}
-              >
-                新建调整单
-              </Button>
+              <Auth code='adjustment:procurement_audit'>
+                <Button
+                  className='mr10'
+                  type='primary'
+                  onClick={this.showAdjustment.bind(this, 'add', undefined)}
+                >
+                  新建调整单
+                </Button>
+              </Auth>
               <Button
                 type='primary'
                 className='mr10'
