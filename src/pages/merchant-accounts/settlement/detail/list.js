@@ -38,7 +38,9 @@ class SettleDetialList extends React.Component {
         title: '单据金额',
         width: 150,
         dataIndex: 'billMoney',
-        render: MoneyRender,
+        render: (billMoney) => {
+          return <span className='success' style={{color: billMoney >= 0 ? 'green' : 'red'}}>{APP.fn.formatMoneyNumber(billMoney, 'm2u')}</span>
+        },
       }, {
         title: '单据日期',
         width: 150,
