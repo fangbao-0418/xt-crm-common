@@ -101,7 +101,7 @@ class List extends React.Component {
       createName: '',
       createTime: '',
       id: '',
-      invoiceInfo: '',
+      isInvoice: '',
       modifyName: '',
       modifyTime: '',
       storeName: ''
