@@ -128,22 +128,19 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         return (
           <div>
-            <Auth code='adjustment:finance_audit'>
-              {(access: boolean, codes: string[]) => {
-                return (record.trimStatus === 20 && codes.indexOf('adjustment:procurement_audit') > -1 || [10, 20].indexOf(record.trimStatus) === -1) && (
-                  <>
-                    <span
-                      className='href'
-                      onClick={() => { this.showAdjustment('view', record) }}
-                    >
-                      查看明细
-                    </span>&nbsp;&nbsp;
-                  </>
-                )
-              }}
-            </Auth>
+            {(record.trimStatus === 20 && APP.user.menuGathers.indexOf('adjustment:procurement_audit') > -1 || [10, 20].indexOf(record.trimStatus) === -1) && (
+                <>
+                  <span
+                    className='href'
+                    onClick={() => { this.showAdjustment('view', record) }}
+                  >
+                    查看明细
+                  </span>&nbsp;&nbsp;
+                </>
+              )
+            }
             {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
-            <Auth code='adjustment:finance_audit,adjustment:procurement_audit'>
+            <Auth>
               {(access: boolean, codes: string[]) => {
                 return (record.trimStatus === 10 && codes.indexOf('adjustment:procurement_audit') > -1 || record.trimStatus === 20 && codes.indexOf('adjustment:finance_audit') > -1) && (
                   <>
@@ -157,15 +154,17 @@ class Main extends React.Component<Props, State> {
                 )
               }}
             </Auth>
-            {/* {record.trimStatus === 10 && (
-              <Popconfirm
-                title='确定是否撤销？'
-                onConfirm={this.toRevoke.bind(this, record)}
-              >
-                <span className='href'>撤销</span>
-              </Popconfirm>
+            {record.trimStatus === 20 && APP.user.id === record.createUid && (
+              <Auth code='finance:trim_revoke'>
+                <Popconfirm
+                  title='确定是否撤销？'
+                  onConfirm={this.toRevoke.bind(this, record)}
+                >
+                  <span className='href'>撤销</span>
+                </Popconfirm>
+              </Auth>
             )}
-            &nbsp;&nbsp; */}
+            &nbsp;&nbsp;
           </div>
         )
       }
@@ -294,7 +293,7 @@ class Main extends React.Component<Props, State> {
                 查询
               </Button>
               <Button className='mr10' onClick={() => { this.listpage.refresh(true) }} >取消</Button>
-              <Auth code='adjustment:procurement_audit'>
+              <Auth code='finance:trim_build'>
                 <Button
                   className='mr10'
                   type='primary'

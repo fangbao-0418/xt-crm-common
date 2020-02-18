@@ -10,7 +10,7 @@ type ChildrenType = (a: any, b: any) => React.ReactNode | React.ReactNode
 
 interface Props extends ReduxState {
   /** 权限码多个权限码,分割 */
-  code: string
+  code?: string
 }
 
 interface RoleInfo {
