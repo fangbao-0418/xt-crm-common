@@ -159,12 +159,19 @@ class SkuStockList extends React.Component<any, SkuStockState> {
     const hasSelected = selectedRowKeys.length > 0;
     return (
       <ListPage
-        namespace='csku'
+        namespace='skuStock'
         formItemLayout={(
           <>
             <FormItem name='productBasicId' />
             <FormItem name='productCode' />
-            <FormItem name='productName' />
+            <FormItem
+              name='productName'
+              // controlProps={{
+              //   style: {
+              //     width: 172
+              //   }
+              // }}
+            />
             <FormItem name='barCode' />
             <FormItem
               label='一级类目'

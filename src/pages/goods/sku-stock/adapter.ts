@@ -1,6 +1,7 @@
 import { statusEnums } from './config';
 import { SkuStockFormProps } from './form';
 import { initImgList } from '@/util/utils';
+import { pick } from 'lodash';
 
 export function replaceHttpUrl(imgUrl?: string) {
   return (imgUrl || '')
@@ -83,4 +84,23 @@ export function detailResponse(res: any) {
   })
   res.showImage = skuList.every(v => !!v.imageUrl1);
   return res;
+}
+
+
+// 传入销售商品skuList数据返回库存商品skuList数据
+export function filterSkuList(list: any[]) {
+  return (list || []).map(item => {
+    return pick(item, [
+      'barCode',
+      'costPrice',
+      'imageUrl1',
+      'marketPrice',
+      'propertyValue1',
+      'propertyValue2',
+      'skuCode',
+      'skuName',
+      'status',
+      'stock'
+    ]);
+  })
 }

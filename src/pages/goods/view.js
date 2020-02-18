@@ -6,7 +6,6 @@ const { TabPane } = Tabs;
 
 const goods = props => {
   const initialStatus = parseQuery().status || '0'
-  console.log(parseQuery().status, '------------------------')
   const [status, setStatus] = useState(initialStatus);
   const callback = (status) => {
     setStatus(status);

@@ -74,7 +74,7 @@ export const handleLoading = (function() {
     const el = document.querySelector('#loading');
     if (loading === 'start') {
       ajaxCount++;
-      console.log(ajaxCount, 'start');
+      // console.log(ajaxCount, 'start');
       const display = getComputedStyle(el).display;
       if (ajaxCount > 0 && display === 'none') {
         el.setAttribute('style', 'display:block');
@@ -82,7 +82,7 @@ export const handleLoading = (function() {
     } else {
       setTimeout(() => {
         ajaxCount--;
-        console.log(ajaxCount, 'end');
+        // console.log(ajaxCount, 'end');
         if (ajaxCount <= 0) {
           const display = getComputedStyle(el).display;
           if (display !== 'none') {

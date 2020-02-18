@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button, Modal, message, Divider } from 'antd';
+import { Button, Modal, message } from 'antd';
 import dateFns from 'date-fns';
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
-import { setQuery, parseQuery, gotoPage } from '@/util/utils';
+import { gotoPage } from '@/util/utils';
 import { formatMoneyWithSign } from '../../helper';
 import Image from '@/components/Image';
 import SelectFetch from '@/components/select-fetch';
@@ -18,11 +18,14 @@ function replaceHttpUrl(imgUrl: string) {
   return imgUrl;
 }
 
+interface SkuSaleListProps {
+  status: string;
+}
 interface SkuSaleListState {
   selectedRowKeys: string[] | number[]
 }
 
-class SkuSaleList extends React.Component<any, SkuSaleListState> {
+class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
   state: SkuSaleListState = {
     selectedRowKeys: []
   }
@@ -30,6 +33,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
   columns = [
     {
       title: '商品ID',
+      width: 120,
       dataIndex: 'id'
     },
     {
@@ -50,24 +54,29 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
     },
     {
       title: '商品名称',
+      width: 120,
       dataIndex: 'productName'
     },
     {
       title: '类目',
+      width: 120,
       dataIndex: 'categoryName'
     },
     {
       title: '成本价',
+      width: 100,
       dataIndex: 'costPrice',
       render: formatMoneyWithSign
     },
     {
       title: '销售价',
+      width: 100,
       dataIndex: 'salePrice',
       render: formatMoneyWithSign
     },
     {
       title: '库存',
+      width: 100,
       dataIndex: 'stock'
     },
     {
@@ -77,6 +86,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
     },
     {
       title: '供应商',
+      width: 120,
       dataIndex: 'storeName'
     },
     {
@@ -93,8 +103,9 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
     },
     {
       title: '操作',
-      width: 160,
+      fixed: 'right',
       align: 'center',
+      width: 120,
       render: (record: any) => (
         <>
           <span
@@ -105,19 +116,17 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           >
             编辑
           </span>
-          <If condition={status === '0'}>
-            <Divider type='vertical' />
+          <If condition={this.props.status === '0'}>
             <span
-              className='href'
+              className='href ml10'
               onClick={() => this.delGoodsDisable([record.id])}
             >
               下架
             </span>
           </If>
-          <If condition={status === '1'}>
-            <Divider type='vertical' />
+          <If condition={this.props.status === '1'}>
             <span
-              className='href'
+              className='href ml10'
               onClick={() => this.enableGoods([record.id])}
             >
               上架
@@ -192,6 +201,43 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
     const { selectedRowKeys } = this.state;
     const hasSelected = Array.isArray(selectedRowKeys) && selectedRowKeys.length > 0
     const { status } = this.props;
+    const tableProps: any = {
+      scroll: {
+        x: true
+      },
+      rowSelection: {
+        selectedRowKeys,
+        onChange: this.onSelectChange
+      }
+    }
+    if (['1', '0'].includes(status)) {
+      tableProps.footer = () => (
+        <>
+          <If condition={status === '1'}>
+            <Button
+              type='danger'
+              onClick={() => {
+                this.enableGoods(selectedRowKeys)
+              }}
+              disabled={!hasSelected}
+            >
+              批量上架
+            </Button>
+          </If>
+          <If condition={status === '0'}>
+            <Button
+              type='danger'
+              onClick={() => {
+                this.delGoodsDisable(selectedRowKeys)
+              }}
+              disabled={!hasSelected}
+            >
+              批量下架
+            </Button>
+          </If>
+        </>
+      )
+    }
     return (
       <>
         <ListPage
@@ -214,24 +260,24 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
                 label='供应商'
                 inner={(form) => {
                   return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect />
+                    <SuppilerSelect style={{ width: 172 }}/>
                   );
                 }}
               />
               <FormItem name='interceptor' />
+              <FormItem
+                label='一级类目'
+                inner={(form) => {
+                  return form.getFieldDecorator('categoryId')(
+                    <SelectFetch
+                      style={{ width: 172 }}
+                      fetchData={getCategoryTopList}
+                    />
+                  )
+                }}
+              />
               <FormItem name='goodsTime' />
               <FormItem name='optionTime' />
-              <FormItem
-              label='一级类目'
-              inner={(form) => {
-                return form.getFieldDecorator('categoryId')(
-                  <SelectFetch
-                    style={{ width: 172 }}
-                    fetchData={getCategoryTopList}
-                  />
-                )
-              }}
-            />
             </>
           )}
           addonAfterSearch={(
@@ -260,38 +306,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           )}
           api={getGoodsList}
           columns={this.columns}
-          tableProps={{
-            rowSelection: {
-              selectedRowKeys,
-              onChange: this.onSelectChange
-            },
-            footer: () => (
-              <>
-                <If condition={status === '1'}>
-                  <Button
-                    type='danger'
-                    onClick={() => {
-                      this.enableGoods(selectedRowKeys)
-                    }}
-                    disabled={!hasSelected}
-                  >
-                    批量上架
-                  </Button>
-                </If>
-                <If condition={status === '0'}>
-                  <Button
-                    type='danger'
-                    onClick={() => {
-                      this.delGoodsDisable(selectedRowKeys)
-                    }}
-                    disabled={!hasSelected}
-                  >
-                    批量下架
-                  </Button>
-                </If>
-              </>
-            )
-          }}
+          tableProps={tableProps}
         />
       </>
     );

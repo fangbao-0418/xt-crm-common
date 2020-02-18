@@ -199,7 +199,6 @@ export const prefix = url => {
     if (!(process.env.PUB_ENV == 'test' || process.env.PUB_ENV == 'dev')) {
       const mockConfig = require('../mock.json');
       if (typeof mockConfig == 'object' && mockConfig['apiList'] instanceof Array) {
-        console.log(url, mockConfig, '-------------');
         const isMock = mockConfig['apiList'].find(item => {
           const path = item.replace(/{/g, ':').replace(/}/g, '');
           return pathToRegexp(path).test(url);

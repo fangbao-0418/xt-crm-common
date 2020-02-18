@@ -4,7 +4,12 @@ export const defaultConfig: FieldsConfig = {
   skuSale: {
     productId: {
       label: '商品ID',
-      type: 'number'
+      type: 'number',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      }
     },
     goodsTime: {
       label: '创建时间',
@@ -23,6 +28,11 @@ export const defaultConfig: FieldsConfig = {
     interceptor: {
       label: '拦截状态',
       type: 'select',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      },
       options: [{
         label: '全部',
         value: ''
@@ -77,11 +87,6 @@ export const defaultConfig: FieldsConfig = {
           required: true,
           message: '请输入商品名称'
         }]
-      },
-      controlProps: {
-        style: {
-          width: '60%'
-        }
       }
     },
     productShortName: {

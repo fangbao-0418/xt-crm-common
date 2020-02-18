@@ -13,6 +13,7 @@ import If from '@/packages/common/components/if';
 import SkuList, { CSkuProps, Spec } from './components/sku';
 import { addProduct, updateProduct, getProduct } from './api';
 import { getGoodsDetial } from '../api';
+import { filterSkuList } from './adapter';
 interface SkuStockFormState {
   specs: Spec[];
   skuAddList: CSkuProps[];
@@ -160,6 +161,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           'videoCoverUrl',
           'videoUrl'
         ]));
+        const skuList = filterSkuList(res.skuList);
         this.specs = this.getSpecs([
           {
             title: res.property1,
@@ -169,9 +171,9 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
             title: res.property2,
             content: [],
           },
-        ], res.skuList);
+        ], skuList);
         this.setState({
-          'skuAddList': res.skuList,
+          'skuAddList': skuList,
           'showImage': res.showImage,
           'specs': this.specs
         });
@@ -186,7 +188,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
     } = this.state;
     return (
       <Form
-        namespace='csku'
+        namespace='skuStock'
         config={defaultConfig}
         getInstance={ref => this.form = ref}
         addonAfter={(
@@ -328,6 +330,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           />
           <FormItem
             label='商品主图'
+            required={true}
             inner={(form) => {
               return (
                 <div className={styles['input-wrapper']}>
@@ -355,6 +358,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           />
           <FormItem
             label='商品图片'
+            required={true}
             inner={(form) => {
               return (
                 <div className={styles['input-wrapper']}>
@@ -375,6 +379,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           />
           <FormItem
             label='banner图'
+            required={true}
             inner={(form) => {
               return (
                 <div className={styles['input-wrapper']}>

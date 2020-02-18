@@ -53,6 +53,7 @@ class Main extends React.Component<Props> {
     return (
       <Select
         value={value}
+        allowClear
         placeholder={this.props.placeholder || '请选择'}
         style={this.props.style}
         onChange={this.onChange}

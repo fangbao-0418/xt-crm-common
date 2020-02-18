@@ -1,7 +1,7 @@
 import { FieldsConfig } from '@/packages/common/components/form';
 
 export const defaultConfig: FieldsConfig = {
-  csku: {
+  skuStock: {
     productBasicId: {
       label: '库存商品ID'
     },

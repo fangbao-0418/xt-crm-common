@@ -707,12 +707,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem
             label='商品图片'
             required={true}
-            help={
-              <>
-                <div>1.本地上传图片大小不能超过300kb</div>
-                <div>2.商品图片最多上传5张图片</div>
-              </>
-            }
             inner={(form) => {
               return form.getFieldDecorator('productImage', {
                 rules: [{
@@ -720,12 +714,17 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                   message: '请上传商品图片',
                 }]
               })(
-                <DraggableUpload
-                  className={styles['goods-detail-draggable']}
-                  listNum={5}
-                  size={0.3}
-                  placeholder='上传商品图片'
-                />
+                <div className={styles['input-wrapper']}>
+                  <div className={styles['input-wrapper-content']}>
+                    <DraggableUpload
+                      className={styles['goods-detail-draggable']}
+                      listNum={5}
+                      size={0.3}
+                      placeholder='上传商品图片'
+                    />
+                  </div>
+                  <div className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内，最多可添加5张）</div>
+                </div>
               )
             }}
           />
