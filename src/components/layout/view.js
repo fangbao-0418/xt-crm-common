@@ -83,9 +83,10 @@ export default class extends Component {
 
   render() {
     const { collapsed, mwidth } = this.state;
+    const pathname = this.props.location.pathname;
     return (
       <Layout>
-        <Sidebar collapsed={collapsed} data={this.props.tree} />
+        <Sidebar collapsed={collapsed} data={this.props.tree} pathname={pathname} />
         <Layout style={{ marginLeft: mwidth, overflow: 'auto', height: '100vh' }}>
           <div style={{ minWidth: '1200px' }}>
             <Header>
