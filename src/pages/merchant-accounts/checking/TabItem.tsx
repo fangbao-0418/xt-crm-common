@@ -111,7 +111,7 @@ class Main extends React.Component<Props, State> {
             >
               查看明细
             </span>&nbsp;&nbsp;
-            <span className='href'>导出</span>&nbsp;&nbsp;
+            {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
             <span
               className='href'
               onClick={() => {
