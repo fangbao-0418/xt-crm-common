@@ -122,9 +122,11 @@ class Main extends React.Component<Props, State> {
         </div>
         <div className={styles['detail-header2']}>
           <div>
-            <div>收入：<span>{query.incomeMoney || '0.00'}</span>元</div>
-            <div>支出：<span>{query.disburseMoney || '0.00'}</span>元</div>
-            <div>本期对对账单总额：<span>{query.settlementMoney || '0.00'}</span>元</div>
+            <div>收入：<span className='success'>{query.incomeMoney || '0.00'}</span>元</div>
+            <div>支出：<span className='error'>{query.disburseMoney || '0.00'}</span>元</div>
+            <div>本期对对账单总额：
+              <span className={Number(query.settlementMoney) > 0 ? 'success' : 'error'}>{query.settlementMoney || '0.00'}</span>元
+            </div>
           </div>
           <div>
             <Auth code='adjustment:procurement_audit'>
