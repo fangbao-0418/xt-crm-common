@@ -54,6 +54,7 @@ const defaultItem: CSkuProps = {
 }
 
 interface SkuListProps extends FormComponentProps {
+  id: number,
   specs: Spec[]
   dataSource: CSkuProps[]
   showImage: boolean
@@ -397,6 +398,7 @@ class SkuList extends React.Component<SkuListProps, SkuListState> {
           )
         })}
         <CSkuTable
+          id={this.props.id}
           form={this.props.form}
           dataSource={(dataSource || []).map((item, index) => ({ ...item, id: index }))}
           extraColumns={this.getCustomColumns()}

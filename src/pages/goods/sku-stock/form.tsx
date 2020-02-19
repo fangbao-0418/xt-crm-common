@@ -20,6 +20,7 @@ interface SkuStockFormState {
   skuAddList: CSkuProps[];
   showImage: boolean;
   productId: string;
+  supplierList: any[]
 }
 
 export interface SkuStockFormProps extends RouteComponentProps<{id: string}> {
@@ -36,7 +37,7 @@ export interface SkuStockFormProps extends RouteComponentProps<{id: string}> {
   // 商品编码
   productCode: string;
   // 供应商ID
-  storeId: string;
+  storeId: number;
   // 视频封面地址
   videoCoverUrl: any;
   // 视频地址
@@ -53,7 +54,6 @@ export interface SkuStockFormProps extends RouteComponentProps<{id: string}> {
   [key: string]: any;
 }
 class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState> {
-  specs: any[] = [];
   id: number;
   form: FormInstance;
   constructor(props: SkuStockFormProps) {
@@ -61,6 +61,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
     this.id = +props.match.params.id;
     this.state = {
       specs: [],
+      supplierList: [],
       skuAddList: [],
       showImage: false,
       productId: ''
@@ -71,25 +72,46 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
   }
   // 获取库存商品详情
   fetchData() {
-    getProduct(this.id).then(res => {
-      this.form.setValues(pick(res, [
-        'bannerUrl',
-        'barCode',
-        'coverUrl',
-        'description',
-        'listImage',
-        'productCode',
-        'productImage',
-        'productName',
-        'productShortName',
-        'videoCoverUrl',
-        'videoUrl'
-      ]));
-      this.setState(pick(res, [
-        'skuAddList',
-        'showImage',
-        'specs'
-      ]));
+    Promise.all([
+      getProduct(this.id),
+      getCategoryList()
+    ]).then(([res, list]: any) => {
+      const categoryId = res.productCategoryVO && res.productCategoryVO.id ?
+      getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse() :
+      [];
+      this.form.setValues({
+        categoryId,
+        ...pick(res, [
+          'bannerUrl',
+          'barCode',
+          'coverUrl',
+          'description',
+          'listImage',
+          'productCode',
+          'productImage',
+          'productName',
+          'productShortName',
+          'videoCoverUrl',
+          'videoUrl',
+          'storeId'
+        ])
+      });
+      const skuList = filterSkuList(res.skuList);
+      this.setState({
+        supplierList: [{ name: res.storeName, id: res.storeId }],
+        skuAddList: skuList,
+        specs: this.getSpecs([
+          {
+            title: res.property1,
+            content: [],
+          },
+          {
+            title: res.property2,
+            content: [],
+          },
+        ], skuList),
+        showImage: res.showImage
+      });
     })
   }
   handleDeleteAll = () => {
@@ -109,7 +131,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
       if (!errs) {
         vals = { ...vals, skuAddList: this.state.skuAddList }
         const isAdd = this.id === -1;
-        const promiseResult = isAdd ? addProduct(vals) : updateProduct(vals);
+        const promiseResult = isAdd ? addProduct(vals) : updateProduct({ ...vals });
         promiseResult.then((res: boolean) => {
           if (res) {
             APP.success(`${isAdd ? '新增' : '编辑'}成功`);
@@ -167,24 +189,25 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           'productName',
           'productShortName',
           'videoCoverUrl',
-          'videoUrl'
+          'videoUrl',
+          'storeId'
         ])
       });
       const skuList = filterSkuList(res.skuList);
-      this.specs = this.getSpecs([
-        {
-          title: res.property1,
-          content: [],
-        },
-        {
-          title: res.property2,
-          content: [],
-        },
-      ], skuList);
       this.setState({
         'skuAddList': skuList,
         'showImage': res.showImage,
-        'specs': this.specs
+        'specs': this.getSpecs([
+          {
+            title: res.property1,
+            content: [],
+          },
+          {
+            title: res.property2,
+            content: [],
+          },
+        ], skuList),
+        supplierList: [{ name: res.storeName, id: res.storeId }]
       });
     });
   }
@@ -193,7 +216,8 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
       specs,
       skuAddList,
       showImage,
-      productId
+      productId,
+      supplierList
     } = this.state;
     return (
       <Form
@@ -277,6 +301,12 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           <FormItem verifiable name='description'/>
           <FormItem
             name='productCode'
+            type='text'
+            controlProps={{
+              style: {
+                width: '60%'
+              }
+            }}
             hidden={this.id === -1}
           />
           <FormItem
@@ -285,6 +315,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
               return form.getFieldDecorator('storeId')(
                 <SupplierSelect
                   style={{ width: '60%' }}
+                  options={supplierList}
                 />
               )
             }}
@@ -401,6 +432,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           />
         </Card>
         <SkuList
+          id={this.id}
           showImage={showImage}
           specs={specs}
           dataSource={skuAddList}

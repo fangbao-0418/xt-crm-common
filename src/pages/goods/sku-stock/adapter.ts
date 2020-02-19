@@ -72,9 +72,9 @@ export function formRequest(payload: SkuStockFormProps) {
 
 // 过滤详情响应
 export function formResponse(res: any) {
-  let result: Record<string, any> = filterUploadFile(res, 'res');
-  const skuList: any[] = res.skuAddList || []
-  res.skuAddList = skuList.map(item => {
+  res = filterUploadFile(res, 'res');
+  const skuList: any[] = res.skuList || []
+  res.skuList = skuList.map(item => {
     item = filterMoney(item, 'res');
     return item;
   })

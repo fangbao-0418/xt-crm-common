@@ -171,17 +171,6 @@ class SkuStockList extends React.Component<any, SkuStockState> {
             <FormItem name='productCode' />
             <FormItem name='productName' />
             <FormItem name='barCode' />
-            <FormItem
-              label='一级类目'
-              inner={(form) => {
-                return form.getFieldDecorator('categoryId')(
-                  <SelectFetch
-                    style={{ width: 172 }}
-                    fetchData={getCategoryTopList}
-                  />
-                )
-              }}
-            />
             <FormItem name='status' />
             <FormItem
               label='供应商'
@@ -193,6 +182,17 @@ class SkuStockList extends React.Component<any, SkuStockState> {
             />
             <FormItem name='createTime' />
             <FormItem name='modifyTime' />
+            <FormItem
+              label='一级类目'
+              inner={(form) => {
+                return form.getFieldDecorator('categoryId')(
+                  <SelectFetch
+                    style={{ width: 172 }}
+                    fetchData={getCategoryTopList}
+                  />
+                )
+              }}
+            />
           </>
         )}
         rangeMap={{

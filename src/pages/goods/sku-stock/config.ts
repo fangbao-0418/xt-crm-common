@@ -15,11 +15,16 @@ export const defaultConfig: FieldsConfig = {
       }
     },
     barCode: {
-      label: '商品条码' 
+      label: '商品条码'
     },
     status: {
       label: '在库状态',
       type: 'select',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      },
       options: [{
         label: '失效',
         value: 0
@@ -66,13 +71,7 @@ export const defaultConfig: FieldsConfig = {
       }
     },
     productCode: {
-      label: '商品编码',
-      type: 'text',
-      controlProps: {
-        style: {
-          width: '60%'
-        }
-      }
+      label: '商品编码'
     }
   }
 }

@@ -9,6 +9,7 @@ import { isFunction } from 'lodash';
 import { CSkuProps } from '../sku';
 
 interface CSkuTableProps extends Partial<AlertComponentProps>, FormComponentProps {
+  id: number,
   extraColumns?: ColumnProps<any>[];
   dataSource: CSkuProps[];
   onChange?: (dataSource: CSkuProps[]) => void;
@@ -35,27 +36,15 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
   getColumns(): ColumnProps<CSkuProps>[] {
     const { dataSource } = this.state;
     const cb = this.handleChangeValue;
-    return [{
+    return this.props.id === -1 ? [{
       title: '规格条码',
       dataIndex: 'barCode',
       render: (text: any, record: any, index: any) => {
-        return (
+        return this.speedyInput('barCode', text, record, index, dataSource, cb)(
           <Input
             value={text}
             placeholder='请输入规格条码'
             onChange={cb('barCode', record, index)}
-          />
-        )
-      }
-    }, {
-      title: '规格编码',
-      dataIndex: 'skuCode',
-      render: (text: any, record: any, index: any) => {
-        return (
-          <Input
-            value={text}
-            placeholder='请输入规格编码'
-            onChange={cb('skuCode', record, index)}
           />
         )
       }
@@ -99,7 +88,66 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
           />
         )
       )
-    }]
+    }]: [
+      {
+        title: '规格条码',
+        dataIndex: 'barCode',
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('barCode', text, record, index, dataSource, cb)(
+            <Input
+              value={text}
+              placeholder='请输入规格条码'
+              onChange={cb('barCode', record, index)}
+            />
+          )
+        }
+      },
+      {
+        title: '规格编码',
+        dataIndex: 'skuCode'
+      },
+      {
+        title: '市场价',
+        dataIndex: 'marketPrice',
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+            <InputMoney
+              precision={2}
+              value={text}
+              placeholder='请输入市场价'
+              onChange={cb('marketPrice', record, index)}
+            />
+          )
+        }
+      }, {
+        title: '成本价',
+        dataIndex: 'costPrice',
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('costPrice', text, record, index, dataSource, cb)(
+            <InputMoney
+              precision={2}
+              value={text}
+              placeholder='请输入成本价'
+              onChange={cb('costPrice', record, index)}
+            />
+          )
+        }
+      }, {
+        title: '库存',
+        dataIndex: 'stock',
+        render: (text: any, record, index: any) => (
+          this.speedyInput('stock', text, record, index, dataSource, cb)(
+            <InputNumber
+              precision={0}
+              min={0}
+              value={text}
+              placeholder="请输入库存"
+              onChange={cb('stock', record, index)}
+            />
+          )
+        )
+      }
+    ]
   }
   speedyInputCallBack = (dataSource: CSkuProps[]) => {
     const { onChange } = this.props;
