@@ -12,6 +12,7 @@ import DeliveryModal from './components/delivery-modal';
 import { dateFormat } from '@/util/utils';
 import moment from 'moment';
 import WithModal from './components/modal'
+import ModifyAddress from './components/modifyAddress'
 import { namespace } from './model'
 import { connect } from 'react-redux'
 
@@ -80,7 +81,8 @@ class Detail extends Component {
       userProceedsListByOrderId: [],
       goodsTableKey: 0,
       deliveryVisible: false,
-      deliveryData: {}
+      deliveryData: {},
+      modifyAddressVisible: false
     };
   }
 
@@ -175,13 +177,27 @@ class Detail extends Component {
       }
     });
   }
+
+  // 修改收货地址弹窗
+  changeModifyAddress = (isOk) => {
+    console.log(111);
+    console.log(this.state.modifyAddressVisible);
+    this.setState({
+      modifyAddressVisible: !this.state.modifyAddressVisible
+    }, () => {
+      console.log(isOk, 'isOk');
+      isOk && this.query();
+    })
+  }
+
   render() {
     const { data, childOrderList } = this.props
     let { 
       userProceedsListByOrderId,
       goodsTableKey,
       deliveryVisible,
-      deliveryData
+      deliveryData,
+      modifyAddressVisible
     } = this.state
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
@@ -191,7 +207,7 @@ class Detail extends Component {
       <>
         <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
         {/* 订单信息 */}
-        <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} />
+        <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress}/>
         {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
         {/* 海关信息 */}
@@ -347,6 +363,13 @@ class Detail extends Component {
           orderId={(deliveryData.childOrder || {}).id}
           logistics={deliveryData.logistics}
           onCancel={() => this.changeModal(false)}
+        />
+        <ModifyAddress 
+          title="修改订单信息"
+          visible={modifyAddressVisible}
+          onCancel={this.changeModifyAddress}
+          orderId={(deliveryData.childOrder || {}).id}
+          buyerInfo={data.buyerInfo}
         />
       </>
     );

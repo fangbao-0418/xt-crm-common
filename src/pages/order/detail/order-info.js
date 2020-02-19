@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Row, Col } from 'antd';
+import { Card, Row, Col, Button } from 'antd';
 import { OrderStatusTextMap } from '../constant';
 import { formatDate, unionAddress } from '../../helper';
 import memberType from '@/enum/memberType';
@@ -20,11 +20,16 @@ const initOrderInfo = {
   remark: 'string',
 };
 
-const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
+const modifyAddress = (changeModifyAddress) => {
+  return <Button onClick={() => changeModifyAddress()} type="primary">修改地址</Button>
+}
+
+const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddress }) => {
   const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
+  console.log(buyerInfo, 'buyerInfo');
   return (
-    <Card title="订单信息">
+    <Card title="订单信息" extra={modifyAddress(changeModifyAddress)}>
       <Row gutter={24}>
         <Col span={8}>订单编号：{orderCode}</Col>
         <Col span={8}>创建时间：{formatDate(createTime)}</Col>
