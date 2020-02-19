@@ -111,7 +111,7 @@ class Main extends React.Component<Props, State> {
             >
               查看明细
             </span>&nbsp;&nbsp;
-            <span className='href'>导出</span>&nbsp;&nbsp;
+            {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
             <span
               className='href'
               onClick={() => {
@@ -253,6 +253,20 @@ class Main extends React.Component<Props, State> {
           formConfig={getFieldsConfig()}
           getInstance={(ref) => {
             this.listpage = ref
+          }}
+          mounted={() => {
+            if (this.listpage.cachePayload) {
+              const { bulidYear, bulidMonth } = this.listpage.cachePayload
+              if (bulidYear !== undefined) {
+                const date = [bulidYear]
+                if (bulidMonth !== undefined) {
+                  date.push(bulidMonth)
+                }
+                this.listpage.form.setValues({
+                  date
+                })
+              }
+            }
           }}
           formItemLayout={(
             <>

@@ -62,8 +62,12 @@ class Main extends React.Component<Props, State> {
       dataIndex: 'trimMoney',
       title: '金额',
       width: 150,
+      align: 'center',
       render: (text) => {
-        return APP.fn.formatMoneyNumber(text, 'm2u')
+        const className = text > 0 ? 'success' : 'error'
+        return (
+          <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+        )
       }
     },
     {
