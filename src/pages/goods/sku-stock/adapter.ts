@@ -49,11 +49,6 @@ export function filterMoney(
   return { ...data, ...result };
 }
 
-// 过滤列表请求
-export function listRequest() {
-
-}
-
 // 过滤列表响应
 export function listResponse(res: any) {
   res.records = (res.records || []).map((record: any) => {

@@ -2,6 +2,7 @@ import moment from 'moment';
 import { listResponse, formRequest, formResponse } from './adapter';
 import { exportFileStream, newPut } from '@/util/fetch';
 import { SkuStockFormProps } from './form';
+import { omitBy } from 'lodash';
 const { get, newPost } = APP.http;
 
 export interface listPayload {
@@ -22,7 +23,8 @@ export interface listPayload {
 }
 
 // 获取库存管理列表
-export function getPages(payload: listPayload) {
+export function getPages(payload: any) {
+  payload = omitBy(payload, value => value === '');
   return newPost('/product/basic/list', payload).then(listResponse);
 }
 
