@@ -128,10 +128,18 @@ class Main extends React.Component<Props, State> {
         APP.error('请检查输入项')
         return
       }
+      const trimImgUrl = (value.trimImgUrl || []).map((item: any) => {
+        item.url = item.rurl
+        return item
+      })
+      const trimFileUrl = (value.trimFileUrl || []).map((item: any) => {
+        item.url = item.rurl
+        return item
+      })
       value = {
         ...value,
-        trimImgUrl: JSON.stringify(value.trimImgUrl || []),
-        trimFileUrl: JSON.stringify(value.trimFileUrl || []),
+        trimImgUrl: JSON.stringify(trimImgUrl),
+        trimFileUrl: JSON.stringify(trimFileUrl),
         trimMoney: APP.fn.formatMoneyNumber(value.trimMoney, 'u2m')
       }
       api.addAdjustment(value).then(() => {

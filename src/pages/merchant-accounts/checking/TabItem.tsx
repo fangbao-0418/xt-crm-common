@@ -254,6 +254,20 @@ class Main extends React.Component<Props, State> {
           getInstance={(ref) => {
             this.listpage = ref
           }}
+          mounted={() => {
+            if (this.listpage.cachePayload) {
+              const { bulidYear, bulidMonth } = this.listpage.cachePayload
+              if (bulidYear !== undefined) {
+                const date = [bulidYear]
+                if (bulidMonth !== undefined) {
+                  date.push(bulidMonth)
+                }
+                this.listpage.form.setValues({
+                  date
+                })
+              }
+            }
+          }}
           formItemLayout={(
             <>
               <FormItem name='serialNo' />

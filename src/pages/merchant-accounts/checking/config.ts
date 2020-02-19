@@ -26,10 +26,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '待结算', value: 30},
           {label: '结算中', value: 40},
           {label: '已结算', value: 50},
-          {label: '已结清', value: 60},
-          {label: '结算异常', value: 70},
-          {label: '冻结中', value: 80},
-          {label: '其他', value: 100}
+          {label: '结算异常', value: 70}
         ]
       }
     },
@@ -127,10 +124,10 @@ export enum AccStatusEnum {
   待结算 = 30,
   结算中 = 40,
   已结算 = 50,
-  已结清 = 60,
+  // 已结清 = 60,
   结算异常 = 70,
-  已冻结 = 80,
-  其他 = 100
+  // 已冻结 = 80,
+  // 其他 = 100
 }
 
 /** 交易状态（1：完成 2：未完成 3：出现异常） */
