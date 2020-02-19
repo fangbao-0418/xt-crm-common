@@ -206,7 +206,7 @@ class Main extends React.Component<Props, State> {
             >
               选择商品
             </span>
-            <ActivityList text="选择活动商品" confirm={this.handleSelectActivity} />
+            <ActivityList activityType={[1, 2, 3, 10]} text="选择活动商品" confirm={this.handleSelectActivity} />
             <GoodsTransfer
               ref={element => {
                 this.goodsTransfer = element;
