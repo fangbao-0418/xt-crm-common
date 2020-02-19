@@ -68,7 +68,7 @@ class SettleDetialList extends React.Component {
             </div>
             <div className={styles['cont-r']}>
               <span style={{ float: 'left' }}>发票凭证：</span>
-              <Image src={settleDetail.invoiceUrl}></Image>
+              {settleDetail.invoiceUrl && <Image src={settleDetail.invoiceUrl} style={{ width: 60, height: 60 }}></Image>}
             </div>
           </div>
         </div>
