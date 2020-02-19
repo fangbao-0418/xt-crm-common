@@ -8,7 +8,7 @@ import SupplierSelect from '../components/supplier-select';
 import DraggableUpload from '../components/draggable-upload';
 import styles from '../style.module.scss';
 import UploadView from '@/components/upload';
-import { pick, map, filter } from 'lodash';
+import { pick, map, filter, assign } from 'lodash';
 import If from '@/packages/common/components/if';
 import SkuList, { CSkuProps, Spec } from './components/sku';
 import { addProduct, updateProduct, getProduct } from './api';
@@ -17,6 +17,8 @@ import { filterSkuList } from './adapter';
 import { getAllId, treeToarr } from '@/util/utils';
 interface SkuStockFormState {
   specs: Spec[];
+  propertyId1: string;
+  propertyId2: string;
   skuAddList: CSkuProps[];
   showImage: boolean;
   productId: string;
@@ -60,6 +62,8 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
     super(props);
     this.id = +props.match.params.id;
     this.state = {
+      propertyId1: '',
+      propertyId2: '',
       specs: [],
       supplierList: [],
       skuAddList: [],
@@ -82,6 +86,8 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
       this.form.setValues({
         categoryId,
         ...pick(res, [
+          // 'property1',
+          // 'property2',
           'bannerUrl',
           'barCode',
           'coverUrl',
@@ -110,7 +116,11 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
             content: [],
           },
         ], skuList),
-        showImage: res.showImage
+        showImage: res.showImage,
+        ...pick(res, [
+          'propertyId1',
+          'propertyId2'
+        ])
       });
     })
   }
@@ -127,11 +137,30 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
     APP.history.go(-1)
   }
   handleSave = () => {
+    const {
+      specs,
+      propertyId1,
+      propertyId2
+    } = this.state;
     this.form.props.form.validateFields((errs, vals) => {
       if (!errs) {
-        vals = { ...vals, skuAddList: this.state.skuAddList }
+        const property = {};
+        if (this.id !== -1) {
+          assign(property, {
+            propertyId1,
+            propertyId2: specs[1] && propertyId2,
+          });
+        }
+        vals = {
+          property1: specs[0] && specs[0].title,
+          property2: specs[1] && specs[1].title,
+          skuAddList: this.state.skuAddList,
+          ...vals,
+          ...property
+        }
         const isAdd = this.id === -1;
-        const promiseResult = isAdd ? addProduct(vals) : updateProduct({ ...vals });
+        
+        const promiseResult = isAdd ? addProduct(vals) : updateProduct({ ...vals, productBasicId: this.id });
         promiseResult.then((res: boolean) => {
           if (res) {
             APP.success(`${isAdd ? '新增' : '编辑'}成功`);
@@ -179,6 +208,8 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
       this.form.setValues({
         categoryId,
         ...pick(res, [
+          // 'property1',
+          // 'property2',
           'bannerUrl',
           'barCode',
           'coverUrl',
@@ -207,7 +238,11 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
             content: [],
           },
         ], skuList),
-        supplierList: [{ name: res.storeName, id: res.storeId }]
+        supplierList: [{ name: res.storeName, id: res.storeId }],
+        ...pick(res, [
+          'propertyId1',
+          'propertyId2'
+        ])
       });
     });
   }

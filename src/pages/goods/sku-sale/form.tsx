@@ -25,22 +25,22 @@ function NumberValidator(rule: any, value: any, callback: any) {
   callback();
 }
 interface SkuSaleFormState extends Record<string, any> {
-  skuList: any[],
-  specs: any[],
-  templateOptions: any[],
-  spuName: any[],
-  spuPicture: any[],
-  propertyId1: string,
-  propertyId2: string,
-  productCategoryVO: any,
-  returnContact: string,
-  returnPhone: string,
-  returnAddress: string,
-  showImage: boolean,
-  strategyData: any,
-  productCustomsDetailVOList: any[],
-  supplierInfo: any,
-  interceptionVisible: boolean,
+  skuList: any[];
+  specs: any[];
+  templateOptions: any[];
+  spuName: any[];
+  spuPicture: any[];
+  propertyId1: string;
+  propertyId2: string;
+  productCategoryVO: any;
+  returnContact: string;
+  returnPhone: string;
+  returnAddress: string;
+  showImage: boolean;
+  strategyData: any;
+  productCustomsDetailVOList: any[];
+  supplierInfo: any;
+  interceptionVisible: boolean;
   freightTemplateId: string
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
@@ -142,8 +142,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'productId',
           'productName',
           'productShortName',
-          'property1',
-          'property2',
+          // 'property1',
+          // 'property2',
           'storeId',
           'status',
           'bulk',

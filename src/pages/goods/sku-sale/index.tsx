@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal, message } from 'antd';
+import { Card, Tabs, Button, Modal, message } from 'antd';
 import dateFns from 'date-fns';
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
 import { gotoPage } from '@/util/utils';
@@ -10,7 +10,7 @@ import { If, ListPage, FormItem } from '@/packages/common/components';
 import { ListPageInstanceProps } from '@/packages/common/components/list-page';
 import SuppilerSelect from '@/components/suppiler-auto-select';
 import { defaultConfig } from './config';
-
+const { TabPane } = Tabs; 
 function replaceHttpUrl(imgUrl: string) {
   if (imgUrl.indexOf('http') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
@@ -18,16 +18,15 @@ function replaceHttpUrl(imgUrl: string) {
   return imgUrl;
 }
 
-interface SkuSaleListProps {
-  status: string;
-}
 interface SkuSaleListState {
-  selectedRowKeys: string[] | number[]
+  selectedRowKeys: string[] | number[];
+  status: number;
 }
 
-class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
+class SkuSaleList extends React.Component<any, SkuSaleListState> {
   state: SkuSaleListState = {
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    status: 0
   }
   list: ListPageInstanceProps;
   columns = [
@@ -116,18 +115,18 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
           >
             编辑
           </span>
-          <If condition={this.props.status === '0'}>
+          <If condition={record.status === 0}>
             <span
               className='href ml10'
-              onClick={() => this.delGoodsDisable([record.id])}
+              onClick={() => this.lower([record.id])}
             >
               下架
             </span>
           </If>
-          <If condition={this.props.status === '1'}>
+          <If condition={record.status === 1}>
             <span
               className='href ml10'
-              onClick={() => this.enableGoods([record.id])}
+              onClick={() => this.upper([record.id])}
             >
               上架
             </span>
@@ -138,7 +137,7 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
   ];
 
   /** 下架商品 */
-  delGoodsDisable = (ids: string[] | number[]) => {
+  lower = (ids: string[] | number[]) => {
     Modal.confirm({
       title: '下架提示',
       content: '确认下架该商品吗?',
@@ -154,7 +153,7 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
   }
 
   // 批量上架
-  enableGoods = (ids: string[] | number[]) => {
+  upper = (ids: string[] | number[]) => {
     Modal.confirm({
       title: '上架提示',
       content: '确认上架该商品吗?',
@@ -170,18 +169,13 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
   };
 
   // 导出
-  exportProduct = () => {
+  export = () => {
     exportFileList({
       ...this.list.payload,
-      status: this.props.status,
+      status: this.state.status,
       pageSize: 6000,
       page: 1
     });
-  }
-
-  /** 添加商品 */
-  handleAdd = () => {
-    APP.history.push('/goods/sku-sale/-1');
   }
 
   /**
@@ -191,15 +185,20 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
     this.setState({
       selectedRowKeys
     });
-  };
-  // 新增组合商品
-  addCommodity = () => {
-    APP.history.push('/goods/sku-sale/-1')
+  }
+
+  // 切换tabPane
+  handleChange = (key: string) => {
+    this.setState({
+      status: +key
+    }, () => {
+      this.list.refresh();
+    })
   }
   render() {
     const { selectedRowKeys } = this.state;
     const hasSelected = Array.isArray(selectedRowKeys) && selectedRowKeys.length > 0
-    const { status } = this.props;
+    const { status } = this.state;
     const tableProps: any = {
       scroll: {
         x: true
@@ -209,25 +208,25 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
         onChange: this.onSelectChange
       }
     }
-    if (['1', '0'].includes(status)) {
+    if ([1, 0].includes(status)) {
       tableProps.footer = () => (
         <>
-          <If condition={status === '1'}>
+          <If condition={status === 1}>
             <Button
               type='danger'
               onClick={() => {
-                this.enableGoods(selectedRowKeys)
+                this.upper(selectedRowKeys)
               }}
               disabled={!hasSelected}
             >
               批量上架
             </Button>
           </If>
-          <If condition={status === '0'}>
+          <If condition={status === 0}>
             <Button
               type='danger'
               onClick={() => {
-                this.delGoodsDisable(selectedRowKeys)
+                this.lower(selectedRowKeys)
               }}
               disabled={!hasSelected}
             >
@@ -238,11 +237,26 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
       )
     }
     return (
-      <>
+      <Card>
+        <Tabs
+          defaultActiveKey='0'
+          onChange={this.handleChange}
+        >
+          <TabPane tab="出售中" key='0' />
+          <TabPane tab="仓库中" key='1' />
+          <TabPane tab="待上架" key='3' />
+          <TabPane tab="商品池" key='2' />
+        </Tabs>
         <ListPage
           namespace='skuSale'
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              status: this.state.status
+            }
+          }}
           rangeMap={{
             goodsTime: {
               fields: ['createStartTime', 'createEndTime']
@@ -284,20 +298,24 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
               <Button
                 type='primary'
                 className='mr10'
-                onClick={this.exportProduct}
+                onClick={this.export}
               >
                 导出商品
               </Button>
               <Button
                 className='mr10'
                 type='primary'
-                onClick={this.handleAdd}
+                onClick={() => {
+                  APP.history.push('/goods/sku-sale/-1')
+                }}
               >
                 添加商品
               </Button>
               <Button
                 type='primary'
-                onClick={this.addCommodity}
+                onClick={() => {
+                  APP.history.push('/goods/sku-sale/-1')
+                }}
               >
                 添加组合商品
               </Button>
@@ -307,8 +325,8 @@ class SkuSaleList extends React.Component<SkuSaleListProps, SkuSaleListState> {
           columns={this.columns}
           tableProps={tableProps}
         />
-      </>
-    );
+    </Card>
+    )
   }
 }
 

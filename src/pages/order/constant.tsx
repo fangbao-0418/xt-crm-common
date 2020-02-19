@@ -26,7 +26,7 @@ export function getDetailColumns (type = 0) {
       width: '8%',
       render(id: any, record: any) {
         console.log('record => ', record)
-        return <Link to={`/goods/edit/${id}`}>{id}</Link>
+        return <Link to={`/goods/sku-sale/${id}`}>{id}</Link>
       }
     },
     {

@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import loadable from '@/util/loadable'
 import Category from './category/index.js';
 
-const List = loadable(() => import('./view'));
+const SkuSale = loadable(() => import('./sku-sale'));
 const Check = loadable(() => import('./check'));
 const Detail = loadable(() => import('./detail'));
 const PricingStrategy = loadable(() => import('./pricing-strategy'));
@@ -16,8 +16,8 @@ export default class RouteApp extends React.Component {
     const { match } = this.props;
     return (
       <Switch>
-        <Route exact path={`${match.url}`} component={List} />
-        <Route path={`${match.url}/list`} component={List} />
+        <Route exact path={`${match.url}`} component={SkuSale} />
+        <Route path={`${match.url}/list`} component={SkuSale} />
         <Route path={`${match.url}/category`} component={Category} />
         <Route path={`${match.url}/check`} component={Check} />
         <Route path={`${match.url}/detail/:id?`} component={Detail} />
