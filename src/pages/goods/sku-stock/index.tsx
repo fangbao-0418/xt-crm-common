@@ -1,7 +1,7 @@
 import React from 'react';
 import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components';
 import SuppilerSelect from '@/components/suppiler-auto-select'
-import { effectProduct, invalidProduct, exportProduct } from './api';
+import { getPages, effectProduct, invalidProduct, exportProduct } from './api';
 import { getCategoryTopList } from '../api';
 import { defaultConfig, statusEnums } from './config';
 import { Modal, Button, Popconfirm } from 'antd';
@@ -164,14 +164,7 @@ class SkuStockList extends React.Component<any, SkuStockState> {
           <>
             <FormItem name='productBasicId' />
             <FormItem name='productCode' />
-            <FormItem
-              name='productName'
-              // controlProps={{
-              //   style: {
-              //     width: 172
-              //   }
-              // }}
-            />
+            <FormItem name='productName' />
             <FormItem name='barCode' />
             <FormItem
               label='一级类目'
@@ -246,7 +239,7 @@ class SkuStockList extends React.Component<any, SkuStockState> {
         )}
         getInstance={ref => this.list = ref}
         formConfig={defaultConfig}
-        api={() => Promise.resolve({ records: []})}
+        api={getPages}
         columns={this.columns}
       />
     )
