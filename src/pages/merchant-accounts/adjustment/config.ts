@@ -127,6 +127,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'number', label: '调整金额',
         controlProps: {
           precision: 2,
+          min: 0,
           style: {width: '100%'}
         },
         fieldDecoratorOptions: {
