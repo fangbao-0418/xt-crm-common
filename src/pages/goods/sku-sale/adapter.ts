@@ -5,7 +5,7 @@ import { replaceHttpUrl } from '../sku-stock/adapter';
 const fields: string[] = ['costPrice', 'salePrice', 'marketPrice', 'cityMemberPrice', 'managerMemberPrice', 'areaMemberPrice', 'headPrice'];
 
 // 过滤新增、编辑销售商品请求
-export function requestPayload(payload: any) {
+export function formRequest(payload: any) {
   const skuList: SkuSaleProps[] = payload.skuList || [];
   let result: Record<string, any> = filterUploadFile(payload)
   result.skuList = skuList.map(item => {
@@ -19,7 +19,7 @@ export function requestPayload(payload: any) {
 }
 
 // 过滤销售商品详情
-export function detailResponse(res: any) {
+export function formResponse(res: any) {
   const skuList: any[] = res.skuList || [];
   res = filterUploadFile(res || {}, 'res');
   res.skuList = skuList.map((item: any) => {

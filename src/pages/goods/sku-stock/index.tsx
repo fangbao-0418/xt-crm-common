@@ -32,48 +32,53 @@ class SkuStockList extends React.Component<any, SkuStockState> {
   }
   columns = [{
     title: '库存商品ID',
-    key: 'id',
+    width: 120,
     dataIndex: 'id'
   }, {
     title: '商品名称',
-    key: 'productName',
+    width: 200,
     dataIndex: 'productName'
   }, {
     title: '商品编码',
-    key: 'productCode',
+    width: 150,
     dataIndex: 'productCode'
   }, {
     title: '商品条码',
-    key: 'barCode',
+    width: 120,
     dataIndex: 'barCode'
   }, {
     title: '类目',
-    key: 'categoryName',
+    width: 120,
     dataIndex: 'categoryName'
   }, {
     title: '总库存',
-    key: 'stock',
+    width: 120,
     dataIndex: 'stock'
   }, {
     title: '供应商',
-    key: 'storeName',
+    width: 150,
     dataIndex: 'storeName'
   }, {
     title: '状态',
-    key: 'statusText',
+    width: 100,
     dataIndex: 'statusText'
   }, {
     title: '创建时间',
-    key: 'createTimeText',
+    width: 200,
     dataIndex: 'createTimeText'
   }, {
     title: '最后操作时间',
-    key: 'modifyTimeText',
+    width: 200,
     dataIndex: 'modifyTimeText'
   }, {
-    title: '操作人'
+    title: '操作人',
+    width: 120,
+    dataIndex: 'modifyUser'
   }, {
     title: '操作',
+    width: 150,
+    align: 'center',
+    fixed: 'right',
     render: (records: any) => {
       return (
         <>
@@ -199,6 +204,9 @@ class SkuStockList extends React.Component<any, SkuStockState> {
           }
         }}
         tableProps={{
+          scroll: {
+            x: true
+          },
           rowSelection: {
             selectedRowKeys,
             onChange: this.onSelectChange
@@ -212,13 +220,13 @@ class SkuStockList extends React.Component<any, SkuStockState> {
             >
               新增
             </Button>
-            <Button
+            {/* <Button
               type='primary'
               className='ml10'
               onClick={this.export}
             >
               导出商品
-            </Button>
+            </Button> */}
             <Button
               type='primary'
               disabled={!hasSelected}

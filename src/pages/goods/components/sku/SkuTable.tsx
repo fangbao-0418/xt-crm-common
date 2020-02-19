@@ -262,21 +262,21 @@ class Main extends React.Component<Props, State> {
     const { getFieldDecorator } = this.props.form
     return [
       {
-        title: '供应商skuID',
+        title: '规格条码',
         dataIndex: 'storeProductSkuId',
         width: 200,
         render: (text: any, record: any, index: any) => {
           return (
             <Input
               value={text}
-              placeholder="请输入供应商skuid"
+              placeholder="请输入规格条码"
               onChange={cb('storeProductSkuId', record, index)}
             />
           );
         },
       },
       {
-        title: <div><span style={{color: 'red'}}>*</span>商品编码</div>,
+        title: <div><span style={{color: 'red'}}>*</span>规格编码</div>,
         dataIndex: 'skuCode',
         width: 200,
         render: (text, record, index) => {
@@ -300,7 +300,7 @@ class Main extends React.Component<Props, State> {
                 })(
                   <Input
                     // value={text}
-                    placeholder="请输入商品编码"
+                    placeholder="请输入规格编码"
                     onChange={(e) => {
                       const value = e.target.value
                       cb('skuCode', record, index)(value)

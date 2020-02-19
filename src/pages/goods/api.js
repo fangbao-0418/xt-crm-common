@@ -1,4 +1,4 @@
-import { detailResponse, requestPayload } from './sku-sale/adapter';
+import { formResponse, formRequest } from './sku-sale/adapter';
 import { exportFile, newGet } from '../../util/fetch';
 const { post, get, newPost } = APP.http; 
 export function getStoreList(data, config) {
@@ -7,7 +7,7 @@ export function getStoreList(data, config) {
 
 export function setProduct(data) {
   const url = data.productId ? '/product/update' : '/product/add';
-  data = requestPayload(data);
+  data = formRequest(data);
   return post(url, {}, { data, headers: {} });
 }
 
@@ -16,7 +16,7 @@ export function getGoodsList(data) {
 }
 
 export function getGoodsDetial(data) {
-  return post('/product/detail', data).then(detailResponse);
+  return post('/product/detail', data).then(formResponse);
 }
 
 export function delGoodsDisable(data) {

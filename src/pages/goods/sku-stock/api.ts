@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { listResponse, requestPayload, detailResponse } from './adapter';
+import { listResponse, formRequest, formResponse } from './adapter';
 import { exportFileStream, newPut } from '@/util/fetch';
 import { SkuStockFormProps } from './form';
 const { get, newPost } = APP.http;
@@ -43,15 +43,15 @@ export function exportProduct(payload: listPayload) {
 
 // 新增库存商品
 export function addProduct(payload: SkuStockFormProps) {
-  return newPost('/product/basic/add', requestPayload(payload));
+  return newPost('/product/basic/add', formRequest(payload));
 }
 
 // 更新库存商品
 export function updateProduct(payload: SkuStockFormProps) {
-  return newPut('/product/basic/update', requestPayload(payload))
+  return newPut('/product/basic/update', formRequest(payload))
 }
 
 // 查询库存商品
 export function getProduct(productBasicId: number) {
-  return get(`/product/basic/detail?productBasicId=${productBasicId}`).then(detailResponse);
+  return get(`/product/basic/detail?productBasicId=${productBasicId}`).then(formResponse);
 }

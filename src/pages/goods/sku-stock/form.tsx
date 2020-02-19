@@ -233,19 +233,11 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
             </Button>
           </FormItem>
           <FormItem
-            label='商品条码'
-            inner={(form) => {
-              return (
-                <>
-                  {form.getFieldDecorator('barCode')(
-                    <Input
-                      placeholder='请输入商品条码'
-                      style={{ width: '60%' }}
-                    />
-                  )}
-                  <Button className='ml10'>校验</Button>
-                </>
-              )
+            name='barCode'
+            controlProps={{
+              style: {
+                width: '60%'
+              }
             }}
           />
           <FormItem

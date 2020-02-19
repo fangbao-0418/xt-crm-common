@@ -11,7 +11,6 @@ export function replaceHttpUrl(imgUrl?: string) {
 
 // 数组转换到字符串
 function array2String(list: any[]) {
-  console.log('array2String=>', list)
   return (list || []).map((item: any) => replaceHttpUrl(item.url)).join(',');
 }
 
@@ -50,34 +49,36 @@ export function filterMoney(
   return { ...data, ...result };
 }
 
+// 过滤列表请求
+export function listRequest() {
+
+}
+
 // 过滤列表响应
 export function listResponse(res: any) {
   res.records = (res.records || []).map((record: any) => {
     record.statusText = statusEnums[record.status];
     record.createTimeText = APP.fn.formatDate(record.createTime);
     record.modifyTimeText = record.modifyTime ? APP.fn.formatDate(record.modifyTime): '-'
+    return record;
   })
   return res;
 }
 
 // 过滤新增、编辑表单
-export function requestPayload(payload: SkuStockFormProps) {
-  let result: Record<string, any> = {};
-  console.log('payload ==>', payload);
-  debugger
-  result = filterUploadFile(payload)
+export function formRequest(payload: SkuStockFormProps) {
+  let result: Record<string, any> = filterUploadFile(payload);
+  result.categoryId = Array.isArray(payload.categoryId) ? payload.categoryId[2] : '';
   result.skuAddList = (payload.skuAddList || []).map(item => {
-    item = filterMoney(item);
-    return item;
+    return filterMoney(item);
   })
   return { ...payload, ...result };
 }
 
 // 过滤详情响应
-export function detailResponse(res: any) {
-  let result: Record<string, any> = {};
+export function formResponse(res: any) {
+  let result: Record<string, any> = filterUploadFile(res, 'res');
   const skuList: any[] = res.skuAddList || []
-  result = filterUploadFile(res, 'res');
   res.skuAddList = skuList.map(item => {
     item = filterMoney(item, 'res');
     return item;
