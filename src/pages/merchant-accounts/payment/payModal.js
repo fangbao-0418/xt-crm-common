@@ -32,10 +32,11 @@ class PayModal extends React.Component {
       form: { getFieldDecorator },
       record: {
         id,
+        paymentSerialNo,
         paymentImgList = [],
         paymentMoney = 0,
         paymentName,
-        settId,
+        settlementSerialNo,
       }
     } = this.props;
     let uploadProps = modalType === 'look' ? { showUploadList: { showPreviewIcon: true, showRemoveIcon: false, showDownloadIcon: false } } : { listNum: 5 }
@@ -62,9 +63,9 @@ class PayModal extends React.Component {
           destroyOnClose
         >
           <Form {...formItemLayout}>
-            <Form.Item label="付款单ID"><span>{id}</span></Form.Item>
+            <Form.Item label="付款单ID"><span>{paymentSerialNo}</span></Form.Item>
             <Form.Item label="付款单名称">{paymentName}</Form.Item>
-            <Form.Item label="结算单ID">{settId}</Form.Item>
+            <Form.Item label="结算单ID">{settlementSerialNo}</Form.Item>
             <Form.Item label="金额">{formatMoneyWithSign(paymentMoney)}</Form.Item>
             <Form.Item label="凭证"
               help={modalType === 'confirm' ?

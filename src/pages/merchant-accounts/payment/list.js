@@ -98,10 +98,10 @@ class List extends React.Component {
     const { setFieldsValue } = this.props.form;
     const { page } = this.state;
     setFieldsValue({
-      settId:'',
+      settlementSerialNo:'',
       createName: '',
       createTime: '',
-      id: '',
+      paymentSerialNo: '',
       modifyName: '',
       modifyTime: '',
       storeName: ''
@@ -154,8 +154,8 @@ class List extends React.Component {
     const columns = [
       {
         title: 'ID',
-        key: 'id',
-        dataIndex: 'id',
+        key: 'paymentSerialNo',
+        dataIndex: 'paymentSerialNo',
       },
       {
         title: '付款单名称',
@@ -164,8 +164,8 @@ class List extends React.Component {
       },
       {
         title: '结算ID',
-        key: 'settId',
-        dataIndex: 'settId',
+        key: 'settlementSerialNo',
+        dataIndex: 'settlementSerialNo',
 
       },
       {
@@ -234,7 +234,7 @@ class List extends React.Component {
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label="结算单ID">
-                  {getFieldDecorator('settId', { initialValue: '' })(
+                  {getFieldDecorator('settlementSerialNo', { initialValue: '' })(
                     <Input placeholder="请输入结算单ID" />
                   )}
                 </FormItem>
@@ -255,7 +255,7 @@ class List extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="付款单ID">
-                  {getFieldDecorator('id', { initialValue: '' })(
+                  {getFieldDecorator('paymentSerialNo', { initialValue: '' })(
                     <Input placeholder="请输入付款单ID" />
                   )}
                 </FormItem>
