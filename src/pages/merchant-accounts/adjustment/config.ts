@@ -87,14 +87,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       },
       trimReason: {
         label: '调整原因',
-        type: 'select',
-        options: [
-          {label: '订单补发', value: 1},
-          {label: '运费补贴', value: 3},
-          {label: '平台补贴', value: 2},
-          {label: '售后扣款', value: 4},
-          {label: '售后补偿', value: 5}
-        ],
+        type: 'input',
+        // options: [
+        //   {label: '订单补发', value: 1},
+        //   {label: '运费补贴', value: 3},
+        //   {label: '平台补贴', value: 2},
+        //   {label: '售后扣款', value: 4},
+        //   {label: '售后补偿', value: 5}
+        // ],
         fieldDecoratorOptions: {
           rules: [
             {required: true, message: '调整原因不能为空'}

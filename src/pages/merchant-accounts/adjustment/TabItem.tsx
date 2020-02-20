@@ -53,18 +53,18 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'trimReason',
       title: '调整原因',
-      width: 100,
-      render: (text) => {
-        return TrimReasonEnum[text]
-      }
+      width: 150
+      // render: (text) => {
+      //   return TrimReasonEnum[text]
+      // }
     },
     {
       dataIndex: 'trimMoney',
       title: '金额',
       width: 150,
       align: 'center',
-      render: (text) => {
-        const className = text > 0 ? 'success' : 'error'
+      render: (text, record) => {
+        const className = record.trimType === 1 ? 'success' : 'error'
         return (
           <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
         )
@@ -276,12 +276,12 @@ class Main extends React.Component<Props, State> {
               <Row>
                 <Col span={6}><FormItem name='trimStatus' /></Col>
                 <Col span={6}><FormItem name='createName' /></Col>
-                <Col span={6}><FormItem name='trimReason' /></Col>
+                {/* <Col span={6}><FormItem name='trimReason' /></Col> */}
                 <Col span={6}><FormItem name='financeReviewName' /></Col>
+                <Col span={6}><FormItem name='createdType' /></Col>
               </Row>
               <Row>
                 <Col span={12}><FormItem name='createTime' /></Col>
-                <Col span={6}><FormItem name='createdType' /></Col>
                 <Col span={6}><FormItem name='supplierName' /></Col>
               </Row>
             </>
