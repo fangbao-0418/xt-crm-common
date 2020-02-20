@@ -128,7 +128,7 @@ class Main extends React.Component<Props> {
                       <span className='href'>+添加文件</span>
                     </Upload>
                   )}
-                  <div style={{fontSize: 12, color: '#999'}}>支持xls、word格式，最多可上传3个文件，最大支持10MB</div>
+                  <div style={{fontSize: 12, color: '#999'}}>支持xls、doc格式，最多可上传3个文件，最大支持10MB</div>
                 </div>
               )
             }}

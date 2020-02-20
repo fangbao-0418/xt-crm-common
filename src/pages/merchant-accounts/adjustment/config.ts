@@ -26,11 +26,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       accNo: {
         type: 'input', label: '对账单ID',
         controlProps: {
-          style: { width: 150 }
+          style: { width: 150 },
+          maxLength: 32
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '对账单ID不能为空'}
+            {required: true, message: '对账单ID不能为空'},
+            {max: 32, message: '长度最大32个字符'}
           ]
         }
       },
@@ -48,9 +50,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       accName: {
         type: 'input',
         label: '对账单名称',
+        controlProps: {
+          maxLength: 64
+        },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '对账单名称不能为空'}
+            {required: true, message: '对账单名称不能为空'},
+            {max: 64, message: '长度最大64个字符'}
           ]
         }
       },
@@ -95,9 +101,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         //   {label: '售后扣款', value: 4},
         //   {label: '售后补偿', value: 5}
         // ],
+        controlProps: {
+          maxLength: 50
+        },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '调整原因不能为空'}
+            {required: true, message: '调整原因不能为空'},
+            {max: 50, message: '长度最大50个字符'}
           ]
         }
       },
@@ -128,6 +138,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         controlProps: {
           precision: 2,
           min: 0,
+          max: 100000000,
           style: {width: '100%'}
         },
         fieldDecoratorOptions: {
@@ -139,9 +150,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       /** 调整说明 | 审核说明 */
       trimExplain: {
         type: 'textarea', label: '调整说明',
+        controlProps: {
+          maxLength: 250
+        },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '调整说明不能为空'}
+            {required: true, message: '调整说明不能为空'},
+            {max: 250, message: '长度最大250个字符'}
           ]
         }
       },
