@@ -22,12 +22,12 @@ class SettleDetial extends React.Component {
   fetchData(id) {
     api.getSettlementDetail(id).then((res = {}) => {
       console.log(res)
-      const { id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, settName, financeSettlementRecordDetailVOList, financeSettlementRecordLogVOList, settStatus, initStatusInfo, createName, createTime } = res;
+      const { serialNo, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, settName, financeSettlementRecordDetailVOList, financeSettlementRecordLogVOList, settStatus, initStatusInfo, createName, createTime } = res;
       this.setState({
         settStatus,
         dataSource: financeSettlementRecordDetailVOList || [],
         settleDetail: {
-          id, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, settName
+          serialNo, storeName, currencyInfo, incomeMoney, disburseMoney, settlementMoney, invoiceUrl, settName
         },
         operateDetail: [{
           operateName: createName,
