@@ -197,8 +197,12 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
   }
   // 获取销售商品详情，用于回显s
   fetchSaleProduct = () => {
+    const { productId } = this.state;
+    if (!productId) {
+      return void APP.error('请输入销售商品ID')
+    }
     Promise.all([
-      getGoodsDetial({ productId: this.state.productId }),
+      getGoodsDetial({ productId }),
       getCategoryList()
     ]).then(([res, list]: any) => {
       const categoryId = res.productCategoryVO && res.productCategoryVO.id ?

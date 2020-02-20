@@ -15,6 +15,7 @@ import ProductCategory from '../components/product-category';
 import { defaultConfig } from './config';
 import DraggableUpload from '../components/draggable-upload';
 import { RouteComponentProps } from 'react-router';
+import { getProduct } from '../sku-stock/api';
 import { FormInstance } from '@/packages/common/components/form';
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
 
@@ -41,7 +42,8 @@ interface SkuSaleFormState extends Record<string, any> {
   productCustomsDetailVOList: any[];
   supplierInfo: any;
   interceptionVisible: boolean;
-  freightTemplateId: string
+  freightTemplateId: string;
+  checkType: 0 | 1;
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
@@ -64,7 +66,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     productCustomsDetailVOList: [],
     supplierInfo: {},
     interceptionVisible: false,
-    freightTemplateId: ''
+    freightTemplateId: '',
+    checkType: 0
   }
   id: number;
   modifyTime: number;
@@ -387,16 +390,21 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     })
   }
   // 校验商品条码
-  checkBarCode = () => {}
+  getSkuStockDetailByCode = () => {
+    // getProduct()
+  }
   // 校验库存商品ID
-  checkBaseProductId = () => {}
+  getSkuStockDetailById = () => {
+
+  }
   render() {
     const {
       interceptionVisible,
       productCustomsDetailVOList,
       supplierInfo,
       freightTemplateId,
-      templateOptions
+      templateOptions,
+      checkType
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
     return (
@@ -413,77 +421,81 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               disabled: this.id !== -1
             }}
           />
-          <FormItem verifiable name='checkType' />
-          <FormItem
-            style={{ marginBottom: 0 }}
-            labelCol={{ span: 0 }}
-            wrapperCol={{ span: 24 }}
-            inner={(form) => {
-              const checkType = form.getFieldValue('checkType')
-              return (
-                <>
-                  <If condition={checkType === 0}>
-                    <FormItem
-                      label='商品条码'
-                      inner={(form) => {
-                        return (
-                          <>
-                            {form.getFieldDecorator('barCode', {
-                              rules: [{
-                                validator: NumberValidator
-                              }]
-                            })(
-                              <Input
-                                style={{ width: '60%' }}
-                                placeholder='请输入商品条码'
-                              />
-                            )}
-                            <Button
-                              className='ml10'
-                              onClick={this.checkBarCode}
-                            >
-                              校验
-                            </Button>
-                          </>
-                        )
-                      }}
-                    />
-                  </If>
-                  <If condition={checkType === 1}>
-                    <FormItem
-                      label='库存商品ID'
-                      required
-                      inner={(form) => {
-                        return (
-                          <>
-                            {form.getFieldDecorator('baseProductId', {
-                              rules: [{
-                                required: true,
-                                message: '请输入库存商品ID'
-                              }, {
-                                validator: NumberValidator
-                              }]
-                            })(
-                              <Input
-                                style={{ width: '60%' }}
-                                placeholder='请输入库存商品ID'
-                              />
-                            )}
-                            <Button
-                              className='ml10'
-                              onClick={this.checkBaseProductId}
-                            >
-                              校验
-                            </Button>
-                          </>
-                        );
-                      }}
-                    />
-                </If>
-                </>
-              )
-            }}
-          />
+          <FormItem label='商品校验类型'>
+            <Radio.Group
+              onChange={(e) => {
+                this.setState({
+                  checkType: e.target.value
+                });
+              }}
+              value={checkType}
+              options={[{
+                label: '商品条码',
+                value: 0
+              }, {
+                label: '库存商品ID',
+                value: 1
+              }]}
+            />
+          </FormItem>
+          <If condition={checkType === 0}>
+            <FormItem
+              label='商品条码'
+              inner={(form) => {
+                return (
+                  <>
+                    {form.getFieldDecorator('barCode', {
+                      rules: [{
+                        validator: NumberValidator
+                      }]
+                    })(
+                      <Input
+                        style={{ width: '60%' }}
+                        placeholder='请输入商品条码'
+                      />
+                    )}
+                    <Button
+                      className='ml10'
+                      onClick={this.getSkuStockDetailByCode}
+                    >
+                      校验
+                    </Button>
+                  </>
+                )
+              }}
+            />
+          </If>
+          <If condition={checkType === 1}>
+            <FormItem
+              label='库存商品ID'
+              required
+              inner={(form) => {
+                return (
+                  <>
+                    {form.getFieldDecorator('baseProductId', {
+                      rules: [{
+                        required: true,
+                        message: '请输入库存商品ID'
+                      }, {
+                        validator: NumberValidator
+                      }]
+                    })(
+                      <Input
+                        style={{ width: '60%' }}
+                        placeholder='请输入库存商品ID'
+                      />
+                    )}
+                    <Button
+                      className='ml10'
+                      onClick={this.getSkuStockDetailById}
+                    >
+                      校验
+                    </Button>
+                  </>
+                );
+              }}
+            />
+          </If>
           <FormItem
             verifiable
             name='productName'

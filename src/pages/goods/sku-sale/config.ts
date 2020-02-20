@@ -62,24 +62,6 @@ export const defaultConfig: FieldsConfig = {
         }]
       }
     },
-    checkType: {
-      label: '商品校验类型',
-      type: 'radio',
-      options: [{
-        label: '商品条码',
-        value: 0
-      }, {
-        label: '库存商品ID',
-        value: 1
-      }],
-      fieldDecoratorOptions: {
-        initialValue: 0,
-        rules: [{
-          required: true,
-          message: '请选择商品校验类型'
-        }]
-      }
-    },
     productName: {
       label: '商品名称',
       fieldDecoratorOptions: {

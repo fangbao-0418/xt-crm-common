@@ -105,34 +105,37 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       fixed: 'right',
       align: 'center',
       width: 120,
-      render: (record: any) => (
-        <div style={{ marginTop: 40 }}>
-          <span
-            className='href'
-            onClick={() => {
-              gotoPage(`/goods/sku-sale/${record.id}`);
-            }}
-          >
-            编辑
-          </span>
-          <If condition={record.status === 0}>
+      render: (record: any) => {
+        const { status } = this.state;
+        return (
+          <div style={{ marginTop: 40 }}>
             <span
-              className='href ml10'
-              onClick={() => this.lower([record.id])}
+              className='href'
+              onClick={() => {
+                gotoPage(`/goods/sku-sale/${record.id}`);
+              }}
             >
-              下架
+              编辑
             </span>
-          </If>
-          <If condition={record.status === 1}>
-            <span
-              className='href ml10'
-              onClick={() => this.upper([record.id])}
-            >
-              上架
-            </span>
-          </If>
-        </div>
-      )
+            <If condition={status === 0}>
+              <span
+                className='href ml10'
+                onClick={() => this.lower([record.id])}
+              >
+                下架
+              </span>
+            </If>
+            <If condition={status === 1}>
+              <span
+                className='href ml10'
+                onClick={() => this.upper([record.id])}
+              >
+                上架
+              </span>
+            </If>
+          </div>
+        )
+      }
     }
   ];
 
