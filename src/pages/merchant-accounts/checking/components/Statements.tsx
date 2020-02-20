@@ -150,9 +150,11 @@ class Main extends React.Component<Props> {
                   this.setState({
                     type: value
                   }, () => {
-                    const accountNoError = this.form.props.form.getFieldError('accountName')
-                    if (accountNoError) {
-                      this.form.props.form.setFields({accountName: {errors: [new Error(`请输入${AccoutNoPlaceholderEnum[value]}`)]}})
+                    const accountCodeError = this.form.props.form.getFieldError('accountCode')
+                    if (accountCodeError) {
+                      if (accountCodeError[0] !== '长度最大32个字符') {
+                        this.form.props.form.setFields({accountCode: {errors: [new Error(`请输入${AccoutNoPlaceholderEnum[value]}`)]}})
+                      }
                     }
                   })
                 }
@@ -161,14 +163,12 @@ class Main extends React.Component<Props> {
             <FormItem
               name='accountName'
               verifiable
-              controlProps={{
-                placeholder: AccoutNoPlaceholderEnum[type],
-                style: {
-                  width: 200
-                }
-              }}
             />
-            <FormItem name='accountCode' verifiable />
+            <FormItem
+              name='accountCode'
+              verifiable
+              placeholder={AccoutNoPlaceholderEnum[type]}
+            />
             <If condition={[1, 2].indexOf(type) === -1}>
               <FormItem name='bankName' verifiable />
             </If>

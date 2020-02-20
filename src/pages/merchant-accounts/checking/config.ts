@@ -71,44 +71,52 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       bankBranchName: {
         type: 'input', label: '银行支行名称',
         controlProps: {
-          placeholder: '请选择收款账号银行名，例如中国银行杭州高新支行'
+          placeholder: '请选择收款账号银行名，例如中国银行杭州高新支行',
+          maxLength: 250
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '请输入银行支行名称'}
+            {required: true, message: '请输入银行支行名称'},
+            {max: 250, message: '长度最大250个字符'}
           ]
         }
       },
       accountName: {
         type: 'input', label: '账户名',
         controlProps: {
-          placeholder: '真实姓名或企业名称'
+          placeholder: '真实姓名或企业名称',
+          maxLength: 100
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '请输入真实姓名或企业名称'}
+            {required: true, message: '请输入真实姓名或企业名称'},
+            {max: 100, message: '长度最大100个字符'}
           ]
         }
       },
       accountCode: {
         type: 'input', label: '账号',
         controlProps: {
-          placeholder: '手机号/邮箱'
+          placeholder: '手机号/邮箱',
+          maxLength: 32
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '请输入手机号/邮箱'}
+            {required: true, message: '请输入手机号/邮箱'},
+            {max: 32, message: '长度最大32个字符'}
           ]
         }
       },
       bankName: {
         type: 'input', label: '银行名称',
         controlProps: {
-          placeholder: '请选择收款账号银行名称'
+          placeholder: '请选择收款账号银行名称',
+          maxLength: 32
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '请输入银行名称'}
+            {required: true, message: '请输入银行名称'},
+            {max: 32, message: '长度最大32个字符'}
           ]
         }
       }
