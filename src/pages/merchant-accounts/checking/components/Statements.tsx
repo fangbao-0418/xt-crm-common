@@ -11,7 +11,7 @@ import If from '@/packages/common/components/if'
 import * as api from '../api'
 
 /** 支付类型账号文案枚举 */
-enum accoutNoPlaceholderEnum {
+enum AccoutNoPlaceholderEnum {
   '手机号/邮箱' = 2,
   收款人储蓄卡号 = 3,
   收款方银行账号 = 4
@@ -146,8 +146,14 @@ class Main extends React.Component<Props> {
               verifiable
               controlProps={{
                 onChange: (e: any) => {
+                  const value = e.target.value
                   this.setState({
-                    type: e.target.value
+                    type: value
+                  }, () => {
+                    const accountNoError = this.form.props.form.getFieldError('accountName')
+                    if (accountNoError) {
+                      this.form.props.form.setFields({accountName: {errors: [new Error(`请输入${AccoutNoPlaceholderEnum[value]}`)]}})
+                    }
                   })
                 }
               }}
@@ -156,7 +162,7 @@ class Main extends React.Component<Props> {
               name='accountName'
               verifiable
               controlProps={{
-                placeholder: accoutNoPlaceholderEnum[type],
+                placeholder: AccoutNoPlaceholderEnum[type],
                 style: {
                   width: 200
                 }
