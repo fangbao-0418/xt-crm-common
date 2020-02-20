@@ -25,7 +25,7 @@ class SettleDetialList extends React.Component {
       }, {
         title: '单据ID',
         width: 150,
-        dataIndex: 'id'
+        dataIndex: 'billSerialNo'
       }, {
         title: '单据名称',
         width: 250,
@@ -55,7 +55,7 @@ class SettleDetialList extends React.Component {
         <div className={styles['detail']}>
           <h1 className={styles['detail-title']}>{settleDetail.settName}</h1>
           <div className={styles['detail-header']}>
-            <span>结算单ID: {settleDetail.id} </span>
+            <span>结算单ID: {settleDetail.serialNo} </span>
             <span>供应商: {settleDetail.storeName}</span>
             <span>币种: {settleDetail.currencyInfo}</span>
           </div>

@@ -100,7 +100,7 @@ class List extends React.Component {
     setFieldsValue({
       createName: '',
       createTime: '',
-      id: '',
+      serialNo: '',
       isInvoice: '',
       modifyName: '',
       modifyTime: '',
@@ -151,8 +151,8 @@ class List extends React.Component {
     const columns = [
       {
         title: '结算单ID',
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: 'serialNo',
+        key: 'serialNo',
         width: 150
       },
       {
@@ -273,7 +273,7 @@ class List extends React.Component {
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label="结算单ID">
-                  {getFieldDecorator('settId', { initialValue: '' })(
+                  {getFieldDecorator('serialNo', { initialValue: '' })(
                     <Input placeholder="请输入结算单ID" />
                   )}
                 </FormItem>
