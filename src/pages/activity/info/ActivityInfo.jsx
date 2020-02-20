@@ -1,8 +1,7 @@
 import React from 'react';
-import { Card, Form, Input, DatePicker, Modal } from 'antd';
+import { Card, Form, Input, DatePicker } from 'antd';
 import { activityType } from '@/enum';
 import { withRouter } from 'react-router';
-import moment from 'moment';
 import Add from '../add';
 import { getPromotionInfo } from '../api';
 const FormItem = Form.Item;
@@ -83,12 +82,19 @@ class ActivityInfo extends React.Component {
             </FormItem>
             <FormItem label="开始时间">
               {getFieldDecorator('startTime', {
-                initialValue: moment(startTime),
-              })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledStartDate} />)}
+                initialValue: startTime,
+              })(
+                <DatePicker
+                  format="YYYY-MM-DD HH:mm:ss"
+                  showTime
+                  disabled={!isEidt}
+                  disabledDate={this.disabledStartDate}
+                />
+              )}
             </FormItem>
             <FormItem label="结束时间">
               {getFieldDecorator('endTime', {
-                initialValue: moment(endTime),
+                initialValue: endTime,
               })(<DatePicker format="YYYY-MM-DD HH:mm:ss" showTime disabled={!isEidt} disabledDate={this.disabledEndDate} />)}
             </FormItem>
             <FormItem label="活动排序">
@@ -98,15 +104,13 @@ class ActivityInfo extends React.Component {
             </FormItem>
           </Form>
         </Card>
-        <Modal
+        <Add 
           title="活动编辑"
           visible={this.state.info.visibleAct}
-          width={1000}
-          footer={null}
           onCancel={this.handleCancel}
-        >
-          <Add data={this.state.info} onOk={this.handleOk} />
-        </Modal>
+          data={this.state.info}
+          onOk={this.handleOk}
+        />
       </>
     );
   }

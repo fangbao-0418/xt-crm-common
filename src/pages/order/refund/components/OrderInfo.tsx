@@ -10,18 +10,6 @@ import moment from 'moment'
 type OrderInfoVO = AfterSalesInfo.OrderInfoVO
 type ProductVO = AfterSalesInfo.ProductVO
 const columns: ColumnProps<ProductVO>[] = getDetailColumns()
-
-const orderTypeConifg: any = {
-  '0': '普通订单',
-  '10': '激活码订单',
-  '20': '地推订单',
-  '30': '活动兑换订单',
-  '40': '采购订单',
-  '60': '团购会订单',
-  '70': '海淘订单',
-  '80': '团购会采购订单'
-}
-
 interface Props extends React.Props<{}> {
   orderInfoVO: OrderInfoVO
 }
@@ -34,7 +22,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>主订单号：<Link to={`/order/detail/${orderInfoVO.mainOrderCode}`}>{orderInfoVO.mainOrderCode}</Link></Col>
         <Col span={8}>子订单号：{orderInfoVO.childOrderCode}</Col>
         <Col span={8}>订单状态：{orderInfoVO.orderStatusStr}</Col>
-        <Col span={8}>订单类型：{orderTypeConifg[String(orderInfoVO.orderType)]}</Col>
+        <Col span={8}>订单类型：{APP.constant.orderTypeConfig[String(orderInfoVO.orderType)]}</Col>
         <Col hidden={String(orderInfoVO.orderType) !== '70'} span={8}>清关完成时间：{!!orderInfoVO.customsClearanceTime && APP.fn.formatDate(orderInfoVO.customsClearanceTime)}</Col>
         <Col span={8}>订单来源：{orderInfoVO.platform}</Col>
         <Col span={8}>供应商订单号：{orderInfoVO.storeOrderId}</Col>

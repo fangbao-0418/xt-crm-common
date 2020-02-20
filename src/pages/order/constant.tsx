@@ -180,17 +180,30 @@ export const TextMapRefundType = {
 
 export enum enumOrderStatus {
   Refund = -1,
+  // 代付款
   Unpaid = 10,
+  // 待成团
+  Tofight = 15,
+  // 待发货
   Undelivered = 20,
+  /**
+   * 部分发货状态，只针对于主订单
+   */
+  // 部分发货
   PartDelivered = 25,
+  // 已发货
   Delivered = 30,
+  // ?后端没这个状态，不知道咋回事，已发货后直接是确认收货
   Received = 40,
+  // 完成
   Complete = 50,
+  // 关闭
   Closed = 60
 };
 
 export const OrderStatusTextMap = {
   [enumOrderStatus.Refund]: '售后',
+  [enumOrderStatus.Tofight]: '待成团',
   [enumOrderStatus.Closed]: '关闭',
   [enumOrderStatus.Complete]: '完成',
   [enumOrderStatus.PartDelivered]: '部分发货',
