@@ -46,7 +46,7 @@ class SettleDetialList extends React.Component {
         width: 150,
         dataIndex: 'createTime',
         render: (createTime) => {
-          return APP.fn.formatDate(createTime)
+          return APP.fn.formatDate(createTime, 'YYYYMMDD')
         }
       }
     ];
