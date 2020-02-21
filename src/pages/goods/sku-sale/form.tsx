@@ -49,11 +49,11 @@ interface SkuSaleFormState extends Record<string, any> {
   visible: boolean;
   // 1入库商品，0非入库商品
   warehouseType: 0 | 1;
-  productList: any[]
+  productList: any[];
+  isGroup: boolean;
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
-  isGroup: boolean = (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1';
   form: FormInstance;
   specs: any[] = [];
   state: SkuSaleFormState = {
@@ -79,7 +79,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     barCode: '',
     warehouseType: 1,
     visible: false,
-    productList: []
+    productList: [],
+    isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1'
   }
   id: number;
   modifyTime: number;
@@ -88,17 +89,29 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     this.id = +props.match.params.id;
   }
   componentDidMount() {
+    // 编辑
     if (this.id !== -1) {
-      this.fetchData();
-    } else {
+      if (this.state.isGroup) {
+        // 查询组合商品详情
+        this.getGourpProduct();
+      } else {
+        // 查询普通商品详情
+        this.getProduct();
+      }
+    }
+    // 新增
+    else {
       getTemplateList().then((opts: any[]) => {
         this.setState({ templateOptions: opts });
       })
     }
   }
+  // 获取组合商品详情
+  getGourpProduct() {
 
+  }
   /** 获取商品详情 */
-  fetchData() {
+  getProduct() {
     Promise.all([
       getGoodsDetial({ productId: this.id }),
       getCategoryList(),
@@ -129,11 +142,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           templateName: res.freightTemplateName
         })
       }
-      this.isGroup = res.isGroup;
       this.setState({
         templateOptions,
         specs: this.specs,
         ...pick(res, [
+          'isGroup',
           'warehouseType',
           'freightTemplateId',
           'skuList',
@@ -272,7 +285,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       skuList,
       propertyId1,
       propertyId2,
-      freightTemplateId
+      freightTemplateId,
+      isGroup
     } = this.state;
     this.form.props.form.validateFields((err, vals) => {
       if (!err) {
@@ -308,7 +322,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           }
         }
         setProduct({
-          isGroup: this.isGroup,
+          isGroup,
           modifyTime: this.modifyTime,
           productId: this.id,
           freightTemplateId,
@@ -464,11 +478,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         content: [],
       },
     ], res.skuList);
-    this.isGroup = res.isGroup;
     this.setState({
       // templateOptions,
       specs: this.specs,
       ...pick(res, [
+        'isGroup',
         'warehouseType',
         'productBasicId',
         'barCode',
@@ -533,7 +547,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       productBasicId,
       barCode,
       visible,
-      productList
+      productList,
+      isGroup
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
     return (
@@ -552,79 +567,82 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           }}
         />
         <Card title='添加/编辑商品'>
-          <FormItem
-            verifiable
-            name='warehouseType'
-            controlProps={{
-              disabled: this.id !== -1,
-              onChange: (e: any) => {
-                this.setState({ warehouseType: e.target.value })
-              }
-            }}
-          />
-          <If condition={warehouseType === 1}>
-            <FormItem label='商品校验类型'>
-              <Radio.Group
-                onChange={(e) => {
-                  this.setState({
-                    checkType: e.target.value
-                  });
-                }}
-                value={checkType}
-                options={[{
-                  label: '商品条码',
-                  value: 0
-                }, {
-                  label: '库存商品ID',
-                  value: 1
-                }]}
-              />
-            </FormItem>
-            <If condition={checkType === 0}>
-              <FormItem
-                label='商品条码'
-              >
-                <Input
-                  value={barCode}
+          {/* 非组合商品才显示 */}
+          <If condition={!isGroup}>
+            <FormItem
+              verifiable
+              name='warehouseType'
+              controlProps={{
+                disabled: this.id !== -1,
+                onChange: (e: any) => {
+                  this.setState({ warehouseType: e.target.value })
+                }
+              }}
+            />
+            <If condition={warehouseType === 1}>
+              <FormItem label='商品校验类型'>
+                <Radio.Group
                   onChange={(e) => {
                     this.setState({
-                      barCode: e.target.value
-                    })
+                      checkType: e.target.value
+                    });
                   }}
-                    style={{ width: '60%' }}
-                    placeholder='请输入商品条码'
-                  />
-                <Button
-                  className='ml10'
-                  onClick={this.getSkuStockDetailByCode}
-                >
-                  校验
-                </Button>
-              </FormItem>
-            </If>
-            <If condition={checkType === 1}>
-              <FormItem
-                label='库存商品ID'
-              >
-                <Input
-                  style={{ width: '60%' }}
-                  placeholder='请输入库存商品ID'
-                  value={productBasicId}
-                  onChange={(e) => {
-                    this.setState({
-                      productBasicId: e.target.value
-                    })
-                  }}
+                  value={checkType}
+                  options={[{
+                    label: '商品条码',
+                    value: 0
+                  }, {
+                    label: '库存商品ID',
+                    value: 1
+                  }]}
                 />
-                <Button
-                  className='ml10'
-                  onClick={() => {
-                    this.getSkuStockDetailById(this.state.productBasicId);
-                  }}
-                >
-                  校验
-                </Button>
               </FormItem>
+              <If condition={checkType === 0}>
+                <FormItem
+                  label='商品条码'
+                >
+                  <Input
+                    value={barCode}
+                    onChange={(e) => {
+                      this.setState({
+                        barCode: e.target.value
+                      })
+                    }}
+                      style={{ width: '60%' }}
+                      placeholder='请输入商品条码'
+                    />
+                  <Button
+                    className='ml10'
+                    onClick={this.getSkuStockDetailByCode}
+                  >
+                    校验
+                  </Button>
+                </FormItem>
+              </If>
+              <If condition={checkType === 1}>
+                <FormItem
+                  label='库存商品ID'
+                >
+                  <Input
+                    style={{ width: '60%' }}
+                    placeholder='请输入库存商品ID'
+                    value={productBasicId}
+                    onChange={(e) => {
+                      this.setState({
+                        productBasicId: e.target.value
+                      })
+                    }}
+                  />
+                  <Button
+                    className='ml10'
+                    onClick={() => {
+                      this.getSkuStockDetailById(this.state.productBasicId);
+                    }}
+                  >
+                    校验
+                  </Button>
+                </FormItem>
+              </If>
             </If>
           </If>
           <FormItem
@@ -662,6 +680,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             }}
           />
           <FormItem verifiable name='productShortName' />
+          <If condition={isGroup}>
+            <FormItem name='barCode' />
+          </If>
           <FormItem name='productCode' />
           <FormItem verifiable name='description' />
           <FormItem

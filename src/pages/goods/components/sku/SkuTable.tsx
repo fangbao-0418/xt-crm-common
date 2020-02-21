@@ -660,6 +660,7 @@ class Main extends React.Component<Props, State> {
                 />
                 <Table
                   rowKey='id'
+                  dataSource={record.productConfig}
                   footer={() => (
                     <span
                       className='href'

@@ -85,6 +85,14 @@ export const defaultConfig: FieldsConfig = {
         }
       }
     },
+    barCode: {
+      label: '商品条码',
+      controlProps: {
+        style: {
+          width: '60%'
+        }
+      }
+    },
     productCode: {
       label: '商品编码',
       controlProps: {

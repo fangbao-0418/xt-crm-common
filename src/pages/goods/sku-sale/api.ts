@@ -25,3 +25,8 @@ export function getBaseProductPage(payload: {
   const search = queryString(payload);
   return newPost(`/product/basic/select/page${search}`).then(baseProductPageResponse);
 }
+
+// 获取组合商品详情
+export function getGroupProductDetail(productId: number) {
+  return newPost(`/product/group/detail?productId=${productId}`)
+}

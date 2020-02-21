@@ -9,6 +9,10 @@ const fields: string[] = ['costPrice', 'salePrice', 'marketPrice', 'cityMemberPr
 // 过滤新增、编辑销售商品请求
 export function formRequest(payload: any) {
   console.log('payload =>', payload)
+  // 组合商品默认是入库商品
+  if (payload.isGroup) {
+    payload.warehouseType = 1;
+  } 
   const skuList: SkuSaleProps[] = payload.skuList || [];
   let result: Record<string, any> = filterUploadFile(payload)
   result.skuAddList = skuList.map(item => {

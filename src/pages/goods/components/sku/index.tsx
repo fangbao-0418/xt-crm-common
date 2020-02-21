@@ -116,6 +116,9 @@ class SkuList extends React.Component<Props, State>{
     dataSource: this.props.dataSource,
     strategyData: {}
   }
+  public static defaultProps = {
+    warehouseType: 1
+  }
   public componentWillReceiveProps (props: Props) {
     console.log('dataSource =>', props.dataSource);
     this.setState({
