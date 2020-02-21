@@ -77,7 +77,8 @@ class Main extends React.Component<Props, State> {
       title: '本期对对账单金额',
       width: 150,
       render: (text) => {
-        return APP.fn.formatMoneyNumber(text, 'm2u')
+        const className = text > 0 ? 'success' : 'error'
+        return <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
       }
     },
     {

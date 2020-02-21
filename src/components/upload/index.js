@@ -309,7 +309,6 @@ class UploadView extends Component {
           listType={listType}
           fileList={fileList}
           showUploadList={showUploadList}
-          // onPreview={this.handlePreview}
           beforeUpload={this.beforeUpload}
           onRemove={this.handleRemove}
           customRequest={(e) => this.customRequest(e)}
