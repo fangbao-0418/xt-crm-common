@@ -129,6 +129,7 @@ class Main extends React.Component<Props, State> {
       title: '操作',
       width: 200,
       align: 'center',
+      fixed: 'right',
       render: (text, record) => {
         return (
           <div>
