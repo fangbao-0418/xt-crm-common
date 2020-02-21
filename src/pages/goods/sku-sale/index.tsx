@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Tabs, Button, Modal, message } from 'antd';
 import dateFns from 'date-fns';
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
-import { gotoPage } from '@/util/utils';
+import { gotoPage, replaceHttpUrl } from '@/util/utils';
 import { formatMoneyWithSign } from '../../helper';
 import Image from '@/components/Image';
 import SelectFetch from '@/components/select-fetch';
@@ -11,12 +11,6 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page';
 import SuppilerSelect from '@/components/suppiler-auto-select';
 import { defaultConfig } from './config';
 const { TabPane } = Tabs; 
-function replaceHttpUrl(imgUrl: string) {
-  if (imgUrl.indexOf('http') !== 0) {
-    imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
-  }
-  return imgUrl;
-}
 
 interface SkuSaleListState {
   selectedRowKeys: string[] | number[];
@@ -36,7 +30,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       dataIndex: 'id'
     },
     {
-      title: '主图',
+      title: '商品主图',
       dataIndex: 'coverUrl',
       width: 120,
       render: (record: any) => (

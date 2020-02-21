@@ -6,6 +6,7 @@ import { PaginationConfig } from 'antd/lib/pagination'
 import { deliveryModeType } from '@/enum';
 import ArrowContain from '../arrow-contain'
 import { SkuSaleProps } from './index'
+import Image from '@/components/Image';
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import InputMoney from '@/packages/common/components/input-money'
 import Record from './Record'
@@ -13,6 +14,7 @@ import Stock from './Stock'
 import Decimal from 'decimal.js'
 import styles from './style.module.scss'
 import ProductSeletor from '../product-selector'
+import { replaceHttpUrl } from '@/util/utils'
 const { Option } = Select;
 const FormItem = Form.Item;
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
@@ -642,7 +644,7 @@ class Main extends React.Component<Props, State> {
           scroll={{ x: true }}
           columns={columns}
           dataSource={this.state.dataSource}
-          expandedRowRender={record => {
+          expandedRowRender={(record, index) => {
             return (
               <>
                 <Card title='商品配置'>
@@ -651,11 +653,12 @@ class Main extends React.Component<Props, State> {
                     dataSource={record.productBasics}
                     footer={() => (
                       <ProductSeletor
-                        onOk={(productBasics) => {
+                        onOk={(productBasics, hide) => {
                           const { dataSource } = this.state;
-                          this.setState({
-                            dataSource: dataSource.map(v => ({ ...v,  productBasics}))
-                          })
+                          if (this.props.onChange) {
+                            this.props.onChange(dataSource.map(v => ({ ...v,  productBasics})))
+                            hide();
+                          }
                         }}
                       />
                     )}
@@ -667,13 +670,24 @@ class Main extends React.Component<Props, State> {
                       dataIndex: 'productName'
                     }, {
                       title: '商品主图',
-                      dataIndex: 'coverUrl'
+                      dataIndex: 'productMainImage',
+                      render: (url: string) => (
+                        <Image
+                          style={{
+                            height: 100,
+                            width: 100,
+                            minWidth: 100
+                          }}
+                          src={replaceHttpUrl(url)}
+                          alt='主图'
+                        />
+                      )
                     }, {
                       title: '商品规格',
-                      dataIndex: 'sku'
+                      dataIndex: 'propertyValue'
                     }, {
                       title: '规格条码',
-                      dataIndex: 'productBasicBarCode'
+                      dataIndex: 'productBasicSkuBarCode'
                     }, {
                       title: '规格编码',
                       dataIndex: 'productBasicSkuCode'
@@ -685,14 +699,42 @@ class Main extends React.Component<Props, State> {
                       dataIndex: 'costPrice'
                     }, {
                       title: '总库存',
-                      dataIndex: 'stock'
+                      dataIndex: 'totalStock'
                     }, {
                       title: '数量配置',
-                      dataIndex: 'num'
+                      dataIndex: 'num',
+                      render: (text, _, idx) => {
+                        return (
+                          <InputNumber
+                            style={{ width: 172 }}
+                            value={text}
+                            placeholder='请输入数量配置'
+                            precision={0}
+                            onChange={(value) => {
+                              const { dataSource } = this.state;
+                              dataSource[index].productBasics[idx].num = value;
+                              this.setState({
+                                dataSource
+                              })
+                            }}/>
+                        )
+                      }
                     }, {
                       title: '操作',
                       align: 'center',
-                      render: () => <Button type='link'>删除</Button>
+                      render: ($0, $1, idx) => (
+                        <Button
+                          type='link'
+                          onClick={() => {
+                            const { dataSource} = this.state;
+                            record.productBasics.splice(idx, 1);
+                            dataSource[index].productBasics = record.productBasics;
+                            this.setState({ dataSource })
+                          }}
+                        >
+                          删除
+                        </Button>
+                      )
                     }]}
                   />
                 </Card>

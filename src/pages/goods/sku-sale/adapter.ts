@@ -18,11 +18,17 @@ export function formRequest(payload: any) {
   result.skuAddList = skuList.map(item => {
     item = filterMoney(item, 'req', fields);
     item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
+    if (Array.isArray(item.productBasics)) {
+      item.productBasics = item.productBasics.map((v: any) => {
+        v.productBasicSpuCode = v.productCode;
+        return v;
+      })
+    }
     return item;
   });
   result.freightTemplateId = +payload.freightTemplateId;
   result.categoryId = Array.isArray(payload.categoryId) ? payload.categoryId[2] : '';
-  return { ...payload, ...result };
+  return omit({ ...payload, ...result }, 'skuList');
 }
 
 // 过滤销售商品详情

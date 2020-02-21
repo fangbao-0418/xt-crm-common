@@ -15,7 +15,7 @@ import ProductSelector from './components/product-seletor';
 import { defaultConfig } from './config';
 import DraggableUpload from '../components/draggable-upload';
 import { RouteComponentProps } from 'react-router';
-import { getBaseProduct, getBaseBarcode, setGroupProduct } from './api';
+import { getBaseProduct, getBaseBarcode, setGroupProduct, getGroupProductDetail } from './api';
 import { FormInstance } from '@/packages/common/components/form';
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
 
@@ -91,29 +91,21 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   componentDidMount() {
     // 编辑
     if (this.id !== -1) {
-      if (this.state.isGroup) {
-        // 查询组合商品详情
-        this.getGourpProduct();
-      } else {
-        // 查询普通商品详情
-        this.getProduct();
-      }
-    }
-    // 新增
-    else {
+      this.fetchData();
+    } else {
       getTemplateList().then((opts: any[]) => {
         this.setState({ templateOptions: opts });
       })
     }
   }
-  // 获取组合商品详情
-  getGourpProduct() {
-
-  }
   /** 获取商品详情 */
-  getProduct() {
+  fetchData() {
+    // 根据isGroup请求不同的接口
+    const { isGroup } = this.state;
+    const payload = { productId: this.id }
+    const promiseDetail = isGroup ? getGroupProductDetail(payload): getGoodsDetial(payload);
     Promise.all([
-      getGoodsDetial({ productId: this.id }),
+      promiseDetail,
       getCategoryList(),
       getTemplateList()
     ]).then(([res, list, templateOptions]) => {
