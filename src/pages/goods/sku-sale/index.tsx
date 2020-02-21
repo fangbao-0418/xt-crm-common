@@ -251,6 +251,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           <TabPane tab="商品池" key='2' />
         </Tabs>
         <ListPage
+          reserveKey='skuSale'
           namespace='skuSale'
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
@@ -309,7 +310,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
                 className='mr10'
                 type='primary'
                 onClick={() => {
-                  APP.history.push('/goods/sku-sale/-1')
+                  APP.history.push('/goods/sku-sale/-1?isGroup=0')
                 }}
               >
                 添加商品
@@ -317,7 +318,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
               <Button
                 type='primary'
                 onClick={() => {
-                  APP.history.push('/goods/sku-sale/-1')
+                  APP.history.push('/goods/sku-sale/-1?isGroup=1')
                 }}
               >
                 添加组合商品

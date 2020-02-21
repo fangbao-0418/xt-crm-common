@@ -281,20 +281,22 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
         )}
       >
         <Card title='基本信息'>
-          <FormItem label='销售商品ID'>
-            <Input
-              value={productId}
-              onChange={e => this.setState({ productId: e.target.value })}
-              placeholder='请输入销售商品ID'
-              style={{ width: '60%' }}
-            />
-            <Button
-              className='ml10'
-              onClick={this.fetchSaleProduct}
-            >
-              校验
-            </Button>
-          </FormItem>
+          <If condition={this.id === -1}>
+            <FormItem label='销售商品ID'>
+              <Input
+                value={productId}
+                onChange={e => this.setState({ productId: e.target.value })}
+                placeholder='请输入销售商品ID'
+                style={{ width: '60%' }}
+              />
+              <Button
+                className='ml10'
+                onClick={this.fetchSaleProduct}
+              >
+                校验
+              </Button>
+            </FormItem>
+          </If>
           <FormItem
             name='barCode'
             controlProps={{

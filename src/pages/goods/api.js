@@ -1,13 +1,15 @@
 import { formResponse, formRequest } from './sku-sale/adapter';
 import { exportFile, newGet } from '../../util/fetch';
+import { omit } from 'lodash';
 const { post, get, newPost } = APP.http; 
 export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }
 
 export function setProduct(data) {
-  const url = data.productId ? '/product/update' : '/product/add';
-  data = formRequest(data);
+  const isAdd = data.productId === -1
+  const url = isAdd ? '/product/add' : '/product/update';
+  data = formRequest(isAdd ? omit(data, ['productId']) : data);
   return post(url, {}, { data, headers: {} });
 }
 

@@ -67,6 +67,7 @@ interface Props extends FormComponentProps {
   type?: 0 | 10 | 20
   /** sku备案信息 */
   productCustomsDetailVOList: any[]
+  warehouseType: 1 | 0
 }
 interface SpecItem {
   specName: string;
@@ -116,6 +117,7 @@ class SkuList extends React.Component<Props, State>{
     strategyData: {}
   }
   public componentWillReceiveProps (props: Props) {
+    console.log('dataSource =>', props.dataSource);
     this.setState({
       showImage: props.showImage,
       specs: props.specs,
@@ -501,6 +503,7 @@ class SkuList extends React.Component<Props, State>{
         }
         <SkuTable
           type={type}
+          warehouseType={this.props.warehouseType}
           form={this.props.form}
           productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}

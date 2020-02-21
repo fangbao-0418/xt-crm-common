@@ -23,6 +23,8 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   type: 0 | 10 | 20
   /** sku备案信息 */
   productCustomsDetailVOList: any[]
+  /** 1: 入库商品，0: 非入库商品 */
+  warehouseType: 1 | 0
 }
 
 interface State {
@@ -75,43 +77,79 @@ class Main extends React.Component<Props, State> {
       </ArrowContain>
     )
   }
+  
   public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
+    const  differentColumns = this.props.warehouseType === 1 ? [{
+      title: '规格条码',
+      dataIndex: 'productBasicBarCode',
+      width: 200,
+      render: (text: any, record: any, index: any) => {
+        return (
+          <Input
+            value={text}
+            disabled={true}
+            placeholder="请输入规格条码"
+            onChange={cb('productBasicBarCode', record, index)}
+          />
+        );
+      },
+    },
+    {
+      title: '规格编码',
+      dataIndex: 'productBasicSkuCode',
+      width: 200,
+      render: (text: any, record: any, index: any) => {
+        return (
+          <Input
+            value={text}
+            disabled={true}
+            placeholder="请输入sku编码"
+            onChange={cb('productBasicSkuCode', record, index)}
+          />
+        );
+      },
+    }]: [{
+      title: '供应商skuid',
+      dataIndex: 'storeProductSkuId',
+      width: 200,
+      render: (text: any, record: any, index: any) => {
+        return (
+          <Input
+            value={text}
+            placeholder="请输入供应商skuid"
+            onChange={cb('storeProductSkuId', record, index)}
+          />
+        );
+      },
+    },
+    {
+      title: 'sku编码',
+      dataIndex: 'skuCode',
+      width: 200,
+      render: (text: any, record: any, index: any) => {
+        return (
+          <Input
+            value={text}
+            placeholder="请输入sku编码"
+            onChange={cb('skuCode', record, index)}
+          />
+        );
+      },
+    }]
     return [
-      {
-        title: '规格条码',
-        dataIndex: 'storeProductSkuId',
-        width: 200,
-        render: (text: any, record: any, index: any) => {
-          return (
-            <Input
-              value={text}
-              placeholder="请输入规格条码"
-              onChange={cb('storeProductSkuId', record, index)}
-            />
-          );
-        },
-      },
-      {
-        title: '规格编码',
-        dataIndex: 'skuCode',
-        width: 200,
-        render: (text: any, record: any, index: any) => {
-          return (
-            <Input
-              value={text}
-              placeholder="请输入规格编码"
-              onChange={cb('skuCode', record, index)}
-            />
-          );
-        },
-      },
+      ...differentColumns,
       {
         title: '发货方式',
         dataIndex: 'deliveryMode',
         width: 200,
         render: (text: any, record: any, index: any) => {
           return (
-            <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
+            <Select
+              disabled={this.props.warehouseType === 1}
+              value={text}
+              placeholder="请选择"
+              onChange={cb('deliveryMode', record, index)}
+            >
               {
                 deliveryModeType.getArray().map(item => (<Option value={item.key} key={item.key}>{item.val}</Option>))
               }
@@ -260,69 +298,129 @@ class Main extends React.Component<Props, State> {
   /** 海外列表 */
   public getOverseasColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     const { getFieldDecorator } = this.props.form
+    const differentColumns = this.props.warehouseType === 1 ? [{
+      title: '规格条码',
+      dataIndex: 'productBasicBarCode',
+      width: 200,
+      render: (text: any, record: any, index: any) => {
+        return (
+          <Input
+            disabled={true}
+            value={text}
+            placeholder="请输入规格条码"
+            onChange={cb('productBasicBarCode', record, index)}
+          />
+        );
+      },
+    }, {
+      title: <div><span style={{color: 'red'}}>*</span>规格编码</div>,
+      dataIndex: 'productBasicSkuCode',
+      width: 200,
+      render: (text: string, record: any, index: number) => {
+        return (
+          <FormItem
+            wrapperCol={{span: 24}}
+          > 
+            {
+              getFieldDecorator(`productBasicSkuCode-${index}`, {
+                initialValue: text,
+                rules: [
+                  {
+                    required: true,
+                    message: '规格编码不能为空'
+                  },
+                  {
+                    pattern: /^SH[\d]{6}[\dA-Z]{1}\d{3}$/,
+                    message: '规格编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
+                  }
+                ]
+              })(
+                <Input
+                  disabled={true}
+                  placeholder="请输入规格编码"
+                  onChange={(e) => {
+                    const value = e.target.value
+                    cb('productBasicSkuCode', record, index)(value)
+                    setTimeout(() => {
+                      this.forceUpdate()
+                      console.log('productBasicSkuCode')
+                    }, 400)
+                  }}
+                />
+              )
+            }
+          </FormItem>
+        );
+      },
+    }]: [{
+      title: '供应商skuid',
+      dataIndex: 'storeProductSkuId',
+      width: 200,
+      render: (text: any, record: any, index: any) => {
+        return (
+          <Input
+            value={text}
+            placeholder="请输入供应商skuid"
+            onChange={cb('storeProductSkuId', record, index)}
+          />
+        );
+      },
+    },
+    {
+      title: <div><span style={{color: 'red'}}>*</span>SKU编码</div>,
+      dataIndex: 'skuCode',
+      width: 200,
+      render: (text: string, record: any, index: number) => {
+        return (
+          <FormItem
+            wrapperCol={{span: 24}}
+          > 
+            {
+              getFieldDecorator(`skuCode-${index}`, {
+                initialValue: text,
+                rules: [
+                  {
+                    required: true,
+                    message: 'SKU编码不能为空'
+                  },
+                  {
+                    pattern: /^SH[\d]{6}[\dA-Z]{1}\d{3}$/,
+                    message: 'SKU编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
+                  }
+                ]
+              })(
+                <Input
+                  // value={text}
+                  placeholder="请输入SKU编码"
+                  onChange={(e) => {
+                    const value = e.target.value
+                    cb('skuCode', record, index)(value)
+                    setTimeout(() => {
+                      this.forceUpdate()
+                      console.log('skuCode skuCode')
+                    }, 400)
+                  }}
+                />
+              )
+            }
+          </FormItem>
+        );
+      },
+    }]
     return [
-      {
-        title: '规格条码',
-        dataIndex: 'storeProductSkuId',
-        width: 200,
-        render: (text: any, record: any, index: any) => {
-          return (
-            <Input
-              value={text}
-              placeholder="请输入规格条码"
-              onChange={cb('storeProductSkuId', record, index)}
-            />
-          );
-        },
-      },
-      {
-        title: <div><span style={{color: 'red'}}>*</span>规格编码</div>,
-        dataIndex: 'skuCode',
-        width: 200,
-        render: (text, record, index) => {
-          return (
-            <FormItem
-              wrapperCol={{span: 24}}
-            > 
-              {
-                getFieldDecorator(`skuCode-${index}`, {
-                  initialValue: text,
-                  rules: [
-                    {
-                      required: true,
-                      message: 'SKU编码不能为空'
-                    },
-                    {
-                      pattern: /^SH[\d]{6}[\dA-Z]{1}\d{3}$/,
-                      message: 'SKU编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
-                    }
-                  ]
-                })(
-                  <Input
-                    // value={text}
-                    placeholder="请输入规格编码"
-                    onChange={(e) => {
-                      const value = e.target.value
-                      cb('skuCode', record, index)(value)
-                      setTimeout(() => {
-                        this.forceUpdate()
-                        console.log('skuCode skuCode')
-                      }, 400)
-                    }}
-                  />
-                )
-              }
-            </FormItem>
-          );
-        },
-      },
+      ...differentColumns,
       {
         title: '发货方式',
         dataIndex: 'deliveryMode',
         width: 200,
         render: (text: any, record: any, index: any) => {
           return (
-            <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
+            <Select
+              disabled={this.props.warehouseType === 1}
+              value={text}
+              placeholder="请选择"
+              onChange={cb('deliveryMode', record, index)}
+            >
               <Option value={4} key='d-4'>保宏保税仓</Option>
             </Select>
           )

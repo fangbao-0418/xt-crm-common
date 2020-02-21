@@ -1,10 +1,9 @@
 import React from 'react';
 import { Modal, Card, Input, Button, message, Radio, Select, Row } from 'antd';
 import UploadView from '@/components/upload';
-import { getAllId, treeToarr } from '@/util/utils';
 import { pick, map, size, filter, assign, isEmpty } from 'lodash';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api';
-import { gotoPage } from '@/util/utils';
+import { gotoPage, parseQuery, getAllId, treeToarr } from '@/util/utils';
 import { radioStyle } from '@/config';
 import SkuList from '../components/sku';
 import SupplierSelect, { supplierItem } from '../components/supplier-select';
@@ -12,10 +11,11 @@ import { TemplateList } from '@/components';
 import styles from '../style.module.scss';
 import { Form, FormItem, If } from '@/packages/common/components';
 import ProductCategory from '../components/product-category';
+import ProductSelector from './components/product-seletor';
 import { defaultConfig } from './config';
 import DraggableUpload from '../components/draggable-upload';
 import { RouteComponentProps } from 'react-router';
-import { getProduct } from '../sku-stock/api';
+import { getBaseProduct, getBaseBarcode } from './api';
 import { FormInstance } from '@/packages/common/components/form';
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
 
@@ -44,9 +44,16 @@ interface SkuSaleFormState extends Record<string, any> {
   interceptionVisible: boolean;
   freightTemplateId: string;
   checkType: 0 | 1;
+  productBasicId: string;
+  barCode: string;
+  visible: boolean;
+  // 1入库商品，0非入库商品
+  warehouseType: 0 | 1;
+  productList: any[]
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
+  isGroup: boolean = (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1';
   form: FormInstance;
   specs: any[] = [];
   state: SkuSaleFormState = {
@@ -67,7 +74,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     supplierInfo: {},
     interceptionVisible: false,
     freightTemplateId: '',
-    checkType: 0
+    checkType: 0,
+    productBasicId: '',
+    barCode: '',
+    warehouseType: 1,
+    visible: false,
+    productList: []
   }
   id: number;
   modifyTime: number;
@@ -79,12 +91,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     if (this.id !== -1) {
       this.fetchData();
     } else {
-      this.form && this.form.props.form.setFieldsValue({ showNum: 1 })
       getTemplateList().then((opts: any[]) => {
         this.setState({ templateOptions: opts });
       })
     }
   }
+
   /** 获取商品详情 */
   fetchData() {
     Promise.all([
@@ -97,7 +109,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         res.productCategoryVO && res.productCategoryVO.id
           ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
           : [];
-      this.getStrategyByCategory(categoryId[0]);
+      categoryId[0] && this.getStrategyByCategory(categoryId[0]);
       this.specs = this.getSpecs([
         {
           title: res.property1,
@@ -117,11 +129,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           templateName: res.freightTemplateName
         })
       }
-
+      this.isGroup = res.isGroup;
       this.setState({
         templateOptions,
         specs: this.specs,
         ...pick(res, [
+          'warehouseType',
           'freightTemplateId',
           'skuList',
           'specs',
@@ -137,6 +150,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       this.form.setValues({
         categoryId,
         ...pick(res, [
+          'warehouseType',
           'productType',
           'interception',
           'showNum',
@@ -294,6 +308,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           }
         }
         setProduct({
+          isGroup: this.isGroup,
           modifyTime: this.modifyTime,
           productId: this.id,
           freightTemplateId,
@@ -391,11 +406,120 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   }
   // 校验商品条码
   getSkuStockDetailByCode = () => {
-    // getProduct()
+    const { barCode } = this.state;
+    if (!barCode) {
+      return void APP.error('请输入商品条码');
+    }
+    Promise.all([
+      getBaseBarcode(barCode),
+      getCategoryList()
+    ])
+    // 可通过条码集库存商品ID对商品进行关联，同一个条码存在多个商品时，需要进行选择后进行信息填充；唯一时，自动填充信息
+    .then(([res, list]: any) => {
+      if (!Array.isArray(res)) return;
+      
+      // 存在唯一商品
+      if (res.length === 1) {
+        this.getSkuStockDetailById(res[0].productBasicId)
+      }
+      // 存在多个商品
+      else if (res.length >= 1) {
+        this.setState({
+          visible: true,
+          productList: res
+        })
+      }
+    })
   }
   // 校验库存商品ID
-  getSkuStockDetailById = () => {
+  getSkuStockDetailById = (productBasicId: string) => {
+    if (!productBasicId) {
+      return void APP.error('请输入库存商品ID');
+    }
+    Promise.all([
+      getBaseProduct(productBasicId),
+      getCategoryList()
+    ])
+    .then((value: any) => {
+      console.log(value, '|||||||||||||||||||||')
+      this.setProductFileds(value);
+    })
+  }
 
+  setProductFileds ([res, list]: any) {
+    this.form.resetValues();
+    this.getSupplierInfo(res.storeId);
+    const categoryId =
+    res.productCategoryVO && res.productCategoryVO.id
+      ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
+      : [];
+    categoryId[0] && this.getStrategyByCategory(categoryId[0]);
+    this.specs = this.getSpecs([
+      {
+        title: res.property1,
+        content: [],
+      },
+      {
+        title: res.property2,
+        content: [],
+      },
+    ], res.skuList);
+    this.isGroup = res.isGroup;
+    this.setState({
+      // templateOptions,
+      specs: this.specs,
+      ...pick(res, [
+        'warehouseType',
+        'productBasicId',
+        'barCode',
+        'freightTemplateId',
+        'skuList',
+        'specs',
+        'propertyId1',
+        'propertyId2',
+        'returnContact',
+        'returnPhone',
+        'returnAddress',
+        'showImage',
+        'productCustomsDetailVOList'
+      ])
+    });
+    this.form.setValues({
+      categoryId,
+      ...pick(res, [
+        'warehouseType',
+        'productType',
+        'interception',
+        'showNum',
+        'description',
+        'productCode',
+        'productId',
+        'productName',
+        'productShortName',
+        // 'property1',
+        // 'property2',
+        'storeId',
+        'status',
+        'bulk',
+        'weight',
+        'withShippingFree',
+        'coverUrl',
+        'videoCoverUrl',
+        'videoUrl',
+        'deliveryMode',
+        'barCode',
+        'bannerUrl',
+        'returnPhone',
+        'listImage',
+        'productImage',
+        'storeProductId',
+        'isAuthentication',
+        'isCalculateFreight'
+      ])
+    });
+  }
+  handleCancel = () => {
+    this.setState({ visible: false })
   }
   render() {
     const {
@@ -404,7 +528,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       supplierInfo,
       freightTemplateId,
       templateOptions,
-      checkType
+      checkType,
+      warehouseType,
+      productBasicId,
+      barCode,
+      visible,
+      productList
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
     return (
@@ -413,88 +542,90 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         config={defaultConfig}
         namespace='skuSale'
       >
+        <ProductSelector
+          dataSource={productList}
+          visible={visible}
+          onCancel={this.handleCancel}
+          onOK={(value: any) => {
+            this.handleCancel();
+            this.getSkuStockDetailById(value)
+          }}
+        />
         <Card title='添加/编辑商品'>
           <FormItem
             verifiable
             name='warehouseType'
             controlProps={{
-              disabled: this.id !== -1
+              disabled: this.id !== -1,
+              onChange: (e: any) => {
+                this.setState({ warehouseType: e.target.value })
+              }
             }}
           />
-          <FormItem label='商品校验类型'>
-            <Radio.Group
-              onChange={(e) => {
-                this.setState({
-                  checkType: e.target.value
-                });
-              }}
-              value={checkType}
-              options={[{
-                label: '商品条码',
-                value: 0
-              }, {
-                label: '库存商品ID',
-                value: 1
-              }]}
-            />
-          </FormItem>
-          <If condition={checkType === 0}>
-            <FormItem
-              label='商品条码'
-              inner={(form) => {
-                return (
-                  <>
-                    {form.getFieldDecorator('barCode', {
-                      rules: [{
-                        validator: NumberValidator
-                      }]
-                    })(
-                      <Input
-                        style={{ width: '60%' }}
-                        placeholder='请输入商品条码'
-                      />
-                    )}
-                    <Button
-                      className='ml10'
-                      onClick={this.getSkuStockDetailByCode}
-                    >
-                      校验
-                    </Button>
-                  </>
-                )
-              }}
-            />
-          </If>
-          <If condition={checkType === 1}>
-            <FormItem
-              label='库存商品ID'
-              required
-              inner={(form) => {
-                return (
-                  <>
-                    {form.getFieldDecorator('baseProductId', {
-                      rules: [{
-                        required: true,
-                        message: '请输入库存商品ID'
-                      }, {
-                        validator: NumberValidator
-                      }]
-                    })(
-                      <Input
-                        style={{ width: '60%' }}
-                        placeholder='请输入库存商品ID'
-                      />
-                    )}
-                    <Button
-                      className='ml10'
-                      onClick={this.getSkuStockDetailById}
-                    >
-                      校验
-                    </Button>
-                  </>
-                );
-              }}
-            />
+          <If condition={warehouseType === 1}>
+            <FormItem label='商品校验类型'>
+              <Radio.Group
+                onChange={(e) => {
+                  this.setState({
+                    checkType: e.target.value
+                  });
+                }}
+                value={checkType}
+                options={[{
+                  label: '商品条码',
+                  value: 0
+                }, {
+                  label: '库存商品ID',
+                  value: 1
+                }]}
+              />
+            </FormItem>
+            <If condition={checkType === 0}>
+              <FormItem
+                label='商品条码'
+              >
+                <Input
+                  value={barCode}
+                  onChange={(e) => {
+                    this.setState({
+                      barCode: e.target.value
+                    })
+                  }}
+                    style={{ width: '60%' }}
+                    placeholder='请输入商品条码'
+                  />
+                <Button
+                  className='ml10'
+                  onClick={this.getSkuStockDetailByCode}
+                >
+                  校验
+                </Button>
+              </FormItem>
+            </If>
+            <If condition={checkType === 1}>
+              <FormItem
+                label='库存商品ID'
+              >
+                <Input
+                  style={{ width: '60%' }}
+                  placeholder='请输入库存商品ID'
+                  value={productBasicId}
+                  onChange={(e) => {
+                    this.setState({
+                      productBasicId: e.target.value
+                    })
+                  }}
+                />
+                <Button
+                  className='ml10'
+                  onClick={() => {
+                    this.getSkuStockDetailById(this.state.productBasicId);
+                  }}
+                >
+                  校验
+                </Button>
+              </FormItem>
+            </If>
           </If>
           <FormItem
             verifiable
@@ -587,6 +718,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem
             label='商品类型'
             required
+            controlProps={{
+              style: {
+                width: '60%'
+              }
+            }}
             style={{
               display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
             }}
@@ -722,21 +858,21 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             label='商品图片'
             required={true}
             inner={(form) => {
-              return form.getFieldDecorator('productImage', {
-                rules: [{
-                  required: true,
-                  message: '请上传商品图片',
-                }]
-              })(
+              return (
                 <div className={styles['input-wrapper']}>
                   <div className={styles['input-wrapper-content']}>
-                    <DraggableUpload
+                    {form.getFieldDecorator('productImage', {
+                      rules: [{
+                        required: true,
+                        message: '请上传商品图片',
+                      }]
+                    })(<DraggableUpload
                       className={styles['goods-detail-draggable']}
                       listNum={5}
                       size={0.3}
                       placeholder='上传商品图片'
-                    />
-                  </div>
+                    />)}
+                    </div>
                   <div className={styles['input-wrapper-placeholder']}>（建议750*750px，300kb以内，最多可添加5张）</div>
                 </div>
               )
@@ -765,6 +901,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem name='showNum' />
         </Card>
         <SkuList
+          warehouseType={warehouseType}
           form={this.form && this.form.props.form}
           type={productType}
           productCustomsDetailVOList={productCustomsDetailVOList}

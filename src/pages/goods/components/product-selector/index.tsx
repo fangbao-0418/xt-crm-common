@@ -6,11 +6,19 @@ import { defaultConfig } from './config';
 import { Modal } from 'antd';
 import { getCategoryTopList } from '../../api';
 import { CSkuProps } from '../../sku-stock/components/sku';
+import { getBaseProductPage } from '../../sku-sale/api';
 interface ProductSelectorProps {
-  visible: boolean,
-  onCancel: ()=> void
+  visible: boolean;
+  onCancel: ()=> void;
+  dataSource?: any[]
 }
-class ProductSelector extends React.Component<ProductSelectorProps, any> {
+interface ProductSelectorState {
+  selectedRowKeys: any[]
+}
+class ProductSelector extends React.Component<ProductSelectorProps, ProductSelectorState> {
+  state: ProductSelectorState = {
+    selectedRowKeys: []
+  }
   columns = [{
     title: 'id',
     width: 80,
@@ -25,7 +33,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, any> {
     title: '状态',
     width: 100,
     align: 'center',
-    dataIndex: 'status'
+    dataIndex: 'statusText'
   }, {
     title: '类目',
     width: 200,
@@ -33,14 +41,15 @@ class ProductSelector extends React.Component<ProductSelectorProps, any> {
     dataIndex: 'categoryName'
   }, {
     title: '规格详情',
-    dataIndex: 'skuAddList',
+    dataIndex: 'productBasicSkuInfos',
     align: 'center',
     render: (data: CSkuProps[]) => {
       return (
         <Table
+          pagination={false}
           columns={[{
             title: '规格',
-            dataIndex: 'skuName'
+            dataIndex: 'propertyValue'
           }, {
             title: '市场价',
             dataIndex: 'marketPrice'
@@ -49,7 +58,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, any> {
             dataIndex: 'costPrice'
           }, {
             title: '总库存',
-            dataIndex: 'stock'
+            dataIndex: 'totalStock'
           }]}
           dataSource={data}
         />
@@ -57,6 +66,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, any> {
     }
   }]
   render() {
+    const { selectedRowKeys } = this.state;
     const { visible, onCancel } = this.props;
     return (
       <Modal
@@ -68,6 +78,14 @@ class ProductSelector extends React.Component<ProductSelectorProps, any> {
         <ListPage
           namespace='productSelector'
           formConfig={defaultConfig}
+          tableProps={{
+            rowSelection: {
+              selectedRowKeys,
+              onChange: (selectedRowKeys) => {
+                this.setState({ selectedRowKeys });
+              }
+            }
+          }}
           formItemLayout={(
             <>
               <FormItem name='productId' />
@@ -87,7 +105,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, any> {
             </>
           )}
           columns={this.columns}
-          api={() => Promise.resolve({ records: []})}
+          api={getBaseProductPage}
         />
       </Modal>
     );
