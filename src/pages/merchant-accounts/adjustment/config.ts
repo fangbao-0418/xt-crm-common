@@ -111,7 +111,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      createdType: {
+      createType: {
         type: 'select',
         label: '创建人类型',
         options: [

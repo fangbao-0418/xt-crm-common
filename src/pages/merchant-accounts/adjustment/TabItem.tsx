@@ -278,7 +278,7 @@ class Main extends React.Component<Props, State> {
                 <Col span={6}><FormItem name='createName' /></Col>
                 {/* <Col span={6}><FormItem name='trimReason' /></Col> */}
                 <Col span={6}><FormItem name='financeReviewName' /></Col>
-                <Col span={6}><FormItem name='createdType' /></Col>
+                <Col span={6}><FormItem name='createType' /></Col>
               </Row>
               <Row>
                 <Col span={12}><FormItem name='createTime' /></Col>
