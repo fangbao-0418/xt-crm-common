@@ -5,7 +5,7 @@ import { FormItem } from '@/packages/common/components/form'
 import ListPage from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { parseQuery } from '@/packages/common/utils'
-import { getFieldsConfig, PaymentStatusEnum, PaymentTypeEnum } from './config'
+import { getFieldsConfig, PaymentStatusEnum, PaymentTypeEnum, AccStatusEnum } from './config'
 import * as api from './api'
 import { ColumnProps } from 'antd/lib/table'
 import { GetDetailsListOnPageResponse } from './interface'
@@ -45,10 +45,10 @@ class Main extends React.Component<Props, State> {
         return PaymentTypeEnum[text]
       }
     }, {
-      dataIndex: 'createTime',
+      dataIndex: 'soucreCreateTime',
       title: '创建时间',
       render: (text) => {
-        return APP.fn.formatDate(text)
+        return APP.fn.formatDate(text) || ''
       }
     }, {
       dataIndex: 'finishTime',
@@ -59,11 +59,9 @@ class Main extends React.Component<Props, State> {
     }, {
       dataIndex: 'paymentMoney',
       title: '交易金额',
-      render: (text) => {
-        const className = text > 0 ? 'success' : 'error'
-        return (
-          <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
-        )
+      render: (text, record) => {
+        const className = [1, 3].indexOf(record.paymentType) > -1 ? 'success' : 'error'
+        return <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
       }
     }, {
       dataIndex: 'paymentStatus',
@@ -117,7 +115,7 @@ class Main extends React.Component<Props, State> {
         </div>
         <div className={styles['detail-header']}>
           <div>日期：{bulidDate}</div>
-          <div>状态：待结算</div>
+          <div>状态：{AccStatusEnum[query.accStatus]}</div>
           <div>共计：{this.state.total}条</div>
         </div>
         <div className={styles['detail-header2']}>
@@ -130,12 +128,14 @@ class Main extends React.Component<Props, State> {
           </div>
           <div>
             <Auth code='adjustment:procurement_audit'>
-              <Button
-                type='primary'
-                onClick={this.addAdjustment}
-              >
-                新建调整单
-              </Button>
+              {['20', '70'].indexOf(query.accStatus) > -1 && (
+                <Button
+                  type='primary'
+                  onClick={this.addAdjustment}
+                >
+                  新建调整单
+                </Button>
+              )}
             </Auth>
           </div>
         </div>

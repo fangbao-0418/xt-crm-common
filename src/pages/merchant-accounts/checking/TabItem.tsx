@@ -33,7 +33,7 @@ class Main extends React.Component<Props, State> {
       title: '日期',
       width: 250,
       render: (text) => {
-        return APP.fn.formatDate(text)
+        return APP.fn.formatDate(text) || ''
       }
     },
     // {
@@ -77,7 +77,8 @@ class Main extends React.Component<Props, State> {
       title: '本期对对账单金额',
       width: 150,
       render: (text) => {
-        return APP.fn.formatMoneyNumber(text, 'm2u')
+        const className = text > 0 ? 'success' : 'error'
+        return <span>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
       }
     },
     {
@@ -92,6 +93,7 @@ class Main extends React.Component<Props, State> {
       title: '操作',
       width: 300,
       align: 'center',
+      fixed: 'right',
       render: (text, record) => {
         return (
           <div>
@@ -104,7 +106,8 @@ class Main extends React.Component<Props, State> {
                   incomeMoney: APP.fn.formatMoneyNumber(record.incomeMoney, 'm2u'),
                   disburseMoney: APP.fn.formatMoneyNumber(record.disburseMoney, 'm2u'),
                   serialNo: record.serialNo,
-                  accName: record.accName
+                  accName: record.accName,
+                  accStatus: record.accStatus
                 })
                 APP.history.push(`/merchant-accounts/checking/${record.id}?${query}`)
               }}
@@ -112,14 +115,14 @@ class Main extends React.Component<Props, State> {
               查看明细
             </span>&nbsp;&nbsp;
             {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
-            <span
+            {[20, 70].indexOf(record.accStatus) > -1 && <span
               className='href'
               onClick={() => {
                 this.showAdjustment(record)
               }}
             >
               新建调整单
-            </span>
+            </span>}
           </div>
         )
       }

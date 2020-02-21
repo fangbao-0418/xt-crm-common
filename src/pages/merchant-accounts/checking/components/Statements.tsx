@@ -218,7 +218,7 @@ class Main extends React.Component<Props> {
                     <span
                       className='href'
                       onClick={() => {
-                        APP.fn.download(require('@/assets/files/进货发票登记模板.xlsx'), '进货发票登记模板')
+                        APP.fn.download(require('@/assets/files/进货发票登记模板.xls'), '进货发票登记模板.xls')
                       }}
                     >
                       下载模板

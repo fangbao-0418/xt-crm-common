@@ -104,18 +104,28 @@ class Main extends React.Component<Props, State> {
       }
     }
   }
-  public handleFileValue (value: string) {
+  public handleFileValue (value: any) {
+    if (value instanceof Array) {
+      return value.map((item) => {
+        return {
+          url: item.rurl | item.url,
+          name: item.name
+        }
+      })
+    }
     value = value || ''
     let result: any
     try {
       result = JSON.parse(value)
-      result.map((item: {url: string, rurl: string}) => {
-        /** 处理相对路径 */
-        item.url = item.rurl || item.url
+      result = (result || []).map((item: {url: string, rurl: string, name: string}) => {
+        return {
+          url: item.rurl || item.url,
+          name: item.name
+        }
       })
     } catch (e) {
       try {
-        result = value.split(',').map((item) => ({url: item}))
+        result = value.split(',').map((item: {url: string}) => ({url: item}))
       } catch (e) {
         result = undefined
       }
@@ -128,18 +138,22 @@ class Main extends React.Component<Props, State> {
         APP.error('请检查输入项')
         return
       }
-      const trimImgUrl = (value.trimImgUrl || []).map((item: any) => {
-        item.url = item.rurl
-        return item
+      const trimImgUrl = (value.trimImgUrl || []).map((item: {name: string, rurl: string}) => {
+        return {
+          url: item.rurl,
+          name: item.name
+        }
       })
-      const trimFileUrl = (value.trimFileUrl || []).map((item: any) => {
-        item.url = item.rurl
-        return item
+      const trimFileUrl = (value.trimFileUrl || []).map((item:  {name: string, rurl: string}) => {
+        return {
+          url: item.rurl,
+          name: item.name
+        }
       })
       value = {
         ...value,
-        trimImgUrl: JSON.stringify(trimImgUrl),
-        trimFileUrl: JSON.stringify(trimFileUrl),
+        trimImgUrl: trimImgUrl,
+        trimFileUrl: trimFileUrl,
         trimMoney: APP.fn.formatMoneyNumber(value.trimMoney, 'u2m')
       }
       api.addAdjustment(value).then(() => {
