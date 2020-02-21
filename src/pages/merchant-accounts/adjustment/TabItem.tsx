@@ -300,7 +300,7 @@ class Main extends React.Component<Props, State> {
                 className='mr10'
                 onClick={() => { this.listpage.refresh(true) }}
               >
-                取消
+                清除
               </Button>
               <Auth code='finance:trim_build'>
                 <Button
@@ -329,11 +329,12 @@ class Main extends React.Component<Props, State> {
           api={api.fetchList}
           processPayload={(payload) => {
             const status = this.props.status
+            console.log(payload, '-----')
             this.payload = {
               ...payload,
               pageNum: payload.page,
               page: undefined,
-              trimStatus: status === 0 ? undefined : status
+              trimStatus: payload.trimStatus || (status === 0 ? undefined : status)
             }
             return this.payload
           }}

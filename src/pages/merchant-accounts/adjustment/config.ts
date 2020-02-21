@@ -78,7 +78,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         label: '状态',
         type: 'select',
         options: [
-          {label: '代采购审核', value: 10},
+          {label: '待采购审核', value: 10},
           {label: '待财务审核', value: 20},
           {label: '审核通过', value: 30},
           {label: '审核不通过', value: 40},
@@ -206,7 +206,7 @@ export enum TrimTypeEnum {
  * 调整状态
  */
 export enum TrimStatusEnum {
-  代采购审核 = 10,
+  待采购审核 = 10,
   待财务审核 = 20,
   审核通过 = 30,
   审核不通过 = 40,
