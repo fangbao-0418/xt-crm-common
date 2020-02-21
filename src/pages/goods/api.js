@@ -6,6 +6,7 @@ export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }
 
+// 设置普通消费商品
 export function setProduct(data) {
   const isAdd = data.productId === -1
   const url = isAdd ? '/product/add' : '/product/update';

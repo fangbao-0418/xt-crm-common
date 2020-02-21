@@ -9,17 +9,16 @@ import { getCategoryTopList } from '../../api';
 import { CSkuProps } from '../../sku-stock/components/sku';
 import { getBaseProductPage } from '../../sku-sale/api';
 interface ProductSelectorProps {
-  visible: boolean;
-  onCancel: ()=> void;
-  dataSource?: any[];
-  onOk: (selectedRowKeys: string[] | number[], selectedRows: any[]) => void;
+  onOk: (selectedRows: any[]) => void;
 }
 interface ProductSelectorState {
-  selectedRowKeys: any[]
+  selectedRowKeys: any[];
+  visible: boolean;
 }
 class ProductSelector extends React.Component<ProductSelectorProps, ProductSelectorState> {
   state: ProductSelectorState = {
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    visible: false
   }
   seletedRows: any[] = [];
   columns = [{
@@ -70,56 +69,71 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     }
   }]
   handleOK = () => {
-    const { selectedRowKeys } = this.state;
-    this.props.onOk(selectedRowKeys, this.seletedRows);
+    this.setState({ visible: false }, () => {
+      this.props.onOk(this.seletedRows);
+    })
+  }
+  handleCancel = () => {
+    this.setState({
+      visible: false
+    })
   }
   render() {
-    const { selectedRowKeys } = this.state;
-    const { visible, onCancel } = this.props;
+    const { selectedRowKeys, visible } = this.state;
     return (
-      <Modal
-        title='请选择商品'
-        visible={visible}
-        onCancel={onCancel}
-        onOk={this.handleOK}
-        width='70%'
-      >
-        <ListPage
-          namespace='productSelector'
-          formConfig={defaultConfig}
-          tableProps={{
-            rowSelection: {
-              selectedRowKeys,
-              onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
-                // fix ant-design bug
-                const unionArray: any[] = unionBy(this.seletedRows, selectedRows, x => x.id)
-                this.seletedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never));
-                this.setState({ selectedRowKeys });
+      <>
+        <Modal
+          title='请选择商品'
+          visible={visible}
+          onCancel={this.handleCancel}
+          onOk={this.handleOK}
+          width='70%'
+        >
+          <ListPage
+            namespace='productSelector'
+            formConfig={defaultConfig}
+            tableProps={{
+              rowSelection: {
+                selectedRowKeys,
+                onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
+                  // fix ant-design bug
+                  const unionArray: any[] = unionBy(this.seletedRows, selectedRows, x => x.id)
+                  this.seletedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never));
+                  this.setState({ selectedRowKeys });
+                }
               }
-            }
+            }}
+            formItemLayout={(
+              <>
+                <FormItem name='id' />
+                <FormItem name='productName' />
+                <FormItem name='status' />
+                <FormItem
+                  label='类目'
+                  inner={(form) => {
+                    return form.getFieldDecorator('categoryId')(
+                      <SelectFetch
+                        style={{ width: 172 }}
+                        fetchData={getCategoryTopList}
+                      />
+                    )
+                  }}
+                />
+              </>
+            )}
+            columns={this.columns}
+            api={getBaseProductPage}
+          />
+        </Modal>
+        <span
+          className='href'
+          onClick={() => {
+            this.setState({ visible: true })
           }}
-          formItemLayout={(
-            <>
-              <FormItem name='id' />
-              <FormItem name='productName' />
-              <FormItem name='status' />
-              <FormItem
-                label='类目'
-                inner={(form) => {
-                  return form.getFieldDecorator('categoryId')(
-                    <SelectFetch
-                      style={{ width: 172 }}
-                      fetchData={getCategoryTopList}
-                    />
-                  )
-                }}
-              />
-            </>
-          )}
-          columns={this.columns}
-          api={getBaseProductPage}
-        />
-      </Modal>
+        >
+          新增商品
+        </span>
+      </>
     );
   }
 }

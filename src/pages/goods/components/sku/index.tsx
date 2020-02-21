@@ -58,6 +58,7 @@ export interface SkuSaleProps {
 }
 
 interface Props extends FormComponentProps {
+  isGroup: boolean,
   specs: Spec[]
   dataSource: SkuSaleProps[]
   showImage: boolean
@@ -76,10 +77,6 @@ interface SpecItem {
 interface Spec {
   title: string;
   content: SpecItem[];
-}
-interface TempSpecInfoItem {
-  tempSpuName: string;
-  tempSpuPicture: any[];
 }
 /**
  * speSelect 规格项
@@ -506,6 +503,7 @@ class SkuList extends React.Component<Props, State>{
         }
         <SkuTable
           type={type}
+          isGroup={this.props.isGroup}
           warehouseType={this.props.warehouseType}
           form={this.props.form}
           productCustomsDetailVOList={this.props.productCustomsDetailVOList}

@@ -25,11 +25,11 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   productCustomsDetailVOList: any[]
   /** 1: 入库商品，0: 非入库商品 */
   warehouseType: 1 | 0
+  isGroup: boolean
 }
 
 interface State {
   dataSource: SkuSaleProps[];
-  visible: boolean;
 }
 
 class Main extends React.Component<Props, State> {
@@ -38,8 +38,7 @@ class Main extends React.Component<Props, State> {
     pageSize: 10
   }
   public state: State = {
-    dataSource: this.props.dataSource || [],
-    visible: false
+    dataSource: this.props.dataSource || []
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({
@@ -87,7 +86,7 @@ class Main extends React.Component<Props, State> {
         return (
           <Input
             value={text}
-            disabled={true}
+            disabled={!this.props.isGroup}
             placeholder="请输入规格条码"
             onChange={cb('productBasicBarCode', record, index)}
           />
@@ -633,81 +632,71 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { visible } = this.state;
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <>
         <Table
-          rowKey='id'
+          rowKey={(_, idx) => idx + ''}
           className={styles['sku-table']}
           style={{ marginTop: 10 }}
           scroll={{ x: true }}
           columns={columns}
-          dataSource={this.state.dataSource.map((item, index) => ({ ...item, id: index }))}
+          dataSource={this.state.dataSource}
           expandedRowRender={record => {
             return (
-              <Card title='商品配置'>
-                <ProductSeletor
-                  visible={visible}
-                  onOk={(selectedRowKeys, selectedRows) => {
-                    console.log('selectedRowKeys, selectedRows =>', selectedRowKeys, selectedRows);
-                  }}
-                  onCancel={() => {
-                    this.setState({
-                      visible: false
-                    })
-                  }}
-                />
-                <Table
-                  rowKey='id'
-                  dataSource={record.productConfig}
-                  footer={() => (
-                    <span
-                      className='href'
-                      onClick={() => {
-                        this.setState({ visible: true })
-                      }}
-                    >
-                      新增商品
-                    </span>
-                  )}
-                  columns={[{
-                    title: '商品ID',
-                    dataIndex: 'productID'
-                  }, {
-                    title: '商品名称',
-                    dataIndex: 'productName'
-                  }, {
-                    title: '商品主图',
-                    dataIndex: 'coverUrl'
-                  }, {
-                    title: '商品规格',
-                    dataIndex: 'sku'
-                  }, {
-                    title: '规格条码',
-                    dataIndex: 'barCode'
-                  }, {
-                    title: '规格编码',
-                    dataIndex: 'skuCode'
-                  }, {
-                    title: '市场价',
-                    dataIndex: 'marketPrice'
-                  }, {
-                    title: '成本价',
-                    dataIndex: 'costPrice'
-                  }, {
-                    title: '总库存',
-                    dataIndex: 'stock'
-                  }, {
-                    title: '数量配置',
-                    dataIndex: 'num'
-                  }, {
-                    title: '操作',
-                    align: 'center',
-                    render: () => <Button type='link'>删除</Button>
-                  }]}
-                />
-              </Card>
+              <>
+                <Card title='商品配置'>
+                  <Table
+                    rowKey='id'
+                    dataSource={record.productBasics}
+                    footer={() => (
+                      <ProductSeletor
+                        onOk={(productBasics) => {
+                          const { dataSource } = this.state;
+                          this.setState({
+                            dataSource: dataSource.map(v => ({ ...v,  productBasics}))
+                          })
+                        }}
+                      />
+                    )}
+                    columns={[{
+                      title: '商品ID',
+                      dataIndex: 'id'
+                    }, {
+                      title: '商品名称',
+                      dataIndex: 'productName'
+                    }, {
+                      title: '商品主图',
+                      dataIndex: 'coverUrl'
+                    }, {
+                      title: '商品规格',
+                      dataIndex: 'sku'
+                    }, {
+                      title: '规格条码',
+                      dataIndex: 'productBasicBarCode'
+                    }, {
+                      title: '规格编码',
+                      dataIndex: 'productBasicSkuCode'
+                    }, {
+                      title: '市场价',
+                      dataIndex: 'marketPrice'
+                    }, {
+                      title: '成本价',
+                      dataIndex: 'costPrice'
+                    }, {
+                      title: '总库存',
+                      dataIndex: 'stock'
+                    }, {
+                      title: '数量配置',
+                      dataIndex: 'num'
+                    }, {
+                      title: '操作',
+                      align: 'center',
+                      render: () => <Button type='link'>删除</Button>
+                    }]}
+                  />
+                </Card>
+              </>
             )
           }}
           onChange={(pagination) => {

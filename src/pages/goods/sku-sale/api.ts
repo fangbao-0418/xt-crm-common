@@ -1,4 +1,4 @@
-import { baseProductResponse, baseProductPageResponse } from "./adapter";
+import { formRequest, baseProductResponse, baseProductPageResponse } from "./adapter";
 import { queryString } from '@/util/utils';
 const { newPost } = APP.http;
 
@@ -29,4 +29,11 @@ export function getBaseProductPage(payload: {
 // 获取组合商品详情
 export function getGroupProductDetail(productId: number) {
   return newPost(`/product/group/detail?productId=${productId}`)
+}
+
+// 新增组合商品
+export function setGroupProduct(payload: any) {
+  const isAdd = payload.productId;
+  payload = formRequest(payload);
+  return isAdd ? newPost('/product/group/add', payload) : newPost('/product/group/update', payload);
 }

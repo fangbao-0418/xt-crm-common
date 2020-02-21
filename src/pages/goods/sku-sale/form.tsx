@@ -15,7 +15,7 @@ import ProductSelector from './components/product-seletor';
 import { defaultConfig } from './config';
 import DraggableUpload from '../components/draggable-upload';
 import { RouteComponentProps } from 'react-router';
-import { getBaseProduct, getBaseBarcode } from './api';
+import { getBaseProduct, getBaseBarcode, setGroupProduct } from './api';
 import { FormInstance } from '@/packages/common/components/form';
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
 
@@ -321,30 +321,60 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             return void APP.error('市场价、成本价、销售价、团长价、社区管理员价、城市合伙人价、公司管理员价必填且不能为0');
           }
         }
-        setProduct({
-          isGroup,
-          modifyTime: this.modifyTime,
-          productId: this.id,
-          freightTemplateId,
-          property1: specs[0] && specs[0].title,
-          property2: specs[1] && specs[1].title,
-          skuList,
-          ...vals,
-          ...pick(this.state, [
-            'returnContact',
-            'returnPhone',
-            'returnAddress'
-          ]),
-          ...property
-        }).then((res: any) => {
-          if (!res) return;
-          if (this.id !== -1) {
-            APP.success('编辑数据成功');
-          } else {
-            APP.success('添加数据成功');
-          }
-          gotoPage('/goods/list');
-        });
+        // 组合商品新增、编辑
+        if (isGroup) {
+          setGroupProduct({
+            isGroup,
+            modifyTime: this.modifyTime,
+            productId: this.id,
+            freightTemplateId,
+            property1: specs[0] && specs[0].title,
+            property2: specs[1] && specs[1].title,
+            skuList,
+            ...vals,
+            ...pick(this.state, [
+              'returnContact',
+              'returnPhone',
+              'returnAddress'
+            ]),
+            ...property
+          }).then((res: any) => {
+            if (!res) return;
+            if (this.id !== -1) {
+              APP.success('编辑数据成功');
+            } else {
+              APP.success('添加数据成功');
+            }
+            gotoPage('/goods/list');
+          })
+        }
+        // 普通商品新增、编辑
+        else {
+          setProduct({
+            isGroup,
+            modifyTime: this.modifyTime,
+            productId: this.id,
+            freightTemplateId,
+            property1: specs[0] && specs[0].title,
+            property2: specs[1] && specs[1].title,
+            skuList,
+            ...vals,
+            ...pick(this.state, [
+              'returnContact',
+              'returnPhone',
+              'returnAddress'
+            ]),
+            ...property
+          }).then((res: any) => {
+            if (!res) return;
+            if (this.id !== -1) {
+              APP.success('编辑数据成功');
+            } else {
+              APP.success('添加数据成功');
+            }
+            gotoPage('/goods/list');
+          });
+        }
       }
     });
   };
@@ -922,6 +952,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem name='showNum' />
         </Card>
         <SkuList
+          isGroup={isGroup}
           warehouseType={warehouseType}
           form={this.form && this.form.props.form}
           type={productType}
