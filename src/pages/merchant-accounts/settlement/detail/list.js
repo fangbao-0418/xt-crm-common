@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, Row, Table, Button } from 'antd';
-import MoneyRender from '@/components/money-render'
 import Image from '@/components/Image'
 import styles from './style.module.styl'
 import { enumPayType } from '../../constant';
+import { download } from '@/util/utils';
 
 
 class SettleDetialList extends React.Component {
@@ -13,7 +13,10 @@ class SettleDetialList extends React.Component {
       dataSource: props.dataSource
     };
   }
-
+  getUrl (url) {
+    url = /^http/.test(url) ? url : `https://assets.hzxituan.com/${url}`
+    return url
+  }
   render() {
     const { settleDetail = {}, dataSource = [] } = this.props
     const columns = [
@@ -46,7 +49,7 @@ class SettleDetialList extends React.Component {
         width: 150,
         dataIndex: 'createTime',
         render: (createTime) => {
-          return APP.fn.formatDate(createTime)
+          return APP.fn.formatDate(createTime, 'YYYYMMDD')
         }
       }
     ];
@@ -67,8 +70,13 @@ class SettleDetialList extends React.Component {
               <div>本期结算总额：<span className={styles['detail-money-in']}>{APP.fn.formatMoney(settleDetail.settlementMoney)}</span>元</div>
             </div>
             <div className={styles['cont-r']}>
-              <span style={{ float: 'left' }}>发票凭证：</span>
-              {settleDetail.invoiceUrl && <Image src={settleDetail.invoiceUrl} style={{ width: 60, height: 60 }}></Image>}
+              <span>发票凭证：</span>
+              {settleDetail.invoiceUrl && (
+                <>
+                  <Button type='link' className={styles['paddingleft0']}>发票凭证</Button>
+                  <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
+                </>
+              )}
             </div>
           </div>
         </div>

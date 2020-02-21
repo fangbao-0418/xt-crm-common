@@ -28,7 +28,7 @@ class List extends React.Component {
     }
   }
   componentDidMount() {
-    this.fetchData()
+   this.fetchData()
   }
   componentDidUpdate(prevProps) {
     if (this.props.settStatus !== prevProps.settStatus) {
@@ -113,7 +113,7 @@ class List extends React.Component {
 
 
   // 驳回|提交结算|去付款按钮
-  handleBtnAction = (id, operateType) => () => {
+  handleBtnAction = (id, operateType, serialNo) => () => {
     if (operateType !== 'topay') {
       this.setState({
         selectId: id,
@@ -122,7 +122,7 @@ class List extends React.Component {
       })
     } else {
       api.settlementPay(id).then(res => {
-        res && gotoPage('/merchant-accounts/payment')
+        res && gotoPage('/merchant-accounts/payment?settlementSerialNo=' + serialNo)
       })
     }
 
@@ -241,7 +241,7 @@ class List extends React.Component {
         title: '操作',
         align: 'center',
         width: 200,
-        render: (operate, { settStatus, id }) => (
+        render: (operate, { settStatus, id, serialNo }) => (
           <>
 
             {
@@ -252,11 +252,11 @@ class List extends React.Component {
                 </>
                 : settStatus === enumSettleType.Settling ?
                   <>
-                    <Button type="link" onClick={this.handleBtnAction(id, 'topay')} style={{ padding: '0 3px' }}>去付款</Button>
+                    <Button type="link" onClick={this.handleBtnAction(id, 'topay', serialNo)} style={{ padding: '0 3px' }}>去付款</Button>
                     <Button type="link" onClick={this.handleBtnAction(id, 'reject')} style={{ padding: '0 3px' }}>驳回 </Button>
                   </>
                   : settStatus === enumSettleType.partSettled ?
-                    <Button type="link" onClick={this.handleBtnAction(id, 'topay')} style={{ padding: '0 3px' }}>去付款</Button>
+                    <Button type="link" onClick={this.handleBtnAction(id, 'topay', serialNo)} style={{ padding: '0 3px' }}>去付款</Button>
                     : null
             }
             <Button type="link" style={{ padding: '0 2px' }}>

@@ -28,10 +28,25 @@ class List extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchData();
+    let settlementSerialNo = (parseQuery() || {}).settlementSerialNo;
+    if (settlementSerialNo) {
+      const { setFieldsValue } = this.props.form;
+      setFieldsValue({
+        settlementSerialNo
+      })
+      this.fetchData({ settlementSerialNo })
+    } else {
+      this.fetchData();
+
+    }
+
   }
   componentDidUpdate(prevProps) {
     if (this.props.paymentStatus !== prevProps.paymentStatus) {
+      const { setFieldsValue } = this.props.form;
+      setFieldsValue({
+        settlementSerialNo: ''
+      })
       const { page } = this.state
       page.current = 1;
       this.fetchData();
@@ -98,7 +113,7 @@ class List extends React.Component {
     const { setFieldsValue } = this.props.form;
     const { page } = this.state;
     setFieldsValue({
-      settlementSerialNo:'',
+      settlementSerialNo: '',
       createName: '',
       createTime: '',
       paymentSerialNo: '',

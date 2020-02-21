@@ -8,12 +8,23 @@ class PayMent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      paymentStatus:  parseQuery().paymentStatus || ''
+      paymentStatus:  parseQuery().paymentStatus || '',
+      settlementSerialNo:  parseQuery().paymentStatus || ''
     };
    
   }
   componentDidMount(){
-    this.handleTabClick(this.state.paymentStatus || '')
+    const {paymentStatus = '', settlementSerialNo} = this.state
+    if (settlementSerialNo) {
+      setQuery({
+        page: 1,
+        pageSize: 10,
+        paymentStatus,
+        settlementSerialNo
+      }, true);
+    } else {
+      this.handleTabClick(this.state.paymentStatus || '')
+    }
   }
   handleTabClick = paymentStatus => {
     this.setState({paymentStatus})
