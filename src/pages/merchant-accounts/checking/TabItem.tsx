@@ -78,7 +78,7 @@ class Main extends React.Component<Props, State> {
       width: 150,
       render: (text) => {
         const className = text > 0 ? 'success' : 'error'
-        return <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+        return <span>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
       }
     },
     {

@@ -236,7 +236,7 @@ class UploadView extends Component {
       }
     }
     this.count++
-    const typeName = this.listType !== 'text' ? '图片' : '文件'
+    const typeName = this.props.listType !== 'text' ? '图片' : '文件'
     if (listNum !== undefined && this.count > listNum) {
       if (this.count === listNum + 1) {
         message.error(`上传${typeName}数量超出最大限制`);
