@@ -1,7 +1,7 @@
 import { FieldsConfig } from '@/packages/common/components/form'
 export const defaultConfig: FieldsConfig = {
   productSelector: {
-    productId:  {
+    id:  {
       label: '商品ID'
     },
     productName: {

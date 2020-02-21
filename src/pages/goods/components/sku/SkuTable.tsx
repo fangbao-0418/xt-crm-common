@@ -637,14 +637,6 @@ class Main extends React.Component<Props, State> {
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <>
-        <ProductSeletor
-          visible={visible}
-          onCancel={() => {
-            this.setState({
-              visible: false
-            })
-          }}
-        />
         <Table
           rowKey='id'
           className={styles['sku-table']}
@@ -655,6 +647,17 @@ class Main extends React.Component<Props, State> {
           expandedRowRender={record => {
             return (
               <Card title='商品配置'>
+                <ProductSeletor
+                  visible={visible}
+                  onOk={(selectedRowKeys, selectedRows) => {
+                    console.log('selectedRowKeys, selectedRows =>', selectedRowKeys, selectedRows);
+                  }}
+                  onCancel={() => {
+                    this.setState({
+                      visible: false
+                    })
+                  }}
+                />
                 <Table
                   rowKey='id'
                   footer={() => (

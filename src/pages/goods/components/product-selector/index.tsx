@@ -4,13 +4,15 @@ import ListPage from '@/packages/common/components/list-page';
 import { FormItem, SelectFetch } from '@/packages/common/components';
 import { defaultConfig } from './config';
 import { Modal } from 'antd';
+import { unionBy } from 'lodash';
 import { getCategoryTopList } from '../../api';
 import { CSkuProps } from '../../sku-stock/components/sku';
 import { getBaseProductPage } from '../../sku-sale/api';
 interface ProductSelectorProps {
   visible: boolean;
   onCancel: ()=> void;
-  dataSource?: any[]
+  dataSource?: any[];
+  onOk: (selectedRowKeys: string[] | number[], selectedRows: any[]) => void;
 }
 interface ProductSelectorState {
   selectedRowKeys: any[]
@@ -19,6 +21,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
   state: ProductSelectorState = {
     selectedRowKeys: []
   }
+  seletedRows: any[] = [];
   columns = [{
     title: 'id',
     width: 80,
@@ -46,6 +49,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     render: (data: CSkuProps[]) => {
       return (
         <Table
+          rowKey='productBasicSkuId'
           pagination={false}
           columns={[{
             title: '规格',
@@ -65,6 +69,10 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
       );
     }
   }]
+  handleOK = () => {
+    const { selectedRowKeys } = this.state;
+    this.props.onOk(selectedRowKeys, this.seletedRows);
+  }
   render() {
     const { selectedRowKeys } = this.state;
     const { visible, onCancel } = this.props;
@@ -73,6 +81,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
         title='请选择商品'
         visible={visible}
         onCancel={onCancel}
+        onOk={this.handleOK}
         width='70%'
       >
         <ListPage
@@ -81,14 +90,17 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
           tableProps={{
             rowSelection: {
               selectedRowKeys,
-              onChange: (selectedRowKeys) => {
+              onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
+                // fix ant-design bug
+                const unionArray: any[] = unionBy(this.seletedRows, selectedRows, x => x.id)
+                this.seletedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never));
                 this.setState({ selectedRowKeys });
               }
             }
           }}
           formItemLayout={(
             <>
-              <FormItem name='productId' />
+              <FormItem name='id' />
               <FormItem name='productName' />
               <FormItem name='status' />
               <FormItem
