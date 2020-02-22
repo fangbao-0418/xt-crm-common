@@ -1,4 +1,4 @@
-import { formRequest, baseProductResponse, baseProductPageResponse } from "./adapter";
+import { formRequest, baseProductResponse, baseProductPageResponse, formResponse, baseSkuDetailResponse } from "./adapter";
 import { queryString } from '@/util/utils';
 import { omit } from "lodash";
 const { newPost } = APP.http;
@@ -29,12 +29,17 @@ export function getBaseProductPage(payload: {
 
 // 获取组合商品详情
 export function getGroupProductDetail(payload: { productId: number }) {
-  return newPost(`/product/group/detail?productId=${payload.productId}`)
+  return newPost(`/product/group/detail?productId=${payload.productId}`).then(formResponse)
 }
 
 // 新增组合商品
 export function setGroupProduct(payload: any) {
-  const isAdd = payload.productId;
+  const isAdd = payload.productId === -1;
   payload = formRequest(payload);
   return isAdd ? newPost('/product/group/add', omit(payload, 'productId')) : newPost('/product/group/update', payload);
+}
+
+// 销售商品SKU中库存商品详情
+export function getBaseSkuDetail(skuId: number) {
+  return newPost(`/product/sku/basic/detail?skuId=${skuId}`).then(baseSkuDetailResponse)
 }

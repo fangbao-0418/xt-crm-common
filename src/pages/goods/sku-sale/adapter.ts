@@ -20,7 +20,7 @@ export function formRequest(payload: any) {
     item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
     if (Array.isArray(item.productBasics)) {
       item.productBasics = item.productBasics.map((v: any) => {
-        v.productBasicSpuCode = v.productCode;
+        v.productBasicSpuCode = v.productBasicSpuCode || v.productCode;
         return v;
       })
     }
@@ -70,4 +70,19 @@ export function baseProductPageResponse(res: any) {
     return item;
   });
   return res;
+}
+
+// 过滤销售商品SKU中库存商品详情
+export function baseSkuDetailResponse(res: any) {
+  return (res || []).map((item: any) => {
+    return {
+      ...omit(item, ['productBasicName', 'stock', 'productBasicMainImage', 'productBasicId', 'propertyInfo']),
+      productBasicSpuCode: item.productBasicSpuCode,
+      propertyValue: item.propertyInfo,
+      id: item.productBasicId,
+      productName: item.productBasicName,
+      totalStock: item.stock,
+      productMainImage: item.productBasicMainImage
+    }
+  });
 }

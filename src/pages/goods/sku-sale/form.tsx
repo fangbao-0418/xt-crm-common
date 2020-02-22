@@ -55,7 +55,6 @@ interface SkuSaleFormState extends Record<string, any> {
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   form: FormInstance;
-  specs: any[] = [];
   state: SkuSaleFormState = {
     specs: [],
     templateOptions: [],
@@ -115,16 +114,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
           : [];
       categoryId[0] && this.getStrategyByCategory(categoryId[0]);
-      this.specs = this.getSpecs([
-        {
-          title: res.property1,
-          content: [],
-        },
-        {
-          title: res.property2,
-          content: [],
-        },
-      ], res.skuList);
       this.getSupplierInfo(res.storeId);
 
       const isRepeat = templateOptions.some((opt: any) => opt.freightTemplateId === res.freightTemplateId)
@@ -136,7 +125,16 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       }
       this.setState({
         templateOptions,
-        specs: this.specs,
+        specs: this.getSpecs([
+          {
+            title: res.property1,
+            content: [],
+          },
+          {
+            title: res.property2,
+            content: [],
+          },
+        ], res.skuList),
         ...pick(res, [
           'isGroup',
           'warehouseType',
@@ -250,18 +248,17 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             deliveryMode:2
           }
         })
-        this.specs = this.getSpecs([
-          {
-            title: data.attributeName1,
-            content: []
-          },
-          {
-            title: data.attributeName2,
-            content: []
-          }
-        ], skus);
         this.setState({
-          specs: this.specs,
+          specs: this.getSpecs([
+            {
+              title: data.attributeName1,
+              content: []
+            },
+            {
+              title: data.attributeName2,
+              content: []
+            }
+          ], skus),
           skuList: skus
         })
       })
@@ -490,7 +487,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
       : [];
     categoryId[0] && this.getStrategyByCategory(categoryId[0]);
-    this.specs = this.getSpecs([
+    const specs = this.getSpecs([
       {
         title: res.property1,
         content: [],
@@ -502,7 +499,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     ], res.skuList);
     this.setState({
       // templateOptions,
-      specs: this.specs,
+      specs,
       ...pick(res, [
         'isGroup',
         'warehouseType',
@@ -510,7 +507,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         'barCode',
         'freightTemplateId',
         'skuList',
-        'specs',
         'propertyId1',
         'propertyId2',
         'returnContact',
@@ -678,6 +674,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           />
           <FormItem
             label='商品类目'
+            required={true}
             inner={(form) => {
               return form.getFieldDecorator('categoryId', {
                 rules: [{
@@ -702,7 +699,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             }}
           />
           <FormItem verifiable name='productShortName' />
-          <If condition={isGroup}>
+          <If condition={isGroup || warehouseType === 0}>
             <FormItem name='barCode' />
           </If>
           <FormItem name='productCode' />
@@ -739,7 +736,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                       placeholder='请填写供货商商品ID'
                     />
                   )}
-                  <If condition={this.id !== -1}>
+                  <If condition={this.id === -1}>
                     <Button
                       className='ml10'
                       onClick={this.sync1688Sku}
