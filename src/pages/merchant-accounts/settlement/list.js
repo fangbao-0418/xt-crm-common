@@ -241,6 +241,7 @@ class List extends React.Component {
         title: '操作',
         align: 'center',
         width: 200,
+        fixed: 'right',
         render: (operate, { settStatus, id, serialNo }) => (
           <>
 
