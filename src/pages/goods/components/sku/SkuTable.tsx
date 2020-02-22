@@ -83,15 +83,14 @@ class Main extends React.Component<Props, State> {
   public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     const  differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
-      dataIndex: 'skuId',
+      dataIndex: 'barCode',
       width: 200,
       render: (text: any, record: any, index: any) => {
         return (
           <Input
             value={text}
-            disabled={!this.props.isGroup}
             placeholder="请输入规格条码"
-            onChange={cb('skuId', record, index)}
+            onChange={cb('barCode', record, index)}
           />
         );
       },
@@ -104,7 +103,6 @@ class Main extends React.Component<Props, State> {
         return (
           <Input
             value={text}
-            disabled={true}
             placeholder="请输入规格编码"
             onChange={cb('skuCode', record, index)}
           />
@@ -303,21 +301,20 @@ class Main extends React.Component<Props, State> {
     const { getFieldDecorator } = this.props.form
     const differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
-      dataIndex: 'skuId',
+      dataIndex: 'barCode',
       width: 200,
       render: (text: any, record: any, index: any) => {
         return (
           <Input
-            disabled={true}
             value={text}
             placeholder="请输入规格条码"
-            onChange={cb('skuId', record, index)}
+            onChange={cb('barCode', record, index)}
           />
         );
       },
     }, {
       title: <div><span style={{color: 'red'}}>*</span>规格编码</div>,
-      dataIndex: 'productBasicSkuCode',
+      dataIndex: 'skuCode',
       width: 200,
       render: (text: string, record: any, index: number) => {
         return (
@@ -325,7 +322,7 @@ class Main extends React.Component<Props, State> {
             wrapperCol={{span: 24}}
           > 
             {
-              getFieldDecorator(`productBasicSkuCode-${index}`, {
+              getFieldDecorator(`skuCode-${index}`, {
                 initialValue: text,
                 rules: [
                   {
@@ -343,10 +340,10 @@ class Main extends React.Component<Props, State> {
                   placeholder="请输入规格编码"
                   onChange={(e) => {
                     const value = e.target.value
-                    cb('productBasicSkuCode', record, index)(value)
+                    cb('skuCode', record, index)(value)
                     setTimeout(() => {
                       this.forceUpdate()
-                      console.log('productBasicSkuCode')
+                      console.log('skuCode')
                     }, 400)
                   }}
                 />
@@ -647,7 +644,6 @@ class Main extends React.Component<Props, State> {
           columns={columns}
           dataSource={this.state.dataSource}
           onExpand={(expanded, record) => {
-            console.log('record =>', record);
             // 展开时
             if (expanded && !record.flag && record.skuId) {
               record.flag = true;
@@ -656,16 +652,14 @@ class Main extends React.Component<Props, State> {
 
               // 销售商品SKU中库存商品详情
               getBaseSkuDetail(record.skuId).then(data => {
-                console.log('data =>', data);
                 record.productBasics = data;
                 record.loading = false;
                 this.forceUpdate();
               })
             }
           }}
-          expandedRowRender={this.props.warehouseType === 0 || !this.props.isGroup? undefined : (record, index) => {
+          expandedRowRender={this.props.warehouseType === 0 ? undefined : (record, index) => {
             return (
-              <Card title='商品配置'>
                 <Table
                   loading={record.loading}
                   rowKey={(_, idx) => idx + ''}
@@ -674,8 +668,9 @@ class Main extends React.Component<Props, State> {
                     <ProductSeletor
                       onOk={(productBasics, hide) => {
                         const { dataSource } = this.state;
+                        dataSource[index].productBasics = productBasics;
                         if (this.props.onChange) {
-                          this.props.onChange(dataSource.map(v => ({ ...v,  productBasics})))
+                          this.props.onChange(dataSource);
                           hide();
                         }
                       }}
@@ -756,7 +751,7 @@ class Main extends React.Component<Props, State> {
                     )
                   }]}
                 />
-              </Card>
+              // </Card>
             )
           }}
           onChange={(pagination) => {

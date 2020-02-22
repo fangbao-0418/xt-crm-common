@@ -26,11 +26,11 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     dataSource: [],
     total: 0,
     page: 1,
-    pageSize: 10
+    pageSize: 100
   }
   payload = {
     page: 1,
-    pageSize: 10
+    pageSize: 100
   }
   form: FormInstance;
   seletedRows: any[] = [];

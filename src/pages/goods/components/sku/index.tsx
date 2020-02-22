@@ -6,7 +6,7 @@ import CardTitle from '../CardTitle';
 import SkuUploadItem from './SkuUploadItem';
 import styles from './style.module.scss';
 import { size, map } from 'lodash';
-import { accAdd, Subtr, accMul, accDiv } from '@/util/utils';
+import { Subtr, accMul, accDiv } from '@/util/utils';
 import SkuTable from './SkuTable'
 
 const defaultItem: SkuSaleProps = {
