@@ -72,10 +72,7 @@ class SettleDetialList extends React.Component {
             <div className={styles['cont-r']}>
               <span>发票凭证：</span>
               {settleDetail.invoiceUrl && (
-                <>
-                  <Button type='link' className={styles['paddingleft0']}>发票凭证</Button>
-                  <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
-                </>
+                <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
               )}
             </div>
           </div>
