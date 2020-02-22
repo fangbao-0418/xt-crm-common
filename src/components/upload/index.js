@@ -189,7 +189,7 @@ class UploadView extends Component {
   }
 
   beforeUpload = async (file, fileList) => {
-    console.log(file, 'file')
+    console.log(fileList, 'file')
     const { fileType, size = 10, pxSize, listNum, fileTypeErrorText } = this.props;
 
     /** 判断文件扩展名是否支持 不传就不限制 */
@@ -231,15 +231,18 @@ class UploadView extends Component {
         return item.width === imgSize.width && item.height === imgSize.height
       })
       if (result.length === 0 ) {
-        message.error(`图片尺寸不正确`);
+        message.error(`图片尺寸不正确`)
         return Promise.reject()
       }
     }
     this.count++
     const typeName = this.props.listType !== 'text' ? '图片' : '文件'
     if (listNum !== undefined && this.count > listNum) {
-      if (this.count === listNum + 1) {
-        message.error(`上传${typeName}数量超出最大限制`);
+      /** 多文件上传只提示一次 */
+      if (this.count >= listNum + 1 && fileList.length > 0) {
+        if (file === fileList[fileList.length - 1]) {
+          message.error(`上传${typeName}数量超出最大限制`)
+        }
       }
       return Promise.reject()
     }
@@ -268,6 +271,7 @@ class UploadView extends Component {
           thumbUrl: this.replaceUrl(item.thumbUrl),
         } : item
       })
+      console.log('change --------')
       isFunction(onChange) && onChange([...value]);
     });
   }
