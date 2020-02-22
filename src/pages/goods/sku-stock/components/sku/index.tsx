@@ -19,7 +19,7 @@ export interface Spec {
 export interface CSkuProps {
   // 商品条形码
   barCode: string;
-  // sku编码
+  // 商品编码
   skuCode: string;
   // 市场价格(单位分)
   marketPrice: number;

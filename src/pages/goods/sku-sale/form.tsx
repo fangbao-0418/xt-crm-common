@@ -109,10 +109,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       getTemplateList()
     ]).then(([res, list, templateOptions]) => {
       this.modifyTime = res.modifyTime;
-      const categoryId =
-        res.productCategoryVO && res.productCategoryVO.id
-          ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
-          : [];
+      console.log('res.categoryId =>', res.categoryId);
+      const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : [];
       categoryId[0] && this.getStrategyByCategory(categoryId[0]);
       this.getSupplierInfo(res.storeId);
 
@@ -482,10 +480,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   setProductFileds ([res, list]: any) {
     this.form.resetValues();
     this.getSupplierInfo(res.storeId);
-    const categoryId =
-    res.productCategoryVO && res.productCategoryVO.id
-      ? getAllId(treeToarr(list), [res.productCategoryVO.id], 'pid').reverse()
-      : [];
+    const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : [];
     categoryId[0] && this.getStrategyByCategory(categoryId[0]);
     const specs = this.getSpecs([
       {
@@ -725,29 +720,32 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               )
             }}
           />
-          <FormItem
-            label='供应商商品ID'
-            inner={(form) => {
-              return (
-                <>
-                  {form.getFieldDecorator('storeProductId')(
-                    <Input
-                      style={{ width: '60%' }}
-                      placeholder='请填写供货商商品ID'
-                    />
-                  )}
-                  <If condition={this.id === -1}>
-                    <Button
-                      className='ml10'
-                      onClick={this.sync1688Sku}
-                    >
-                      同步1688规格信息
-                    </Button>
-                  </If>
-                </>
-              );
-            }}
-          />
+          {/* 只有非入库商品显示供应商商品ID，供应商发货 */}
+          <If condition={warehouseType === 0}>
+            <FormItem
+              label='供应商商品ID'
+              inner={(form) => {
+                return (
+                  <>
+                    {form.getFieldDecorator('storeProductId')(
+                      <Input
+                        style={{ width: '60%' }}
+                        placeholder='请填写供货商商品ID'
+                      />
+                    )}
+                    <If condition={this.id === -1}>
+                      <Button
+                        className='ml10'
+                        onClick={this.sync1688Sku}
+                      >
+                        同步1688规格信息
+                      </Button>
+                    </If>
+                  </>
+                );
+              }}
+            />
+          </If>
           <FormItem
             name='interception'
             hidden={!interceptionVisible}
@@ -758,14 +756,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem
             label='商品类型'
             required
-            controlProps={{
-              style: {
-                width: '60%'
-              }
-            }}
-            style={{
-              display: [3, 4].indexOf(supplierInfo.category) > -1 ? 'inherit' : 'none'
-            }}
+            hidden={![3, 4].includes(supplierInfo.category)}
             inner={(form) => {
               return form.getFieldDecorator('productType', {
                 initialValue: 0,
@@ -777,6 +768,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 ]
               })(
                 <Select
+                  style={{ width: '60%' }}
                   disabled={this.id !== -1 && supplierInfo.category !== 3}
                   onChange={(value: number) => {
                     /** 海淘商品 */
@@ -921,24 +913,30 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem
             label='banner图片'
             required={true}
-            help={<span>(建议尺寸700*320，300kb内)</span>}
             inner={(form) => {
-              return form.getFieldDecorator('bannerUrl', {
-                rules: [{
-                  required: true,
-                  message: '请设置banner图片',
-                }]
-              })(
-                <UploadView
-                  placeholder='上传banner图片'
-                  listType='picture-card'
-                  listNum={1}
-                  size={.3}
-                />
+              return (
+                <div className={styles['input-wrapper']}>
+                  <div className={styles['input-wrapper-content']}>
+                    {form.getFieldDecorator('bannerUrl', {
+                        rules: [{
+                          required: true,
+                          message: '请设置banner图片',
+                        }]
+                      })(
+                        <UploadView
+                          placeholder='上传banner图片'
+                          listType='picture-card'
+                          listNum={1}
+                          size={.3}
+                        />
+                      )}
+                  </div>
+                  <div className={styles['input-wrapper-placeholder']}>（建议700*320px，300kb以内）</div>
+                </div>
               )
             }}
           />
-          <FormItem name='showNum' />
+          <FormItem verifiable name='showNum' />
         </Card>
         <SkuList
           isGroup={isGroup}

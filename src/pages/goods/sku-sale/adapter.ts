@@ -12,7 +12,7 @@ export function formRequest(payload: any) {
   // 组合商品默认是入库商品
   if (payload.isGroup) {
     payload.warehouseType = 1;
-  } 
+  }
   const skuList: SkuSaleProps[] = payload.skuList || [];
   let result: Record<string, any> = filterUploadFile(payload)
   result.skuAddList = skuList.map(item => {
@@ -23,6 +23,9 @@ export function formRequest(payload: any) {
         v.productBasicSpuCode = v.productBasicSpuCode || v.productCode;
         return v;
       })
+    }
+    if (!payload.isGroup) {
+      item.num = item.num || 1;
     }
     return item;
   });
@@ -35,6 +38,12 @@ export function formRequest(payload: any) {
 export function formResponse(res: any) {
   const skuList: any[] = res.skuList || [];
   res = filterUploadFile(res || {}, 'res');
+  const { productCategoryVO } = res;
+  if (productCategoryVO) {
+    res.categoryId = productCategoryVO.id;
+    res.combineName = productCategoryVO.combineName;
+    res.categoryName = productCategoryVO.name;
+  }
   res.skuList = skuList.map((item: any) => {
     item = filterMoney(item, 'res', fields);
     return item;
@@ -43,13 +52,19 @@ export function formResponse(res: any) {
   res.freightTemplateId = res.freightTemplateId ? res.freightTemplateId + '' : '';
   res.status = +res.status;
   res.productCustomsDetailVOList = res.productCustomsDetailVOList || [];
+  res.warehouseType = res.warehouseType ? 1 :  0;
   return res;
 }
 
 // 过滤库存商品详情响应
 export function baseProductResponse(res: any) {
   res = filterUploadFile(res, 'res');
-  const skuList: any[] = res.skuList || []
+  const skuList: any[] = res.skuList || [];
+  const { productBasicCategoryRelationVO } = res;
+  if (productBasicCategoryRelationVO) {
+    res.categoryId = productBasicCategoryRelationVO.categoryId;
+    res.productBasicId = productBasicCategoryRelationVO.productBasicId;
+  }
   res.skuList = skuList.map(item => {
     const result = filterMoney(item, 'res');
     result.productBasicBarCode = item.barCode;
@@ -60,7 +75,7 @@ export function baseProductResponse(res: any) {
     return { ...omit(item, ['barCode', 'skuCode']), ...result};
   })
   res.showImage = skuList.every(v => !!v.imageUrl1);
-  return omit(res, ['productCode']);
+  return omit(res, ['productCode', 'productBasicCategoryRelationVO']);
 }
 
 // 过滤库存

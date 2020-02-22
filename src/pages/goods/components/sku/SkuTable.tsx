@@ -83,7 +83,7 @@ class Main extends React.Component<Props, State> {
   public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     const  differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
-      dataIndex: 'productBasicBarCode',
+      dataIndex: 'skuId',
       width: 200,
       render: (text: any, record: any, index: any) => {
         return (
@@ -91,22 +91,22 @@ class Main extends React.Component<Props, State> {
             value={text}
             disabled={!this.props.isGroup}
             placeholder="请输入规格条码"
-            onChange={cb('productBasicBarCode', record, index)}
+            onChange={cb('skuId', record, index)}
           />
         );
       },
     },
     {
       title: '规格编码',
-      dataIndex: 'productBasicSkuCode',
+      dataIndex: 'skuCode',
       width: 200,
       render: (text: any, record: any, index: any) => {
         return (
           <Input
             value={text}
             disabled={true}
-            placeholder="请输入sku编码"
-            onChange={cb('productBasicSkuCode', record, index)}
+            placeholder="请输入规格编码"
+            onChange={cb('skuCode', record, index)}
           />
         );
       },
@@ -125,14 +125,14 @@ class Main extends React.Component<Props, State> {
       },
     },
     {
-      title: 'sku编码',
+      title: '商品编码',
       dataIndex: 'skuCode',
       width: 200,
       render: (text: any, record: any, index: any) => {
         return (
           <Input
             value={text}
-            placeholder="请输入sku编码"
+            placeholder="请输入商品编码"
             onChange={cb('skuCode', record, index)}
           />
         );
@@ -288,6 +288,7 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('stockAlert', text, record, index, dataSource, cb)(
             <InputNumber
               precision={0}
+              min={0}
               value={text}
               placeholder="请输入警戒库存"
               onChange={cb('stockAlert', record, index)}
@@ -302,7 +303,7 @@ class Main extends React.Component<Props, State> {
     const { getFieldDecorator } = this.props.form
     const differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
-      dataIndex: 'productBasicBarCode',
+      dataIndex: 'skuId',
       width: 200,
       render: (text: any, record: any, index: any) => {
         return (
@@ -310,7 +311,7 @@ class Main extends React.Component<Props, State> {
             disabled={true}
             value={text}
             placeholder="请输入规格条码"
-            onChange={cb('productBasicBarCode', record, index)}
+            onChange={cb('skuId', record, index)}
           />
         );
       },
@@ -369,7 +370,7 @@ class Main extends React.Component<Props, State> {
       },
     },
     {
-      title: <div><span style={{color: 'red'}}>*</span>SKU编码</div>,
+      title: <div><span style={{color: 'red'}}>*</span>商品编码</div>,
       dataIndex: 'skuCode',
       width: 200,
       render: (text: string, record: any, index: number) => {
@@ -383,17 +384,17 @@ class Main extends React.Component<Props, State> {
                 rules: [
                   {
                     required: true,
-                    message: 'SKU编码不能为空'
+                    message: '商品编码不能为空'
                   },
                   {
                     pattern: /^SH[\d]{6}[\dA-Z]{1}\d{3}$/,
-                    message: 'SKU编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
+                    message: '商品编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
                   }
                 ]
               })(
                 <Input
                   // value={text}
-                  placeholder="请输入SKU编码"
+                  placeholder="请输入商品编码"
                   onChange={(e) => {
                     const value = e.target.value
                     cb('skuCode', record, index)(value)
@@ -645,11 +646,10 @@ class Main extends React.Component<Props, State> {
           scroll={{ x: true }}
           columns={columns}
           dataSource={this.state.dataSource}
-          expandRowByClick={true}
           onExpand={(expanded, record) => {
             console.log('record =>', record);
             // 展开时
-            if (expanded && !record.flag) {
+            if (expanded && !record.flag && record.skuId) {
               record.flag = true;
               record.loading = true;
               this.forceUpdate();
@@ -663,12 +663,12 @@ class Main extends React.Component<Props, State> {
               })
             }
           }}
-          expandedRowRender={(record, index) => {
+          expandedRowRender={this.props.warehouseType === 0 || !this.props.isGroup? undefined : (record, index) => {
             return (
               <Card title='商品配置'>
                 <Table
                   loading={record.loading}
-                  rowKey='id'
+                  rowKey={(_, idx) => idx + ''}
                   dataSource={record.productBasics}
                   footer={() => (
                     <ProductSeletor

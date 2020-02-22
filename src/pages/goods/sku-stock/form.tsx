@@ -466,7 +466,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
                       />
                     )}
                   </div>
-                  <div className={styles['input-wrapper-placeholder']}>（建议700*300px，300kb以内）</div>
+                  <div className={styles['input-wrapper-placeholder']}>（建议700*320px，300kb以内）</div>
                 </div>
               )
             }}

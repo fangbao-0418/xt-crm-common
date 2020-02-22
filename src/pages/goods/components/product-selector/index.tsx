@@ -66,8 +66,9 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
             selectedRowKeys: records.productBasicSkuInfosRowKeys || [],
             onChange: (productBasicSkuInfosRowKeys: any[]) => {
               let { dataSource, selectedRowKeys } = this.state;
+              const productBasicSkuInfos = records.productBasicSkuInfos || [];
               dataSource[index].productBasicSkuInfosRowKeys = productBasicSkuInfosRowKeys;
-              if (productBasicSkuInfosRowKeys.length === 0) {
+              if (!!productBasicSkuInfosRowKeys.length && productBasicSkuInfosRowKeys.length < productBasicSkuInfos.length) {
                 // 必须保证id唯一否则有bug
                 selectedRowKeys = selectedRowKeys.filter(id => id !== records.id);
               } else {
@@ -113,13 +114,14 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
   }
   // TODO
   handleOK = () => {
-    const result = this.seletedRows.reduce((prev, curr) => {
-      const productBasicSkuInfos = curr.productBasicSkuInfos
-          .map((x: any) => ({ ...x, ...curr}))
-          .filter((v: any) => {
+    const { dataSource } = this.state;
+    const result = dataSource.reduce((prev, curr) => {
+      curr = curr.productBasicSkuInfos
+        .map((x: any) => ({ ...x, ...curr}))
+        .filter((v: any) => {
           return (curr.productBasicSkuInfosRowKeys || []).includes(v.productBasicSkuId)
-      });
-      return prev.concat(productBasicSkuInfos)
+        });
+      return prev.concat(curr)
     }, []);
     console.log('result =>', result);
     if (result.length === 0) {
@@ -209,6 +211,13 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
             }}
             rowSelection={{
               selectedRowKeys,
+              getCheckboxProps: (record) => {
+                const productBasicSkuInfosRowKeys = record.productBasicSkuInfosRowKeys || [];
+                const productBasicSkuInfos = record.productBasicSkuInfos || [];
+                return {
+                  indeterminate: !!productBasicSkuInfosRowKeys.length && productBasicSkuInfosRowKeys.length < productBasicSkuInfos.length
+                }
+              },
               onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
                 let { dataSource } = this.state;
                 // fix ant-design bug
@@ -217,18 +226,18 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
                 this.setState({
                   selectedRowKeys
                 });
-                // dataSource = dataSource.map(item => {
-                //   if (selectedRowKeys.includes(item.id as never)) {
-                //     item.productBasicSkuInfosRowKeys = item.productBasicSkuInfos.map((v: any) => v.productBasicSkuId);
-                //     return item;
-                //   } else {
-                //     return omit(item, 'productBasicSkuInfosRowKeys');
-                //   }
-                // })
-                // console.log('dataSource => ', dataSource)
-                // this.setState({
-                //   dataSource
-                // })
+                dataSource = dataSource.map(item => {
+                  if (selectedRowKeys.includes(item.id as never)) {
+                    item.productBasicSkuInfosRowKeys = item.productBasicSkuInfos.map((v: any) => v.productBasicSkuId);
+                    return item;
+                  } else {
+                    return omit(item, 'productBasicSkuInfosRowKeys');
+                  }
+                })
+                console.log('dataSource => ', dataSource)
+                this.setState({
+                  dataSource
+                })
               }
             }}
           />
