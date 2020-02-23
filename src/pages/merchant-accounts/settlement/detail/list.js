@@ -67,15 +67,12 @@ class SettleDetialList extends React.Component {
             <div className={styles['cont-l']}>
               <div>收入：<span className={styles['detail-money-in']}>{APP.fn.formatMoney(settleDetail.incomeMoney)}</span>元</div>
               <div>支出：<span className={styles['detail-money-out']}>{APP.fn.formatMoney(settleDetail.disburseMoney)}</span>元</div>
-              <div>本期结算总额：<span className={styles['detail-money-in']}>{APP.fn.formatMoney(settleDetail.settlementMoney)}</span>元</div>
+              <div>本期结算总额：<span className={settleDetail.settlementMoney >= 0 ? styles['detail-money-in'] : styles['detail-money-out']}>{APP.fn.formatMoney(Math.abs(settleDetail.settlementMoney))}</span>元</div>
             </div>
             <div className={styles['cont-r']}>
               <span>发票凭证：</span>
               {settleDetail.invoiceUrl && (
-                <>
-                  <Button type='link' className={styles['paddingleft0']}>发票凭证</Button>
-                  <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
-                </>
+                <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
               )}
             </div>
           </div>

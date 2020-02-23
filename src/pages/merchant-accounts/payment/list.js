@@ -168,7 +168,7 @@ class List extends React.Component {
 
     const columns = [
       {
-        title: 'ID',
+        title: '付款单ID',
         key: 'paymentSerialNo',
         dataIndex: 'paymentSerialNo',
       },
@@ -178,7 +178,7 @@ class List extends React.Component {
         dataIndex: 'paymentName'
       },
       {
-        title: '结算ID',
+        title: '结算单ID',
         key: 'settlementSerialNo',
         dataIndex: 'settlementSerialNo',
 
