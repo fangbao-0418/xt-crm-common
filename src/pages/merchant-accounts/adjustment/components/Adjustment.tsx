@@ -71,7 +71,7 @@ class Main extends React.Component<Props> {
             readonly={readonly || from === 'checking'}
           />
           <If condition={readonly}>
-            <FormItem name='storeName' label='供应商' />
+            <FormItem name='supplierName' label='供应商' />
           </If>
           <FormItem name='trimType' verifiable />
           <FormItem name='trimReason' verifiable />
@@ -125,7 +125,7 @@ class Main extends React.Component<Props> {
                       extname='doc,docx,xls,xlsx'
                       fileTypeErrorText='请上传正确doc、xls格式文件'
                     >
-                      <span className='href'>+添加文件</span>
+                      <span className={readonly ? 'disabled' : 'href'}>+添加文件</span>
                     </Upload>
                   )}
                   <div style={{fontSize: 12, color: '#999'}}>支持xls、doc格式，最多可上传3个文件，最大支持10MB</div>

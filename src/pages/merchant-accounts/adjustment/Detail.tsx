@@ -68,7 +68,7 @@ class Main extends React.Component<Props, State> {
       trimFileUrl: '',
       trimImgUrl: ''
     }
-    values.accNo = values.serialNo
+    values.accNo = values.accNo
     values.trimExplain = trimEnclosure.trimExplain
     values.trimFileUrl = this.handleFileValue(trimEnclosure.trimFileUrl)
     values.trimImgUrl = this.handleFileValue(trimEnclosure.trimImgUrl)
@@ -172,8 +172,18 @@ class Main extends React.Component<Props, State> {
     const auditRef = trimStatus === 10 ? this.audit1Ref : this.audit2Ref
     auditRef.form.props.form.validateFields((err, value) => {
       value.trimId = this.props.id
-      value.trimFileUrl = JSON.stringify(value.trimFileUrl)
-      value.trimImgUrl = JSON.stringify(value.trimImgUrl)
+      value.trimFileUrl = (value.trimFileUrl || []).map((item:  {name: string, rurl: string}) => {
+        return {
+          url: item.rurl,
+          name: item.name
+        }
+      })
+      value.trimImgUrl = (value.trimImgUrl || []).map((item:  {name: string, rurl: string}) => {
+        return {
+          url: item.rurl,
+          name: item.name
+        }
+      })
       let type: 'purchase' | 'finance' = 'purchase'
       if (trimStatus === 10) {
         type = 'purchase'

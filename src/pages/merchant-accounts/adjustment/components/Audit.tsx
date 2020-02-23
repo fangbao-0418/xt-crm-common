@@ -42,7 +42,11 @@ class Main extends React.Component<Props> {
                       disabled={readonly}
                       size={10}
                      >
-                      <span className='href'>+添加文件</span>
+                      <span
+                        className={readonly ? 'disabled' : 'href'}
+                      >
+                        +添加文件
+                      </span>
                     </Upload>
                   )}
                   <div style={{fontSize: 12, color: '#999'}}>支持xls、doc格式，最多可上传3个文件，最大支持10MB</div>
