@@ -38,11 +38,11 @@ class SettleDetial extends React.Component {
     })
   }
   render() {
-    let { settleDetail = [], dataSource = [], operateDetail = [], settStatus } = this.state
+    let { settleDetail = [], dataSource = [], operateDetail = [], settStatus, id } = this.state
     return (
       <div>
         {operateDetail.length > 0 && <StepInfo stepinfo={operateDetail} />}
-        <List settleDetail={settleDetail} dataSource={dataSource} settStatus={settStatus} />
+        <List settleDetail={settleDetail} dataSource={dataSource} settStatus={settStatus} id={id} fetchData={this.fetchData.bind(this)} />
       </div>
     )
   }

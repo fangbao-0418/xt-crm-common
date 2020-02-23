@@ -1,24 +1,46 @@
 import React from 'react';
 import { Card, Row, Table, Button } from 'antd';
-import Image from '@/components/Image'
 import styles from './style.module.styl'
 import { enumPayType } from '../../constant';
 import { download } from '@/util/utils';
+import SettleModal from '../settleModal'
 
 
 class SettleDetialList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: props.dataSource
+      dataSource: props.dataSource,
+      modalVisible: false // modal弹框隐藏显示
     };
   }
   getUrl (url) {
     url = /^http/.test(url) ? url : `https://assets.hzxituan.com/${url}`
     return url
   }
+  // 提交结算
+  handleBtnAction = id => () => {
+    this.setState({
+      modalVisible: true
+    })
+  }
+  // 提交结算 确定后回调
+  handleSucc = () => {
+    this.setState({
+      modalVisible: false
+    })
+    // 刷新
+    this.props.fetchData(this.props.id);
+  }
+
+  handleCancel = () => {
+    this.setState({
+      modalVisible: false
+    })
+  };
   render() {
-    const { settleDetail = {}, dataSource = [] } = this.props
+    const { settleDetail = {}, dataSource = [], settStatus, id } = this.props
+    const { modalVisible } = this.state
     const columns = [
       {
         title: '序号',
@@ -83,16 +105,18 @@ class SettleDetialList extends React.Component {
               return a + b
             })
           }}
+          rowKey='index'
           columns={columns}
           dataSource={dataSource}
           pagination={false}
-          rowKey={record => record.id}
         />
         <Row>共计{dataSource.length}条</Row>
         <Row style={{ textAlign: 'center' }}>
-          {enumPayType.ToBePaid === this.props.settStatus && <Button type='primary' style={{ margin: '0 10px' }}>提交结算</Button>}
+          {enumPayType.ToBePaid === settStatus && <Button type='primary' style={{ margin: '0 10px' }} onClick={this.handleBtnAction(id)}>提交结算</Button>}
           <Button onClick={() => APP.history.go(-1)}>返回</Button>
         </Row>
+        {/* 提交提示框 */}
+        <SettleModal id={id} operateType='submit' handleSucc={this.handleSucc} modalProps={{ visible: modalVisible, onCancel: this.handleCancel }} />
       </Card>
     );
   }
