@@ -21,8 +21,9 @@ class SkuStockList extends React.Component<any, SkuStockState> {
     const promiseResult = isInvalid ? invalidProduct(params) : effectProduct(params);
     promiseResult.then(res => {
       if (res) {
-        APP.success(`${isInvalid ? '失效': '生效'}成功`);
+        APP.success('操作成功');
         this.list.refresh();
+        this.setState({ selectedRowKeys: []})
       }
     })
   }
@@ -90,7 +91,7 @@ class SkuStockList extends React.Component<any, SkuStockState> {
           >
             编辑
           </Button>
-          <If condition={records.status === statusEnums['正常']}>
+          <If condition={ records.status !== statusEnums['失效']}>
             <Popconfirm
               title='确定失效吗'
               onConfirm={() => {
@@ -126,8 +127,9 @@ class SkuStockList extends React.Component<any, SkuStockState> {
         effectProduct({ ids: this.state.selectedRowKeys })
           .then(res => {
             if (res) {
-              APP.success('批量生效成功');
+              APP.success('操作成功');
               this.list.refresh();
+              this.setState({ selectedRowKeys: []})
             }
           })
       }
@@ -141,8 +143,9 @@ class SkuStockList extends React.Component<any, SkuStockState> {
         invalidProduct({ ids: this.state.selectedRowKeys })
           .then(res => {
             if (res) {
-              APP.success('批量失效成功');
+              APP.success('操作成功');
               this.list.refresh();
+              this.setState({ selectedRowKeys: []})
             }
           })
       }

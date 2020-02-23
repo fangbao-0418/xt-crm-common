@@ -3,7 +3,13 @@ import { FieldsConfig } from '@/packages/common/components/form';
 export const defaultConfig: FieldsConfig = {
   skuStock: {
     productBasicId: {
-      label: '库存商品ID'
+      label: '库存商品ID',
+      type: 'number',
+      controlProps: {
+        style: {
+          width: 172
+        }
+      }
     },
     productName: {
       label: '商品名称',
