@@ -4,7 +4,7 @@ import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { param } from '@/packages/common/utils'
-import { Tag, Divider, Button } from 'antd'
+import { Tag, Divider, Popover } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
@@ -43,6 +43,22 @@ class Main extends React.Component<Props> {
             {text || record.anchorPhone}
           </span>
 
+        )
+      }
+    },
+    {
+      title: '直播封面',
+      dataIndex: 'liveCoverUrl',
+      width: 120,
+      render: (text) => {
+        return (
+          <Popover
+            content={(
+              <Image src={text} width={240} height={240}/>
+            )}
+          >
+            <Image src={text} width={80} height={80} />
+          </Popover>
         )
       }
     },
@@ -296,6 +312,11 @@ class Main extends React.Component<Props> {
           columns={this.columns}
           tableProps={{
             rowKey: 'planId',
+            rowSelection: {
+              onChange: (keys: string[] | number[]) => {
+                console.log(keys)
+              }
+            },
             scroll: {
               x: 1630
             }
