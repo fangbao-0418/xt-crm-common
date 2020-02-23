@@ -29,7 +29,7 @@ class Main extends React.Component<Props, State> {
   public columns: ColumnProps<ListResponse>[] = [
     {
       dataIndex: 'serialNo',
-      title: 'ID',
+      title: '调整单ID',
       width: 200
     },
     {
