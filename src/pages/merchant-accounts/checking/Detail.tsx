@@ -5,7 +5,7 @@ import { FormItem } from '@/packages/common/components/form'
 import ListPage from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { parseQuery } from '@/packages/common/utils'
-import { getFieldsConfig, PaymentStatusEnum, PaymentTypeEnum, AccStatusEnum } from './config'
+import { getFieldsConfig, PaymentStatusEnum, PaymentTypeEnum, AccStatusEnum, IncomePaymentStatusEnum, ExpendPaymentStatusEnum } from './config'
 import * as api from './api'
 import { ColumnProps } from 'antd/lib/table'
 import { GetDetailsListOnPageResponse } from './interface'
@@ -66,8 +66,8 @@ class Main extends React.Component<Props, State> {
     }, {
       dataIndex: 'paymentStatus',
       title: '交易状态',
-      render: (text) => {
-        return PaymentStatusEnum[text]
+      render: (text, record) => {
+        return [1, 3].indexOf(record.paymentType) > -1 ? IncomePaymentStatusEnum[text] : ExpendPaymentStatusEnum[text]
       }
     }
   ]

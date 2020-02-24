@@ -41,6 +41,7 @@ class Main extends React.Component<Props> {
                       fileTypeErrorText='请上传正确doc、xls格式文件'
                       disabled={readonly}
                       size={10}
+                      extname='doc,docx,xls,xlsx'
                      >
                       <span
                         className={readonly ? 'disabled' : 'href'}
@@ -64,6 +65,7 @@ class Main extends React.Component<Props> {
                       listType='picture-card'
                       listNum={5}
                       // fileType={['jpg', 'png', 'jpeg']}
+                      extname='png,jpg,jpeg'
                       multiple
                       size={2}
                       disabled={readonly}
