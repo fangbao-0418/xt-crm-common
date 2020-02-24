@@ -27,10 +27,10 @@ const modifyAddress = (changeModifyAddress) => {
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddress }) => {
   const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, payDate } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
-  console.log(buyerInfo, 'buyerInfo');
+  // 支付时间小于1个小时显示按钮。
   const isModify = (new Date().getTime() - payDate) < 3600000;
   return (
-    <Card title="订单信息" extra={ isModify ? modifyAddress(changeModifyAddress) : ''}>
+    <Card title="订单信息" extra={ isModify && orderStatus === 20 ? modifyAddress(changeModifyAddress) : ''}>
       <Row gutter={24}>
         <Col span={8}>订单编号：{orderCode}</Col>
         <Col span={8}>创建时间：{formatDate(createTime)}</Col>

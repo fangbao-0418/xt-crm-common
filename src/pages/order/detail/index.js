@@ -180,12 +180,9 @@ class Detail extends Component {
 
   // 修改收货地址弹窗
   changeModifyAddress = (isOk) => {
-    console.log(111);
-    console.log(this.state.modifyAddressVisible);
     this.setState({
       modifyAddressVisible: !this.state.modifyAddressVisible
     }, () => {
-      console.log(isOk, 'isOk');
       isOk && this.query();
     })
   }
@@ -368,8 +365,8 @@ class Detail extends Component {
           title="修改订单信息"
           visible={modifyAddressVisible}
           onCancel={this.changeModifyAddress}
-          orderId={(deliveryData.childOrder || {}).id}
           buyerInfo={data.buyerInfo}
+          orderInfo={data.orderInfo}
         />
       </>
     );

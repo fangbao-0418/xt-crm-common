@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Modal, Input, Form, Cascader } from 'antd';
+import { Modal, Input, Form, message } from 'antd';
 import { formItemLayout } from '@/config';
-import { deliveryChildOrder, updateLogisticsInfo } from '../../../api';
+import { modifyAddress } from '../../../api';
 import CitySelect from '@/components/city-select'
 
 
@@ -14,31 +14,49 @@ class DeliveryDialog extends Component {
     };
   }
 
-  handleOk = e => {
-    const { onSuccess, orderId, data, form: { validateFields } } = this.props;
-    console.log(this.state.selectedValues, 'selectedValues');
+  handleOk =  (channel) => {
+    // channel用来判断是否校验运费，不传的话会校验，会有运费提高的净高，传3表示不校验更改地址。
+    const _this = this;
+    const { onCancel, form: { validateFields }, orderInfo: { id }, buyerInfo: { memberAddress } } = this.props;
+    const { selectedValues } = this.state;
     validateFields((errors, values) => {
       if (!errors) {
         console.log(values, 'values');
-        if (data && data.id) {
-          updateLogisticsInfo({
-            id: data.id,
-            expressCompanyName: values.expressCompanyName,
-            expressCode: values.expressCode,
-          }).then(() => {
-            onSuccess && onSuccess();
-          });
-          return;
+        let { province, provinceId, cityId, city, districtId, district } = memberAddress || {};
+        if(selectedValues){
+          [{label: province, value: provinceId},{label: city, value: cityId},{label: district, value: districtId}] = selectedValues;
         }
-
-        const delivery = [values.expressCompanyName + ',' + values.expressCode];
-
-        deliveryChildOrder({
-          orderId,
-          delivery,
-        }).then(() => {
-          onSuccess && onSuccess();
+        modifyAddress({
+          mainOrderId: id,
+          province,
+          provinceId,
+          cityId,
+          city,
+          districtId,
+          district,
+          id: memberAddress.id,
+          channel,
+          ...values,
+        }).then(res => {
+          const { code, success } = res;
+          if(success){
+            message.success('修改成功');
+            return onCancel(true);
+          } else if(code === "-2"){
+            return Modal.error({
+              title: res.message,
+            });
+          } else if(code === "-1"){
+            return Modal.confirm({
+              title: res.message,
+              okText: '继续',
+              onOk() {
+                _this.handleOk(3);
+              },
+            });
+          } 
         });
+      
       }
     })
   };
@@ -59,7 +77,7 @@ class DeliveryDialog extends Component {
         <Modal
           title={title}
           visible={visible}
-          onOk={this.handleOk}
+          onOk={() => this.handleOk()}
           onCancel={() => onCancel(false)}
         >
           <Form {...formItemLayout}>
@@ -71,7 +89,7 @@ class DeliveryDialog extends Component {
                   message: '请填写收件人'
                 }]
               })(
-                <Input placeholder="请填写收件人" />,
+                <Input allowClear placeholder="请填写收件人" />,
               )}
             </Form.Item>
             <Form.Item label="手机号">
@@ -79,9 +97,10 @@ class DeliveryDialog extends Component {
                 initialValue: phone,
                 rules: [{
                   required: true,
+                  len: 11,
                   message: '请填写手机号'
                 }]
-              })(<Input placeholder="请填写手机号" />)}
+              })(<Input allowClear placeholder="请填写手机号" />)}
             </Form.Item>
             <Form.Item label="所在地区">
             {getFieldDecorator(`Provinces`, {
@@ -99,7 +118,7 @@ class DeliveryDialog extends Component {
                   required: true,
                   message: '请填写详细地址'
                 }]
-              })(<Input placeholder="请填写详细地址" />)}
+              })(<Input allowClear placeholder="请填写详细地址" />)}
             </Form.Item>
           </Form>
           <div style={{textAlign: "center"}}>
