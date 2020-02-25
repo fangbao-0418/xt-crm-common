@@ -37,13 +37,15 @@ export const defaultConfig: FieldsConfig = {
       }, {
         label: '正常',
         value: 1
-      }, {
-        label: '异常',
-        value: 2
-      }, {
-        label: '售罄',
-        value: 3
-      }]
+      }
+      // , {
+      //   label: '异常',
+      //   value: 2
+      // }, {
+      //   label: '售罄',
+      //   value: 3
+      // }
+      ]
     },
     createTime: {
       label: '创建时间',
@@ -85,6 +87,6 @@ export const defaultConfig: FieldsConfig = {
 export enum statusEnums {
   失效 = 0,
   正常 = 1,
-  异常 = 2,
-  售罄 = 3
+  // 异常 = 2,
+  // 售罄 = 3
 }

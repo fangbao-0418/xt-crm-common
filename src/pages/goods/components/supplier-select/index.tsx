@@ -73,7 +73,7 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
         showArrow={false}
         filterOption={false}
         notFoundContent={fetching ? <Spin size="small" /> : null}
-        placeholder='请输入供应商'
+        placeholder='请输入供应商名称'
         onChange={this.handleChange}
         value={value as string}
       >

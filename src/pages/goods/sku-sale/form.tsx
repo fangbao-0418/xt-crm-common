@@ -738,14 +738,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           </If>
           <FormItem verifiable name='description' />
           <FormItem
-            required
+            required={true}
             label='供应商'
             inner={(form) => {
               return form.getFieldDecorator('storeId', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入供应商',
+                    message: '请输入供应商名称',
                   }
                 ],
                 onChange: this.supplierChange

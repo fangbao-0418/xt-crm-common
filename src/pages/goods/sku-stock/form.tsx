@@ -377,8 +377,14 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
           </If>
           <FormItem
             label='供应商'
+            required={true}
             inner={(form) => {
-              return form.getFieldDecorator('storeId')(
+              return form.getFieldDecorator('storeId', {
+                rules: [{
+                  required: true,
+                  message: '请输入供应商名称'
+                }]
+              })(
                 <SupplierSelect
                   style={{ width: '60%' }}
                   options={isEmpty(supplierInfo) ? []: [supplierInfo]}
