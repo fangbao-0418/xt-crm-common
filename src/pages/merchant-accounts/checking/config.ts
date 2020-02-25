@@ -145,18 +145,18 @@ export enum PaymentStatusEnum {
   出现异常 = 3
 }
 
-/** 交易类型(1:订单收入 2：售后退款 3：运费收入 4：运费支出 5：优惠券退款) */
+/** 交易类型(1:订单收入 2：售后退款 3：运费收入 4：运费支出 5：售后收入) */
 export enum PaymentTypeEnum {
   订单收入 = 1,
   售后退款 = 2,
   运费收入 = 3,
   运费支出 = 4,
-  优惠券退款 = 5
+  售后收入 = 5
 }
 
 
 /** 1-订单收入、3-运费收入交易类型对应的交易状态 */
-export enum IncomePaymentStatusEnum {
+export enum OrderPaymentStatusEnum {
   未付款 = 10,
   待发货 = 20,
   部分发货 = 25,
@@ -167,7 +167,7 @@ export enum IncomePaymentStatusEnum {
 }
 
 /** 2-售后支出、4-运费支出交易类型对应的交易状态 */
-export enum ExpendPaymentStatusEnum {
+export enum AfterSalePaymentStatusEnum {
   无售后 = 0,
   待审核 = 10,
   待用户发货 = 20,
