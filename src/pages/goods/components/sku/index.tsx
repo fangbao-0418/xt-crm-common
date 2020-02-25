@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Card, Popover, Input, Button, message } from 'antd'
+import { Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
 import CardTitle from '../CardTitle';

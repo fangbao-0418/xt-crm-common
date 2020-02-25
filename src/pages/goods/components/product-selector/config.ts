@@ -1,8 +1,15 @@
 import { FieldsConfig } from '@/packages/common/components/form'
 export const defaultConfig: FieldsConfig = {
   productSelector: {
-    id:  {
-      label: '商品ID'
+    productBasicId:  {
+      label: '商品ID',
+      type: 'number',
+      controlProps: {
+        maxLength: 20,
+        style: {
+          width: 172
+        }
+      }
     },
     productName: {
       label: '商品名称'
@@ -16,13 +23,15 @@ export const defaultConfig: FieldsConfig = {
       }, {
         label: '正常',
         value: 1
-      }, {
-        label: '异常',
-        value: 2
-      }, {
-        label: '售罄',
-        value: 3
-      }]
+      },
+      // {
+      //   label: '异常',
+      //   value: 2
+      // }, {
+      //   label: '售罄',
+      //   value: 3
+      // }
+      ]
     }
   }
 }

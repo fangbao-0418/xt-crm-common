@@ -195,7 +195,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
             config={defaultConfig}
             onSubmit={this.handleSubmit}
           >
-            <FormItem name='id' />
+            <FormItem name='productBasicId' />
             <FormItem name='productName' />
             <FormItem name='status' />
             <FormItem
@@ -223,7 +223,6 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
               showTotal: (t) => {
                 return `共计${t}条`
               },
-              // pageSizeOptions: ['10', '20', '30', '40'],
               showSizeChanger: true,
               showQuickJumper: true,
               onShowSizeChange: (current, size) => {
@@ -257,7 +256,6 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
                     return omit(item, 'productBasicSkuInfosRowKeys');
                   }
                 })
-                console.log('dataSource ||||||||||||||||| ', dataSource)
                 this.setState({
                   selectedRowKeys,
                   dataSource
