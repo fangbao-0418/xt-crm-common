@@ -54,7 +54,7 @@ export default class extends PureComponent {
     console.log('options=>', options);
     const placeholder = '请选择' + item.label;
     return (
-      <Select placeholder={placeholder}>
+      <Select placeholder={placeholder} allowClear>
         {
           options.map(({ key, val }) => (<Option value={key} key={key}>{val}</Option>))
         }

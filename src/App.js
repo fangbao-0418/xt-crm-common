@@ -32,6 +32,7 @@ class Main extends React.Component {
     APP.dispatch = props.dispatch
     APP.history = props.history
     this.fetchConfig()
+    this.fetchOrderTypes()
   }
   async fetchConfig () {
     const list = await get('/express/getList') || []
@@ -41,6 +42,13 @@ class Main extends React.Component {
     }))
     APP.constant.expressList = expressList
     APP.constant.expressConfig = this.convert2Config(expressList)
+  }
+  fetchOrderTypes () {
+    get('/order/getOrderTypeList').then(res => {
+      const orderTypeList = res.map(item =>({ label: item.name, value: item.value}));
+      APP.constant.orderTypeList = orderTypeList;
+      APP.constant.orderTypeConfig = this.convert2Config(orderTypeList);
+    })
   }
   convert2Config (list) {
     return list.reduce((config, curr) => {

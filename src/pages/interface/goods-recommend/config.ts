@@ -56,7 +56,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '支付结果页', value: 8},
           {label: '个人中心', value: 4},
           {label: '购物车', value: 2},
-          {label: '商品详情', value: 1}
+          {label: '商品详情', value: 1},
+          {label: '拼团详情', value: 16}
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -106,6 +107,7 @@ export enum StatusEnum {
 }
 
 export enum LocationEnum {
+  拼团详情 = 16,
   支付结果页 = 8,
   个人中心 = 4,
   购物车 = 2,
@@ -120,7 +122,7 @@ export enum DisplayFromEnum {
 }
 
 export const locationMap: any = {
-  value: getAllGroupMap([1,2,4,8]),
+  value: getAllGroupMap([1,2,4,8,16]),
   get label () {
     const value = this.value
     const result: any = {}
