@@ -10,7 +10,28 @@ import { getBaseProductPage } from '../../sku-sale/api';
 import { ColumnProps } from 'antd/lib/table';
 interface ProductSelectorProps {
   onOk: (selectedRows: any[], hide: () => void) => void;
+  selectedRows: any[];
 }
+
+// 组合
+function combination(dataSource: any[]) {
+  const result = dataSource.reduce((prev, curr) => {
+    curr = curr.productBasicSkuInfos
+      .map((x: any) => ({ ...x, ...curr}))
+      .filter((v: any) => {
+        return (curr.productBasicSkuInfosRowKeys || []).includes(v.productBasicSkuId)
+      });
+    return prev.concat(curr)
+  }, []);
+  return result;
+}
+
+
+// 展开
+function expansion(selectedRows: any[]) {
+  console.log(selectedRows, '----------------')
+}
+
 interface ProductSelectorState {
   selectedRowKeys: any[];
   visible: boolean;
@@ -26,11 +47,11 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     dataSource: [],
     total: 0,
     page: 1,
-    pageSize: 100
+    pageSize: 10
   }
   payload = {
     page: 1,
-    pageSize: 100
+    pageSize: 10
   }
   form: FormInstance;
   seletedRows: any[] = [];
@@ -96,6 +117,12 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
       );
     }
   }]
+  // UNSAFE_componentWillReceiveProps({ selectedRows }: ProductSelectorProps) {
+  //   this.setState({
+  //     selectedRowKeys: selectedRows.map(v => v.id),
+  //     dataSource: expansion(selectedRows)
+  //   })
+  // }
   componentDidMount() {
     this.fetchData();
   }
@@ -115,15 +142,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
   // TODO
   handleOK = () => {
     const { dataSource } = this.state;
-    const result = dataSource.reduce((prev, curr) => {
-      curr = curr.productBasicSkuInfos
-        .map((x: any) => ({ ...x, ...curr}))
-        .filter((v: any) => {
-          return (curr.productBasicSkuInfosRowKeys || []).includes(v.productBasicSkuId)
-        });
-      return prev.concat(curr)
-    }, []);
-    console.log('result =>', result);
+    const result = combination(dataSource);
     if (result.length === 0) {
       return void APP.error('请选择商品');
     }

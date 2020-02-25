@@ -33,6 +33,7 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
 
 interface State {
   dataSource: SkuSaleProps[];
+  selectedRows: any[];
 }
 
 class Main extends React.Component<Props, State> {
@@ -41,7 +42,8 @@ class Main extends React.Component<Props, State> {
     pageSize: 10
   }
   public state: State = {
-    dataSource: this.props.dataSource || []
+    dataSource: this.props.dataSource || [],
+    selectedRows: []
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({
@@ -630,6 +632,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
+    const { selectedRows } = this.state;
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <>
@@ -663,9 +666,11 @@ class Main extends React.Component<Props, State> {
                   dataSource={record.productBasics}
                   footer={() => (
                     <ProductSeletor
+                      selectedRows={selectedRows}
                       onOk={(productBasics, hide) => {
                         const { dataSource } = this.state;
                         dataSource[index].productBasics = productBasics;
+                        this.setState({ selectedRows })
                         if (this.props.onChange) {
                           this.props.onChange(dataSource);
                           hide();
@@ -737,10 +742,11 @@ class Main extends React.Component<Props, State> {
                       <Button
                         type='link'
                         onClick={() => {
-                          const { dataSource} = this.state;
+                          const { dataSource, selectedRows} = this.state;
                           record.productBasics.splice(idx, 1);
+                          selectedRows.splice(idx, 1);
                           dataSource[index].productBasics = record.productBasics;
-                          this.setState({ dataSource })
+                          this.setState({ dataSource, selectedRows })
                         }}
                       >
                         删除

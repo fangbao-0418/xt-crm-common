@@ -1,6 +1,7 @@
 import { filterMoney, filterUploadFile } from '../sku-stock/adapter';
 import { SkuSaleProps } from '../components/sku';
 import { replaceHttpUrl } from '../sku-stock/adapter';
+import { replaceHttpUrl as addonPrefix} from '@/util/utils';
 import { statusEnums } from '../sku-stock/config';
 import { omit } from 'lodash';
 
@@ -85,6 +86,7 @@ export function baseProductResponse(res: any) {
 export function baseProductPageResponse(res: any) {
   res.records = (res.records || []).map((item: any) => {
     item.statusText = statusEnums[item.status];
+    item.productMainImage = addonPrefix(item.coverUrl);
     return item;
   });
   return res;
