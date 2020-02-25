@@ -3,6 +3,7 @@ const {
   fixBabelImports,
   addDecoratorsLegacy,
   useEslintRc,
+  disableEsLint,
   addWebpackAlias,
   addWebpackPlugin,
   removeModuleScopePlugin,
@@ -77,6 +78,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
 module.exports = override(
   addWebpackModuleRule({
     test: /\.module.styl/,
+    exclude: /node_modules/,
     use: getStyleLoaders(
       {
         importLoaders: 2,
@@ -118,6 +120,7 @@ module.exports = override(
     ])
   ),
   useEslintRc(),
+  isEnvDevelopment ? undefined : disableEsLint(),
   addWebpackAlias({
     packages: path.resolve(__dirname, 'packages/'),
     '@': path.resolve(__dirname, 'src/')
