@@ -18,6 +18,9 @@ export function formRequest(payload: any) {
   result.skuAddList = skuList.map(item => {
     item = filterMoney(item, 'req', fields);
     item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
+    if (payload.warehouseType = 1) {
+      item.deliveryMode = 1;
+    }
     if (Array.isArray(item.productBasics)) {
       item.productBasics = item.productBasics.map((v: any) => {
         v.productBasicSpuCode = v.productBasicSpuCode || v.productCode;
@@ -75,7 +78,7 @@ export function baseProductResponse(res: any) {
     return { ...omit(item, ['barCode', 'skuCode']), ...result};
   })
   res.showImage = skuList.every(v => !!v.imageUrl1);
-  return omit(res, ['productCode', 'productBasicCategoryRelationVO']);
+  return omit(res, 'productBasicCategoryRelationVO');
 }
 
 // 过滤库存

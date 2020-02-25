@@ -4,7 +4,7 @@ import { omit } from "lodash";
 const { newPost } = APP.http;
 
 // 库存商品ID查询
-export function getBaseProduct(id: string) {
+export function getBaseProduct(id: number) {
   return newPost(`/product/basic/${id}`).then(baseProductResponse)
 }
 

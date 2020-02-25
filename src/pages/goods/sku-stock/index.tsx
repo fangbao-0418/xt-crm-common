@@ -168,6 +168,7 @@ class SkuStockList extends React.Component<any, SkuStockState> {
     return (
       <ListPage
         namespace='skuStock'
+        reserveKey='skuStock'
         formItemLayout={(
           <>
             <FormItem name='productBasicId' />

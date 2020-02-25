@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Card, Input, Button, message, Radio, Select, Row } from 'antd';
+import { Modal, Card, Input, Button, message, Radio, Select, Row, InputNumber } from 'antd';
 import UploadView from '@/components/upload';
 import { pick, map, size, filter, assign, isEmpty } from 'lodash';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api';
@@ -29,8 +29,6 @@ interface SkuSaleFormState extends Record<string, any> {
   skuList: any[];
   specs: any[];
   templateOptions: any[];
-  spuName: any[];
-  spuPicture: any[];
   propertyId1: string;
   propertyId2: string;
   productCategoryVO: any;
@@ -44,13 +42,14 @@ interface SkuSaleFormState extends Record<string, any> {
   interceptionVisible: boolean;
   freightTemplateId: string;
   checkType: 0 | 1;
-  productBasicId: string;
+  productBasicId?: number;
   barCode: string;
   visible: boolean;
   // 1入库商品，0非入库商品
   warehouseType: 0 | 1;
   productList: any[];
   isGroup: boolean;
+  productCode: string;
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
@@ -58,8 +57,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   state: SkuSaleFormState = {
     specs: [],
     templateOptions: [],
-    spuName: [],
-    spuPicture: [],
     skuList: [],
     propertyId1: '',
     propertyId2: '',
@@ -74,12 +71,13 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     interceptionVisible: false,
     freightTemplateId: '',
     checkType: 0,
-    productBasicId: '',
+    productBasicId: undefined,
     barCode: '',
     warehouseType: 1,
     visible: false,
     productList: [],
-    isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1'
+    isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1',
+    productCode: ''
   }
   id: number;
   modifyTime: number;
@@ -96,6 +94,31 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         this.setState({ templateOptions: opts });
       })
     }
+  }
+  // 重置状态
+  initState() {
+    this.setState({
+      specs: [],
+      skuList: [],
+      propertyId1: '',
+      propertyId2: '',
+      productCategoryVO: {},
+      returnContact: '',
+      returnPhone: '',
+      returnAddress: '',
+      showImage: false,
+      strategyData: null,
+      productCustomsDetailVOList: [],
+      supplierInfo: {},
+      interceptionVisible: false,
+      freightTemplateId: '',
+      checkType: 0,
+      productBasicId: undefined,
+      barCode: '',
+      visible: false,
+      productList: [],
+      productCode: ''
+    })
   }
   /** 获取商品详情 */
   fetchData() {
@@ -134,6 +157,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           },
         ], res.skuList),
         ...pick(res, [
+          'productCode',
           'isGroup',
           'warehouseType',
           'freightTemplateId',
@@ -156,7 +180,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'interception',
           'showNum',
           'description',
-          'productCode',
           'productId',
           'productName',
           'productShortName',
@@ -273,7 +296,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       propertyId1,
       propertyId2,
       freightTemplateId,
-      isGroup
+      isGroup,
+      productCode
     } = this.state;
     this.form.props.form.validateFields((err, vals) => {
       if (!err) {
@@ -311,6 +335,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         // 组合商品新增、编辑
         if (isGroup) {
           setGroupProduct({
+            productCode,
             isGroup,
             modifyTime: this.modifyTime,
             productId: this.id,
@@ -338,6 +363,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         // 普通商品新增、编辑
         else {
           setProduct({
+            productCode,
             isGroup,
             modifyTime: this.modifyTime,
             productId: this.id,
@@ -463,7 +489,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     })
   }
   // 校验库存商品ID
-  getSkuStockDetailById = (productBasicId: string) => {
+  getSkuStockDetailById = (productBasicId?: number) => {
     if (!productBasicId) {
       return void APP.error('请输入库存商品ID');
     }
@@ -479,7 +505,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
 
   setProductFileds ([res, list]: any) {
     this.form.resetValues();
+    this.initState();
     this.getSupplierInfo(res.storeId);
+    console.log('res => ', res);
     const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : [];
     categoryId[0] && this.getStrategyByCategory(categoryId[0]);
     const specs = this.getSpecs([
@@ -496,6 +524,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       // templateOptions,
       specs,
       ...pick(res, [
+        'productCode',
         'isGroup',
         'warehouseType',
         'productBasicId',
@@ -519,7 +548,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         'interception',
         'showNum',
         'description',
-        'productCode',
         'productId',
         'productName',
         'productShortName',
@@ -561,7 +589,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       barCode,
       visible,
       productList,
-      isGroup
+      isGroup,
+      productCode
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
     return (
@@ -588,6 +617,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               controlProps={{
                 disabled: this.id !== -1,
                 onChange: (e: any) => {
+                  this.form.resetValues();
+                  this.initState();
+                  this.initState();
                   this.setState({ warehouseType: e.target.value })
                 }
               }}
@@ -596,6 +628,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               <FormItem label='商品校验类型'>
                 <Radio.Group
                   onChange={(e) => {
+                    this.form.resetValues();
+                    this.initState();
+                    this.initState();
                     this.setState({
                       checkType: e.target.value
                     });
@@ -636,13 +671,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 <FormItem
                   label='库存商品ID'
                 >
-                  <Input
+                  <InputNumber
+                    maxLength={20}
                     style={{ width: '60%' }}
                     placeholder='请输入库存商品ID'
                     value={productBasicId}
-                    onChange={(e) => {
+                    onChange={(productBasicId) => {
                       this.setState({
-                        productBasicId: e.target.value
+                        productBasicId
                       })
                     }}
                   />
@@ -697,7 +733,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <If condition={isGroup || warehouseType === 0}>
             <FormItem name='barCode' />
           </If>
-          <FormItem name='productCode' />
+          <If condition={!!productCode}>
+            <FormItem label='商品编码'>{productCode}</FormItem>
+          </If>
           <FormItem verifiable name='description' />
           <FormItem
             required
@@ -748,6 +786,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           </If>
           <FormItem
             name='interception'
+            verifiable
             hidden={!interceptionVisible}
             controlProps={{
               disabled: productType === 20
@@ -1068,7 +1107,22 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             }}
           />
         </Card>
-        <Card style={{ marginTop: 10 }}>
+        <Card
+          style={{ marginTop: 10 }}
+          title={(
+            <div>
+              商品详情
+              <span
+                style={{
+                  fontSize: 14,
+                  color: '#999'
+                }}
+              >
+                （建议图片宽度750px，单张图片300kb内）
+              </span>
+            </div>
+          )}
+        >
           <FormItem
             label='商品详情页'
             inner={(form) => {

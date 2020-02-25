@@ -98,7 +98,8 @@ export const defaultConfig: FieldsConfig = {
       controlProps: {
         style: {
           width: '60%'
-        }
+        },
+        maxLength: 20
       }
     },
     description: {
@@ -118,7 +119,11 @@ export const defaultConfig: FieldsConfig = {
     interception: {
       label: '是否可拦截发货',
       fieldDecoratorOptions: {
-        initialValue: 0
+        initialValue: 0,
+        rules: [{
+          required: true,
+          message: '请选择是否可拦截发货'
+        }]
       },
       type: 'radio',
       options: [{

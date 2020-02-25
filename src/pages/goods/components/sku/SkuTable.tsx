@@ -134,29 +134,28 @@ class Main extends React.Component<Props, State> {
             onChange={cb('skuCode', record, index)}
           />
         );
-      },
+      }
+    }, {
+      title: '发货方式',
+      dataIndex: 'deliveryMode',
+      width: 200,
+      render: (text: any, record: any, index: any) => {
+        return (
+          <Select
+            disabled={this.props.warehouseType === 1}
+            value={text}
+            placeholder="请选择"
+            onChange={cb('deliveryMode', record, index)}
+          >
+            {
+              deliveryModeType.getArray().map(item => (<Option value={item.key} key={item.key}>{item.val}</Option>))
+            }
+          </Select>
+        )
+      }
     }]
     return [
       ...differentColumns,
-      {
-        title: '发货方式',
-        dataIndex: 'deliveryMode',
-        width: 200,
-        render: (text: any, record: any, index: any) => {
-          return (
-            <Select
-              disabled={this.props.warehouseType === 1}
-              value={text}
-              placeholder="请选择"
-              onChange={cb('deliveryMode', record, index)}
-            >
-              {
-                deliveryModeType.getArray().map(item => (<Option value={item.key} key={item.key}>{item.val}</Option>))
-              }
-            </Select>
-          )
-        }
-      },
       {
         title: '市场价',
         dataIndex: 'marketPrice',
@@ -406,26 +405,24 @@ class Main extends React.Component<Props, State> {
           </FormItem>
         );
       },
+    }, {
+      title: '发货方式',
+      dataIndex: 'deliveryMode',
+      width: 200,
+      render: (text: any, record: any, index: any) => {
+        return (
+          <Select
+            value={text}
+            placeholder="请选择"
+            onChange={cb('deliveryMode', record, index)}
+          >
+            <Option value={4} key='d-4'>保宏保税仓</Option>
+          </Select>
+        )
+      }
     }]
     return [
       ...differentColumns,
-      {
-        title: '发货方式',
-        dataIndex: 'deliveryMode',
-        width: 200,
-        render: (text: any, record: any, index: any) => {
-          return (
-            <Select
-              disabled={this.props.warehouseType === 1}
-              value={text}
-              placeholder="请选择"
-              onChange={cb('deliveryMode', record, index)}
-            >
-              <Option value={4} key='d-4'>保宏保税仓</Option>
-            </Select>
-          )
-        }
-      },
       {
         title: '备案信息',
         dataIndex: 'customsStatusInfo',
