@@ -76,6 +76,9 @@ class Main extends React.Component<Props, State> {
   }
   public getColumns (cb: any, dataSource: SkuProps[]): ColumnProps<SkuProps>[] {
     const { getFieldDecorator, validateFields } = this.props.form
+    const validateColumnsFields = (index:number) => {
+      validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
+    }
     return [
       {
         title: '供应商skuID',
@@ -145,6 +148,7 @@ class Main extends React.Component<Props, State> {
               value={text}
               placeholder="请输入成本价"
               onChange={cb('costPrice', record, index)}
+              onBlur={() => validateColumnsFields(index)}
             />
           )
         ),
@@ -181,7 +185,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.headPrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value <= record.headPrice) {
                           cb({
                             message: '应高于团长价',
                             pass: true,
@@ -198,7 +208,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入销售价"
                       onChange={cb('salePrice', record, index)}
-                      onBlur={() => validateFields([`headPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -221,7 +231,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.salePrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value >= record.salePrice) {
                           cb({
                             message: '应低于销售价',
                             pass: true,
@@ -244,7 +260,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入团长价"
                       onChange={cb('headPrice', record, index)}
-                      onBlur={() => validateFields([`salePrice-${index}`, `areaMemberPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -267,7 +283,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.headPrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value >= record.headPrice) {
                           cb({
                             message: '应低于团长价',
                             pass: true,
@@ -290,7 +312,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入社区管理员价"
                       onChange={cb('areaMemberPrice', record, index)}
-                      onBlur={() => validateFields([`headPrice-${index}`, `cityMemberPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -313,7 +335,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.areaMemberPrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value >= record.areaMemberPrice) {
                           cb({
                             message: '应低于社区管理员价',
                             pass: true,
@@ -336,7 +364,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入城市合伙人价"
                       onChange={cb('cityMemberPrice', record, index)}
-                      onBlur={() => validateFields([`areaMemberPrice-${index}`, `managerMemberPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -359,7 +387,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.cityMemberPrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value >= record.cityMemberPrice) {
                           cb({
                             message: '应低于合伙人价',
                             pass: true,
@@ -382,7 +416,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入公司管理员价"
                       onChange={cb('managerMemberPrice', record, index)}
-                      onBlur={() => validateFields([`cityMemberPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -410,6 +444,9 @@ class Main extends React.Component<Props, State> {
   /** 海外列表 */
   public getOverseasColumns (cb: any, dataSource: SkuProps[]): ColumnProps<SkuProps>[] {
     const { getFieldDecorator, validateFields } = this.props.form
+    const validateColumnsFields = (index:number) => {
+      validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
+    }
     return [
       {
         title: '供应商skuID',
@@ -557,6 +594,7 @@ class Main extends React.Component<Props, State> {
               value={text}
               placeholder="请输入成本价"
               onChange={cb('costPrice', record, index)}
+              onBlur={() => validateColumnsFields(index)}
             />
           )
         ),
@@ -577,7 +615,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.headPrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value <= record.headPrice) {
                           cb({
                             message: '应高于团长价',
                             pass: true,
@@ -594,7 +638,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入销售价"
                       onChange={cb('salePrice', record, index)}
-                      onBlur={() => validateFields([`headPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -617,7 +661,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.salePrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value >= record.salePrice) {
                           cb({
                             message: '应低于销售价',
                             pass: true,
@@ -640,7 +690,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入团长价"
                       onChange={cb('headPrice', record, index)}
-                      onBlur={() => validateFields([`salePrice-${index}`, `areaMemberPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -663,7 +713,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.headPrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value >= record.headPrice) {
                           cb({
                             message: '应低于团长价',
                             pass: true,
@@ -686,7 +742,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入社区管理员价"
                       onChange={cb('areaMemberPrice', record, index)}
-                      onBlur={() => validateFields([`headPrice-${index}`, `cityMemberPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -709,7 +765,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.areaMemberPrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value >= record.areaMemberPrice) {
                           cb({
                             message: '应低于社区管理员价',
                             pass: true,
@@ -732,7 +794,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入城市合伙人价"
                       onChange={cb('cityMemberPrice', record, index)}
-                      onBlur={() => validateFields([`areaMemberPrice-${index}`, `managerMemberPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
@@ -755,7 +817,13 @@ class Main extends React.Component<Props, State> {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value >= record.cityMemberPrice) {
+                        if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value >= record.cityMemberPrice) {
                           cb({
                             message: '应低于合伙人价',
                             pass: true,
@@ -778,7 +846,7 @@ class Main extends React.Component<Props, State> {
                       precision={2}
                       placeholder="请输入公司管理员价"
                       onChange={cb('managerMemberPrice', record, index)}
-                      onBlur={() => validateFields([`cityMemberPrice-${index}`])}
+                      onBlur={() => validateColumnsFields(index)}
                     />
                   )
                 }
