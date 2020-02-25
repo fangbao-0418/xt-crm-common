@@ -4,7 +4,7 @@ import { Card, Input, Button, Modal, InputNumber } from 'antd';
 import ProductCategory from '../components/product-category';
 import { defaultConfig } from './config'
 import { RouteComponentProps } from 'react-router'
-import SupplierSelect from '../components/supplier-select';
+import SupplierSelect, { supplierItem } from '../components/supplier-select';
 import DraggableUpload from '../components/draggable-upload';
 import styles from '../style.module.scss';
 import UploadView from '@/components/upload';
@@ -15,6 +15,7 @@ import { addProduct, updateProduct, getProduct } from './api';
 import { getGoodsDetial, getCategoryList, getStoreList } from '../api';
 import { filterSkuList } from './adapter';
 import { getAllId, treeToarr } from '@/util/utils';
+import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
 interface SkuStockFormState {
   specs: Spec[];
   propertyId1: string;
@@ -279,6 +280,12 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
       });
     });
   }
+  supplierChange = (value: string, options: supplierItem[]) => {
+    const currentSupplier: any = options.find(item => item.id === +value) || {};
+    this.setState({
+      supplierInfo: currentSupplier
+    })
+  }
   render() {
     const {
       specs,
@@ -383,8 +390,9 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
                 rules: [{
                   required: true,
                   message: '请输入供应商名称'
-                }]
-              })(
+                }],
+                onChange: this.supplierChange
+              } as GetFieldDecoratorOptions)(
                 <SupplierSelect
                   style={{ width: '60%' }}
                   options={isEmpty(supplierInfo) ? []: [supplierInfo]}
