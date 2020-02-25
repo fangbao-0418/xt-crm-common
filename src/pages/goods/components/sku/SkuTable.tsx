@@ -55,7 +55,7 @@ class Main extends React.Component<Props, State> {
       <ArrowContain
         disabled={dataSource.length <= 1}
         type={(realIndex === 0 && 'down' || realIndex === dataSource.length - 1 && 'up' || undefined)}
-        onClick={(type) => {   
+        onClick={(type) => {
           const value = text
           let currentIndex = 0
           let end = realIndex
@@ -75,6 +75,7 @@ class Main extends React.Component<Props, State> {
     )
   }
   public getColumns (cb: any, dataSource: SkuProps[]): ColumnProps<SkuProps>[] {
+    const { getFieldDecorator, validateFields } = this.props.form
     return [
       {
         title: '供应商skuID',
@@ -168,76 +169,226 @@ class Main extends React.Component<Props, State> {
         title: '销售价',
         dataIndex: 'salePrice',
         width: 200,
-        render: (text, record, index: any) => (
-          this.speedyInput('salePrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入销售价"
-              onChange={cb('salePrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          debugger
+          return this.speedyInput('salePrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`salePrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.headPrice) {
+                          cb({
+                            message: '应高于团长价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.headPrice ? '等于' : '低于'} 团长价(${record.headPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入销售价"
+                      onChange={cb('salePrice', record, index)}
+                      onBlur={() => validateFields([`headPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '团长价',
         dataIndex: 'headPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('headPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入团长价"
-              onChange={cb('headPrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('headPrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`headPrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.salePrice) {
+                          cb({
+                            message: '应低于销售价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.salePrice ? '等于' : '高于'} 销售价(${record.salePrice}元)`
+                          })
+                        } else if (value <= record.areaMemberPrice) {
+                          cb({
+                            message: '应高于社区管理员价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.areaMemberPrice ? '等于' : '低于'} 社区管理员价(${record.areaMemberPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入团长价"
+                      onChange={cb('headPrice', record, index)}
+                      onBlur={() => validateFields([`salePrice-${index}`, `areaMemberPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '社区管理员价',
         dataIndex: 'areaMemberPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入社区管理员价"
-              onChange={cb('areaMemberPrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`areaMemberPrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.headPrice) {
+                          cb({
+                            message: '应低于团长价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.headPrice ? '等于' : '高于'} 团长价(${record.headPrice}元)`
+                          })
+                        } else if (value <= record.cityMemberPrice) {
+                          cb({
+                            message: '应高于城市合伙人价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '低于'} 城市合伙人价(${record.cityMemberPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入社区管理员价"
+                      onChange={cb('areaMemberPrice', record, index)}
+                      onBlur={() => validateFields([`headPrice-${index}`, `cityMemberPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '城市合伙人价',
         dataIndex: 'cityMemberPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入合伙人价"
-              onChange={cb('cityMemberPrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`cityMemberPrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.areaMemberPrice) {
+                          cb({
+                            message: '应低于社区管理员价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.areaMemberPrice ? '等于' : '高于'} 社区管理员价(${record.areaMemberPrice}元)`
+                          })
+                        } else if (value <= record.managerMemberPrice) {
+                          cb({
+                            message: '应高于公司管理员价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.managerMemberPrice ? '等于' : '低于'} 公司管理员价(${record.managerMemberPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入城市合伙人价"
+                      onChange={cb('cityMemberPrice', record, index)}
+                      onBlur={() => validateFields([`areaMemberPrice-${index}`, `managerMemberPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '公司管理员价',
         dataIndex: 'managerMemberPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入公司管理员价"
-              onChange={cb('managerMemberPrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`managerMemberPrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.cityMemberPrice) {
+                          cb({
+                            message: '应低于合伙人价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '高于'} 合伙人价(${record.cityMemberPrice}元)`
+                          })
+                        } else if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入公司管理员价"
+                      onChange={cb('managerMemberPrice', record, index)}
+                      onBlur={() => validateFields([`cityMemberPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '警戒库存',
@@ -258,7 +409,7 @@ class Main extends React.Component<Props, State> {
   }
   /** 海外列表 */
   public getOverseasColumns (cb: any, dataSource: SkuProps[]): ColumnProps<SkuProps>[] {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, validateFields } = this.props.form
     return [
       {
         title: '供应商skuID',
@@ -282,7 +433,7 @@ class Main extends React.Component<Props, State> {
           return (
             <FormItem
               wrapperCol={{span: 24}}
-            > 
+            >
               {
                 getFieldDecorator(`skuCode-${index}`, {
                   initialValue: text,
@@ -414,76 +565,226 @@ class Main extends React.Component<Props, State> {
         title: '销售价',
         dataIndex: 'salePrice',
         width: 200,
-        render: (text, record, index: any) => (
-          this.speedyInput('salePrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入销售价"
-              onChange={cb('salePrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          debugger
+          return this.speedyInput('salePrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`salePrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.headPrice) {
+                          cb({
+                            message: '应高于团长价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.headPrice ? '等于' : '低于'} 团长价(${record.headPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入销售价"
+                      onChange={cb('salePrice', record, index)}
+                      onBlur={() => validateFields([`headPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '团长价',
         dataIndex: 'headPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('headPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入团长价"
-              onChange={cb('headPrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('headPrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`headPrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.salePrice) {
+                          cb({
+                            message: '应低于销售价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.salePrice ? '等于' : '高于'} 销售价(${record.salePrice}元)`
+                          })
+                        } else if (value <= record.areaMemberPrice) {
+                          cb({
+                            message: '应高于社区管理员价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.areaMemberPrice ? '等于' : '低于'} 社区管理员价(${record.areaMemberPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入团长价"
+                      onChange={cb('headPrice', record, index)}
+                      onBlur={() => validateFields([`salePrice-${index}`, `areaMemberPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '社区管理员价',
         dataIndex: 'areaMemberPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入社区管理员价"
-              onChange={cb('areaMemberPrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`areaMemberPrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.headPrice) {
+                          cb({
+                            message: '应低于团长价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.headPrice ? '等于' : '高于'} 团长价(${record.headPrice}元)`
+                          })
+                        } else if (value <= record.cityMemberPrice) {
+                          cb({
+                            message: '应高于城市合伙人价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '低于'} 城市合伙人价(${record.cityMemberPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入社区管理员价"
+                      onChange={cb('areaMemberPrice', record, index)}
+                      onBlur={() => validateFields([`headPrice-${index}`, `cityMemberPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '城市合伙人价',
         dataIndex: 'cityMemberPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入合伙人价"
-              onChange={cb('cityMemberPrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`cityMemberPrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.areaMemberPrice) {
+                          cb({
+                            message: '应低于社区管理员价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.areaMemberPrice ? '等于' : '高于'} 社区管理员价(${record.areaMemberPrice}元)`
+                          })
+                        } else if (value <= record.managerMemberPrice) {
+                          cb({
+                            message: '应高于公司管理员价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.managerMemberPrice ? '等于' : '低于'} 公司管理员价(${record.managerMemberPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入城市合伙人价"
+                      onChange={cb('cityMemberPrice', record, index)}
+                      onBlur={() => validateFields([`areaMemberPrice-${index}`, `managerMemberPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '公司管理员价',
         dataIndex: 'managerMemberPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入公司管理员价"
-              onChange={cb('managerMemberPrice', record, index)}
-            />
-          )
-        ),
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`managerMemberPrice-${index}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        if (value >= record.cityMemberPrice) {
+                          cb({
+                            message: '应低于合伙人价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '高于'} 合伙人价(${record.cityMemberPrice}元)`
+                          })
+                        } else if (value <= record.costPrice) {
+                          cb({
+                            message: '应高于成本价',
+                            pass: true,
+                            msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
+                })(
+                    <InputMoney
+                      precision={2}
+                      placeholder="请输入公司管理员价"
+                      onChange={cb('managerMemberPrice', record, index)}
+                      onBlur={() => validateFields([`cityMemberPrice-${index}`])}
+                    />
+                  )
+                }
+            </FormItem>
+          );
+        },
       },
       {
         title: '警戒库存',
@@ -537,7 +838,7 @@ class Main extends React.Component<Props, State> {
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <Table
-        // rowKey={(record: any) => record.id}
+        rowKey={(record: any, index: any) => `sku-table-${index}`}
         className={styles['sku-table']}
         style={{ marginTop: 10 }}
         scroll={{ x: 2500 }}
