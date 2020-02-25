@@ -667,9 +667,10 @@ class Main extends React.Component<Props, State> {
                   footer={() => (
                     <ProductSeletor
                       selectedRows={selectedRows}
-                      onOk={(productBasics, hide) => {
+                      onOk={(selectedRows, hide) => {
+                        selectedRows = [...selectedRows]
                         const { dataSource } = this.state;
-                        dataSource[index].productBasics = productBasics;
+                        dataSource[index].productBasics = selectedRows;
                         this.setState({ selectedRows })
                         if (this.props.onChange) {
                           this.props.onChange(dataSource);
@@ -742,10 +743,12 @@ class Main extends React.Component<Props, State> {
                       <Button
                         type='link'
                         onClick={() => {
-                          const { dataSource, selectedRows} = this.state;
-                          record.productBasics.splice(idx, 1);
+                          const { dataSource } = this.state;
+                          const productBasics = [...record.productBasics];
+                          const selectedRows = [...this.state.selectedRows];
+                          productBasics.splice(idx, 1);
                           selectedRows.splice(idx, 1);
-                          dataSource[index].productBasics = record.productBasics;
+                          dataSource[index].productBasics = productBasics;
                           this.setState({ dataSource, selectedRows })
                         }}
                       >

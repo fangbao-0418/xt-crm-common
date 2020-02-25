@@ -28,8 +28,14 @@ function combination(dataSource: any[]) {
 
 
 // 展开
-function expansion(selectedRows: any[]) {
-  console.log(selectedRows, '----------------')
+function expansion(data: any[], selectedRows: any[]) {
+  return data.map(item => {
+    item.productBasicSkuInfosRowKeys =
+      item.productBasicSkuInfos
+      .map((v: any) => v.productBasicSkuId)
+      .filter((id: any) => selectedRows.find(item => item.productBasicSkuId === id))
+    return item;
+  })
 }
 
 interface ProductSelectorState {
@@ -117,12 +123,13 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
       );
     }
   }]
-  // UNSAFE_componentWillReceiveProps({ selectedRows }: ProductSelectorProps) {
-  //   this.setState({
-  //     selectedRowKeys: selectedRows.map(v => v.id),
-  //     dataSource: expansion(selectedRows)
-  //   })
-  // }
+  UNSAFE_componentWillReceiveProps({ selectedRows }: ProductSelectorProps) {
+    const selectedRowKeys = selectedRows.map(v => v.id);
+    this.setState({
+      selectedRowKeys,
+      dataSource: expansion(this.state.dataSource, selectedRows)
+    })
+  }
   componentDidMount() {
     this.fetchData();
   }
@@ -242,9 +249,6 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
                 // fix ant-design bug
                 const unionArray: any[] = unionBy(this.seletedRows, selectedRows, x => x.id)
                 this.seletedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never));
-                this.setState({
-                  selectedRowKeys
-                });
                 dataSource = dataSource.map(item => {
                   if (selectedRowKeys.includes(item.id as never)) {
                     item.productBasicSkuInfosRowKeys = item.productBasicSkuInfos.map((v: any) => v.productBasicSkuId);
@@ -253,8 +257,9 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
                     return omit(item, 'productBasicSkuInfosRowKeys');
                   }
                 })
-                console.log('dataSource => ', dataSource)
+                console.log('dataSource ||||||||||||||||| ', dataSource)
                 this.setState({
+                  selectedRowKeys,
                   dataSource
                 })
               }
