@@ -60,7 +60,7 @@ class Main extends React.Component<Props, State> {
       dataIndex: 'paymentMoney',
       title: '交易金额',
       render: (text, record) => {
-        const className = [1, 3].indexOf(record.paymentType) > -1 ? 'success' : 'error'
+        const className = [1, 3, 5].indexOf(record.paymentType) > -1 ? 'success' : 'error'
         return <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
       }
     }, {
