@@ -8,6 +8,12 @@ export interface batchExportPayload {
   expressNumbers: string;
   fileName: string;
 }
+
+// 获取订单类型集合
+export function getOrderTypeList () {
+  return get('/order/getOrderTypeList')
+}
+
 // 批量轨迹导出
 export function batchExport(payload: batchExportPayload) {
   return exportFileStream('/expressTracking/batchExport', batchExportRequest(payload), payload.fileName)

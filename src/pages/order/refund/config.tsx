@@ -1,7 +1,6 @@
 import React from 'react';
 import GoodCell from '@/components/good-cell';
 import SuppilerSelect from '@/components/suppiler-auto-select'
-import { enumRefundStatus } from '../constant';
 import refundType from '@/enum/refundType';
 import createType from '@/enum/createType';
 import { Button } from 'antd';
@@ -129,17 +128,8 @@ export const formFields = function (refundStatus: any, intercept: any) {
       type: 'select',
       id: 'orderType',
       label: '订单类型',
-      options: [
-        { val: '全部', key: '' },
-        { val: '普通订单', key: '0' },
-        { val: '激活码订单', key: '10' },
-        { val: '地推订单', key: '20' },
-        { val: '活动兑换订单', key: '30' },
-        { val: '采购订单', key: '40' },
-        { val: '团购会订单', key: '60' },
-        { val: '海淘订单', key: '70' },
-        { val: '团购会采购订单', key: '80' }
-      ]
+      // 必须按需加载这个模块
+      options: (APP.constant.orderTypeList || []).map(item => ({ val: item.label, key: item.value }))
     }, {
       type: 'select',
       id: 'interception',

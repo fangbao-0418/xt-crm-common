@@ -15,6 +15,7 @@ import WithModal from './components/modal'
 import ModifyAddress from './components/modifyAddress'
 import { namespace } from './model'
 import { connect } from 'react-redux'
+import If from '@/packages/common/components/if'
 
 /**
  * 海淘状态
@@ -197,12 +198,18 @@ class Detail extends Component {
       modifyAddressVisible
     } = this.state
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
+    const orderType = get(data, 'orderInfo.orderType');
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
     const showFlag = !!data.orderGlobalExtendVO 
     const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
+    console.log(childOrderList, 'childOrderListchildOrderListchildOrderListchildOrderList')
     return (
       <>
-        <StepInfo orderStatus={orderStatus} orderStatusLogList={orderStatusLogList} />
+        <StepInfo
+          orderType={orderType}
+          orderStatus={orderStatus}
+          orderStatusLogList={orderStatusLogList}
+        />
         {/* 订单信息 */}
         <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress}/>
         {/* 支付信息 */}
@@ -327,7 +334,13 @@ class Detail extends Component {
                       <Row gutter={24}>
                         <Col span={8}>供应商：{item.childOrder.storeName}</Col>
                         <Col span={8}>供应商类型：{storeType[item.childOrder.category]}</Col>
-                        <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
+                        <If condition={item.childOrder.liveId > 0}>
+                          <Col span={4}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
+                          <Col span={4}>直播间ID：{item.childOrder.liveId}</Col>
+                        </If>
+                        <If condition={item.childOrder.liveId <= 0}>
+                          <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
+                        </If>
                       </Row>
                       <Row>
                         {

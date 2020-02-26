@@ -12,22 +12,10 @@ import RemarkModal from '../components/modal/remark-modal';
 import RefundModal from '../components/refund-modal';
 import RefundStatusCell from '../components/refund-status-cell';
 import { getHeaders, parseQuery } from '@/util/utils';
+import SelectOrderType from './SelectOrderType';
 import withModal from './withModal';
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
-
-/** 订单类型选项 */
-const orderTypeOptions = [
-  { label: '全部', value: '' },
-  { label: '普通订单', value: '0' },
-  { label: '激活码订单', value: '10' },
-  { label: '地推订单', value: '20' },
-  { label: '活动兑换订单', value: '30' },
-  { label: '采购订单', value: '40' },
-  { label: '团购会订单', value: '60' },
-  { label: '海淘订单', value: '70' },
-  { label: '团购会采购订单', value: '80'}
-]
 
 const formatRangeDate = (val) => {
   return Array.isArray(val) ? val.map(v => v.format('YYYY-MM-DD HH:mm')) : []
@@ -339,13 +327,9 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="订单类型">
-                  {getFieldDecorator('queryOrderType', {initialValue: values.queryOrderType})(
-                    <Select allowClear placeholder='请选择订单类型'>
-                      {orderTypeOptions.map((v) => (
-                        <Select.Option value={v.value}>{v.label}</Select.Option>
-                      ))}
-                    </Select>
-                  )}
+                  {getFieldDecorator('queryOrderType', {
+                    initialValue: values.queryOrderType
+                  })(<SelectOrderType />)}
                 </FormItem>
               </Col>
               <Col span={6}>

@@ -33,7 +33,7 @@ class Main extends React.Component<Props, State> {
   public payload: PayloadProps = {
     page: 1,
     pageSize: 10,
-    excludTypes: [3, 4, 5, 6, 7, 8, 9]
+    excludTypes: [3, 4, 5, 6, 7, 8, 9, 10]
   }
   public selectRows: Marketing.ItemProps[] = []
   public form: FormInstance
