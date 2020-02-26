@@ -5,25 +5,35 @@ import { Button } from 'antd';
 
 class Withdraw extends React.Component {
   columns = [{
-    title: '提现单号'
+    title: '提现单号',
+    dataIndex: 'transferNo'
   }, {
-    title: '提现类型'
+    title: '提现类型',
+    dataIndex: 'moneyAccountType'
   }, {
-    title: '申请人账号'
+    title: '申请人账号',
+    dataIndex: 'memberMobile'
   }, {
-    title: '申请时间'
+    title: '申请时间',
+    dataIndex: 'createTime'
   }, {
-    title: '提交时间'
+    title: '提交时间',
+    dataIndex: 'submitTime'
   }, {
-    title: '提现金额'
+    title: '提现金额',
+    dataIndex: 'transferAmount'
   }, {
-    title: '服务费'
+    title: '服务费',
+    dataIndex: 'serviceCharge'
   }, {
-    title: '银行卡绑定人'
+    title: '银行卡绑定人',
+    dataIndex: 'realName'
   }, {
-    title: '银行卡号'
+    title: '银行卡号',
+    dataIndex: 'bankCardNo'
   }, {
-    title: '身份证号'
+    title: '身份证号',
+    dataIndex: 'idCardNo'
   }, {
     title: '提现状态'
   }, {

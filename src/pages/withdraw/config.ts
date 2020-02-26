@@ -2,23 +2,44 @@ import { FieldsConfig } from "@/packages/common/components/form";
 
 export const defaultConfig: FieldsConfig = {
   withdraw: {
-    num: {
+    transferNo: {
       label: '提现单号'
     },
-    type: {
+    moneyAccountType: {
       label: '提现类型',
       type: 'select',
-      options: []
+      options: [{
+        label: '普通提现',
+        value: 0
+      }, {
+        label: '拦截提现',
+        value: 1
+      }]
     },
-    status: {
+    transferStatus: {
       label: '状态',
       type: 'select',
-      options: []
+      options: [{
+        label: '提现取消',
+        value: -2
+      }, {
+        label: '提现失败',
+        value: -1
+      }, {
+        label: '待提现',
+        value: 0
+      }, {
+        label: '提现成功',
+        value: 1    
+      }, {
+        label: '提现中',
+        value: 2
+      }]
     },
-    account: {
+    memberMobile: {
       label: '申请人手机号'
     },
-    applayTime: {
+    createTime: {
       label: '申请时间',
       type: 'rangepicker'
     },
@@ -26,7 +47,7 @@ export const defaultConfig: FieldsConfig = {
       label: '提交时间',
       type: 'rangepicker'
     },
-    bankCardNum: {
+    bankCardNo: {
       label: '银行卡号'
     },
     
