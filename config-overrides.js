@@ -7,7 +7,8 @@ const {
   addWebpackAlias,
   addWebpackPlugin,
   removeModuleScopePlugin,
-  addWebpackModuleRule
+  addWebpackModuleRule,
+  addWebpackExternals
 } = require('customize-cra');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
@@ -125,6 +126,12 @@ module.exports = override(
     packages: path.resolve(__dirname, 'packages/'),
     '@': path.resolve(__dirname, 'src/')
   }),
+  addWebpackExternals({
+    react: 'React',
+    'react-dom': 'ReactDom',
+    antd: 'antd',
+    moment: 'moment'
+  })
   (function () {
     return function (config) {
       if (isEnvProduction) {
