@@ -8,10 +8,11 @@ function getUser () {
   var userStr = localStorage.getItem('user')
   var user = {}
   try {
-    user = JSON.parse(userStr)
+    user = JSON.parse(userStr) || {}
   } catch (e) {
     console.log(e)
   }
+  console.log(user, 'user')
   user.menuGathers = user.menuGathers || []
   return user
 }

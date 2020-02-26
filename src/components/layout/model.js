@@ -1,6 +1,6 @@
 import * as api from './api';
 import { arrToTree, getItemById, getAllId } from '@/util/utils';
-import { Message } from 'antd';
+// import { Message } from 'antd';
 
 export default {
   namespace: 'layout',
