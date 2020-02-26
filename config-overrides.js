@@ -10,7 +10,8 @@ const {
   addWebpackModuleRule,
   addWebpackExternals,
   addBundleVisualizer,
-  setWebpackOptimizationSplitChunks
+  setWebpackOptimizationSplitChunks,
+  addTslintLoader
 } = require('customize-cra');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
@@ -79,6 +80,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
 };
 
 module.exports = override(
+  addTslintLoader(),
   addWebpackModuleRule({
     test: /\.module.styl/,
     exclude: /node_modules/,
