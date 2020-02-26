@@ -7,7 +7,10 @@ const {
   addWebpackAlias,
   addWebpackPlugin,
   removeModuleScopePlugin,
-  addWebpackModuleRule
+  addWebpackModuleRule,
+  addWebpackExternals,
+  addBundleVisualizer,
+  setWebpackOptimizationSplitChunks
 } = require('customize-cra');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
@@ -90,11 +93,11 @@ module.exports = override(
     )
   }),
   removeModuleScopePlugin(),
-  fixBabelImports('import', {
-    libraryName: 'antd',
-    style: 'css',
-    libraryDirectory: 'es' // change importing css to less
-  }),
+  // fixBabelImports('import', {
+  //   libraryName: 'antd',
+  //   style: 'css',
+  //   libraryDirectory: 'es' // change importing css to less
+  // }),
   fixBabelImports('lodash', {
     libraryDirectory: '',
     camel2DashComponentName: false
@@ -124,6 +127,24 @@ module.exports = override(
   addWebpackAlias({
     packages: path.resolve(__dirname, 'packages/'),
     '@': path.resolve(__dirname, 'src/')
+  }),
+  addWebpackExternals({
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    antd: 'antd',
+    imutable: 'Immutable',
+    moment: 'moment',
+    'ali-oss': 'OSS'
+  }),
+  // addBundleVisualizer(),
+  setWebpackOptimizationSplitChunks({
+    cacheGroups: {
+      commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+      }
+    }
   }),
   (function () {
     return function (config) {
