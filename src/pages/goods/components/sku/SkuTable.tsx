@@ -143,13 +143,22 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入成本价"
-              onChange={cb('costPrice', record, index)}
-              onBlur={() => validateColumnsFields(index)}
-            />
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`costPrice-${index}`, {
+                  initialValue: text,
+                })(
+                  <InputMoney
+                    precision={2}
+                    placeholder="请输入成本价"
+                    onChange={cb('costPrice', record, index)}
+                    onBlur={() => validateColumnsFields(index)}
+                  />
+                )
+              }
+            </FormItem>
           )
         ),
       },
@@ -174,7 +183,6 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'salePrice',
         width: 200,
         render: (text: any, record: any, index: any) => {
-          debugger
           return this.speedyInput('salePrice', text, record, index, dataSource, cb)(
             <FormItem
               wrapperCol={{span: 24}}
@@ -589,13 +597,22 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb)(
-            <InputMoney
-              precision={2}
-              value={text}
-              placeholder="请输入成本价"
-              onChange={cb('costPrice', record, index)}
-              onBlur={() => validateColumnsFields(index)}
-            />
+            <FormItem
+              wrapperCol={{span: 24}}
+            >
+              {
+                getFieldDecorator(`costPrice-${index}`, {
+                  initialValue: text,
+                })(
+                  <InputMoney
+                    precision={2}
+                    placeholder="请输入成本价"
+                    onChange={cb('costPrice', record, index)}
+                    onBlur={() => validateColumnsFields(index)}
+                  />
+                )
+              }
+            </FormItem>
           )
         ),
       },
@@ -604,7 +621,6 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'salePrice',
         width: 200,
         render: (text: any, record: any, index: any) => {
-          debugger
           return this.speedyInput('salePrice', text, record, index, dataSource, cb)(
             <FormItem
               wrapperCol={{span: 24}}
