@@ -1892,10 +1892,10 @@ ansistyles@~0.1.3:
   resolved "http://192.168.20.8:802/ansistyles/-/ansistyles-0.1.3.tgz#5de60415bda071bb37127854c864f41b23254539"
   integrity sha1-XeYEFb2gcbs3EnhUyGT0GyMlRTk=
 
-antd@^3.10.8:
-  version "3.26.3"
-  resolved "http://192.168.20.8:802/antd/-/antd-3.26.3.tgz#046747567d25e381b1b298c3a5c5b970ed716a0d"
-  integrity sha1-BGdHVn0l44GxspjDpcW5cO1xag0=
+antd@3.26.8:
+  version "3.26.8"
+  resolved "http://192.168.20.8:802/antd/-/antd-3.26.8.tgz#e40982c5cdb6c5c2c5f037ead27889b5f71e4ea3"
+  integrity sha1-5AmCxc22xcLF8Dfq0niJtfceTqM=
   dependencies:
     "@ant-design/create-react-context" "^0.2.4"
     "@ant-design/icons" "~2.1.1"
@@ -1908,6 +1908,7 @@ antd@^3.10.8:
     css-animation "^1.5.0"
     dom-closest "^0.2.0"
     enquire.js "^2.1.6"
+    is-mobile "^2.1.0"
     lodash "^4.17.13"
     moment "^2.24.0"
     omit.js "^1.0.2"
@@ -7344,6 +7345,11 @@ is-installed-globally@^0.1.0:
   dependencies:
     global-dirs "^0.1.0"
     is-path-inside "^1.0.0"
+
+is-mobile@^2.1.0:
+  version "2.2.1"
+  resolved "http://192.168.20.8:802/is-mobile/-/is-mobile-2.2.1.tgz#10f2320012c410cc285feecb13406bd586f1b2f8"
+  integrity sha1-EPIyABLEEMwoX+7LE0Br1Ybxsvg=
 
 is-npm@^1.0.0:
   version "1.0.0"

@@ -136,7 +136,7 @@ module.exports = override(
     moment: 'moment',
     'ali-oss': 'OSS'
   }),
-  // isEnvDevelopment ? undefined : addBundleVisualizer(),
+  // addBundleVisualizer(),
   setWebpackOptimizationSplitChunks({
     cacheGroups: {
       commons: {
