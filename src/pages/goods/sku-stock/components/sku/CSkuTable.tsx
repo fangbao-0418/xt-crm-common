@@ -37,6 +37,22 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
     const { dataSource } = this.state;
     const cb = this.handleChangeValue;
     return this.props.id === -1 ? [{
+      title: '单位',
+      dataIndex: 'unit',
+      width: 100,
+      align: 'center',
+      render: (text, record, index) => {
+        return (
+          this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+            <Input
+              value={text}
+              placeholder='请输入单位'
+              onChange={cb('marketPrice', record, index)}
+            />
+          )
+        )
+      }
+    }, {
       title: '规格条码',
       dataIndex: 'barCode',
       render: (text: any, record: any, index: any) => {
@@ -89,6 +105,23 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
         )
       )
     }]: [
+      {
+        title: '单位',
+        dataIndex: 'unit',
+        width: 100,
+        align: 'center',
+        render: (text, record, index) => {
+          return (
+            this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+              <Input
+                value={text}
+                placeholder='请输入单位'
+                onChange={cb('marketPrice', record, index)}
+              />
+            )
+          )
+        }
+      },
       {
         title: '规格条码',
         dataIndex: 'barCode',

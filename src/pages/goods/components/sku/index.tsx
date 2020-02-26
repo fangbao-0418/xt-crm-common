@@ -117,7 +117,7 @@ class SkuList extends React.Component<Props, State>{
     warehouseType: 1
   }
   public componentWillReceiveProps (props: Props) {
-    console.log('dataSource =>', props.dataSource);
+    // console.log('dataSource =>', props.dataSource);
     this.setState({
       showImage: props.showImage,
       specs: props.specs,
@@ -126,11 +126,11 @@ class SkuList extends React.Component<Props, State>{
     })
   }
   public getCombineResult (specs: Spec[], dataSource: SkuSaleProps[]) {
-    console.log(specs, 'specs getCombineResult')
-    console.log(dataSource, 'dataSource getCombineResult')
+    // console.log(specs, 'specs getCombineResult')
+    // console.log(dataSource, 'dataSource getCombineResult')
     const collection = specs.map((item) => item.content)
     const combineResutle: SpecItem[][] = APP.fn.mutilCollectionCombine.apply(null, collection)
-    console.log(combineResutle, 'combineResutle getCombineResult')
+    // console.log(combineResutle, 'combineResutle getCombineResult')
     /** 如果合并后只有一组数据切第一项全部都是undefind则数组返回空, */
     if (combineResutle.length === 1 && combineResutle[0].every((item) => item === undefined)) {
       return []

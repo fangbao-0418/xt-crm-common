@@ -19,12 +19,12 @@ import { getBaseProduct, getBaseBarcode, setGroupProduct, getGroupProductDetail 
 import { FormInstance } from '@/packages/common/components/form';
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
 
-function NumberValidator(rule: any, value: any, callback: any) {
-  if (!(/^\d{0,20}$/.test(value))) {
-    callback('仅支持数字，20个字符以内');
-  }
-  callback();
-}
+// function NumberValidator(rule: any, value: any, callback: any) {
+//   if (!(/^\d{0,20}$/.test(value))) {
+//     callback('仅支持数字，20个字符以内');
+//   }
+//   callback();
+// }
 interface SkuSaleFormState extends Record<string, any> {
   skuList: any[];
   specs: any[];
@@ -39,7 +39,7 @@ interface SkuSaleFormState extends Record<string, any> {
   strategyData: any;
   productCustomsDetailVOList: any[];
   supplierInfo: any;
-  interceptionVisible: boolean;
+  // interceptionVisible: boolean;
   freightTemplateId: string;
   checkType: 0 | 1;
   productBasicId?: number;
@@ -68,7 +68,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     strategyData: null,
     productCustomsDetailVOList: [],
     supplierInfo: {},
-    interceptionVisible: false,
+    // interceptionVisible: false,
     freightTemplateId: '',
     checkType: 0,
     productBasicId: undefined,
@@ -110,7 +110,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       strategyData: null,
       productCustomsDetailVOList: [],
       supplierInfo: {},
-      interceptionVisible: false,
+      // interceptionVisible: false,
       freightTemplateId: '',
       checkType: 0,
       productBasicId: undefined,
@@ -132,7 +132,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       getTemplateList()
     ]).then(([res, list, templateOptions]) => {
       this.modifyTime = res.modifyTime;
-      console.log('res.categoryId =>', res.categoryId);
+      // console.log('res.categoryId =>', res.categoryId);
       const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : [];
       categoryId[0] && this.getStrategyByCategory(categoryId[0]);
       this.getSupplierInfo(res.storeId);
@@ -252,7 +252,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       }
       this.setState({
         supplierInfo,
-        interceptionVisible: supplierInfo.category == 1 ? false : true,
+        // interceptionVisible: supplierInfo.category == 1 ? false : true,
       });
     })
   }
@@ -415,14 +415,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     let { productType } = getFieldsValue()
     if (category === 1) {
       resetFields(['interception']);
-      this.setState({
-        interceptionVisible: false
-      })
+      // this.setState({
+      //   interceptionVisible: false
+      // })
     } else {
       resetFields(['interception']);
-      this.setState({
-        interceptionVisible: true
-      })
+      // this.setState({
+      //   interceptionVisible: true
+      // })
     }
     if (currentSupplier.category === 3) {
       productType = 10
@@ -498,7 +498,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       getCategoryList()
     ])
     .then((value: any) => {
-      console.log(value, '|||||||||||||||||||||')
+      // console.log(value, '|||||||||||||||||||||')
       this.setProductFileds(value);
     })
   }
@@ -507,7 +507,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     this.form.resetValues();
     this.initState();
     this.getSupplierInfo(res.storeId);
-    console.log('res => ', res);
+    // console.log('res => ', res);
     const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : [];
     categoryId[0] && this.getStrategyByCategory(categoryId[0]);
     const specs = this.getSpecs([
@@ -578,7 +578,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   }
   render() {
     const {
-      interceptionVisible,
+      // interceptionVisible,
       productCustomsDetailVOList,
       supplierInfo,
       freightTemplateId,
@@ -787,7 +787,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem
             name='interception'
             verifiable
-            hidden={!interceptionVisible}
+            // hidden={!interceptionVisible}
             controlProps={{
               disabled: productType === 20
             }}

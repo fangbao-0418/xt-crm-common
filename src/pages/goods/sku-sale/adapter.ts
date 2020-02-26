@@ -87,6 +87,13 @@ export function baseProductPageResponse(res: any) {
   res.records = (res.records || []).map((item: any) => {
     item.statusText = statusEnums[item.status];
     item.productMainImage = addonPrefix(item.coverUrl);
+    item.productBasicSkuInfos = (item.productBasicSkuInfos || []).map((v: any) => {
+      return {
+        ...v,
+        costPrice: APP.fn.formatMoneyNumber(v.costPrice, 'm2u'),
+        marketPrice: APP.fn.formatMoneyNumber(v.marketPrice, 'm2u')
+      }
+    });
     return item;
   });
   return res;
@@ -105,4 +112,16 @@ export function baseSkuDetailResponse(res: any) {
       productMainImage: item.productBasicMainImage
     }
   });
+}
+
+// 过滤转换后销售商品SKU中库存商品详情
+export function normalizeBaseSkuDetailResponse(res: any) {
+  // const result: any[] = [];
+  // for (let item of res) {
+  //   for (let info of item.productBasicSkuInfos) {
+  //     result.push({ ...item, ...info })
+  //   }
+  // }
+  console.log('res =>', res);
+  return res;
 }

@@ -9,37 +9,40 @@ import { CSkuProps } from '../../sku-stock/components/sku';
 import { getBaseProductPage } from '../../sku-sale/api';
 import { ColumnProps } from 'antd/lib/table';
 interface ProductSelectorProps {
-  onOk: (selectedRows: any[], hide: () => void) => void;
-  selectedRows: any[];
+  onOk: (selectedRowKeys: any, selectedRows: any[], selectedRowKeysMap: any) => void;
+  selectedRowKeys: any[],
+  selectedRowKeysMap: any;
 }
 
 // 组合
-function combination(dataSource: any[]) {
-  const result = dataSource.reduce((prev, curr) => {
-    curr = curr.productBasicSkuInfos
-      .map((x: any) => ({ ...x, ...curr}))
-      .filter((v: any) => {
-        return (curr.productBasicSkuInfosRowKeys || []).includes(v.productBasicSkuId)
-      });
-    return prev.concat(curr)
-  }, []);
+function combination(selectedRows: any[], selectedRowKeysMap: any) {
+  let result: any[] = [];
+  for (let row of selectedRows) {
+    const productBasicSkuInfos = row.productBasicSkuInfos.filter((v: any) => {
+      return (selectedRowKeysMap[row.id] || []).includes(v.productBasicSkuId);
+    })
+    for (let item of productBasicSkuInfos) {
+      result.push({ ...row, ...item})
+    }
+  }
   return result;
 }
 
-
-// 展开
-function expansion(data: any[], selectedRows: any[]) {
-  return data.map(item => {
-    item.productBasicSkuInfosRowKeys =
-      item.productBasicSkuInfos
-      .map((v: any) => v.productBasicSkuId)
-      .filter((id: any) => selectedRows.find(item => item.productBasicSkuId === id))
-    return item;
-  })
+function getSelectedRowKeysMap(selectedRows: any[]) {
+  const result: any = {};
+  for (let item of selectedRows) {
+    const productBasicSkuInfos: any[] = item.productBasicSkuInfos || [];
+    const childKeys: any[] = productBasicSkuInfos.map(v => v.productBasicSkuId);
+    if (item.id) {
+      result[item.id] = childKeys;
+    }
+  }
+  return result;
 }
 
 interface ProductSelectorState {
-  selectedRowKeys: any[];
+  selectedRowKeys: string[] | number[];
+  selectedRowKeysMap: Partial<{ [field: string] : string[] | number[] }>;
   visible: boolean;
   dataSource: any[];
   total: number;
@@ -49,6 +52,7 @@ interface ProductSelectorState {
 class ProductSelector extends React.Component<ProductSelectorProps, ProductSelectorState> {
   state: ProductSelectorState = {
     selectedRowKeys: [],
+    selectedRowKeysMap: {},
     visible: false,
     dataSource: [],
     total: 0,
@@ -60,7 +64,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     pageSize: 10
   }
   form: FormInstance;
-  seletedRows: any[] = [];
+  selectedRows: any[] = [];
   columns: ColumnProps<any>[] = [{
     title: 'id',
     width: 80,
@@ -85,23 +89,39 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     title: '规格详情',
     dataIndex: 'productBasicSkuInfos',
     align: 'center',
-    render: (data: CSkuProps[], records: any, index: number) => {
+    render: (data: CSkuProps[], record: any, index: number) => {
+      const { selectedRowKeysMap } = this.state;
+      const id = record.id;
+      let productBasicSkuInfoKeys: any[] = selectedRowKeysMap[id] || [];
       return (
         <Table
           rowKey='productBasicSkuId'
           rowSelection={{
-            selectedRowKeys: records.productBasicSkuInfosRowKeys || [],
-            onChange: (productBasicSkuInfosRowKeys: any[]) => {
-              let { dataSource, selectedRowKeys } = this.state;
-              const productBasicSkuInfos = records.productBasicSkuInfos || [];
-              dataSource[index].productBasicSkuInfosRowKeys = productBasicSkuInfosRowKeys;
-              if (!!productBasicSkuInfosRowKeys.length && productBasicSkuInfosRowKeys.length < productBasicSkuInfos.length) {
-                // 必须保证id唯一否则有bug
-                selectedRowKeys = selectedRowKeys.filter(id => id !== records.id);
+            selectedRowKeys: productBasicSkuInfoKeys,
+            onChange: (productBasicSkuInfoKeys: any[], productBasicSkuInfoRows: any[]) => {
+              const productBasicSkuInfos: any[]= record.productBasicSkuInfos;
+              let selectedRowKeys: any[] = this.state.selectedRowKeys || [];
+
+              const { selectedRowKeysMap } = this.state;
+              selectedRowKeysMap[id] = productBasicSkuInfoKeys;
+              
+              if (!!(productBasicSkuInfos && productBasicSkuInfos.length) &&
+                productBasicSkuInfoKeys.length === 0) {
+                selectedRowKeys = selectedRowKeys.filter(key => key !== id); 
+                this.selectedRows = this.selectedRows.filter(v => v.id !== id);
               } else {
-                selectedRowKeys = union(selectedRowKeys, [records.id])
+                selectedRowKeys = union(selectedRowKeys, [id]);
+                this.selectedRows = unionBy(this.selectedRows, [{
+                  ...record,
+                  productBasicSkuInfos: productBasicSkuInfoRows
+                }], x => x.id);
               }
-              this.setState({ dataSource, selectedRowKeys })
+
+              console.log('this.selectedRows =>', this.selectedRows);
+              this.setState({
+                selectedRowKeys,
+                selectedRowKeysMap
+              })
             }
           }}
           pagination={false}
@@ -123,11 +143,10 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
       );
     }
   }]
-  UNSAFE_componentWillReceiveProps({ selectedRows }: ProductSelectorProps) {
-    const selectedRowKeys = selectedRows.map(v => v.id);
+  UNSAFE_componentWillReceiveProps({ selectedRowKeys, selectedRowKeysMap }: ProductSelectorProps) {
     this.setState({
       selectedRowKeys,
-      dataSource: expansion(this.state.dataSource, selectedRows)
+      selectedRowKeysMap
     })
   }
   componentDidMount() {
@@ -146,16 +165,15 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
         })
       })
   }
-  // TODO
+
   handleOK = () => {
-    const { dataSource } = this.state;
-    const result = combination(dataSource);
-    if (result.length === 0) {
+    const { selectedRowKeys, selectedRowKeysMap } = this.state;
+    const productBasics = combination(this.selectedRows, selectedRowKeysMap);
+    if (productBasics.length === 0) {
       return void APP.error('请选择商品');
     }
-    this.props.onOk(result, () => {
-      this.setState({ visible: false})
-    });
+    this.props.onOk(selectedRowKeys, productBasics, selectedRowKeysMap);
+    this.setState({ visible: false})
   }
   handleCancel = () => {
     this.setState({
@@ -237,28 +255,23 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
             rowSelection={{
               selectedRowKeys,
               getCheckboxProps: (record) => {
-                const productBasicSkuInfosRowKeys = record.productBasicSkuInfosRowKeys || [];
+                const { selectedRowKeysMap } = this.state;
+                const productBasicSkuInfosRowKeys = selectedRowKeysMap[record.id];
                 const productBasicSkuInfos = record.productBasicSkuInfos || [];
                 return {
-                  indeterminate: !!productBasicSkuInfosRowKeys.length && productBasicSkuInfosRowKeys.length < productBasicSkuInfos.length
+                  indeterminate: !!(productBasicSkuInfosRowKeys && productBasicSkuInfosRowKeys.length) &&
+                    productBasicSkuInfosRowKeys.length < productBasicSkuInfos.length
                 }
               },
               onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
-                let { dataSource } = this.state;
                 // fix ant-design bug
-                const unionArray: any[] = unionBy(this.seletedRows, selectedRows, x => x.id)
-                this.seletedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never));
-                dataSource = dataSource.map(item => {
-                  if (selectedRowKeys.includes(item.id as never)) {
-                    item.productBasicSkuInfosRowKeys = item.productBasicSkuInfos.map((v: any) => v.productBasicSkuId);
-                    return item;
-                  } else {
-                    return omit(item, 'productBasicSkuInfosRowKeys');
-                  }
-                })
+                const unionArray: any[] = unionBy(this.selectedRows, selectedRows, x => x.id)
+
+
+                this.selectedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never));
                 this.setState({
-                  selectedRowKeys,
-                  dataSource
+                  selectedRowKeysMap: getSelectedRowKeysMap(this.selectedRows),
+                  selectedRowKeys
                 })
               }
             }}

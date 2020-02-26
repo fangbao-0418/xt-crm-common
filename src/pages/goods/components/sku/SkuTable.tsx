@@ -15,7 +15,7 @@ import Decimal from 'decimal.js'
 import styles from './style.module.scss'
 import ProductSeletor from '../product-selector'
 import { replaceHttpUrl } from '@/util/utils'
-import { getBaseSkuDetail } from '../../sku-sale/api';
+import { getNormalizeBaseSkuDetail } from '../../sku-sale/api';
 const { Option } = Select;
 const FormItem = Form.Item;
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
@@ -34,6 +34,8 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
 interface State {
   dataSource: SkuSaleProps[];
   selectedRows: any[];
+  selectedRowKeys: any[],
+  selectedRowKeysMap: any
 }
 
 class Main extends React.Component<Props, State> {
@@ -43,7 +45,9 @@ class Main extends React.Component<Props, State> {
   }
   public state: State = {
     dataSource: this.props.dataSource || [],
-    selectedRows: []
+    selectedRows: [],
+    selectedRowKeys: [],
+    selectedRowKeysMap: []
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({
@@ -158,6 +162,23 @@ class Main extends React.Component<Props, State> {
     }]
     return [
       ...differentColumns,
+      {
+        title: '单位',
+        dataIndex: 'unit',
+        width: 200,
+        align: 'center',
+        render: (text, record, index) => {
+          return (
+            this.speedyInput('unit', text, record, index, dataSource, cb)(
+              <Input
+                value={text}
+                placeholder='请输入单位'
+                onChange={cb('unit', record, index)}
+              />
+            )
+          )
+        }
+      },
       {
         title: '市场价',
         dataIndex: 'marketPrice',
@@ -426,6 +447,22 @@ class Main extends React.Component<Props, State> {
     return [
       ...differentColumns,
       {
+        title: '单位',
+        dataIndex: 'unit',
+        width: 100,
+        render: (text, record, index) => {
+          return (
+            this.speedyInput('unit', text, record, index, dataSource, cb)(
+              <Input
+                value={text}
+                placeholder='请输入单位'
+                onChange={cb('unit', record, index)}
+              />
+            )
+          )
+        }
+      },
+      {
         title: '备案信息',
         dataIndex: 'customsStatusInfo',
         width: 100,
@@ -632,7 +669,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { selectedRows } = this.state;
+    const { selectedRowKeys, selectedRows, selectedRowKeysMap } = this.state;
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <>
@@ -651,7 +688,8 @@ class Main extends React.Component<Props, State> {
               this.forceUpdate();
 
               // 销售商品SKU中库存商品详情
-              getBaseSkuDetail(record.skuId).then(data => {
+              getNormalizeBaseSkuDetail(record.skuId).then(data => {
+                // console.log('data =>//////////////////////////', data);
                 record.productBasics = data;
                 record.loading = false;
                 this.forceUpdate();
@@ -660,104 +698,109 @@ class Main extends React.Component<Props, State> {
           }}
           expandedRowRender={this.props.warehouseType === 0 ? undefined : (record, index) => {
             return (
-                <Table
-                  loading={record.loading}
-                  rowKey={(_, idx) => idx + ''}
-                  dataSource={record.productBasics}
-                  footer={() => (
-                    <ProductSeletor
-                      selectedRows={selectedRows}
-                      onOk={(selectedRows, hide) => {
-                        selectedRows = [...selectedRows]
-                        const { dataSource } = this.state;
-                        dataSource[index].productBasics = selectedRows;
-                        this.setState({ selectedRows })
-                        if (this.props.onChange) {
-                          this.props.onChange(dataSource);
-                          hide();
-                        }
+              <Table
+                loading={record.loading}
+                rowKey={(_, idx) => idx + ''}
+                dataSource={record.productBasics}
+                footer={() => (
+                  <ProductSeletor
+                    selectedRowKeys={selectedRowKeys}
+                    selectedRowKeysMap={selectedRowKeysMap}
+                    onOk={(selectedRowKeys, productBasics, selectedRowKeysMap) => {
+                      const { dataSource } = this.state;
+                      dataSource[index].productBasics = [...productBasics];
+                      this.setState({
+                        selectedRowKeys,
+                        dataSource,
+                        selectedRowKeysMap
+                      })
+                      if (this.props.onChange) {
+                        this.props.onChange(dataSource);
+                      }
+                    }}
+                  />
+                )}
+                columns={[{
+                  title: '商品ID',
+                  dataIndex: 'id'
+                }, {
+                  title: '商品名称',
+                  dataIndex: 'productName'
+                }, {
+                  title: '商品主图',
+                  dataIndex: 'productMainImage',
+                  render: (url: string) => (
+                    <Image
+                      style={{
+                        height: 100,
+                        width: 100,
+                        minWidth: 100
                       }}
+                      src={replaceHttpUrl(url)}
+                      alt='主图'
                     />
-                  )}
-                  columns={[{
-                    title: '商品ID',
-                    dataIndex: 'id'
-                  }, {
-                    title: '商品名称',
-                    dataIndex: 'productName'
-                  }, {
-                    title: '商品主图',
-                    dataIndex: 'productMainImage',
-                    render: (url: string) => (
-                      <Image
-                        style={{
-                          height: 100,
-                          width: 100,
-                          minWidth: 100
-                        }}
-                        src={replaceHttpUrl(url)}
-                        alt='主图'
-                      />
-                    )
-                  }, {
-                    title: '商品规格',
-                    dataIndex: 'propertyValue'
-                  }, {
-                    title: '规格条码',
-                    dataIndex: 'productBasicSkuBarCode'
-                  }, {
-                    title: '规格编码',
-                    dataIndex: 'productBasicSkuCode'
-                  }, {
-                    title: '市场价',
-                    dataIndex: 'marketPrice'
-                  }, {
-                    title: '成本价',
-                    dataIndex: 'costPrice'
-                  }, {
-                    title: '总库存',
-                    dataIndex: 'totalStock'
-                  }, {
-                    title: '数量配置',
-                    dataIndex: 'num',
-                    render: (text, _, idx) => {
-                      return (
-                        <InputNumber
-                          style={{ width: 172 }}
-                          value={text}
-                          placeholder='请输入数量配置'
-                          precision={0}
-                          onChange={(value) => {
-                            const { dataSource } = this.state;
-                            dataSource[index].productBasics[idx].num = value;
-                            this.setState({
-                              dataSource
-                            })
-                          }}/>
-                      )
-                    }
-                  }, {
-                    title: '操作',
-                    align: 'center',
-                    render: ($0, $1, idx) => (
-                      <Button
-                        type='link'
-                        onClick={() => {
+                  )
+                }, {
+                  title: '商品规格',
+                  dataIndex: 'propertyValue'
+                }, {
+                  title: '规格条码',
+                  dataIndex: 'productBasicSkuBarCode'
+                }, {
+                  title: '规格编码',
+                  dataIndex: 'productBasicSkuCode'
+                }, {
+                  title: '市场价',
+                  dataIndex: 'marketPrice'
+                }, {
+                  title: '成本价',
+                  dataIndex: 'costPrice'
+                }, {
+                  title: '总库存',
+                  dataIndex: 'totalStock'
+                }, {
+                  title: '数量配置',
+                  dataIndex: 'num',
+                  render: (text, _, idx) => {
+                    return (
+                      <InputNumber
+                        style={{ width: 172 }}
+                        value={text}
+                        placeholder='请输入数量配置'
+                        precision={0}
+                        onChange={(value) => {
                           const { dataSource } = this.state;
-                          const productBasics = [...record.productBasics];
-                          const selectedRows = [...this.state.selectedRows];
-                          productBasics.splice(idx, 1);
-                          selectedRows.splice(idx, 1);
-                          dataSource[index].productBasics = productBasics;
-                          this.setState({ dataSource, selectedRows })
-                        }}
-                      >
-                        删除
-                      </Button>
+                          dataSource[index].productBasics[idx].num = value;
+                          this.setState({
+                            dataSource
+                          })
+                        }}/>
                     )
-                  }]}
-                />
-              // </Card>
+                  }
+                }, {
+                  title: '操作',
+                  align: 'center',
+                  render: (record, $1, idx) => (
+                    <Button
+                      type='link'
+                      onClick={() => {
+                        const { dataSource } = this.state;
+                        let selectedRowKeys: any[] = [...this.state.selectedRowKeys];
+                        (dataSource[index].productBasics || []).splice(idx, 1);
+                        let productBasicSkuInfoKeys: any[] = this.state.selectedRowKeysMap[record.id];
+                        productBasicSkuInfoKeys = productBasicSkuInfoKeys.filter(key => key !== record.productBasicSkuId);
+                        selectedRowKeysMap[record.id] = productBasicSkuInfoKeys;
+                        if (productBasicSkuInfoKeys.length === 0) {
+                          selectedRowKeys = selectedRowKeys.filter(id => id !== record.id);
+                        }
+                        this.setState({ dataSource, selectedRowKeys, selectedRowKeysMap })
+                      }}
+                    >
+                      删除
+                    </Button>
+                  )
+                }]}
+              />
             )
           }}
           onChange={(pagination) => {
