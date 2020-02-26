@@ -8,7 +8,9 @@ const {
   addWebpackPlugin,
   removeModuleScopePlugin,
   addWebpackModuleRule,
-  addWebpackExternals
+  addWebpackExternals,
+  addBundleVisualizer,
+  setWebpackOptimizationSplitChunks
 } = require('customize-cra');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
@@ -26,6 +28,7 @@ const pubconfig = fs.existsSync('./pubconfig.json')
 paths.appBuild = path.resolve(pubconfig.outputDir);
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
+console.log(setWebpackOptimizationSplitChunks, '------setWebpackOptimizationSplitChunks')
 // const dev = process.env.PUB_ENV !== 'prod'
 const isEnvDevelopment = ['prod', 'pre', 'test', 'dev'].indexOf(process.env.PUB_ENV) === -1;
 const isEnvProduction = !isEnvDevelopment;
@@ -130,8 +133,11 @@ module.exports = override(
     react: 'React',
     'react-dom': 'ReactDom',
     antd: 'antd',
-    moment: 'moment'
-  })
+    moment: 'moment',
+    'ali-oss': 'OSS'
+  }),
+  addBundleVisualizer(),
+  setWebpackOptimizationSplitChunks(),
   (function () {
     return function (config) {
       if (isEnvProduction) {
