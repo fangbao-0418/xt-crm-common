@@ -28,7 +28,6 @@ const pubconfig = fs.existsSync('./pubconfig.json')
 paths.appBuild = path.resolve(pubconfig.outputDir);
 
 console.log('PUB_ENV => ', process.env.PUB_ENV);
-console.log(setWebpackOptimizationSplitChunks, '------setWebpackOptimizationSplitChunks')
 // const dev = process.env.PUB_ENV !== 'prod'
 const isEnvDevelopment = ['prod', 'pre', 'test', 'dev'].indexOf(process.env.PUB_ENV) === -1;
 const isEnvProduction = !isEnvDevelopment;
@@ -94,11 +93,11 @@ module.exports = override(
     )
   }),
   removeModuleScopePlugin(),
-  fixBabelImports('import', {
-    libraryName: 'antd',
-    style: 'css',
-    libraryDirectory: 'es' // change importing css to less
-  }),
+  // fixBabelImports('import', {
+  //   libraryName: 'antd',
+  //   style: 'css',
+  //   libraryDirectory: 'es' // change importing css to less
+  // }),
   fixBabelImports('lodash', {
     libraryDirectory: '',
     camel2DashComponentName: false
@@ -131,13 +130,22 @@ module.exports = override(
   }),
   addWebpackExternals({
     react: 'React',
-    'react-dom': 'ReactDom',
+    'react-dom': 'ReactDOM',
     antd: 'antd',
+    imutable: 'Immutable',
     moment: 'moment',
     'ali-oss': 'OSS'
   }),
-  addBundleVisualizer(),
-  setWebpackOptimizationSplitChunks(),
+  // isEnvDevelopment ? undefined : addBundleVisualizer(),
+  setWebpackOptimizationSplitChunks({
+    cacheGroups: {
+      commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+      }
+    }
+  }),
   (function () {
     return function (config) {
       if (isEnvProduction) {
