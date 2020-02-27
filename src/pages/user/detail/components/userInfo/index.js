@@ -209,6 +209,11 @@ class UserInfo extends Component {
       upOrDwon: type
     })
   }
+  // 解除绑定
+  unbind= (type) => {
+
+  }
+
   handleUnlock = (memberId) => {
     Modal.confirm({
       title: '系统提示',
@@ -311,7 +316,7 @@ class UserInfo extends Component {
           headStyle={{
             fontWeight: 900
           }}
-          extra={<div><span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>}
+          extra={<div><span className='href' onClick={this.showModalInvit}>冻结</span>&nbsp;&nbsp;<span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>}
           loading={loading}
         >
           <Descriptions column={2} className={styles.description}>
@@ -323,12 +328,18 @@ class UserInfo extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="用户名">{data.nickName || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="注册时间">{formatTime(data.createTime)}</Descriptions.Item>
-            <Descriptions.Item label="手机号">{data.phone}</Descriptions.Item>
+            <Descriptions.Item label="手机号">
+              {data.phone}
+              <Button onClick={()=>this.unbind('wechat')} style={{ marginLeft: 20}}>修改</Button>
+            </Descriptions.Item>
             <Descriptions.Item label="等级">
               {levelName(data.memberTypeVO)}
               <Button disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)} onClick={()=>this.modifyMemberType(1)} style={{ marginLeft: 20}}>升级</Button><Button disabled={(data.memberTypeVO && (!data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))} onClick={()=>this.modifyMemberType(-1)} style={{ marginLeft: 20}}>降级</Button>
             </Descriptions.Item>
-            <Descriptions.Item label="微信">{data.wechat || '暂无'}</Descriptions.Item>
+            <Descriptions.Item label="微信">
+              {data.wechat || '暂无'}
+              <Button onClick={()=>this.unbind('wechat')} style={{ marginLeft: 20}}>解绑</Button>
+            </Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="上级">
               <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName}</span> {levelName(data.parentMemberTypeVO)}
@@ -353,7 +364,7 @@ class UserInfo extends Component {
               <Button
                 type='link'
                 className='ml10'
-                onClick={() => {
+                onClick={() => {  
                   this.props.modal.showModal({
                     type: 'bail',
                     depositAmount: data.depositAmount
