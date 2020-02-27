@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, InputNumber } from 'antd';
+import { Table, Input, InputNumber, Form } from 'antd';
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form';
 import { PaginationConfig } from 'antd/lib/pagination'
@@ -7,6 +7,8 @@ import Alert, { AlertComponentProps } from '@/packages/common/components/alert';
 import { ArrowContain, InputMoney } from '@/packages/common/components';
 import { isFunction } from 'lodash';
 import { CSkuProps } from '../sku';
+import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
+const FormItem = Form.Item;
 
 interface CSkuTableProps extends Partial<AlertComponentProps>, FormComponentProps {
   id: number,
@@ -44,6 +46,7 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
         return (
           this.speedyInput('unit', text, record, index, dataSource, cb)(
             <Input
+              maxLength={10}
               value={text}
               placeholder='请输入单位'
               onChange={cb('unit', record, index)}
@@ -67,12 +70,16 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
       title: '市场价',
       dataIndex: 'marketPrice',
       render: (text: any, record: any, index: any) => {
-        return this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+        return this.speedyInput('marketPrice', text, record, index, dataSource, cb, {
+          rules: [{
+            required: true,
+            message: '请输入市场价'
+          }]
+        })(
           <InputMoney
+            min={0.01}
             precision={2}
-            value={text}
             placeholder='请输入市场价'
-            onChange={cb('marketPrice', record, index)}
           />
         )
       }
@@ -80,12 +87,16 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
       title: '成本价',
       dataIndex: 'costPrice',
       render: (text: any, record: any, index: any) => {
-        return this.speedyInput('costPrice', text, record, index, dataSource, cb)(
+        return this.speedyInput('costPrice', text, record, index, dataSource, cb, {
+          rules: [{
+            required: true,
+            message: '请输入成本价'
+          }]
+        })(
           <InputMoney
+            min={0.01}
             precision={2}
-            value={text}
             placeholder='请输入成本价'
-            onChange={cb('costPrice', record, index)}
           />
         )
       }
@@ -112,6 +123,7 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
           return (
             this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
               <Input
+                maxLength={10}
                 value={text}
                 placeholder='请输入单位'
                 onChange={cb('marketPrice', record, index)}
@@ -141,12 +153,16 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
         title: '市场价',
         dataIndex: 'marketPrice',
         render: (text: any, record: any, index: any) => {
-          return this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+          return this.speedyInput('marketPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入市场价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder='请输入市场价'
-              onChange={cb('marketPrice', record, index)}
             />
           )
         }
@@ -154,12 +170,16 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
         title: '成本价',
         dataIndex: 'costPrice',
         render: (text: any, record: any, index: any) => {
-          return this.speedyInput('costPrice', text, record, index, dataSource, cb)(
+          return this.speedyInput('costPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入成本价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder='请输入成本价'
-              onChange={cb('costPrice', record, index)}
             />
           )
         }
@@ -186,33 +206,56 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
       onChange([...dataSource])
     }
   }
-  // 快速输入
-  speedyInput(field: string, text: any, record: CSkuProps, index: number, dataSource: CSkuProps[], cb?: any) {
-    const { pageSize = 10, current = 1 } = this.pagination;
-    const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index;
-    return (node: React.ReactNode) => (
-      <ArrowContain
-        disabled={dataSource.length <= 1}
-        type={(realIndex === 0 && 'down' || realIndex === dataSource.length - 1 && 'up' || undefined)}
-        onClick={(type) => {   
-          const value = text
-          let currentIndex = 0
-          let end = realIndex
-          if (type === 'down') {
-            currentIndex = realIndex
-            end = dataSource.length - 1
-          }
-          while (currentIndex <= end) {
-            dataSource[currentIndex][field] = text as never
-            currentIndex++
-          }
-          this.speedyInputCallBack(dataSource)
-        }}
-      >
-      {node}
-      </ArrowContain>
-    )
+  // 快速填充
+  speedyInput (field: string, text: any, record: CSkuProps, index: number, dataSource: CSkuProps[], cb?: any, fieldDecoratorOptions?: GetFieldDecoratorOptions) {
+    const { pageSize = 10, current = 1 } = this.pagination
+    const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
+    const { getFieldDecorator } = this.props.form
+    return (node: React.ReactNode) => {
+      return (
+        <FormItem
+          wrapperCol={{span: 24}}
+        >
+          <ArrowContain
+            disabled={dataSource.length <= 1}
+            type={(realIndex === 0 && 'down' || realIndex === dataSource.length - 1 && 'up' || undefined)}
+            onClick={(type) => {   
+              // const value = text
+              let currentIndex = 0
+              let end = realIndex
+              if (type === 'down') {
+                currentIndex = realIndex
+                end = dataSource.length - 1
+              }
+              while (currentIndex <= end) {
+                dataSource[currentIndex][field] = text as never
+                currentIndex++
+              }
+              this.speedyInputCallBack(dataSource)
+            }}
+          >
+            {fieldDecoratorOptions ?
+              getFieldDecorator(`${field}-${index}`, {
+                getValueFromEvent(e) {
+                  let value: string | number = '';
+                  if (!e || !e.target) {
+                    value = e;
+                  } else {
+                    const { target } = e;
+                    value = target.type === 'checkbox' ? target.checked : target.value;
+                  }
+                  cb(field, record, index)(value);
+                  return value;
+                },
+                ...fieldDecoratorOptions
+              })(node)
+            : node}
+          </ArrowContain>
+        </FormItem>
+      );
+    }
   }
+    
   handleChangeValue = (field: string, record: any, index: any) => (e: any) => {
     const { pageSize = 10, current = 1 } = this.pagination
     const realIndex = current > 1 ? pageSize * (current - 1) + index : index
