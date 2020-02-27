@@ -16,7 +16,7 @@ class Main extends React.Component<Partial<Props>> {
     },
     {
       title: '标签名称',
-      dataIndex: 'a',
+      dataIndex: 'title',
       align: 'center',
       render: (text) => {
         return <span className='href'>{text}</span>
@@ -24,7 +24,12 @@ class Main extends React.Component<Partial<Props>> {
     },
     {
       title: '直播场次（直播中 | 预告）',
-      dataIndex: '直播场次（直播中 | 预告）'
+      dataIndex: 'livingTatol',
+      render: (text, record) => {
+        return (
+        <span>{record.livingTatol}|</span>
+        )
+      }
     },
     {
       title: '排序',
