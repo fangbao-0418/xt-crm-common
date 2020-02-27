@@ -15,10 +15,10 @@ import Decimal from 'decimal.js'
 import styles from './style.module.scss'
 import ProductSeletor from '../product-selector'
 import { replaceHttpUrl } from '@/util/utils'
-import { getNormalizeBaseSkuDetail } from '../../sku-sale/api';
+import { getBaseSkuDetail } from '../../sku-sale/api';
 import classNames from 'classnames'
-import { union } from 'lodash'
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
+import { pick } from 'lodash'
 const { Option } = Select;
 const FormItem = Form.Item;
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
@@ -34,6 +34,7 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   isGroup: boolean
 }
 
+// 通过返回数据拿到id到规格详情的映射关系
 function getSelectedRowKeysMap(data: any[]) {
   let result: any = {};
   for (let item of data) {
@@ -43,7 +44,44 @@ function getSelectedRowKeysMap(data: any[]) {
       result[item.id] = [item.productBasicSkuId]
     }
   }
-  return {}
+  return result;
+}
+
+function combination(data: any[]) {
+  const keysMap: any = {};
+  const result: any[] = [];
+  for (let item of data) {
+    const record = {
+      ...pick(item, [
+        'id',
+        'productName',
+        'status',
+        'categoryId',
+        'categoryName',
+        'productCode',
+        'barCode',
+        'productMainImage'
+      ]),
+      productBasicSkuInfos: [pick(item, [
+        'productBasicSkuId',
+        'productBasicSkuCode',
+        'productBasicSkuBarCode',
+        'productBasicSpuCode',
+        'propertyValue',
+        'marketPrice',
+        'costPrice',
+        'totalStock'
+      ])]
+    };
+    if (keysMap[item.id]) {
+      keysMap[item.id].productBasicSkuInfos = [...keysMap[item.id].productBasicSkuInfos, record];
+    } else {
+      keysMap[item.id] = record;
+      result.push(record)
+    }
+  }
+  console.log('result =>', result);
+  return result;
 }
 
 interface State {
@@ -771,7 +809,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { selectedRowKeys, selectedRowKeysMap } = this.state;
+    const { selectedRowKeys, selectedRowKeysMap, selectedRows } = this.state;
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <>
@@ -790,13 +828,12 @@ class Main extends React.Component<Props, State> {
               this.forceUpdate();
 
               // 销售商品SKU中库存商品详情
-              getNormalizeBaseSkuDetail(record.skuId).then(data => {
-                console.log('data =>//////////////////////////', data);
+              getBaseSkuDetail(record.skuId).then(data => {
                 record.productBasics = data;
                 record.loading = false;
-                // console.log('///////////////////////////', union(selectedRowKeys, data.map((v: any) => v.productBasicId)));
                 
                 this.setState({
+                  selectedRows: combination(record.productBasics),
                   selectedRowKeys: data.map((v: any) => v.id),
                   selectedRowKeysMap: getSelectedRowKeysMap(data)
                 })
@@ -830,12 +867,14 @@ class Main extends React.Component<Props, State> {
                   <ProductSeletor
                     selectedRowKeys={selectedRowKeys}
                     selectedRowKeysMap={selectedRowKeysMap}
-                    onOk={(selectedRowKeys, productBasics, selectedRowKeysMap) => {
+                    selectedRows={selectedRows}
+                    onOk={({selectedRowKeys, productBasics, selectedRowKeysMap, selectedRows}: any) => {
                       const { dataSource } = this.state;
                       dataSource[index].productBasics = [...productBasics];
                       this.setState({
                         selectedRowKeys,
                         dataSource,
+                        selectedRows,
                         selectedRowKeysMap
                       })
                       if (this.props.onChange) {

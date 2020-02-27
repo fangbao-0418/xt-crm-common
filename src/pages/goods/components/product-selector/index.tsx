@@ -9,16 +9,17 @@ import { CSkuProps } from '../../sku-stock/components/sku';
 import { getBaseProductPage } from '../../sku-sale/api';
 import { ColumnProps } from 'antd/lib/table';
 interface ProductSelectorProps {
-  onOk: (selectedRowKeys: any, selectedRows: any[], selectedRowKeysMap: any) => void;
+  onOk: ({selectedRowKeys, productBasics, selectedRowKeysMap, selectedRows}: any) => void;
   selectedRowKeys: any[],
   selectedRowKeysMap: any;
+  selectedRows: any[];
 }
 
-// 组合
-function combination(selectedRows: any[], selectedRowKeysMap: any) {
+// 分散开
+function spread(selectedRows: any[], selectedRowKeysMap: any) {
   let result: any[] = [];
   for (let row of selectedRows) {
-    const productBasicSkuInfos = row.productBasicSkuInfos.filter((v: any) => {
+    const productBasicSkuInfos = (row.productBasicSkuInfos || []).filter((v: any) => {
       return (selectedRowKeysMap[row.id] || []).includes(v.productBasicSkuId);
     })
     for (let item of productBasicSkuInfos) {
@@ -28,6 +29,7 @@ function combination(selectedRows: any[], selectedRowKeysMap: any) {
   return result;
 }
 
+// 获取id->规格详情的映射关系
 function getSelectedRowKeysMap(selectedRows: any[]) {
   const result: any = {};
   for (let item of selectedRows) {
@@ -117,7 +119,6 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
                 }], x => x.id);
               }
 
-              console.log('this.selectedRows =>', this.selectedRows);
               this.setState({
                 selectedRowKeys,
                 selectedRowKeysMap
@@ -143,7 +144,9 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
       );
     }
   }]
-  UNSAFE_componentWillReceiveProps({ selectedRowKeys, selectedRowKeysMap }: ProductSelectorProps) {
+  UNSAFE_componentWillReceiveProps({ selectedRowKeys, selectedRowKeysMap, selectedRows }: ProductSelectorProps) {
+    this.selectedRows = selectedRows;
+    console.log('this.selectedRows => ', this.selectedRows);
     this.setState({
       selectedRowKeys,
       selectedRowKeysMap
@@ -168,11 +171,12 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
 
   handleOK = () => {
     const { selectedRowKeys, selectedRowKeysMap } = this.state;
-    const productBasics = combination(this.selectedRows, selectedRowKeysMap);
+    const productBasics = spread(this.selectedRows, selectedRowKeysMap);
     if (productBasics.length === 0) {
       return void APP.error('请选择商品');
     }
-    this.props.onOk(selectedRowKeys, productBasics, selectedRowKeysMap);
+    console.log(productBasics, this.selectedRows, '~~~~~~~~~~~~~');
+    this.props.onOk({selectedRowKeys, productBasics, selectedRowKeysMap, selectedRows: this.selectedRows});
     this.setState({ visible: false})
   }
   handleCancel = () => {

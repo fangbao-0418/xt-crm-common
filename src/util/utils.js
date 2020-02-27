@@ -236,7 +236,7 @@ export function unionArray(target, source) {
 
 /** 检测imgUrl是否带域名，没有则加上*/
 export function replaceHttpUrl(imgUrl) {
-  if (typeof imgUrl !== 'string') imgUrl = ''
+  if (typeof imgUrl !== 'string') return ''
   if (imgUrl.indexOf('http') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
   }

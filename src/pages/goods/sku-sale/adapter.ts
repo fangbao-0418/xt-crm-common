@@ -16,6 +16,8 @@ export function formRequest(payload: any) {
   }
   const skuList: SkuSaleProps[] = payload.skuList || [];
   let result: Record<string, any> = filterUploadFile(payload)
+
+  console.log('result !!!!!!!!!!!!!', result);
   result.skuAddList = skuList.map(item => {
     item = filterMoney(item, 'req', fields);
     item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
@@ -112,16 +114,4 @@ export function baseSkuDetailResponse(res: any) {
       productMainImage: item.productBasicMainImage
     }
   });
-}
-
-// 过滤转换后销售商品SKU中库存商品详情
-export function normalizeBaseSkuDetailResponse(res: any) {
-  // const result: any[] = [];
-  // for (let item of res) {
-  //   for (let info of item.productBasicSkuInfos) {
-  //     result.push({ ...item, ...info })
-  //   }
-  // }
-  console.log('res =>', res);
-  return res;
 }

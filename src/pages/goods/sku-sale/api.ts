@@ -1,4 +1,4 @@
-import { formRequest, baseProductResponse, baseProductPageResponse, formResponse, baseSkuDetailResponse, normalizeBaseSkuDetailResponse } from "./adapter";
+import { formRequest, baseProductResponse, baseProductPageResponse, formResponse, baseSkuDetailResponse } from "./adapter";
 import { queryString } from '@/util/utils';
 import { omit } from "lodash";
 const { newPost } = APP.http;
@@ -42,11 +42,4 @@ export function setGroupProduct(payload: any) {
 // 销售商品SKU中库存商品详情
 export function getBaseSkuDetail(skuId: number) {
   return newPost(`/product/sku/basic/detail?skuId=${skuId}`).then(baseSkuDetailResponse)
-}
-
-// 获取转换后的销售商品SKU中库存商品详情
-export function getNormalizeBaseSkuDetail(skuId: number) {
-  return newPost(`/product/sku/basic/detail?skuId=${skuId}`)
-    .then(normalizeBaseSkuDetailResponse)
-    .then(baseSkuDetailResponse)
 }
