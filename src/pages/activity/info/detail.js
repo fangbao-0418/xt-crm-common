@@ -309,7 +309,7 @@ class ActivityDetail extends React.Component {
     },
   ]
   getColumns = (detailData) => {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, validateFields } = this.props.form
     return [
       {
         title: '规格名称',
@@ -357,6 +357,7 @@ class ActivityDetail extends React.Component {
                     min={0}
                     precision={detailData.type === 6 ? 0: 2}
                     onChange={this.handleChangeValue('buyingPrice', index)}
+                    onBlur={() => validateFields([`buyingPrice-${index}`])}
                   />
                 )
               }
