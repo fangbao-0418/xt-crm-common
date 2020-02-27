@@ -117,7 +117,7 @@ export function download(url, name) {
 
 /**
  * 多个集合合并
- * examp1 params ([1, 2], [3, 4]) => [[1, 3], [2, 3], [2, 3], [2, 4]]
+ * examp1 params ([1, 2], [3, 4]) => [[1, 3], [1, 4], [2, 3], [2, 4]]
  * examp2 params ([1, 2], []) => [[1, undefined], [2, undefined]]
  * examp3 params ([], []) => [[undefined, undefined]]
  * examp4 params ([]) => [[]]

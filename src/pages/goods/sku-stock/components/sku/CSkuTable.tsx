@@ -39,15 +39,14 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
     return this.props.id === -1 ? [{
       title: '单位',
       dataIndex: 'unit',
-      width: 100,
-      align: 'center',
+      width: 200,
       render: (text, record, index) => {
         return (
-          this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('unit', text, record, index, dataSource, cb)(
             <Input
               value={text}
               placeholder='请输入单位'
-              onChange={cb('marketPrice', record, index)}
+              onChange={cb('unit', record, index)}
             />
           )
         )
@@ -108,8 +107,7 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
       {
         title: '单位',
         dataIndex: 'unit',
-        width: 100,
-        align: 'center',
+        width: 200,
         render: (text, record, index) => {
           return (
             this.speedyInput('marketPrice', text, record, index, dataSource, cb)(

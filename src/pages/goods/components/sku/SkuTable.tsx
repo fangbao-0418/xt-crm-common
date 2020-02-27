@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Card, Select, Input, Button, Form, InputNumber } from 'antd'
+import { Table, Select, Input, Button, Form, InputNumber } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
 import { PaginationConfig } from 'antd/lib/pagination'
@@ -16,6 +16,9 @@ import styles from './style.module.scss'
 import ProductSeletor from '../product-selector'
 import { replaceHttpUrl } from '@/util/utils'
 import { getNormalizeBaseSkuDetail } from '../../sku-sale/api';
+import classNames from 'classnames'
+import { union } from 'lodash'
+import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 const { Option } = Select;
 const FormItem = Form.Item;
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
@@ -29,6 +32,18 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   /** 1: 入库商品，0: 非入库商品 */
   warehouseType: 1 | 0
   isGroup: boolean
+}
+
+function getSelectedRowKeysMap(data: any[]) {
+  let result: any = {};
+  for (let item of data) {
+    if (result[item.id]) {
+      result[item.id] = result[item.id].concat([item.productBasicSkuId])
+    } else {
+      result[item.id] = [item.productBasicSkuId]
+    }
+  }
+  return {}
 }
 
 interface State {
@@ -59,31 +74,54 @@ class Main extends React.Component<Props, State> {
       this.props.onChange([...dataSource])
     }
   }
-  public speedyInput (field: string, text: any, record: SkuSaleProps, index: number, dataSource: SkuSaleProps[], cb?: any) {
+  // 快速填充
+  public speedyInput (field: string, text: any, record: SkuSaleProps, index: number, dataSource: SkuSaleProps[], cb?: any, fieldDecoratorOptions?: GetFieldDecoratorOptions) {
     const { pageSize = 10, current = 1 } = this.pagination
     const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
-    return (node: React.ReactNode) => (
-      <ArrowContain
-        disabled={dataSource.length <= 1}
-        type={(realIndex === 0 && 'down' || realIndex === dataSource.length - 1 && 'up' || undefined)}
-        onClick={(type) => {   
-          const value = text
-          let currentIndex = 0
-          let end = realIndex
-          if (type === 'down') {
-            currentIndex = realIndex
-            end = dataSource.length - 1
-          }
-          while (currentIndex <= end) {
-            dataSource[currentIndex][field] = text as never
-            currentIndex++
-          }
-          this.speedyInputCallBack(dataSource)
-        }}
-      >
-        {node}
-      </ArrowContain>
-    )
+    const { getFieldDecorator } = this.props.form
+    return (node: React.ReactNode) => {
+      return (
+        <FormItem
+          wrapperCol={{span: 24}}
+        >
+          <ArrowContain
+            disabled={dataSource.length <= 1}
+            type={(realIndex === 0 && 'down' || realIndex === dataSource.length - 1 && 'up' || undefined)}
+            onClick={(type) => {   
+              // const value = text
+              let currentIndex = 0
+              let end = realIndex
+              if (type === 'down') {
+                currentIndex = realIndex
+                end = dataSource.length - 1
+              }
+              while (currentIndex <= end) {
+                dataSource[currentIndex][field] = text as never
+                currentIndex++
+              }
+              this.speedyInputCallBack(dataSource)
+            }}
+          >
+            {fieldDecoratorOptions ?
+              getFieldDecorator(`${field}-${index}`, {
+                getValueFromEvent(e) {
+                  let value: string | number = '';
+                  if (!e || !e.target) {
+                    value = e;
+                  } else {
+                    const { target } = e;
+                    value = target.type === 'checkbox' ? target.checked : target.value;
+                  }
+                  cb(field, record, index)(value);
+                  return value;
+                },
+                ...fieldDecoratorOptions
+              })(node)
+            : node}
+          </ArrowContain>
+        </FormItem>
+      );
+    }
   }
   
   public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
@@ -166,11 +204,11 @@ class Main extends React.Component<Props, State> {
         title: '单位',
         dataIndex: 'unit',
         width: 200,
-        align: 'center',
         render: (text, record, index) => {
           return (
             this.speedyInput('unit', text, record, index, dataSource, cb)(
               <Input
+                maxLength={10}
                 value={text}
                 placeholder='请输入单位'
                 onChange={cb('unit', record, index)}
@@ -183,28 +221,38 @@ class Main extends React.Component<Props, State> {
         title: '市场价',
         dataIndex: 'marketPrice',
         width: 200,
-        render: (text: any, record: any, index: any) => (
-          this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('marketPrice', text, record, index, dataSource, cb, {
+            initialValue: text,
+            rules: [{
+              required: true,
+              message: '请输入市场价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入市场价"
-              onChange={cb('marketPrice', record, index)}
             />
           )
-        ),
+        },
       },
       {
         title: '成本价',
         dataIndex: 'costPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('costPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('costPrice', text, record, index, dataSource, cb, {
+            initialValue: text,
+            rules: [{
+              required: true,
+              message: '请输入成本价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入成本价"
-              onChange={cb('costPrice', record, index)}
             />
           )
         ),
@@ -230,12 +278,17 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'salePrice',
         width: 200,
         render: (text, record, index: any) => (
-          this.speedyInput('salePrice', text, record, index, dataSource, cb)(
+          this.speedyInput('salePrice', text, record, index, dataSource, cb, {
+            initialValue: text,
+            rules: [{
+              required: true,
+              message: '请输入销售价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入销售价"
-              onChange={cb('salePrice', record, index)}
             />
           )
         ),
@@ -245,12 +298,17 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'headPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('headPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('headPrice', text, record, index, dataSource, cb, {
+            initialValue: text,
+            rules: [{
+              required: true,
+              message: '请输入团长价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入团长价"
-              onChange={cb('headPrice', record, index)}
             />
           )
         ),
@@ -260,12 +318,17 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'areaMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb, {
+            initialValue: text,
+            rules: [{
+              required: true,
+              message: '请输入区长价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入区长价"
-              onChange={cb('areaMemberPrice', record, index)}
             />
           )
         ),
@@ -275,12 +338,17 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'cityMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb, {
+            initialValue: text,
+            rules: [{
+              required: true,
+              message: '请输入合伙人价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入合伙人价"
-              onChange={cb('cityMemberPrice', record, index)}
             />
           )
         ),
@@ -290,12 +358,17 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'managerMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb, {
+            initialValue: text,
+            rules: [{
+              required: true,
+              message: '请输入管理员价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入管理员价"
-              onChange={cb('managerMemberPrice', record, index)}
             />
           )
         ),
@@ -449,11 +522,12 @@ class Main extends React.Component<Props, State> {
       {
         title: '单位',
         dataIndex: 'unit',
-        width: 100,
+        width: 200,
         render: (text, record, index) => {
           return (
             this.speedyInput('unit', text, record, index, dataSource, cb)(
               <Input
+                maxLength={10}
                 value={text}
                 placeholder='请输入单位'
                 onChange={cb('unit', record, index)}
@@ -520,12 +594,16 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'marketPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('marketPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入市场价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入市场价"
-              onChange={cb('marketPrice', record, index)}
             />
           )
         ),
@@ -535,12 +613,16 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'costPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('costPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('costPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入成本价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入成本价"
-              onChange={cb('costPrice', record, index)}
             />
           )
         ),
@@ -550,12 +632,16 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'salePrice',
         width: 200,
         render: (text, record, index: any) => (
-          this.speedyInput('salePrice', text, record, index, dataSource, cb)(
+          this.speedyInput('salePrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入销售价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入销售价"
-              onChange={cb('salePrice', record, index)}
             />
           )
         ),
@@ -565,12 +651,16 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'headPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('headPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('headPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入团长价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入团长价"
-              onChange={cb('headPrice', record, index)}
             />
           )
         ),
@@ -580,12 +670,16 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'areaMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入区长价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入区长价"
-              onChange={cb('areaMemberPrice', record, index)}
             />
           )
         ),
@@ -595,12 +689,16 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'cityMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入合伙人价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入合伙人价"
-              onChange={cb('cityMemberPrice', record, index)}
             />
           )
         ),
@@ -610,12 +708,16 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'managerMemberPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb)(
+          this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入管理员价'
+            }]
+          })(
             <InputMoney
+              min={0.01}
               precision={2}
-              value={text}
               placeholder="请输入管理员价"
-              onChange={cb('managerMemberPrice', record, index)}
             />
           )
         ),
@@ -669,7 +771,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { selectedRowKeys, selectedRows, selectedRowKeysMap } = this.state;
+    const { selectedRowKeys, selectedRowKeysMap } = this.state;
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <>
@@ -689,12 +791,34 @@ class Main extends React.Component<Props, State> {
 
               // 销售商品SKU中库存商品详情
               getNormalizeBaseSkuDetail(record.skuId).then(data => {
-                // console.log('data =>//////////////////////////', data);
+                console.log('data =>//////////////////////////', data);
                 record.productBasics = data;
                 record.loading = false;
+                // console.log('///////////////////////////', union(selectedRowKeys, data.map((v: any) => v.productBasicId)));
+                
+                this.setState({
+                  selectedRowKeys: data.map((v: any) => v.id),
+                  selectedRowKeysMap: getSelectedRowKeysMap(data)
+                })
                 this.forceUpdate();
               })
             }
+          }}
+          expandIcon={(props: any) => {
+            const { expanded, record, onExpand } = props;
+            console.log('props =>', props);
+            return (!!record.skuId || record.expandable) ? (
+              <div
+                className={classNames({
+                  'ant-table-row-expand-icon': true,
+                  'ant-table-row-expanded': expanded,
+                  'ant-table-row-collapsed': !expanded
+                })}
+                onClick={(event) => {
+                  onExpand(record, event);
+                }}
+              ></div>
+            ): null
           }}
           expandedRowRender={this.props.warehouseType === 0 ? undefined : (record, index) => {
             return (

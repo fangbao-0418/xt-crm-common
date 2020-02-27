@@ -20,7 +20,8 @@ const defaultItem: SkuSaleProps = {
   deliveryMode: 2,
   marketPrice: 0,
   salePrice: 0,
-  managerMemberPrice: 0
+  managerMemberPrice: 0,
+  expandable: true
 }
 
 /** 子规格字段集合 */
