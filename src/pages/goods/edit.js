@@ -326,120 +326,137 @@ class GoodsEdit extends React.Component {
    */
   handleSave = (status) => {
     const {
-      form: { validateFields },
+      form: { validateFields }
+    } = this.props;
+    const { speSelect, data } = this.state;
+
+    validateFields((err, vals) => {
+      let msgs = []
+      if (err) {
+        const errs = Object.keys(err).map(key => err[key].errors).flat()
+        msgs = errs.filter(item => item.pass).map(item => item.msg)
+        if (errs.length !== msgs.length) {
+          APP.error('请检查输入项')
+          return
+        }
+      }
+      if (speSelect.find((item) => { return item.content.length === 0 })) {
+        APP.error('请添加商品规格')
+        return
+      }
+      if (size(speSelect) === 0) {
+        message.error('请添加规格');
+        return false;
+      }
+
+      if (size(data) === 0) {
+        message.error('请添加sku项');
+        return false;
+      }
+      if (vals.withShippingFree === 0 && !vals.freightTemplateId) {
+        message.error('请选择运费模板');
+        return;
+      }
+      if (msgs.length) {
+        Modal.confirm({
+          title: <div style={{textAlign: 'center'}}>商品价格提醒</div>,
+          icon: null,
+          width: 800,
+          content: <div style={{maxHeight: '60vh', overflow: 'auto'}}>{msgs.map(msg => (<div style={{marginBottom: '5px'}}>{msg}</div>))}</div>,
+          onOk: () => {
+            this.handleSetProduct(vals, status)
+          },
+        });
+      } else {
+        this.handleSetProduct(vals, status)
+      }
+    });
+  };
+  handleSetProduct(vals, status) {
+    const {
       match: {
         params: { id },
       },
     } = this.props;
     const { speSelect, data, propertyId1, propertyId2 } = this.state;
-
-    validateFields((err, vals) => {
-      if (err) {
-        APP.error('请检查输入项')
-        return
-      }
-      vals.freightTemplateId = +vals.freightTemplateId
-      if (err) {
-        APP.error('请检查必填项')
-        return
-      }
-      if (!err) {
-        if (speSelect.find((item) => { return item.content.length === 0 })) {
-          APP.error('请添加商品规格')
-          return
-        }
-        if (size(speSelect) === 0) {
-          message.error('请添加规格');
-          return false;
-        }
-
-        if (size(data) === 0) {
-          message.error('请添加sku项');
-          return false;
-        }
-        if (vals.withShippingFree === 0 && !vals.freightTemplateId) {
-          message.error('请选择运费模板');
-          return;
-        }
-        const property = {};
-        if (id) {
-          assign(property, {
-            propertyId1,
-            propertyId2: speSelect[1] && propertyId2,
-          });
-        }
-        // let isExistImg = true
-        // let isNotExistImg = true
-        const skuAddList = forEach(cloneDeep(data), item => {
-          // if (item.imageUrl1) {
-          //   isNotExistImg = false
-          // }
-          // if (!item.imageUrl1) {
-          //   isExistImg = false
-          // }
-          item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
-          item.costPrice = formatMoneyBeforeRequest(item.costPrice);
-          item.salePrice = formatMoneyBeforeRequest(item.salePrice);
-          item.marketPrice = formatMoneyBeforeRequest(item.marketPrice);
-          item.cityMemberPrice = formatMoneyBeforeRequest(item.cityMemberPrice);
-          item.managerMemberPrice = formatMoneyBeforeRequest(item.managerMemberPrice);
-          item.areaMemberPrice = formatMoneyBeforeRequest(item.areaMemberPrice);
-          item.headPrice = formatMoneyBeforeRequest(item.headPrice);
-        });
-        /** isNotExistImg为false存在图片上传, isExistImg为false存在未上传图片*/
-        // if (!isNotExistImg && !isExistImg) {
-        //   APP.error('存在未上传的商品图')
-        //   return
-        // }
-        const productImage = [];
-        map(vals.productImage, item => {
-          productImage.push(replaceHttpUrl(item.url));
-        });
-
-        const listImage = [];
-        map(vals.listImage, item => {
-          listImage.push(replaceHttpUrl(item.url));
-        });
-        /** 推送至仓库中即为下架，详情和列表页状态反了 */
-        vals.status =  status === undefined ? vals.status : status
-        for (let item of skuAddList) {
-          if (!+item.marketPrice || !+item.costPrice || !+item.salePrice || !+item.headPrice || !+item.areaMemberPrice || !+item.cityMemberPrice || !+item.managerMemberPrice) {
-            return void APP.error('市场价、成本价、销售价、团长价、社区管理员价、城市合伙人价、公司管理员价必填且不能为0');
-          }
-        }
-        const params = {
-          ...vals,
-          returnContact: this.state.returnContact,
-          returnPhone: this.state.returnPhone,
-          returnAddress: this.state.returnAddress,
-          property1: speSelect[0] && speSelect[0].title,
-          property2: speSelect[1] && speSelect[1].title,
-          skuAddList,
-          coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].url),
-          videoCoverUrl:
-            vals.videoCoverUrl && vals.videoCoverUrl[0]
-              ? replaceHttpUrl(vals.videoCoverUrl[0].url)
-              : '',
-          videoUrl: vals.videoUrl && vals.videoUrl[0] ? replaceHttpUrl(vals.videoUrl[0].url) : '',
-          listImage: listImage.join(','),
-          productImage: productImage.join(','),
-          ...property,
-          bannerUrl: vals.bannerUrl && replaceHttpUrl(vals.bannerUrl[0].url),
-          categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
-          modifyTime: this.detail.modifyTime
-        };
-        setProduct({ productId: id, ...params }).then(res => {
-          if (!res) return;
-          if (id) {
-            res && message.success('编辑数据成功');
-          } else {
-            res && message.success('添加数据成功');
-          }
-          gotoPage('/goods/list');
-        });
-      }
+    vals.freightTemplateId = +vals.freightTemplateId
+    const property = {};
+    if (id) {
+      assign(property, {
+        propertyId1,
+        propertyId2: speSelect[1] && propertyId2,
+      });
+    }
+    // let isExistImg = true
+    // let isNotExistImg = true
+    const skuAddList = forEach(cloneDeep(data), item => {
+      // if (item.imageUrl1) {
+      //   isNotExistImg = false
+      // }
+      // if (!item.imageUrl1) {
+      //   isExistImg = false
+      // }
+      item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
+      item.costPrice = formatMoneyBeforeRequest(item.costPrice);
+      item.salePrice = formatMoneyBeforeRequest(item.salePrice);
+      item.marketPrice = formatMoneyBeforeRequest(item.marketPrice);
+      item.cityMemberPrice = formatMoneyBeforeRequest(item.cityMemberPrice);
+      item.managerMemberPrice = formatMoneyBeforeRequest(item.managerMemberPrice);
+      item.areaMemberPrice = formatMoneyBeforeRequest(item.areaMemberPrice);
+      item.headPrice = formatMoneyBeforeRequest(item.headPrice);
     });
-  };
+    /** isNotExistImg为false存在图片上传, isExistImg为false存在未上传图片*/
+    // if (!isNotExistImg && !isExistImg) {
+    //   APP.error('存在未上传的商品图')
+    //   return
+    // }
+    const productImage = [];
+    map(vals.productImage, item => {
+      productImage.push(replaceHttpUrl(item.url));
+    });
+
+    const listImage = [];
+    map(vals.listImage, item => {
+      listImage.push(replaceHttpUrl(item.url));
+    });
+    /** 推送至仓库中即为下架，详情和列表页状态反了 */
+    vals.status =  status === undefined ? vals.status : status
+    for (let item of skuAddList) {
+      if (!+item.marketPrice || !+item.costPrice || !+item.salePrice || !+item.headPrice || !+item.areaMemberPrice || !+item.cityMemberPrice || !+item.managerMemberPrice) {
+        return void APP.error('市场价、成本价、销售价、团长价、社区管理员价、城市合伙人价、公司管理员价必填且不能为0');
+      }
+    }
+    const params = {
+      ...vals,
+      returnContact: this.state.returnContact,
+      returnPhone: this.state.returnPhone,
+      returnAddress: this.state.returnAddress,
+      property1: speSelect[0] && speSelect[0].title,
+      property2: speSelect[1] && speSelect[1].title,
+      skuAddList,
+      coverUrl: vals.coverUrl && replaceHttpUrl(vals.coverUrl[0].url),
+      videoCoverUrl:
+        vals.videoCoverUrl && vals.videoCoverUrl[0]
+          ? replaceHttpUrl(vals.videoCoverUrl[0].url)
+          : '',
+      videoUrl: vals.videoUrl && vals.videoUrl[0] ? replaceHttpUrl(vals.videoUrl[0].url) : '',
+      listImage: listImage.join(','),
+      productImage: productImage.join(','),
+      ...property,
+      bannerUrl: vals.bannerUrl && replaceHttpUrl(vals.bannerUrl[0].url),
+      categoryId: Array.isArray(vals.categoryId) ? vals.categoryId[2] : '',
+      modifyTime: this.detail.modifyTime
+    };
+    setProduct({ productId: id, ...params }).then(res => {
+      if (!res) return;
+      if (id) {
+        res && message.success('编辑数据成功');
+      } else {
+        res && message.success('添加数据成功');
+      }
+      gotoPage('/goods/list');
+    });
+  }
   handleDeleteAll = () => {
     Modal.confirm({
       title: '提示',

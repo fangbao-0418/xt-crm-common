@@ -20,10 +20,15 @@ const initOrderInfo = {
   remark: 'string',
 };
 
-const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
+const modifyAddress = (changeModifyAddress) => {
+  return <Button onClick={() => changeModifyAddress()} type="primary">修改地址</Button>
+}
+const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddress }) => {
   const [visible, setVisible] = useState(false);
-  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes } = orderInfo;
+  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
+  // 支付时间小于1个小时显示按钮。
+  const isModify = (new Date().getTime() - payDate) < 3600000;
   return (
     <>
       <Modal
@@ -49,7 +54,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, refresh }) => {
           dataSource={groupBuyOrderCodes}
         />
       </Modal>
-      <Card title="订单信息">
+      <Card title="订单信息" extra={ isModify && orderStatus === 20 ? modifyAddress(changeModifyAddress) : ''}>
         <Row gutter={24}>
           <Col span={8}>订单编号：{orderCode}</Col>
           <Col span={8}>创建时间：{formatDate(createTime)}</Col>
