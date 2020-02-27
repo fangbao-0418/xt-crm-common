@@ -3,10 +3,14 @@ const {
   fixBabelImports,
   addDecoratorsLegacy,
   useEslintRc,
+  disableEsLint,
   addWebpackAlias,
   addWebpackPlugin,
   removeModuleScopePlugin,
-  addWebpackModuleRule
+  addWebpackModuleRule,
+  addWebpackExternals,
+  addBundleVisualizer,
+  setWebpackOptimizationSplitChunks
 } = require('customize-cra');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
@@ -77,6 +81,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
 module.exports = override(
   addWebpackModuleRule({
     test: /\.module.styl/,
+    exclude: /node_modules/,
     use: getStyleLoaders(
       {
         importLoaders: 2,
@@ -88,11 +93,11 @@ module.exports = override(
     )
   }),
   removeModuleScopePlugin(),
-  fixBabelImports('import', {
-    libraryName: 'antd',
-    style: 'css',
-    libraryDirectory: 'es' // change importing css to less
-  }),
+  // fixBabelImports('import', {
+  //   libraryName: 'antd',
+  //   style: 'css',
+  //   libraryDirectory: 'es' // change importing css to less
+  // }),
   fixBabelImports('lodash', {
     libraryDirectory: '',
     camel2DashComponentName: false
@@ -118,9 +123,28 @@ module.exports = override(
     ])
   ),
   useEslintRc(),
+  isEnvDevelopment ? undefined : disableEsLint(),
   addWebpackAlias({
     packages: path.resolve(__dirname, 'packages/'),
     '@': path.resolve(__dirname, 'src/')
+  }),
+  addWebpackExternals({
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    antd: 'antd',
+    imutable: 'Immutable',
+    moment: 'moment',
+    'ali-oss': 'OSS'
+  }),
+  // addBundleVisualizer(),
+  setWebpackOptimizationSplitChunks({
+    cacheGroups: {
+      commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+      }
+    }
   }),
   (function () {
     return function (config) {
