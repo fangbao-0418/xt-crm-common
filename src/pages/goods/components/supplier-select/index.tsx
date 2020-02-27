@@ -9,9 +9,9 @@ interface supplierItem {
   name: string;
 }
 interface SupplierSelectProps {
-  disabled: boolean;
-  onChange: (value: string, options: supplierItem[]) => void;
-  value: string;
+  disabled?: boolean;
+  onChange?: (value: string, options: supplierItem[]) => void;
+  value?: string;
   options?: supplierItem[];
 }
 interface SupplierSelectState {
@@ -56,7 +56,9 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
     }
   }
   handleChange = (value: string) => {
-    this.props.onChange(value, this.state.supplierList)
+    if (this.props.onChange) {
+      this.props.onChange(value, this.state.supplierList)
+    }
   }
   render () {
     const { disabled, value } = this.props;
