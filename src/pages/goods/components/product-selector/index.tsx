@@ -3,25 +3,25 @@ import { Form, FormItem, SelectFetch } from '@/packages/common/components';
 import { FormInstance } from '@/packages/common/components/form';
 import { defaultConfig } from './config';
 import { Modal, Table } from 'antd';
-import { unionBy, omit, union } from 'lodash';
+import { unionBy, union } from 'lodash';
 import { getCategoryTopList } from '../../api';
 import { CSkuProps } from '../../sku-stock/components/sku';
 import { getBaseProductPage } from '../../sku-sale/api';
 import { ColumnProps } from 'antd/lib/table';
 interface ProductSelectorProps {
-  onOk: ({selectedRowKeys, productBasics, selectedRowKeysMap, selectedRows}: any) => void;
+  onOk: ({selectedRowKeys, productBasics, selectedRowKeysMap}: any) => void;
   selectedRowKeys: any[],
   selectedRowKeysMap: any;
-  selectedRows: any[];
+  productBasics: any[];
 }
 
 // 分散开
-function spread(selectedRows: any[], selectedRowKeysMap: any) {
+function spread(selectedRows: any[], selectedRowKeysMap?: any) {
   let result: any[] = [];
   for (let row of selectedRows) {
-    const productBasicSkuInfos = (row.productBasicSkuInfos || []).filter((v: any) => {
+    const productBasicSkuInfos = selectedRowKeysMap ? (row.productBasicSkuInfos || []).filter((v: any) => {
       return (selectedRowKeysMap[row.id] || []).includes(v.productBasicSkuId);
-    })
+    }): row.productBasicSkuInfos;
     for (let item of productBasicSkuInfos) {
       result.push({ ...row, ...item})
     }
@@ -107,6 +107,8 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
               const { selectedRowKeysMap } = this.state;
               selectedRowKeysMap[id] = productBasicSkuInfoKeys;
               
+
+              // 改变selectedRowKeys，selectedRows
               if (!!(productBasicSkuInfos && productBasicSkuInfos.length) &&
                 productBasicSkuInfoKeys.length === 0) {
                 selectedRowKeys = selectedRowKeys.filter(key => key !== id); 
@@ -144,9 +146,9 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
       );
     }
   }]
-  UNSAFE_componentWillReceiveProps({ selectedRowKeys, selectedRowKeysMap, selectedRows }: ProductSelectorProps) {
-    this.selectedRows = selectedRows;
-    console.log('this.selectedRows => ', this.selectedRows);
+  UNSAFE_componentWillReceiveProps({ selectedRowKeys, selectedRowKeysMap, productBasics }: ProductSelectorProps) {
+    this.selectedRows = productBasics;
+    console.log('this.selectedRows =>', this.selectedRows);
     this.setState({
       selectedRowKeys,
       selectedRowKeysMap
@@ -162,8 +164,9 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     })
     getBaseProductPage(this.payload)
       .then((res: any) => {
+
         this.setState({
-          dataSource: res.records || [],
+          dataSource: res.records,
           total: res.total || 0
         })
       })
@@ -171,12 +174,22 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
 
   handleOK = () => {
     const { selectedRowKeys, selectedRowKeysMap } = this.state;
-    const productBasics = spread(this.selectedRows, selectedRowKeysMap);
+    let productBasics = spread(this.selectedRows, selectedRowKeysMap);
     if (productBasics.length === 0) {
       return void APP.error('请选择商品');
     }
-    console.log(productBasics, this.selectedRows, '~~~~~~~~~~~~~');
-    this.props.onOk({selectedRowKeys, productBasics, selectedRowKeysMap, selectedRows: this.selectedRows});
+    console.log('this.selectedRows => ', this.selectedRows)
+    // 同步num字段;
+    productBasics = productBasics.map((item: any) => {
+      const selectedItem = spread(this.selectedRows).find(item2 => {
+        return item.productBasicSkuId === item2.productBasicSkuId;
+      }) || item;
+      item.num = selectedItem.num;
+      return item;
+    });
+
+    console.log('productBasics => ', productBasics)
+    this.props.onOk({selectedRowKeys, productBasics, selectedRowKeysMap});
     this.setState({ visible: false})
   }
   handleCancel = () => {

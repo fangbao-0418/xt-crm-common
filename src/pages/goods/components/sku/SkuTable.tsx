@@ -53,6 +53,7 @@ function combination(data: any[]) {
   for (let item of data) {
     const record = {
       ...pick(item, [
+        'num',
         'id',
         'productName',
         'status',
@@ -86,7 +87,6 @@ function combination(data: any[]) {
 
 interface State {
   dataSource: SkuSaleProps[];
-  selectedRows: any[];
   selectedRowKeys: any[],
   selectedRowKeysMap: any
 }
@@ -98,7 +98,6 @@ class Main extends React.Component<Props, State> {
   }
   public state: State = {
     dataSource: this.props.dataSource || [],
-    selectedRows: [],
     selectedRowKeys: [],
     selectedRowKeysMap: []
   }
@@ -558,6 +557,32 @@ class Main extends React.Component<Props, State> {
     return [
       ...differentColumns,
       {
+        title: (
+          <div style={{textAlign: 'center'}}>
+            <div>单次限购</div>
+            <span style={{fontSize: 12}}>(0为不限制)</span>
+          </div>
+        ),
+        width: 200,
+        dataIndex: 'singleBuyNumMax',
+        render: (text: any, record: any, index: any) => {
+          return (
+            <div style={{ display: 'flex', alignItems: 'center'}}>
+              {this.speedyInput('singleBuyNumMax', text, record, index, dataSource, cb)(
+                <InputNumber
+                  min={0}
+                  maxLength={8}
+                  precision={0}
+                  value={text}
+                  onChange={cb('singleBuyNumMax', record, index)}
+                />
+              )}
+              <span style={{ marginLeft: 4, marginBottom: 24 }}>件</span>
+            </div>
+          )
+        }
+      },
+      {
         title: '单位',
         dataIndex: 'unit',
         width: 200,
@@ -775,7 +800,7 @@ class Main extends React.Component<Props, State> {
             />
           )
         ),
-      },
+      }
     ]
   }
   public handleChangeValue = (field: string, record: any, index: any) => (e: any) => {
@@ -809,7 +834,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { selectedRowKeys, selectedRowKeysMap, selectedRows } = this.state;
+    const { selectedRowKeys, selectedRowKeysMap } = this.state;
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
     return (
       <>
@@ -833,7 +858,6 @@ class Main extends React.Component<Props, State> {
                 record.loading = false;
                 
                 this.setState({
-                  selectedRows: combination(record.productBasics),
                   selectedRowKeys: data.map((v: any) => v.id),
                   selectedRowKeysMap: getSelectedRowKeysMap(data)
                 })
@@ -844,7 +868,7 @@ class Main extends React.Component<Props, State> {
           expandIcon={(props: any) => {
             const { expanded, record, onExpand } = props;
             console.log('props =>', props);
-            return (!!record.skuId || record.expandable) ? (
+            return (!!record.skuId || record.expandable) && this.props.warehouseType === 1 ? (
               <div
                 className={classNames({
                   'ant-table-row-expand-icon': true,
@@ -867,14 +891,13 @@ class Main extends React.Component<Props, State> {
                   <ProductSeletor
                     selectedRowKeys={selectedRowKeys}
                     selectedRowKeysMap={selectedRowKeysMap}
-                    selectedRows={selectedRows}
-                    onOk={({selectedRowKeys, productBasics, selectedRowKeysMap, selectedRows}: any) => {
+                    productBasics={combination(record.productBasics)}
+                    onOk={({selectedRowKeys, productBasics, selectedRowKeysMap}: any) => {
                       const { dataSource } = this.state;
                       dataSource[index].productBasics = [...productBasics];
                       this.setState({
                         selectedRowKeys,
                         dataSource,
-                        selectedRows,
                         selectedRowKeysMap
                       })
                       if (this.props.onChange) {
@@ -929,6 +952,7 @@ class Main extends React.Component<Props, State> {
                       <InputNumber
                         style={{ width: 172 }}
                         value={text}
+                        max={999}
                         placeholder='请输入数量配置'
                         precision={0}
                         onChange={(value) => {
