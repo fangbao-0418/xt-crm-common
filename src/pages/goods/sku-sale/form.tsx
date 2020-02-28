@@ -257,7 +257,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     })
   }
   sync1688Sku = () => {
-    this.form.props.form.validateFields((err, vals) => {
+    this.form && this.form.props.form.validateFields((err, vals) => {
       if(!vals.storeProductId) return;
       get1688Sku(vals.storeProductId).then((data: any)=>{
         if (!data) return;
@@ -293,99 +293,126 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     const {
       specs,
       skuList,
+      freightTemplateId,
+    } = this.state;
+    this.form && this.form.props.form.validateFields((err, vals) => {
+      let msgs = []
+      if (err) {
+        const errs = Object.keys(err).map(key => err[key].errors).flat()
+        msgs = errs.filter(item => item.pass).map(item => item.msg)
+        if (errs.length !== msgs.length) {
+          APP.error('请检查输入项')
+          return
+        }
+      }
+      if (specs.find((item) => { return item.content.length === 0 })) {
+        APP.error('请添加商品规格')
+        return
+      }
+      if (size(specs) === 0) {
+        message.error('请添加规格');
+        return false;
+      }
+
+      if (size(skuList) === 0) {
+        message.error('请添加sku项');
+        return false;
+      }
+      if (vals.withShippingFree === 0 && !freightTemplateId) {
+        message.error('请选择运费模板');
+        return;
+      }
+      if (msgs.length) {
+        Modal.confirm({
+          title: <div style={{textAlign: 'center'}}>商品价格提醒</div>,
+          icon: null,
+          width: 800,
+          content: <div style={{maxHeight: '60vh', overflow: 'auto'}}>{msgs.map(msg => (<div style={{marginBottom: '5px'}}>{msg}</div>))}</div>,
+          onOk: () => {
+            this.handleSetProduct(vals, status)
+          },
+        });
+      } else {
+        this.handleSetProduct(vals, status)
+      }
+    });
+  };
+  handleSetProduct(vals:any, status?:number) {
+    const {
+      specs,
+      skuList,
       propertyId1,
       propertyId2,
       freightTemplateId,
       isGroup,
       productCode
     } = this.state;
-    this.form.props.form.validateFields((err, vals) => {
-      if (!err) {
-        if (specs.find((item) => { return item.content.length === 0 })) {
-          APP.error('请添加商品规格')
-          return
-        }
-        if (size(specs) === 0) {
-          message.error('请添加规格');
-          return false;
-        }
-
-        if (size(skuList) === 0) {
-          message.error('请添加sku项');
-          return false;
-        }
-        if (vals.withShippingFree === 0 && !freightTemplateId) {
-          message.error('请选择运费模板');
-          return;
-        }
-        const property = {};
+    const property = {};
+    if (this.id !== -1) {
+      assign(property, {
+        propertyId1,
+        propertyId2: specs[1] && propertyId2,
+      });
+    }
+    /** 推送至仓库中即为下架，详情和列表页状态反了 */
+    vals.status =  status === undefined ? vals.status : status
+    // 组合商品新增、编辑
+    if (isGroup) {
+      setGroupProduct({
+        productCode,
+        isGroup,
+        modifyTime: this.modifyTime,
+        productId: this.id,
+        freightTemplateId,
+        property1: specs[0] && specs[0].title,
+        property2: specs[1] && specs[1].title,
+        skuList,
+        ...vals,
+        ...pick(this.state, [
+          'returnContact',
+          'returnPhone',
+          'returnAddress'
+        ]),
+        ...property
+      }).then((res: any) => {
+        if (!res) return;
         if (this.id !== -1) {
-          assign(property, {
-            propertyId1,
-            propertyId2: specs[1] && propertyId2,
-          });
+          APP.success('编辑数据成功');
+        } else {
+          APP.success('添加数据成功');
         }
-        /** 推送至仓库中即为下架，详情和列表页状态反了 */
-        vals.status =  status === undefined ? vals.status : status
-        // 组合商品新增、编辑
-        if (isGroup) {
-          setGroupProduct({
-            productCode,
-            isGroup,
-            modifyTime: this.modifyTime,
-            productId: this.id,
-            freightTemplateId,
-            property1: specs[0] && specs[0].title,
-            property2: specs[1] && specs[1].title,
-            skuList,
-            ...vals,
-            ...pick(this.state, [
-              'returnContact',
-              'returnPhone',
-              'returnAddress'
-            ]),
-            ...property
-          }).then((res: any) => {
-            if (!res) return;
-            if (this.id !== -1) {
-              APP.success('编辑数据成功');
-            } else {
-              APP.success('添加数据成功');
-            }
-            gotoPage('/goods/list');
-          })
+        gotoPage('/goods/list');
+      })
+    }
+    // 普通商品新增、编辑
+    else {
+      setProduct({
+        productCode,
+        isGroup,
+        modifyTime: this.modifyTime,
+        productId: this.id,
+        freightTemplateId,
+        property1: specs[0] && specs[0].title,
+        property2: specs[1] && specs[1].title,
+        skuList,
+        ...vals,
+        ...pick(this.state, [
+          'returnContact',
+          'returnPhone',
+          'returnAddress'
+        ]),
+        ...property
+      }).then((res: any) => {
+        if (!res) return;
+        if (this.id !== -1) {
+          APP.success('编辑数据成功');
+        } else {
+          APP.success('添加数据成功');
         }
-        // 普通商品新增、编辑
-        else {
-          setProduct({
-            productCode,
-            isGroup,
-            modifyTime: this.modifyTime,
-            productId: this.id,
-            freightTemplateId,
-            property1: specs[0] && specs[0].title,
-            property2: specs[1] && specs[1].title,
-            skuList,
-            ...vals,
-            ...pick(this.state, [
-              'returnContact',
-              'returnPhone',
-              'returnAddress'
-            ]),
-            ...property
-          }).then((res: any) => {
-            if (!res) return;
-            if (this.id !== -1) {
-              APP.success('编辑数据成功');
-            } else {
-              APP.success('添加数据成功');
-            }
-            gotoPage('/goods/list');
-          });
-        }
-      }
-    });
-  };
+        gotoPage('/goods/list');
+      });
+    }
+  }
   handleDeleteAll = () => {
     Modal.confirm({
       title: '提示',

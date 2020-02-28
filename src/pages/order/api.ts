@@ -8,6 +8,12 @@ export interface batchExportPayload {
   expressNumbers: string;
   fileName: string;
 }
+
+// 获取订单类型集合
+export function getOrderTypeList () {
+  return get('/order/getOrderTypeList')
+}
+
 // 批量轨迹导出
 export function batchExport(payload: batchExportPayload) {
   return exportFileStream('/expressTracking/batchExport', batchExportRequest(payload), payload.fileName)
@@ -246,6 +252,18 @@ export function cancelIntercept(param: any) {
  */
 export function deliveryInterceptOrder(param: any) {
   return post('/order/intercept/interceptDeliver', param);
+}
+
+/**
+ * 下单一小内修改收货地址
+ * @param {object}  param
+ */
+export function modifyAddress(data: any) {
+  return fetch('/order/updateContact', {
+    method: 'POST',
+    data,
+    hideLoading: true
+  });
 }
 
 

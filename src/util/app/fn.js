@@ -25,7 +25,7 @@ export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
     date = Number(date)
     date = String(date).length === 10 ? date * 1000 : date
   }
-  return date && moment(date).format(format);
+  return (date && moment(date).format(format)) || '';
 }
 
 export function formatMoney(money = '0') {

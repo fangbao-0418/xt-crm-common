@@ -6,7 +6,6 @@ import { Card, DatePicker, Icon, Table, Button } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
-import moment from 'moment'
 import { disabledDate, disabledDateTime } from '@/util/antdUtil'
 interface State {
   roundList: Lottery.LuckyDrawRoundListVo[],

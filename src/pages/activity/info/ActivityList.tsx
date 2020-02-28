@@ -14,6 +14,7 @@ interface UserFormProps extends FormComponentProps {
   text?: string;
   info?: any;
   confirm: (selectedRow: any) => void;
+  activityType?: number[]
 }
 
 class ActivityList extends React.Component<UserFormProps, any> {
@@ -158,7 +159,6 @@ class ActivityList extends React.Component<UserFormProps, any> {
       form: { getFieldDecorator },
       text = '批量转移'
     } = this.props as any;
-
     return (
       <>
         <span className="href" onClick={this.showModal} style={{ marginRight: 20 }}>
@@ -196,7 +196,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
                 {getFieldDecorator('name')(<Input placeholder="请输入活动名称" style={{ width: 150 }} />)}
               </FormItem>
               <FormItem label="商品ID">
-                {getFieldDecorator('pid')(<Input placeholder="请输入商品ID" style={{ width: 150 }} />)}
+                {getFieldDecorator('productId')(<Input placeholder="请输入商品ID" style={{ width: 150 }} />)}
               </FormItem>
               <FormItem label="商品名称">
                 {getFieldDecorator('pname')(<Input placeholder="请输入商品名称" style={{ width: 150 }} />)}
@@ -207,7 +207,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
                     <Option value="">全部</Option>
                     {activityType
                       .getArray()
-                      .filter(val => val.key === 1 || val.key === 2 || val.key === 3)
+                      .filter(val => (this.props.activityType || [1, 2, 3]).includes(val.key))
                       .map((val, i) => (
                         <Option value={val.key} key={i}>
                           {val.val}

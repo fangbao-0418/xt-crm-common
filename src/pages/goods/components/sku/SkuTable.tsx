@@ -162,6 +162,10 @@ class Main extends React.Component<Props, State> {
   }
   
   public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
+    const { validateFields } = this.props.form
+    const validateColumnsFields = (index:number) => {
+      validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
+    }
     const  differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
       dataIndex: 'barCode',
@@ -174,7 +178,7 @@ class Main extends React.Component<Props, State> {
             onChange={cb('barCode', record, index)}
           />
         );
-      },
+      }
     },
     {
       title: '规格编码',
@@ -290,6 +294,7 @@ class Main extends React.Component<Props, State> {
               min={0.01}
               precision={2}
               placeholder="请输入成本价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
         ),
@@ -320,15 +325,34 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入销售价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value <= record.headPrice) {
+                  cb({
+                    message: '应高于团长价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.headPrice ? '等于' : '低于'} 团长价(${record.headPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入销售价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '团长价',
@@ -340,15 +364,40 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入团长价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value >= record.salePrice) {
+                  cb({
+                    message: '应低于销售价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.salePrice ? '等于' : '高于'} 销售价(${record.salePrice}元)`
+                  })
+                } else if (value <= record.areaMemberPrice) {
+                  cb({
+                    message: '应高于社区管理员价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.areaMemberPrice ? '等于' : '低于'} 社区管理员价(${record.areaMemberPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入团长价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '区长价',
@@ -360,15 +409,40 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入区长价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value >= record.headPrice) {
+                  cb({
+                    message: '应低于团长价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.headPrice ? '等于' : '高于'} 团长价(${record.headPrice}元)`
+                  })
+                } else if (value <= record.cityMemberPrice) {
+                  cb({
+                    message: '应高于城市合伙人价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '低于'} 城市合伙人价(${record.cityMemberPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入区长价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '合伙人价',
@@ -380,15 +454,40 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入合伙人价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value >= record.areaMemberPrice) {
+                  cb({
+                    message: '应低于社区管理员价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.areaMemberPrice ? '等于' : '高于'} 社区管理员价(${record.areaMemberPrice}元)`
+                  })
+                } else if (value <= record.managerMemberPrice) {
+                  cb({
+                    message: '应高于公司管理员价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.managerMemberPrice ? '等于' : '低于'} 公司管理员价(${record.managerMemberPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入合伙人价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '管理员价',
@@ -400,15 +499,40 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入管理员价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value >= record.cityMemberPrice) {
+                  cb({
+                    message: '应低于合伙人价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '高于'} 合伙人价(${record.cityMemberPrice}元)`
+                  })
+                } else if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入管理员价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '警戒库存',
@@ -430,7 +554,10 @@ class Main extends React.Component<Props, State> {
   }
   /** 海外列表 */
   public getOverseasColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, validateFields } = this.props.form
+    const validateColumnsFields = (index:number) => {
+      validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
+    }
     const differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
       dataIndex: 'barCode',
@@ -554,6 +681,7 @@ class Main extends React.Component<Props, State> {
         )
       }
     }]
+
     return [
       ...differentColumns,
       {
@@ -596,6 +724,18 @@ class Main extends React.Component<Props, State> {
                 onChange={cb('unit', record, index)}
               />
             )
+          )
+        }
+      },
+      {
+        title: '发货方式',
+        dataIndex: 'deliveryMode',
+        width: 200,
+        render: (text: any, record: any, index: any) => {
+          return (
+            <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
+              <Option value={4} key='d-4'>保宏保税仓</Option>
+            </Select>
           )
         }
       },
@@ -686,6 +826,7 @@ class Main extends React.Component<Props, State> {
               min={0.01}
               precision={2}
               placeholder="请输入成本价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
         ),
@@ -699,15 +840,34 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入销售价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value <= record.headPrice) {
+                  cb({
+                    message: '应高于团长价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.headPrice ? '等于' : '低于'} 团长价(${record.headPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入销售价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '团长价',
@@ -718,15 +878,40 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入团长价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value >= record.salePrice) {
+                  cb({
+                    message: '应低于销售价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.salePrice ? '等于' : '高于'} 销售价(${record.salePrice}元)`
+                  })
+                } else if (value <= record.areaMemberPrice) {
+                  cb({
+                    message: '应高于社区管理员价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.areaMemberPrice ? '等于' : '低于'} 社区管理员价(${record.areaMemberPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入团长价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '区长价',
@@ -737,15 +922,40 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入区长价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value >= record.headPrice) {
+                  cb({
+                    message: '应低于团长价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.headPrice ? '等于' : '高于'} 团长价(${record.headPrice}元)`
+                  })
+                } else if (value <= record.cityMemberPrice) {
+                  cb({
+                    message: '应高于城市合伙人价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '低于'} 城市合伙人价(${record.cityMemberPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入区长价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '合伙人价',
@@ -756,15 +966,40 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入合伙人价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value >= record.areaMemberPrice) {
+                  cb({
+                    message: '应低于社区管理员价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.areaMemberPrice ? '等于' : '高于'} 社区管理员价(${record.areaMemberPrice}元)`
+                  })
+                } else if (value <= record.managerMemberPrice) {
+                  cb({
+                    message: '应高于公司管理员价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.managerMemberPrice ? '等于' : '低于'} 公司管理员价(${record.managerMemberPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入合伙人价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '管理员价',
@@ -775,15 +1010,40 @@ class Main extends React.Component<Props, State> {
             rules: [{
               required: true,
               message: '请输入管理员价'
+            }, {
+              validator: (rule, value, cb) => {
+                if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else if (value >= record.cityMemberPrice) {
+                  cb({
+                    message: '应低于合伙人价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '高于'} 合伙人价(${record.cityMemberPrice}元)`
+                  })
+                } else if (value <= record.costPrice) {
+                  cb({
+                    message: '应高于成本价',
+                    pass: true,
+                    msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                  })
+                } else {
+                  cb()
+                }
+              }
             }]
           })(
             <InputMoney
               min={0.01}
               precision={2}
               placeholder="请输入管理员价"
+              onBlur={() => validateColumnsFields(index)}
             />
           )
-        ),
+        )
       },
       {
         title: '警戒库存',
@@ -885,7 +1145,7 @@ class Main extends React.Component<Props, State> {
             return (
               <Table
                 loading={record.loading}
-                rowKey={(_, idx) => idx + ''}
+                rowKey={(_, idx) => `sku-table-${index}`}
                 dataSource={record.productBasics}
                 footer={() => (
                   <ProductSeletor

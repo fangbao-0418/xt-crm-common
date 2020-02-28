@@ -71,7 +71,7 @@ class Main extends React.Component<{}, State> {
                     <div
                       style={{color: 'rgba(0, 0, 0, 0.65)'}}
                     >
-                      多直播状态，图片格式支持png,jpg，规格为：待补充；750X380
+                      多直播状态，图片格式支持png,jpg，规格为：待补充；750X400
                     </div>
                   </>
                 )
@@ -108,7 +108,7 @@ class Main extends React.Component<{}, State> {
                     <div
                       style={{color: 'rgba(0, 0, 0, 0.65)'}}
                     >
-                      单直播状态，图片格式支持png,jpg，规格为：750X420
+                      单直播状态，图片格式支持png,jpg，规格为：750X440
                     </div>
                   </>
                 )

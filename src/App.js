@@ -25,13 +25,14 @@ const CrudPage = Loadable(() => import('./components/crudPage'))
 const Message = Loadable(() => import('./pages/message'))
 const Setting = Loadable(() => import('./pages/setting'))
 const ULive = Loadable(() => import('./pages/ulive'))
-
+const MerchantAccounts = Loadable(() => import('./pages/merchant-accounts'))
 class Main extends React.Component {
   constructor (props) {
     super(props)
     APP.dispatch = props.dispatch
     APP.history = props.history
     this.fetchConfig()
+    this.fetchOrderTypes()
   }
   async fetchConfig () {
     const list = await get('/express/getList') || []
@@ -41,6 +42,13 @@ class Main extends React.Component {
     }))
     APP.constant.expressList = expressList
     APP.constant.expressConfig = this.convert2Config(expressList)
+  }
+  fetchOrderTypes () {
+    get('/order/getOrderTypeList').then(res => {
+      const orderTypeList = res.map(item =>({ label: item.name, value: item.value}));
+      APP.constant.orderTypeList = orderTypeList;
+      APP.constant.orderTypeConfig = this.convert2Config(orderTypeList);
+    })
   }
   convert2Config (list) {
     return list.reduce((config, curr) => {
@@ -71,6 +79,7 @@ class Main extends React.Component {
           <Route path="/message" component={Message} />
           <Route path="/setting" component={Setting}/>
           <Route path="/ulive" component={ULive}/>
+          <Route path="/merchant-accounts" component={MerchantAccounts}/>
         </Layout>
       </Switch>
     )

@@ -46,7 +46,9 @@
   word-wrap : break-word;
   word-break: break-all;
 }
-
+.success {
+  color: #008000;
+}
 .error {
   color: red;
   cursor: pointer;

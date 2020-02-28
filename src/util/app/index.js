@@ -3,8 +3,23 @@ import * as regular from './regular'
 var constant = require('./constant').default
 var http = require('./http')
 var fn = require('./fn')
+
+function getUser () {
+  var userStr = localStorage.getItem('user')
+  var user = {}
+  try {
+    user = JSON.parse(userStr) || {}
+  } catch (e) {
+    console.log(e)
+  }
+  console.log(user, 'user')
+  user.menuGathers = user.menuGathers || []
+  return user
+}
+
 Object.assign(APP, {
   history: {},
+  user: getUser(),
   success: function (text, duration = 1) {
     message.success(text, duration)
   },

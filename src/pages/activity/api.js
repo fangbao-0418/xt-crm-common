@@ -1,11 +1,15 @@
 import { post, get, newPost } from '../../util/fetch';
+import { promotionParams, promotionResponse } from './adapter';
 
 export function getPromotionList(data) {
   return post('/promotion/list', data);
 }
 
 export function setBasePromotion(data) {
-  return post('/promotion/addBasePromotion', {}, { data, headers: {} });
+  return post('/promotion/addBasePromotion', {}, { 
+    data: promotionParams(data),
+    headers: {}
+  });
 }
 
 /**
@@ -13,7 +17,7 @@ export function setBasePromotion(data) {
  * @param {*} promotionId
  */
 export function getPromotionInfo(promotionId) {
-  return get(`/promotion/${promotionId}`);
+  return get(`/promotion/${promotionId}`).then(promotionResponse);
 }
 
 // 获取活动商品列表
@@ -49,7 +53,10 @@ export function enablePromotion(data) {
 }
 
 export function updateBasePromotion(data) {
-  return post('/promotion/updateBasePromotion', {}, { data, headers: {} });
+  return post('/promotion/updateBasePromotion', {}, {
+    data: promotionParams(data),
+    headers: {}
+  });
 }
 
 export function delSpuPromotion(data) {
