@@ -381,7 +381,7 @@ class UserInfo extends Component {
             <Descriptions.Item label="注册时间">{formatTime(data.createTime)}</Descriptions.Item>
             <Descriptions.Item label="手机号">
               {data.phone}
-              <Button onClick={() => this.unbind('phone')} style={{ marginLeft: 20 }}>修改</Button>
+              <Button onClick={() => this.unbind('phone')} style={{ marginLeft: 20 }}>置换</Button>
             </Descriptions.Item>
             <Descriptions.Item label="等级">
               {levelName(data.memberTypeVO)}
