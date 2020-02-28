@@ -31,6 +31,7 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
     }
   }
   componentWillReceiveProps (props: CSkuTableProps) {
+    console.log('props.dataSource =>', props.dataSource);
     this.setState({
       dataSource: props.dataSource
     })
@@ -121,12 +122,12 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
         width: 200,
         render: (text, record, index) => {
           return (
-            this.speedyInput('marketPrice', text, record, index, dataSource, cb)(
+            this.speedyInput('unit', text, record, index, dataSource, cb)(
               <Input
                 maxLength={10}
                 value={text}
                 placeholder='请输入单位'
-                onChange={cb('marketPrice', record, index)}
+                onChange={cb('unit', record, index)}
               />
             )
           )
@@ -147,7 +148,8 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
       },
       {
         title: '规格编码',
-        dataIndex: 'skuCode'
+        dataIndex: 'skuCode',
+        render: (value: string) => <div className='mt10'>{value}</div>
       },
       {
         title: '市场价',
@@ -210,7 +212,6 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
   speedyInput (field: string, text: any, record: CSkuProps, index: number, dataSource: CSkuProps[], cb?: any, fieldDecoratorOptions?: GetFieldDecoratorOptions) {
     const { pageSize = 10, current = 1 } = this.pagination
     const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
-    const { getFieldDecorator } = this.props.form
     return (node: React.ReactNode) => {
       return (
         <FormItem
@@ -235,7 +236,8 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
             }}
           >
             {fieldDecoratorOptions ?
-              getFieldDecorator(`${field}-${index}`, {
+              this.props.form && this.props.form.getFieldDecorator(`${field}-${index}`, {
+                initialValue: text,
                 getValueFromEvent(e) {
                   let value: string | number = '';
                   if (!e || !e.target) {

@@ -13,14 +13,14 @@ const defaultItem: SkuSaleProps = {
   imageUrl1: '',
   skuCode: '',
   stock: 0,
-  areaMemberPrice: 0,
-  cityMemberPrice: 0,
-  costPrice: 0,
-  headPrice: 0,
+  areaMemberPrice: undefined,
+  cityMemberPrice: undefined,
+  costPrice: undefined,
+  headPrice: undefined,
   deliveryMode: 2,
-  marketPrice: 0,
-  salePrice: 0,
-  managerMemberPrice: 0,
+  marketPrice: undefined,
+  salePrice: undefined,
+  managerMemberPrice: undefined,
   expandable: true
 }
 
@@ -35,19 +35,19 @@ export interface SkuSaleProps {
   /** 发货方式 1-仓库发货, 2-供货商发货, 3-其他, 4-保宏保税仓 */
   deliveryMode: 1 | 2 | 3 | 4
   /** 成本价 */
-  costPrice: number
+  costPrice?: number
   /** 市场价 */
-  marketPrice: number
+  marketPrice?: number
   /** 销售价 */
-  salePrice: number
+  salePrice?: number
   /** 团长价 */
-  headPrice: number
+  headPrice?: number
   /** 社区管理员价 */
-  areaMemberPrice: number
+  areaMemberPrice?: number
   /** 城市合伙人价 */
-  cityMemberPrice: number
+  cityMemberPrice?: number
   /** 公司管理员价 */
-  managerMemberPrice: number
+  managerMemberPrice?: number
   /** 库存 */
   stock: number
   /** 警戒库存 */

@@ -48,6 +48,7 @@ function getSelectedRowKeysMap(data: any[]) {
 }
 
 function combination(data: any[]) {
+  data = data || [];
   const keysMap: any = {};
   const result: any[] = [];
   for (let item of data) {
@@ -140,6 +141,7 @@ class Main extends React.Component<Props, State> {
           >
             {fieldDecoratorOptions ?
               this.props.form && this.props.form.getFieldDecorator(`${field}-${index}`, {
+                initialValue: text,
                 getValueFromEvent(e) {
                   let value: string | number = '';
                   if (!e || !e.target) {
@@ -261,8 +263,7 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'marketPrice',
         width: 200,
         render: (text: any, record: any, index: any) => {
-          return this.speedyInput('marketPrice', text, record, index, dataSource, cb, {
-            initialValue: text,
+          return this.speedyInput('marketPrice', text, record, index, dataSource, cb, {  
             rules: [{
               required: true,
               message: '请输入市场价'
@@ -282,7 +283,6 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('costPrice', text, record, index, dataSource, cb, {
-            initialValue: text,
             rules: [{
               required: true,
               message: '请输入成本价'
@@ -319,18 +319,17 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text, record, index: any) => (
           this.speedyInput('salePrice', text, record, index, dataSource, cb, {
-            initialValue: text,
             rules: [{
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入销售价');
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value <= record.headPrice) {
+                } else if (record.headPrice && value <= record.headPrice) {
                   cb({
                     message: '应高于团长价',
                     pass: true,
@@ -355,25 +354,24 @@ class Main extends React.Component<Props, State> {
         dataIndex: 'headPrice',
         width: 200,
         render: (text: any, record: any, index: any) => (
-          this.speedyInput('headPrice', text, record, index, dataSource, cb, {
-            initialValue: text,
+          this.speedyInput('headPrice', text, record, index, dataSource, cb, {    
             rules: [{
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入团长价');
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value >= record.salePrice) {
+                } else if (record.salePrice && value >= record.salePrice) {
                   cb({
                     message: '应低于销售价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.salePrice ? '等于' : '高于'} 销售价(${record.salePrice}元)`
                   })
-                } else if (value <= record.areaMemberPrice) {
+                } else if (record.areaMemberPrice && value <= record.areaMemberPrice) {
                   cb({
                     message: '应高于社区管理员价',
                     pass: true,
@@ -399,24 +397,23 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb, {
-            initialValue: text,
             rules: [{
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入区长价');
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value >= record.headPrice) {
+                } else if (record.headPrice && value >= record.headPrice) {
                   cb({
                     message: '应低于团长价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.headPrice ? '等于' : '高于'} 团长价(${record.headPrice}元)`
                   })
-                } else if (value <= record.cityMemberPrice) {
+                } else if (record.cityMemberPrice && value <= record.cityMemberPrice) {
                   cb({
                     message: '应高于城市合伙人价',
                     pass: true,
@@ -442,24 +439,23 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb, {
-            initialValue: text,
             rules: [{
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入合伙人价');
-                }else if (value <= record.costPrice) {
+                }else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value >= record.areaMemberPrice) {
+                } else if (record.areaMemberPrice && value >= record.areaMemberPrice) {
                   cb({
                     message: '应低于社区管理员价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.areaMemberPrice ? '等于' : '高于'} 社区管理员价(${record.areaMemberPrice}元)`
                   })
-                } else if (value <= record.managerMemberPrice) {
+                } else if (record.managerMemberPrice && value <= record.managerMemberPrice) {
                   cb({
                     message: '应高于公司管理员价',
                     pass: true,
@@ -485,24 +481,23 @@ class Main extends React.Component<Props, State> {
         width: 200,
         render: (text: any, record: any, index: any) => (
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb, {
-            initialValue: text,
             rules: [{
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入管理员价');
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value >= record.cityMemberPrice) {
+                } else if (record.cityMemberPrice && value >= record.cityMemberPrice) {
                   cb({
                     message: '应低于合伙人价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '高于'} 合伙人价(${record.cityMemberPrice}元)`
                   })
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -828,13 +823,13 @@ class Main extends React.Component<Props, State> {
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入销售价')
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value <= record.headPrice) {
+                } else if (record.headPrice && value <= record.headPrice) {
                   cb({
                     message: '应高于团长价',
                     pass: true,
@@ -864,19 +859,19 @@ class Main extends React.Component<Props, State> {
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入团长价')
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value >= record.salePrice) {
+                } else if (record.salePrice && value >= record.salePrice) {
                   cb({
                     message: '应低于销售价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.salePrice ? '等于' : '高于'} 销售价(${record.salePrice}元)`
                   })
-                } else if (value <= record.areaMemberPrice) {
+                } else if (record.areaMemberPrice && value <= record.areaMemberPrice) {
                   cb({
                     message: '应高于社区管理员价',
                     pass: true,
@@ -906,19 +901,19 @@ class Main extends React.Component<Props, State> {
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入区长价');
-                }else if (value <= record.costPrice) {
+                }else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value >= record.headPrice) {
+                } else if (record.headPrice && value >= record.headPrice) {
                   cb({
                     message: '应低于团长价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.headPrice ? '等于' : '高于'} 团长价(${record.headPrice}元)`
                   })
-                } else if (value <= record.cityMemberPrice) {
+                } else if (record.cityMemberPrice && value <= record.cityMemberPrice) {
                   cb({
                     message: '应高于城市合伙人价',
                     pass: true,
@@ -948,19 +943,19 @@ class Main extends React.Component<Props, State> {
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入合伙人价');
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value >= record.areaMemberPrice) {
+                } else if (record.areaMemberPrice && value >= record.areaMemberPrice) {
                   cb({
                     message: '应低于社区管理员价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.areaMemberPrice ? '等于' : '高于'} 社区管理员价(${record.areaMemberPrice}元)`
                   })
-                } else if (value <= record.managerMemberPrice) {
+                } else if (record.managerMemberPrice && value <= record.managerMemberPrice) {
                   cb({
                     message: '应高于公司管理员价',
                     pass: true,
@@ -990,19 +985,19 @@ class Main extends React.Component<Props, State> {
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入管理员价');
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else if (value >= record.cityMemberPrice) {
+                } else if (record.cityMemberPrice && value >= record.cityMemberPrice) {
                   cb({
                     message: '应低于合伙人价',
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '高于'} 合伙人价(${record.cityMemberPrice}元)`
                   })
-                } else if (value <= record.costPrice) {
+                } else if (record.costPrice && value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,

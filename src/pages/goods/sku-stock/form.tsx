@@ -158,6 +158,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
       propertyId2
     } = this.state;
     this.form.props.form.validateFields((errs, vals) => {
+      this.forceUpdate();
       if (!errs) {
         const property = {};
         if (this.id !== -1) {

@@ -22,9 +22,9 @@ export interface CSkuProps {
   // 商品编码
   skuCode: string;
   // 市场价格(单位分)
-  marketPrice: number;
+  marketPrice?: number;
   // 成本价(单位分)
-  costPrice: number;
+  costPrice?: number;
   // 库存
   stock: number;
   // 规格值1
@@ -47,10 +47,11 @@ interface SkuListState {
 const defaultItem: CSkuProps = {
   barCode: '',
   skuCode: '',
-  marketPrice: 0,
-  costPrice: 0,
+  marketPrice: undefined,
+  costPrice: undefined,
   stock: 0,
-  imageUrl1: ''
+  imageUrl1: '',
+  unit: ''
 }
 
 interface SkuListProps extends FormComponentProps {
