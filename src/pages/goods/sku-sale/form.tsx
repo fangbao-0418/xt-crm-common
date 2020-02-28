@@ -296,6 +296,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       freightTemplateId,
     } = this.state;
     this.form && this.form.props.form.validateFields((err, vals) => {
+      this.forceUpdate();
       let msgs = []
       if (err) {
         const errs = Object.keys(err).map(key => err[key].errors).flat()
