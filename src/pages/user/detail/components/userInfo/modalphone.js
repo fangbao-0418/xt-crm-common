@@ -60,7 +60,7 @@ export default class extends Component {
       <Form layout="horizontal" {...formItemLayout} className={styles['user-edit-box']}>
         <Row>
           <Col span={12}>
-            <FormItem label="人手机">
+            <FormItem label="手机">
               <Search
                 enterButton="校验"
                 onChange={(event) => {

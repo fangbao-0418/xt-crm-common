@@ -84,6 +84,7 @@ export default {
     },
     async checkInvited(payload) {
       const logConfig = await api.checkInvited(payload);
+  
       dispatch({
         type: 'user.userinfo/saveDefault',
         payload: {

@@ -246,7 +246,7 @@ class UserInfo extends Component {
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        (enableBlack ? addBlack : delBlack)({ memberId: this.props.data.id }).then(res => {
+        (enableBlack ? delBlack: addBlack)({ memberId: this.props.data.id }).then(res => {
           if (res) {
             APP.success('操作成功')
             this.handleSearch();

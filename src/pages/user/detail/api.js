@@ -77,11 +77,11 @@ export function setMemberUnlocking(params) {
 
 // 添加黑名单操作
 export function addBlack(params) {
-    return Fetch.post('/manager/black/add', params)
+    return newPost('/manager/black/add', params)
 }
 // 删除黑名单操作
 export function delBlack(params) {
-    return Fetch.post('/manager/black/del', params)
+    return newPost('/manager/black/del', params)
 }
 // 微信解除绑定操作
 export function relieveWechat(params) {
