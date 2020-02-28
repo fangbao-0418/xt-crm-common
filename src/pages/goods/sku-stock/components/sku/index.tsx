@@ -89,8 +89,12 @@ class SkuList extends React.Component<SkuListProps, SkuListState> {
   handleTabsAdd = () => {
     const { GGName, specs } = this.state
     if (!GGName) {
-      message.error('请输入正确的规格名称');
+      message.error('请设置规格名称');
       return false;
+    }
+    if (GGName.length > 5) {
+      message.error('规格名称不能大于5个字符');
+      return
     }
     if (specs.find(item => item.title === GGName)) {
       message.error('规格名称重复');

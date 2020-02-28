@@ -731,12 +731,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             inner={(form) => {
               return form.getFieldDecorator('categoryId', {
                 rules: [{
-                  required: true,
-                  message: '请选择商品类目'
-                }, {
                   validator(rule, value, callback) {
                     if (!value || value.length === 0) {
-                      callback('请选择类目');
+                      callback('请选择商品类目');
                     }
                     callback();
                   }

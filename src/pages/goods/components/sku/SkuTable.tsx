@@ -115,7 +115,6 @@ class Main extends React.Component<Props, State> {
   public speedyInput (field: string, text: any, record: SkuSaleProps, index: number, dataSource: SkuSaleProps[], cb?: any, fieldDecoratorOptions?: GetFieldDecoratorOptions) {
     const { pageSize = 10, current = 1 } = this.pagination
     const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
-    const { getFieldDecorator } = this.props.form
     return (node: React.ReactNode) => {
       return (
         <FormItem
@@ -140,7 +139,7 @@ class Main extends React.Component<Props, State> {
             }}
           >
             {fieldDecoratorOptions ?
-              getFieldDecorator(`${field}-${index}`, {
+              this.props.form && this.props.form.getFieldDecorator(`${field}-${index}`, {
                 getValueFromEvent(e) {
                   let value: string | number = '';
                   if (!e || !e.target) {
@@ -162,9 +161,8 @@ class Main extends React.Component<Props, State> {
   }
   
   public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
-    const { validateFields } = this.props.form
     const validateColumnsFields = (index:number) => {
-      validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
+      this.props.form && this.props.form.validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
     }
     const  differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
@@ -323,11 +321,10 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('salePrice', text, record, index, dataSource, cb, {
             initialValue: text,
             rules: [{
-              required: true,
-              message: '请输入销售价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入销售价');
+                } else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -339,9 +336,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.headPrice ? '等于' : '低于'} 团长价(${record.headPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -362,11 +358,10 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('headPrice', text, record, index, dataSource, cb, {
             initialValue: text,
             rules: [{
-              required: true,
-              message: '请输入团长价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入团长价');
+                } else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -384,9 +379,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.areaMemberPrice ? '等于' : '低于'} 社区管理员价(${record.areaMemberPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -407,11 +401,10 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb, {
             initialValue: text,
             rules: [{
-              required: true,
-              message: '请输入区长价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入区长价');
+                } else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -429,9 +422,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '低于'} 城市合伙人价(${record.cityMemberPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -452,11 +444,10 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb, {
             initialValue: text,
             rules: [{
-              required: true,
-              message: '请输入合伙人价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入合伙人价');
+                }else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -474,9 +465,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.managerMemberPrice ? '等于' : '低于'} 公司管理员价(${record.managerMemberPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -497,11 +487,10 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb, {
             initialValue: text,
             rules: [{
-              required: true,
-              message: '请输入管理员价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入管理员价');
+                } else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -519,9 +508,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -554,9 +542,8 @@ class Main extends React.Component<Props, State> {
   }
   /** 海外列表 */
   public getOverseasColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
-    const { getFieldDecorator, validateFields } = this.props.form
     const validateColumnsFields = (index:number) => {
-      validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
+      this.props.form && this.props.form.validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
     }
     const differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
@@ -581,7 +568,7 @@ class Main extends React.Component<Props, State> {
             wrapperCol={{span: 24}}
           > 
             {
-              getFieldDecorator(`skuCode-${index}`, {
+              this.props.form && this.props.form.getFieldDecorator(`skuCode-${index}`, {
                 initialValue: text,
                 rules: [
                   {
@@ -635,7 +622,7 @@ class Main extends React.Component<Props, State> {
             wrapperCol={{span: 24}}
           > 
             {
-              getFieldDecorator(`skuCode-${index}`, {
+              this.props.form && this.props.form.getFieldDecorator(`skuCode-${index}`, {
                 initialValue: text,
                 rules: [
                   {
@@ -838,11 +825,10 @@ class Main extends React.Component<Props, State> {
         render: (text, record, index: any) => (
           this.speedyInput('salePrice', text, record, index, dataSource, cb, {
             rules: [{
-              required: true,
-              message: '请输入销售价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入销售价')
+                } else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -854,9 +840,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 销售价(${value}元) ${value === record.headPrice ? '等于' : '低于'} 团长价(${record.headPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -876,11 +861,10 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('headPrice', text, record, index, dataSource, cb, {
             rules: [{
-              required: true,
-              message: '请输入团长价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入团长价')
+                } else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -898,9 +882,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 团长价(${value}元) ${value === record.areaMemberPrice ? '等于' : '低于'} 社区管理员价(${record.areaMemberPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -920,11 +903,10 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('areaMemberPrice', text, record, index, dataSource, cb, {
             rules: [{
-              required: true,
-              message: '请输入区长价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入区长价');
+                }else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -942,9 +924,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 社区管理员价(${value}元) ${value === record.cityMemberPrice ? '等于' : '低于'} 城市合伙人价(${record.cityMemberPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -964,11 +945,10 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('cityMemberPrice', text, record, index, dataSource, cb, {
             rules: [{
-              required: true,
-              message: '请输入合伙人价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入合伙人价');
+                } else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -986,9 +966,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 城市合伙人价(${value}元) ${value === record.managerMemberPrice ? '等于' : '低于'} 公司管理员价(${record.managerMemberPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
@@ -1008,11 +987,10 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => (
           this.speedyInput('managerMemberPrice', text, record, index, dataSource, cb, {
             rules: [{
-              required: true,
-              message: '请输入管理员价'
-            }, {
               validator: (rule, value, cb) => {
-                if (value <= record.costPrice) {
+                if (!value) {
+                  cb('请输入管理员价');
+                } else if (value <= record.costPrice) {
                   cb({
                     message: '应高于成本价',
                     pass: true,
@@ -1030,9 +1008,8 @@ class Main extends React.Component<Props, State> {
                     pass: true,
                     msg: `规格名称: ${record.propertyValue1 || ''} ${record.propertyValue2 || ''} 公司管理员价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                   })
-                } else {
-                  cb()
                 }
+                cb();
               }
             }]
           })(
