@@ -50,6 +50,8 @@ export const defaultConfig: FieldsConfig = {
     bankCardNo: {
       label: '银行卡号'
     },
-    
+    idCardNo: {
+      label: '身份证号'
+    }
   }
 }
