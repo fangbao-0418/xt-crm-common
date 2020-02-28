@@ -710,18 +710,6 @@ class Main extends React.Component<Props, State> {
         }
       },
       {
-        title: '发货方式',
-        dataIndex: 'deliveryMode',
-        width: 200,
-        render: (text: any, record: any, index: any) => {
-          return (
-            <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
-              <Option value={4} key='d-4'>保宏保税仓</Option>
-            </Select>
-          )
-        }
-      },
-      {
         title: '备案信息',
         dataIndex: 'customsStatusInfo',
         width: 100,
