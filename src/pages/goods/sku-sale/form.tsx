@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Card, Input, Button, message, Radio, Select, Row, InputNumber } from 'antd';
 import UploadView from '@/components/upload';
-import { pick, map, size, filter, assign, isEmpty } from 'lodash';
+import { pick, map, size, filter, assign, isEmpty, flattenDeep } from 'lodash';
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api';
 import { gotoPage, parseQuery, getAllId, treeToarr } from '@/util/utils';
 import { radioStyle } from '@/config';
@@ -297,7 +297,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       this.forceUpdate();
       let msgs = []
       if (err) {
-        const errs = Object.keys(err).map(key => err[key].errors).flat()
+        const errs = flattenDeep(Object.keys(err).map(key => err[key].errors));
         msgs = errs.filter(item => item.pass).map(item => item.msg)
         if (errs.length !== msgs.length) {
           APP.error('请检查输入项')
