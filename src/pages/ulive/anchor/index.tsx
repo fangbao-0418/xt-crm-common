@@ -61,6 +61,11 @@ class Main extends React.Component<Props> {
   //   }
   // },
   {
+    title: '粉丝数',
+    dataIndex: 'fansTotal',
+    width: 150
+  },
+  {
     dataIndex: 'anchorIdentityType',
     title: '主播身份',
     render: (text) => {

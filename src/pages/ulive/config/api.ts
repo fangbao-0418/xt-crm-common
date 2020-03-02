@@ -18,7 +18,6 @@ export const fetchTagList = (payload: any) => {
 /** 删除tag */
 export const deleteTag = (id: number) => {
   return newPost('::ulive/live/tag/delete', {
-    id,
-    isDelete: 0
+    id
   })
 }
