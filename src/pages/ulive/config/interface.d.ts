@@ -1,5 +1,5 @@
 /** 直播标签 */
-interface TagItem {
+export interface TagItem {
   id: number
   /** 删除状态(0-不删除，1-删除, 2-删除中) */
   isDelete: 0 | 1

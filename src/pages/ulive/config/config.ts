@@ -6,20 +6,27 @@ export interface FieldsConfig {
 }
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
-    common: {
+    tag: {
       title: {
-        type: 'input', label: '直播标题',
+        type: 'input', label: '名称',
         fieldDecoratorOptions: {
           rules: [
             {
-              pattern: /^\d{11}$/,
-              message: '格式不正确'
+              required: true,
+              message: '标签名称不能为空'
+            },
+            {
+              max: 10,
+              message: '标签名称最大10个字符'
             }
           ]
         }
       },
       sort: {
-        type: 'number', label: '排序'
+        type: 'number', label: '排序',
+        fieldDecoratorOptions: {
+          initialValue: 0
+        }
       }
     }
   }

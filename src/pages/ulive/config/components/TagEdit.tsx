@@ -1,17 +1,40 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from '../config'
-
+import { TagItem } from '../interface'
 import * as api from '../api'
 
-class Main extends React.Component {
+interface Props {
+  record?: TagItem
+}
+
+class Main extends React.Component<Props> {
   public form: FormInstance
   public save () {
-    this.form.props.form.validateFields((err, values) => {
-      api.saveTag(values).then(() => {
-
+    const record = this.props.record
+    return new Promise((resove, reject) => {
+      this.form.props.form.validateFields((err, values) => {
+        if (err) {
+          return
+        }
+        api.saveTag({
+          ...values,
+          id: record && record.id
+        }).then((res) => {
+          resove(res)
+        }, () => {
+          reject()
+        })
       })
     })
+  }
+  public componentDidMount () {
+    const record = this.props.record
+    if (record) {
+      this.form.setValues({
+        ...record
+      })
+    }
   }
   public render () {
     return (
@@ -23,9 +46,11 @@ class Main extends React.Component {
           getInstance={(ref) => {
             this.form = ref
           }}
+          namespace='tag'
         >
           <FormItem
             name='title'
+            verifiable
             controlProps={{
               style: {width: 200}
             }}
