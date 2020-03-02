@@ -21,7 +21,7 @@ export function formRequest(payload: any) {
   result.skuAddList = skuList.map(item => {
     item = filterMoney(item, 'req', fields);
     item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
-    if (payload.warehouseType = 1) {
+    if (payload.warehouseType === 1) {
       item.deliveryMode = 1;
     }
     if (Array.isArray(item.productBasics)) {
