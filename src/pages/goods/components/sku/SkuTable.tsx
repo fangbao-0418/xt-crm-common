@@ -132,15 +132,18 @@ class Main extends React.Component<Props, State> {
                 currentIndex = realIndex
                 end = dataSource.length - 1
               }
+              let fields: any = [];
               while (currentIndex <= end) {
+                fields.push(`${field}-${currentIndex}`);
                 dataSource[currentIndex][field] = text as never
                 currentIndex++
               }
+              this.props.form.resetFields(fields);
               this.speedyInputCallBack(dataSource)
             }}
           >
             {fieldDecoratorOptions ?
-              this.props.form && this.props.form.getFieldDecorator(`${field}-${index}`, {
+              this.props.form && this.props.form.getFieldDecorator(`${field}-${realIndex}`, {
                 initialValue: text,
                 getValueFromEvent(e) {
                   let value: string | number = '';
@@ -150,7 +153,7 @@ class Main extends React.Component<Props, State> {
                     const { target } = e;
                     value = target.type === 'checkbox' ? target.checked : target.value;
                   }
-                  cb(field, record, index)(value);
+                  cb(field, record, realIndex)(value);
                   return value;
                 },
                 ...fieldDecoratorOptions
@@ -164,7 +167,9 @@ class Main extends React.Component<Props, State> {
   
   public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     const validateColumnsFields = (index:number) => {
-      this.props.form && this.props.form.validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
+      const { pageSize = 10, current = 1 } = this.pagination
+      const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
+      this.props.form && this.props.form.validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${realIndex}`))
     }
     const  differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
@@ -538,7 +543,9 @@ class Main extends React.Component<Props, State> {
   /** 海外列表 */
   public getOverseasColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     const validateColumnsFields = (index:number) => {
-      this.props.form && this.props.form.validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${index}`))
+      const { pageSize = 10, current = 1 } = this.pagination
+      const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
+      this.props.form && this.props.form.validateFields(['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${realIndex}`))
     }
     const differentColumns = this.props.warehouseType === 1 ? [{
       title: '规格条码',
@@ -558,12 +565,15 @@ class Main extends React.Component<Props, State> {
       dataIndex: 'skuCode',
       width: 200,
       render: (text: string, record: any, index: number) => {
+        const { pageSize = 10, current = 1 } = this.pagination
+        const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
+
         return (
           <FormItem
             wrapperCol={{span: 24}}
           > 
             {
-              this.props.form && this.props.form.getFieldDecorator(`skuCode-${index}`, {
+              this.props.form && this.props.form.getFieldDecorator(`skuCode-${realIndex}`, {
                 initialValue: text,
                 rules: [
                   {
@@ -612,12 +622,15 @@ class Main extends React.Component<Props, State> {
       dataIndex: 'skuCode',
       width: 200,
       render: (text: string, record: any, index: number) => {
+        const { pageSize = 10, current = 1 } = this.pagination
+        const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
+
         return (
           <FormItem
             wrapperCol={{span: 24}}
           > 
             {
-              this.props.form && this.props.form.getFieldDecorator(`skuCode-${index}`, {
+              this.props.form && this.props.form.getFieldDecorator(`skuCode-${realIndex}`, {
                 initialValue: text,
                 rules: [
                   {
