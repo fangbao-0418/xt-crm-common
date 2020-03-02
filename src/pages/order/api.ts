@@ -254,4 +254,16 @@ export function deliveryInterceptOrder(param: any) {
   return post('/order/intercept/interceptDeliver', param);
 }
 
+/**
+ * 下单一小内修改收货地址
+ * @param {object}  param
+ */
+export function modifyAddress(data: any) {
+  return fetch('/order/updateContact', {
+    method: 'POST',
+    data,
+    hideLoading: true
+  });
+}
+
 

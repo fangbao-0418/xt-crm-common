@@ -16,7 +16,8 @@
     "mock": "nodemon mock/server.js",
     "i18n": "gulp i18n-json-merge",
     "dev": "react-app-rewired start",
-    "submodule": "git submodule update --init --remote"
+    "submodule": "git submodule update --init --remote",
+    "ytt": "node ./node_modules/yapi-to-typescript/lib/cli.js"
   },
   "dependencies": {
     "@rematch/core": "^1.1.0",
@@ -92,6 +93,7 @@
     "tslint-loader": "^3.5.4",
     "tslint-react": "^4.2.0",
     "typescript": "^3.6.2",
+    "yapi-to-typescript": "^2.0.2",
     "webpack-bundle-analyzer": "^3.6.0"
   },
   "browserslist": [

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { view as XHeader } from '@/components/header';
 import { view as Sidebar } from '@/components/sidebar';
-import { Layout, Message } from 'antd';
+import { Layout, message } from 'antd';
 import { connect } from '@/util/utils';
 import * as LocalStorage from '@/util/localstorage';
 
@@ -59,7 +59,7 @@ export default class extends Component {
   gotoAuth = pathname => {
     const user = LocalStorage.get('user') || {};
     if (!user.id) {
-      Message.info('未登录');
+      message.info('未登录');
       this.props.history.push('/login');
       return;
     }
@@ -74,7 +74,7 @@ export default class extends Component {
 
   logout = () => {
     LocalStorage.clear();
-    Message.success('退出成功');
+    message.success('退出成功');
   };
 
   componentWillUnmount() {
@@ -83,9 +83,10 @@ export default class extends Component {
 
   render() {
     const { collapsed, mwidth } = this.state;
+    const pathname = this.props.location.pathname;
     return (
       <Layout>
-        <Sidebar collapsed={collapsed} data={this.props.tree} />
+        <Sidebar collapsed={collapsed} data={this.props.tree} pathname={pathname} />
         <Layout style={{ marginLeft: mwidth, overflow: 'auto', height: '100vh' }}>
           <div style={{ minWidth: '1200px' }}>
             <Header>
