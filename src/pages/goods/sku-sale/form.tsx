@@ -31,7 +31,6 @@ interface SkuSaleFormState extends Record<string, any> {
   templateOptions: any[];
   propertyId1: string;
   propertyId2: string;
-  productCategoryVO: any;
   returnContact: string;
   returnPhone: string;
   returnAddress: string;
@@ -60,7 +59,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     skuList: [],
     propertyId1: '',
     propertyId2: '',
-    productCategoryVO: {},
     returnContact: '',
     returnPhone: '',
     returnAddress: '',
@@ -102,7 +100,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       skuList: [],
       propertyId1: '',
       propertyId2: '',
-      productCategoryVO: {},
       returnContact: '',
       returnPhone: '',
       returnAddress: '',
@@ -137,6 +134,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       categoryId[0] && this.getStrategyByCategory(categoryId[0]);
       this.getSupplierInfo(res.storeId);
 
+      console.log('categoryId =>', categoryId);
       const isRepeat = templateOptions.some((opt: any) => opt.freightTemplateId === res.freightTemplateId)
       if (!isRepeat && res.freightTemplateId) {
         templateOptions = templateOptions.concat({
@@ -530,9 +528,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     this.form.resetValues();
     this.initState();
     this.getSupplierInfo(res.storeId);
-    // console.log('res => ', res);
     const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : [];
     categoryId[0] && this.getStrategyByCategory(categoryId[0]);
+    console.log('categoryId => ', categoryId);
     const specs = this.getSpecs([
       {
         title: res.property1,

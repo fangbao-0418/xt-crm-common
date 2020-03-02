@@ -66,10 +66,12 @@ export function formResponse(res: any) {
 export function baseProductResponse(res: any) {
   res = filterUploadFile(res, 'res');
   const skuList: any[] = res.skuList || [];
-  const { productBasicCategoryRelationVO } = res;
-  if (productBasicCategoryRelationVO) {
-    res.categoryId = productBasicCategoryRelationVO.categoryId;
-    res.productBasicId = productBasicCategoryRelationVO.productBasicId;
+  const { productCategoryVO } = res;
+
+  if (productCategoryVO) {
+    res.categoryId = productCategoryVO.id;
+    res.combineName = productCategoryVO.combineName;
+    res.categoryName = productCategoryVO.name;
   }
   res.skuList = skuList.map(item => {
     const result = filterMoney(item, 'res');
@@ -81,7 +83,7 @@ export function baseProductResponse(res: any) {
     return { ...omit(item, ['barCode', 'skuCode']), ...result};
   })
   res.showImage = skuList.every(v => !!v.imageUrl1);
-  return omit(res, 'productBasicCategoryRelationVO');
+  return omit(res, 'productCategoryVO');
 }
 
 // 过滤库存
@@ -104,6 +106,7 @@ export function baseProductPageResponse(res: any) {
 // 过滤销售商品SKU中库存商品详情
 export function baseSkuDetailResponse(res: any) {
   return (res || []).map((item: any) => {
+    item = filterMoney(item, 'res')
     return {
       ...omit(item, ['productBasicName', 'stock', 'productBasicMainImage', 'productBasicId', 'propertyInfo']),
       productBasicSpuCode: item.productBasicSpuCode,
