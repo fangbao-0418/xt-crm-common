@@ -389,7 +389,7 @@ class UserInfo extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="微信">
               {data.wechat || '暂无'}
-              <Button onClick={() => this.unbind('wechat')} style={{ marginLeft: 20 }}>解绑</Button>
+              <Button disabled={!data.wechat} onClick={() => this.unbind('wechat')} style={{ marginLeft: 20 }}>解绑</Button>
             </Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="上级">
