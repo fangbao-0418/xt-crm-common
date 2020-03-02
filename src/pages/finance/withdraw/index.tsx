@@ -51,7 +51,7 @@ class Withdraw extends React.Component {
           <span
             className='href'
             onClick={() => {
-              APP.history.push('/finance/withdraw/form')
+              APP.history.push(`/finance/withdraw/${records.id}?readOnly=1`);
             }}
           >
             查看详情

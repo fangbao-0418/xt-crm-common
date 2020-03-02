@@ -40,3 +40,8 @@ export function getRemittanceList(payload: ListPayload) {
 export function getBatchList(payload: RecordsPaylod) {
   return newPost('/crm/member/fund/remittance/v1/batch/list', payload).then(RecordsResponse)
 }
+
+// 提现申请详情
+export function getRemittanceDetail(id: number) {
+  return newPost(`/crm/member/fund/remittance/v1/detail?id=${id}`)
+}

@@ -54,8 +54,26 @@ export const defaultConfig: FieldsConfig = {
     idCardNo: {
       label: '身份证号'
     },
+    idCardAddress: {
+      label: '持卡人身份证地址'
+    },
     moneyAccountTypeDesc: {
       label: '提现类型'
+    },
+    transferAmount: {
+      label: '提现金额'
+    },
+    serviceCharge: {
+      label: '服务费'
+    },
+    transferStatusDesc: {
+      label: '提现状态'
+    },
+    realName: {
+      label: '银行卡持有人'
+    },
+    phone: {
+      label: '持卡人预留手机号'
     }
   }
 }

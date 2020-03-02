@@ -13,7 +13,7 @@ export default class extends Component {
                 <Route path="/finance/order" component={Order} />
                 <Route path="/finance/withdraw" exact component={Withdraw} />
                 <Route path='/finance/withdraw/records' component={Records} />
-                <Route path='/finance/withdraw/form' component={WithdrawForm} />
+                <Route path='/finance/withdraw/:id' component={WithdrawForm} />
             </Switch>
         );
     }
