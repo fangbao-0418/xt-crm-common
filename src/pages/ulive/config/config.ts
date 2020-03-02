@@ -7,7 +7,7 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      tagName: {
+      title: {
         type: 'input', label: '直播标题',
         fieldDecoratorOptions: {
           rules: [
@@ -18,7 +18,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      tagSort: {
+      sort: {
         type: 'number', label: '排序'
       }
     }

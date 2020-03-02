@@ -57,10 +57,20 @@ class Main extends React.Component<Partial<Props>> {
       }
     }
   ]
+  // public refs: {
+  //   tagRef: AddTag
+  // }
+  public tagRef: AddTag | null
   public addTag = () => {
     if (this.props.alert) {
       this.props.alert({
-        content: <AddTag />
+        width: 400,
+        content: <AddTag ref={(ref) => this.tagRef = ref} />,
+        onOk: () => {
+          if (this.tagRef) {
+            this.tagRef.save()
+          }
+        }
       })
     }
   }

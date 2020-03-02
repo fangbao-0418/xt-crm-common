@@ -7,7 +7,7 @@ class Main extends React.Component {
   public render () {
     return (
       <div className='page'>
-        <Tabs>
+        <Tabs defaultActiveKey="2">
           <TabPane tab="轮播场次" key="1">
             <CarouselList />
           </TabPane>
