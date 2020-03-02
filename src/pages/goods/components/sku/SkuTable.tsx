@@ -1095,6 +1095,9 @@ class Main extends React.Component<Props, State> {
                   selectedRowKeysMap: getSelectedRowKeysMap(data)
                 })
                 this.forceUpdate();
+              }).catch(() => {
+                record.loading = false;
+                this.forceUpdate();
               })
             }
           }}
