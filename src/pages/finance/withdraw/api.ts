@@ -1,5 +1,7 @@
 import { listResponse, RecordsResponse } from './adapter';
-const { newPost } = APP.http;
+import { exportFile } from '@/util/fetch';
+import { queryString } from '@/util/utils';
+const { get, newPost } = APP.http;
 
 interface ListPayload {
   // 银行卡号
@@ -38,10 +40,46 @@ export function getRemittanceList(payload: ListPayload) {
 
 // 批次记录，分页
 export function getBatchList(payload: RecordsPaylod) {
-  return newPost('/crm/member/fund/remittance/v1/batch/list', payload).then(RecordsResponse)
+  return newPost('/crm/member/fund/remittance/v1/batch/list', payload).then(RecordsResponse);
 }
 
 // 提现申请详情
-export function getRemittanceDetail(id: number) {
-  return newPost(`/crm/member/fund/remittance/v1/detail?id=${id}`)
+export function getRemittanceDetail(id: string) {
+  return get(`/crm/member/fund/remittance/v1/detail?id=${id}`);
+}
+
+// 单笔提交打款
+export function submitRemittance(id: string) {
+  return newPost('/crm/member/fund/remittance/v1/submit', { id });
+}
+
+// 导出
+export function exportList(payload: ListPayload) {
+  return exportFile('/crm/member/fund/remittance/v1/export', payload)
+}
+
+// 取消提现
+export function cancelRemittance(payload: { id: string, remark: string }) {
+  return newPost('/crm/member/fund/remittance/v1/cancel', payload);
+}
+
+// 提现操作日志
+export function getRemittanceLog(id: string) {
+  return get(`/crm/member/fund/remittance/v1/log?id=${id}`)
+}
+
+// 批量打款
+export function batchSubmit(payload: {
+  startTime: string,
+  endTime: string,
+  batchId: string
+}) {
+  return newPost('/crm/member/fund/remittance/v1/batchSubmit', payload)
+}
+
+
+// 批量打款统计信息
+export function getRemittanceInfo(payload: { startTime: string, endTime: string }) {
+  const search = queryString(payload);
+  return get(`/crm/member/fund/remittance/v1/info${search}`)
 }
