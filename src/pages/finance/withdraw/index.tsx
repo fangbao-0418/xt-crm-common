@@ -1,10 +1,9 @@
 import React from 'react';
-import { ListPage } from '@/packages/common/components';
+import { ListPage, FormItem } from '@/packages/common/components';
 import { getRemittanceList } from './api';
-import { defaultConfig } from './config';
+import { defaultConfig, NAME_SPACE } from './config';
 import { Button } from 'antd';
 import { getPayload } from '@/packages/common/utils';
-
 export const RESERVE_KEY = 'withdraw';
 /**
  * 提现管理列表
@@ -49,7 +48,14 @@ class Withdraw extends React.Component {
     render: (records: any) => {
       return (
         <>
-          <span className='href'>查看详情</span>
+          <span
+            className='href'
+            onClick={() => {
+              APP.history.push('/finance/withdraw/form')
+            }}
+          >
+            查看详情
+          </span>
           <span className='href ml10'>提交打款</span>
           <span className='href ml10'>取消提现</span>
         </>
@@ -64,7 +70,20 @@ class Withdraw extends React.Component {
             x: true
           }
         }}
+        namespace={NAME_SPACE}
         reserveKey={RESERVE_KEY}
+        formItemLayout={(
+          <>
+            <FormItem name='transferNo' />
+            <FormItem name='moneyAccountType' />
+            <FormItem name='transferStatus' />
+            <FormItem name='memberMobile' />
+            <FormItem name='createTime' />
+            <FormItem name='submitTime' />
+            <FormItem name='bankCardNo' />
+            <FormItem name='idCardNo' />
+          </>
+        )}
         getInstance={(ref) => {
           console.log(`${RESERVE_KEY} =>`, getPayload(RESERVE_KEY));
           ref.form && ref.form.setValues(getPayload(RESERVE_KEY));

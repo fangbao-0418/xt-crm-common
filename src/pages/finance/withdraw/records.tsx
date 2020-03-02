@@ -29,7 +29,7 @@ class Records extends React.Component {
         <span
           className='href'
           onClick={() => {
-            setPayload(RESERVE_KEY, records);
+            // setPayload(RESERVE_KEY, records);
             APP.history.push('/finance/withdraw');
           }}
         >

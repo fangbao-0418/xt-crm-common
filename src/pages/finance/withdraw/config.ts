@@ -1,5 +1,6 @@
 import { FieldsConfig } from "@/packages/common/components/form";
 
+export const NAME_SPACE = 'withdraw'
 export const defaultConfig: FieldsConfig = {
   withdraw: {
     transferNo: {
@@ -52,6 +53,9 @@ export const defaultConfig: FieldsConfig = {
     },
     idCardNo: {
       label: '身份证号'
+    },
+    moneyAccountTypeDesc: {
+      label: '提现类型'
     }
   }
 }
