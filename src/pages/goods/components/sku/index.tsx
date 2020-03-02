@@ -257,9 +257,10 @@ class SkuList extends React.Component<Props, State>{
     const { dataSource, strategyData } = this.state;
     let isZero = false;
     let isError = false;
+    let fields: any = [];
     // accAdd, Subtr, accMul, accDiv 
     const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData;
-    const newData = dataSource.map(res => {
+    const newData = dataSource.map((res, index) => {
       isZero = false;
       const { salePrice, costPrice } = res;
       if(!Number(salePrice) || !Number(costPrice) || Number(salePrice) - Number(costPrice) < 0){
@@ -273,6 +274,13 @@ class SkuList extends React.Component<Props, State>{
       let areaNetProfit = accDiv(accMul(netProfit,areaCommissionRate),100);
       let cityNetProfit = accDiv(accMul(netProfit,cityCommissionRate),100);
       let managerNetProfit = accDiv(accMul(netProfit,managerCommissionRate),100);
+
+      fields = fields.concat([
+        `headPrice-${index}`,
+        `areaMemberPrice-${index}`,
+        `cityMemberPrice-${index}`,
+        `managerMemberPrice-${index}`
+      ]);
       return Object.assign(res, {
         headPrice: isZero ? 0 : Math.floor(Subtr(salePrice, headNetProfit)*10) / 10,
         areaMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*10) / 10,
@@ -283,7 +291,8 @@ class SkuList extends React.Component<Props, State>{
     if(isError){
       message.error('价格错误，不能进行计算，请确认成本价及销售价是否正确');
     } 
-    
+    console.log('fields =>', fields);
+    this.props.form.resetFields(fields);
     this.setState({
       dataSource: newData
     })
