@@ -281,7 +281,7 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
           >
             {fieldDecoratorOptions
               ? this.props.form &&
-                this.props.form.getFieldDecorator(`${field}-${index}`, {
+                this.props.form.getFieldDecorator(`${field}-${realIndex}`, {
                   initialValue: text,
                   getValueFromEvent(e) {
                     let value: string | number = '';
