@@ -199,7 +199,6 @@ export const prefix = url => {
     if (!(process.env.PUB_ENV == 'test' || process.env.PUB_ENV == 'dev')) {
       const mockConfig = require('../mock.json');
       if (typeof mockConfig == 'object' && mockConfig['apiList'] instanceof Array) {
-        console.log(url, mockConfig, '-------------');
         const isMock = mockConfig['apiList'].find(item => {
           const path = item.replace(/{/g, ':').replace(/}/g, '');
           return pathToRegexp(path).test(url);
@@ -237,8 +236,8 @@ export function unionArray(target, source) {
 
 /** 检测imgUrl是否带域名，没有则加上*/
 export function replaceHttpUrl(imgUrl) {
-  if (typeof imgUrl !== 'string') imgUrl = ''
-  if (imgUrl.indexOf('https') !== 0) {
+  if (typeof imgUrl !== 'string') return ''
+  if (imgUrl.indexOf('http') !== 0) {
     imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
   }
   return imgUrl;
@@ -284,12 +283,15 @@ export function momentRangeValueof(values = []) {
 
 export function mapTree(org) {
   const haveChildren = Array.isArray(org.childList) && org.childList.length > 0;
-  return {
+  const result = {
     label: org.name,
     value: org.id,
-    data: { ...org },
-    children: haveChildren ? org.childList.map(i => mapTree(i)) : []
-  };
+    data: { ...org }
+  }
+  return haveChildren ? {
+    ...result,
+    children: org.childList.map(mapTree)
+  } : result;
 }
 
 export const formatMoneyBeforeRequest = price => {

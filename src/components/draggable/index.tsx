@@ -34,7 +34,8 @@ function Main (props: Props) {
       className={className}
       style={{
         userSelect: 'none',
-        transition: 'all 1000ms'
+        transition: 'all 1000ms',
+        display: 'block'
       }}
     >
       {props.children}

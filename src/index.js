@@ -25,7 +25,15 @@ const store = init({
 
 ReactDOM.render(
   <ErrorBoundary>
-    <ConfigProvider locale={zh_CN}>
+    <ConfigProvider
+      locale={zh_CN}
+      getPopupContainer={node => {
+        if (node) {
+          return node.parentNode;
+        }
+        return document.body;
+      }}
+    >
       <Provider store={store}>
         <HashRouter>
           <App />

@@ -4,11 +4,12 @@ import debounce from 'lodash/debounce';
 import { getStoreList } from '../../api';
 
 const { Option } = Select;
-interface supplierItem {
+export interface supplierItem {
   id: number;
   name: string;
 }
 interface SupplierSelectProps {
+  style?: React.CSSProperties,
   disabled?: boolean;
   onChange?: (value: string, options: supplierItem[]) => void;
   value?: string;
@@ -56,15 +57,15 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
     }
   }
   handleChange = (value: string) => {
-    if (this.props.onChange) {
-      this.props.onChange(value, this.state.supplierList)
-    }
+    const { onChange } = this.props;
+    (typeof onChange === 'function') && onChange(value, this.state.supplierList)
   }
   render () {
-    const { disabled, value } = this.props;
+    const { disabled, value, style } = this.props;
     const { fetching, supplierList } = this.state;
     return (
       <Select
+        style={style}
         disabled={disabled}
         showSearch
         onSearch={this.fetchSupplier}
@@ -72,7 +73,7 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
         showArrow={false}
         filterOption={false}
         notFoundContent={fetching ? <Spin size="small" /> : null}
-        placeholder='请输入供应商'
+        placeholder='请输入供应商名称'
         onChange={this.handleChange}
         value={value as string}
       >

@@ -51,7 +51,7 @@ class Main extends React.Component<any, State> {
         return (
           <span
             className='href'
-            onClick={() => APP.history.push(`/goods/edit/${id}`)}>
+            onClick={() => APP.history.push(`/goods/sku-sale/${id}`)}>
             {id}
           </span>
         )

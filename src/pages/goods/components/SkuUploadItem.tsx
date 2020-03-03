@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from 'antd';
-import UploadView from '../../components/upload';
-import styles from './edit.module.scss'
+import UploadView from '../../../components/upload';
+import styles from '../style.module.scss'
 interface ValueProps {
   specPicture?: string
   specName: string
