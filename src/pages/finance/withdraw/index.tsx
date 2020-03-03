@@ -3,13 +3,12 @@ import { ListPage, Form, FormItem, Alert, If } from '@/packages/common/component
 import { getRemittanceList, exportList, submitRemittance, cancelRemittance, batchSubmit, getRemittanceInfo } from './api';
 import { defaultConfig, NAME_SPACE } from './config';
 import { Button, Modal, DatePicker } from 'antd';
-import { getPayload } from '@/packages/common/utils';
 import { ListPageInstanceProps } from '@/packages/common/components/list-page';
 import { AlertComponentProps } from '@/packages/common/components/alert';
 import { FormInstance } from '@/packages/common/components/form';
+import { parseQuery } from '@/util/utils';
 import moment from 'moment';
 import { pick } from 'lodash';
-export const RESERVE_KEY = 'withdraw';
 
 const { RangePicker } = DatePicker;
 interface WithdrawState {
@@ -28,6 +27,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
   list: ListPageInstanceProps;
   form: FormInstance;
   batchPaymentForm: FormInstance;
+  batchId =  (parseQuery() as any).batchId;
   state: WithdrawState = {
     batchId: '',
     commonNum: 0,
@@ -157,6 +157,15 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
       )
     }
   }];
+  componentDidMount() {
+    const form = this.list.form;
+    if (form && this.batchId) {
+      form.setValues({ batchId: this.batchId });
+      this.list.fetchData();
+    } else {
+      this.list.refresh();
+    }
+  }
   onChange = (value: [moment.Moment, moment.Moment]) => {
     if ( !value[0] || !value[1]) return;
     getRemittanceInfo({
@@ -216,7 +225,6 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
               inner={(form) => {
                 const { commonNum, interceptionNum, commonAmount, interceptionAmount, totalNum, totalAmount } = this.state;
                 const { startTime, endTime } = this.batchPaymentForm.getValues();
-                console.log(startTime, endTime, '----------------');
                 const hasValue = startTime && endTime;
                 return (
                   <>
@@ -250,19 +258,20 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
   render() {
     return (
       <>
-        {/* <Modal title='是否取消提现？' visible={visible}>
-          <TextArea placeholder='请输入取消原因（用户可见）*必填'/>
-        </Modal> */}
         <ListPage
+          autoFetch={false}
           tableProps={{
             scroll: {
               x: true
             }
           }}
           namespace={NAME_SPACE}
-          reserveKey={RESERVE_KEY}
           formItemLayout={(
             <>
+              <FormItem
+                name='batchId'
+                hidden={!this.batchId}
+              />
               <FormItem name='transferNo' />
               <FormItem name='moneyAccountType' />
               <FormItem name='transferStatus' />
@@ -274,8 +283,6 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
             </>
           )}
           getInstance={(ref) => {
-            console.log(`${RESERVE_KEY} =>`, getPayload(RESERVE_KEY));
-            ref.form && ref.form.setValues(getPayload(RESERVE_KEY));
             this.list = ref;
           }}
           addonAfterSearch={(

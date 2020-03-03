@@ -3,8 +3,21 @@ import { FieldsConfig } from "@/packages/common/components/form";
 export const NAME_SPACE = 'withdraw'
 export const defaultConfig: FieldsConfig = {
   withdraw: {
+    batchId: {
+      label: '批次ID',
+      controlProps: {
+        style: {
+          width: 200
+        }
+      }
+    },
     transferNo: {
-      label: '提现单号'
+      label: '提现单号',
+      controlProps: {
+        style: {
+          width: 200
+        }
+      }
     },
     moneyAccountType: {
       label: '提现类型',

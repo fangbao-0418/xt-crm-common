@@ -2,7 +2,6 @@ import React from 'react';
 import { getBatchList } from './api';
 import { ListPage } from '@/packages/common/components'
 import { setPayload } from '@/packages/common/utils';
-import { RESERVE_KEY } from '.';
 /**
  * 批次记录列表
  */
@@ -26,15 +25,13 @@ class Records extends React.Component {
     title: '操作',
     render: (records: any) => {
       return (
-        <span
-          className='href'
-          onClick={() => {
-            // setPayload(RESERVE_KEY, records);
-            APP.history.push('/finance/withdraw');
-          }}
+        <a
+          href={window.location.pathname + `#/finance/withdraw?batchId=${records.id}`}
+          target='_blank'
+          rel='noopener noreferrer'
         >
           查看列表
-        </span>
+        </a>
       )
     }
   }]
