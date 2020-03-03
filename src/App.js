@@ -26,6 +26,7 @@ const Message = Loadable(() => import('./pages/message'))
 const Setting = Loadable(() => import('./pages/setting'))
 const ULive = Loadable(() => import('./pages/ulive'))
 const MerchantAccounts = Loadable(() => import('./pages/merchant-accounts'))
+const Fresh = Loadable(() => import('./pages/fresh'));
 class Main extends React.Component {
   constructor (props) {
     super(props)
@@ -80,6 +81,7 @@ class Main extends React.Component {
           <Route path="/setting" component={Setting}/>
           <Route path="/ulive" component={ULive}/>
           <Route path="/merchant-accounts" component={MerchantAccounts}/>
+          <Route path='/fresh' component={Fresh} />
         </Layout>
       </Switch>
     )
