@@ -4,7 +4,58 @@ export const NAME_SPACE = 'store';
 export const defaultConfig: FieldsConfig = {
   store: {
     shopName: {
-      label: '门店名称'
+      label: '门店名称',
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请输入门店名称'
+        }]
+      },
+      controlProps: {
+        maxLength: 20
+      }
+    },
+    shopType: {
+      label: '门店类型',
+      type: 'select',
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请选择门店类型'
+        }]
+      },
+      options: [{
+        label: '喜团小店',
+        value: 1
+      }, {
+        label: '喜团工厂店',
+        value: 2
+      }]
+    },
+    memberPhone: {
+      label: '店主手机',
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请输入店主手机'
+        }]
+      }
+    },
+    shopPhone: {
+      label: '门店电话',
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请输入门店电话'
+        }]
+      }
+    },
+    shopDesc: {
+      label: '门店简介',
+      type: 'textarea',
+      controlProps: {
+        rows: 5
+      }
     },
     status: {
       label: '店铺状态',
