@@ -553,7 +553,6 @@ class Main extends React.Component<Props, State> {
     })
   }
   public generateChance = () => {
-    debugger
     let awardList = this.state.awardList
     for (let i = 0; i < awardList.length; i++) {
       const v = awardList[i]

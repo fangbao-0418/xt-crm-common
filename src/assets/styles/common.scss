@@ -97,3 +97,7 @@
 .ant-upload-list-picture-card .ant-upload-list-item-info::before {
   left: 0
 }
+
+.ant-card + .ant-card {
+  margin-top: 10px;
+}

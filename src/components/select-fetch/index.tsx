@@ -50,10 +50,10 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { options, value } = this.state
-    console.log(options, 'options')
     return (
       <Select
         value={value}
+        allowClear
         placeholder={this.props.placeholder || '请选择'}
         style={this.props.style}
         onChange={this.onChange}

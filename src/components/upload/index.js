@@ -148,7 +148,6 @@ class UploadView extends Component {
       val.thumbUrl = result.thumbUrl
       val.rurl = this.replaceUrl(result.url)
       val.name = result.name || val.url
-      console.log(val, '----------------')
       return val
     });
   }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Row, Col, Form, Table, Input, Icon, Tooltip, Button, Checkbox, message, InputNumber, Modal } from 'antd';
 import { formatMoneyWithSign } from '../../helper';
-import { map } from 'lodash';
+import { map, flattenDeep } from 'lodash';
 import UploadView from '../../../components/upload';
 import { setPromotionAddSKu } from '../api';
 import Image from '../../../components/Image';
@@ -135,7 +135,7 @@ class ActivityDetail extends React.Component {
     validateFields((err, vals) => {
       let msgs = []
       if (err) {
-        const errs = Object.keys(err).map(key => err[key].errors).flat()
+        const errs = flattenDeep(Object.keys(err).map(key => err[key].errors))
         msgs = errs.filter(item => item.pass).map(item => item.msg)
       }
       if (msgs.length) {
