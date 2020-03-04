@@ -106,7 +106,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
             <span
               className='href'
               onClick={() => {
-                gotoPage(`/goods/sku-sale/${record.id}`);
+                gotoPage(`/fresh/goods/sku-sale/${record.id}`);
               }}
             >
               编辑
@@ -241,8 +241,6 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
         >
           <TabPane tab="出售中" key='0' />
           <TabPane tab="仓库中" key='1' />
-          <TabPane tab="待上架" key='3' />
-          <TabPane tab="商品池" key='2' />
         </Tabs>
         <ListPage
           reserveKey='skuSale'
@@ -304,18 +302,10 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
                 className='mr10'
                 type='primary'
                 onClick={() => {
-                  APP.history.push('/goods/sku-sale/-1?isGroup=0')
+                  APP.history.push('/fresh/goods/sku-sale/-1')
                 }}
               >
                 添加商品
-              </Button>
-              <Button
-                type='primary'
-                onClick={() => {
-                  APP.history.push('/goods/sku-sale/-1?isGroup=1')
-                }}
-              >
-                添加组合商品
               </Button>
             </>
           )}

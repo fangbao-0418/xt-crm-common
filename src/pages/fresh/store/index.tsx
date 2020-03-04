@@ -28,18 +28,19 @@ class Store extends React.Component {
     render: (record: any) => {
       return (
         <>
-          <span className='href'>查看</span>
+          <span className='href' onClick={() => APP.history.push(`/fresh/store/${record.id}?readOnly=1`)}>查看</span>
           <span className='href ml10' onClick={() => APP.history.push(`/fresh/store/${record.id}`)}>编辑</span>
           <If condition={record.status === statusEnum['下线']}>
             <span
               className='href ml10'
               onClick={() => {
                 Modal.confirm({
-                  title: '是否确定上线？',
+                  title: '系统提示',
+                  content: '是否确定上线？',
                   onOk: () => {
-                    onOrOffShop({ shopId: record.id, status: 2 }).then(res => {
+                    onOrOffShop({ shopId: record.id, status: 2 }).then((res: any) => {
                       if (res) {
-                        APP.success('下线成功');
+                        APP.success('上线成功');
                         this.list.refresh();
                       }
                     })
@@ -55,9 +56,10 @@ class Store extends React.Component {
               className='href ml10'
               onClick={() => {
                 Modal.confirm({
-                  title: '是否确定下线？',
+                  title: '系统提示',
+                  content: '是否确定下线？',
                   onOk: () => {
-                    onOrOffShop({ shopId: record.id, status: 3 }).then(res => {
+                    onOrOffShop({ shopId: record.id, status: 3 }).then((res: any) => {
                       if (res) {
                         APP.success('下线成功');
                         this.list.refresh();

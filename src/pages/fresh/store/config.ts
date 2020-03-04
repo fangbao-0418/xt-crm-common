@@ -3,7 +3,10 @@ import { FieldsConfig } from "@/packages/common/components/form";
 export const NAME_SPACE = 'store';
 export const defaultConfig: FieldsConfig = {
   store: {
-    shopName: {
+    code: {
+      label: '门店编码'
+    },
+    name: {
       label: '门店名称',
       fieldDecoratorOptions: {
         rules: [{
@@ -15,7 +18,7 @@ export const defaultConfig: FieldsConfig = {
         maxLength: 20
       }
     },
-    shopType: {
+    type: {
       label: '门店类型',
       type: 'select',
       fieldDecoratorOptions: {
@@ -41,7 +44,7 @@ export const defaultConfig: FieldsConfig = {
         }]
       }
     },
-    shopPhone: {
+    phone: {
       label: '门店电话',
       fieldDecoratorOptions: {
         rules: [{
@@ -50,7 +53,7 @@ export const defaultConfig: FieldsConfig = {
         }]
       }
     },
-    shopDesc: {
+    desc: {
       label: '门店简介',
       type: 'textarea',
       controlProps: {

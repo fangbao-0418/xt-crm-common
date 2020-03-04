@@ -10,16 +10,31 @@ import { addShop, updateShop, getShopDetail } from './api';
 import { RouteComponentProps } from 'react-router';
 import { parseQuery } from '@/util/utils';
 type Props = RouteComponentProps<{id: string}>;
+
 class StoreForm extends React.Component<Props, any> {
   form: FormInstance;
-  id: number = -1;
-  readOnly = (parseQuery() as any).readOnly;
+  id: string = '-1';
+  readOnly: boolean = !!(parseQuery() as any).readOnly;
+  address: string = '';
+  citylocation: any;
   constructor(props: Props) {
     super(props);
-    this.id = +props.match.params.id;
+    this.id = props.match.params.id;
   }
   componentDidMount() {
-    this.id !== -1 && this.fetchData();
+    this.init();
+    this.id !== '-1' && this.fetchData();
+  }
+  init() {
+    this.citylocation = new (window as any).qq.maps.CityService({
+      complete: (results: any) => {
+        const { lat, lng } = results.detail.latLng;
+        this.form.setValues({
+          longitude: lat,
+          latitude: lng
+        })
+      }
+    })
   }
   fetchData() {
     getShopDetail(this.id).then(res => {
@@ -29,7 +44,7 @@ class StoreForm extends React.Component<Props, any> {
   handleSave = () => {
     this.form.props.form.validateFields((err, vals) => {
       if (!err) {
-        const isAdd = this.id === -1
+        const isAdd = this.id === '-1'
         const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id });
         promiseResult.then((res: any) => {
           if (res) {
@@ -42,6 +57,7 @@ class StoreForm extends React.Component<Props, any> {
   render() {
     return (
       <Form
+        readonly={this.readOnly}
         getInstance={ref => this.form = ref}
         namespace={NAME_SPACE}
         config={defaultConfig}
@@ -49,21 +65,28 @@ class StoreForm extends React.Component<Props, any> {
           <div style={{ width: '60%' }}>
             <FormItem>
               <Button type='primary' onClick={this.handleSave}>保存</Button>
-              <Button type='primary' className='ml10'>返回</Button>
+              <Button
+                type='primary'
+                className='ml10'
+                onClick={() => {
+                  APP.history.push('/fresh/store');
+                }}>
+                  返回
+                </Button>
             </FormItem>
           </div>
         )}
       >
         <Card title='门店基础信息'>
           <div style={{ width: '60%' }}>
-            <FormItem name='shopCode' hidden={this.id === -1}/>
+            <FormItem name='code' type='text' hidden={this.id === '-1'}/>
             <FormItem
               verifiable
-              name='shopName'
+              name='name'
             />
             <FormItem
               verifiable
-              name='shopType'
+              name='type'
             />
             <FormItem
               verifiable
@@ -82,7 +105,11 @@ class StoreForm extends React.Component<Props, any> {
                     required: true,
                     message: '请选择省市区'
                   }]
-                })(<CitySelect />);
+                })(<CitySelect
+                    getSelectedValues={(value: any[]) => {
+                      this.address = value.reduce((prev, curr) => prev + curr.label, '')
+                    }}
+                  />);
               }}
             />
             <FormItem
@@ -90,7 +117,11 @@ class StoreForm extends React.Component<Props, any> {
               wrapperCol={{ offset: 4 }}
               name='detailAddress'
               controlProps={{
-                placeholder: '请输入详细地址'
+                placeholder: '请输入详细地址',
+                onChange: (e: any) => {
+                  const localcity = `${this.address}${e.target.value}`;
+                  this.citylocation.searchCityByName(localcity);
+                }
               }}
               verifiable
               fieldDecoratorOptions={{
@@ -102,17 +133,17 @@ class StoreForm extends React.Component<Props, any> {
             />
             <Row>
               <Col offset={4} style={{ display: 'flex'}}>
-                <FormItem style={{ width: 300 }} label='经度' name='longitude'/>
-                <FormItem style={{ width: 300, marginLeft: 30 }} label='维度' name='latitude' />
+                <FormItem style={{ width: 300 }} label='经度' name='longitude' type='text'/>
+                <FormItem style={{ width: 300, marginLeft: 30 }} label='维度' name='latitude' type='text' />
               </Col>
             </Row>
             <FormItem
               verifiable
-              name='shopPhone'
+              name='phone'
             />
             <FormItem
               verifiable
-              name='shopDesc'
+              name='desc'
             />
             <FormItem
               label='门店图片'
@@ -120,7 +151,7 @@ class StoreForm extends React.Component<Props, any> {
                 return (
                   <div className={styles['input-wrapper']}>
                     <div className={styles['input-wrapper-content']}>
-                      {form.getFieldDecorator('shopPictrueUrl')(
+                      {form.getFieldDecorator('pictrueUrl')(
                         <UploadView
                           placeholder='上传门店图片'
                           listType='picture-card'

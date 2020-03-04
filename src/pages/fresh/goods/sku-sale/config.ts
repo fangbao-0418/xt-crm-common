@@ -25,43 +25,43 @@ export const defaultConfig: FieldsConfig = {
         showTime: true
       }
     },
-    interceptor: {
-      label: '拦截状态',
-      type: 'select',
-      controlProps: {
-        style: {
-          width: 172
-        }
-      },
-      options: [{
-        label: '全部',
-        value: ''
-      }, {
-        label: '是',
-        value: 1
-      }, {
-        label: '否',
-        value: 0
-      }]
-    },
-    warehouseType: {
-      label: '商品入库类型',
-      type: 'radio',
-      options: [{
-        label: '入库商品',
-        value: 1
-      }, {
-        label: '非入库商品',
-        value: 0
-      }],
-      fieldDecoratorOptions: {
-        initialValue: 1,
-        rules: [{
-          required: true,
-          message: '请选择商品入库类型'
-        }]
-      }
-    },
+    // interceptor: {
+    //   label: '拦截状态',
+    //   type: 'select',
+    //   controlProps: {
+    //     style: {
+    //       width: 172
+    //     }
+    //   },
+    //   options: [{
+    //     label: '全部',
+    //     value: ''
+    //   }, {
+    //     label: '是',
+    //     value: 1
+    //   }, {
+    //     label: '否',
+    //     value: 0
+    //   }]
+    // },
+    // warehouseType: {
+    //   label: '商品入库类型',
+    //   type: 'radio',
+    //   options: [{
+    //     label: '入库商品',
+    //     value: 1
+    //   }, {
+    //     label: '非入库商品',
+    //     value: 0
+    //   }],
+    //   fieldDecoratorOptions: {
+    //     initialValue: 1,
+    //     rules: [{
+    //       required: true,
+    //       message: '请选择商品入库类型'
+    //     }]
+    //   }
+    // },
     productName: {
       label: '商品名称',
       fieldDecoratorOptions: {
@@ -116,24 +116,24 @@ export const defaultConfig: FieldsConfig = {
         }
       }
     },
-    interception: {
-      label: '是否可拦截发货',
-      fieldDecoratorOptions: {
-        initialValue: 0,
-        rules: [{
-          required: true,
-          message: '请选择是否可拦截发货'
-        }]
-      },
-      type: 'radio',
-      options: [{
-        label: '是',
-        value: 1
-      }, {
-        label: '否',
-        value: 0
-      }]
-    },
+    // interception: {
+    //   label: '是否可拦截发货',
+    //   fieldDecoratorOptions: {
+    //     initialValue: 0,
+    //     rules: [{
+    //       required: true,
+    //       message: '请选择是否可拦截发货'
+    //     }]
+    //   },
+    //   type: 'radio',
+    //   options: [{
+    //     label: '是',
+    //     value: 1
+    //   }, {
+    //     label: '否',
+    //     value: 0
+    //   }]
+    // },
     status: {
       label: '上架状态',
       type: 'radio',
@@ -151,26 +151,26 @@ export const defaultConfig: FieldsConfig = {
         value: 3
       }]
     },
-    showNum: {
-      label: '累计销量',
-      type: 'radio',
-      fieldDecoratorOptions: {
-        initialValue: 1,
-        rules: [{
-          required: true,
-          message: '请选择累计销量'
-        }]
-      },
-      options: [{
-        label: '展示',
-        value: 1
-      }, {
-        label: '不展示',
-        value: 0
-      }]
-    },
+    // showNum: {
+    //   label: '累计销量',
+    //   type: 'radio',
+    //   fieldDecoratorOptions: {
+    //     initialValue: 1,
+    //     rules: [{
+    //       required: true,
+    //       message: '请选择累计销量'
+    //     }]
+    //   },
+    //   options: [{
+    //     label: '展示',
+    //     value: 1
+    //   }, {
+    //     label: '不展示',
+    //     value: 0
+    //   }]
+    // },
     bulk: {
-      label: '物流体积',
+      label: '商品体积',
       controlProps: {
         style: {
           width: '60%'
@@ -178,31 +178,31 @@ export const defaultConfig: FieldsConfig = {
       }
     },
     weight: {
-      label: '物流重量',
+      label: '商品重量',
       controlProps: {
         style: {
           width: '60%'
         }
       }
     },
-    isAuthentication: {
-      label: '实名认证',
-      type: 'radio',
-      options: [{
-        value: 1,
-        label: '是'
-      }, {
-        value: 0,
-        label: '否'
-      }],
-      fieldDecoratorOptions: {
-        initialValue: 0,
-        rules: [{
-          required: true,
-          message: '请选择实名认证'
-        }]
-      }
-    },
+    // isAuthentication: {
+    //   label: '实名认证',
+    //   type: 'radio',
+    //   options: [{
+    //     value: 1,
+    //     label: '是'
+    //   }, {
+    //     value: 0,
+    //     label: '否'
+    //   }],
+    //   fieldDecoratorOptions: {
+    //     initialValue: 0,
+    //     rules: [{
+    //       required: true,
+    //       message: '请选择实名认证'
+    //     }]
+    //   }
+    // },
     // isCalculateFreight: {
     //   label: '单独计算运费',
     //   type: 'select',
