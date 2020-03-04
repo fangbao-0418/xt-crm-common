@@ -1,10 +1,12 @@
 import React from 'react';
-import { getShopList } from './api';
+import { getShopList, onOrOffShop } from './api';
 import { ListPage, If, FormItem } from '@/packages/common/components';
 import { defaultConfig, NAME_SPACE, statusEnum } from './config';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
+import { ListPageInstanceProps } from '@/packages/common/components/list-page';
 
 class Store extends React.Component {
+  list: ListPageInstanceProps;
   columns = [{
     title: '门店编号',
     dataIndex: 'shopCode'
@@ -29,10 +31,44 @@ class Store extends React.Component {
           <span className='href'>查看</span>
           <span className='href ml10' onClick={() => APP.history.push(`/fresh/store/${record.id}`)}>编辑</span>
           <If condition={record.status === statusEnum['下线']}>
-            <span className='href ml10'>上线</span>
+            <span
+              className='href ml10'
+              onClick={() => {
+                Modal.confirm({
+                  title: '是否确定上线？',
+                  onOk: () => {
+                    onOrOffShop({ shopId: record.id, status: 2 }).then(res => {
+                      if (res) {
+                        APP.success('下线成功');
+                        this.list.refresh();
+                      }
+                    })
+                  }
+                })
+              }}
+            >
+              上线
+            </span>
           </If>
           <If condition={record.status === statusEnum['上线']}>
-            <span className='href ml10'>下线</span>
+            <span
+              className='href ml10'
+              onClick={() => {
+                Modal.confirm({
+                  title: '是否确定下线？',
+                  onOk: () => {
+                    onOrOffShop({ shopId: record.id, status: 3 }).then(res => {
+                      if (res) {
+                        APP.success('下线成功');
+                        this.list.refresh();
+                      }
+                    })
+                  }
+                })
+              }}
+            >
+              下线
+            </span>
           </If>
         </>
       )
@@ -42,6 +78,7 @@ class Store extends React.Component {
     return (
       <>
         <ListPage
+          getInstance={ref => this.list = ref}
           rangeMap={{
             workDate: {
               fields: ['startWorkDate', 'endWorkDate']

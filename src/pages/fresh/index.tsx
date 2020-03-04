@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Switch, RouteComponentProps } from 'react-router-dom';
 import Store from './store';
+import Goods from './goods';
 import StoreForm from './store/form';
 
 class Fresh extends React.Component<RouteComponentProps> {
@@ -9,6 +10,7 @@ class Fresh extends React.Component<RouteComponentProps> {
     return (
       <Switch>
         <Route path={`${match.url}/store`} component={Store} exact />
+        <Route path={`${match.url}/goods`} component={Goods} />
         <Route path={`${match.url}/store/:id`} component={StoreForm} />
       </Switch>
     )

@@ -1,4 +1,5 @@
 import { statusEnum, shopTypeEnum } from './config';
+import { omit } from 'lodash';
 
 // 过滤列表响应
 export function listResponse(res: any) {
@@ -13,5 +14,12 @@ export function listResponse(res: any) {
 
 // 过滤表单请求
 export function formRequest(payload: any) {
-  return payload;
+  const result: any = {};
+  // 省市区
+  const [provinceCode, cityCode, areaCode] = payload.address;
+  result.provinceCode = provinceCode;
+  result.cityCode = cityCode;
+  result.areaCode = areaCode;
+
+  return { ...omit(payload, 'address'), ...result};
 }

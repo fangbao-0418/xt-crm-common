@@ -6,15 +6,25 @@ import styles from './style.module.scss';
 import UploadView from '@/components/upload';
 import CitySelect from '@/components/city-select';
 import { FormInstance } from '@/packages/common/components/form';
-import { addShop, updateShop } from './api';
+import { addShop, updateShop, getShopDetail } from './api';
 import { RouteComponentProps } from 'react-router';
+import { parseQuery } from '@/util/utils';
 type Props = RouteComponentProps<{id: string}>;
 class StoreForm extends React.Component<Props, any> {
   form: FormInstance;
   id: number = -1;
+  readOnly = (parseQuery() as any).readOnly;
   constructor(props: Props) {
     super(props);
     this.id = +props.match.params.id;
+  }
+  componentDidMount() {
+    this.id !== -1 && this.fetchData();
+  }
+  fetchData() {
+    getShopDetail(this.id).then(res => {
+      this.form.setValues(res);
+    })
   }
   handleSave = () => {
     this.form.props.form.validateFields((err, vals) => {
@@ -46,6 +56,7 @@ class StoreForm extends React.Component<Props, any> {
       >
         <Card title='门店基础信息'>
           <div style={{ width: '60%' }}>
+            <FormItem name='shopCode' hidden={this.id === -1}/>
             <FormItem
               verifiable
               name='shopName'
