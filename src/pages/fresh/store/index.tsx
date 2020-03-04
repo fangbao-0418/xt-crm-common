@@ -9,13 +9,13 @@ class Store extends React.Component {
   list: ListPageInstanceProps;
   columns = [{
     title: '门店编号',
-    dataIndex: 'shopCode'
+    dataIndex: 'code'
   }, {
     title: '门店名称',
-    dataIndex: 'shopName'
+    dataIndex: 'name'
   }, {
     title: '类型',
-    dataIndex: 'shopTypeText'
+    dataIndex: 'typeText'
   }, {
     title: '创建时间',
     dataIndex: 'createTimeText'
@@ -88,7 +88,7 @@ class Store extends React.Component {
           }}
           formItemLayout={(
             <>
-              <FormItem name='shopName' />
+              <FormItem name='name' />
               <FormItem name='status' />
               <FormItem name='workDate' />
             </>

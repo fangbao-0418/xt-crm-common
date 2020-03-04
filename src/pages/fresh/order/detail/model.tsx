@@ -1,5 +1,5 @@
 import { queryOrderDetail } from '../api'
-export const namespace = 'order.detail'
+export const namespace = 'fresh.order.detail'
 
 export default {
   namespace,
