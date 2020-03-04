@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MoneyRender from '@/components/money-render'
 import { Table, Row, Button, Modal, message } from 'antd';
 import { MemberTypeTextMap } from '../constant';
-import { formatMoneyWithSign } from '../../helper';
+import { formatMoneyWithSign } from '@/pages/helper';
 import { profitRecal, profitRecycl, getProceedsListByOrderIdAndMemberId, getProceedsListByOrderIdAndMemberIdAndSkuId } from '../api';
 import EarningsDetail from './components/modal/EarningsDetail'
 import Alert from '@/packages/common/components/alert'

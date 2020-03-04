@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { Card, Row, Col } from 'antd';
 import { TextMapRefundType } from '../../constant';
-import Image from '../../../../components/Image';
+import Image from '@/components/Image';
 import { dateFormat } from '@/util/utils';
 
 

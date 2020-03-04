@@ -15,7 +15,6 @@ class StoreForm extends React.Component<Props, any> {
   form: FormInstance;
   id: string = '-1';
   readOnly: boolean = !!(parseQuery() as any).readOnly;
-  address: string = '';
   citylocation: any;
   constructor(props: Props) {
     super(props);
@@ -107,7 +106,7 @@ class StoreForm extends React.Component<Props, any> {
                   }]
                 })(<CitySelect
                     getSelectedValues={(value: any[]) => {
-                      this.address = value.reduce((prev, curr) => prev + curr.label, '')
+                      // this.address = value.reduce((prev, curr) => prev + curr.label, '')
                     }}
                   />);
               }}
@@ -119,8 +118,7 @@ class StoreForm extends React.Component<Props, any> {
               controlProps={{
                 placeholder: '请输入详细地址',
                 onChange: (e: any) => {
-                  const localcity = `${this.address}${e.target.value}`;
-                  this.citylocation.searchCityByName(localcity);
+                  this.citylocation.searchCityByName(e.target.value);
                 }
               }}
               verifiable
@@ -143,7 +141,7 @@ class StoreForm extends React.Component<Props, any> {
             />
             <FormItem
               verifiable
-              name='desc'
+              name='pointDesc'
             />
             <FormItem
               label='门店图片'

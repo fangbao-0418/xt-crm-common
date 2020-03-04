@@ -53,7 +53,7 @@ export const defaultConfig: FieldsConfig = {
         }]
       }
     },
-    desc: {
+    pointDesc: {
       label: '门店简介',
       type: 'textarea',
       controlProps: {
@@ -90,5 +90,6 @@ export enum statusEnum {
 
 export enum shopTypeEnum {
   喜团小店 = 1,
-  喜团工厂店 = 2
+  喜团工厂店 = 2,
+  生鲜店 = 3
 }

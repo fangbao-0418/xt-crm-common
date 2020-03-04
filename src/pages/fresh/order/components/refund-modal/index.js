@@ -5,7 +5,7 @@ import { refundOperate, getRefundOrderInfo, refundAgain, closeRefund } from '../
 import RefundInfo from './refund-info';
 import RefundTypeSelect from '../refund-type-select';
 import { enumRefundType, enumRefundStatus } from '../../constant';
-import { formatMoneyBeforeRequest } from '../../../helper';
+import { formatMoneyBeforeRequest } from '@/helper';
 import RefundStatusCell from '../refund-status-cell';
 import { dateFormat } from '@/util/utils';
 

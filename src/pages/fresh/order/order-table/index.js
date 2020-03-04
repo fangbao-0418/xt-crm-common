@@ -3,14 +3,14 @@ import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker,
 import { isNil } from 'lodash';
 import moment from 'moment';
 import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant';
-import { formatDate, formatMoneyWithSign } from '../../helper';
+import { formatDate, formatMoneyWithSign } from '@/pages/helper';
 import { getOrderList, exportOrder, importLogistics } from '../api';
-import GoodCell from '../../../components/good-cell';
+import GoodCell from '@/components/good-cell';
 import SuppilerSelect from '@/components/suppiler-auto-select';
-import RefundCell from '../components/refund-cell';
+// import RefundCell from '../components/refund-cell';
 import RemarkModal from '../components/modal/remark-modal';
-import RefundModal from '../components/refund-modal';
-import RefundStatusCell from '../components/refund-status-cell';
+// import RefundModal from '../components/refund-modal';
+// import RefundStatusCell from '../components/refund-status-cell';
 import { getHeaders, parseQuery } from '@/util/utils';
 import SelectOrderType from './SelectOrderType';
 import withModal from './withModal';
@@ -258,21 +258,21 @@ class OrderList extends React.Component {
           dataIndex: 'num',
           key: 'num'
         },
-        {
-          title: '售后信息',
-          dataIndex: 'info',
-          hide: isNil(refundStatus),
-          render(info, row) {
-            return <RefundCell {...row} />;
-          }
-        },
+        // {
+        //   title: '售后信息',
+        //   dataIndex: 'info',
+        //   hide: isNil(refundStatus),
+        //   render(info, row) {
+        //     return <RefundCell {...row} />;
+        //   }
+        // },
         {
           title: '售后状态',
           dataIndex: 'refundStatus',
           hide: isNil(refundStatus),
-          render(refundStatus, row) {
-            return <RefundStatusCell refundStatus={refundStatus} />;
-          }
+          // render(refundStatus, row) {
+          //   return <RefundStatusCell refundStatus={refundStatus} />;
+          // }
         },
         {
           title: '操作',
@@ -287,7 +287,7 @@ class OrderList extends React.Component {
                 childOrderId={childOrderId}
               />
               &nbsp;
-              {[enumRefundStatus.Operating, enumRefundStatus.WaitConfirm].indexOf(Number(refundStatus)) > -1 && (
+              {/* {[enumRefundStatus.Operating, enumRefundStatus.WaitConfirm].indexOf(Number(refundStatus)) > -1 && (
                 <RefundModal
                   onSuccess={this.query}
                   orderCode={row.orderCode}
@@ -295,7 +295,7 @@ class OrderList extends React.Component {
                   childOrderId={childOrderId}
                   skuId={skuId}
                 />
-              )}
+              )} */}
             </>
           )
         }

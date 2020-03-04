@@ -6,7 +6,7 @@ import { filterUploadFile } from '@/util/format';
 export function listResponse(res: any) {
   res.records = (res.result || []).map((record: any) => {
     record.statusText = statusEnum[record.status];
-    record.shopTypeText = shopTypeEnum[record.shopType];
+    record.typeText = shopTypeEnum[record.type];
     record.createTimeText = APP.fn.formatDate(record.createTime);
     return record;
   })
@@ -15,7 +15,7 @@ export function listResponse(res: any) {
 
 // 过滤表单请求
 export function formRequest(payload: any) {
-  const result: any = filterUploadFile(payload, 'req', ['shopPictrueUrl']);
+  const result: any = filterUploadFile(payload, 'req', ['pictrueUrl']);
   // 省市区
   const [provinceCode, cityCode, areaCode] = payload.address;
   result.provinceCode = provinceCode;
@@ -27,7 +27,7 @@ export function formRequest(payload: any) {
 
 // 过滤表单响应
 export function formResponse(res: any) {
-  const result: any = filterUploadFile(res, 'res', ['shopPictrueUrl']);
+  const result: any = filterUploadFile(res, 'res', ['pictrueUrl']);
   result.address = [res.provinceCode, res.cityCode, res.areaCode];
   return omit({ ...res, ...result}, ['provinceCode', 'cityCode', 'areaCode']);
 }

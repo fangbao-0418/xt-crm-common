@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Card, Row, Col, Modal, Table, Button } from 'antd';
 import { OrderStatusTextMap } from '../constant';
-import { formatDate, unionAddress } from '../../helper';
-import { levelName } from '../../user/utils';
-import { If } from '@/packages/common/components'
+import { levelName } from '@/pages/user/utils';
+import { If } from '@/packages/common/components';
+import { unionAddress } from '@/pages/helper';
 const initOrderInfo = {
   childOrderList: [
     {
@@ -57,7 +57,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
       <Card title="订单信息" extra={ isModify && orderStatus === 20 ? modifyAddress(changeModifyAddress) : ''}>
         <Row gutter={24}>
           <Col span={8}>订单编号：{orderCode}</Col>
-          <Col span={8}>创建时间：{formatDate(createTime)}</Col>
+          <Col span={8}>创建时间：{APP.fn.formatDate(createTime)}</Col>
           <Col span={8}>订单状态：{OrderStatusTextMap[orderStatus]}</Col>
           {orderStatus === 60 && <Col span={8}>关闭原因：{closeReason}</Col>}
           <Col span={8}>买家名称：{userName}</Col>
@@ -65,7 +65,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
           <Col span={8}>联系电话：{phone}</Col>
           <Col span={8}>订单来源：{platform}</Col>
           <Col span={8}>订单类型：{orderTypeStr}</Col>
-          <Col span={8}>完成时间：{formatDate(finishTime)}</Col>
+          <Col span={8}>完成时间：{APP.fn.formatDate(finishTime)}</Col>
         </Row>
         <Row gutter={24}>
           <Col span={8}>下单会员类型：{levelName({memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel})}</Col>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Steps, Card } from 'antd';
 import { enumOrderStatus } from '../constant';
-import { formatDate } from '../../helper';
+import { formatDate } from '@/pages/helper';
 const { Step } = Steps;
 
 function getCurrentIndex(orderStatus, orderType) {

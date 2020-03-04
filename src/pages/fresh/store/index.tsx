@@ -30,7 +30,7 @@ class Store extends React.Component {
         <>
           <span className='href' onClick={() => APP.history.push(`/fresh/store/${record.id}?readOnly=1`)}>查看</span>
           <span className='href ml10' onClick={() => APP.history.push(`/fresh/store/${record.id}`)}>编辑</span>
-          <If condition={record.status === statusEnum['下线']}>
+          <If condition={[statusEnum['新建'], statusEnum['下线']].includes(record.status)}>
             <span
               className='href ml10'
               onClick={() => {

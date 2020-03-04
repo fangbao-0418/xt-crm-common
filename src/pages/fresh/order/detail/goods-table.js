@@ -6,7 +6,6 @@ import { withRouter } from 'react-router'
 import { getDetailColumns } from '../constant'
 import LogisticsInfo from './logistics-info'
 import ChildOrderBenefitInfo from './child-order-benefit-info'
-import { formatDate } from '../../helper'
 import { setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId } from '../api'
 import alert from '@/packages/common/components/alert'
 import * as adapter from './adapter'
@@ -232,14 +231,14 @@ class GoodsTable extends Component {
                   <Row>
                     <Col style={{ fontWeight: 'bold' }}>订单客服备注：</Col>
                     {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => (
-                      <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
+                      <Col key={v.createTime}>{v.info} （{APP.fn.formatDate(v.createTime)} {v.operator}）</Col>
                     ))}
                     {Array.isArray(childOrder.orderChildServerVOS) && childOrder.orderChildServerVOS.map(v => (
                       <Col key={v.orderCode}>
                         {Array.isArray(v.commentListVO) && v.commentListVO.map(item => (
                           <div key={item.createTime}>
                             <span>{(Array.isArray(item.info) && item.info.length > 0) ? item.info[item.info.length -1].value: ''}</span>
-                            <span>（{formatDate(item.createTime)} {item.name}）</span>
+                            <span>（{APP.fn.formatDate(item.createTime)} {item.name}）</span>
                             <span>
                               售后单号：(
                                 <span
