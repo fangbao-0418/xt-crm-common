@@ -18,8 +18,7 @@ import { RouteComponentProps } from 'react-router';
 import { getBaseProduct, getBaseBarcode, setGroupProduct, getGroupProductDetail } from './api';
 import { FormInstance } from '@/packages/common/components/form';
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
-import CitySelector from '@/packages/common/components/city-selector';
-
+import CitySelect, { options } from '@/packages/common/components/city-select';
 // function NumberValidator(rule: any, value: any, callback: any) {
 //   if (!(/^\d{0,20}$/.test(value))) {
 //     callback('仅支持数字，20个字符以内');
@@ -50,6 +49,7 @@ interface SkuSaleFormState extends Record<string, any> {
   productList: any[];
   isGroup: boolean;
   productCode: string;
+  checkedData: any[];
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
@@ -76,7 +76,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     visible: false,
     productList: [],
     isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1',
-    productCode: ''
+    productCode: '',
+    checkedData: []
   }
   id: number;
   modifyTime: number;
@@ -495,7 +496,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       visible,
       productList,
       isGroup,
-      productCode
+      productCode,
+      checkedData
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
     return (
@@ -784,7 +786,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             label='可售区域'
             inner={(form) => {
               return (
-                <CitySelector visible={false} />
+                <CitySelect
+                  options={options}
+                  value={checkedData}
+                  visible={false}
+                  onChange={(value) => this.setState({ checkedData: value })}
+                />
               )
             }
           }/>
