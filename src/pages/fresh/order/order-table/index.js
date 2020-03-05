@@ -7,7 +7,6 @@ import { formatDate, formatMoneyWithSign } from '@/pages/helper';
 import { getOrderList, exportOrder, importLogistics } from '../api';
 import GoodCell from '@/components/good-cell';
 import SuppilerSelect from '@/components/suppiler-auto-select';
-// import RefundCell from '../components/refund-cell';
 import RemarkModal from '../components/modal/remark-modal';
 // import RefundModal from '../components/refund-modal';
 // import RefundStatusCell from '../components/refund-status-cell';
@@ -154,7 +153,6 @@ class OrderList extends React.Component {
     const { total, pageSize, current, list } = this.state;
     const {
       refundStatus,
-      intercept,
       form: { getFieldDecorator }
     } = this.props;
     const columns = [
@@ -213,12 +211,12 @@ class OrderList extends React.Component {
         width: '150px',
         render: (operate, { orderType, orderStatus, orderCode }) => (
           <>
-            <Button type="link" href={window.location.pathname + `#/order/detail/${orderCode}`} target="_blank">
+            <Button type="link" href={window.location.pathname + `#/fresh/order/detail/${orderCode}`} target="_blank">
               查看详情
             </Button>
             <Divider type="vertical" />
             {Number(orderType) !== 70 && orderStatus === enumOrderStatus.Undelivered && (
-              <Button type="link" href={window.location.pathname + `#/order/detail/${orderCode}`} target="_blank">
+              <Button type="link" href={window.location.pathname + `#/fresh/order/detail/${orderCode}`} target="_blank">
                 发货
               </Button>
             )}
@@ -258,14 +256,6 @@ class OrderList extends React.Component {
           dataIndex: 'num',
           key: 'num'
         },
-        // {
-        //   title: '售后信息',
-        //   dataIndex: 'info',
-        //   hide: isNil(refundStatus),
-        //   render(info, row) {
-        //     return <RefundCell {...row} />;
-        //   }
-        // },
         {
           title: '售后状态',
           dataIndex: 'refundStatus',
@@ -333,13 +323,6 @@ class OrderList extends React.Component {
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="快递单号">
-                  {getFieldDecorator('expressCode', { initialValue: values.expressCode })(
-                    <Input placeholder="请输入快递单号" />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
                 <FormItem label="商品ID">
                   {getFieldDecorator('productId', { initialValue: values.productId })(
                     <Input type="number" placeholder="请输入商品ID" />
@@ -375,30 +358,6 @@ class OrderList extends React.Component {
                   {getFieldDecorator('storeId', { initialValue: values.storeId })(<SuppilerSelect />)}
                 </FormItem>
               </Col>
-              {!intercept && (
-                <>
-                  <Col span={6}>
-                    <FormItem label="拦截订单">
-                      {getFieldDecorator('interceptorFlag', {
-                        initialValue: values.interceptorFlag || ''
-                      })(
-                        <Select>
-                          <Select.Option value={''}>全部</Select.Option>
-                          <Select.Option value={'1'}>拦截订单</Select.Option>
-                          <Select.Option value={'0'}>非拦截订单</Select.Option>
-                        </Select>
-                      )}
-                    </FormItem>
-                  </Col>
-                  <Col span={6}>
-                    <FormItem label="拦截人电话">
-                      {getFieldDecorator('interceptorPhone', {
-                        initialValue: values.interceptorPhone
-                      })(<Input placeholder="请输入拦截人手机号" />)}
-                    </FormItem>
-                  </Col>
-                </>
-              )}
               <Col span={6}>
                 <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
                   {getFieldDecorator('rangePicker', {initialValue: values.rangePicker})(
@@ -428,7 +387,7 @@ class OrderList extends React.Component {
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
-                <Button type='link' onClick={this.props.modal}>批量查询物流轨迹</Button>
+                {/* <Button type='link' onClick={this.props.modal}>批量查询物流轨迹</Button> */}
                 <Button type="default" onClick={this.reset}>
                   清除条件
                 </Button>
@@ -438,7 +397,7 @@ class OrderList extends React.Component {
                 <Button type="primary" onClick={this.export}>
                   导出订单
                 </Button>
-                {this.props.orderStatus === enumOrderStatus.Undelivered && (
+                {/* {this.props.orderStatus === enumOrderStatus.Undelivered && (
                   <Upload
                     name="file"
                     accept=".xls,.xlsx"
@@ -451,7 +410,7 @@ class OrderList extends React.Component {
                   >
                     <Button type="primary">导入物流单号</Button>
                   </Upload>
-                )}
+                )} */}
               </Col>
             </Row>
           </Form>

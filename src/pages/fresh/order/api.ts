@@ -11,7 +11,7 @@ export interface batchExportPayload {
 
 // 获取订单类型集合
 export function getOrderTypeList () {
-  return get('/order/getOrderTypeList')
+  return get('/order/getOrderTypeList?bizType=10')
 }
 
 // 批量轨迹导出
@@ -24,8 +24,10 @@ export function verifyDownDgrade(data: any) {
   return newPost('/order/afterSale/check/downHeadgrade', data);
 }
 
+// 订单列表
 export function getOrderList(data: any) {
-  return post('/order/list', data);
+  // return post('/order/list', data);
+  return post('/order/freshList', { ...data, bizType: 10 })
 }
 
 // 客服代申请售后单个商品详情
@@ -84,8 +86,11 @@ export function getSkuServerProcessDetailList(skuServerId: number) {
 export function saveRefundInfo(data: any) {
   return post('/order/afterSale/saveRefundInfo', data)
 }
+
+// 订单详情
 export function queryOrderDetail(data: any) {
   return post('/order/detail', data);
+  // return post('/order/freshDetail', data);
 }
 
 export function push1688(childOrderId: number) {

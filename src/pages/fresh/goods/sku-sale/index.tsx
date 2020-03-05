@@ -55,12 +55,12 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       width: 120,
       dataIndex: 'categoryName'
     },
-    {
-      title: '成本价',
-      width: 100,
-      dataIndex: 'costPrice',
-      render: formatMoneyWithSign
-    },
+    // {
+    //   title: '成本价',
+    //   width: 100,
+    //   dataIndex: 'costPrice',
+    //   render: formatMoneyWithSign
+    // },
     {
       title: '销售价',
       width: 100,
@@ -273,7 +273,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
                   );
                 }}
               />
-              <FormItem name='interceptor' />
+              {/* <FormItem name='interceptor' /> */}
               <FormItem
                 label='一级类目'
                 inner={(form) => {

@@ -165,7 +165,7 @@ class GoodsTable extends Component {
                 </Button>
               )}
             </div>
-            <div>
+            {/* <div>
               <Button
                 style={{ padding: 0 }}
                 type="link"
@@ -173,7 +173,7 @@ class GoodsTable extends Component {
                 onClick={() => this.childOrderProceeds(record, proceedsVisible)}>
                 {proceedsVisible ? "收起收益" : "查看收益"}
               </Button>
-            </div>
+            </div> */}
           </>
         )
       }

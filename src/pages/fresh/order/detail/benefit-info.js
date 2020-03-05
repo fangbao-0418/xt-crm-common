@@ -207,8 +207,8 @@ const BenefitInfo = (props) => {
     <div>
       <Row>
         <span>预计盈利信息</span>
-        <Button type="primary" style={{ float: 'right' }} onClick={() => handleClick('recycl')}>收益回收</Button>
-        <Button type="primary" style={{ float: 'right', marginRight: '10px' }} onClick={() => handleClick('recal')}>收益重跑</Button>
+        {/* <Button type="primary" style={{ float: 'right' }} onClick={() => handleClick('recycl')}>收益回收</Button>
+        <Button type="primary" style={{ float: 'right', marginRight: '10px' }} onClick={() => handleClick('recal')}>收益重跑</Button> */}
       </Row>
       <Row>成交金额：{formatMoneyWithSign(data.totalPrice)}</Row>
       <Row>成本金额：{formatMoneyWithSign(data.costPrice)}</Row>

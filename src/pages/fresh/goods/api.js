@@ -14,12 +14,15 @@ export function setProduct(data) {
   return post(url, {}, { data, headers: {} });
 }
 
+// 商品列表
 export function getGoodsList(data) {
   return post('/product/list', data);
+  // return post('/product/fresh/list', data);
 }
 
+// 商品详情
 export function getGoodsDetial(data) {
-  return post('/product/detail', data).then(formResponse);
+  return post('/product/fresh/detail', data).then(formResponse);
 }
 
 export function delGoodsDisable(data) {
@@ -51,7 +54,7 @@ export function getTemplateList() {
  * 获取待审核商品列表
  */
 export function getToAuditList(data) {
-  return newPost(`/product/supplier/toAudit/list`, data)
+  return newPost(`/product/fresh/audit/list`, data)
 }
 
 /**
@@ -69,10 +72,10 @@ export function getCategoryTopList () {
 }
 
 /**
- * 审核商品
+ * 买菜商品-审核
  */
 export function auditGoods(data) {
-  return newPost('/product/supplier/toAudit/audit', data)
+  return newPost('/product/fresh/audit', data)
 }
 
 /**
