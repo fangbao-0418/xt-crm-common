@@ -20,7 +20,25 @@ export default {
             const allId = Array.isArray(menuList) ? getAllId(menuList, roleId) : []; // 有权限的id集合（包括parentId）
             const filterAllId = [...new Set(allId)]; // 将重复的父id筛选掉
             const allItemFilted = filterAllId.map(id => getItemById(menuList, id)); // 根据id找对应的item
-            const tree = arrToTree(allItemFilted); // 将数组转化为树状结构
+            let tree = arrToTree(allItemFilted); // 将数组转化为树状结构
+            tree = [{
+              id: +new Date,
+              name: "小店管理",
+              icon: 'shop',
+              subMenus: [{
+                id: +new Date + 1,
+                name: "店长管理",
+                path: "/shop/boss"
+              }, {
+                id: +new Date + 2,
+                name: "商品管理",
+                path: "/shop/goods"
+              }, {
+                id: +new Date + 3,
+                name: "佣金管理",
+                path: "/shop/commission"
+              }]
+            },...tree]
             dispatch['layout'].saveDefault({
               roleList,
               tree
