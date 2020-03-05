@@ -63,7 +63,8 @@ class Main extends React.Component<Props> {
   {
     title: '粉丝数',
     dataIndex: 'fansTotal',
-    width: 150
+    width: 150,
+    align: 'center'
   },
   {
     dataIndex: 'anchorIdentityType',

@@ -3,6 +3,7 @@ import Image from '@/components/Image'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
+import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
 import { Tag, Divider, Popover } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
@@ -150,7 +151,8 @@ class Main extends React.Component<Props> {
         return (
           <div>
             <span onClick={this.showView.bind(this, record.planId)} className='href'>详情</span>&nbsp;&nbsp;
-            <span onClick={(canUp || canDown) ? this.changeStatus.bind(this, record) : undefined} className={(canUp || canDown) ? 'href' : ''}>{record.status === 0 ? '上架' : '下架'}</span>&nbsp;&nbsp;
+            <If condition={[0, 1].indexOf(record.status) > -1}><span onClick={(canUp || canDown) ? this.changeStatus.bind(this, record) : undefined} className={(canUp || canDown) ? 'href' : ''}>{record.status === 0 ? '上架' : '下架'}</span>&nbsp;&nbsp;</If>
+            <If condition={record.status === 6}><span> 断网下架</span>&nbsp;&nbsp;</If>
             <span onClick={canStopPlay ? this.closeDown.bind(this, record) : undefined} className={canStopPlay ? 'href' : ''}>停播</span>&nbsp;&nbsp;
             {record.anchorType !== 10 && <span onClick={canSetTop ? this.setTop.bind(this, record) : undefined} className={canSetTop ? 'href' : ''}>{record.liveTop === 0 ? '置顶' : '取消置顶'}</span>}&nbsp;&nbsp;
             {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)}
