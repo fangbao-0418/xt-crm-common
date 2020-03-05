@@ -787,9 +787,10 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             inner={(form) => {
               return (
                 <CitySelect
+                  title='选择区域'
                   options={options}
                   value={checkedData}
-                  visible={false}
+                  visible={true}
                   onChange={(value) => this.setState({ checkedData: value })}
                 />
               )

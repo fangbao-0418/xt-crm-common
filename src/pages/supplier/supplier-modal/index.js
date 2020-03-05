@@ -47,6 +47,16 @@ class SupplierModal extends Component {
         const api = isEdit ? updateSupplier : addSupplier;
         api({
           id,
+          saleAreaList: [{
+            "city": "杭州市",
+            "cityId": 1,
+            "district": "余杭区",
+            "districtId": 1,
+            "name": "浙江省杭州市余杭区",
+            'id': 1,
+            "province": "浙江省",
+            "provinceId": 1
+        }],
           ...form.getFieldsValue(),
         }).then((res) => {
           if (res) {
