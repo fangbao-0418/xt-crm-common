@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Tabs, Button, Modal, message } from 'antd';
+import { Card, Tabs, Button, Modal, message, Row, Col } from 'antd';
 import dateFns from 'date-fns';
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
 import { gotoPage, replaceHttpUrl } from '@/util/utils';
@@ -100,7 +100,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       align: 'center',
       width: 120,
       render: (record: any) => {
-        const { status } = this.state;
+        const { status } = this.state
         return (
           <div style={{ marginTop: 40 }}>
             <span
@@ -263,29 +263,32 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           }}
           formItemLayout={(
             <>
-              <FormItem name='productName'/>
-              <FormItem name='productId' />
-              <FormItem
-                label='供应商'
-                inner={(form) => {
-                  return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect style={{ width: 172 }}/>
-                  );
-                }}
-              />
-              {/* <FormItem name='interceptor' /> */}
-              <FormItem
-                label='一级类目'
-                inner={(form) => {
-                  return form.getFieldDecorator('categoryId')(
-                    <SelectFetch
-                      style={{ width: 172 }}
-                      fetchData={getCategoryTopList}
-                    />
-                  )
-                }}
-              />
-              <FormItem name='goodsTime' />
+              <Row>
+                <FormItem name='productName'/>
+                <FormItem name='productId' />
+                <FormItem
+                  label='供应商'
+                  inner={(form) => {
+                    return form.getFieldDecorator('storeId')(
+                      <SuppilerSelect style={{ width: 172 }}/>
+                    );
+                  }}
+                />
+              </Row>
+              <Row>
+                <FormItem
+                  label='一级类目'
+                  inner={(form) => {
+                    return form.getFieldDecorator('categoryId')(
+                      <SelectFetch
+                        style={{ width: 172 }}
+                        fetchData={getCategoryTopList}
+                      />
+                    )
+                  }}
+                />
+                <FormItem name='goodsTime' />
+              </Row>
               <FormItem name='optionTime' />
             </>
           )}

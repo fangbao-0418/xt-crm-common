@@ -116,29 +116,11 @@ export const defaultConfig: FieldsConfig = {
         }
       }
     },
-    // interception: {
-    //   label: '是否可拦截发货',
-    //   fieldDecoratorOptions: {
-    //     initialValue: 0,
-    //     rules: [{
-    //       required: true,
-    //       message: '请选择是否可拦截发货'
-    //     }]
-    //   },
-    //   type: 'radio',
-    //   options: [{
-    //     label: '是',
-    //     value: 1
-    //   }, {
-    //     label: '否',
-    //     value: 0
-    //   }]
-    // },
     status: {
       label: '上架状态',
       type: 'radio',
       fieldDecoratorOptions: {
-        initialValue: 3
+        initialValue: 0
       },
       options: [{
         label: '上架',
@@ -146,9 +128,6 @@ export const defaultConfig: FieldsConfig = {
       }, {
         label: '下架',
         value: 0
-      }, {
-        label: '待上架',
-        value: 3
       }]
     },
     // showNum: {

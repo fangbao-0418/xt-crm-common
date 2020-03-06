@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-03 21:13:10
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-06 14:35:25
+ * @FilePath: /xt-crm/src/pages/goods/api.js
+ */
 import { formResponse, formRequest } from './sku-sale/adapter';
 import { exportFile, newGet } from '../../util/fetch';
 import { omit } from 'lodash';
