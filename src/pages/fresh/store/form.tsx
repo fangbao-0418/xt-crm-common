@@ -15,26 +15,26 @@ class StoreForm extends React.Component<Props, any> {
   form: FormInstance;
   id: string = '-1';
   readOnly: boolean = !!(parseQuery() as any).readOnly;
-  citylocation: any;
+  // citylocation: any;
   constructor(props: Props) {
     super(props);
     this.id = props.match.params.id;
   }
   componentDidMount() {
-    this.init();
+    // this.init();
     this.id !== '-1' && this.fetchData();
   }
-  init() {
-    this.citylocation = new (window as any).qq.maps.CityService({
-      complete: (results: any) => {
-        const { lat, lng } = results.detail.latLng;
-        this.form.setValues({
-          longitude: lat,
-          latitude: lng
-        })
-      }
-    })
-  }
+  // init() {
+  //   this.citylocation = new (window as any).qq.maps.CityService({
+  //     complete: (results: any) => {
+  //       const { lat, lng } = results.detail.latLng;
+  //       this.form.setValues({
+  //         longitude: lat,
+  //         latitude: lng
+  //       })
+  //     }
+  //   })
+  // }
   fetchData() {
     getShopDetail(this.id).then(res => {
       this.form.setValues(res);
@@ -105,9 +105,9 @@ class StoreForm extends React.Component<Props, any> {
                     message: '请选择省市区'
                   }]
                 })(<CitySelect
-                    getSelectedValues={(value: any[]) => {
-                      // this.address = value.reduce((prev, curr) => prev + curr.label, '')
-                    }}
+                    // getSelectedValues={(value: any[]) => {
+                    //   this.address = value.reduce((prev, curr) => prev + curr.label, '')
+                    // }}
                   />);
               }}
             />
@@ -117,9 +117,9 @@ class StoreForm extends React.Component<Props, any> {
               name='detailAddress'
               controlProps={{
                 placeholder: '请输入详细地址',
-                onChange: (e: any) => {
-                  this.citylocation.searchCityByName(e.target.value);
-                }
+                // onChange: (e: any) => {
+                //   this.citylocation.searchCityByName(e.target.value);
+                // }
               }}
               verifiable
               fieldDecoratorOptions={{
@@ -131,8 +131,8 @@ class StoreForm extends React.Component<Props, any> {
             />
             <Row>
               <Col offset={4} style={{ display: 'flex'}}>
-                <FormItem style={{ width: 300 }} label='经度' name='longitude' type='text'/>
-                <FormItem style={{ width: 300, marginLeft: 30 }} label='维度' name='latitude' type='text' />
+                <FormItem style={{ width: 300 }} label='经度' name='longitude'/>
+                <FormItem style={{ width: 300, marginLeft: 30 }} label='维度' name='latitude'/>
               </Col>
             </Row>
             <FormItem
@@ -153,7 +153,7 @@ class StoreForm extends React.Component<Props, any> {
                         <UploadView
                           placeholder='上传门店图片'
                           listType='picture-card'
-                          listNum={3}
+                          listNum={1}
                           size={0.3}
                         />
                       )}
