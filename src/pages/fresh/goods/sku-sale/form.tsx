@@ -311,6 +311,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     }
     /** 推送至仓库中即为下架，详情和列表页状态反了 */
     vals.status =  status === undefined ? vals.status : status
+    vals.productSaleAreas = [{
+      cityId: '330100',
+      districtId: '330110',
+      provinceId: '330000'
+    }]
     setProduct({
       productCode,
       isGroup,
