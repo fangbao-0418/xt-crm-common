@@ -39,14 +39,16 @@ export default class categorySelect extends Component {
     // }
 
     render() {
-        const { buttonText, data = [], onSearch, renderActions, onBtnClick } = this.props;
+        const { buttonText, data = [], onSearch, renderDesc, renderActions, onBtnClick } = this.props;
         const { activityItem, inputValue } = this.state;
         return (
             <div className={styles.box}>
                 <div className={styles.header}>
-                    <Input size="small" style={{ width: '40%' }} onChange={this.onInputChange} allowClear/>
+                    <Input size="small" onChange={this.onInputChange} allowClear />
                     <Button size="small" type="primary" icon="search" style={{ margin: '0 10px' }} onClick={() => onSearch(inputValue)}>搜索</Button>
-                    <Button size="small" type="primary" icon="plus" onClick={onBtnClick}>{buttonText}</Button>
+                    {
+                        buttonText ? <Button size="small" type="primary" icon="plus" onClick={onBtnClick}>{buttonText}</Button> : null
+                    }
                 </div>
                 <div className={styles.content}>
                     {
@@ -56,7 +58,10 @@ export default class categorySelect extends Component {
                                     className={[styles.item, activityItem === index ? styles.activity : ''].join(' ')}
                                     key={index}
                                 >
-                                    <span className={styles.name} onClick={() => this.onItemClick(item, index)}>{item.name}</span>
+                                    <span className={[renderDesc ? '' : styles.name]} onClick={() => this.onItemClick(item, index)}>{item.name}</span>
+                                    {
+                                        renderDesc ? <span className={styles.desc} onClick={() => this.onItemClick(item, index)}>{renderDesc}</span> : null
+                                    }
                                     <span className={styles.actions}>
                                         {
                                             typeof renderActions === 'function' ? renderActions(item) : ''

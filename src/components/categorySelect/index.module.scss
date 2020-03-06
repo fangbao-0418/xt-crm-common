@@ -22,9 +22,13 @@
         .item {
             padding: 5px 10px;
             display: flex;
+            cursor: pointer;
 
             .name {
-                cursor: pointer;
+                flex: 1;
+            }
+
+            .desc {
                 flex: 1;
             }
         }
