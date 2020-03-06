@@ -1,11 +1,12 @@
 import React from 'react';
-import { Divider } from 'antd';
+import UserView from './components/userView';
 
-const getColumns = ({ onDetail, onSwitch }) => {
+const getColumns = ({ onUserClick, onSwitch }) => {
   return [{
     title: '用户昵称',
     dataIndex: 'name',
     key: 'name',
+    render: (val, record) => <UserView onClick={onUserClick} title={val} desc={record.desc || '123'} avatar={record.avatar} />
   },
   {
     title: '手机号',
@@ -42,8 +43,6 @@ const getColumns = ({ onDetail, onSwitch }) => {
     render: (val, record) => {
       return (
         <div>
-          <span onClick={onDetail.bind(null, record.id)} className="href">查看详情</span>
-          <Divider type="vertical" />
           <span onClick={onSwitch.bind(null, record)} className="href">关闭店铺</span>
         </div>
       );

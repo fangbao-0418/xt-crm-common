@@ -66,12 +66,6 @@ class Main extends React.Component {
     this.fetchData()
   }
 
-  /** 操作: 列表内容-查看详情 */
-  handleDetail = (id) => {
-    const { history, match } = this.props;
-    history.push(`${match.url}/detail/${id}`)
-  }
-
   /** 操作: 列表内容-开启关闭店铺 */
   handleSwitch = (currentBoss) => {
     const { dispatch } = this.props;
@@ -84,6 +78,11 @@ class Main extends React.Component {
         }
       }
     });
+  }
+
+  /** 操作: 点击用户跳转至用户详情 */
+  handleUserClick = () => {
+    window.open(`/#/user/detail?memberId=888889347`);
   }
 
   /** 视图: 条件查询模块 */
@@ -122,8 +121,8 @@ class Main extends React.Component {
     const { bossData } = this.props;
     return <CommonTable
       columns={getColumns({
-        onDetail: this.handleDetail,
-        onSwitch: this.handleSwitch
+        onSwitch: this.handleSwitch,
+        onUserClick: this.handleUserClick
       })}
       dataSource={bossData.records || []}
       onChange={this.handleSearch}
