@@ -218,7 +218,7 @@ class Main extends React.Component<any, State> {
             <FormItem label="商品名称" name="productName" />
             <FormItem
               label="商品ID"
-              name="id"
+              name="productId"
               type="number"
               controlProps={{
                 style: {
