@@ -715,8 +715,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               type='danger'
               onClick={() => {
                 APP.history.go(-1)
-              }
-            }>
+              }}
+            >
               返回
             </Button>
             <If condition={status === 2}>
@@ -731,7 +731,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           </FormItem>
         </Card>
       </Form>
-    );
+    )
   }
 }
 

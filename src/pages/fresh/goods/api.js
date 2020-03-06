@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-06 10:18:13
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-06 15:25:02
+ * @LastEditTime: 2020-03-06 16:01:09
  * @FilePath: /xt-crm/src/pages/fresh/goods/api.js
  */
 
@@ -37,11 +37,11 @@ export function getGoodsDetial(data) {
 }
 
 export function delGoodsDisable(data) {
-  return post('/product/disable', {}, { data, headers: {} });
+  return post('/product/fresh/disable', {}, { data, headers: {} });
 }
 
 export function enableGoods(data) {
-  return post('/product/enable', {}, { data, headers: {} });
+  return post('/product/fresh/enable', {}, { data, headers: {} });
 }
 
 export function exportFileList(data) {

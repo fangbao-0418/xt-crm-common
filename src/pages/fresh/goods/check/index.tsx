@@ -53,7 +53,7 @@ class Main extends React.Component<any, State> {
       title: '商品',
       dataIndex: 'productName',
       key: 'productName',
-      width: 150,
+      width: 400,
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
         return <GoodCell skuName={text} coverUrl={record.coverUrl} />
       }
@@ -110,6 +110,7 @@ class Main extends React.Component<any, State> {
       title: '操作',
       dataIndex: 'operate',
       key: 'operate',
+      align: 'center',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
         return record.auditStatus === 1 ? (
           <Button
