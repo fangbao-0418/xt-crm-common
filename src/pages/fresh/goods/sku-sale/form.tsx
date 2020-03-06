@@ -566,7 +566,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               )
             }}
           />
-          {/* <FormItem
+          <FormItem
             label='商品视频封面'
             inner={(form) => {
               return (
@@ -585,7 +585,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 </div>
               )
             }}
-          /> */}
+          />
           <FormItem
             label='banner图片'
             required={true}
