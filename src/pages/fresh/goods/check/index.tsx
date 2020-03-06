@@ -1,17 +1,17 @@
-import React from 'react';
-import { Table, Card, Button } from 'antd';
-import { ColumnProps, PaginationConfig } from 'antd/lib/table';
-import MoneyRender from '@/components/money-render';
-import GoodCell from '@/components/good-cell';
-import moment from 'moment';
-import * as api from '../api';
-import { auditStatusConfig } from './config';
-import Form, { FormInstance, FormItem } from '@/packages/common/components/form';
-import SelectFetch from '@/components/select-fetch';
-import SuppilerSelect from '@/components/suppiler-select';
-import { getCategoryTopList } from '../api';
+import React from 'react'
+import { Table, Card, Button } from 'antd'
+import { ColumnProps, PaginationConfig } from 'antd/lib/table'
+import MoneyRender from '@/components/money-render'
+import GoodCell from '@/components/good-cell'
+import moment from 'moment'
+import * as api from '../api'
+import { auditStatusConfig } from './config'
+import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
+import SelectFetch from '@/components/select-fetch'
+import SuppilerSelect from '@/components/suppiler-select'
+import { getCategoryTopList } from '../api'
 interface State {
-  list: any[];
+  list: any[]
 }
 
 function formatTime(text: any, record: GoodsCheck.ItemProps, index: number) {
@@ -28,8 +28,8 @@ class Main extends React.Component<any, State> {
   public payload: GoodsCheck.payloadProps = {
     page: 1,
     pageSize: 10,
-    total: 0,
-  };
+    total: 0
+  }
   /**
    * 条件查询
    */
@@ -53,20 +53,20 @@ class Main extends React.Component<any, State> {
       title: '商品',
       dataIndex: 'productName',
       key: 'productName',
+      width: 400,
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
-        return <GoodCell skuName={text} coverUrl={record.coverUrl} />;
-      },
+        return <GoodCell skuName={text} coverUrl={record.coverUrl} />
+      }
     },
     {
-      title: '供货价',
-      dataIndex: 'costPrice',
-      key: 'costPrice',
-      render: MoneyRender,
+      title: '销售价',
+      dataIndex: 'salePrice',
+      render: MoneyRender
     },
     {
       title: '库存',
       dataIndex: 'stock',
-      key: 'stock',
+      key: 'stock'
     },
     {
       title: '供应商名称',
@@ -104,18 +104,19 @@ class Main extends React.Component<any, State> {
       title: '审核时间',
       dataIndex: 'auditTime',
       key: 'auditTime',
-      render: formatTime,
+      render: formatTime
     },
     {
       title: '操作',
       dataIndex: 'operate',
       key: 'operate',
+      align: 'center',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
         return record.auditStatus === 1 ? (
           <Button
             type='primary'
             onClick={() => {
-              APP.history.push(`/goods/detail/${record.id}?auditStatus=${record.auditStatus}`);
+              APP.history.push(`/fresh/goods/detail/${record.id}?auditStatus=${record.auditStatus}`)
             }}
           >
             审核
@@ -123,15 +124,15 @@ class Main extends React.Component<any, State> {
         ): (
           <Button
             onClick={() => {
-              APP.history.push(`/goods/detail/${record.id}?auditStatus=${record.auditStatus}`);
+              APP.history.push(`/fresh/goods/detail/${record.id}?auditStatus=${record.auditStatus}`)
             }}
           >
             查看
           </Button>
         )
-      },
-    },
-  ];
+      }
+    }
+  ]
   public reset() {
     this.form.props.form.resetFields();
     this.payload = {
@@ -193,7 +194,7 @@ class Main extends React.Component<any, State> {
             getInstance={ref => {
               this.form = ref;
             }}
-            addonAfter={
+            addonAfter={(
               <div
                 style={{
                   display: 'inline-block',
@@ -212,12 +213,12 @@ class Main extends React.Component<any, State> {
                   清除
                 </Button>
               </div>
-            }
+            )}
           >
             <FormItem label="商品名称" name="productName" />
             <FormItem
               label="商品ID"
-              name="id"
+              name="productId"
               type="number"
               controlProps={{
                 style: {
@@ -305,4 +306,4 @@ class Main extends React.Component<any, State> {
     );
   }
 }
-export default Main;
+export default Main

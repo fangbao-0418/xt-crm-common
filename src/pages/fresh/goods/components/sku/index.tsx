@@ -6,7 +6,6 @@ import CardTitle from '../CardTitle';
 import SkuUploadItem from './SkuUploadItem';
 import styles from './style.module.scss';
 import { size, map } from 'lodash';
-import { Subtr, accMul, accDiv } from '@/util/utils';
 import SkuTable from './SkuTable'
 
 const defaultItem: SkuSaleProps = {
@@ -21,7 +20,8 @@ const defaultItem: SkuSaleProps = {
   marketPrice: undefined,
   salePrice: undefined,
   managerMemberPrice: undefined,
-  expandable: true
+  expandable: true,
+  commissionPercentage: 10
 }
 
 /** 子规格字段集合 */
@@ -55,29 +55,25 @@ export interface SkuSaleProps {
   propertyValue1?: any
   propertyValue2?: any
   imageUrl1?: string
+  /** 自提佣金比 */
+  commissionPercentage?: number
   [field: string]: any
 }
 
 interface Props extends FormComponentProps {
-  isGroup: boolean,
   specs: Spec[]
   dataSource: SkuSaleProps[]
   showImage: boolean
   onChange?: (value: SkuSaleProps[], specs: Spec[], showImage: boolean) => void
   strategyData?: {}
-  /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
-  type?: 0 | 10 | 20
-  /** sku备案信息 */
-  productCustomsDetailVOList: any[]
-  warehouseType: 1 | 0
 }
 interface SpecItem {
-  specName: string;
-  specPicture?: string;
+  specName: string
+  specPicture?: string
 }
 interface Spec {
-  title: string;
-  content: SpecItem[];
+  title: string
+  content: SpecItem[]
 }
 /**
  * speSelect 规格项
@@ -152,7 +148,6 @@ class SkuList extends React.Component<Props, State>{
           return !item3 || !item2[subSpecFields[index]] || item2 && item3 && item3.specName === item2[subSpecFields[index]]
         })
       }) || val
-      val.deliveryMode = this.props.type === 20 ? 4 : val.deliveryMode
       item.map((item2, index) => {
         const field = subSpecFields[index]
         val[field] = (item2 && item2.specName) as never
@@ -203,7 +198,7 @@ class SkuList extends React.Component<Props, State>{
    * 添加子规格
    */
   addSubSpec = (key: number) => () => {
-    let specs = this.state.specs
+    const specs = this.state.specs
     const { content } = specs[key]
     const { tempSpecInfo, showImage } = this.state
     const specName = (tempSpecInfo[key] && tempSpecInfo[key].specName || '').trim()
@@ -231,92 +226,29 @@ class SkuList extends React.Component<Props, State>{
       specs
     })
     this.onChange(dataSource1)
-  };
+  }
   handleTabsAdd = () => {
     const GGName = this.state.GGName
     if (!GGName) {
-      message.error('请输入正确的规格名称');
-      return false;
+      message.error('请输入正确的规格名称')
+      return false
     }
     if (GGName.length > 5) {
-      message.error('规格名称不能大于5个字符');
+      message.error('规格名称不能大于5个字符')
       return
     }
     if (this.state.specs.find((item) => item.title === GGName)) {
-      message.error('规格名称重复');
-      return false;
+      message.error('规格名称重复')
+      return false
     }
     this.setState({
       dimensionNamePropoverStatus: false
     })
-    this.handleAdd(GGName);
-  };
-
-  //计算价格
-  calculatePrice = () => {
-    const { dataSource, strategyData } = this.state;
-    let isZero = false;
-    let isError = false;
-    let fields: any = [];
-    // accAdd, Subtr, accMul, accDiv 
-    const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData;
-    const newData = dataSource.map((res, index) => {
-      isZero = false;
-      const { salePrice, costPrice } = res;
-      if(!Number(salePrice) || !Number(costPrice) || Number(salePrice) - Number(costPrice) < 0){
-        isZero = true;
-        isError = true
-      }
-      let grossProfit = Subtr(salePrice,costPrice);//毛利润
-      let netProfit : any = Subtr(grossProfit, accDiv(accMul(grossProfit, categoryProfitRate), 100));//去除类目利润比的利润
-
-      let headNetProfit = accDiv(accMul(netProfit,headCommissionRate),100);
-      let areaNetProfit = accDiv(accMul(netProfit,areaCommissionRate),100);
-      let cityNetProfit = accDiv(accMul(netProfit,cityCommissionRate),100);
-      let managerNetProfit = accDiv(accMul(netProfit,managerCommissionRate),100);
-
-      fields = fields.concat([
-        `headPrice-${index}`,
-        `areaMemberPrice-${index}`,
-        `cityMemberPrice-${index}`,
-        `managerMemberPrice-${index}`
-      ]);
-      return Object.assign(res, {
-        headPrice: isZero ? 0 : Math.floor(Subtr(salePrice, headNetProfit)*10) / 10,
-        areaMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*10) / 10,
-        cityMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit)*10) / 10,
-        managerMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*10) / 10
-      })
-    })
-    if(isError){
-      message.error('价格错误，不能进行计算，请确认成本价及销售价是否正确');
-    } 
-    console.log('fields =>', fields);
-    this.props.form.resetFields(fields);
-    this.setState({
-      dataSource: newData
-    })
-  }
-
-  // 重置价格
-  resetPrice = () => {
-    const { dataSource } = this.state;
-    const newData = dataSource.map(res => {
-      return Object.assign(res, {
-        headPrice: 0,
-        areaMemberPrice: 0,
-        cityMemberPrice: 0,
-        managerMemberPrice: 0
-      })
-    })
-
-    this.setState({
-      dataSource: newData
-    })
+    this.handleAdd(GGName)
   }
   /**
-  * 删除规格
-  */
+   * 删除规格
+   */
   removeSpec = (index: number) => {
     const { specs } = this.state
     specs.splice(index, 1)
@@ -326,7 +258,7 @@ class SkuList extends React.Component<Props, State>{
     }, () => {
       this.onChange([])
     })
-  };
+  }
   /** 删除子规格 */
   removeSubSpec = (key: number, index: number) => () => {
     /** 另一组索引 */
@@ -339,11 +271,11 @@ class SkuList extends React.Component<Props, State>{
 
     /////////////////////
     dataSource = this.getCombineResult(specs, dataSource)
-    this.setState({ specs, dataSource: dataSource });
+    this.setState({ specs, dataSource })
     this.onChange(dataSource)
     return
     /////////////////////
-  };
+  }
   public getCustomColumns () {
     const columns: ColumnProps<any>[] = []
     const keys = ['propertyValue1', 'propertyValue2']
@@ -353,10 +285,9 @@ class SkuList extends React.Component<Props, State>{
           width: 100,
           title: item.title,
           dataIndex: keys[index]
-        }) 
+        })
       }
     })
-    
     return columns
   }
   public onChange (dataSource: SkuSaleProps[]) {
@@ -385,32 +316,31 @@ class SkuList extends React.Component<Props, State>{
     })
   }
   render() {
-    const type = this.props.type !== undefined ? this.props.type : 0
     return (
       <Card
-        title="添加规格项"
+        title='添加规格项'
         style={{ marginTop: 10 }}
-        extra={
+        extra={(
           <Popover
-            trigger="click"
+            trigger='click'
             visible={this.state.dimensionNamePropoverStatus}
-            content={
-              <div style={{ display: 'flex' }}>
+            content={(
+            <div style={{ display: 'flex' }}>
                 <Input
                   style={{width: 150}}
-                  placeholder="请添加规格名称"
+                  placeholder='请添加规格名称'
                   value={this.state.GGName}
                   onChange={e => {
                     this.setState({
                       GGName: (e.target.value || '').trim()
-                    });
+                    })
                   }}
                 />
-                <Button type="primary" style={{ marginLeft: 5 }} onClick={this.handleTabsAdd}>
+                <Button type='primary' style={{ marginLeft: 5 }} onClick={this.handleTabsAdd}>
                   确定
                 </Button>
               </div>
-            }
+            )}
           >
             {this.state.specs.length < 2 && (
               <span
@@ -423,14 +353,14 @@ class SkuList extends React.Component<Props, State>{
               </span>
             )}
           </Popover>
-        }
+        )}
       >
         {this.state.specs.map((spec, key) => {
           return (
             <Card
               style={{ marginBottom: 10 }}
               key={key}
-              type="inner"
+              type='inner'
               title={(
                 <CardTitle
                   checked={this.state.showImage}
@@ -459,7 +389,8 @@ class SkuList extends React.Component<Props, State>{
               )}
               extra={
                 <span className='href' onClick={() => this.removeSpec(key)}>删除</span>
-              }>
+              }
+            >
               <div className={styles.spulist}>
                 {map(spec.content, (item, index: number) => (
                   <SkuUploadItem
@@ -505,22 +436,8 @@ class SkuList extends React.Component<Props, State>{
             </Card>
           )
         })}
-        {
-          this.state.strategyData ? <>
-            <Button type="primary" style={{ marginLeft: 5 }} onClick={this.resetPrice}>
-              重置价格
-            </Button>
-            <Button type="primary" style={{ marginLeft: 5 }} onClick={this.calculatePrice}>
-              计算价格
-            </Button>
-          </> : null
-        }
         <SkuTable
-          type={type}
-          isGroup={this.props.isGroup}
-          warehouseType={this.props.warehouseType}
           form={this.props.form}
-          productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}
           extraColumns={this.getCustomColumns()}
           onChange={(dataSource) => {
@@ -532,4 +449,4 @@ class SkuList extends React.Component<Props, State>{
   }
 }
 
-export default SkuList;
+export default SkuList

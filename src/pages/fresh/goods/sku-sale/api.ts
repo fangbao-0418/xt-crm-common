@@ -1,7 +1,7 @@
-import { formRequest, baseProductResponse, baseProductPageResponse, formResponse, baseSkuDetailResponse } from "./adapter";
-import { queryString } from '@/util/utils';
-import { omit } from "lodash";
-const { newPost } = APP.http;
+import { formRequest, baseProductResponse, baseProductPageResponse, formResponse, baseSkuDetailResponse } from './adapter'
+import { queryString } from '@/util/utils'
+import { omit } from 'lodash'
+const { newPost, newPut } = APP.http
 
 // 库存商品ID查询
 export function getBaseProduct(id: number) {
@@ -34,9 +34,9 @@ export function getGroupProductDetail(payload: { productId: number }) {
 
 // 新增组合商品
 export function setGroupProduct(payload: any) {
-  const isAdd = payload.productId === -1;
-  payload = formRequest(payload);
-  return isAdd ? newPost('/product/group/add', omit(payload, 'productId')) : newPost('/product/group/update', payload);
+  const isAdd = payload.productId === -1
+  payload = formRequest(payload)
+  return isAdd ? newPost('/product/fresh/add', omit(payload, 'productId')) : newPut('/product/fresh/update', payload)
 }
 
 // 销售商品SKU中库存商品详情

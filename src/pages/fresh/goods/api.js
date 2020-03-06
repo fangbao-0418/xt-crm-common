@@ -1,7 +1,14 @@
+/*
+ * @Date: 2020-03-06 10:18:13
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-06 16:01:09
+ * @FilePath: /xt-crm/src/pages/fresh/goods/api.js
+ */
+
 import { formResponse, formRequest } from './sku-sale/adapter';
 import { exportFile, newGet } from '@/util/fetch';
 import { omit } from 'lodash';
-const { post, get, newPost } = APP.http; 
+const { post, get, newPost, newPut } = APP.http; 
 export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }
@@ -9,28 +16,32 @@ export function getStoreList(data, config) {
 // 设置普通消费商品
 export function setProduct(data) {
   const isAdd = data.productId === -1
-  const url = isAdd ? '/product/add' : '/product/update';
-  data = formRequest(isAdd ? omit(data, ['productId']) : data);
-  return post(url, {}, { data, headers: {} });
+  const url = isAdd ? '/product/fresh/add' : '/product/fresh/update'
+  data = formRequest(isAdd ? omit(data, ['productId']) : data)
+  console.log(data, 'data')
+  if (isAdd) {
+    return post(url, {}, { data, headers: {} });
+  } else {
+    return newPut(url, {}, { data, headers: {} });
+  }
 }
 
 // 商品列表
 export function getGoodsList(data) {
-  return post('/product/list', data);
-  // return post('/product/fresh/list', data);
+  return get('/product/fresh/list', data);
 }
 
 // 商品详情
 export function getGoodsDetial(data) {
-  return post('/product/fresh/detail', data).then(formResponse);
+  return get('/product/fresh/detail', data).then(formResponse);
 }
 
 export function delGoodsDisable(data) {
-  return post('/product/disable', {}, { data, headers: {} });
+  return post('/product/fresh/disable', {}, { data, headers: {} });
 }
 
 export function enableGoods(data) {
-  return post('/product/enable', {}, { data, headers: {} });
+  return post('/product/fresh/enable', {}, { data, headers: {} });
 }
 
 export function exportFileList(data) {
@@ -54,7 +65,7 @@ export function getTemplateList() {
  * 获取待审核商品列表
  */
 export function getToAuditList(data) {
-  return newPost(`/product/fresh/audit/list`, data)
+  return get(`/product/fresh/audit/list`, data)
 }
 
 /**
@@ -88,11 +99,20 @@ export function getStrategyByCategory(data) {
  * 待审核详情 
  */
 export function toAuditDetail(data) {
-  return get('/product/supplier/toAudit/get', data)
+  return get('/product/fresh/detail', data)
 }
 /**
  * 获取海淘商品库存信息
  */
 export function getStockInfo (id) {
   return get(`/product/stock?skuId=${id}`)
+}
+
+
+/**
+ * 查看单个运费模板
+ * @param freightTemplateId 
+ */
+export function getDetail(freightTemplateId) {
+  return get(`/template/${freightTemplateId}`)
 }

@@ -8,20 +8,18 @@ const fields: string[] = ['costPrice', 'salePrice', 'marketPrice', 'cityMemberPr
 
 // 过滤新增、编辑销售商品请求
 export function formRequest(payload: any) {
-  console.log('payload =>', payload)
   // 组合商品默认是入库商品
   if (payload.isGroup) {
-    payload.warehouseType = 1;
+    payload.warehouseType = 1
   }
   const skuList: SkuSaleProps[] = payload.skuList || [];
-  let result: Record<string, any> = filterUploadFile(payload)
-
-  console.log('result !!!!!!!!!!!!!', result);
-  result.skuAddList = skuList.map(item => {
+  const result: Record<string, any> = filterUploadFile(payload)
+  result.productSkuList = skuList.map(item => {
     item = filterMoney(item, 'req', fields);
-    item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
+    // item.imageUrl1 = replaceHttpUrl(item.imageUrl1);
+    console.log(item.imageUrl1, '------')
     if (payload.warehouseType === 1) {
-      item.deliveryMode = 1;
+      item.deliveryMode = 1
     }
     if (Array.isArray(item.productBasics)) {
       item.productBasics = item.productBasics.map((v: any) => {
@@ -32,33 +30,34 @@ export function formRequest(payload: any) {
     if (!payload.isGroup) {
       item.num = item.num || 1;
     }
-    return item;
-  });
-  result.freightTemplateId = +payload.freightTemplateId;
-  result.categoryId = Array.isArray(payload.categoryId) ? payload.categoryId[2] : '';
-  return omit({ ...payload, ...result }, 'skuList');
+    return item
+  })
+  result.firstCategoryId = payload.categoryId[0]
+  result.secondCategoryId = payload.categoryId[1]
+  result.thirdCategoryId = payload.categoryId[2]
+  return omit({ ...payload, ...result }, 'skuList')
 }
 
 // 过滤销售商品详情
 export function formResponse(res: any) {
-  const skuList: any[] = res.skuList || [];
-  res = filterUploadFile(res || {}, 'res');
-  const { productCategoryVO } = res;
+  const skuList: any[] = res.productSkuVOList || []
+  res = filterUploadFile(res || {}, 'res')
+  const { productCategoryVO } = res
   if (productCategoryVO) {
-    res.categoryId = productCategoryVO.id;
-    res.combineName = productCategoryVO.combineName;
-    res.categoryName = productCategoryVO.name;
+    res.categoryId = productCategoryVO.id
+    res.combineName = productCategoryVO.combineName
+    res.categoryName = productCategoryVO.name
   }
   res.skuList = skuList.map((item: any) => {
-    item = filterMoney(item, 'res', fields);
-    return item;
-  });
-  res.showImage = skuList.every(v => !!v.imageUrl1);
-  res.freightTemplateId = res.freightTemplateId ? res.freightTemplateId + '' : '';
-  res.status = +res.status;
-  res.productCustomsDetailVOList = res.productCustomsDetailVOList || [];
-  res.warehouseType = res.warehouseType ? 1 :  0;
-  return res;
+    item = filterMoney(item, 'res', fields)
+    return item
+  })
+  res.showImage = !!skuList.find(v => !!v.imageUrl1);
+  res.freightTemplateId = res.freightTemplateId ? res.freightTemplateId + '' : ''
+  res.status = +res.status
+  res.productCustomsDetailVOList = res.productCustomsDetailVOList || []
+  res.warehouseType = res.warehouseType ? 1 :  0
+  return res
 }
 
 // 过滤库存商品详情响应
