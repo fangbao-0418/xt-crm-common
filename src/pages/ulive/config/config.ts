@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-06 17:18:26
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-06 17:21:47
+ * @FilePath: /xt-crm/src/pages/ulive/config/config.ts
+ */
 import _ from 'lodash'
 import { OptionProps } from '@/packages/common/components/form'
 
@@ -24,6 +30,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       },
       sort: {
         type: 'number', label: '排序',
+        controlProps: {
+          precision: 0,
+          min: 0
+        },
         fieldDecoratorOptions: {
           initialValue: 0
         }
