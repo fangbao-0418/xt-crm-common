@@ -306,10 +306,25 @@ class Main extends React.Component<Props, State> {
       {
         title: '库存',
         dataIndex: 'stock',
-        width: 200,
+        width: 100,
+      },
+      {
+        title: '锁定库存',
+        dataIndex: 'lockStock',
+        width: 100,
+      },
+      {
+        title: '可用库存',
+        dataIndex: 'usableStock',
+        width: 100,
+      },
+      {
+        title: '编辑库存',
+        dataIndex: 'incStock',
+        width: 100,
         render: (text: any, record, index: any) =>
           this.speedyInput(
-            'stock',
+            'incStock',
             text,
             record,
             index,
@@ -318,10 +333,9 @@ class Main extends React.Component<Props, State> {
           )(
             <InputNumber
               precision={0}
-              min={0}
               value={text}
               placeholder="请输入库存"
-              onChange={cb('stock', record, index)}
+              onChange={cb('incStock', record, index)}
             />
           )
       },
@@ -850,6 +864,16 @@ class Main extends React.Component<Props, State> {
             '-'
           );
         }
+      },
+      {
+        title: '锁定库存',
+        dataIndex: 'lockStock',
+        width: 100,
+      },
+      {
+        title: '可用库存',
+        dataIndex: 'usableStock',
+        width: 100,
       },
       {
         title: '市场价',
