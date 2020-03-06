@@ -33,6 +33,9 @@ export const defaultConfig: FieldsConfig = {
       }, {
         label: '喜团工厂店',
         value: 2
+      }, {
+        label: '生鲜店',
+        value: 3
       }]
     },
     memberPhone: {
@@ -68,10 +71,10 @@ export const defaultConfig: FieldsConfig = {
         value: 1
       }, {
         label: '上线',
-        value: 1
+        value: 2
       }, {
         label: '下线',
-        value: 2    
+        value: 3    
       }]
     },
     workDate: {
@@ -88,7 +91,7 @@ export enum statusEnum {
   下线 = 3
 }
 
-export enum shopTypeEnum {
+export enum typeEnum {
   喜团小店 = 1,
   喜团工厂店 = 2,
   生鲜店 = 3

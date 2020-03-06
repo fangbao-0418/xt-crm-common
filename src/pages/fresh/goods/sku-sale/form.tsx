@@ -722,8 +722,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             <If condition={status === 2}>
               <Button
                 onClick={() => {
-                  this.handleSave(3);
-                }}>
+                  this.handleSave(3)
+                }}
+              >
                 推送至待上架
               </Button>
             </If>
@@ -734,4 +735,4 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   }
 }
 
-export default SkuSaleForm;
+export default SkuSaleForm
