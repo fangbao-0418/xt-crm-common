@@ -31,11 +31,11 @@ export default {
                 path: "/shop/boss"
               }, {
                 id: +new Date + 2,
-                name: "商品管理",
+                name: "商品审核",
                 path: "/shop/goods"
               }, {
                 id: +new Date + 3,
-                name: "佣金管理",
+                name: "佣金配置",
                 path: "/shop/commission"
               }]
             },...tree]
