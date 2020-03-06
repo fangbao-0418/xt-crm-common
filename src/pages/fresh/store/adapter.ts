@@ -1,4 +1,4 @@
-import { statusEnum, shopTypeEnum } from './config';
+import { statusEnum, typeEnum } from './config';
 import { omit } from 'lodash';
 import { filterUploadFile } from '@/util/format';
 
@@ -6,7 +6,7 @@ import { filterUploadFile } from '@/util/format';
 export function listResponse(res: any) {
   res.records = (res.result || []).map((record: any) => {
     record.statusText = statusEnum[record.status];
-    record.typeText = shopTypeEnum[record.type];
+    record.typeText = typeEnum[record.type];
     record.createTimeText = APP.fn.formatDate(record.createTime);
     return record;
   })
