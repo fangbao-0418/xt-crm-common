@@ -71,10 +71,10 @@ export const defaultConfig: FieldsConfig = {
         value: 1
       }, {
         label: '上线',
-        value: 1
+        value: 2
       }, {
         label: '下线',
-        value: 2    
+        value: 3    
       }]
     },
     workDate: {

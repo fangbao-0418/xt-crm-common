@@ -15,34 +15,33 @@ class StoreForm extends React.Component<Props, any> {
   form: FormInstance;
   id: string = '-1';
   readOnly: boolean = !!(parseQuery() as any).readOnly;
-  // citylocation: any;
+  provinceName: string;
+  cityName: string;
+  areaName: string;
   constructor(props: Props) {
     super(props);
     this.id = props.match.params.id;
   }
   componentDidMount() {
-    // this.init();
     this.id !== '-1' && this.fetchData();
   }
-  // init() {
-  //   this.citylocation = new (window as any).qq.maps.CityService({
-  //     complete: (results: any) => {
-  //       const { lat, lng } = results.detail.latLng;
-  //       this.form.setValues({
-  //         longitude: lat,
-  //         latitude: lng
-  //       })
-  //     }
-  //   })
-  // }
   fetchData() {
     getShopDetail(this.id).then(res => {
+      this.provinceName = res.provinceName;
+      this.cityName = res.cityName;
+      this.areaName = res.areaName;
       this.form.setValues(res);
     })
   }
   handleSave = () => {
     this.form.props.form.validateFields((err, vals) => {
       if (!err) {
+        // 合并省市区名称
+        vals = Object.assign(vals, {
+          provinceName: this.provinceName,
+          cityName: this.cityName,
+          areaName: this.areaName
+        })
         const isAdd = this.id === '-1'
         const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id });
         promiseResult.then((res: any) => {
@@ -105,9 +104,14 @@ class StoreForm extends React.Component<Props, any> {
                     message: '请选择省市区'
                   }]
                 })(<CitySelect
-                    // getSelectedValues={(value: any[]) => {
-                    //   this.address = value.reduce((prev, curr) => prev + curr.label, '')
-                    // }}
+                    getSelectedValues={(value: any[]) => {
+                      console.log('value => ', value);
+                      if (Array.isArray(value) && value.length === 3) {
+                        this.provinceName = value[0].label;
+                        this.cityName = value[1].label;
+                        this.areaName = value[2].label;
+                      }
+                    }}
                   />);
               }}
             />
@@ -116,10 +120,7 @@ class StoreForm extends React.Component<Props, any> {
               wrapperCol={{ offset: 4 }}
               name='detailAddress'
               controlProps={{
-                placeholder: '请输入详细地址',
-                // onChange: (e: any) => {
-                //   this.citylocation.searchCityByName(e.target.value);
-                // }
+                placeholder: '请输入详细地址'
               }}
               verifiable
               fieldDecoratorOptions={{
@@ -158,7 +159,7 @@ class StoreForm extends React.Component<Props, any> {
                         />
                       )}
                     </div>
-                    <div className={styles['input-wrapper-placeholder']}>（建议720*500px，300kb以内，最多可添加3张）</div>
+                    <div className={styles['input-wrapper-placeholder']}>（建议720*500px，300kb以内）</div>
                   </div>
                 )
               }}
