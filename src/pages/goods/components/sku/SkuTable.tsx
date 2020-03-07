@@ -162,7 +162,7 @@ class Main extends React.Component<Props, State> {
                       const { target } = e;
                       value = target.type === 'checkbox' ? target.checked : target.value;
                     }
-                    cb(field, record, realIndex)(value);
+                    cb(field, record, index)(value);
                     return value;
                   },
                   ...fieldDecoratorOptions
@@ -1162,6 +1162,7 @@ class Main extends React.Component<Props, State> {
     ];
   }
   public handleChangeValue = (field: string, record: any, index: any) => (e: any) => {
+    console.log(index, '---------')
     const { pageSize = 10, current = 1 } = this.pagination
     const realIndex = current > 1 ? pageSize * (current - 1) + index : index
     const value = (e && e.target ? e.target.value : e) as never;
@@ -1236,7 +1237,6 @@ class Main extends React.Component<Props, State> {
           }}
           expandIcon={(props: any) => {
             const { expanded, record, onExpand } = props;
-            console.log('props =>', props);
             return (!!record.skuId || record.expandable) && this.props.warehouseType === 1 ? (
               <div
                 className={classNames({
