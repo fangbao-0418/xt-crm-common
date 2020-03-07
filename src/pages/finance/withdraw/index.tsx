@@ -7,6 +7,7 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page';
 import { AlertComponentProps } from '@/packages/common/components/alert';
 import { FormInstance } from '@/packages/common/components/form';
 import { parseQuery } from '@/util/utils';
+import { formatMoneyWithSign } from '../../../pages/helper';
 import moment from 'moment';
 import { pick } from 'lodash';
 
@@ -27,7 +28,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
   list: ListPageInstanceProps;
   form: FormInstance;
   batchPaymentForm: FormInstance;
-  batchId =  (parseQuery() as any).batchId;
+  batchId = (parseQuery() as any).batchId;
   state: WithdrawState = {
     batchId: '',
     commonNum: 0,
@@ -54,10 +55,12 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
     dataIndex: 'submitTime'
   }, {
     title: '提现金额',
-    dataIndex: 'transferAmount'
+    dataIndex: 'transferAmount',
+    render: (text: any) => <>{formatMoneyWithSign(text)}</>,
   }, {
     title: '服务费',
-    dataIndex: 'serviceCharge'
+    dataIndex: 'serviceCharge',
+    render: (text: any) => <>{formatMoneyWithSign(text)}</>,
   }, {
     title: '银行卡绑定人',
     dataIndex: 'realName'
@@ -101,7 +104,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                     })
                   }
                 })
-            }}>提交打款</span>
+              }}>提交打款</span>
             <span
               className='href ml10'
               onClick={() => {
@@ -110,7 +113,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                   content: (
                     <Form
                       getInstance={ref => this.form = ref}
-                      labelCol={{ span: 0}}
+                      labelCol={{ span: 0 }}
                       wrapperCol={{ span: 24 }}
                     >
                       <FormItem
@@ -167,7 +170,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
     }
   }
   onChange = (value: [moment.Moment, moment.Moment]) => {
-    if ( !value[0] || !value[1]) return;
+    if (!value[0] || !value[1]) return;
     getRemittanceInfo({
       startTime: value[0].format('YYYY-MM-DD HH:mm:ss'),
       endTime: value[1].format('YYYY-MM-DD HH:mm:ss')
@@ -217,7 +220,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                     message: '请选择申请时间'
                   }]
                 })(
-                  <RangePicker showTime/>
+                  <RangePicker showTime />
                 )
               }}
             />
@@ -228,8 +231,8 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                 const hasValue = startTime && endTime;
                 return (
                   <>
-                    <div>所选日期待提现条目数目：{hasValue ? `${totalNum}（普通提现${commonNum} 拦截提现${interceptionNum}）`: '-'}</div>
-                    <div>所选日期待提现金额：{hasValue ? `￥${totalAmount}（普通提现￥${commonAmount} 拦截提现￥${interceptionAmount}）`: '-'}</div>
+                    <div>所选日期待提现条目数目：{hasValue ? `${totalNum}（普通提现${commonNum} 拦截提现${interceptionNum}）` : '-'}</div>
+                    <div>所选日期待提现金额：{hasValue ? `￥${totalAmount}（普通提现￥${commonAmount} 拦截提现￥${interceptionAmount}）` : '-'}</div>
                   </>
                 )
               }}
@@ -255,6 +258,29 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
       }
     })
   }
+
+  getRemittanceList = async (data: any) => {
+    if (data.submitTime) {
+      if (data.submitTime[0]) {
+        data.remitStartTime = data.submitTime[0].format('YYYY-MM-DD')
+      }
+      if (data.submitTime[1]) {
+        data.remitEndTime = data.submitTime[1].format('YYYY-MM-DD')
+      }
+      delete data.submitTime;
+    }
+    if (data.createTimeBegin) {
+      data.createStartTime = data.createTimeBegin.substr(0, 10)
+      delete data.createTimeBegin;
+    }
+    if (data.createTimeEnd) {
+      data.createEndTime = data.createTimeEnd.substr(0, 10)
+      delete data.createTimeEnd;
+    }
+    console.log('2222222')
+    return getRemittanceList(data);
+  }
+
   render() {
     return (
       <>
@@ -266,7 +292,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
             }
           }}
           namespace={NAME_SPACE}
-          formItemLayout={(
+          formItemLayout={( 
             <>
               <FormItem
                 name='batchId'
@@ -294,7 +320,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
           )}
           formConfig={defaultConfig}
           columns={this.columns}
-          api={getRemittanceList}
+          api={this.getRemittanceList}
         />
       </>
     )

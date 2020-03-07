@@ -8,6 +8,7 @@ import { parseQuery } from '@/util/utils';
 import { getRemittanceDetail, submitRemittance, getRemittanceLog, cancelRemittance } from './api';
 import { FormInstance } from '@/packages/common/components/form';
 import Image from '@/components/Image';
+import { formatMoneyWithSign } from '../../../pages/helper';
 import { AlertComponentProps } from '@/packages/common/components/alert';
 import { pick } from 'lodash';
 const { TabPane } = Tabs;
@@ -47,6 +48,8 @@ class WithdrawForm extends React.Component<Props, any> {
   fetchData() {
     getRemittanceDetail(this.id).then(res => {
       console.log('res => ', res);
+      res.transferAmount = formatMoneyWithSign(res.transferAmount);
+      res.serviceCharge = formatMoneyWithSign(res.serviceCharge);
       this.form.setValues(res);
       this.setState(pick(res, ['canCancel', 'canSubmit']))
     })
