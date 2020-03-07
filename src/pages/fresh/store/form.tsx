@@ -11,7 +11,13 @@ import { RouteComponentProps } from 'react-router';
 import { parseQuery } from '@/util/utils';
 type Props = RouteComponentProps<{id: string}>;
 
-class StoreForm extends React.Component<Props, any> {
+interface StoreFormState {
+  address: string;
+}
+class StoreForm extends React.Component<Props, StoreFormState> {
+  state: StoreFormState = {
+    address: ''
+  }
   form: FormInstance;
   id: string = '-1';
   readOnly: boolean = !!(parseQuery() as any).readOnly;
@@ -30,6 +36,9 @@ class StoreForm extends React.Component<Props, any> {
       this.provinceName = res.provinceName;
       this.cityName = res.cityName;
       this.areaName = res.areaName;
+      this.setState({
+        address: res.provinceName + '' + res.cityName + '' + res.areaName
+      })
       this.form.setValues(res);
     })
   }
@@ -62,10 +71,9 @@ class StoreForm extends React.Component<Props, any> {
         addonAfter={(
           <div style={{ width: '60%' }}>
             <FormItem>
-              <Button type='primary' onClick={this.handleSave}>保存</Button>
+              {!this.readOnly && <Button type='primary' onClick={this.handleSave} className='mr10'>保存</Button>}
               <Button
                 type='primary'
-                className='ml10'
                 onClick={() => {
                   APP.history.push('/fresh/store');
                 }}>
@@ -98,14 +106,13 @@ class StoreForm extends React.Component<Props, any> {
               label='门店地址'
               required
               inner={(form) => {
-                return form.getFieldDecorator('address', {
+                return this.readOnly ? this.state.address : form.getFieldDecorator('address', {
                   rules: [{
                     required: true,
                     message: '请选择省市区'
                   }]
                 })(<CitySelect
                     getSelectedValues={(value: any[]) => {
-                      console.log('value => ', value);
                       if (Array.isArray(value) && value.length === 3) {
                         this.provinceName = value[0].label;
                         this.cityName = value[1].label;
@@ -132,8 +139,73 @@ class StoreForm extends React.Component<Props, any> {
             />
             <Row>
               <Col offset={4} style={{ display: 'flex'}}>
-                <FormItem style={{ width: 300 }} label='经度' name='longitude'/>
-                <FormItem style={{ width: 300, marginLeft: 30 }} label='维度' name='latitude'/>
+                <FormItem
+                  label='经度'
+                  name='longitude'
+                  type='number'
+                  verifiable
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 19 }}
+                  controlProps={{
+                    precision: 6,
+                    style: {
+                      width: 220 
+                    },
+                    max: 180,
+                    min: -180
+                  }}
+                  fieldDecoratorOptions={{
+                    rules: [{
+                      validator: async (rules, value) => {
+                        if (!value) {
+                          throw new Error('请输入经度');
+                        }
+                        if (value < -180) {
+                          throw new Error('经度不能低于负180度');
+                        }
+                        if (value > 180) {
+                          throw new Error('经度不能超过正180度');
+                        }
+                        return value;
+                      }
+                    }]
+                  }}
+                />
+                <FormItem
+                  type='number'
+                  label='维度'
+                  name='latitude'
+                  verifiable
+                  style={{
+                    marginLeft: 30
+                  }}
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 19 }}
+                  controlProps={{
+                    precision: 6,
+                    style: {
+                      width: 220
+                    },
+                    max: 180,
+                    min: -180
+                  }}
+                  fieldDecoratorOptions={{
+                    rules: [{
+                      validator: async (rules, value) => {
+                        if (!value) {
+                          throw new Error('请输入维度');
+                        }
+                        if (value < -180) {
+                          throw new Error('维度不能低于负180度');
+                        }
+                        if (value > 180) {
+                          throw new Error('维度不能超过正180度');
+                        }
+                        return value;
+                      }
+                    }]
+                  }}
+                />
               </Col>
             </Row>
             <FormItem

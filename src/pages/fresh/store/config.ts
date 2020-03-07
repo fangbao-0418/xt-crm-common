@@ -44,6 +44,9 @@ export const defaultConfig: FieldsConfig = {
         rules: [{
           required: true,
           message: '请输入店主手机'
+        }, {
+          pattern: /^1[3456789]\d{9}$/,
+          message: '店主手机有误，请重填'
         }]
       }
     },
@@ -53,6 +56,9 @@ export const defaultConfig: FieldsConfig = {
         rules: [{
           required: true,
           message: '请输入门店电话'
+        }, {
+          pattern: /^1[3456789]\d{9}$/,
+          message: '门店电话有误，请重填'
         }]
       }
     },
@@ -78,7 +84,7 @@ export const defaultConfig: FieldsConfig = {
       }]
     },
     workDate: {
-      label: '营业时间',
+      label: '创建时间',
       type: 'rangepicker'
     }
   }
