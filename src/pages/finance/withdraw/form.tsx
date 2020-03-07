@@ -164,7 +164,6 @@ class WithdrawForm extends React.Component<Props, any> {
                 }}
               />
               <FormItem name='phone' />
-              <FormItem name='idCardNo' label='持卡人身份证' />
             </Form>
           </TabPane>
           <TabPane tab='信息记录' key='2'>
