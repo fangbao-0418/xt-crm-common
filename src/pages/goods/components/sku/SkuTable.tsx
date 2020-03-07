@@ -1162,7 +1162,8 @@ class Main extends React.Component<Props, State> {
     ];
   }
   public handleChangeValue = (field: string, record: any, index: any) => (e: any) => {
-    const realIndex = index;
+    const { pageSize = 10, current = 1 } = this.pagination
+    const realIndex = current > 1 ? pageSize * (current - 1) + index : index
     const value = (e && e.target ? e.target.value : e) as never;
     const dataSource = this.props.dataSource;
     dataSource[realIndex][field] = value;
