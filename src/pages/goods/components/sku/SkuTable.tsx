@@ -29,8 +29,6 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   type: 0 | 10 | 20;
   /** sku备案信息 */
   productCustomsDetailVOList: any[];
-  /** 1: 入库商品，0: 非入库商品 */
-  // warehouseType: 1 | 0;
   isGroup: boolean;
 }
 
@@ -599,140 +597,82 @@ class Main extends React.Component<Props, State> {
           )
         );
     };
-    const differentColumns =
-      this.props.warehouseType === 1
-        ? [
-            {
-              title: '规格条码',
-              dataIndex: 'barCode',
-              width: 200,
-              render: (text: any, record: any, index: any) => {
-                return <Input value={text} placeholder="请输入规格条码" onChange={cb('barCode', record, index)} />;
-              }
-            },
-            {
-              title: (
-                <div>
-                  <span style={{ color: 'red' }}>*</span>规格编码
-                </div>
-              ),
-              dataIndex: 'skuCode',
-              width: 200,
-              render: (text: string, record: any, index: number) => {
-                const { pageSize = 10, current = 1 } = this.pagination;
-                const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index;
+    const differentColumns = [
+      {
+        title: '供应商skuid',
+        dataIndex: 'storeProductSkuId',
+        width: 200,
+        render: (text: any, record: any, index: any) => {
+          return (
+            <Input
+              value={text}
+              placeholder="请输入供应商skuid"
+              onChange={cb('storeProductSkuId', record, index)}
+            />
+          );
+        }
+      },
+      {
+        title: (
+          <div>
+            <span style={{ color: 'red' }}>*</span>商品编码
+          </div>
+        ),
+        dataIndex: 'skuCode',
+        width: 200,
+        render: (text: string, record: any, index: number) => {
+          const { pageSize = 10, current = 1 } = this.pagination;
+          const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index;
 
-                return (
-                  <FormItem wrapperCol={{ span: 24 }}>
-                    {this.props.form &&
-                      this.props.form.getFieldDecorator(`skuCode-${realIndex}`, {
-                        initialValue: text,
-                        rules: [
-                          {
-                            required: true,
-                            message: '规格编码不能为空'
-                          },
-                          {
-                            pattern: /^SH[\d]{6}[\dA-Z]{1}\d{3}$/,
-                            message:
-                              '规格编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
-                          }
-                        ]
-                      })(
-                        <Input
-                          disabled={true}
-                          placeholder="请输入规格编码"
-                          onChange={e => {
-                            const value = e.target.value;
-                            cb('skuCode', record, index)(value);
-                            setTimeout(() => {
-                              this.forceUpdate();
-                              console.log('skuCode');
-                            }, 400);
-                          }}
-                        />
-                      )}
-                  </FormItem>
-                );
-              }
-            }
-          ]
-        : [
-            {
-              title: '供应商skuid',
-              dataIndex: 'storeProductSkuId',
-              width: 200,
-              render: (text: any, record: any, index: any) => {
-                return (
+          return (
+            <FormItem wrapperCol={{ span: 24 }}>
+              {this.props.form &&
+                this.props.form.getFieldDecorator(`skuCode-${realIndex}`, {
+                  initialValue: text,
+                  rules: [
+                    {
+                      required: true,
+                      message: '商品编码不能为空'
+                    },
+                    {
+                      pattern: /^SH[\d]{6}[\dA-Z]{1}\d{3}$/,
+                      message:
+                        '商品编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
+                    }
+                  ]
+                })(
                   <Input
-                    value={text}
-                    placeholder="请输入供应商skuid"
-                    onChange={cb('storeProductSkuId', record, index)}
+                    // value={text}
+                    placeholder="请输入商品编码"
+                    onChange={e => {
+                      const value = e.target.value;
+                      cb('skuCode', record, index)(value);
+                      setTimeout(() => {
+                        this.forceUpdate();
+                        console.log('skuCode skuCode');
+                      }, 400);
+                    }}
                   />
-                );
-              }
-            },
-            {
-              title: (
-                <div>
-                  <span style={{ color: 'red' }}>*</span>商品编码
-                </div>
-              ),
-              dataIndex: 'skuCode',
-              width: 200,
-              render: (text: string, record: any, index: number) => {
-                const { pageSize = 10, current = 1 } = this.pagination;
-                const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index;
-
-                return (
-                  <FormItem wrapperCol={{ span: 24 }}>
-                    {this.props.form &&
-                      this.props.form.getFieldDecorator(`skuCode-${realIndex}`, {
-                        initialValue: text,
-                        rules: [
-                          {
-                            required: true,
-                            message: '商品编码不能为空'
-                          },
-                          {
-                            pattern: /^SH[\d]{6}[\dA-Z]{1}\d{3}$/,
-                            message:
-                              '商品编码规则：固定头(1位大写字母，固定为S) + 产品类型(1位大写字母，固定H) + 创建年月日(6位数字，2019简写19) + 类目代码(1位数字或大写字母) + 流水号(3位数字), 示例: SH191126A001，SH1912042016'
-                          }
-                        ]
-                      })(
-                        <Input
-                          // value={text}
-                          placeholder="请输入商品编码"
-                          onChange={e => {
-                            const value = e.target.value;
-                            cb('skuCode', record, index)(value);
-                            setTimeout(() => {
-                              this.forceUpdate();
-                              console.log('skuCode skuCode');
-                            }, 400);
-                          }}
-                        />
-                      )}
-                  </FormItem>
-                );
-              }
-            },
-            {
-              title: '发货方式',
-              dataIndex: 'deliveryMode',
-              width: 200,
-              render: (text: any, record: any, index: any) => {
-                return (
-                  <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
-                    <Option value={4} key="d-4">
-                      保宏保税仓
-                    </Option>
-                  </Select>
-                );
-              }
-            }
-          ];
+                )}
+            </FormItem>
+          );
+        }
+      },
+      {
+        title: '发货方式',
+        dataIndex: 'deliveryMode',
+        width: 200,
+        render: (text: any, record: any, index: any) => {
+          return (
+            <Select value={text} placeholder="请选择" onChange={cb('deliveryMode', record, index)}>
+              <Option value={4} key="d-4">
+                保宏保税仓
+              </Option>
+            </Select>
+          );
+        }
+      }
+    ];
 
     return [
       ...differentColumns,
@@ -1153,6 +1093,7 @@ class Main extends React.Component<Props, State> {
     const { pageSize = 10, current = 1 } = this.pagination
     const realIndex = current > 1 ? pageSize * (current - 1) + index : index
     const value = (e && e.target ? e.target.value : e) as never;
+    console.log(value);
     const dataSource = this.props.dataSource;
     dataSource[realIndex][field] = value;
     if (this.props.onChange) {
@@ -1183,11 +1124,13 @@ class Main extends React.Component<Props, State> {
   }
   public render() {
     const { selectedRowKeys, selectedRowKeysMap } = this.state;
+    const isBondedGood = this.props.type === 20// 是否保税仓海淘商品
     const columns = (this.props.extraColumns || []).concat(
-      this.props.type === 20
+      isBondedGood
         ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource)
         : this.getColumns(this.handleChangeValue, this.state.dataSource)
     );
+    console.log(this.state.dataSource, 'this.state.dataSource')
     return (
       <>
         <Table
@@ -1222,9 +1165,10 @@ class Main extends React.Component<Props, State> {
                 });
             }
           }}
-          expandIcon={(props: any) => {
+          expandIcon={ isBondedGood ? undefined : (props: any) => {
             const { expanded, record, onExpand } = props;
-            return (!!record.skuId || record.expandable) ? (
+            const {deliveryMode} = record
+            return (!!record.skuId || record.expandable) && deliveryMode === 1 ? (
               <div
                 className={classNames({
                   'ant-table-row-expand-icon': true,
@@ -1237,130 +1181,131 @@ class Main extends React.Component<Props, State> {
               ></div>
             ) : null;
           }}
-          expandedRowRender={(record, index) => {
-                  return (
-                    <Table
-                      loading={record.loading}
-                      rowKey={(_, idx) => `sku-table-${index}`}
-                      dataSource={record.productBasics}
-                      footer={() => (
-                        <ProductSeletor
-                          selectedRowKeys={selectedRowKeys}
-                          selectedRowKeysMap={selectedRowKeysMap}
-                          productBasics={combination(record.productBasics)}
-                          onOk={({ selectedRowKeys, productBasics, selectedRowKeysMap }: any) => {
-                            const { dataSource } = this.state;
-                            dataSource[index].productBasics = [...productBasics];
-                            this.setState({
-                              selectedRowKeys,
-                              dataSource,
-                              selectedRowKeysMap
-                            });
-                            if (this.props.onChange) {
-                              this.props.onChange(dataSource);
-                            }
-                          }}
-                        />
-                      )}
-                      columns={[
-                        {
-                          title: '商品ID',
-                          dataIndex: 'id'
-                        },
-                        {
-                          title: '商品名称',
-                          dataIndex: 'productName'
-                        },
-                        {
-                          title: '商品主图',
-                          dataIndex: 'productMainImage',
-                          render: (url: string) => (
-                            <Image
-                              style={{
-                                height: 100,
-                                width: 100,
-                                minWidth: 100
-                              }}
-                              src={replaceHttpUrl(url)}
-                              alt="主图"
-                            />
-                          )
-                        },
-                        {
-                          title: '商品规格',
-                          dataIndex: 'propertyValue'
-                        },
-                        {
-                          title: '规格条码',
-                          dataIndex: 'productBasicSkuBarCode'
-                        },
-                        {
-                          title: '规格编码',
-                          dataIndex: 'productBasicSkuCode'
-                        },
-                        {
-                          title: '市场价',
-                          dataIndex: 'marketPrice'
-                        },
-                        {
-                          title: '成本价',
-                          dataIndex: 'costPrice'
-                        },
-                        {
-                          title: '总库存',
-                          dataIndex: 'totalStock'
-                        },
-                        {
-                          title: '数量配置',
-                          dataIndex: 'num',
-                          render: (text, _, idx) => {
-                            return (
-                              <InputNumber
-                                style={{ width: 172 }}
-                                value={text}
-                                max={999}
-                                placeholder="请输入数量配置"
-                                precision={0}
-                                onChange={value => {
-                                  const { dataSource } = this.state;
-                                  dataSource[index].productBasics[idx].num = value;
-                                  this.setState({
-                                    dataSource
-                                  });
-                                }}
-                              />
-                            );
-                          }
-                        },
-                        {
-                          title: '操作',
-                          align: 'center',
-                          render: (record, $1, idx) => (
-                            <Button
-                              type="link"
-                              onClick={() => {
-                                const { dataSource } = this.state;
-                                let selectedRowKeys: any[] = [...this.state.selectedRowKeys];
-                                (dataSource[index].productBasics || []).splice(idx, 1);
-                                let productBasicSkuInfoKeys: any[] = this.state.selectedRowKeysMap[record.id];
-                                productBasicSkuInfoKeys = productBasicSkuInfoKeys.filter(
-                                  key => key !== record.productBasicSkuId
-                                );
-                                selectedRowKeysMap[record.id] = productBasicSkuInfoKeys;
-                                if (productBasicSkuInfoKeys.length === 0) {
-                                  selectedRowKeys = selectedRowKeys.filter(id => id !== record.id);
-                                }
-                                this.setState({ dataSource, selectedRowKeys, selectedRowKeysMap });
-                              }}
-                            >
-                              删除
-                            </Button>
-                          )
+          expandedRowRender={ isBondedGood ? undefined : (record, index) => {
+              const {deliveryMode} = record
+              return (
+                deliveryMode === 1 && <Table
+                  loading={record.loading}
+                  rowKey={(_, idx) => `sku-table-${index}`}
+                  dataSource={record.productBasics}
+                  footer={() => (
+                    <ProductSeletor
+                      selectedRowKeys={selectedRowKeys}
+                      selectedRowKeysMap={selectedRowKeysMap}
+                      productBasics={combination(record.productBasics)}
+                      onOk={({ selectedRowKeys, productBasics, selectedRowKeysMap }: any) => {
+                        const { dataSource } = this.state;
+                        dataSource[index].productBasics = [...productBasics];
+                        this.setState({
+                          selectedRowKeys,
+                          dataSource,
+                          selectedRowKeysMap
+                        });
+                        if (this.props.onChange) {
+                          this.props.onChange(dataSource);
                         }
-                      ]}
+                      }}
                     />
-                  );
-                }
+                  )}
+                  columns={[
+                    {
+                      title: '商品ID',
+                      dataIndex: 'id'
+                    },
+                    {
+                      title: '商品名称',
+                      dataIndex: 'productName'
+                    },
+                    {
+                      title: '商品主图',
+                      dataIndex: 'productMainImage',
+                      render: (url: string) => (
+                        <Image
+                          style={{
+                            height: 100,
+                            width: 100,
+                            minWidth: 100
+                          }}
+                          src={replaceHttpUrl(url)}
+                          alt="主图"
+                        />
+                      )
+                    },
+                    {
+                      title: '商品规格',
+                      dataIndex: 'propertyValue'
+                    },
+                    {
+                      title: '规格条码',
+                      dataIndex: 'productBasicSkuBarCode'
+                    },
+                    {
+                      title: '规格编码',
+                      dataIndex: 'productBasicSkuCode'
+                    },
+                    {
+                      title: '市场价',
+                      dataIndex: 'marketPrice'
+                    },
+                    {
+                      title: '成本价',
+                      dataIndex: 'costPrice'
+                    },
+                    {
+                      title: '总库存',
+                      dataIndex: 'totalStock'
+                    },
+                    {
+                      title: '数量配置',
+                      dataIndex: 'num',
+                      render: (text, _, idx) => {
+                        return (
+                          <InputNumber
+                            style={{ width: 172 }}
+                            value={text}
+                            max={999}
+                            placeholder="请输入数量配置"
+                            precision={0}
+                            onChange={value => {
+                              const { dataSource } = this.state;
+                              dataSource[index].productBasics[idx].num = value;
+                              this.setState({
+                                dataSource
+                              });
+                            }}
+                          />
+                        );
+                      }
+                    },
+                    {
+                      title: '操作',
+                      align: 'center',
+                      render: (record, $1, idx) => (
+                        <Button
+                          type="link"
+                          onClick={() => {
+                            const { dataSource } = this.state;
+                            let selectedRowKeys: any[] = [...this.state.selectedRowKeys];
+                            (dataSource[index].productBasics || []).splice(idx, 1);
+                            let productBasicSkuInfoKeys: any[] = this.state.selectedRowKeysMap[record.id];
+                            productBasicSkuInfoKeys = productBasicSkuInfoKeys.filter(
+                              key => key !== record.productBasicSkuId
+                            );
+                            selectedRowKeysMap[record.id] = productBasicSkuInfoKeys;
+                            if (productBasicSkuInfoKeys.length === 0) {
+                              selectedRowKeys = selectedRowKeys.filter(id => id !== record.id);
+                            }
+                            this.setState({ dataSource, selectedRowKeys, selectedRowKeysMap });
+                          }}
+                        >
+                          删除
+                        </Button>
+                      )
+                    }
+                  ]}
+                />
+              );
+            }
           }
           onChange={pagination => {
             this.pagination = pagination;

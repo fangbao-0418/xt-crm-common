@@ -222,6 +222,7 @@ class SkuList extends React.Component<Props, State>{
 
     //////////////////////////////
     const dataSource1 = this.getCombineResult(specs, this.state.dataSource)
+    console.log(dataSource1, 'dataSource1');
     this.setState({
       dataSource: dataSource1,
       tempSpecInfo,
