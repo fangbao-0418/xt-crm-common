@@ -17,7 +17,7 @@ const defaultItem: SkuSaleProps = {
   cityMemberPrice: undefined,
   costPrice: undefined,
   headPrice: undefined,
-  deliveryMode: 2,
+  deliveryMode: 1,
   marketPrice: undefined,
   salePrice: undefined,
   managerMemberPrice: undefined,
