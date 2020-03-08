@@ -1168,7 +1168,8 @@ class Main extends React.Component<Props, State> {
           expandIcon={ isBondedGood ? undefined : (props: any) => {
             const { expanded, record, onExpand } = props;
             const {deliveryMode} = record
-            return (!!record.skuId || record.expandable) && deliveryMode === 1 ? (
+            console.log(deliveryMode, 'deliveryMode');
+            return deliveryMode === 1 ? (
               <div
                 className={classNames({
                   'ant-table-row-expand-icon': true,
