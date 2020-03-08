@@ -49,7 +49,7 @@ interface SkuSaleFormState extends Record<string, any> {
   productList: any[];
   isGroup: boolean;
   productCode: string;
-  checkedData: any[];
+  checkedKeys: any[];
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
 class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
@@ -77,7 +77,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     productList: [],
     isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1',
     productCode: '',
-    checkedData: []
+    checkedKeys: []
   }
   id: number;
   modifyTime: number;
@@ -424,7 +424,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       visible,
       productList,
       productCode,
-      checkedData
+      checkedKeys
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
     return (
@@ -648,9 +648,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 <CitySelect
                   title='选择区域'
                   options={options}
-                  value={checkedData}
+                  checkedKeys={checkedKeys}
                   visible={true}
-                  onChange={(value) => this.setState({ checkedData: value })}
+                  onChange={(value) => this.setState({ checkedKeys: value })}
                 />
               )
             }
