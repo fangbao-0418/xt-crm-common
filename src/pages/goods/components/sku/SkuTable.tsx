@@ -30,7 +30,7 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   /** sku备案信息 */
   productCustomsDetailVOList: any[];
   /** 1: 入库商品，0: 非入库商品 */
-  warehouseType: 1 | 0;
+  // warehouseType: 1 | 0;
   isGroup: boolean;
 }
 
@@ -185,27 +185,7 @@ class Main extends React.Component<Props, State> {
           )
         );
     };
-    const differentColumns =
-      this.props.warehouseType === 1
-        ? [
-            {
-              title: '规格条码',
-              dataIndex: 'barCode',
-              width: 200,
-              render: (text: any, record: any, index: any) => {
-                return <Input value={text} placeholder="请输入规格条码" onChange={cb('barCode', record, index)} />;
-              }
-            },
-            {
-              title: '规格编码',
-              dataIndex: 'skuCode',
-              width: 200,
-              render: (text: any, record: any, index: any) => {
-                return <Input value={text} placeholder="请输入规格编码" onChange={cb('skuCode', record, index)} />;
-              }
-            }
-          ]
-        : [
+    const differentColumns = [
             {
               title: '供应商skuid',
               dataIndex: 'storeProductSkuId',
@@ -218,6 +198,14 @@ class Main extends React.Component<Props, State> {
                     onChange={cb('storeProductSkuId', record, index)}
                   />
                 );
+              }
+            },
+            {
+              title: '规格条码',
+              dataIndex: 'barCode',
+              width: 200,
+              render: (text: any, record: any, index: any) => {
+                return <Input value={text} placeholder="请输入规格条码" onChange={cb('barCode', record, index)} />;
               }
             },
             {
@@ -235,7 +223,6 @@ class Main extends React.Component<Props, State> {
               render: (text: any, record: any, index: any) => {
                 return (
                   <Select
-                    disabled={this.props.warehouseType === 1}
                     value={text}
                     placeholder="请选择"
                     onChange={cb('deliveryMode', record, index)}
@@ -1237,7 +1224,7 @@ class Main extends React.Component<Props, State> {
           }}
           expandIcon={(props: any) => {
             const { expanded, record, onExpand } = props;
-            return (!!record.skuId || record.expandable) && this.props.warehouseType === 1 ? (
+            return (!!record.skuId || record.expandable) ? (
               <div
                 className={classNames({
                   'ant-table-row-expand-icon': true,
@@ -1250,10 +1237,7 @@ class Main extends React.Component<Props, State> {
               ></div>
             ) : null;
           }}
-          expandedRowRender={
-            this.props.warehouseType === 0
-              ? undefined
-              : (record, index) => {
+          expandedRowRender={(record, index) => {
                   return (
                     <Table
                       loading={record.loading}
