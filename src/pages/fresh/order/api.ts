@@ -89,7 +89,7 @@ export function saveRefundInfo(data: any) {
 
 // 订单详情
 export function queryOrderDetail(data: any) {
-  return post('/order/detail', data);
+  return post('/order/freshDetail', data);
   // return post('/order/freshDetail', data);
 }
 
@@ -216,7 +216,7 @@ export function profitRecycl(data: any) {
  * @param {object} data  
  */
 export function getProceedsListByOrderId(param: any) {
-  return get(`/crm/member/settlement/v1/order/summary`, param);
+  return get(`/crm/member/common/settlement/v1/summary`, param);
 }
 
 /**
@@ -240,7 +240,7 @@ export function getProceedsListByOrderIdAndMemberIdAndSkuId(param: any) {
  * @param {object} data  
  */
 export function getProceedsListByOrderIdAndSkuId(param: any) {
-  return get(`/crm/member/settlement/v1/order/skuSummary`, param);
+  return get(`/crm/member/common/settlement/v1/skuSummary`, param);
 }
 
 /**

@@ -641,7 +641,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         >
           <FormItem name='bulk' />
           <FormItem name='weight' />
-          {/* <FormItem
+          <FormItem
             label='可售区域'
             inner={(form) => {
               return (
@@ -654,7 +654,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 />
               )
             }
-          }/> */}
+          }/>
         </Card>
         <Card
           style={{ marginTop: 10 }}
