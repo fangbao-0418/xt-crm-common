@@ -25,7 +25,7 @@ export function formatDate(date, format = 'YYYY-MM-DD HH:mm:ss') {
     date = Number(date)
     date = String(date).length === 10 ? date * 1000 : date
   }
-  return date && moment(date).format(format);
+  return (date && moment(date).format(format)) || '';
 }
 
 export function formatMoney(money = '0') {
@@ -74,7 +74,7 @@ export const handleLoading = (function() {
     const el = document.querySelector('#loading');
     if (loading === 'start') {
       ajaxCount++;
-      console.log(ajaxCount, 'start');
+      // console.log(ajaxCount, 'start');
       const display = getComputedStyle(el).display;
       if (ajaxCount > 0 && display === 'none') {
         el.setAttribute('style', 'display:block');
@@ -82,7 +82,7 @@ export const handleLoading = (function() {
     } else {
       setTimeout(() => {
         ajaxCount--;
-        console.log(ajaxCount, 'end');
+        // console.log(ajaxCount, 'end');
         if (ajaxCount <= 0) {
           const display = getComputedStyle(el).display;
           if (display !== 'none') {
@@ -117,7 +117,7 @@ export function download(url, name) {
 
 /**
  * 多个集合合并
- * examp1 params ([1, 2], [3, 4]) => [[1, 3], [2, 3], [2, 3], [2, 4]]
+ * examp1 params ([1, 2], [3, 4]) => [[1, 3], [1, 4], [2, 3], [2, 4]]
  * examp2 params ([1, 2], []) => [[1, undefined], [2, undefined]]
  * examp3 params ([], []) => [[undefined, undefined]]
  * examp4 params ([]) => [[]]

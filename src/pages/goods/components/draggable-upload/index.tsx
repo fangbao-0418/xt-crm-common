@@ -4,8 +4,8 @@ import UploadView from '@/components/upload';
 import styles from './style.module.styl'
 interface Props {
   className: string 
-  value: any[]
-  onChange: (value: any[]) => void
+  value?: any[]
+  onChange?: (value: any[]) => void
   listNum?: number
   size?: number
   placeholder?: string

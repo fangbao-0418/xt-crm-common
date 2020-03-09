@@ -46,7 +46,9 @@
   word-wrap : break-word;
   word-break: break-all;
 }
-
+.success {
+  color: #008000;
+}
 .error {
   color: red;
   cursor: pointer;
@@ -94,4 +96,8 @@
 
 .ant-upload-list-picture-card .ant-upload-list-item-info::before {
   left: 0
+}
+
+.ant-card + .ant-card {
+  margin-top: 10px;
 }

@@ -1,32 +1,33 @@
 import React from 'react';
-import { Table, Card, Popover, Input, Button, message } from 'antd'
+import { Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
-import CardTitle from '../../CardTitle';
+import CardTitle from '../CardTitle';
 import SkuUploadItem from './SkuUploadItem';
 import styles from './style.module.scss';
 import { size, map } from 'lodash';
-import { accAdd, Subtr, accMul, accDiv } from '@/util/utils';
+import { Subtr, accMul, accDiv } from '@/util/utils';
 import SkuTable from './SkuTable'
 
-const defaultItem: SkuProps = {
+const defaultItem: SkuSaleProps = {
   imageUrl1: '',
   skuCode: '',
   stock: 0,
-  areaMemberPrice: 0,
-  cityMemberPrice: 0,
-  costPrice: 0,
-  headPrice: 0,
+  areaMemberPrice: undefined,
+  cityMemberPrice: undefined,
+  costPrice: undefined,
+  headPrice: undefined,
   deliveryMode: 2,
-  marketPrice: 0,
-  salePrice: 0,
-  managerMemberPrice: 0
+  marketPrice: undefined,
+  salePrice: undefined,
+  managerMemberPrice: undefined,
+  expandable: true
 }
 
 /** 子规格字段集合 */
-const subSpecFields: Array<keyof SkuProps> = ['propertyValue1', 'propertyValue2']
+const subSpecFields: Array<keyof SkuSaleProps> = ['propertyValue1', 'propertyValue2']
 
-export interface SkuProps {
+export interface SkuSaleProps {
   /** 供应商id */
   storeProductSkuId?: number
   /** 商品编码 */
@@ -34,19 +35,19 @@ export interface SkuProps {
   /** 发货方式 1-仓库发货, 2-供货商发货, 3-其他, 4-保宏保税仓 */
   deliveryMode: 1 | 2 | 3 | 4
   /** 成本价 */
-  costPrice: number
+  costPrice?: number
   /** 市场价 */
-  marketPrice: number
+  marketPrice?: number
   /** 销售价 */
-  salePrice: number
+  salePrice?: number
   /** 团长价 */
-  headPrice: number
+  headPrice?: number
   /** 社区管理员价 */
-  areaMemberPrice: number
+  areaMemberPrice?: number
   /** 城市合伙人价 */
-  cityMemberPrice: number
+  cityMemberPrice?: number
   /** 公司管理员价 */
-  managerMemberPrice: number
+  managerMemberPrice?: number
   /** 库存 */
   stock: number
   /** 警戒库存 */
@@ -58,15 +59,17 @@ export interface SkuProps {
 }
 
 interface Props extends FormComponentProps {
+  isGroup: boolean,
   specs: Spec[]
-  dataSource: SkuProps[]
+  dataSource: SkuSaleProps[]
   showImage: boolean
-  onChange?: (value: SkuProps[], specs: Spec[], showImage: boolean) => void
-  strategyData: {}
+  onChange?: (value: SkuSaleProps[], specs: Spec[], showImage: boolean) => void
+  strategyData?: {}
   /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
   type?: 0 | 10 | 20
   /** sku备案信息 */
   productCustomsDetailVOList: any[]
+  warehouseType: 1 | 0
 }
 interface SpecItem {
   specName: string;
@@ -75,10 +78,6 @@ interface SpecItem {
 interface Spec {
   title: string;
   content: SpecItem[];
-}
-interface TempSpecInfoItem {
-  tempSpuName: string;
-  tempSpuPicture: any[];
 }
 /**
  * speSelect 规格项
@@ -96,7 +95,7 @@ interface State {
   tempSpuPicture: any[]
   /** 添加规格名propover显示状态 */
   dimensionNamePropoverStatus: boolean
-  dataSource: SkuProps[]
+  dataSource: SkuSaleProps[]
   strategyData: any
 }
 class SkuList extends React.Component<Props, State>{
@@ -115,7 +114,11 @@ class SkuList extends React.Component<Props, State>{
     dataSource: this.props.dataSource,
     strategyData: {}
   }
+  public static defaultProps = {
+    warehouseType: 1
+  }
   public componentWillReceiveProps (props: Props) {
+    // console.log('dataSource =>', props.dataSource);
     this.setState({
       showImage: props.showImage,
       specs: props.specs,
@@ -123,12 +126,12 @@ class SkuList extends React.Component<Props, State>{
       strategyData: props.strategyData
     })
   }
-  public getCombineResult (specs: Spec[], dataSource: SkuProps[]) {
-    console.log(specs, 'specs getCombineResult')
-    console.log(dataSource, 'dataSource getCombineResult')
+  public getCombineResult (specs: Spec[], dataSource: SkuSaleProps[]) {
+    // console.log(specs, 'specs getCombineResult')
+    // console.log(dataSource, 'dataSource getCombineResult')
     const collection = specs.map((item) => item.content)
     const combineResutle: SpecItem[][] = APP.fn.mutilCollectionCombine.apply(null, collection)
-    console.log(combineResutle, 'combineResutle getCombineResult')
+    // console.log(combineResutle, 'combineResutle getCombineResult')
     /** 如果合并后只有一组数据切第一项全部都是undefind则数组返回空, */
     if (combineResutle.length === 1 && combineResutle[0].every((item) => item === undefined)) {
       return []
@@ -136,7 +139,7 @@ class SkuList extends React.Component<Props, State>{
     // let addNew = false
     /** 多规格合并 */
     const result = combineResutle.map((item) => {
-      let val: SkuProps = {...defaultItem}
+      let val: SkuSaleProps = {...defaultItem}
       /** 根据原规格查找规格信息 */
       val = dataSource.find((item2) => {
         /** item 自定义输入规格序列 规格1，2 */
@@ -235,6 +238,10 @@ class SkuList extends React.Component<Props, State>{
       message.error('请输入正确的规格名称');
       return false;
     }
+    if (GGName.length > 5) {
+      message.error('规格名称不能大于5个字符');
+      return
+    }
     if (this.state.specs.find((item) => item.title === GGName)) {
       message.error('规格名称重复');
       return false;
@@ -250,9 +257,10 @@ class SkuList extends React.Component<Props, State>{
     const { dataSource, strategyData } = this.state;
     let isZero = false;
     let isError = false;
+    let fields: any = [];
     // accAdd, Subtr, accMul, accDiv 
     const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData;
-    const newData = dataSource.map(res => {
+    const newData = dataSource.map((res, index) => {
       isZero = false;
       const { salePrice, costPrice } = res;
       if(!Number(salePrice) || !Number(costPrice) || Number(salePrice) - Number(costPrice) < 0){
@@ -266,6 +274,13 @@ class SkuList extends React.Component<Props, State>{
       let areaNetProfit = accDiv(accMul(netProfit,areaCommissionRate),100);
       let cityNetProfit = accDiv(accMul(netProfit,cityCommissionRate),100);
       let managerNetProfit = accDiv(accMul(netProfit,managerCommissionRate),100);
+
+      fields = fields.concat([
+        `headPrice-${index}`,
+        `areaMemberPrice-${index}`,
+        `cityMemberPrice-${index}`,
+        `managerMemberPrice-${index}`
+      ]);
       return Object.assign(res, {
         headPrice: isZero ? 0 : Math.floor(Subtr(salePrice, headNetProfit)*10) / 10,
         areaMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*10) / 10,
@@ -276,7 +291,8 @@ class SkuList extends React.Component<Props, State>{
     if(isError){
       message.error('价格错误，不能进行计算，请确认成本价及销售价是否正确');
     } 
-    
+    console.log('fields =>', fields);
+    this.props.form.resetFields(fields);
     this.setState({
       dataSource: newData
     })
@@ -335,7 +351,6 @@ class SkuList extends React.Component<Props, State>{
       if (keys[index]) {
         columns.push({
           width: 100,
-          fixed: 'left',
           title: item.title,
           dataIndex: keys[index]
         }) 
@@ -344,7 +359,7 @@ class SkuList extends React.Component<Props, State>{
     
     return columns
   }
-  public onChange (dataSource: SkuProps[]) {
+  public onChange (dataSource: SkuSaleProps[]) {
     if (this.props.onChange) {
       this.props.onChange(dataSource, this.state.specs, this.state.showImage)
     }
@@ -413,6 +428,7 @@ class SkuList extends React.Component<Props, State>{
         {this.state.specs.map((spec, key) => {
           return (
             <Card
+              style={{ marginBottom: 10 }}
               key={key}
               type="inner"
               title={(
@@ -501,6 +517,8 @@ class SkuList extends React.Component<Props, State>{
         }
         <SkuTable
           type={type}
+          isGroup={this.props.isGroup}
+          warehouseType={this.props.warehouseType}
           form={this.props.form}
           productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}

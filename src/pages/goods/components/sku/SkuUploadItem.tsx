@@ -29,7 +29,6 @@ function SkuUploadItem(props: Props) {
   const [value, setValue] = useState(Object.assign({}, props.value))
   const { specName, specPicture } = Object.assign({}, props.value)
   useEffect(() => {
-    console.log('--------------------  value')
     setValue(Object.assign({}, props.value))
   }, [specName, specPicture])
   return (

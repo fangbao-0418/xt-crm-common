@@ -5,16 +5,18 @@ import { connect, parseQuery, setQuery } from '@/util/utils';
 import styles from './index.module.scss';
 import UserModal from './modal';
 import ModalInvit from './modalInvit';
+import ModalPhone from './modalphone';
 import { levelName } from '../../../utils';
-import { memberModify, getReasonList, setMemberUnlocking } from '../../api'
+import { memberModify, getReasonList, setMemberUnlocking, relieveWechat, addBlack, delBlack } from '../../api'
 import { updateDepositAmount, updateCreditAmount, enablePermission } from './api'
 const FormItem = Form.Item
 const { Option } = Select;
 const { TextArea } = Input;
+
 const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 let unlisten = '';
 function formatTime(text) {
-  return text ? moment(text).format(timeFormat): '';
+  return text ? moment(text).format(timeFormat) : '';
 }
 
 function withModal(WrappedComponent) {
@@ -24,7 +26,7 @@ function withModal(WrappedComponent) {
       visible: false,
       name: 'depositAmount'
     }
-    constructor (props) {
+    constructor(props) {
       super(props)
       this.wrappedCompRef = React.createRef()
     }
@@ -94,7 +96,7 @@ function withModal(WrappedComponent) {
         }
       })
     }
-    render () {
+    render() {
       const { label, visible, name } = this.state
       const { form, ...otherProps } = this.props
       return (
@@ -129,7 +131,7 @@ function withModal(WrappedComponent) {
             </Form>
           </Modal>
           <WrappedComponent
-            wrappedCompRef = {this.wrappedCompRef}
+            wrappedCompRef={this.wrappedCompRef}
             {...otherProps}
             modal={this.modal}
           />
@@ -178,7 +180,7 @@ class UserInfo extends Component {
     visible: false,
     switchLoading: false,
     reasonRemark: "", //升降级说明
-    upOrDwon: 0 , //1 升级，-1降级。0 不处理
+    upOrDwon: 0, //1 升级，-1降级。0 不处理
   }
   constructor(props) {
     super(props);
@@ -209,6 +211,50 @@ class UserInfo extends Component {
       upOrDwon: type
     })
   }
+  // 解除绑定
+  unbind = (type) => {
+    if (type === 'wechat') {
+      Modal.confirm({
+        title: '系统提示',
+        content: '确定要解锁吗？',
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          relieveWechat({ memberId: this.props.data.id }).then(res => {
+            if (res) {
+              APP.success('解锁成功')
+              this.handleSearch();
+            }
+          })
+        },
+      })
+    }
+    if (type === 'phone') {
+      this.props.dispatch({
+        type: 'user.userinfo/saveDefault',
+        payload: {
+          visiblePhone: true,
+          currentData: this.props.data
+        }
+      })
+    }
+  }
+  handleBlack = (enableBlack) => {
+    Modal.confirm({
+      title: '系统提示',
+      content: '确定要' + (enableBlack ? '解除' : '') + '拉黑吗？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        (enableBlack ? delBlack: addBlack)({ memberId: this.props.data.id }).then(res => {
+          if (res) {
+            APP.success('操作成功')
+            this.handleSearch();
+          }
+        })
+      },
+    })
+  }
   handleUnlock = (memberId) => {
     Modal.confirm({
       title: '系统提示',
@@ -216,7 +262,7 @@ class UserInfo extends Component {
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        setMemberUnlocking({memberId: memberId}).then(res => {
+        setMemberUnlocking({ memberId: memberId }).then(res => {
           if (res) {
             APP.success('解锁成功')
             this.handleSearch();
@@ -235,6 +281,16 @@ class UserInfo extends Component {
         this.setState({
           enableGroupBuyPermission: res.enableGroupBuyPermission
         })
+      }
+    })
+  }
+
+  showModalInvit = () => {
+    this.props.dispatch({
+      type: 'user.userinfo/saveDefault',
+      payload: {
+        visibleInvit: true,
+        currentData: this.props.data
       }
     })
   }
@@ -311,7 +367,7 @@ class UserInfo extends Component {
           headStyle={{
             fontWeight: 900
           }}
-          extra={<div><span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>}
+          extra={<div><span className='href' onClick={() => this.handleBlack(data.enableBlack)}>{data.enableBlack ? '解除拉黑' : '拉黑'}</span>&nbsp;&nbsp;<span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>}
           loading={loading}
         >
           <Descriptions column={2} className={styles.description}>
@@ -323,12 +379,18 @@ class UserInfo extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="用户名">{data.nickName || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="注册时间">{formatTime(data.createTime)}</Descriptions.Item>
-            <Descriptions.Item label="手机号">{data.phone}</Descriptions.Item>
+            <Descriptions.Item label="手机号">
+              {data.phone}
+              <Button onClick={() => this.unbind('phone')} style={{ marginLeft: 20 }}>置换</Button>
+            </Descriptions.Item>
             <Descriptions.Item label="等级">
               {levelName(data.memberTypeVO)}
-              <Button disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)} onClick={()=>this.modifyMemberType(1)} style={{ marginLeft: 20}}>升级</Button><Button disabled={(data.memberTypeVO && (!data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))} onClick={()=>this.modifyMemberType(-1)} style={{ marginLeft: 20}}>降级</Button>
+              <Button disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)} onClick={() => this.modifyMemberType(1)} style={{ marginLeft: 20 }}>升级</Button><Button disabled={(data.memberTypeVO && (!data.memberTypeVO.memberType || data.memberTypeVO.memberType > 20))} onClick={() => this.modifyMemberType(-1)} style={{ marginLeft: 20 }}>降级</Button>
             </Descriptions.Item>
-            <Descriptions.Item label="微信">{data.wechat || '暂无'}</Descriptions.Item>
+            <Descriptions.Item label="微信">
+              {data.wechat || '暂无'}
+              <Button disabled={!data.wechat} onClick={() => this.unbind('wechat')} style={{ marginLeft: 20 }}>解绑</Button>
+            </Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="上级">
               <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName}</span> {levelName(data.parentMemberTypeVO)}
@@ -338,7 +400,7 @@ class UserInfo extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="锁定状态">
               {data.fansTypeDesc}
-              <Button disabled={(data.fansType !== 1)} onClick={()=>this.handleUnlock(data.id)} style={{ marginLeft: 20}}>解锁</Button>
+              <Button disabled={(data.fansType !== 1)} onClick={() => this.handleUnlock(data.id)} style={{ marginLeft: 20 }}>解锁</Button>
             </Descriptions.Item>
           </Descriptions>
           <Descriptions title="实名认证" column={2} className={styles.authentication}>
@@ -419,10 +481,10 @@ class UserInfo extends Component {
           title="全球购收件人"
           style={{ marginBottom: 20 }}
           headStyle={{ fontWeight: 900 }}>
-            <Table
-              columns={columns}
-              dataSource={data.authenticationVOList}
-            />
+          <Table
+            columns={columns}
+            dataSource={data.authenticationVOList}
+          />
         </Card>
         <Card
           title="用户收益"
@@ -456,8 +518,9 @@ class UserInfo extends Component {
         </Card>
         <UserModal />
         <ModalInvit />
+        <ModalPhone />
         <Modal
-          title={this.state.upOrDwon > 0 ? '提升用户等级':'降低用户等级'}
+          title={this.state.upOrDwon > 0 ? '提升用户等级' : '降低用户等级'}
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={() => {
@@ -470,7 +533,7 @@ class UserInfo extends Component {
             <FormItem label="主订单号">
               {
                 getFieldDecorator('orderCode')
-                (<Input placeholder="请输入主订单号编号"/>)
+                  (<Input placeholder="请输入主订单号编号" />)
               }
             </FormItem>
             <FormItem label="原因类型" required={true}>
@@ -481,22 +544,22 @@ class UserInfo extends Component {
                     message: '请输入内容!'
                   }
                 ],
-                  })(
-                    <Select>
-                        {reasonList.map(item => <Option value={item.code} key={item.code}>{item.message}</Option>)}
-                    </Select>
-                    )
+              })(
+                <Select>
+                  {reasonList.map(item => <Option value={item.code} key={item.code}>{item.message}</Option>)}
+                </Select>
+              )
               }
             </FormItem>
             <FormItem label="说明" required={true}>
-                {getFieldDecorator('reasonRemark', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入内容!'
-                    }
-                  ],
-                })(<TextArea placeholder={'请输入说明内容'}  />)}
+              {getFieldDecorator('reasonRemark', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入内容!'
+                  }
+                ],
+              })(<TextArea placeholder={'请输入说明内容'} />)}
             </FormItem>
           </Form>
 

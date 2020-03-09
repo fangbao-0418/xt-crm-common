@@ -1,11 +1,16 @@
-import { post, exportFile, get, newGet, newPost } from '../../util/fetch';
-
+import { formResponse, formRequest } from './sku-sale/adapter';
+import { exportFile, newGet } from '../../util/fetch';
+import { omit } from 'lodash';
+const { post, get, newPost } = APP.http; 
 export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }
 
+// 设置普通消费商品
 export function setProduct(data) {
-  const url = data.productId ? '/product/update' : '/product/add';
+  const isAdd = data.productId === -1
+  const url = isAdd ? '/product/add' : '/product/update';
+  data = formRequest(isAdd ? omit(data, ['productId']) : data);
   return post(url, {}, { data, headers: {} });
 }
 
@@ -14,7 +19,7 @@ export function getGoodsList(data) {
 }
 
 export function getGoodsDetial(data) {
-  return post('/product/detail', data);
+  return post('/product/detail', data).then(formResponse);
 }
 
 export function delGoodsDisable(data) {
