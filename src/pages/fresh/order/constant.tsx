@@ -29,14 +29,14 @@ export function getDetailColumns (type = 0) {
         return <Link to={`/goods/sku-sale/${id}`}>{id}</Link>
       }
     },
-    {
-      title: '实名认证',
-      dataIndex: 'isAuthentication',
-      key: 'isAuthentication',
-      render(text: any) {
-        return String(text) === '1' ? '是': '否'
-      }
-    },
+    // {
+    //   title: '实名认证',
+    //   dataIndex: 'isAuthentication',
+    //   key: 'isAuthentication',
+    //   render(text: any) {
+    //     return String(text) === '1' ? '是': '否'
+    //   }
+    // },
     {
       title: '属性',
       dataIndex: 'properties',
@@ -96,7 +96,8 @@ export function getDetailColumns (type = 0) {
   ];
 }
 
-export const storeType = ['喜团', '1688', '淘宝联盟', '一般海外供应商', '保税仓海外供应商'];
+/** 供应商分类(0-喜团,1-1688,2-淘宝联盟,3-一般海外供应商,4-保税仓海外供应商,5-喜团买菜供应商) */
+export const storeType = ['喜团', '1688', '淘宝联盟', '一般海外供应商', '保税仓海外供应商', '喜团买菜供应商'];
 export const supplierOperate: any = {
   0: '未验收',
   10: '已验收'

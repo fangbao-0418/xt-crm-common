@@ -339,10 +339,14 @@ class Detail extends Component {
                           <Col span={4}>直播间ID：{item.childOrder.liveId}</Col>
                         </If>
                         <If condition={item.childOrder.liveId <= 0}>
-                          <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
+                          <Col span={8}>供应商订单号：{item.childOrder.purchaseSentSn || '无'}</Col>
                         </If>
                       </Row>
-                      <Row>
+                      <Row gutter={24}>
+                        <Col span={8}>门店名称：{item.childOrder.selfDeliveryPointName}</Col>
+                        <Col span={8}>门店电话：{item.childOrder.selfDeliveryPointTel}</Col>
+                      </Row>
+                      {/* <Row>
                         {
                           item.childOrder.interceptorType == 10 &&
                             (
@@ -352,7 +356,7 @@ class Detail extends Component {
                               </>
                             )
                         }
-                      </Row>
+                      </Row> */}
                     </div>
                   }
                 />
@@ -362,7 +366,13 @@ class Detail extends Component {
           })}
         </Card>
         <Card title="整单收益信息">
-          <BenefitInfo key={`benefit-${goodsTableKey}`} data={data.orderYield} orderInfo={data.orderInfo} proceedsList={userProceedsListByOrderId} refresh={this.queryProceeds} />
+          <BenefitInfo
+            key={`benefit-${goodsTableKey}`}
+            data={data.orderYield}
+            orderInfo={data.orderInfo}
+            proceedsList={userProceedsListByOrderId}
+            refresh={this.queryProceeds}
+          />
         </Card>
         <DeliveryModal
           type='add'

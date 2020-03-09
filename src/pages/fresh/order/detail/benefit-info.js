@@ -98,7 +98,7 @@ const BenefitInfo = (props) => {
         return MemberTypeTextMap[memberType];
       }
     }, {
-      title: '姓名',
+      title: '门店名称',
       width: '30%',
       dataIndex: 'memberUserName'
     }, {
