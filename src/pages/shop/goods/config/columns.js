@@ -29,14 +29,14 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
       )
     },
     {
-      title: '商品标题',
+      title: '商品名称',
       width: 120,
       dataIndex: 'productName'
     },
     {
       title: '一级类目',
       width: 120,
-      dataIndex: 'categoryName'
+      dataIndex: 'firstCategoryName'
     },
     {
       title: '售价',
@@ -47,21 +47,26 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
     {
       title: '供应商',
       width: 100,
-      dataIndex: 'stock'
+      dataIndex: 'supplierName'
     },
     {
       title: '商品状态',
       width: 100,
-      dataIndex: 'saleCount'
+      dataIndex: 'childStatus'
     },
     {
       title: '审核时间',
       width: 120,
-      dataIndex: 'storeName'
+      dataIndex: 'auditTime'
+    },
+    {
+      title: '审核人',
+      width: 120,
+      dataIndex: 'auditUser'
     },
     {
       title: '违规次数',
-      dataIndex: 'modifyTime',
+      dataIndex: 'violationCount',
       width: 200,
       render: (val, record) => (
         <span onClick={() => onViolation(record)} className="href">{val}</span>

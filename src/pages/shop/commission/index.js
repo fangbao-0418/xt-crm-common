@@ -13,7 +13,7 @@ export default class extends Component {
   componentDidMount() {
     this.fetchaData({
       level: 1,
-      parentId: 0
+      parentCategoryId: 0
     });
   }
 
@@ -28,7 +28,7 @@ export default class extends Component {
     this.fetchaData({
       name,
       level: levelItem.id,
-      parentId: levelItem.parentId
+      parentCategoryId: levelItem.parentId
     });
   }
 
@@ -53,22 +53,16 @@ export default class extends Component {
     // 请求下一级数据
     this.fetchaData({
       level: levelItem.id + 1,
-      parentId: innerItem.id
+      parentCategoryId: innerItem.id
     });
   }
 
   /** 操作: 类目列表选项配置佣金-显示模态框 */
   handleShowCategoryModal = (currentCategory) => {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'shop.commission/saveDefault',
-      payload: {
-        currentCategory,
-        configModal: {
-          visible: true
-        }
-      }
-    })
+    dispatch['shop.commission'].getDetai({
+      id: currentCategory.id
+    });
   }
 
   /** 视图: 类目列表项显示操作 */
@@ -99,15 +93,15 @@ export default class extends Component {
                     data={levelItem.data}
                     onSearch={(value) => this.handleSearch(value, levelItem)}
                     onItemClick={(innerItem) => this.handleItemClick(innerItem, levelItem)}
-                    renderDesc={
+                    renderDesc={innerItem => 
                       <Row>
                         <Col span={12} style={{ textAlign: 'center' }}>
                           <span className={styles.icon}>代</span>
-                          20%
+                          {innerItem.agencyRate}
                         </Col>
                         <Col span={12} style={{ textAlign: 'center' }}>
                           <span className={styles.icon}>公</span>
-                          30%
+                          {innerItem.companyRate}
                         </Col>
                       </Row>
                     }

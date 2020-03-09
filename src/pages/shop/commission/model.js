@@ -16,20 +16,35 @@ export default {
     async getList(payload, rootState) {
       const res = await api.getList(payload);
 
-      const { level, parentId } = payload;
+      const { level, parentCategoryId } = payload;
       const { levelList } = rootState['shop.commission']
       const curentLevel = levelList.find(levelItem => levelItem.id === level)
-      
+
       if (!curentLevel) return
 
       curentLevel.data = Array.isArray(res.data) ? res.data : []
-      curentLevel.parentId = parentId;
+      curentLevel.parentId = parentCategoryId;
       curentLevel.init = true;
 
       dispatch({
         type: 'shop.commission/saveDefault',
         payload: {
           levelList: [...levelList]
+        }
+      });
+    },
+
+    // 获取类目详情
+    async getDetai(payload) {
+      const res = await api.getDetai(payload);
+      console.log(res)
+      dispatch({
+        type: 'shop.commission/saveDefault',
+        payload: {
+          currentCategory: res,
+          configModal: {
+            visible: true
+          }
         }
       });
     },

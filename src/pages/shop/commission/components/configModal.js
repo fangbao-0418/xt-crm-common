@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Modal, Form, Radio, InputNumber, Checkbox, Row, Col } from 'antd';
+import If from '@/packages/common/components/if';
 import { connect } from '@/util/utils';
 import styles from '../index.module.scss';
 
@@ -45,7 +46,7 @@ export default class ConfigModal extends Component {
   }
 
   render() {
-    const { form: { getFieldDecorator }, modal, currentCategory } = this.props;
+    const { form: { getFieldDecorator, getFieldValue }, modal, currentCategory } = this.props;
 
     if (!currentCategory) return null;
 
@@ -70,6 +71,11 @@ export default class ConfigModal extends Component {
       },
     };
 
+    let rateType = getFieldValue('rateType') || currentCategory.currentCategory,
+      agencyRate = currentCategory.agencyRate,
+      companyRate = currentCategory.companyRate,
+      isCoverChildCategory = currentCategory.isCoverChildCategory;
+
     return (
       <Modal
         title={`当前类目 【${currentCategory.name}】 设置佣金`}
@@ -78,66 +84,71 @@ export default class ConfigModal extends Component {
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
       >
-        {
-          currentCategory.parentId !== 0 ? <Fragment>
-            <FormItem {...formItemLayout} label="父类目">
-              <span>{currentCategory.parentName}</span>
-            </FormItem>
-            <FormItem {...formItemLayout} label="父类目佣金">
-              <Row>
-                <Col span={8}>
-                  <span className={styles.icon}>代</span>
-                  20%
+        <If condition={currentCategory.parentCategoryId !== 0}>
+          <FormItem {...formItemLayout} label="父类目">
+            <span>{currentCategory.parentCategoryName}</span>
+          </FormItem>
+          <FormItem {...formItemLayout} label="父类目佣金">
+            <Row>
+              <Col span={8}>
+                <span className={styles.icon}>代</span>
+                {currentCategory.parentAgencyRate}
               </Col>
-                <Col span={8}>
-                  <span className={styles.icon}>公</span>
-                  20%
+              <Col span={8}>
+                <span className={styles.icon}>公</span>
+                {currentCategory.parentCompanyRate}
               </Col>
-              </Row>
-            </FormItem>
-          </Fragment> : null
-        }
+            </Row>
+          </FormItem>
+        </If>
         <FormItem {...formItemLayout} label="类目名称">
-      <span>{currentCategory.name}</span>
+          <span>{currentCategory.name}</span>
         </FormItem>
         <FormItem {...formItemLayout} label="佣金类型">
-          {getFieldDecorator('commissionType', {
+          {getFieldDecorator('rateType', {
             rules: [
               {
                 required: true,
                 message: '请选择佣金类型！'
               }
             ],
+            initialValue: rateType
           })(<Radio.Group>
-            <Radio value="1">继承父类目</Radio>
-            <Radio value="2">独立设置</Radio>
+            <Radio value={1}>继承父类目</Radio>
+            <Radio value={2}>独立设置</Radio>
           </Radio.Group>)}
         </FormItem>
-        <FormItem {...formItemLayout} label="代理佣金">
-          {getFieldDecorator('agentCommission', {
-            rules: [
-              {
-                required: true,
-                message: '请输入代理佣金！'
-              }
-            ],
-          })(<InputNumber style={{ width: 120 }} placeholder='请输入' min={1} max={10} />)}
-          <span>{' %'}</span>
-        </FormItem>
-        <FormItem {...formItemLayout} label="公司佣金">
-          {getFieldDecorator('companyCommission', {
-            rules: [
-              {
-                required: true,
-                message: '请输入公司佣金！'
-              }
-            ],
-          })(<InputNumber style={{ width: 120 }} placeholder='请输入' min={0} max={10} />)}
-          <span>{' %'}</span>
-        </FormItem>
-        <FormItem {...formTailLayout}>
-          {getFieldDecorator('cover')(<Checkbox>覆盖所有子类目</Checkbox>)}
-        </FormItem>
+        <If condition={rateType === 2}>
+          <FormItem {...formItemLayout} label="代理佣金">
+            {getFieldDecorator('agencyRate', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入代理佣金！'
+                }
+              ],
+              initialValue: agencyRate
+            })(<InputNumber style={{ width: 120 }} placeholder='请输入' min={1} max={10} />)}
+            <span>{' %'}</span>
+          </FormItem>
+          <FormItem {...formItemLayout} label="公司佣金">
+            {getFieldDecorator('companyRate', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入公司佣金！'
+                }
+              ],
+              initialValue: companyRate
+            })(<InputNumber style={{ width: 120 }} placeholder='请输入' min={0} max={10} />)}
+            <span>{' %'}</span>
+          </FormItem>
+          <FormItem {...formTailLayout}>
+            {getFieldDecorator('isCoverChildCategory', {
+              initialValue: isCoverChildCategory
+            })(<Checkbox>覆盖所有子类目</Checkbox>)}
+          </FormItem>
+        </If>
       </Modal>
     )
   }

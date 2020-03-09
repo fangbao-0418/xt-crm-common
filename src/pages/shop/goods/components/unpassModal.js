@@ -32,7 +32,7 @@ class UnpassModal extends Component {
       if (err) return;
       unPassGoods({
         ...values,
-        id: currentGoods.id
+        ids: [currentGoods.id]
       }).then(() => {
         this.setState({
           visible: false
@@ -67,7 +67,7 @@ class UnpassModal extends Component {
       >
         <Form layout="vertical">
           <FormItem label="请输入不通过原因">
-            {getFieldDecorator('renson', {
+            {getFieldDecorator('auditInfo', {
               rules: [{
                 required: true,
                 message: '请输入不通过原因！'

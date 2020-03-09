@@ -23,7 +23,7 @@ export const formConfig = {
         }]
       }
     },
-    productId: {
+    id: {
       label: '商品ID',
       type: 'number',
       controlProps: {

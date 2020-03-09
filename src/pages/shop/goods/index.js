@@ -54,8 +54,9 @@ class Main extends React.Component {
 
   /** 操作：通过商品审核 */
   handlePass = (record) => {
-    const params = record.id
-    passGoods(params).then(() => {
+    passGoods({
+      ids: [record.id]
+    }).then(() => {
       this.listRef.fetchData()
     })
   }
@@ -143,21 +144,21 @@ class Main extends React.Component {
             }
           }}
           rangeMap={{
-            goodsTime: {
+            createTime: {
               fields: ['createStartTime', 'createEndTime']
             },
-            optionTime: {
+            auditTime: {
               fields: ['modifyStartTime', 'modifyEndTime']
             }
           }}
           formItemLayout={(
             <>
               <FormItem name='productName' />
-              <FormItem name='productId' />
+              <FormItem name='id' />
               <FormItem
                 label='一级类目'
                 inner={(form) => {
-                  return form.getFieldDecorator('categoryId')(
+                  return form.getFieldDecorator('firstCategoryId')(
                     <SelectFetch
                       style={{ width: 172 }}
                       fetchData={getCategoryTopList}
