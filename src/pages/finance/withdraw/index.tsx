@@ -172,11 +172,11 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
   onChange = (value: [moment.Moment, moment.Moment]) => {
     if (!value[0] || !value[1]) return;
     getRemittanceInfo({
-      startTime: value[0].format('YYYY-MM-DD HH:mm:ss'),
-      endTime: value[1].format('YYYY-MM-DD HH:mm:ss')
+      startTime: value[0].format('YYYY-MM-DD'),
+      endTime: value[1].format('YYYY-MM-DD')
     }).then(res => {
       if (res) {
-        this.setState(pick(res, ['commonAmount', 'commonNum', 'interceptionAmount', 'interceptionNum', 'totalAmount', 'totalNum']))
+        this.setState(pick(res, ['commonAmount', 'commonNum', 'interceptionAmount', 'interceptionNum', 'totalAmount', 'totalNum', 'batchId']))
       }
     })
   }
@@ -220,7 +220,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                     message: '请选择申请时间'
                   }]
                 })(
-                  <RangePicker showTime />
+                  <RangePicker showTime format="YYYY/MM/DD"/>
                 )
               }}
             />
@@ -232,7 +232,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                 return (
                   <>
                     <div>所选日期待提现条目数目：{hasValue ? `${totalNum}（普通提现${commonNum} 拦截提现${interceptionNum}）` : '-'}</div>
-                    <div>所选日期待提现金额：{hasValue ? `￥${totalAmount}（普通提现￥${commonAmount} 拦截提现￥${interceptionAmount}）` : '-'}</div>
+                    <div>所选日期待提现金额：{hasValue ? `${formatMoneyWithSign(totalAmount)}（普通提现${formatMoneyWithSign(commonAmount)} 拦截提现${formatMoneyWithSign(interceptionAmount)}）` : '-'}</div>
                   </>
                 )
               }}
@@ -247,7 +247,8 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
           if (!err) {
             batchSubmit({
               batchId,
-              ...vals
+              startTime: moment(vals.startTime).format('YYYY-MM-DD'),
+              endTime: moment(vals.endTime).format('YYYY-MM-DD')
             }).then(res => {
               if (res) {
                 APP.success('批量打款成功');
@@ -277,7 +278,6 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
       data.createEndTime = data.createTimeEnd.substr(0, 10)
       delete data.createTimeEnd;
     }
-    console.log('2222222')
     return getRemittanceList(data);
   }
 
