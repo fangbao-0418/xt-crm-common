@@ -150,8 +150,10 @@ class WithdrawForm extends React.Component<Props, any> {
               <FormItem name='bankCardNo' label='到账银行卡' />
               <FormItem name='idCardNo' label='持卡人身份证号' />
               <FormItem name='idCardFaceUrl' hidden/>
+              <FormItem name='idCardBackUrl' hidden/>
               <FormItem
                 inner={(form) => {
+                  console.log(form.getFieldValue('idCardBackUrl'))
                   return (
                     <>
                       <Image style={{ width: 150, height: 100 }} src={form.getFieldValue('idCardFaceUrl')}/>
@@ -164,6 +166,9 @@ class WithdrawForm extends React.Component<Props, any> {
                 }}
               />
               <FormItem name='phone' />
+              <FormItem name='remark' label='备注' />
+              <FormItem name='transferStatusDesc' label='提现状态'/>
+              <FormItem name='passBackTime' label='回执结果时间'/>
             </Form>
           </TabPane>
           <TabPane tab='信息记录' key='2'>
