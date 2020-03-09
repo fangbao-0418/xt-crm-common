@@ -43,7 +43,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
     dataIndex: 'transferNo'
   }, {
     title: '提现类型',
-    dataIndex: 'moneyAccountType'
+    dataIndex: 'moneyAccountTypeDesc'
   }, {
     title: '申请人账号',
     dataIndex: 'memberMobile'
