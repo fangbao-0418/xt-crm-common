@@ -2,6 +2,7 @@ import React from 'react';
 import { getBatchList } from './api';
 import { ListPage } from '@/packages/common/components'
 import { setPayload } from '@/packages/common/utils';
+import { formatMoneyWithSign } from '../../../pages/helper';
 /**
  * 批次记录列表
  */
@@ -17,7 +18,8 @@ class Records extends React.Component {
     dataIndex: 'createTime'
   }, {
     title: '提现请求总金额',
-    dataIndex: 'totalAmount'
+    dataIndex: 'totalAmount',
+    render: (text: any) => <>{formatMoneyWithSign(text)}</>,
   }, {
     title: '提交提现条目',
     dataIndex: 'recordNum'
