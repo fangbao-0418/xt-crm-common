@@ -45,7 +45,7 @@ interface SkuSaleFormState extends Record<string, any> {
   barCode: string;
   visible: boolean;
   // 1入库商品，0非入库商品
-  warehouseType: 0 | 1;
+  // warehouseType: 0 | 1;  已经不记到spu上，直接根据sku的选择进行区分
   productList: any[];
   isGroup: boolean;
   productCode: string;
@@ -71,7 +71,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     checkType: 0,
     productBasicId: undefined,
     barCode: '',
-    warehouseType: 1,
     visible: false,
     productList: [],
     isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1',
@@ -157,7 +156,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         ...pick(res, [
           'productCode',
           'isGroup',
-          'warehouseType',
           'freightTemplateId',
           'skuList',
           'specs',
@@ -173,7 +171,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       this.form.setValues({
         categoryId,
         ...pick(res, [
-          'warehouseType',
           'productType',
           'interception',
           'showNum',
@@ -547,7 +544,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       ...pick(res, [
         'productCode',
         'isGroup',
-        'warehouseType',
         'productBasicId',
         'barCode',
         'freightTemplateId',
@@ -564,7 +560,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     this.form.setValues({
       categoryId,
       ...pick(res, [
-        'warehouseType',
         'productType',
         'interception',
         'showNum',
@@ -605,7 +600,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       freightTemplateId,
       templateOptions,
       checkType,
-      warehouseType,
       productBasicId,
       barCode,
       visible,
@@ -632,20 +626,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         <Card title='添加/编辑商品'>
           {/* 非组合商品才显示 */}
           <If condition={!isGroup}>
-            <FormItem
-              verifiable
-              name='warehouseType'
-              controlProps={{
-                disabled: this.id !== -1,
-                onChange: (e: any) => {
-                  this.form.resetValues();
-                  this.initState();
-                  this.initState();
-                  this.setState({ warehouseType: e.target.value })
-                }
-              }}
-            />
-            <If condition={warehouseType === 1}>
               <FormItem label='商品校验类型'>
                 <Radio.Group
                   onChange={(e) => {
@@ -712,7 +692,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                     校验
                   </Button>
                 </FormItem>
-              </If>
             </If>
           </If>
           <FormItem
@@ -748,9 +727,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             }}
           />
           <FormItem verifiable name='productShortName' />
-          <If condition={isGroup || warehouseType === 0}>
-            <FormItem name='barCode' />
-          </If>
+          <FormItem name='barCode' />
           <If condition={!!productCode}>
             <FormItem label='商品编码'>{productCode}</FormItem>
           </If>
@@ -777,31 +754,29 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             }}
           />
           {/* 只有非入库商品显示供应商商品ID，供应商发货 */}
-          <If condition={warehouseType === 0}>
-            <FormItem
-              label='供应商商品ID'
-              inner={(form) => {
-                return (
-                  <>
-                    {form.getFieldDecorator('storeProductId')(
-                      <Input
-                        style={{ width: '60%' }}
-                        placeholder='请填写供货商商品ID'
-                      />
-                    )}
-                    <If condition={this.id === -1}>
-                      <Button
-                        className='ml10'
-                        onClick={this.sync1688Sku}
-                      >
-                        同步1688规格信息
-                      </Button>
-                    </If>
-                  </>
-                );
-              }}
-            />
-          </If>
+          <FormItem
+            label='供应商商品ID'
+            inner={(form) => {
+              return (
+                <>
+                  {form.getFieldDecorator('storeProductId')(
+                    <Input
+                      style={{ width: '60%' }}
+                      placeholder='请填写供货商商品ID'
+                    />
+                  )}
+                  <If condition={this.id === -1}>
+                    <Button
+                      className='ml10'
+                      onClick={this.sync1688Sku}
+                    >
+                      同步1688规格信息
+                    </Button>
+                  </If>
+                </>
+              );
+            }}
+          />
           <FormItem
             name='interception'
             verifiable
@@ -997,7 +972,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         </Card>
         <SkuList
           isGroup={isGroup}
-          warehouseType={warehouseType}
           form={this.form && this.form.props.form}
           type={productType}
           productCustomsDetailVOList={productCustomsDetailVOList}
