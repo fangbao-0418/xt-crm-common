@@ -9,14 +9,17 @@ import { FormInstance } from '@/packages/common/components/form';
 import { addShop, updateShop, getShopDetail } from './api';
 import { RouteComponentProps } from 'react-router';
 import { parseQuery } from '@/util/utils';
+import Image from '@/components/Image'
 type Props = RouteComponentProps<{id: string}>;
 
 interface StoreFormState {
   address: string;
+  pictrueUrl: any[];
 }
 class StoreForm extends React.Component<Props, StoreFormState> {
   state: StoreFormState = {
-    address: ''
+    address: '',
+    pictrueUrl: []
   }
   form: FormInstance;
   id: string = '-1';
@@ -37,7 +40,8 @@ class StoreForm extends React.Component<Props, StoreFormState> {
       this.cityName = res.cityName;
       this.areaName = res.areaName;
       this.setState({
-        address: res.provinceName + '' + res.cityName + '' + res.areaName
+        address: res.provinceName + '' + res.cityName + '' + res.areaName,
+        pictrueUrl: res.pictrueUrl
       })
       this.form.setValues(res);
     })
@@ -140,51 +144,17 @@ class StoreForm extends React.Component<Props, StoreFormState> {
             <Row>
               <Col offset={4} style={{ display: 'flex'}}>
                 <FormItem
-                  label='经度'
-                  name='longitude'
-                  type='number'
-                  verifiable
-                  labelCol={{ span: 5 }}
-                  wrapperCol={{ span: 19 }}
-                  controlProps={{
-                    precision: 6,
-                    style: {
-                      width: 220 
-                    },
-                    max: 180,
-                    min: -180
-                  }}
-                  fieldDecoratorOptions={{
-                    rules: [{
-                      validator: async (rules, value) => {
-                        if (!value) {
-                          throw new Error('请输入经度');
-                        }
-                        if (value < -180) {
-                          throw new Error('经度不能低于负180度');
-                        }
-                        if (value > 180) {
-                          throw new Error('经度不能超过正180度');
-                        }
-                        return value;
-                      }
-                    }]
-                  }}
-                />
-                <FormItem
                   type='number'
                   label='维度'
                   name='latitude'
                   verifiable
-                  style={{
-                    marginLeft: 30
-                  }}
-                  labelCol={{ span: 5 }}
-                  wrapperCol={{ span: 19 }}
+                  style={{ width: 220 }}
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
                   controlProps={{
                     precision: 6,
                     style: {
-                      width: 220
+                      width: 172
                     },
                     max: 180,
                     min: -180
@@ -206,6 +176,42 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                     }]
                   }}
                 />
+                <FormItem
+                  label='经度'
+                  name='longitude'
+                  type='number'
+                  verifiable
+                  style={{
+                    marginLeft: 30,
+                    width: 220
+                  }}
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  controlProps={{
+                    precision: 6,
+                    style: {
+                      width: 172 
+                    },
+                    max: 180,
+                    min: -180
+                  }}
+                  fieldDecoratorOptions={{
+                    rules: [{
+                      validator: async (rules, value) => {
+                        if (!value) {
+                          throw new Error('请输入经度');
+                        }
+                        if (value < -180) {
+                          throw new Error('经度不能低于负180度');
+                        }
+                        if (value > 180) {
+                          throw new Error('经度不能超过正180度');
+                        }
+                        return value;
+                      }
+                    }]
+                  }}
+                />
               </Col>
             </Row>
             <FormItem
@@ -219,7 +225,8 @@ class StoreForm extends React.Component<Props, StoreFormState> {
             <FormItem
               label='门店图片'
               inner={(form) => {
-                return (
+                const { pictrueUrl } = this.state;
+                return this.readOnly ? (pictrueUrl.length > 0 ? <Image src={pictrueUrl[0] && pictrueUrl[0].url}/>: '') : (
                   <div className={styles['input-wrapper']}>
                     <div className={styles['input-wrapper-content']}>
                       {form.getFieldDecorator('pictrueUrl')(

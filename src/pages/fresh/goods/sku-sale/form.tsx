@@ -42,7 +42,7 @@ interface SkuSaleFormState extends Record<string, any> {
   freightTemplateId: string;
   checkType: 0 | 1;
   productBasicId?: number;
-  barCode: string;
+  // barCode: string;
   visible: boolean;
   // 1入库商品，0非入库商品
   // warehouseType: 0 | 1;
@@ -71,7 +71,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     freightTemplateId: '',
     checkType: 0,
     productBasicId: undefined,
-    barCode: '',
+    // barCode: '',
     // warehouseType: 1,
     visible: false,
     productList: [],
@@ -113,7 +113,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       freightTemplateId: '',
       checkType: 0,
       productBasicId: undefined,
-      barCode: '',
+      // barCode: '',
       visible: false,
       productList: [],
       productCode: ''
@@ -190,7 +190,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'videoCoverUrl',
           'videoUrl',
           'deliveryMode',
-          'barCode',
+          // 'barCode',
           'bannerUrl',
           'returnPhone',
           'listImage',
@@ -421,7 +421,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       checkType,
       // warehouseType,
       productBasicId,
-      barCode,
+      // barCode,
       visible,
       productList,
       productCode,
@@ -480,7 +480,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           {/* <If condition={isGroup || warehouseType === 0}>
             <FormItem name='barCode' />
           </If> */}
-          <FormItem name='barCode' />
+          {/* <FormItem name='barCode' /> */}
           <If condition={!!productCode}>
             <FormItem label='商品编码'>{productCode}</FormItem>
           </If>

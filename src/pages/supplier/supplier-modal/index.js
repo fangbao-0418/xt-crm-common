@@ -221,7 +221,7 @@ class SupplierModal extends Component {
                   return value;
                 }
               })(
-                <SupplierTypeSelect />
+                <SupplierTypeSelect disabled={this.props.isEdit} />
               )}
             </FormItem>
             <If condition={this.state.saleAreaVisible}>

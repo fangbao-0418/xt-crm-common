@@ -28,6 +28,7 @@ export function formRequest(payload: any) {
 // 过滤表单响应
 export function formResponse(res: any) {
   const result: any = filterUploadFile(res, 'res', ['pictrueUrl']);
+  console.log('formResponse =>', result);
   result.address = [res.provinceCode, res.cityCode, res.areaCode];
   return omit({ ...res, ...result}, ['provinceCode', 'cityCode', 'areaCode']);
 }
