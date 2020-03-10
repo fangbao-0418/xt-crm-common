@@ -316,7 +316,7 @@ class OrderList extends React.Component {
     return (
       <Spin tip="操作处理中..." spinning={false}>
         <Card title="筛选">
-          <Form labelCol = {{ span: 8 }} wrapperCol={{ span: 16}}>
+          <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label="订单编号">
@@ -401,7 +401,7 @@ class OrderList extends React.Component {
               )}
               <Col span={6}>
                 <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
-                  {getFieldDecorator('rangePicker', {initialValue: values.rangePicker})(
+                  {getFieldDecorator('rangePicker', { initialValue: values.rangePicker })(
                     <RangePicker
                       style={{ width: '100%' }}
                       format="YYYY-MM-DD HH:mm"
@@ -413,8 +413,8 @@ class OrderList extends React.Component {
               <Col span={6}>
                 {
                   this.props.type === 'order' ?
-                    <FormItem  label="支付时间">
-                      {getFieldDecorator('playPicker', {initialValue: values.playPicker})(
+                    <FormItem label="支付时间">
+                      {getFieldDecorator('playPicker', { initialValue: values.playPicker })(
                         <RangePicker
                           style={{ width: '100%' }}
                           format="YYYY-MM-DD HH:mm"
@@ -424,6 +424,23 @@ class OrderList extends React.Component {
                     </FormItem> :
                     ''
                 }
+              </Col>
+              <Col span={6}>
+                <FormItem label="小店长手机">
+                  {getFieldDecorator('shopPhone')(<Input placeholder="请输入收货人电话" />)}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="小店订单">
+                  {getFieldDecorator('isShopOrder', {
+                    initialValue: values.interceptorFlag || ''
+                  })(
+                    <Select>
+                      <Select.Option value={''}>全部</Select.Option>
+                      <Select.Option value={'1'}>仅小店订单</Select.Option>
+                    </Select>
+                  )}
+                </FormItem>
               </Col>
             </Row>
             <Row>
@@ -473,8 +490,8 @@ class OrderList extends React.Component {
               rowKey={record => record.orderCode}
             />
           ) : (
-            '暂无数据'
-          )}
+              '暂无数据'
+            )}
         </Card>
       </Spin>
     );

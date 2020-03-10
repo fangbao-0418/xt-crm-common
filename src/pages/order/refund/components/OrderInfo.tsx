@@ -51,6 +51,18 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
           身份证号：{orderInfoVO.idNo}
         </Col>
       </Row>
+      <h4>供应商信息</h4>
+      <Row gutter={24}>
+        <Col span={8}>
+          名称：小店店长昵称
+        </Col>
+        <Col span={8}>
+          手机号：1888888888
+        </Col>
+        <Col span={8}>
+          供应商类型：小店店长
+        </Col>
+      </Row>
       <Row>
         <h4>物流信息</h4>
         <Table rowKey={(record: any) => record.id} style={{ width: '400px' }} pagination={false} columns={logisticsInformationColumns} dataSource={orderInfoVO.expressVO || []} />

@@ -167,6 +167,9 @@ export const formFields = function (refundStatus: any, intercept: any) {
       }, {
         val: '保税仓海外供应商',
         key: 4
+      }, {
+        val: '小店店长',
+        key: 5
       }]
     }
   ].filter((item: any) => {
