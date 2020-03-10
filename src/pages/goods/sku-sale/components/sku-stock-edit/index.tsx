@@ -24,9 +24,10 @@ class SkuStockEdit extends React.Component<SkuStockEditProps, SkuStockEditState>
     const { id, visible } = this.props
     if (visible && visible !== prevProps.visible) {
       this.setState({
-        editSkus: {}
+        editSkus: {},
+        dataSource: []
       })
-      if (id && prevProps.id !== id) {
+      if (id) {
         const res = await getSkusStock(id)
         this.setState({
           dataSource: res.skuStockList
