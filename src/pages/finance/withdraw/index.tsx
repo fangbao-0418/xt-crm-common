@@ -177,6 +177,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
     }).then(res => {
       if (res) {
         this.setState(pick(res, ['commonAmount', 'commonNum', 'interceptionAmount', 'interceptionNum', 'totalAmount', 'totalNum', 'batchId']))
+        this.batchPaymentForm.props.form.setFieldsValue({id: Math.random()})
       }
     })
   }
@@ -198,7 +199,8 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                 fields: ['startTime', 'endTime']
               }
             }}
-          >
+          > 
+            <FormItem name="id" hidden={true}/>
             <FormItem
               label='申请时间'
               required
