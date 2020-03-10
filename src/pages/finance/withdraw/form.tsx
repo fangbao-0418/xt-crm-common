@@ -146,6 +146,7 @@ class WithdrawForm extends React.Component<Props, any> {
               <FormItem name='serviceCharge' />
               <FormItem name='memberMobile' />
               <FormItem name='createTime' type='date'/>
+              <FormItem name='submitTime' type='date'/>
               <FormItem name='realName' />
               <FormItem name='bankCardNo' label='到账银行卡' />
               <FormItem name='idCardNo' label='持卡人身份证号' />
