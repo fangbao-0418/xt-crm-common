@@ -1,36 +1,70 @@
 import React from 'react';
-import { Card, Form } from 'antd';
+import { Card, Table } from 'antd';
+import WrapCard from './wrapCard'
+import SkuItem from './skuItem'
 
-const FormItem = Form.Item
+/** 商品规格的key */
+const SpecKeysCards = ({ specKeys }) => {
+  return <div>
+    {
+      specKeys.map(sitem => (
+        <Card type="inner" key={sitem.id} title={sitem.name}>
+          {
+            sitem.content.map((citem, i) => (
+              <SkuItem key={i} cont={citem} />
+            ))
+          }
+        </Card>
+      ))
+    }
+  </div>
+}
+
+/** 商品Sku组合 */
+const SpecValsCard = ({ goodsInfo }) => {
+  const { specVals, specKeys } = goodsInfo;
+
+  // 动态表头
+  const dynaColums = specKeys.map(sitem => ({
+    title: sitem.name,
+    dataIndex: sitem.specNameKey,
+    key: sitem.specNameKey
+  }));
+
+  // 固定表头
+  const fixedColumns = [{
+    title: '销售价',
+    dataIndex: 'salePrice',
+    key: 'salePrice'
+  }, {
+    title: '库存',
+    dataIndex: 'stock',
+    key: 'stock'
+  }]
+
+  const columns = [...dynaColums, ...fixedColumns];
+
+  return <div>
+    <Table pagination={false} dataSource={specVals} columns={columns} />
+  </div>
+}
 
 class SkuCard extends React.Component {
+
   render() {
-    const formItemLayout = {
-      labelCol: { span: 2 },
-      wrapperCol: { span: 14 },
-    };
-
+    const { data } = this.props
     return (
-      <Card title='规格信息'>
-        <Form {...formItemLayout}>
-          <FormItem label="商品类目">
-            <span className="ant-form-text">商品类目</span>
-          </FormItem>
-          <FormItem label="商品名称">
-            <span className="ant-form-text">商品名称</span>
-          </FormItem>
-          <FormItem label="商品图片">
-            <span className="ant-form-text">商品名称</span>
-          </FormItem>
-          <FormItem label="详情图片">
-            <span className="ant-form-text">详情图片</span>
-          </FormItem>
-          <FormItem label="累计销量">
-            <span className="ant-form-text">累计销量</span>
-          </FormItem>
-        </Form>
-
-      </Card>
+      <WrapCard
+        data={data}
+        render={(goodsInfo) => {
+          return (
+            <Card title="商品规格">
+              <SpecKeysCards specKeys={goodsInfo.specKeys} />
+              <SpecValsCard goodsInfo={goodsInfo} />
+            </Card>
+          )
+        }}
+      />
     )
   }
 }

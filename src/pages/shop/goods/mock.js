@@ -9,7 +9,7 @@ export const list = {
   data: {
     records: [
       {
-        id: 0,
+        id: 1356,
         coverUrl: 'https://assets.hzxituan.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551575374574614.jpg',
         productName: '商品名称',
         firstCategoryId: 0,

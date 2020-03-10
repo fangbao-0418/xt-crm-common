@@ -1069,6 +1069,8 @@ class Main extends React.Component<Props, State> {
   public render () {
     const { selectedRowKeys, selectedRowKeysMap } = this.state;
     const columns = (this.props.extraColumns || []).concat(this.props.type === 20 ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource) : this.getColumns(this.handleChangeValue, this.state.dataSource))
+
+    console.log(this.state.dataSource, 'this.state.dataSource')
     return (
       <>
         <Table

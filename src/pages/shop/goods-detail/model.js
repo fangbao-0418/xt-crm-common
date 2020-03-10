@@ -4,7 +4,7 @@ const namespace = 'shop.goods.detail';
 export default {
   namespace,
   state: {
-    goodsInfo: {}
+    goodsInfo: null
   },
   effects: (dispatch) => ({
     async getGoodsInfo(data) {
