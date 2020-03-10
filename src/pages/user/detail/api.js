@@ -74,3 +74,20 @@ export function getReasonList() {
 export function setMemberUnlocking(params) {
     return Fetch.post('/member/unlocking', params);
 }
+
+// 添加黑名单操作
+export function addBlack(params) {
+    return newPost('/manager/black/add', params)
+}
+// 删除黑名单操作
+export function delBlack(params) {
+    return newPost('/manager/black/del', params)
+}
+// 微信解除绑定操作
+export function relieveWechat(params) {
+    return get('/manager/wechat/relieve', params);
+}
+// 修改手机操作
+export function exchangePhone(params) {
+    return get('/manager/phone/exchange', params);
+}

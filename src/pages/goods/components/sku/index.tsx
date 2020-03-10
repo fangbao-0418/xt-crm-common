@@ -17,7 +17,7 @@ const defaultItem: SkuSaleProps = {
   cityMemberPrice: undefined,
   costPrice: undefined,
   headPrice: undefined,
-  deliveryMode: 2,
+  deliveryMode: 1,
   marketPrice: undefined,
   salePrice: undefined,
   managerMemberPrice: undefined,
@@ -69,7 +69,6 @@ interface Props extends FormComponentProps {
   type?: 0 | 10 | 20
   /** sku备案信息 */
   productCustomsDetailVOList: any[]
-  warehouseType: 1 | 0
 }
 interface SpecItem {
   specName: string;
@@ -114,9 +113,7 @@ class SkuList extends React.Component<Props, State>{
     dataSource: this.props.dataSource,
     strategyData: {}
   }
-  public static defaultProps = {
-    warehouseType: 1
-  }
+  
   public componentWillReceiveProps (props: Props) {
     // console.log('dataSource =>', props.dataSource);
     this.setState({
@@ -225,6 +222,7 @@ class SkuList extends React.Component<Props, State>{
 
     //////////////////////////////
     const dataSource1 = this.getCombineResult(specs, this.state.dataSource)
+    console.log(dataSource1, 'dataSource1');
     this.setState({
       dataSource: dataSource1,
       tempSpecInfo,
@@ -518,7 +516,6 @@ class SkuList extends React.Component<Props, State>{
         <SkuTable
           type={type}
           isGroup={this.props.isGroup}
-          warehouseType={this.props.warehouseType}
           form={this.props.form}
           productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}

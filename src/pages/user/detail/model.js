@@ -33,6 +33,7 @@ export default {
     },
     visible: false,
     visibleInvit: false,
+    visiblePhone: false,
   },
   effects: dispatch => ({
     async getUserInfo(payload) {
@@ -83,6 +84,7 @@ export default {
     },
     async checkInvited(payload) {
       const logConfig = await api.checkInvited(payload);
+  
       dispatch({
         type: 'user.userinfo/saveDefault',
         payload: {
@@ -115,6 +117,22 @@ export default {
     },
     async updateInviteUser(payload) {
       const res = await api.updateInviteUser(payload);
+      if (res) { // true为成功
+        dispatch({
+          type: 'user.userinfo/saveDefault',
+          payload: {
+            visibleInvit: false,
+            inviteInfo: {}
+          }
+        });
+        dispatch['user.userinfo'].getUserInfo({
+          memberId: payload.memberId
+        });
+        message.success('编辑成功!');
+      }
+    },
+    async exchangePhone(payload) {
+      const res = await api.exchangePhone(payload);
       if (res) { // true为成功
         dispatch({
           type: 'user.userinfo/saveDefault',
