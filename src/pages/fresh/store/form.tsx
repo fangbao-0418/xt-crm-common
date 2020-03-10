@@ -127,8 +127,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
               }}
             />
             <FormItem
-              labelCol={{ span: 0 }}
-              wrapperCol={{ offset: 4 }}
+              label='详细地址'
               name='detailAddress'
               controlProps={{
                 placeholder: '请输入详细地址'
@@ -141,79 +140,79 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                 }]
               }}
             />
-            <Row>
-              <Col offset={4} style={{ display: 'flex'}}>
-                <FormItem
-                  type='number'
-                  label='维度'
-                  name='latitude'
-                  verifiable
-                  style={{ width: 220 }}
-                  labelCol={{ span: 8 }}
-                  wrapperCol={{ span: 16 }}
-                  controlProps={{
-                    precision: 6,
-                    style: {
-                      width: 172
-                    },
-                    max: 180,
-                    min: -180
-                  }}
-                  fieldDecoratorOptions={{
-                    rules: [{
-                      validator: async (rules, value) => {
-                        if (!value) {
-                          throw new Error('请输入维度');
-                        }
-                        if (value < -180) {
-                          throw new Error('维度不能低于负180度');
-                        }
-                        if (value > 180) {
-                          throw new Error('维度不能超过正180度');
-                        }
-                        return value;
+            <div style={{display: 'flex'}}>
+              <FormItem
+                type='number'
+                label='纬度'
+                name='latitude'
+                verifiable
+                style={{ width: '50%' }}
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                controlProps={{
+                  precision: 6,
+                  style: {
+                    width: 250,
+                    marginLeft: 4
+                  },
+                  max: 180,
+                  min: -180
+                }}
+                fieldDecoratorOptions={{
+                  rules: [{
+                    validator: async (rules, value) => {
+                      if (!value) {
+                        throw new Error('请输入纬度');
                       }
-                    }]
-                  }}
-                />
-                <FormItem
-                  label='经度'
-                  name='longitude'
-                  type='number'
-                  verifiable
-                  style={{
-                    marginLeft: 30,
-                    width: 220
-                  }}
-                  labelCol={{ span: 8 }}
-                  wrapperCol={{ span: 16 }}
-                  controlProps={{
-                    precision: 6,
-                    style: {
-                      width: 172 
-                    },
-                    max: 180,
-                    min: -180
-                  }}
-                  fieldDecoratorOptions={{
-                    rules: [{
-                      validator: async (rules, value) => {
-                        if (!value) {
-                          throw new Error('请输入经度');
-                        }
-                        if (value < -180) {
-                          throw new Error('经度不能低于负180度');
-                        }
-                        if (value > 180) {
-                          throw new Error('经度不能超过正180度');
-                        }
-                        return value;
+                      if (value < -180) {
+                        throw new Error('纬度不能低于负180度');
                       }
-                    }]
-                  }}
-                />
-              </Col>
-            </Row>
+                      if (value > 180) {
+                        throw new Error('纬度不能超过正180度');
+                      }
+                      return value;
+                    }
+                  }]
+                }}
+              />
+              <FormItem
+                label='经度'
+                name='longitude'
+                type='number'
+                verifiable
+                style={{
+                  marginLeft: 30,
+                  width: '50%'
+                }}
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                controlProps={{
+                  precision: 6,
+                  style: {
+                    width: 250,
+                    marginLeft: 4
+                  },
+                  max: 180,
+                  min: -180
+                }}
+                fieldDecoratorOptions={{
+                  rules: [{
+                    validator: async (rules, value) => {
+                      if (!value) {
+                        throw new Error('请输入经度');
+                      }
+                      if (value < -180) {
+                        throw new Error('经度不能低于负180度');
+                      }
+                      if (value > 180) {
+                        throw new Error('经度不能超过正180度');
+                      }
+                      return value;
+                    }
+                  }]
+                }}
+              />
+            </div>
             <FormItem
               verifiable
               name='phone'

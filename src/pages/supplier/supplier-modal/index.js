@@ -38,7 +38,11 @@ class SupplierModal extends Component {
         data,
         renderKey: this.state.renderKey + 1,
       });
-      
+      if (data.category === 5) {
+        this.setState({
+          saleAreaVisible: true
+        })
+      }
       this.props.form && this.props.form.setFieldsValue(data);
     });
   };
@@ -214,7 +218,6 @@ class SupplierModal extends Component {
                     const { target } = e;
                     value = target.type === 'checkbox' ? target.checked : target.value;
                   }
-                  console.log(+value === 5);
                   this.setState({
                     saleAreaVisible: +value === 5
                   })
@@ -226,7 +229,9 @@ class SupplierModal extends Component {
             </FormItem>
             <If condition={this.state.saleAreaVisible}>
               <FormItem required label='可售区域'>
-                {getFieldDecorator('saleAreaList')(<SaleArea />)}
+                {getFieldDecorator('saleAreaList')(
+                  <SaleArea readOnly={this.props.isEdit}/>
+                )}
               </FormItem>
             </If>
           </Form>

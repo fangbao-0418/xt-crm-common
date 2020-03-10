@@ -1,10 +1,13 @@
-import React, { Children } from 'react';
-import { Input } from 'antd';
+import React, { Children } from 'react'
+import { Input } from 'antd'
 const { TextArea } = Input
-import TreeCheckBox, { options } from '@/packages/common/components/tree-checkbox';
+import TreeCheckBox from '@/packages/common/components/tree-checkbox'
+import { getAddress } from './api'
+import { If } from '@/packages/common/components'
 interface SaleAreaProps {
-  onChange?: (value: any) => void;
-  value?: any;
+  readOnly?: boolean
+  onChange?: (value: any) => void
+  value?: any
   style?: React.CSSProperties
 }
 interface SaleAreaState {
@@ -32,7 +35,7 @@ function convert(nodes: any[]) {
       result[item.provinceId].cityIds.push(item.cityId)
     }
   }
-  return Object.values(result);
+  return Object.values(result)
 }
 class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
   state: SaleAreaState = {
@@ -41,7 +44,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
     checkedKeys: []
   }
   componentWillReceiveProps(props: SaleAreaProps) {
-    const checkedOptions = props.value || [];
+    const checkedOptions = props.value || []
     this.setState({
       text: convert(checkedOptions).map((v: any) => {
         return `${v.province}（${v.cityIds.length}）`
@@ -70,34 +73,37 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
         >
           {text ? '编辑可售区域': '新增可售区域'}
         </span>
-        <span
-          className='href ml10'
-          onClick={() => {
-            this.setState({
-              text: '',
-              checkedKeys: []
-            })
-          }}
-        >
-          清空可售区域
-        </span>
+        <If condition={!this.props.readOnly}>
+          <span
+            className='href ml10'
+            onClick={() => {
+              this.setState({
+                text: '',
+                checkedKeys: []
+              })
+            }}
+          >
+            清空可售区域
+          </span>
+        </If>
         <TreeCheckBox
           title='选择区域'
-          treeData={options}
+          api={getAddress}
           checkedKeys={checkedKeys}
           visible={visible}
+          readOnly={this.props.readOnly}
           onCancel={() => {
             this.setState({
               visible: false
             })
           }}
           onOk={(e) => {
-            const { onChange } = this.props;
+            const { onChange } = this.props
             this.setState({
               visible: false,
               text: nodes2Texts(e.textNodes)
-            });
-            onChange && onChange(e.businessCheckNodes);
+            })
+            onChange && onChange(e.businessCheckNodes)
           }}
         />
       </>
@@ -105,4 +111,4 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
   }
 }
 
-export default SaleArea;
+export default SaleArea
