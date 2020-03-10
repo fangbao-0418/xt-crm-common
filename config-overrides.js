@@ -123,7 +123,8 @@ module.exports = override(
     ])
   ),
   useEslintRc(),
-  isEnvDevelopment ? undefined : disableEsLint(),
+  // isEnvDevelopment ? undefined : disableEsLint(),
+  disableEsLint(),
   addWebpackAlias({
     packages: path.resolve(__dirname, 'packages/'),
     '@': path.resolve(__dirname, 'src/')
@@ -148,6 +149,15 @@ module.exports = override(
   }),
   (function () {
     return function (config) {
+      config.module.rules.unshift({
+        test: /\.(ts|tsx)$/,
+        loader: "tslint-loader",
+        include: [path.resolve(__dirname, 'src/packages')],
+        options: {
+          emitErrors: function (err) { throw Errow(err) }
+        },
+        enforce: "pre"
+      });
       if (isEnvProduction) {
         config.devtool = false;
       }
