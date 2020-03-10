@@ -257,6 +257,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
               endTime: moment(vals.endTime).format('YYYY-MM-DD')
             }).then(res => {
               if (res) {
+                hide()
                 APP.success('批量打款成功');
               }
             })
