@@ -432,7 +432,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       <Form
         getInstance={ref => this.form = ref}
         config={defaultConfig}
-        namespace='skuSale'
+        namespace='freshSku'
       >
         {/* <ProductSelector
           dataSource={productList}

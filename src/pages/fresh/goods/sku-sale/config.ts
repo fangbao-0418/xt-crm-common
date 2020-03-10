@@ -1,7 +1,7 @@
 import { FieldsConfig } from '@/packages/common/components/form';
 
 export const defaultConfig: FieldsConfig = {
-  skuSale: {
+  freshSku: {
     productId: {
       label: '商品ID',
       type: 'number',

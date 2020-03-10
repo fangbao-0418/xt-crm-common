@@ -53,7 +53,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
     {
       title: '类目',
       width: 120,
-      dataIndex: 'categoryName'
+      dataIndex: 'firstCategoryName'
     },
     // {
     //   title: '成本价',
@@ -243,11 +243,12 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           <TabPane tab="仓库中" key='1' />
         </Tabs>
         <ListPage
-          reserveKey='skuSale'
-          namespace='skuSale'
+          reserveKey='freshSku'
+          namespace='freshSku'
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
           processPayload={(payload) => {
+            console.log('payload =>', payload)
             return {
               ...payload,
               status: this.state.status
@@ -270,7 +271,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
                   label='供应商'
                   inner={(form) => {
                     return form.getFieldDecorator('storeId')(
-                      <SuppilerSelect style={{ width: 172 }}/>
+                      <SuppilerSelect type='fresh' style={{ width: 172 }}/>
                     );
                   }}
                 />
@@ -279,7 +280,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
                 <FormItem
                   label='一级类目'
                   inner={(form) => {
-                    return form.getFieldDecorator('categoryId')(
+                    return form.getFieldDecorator('firstCategoryId')(
                       <SelectFetch
                         style={{ width: 172 }}
                         fetchData={getCategoryTopList}

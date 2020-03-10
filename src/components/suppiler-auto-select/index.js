@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
 import { Select } from 'antd';
-import { getStoreList } from './api';
+import { getStoreList, getFreshList } from './api';
 import { map } from 'lodash';
-
 class SuppilerSelect extends Component {
+  /** type  'normal' | 'fresh' */
+  defaultProps = {
+    type: 'normal'
+  }
   state = {
     supplier: []
   }
   componentDidMount() {
     this.getStoreList();
   }
-  getStoreList = params => {
-    getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
+  getStoreList = (params) => {
+    params = { pageSize: 5000, ...params };
+    const api = this.props.type === 'normal' ? getStoreList(params): getFreshList(params);
+    api.then((res = {}) => {
       this.setState({
         supplier: res.records,
       });
