@@ -18,7 +18,7 @@ import { RouteComponentProps } from 'react-router';
 import { getBaseProduct, getBaseBarcode, setGroupProduct, getGroupProductDetail } from './api';
 import { FormInstance } from '@/packages/common/components/form';
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form';
-import TreeCheckBox, { options } from '@/packages/common/components/tree-checkbox';
+import SaleArea from '../../../../components/sale-area';
 // function NumberValidator(rule: any, value: any, callback: any) {
 //   if (!(/^\d{0,20}$/.test(value))) {
 //     callback('仅支持数字，20个字符以内');
@@ -197,7 +197,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'productImage',
           'storeProductId',
           'isAuthentication',
-          'isCalculateFreight'
+          'isCalculateFreight',
+          'productSaleAreas'
         ])
       });
     });
@@ -311,11 +312,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     }
     /** 推送至仓库中即为下架，详情和列表页状态反了 */
     vals.status =  status === undefined ? vals.status : status
-    vals.productSaleAreas = [{
-      cityId: '330100',
-      districtId: '330110',
-      provinceId: '330000'
-    }]
+    // vals.productSaleAreas = [{
+    //   cityId: '330100',
+    //   districtId: '330110',
+    //   provinceId: '330000'
+    // }]
     setProduct({
       productCode,
       isGroup,
@@ -643,19 +644,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           <FormItem name='weight' />
           <FormItem
             label='可售区域'
+            required
             inner={(form) => {
-              return (
-                <TreeCheckBox
-                  title='选择区域'
-                  treeData={options}
-                  // defaultCheckedKeys={checkedKeys}
-                  visible={true}
-                  onOk={(value, e) => {
-                    console.log('选择区域keys =>', value)
-                    console.log('选择区域e =>', e)
-                  }}
-                />
-              )
+              return form.getFieldDecorator('productSaleAreas')(<SaleArea />)
             }
           }/>
         </Card>

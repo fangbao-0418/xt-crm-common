@@ -18,7 +18,7 @@ export function setProduct(data) {
   const isAdd = data.productId === -1
   const url = isAdd ? '/product/fresh/add' : '/product/fresh/update'
   data = formRequest(isAdd ? omit(data, ['productId']) : data)
-  console.log(data, 'data')
+  console.log(data, 'setProduct data')
   if (isAdd) {
     return post(url, {}, { data, headers: {} });
   } else {

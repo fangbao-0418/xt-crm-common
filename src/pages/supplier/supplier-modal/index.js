@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Modal, Button, Form, Input, message, Row } from 'antd';
 import { getSupplierDetail, updateSupplier, addSupplier } from '../api';
 import SupplierTypeSelect from '../../../components/supplier-type-select';
+import SaleArea from '@/components/sale-area';
+import { If } from '@/packages/common/components';
 const FormItem = Form.Item;
 
 const formItemLayout = {
@@ -17,7 +19,8 @@ class SupplierModal extends Component {
   };
   state = {
     visible: false,
-    data: {},
+    saleAreaVisible: false,
+    data: {}
   };
 
   showModal = () => {
@@ -47,16 +50,16 @@ class SupplierModal extends Component {
         const api = isEdit ? updateSupplier : addSupplier;
         api({
           id,
-          saleAreaList: [{
-            "city": "杭州市",
-            "cityId": 1,
-            "district": "余杭区",
-            "districtId": 1,
-            "name": "浙江省杭州市余杭区",
-            'id': 1,
-            "province": "浙江省",
-            "provinceId": 1
-        }],
+        //   saleAreaList: [{
+        //     "city": "杭州市",
+        //     "cityId": 1,
+        //     "district": "余杭区",
+        //     "districtId": 1,
+        //     "name": "浙江省杭州市余杭区",
+        //     'id': 1,
+        //     "province": "浙江省",
+        //     "provinceId": 1
+        // }],
           ...form.getFieldsValue(),
         }).then((res) => {
           if (res) {
@@ -79,8 +82,6 @@ class SupplierModal extends Component {
   render() {
     const { isEdit } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { data } = this.state;
-
     return (
       <>
         <Button type="primary" onClick={this.showModal}>
@@ -204,11 +205,30 @@ class SupplierModal extends Component {
                     required: true,
                     message: '请选择供应商分类'
                   }
-                ]
+                ],
+                getValueFromEvent: (e) => {
+                  let value
+                  if (!e || !e.target) {
+                    value = e;
+                  } else {
+                    const { target } = e;
+                    value = target.type === 'checkbox' ? target.checked : target.value;
+                  }
+                  console.log(+value === 5);
+                  this.setState({
+                    saleAreaVisible: +value === 5
+                  })
+                  return value;
+                }
               })(
-                <SupplierTypeSelect />,
+                <SupplierTypeSelect />
               )}
             </FormItem>
+            <If condition={this.state.saleAreaVisible}>
+              <FormItem required label='可售区域'>
+                {getFieldDecorator('saleAreaList')(<SaleArea />)}
+              </FormItem>
+            </If>
           </Form>
         </Modal>
       </>
