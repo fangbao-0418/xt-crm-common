@@ -77,10 +77,10 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
           <span
             className='href ml10'
             onClick={() => {
-              this.setState({
-                text: '',
-                checkedKeys: []
-              })
+              const { onChange } = this.props;
+              if (typeof onChange === 'function') {
+                onChange([]);
+              }
             }}
           >
             清空可售区域

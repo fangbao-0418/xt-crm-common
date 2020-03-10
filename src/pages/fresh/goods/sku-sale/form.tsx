@@ -647,7 +647,16 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             label='可售区域'
             required
             inner={(form) => {
-              return form.getFieldDecorator('productSaleAreas')(<SaleArea />)
+              return form.getFieldDecorator('productSaleAreas', {
+                rules: [{
+                  validator: async (rules, value) => {
+                    if (!value || Array.isArray(value) && value.length === 0) {
+                      throw new Error('请选择可售区域');
+                    }
+                    return value;
+                  }
+                }]
+              })(<SaleArea/>)
             }
           }/>
         </Card>
