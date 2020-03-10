@@ -386,8 +386,6 @@ class SkuList extends React.Component<Props, State>{
   }
   render() {
     const type = this.props.type !== undefined ? this.props.type : 0
-
-    console.log(this.state.specs, 'specs')
     return (
       <Card
         title="添加规格项"
