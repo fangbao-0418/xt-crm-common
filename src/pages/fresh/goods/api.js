@@ -13,6 +13,10 @@ export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }
 
+export function getStoreFreshList(data, config) {
+  return post('/store/fresh/list', data, config);
+}
+
 // 设置普通消费商品
 export function setProduct(data) {
   const isAdd = data.productId === -1

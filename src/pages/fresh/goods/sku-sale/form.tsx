@@ -499,6 +499,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 onChange: this.supplierChange
               } as GetFieldDecoratorOptions)(
                 <SupplierSelect
+                  type='fresh'
                   style={{ width: '60%' }}
                   disabled={this.id !== -1 && supplierInfo.category === 4}
                   options={isEmpty(supplierInfo) ? []: [supplierInfo]}

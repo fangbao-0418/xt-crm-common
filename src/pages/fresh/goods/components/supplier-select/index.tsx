@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, Spin } from 'antd';
 import debounce from 'lodash/debounce';
-import { getStoreList } from '../../api';
+import { getStoreList, getStoreFreshList } from '../../api';
 
 const { Option } = Select;
 export interface supplierItem {
@@ -9,7 +9,8 @@ export interface supplierItem {
   name: string;
 }
 interface SupplierSelectProps {
-  style?: React.CSSProperties,
+  type?: 'normal' | 'fresh';
+  style?: React.CSSProperties;
   disabled?: boolean;
   onChange?: (value: string, options: supplierItem[]) => void;
   value?: string;
@@ -21,6 +22,9 @@ interface SupplierSelectState {
 }
 class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelectState> {
   lastFetchId: number = 0;
+  defaultProps = {
+    type: 'normal'
+  }
   constructor (props: SupplierSelectProps) {
     super(props);
     this.state = {
@@ -41,14 +45,14 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
       this.lastFetchId += 1;
       const fetchId = this.lastFetchId;
       this.setState({ supplierList: [], fetching: true });
-      getStoreList({name, pageSize: 5000 }, { hideLoading: true })
-        .then((res: any) => {
-          if (fetchId !== this.lastFetchId) {
-            // for fetch callback order
-            return;
-          }
-          this.setState({ supplierList: res.records, fetching: false });
-        })
+      const api = this.props.type === 'normal' ? getStoreList({name, pageSize: 5000 }, { hideLoading: true }): getStoreFreshList({name, pageSize: 5000 }, { hideLoading: true });
+      api.then((res: any) => {
+        if (fetchId !== this.lastFetchId) {
+          // for fetch callback order
+          return;
+        }
+        this.setState({ supplierList: res.records, fetching: false });
+      })
     } else {
       this.setState({
         supplierList: [],

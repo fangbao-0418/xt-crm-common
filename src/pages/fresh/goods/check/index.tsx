@@ -8,7 +8,7 @@ import * as api from '../api'
 import { auditStatusConfig } from './config'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import SelectFetch from '@/components/select-fetch'
-import SuppilerSelect from '@/components/suppiler-select'
+import SuppilerSelect from '@/components/suppiler-auto-select'
 import { getCategoryTopList } from '../api'
 interface State {
   list: any[]
@@ -65,16 +65,19 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '库存',
+      width: 100,
       dataIndex: 'stock',
       key: 'stock'
     },
     {
       title: '供应商名称',
-      dataIndex: 'supplierName',
-      key: 'supplierName',
+      width: 150,
+      dataIndex: 'storeName',
+      key: 'storeName',
     },
     {
       title: '一级类目',
+      width: 150,
       dataIndex: 'firstCategoryName',
       key: 'firstCategoryName',
     },
@@ -86,6 +89,7 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '审核状态',
+      width: 150,
       dataIndex: 'auditStatus',
       key: 'auditStatus',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
@@ -94,6 +98,7 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '审核人',
+      width: 150,
       dataIndex: 'auditUser',
       key: 'auditUser',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
@@ -102,6 +107,7 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '审核时间',
+      width: 180,
       dataIndex: 'auditTime',
       key: 'auditTime',
       render: formatTime
@@ -110,6 +116,8 @@ class Main extends React.Component<any, State> {
       title: '操作',
       dataIndex: 'operate',
       key: 'operate',
+      width: 120,
+      fixed: 'right',
       align: 'center',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
         return record.auditStatus === 1 ? (
@@ -243,7 +251,7 @@ class Main extends React.Component<any, State> {
               label="供应商名称"
               inner={form => {
                 return form.getFieldDecorator('storeId')(
-                  <SuppilerSelect style={{ width: '174px' }} />,
+                  <SuppilerSelect type='fresh' style={{ width: '174px' }} />,
                 );
               }}
             />
@@ -296,6 +304,9 @@ class Main extends React.Component<any, State> {
         </Card>
         <Card>
           <Table
+            scroll={{
+              x: true
+            }}
             columns={this.columns}
             dataSource={this.state.list}
             pagination={pagination}
