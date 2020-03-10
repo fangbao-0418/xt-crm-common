@@ -1,7 +1,7 @@
 import React from 'react';
 import { getBatchList } from './api';
-import { ListPage } from '@/packages/common/components'
-import { setPayload } from '@/packages/common/utils';
+import { ListPage, FormItem } from '@/packages/common/components'
+import moment from 'moment';
 import { formatMoneyWithSign } from '../../../pages/helper';
 /**
  * 批次记录列表
@@ -37,9 +37,38 @@ class Records extends React.Component {
       )
     }
   }]
+
+   getBatchList = async (data:any) =>{ 
+    if (data.create) {
+      if (data.create[0]) {
+        data.startTime = data.create[0].format('YYYY-MM-DD')
+      }
+      if (data.create[1]) {
+        data.endTime = data.create[1].format('YYYY-MM-DD')
+      }
+      delete data.create;
+    }
+    return await getBatchList(data)
+  }
+
   render() {
     return (
-      <ListPage api={getBatchList} columns={this.columns}/>
+      <ListPage
+        formItemLayout={(
+          <FormItem name='create' label='申请时间'  />
+        )}
+        namespace={'withdraw_records'}
+        api={this.getBatchList}
+        formConfig={{
+          withdraw_records: {
+            create: {
+              label: '申请时间',
+              type: 'rangepicker'
+            }
+          }
+        }}
+        columns={this.columns}
+      />
     )
   }
 }

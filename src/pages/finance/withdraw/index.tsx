@@ -220,7 +220,13 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                     message: '请选择申请时间'
                   }]
                 })(
-                  <RangePicker showTime format="YYYY/MM/DD"/>
+                  <RangePicker
+                    disabledDate={(current: moment.Moment | null) => {
+                      return !!(current && current >= moment().startOf('day'));
+                    }}
+                    showTime
+                    format="YYYY/MM/DD"
+                  />
                 )
               }}
             />
@@ -292,7 +298,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
             }
           }}
           namespace={NAME_SPACE}
-          formItemLayout={( 
+          formItemLayout={(
             <>
               <FormItem
                 name='batchId'
