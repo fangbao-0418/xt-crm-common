@@ -25,7 +25,7 @@ const modifyAddress = (changeModifyAddress) => {
 }
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddress }) => {
   const [visible, setVisible] = useState(false);
-  const { orderStatus, orderCode, platform, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate } = orderInfo;
+  const { orderStatus, orderCode, orderBizTypeStr, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate } = orderInfo;
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo;
   // 支付时间小于1个小时显示按钮。
   const isModify = (new Date().getTime() - payDate) < 3600000;
@@ -63,7 +63,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
           <Col span={8}>买家名称：{userName}</Col>
           <Col span={8}>微信昵称：{nickname}</Col>
           <Col span={8}>联系电话：{phone}</Col>
-          <Col span={8}>订单来源：{platform}</Col>
+          <Col span={8}>订单来源：{orderBizTypeStr}</Col>
           <Col span={8}>订单类型：{orderTypeStr}</Col>
           <Col span={8}>完成时间：{APP.fn.formatDate(finishTime)}</Col>
         </Row>

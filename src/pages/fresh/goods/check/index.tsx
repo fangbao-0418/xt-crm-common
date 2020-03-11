@@ -18,7 +18,7 @@ function formatTime(text: any, record: GoodsCheck.ItemProps, index: number) {
   return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-';
 }
 
-const namespace = 'goods-check'
+const namespace = 'fresh-goods-check'
 
 class Main extends React.Component<any, State> {
   public state: State = {
@@ -267,7 +267,7 @@ class Main extends React.Component<any, State> {
               options={[
                 {
                   label: '全部',
-                  value: -1,
+                  value: '',
                 },
                 {
                   label: '待审核',

@@ -345,6 +345,7 @@ class Detail extends Component {
                       <Row gutter={24}>
                         <Col span={8}>门店名称：{item.childOrder.selfDeliveryPointName}</Col>
                         <Col span={8}>门店电话：{item.childOrder.selfDeliveryPointTel}</Col>
+                        <Col span={8}>门店地址：{item.childOrder.selfDeliveryAddress}</Col>
                       </Row>
                       {/* <Row>
                         {
