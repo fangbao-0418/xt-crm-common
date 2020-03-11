@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { setQuery, parseQuery } from '@/util/utils';
-import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col } from 'antd';
+import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col, Select } from 'antd';
 import PayModal from './payModal'
 import MoneyRender from '@/components/money-render'
 import { enumPayType } from '../constant'
@@ -9,6 +9,7 @@ import * as api from '../api'
 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
+const { Option } = Select;
 class List extends React.Component {
   constructor(props) {
     super(props);
@@ -21,6 +22,7 @@ class List extends React.Component {
         current: +params.page || 1,
         pageSize: 10
       },
+      selectedRowKeys: [],
       modalVisible: false,
       modalType: 'look' // look | confirm
     };
@@ -153,14 +155,21 @@ class List extends React.Component {
     })
     this.fetchData()
   };
+
   handleRejectCancel = () => {
     this.setState({
       modalVisible: false
     })
   };
 
+  handleSelectChange = (selectedRowKeys) => {
+    this.setState({
+      selectedRowKeys
+    })
+  }
+
   render() {
-    const { total, pageSize, current, dataSource, recordItem, modalType } = this.state;
+    const { total, pageSize, current, dataSource, selectedRowKeys, recordItem, modalType } = this.state;
 
     const {
       form: { getFieldDecorator }
@@ -190,10 +199,14 @@ class List extends React.Component {
         render: MoneyRender
       },
       {
-        title: '供应商',
+        title: '结算人名称',
         key: 'storeName',
         dataIndex: 'storeName',
-
+      },
+      {
+        title: '结算人类型',
+        key: 'storeNameType',
+        dataIndex: 'storeNameType',
       },
       {
         title: '状态',
@@ -242,6 +255,12 @@ class List extends React.Component {
         )
       }
     ];
+
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.handleSelectChange
+    }
+
     return (
       <Spin tip="操作处理中..." spinning={false}>
         <Card title="筛选">
@@ -255,7 +274,7 @@ class List extends React.Component {
                 </FormItem>
               </Col>
               <Col span={6}>
-                <FormItem label="供应商">
+                <FormItem label="结算人名称">
                   {getFieldDecorator('storeName', { initialValue: '' })(
                     <Input placeholder="请输入供应商名称" />
                   )}
@@ -265,6 +284,17 @@ class List extends React.Component {
                 <FormItem label="创建人">
                   {getFieldDecorator('createName', { initialValue: '' })(
                     <Input placeholder="请输入创建人" />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="结算人类型">
+                  {getFieldDecorator('storeNameType', { initialValue: '' })(
+                    <Select>
+                      <Option value="">全部</Option>
+                      <Option value="1">小店</Option>
+                      <Option value="2">供应商</Option>
+                    </Select>
                   )}
                 </FormItem>
               </Col>
@@ -325,23 +355,28 @@ class List extends React.Component {
           </Form>
         </Card>
         <Card style={{ marginTop: 10 }}>
-          {dataSource && dataSource.length > 0 ? (
-            <Table
-              bordered
-              columns={columns}
-              dataSource={dataSource}
-              pagination={{
-                current,
-                total,
-                pageSize,
-                onChange: this.handleChangeTable
-              }}
-              defaultExpandAllRows={true}
-              rowKey={record => record.id}
-            />
-          ) : (
-              '暂无数据'
-            )}
+          <div>
+            <Button type="primary" onClick={this.handleBatchPay}>
+              批量支付
+            </Button>
+            <Button type="primary" onClick={this.handleBatchFail}>
+              批量失败
+            </Button>
+          </div>
+          <Table
+            bordered
+            columns={columns}
+            dataSource={dataSource}
+            pagination={{
+              current,
+              total,
+              pageSize,
+              onChange: this.handleChangeTable
+            }}
+            rowSelection={rowSelection}
+            defaultExpandAllRows={true}
+            rowKey={record => record.id}
+          />
         </Card>
         {/* 确认提示弹窗 */}
         <PayModal

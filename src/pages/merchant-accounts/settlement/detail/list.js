@@ -3,7 +3,7 @@ import { Card, Row, Table, Button } from 'antd';
 import styles from './style.module.styl'
 import { enumPayType } from '../../constant';
 import { download } from '@/util/utils';
-import SettleModal from '../settleModal'
+import SettleModal from '../components/settleModal'
 
 
 class SettleDetialList extends React.Component {

@@ -1,0 +1,187 @@
+import React from 'react';
+import { Modal, Form, Select, Message, Radio, Input, InputNumber, Alert } from 'antd';
+import If from '@/packages/common/components/if';
+import { formItemLayout } from '@/config';
+import * as api from '../../api'
+class SettleModal extends React.Component {
+  state = {
+    payRateErr: false
+  }
+
+  handleOk = () => {
+    const {
+      id,
+      form: { validateFields },
+      handleSucc,
+    } = this.props;
+    const { payRateErr } = this.setState;
+    validateFields((err, vals) => {
+      if (err || payRateErr) return
+      console.log(vals)
+      return;
+      api.settlementSubmit({ id, payMod: vals.payMod }).then(res => {
+        console.log(res)
+        if (res) {
+          Message.success('已提交');
+          handleSucc()
+        }
+      })
+    });
+  }
+
+  // 切换付款类型的时候 需要重置付款次数的表单到初始值
+  handlePayModTypeChange = () => {
+    this.setState({
+      payRateErr: false
+    })
+    this.props.form.setFieldsValue({
+      payMod: '1'
+    })
+  }
+
+  handlePayRateBlur = () => {
+    const payRate = this.props.form.getFieldValue('payRate')
+    console.log(payRate)
+    if (payRate.some(item => [null, ''].includes(item))) return
+    const sum = payRate.reduce((pre, next) => +pre + +next)
+    if (sum === 100) {
+      this.setState({
+        payRateErr: false
+      })
+    } else {
+      this.setState({
+        payRateErr: true
+      })
+    }
+  }
+
+  handleAfterClose = () => {
+    this.setState({
+      payRateErr: false
+    })
+  }
+
+  render() {
+    const { modalProps = {}, form: { getFieldDecorator, getFieldValue } } = this.props;
+    const { payRateErr } = this.state;
+
+    let payModType = getFieldValue('payModType'),
+      payMod = +getFieldValue('payMod');
+
+    let formItems = null;
+
+    const formItemLayoutWithOutLabel = {
+      wrapperCol: {
+        xs: { span: 24, offset: 0 },
+        sm: { span: 12, offset: 6 },
+      },
+    };
+
+    if (payModType === 2) {
+      getFieldDecorator('keys', {
+        initialValue: [...Array(payMod).keys()]
+      });
+      const keys = getFieldValue('keys');
+      formItems = keys.map((k, index) => (
+        <Form.Item
+          {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
+          label={index === 0 ? '请设置支付比例' : ''}
+          required={false}
+          key={k}
+        >
+          {getFieldDecorator(`payRate[${k}]`, {
+            validateTrigger: ['onChange', 'onBlur'],
+            rules: [
+              {
+                required: true,
+                whitespace: true,
+                message: `第${index + 1}次输入比例`,
+              },
+            ],
+            initialValue: keys.length === 1 ? '100' : ''
+          })(
+            <InputNumber
+              onBlur={this.handlePayRateBlur}
+              style={{ width: 180 }}
+              disabled={keys.length === 1}
+              placeholder={`第${index + 1}次输入比例`}
+            />
+          )}
+          <span className="ant-form-text"> %</span>
+        </Form.Item>
+      ))
+    }
+
+
+    return (
+      <div>
+        <Modal
+          {...modalProps}
+          onOk={this.handleOk}
+          title="提示"
+          afterClose={this.handleAfterClose}
+          destroyOnClose
+        >
+          <Form {...formItemLayout}>
+            <Form.Item label="请设置付款类型">
+              {getFieldDecorator('payModType', {
+                initialValue: 1, rules: [
+                  {
+                    required: true,
+                    message: '请设置付款类型',
+                  },
+                ],
+              })(
+                <Radio.Group onChange={this.handlePayModTypeChange}>
+                  <Radio value={1}>系统默认</Radio>
+                  <Radio value={2}>自定义</Radio>
+                </Radio.Group>
+              )}
+            </Form.Item>
+            <Form.Item label="请设置付款次数">
+              {getFieldDecorator('payMod', {
+                initialValue: '1', rules: [
+                  {
+                    required: true,
+                    message: '请设置付款次数',
+                  },
+                ],
+              })(
+                <Select placeholder='请设置付款次数'>
+                  <Select.Option key="1" value="1">一次付清</Select.Option>
+                  <Select.Option key="2" value="2">分两次付清</Select.Option>
+                  <Select.Option key="3" value="3">分三次付清</Select.Option>
+                </Select>
+              )}
+            </Form.Item>
+            <If condition={payModType === 2}>
+              {formItems}
+              <If condition={payRateErr}>
+                <Form.Item {...formItemLayoutWithOutLabel}>
+                  <Alert
+                    message="支付比例总和需等于100"
+                    type="error"
+                  />
+                </Form.Item>
+              </If>
+              <Form.Item label="请设置支付周期">
+                {getFieldDecorator('payPeriod', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请设置支付周期',
+                    },
+                  ],
+                })(
+                  <InputNumber placeholder='请设置支付周期' style={{ width: 180 }} />
+                )}
+                <span className="ant-form-text"> 天</span>
+              </Form.Item>
+            </If>
+          </Form>
+        </Modal>
+      </div>
+    );
+  }
+}
+export default Form.create()(SettleModal);
