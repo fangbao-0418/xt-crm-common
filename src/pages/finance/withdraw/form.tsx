@@ -51,7 +51,10 @@ class WithdrawForm extends React.Component<Props, any> {
       res.transferAmount = formatMoneyWithSign(res.transferAmount);
       res.serviceCharge = formatMoneyWithSign(res.serviceCharge);
       this.form.setValues(res);
-      this.setState(pick(res, ['canCancel', 'canSubmit']))
+      this.setState({
+        ...pick(res, ['canCancel', 'canSubmit']),
+        failReason: res.failReason
+      })
     })
   }
   // 提现操作日志
@@ -170,6 +173,7 @@ class WithdrawForm extends React.Component<Props, any> {
               <FormItem name='remark' label='备注' />
               <FormItem name='transferStatusDesc' label='提现状态'/>
               <FormItem name='passBackTime' label='回执结果时间'/>
+              <FormItem name='failReason' hidden={!this.state.failReason} label='失败原因'/>
             </Form>
           </TabPane>
           <TabPane tab='信息记录' key='2'>
