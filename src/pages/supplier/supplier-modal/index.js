@@ -229,7 +229,16 @@ class SupplierModal extends Component {
             </FormItem>
             <If condition={this.state.saleAreaVisible}>
               <FormItem required label='可售区域'>
-                {getFieldDecorator('saleAreaList')(
+                {getFieldDecorator('saleAreaList', {
+                  rules: [{
+                    validator: async (rules, value) => {
+                      if (!value || Array.isArray(value) && value.length === 0) {
+                        throw new Error('请选择可售区域')
+                      }
+                      return value
+                    }
+                  }]
+                })(
                   <SaleArea readOnly={this.props.isEdit}/>
                 )}
               </FormItem>

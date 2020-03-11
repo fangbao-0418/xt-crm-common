@@ -63,17 +63,29 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
           value={text}
           style={Object.assign({ width: 450 }, this.props.style)}
         />
-        <span
-          className='href ml10'
-          onClick={() => {
-            this.setState({
-              visible: true
-            })
-          }}
-        >
-          {text ? '编辑可售区域': '新增可售区域'}
-        </span>
+        <If condition={!!this.props.readOnly}>
+          <span
+            className='href ml10'
+            onClick={() => {
+              this.setState({
+                visible: true
+              })
+            }}
+          >
+            查看可售区域
+          </span>
+        </If>
         <If condition={!this.props.readOnly}>
+          <span
+            className='href ml10'
+            onClick={() => {
+              this.setState({
+                visible: true
+              })
+            }}
+          >
+            {text ? '编辑可售区域': '新增可售区域'}
+          </span>
           <span
             className='href ml10'
             onClick={() => {
