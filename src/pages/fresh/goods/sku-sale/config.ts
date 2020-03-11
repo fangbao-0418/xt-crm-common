@@ -64,6 +64,10 @@ export const defaultConfig: FieldsConfig = {
     // },
     productName: {
       label: '商品名称',
+      controlProps: {
+        maxLength: 20,
+        placeholder: '请输入商品名称，不能超过20个字符'
+      },
       fieldDecoratorOptions: {
         rules: [{
           required: true,

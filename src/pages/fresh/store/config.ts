@@ -16,7 +16,7 @@ export const defaultConfig: FieldsConfig = {
       },
       controlProps: {
         maxLength: 30,
-        placeholder: '请输入门店名称，30个字符内'
+        placeholder: '请输入门店名称，不能超过30个字符'
       }
     },
     type: {

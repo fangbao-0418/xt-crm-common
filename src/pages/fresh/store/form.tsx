@@ -130,8 +130,10 @@ class StoreForm extends React.Component<Props, StoreFormState> {
             <FormItem
               label='详细地址'
               name='detailAddress'
+              type='textarea'
               controlProps={{
-                placeholder: '请输入详细地址'
+                placeholder: '请输入详细地址，不能超过60字符',
+                maxLength: 60
               }}
               verifiable
               fieldDecoratorOptions={{
