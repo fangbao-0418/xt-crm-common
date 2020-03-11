@@ -14,8 +14,8 @@ declare namespace UliveStudio {
     planId: number
     /** 直播地址 */
     playUrl: string
-    /** 是否上下架(0-下架, 1-上架) */
-    status: 0 | 1
+    /** 是否上下架(0-下架, 1-上架, 6-断网下架) */
+    status: 0 | 1 | 6
     /** 直播类型 0-公开直播，10-私密直播 */
     type: number
     liveData: StatisticsProps
