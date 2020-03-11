@@ -101,6 +101,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
             <FormItem
               verifiable
               name='memberPhone'
+              disabled={this.id !== '-1'}
             />
           </div>
         </Card>

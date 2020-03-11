@@ -65,7 +65,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       title: '销售价',
       width: 100,
       dataIndex: 'salePrice',
-      render: formatMoneyWithSign
+      render: APP.fn.formatMoney
     },
     {
       title: '库存',
