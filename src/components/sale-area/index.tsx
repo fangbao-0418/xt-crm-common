@@ -1,9 +1,10 @@
 import React, { Children } from 'react'
 import { Input } from 'antd'
-const { TextArea } = Input
 import TreeCheckBox from '@/packages/common/components/tree-checkbox'
-import { getAddress } from './api'
 import { If } from '@/packages/common/components'
+import { groupBy } from 'lodash'
+import { getAddress } from './api'
+const { TextArea } = Input
 interface SaleAreaProps {
   readOnly?: boolean
   onChange?: (value: any) => void
@@ -14,6 +15,20 @@ interface SaleAreaState {
   visible: boolean,
   text: string,
   checkedKeys: string[]
+}
+
+
+function buildTree (list: any[]) {
+  // console.log('原list', list)
+  // console.log('按省分组', groupBy(list, 'provinceId'))
+  // console.log('按市分组', groupBy(list, 'cityId'))
+  const provinces = groupBy(list, (item) => item.provinceId + ',' + item.province)
+  console.log('分组后的provinces', provinces)
+  let citys: any = {}
+  for (const name in provinces) {
+    citys[name] = groupBy(provinces[name], (item1) => item1.cityId + ',' + item1.city)
+  }
+  console.log('分组后的citys', citys)
 }
 
 function nodes2Texts(nodes: any[]) {
@@ -44,6 +59,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
     checkedKeys: []
   }
   componentWillReceiveProps(props: SaleAreaProps) {
+    buildTree(props.value)
     const checkedOptions = props.value || []
     this.setState({
       text: convert(checkedOptions).map((v: any) => {
