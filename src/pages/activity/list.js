@@ -188,7 +188,7 @@ class List extends React.Component {
         render: record => (
           <>
             {/* <Link to={`/activity/info/edit/${record.id}?page=${page.current}&pageSize=${page.pageSize}`}>编辑</Link> */}
-            <a onClick={() => gotoPage(`/activity/info/edit/${record.id}`)}>{record.canUpdate ? '编辑' : '查看'}</a>
+            <a onClick={() => gotoPage(`/activity/info/edit/${record.id}`)}>{record.systemTime < record.endTime ? '编辑' : '查看'}</a>
 
             {record.status ? (
               <>
