@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { Card, Button, Input, Row, Col, Select } from 'antd';
+import { Card, Button, Input, Select } from 'antd';
 import Form, { FormItem } from '@/packages/common/components/form';
 import CommonTable from '@/components/common-table';
 import SwitchModal from './components/switchModal';
@@ -9,16 +9,18 @@ import CheckModal from './components/checkModal';
 import { connect } from '@/util/utils';
 import getColumns from './columns'
 import { queryConfig } from './config'
+import { namespace } from './model'
 
 const { Option } = Select;
 
-/** 店长管理PAGE */
 @connect(state => ({
   bossData: state['shop.boss'].bossData
 }))
 @Form.create()
 @withRouter
 class Main extends React.Component {
+
+  payload = APP.fn.getPayload(namespace)
 
   componentDidMount() {
     this.fetchData()
@@ -93,25 +95,31 @@ class Main extends React.Component {
 
     return (
       <Form layout="inline">
-        <Row>
-          <Col>
-            <FormItem label="用户ID">{getFieldDecorator('userid')(<Input placeholder="请输入用户ID" />)}</FormItem>
-            <FormItem label="昵称">{getFieldDecorator('nickname')(<Input placeholder="请输入昵称" />)}</FormItem>
-            <FormItem label="姓名">{getFieldDecorator('realname')(<Input placeholder="请输入姓名" />)}</FormItem>
-            <FormItem label="手机号">{getFieldDecorator('phone')(<Input placeholder="请输入手机号" />)}</FormItem>
-            <FormItem label="权限状态">{getFieldDecorator('status')(<Select placeholder="请选择" defaultValue="lucy" style={{ width: '100%' }}>
-              {queryConfig.statusOptions.map(item => <Option value={item.value}>{item.label}</Option>)}
-            </Select>)}</FormItem>
-          </Col>
-          <Col style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button type="primary" onClick={this.handleSearch}>
-              查询
-            </Button>
-            <Button style={{ marginLeft: 16 }} onClick={this.handleReset}>
-              重置
-            </Button>
-          </Col>
-        </Row>
+        <FormItem label="用户ID">
+          {getFieldDecorator('userid')(<Input placeholder="请输入用户ID" />)}
+        </FormItem>
+        <FormItem label="昵称">
+          {getFieldDecorator('nickname')(<Input placeholder="请输入昵称" />)}
+        </FormItem>
+        <FormItem label="姓名">
+          {getFieldDecorator('realname')(<Input placeholder="请输入姓名" />)}
+        </FormItem>
+        <FormItem label="手机号">
+          {getFieldDecorator('phone')(<Input placeholder="请输入手机号" />)}
+        </FormItem>
+        <FormItem label="权限状态">
+          {getFieldDecorator('status')(<Select placeholder="请选择" defaultValue="lucy" style={{ width: '100%' }}>
+            {queryConfig.statusOptions.map(item => <Option value={item.value}>{item.label}</Option>)}
+          </Select>)}
+        </FormItem>
+        <FormItem>
+          <Button type="primary" onClick={this.handleSearch}>
+            查询
+          </Button>
+          <Button style={{ marginLeft: 16 }} onClick={this.handleReset}>
+            重置
+          </Button>
+        </FormItem>
       </Form>
     );
   }

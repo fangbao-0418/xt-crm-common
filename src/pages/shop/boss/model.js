@@ -1,7 +1,8 @@
 import * as api from './api';
+export const namespace = 'shop.boss'
 
 export default {
-  namespace: 'shop.boss',
+  namespace,
   state: {
     bossData: {}, // 店长列表数据
     currentBoss: null, // 当前店长数据
