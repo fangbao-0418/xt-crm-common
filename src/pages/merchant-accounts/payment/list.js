@@ -1,15 +1,15 @@
 import React from 'react';
-import moment from 'moment';
-import { setQuery, parseQuery } from '@/util/utils';
-import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col, Select } from 'antd';
-import PayModal from './payModal'
-import MoneyRender from '@/components/money-render'
-import { enumPayType } from '../constant'
+import { setQuery, parseQuery, download } from '@/util/utils';
+import { Table, Card, Form, Button, Spin } from 'antd';
+import SearchForm from './components/searchForm'
+import PayModal from './components/payModal'
+import DetailModal from './components/detailModal'
+import BatchPayModal from './components/batchPayModal'
+import BatchFaliModal from './components/batchFaliModal'
 import * as api from '../api'
+import getColumns from './config/columns'
+import styles from './style.module.scss'
 
-const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
-const { Option } = Select;
 class List extends React.Component {
   constructor(props) {
     super(props);
@@ -23,30 +23,28 @@ class List extends React.Component {
         pageSize: 10
       },
       selectedRowKeys: [],
-      modalVisible: false,
-      modalType: 'look' // look | confirm
+      payModalVisible: false, // 确认支付模态框
+      batchPayModalVisible: false, // 批量支付模态框
+      batchFailModalVisible: false, // 批量失败模态框
+      detailModalVisible: false // 明细模态框
     };
-
   }
 
   componentDidMount() {
     let settlementSerialNo = (parseQuery() || {}).settlementSerialNo;
     if (settlementSerialNo) {
-      const { setFieldsValue } = this.props.form;
-      setFieldsValue({
+      this.searchFormRef.setFieldsValue({
         settlementSerialNo
       })
       this.fetchData({ settlementSerialNo })
     } else {
       this.fetchData();
-
     }
 
   }
   componentDidUpdate(prevProps) {
     if (this.props.paymentStatus !== prevProps.paymentStatus) {
-      const { setFieldsValue } = this.props.form;
-      setFieldsValue({
+      this.searchFormRef.setFieldsValue({
         settlementSerialNo: ''
       })
       const { page } = this.state
@@ -55,7 +53,7 @@ class List extends React.Component {
     }
   }
   // 列表数据
-  fetchData(params = {}) {
+  fetchData = (params = {}) => {
     const { paymentStatus } = this.props;
     const { page } = this.state;
     const options = {
@@ -64,6 +62,7 @@ class List extends React.Component {
       page: page.current,
       ...params
     };
+
     api.getPaymentList(options).then((res = {}) => {
       page.total = res.total;
       this.setState({
@@ -90,43 +89,7 @@ class List extends React.Component {
       }
     );
   };
-  // 查询
-  handleSearch = () => {
-    const { validateFields } = this.props.form;
-    validateFields((err, vals) => {
-      if (!err) {
-        const params = {
-          ...vals,
-          startCreateTime: vals.createTime && vals.createTime[0] && +new Date(vals.createTime[0]),
-          endCreateTime: vals.createTime && vals.createTime[1] && +new Date(vals.createTime[1]),
-          startModifyTime: vals.modifyTime && vals.modifyTime[0] && +new Date(vals.modifyTime[0]),
-          endModifyTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
-          page: 1
-        };
-        delete params.createTime;
-        delete params.modifyTime;
-        this.fetchData(params);
-      }
-    });
-  };
 
-  // 重置条件
-  handleReset = () => {
-    const { setFieldsValue } = this.props.form;
-    const { page } = this.state;
-    setFieldsValue({
-      settlementSerialNo: '',
-      createName: '',
-      createTime: '',
-      paymentSerialNo: '',
-      modifyName: '',
-      modifyTime: '',
-      storeName: ''
-    })
-    page.current = 1
-    setQuery({ page: page.current, pageSize: page.pageSize }, true);
-    this.fetchData();
-  };
   // 确认支付
   handleConfirm = (record, type) => () => {
     // 查看明细
@@ -134,127 +97,53 @@ class List extends React.Component {
       api.getPaymentDetail(record.id).then(res => {
         this.setState({
           recordItem: res,
-          modalVisible: true,
-          modalType: type,
-
+          detailModalVisible: true
         })
       })
     } else {
       this.setState({
-        modalVisible: true,
-
-        modalType: type,
+        payModalVisible: true,
         recordItem: record
       })
     }
-
   };
+
+  // 确认支付回调
   handlePayConfirm = () => {
     this.setState({
-      modalVisible: false
+      payModalVisible: false
     })
     this.fetchData()
   };
 
-  handleRejectCancel = () => {
+  // 失败确认
+  handleFailConfirm = () => {
+
+  }
+
+  // 模态框取消操作
+  handleCancel = (key) => {
     this.setState({
-      modalVisible: false
+      [key]: false
     })
   };
 
+  // 表格批量选择
   handleSelectChange = (selectedRowKeys) => {
     this.setState({
       selectedRowKeys
     })
   }
 
+  // 显示批量模态框
+  handleBatchShow = (key) => {
+    this.setState({
+      [key]: true
+    })
+  }
+
   render() {
-    const { total, pageSize, current, dataSource, selectedRowKeys, recordItem, modalType } = this.state;
-
-    const {
-      form: { getFieldDecorator }
-    } = this.props;
-
-    const columns = [
-      {
-        title: '付款单ID',
-        key: 'paymentSerialNo',
-        dataIndex: 'paymentSerialNo',
-      },
-      {
-        title: '付款单名称',
-        key: 'paymentName',
-        dataIndex: 'paymentName'
-      },
-      {
-        title: '结算单ID',
-        key: 'settlementSerialNo',
-        dataIndex: 'settlementSerialNo',
-
-      },
-      {
-        title: '金额',
-        key: 'paymentMoney',
-        dataIndex: 'paymentMoney',
-        render: MoneyRender
-      },
-      {
-        title: '结算人名称',
-        key: 'storeName',
-        dataIndex: 'storeName',
-      },
-      {
-        title: '结算人类型',
-        key: 'storeNameType',
-        dataIndex: 'storeNameType',
-      },
-      {
-        title: '状态',
-        key: 'paymentStatusInfo',
-        dataIndex: 'paymentStatusInfo'
-      },
-      {
-        title: '创建时间',
-        key: 'createTime',
-        dataIndex: 'createTime',
-        render: (createTime) => APP.fn.formatDate(createTime)
-      },
-      {
-        title: '创建人',
-        key: 'createName',
-        dataIndex: 'createName',
-      },
-      {
-        title: '操作时间',
-        key: 'modifyTime',
-        dataIndex: 'modifyTime',
-        render: (modifyTime) => APP.fn.formatDate(modifyTime)
-
-      },
-      {
-        title: '操作人',
-        key: 'modifyName',
-        dataIndex: 'modifyName',
-      },
-      {
-        title: '操作',
-        width: '150px',
-        align: 'center',
-        render: (operate, record) => (
-          <>
-            {
-              enumPayType.ToBePaid === record.paymentStatus
-                ? <Button type="primary" onClick={this.handleConfirm(record, 'confirm')}>确认支付</Button>
-                : enumPayType.Freezing === record.paymentStatus
-                  ? <Button type="primary" disabled>确认支付</Button>
-                  : enumPayType.Paid === record.paymentStatus
-                    ? <Button type="link" onClick={this.handleConfirm(record, 'look')}>查看明细</Button>
-                    : null
-            }
-          </>
-        )
-      }
-    ];
+    const { page, dataSource, selectedRowKeys, recordItem } = this.state;
 
     const rowSelection = {
       selectedRowKeys,
@@ -263,114 +152,57 @@ class List extends React.Component {
 
     return (
       <Spin tip="操作处理中..." spinning={false}>
-        <Card title="筛选">
-          <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-            <Row gutter={24}>
-              <Col span={6}>
-                <FormItem label="结算单ID">
-                  {getFieldDecorator('settlementSerialNo', { initialValue: '' })(
-                    <Input placeholder="请输入结算单ID" />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="结算人名称">
-                  {getFieldDecorator('storeName', { initialValue: '' })(
-                    <Input placeholder="请输入供应商名称" />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="创建人">
-                  {getFieldDecorator('createName', { initialValue: '' })(
-                    <Input placeholder="请输入创建人" />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="结算人类型">
-                  {getFieldDecorator('storeNameType', { initialValue: '' })(
-                    <Select>
-                      <Option value="">全部</Option>
-                      <Option value="1">小店</Option>
-                      <Option value="2">供应商</Option>
-                    </Select>
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="付款单ID">
-                  {getFieldDecorator('paymentSerialNo', { initialValue: '' })(
-                    <Input placeholder="请输入付款单ID" />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="操作人">
-                  {getFieldDecorator('modifyName', { initialValue: '' })(
-                    <Input placeholder="请输入操作人" />
-                  )}
-                </FormItem>
-              </Col>
-              {/* <Col span={6}>
-                <FormItem label="全部">
-                  {getFieldDecorator('paymentStatus', { initialValue: '' })(
-                    <Select placeholder="请选择">
-                      {Object.values(enumPayType).map((v) => (
-                        <Select.Option key={v} value={v}>{TextMapPayStatus[v]}</Select.Option>
-                      ))}
-                    </Select>
-                  )}
-                </FormItem>
-              </Col> */}
-              <Col span={6}>
-                <FormItem label="创建时间">
-                  {getFieldDecorator('createTime', { initialValue: '' })(
-                    <RangePicker
-                      style={{ width: '100%' }}
-                      format="YYYY-MM-DD HH:mm"
-                      showTime={{ defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')] }}
-                    />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label="操作时间">
-                  {getFieldDecorator('modifyTime', { initialValue: '' })(
-                    <RangePicker
-                      style={{ width: '100%' }}
-                      format="YYYY-MM-DD HH:mm"
-                      showTime={{ defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')] }}
-                    />
-                  )}
-                </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={24} style={{ textAlign: 'right' }}>
-                <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>查询</Button>
-                <Button type="default" onClick={this.handleReset}>清除</Button>
-              </Col>
-            </Row>
-          </Form>
-        </Card>
+        {/* 搜索表单 */}
+        <SearchForm
+          wrappedComponentRef={ref => this.searchFormRef = ref}
+          onFetchData={this.fetchData}
+          page={page}
+        />
         <Card style={{ marginTop: 10 }}>
-          <div>
-            <Button type="primary" onClick={this.handleBatchPay}>
-              批量支付
-            </Button>
-            <Button type="primary" onClick={this.handleBatchFail}>
-              批量失败
-            </Button>
+          <div className={styles.actions}>
+            <div className={styles.left}>
+              <Button
+                type="primary"
+                onClick={this.handleBatchShow.bind(this, 'batchPayModalVisible')}
+              >
+                批量支付
+              </Button>
+              <Button
+                style={{ marginLeft: 16 }}
+                type="primary"
+                onClick={this.handleBatchShow.bind(this, 'batchFailModalVisible')}
+              >
+                批量失败
+              </Button>
+            </div>
+            <div className={styles.right}>
+              <span
+                className="href"
+                onClick={() => {
+                  download('https://xituan.oss-cn-shenzhen.aliyuncs.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551571728654649.xlsx', '批量支付模版')
+                }}
+              >
+                下载批量支付模版
+              </span>
+              <span
+                style={{ marginLeft: 16 }}
+                className="href"
+                onClick={() => {
+                  download('https://xituan.oss-cn-shenzhen.aliyuncs.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551571728654649.xlsx', '批量失败模版')
+                }}
+              >
+                下载批量失败模版
+              </span>
+            </div>
           </div>
           <Table
             bordered
-            columns={columns}
+            columns={getColumns({
+              onConfirm: this.handleConfirm
+            })}
             dataSource={dataSource}
             pagination={{
-              current,
-              total,
-              pageSize,
+              ...page,
               onChange: this.handleChangeTable
             }}
             rowSelection={rowSelection}
@@ -380,14 +212,35 @@ class List extends React.Component {
         </Card>
         {/* 确认提示弹窗 */}
         <PayModal
-          modalType={modalType}
           modalProps={{
-            visible: this.state.modalVisible,
-            onOk: this.handleRejectOk,
-            onCancel: this.handleRejectCancel,
+            visible: this.state.payModalVisible,
+            onCancel: this.handleCancel.bind(this, 'payModalVisible')
           }}
           handlePayConfirm={this.handlePayConfirm}
           record={recordItem}
+        />
+        {/* 明细模态框 */}
+        <DetailModal
+          modalProps={{
+            visible: this.state.detailModalVisible,
+            onCancel: this.handleCancel.bind(this, 'detailModalVisible')
+          }}
+          record={recordItem}
+        />
+        {/* 批量支付模态框 */}
+        <BatchPayModal
+          modalProps={{
+            visible: this.state.batchPayModalVisible,
+            onCancel: this.handleCancel.bind(this, 'batchPayModalVisible')
+          }}
+        />
+        {/* 批量失败模态框 */}
+        <BatchFaliModal
+          modalProps={{
+            visible: this.state.batchFailModalVisible,
+            onCancel: this.handleCancel.bind(this, 'batchFailModalVisible')
+          }}
+          handleFailConfirm={this.handleFailConfirm}
         />
       </Spin>
     )

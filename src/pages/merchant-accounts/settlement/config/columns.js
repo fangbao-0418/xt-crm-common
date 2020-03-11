@@ -110,7 +110,7 @@ const getColumns = ({ onSettle, onReject, onPay }) => {
       render: (operate, { settStatus, id, serialNo }) => (
         <>
           {
-            settStatus !== enumSettleType.ToBeSettled ?
+            settStatus == enumSettleType.ToBeSettled ?
               <>
                 <Button type="link" onClick={onSettle(id)} style={{ padding: '0 3px' }}>提交结算</Button>
                 <Button type="link" onClick={onReject(id)} style={{ padding: '0 3px' }}>驳回 </Button>

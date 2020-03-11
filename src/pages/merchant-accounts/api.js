@@ -9,8 +9,8 @@ import { post, get, newPost } from '../../util/fetch';
 // }
 /******************************付款单**************************/
 // 付款单确认支付
-export function paymentConfirm({id, paymentImg}) {
-  return post(`/finance/payment/confirm/${id}`,{paymentImg});
+export function paymentConfirm({ id, paymentImg }) {
+  return post(`/finance/payment/confirm/${id}`, { paymentImg });
 }
 
 // 付款单详情
@@ -35,7 +35,7 @@ export function getSettlementExport(id) {
 }
 // 结算单创建
 export function createSettlement(data) {
-  return post(`/finance/settlement/generate`,data);
+  return post(`/finance/settlement/generate`, data);
 }
 // 结算单列表
 export function getSettlementList(data) {
@@ -46,14 +46,18 @@ export function settlementPay(id) {
   return get(`/finance/settlement/pay/${id}`);
 }
 // 结算单驳回--包括待结算的结算单和结算中的结算单
-export function settlementReject({id,remark=''}) {
-  return post(`/finance/settlement/reject/${id}`, {remark});
+export function settlementReject({ id, remark = '' }) {
+  return post(`/finance/settlement/reject/${id}`, { remark });
 }
 // 待结算的结算单提交结算
-export function settlementSubmit({id,payMod=''}) {
-  return post(`/finance/settlement/submit/${id}`, {payMod});
+export function settlementSubmit({ id, payMod = '' }) {
+  return post(`/finance/settlement/submit/${id}`, { payMod });
 }
 /** 测试接口 */
 export const fetchCheckingList = payload => {
   return get('::ulive/live/plan/list', payload)
+}
+/** 获取收款账户列表 */
+export const fetchGatheringAccountList = (id) => {
+  return get(`/finance/settlement/account/list?accid=${id}`)
 }

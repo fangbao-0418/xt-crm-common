@@ -39,9 +39,9 @@ class SettleModal extends React.Component {
     })
   }
 
+  // 设置支付比例的时候失去焦点需要判断payRate之和等于100
   handlePayRateBlur = () => {
     const payRate = this.props.form.getFieldValue('payRate')
-    console.log(payRate)
     if (payRate.some(item => [null, ''].includes(item))) return
     const sum = payRate.reduce((pre, next) => +pre + +next)
     if (sum === 100) {
