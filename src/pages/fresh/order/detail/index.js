@@ -8,7 +8,6 @@ import GoodsTable from './goods-table';
 import BenefitInfo from './benefit-info';
 import StepInfo from './step-info';
 import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant';
-import DeliveryModal from './components/delivery-modal';
 import { dateFormat } from '@/util/utils';
 import moment from 'moment';
 import WithModal from './components/modal'
@@ -284,51 +283,9 @@ class Detail extends Component {
                             }
                           </span>
                         </Col>
-                        <Col className="gutter-row" span={8} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <div>
-                            <span style={{marginRight: 30}}>发货模式：{item.childOrder.deliveryModeName}</span>
-                            {item.childOrder.shippedWarehouseName && <span>仓库：{item.childOrder.shippedWarehouseName}</span>}
-                          </div>
-                          <span>
-                            { /**
-                               * 海淘子订单的发货按钮去掉
-                               * 订单状态（10：待付款；20：待发货；30：已发货；40：已收货; 50完成; 60关闭） 
-                               * 当订单状态orderStatus >= 20 && orderStatus <= 50
-                               */
-                              (Number(item.childOrder.orderType) !== 70 &&
-                              orderStatus >= enumOrderStatus.Undelivered &&
-                              orderStatus <= enumOrderStatus.Complete) && (
-                                <Button
-                                  type='primary'
-                                  onClick={() => this.changeModal(true, item)}>
-                                  发货
-                                </Button>
-                              )
-                            }
-                            {
-                              (item.childOrder.interceptorType == 10 && (
-                                item.childOrder.orderStatus == enumOrderStatus.Undelivered ||
-                                item.childOrder.orderStatus == enumOrderStatus.Delivered)
-                              ) && (
-                                <Button
-                                  type='primary'
-                                  style={{ marginLeft: 8 }}
-                                  onClick={() => this.cancelInterceptor(item)}
-                                >
-                                  取消拦截发货
-                                </Button>
-                              )}
-                            {item.canProtocolPay ? <Button
-                              type='primary'
-                              style={{ margin: '0 10px 10px 0' }}
-                              onClick={() => this.comfirmWithhold(item.childOrder.id)}
-                            >重新发起代扣</Button> : ''}
-                            {item.canPush ? <Button
-                              style={{ margin: '0 10px 10px 0' }}
-                              type='primary'
-                              onClick={() => this.comfirmPush1688(item.childOrder.id)}
-                            >重新推送1688 </Button> : ''}
-                          </span>
+                        <Col className="gutter-row" span={8}>
+                          <span style={{marginRight: 30}}>发货模式：{item.childOrder.deliveryModeName}</span>
+                          <span>提货方式：{item.childOrder.extractModeStr}</span>
                         </Col>
                       </Row>
                       <Row gutter={24}>
@@ -347,17 +304,6 @@ class Detail extends Component {
                         <Col span={8}>门店电话：{item.childOrder.selfDeliveryPointTel}</Col>
                         <Col span={8}>门店地址：{item.childOrder.selfDeliveryAddress}</Col>
                       </Row>
-                      {/* <Row>
-                        {
-                          item.childOrder.interceptorType == 10 &&
-                            (
-                              <>
-                                <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
-                                <Col span={8}>拦截人手机号：{item.childOrder.interceptorMemberPhone}</Col>
-                              </>
-                            )
-                        }
-                      </Row> */}
                     </div>
                   }
                 />
@@ -375,23 +321,6 @@ class Detail extends Component {
             refresh={this.queryProceeds}
           />
         </Card>
-        <DeliveryModal
-          type='add'
-          title="发货"
-          visible={deliveryVisible}
-          mainorderInfo={data.orderInfo}
-          onSuccess={this.onOk}
-          orderId={(deliveryData.childOrder || {}).id}
-          logistics={deliveryData.logistics}
-          onCancel={() => this.changeModal(false)}
-        />
-        <ModifyAddress 
-          title="修改订单信息"
-          visible={modifyAddressVisible}
-          onCancel={this.changeModifyAddress}
-          buyerInfo={data.buyerInfo}
-          orderInfo={data.orderInfo}
-        />
       </>
     );
   }

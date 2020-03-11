@@ -20,9 +20,6 @@ const initOrderInfo = {
   remark: 'string',
 };
 
-const modifyAddress = (changeModifyAddress) => {
-  return <Button onClick={() => changeModifyAddress()} type="primary">修改地址</Button>
-}
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddress }) => {
   const [visible, setVisible] = useState(false);
   const { orderStatus, orderCode, orderBizTypeStr, remark, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate } = orderInfo;
@@ -45,7 +42,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
             title: '订单编号',
             dataIndex: 'orderCode',
             render: (code) => {
-              return <Button type='link' href={window.location.pathname + `#/order/detail/${code}`} target="_blank">{code}</Button>
+              return <Button type='link' href={window.location.pathname + `#/fresh/order/detail/${code}`} target="_blank">{code}</Button>
             }
           }, {
             title: '状态',
@@ -54,7 +51,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
           dataSource={groupBuyOrderCodes}
         />
       </Modal>
-      <Card title="订单信息" extra={ isModify && orderStatus === 20 ? modifyAddress(changeModifyAddress) : ''}>
+      <Card title="订单信息">
         <Row gutter={24}>
           <Col span={8}>订单编号：{orderCode}</Col>
           <Col span={8}>创建时间：{APP.fn.formatDate(createTime)}</Col>
@@ -69,7 +66,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
         </Row>
         <Row gutter={24}>
           <Col span={8}>下单会员类型：{levelName({memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel})}</Col>
-          <Col span={16}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress &&　memberAddress.phone}</Col>
+          <Col span={16}>收货信息：{contact}，{memberAddress &&　memberAddress.phone}</Col>
         </Row>
         <Row gutter={24}>
           <Col span={8}>买家备注：{remark}</Col>

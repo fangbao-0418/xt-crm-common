@@ -270,3 +270,10 @@ export const MemberTypeTextMap = {
   [enumMemberType.Manager]: '管理员',
   [enumMemberType.Company]: '公司',
 };
+
+
+export enum storeTypes {
+  喜团小店 = 1,
+  喜团工厂店 = 2,
+  生鲜店 = 3
+}

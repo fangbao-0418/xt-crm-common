@@ -18,17 +18,28 @@ interface SaleAreaState {
 }
 
 
-function buildTree (list: any[]) {
-  // console.log('原list', list)
-  // console.log('按省分组', groupBy(list, 'provinceId'))
-  // console.log('按市分组', groupBy(list, 'cityId'))
+function buildTree (list?: any[]) {
+  list = list || []
   const provinces = groupBy(list, (item) => item.provinceId + ',' + item.province)
-  console.log('分组后的provinces', provinces)
   let citys: any = {}
   for (const name in provinces) {
     citys[name] = groupBy(provinces[name], (item1) => item1.cityId + ',' + item1.city)
   }
-  console.log('分组后的citys', citys)
+  // console.log('分组后的', citys)
+
+  function loop(citys: any[]) {
+    if (Object.prototype.toString.call(citys) === '[object Object]') {
+      let result: any[] =  []
+      for (let prop in citys) {
+        const [id, name] = prop.split(',')
+        result.push({ id, name, children: loop(citys[prop]) })
+      }
+      return result
+    }
+    return citys
+  }
+  console.log('分组后的', loop(citys))
+  return loop(citys)
 }
 
 function nodes2Texts(nodes: any[]) {
@@ -59,7 +70,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
     checkedKeys: []
   }
   componentWillReceiveProps(props: SaleAreaProps) {
-    buildTree(props.value)
+    // buildTree(props.value)
     const checkedOptions = props.value || []
     this.setState({
       text: convert(checkedOptions).map((v: any) => {
@@ -120,6 +131,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
           checkedKeys={checkedKeys}
           visible={visible}
           readOnly={this.props.readOnly}
+          checkedNodes={buildTree(this.props.value)}
           onCancel={() => {
             this.setState({
               visible: false
