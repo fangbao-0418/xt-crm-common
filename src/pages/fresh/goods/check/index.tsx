@@ -267,7 +267,7 @@ class Main extends React.Component<any, State> {
               options={[
                 {
                   label: '全部',
-                  value: '',
+                  value: -1,
                 },
                 {
                   label: '待审核',
