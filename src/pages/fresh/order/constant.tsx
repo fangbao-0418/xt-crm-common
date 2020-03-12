@@ -29,14 +29,6 @@ export function getDetailColumns (type = 0) {
         return <Link to={`/fresh/goods/sku-sale/${id}`}>{id}</Link>
       }
     },
-    // {
-    //   title: '实名认证',
-    //   dataIndex: 'isAuthentication',
-    //   key: 'isAuthentication',
-    //   render(text: any) {
-    //     return String(text) === '1' ? '是': '否'
-    //   }
-    // },
     {
       title: '属性',
       dataIndex: 'properties',
@@ -180,38 +172,24 @@ export const TextMapRefundType = {
 
 
 export enum enumOrderStatus {
-  Refund = -1,
   // 代付款
   Unpaid = 10,
-  // 待成团
-  Tofight = 15,
   // 待发货
   Undelivered = 20,
-  /**
-   * 部分发货状态，只针对于主订单
-   */
-  // 部分发货
-  // PartDelivered = 25,
   // 已发货
   Delivered = 30,
-  // ?后端没这个状态，不知道咋回事，已发货后直接是确认收货
-  Received = 40,
-  // 完成
+  // 已提货
   Complete = 50,
   // 关闭
   Closed = 60
 };
 
 export const OrderStatusTextMap = {
-  [enumOrderStatus.Refund]: '售后',
-  [enumOrderStatus.Tofight]: '待成团',
-  [enumOrderStatus.Closed]: '关闭',
-  [enumOrderStatus.Complete]: '完成',
-  // [enumOrderStatus.PartDelivered]: '部分发货',
-  [enumOrderStatus.Delivered]: '待提货',
-  [enumOrderStatus.Received]: '已收货',
-  [enumOrderStatus.Undelivered]: '待发货',
-  [enumOrderStatus.Unpaid]: '待付款'
+  10: '待付款',
+  20: '待发货',
+  30: '待提货',
+  50: '已提货',
+  60: '关闭'
 };
 
 export const TabList = [
@@ -230,11 +208,6 @@ export const TabList = [
     url: '/fresh/order/undeliveredOrder',
     status: enumOrderStatus.Undelivered,
   },
-  // {
-  //   name: OrderStatusTextMap[enumOrderStatus.PartDelivered],
-  //   url: '/fresh/order/partDeliveredOrder',
-  //   status: enumOrderStatus.PartDelivered,
-  // },
   {
     name: OrderStatusTextMap[enumOrderStatus.Delivered],
     url: '/fresh/order/deliveredOrder',
@@ -248,7 +221,7 @@ export const TabList = [
   {
     name: OrderStatusTextMap[enumOrderStatus.Closed],
     url: '/fresh/order/closedOrder',
-    status: enumOrderStatus.Closed,
+    status: enumOrderStatus.Closed
   },
 ];
 

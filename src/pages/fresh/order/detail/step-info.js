@@ -5,22 +5,11 @@ import { formatDate } from '@/pages/helper';
 const { Step } = Steps;
 
 function getCurrentIndex(orderStatus, orderType) {
-  // orderType为90等于拼团订单
-  const orderStatusMap = orderType !== 90 ? {
+  const orderStatusMap = {
     [enumOrderStatus.Unpaid]: 0,
     [enumOrderStatus.Undelivered]: 1,
-    [enumOrderStatus.PartDelivered]: 2,
-    [enumOrderStatus.Delivered]: 2,
-    [enumOrderStatus.Received]: 3,
-    [enumOrderStatus.Complete]: 4
-  } : {
-    [enumOrderStatus.Unpaid]: 0,
-    [enumOrderStatus.Tofight]: 1,
-    [enumOrderStatus.Undelivered]: 2,
-    [enumOrderStatus.PartDelivered]: 3,
     [enumOrderStatus.Delivered]: 3,
-    [enumOrderStatus.Received]: 4,
-    [enumOrderStatus.Complete]: 5
+    [enumOrderStatus.Complete]: 4
   }
   return orderStatusMap[orderStatus]
 }
@@ -42,26 +31,19 @@ const StepInfo = ({ orderType, orderStatus, orderStatusLogList = [] }) => {
     <Card>
       <Steps progressDot current={current}>
         <Step
-          title="买家下单"
+          title='买家下单'
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Unpaid)}
         />
-        {orderType === 90 && <Step
-          title='待成团'
-        />}
         <Step
-          title="待发货"
+          title='待发货'
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Undelivered)}
         />
         <Step
-          title="发货"
+          title='待提货'
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Delivered)}
         />
         <Step
-          title="确认收货"
-          description={getStatusTime(orderStatusLogList, enumOrderStatus.Received)}
-        />
-        <Step
-          title="交易完成"
+          title='已提货'
           description={getStatusTime(orderStatusLogList, enumOrderStatus.Complete)}
         />
       </Steps>

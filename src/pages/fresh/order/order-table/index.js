@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin, Row, Col, Select } from 'antd';
+import { Table, Card, Form, Input, Button, message, DatePicker, Spin, Row, Col } from 'antd';
 import { isNil } from 'lodash';
 import moment from 'moment';
-import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant';
+import { OrderStatusTextMap } from '../constant';
 import { formatDate, formatMoneyWithSign } from '@/pages/helper';
-import { getOrderList, exportOrder, importLogistics } from '../api';
+import { getOrderList } from '../api';
 import GoodCell from '@/components/good-cell';
 import SuppilerSelect from '@/components/suppiler-auto-select';
 import RemarkModal from '../components/modal/remark-modal';
 // import RefundModal from '../components/refund-modal';
 // import RefundStatusCell from '../components/refund-status-cell';
-import { getHeaders, parseQuery } from '@/util/utils';
+import { parseQuery } from '@/util/utils';
 import SelectOrderType from './SelectOrderType';
 import withModal from './withModal';
 const { RangePicker } = DatePicker;
@@ -74,27 +74,12 @@ class OrderList extends React.Component {
     if (noFetch) {
       return;
     }
-    if (isExport) {
+    getOrderList(params).then((res = {}) => {
       this.setState({
-        loading: true
+        list: res.records,
+        total: res.total
       });
-      exportOrder(params)
-        .then(res => {
-          res && message.success('导出成功');
-        })
-        .finally(() => {
-          this.setState({
-            loading: false
-          });
-        });
-    } else {
-      getOrderList(params).then((res = {}) => {
-        this.setState({
-          list: res.records,
-          total: res.total
-        });
-      });
-    }
+    });
   };
 
   handleSearch = () => {
@@ -119,11 +104,7 @@ class OrderList extends React.Component {
     } else if (status === 'error') {
       message.error(`${name} 文件上传错误.`);
     }
-  };
-
-  export = () => {
-    this.query(true);
-  };
+  }
 
   reset = () => {
     this.props.form.resetFields();
@@ -214,7 +195,6 @@ class OrderList extends React.Component {
             <Button type="link" href={window.location.pathname + `#/fresh/order/detail/${orderCode}`} target="_blank">
               查看详情
             </Button>
-            <Divider type="vertical" />
           </>
         )
       }
@@ -389,23 +369,6 @@ class OrderList extends React.Component {
                 <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>
                   查询订单
                 </Button>
-                <Button type="primary" onClick={this.export}>
-                  导出订单
-                </Button>
-                {/* {this.props.orderStatus === enumOrderStatus.Undelivered && (
-                  <Upload
-                    name="file"
-                    accept=".xls,.xlsx"
-                    showUploadList={false}
-                    withCredentials={true}
-                    action={importLogistics}
-                    headers={getHeaders({})}
-                    onChange={this.handleImportChange}
-                    style={{ margin: '0 10px' }}
-                  >
-                    <Button type="primary">导入物流单号</Button>
-                  </Upload>
-                )} */}
               </Col>
             </Row>
           </Form>

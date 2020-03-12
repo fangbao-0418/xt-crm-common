@@ -177,7 +177,7 @@ export function refundDetail(params: any) {
   return fetch(`/order/afterSale/afterSalesInfo?${qs.stringify(params)}`)
 }
 export function exportOrder(data: any) {
-  return exportFile('/order/export', data);
+  return exportFile('/order/freshExport', data);
 }
 
 export const importLogistics = prefix('/order/logistics/import');

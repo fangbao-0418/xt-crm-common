@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { push1688, withhold, getProceedsListByOrderId, cancelIntercept } from '../api';
+import { getProceedsListByOrderId } from '../api';
 import { get, map } from 'lodash';
-import { Button, Row, Card, Col, message, Modal, Divider } from 'antd';
+import { Row, Card, Col, Divider } from 'antd';
 import BuyerInfo from './buyer-info';
 import OrderInfo from './order-info';
 import GoodsTable from './goods-table';
@@ -11,54 +11,9 @@ import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant';
 import { dateFormat } from '@/util/utils';
 import moment from 'moment';
 import WithModal from './components/modal'
-import ModifyAddress from './components/modifyAddress'
 import { namespace } from './model'
 import { connect } from 'react-redux'
 import If from '@/packages/common/components/if'
-
-/**
- * 海淘状态
- * 10-用户已下单，20-订单提交中，21-订单提交失败，22-订单提交成功，30-支付单提交中，31-支付提交失败，
- * 32-支付单提交成功，40-已推送保税仓，41-推送保税仓失败，50-海关清关中，51-海关清关失败，60-保税仓准备中，70-保税仓已发货
- */
-const globalOrderStatusConfig = {
-  '10': '用户已下单',
-  '20': '订单提交中',
-  '21': '订单提交失败',
-  '22': '订单提交成功',
-  '30': '支付单提交中',
-  '31': '支付提交失败',
-  '32': '支付单提交成功',
-  '40': '已推送保税仓',
-  '41': '推送保税仓失败',
-  '50': '海关清关中',
-  '51': '海关清关失败',
-  '60': '保税仓准备中',
-  '70': '保税仓已发货'
-}
-
-/**
- * 订单推送海关状态
- */
-const orderPushCustomsStatusConfig = {
-  '1': '未推送',
-  '2': '已推送',
-  '3': '处理成功',
-  '4': '处理失败'
-}
-
-/**
- * 支付单推送状态
- */
-const paymentPushCustomsStatusConifg = {
-  '1': '未推送',
-  '2': '已推送属地',
-  '3': '处理成功',
-  '4': '处理失败',
-  '5': '已推送总署'
-}
-const { confirm } = Modal;
-
 @connect((state) => ({
   data: state[namespace].data,
   childOrderList: state[namespace].childOrderList
@@ -116,91 +71,15 @@ class Detail extends Component {
     })
   }
 
-  /**
-   * 推送到1688
-   * @param {string} id 订单Id  
-   */
-  push1688(id) {
-    if (this.pushload) return;
-    this.pushload = true;
-    push1688(id).then(res => {
-      if (res.success) {
-        message.success('操作成功');
-      } else {
-        message.error(res.message)
-      }
-    }).finally(() => {
-      this.pushload = false;
-    })
-  }
-
-  /**
-   * 发起代扣
-   * @param {string} id 订单Id 
-   */
-  withhold(id) {
-    if (this.holdload) return;
-    this.holdload = true;
-    withhold(id).then(res => {
-      if (res && res.success) {
-        message.success('操作成功');
-      } else {
-        message.error(res.message)
-      }
-    }).finally(() => {
-      this.holdload = false;
-    })
-  }
-
-  /**
-   * 确认发起代扣弹窗
-   * @param {string} id 订单Id 
-   */
-  comfirmWithhold = (id) => {
-    confirm({
-      title: '确认重新发起代扣?',
-      onOk() {
-        this.withhold(id)
-      }
-    });
-  }
-
-  /**
-   * 确认推送1688弹窗
-   * @param {string} id 订单Id 
-   */
-  comfirmPush1688 = (id) => {
-    confirm({
-      title: '确认重新推送1688?',
-      onOk() {
-        this.push1688(id)
-      }
-    });
-  }
-
-  // 修改收货地址弹窗
-  changeModifyAddress = (isOk) => {
-    this.setState({
-      modifyAddressVisible: !this.state.modifyAddressVisible
-    }, () => {
-      isOk && this.query();
-    })
-  }
-
   render() {
     const { data, childOrderList } = this.props
     let { 
       userProceedsListByOrderId,
-      goodsTableKey,
-      deliveryVisible,
-      deliveryData,
-      modifyAddressVisible
+      goodsTableKey
     } = this.state
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderType = get(data, 'orderInfo.orderType');
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
-    const showFlag = !!data.orderGlobalExtendVO 
-    const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
     console.log(childOrderList, 'childOrderListchildOrderListchildOrderListchildOrderList')
     return (
       <>
@@ -213,40 +92,6 @@ class Detail extends Component {
         <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress}/>
         {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
-        {/* 海关信息 */}
-        <Card title='海关信息' hidden={!showFlag}>
-          <Row gutter={24}>
-            <Col span={8}>海淘状态：{globalOrderStatusConfig[orderGlobalExtendVO.globalOrderStatus]}</Col>
-            <Col span={8}>清关完成时间：{!!orderGlobalExtendVO.customsClearanceTime && APP.fn.formatDate(orderGlobalExtendVO.customsClearanceTime)}</Col>
-          </Row>
-          <Row gutter={24}>
-            <Col span={8}>订单报文：{orderPushCustomsStatusConfig[orderGlobalExtendVO.orderPushCustomsStatus]}
-              <Button type='link'
-                onClick={() => {
-                  this.props.modal.show({
-                    type: 'orderMessage',
-                    title: '订单报文详情',
-                    ...orderGlobalExtendVO
-                  })
-                }}>
-                查看详情
-              </Button>
-            </Col>
-            <Col span={8}>支付单报文：{paymentPushCustomsStatusConifg[orderGlobalExtendVO.paymentPushCustomsStatus]}
-              <Button
-                type='link'
-                onClick={() => {
-                  this.props.modal.show({
-                    type: 'payMessage',
-                    title: '支付单报文详情',
-                    ...orderGlobalExtendVO
-                  })
-                }}>
-                查看详情
-              </Button>
-            </Col>
-          </Row>
-        </Card>
         <Card title="详细信息">
           {map(childOrderList, (item, index) => {
             return (
@@ -268,7 +113,6 @@ class Detail extends Component {
                         <Col span={8}>
                           <span>子订单号{index + 1}: </span>
                           <span>{item.childOrder.orderCode}</span>
-                          <span> {Number(item.childOrder.interceptorType) === 10 ? '(拦截订单)' : ''}</span>
                         </Col>
                         <Col span={8}>
                           <span>订单状态：</span>
@@ -323,18 +167,6 @@ class Detail extends Component {
         </Card>
       </>
     );
-  }
-
-  cancelInterceptor = ({
-    childOrder
-  }) => {
-    console.log(childOrder);
-    cancelIntercept({ interceptOrderId: childOrder.interceptorOrderRecordId, memberId: childOrder.interceptorMemberId }).then((res) => {
-      if (res) {
-        message.success('取消成功');
-        this.query();
-      }
-    })
   }
 
   onOk = () => {
