@@ -382,14 +382,11 @@ class ActivityDetail extends React.Component {
             value: text,
             onChange: this.handleChangeValue('inventory', index)
           }
-          if (record.sellableQty) {
-            props.max = record.sellableQty
-          }
           return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
         },
       },
       {
-        title: '可用库存',
+        title: '商品可用库存',
         dataIndex: 'stock',
         render: (text, record, index) => {
           // 1.售后详情中 订单信息模块 需要添加订单类型的属性
