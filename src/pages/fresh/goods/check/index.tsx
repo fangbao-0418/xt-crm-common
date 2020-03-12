@@ -47,15 +47,18 @@ class Main extends React.Component<any, State> {
     {
       title: 'ID',
       dataIndex: 'id',
-      key: 'id',
+      key: 'id'
     },
     {
       title: '商品',
       dataIndex: 'productName',
       key: 'productName',
-      width: 400,
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
-        return <GoodCell skuName={text} coverUrl={record.coverUrl} />
+        return (
+          <div style={{ height: 100 }}>
+            <GoodCell skuName={text} coverUrl={record.coverUrl} />
+          </div>
+        )
       }
     },
     {
@@ -65,19 +68,16 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '库存',
-      width: 100,
       dataIndex: 'stock',
       key: 'stock'
     },
     {
       title: '供应商名称',
-      width: 150,
       dataIndex: 'storeName',
       key: 'storeName',
     },
     {
       title: '一级类目',
-      width: 150,
       dataIndex: 'firstCategoryName',
       key: 'firstCategoryName',
     },
@@ -89,7 +89,6 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '审核状态',
-      width: 150,
       dataIndex: 'auditStatus',
       key: 'auditStatus',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
@@ -98,7 +97,6 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '审核人',
-      width: 150,
       dataIndex: 'auditUser',
       key: 'auditUser',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
@@ -107,7 +105,6 @@ class Main extends React.Component<any, State> {
     },
     {
       title: '审核时间',
-      width: 180,
       dataIndex: 'auditTime',
       key: 'auditTime',
       render: formatTime
