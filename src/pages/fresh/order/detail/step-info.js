@@ -1,31 +1,31 @@
-import React from 'react';
-import { Steps, Card } from 'antd';
-import { enumOrderStatus } from '../constant';
-import { formatDate } from '@/pages/helper';
-const { Step } = Steps;
+import React from 'react'
+import { Steps, Card } from 'antd'
+import { enumOrderStatus } from '../constant'
+import { formatDate } from '@/pages/helper'
+const { Step } = Steps
 
-function getCurrentIndex(orderStatus, orderType) {
+function getCurrentIndex(orderStatus) {
   const orderStatusMap = {
     [enumOrderStatus.Unpaid]: 0,
     [enumOrderStatus.Undelivered]: 1,
-    [enumOrderStatus.Delivered]: 3,
-    [enumOrderStatus.Complete]: 4
+    [enumOrderStatus.Delivered]: 2,
+    [enumOrderStatus.Complete]: 3
   }
   return orderStatusMap[orderStatus]
 }
 
 function getStatusTime(orderStatusLogList = [], orderStatus) {
   const found =
-    orderStatusLogList && orderStatusLogList.find(item => item.orderStatus === orderStatus);
+    orderStatusLogList && orderStatusLogList.find(item => item.orderStatus === orderStatus)
 
-  return found ? formatDate(found.createTime) : '';
+  return found ? formatDate(found.createTime) : ''
 }
 
-const StepInfo = ({ orderType, orderStatus, orderStatusLogList = [] }) => {
+const StepInfo = ({ orderStatus, orderStatusLogList = [] }) => {
   if (orderStatus === enumOrderStatus.Closed) {
-    return null;
+    return null
   }
-  const current = getCurrentIndex(orderStatus, orderType);
+  const current = getCurrentIndex(orderStatus)
 
   return (
     <Card>
@@ -48,7 +48,7 @@ const StepInfo = ({ orderType, orderStatus, orderStatusLogList = [] }) => {
         />
       </Steps>
     </Card>
-  );
-};
+  )
+}
 
-export default StepInfo;
+export default StepInfo

@@ -77,14 +77,11 @@ class Detail extends Component {
       userProceedsListByOrderId,
       goodsTableKey
     } = this.state
-    const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
-    const orderType = get(data, 'orderInfo.orderType');
-    const orderStatusLogList = get(data, 'orderStatusLogList', []);
-    console.log(childOrderList, 'childOrderListchildOrderListchildOrderListchildOrderList')
+    const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid)
+    const orderStatusLogList = get(data, 'orderStatusLogList', [])
     return (
       <>
         <StepInfo
-          orderType={orderType}
           orderStatus={orderStatus}
           orderStatusLogList={orderStatusLogList}
         />
