@@ -15,7 +15,8 @@ export function formatMoney(money) {
 }
 
 export function formatMoneyWithSign(money, decimal = 2, sign = '￥') {
-  return `￥${formatMoney(money).toFixed(decimal)}`;
+  // return `￥${formatMoney(money).toFixed(decimal)}`;
+  return APP.fn.formatMoney(money)
 }
 
 export function unionAddress(args) {
