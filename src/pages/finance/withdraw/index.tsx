@@ -256,16 +256,22 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
         this.batchPaymentForm.props.form.validateFields((err) => {
           const vals = this.batchPaymentForm.getValues();
           if (!err) {
-            batchSubmit({
-              batchId,
-              startTime: moment(vals.startTime).format('YYYY-MM-DD'),
-              endTime: moment(vals.endTime).format('YYYY-MM-DD')
-            }).then(res => {
-              if (res) {
-                hide()
-                APP.success('批量打款成功');
+            Modal.confirm({
+              title: '系统提示',
+              content: '请确保财务向连连账号中充值后再行操作，否则提现将全部失败',
+              onOk: () => {
+                batchSubmit({
+                  batchId,
+                  startTime: moment(vals.startTime).format('YYYY-MM-DD'),
+                  endTime: moment(vals.endTime).format('YYYY-MM-DD')
+                }).then(res => {
+                  if (res) {
+                    hide()
+                    APP.success('批量打款成功');
+                  }
+                })
               }
-            })
+              });
           }
         })
       }
