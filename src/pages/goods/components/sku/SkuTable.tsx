@@ -304,7 +304,7 @@ class Main extends React.Component<Props, State> {
         width: 100,
       },
       {
-        title: '编辑库存',
+        title: '加减可用库存',
         dataIndex: 'incStock',
         width: 100,
         render: (text: any, record, index: any) =>
