@@ -8,8 +8,8 @@ import SkuUploadItem from './components/SkuUploadItem';
 import Image from '@/components/Image';
 import styles from './style.module.scss';
 import { replaceHttpUrl, parseQuery } from '@/util/utils';
-import { formatPrice } from '@/util/format';
-import { auditGoods, getDetail } from './api';
+import SaleArea from '@/components/sale-area';
+import { auditGoods } from './api';
 const { TextArea } = Input;
 const formLayout = {
   labelCol: {
@@ -20,27 +20,7 @@ const formLayout = {
     xs: { span: 24 },
     sm: { span: 12 }
   }
-};
-
-/**
- * 映射特定区域数组
- * {
- *  cost, // 金额
- *  describe,
- *  destinationList,
- *  rankNo,
- *  rankType
- * }[]
- * @param list
- */
-const mapTemplateData = list => {
-  return (list || []).map(item => {
-    return {
-      ...item,
-      cost: item.cost && formatPrice(item.cost)
-    };
-  });
-};
+}
 
 const collection = {
   property1: {
@@ -59,12 +39,6 @@ const collection = {
 function filterProp(obj) {
   obj = obj || {};
   return Object.keys(collection).filter(key => obj[key]);
-}
-
-/** 返回地址 */
-function getAddress(...args) {
-  args = args.filter(Boolean);
-  return args.length > 0 ? args.join(' ') : '无';
 }
 
 /**
@@ -127,10 +101,7 @@ function normalizeVideoUrl(url) {
   const index = url.indexOf('?')
   return url.indexOf('?') !== -1 ? url.slice(0, index): url
 }
-const styleObject = {
-  backgroundColor: '#fafafa',
-  padding: '0 16px'
-};
+
 class GoodsEdit extends React.Component {
   constructor(props) {
     super(props);
@@ -143,7 +114,8 @@ class GoodsEdit extends React.Component {
     commonCost: '',
     templateName: '',
     templateData: [],
-    destinationList: []
+    destinationList: [],
+    productSaleAreas: []
   };
   componentDidMount() {
     this.getStoreList();
@@ -197,55 +169,6 @@ class GoodsEdit extends React.Component {
     });
   };
   render() {
-    const editColumns = [
-      {
-        title: '编号',
-        key: 'index',
-        width: 80,
-        render: (text, record, index) => {
-          return index + 1;
-        }
-      },
-      {
-        title: '目的地',
-        dataIndex: 'destinationList',
-        key: 'destinationList',
-        width: '60%',
-        render: (destinationList, record, index) => {
-          return (
-            <div className={styles.areas}>
-              <div style={{ maxWidth: '90%' }}>
-                {destinationList.map(v => (
-                  <span key={v.id}>
-                    {v.name}（{v.children.length}）
-                  </span>
-                ))}
-              </div>
-              <div className={styles.operate}>
-                <Button
-                  type="link"
-                  onClick={() => {
-                    this.setState({
-                      destinationList,
-                      visible: true
-                    });
-                  }}
-                >
-                  查看
-                </Button>
-              </div>
-            </div>
-          );
-        }
-      },
-      {
-        title: '运费/元',
-        key: 'fare',
-        render: (text, record, index) => {
-          return record.rankType === 1 ? record.cost : '不发货';
-        }
-      }
-    ];
     const columns = [
       {
         title: '规格编码',
@@ -281,8 +204,6 @@ class GoodsEdit extends React.Component {
     const {
       detail,
       detail: {
-        /** 是否可拦截 */
-        interceptionVisible,
         /** 商品简称 */
         productShortName,
         /** 商品编码 */
@@ -293,14 +214,6 @@ class GoodsEdit extends React.Component {
         barCode,
         /** 供应商ID */
         storeId,
-        /** 供应商商品ID */
-        storeProductId,
-        /** 是否可被拦截发货 */
-        interception,
-        /** 是否需要实名认证 */
-        isAuthentication,
-        /** 是否展示销量 */
-        showNum,
         /** 视频封面地址 */
         videoCoverUrl,
         /** 商品名称 */
@@ -309,8 +222,6 @@ class GoodsEdit extends React.Component {
         combineName,
         /** 商品详情图 */
         listImage,
-        /** 运费设置 */
-        withShippingFree,
         /** 商品主图 */
         coverUrl,
         /** banner图片 */
@@ -321,12 +232,6 @@ class GoodsEdit extends React.Component {
         bulk,
         /** 物流重量 */
         weight,
-        /** 退货联系人 */
-        returnContact,
-        /** 退货联系电话 */
-        returnPhone,
-        /** 退货地址 */
-        returnAddress,
         /** sku列表 */
         skuList,
         /** 视频地址 */
@@ -409,7 +314,6 @@ class GoodsEdit extends React.Component {
                 '无'
               )}
             </Form.Item>
-            {/* <Form.Item label="累计销量">{showNum ? '展示' : '不展示'}</Form.Item> */}
           </Card>
           <Card title="商品规格">
             {getSpecs(detail).map((spec, key) => {
@@ -440,6 +344,9 @@ class GoodsEdit extends React.Component {
           <Card title="物流信息" style={{ marginTop: 10 }}>
             <Form.Item label="商品体积">{bulk || '无'}</Form.Item>
             <Form.Item label="商品重量">{weight || '无'}</Form.Item>
+            <Form.Item label='可售区域'>
+              <SaleArea value={detail.productSaleAreas} readOnly/>
+            </Form.Item>
           </Card>
           <Card title="商品详情" style={{ marginTop: 10 }}>
             <Form.Item label="商品详情页">
@@ -458,7 +365,6 @@ class GoodsEdit extends React.Component {
                   ))
                 : '无'}
             </Form.Item>
-            {/* <Form.Item label='上架状态'>{status === 1 ? '上架': '下架'}</Form.Item> */}
           </Card>
           <Card title="审核结果">
             {this.auditStatus === '1' ? (

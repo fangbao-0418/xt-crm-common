@@ -1,6 +1,6 @@
 import React, { Children } from 'react'
 import { Input } from 'antd'
-import TreeCheckBox, { getCheckedKeys } from '@/packages/common/components/tree-checkbox'
+import TreeCheckBox from '@/packages/common/components/tree-checkbox'
 import { If } from '@/packages/common/components'
 import { getAddress } from './api'
 const { TextArea } = Input
@@ -24,11 +24,9 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
   treeCheckBox: TreeCheckBox
   componentWillReceiveProps(props: SaleAreaProps) {
     const treeData = this.treeCheckBox.getTreeData(props.value) || []
-    console.log('props.value =>', props.value)
-    console.log('getCheckedKeys(treeData =>', getCheckedKeys(treeData))
     this.setState({
       text: treeData.map(v => `${v.name}（${v.children.length}）`).join('、'),
-      checkedKeys: getCheckedKeys(treeData)
+      checkedKeys: this.treeCheckBox.getCheckedKeys(treeData)
     })
   }
   saveRef = (ref: TreeCheckBox) => {
@@ -99,7 +97,6 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
           }}
           onOk={(e) => {
             const { onChange } = this.props
-            console.log('onOk e.checkedKeys =>', e.checkedNodes)
             this.setState({
               visible: false,
               checkedKeys: e.checkedKeys
