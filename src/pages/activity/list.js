@@ -70,7 +70,7 @@ class List extends React.Component {
           listData: res.records,
           page,
         });
-        setQuery({ page: page.current, pageSize: page.pageSize, ...params });
+        setQuery({ page: page.current, pageSize: page.pageSize, ...params }, true);
       },
     );
   };
