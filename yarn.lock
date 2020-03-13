@@ -10731,15 +10731,6 @@ react-dnd@^9.4.0:
     hoist-non-react-statics "^3.3.0"
     shallowequal "^1.1.0"
 
-react-dom@^16.8.0:
-  version "16.13.0"
-  resolved "http://192.168.20.8:802/react-dom/-/react-dom-16.13.0.tgz#cdde54b48eb9e8a0ca1b3dc9943d9bb409b81866"
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
-    scheduler "^0.19.0"
-
 react-error-overlay@^5.1.4:
   version "5.1.6"
   resolved "http://192.168.20.8:802/react-error-overlay/-/react-error-overlay-5.1.6.tgz#0cd73407c5d141f9638ae1e0c63e7b2bf7e9929d"
@@ -11504,13 +11495,6 @@ sass-loader@7.1.0:
 sax@>=0.6.0, sax@^1.2.4, sax@~1.2.4:
   version "1.2.4"
   resolved "http://192.168.20.8:802/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
-
-scheduler@^0.19.0:
-  version "0.19.0"
-  resolved "http://192.168.20.8:802/scheduler/-/scheduler-0.19.0.tgz#a715d56302de403df742f4a9be11975b32f5698d"
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
 
 schema-utils@^0.4.4:
   version "0.4.7"

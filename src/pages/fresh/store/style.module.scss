@@ -1,0 +1,13 @@
+.input-wrapper {
+    overflow: hidden;
+    &-content,
+    &-placeholder {
+      float: left;
+    }
+    &-placeholder {
+      color: #999;
+      font-size: 14px;
+      margin-top: 70px;
+    }
+  }
+  
