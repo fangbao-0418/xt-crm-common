@@ -232,6 +232,7 @@ class SupplierModal extends Component {
                 {getFieldDecorator('saleAreaList', {
                   rules: [{
                     validator: async (rules, value) => {
+                      console.log('value =>', value)
                       if (!value || Array.isArray(value) && value.length === 0) {
                         throw new Error('请选择可售区域')
                       }

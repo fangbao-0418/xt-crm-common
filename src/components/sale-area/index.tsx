@@ -1,8 +1,7 @@
 import React, { Children } from 'react'
 import { Input } from 'antd'
-import TreeCheckBox from '@/packages/common/components/tree-checkbox'
+import TreeCheckBox, { getCheckedKeys } from '@/packages/common/components/tree-checkbox'
 import { If } from '@/packages/common/components'
-import { groupBy } from 'lodash'
 import { getAddress } from './api'
 const { TextArea } = Input
 interface SaleAreaProps {
@@ -16,68 +15,22 @@ interface SaleAreaState {
   text: string,
   checkedKeys: string[]
 }
-
-
-function buildTree (list?: any[]) {
-  list = list || []
-  const provinces = groupBy(list, (item) => item.provinceId + ',' + item.province)
-  let citys: any = {}
-  for (const name in provinces) {
-    citys[name] = groupBy(provinces[name], (item1) => item1.cityId + ',' + item1.city)
-  }
-  // console.log('分组后的', citys)
-
-  function loop(citys: any[]) {
-    if (Object.prototype.toString.call(citys) === '[object Object]') {
-      let result: any[] =  []
-      for (let prop in citys) {
-        const [id, name] = prop.split(',')
-        result.push({ id, name, children: loop(citys[prop]) })
-      }
-      return result
-    }
-    return citys
-  }
-  console.log('分组后的', loop(citys))
-  return loop(citys)
-}
-
-function nodes2Texts(nodes: any[]) {
-  return (nodes || []).map((v: any) => {
-    return `${v.name}（${v.length}）`
-  }).join('、')
-}
-
-function convert(nodes: any[]) {
-  nodes = nodes || []
-  const result: any = {}
-  for (let item of nodes) {
-    if(!result[item.provinceId]){
-      result[item.provinceId] = {
-        ...item,
-        cityIds: [item.cityId]
-      }
-    } else if(result[item.provinceId].cityIds.indexOf(item.cityId) == -1 && item.provinceId == result[item.provinceId].provinceId ){
-      result[item.provinceId].cityIds.push(item.cityId)
-    }
-  }
-  return Object.values(result)
-}
 class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
   state: SaleAreaState = {
     visible: false,
     text: '',
     checkedKeys: []
   }
+  treeCheckBox: TreeCheckBox
   componentWillReceiveProps(props: SaleAreaProps) {
-    // buildTree(props.value)
-    const checkedOptions = props.value || []
+    const treeData = this.treeCheckBox.getTreeData(props.value) || []
     this.setState({
-      text: convert(checkedOptions).map((v: any) => {
-        return `${v.province}（${v.cityIds.length}）`
-      }).join('、'),
-      checkedKeys: checkedOptions.map((v: any) => v.districtId + '')
+      text: treeData.map(v => `${v.name}（${v.children.length}）`).join('、'),
+      checkedKeys: getCheckedKeys(treeData)
     })
+  }
+  saveRef = (ref: TreeCheckBox) => {
+    this.treeCheckBox = ref
   }
   render() {
     const { visible, text, checkedKeys } = this.state
@@ -126,24 +79,30 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
           </span>
         </If>
         <TreeCheckBox
+          ref={this.saveRef}
           title='选择区域'
           api={getAddress}
           checkedKeys={checkedKeys}
           visible={visible}
-          readOnly={this.props.readOnly}
-          checkedNodes={buildTree(this.props.value)}
+          disabled={this.props.readOnly}
           onCancel={() => {
             this.setState({
               visible: false
             })
           }}
+          onChange={(checkedKeys: string[]) => {
+            this.setState({
+              checkedKeys
+            })
+          }}
           onOk={(e) => {
+            console.log('e =>', e)
             const { onChange } = this.props
             this.setState({
               visible: false,
-              text: nodes2Texts(e.textNodes)
+              checkedKeys: e.checkedKeys
             })
-            onChange && onChange(e.businessCheckNodes)
+            onChange && onChange(e.checkedNodes)
           }}
         />
       </>
