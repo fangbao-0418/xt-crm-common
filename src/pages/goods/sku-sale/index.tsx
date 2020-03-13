@@ -3,7 +3,6 @@ import { Card, Tabs, Button, Modal, message } from 'antd';
 import dateFns from 'date-fns';
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
 import { gotoPage, replaceHttpUrl } from '@/util/utils';
-import { formatMoneyWithSign } from '../../helper';
 import Image from '@/components/Image';
 import SelectFetch from '@/components/select-fetch';
 import { If, ListPage, FormItem } from '@/packages/common/components';
@@ -59,13 +58,13 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       title: '成本价',
       width: 100,
       dataIndex: 'costPrice',
-      render: formatMoneyWithSign
+      render: APP.fn.formatMoney
     },
     {
       title: '销售价',
       width: 100,
       dataIndex: 'salePrice',
-      render: formatMoneyWithSign
+      render: APP.fn.formatMoney
     },
     {
       title: '库存',
