@@ -51,7 +51,6 @@
     "react": "^16.8.0",
     "react-dnd": "^9.4.0",
     "react-dnd-html5-backend": "^9.4.0",
-    "react-dom": "^16.8.0",
     "react-intl": "^2.7.2",
     "react-loadable": "^5.5.0",
     "react-redux": "^5.1.1",
@@ -93,8 +92,8 @@
     "tslint-loader": "^3.5.4",
     "tslint-react": "^4.2.0",
     "typescript": "^3.6.2",
-    "yapi-to-typescript": "^2.0.2",
-    "webpack-bundle-analyzer": "^3.6.0"
+    "webpack-bundle-analyzer": "^3.6.0",
+    "yapi-to-typescript": "^2.0.2"
   },
   "browserslist": [
     ">0.2%",

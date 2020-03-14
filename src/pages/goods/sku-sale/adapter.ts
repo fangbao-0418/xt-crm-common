@@ -54,7 +54,7 @@ export function formResponse(res: any) {
     item = filterMoney(item, 'res', fields);
     return item;
   });
-  res.showImage = skuList.every(v => !!v.imageUrl1);
+  res.showImage = !!skuList.find(v => !!v.imageUrl1);
   res.freightTemplateId = res.freightTemplateId ? res.freightTemplateId + '' : '';
   res.status = +res.status;
   res.productCustomsDetailVOList = res.productCustomsDetailVOList || [];
