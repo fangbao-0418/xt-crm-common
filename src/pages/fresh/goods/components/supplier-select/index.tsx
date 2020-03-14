@@ -22,7 +22,7 @@ interface SupplierSelectState {
 }
 class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelectState> {
   lastFetchId: number = 0;
-  defaultProps = {
+  static defaultProps = {
     type: 'normal'
   }
   constructor (props: SupplierSelectProps) {
