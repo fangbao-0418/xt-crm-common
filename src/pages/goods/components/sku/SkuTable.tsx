@@ -1196,7 +1196,10 @@ class Main extends React.Component<Props, State> {
                       productBasics={combination(record.productBasics)}
                       onOk={({ selectedRowKeys, productBasics, selectedRowKeysMap }: any) => {
                         const { dataSource } = this.state;
-                        dataSource[index].productBasics = [...productBasics];
+                        dataSource[index].productBasics = (productBasics || []).map((v: any) => {
+                          v.num = v.num || 1
+                          return v;
+                        });
                         this.setState({
                           selectedRowKeys,
                           dataSource,
