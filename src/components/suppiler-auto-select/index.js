@@ -4,7 +4,7 @@ import { getStoreList, getFreshList } from './api';
 import { map } from 'lodash';
 class SuppilerSelect extends Component {
   /** type  'normal' | 'fresh' */
-  defaultProps = {
+  static defaultProps = {
     type: 'normal'
   }
   state = {
