@@ -14,16 +14,17 @@ export default {
   effects: dispatch => ({
     // 获取类目列表
     async getList(payload, rootState) {
-      const res = await api.getList(payload);
+      const list = await api.getList(payload);
 
-      const { level, parentCategoryId } = payload;
+      const { level, parentCategoryId, name } = payload;
       const { levelList } = rootState['shop.commission']
       const curentLevel = levelList.find(levelItem => levelItem.id === level)
 
       if (!curentLevel) return
 
-      curentLevel.data = Array.isArray(res.data) ? res.data : []
+      curentLevel.data = Array.isArray(list) ? list : []
       curentLevel.parentId = parentCategoryId;
+      curentLevel.name = name;
       curentLevel.init = true;
 
       dispatch({
@@ -37,7 +38,6 @@ export default {
     // 获取类目详情
     async getDetai(payload) {
       const res = await api.getDetai(payload);
-      console.log(res)
       dispatch({
         type: 'shop.commission/saveDefault',
         payload: {
@@ -50,10 +50,26 @@ export default {
     },
 
     // 编辑类目
-    async updateCategory(payload, state) {
+    async updateCategory(payload, rootState) {
       const res = await api.editCategory(payload);
-      if (res.success) {
-        dispatch['shop.commission'].getList();
+      if (res) {
+        const { levelList } = rootState['shop.commission']
+        const curentLevel = levelList.find(levelItem => levelItem.id === payload.level)
+        if (!curentLevel) return
+        dispatch({
+          type: 'shop.commission/saveDefault',
+          payload: {
+            currentCategory: null,
+            configModal: {
+              visible: false
+            }
+          }
+        });
+        dispatch['shop.commission'].getList({
+          level: curentLevel.id,
+          name: curentLevel.name,
+          parentCategoryId: curentLevel.parentId
+        });
         Message.success('编辑成功');
       }
     }

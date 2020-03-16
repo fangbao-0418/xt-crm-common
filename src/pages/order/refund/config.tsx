@@ -167,9 +167,17 @@ export const formFields = function (refundStatus: any, intercept: any) {
       }, {
         val: '保税仓海外供应商',
         key: 4
+      }]
+    }, {
+      type: 'select',
+      id: 'smallShopOrder',
+      label: '是否小店订单',
+      options: [{
+        val: '全部',
+        key: ''
       }, {
-        val: '小店店长',
-        key: 5
+        val: '小店订单',
+        key: 1
       }]
     }
   ].filter((item: any) => {

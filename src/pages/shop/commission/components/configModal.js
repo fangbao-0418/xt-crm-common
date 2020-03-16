@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { Modal, Form, Radio, InputNumber, Checkbox, Row, Col } from 'antd';
 import If from '@/packages/common/components/if';
 import { connect } from '@/util/utils';
@@ -14,10 +14,28 @@ const FormItem = Form.Item;
 export default class ConfigModal extends Component {
   /** 确定操作 */
   handleOk = () => {
-    const { form: { validateFields }, dispatch } = this.props
-    validateFields((err, values) => {
+    const { form: { validateFields }, dispatch, currentCategory } = this.props
+    validateFields((err, { commissionType, agencyRate, companyRate, isCoverChildCategory }) => {
       if (err) return;
-      dispatch['shop.commission'].updateCategory(values);
+
+      const params = {
+        id: currentCategory.id,
+        level: currentCategory.level,
+        categoryId: currentCategory.categoryId,
+        parentCategoryId: currentCategory.parentCategoryId,
+        isCoverChildCategory: isCoverChildCategory ? 1 : 0,
+        commissionType
+      }
+
+      if (commissionType === 1) { // 继承父类目
+        params.agencyRate = currentCategory.parentAgencyRate
+        params.companyRate = currentCategory.parentCompanyRate
+      } else {
+        params.agencyRate = agencyRate
+        params.companyRate = companyRate
+      }
+
+      dispatch['shop.commission'].updateCategory(params);
     });
   }
 
@@ -71,7 +89,8 @@ export default class ConfigModal extends Component {
       },
     };
 
-    let rateType = getFieldValue('rateType') || currentCategory.currentCategory,
+    let level = currentCategory.level,
+      commissionType = getFieldValue('commissionType') === undefined ? currentCategory.commissionType : getFieldValue('commissionType'),
       agencyRate = currentCategory.agencyRate,
       companyRate = currentCategory.companyRate,
       isCoverChildCategory = currentCategory.isCoverChildCategory;
@@ -92,11 +111,11 @@ export default class ConfigModal extends Component {
             <Row>
               <Col span={8}>
                 <span className={styles.icon}>代</span>
-                {currentCategory.parentAgencyRate}
+                {currentCategory.parentAgencyRate} %
               </Col>
               <Col span={8}>
                 <span className={styles.icon}>公</span>
-                {currentCategory.parentCompanyRate}
+                {currentCategory.parentCompanyRate} %
               </Col>
             </Row>
           </FormItem>
@@ -104,21 +123,23 @@ export default class ConfigModal extends Component {
         <FormItem {...formItemLayout} label="类目名称">
           <span>{currentCategory.name}</span>
         </FormItem>
-        <FormItem {...formItemLayout} label="佣金类型">
-          {getFieldDecorator('rateType', {
-            rules: [
-              {
-                required: true,
-                message: '请选择佣金类型！'
-              }
-            ],
-            initialValue: rateType
-          })(<Radio.Group>
-            <Radio value={1}>继承父类目</Radio>
-            <Radio value={2}>独立设置</Radio>
-          </Radio.Group>)}
-        </FormItem>
-        <If condition={rateType === 2}>
+        <If condition={level !== 1}>
+          <FormItem {...formItemLayout} label="佣金类型">
+            {getFieldDecorator('commissionType', {
+              rules: [
+                {
+                  required: true,
+                  message: '请选择佣金类型！'
+                }
+              ],
+              initialValue: commissionType
+            })(<Radio.Group>
+              <Radio value={1}>继承父类目</Radio>
+              <Radio value={0}>独立设置</Radio>
+            </Radio.Group>)}
+          </FormItem>
+        </If>
+        <If condition={commissionType === 0}>
           <FormItem {...formItemLayout} label="代理佣金">
             {getFieldDecorator('agencyRate', {
               rules: [
@@ -128,7 +149,15 @@ export default class ConfigModal extends Component {
                 }
               ],
               initialValue: agencyRate
-            })(<InputNumber style={{ width: 120 }} placeholder='请输入' min={1} max={10} />)}
+            })(
+              <InputNumber
+                style={{ width: 120 }}
+                placeholder='请输入'
+                precision={1}
+                min={0}
+                max={100}
+              />
+            )}
             <span>{' %'}</span>
           </FormItem>
           <FormItem {...formItemLayout} label="公司佣金">
@@ -140,9 +169,19 @@ export default class ConfigModal extends Component {
                 }
               ],
               initialValue: companyRate
-            })(<InputNumber style={{ width: 120 }} placeholder='请输入' min={0} max={10} />)}
+            })(
+              <InputNumber
+                style={{ width: 120 }}
+                placeholder='请输入'
+                precision={1}
+                min={0}
+                max={100}
+              />
+            )}
             <span>{' %'}</span>
           </FormItem>
+        </If>
+        <If condition={level !== 3}>
           <FormItem {...formTailLayout}>
             {getFieldDecorator('isCoverChildCategory', {
               initialValue: isCoverChildCategory

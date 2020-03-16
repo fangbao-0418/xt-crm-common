@@ -1,5 +1,5 @@
 import { exportFile } from '../../util/fetch';
-const { post } = APP.http
+const { post, get } = APP.http
 const debug = false;
 
 const mockData = {
@@ -54,7 +54,7 @@ export function getSupplierDetail(data) {
       shortName: 'string',
     });
   }
-  return post('/store/detail', data);
+  return get('/store/detail', data);
 }
 
 export function addSupplier(data) {

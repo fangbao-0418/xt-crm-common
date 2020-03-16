@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Row, Col, Table } from 'antd'
+import { Card, Row, Col, Table, Avatar } from 'antd'
 import { getDetailColumns } from '../../constant'
 import { formatDate, joinFilterEmpty, formatMoneyWithSign } from '@/pages/helper'
 import { ColumnProps } from 'antd/es/table'
@@ -9,15 +9,18 @@ import memberType from '@/enum/memberType'
 import moment from 'moment'
 type OrderInfoVO = AfterSalesInfo.OrderInfoVO
 type ProductVO = AfterSalesInfo.ProductVO
+type ShopDTO = AfterSalesInfo.ShopDTO
 const columns: ColumnProps<ProductVO>[] = getDetailColumns()
 interface Props extends React.Props<{}> {
-  orderInfoVO: OrderInfoVO
+  orderInfoVO: OrderInfoVO;
+  shopDTO: ShopDTO;
 }
 const OrderInfo: React.FC<Props> = (props: Props) => {
   const orderInfoVO = Object.assign({}, props.orderInfoVO);
+  const shopDTO = props.shopDTO;
   return (
     <Card>
-      <h4 style={{marginTop: 0}}>订单信息</h4>
+      <h4 style={{ marginTop: 0 }}>订单信息</h4>
       <Row gutter={24}>
         <Col span={8}>主订单号：<Link to={`/order/detail/${orderInfoVO.mainOrderCode}`}>{orderInfoVO.mainOrderCode}</Link></Col>
         <Col span={8}>子订单号：{orderInfoVO.childOrderCode}</Col>
@@ -52,17 +55,22 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         </Col>
       </Row>
       <h4>供应商信息</h4>
-      <Row gutter={24}>
-        <Col span={8}>
-          名称：小店店长昵称
-        </Col>
-        <Col span={8}>
-          手机号：1888888888
-        </Col>
-        <Col span={8}>
-          供应商类型：小店店长
-        </Col>
-      </Row>
+      {
+        shopDTO ? (
+          <Row gutter={24}>
+            <Col span={8}>
+              <Avatar src={shopDTO.shopPictrueUrl} />
+              名称：{shopDTO.shopName}
+            </Col>
+            <Col span={8}>
+              手机号：{shopDTO.shopOwnerPhone}
+            </Col>
+            <Col span={8}>
+              供应商类型：{shopDTO.shopCode}
+            </Col>
+          </Row>
+        ) : '暂无信息'
+      }
       <Row>
         <h4>物流信息</h4>
         <Table rowKey={(record: any) => record.id} style={{ width: '400px' }} pagination={false} columns={logisticsInformationColumns} dataSource={orderInfoVO.expressVO || []} />

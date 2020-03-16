@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/util/utils';
-import { Row, Col, Icon } from 'antd';
+import { Row, Col, Icon, Tooltip } from 'antd';
 import CategorySelect from '@/components/categorySelect';
 import ConfigModal from './components/configModal';
 import styles from './index.module.scss';
@@ -12,6 +12,7 @@ export default class extends Component {
 
   componentDidMount() {
     this.fetchaData({
+      name: '',
       level: 1,
       parentCategoryId: 0
     });
@@ -52,8 +53,9 @@ export default class extends Component {
 
     // 请求下一级数据
     this.fetchaData({
+      name: '',
       level: levelItem.id + 1,
-      parentCategoryId: innerItem.id
+      parentCategoryId: innerItem.categoryId
     });
   }
 
@@ -70,6 +72,11 @@ export default class extends Component {
     return (
       <div>
         <Icon type="edit" onClick={() => this.handleShowCategoryModal(innerItem)} />
+        {
+          innerItem.commissionType === 1 ? <Tooltip placement="bottom" title="继承父类目">
+            <Icon type="fork" />
+          </Tooltip> : ''
+        }
       </div>
     )
   }
@@ -93,7 +100,8 @@ export default class extends Component {
                     data={levelItem.data}
                     onSearch={(value) => this.handleSearch(value, levelItem)}
                     onItemClick={(innerItem) => this.handleItemClick(innerItem, levelItem)}
-                    renderDesc={innerItem => 
+                    inheritMark={true}
+                    renderDesc={innerItem =>
                       <Row>
                         <Col span={12} style={{ textAlign: 'center' }}>
                           <span className={styles.icon}>代</span>
