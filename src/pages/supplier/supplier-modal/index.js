@@ -3,7 +3,6 @@ import { Modal, Button, Form, Input, message, Row } from 'antd';
 import { getSupplierDetail, updateSupplier, addSupplier } from '../api';
 import SupplierTypeSelect from '../../../components/supplier-type-select';
 import SaleArea from '@/components/sale-area';
-import { If } from '@/packages/common/components';
 const FormItem = Form.Item;
 
 const formItemLayout = {
@@ -227,7 +226,7 @@ class SupplierModal extends Component {
                 <SupplierTypeSelect disabled={this.props.isEdit} />
               )}
             </FormItem>
-            <If condition={this.state.saleAreaVisible}>
+            {this.state.saleAreaVisible && (
               <FormItem required label='可售区域'>
                 {getFieldDecorator('saleAreaList', {
                   rules: [{
@@ -243,7 +242,7 @@ class SupplierModal extends Component {
                   <SaleArea readOnly={this.props.isEdit}/>
                 )}
               </FormItem>
-            </If>
+            )}
           </Form>
         </Modal>
       </>
