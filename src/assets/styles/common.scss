@@ -106,3 +106,9 @@
 .ant-card + .ant-card {
   margin-top: 10px;
 }
+
+.vertical-align-table {
+  .ant-table-tbody>tr>td, .ant-table-thead>tr>th {
+    vertical-align: middle;
+  }
+}
