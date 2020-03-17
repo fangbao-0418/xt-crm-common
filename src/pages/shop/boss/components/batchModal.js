@@ -16,6 +16,7 @@ export default class extends Component {
     const { form: { validateFields }, dispatch } = this.props
     validateFields((err, values) => {
       if (err) return;
+      console.log(values)
       dispatch['shop.boss'].checkUser(values);
     });
   }
@@ -58,7 +59,7 @@ export default class extends Component {
       >
         <Form layout="vertical">
           <FormItem label="请输入手机号">
-            {getFieldDecorator('phone', {
+            {getFieldDecorator('phones', {
               rules: [{
                 required: true,
                 message: '请输入至少一个手机号码！'

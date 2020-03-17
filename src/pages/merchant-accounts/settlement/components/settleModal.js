@@ -15,17 +15,19 @@ class SettleModal extends React.Component {
       handleSucc,
     } = this.props;
     const { payRateErr } = this.setState;
-    validateFields((err, vals) => {
+    validateFields((err, { payMode, payModNum, keys, payRate, payPeriod } ) => {
       if (err || payRateErr) return
-      console.log(vals)
+      
+
+
       return;
-      api.settlementSubmit({ id, payMod: vals.payMod }).then(res => {
-        console.log(res)
-        if (res) {
-          Message.success('已提交');
-          handleSucc()
-        }
-      })
+      // api.settlementSubmit({ id, payMod: vals.payMod }).then(res => {
+      //   console.log(res)
+      //   if (res) {
+      //     Message.success('已提交');
+      //     handleSucc()
+      //   }
+      // })
     });
   }
 
@@ -65,8 +67,8 @@ class SettleModal extends React.Component {
     const { modalProps = {}, form: { getFieldDecorator, getFieldValue } } = this.props;
     const { payRateErr } = this.state;
 
-    let payModType = getFieldValue('payModType'),
-      payMod = +getFieldValue('payMod');
+    let payMod = getFieldValue('payMod'),
+      payModNum = +getFieldValue('payModNum');
 
     let formItems = null;
 
@@ -77,9 +79,9 @@ class SettleModal extends React.Component {
       },
     };
 
-    if (payModType === 2) {
+    if (payMod === 2) {
       getFieldDecorator('keys', {
-        initialValue: [...Array(payMod).keys()]
+        initialValue: [...Array(payModNum).keys()]
       });
       const keys = getFieldValue('keys');
       formItems = keys.map((k, index) => (
@@ -124,7 +126,7 @@ class SettleModal extends React.Component {
         >
           <Form {...formItemLayout}>
             <Form.Item label="请设置付款类型">
-              {getFieldDecorator('payModType', {
+              {getFieldDecorator('payMod', {
                 initialValue: 1, rules: [
                   {
                     required: true,
@@ -139,7 +141,7 @@ class SettleModal extends React.Component {
               )}
             </Form.Item>
             <Form.Item label="请设置付款次数">
-              {getFieldDecorator('payMod', {
+              {getFieldDecorator('payModNum', {
                 initialValue: '1', rules: [
                   {
                     required: true,
@@ -154,7 +156,7 @@ class SettleModal extends React.Component {
                 </Select>
               )}
             </Form.Item>
-            <If condition={payModType === 2}>
+            <If condition={payMod === 2}>
               {formItems}
               <If condition={payRateErr}>
                 <Form.Item {...formItemLayoutWithOutLabel}>
@@ -173,7 +175,7 @@ class SettleModal extends React.Component {
                     },
                   ],
                 })(
-                  <InputNumber placeholder='请设置支付周期' style={{ width: 180 }} />
+                  <InputNumber precision={0} placeholder='请设置支付周期' style={{ width: 180 }} />
                 )}
                 <span className="ant-form-text"> 天</span>
               </Form.Item>

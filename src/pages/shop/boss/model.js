@@ -32,7 +32,7 @@ export default {
 
     async checkUser(payload) {
       const usersInfo = await api.checkUser(payload);
-      console.log('这里查询用户', payload)
+      console.log('这里查询用户', usersInfo)
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {

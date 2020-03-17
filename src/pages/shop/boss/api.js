@@ -1,4 +1,4 @@
-const { get, newPost, newPut } = APP.http
+const { post, newPost, newPut } = APP.http
 
 // 获取店长列表数据
 export function getBossList(params) {
@@ -25,9 +25,8 @@ export function getBossList(params) {
 }
 
 // 查询用户
-export function checkUser() {
-  const res = true
-  return res
+export function checkUser(params) {
+  return post('/shop/v1/managers/check', params);
 }
 
 // 开通小店
