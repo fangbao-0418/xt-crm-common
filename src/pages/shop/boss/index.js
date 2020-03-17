@@ -20,8 +20,6 @@ const { Option } = Select;
 @withRouter
 class Main extends React.Component {
 
-  payload = APP.fn.getPayload(namespace)
-
   componentDidMount() {
     this.fetchData()
   }
@@ -35,12 +33,23 @@ class Main extends React.Component {
 
     validateFields((errors, values) => {
       if (errors) return
+      const localPayload = APP.fn.getPayload(namespace) || {}
       const payload = {
         page: params.page || 1,
         pageSize: params.pageSize || 10,
-        realname: values.realname,
-        status: params.status || params.status === '' || params.status === 0 ? params.status : values.status
+        memberId: values.memberId !== undefined ? values.memberId : localPayload.memberId,
+        nickName: values.nickName !== undefined ? values.nickName : localPayload.nickName,
+        userName: values.userName !== undefined ? values.userName : localPayload.userName,
+        phone: values.phone !== undefined ? values.phone : localPayload.phone,
+        shopStatus: values.shopStatus !== undefined ? values.shopStatus : localPayload.shopStatus,
       };
+      APP.fn.setPayload(namespace, {
+        memberId: payload.memberId,
+        nickName: payload.nickName,
+        userName: payload.userName,
+        phone: payload.phone,
+        shopStatus: payload.shopStatus
+      })
       dispatch['shop.boss'].getBossList(payload);
     });
   }
@@ -65,7 +74,19 @@ class Main extends React.Component {
 
   /** 操作: 条件查询-重置 */
   handleReset = () => {
-    this.fetchData()
+    const { form, dispatch } = this.props
+    form.resetFields()
+    APP.fn.setPayload(namespace, {
+      memberId: '',
+      nickName: '',
+      userName: '',
+      phone: '',
+      shopStatus: ''
+    })
+    dispatch['shop.boss'].getBossList({
+      page: 1,
+      pageSize: 10
+    });
   }
 
   /** 操作: 列表内容-开启关闭店铺 */
@@ -93,24 +114,43 @@ class Main extends React.Component {
       form: { getFieldDecorator }
     } = this.props;
 
+    const values = APP.fn.getPayload(namespace) || {}
+
     return (
       <Form layout="inline">
         <FormItem label="用户ID">
-          {getFieldDecorator('userid')(<Input placeholder="请输入用户ID" />)}
+          {getFieldDecorator('memberId', {
+            initialValue: values.memberId
+          })(<Input placeholder="请输入用户ID" />)}
         </FormItem>
         <FormItem label="昵称">
-          {getFieldDecorator('nickname')(<Input placeholder="请输入昵称" />)}
+          {getFieldDecorator('nickName', {
+            initialValue: values.nickName
+          })(<Input placeholder="请输入昵称" />)}
         </FormItem>
         <FormItem label="姓名">
-          {getFieldDecorator('realname')(<Input placeholder="请输入姓名" />)}
+          {getFieldDecorator('userName', {
+            initialValue: values.userName
+          })(<Input placeholder="请输入姓名" />)}
         </FormItem>
         <FormItem label="手机号">
-          {getFieldDecorator('phone')(<Input placeholder="请输入手机号" />)}
+          {getFieldDecorator('phone', {
+            initialValue: values.phone
+          })(<Input placeholder="请输入手机号" />)}
         </FormItem>
         <FormItem label="权限状态">
-          {getFieldDecorator('status')(<Select placeholder="请选择" defaultValue="lucy" style={{ width: '100%' }}>
-            {queryConfig.statusOptions.map(item => <Option value={item.value}>{item.label}</Option>)}
-          </Select>)}
+          {getFieldDecorator('shopStatus', {
+            initialValue: values.shopStatus
+          })(
+            <Select
+              placeholder="请选择"
+              style={{ width: '100%' }}>
+              {
+                queryConfig.statusOptions.map(item => (
+                  <Option value={item.value}>{item.label}</Option>
+                ))
+              }
+            </Select>)}
         </FormItem>
         <FormItem>
           <Button type="primary" onClick={this.handleSearch}>

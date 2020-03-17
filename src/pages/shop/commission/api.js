@@ -1,4 +1,3 @@
-// import { fetch } from '@/util/fetch';
 const { get, newPost, newPut } = APP.http
 
 // 类目列表
