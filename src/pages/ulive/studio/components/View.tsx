@@ -5,7 +5,7 @@ import { If } from '@/packages/common/components'
 import { formatDuration } from '@/packages/common/utils'
 import styles from './style.module.styl'
 import * as api from '../api'
-import { TypeEnum, LiveStatusEnum } from '../config'
+import { TypeEnum, LiveStatusEnum, LevelEnum } from '../config'
 import Image from '@/components/Image'
 const TextArea = Input.TextArea
 
@@ -20,7 +20,7 @@ type ViewType = -1 | 1 | 2 | 3
 interface State {
   statistics: {label: string, value: any}[]
   type: ViewType
-  detail: Partial<UliveStudio.ItemProps>
+  detail: UliveStudio.ItemProps
 }
 
 function Statistics (props: {
@@ -77,7 +77,7 @@ class Main extends React.Component<Props, State> {
       liveTitle: '',
       liveAnticipatedStartTime: 0,
       type: 0
-    }
+    } as any
   }
   public auditReason = ''
   // public constructor (props: Props) {
@@ -187,10 +187,12 @@ class Main extends React.Component<Props, State> {
                 <Col span={12}>类型：{TypeEnum[(detail.type || 0)]}</Col>
               </Row>
               <Row>
-                <Col span={24}>主播昵称：{detail.anchorNickName}</Col>
+                <Col span={12}>主播昵称：{detail.anchorNickName}</Col>
+                <Col span={12}>主播等级：{LevelEnum[detail.anchorLevel]}</Col>
               </Row>
               <Row>
-                <Col span={24}>主播手机号：{detail.anchorPhone}</Col>
+                <Col span={12}>主播手机号：{detail.anchorPhone}</Col>
+                <Col span={12}>主播标签：{(detail.liveTags || []).join(',')}</Col>
               </Row>
               {/* <div>
                 <Tag color='#108ee9'>待开播</Tag>

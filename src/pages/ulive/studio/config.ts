@@ -55,6 +55,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '主播昵称'
         }
       },
+      liveTop: {
+        type: 'select', label: '是否置顶',
+        options: [
+          {label: '官方置顶', value: 2},
+          {label: '置顶', value: 1},
+          {label: '未置顶', value: 0}
+        ]
+      },
       liveStatus: {
         type: 'select', label: '直播状态',
         options: [
@@ -114,6 +122,11 @@ export enum TypeEnum {
   私密直播 = 10
 }
 
+/** 直播等级 */
+export enum LevelEnum {
+  普通主播 = 0,
+  星级主播 = 10
+}
 /** 举报类型 */
 export enum ComplainTypeEnum {
   讨论政治内容 = 0,

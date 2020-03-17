@@ -1,6 +1,14 @@
 import React from 'react'
-import ListPage from '@/packages/common/components/list-page'
-class Main extends React.Component {
+import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import { Button } from 'antd'
+import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import CarouselEdit from './components/CarouselEdit'
+import { CarouselItem } from './interface'
+import * as api from './api'
+
+interface Props extends AlertComponentProps {}
+
+class Main extends React.Component<Partial<Props>> {
   public columns: any[] = [
     {
       title: '场次ID',
@@ -36,17 +44,49 @@ class Main extends React.Component {
       }
     }
   ]
+  public listpage: ListPageInstanceProps
+  public carouselRef: CarouselEdit | null
+  public edit = (record?: CarouselItem) => {
+    if (this.props.alert) {
+      const hide = this.props.alert({
+        width: 400,
+        content: (
+          <CarouselEdit
+            ref={(ref) => this.carouselRef = ref}
+            // record={record}
+          />
+        ),
+        onOk: () => {
+          if (this.carouselRef) {
+            this.carouselRef.save().then(() => {
+              hide()
+              this.listpage.refresh()
+            })
+          }
+        }
+      })
+    }
+  }
   public render () {
     return (
       <div>
         <ListPage
           columns={this.columns}
-          api={() => {
-            return Promise.resolve({})
-          }}
+          api={api.fetchCarouselList}
+          getInstance={(ref) => this.listpage = ref}
+          addonAfterSearch={(
+            <div style={{marginTop: -10}}>
+              <Button
+                type='primary'
+                onClick={this.edit.bind(this, undefined)}
+              >
+                新建标签
+              </Button>
+            </div>
+          )}
         />
       </div>
     )
   }
 }
-export default Main
+export default Alert(Main)

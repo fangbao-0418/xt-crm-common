@@ -90,10 +90,20 @@ export const exportMultiAddErrorInfo = (payload: {
     })
   }).then((res) => {
     res.blob().then((excelBlob) => {
-      var el = document.createElement('a')
+      const el = document.createElement('a')
       el.href = URL.createObjectURL(excelBlob)
       el.download = '主播批量新增异常数据.xlsx'
       el.click()
     })
   })
+}
+
+/** 获取小程序微信太阳码 */
+export const getWxQrcode = (payload: {
+  host?: string
+  linkUrl?: string
+  page: string
+  scene: string
+}) => {
+  return newPost('::ulive/live/plan/code', payload)
 }

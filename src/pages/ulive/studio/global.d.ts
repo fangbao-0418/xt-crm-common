@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-17 19:31:58
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/ulive/studio/global.d.ts
+ */
 /** 直播 */
 declare namespace UliveStudio {
   interface ItemProps {
@@ -44,6 +50,11 @@ declare namespace UliveStudio {
     /** 停播原因 */
     stopReason: string
     memberId: number
+    playbackUrl: string[]
+    /** 0-普通主播, 10-星级主播 */
+    anchorLevel: 0 | 10
+    /** 直播标签 */
+    liveTags: string[]
   }
   /** 直播计划详情 */
   interface StatisticsProps {

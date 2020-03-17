@@ -3,19 +3,24 @@ import Image from '@/components/Image'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
+import SelectFetch from '@/packages/common/components/select-fetch'
 import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
-import { Tag, Divider, Popover } from 'antd'
+import { Tag, Divider, Popover, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
 import CloseDown from './components/CloseDown'
 import UploadCover from './components/UploadCover'
 import * as api from './api'
+import { fetchTagList } from '../config/api'
+import TextArea from 'antd/lib/input/TextArea'
+
 interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
+  public rowKeys: any[] = []
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
       title: '场次id',
@@ -101,8 +106,24 @@ class Main extends React.Component<Props> {
             </img>
             {record.playUrl && record.liveStatus === 90 && (
               <>
-                <Divider type="vertical" />
-                <span onClick={() => this.showVideo(record)} className='href'>查看</span>
+                <Divider type='vertical' />
+                <span
+                  onClick={() => this.showVideo(record)}
+                  className='href'
+                >
+                  查看
+                </span>
+              </>
+            )}
+            {record.playbackUrl && record.liveStatus === 60 && (
+              <>
+                <Divider type='vertical' />
+                <span
+                  onClick={() => this.showVideo(record)}
+                  className='href'
+                >
+                  查看回放
+                </span>
               </>
             )}
           </div>
@@ -254,15 +275,61 @@ class Main extends React.Component<Props> {
       footer: null
     })
   }
+  /**
+   * 批量审核
+   * @param auditStatus {(0|1)} - 0-审核不通过 1-审核通过
+   */
+  public multiAudit = (auditStatus: 0 | 1) => () => {
+    if (this.rowKeys.length === 0) {
+      APP.error('请选择待审核的直播场次')
+      return
+    }
+    let reason = ''
+    if (auditStatus === 0) {
+      const hide = this.props.alert({
+        content: (
+          <div>
+            <div>请填写审核原因（审核不通过时为必填）</div>
+            <div>
+              <TextArea
+                onChange={(e) => {
+                  reason = e.target.value
+                }}
+              />
+            </div>
+          </div>
+        ),
+        onOk: () => {
+          console.log(reason, '-----')
+          api.multiAudit({
+            auditReason: reason,
+            auditStatus: 0,
+            planIds: this.rowKeys
+          }).then(() => {
+            this.rowKeys = []
+            hide()
+            this.listpage.refresh()
+          })
+        }
+      })
+    } else {
+      api.multiAudit({
+        auditStatus: 1,
+        planIds: this.rowKeys
+      }).then(() => {
+        this.rowKeys = []
+        this.listpage.refresh()
+      })
+    }
+  }
   public showVideo (record: UliveStudio.ItemProps) {
-    console.log(param(record))
     const query = param({
       version: new Date().getTime(),
-      playUrl: record.playUrl,
+      playUrl: record.liveStatus === 60 ? (record.playbackUrl || []).join(',') : record.playUrl,
       liveCoverUrl: record.liveCoverUrl
     })
     let url = location.pathname.replace(/index.html/, '') +  'video.html?' + query
-    // url = location.origin.replace(/^https?/, 'http') + url
+    // url = 'http://assets.hzxituan.com/upload/2020-03-17/020bfc50-ec64-41cd-9a42-db1b7e92864e-k7vplmky.html?' + query
     url = 'http://test-crmadmin.hzxituan.com/issue23/video.html?' + query
     window.open(url, '喜团直播', 'top=120,left=150,width=800,height=500,scrollbars=0,titlebar=1', false)
   }
@@ -310,6 +377,7 @@ class Main extends React.Component<Props> {
         }}
       >
         <ListPage
+          reserveKey='ulive-studio'
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
@@ -317,6 +385,12 @@ class Main extends React.Component<Props> {
             rowSelection: {
               onChange: (keys: string[] | number[]) => {
                 console.log(keys)
+                this.rowKeys = keys
+              },
+              getCheckboxProps: (record) => {
+                return {
+                  disabled: record.liveStatus !== 10
+                }
               }
             },
             scroll: {
@@ -337,7 +411,42 @@ class Main extends React.Component<Props> {
               <FormItem name='anchorPhone' />
               <FormItem label='场次ID' name='planId' />
               <FormItem name='liveTime' />
+              <FormItem
+                name='liveTagId'
+                label='直播标签'
+                inner={(form) => {
+                  return (
+                    <SelectFetch
+                      fetchData={() => {
+                        return fetchTagList().then((res) => {
+                          const data = res || []
+                          console.log(res, '-----')
+                          return data.map((item: {title: string, id: any}) => {
+                            return {
+                              label: item.title,
+                              value: item.id
+                            }
+                          })
+                        })
+                      }}
+                    />
+                  )
+                }}
+              />
+              <FormItem name='liveTop' />
             </>
+          )}
+          addonAfterSearch={(
+            <div>
+              <Button
+                className='mr10'
+                type='primary'
+                onClick={this.multiAudit(1)}
+              >
+                批量通过
+              </Button>
+              <Button onClick={this.multiAudit(0)}>审核不通过</Button>
+            </div>
           )}
           api={api.getStudioList}
         />
