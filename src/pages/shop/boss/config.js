@@ -6,6 +6,22 @@ export const queryConfig = {
   ]
 }
 
+export const shopStatusList = [{
+  id: 1,
+  text: '待审核'
+}, {
+  id: 2,
+  text: '已开启'
+}, {
+  id: 3,
+  text: '已关闭'
+}];
+
+export const shopStatusMap = shopStatusList.reduce((pre, next) => ({
+  ...pre,
+  [next.id]: next.text
+}), {})
+
 export const switchModalConfig = {
   hint: [
     '1.店铺的商品均会下架并不可上架，店铺禁止新发商品，但保留订单处理（售后、发货）权限；',

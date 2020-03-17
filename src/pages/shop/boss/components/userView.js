@@ -12,11 +12,14 @@ class UserView extends PureComponent {
         <div className={styles.main}>
           <div className={styles.avatar}>
             {
-              avatar ? <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" /> : <Avatar src={avatar} />
+              avatar ?
+                <Avatar src={avatar} />
+                :
+                <Avatar icon="user" />
             }
           </div>
           <div className={styles.info}>
-            <div>{title}</div>
+            <div>{title || '暂无昵称'}</div>
             {desc && <div className={styles.desc}>{desc}</div>}
           </div>
         </div>

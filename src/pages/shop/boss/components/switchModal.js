@@ -15,10 +15,14 @@ export default class extends Component {
 
   /** 确定操作 */
   handleOk = () => {
-    const { form: { validateFields }, dispatch } = this.props
+    const { form: { validateFields }, dispatch, currentBoss } = this.props
     validateFields((err, values) => {
       if (err) return;
-      dispatch['shop.boss'].closeShop(values);
+      dispatch['shop.boss'].closeShop({
+        ...values,
+        shopId: currentBoss.id,
+        shopStatus: 3
+      });
     });
   }
 
@@ -51,7 +55,7 @@ export default class extends Component {
 
     if (!currentBoss) return null
 
-    const modalTitle = `操作 ${currentBoss.name} 店长`
+    const modalTitle = `操作 ${currentBoss.nickName || '暂无昵称'} 店长`
 
     const fontStyle = {
       color: 'red'
@@ -65,6 +69,7 @@ export default class extends Component {
         onOk={this.handleOk}
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
+        destroyOnClose
       >
         <div>
           <p style={fontStyle}>关店前请务必阅读关店注意事项！</p>
@@ -74,7 +79,7 @@ export default class extends Component {
         </div>
         <Form layout="vertical">
           <FormItem label={<span style={fontStyle}>关店原因</span>}>
-            {getFieldDecorator('memo', {
+            {getFieldDecorator('closeReason', {
               rules: [{
                 required: true,
                 message: '请输入关店理由！'

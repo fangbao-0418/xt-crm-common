@@ -14,10 +14,10 @@ export default class extends Component {
   /** 确定操作 */
   handleOk = () => {
     const { form: { validateFields }, dispatch } = this.props
-    validateFields((err, values) => {
+    validateFields((err, { phones }) => {
       if (err) return;
-      console.log(values)
-      dispatch['shop.boss'].checkUser(values);
+      phones = phones.replace(/\n/g, ',')
+      dispatch['shop.boss'].checkUser({ phones });
     });
   }
 
@@ -56,6 +56,7 @@ export default class extends Component {
         onOk={this.handleOk}
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
+        destroyOnClose
       >
         <Form layout="vertical">
           <FormItem label="请输入手机号">

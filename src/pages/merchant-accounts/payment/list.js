@@ -179,7 +179,7 @@ class List extends React.Component {
               <span
                 className="href"
                 onClick={() => {
-                  download('https://xituan.oss-cn-shenzhen.aliyuncs.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551571728654649.xlsx', '批量支付模版')
+                  download('/assets/files/批量支付成功模版.xlsx', '批量支付模版')
                 }}
               >
                 下载批量支付模版
@@ -188,7 +188,7 @@ class List extends React.Component {
                 style={{ marginLeft: 16 }}
                 className="href"
                 onClick={() => {
-                  download('https://xituan.oss-cn-shenzhen.aliyuncs.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551571728654649.xlsx', '批量失败模版')
+                  download('/assets/files/批量支付失败模板.xlsx', '批量失败模版')
                 }}
               >
                 下载批量失败模版

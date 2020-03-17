@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import { Card, Button, Input, Select } from 'antd';
+import { Card, Button, Input, Select, Modal } from 'antd';
 import Form, { FormItem } from '@/packages/common/components/form';
 import CommonTable from '@/components/common-table';
 import SwitchModal from './components/switchModal';
@@ -12,6 +12,7 @@ import { queryConfig } from './config'
 import { namespace } from './model'
 
 const { Option } = Select;
+const { confirm } = Modal;
 
 @connect(state => ({
   bossData: state['shop.boss'].bossData
@@ -68,8 +69,8 @@ class Main extends React.Component {
   }
 
   /** 操作: 条件查询-搜索 */
-  handleSearch = () => {
-    this.fetchData()
+  handleSearch = (params) => {
+    this.fetchData(params)
   }
 
   /** 操作: 条件查询-重置 */
@@ -89,8 +90,8 @@ class Main extends React.Component {
     });
   }
 
-  /** 操作: 列表内容-开启关闭店铺 */
-  handleSwitch = (currentBoss) => {
+  /** 操作: 列表内容-关闭店铺 */
+  handleClose = (currentBoss) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'shop.boss/saveDefault',
@@ -99,6 +100,21 @@ class Main extends React.Component {
         switchModal: {
           visible: true
         }
+      }
+    });
+  }
+
+  /** 操作: 列表内容-开启店铺 */
+  handleOpen = (currentBoss) => {
+    const { dispatch } = this.props;
+    confirm({
+      title: '确认重新开通店铺吗?',
+      okText: '确认开通',
+      onOk: () => {
+        dispatch['shop.boss'].openShop({
+          shopId: currentBoss.id,
+          shopStatus: 2
+        });
       }
     });
   }
@@ -169,7 +185,8 @@ class Main extends React.Component {
     const { bossData } = this.props;
     return <CommonTable
       columns={getColumns({
-        onSwitch: this.handleSwitch,
+        onClose: this.handleClose,
+        onOpen: this.handleOpen,
         onUserClick: this.handleUserClick
       })}
       dataSource={bossData.records || []}

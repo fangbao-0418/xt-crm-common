@@ -1,4 +1,5 @@
 import * as api from './api';
+import { message } from 'antd';
 export const namespace = 'shop.boss'
 
 export default {
@@ -15,7 +16,8 @@ export default {
     checkModal: { // 查询用户信息模态框
       visible: false
     },
-    usersInfo: {} // 查询的用户信息
+    checkArr: [], // 查询的用户信息
+    phones: ''
   },
   effects: dispatch => ({
     // 获取boss列表
@@ -30,31 +32,45 @@ export default {
       });
     },
 
+    // 检查用户
     async checkUser(payload) {
-      const usersInfo = await api.checkUser(payload);
-      console.log('这里查询用户', usersInfo)
+      const checkArr = await api.checkUser(payload);
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {
-          usersInfo,
+          checkArr,
           batchModal: {
             visible: false
           },
           checkModal: {
             visible: true
-          }
+          },
+          phones: payload.phones
         }
       });
     },
 
+    async createShop(payload) {
+      await api.createShop(payload);
+      message.success('批量开通小店成功！')
+      dispatch['shop.boss'].getBossList({
+        page: 1,
+        pageSize: 10
+      });
+    },
+
     async openShop(payload) {
-      await api.checkUser(payload);
-      console.log('这里开通小店', payload)
+      await api.openShop(payload);
+      message.success('开通小店成功！')
+      dispatch['shop.boss'].getBossList({
+        page: 1,
+        pageSize: 10
+      });
     },
 
     async closeShop(payload) {
-      await api.checkUser(payload);
-      console.log('这里关闭小店', payload)
+      await api.closeShop(payload);
+      message.success('关闭小店成功！')
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {
@@ -64,7 +80,8 @@ export default {
         }
       });
       dispatch['shop.boss'].getBossList({
-        page: 1
+        page: 1,
+        pageSize: 10
       });
     }
   })
