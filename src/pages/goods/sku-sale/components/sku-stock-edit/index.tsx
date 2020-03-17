@@ -71,7 +71,7 @@ class SkuStockEdit extends React.Component<SkuStockEditProps, SkuStockEditState>
       render: (text: any, record: any, index: any) => (
         <InputNumber
           precision={0}
-          value={(editSkus as any)[record.skuId]}
+          value={(editSkus as any)[record.skuId] || 0}
           onChange={(value:any) => this.updateEditSkus(value, record.skuId)}
         />
       )
