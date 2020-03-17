@@ -190,7 +190,7 @@ class Detail extends Component {
 
   render() {
     const { data, childOrderList } = this.props
-    let { 
+    let {
       userProceedsListByOrderId,
       goodsTableKey,
       deliveryVisible,
@@ -200,7 +200,7 @@ class Detail extends Component {
     const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
     const orderType = get(data, 'orderInfo.orderType');
     const orderStatusLogList = get(data, 'orderStatusLogList', []);
-    const showFlag = !!data.orderGlobalExtendVO 
+    const showFlag = !!data.orderGlobalExtendVO
     const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
     console.log(childOrderList, 'childOrderListchildOrderListchildOrderListchildOrderList')
     return (
@@ -211,7 +211,7 @@ class Detail extends Component {
           orderStatusLogList={orderStatusLogList}
         />
         {/* 订单信息 */}
-        <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress}/>
+        <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress} />
         {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
         {/* 海关信息 */}
@@ -286,7 +286,7 @@ class Detail extends Component {
                         </Col>
                         <Col className="gutter-row" span={8} style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <div>
-                            <span style={{marginRight: 30}}>发货模式：{item.childOrder.deliveryModeName}</span>
+                            <span style={{ marginRight: 30 }}>发货模式：{item.childOrder.deliveryModeName}</span>
                             {item.childOrder.shippedWarehouseName && <span>仓库：{item.childOrder.shippedWarehouseName}</span>}
                           </div>
                           <span>
@@ -296,8 +296,8 @@ class Detail extends Component {
                                * 当订单状态orderStatus >= 20 && orderStatus <= 50
                                */
                               (Number(item.childOrder.orderType) !== 70 &&
-                              orderStatus >= enumOrderStatus.Undelivered &&
-                              orderStatus <= enumOrderStatus.Complete) && (
+                                orderStatus >= enumOrderStatus.Undelivered &&
+                                orderStatus <= enumOrderStatus.Complete) && (
                                 <Button
                                   type='primary'
                                   onClick={() => this.changeModal(true, item)}>
@@ -345,12 +345,12 @@ class Detail extends Component {
                       <Row>
                         {
                           item.childOrder.interceptorType == 10 &&
-                            (
-                              <>
-                                <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
-                                <Col span={8}>拦截人手机号：{item.childOrder.interceptorMemberPhone}</Col>
-                              </>
-                            )
+                          (
+                            <>
+                              <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
+                              <Col span={8}>拦截人手机号：{item.childOrder.interceptorMemberPhone}</Col>
+                            </>
+                          )
                         }
                       </Row>
                     </div>
@@ -374,7 +374,7 @@ class Detail extends Component {
           logistics={deliveryData.logistics}
           onCancel={() => this.changeModal(false)}
         />
-        <ModifyAddress 
+        <ModifyAddress
           title="修改订单信息"
           visible={modifyAddressVisible}
           onCancel={this.changeModifyAddress}
@@ -388,13 +388,19 @@ class Detail extends Component {
   cancelInterceptor = ({
     childOrder
   }) => {
-    console.log(childOrder);
-    cancelIntercept({ interceptOrderId: childOrder.interceptorOrderRecordId, memberId: childOrder.interceptorMemberId }).then((res) => {
-      if (res) {
-        message.success('取消成功');
-        this.query();
+    confirm({
+      title: '确认取消拦截发货吗?',
+      okText: '取消拦截',
+      onOk() {
+        console.log(childOrder);
+        cancelIntercept({ interceptOrderId: childOrder.interceptorOrderRecordId, memberId: childOrder.interceptorMemberId }).then((res) => {
+          if (res) {
+            message.success('取消拦截发货成功');
+            this.query();
+          }
+        })
       }
-    })
+    });
   }
 
   onOk = () => {
