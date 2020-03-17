@@ -390,9 +390,9 @@ class Detail extends Component {
   }) => {
     confirm({
       title: '确认取消拦截发货吗?',
-      content: '取消拦截发货, 将取消代理发货, 由公司发货。',
+      content: '取消拦截发货: 将取消代理拦截发货, 由公司发货。',
       okText: '取消拦截',
-      onOk() {
+      onOk: () => {
         console.log(childOrder);
         cancelIntercept({ interceptOrderId: childOrder.interceptorOrderRecordId, memberId: childOrder.interceptorMemberId }).then((res) => {
           if (res) {
