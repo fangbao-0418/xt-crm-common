@@ -1,11 +1,19 @@
 import { message } from 'antd';
-import { audit, disable } from './mock'
 
 const { post, newPost } = APP.http;
 
 /** 获取商品列表 */
 export function getGoodsList(data) {
   return newPost('/shop/product/list', data);
+}
+
+/** 获取违规历史列表 */
+export function getOperateList(data) {
+  return newPost('/product/operate/list', {
+    ...data,
+    type: 1,
+    pageSize: 10
+  });
 }
 
 /** 获取一级类目 */

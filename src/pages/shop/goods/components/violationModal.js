@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, Table } from 'antd';
+import { getOperateList } from '../api'
 
 const dataSource = [
   {
@@ -61,6 +62,12 @@ class ViolationModal extends Component {
   /** 窗口彻底关闭回调 */
   handleClose = () => {
     this.props.ondestroy();
+  }
+
+  fetchData = (data) => {
+    getOperateList(data).then(res => {
+      console.log(res)
+    })
   }
 
   render() {

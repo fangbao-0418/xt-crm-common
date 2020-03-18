@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from '@/components/Image';
 import { If } from '@/packages/common/components';
+import { Tooltip } from 'antd';
 import { replaceHttpUrl } from '@/util/utils';
 import { formatMoneyWithSign } from '@/pages/helper';
 
@@ -52,7 +53,28 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
     {
       title: '商品状态',
       width: 100,
-      dataIndex: 'status'
+      dataIndex: 'status',
+      render: (val, record) => {
+        const withdrawalType = record.withdrawalType // 1: 店长下架 2: 管理员下架
+        const withdrawalInfo = record.withdrawalInfo // 下架说明 管理员才有
+        const auditStatus = record.auditStatus // 商品审核 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
+        if (val === 1) return '在售'
+        if (auditStatus === 1) {
+          return '待审核'
+        } else if (auditStatus === 3) {
+          return '不通过'
+        } else if (withdrawalType === 1) {
+          return '店长下架'
+        } else if (withdrawalType === 2) {
+          return (
+            <Tooltip title={withdrawalInfo}>
+              <span>管理员下架</span>
+            </Tooltip>
+          )
+        } else {
+          return '状态错误'
+        }
+      }
     },
     {
       title: '审核时间',
@@ -77,41 +99,63 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
       fixed: 'right',
       align: 'center',
       width: 200,
-      render: (record) => {
-        return (
-          <div style={{ marginTop: 40 }}>
-            <span
-              className='href'
-              onClick={() => onDetail(record)}
-            >
-              查看
-            </span>
-            <If condition={true}>
+      render: (_, record) => {
+        const auditStatus = record.auditStatus // 商品审核 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
+        const status = record.status
+        if (status === 1) {
+          return (
+            <div style={{ marginTop: 40 }}>
+              <span
+                className='href'
+                onClick={() => onDetail(record)}
+              >
+                查看
+              </span>
+                <span
+                className='href ml10'
+                onClick={() => onLower(record)}
+              >
+                下架
+              </span>
+            </div>
+          )
+        }
+        
+        if (auditStatus === 1) {
+          return (
+            <div style={{ marginTop: 40 }}>
+              <span
+                className='href'
+                onClick={() => onDetail(record)}
+              >
+                查看
+              </span>
               <span
                 className='href ml10'
                 onClick={() => onPass(record)}
               >
                 通过
               </span>
-            </If>
-            <If condition={true}>
               <span
                 className='href ml10'
                 onClick={() => onUnpass(record)}
               >
                 不通过
               </span>
-            </If>
-            <If condition={status === 0}>
+            </div>
+          )
+        } else {
+          return (
+            <div style={{ marginTop: 40 }}>
               <span
-                className='href ml10'
-                onClick={() => onLower(record)}
+                className='href'
+                onClick={() => onDetail(record)}
               >
-                下架
+                查看
               </span>
-            </If>
-          </div>
-        )
+            </div>
+          )
+        }
       }
     }
   ]

@@ -36,6 +36,10 @@ class Main extends React.Component {
       currentGoods
     }, () => {
       this.violationModalRef.showModal()
+      this.violationModalRef.fetchData({
+        page: 1,
+        productPoolId: currentGoods.id
+      })
     })
   }
 

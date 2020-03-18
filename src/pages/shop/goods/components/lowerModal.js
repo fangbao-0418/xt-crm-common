@@ -32,7 +32,8 @@ class LowerModal extends Component {
       if (err) return;
       lowerGoods({
         ...values,
-        id: currentGoods.id
+        productPoolId: currentGoods.id,
+        withdrawalType: 2
       }).then(() => {
         this.setState({
           visible: false
