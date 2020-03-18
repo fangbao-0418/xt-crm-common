@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Form, Select, Message, Radio, Input, InputNumber, Alert } from 'antd';
+import { Modal, Form, Select, Message, Radio, InputNumber, Alert } from 'antd';
 import If from '@/packages/common/components/if';
 import { formItemLayout } from '@/config';
 import * as api from '../../api'
@@ -14,20 +14,34 @@ class SettleModal extends React.Component {
       form: { validateFields },
       handleSucc,
     } = this.props;
-    const { payRateErr } = this.setState;
-    validateFields((err, { payMode, payModNum, keys, payRate, payPeriod } ) => {
+    const { payRateErr } = this.state;
+    validateFields((err, values) => {
       if (err || payRateErr) return
-      
 
+      const { payMode, payTimes, payRate, payPeriod } = values
 
-      return;
-      // api.settlementSubmit({ id, payMod: vals.payMod }).then(res => {
-      //   console.log(res)
-      //   if (res) {
-      //     Message.success('已提交');
-      //     handleSucc()
-      //   }
-      // })
+      let params = {
+        id,
+        payMode,
+        payTimes: +payTimes
+      };
+
+      const rateKeys = ['firstRate', 'secondRate', 'thirdRate']
+
+      if (payMode === 2) {
+        params.payPeriod = payPeriod
+        payRate.forEach((item, i) => {
+          params[rateKeys[i]] = +item
+        })
+      }
+
+      api.settlementSubmit(params).then(res => {
+        console.log(res)
+        if (res) {
+          Message.success('已提交');
+          handleSucc()
+        }
+      })
     });
   }
 
@@ -37,7 +51,7 @@ class SettleModal extends React.Component {
       payRateErr: false
     })
     this.props.form.setFieldsValue({
-      payMod: '1'
+      payMode: '1'
     })
   }
 
@@ -67,8 +81,8 @@ class SettleModal extends React.Component {
     const { modalProps = {}, form: { getFieldDecorator, getFieldValue } } = this.props;
     const { payRateErr } = this.state;
 
-    let payMod = getFieldValue('payMod'),
-      payModNum = +getFieldValue('payModNum');
+    let payMode = getFieldValue('payMode'),
+      payTimes = +getFieldValue('payTimes');
 
     let formItems = null;
 
@@ -79,9 +93,9 @@ class SettleModal extends React.Component {
       },
     };
 
-    if (payMod === 2) {
+    if (payMode === 2) {
       getFieldDecorator('keys', {
-        initialValue: [...Array(payModNum).keys()]
+        initialValue: [...Array(payTimes).keys()]
       });
       const keys = getFieldValue('keys');
       formItems = keys.map((k, index) => (
@@ -126,7 +140,7 @@ class SettleModal extends React.Component {
         >
           <Form {...formItemLayout}>
             <Form.Item label="请设置付款类型">
-              {getFieldDecorator('payMod', {
+              {getFieldDecorator('payMode', {
                 initialValue: 1, rules: [
                   {
                     required: true,
@@ -141,7 +155,7 @@ class SettleModal extends React.Component {
               )}
             </Form.Item>
             <Form.Item label="请设置付款次数">
-              {getFieldDecorator('payModNum', {
+              {getFieldDecorator('payTimes', {
                 initialValue: '1', rules: [
                   {
                     required: true,
@@ -156,7 +170,7 @@ class SettleModal extends React.Component {
                 </Select>
               )}
             </Form.Item>
-            <If condition={payMod === 2}>
+            <If condition={payMode === 2}>
               {formItems}
               <If condition={payRateErr}>
                 <Form.Item {...formItemLayoutWithOutLabel}>
@@ -170,7 +184,7 @@ class SettleModal extends React.Component {
                 {getFieldDecorator('payPeriod', {
                   rules: [
                     {
-                      required: true,
+                      required: payMode === 2,
                       message: '请设置支付周期',
                     },
                   ],

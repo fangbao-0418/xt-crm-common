@@ -50,8 +50,8 @@ export function settlementReject({ id, remark = '' }) {
   return post(`/finance/settlement/reject/${id}`, { remark });
 }
 // 待结算的结算单提交结算
-export function settlementSubmit({ id, payMod = '' }) {
-  return post(`/finance/settlement/submit/${id}`, { payMod });
+export function settlementSubmit({ id, ...data }) {
+  return newPost(`/finance/settlement/submit/${id}`, { ...data });
 }
 /** 测试接口 */
 export const fetchCheckingList = payload => {

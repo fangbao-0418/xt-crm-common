@@ -59,17 +59,19 @@ export default {
       });
     },
 
-    async openShop(payload) {
+    async openShop(payload, rootState) {
       await api.openShop(payload);
+      const bossData = rootState['shop.boss'].bossData
       message.success('开通小店成功！')
       dispatch['shop.boss'].getBossList({
-        page: 1,
-        pageSize: 10
+        page: bossData.current,
+        pageSize: bossData.size
       });
     },
 
-    async closeShop(payload) {
+    async closeShop(payload, rootState) {
       await api.closeShop(payload);
+      const bossData = rootState['shop.boss'].bossData
       message.success('关闭小店成功！')
       dispatch({
         type: 'shop.boss/saveDefault',
@@ -80,8 +82,8 @@ export default {
         }
       });
       dispatch['shop.boss'].getBossList({
-        page: 1,
-        pageSize: 10
+        page: bossData.current,
+        pageSize: bossData.size
       });
     }
   })

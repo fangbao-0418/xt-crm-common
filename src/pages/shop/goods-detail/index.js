@@ -60,8 +60,8 @@ class GoodsDetail extends React.Component {
 
     if (goodsInfo) {
       baseInfo = {
-        productCategory: goodsInfo.productCategoryVO.combineName,
-        productName: goodsInfo.productName,
+        productCategory: goodsInfo.productCategoryVO.combineName || '暂无数据',
+        productName: goodsInfo.productName || '暂无数据',
         productImage: goodsInfo.productImage.split(','),
         listImage: goodsInfo.listImage.split(','),
         showNum: goodsInfo.showNum

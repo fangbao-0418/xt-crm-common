@@ -23,6 +23,13 @@ export default class extends Component {
     }
   };
 
+  handBeforeUpload = (file) => {
+    if (file.size / 1024 / 1024 > 2) {
+      message.warn('上传文件不能超过2M');
+      return false
+    }
+  }
+
   render() {
     const { importRes } = this.state
     const { modalProps = {} } = this.props;
@@ -41,17 +48,18 @@ export default class extends Component {
             accept='.xls,.xlsx'
             showUploadList={false}
             withCredentials={true}
-            action={prefix('/member/account/groupBuy/import')}
+            action={prefix('/finance/payment/batch/pay')}
             headers={getHeaders({})}
             onChange={this.handleImportChange}
             style={{ margin: '0 10px' }}
+            beforeUpload={this.handBeforeUpload}
           >
             <Button type='primary'>导入excel表</Button>
           </Upload>
           <span
             className="href"
             onClick={() => {
-              download('https://assets.hzxituan.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551576916792656.xlsx', '批量支付模板')
+              download('/assets/files/批量支付成功模版.xlsx', '批量支付模版')
             }}
           >
             下载模板

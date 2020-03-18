@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Tabs } from 'antd';
+import { Card, Tabs, message } from 'antd';
 import { getGoodsList, getCategoryTopList, passGoods } from './api';
 import SelectFetch from '@/components/select-fetch';
 import { ListPage, FormItem } from '@/packages/common/components';
@@ -8,7 +8,7 @@ import CarouselModal from './components/carouselModal';
 import UnpassModal from './components/unpassModal';
 import LowerModal from './components/lowerModal';
 import ViolationModal from './components/violationModal';
-import { statusList, formConfig } from './config/config';
+import { combinationStatusList, formConfig } from './config/config';
 import getColumns from './config/columns';
 
 const { TabPane } = Tabs;
@@ -16,7 +16,8 @@ const { TabPane } = Tabs;
 class Main extends React.Component {
 
   state = {
-    status: 0, // 当期tab切换状态
+    status: undefined, // 0: 下架 1: 上架
+    auditStatus: undefined, // 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
     currentGoods: null // 当前审核商品
   }
 
@@ -57,6 +58,7 @@ class Main extends React.Component {
     passGoods({
       ids: [record.id]
     }).then(() => {
+      message.success('审核通过成功!');
       this.listRef.fetchData()
     })
   }
@@ -72,11 +74,12 @@ class Main extends React.Component {
 
   /** 操作：切换状态查询 */
   handleTabChange = (key) => {
-    this.setState({
-      status: +key
-    }, () => {
-      this.listRef.refresh();
-    })
+    console.log(key)
+    // this.setState({
+    //   status: +key
+    // }, () => {
+    //   this.listRef.refresh();
+    // })
   }
 
   /** 性能优化: 重置清空当前商品 */
@@ -127,7 +130,7 @@ class Main extends React.Component {
           onChange={this.handleTabChange}
         >
           {
-            statusList.map(item => <TabPane tab={item.name} key={item.id} />)
+            combinationStatusList.map(item => <TabPane tab={item.name} key={item.id} />)
           }
         </Tabs>
 
@@ -140,7 +143,8 @@ class Main extends React.Component {
           processPayload={(payload) => {
             return {
               ...payload,
-              status: this.state.status
+              status: this.state.status,
+              auditStatus: this.state.auditStatus
             }
           }}
           rangeMap={{
@@ -148,7 +152,7 @@ class Main extends React.Component {
               fields: ['createStartTime', 'createEndTime']
             },
             auditTime: {
-              fields: ['modifyStartTime', 'modifyEndTime']
+              fields: ['auditStartTime', 'auditEndTime']
             }
           }}
           formItemLayout={(

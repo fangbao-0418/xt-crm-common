@@ -53,13 +53,15 @@ class LowerModal extends Component {
   }
   
   render() {
-    const { form: { getFieldDecorator } } = this.props
+    const { form: { getFieldDecorator }, currentGoods } = this.props
     const { visible } = this.state;
+
+    if (!currentGoods) return null;
 
     return (
       <Modal
         visible={visible}
-        title="确认下架商品【xxx】"
+        title={`确认下架商品【${currentGoods.productName}】吗?`}
         okText="确认"
         onOk={this.handleOk}
         onCancel={this.handleCancel}
@@ -67,19 +69,19 @@ class LowerModal extends Component {
       >
         <Form layout="vertical">
           <FormItem label="是否允许再次上架">
-            {getFieldDecorator('statusEnabled', {
+            {getFieldDecorator('isAllowShelves', {
               rules: [{
                 required: true,
                 message: '请选择！'
               }]
             })(
               <Radio.Group >
-                <Radio value={1}>允许</Radio>
-                <Radio value={2}>禁止</Radio>
+                <Radio value={0}>允许</Radio>
+                <Radio value={1}>禁止</Radio>
               </Radio.Group>)}
           </FormItem>
           <FormItem label="违规原因">
-            {getFieldDecorator('renson', {
+            {getFieldDecorator('info', {
               rules: [{
                 required: true,
                 message: '请输入违规原因！'

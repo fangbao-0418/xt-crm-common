@@ -44,6 +44,7 @@ class Main extends React.Component {
         phone: values.phone !== undefined ? values.phone : localPayload.phone,
         shopStatus: values.shopStatus !== undefined ? values.shopStatus : localPayload.shopStatus,
       };
+      payload.shopStatus = payload.shopStatus || undefined
       APP.fn.setPayload(namespace, {
         memberId: payload.memberId,
         nickName: payload.nickName,
@@ -78,11 +79,11 @@ class Main extends React.Component {
     const { form, dispatch } = this.props
     form.resetFields()
     APP.fn.setPayload(namespace, {
-      memberId: '',
-      nickName: '',
-      userName: '',
-      phone: '',
-      shopStatus: ''
+      memberId: undefined,
+      nickName: undefined,
+      userName: undefined,
+      phone: undefined,
+      shopStatus: undefined
     })
     dispatch['shop.boss'].getBossList({
       page: 1,
@@ -139,7 +140,7 @@ class Main extends React.Component {
             initialValue: values.memberId
           })(<Input placeholder="请输入用户ID" />)}
         </FormItem>
-        <FormItem label="昵称">
+        {/* <FormItem label="昵称">
           {getFieldDecorator('nickName', {
             initialValue: values.nickName
           })(<Input placeholder="请输入昵称" />)}
@@ -148,7 +149,7 @@ class Main extends React.Component {
           {getFieldDecorator('userName', {
             initialValue: values.userName
           })(<Input placeholder="请输入姓名" />)}
-        </FormItem>
+        </FormItem> */}
         <FormItem label="手机号">
           {getFieldDecorator('phone', {
             initialValue: values.phone

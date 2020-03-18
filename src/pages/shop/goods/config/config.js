@@ -1,16 +1,35 @@
-export const statusList = [{
+export const combinationStatusList = [{
   id: '0',
   name: '全部商品'
 }, {
   id: '1',
   name: '在售商品'
 }, {
+  id: '2',
+  name: '仓库中商品'
+}, {
   id: '3',
+  name: '待审核'
+}]
+
+export const auditStatusList = [{
+  id: '0',
+  name: '待提交'
+}, {
+  id: '1',
   name: '待审核'
 }, {
   id: '2',
-  name: '仓库中'
+  name: '审核通过'
+}, {
+  id: '3',
+  name: '审核不通过'
 }]
+
+export const auditStatusMap = auditStatusList.reduce((pre, next) => ({
+  ...pre,
+  [next.id]: next.name
+}), {})
 
 export const formConfig = {
   '/shop/goods': {

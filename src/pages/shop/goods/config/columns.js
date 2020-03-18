@@ -52,7 +52,7 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
     {
       title: '商品状态',
       width: 100,
-      dataIndex: 'childStatus'
+      dataIndex: 'status'
     },
     {
       title: '审核时间',
@@ -86,7 +86,7 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
             >
               查看
             </span>
-            <If condition={status === 0}>
+            <If condition={true}>
               <span
                 className='href ml10'
                 onClick={() => onPass(record)}
@@ -94,7 +94,7 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
                 通过
               </span>
             </If>
-            <If condition={status === 0}>
+            <If condition={true}>
               <span
                 className='href ml10'
                 onClick={() => onUnpass(record)}

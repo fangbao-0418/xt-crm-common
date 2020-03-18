@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Form, Table, Spin } from 'antd';
 import WrapCard from './wrapCard'
+import CascaderCity from '@/components/cascader-city';
 import { getFreightTemplate } from '../api';
 
 const FormItem = Form.Item
@@ -48,7 +49,9 @@ const FreightInfo = ({ data: freightTemplate }) => {
 
 class LogisCard extends React.Component {
   state = {
-    freightTemplate: null
+    freightTemplate: null,
+    cascaderCityVisible: false,
+    cascaderCityValue: []
   }
 
   componentDidUpdate(prevProps) {
@@ -57,6 +60,7 @@ class LogisCard extends React.Component {
     }
   }
 
+  /** 获取模板详情 */ 
   fetchTemplateDetail = () => {
     const { data: { freightTemplateId } } = this.props
     getFreightTemplate(freightTemplateId).then(freightTemplate => {
@@ -66,9 +70,15 @@ class LogisCard extends React.Component {
     })
   }
 
+  handleCascaderCityCancel = () => {
+    this.setState({
+      cascaderCityVisible: false
+    })
+  }
+
   render() {
     const { data } = this.props
-    const { freightTemplate } = this.state
+    const { freightTemplate, cascaderCityVisible, cascaderCityValue } = this.state
 
     const formItemLayout = {
       labelCol: { span: 2 },
@@ -80,6 +90,12 @@ class LogisCard extends React.Component {
         data={data}
         render={logisInfo => (
           <Card title='物流信息'>
+            <CascaderCity
+              disabled={true}
+              visible={cascaderCityVisible}
+              value={cascaderCityValue}
+              onCancel={this.handleCascaderCityCancel}
+            />
             <Form {...formItemLayout}>
               <FormItem label="物流体积">
                 <span className="ant-form-text">{logisInfo.bulk}</span>
