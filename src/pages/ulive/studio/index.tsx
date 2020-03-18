@@ -23,9 +23,11 @@ interface State {
   rowKeys: any[]
 }
 
-class Main extends React.Component<Props> {
+class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
-  public rowKeys: any[] = []
+  public state: State = {
+    rowKeys: []
+  }
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
       title: '场次id',
@@ -317,8 +319,8 @@ class Main extends React.Component<Props> {
    * @param auditStatus {(0|1)} - 0-审核不通过 1-审核通过
    */
   public multiAudit = (auditStatus: 0 | 1) => () => {
-    if (this.rowKeys.length === 0) {
-      APP.error('请选择待审核的直播场次')
+    if (this.state.rowKeys.length === 0) {
+      APP.error('请选择待审核的直播')
       return
     }
     let reason = ''
@@ -341,9 +343,11 @@ class Main extends React.Component<Props> {
           api.multiAudit({
             auditReason: reason,
             auditStatus: 0,
-            planIds: this.rowKeys
+            planIds: this.state.rowKeys
           }).then(() => {
-            this.rowKeys = []
+            this.setState({
+              rowKeys: []
+            })
             hide()
             this.listpage.refresh()
           })
@@ -352,9 +356,11 @@ class Main extends React.Component<Props> {
     } else {
       api.multiAudit({
         auditStatus: 1,
-        planIds: this.rowKeys
+        planIds: this.state.rowKeys
       }).then(() => {
-        this.rowKeys = []
+        this.setState({
+          rowKeys: []
+        })
         this.listpage.refresh()
       })
     }
@@ -424,8 +430,15 @@ class Main extends React.Component<Props> {
           tableProps={{
             rowKey: 'planId',
             rowSelection: {
+              selectedRowKeys: this.state.rowKeys,
               onChange: (keys: string[] | number[]) => {
-                this.rowKeys = keys
+                if (keys.length > 20) {
+                  APP.error('批量审批场次不可超过20条')
+                  return
+                }
+                this.setState({
+                  rowKeys: keys
+                })
               },
               getCheckboxProps: (record) => {
                 return {

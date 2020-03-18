@@ -61,11 +61,6 @@ class Main extends React.Component<Partial<Props>, State> {
   public listpage: ListPageInstanceProps
   public carouselRef: CarouselEdit | null
   public edit = (record?: CarouselItem) => () => {
-    const dataSource = this.state.dataSource
-    if (dataSource.length >= 10) {
-      APP.error('添加场次超出10条')
-      return
-    }
     if (this.props.alert) {
       const hide = this.props.alert({
         width: 400,
