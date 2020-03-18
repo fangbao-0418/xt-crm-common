@@ -118,7 +118,7 @@
               setPartNode(currentPlayindex);
             }
           });
-          if (!isLive) {
+          if (!live) {
             renderNode(urls, player);
             document.body.addEventListener('mousemove', function(e){
               var selectEl = document.querySelector('.vcp-playnode-select')
