@@ -372,7 +372,7 @@ class Main extends React.Component<Props, State> {
       version: new Date().getTime(),
       playUrl: isPlayBack ? (record.playbackUrl || []).join(',') : record.playUrl,
       liveCoverUrl: record.liveCoverUrl,
-      live: isPlayBack ? '' : 'live'
+      isLive: isPlayBack ? '' : 'live'
     })
     let url = location.pathname.replace(/index.html/, '') +  'video.html?' + query
     // url = 'http://assets.hzxituan.com/upload/2020-03-17/020bfc50-ec64-41cd-9a42-db1b7e92864e-k7vplmky.html?' + query

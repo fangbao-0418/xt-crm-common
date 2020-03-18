@@ -1,9 +1,3 @@
-<!--
- * @Date: 2020-03-16 14:01:18
- * @LastEditors: fangbao
- * @LastEditTime: 2020-03-18 21:05:32
- * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/assets/root/video.html
- -->
 <!DOCTYPE html>
 <html lang="zh-cn">
   <head>
@@ -91,7 +85,7 @@
           playUrl: query.playUrl,
           liveCoverUrl: query.liveCoverUrl
         };
-        var live = query.live === 'live' ? true : false
+        var live = query.isLive === 'live' ? true : false
         var config = undefined;
         if (detail.playUrl) {
           var https = /https/.test(window.location.origin) ? true : false;
