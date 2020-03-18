@@ -93,6 +93,7 @@ class Main extends React.Component<Props, State> {
       if (!res) {
         return
       }
+      res.liveStatus = res.liveStatus === 51 ? 50 :  res.liveStatus
       const liveData = res.liveData
       let type: ViewType = -1
       /** 待审核 */

@@ -83,6 +83,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           showTime: true
         }
       },
+      type: {
+        type: 'select', label: '直播类型',
+        options: [
+          {label: '公开直播', value: 0},
+          {label: '私密直播', value: 10}
+        ]
+      },
       anchorLevel: {
         type: 'select', label: '主播等级',
         options: [

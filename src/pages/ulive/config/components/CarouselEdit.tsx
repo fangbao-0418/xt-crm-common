@@ -1,11 +1,11 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig } from '../config'
-import { TagItem } from '../interface'
+import { CarouselItem } from '../interface'
 import * as api from '../api'
 
 interface Props {
-  record?: TagItem
+  record?: CarouselItem
 }
 
 class Main extends React.Component<Props> {
@@ -17,14 +17,23 @@ class Main extends React.Component<Props> {
         if (err) {
           return
         }
-        api.saveTag({
-          ...values,
-          id: record && record.id
-        }).then((res) => {
-          resove(res)
-        }, () => {
-          reject()
-        })
+        if (record && record.id) {
+          api.updateCarousel({
+            ...values
+          }).then((res) => {
+            resove(res)
+          }, () => {
+            reject()
+          })
+        } else {
+          api.addCarousel({
+            ...values
+          }).then((res) => {
+            resove(res)
+          }, () => {
+            reject()
+          })
+        }
       })
     })
   }
@@ -37,6 +46,7 @@ class Main extends React.Component<Props> {
     }
   }
   public render () {
+    const record = Object.assign({}, this.props.record)
     return (
       <div>
         <Form
@@ -46,17 +56,18 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => {
             this.form = ref
           }}
-          namespace='tag'
+          namespace='carousel'
         >
           <FormItem
-            name='title'
+            name='id'
             verifiable
+            readonly={record.id !== undefined}
             controlProps={{
               style: {width: 200}
             }}
           />
           <FormItem
-            name='sort'
+            name='carouselSort'
             controlProps={{
               style: {width: 200}
             }}

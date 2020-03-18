@@ -6,7 +6,7 @@ import { AlertComponentProps } from '@/packages/common/components/alert'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
-import { Tag, Divider, Popover, Button } from 'antd'
+import { Tag, Divider, Popover, Button, Popconfirm } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
@@ -68,27 +68,27 @@ class Main extends React.Component<Props> {
         )
       }
     },
-    {
-      title: '计划开播',
-      dataIndex: 'liveAnticipatedStartTime',
-      width: 200,
-      render: (text) => {
-        return APP.fn.formatDate(text) || ''
-      }
-    },
-    {
-      title: '直播时间',
-      dataIndex: 'liveStartTime',
-      width: 200,
-      render: (text, record) => {
-        return (
-          <>
-            <div>{APP.fn.formatDate(text) || ''}</div>
-            <div>{APP.fn.formatDate(record.liveEndTime) || ''}</div>
-          </>
-        )
-      }
-    },
+    // {
+    //   title: '计划开播',
+    //   dataIndex: 'liveAnticipatedStartTime',
+    //   width: 200,
+    //   render: (text) => {
+    //     return APP.fn.formatDate(text) || ''
+    //   }
+    // },
+    // {
+    //   title: '直播时间',
+    //   dataIndex: 'liveStartTime',
+    //   width: 200,
+    //   render: (text, record) => {
+    //     return (
+    //       <>
+    //         <div>{APP.fn.formatDate(text) || ''}</div>
+    //         <div>{APP.fn.formatDate(record.liveEndTime) || ''}</div>
+    //       </>
+    //     )
+    //   }
+    // },
     {
       title: '直播间',
       width: 200,
@@ -174,7 +174,13 @@ class Main extends React.Component<Props> {
             <span onClick={this.showView.bind(this, record.planId)} className='href'>详情</span>&nbsp;&nbsp;
             <If condition={[0, 1].indexOf(record.status) > -1}><span onClick={(canUp || canDown) ? this.changeStatus.bind(this, record) : undefined} className={(canUp || canDown) ? 'href' : ''}>{record.status === 0 ? '上架' : '下架'}</span>&nbsp;&nbsp;</If>
             <If condition={record.status === 6}><span> 断网下架</span>&nbsp;&nbsp;</If>
-            <span onClick={canStopPlay ? this.closeDown.bind(this, record) : undefined} className={canStopPlay ? 'href' : ''}>停播</span>&nbsp;&nbsp;
+            <If condition={[51, 60].indexOf(record.liveStatus) === -1}>
+              <span onClick={canStopPlay ? this.closeDown.bind(this, record) : undefined} className={canStopPlay ? 'href' : ''}>停播</span>&nbsp;&nbsp;
+            </If>
+            <If condition={record.liveStatus === 60}>
+              <span onClick={this.stopPlayback.bind(this, record)} className={'href'}>停播回放</span>
+              &nbsp;&nbsp;
+            </If>
             {record.anchorType !== 10 && <span onClick={canSetTop ? this.setTop.bind(this, record) : undefined} className={canSetTop ? 'href' : ''}>{record.liveTop === 0 ? '置顶' : '取消置顶'}</span>}&nbsp;&nbsp;
             {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)}
           </div>
@@ -182,6 +188,33 @@ class Main extends React.Component<Props> {
       }
     }
   ]
+  public stopPlayback (record: UliveStudio.ItemProps) {
+    if (this.props.alert) {
+      let reason = ''
+      const hide = this.props.alert({
+        title: '停播回放',
+        content: (
+          <div>
+            <TextArea
+              placeholder='请输入停播原因'
+              onChange={(e) => {
+                reason = e.target.value
+              }}
+            />
+          </div>
+        ),
+        onOk: () => {
+          api.stopPlayback({
+            planId: record.planId,
+            forbidReason: reason
+          }).then(() => {
+            hide()
+            this.listpage.refresh()
+          })
+        }
+      })
+    }
+  }
   public changeStatus (record: UliveStudio.ItemProps) {
     const hide = this.props.alert({
       content: (
@@ -226,7 +259,6 @@ class Main extends React.Component<Props> {
       // page: 'pages/product/product',
       // scene: 'pid=782&index=2'
     }).then((res) => {
-      console.log(res, '-------------')
       if (!res) {
         return
       }
@@ -330,7 +362,8 @@ class Main extends React.Component<Props> {
     })
     let url = location.pathname.replace(/index.html/, '') +  'video.html?' + query
     // url = 'http://assets.hzxituan.com/upload/2020-03-17/020bfc50-ec64-41cd-9a42-db1b7e92864e-k7vplmky.html?' + query
-    url = 'http://test-crmadmin.hzxituan.com/issue23/video.html?' + query
+    // url = 'http://test-crmadmin.hzxituan.com/issue23/video.html?' + query
+    url = 'http://localhost:3000/video.html?' + query
     window.open(url, '喜团直播', 'top=120,left=150,width=800,height=500,scrollbars=0,titlebar=1', false)
   }
   /** 禁播 */
@@ -384,7 +417,6 @@ class Main extends React.Component<Props> {
             rowKey: 'planId',
             rowSelection: {
               onChange: (keys: string[] | number[]) => {
-                console.log(keys)
                 this.rowKeys = keys
               },
               getCheckboxProps: (record) => {
@@ -410,6 +442,7 @@ class Main extends React.Component<Props> {
               <FormItem name='liveStatus' />
               <FormItem name='anchorPhone' />
               <FormItem label='场次ID' name='planId' />
+              {/* <FormItem name='type' /> */}
               <FormItem name='liveTime' />
               <FormItem
                 name='liveTagId'
@@ -420,7 +453,6 @@ class Main extends React.Component<Props> {
                       fetchData={() => {
                         return fetchTagList().then((res) => {
                           const data = res || []
-                          console.log(res, '-----')
                           return data.map((item: {title: string, id: any}) => {
                             return {
                               label: item.title,

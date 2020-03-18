@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-06 17:18:26
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-06 17:21:47
- * @FilePath: /xt-crm/src/pages/ulive/config/config.ts
+ * @LastEditTime: 2020-03-18 10:23:14
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/ulive/config/config.ts
  */
 import _ from 'lodash'
 import { OptionProps } from '@/packages/common/components/form'
@@ -29,6 +29,29 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       sort: {
+        type: 'number', label: '排序',
+        controlProps: {
+          precision: 0,
+          min: 0
+        },
+        fieldDecoratorOptions: {
+          initialValue: 0
+        }
+      }
+    },
+    carousel: {
+      id: {
+        type: 'number', label: '场次ID',
+        fieldDecoratorOptions: {
+          rules: [
+            {
+              required: true,
+              message: '场次ID不能为空'
+            }
+          ]
+        }
+      },
+      carouselSort: {
         type: 'number', label: '排序',
         controlProps: {
           precision: 0,

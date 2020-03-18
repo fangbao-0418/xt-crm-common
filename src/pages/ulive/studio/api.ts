@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-17 16:32:51
+ * @LastEditTime: 2020-03-18 11:47:02
  * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/ulive/studio/api.ts
  */
 const { post, get, newPost, newPut } = APP.http
@@ -80,4 +80,12 @@ export const multiAudit = (payload: {
   auditReason?: string
 }) => {
   return newPost('::ulive/live/plan/batch/audit', payload)
+}
+
+/** 删除直播回放 */
+export const stopPlayback = (payload: {
+  planId: any
+  forbidReason?: string
+}) => {
+  return newPost('::ulive/live/plan/playback/forbid', payload)
 }
