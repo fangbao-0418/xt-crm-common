@@ -1,7 +1,7 @@
 <!--
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-18 18:08:06
+ * @LastEditTime: 2020-03-18 21:05:32
  * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/assets/root/video.html
  -->
 <!DOCTYPE html>
@@ -19,7 +19,7 @@
         overflow: hidden;
       }
       .vcp-playnode {
-        z-index: 1001;
+        z-index: 1002;
         position: relative;
         height: 3em;
         color: #FFFFFF;
@@ -36,16 +36,19 @@
         list-style: none;
         margin: 0;
         padding: 0;
-        transition: opacity 500ms;
+        transition: all 500ms;
         opacity: 0;
         overflow: auto;
         max-height: 140px;
+        z-index: 1002;
       }
       .vcp-playnode-select.hide {
         opacity: 0;
+        display: none;
       }
       .vcp-playnode-select.show {
         opacity: 1;
+        display: block;
       }
       .vcp-playnode-select li {
         line-height: 28px;
@@ -88,6 +91,7 @@
           playUrl: query.playUrl,
           liveCoverUrl: query.liveCoverUrl
         };
+        var live = query.live === 'live' ? true : false
         var config = undefined;
         if (detail.playUrl) {
           var https = /https/.test(window.location.origin) ? true : false;
@@ -96,7 +100,7 @@
           // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
           config = {
             posterImage: true,
-            live: false,
+            live: live,
             m3u8: playUrl.replace('.flv', '.m3u8'),
             flv: playUrl,
             // autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
@@ -183,14 +187,11 @@
       }
       initConfig();
       document.body.addEventListener('mousemove', function(e){
-        console.log(e.target, 'mousemove');
         var selectEl = document.querySelector('.vcp-playnode-select')
         var parentEl = document.querySelector('.vcp-playnode');
-        if (parentEl.contains(e.target)) {
-
-        } else {
+        if (!parentEl.contains(e.target)) {
           if (selectEl) {
-            // selectEl.className = '.vcp-playnode-select hide'
+            selectEl.className = 'vcp-playnode-select hide'
           }
         }
       })

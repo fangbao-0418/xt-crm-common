@@ -18,6 +18,11 @@ import TextArea from 'antd/lib/input/TextArea'
 
 interface Props extends AlertComponentProps {
 }
+
+interface State {
+  rowKeys: any[]
+}
+
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public rowKeys: any[] = []
@@ -115,7 +120,7 @@ class Main extends React.Component<Props> {
                 </span>
               </>
             )}
-            {record.playbackUrl && record.liveStatus === 60 && (
+            {record.playbackUrl && [51, 60].indexOf(record.liveStatus) > -1 && (
               <>
                 <Divider type='vertical' />
                 <span
@@ -355,15 +360,18 @@ class Main extends React.Component<Props> {
     }
   }
   public showVideo (record: UliveStudio.ItemProps) {
+    const liveStatus = record.liveStatus
+    const isPlayBack = [51, 60].indexOf(liveStatus) > -1
     const query = param({
       version: new Date().getTime(),
-      playUrl: record.liveStatus === 60 ? (record.playbackUrl || []).join(',') : record.playUrl,
-      liveCoverUrl: record.liveCoverUrl
+      playUrl: isPlayBack ? (record.playbackUrl || []).join(',') : record.playUrl,
+      liveCoverUrl: record.liveCoverUrl,
+      live: isPlayBack ? '' : 'live'
     })
     let url = location.pathname.replace(/index.html/, '') +  'video.html?' + query
     // url = 'http://assets.hzxituan.com/upload/2020-03-17/020bfc50-ec64-41cd-9a42-db1b7e92864e-k7vplmky.html?' + query
-    // url = 'http://test-crmadmin.hzxituan.com/issue23/video.html?' + query
-    url = 'http://localhost:3000/video.html?' + query
+    url = 'http://test-crmadmin.hzxituan.com/issue50/video.html?' + query
+    // url = 'http://localhost:3000/video.html?' + query
     window.open(url, '喜团直播', 'top=120,left=150,width=800,height=500,scrollbars=0,titlebar=1', false)
   }
   /** 禁播 */
