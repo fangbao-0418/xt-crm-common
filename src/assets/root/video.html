@@ -118,7 +118,18 @@
               setPartNode(currentPlayindex);
             }
           });
-          renderNode(urls, player);
+          if (!isLive) {
+            renderNode(urls, player);
+            document.body.addEventListener('mousemove', function(e){
+              var selectEl = document.querySelector('.vcp-playnode-select')
+              var parentEl = document.querySelector('.vcp-playnode');
+              if (!parentEl.contains(e.target)) {
+                if (selectEl) {
+                  selectEl.className = 'vcp-playnode-select hide'
+                }
+              }
+            })
+          }
           document.body.onload = function () {
             player.play();
           }
@@ -180,15 +191,6 @@
         }
       }
       initConfig();
-      document.body.addEventListener('mousemove', function(e){
-        var selectEl = document.querySelector('.vcp-playnode-select')
-        var parentEl = document.querySelector('.vcp-playnode');
-        if (!parentEl.contains(e.target)) {
-          if (selectEl) {
-            selectEl.className = 'vcp-playnode-select hide'
-          }
-        }
-      })
     </script>
   </body>
 </html>
