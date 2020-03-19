@@ -185,6 +185,8 @@ class List extends React.Component {
       },
       {
         title: '操作',
+        align: 'center',
+        width: 200,
         render: record => (
           <>
             {/* <Link to={`/activity/info/edit/${record.id}?page=${page.current}&pageSize=${page.pageSize}`}>编辑</Link> */}

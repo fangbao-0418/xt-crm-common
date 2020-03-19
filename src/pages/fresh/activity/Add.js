@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import { Modal, Form, Input, Select, DatePicker, Card, Button, message, Radio } from 'antd';
+import { Modal, Form, Input, InputNumber, Select, DatePicker, Card, Button, message, Radio, Icon } from 'antd'
 import { setBasePromotion, updateBasePromotion } from './api';
 import { isFunction } from 'lodash';
 import UploadView from '@/components/upload';
@@ -10,6 +10,7 @@ import activityTagSImg from '@/assets/images/activity-tag-smimg.jpg';
 import If from '@/packages/common/components/if';
 import omit from 'lodash/omit';
 import { replaceHttpUrl as prefixUrl} from '@/util/utils';
+import SaleArea from '@/components/sale-area';
 import './activity.scss';
 
 const FormItem = Form.Item;
@@ -210,6 +211,17 @@ class ActivityForm extends React.Component {
                 ],
               })(<Input placeholder="请输入活动名称" />)}
             </FormItem>
+            <FormItem label="提前预热">
+              {getFieldDecorator('preheatHours', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请输入提前预热时间',
+                  },
+                ],
+              })(<InputNumber precision={0} placeholder="小时" />)}
+              <span className='ml10'><Icon type="info-circle" theme='filled' style={{color: '#1890ff'}} /> 仅支持填写正整数</span>
+            </FormItem>
             <FormItem label="开始时间">
               {getFieldDecorator('startTime', {
                 rules: [
@@ -275,6 +287,23 @@ class ActivityForm extends React.Component {
                   <Radio value={20}>右下角</Radio>
                 </Radio.Group>
               )}
+            </Form.Item>
+            <Form.Item
+              label='可售区域'
+              required
+            >
+              {
+                getFieldDecorator('productSaleAreas', {
+                  rules: [{
+                    validator: async (rules, value) => {
+                      if (!value || Array.isArray(value) && value.length === 0) {
+                        throw new Error('请选择可售区域');
+                      }
+                      return value;
+                    }
+                  }]
+                })(<SaleArea/>)
+              }
             </Form.Item>
             <FormItem wrapperCol={{ offset: 9 }}>
               <Button
