@@ -294,11 +294,6 @@ class Main extends React.Component<Props, State> {
         width: 100,
       },
       {
-        title: '锁定库存',
-        dataIndex: 'lockStock',
-        width: 100,
-      },
-      {
         title: '可用库存',
         dataIndex: 'usableStock',
         width: 100,
@@ -791,11 +786,6 @@ class Main extends React.Component<Props, State> {
             '-'
           );
         }
-      },
-      {
-        title: '锁定库存',
-        dataIndex: 'lockStock',
-        width: 100,
       },
       {
         title: '可用库存',

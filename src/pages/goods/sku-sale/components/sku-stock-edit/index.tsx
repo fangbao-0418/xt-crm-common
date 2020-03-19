@@ -58,10 +58,6 @@ class SkuStockEdit extends React.Component<SkuStockEditProps, SkuStockEditState>
       width: 100,
       dataIndex: 'stock'
     }, {
-      title: '锁定库存',
-      width: 100,
-      dataIndex: 'lockStock'
-    }, {
       title: '可用库存',
       width: 100,
       dataIndex: 'usableStock'

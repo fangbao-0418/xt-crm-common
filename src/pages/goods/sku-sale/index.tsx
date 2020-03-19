@@ -92,11 +92,6 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       )
     },
     {
-      title: '锁定库存',
-      width: 100,
-      dataIndex: 'lockStock'
-    },
-    {
       title: '可用库存',
       width: 100,
       dataIndex: 'usableStock'
