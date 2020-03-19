@@ -313,9 +313,9 @@ class Main extends React.Component<Props, State> {
           )(
             <InputNumber
               precision={0}
-              value={text || 0}
+              value={text}
               placeholder="请输入库存"
-              onChange={cb('incStock', record, index)}
+              onChange={value => cb('incStock', record, index)(value||0)}
             />
           )
       },
