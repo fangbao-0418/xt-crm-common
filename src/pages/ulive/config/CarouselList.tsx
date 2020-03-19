@@ -11,6 +11,7 @@ import * as api from './api'
 interface Props extends AlertComponentProps {}
 interface State {
   dataSource: CarouselItem[]
+  total: number
 }
 class Main extends React.Component<Partial<Props>, State> {
   public columns: ColumnProps<CarouselItem>[] = [
@@ -56,7 +57,8 @@ class Main extends React.Component<Partial<Props>, State> {
     }
   ]
   public state: State = {
-    dataSource: []
+    dataSource: [],
+    total: 0
   }
   public listpage: ListPageInstanceProps
   public carouselRef: CarouselEdit | null
@@ -120,14 +122,22 @@ class Main extends React.Component<Partial<Props>, State> {
                 新增场次
               </Button>
               <div style={{float: 'right', marginTop: 5}}>
-                合计 <span style={{color: 'red'}}>{dataSource.length}</span> 场直播，还可添加 <span style={{color: '#0b8235'}}>{addableNum}</span> 场
+                合计 <span style={{color: 'red'}}>{this.state.total}</span> 场直播，还可添加 <span style={{color: '#0b8235'}}>{addableNum}</span> 场
               </div>
             </div>
           )}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              pageSize: undefined,
+              page: undefined
+            }
+          }}
           processData={(result) => {
             result = result || []
             this.setState({
-              dataSource: result
+              dataSource: result.filter((item: any) => item.type !== 10),
+              total: result.length
             })
             return {
               total: result.length,
