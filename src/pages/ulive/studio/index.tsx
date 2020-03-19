@@ -425,8 +425,21 @@ class Main extends React.Component<Props, State> {
       >
         <ListPage
           reserveKey='ulive-studio'
-          getInstance={(ref) => this.listpage = ref}
+          getInstance={(ref) => {
+            this.listpage = ref
+          }}
           columns={this.columns}
+          onFormChange={(field, value) => {
+            if (field === 'liveTagId') {
+              this.listpage.form.setValues({
+                liveTop: undefined
+              }, true)
+            } else if (field === 'liveTop') {
+              this.listpage.form.setValues({
+                liveTagId: undefined
+              }, true)
+            }
+          }}
           tableProps={{
             rowKey: 'planId',
             rowSelection: {
