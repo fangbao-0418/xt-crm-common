@@ -1,8 +1,8 @@
 export const queryConfig = {
   statusOptions: [
     { label: '全部', value: 0 },
-    { label: '已开启', value: 1 },
-    { label: '已关闭', value: 2 }
+    { label: '已开启', value: 2 },
+    { label: '已关闭', value: 3 }
   ]
 }
 

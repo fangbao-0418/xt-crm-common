@@ -29,8 +29,9 @@ class AuditCard extends React.Component {
     return (
       <WrapCard
         data={data}
-        render={(auditInfo) => {
-          if (auditInfo.auditStatus === 1) {
+        render={({ status, auditStatus, withdrawalType, withdrawalInfo }) => {
+
+          if (status === 0 && auditStatus === 1) {
             return (
               <Card title='审核信息'>
                 <Form {...formItemLayout}>
@@ -82,20 +83,33 @@ class AuditCard extends React.Component {
               </Card>
             )
           }
+
+          let auditResult = ''
+
+          if (status === 1) {
+            auditResult = '在售'
+          } else if (auditStatus === 3) {
+            auditResult = '不通过'
+          } else if (withdrawalType === 1) {
+            auditResult = '店长下架'
+          } else if (withdrawalType === 2) {
+            auditResult = '管理员下架'
+          } else {
+            auditResult = '状态错误'
+          }
+
           return (
             <Card title='审核信息'>
               <Form {...formItemLayout}>
                 <FormItem label="审核结果">
                   <span className="ant-form-text">
-                    {
-                      auditInfo.auditStatus === 2 ? '通过' : '不通过'
-                    }
+                    {auditResult}
                   </span>
                 </FormItem>
                 <FormItem label="审核说明">
                   <span className="ant-form-text">
                     {
-                      auditInfo.auditInfo || '暂无数据'
+                      withdrawalInfo || '暂无说明'
                     }
                   </span>
                 </FormItem>

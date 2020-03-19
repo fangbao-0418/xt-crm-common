@@ -1,43 +1,48 @@
 import React, { Component } from 'react';
-import { Modal, Table } from 'antd';
+import { Modal } from 'antd';
+import moment from 'moment';
+import CommonTable from '@/components/common-table';
 import { getOperateList } from '../api'
 
-const dataSource = [
-  {
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    address: '西湖区湖底公园1号',
-  },
-  {
-    key: '2',
-    name: '胡彦祖',
-    age: 42,
-    address: '西湖区湖底公园1号',
-  },
-];
+
+function formatTime(text) {
+  return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-';
+}
 
 const columns = [
   {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
+    title: '编号',
+    dataIndex: 'createUid',
+    key: 'createUid'
   },
   {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
+    title: '下架时间',
+    dataIndex: 'createTime',
+    key: 'createTime',
+    render: formatTime
   },
   {
-    title: '住址',
-    dataIndex: 'address',
-    key: 'address',
+    title: '操作人',
+    dataIndex: 'createUser',
+    key: 'createUser'
   },
+  {
+    title: '下架原因',
+    dataIndex: 'info',
+    key: 'info'
+  }
 ];
 class ViolationModal extends Component {
 
   state = {
-    visible: false
+    visible: false,
+    violationData: {
+      records: [],
+      current: 1,
+      size: 0,
+      pages: 10,
+      total: 0
+    }
   }
 
   /** 隐藏模态框 */
@@ -66,12 +71,22 @@ class ViolationModal extends Component {
 
   fetchData = (data) => {
     getOperateList(data).then(res => {
-      console.log(res)
+      this.setState({
+        violationData: res
+      })
+    })
+  }
+
+  handleChange = (params) => {
+    const { currentGoods } = this.props;
+    this.fetchData({
+      ...params,
+      productPoolId: currentGoods.id
     })
   }
 
   render() {
-    const { visible } = this.state;
+    const { visible, violationData } = this.state;
 
     const { currentGoods } = this.props
 
@@ -79,16 +94,20 @@ class ViolationModal extends Component {
 
     return (
       <Modal
+        width={'60%'}
         visible={visible}
         footer={null}
         title={`商品【${currentGoods.productName}】的图片`}
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
+        destroyOnClose
       >
-        <Table 
-          dataSource={dataSource}
+        <CommonTable
           columns={columns}
-          pagination={false}
+          dataSource={violationData.records || []}
+          onChange={this.handleChange}
+          total={violationData.total}
+          current={violationData.current}
         />
       </Modal>
     )

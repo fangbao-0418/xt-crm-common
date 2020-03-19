@@ -97,12 +97,12 @@ class LogisCard extends React.Component {
               onCancel={this.handleCascaderCityCancel}
             />
             <Form {...formItemLayout}>
-              <FormItem label="物流体积">
+              {/* <FormItem label="物流体积">
                 <span className="ant-form-text">{logisInfo.bulk}</span>
               </FormItem>
               <FormItem label="物流重量">
                 <span className="ant-form-text">{logisInfo.weight}</span>
-              </FormItem>
+              </FormItem> */}
               <FormItem label="运费设置">
                 {
                   logisInfo.withShippingFree === 1 ?

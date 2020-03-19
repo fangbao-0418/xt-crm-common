@@ -81,7 +81,9 @@ export default class extends Component {
         onCancel={this.handleCancel}
       >
         <div>
-          <p style={{ fontWeight: 600, fontSize: 24, textAlign: "center", margin: '16px 0' }}>共识别到{checkInfo['00000'] && checkInfo['00000'].num || 0}个用户可开通小店</p>
+          <p style={{ fontWeight: 600, fontSize: 24, textAlign: "center", margin: '16px 0' }}>
+            共识别到{checkInfo['00000'] && checkInfo['00000'].num || 0}个用户可开通小店
+          </p>
           <If condition={failData.length}>
             另
             {
@@ -91,7 +93,9 @@ export default class extends Component {
             }
             <span onClick={this.handleExport} className="href"> 导出</span>
           </If>
-          <p style={{ marginTop: 32 }}>提示：如有无法识别字符请检查手机号长度或者逗号格式是否英文状态</p>
+          <p style={{ marginTop: 32 }}>
+            提示：如有无法识别字符请检查手机号长度或者内容结尾删除空格等不合格字符
+          </p>
         </div>
       </Modal>
     )

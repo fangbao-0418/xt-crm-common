@@ -64,7 +64,7 @@ class GoodsDetail extends React.Component {
         productName: goodsInfo.productName || '暂无数据',
         productImage: goodsInfo.productImage.split(','),
         listImage: goodsInfo.listImage.split(','),
-        showNum: goodsInfo.showNum || '暂无数据'
+        showNum: goodsInfo.showNum || 0
       }
 
       skuInfo = {
@@ -86,7 +86,8 @@ class GoodsDetail extends React.Component {
       auditInfo = {
         status: goodsInfo.status,
         auditStatus: goodsInfo.auditStatus,
-        auditInfo: goodsInfo.auditInfo
+        withdrawalType: goodsInfo.withdrawalType,
+        withdrawalInfo: goodsInfo.withdrawalInfo
       }
     }
 

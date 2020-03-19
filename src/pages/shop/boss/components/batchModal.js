@@ -62,8 +62,15 @@ export default class extends Component {
           <FormItem label="请输入手机号">
             {getFieldDecorator('phones', {
               rules: [{
-                required: true,
-                message: '请输入至少一个手机号码！'
+                validator: (rule, value, cb) => {
+                  const reg = /^[1]([0-9])[0-9]{9}(\n[1]([0-9])[0-9]{9})*$/
+                  if (!reg.test(value)) {
+                    cb('请添加手机号,并按enter键隔开~')
+                    // return
+                  } else {
+                    cb()
+                  }
+                }
               }]
             })(
               <TextArea

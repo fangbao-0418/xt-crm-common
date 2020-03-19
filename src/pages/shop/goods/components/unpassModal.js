@@ -53,13 +53,15 @@ class UnpassModal extends Component {
   }
 
   render() {
-    const { form: { getFieldDecorator } } = this.props
+    const { form: { getFieldDecorator }, currentGoods } = this.props
     const { visible } = this.state;
+
+    if (!currentGoods) return null;
 
     return (
       <Modal
         visible={visible}
-        title="请填写【xxx】商品不通过原因"
+        title={`请填写【${currentGoods.productName}】商品不通过原因`}
         okText="确认不通过"
         onOk={this.handleOk}
         onCancel={this.handleCancel}

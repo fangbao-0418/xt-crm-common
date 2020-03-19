@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from 'antd';
 import Image from '@/components/Image';
+import If from '@/packages/common/components/if';
 
 class SkuItem extends React.Component {
 
@@ -23,14 +24,16 @@ class SkuItem extends React.Component {
         }}>
           { specName }
         </div>
-        <Image
-          style={{
-            marginTop: 8,
-            width: 110,
-            height: 110,
-          }}
-          src={specPicture}
-        />
+        <If condition={specPicture}>
+          <Image
+            style={{
+              marginTop: 8,
+              width: 110,
+              height: 110,
+            }}
+            src={specPicture}
+          /> 
+        </If>
       </Card>
     )
   }

@@ -82,7 +82,7 @@ class LowerModal extends Component {
               </Radio.Group>)}
           </FormItem>
           <FormItem label="违规原因">
-            {getFieldDecorator('info', {
+            {getFieldDecorator('withdrawalInfo', {
               rules: [{
                 required: true,
                 message: '请输入违规原因！'

@@ -9,7 +9,7 @@ function formatTime(text) {
   return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-';
 }
 
-const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass, onUnpass }) => {
+const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpass }) => {
   return [
     {
       title: '商品ID',
@@ -59,6 +59,7 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
       width: 100,
       dataIndex: 'status',
       render: (val, record) => {
+        // status 1: 上架 0 下架
         const withdrawalType = record.withdrawalType // 1: 店长下架 2: 管理员下架
         const withdrawalInfo = record.withdrawalInfo // 下架说明 管理员才有
         const auditStatus = record.auditStatus // 商品审核 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
@@ -96,9 +97,10 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
       title: '违规次数',
       dataIndex: 'violationCount',
       width: 200,
-      render: (val, record) => (
-        <span onClick={() => onViolation(record)} className="href">{val}</span>
-      )
+      render: (val, record) => {
+        if (val === 0) return val;
+        return <span onClick={() => onViolation(record)} className="href">{val}</span>
+      }
     },
     {
       title: '操作',

@@ -53,6 +53,14 @@ export default {
     async createShop(payload) {
       await api.createShop(payload);
       message.success('批量开通小店成功！')
+      dispatch({
+        type: 'shop.boss/saveDefault',
+        payload: {
+          checkModal: {
+            visible: false
+          }
+        }
+      });
       dispatch['shop.boss'].getBossList({
         page: 1,
         pageSize: 10

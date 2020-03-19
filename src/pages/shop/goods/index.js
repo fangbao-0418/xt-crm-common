@@ -16,8 +16,9 @@ const { TabPane } = Tabs;
 class Main extends React.Component {
 
   state = {
-    status: undefined, // 0: 下架 1: 上架
-    auditStatus: undefined, // 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
+    tabStatus: '0',
+    // status: undefined, // 0: 下架 1: 上架
+    // auditStatus: undefined, // 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
     currentGoods: null // 当前审核商品
   }
 
@@ -38,6 +39,7 @@ class Main extends React.Component {
       this.violationModalRef.showModal()
       this.violationModalRef.fetchData({
         page: 1,
+        pageSize: 10,
         productPoolId: currentGoods.id
       })
     })
@@ -77,13 +79,12 @@ class Main extends React.Component {
   }
 
   /** 操作：切换状态查询 */
-  handleTabChange = (key) => {
-    console.log(key)
-    // this.setState({
-    //   status: +key
-    // }, () => {
-    //   this.listRef.refresh();
-    // })
+  handleTabChange = (tabStatus) => {
+    this.setState({
+      tabStatus
+    }, () => {
+      this.listRef.refresh();
+    })
   }
 
   /** 性能优化: 重置清空当前商品 */
@@ -94,7 +95,7 @@ class Main extends React.Component {
   }
 
   render() {
-    const { status, currentGoods } = this.state;
+    const { currentGoods, tabStatus } = this.state;
 
     return (
       <Card>
@@ -145,11 +146,25 @@ class Main extends React.Component {
           formConfig={formConfig}
           getInstance={ref => this.listRef = ref}
           processPayload={(payload) => {
-            return {
-              ...payload,
-              status: this.state.status,
-              auditStatus: this.state.auditStatus
+            if (tabStatus === '0') {
+              payload.status = undefined
+              // payload.auditStatus = undefined
+              payload.auditStatues = '1, 2, 3'
+            } else if (tabStatus === '1') { // tab 在售商品
+              payload.status = 1
+              // payload.auditStatus = 2
+              payload.auditStatues = '2'
+            } else if (tabStatus === '2') { // tab 仓库中商品
+              payload.status = 0
+              // payload.auditStatus = 3
+              payload.auditStatues = '3'
+            } else if (tabStatus === '3') { // tab 待审核
+              payload.status = 0
+              // payload.auditStatus = 1
+              payload.auditStatues = '1'
             }
+
+            return payload
           }}
           rangeMap={{
             createTime: {
@@ -182,7 +197,7 @@ class Main extends React.Component {
                   );
                 }}
               />
-              <FormItem name='auditStatus' />
+              {/* <FormItem name='auditStatus' /> */}
               <FormItem label="审核人" name="auditUser" />
               <FormItem
                 name="createTime"
@@ -205,7 +220,6 @@ class Main extends React.Component {
           )}
           api={getGoodsList}
           columns={getColumns({
-            status,
             onPreview: this.handlePreview,
             onViolation: this.handleViolation,
             onDetail: this.handleDetail,
