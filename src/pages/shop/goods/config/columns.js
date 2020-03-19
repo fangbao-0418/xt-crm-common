@@ -1,9 +1,13 @@
 import React from 'react';
 import Image from '@/components/Image';
-import { If } from '@/packages/common/components';
+import moment from 'moment';
 import { Tooltip } from 'antd';
 import { replaceHttpUrl } from '@/util/utils';
 import { formatMoneyWithSign } from '@/pages/helper';
+
+function formatTime(text) {
+  return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-';
+}
 
 const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass, onUnpass }) => {
   return [
@@ -79,12 +83,14 @@ const getColumns = ({ status, onPreview, onViolation, onDetail, onLower, onPass,
     {
       title: '审核时间',
       width: 120,
-      dataIndex: 'auditTime'
+      dataIndex: 'auditTime',
+      render: formatTime
     },
     {
       title: '审核人',
       width: 120,
-      dataIndex: 'auditUser'
+      dataIndex: 'auditUser',
+      render: val => val || '暂无'
     },
     {
       title: '违规次数',

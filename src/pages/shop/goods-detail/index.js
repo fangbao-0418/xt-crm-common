@@ -14,8 +14,8 @@ class GoodsDetail extends React.Component {
   }
 
   fetchData = () => {
-    const { dispatch, match: { params: { id: productId } } } = this.props;
-    dispatch['shop.goods.detail'].getGoodsInfo({ productId });
+    const { dispatch, match: { params: { id: productPoolId } } } = this.props;
+    dispatch['shop.goods.detail'].getGoodsInfo({ productPoolId });
   }
 
 
@@ -35,7 +35,7 @@ class GoodsDetail extends React.Component {
 
     // 2.根据后端的skuList遍历获取规格key的其他一些元数据, 具体有key下面的一些数据, 如key为颜色,那么key下面的值有红色、绿色等数据
     propertys.forEach(pitem => {
-      pitem.content = goodsInfo.skuList.map(sitem => ({
+      pitem.content = (goodsInfo.skuList || []).map(sitem => ({
         specName: sitem[pitem.specNameKey],
         specPicture: sitem[pitem.specPictureKey]
       }))
@@ -60,11 +60,11 @@ class GoodsDetail extends React.Component {
 
     if (goodsInfo) {
       baseInfo = {
-        productCategory: goodsInfo.productCategoryVO.combineName || '暂无数据',
+        productCategory: goodsInfo.productCategoryVO && goodsInfo.productCategoryVO.combineName || '暂无数据',
         productName: goodsInfo.productName || '暂无数据',
         productImage: goodsInfo.productImage.split(','),
         listImage: goodsInfo.listImage.split(','),
-        showNum: goodsInfo.showNum
+        showNum: goodsInfo.showNum || '暂无数据'
       }
 
       skuInfo = {
@@ -73,8 +73,8 @@ class GoodsDetail extends React.Component {
       }
 
       logisInfo = {
-        bulk: goodsInfo.bulk,
-        weight: goodsInfo.weight,
+        bulk: goodsInfo.bulk || '暂无数据',
+        weight: goodsInfo.weight || '暂无数据',
         withShippingFree: goodsInfo.withShippingFree,
         freightTemplateName: goodsInfo.freightTemplateName,
         freightTemplateId: 1, // goodsInfo.freightTemplateId,
@@ -84,7 +84,8 @@ class GoodsDetail extends React.Component {
       }
 
       auditInfo = {
-        auditStatus: goodsInfo.status,
+        status: goodsInfo.status,
+        auditStatus: goodsInfo.auditStatus,
         auditInfo: goodsInfo.auditInfo
       }
     }

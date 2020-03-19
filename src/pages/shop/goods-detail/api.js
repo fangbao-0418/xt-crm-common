@@ -2,7 +2,7 @@ import { post, get } from '@/util/fetch';
 
 /** 获取商品详情信息 */
 export function getGoodsInfo(data) {
-  return post('/product/detail', data);
+  return get('/shop/product/detail', data);
 }
 
 /** 获取运费模板信息 */

@@ -1,5 +1,3 @@
-import { message } from 'antd';
-
 const { post, newPost } = APP.http;
 
 /** 获取商品列表 */
@@ -9,7 +7,7 @@ export function getGoodsList(data) {
 
 /** 获取违规历史列表 */
 export function getOperateList(data) {
-  return newPost('/product/operate/list', {
+  return newPost('http://192.168.4.205:8080/product/operate/list', {
     ...data,
     type: 1,
     pageSize: 10

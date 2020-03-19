@@ -5,7 +5,7 @@ import styles from '../style.module.scss'
 const CarouselItem = (src) => {
   return (
     <div>
-      <img alt="img" src={"https://assets.hzxituan.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551581836105420.jpg"} />
+      <img alt="img" src={src} />
     </div>
   )
 }
@@ -65,7 +65,7 @@ class CarouselModal extends Component {
 
     if (!currentGoods) return null;
 
-    const arr = [1, 2]
+    const carousels = [currentGoods.coverUrl]
 
     return (
       <Modal
@@ -85,10 +85,10 @@ class CarouselModal extends Component {
           beforeChange={this.handleBeforeChange}
           ref={ref => (this.sliderRef = ref)}
         >
-          {arr.map(item => <CarouselItem src={item} />)}
+          {carousels.map((item, i) => <CarouselItem key={i} src={item} />)}
         </Carousel>
         <p className={styles.hint}>
-          { activeSlide } / { arr.length }
+          { activeSlide } / { carousels.length }
         </p>
         <Icon className={[ styles.action, styles.actionPre ]} type="left-circle" onClick={this.handlePrev} />
         <Icon className={[ styles.action, styles.actionNext ]} type="right-circle" onClick={this.handleNext} />

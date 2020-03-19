@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table } from 'antd';
+import { Card, Table, Empty } from 'antd';
 import WrapCard from './wrapCard'
 import SkuItem from './skuItem'
 
@@ -10,9 +10,11 @@ const SpecKeysCards = ({ specKeys }) => {
       specKeys.map(sitem => (
         <Card type="inner" key={sitem.id} title={sitem.name}>
           {
-            sitem.content.map((citem, i) => (
-              <SkuItem key={i} cont={citem} />
-            ))
+            sitem.content.length ?
+              sitem.content.map((citem, i) => (
+                <SkuItem key={i} cont={citem} />
+              )) :
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
           }
         </Card>
       ))
