@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Button } from 'antd';
 import MoneyRender from '@/components/money-render'
 import { enumPayType } from '../../constant'
@@ -70,17 +70,23 @@ const getColumns = ({ onConfirm }) => {
       width: '150px',
       align: 'center',
       render: (operate, record) => (
-        <>
+        <div>
           {
             enumPayType.ToBePaid === record.paymentStatus
-              ? <Button type="primary" onClick={onConfirm(record, 'confirm')}>确认支付</Button>
+              ?
+              (
+                <Fragment>
+                  <Button type="primary" onClick={onConfirm(record, 'confirm')}>确认支付</Button><br />
+                  <Button className="mt10" onClick={onConfirm(record, 'fail')}>支付失败</Button>
+                </Fragment>
+              )
               : enumPayType.Freezing === record.paymentStatus
                 ? <Button type="primary" disabled>确认支付</Button>
                 : enumPayType.Paid === record.paymentStatus
                   ? <Button type="link" onClick={onConfirm(record, 'look')}>查看明细</Button>
                   : null
           }
-        </>
+        </div>
       )
     }
   ];

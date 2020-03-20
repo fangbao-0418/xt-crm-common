@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Table, Empty } from 'antd';
 import WrapCard from './wrapCard'
 import SkuItem from './skuItem'
+import { formatMoneyWithSign } from '@/util/helper';
 
 /** 商品规格的key */
 const SpecKeysCards = ({ specKeys }) => {
@@ -37,7 +38,8 @@ const SpecValsCard = ({ goodsInfo }) => {
   const fixedColumns = [{
     title: '销售价',
     dataIndex: 'salePrice',
-    key: 'salePrice'
+    key: 'salePrice',
+    render: (value) => (value ? formatMoneyWithSign(value) : '-')
   }, {
     title: '库存',
     dataIndex: 'stock',

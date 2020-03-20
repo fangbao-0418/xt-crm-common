@@ -61,3 +61,7 @@ export const fetchCheckingList = payload => {
 export const fetchGatheringAccountList = (id) => {
   return get(`/finance/settlement/account/list?accid=${id}`)
 }
+/** 付款单支付失败 单个 */
+export const paymentFail = ({ id, ...data }) => {
+  return newPost(`/finance/payment/fail/${id}`, data)
+}

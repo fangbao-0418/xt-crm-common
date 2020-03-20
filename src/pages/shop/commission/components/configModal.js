@@ -146,6 +146,14 @@ export default class ConfigModal extends Component {
                 {
                   required: true,
                   message: '请输入代理佣金！'
+                  // validator: (rule, value, cb) => {
+                  //   if (value < 0.1) {
+                  //     cb('请输入大于0的一位小数~')
+                  //     // return
+                  //   } else {
+                  //     cb()
+                  //   }
+                  // }
                 }
               ],
               initialValue: agencyRate
@@ -165,7 +173,15 @@ export default class ConfigModal extends Component {
               rules: [
                 {
                   required: true,
-                  message: '请输入公司佣金！'
+                  message: '请输入代理佣金！'
+                  // validator: (rule, value, cb) => {
+                  //   if (value < 0.1) {
+                  //     cb('请输入大于0的一位小数~')
+                  //     // return
+                  //   } else {
+                  //     cb()
+                  //   }
+                  // }
                 }
               ],
               initialValue: companyRate

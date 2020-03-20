@@ -1,5 +1,5 @@
 const { post, newPost } = APP.http;
-
+// http://192.168.4.205:8082
 /** 获取商品列表 */
 export function getGoodsList(data) {
   return newPost('/shop/product/list', data);

@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Form, Table, Spin } from 'antd';
 import WrapCard from './wrapCard'
 import CascaderCity from '@/components/cascader-city';
+import { formatMoneyWithSign } from '@/util/helper';
 import { getFreightTemplate } from '../api';
 
 const FormItem = Form.Item
@@ -30,7 +31,7 @@ const FreightInfo = ({ data: freightTemplate }) => {
     key: 'fare',
     width: 200,
     render: (text, record, index) => {
-      return record.rankType === 1 ? record.cost : '不发货';
+      return record.rankType === 1 ? formatMoneyWithSign(record.cost) : '不发货';
     }
   }]
 

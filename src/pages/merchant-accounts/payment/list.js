@@ -1,5 +1,5 @@
 import React from 'react';
-import { setQuery, parseQuery, download } from '@/util/utils';
+import { setQuery, parseQuery } from '@/util/utils';
 import { Table, Card, Form, Button, Spin } from 'antd';
 import SearchForm from './components/searchForm'
 import PayModal from './components/payModal'
@@ -26,7 +26,8 @@ class List extends React.Component {
       payModalVisible: false, // 确认支付模态框
       batchPayModalVisible: false, // 批量支付模态框
       batchFailModalVisible: false, // 批量失败模态框
-      detailModalVisible: false // 明细模态框
+      detailModalVisible: false, // 明细模态框
+      isBatchFail: false // 是否批量支付
     };
   }
 
@@ -100,6 +101,12 @@ class List extends React.Component {
           detailModalVisible: true
         })
       })
+    } else if (type === 'fail') {
+      this.setState({
+        batchFailModalVisible: true,
+        recordItem: record,
+        isBatchFail: false
+      })
     } else {
       this.setState({
         payModalVisible: true,
@@ -118,7 +125,10 @@ class List extends React.Component {
 
   // 失败确认
   handleFailConfirm = () => {
-
+    this.setState({
+      batchFailModalVisible: false
+    })
+    this.fetchData()
   }
 
   // 模态框取消操作
@@ -138,17 +148,18 @@ class List extends React.Component {
   // 显示批量模态框
   handleBatchShow = (key) => {
     this.setState({
-      [key]: true
+      [key]: true,
+      isBatchFail: true
     })
   }
 
   render() {
-    const { page, dataSource, selectedRowKeys, recordItem } = this.state;
+    const { page, dataSource, recordItem, isBatchFail } = this.state; // , selectedRowKeys
 
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.handleSelectChange
-    }
+    // const rowSelection = {
+    //   selectedRowKeys,
+    //   onChange: this.handleSelectChange
+    // }
 
     return (
       <Spin tip="操作处理中..." spinning={false}>
@@ -179,7 +190,7 @@ class List extends React.Component {
               <span
                 className="href"
                 onClick={() => {
-                  download('/assets/files/批量支付成功模版.xlsx', '批量支付模版')
+                  APP.fn.download(require('@/assets/files/批量支付成功模版.xlsx'), '批量支付模版')
                 }}
               >
                 下载批量支付模版
@@ -188,7 +199,7 @@ class List extends React.Component {
                 style={{ marginLeft: 16 }}
                 className="href"
                 onClick={() => {
-                  download('/assets/files/批量支付失败模板.xlsx', '批量失败模版')
+                  APP.fn.download(require('@/assets/files/批量支付失败模板.xlsx'), '批量失败模版')
                 }}
               >
                 下载批量失败模版
@@ -205,7 +216,7 @@ class List extends React.Component {
               ...page,
               onChange: this.handleChangeTable
             }}
-            rowSelection={rowSelection}
+            // rowSelection={rowSelection}
             defaultExpandAllRows={true}
             rowKey={record => record.id}
           />
@@ -236,6 +247,8 @@ class List extends React.Component {
         />
         {/* 批量失败模态框 */}
         <BatchFaliModal
+          record={recordItem}
+          isBatchFail={isBatchFail}
           modalProps={{
             visible: this.state.batchFailModalVisible,
             onCancel: this.handleCancel.bind(this, 'batchFailModalVisible')

@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { Form, Modal, Button, Upload, message } from 'antd';
-import { getHeaders, prefix, replaceHttpUrl, download } from '@/util/utils'
+import { getHeaders, prefix, replaceHttpUrl } from '@/util/utils'
+import If from '@/packages/common/components/if';
+import { exportFile } from '@/util/fetch';
 
 @Form.create()
 export default class extends Component {
   state = {
-    importRes: null
+    importRes: null,
+    errorUrl: ''
   }
 
   handleImportChange = info => {
@@ -15,6 +18,11 @@ export default class extends Component {
         console.log('file response =>', response)
         this.setState({ importRes: response.data })
         message.success(`${name} 文件上传成功`);
+      } else if (/^url:/.test(response.message)) {
+        const errorUrl = response.message.split(':')[1]
+        this.setState({
+          errorUrl
+        })
       } else {
         message.error(`${response.message}`);
       }
@@ -59,7 +67,7 @@ export default class extends Component {
           <span
             className="href"
             onClick={() => {
-              download('/assets/files/批量支付成功模版.xlsx', '批量支付模版')
+              APP.fn.download(require('@/assets/files/批量支付成功模版.xlsx'), '批量支付模版')
             }}
           >
             下载模板
@@ -69,9 +77,9 @@ export default class extends Component {
           <div style={{ marginBottom: 8 }}>（请控制文件大小在2mb内）</div>
           {importRes && <div>
             <div style={{ marginBottom: 8 }}>
-              <span>成功添加</span>
+              <span>成功导入</span>
               <span style={{ color: 'red' }}>{importRes.successNum}</span>
-              <span>条用户数据</span>
+              <span>条数据</span>
             </div>
             <div>
               <a href={replaceHttpUrl(importRes.excelAddress)} target="_blank" rel="noopener noreferrer">
@@ -80,6 +88,11 @@ export default class extends Component {
             </div>
           </div>}
         </div>
+        <If condition={this.state.errorUrl}>
+          <div>上传失败 <span className="href" onClick={() => {
+            exportFile(this.state.errorUrl)
+          }}>下载</span></div>
+        </If>
       </Modal>
     )
   }
