@@ -1,0 +1,282 @@
+import React from 'react'
+import { Table, Select, Input, Button, Form, InputNumber } from 'antd'
+import { ColumnProps } from 'antd/lib/table'
+import { FormComponentProps } from 'antd/lib/form'
+import { PaginationConfig } from 'antd/lib/pagination'
+import ArrowContain from '../arrow-contain'
+import { SkuSaleProps } from './index'
+import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import InputMoney from '@/packages/common/components/input-money'
+import styles from './style.module.scss'
+import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
+import { pick } from 'lodash'
+const FormItem = Form.Item;
+interface Props extends Partial<AlertComponentProps>, FormComponentProps {
+  extraColumns?: ColumnProps<any>[]
+  dataSource: SkuSaleProps[]
+  onChange?: (dataSource: SkuSaleProps[]) => void
+}
+
+// 通过返回数据拿到id到规格详情的映射关系
+function getSelectedRowKeysMap(data: any[]) {
+  let result: any = {};
+  for (let item of data) {
+    if (result[item.id]) {
+      result[item.id] = result[item.id].concat([item.productBasicSkuId])
+    } else {
+      result[item.id] = [item.productBasicSkuId]
+    }
+  }
+  return result;
+}
+
+function combination(data: any[]) {
+  data = data || [];
+  const keysMap: any = {};
+  const result: any[] = [];
+  for (const item of data) {
+    const record = {
+      ...pick(item, [
+        'num',
+        'id',
+        'productName',
+        'status',
+        'categoryId',
+        'categoryName',
+        'productCode',
+        'barCode',
+        'productMainImage'
+      ]),
+      productBasicSkuInfos: [pick(item, [
+        'productBasicSkuId',
+        'productBasicSkuCode',
+        'productBasicSkuBarCode',
+        'productBasicSpuCode',
+        'propertyValue',
+        'marketPrice',
+        'costPrice',
+        'totalStock'
+      ])]
+    }
+    if (keysMap[item.id]) {
+      keysMap[item.id].productBasicSkuInfos = [...keysMap[item.id].productBasicSkuInfos, record];
+    } else {
+      keysMap[item.id] = record;
+      result.push(record)
+    }
+  }
+  console.log('result =>', result)
+  return result
+}
+
+interface State {
+  dataSource: SkuSaleProps[];
+  selectedRowKeys: any[],
+  selectedRowKeysMap: any
+}
+
+class Main extends React.Component<Props, State> {
+  public pagination: PaginationConfig = {
+    current: 1,
+    pageSize: 10
+  }
+  public state: State = {
+    dataSource: this.props.dataSource || [],
+    selectedRowKeys: [],
+    selectedRowKeysMap: []
+  }
+  public componentWillReceiveProps (props: Props) {
+    this.setState({
+      dataSource: props.dataSource
+    })
+  }
+  public speedyInputCallBack = (dataSource: SkuSaleProps[]) => {
+    if (this.props.onChange) {
+      this.props.onChange([...dataSource])
+    }
+  }
+  // 快速填充
+  public speedyInput (field: string, text: any, record: SkuSaleProps, index: number, dataSource: SkuSaleProps[], cb?: any, fieldDecoratorOptions?: GetFieldDecoratorOptions) {
+    const { pageSize = 10, current = 1 } = this.pagination
+    const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
+    return (node: React.ReactNode) => {
+      return (
+        <FormItem
+          wrapperCol={{span: 24}}
+        >
+          <ArrowContain
+            disabled={dataSource.length <= 1}
+            type={(realIndex === 0 && 'down' || realIndex === dataSource.length - 1 && 'up' || undefined)}
+            onClick={(type) => {   
+              // const value = text
+              let currentIndex = 0
+              let end = realIndex
+              if (type === 'down') {
+                currentIndex = realIndex
+                end = dataSource.length - 1
+              }
+              let fields: any = [];
+              while (currentIndex <= end) {
+                fields.push(`${field}-${currentIndex}`);
+                dataSource[currentIndex][field] = text as never
+                currentIndex++
+              }
+              this.props.form.resetFields(fields);
+              this.speedyInputCallBack(dataSource)
+            }}
+          >
+            {fieldDecoratorOptions ?
+              this.props.form && this.props.form.getFieldDecorator(`${field}-${realIndex}`, {
+                initialValue: text,
+                getValueFromEvent(e) {
+                  let value: string | number = '';
+                  if (!e || !e.target) {
+                    value = e;
+                  } else {
+                    const { target } = e;
+                    value = target.type === 'checkbox' ? target.checked : target.value;
+                  }
+                  cb(field, record, realIndex)(value);
+                  return value;
+                },
+                ...fieldDecoratorOptions
+              })(node)
+            : node}
+          </ArrowContain>
+        </FormItem>
+      )
+    }
+  }
+
+  public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
+    const validateColumnsFields = (index:number) => {
+      const { pageSize = 10, current = 1 } = this.pagination
+      const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
+      if (this.props.form) {
+        this.props.form.validateFields(
+          ['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${realIndex}`)
+        )
+      }
+    }
+    return [
+      {
+        title: '规格编码',
+        dataIndex: 'skuCode',
+        width: 200,
+        render: (text: any, record: any, index: any) => {
+          return (
+            <Input
+              value={text}
+              placeholder='请输入规格编码'
+              onChange={cb('skuCode', record, index)}
+            />
+          )
+        }
+      },
+      {
+        title: '市场价',
+        dataIndex: 'marketPrice',
+        width: 200,
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('marketPrice', text, record, index, dataSource, cb, {  
+            rules: [{
+              required: true,
+              message: '请输入市场价'
+            }]
+          })(
+            <InputMoney
+              min={0.01}
+              precision={2}
+              placeholder='请输入市场价'
+            />
+          )
+        }
+      },
+      {
+        title: '销售价',
+        dataIndex: 'salePrice',
+        width: 200,
+        render: (text, record, index: any) => (
+          this.speedyInput('salePrice', text, record, index, dataSource, cb, {
+            rules: [{
+              validator: (rule, value, cb) => {
+                if (!value) {
+                  cb('请输入销售价')
+                }
+                cb()
+              }
+            }]
+          })(
+            <InputMoney
+              min={0.01}
+              precision={2}
+              placeholder='请输入销售价'
+              onBlur={() => validateColumnsFields(index)}
+            />
+          )
+        )
+      },
+      {
+        title: '库存',
+        dataIndex: 'stock',
+        width: 200,
+        render: (text: any, record, index: any) => (
+          this.speedyInput('stock', text, record, index, dataSource, cb)(
+            <InputNumber
+              precision={0}
+              min={0}
+              value={text}
+              placeholder='请输入库存'
+              onChange={cb('stock', record, index)}
+            />
+          )
+        )
+      },
+      {
+        title: '自提分佣%',
+        dataIndex: 'commissionPercentage',
+        width: 200,
+        render: (text: any, record: any, index: any) => (
+          this.speedyInput('commissionPercentage', text, record, index, dataSource, cb)(
+            <InputNumber
+              precision={2}
+              min={0}
+              max={100}
+              value={text}
+              onChange={cb('commissionPercentage', record, index)}
+            />
+          )
+        )
+      }
+    ]
+  }
+  public handleChangeValue = (field: string, record: any, index: any) => (e: any) => {
+    const { pageSize = 10, current = 1 } = this.pagination
+    const realIndex = current > 1 ? pageSize * (current - 1) + index : index
+    const value = (e && e.target ? e.target.value : e) as never
+    const dataSource = this.props.dataSource
+    dataSource[realIndex][field] = value
+    if (this.props.onChange) {
+      this.props.onChange([...dataSource])
+    }
+  }
+  public render () {
+    const columns = (this.props.extraColumns || []).concat(this.getColumns(this.handleChangeValue, this.state.dataSource))
+    return (
+      <>
+        <Table
+          rowKey={(_, idx) => idx + ''}
+          className={styles['sku-table']}
+          style={{ marginTop: 10 }}
+          scroll={{ x: true }}
+          columns={columns}
+          dataSource={this.state.dataSource}
+          onChange={(pagination) => {
+            this.pagination = pagination
+          }}
+        />
+      </>
+    )
+  }
+}
+export default Alert(Main)

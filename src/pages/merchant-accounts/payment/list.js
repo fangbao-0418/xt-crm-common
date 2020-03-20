@@ -76,13 +76,16 @@ class List extends React.Component {
   handleChangeTable = e => {
     this.setState(
       {
-        page: e
+        page: {
+          ...this.state.page,
+          current: e
+        }
       },
       () => {
         const params = parseQuery();
         this.fetchData({
           ...params,
-          page: e.current,
+          page: e,
           pageSize: e.pageSize
         });
       }
@@ -101,9 +104,16 @@ class List extends React.Component {
           endModifyTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
           page: 1
         };
-        delete params.createTime;
-        delete params.modifyTime;
-        this.fetchData(params);
+        this.setState({
+          page: {
+            ...this.state.page,
+            current: 1
+          }
+        }, ()=> {
+          delete params.createTime;
+          delete params.modifyTime;
+          this.fetchData(params);
+        })
       }
     });
   };
@@ -160,8 +170,7 @@ class List extends React.Component {
   };
 
   render() {
-    const { total, pageSize, current, dataSource, recordItem, modalType } = this.state;
-
+    const { page: {total, current}, pageSize, dataSource, recordItem, modalType } = this.state;
     const {
       form: { getFieldDecorator }
     } = this.props;

@@ -181,8 +181,16 @@ class List extends React.Component {
         title: '收款账户',
         dataIndex: 'accountInfo',
         key: 'accountInfo',
-        width: 150
-
+        width: 150,
+        render: accountInfo => {
+          return (
+            <div>
+              <p>{accountInfo.accountName}</p>
+              <p>{accountInfo.accountNo}</p>
+              <p>{accountInfo.bankName}</p>
+            </div>
+          )
+        }
       },
       {
         title: '币种',

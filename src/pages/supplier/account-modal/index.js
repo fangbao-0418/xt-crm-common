@@ -23,14 +23,17 @@ class AccountModal extends Component {
   // 重置密码
   resetAccount = async () => {
     this.setState({ loading: true })
-    const res = await resetStore({
+    resetStore({
       id: this.props.supplierAccountId,
       supplierId: this.props.id
-    });
-    if (res) {
-      this.successCb('重置密码成功');
-    }
-    this.setState({ loading: false })
+    }).then((res) => {
+      if (res) {
+        this.successCb('重置密码成功');
+      }
+      this.setState({ loading: false })
+    }).catch((err) => {
+      this.setState({ loading: false })
+    })
   }
   // 创建供应商账号
   createAccount = () => {
@@ -38,15 +41,17 @@ class AccountModal extends Component {
       if (!err) {
         this.setState({ loading: true })
         const params = this.props.form.getFieldsValue();
-        const res = await addSupplierAccount({
+        addSupplierAccount({
           ...params,
           supplierId: this.props.id
-        });
-
-        if (res) {
-          this.successCb('创建账号成功');
-        }
-        this.setState({ loading: false })
+        }).then((res) => {
+          if (res) {
+            this.successCb('创建账号成功');
+          }
+          this.setState({ loading: false })
+        }).catch((err) => {
+          this.setState({ loading: false })
+        })
       }
     });
   }

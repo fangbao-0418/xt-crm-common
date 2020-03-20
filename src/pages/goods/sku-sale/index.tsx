@@ -3,7 +3,6 @@ import { Card, Tabs, Button, Modal, message, Icon } from 'antd';
 import dateFns from 'date-fns';
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
 import { gotoPage, replaceHttpUrl } from '@/util/utils';
-import { formatMoneyWithSign } from '../../helper';
 import Image from '@/components/Image';
 import SelectFetch from '@/components/select-fetch';
 import { If, ListPage, FormItem } from '@/packages/common/components';
@@ -66,13 +65,13 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       title: '成本价',
       width: 100,
       dataIndex: 'costPrice',
-      render: formatMoneyWithSign
+      render: APP.fn.formatMoney
     },
     {
       title: '销售价',
       width: 100,
       dataIndex: 'salePrice',
-      render: formatMoneyWithSign
+      render: APP.fn.formatMoney
     },
     {
       title: '总库存',
@@ -126,7 +125,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       render: (record: any) => {
         const { status } = this.state;
         return (
-          <div style={{ marginTop: 40 }}>
+          <div>
             <span
               className='href'
               onClick={() => {
@@ -279,6 +278,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
         <ListPage
           reserveKey='skuSale'
           namespace='skuSale'
+          className='vertical-align-table'
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
           processPayload={(payload) => {
