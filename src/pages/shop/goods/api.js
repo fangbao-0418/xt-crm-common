@@ -2,7 +2,7 @@ const { post, newPost } = APP.http;
 
 /** 获取商品列表 */
 export function getGoodsList(data) {
-  return newPost('http://192.168.4.205:8080/shop/product/list', data);
+  return newPost('/shop/product/list', data);
 }
 
 /** 获取违规历史列表 */

@@ -18,7 +18,6 @@ class GoodsDetail extends React.Component {
     dispatch['shop.goods.detail'].getGoodsInfo({ productPoolId });
   }
 
-
   getSpecKeys = (goodsInfo) => {
     // 1.根据后端的propertyId1, propertyId2组装成规格key数组
     let propertys = [{
@@ -49,9 +48,7 @@ class GoodsDetail extends React.Component {
   }
 
   render() {
-    const { goodsInfo } = this.props;
-
-    console.log(goodsInfo)
+    const { goodsInfo, match: { params: { id: productPoolId } }  } = this.props;
 
     let baseInfo = null, // 商品信息
       skuInfo = null, // 规格信息
@@ -96,7 +93,7 @@ class GoodsDetail extends React.Component {
         <BaseCard data={baseInfo} />
         <SkuCard data={skuInfo} />
         <LogisCard data={logisInfo} />
-        <AuditCard data={auditInfo} />
+        <AuditCard data={auditInfo} productPoolId={productPoolId} />
       </div>
     );
   }

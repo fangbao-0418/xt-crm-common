@@ -1,16 +1,23 @@
 import React from 'react';
 import { Card, Form, Radio, Input, Button } from 'antd';
+import { connect } from '@/util/utils';
 import WrapCard from './wrapCard'
 
 const FormItem = Form.Item
 const { TextArea } = Input;
 
+@connect()
 @Form.create()
 class AuditCard extends React.Component {
   handleSave = () => {
-    this.props.form.validateFields(async (errors, values) => {
+    const { dispatch, form, productPoolId } = this.props;
+    form.validateFields(async (errors, values) => {
       if (errors) return;
       console.log(values)
+      dispatch['shop.goods.detail'].auditGoods({
+        ...values,
+        productPoolId
+      })
     });
   }
 

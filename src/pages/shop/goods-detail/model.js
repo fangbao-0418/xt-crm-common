@@ -1,4 +1,4 @@
-import { getGoodsInfo } from './api';
+import { getGoodsInfo, auditGoods } from './api';
 
 const namespace = 'shop.goods.detail';
 export default {
@@ -10,6 +10,17 @@ export default {
     async getGoodsInfo(data) {
       const goodsInfo = await getGoodsInfo(data);
       dispatch[namespace].saveDefault({ goodsInfo });
-    }
+    },
+
+    async auditGoods({ productPoolId, auditStatus, auditInfo }) {
+      await auditGoods({
+        auditStatus,
+        auditInfo,
+        ids: [+productPoolId]
+      });
+      dispatch[namespace].getGoodsInfo({
+        productPoolId
+      });
+    },
   })
 };
