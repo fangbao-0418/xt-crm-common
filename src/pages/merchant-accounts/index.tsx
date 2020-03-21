@@ -49,7 +49,7 @@ class Main extends React.Component<Props> {
         <Route exact path={`${match.url}/settlement`} component={SettlementList} />
         <Route exact path={`${match.url}/settlement/:id`} component={SettlementDetail} />
         <Route exact path={`${match.url}/payment`} component={PaymentList} />
-        <Route exact path={`${match.url}/downList`} component={DownList} />
+        <Route exact path={`${match.url}/download`} component={DownList} />
       </Switch>
     )
   }
