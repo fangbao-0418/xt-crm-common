@@ -21,7 +21,7 @@ export const fetchGatheringAccountList = (id: number) => {
 
 /** 对账单明细列表 */
 export const exportAccount = (accId: number) => {
-  return get(`/finance/accountRecord/queryExportAccountData/exportAccountDataaccId?accId=${accId}`)
+  return get(`/finance/accountRecord/exportAccountData?accId=${accId}`)
 }
 
 

@@ -75,12 +75,7 @@ class PayModal extends React.Component {
                 </> : null
               }>
               {getFieldDecorator('paymentImg', {
-                initialValue: [].concat(paymentImgList.map(item => initImgList(item)[0])),
-                rules: [
-                  {
-                    required: modalType === 'confirm'
-                  }
-                ]
+                initialValue: [].concat(paymentImgList.map(item => initImgList(item)[0]))
               })(
                 <UploadView
                   {...uploadProps}
