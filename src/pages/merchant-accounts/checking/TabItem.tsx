@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'antd'
+import { Button, message } from 'antd'
 import { FormItem } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
@@ -127,7 +127,12 @@ class Main extends React.Component<Props, State> {
               </span>
               )
             }&nbsp;&nbsp;
-            <span className='href' onClick={() => api.exportAccount(id)}>
+            <span
+              className='href'
+              onClick={() => api.exportAccount(id).then(res => {
+                return message.success('导出成功')
+              })}
+            >
               导出
             </span>
           </div>
