@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Modal, Button, Input, Radio, message, Upload } from 'antd';
+import { Form, Modal, Button, Input, Radio, message } from 'antd';
 import If from '@/packages/common/components/if';
-import { getHeaders, prefix, replaceHttpUrl } from '@/util/utils'
+import UploadView from '@/components/upload';
 import { exportFile } from '@/util/fetch';
 import * as api from '../../api'
 
@@ -45,22 +45,32 @@ export default class extends Component {
   handlePayConfirm = (id) => () => {
     const {
       form: { validateFields },
-      handleFailConfirm
+      handleFailConfirm,
+      isBatchFail
     } = this.props;
-    validateFields((err, vals) => {
-      if (!err) {
-        api.paymentFail({
-          ...vals,
-          id
-        }).then(res => {
+    validateFields((err, { files, remark, sendMsg }) => {
+      if (err) return
+      const params = {
+        id,
+        remark,
+        sendMsg
+      }
+
+      let fn = 'paymentFail'
+
+      if (isBatchFail) {
+        // 批量支付
+        params.fileUrl = files[0].url.replace('https://assets.hzxituan.com/finance/payment/', '')
+        params.fileName = files[0].name
+        fn = 'paymentBatchFail'
+      }
+        api[fn](params).then(res => {
           res && handleFailConfirm()
         })
-      }
     });
   }
 
   render() {
-    const { importRes } = this.state
     const { modalProps = {}, form: { getFieldDecorator }, isBatchFail, record } = this.props;
 
     const formItemLayout = {
@@ -83,44 +93,33 @@ export default class extends Component {
       >
         <Form {...formItemLayout}>
           <If condition={isBatchFail}>
-            <FormItem label="上传文件">
-              <Upload
-                className='mr10'
-                name='file'
-                accept='.xls,.xlsx'
-                showUploadList={false}
-                withCredentials={true}
-                action={prefix('/finance/payment/batch/pay')}
-                headers={getHeaders({})}
-                onChange={this.handleImportChange}
-                style={{ margin: '0 10px' }}
-                beforeUpload={this.handBeforeUpload}
-              >
-                <Button type='primary'>导入excel表</Button>
-              </Upload>
-              <span
-                className="href"
-                onClick={() => {
-                  APP.fn.download(require('@/assets/files/批量支付失败模板.xlsx'), '批量失败模版')
-                }}
-              >
-                下载模板
-              </span>
-              <div style={{ padding: 10 }}>
-                <div style={{ marginBottom: 8 }}>（请控制文件大小在2mb内）</div>
-                {importRes && <div>
-                  <div style={{ marginBottom: 8 }}>
-                    <span>成功导入</span>
-                    <span style={{ color: 'red' }}>{importRes.successNum}</span>
-                    <span>条数据</span>
-                  </div>
-                  <div>
-                    <a href={replaceHttpUrl(importRes.excelAddress)} target="_blank" rel="noopener noreferrer">
-                      支付失败清单下载
-              </a>
-                  </div>
-                </div>}
-              </div>
+            <FormItem label="上传文件" extra="(请控制文件大小在2mb内)">
+              {getFieldDecorator('files', {
+                rules: [
+                  {
+                    required: isBatchFail,
+                    message: '请上传文件',
+                  },
+                ],
+              })(
+                <UploadView
+                  placeholder='请上传文件'
+                  listNum={1}
+                  size={2}
+                  ossDir="finance/payment"
+                >
+                  <Button type='primary'>导入excel表</Button>{' '}
+                  <span
+                    className="href"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      APP.fn.download(require('@/assets/files/批量支付失败模板.xlsx'), '批量失败模版')
+                    }}
+                  >
+                    下载模板
+                  </span>
+                </UploadView>
+              )}
               <If condition={this.state.errorUrl}>
                 <div>上传失败 <span className="href" onClick={() => {
                   exportFile(this.state.errorUrl)
@@ -129,7 +128,14 @@ export default class extends Component {
             </FormItem>
           </If>
           <FormItem label="失败原因">
-            {getFieldDecorator('remark')(
+            {getFieldDecorator('remark', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入失败原因',
+                },
+              ],
+            })(
               <TextArea
                 placeholder="请输入失败原因，30字内"
                 autoSize={{ minRows: 3, maxRows: 5 }}
@@ -137,7 +143,14 @@ export default class extends Component {
             )}
           </FormItem>
           <FormItem label="发送短信">
-            {getFieldDecorator('sendMsg')(
+            {getFieldDecorator('sendMsg', {
+              rules: [
+                {
+                  required: true,
+                  message: '请选择是否发送短信',
+                },
+              ],
+            })(
               <Radio.Group>
                 <Radio value={1}>是</Radio>
                 <Radio value={0}>否</Radio>

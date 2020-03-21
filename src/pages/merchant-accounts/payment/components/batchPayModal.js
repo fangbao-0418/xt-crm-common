@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Form, Modal, Button, Upload, message } from 'antd';
 import { getHeaders, prefix, replaceHttpUrl } from '@/util/utils'
 import If from '@/packages/common/components/if';
-import { exportFile } from '@/util/fetch';
 
 @Form.create()
 export default class extends Component {
@@ -19,7 +18,7 @@ export default class extends Component {
         this.setState({ importRes: response.data })
         message.success(`${name} 文件上传成功`);
       } else if (/^url:/.test(response.message)) {
-        const errorUrl = response.message.split(':')[1]
+        const errorUrl = response.message.replace('url:', '')
         this.setState({
           errorUrl
         })
@@ -41,6 +40,8 @@ export default class extends Component {
   render() {
     const { importRes } = this.state
     const { modalProps = {} } = this.props;
+
+    console.log(this.state.errorUrl)
 
     return (
       <Modal
@@ -89,9 +90,17 @@ export default class extends Component {
           </div>}
         </div>
         <If condition={this.state.errorUrl}>
-          <div>上传失败 <span className="href" onClick={() => {
-            exportFile(this.state.errorUrl)
-          }}>下载</span></div>
+          <div>
+            上传失败
+            <span
+              className="href"
+              onClick={() => {
+                APP.fn.download(this.state.errorUrl, '批量支付模版')
+              }}
+            >
+              下载
+            </span>
+          </div>
         </If>
       </Modal>
     )

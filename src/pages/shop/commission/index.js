@@ -105,11 +105,11 @@ export default class extends Component {
                       <Row>
                         <Col span={12} style={{ textAlign: 'center' }}>
                           <span className={styles.icon}>代</span>
-                          {innerItem.agencyRate}
+                          {innerItem.agencyRate} %
                         </Col>
                         <Col span={12} style={{ textAlign: 'center' }}>
                           <span className={styles.icon}>公</span>
-                          {innerItem.companyRate}
+                          {innerItem.companyRate} %
                         </Col>
                       </Row>
                     }

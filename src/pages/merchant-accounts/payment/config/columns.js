@@ -69,25 +69,40 @@ const getColumns = ({ onConfirm }) => {
       title: '操作',
       width: '150px',
       align: 'center',
-      render: (operate, record) => (
-        <div>
-          {
-            enumPayType.ToBePaid === record.paymentStatus
-              ?
-              (
-                <Fragment>
-                  <Button type="primary" onClick={onConfirm(record, 'confirm')}>确认支付</Button><br />
-                  <Button className="mt10" onClick={onConfirm(record, 'fail')}>支付失败</Button>
-                </Fragment>
-              )
-              : enumPayType.Freezing === record.paymentStatus
-                ? <Button type="primary" disabled>确认支付</Button>
-                : enumPayType.Paid === record.paymentStatus
-                  ? <Button type="link" onClick={onConfirm(record, 'look')}>查看明细</Button>
-                  : null
-          }
-        </div>
-      )
+      render: (operate, record) => {
+        if (enumPayType.ToBePaid === record.paymentStatus) {
+          return (
+            <Fragment>
+              <Button type="primary" onClick={onConfirm(record, 'confirm')}>
+                确认支付
+              </Button><br />
+              <Button className="mt10" onClick={onConfirm(record, 'fail')}>
+                支付失败
+              </Button>
+            </Fragment>
+          )
+        } else if (enumPayType.Freezing === record.paymentStatus) {
+          return (
+            <Button type="primary" disabled>
+              确认支付
+            </Button>
+          )
+        } else if (enumPayType.Paid === record.paymentStatus) {
+          return (
+            <Button type="link" onClick={onConfirm(record, 'look')}>
+              查看明细
+            </Button>
+          )
+        } else if (enumPayType.Fail === record.paymentStatus) {
+          return (
+            <Button type="primary" onClick={onConfirm(record, 'confirm')}>
+              重新支付
+            </Button>
+          )
+        } else {
+          return null
+        }
+      }
     }
   ];
 }

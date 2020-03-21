@@ -93,24 +93,25 @@ class List extends React.Component {
 
   // 确认支付
   handleConfirm = (record, type) => () => {
-    // 查看明细
-    if (type === 'look') {
+    if (type === 'look') { // 查看明细
       api.getPaymentDetail(record.id).then(res => {
         this.setState({
           recordItem: res,
           detailModalVisible: true
         })
       })
-    } else if (type === 'fail') {
+    } else if (type === 'fail') { // 确认失败
       this.setState({
         batchFailModalVisible: true,
         recordItem: record,
         isBatchFail: false
       })
-    } else {
-      this.setState({
-        payModalVisible: true,
-        recordItem: record
+    } else { // 确认支付
+      api.getPaymentDetail(record.id).then(res => {
+        this.setState({
+          payModalVisible: true,
+          recordItem: res
+        })
       })
     }
   };
@@ -160,6 +161,8 @@ class List extends React.Component {
     //   selectedRowKeys,
     //   onChange: this.handleSelectChange
     // }
+
+    console.log(recordItem)
 
     return (
       <Spin tip="操作处理中..." spinning={false}>

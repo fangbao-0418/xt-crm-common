@@ -1,5 +1,7 @@
 const { get, newPost, newPut } = APP.http
 
+// http://192.168.4.205:8080
+
 // 类目列表
 export function getList(data) {
   return newPost('/category/commission/list', data)
