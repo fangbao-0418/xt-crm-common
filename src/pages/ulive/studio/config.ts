@@ -58,7 +58,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       liveTop: {
         type: 'select', label: '是否置顶',
         options: [
-          {label: '官方置顶', value: 2},
+          // {label: '官方置顶', value: 2},
           {label: '置顶', value: 1},
           {label: '未置顶', value: 0}
         ]

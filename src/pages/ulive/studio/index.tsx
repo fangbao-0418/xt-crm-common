@@ -189,7 +189,7 @@ class Main extends React.Component<Props, State> {
               &nbsp;&nbsp;
             </If>
             {record.anchorType !== 10 && <span onClick={canSetTop ? this.setTop.bind(this, record) : undefined} className={canSetTop ? 'href' : ''}>{record.liveTop === 0 ? '置顶' : '取消置顶'}</span>}&nbsp;&nbsp;
-            {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)}
+            {/* {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)} */}
           </div>
         )
       }
