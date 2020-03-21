@@ -7,7 +7,7 @@ import OrderInfo from './order-info';
 import GoodsTable from './goods-table';
 import BenefitInfo from './benefit-info';
 import StepInfo from './step-info';
-import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant';
+import { enumOrderStatus, OrderStatusTextMap } from '../constant';
 import DeliveryModal from './components/delivery-modal';
 import { dateFormat } from '@/util/utils';
 import moment from 'moment';
@@ -278,7 +278,7 @@ class Detail extends Component {
                           </span>
                           <span>
                             {
-                              (item.childOrder.orderStatus == enumOrderStatus.Intercept && item.childOrder.interceptorTimeOut) ?
+                              (item.childOrder.orderStatus === enumOrderStatus.Intercept && item.childOrder.interceptorTimeOut) ?
                                 `(${moment(item.childOrder.interceptorTimeOut).format(dateFormat)})` :
                                 ''
                             }
@@ -306,9 +306,9 @@ class Detail extends Component {
                               )
                             }
                             {
-                              (item.childOrder.interceptorType == 10 && (
-                                item.childOrder.orderStatus == enumOrderStatus.Undelivered ||
-                                item.childOrder.orderStatus == enumOrderStatus.Delivered)
+                              (item.childOrder.interceptorType === 10 && (
+                                item.childOrder.orderStatus === enumOrderStatus.Undelivered ||
+                                item.childOrder.orderStatus === enumOrderStatus.Delivered)
                               ) && (
                                 <Button
                                   type='primary'
@@ -342,11 +342,11 @@ class Detail extends Component {
                         <If condition={item.childOrder.liveId <= 0}>
                           <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
                         </If>
-                        <Col span={8}>供应商电话：{item.childOrder.storePhone}</Col>
+                        <Col span={8}>供应商电话：{item.childOrder.storePhone || '无'}</Col>
                       </Row>
                       <Row>
                         {
-                          item.childOrder.interceptorType == 10 &&
+                          item.childOrder.interceptorType === 10 &&
                             (
                               <>
                                 <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
