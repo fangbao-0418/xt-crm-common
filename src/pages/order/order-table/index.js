@@ -427,12 +427,12 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label="小店长手机">
-                  {getFieldDecorator('shopPhone')(<Input placeholder="请输入收货人电话" />)}
+                  {getFieldDecorator('shopOwnerPhone')(<Input placeholder="请输入供应商手机号" />)}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label="小店订单">
-                  {getFieldDecorator('isShopOrder', {
+                  {getFieldDecorator('shopOrder', {
                     initialValue: values.interceptorFlag || ''
                   })(
                     <Select>

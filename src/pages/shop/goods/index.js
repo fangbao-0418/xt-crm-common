@@ -16,7 +16,7 @@ const { TabPane } = Tabs;
 class Main extends React.Component {
 
   state = {
-    tabStatus: '0',
+    tabStatus: '3',
     // status: undefined, // 0: 下架 1: 上架
     // auditStatus: undefined, // 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
     currentGoods: null // 当前审核商品
@@ -131,7 +131,7 @@ class Main extends React.Component {
 
         {/* Tabs状态切换组 */}
         <Tabs
-          defaultActiveKey='0'
+          defaultActiveKey='3'
           onChange={this.handleTabChange}
         >
           {

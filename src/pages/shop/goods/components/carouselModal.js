@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, Carousel, Icon } from 'antd';
+import { Modal, Carousel, Icon, message } from 'antd';
+import { replaceHttpUrl } from '@/util/utils';
 import styles from '../style.module.scss'
 
-const CarouselItem = (src) => {
+const CarouselItem = ({ src }) => {
   return (
     <div>
       <img alt="img" src={src} />
@@ -19,11 +20,23 @@ class CarouselModal extends Component {
 
   /** 上一张图片 */
   handlePrev = () => {
+    const { activeSlide } = this.state
+    if (activeSlide === 0) {
+      message.warn('已经第一张了')
+      return
+    }
     this.sliderRef.slick.slickPrev();
   }
 
   /** 下一张图片 */
   handleNext = () => {
+    const { activeSlide } = this.state
+    const { currentGoods } = this.props
+    const carousels = [currentGoods.coverUrl]
+    if (activeSlide === carousels.length - 1) {
+      message.warn('已经最后一张了')
+      return
+    }
     this.sliderRef.slick.slickNext();
   }
 
@@ -85,10 +98,10 @@ class CarouselModal extends Component {
           beforeChange={this.handleBeforeChange}
           ref={ref => (this.sliderRef = ref)}
         >
-          {carousels.map((item, i) => <CarouselItem key={i} src={item} />)}
+          {carousels.map((item, i) => <CarouselItem key={i} src={replaceHttpUrl(item)} />)}
         </Carousel>
         <p className={styles.hint}>
-          { activeSlide } / { carousels.length }
+          { activeSlide + 1 } / { carousels.length }
         </p>
         <Icon className={[ styles.action, styles.actionPre ]} type="left-circle" onClick={this.handlePrev} />
         <Icon className={[ styles.action, styles.actionNext ]} type="right-circle" onClick={this.handleNext} />

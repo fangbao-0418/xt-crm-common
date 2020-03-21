@@ -333,7 +333,8 @@ class Detail extends Component {
                       </Row>
                       <Row gutter={24}>
                         <Col span={8}>供应商：{item.childOrder.storeName}</Col>
-                        <Col span={8}>供应商类型：{storeType[item.childOrder.category]}</Col>
+                        {/* <Col span={8}>供应商类型：{storeType[item.childOrder.category]}</Col> */}
+                        <Col span={8}>供应商类型：{item.childOrder.storeTypeStr}</Col>
                         <If condition={item.childOrder.liveId > 0}>
                           <Col span={4}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
                           <Col span={4}>直播间ID：{item.childOrder.liveId}</Col>
@@ -341,6 +342,7 @@ class Detail extends Component {
                         <If condition={item.childOrder.liveId <= 0}>
                           <Col span={8}>供应商订单号：{item.childOrder.storeOrderId || '无'}</Col>
                         </If>
+                        <Col span={8}>供应商电话：{item.childOrder.storePhone}</Col>
                       </Row>
                       <Row>
                         {

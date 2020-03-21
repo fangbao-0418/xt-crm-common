@@ -5,11 +5,11 @@ export const combinationStatusList = [{
   id: '1',
   name: '在售商品'
 }, {
-  id: '2',
-  name: '仓库中商品'
-}, {
   id: '3',
   name: '待审核'
+}, {
+  id: '2',
+  name: '仓库中'
 }]
 
 export const auditStatusList = [{
