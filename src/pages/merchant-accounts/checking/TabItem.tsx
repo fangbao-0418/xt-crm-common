@@ -169,6 +169,10 @@ class Main extends React.Component<Props, State> {
         content: (
           <Statements
             onOk={() => {
+              this.selectedRows = []
+              this.setState({
+                selectedRowKeys: []
+              })
               this.listpage.refresh()
               hide()
             }}
@@ -240,13 +244,19 @@ class Main extends React.Component<Props, State> {
       })
     }
   }
+  public onChange = (rowKeys: any[]) => {
+    this.setState({
+      selectedRowKeys: rowKeys
+    })
+  }
   public render () {
     const rowSelection: TableRowSelection<GetListOnPageResponse> = {
-      // selectedRowKeys,
       fixed: true,
       columnWidth: 50,
+      selectedRowKeys: this.state.selectedRowKeys,
       onSelect: this.onSelectChange,
-      onSelectAll: this.onSelectAll
+      onSelectAll: this.onSelectAll,
+      onChange: this.onChange
     }
     return (
       <div>
