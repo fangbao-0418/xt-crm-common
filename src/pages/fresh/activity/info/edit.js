@@ -78,6 +78,7 @@ class List extends React.Component {
       };
       APP.fn.setPayload(namespace, payload);
       getOperatorSpuList(payload).then(res => {
+        console.log(res, 'resresres')
         this.setState({
           promotionDetail: res || {}
         })
@@ -380,6 +381,7 @@ class List extends React.Component {
     } = this.props;
     // 是否显示批量转移按钮
     const isShowTransfer = type === 1 || type === 2 || type === 3;
+    console.log(records, 'recordsrecordsrecords')
     return (
       <>
         <ActivityInfo

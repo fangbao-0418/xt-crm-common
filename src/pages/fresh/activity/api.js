@@ -1,12 +1,14 @@
-import { post, get, newPost } from '@/util/fetch';
-import { promotionParams, promotionResponse } from './adapter';
+import { promotionParams, promotionResponse } from './adapter'
+
+const { post, newPost, get } = APP.http
 
 export function getPromotionList(data) {
-  return post('/promotion/list', data);
+  return post('/promotion/freshList', data);
 }
 
 export function setBasePromotion(data) {
-  return post('/promotion/addBasePromotion', {}, { 
+  // /promotion/fresh/addBasePromotion
+  return post('/promotion/fresh/addBasePromotion', {}, { 
     data: promotionParams(data),
     headers: {}
   });
@@ -53,6 +55,7 @@ export function enablePromotion(data) {
 }
 
 export function updateBasePromotion(data) {
+  console.log(data, 'updateBasePromotion')
   return post('/promotion/updateBasePromotion', {}, {
     data: promotionParams(data),
     headers: {}

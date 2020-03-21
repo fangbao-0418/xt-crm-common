@@ -74,7 +74,12 @@ class ActivityForm extends React.Component {
     if (this.loading) return;
     this.loadStatus(true)
     if (this.state.id) params.id = this.state.id;
-    (params.id ? updateBasePromotion : setBasePromotion)(params).then((res) => {
+    params.areaIdList = (params.areaIdList || []).map((item) => {
+      return item.districtId
+    });
+    // console.log(params, 'params')
+    const func = params.id ? updateBasePromotion : setBasePromotion
+    func(params).then((res) => {
       this.loadStatus(false)
       if (res) {
         message.success('活动基础信息保存成功');
@@ -189,7 +194,7 @@ class ActivityForm extends React.Component {
           <Form {...formLayout}>
             <FormItem label="活动类型">
               {getFieldDecorator('type', {
-                initialValue: 11,
+                initialValue: 50,
                 onChange: this.typeChange
               })(
                 <Select
@@ -293,7 +298,7 @@ class ActivityForm extends React.Component {
               required
             >
               {
-                getFieldDecorator('productSaleAreas', {
+                getFieldDecorator('areaIdList', {
                   rules: [{
                     validator: async (rules, value) => {
                       if (!value || Array.isArray(value) && value.length === 0) {

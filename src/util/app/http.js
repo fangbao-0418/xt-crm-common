@@ -36,7 +36,12 @@ export const request = (url, config = {}) => {
         const data = res.data.data;
         return isPlainObject(data) ? omitBy(data, isNil) : data;
       } else {
-        console.log(res, 'res')
+        console.log(res, 'fetch success false')
+        try {
+          window.Moon && window.Moon.oper(res, res.status)
+        } catch (e) {
+          console.log(e)
+        }
         if (res.data && res.data.message) {
           message.error(res.data.message || '内部错误，请等待响应...');
         }
