@@ -95,6 +95,7 @@ class Main extends React.Component<Props, State> {
       align: 'center',
       fixed: 'right',
       render: (text, record) => {
+        const { id } = record
         return (
           <div>
             <span
@@ -115,14 +116,20 @@ class Main extends React.Component<Props, State> {
               查看明细
             </span>&nbsp;&nbsp;
             {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
-            {[20, 70].indexOf(record.accStatus) > -1 && <span
-              className='href'
-              onClick={() => {
-                this.showAdjustment(record)
-              }}
-            >
-              新建调整单
-            </span>}
+            {[20, 70].indexOf(record.accStatus) > -1 && (
+              <span
+                className='href'
+                onClick={() => {
+                  this.showAdjustment(record)
+                }}
+              >
+                新建调整单
+              </span>
+              )
+            }&nbsp;&nbsp;
+            <span className='href' onClick={() => api.exportAccount(id)}>
+              导出
+            </span>
           </div>
         )
       }

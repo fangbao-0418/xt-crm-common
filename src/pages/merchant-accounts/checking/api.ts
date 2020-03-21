@@ -19,6 +19,12 @@ export const fetchGatheringAccountList = (id: number) => {
   return get(`/finance/settlement/account/list?accid=${id}`)
 }
 
+/** 对账单明细列表 */
+export const exportAccount = (accId: number) => {
+  return get(`/finance/accountRecord/queryExportAccountData/exportAccountDataaccId?accId=${accId}`)
+}
+
+
 /** 新建结算单 */
 export const addSettlement = (payload: AddSettlementRequest) => {
   return newPost('/finance/settlement/generate', payload)

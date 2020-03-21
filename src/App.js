@@ -83,7 +83,6 @@ class Main extends React.Component {
           <Route path="/ulive" component={ULive}/>
           <Route path="/merchant-accounts" component={MerchantAccounts}/>
           <Route path='/fresh' component={Fresh} />
-          <Route path='/download' component={DownloadList} />
         </Layout>
       </Switch>
     )
