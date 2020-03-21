@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown, Icon, Menu } from 'antd';
+import { Dropdown, Icon, Menu, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import styles from './header.module.scss';
 import * as LocalStorage from '@/util/localstorage';
@@ -32,6 +32,11 @@ const Header = ({ collapsed, setCollapsed, logout }) => {
         <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
       </span>
       <div className={styles['header-user-info']}>
+        <div className={styles['add_header_menu']}>
+          <Link to="/download">
+            <Button type="primary">下载列表</Button>
+          </Link>
+        </div>
         <Dropdown overlay={menu(logout)} placement="bottomRight">
           <span className={styles['header-dropdown-link']}>
             <Icon type="user" /> {user.username} <Icon type="down" />
