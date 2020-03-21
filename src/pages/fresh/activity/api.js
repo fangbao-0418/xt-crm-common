@@ -19,7 +19,10 @@ export function setBasePromotion(data) {
  * @param {*} promotionId
  */
 export function getPromotionInfo(promotionId) {
-  return get(`/promotion/${promotionId}`).then(promotionResponse);
+  return get(`/promotion/${promotionId}`).then(promotionResponse).then((result) => {
+    result.areaIdList = result.promotionAreaDTOList || []
+    return result
+  });
 }
 
 // 获取活动商品列表
@@ -43,7 +46,7 @@ export function setPromotionAddSKu(data) {
 }
 
 export function getProductList(data) {
-  return post('/product/list', data);
+  return post('/product/fresh/promotion/select/list', data);
 }
 
 export function disablePromotion(data) {

@@ -40,15 +40,17 @@ class ActivityForm extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.data) {
-      const { tagUrl, type, title, sort, startTime, endTime, tagPosition, id, canUpdate } = nextProps.data;
+      const { tagUrl, preheatHours, areaIdList, type, title, sort, startTime, endTime, tagPosition, id, canUpdate } = nextProps.data;
       if (this.props.visible !== nextProps.visible) {
-        console.log('nextProps.data =>', nextProps.data)
+        console.log(areaIdList, 'nextProps.data =>', nextProps.data)
         this.props.form.setFieldsValue({
           tagUrl,
           type,
           title,
           sort,
           startTime,
+          preheatHours,
+          areaIdList,
           endTime,
           tagPosition
         });
