@@ -27,7 +27,6 @@ const Setting = Loadable(() => import('./pages/setting'))
 const ULive = Loadable(() => import('./pages/ulive'))
 const MerchantAccounts = Loadable(() => import('./pages/merchant-accounts'))
 const Fresh = Loadable(() => import('./pages/fresh'));
-const DownloadList = Loadable(() => import('./pages/download-list'))
 class Main extends React.Component {
   constructor (props) {
     super(props)
