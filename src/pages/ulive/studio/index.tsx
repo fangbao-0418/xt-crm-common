@@ -357,7 +357,10 @@ class Main extends React.Component<Props, State> {
       api.multiAudit({
         auditStatus: 1,
         planIds: this.state.rowKeys
-      }).then(() => {
+      }).then((res: any) => {
+        res = res || {}
+        const planIds = res.planIds || []
+        APP.success(`共有${planIds.length}场直播成功审核通过`)
         this.setState({
           rowKeys: []
         })
