@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-06 17:18:26
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-18 10:23:14
+ * @LastEditTime: 2020-03-23 16:22:36
  * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/ulive/config/config.ts
  */
 import _ from 'lodash'
@@ -22,8 +22,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               message: '标签名称不能为空'
             },
             {
-              max: 10,
-              message: '标签名称最大10个字符'
+              max: 5,
+              message: '标签名称最大5个字符'
             }
           ]
         }

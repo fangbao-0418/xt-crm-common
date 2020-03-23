@@ -1,5 +1,10 @@
-// https://test-rlcas.hzxituan.com/
-// https://rlcas.hzxituan.com/
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-23 16:23:33
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/util/moon.js
+ */
+
 (function (a, b) {
   const env = process.env.PUB_ENV
   a._moon_ = {
@@ -7,7 +12,7 @@
     domain: env !== 'prod' ? 'https://test-rlcas.hzxituan.com' : 'https://rlcas.hzxituan.com',
     file: [],
     env,
-    reqType: 'img',
+    reqType: 'http',
     spa: true
   };
   var m = b.createElement("script");
