@@ -117,6 +117,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
         ])
       });
       const skuList = filterSkuList(res.skuList);
+      console.log('skuList =////////////', skuList);
       this.setState({
         // supplierList: [{ name: res.storeName, id: res.storeId }],
         skuAddList: skuList,
@@ -159,6 +160,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
     } = this.state;
     this.form.props.form.validateFields((errs, vals) => {
       this.forceUpdate();
+      console.log('this.state.skuAddList =>\\\\\\\\\\\\\\', this.state.skuAddList)
       if (!errs) {
         const property = {};
         if (this.id !== -1) {
