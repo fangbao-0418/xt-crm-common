@@ -1,4 +1,4 @@
-import { post, get, newPost, newGet } from '../../util/fetch';
+import { post, get, newPost } from '../../util/fetch';
 
 // export function getPromotionList(data) {
 //   return post('/promotion/list', data);
@@ -35,7 +35,7 @@ export const paymentFail = ({ id, ...data }) => {
 
 /** 付款单上传凭证 */
 export const paymentUpload = ({ id, ...data }) => {
-  return post(`/finance/payment/upload/${id}`, data)
+  return newPost(`/finance/payment/upload/${id}`, data)
 }
 
 /******************************结算单**************************/
@@ -83,5 +83,5 @@ export const fetchCheckingList = payload => {
 /** 获取收款账户列表 */
 export const fetchGatheringAccountList = () => {
   // return get(`/finance/settlement/account/list?accid=${id}`)
-  return newPost(`/finance/payment/account/list`)
+  return get(`/finance/payment/account/list`)
 }

@@ -281,7 +281,6 @@ class Main extends React.Component {
                   审核通过
               </Button>
                 <Button
-                  type='primary'
                   disabled={!hasSelected}
                   className='ml10'
                   onClick={this.handleBatchReject}

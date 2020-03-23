@@ -110,7 +110,7 @@ class List extends React.Component {
           detailModalUpload: true
         })
       })
-    }else if (type === 'fail') { // 确认失败
+    } else if (type === 'fail') { // 确认失败
       this.setState({
         batchFailModalVisible: true,
         recordItem: record,
@@ -138,6 +138,14 @@ class List extends React.Component {
   handleFailConfirm = () => {
     this.setState({
       batchFailModalVisible: false
+    })
+    this.fetchData()
+  }
+
+  handlePayUpload = () => {
+    this.setState({
+      detailModalVisible: false,
+      detailModalUpload: false
     })
     this.fetchData()
   }
@@ -250,6 +258,7 @@ class List extends React.Component {
             onCancel: this.handleCancel.bind(this, 'detailModalVisible')
           }}
           record={recordItem}
+          handlePayUpload={this.handlePayUpload}
           detailModalUpload={detailModalUpload}
         />
         {/* 批量支付模态框 */}

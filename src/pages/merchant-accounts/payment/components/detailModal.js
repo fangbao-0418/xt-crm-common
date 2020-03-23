@@ -14,7 +14,8 @@ class DetailModal extends React.Component {
   handleSave = (id) => () => {
     const {
       form: { validateFields },
-      record: { paymentImgList = [] }
+      record: { paymentImgList = [] },
+      handlePayUpload
     } = this.props;
     validateFields((err, { paymentImg }) => {
       if (err) return;
@@ -27,7 +28,7 @@ class DetailModal extends React.Component {
           paymentImg
         })
         .then(res => {
-          res && console.log(12)
+          res && handlePayUpload()
         })
     });
   }
@@ -105,15 +106,16 @@ class DetailModal extends React.Component {
             <Divider />
             <h4>实际支付信息</h4>
             <Form.Item label="支付信息">
-              {
-                Object.values(financePaymentAccountVO).map((item, i) => (
-                  <p key={i}>{item}</p>
-                ))
-              }
+              <p>{financePaymentAccountVO.payTypeInfo}</p>
+              <If condition={financePaymentAccountVO.payType === 20}>
+                <p>{financePaymentAccountVO.bankName}</p>
+              </If>
+              <p>{financePaymentAccountVO.accountName}</p>
+              <p>{financePaymentAccountVO.accountNo}</p>
             </Form.Item>
             <Form.Item label="凭证">
               {getFieldDecorator('paymentImg', {
-                initialValue: [].concat(paymentImgList.map(item => initImgList(item)[0]))
+                initialValue: [].concat(paymentImgList.filter(item => !!item).map(item => initImgList(item)[0]))
               })(
                 <UploadView
                   {...uploadProps}

@@ -19,7 +19,7 @@ class PayModal extends React.Component {
       form: { validateFields },
       handlePayConfirm
     } = this.props;
-    validateFields((err, { newPaymentAccount, accountId, payType, accountName, accountNo, bankName, paymentImg, realPayTime }) => {
+    validateFields((err, { newPaymentAccount, paymentAccountId, payType, accountName, accountNo, bankName, paymentImg, realPayTime }) => {
       if (err) return;
       paymentImg = paymentImg.map(o => replaceHttpUrl(o.url))
 
@@ -31,7 +31,7 @@ class PayModal extends React.Component {
       }
 
       if (newPaymentAccount === 0) { // 已有账号
-        params.accountId = accountId
+        params.paymentAccountId = paymentAccountId
       } else if (newPaymentAccount === 1) { // 新账号
         params.accountName = accountName
         params.accountNo = accountNo
@@ -40,7 +40,6 @@ class PayModal extends React.Component {
           params.bankName = bankName
         }
       }
-      // console.log(params)
       api.paymentConfirm(params).then(res => {
         res && handlePayConfirm()
       })
@@ -128,7 +127,7 @@ class PayModal extends React.Component {
             </Form.Item>
             <If condition={newPaymentAccount === 0}>
               <Form.Item label="账号选择">
-                {getFieldDecorator('accountId', {
+                {getFieldDecorator('paymentAccountId', {
                   rules: [
                     {
                       required: newPaymentAccount === 0,
@@ -142,8 +141,8 @@ class PayModal extends React.Component {
                       return api.fetchGatheringAccountList().then((res) => {
                         return (res || []).map((item) => {
                           return {
-                            label: item.accoutName,
-                            value: item.id
+                            label: item.accountInfo,
+                            value: item.accountId
                           }
                         })
                       })

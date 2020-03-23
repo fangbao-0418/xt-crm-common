@@ -39,7 +39,7 @@ class UnpassModal extends Component {
         ids = selectedRowKeys
       }
 
-      if(!ids.length) return message.warn('请至少选择一个人审核')
+      if(!ids.length) return message.warn('请至少选择一个商品审核')
 
       unPassGoods({
         ...values,
