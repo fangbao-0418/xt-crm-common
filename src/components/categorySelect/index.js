@@ -58,7 +58,7 @@ export default class categorySelect extends Component {
                                     className={[styles.item, activityItem === index ? styles.activity : ''].join(' ')}
                                     key={index}
                                 >
-                                    <span className={[renderDesc ? '' : styles.name]} onClick={() => this.onItemClick(item, index)}>{item.name}</span>
+                                    <span className={[renderDesc ? styles.word : styles.name]} onClick={() => this.onItemClick(item, index)}>{item.name}</span>
                                     {
                                         renderDesc ? <span className={styles.desc} onClick={() => this.onItemClick(item, index)}>{renderDesc(item)}</span> : null
                                     }

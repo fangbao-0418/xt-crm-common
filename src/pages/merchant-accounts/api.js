@@ -9,8 +9,8 @@ import { post, get, newPost } from '../../util/fetch';
 // }
 /******************************付款单**************************/
 // 付款单确认支付
-export function paymentConfirm({ id, paymentImg }) {
-  return post(`/finance/payment/confirm/${id}`, { paymentImg });
+export function paymentConfirm({ id, ...data }) {
+  return newPost(`/finance/payment/confirm/${id}`, data);
 }
 
 // 付款单详情

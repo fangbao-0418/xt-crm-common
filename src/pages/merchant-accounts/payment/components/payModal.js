@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form, Divider, Radio, Select, Input } from 'antd';
+import { Modal, Button, Form, Divider, Radio, Select, Input, DatePicker } from 'antd';
 import { formatMoneyWithSign } from '@/pages/helper';
 import UploadView from '@/components/upload';
 import SelectFetch from '@/packages/common/components/select-fetch'
@@ -19,28 +19,31 @@ class PayModal extends React.Component {
       form: { validateFields },
       handlePayConfirm
     } = this.props;
-    validateFields((err, { newPaymentAccount, accountId, payType, accountName, accountNo, bankName, paymentImg }) => {
+    validateFields((err, { newPaymentAccount, accountId, payType, accountName, accountNo, bankName, paymentImg, realPayTime }) => {
       if (err) return;
-      paymentImg = paymentImg.map(o => replaceHttpUrl(o.url)).join(',')
+      paymentImg = paymentImg.map(o => replaceHttpUrl(o.url))
 
       let params = {
         id,
-        paymentImg
+        paymentImg,
+        newPaymentAccount,
+        realPayTime: +new Date(realPayTime)
       }
 
-      if (newPaymentAccount === 1) { // 已有账号
+      if (newPaymentAccount === 0) { // 已有账号
         params.accountId = accountId
-      } else if (newPaymentAccount === 2) { // 新账号
+      } else if (newPaymentAccount === 1) { // 新账号
         params.accountName = accountName
         params.accountNo = accountNo
-        if (payType === '2') { // 银行转账
+        params.payType = payType
+        if (payType === 20) { // 银行转账
           params.bankName = bankName
         }
       }
-      console.log(params)
-      // api.paymentConfirm(params).then(res => {
-      //   res && handlePayConfirm()
-      // })
+      // console.log(params)
+      api.paymentConfirm(params).then(res => {
+        res && handlePayConfirm()
+      })
     });
   }
 
@@ -61,13 +64,13 @@ class PayModal extends React.Component {
         paymentSerialNo,
         paymentImgList = [],
         paymentMoney = 0,
-        paymentName,
-        settlementSerialNo,
-        storeTypeInfo,
-        storeName,
-        payTypeInfo,
-        accountName,
-        accountNo
+        paymentName = '暂无数据',
+        settlementSerialNo = '暂无数据',
+        storeTypeInfo = '暂无数据',
+        storeName = '暂无数据',
+        payTypeInfo = '暂无数据',
+        accountName = '暂无数据',
+        accountNo = '暂无数据'
       }
     } = this.props;
 
@@ -118,17 +121,17 @@ class PayModal extends React.Component {
                 ]
               })(
                 <Radio.Group placeholder="请选择账号类型">
-                  <Radio value={1}>已有账号</Radio>
-                  <Radio value={2}>新账号</Radio>
+                  <Radio value={0}>已有账号</Radio>
+                  <Radio value={1}>新账号</Radio>
                 </Radio.Group>
               )}
             </Form.Item>
-            <If condition={newPaymentAccount === 1}>
+            <If condition={newPaymentAccount === 0}>
               <Form.Item label="账号选择">
                 {getFieldDecorator('accountId', {
                   rules: [
                     {
-                      required: newPaymentAccount === 1,
+                      required: newPaymentAccount === 0,
                       message: '请选择具体账号'
                     }
                   ]
@@ -150,29 +153,29 @@ class PayModal extends React.Component {
                 )}
               </Form.Item>
             </If>
-            <If condition={newPaymentAccount === 2}>
+            <If condition={newPaymentAccount === 1}>
               <Form.Item label="支付方式">
                 {getFieldDecorator('payType', {
                   rules: [
                     {
-                      required: newPaymentAccount === 2,
+                      required: newPaymentAccount === 1,
                       message: '请选择支付方式'
                     }
                   ]
                 })(
                   <Select onChange={this.handlePayTypeChange} placeholder="请选择支付方式">
-                    <Option value="1">支付宝</Option>
-                    <Option value="2">银行转账</Option>
+                    <Option value={10}>支付宝</Option>
+                    <Option value={20}>银行转账</Option>
                   </Select>
                 )}
               </Form.Item>
             </If>
-            <If condition={newPaymentAccount === 2 && payType === '1'}>
+            <If condition={newPaymentAccount === 1 && payType === 10}>
               <Form.Item label="支付宝名称">
                 {getFieldDecorator('accountName', {
                   rules: [
                     {
-                      required: newPaymentAccount === 2 && payType === '1',
+                      required: newPaymentAccount === 1 && payType === 10,
                       message: '请输入支付宝名称'
                     }
                   ]
@@ -184,7 +187,7 @@ class PayModal extends React.Component {
                 {getFieldDecorator('accountNo', {
                   rules: [
                     {
-                      required: newPaymentAccount === 2 && payType === '1',
+                      required: newPaymentAccount === 1 && payType === 10,
                       message: '请输入支付宝账号'
                     }
                   ]
@@ -193,12 +196,12 @@ class PayModal extends React.Component {
                 )}
               </Form.Item>
             </If>
-            <If condition={newPaymentAccount === 2 && payType === '2'}>
+            <If condition={newPaymentAccount === 1 && payType === 20}>
               <Form.Item label="银行名称">
                 {getFieldDecorator('bankName', {
                   rules: [
                     {
-                      required: newPaymentAccount === 2 && payType === '2',
+                      required: newPaymentAccount === 1 && payType === 20,
                       message: '请输入银行名称'
                     }
                   ]
@@ -210,7 +213,7 @@ class PayModal extends React.Component {
                 {getFieldDecorator('accountName', {
                   rules: [
                     {
-                      required: newPaymentAccount === 2 && payType === '2',
+                      required: newPaymentAccount === 1 && payType === 20,
                       message: '请输入账号名称'
                     }
                   ]
@@ -222,7 +225,7 @@ class PayModal extends React.Component {
                 {getFieldDecorator('accountNo', {
                   rules: [
                     {
-                      required: newPaymentAccount === 2 && payType === '2',
+                      required: newPaymentAccount === 1 && payType === 20,
                       message: '请输入银行账号'
                     }
                   ]
@@ -231,6 +234,18 @@ class PayModal extends React.Component {
                 )}
               </Form.Item>
             </If>
+            <Form.Item label="支付时间">
+              {getFieldDecorator('realPayTime', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择支付时间'
+                  }
+                ]
+              })(
+                <DatePicker showTime placeholder="请选择支付时间" />
+              )}
+            </Form.Item>
             <Form.Item label="凭证"
               help={
                 <>

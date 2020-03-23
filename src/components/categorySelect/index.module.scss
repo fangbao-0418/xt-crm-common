@@ -23,6 +23,11 @@
             padding: 5px 10px;
             display: flex;
             cursor: pointer;
+            align-items: center;
+
+            .word {
+                max-width: 120px;
+            }
 
             .name {
                 flex: 1;
