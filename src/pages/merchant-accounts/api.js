@@ -35,7 +35,7 @@ export const paymentFail = ({ id, ...data }) => {
 
 /** 付款单上传凭证 */
 export const paymentUpload = ({ id, ...data }) => {
-  return newGet(`/finance/payment/upload/${id}`, data)
+  return post(`/finance/payment/upload/${id}`, data)
 }
 
 /******************************结算单**************************/
@@ -81,7 +81,7 @@ export const fetchCheckingList = payload => {
 }
 
 /** 获取收款账户列表 */
-export const fetchGatheringAccountList = (id) => {
+export const fetchGatheringAccountList = () => {
   // return get(`/finance/settlement/account/list?accid=${id}`)
-  return get(`/finance/payment/account/${id}`)
+  return newPost(`/finance/payment/account/list`)
 }

@@ -27,6 +27,7 @@ class List extends React.Component {
       batchPayModalVisible: false, // 批量支付模态框
       batchFailModalVisible: false, // 批量失败模态框
       detailModalVisible: false, // 明细模态框
+      detailModalUpload: true, // 是否上传凭证
       isBatchFail: false // 是否批量支付
     };
   }
@@ -97,10 +98,19 @@ class List extends React.Component {
       api.getPaymentDetail(record.id).then(res => {
         this.setState({
           recordItem: res,
-          detailModalVisible: true
+          detailModalVisible: true,
+          detailModalUpload: false
         })
       })
-    } else if (type === 'fail') { // 确认失败
+    } else if (type === 'lookupload') { // 查看明细 上传
+      api.getPaymentDetail(record.id).then(res => {
+        this.setState({
+          recordItem: res,
+          detailModalVisible: true,
+          detailModalUpload: true
+        })
+      })
+    }else if (type === 'fail') { // 确认失败
       this.setState({
         batchFailModalVisible: true,
         recordItem: record,
@@ -155,7 +165,7 @@ class List extends React.Component {
   }
 
   render() {
-    const { page, dataSource, recordItem, isBatchFail } = this.state; // , selectedRowKeys
+    const { page, dataSource, recordItem, isBatchFail, detailModalUpload } = this.state; // , selectedRowKeys
 
     // const rowSelection = {
     //   selectedRowKeys,
@@ -240,6 +250,7 @@ class List extends React.Component {
             onCancel: this.handleCancel.bind(this, 'detailModalVisible')
           }}
           record={recordItem}
+          detailModalUpload={detailModalUpload}
         />
         {/* 批量支付模态框 */}
         <BatchPayModal

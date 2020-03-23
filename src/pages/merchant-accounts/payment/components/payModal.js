@@ -139,8 +139,7 @@ class PayModal extends React.Component {
                   <SelectFetch
                     placeholder="请选择账号"
                     fetchData={() => {
-                      // const { id } = { id: '' }
-                      return api.fetchGatheringAccountList(id).then((res) => {
+                      return api.fetchGatheringAccountList().then((res) => {
                         return (res || []).map((item) => {
                           return {
                             label: item.accoutName,
@@ -270,22 +269,20 @@ class PayModal extends React.Component {
                 />,
               )}
             </Form.Item>
-            {
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: '20px'
-                }}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: '20px'
+              }}
+            >
+              <Button
+                type="primary"
+                onClick={this.handlePayConfirm(id)}
               >
-                <Button
-                  type="primary"
-                  onClick={this.handlePayConfirm(id)}
-                >
-                  确认支付
-                </Button>
-              </div>
-            }
+                确认支付
+              </Button>
+            </div>
           </Form>
         </Modal>
       </div>

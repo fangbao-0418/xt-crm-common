@@ -1,8 +1,9 @@
 import React from 'react';
-import { Modal, Form, Button } from 'antd';
+import { Modal, Form, Button, Divider } from 'antd';
 import { formatMoneyWithSign } from '@/pages/helper';
 import UploadView from '@/components/upload';
 import { initImgList } from '@/util/utils';
+import If from '@/packages/common/components/if';
 import * as api from '../../api'
 const replaceHttpUrl = imgUrl => {
   return (imgUrl || '').replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
@@ -34,7 +35,7 @@ class DetailModal extends React.Component {
   render() {
     const {
       modalProps = {},
-      form: { getFieldDecorator },
+      form: { getFieldDecorator, getFieldValue },
       record: {
         id,
         paymentSerialNo,
@@ -42,7 +43,14 @@ class DetailModal extends React.Component {
         paymentMoney = 0,
         paymentName,
         settlementSerialNo,
-      }
+        storeTypeInfo = '暂无数据',
+        storeName = '暂无数据',
+        payTypeInfo = '暂无数据',
+        accountName = '暂无数据',
+        accountNo = '暂无数据',
+        financePaymentAccountVO = {}
+      },
+      detailModalUpload
     } = this.props;
 
     let uploadProps = {
@@ -51,6 +59,10 @@ class DetailModal extends React.Component {
         showRemoveIcon: false,
         showDownloadIcon: false
       }
+    }
+
+    if (detailModalUpload) {
+      uploadProps.listNum = 5
     }
 
     const formItemLayout = {
@@ -64,6 +76,11 @@ class DetailModal extends React.Component {
       },
     };
 
+    let paymentImg = getFieldValue('paymentImg') || [];
+
+    paymentImg = paymentImg.map(o => replaceHttpUrl(o.url))
+    paymentImg = paymentImg.filter(item => !paymentImgList.includes(item))
+
     return (
       <div>
         <Modal
@@ -75,17 +92,31 @@ class DetailModal extends React.Component {
           destroyOnClose
         >
           <Form {...formItemLayout}>
+            <h4>付款单信息</h4>
             <Form.Item label="付款单ID"><span>{paymentSerialNo}</span></Form.Item>
             <Form.Item label="付款单名称">{paymentName}</Form.Item>
             <Form.Item label="结算单ID">{settlementSerialNo}</Form.Item>
             <Form.Item label="金额">{formatMoneyWithSign(paymentMoney)}</Form.Item>
+            <Form.Item label="结算人类型">{storeTypeInfo}</Form.Item>
+            <Form.Item label="结算人名称">{storeName}</Form.Item>
+            <Form.Item label="账号类型">{payTypeInfo}</Form.Item>
+            <Form.Item label="账户名称">{accountName}</Form.Item>
+            <Form.Item label="账号">{accountNo}</Form.Item>
+            <Divider />
+            <h4>实际支付信息</h4>
+            <Form.Item label="支付信息">
+              {
+                Object.values(financePaymentAccountVO).map((item, i) => (
+                  <p key={i}>{item}</p>
+                ))
+              }
+            </Form.Item>
             <Form.Item label="凭证">
               {getFieldDecorator('paymentImg', {
                 initialValue: [].concat(paymentImgList.map(item => initImgList(item)[0]))
               })(
                 <UploadView
                   {...uploadProps}
-                  listNum={5}
                   placeholder="上传凭证"
                   listType="picture-card"
                   size={2}
@@ -93,7 +124,7 @@ class DetailModal extends React.Component {
                 />,
               )}
             </Form.Item>
-            {
+            <If condition={detailModalUpload}>
               <div
                 style={{
                   display: "flex",
@@ -102,13 +133,14 @@ class DetailModal extends React.Component {
                 }}
               >
                 <Button
+                  disabled={!paymentImg.length}
                   type="primary"
                   onClick={this.handleSave(id)}
                 >
                   保存
                 </Button>
               </div>
-            }
+            </If>
           </Form>
         </Modal>
       </div>

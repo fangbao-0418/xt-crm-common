@@ -94,7 +94,7 @@ const getColumns = ({ onConfirm }) => {
               <Button type="link" onClick={onConfirm(record, 'look')}>
                 查看明细
               </Button>
-              <Button type="link" onClick={onConfirm(record, 'look')}>
+              <Button type="link" onClick={onConfirm(record, 'lookupload')}>
                 上传凭证
               </Button>
             </Fragment>
