@@ -1,4 +1,4 @@
-import { post, get, newPost } from '../../util/fetch';
+import { post, get, newPost, newGet } from '../../util/fetch';
 
 // export function getPromotionList(data) {
 //   return post('/promotion/list', data);
@@ -31,6 +31,11 @@ export const paymentBatchFail = (data) => {
 /** 付款单支付失败 单个 */
 export const paymentFail = ({ id, ...data }) => {
   return newPost(`/finance/payment/fail/${id}`, data)
+}
+
+/** 付款单上传凭证 */
+export const paymentUpload = ({ id, ...data }) => {
+  return newGet(`/finance/payment/upload/${id}`, data)
 }
 
 /******************************结算单**************************/

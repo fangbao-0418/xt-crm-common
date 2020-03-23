@@ -139,7 +139,7 @@ class PayModal extends React.Component {
                   <SelectFetch
                     placeholder="请选择账号"
                     fetchData={() => {
-                      const { id } = { id: '' }
+                      // const { id } = { id: '' }
                       return api.fetchGatheringAccountList(id).then((res) => {
                         return (res || []).map((item) => {
                           return {

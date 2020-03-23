@@ -1,16 +1,42 @@
 import React from 'react';
-import { Modal, Form } from 'antd';
+import { Modal, Form, Button } from 'antd';
 import { formatMoneyWithSign } from '@/pages/helper';
 import UploadView from '@/components/upload';
 import { initImgList } from '@/util/utils';
+import * as api from '../../api'
+const replaceHttpUrl = imgUrl => {
+  return (imgUrl || '').replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
+};
 
 class DetailModal extends React.Component {
+
+  handleSave = (id) => () => {
+    const {
+      form: { validateFields },
+      record: { paymentImgList = [] }
+    } = this.props;
+    validateFields((err, { paymentImg }) => {
+      if (err) return;
+      paymentImg = paymentImg.map(o => replaceHttpUrl(o.url))
+      paymentImg = paymentImg.filter(item => !paymentImgList.includes(item))
+      console.log(paymentImg)
+      api
+        .paymentUpload({
+          id,
+          paymentImg
+        })
+        .then(res => {
+          res && console.log(12)
+        })
+    });
+  }
 
   render() {
     const {
       modalProps = {},
       form: { getFieldDecorator },
       record: {
+        id,
         paymentSerialNo,
         paymentImgList = [],
         paymentMoney = 0,
@@ -59,6 +85,7 @@ class DetailModal extends React.Component {
               })(
                 <UploadView
                   {...uploadProps}
+                  listNum={5}
                   placeholder="上传凭证"
                   listType="picture-card"
                   size={2}
@@ -66,6 +93,22 @@ class DetailModal extends React.Component {
                 />,
               )}
             </Form.Item>
+            {
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: '20px'
+                }}
+              >
+                <Button
+                  type="primary"
+                  onClick={this.handleSave(id)}
+                >
+                  保存
+                </Button>
+              </div>
+            }
           </Form>
         </Modal>
       </div>

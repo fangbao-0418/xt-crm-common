@@ -47,7 +47,7 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       title: '售价',
       width: 100,
       dataIndex: 'salePrice',
-      render: formatMoneyWithSign
+      render: val => formatMoneyWithSign(val)
     },
     {
       title: '供应商',

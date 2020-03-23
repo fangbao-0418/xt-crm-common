@@ -90,9 +90,15 @@ const getColumns = ({ onConfirm }) => {
           )
         } else if (enumPayType.Paid === record.paymentStatus) {
           return (
-            <Button type="link" onClick={onConfirm(record, 'look')}>
-              查看明细
-            </Button>
+            <Fragment>
+              <Button type="link" onClick={onConfirm(record, 'look')}>
+                查看明细
+              </Button>
+              <Button type="link" onClick={onConfirm(record, 'look')}>
+                上传凭证
+              </Button>
+            </Fragment>
+
           )
         } else if (enumPayType.Fail === record.paymentStatus) {
           return (
