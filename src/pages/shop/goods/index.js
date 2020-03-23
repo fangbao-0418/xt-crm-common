@@ -48,7 +48,7 @@ class Main extends React.Component {
   /** 操作：查看商品详情-打开新标签页面 */
   handleDetail = (record) => {
     const { origin, pathname } = window.location
-    window.open(`${origin}${pathname}/#/shop/goods/detail/${record.id}`);
+    window.open(`${origin}${/^\/$/.test(pathname) ? '' : pathname + '/'}#/shop/goods/detail/${record.id}`);
   }
 
   /** 操作：下架商品-显示下架理由模态框 */
