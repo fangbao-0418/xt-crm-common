@@ -11,7 +11,7 @@ const getColumns = ({ onUserClick, onClose, onOpen }) => {
     key: 'user',
     render: (val, record) => (
       <UserView
-        onClick={onUserClick}
+        onClick={onUserClick.bind(null, record)}
         title={record.nickName}
         desc={record.memberId}
         avatar={record.headUrl}
