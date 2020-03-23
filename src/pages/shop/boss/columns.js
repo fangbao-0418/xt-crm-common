@@ -9,14 +9,19 @@ const getColumns = ({ onUserClick, onClose, onOpen }) => {
     title: '用户昵称',
     dataIndex: 'user',
     key: 'user',
-    render: (val, record) => (
-      <UserView
+    render: (val, record) => {
+      let src = ''
+      if (record.headUrl) {
+        src = record.headUrl.indexOf('http') === 0 ? `${record.headUrl}` : `https://assets.hzxituan.com/${record.headUrl}`;
+      }
+      
+      return <UserView
         onClick={onUserClick.bind(null, record)}
         title={record.nickName}
         desc={record.memberId}
-        avatar={record.headUrl}
+        avatar={src}
       />
-    )
+    }
   },
   {
     title: '手机号',
@@ -67,7 +72,7 @@ const getColumns = ({ onUserClick, onClose, onOpen }) => {
           <If condition={record.shopStatus === 2}>
             <span onClick={onClose.bind(null, record)} className="href">关闭店铺</span>
           </If>
-          <If condition={record.shopStatus === 3  || record.shopStatus === 1}>
+          <If condition={record.shopStatus === 3 || record.shopStatus === 1}>
             <span onClick={onOpen.bind(null, record)} className="href">开启店铺</span>
           </If>
         </div >
