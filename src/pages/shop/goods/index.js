@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Tabs, message } from 'antd';
+import { Card, Tabs, message, Button } from 'antd';
 import { getGoodsList, getCategoryTopList, passGoods } from './api';
 import SelectFetch from '@/components/select-fetch';
 import { ListPage, FormItem } from '@/packages/common/components';
@@ -19,7 +19,8 @@ class Main extends React.Component {
     tabStatus: '3',
     // status: undefined, // 0: 下架 1: 上架
     // auditStatus: undefined, // 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
-    currentGoods: null // 当前审核商品
+    currentGoods: null, // 当前审核商品
+    selectedRowKeys: []
   }
 
   /** 操作：商品图片预览-显示预览模态框 */
@@ -95,8 +96,37 @@ class Main extends React.Component {
     })
   }
 
+  onSelectChange = (selectedRowKeys) => {
+    this.setState({ selectedRowKeys });
+  }
+
+  handleBatchPass = () => {
+    const { selectedRowKeys } = this.state;
+    passGoods({
+      ids: selectedRowKeys
+    }).then(() => {
+      message.success(`共${selectedRowKeys.length}件商品审核通过成功！`);
+      this.setState({
+        selectedRowKeys: []
+      })
+      this.listRef.fetchData()
+    })
+  }
+
+  handleBatchReject = () => {
+    this.unpassModalRef.showModal()
+  }
+
+
+  clearSelectedRowKeys = () => {
+    this.setState({
+      selectedRowKeys: []
+    })
+  }
+
   render() {
-    const { currentGoods, tabStatus } = this.state;
+    const { currentGoods, tabStatus, selectedRowKeys } = this.state;
+    const hasSelected = selectedRowKeys.length > 0;
 
     return (
       <Card>
@@ -110,9 +140,11 @@ class Main extends React.Component {
         {/* 不通过理由模态框 */}
         <UnpassModal
           currentGoods={currentGoods}
+          selectedRowKeys={selectedRowKeys}
           listRef={this.listRef}
           wrappedComponentRef={ref => this.unpassModalRef = ref}
           ondestroy={this.handleDestroy}
+          onClearSelectedRowKeys={this.clearSelectedRowKeys}
         />
 
         {/* 下架操作模态框 */}
@@ -231,8 +263,33 @@ class Main extends React.Component {
           tableProps={{
             scroll: {
               x: true
+            },
+            rowSelection: {
+              selectedRowKeys,
+              onChange: this.onSelectChange
             }
           }}
+          addonAfterSearch={
+            tabStatus === '3' ?
+              <div>
+                <Button
+                  type='primary'
+                  disabled={!hasSelected}
+                  className='ml10'
+                  onClick={this.handleBatchPass}
+                >
+                  审核通过
+              </Button>
+                <Button
+                  type='primary'
+                  disabled={!hasSelected}
+                  className='ml10'
+                  onClick={this.handleBatchReject}
+                >
+                  审核不通过
+              </Button>
+              </div> : null
+          }
         />
       </Card>
     )
