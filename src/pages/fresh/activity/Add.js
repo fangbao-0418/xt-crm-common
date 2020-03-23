@@ -114,7 +114,7 @@ class ActivityForm extends React.Component {
   // 保存并添加商品
   handleSaveNext = () => {
     this.handleSave(id => {
-      APP.history.push(`/activity/info/edit/${id}`);
+      APP.history.push(`/fresh/activity/info/edit/${id}`);
     });
   };
 
