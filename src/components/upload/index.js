@@ -22,7 +22,10 @@ export async function ossUpload(file) {
       return urlList;
     } catch (error) {
       message.error('上传失败，请重试', 'middle');
+      return Promise.reject(error)
     }
+  } else {
+    return Promise.reject()
   }
 }
 
@@ -82,7 +85,6 @@ function isMatchFileType (file, list, type = 'ext') {
   }
   return isSupport
 }
-
 
 class UploadView extends Component {
   count = 0
@@ -234,6 +236,7 @@ class UploadView extends Component {
         return Promise.reject()
       }
     }
+    /** 限制判断一定要放到最后 */
     this.count++
     const typeName = this.props.listType !== 'text' ? '图片' : '文件'
     if (listNum !== undefined && this.count > listNum) {
@@ -243,6 +246,7 @@ class UploadView extends Component {
           message.error(`上传${typeName}数量超出最大限制`)
         }
       }
+      this.count = listNum
       return Promise.reject()
     }
     return Promise.resolve(file)
@@ -272,6 +276,12 @@ class UploadView extends Component {
       })
       console.log('change --------')
       isFunction(onChange) && onChange([...value]);
+    }, () => {
+      this.count--
+      if (this.count <= 0) {
+        this.count = 0
+      }
+      console.log(this.count, 'upload error')
     });
   }
   handleRemove = e => {

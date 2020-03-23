@@ -19,7 +19,8 @@ interface WithdrawState {
   interceptionNum: number,
   totalAmount: number,
   totalNum: number,
-  commonAmount: number
+  commonAmount: number,
+  totalRechargeAmount: number
 }
 /**
  * 提现管理列表
@@ -36,7 +37,8 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
     interceptionNum: 0,
     totalAmount: 0,
     totalNum: 0,
-    commonAmount: 0
+    commonAmount: 0,
+    totalRechargeAmount: 0
   }
   columns = [{
     title: '提现单号',
@@ -176,7 +178,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
       endTime: value[1].format('YYYY-MM-DD')
     }).then(res => {
       if (res) {
-        this.setState(pick(res, ['commonAmount', 'commonNum', 'interceptionAmount', 'interceptionNum', 'totalAmount', 'totalNum', 'batchId']))
+        this.setState(pick(res, ['commonAmount', 'commonNum', 'interceptionAmount', 'interceptionNum', 'totalAmount', 'totalNum', 'batchId', 'totalRechargeAmount']))
         this.batchPaymentForm.props.form.setFieldsValue({id: Math.random()})
       }
     })
@@ -234,13 +236,14 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
             />
             <FormItem
               inner={(form) => {
-                const { commonNum, interceptionNum, commonAmount, interceptionAmount, totalNum, totalAmount } = this.state;
+                const { commonNum, interceptionNum, commonAmount, interceptionAmount, totalNum, totalAmount, totalRechargeAmount } = this.state;
                 const { startTime, endTime } = this.batchPaymentForm.getValues();
                 const hasValue = startTime && endTime;
                 return (
                   <>
                     <div>所选日期待提现条目数目：{hasValue ? `${totalNum}（普通提现${commonNum} 拦截提现${interceptionNum}）` : '-'}</div>
                     <div>所选日期待提现金额：{hasValue ? `${formatMoneyWithSign(totalAmount)}（普通提现${formatMoneyWithSign(commonAmount)} 拦截提现${formatMoneyWithSign(interceptionAmount)}）` : '-'}</div>
+                    <div style={{color:'red'}}>所选日期需充值金额: {hasValue ? formatMoneyWithSign(totalRechargeAmount) : ''}</div>
                   </>
                 )
               }}
@@ -253,16 +256,22 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
         this.batchPaymentForm.props.form.validateFields((err) => {
           const vals = this.batchPaymentForm.getValues();
           if (!err) {
-            batchSubmit({
-              batchId,
-              startTime: moment(vals.startTime).format('YYYY-MM-DD'),
-              endTime: moment(vals.endTime).format('YYYY-MM-DD')
-            }).then(res => {
-              if (res) {
-                hide()
-                APP.success('批量打款成功');
+            Modal.confirm({
+              title: '系统提示',
+              content: '请确保财务向连连账号中充值后再行操作，否则提现将全部失败',
+              onOk: () => {
+                batchSubmit({
+                  batchId,
+                  startTime: moment(vals.startTime).format('YYYY-MM-DD'),
+                  endTime: moment(vals.endTime).format('YYYY-MM-DD')
+                }).then(res => {
+                  if (res) {
+                    hide()
+                    APP.success('批量打款成功');
+                  }
+                })
               }
-            })
+              });
           }
         })
       }

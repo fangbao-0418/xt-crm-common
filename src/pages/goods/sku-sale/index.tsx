@@ -101,7 +101,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       render: (record: any) => {
         const { status } = this.state;
         return (
-          <div style={{ marginTop: 40 }}>
+          <div>
             <span
               className='href'
               onClick={() => {
@@ -246,6 +246,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
         <ListPage
           reserveKey='skuSale'
           namespace='skuSale'
+          className='vertical-align-table'
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
           processPayload={(payload) => {
