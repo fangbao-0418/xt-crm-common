@@ -46,7 +46,7 @@ const getColumns = ({ onConfirm }) => {
       title: '创建时间',
       key: 'createTime',
       dataIndex: 'createTime',
-      render: (createTime) => APP.fn.formatDate(createTime)
+      render: (createTime) => APP.fn.formatDate(createTime) || '-'
     },
     {
       title: '创建人',
@@ -57,13 +57,14 @@ const getColumns = ({ onConfirm }) => {
       title: '操作时间',
       key: 'modifyTime',
       dataIndex: 'modifyTime',
-      render: (modifyTime) => APP.fn.formatDate(modifyTime)
+      render: (modifyTime) => APP.fn.formatDate(modifyTime) || '-'
 
     },
     {
       title: '操作人',
       key: 'modifyName',
       dataIndex: 'modifyName',
+      render: val => val || '-'
     },
     {
       title: '操作',
