@@ -346,8 +346,7 @@ class Main extends React.Component<Props, State> {
           )}
           api={api.fetchList}
           processPayload={(payload) => {
-            payload.pageSize = 1
-            // payload.page = 2
+            // payload.pageSize = 1
             const status = this.props.status
             const date = payload.date || []
             return {
