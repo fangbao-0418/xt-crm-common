@@ -183,7 +183,7 @@ export default class extends Component {
     );
   };
   render() {
-    const { userConfig } = this.props;
+    const userConfig = this.props.userConfig || {};
     return (
       <Row>
         <Col style={{ marginBottom: 10 }}>{this.renderForm()}</Col>

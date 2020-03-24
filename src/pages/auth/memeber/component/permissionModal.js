@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-24 16:24:42
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/auth/memeber/component/permissionModal.js
+ */
 import React, { Component } from 'react';
 import { connect } from '@/util/utils';
 import { Modal, Divider, Table } from 'antd';
@@ -37,7 +43,8 @@ export default class extends Component {
         });
       }
     };
-    const { visible, roleConfig, currentUserInfo } = this.props;
+    const { visible, currentUserInfo } = this.props;
+    const roleConfig = this.props.roleConfig || {}
     return (
       <Modal visible={visible} title="角色分配" destroyOnClose onCancel={this.onCancel} onOk={this.onOk}>
         <div>
