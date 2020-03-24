@@ -123,7 +123,7 @@ class Main extends React.Component<Partial<Props>> {
       node = (
         <div>
           该标签仍有{record.livingTatol}场直播中的场次，结束后会自动删除！<br />
-          {record.trailerTatol && <span>另外有{record.trailerTatol}场预告标签将失效！</span>}
+          {record.trailerTatol > 0 && <span>另外有{record.trailerTatol}场预告标签将失效！</span>}
         </div>
       )
     }
