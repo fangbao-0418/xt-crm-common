@@ -20,6 +20,12 @@ const InformDetail = Loadable({
   loading: Loader,
 });
 
+/** 直播频道管理 */
+const Config = Loadable({
+  loader: () => import('./config'),
+  loading: Loader,
+});
+
 interface Props extends RouteComponentProps {}
 class Main extends React.Component<Props> {
   public render () {
@@ -29,6 +35,7 @@ class Main extends React.Component<Props> {
         <Route exact path={`${match.url}/anchor`} component={AnchorList} />
         <Route exact path={`${match.url}/studio`} component={StudioList} />
         <Route exact path={`${match.url}/inform/:id`} component={InformDetail} />
+        <Route exact path={`${match.url}/config`} component={Config} />
       </Switch>
     )
   }

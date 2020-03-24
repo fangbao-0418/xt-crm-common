@@ -1,5 +1,6 @@
 import { exportFile } from '../../util/fetch';
-const { post, get } = APP.http
+import { queryString } from '@/util/utils';
+const { post, newPost, get } = APP.http
 const debug = false;
 
 const mockData = {
@@ -54,7 +55,7 @@ export function getSupplierDetail(data) {
       shortName: 'string',
     });
   }
-  return get('/store/detail', data);
+  return get(`/store/detail${queryString(data)}`);
 }
 
 export function addSupplier(data) {
@@ -62,7 +63,7 @@ export function addSupplier(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return post('/store/add', data);
+  return newPost('/store/add', data);
 }
 
 export function updateSupplier(data) {
@@ -70,7 +71,7 @@ export function updateSupplier(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return post('/store/update', data);
+  return newPost('/store/update', data);
 }
 
 export function exportSupplier(data) {

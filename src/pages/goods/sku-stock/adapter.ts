@@ -78,7 +78,7 @@ export function formResponse(res: any) {
     item = filterMoney(item, 'res');
     return item;
   })
-  res.showImage = skuList.every(v => !!v.imageUrl1);
+  res.showImage = skuList.some(v => !!v.imageUrl1);
   return res;
 }
 
@@ -96,7 +96,8 @@ export function filterSkuList(list: any[]) {
       'skuCode',
       'skuName',
       'status',
-      'stock'
+      'stock',
+      'productBasicSkuId'
     ]);
   })
 }

@@ -1,26 +1,32 @@
 import React from 'react';
-import { Card, Tabs, Button, Modal, message } from 'antd';
+import { Card, Tabs, Button, Modal, message, Icon } from 'antd';
 import dateFns from 'date-fns';
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
 import { gotoPage, replaceHttpUrl } from '@/util/utils';
-import { formatMoneyWithSign } from '../../helper';
 import Image from '@/components/Image';
 import SelectFetch from '@/components/select-fetch';
 import { If, ListPage, FormItem } from '@/packages/common/components';
 import { ListPageInstanceProps } from '@/packages/common/components/list-page';
 import SuppilerSelect from '@/components/suppiler-auto-select';
 import { defaultConfig } from './config';
-const { TabPane } = Tabs; 
+const { TabPane } = Tabs;
+import SkuStockEditState from './components/sku-stock-edit'
 
 interface SkuSaleListState {
   selectedRowKeys: string[] | number[];
   status: number;
+  idOfStockEdit: number;
+  visibleOfStockEdit: boolean;
+  productNameOfStockEdit: string;
 }
 
 class SkuSaleList extends React.Component<any, SkuSaleListState> {
   state: SkuSaleListState = {
     selectedRowKeys: [],
-    status: 0
+    status: 0,
+    idOfStockEdit: 0,
+    visibleOfStockEdit: false,
+    productNameOfStockEdit: ''
   }
   list: ListPageInstanceProps;
   columns = [
@@ -59,18 +65,35 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       title: '成本价',
       width: 100,
       dataIndex: 'costPrice',
-      render: formatMoneyWithSign
+      render: APP.fn.formatMoney
     },
     {
       title: '销售价',
       width: 100,
       dataIndex: 'salePrice',
-      render: formatMoneyWithSign
+      render: APP.fn.formatMoney
     },
     {
-      title: '库存',
+      title: '总库存',
       width: 100,
-      dataIndex: 'stock'
+      dataIndex: 'stock',
+      render: (text: any, record:any, index:any) => (
+        <div style={{whiteSpace: 'nowrap'}}>
+          <span>{text}</span>
+          <Icon type="form" style={{fontSize: '20px', marginLeft: '5px'}} onClick={() => {
+            this.setState({
+              idOfStockEdit: record.id,
+              visibleOfStockEdit: true,
+              productNameOfStockEdit: record.productName,
+            })
+          }} />
+        </div>
+      )
+    },
+    {
+      title: '可用库存',
+      width: 100,
+      dataIndex: 'usableStock'
     },
     {
       title: '累计销量',
@@ -102,7 +125,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       render: (record: any) => {
         const { status } = this.state;
         return (
-          <div style={{ marginTop: 40 }}>
+          <div>
             <span
               className='href'
               onClick={() => {
@@ -192,8 +215,16 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       this.list.refresh();
     })
   }
+
+  // 库存编辑 关闭
+  handleSkuStockEditCancel = (status:boolean) => {
+    this.setState({ visibleOfStockEdit: false, })
+    if (status) {
+      this.list.refresh();
+    }
+  }
   render() {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, visibleOfStockEdit, idOfStockEdit, productNameOfStockEdit } = this.state;
     const hasSelected = Array.isArray(selectedRowKeys) && selectedRowKeys.length > 0
     const { status } = this.state;
     const tableProps: any = {
@@ -247,6 +278,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
         <ListPage
           reserveKey='skuSale'
           namespace='skuSale'
+          className='vertical-align-table'
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
           processPayload={(payload) => {
@@ -322,6 +354,15 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           api={getGoodsList}
           columns={this.columns}
           tableProps={tableProps}
+        />
+        <SkuStockEditState
+          id={idOfStockEdit}
+          visible={visibleOfStockEdit}
+          name={productNameOfStockEdit}
+          onCancel={() => this.handleSkuStockEditCancel(false)}
+          onOK={() => {
+            this.handleSkuStockEditCancel(true);
+          }}
         />
     </Card>
     )

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Button, Form, Input, message, Row } from 'antd';
 import { getSupplierDetail, updateSupplier, addSupplier } from '../api';
 import SupplierTypeSelect from '../../../components/supplier-type-select';
+import SaleArea from '@/components/sale-area';
 const FormItem = Form.Item;
 
 const formItemLayout = {
@@ -10,51 +11,47 @@ const formItemLayout = {
 };
 class SupplierModal extends Component {
   static defaultProps = {
-    onSuccess: () => { },
     id: '',
-    isEdit: false,
-    renderKey: 0,
+    isEdit: false
   };
   state = {
     visible: false,
-    data: {},
-  };
+    saleAreaVisible: false
+  }
 
   showModal = () => {
     this.props.isEdit && this.query();
     this.setState({
-      visible: true,
+      visible: true
     });
-  };
+  }
 
   query = () => {
     getSupplierDetail({
       id: this.props.id,
-    }).then(data => {
-      this.setState({
-        data,
-        renderKey: this.state.renderKey + 1,
-      });
-      
+    }).then((data) => {
+      if (data.category === 5) {
+        this.setState({
+          saleAreaVisible: true
+        })
+      }
       this.props.form && this.props.form.setFieldsValue(data);
     });
-  };
+  }
 
   handleOk = () => {
     const { onSuccess, id, form, isEdit } = this.props;
-    form.validateFields(err => {
+    form.validateFields((err, vals) => {
       if (!err) {
         const api = isEdit ? updateSupplier : addSupplier;
         api({
           id,
-          ...form.getFieldsValue(),
+          ...vals,
         }).then((res) => {
           if (res) {
             onSuccess && onSuccess();
             res && message.success('操作成功');
-            this.setState({
-              visible: false,
-            });
+            this.handleCancel()
           }
         });
       }
@@ -64,13 +61,13 @@ class SupplierModal extends Component {
   handleCancel = e => {
     this.setState({
       visible: false,
-    });
-  };
+      saleAreaVisible: false
+    })
+    this.props.form && this.props.form.resetFields()
+  }
   render() {
     const { isEdit } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { data } = this.state;
-
     return (
       <>
         <Button type="primary" onClick={this.showModal}>
@@ -101,11 +98,11 @@ class SupplierModal extends Component {
                   required: true,
                   message: '请输入供应商编码'
                 }]
-              })(<Input placeholder="" />)}
+              })(<Input placeholder="请输入供应商编码" />)}
             </FormItem>
             <FormItem label="联系人">
               {getFieldDecorator('contacts',)(
-                <Input placeholder="" />,
+                <Input placeholder="请输入联系人" />,
               )}
             </FormItem>
             <FormItem label="供应商名称">
@@ -114,7 +111,7 @@ class SupplierModal extends Component {
                   required: true,
                   message: '请输入供应商名称'
                 }]
-              })(<Input placeholder="" />)}
+              })(<Input placeholder="请输入供应商名称" />)}
             </FormItem>
             <FormItem label="联系电话">
               {getFieldDecorator('phone', {
@@ -122,30 +119,29 @@ class SupplierModal extends Component {
                   required: true,
                   message: '请输入联系电话'
                 }]
-              })(<Input placeholder="" maxLength={11}/>)}
+              })(<Input placeholder="请输入联系电话" maxLength={11}/>)}
             </FormItem>
             <FormItem label="供应商简称">
               {getFieldDecorator('shortName')(
-                <Input placeholder="" />,
+                <Input placeholder="请输入供应商简称" />,
               )}
             </FormItem>
             <FormItem label="联系邮箱">
-              {getFieldDecorator('email')(<Input placeholder="" />)}
+              {getFieldDecorator('email')(<Input placeholder="请输入联系邮箱" />)}
             </FormItem>
             <Row>详细信息</Row>
             <FormItem label="官网链接">
               {getFieldDecorator('jumpUrl')(
-                <Input placeholder="" />,
+                <Input placeholder="请输入官网链接" />,
               )}
             </FormItem>
             <FormItem label="详细地址">
               {getFieldDecorator('address', )(
-                <Input placeholder="" />,
+                <Input placeholder="请输入详细地址" />,
               )}
             </FormItem>
             <FormItem label="退货收件人">
               {getFieldDecorator('returnContact', {
-                
                 rules: [
                   {
                     required: true,
@@ -153,7 +149,7 @@ class SupplierModal extends Component {
                   },
                 ]
               })(
-                <Input placeholder="" maxLength={20} />,
+                <Input placeholder="请输入退货收件人" maxLength={20} />,
               )}
             </FormItem>
             <FormItem label="退货电话">
@@ -166,7 +162,7 @@ class SupplierModal extends Component {
                   },
                 ]
               })(
-                <Input placeholder="" maxLength={12} />,
+                <Input placeholder="请输入退货电话" maxLength={12} />,
               )}
             </FormItem>
             <FormItem label="退货地址">
@@ -179,26 +175,51 @@ class SupplierModal extends Component {
                   },
                 ]
               })(
-                <Input placeholder="" maxLength={60} />,
+                <Input placeholder="请输入退货地址" maxLength={60} />,
               )}
             </FormItem>
-            {/* <FormItem label="送货地址">
-              {getFieldDecorator('consigneeAddress', { initialValue: data.consigneeAddress })(
-                <Input placeholder="" />,
-              )}
-            </FormItem> */}
-            <FormItem key={this.state.renderKey} label="供应商分类">
+            <FormItem label="供应商分类">
               {getFieldDecorator('category', {
                 rules: [
                   {
                     required: true,
                     message: '请选择供应商分类'
                   }
-                ]
+                ],
+                getValueFromEvent: (e) => {
+                  let value
+                  if (!e || !e.target) {
+                    value = e;
+                  } else {
+                    const { target } = e;
+                    value = target.type === 'checkbox' ? target.checked : target.value;
+                  }
+                  this.setState({
+                    saleAreaVisible: +value === 5
+                  })
+                  return value;
+                }
               })(
-                <SupplierTypeSelect />,
+                <SupplierTypeSelect disabled={this.props.isEdit} />
               )}
             </FormItem>
+            {this.state.saleAreaVisible && (
+              <FormItem required label='可售区域'>
+                {getFieldDecorator('saleAreaList', {
+                  rules: [{
+                    validator: async (rules, value) => {
+                      console.log('value =>', value)
+                      if (!value || Array.isArray(value) && value.length === 0) {
+                        throw new Error('请选择可售区域')
+                      }
+                      return value
+                    }
+                  }]
+                })(
+                  <SaleArea readOnly={this.props.isEdit}/>
+                )}
+              </FormItem>
+            )}
           </Form>
         </Modal>
       </>

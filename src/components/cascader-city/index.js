@@ -171,7 +171,7 @@ class CascaderCity extends (PureComponent || Component) {
         <div id="cascader-city" style={{ padding: '0 30px', overflow: 'hidden' }}>
           {sourceData.map(item => {
             /** 遍历找出所有选中项 */
-            const checkedItem = checkedSourceData.find(checkedItem => checkedItem.id === item.id);
+            const checkedItem = (checkedSourceData || []).find(checkedItem => checkedItem.id === item.id);
             return (
               <Group
                 disabled={this.props.disabled}

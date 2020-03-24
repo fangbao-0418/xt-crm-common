@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from 'antd'
+import { Button, message } from 'antd'
 import { FormItem } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
@@ -95,6 +95,7 @@ class Main extends React.Component<Props, State> {
       align: 'center',
       fixed: 'right',
       render: (text, record) => {
+        const { id } = record
         return (
           <div>
             <span
@@ -115,14 +116,25 @@ class Main extends React.Component<Props, State> {
               查看明细
             </span>&nbsp;&nbsp;
             {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
-            {[20, 70].indexOf(record.accStatus) > -1 && <span
+            {[20, 70].indexOf(record.accStatus) > -1 && (
+              <span
+                className='href'
+                onClick={() => {
+                  this.showAdjustment(record)
+                }}
+              >
+                新建调整单
+              </span>
+              )
+            }&nbsp;&nbsp;
+            <span
               className='href'
-              onClick={() => {
-                this.showAdjustment(record)
-              }}
+              onClick={() => api.exportAccount(id).then(res => {
+                return message.success('导出成功')
+              })}
             >
-              新建调整单
-            </span>}
+              导出
+            </span>
           </div>
         )
       }
@@ -169,6 +181,10 @@ class Main extends React.Component<Props, State> {
         content: (
           <Statements
             onOk={() => {
+              this.selectedRows = []
+              this.setState({
+                selectedRowKeys: []
+              })
               this.listpage.refresh()
               hide()
             }}
@@ -240,13 +256,19 @@ class Main extends React.Component<Props, State> {
       })
     }
   }
+  public onChange = (rowKeys: any[]) => {
+    this.setState({
+      selectedRowKeys: rowKeys
+    })
+  }
   public render () {
     const rowSelection: TableRowSelection<GetListOnPageResponse> = {
-      // selectedRowKeys,
       fixed: true,
       columnWidth: 50,
+      selectedRowKeys: this.state.selectedRowKeys,
       onSelect: this.onSelectChange,
-      onSelectAll: this.onSelectAll
+      onSelectAll: this.onSelectAll,
+      onChange: this.onChange
     }
     return (
       <div>

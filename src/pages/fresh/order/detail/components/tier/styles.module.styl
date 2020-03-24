@@ -1,0 +1,38 @@
+.tier
+  display: flex
+  &:before,&:after
+    clear: both
+    content: ''
+    display: block
+  .tier-item
+    text-align: center
+    flex: 1
+    &.tier-item-line
+      width: 20px
+      order: 1
+      flex: 0
+      &:after
+        content: ''
+        margin-top: 28px
+        display: inline-block
+        width: 20px
+        height: 1px
+        background: #999999
+      &.tier-item-line-hidden:after
+        background: transparent
+    &.tier-item-right
+      order: 2
+    .tier-label
+      width: 200px
+      display: inline-block
+      padding: 5px 10px
+      border: 1px solid #999999
+      border-radius 10px
+      &.tier-label-current
+        color: #1890ff
+    .tier-line
+      display: inline-block
+      height: 20px
+      width: 1px
+      background: #999999
+      vertical-align: top

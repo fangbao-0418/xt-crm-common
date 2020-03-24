@@ -1,3 +1,8 @@
+.page {
+  background: #FFFFFF;
+  padding: 10px 20px;
+}
+
 .ml10 {
   margin-left: 10px;
 }
@@ -100,4 +105,10 @@
 
 .ant-card + .ant-card {
   margin-top: 10px;
+}
+
+.vertical-align-table {
+  .ant-table-tbody>tr>td, .ant-table-thead>tr>th {
+    vertical-align: middle;
+  }
 }
