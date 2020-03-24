@@ -85,8 +85,7 @@ class List extends React.Component {
         const params = parseQuery();
         this.fetchData({
           ...params,
-          page: e,
-          pageSize: e.pageSize
+          page: e
         });
       }
     );
@@ -170,7 +169,7 @@ class List extends React.Component {
   };
 
   render() {
-    const { page: {total, current}, pageSize, dataSource, recordItem, modalType } = this.state;
+    const { page: { total, current, pageSize }, dataSource, recordItem, modalType } = this.state;
     const {
       form: { getFieldDecorator }
     } = this.props;
@@ -251,6 +250,7 @@ class List extends React.Component {
         )
       }
     ];
+    console.log(this.state, 'render')
     return (
       <Spin tip="操作处理中..." spinning={false}>
         <Card title="筛选">
