@@ -36,7 +36,7 @@ class AuditCard extends React.Component {
     return (
       <WrapCard
         data={data}
-        render={({ status, auditStatus, withdrawalType, withdrawalInfo }) => {
+        render={({ status, auditStatus, withdrawalType, auditInfo }) => {
 
           if (status === 0 && auditStatus === 1) {
             return (
@@ -116,7 +116,7 @@ class AuditCard extends React.Component {
                 <FormItem label="审核说明">
                   <span className="ant-form-text">
                     {
-                      withdrawalInfo || '暂无说明'
+                      auditInfo || '暂无说明'
                     }
                   </span>
                 </FormItem>

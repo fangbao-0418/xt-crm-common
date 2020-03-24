@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Tabs, message, Button } from 'antd';
-import { getGoodsList, getCategoryTopList, passGoods } from './api';
+import { getGoodsList, getCategoryTopList, passGoods, getGoodsInfo } from './api';
 import SelectFetch from '@/components/select-fetch';
-import { ListPage, FormItem } from '@/packages/common/components';
+import { ListPage, FormItem, If } from '@/packages/common/components';
 import SuppilerSelect from '@/components/suppiler-auto-select';
 import CarouselModal from './components/carouselModal';
 import UnpassModal from './components/unpassModal';
@@ -25,10 +25,12 @@ class Main extends React.Component {
 
   /** 操作：商品图片预览-显示预览模态框 */
   handlePreview = (currentGoods) => {
-    this.setState({
-      currentGoods
-    }, () => {
-      this.carouselModalRef.showModal()
+    getGoodsInfo({ productPoolId: currentGoods.id }).then(res => {
+      this.setState({
+        currentGoods: res
+      }, () => {
+        this.carouselModalRef.showModal()
+      })
     })
   }
 
@@ -178,22 +180,22 @@ class Main extends React.Component {
           namespace='/shop/goods'
           formConfig={formConfig}
           getInstance={ref => this.listRef = ref}
-          processPayload={(payload) => {
+          processPayload={({ innerAuditStatus, ...payload }) => {
+
             if (tabStatus === '0') {
               payload.status = undefined
-              // payload.auditStatus = undefined
               payload.auditStatues = '1, 2, 3'
+              if (innerAuditStatus && (innerAuditStatus !== -1)) {
+                payload.auditStatues = innerAuditStatus
+              }
             } else if (tabStatus === '1') { // tab 在售商品
               payload.status = 1
-              // payload.auditStatus = 2
               payload.auditStatues = '2'
             } else if (tabStatus === '2') { // tab 仓库中商品
               payload.status = 0
-              // payload.auditStatus = 3
               payload.auditStatues = '3'
             } else if (tabStatus === '3') { // tab 待审核
               payload.status = 0
-              // payload.auditStatus = 1
               payload.auditStatues = '1'
             }
 
@@ -230,7 +232,9 @@ class Main extends React.Component {
                   );
                 }}
               />
-              {/* <FormItem name='auditStatus' /> */}
+              <If condition={tabStatus === '0'}>
+                <FormItem name='innerAuditStatus' />
+              </If>
               <FormItem label="审核人" name="auditUser" />
               <FormItem
                 name="createTime"

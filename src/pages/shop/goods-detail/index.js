@@ -82,6 +82,7 @@ class GoodsDetail extends React.Component {
 
       auditInfo = {
         status: goodsInfo.status,
+        auditInfo: goodsInfo.auditInfo,
         auditStatus: goodsInfo.auditStatus,
         withdrawalType: goodsInfo.withdrawalType,
         withdrawalInfo: goodsInfo.withdrawalInfo

@@ -39,7 +39,7 @@ class UnpassModal extends Component {
         ids = selectedRowKeys
       }
 
-      if(!ids.length) return message.warn('请至少选择一个商品审核')
+      if (!ids.length) return message.warn('请至少选择一个商品审核')
 
       unPassGoods({
         ...values,
@@ -84,14 +84,25 @@ class UnpassModal extends Component {
         onOk={this.handleOk}
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
+        destroyOnClose
       >
         <Form layout="vertical">
           <FormItem label="请输入不通过原因">
             {getFieldDecorator('auditInfo', {
-              rules: [{
-                required: true,
-                message: '请输入不通过原因！'
-              }]
+              rules: [
+                {
+                  validator: (rules, value, cb) => {
+                    value = value && value.trim() || ''
+                    if (value.length > 255) {
+                      cb('原因字数不能超过255个')
+                    } else if (value.length === 0) {
+                      cb('原因不能为空')
+                    } else {
+                      cb()
+                    }
+                  }
+                }
+              ]
             })(
               <TextArea
                 placeholder="请输入不通过原因"

@@ -61,7 +61,7 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       render: (val, record) => {
         // status 1: 上架 0 下架
         const withdrawalType = record.withdrawalType // 1: 店长下架 2: 管理员下架
-        const withdrawalInfo = record.withdrawalInfo // 下架说明 管理员才有
+        const withdrawalInfo = record.withdrawalInfo // 下架说明 管理员下架才有
         const auditStatus = record.auditStatus // 商品审核 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
         if (val === 1) return '在售'
         if (auditStatus === 1) {

@@ -3,16 +3,16 @@ import { Modal, Carousel, Icon, message } from 'antd';
 import { replaceHttpUrl } from '@/util/utils';
 import styles from '../style.module.scss'
 
-const CarouselItem = ({ src }) => {
+const CarouselItem = ({ item }) => {
   return (
     <div>
-      <img alt="img" src={src} />
+      <img alt="img" src={item.value} />
+      <p style={{ textAlign: 'center' }}>{item.label}</p>
     </div>
   )
 }
 
 class CarouselModal extends Component {
-
   state = {
     visible: false,
     activeSlide: 0
@@ -32,8 +32,8 @@ class CarouselModal extends Component {
   handleNext = () => {
     const { activeSlide } = this.state
     const { currentGoods } = this.props
-    const carousels = [currentGoods.coverUrl]
-    if (activeSlide === carousels.length - 1) {
+    const carouselsInfos = this.getCarouselsInfos(currentGoods)
+    if (activeSlide === carouselsInfos.length - 1) {
       message.warn('已经最后一张了')
       return
     }
@@ -68,7 +68,41 @@ class CarouselModal extends Component {
 
   /** 窗口彻底关闭回调 */
   handleClose = () => {
+    this.setState({
+      activeSlide: 0
+    })
     this.props.ondestroy();
+  }
+
+  getCarouselsInfos = (currentGoods) => {
+    let coverUrl = [{
+      label: '封面图',
+      value: currentGoods.coverUrl
+    }]
+    
+    let productImage = [], skuImages = []
+
+    if (currentGoods.productImage) {
+      productImage = currentGoods.productImage.split(',').map(item => ({
+        label: '详情图',
+        value: currentGoods.coverUrl
+      }))
+    }
+
+    if (currentGoods.skuList) {
+      skuImages = currentGoods.skuList.filter(item => !!item.imageUrl1).map(item => ({
+        label: 'sku图',
+        value: replaceHttpUrl(item.imageUrl1)
+      }))
+    }
+
+    const carouselsInfos = [
+      ...coverUrl,
+      ...productImage,
+      ...skuImages
+    ];
+
+    return carouselsInfos
   }
 
   render() {
@@ -78,7 +112,7 @@ class CarouselModal extends Component {
 
     if (!currentGoods) return null;
 
-    const carousels = [currentGoods.coverUrl]
+    const carouselsInfos = this.getCarouselsInfos(currentGoods)
 
     return (
       <Modal
@@ -98,10 +132,10 @@ class CarouselModal extends Component {
           beforeChange={this.handleBeforeChange}
           ref={ref => (this.sliderRef = ref)}
         >
-          {carousels.map((item, i) => <CarouselItem key={i} src={replaceHttpUrl(item)} />)}
+          {carouselsInfos.map((item, i) => <CarouselItem key={i} item={item} />)}
         </Carousel>
         <p className={styles.hint}>
-          { activeSlide + 1 } / { carousels.length }
+          { activeSlide + 1 } / { carouselsInfos.length }
         </p>
         <Icon className={[ styles.action, styles.actionPre ]} type="left-circle" onClick={this.handlePrev} />
         <Icon className={[ styles.action, styles.actionNext ]} type="right-circle" onClick={this.handleNext} />

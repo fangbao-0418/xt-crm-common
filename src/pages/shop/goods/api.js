@@ -1,8 +1,13 @@
-const { post, newPost } = APP.http;
+const { post, newPost, get } = APP.http;
 // http://192.168.4.205:8082
 /** 获取商品列表 */
 export function getGoodsList(data) {
   return newPost('/shop/product/list', data);
+}
+
+/** 获取商品详情信息 */
+export function getGoodsInfo(data) {
+  return get('/shop/product/detail', data);
 }
 
 /** 获取违规历史列表 */
