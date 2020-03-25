@@ -100,6 +100,7 @@ class List extends React.Component {
     const {
       form: { resetFields },
     } = this.props;
+    APP.history.push('/fresh/activity/list')
     this.setState({ initParams: {} }, () => {
       resetFields();
       this.handleSearch();
@@ -223,16 +224,20 @@ class List extends React.Component {
             </FormItem>
             <FormItem label="活动ID">
               {getFieldDecorator('promotionId', {
-                initialValue: initParams.id,
+                initialValue: initParams.promotionId
               })(<Input placeholder="请输入活动ID" style={{ width: 180 }} />)}
             </FormItem>
             <FormItem label="商品名称">
-              {getFieldDecorator('productName')(
+              {getFieldDecorator('productName', {
+                initialValue: initParams.productName
+              })(
                 <Input placeholder="请输入商品名称" style={{ width: 180 }} />,
               )}
             </FormItem>
             <FormItem label="商品ID">
-              {getFieldDecorator('productId')(
+              {getFieldDecorator('productId', {
+                initialValue: initParams.productId
+              })(
                 <Input placeholder="请输入商品ID" style={{ width: 180 }} />,
               )}
             </FormItem>
