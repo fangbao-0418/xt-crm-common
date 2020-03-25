@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Table, Button, Popconfirm, Form } from 'antd';
+import Page from '@/components/page';
 import { connect } from '@/util/utils';
 import Modal from './modal';
 
@@ -39,6 +40,8 @@ function getColumns(scope) {
             // },
         }, {
             title: '操作',
+            align: 'center',
+            width: 200,
             render(val, record) {
                 return (
                     <div>
@@ -135,7 +138,7 @@ export default class extends Component {
     render() {
         const { menulist } = this.props;
         return (
-            <>
+            <Page>
                 {
                     this.renderForm()
                 }
@@ -148,7 +151,7 @@ export default class extends Component {
                     <Column title="类型" dataIndex="type"></Column> */}
                 </Table>
                 <Modal />
-            </>
+            </Page>
         );
     }
 }

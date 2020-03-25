@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Select, Button, Row, Col, Form } from 'antd';
+import Page from '@/components/page';
 import moment from 'moment';
 import { connect } from '@/util/utils';
 import CommonTable from '@/components/common-table';
@@ -185,20 +186,22 @@ export default class extends Component {
   render() {
     const userConfig = this.props.userConfig || {};
     return (
-      <Row>
-        <Col style={{ marginBottom: 10 }}>{this.renderForm()}</Col>
-        <Col>
-          <CommonTable
-            columns={getColumns(this)}
-            dataSource={userConfig.records || []}
-            onChange={this.handleSearch}
-            total={userConfig.total}
-            current={userConfig.current}
-          />
-        </Col>
-        <Modal />
-        <PermissionModal />
-      </Row>
+      <Page>
+        <Row>
+          <Col style={{ marginBottom: 10 }}>{this.renderForm()}</Col>
+          <Col>
+            <CommonTable
+              columns={getColumns(this)}
+              dataSource={userConfig.records || []}
+              onChange={this.handleSearch}
+              total={userConfig.total}
+              current={userConfig.current}
+            />
+          </Col>
+          <Modal />
+          <PermissionModal />
+        </Row>
+      </Page>
     );
   }
 }
