@@ -379,9 +379,8 @@ class List extends React.Component {
     const {
       form: { getFieldDecorator }
     } = this.props;
-    // 是否显示批量转移按钮
-    const isShowTransfer = type === 1 || type === 2 || type === 3;
-    console.log(records, 'recordsrecordsrecords')
+    // 买菜暂时不显示批量转移按钮
+    const isShowTransfer = false
     return (
       <>
         <ActivityInfo
