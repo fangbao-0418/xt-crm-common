@@ -183,14 +183,12 @@ class Main extends React.Component<Props, State> {
                 </div>
               )
               )}
-            {
-              dataSource.length < 8 && <div
+            <div
                 className={classNames(styles.tbtn, styles.add)}
                 onClick={this.addIconItem}
               >
-                +新增icon
-              </div>
-            }
+              +新增icon
+            </div>
             <Popconfirm
               title='确认发布icon吗'
               onConfirm={this.toPublish}
