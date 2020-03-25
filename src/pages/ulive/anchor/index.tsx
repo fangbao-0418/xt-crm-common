@@ -60,7 +60,7 @@ class Main extends React.Component<Props> {
     }
   },
   {
-    dataIndex: 'aaa',
+    dataIndex: 'anchorId',
     title: '主播个人页',
     width: 120,
     align: 'center',
@@ -128,14 +128,10 @@ class Main extends React.Component<Props> {
     })
   }
   public showQrcode = (record: Anchor.ItemProps) => {
-    // module_live/pages/room/index
     api.getWxQrcode({
       page: 'module_live/pages/room/index',
       scene: `id=${record.anchorId}`
-      // page: 'pages/product/product',
-      // scene: 'pid=782&index=2'
     }).then((res) => {
-      console.log(res, '-------------')
       if (!res) {
         return
       }
