@@ -182,7 +182,7 @@ class Main extends React.Component {
           getInstance={ref => this.listRef = ref}
           processPayload={({ innerAuditStatus, ...payload }) => {
 
-            if (tabStatus === '0') {
+            if (tabStatus === '0') { // tab 全部
               payload.status = undefined
               payload.auditStatues = '1, 2, 3'
               if (innerAuditStatus && (innerAuditStatus !== -1)) {
@@ -193,7 +193,8 @@ class Main extends React.Component {
               payload.auditStatues = '2'
             } else if (tabStatus === '2') { // tab 仓库中商品
               payload.status = 0
-              payload.auditStatues = '3'
+              payload.auditStatues = '0,3'
+              payload.withdrawalTypes = '1,2' // 下架类型 为了过滤店家草稿数据
             } else if (tabStatus === '3') { // tab 待审核
               payload.status = 0
               payload.auditStatues = '1'

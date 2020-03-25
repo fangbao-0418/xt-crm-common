@@ -41,9 +41,13 @@ const SpecValsCard = ({ goodsInfo }) => {
     key: 'salePrice',
     render: (value) => (value ? formatMoneyWithSign(value) : '-')
   }, {
-    title: '库存',
+    title: '总库存',
     dataIndex: 'stock',
     key: 'stock'
+  }, {
+    title: '可用库存',
+    dataIndex: 'usableStock',
+    key: 'usableStock'
   }]
 
   const columns = [...dynaColums, ...fixedColumns];

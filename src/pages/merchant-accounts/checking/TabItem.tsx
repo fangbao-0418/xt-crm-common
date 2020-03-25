@@ -74,7 +74,7 @@ class Main extends React.Component<Props, State> {
     },
     {
       dataIndex: 'settlementMoney',
-      title: '本期对对账单金额',
+      title: '本期对账单金额',
       width: 150,
       render: (text) => {
         const className = text > 0 ? 'success' : 'error'

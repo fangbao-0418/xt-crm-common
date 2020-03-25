@@ -66,9 +66,9 @@ class SearchForm extends React.Component {
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="结算人名称">
+              <FormItem label="商家名称">
                 {getFieldDecorator('storeName', { initialValue: '' })(
-                  <Input placeholder="请输入供应商名称" />
+                  <Input placeholder="请输入商家名称" />
                 )}
               </FormItem>
             </Col>
@@ -80,7 +80,7 @@ class SearchForm extends React.Component {
               </FormItem>
             </Col>
             <Col span={6}>
-              <FormItem label="结算人类型">
+              <FormItem label="商家类型">
                 {getFieldDecorator('storeNameType', { initialValue: '' })(
                   <Select>
                     <Option value="">全部</Option>

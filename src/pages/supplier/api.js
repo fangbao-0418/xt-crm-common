@@ -63,7 +63,7 @@ export function addSupplier(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return newPost('/store/add', data);
+  return newPost('http://192.168.4.205:8082/store/add', data);
 }
 
 export function updateSupplier(data) {
@@ -71,7 +71,7 @@ export function updateSupplier(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return newPost('/store/update', data);
+  return newPost('http://192.168.4.205:8082/store/update', data);
 }
 
 export function exportSupplier(data) {

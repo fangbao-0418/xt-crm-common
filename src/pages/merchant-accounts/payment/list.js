@@ -175,13 +175,6 @@ class List extends React.Component {
   render() {
     const { page, dataSource, recordItem, isBatchFail, detailModalUpload } = this.state; // , selectedRowKeys
 
-    // const rowSelection = {
-    //   selectedRowKeys,
-    //   onChange: this.handleSelectChange
-    // }
-
-    console.log(recordItem)
-
     return (
       <Spin tip="操作处理中..." spinning={false}>
         {/* 搜索表单 */}

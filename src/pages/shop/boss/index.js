@@ -198,28 +198,30 @@ class Main extends React.Component {
     />
   }
 
-  render() {
-    return <div>
-      {/* 开启关闭店铺模态框 */}
-      <SwitchModal />
-      {/* 添加店长模态框 */}
-      <BatchModal />
-      {/* 识别用户模态框 */}
-      <CheckModal />
-      <Card>
-        {/* 条件查询视图 */}
-        {this.renderForm()}
-      </Card>
-      <Card>
-        <div style={{ marginBottom: 16 }}>
-          <Button type="primary" onClick={this.handleAdd}>
-            添加店长
-          </Button>
-        </div>
-        {/* 内容列表视图 */}
-        {this.renderContent()}
-      </Card>
-    </div>
+  render () {
+    return (
+      <div>
+        {/* 开启关闭店铺模态框 */}
+        <SwitchModal />
+        {/* 添加店长模态框 */}
+        <BatchModal />
+        {/* 识别用户模态框 */}
+        <CheckModal />
+        <Card>
+          {/* 条件查询视图 */}
+          {this.renderForm()}
+        </Card>
+        <Card>
+          <div style={{ marginBottom: 16 }}>
+            <Button type="primary" onClick={this.handleAdd}>
+              添加店长
+            </Button>
+          </div>
+          {/* 内容列表视图 */}
+          {this.renderContent()}
+        </Card>
+      </div>
+    )
   }
 }
 

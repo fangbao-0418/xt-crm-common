@@ -95,12 +95,12 @@ class AuditCard extends React.Component {
 
           if (status === 1) {
             auditResult = '在售'
+          } else if (auditStatus === 0) {
+            auditResult = '待提交'
+          } else if (auditStatus === 2) {
+            auditResult = '通过'
           } else if (auditStatus === 3) {
             auditResult = '不通过'
-          } else if (withdrawalType === 1) {
-            auditResult = '店长下架'
-          } else if (withdrawalType === 2) {
-            auditResult = '管理员下架'
           } else {
             auditResult = '状态错误'
           }

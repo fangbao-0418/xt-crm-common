@@ -110,7 +110,7 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       render: (_, record) => {
         const auditStatus = record.auditStatus // 商品审核 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
         const status = record.status
-        if (status === 1) {
+        if (status === 1) { // 上架
           return (
             <div style={{ marginTop: 40 }}>
               <span

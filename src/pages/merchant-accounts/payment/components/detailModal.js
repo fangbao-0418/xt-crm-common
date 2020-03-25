@@ -98,8 +98,8 @@ class DetailModal extends React.Component {
             <Form.Item label="付款单名称">{paymentName}</Form.Item>
             <Form.Item label="结算单ID">{settlementSerialNo}</Form.Item>
             <Form.Item label="金额">{formatMoneyWithSign(paymentMoney)}</Form.Item>
-            <Form.Item label="结算人类型">{storeTypeInfo}</Form.Item>
-            <Form.Item label="结算人名称">{storeName}</Form.Item>
+            <Form.Item label="商家类型">{storeTypeInfo}</Form.Item>
+            <Form.Item label="商家名称">{storeName}</Form.Item>
             <Form.Item label="账号类型">{payTypeInfo}</Form.Item>
             <Form.Item label="账户名称">{accountName}</Form.Item>
             <Form.Item label="账号">{accountNo}</Form.Item>

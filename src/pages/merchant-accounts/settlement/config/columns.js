@@ -13,7 +13,7 @@ const getColumns = ({ onSettle, onReject, onPay }) => {
       width: 150
     },
     {
-      title: '本期结算对账单金额',
+      title: '本期结算金额',
       dataIndex: 'settlementMoney',
       key: 'settlementMoney',
       render: MoneyRender,
