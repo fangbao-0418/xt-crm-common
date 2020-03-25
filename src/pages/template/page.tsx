@@ -113,6 +113,7 @@ class Page extends React.Component<Props, State> {
       },
       {
         title: '操作',
+        align: 'center',
         render: (text: any, record: any) => {
           return (
             <Button

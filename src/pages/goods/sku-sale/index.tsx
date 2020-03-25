@@ -279,6 +279,9 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           reserveKey='skuSale'
           namespace='skuSale'
           className='vertical-align-table'
+          style={{
+            padding: '0px 16px 0'
+          }}
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
           processPayload={(payload) => {
