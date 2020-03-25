@@ -85,6 +85,7 @@ class OrderList extends React.Component {
     const columns = [
       {
         title: '排序',
+        align: 'center',
         dataIndex: 'sort',
       },
       {
@@ -115,6 +116,11 @@ class OrderList extends React.Component {
       {
         title: '链接地址',
         dataIndex: 'jumpUrlWap',
+        render: (text) => {
+          return (
+            <span className='href' onClick={() => APP.href(text, '__blank')}>{text}</span>
+          )
+        }
       },
       {
         title: '位置',
@@ -132,11 +138,14 @@ class OrderList extends React.Component {
       },
       {
         title: '操作',
+        align: 'center',
+        width: 200,
         render: (operator, { id, status }) => {
           return (
             <>
-              <BannerModal onSuccess={this.query} isEdit id={id} /> &nbsp;
+              <BannerModal size='small' onSuccess={this.query} isEdit id={id} /> &nbsp;
               <Button
+                size='small'
                 onClick={() => {
                   this.toggleStatus(id, status ? 0 : 1);
                 }}
@@ -145,6 +154,7 @@ class OrderList extends React.Component {
               </Button>
               &nbsp;
               <Button
+                size='small'
                 type="danger"
                 onClick={() => {
                   this.delete(id);

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Button, Row, Col, Form } from 'antd';
+import Page from '@/components/page';
 import moment from 'moment';
 import { connect } from '@/util/utils';
 import CommonTable from '@/components/common-table';
@@ -96,22 +97,24 @@ export default class extends Component {
     render() {
         const { roleConfig = {} } = this.props;
         return (
-            <Row>
-                <Col style={{ marginBottom: 10 }}>
-                    {this.renderForm()}
-                </Col>
-                <Col>
-                    <CommonTable
-                        columns={getColumns(this)}
-                        dataSource={roleConfig.records || []}
-                        onChange={this.handleSearch}
-                        total={roleConfig.total}
-                        current={roleConfig.current}
-                        rowKey={record => record.id}
-                    />
-                </Col>
-                <Modal />
-            </Row>
+            <Page>
+                <Row>
+                    <Col style={{ marginBottom: 10 }}>
+                        {this.renderForm()}
+                    </Col>
+                    <Col>
+                        <CommonTable
+                            columns={getColumns(this)}
+                            dataSource={roleConfig.records || []}
+                            onChange={this.handleSearch}
+                            total={roleConfig.total}
+                            current={roleConfig.current}
+                            rowKey={record => record.id}
+                        />
+                    </Col>
+                    <Modal />
+                </Row>
+            </Page>
         )
     }
 }

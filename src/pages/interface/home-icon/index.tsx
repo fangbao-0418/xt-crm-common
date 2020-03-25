@@ -37,6 +37,7 @@ class Main extends React.Component<Props, State> {
       })
       if (init) {
         const item = res[0] || {}
+        item.imgUrl = [{url: item.imgUrl, uid: 'imgurl'}]
         this.props.form.setFieldsValue(item)
       }
     })
@@ -104,7 +105,6 @@ class Main extends React.Component<Props, State> {
   }
   public resetForm() {
     this.props.form.resetFields()
-    
     this.props.form.setFieldsValue({
       platformArray: _platformType.map(val => val.value)
     });

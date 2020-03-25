@@ -71,6 +71,7 @@ class SprinkleCash extends React.Component {
           }, {
             title: '操作',
             width: 180,
+            align: 'center',
             render: (record: any) => {
               return (
                 <>
