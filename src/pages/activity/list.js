@@ -70,7 +70,7 @@ class List extends React.Component {
           listData: res.records,
           page,
         });
-        setQuery({ page: page.current, pageSize: page.pageSize, ...params });
+        setQuery({ page: page.current, pageSize: page.pageSize, ...params }, true);
       },
     );
   };
@@ -186,20 +186,27 @@ class List extends React.Component {
       },
       {
         title: '操作',
+        align: 'center',
         render: record => (
           <>
             {/* <Link to={`/activity/info/edit/${record.id}?page=${page.current}&pageSize=${page.pageSize}`}>编辑</Link> */}
-            <a onClick={() => gotoPage(`/activity/info/edit/${record.id}`)}>编辑</a>
-            <Divider type="vertical" />
+            <a onClick={() => gotoPage(`/activity/info/edit/${record.id}`)}>{record.systemTime < record.endTime ? '编辑' : '查看'}</a>
+
             {record.status ? (
-              <a style={{ color: '#ff6600' }} onClick={this.hanadleDisablePromotion(record.id)}>
-                关闭
-              </a>
-            ) : (
-              <a style={{ color: '#ff6600' }} onClick={this.handleEnablePromotion(record.id)}>
-                开启
-              </a>
-            )}
+              <>
+                <Divider type="vertical" />
+                <a style={{ color: '#ff6600' }} onClick={this.hanadleDisablePromotion(record.id)}>
+                  关闭
+                </a>
+              </>
+            ) : record.systemTime < record.endTime ? (
+              <>
+                <Divider type="vertical" />
+                <a style={{ color: '#ff6600' }} onClick={this.handleEnablePromotion(record.id)}>
+                  开启
+                </a>
+              </>
+            ) : null}
           </>
         ),
       },

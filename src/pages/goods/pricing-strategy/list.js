@@ -12,7 +12,6 @@ const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-
 class List extends React.Component {
   constructor(props) {
     super(props);
@@ -205,6 +204,7 @@ class List extends React.Component {
       },
       {
         title: '操作',
+        align: 'center',
         render: record => (
           <>
             {record.status ? (

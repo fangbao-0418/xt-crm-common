@@ -47,18 +47,23 @@ class Main extends React.Component {
     {
       key: 'participationTimes',
       title: '参与人次',
+      width: 120,
+      align: 'center',
       dataIndex: 'participationTimes'
     },
     {
       key: 'status',
       title: '状态',
       dataIndex: 'status',
+      width: 120,
+      align: 'center',
       render: (status: any) => statusConfig[status]
     },
     {
       key: 'operate',
       title: '操作',
       width: 220,
+      align: 'center',
       render: (text: any, record: Lottery.ListProps) => {
         const path = `/activity/lottery/${record.id}`
         return (
@@ -79,7 +84,7 @@ class Main extends React.Component {
                 luckyDrawId: record.id
               })
               if (res) {
-                const msg = open === 1 ? '开启成功' : '关闭成功' 
+                const msg = open === 1 ? '开启成功' : '关闭成功'
                 APP.success(msg)
                 this.listPage.refresh()
               }

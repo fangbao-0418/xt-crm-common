@@ -31,7 +31,7 @@ const initImgList = imgUrlWap => {
   return [];
 };
 
-function speedyInput (field, text, record, index, dataSource, cb) {
+function speedyInput (field, text, record, index, dataSource, cb, _this) {
   dataSource = dataSource || []
   return (node) => (
     <ArrowContain
@@ -46,7 +46,9 @@ function speedyInput (field, text, record, index, dataSource, cb) {
           end = dataSource.length - 1
         }
         console.log(current, cb, stock, '----------------')
+        let fields = [];
         while (current <= end) {
+          fields.push(`${field}-${current}`);
           const { sellableQty } = dataSource[current]
           if (field === 'inventory') {
             stock = (sellableQty && stock > sellableQty) ? sellableQty : stock
@@ -54,6 +56,7 @@ function speedyInput (field, text, record, index, dataSource, cb) {
           cb(field, current)(stock)
           current++
         }
+        _this.props.form.resetFields(fields);
       }}
     >
       {node}
@@ -320,7 +323,7 @@ class ActivityDetail extends React.Component {
         dataIndex: 'buyingPrice',
         width: 200,
         render: (text, record, index) => {
-          return speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          return speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
             <FormItem
               wrapperCol={{span: 24}}
             >
@@ -379,19 +382,16 @@ class ActivityDetail extends React.Component {
             value: text,
             onChange: this.handleChangeValue('inventory', index)
           }
-          if (record.sellableQty) {
-            props.max = record.sellableQty
-          }
           return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
         },
       },
       {
-        title: '可用库存',
+        title: '商品可用库存',
         dataIndex: 'stock',
         render: (text, record, index) => {
           // 1.售后详情中 订单信息模块 需要添加订单类型的属性
           // 海淘商品可用库存需要读取保宏仓的可用库存数量，活动库存不可大于可用库存
-          return <span>{record.sellableQty || '无限制' }</span>
+          return <span>{record.sellableQty }</span>
         }
       },
       {
