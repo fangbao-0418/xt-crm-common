@@ -416,6 +416,7 @@ class ActivityDetail extends React.Component {
           </Row>
         </Card>
         <Card style={{ marginTop: 10 }}>
+          <div style={{color: 'red', fontSize: 12, marginBottom: 8}}>* 修改活动库存后，请点击同步更新，否则缓存期间会导致前端展示问题</div>
           <Table
             scroll={{ x: true }}
             rowSelection={rowSelection}
