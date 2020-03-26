@@ -1149,6 +1149,7 @@ class Main extends React.Component<Props, State> {
       selectedRowKeys: [],
       selectedRowKeysMap: {}
     })
+    this.props.form.resetFields()
   }
   public render() {
     const { selectedRowKeys, selectedRowKeysMap } = this.state;

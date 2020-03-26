@@ -21,7 +21,12 @@ const defaultItem: SkuSaleProps = {
   marketPrice: undefined,
   salePrice: undefined,
   managerMemberPrice: undefined,
-  expandable: true
+  expandable: true,
+  storeProductSkuId: undefined,
+  barCode: undefined,
+  unit: undefined,
+  incStock: undefined,
+  stockAlert: undefined
 }
 
 /** 子规格字段集合 */
@@ -155,8 +160,15 @@ class SkuList extends React.Component<Props, State>{
         if (index === 0) {
           val.imageUrl1 = item2 && item2.specPicture || val.imageUrl1
         }
-        val.skuId = this.dirty ? undefined : val.skuId
-        val.productBasics = this.dirty ? [] : (val.productBasics || [])
+        if (this.dirty) {
+          val.skuId = undefined
+          val.productBasics = undefined
+          val = {
+            ...val,
+            ...defaultItem
+          }
+          console.log(val, '------')
+        }
       })
       return val
     })
@@ -213,6 +225,7 @@ class SkuList extends React.Component<Props, State>{
       this.dirty = true
       this.skuTable.clearSelected()
     }
+    this.dirty = false
     specs[key].content.push(this.state.tempSpecInfo[key])
     tempSpecInfo[key] = {
       specName: '',
@@ -320,6 +333,7 @@ class SkuList extends React.Component<Props, State>{
       this.setState({
         specs
       })
+      this.skuTable.clearSelected()
       return
     }
     this.dirty = true
@@ -333,6 +347,7 @@ class SkuList extends React.Component<Props, State>{
   }
   /** 删除子规格 */
   public removeSubSpec = (key: number, index: number) => () => {
+    this.dirty = false
     /** 另一组索引 */
     const otherKey = key === 0 ? 1 : 0
     const keys = ['propertyValue1', 'propertyValue2']
