@@ -133,7 +133,6 @@ class SkuList extends React.Component<Props, State>{
     }
     // let addNew = false
     /** 多规格合并 */
-    console.log(this.dirty, 'dirty')
     const result = combineResutle.map((item) => {
       let val: SkuSaleProps = {...defaultItem}
       /** 根据原规格查找规格信息 */
@@ -156,6 +155,7 @@ class SkuList extends React.Component<Props, State>{
           val.imageUrl1 = item2 && item2.specPicture || val.imageUrl1
         }
         val.skuId = this.dirty ? undefined : val.skuId
+        val.productBasics = this.dirty ? [] : (val.productBasics || [])
       })
       return val
     })
