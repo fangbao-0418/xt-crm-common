@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Carousel, Icon, message } from 'antd';
 import { replaceHttpUrl } from '@/util/utils';
+import { debounce } from 'lodash'
 import styles from '../style.module.scss'
 
 const CarouselItem = ({ item }) => {
@@ -19,22 +20,22 @@ class CarouselModal extends Component {
   }
 
   /** 上一张图片 */
-  handlePrev = () => {
+  handlePrev = (hint) => {
     const { activeSlide } = this.state
     if (activeSlide === 0) {
-      message.warn('已经第一张了')
+      hint && message.warn('已经第一张了')
       return
     }
     this.sliderRef.slick.slickPrev();
   }
 
   /** 下一张图片 */
-  handleNext = () => {
+  handleNext = (hint) => {
     const { activeSlide } = this.state
     const { currentGoods } = this.props
     const carouselsInfos = this.getCarouselsInfos(currentGoods)
     if (activeSlide === carouselsInfos.length - 1) {
-      message.warn('已经最后一张了')
+      hint && message.warn('已经最后一张了')
       return
     }
     this.sliderRef.slick.slickNext();
@@ -79,7 +80,7 @@ class CarouselModal extends Component {
       label: '封面图',
       value: currentGoods.coverUrl
     }]
-    
+
     let productImage = [], skuImages = []
 
     if (currentGoods.productImage) {
@@ -105,6 +106,17 @@ class CarouselModal extends Component {
     return carouselsInfos
   }
 
+  handleScroll = (event) => {
+    const deltaY = event.deltaY
+    if (deltaY > 0) {
+      // 下一张
+      debounce(this.handleNext)()
+    } else {
+      // 上一张
+      debounce(this.handlePrev)()
+    }
+  }
+
   render() {
     const { visible, activeSlide } = this.state;
 
@@ -126,19 +138,21 @@ class CarouselModal extends Component {
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
       >
-        <Carousel
-          dots={false}
-          infinite={true}
-          beforeChange={this.handleBeforeChange}
-          ref={ref => (this.sliderRef = ref)}
-        >
-          {carouselsInfos.map((item, i) => <CarouselItem key={i} item={item} />)}
-        </Carousel>
-        <p className={styles.hint}>
-          { activeSlide + 1 } / { carouselsInfos.length }
-        </p>
-        <Icon className={[ styles.action, styles.actionPre ]} type="left-circle" onClick={this.handlePrev} />
-        <Icon className={[ styles.action, styles.actionNext ]} type="right-circle" onClick={this.handleNext} />
+        <div onWheel={this.handleScroll}>
+          <Carousel
+            dots={false}
+            infinite={true}
+            beforeChange={this.handleBeforeChange}
+            ref={ref => (this.sliderRef = ref)}
+          >
+            {carouselsInfos.map((item, i) => <CarouselItem key={i} item={item} />)}
+          </Carousel>
+          <p className={styles.hint}>
+            {activeSlide + 1} / {carouselsInfos.length}
+          </p>
+          <Icon className={[styles.action, styles.actionPre]} type="left-circle" onClick={this.handlePrev.bind(true)} />
+          <Icon className={[styles.action, styles.actionNext]} type="right-circle" onClick={this.handleNext.bind(true)} />
+        </div>
       </Modal>
     )
   }
