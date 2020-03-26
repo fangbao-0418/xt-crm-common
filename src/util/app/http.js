@@ -28,7 +28,7 @@ export const request = (url, config = {}) => {
   return axios(_config)
     .then(res => {
       !config.hideLoading && APP.fn.handleLoading('end');
-      if (_config.banLog !== false) {
+      if (_config.banLog !== true) {
         APP.moon.oper(res);
       }
       if (res.status === 401) {
@@ -180,6 +180,9 @@ export function fetch(url, config = {}) {
     ...others
   }).then(res => {
     !config.hideLoading && APP.fn.handleLoading('end')
+    if (config.banLog !== true) {
+      APP.moon.oper(res);
+    }
     return res;
   }, (error) => {
     !config.hideLoading && APP.fn.handleLoading('end')

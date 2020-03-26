@@ -145,8 +145,10 @@ export function refundOperate(data: any) {
 export function getStoreList(data: any) {
   return fetch('/store/list', {
     method: 'POST',
-    data
-  });
+    data,
+    /** 禁止日志 */
+    banLog: true
+  })
 }
 export function customerAdd(data: any) {
   return fetch('/order/afterSale/customerAdd', {

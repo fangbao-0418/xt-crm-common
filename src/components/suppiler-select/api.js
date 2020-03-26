@@ -1,3 +1,9 @@
+/*
+ * @Date: 2019-11-12 11:03:51
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-26 18:17:00
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/components/suppiler-select/api.js
+ */
 import { post } from '../../util/fetch';
 const debug = true;
 
@@ -29,5 +35,8 @@ export function getStoreList(data) {
   if (!debug) {
     return Promise.resolve(mockData);
   }
-  return post('/store/list', data);
+  return post('/store/list', data, {
+    /** 禁止日志 */
+    banLog: true
+  });
 }

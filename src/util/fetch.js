@@ -17,7 +17,7 @@ export const request = (url, config = {}) => {
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
-      if (_config.banLog !== false) {
+      if (_config.banLog !== true) {
         window.Moon && window.Moon.oper(res);
       }
       !config.hideLoading && APP.fn.handleLoading('end');
@@ -336,6 +336,9 @@ export function fetch(url, config = {}) {
     .then(
       res => {
         !config.hideLoading && APP.fn.handleLoading('end');
+        if (config.banLog !== true) {
+          window.Moon && window.Moon.oper(res);
+        }
         return res;
       },
       err => {
