@@ -98,7 +98,7 @@ interface State {
   strategyData: any
 }
 class SkuList extends React.Component<Props, State>{
-  state: State = {
+  public state: State = {
     specs: this.props.specs,
     specPictures: [],
     speSelect: [],
@@ -113,7 +113,8 @@ class SkuList extends React.Component<Props, State>{
     dataSource: this.props.dataSource,
     strategyData: {}
   }
-  
+  /** 是否发生一级规格项变动 */
+  public dirty = false
   public componentWillReceiveProps (props: Props) {
     // console.log('dataSource =>', props.dataSource);
     this.setState({
@@ -124,17 +125,15 @@ class SkuList extends React.Component<Props, State>{
     })
   }
   public getCombineResult (specs: Spec[], dataSource: SkuSaleProps[]) {
-    // console.log(specs, 'specs getCombineResult')
-    // console.log(dataSource, 'dataSource getCombineResult')
     const collection = specs.map((item) => item.content)
     const combineResutle: SpecItem[][] = APP.fn.mutilCollectionCombine.apply(null, collection)
-    // console.log(combineResutle, 'combineResutle getCombineResult')
     /** 如果合并后只有一组数据切第一项全部都是undefind则数组返回空, */
     if (combineResutle.length === 1 && combineResutle[0].every((item) => item === undefined)) {
       return []
     }
     // let addNew = false
     /** 多规格合并 */
+    console.log(this.dirty, 'dirty')
     const result = combineResutle.map((item) => {
       let val: SkuSaleProps = {...defaultItem}
       /** 根据原规格查找规格信息 */
@@ -156,7 +155,7 @@ class SkuList extends React.Component<Props, State>{
         if (index === 0) {
           val.imageUrl1 = item2 && item2.specPicture || val.imageUrl1
         }
-        // val.skuId = undefined
+        val.skuId = this.dirty ? undefined : val.skuId
       })
       return val
     })
@@ -170,21 +169,16 @@ class SkuList extends React.Component<Props, State>{
      */
     if (!nosync) {
       dataSource[index][text] = e.target ? e.target.value : e;
-    }
-    /**
-     * 同步修改一列的数值
-     */
-    else {
+    } else {
+      /* 同步修改一列的数值 */
       dataSource.forEach((item, inex) => {
         item[text] = e.target ? e.target.value : e
       })
     }
-    this.setState({ dataSource });
-  };
-  /**
-   * 添加规格不能超过两个
-   */
-  handleAdd = (title: string) => {
+    this.setState({ dataSource })
+  }
+  /* 添加规格不能超过两个 */
+  public handleAdd = (title: string) => {
     if (size(this.state.specs) >= 0 && size(this.state.specs) < 2) {
       this.state.specs.push({
         title,
@@ -192,15 +186,15 @@ class SkuList extends React.Component<Props, State>{
       });
       this.setState({
         specs: this.state.specs,
-        GGName: '',
-      });
+        GGName: ''
+      })
     }
   };
   /**
    * 添加子规格
    */
   addSubSpec = (key: number) => () => {
-    let specs = this.state.specs
+    const specs = this.state.specs
     const { content } = specs[key]
     const { tempSpecInfo, showImage } = this.state
     const specName = (tempSpecInfo[key] && tempSpecInfo[key].specName || '').trim()
@@ -213,7 +207,10 @@ class SkuList extends React.Component<Props, State>{
       message.error('请不要填写相同的规格');
       return
     }
-
+    if (content.length === 0) {
+      /** 添加第一个子规格时，代表sku重新洗牌skuid传undefind @getCombineResult */
+      this.dirty = true
+    }
     specs[key].content.push(this.state.tempSpecInfo[key])
     tempSpecInfo[key] = {
       specName: '',
@@ -247,10 +244,10 @@ class SkuList extends React.Component<Props, State>{
     this.setState({
       dimensionNamePropoverStatus: false
     })
-    this.handleAdd(GGName);
-  };
+    this.handleAdd(GGName)
+  }
 
-  //计算价格
+  // 计算价格
   calculatePrice = () => {
     const { dataSource, strategyData } = this.state;
     let isZero = false;
@@ -312,21 +309,27 @@ class SkuList extends React.Component<Props, State>{
       dataSource: newData
     })
   }
-  /**
-  * 删除规格
-  */
-  removeSpec = (index: number) => {
+  /** 删除规格 */
+  public removeSpec = (index: number) => {
     const { specs } = this.state
+    const delContentLen = specs[index].content.length
     specs.splice(index, 1)
+    if (delContentLen === 0) {
+      this.setState({
+        specs
+      })
+      return
+    }
+    this.dirty = true
     this.setState({
       specs,
       dataSource: []
     }, () => {
       this.onChange([])
     })
-  };
+  }
   /** 删除子规格 */
-  removeSubSpec = (key: number, index: number) => () => {
+  public removeSubSpec = (key: number, index: number) => () => {
     /** 另一组索引 */
     const otherKey = key === 0 ? 1 : 0
     const keys = ['propertyValue1', 'propertyValue2']
@@ -337,11 +340,11 @@ class SkuList extends React.Component<Props, State>{
 
     /////////////////////
     dataSource = this.getCombineResult(specs, dataSource)
-    this.setState({ specs, dataSource: dataSource });
+    this.setState({ specs, dataSource })
     this.onChange(dataSource)
     return
     /////////////////////
-  };
+  }
   public getCustomColumns () {
     const columns: ColumnProps<any>[] = []
     const keys = ['propertyValue1', 'propertyValue2']
@@ -351,10 +354,9 @@ class SkuList extends React.Component<Props, State>{
           width: 100,
           title: item.title,
           dataIndex: keys[index]
-        }) 
+        })
       }
     })
-    
     return columns
   }
   public onChange (dataSource: SkuSaleProps[]) {
@@ -386,29 +388,29 @@ class SkuList extends React.Component<Props, State>{
     const type = this.props.type !== undefined ? this.props.type : 0
     return (
       <Card
-        title="添加规格项"
+        title='添加规格项'
         style={{ marginTop: 10 }}
-        extra={
+        extra={(
           <Popover
-            trigger="click"
+            trigger='click'
             visible={this.state.dimensionNamePropoverStatus}
-            content={
+            content={(
               <div style={{ display: 'flex' }}>
                 <Input
                   style={{width: 150}}
-                  placeholder="请添加规格名称"
+                  placeholder='请添加规格名称'
                   value={this.state.GGName}
-                  onChange={e => {
+                  onChange={(e) => {
                     this.setState({
                       GGName: (e.target.value || '').trim()
-                    });
+                    })
                   }}
                 />
-                <Button type="primary" style={{ marginLeft: 5 }} onClick={this.handleTabsAdd}>
+                <Button type='primary' style={{ marginLeft: 5 }} onClick={this.handleTabsAdd}>
                   确定
                 </Button>
               </div>
-            }
+            )}
           >
             {this.state.specs.length < 2 && (
               <span
@@ -421,14 +423,14 @@ class SkuList extends React.Component<Props, State>{
               </span>
             )}
           </Popover>
-        }
+        )}
       >
         {this.state.specs.map((spec, key) => {
           return (
             <Card
               style={{ marginBottom: 10 }}
               key={key}
-              type="inner"
+              type='inner'
               title={(
                 <CardTitle
                   checked={this.state.showImage}
@@ -455,9 +457,17 @@ class SkuList extends React.Component<Props, State>{
                   }}
                 />
               )}
-              extra={
-                <span className='href' onClick={() => this.removeSpec(key)}>删除</span>
-              }>
+              extra={(
+                <span
+                  className='href'
+                  onClick={() => {
+                    this.removeSpec(key)
+                  }}
+                >
+                  删除
+                </span>
+              )}
+            >
               <div className={styles.spulist}>
                 {map(spec.content, (item, index: number) => (
                   <SkuUploadItem
@@ -472,7 +482,7 @@ class SkuList extends React.Component<Props, State>{
                   >
                     <Button
                       className={styles.spubtn}
-                      type="danger"
+                      type='danger'
                       onClick={this.removeSubSpec(key, index)}
                     >
                       删除规格
@@ -493,8 +503,9 @@ class SkuList extends React.Component<Props, State>{
                   >
                     <Button
                       className={styles.spubtn}
-                      type="primary"
-                      onClick={this.addSubSpec(key)}>
+                      type='primary'
+                      onClick={this.addSubSpec(key)}
+                    >
                       添加规格
                     </Button>
                   </SkuUploadItem>
@@ -504,14 +515,16 @@ class SkuList extends React.Component<Props, State>{
           )
         })}
         {
-          this.state.strategyData ? <>
-            <Button type="primary" style={{ marginLeft: 5 }} onClick={this.resetPrice}>
-              重置价格
-            </Button>
-            <Button type="primary" style={{ marginLeft: 5 }} onClick={this.calculatePrice}>
-              计算价格
-            </Button>
-          </> : null
+          this.state.strategyData ? (
+            <>
+              <Button type='primary' style={{ marginLeft: 5 }} onClick={this.resetPrice}>
+                重置价格
+              </Button>
+              <Button type='primary' style={{ marginLeft: 5 }} onClick={this.calculatePrice}>
+                计算价格
+              </Button>
+            </>
+          ) : null
         }
         <SkuTable
           type={type}
