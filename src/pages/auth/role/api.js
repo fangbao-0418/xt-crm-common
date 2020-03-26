@@ -39,6 +39,7 @@ export function getRoleInfo(params) {
     {},
     {
       data: params,
+      banLog: true,
       headers: { 'Content-Type': 'application/json;charset=UTF-8' }
     }
   );

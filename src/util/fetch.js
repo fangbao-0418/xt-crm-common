@@ -17,7 +17,6 @@ export const request = (url, config = {}) => {
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
-      console.log(res, 'request')
       if (_config.banLog !== true) {
         APP.moon.oper(res);
       }
