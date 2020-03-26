@@ -291,6 +291,19 @@ class List extends React.Component {
       promotionId: info.id,
       tagetPromotionId: transferActivity.id
     }).then(res => {
+      APP.moon.error({
+        label: '批量转移商品',
+        data: res
+      })
+      if (!(res instanceof Object)) {
+        APP.moon.error({
+          label: '批量转移商品',
+          data: res
+        })
+        res = {
+          successCount: 0
+        }
+      }
       this.setState({ transferGoodsVisible: false }, () => {
         Modal.info({
           title: '转移结果',

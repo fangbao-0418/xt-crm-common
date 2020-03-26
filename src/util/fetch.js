@@ -17,10 +17,13 @@ export const request = (url, config = {}) => {
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
+      if (_config.banLog !== false) {
+        window.Moon && window.Moon.oper(res);
+      }
       !config.hideLoading && APP.fn.handleLoading('end');
       if (res.status === 401) {
         window.location = '/#/login';
-        return;
+        return res.data.data;
       }
       if (res.status === 200 && res.data.success) {
         const data = res.data.data;

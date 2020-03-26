@@ -30,7 +30,22 @@ class ApplyAfterSale extends React.Component<Props, State> {
   };
   isHaiTao: boolean
   async fetchDetail() {
-    const skuDetail: ApplyOrderSkuDetail.data = await getProductDetail(this.props.modalInfo);
+    let skuDetail: Partial<ApplyOrderSkuDetail.data> = await getProductDetail(this.props.modalInfo);
+    APP.moon.error({
+      label: '订单申请售后',
+      label2: 'getProductDetail',
+      data: skuDetail,
+      data2: this.props.modalInfo
+    });
+    if (!skuDetail) {
+      APP.moon.error({
+        label: '订单申请售后',
+        label2: 'getProductDetail',
+        data: skuDetail,
+        data2: this.props.modalInfo
+      })
+      skuDetail = {}
+    }
     this.setState({ skuDetail });
   }
   componentDidMount() {

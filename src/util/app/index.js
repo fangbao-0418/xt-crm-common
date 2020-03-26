@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-25 16:44:53
+ * @LastEditTime: 2020-03-26 15:49:10
  * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/util/app/index.js
  */
 import { message } from 'antd'
@@ -25,6 +25,14 @@ function getUser () {
 
 Object.assign(APP, {
   history: {},
+  moon: {
+    oper: function () {
+      console.log('moon oper')
+    },
+    error: function () {
+      console.log('moon error')
+    }
+  },
   user: getUser(),
   success: function (text, duration = 1) {
     message.success(text, duration)
