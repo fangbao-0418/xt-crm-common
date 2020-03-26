@@ -22,14 +22,15 @@ import { pick } from 'lodash';
 const { Option } = Select;
 const FormItem = Form.Item;
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
-  extraColumns?: ColumnProps<any>[];
-  dataSource: SkuSaleProps[];
-  onChange?: (dataSource: SkuSaleProps[]) => void;
+  extraColumns?: ColumnProps<any>[]
+  dataSource: SkuSaleProps[]
+  onChange?: (dataSource: SkuSaleProps[]) => void
+  getInstance?: (ref: any) => void
   /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
-  type: 0 | 10 | 20;
+  type: 0 | 10 | 20
   /** sku备案信息 */
-  productCustomsDetailVOList: any[];
-  isGroup: boolean;
+  productCustomsDetailVOList: any[]
+  isGroup: boolean
 }
 
 // 通过返回数据拿到id到规格详情的映射关系
@@ -96,12 +97,17 @@ class Main extends React.Component<Props, State> {
   public pagination: PaginationConfig = {
     current: 1,
     pageSize: 10
-  };
+  }
   public state: State = {
     dataSource: this.props.dataSource || [],
     selectedRowKeys: [],
     selectedRowKeysMap: []
-  };
+  }
+  public componentWillMount () {
+    if (this.props.getInstance) {
+      this.props.getInstance(this)
+    }
+  }
   public componentWillReceiveProps(props: Props) {
     this.setState({
       dataSource: props.dataSource
@@ -172,7 +178,7 @@ class Main extends React.Component<Props, State> {
     };
   }
 
-  public getColumns(cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
+  public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     const { isGroup } = this.props;
     const validateColumnsFields = (index: number) => {
       const { pageSize = 10, current = 1 } = this.pagination;
@@ -1137,6 +1143,13 @@ class Main extends React.Component<Props, State> {
         content: <Stock id={record.skuId} />
       });
   }
+  /** 清空已选商品 */
+  public clearSelected () {
+    this.setState({
+      selectedRowKeys: [],
+      selectedRowKeysMap: {}
+    })
+  }
   public render() {
     const { selectedRowKeys, selectedRowKeysMap } = this.state;
     const isBondedGood = this.props.type === 20// 是否保税仓海淘商品
@@ -1216,15 +1229,15 @@ class Main extends React.Component<Props, State> {
                       const { dataSource } = this.state;
                       dataSource[index].productBasics = (productBasics || []).map((v: any) => {
                         v.num = v.num || 1
-                        return v;
-                      });
+                        return v
+                      })
                       this.setState({
                         selectedRowKeys,
                         dataSource,
                         selectedRowKeysMap
-                      });
+                      })
                       if (this.props.onChange) {
-                        this.props.onChange(dataSource);
+                        this.props.onChange(dataSource)
                       }
                     }}
                   />

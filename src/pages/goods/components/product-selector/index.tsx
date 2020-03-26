@@ -16,17 +16,17 @@ interface ProductSelectorProps {
 }
 
 // 分散开
-function spread(selectedRows: any[], selectedRowKeysMap?: any) {
-  let result: any[] = [];
-  for (let row of selectedRows) {
+function spread (selectedRows: any[], selectedRowKeysMap?: any) {
+  const result: any[] = []
+  for (const row of selectedRows) {
     const productBasicSkuInfos = selectedRowKeysMap ? (row.productBasicSkuInfos || []).filter((v: any) => {
-      return (selectedRowKeysMap[row.id] || []).includes(v.productBasicSkuId);
-    }): row.productBasicSkuInfos;
-    for (let item of productBasicSkuInfos) {
+      return (selectedRowKeysMap[row.id] || []).includes(v.productBasicSkuId)
+    }) : row.productBasicSkuInfos
+    for (const item of productBasicSkuInfos) {
       result.push({ ...row, ...item})
     }
   }
-  return result;
+  return result
 }
 
 // 获取id->规格详情的映射关系
@@ -148,7 +148,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
   }]
   UNSAFE_componentWillReceiveProps({ selectedRowKeys, selectedRowKeysMap, productBasics }: ProductSelectorProps) {
     this.selectedRows = productBasics;
-    console.log('this.selectedRows =>', this.selectedRows);
+    console.log(selectedRowKeys, selectedRowKeysMap, productBasics, 'this.selectedRows =>', this.selectedRows);
     this.setState({
       selectedRowKeys,
       selectedRowKeysMap
@@ -173,8 +173,9 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
   }
 
   handleOK = () => {
-    const { selectedRowKeys, selectedRowKeysMap } = this.state;
-    let productBasics = spread(this.selectedRows, selectedRowKeysMap);
+    const { selectedRowKeys, selectedRowKeysMap } = this.state
+    let productBasics = spread(this.selectedRows, selectedRowKeysMap)
+    console.log(productBasics, this.selectedRows, selectedRowKeysMap, 'on ok')
     if (productBasics.length === 0) {
       return void APP.error('请选择商品');
     }
@@ -307,4 +308,4 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
   }
 }
 
-export default ProductSelector;
+export default ProductSelector

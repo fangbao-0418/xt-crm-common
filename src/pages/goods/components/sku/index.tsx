@@ -115,6 +115,7 @@ class SkuList extends React.Component<Props, State>{
   }
   /** 是否发生一级规格项变动 */
   public dirty = false
+  public skuTable: any
   public componentWillReceiveProps (props: Props) {
     // console.log('dataSource =>', props.dataSource);
     this.setState({
@@ -210,6 +211,7 @@ class SkuList extends React.Component<Props, State>{
     if (content.length === 0) {
       /** 添加第一个子规格时，代表sku重新洗牌skuid传undefind @getCombineResult */
       this.dirty = true
+      this.skuTable.clearSelected()
     }
     specs[key].content.push(this.state.tempSpecInfo[key])
     tempSpecInfo[key] = {
@@ -321,6 +323,7 @@ class SkuList extends React.Component<Props, State>{
       return
     }
     this.dirty = true
+    this.skuTable.clearSelected()
     this.setState({
       specs,
       dataSource: []
@@ -527,6 +530,9 @@ class SkuList extends React.Component<Props, State>{
           ) : null
         }
         <SkuTable
+          getInstance={(ref) => {
+            this.skuTable = ref
+          }}
           type={type}
           isGroup={this.props.isGroup}
           form={this.props.form}
