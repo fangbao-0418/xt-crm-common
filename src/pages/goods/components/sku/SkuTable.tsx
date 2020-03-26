@@ -173,6 +173,7 @@ class Main extends React.Component<Props, State> {
   }
 
   public getColumns(cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
+    const { isGroup } = this.props;
     const validateColumnsFields = (index: number) => {
       const { pageSize = 10, current = 1 } = this.pagination;
       const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index;
@@ -226,7 +227,7 @@ class Main extends React.Component<Props, State> {
                     onChange={cb('deliveryMode', record, index)}
                   >
                     {deliveryModeType.getArray().map(item => (
-                      <Option value={item.key} key={item.key}>
+                      <Option value={item.key} disabled={isGroup} key={item.key}>
                         {item.val}
                       </Option>
                     ))}
