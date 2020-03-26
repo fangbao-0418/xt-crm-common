@@ -17,8 +17,9 @@ export const request = (url, config = {}) => {
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
+      console.log(res, 'request')
       if (_config.banLog !== true) {
-        window.Moon && window.Moon.oper(res);
+        APP.moon.oper(res);
       }
       !config.hideLoading && APP.fn.handleLoading('end');
       if (res.status === 401) {
@@ -50,7 +51,7 @@ export const request = (url, config = {}) => {
         message.error(error.message || '内部错误，请等待响应...');
       }
       try {
-        window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+        APP.moon.oper(error, error && error.response && error.response.status)
       } catch (e) {
         console.log(e)
       }
@@ -334,17 +335,18 @@ export function fetch(url, config = {}) {
       ...others
     })
     .then(
-      res => {
+      function(res) {
+        console.log(instance, 'fetch')
         !config.hideLoading && APP.fn.handleLoading('end');
-        if (config.banLog !== true) {
-          window.Moon && window.Moon.oper(res);
-        }
+        // if (config.banLog !== true) {
+        //   APP.moon.oper(res);
+        // }
         return res;
       },
       err => {
         !config.hideLoading && APP.fn.handleLoading('end');
+        // APP.moon.oper(error);
         return Promise.reject(err);
       }
     );
 }
-

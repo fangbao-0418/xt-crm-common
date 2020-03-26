@@ -180,9 +180,9 @@ export function fetch(url, config = {}) {
     ...others
   }).then(res => {
     !config.hideLoading && APP.fn.handleLoading('end')
-    if (config.banLog !== true) {
-      APP.moon.oper(res);
-    }
+    // if (config.banLog !== true) {
+    //   APP.moon.oper(res);
+    // }
     return res;
   }, (error) => {
     !config.hideLoading && APP.fn.handleLoading('end')
