@@ -1223,6 +1223,7 @@ class Main extends React.Component<Props, State> {
                 dataSource={record.productBasics}
                 footer={() => (
                   <ProductSeletor
+                    record={record}
                     selectedRowKeys={selectedRowKeys}
                     selectedRowKeysMap={selectedRowKeysMap}
                     productBasics={combination(record.productBasics)}

@@ -9,10 +9,11 @@ import { CSkuProps } from '../../sku-stock/components/sku';
 import { getBaseProductPage } from '../../sku-sale/api';
 import { ColumnProps } from 'antd/lib/table';
 interface ProductSelectorProps {
-  onOk: ({selectedRowKeys, productBasics, selectedRowKeysMap}: any) => void;
-  selectedRowKeys: any[],
-  selectedRowKeysMap: any;
-  productBasics: any[];
+  onOk: ({selectedRowKeys, productBasics, selectedRowKeysMap}: any) => void
+  selectedRowKeys: any[]
+  selectedRowKeysMap: any
+  productBasics: any[]
+  record: any
 }
 
 // 分散开
@@ -298,7 +299,13 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
         <span
           className='href'
           onClick={() => {
-            this.setState({ visible: true })
+            console.log(this.props, '----')
+            this.selectedRows = this.props.record.productBasics || []
+            this.setState({
+              selectedRowKeysMap: getSelectedRowKeysMap(this.selectedRows),
+              selectedRowKeys: this.selectedRows.map((val) => val.id),
+              visible: true
+            })
           }}
         >
           新增商品

@@ -224,8 +224,9 @@ class SkuList extends React.Component<Props, State>{
       /** 添加第一个子规格时，代表sku重新洗牌skuid传undefind @getCombineResult */
       this.dirty = true
       this.skuTable.clearSelected()
+    } else {
+      this.dirty = false
     }
-    this.dirty = false
     specs[key].content.push(this.state.tempSpecInfo[key])
     tempSpecInfo[key] = {
       specName: '',
