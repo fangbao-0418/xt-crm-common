@@ -291,10 +291,6 @@ class List extends React.Component {
       promotionId: info.id,
       tagetPromotionId: transferActivity.id
     }).then(res => {
-      APP.moon.error({
-        label: '批量转移商品',
-        data: res
-      })
       if (!(res instanceof Object)) {
         APP.moon.error({
           label: '批量转移商品',
