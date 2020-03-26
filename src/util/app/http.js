@@ -62,7 +62,7 @@ export const request = (url, config = {}) => {
         message.error(error.message || '内部错误，请等待响应...');
       }
       try {
-        window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+        APP.moon.oper(error, error && error.response && error.response.status)
       } catch (e) {
         console.log(e)
       }
@@ -162,7 +162,7 @@ instance.interceptors.response.use(res => {
   }
   message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...')
   try {
-    window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+    APP.moon.oper(error, error && error.response && error.response.status)
   } catch (e) {
     console.log(e)
   }

@@ -207,7 +207,7 @@ export const exportFile = (url, data) => {
         message.error(error.message || '内部错误，请等待响应...');
       }
       try {
-        window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+        APP.moon.oper(error, error && error.response && error.response.status)
       } catch (e) {
         console.log(e)
       }
@@ -271,7 +271,7 @@ export const exportFileStream = (url, data, fileName = '导出信息.xlsx') => {
       message.error(error.message || '内部错误，请等待响应...');
     }
     try {
-      window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+      APP.moon.oper(error, error && error.response && error.response.status)
     } catch (e) {
       console.log(e)
     }
@@ -316,7 +316,7 @@ instance.interceptors.response.use(
     }
     message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...');
     try {
-      window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+      APP.moon.oper(error, error && error.response && error.response.status)
     } catch (e) {
       console.log(e)
     }
@@ -336,7 +336,6 @@ export function fetch(url, config = {}) {
     })
     .then(
       function(res) {
-        console.log(instance, 'fetch')
         !config.hideLoading && APP.fn.handleLoading('end');
         // if (config.banLog !== true) {
         //   APP.moon.oper(res);

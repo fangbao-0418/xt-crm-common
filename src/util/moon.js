@@ -1,14 +1,4 @@
-// https://test-rlcas.hzxituan.com/
-// https://rlcas.hzxituan.com/
 (function (a, b) {
-  a.Moon = {
-    oper: function () {
-      console.log(window.Moon, 'oper')
-    },
-    error: function () {
-      console.log(window.Moon, 'error')
-    }
-  }
   const env = process.env.PUB_ENV
   a._moon_ = {
     mid: "jw0pzj9nh",
@@ -22,20 +12,21 @@
   m.async = true;
   m.onload = function () {
     if (Moon) {
-      console.log(Moon, 'onload')
       APP.moon.error = function (error) {
         if (error instanceof Object) {
           error = JSON.stringify(error)
         }
-        Moon.error(new Error(error))
+        try {
+          Moon.error(new Error(error))
+        } catch (e) {
+          Moon.error(e)
+        }
       }
       APP.moon.oper = function () {
-        console.log(arguments, 'oper arguments')
         try {
           Moon.oper.apply(null, arguments)
         } catch (e) {
           Moon.error(e)
-          // throw Error(e)
         }
       }
     }
