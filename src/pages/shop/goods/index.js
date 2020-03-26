@@ -87,7 +87,7 @@ class Main extends React.Component {
     this.setState({
       tabStatus
     }, () => {
-      this.listRef.refresh();
+      this.listRef.refresh(true);
     })
   }
 
@@ -184,7 +184,8 @@ class Main extends React.Component {
 
             if (tabStatus === '0') { // tab 全部
               payload.status = undefined
-              payload.auditStatues = '1, 2, 3'
+              payload.auditStatues = '0, 1, 2, 3'
+              // payload.withdrawalTypes = '1,2' // 下架类型 为了过滤店家草稿数据
               if (innerAuditStatus && (innerAuditStatus !== -1)) {
                 payload.auditStatues = innerAuditStatus
               }

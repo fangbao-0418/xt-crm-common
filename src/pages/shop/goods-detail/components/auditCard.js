@@ -36,7 +36,10 @@ class AuditCard extends React.Component {
     return (
       <WrapCard
         data={data}
-        render={({ status, auditStatus, withdrawalType, auditInfo }) => {
+        render={({ status, auditStatus, auditInfo }) => {
+          // status 1: 上架 0 下架
+          // auditStatus 商品审核 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
+          if (auditStatus === 0) { return null }
 
           if (status === 0 && auditStatus === 1) {
             return (
@@ -93,11 +96,7 @@ class AuditCard extends React.Component {
 
           let auditResult = ''
 
-          if (status === 1) {
-            auditResult = '在售'
-          } else if (auditStatus === 0) {
-            auditResult = '待提交'
-          } else if (auditStatus === 2) {
+          if (auditStatus === 2) {
             auditResult = '通过'
           } else if (auditStatus === 3) {
             auditResult = '不通过'

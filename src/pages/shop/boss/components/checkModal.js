@@ -8,7 +8,7 @@ import { batchExport } from '../api';
 const unionArr2Map = function (arr) {
   const arrMap = {}
   arr.forEach(item => {
-    if (item.errorCode === 0) {
+    if (item.errorCode === 0 || item.errorCode === '0') {
       if (arrMap['00000']) {
         arrMap['00000'].num += 1
       } else {
@@ -41,7 +41,7 @@ export default class extends Component {
   /** 确定操作 */
   handleOk = () => {
     const { checkArr, dispatch } = this.props
-    const phones = checkArr.filter(item => item.errorCode === 0).map(item => item.phone)
+    const phones = checkArr.filter(item => item.errorCode === 0 || item.errorCode === '0').map(item => item.phone)
     if(!phones.length) return message.warn('没有小店可以开通, 请检查数据');
     const phonesStr = phones.join(',')
     dispatch['shop.boss'].createShop({ phones: phonesStr });

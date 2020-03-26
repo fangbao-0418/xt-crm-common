@@ -6,8 +6,8 @@ import styles from '../style.module.scss'
 
 const CarouselItem = ({ item }) => {
   return (
-    <div>
-      <img alt="img" src={item.value} />
+    <div style={{ maxWith: 750 }}>
+      <img style={{ margin: '0 auto' }} alt="img" src={item.value} />
       <p style={{ textAlign: 'center' }}>{item.label}</p>
     </div>
   )
@@ -75,6 +75,7 @@ class CarouselModal extends Component {
     this.props.ondestroy();
   }
 
+  /** 获取相关图片组合成自己想要的数据结构 */
   getCarouselsInfos = (currentGoods) => {
     let coverUrl = [{
       label: '封面图',
@@ -106,7 +107,8 @@ class CarouselModal extends Component {
     return carouselsInfos
   }
 
-  handleScroll = (event) => {
+  /** 滚轮上一张下一张 */
+  handleWheel = (event) => {
     const deltaY = event.deltaY
     if (deltaY > 0) {
       // 下一张
@@ -127,18 +129,18 @@ class CarouselModal extends Component {
     const carouselsInfos = this.getCarouselsInfos(currentGoods)
 
     return (
-      <Modal
-        visible={visible}
-        bodyStyle={{
-          padding: '24px 64px 12px'
-        }}
-        className={styles.slider}
-        footer={null}
-        title={`商品【${currentGoods.productName}】的图片`}
-        onCancel={this.handleCancel}
-        afterClose={this.handleClose}
-      >
-        <div onWheel={this.handleScroll}>
+      <div onWheel={this.handleWheel}>
+        <Modal
+          visible={visible}
+          bodyStyle={{
+            padding: '24px 64px 12px'
+          }}
+          className={styles.slider}
+          footer={null}
+          title={`商品【${currentGoods.productName}】的图片`}
+          onCancel={this.handleCancel}
+          afterClose={this.handleClose}
+        >
           <Carousel
             dots={false}
             infinite={true}
@@ -152,8 +154,8 @@ class CarouselModal extends Component {
           </p>
           <Icon className={[styles.action, styles.actionPre]} type="left-circle" onClick={this.handlePrev.bind(true)} />
           <Icon className={[styles.action, styles.actionNext]} type="right-circle" onClick={this.handleNext.bind(true)} />
-        </div>
-      </Modal>
+        </Modal>
+      </div>
     )
   }
 }
