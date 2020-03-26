@@ -360,7 +360,15 @@ class Main extends React.Component<Props, State> {
       }).then((res: any) => {
         res = res || {}
         const planIds = res.planIds || []
-        APP.success(`共有${planIds.length}场直播成功审核通过`)
+        // APP.success(`共有${planIds.length}场直播成功审核通过`)
+        this.props.alert({
+          width: 400,
+          content: (
+            <div className='text-center'>
+              共有{planIds.length}场直播成功审核通过
+            </div>
+          )
+        })
         this.setState({
           rowKeys: []
         })

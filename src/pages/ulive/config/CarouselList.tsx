@@ -122,7 +122,7 @@ class Main extends React.Component<Partial<Props>, State> {
                 新增场次
               </Button>
               <div style={{float: 'right', marginTop: 5}}>
-                合计 <span style={{color: 'red'}}>{this.state.total}</span> 场直播，还可添加 <span style={{color: '#0b8235'}}>{addableNum}</span> 场
+                {/* 合计 <span style={{color: 'red'}}>{this.state.total}</span> 场直播，还可添加 <span style={{color: '#0b8235'}}>{addableNum}</span> 场 */}
               </div>
             </div>
           )}
