@@ -344,14 +344,14 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
               >
                 添加商品
               </Button>
-              <Button
+              {/* <Button
                 type='primary'
                 onClick={() => {
                   APP.history.push('/goods/sku-sale/-1?isGroup=1')
                 }}
               >
                 添加组合商品
-              </Button>
+              </Button> */}
             </>
           )}
           api={getGoodsList}

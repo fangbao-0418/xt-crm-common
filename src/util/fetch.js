@@ -17,10 +17,13 @@ export const request = (url, config = {}) => {
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
+      if (_config.banLog !== true) {
+        APP.moon.oper(res);
+      }
       !config.hideLoading && APP.fn.handleLoading('end');
       if (res.status === 401) {
         window.location = '/#/login';
-        return;
+        return res.data.data;
       }
       if (res.status === 200 && res.data.success) {
         const data = res.data.data;
@@ -47,7 +50,7 @@ export const request = (url, config = {}) => {
         message.error(error.message || '内部错误，请等待响应...');
       }
       try {
-        window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+        APP.moon.oper(error, error && error.response && error.response.status)
       } catch (e) {
         console.log(e)
       }
@@ -203,7 +206,7 @@ export const exportFile = (url, data) => {
         message.error(error.message || '内部错误，请等待响应...');
       }
       try {
-        window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+        APP.moon.oper(error, error && error.response && error.response.status)
       } catch (e) {
         console.log(e)
       }
@@ -267,7 +270,7 @@ export const exportFileStream = (url, data, fileName = '导出信息.xlsx') => {
       message.error(error.message || '内部错误，请等待响应...');
     }
     try {
-      window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+      APP.moon.oper(error, error && error.response && error.response.status)
     } catch (e) {
       console.log(e)
     }
@@ -312,7 +315,7 @@ instance.interceptors.response.use(
     }
     message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...');
     try {
-      window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+      APP.moon.oper(error, error && error.response && error.response.status)
     } catch (e) {
       console.log(e)
     }
@@ -331,14 +334,17 @@ export function fetch(url, config = {}) {
       ...others
     })
     .then(
-      res => {
+      function(res) {
         !config.hideLoading && APP.fn.handleLoading('end');
+        // if (config.banLog !== true) {
+        //   APP.moon.oper(res);
+        // }
         return res;
       },
       err => {
         !config.hideLoading && APP.fn.handleLoading('end');
+        // APP.moon.oper(error);
         return Promise.reject(err);
       }
     );
 }
-
