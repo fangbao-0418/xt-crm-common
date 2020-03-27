@@ -126,7 +126,7 @@ class Main extends React.Component {
     })
   }
 
-  render() {
+  render () {
     const { currentGoods, tabStatus, selectedRowKeys } = this.state;
     const hasSelected = selectedRowKeys.length > 0;
 
@@ -170,7 +170,12 @@ class Main extends React.Component {
           onChange={this.handleTabChange}
         >
           {
-            combinationStatusList.map(item => <TabPane tab={item.name} key={item.id} />)
+            combinationStatusList
+              .map((item) => {
+                return (
+                  <TabPane tab={item.name} key={item.id} />
+                )
+              })
           }
         </Tabs>
 

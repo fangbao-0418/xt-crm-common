@@ -68,6 +68,8 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
           return '待审核'
         } else if (auditStatus === 3) {
           return '不通过'
+        } else if (withdrawalType === 0) {
+          return '待提交'
         } else if (withdrawalType === 1) {
           return '店长下架'
         } else if (withdrawalType === 2) {
