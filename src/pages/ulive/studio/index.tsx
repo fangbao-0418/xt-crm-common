@@ -328,7 +328,7 @@ class Main extends React.Component<Props, State> {
       const hide = this.props.alert({
         content: (
           <div>
-            <div>请填写审核原因（审核不通过时为必填）</div>
+            <div className='mb8'>请填写审核原因（审核不通过时为必填）</div>
             <div>
               <TextArea
                 onChange={(e) => {
@@ -344,7 +344,17 @@ class Main extends React.Component<Props, State> {
             auditReason: reason,
             auditStatus: 0,
             planIds: this.state.rowKeys
-          }).then(() => {
+          }).then((res) => {
+            res = res || {}
+            const planIds = res.planIds || []
+            this.props.alert({
+              width: 400,
+              content: (
+                <div className='text-center'>
+                  共有{planIds.length}场直播审核不通过成功!
+                </div>
+              )
+            })
             this.setState({
               rowKeys: []
             })
