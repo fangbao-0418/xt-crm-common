@@ -86,14 +86,15 @@ class List extends React.Component {
   };
 
   getProductList = params => {
-    // type 活动类型 10为拼团活动
+    // type 活动类型 10为拼团活动-拼团活动不包含1688
     const { modalPage, type } = this.state;
     getProductList({
       status: 0,
       pageSize: modalPage.pageSize,
       page: modalPage.current,
       types: type === 10 ? [0, 10] : undefined,
-      ...params
+      ...params,
+      include1688: type === 10 ? false : undefined
     }).then((res) => {
       res = res || {};
       modalPage.total = res.total;
