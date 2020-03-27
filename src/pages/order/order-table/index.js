@@ -14,6 +14,7 @@ import RefundStatusCell from '../components/refund-status-cell';
 import { getHeaders, parseQuery } from '@/util/utils';
 import SelectOrderType from './SelectOrderType';
 import withModal from './withModal';
+import styles from './style.m.styl'
 const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
@@ -314,9 +315,9 @@ class OrderList extends React.Component {
     values.rangePicker = values.orderStartDate && [moment(values.orderStartDate), moment(values.orderEndDate)]
     values.playPicker = values.payStartDate && [moment(values.payStartDate), moment(values.payEndDate)]
     return (
-      <Spin tip="操作处理中..." spinning={false}>
+      <div className={styles.page}>
         <Card title="筛选">
-          <Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+          <Form className={styles.form} labelCol = {{ span: 8 }} wrapperCol={{ span: 16}}>
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label="订单编号">
@@ -452,7 +453,7 @@ class OrderList extends React.Component {
                 <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>
                   查询订单
                 </Button>
-                <Button type="primary" onClick={this.export}>
+                <Button type="primary" className='mr10' onClick={this.export}>
                   导出订单
                 </Button>
                 {this.props.orderStatus === enumOrderStatus.Undelivered && (
@@ -493,7 +494,7 @@ class OrderList extends React.Component {
               '暂无数据'
             )}
         </Card>
-      </Spin>
+      </div>
     );
   }
 }

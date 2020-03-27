@@ -80,7 +80,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
 
 module.exports = override(
   addWebpackModuleRule({
-    test: /\.module.styl/,
+    test: /\.m(odule)?.styl/,
     exclude: /node_modules/,
     use: getStyleLoaders(
       {

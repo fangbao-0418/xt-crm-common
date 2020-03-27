@@ -3,15 +3,100 @@ import { Message, Button, Spin, Row, Col } from 'antd';
 import { refundList, exportRefund } from '../api';
 import CommonTable from '@/components/common-table';
 import SearchForm from '@/components/search-form';
-import { getListColumns, formFields } from './config';
+import MoneyRender from '@/components/money-render';
+import GoodCell from '@/components/good-cell';
+import { formFields } from './config';
 import { withRouter } from 'react-router-dom';
 import { formatDate } from '@/pages/helper';
 import { typeMapRefundStatus } from './config';
 import { parseQuery } from '@/util/utils';
+import styles from './style.m.styl'
+
 const formatFields = range => {
   range = range || [];
   return range.map(v => v && v.format('YYYY-MM-DD HH:mm'));
 };
+
+const getListColumns = ({ query, history }) => [
+  {
+    title: '商品ID',
+    dataIndex: 'productId',
+    width: 100,
+  },
+  {
+    title: '商品',
+    dataIndex: 'skuName',
+    width: 300,
+    render(skuName, row) {
+      return <GoodCell {...row} showImage={false} isRefund />
+    }
+  },
+  {
+    title: '售后状态',
+    dataIndex: 'refundStatusStr',
+    width: 100
+  },
+  {
+    title: '售后类型',
+    dataIndex: 'refundTypeStr',
+    width: 100
+  },
+  {
+    title: '申请售后数目',
+    dataIndex: 'serverNum',
+    width: 150
+  },
+  {
+    title: '申请售后金额',
+    dataIndex: 'amount',
+    width: 150,
+    render: MoneyRender
+  },
+  {
+    title: '供应商',
+    dataIndex: 'storeName',
+    width: 200
+  },
+  {
+    title: '买家信息',
+    dataIndex: 'userName',
+    width: 200,
+    render(v, record) {
+      return `${v ? v : ''} ${record.phone ? `(${record.phone})` : ''}`
+    }
+  },
+  {
+    title: '处理人',
+    dataIndex: 'operator',
+    width: 200,
+    render: (text) => text || '-'
+  },
+  {
+    title: '最后处理时间',
+    dataIndex: 'handleTime',
+    width: 200,
+    render: (text) => text ? formatDate(text) : '-'
+  },
+  {
+    title: '供应商操作',
+    dataIndex: 'supplierOperate',
+    width: 100,
+    render: (text) => {
+      return text === 10 ? '同意' : '-';
+    }
+  },
+  {
+    title: '操作',
+    width: 100,
+    dataIndex: 'record',
+    fixed: 'right',
+    render: (text, { id }) => {
+      return (
+        <Button type="primary" size="small" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看详情</Button>
+      )
+    }
+  }
+]
 
 @withRouter
 export default class extends React.Component {
@@ -36,7 +121,6 @@ export default class extends React.Component {
     /** 获取url参数 */
     const obj = parseQuery();
     const fieldsValues = this.SearchForm.props.form.getFieldsValue();
-    console.log(type, obj, fieldsValues, 'obj query');
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
     const [payStartTime, payEndTime] = formatFields(fieldsValues['payTime']);
@@ -131,8 +215,9 @@ export default class extends React.Component {
     } = this.state;
     const { intercept } = this.props;
     return (
-      <Spin tip="操作处理中..." spinning={false}>
+      <div className={styles.page}>
         <SearchForm
+          className='mb16'
           wrappedComponentRef={ref => (this.SearchForm = ref)}
           format={this.handleFormat}
           search={this.handleSearch}
@@ -151,11 +236,13 @@ export default class extends React.Component {
             current={current}
             total={total}
             expandedRowRender={record => (
-              <Row className="expanded-row-wrapped" gutter={24}>
-                <Col span={6}>售后单编号：{record.orderCode}</Col>
-                <Col span={6}>订单编号：{record.mainOrderCode}</Col>
-                <Col span={6}>申请时间：{formatDate(record.createTime)}</Col>
-              </Row>
+              <div
+                className="expanded-row-wrapped"
+              >
+                <span>售后单编号：{record.orderCode}</span>
+                <span>订单编号：{record.mainOrderCode}</span>
+                <span>申请时间：{formatDate(record.createTime)}</span>
+              </div>
             )}
             expandedRowKeys={this.state.expands}
             onExpand={(expanded, record) => {
@@ -169,10 +256,10 @@ export default class extends React.Component {
             }}
             onChange={this.handlePageChange}
             rowKey={record => record.orderCode}
-            scroll={{ x: 1.5 }}
+            scroll={{ x: 1800 }}
           />
         ) : null}
-      </Spin>
-    );
+      </div>
+    )
   }
 }

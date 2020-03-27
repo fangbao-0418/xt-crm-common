@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-26 20:20:47
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/util/app/index.js
+ */
 import { message } from 'antd'
 import * as regular from './regular'
 var constant = require('./constant').default
@@ -19,6 +25,21 @@ function getUser () {
 
 Object.assign(APP, {
   history: {},
+  moon: {
+    oper: function () {
+      if (window.Moon) {
+        window.Moon.oper.apply(null, arguments)
+      }
+    },
+    error: function (err) {
+      if (window.Moon) {
+        if (err instanceof Object) {
+          err = JSON.stringify(err)
+        }
+        window.Moon.error(err)
+      }
+    }
+  },
   user: getUser(),
   success: function (text, duration = 1) {
     message.success(text, duration)
@@ -30,6 +51,7 @@ Object.assign(APP, {
   fn,
   constant,
   href: function (url, target) {
+    url = String(url || '').trim()
     url = /^(https?|#)/.test(url) ? url : '#' + url
     let el = document.createElement('a')
     el.setAttribute('href', url)

@@ -279,6 +279,9 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           reserveKey='skuSale'
           namespace='skuSale'
           className='vertical-align-table'
+          style={{
+            padding: '0px 16px 0'
+          }}
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
           processPayload={(payload) => {
@@ -341,14 +344,14 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
               >
                 添加商品
               </Button>
-              <Button
+              {/* <Button
                 type='primary'
                 onClick={() => {
                   APP.history.push('/goods/sku-sale/-1?isGroup=1')
                 }}
               >
                 添加组合商品
-              </Button>
+              </Button> */}
             </>
           )}
           api={getGoodsList}

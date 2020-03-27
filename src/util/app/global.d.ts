@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-26 15:56:12
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/util/app/global.d.ts
+ */
 /// <reference path="./http.d.ts"  />
 /// <reference path="./fn.d.ts"  />
 /// <reference path="./constant.d.ts"  />
@@ -23,6 +29,10 @@ declare module APP {
   export const regular: {
     /** 手机号校验 */
     phone: RegExp
+  }
+  export const moon: {
+    oper: (response: any, status?: any) => void
+    error: (error: any) => void
   }
   export const user: {
     id: number

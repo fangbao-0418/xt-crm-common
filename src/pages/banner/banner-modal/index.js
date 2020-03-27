@@ -75,7 +75,7 @@ class BannerModal extends Component {
   };
 
   handleOk = () => {
-    const { onSuccess, id, form, isEdit } = this.props;
+    const { onSuccess, id, form, isEdit, size } = this.props;
     form.validateFields(err => {
       if (!err) {
         const api = isEdit ? updateBanner : addBanner;
@@ -115,13 +115,13 @@ class BannerModal extends Component {
     });
   };
   render() {
-    const { isEdit } = this.props;
+    const { isEdit, size } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { data, renderKey } = this.state;
 
     return (
       <>
-        <Button type="primary" onClick={this.showModal}>
+        <Button size={size} type="primary" onClick={this.showModal}>
           {isEdit ? '编辑' : '新增Banner'}
         </Button>
         <Modal

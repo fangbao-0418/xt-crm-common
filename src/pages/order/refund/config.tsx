@@ -187,7 +187,7 @@ export const formFields = function (refundStatus: any, intercept: any) {
 
 /**
  * 列表属性
- * @param {*} param0 
+ * @param {*} param
  */
 export const getListColumns = ({ query, history }: any) => [
   {
@@ -198,8 +198,8 @@ export const getListColumns = ({ query, history }: any) => [
     title: '商品',
     dataIndex: 'skuName',
     render(skuName: any, row: any) {
-      return <GoodCell {...row} showImage={false} isRefund />;
-    },
+      return <GoodCell {...row} showImage={false} isRefund />
+    }
   },
   {
     title: '售后状态',
@@ -250,7 +250,7 @@ export const getListColumns = ({ query, history }: any) => [
     title: '操作',
     dataIndex: 'record',
     render: (_: any, { id }: any) => <Button type="primary" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看详情</Button>
-  },
+  }
 ]
 
 
