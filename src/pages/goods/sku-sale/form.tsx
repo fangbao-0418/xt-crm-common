@@ -121,7 +121,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     // 根据isGroup请求不同的接口
     const { isGroup } = this.state;
     const payload = { productId: this.id }
-    const promiseDetail = isGroup ? getGroupProductDetail(payload): getGoodsDetial(payload);
+    // const promiseDetail = isGroup ? getGroupProductDetail(payload): getGoodsDetial(payload);
+    const promiseDetail = getGoodsDetial(payload)
     Promise.all([
       promiseDetail,
       getCategoryList(),
@@ -288,8 +289,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     const {
       specs,
       skuList,
-      freightTemplateId,
-    } = this.state;
+      freightTemplateId
+    } = this.state
     this.form && this.form.props.form.validateFields((err, vals) => {
       this.forceUpdate();
       let msgs = []
@@ -332,7 +333,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         this.handleSetProduct(vals, status)
       }
     });
-  };
+  }
+
   handleSetProduct(vals:any, status?:number) {
     const {
       specs,
@@ -415,11 +417,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       content: '确认要删除全部图片吗?',
       onOk: () => {
         this.form.props.form.setFieldsValue({ listImage: [] });
-      },
-    });
+      }
+    })
   }
   handleInput: React.ChangeEventHandler<Record<string, any>> = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     this.setState({
       [name]: value
     })
