@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Table, Button, Popconfirm, Form } from 'antd';
+import Page from '@/components/page';
 import { connect } from '@/util/utils';
 import Modal from './modal';
 
@@ -128,38 +129,40 @@ export default class extends Component {
   };
 
   renderForm = () => {
-    const {
-      form: { getFieldDecorator }
-    } = this.props;
-    return (
-      <Form layout="inline" style={{ marginBottom: 10 }}>
-        <FormItem label="菜单名称">{getFieldDecorator('name')(<Input />)}</FormItem>
-        <FormItem>
-          <Button type="primary" onClick={this.handleSearch}>
-            查询
-          </Button>
-          <Button onClick={this.onShowModal} style={{ marginLeft: 10 }}>
-            新增目录
-          </Button>
-        </FormItem>
-      </Form>
-    );
-  };
+      const { form: { getFieldDecorator } } = this.props;
+      return (
+          <Form layout="inline" style={{ marginBottom: 10 }}>
+              <FormItem label="菜单名称">
+                  {
+                      getFieldDecorator('name')(
+                          <Input />
+                      )
+                  }
+              </FormItem>
+              <FormItem>
+                  <Button type="primary" onClick={this.handleSearch}>查询</Button>
+                  <Button onClick={this.onShowModal} style={{ marginLeft: 10 }}>新增目录</Button>
+              </FormItem>
+          </Form>
+      )
+  }
   render() {
-    const { menulist } = this.props;
-    return (
-      <div style={{ background: '#FFFFFF', padding: 20 }}>
-        {this.renderForm()}
-        <Table
-          // expandedRowRender={this.expandedRowRender}
-          dataSource={menulist}
-          columns={getColumns(this)}
-        >
-          {/* <Column title="菜单名称" dataIndex="name"></Column>
-                    <Column title="类型" dataIndex="type"></Column> */}
-        </Table>
-        <Modal />
-      </div>
-    );
+      const { menulist } = this.props;
+      return (
+          <Page>
+              {
+                  this.renderForm()
+              }
+              <Table
+                  // expandedRowRender={this.expandedRowRender}
+                  dataSource={menulist}
+                  columns={getColumns(this)}
+              >
+                  {/* <Column title="菜单名称" dataIndex="name"></Column>
+                  <Column title="类型" dataIndex="type"></Column> */}
+              </Table>
+              <Modal />
+          </Page>
+      );
   }
 }

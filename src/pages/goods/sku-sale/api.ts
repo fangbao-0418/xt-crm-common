@@ -1,7 +1,7 @@
 import { formRequest, baseProductResponse, baseProductPageResponse, formResponse, baseSkuDetailResponse } from "./adapter";
 import { queryString } from '@/util/utils';
 import { omit } from "lodash";
-const { newPost } = APP.http;
+const { newPost, get } = APP.http;
 
 // 库存商品ID查询
 export function getBaseProduct(id: number) {
@@ -42,4 +42,13 @@ export function setGroupProduct(payload: any) {
 // 销售商品SKU中库存商品详情
 export function getBaseSkuDetail(skuId: number) {
   return newPost(`/product/sku/basic/detail?skuId=${skuId}`).then(baseSkuDetailResponse)
+}
+
+// 商品sku库存列表
+export function getSkusStock(productId: number) {
+  return get(`/product/sku/stock/${productId}`)
+}
+// 修改商品sku库存
+export function postSkusStockEdit(data:any) {
+  return newPost(`/product/sku/stock/edit`, data)
 }

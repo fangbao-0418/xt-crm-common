@@ -68,18 +68,22 @@ class Main extends React.Component<Props, any> {
     {
       title: '操作',
       width: 180,
+      align: 'center',
       render: (text: any, records: FloorProps) => {
         return (
           <div>
             <Button
               type='primary'
-              onClick={() =>{
+              size='small'
+              onClick={() => {
                 APP.history.push(`/interface/special-content/${records.id}`)
-              }}>
-                编辑
-              </Button>
+              }}
+            >
+              编辑
+            </Button>
             {records.status === 1 && (
               <Button
+                size='small'
                 type='danger'
                 className='ml10'
                 onClick={() => this.handleUpdate(records.id, 0)}>
@@ -88,6 +92,7 @@ class Main extends React.Component<Props, any> {
             )}
             {records.status === 0 && (
               <Button
+                size='small'
                 type='danger'
                 className='ml10'
                 onClick={() => this.handleUpdate(records.id, 1)}>

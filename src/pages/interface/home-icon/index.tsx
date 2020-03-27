@@ -37,6 +37,7 @@ class Main extends React.Component<Props, State> {
       })
       if (init) {
         const item = res[0] || {}
+        item.imgUrl = [{url: item.imgUrl, uid: 'imgurl'}]
         this.props.form.setFieldsValue(item)
       }
     })
@@ -104,7 +105,6 @@ class Main extends React.Component<Props, State> {
   }
   public resetForm() {
     this.props.form.resetFields()
-    
     this.props.form.setFieldsValue({
       platformArray: _platformType.map(val => val.value)
     });
@@ -183,14 +183,12 @@ class Main extends React.Component<Props, State> {
                 </div>
               )
               )}
-            {
-              dataSource.length < 8 && <div
+            <div
                 className={classNames(styles.tbtn, styles.add)}
                 onClick={this.addIconItem}
               >
-                +新增icon
-              </div>
-            }
+              +新增icon
+            </div>
             <Popconfirm
               title='确认发布icon吗'
               onConfirm={this.toPublish}

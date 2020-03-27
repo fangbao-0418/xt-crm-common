@@ -271,12 +271,12 @@ class ActivityDetail extends React.Component {
         },
       },
       {
-        title: '可用库存',
+        title: '商品可用库存',
         dataIndex: 'stock',
         render: (text, record, index) => {
           // 1.售后详情中 订单信息模块 需要添加订单类型的属性
           // 海淘商品可用库存需要读取保宏仓的可用库存数量，活动库存不可大于可用库存
-          return <span>{record.sellableQty || '无限制' }</span>
+          return <span>{record.sellableQty}</span>
         }
       },
       {

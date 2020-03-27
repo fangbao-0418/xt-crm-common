@@ -357,7 +357,10 @@ class List extends React.Component {
     const getSkuColumns = () => [
       {
         title: 'sku名称',
-        dataIndex: 'property'
+        dataIndex: 'property',
+        render: text => {
+          return <span>{text || '已删除'}</span>
+        }
       },
       {
         title: `${type === 6 ? '助力分' : '活动价'}`,
