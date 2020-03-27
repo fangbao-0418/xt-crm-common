@@ -339,7 +339,10 @@ class Main extends React.Component<Props, State> {
           </div>
         ),
         onOk: () => {
-          console.log(reason, '-----')
+          if (!reason) {
+            APP.error('请填写审核原因')
+            return
+          }
           api.multiAudit({
             auditReason: reason,
             auditStatus: 0,
@@ -347,42 +350,59 @@ class Main extends React.Component<Props, State> {
           }).then((res) => {
             res = res || {}
             const planIds = res.planIds || []
-            this.props.alert({
+            hide()
+            const hide2 = this.props.alert({
               width: 400,
               content: (
                 <div className='text-center'>
                   共有{planIds.length}场直播审核不通过成功!
                 </div>
-              )
+              ),
+              onOk: () => {
+                hide2()
+              }
             })
             this.setState({
               rowKeys: []
             })
-            hide()
             this.listpage.refresh()
           })
         }
       })
     } else {
-      api.multiAudit({
-        auditStatus: 1,
-        planIds: this.state.rowKeys
-      }).then((res: any) => {
-        res = res || {}
-        const planIds = res.planIds || []
-        // APP.success(`共有${planIds.length}场直播成功审核通过`)
-        this.props.alert({
-          width: 400,
-          content: (
-            <div className='text-center'>
-              共有{planIds.length}场直播成功审核通过
-            </div>
-          )
-        })
-        this.setState({
-          rowKeys: []
-        })
-        this.listpage.refresh()
+      const hide = this.props.alert({
+        width: 400,
+        content: (
+          <div className='text-center'>
+            确定是否全部批量审核通过？
+          </div>
+        ),
+        onOk: () => {
+          api.multiAudit({
+            auditStatus: 1,
+            planIds: this.state.rowKeys
+          }).then((res: any) => {
+            hide()
+            res = res || {}
+            const planIds = res.planIds || []
+            // APP.success(`共有${planIds.length}场直播成功审核通过`)
+            const hide2 = this.props.alert({
+              width: 400,
+              content: (
+                <div className='text-center'>
+                  共有{planIds.length}场直播成功审核通过
+                </div>
+              ),
+              onOk: () => {
+                hide2()
+              }
+            })
+            this.setState({
+              rowKeys: []
+            })
+            this.listpage.refresh()
+          })
+        }
       })
     }
   }
