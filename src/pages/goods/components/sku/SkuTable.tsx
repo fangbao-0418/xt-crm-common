@@ -1149,16 +1149,25 @@ class Main extends React.Component<Props, State> {
       selectedRowKeys: [],
       selectedRowKeysMap: {}
     })
-    this.props.form.resetFields()
+    const dataSource = this.state.dataSource || []
+    const len = dataSource.length
+    const fields: string[] = []
+    const arr = ['unit', 'marketPrice', 'costPrice', 'incStock', 'salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice', 'stockAlert', 'singleBuyNumMax']
+    for (let i = 0; i < len; i++) {
+      arr.map((item) => {
+        fields.push(`${item}-${i}`)
+      })
+    }
+    this.props.form.resetFields(fields)
   }
-  public render() {
+  public render () {
     const { selectedRowKeys, selectedRowKeysMap } = this.state;
     const isBondedGood = this.props.type === 20// 是否保税仓海淘商品
     const columns = (this.props.extraColumns || []).concat(
       isBondedGood
-        ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource)
-        : this.getColumns(this.handleChangeValue, this.state.dataSource)
-    );
+      ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource)
+      : this.getColumns(this.handleChangeValue, this.state.dataSource)
+    )
     console.log(this.state.dataSource, 'this.state.dataSource')
     return (
       <>
@@ -1319,7 +1328,7 @@ class Main extends React.Component<Props, State> {
                     align: 'center',
                     render: (record, $1, idx) => (
                       <Button
-                        type="link"
+                        type='link'
                         onClick={() => {
                           const { dataSource } = this.state;
                           let selectedRowKeys: any[] = [...this.state.selectedRowKeys];
@@ -1344,11 +1353,11 @@ class Main extends React.Component<Props, State> {
             )
           }}
           onChange={pagination => {
-            this.pagination = pagination;
+            this.pagination = pagination
           }}
         />
       </>
-    );
+    )
   }
 }
-export default Alert(Main);
+export default Alert(Main)

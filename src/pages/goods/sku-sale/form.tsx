@@ -1195,4 +1195,4 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   }
 }
 
-export default SkuSaleForm;
+export default SkuSaleForm
