@@ -26,7 +26,8 @@ const defaultItem: SkuSaleProps = {
   barCode: undefined,
   unit: undefined,
   incStock: undefined,
-  stockAlert: undefined
+  stockAlert: undefined,
+  usableStock: 0
 }
 
 /** 子规格字段集合 */
