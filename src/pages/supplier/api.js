@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-24 10:28:23
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-26 18:17:07
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/supplier/api.js
+ */
 import { exportFile } from '../../util/fetch';
 import { queryString } from '@/util/utils';
 const { post, newPost, get } = APP.http
@@ -36,7 +42,10 @@ export function querySupplierList(data) {
   if (debug) {
     return Promise.resolve(mockData);
   }
-  return post('/store/list', data);
+  return post('/store/list', data, {
+    /** 禁止日志 */
+    banLog: true
+  });
 }
 
 export function getSupplierDetail(data) {

@@ -14,7 +14,7 @@ var qs = require('qs');
 // const prod = true;
 
 export const request = (url, config = {}) => {
-  !config.hideLoading && APP.fn.handleLoading('start')
+  !config.hideLoading && APP.fn.handleLoading('start');
   const _config = {
     url: prefix(url),
     method: 'get',
@@ -27,7 +27,10 @@ export const request = (url, config = {}) => {
   _config.headers = getHeaders(_config.headers);
   return axios(_config)
     .then(res => {
-      !config.hideLoading && APP.fn.handleLoading('end')
+      !config.hideLoading && APP.fn.handleLoading('end');
+      if (_config.banLog !== true) {
+        APP.moon.oper(res);
+      }
       if (res.status === 401) {
         window.location.href = '/#/login'
         return Promise.reject(res);
@@ -36,12 +39,6 @@ export const request = (url, config = {}) => {
         const data = res.data.data;
         return isPlainObject(data) ? omitBy(data, isNil) : data;
       } else {
-        console.log(res, 'fetch success false')
-        try {
-          window.Moon && window.Moon.oper(res, res.status)
-        } catch (e) {
-          console.log(e)
-        }
         if (res.data && res.data.message) {
           message.error(res.data.message || '内部错误，请等待响应...');
         }
@@ -65,7 +62,7 @@ export const request = (url, config = {}) => {
         message.error(error.message || '内部错误，请等待响应...');
       }
       try {
-        window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+        APP.moon.oper(error, error && error.response && error.response.status)
       } catch (e) {
         console.log(e)
       }
@@ -165,7 +162,7 @@ instance.interceptors.response.use(res => {
   }
   message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...')
   try {
-    window.Moon && window.Moon.oper(error, error && error.response && error.response.status)
+    APP.moon.oper(error, error && error.response && error.response.status)
   } catch (e) {
     console.log(e)
   }
@@ -183,6 +180,9 @@ export function fetch(url, config = {}) {
     ...others
   }).then(res => {
     !config.hideLoading && APP.fn.handleLoading('end')
+    // if (config.banLog !== true) {
+    //   APP.moon.oper(res);
+    // }
     return res;
   }, (error) => {
     !config.hideLoading && APP.fn.handleLoading('end')

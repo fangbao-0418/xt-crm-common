@@ -1,25 +1,23 @@
 import React from 'react'
-interface Props {
-
-}
+type Props = {}
 interface State {
   error: any
-  errorInfo: any 
+  errorInfo: any
 }
 class Main extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { error: null, errorInfo: null };
   }
-  
+
   componentDidCatch(error: any, errorInfo: any) {
-    Moon.error(error) 
+    APP.moon.error(error)
     this.setState({
-      error: error,
-      errorInfo: errorInfo
+      error,
+      errorInfo
     })
   }
-  
+
   public render () {
     if (this.state.errorInfo) {
       return (
@@ -31,7 +29,7 @@ class Main extends React.Component<Props, State> {
             {this.state.errorInfo.componentStack}
           </details>
         </div>
-      );
+      )
     }
     return this.props.children || null
   }
