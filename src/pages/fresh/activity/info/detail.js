@@ -264,9 +264,9 @@ class ActivityDetail extends React.Component {
             value: text,
             onChange: this.handleChangeValue('inventory', index)
           }
-          if (record.sellableQty) {
-            props.max = record.sellableQty
-          }
+          // if (record.sellableQty) {
+          //   props.max = record.sellableQty
+          // }
           return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
         },
       },
