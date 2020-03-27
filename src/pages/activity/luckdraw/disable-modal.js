@@ -1,3 +1,9 @@
+/*
+ * @Date: 2019-11-12 11:03:51
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-25 16:35:10
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/activity/luckdraw/disable-modal.js
+ */
 // 失效弹窗
 
 import React, { Component } from 'react';
@@ -52,9 +58,10 @@ class DisableModal extends Component {
         });
       };
     render() {
+        const { size } = this.props
         return (
             <div style={{display:"inline-block"}}>
-                <Button disabled={this.props.disabled} type="danger" onClick={this.showModal}>
+                <Button size={size} disabled={this.props.disabled} type="danger" onClick={this.showModal}>
                     {this.props.btntext}
                 </Button>
                 <Modal

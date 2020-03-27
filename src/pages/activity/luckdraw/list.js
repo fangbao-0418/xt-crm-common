@@ -169,16 +169,17 @@ class List extends React.Component {
       },
       {
         title: '操作',
+        align: 'center',
         render: (text, record) => {
           if (text.status == 1) {
             return (
               <>
-                <DisableModal handleSearch={this.handleSearch} selRow={[text]} btntext={'失效'}></DisableModal>
+                <DisableModal size='small' handleSearch={this.handleSearch} selRow={[text]} btntext={'失效'}></DisableModal>
               </>
             );
           } else if (text.status == 0) {
             return (
-              <Button type="primary" onClick={() => this.handleBatchEnable([text])}>
+              <Button size='small' type="primary" onClick={() => this.handleBatchEnable([text])}>
                 生效
               </Button>
             );

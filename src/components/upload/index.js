@@ -122,7 +122,13 @@ class UploadView extends Component {
     return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
   }
   initFileList(fileList = []) {
-    fileList = fileList || []
+    if (typeof fileList === 'string') {
+      fileList = [{
+        url: fileList,
+        uid: getUniqueId()
+      }]
+    }
+    fileList = (fileList || []).filter(item => !!item) || []
     const { fileType } = this.props;
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
     this.count = fileList.length
