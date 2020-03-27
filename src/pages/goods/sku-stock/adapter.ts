@@ -97,7 +97,8 @@ export function filterSkuList(list: any[]) {
       'skuName',
       'status',
       'stock',
-      'productBasicSkuId'
+      'productBasicSkuId',
+      'productBasicId'
     ]);
   })
 }
