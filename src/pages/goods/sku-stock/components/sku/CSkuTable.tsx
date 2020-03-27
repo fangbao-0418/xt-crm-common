@@ -320,7 +320,7 @@ class CSkuTable extends React.Component<CSkuTableProps, CSkuTableState> {
     console.log('dataSource =>', dataSource);
     return (
       <Table
-        rowKey="id"
+        rowKey={(_, index) => `${index}`}
         title={() => '规格明细'}
         columns={columns}
         dataSource={dataSource}

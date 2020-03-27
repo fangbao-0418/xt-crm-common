@@ -87,6 +87,7 @@ export function formResponse(res: any) {
 export function filterSkuList(list: any[]) {
   return (list || []).map(item => {
     return pick(item, [
+      'unit',
       'barCode',
       'costPrice',
       'imageUrl1',
@@ -97,7 +98,8 @@ export function filterSkuList(list: any[]) {
       'skuName',
       'status',
       'stock',
-      'productBasicSkuId'
+      'productBasicSkuId',
+      'productBasicId'
     ]);
   })
 }
