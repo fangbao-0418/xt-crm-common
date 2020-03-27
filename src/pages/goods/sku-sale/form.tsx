@@ -76,19 +76,19 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1',
     productCode: ''
   }
-  id: number;
-  modifyTime: number;
+  id: number
+  modifyTime: number
   constructor(props: SkuSaleFormProps) {
-    super(props);
-    this.id = +props.match.params.id;
+    super(props)
+    this.id = +props.match.params.id
   }
   componentDidMount() {
     // 编辑
     if (this.id !== -1) {
-      this.fetchData();
+      this.fetchData()
     } else {
       getTemplateList().then((opts: any[]) => {
-        this.setState({ templateOptions: opts });
+        this.setState({ templateOptions: opts })
       })
     }
   }
@@ -119,9 +119,10 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   /** 获取商品详情 */
   fetchData() {
     // 根据isGroup请求不同的接口
-    const { isGroup } = this.state;
+    const { isGroup } = this.state
     const payload = { productId: this.id }
-    const promiseDetail = isGroup ? getGroupProductDetail(payload): getGoodsDetial(payload);
+    // const promiseDetail = isGroup ? getGroupProductDetail(payload): getGoodsDetial(payload);
+    const promiseDetail = getGoodsDetial(payload)
     Promise.all([
       promiseDetail,
       getCategoryList(),
@@ -288,13 +289,16 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     const {
       specs,
       skuList,
-      freightTemplateId,
-    } = this.state;
-    this.form && this.form.props.form.validateFields((err, vals) => {
-      this.forceUpdate();
+      freightTemplateId
+    } = this.state
+    if (!this.form) {
+      return
+    }
+    this.form.props.form.validateFields((err, vals) => {
+      this.forceUpdate()
       let msgs = []
       if (err) {
-        const errs = flattenDeep(Object.keys(err).map(key => err[key].errors));
+        const errs = flattenDeep(Object.keys(err).map(key => err[key].errors))
         msgs = errs.filter(item => item.pass).map(item => item.msg)
         if (errs.length !== msgs.length) {
           APP.error('请检查输入项')
@@ -306,33 +310,42 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         return
       }
       if (size(specs) === 0) {
-        message.error('请添加规格');
-        return false;
+        message.error('请添加规格')
+        return false
       }
 
       if (size(skuList) === 0) {
-        message.error('请添加sku项');
-        return false;
+        message.error('请添加sku项')
+        return false
       }
       if (vals.withShippingFree === 0 && !freightTemplateId) {
-        message.error('请选择运费模板');
-        return;
+        message.error('请选择运费模板')
+        return
       }
       if (msgs.length) {
         Modal.confirm({
           title: <div style={{textAlign: 'center'}}>商品价格提醒</div>,
           icon: null,
           width: 800,
-          content: <div style={{maxHeight: '60vh', overflow: 'auto'}}>{msgs.map(msg => (<div style={{marginBottom: '5px'}}>{msg}</div>))}</div>,
+          content: (
+            <div style={{maxHeight: '60vh', overflow: 'auto'}}>
+              {msgs.map((msg, i) => (
+                <div key={i} style={{marginBottom: '5px'}}>
+                  {msg}
+                </div>
+              ))}
+            </div>
+          ),
           onOk: () => {
             this.handleSetProduct(vals, status)
-          },
-        });
+          }
+        })
       } else {
         this.handleSetProduct(vals, status)
       }
-    });
-  };
+    })
+  }
+
   handleSetProduct(vals:any, status?:number) {
     const {
       specs,
@@ -379,9 +392,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         }
         gotoPage('/goods/list');
       })
-    }
-    // 普通商品新增、编辑
-    else {
+    } else {
+      // 普通商品新增、编辑
       setProduct({
         productCode,
         isGroup,
@@ -401,12 +413,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       }).then((res: any) => {
         if (!res) return;
         if (this.id !== -1) {
-          APP.success('编辑数据成功');
+          APP.success('编辑数据成功')
         } else {
-          APP.success('添加数据成功');
+          APP.success('添加数据成功')
         }
-        gotoPage('/goods/list');
-      });
+        gotoPage('/goods/list')
+      })
     }
   }
   handleDeleteAll = () => {
@@ -414,12 +426,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       title: '提示',
       content: '确认要删除全部图片吗?',
       onOk: () => {
-        this.form.props.form.setFieldsValue({ listImage: [] });
-      },
-    });
+        this.form.props.form.setFieldsValue({ listImage: [] })
+      }
+    })
   }
   handleInput: React.ChangeEventHandler<Record<string, any>> = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     this.setState({
       [name]: value
     })
@@ -608,6 +620,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       productCode
     } = this.state;
     const { productType, status }: any = this.form ? this.form.getValues() : {}
+    console.log(barCode, 'render')
     return (
       <Form
         getInstance={ref => this.form = ref}
@@ -1153,7 +1166,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               className='mr10'
               type='primary'
               onClick={() => {
-                this.handleSave();
+                this.handleSave()
               }}
             >
               保存
@@ -1182,4 +1195,4 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   }
 }
 
-export default SkuSaleForm;
+export default SkuSaleForm

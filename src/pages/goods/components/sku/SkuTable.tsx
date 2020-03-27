@@ -22,14 +22,15 @@ import { pick } from 'lodash';
 const { Option } = Select;
 const FormItem = Form.Item;
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
-  extraColumns?: ColumnProps<any>[];
-  dataSource: SkuSaleProps[];
-  onChange?: (dataSource: SkuSaleProps[]) => void;
+  extraColumns?: ColumnProps<any>[]
+  dataSource: SkuSaleProps[]
+  onChange?: (dataSource: SkuSaleProps[]) => void
+  getInstance?: (ref: any) => void
   /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
-  type: 0 | 10 | 20;
+  type: 0 | 10 | 20
   /** sku备案信息 */
-  productCustomsDetailVOList: any[];
-  isGroup: boolean;
+  productCustomsDetailVOList: any[]
+  isGroup: boolean
 }
 
 // 通过返回数据拿到id到规格详情的映射关系
@@ -96,12 +97,17 @@ class Main extends React.Component<Props, State> {
   public pagination: PaginationConfig = {
     current: 1,
     pageSize: 10
-  };
+  }
   public state: State = {
     dataSource: this.props.dataSource || [],
     selectedRowKeys: [],
     selectedRowKeysMap: []
-  };
+  }
+  public componentWillMount () {
+    if (this.props.getInstance) {
+      this.props.getInstance(this)
+    }
+  }
   public componentWillReceiveProps(props: Props) {
     this.setState({
       dataSource: props.dataSource
@@ -172,7 +178,8 @@ class Main extends React.Component<Props, State> {
     };
   }
 
-  public getColumns(cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
+  public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
+    const { isGroup } = this.props;
     const validateColumnsFields = (index: number) => {
       const { pageSize = 10, current = 1 } = this.pagination;
       const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index;
@@ -226,7 +233,7 @@ class Main extends React.Component<Props, State> {
                     onChange={cb('deliveryMode', record, index)}
                   >
                     {deliveryModeType.getArray().map(item => (
-                      <Option value={item.key} key={item.key}>
+                      <Option value={item.key} disabled={isGroup} key={item.key}>
                         {item.val}
                       </Option>
                     ))}
@@ -1136,14 +1143,31 @@ class Main extends React.Component<Props, State> {
         content: <Stock id={record.skuId} />
       });
   }
-  public render() {
+  /** 清空已选商品 */
+  public clearSelected () {
+    this.setState({
+      selectedRowKeys: [],
+      selectedRowKeysMap: {}
+    })
+    const dataSource = this.state.dataSource || []
+    const len = dataSource.length
+    const fields: string[] = []
+    const arr = ['unit', 'marketPrice', 'costPrice', 'incStock', 'salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice', 'stockAlert', 'singleBuyNumMax']
+    for (let i = 0; i < len; i++) {
+      arr.map((item) => {
+        fields.push(`${item}-${i}`)
+      })
+    }
+    this.props.form.resetFields(fields)
+  }
+  public render () {
     const { selectedRowKeys, selectedRowKeysMap } = this.state;
     const isBondedGood = this.props.type === 20// 是否保税仓海淘商品
     const columns = (this.props.extraColumns || []).concat(
       isBondedGood
-        ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource)
-        : this.getColumns(this.handleChangeValue, this.state.dataSource)
-    );
+      ? this.getOverseasColumns(this.handleChangeValue, this.state.dataSource)
+      : this.getColumns(this.handleChangeValue, this.state.dataSource)
+    )
     console.log(this.state.dataSource, 'this.state.dataSource')
     return (
       <>
@@ -1193,144 +1217,147 @@ class Main extends React.Component<Props, State> {
                 onClick={event => {
                   onExpand(record, event);
                 }}
-              ></div>
-            ) : null;
+              />
+            ) : null
           }}
           expandedRowRender={ isBondedGood ? undefined : (record, index) => {
-              const {deliveryMode} = record
-              return (
-                deliveryMode === 1 && <Table
-                  loading={record.loading}
-                  rowKey={(_, idx) => `sku-table-${index}`}
-                  dataSource={record.productBasics}
-                  footer={() => (
-                    <ProductSeletor
-                      selectedRowKeys={selectedRowKeys}
-                      selectedRowKeysMap={selectedRowKeysMap}
-                      productBasics={combination(record.productBasics)}
-                      onOk={({ selectedRowKeys, productBasics, selectedRowKeysMap }: any) => {
-                        const { dataSource } = this.state;
-                        dataSource[index].productBasics = (productBasics || []).map((v: any) => {
-                          v.num = v.num || 1
-                          return v;
-                        });
-                        this.setState({
-                          selectedRowKeys,
-                          dataSource,
-                          selectedRowKeysMap
-                        });
-                        if (this.props.onChange) {
-                          this.props.onChange(dataSource);
-                        }
-                      }}
-                    />
-                  )}
-                  columns={[
-                    {
-                      title: '商品ID',
-                      dataIndex: 'id'
-                    },
-                    {
-                      title: '商品名称',
-                      dataIndex: 'productName'
-                    },
-                    {
-                      title: '商品主图',
-                      dataIndex: 'productMainImage',
-                      render: (url: string) => (
-                        <Image
-                          style={{
-                            height: 100,
-                            width: 100,
-                            minWidth: 100
-                          }}
-                          src={replaceHttpUrl(url)}
-                          alt="主图"
-                        />
-                      )
-                    },
-                    {
-                      title: '商品规格',
-                      dataIndex: 'propertyValue'
-                    },
-                    {
-                      title: '规格条码',
-                      dataIndex: 'productBasicSkuBarCode'
-                    },
-                    {
-                      title: '规格编码',
-                      dataIndex: 'productBasicSkuCode'
-                    },
-                    {
-                      title: '市场价',
-                      dataIndex: 'marketPrice'
-                    },
-                    {
-                      title: '成本价',
-                      dataIndex: 'costPrice'
-                    },
-                    {
-                      title: '总库存',
-                      dataIndex: 'totalStock'
-                    },
-                    {
-                      title: '数量配置',
-                      dataIndex: 'num',
-                      render: (text, _, idx) => {
-                        return (
-                          <InputNumber
-                            style={{ width: 172 }}
-                            value={text}
-                            max={999}
-                            placeholder="请输入数量配置"
-                            precision={0}
-                            onChange={value => {
-                              const { dataSource } = this.state;
-                              dataSource[index].productBasics[idx].num = value;
-                              this.setState({
-                                dataSource
-                              });
-                            }}
-                          />
-                        );
-                      }
-                    },
-                    {
-                      title: '操作',
-                      align: 'center',
-                      render: (record, $1, idx) => (
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            const { dataSource } = this.state;
-                            let selectedRowKeys: any[] = [...this.state.selectedRowKeys];
-                            (dataSource[index].productBasics || []).splice(idx, 1);
-                            let productBasicSkuInfoKeys: any[] = this.state.selectedRowKeysMap[record.id];
-                            productBasicSkuInfoKeys = productBasicSkuInfoKeys.filter(
-                              key => key !== record.productBasicSkuId
-                            );
-                            selectedRowKeysMap[record.id] = productBasicSkuInfoKeys;
-                            if (productBasicSkuInfoKeys.length === 0) {
-                              selectedRowKeys = selectedRowKeys.filter(id => id !== record.id);
-                            }
-                            this.setState({ dataSource, selectedRowKeys, selectedRowKeysMap });
-                          }}
-                        >
-                          删除
-                        </Button>
-                      )
-                    }
-                  ]}
-                />
-              );
+            const { deliveryMode } = record
+            if (deliveryMode !== 1) {
+              return null
             }
-          }
+            return (
+              <Table
+                loading={record.loading}
+                rowKey={(_, idx) => `sku-table-${index}`}
+                dataSource={record.productBasics}
+                footer={() => (
+                  <ProductSeletor
+                    record={record}
+                    selectedRowKeys={selectedRowKeys}
+                    selectedRowKeysMap={selectedRowKeysMap}
+                    productBasics={combination(record.productBasics)}
+                    onOk={({ selectedRowKeys, productBasics, selectedRowKeysMap }: any) => {
+                      const { dataSource } = this.state;
+                      dataSource[index].productBasics = (productBasics || []).map((v: any) => {
+                        v.num = v.num || 1
+                        return v
+                      })
+                      this.setState({
+                        selectedRowKeys,
+                        dataSource,
+                        selectedRowKeysMap
+                      })
+                      if (this.props.onChange) {
+                        this.props.onChange(dataSource)
+                      }
+                    }}
+                  />
+                )}
+                columns={[
+                  {
+                    title: '商品ID',
+                    dataIndex: 'id'
+                  },
+                  {
+                    title: '商品名称',
+                    dataIndex: 'productName'
+                  },
+                  {
+                    title: '商品主图',
+                    dataIndex: 'productMainImage',
+                    render: (url: string) => (
+                      <Image
+                        style={{
+                          height: 100,
+                          width: 100,
+                          minWidth: 100
+                        }}
+                        src={replaceHttpUrl(url)}
+                        alt="主图"
+                      />
+                    )
+                  },
+                  {
+                    title: '商品规格',
+                    dataIndex: 'propertyValue'
+                  },
+                  {
+                    title: '规格条码',
+                    dataIndex: 'productBasicSkuBarCode'
+                  },
+                  {
+                    title: '规格编码',
+                    dataIndex: 'productBasicSkuCode'
+                  },
+                  {
+                    title: '市场价',
+                    dataIndex: 'marketPrice'
+                  },
+                  {
+                    title: '成本价',
+                    dataIndex: 'costPrice'
+                  },
+                  {
+                    title: '总库存',
+                    dataIndex: 'totalStock'
+                  },
+                  {
+                    title: '数量配置',
+                    dataIndex: 'num',
+                    render: (text, _, idx) => {
+                      return (
+                        <InputNumber
+                          style={{ width: 172 }}
+                          value={text}
+                          max={999}
+                          placeholder="请输入数量配置"
+                          precision={0}
+                          onChange={value => {
+                            const { dataSource } = this.state;
+                            dataSource[index].productBasics[idx].num = value;
+                            this.setState({
+                              dataSource
+                            });
+                          }}
+                        />
+                      );
+                    }
+                  },
+                  {
+                    title: '操作',
+                    align: 'center',
+                    render: (record, $1, idx) => (
+                      <Button
+                        type='link'
+                        onClick={() => {
+                          const { dataSource } = this.state;
+                          let selectedRowKeys: any[] = [...this.state.selectedRowKeys];
+                          (dataSource[index].productBasics || []).splice(idx, 1);
+                          let productBasicSkuInfoKeys: any[] = this.state.selectedRowKeysMap[record.id];
+                          productBasicSkuInfoKeys = productBasicSkuInfoKeys.filter(
+                            key => key !== record.productBasicSkuId
+                          );
+                          selectedRowKeysMap[record.id] = productBasicSkuInfoKeys;
+                          if (productBasicSkuInfoKeys.length === 0) {
+                            selectedRowKeys = selectedRowKeys.filter(id => id !== record.id);
+                          }
+                          this.setState({ dataSource, selectedRowKeys, selectedRowKeysMap });
+                        }}
+                      >
+                        删除
+                      </Button>
+                    )
+                  }
+                ]}
+              />
+            )
+          }}
           onChange={pagination => {
-            this.pagination = pagination;
+            this.pagination = pagination
           }}
         />
       </>
-    );
+    )
   }
 }
-export default Alert(Main);
+export default Alert(Main)
