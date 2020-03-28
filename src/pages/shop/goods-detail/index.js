@@ -4,6 +4,7 @@ import BaseCard from './components/baseCard';
 import SkuCard from './components/skuCard';
 import LogisCard from './components/logisCard';
 import AuditCard from './components/auditCard';
+import { unionBy } from 'lodash'
 
 @connect(state => ({
   goodsInfo: state['shop.goods.detail'].goodsInfo
@@ -38,7 +39,10 @@ class GoodsDetail extends React.Component {
         specName: sitem[pitem.specNameKey],
         specPicture: sitem[pitem.specPictureKey]
       }))
+      pitem.content = unionBy(pitem.content, 'specName')
     })
+
+    console.log(propertys)
 
     return propertys
   }

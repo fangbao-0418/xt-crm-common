@@ -189,7 +189,7 @@ class Main extends React.Component {
 
             if (tabStatus === '0') { // tab 全部
               payload.status = undefined
-              payload.auditStatues = '0, 1, 2, 3'
+              payload.auditStatues = '0,1,2,3'
               // payload.withdrawalTypes = '1,2' // 下架类型 为了过滤店家草稿数据
               if (innerAuditStatus && (innerAuditStatus !== -1)) {
                 payload.auditStatues = innerAuditStatus
@@ -200,11 +200,13 @@ class Main extends React.Component {
             } else if (tabStatus === '2') { // tab 仓库中商品
               payload.status = 0
               payload.auditStatues = '0,3'
-              payload.withdrawalTypes = '1,2' // 下架类型 为了过滤店家草稿数据
+              // payload.withdrawalTypes = '0,1,2' // 下架类型 为了过滤店家草稿数据
             } else if (tabStatus === '3') { // tab 待审核
               payload.status = 0
               payload.auditStatues = '1'
             }
+
+            // payload.storeId = 124
 
             return payload
           }}
