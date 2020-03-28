@@ -5,12 +5,15 @@ interface State {
   errorInfo: any
 }
 class Main extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+  constructor (props: Props) {
+    super(props)
     this.state = { error: null, errorInfo: null };
   }
 
-  componentDidCatch(error: any, errorInfo: any) {
+  componentDidCatch (error: any, errorInfo: any) {
+    if (error instanceof Object) {
+      error.name = 'Error Page'
+    }
     APP.moon.error(error)
     this.setState({
       error,
