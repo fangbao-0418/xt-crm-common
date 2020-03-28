@@ -16,7 +16,7 @@ import ActivityInfo from './ActivityInfo';
 import ActivityList from './ActivityList';
 import { size, filter, difference } from 'lodash';
 import { gotoPage } from '@/util/utils';
-import { formatMoney, formatMoneyWithSign } from '../../helper';
+import { formatMoney, formatMoneyWithSign } from '@/pages/helper';
 import { goodsColumns } from './goodsColumns';
 import GoodsTransfer from '@/components/goods-transfer';
 const namespace = 'activity/info/shoplist';
@@ -78,6 +78,7 @@ class List extends React.Component {
       };
       APP.fn.setPayload(namespace, payload);
       getOperatorSpuList(payload).then(res => {
+        console.log(res, 'resresres')
         this.setState({
           promotionDetail: res || {}
         })
@@ -86,15 +87,14 @@ class List extends React.Component {
   };
 
   getProductList = params => {
-    // type 活动类型 10为拼团活动-拼团活动不包含1688
+    // type 活动类型 10为拼团活动
     const { modalPage, type } = this.state;
     getProductList({
       status: 0,
       pageSize: modalPage.pageSize,
       page: modalPage.current,
       types: type === 10 ? [0, 10] : undefined,
-      ...params,
-      include1688: type === 10 ? false : undefined
+      ...params
     }).then((res) => {
       res = res || {};
       modalPage.total = res.total;
@@ -198,7 +198,7 @@ class List extends React.Component {
       }
     } = this.props;
     localStorage.setItem('editsku', JSON.stringify({ type, ...record }));
-    history.push(`/activity/info/detail/${id}`);
+    history.push(`/fresh/activity/info/detail/${id}`);
   };
 
   handleInputValue = (text, record, index) => e => {
@@ -207,10 +207,7 @@ class List extends React.Component {
   };
 
   handleReturn = () => {
-    // const { history } = this.props;
-    // const params = parseQuery();
-    gotoPage('/activity/list');
-    // history.push(`/activity/list?page=${params.page}&pageSize=${params.pageSize}`);
+    gotoPage('/fresh/activity/list');
   };
   updateSync = () => {
     Modal.confirm({
@@ -292,15 +289,6 @@ class List extends React.Component {
       promotionId: info.id,
       tagetPromotionId: transferActivity.id
     }).then(res => {
-      if (!(res instanceof Object)) {
-        APP.moon.error({
-          label: '批量转移商品',
-          data: res
-        })
-        res = {
-          successCount: 0
-        }
-      }
       this.setState({ transferGoodsVisible: false }, () => {
         Modal.info({
           title: '转移结果',
@@ -366,10 +354,7 @@ class List extends React.Component {
     const getSkuColumns = () => [
       {
         title: 'sku名称',
-        dataIndex: 'property',
-        render: text => {
-          return <span>{text || '已删除'}</span>
-        }
+        dataIndex: 'property'
       },
       {
         title: `${type === 6 ? '助力分' : '活动价'}`,
@@ -394,8 +379,8 @@ class List extends React.Component {
     const {
       form: { getFieldDecorator }
     } = this.props;
-    // 是否显示批量转移按钮
-    const isShowTransfer = type === 1 || type === 2 || type === 3;
+    // 买菜暂时不显示批量转移按钮
+    const isShowTransfer = false
     return (
       <>
         <ActivityInfo
