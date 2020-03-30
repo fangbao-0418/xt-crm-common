@@ -176,21 +176,17 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
   handleOK = () => {
     const { selectedRowKeys, selectedRowKeysMap } = this.state
     let productBasics = spread(this.selectedRows, selectedRowKeysMap)
-    console.log(productBasics, this.selectedRows, selectedRowKeysMap, 'on ok')
     if (productBasics.length === 0) {
-      return void APP.error('请选择商品');
+      return void APP.error('请选择商品')
     }
-    console.log('this.selectedRows => ', this.selectedRows)
     // 同步num字段;
     productBasics = productBasics.map((item: any) => {
       const selectedItem = spread(this.selectedRows).find(item2 => {
-        return item.productBasicSkuId === item2.productBasicSkuId;
-      }) || item;
-      item.num = selectedItem.num;
-      return item;
-    });
-
-    console.log('productBasics => ', productBasics)
+        return item.productBasicSkuId === item2.productBasicSkuId
+      }) || item
+      item.num = selectedItem.num
+      return item
+    })
     this.props.onOk({selectedRowKeys, productBasics, selectedRowKeysMap});
     this.setState({ visible: false})
   }
@@ -230,7 +226,10 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
             getInstance={ref => this.form = ref}
             namespace='productSelector'
             config={defaultConfig}
-            onSubmit={this.handleSubmit}
+            onSubmit={(val) => {
+              this.payload.page = 1
+              this.handleSubmit(val)
+            }}
           >
             <FormItem name='productBasicId' />
             <FormItem name='productName' />
@@ -285,9 +284,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
               onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
                 // fix ant-design bug
                 const unionArray: any[] = unionBy(this.selectedRows, selectedRows, x => x.id)
-
-
-                this.selectedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never));
+                this.selectedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never))
                 this.setState({
                   selectedRowKeysMap: getSelectedRowKeysMap(this.selectedRows),
                   selectedRowKeys
@@ -299,8 +296,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
         <span
           className='href'
           onClick={() => {
-            console.log(this.props, '----')
-            this.selectedRows = this.props.record.productBasics || []
+            this.selectedRows = this.props.productBasics || []
             this.setState({
               selectedRowKeysMap: getSelectedRowKeysMap(this.selectedRows),
               selectedRowKeys: this.selectedRows.map((val) => val.id),
