@@ -4,7 +4,9 @@ import ActionView from '@/components/action-view'
 const formatDate = (text) =>
   text ? APP.fn.formatDate(text) : '-'
 
-export default function getColumns () {
+export default function getColumns ({
+  onEdit // 编辑
+}) {
   return [
     {
       title: '编号',
@@ -51,11 +53,13 @@ export default function getColumns () {
       title: '操作',
       width: 180,
       dataIndex: 'action',
-      render: () => {
+      render: (_, record) => {
         return (
           <ActionView showNum={4}>
             <span className='href'>查看</span>
-            <span className='href'>编辑</span>
+            <span className='href' onClick={onEdit.bind(null, record)}>
+              编辑
+            </span>
             <span className='href'>关闭</span>
             <span className='href'>复制</span>
           </ActionView>

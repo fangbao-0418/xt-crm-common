@@ -1,11 +1,16 @@
 import React, { PureComponent } from 'react'
 import { Card, Button } from 'antd'
 import { ListPage, FormItem } from '@/packages/common/components'
+import { gotoPage } from '@/util/utils';
 import getColumns from './config/getColumns'
 import { queryConfig } from './config/config';
 import { getGoodsList } from './api'
 
 class FullDiscountPage extends PureComponent {
+  handleEdit = (record) => {
+    gotoPage(`/activity/full-discount/edit/${record.id}`)
+  }
+
   render() {
     return (
       <Card>
@@ -19,7 +24,9 @@ class FullDiscountPage extends PureComponent {
               fields: ['createStartTime', 'createEndTime']
             }
           }}
-          columns={getColumns()}
+          columns={getColumns({
+            onEdit: this.handleEdit
+          })}
           api={getGoodsList}
           formItemLayout={(
             <>

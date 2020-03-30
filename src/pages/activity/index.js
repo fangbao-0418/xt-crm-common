@@ -101,6 +101,11 @@ const FullDiscount = Loadable({
   loading: Loader
 })
 
+const FullDiscountEdit = Loadable({
+  loader: () => import('./full-discount-edit'),
+  loading: Loader
+})
+
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -126,7 +131,8 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/sprinkle-cash`} exact component={SprinkleCash} />
         <Route path={`${match.url}/sprinkle-cash/form/:id`} component={SprinkleCashForm} />
         <Route path={`${match.url}/reward/:luckyDrawRoundId/:memberId`} exact component={ActivityRewardDetail} />
-        <Route path={`${match.url}/full-discount`} component={FullDiscount} />
+        <Route path={`${match.url}/full-discount`} exact component={FullDiscount} />
+        <Route path={`${match.url}/full-discount/edit/:id`} component={FullDiscountEdit} />
       </Switch>
     );
   }
