@@ -47,6 +47,7 @@ function getSelectedRowKeysMap(data: any[]) {
 }
 
 function combination(data: any[]) {
+  /** 原始数据sku集合，转化成spu集合 */
   data = data || []
   console.log(data, 'combination')
   const keysMap: any = {}
@@ -78,14 +79,14 @@ function combination(data: any[]) {
       ]
     }
     if (keysMap[item.id]) {
-      keysMap[item.id].productBasicSkuInfos = [...keysMap[item.id].productBasicSkuInfos, record];
+      keysMap[item.id].productBasicSkuInfos = keysMap[item.id].productBasicSkuInfos.concat(record.productBasicSkuInfos)
     } else {
-      keysMap[item.id] = record;
-      result.push(record);
+      keysMap[item.id] = record
+      result.push(record)
     }
   }
-  console.log('result =>', result);
-  return result;
+  console.log(result, 'combination result')
+  return result
 }
 
 interface State {
@@ -1225,6 +1226,7 @@ class Main extends React.Component<Props, State> {
             if (deliveryMode !== 1) {
               return null
             }
+            console.log(record.productBasics, 'record.productBasicsrecord.productBasics')
             return (
               <Table
                 loading={record.loading}
@@ -1242,6 +1244,7 @@ class Main extends React.Component<Props, State> {
                         v.num = v.num || 1
                         return v
                       })
+                      console.log(dataSource, 'product selector on ok ')
                       this.setState({
                         selectedRowKeys,
                         dataSource,
