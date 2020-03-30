@@ -96,6 +96,11 @@ const SprinkleCashForm = Loadable({
   loading: Loader
 })
 
+const FullDiscount = Loadable({
+  loader: () => import('./full-discount'),
+  loading: Loader
+})
+
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -118,9 +123,10 @@ export default class RouteApp extends React.Component {
         {/* luckyDrawId：活动ID，id场次ID */}
         <Route path={`${match.url}/lottery/:luckyDrawId/:id`} component={ActivitySessions} />
         <Route path={`${match.url}/reward`} exact component={ActivityReward} />
-        <Route path={`${match.url}/sprinkle-cash`} exact component={SprinkleCash}/>
-        <Route path={`${match.url}/sprinkle-cash/form/:id`} component={SprinkleCashForm}/>
+        <Route path={`${match.url}/sprinkle-cash`} exact component={SprinkleCash} />
+        <Route path={`${match.url}/sprinkle-cash/form/:id`} component={SprinkleCashForm} />
         <Route path={`${match.url}/reward/:luckyDrawRoundId/:memberId`} exact component={ActivityRewardDetail} />
+        <Route path={`${match.url}/full-discount`} component={FullDiscount} />
       </Switch>
     );
   }
