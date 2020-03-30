@@ -145,6 +145,7 @@ declare module AfterSalesInfo {
   }
 
   export interface ShopDTO {
+    shopType: 1 | 2;
     shopCode: string;
     shopName: string;
     shopOwnerPhone: string;

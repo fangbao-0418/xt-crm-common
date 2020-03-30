@@ -8,7 +8,10 @@ import {
 } from '@/pages/helper'
 import { ColumnProps } from 'antd/es/table'
 import { Link } from 'react-router-dom'
-import { logisticsInformationColumns } from '../config'
+import {
+  logisticsInformationColumns,
+  storeTypeMap
+} from '../config'
 import memberType from '@/enum/memberType'
 import moment from 'moment'
 type OrderInfoVO = AfterSalesInfo.OrderInfoVO
@@ -108,11 +111,13 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
               <Avatar src={shopDTO.shopPictrueUrl} />
             ) : (
               <Avatar icon='user' />
-            )}
-            {' '}名称：{shopDTO.shopName}
+            )}{' '}
+            名称：{shopDTO.shopName}
           </Col>
           <Col span={8}>手机号：{shopDTO.shopOwnerPhone}</Col>
-          <Col span={8}>供应商类型：{shopDTO.shopCode}</Col>
+          <Col span={8}>
+            供应商类型：{storeTypeMap[shopDTO.shopType]}
+          </Col>
         </Row>
       ) : (
         '暂无信息'
