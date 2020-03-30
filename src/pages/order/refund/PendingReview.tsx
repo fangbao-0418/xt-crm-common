@@ -256,8 +256,9 @@ class PendingReview extends React.Component<Props, State> {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { orderInterceptRecordVO } = (this.props.data as any)
+    const { orderInterceptRecordVO, storeType } = (this.props.data as any)
     const isHaiTao = Number(this.orderInfoVO.orderType) === 70
+    const isXiaoDian = Number(storeType) === 6
     const options = refundType.getArray()
     /** 海淘订单请选择售后类型没有换货 */
     const refundTypeOptions = isHaiTao ? options.filter(v => v.key !== 30) : options
@@ -352,7 +353,7 @@ class PendingReview extends React.Component<Props, State> {
                   ],
                 })(
                   <InputNumber
-                    disabled={isHaiTao}
+                    disabled={isHaiTao || isXiaoDian}
                     min={0}
                     max={formatPrice(this.maxRefundAmount)}
                     formatter={formatRMB}
