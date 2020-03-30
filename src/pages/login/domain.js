@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-30 15:27:20
+ * @LastEditTime: 2020-03-30 19:17:24
  * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/login/domain.js
  */
 export default [
