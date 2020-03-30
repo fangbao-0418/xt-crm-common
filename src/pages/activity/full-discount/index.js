@@ -1,26 +1,42 @@
 import React, { PureComponent } from 'react'
-import { Card } from 'antd'
-import { ListPage } from '@/packages/common/components'
+import { Card, Button } from 'antd'
+import { ListPage, FormItem } from '@/packages/common/components'
+import getColumns from './config/getColumns'
+import { queryConfig } from './config/config';
 import { getGoodsList } from './api'
 
-
 class FullDiscountPage extends PureComponent {
-  columns = [
-    {
-      title: '商品ID',
-      width: 120,
-      dataIndex: 'id'
-    }
-  ]
-
   render() {
     return (
       <Card>
         <ListPage
           reserveKey='fullDiscount'
           namespace='fullDiscount'
-          columns={this.columns}
+          formConfig={queryConfig}
+          getInstance={ref => this.listRef = ref}
+          rangeMap={{
+            createTime: {
+              fields: ['createStartTime', 'createEndTime']
+            }
+          }}
+          columns={getColumns()}
           api={getGoodsList}
+          formItemLayout={(
+            <>
+              <FormItem name='createTime' />
+              <FormItem name='activeName' />
+              <FormItem name='activeStatus' />
+            </>
+          )}
+          addonAfterSearch={(
+            <div>
+              <Button
+                type='primary'
+              >
+                添加活动
+              </Button>
+            </div>
+          )}
         />
       </Card>
     )
