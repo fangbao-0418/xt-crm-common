@@ -22,7 +22,10 @@ class BaseCard extends React.Component {
           <Card title='商品信息'>
             <Form {...formItemLayout}>
               <FormItem label="商品类目">
-                <span className="ant-form-text">{baseInfo.productCategory}</span>
+                <div>
+                  <p className="ant-form-text">{baseInfo.productCategory}</p>
+                  <p style={{color: 'red'}}>平台服务费: {baseInfo.commission}</p>
+                </div>
               </FormItem>
               <FormItem label="商品名称">
                 <span className="ant-form-text">{baseInfo.productName}</span>

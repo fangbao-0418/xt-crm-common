@@ -62,6 +62,7 @@ class GoodsDetail extends React.Component {
     if (goodsInfo) {
       baseInfo = {
         productCategory: goodsInfo.productCategoryVO && goodsInfo.productCategoryVO.combineName || '暂无数据',
+        commission: (goodsInfo.productCategoryVO && (goodsInfo.productCategoryVO.agencyRate + goodsInfo.productCategoryVO.companyRate) || 0) + ' %',
         productName: goodsInfo.productName || '暂无数据',
         productImage: goodsInfo.productImage.split(','),
         listImage: goodsInfo.listImage.split(','),
