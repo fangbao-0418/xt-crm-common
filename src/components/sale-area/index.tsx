@@ -22,7 +22,17 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
     checkedKeys: []
   }
   treeCheckBox: TreeCheckBox
-  componentWillReceiveProps(props: SaleAreaProps) {
+  componentDidMount () {
+    if (this.treeCheckBox) {
+      const treeData = this.treeCheckBox.getTreeData(this.props.value) || []
+      this.setState({
+        text: treeData.map(v => `${v.name}（${v.children.length}）`).join('、'),
+        checkedKeys: this.treeCheckBox.getCheckedKeys(treeData)
+      })
+    }
+  }
+  componentWillReceiveProps (props: SaleAreaProps) {
+    console.log(props, 'xxxxxx')
     const treeData = this.treeCheckBox.getTreeData(props.value) || []
     this.setState({
       text: treeData.map(v => `${v.name}（${v.children.length}）`).join('、'),
@@ -33,6 +43,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
     this.treeCheckBox = ref
   }
   render() {
+    console.log(this.props, 'xxxxx-----')
     const { visible, text, checkedKeys } = this.state
     return (
       <>

@@ -405,7 +405,7 @@ class SkuList extends React.Component<SkuListProps, SkuListState> {
         <CSkuTable
           id={this.props.id}
           form={this.props.form}
-          dataSource={(dataSource || []).map((item, index) => ({ ...item, id: index }))}
+          dataSource={dataSource || []}
           extraColumns={this.getCustomColumns()}
           onChange={(dataSource) => {
             this.onChange(dataSource)
