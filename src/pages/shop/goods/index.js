@@ -16,7 +16,7 @@ const { TabPane } = Tabs;
 class Main extends React.Component {
 
   state = {
-    tabStatus: '3',
+    tabStatus: '2',
     // status: undefined, // 0: 下架 1: 上架
     // auditStatus: undefined, // 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
     currentGoods: null, // 当前审核商品
@@ -126,7 +126,7 @@ class Main extends React.Component {
     })
   }
 
-  render () {
+  render() {
     const { currentGoods, tabStatus, selectedRowKeys } = this.state;
     const hasSelected = selectedRowKeys.length > 0;
 
@@ -166,7 +166,7 @@ class Main extends React.Component {
 
         {/* Tabs状态切换组 */}
         <Tabs
-          defaultActiveKey='3'
+          defaultActiveKey='2'
           onChange={this.handleTabChange}
         >
           {
@@ -186,24 +186,18 @@ class Main extends React.Component {
           formConfig={formConfig}
           getInstance={ref => this.listRef = ref}
           processPayload={({ innerAuditStatus, ...payload }) => {
-
+            payload.labType = +tabStatus
             if (tabStatus === '0') { // tab 全部
-              payload.status = undefined
-              payload.auditStatues = '0,1,2,3'
-              // payload.withdrawalTypes = '1,2' // 下架类型 为了过滤店家草稿数据
-              if (innerAuditStatus && (innerAuditStatus !== -1)) {
-                payload.auditStatues = innerAuditStatus
+              if (
+                innerAuditStatus &&
+                (innerAuditStatus !== -1)
+              ) {
+                payload.auditStatus = innerAuditStatus
+              } else {
+                payload.auditStatus = undefined
               }
-            } else if (tabStatus === '1') { // tab 在售商品
-              payload.status = 1
-              payload.auditStatues = '2'
-            } else if (tabStatus === '2') { // tab 仓库中商品
-              payload.status = 0
-              payload.auditStatues = '0,3'
-              // payload.withdrawalTypes = '0,1,2' // 下架类型 为了过滤店家草稿数据
-            } else if (tabStatus === '3') { // tab 待审核
-              payload.status = 0
-              payload.auditStatues = '1'
+            } else {
+              payload.auditStatus = undefined
             }
 
             // payload.storeId = 124
