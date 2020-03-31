@@ -88,22 +88,30 @@ export default class extends Component {
             }}
           >
             下载模板
-            </span>
+          </span>
         </div>
         <div style={{ padding: 10 }}>
           <div style={{ marginBottom: 8 }}>（请控制文件大小在2mb内）</div>
-          {importRes && <div>
-            <div style={{ marginBottom: 8 }}>
-              <span>成功导入</span>
-              <span style={{ color: 'red' }}>{importRes.successNum}</span>
-              <span>条数据</span>
-            </div>
+          <If condition={importRes}>
             <div>
-              <a href={replaceHttpUrl(importRes.excelAddress)} target="_blank" rel="noopener noreferrer">
-                支付失败清单下载
-              </a>
+              <If condition={importRes.successNum}>
+                <div style={{ marginBottom: 8 }}>
+                  <span>成功导入</span>
+                  <span style={{ color: 'red' }}>{importRes.successNum}</span>
+                  <span>条数据</span>
+                </div>
+              </If>
+              <If condition={importRes.excelAddress}>
+                <div>
+                  <a
+                    href={replaceHttpUrl(importRes.excelAddress)}
+                    target="_blank" rel="noopener noreferrer">
+                    支付失败清单下载
+                   </a>
+                </div>
+              </If>
             </div>
-          </div>}
+          </If>
         </div>
         <If condition={this.state.errorUrl}>
           <div>
