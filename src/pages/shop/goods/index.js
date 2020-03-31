@@ -323,7 +323,7 @@ class Main extends React.Component {
             }
           }}
           addonAfterSearch={
-            tabStatus === '3' ?
+            tabStatus === '2' ?
               <div>
                 <Button
                   type='primary'
