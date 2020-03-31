@@ -1,17 +1,17 @@
-import React from 'react';
-import { ListPage, Form, FormItem, Alert, If } from '@/packages/common/components';
-import { getRemittanceList, exportList, submitRemittance, cancelRemittance, batchSubmit, getRemittanceInfo } from './api';
-import { defaultConfig, NAME_SPACE } from './config';
-import { Button, Modal, DatePicker } from 'antd';
-import { ListPageInstanceProps } from '@/packages/common/components/list-page';
-import { AlertComponentProps } from '@/packages/common/components/alert';
-import { FormInstance } from '@/packages/common/components/form';
-import { parseQuery } from '@/util/utils';
-import { formatMoneyWithSign } from '../../../pages/helper';
-import moment from 'moment';
-import { pick } from 'lodash';
+import React from 'react'
+import { ListPage, Form, FormItem, Alert, If } from '@/packages/common/components'
+import { getSummary, getRemittanceList, exportList, submitRemittance, cancelRemittance, batchSubmit, getRemittanceInfo, applyVoucher } from './api'
+import { defaultConfig, NAME_SPACE } from './config'
+import { Button, Modal, DatePicker } from 'antd'
+import { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import { AlertComponentProps } from '@/packages/common/components/alert'
+import { FormInstance } from '@/packages/common/components/form'
+import { parseQuery } from '@/util/utils'
+import { formatMoneyWithSign } from '@/pages/helper'
+import moment from 'moment'
+import { pick } from 'lodash'
 
-const { RangePicker } = DatePicker;
+const { RangePicker } = DatePicker
 interface WithdrawState {
   batchId: string,
   commonNum: number,
@@ -21,15 +21,19 @@ interface WithdrawState {
   totalNum: number,
   commonAmount: number,
   totalRechargeAmount: number
+  summary: {
+    earliestDate: string
+    totalAmount: number
+  }
 }
 /**
  * 提现管理列表
  */
 class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
-  list: ListPageInstanceProps;
-  form: FormInstance;
-  batchPaymentForm: FormInstance;
-  batchId = (parseQuery() as any).batchId;
+  list: ListPageInstanceProps
+  form: FormInstance
+  batchPaymentForm: FormInstance
+  batchId = (parseQuery() as any).batchId
   state: WithdrawState = {
     batchId: '',
     commonNum: 0,
@@ -38,7 +42,11 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
     totalAmount: 0,
     totalNum: 0,
     commonAmount: 0,
-    totalRechargeAmount: 0
+    totalRechargeAmount: 0,
+    summary: {
+      totalAmount: 0,
+      earliestDate: ''
+    }
   }
   columns = [{
     title: '提现单号',
@@ -58,11 +66,11 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
   }, {
     title: '提现金额',
     dataIndex: 'transferAmount',
-    render: (text: any) => <>{formatMoneyWithSign(text)}</>,
+    render: (text: any) => <>{formatMoneyWithSign(text)}</>
   }, {
     title: '服务费',
     dataIndex: 'serviceCharge',
-    render: (text: any) => <>{formatMoneyWithSign(text)}</>,
+    render: (text: any) => <>{formatMoneyWithSign(text)}</>
   }, {
     title: '银行卡绑定人',
     dataIndex: 'realName'
@@ -85,7 +93,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
           <span
             className='href'
             onClick={() => {
-              APP.history.push(`/finance/withdraw/${records.id}?readOnly=1`);
+              APP.history.push(`/finance/withdraw/${records.id}?readOnly=1`)
             }}
           >
             查看详情
@@ -95,18 +103,21 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
               className='href ml10'
               onClick={() => {
                 Modal.confirm({
-                  title: '是否提交打款？',
-                  content: '确认后将会打款给对应用户',
+                  title: '是否提交申请？',
+                  content: '提交后生成提现请求，在提现请求管理中进行打款操作',
                   onOk: () => {
                     submitRemittance(records.id).then(res => {
                       if (res) {
-                        APP.success('提交打款成功');
-                        this.list.refresh();
+                        APP.success('提交打款成功')
+                        this.list.refresh()
                       }
                     })
                   }
                 })
-              }}>提交打款</span>
+              }}
+            >
+              提交打款请求
+            </span>
             <span
               className='href ml10'
               onClick={() => {
@@ -158,18 +169,47 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
               取消提现
             </span>
           </If>
+          <span
+            className='ml8 href'
+            onClick={this.applyVoucher(records)}
+          >
+            提现凭证申请
+          </span>
+          <span className='ml8 href'>
+            提现凭证下载
+          </span>
         </>
       )
     }
-  }];
+  }]
   componentDidMount() {
-    const form = this.list.form;
+    const form = this.list.form
     if (form && this.batchId) {
-      form.setValues({ batchId: this.batchId });
-      this.list.fetchData();
+      form.setValues({ batchId: this.batchId })
+      this.list.fetchData()
     } else {
-      this.list.refresh();
+      this.list.refresh()
     }
+    // getSummary().then((res) => {
+    //   console.log(res, 'res')
+    // })
+  }
+  applyVoucher = (record: any) => () => {
+    const hide = this.props.alert({
+      title: '提现凭证申请',
+      width: 400,
+      content: (
+        <div>
+          申请提现凭证后需要等待一段时间后方可下载提现凭证
+        </div>
+      ),
+      onOk: () => {
+        applyVoucher(record.id).then(() => {
+          hide()
+          this.list.refresh()
+        })
+      }
+    })
   }
   onChange = (value: [moment.Moment, moment.Moment]) => {
     if (!value[0] || !value[1]) return;
@@ -186,23 +226,25 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
   submitPayment = () => {
     this.props.alert({
       width: 600,
-      title: (
-        <div style={{ textAlign: 'center' }}>
-          <div>按申请日期提交打款</div>
-          <div>提交后将会打款给对应用户</div>
-        </div>
-      ),
+      title: null,
       content: (
         <div>
+          <div style={{ textAlign: 'center' }}>
+            <div className='font18'>按日期提交提现申请</div>
+            <div className='mt8 mb8'>提交后生成提现请求，在提现请求管理中进行打款操作</div>
+          </div>
           <Form
+            formItemStyle={{
+              marginBottom: 0
+            }}
             getInstance={ref => this.batchPaymentForm = ref}
             rangeMap={{
               dateRange: {
                 fields: ['startTime', 'endTime']
               }
             }}
-          > 
-            <FormItem name="id" hidden={true}/>
+          >
+            <FormItem name='id' hidden={true}/>
             <FormItem
               label='申请时间'
               required
@@ -226,17 +268,17 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                 })(
                   <RangePicker
                     disabledDate={(current: moment.Moment | null) => {
-                      return !!(current && current >= moment().startOf('day'));
+                      return !!(current && current >= moment().startOf('day'))
                     }}
                     showTime
-                    format="YYYY/MM/DD"
+                    format='YYYY/MM/DD'
                   />
                 )
               }}
             />
             <FormItem
               inner={(form) => {
-                const { commonNum, interceptionNum, commonAmount, interceptionAmount, totalNum, totalAmount, totalRechargeAmount } = this.state;
+                const { commonNum, interceptionNum, commonAmount, interceptionAmount, totalNum, totalAmount, totalRechargeAmount } = this.state
                 const { startTime, endTime } = this.batchPaymentForm.getValues();
                 const hasValue = startTime && endTime;
                 return (
@@ -252,13 +294,13 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
         </div>
       ),
       onOk: (hide) => {
-        const { batchId } = this.state;
+        const { batchId } = this.state
         this.batchPaymentForm.props.form.validateFields((err) => {
-          const vals = this.batchPaymentForm.getValues();
+          const vals = this.batchPaymentForm.getValues()
           if (!err) {
             Modal.confirm({
-              title: '系统提示',
-              content: '请确保财务向连连账号中充值后再行操作，否则提现将全部失败',
+              title: '是否提交申请',
+              content: '提交后生成提现请求，在提现请求管理中进行打款操作',
               onOk: () => {
                 batchSubmit({
                   batchId,
@@ -267,11 +309,11 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                 }).then(res => {
                   if (res) {
                     hide()
-                    APP.success('批量打款成功');
+                    APP.success('提交申请成功')
                   }
                 })
               }
-              });
+            })
           }
         })
       }
@@ -327,13 +369,16 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
             </>
           )}
           getInstance={(ref) => {
-            this.list = ref;
+            this.list = ref
           }}
           addonAfterSearch={(
             <>
-              <Button type='primary' onClick={() => APP.history.push('/finance/withdraw/records')}>批次记录</Button>
-              <Button type='primary' className='ml10' onClick={this.submitPayment}>按申请日期提交打款</Button>
+              <Button type='primary' className='ml10' onClick={this.submitPayment}>按日期提交申请</Button>
               <Button type='primary' className='ml10' onClick={() => exportList(this.list.payload)}>导出表格</Button>
+              <div className='fr text-right'>
+                <span>当前待提现金额汇总：{APP.fn.formatMoney(this.state.summary.totalAmount)}元</span>&nbsp;&nbsp;
+                {this.state.summary.earliestDate && <span>最早未打款日期：{APP.fn.formatDate(this.state.summary.earliestDate)}</span>}
+              </div>
             </>
           )}
           formConfig={defaultConfig}

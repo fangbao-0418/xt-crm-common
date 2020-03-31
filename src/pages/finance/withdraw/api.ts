@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-27 11:00:32
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-31 16:08:37
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/finance/withdraw/api.ts
+ */
 import { listResponse, RecordsResponse } from './adapter';
 import { exportFile } from '@/util/fetch';
 import { queryString } from '@/util/utils';
@@ -48,7 +54,7 @@ export function getRemittanceDetail(id: string) {
   return get(`/crm/member/fund/remittance/v1/detail?id=${id}`);
 }
 
-// 单笔提交打款
+// 单笔提交打款申请
 export function submitRemittance(id: string) {
   return newPost('/crm/member/fund/remittance/v1/submit', { id });
 }
@@ -68,7 +74,7 @@ export function getRemittanceLog(id: string) {
   return get(`/crm/member/fund/remittance/v1/log?id=${id}`)
 }
 
-// 批量打款
+// 批量打款申请
 export function batchSubmit(payload: {
   startTime: string,
   endTime: string,
@@ -77,9 +83,23 @@ export function batchSubmit(payload: {
   return newPost('/crm/member/fund/remittance/v1/batchSubmit', payload)
 }
 
-
 // 批量打款统计信息
 export function getRemittanceInfo(payload: { startTime: string, endTime: string }) {
   const search = queryString(payload);
   return get(`/crm/member/fund/remittance/v1/info${search}`)
+}
+
+/** 提交打款 */
+export function submitPay (id: any) {
+  return newPost('/crm/member/fund/remittance/v1/remit', {id})
+}
+
+/** 申请凭证 */
+export function applyVoucher (id: any) {
+  return newPost('/crm/member/fund/remittance/v1/receiptApply', {id})
+}
+
+/** 提现汇总信息 */
+export function getSummary () {
+  return get('/crm/member/fund/remittance/v1/summary')
 }
