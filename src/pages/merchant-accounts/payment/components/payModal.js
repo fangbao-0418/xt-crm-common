@@ -169,28 +169,28 @@ class PayModal extends React.Component {
               </Form.Item>
             </If>
             <If condition={newPaymentAccount === 1 && payType === 10}>
-              <Form.Item label="支付宝名称">
+              <Form.Item label="账户名">
                 {getFieldDecorator('accountName', {
                   rules: [
                     {
                       required: newPaymentAccount === 1 && payType === 10,
-                      message: '请输入支付宝名称'
+                      message: '请输入账户名'
                     }
                   ]
                 })(
-                  <Input placeholder="请输入支付宝名称" />
+                  <Input placeholder="真实姓名或企业名称" />
                 )}
               </Form.Item>
-              <Form.Item label="支付宝账号">
+              <Form.Item label="账号">
                 {getFieldDecorator('accountNo', {
                   rules: [
                     {
                       required: newPaymentAccount === 1 && payType === 10,
-                      message: '请输入支付宝账号'
+                      message: '请输入账户'
                     }
                   ]
                 })(
-                  <Input placeholder="请输入支付宝账号" />
+                  <Input placeholder="手机号或邮箱" />
                 )}
               </Form.Item>
             </If>

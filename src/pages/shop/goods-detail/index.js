@@ -79,7 +79,7 @@ class GoodsDetail extends React.Component {
         weight: goodsInfo.weight || '暂无数据',
         withShippingFree: goodsInfo.withShippingFree,
         freightTemplateName: goodsInfo.freightTemplateName,
-        freightTemplateId: 1, // goodsInfo.freightTemplateId,
+        freightTemplateId: goodsInfo.freightTemplateId,
         returnContact: goodsInfo.returnContact,
         returnPhone: goodsInfo.returnPhone,
         returnAddress: goodsInfo.returnAddress

@@ -7,17 +7,22 @@ import If from '@/packages/common/components/if';
 export default class extends Component {
   state = {
     importRes: null,
-    errorUrl: ''
+    errorUrl: '',
+    loading: false
   }
 
   handleImportChange = info => {
     const { status, response, name } = info.file;
     if (status === 'done') {
+      this.setState({
+        loading: false
+      })
       if (response.success) {
         console.log('file response =>', response)
         this.setState({ importRes: response.data })
         message.success(`${name} 文件上传成功`);
       } else if (/^url:/.test(response.message)) {
+        message.error(`上传失败`);
         const errorUrl = response.message.replace('url:', '')
         this.setState({
           errorUrl
@@ -26,6 +31,9 @@ export default class extends Component {
         message.error(`${response.message}`);
       }
     } else if (status === 'error') {
+      this.setState({
+        loading: false
+      })
       message.error(`${name} 文件上传错误.`);
     }
   };
@@ -35,13 +43,20 @@ export default class extends Component {
       message.warn('上传文件不能超过2M');
       return false
     }
+    this.setState({
+      loading: true
+    })
+  }
+
+  handleAfterClose = () => {
+    this.setState({
+      errorUrl: ''
+    })
   }
 
   render() {
-    const { importRes } = this.state
+    const { importRes, loading } = this.state
     const { modalProps = {} } = this.props;
-
-    console.log(this.state.errorUrl)
 
     return (
       <Modal
@@ -49,6 +64,7 @@ export default class extends Component {
         title='批量支付'
         footer={null}
         destroyOnClose
+        afterClose={this.handleAfterClose}
       >
         <div>
           <Upload
@@ -63,7 +79,7 @@ export default class extends Component {
             style={{ margin: '0 10px' }}
             beforeUpload={this.handBeforeUpload}
           >
-            <Button type='primary'>导入excel表</Button>
+            <Button loading={loading} type='primary'>导入excel表</Button>
           </Upload>
           <span
             className="href"
@@ -91,7 +107,7 @@ export default class extends Component {
         </div>
         <If condition={this.state.errorUrl}>
           <div>
-            上传失败
+            <span style={{ color: 'red' }}>上传失败{' '}</span>
             <span
               className="href"
               onClick={() => {
