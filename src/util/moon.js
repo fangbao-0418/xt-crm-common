@@ -2,8 +2,8 @@
  * @Author: fangbao
  * @Date: 2020-03-27 19:49:47
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-28 09:44:29
- * @FilePath: /xt-crm/src/util/moon.js
+ * @LastEditTime: 2020-03-31 10:28:50
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/util/moon.js
  */
 (function (a, b) {
   const env = process.env.PUB_ENV

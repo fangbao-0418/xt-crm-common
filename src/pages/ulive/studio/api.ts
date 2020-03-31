@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-18 11:47:02
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/ulive/studio/api.ts
+ */
 const { post, get, newPost, newPut } = APP.http
 /** 直播列表 */
 export const getStudioList = (payload: any) => {
@@ -64,4 +70,22 @@ export const fetchComplainList = (payload: {
   page: number
 }) => {
   return get('::ulive/live/complain/list', payload)
+}
+
+/** 直播场次批量审核 */
+export const multiAudit = (payload: {
+  /** 0-审核未通过, 1-审核通过 */
+  auditStatus: 0 | 1
+  planIds: any[]
+  auditReason?: string
+}) => {
+  return newPost('::ulive/live/plan/batch/audit', payload)
+}
+
+/** 删除直播回放 */
+export const stopPlayback = (payload: {
+  planId: any
+  forbidReason?: string
+}) => {
+  return newPost('::ulive/live/plan/playback/forbid', payload)
 }

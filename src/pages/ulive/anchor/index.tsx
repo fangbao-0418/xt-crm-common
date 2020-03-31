@@ -18,7 +18,7 @@ class Main extends React.Component<Props> {
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
     title: '主播昵称',
     dataIndex: 'nickName',
-    width: 360,
+    width: 300,
     render: (text, record) => {
       return (
         <div className={styles['anchor-column-nickname']}>
@@ -45,37 +45,41 @@ class Main extends React.Component<Props> {
       )
     }
   },
-  // {
-  //   title: '直播间',
-  //   render: () => {
-  //     return (
-  //       <div>
-  //         <img
-  //           src="https://axure-file.lanhuapp.com/6c74a568-2a43-4303-b380-de2eec294975__9abb445b2c0c5bfdd5970c937d437273.svg" alt=""
-  //         >
-  //         </img>
-  //         <Divider type="vertical" />
-  //         <span onClick={() => this.showVideo()} className='href'>查看</span>
-  //       </div>
-  //     )
-  //   }
-  // },
   {
     title: '粉丝数',
     dataIndex: 'fansTotal',
-    width: 150,
+    width: 200,
     align: 'center'
   },
   {
     dataIndex: 'anchorIdentityType',
     title: '主播身份',
+    width: 150,
     render: (text) => {
       return AnchorIdentityTypeEnum[text]
     }
   },
   {
+    dataIndex: 'anchorId',
+    title: '主播个人页',
+    width: 120,
+    align: 'center',
+    render: (text, record) => {
+      return (
+        <img
+          onClick={this.showQrcode.bind(this, record)}
+          width={30}
+          height={30}
+          src={require('@/assets/images/qrcode.svg')}
+        >
+        </img>
+      )
+    }
+  },
+  {
     dataIndex: 'anchorLevel',
     title: '主播等级',
+    width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
@@ -83,7 +87,6 @@ class Main extends React.Component<Props> {
   {
     title: '操作',
     align: 'center',
-    width: 150,
     render: (text, record) => {
       return (
         <div>
@@ -124,17 +127,23 @@ class Main extends React.Component<Props> {
       footer: null
     })
   }
-  public showVideo () {
-    const hide = this.props.alert({
-      content: (
-        <Video
-          // detail={item}
-          hide={() => {
-            hide()
-          }}
-        />
-      ),
-      footer: null
+  public showQrcode = (record: Anchor.ItemProps) => {
+    api.getWxQrcode({
+      page: 'module_live/pages/room/index',
+      scene: `id=${record.anchorId}`
+    }).then((res) => {
+      if (!res) {
+        return
+      }
+      const hide = this.props.alert({
+        width: 400,
+        content: (
+          <div className='text-center'>
+            <img src={res} />
+          </div>
+        ),
+        footer: null
+      })
     })
   }
   public render () {
