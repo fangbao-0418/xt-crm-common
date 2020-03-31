@@ -47,10 +47,12 @@ function getSelectedRowKeysMap(data: any[]) {
 }
 
 function combination(data: any[]) {
-  data = data || [];
-  const keysMap: any = {};
-  const result: any[] = [];
-  for (let item of data) {
+  /** 原始数据sku集合，转化成spu集合 */
+  data = data || []
+  console.log(data, 'combination')
+  const keysMap: any = {}
+  const result: any[] = []
+  for (const item of data) {
     const record = {
       ...pick(item, [
         'num',
@@ -75,16 +77,16 @@ function combination(data: any[]) {
           'totalStock'
         ])
       ]
-    };
+    }
     if (keysMap[item.id]) {
-      keysMap[item.id].productBasicSkuInfos = [...keysMap[item.id].productBasicSkuInfos, record];
+      keysMap[item.id].productBasicSkuInfos = keysMap[item.id].productBasicSkuInfos.concat(record.productBasicSkuInfos)
     } else {
-      keysMap[item.id] = record;
-      result.push(record);
+      keysMap[item.id] = record
+      result.push(record)
     }
   }
-  console.log('result =>', result);
-  return result;
+  console.log(result, 'combination result')
+  return result
 }
 
 interface State {
@@ -1188,19 +1190,18 @@ class Main extends React.Component<Props, State> {
               // 销售商品SKU中库存商品详情
               getBaseSkuDetail(record.skuId)
                 .then(data => {
-                  record.productBasics = data;
-                  record.loading = false;
-
+                  record.productBasics = data
+                  record.loading = false
                   this.setState({
                     selectedRowKeys: data.map((v: any) => v.id),
                     selectedRowKeysMap: getSelectedRowKeysMap(data)
                   });
-                  this.forceUpdate();
+                  this.forceUpdate()
                 })
                 .catch(() => {
-                  record.loading = false;
-                  this.forceUpdate();
-                });
+                  record.loading = false
+                  this.forceUpdate()
+                })
             }
           }}
           expandIcon={ isBondedGood ? undefined : (props: any) => {
@@ -1225,6 +1226,7 @@ class Main extends React.Component<Props, State> {
             if (deliveryMode !== 1) {
               return null
             }
+            console.log(record.productBasics, 'record.productBasicsrecord.productBasics')
             return (
               <Table
                 loading={record.loading}
@@ -1242,6 +1244,7 @@ class Main extends React.Component<Props, State> {
                         v.num = v.num || 1
                         return v
                       })
+                      console.log(dataSource, 'product selector on ok ')
                       this.setState({
                         selectedRowKeys,
                         dataSource,

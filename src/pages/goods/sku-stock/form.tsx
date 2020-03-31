@@ -1,6 +1,6 @@
 import React from 'react';
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form';
-import { Card, Input, Button, Modal, InputNumber } from 'antd';
+import { Card, Button, Modal, InputNumber } from 'antd';
 import ProductCategory from '../components/product-category';
 import { defaultConfig } from './config'
 import { RouteComponentProps } from 'react-router'
