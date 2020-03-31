@@ -124,7 +124,7 @@ class GoodsTable extends Component {
     const list = this.props.list || []
     const logistics = this.props.logistics || {}
     const columns = [
-      ...(getDetailColumns(0).filter(item => item.key !== 'storeName')),
+      ...(getDetailColumns(0, orderInfo.isShop === 1).filter(item => item.key !== 'storeName')),
       {
         title: '操作',
         dataIndex: 'operate',
