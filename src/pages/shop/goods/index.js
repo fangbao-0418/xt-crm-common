@@ -4,7 +4,8 @@ import { getGoodsList, getCategoryTopList, passGoods, getGoodsInfo } from './api
 import SelectFetch from '@/components/select-fetch';
 import { ListPage, FormItem, If } from '@/packages/common/components';
 import SuppilerSelect from '@/components/suppiler-auto-select';
-import CarouselModal from './components/carouselModal';
+import { replaceHttpUrl } from '@/util/utils';
+import CarouselPreview from '@/components/carousel-preview'
 import UnpassModal from './components/unpassModal';
 import LowerModal from './components/lowerModal';
 import ViolationModal from './components/violationModal';
@@ -20,16 +21,51 @@ class Main extends React.Component {
     // status: undefined, // 0: 下架 1: 上架
     // auditStatus: undefined, // 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
     currentGoods: null, // 当前审核商品
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    carouselTitle: '',
+    carouselVisible: false,
+    carouselImgs: []
+  }
+
+  /** 获取相关图片组合成自己想要的数据结构 */
+  getCarouselsInfos = (currentGoods) => {
+    let coverUrl = [{
+      label: '封面图',
+      value: currentGoods.coverUrl
+    }]
+
+    let productImage = [], skuImages = []
+
+    if (currentGoods.productImage) {
+      productImage = currentGoods.productImage.split(',').map(item => ({
+        label: '详情图',
+        value: currentGoods.coverUrl
+      }))
+    }
+
+    if (currentGoods.skuList) {
+      skuImages = currentGoods.skuList.filter(item => !!item.imageUrl1).map(item => ({
+        label: 'sku图',
+        value: replaceHttpUrl(item.imageUrl1)
+      }))
+    }
+
+    const carouselsInfos = [
+      ...coverUrl,
+      ...productImage,
+      ...skuImages
+    ];
+
+    return carouselsInfos
   }
 
   /** 操作：商品图片预览-显示预览模态框 */
   handlePreview = (currentGoods) => {
     getGoodsInfo({ productPoolId: currentGoods.id }).then(res => {
       this.setState({
-        currentGoods: res
-      }, () => {
-        this.carouselModalRef.showModal()
+        carouselTitle: `【${res.productName}】 图片预览`,
+        carouselVisible: true,
+        carouselImgs: this.getCarouselsInfos(res)
       })
     })
   }
@@ -94,7 +130,8 @@ class Main extends React.Component {
   /** 性能优化: 重置清空当前商品 */
   handleDestroy = () => {
     this.setState({
-      currentGoods: null
+      currentGoods: null,
+      carouselImgs: []
     })
   }
 
@@ -126,17 +163,26 @@ class Main extends React.Component {
     })
   }
 
+  /* 商品图片预览模态框取消 */
+  handleCarouselPreviewCancel = () => {
+    this.setState({
+      carouselVisible: false
+    })
+  }
+
   render() {
-    const { currentGoods, tabStatus, selectedRowKeys } = this.state;
+    const { currentGoods, tabStatus, selectedRowKeys, carouselTitle, carouselVisible, carouselImgs } = this.state;
     const hasSelected = selectedRowKeys.length > 0;
 
     return (
       <Card>
         {/* 商品图片预览模态框 */}
-        <CarouselModal
-          currentGoods={currentGoods}
-          ref={ref => this.carouselModalRef = ref}
-          ondestroy={this.handleDestroy}
+        <CarouselPreview
+          title={carouselTitle}
+          visible={carouselVisible}
+          list={carouselImgs}
+          onCancel={this.handleCarouselPreviewCancel}
+          afterClose={this.handleDestroy}
         />
 
         {/* 不通过理由模态框 */}
