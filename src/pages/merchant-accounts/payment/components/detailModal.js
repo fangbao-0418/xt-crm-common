@@ -49,7 +49,8 @@ class DetailModal extends React.Component {
         payTypeInfo = '暂无数据',
         accountName = '暂无数据',
         accountNo = '暂无数据',
-        financePaymentAccountVO = {}
+        financePaymentAccountVO = {},
+        realPayTimeInfo
       },
       detailModalUpload
     } = this.props;
@@ -112,6 +113,9 @@ class DetailModal extends React.Component {
               </If>
               <p>{financePaymentAccountVO.accountName}</p>
               <p>{financePaymentAccountVO.accountNo}</p>
+            </Form.Item>
+            <Form.Item label="实际支付时间">
+              <p>{realPayTimeInfo}</p>
             </Form.Item>
             <Form.Item
               label="凭证"
