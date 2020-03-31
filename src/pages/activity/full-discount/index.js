@@ -11,6 +11,10 @@ class FullDiscountPage extends PureComponent {
     gotoPage(`/activity/full-discount/edit/${record.id}`)
   }
 
+  handleAdd = () => {
+    gotoPage(`/activity/full-discount/edit`)
+  }
+
   render() {
     return (
       <Card>
@@ -39,6 +43,7 @@ class FullDiscountPage extends PureComponent {
             <div>
               <Button
                 type='primary'
+                onClick={this.handleAdd}
               >
                 添加活动
               </Button>
