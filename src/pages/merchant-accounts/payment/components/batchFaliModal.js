@@ -64,9 +64,9 @@ export default class extends Component {
         params.fileName = files[0].name
         fn = 'paymentBatchFail'
       }
-        api[fn](params).then(res => {
-          res && handleFailConfirm()
-        })
+      api[fn](params).then(res => {
+        res && handleFailConfirm()
+      })
     });
   }
 
@@ -131,8 +131,17 @@ export default class extends Component {
             {getFieldDecorator('remark', {
               rules: [
                 {
-                  required: true,
-                  message: '请输入失败原因',
+                  validator: (rule, value, cb) => {
+                    if (!value) {
+                      cb('请输入至少一个字符')
+                      return
+                    }
+                    if (value.trim().length > 30) {
+                      cb('不能超过30个字符')
+                      return
+                    }
+                    cb()
+                  }
                 },
               ],
             })(
