@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Input, DatePicker, Radio, Button, Table } from 'antd'
+import DiscountModal from './components/discount-modal'
 import { gotoPage } from '@/util/utils';
 
 const { RangePicker } = DatePicker;
@@ -38,6 +39,7 @@ const columns = [
   },
 ];
 
+@Form.create()
 class FullDiscountEditPage extends PureComponent {
   handleSave = () => {
     this.props.form.validateFields((err, vals) => {
@@ -70,6 +72,8 @@ class FullDiscountEditPage extends PureComponent {
         title="添加活动"
         extra={<span onClick={this.handleBack} className="href">返回</span>}
       >
+        {/* 优惠条件模态框 */}
+        <DiscountModal />
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Card type="inner" title="基本信息">
             <Form.Item label="活动名称">
@@ -189,4 +193,4 @@ class FullDiscountEditPage extends PureComponent {
   }
 }
 
-export default Form.create()(FullDiscountEditPage)
+export default FullDiscountEditPage
