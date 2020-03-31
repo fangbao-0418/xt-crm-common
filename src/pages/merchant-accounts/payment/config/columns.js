@@ -28,14 +28,14 @@ const getColumns = ({ onConfirm }) => {
       render: MoneyRender
     },
     {
-      title: '结算人名称',
+      title: '商家名称',
       key: 'storeName',
       dataIndex: 'storeName',
     },
     {
-      title: '结算人类型',
-      key: 'storeNameType',
-      dataIndex: 'storeNameType',
+      title: '商家类型',
+      key: 'storeTypeInfo',
+      dataIndex: 'storeTypeInfo',
     },
     {
       title: '状态',

@@ -38,7 +38,8 @@ class SearchForm extends React.Component {
       paymentSerialNo: '',
       modifyName: '',
       modifyTime: '',
-      storeName: ''
+      storeName: '',
+      storeType: ''
     })
     setQuery({ page: 1, pageSize: page.pageSize }, true);
     onFetchData();
@@ -81,11 +82,11 @@ class SearchForm extends React.Component {
             </Col>
             <Col span={6}>
               <FormItem label="商家类型">
-                {getFieldDecorator('storeNameType', { initialValue: '' })(
+                {getFieldDecorator('storeType', { initialValue: '' })(
                   <Select>
                     <Option value="">全部</Option>
-                    <Option value="1">小店</Option>
-                    <Option value="2">供应商</Option>
+                    <Option value="1">供应商</Option>
+                    <Option value="2">小店</Option>
                   </Select>
                 )}
               </FormItem>
