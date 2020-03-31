@@ -117,7 +117,7 @@ class SettleModal extends React.Component {
             initialValue: keys.length === 1 ? '100' : ''
           })(
             <InputNumber
-              min={0}
+              min={1}
               onBlur={this.handlePayRateBlur}
               style={{ width: 180 }}
               disabled={keys.length === 1}

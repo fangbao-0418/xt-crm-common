@@ -113,7 +113,15 @@ class DetailModal extends React.Component {
               <p>{financePaymentAccountVO.accountName}</p>
               <p>{financePaymentAccountVO.accountNo}</p>
             </Form.Item>
-            <Form.Item label="凭证">
+            <Form.Item
+              label="凭证"
+              help={
+                <>
+                  <div>1.本地上传图片大小不能超过2M</div>
+                  <div>2.商品图片最多上传5张图片</div>
+                </>
+              }
+            >
               {getFieldDecorator('paymentImg', {
                 initialValue: [].concat(paymentImgList.filter(item => !!item).map(item => initImgList(item)[0]))
               })(
