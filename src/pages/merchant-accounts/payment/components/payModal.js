@@ -252,12 +252,7 @@ class PayModal extends React.Component {
                 </>
               }>
               {getFieldDecorator('paymentImg', {
-                initialValue: [].concat(paymentImgList.filter(item => !!item).map(item => initImgList(item)[0])),
-                rules: [
-                  {
-                    required: true
-                  }
-                ]
+                initialValue: [].concat(paymentImgList.filter(item => !!item).map(item => initImgList(item)[0]))
               })(
                 <UploadView
                   listNum={5}
