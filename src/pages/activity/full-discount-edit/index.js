@@ -109,6 +109,17 @@ class FullDiscountEditPage extends PureComponent {
       },
     }
 
+    const formTailLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 4 },
+      },
+      wrapperCol: {
+        xs: { span: 24, offset: 0 },
+        sm: { span: 20, offset: 4 },
+      },
+    };
+
     let promotionType = getFieldValue('promotionType')
     let ruleType = getFieldValue('ruleType')
 
@@ -262,17 +273,19 @@ class FullDiscountEditPage extends PureComponent {
             <Form.Item label="活动说明">
               {getFieldDecorator('promotionDesc')(
                 <TextArea
-                  style={{ maxWidth: 1050 }}
+                  style={{ maxWidth: 350 }}
                   placeholder="显示在用户端, 建议填写活动商品信息, 如美妆个护、食品保健可用, 100字以内"
-                  autoSize={{ minRows: 3, maxRows: 7 }}
+                  autoSize={{ minRows: 5, maxRows: 7 }}
                 />
               )}
             </Form.Item>
           </Card>
-          <div style={{ textAlign: 'center', marginTop: 24 }}>
-            <Button onClick={this.handleSave} type="primary">保存</Button>
-            <Button style={{ marginLeft: 16 }}>取消</Button>
-            <Button onClick={this.handleBack} style={{ marginLeft: 16 }}>返回</Button>
+          <div style={{ padding: '16px 24px 0 24px' }}>
+            <Form.Item {...formTailLayout}>
+              <Button onClick={this.handleSave} type="primary">保存</Button>
+              <Button style={{ marginLeft: 16 }}>取消</Button>
+              <Button onClick={this.handleBack} style={{ marginLeft: 16 }}>返回</Button>
+            </Form.Item>
           </div>
         </Form>
       </Card>

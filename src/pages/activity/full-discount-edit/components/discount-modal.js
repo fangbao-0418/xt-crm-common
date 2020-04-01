@@ -4,28 +4,32 @@ import { connect } from '@/util/utils';
 import { namespace } from '../model';
 
 const errMsgs = [{
-  err: 'condition',
+  key: 'condition',
   msg: '请设置优惠门槛'
 }, {
-  err: 'stageAmount',
+  key: 'stageAmount',
+  reverse: 'stageCount',
   msg: '请输入优惠门槛金额',
   type: 'condition',
   val: 1
 }, {
-  err: 'stageCount',
+  key: 'stageCount',
+  reverse: 'stageAmount',
   msg: '请输入优惠门槛件数',
   type: 'condition',
   val: 2
 }, {
-  err: 'mode',
+  key: 'mode',
   msg: '请设置优惠方式'
 }, {
-  err: 'discountsAmount',
+  key: 'discountsAmount',
+  reverse: 'discounts',
   msg: '请输入优惠金额',
   type: 'mode',
   val: 1
 }, {
-  err: 'discountsAmount',
+  key: 'discounts',
+  reverse: 'discountsAmount',
   msg: '请输入优惠件数',
   type: 'mode',
   val: 2
@@ -37,7 +41,8 @@ const errMsgs = [{
 @Form.create()
 class DiscountModal extends PureComponent {
   state = {
-    err: ''
+    conditionErr: '',
+    modeErr: ''
   }
 
   handleOk = () => {
@@ -66,6 +71,10 @@ class DiscountModal extends PureComponent {
   /* 模态框消失之后回调 */
   handleAfterClose = () => {
     const { dispatch, discountModal } = this.props
+    this.setState({
+      conditionErr: '',
+      modeErr: ''
+    })
     dispatch[namespace].saveDefault({
       discountModal: {
         ...discountModal,
@@ -74,33 +83,55 @@ class DiscountModal extends PureComponent {
     })
   }
 
-  /* 输入框获取焦点 */
-  handleFocus = (key) => {
+  /* 输入框获取焦点-自动选择radio选项 & 清空另外一边的选项 */
+  handleFocus = (errkey, itemkey, e) => {
     const { setFieldsValue } = this.props.form
-    const currentItem = this.getCurrentItem(key)
+    const currentItem = this.getCurrentItem(itemkey)
     if (currentItem) {
       setFieldsValue({
-        [currentItem.type]: currentItem.val
+        [currentItem.type]: currentItem.val,
+        [currentItem.reverse]: undefined
+      })
+    }
+    if (e.target.value === '') {
+      this.setState({
+        [errkey]: itemkey
+      })
+    }
+  }
+
+  /* 单选变化回调-清空另一边的输入框 & 并立马给出报错提示 */
+  handleRadioChange = (errkey, itemkey, e) => {
+    const { setFieldsValue } = this.props.form
+    const val = e.target.value
+    const currentItem = errMsgs.find(item => item.type === itemkey && item.val === val)
+    if (currentItem) {
+      setFieldsValue({
+        [currentItem.reverse]: undefined
+      })
+      this.setState({
+        [errkey]: currentItem.key
       })
     }
   }
 
   /* 输入框变化回调 */
-  handleInputChange = (key, val) => {
-    const { isFieldTouched } = this.props.form
-    if (!isFieldTouched(key)) {
-      return
-    }
+  handleInputChange = (errkey, itemkey, val) => {
+    // 没有设置值的话 就设置错误
     if (val === '') {
       this.setState({
-        err: key
+        [errkey]: itemkey
       })
-      return
+    } else {
+      this.setState({
+        [errkey]: ''
+      })
     }
   }
 
+  /* 获取errMsgs的当前值 */
   getCurrentItem = (key) => {
-    return errMsgs.find(item => item.err === key)
+    return errMsgs.find(item => item.key === key)
   }
 
   render() {
@@ -110,6 +141,10 @@ class DiscountModal extends PureComponent {
       },
       discountModal
     } = this.props
+    const { conditionErr, modeErr } = this.state
+
+    const conditionErrItem = this.getCurrentItem(conditionErr)
+    const modeErrItem = this.getCurrentItem(modeErr)
 
     const radioStyle = {
       display: 'block',
@@ -138,7 +173,7 @@ class DiscountModal extends PureComponent {
                   }
                 ]
               })(
-                <Radio.Group>
+                <Radio.Group onChange={this.handleRadioChange.bind(this, 'conditionErr', 'condition')}>
                   <Radio
                     style={radioStyle}
                     value={1}
@@ -168,16 +203,14 @@ class DiscountModal extends PureComponent {
                       }
                     ]
                   })(
-                    <div>
-                      <InputNumber 
-                        onChange={this.handleInputChange.bind(this, 'stageAmount')}
-                        onFocus={this.handleFocus.bind(this, 'stageAmount')}
-                      />
-                      &nbsp;元&nbsp;&nbsp;
-                      大于0, 小数点后最多2位有效数字
-                    </div>
+                    <InputNumber
+                      onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageAmount')}
+                      onFocus={this.handleFocus.bind(this, 'conditionErr', 'stageAmount')}
+                    />
                   )
                 }
+                 &nbsp;元&nbsp;&nbsp;
+                 大于0, 小数点后最多2位有效数字
               </div>
               <div style={{ marginTop: 16 }}>
                 {
@@ -189,15 +222,22 @@ class DiscountModal extends PureComponent {
                       }
                     ]
                   })(
-                    <div>
-                      <InputNumber />&nbsp;件&nbsp;&nbsp;
-                      大于0的整数
-                    </div>
+                    <InputNumber
+                      onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageCount')}
+                      onFocus={this.handleFocus.bind(this, 'conditionErr', 'stageCount')}
+                    />
                   )
                 }
+                &nbsp;件&nbsp;&nbsp;
+                大于0的整数
               </div>
             </div>
           </div>
+          {
+            conditionErrItem &&
+            ['stageAmount', 'stageCount'].includes(conditionErrItem.key) &&
+            <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{conditionErrItem.msg}</p>
+          }
           <h3>优惠方式</h3>
           <div style={{ marginBottom: 0, paddingLeft: 8 }}>
             <div style={{ display: 'inline-block' }}>
@@ -209,7 +249,7 @@ class DiscountModal extends PureComponent {
                   }
                 ]
               })(
-                <Radio.Group>
+                <Radio.Group onChange={this.handleRadioChange.bind(this, 'modeErr', 'mode')}>
                   <Radio
                     style={radioStyle}
                     value={1}
@@ -239,12 +279,14 @@ class DiscountModal extends PureComponent {
                       }
                     ]
                   })(
-                    <div>
-                      <InputNumber />&nbsp;元&nbsp;&nbsp;
-                      大于0, 小数点后最多2位有效数字
-                    </div>
+                    <InputNumber
+                      onChange={this.handleInputChange.bind(this, 'modeErr', 'discountsAmount')}
+                      onFocus={this.handleFocus.bind(this, 'modeErr', 'discountsAmount')}
+                    />
                   )
                 }
+                &nbsp;元&nbsp;&nbsp;
+                大于0, 小数点后最多2位有效数字
               </div>
               <div style={{ marginTop: 16 }}>
                 {
@@ -256,15 +298,22 @@ class DiscountModal extends PureComponent {
                       }
                     ]
                   })(
-                    <div>
-                      <InputNumber />&nbsp;折&nbsp;&nbsp;
-                      10分制, 大于0小于10, 保留小数点后1位
-                    </div>
+                    <InputNumber
+                      onChange={this.handleInputChange.bind(this, 'discounts')}
+                      onFocus={this.handleFocus.bind(this, 'modeErr', 'discounts')}
+                    />
                   )
                 }
+                &nbsp;折&nbsp;&nbsp;
+                10分制, 大于0小于10, 保留小数点后1位
               </div>
             </div>
           </div>
+          {
+            modeErrItem &&
+            ['discountsAmount', 'discounts'].includes(modeErrItem.key) &&
+            <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{modeErrItem.msg}</p>
+          }
         </Form>
       </Modal>
     )

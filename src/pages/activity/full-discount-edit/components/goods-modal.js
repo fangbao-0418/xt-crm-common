@@ -73,6 +73,9 @@ class GoodsModal extends PureComponent {
     return (
       <Modal
         width="60%"
+        bodyStyle={{
+          paddingBottom: 0
+        }}
         title={goodsModal.title}
         visible={goodsModal.visible}
         onCancel={this.handleCancel}

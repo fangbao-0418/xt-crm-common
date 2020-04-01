@@ -73,7 +73,9 @@ class ActivityModal extends PureComponent {
     return (
       <Modal
         width="60%"
-        style={{ minWidth: 600 }}
+        bodyStyle={{
+          paddingBottom: 0
+        }}
         title={activityModal.title}
         visible={activityModal.visible}
         onCancel={this.handleCancel}
