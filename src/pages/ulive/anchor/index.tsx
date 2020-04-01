@@ -129,7 +129,7 @@ class Main extends React.Component<Props> {
   }
   public showQrcode = (record: Anchor.ItemProps) => {
     api.getWxQrcode({
-      page: 'module_live/pages/room/index',
+      page: 'module_live/pages/personal/index',
       scene: `id=${record.anchorId}`
     }).then((res) => {
       if (!res) {
