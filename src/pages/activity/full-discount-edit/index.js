@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react'
-import { Card, Form, Input, DatePicker, Radio, Button, Table } from 'antd'
+import { Card, Form, Input, DatePicker, Radio, Button, Table, InputNumber } from 'antd'
 import DiscountModal from './components/discount-modal'
 import GoodsModal from './components/goods-modal'
+import RulesTable from './components/rules-table'
 import { gotoPage, connect } from '@/util/utils';
 import { namespace } from './model';
 
@@ -49,7 +50,8 @@ class FullDiscountEditPage extends PureComponent {
   /* 保存操作 */
   handleSave = () => {
     this.props.form.validateFields((err, vals) => {
-      if (!err) return
+      console.log(err)
+      if (err) return
 
       console.log(vals)
     })
@@ -58,17 +60,6 @@ class FullDiscountEditPage extends PureComponent {
   /* 返回操作 */
   handleBack = () => {
     gotoPage(`/activity/full-discount`)
-  }
-
-  /* 添加优惠条件操作-显示优惠模态框 */
-  handleDiscount = () => {
-    const { dispatch } = this.props
-    dispatch[namespace].saveDefault({
-      discountModal: {
-        visible: true,
-        title: '添加优惠条件'
-      }
-    })
   }
 
   /* 添加活动商品操作-显示活动或商品模态框 */
@@ -82,8 +73,31 @@ class FullDiscountEditPage extends PureComponent {
     })
   }
 
+  /* 优惠种类选项变化的时候-自动设置优惠类型为阶梯满 & 清空满减选项关联的满减封顶数值 */
+  handlePromotionTypeChange = (e) => {
+    const ruleType = e.target.value
+    const { setFieldsValue } = this.props.form
+    if (ruleType === 12) {
+      setFieldsValue({
+        ruleType: 1,
+        maxDiscountsAmount: undefined
+      })
+    }
+  }
+
+  /* 优惠类型选项变化的时候-清空满减选项关联的满减封顶数值 */
+  handleRuleTypeChange = (e) => {
+    const ruleType = e.target.value
+    const { setFieldsValue } = this.props.form
+    if (ruleType === 1) {
+      setFieldsValue({
+        maxDiscountsAmount: undefined
+      })
+    }
+  }
+
   render() {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, getFieldValue } = this.props.form
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -94,6 +108,9 @@ class FullDiscountEditPage extends PureComponent {
         sm: { span: 20 },
       },
     }
+
+    let promotionType = getFieldValue('promotionType')
+    let ruleType = getFieldValue('ruleType')
 
     return (
       <Card
@@ -142,34 +159,73 @@ class FullDiscountEditPage extends PureComponent {
             title="优惠信息"
           >
             <Form.Item label="优惠种类">
-              {getFieldDecorator('promotionType')(
-                <Radio.Group>
+              {getFieldDecorator('promotionType', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择优惠种类',
+                  },
+                ],
+              })(
+                <Radio.Group onChange={this.handlePromotionTypeChange}>
                   <Radio value={11}>满减</Radio>
                   <Radio value={12}>满折</Radio>
                 </Radio.Group>
               )}
             </Form.Item>
             <Form.Item label="优惠类型">
-              {getFieldDecorator('promotionCategory')(
-                <Radio.Group>
-                  <Radio value={11}>阶梯满</Radio>
-                  <Radio value={12}>每满减</Radio>
+              {getFieldDecorator('ruleType', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择至少一项优惠类型'
+                  }
+                ],
+              })(
+                <Radio.Group onChange={this.handleRuleTypeChange}>
+                  <Radio value={1}>
+                    阶梯满
+                  </Radio>
+                  <Radio disabled={promotionType === 12} value={0}>
+                    每满减
+                  </Radio>
                 </Radio.Group>
               )}
+              <Form.Item style={{ display: 'inline-block', marginBottom: 0 }}>
+                {
+                  getFieldDecorator('maxDiscountsAmount', {
+                    rules: [{
+                      required: ruleType === 0,
+                      message: '请输入满减封顶数'
+                    }]
+                  })(
+                    <InputNumber
+                      {...(
+                        /* 解决不必选的时候也会出现报错样式的bug */
+                        ruleType !== 0 ? {
+                          style: {
+                            borderColor: '#d9d9d9'
+                          }
+                        } : null
+                      )}
+                      disabled={ruleType !== 0}
+                    />
+                  )
+                }
+                &nbsp;元封顶，0 元表示不封顶
+              </Form.Item>
             </Form.Item>
             <Form.Item label="优惠条件">
-              <p>
-                <Button onClick={this.handleDiscount} type="link">
-                  添加条件
-                </Button>
-                <span>可添加最多X个阶梯</span>
-              </p>
-              <Table
-                style={{ marginTop: 8 }}
-                pagination={false}
-                dataSource={dataSource}
-                columns={columns}
-              />
+              {
+                getFieldDecorator('rules', {
+                  rules: [{
+                    required: true,
+                    message: '请输入满减封顶数'
+                  }]
+                })(
+                  <RulesTable />
+                )
+              }
             </Form.Item>
           </Card>
           <Card
