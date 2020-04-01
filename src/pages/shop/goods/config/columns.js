@@ -6,7 +6,7 @@ import { replaceHttpUrl } from '@/util/utils';
 import { formatMoneyWithSign } from '@/pages/helper';
 
 function formatTime(text) {
-  return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-';
+  return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '-';
 }
 
 const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpass }) => {
@@ -41,7 +41,14 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
     {
       title: '一级类目',
       width: 120,
-      dataIndex: 'firstCategoryName'
+      dataIndex: 'firstCategoryName',
+      render: (val, record) => {
+        return (
+          <Tooltip title={record.combineName}>
+            {val}
+          </Tooltip>
+        )
+      }
     },
     {
       title: '售价',
@@ -127,7 +134,7 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
               >
                 查看
               </span>
-                <span
+              <span
                 className='href ml10'
                 onClick={() => onLower(record)}
               >
@@ -136,7 +143,7 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
             </div>
           )
         }
-        
+
         if (auditStatus === 1) {
           return (
             <div style={{ marginTop: 40 }}>
