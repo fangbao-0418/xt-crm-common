@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Popconfirm, Row, Col } from 'antd'
 import { FormItem } from '@/packages/common/components/form'
+import ExportButton from '@/packages/common/components/export-button'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import Detail from './Detail'
@@ -66,7 +67,10 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         const className = record.trimType === 1 ? 'success' : 'error'
         return (
-          <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+          <span className={className}>
+            {text !== 0 ? record.trimType === 1 ? '+' : '-' : null}
+            {APP.fn.formatMoneyNumber(text, 'm2u')}
+          </span>
         )
       }
     },
@@ -181,7 +185,7 @@ class Main extends React.Component<Props, State> {
     selectedRowKeys: []
   }
   /** 添加调整单 */
-  public showAdjustment (type: 'add' | 'audit' | 'view',record?: ListResponse) {
+  public showAdjustment (type: 'add' | 'audit' | 'view', record?: ListResponse) {
     if (this.props.alert) {
       const hide = this.props.alert({
         width: 600,
@@ -234,7 +238,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys } = this.state
     const rowSelection: TableRowSelection<ListResponse> = {
       selectedRowKeys,
       onChange: this.onSelectChange,
@@ -253,7 +257,7 @@ class Main extends React.Component<Props, State> {
               fields: ['createTimeBegin', 'createTimeEnd']
             }
           }}
-          reserveKey={`adjustment${this.props.status}`}
+          // reserveKey={`adjustment${this.props.status}`}
           columns={this.columns}
           formConfig={getFieldsConfig()}
           tableProps={{
@@ -261,8 +265,7 @@ class Main extends React.Component<Props, State> {
               x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
                 return a + b
               })
-            },
-            rowSelection
+            }
           }}
           formItemLayout={(
             <>
@@ -303,6 +306,7 @@ class Main extends React.Component<Props, State> {
               >
                 清除
               </Button>
+              {/* 供应商1.0.2隐藏需求
               <Auth code='finance:trim_build'>
                 <Button
                   className='mr10'
@@ -311,20 +315,21 @@ class Main extends React.Component<Props, State> {
                 >
                   新建调整单
                 </Button>
-              </Auth>
-              <Button
+              </Auth> */}
+              {/* <Button
                 type='primary'
                 className='mr10'
                 onClick={this.toExport.bind(this, undefined)}
               >
                 批量导出
-              </Button>
-              <Button
+              </Button> */}
+              <ExportButton></ExportButton>
+              {/* <Button
                 type='primary'
                 onClick={this.toExport.bind(this, true)}
               >
                 全部导出
-              </Button>
+              </Button> */}
             </div>
           )}
           api={api.fetchList}
