@@ -11,6 +11,10 @@ time, tr, tt, u, ul, var, video {
     /* vertical-align: baseline; */
 }
 
+.ant-table-tbody>tr>td, .ant-table-thead>tr>th {
+  vertical-align: top;
+}
+
 *, :after, :before {
     box-sizing: border-box;
 }
