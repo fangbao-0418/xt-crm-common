@@ -314,6 +314,7 @@ class PendingReview extends React.Component<Props, State> {
     const refundTypeOptions = isHaiTao
       ? options.filter((v) => v.key !== 30)
       : options
+
     return (
       <div>
         <Card title={<AfterSaleDetailTitle />}>

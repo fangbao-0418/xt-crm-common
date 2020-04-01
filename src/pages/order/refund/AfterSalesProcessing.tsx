@@ -37,6 +37,7 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
    * 之前状态是待审核且是已关闭状态
    */
   const falg = !(isBeforeStatusOf(enumRefundStatus.WaitConfirm) && isRefundStatusOf(enumRefundStatus.Rejected));
+
   return (
     <>
       <Card title={<AfterSaleDetailTitle />}>
@@ -58,7 +59,7 @@ const AfterSalesProcessing: React.FC<Props> = ({ data }: Props) => {
         {isRefundStatusOf(enumRefundStatus.Rejected) && <CloseInfo orderServerVO={orderServerVO} />}
       </Card>
       <Card bodyStyle={{ paddingTop: 0 }}>
-        <AfterSaleApplyInfo orderServerVO={orderServerVO} orderInterceptRecordVO={orderInterceptRecordVO}/>
+        <AfterSaleApplyInfo shopDTO={data.shopDTO} orderServerVO={orderServerVO} orderInterceptRecordVO={orderInterceptRecordVO}/>
       </Card>
     </>
   );

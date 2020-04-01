@@ -59,6 +59,8 @@ const AfterSaleApplyInfo = (props: Props) => {
     (props.shopDTO && props.shopDTO.shopType === 2) || false // 是否小店订单 传入
   )
 
+  console.log(props)
+
   return (
     <div>
       <Row
