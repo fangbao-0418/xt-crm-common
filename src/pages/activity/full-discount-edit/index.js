@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Input, DatePicker, Radio, Button, Table } from 'antd'
 import DiscountModal from './components/discount-modal'
-import { gotoPage } from '@/util/utils';
+import GoodsModal from './components/goods-modal'
+import { gotoPage, connect } from '@/util/utils';
+import { namespace } from './model';
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -39,8 +41,12 @@ const columns = [
   },
 ];
 
+@connect(state => ({
+  discountModal: state[namespace].discountModal
+}))
 @Form.create()
 class FullDiscountEditPage extends PureComponent {
+  /* 保存操作 */
   handleSave = () => {
     this.props.form.validateFields((err, vals) => {
       if (!err) return
@@ -49,8 +55,31 @@ class FullDiscountEditPage extends PureComponent {
     })
   }
 
+  /* 返回操作 */
   handleBack = () => {
     gotoPage(`/activity/full-discount`)
+  }
+
+  /* 添加优惠条件操作-显示优惠模态框 */
+  handleDiscount = () => {
+    const { dispatch } = this.props
+    dispatch[namespace].saveDefault({
+      discountModal: {
+        visible: true,
+        title: '添加优惠条件'
+      }
+    })
+  }
+
+  /* 添加活动商品操作-显示活动或商品模态框 */
+  handleRelevancy = () => {
+    const { dispatch } = this.props
+    dispatch[namespace].saveDefault({
+      goodsModal: {
+        visible: true,
+        title: '添加商品'
+      }
+    })
   }
 
   render() {
@@ -74,6 +103,8 @@ class FullDiscountEditPage extends PureComponent {
       >
         {/* 优惠条件模态框 */}
         <DiscountModal />
+        {/* 添加商品模态框 */}
+        <GoodsModal />
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Card type="inner" title="基本信息">
             <Form.Item label="活动名称">
@@ -128,7 +159,7 @@ class FullDiscountEditPage extends PureComponent {
             </Form.Item>
             <Form.Item label="优惠条件">
               <p>
-                <Button type="link">
+                <Button onClick={this.handleDiscount} type="link">
                   添加条件
                 </Button>
                 <span>可添加最多X个阶梯</span>
@@ -154,7 +185,7 @@ class FullDiscountEditPage extends PureComponent {
                 </Radio.Group>
               )}
               <p>
-                <Button type="link">
+                <Button onClick={this.handleRelevancy} type="link">
                   添加数据
                 </Button>
                 <span>已添加最n个数据</span>
