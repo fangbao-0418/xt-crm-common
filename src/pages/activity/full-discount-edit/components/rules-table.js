@@ -4,9 +4,7 @@ import { connect } from '@/util/utils';
 import { namespace } from '../model';
 import { getRulesColumns } from '../config/columns';
 
-@connect(state => ({
-  discountModal: state[namespace].discountModal
-}))
+@connect()
 class RulesTable extends PureComponent {
   /* 添加优惠条件操作-显示优惠模态框 */
   handleDiscount = () => {

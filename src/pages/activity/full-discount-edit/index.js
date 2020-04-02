@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Input, DatePicker, Radio, Button, Table, InputNumber } from 'antd'
+import { ProductSelector, ActivitySelector } from '@/components'
 import DiscountModal from './components/discount-modal'
-import GoodsModal from './components/goods-modal'
 import RulesTable from './components/rules-table'
+import ProductTable from './components/product-table'
 import { gotoPage, connect } from '@/util/utils';
 import { namespace } from './model';
 
@@ -46,7 +47,9 @@ const columns = [
 ]
 
 @connect(state => ({
-  discountModal: state[namespace].discountModal
+  discountModal: state[namespace].discountModal,
+  goodsModal: state[namespace].goodsModal,
+  activityModal: state[namespace].activityModal
 }))
 @Form.create()
 class FullDiscountEditPage extends PureComponent {
@@ -66,14 +69,23 @@ class FullDiscountEditPage extends PureComponent {
   }
 
   /* 添加活动商品操作-显示活动或商品模态框 */
-  handleRelevancy = () => {
+  handleRelevancy = (productRef) => {
     const { dispatch } = this.props
-    dispatch[namespace].saveDefault({
-      goodsModal: {
-        visible: true,
-        title: '添加商品'
-      }
-    })
+    if (productRef === 0) {
+      dispatch[namespace].saveDefault({
+        goodsModal: {
+          visible: true,
+          title: '选择商品'
+        }
+      })
+    } else if (productRef === 1) {
+      dispatch[namespace].saveDefault({
+        activityModal: {
+          visible: true,
+          title: '选择活动'
+        }
+      })
+    }
   }
 
   /* 优惠种类选项变化的时候-自动设置优惠类型为阶梯满 & 清空满减选项关联的满减封顶数值 */
@@ -135,8 +147,40 @@ class FullDiscountEditPage extends PureComponent {
     })
   }
 
+  /* 商品选择器关闭 */
+  handleGoodsModalCancel = () => {
+    const { dispatch, goodsModal } = this.props
+    dispatch[namespace].saveDefault({
+      goodsModal: {
+        ...goodsModal,
+        visible: false
+      }
+    })
+  }
+
+  /* 商品选择器选择商品 */
+  handleProductSelectorChange = (_, selectedRows) => {
+    console.log(selectedRows)
+  }
+
+  /* 活动选择器关闭 */
+  handleActivityModalCancel = () => {
+    const { dispatch, activityModal } = this.props
+    dispatch[namespace].saveDefault({
+      activityModal: {
+        ...activityModal,
+        visible: false
+      }
+    })
+  }
+
+  /* 活动选择器选择活动 */
+  handleActivitySelectorChange = (_, selectedRows) => {
+    console.log(selectedRows)
+  }
+
   render() {
-    const { getFieldDecorator, getFieldValue } = this.props.form
+    const { form: { getFieldDecorator, getFieldValue }, goodsModal, activityModal } = this.props
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -163,13 +207,6 @@ class FullDiscountEditPage extends PureComponent {
     let ruleType = getFieldValue('ruleType')
     let productRef = getFieldValue('productRef')
 
-    let productRefTxt = '选择商品/活动'
-    if (productRef === 0) {
-      productRefTxt = '选择活动'
-    } else if (productRef === 1) {
-      productRefTxt = '选择商品'
-    }
-
     return (
       <Card
         bordered={false}
@@ -178,8 +215,18 @@ class FullDiscountEditPage extends PureComponent {
       >
         {/* 优惠条件模态框 */}
         <DiscountModal rules={getFieldValue('rules')} onOk={this.handleRulesSave} />
-        {/* 添加商品模态框 */}
-        <GoodsModal />
+        {/* 选择商品模态框 */}
+        <ProductSelector
+          visible={goodsModal.visible}
+          onCancel={this.handleGoodsModalCancel}
+          onChange={this.handleProductSelectorChange}
+        />
+        {/* 选择活动模态框 */}
+        <ActivitySelector
+          visible={activityModal.visible}
+          onCancel={this.handleActivityModalCancel}
+          onChange={this.handleActivitySelectorChange}
+        />
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Card type="inner" title="基本信息">
             <Form.Item label="活动名称">
@@ -303,24 +350,34 @@ class FullDiscountEditPage extends PureComponent {
             title="活动商品"
           >
             <Form.Item label="活动商品">
-              {getFieldDecorator('productRef')(
+              {getFieldDecorator('productRef', {
+                rules: [{
+                  required: true,
+                  message: '请选择活动商品'
+                }]
+              })(
                 <Radio.Group>
                   <Radio value={0}>指定商品</Radio>
                   <Radio value={1}>指定活动</Radio>
                 </Radio.Group>
               )}
-              <p>
-                <Button disabled={![0, 1].includes(productRef)} onClick={this.handleRelevancy} type="link">
-                  {productRefTxt}
-                </Button>
-                <span>已添加最n个数据</span>
-              </p>
-              <Table
-                style={{ marginTop: 8 }}
-                pagination={false}
-                dataSource={dataSource}
-                columns={columns}
-              />
+            </Form.Item>
+            <Form.Item label="选择关联">
+              {getFieldDecorator('productRefInfo', {
+                rules: [{
+                  required: true,
+                  validator: (_, value, callback) => {
+                    if (value.length) {
+                      callback()
+                    } else {
+                      callback('请选择关联活动/商品')
+                    }
+                  }
+                }],
+                initialValue: []
+              })(
+                <ProductTable productRef={productRef} />
+              )}
             </Form.Item>
           </Card>
           <Card
