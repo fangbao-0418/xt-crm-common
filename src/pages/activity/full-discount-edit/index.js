@@ -161,6 +161,14 @@ class FullDiscountEditPage extends PureComponent {
 
     let promotionType = getFieldValue('promotionType')
     let ruleType = getFieldValue('ruleType')
+    let productRef = getFieldValue('productRef')
+
+    let productRefTxt = '选择商品/活动'
+    if (productRef === 0) {
+      productRefTxt = '选择活动'
+    } else if (productRef === 1) {
+      productRefTxt = '选择商品'
+    }
 
     return (
       <Card
@@ -269,6 +277,7 @@ class FullDiscountEditPage extends PureComponent {
               {
                 getFieldDecorator('rules', {
                   rules: [{
+                    required: true,
                     validator: (_, value, callback) => {
                       if (value.length) {
                         callback()
@@ -279,7 +288,11 @@ class FullDiscountEditPage extends PureComponent {
                   }],
                   initialValue: []
                 })(
-                  <RulesTable onEdit={this.handleRuleEdit} onDelete={this.handleRuleDelete} />
+                  <RulesTable
+                    ruleType={ruleType}
+                    onEdit={this.handleRuleEdit}
+                    onDelete={this.handleRuleDelete}
+                  />
                 )
               }
             </Form.Item>
@@ -297,8 +310,8 @@ class FullDiscountEditPage extends PureComponent {
                 </Radio.Group>
               )}
               <p>
-                <Button onClick={this.handleRelevancy} type="link">
-                  添加数据
+                <Button disabled={![0, 1].includes(productRef)} onClick={this.handleRelevancy} type="link">
+                  {productRefTxt}
                 </Button>
                 <span>已添加最n个数据</span>
               </p>

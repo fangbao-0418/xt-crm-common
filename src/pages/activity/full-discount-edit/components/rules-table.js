@@ -32,15 +32,28 @@ class RulesTable extends PureComponent {
   }
 
   render() {
-    const { value: dataSource } = this.props
+    const { value: dataSource, ruleType } = this.props
+
+    let maxSize = 0
+    let disabled = false
+
+    if (ruleType === 1) { // 阶梯满 可以添加5条规则
+      maxSize = 5
+      disabled = dataSource.length >= 5
+    } else if (ruleType === 0) { // 每满减 只可以添加1条规则
+      maxSize = 1
+      disabled = dataSource.length >= 1
+    } else {
+      disabled = true
+    }
 
     return (
       <div>
         <p>
-          <Button onClick={this.handleDiscount} type="link">
+          <Button disabled={disabled} onClick={this.handleDiscount} type="link">
             添加条件
           </Button>
-          <span>可添加最多X个阶梯</span>
+          <span>可添加最多{maxSize}个阶梯</span>
         </p>
         <Table
           style={{ margin: '8px 0 8px' }}
