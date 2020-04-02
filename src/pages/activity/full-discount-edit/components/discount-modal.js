@@ -36,7 +36,8 @@ const errMsgs = [{
 }]
 
 @connect(state => ({
-  discountModal: state[namespace].discountModal
+  discountModal: state[namespace].discountModal,
+  currentRuleIndex: state[namespace].currentRuleIndex
 }))
 @Form.create()
 class DiscountModal extends PureComponent {
@@ -46,13 +47,64 @@ class DiscountModal extends PureComponent {
   }
 
   handleOk = () => {
-    const { form: { validateFields }, onOk } = this.props
-    validateFields((err, vals) => {
-      console.log(err)
-      if (err) return
-      console.log(vals)
+    const { form: { validateFields }, onOk, dispatch, discountModal, currentRuleIndex } = this.props
+    validateFields((err, { condition, mode, stageAmount, stageCount, discountsAmount, discounts }) => {
+      if (err) {
+        // 发生的错误根据conditionErr 和 modeErr 收集
+        const errMap = errMsgs.reduce((pre, next) => {
+          if (next.key in err) {
+            if (['condition', 'stageAmount', 'stageCount'].includes(next.key)) {
+              return {
+                ...pre,
+                conditionErr: next.key
+              }
+            } else if (['mode', 'discountsAmount', 'discounts'].includes(next.key)) {
+              return {
+                ...pre,
+                modeErr: next.key
+              }
+            } else {
+              return pre
+            }
+          } else {
+            return pre
+          }
+        }, {})
+        this.setState({
+          ...errMap
+        })
+        return
+      }
+
+      const record = {
+        condition,
+        mode
+      }
+
+      if (condition === 1) {
+        record.stageAmount = stageAmount
+        record.conditionStr = `满 ${stageAmount} 元`
+      } else if (condition === 2) {
+        record.stageCount = stageCount
+        record.conditionStr = `满 ${stageCount} 件`
+      }
+
+      if (mode === 1) {
+        record.discountsAmount = discountsAmount
+        record.modeStr = `减 ${discountsAmount} 元`
+      } else if (mode === 2) {
+        record.discounts = discounts
+        record.modeStr = `折 ${discounts} 折`
+      }
+
       if (onOk) {
-        onOk(vals)
+        dispatch[namespace].saveDefault({
+          discountModal: {
+            ...discountModal,
+            visible: false,
+          }
+        })
+        onOk(record, currentRuleIndex)
       }
     })
   }
@@ -79,11 +131,12 @@ class DiscountModal extends PureComponent {
       discountModal: {
         ...discountModal,
         title: '优惠条件'
-      }
+      },
+      currentRuleIndex: -1
     })
   }
 
-  /* 输入框获取焦点-自动选择radio选项 & 清空另外一边的选项 */
+  /* 输入框获取焦点-自动选择radio选项 & 清空另外一边的选项 & 空值的时候设置错误值 */
   handleFocus = (errkey, itemkey, e) => {
     const { setFieldsValue } = this.props.form
     const currentItem = this.getCurrentItem(itemkey)
@@ -93,6 +146,15 @@ class DiscountModal extends PureComponent {
         [currentItem.reverse]: undefined
       })
     }
+    if (e.target.value === '') {
+      this.setState({
+        [errkey]: itemkey
+      })
+    }
+  }
+
+  /* 输入框失去焦点-空值的时候设置错误值 */
+  handleBlur = (errkey, itemkey, e) => {
     if (e.target.value === '') {
       this.setState({
         [errkey]: itemkey
@@ -137,14 +199,34 @@ class DiscountModal extends PureComponent {
   render() {
     const {
       form: {
-        getFieldDecorator
+        getFieldDecorator,
+        getFieldsValue
       },
-      discountModal
+      discountModal,
+      currentRuleIndex,
+      rules
     } = this.props
     const { conditionErr, modeErr } = this.state
-
+    /* 优惠门槛错误提示 */
     const conditionErrItem = this.getCurrentItem(conditionErr)
+    /* 优惠方式错误提示 */
     const modeErrItem = this.getCurrentItem(modeErr)
+
+    let { condition, mode } = getFieldsValue(['condition', 'mode'])
+    let stageAmount
+    let stageCount
+    let discountsAmount
+    let discounts
+
+    if (currentRuleIndex >= 0 && rules.length) {
+      const currentRule = rules[currentRuleIndex]
+      condition = condition || currentRule.condition
+      mode = mode || currentRule.mode
+      stageAmount = currentRule.stageAmount
+      stageCount = currentRule.stageCount
+      discountsAmount = currentRule.discountsAmount
+      discounts = currentRule.discounts
+    }
 
     const radioStyle = {
       display: 'block',
@@ -168,10 +250,10 @@ class DiscountModal extends PureComponent {
               {getFieldDecorator('condition', {
                 rules: [
                   {
-                    required: true,
-                    message: '请设置优惠门槛',
+                    required: true
                   }
-                ]
+                ],
+                initialValue: condition
               })(
                 <Radio.Group onChange={this.handleRadioChange.bind(this, 'conditionErr', 'condition')}>
                   <Radio
@@ -198,14 +280,18 @@ class DiscountModal extends PureComponent {
                   getFieldDecorator('stageAmount', {
                     rules: [
                       {
-                        required: true,
-                        message: '请输入优惠门槛金额',
+                        required: condition === 1
                       }
-                    ]
+                    ],
+                    initialValue: stageAmount
                   })(
                     <InputNumber
+                      disabled={condition === 2}
+                      min={0.01}
+                      precision={2}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageAmount')}
                       onFocus={this.handleFocus.bind(this, 'conditionErr', 'stageAmount')}
+                      onBlur={this.handleBlur.bind(this, 'conditionErr', 'stageAmount')}
                     />
                   )
                 }
@@ -217,14 +303,17 @@ class DiscountModal extends PureComponent {
                   getFieldDecorator('stageCount', {
                     rules: [
                       {
-                        required: true,
-                        message: '请输入优惠门槛件数',
+                        required: condition === 2
                       }
-                    ]
+                    ],
+                    initialValue: stageCount
                   })(
                     <InputNumber
+                      disabled={condition === 1}
+                      min={1}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageCount')}
                       onFocus={this.handleFocus.bind(this, 'conditionErr', 'stageCount')}
+                      onBlur={this.handleBlur.bind(this, 'conditionErr', 'stageCount')}
                     />
                   )
                 }
@@ -235,7 +324,7 @@ class DiscountModal extends PureComponent {
           </div>
           {
             conditionErrItem &&
-            ['stageAmount', 'stageCount'].includes(conditionErrItem.key) &&
+            ['condition', 'stageAmount', 'stageCount'].includes(conditionErrItem.key) &&
             <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{conditionErrItem.msg}</p>
           }
           <h3>优惠方式</h3>
@@ -244,10 +333,10 @@ class DiscountModal extends PureComponent {
               {getFieldDecorator('mode', {
                 rules: [
                   {
-                    required: true,
-                    message: '请设置优惠方式',
+                    required: true
                   }
-                ]
+                ],
+                initialValue: mode
               })(
                 <Radio.Group onChange={this.handleRadioChange.bind(this, 'modeErr', 'mode')}>
                   <Radio
@@ -274,14 +363,18 @@ class DiscountModal extends PureComponent {
                   getFieldDecorator('discountsAmount', {
                     rules: [
                       {
-                        required: true,
-                        message: '请输入优惠金额'
+                        required: mode === 1
                       }
-                    ]
+                    ],
+                    initialValue: discountsAmount
                   })(
                     <InputNumber
+                      disabled={mode === 2}
+                      min={0.01}
+                      precision={2}
                       onChange={this.handleInputChange.bind(this, 'modeErr', 'discountsAmount')}
                       onFocus={this.handleFocus.bind(this, 'modeErr', 'discountsAmount')}
+                      onBlur={this.handleBlur.bind(this, 'modeErr', 'discountsAmount')}
                     />
                   )
                 }
@@ -293,14 +386,19 @@ class DiscountModal extends PureComponent {
                   getFieldDecorator('discounts', {
                     rules: [
                       {
-                        required: true,
-                        message: '请输入优惠件数'
+                        required: mode === 2
                       }
-                    ]
+                    ],
+                    initialValue: discounts
                   })(
                     <InputNumber
-                      onChange={this.handleInputChange.bind(this, 'discounts')}
+                      disabled={mode === 1}
+                      min={0.1}
+                      max={9.9}
+                      precision={1}
+                      onChange={this.handleInputChange.bind(this, 'modeErr', 'discounts')}
                       onFocus={this.handleFocus.bind(this, 'modeErr', 'discounts')}
+                      onBlur={this.handleBlur.bind(this, 'modeErr', 'discounts')}
                     />
                   )
                 }
@@ -311,7 +409,7 @@ class DiscountModal extends PureComponent {
           </div>
           {
             modeErrItem &&
-            ['discountsAmount', 'discounts'].includes(modeErrItem.key) &&
+            ['mode', 'discountsAmount', 'discounts'].includes(modeErrItem.key) &&
             <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{modeErrItem.msg}</p>
           }
         </Form>

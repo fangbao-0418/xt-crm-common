@@ -14,7 +14,8 @@ export default {
     activityModal: {
       visible: false,
       title: '活动查询'
-    }
+    },
+    currentRuleIndex: -1 // 当前规则索引
   },
   effects: {}
 }

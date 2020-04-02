@@ -2,39 +2,7 @@ import React, { PureComponent } from 'react'
 import { Button, Table } from 'antd'
 import { connect } from '@/util/utils';
 import { namespace } from '../model';
-
-const dataSource = [
-  {
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    address: '西湖区湖底公园1号',
-  },
-  {
-    key: '2',
-    name: '胡彦祖',
-    age: 42,
-    address: '西湖区湖底公园1号',
-  },
-];
-
-const columns = [
-  {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: '住址',
-    dataIndex: 'address',
-    key: 'address',
-  },
-];
+import { getRulesColumns } from '../config/columns';
 
 @connect(state => ({
   discountModal: state[namespace].discountModal
@@ -51,7 +19,21 @@ class RulesTable extends PureComponent {
     })
   }
 
+  /* 编辑条件 */
+  handleEdit = (i) => {
+    const { onEdit } = this.props
+    onEdit(i)
+  }
+
+  /* 删除条件 */
+  handleDelete = (i) => {
+    const { onDelete } = this.props
+    onDelete(i)
+  }
+
   render() {
+    const { value: dataSource } = this.props
+
     return (
       <div>
         <p>
@@ -64,7 +46,10 @@ class RulesTable extends PureComponent {
           style={{ margin: '8px 0 8px' }}
           pagination={false}
           dataSource={dataSource}
-          columns={columns}
+          columns={getRulesColumns({
+            onEdit: this.handleEdit,
+            onDelete: this.handleDelete
+          })}
         />
       </div>
     )

@@ -26,21 +26,24 @@ const dataSource = [
 
 const columns = [
   {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
+    title: '优惠门槛',
+    dataIndex: 'condition',
+    key: 'condition',
   },
   {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
+    title: '优惠方式',
+    dataIndex: 'mode',
+    key: 'mode',
   },
   {
-    title: '住址',
-    dataIndex: 'address',
-    key: 'address',
-  },
-];
+    title: '操作',
+    render: () => {
+      return (
+        <span className="href">删除</span>
+      )
+    }
+  }
+]
 
 @connect(state => ({
   discountModal: state[namespace].discountModal
@@ -96,6 +99,42 @@ class FullDiscountEditPage extends PureComponent {
     }
   }
 
+  /* 优惠条件保存 */
+  handleRulesSave = (val, index) => {
+    const { getFieldValue, setFieldsValue } = this.props.form
+    let rules = getFieldValue('rules')
+    if (index >= 0) {
+      rules.splice(index, 1, val)
+    } else {
+      rules.push(val)
+    }
+    setFieldsValue({
+      rules
+    })
+  }
+
+  /* 优惠条件编辑 */
+  handleRuleEdit = (i) => {
+    const { dispatch } = this.props
+    dispatch[namespace].saveDefault({
+      discountModal: {
+        visible: true,
+        title: `编辑第【${i + 1}】条规则`
+      },
+      currentRuleIndex: i
+    })
+  }
+
+  /* 优惠条件删除 */
+  handleRuleDelete = (i) => {
+    const { getFieldValue, setFieldsValue } = this.props.form
+    const rules = getFieldValue('rules')
+    rules.splice(i, 1)
+    setFieldsValue({
+      rules
+    })
+  }
+
   render() {
     const { getFieldDecorator, getFieldValue } = this.props.form
     const formItemLayout = {
@@ -130,7 +169,7 @@ class FullDiscountEditPage extends PureComponent {
         extra={<span onClick={this.handleBack} className="href">返回</span>}
       >
         {/* 优惠条件模态框 */}
-        <DiscountModal />
+        <DiscountModal rules={getFieldValue('rules')} onOk={this.handleRulesSave} />
         {/* 添加商品模态框 */}
         <GoodsModal />
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
@@ -230,11 +269,17 @@ class FullDiscountEditPage extends PureComponent {
               {
                 getFieldDecorator('rules', {
                   rules: [{
-                    required: true,
-                    message: '请输入满减封顶数'
-                  }]
+                    validator: (_, value, callback) => {
+                      if (value.length) {
+                        callback()
+                      } else {
+                        callback('请添加优惠条件')
+                      }
+                    }
+                  }],
+                  initialValue: []
                 })(
-                  <RulesTable />
+                  <RulesTable onEdit={this.handleRuleEdit} onDelete={this.handleRuleDelete} />
                 )
               }
             </Form.Item>
