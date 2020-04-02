@@ -12,8 +12,8 @@ function formatTime(text) {
 const columns = [
   {
     title: '编号',
-    dataIndex: 'createUid',
-    key: 'createUid'
+    dataIndex: 'index',
+    key: 'index'
   },
   {
     title: '下架时间',
@@ -72,7 +72,13 @@ class ViolationModal extends Component {
   fetchData = (data) => {
     getOperateList(data).then(res => {
       this.setState({
-        violationData: res
+        violationData: {
+          ...res,
+          records: res.records.map((item, i) => ({
+            ...item,
+            index: (res.current - 1) * res.size + i + 1
+          }))
+        }
       })
     })
   }
