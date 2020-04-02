@@ -87,6 +87,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
     title: '操作',
     width: 220,
     fixed: 'right',
+    align: 'center',
     render: (records: any) => {
       return (
         <>
@@ -98,6 +99,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
           >
             查看详情
           </span>
+          <br />
           <If condition={records.transferStatus === 0}>
             <span
               className='href ml10'
@@ -118,6 +120,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
             >
               提交打款请求
             </span>
+            <br />
             <span
               className='href ml10'
               onClick={() => {
@@ -155,9 +158,9 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
                           remark: vals.remark
                         }).then(res => {
                           if (res) {
-                            APP.success('取消提现成功');
-                            this.list.refresh();
-                            hide();
+                            APP.success('取消提现成功')
+                            this.list.refresh()
+                            hide()
                           }
                         })
                       }
@@ -169,7 +172,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
               取消提现
             </span>
           </If>
-          <span
+          {/* <span
             className='ml8 href'
             onClick={this.applyVoucher(records)}
           >
@@ -177,7 +180,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
           </span>
           <span className='ml8 href'>
             提现凭证下载
-          </span>
+          </span> */}
         </>
       )
     }
@@ -190,9 +193,11 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
     } else {
       this.list.refresh()
     }
-    // getSummary().then((res) => {
-    //   console.log(res, 'res')
-    // })
+    getSummary().then((res) => {
+      this.setState({
+        summary: res
+      })
+    })
   }
   applyVoucher = (record: any) => () => {
     const hide = this.props.alert({
@@ -377,7 +382,7 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
               <Button type='primary' className='ml10' onClick={() => exportList(this.list.payload)}>导出表格</Button>
               <div className='fr text-right'>
                 <span>当前待提现金额汇总：{APP.fn.formatMoney(this.state.summary.totalAmount)}元</span>&nbsp;&nbsp;
-                {this.state.summary.earliestDate && <span>最早未打款日期：{APP.fn.formatDate(this.state.summary.earliestDate)}</span>}
+                {this.state.summary.earliestDate && <span>最早未打款日期：{this.state.summary.earliestDate}</span>}
               </div>
             </>
           )}
@@ -390,4 +395,4 @@ class Withdraw extends React.Component<AlertComponentProps, WithdrawState> {
   }
 }
 
-export default Alert(Withdraw);
+export default Alert(Withdraw)

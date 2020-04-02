@@ -49,10 +49,12 @@ class Records extends React.Component<Props> {
   }, {
     title: '提现请求总金额',
     dataIndex: 'totalAmount',
+    align: 'center',
     render: (text: any) => <>{formatMoneyWithSign(text)}</>
   }, {
     title: '需充值金额',
     dataIndex: 'totalRechargeAmount',
+    align: 'center',
     render: (text: any) => <>{formatMoneyWithSign(text)}</>
   }, {
     title: '提交提现条目',
@@ -71,11 +73,11 @@ class Records extends React.Component<Props> {
           >
             查看列表
           </a>
-          {/* {record.remitStatus === 1 && ( */}
+          {record.remitStatus === 1 && (
             <span onClick={this.applyPay(record)} className='ml8 href'>
               提交打款
             </span>
-          {/* )} */}
+          )}
         </>
       )
     }
@@ -86,7 +88,7 @@ class Records extends React.Component<Props> {
       content: (
         <div>
           {/* <h1 className='text-center clear font18'>提交打款确认</h1> */}
-          <h2 className='text-center clear font16' style={{color: '#D9001B'}}>充值到连连平台后再确认打款！</h2>
+          <h2 className='text-center clear font16'>充值到连连平台后再确认打款！</h2>
           <h2 className='text-center clear font16'>本次提现需充值金额：{APP.fn.formatMoney(record.totalRechargeAmount)}</h2>
           <p className='mt8'>本次提现日期范围：{APP.fn.formatDate(record.startTime, 'YYYY.MM.DD')}-{APP.fn.formatDate(record.endTime, 'YYYY.MM.DD')}</p>
           <p>本次提现条目数目：{record.recordNum}（普通提现5000 拦截提现5000）</p>
@@ -105,10 +107,10 @@ class Records extends React.Component<Props> {
   getBatchList = async (data:any) => {
     if (data.create) {
       if (data.create[0]) {
-        data.startTime = data.create[0].format('YYYY-MM-DD')
+        data.startTime = data.create[0].format('YYYY.MM.DD')
       }
       if (data.create[1]) {
-        data.endTime = data.create[1].format('YYYY-MM-DD')
+        data.endTime = data.create[1].format('YYYY.MM.DD')
       }
       delete data.create
     }
