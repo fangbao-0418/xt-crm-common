@@ -67,7 +67,7 @@ class BaseCard extends React.Component {
                 </span>
               </FormItem>
               <FormItem label="累计销量">
-                <span className="ant-form-text">{baseInfo.showNum}</span>
+                <span className="ant-form-text">{baseInfo.saleCount}</span>
               </FormItem>
             </Form>
           </Card>
