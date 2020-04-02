@@ -1,50 +1,15 @@
 import React, { PureComponent } from 'react'
-import { Card, Form, Input, DatePicker, Radio, Button, Table, InputNumber } from 'antd'
+import { Card, Form, Input, DatePicker, Radio, Button, Modal, InputNumber } from 'antd'
 import { ProductSelector, ActivitySelector } from '@/components'
 import DiscountModal from './components/discount-modal'
 import RulesTable from './components/rules-table'
 import ProductTable from './components/product-table'
-import { gotoPage, connect } from '@/util/utils';
+import { gotoPage, connect, unionArray } from '@/util/utils';
 import { namespace } from './model';
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
-
-const dataSource = [
-  {
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    address: '西湖区湖底公园1号',
-  },
-  {
-    key: '2',
-    name: '胡彦祖',
-    age: 42,
-    address: '西湖区湖底公园1号',
-  },
-];
-
-const columns = [
-  {
-    title: '优惠门槛',
-    dataIndex: 'condition',
-    key: 'condition',
-  },
-  {
-    title: '优惠方式',
-    dataIndex: 'mode',
-    key: 'mode',
-  },
-  {
-    title: '操作',
-    render: () => {
-      return (
-        <span className="href">删除</span>
-      )
-    }
-  }
-]
+const { confirm } = Modal;
 
 @connect(state => ({
   discountModal: state[namespace].discountModal,
@@ -160,7 +125,20 @@ class FullDiscountEditPage extends PureComponent {
 
   /* 商品选择器选择商品 */
   handleProductSelectorChange = (_, selectedRows) => {
-    console.log(selectedRows)
+    const { getFieldValue, setFieldsValue } = this.props.form
+    const productRefInfo = getFieldValue('productRefInfo')
+    setFieldsValue({
+      productRefInfo: unionArray(productRefInfo, selectedRows)
+    });
+  }
+
+  /* 活动选择器选择活动 */
+  handleActivitySelectorChange = (_, selectedRows) => {
+    const { getFieldValue, setFieldsValue } = this.props.form
+    const productRefInfo = getFieldValue('productRefInfo')
+    setFieldsValue({
+      productRefInfo: unionArray(productRefInfo, selectedRows)
+    });
   }
 
   /* 活动选择器关闭 */
@@ -174,9 +152,36 @@ class FullDiscountEditPage extends PureComponent {
     })
   }
 
-  /* 活动选择器选择活动 */
-  handleActivitySelectorChange = (_, selectedRows) => {
-    console.log(selectedRows)
+  /* 活动商品变化 */
+  handleProductRefChange = (e) => {
+    const { getFieldValue, setFieldsValue } = this.props.form
+    const productRefInfo = getFieldValue('productRefInfo')
+    const value = e.target.value
+    if (!productRefInfo.length) {
+      return
+    }
+    let title = ''
+    if (value === 0) {
+      // 选择商品
+      title = '已有选择活动关联, 切换活动商品类型, 会自动清空关联活动数据?'
+    } else if (value === 1) {
+      // 选择活动
+      title = '已有选择商品关联, 切换活动商品类型, 会自动清空关联商品数据?'
+    }
+    setFieldsValue({
+      productRefInfo: []
+    })
+    confirm({
+      title,
+      onCancel() {
+        setFieldsValue({
+          productRefInfo
+        })
+        setFieldsValue({
+          productRef: value === 0 ? 1 : 0
+        })
+      }
+    });
   }
 
   render() {
@@ -223,6 +228,7 @@ class FullDiscountEditPage extends PureComponent {
         />
         {/* 选择活动模态框 */}
         <ActivitySelector
+          multi={false}
           visible={activityModal.visible}
           onCancel={this.handleActivityModalCancel}
           onChange={this.handleActivitySelectorChange}
@@ -356,9 +362,11 @@ class FullDiscountEditPage extends PureComponent {
                   message: '请选择活动商品'
                 }]
               })(
-                <Radio.Group>
-                  <Radio value={0}>指定商品</Radio>
-                  <Radio value={1}>指定活动</Radio>
+                <Radio.Group
+                  onChange={this.handleProductRefChange}
+                >
+                  <Radio value={1}>指定商品</Radio>
+                  <Radio value={0}>指定活动</Radio>
                 </Radio.Group>
               )}
             </Form.Item>

@@ -35,6 +35,8 @@ class ProductTable extends PureComponent {
   render() {
     const { value: dataSource, productRef } = this.props
 
+    console.log(dataSource)
+
     let disabled = false
     let columns = []
 
