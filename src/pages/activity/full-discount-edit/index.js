@@ -112,6 +112,16 @@ class FullDiscountEditPage extends PureComponent {
     })
   }
 
+  /* 活动商品删除 */
+  handleProductDelete = (i) => {
+    const { getFieldValue, setFieldsValue } = this.props.form
+    const productRefInfo = getFieldValue('productRefInfo')
+    productRefInfo.splice(i, 1)
+    setFieldsValue({
+      productRefInfo
+    })
+  }
+
   /* 商品选择器关闭 */
   handleGoodsModalCancel = () => {
     const { dispatch, goodsModal } = this.props
@@ -384,7 +394,7 @@ class FullDiscountEditPage extends PureComponent {
                 }],
                 initialValue: []
               })(
-                <ProductTable productRef={productRef} />
+                <ProductTable productRef={productRef} onDelete={this.handleProductDelete} />
               )}
             </Form.Item>
           </Card>

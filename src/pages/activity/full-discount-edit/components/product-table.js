@@ -35,13 +35,13 @@ class ProductTable extends PureComponent {
   render() {
     const { value: dataSource, productRef } = this.props
 
-    console.log(dataSource)
-
     let disabled = false
     let columns = []
+    let length = dataSource.length
 
     let productRefTxt = '选择商品/活动'
     if (productRef === 0) {
+      disabled = length >= 1 // 活动只能选择一个
       productRefTxt = '选择活动'
       columns = getActivityColumns({
         onDelete: this.handleDelete
@@ -61,6 +61,7 @@ class ProductTable extends PureComponent {
           <Button disabled={disabled} onClick={this.handleGoods} type="link">
             {productRefTxt}
           </Button>
+          <span>已选择{length}条数据</span>
         </p>
         <Table
           style={{ margin: '8px 0 8px' }}
