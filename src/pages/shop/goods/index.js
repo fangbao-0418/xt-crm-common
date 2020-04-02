@@ -277,7 +277,10 @@ class Main extends React.Component {
                 label='供应商'
                 inner={(form) => {
                   return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect style={{ width: 172 }} />
+                    <SuppilerSelect
+                      style={{ width: 172 }}
+                      processPayload={(params) => ({ ...params, category: 6 })}
+                    />
                   );
                 }}
               />
