@@ -1,12 +1,13 @@
 import React from 'react'
 import Image from '@/components/Image'
+import Form, { FormInstance } from '@/packages/common/components/form'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
-import { Tag, Divider, Popover, Button, Popconfirm } from 'antd'
+import { Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
@@ -241,22 +242,62 @@ class Main extends React.Component<Props, State> {
     })
   }
   public setTop (record: UliveStudio.ItemProps) {
-    const hide = this.props.alert({
-      content: (
-        <div className='text-center'>
-          确定是否{record.liveTop === 0 ? '置顶' : '取消置顶'}
-        </div>
-      ),
-      onOk: () => {
-        api.setTop({
-          planId: record.planId,
-          isTop: record.liveTop === 0 ? 1 : 0
-        }).then(() => {
-          hide()
-          this.refresh()
-        })
-      }
-    })
+    if (record.liveTop === 0) {
+      let form: FormInstance
+      const hide = this.props.alert({
+        content: (
+          <Form
+            getInstance={(ref) => form = ref}
+          >
+            <div>数字越大排序越靠前</div>
+            <div className='mt8'>
+              <FormItem
+                name='sort'
+                type='number'
+                placeholder='请输入正整数'
+                labelCol={{span: 0}}
+                controlProps={{
+                  precision: 0,
+                  min: 0,
+                  style: {
+                    width: 200
+                  }
+                }}
+              />
+            </div>
+          </Form>
+        ),
+        onOk: () => {
+          const values = form.getValues()
+          console.log(values, 'values')
+          api.setTop({
+            planId: record.planId,
+            isTop: record.liveTop === 0 ? 1 : 0
+          }).then(() => {
+            hide()
+            this.refresh()
+          })
+        }
+      })
+      return
+    } else {
+      const hide = this.props.alert({
+        content: (
+          <div className='text-center'>
+            确定是否取消置顶
+          </div>
+        ),
+        onOk: () => {
+          api.setTop({
+            planId: record.planId,
+            isTop: record.liveTop === 0 ? 1 : 0
+          }).then(() => {
+            hide()
+            this.refresh()
+          })
+        }
+      })
+    }
   }
   public showQrcode = (record: UliveStudio.ItemProps) => {
     // module_live/pages/room/index
