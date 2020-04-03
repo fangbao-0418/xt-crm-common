@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-27 11:00:32
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-31 16:08:37
+ * @LastEditTime: 2020-04-03 10:30:22
  * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/finance/withdraw/api.ts
  */
 import { listResponse, RecordsResponse } from './adapter';
@@ -102,4 +102,9 @@ export function applyVoucher (id: any) {
 /** 提现汇总信息 */
 export function getSummary () {
   return get('/crm/member/fund/remittance/v1/summary')
+}
+
+/** 获取提现请求详情 */
+export function batchDetail (id: any) {
+  return get(`/crm/member/fund/remittance/v1/batch/detail`, {id})
 }

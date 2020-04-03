@@ -1,8 +1,7 @@
 import React from 'react'
-import { getBatchList, submitPay } from './api'
+import { getBatchList, submitPay, batchDetail } from './api'
 import { ListPage, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import moment from 'moment'
 import { formatMoneyWithSign } from '@/pages/helper'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 
@@ -82,17 +81,23 @@ class Records extends React.Component<Props> {
       )
     }
   }]
-  applyPay = (record: ItemProps) => () => {
+  applyPay = (record: ItemProps) => async () => {
+    const res = await batchDetail(record.id) || {}
+    // console.log(res, 'res')
+    res.commonAmount = APP.fn.formatMoney(res.commonAmount)
+    res.interceptAmount = APP.fn.formatMoney(res.interceptAmount)
+    res.totalAmount = APP.fn.formatMoney(res.totalAmount)
+    res.totalRechargeAmount = APP.fn.formatMoney(res.totalRechargeAmount)
     const hide = this.props.alert({
       title: '提交打款确认',
       content: (
         <div>
           {/* <h1 className='text-center clear font18'>提交打款确认</h1> */}
           <h2 className='text-center clear font16'>充值到连连平台后再确认打款！</h2>
-          <h2 className='text-center clear font16'>本次提现需充值金额：{APP.fn.formatMoney(record.totalRechargeAmount)}</h2>
-          <p className='mt8'>本次提现日期范围：{APP.fn.formatDate(record.startTime, 'YYYY.MM.DD')}-{APP.fn.formatDate(record.endTime, 'YYYY.MM.DD')}</p>
-          <p>本次提现条目数目：{record.recordNum}（普通提现5000 拦截提现5000）</p>
-          <p>本次提现金额：{APP.fn.formatMoney(record.totalAmount)}（普通提现￥5000 拦截提现￥5000）</p>
+          <h2 className='text-center clear font16'>本次提现需充值金额：{res.totalRechargeAmount}</h2>
+          <p className='mt8'>本次提现日期范围：{res.startTime}-{res.endTime}</p>
+          <p>本次提现条目数目：{res.recordNum}（普通提现{res.commonNum} 拦截提现{res.interceptNum}）</p>
+          <p>本次提现金额：{res.totalAmount}（普通提现{res.commonAmount} 拦截提现{res.interceptAmount}）</p>
         </div>
       ),
       onOk: () => {
