@@ -1,10 +1,8 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Input, DatePicker, Radio, Button, InputNumber } from 'antd'
-import { ProductSelector, ActivitySelector } from '@/components'
-// import DiscountModal from './components/discount-modal'
 import RulesTable from './components/rules-table'
 import ProductTable from './components/product-table'
-import { gotoPage, connect, unionArray } from '@/util/utils';
+import { gotoPage, connect } from '@/util/utils';
 import { namespace } from './model';
 
 const { RangePicker } = DatePicker;
@@ -40,7 +38,6 @@ const getExceptionStr = (list) => {
 }
 
 @connect(state => ({
-  discountModal: state[namespace].discountModal,
   goodsModal: state[namespace].goodsModal,
   activityModal: state[namespace].activityModal,
   preRulesMaps: state[namespace].preRulesMaps,
@@ -119,26 +116,6 @@ class FullDiscountEditPage extends PureComponent {
     gotoPage(`/activity/full-discount`)
   }
 
-  /* 添加活动商品操作-显示相应活动或商品模态框 */
-  handleRelevancy = (productRef) => {
-    const { dispatch } = this.props
-    if (productRef === 0) {
-      dispatch[namespace].saveDefault({
-        goodsModal: {
-          visible: true,
-          title: '选择商品'
-        }
-      })
-    } else if (productRef === 1) {
-      dispatch[namespace].saveDefault({
-        activityModal: {
-          visible: true,
-          title: '选择活动'
-        }
-      })
-    }
-  }
-
   /* 优惠种类选项变化的时候-自动设置优惠类型为阶梯满 & 清空满减选项关联的满减封顶数值 */
   handlePromotionTypeChange = (e) => {
     const { form: { setFieldsValue, getFieldValue }, preRulesMaps, dispatch } = this.props
@@ -204,70 +181,6 @@ class FullDiscountEditPage extends PureComponent {
     }
   }
 
-  /* 活动商品删除 */
-  handleProductDelete = (i) => {
-    const { getFieldValue, setFieldsValue } = this.props.form
-    const productRefInfo = getFieldValue('productRefInfo')
-    productRefInfo.splice(i, 1)
-    setFieldsValue({
-      productRefInfo
-    })
-  }
-
-  /* 清空活动商品 */
-  handleProductClear = (productRef) => {
-    const { dispatch, preProductRefMaps, form: { setFieldsValue } } = this.props
-    setFieldsValue({
-      productRefInfo: []
-    })
-    dispatch[namespace].saveDefault({
-      preProductRefMaps: {
-        ...preProductRefMaps,
-        [productRef]: []
-      }
-    })
-  }
-
-  /* 商品选择器关闭 */
-  handleGoodsModalCancel = () => {
-    const { dispatch, goodsModal } = this.props
-    dispatch[namespace].saveDefault({
-      goodsModal: {
-        ...goodsModal,
-        visible: false
-      }
-    })
-  }
-
-  /* 商品选择器选择商品 */
-  handleProductSelectorChange = (_, selectedRows) => {
-    const { getFieldValue, setFieldsValue } = this.props.form
-    const productRefInfo = getFieldValue('productRefInfo')
-    setFieldsValue({
-      productRefInfo: unionArray(productRefInfo, selectedRows)
-    });
-  }
-
-  /* 活动选择器选择活动 */
-  handleActivitySelectorChange = (_, selectedRows) => {
-    const { getFieldValue, setFieldsValue } = this.props.form
-    const productRefInfo = getFieldValue('productRefInfo')
-    setFieldsValue({
-      productRefInfo: unionArray(productRefInfo, selectedRows)
-    });
-  }
-
-  /* 活动选择器关闭 */
-  handleActivityModalCancel = () => {
-    const { dispatch, activityModal } = this.props
-    dispatch[namespace].saveDefault({
-      activityModal: {
-        ...activityModal,
-        visible: false
-      }
-    })
-  }
-
   /* 活动商品变化 */
   handleProductRefChange = (e) => {
     const { form: { getFieldValue, setFieldsValue }, preProductRefMaps, dispatch } = this.props
@@ -299,7 +212,7 @@ class FullDiscountEditPage extends PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator, getFieldValue }, goodsModal, activityModal } = this.props
+    const { form: { getFieldDecorator, getFieldValue } } = this.props
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -332,19 +245,6 @@ class FullDiscountEditPage extends PureComponent {
         title="添加活动"
         extra={<span onClick={this.handleBack} className="href">返回</span>}
       >
-        {/* 选择商品模态框 */}
-        <ProductSelector
-          visible={goodsModal.visible}
-          onCancel={this.handleGoodsModalCancel}
-          onChange={this.handleProductSelectorChange}
-        />
-        {/* 选择活动模态框 */}
-        <ActivitySelector
-          multi={false}
-          visible={activityModal.visible}
-          onCancel={this.handleActivityModalCancel}
-          onChange={this.handleActivitySelectorChange}
-        />
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Card type="inner" title="基本信息">
             <Form.Item label="活动名称">
@@ -505,8 +405,6 @@ class FullDiscountEditPage extends PureComponent {
               })(
                 <ProductTable
                   productRef={productRef}
-                  onDelete={this.handleProductDelete}
-                  onClear={this.handleProductClear}
                 />
               )}
             </Form.Item>

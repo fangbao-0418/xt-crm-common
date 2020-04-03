@@ -1,11 +1,34 @@
 import React, { PureComponent } from 'react'
 import { Button, Table } from 'antd'
-import { connect } from '@/util/utils';
+import { ProductSelector, ActivitySelector } from '@/components'
+import { isEqual } from 'lodash'
+import { connect, unionArray } from '@/util/utils';
 import { namespace } from '../model';
 import { getGoodsColumns, getActivityColumns } from '../config/columns';
 
-@connect()
+@connect(state => ({
+  preProductRefMaps: state[namespace].preProductRefMaps,
+  goodsModal: state[namespace].goodsModal,
+  activityModal: state[namespace].activityModal,
+}))
 class ProductTable extends PureComponent {
+  state = {
+    productRefInfo: [],
+    preProductRefInfo: []
+  }
+
+  static getDerivedStateFromProps(nextProps, preState) {
+    if (isEqual(nextProps.value, preState.preRules)) {
+      return null;
+    }
+    const productRefInfo = nextProps.value
+    return {
+      productRefInfo,
+      preProductRefInfo: productRefInfo
+    }
+  }
+
+
   /* 添加活动商品操作-显示相应模态框 */
   handleGoods = () => {
     const { dispatch, productRef } = this.props
@@ -28,20 +51,60 @@ class ProductTable extends PureComponent {
 
   /* 清空数据 */
   handleClear = () => {
-    const { productRef, onClear } = this.props
-    if (onClear) {
-      onClear(productRef)
-    }
+    const { productRef, dispatch, preProductRefMaps } = this.props
+    dispatch[namespace].saveDefault({
+      preProductRefMaps: {
+        ...preProductRefMaps,
+        [productRef]: []
+      }
+    })
   }
 
   /* 删除条件 */
   handleDelete = (i) => {
-    const { onDelete } = this.props
-    onDelete(i)
+    const { productRefInfo } = this.state
+    const { onChange } = this.props
+    const newProductRefInfo = [...productRefInfo]
+    newProductRefInfo.splice(i, 1)
+    if (onChange) {
+      onChange(newProductRefInfo)
+    }
+  }
+
+  /* 商品选择器关闭 */
+  handleGoodsModalCancel = () => {
+    const { dispatch, goodsModal } = this.props
+    dispatch[namespace].saveDefault({
+      goodsModal: {
+        ...goodsModal,
+        visible: false
+      }
+    })
+  }
+
+  /* 活动选择器关闭 */
+  handleActivityModalCancel = () => {
+    const { dispatch, activityModal } = this.props
+    dispatch[namespace].saveDefault({
+      activityModal: {
+        ...activityModal,
+        visible: false
+      }
+    })
+  }
+
+  /* 选择器选择 */
+  handleSelectorChange = (_, selectedRows) => {
+    const { onChange } = this.props
+    const { productRefInfo } = this.state
+    if (onChange) {
+      onChange(unionArray(productRefInfo, selectedRows))
+    }
   }
 
   render() {
-    const { value: dataSource, productRef } = this.props
+    const { productRef, goodsModal, activityModal } = this.props
+    const { productRefInfo: dataSource } = this.state
 
     let disabled = false
     let columns = []
@@ -65,6 +128,19 @@ class ProductTable extends PureComponent {
 
     return (
       <div>
+        {/* 选择商品模态框 */}
+        <ProductSelector
+          visible={goodsModal.visible}
+          onCancel={this.handleGoodsModalCancel}
+          onChange={this.handleSelectorChange}
+        />
+        {/* 选择活动模态框 */}
+        <ActivitySelector
+          multi={false}
+          visible={activityModal.visible}
+          onCancel={this.handleActivityModalCancel}
+          onChange={this.handleSelectorChange}
+        />
         <p>
           <Button disabled={disabled} onClick={this.handleGoods} type="link">
             {productRefTxt}
