@@ -66,7 +66,10 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         const className = record.trimType === 1 ? 'success' : 'error'
         return (
-          <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+          <span className={className}>
+            {text !== 0 ? record.trimType === 1 ? '+' : '-' : ''}
+            {APP.fn.formatMoneyNumber(text, 'm2u')}
+          </span>
         )
       }
     },
@@ -261,8 +264,7 @@ class Main extends React.Component<Props, State> {
               x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
                 return a + b
               })
-            },
-            rowSelection
+            }
           }}
           formItemLayout={(
             <>
@@ -319,12 +321,12 @@ class Main extends React.Component<Props, State> {
               >
                 批量导出
               </Button>
-              <Button
+              {/* <Button
                 type='primary'
                 onClick={this.toExport.bind(this, true)}
               >
                 全部导出
-              </Button>
+              </Button> */}
             </div>
           )}
           api={api.fetchList}

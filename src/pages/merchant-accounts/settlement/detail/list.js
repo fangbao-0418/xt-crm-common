@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Row, Table, Button } from 'antd';
+import { Card, Row, Table, Button, message } from 'antd';
 import styles from './style.module.styl'
+import * as api from '../../api'
 import { enumPayType } from '../../constant';
 import { download } from '@/util/utils';
 import SettleModal from '../settleModal'
@@ -38,6 +39,30 @@ class SettleDetialList extends React.Component {
       modalVisible: false
     })
   };
+
+  batchExport = (type) => {
+    const values = this.listpage && this.listpage.form.getValues()
+    const params = Object.assign(values, {bulidYear: values.date[0], bulidMonth: values.date[1]})
+    delete params.date
+    if (!params.storeName) {
+      return message.info('请输入供应商名称')
+    }
+    console.log(type, 'type')
+    let apiUrl = ''
+    switch (type) {
+    case 'checking':
+      apiUrl =  '/finance/accountRecord/exportAccountData'
+      break
+    case 'adjustment':
+      apiUrl =  '/finance/trimRecord/exportTrim'
+      break
+    default: 
+    }
+    api.batchExport(apiUrl, params).then(() => {
+      return message.success('导出成功，请前往下载列表下载文件')
+    })
+  }
+
   render() {
     const { settleDetail = {}, dataSource = [], settStatus, id } = this.props
     const { modalVisible } = this.state
@@ -113,6 +138,22 @@ class SettleDetialList extends React.Component {
               {settleDetail.invoiceUrl && (
                 <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
               )}
+            </div>
+            <div className={styles['cont-r','align-r']}>
+              <Button
+                className='ml10'
+                type='primary'
+                onClick={() => this.batchExport('checking')}
+              >
+                导出对账单详情
+              </Button>
+              <Button
+                className='ml10'
+                type='primary'
+                onClick={() => this.batchExport('adjustment')}
+              >
+                导出调整单详情
+              </Button>
             </div>
           </div>
         </div>

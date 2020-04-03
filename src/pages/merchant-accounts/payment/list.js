@@ -329,6 +329,13 @@ class List extends React.Component {
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>查询</Button>
                 <Button type="default" onClick={this.handleReset}>清除</Button>
+                <Button
+                  type='primary'
+                  className='mr10'
+                  onClick={this.toExport.bind(this, undefined)}
+                >
+                  批量导出
+                </Button>
               </Col>
             </Row>
           </Form>

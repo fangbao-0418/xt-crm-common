@@ -57,3 +57,8 @@ export function settlementSubmit({id,payMod=''}) {
 export const fetchCheckingList = payload => {
   return get('::ulive/live/plan/list', payload)
 }
+
+/** 批量导出 */
+export const batchExport = (api, params) => {
+  return newPost(api, params)
+}

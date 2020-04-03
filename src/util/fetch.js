@@ -48,6 +48,7 @@ export const request = (url, config = {}) => {
         return;
       } else {
         message.error(error.message || '内部错误，请等待响应...');
+        // Promise.reject(error)
       }
       try {
         APP.moon.oper(error, error && error.response && error.response.status)
