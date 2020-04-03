@@ -19,9 +19,9 @@ export const fetchGatheringAccountList = (id: number) => {
   return get(`/finance/settlement/account/list?accid=${id}`)
 }
 
-/** 对账单明细列表 */
+/** 单条导出 */
 export const exportAccount = (accId: number) => {
-  return get(`/finance/accountRecord/exportAccountData?accId=${accId}`)
+  return newPost(`/finance/accountRecord/exportAccountData`, {accId})
 }
 
 

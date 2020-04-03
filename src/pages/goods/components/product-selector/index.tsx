@@ -7,20 +7,45 @@ import { unionBy, union } from 'lodash';
 import { getCategoryTopList } from '../../api';
 import { CSkuProps } from '../../sku-stock/components/sku';
 import { getBaseProductPage } from '../../sku-sale/api';
-import { ColumnProps } from 'antd/lib/table';
+import { ColumnProps } from 'antd/lib/table'
+interface SkuProps {
+  productBasicId: number
+  productBasicSkuId: number
+  productBasicName: string
+  productBasicMainImage: string
+  propertyInfo: string
+  costPrice: number
+  productBasicSpuCode: string
+  productBasicSkuCode: string
+  productBasicBarCode: string
+  num: number
+}
 interface ProductSelectorProps {
-  onOk: ({selectedRowKeys, productBasics, selectedRowKeysMap}: any) => void
+  onOk: (payload: {
+    selectedRowKeys: any[]
+    /** sku集合 */
+    productBasics: SkuProps[]
+    selectedRowKeysMap: any
+  }) => void
+  /** 一级id结合 */
   selectedRowKeys: any[]
   selectedRowKeysMap: any
-  productBasics: any[]
+  /** spu集合 */
+  productBasics: {
+    id: any
+    num: number
+    productBasicSkuInfos: SkuProps[]
+  }[]
   record: any
 }
 
-// 分散开
+// spu集合转sku集合
 function spread (selectedRows: any[], selectedRowKeysMap?: any) {
   const result: any[] = []
+  /** selectedRows spu集合 */
   for (const row of selectedRows) {
     const productBasicSkuInfos = selectedRowKeysMap ? (row.productBasicSkuInfos || []).filter((v: any) => {
+      /** 过滤sku集合 */
       return (selectedRowKeysMap[row.id] || []).includes(v.productBasicSkuId)
     }) : row.productBasicSkuInfos
     for (const item of productBasicSkuInfos) {
@@ -67,6 +92,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     pageSize: 10
   }
   form: FormInstance;
+  /** spu集合 */
   selectedRows: any[] = [];
   columns: ColumnProps<any>[] = [{
     title: 'id',
@@ -101,27 +127,39 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
           rowKey='productBasicSkuId'
           rowSelection={{
             selectedRowKeys: productBasicSkuInfoKeys,
-            onChange: (productBasicSkuInfoKeys: any[], productBasicSkuInfoRows: any[]) => {
-              const productBasicSkuInfos: any[]= record.productBasicSkuInfos;
-              let selectedRowKeys: any[] = this.state.selectedRowKeys || [];
-
-              const { selectedRowKeysMap } = this.state;
-              selectedRowKeysMap[id] = productBasicSkuInfoKeys;
-              
-
-              // 改变selectedRowKeys，selectedRows
-              if (!!(productBasicSkuInfos && productBasicSkuInfos.length) &&
-                productBasicSkuInfoKeys.length === 0) {
-                selectedRowKeys = selectedRowKeys.filter(key => key !== id); 
-                this.selectedRows = this.selectedRows.filter(v => v.id !== id);
+            onChange: (rowKeys: any[], selectedRows: any[]) => {
+              // const productBasicSkuInfos: any[]= record.productBasicSkuInfos;
+              let selectedRowKeys: any[] = this.state.selectedRowKeys || []
+              // const { selectedRowKeysMap } = this.state
+              selectedRowKeysMap[id] = rowKeys
+              // // 改变selectedRowKeys，selectedRows
+              // if (!!(productBasicSkuInfos && productBasicSkuInfos.length) &&
+              //   rowKeys.length === 0) {
+              //   selectedRowKeys = selectedRowKeys.filter(key => key !== id);
+              //   this.selectedRows = this.selectedRows.filter(v => v.id !== id);
+              // } else {
+              //   selectedRowKeys = union(selectedRowKeys, [id]);
+              //   this.selectedRows = unionBy(this.selectedRows, [{
+              //     ...record,
+              //     productBasicSkuInfos: productBasicSkuInfoRows
+              //   }], x => x.id);
+              // }
+              // console.log(this.selectedRows, productBasicSkuInfoRows, 'this.selectedRows')
+              this.selectedRows = this.selectedRows.filter(v => v.id !== id)
+              if (rowKeys.length === 0 && selectedRowKeysMap[id]) {
+                delete selectedRowKeysMap[id]
+                selectedRowKeys = selectedRowKeys.filter(key => key !== id)
+                console.log(selectedRowKeys, id, '----')
               } else {
-                selectedRowKeys = union(selectedRowKeys, [id]);
-                this.selectedRows = unionBy(this.selectedRows, [{
+                selectedRowKeysMap[id] = rowKeys
+                selectedRowKeys.push(id)
+                this.selectedRows.push({
                   ...record,
-                  productBasicSkuInfos: productBasicSkuInfoRows
-                }], x => x.id);
+                  productBasicSkuInfos: selectedRows
+                })
+                selectedRowKeys = union(selectedRowKeys, [id])
               }
-
+              console.log(this.selectedRows, selectedRowKeys, selectedRowKeysMap, 'table change')
               this.setState({
                 selectedRowKeys,
                 selectedRowKeysMap
@@ -148,8 +186,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
     }
   }]
   UNSAFE_componentWillReceiveProps({ selectedRowKeys, selectedRowKeysMap, productBasics }: ProductSelectorProps) {
-    this.selectedRows = productBasics;
-    console.log(selectedRowKeys, selectedRowKeysMap, productBasics, 'this.selectedRows =>', this.selectedRows);
+    this.selectedRows = productBasics
     this.setState({
       selectedRowKeys,
       selectedRowKeysMap
@@ -175,22 +212,25 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
 
   handleOK = () => {
     const { selectedRowKeys, selectedRowKeysMap } = this.state
-    let productBasics = spread(this.selectedRows, selectedRowKeysMap)
-    console.log(productBasics, this.selectedRows, selectedRowKeysMap, 'on ok')
+    /** 获取sku集合 */
+    let productBasics: any[] = []
+    this.selectedRows.map((item) => {
+      item.productBasicSkuInfos = item.productBasicSkuInfos || []
+      item.productBasicSkuInfos = item.productBasicSkuInfos.map((val: {num: any}) => {
+        val.num = item.num
+        return {
+          ...item,
+          ...val,
+          productBasicSkuInfos: undefined
+        }
+      })
+      productBasics = productBasics.concat(item.productBasicSkuInfos)
+    })
+    console.log(productBasics, this.selectedRows, 'handleOK')
     if (productBasics.length === 0) {
-      return void APP.error('请选择商品');
+      return void APP.error('请选择商品')
     }
-    console.log('this.selectedRows => ', this.selectedRows)
-    // 同步num字段;
-    productBasics = productBasics.map((item: any) => {
-      const selectedItem = spread(this.selectedRows).find(item2 => {
-        return item.productBasicSkuId === item2.productBasicSkuId;
-      }) || item;
-      item.num = selectedItem.num;
-      return item;
-    });
 
-    console.log('productBasics => ', productBasics)
     this.props.onOk({selectedRowKeys, productBasics, selectedRowKeysMap});
     this.setState({ visible: false})
   }
@@ -230,7 +270,10 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
             getInstance={ref => this.form = ref}
             namespace='productSelector'
             config={defaultConfig}
-            onSubmit={this.handleSubmit}
+            onSubmit={(val) => {
+              this.payload.page = 1
+              this.handleSubmit(val)
+            }}
           >
             <FormItem name='productBasicId' />
             <FormItem name='productName' />
@@ -285,9 +328,7 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
               onChange: (selectedRowKeys: string[] | number[], selectedRows: any[]) => {
                 // fix ant-design bug
                 const unionArray: any[] = unionBy(this.selectedRows, selectedRows, x => x.id)
-
-
-                this.selectedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never));
+                this.selectedRows = unionArray.filter(x => selectedRowKeys.includes(x.id as never))
                 this.setState({
                   selectedRowKeysMap: getSelectedRowKeysMap(this.selectedRows),
                   selectedRowKeys
@@ -299,8 +340,8 @@ class ProductSelector extends React.Component<ProductSelectorProps, ProductSelec
         <span
           className='href'
           onClick={() => {
-            console.log(this.props, '----')
-            this.selectedRows = this.props.record.productBasics || []
+            this.selectedRows = this.props.productBasics || []
+            console.log(this.selectedRows, 'this.selectedRows')
             this.setState({
               selectedRowKeysMap: getSelectedRowKeysMap(this.selectedRows),
               selectedRowKeys: this.selectedRows.map((val) => val.id),

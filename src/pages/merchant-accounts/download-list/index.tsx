@@ -16,6 +16,7 @@ enum TypeEnum {
   订单导出 = 1,
   售后订单导出 = 2,
   财务对账单详情导出 = 3,
+  财务对账单列表导出 = 5,
   结算单明细导出 = 4,
   买菜商品导出 = 201,
   买菜订单导出 = 202,
@@ -36,11 +37,10 @@ class Main extends React.Component {
     pageNum: 1
   }
   public columns: ColumnProps<Info>[] = [
-    // {
-    //   title: '编号',
-    //   dataIndex: 'id',
-    //   key: 'id'
-    // },
+    {
+      title: '文件名',
+      dataIndex: 'fileName'
+    },
     {
       title: '任务类型',
       dataIndex: 'type',
@@ -120,17 +120,17 @@ class Main extends React.Component {
     loading: false
   }
   public componentDidMount () {
-    this.handleSearch()
+    this.handleSearch(1)
   }
   /**
    * 搜索事件
    */
-  public handleSearch () {
+  public handleSearch (current: number) {
     this.setState({
       loading: true,
       page: this.payload.pageNum
     })
-    api.getEarningsDetail().then((res) => {
+    api.getEarningsDetail(current).then((res) => {
       this.setState({
         total: res.total,
         loading: false,
@@ -149,7 +149,7 @@ class Main extends React.Component {
               total,
               onChange: (current) => {
                 this.payload.pageNum = current
-                this.handleSearch()
+                this.handleSearch(current)
               },
               pageSize,
               current: page

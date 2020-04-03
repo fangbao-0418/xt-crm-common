@@ -28,6 +28,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           {label: '已结算', value: 50},
           {label: '结算异常', value: 70}
         ]
+      },
+      sourceNo: {
+        type: 'input', label: '交易编号',
+        controlProps: {
+          placeholder: '请输入交易编号'
+        }
       }
     },
     statements: {

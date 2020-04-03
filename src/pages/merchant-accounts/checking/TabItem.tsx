@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, message } from 'antd'
 import { FormItem } from '@/packages/common/components/form'
+import ExportButton from '@/packages/common/components/export-button'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { param } from '@/packages/common/utils'
@@ -36,11 +37,11 @@ class Main extends React.Component<Props, State> {
         return APP.fn.formatDate(text) || ''
       }
     },
-    // {
-    //   dataIndex: 'accName',
-    //   title: '名称',
-    //   width: 150
-    // },
+    {
+      dataIndex: 'storeId',
+      title: '供应商ID',
+      width: 100
+    },
     {
       dataIndex: 'storeName',
       title: '供应商',
@@ -56,7 +57,12 @@ class Main extends React.Component<Props, State> {
       title: '收入（元）',
       width: 150,
       render: (text) => {
-        return <span className='success'>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+        return (
+          <span className='success'>
+            {text !== 0 ? '+' : null}
+            {APP.fn.formatMoneyNumber(text, 'm2u')}
+          </span>
+        )
       }
     },
     {
@@ -69,12 +75,17 @@ class Main extends React.Component<Props, State> {
       title: '支出（元）',
       width: 150,
       render: (text) => {
-        return <span className='error'>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+        return (
+          <span className='error'>
+            {text !== 0 ? '-' : null}
+            {APP.fn.formatMoneyNumber(text, 'm2u')}
+          </span>
+        )
       }
     },
     {
       dataIndex: 'settlementMoney',
-      title: '本期对对账单金额',
+      title: '本期对账单金额',
       width: 150,
       render: (text) => {
         const className = text > 0 ? 'success' : 'error'
@@ -129,8 +140,8 @@ class Main extends React.Component<Props, State> {
             }&nbsp;&nbsp;
             <span
               className='href'
-              onClick={() => api.exportAccount(id).then(res => {
-                return message.success('导出成功')
+              onClick={() => api.exportAccount(id).then((res: any) => {
+                return message.success('导出成功，请前往下载列表下载文件')
               })}
             >
               导出
@@ -309,6 +320,7 @@ class Main extends React.Component<Props, State> {
                   )
                 }}
               />
+              <FormItem name='sourceNo'/>
             </>
           )}
           tableProps={{
@@ -317,8 +329,7 @@ class Main extends React.Component<Props, State> {
               x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
                 return a + b
               })
-            },
-            rowSelection
+            }
           }}
           addonAfterSearch={(
             <div>
@@ -334,6 +345,20 @@ class Main extends React.Component<Props, State> {
               >
                 全部导出
               </Button> */}
+              <ExportButton
+                onClick={() => {
+                  const values = this.listpage && this.listpage.form.getValues()
+                  const params = Object.assign(values, {bulidYear: values.date[0], bulidMonth: values.date[1]})
+                  delete params.date
+                  if (!params.storeName) {
+                    return message.info('请输入供应商名称')
+                  }
+                  return {
+                    api: '/finance/accountRecord/exportAccountSingleData',
+                    params
+                  }
+                }}
+              />
               {[20, 70].indexOf(this.props.status) > -1 && (
                 <Button
                   type='primary'
