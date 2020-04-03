@@ -26,6 +26,14 @@ class ProductTable extends PureComponent {
     }
   }
 
+  /* 清空数据 */
+  handleClear = () => {
+    const { productRef, onClear } = this.props
+    if (onClear) {
+      onClear(productRef)
+    }
+  }
+
   /* 删除条件 */
   handleDelete = (i) => {
     const { onDelete } = this.props
@@ -62,6 +70,9 @@ class ProductTable extends PureComponent {
             {productRefTxt}
           </Button>
           <span>已选择{length}条数据</span>
+          <Button disabled={!length} onClick={this.handleClear} type="link">
+            清空
+          </Button>
         </p>
         <Table
           style={{ margin: '8px 0 8px' }}

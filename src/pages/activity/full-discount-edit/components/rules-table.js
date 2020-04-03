@@ -29,29 +29,42 @@ class RulesTable extends PureComponent {
     onDelete(i)
   }
 
+  /* 清空数据 */
+  handleClear = () => {
+    const { ruleType, onClear } = this.props
+    if (onClear) {
+      onClear(ruleType)
+    }
+  }
+
   render() {
-    const { value: dataSource, ruleType } = this.props
+    const { value: dataSource, promotionType, ruleType } = this.props
 
     let maxSize = 0
-    let disabled = false
+    let disabled = true
+    let length = dataSource.length
 
     if (ruleType === 1) { // 阶梯满 可以添加5条规则
       maxSize = 5
-      disabled = dataSource.length >= 5
+      disabled = length >= 5
     } else if (ruleType === 0) { // 每满减 只可以添加1条规则
       maxSize = 1
-      disabled = dataSource.length >= 1
-    } else {
-      disabled = true
+      disabled = length >= 1
     }
 
     return (
       <div>
         <p>
-          <Button disabled={disabled} onClick={this.handleDiscount} type="link">
+          <Button
+            disabled={disabled || (!promotionType)}
+            onClick={this.handleDiscount} type="link"
+          >
             添加条件
           </Button>
           <span>可添加最多{maxSize}个阶梯</span>
+          <Button disabled={!length} onClick={this.handleClear} type="link">
+            清空
+          </Button>
         </p>
         <Table
           style={{ margin: '8px 0 8px' }}

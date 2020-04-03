@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Card, Form, Input, DatePicker, Radio, Button, Modal, InputNumber } from 'antd'
+import { Card, Form, Input, DatePicker, Radio, Button, InputNumber } from 'antd'
 import { ProductSelector, ActivitySelector } from '@/components'
 import DiscountModal from './components/discount-modal'
 import RulesTable from './components/rules-table'
@@ -9,12 +9,13 @@ import { namespace } from './model';
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
-const { confirm } = Modal;
 
 @connect(state => ({
   discountModal: state[namespace].discountModal,
   goodsModal: state[namespace].goodsModal,
-  activityModal: state[namespace].activityModal
+  activityModal: state[namespace].activityModal,
+  preRulesMaps: state[namespace].preRulesMaps,
+  preProductRefMaps: state[namespace].preProductRefMaps
 }))
 @Form.create()
 class FullDiscountEditPage extends PureComponent {
@@ -33,7 +34,7 @@ class FullDiscountEditPage extends PureComponent {
     gotoPage(`/activity/full-discount`)
   }
 
-  /* 添加活动商品操作-显示活动或商品模态框 */
+  /* 添加活动商品操作-显示相应活动或商品模态框 */
   handleRelevancy = (productRef) => {
     const { dispatch } = this.props
     if (productRef === 0) {
@@ -55,23 +56,65 @@ class FullDiscountEditPage extends PureComponent {
 
   /* 优惠种类选项变化的时候-自动设置优惠类型为阶梯满 & 清空满减选项关联的满减封顶数值 */
   handlePromotionTypeChange = (e) => {
-    const ruleType = e.target.value
-    const { setFieldsValue } = this.props.form
-    if (ruleType === 12) {
+    const { form: { setFieldsValue, getFieldValue }, preRulesMaps, dispatch } = this.props
+    const rules = getFieldValue('rules')
+    const ruleType = getFieldValue('ruleType')
+    const promotionType = e.target.value
+    if ((promotionType === 11) && (ruleType !== undefined)) {
+      // 选择满减 设置值为上一次满减的值 然后把满折数据储存起来 以备下次切换使用
       setFieldsValue({
-        ruleType: 1,
+        rules: preRulesMaps[`11-${ruleType}`] || []
+      })
+      dispatch[namespace].saveDefault({
+        preRulesMaps: {
+          ...preRulesMaps,
+          [`12-${ruleType}`]: rules
+        }
+      })
+    } else if ((promotionType === 12) && (ruleType !== undefined)) {
+      // 选择满折 设置值为上一次满折的值 然后把满减数据储存起来 以备下次切换使用
+      setFieldsValue({ // 优惠类型已经选择每满减的时候 因为禁止这种组合 所以需要清空数据
+        rules: ruleType === 0 ? [] : (preRulesMaps[`12-${ruleType}`] || []),
+        ruleType: ruleType === 0 ? undefined : ruleType,
         maxDiscountsAmount: undefined
+      })
+      dispatch[namespace].saveDefault({
+        preRulesMaps: {
+          ...preRulesMaps,
+          [`11-${ruleType}`]: rules
+        }
       })
     }
   }
 
   /* 优惠类型选项变化的时候-清空满减选项关联的满减封顶数值 */
   handleRuleTypeChange = (e) => {
+    const { form: { setFieldsValue, getFieldValue }, preRulesMaps, dispatch } = this.props
+    const rules = getFieldValue('rules')
+    const promotionType = getFieldValue('promotionType')
     const ruleType = e.target.value
-    const { setFieldsValue } = this.props.form
-    if (ruleType === 1) {
+    if ((ruleType === 1) && promotionType !== undefined) {
+      // 选择阶梯满的时候 设置为上一次阶梯满组合的值 然后把每满减的数据储存起来 以备下次切换使用
       setFieldsValue({
+        rules: preRulesMaps[`${promotionType}-1`] || [],
         maxDiscountsAmount: undefined
+      })
+      dispatch[namespace].saveDefault({
+        preRulesMaps: {
+          ...preRulesMaps,
+          [`${promotionType}-0`]: rules
+        }
+      })
+    } else if (ruleType === 0) {
+      // 选择每满减的时候 设置为上一次每满减组合的值 然后把阶梯满的数据储存起来 以备下次切换使用
+      setFieldsValue({
+        rules: preRulesMaps[`${promotionType}-0`] || []
+      })
+      dispatch[namespace].saveDefault({
+        preRulesMaps: {
+          ...preRulesMaps,
+          [`${promotionType}-1`]: rules
+        }
       })
     }
   }
@@ -122,6 +165,34 @@ class FullDiscountEditPage extends PureComponent {
     })
   }
 
+  /* 清空优惠条件 */
+  handleRulesClear = (ruleType) => {
+    const { dispatch, preRulesMaps, form: { setFieldsValue } } = this.props
+    setFieldsValue({
+      rules: []
+    })
+    dispatch[namespace].saveDefault({
+      preRulesMaps: {
+        ...preRulesMaps,
+        [ruleType]: []
+      }
+    })
+  }
+
+  /* 清空活动商品 */
+  handleProductClear = (productRef) => {
+    const { dispatch, preProductRefMaps, form: { setFieldsValue } } = this.props
+    setFieldsValue({
+      productRefInfo: []
+    })
+    dispatch[namespace].saveDefault({
+      preProductRefMaps: {
+        ...preProductRefMaps,
+        [productRef]: []
+      }
+    })
+  }
+
   /* 商品选择器关闭 */
   handleGoodsModalCancel = () => {
     const { dispatch, goodsModal } = this.props
@@ -164,34 +235,32 @@ class FullDiscountEditPage extends PureComponent {
 
   /* 活动商品变化 */
   handleProductRefChange = (e) => {
-    const { getFieldValue, setFieldsValue } = this.props.form
+    const { form: { getFieldValue, setFieldsValue }, preProductRefMaps, dispatch } = this.props
     const productRefInfo = getFieldValue('productRefInfo')
     const value = e.target.value
-    if (!productRefInfo.length) {
-      return
-    }
-    let title = ''
     if (value === 0) {
-      // 选择商品
-      title = '已有选择活动关联, 切换活动商品类型, 会自动清空关联活动数据?'
+      // 选择商品 设置值为上一次选择商品有的值 那么把活动暂时储存起来
+      setFieldsValue({
+        productRefInfo: preProductRefMaps['0'] || []
+      })
+      dispatch[namespace].saveDefault({
+        preProductRefMaps: {
+          ...preProductRefMaps,
+          '1': productRefInfo
+        }
+      })
     } else if (value === 1) {
-      // 选择活动
-      title = '已有选择商品关联, 切换活动商品类型, 会自动清空关联商品数据?'
+      // 选择活动 设置值为上一次选择活动有的值 那么把商品暂时储存起来
+      setFieldsValue({
+        productRefInfo: preProductRefMaps['1'] || []
+      })
+      dispatch[namespace].saveDefault({
+        preProductRefMaps: {
+          ...preProductRefMaps,
+          '0': productRefInfo
+        }
+      })
     }
-    setFieldsValue({
-      productRefInfo: []
-    })
-    confirm({
-      title,
-      onCancel() {
-        setFieldsValue({
-          productRefInfo
-        })
-        setFieldsValue({
-          productRef: value === 0 ? 1 : 0
-        })
-      }
-    });
   }
 
   render() {
@@ -229,7 +298,11 @@ class FullDiscountEditPage extends PureComponent {
         extra={<span onClick={this.handleBack} className="href">返回</span>}
       >
         {/* 优惠条件模态框 */}
-        <DiscountModal rules={getFieldValue('rules')} onOk={this.handleRulesSave} />
+        <DiscountModal
+          promotionType={promotionType}
+          rules={getFieldValue('rules')}
+          onOk={this.handleRulesSave}
+        />
         {/* 选择商品模态框 */}
         <ProductSelector
           visible={goodsModal.visible}
@@ -250,7 +323,9 @@ class FullDiscountEditPage extends PureComponent {
                 rules: [
                   {
                     required: true,
-                    message: '请输入活动名称',
+                    whitespace: true,
+                    message: '请输入活动名称(限16个字符)',
+                    max: 16
                   },
                 ],
               })(
@@ -267,8 +342,8 @@ class FullDiscountEditPage extends PureComponent {
                 ],
               })(
                 <RangePicker
-                  showTime={{ format: 'HH:mm' }}
-                  format="YYYY-MM-DD HH:mm"
+                  showTime={{ format: 'HH:mm:ss' }}
+                  format="YYYY-MM-DD HH:mm:ss"
                   placeholder={['开始时间', '结束时间']}
                 />
               )}
@@ -316,11 +391,13 @@ class FullDiscountEditPage extends PureComponent {
                 {
                   getFieldDecorator('maxDiscountsAmount', {
                     rules: [{
-                      required: ruleType === 0,
+                      // required: ruleType === 0,
                       message: '请输入满减封顶数'
                     }]
                   })(
                     <InputNumber
+                      min={0.01}
+                      precision={2}
                       {...(
                         /* 解决不必选的时候也会出现报错样式的bug */
                         ruleType !== 0 ? {
@@ -352,9 +429,11 @@ class FullDiscountEditPage extends PureComponent {
                   initialValue: []
                 })(
                   <RulesTable
+                    promotionType={promotionType}
                     ruleType={ruleType}
                     onEdit={this.handleRuleEdit}
                     onDelete={this.handleRuleDelete}
+                    onClear={this.handleRulesClear}
                   />
                 )
               }
@@ -394,7 +473,11 @@ class FullDiscountEditPage extends PureComponent {
                 }],
                 initialValue: []
               })(
-                <ProductTable productRef={productRef} onDelete={this.handleProductDelete} />
+                <ProductTable
+                  productRef={productRef}
+                  onDelete={this.handleProductDelete}
+                  onClear={this.handleProductClear}
+                />
               )}
             </Form.Item>
           </Card>
