@@ -7,12 +7,24 @@ import { queryConfig } from './config/config';
 import { getGoodsList } from './api'
 
 class FullDiscountPage extends PureComponent {
+  /* 编辑 */
   handleEdit = (record) => {
     gotoPage(`/activity/full-discount/edit/${record.id}`)
   }
 
+  /* 添加 */
   handleAdd = () => {
     gotoPage(`/activity/full-discount/edit`)
+  }
+
+  /* 详情 */
+  handleDetail = (record) => {
+    gotoPage(`/activity/full-discount/detail/${record.id}`)
+  }
+
+  /* 复制 */
+  handleCopy = (record) => {
+    gotoPage(`/activity/full-discount/copy/${record.id}`)
   }
 
   render() {
@@ -29,7 +41,9 @@ class FullDiscountPage extends PureComponent {
             }
           }}
           columns={getColumns({
-            onEdit: this.handleEdit
+            onDetail: this.handleDetail,
+            onEdit: this.handleEdit,
+            onCopy: this.handleCopy
           })}
           api={getGoodsList}
           formItemLayout={(

@@ -5,7 +5,9 @@ const formatDate = (text) =>
   text ? APP.fn.formatDate(text) : '-'
 
 export default function getColumns ({
-  onEdit // 编辑
+  onDetail, // 查看
+  onEdit, // 编辑
+  onCopy // 复制
 }) {
   return [
     {
@@ -51,17 +53,30 @@ export default function getColumns ({
     },
     {
       title: '操作',
-      width: 180,
+      width: 220,
       dataIndex: 'action',
       render: (_, record) => {
         return (
           <ActionView showNum={4}>
-            <span className='href'>查看</span>
-            <span className='href' onClick={onEdit.bind(null, record)}>
+            <span
+              className='href'
+              onClick={onDetail.bind(null, record)}
+            >
+              查看
+            </span>
+            <span
+              className='href'
+              onClick={onEdit.bind(null, record)}
+            >
               编辑
             </span>
+            <span
+              className='href'
+              onClick={onCopy.bind(null, record)}
+            >
+              复制
+            </span>
             <span className='href'>关闭</span>
-            <span className='href'>复制</span>
           </ActionView>
         )
       }
