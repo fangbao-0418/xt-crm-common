@@ -1,10 +1,13 @@
-import React from 'react';
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-03-16 17:09:48
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/components/Image/index.js
+ */
+import React, { useState } from 'react';
 import zwtPic from '../../assets/images/zw.png';
-// import { getUserList } from '@/pages/order/intercept/user/api';
-
-
+import imageMiss from '../../assets/images/image-miss.jpg';
 const onClick = src => () => {
-  console.log(src, 'src')
   window.open(src);
 };
 
@@ -14,9 +17,9 @@ function getUrl (url) {
 }
 
 const Image = (props) => {
-  const { className, alt = '图片', style, width, height, ...otherProps } = props
-  let src = (props.src || '').trim()
-  src = src ? getUrl(src) : zwtPic
+  const { className, alt = '', style, width, height, ...otherProps } = props
+  let sourceSrc = (props.src || '').trim()
+  const [src, setSrc] = useState(sourceSrc ? getUrl(sourceSrc) : zwtPic)
   return (
     <img
       className={className}
@@ -24,6 +27,9 @@ const Image = (props) => {
       {...otherProps}
       src={src}
       alt={alt}
+      onError={() => {
+        setSrc(imageMiss)
+      }}
       style={{
         width: width || 100,
         height: height || 100,

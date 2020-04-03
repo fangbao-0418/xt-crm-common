@@ -1,6 +1,7 @@
 import React from 'react'
 import ListPage, { ListPageInstanceProps} from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import If from '@/packages/common/components/if'
 import { ColumnProps } from 'antd/lib/table'
 import TagEdit from './components/TagEdit'
 import { Button, Popconfirm } from 'antd'
@@ -65,20 +66,22 @@ class Main extends React.Component<Partial<Props>> {
       render: (text, record) => {
         return (
           <div>
-            <span
-              className='href'
-              onClick={() => {
-                this.editTag(record)
-              }}
-            >
-              修改
-            </span>&nbsp;&nbsp;
-            <span
-              className='href'
-              onClick={() => { this.deleteTag(record) }}
-            >
-              删除
-            </span>
+            <If condition={record.isDelete !== 2} >
+              <span
+                className='href'
+                onClick={() => {
+                  this.editTag(record)
+                }}
+              >
+                修改
+              </span>&nbsp;&nbsp;
+              <span
+                className='href'
+                onClick={() => { this.deleteTag(record) }}
+              >
+                删除
+              </span>
+            </If>
           </div>
         )
       }
@@ -120,7 +123,7 @@ class Main extends React.Component<Partial<Props>> {
       node = (
         <div>
           该标签仍有{record.livingTatol}场直播中的场次，结束后会自动删除！<br />
-          {record.trailerTatol && <span>另外有{record.trailerTatol}场预告标签将失效！</span>}
+          {record.trailerTatol > 0 && <span>另外有{record.trailerTatol}场预告标签将失效！</span>}
         </div>
       )
     }

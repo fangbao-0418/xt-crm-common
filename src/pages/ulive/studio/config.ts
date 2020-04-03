@@ -55,6 +55,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '主播昵称'
         }
       },
+      liveTop: {
+        type: 'select', label: '是否置顶',
+        options: [
+          // {label: '官方置顶', value: 2},
+          {label: '置顶', value: 1},
+          {label: '未置顶', value: 0}
+        ]
+      },
       liveStatus: {
         type: 'select', label: '直播状态',
         options: [
@@ -74,6 +82,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         controlProps: {
           showTime: true
         }
+      },
+      type: {
+        type: 'select', label: '直播类型',
+        options: [
+          {label: '公开直播', value: 0},
+          {label: '私密直播', value: 10}
+        ]
       },
       anchorLevel: {
         type: 'select', label: '主播等级',
@@ -102,6 +117,7 @@ export enum LiveStatusEnum {
   '预告-已过期' = 30,
   '预告-禁播' = 40,
   '停播-运营停播' = 50,
+  '回放已停播' = 51,
   '已结束' = 60,
   '预告-待开播' = 70,
   '即将开始' = 80,
@@ -114,6 +130,11 @@ export enum TypeEnum {
   私密直播 = 10
 }
 
+/** 直播等级 */
+export enum LevelEnum {
+  普通主播 = 0,
+  星级主播 = 10
+}
 /** 举报类型 */
 export enum ComplainTypeEnum {
   讨论政治内容 = 0,

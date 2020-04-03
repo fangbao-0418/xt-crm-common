@@ -8,7 +8,11 @@ time, tr, tt, u, ul, var, video {
     font-size: 100%;
     margin: 0;
     padding: 0;
-    vertical-align: baseline;
+    /* vertical-align: baseline; */
+}
+
+.ant-table-tbody>tr>td, .ant-table-thead>tr>th {
+  vertical-align: top;
 }
 
 *, :after, :before {
