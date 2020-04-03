@@ -41,24 +41,26 @@ class SettleDetialList extends React.Component {
   };
 
   batchExport = (type) => {
-    const values = this.listpage && this.listpage.form.getValues()
-    const params = Object.assign(values, {bulidYear: values.date[0], bulidMonth: values.date[1]})
-    delete params.date
-    if (!params.storeName) {
-      return message.info('请输入供应商名称')
-    }
+    const { dataSource } = this.props
+    console.log(dataSource, 'dataSource')
     console.log(type, 'type')
     let apiUrl = ''
+    let accIdS = null 
     switch (type) {
     case 'checking':
       apiUrl =  '/finance/accountRecord/exportAccountData'
+      accIdS = dataSource.filter(item => item.billTypeInfo === '对账单').map(item => item.id)
       break
     case 'adjustment':
       apiUrl =  '/finance/trimRecord/exportTrim'
+      accIdS = dataSource.filter(item => item.billTypeInfo === '调整单').map(item => item.id)
       break
     default: 
     }
-    api.batchExport(apiUrl, params).then(() => {
+    if(!accIdS ||!accIdS.length){
+      return message.info(`当前结算单没有${type === 'checking' ? '对账单' : '调整单'}`)
+    }
+    api.batchExport(apiUrl, {accIdS}).then(() => {
       return message.success('导出成功，请前往下载列表下载文件')
     })
   }

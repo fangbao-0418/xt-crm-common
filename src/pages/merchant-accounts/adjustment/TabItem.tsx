@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Popconfirm, Row, Col } from 'antd'
+import { Button, Popconfirm, Row, Col, message } from 'antd'
 import { FormItem } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
@@ -211,25 +211,14 @@ class Main extends React.Component<Props, State> {
       this.listpage.refresh()
     })
   }
-  public toExport (isAll?: boolean) {
-    if (isAll) {
-      api.toSearchExport({
-        ...this.payload,
-        pageNum: undefined,
-        pageSize: undefined
-      }).then((res) => {
-        APP.fn.download(res, '调整单导出')
-      })
-    } else {
-      const { selectedRowKeys } = this.state
-      if (selectedRowKeys.length === 0) {
-        APP.error('请勾选导出ID')
-        return
-      }
-      api.toExport(selectedRowKeys).then((res) => {
-        APP.fn.download(res, '调整单导出')
-      })
-    }
+  public toExport () {
+    api.toSearchExport({
+      ...this.payload,
+      pageNum: undefined,
+      pageSize: undefined
+    }).then((res) => {
+      return message.success('导出成功，请前往下载列表下载文件')
+    })
   }
   public onSelectChange = (selectedRowKeys: string[] | number[]) => {
     this.setState({
@@ -317,7 +306,7 @@ class Main extends React.Component<Props, State> {
               <Button
                 type='primary'
                 className='mr10'
-                onClick={this.toExport.bind(this, undefined)}
+                onClick={this.toExport.bind(this)}
               >
                 批量导出
               </Button>

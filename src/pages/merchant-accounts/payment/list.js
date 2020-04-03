@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { setQuery, parseQuery } from '@/util/utils';
-import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col } from 'antd';
+import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col, message } from 'antd';
 import PayModal from './payModal'
 import MoneyRender from '@/components/money-render'
 import { enumPayType } from '../constant'
@@ -92,7 +92,7 @@ class List extends React.Component {
     );
   };
   // 查询
-  handleSearch = () => {
+  handleSearch = (isExport) => {
     const { validateFields } = this.props.form;
     validateFields((err, vals) => {
       if (!err) {
@@ -104,6 +104,15 @@ class List extends React.Component {
           endModifyTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
           page: 1
         };
+        /** 如果isExport === batchExport 就是导出按钮，导出按钮也按照当前筛选条件进行导出 */
+        if(isExport === 'batchExport'){
+          return api.paymentBatchExport('/finance/payment/exportData',params).then((res) => {
+            console.log(res, 'res')
+            return message.success('导出成功，请前往下载列表下载文件')
+          }).catch(err => {
+            console.log(err)
+          })
+        }
         this.setState({
           page: {
             ...this.state.page,
@@ -327,12 +336,12 @@ class List extends React.Component {
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
-                <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>查询</Button>
+                <Button type="primary" style={{ margin: '0 10px' }} onClick={() => this.handleSearch()}>查询</Button>
                 <Button type="default" onClick={this.handleReset}>清除</Button>
                 <Button
+                  className='ml10'
                   type='primary'
-                  className='mr10'
-                  onClick={this.toExport.bind(this, undefined)}
+                  onClick={() => this.handleSearch('batchExport')}
                 >
                   批量导出
                 </Button>

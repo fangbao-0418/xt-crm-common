@@ -62,3 +62,8 @@ export const fetchCheckingList = payload => {
 export const batchExport = (api, params) => {
   return newPost(api, params)
 }
+
+/** 批量导出 */
+export const paymentBatchExport = (api, params) => {
+  return newPost(api, params)
+}
