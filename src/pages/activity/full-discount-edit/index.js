@@ -21,11 +21,66 @@ const { TextArea } = Input;
 class FullDiscountEditPage extends PureComponent {
   /* 保存操作 */
   handleSave = () => {
-    this.props.form.validateFields((err, vals) => {
-      console.log(err)
+    this.props.form.validateFields((err, { title, time, promotionType, ruleType, maxDiscountsAmount, rules, productRef, productRefInfo, promotionDesc }) => {
       if (err) return
+      // api: http://192.168.20.21/project/278/interface/api/50540
+      const params = {
+        title,
+        startTime: time[0].valueOf(),
+        endTime: time[1].valueOf(),
+        promotionType,
+        productRef,
+        rule: {
+          ruleType
+        },
+        promotionDesc
+      }
 
-      console.log(vals)
+      if (productRef === 0) { // 指定活动
+        params.refPromotionId = productRefInfo[0].id
+      } else if (productRef === 1) { // 指定商品
+        params.refProductIds = productRefInfo.map(item => item.id)
+      }
+
+      if (promotionType === 11) { // 满减
+        params.rule.amountDiscountsRules = rules.map(item => {
+          if (item.condition === 1) { // 满 x 元
+            return {
+              discountsAmount: item.discountsAmount,
+              stageAmount: item.stageAmount
+            }
+          } else if (item.condition === 1) { // 满 x 件
+            return {
+              discountsAmount: item.discountsAmount,
+              stageCount: item.stageCount
+            }
+          } else {
+            return null
+          }
+        })
+      } else if (promotionType === 12) { // 满折
+        params.rule.discountsRules = rules.map(item => {
+          if (item.condition === 1) { // 满 x 元
+            return {
+              discounts: item.discounts * 10,
+              stageAmount: item.stageAmount
+            }
+          } else if (item.condition === 1) { // 满 x 件
+            return {
+              discounts: item.discounts * 10,
+              stageCount: item.stageCount
+            }
+          } else {
+            return null
+          }
+        })
+      }
+
+      if (ruleType === 0) {
+        params.rule.maxDiscountsAmount = maxDiscountsAmount
+      }
+
+      console.log(params)
     })
   }
 
@@ -337,7 +392,7 @@ class FullDiscountEditPage extends PureComponent {
                 rules: [
                   {
                     required: true,
-                    message: '请输入活动名称',
+                    message: '请选择活动时间',
                   },
                 ],
               })(
