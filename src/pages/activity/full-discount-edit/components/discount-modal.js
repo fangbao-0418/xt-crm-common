@@ -220,7 +220,7 @@ class DiscountModal extends PureComponent {
       discountModal,
       currentRuleIndex,
       promotionType, // 11: 满减 12: 满折
-      rules
+      rules = []
     } = this.props
     const { conditionErr, modeErr, alertErr } = this.state
     /* 优惠门槛错误提示 */
@@ -234,14 +234,16 @@ class DiscountModal extends PureComponent {
     let discountsAmount
     let discounts
 
-    if (currentRuleIndex >= 0 && rules.length) { // 编辑规则的时候 需要设置默认值
-      const currentRule = rules[currentRuleIndex]
-      condition = condition || currentRule.condition
-      mode = mode || currentRule.mode
-      stageAmount = currentRule.stageAmount
-      stageCount = currentRule.stageCount
-      discountsAmount = currentRule.discountsAmount
-      discounts = currentRule.discounts
+    if (rules.length) {
+      if (currentRuleIndex >= 0) {  // 编辑规则的时候 需要设置默认值
+        const currentRule = rules[currentRuleIndex]
+        condition = condition || currentRule.condition
+        mode = mode || currentRule.mode
+        stageAmount = currentRule.stageAmount
+        stageCount = currentRule.stageCount
+        discountsAmount = currentRule.discountsAmount
+        discounts = currentRule.discounts
+      }
     }
 
     const radioStyle = {
