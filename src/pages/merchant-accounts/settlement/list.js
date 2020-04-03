@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col, Select } from 'antd';
-import SettleModal from './settleModal'
-import MoneyRender from '@/components/money-render'
-import { enumSettleType } from '../constant'
+import SettleModal from './components/settleModal'
+import RejectModal from './components/rejectModal'
+import getColumns from './config/columns'
 import { setQuery, parseQuery, gotoPage } from '@/util/utils';
 import * as api from '../api'
 
@@ -22,14 +21,15 @@ class List extends React.Component {
         current: +params.page || 1,
         pageSize: 10
       },
-      modalVisible: false, // modal弹框隐藏显示
-      operateType: 'submit', // modal操作类型
+      settleModalVisible: false, // 结算模态框
+      rejectModalVisible: false, // 驳回模态框
       selectId: '' // 当前选中条目
     }
   }
   componentDidMount() {
-   this.fetchData()
+    this.fetchData()
   }
+
   componentDidUpdate(prevProps) {
     if (this.props.settStatus !== prevProps.settStatus) {
       const { page } = this.state
@@ -111,170 +111,57 @@ class List extends React.Component {
     this.fetchData();
   }
 
-
-  // 驳回|提交结算|去付款按钮
-  handleBtnAction = (id, operateType, serialNo) => () => {
-    if (operateType !== 'topay') {
-      this.setState({
-        selectId: id,
-        modalVisible: true,
-        operateType
-      })
-    } else {
-      api.settlementPay(id).then(res => {
-        res && gotoPage('/merchant-accounts/payment?settlementSerialNo=' + serialNo)
-      })
-    }
-
-  };
-  // 驳回|提交结算 确定后回调
-  handleSucc = () => {
+  // 结算
+  handleSettle = (selectId) => () => {
     this.setState({
-      modalVisible: false
+      selectId,
+      settleModalVisible: true,
+    })
+  }
+
+  // 驳回
+  handleReject = (selectId) => () => {
+    this.setState({
+      selectId,
+      rejectModalVisible: true,
+    })
+  }
+
+  // 支付
+  handlePay = (id, serialNo) => () => {
+    api.settlementPay(id).then(res => {
+      res && gotoPage('/merchant-accounts/payment?settlementSerialNo=' + serialNo)
+    })
+  }
+
+  // 结算|驳回 确认回调
+  handleSucc = (key) => {
+    this.setState({
+      [key]: false
     })
     // 刷新
     this.fetchData(parseQuery());
   }
 
-  handleCancel = () => {
+  // 模态框取消操作
+  handleCancel = (key) => {
     this.setState({
-      modalVisible: false
+      [key]: false
     })
-  };
-
+  }
 
   render() {
-    const { page, dataSource, operateType, selectId, modalVisible } = this.state;
+    const { page, dataSource, selectId, settleModalVisible, rejectModalVisible } = this.state;
     const {
       form: { getFieldDecorator }
     } = this.props;
-    const columns = [
-      {
-        title: '结算单ID',
-        dataIndex: 'serialNo',
-        key: 'serialNo',
-        width: 150
-      },
-      {
-        title: '本期结算对账单金额',
-        dataIndex: 'settlementMoney',
-        key: 'settlementMoney',
-        render: MoneyRender,
-        width: 150
 
-      },
-      {
-        title: '供应商',
-        dataIndex: 'storeName',
-        key: 'storeName',
-        width: 150
+    const columns = getColumns({
+      onSettle: this.handleSettle,
+      onReject: this.handleReject,
+      onPay: this.handlePay
+    });
 
-      },
-      {
-        title: '结算方式',
-        dataIndex: 'payType',
-        key: 'payType',
-        width: 150
-
-      },
-      {
-        title: '收款账户',
-        dataIndex: 'accountInfo',
-        key: 'accountInfo',
-        width: 150,
-        render: accountInfo => {
-          return (
-            <div>
-              <p>{accountInfo.accountName}</p>
-              <p>{accountInfo.accountNo}</p>
-              <p>{accountInfo.bankName}</p>
-            </div>
-          )
-        }
-      },
-      {
-        title: '币种',
-        dataIndex: 'currencyInfo',
-        key: 'currencyInfo',
-        width: 150
-
-      },
-      {
-        title: '发票',
-        dataIndex: 'invoiceInfo',
-        width: 150
-
-      },
-      {
-        title: '状态',
-        dataIndex: 'settStatusInfo',
-        key: 'settStatusInfo',
-        width: 150
-      },
-      {
-        title: '创建人',
-        dataIndex: 'createName',
-        key: 'createName',
-        width: 150
-
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'createTime',
-        key: 'createTime',
-        width: 200,
-
-        render: (createTime) => {
-          return APP.fn.formatDate(createTime)
-        }
-      },
-      {
-        title: '操作人',
-        dataIndex: 'modifyName',
-        key: 'modifyName',
-        width: 150
-
-      },
-      {
-        title: '操作时间',
-        dataIndex: 'modifyTime',
-        key: 'modifyTime',
-        width: 200,
-
-        render: (modifyTime) => {
-          return APP.fn.formatDate(modifyTime)
-        }
-      },
-      {
-        title: '操作',
-        align: 'center',
-        width: 200,
-        fixed: 'right',
-        render: (operate, { settStatus, id, serialNo }) => (
-          <>
-
-            {
-              settStatus === enumSettleType.ToBeSettled ?
-                <>
-                  <Button type="link" onClick={this.handleBtnAction(id, 'submit')} style={{ padding: '0 3px' }}>提交结算</Button>
-                  <Button type="link" onClick={this.handleBtnAction(id, 'reject')} style={{ padding: '0 3px' }}>驳回 </Button>
-                </>
-                : settStatus === enumSettleType.Settling ?
-                  <>
-                    <Button type="link" onClick={this.handleBtnAction(id, 'topay', serialNo)} style={{ padding: '0 3px' }}>去付款</Button>
-                    <Button type="link" onClick={this.handleBtnAction(id, 'reject')} style={{ padding: '0 3px' }}>驳回 </Button>
-                  </>
-                  : settStatus === enumSettleType.partSettled ?
-                    <Button type="link" onClick={this.handleBtnAction(id, 'topay', serialNo)} style={{ padding: '0 3px' }}>去付款</Button>
-                    : null
-            }
-            <Button type="link" style={{ padding: '0 2px' }}>
-              <Link to={`/merchant-accounts/settlement/${id}`}>查看明细</Link>
-            </Button>
-          </>
-        )
-      }
-    ];
     return (
       <Spin tip="操作处理中..." spinning={false}>
         <Card title="筛选">
@@ -351,27 +238,39 @@ class List extends React.Component {
           </Form>
         </Card>
         <Card style={{ marginTop: 10 }}>
-          {dataSource && dataSource.length > 0 ? (
-            <Table
-              scroll={{
-                x: columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
-                  return a + b
-                })
-              }}
-              bordered
-              columns={columns}
-              dataSource={dataSource}
-              pagination={page}
-              onChange={this.handleChangeTable}
-              defaultExpandAllRows={true}
-              rowKey={record => record.id}
-            />
-          ) : (
-              '暂无数据'
-            )}
+          <Table
+            scroll={{
+              x: columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
+                return a + b
+              })
+            }}
+            bordered
+            columns={columns}
+            dataSource={dataSource}
+            pagination={page}
+            onChange={this.handleChangeTable}
+            defaultExpandAllRows={true}
+            rowKey={record => record.id}
+          />
         </Card>
-        {/* 提交|驳回提示框 */}
-        <SettleModal id={selectId} operateType={operateType} handleSucc={this.handleSucc} modalProps={{ visible: modalVisible, onCancel: this.handleCancel }} />
+        {/* 结算提示框 */}
+        <SettleModal
+          id={selectId}
+          handleSucc={this.handleSucc.bind(this, 'settleModalVisible')}
+          modalProps={{
+            visible: settleModalVisible,
+            onCancel: this.handleCancel.bind(this, 'settleModalVisible')
+          }}
+        />
+        {/* 驳回提示框 */}
+        <RejectModal
+          id={selectId}
+          handleSucc={this.handleSucc.bind(this, 'rejectModalVisible')}
+          modalProps={{
+            visible: rejectModalVisible,
+            onCancel: this.handleCancel.bind(this, 'rejectModalVisible')
+          }}
+        />
       </Spin>
     )
   }
