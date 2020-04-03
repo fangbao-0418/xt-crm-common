@@ -15,26 +15,25 @@ const getExceptionStr = (list) => {
     let nextItem = list[i + 1]
     if (curItem.condition === 1) { // 满 x 元
       if (curItem.stageAmount >= nextItem.stageAmount) {
-        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(具体: 高阶梯的满X元必须大于低阶梯的满X元)`
+        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠门槛: 高阶梯的满X元必须大于低阶梯的满X元)`
       }
     } else if (curItem.condition === 2) { // 满 x 件
       if (curItem.stageCount >= nextItem.stageCount) {
-        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(具体: 高阶梯的满X件必须大于低阶梯的满X件)`
+        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠门槛: 高阶梯的满X件必须大于低阶梯的满X件)`
       }
     }
 
     if (curItem.mode === 1) { // 减 x 元
       if (curItem.discountsAmount >= nextItem.discountsAmount) {
-        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(具体: 高阶梯的减X元必须大于低阶梯的减X元)`
+        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠方式: 高阶梯的减X元必须大于低阶梯的减X元)`
       }
     } else if (curItem.mode === 2) { // 折 x 折
       if (curItem.discounts >= nextItem.discounts) {
-        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(具体: 高阶梯的折x折必须大于低阶梯的折X折)`
+        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠方式: 高阶梯的折x折必须大于低阶梯的折X折)`
       }
     }
-
-    return false
   }
+  return false
 }
 
 @connect(state => ({
@@ -45,6 +44,15 @@ const getExceptionStr = (list) => {
 }))
 @Form.create()
 class FullDiscountEditPage extends PureComponent {
+  componentWillUnmount() {
+    const { dispatch } = this.props
+    // 这里需要重置preRulesMaps 和 preProductRefMaps的值，否则下次进入该页面会保留之前的数据
+    dispatch[namespace].saveDefault({
+      preRulesMaps: {},
+      preProductRefMaps: {}
+    })
+  }
+
   /* 保存操作 */
   handleSave = () => {
     this.props.form.validateFields((err, { title, time, promotionType, ruleType, maxDiscountsAmount, rules, productRef, productRefInfo, promotionDesc }) => {
@@ -353,6 +361,7 @@ class FullDiscountEditPage extends PureComponent {
                         callback('请添加优惠条件')
                         return
                       }
+                      console.log(getExceptionStr(value))
                       if (getExceptionStr(value)) {
                         callback(getExceptionStr(value))
                       }
