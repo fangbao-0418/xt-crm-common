@@ -128,8 +128,8 @@ class Records extends React.Component<Props> {
         getInstance={(ref) => this.listpage = ref}
         formItemLayout={(
           <>
-            <FormItem name='create' label='申请时间' />
-            <FormItem name='remitStatus' label='申请时间' />
+            <FormItem name='create' />
+            <FormItem name='remitStatus' />
           </>
         )}
         api={this.getBatchList}
@@ -141,6 +141,7 @@ class Records extends React.Component<Props> {
             },
             remitStatus: {
               type: 'select',
+              label: '提交状态',
               options: [
                 {label: '未提交', value: 1},
                 {label: '已提交', value: 2}
