@@ -6,6 +6,14 @@ import DateFns from 'date-fns'
 export const getRulesColumns = ({ onEdit, onDelete }) => {
   return [
     {
+      title: '级数',
+      dataIndex: 'index',
+      key: 'index',
+      render: (_, __, i) => {
+        return `第 ${i + 1} 级`
+      }
+    },
+    {
       title: '优惠门槛',
       dataIndex: 'conditionStr',
       key: 'conditionStr'

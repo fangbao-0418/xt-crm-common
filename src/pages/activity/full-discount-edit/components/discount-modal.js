@@ -48,7 +48,13 @@ class DiscountModal extends PureComponent {
   }
 
   handleOk = () => {
-    const { form: { validateFields }, onOk, dispatch, discountModal, currentRuleIndex, promotionType } = this.props
+    const {
+      form: { validateFields },
+      onOk,
+      dispatch,
+      discountModal,
+      promotionType
+    } = this.props
     validateFields((err, { condition, mode, stageAmount, stageCount, discountsAmount, discounts }) => {
       if (err) {
         // 发生的错误根据conditionErr 和 modeErr 收集
@@ -115,7 +121,8 @@ class DiscountModal extends PureComponent {
             visible: false,
           }
         })
-        onOk(record, currentRuleIndex)
+
+        onOk(record)
       }
     })
   }
@@ -136,7 +143,8 @@ class DiscountModal extends PureComponent {
     const { dispatch, discountModal } = this.props
     this.setState({
       conditionErr: '',
-      modeErr: ''
+      modeErr: '',
+      alertErr: ''
     })
     dispatch[namespace].saveDefault({
       discountModal: {
@@ -275,12 +283,14 @@ class DiscountModal extends PureComponent {
               })(
                 <Radio.Group onChange={this.handleRadioChange.bind(this, 'conditionErr', 'condition')}>
                   <Radio
+                    disabled={rules && rules[0] && rules[0].condition === 2 || false} // 第一次选择 满x件类型 的话 第二次以上配置禁止该选项选择
                     style={radioStyle}
                     value={1}
                   >
                     满
                 </Radio>
                   <Radio
+                    disabled={rules && rules[0] && rules[0].condition === 1 || false} // 第一次选择 满x元类型 的话 第二次以上配置禁止该选项选择
                     style={{
                       ...radioStyle,
                       marginTop: 16
@@ -304,7 +314,7 @@ class DiscountModal extends PureComponent {
                     initialValue: stageAmount
                   })(
                     <InputNumber
-                      disabled={condition === 2}
+                      disabled={condition === 2 || (rules && rules[0] && rules[0].condition === 2 || false)}
                       min={0.01}
                       precision={2}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageAmount')}
@@ -327,7 +337,7 @@ class DiscountModal extends PureComponent {
                     initialValue: stageCount
                   })(
                     <InputNumber
-                      disabled={condition === 1}
+                      disabled={condition === 1 || rules && rules[0] && rules[0].condition === 1 || false}
                       min={1}
                       precision={0}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageCount')}
