@@ -8,7 +8,8 @@ const formatDate = (text) =>
 export default function getColumns ({
   onDetail, // 查看
   onEdit, // 编辑
-  onCopy // 复制
+  onCopy, // 复制
+  onDisable // 关闭
 }) {
   return [
     {
@@ -42,7 +43,7 @@ export default function getColumns ({
       title: '活动说明',
       width: 120,
       dataIndex: 'promotionDesc',
-      render: val => val || '暂无数据'
+      render: (val) => val || '暂无数据'
     },
     {
       title: '创建时间',
@@ -66,6 +67,8 @@ export default function getColumns ({
       width: 220,
       dataIndex: 'action',
       render: (_, record) => {
+        const action = []
+
         return (
           <ActionView showNum={4}>
             <span
@@ -86,7 +89,14 @@ export default function getColumns ({
             >
               复制
             </span>
-            <span className='href'>关闭</span>
+            {record.discountsStatus !== 0 ? (
+              <span
+                onClick={onDisable.bind(null, record)}
+                className='href'
+              >
+                关闭
+              </span>
+            ) : null}
           </ActionView>
         )
       }

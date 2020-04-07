@@ -26,6 +26,12 @@ export default {
       await api.addFullDiscounts(payload);
       message.success('活动创建成功')
       APP.history.replace('/activity/full-discount')
+    },
+
+    async updateFullDiscounts(payload) {
+      await api.updateFullDiscounts(payload);
+      message.success('活动编辑成功')
+      APP.history.replace('/activity/full-discount')
     }
   })
 }

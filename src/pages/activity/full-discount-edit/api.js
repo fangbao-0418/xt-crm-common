@@ -14,3 +14,8 @@ export function queryDiscounts(params) {
 export function addFullDiscounts(params) {
   return newPost('/promotion/addFullDiscounts', params)
 }
+
+// 更新满减满折活动
+export function updateFullDiscounts(params) {
+  return newPost('/promotion/updateFullDiscounts', params)
+}

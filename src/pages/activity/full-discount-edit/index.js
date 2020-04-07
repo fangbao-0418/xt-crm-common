@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Input, DatePicker, Radio, Button, InputNumber } from 'antd'
+import moment from 'moment';
 import RulesTable from './components/rules-table'
 import ProductTable from './components/product-table'
 import { formatMoneyWithSign } from '@/pages/helper';
@@ -30,7 +31,7 @@ const getExceptionStr = (list) => {
         return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠方式: 高阶梯的减X元必须大于低阶梯的减X元)`
       }
     } else if (curItem.mode === 2) { // 折 x 折
-      if (curItem.discounts >= nextItem.discounts) {
+      if (curItem.discounts <= nextItem.discounts) {
         return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠方式: 高阶梯的折x折必须大于低阶梯的折X折)`
       }
     }
@@ -62,8 +63,11 @@ class FullDiscountEditPage extends PureComponent {
       detailFullDiscounts(id).then(detail => {
         const fieldsValue = {
           title: detail.title,
-          // time: [detail.startTime, detail.endTime],
-          promotionType: detail.promotionType
+          time: [moment(detail.startTime), moment(detail.endTime)],
+          promotionType: detail.promotionType,
+          productRef: detail.productRef,
+          productRefInfo: detail.referenceProductVO,
+          promotionDesc: detail.promotionDesc
         }
 
         if (detail.rule) {
@@ -80,6 +84,8 @@ class FullDiscountEditPage extends PureComponent {
                   ...item,
                   stageType: detail.stageType,
                   mode: 1,
+                  discountsAmount: item.discountsAmount / 100,
+                  stageAmount: item.stageAmount / 100,
                   conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
                   modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
                 }
@@ -88,6 +94,7 @@ class FullDiscountEditPage extends PureComponent {
                   ...item,
                   stageType: detail.stageType,
                   mode: 1,
+                  discountsAmount: item.discountsAmount / 100,
                   conditionStr: `满 ${formatMoneyWithSign(item.stageCount)} 件`,
                   modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
                 }
@@ -102,6 +109,7 @@ class FullDiscountEditPage extends PureComponent {
                   ...item,
                   stageType: detail.stageType,
                   mode: 2,
+                  stageAmount: item.stageAmount / 100,
                   conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
                   modeStr: `减 ${formatMoneyWithSign(item.discounts)} 折`
                 }
@@ -132,7 +140,8 @@ class FullDiscountEditPage extends PureComponent {
       form: {
         validateFields
       },
-      dispatch
+      dispatch,
+      match: { params: { id, action } }
     } = this.props
     validateFields((err, {
       title, // 活动名称
@@ -210,7 +219,14 @@ class FullDiscountEditPage extends PureComponent {
         params.rule.maxDiscountsAmount = maxDiscountsAmount * 10 * 10
       }
 
-      dispatch[namespace].addFullDiscounts(params)
+      if (action === 'copy' || (!id)) { // 复制或者新建
+        dispatch[namespace].addFullDiscounts(params)
+      } else { // 编辑
+        dispatch[namespace].updateFullDiscounts({
+          ...params,
+          id
+        })
+      }
     })
   }
 
@@ -421,14 +437,16 @@ class FullDiscountEditPage extends PureComponent {
               )}
               <Form.Item style={{ display: 'inline-block', marginBottom: 0 }}>
                 {
-                  getFieldDecorator('maxDiscountsAmount', {
-                    rules: [{
-                      required: ruleType === 0,
-                      message: '请输入满减封顶数'
-                    }]
-                  })(
+                  getFieldDecorator('maxDiscountsAmount',
+                    // {
+                    //   rules: [{
+                    //     required: ruleType === 0,
+                    //     message: '请输入满减封顶数'
+                    //   }]
+                    // }
+                  )(
                     <InputNumber
-                      min={0.01}
+                      min={0}
                       precision={2}
                       {...(
                         /* 解决不必选的时候也会出现报错样式的bug */

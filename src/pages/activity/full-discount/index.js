@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react'
-import { Card, Button } from 'antd'
+import { Card, Button, Modal } from 'antd'
 import { ListPage, FormItem } from '@/packages/common/components'
 import { gotoPage } from '@/util/utils';
 import getColumns from './config/getColumns'
 import { queryConfig } from './config/config';
-import { queryDiscounts } from './api'
+import { queryDiscounts, disableDiscounts } from './api'
+
+const { confirm } = Modal;
 
 class FullDiscountPage extends PureComponent {
   /* 编辑 */
@@ -27,6 +29,21 @@ class FullDiscountPage extends PureComponent {
     gotoPage(`/activity/full-discount/copy/${record.id}`)
   }
 
+  /* 关闭 */
+  handleDisable = (record) => {
+    confirm({
+      content: '确认关闭该活动吗',
+      onOk: () => {
+        disableDiscounts({
+          promotionIds: [record.id]
+        })
+          .then(() => {
+            this.listRef.refresh()
+          })
+      }
+    });
+  }
+
   render() {
     return (
       <Card>
@@ -43,7 +60,8 @@ class FullDiscountPage extends PureComponent {
           columns={getColumns({
             onDetail: this.handleDetail,
             onEdit: this.handleEdit,
-            onCopy: this.handleCopy
+            onCopy: this.handleCopy,
+            onDisable: this.handleDisable
           })}
           api={queryDiscounts}
           formItemLayout={(
