@@ -13,11 +13,11 @@ const getExceptionStr = (list) => {
   for (let i = 0, l = list.length - 1; i < l; i++) {
     let curItem = list[i]
     let nextItem = list[i + 1]
-    if (curItem.condition === 1) { // 满 x 元
+    if (curItem.stageType === 1) { // 满 x 元
       if (curItem.stageAmount >= nextItem.stageAmount) {
         return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠门槛: 高阶梯的满X元必须大于低阶梯的满X元)`
       }
-    } else if (curItem.condition === 2) { // 满 x 件
+    } else if (curItem.stageType === 2) { // 满 x 件
       if (curItem.stageCount >= nextItem.stageCount) {
         return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠门槛: 高阶梯的满X件必须大于低阶梯的满X件)`
       }
@@ -55,8 +55,23 @@ class FullDiscountEditPage extends PureComponent {
 
   /* 保存操作 */
   handleSave = () => {
-    this.props.form.validateFields((err, { title, time, promotionType, ruleType, maxDiscountsAmount, rules, productRef, productRefInfo, promotionDesc }) => {
-      console.log(err)
+    const {
+      form: {
+        validateFields
+      },
+      dispatch
+    } = this.props
+    validateFields((err, {
+      title, // 活动名称
+      time, // 活动时间
+      promotionType, // 优惠种类
+      ruleType, // 优惠类型
+      maxDiscountsAmount, // 满减封顶金额
+      rules, // 优惠条件
+      productRef, // 活动商品
+      productRefInfo, // 关联活动商品
+      promotionDesc // 活动说明
+    }) => {
       if (err) return
       // api: http://192.168.20.21/project/278/interface/api/50540
       const params = {
@@ -68,7 +83,8 @@ class FullDiscountEditPage extends PureComponent {
         rule: {
           ruleType
         },
-        promotionDesc
+        promotionDesc,
+        sort: 1
       }
 
       if (productRef === 0) { // 指定活动
@@ -79,14 +95,17 @@ class FullDiscountEditPage extends PureComponent {
 
       if (promotionType === 11) { // 满减
         params.rule.amountDiscountsRules = rules.map(item => {
-          if (item.condition === 1) { // 满 x 元
+          if (params.rule.stageType === undefined) {
+            params.rule.stageType = item.stageType
+          }
+          if (item.stageType === 1) { // 满 x 元
             return {
-              discountsAmount: item.discountsAmount,
-              stageAmount: item.stageAmount
+              discountsAmount: item.discountsAmount * 10 * 10,
+              stageAmount: item.stageAmount * 10 * 10
             }
-          } else if (item.condition === 1) { // 满 x 件
+          } else if (item.stageType === 1) { // 满 x 件
             return {
-              discountsAmount: item.discountsAmount,
+              discountsAmount: item.discountsAmount * 10 * 10,
               stageCount: item.stageCount
             }
           } else {
@@ -95,12 +114,15 @@ class FullDiscountEditPage extends PureComponent {
         })
       } else if (promotionType === 12) { // 满折
         params.rule.discountsRules = rules.map(item => {
-          if (item.condition === 1) { // 满 x 元
+          if (params.rule.stageType === undefined) {
+            params.rule.stageType = item.stageType
+          }
+          if (item.stageType === 1) { // 满 x 元
             return {
               discounts: item.discounts * 10,
-              stageAmount: item.stageAmount
+              stageAmount: item.stageAmount * 10 * 10
             }
-          } else if (item.condition === 1) { // 满 x 件
+          } else if (item.stageType === 2) { // 满 x 件
             return {
               discounts: item.discounts * 10,
               stageCount: item.stageCount
@@ -112,10 +134,10 @@ class FullDiscountEditPage extends PureComponent {
       }
 
       if (ruleType === 0) {
-        params.rule.maxDiscountsAmount = maxDiscountsAmount
+        params.rule.maxDiscountsAmount = maxDiscountsAmount * 10 * 10
       }
 
-      console.log(params)
+      dispatch[namespace].addFullDiscounts(params)
     })
   }
 
@@ -361,7 +383,6 @@ class FullDiscountEditPage extends PureComponent {
                         callback('请添加优惠条件')
                         return
                       }
-                      console.log(getExceptionStr(value))
                       if (getExceptionStr(value)) {
                         callback(getExceptionStr(value))
                       }
@@ -436,8 +457,7 @@ class FullDiscountEditPage extends PureComponent {
           <div style={{ padding: '16px 24px 0 24px' }}>
             <Form.Item {...formTailLayout}>
               <Button onClick={this.handleSave} type="primary">保存</Button>
-              <Button style={{ marginLeft: 16 }}>取消</Button>
-              <Button onClick={this.handleBack} style={{ marginLeft: 16 }}>返回</Button>
+              <Button  onClick={this.handleBack} style={{ marginLeft: 16 }}>取消</Button>
             </Form.Item>
           </div>
         </Form>

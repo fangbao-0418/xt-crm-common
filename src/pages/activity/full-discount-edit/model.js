@@ -1,3 +1,5 @@
+import { message } from 'antd';
+import * as api from './api';
 export const namespace = 'activity.full-discount-edit'
 
 export default {
@@ -19,5 +21,11 @@ export default {
     preProductRefMaps: {}, // 上一次选择的活动商品选择数据
     currentRuleIndex: -1 // 当前规则索引
   },
-  effects: {}
+  effects: (dispatch) => ({
+    async addFullDiscounts(payload) {
+      await api.addFullDiscounts(payload);
+      message.success('活动创建成功')
+      APP.history.replace('/activity/full-discount')
+    }
+  })
 }

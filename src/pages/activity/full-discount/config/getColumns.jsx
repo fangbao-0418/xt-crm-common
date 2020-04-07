@@ -1,5 +1,6 @@
 import React from 'react'
 import ActionView from '@/components/action-view'
+import { discountsStatusMap } from './config'
 
 const formatDate = (text) =>
   text ? APP.fn.formatDate(text) : '-'
@@ -13,27 +14,35 @@ export default function getColumns ({
     {
       title: '编号',
       width: 120,
-      dataIndex: 'index'
+      dataIndex: 'id'
     },
     {
       title: '活动名称',
       width: 120,
-      dataIndex: 'activeName'
+      dataIndex: 'title'
     },
     {
       title: '活动时间',
       width: 120,
-      dataIndex: 'activeTime'
+      render: (_, record) => {
+        return (
+          formatDate(record.startTime) +
+          '-' +
+          formatDate(record.endTime)
+        )
+      }
     },
     {
       title: '活动状态',
       width: 120,
-      dataIndex: 'activeStatus'
+      dataIndex: 'discountsStatus',
+      render: (val) => discountsStatusMap[val] || '状态错误'
     },
     {
       title: '活动说明',
       width: 120,
-      dataIndex: 'activeMemo'
+      dataIndex: 'promotionDesc',
+      render: val => val || '暂无数据'
     },
     {
       title: '创建时间',
@@ -44,7 +53,8 @@ export default function getColumns ({
     {
       title: '更新时间',
       width: 120,
-      dataIndex: 'updateTime'
+      dataIndex: 'updateTime',
+      render: formatDate
     },
     {
       title: '最后操作人',

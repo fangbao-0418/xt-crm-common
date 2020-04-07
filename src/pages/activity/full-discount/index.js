@@ -4,7 +4,7 @@ import { ListPage, FormItem } from '@/packages/common/components'
 import { gotoPage } from '@/util/utils';
 import getColumns from './config/getColumns'
 import { queryConfig } from './config/config';
-import { getGoodsList } from './api'
+import { queryDiscounts } from './api'
 
 class FullDiscountPage extends PureComponent {
   /* 编辑 */
@@ -37,7 +37,7 @@ class FullDiscountPage extends PureComponent {
           getInstance={ref => this.listRef = ref}
           rangeMap={{
             createTime: {
-              fields: ['createStartTime', 'createEndTime']
+              fields: ['startTime', 'endTime']
             }
           }}
           columns={getColumns({
@@ -45,12 +45,12 @@ class FullDiscountPage extends PureComponent {
             onEdit: this.handleEdit,
             onCopy: this.handleCopy
           })}
-          api={getGoodsList}
+          api={queryDiscounts}
           formItemLayout={(
             <>
               <FormItem name='createTime' />
-              <FormItem name='activeName' />
-              <FormItem name='activeStatus' />
+              <FormItem name='title' />
+              <FormItem name='discountsStatus' />
             </>
           )}
           addonAfterSearch={(

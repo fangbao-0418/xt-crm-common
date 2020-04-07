@@ -1,5 +1,9 @@
 const { post } = APP.http;
 
-export function getGoodsList(data) {
-  return post('/product/list', data);
+// 买赠/满减满折活动列表查询
+export function queryDiscounts(params) {
+  return post('/promotion/queryDiscounts', {
+    ...params,
+    promotionTypes: '11,12'
+  })
 }

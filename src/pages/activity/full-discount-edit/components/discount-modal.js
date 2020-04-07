@@ -4,19 +4,19 @@ import { connect } from '@/util/utils';
 import { namespace } from '../model';
 
 const errMsgs = [{
-  key: 'condition',
+  key: 'stageType',
   msg: '请设置优惠门槛'
 }, {
   key: 'stageAmount',
   reverse: 'stageCount',
   msg: '请输入优惠门槛金额',
-  type: 'condition',
+  type: 'stageType',
   val: 1
 }, {
   key: 'stageCount',
   reverse: 'stageAmount',
   msg: '请输入优惠门槛件数',
-  type: 'condition',
+  type: 'stageType',
   val: 2
 }, {
   key: 'mode',
@@ -55,12 +55,12 @@ class DiscountModal extends PureComponent {
       discountModal,
       promotionType
     } = this.props
-    validateFields((err, { condition, mode, stageAmount, stageCount, discountsAmount, discounts }) => {
+    validateFields((err, { stageType, mode, stageAmount, stageCount, discountsAmount, discounts }) => {
       if (err) {
         // 发生的错误根据conditionErr 和 modeErr 收集
         const errMap = errMsgs.reduce((pre, next) => {
           if (next.key in err) {
-            if (['condition', 'stageAmount', 'stageCount'].includes(next.key)) {
+            if (['stageType', 'stageAmount', 'stageCount'].includes(next.key)) {
               return {
                 ...pre,
                 conditionErr: next.key
@@ -83,7 +83,7 @@ class DiscountModal extends PureComponent {
         return
       }
 
-      if (promotionType === 11 && condition === 1) {
+      if (promotionType === 11 && stageType === 1) {
         // 只有优惠条件为满减类型 同时优惠门槛为满x元类型的时候 需要校验优惠的价格不能大于门槛值
         if (stageAmount < discountsAmount) {
           this.setState({
@@ -94,14 +94,14 @@ class DiscountModal extends PureComponent {
       }
 
       const record = {
-        condition,
+        stageType,
         mode
       }
 
-      if (condition === 1) { // 满 X 元
+      if (stageType === 1) { // 满 X 元
         record.stageAmount = stageAmount
         record.conditionStr = `满 ${stageAmount} 元`
-      } else if (condition === 2) { // 满 X 件
+      } else if (stageType === 2) { // 满 X 件
         record.stageCount = stageCount
         record.conditionStr = `满 ${stageCount} 件`
       }
@@ -236,7 +236,7 @@ class DiscountModal extends PureComponent {
     /* 优惠方式错误提示 */
     const modeErrItem = this.getCurrentItem(modeErr)
 
-    let { condition, mode } = getFieldsValue(['condition', 'mode'])
+    let { stageType, mode } = getFieldsValue(['stageType', 'mode'])
     let stageAmount
     let stageCount
     let discountsAmount
@@ -245,7 +245,7 @@ class DiscountModal extends PureComponent {
     if (rules.length) {
       if (currentRuleIndex >= 0) {  // 编辑规则的时候 需要设置默认值
         const currentRule = rules[currentRuleIndex]
-        condition = condition || currentRule.condition
+        stageType = stageType || currentRule.stageType
         mode = mode || currentRule.mode
         stageAmount = currentRule.stageAmount
         stageCount = currentRule.stageCount
@@ -273,24 +273,24 @@ class DiscountModal extends PureComponent {
           <h3 style={{ marginTop: 0 }}>优惠门槛</h3>
           <div style={{ marginBottom: 0, paddingLeft: 8 }}>
             <div style={{ display: 'inline-block' }}>
-              {getFieldDecorator('condition', {
+              {getFieldDecorator('stageType', {
                 rules: [
                   {
                     required: true
                   }
                 ],
-                initialValue: condition
+                initialValue: stageType
               })(
-                <Radio.Group onChange={this.handleRadioChange.bind(this, 'conditionErr', 'condition')}>
+                <Radio.Group onChange={this.handleRadioChange.bind(this, 'conditionErr', 'stageType')}>
                   <Radio
-                    disabled={rules && rules[0] && rules[0].condition === 2 || false} // 第一次选择 满x件类型 的话 第二次以上配置禁止该选项选择
+                    disabled={rules && rules[0] && rules[0].stageType === 2 || false} // 第一次选择 满x件类型 的话 第二次以上配置禁止该选项选择
                     style={radioStyle}
                     value={1}
                   >
                     满
                 </Radio>
                   <Radio
-                    disabled={rules && rules[0] && rules[0].condition === 1 || false} // 第一次选择 满x元类型 的话 第二次以上配置禁止该选项选择
+                    disabled={rules && rules[0] && rules[0].stageType === 1 || false} // 第一次选择 满x元类型 的话 第二次以上配置禁止该选项选择
                     style={{
                       ...radioStyle,
                       marginTop: 16
@@ -308,13 +308,13 @@ class DiscountModal extends PureComponent {
                   getFieldDecorator('stageAmount', {
                     rules: [
                       {
-                        required: condition === 1
+                        required: stageType === 1
                       }
                     ],
                     initialValue: stageAmount
                   })(
                     <InputNumber
-                      disabled={condition === 2 || (rules && rules[0] && rules[0].condition === 2 || false)}
+                      disabled={stageType === 2 || (rules && rules[0] && rules[0].stageType === 2 || false)}
                       min={0.01}
                       precision={2}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageAmount')}
@@ -331,13 +331,13 @@ class DiscountModal extends PureComponent {
                   getFieldDecorator('stageCount', {
                     rules: [
                       {
-                        required: condition === 2
+                        required: stageType === 2
                       }
                     ],
                     initialValue: stageCount
                   })(
                     <InputNumber
-                      disabled={condition === 1 || rules && rules[0] && rules[0].condition === 1 || false}
+                      disabled={stageType === 1 || rules && rules[0] && rules[0].stageType === 1 || false}
                       min={1}
                       precision={0}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageCount')}
@@ -353,7 +353,7 @@ class DiscountModal extends PureComponent {
           </div>
           {
             conditionErrItem &&
-            ['condition', 'stageAmount', 'stageCount'].includes(conditionErrItem.key) &&
+            ['stageType', 'stageAmount', 'stageCount'].includes(conditionErrItem.key) &&
             <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{conditionErrItem.msg}</p>
           }
           <h3>优惠方式</h3>
