@@ -64,7 +64,6 @@ class List extends React.Component {
       page: page.current,
       ...params
     };
-
     api.getPaymentList(options).then((res = {}) => {
       page.total = res.total;
       this.setState({
@@ -226,10 +225,8 @@ class List extends React.Component {
               onConfirm: this.handleConfirm
             })}
             dataSource={dataSource}
-            pagination={{
-              ...page,
-              onChange: this.handleChangeTable
-            }}
+            pagination={page}
+            onChange={this.handleChangeTable}
             // rowSelection={rowSelection}
             defaultExpandAllRows={true}
             rowKey={record => record.id}
