@@ -196,6 +196,7 @@ class CouponInfo extends React.Component {
   }
   handleSave = () => {
     formRef.validateFields(async (err, vals) => {
+      console.log(err, '------')
       const {
         receiveRestrictValues,
         availableDays,
@@ -252,11 +253,19 @@ class CouponInfo extends React.Component {
   // 领取时间校验
   receiveTimeValidator = (rule, value = [], callback) => {
     const { useTimeRange } = this.state
-    if (useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
-      callback('领取起始时间必须小于等于使用起始时间')
-    } else {
-      callback()
+    const form =  formRef.current
+    const { useTimeType } = form ? form.getValues() : {}
+    if (form) {
+      if (useTimeType === 1) {
+        callback()
+        return
+      }
     }
+    console.log(useTimeType, useTimeRange, value, 'receiveTimeValidator')
+    if (useTimeType === 0 && useTimeRange && value[1] && useTimeRange[1] && value[1] > useTimeRange[1]) {
+      callback('领取结束时间必须小于等于使用结束时间')
+    }
+    callback()
   }
   render() {
     const {
@@ -580,16 +589,44 @@ class CouponInfo extends React.Component {
           <FormItem
             name='useTimeType'
             verifiable
+            controlProps={{
+              onChange: (e) => {
+                const value = e.target.value
+                const form =  formRef.current
+                if (value === 1) {
+                  if (!form) {
+                    return
+                  }
+                  const { startReceiveTime, overReceiveTime } = form.getValues()
+                  form.setValues({
+                    startReceiveTime,
+                    overReceiveTime
+                  })
+                }
+              }
+            }}
             options={[{
               label: (
                 <DatePicker.RangePicker
-                  disabledDate={formRef.useTimeTypeDisabledDate.bind(formRef)}
+                  style={{width: 360}}
+                  // disabledDate={formRef.useTimeTypeDisabledDate.bind(formRef)}
                   showTime={{
                     hideDisabledOptions: true
                   }}
                   format='YYYY-MM-DD HH:mm:ss'
                   value={useTimeRange}
-                  onChange={date => this.setState({useTimeRange: date})}
+                  onChange={date => {
+                    // validateFields
+                    this.setState({useTimeRange: date}, () => {
+                      const form =  formRef.current
+                      if (form) {
+                        console.log(form, '-----')
+                        form.props.form.validateFields(['receiveTime'], {force: true}, (err, val) => {
+                          console.log(err, val, '---')
+                        })
+                      }
+                    })
+                  }}
                 />
               ),
               value: 0
