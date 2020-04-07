@@ -3,7 +3,7 @@ import { Card, Row, Col, Form, Table, Input, Icon, Tooltip, Button, Checkbox, me
 import { formatMoneyWithSign } from '../../helper';
 import { map, flattenDeep } from 'lodash';
 import UploadView from '../../../components/upload';
-import { setPromotionAddSKu } from '../api';
+import { setPromotionAddSKu, getOperatorSpuList } from '../api';
 import Image from '../../../components/Image';
 import ArrowContain from '@/pages/goods/components/arrow-contain'
 import If from '@/packages/common/components/if'
@@ -78,9 +78,13 @@ class ActivityDetail extends React.Component {
   };
 
   componentDidMount() {
-    // console.log(new Decimal(1000).mul(100).toNumber(), '--------')
+    this.fetchData()
+    // const { selectedRowKeys, selectedRows } = this.state;
+    // const data = JSON.parse(localStorage.getItem('editsku') || {});
+  }
+
+  handleData (data) {
     const { selectedRowKeys, selectedRows } = this.state;
-    const data = JSON.parse(localStorage.getItem('editsku') || {});
     map(data.promotionSkuList, (item, key) => {
       item.costPrice = Number(item.costPrice / 100);
       item.buyingPrice = Number(item.buyingPrice / 100);
@@ -111,6 +115,20 @@ class ActivityDetail extends React.Component {
       sort: data.sort,
       activityImage: initImgList(data.banner),
     });
+  }
+
+  fetchData () {
+    const { id, productId } = this.props.match.params
+    getOperatorSpuList({
+      promotionId: id,
+      productId: productId
+    }).then((res) => {
+      res = res || {}
+      const record = Object.assign({}, (res.records || [])[0])
+      record.promotionSkuList = record.promotionSkuList || []
+      console.log(record, '----')
+      this.handleData(record)
+    })
   }
 
   setPromotionAddSKu = params => {

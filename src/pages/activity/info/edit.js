@@ -197,8 +197,8 @@ class List extends React.Component {
         params: { id }
       }
     } = this.props;
-    localStorage.setItem('editsku', JSON.stringify({ type, ...record }));
-    history.push(`/activity/info/detail/${id}`);
+    // localStorage.setItem('editsku', JSON.stringify({ type, ...record }));
+    history.push(`/activity/info/detail/${id}/${record.productId}`);
   };
 
   handleInputValue = (text, record, index) => e => {
@@ -453,6 +453,8 @@ class List extends React.Component {
                 {
                   title: '操作',
                   key: 'opt',
+                  align: 'center',
+                  width: 110,
                   render: (record, rows, index) => (
                     <>
                       <span className="href" onClick={this.handleEditsku(record, type)}>
