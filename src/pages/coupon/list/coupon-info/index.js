@@ -262,7 +262,9 @@ class CouponInfo extends React.Component {
       }
     }
     console.log(useTimeType, useTimeRange, value, 'receiveTimeValidator')
-    if (useTimeType === 0 && useTimeRange && value[1] && useTimeRange[1] && value[1] > useTimeRange[1]) {
+    if (useTimeType === 0 && useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
+      callback('领取开始时间必须小于等于使用开始时间')
+    } else if (useTimeType === 0 && useTimeRange && value[1] && useTimeRange[1] && value[1] > useTimeRange[1]) {
       callback('领取结束时间必须小于等于使用结束时间')
     }
     callback()
