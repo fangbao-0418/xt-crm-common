@@ -141,7 +141,7 @@ class SettleDetialList extends React.Component {
                 <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
               )}
             </div>
-            <div className={styles['cont-r','align-r']}>
+            <div className={`${styles['cont-r']} ${styles['align-r']}`}>
               <Button
                 className='ml10'
                 type='primary'

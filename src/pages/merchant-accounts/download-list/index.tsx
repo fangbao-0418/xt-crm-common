@@ -134,16 +134,19 @@ class Main extends React.Component {
       page: this.payload.pageNum
     })
     api.getEarningsDetail(current).then((res) => {
+      console.log(res, 'res')
       this.setState({
         total: res.total,
         loading: false,
         data: res.result
+      }, () => {
+        console.log(this.state.data, 'this.state.data')
       })
     })
   }
 
   public render () {
-    const { pageSize, page, total } = this.state
+    const { pageSize, page, total, data } = this.state
     return (
       <div>
         <div>
@@ -159,7 +162,7 @@ class Main extends React.Component {
             }}
             rowKey='id'
             columns={this.columns}
-            dataSource={this.state.data}
+            dataSource={data}
             loading={this.state.loading}
           />
         </div>
