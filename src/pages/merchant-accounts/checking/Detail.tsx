@@ -37,7 +37,15 @@ class Main extends React.Component<Props, State> {
       }
     }, {
       dataIndex: 'sourceNo',
-      title: '交易编号'
+      title: '交易编号',
+      render: (text) => {
+        // 此逻辑由海鑫建议。售后单不带 -，子单都带 - isAfterSales: 是否售后单
+        const isAfterSales = text.indexOf('-') !== -1 ? false : true
+        const id = isAfterSales ? text : text.slice(0, text.indexOf('-'))
+        const url = isAfterSales ? '#/order/refundOrder/' : '#/order/detail/'
+        console.log(window.location.pathname, 'window.location.pathname ')
+        return <Button type='link' href={window.location.pathname + `${url}${id}`} target='_blank'>{text}</Button>
+      }
     }, {
       dataIndex: 'paymentType',
       title: '交易类型',
