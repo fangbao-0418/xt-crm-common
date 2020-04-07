@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Table } from 'antd'
 import { gotoPage } from '@/util/utils';
+import { formatMoneyWithSign } from '@/pages/helper';
 import { detailFullDiscounts } from './api'
-import { getGoodsColumns, getActivityColumns } from './config/config';
+import { getRulesColumns, getGoodsColumns, getActivityColumns } from './config/columns';
+import { promotionTypeMap } from './config/config';
 
 const formatDate = (text) =>
   text ? APP.fn.formatDate(text) : '-'
@@ -40,16 +42,75 @@ class FullDiscountDetailPage extends PureComponent {
       },
     }
 
-    let title = '加载中...'
-    let time = '加载中...'
-    let promotionDesc = '加载中...'
-    let columns = []
-    let referenceProductVO = []
+    let title = '加载中...'// 活动名称
+    let time = '加载中...' // 活动时间
+    let promotionType = '加载中...' // 优惠种类
+    let ruleTypeTxt = '加载中...' // 优惠类型
+    let rules = [] // 优惠条件
+    let columns = [] // 活动商品表头
+    let referenceProductVO = [] // 活动商品数据
+    let promotionDesc = '加载中...' // 活动说明
 
     if (detail) {
       title = detail.title || '暂无数据'
       time = formatDate(detail.startTime) + ' 至 ' + formatDate(detail.endTime)
-      promotionDesc = detail.promotionDesc || '暂无数据'
+      promotionType = promotionTypeMap[detail.promotionType]
+      if (detail.rule) {
+        const rule = detail.rule
+        if (rule.ruleType === 0) {
+          ruleTypeTxt = '阶梯满'
+        } else if (rule.ruleType === 1) {
+          ruleTypeTxt = '每满减:'
+          if (rule.maxDiscountsAmount === 0) {
+            ruleTypeTxt += ' 不封顶'
+          } else {
+            ruleTypeTxt += ` ${formatMoneyWithSign(rule.maxDiscountsAmount)}元封顶`
+          }
+        } else {
+          ruleTypeTxt = '数据出错'
+        }
+
+        if (detail.promotionType === 11) { // 满减
+          rules = rule.amountRuleList.map(item => {
+            if (detail.stageType === 1) { // 满 x 元
+              return {
+                ...item,
+                conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
+                modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
+              }
+            } else if (detail.stageType === 2) { // 满 x 件
+              return {
+                ...item,
+                conditionStr: `满 ${formatMoneyWithSign(item.stageCount)} 件`,
+                modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
+              }
+            } else {
+              return item
+            }
+          })
+        } else if (detail.promotionType === 12) { // 满折
+          rules = rule.amountRuleList.map(item => {
+            if (detail.stageType === 1) { // 满 x 元
+              return {
+                ...item,
+                conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
+                modeStr: `减 ${formatMoneyWithSign(item.discounts)} 折`
+              }
+            } else if (detail.stageType === 2) { // 满 x 件
+              return {
+                ...item,
+                conditionStr: `满 ${formatMoneyWithSign(item.stageCount)} 件`,
+                modeStr: `减 ${formatMoneyWithSign(item.discounts)} 折`
+              }
+            } else {
+              return item
+            }
+          })
+        }
+      } else {
+        ruleTypeTxt = '未获取rule字段数据'
+      }
+
 
       if (detail.productRef === 0) { // 活动
         columns = getActivityColumns()
@@ -58,6 +119,7 @@ class FullDiscountDetailPage extends PureComponent {
       }
 
       referenceProductVO = detail.referenceProductVO
+      promotionDesc = detail.promotionDesc || '暂无数据'
     }
 
     console.log(detail, referenceProductVO)
@@ -74,14 +136,20 @@ class FullDiscountDetailPage extends PureComponent {
             <Form.Item label="活动时间">{time} </Form.Item>
           </Card>
           <Card type="inner" title="优惠信息">
-            <Form.Item label="优惠种类">优惠种类</Form.Item>
-            <Form.Item label="优惠类型">优惠类型</Form.Item>
-            <Form.Item label="优惠条件">优惠条件</Form.Item>
+            <Form.Item label="优惠种类">{promotionType}</Form.Item>
+            <Form.Item label="优惠类型">{ruleTypeTxt}</Form.Item>
+            <Form.Item label="优惠条件">
+              <Table
+                style={{ margin: '8px 0 8px' }}
+                pagination={false}
+                dataSource={rules}
+                columns={getRulesColumns()}
+              />
+            </Form.Item>
           </Card>
           <Card type="inner" title="活动商品">
             <Form.Item label="指定活动">
               <Table
-                style={{ margin: '8px 0 8px' }}
                 pagination={false}
                 dataSource={referenceProductVO}
                 columns={columns}

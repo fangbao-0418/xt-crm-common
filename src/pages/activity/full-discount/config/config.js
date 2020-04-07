@@ -8,7 +8,7 @@ export const queryConfig = {
       }
     },
     title: {
-      label: '商品名称'
+      label: '活动名称'
     },
     discountsStatus: {
       label: '活动状态',

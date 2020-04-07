@@ -103,7 +103,7 @@ class FullDiscountEditPage extends PureComponent {
               discountsAmount: item.discountsAmount * 10 * 10,
               stageAmount: item.stageAmount * 10 * 10
             }
-          } else if (item.stageType === 1) { // 满 x 件
+          } else if (item.stageType === 2) { // 满 x 件
             return {
               discountsAmount: item.discountsAmount * 10 * 10,
               stageCount: item.stageCount
