@@ -1,14 +1,15 @@
 import React from 'react'
 import { ListItem } from '../config/interface'
+import { getUrl } from '../config/adapter'
 
 const CarouselItem = ({ item }: { item: ListItem }) => {
   let src = ''
   let desc = ''
 
   if (typeof item === 'string') {
-    src = item
+    src = getUrl(item)
   } else {
-    src = item.value
+    src = getUrl(item.value)
     desc = item.label
   }
 
