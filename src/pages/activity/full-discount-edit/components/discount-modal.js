@@ -30,7 +30,7 @@ const errMsgs = [{
 }, {
   key: 'discounts',
   reverse: 'discountsAmount',
-  msg: '请输入优惠件数',
+  msg: '请输入优惠折扣',
   type: 'mode',
   val: 2
 }]

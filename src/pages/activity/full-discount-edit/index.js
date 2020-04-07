@@ -2,8 +2,10 @@ import React, { PureComponent } from 'react'
 import { Card, Form, Input, DatePicker, Radio, Button, InputNumber } from 'antd'
 import RulesTable from './components/rules-table'
 import ProductTable from './components/product-table'
+import { formatMoneyWithSign } from '@/pages/helper';
 import { gotoPage, connect } from '@/util/utils';
 import { namespace } from './model';
+import { detailFullDiscounts } from './api'
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -51,6 +53,77 @@ class FullDiscountEditPage extends PureComponent {
       preRulesMaps: {},
       preProductRefMaps: {}
     })
+  }
+
+  componentDidMount() {
+    const { match: { params: { id, action } }, form: { setFieldsValue } } = this.props
+    if (!id) return
+    if (action === 'copy' || action === 'edit') {
+      detailFullDiscounts(id).then(detail => {
+        const fieldsValue = {
+          title: detail.title,
+          // time: [detail.startTime, detail.endTime],
+          promotionType: detail.promotionType
+        }
+
+        if (detail.rule) {
+          const rule = detail.rule
+          let rules = []
+          fieldsValue.ruleType = rule.ruleType
+          if (rule.ruleType === 0) { // 每满减的时候设置封顶值
+            fieldsValue.maxDiscountsAmount = rule.maxDiscountsAmount / 100
+          }
+          if (detail.promotionType === 11) { // 满减
+            rules = rule.amountRuleList.map(item => {
+              if (detail.stageType === 1) { // 满 x 元
+                return {
+                  ...item,
+                  stageType: detail.stageType,
+                  mode: 1,
+                  conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
+                  modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
+                }
+              } else if (detail.stageType === 2) { // 满 x 件
+                return {
+                  ...item,
+                  stageType: detail.stageType,
+                  mode: 1,
+                  conditionStr: `满 ${formatMoneyWithSign(item.stageCount)} 件`,
+                  modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
+                }
+              } else {
+                return item
+              }
+            })
+          } else if (detail.promotionType === 12) { // 满折
+            rules = rule.discountsRuleList.map(item => {
+              if (detail.stageType === 1) { // 满 x 元
+                return {
+                  ...item,
+                  stageType: detail.stageType,
+                  mode: 2,
+                  conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
+                  modeStr: `减 ${formatMoneyWithSign(item.discounts)} 折`
+                }
+              } else if (detail.stageType === 2) { // 满 x 件
+                return {
+                  ...item,
+                  stageType: detail.stageType,
+                  mode: 2,
+                  conditionStr: `满 ${formatMoneyWithSign(item.stageCount)} 件`,
+                  modeStr: `减 ${formatMoneyWithSign(item.discounts)} 折`
+                }
+              } else {
+                return item
+              }
+            })
+          }
+          fieldsValue.rules = rules
+        }
+
+        setFieldsValue(fieldsValue)
+      })
+    }
   }
 
   /* 保存操作 */
@@ -457,7 +530,7 @@ class FullDiscountEditPage extends PureComponent {
           <div style={{ padding: '16px 24px 0 24px' }}>
             <Form.Item {...formTailLayout}>
               <Button onClick={this.handleSave} type="primary">保存</Button>
-              <Button  onClick={this.handleBack} style={{ marginLeft: 16 }}>取消</Button>
+              <Button onClick={this.handleBack} style={{ marginLeft: 16 }}>取消</Button>
             </Form.Item>
           </div>
         </Form>

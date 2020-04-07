@@ -1,4 +1,9 @@
-const { newPost } = APP.http
+const { get, newPost } = APP.http
+
+// 查看满赠/满折满减活动详情
+export function detailFullDiscounts(promotionId) {
+  return get('/promotion/detailFullDiscounts', { promotionId })
+}
 
 // 买赠/满减满折活动列表查询
 export function queryDiscounts(params) {

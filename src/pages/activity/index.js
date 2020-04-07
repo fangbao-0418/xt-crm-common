@@ -137,9 +137,8 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/sprinkle-cash/form/:id`} component={SprinkleCashForm} />
         <Route path={`${match.url}/reward/:luckyDrawRoundId/:memberId`} exact component={ActivityRewardDetail} />
         <Route path={`${match.url}/full-discount`} exact component={FullDiscount} />
-        <Route path={`${match.url}/full-discount/edit/:id?`} component={FullDiscountEdit} />
-        <Route path={`${match.url}/full-discount/copy/:id`} component={FullDiscountEdit} />
         <Route path={`${match.url}/full-discount/detail/:id`} component={FullDiscountDetail} />
+        <Route path={`${match.url}/full-discount/:action/:id?`} component={FullDiscountEdit} />
       </Switch>
     );
   }

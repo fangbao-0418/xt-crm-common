@@ -57,6 +57,7 @@ class FullDiscountDetailPage extends PureComponent {
       promotionType = promotionTypeMap[detail.promotionType]
       if (detail.rule) {
         const rule = detail.rule
+        // 优惠类型
         if (rule.ruleType === 0) {
           ruleTypeTxt = '阶梯满'
         } else if (rule.ruleType === 1) {
@@ -70,6 +71,7 @@ class FullDiscountDetailPage extends PureComponent {
           ruleTypeTxt = '数据出错'
         }
 
+        // 优惠条件
         if (detail.promotionType === 11) { // 满减
           rules = rule.amountRuleList.map(item => {
             if (detail.stageType === 1) { // 满 x 元
@@ -89,7 +91,7 @@ class FullDiscountDetailPage extends PureComponent {
             }
           })
         } else if (detail.promotionType === 12) { // 满折
-          rules = rule.amountRuleList.map(item => {
+          rules = rule.discountsRuleList.map(item => {
             if (detail.stageType === 1) { // 满 x 元
               return {
                 ...item,
@@ -121,8 +123,6 @@ class FullDiscountDetailPage extends PureComponent {
       referenceProductVO = detail.referenceProductVO
       promotionDesc = detail.promotionDesc || '暂无数据'
     }
-
-    console.log(detail, referenceProductVO)
 
     return (
       <Card
