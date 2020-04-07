@@ -199,7 +199,13 @@ class List extends React.Component {
         title: '结算单ID',
         key: 'settlementSerialNo',
         dataIndex: 'settlementSerialNo',
-
+        render: (text, record) => {
+          const {settId} = record
+          return <Button 
+            type='link' 
+            href={window.location.pathname + `#/merchant-accounts/checking/${settId}`}
+          >{text}</Button>
+        }
       },
       {
         title: '金额',

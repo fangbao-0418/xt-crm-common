@@ -42,8 +42,6 @@ class SettleDetialList extends React.Component {
 
   batchExport = (type) => {
     const { dataSource } = this.props
-    console.log(dataSource, 'dataSource')
-    console.log(type, 'type')
     let apiUrl = ''
     let accIdS = null 
     switch (type) {
@@ -77,7 +75,22 @@ class SettleDetialList extends React.Component {
       }, {
         title: '单据ID',
         width: 150,
-        dataIndex: 'billSerialNo'
+        dataIndex: 'billSerialNo',
+        render: (text, record) => {
+          const {billTypeInfo, id} = record
+          return (
+            <>
+              {
+                billTypeInfo === '对账单' ? 
+                  <Button 
+                  type='link' 
+                  href={window.location.pathname + `#/merchant-accounts/checking/${id}`}
+                >{text}</Button> : text
+              }
+            </>
+            
+          )
+        }
       }, {
         title: '单据名称',
         width: 250,

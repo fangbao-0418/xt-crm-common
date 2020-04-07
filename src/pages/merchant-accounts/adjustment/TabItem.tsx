@@ -40,7 +40,10 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'accNo',
       title: '对账单ID',
-      width: 200
+      width: 200,
+      render: (text, record) => {
+        return <Button type='link' href={window.location.pathname + `#/merchant-accounts/checking/${record.accId}`}>{text}</Button>
+      }
     },
     {
       dataIndex: 'trimType',
@@ -184,7 +187,7 @@ class Main extends React.Component<Props, State> {
     selectedRowKeys: []
   }
   /** 添加调整单 */
-  public showAdjustment (type: 'add' | 'audit' | 'view',record?: ListResponse) {
+  public showAdjustment (type: 'add' | 'audit' | 'view', record?: ListResponse) {
     if (this.props.alert) {
       const hide = this.props.alert({
         width: 600,
@@ -226,7 +229,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys } = this.state
     const rowSelection: TableRowSelection<ListResponse> = {
       selectedRowKeys,
       onChange: this.onSelectChange,

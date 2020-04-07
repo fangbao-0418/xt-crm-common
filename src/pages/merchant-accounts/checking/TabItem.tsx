@@ -111,16 +111,7 @@ class Main extends React.Component<Props, State> {
             <span
               className='href'
               onClick={() => {
-                const query = param({
-                  settlementMoney: APP.fn.formatMoneyNumber(record.settlementMoney, 'm2u'),
-                  bulidDate: record.bulidDate,
-                  incomeMoney: APP.fn.formatMoneyNumber(record.incomeMoney, 'm2u'),
-                  disburseMoney: APP.fn.formatMoneyNumber(record.disburseMoney, 'm2u'),
-                  serialNo: record.serialNo,
-                  accName: record.accName,
-                  accStatus: record.accStatus
-                })
-                APP.history.push(`/merchant-accounts/checking/${record.id}?${query}`)
+                APP.history.push(`/merchant-accounts/checking/${record.id}`)
               }}
             >
               查看明细
