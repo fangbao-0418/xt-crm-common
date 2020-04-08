@@ -75,19 +75,23 @@ export default function getColumns ({
             >
               查看
             </span>
-            <span
-              className='href'
-              onClick={onEdit.bind(null, record)}
-            >
-              编辑
-            </span>
+            {/* 只有未开始和进行中的活动支持编辑 */}
+            {[1, 2].includes(record.discountsStatus) ? (
+              <span
+                className='href'
+                onClick={onEdit.bind(null, record)}
+              >
+                编辑
+              </span>
+            ) : null}
             <span
               className='href'
               onClick={onCopy.bind(null, record)}
             >
               复制
             </span>
-            {record.discountsStatus !== 0 ? (
+            {/* 未开始和进行中的活动支持关闭 */}
+            {[1, 2].includes(record.discountsStatus) ? (
               <span
                 onClick={onDisable.bind(null, record)}
                 className='href'

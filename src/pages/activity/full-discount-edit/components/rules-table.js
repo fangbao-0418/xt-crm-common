@@ -90,7 +90,12 @@ class RulesTable extends PureComponent {
   }
 
   render() {
-    const { value: dataSource, promotionType, ruleType } = this.props
+    const {
+      value: dataSource,
+      promotionType,
+      ruleType,
+      disabled: statusDisabled // 根据活动详情状态值计算的是否禁用值
+    } = this.props
     const { rules } = this.state
 
     let maxSize = 0
@@ -115,13 +120,13 @@ class RulesTable extends PureComponent {
         />
         <p>
           <Button
-            disabled={disabled || (!promotionType)}
+            disabled={disabled || (!promotionType) || statusDisabled}
             onClick={this.handleDiscount} type="link"
           >
             添加条件
           </Button>
           <span>可添加最多{maxSize}个阶梯</span>
-          <Button disabled={!length} onClick={this.handleClear} type="link">
+          <Button disabled={!length || statusDisabled} onClick={this.handleClear} type="link">
             清空
           </Button>
         </p>
@@ -131,7 +136,8 @@ class RulesTable extends PureComponent {
           dataSource={dataSource}
           columns={getRulesColumns({
             onEdit: this.handleEdit,
-            onDelete: this.handleDelete
+            onDelete: this.handleDelete,
+            statusDisabled
           })}
         />
       </div>

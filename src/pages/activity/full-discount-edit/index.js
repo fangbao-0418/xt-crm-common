@@ -47,6 +47,10 @@ const getExceptionStr = (list) => {
 }))
 @Form.create()
 class FullDiscountEditPage extends PureComponent {
+  state = {
+    detail: null
+  }
+
   componentWillUnmount() {
     const { dispatch } = this.props
     // 这里需要重置preRulesMaps 和 preProductRefMaps的值，否则下次进入该页面会保留之前的数据
@@ -61,6 +65,9 @@ class FullDiscountEditPage extends PureComponent {
     if (!id) return
     if (action === 'copy' || action === 'edit') {
       detailFullDiscounts(id).then(detail => {
+        this.setState({
+          detail
+        })
         const fieldsValue = {
           title: detail.title,
           time: [moment(detail.startTime), moment(detail.endTime)],
@@ -332,6 +339,8 @@ class FullDiscountEditPage extends PureComponent {
 
   render() {
     const { form: { getFieldDecorator, getFieldValue } } = this.props
+    const { detail } = this.state
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -358,6 +367,19 @@ class FullDiscountEditPage extends PureComponent {
     let ruleType = getFieldValue('ruleType')
     let productRef = getFieldValue('productRef')
 
+    /* 未开始( 1 )的活动可以编辑全部信息 进行中( 2 )的活动只可以编辑活动商品 已结束( 3 )和已关闭( 0 )的活动不可编辑全部信息 */
+    let goodsDisable = false
+    let otherDisable = false
+
+    if (detail) {
+      if (detail.discountsStatus === 2) {
+        otherDisable = true
+      } else if ([3, 0].includes(detail.discountsStatus)) {
+        goodsDisable = true
+        otherDisable = true
+      }
+    }
+
     return (
       <Card
         bordered={false}
@@ -377,7 +399,7 @@ class FullDiscountEditPage extends PureComponent {
                   },
                 ],
               })(
-                <Input style={{ maxWidth: 350 }} placeholder="限16个字符" />
+                <Input disabled={otherDisable} style={{ maxWidth: 350 }} placeholder="限16个字符" />
               )}
             </Form.Item>
             <Form.Item label="活动时间">
@@ -390,6 +412,7 @@ class FullDiscountEditPage extends PureComponent {
                 ],
               })(
                 <RangePicker
+                  disabled={otherDisable}
                   showTime={{ format: 'HH:mm:ss' }}
                   format="YYYY-MM-DD HH:mm:ss"
                   placeholder={['开始时间', '结束时间']}
@@ -411,7 +434,7 @@ class FullDiscountEditPage extends PureComponent {
                   },
                 ],
               })(
-                <Radio.Group onChange={this.handlePromotionTypeChange}>
+                <Radio.Group disabled={otherDisable} onChange={this.handlePromotionTypeChange}>
                   <Radio value={11}>满减</Radio>
                   <Radio value={12}>满折</Radio>
                 </Radio.Group>
@@ -426,7 +449,7 @@ class FullDiscountEditPage extends PureComponent {
                   }
                 ],
               })(
-                <Radio.Group onChange={this.handleRuleTypeChange}>
+                <Radio.Group disabled={otherDisable} onChange={this.handleRuleTypeChange}>
                   <Radio value={1}>
                     阶梯满
                   </Radio>
@@ -456,7 +479,7 @@ class FullDiscountEditPage extends PureComponent {
                           }
                         } : null
                       )}
-                      disabled={ruleType !== 0}
+                      disabled={ruleType !== 0 || otherDisable}
                     />
                   )
                 }
@@ -483,6 +506,7 @@ class FullDiscountEditPage extends PureComponent {
                   initialValue: []
                 })(
                   <RulesTable
+                    disabled={otherDisable}
                     promotionType={promotionType}
                     ruleType={ruleType}
                   />
@@ -503,6 +527,7 @@ class FullDiscountEditPage extends PureComponent {
                 }]
               })(
                 <Radio.Group
+                  disabled={goodsDisable}
                   onChange={this.handleProductRefChange}
                 >
                   <Radio value={1}>指定商品</Radio>
@@ -525,6 +550,7 @@ class FullDiscountEditPage extends PureComponent {
                 initialValue: []
               })(
                 <ProductTable
+                  disabled={goodsDisable}
                   productRef={productRef}
                 />
               )}
@@ -538,6 +564,7 @@ class FullDiscountEditPage extends PureComponent {
             <Form.Item label="活动说明">
               {getFieldDecorator('promotionDesc')(
                 <TextArea
+                  disabled={otherDisable}
                   style={{ maxWidth: 350 }}
                   placeholder="显示在用户端, 建议填写活动商品信息, 如美妆个护、食品保健可用, 100字以内"
                   autoSize={{ minRows: 5, maxRows: 7 }}
@@ -547,7 +574,12 @@ class FullDiscountEditPage extends PureComponent {
           </Card>
           <div style={{ padding: '16px 24px 0 24px' }}>
             <Form.Item {...formTailLayout}>
-              <Button onClick={this.handleSave} type="primary">保存</Button>
+              <Button
+                disabled={goodsDisable && otherDisable}
+                onClick={this.handleSave} type="primary"
+              >
+                保存
+              </Button>
               <Button onClick={this.handleBack} style={{ marginLeft: 16 }}>取消</Button>
             </Form.Item>
           </div>

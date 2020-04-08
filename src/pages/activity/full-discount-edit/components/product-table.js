@@ -106,7 +106,12 @@ class ProductTable extends PureComponent {
   }
 
   render() {
-    const { productRef, goodsModal, activityModal } = this.props
+    const {
+      productRef,
+      goodsModal,
+      activityModal,
+      disabled: statusDisabled // 根据活动详情状态值计算的是否禁用值
+    } = this.props
     const { productRefInfo: dataSource } = this.state
 
     let disabled = false
@@ -118,12 +123,14 @@ class ProductTable extends PureComponent {
       disabled = length >= 1 // 活动只能选择一个
       productRefTxt = '选择活动'
       columns = getActivityColumns({
-        onDelete: this.handleDelete
+        onDelete: this.handleDelete,
+        statusDisabled
       })
     } else if (productRef === 1) {
       productRefTxt = '选择商品'
       columns = getGoodsColumns({
-        onDelete: this.handleDelete
+        onDelete: this.handleDelete,
+        statusDisabled
       })
     } else {
       disabled = true
@@ -145,11 +152,11 @@ class ProductTable extends PureComponent {
           onChange={this.handleSelectorChange}
         />
         <p>
-          <Button disabled={disabled} onClick={this.handleGoods} type="link">
+          <Button disabled={disabled || statusDisabled} onClick={this.handleGoods} type="link">
             {productRefTxt}
           </Button>
           <span>已选择{length}条数据</span>
-          <Button disabled={!length} onClick={this.handleClear} type="link">
+          <Button disabled={!length || statusDisabled} onClick={this.handleClear} type="link">
             清空
           </Button>
         </p>

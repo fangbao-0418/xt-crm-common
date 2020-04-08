@@ -3,7 +3,7 @@ import ActionView from '@/components/action-view'
 import activityType from '@/enum/activityType'
 import DateFns from 'date-fns'
 
-export const getRulesColumns = ({ onEdit, onDelete }) => {
+export const getRulesColumns = ({ onEdit, onDelete, statusDisabled }) => {
   return [
     {
       title: '级数',
@@ -26,6 +26,7 @@ export const getRulesColumns = ({ onEdit, onDelete }) => {
     {
       title: '操作',
       render: (_, record, i) => {
+        if (statusDisabled) return '不可操作'
         return (
           <ActionView>
             <span className="href" onClick={onEdit.bind(null, i)}>编辑</span>
@@ -37,7 +38,7 @@ export const getRulesColumns = ({ onEdit, onDelete }) => {
   ]
 }
 
-export const getGoodsColumns = ({ onDelete }) => {
+export const getGoodsColumns = ({ onDelete, statusDisabled }) => {
   return [
     {
       title: '商品ID',
@@ -52,6 +53,7 @@ export const getGoodsColumns = ({ onDelete }) => {
     {
       title: '操作',
       render: (_, record, i) => {
+        if (statusDisabled) return '不可操作'
         return (
           <ActionView>
             <span className="href" onClick={onDelete.bind(null, i)}>删除</span>
@@ -62,7 +64,7 @@ export const getGoodsColumns = ({ onDelete }) => {
   ]
 }
 
-export const getActivityColumns = ({ onDelete }) => {
+export const getActivityColumns = ({ onDelete, statusDisabled }) => {
   return [
     {
       title: '活动ID',
@@ -101,6 +103,7 @@ export const getActivityColumns = ({ onDelete }) => {
     {
       title: '操作',
       render: (_, record, i) => {
+        if (statusDisabled) return '不可操作'
         return (
           <ActionView>
             <span className="href" onClick={onDelete.bind(null, i)}>删除</span>
