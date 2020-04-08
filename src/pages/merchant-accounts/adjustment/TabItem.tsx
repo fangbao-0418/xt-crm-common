@@ -42,7 +42,15 @@ class Main extends React.Component<Props, State> {
       title: '对账单ID',
       width: 200,
       render: (text, record) => {
-        return <Button type='link' href={window.location.pathname + `#/merchant-accounts/checking/${record.accId}`}>{text}</Button>
+        return (
+          <Button
+            type='link'
+            href={window.location.pathname + `#/merchant-accounts/checking/${record.accId}`}
+            target='_blank'
+          >
+            {text}
+          </Button>
+        )
       }
     },
     {

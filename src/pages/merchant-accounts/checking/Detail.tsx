@@ -62,7 +62,15 @@ class Main extends React.Component<Props, State> {
         const isAfterSales = text.indexOf('-') !== -1 ? false : true
         const id = isAfterSales ? text : text.slice(0, text.indexOf('-'))
         const url = isAfterSales ? '#/order/refundOrder/' : '#/order/detail/'
-        return <Button type='link' href={window.location.pathname + `${url}${id}`} target='_blank'>{text}</Button>
+        return (
+          <Button
+            type='link'
+            href={window.location.pathname + `${url}${id}`}
+            target='_blank'
+          >
+            {text}
+          </Button>
+        )
       }
     }, {
       dataIndex: 'paymentType',

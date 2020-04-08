@@ -85,6 +85,7 @@ class SettleDetialList extends React.Component {
                   <Button 
                   type='link' 
                   href={window.location.pathname + `#/merchant-accounts/checking/${id}`}
+                  target="_blank"
                 >{text}</Button> : text
               }
             </>
@@ -151,7 +152,13 @@ class SettleDetialList extends React.Component {
             <div className={styles['cont-r']}>
               <span>发票凭证：</span>
               {settleDetail.invoiceUrl && (
-                <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
+                <Button 
+                  className={styles['paddingleft0']} 
+                  type='link' 
+                  onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}
+                >
+                  下载
+                </Button>
               )}
             </div>
             <div className={`${styles['cont-r']} ${styles['align-r']}`}>

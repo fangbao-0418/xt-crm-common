@@ -202,8 +202,9 @@ class List extends React.Component {
         render: (text, record) => {
           const {settId} = record
           return <Button 
-            type='link' 
+            type='link'
             href={window.location.pathname + `#/merchant-accounts/checking/${settId}`}
+            target='_blank'
           >{text}</Button>
         }
       },
