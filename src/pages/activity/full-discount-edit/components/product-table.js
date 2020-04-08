@@ -51,7 +51,10 @@ class ProductTable extends PureComponent {
 
   /* 清空数据 */
   handleClear = () => {
-    const { productRef, dispatch, preProductRefMaps } = this.props
+    const { productRef, dispatch, preProductRefMaps, onChange } = this.props
+    if (onChange) {
+      onChange([])
+    }
     dispatch[namespace].saveDefault({
       preProductRefMaps: {
         ...preProductRefMaps,

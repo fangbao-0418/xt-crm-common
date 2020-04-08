@@ -67,8 +67,6 @@ export default function getColumns ({
       width: 220,
       dataIndex: 'action',
       render: (_, record) => {
-        const action = []
-
         return (
           <ActionView showNum={4}>
             <span
