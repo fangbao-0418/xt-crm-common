@@ -28,7 +28,7 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
         ) : (
           <AfterSalesProcessing data={data} />
         )}
-        <OrderInfo orderInfoVO={data.orderInfoVO} />
+        <OrderInfo orderInfoVO={data.orderInfoVO} shopDTO={data.shopDTO} />
       </>
     );
   }

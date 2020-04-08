@@ -186,6 +186,8 @@ class CheckBoth extends React.Component<Props, State> {
     const checkVO = this.data.checkVO || {}
     /** 是否是海淘订单 */
     const isHaiTao = Number(this.orderInfoVO.orderType) === 70
+
+    const isXiaoDian = this.data.shopDTO && this.data.shopDTO.shopType === 2
     
     return (
       <>
@@ -251,7 +253,7 @@ class CheckBoth extends React.Component<Props, State> {
                     <InputNumber
                       min={0}
                       max={formatPrice(this.maxRefundAmount)}
-                      disabled={isHaiTao}
+                      disabled={isHaiTao || isXiaoDian}
                       formatter={formatRMB}
                       onChange={this.handleChangeMaxRefundAmount}
                     />,

@@ -8,7 +8,7 @@ import MoneyRender from '@/components/money-render'
  * @param {0 | 1} type - 订单类型 0-订单，1-售后订单
  * @returns object[]
  */
-export function getDetailColumns (type = 0) {
+export function getDetailColumns (type = 0, isXiaoDian = false) {
   return [
     {
       title: '名称',
@@ -25,7 +25,7 @@ export function getDetailColumns (type = 0) {
       key: 'productId',
       width: '8%',
       render(id: any, record: any) {
-        console.log('record => ', record)
+        if (isXiaoDian) return id
         return <Link to={`/goods/sku-sale/${id}`}>{id}</Link>
       }
     },
