@@ -1,5 +1,5 @@
 import React from 'react'
-import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio } from 'antd'
+import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio, Form as AntForm } from 'antd'
 import { formItemLayout } from '@/config'
 import { getCouponDetail } from '@/pages/coupon/api'
 import { platformOptions, useIdentityOptions } from '../../config'
@@ -83,7 +83,8 @@ class CouponInfo extends React.Component {
       productSelectorVisible: false,
       excludeProductSelectorVisible: false,
       activitySelectorVisible: false,
-      receivePattern: 0
+      receivePattern: 0,
+      useTimeErrorMsg: ''
     }
   } 
 
@@ -220,6 +221,10 @@ class CouponInfo extends React.Component {
       if (vals.useTimeType === 1 && availableDays === '') {
         return void message.error('请输入领券当日起多少天内可用')
       }
+      if (vals.useTimeTYPE === 0 && this.state.useTimeErrorMsg) {
+        APP.error('使用开始时间必须小于结束时间')
+        return
+      }
       if (dailyRestrictChecked && !vals.dailyRestrict) {
         return void message.error('请输入每日限领多少张')
       }
@@ -252,6 +257,7 @@ class CouponInfo extends React.Component {
   }
   // 领取时间校验
   receiveTimeValidator = (rule, value = [], callback) => {
+    console.log(value, 'receiveTimeValidator')
     const { useTimeRange } = this.state
     const form =  formRef.current
     const { useTimeType } = form ? form.getValues() : {}
@@ -261,7 +267,9 @@ class CouponInfo extends React.Component {
         return
       }
     }
-    console.log(useTimeType, useTimeRange, value, 'receiveTimeValidator')
+    if (value[0] && value[1] && value[0] >= value[1]) {
+      callback('领取开始时间必须小于结束时间')
+    }
     if (useTimeType === 0 && useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
       callback('领取开始时间必须小于等于使用开始时间')
     } else if (useTimeType === 0 && useTimeRange && value[1] && useTimeRange[1] && value[1] > useTimeRange[1]) {
@@ -287,7 +295,9 @@ class CouponInfo extends React.Component {
       useTimeRange
     } = this.state
     return (
-      <Card>
+      <Card
+        className='coupon-detail'
+      >
         {/* 已选择商品 */}
         <ProductSelector
           visible={productSelectorVisible}
@@ -590,6 +600,7 @@ class CouponInfo extends React.Component {
           />
           <FormItem
             name='useTimeType'
+            className='coupon-detail-use-time'
             verifiable
             controlProps={{
               onChange: (e) => {
@@ -604,32 +615,59 @@ class CouponInfo extends React.Component {
                     startReceiveTime,
                     overReceiveTime
                   })
+                  this.setState({
+                    useTimeErrorMsg: ''
+                  })
+                } else {
+                  const { useTimeRange } = this.state
+                  if (useTimeRange[0] && useTimeRange[1]) {
+                    this.setState({
+                      useTimeErrorMsg: useTimeRange[0] >= useTimeRange[1] ? '使用开始时间必须小于结束时间' : ''
+                    })
+                  }
                 }
               }
             }}
             options={[{
               label: (
-                <DatePicker.RangePicker
-                  style={{width: 360}}
-                  // disabledDate={formRef.useTimeTypeDisabledDate.bind(formRef)}
-                  showTime={{
-                    hideDisabledOptions: true
+                <AntForm.Item
+                  className='use-time-widget'
+                  style={{
+                    display: 'inline-bock',
+                    // marginBottom: 0
                   }}
-                  format='YYYY-MM-DD HH:mm:ss'
-                  value={useTimeRange}
-                  onChange={date => {
-                    // validateFields
-                    this.setState({useTimeRange: date}, () => {
-                      const form =  formRef.current
-                      if (form) {
-                        console.log(form, '-----')
-                        form.props.form.validateFields(['receiveTime'], {force: true}, (err, val) => {
-                          console.log(err, val, '---')
+                  validateStatus={this.state.useTimeErrorMsg && 'error'}
+                  help={this.state.useTimeErrorMsg}
+                >
+                  <DatePicker.RangePicker
+                    style={{width: 360}}
+                    // disabledDate={formRef.useTimeTypeDisabledDate.bind(formRef)}
+                    showTime={{
+                      hideDisabledOptions: true
+                    }}
+                    format='YYYY-MM-DD HH:mm:ss'
+                    value={useTimeRange}
+                    onChange={date => {
+                      if (date[0] && date[1]) {
+                        const form =  formRef.current
+                        const useTimeType = form && form.getValues()['useTimeType']
+                        this.setState({
+                          useTimeErrorMsg: useTimeType === 0 && date[0] >= date[1] ? '使用开始时间必须小于结束时间' : ''
+                        })
+                      } else {
+                        this.setState({
+                          useTimeErrorMsg: ''
                         })
                       }
-                    })
-                  }}
-                />
+                      this.setState({useTimeRange: date}, () => {
+                        const form =  formRef.current
+                        if (form) {
+                          form.props.form.validateFields(['receiveTime'], {force: true})
+                        }
+                      })
+                    }}
+                  />
+                </AntForm.Item>
               ),
               value: 0
             }, {
