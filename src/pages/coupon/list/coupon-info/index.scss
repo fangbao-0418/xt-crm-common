@@ -7,3 +7,15 @@
   height     : 30px;
   line-height: 30px;
 }
+
+.coupon-detail {
+  .coupon-detail-use-time {
+    .ant-radio-wrapper {
+      width: 400px;
+    }
+    .use-time-widget {
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+}
