@@ -196,6 +196,7 @@ class List extends React.Component {
                       <Select.Option value="">全部</Select.Option>
                       <Select.Option value="1">供应商</Select.Option>
                       <Select.Option value="2">小店</Select.Option>
+                      <Select.Option value="3">买菜供应商</Select.Option>
                     </Select>
                   )}
                 </FormItem>

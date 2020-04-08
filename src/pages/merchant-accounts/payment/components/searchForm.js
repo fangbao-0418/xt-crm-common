@@ -87,6 +87,7 @@ class SearchForm extends React.Component {
                     <Option value="">全部</Option>
                     <Option value="1">供应商</Option>
                     <Option value="2">小店</Option>
+                    <Option value="3">买菜供应商</Option>
                   </Select>
                 )}
               </FormItem>
