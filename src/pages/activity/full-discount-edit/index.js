@@ -32,7 +32,7 @@ const getExceptionStr = (list) => {
       }
     } else if (curItem.mode === 2) { // 折 x 折
       if (curItem.discounts <= nextItem.discounts) {
-        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠方式: 高阶梯的折x折必须大于低阶梯的折X折)`
+        return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠方式: 高阶梯的打折优惠力度必须大于低阶梯)`
       }
     }
   }
@@ -337,6 +337,32 @@ class FullDiscountEditPage extends PureComponent {
     }
   }
 
+  /* 最大优惠金额设置变化 */
+  handleMaxDiscountsAmountChange = () => {
+    const { form: { getFieldValue, setFieldsValue } } = this.props
+    const rules = getFieldValue('rules')
+    const ruleType = getFieldValue('ruleType')
+    // 优惠类型设置为每满减 且 优惠条件已经设置了的话 再来重新调整最大优惠金额 需要判断最大金额的限制 因为form收集报错的缘故 这边重新设置一下rules会清理假如rule不合法的报错提示
+    if (rules.length && ruleType === 0) {
+      setFieldsValue({
+        rules
+      })
+    }
+  }
+
+  /* 优惠条件设置变化 */
+  handleRulesChange = () => {
+    const { form: { getFieldValue, setFieldsValue } } = this.props
+    const ruleType = getFieldValue('ruleType')
+    const maxDiscountsAmount = getFieldValue('maxDiscountsAmount')
+    // 优惠类型设置为每满减 且 设置了最大金额 那么假如最大优惠金额比优惠条件设置的最大优惠小的话 这个时候 可能最大优惠金额会报错误提示 此时rules设置变化了 就要把错误提示转嫁到rules过来 清除 maxDiscountsAmount 的错误提示
+    if (ruleType === 0 && maxDiscountsAmount) {
+      setFieldsValue({
+        maxDiscountsAmount
+      })
+    }
+  }
+
   render() {
     const { form: { getFieldDecorator, getFieldValue }, match: { params: { action } } } = this.props
     const { detail } = this.state
@@ -366,6 +392,8 @@ class FullDiscountEditPage extends PureComponent {
     let promotionType = getFieldValue('promotionType')
     let ruleType = getFieldValue('ruleType')
     let productRef = getFieldValue('productRef')
+    let rules = getFieldValue('rules')
+    let maxDiscountsAmount = getFieldValue('maxDiscountsAmount')
 
     /* 未开始( 1 )的活动可以编辑全部信息 进行中( 2 )的活动只可以编辑活动商品 已结束( 3 )和已关闭( 0 )的活动不可编辑全部信息 */
     let goodsDisable = false
@@ -461,14 +489,26 @@ class FullDiscountEditPage extends PureComponent {
               <Form.Item style={{ display: 'inline-block', marginBottom: 0 }}>
                 {
                   getFieldDecorator('maxDiscountsAmount',
-                    // {
-                    //   rules: [{
-                    //     required: ruleType === 0,
-                    //     message: '请输入满减封顶数'
-                    //   }]
-                    // }
+                    {
+                      rules: [{
+                        validator: (_, value, callback) => {
+                          if (!value) callback()
+                          if (rules.length && ruleType === 0) {
+                            const currentMaxDiscountsAmount = Math.max(...(rules.map(item => item.discountsAmount)))
+                            if (currentMaxDiscountsAmount > value) {
+                              callback('最大优惠值必须大于已经设置的优惠条件中的最大优惠值')
+                            } else {
+                              callback()
+                            }
+                          } else {
+                            callback()
+                          }
+                        }
+                      }]
+                    }
                   )(
                     <InputNumber
+                      onChange={this.handleMaxDiscountsAmountChange}
                       min={0}
                       precision={2}
                       {...(
@@ -497,6 +537,16 @@ class FullDiscountEditPage extends PureComponent {
                         callback('请添加优惠条件')
                         return
                       }
+
+                      if (promotionType === 11 && ruleType === 0 && maxDiscountsAmount > 0) {
+                        // 优惠种类为满减的时候且优惠类型每满减的时候且设置了最大优惠值的时候, 后面的最大优惠不能超过设置的maxDiscountsAmount最大优惠值
+                        const currentMaxDiscountsAmount = Math.max(...(value.map(item => item.discountsAmount)))
+                        if (currentMaxDiscountsAmount > maxDiscountsAmount) {
+                          callback('优惠金额不能超过已设置的最大优惠金额: ' + maxDiscountsAmount + ' 元')
+                          return
+                        }
+                      }
+
                       if (getExceptionStr(value)) {
                         callback(getExceptionStr(value))
                       }
@@ -506,6 +556,7 @@ class FullDiscountEditPage extends PureComponent {
                   initialValue: []
                 })(
                   <RulesTable
+                    onChange={this.handleRulesChange}
                     disabled={otherDisable}
                     promotionType={promotionType}
                     ruleType={ruleType}

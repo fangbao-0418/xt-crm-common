@@ -59,14 +59,14 @@ class FullDiscountDetailPage extends PureComponent {
         const rule = detail.rule
         // 优惠类型
         if (rule.ruleType === 0) {
-          ruleTypeTxt = '阶梯满'
-        } else if (rule.ruleType === 1) {
           ruleTypeTxt = '每满减:'
           if (rule.maxDiscountsAmount === 0) {
             ruleTypeTxt += ' 不封顶'
           } else {
-            ruleTypeTxt += ` ${formatMoneyWithSign(rule.maxDiscountsAmount)}元封顶`
+            ruleTypeTxt += `最大优惠金额: ${formatMoneyWithSign(rule.maxDiscountsAmount)}`
           }
+        } else if (rule.ruleType === 1) {
+          ruleTypeTxt = '阶梯满'
         } else {
           ruleTypeTxt = '数据出错'
         }
@@ -96,13 +96,13 @@ class FullDiscountDetailPage extends PureComponent {
               return {
                 ...item,
                 conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
-                modeStr: `减 ${formatMoneyWithSign(item.discounts)} 折`
+                modeStr: `打 ${item.discounts / 10} 折`
               }
             } else if (detail.stageType === 2) { // 满 x 件
               return {
                 ...item,
                 conditionStr: `满 ${formatMoneyWithSign(item.stageCount)} 件`,
-                modeStr: `减 ${formatMoneyWithSign(item.discounts)} 折`
+                modeStr: `打 ${item.discounts / 10} 折`
               }
             } else {
               return item
