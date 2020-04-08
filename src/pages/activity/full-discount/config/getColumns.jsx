@@ -54,7 +54,7 @@ export default function getColumns ({
     {
       title: '更新时间',
       width: 120,
-      dataIndex: 'updateTime',
+      dataIndex: 'modifyTime',
       render: formatDate
     },
     {
