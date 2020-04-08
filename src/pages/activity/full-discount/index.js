@@ -32,7 +32,8 @@ class FullDiscountPage extends PureComponent {
   /* 关闭 */
   handleDisable = (record) => {
     confirm({
-      content: '确认关闭该活动吗',
+      title: `确认关闭【${record.title}】吗`,
+      content: `关闭后不可恢复`,
       onOk: () => {
         disableDiscounts({
           promotionIds: [record.id]
