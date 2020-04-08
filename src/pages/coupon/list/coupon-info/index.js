@@ -338,6 +338,13 @@ class CouponInfo extends React.Component {
           getInstance={
             ref => formRef.current = ref
           }
+          onChange={(field) => {
+            const form =  formRef.current
+            if (form && field === 'receiveTime') {
+              console.log('on change')
+              form.props.form.validateFields(['receiveTime'], {force: true})
+            }
+          }}
           config={defaultConfig}
           namespace='coupon'
           rangeMap={{
@@ -663,7 +670,7 @@ class CouponInfo extends React.Component {
                   help={this.state.useTimeErrorMsg}
                 >
                   <DatePicker.RangePicker
-                    style={{width: 360}}
+                    style={{width: 400}}
                     // disabledDate={formRef.useTimeTypeDisabledDate.bind(formRef)}
                     showTime={{
                       hideDisabledOptions: true
@@ -674,8 +681,10 @@ class CouponInfo extends React.Component {
                       if (date[0] && date[1]) {
                         const form =  formRef.current
                         const useTimeType = form && form.getValues()['useTimeType']
+                        const msg1 = date[0] >= date[1] ? '使用开始时间必须小于结束时间' : ''
+                        const msg2 = date[1] < moment() ? '使用结束时间必须大于当前时间' : ''
                         this.setState({
-                          useTimeErrorMsg: useTimeType === 0 && date[0] >= date[1] ? '使用开始时间必须小于结束时间' : ''
+                          useTimeErrorMsg: useTimeType === 0 && (msg1 || msg2)
                         })
                       } else {
                         this.setState({
