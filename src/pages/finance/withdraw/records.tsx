@@ -111,12 +111,12 @@ class Records extends React.Component<Props> {
   }
   getBatchList = async (data:any) => {
     if (data.create) {
-      if (data.create[0]) {
-        data.startTime = data.create[0].format('YYYY.MM.DD')
-      }
-      if (data.create[1]) {
-        data.endTime = data.create[1].format('YYYY.MM.DD')
-      }
+      // if (data.create[0]) {
+      //   data.startTime = data.create[0].format('YYYY.MM.DD')
+      // }
+      // if (data.create[1]) {
+      //   data.endTime = data.create[1].format('YYYY.MM.DD')
+      // }
       delete data.create
     }
     return await getBatchList(data)
@@ -126,6 +126,12 @@ class Records extends React.Component<Props> {
     return (
       <ListPage
         getInstance={(ref) => this.listpage = ref}
+        rangeMap={{
+          create: {
+            fields: ['startTime', 'endTime'],
+            format: 'YYYY-MM-DD'
+          }
+        }}
         formItemLayout={(
           <>
             <FormItem name='create' />
