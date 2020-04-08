@@ -47,6 +47,7 @@ class FullDiscountDetailPage extends PureComponent {
     let promotionType = '加载中...' // 优惠种类
     let ruleTypeTxt = '加载中...' // 优惠类型
     let rules = [] // 优惠条件
+    let label = '活动商品' // 活动商品文案
     let columns = [] // 活动商品表头
     let dataSource = [] // 活动商品数据
     let promotionDesc = '加载中...' // 活动说明
@@ -59,9 +60,9 @@ class FullDiscountDetailPage extends PureComponent {
         const rule = detail.rule
         // 优惠类型
         if (rule.ruleType === 0) {
-          ruleTypeTxt = '每满减:'
+          ruleTypeTxt = '每满减 & '
           if (rule.maxDiscountsAmount === 0) {
-            ruleTypeTxt += ' 不封顶'
+            ruleTypeTxt += '未设置最大优惠金额(不封顶)'
           } else {
             ruleTypeTxt += `最大优惠金额: ${formatMoneyWithSign(rule.maxDiscountsAmount)}`
           }
@@ -115,8 +116,10 @@ class FullDiscountDetailPage extends PureComponent {
 
 
       if (detail.productRef === 0) { // 活动
+        label = '指定活动'
         columns = getActivityColumns()
       } else if (detail.productRef === 1) { // 商品
+        label = '指定商品'
         columns = getGoodsColumns()
       }
 
@@ -139,7 +142,7 @@ class FullDiscountDetailPage extends PureComponent {
             <Form.Item label="活动名称">{title}</Form.Item>
             <Form.Item label="活动时间">{time} </Form.Item>
           </Card>
-          <Card type="inner" title="优惠信息">
+          <Card style={{ marginTop: 16 }} type="inner" title="优惠信息">
             <Form.Item label="优惠种类">{promotionType}</Form.Item>
             <Form.Item label="优惠类型">{ruleTypeTxt}</Form.Item>
             <Form.Item label="优惠条件">
@@ -151,8 +154,8 @@ class FullDiscountDetailPage extends PureComponent {
               />
             </Form.Item>
           </Card>
-          <Card type="inner" title="活动商品">
-            <Form.Item label="指定活动">
+          <Card style={{ marginTop: 16 }} type="inner" title="活动商品">
+            <Form.Item label={label}>
               <Table
                 pagination={false}
                 dataSource={dataSource}
@@ -160,7 +163,7 @@ class FullDiscountDetailPage extends PureComponent {
               />
             </Form.Item>
           </Card>
-          <Card type="inner" title="活动说明">
+          <Card style={{ marginTop: 16 }} type="inner" title="活动说明">
             <Form.Item label="活动说明">{promotionDesc}</Form.Item>
           </Card>
         </Form>
