@@ -104,7 +104,8 @@ class List extends React.Component {
       isInvoice: '',
       modifyName: '',
       modifyTime: '',
-      storeName: ''
+      storeName: '',
+      storeType: ''
     })
     page.current = 1
     setQuery({ page: page.current, pageSize: page.pageSize }, true);
@@ -185,6 +186,17 @@ class List extends React.Component {
                 <FormItem label="创建人">
                   {getFieldDecorator('createName', { initialValue: '' })(
                     <Input placeholder="请输入创建人" />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="商家类型">
+                  {getFieldDecorator('storeType', { initialValue: '' })(
+                    <Select>
+                      <Select.Option value="">全部</Select.Option>
+                      <Select.Option value="1">供应商</Select.Option>
+                      <Select.Option value="2">小店</Select.Option>
+                    </Select>
                   )}
                 </FormItem>
               </Col>
