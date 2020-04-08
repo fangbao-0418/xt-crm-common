@@ -341,7 +341,8 @@ class Main extends React.Component<Props, State> {
               x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
                 return a + b
               })
-            }
+            },
+            rowSelection
           }}
           addonAfterSearch={(
             <div>
