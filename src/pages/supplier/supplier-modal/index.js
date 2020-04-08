@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Modal, Button, Form, Input, message } from 'antd';
+import { Modal, Button, Form, Input, message, Radio } from 'antd';
+import { If } from '@/packages/common/components'
 import { getSupplierDetail, updateSupplier, addSupplier } from '../api';
 import SupplierTypeSelect from '@/components/supplier-type-select';
 import SaleArea from '@/components/sale-area';
@@ -67,8 +68,8 @@ class SupplierModal extends Component {
   }
   render() {
     const { isEdit } = this.props;
-    const { getFieldDecorator } = this.props.form;
-
+    const { getFieldDecorator, getFieldsValue } = this.props.form;
+    const {category, showType} = this.props.form && getFieldsValue(['category', 'showType']);
     return (
       <>
         <Button type="primary" onClick={this.showModal}>
@@ -93,46 +94,6 @@ class SupplierModal extends Component {
         >
           <Form {...formItemLayout}>
             <h4>基本信息</h4>
-            <FormItem label="供应商名称">
-              {getFieldDecorator('name', {
-                rules: [{
-                  required: true,
-                  message: '请输入供应商名称'
-                }]
-              })(<Input placeholder="请输入供应商名称" />)}
-            </FormItem>
-            <FormItem label="联系电话">
-              {getFieldDecorator('phone', {
-                rules: [{
-                  required: true,
-                  message: '请输入联系电话'
-                }]
-              })(<Input placeholder="请输入联系电话" maxLength={11} />)}
-            </FormItem>
-            <FormItem label="供应商简称">
-              {getFieldDecorator('shortName')(
-                <Input placeholder="请输入供应商简称" />,
-              )}
-            </FormItem>
-            <FormItem label="联系人">
-              {getFieldDecorator('contacts')(
-                <Input placeholder="请输入联系人" />,
-              )}
-            </FormItem>
-            <FormItem label="联系邮箱">
-              {getFieldDecorator('email')(<Input placeholder="请输入联系邮箱" />)}
-            </FormItem>
-            <h4>详细信息</h4>
-            <FormItem label="官网链接">
-              {getFieldDecorator('jumpUrl')(
-                <Input placeholder="请输入官网链接" />,
-              )}
-            </FormItem>
-            <FormItem label="详细地址">
-              {getFieldDecorator('address')(
-                <Input placeholder="请输入详细地址" />,
-              )}
-            </FormItem>
             <FormItem label="供应商分类">
               {getFieldDecorator('category', {
                 rules: [
@@ -156,6 +117,62 @@ class SupplierModal extends Component {
                 }
               })(
                 <SupplierTypeSelect disabled={this.props.isEdit} />
+              )}
+            </FormItem>
+            <If visible={[0,1,3,4].indexOf(category) === -1} condition={[0,1,3,4].indexOf(category) !== -1}>
+              <FormItem label="前台展示">
+                {getFieldDecorator('showType', {
+                  initialValue: 0
+                })
+                (<Radio.Group>
+                  <Radio value={0}>关闭</Radio>
+                  <Radio value={1}>开启</Radio>
+                </Radio.Group>)}
+              </FormItem>
+            </If>
+            <FormItem label="供应商名称">
+              {getFieldDecorator('name', {
+                rules: [{
+                  required: true,
+                  message: '请输入供应商名称'
+                }]
+              })(<Input placeholder="请输入供应商名称" />)}
+            </FormItem>
+            <FormItem label="联系电话">
+              {getFieldDecorator('phone', {
+                rules: [{
+                  required: true,
+                  message: '请输入联系电话'
+                }]
+              })(<Input placeholder="请输入联系电话" maxLength={11} />)}
+            </FormItem>
+            <FormItem label="供应商简称">
+              {getFieldDecorator('shortName', {
+                rules: [{
+                  required: showType,
+                  message: '请输入供应商简称'
+                }]
+              })(
+                <Input placeholder="请输入供应商简称" />,
+              )}
+            </FormItem>
+            <FormItem label="联系人">
+              {getFieldDecorator('contacts')(
+                <Input placeholder="请输入联系人" />,
+              )}
+            </FormItem>
+            <FormItem label="联系邮箱">
+              {getFieldDecorator('email')(<Input placeholder="请输入联系邮箱" />)}
+            </FormItem>
+            <h4>详细信息</h4>
+            <FormItem label="官网链接">
+              {getFieldDecorator('jumpUrl')(
+                <Input placeholder="请输入官网链接" />,
+              )}
+            </FormItem>
+            <FormItem label="详细地址">
+              {getFieldDecorator('address')(
+                <Input placeholder="请输入详细地址" />,
               )}
             </FormItem>
             {this.state.saleAreaVisible && (
