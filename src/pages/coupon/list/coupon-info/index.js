@@ -34,11 +34,18 @@ const formRef = {
     this.current && this.current.props.form.validateFields((err) => cb(err, this.getValues()))
   },
   validateConditions(rule, value = 0, callback) {
-    if (value <= this.getFieldValue('discountPrice')) {
-      callback('订单使用门槛设置金额必须大于优惠面值')
-    } else {
-      callback()
+    const useSill = this.getFieldValue('useSill')
+    const discountConditions = this.getFieldValue('discountConditions')
+    console.log(useSill, discountConditions, 'validateConditions')
+    if (useSill === 1) {
+      if (!discountConditions) {
+        callback('订单使用门槛设置金额必填')
+      }
+      if (discountConditions <= this.getFieldValue('discountPrice')) {
+        callback('订单使用门槛设置金额必须大于优惠面值')
+      }
     }
+    callback()
   },
   // 校验优惠券面值
   validateDiscountPrice(rule, value, callback) {
@@ -231,23 +238,25 @@ class CouponInfo extends React.Component {
       if (vals.platformType === 1 && this.getPlatformRestrictValues(vals.platformType) == '') {
         return void message.error('请选择使用平台')
       }
-      if (!err) {
-        const res = await saveCouponInfo({
-          ...vals,
-          dailyRestrictChecked,
-          chosenProduct,
-          activityList,
-          useTimeRange,
-          availableDays,
-          platformRestrictValues,
-          receiveRestrictValues,
-          receivePattern,
-          excludeProduct
-        })
-        if (res) {
-          message.success('新增优惠券成功')
-          APP.history.goBack()
-        }
+      if (err) {
+        APP.error('请检查输入项')
+        return
+      }
+      const res = await saveCouponInfo({
+        ...vals,
+        dailyRestrictChecked,
+        chosenProduct,
+        activityList,
+        useTimeRange,
+        availableDays,
+        platformRestrictValues,
+        receiveRestrictValues,
+        receivePattern,
+        excludeProduct
+      })
+      if (res) {
+        message.success('新增优惠券成功')
+        APP.history.goBack()
       }
     })
   }
@@ -257,18 +266,21 @@ class CouponInfo extends React.Component {
   }
   // 领取时间校验
   receiveTimeValidator = (rule, value = [], callback) => {
-    console.log(value, 'receiveTimeValidator')
     const { useTimeRange } = this.state
     const form =  formRef.current
     const { useTimeType } = form ? form.getValues() : {}
+    console.log(value, useTimeRange, value[0] >= value[1], 'receiveTimeValidator')
+    if (value[0] && value[1]) {
+      console.log(value, value[0].unix())
+      if (value[0] >= value[1]) {
+        callback('领取开始时间必须小于结束时间')
+      }
+    }
     if (form) {
       if (useTimeType === 1) {
         callback()
         return
       }
-    }
-    if (value[0] && value[1] && value[0] >= value[1]) {
-      callback('领取开始时间必须小于结束时间')
     }
     if (useTimeType === 0 && useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
       callback('领取开始时间必须小于等于使用开始时间')
@@ -486,40 +498,51 @@ class CouponInfo extends React.Component {
             type='radio'
             label='使用门槛'
             required
-            fieldDecoratorOptions={{
-              initialValue: 1,
-              rules: [{
-                required: true,
-                message: '请选择使用门槛'
-              }]
-            }}
-            options={[{
-              label: '无门槛（暂未开放）',
-              value: 0,
-              disabled: true
-            }]}
             inner={(form) => {
               return (
                 <>
-                {form.getFieldDecorator('useSill')(
-                  <Radio.Group>
-                    <Radio disabled className='block-radio' value={0}>
-                      无门槛（暂未开放）
-                    </Radio>
-                    <Radio className='block-radio' value={1}>
-                      <span>订单满</span>
-                      {form.getFieldDecorator('discountConditions', {
-                        rules: [{ validator: formRef.validateConditions.bind(formRef) }]
-                      })(
-                        <InputNumber
-                          min={0.01}
-                          className='ml10 short-input'
-                        />
-                      )}
-                      <span className='ml10'>元</span>
-                    </Radio>
-                  </Radio.Group>
-                )}
+                  {form.getFieldDecorator('useSill', {
+                    initialValue: 1,
+                    rules: [
+                      {required: true, message: '使用门槛必选'},
+                      { validator: formRef.validateConditions.bind(formRef) },
+                    ]
+                  })(
+                    <Radio.Group>
+                      <Radio disabled className='block-radio' value={0}>
+                        无门槛（暂未开放）
+                      </Radio>
+                      <Radio className='block-radio' value={1}>
+                        <span>订单满</span>
+                        {form.getFieldDecorator('discountConditions', {
+                          onChange: (e) => {
+                            console.log(e, 'onchange')
+                            const { useSill } = form.getFieldsValue()
+                            if (useSill === 1 && !e) {
+                              form.setFields({
+                                useSill: {
+                                  value: 1,
+                                  errors: [new Error('订单使用门槛设置金额必填')]
+                                }
+                              })
+                            } else {
+                              form.setFields({
+                                useSill: {
+                                  value: useSill
+                                }
+                              })
+                            }
+                          }
+                        })(
+                          <InputNumber
+                            min={0.01}
+                            className='ml10 short-input'
+                          />
+                        )}
+                        <span className='ml10'>元</span>
+                      </Radio>
+                    </Radio.Group>
+                  )}
                 </>
               )
             }}
