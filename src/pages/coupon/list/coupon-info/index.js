@@ -801,7 +801,9 @@ class CouponInfo extends React.Component {
             inner={form => {
               return (
                 <>
-                  {form.getFieldDecorator('platformType')(
+                  {form.getFieldDecorator('platformType', {
+                    rules: [{required: true, message: '请选择使用平台'}]
+                  })(
                     <Radio.Group>
                       <Radio className='block-radio' value={0}>不限制</Radio>
                       <Radio className='block-radio' value={1}>选择平台</Radio>
