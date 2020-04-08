@@ -26,14 +26,14 @@ interface PayloadProps {
   categoryIds?: string
   page: number
   pageSize: number
-  /** 排除查询活动类型，1-限时秒杀，2-今日拼团，3-礼包，4-激活码，5-地推专区，6-体验团长专区，7-采购专区，8-买赠, 9-团购*/
+  /** 排除查询活动类型，1-限时秒杀，2-今日拼团，3-礼包，4-激活码，5-地推专区，6-体验团长专区，7-采购专区，8-买赠, 9-团购 10-拼团 11-满减 12-满折*/
   excludTypes?: Marketing.ActivityType[]
 }
 class Main extends React.Component<Props, State> {
   public payload: PayloadProps = {
     page: 1,
     pageSize: 10,
-    excludTypes: [3, 4, 5, 6, 7, 8, 9, 10]
+    excludTypes: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   }
   public selectRows: Marketing.ItemProps[] = []
   public form: FormInstance

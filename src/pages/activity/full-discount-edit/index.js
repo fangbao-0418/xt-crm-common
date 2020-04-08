@@ -338,7 +338,7 @@ class FullDiscountEditPage extends PureComponent {
   }
 
   render() {
-    const { form: { getFieldDecorator, getFieldValue } } = this.props
+    const { form: { getFieldDecorator, getFieldValue }, match: { params: { action } } } = this.props
     const { detail } = this.state
 
     const formItemLayout = {
@@ -371,7 +371,7 @@ class FullDiscountEditPage extends PureComponent {
     let goodsDisable = false
     let otherDisable = false
 
-    if (detail) {
+    if (detail && action === 'edit') {
       if (detail.discountsStatus === 2) {
         otherDisable = true
       } else if ([3, 0].includes(detail.discountsStatus)) {
@@ -562,7 +562,16 @@ class FullDiscountEditPage extends PureComponent {
             title="活动说明"
           >
             <Form.Item label="活动说明">
-              {getFieldDecorator('promotionDesc')(
+              {getFieldDecorator('promotionDesc', {
+                rules: [
+                  {
+                    required: false,
+                    whitespace: true,
+                    message: '请输入活动说明(限100个字符)',
+                    max: 100
+                  }
+                ]
+              })(
                 <TextArea
                   disabled={otherDisable}
                   style={{ maxWidth: 350 }}

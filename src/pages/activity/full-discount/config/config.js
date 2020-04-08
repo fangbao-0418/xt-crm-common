@@ -7,7 +7,7 @@ export const queryConfig = {
         showTime: true
       }
     },
-    title: {
+    name: {
       label: '活动名称'
     },
     discountsStatus: {

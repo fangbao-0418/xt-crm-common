@@ -110,6 +110,7 @@ class Main extends React.Component<Props, State> {
     } else {
       value = values[this.presentContentSelectedKey]
     }
+    console.log(value, field, values)
     if (type === 0) {
       this.activityModalInstance.open(value)
     } else if (type === 1) {

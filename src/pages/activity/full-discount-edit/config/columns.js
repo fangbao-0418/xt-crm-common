@@ -1,7 +1,5 @@
 import React from 'react'
 import ActionView from '@/components/action-view'
-import activityType from '@/enum/activityType'
-import DateFns from 'date-fns'
 
 export const getRulesColumns = ({ onEdit, onDelete, statusDisabled }) => {
   return [
@@ -74,26 +72,32 @@ export const getActivityColumns = ({ onDelete, statusDisabled }) => {
     {
       title: '活动名称',
       dataIndex: 'title',
-      key: 'title'
+      render: (text, record) => {
+        return (
+          <span
+            className="href"
+            onClick={() => {
+              APP.href(`/activity/info/edit/${record.id}?page=1&pageSize=20`, '_blank');
+            }}
+          >
+            {text}
+          </span>
+        );
+      }
     },
     {
       title: '开始时间',
       dataIndex: 'startTime',
-      render: text => <span>{text ? DateFns.format(text, 'YYYY-MM-DD HH:mm:ss') : '-'}</span>
+      render: text => APP.fn.formatDate(text)
     },
     {
       title: '结束时间',
       dataIndex: 'endTime',
-      render: text => <span>{text ? DateFns.format(text, 'YYYY-MM-DD HH:mm:ss') : '-'}</span>
+      render: text => APP.fn.formatDate(text)
     },
     {
       title: '活动类型',
-      dataIndex: 'type',
-      render: text => (
-        <span>
-          {text ? activityType.getValue(text) : '-'}
-        </span>
-      )
+      dataIndex: 'activityTypeName'
     },
     {
       title: '活动状态',

@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react'
 import { Button, Table } from 'antd'
-import { ProductSelector, ActivitySelector } from '@/components'
+import ActivitySelectModal from '@/pages/activity/marketing/components/activity/SelectModal'
+import ShopSelectModal from '@/pages/activity/marketing/components/shop/SelectModal'
 import { isEqual } from 'lodash'
-import { connect, unionArray } from '@/util/utils';
+import { connect } from '@/util/utils';
 import { namespace } from '../model';
 import { getGoodsColumns, getActivityColumns } from '../config/columns';
 
@@ -18,7 +19,7 @@ class ProductTable extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, preState) {
-    if (isEqual(nextProps.value, preState.preRules)) {
+    if (isEqual(nextProps.value, preState.preProductRefInfo)) {
       return null;
     }
     const productRefInfo = nextProps.value
@@ -31,20 +32,15 @@ class ProductTable extends PureComponent {
 
   /* 添加活动商品操作-显示相应模态框 */
   handleGoods = () => {
-    const { dispatch, productRef } = this.props
+    const { productRef } = this.props
+    const { productRefInfo } = this.state
     if (productRef === 0) {
-      dispatch[namespace].saveDefault({
-        activityModal: {
-          visible: true,
-          title: '选择活动'
-        }
+      this.activityModalInstance.open({
+        activityList: productRefInfo
       })
     } else if (productRef === 1) {
-      dispatch[namespace].saveDefault({
-        goodsModal: {
-          visible: true,
-          title: '选择商品'
-        }
+      this.shopModalInstance.open({
+        spuList: productRefInfo
       })
     }
   }
@@ -97,19 +93,16 @@ class ProductTable extends PureComponent {
   }
 
   /* 选择器选择 */
-  handleSelectorChange = (_, selectedRows) => {
+  handleSelectorChange = (selectedRows) => {
     const { onChange } = this.props
-    const { productRefInfo } = this.state
     if (onChange) {
-      onChange(unionArray(productRefInfo, selectedRows))
+      onChange(selectedRows)
     }
   }
 
   render() {
     const {
       productRef,
-      goodsModal,
-      activityModal,
       disabled: statusDisabled // 根据活动详情状态值计算的是否禁用值
     } = this.props
     const { productRefInfo: dataSource } = this.state
@@ -138,18 +131,21 @@ class ProductTable extends PureComponent {
 
     return (
       <div>
-        {/* 选择商品模态框 */}
-        <ProductSelector
-          visible={goodsModal.visible}
-          onCancel={this.handleGoodsModalCancel}
-          onChange={this.handleSelectorChange}
-        />
         {/* 选择活动模态框 */}
-        <ActivitySelector
-          multi={false}
-          visible={activityModal.visible}
-          onCancel={this.handleActivityModalCancel}
-          onChange={this.handleSelectorChange}
+        <ActivitySelectModal
+          getInstance={ref => this.activityModalInstance = ref}
+          onOk={rows => {
+            this.activityModalInstance.hide()
+            this.handleSelectorChange(rows)
+          }}
+        />
+        {/* 选择商品模态框 */}
+        <ShopSelectModal
+          getInstance={ref => this.shopModalInstance = ref}
+          onOk={rows => {
+            this.shopModalInstance.hide()
+            this.handleSelectorChange(rows)
+          }}
         />
         <p>
           <Button disabled={disabled || statusDisabled} onClick={this.handleGoods} type="link">

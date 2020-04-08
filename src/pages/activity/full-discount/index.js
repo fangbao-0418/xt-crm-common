@@ -67,7 +67,7 @@ class FullDiscountPage extends PureComponent {
           formItemLayout={(
             <>
               <FormItem name='createTime' />
-              <FormItem name='title' />
+              <FormItem name='name' />
               <FormItem name='discountsStatus' />
             </>
           )}
