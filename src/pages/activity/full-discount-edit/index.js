@@ -73,7 +73,6 @@ class FullDiscountEditPage extends PureComponent {
           time: [moment(detail.startTime), moment(detail.endTime)],
           promotionType: detail.promotionType,
           productRef: detail.productRef,
-          productRefInfo: detail.referenceProductVO,
           promotionDesc: detail.promotionDesc
         }
 
@@ -134,6 +133,12 @@ class FullDiscountEditPage extends PureComponent {
             })
           }
           fieldsValue.rules = rules
+        }
+
+        if (detail.productRef === 1) {
+          fieldsValue.productRefInfo = detail.referenceProductVO
+        } else if (detail.productRef === 0) {
+          fieldsValue.productRefInfo = [detail.refPromotion]
         }
 
         setFieldsValue(fieldsValue)

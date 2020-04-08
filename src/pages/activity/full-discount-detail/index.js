@@ -48,7 +48,7 @@ class FullDiscountDetailPage extends PureComponent {
     let ruleTypeTxt = '加载中...' // 优惠类型
     let rules = [] // 优惠条件
     let columns = [] // 活动商品表头
-    let referenceProductVO = [] // 活动商品数据
+    let dataSource = [] // 活动商品数据
     let promotionDesc = '加载中...' // 活动说明
 
     if (detail) {
@@ -120,7 +120,11 @@ class FullDiscountDetailPage extends PureComponent {
         columns = getGoodsColumns()
       }
 
-      referenceProductVO = detail.referenceProductVO
+      if (detail.productRef === 1) {
+        dataSource = detail.referenceProductVO
+      } else if (detail.productRef === 0) {
+        dataSource = [detail.refPromotion]
+      }
       promotionDesc = detail.promotionDesc || '暂无数据'
     }
 
@@ -151,7 +155,7 @@ class FullDiscountDetailPage extends PureComponent {
             <Form.Item label="指定活动">
               <Table
                 pagination={false}
-                dataSource={referenceProductVO}
+                dataSource={dataSource}
                 columns={columns}
               />
             </Form.Item>

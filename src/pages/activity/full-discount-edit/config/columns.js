@@ -1,5 +1,6 @@
 import React from 'react'
 import ActionView from '@/components/action-view'
+import { activeNameMap } from './config'
 
 export const getRulesColumns = ({ onEdit, onDelete, statusDisabled }) => {
   return [
@@ -97,7 +98,8 @@ export const getActivityColumns = ({ onDelete, statusDisabled }) => {
     },
     {
       title: '活动类型',
-      dataIndex: 'activityTypeName'
+      dataIndex: 'type',
+      render: text => activeNameMap[text] || '状态出错'
     },
     {
       title: '活动状态',

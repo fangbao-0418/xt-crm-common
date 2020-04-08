@@ -1,4 +1,5 @@
 import React from 'react'
+import { activeNameMap } from './config'
 
 export const getRulesColumns = () => {
   return [
@@ -73,7 +74,8 @@ export const getActivityColumns = () => {
     },
     {
       title: '活动类型',
-      dataIndex: 'activityTypeName'
+      dataIndex: 'type',
+      render: text => activeNameMap[text] || '状态出错'
     },
     {
       title: '活动状态',
