@@ -275,6 +275,13 @@ class CouponInfo extends React.Component {
       if (value[0] >= value[1]) {
         callback('领取开始时间必须小于结束时间')
       }
+    } else {
+      if (!value[0]) {
+        callback('领取开始时间不能为空')
+      }
+      if (!value[1]) {
+        callback('领取结束时间不能为空')
+      }
     }
     if (form) {
       if (useTimeType === 1) {
@@ -285,6 +292,7 @@ class CouponInfo extends React.Component {
     if (useTimeType === 0 && useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
       callback('领取开始时间必须小于等于使用开始时间')
     } else if (useTimeType === 0 && useTimeRange && value[1] && useTimeRange[1] && value[1] > useTimeRange[1]) {
+      console.log(value[1] > useTimeRange[1], '----')
       callback('领取结束时间必须小于等于使用结束时间')
     }
     callback()
@@ -618,9 +626,6 @@ class CouponInfo extends React.Component {
             verifiable
             fieldDecoratorOptions={{
               rules: [{
-                required: true,
-                message: '请选择领取时间'
-              }, {
                 validator: this.receiveTimeValidator
               }]
             }}
