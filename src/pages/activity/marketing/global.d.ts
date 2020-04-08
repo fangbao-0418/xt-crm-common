@@ -61,6 +61,7 @@ declare namespace Marketing {
     pageSize: number
     /** 活动类型，1-限时秒杀，2-今日拼团，3-礼包，4-激活码，5-地推专区，6-体验团长专区，7-采购专区，8-买赠 */
     type?: number
+    promotionTypes?: string
   }
   /** 满赠详情新增/修改传参属性 */
   interface FormDataProps {
