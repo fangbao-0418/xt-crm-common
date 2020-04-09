@@ -156,6 +156,10 @@ class SupplierModal extends Component {
                   {
                     max: 15,
                     message: '最多15个字符'
+                  },
+                  {
+                    pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/g,
+                    message: '非法输入'
                   }
                 ]
               })(
