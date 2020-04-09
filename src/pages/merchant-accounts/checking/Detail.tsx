@@ -21,6 +21,25 @@ interface State {
   page: number
   /** 页码 */
   pageSize: number
+  /** 对账单数据 */
+  financeAccountRecordVO: FinanceAccountRecordVO
+}
+
+interface FinanceAccountRecordVO {
+  /** 对账单编码 */
+  serialNo: string
+  /** 供应商名称 */
+  accName: string
+  /** 创建日期 */
+  bulidDate: number
+  /** 对账单状态 */
+  accStatus: number
+  /** 收入 */
+  incomeMoney: number
+  /** 支出 */
+  disburseMoney: number
+  /** 总额 */
+  settlementMoney: number
 }
 
 class Main extends React.Component<Props, State> {
@@ -37,7 +56,21 @@ class Main extends React.Component<Props, State> {
       }
     }, {
       dataIndex: 'sourceNo',
-      title: '交易编号'
+      title: '交易编号',
+      render: (text) => {
+        // 此逻辑由海鑫建议。售后单不带 -，子单都带 - isAfterSales: 是否售后单
+        const isAfterSales = text.indexOf('-') !== -1 ? false : true
+        const id = isAfterSales ? text : text.slice(0, text.indexOf('-'))
+        const url = isAfterSales ? '#/order/refundOrder/' : '#/order/detail/'
+        return (
+          <a
+            href={window.location.pathname + `${url}${id}`}
+            target='_blank'
+          >
+            {text}
+          </a>
+        )
+      }
     }, {
       dataIndex: 'paymentType',
       title: '交易类型',
@@ -76,16 +109,24 @@ class Main extends React.Component<Props, State> {
       }
     }
   ]
-  public query = parseQuery()
   public id = this.props.match.params.id
   public state: State = {
     total: 0,
     page: 1,
-    pageSize: 10
+    pageSize: 10,
+    financeAccountRecordVO: {
+      serialNo: '',
+      accName: '',
+      bulidDate: 0,
+      accStatus: 0,
+      incomeMoney: 0,
+      disburseMoney: 0,
+      settlementMoney: 0
+    }
   }
   /** 添加调整单 */
   public addAdjustment = () => {
-    const query = this.query
+    const query = this.state.financeAccountRecordVO
     const record: any = {
       serialNo: query.serialNo,
       accName: query.accName
@@ -111,7 +152,7 @@ class Main extends React.Component<Props, State> {
     }
   }
   public render () {
-    const query = this.query
+    const query = this.state.financeAccountRecordVO
     const bulidDate = APP.fn.formatDate(Number(query.bulidDate), 'YYYYMMDD')
     return (
       <div className={styles.detail}>
@@ -125,17 +166,18 @@ class Main extends React.Component<Props, State> {
         </div>
         <div className={styles['detail-header2']}>
           <div>
-            <div>收入：<span className='success'>{Number(query.incomeMoney) !== 0 ? '+' : ''}{query.incomeMoney || '0.00'}</span>元</div>
-            <div>支出：<span className='error'>{Number(query.disburseMoney) !== 0 ? '-' : ''}{query.disburseMoney || '0.00'}</span>元</div>
+            <div>收入：<span className='success'>{Number(query.incomeMoney) !== 0 ? '+' : ''}{APP.fn.formatMoney(query.incomeMoney) || '0.00'}</span>元</div>
+            <div>支出：<span className='error'>{Number(query.disburseMoney) !== 0 ? '-' : ''}{APP.fn.formatMoney(query.disburseMoney) || '0.00'}</span>元</div>
             <div>本期对账单总额：
               <span className={Number(query.settlementMoney) > 0 ? 'success' : 'error'}>
-                {query.settlementMoney || '0.00'}
+                {Number(query.settlementMoney) !== 0 ? Number(query.settlementMoney) > 0 ? '+' : '-' : ''}
+                {APP.fn.formatMoney(query.settlementMoney) || '0.00'}
               </span>元
             </div>
           </div>
           <div>
             <Auth code='adjustment:procurement_audit'>
-              {['20', '70'].indexOf(query.accStatus) > -1 && (
+              {['20', '70'].indexOf(query.accStatus.toString()) > -1 && (
                 <Button
                   type='primary'
                   onClick={this.addAdjustment}
@@ -162,8 +204,10 @@ class Main extends React.Component<Props, State> {
             }
           }}
           processData={(data) => {
+            console.log(data, 'payloaddata')
             this.setState({
-              total: data.total
+              total: data.total,
+              financeAccountRecordVO: data.result[0].financeAccountRecordVO
             })
             return {
               total: data.total,

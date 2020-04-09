@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, message } from 'antd'
 import { FormItem } from '@/packages/common/components/form'
-import ExportButton from '@/packages/common/components/export-button'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { param } from '@/packages/common/utils'
@@ -112,16 +111,7 @@ class Main extends React.Component<Props, State> {
             <span
               className='href'
               onClick={() => {
-                const query = param({
-                  settlementMoney: APP.fn.formatMoneyNumber(record.settlementMoney, 'm2u'),
-                  bulidDate: record.bulidDate,
-                  incomeMoney: APP.fn.formatMoneyNumber(record.incomeMoney, 'm2u'),
-                  disburseMoney: APP.fn.formatMoneyNumber(record.disburseMoney, 'm2u'),
-                  serialNo: record.serialNo,
-                  accName: record.accName,
-                  accStatus: record.accStatus
-                })
-                APP.history.push(`/merchant-accounts/checking/${record.id}?${query}`)
+                APP.history.push(`/merchant-accounts/checking/${record.id}`)
               }}
             >
               查看明细
@@ -272,6 +262,28 @@ class Main extends React.Component<Props, State> {
       selectedRowKeys: rowKeys
     })
   }
+  /** 批量导出方法 */
+  public batchExport = (type: string) => {
+    const values = this.listpage && this.listpage.form.getValues()
+    const params = Object.assign(values, {bulidYear: values.date[0], bulidMonth: values.date[1]})
+    delete params.date
+    if (!params.storeName) {
+      return message.info('请输入供应商名称')
+    }
+    console.log(type, 'type')
+    let apiUrl = ''
+    switch (type) {
+    case 'list':
+      apiUrl =  '/finance/accountRecord/exportAccountSingleData'
+      break
+    case 'detail':
+      apiUrl =  '/finance/accountRecord/exportAccountData'
+      break
+    }
+    api.batchExport(apiUrl, params).then(() => {
+      return message.success('导出成功，请前往下载列表下载文件')
+    })
+  }
   public render () {
     const rowSelection: TableRowSelection<GetListOnPageResponse> = {
       fixed: true,
@@ -329,7 +341,8 @@ class Main extends React.Component<Props, State> {
               x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
                 return a + b
               })
-            }
+            },
+            rowSelection
           }}
           addonAfterSearch={(
             <div>
@@ -345,20 +358,20 @@ class Main extends React.Component<Props, State> {
               >
                 全部导出
               </Button> */}
-              <ExportButton
-                onClick={() => {
-                  const values = this.listpage && this.listpage.form.getValues()
-                  const params = Object.assign(values, {bulidYear: values.date[0], bulidMonth: values.date[1]})
-                  delete params.date
-                  if (!params.storeName) {
-                    return message.info('请输入供应商名称')
-                  }
-                  return {
-                    api: '/finance/accountRecord/exportAccountSingleData',
-                    params
-                  }
-                }}
-              />
+              <Button
+                className='mr10'
+                type='primary'
+                onClick={() => this.batchExport('list')}
+              >
+                批量导出
+              </Button>
+              <Button
+                className='mr10'
+                type='primary'
+                onClick={() => this.batchExport('detail')}
+              >
+                批量导出明细
+              </Button>
               {[20, 70].indexOf(this.props.status) > -1 && (
                 <Button
                   type='primary'

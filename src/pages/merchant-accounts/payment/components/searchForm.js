@@ -9,8 +9,8 @@ const { Option } = Select;
 
 class SearchForm extends React.Component {
   // 查询
-  handleSearch = () => {
-    const { form: { validateFields }, onFetchData } = this.props;
+  handleSearch = (isExport) => {
+    const { form: { validateFields }, onFetchData, paymentBatchExport } = this.props;
     validateFields((err, vals) => {
       if (!err) {
         const params = {
@@ -21,6 +21,10 @@ class SearchForm extends React.Component {
           endModifyTime: vals.modifyTime && vals.modifyTime[1] && +new Date(vals.modifyTime[1]),
           page: 1
         };
+        /** 如果isExport === batchExport 就是导出按钮，导出按钮也按照当前筛选条件进行导出 */
+        if(isExport === 'batchExport'){
+          return paymentBatchExport(params)
+        }
         delete params.createTime;
         delete params.modifyTime;
         onFetchData(params);
@@ -133,6 +137,13 @@ class SearchForm extends React.Component {
             <Col span={24} style={{ textAlign: 'right' }}>
               <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>查询</Button>
               <Button type="default" onClick={this.handleReset}>清除</Button>
+              <Button
+                  className='ml10'
+                  type='primary'
+                  onClick={() => this.handleSearch('batchExport')}
+                >
+                  批量导出
+                </Button>
             </Col>
           </Row>
         </Form>

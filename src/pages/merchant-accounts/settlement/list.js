@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col, Select } from 'antd';
+import { Table, Card, Form, Input, Button, DatePicker, Spin, Row, Col, Select, message } from 'antd';
 import SettleModal from './components/settleModal'
 import RejectModal from './components/rejectModal'
 import getColumns from './config/columns'
@@ -73,7 +73,7 @@ class List extends React.Component {
     );
   };
   // 查询
-  handleSearch = () => {
+  handleSearch = (isExport) => {
     const { validateFields } = this.props.form;
     validateFields((err, vals) => {
       if (!err) {
@@ -88,6 +88,15 @@ class List extends React.Component {
         };
         delete params.createTime;
         delete params.modifyTime;
+        /** 如果isExport === batchExport 就是导出按钮，导出按钮也按照当前筛选条件进行导出 */
+        if(isExport === 'batchExport'){
+          return api[isExport]('/finance/settlement/exportData',params).then((res) => {
+            console.log(res, 'res')
+            return message.success('导出成功，请前往下载列表下载文件')
+          }).catch(err => {
+            console.log(err)
+          })
+        }
         this.fetchData(params);
       }
     });
@@ -244,8 +253,15 @@ class List extends React.Component {
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
-                <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>查询</Button>
+                <Button type="primary" style={{ margin: '0 10px' }} onClick={() => this.handleSearch()}>查询</Button>
                 <Button type="default" onClick={this.handleClear}>清除</Button>
+                <Button
+                  className='ml10'
+                  type='primary'
+                  onClick={() => this.handleSearch('batchExport')}
+                >
+                  批量导出
+                </Button>
               </Col>
             </Row>
           </Form>
