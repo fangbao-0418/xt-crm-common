@@ -7,6 +7,7 @@ import { setPromotionAddSKu, getOperatorSpuList } from '../api';
 import Image from '../../../components/Image';
 import ArrowContain from '@/pages/goods/components/arrow-contain'
 import If from '@/packages/common/components/if'
+import { parseQuery } from '@/packages/common/utils'
 import { Decimal } from 'decimal.js';
 const FormItem = Form.Item;
 console.log('Image=>', Image)
@@ -123,10 +124,11 @@ class ActivityDetail extends React.Component {
       promotionId: id,
       productId: productId
     }).then((res) => {
+      const { type } = parseQuery()
       res = res || {}
       const record = Object.assign({}, (res.records || [])[0])
       record.promotionSkuList = record.promotionSkuList || []
-      console.log(record, '----')
+      record.type = Number(type)
       this.handleData(record)
     })
   }

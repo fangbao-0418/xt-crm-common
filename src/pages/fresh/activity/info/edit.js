@@ -198,7 +198,7 @@ class List extends React.Component {
       }
     } = this.props;
     // localStorage.setItem('editsku', JSON.stringify({ type, ...record }));
-    history.push(`/fresh/activity/info/detail/${id}/${record.productId}`);
+    history.push(`/fresh/activity/info/detail/${id}/${record.productId}?type=${type}`);
   };
 
   handleInputValue = (text, record, index) => e => {
