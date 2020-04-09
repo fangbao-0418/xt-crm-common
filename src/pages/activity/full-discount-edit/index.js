@@ -101,7 +101,7 @@ class FullDiscountEditPage extends PureComponent {
                   stageType: detail.stageType,
                   mode: 1,
                   discountsAmount: item.discountsAmount / 100,
-                  conditionStr: `满 ${formatMoneyWithSign(item.stageCount)} 件`,
+                  conditionStr: `满 ${item.stageCount} 件`,
                   modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
                 }
               } else {
@@ -124,7 +124,7 @@ class FullDiscountEditPage extends PureComponent {
                   ...item,
                   stageType: detail.stageType,
                   mode: 2,
-                  conditionStr: `满 ${formatMoneyWithSign(item.stageCount)} 件`,
+                  conditionStr: `满 ${item.stageCount} 件`,
                   modeStr: `打 ${item.discounts / 10} 折`
                 }
               } else {
