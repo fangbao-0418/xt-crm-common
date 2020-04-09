@@ -17,6 +17,10 @@ enum TypeEnum {
   售后订单导出 = 2,
   财务对账单详情导出 = 3,
   结算单明细导出 = 4,
+  财务对账单列表导出 = 5,
+  财务结算单导出 = 6,
+  财务付款单导出 = 7,
+  财务调整单导出 = 8,
   买菜商品导出 = 201,
   买菜订单导出 = 202,
   买菜采购单导出 = 301,
@@ -36,11 +40,10 @@ class Main extends React.Component {
     pageNum: 1
   }
   public columns: ColumnProps<Info>[] = [
-    // {
-    //   title: '编号',
-    //   dataIndex: 'id',
-    //   key: 'id'
-    // },
+    {
+      title: '文件名',
+      dataIndex: 'fileName'
+    },
     {
       title: '任务类型',
       dataIndex: 'type',
@@ -120,27 +123,30 @@ class Main extends React.Component {
     loading: false
   }
   public componentDidMount () {
-    this.handleSearch()
+    this.handleSearch(1)
   }
   /**
    * 搜索事件
    */
-  public handleSearch () {
+  public handleSearch (current: number) {
     this.setState({
       loading: true,
       page: this.payload.pageNum
     })
-    api.getEarningsDetail().then((res) => {
+    api.getEarningsDetail(current).then((res) => {
+      console.log(res, 'res')
       this.setState({
         total: res.total,
         loading: false,
         data: res.result
+      }, () => {
+        console.log(this.state.data, 'this.state.data')
       })
     })
   }
 
   public render () {
-    const { pageSize, page, total } = this.state
+    const { pageSize, page, total, data } = this.state
     return (
       <div>
         <div>
@@ -149,14 +155,14 @@ class Main extends React.Component {
               total,
               onChange: (current) => {
                 this.payload.pageNum = current
-                this.handleSearch()
+                this.handleSearch(current)
               },
               pageSize,
               current: page
             }}
             rowKey='id'
             columns={this.columns}
-            dataSource={this.state.data}
+            dataSource={data}
             loading={this.state.loading}
           />
         </div>

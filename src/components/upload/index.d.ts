@@ -24,7 +24,8 @@ interface Props {
   accept?: string
   style?: React.CSSProperties
   /** 是否格式化掉域名，即去掉cdn域名，默认false 不去掉域名部分 */
-  formatOrigin?: boolean
+  formatOrigin?: boolean,
+  ossDir?: string /** oss 上传指定目录 */
 }
 export declare const ossUpload: (file: File) => Promise<any>
 export function formatValue (value: any[]): string

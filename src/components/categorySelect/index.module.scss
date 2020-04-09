@@ -22,9 +22,18 @@
         .item {
             padding: 5px 10px;
             display: flex;
+            cursor: pointer;
+            align-items: center;
+
+            .word {
+                max-width: 120px;
+            }
 
             .name {
-                cursor: pointer;
+                flex: 1;
+            }
+
+            .desc {
                 flex: 1;
             }
         }

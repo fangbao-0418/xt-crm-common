@@ -36,11 +36,11 @@ class Main extends React.Component<Props, State> {
         return APP.fn.formatDate(text) || ''
       }
     },
-    // {
-    //   dataIndex: 'accName',
-    //   title: '名称',
-    //   width: 150
-    // },
+    {
+      dataIndex: 'storeId',
+      title: '供应商ID',
+      width: 100
+    },
     {
       dataIndex: 'storeName',
       title: '供应商',
@@ -56,7 +56,12 @@ class Main extends React.Component<Props, State> {
       title: '收入（元）',
       width: 150,
       render: (text) => {
-        return <span className='success'>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+        return (
+          <span className='success'>
+            {text !== 0 ? '+' : null}
+            {APP.fn.formatMoneyNumber(text, 'm2u')}
+          </span>
+        )
       }
     },
     {
@@ -69,12 +74,17 @@ class Main extends React.Component<Props, State> {
       title: '支出（元）',
       width: 150,
       render: (text) => {
-        return <span className='error'>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+        return (
+          <span className='error'>
+            {text !== 0 ? '-' : null}
+            {APP.fn.formatMoneyNumber(text, 'm2u')}
+          </span>
+        )
       }
     },
     {
       dataIndex: 'settlementMoney',
-      title: '本期对对账单金额',
+      title: '本期对账单金额',
       width: 150,
       render: (text) => {
         const className = text > 0 ? 'success' : 'error'
@@ -101,16 +111,7 @@ class Main extends React.Component<Props, State> {
             <span
               className='href'
               onClick={() => {
-                const query = param({
-                  settlementMoney: APP.fn.formatMoneyNumber(record.settlementMoney, 'm2u'),
-                  bulidDate: record.bulidDate,
-                  incomeMoney: APP.fn.formatMoneyNumber(record.incomeMoney, 'm2u'),
-                  disburseMoney: APP.fn.formatMoneyNumber(record.disburseMoney, 'm2u'),
-                  serialNo: record.serialNo,
-                  accName: record.accName,
-                  accStatus: record.accStatus
-                })
-                APP.history.push(`/merchant-accounts/checking/${record.id}?${query}`)
+                APP.history.push(`/merchant-accounts/checking/${record.id}`)
               }}
             >
               查看明细
@@ -129,8 +130,8 @@ class Main extends React.Component<Props, State> {
             }&nbsp;&nbsp;
             <span
               className='href'
-              onClick={() => api.exportAccount(id).then(res => {
-                return message.success('导出成功')
+              onClick={() => api.exportAccount(id).then((res: any) => {
+                return message.success('导出成功，请前往下载列表下载文件')
               })}
             >
               导出
@@ -261,6 +262,28 @@ class Main extends React.Component<Props, State> {
       selectedRowKeys: rowKeys
     })
   }
+  /** 批量导出方法 */
+  public batchExport = (type: string) => {
+    const values = this.listpage && this.listpage.form.getValues()
+    const params = Object.assign(values, {bulidYear: values.date[0], bulidMonth: values.date[1]})
+    delete params.date
+    if (!params.storeName) {
+      return message.info('请输入供应商名称')
+    }
+    console.log(type, 'type')
+    let apiUrl = ''
+    switch (type) {
+    case 'list':
+      apiUrl =  '/finance/accountRecord/exportAccountSingleData'
+      break
+    case 'detail':
+      apiUrl =  '/finance/accountRecord/exportAccountData'
+      break
+    }
+    api.batchExport(apiUrl, params).then(() => {
+      return message.success('导出成功，请前往下载列表下载文件')
+    })
+  }
   public render () {
     const rowSelection: TableRowSelection<GetListOnPageResponse> = {
       fixed: true,
@@ -309,6 +332,7 @@ class Main extends React.Component<Props, State> {
                   )
                 }}
               />
+              <FormItem name='sourceNo'/>
             </>
           )}
           tableProps={{
@@ -334,6 +358,20 @@ class Main extends React.Component<Props, State> {
               >
                 全部导出
               </Button> */}
+              <Button
+                className='mr10'
+                type='primary'
+                onClick={() => this.batchExport('list')}
+              >
+                批量导出
+              </Button>
+              <Button
+                className='mr10'
+                type='primary'
+                onClick={() => this.batchExport('detail')}
+              >
+                批量导出明细
+              </Button>
               {[20, 70].indexOf(this.props.status) > -1 && (
                 <Button
                   type='primary'

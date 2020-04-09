@@ -13,12 +13,12 @@ const uploadButton = props => (
   </div>
 );
 
-export async function ossUpload(file) {
+export async function ossUpload(file, dir = 'crm') {
   const res = await getStsPolicy();
   if (res) {
     const client = createClient(res);
     try {
-      const urlList = await ossUploadBlob(client, file, 'crm');
+      const urlList = await ossUploadBlob(client, file, dir);
       return urlList;
     } catch (error) {
       message.error('上传失败，请重试', 'middle');
@@ -259,9 +259,9 @@ class UploadView extends Component {
   };
   customRequest(e) {
     const file = e.file;
-    ossUpload(file).then((urlList) => {
+    const { onChange, formatOrigin, ossDir } = this.props;
+    ossUpload(file, ossDir).then((urlList) => {
       let { fileList } = this.state;
-      const { onChange, formatOrigin } = this.props;
       file.url = urlList && urlList[0];
       file.durl = file.url;
       fileList.push({
@@ -357,6 +357,7 @@ UploadView.propTypes = {
   listNum: PropTypes.number,
   size: PropTypes.number,
   showUploadList: PropTypes.bool,
+  ossDir: PropTypes.string
 };
 
 UploadView.defaultProps = {

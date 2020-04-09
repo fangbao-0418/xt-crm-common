@@ -15,7 +15,11 @@ class SuppilerSelect extends Component {
   }
   getStoreList = (params) => {
     params = { pageSize: 5000, ...params };
-    const api = this.props.type === 'normal' ? getStoreList(params): getFreshList(params);
+    /** 这里可自定已配置传参 */
+    if (typeof this.props.processPayload === 'function') {
+      params = this.props.processPayload(params) || params
+    }
+    const api = this.props.type === 'normal' ? getStoreList(params) : getFreshList(params);
     api.then((res = {}) => {
       this.setState({
         supplier: res.records,
