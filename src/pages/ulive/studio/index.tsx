@@ -257,6 +257,7 @@ class Main extends React.Component<Props, State> {
     if (record.liveTop === 0) {
       let form: FormInstance
       const hide = this.props.alert({
+        width: 300,
         content: (
           <Form
             getInstance={(ref) => form = ref}
@@ -267,12 +268,22 @@ class Main extends React.Component<Props, State> {
                 name='sort'
                 type='number'
                 placeholder='请输入正整数'
+                style={{
+                  marginBottom: 8
+                }}
                 labelCol={{ span: 0 }}
+                wrapperCol={{ span: 24 }}
+                verifiable
+                fieldDecoratorOptions={{
+                  rules: [
+                    { required: true, message: '请输入序号' }
+                  ]
+                }}
                 controlProps={{
                   precision: 0,
-                  min: 0,
+                  min: 1,
                   style: {
-                    width: 200
+                    width: '100%'
                   }
                 }}
               />
@@ -280,21 +291,27 @@ class Main extends React.Component<Props, State> {
           </Form>
         ),
         onOk: () => {
-          const values = form.getValues()
-          console.log(values, 'values')
-          api.setTop({
-            planId: record.planId,
-            topSort: values.sort,
-            isTop: record.liveTop === 0 ? 1 : 0
-          }).then(() => {
-            hide()
-            this.refresh()
+          form.props.form.validateFields((err) => {
+            if (err) {
+              return
+            }
+            const values = form.getValues()
+            console.log(values, 'values')
+            api.setTop({
+              planId: record.planId,
+              topSort: values.sort,
+              isTop: record.liveTop === 0 ? 1 : 0
+            }).then(() => {
+              hide()
+              this.refresh()
+            })
           })
         }
       })
       return
     } else {
       const hide = this.props.alert({
+        width: 300,
         content: (
           <div className='text-center'>
             确定是否取消置顶
