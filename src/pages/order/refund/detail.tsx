@@ -18,6 +18,11 @@ export interface Logger {
   name: string
 }
 
+interface Params {
+  id: number
+  orderCode?: number | string
+}
+
 const columns: ColumnProps<Logger>[] = [
   {
     title: '内容',
@@ -62,7 +67,17 @@ class Detail extends Component<DetailProps, State> {
     return Number(this.props.match.params.id)
   }
   async fetchLog () {
-    const logs = await getSkuServerProcessDetailList(this.refundId)
+    /** 海鑫让加的逻辑，这个必须要传id，从对账单跳转过来只有orderCode，所以要单独写字段判断。 */
+    const {id, sourceType} = this.props.match.params
+    const params: Params = {
+      id: !sourceType ? id : 1,
+      orderCode: ''
+    }
+    console.log(sourceType, 'sourceType')
+    if (sourceType === 'checking') {
+      params.orderCode = id
+    }
+    const logs = await getSkuServerProcessDetailList(params)
     this.setState({
       logs
     })
@@ -70,9 +85,16 @@ class Detail extends Component<DetailProps, State> {
   getDetail () {
     /** 海鑫让加的逻辑，这个必须要传id，从对账单跳转过来只有orderCode，所以要单独写字段判断。 */
     const {id, sourceType} = this.props.match.params
+    const params: Params = {
+      id: !sourceType ? id : 1,
+      orderCode: ''
+    }
+    if (sourceType === 'checking') {
+      params.orderCode = id
+    }
     APP.dispatch({
       type: `${namespace}/getDetail`,
-      payload: { id: !sourceType ? id : 1, orderCode: id}
+      payload: params
     })
   }
   componentWillMount () {

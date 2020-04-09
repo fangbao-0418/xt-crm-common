@@ -204,7 +204,6 @@ class Main extends React.Component<Props, State> {
             }
           }}
           processData={(data) => {
-            console.log(data, 'payloaddata')
             this.setState({
               total: data.total,
               financeAccountRecordVO: data.result[0].financeAccountRecordVO

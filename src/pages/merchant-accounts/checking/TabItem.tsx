@@ -270,7 +270,6 @@ class Main extends React.Component<Props, State> {
     if (!params.storeName) {
       return message.info('请输入供应商名称')
     }
-    console.log(type, 'type')
     let apiUrl = ''
     switch (type) {
     case 'list':
