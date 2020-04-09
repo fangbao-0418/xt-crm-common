@@ -159,7 +159,7 @@ class SupplierModal extends Component {
                   },
                   {
                     pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/g,
-                    message: '非法输入'
+                    message: '仅支持中文、英文、数字'
                   }
                 ]
               })(
