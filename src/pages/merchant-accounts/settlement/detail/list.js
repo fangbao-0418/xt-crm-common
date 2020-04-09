@@ -3,7 +3,7 @@ import { Card, Row, Table, Button } from 'antd';
 import styles from './style.module.styl'
 import { enumPayType } from '../../constant';
 import { download } from '@/util/utils';
-import SettleModal from '../settleModal'
+import SettleModal from '../components/settleModal'
 
 
 class SettleDetialList extends React.Component {
@@ -64,7 +64,12 @@ class SettleDetialList extends React.Component {
         width: 150,
         dataIndex: 'billMoney',
         render: (billMoney, record) => {
-          return <span style={{color: record.financeType === 1 ? 'green' : 'red'}}>{APP.fn.formatMoneyNumber(billMoney, 'm2u')}</span>
+          return ( 
+            <span style={{color: record.financeType === 1 ? 'green' : 'red'}}>
+              {record.financeType === 1 ? '+' : '-'}
+              {APP.fn.formatMoneyNumber(billMoney, 'm2u')}
+            </span> 
+          )
         },
       }, {
         title: '单据日期',
@@ -87,9 +92,21 @@ class SettleDetialList extends React.Component {
           <hr />
           <div className={styles['detail-cont']}>
             <div className={styles['cont-l']}>
-              <div>收入：<span className={styles['detail-money-in']}>{APP.fn.formatMoney(settleDetail.incomeMoney)}</span>元</div>
-              <div>支出：<span className={styles['detail-money-out']}>{APP.fn.formatMoney(settleDetail.disburseMoney)}</span>元</div>
-              <div>本期结算总额：<span className={settleDetail.settlementMoney >= 0 ? styles['detail-money-in'] : styles['detail-money-out']}>{APP.fn.formatMoney(Math.abs(settleDetail.settlementMoney))}</span>元</div>
+              <div>收入：<span className={styles['detail-money-in']}>
+                {settleDetail.disburseMoney > 0 ? '+' : ''}
+                {APP.fn.formatMoney(settleDetail.incomeMoney)}</span>元
+              </div>
+              <div>支出：
+                <span className={styles['detail-money-out']}>
+                {settleDetail.disburseMoney > 0 ? '-' : ''}
+                {APP.fn.formatMoney(settleDetail.disburseMoney)}
+                </span>元
+              </div>
+              <div>本期结算总额：<span className={settleDetail.settlementMoney >= 0 ? styles['detail-money-in'] : styles['detail-money-out']}>
+                { settleDetail.settlementMoney > 0 ? '+' : settleDetail.settlementMoney === 0 ? '' : '-'}
+                {APP.fn.formatMoney(Math.abs(settleDetail.settlementMoney))}
+                </span>元
+              </div>
             </div>
             <div className={styles['cont-r']}>
               <span>发票凭证：</span>

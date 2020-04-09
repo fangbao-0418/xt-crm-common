@@ -1,0 +1,20 @@
+.user-view {
+  cursor: pointer;
+}
+
+.main {
+  display: flex;
+}
+
+.avatar {
+  margin-right: 8px;
+}
+
+.info {
+  flex: 1;
+  text-align: left;
+}
+
+.desc {
+  font-size: 12px;  
+}

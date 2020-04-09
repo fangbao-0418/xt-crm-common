@@ -11,6 +11,7 @@ declare module AfterSalesInfo {
     checkVO: CheckVO;
     expirationClose: number | null;
     skuServerLogVO: any[];
+    shopDTO: ShopDTO;
     /** 自营仓名称 */
     warehouseName: string | null;
     /** 供应商名称 */
@@ -141,6 +142,14 @@ declare module AfterSalesInfo {
     canShowHistoryBtn: boolean;
     ableRefundAmount: number;
     alreadyRefundSkuAmount: number;
+  }
+
+  export interface ShopDTO {
+    shopType: 1 | 2;
+    shopCode: string;
+    shopName: string;
+    shopOwnerPhone: string;
+    shopPictrueUrl: string;
   }
 }
 

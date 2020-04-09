@@ -12,6 +12,45 @@
         margin: 0;
         overflow: hidden;
       }
+      .vcp-playnode {
+        z-index: 1002;
+        position: relative;
+        height: 3em;
+        color: #FFFFFF;
+        float: left;
+        line-height: 3em;
+      }
+      .vcp-playnode-current {
+        cursor: pointer;
+      }
+      .vcp-playnode-select {
+        position: absolute;
+        bottom: 3em;
+        width: 100px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        transition: all 500ms;
+        opacity: 0;
+        overflow: auto;
+        max-height: 140px;
+        z-index: 1002;
+      }
+      .vcp-playnode-select.hide {
+        opacity: 0;
+        display: none;
+      }
+      .vcp-playnode-select.show {
+        opacity: 1;
+        display: block;
+      }
+      .vcp-playnode-select li {
+        line-height: 28px;
+        cursor: pointer;
+      }
+      .vcp-playnode-select li.active {
+        color: #d14;
+      }
     </style>
   </head>
   <body>
@@ -39,12 +78,14 @@
       }
     </script>
     <script>
+      var currentPlayindex = 0
       function initConfig () {
         var query = parseQuery() || {};
         var detail = {
           playUrl: query.playUrl,
           liveCoverUrl: query.liveCoverUrl
         };
+        var live = query.isLive === 'live' ? true : false
         var config = undefined;
         if (detail.playUrl) {
           var https = /https/.test(window.location.origin) ? true : false;
@@ -52,12 +93,12 @@
           var playUrl = (detail.playUrl || '');
           // http://xtliveqq.bizliveplay.myqcloud.com/live/203.flv?txSecret=fa0a64ea4bb23584cc1cdfce13a7ef7c&txTime=5E0ABBAB
           config = {
-            posterImage: true,
-            live: true,
+            // posterImage: true,
+            live: live,
             m3u8: playUrl.replace('.flv', '.m3u8'),
             flv: playUrl,
             // autoplay: true, //iOS 下 safari 浏览器，以及大部分移动端浏览器是不开放视频自动播放这个能力的
-            poster: detail.liveCoverUrl,
+            // poster: detail.liveCoverUrl,
             width:  '100%', // 视频的显示宽度，请尽量使用视频分辨率宽度
             height: '100%', // 视频的显示高度，请尽量使用视频分辨率高度
           };
@@ -66,8 +107,85 @@
           };
           var player = new TcPlayer('id_test_video', config);
           player.mute(true);
+          var urls = (detail.playUrl || '').split(',');
+          player.load(urls[0]);
+          player.video.on('ended', function () {
+            if (currentPlayindex < urls.length - 1) {
+              currentPlayindex += 1;
+              player.load(urls[currentPlayindex]);
+              player.play();
+              setPartNode(currentPlayindex);
+            }
+          });
+          if (!live && urls.length > 1) {
+            renderNode(urls, player);
+            document.body.addEventListener('mousemove', function(e){
+              var selectEl = document.querySelector('.vcp-playnode-select')
+              var parentEl = document.querySelector('.vcp-playnode');
+              if (!parentEl.contains(e.target)) {
+                if (selectEl) {
+                  selectEl.className = 'vcp-playnode-select hide'
+                }
+              }
+            })
+          }
           document.body.onload = function () {
             player.play();
+          }
+        }
+      }
+      function setPartNode (index) {
+        var el = document.querySelector('.vcp-playnode');
+        var node = el.childNodes[1].childNodes[index];
+        if (node) {
+          el.childNodes[1].childNodes.forEach(function(item){
+            if (item === node) {
+              item.className = 'active';
+            } else {
+              item.className = '';
+            }
+          })
+          el.childNodes[0].innerText = node.innerText;
+        }
+      }
+      function renderNode (urls, player) {
+        if (urls.length <= 1) {
+          return
+        }
+        var innerHtml = ''
+        urls.map((item, index) => {
+          if (index === 0) {
+            innerHtml += '<li class="active">part ' + (index + 1) + '</li>';
+          } else {
+            innerHtml += '<li>part ' + (index + 1) + '</li>';
+          }
+        })
+        var panelEl = document.querySelector('.vcp-controls-panel');
+        // var playBtnEl = document.querySelector('.vcp-controls-panel .vcp-playtoggle')
+        var insertEl = document.createElement('div');
+        insertEl.setAttribute('class', 'vcp-playnode');
+        insertEl.setAttribute('style', 'display:inline-block;color:#FFFFFF;');
+        insertEl.innerHTML = '<span class="vcp-playnode-current">part 1</span><ul class="vcp-playnode-select">' + innerHtml + '</ul></div>';
+        panelEl.insertBefore(insertEl, panelEl.childNodes[2]);
+        insertEl.childNodes[0].onclick = function (el) {
+          insertEl.childNodes[1].className = (insertEl.childNodes[1].className).replace(/(show|hide)/g, '') + ' show';
+        }
+        insertEl.childNodes[1].onclick = function (e) {
+          var index = -1;
+          var target = e.target
+          insertEl.childNodes[1].childNodes.forEach((item, i) => {
+            if (item === target) {
+              index = i;
+            }
+            item.className = '';
+          })
+          if (target && index > -1) {
+            currentPlayindex = index;
+            player.load(urls[index]);
+            player.play();
+            target.className = 'active';
+            insertEl.childNodes[0].innerText = target.innerText;
+            insertEl.childNodes[1].className = (insertEl.childNodes[1].className).replace(/(show|hide)/g, '') + ' hide';
           }
         }
       }

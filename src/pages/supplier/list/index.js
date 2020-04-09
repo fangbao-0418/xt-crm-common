@@ -106,10 +106,6 @@ class OrderList extends React.Component {
         dataIndex: 'id',
       },
       {
-        title: '供应商编码',
-        dataIndex: 'code',
-      },
-      {
         title: '供应商名称',
         dataIndex: 'name',
       },
@@ -160,11 +156,6 @@ class OrderList extends React.Component {
               {getFieldDecorator('contacts', {
                 initialValue: values.contacts
               })(<Input placeholder="请输入联系人" />)}
-            </FormItem>
-            <FormItem label="供应商编码">
-              {getFieldDecorator('code', {
-                initialValue: values.code
-              })(<Input placeholder="请输入供应商编码" />)}
             </FormItem>
             <FormItem label='供应商分类'>
               {getFieldDecorator('category', {

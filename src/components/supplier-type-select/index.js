@@ -20,7 +20,8 @@ const Options = {
   2: '淘宝联盟',
   3: '一般海外供应商',
   4: '保税仓海外供应商',
-  5: '喜团卖菜供应商'
+  5: '喜团买菜供应商',
+  6: '小店供应商'
 };
 
 const valueArray = Object.keys(Options);

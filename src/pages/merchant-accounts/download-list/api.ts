@@ -1,6 +1,6 @@
 const { get } = APP.http
 
-/** 订单收益结算快照 */
-export function getEarningsDetail () {
-  return get('/finance/accountRecord/queryExportAccountData')
+/** 请求下载接口 */
+export function getEarningsDetail (pageNum: number) {
+  return get(`/finance/accountRecord/queryExportAccountData?pageNum=${pageNum}`)
 }

@@ -119,7 +119,7 @@ export default class RouteApp extends React.Component {
         <Route exact path={`${match.url}`} component={List} />
         <Route path={`${match.url}/list`} component={List} />
         <Route path={`${match.url}/info/edit/:id?`} component={InfoEdit} />
-        <Route path={`${match.url}/info/detail/:id`} component={InfoDetail} />
+        <Route path={`${match.url}/info/detail/:id/:productId/:type`} component={InfoDetail} />
         <Route path={`${match.url}/add`} component={Add} />
         <Route path={`${match.url}/marketing`} exact component={Marketing} />
         <Route path={`${match.url}/marketing/:type/:id`} component={MarketingDetail} />

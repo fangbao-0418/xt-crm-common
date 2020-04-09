@@ -13,16 +13,19 @@ const uploadButton = props => (
   </div>
 );
 
-export async function ossUpload(file) {
+export async function ossUpload(file, dir = 'crm') {
   const res = await getStsPolicy();
   if (res) {
     const client = createClient(res);
     try {
-      const urlList = await ossUploadBlob(client, file, 'crm');
+      const urlList = await ossUploadBlob(client, file, dir);
       return urlList;
     } catch (error) {
       message.error('上传失败，请重试', 'middle');
+      return Promise.reject(error)
     }
+  } else {
+    return Promise.reject()
   }
 }
 
@@ -239,6 +242,7 @@ class UploadView extends Component {
         return Promise.reject()
       }
     }
+    /** 限制判断一定要放到最后 */
     this.count++
     const typeName = this.props.listType !== 'text' ? '图片' : '文件'
     if (listNum !== undefined && this.count > listNum) {
@@ -248,15 +252,16 @@ class UploadView extends Component {
           message.error(`上传${typeName}数量超出最大限制`)
         }
       }
+      this.count = listNum
       return Promise.reject()
     }
     return Promise.resolve(file)
   };
   customRequest(e) {
     const file = e.file;
-    ossUpload(file).then((urlList) => {
+    const { onChange, formatOrigin, ossDir } = this.props;
+    ossUpload(file, ossDir).then((urlList) => {
       let { fileList } = this.state;
-      const { onChange, formatOrigin } = this.props;
       file.url = urlList && urlList[0];
       file.durl = file.url;
       fileList.push({
@@ -277,6 +282,12 @@ class UploadView extends Component {
       })
       console.log('change --------')
       isFunction(onChange) && onChange([...value]);
+    }, () => {
+      this.count--
+      if (this.count <= 0) {
+        this.count = 0
+      }
+      console.log(this.count, 'upload error')
     });
   }
   handleRemove = e => {
@@ -346,6 +357,7 @@ UploadView.propTypes = {
   listNum: PropTypes.number,
   size: PropTypes.number,
   showUploadList: PropTypes.bool,
+  ossDir: PropTypes.string
 };
 
 UploadView.defaultProps = {
