@@ -58,7 +58,7 @@ class SettleDetialList extends React.Component {
     if(!accIdS ||!accIdS.length){
       return message.info(`当前结算单没有${type === 'checking' ? '对账单' : '调整单'}`)
     }
-    api.batchExport(apiUrl, {accIdS}).then(() => {
+    api.batchExport(apiUrl, {accIdS, ids: accIdS}).then(() => {
       return message.success('导出成功，请前往下载列表下载文件')
     })
   }
@@ -82,11 +82,10 @@ class SettleDetialList extends React.Component {
             <>
               {
                 billTypeInfo === '对账单' ? 
-                  <Button 
-                  type='link' 
+                  <a 
                   href={window.location.pathname + `#/merchant-accounts/checking/${id}`}
                   target="_blank"
-                >{text}</Button> : text
+                >{text}</a> : text
               }
             </>
             
