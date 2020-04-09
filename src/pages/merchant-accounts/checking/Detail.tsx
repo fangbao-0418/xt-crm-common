@@ -63,13 +63,12 @@ class Main extends React.Component<Props, State> {
         const id = isAfterSales ? text : text.slice(0, text.indexOf('-'))
         const url = isAfterSales ? '#/order/refundOrder/' : '#/order/detail/'
         return (
-          <Button
-            type='link'
+          <a
             href={window.location.pathname + `${url}${id}`}
             target='_blank'
           >
             {text}
-          </Button>
+          </a>
         )
       }
     }, {

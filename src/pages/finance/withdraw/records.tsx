@@ -1,8 +1,8 @@
-import React from 'react';
-import { getBatchList } from './api';
+import React from 'react'
+import { getBatchList } from './api'
 import { ListPage, FormItem } from '@/packages/common/components'
-import moment from 'moment';
-import { formatMoneyWithSign } from '../../../pages/helper';
+import moment from 'moment'
+import { formatMoneyWithSign } from '../../../pages/helper'
 /**
  * 批次记录列表
  */
@@ -19,7 +19,7 @@ class Records extends React.Component {
   }, {
     title: '提现请求总金额',
     dataIndex: 'totalAmount',
-    render: (text: any) => <>{formatMoneyWithSign(text)}</>,
+    render: (text: any) => <>{formatMoneyWithSign(text)}</>
   }, {
     title: '提交提现条目',
     dataIndex: 'recordNum'
@@ -38,7 +38,7 @@ class Records extends React.Component {
     }
   }]
 
-   getBatchList = async (data:any) =>{ 
+  getBatchList = async (data:any) => {
     if (data.create) {
       if (data.create[0]) {
         data.startTime = data.create[0].format('YYYY-MM-DD')
@@ -46,12 +46,12 @@ class Records extends React.Component {
       if (data.create[1]) {
         data.endTime = data.create[1].format('YYYY-MM-DD')
       }
-      delete data.create;
+      delete data.create
     }
     return await getBatchList(data)
   }
 
-  render() {
+  render () {
     return (
       <ListPage
         formItemLayout={(
@@ -73,4 +73,4 @@ class Records extends React.Component {
   }
 }
 
-export default Records;
+export default Records

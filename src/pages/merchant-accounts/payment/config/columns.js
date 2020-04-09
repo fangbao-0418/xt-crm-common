@@ -21,11 +21,9 @@ const getColumns = ({ onConfirm }) => {
       dataIndex: 'settlementSerialNo',
       render: (text, record) => {
         const {settId} = record
-        return <Button 
-          type='link'
-          href={window.location.pathname + `#/merchant-accounts/checking/${settId}`}
-          target='_blank'
-        >{text}</Button>
+        return <a 
+          href={window.location.pathname + `#/merchant-accounts/settlement/${settId}`} target='_blank'
+        >{text}</a>
       }
     },
     {
