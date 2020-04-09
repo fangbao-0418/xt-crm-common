@@ -148,10 +148,16 @@ class SupplierModal extends Component {
             </FormItem>
             <FormItem label="供应商简称">
               {getFieldDecorator('shortName', {
-                rules: [{
-                  required: showType,
-                  message: '请输入供应商简称'
-                }]
+                rules: [
+                  {
+                    required: showType,
+                    message: '请输入供应商简称'
+                  },
+                  {
+                    max: 15,
+                    message: '最多15个字符'
+                  }
+                ]
               })(
                 <Input placeholder="请输入供应商简称" />,
               )}
