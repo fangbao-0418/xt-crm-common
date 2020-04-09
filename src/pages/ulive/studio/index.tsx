@@ -35,7 +35,19 @@ class Main extends React.Component<Props, State> {
       dataIndex: 'planId',
       align: 'center',
       width: 100,
-      fixed: 'left'
+      fixed: 'left',
+      render: (text, record) => {
+        return (
+          <div>
+            {text}
+            {record.liveTop === 1 && (
+            <>
+             <br />
+            排序 { record.topSort }
+            </>)}
+          </div>
+        )
+      }
     },
     {
       title: '直播场次标题',
@@ -255,7 +267,7 @@ class Main extends React.Component<Props, State> {
                 name='sort'
                 type='number'
                 placeholder='请输入正整数'
-                labelCol={{span: 0}}
+                labelCol={{ span: 0 }}
                 controlProps={{
                   precision: 0,
                   min: 0,
@@ -272,6 +284,7 @@ class Main extends React.Component<Props, State> {
           console.log(values, 'values')
           api.setTop({
             planId: record.planId,
+            topSort: values.sort,
             isTop: record.liveTop === 0 ? 1 : 0
           }).then(() => {
             hide()

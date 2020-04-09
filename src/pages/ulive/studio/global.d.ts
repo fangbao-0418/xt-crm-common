@@ -1,12 +1,13 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-18 11:59:13
- * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/ulive/studio/global.d.ts
+ * @LastEditTime: 2020-04-09 13:23:31
+ * @FilePath: /xt-crm/src/pages/ulive/studio/global.d.ts
  */
 /** 直播 */
 declare namespace UliveStudio {
   interface ItemProps {
+    topSort: number
     anchorId: number
     /** 状态 (0-草稿, 10-预告:已提交未审核, 20-预告:未过审(审核失败), 30-预告:已过期, 40-预告:禁播,50-停播(运营停播), 51-停播（停播回放）, 60-已结束(主播关闭直播), 70-预告:待开播(审核成功), 80-即将开始(主播已进入直播间), 90-直播中) */
     liveStatus: 0 | 10 | 20 | 30 | 40 | 50 | 51 | 60 | 70 | 80 | 90
