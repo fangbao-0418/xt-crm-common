@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-06 10:18:13
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-06 16:01:09
- * @FilePath: /xt-crm/src/pages/fresh/goods/api.js
+ * @LastEditTime: 2020-03-30 20:07:26
+ * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/goods/api.js
  */
 
 import { formResponse, formRequest } from './sku-sale/adapter';
@@ -103,7 +103,7 @@ export function getStrategyByCategory(data) {
  * 待审核详情 
  */
 export function toAuditDetail(data) {
-  return get('/product/fresh/detail', data)
+  return get('/product/fresh/pool/detail', data)
 }
 /**
  * 获取海淘商品库存信息

@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-04-08 20:54:25
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-09 11:33:07
+ * @FilePath: /xt-crm/src/App.js
+ */
 import React from 'react'
 import { withRouter } from 'react-router'
 import { Route, Redirect, Switch } from 'react-router-dom'
@@ -26,6 +32,7 @@ const Message = Loadable(() => import('./pages/message'))
 const Setting = Loadable(() => import('./pages/setting'))
 const ULive = Loadable(() => import('./pages/ulive'))
 const MerchantAccounts = Loadable(() => import('./pages/merchant-accounts'))
+const Shop = Loadable(() => import('./pages/shop'))
 const Fresh = Loadable(() => import('./pages/fresh'));
 class Main extends React.Component {
   constructor (props) {
@@ -81,6 +88,7 @@ class Main extends React.Component {
           <Route path="/setting" component={Setting}/>
           <Route path="/ulive" component={ULive}/>
           <Route path="/merchant-accounts" component={MerchantAccounts}/>
+          <Route path="/shop" component={Shop}/>
           <Route path='/fresh' component={Fresh} />
         </Layout>
       </Switch>

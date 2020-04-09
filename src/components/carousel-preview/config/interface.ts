@@ -1,0 +1,1 @@
+export type ListItem = string | { label: string, value: string }

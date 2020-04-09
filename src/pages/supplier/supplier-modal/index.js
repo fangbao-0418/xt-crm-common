@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Modal, Button, Form, Input, message, Row } from 'antd';
+import { Modal, Button, Form, Input, message } from 'antd';
 import { getSupplierDetail, updateSupplier, addSupplier } from '../api';
-import SupplierTypeSelect from '../../../components/supplier-type-select';
+import SupplierTypeSelect from '@/components/supplier-type-select';
 import SaleArea from '@/components/sale-area';
 const FormItem = Form.Item;
 
@@ -68,6 +68,7 @@ class SupplierModal extends Component {
   render() {
     const { isEdit } = this.props;
     const { getFieldDecorator } = this.props.form;
+
     return (
       <>
         <Button type="primary" onClick={this.showModal}>
@@ -91,20 +92,7 @@ class SupplierModal extends Component {
           onCancel={this.handleCancel}
         >
           <Form {...formItemLayout}>
-            <Row>基本信息</Row>
-            <FormItem label="供应商编码">
-              {getFieldDecorator('code', {
-                rules: [{
-                  required: true,
-                  message: '请输入供应商编码'
-                }]
-              })(<Input placeholder="请输入供应商编码" />)}
-            </FormItem>
-            <FormItem label="联系人">
-              {getFieldDecorator('contacts',)(
-                <Input placeholder="请输入联系人" />,
-              )}
-            </FormItem>
+            <h4>基本信息</h4>
             <FormItem label="供应商名称">
               {getFieldDecorator('name', {
                 rules: [{
@@ -119,63 +107,30 @@ class SupplierModal extends Component {
                   required: true,
                   message: '请输入联系电话'
                 }]
-              })(<Input placeholder="请输入联系电话" maxLength={11}/>)}
+              })(<Input placeholder="请输入联系电话" maxLength={11} />)}
             </FormItem>
             <FormItem label="供应商简称">
               {getFieldDecorator('shortName')(
                 <Input placeholder="请输入供应商简称" />,
               )}
             </FormItem>
+            <FormItem label="联系人">
+              {getFieldDecorator('contacts')(
+                <Input placeholder="请输入联系人" />,
+              )}
+            </FormItem>
             <FormItem label="联系邮箱">
               {getFieldDecorator('email')(<Input placeholder="请输入联系邮箱" />)}
             </FormItem>
-            <Row>详细信息</Row>
+            <h4>详细信息</h4>
             <FormItem label="官网链接">
               {getFieldDecorator('jumpUrl')(
                 <Input placeholder="请输入官网链接" />,
               )}
             </FormItem>
             <FormItem label="详细地址">
-              {getFieldDecorator('address', )(
+              {getFieldDecorator('address')(
                 <Input placeholder="请输入详细地址" />,
-              )}
-            </FormItem>
-            <FormItem label="退货收件人">
-              {getFieldDecorator('returnContact', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入退货收件人',
-                  },
-                ]
-              })(
-                <Input placeholder="请输入退货收件人" maxLength={20} />,
-              )}
-            </FormItem>
-            <FormItem label="退货电话">
-              {getFieldDecorator('returnPhone', {
-              
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入退货电话',
-                  },
-                ]
-              })(
-                <Input placeholder="请输入退货电话" maxLength={12} />,
-              )}
-            </FormItem>
-            <FormItem label="退货地址">
-              {getFieldDecorator('returnAddress', {
-          
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入退货地址',
-                  },
-                ]
-              })(
-                <Input placeholder="请输入退货地址" maxLength={60} />,
               )}
             </FormItem>
             <FormItem label="供应商分类">
@@ -216,7 +171,7 @@ class SupplierModal extends Component {
                     }
                   }]
                 })(
-                  <SaleArea readOnly={this.props.isEdit}/>
+                  <SaleArea readOnly={this.props.isEdit} />
                 )}
               </FormItem>
             )}

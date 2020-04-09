@@ -1,38 +1,46 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { HashRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { ConfigProvider } from 'antd';
-import 'url-search-params-polyfill';
-import App from './App';
-import './assets/css/common.css';
-import 'viewerjs/dist/viewer.css';
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
-import moment from 'moment';
-import 'moment/locale/zh-cn';
-import { init } from '@rematch/core';
-import createLoadingPlugin from '@rematch/loading';
-import models from './model-store';
+/*
+ * @Date: 2020-03-27 11:00:32
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-09 11:30:30
+ * @FilePath: /xt-crm/src/index.js
+ */
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { HashRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { ConfigProvider } from 'antd'
+import 'url-search-params-polyfill'
+import App from './App'
+import './assets/css/common.css'
+import 'viewerjs/dist/viewer.css'
+import zh_CN from 'antd/lib/locale-provider/zh_CN'
+import moment from 'moment'
+import 'moment/locale/zh-cn'
+import { init } from '@rematch/core'
+import createLoadingPlugin from '@rematch/loading'
+import models from './model-store'
 import ErrorBoundary from '@/components/error-boundary'
 import './util/moon'
-moment.locale('zh-cn');
+moment.locale('zh-cn')
 
-const loading = createLoadingPlugin();
+const loading = createLoadingPlugin()
 const store = init({
   models,
   plugins: [loading]
-});
+})
 
 ReactDOM.render(
   <ErrorBoundary>
     <ConfigProvider
       locale={zh_CN}
-      // getPopupContainer={node => {
-      //   if (node) {
-      //     return node.parentNode;
-      //   }
-      //   return document.body;
-      // }}
+      /*
+       * getPopupContainer={node => {
+       *   if (node) {
+       *     return node.parentNode;
+       *   }
+       *   return document.body;
+       * }}
+       */
     >
       <Provider store={store}>
         <HashRouter>
@@ -42,4 +50,4 @@ ReactDOM.render(
     </ConfigProvider>
   </ErrorBoundary>,
   document.getElementById('root')
-);
+)

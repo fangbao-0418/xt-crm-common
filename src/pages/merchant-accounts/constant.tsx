@@ -4,7 +4,8 @@ export const enumPayType = {
   ToBePaid: 10,
   Paid: 20,
   Closed: 30,
-  Freezing: 40
+  Freezing: 40,
+  Fail: 50
 };
 
 // 付款状态文字
@@ -13,11 +14,9 @@ export const TextMapPayStatus = {
   [enumPayType.ToBePaid]: '待支付',
   [enumPayType.Paid]: '已支付',
   [enumPayType.Closed]: '已关闭',
-  [enumPayType.Freezing]: '冻结中'
+  [enumPayType.Freezing]: '冻结中',
+  [enumPayType.Fail]: '支付失败'
 };
-
-
-
 
 // 结算状态
 export const enumSettleType = {
@@ -36,7 +35,6 @@ export const TextMapSettleStatus = {
   [enumSettleType.Settling]: '结算中',
   [enumSettleType.partSettled]: '部分结算',
   [enumSettleType.Abnormal]: '结算异常',
-  [enumSettleType.Settled]: '已结算',
-
+  [enumSettleType.Settled]: '已结算'
 };
 

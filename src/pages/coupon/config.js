@@ -261,6 +261,7 @@ export const defaultConfig = {
       label: '使用时间',
       type: 'radio',
       fieldDecoratorOptions: {
+        initialValue: 0,
         rules: [{
           required: true,
           message: '请选择使用时间类型'
