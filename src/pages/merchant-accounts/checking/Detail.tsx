@@ -64,7 +64,7 @@ class Main extends React.Component<Props, State> {
         const url = isAfterSales ? '#/order/refundOrder/' : '#/order/detail/'
         return (
           <a
-            href={window.location.pathname + `${url}${id}`}
+            href={window.location.pathname + `${url}${id}/checking`}
             target='_blank'
           >
             {text}

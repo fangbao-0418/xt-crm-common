@@ -1,21 +1,21 @@
-import React, { Component } from 'react';
-import { Card, Table, Tabs } from 'antd';
-import { ColumnProps } from 'antd/es/table';
-import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
-import AfterSalesDetail from './AfterSalesDetail';
-import { namespace } from './model';
-import { getSkuServerProcessDetailList } from '../api';
-import moment from "moment";
+import React, { Component } from 'react'
+import { Card, Table, Tabs } from 'antd'
+import { ColumnProps } from 'antd/es/table'
+import { connect } from 'react-redux'
+import { RouteComponentProps } from 'react-router'
+import AfterSalesDetail from './AfterSalesDetail'
+import { namespace } from './model'
+import { getSkuServerProcessDetailList } from '../api'
+import moment from 'moment'
 
 export interface Logger {
-  skuServerId: number;
-  beforeStatus: string;
-  afterStatus: string;
-  createTime: number;
-  info: any;
-  operator: string;
-  name: string;
+  skuServerId: number
+  beforeStatus: string
+  afterStatus: string
+  createTime: number
+  info: any
+  operator: string
+  name: string
 }
 
 const columns: ColumnProps<Logger>[] = [
@@ -23,7 +23,7 @@ const columns: ColumnProps<Logger>[] = [
     title: '内容',
     dataIndex: 'info',
     key: 'info',
-    render(list: any, record: Logger, index: number) {
+    render (list: any, record: Logger, index: number) {
       return (list || []).map((item: any) => <p key={item.createTime}>{item.key}：{item.value}</p>)
     }
   },
@@ -31,21 +31,21 @@ const columns: ColumnProps<Logger>[] = [
     title: '时间',
     dataIndex: 'createTime',
     key: 'createTime',
-    render(text: any, record: Logger, index: number) {
-      return moment(text).format('YYYY-MM-DD HH:mm:ss');
+    render (text: any, record: Logger, index: number) {
+      return moment(text).format('YYYY-MM-DD HH:mm:ss')
     }
   },
   {
     title: '操作人',
     dataIndex: 'operator',
     key: 'operator',
-    render(text: any, record: Logger, index: number) {
-      return `${record.operator}：${record.name}`;
+    render (text: any, record: Logger, index: number) {
+      return `${record.operator}：${record.name}`
     }
-  },
-];
-interface DetailProps extends RouteComponentProps<{ id: any }> {
-  data: AfterSalesInfo.data;
+  }
+]
+interface DetailProps extends RouteComponentProps<{ id: any, sourceType: string }> {
+  data: AfterSalesInfo.data
 }
 interface State {
   logs: any[]
@@ -54,39 +54,41 @@ class Detail extends Component<DetailProps, State> {
   state: State = {
     logs: []
   }
-  constructor(props: DetailProps) {
-    super(props);
-    this.getDetail = this.getDetail.bind(this);
+  constructor (props: DetailProps) {
+    super(props)
+    this.getDetail = this.getDetail.bind(this)
   }
-  get refundId() {
+  get refundId () {
     return Number(this.props.match.params.id)
   }
-  async fetchLog() {
-    let logs = await getSkuServerProcessDetailList(this.refundId);
+  async fetchLog () {
+    const logs = await getSkuServerProcessDetailList(this.refundId)
     this.setState({
       logs
     })
   }
-  getDetail() {
+  getDetail () {
+    /** 海鑫让加的逻辑，这个必须要传id，从对账单跳转过来只有orderCode，所以要单独写字段判断。 */
+    const {id, sourceType} = this.props.match.params
     APP.dispatch({
       type: `${namespace}/getDetail`,
-      payload: { id: this.refundId },
-    });
+      payload: { id: !sourceType ? id : 1, orderCode: id}
+    })
   }
-  componentWillMount() {
-    this.getDetail();
-    this.fetchLog();
+  componentWillMount () {
+    this.getDetail()
+    this.fetchLog()
   }
-  render() {
-    const dataSource: any = (this.state.logs || []).map((v: any, i: any) => ({ ...v, uniqueKey: i }));
+  render () {
+    const dataSource: any = (this.state.logs || []).map((v: any, i: any) => ({ ...v, uniqueKey: i }))
     return (
       <>
         <Card>
           <Tabs>
-            <Tabs.TabPane tab="售后详情" key="1">
+            <Tabs.TabPane tab='售后详情' key='1'>
               <AfterSalesDetail />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="信息记录" key="2">
+            <Tabs.TabPane tab='信息记录' key='2'>
               <Table
                 rowKey={(record: any, index: number) => String(record.uniqueKey)}
                 dataSource={dataSource}
@@ -97,11 +99,11 @@ class Detail extends Component<DetailProps, State> {
           </Tabs>
         </Card>
       </>
-    );
+    )
   }
 }
 export default connect((state: any) => {
   return {
-    data: (state[namespace] && state[namespace].data) || {},
-  };
-})(Detail);
+    data: (state[namespace] && state[namespace].data) || {}
+  }
+})(Detail)
