@@ -1,4 +1,5 @@
 import React from 'react'
+import { List } from 'antd'
 import ActionView from '@/components/action-view'
 import { discountsStatusMap } from './config'
 
@@ -24,12 +25,27 @@ export default function getColumns ({
     },
     {
       title: '活动时间',
-      width: 120,
+      width: 180,
       render: (_, record) => {
         return (
-          formatDate(record.startTime) +
-          '-' +
-          formatDate(record.endTime)
+          <List
+            size='small'
+            dataSource={[
+              {
+                lab: '开始时间',
+                val: formatDate(record.startTime)
+              },
+              {
+                lab: '结束时间',
+                val: formatDate(record.endTime)
+              }
+            ]}
+            renderItem={(item) => (
+              <List.Item>
+                {item.lab}: {item.val}
+              </List.Item>
+            )}
+          />
         )
       }
     },
@@ -38,12 +54,6 @@ export default function getColumns ({
       width: 120,
       dataIndex: 'discountsStatus',
       render: (val) => discountsStatusMap[val] || '状态错误'
-    },
-    {
-      title: '活动说明',
-      width: 120,
-      dataIndex: 'promotionDesc',
-      render: (val) => val || '暂无数据'
     },
     {
       title: '创建时间',
