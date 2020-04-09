@@ -119,16 +119,16 @@ class ActivityDetail extends React.Component {
   }
 
   fetchData () {
-    const { id, productId } = this.props.match.params
+    const { id, productId, type } = this.props.match.params
     getOperatorSpuList({
       promotionId: id,
       productId: productId
     }).then((res) => {
-      const { type } = parseQuery()
       res = res || {}
       const record = Object.assign({}, (res.records || [])[0])
       record.promotionSkuList = record.promotionSkuList || []
-      record.type = Number(type)
+      record.type = record.type !== undefined ? record.type : Number(type)
+      console.log(type, 'type')
       this.handleData(record)
     })
   }
