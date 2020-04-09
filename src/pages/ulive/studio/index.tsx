@@ -188,7 +188,7 @@ class Main extends React.Component<Props, State> {
         const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
         const canUp = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
-        const canSetTop = record.status === 1 && [70,90].indexOf(record.liveStatus) > -1 && record.type === 0
+        const canSetTop = record.isCarousel === 0 && record.status === 1 && [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         return (
           <div>
             <span onClick={this.showView.bind(this, record.planId)} className='href'>详情</span>&nbsp;&nbsp;
@@ -198,10 +198,15 @@ class Main extends React.Component<Props, State> {
               <span onClick={canStopPlay ? this.closeDown.bind(this, record) : undefined} className={canStopPlay ? 'href' : ''}>停播</span>&nbsp;&nbsp;
             </If>
             <If condition={record.liveStatus === 60}>
-              <span onClick={this.stopPlayback.bind(this, record)} className={'href'}>停播回放</span>
-              &nbsp;&nbsp;
+              <span onClick={this.stopPlayback.bind(this, record)} className={'href'}>
+                停播回放
+              </span>&nbsp;&nbsp;
             </If>
-            {record.anchorType !== 10 && <span onClick={canSetTop ? this.setTop.bind(this, record) : undefined} className={canSetTop ? 'href' : ''}>{record.liveTop === 0 ? '置顶' : '取消置顶'}</span>}&nbsp;&nbsp;
+            {record.anchorType !== 10 && (
+              <span onClick={canSetTop ? this.setTop.bind(this, record) : undefined} className={canSetTop ? 'href' : ''}>
+                {record.liveTop === 0 ? '置顶' : '取消置顶'}
+              </span>
+            )}&nbsp;&nbsp;
             {/* {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)} */}
           </div>
         )
