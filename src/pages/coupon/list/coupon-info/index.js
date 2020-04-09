@@ -1,5 +1,5 @@
 import React from 'react'
-import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio } from 'antd'
+import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio, Form as AntForm } from 'antd'
 import { formItemLayout } from '@/config'
 import { getCouponDetail } from '@/pages/coupon/api'
 import { platformOptions, useIdentityOptions } from '../../config'
@@ -34,11 +34,18 @@ const formRef = {
     this.current && this.current.props.form.validateFields((err) => cb(err, this.getValues()))
   },
   validateConditions(rule, value = 0, callback) {
-    if (value <= this.getFieldValue('discountPrice')) {
-      callback('订单使用门槛设置金额必须大于优惠面值')
-    } else {
-      callback()
+    const useSill = this.getFieldValue('useSill')
+    const discountConditions = this.getFieldValue('discountConditions')
+    console.log(useSill, discountConditions, 'validateConditions')
+    if (useSill === 1) {
+      if (!discountConditions) {
+        callback('订单使用门槛设置金额必填')
+      }
+      if (discountConditions <= this.getFieldValue('discountPrice')) {
+        callback('订单使用门槛设置金额必须大于优惠面值')
+      }
     }
+    callback()
   },
   // 校验优惠券面值
   validateDiscountPrice(rule, value, callback) {
@@ -83,7 +90,8 @@ class CouponInfo extends React.Component {
       productSelectorVisible: false,
       excludeProductSelectorVisible: false,
       activitySelectorVisible: false,
-      receivePattern: 0
+      receivePattern: 0,
+      useTimeErrorMsg: ''
     }
   } 
 
@@ -196,6 +204,7 @@ class CouponInfo extends React.Component {
   }
   handleSave = () => {
     formRef.validateFields(async (err, vals) => {
+      console.log(err, '------')
       const {
         receiveRestrictValues,
         availableDays,
@@ -219,29 +228,35 @@ class CouponInfo extends React.Component {
       if (vals.useTimeType === 1 && availableDays === '') {
         return void message.error('请输入领券当日起多少天内可用')
       }
+      if (vals.useTimeTYPE === 0 && this.state.useTimeErrorMsg) {
+        APP.error('使用开始时间必须小于结束时间')
+        return
+      }
       if (dailyRestrictChecked && !vals.dailyRestrict) {
         return void message.error('请输入每日限领多少张')
       }
       if (vals.platformType === 1 && this.getPlatformRestrictValues(vals.platformType) == '') {
         return void message.error('请选择使用平台')
       }
-      if (!err) {
-        const res = await saveCouponInfo({
-          ...vals,
-          dailyRestrictChecked,
-          chosenProduct,
-          activityList,
-          useTimeRange,
-          availableDays,
-          platformRestrictValues,
-          receiveRestrictValues,
-          receivePattern,
-          excludeProduct
-        })
-        if (res) {
-          message.success('新增优惠券成功')
-          APP.history.goBack()
-        }
+      if (err) {
+        APP.error('请检查输入项')
+        return
+      }
+      const res = await saveCouponInfo({
+        ...vals,
+        dailyRestrictChecked,
+        chosenProduct,
+        activityList,
+        useTimeRange,
+        availableDays,
+        platformRestrictValues,
+        receiveRestrictValues,
+        receivePattern,
+        excludeProduct
+      })
+      if (res) {
+        message.success('新增优惠券成功')
+        APP.history.goBack()
       }
     })
   }
@@ -252,11 +267,35 @@ class CouponInfo extends React.Component {
   // 领取时间校验
   receiveTimeValidator = (rule, value = [], callback) => {
     const { useTimeRange } = this.state
-    if (useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
-      callback('领取起始时间必须小于等于使用起始时间')
+    const form =  formRef.current
+    const { useTimeType } = form ? form.getValues() : {}
+    console.log(value, useTimeRange, value[0] >= value[1], 'receiveTimeValidator')
+    if (value[0] && value[1]) {
+      console.log(value, value[0].unix())
+      if (value[0] >= value[1]) {
+        callback('领取开始时间必须小于结束时间')
+      }
     } else {
-      callback()
+      if (!value[0]) {
+        callback('领取开始时间不能为空')
+      }
+      if (!value[1]) {
+        callback('领取结束时间不能为空')
+      }
     }
+    if (form) {
+      if (useTimeType === 1) {
+        callback()
+        return
+      }
+    }
+    if (useTimeType === 0 && useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
+      callback('领取开始时间必须小于等于使用开始时间')
+    } else if (useTimeType === 0 && useTimeRange && value[1] && useTimeRange[1] && value[1] > useTimeRange[1]) {
+      console.log(value[1] > useTimeRange[1], '----')
+      callback('领取结束时间必须小于等于使用结束时间')
+    }
+    callback()
   }
   render() {
     const {
@@ -276,7 +315,9 @@ class CouponInfo extends React.Component {
       useTimeRange
     } = this.state
     return (
-      <Card>
+      <Card
+        className='coupon-detail'
+      >
         {/* 已选择商品 */}
         <ProductSelector
           visible={productSelectorVisible}
@@ -305,6 +346,13 @@ class CouponInfo extends React.Component {
           getInstance={
             ref => formRef.current = ref
           }
+          onChange={(field) => {
+            const form =  formRef.current
+            if (form && field === 'receiveTime') {
+              console.log('on change')
+              form.props.form.validateFields(['receiveTime'], {force: true})
+            }
+          }}
           config={defaultConfig}
           namespace='coupon'
           rangeMap={{
@@ -465,40 +513,51 @@ class CouponInfo extends React.Component {
             type='radio'
             label='使用门槛'
             required
-            fieldDecoratorOptions={{
-              initialValue: 1,
-              rules: [{
-                required: true,
-                message: '请选择使用门槛'
-              }]
-            }}
-            options={[{
-              label: '无门槛（暂未开放）',
-              value: 0,
-              disabled: true
-            }]}
             inner={(form) => {
               return (
                 <>
-                {form.getFieldDecorator('useSill')(
-                  <Radio.Group>
-                    <Radio disabled className='block-radio' value={0}>
-                      无门槛（暂未开放）
-                    </Radio>
-                    <Radio className='block-radio' value={1}>
-                      <span>订单满</span>
-                      {form.getFieldDecorator('discountConditions', {
-                        rules: [{ validator: formRef.validateConditions.bind(formRef) }]
-                      })(
-                        <InputNumber
-                          min={0.01}
-                          className='ml10 short-input'
-                        />
-                      )}
-                      <span className='ml10'>元</span>
-                    </Radio>
-                  </Radio.Group>
-                )}
+                  {form.getFieldDecorator('useSill', {
+                    initialValue: 1,
+                    rules: [
+                      {required: true, message: '使用门槛必选'},
+                      { validator: formRef.validateConditions.bind(formRef) },
+                    ]
+                  })(
+                    <Radio.Group>
+                      <Radio disabled className='block-radio' value={0}>
+                        无门槛（暂未开放）
+                      </Radio>
+                      <Radio className='block-radio' value={1}>
+                        <span>订单满</span>
+                        {form.getFieldDecorator('discountConditions', {
+                          onChange: (e) => {
+                            console.log(e, 'onchange')
+                            const { useSill } = form.getFieldsValue()
+                            if (useSill === 1 && !e) {
+                              form.setFields({
+                                useSill: {
+                                  value: 1,
+                                  errors: [new Error('订单使用门槛设置金额必填')]
+                                }
+                              })
+                            } else {
+                              form.setFields({
+                                useSill: {
+                                  value: useSill
+                                }
+                              })
+                            }
+                          }
+                        })(
+                          <InputNumber
+                            min={0.01}
+                            className='ml10 short-input'
+                          />
+                        )}
+                        <span className='ml10'>元</span>
+                      </Radio>
+                    </Radio.Group>
+                  )}
                 </>
               )
             }}
@@ -567,9 +626,6 @@ class CouponInfo extends React.Component {
             verifiable
             fieldDecoratorOptions={{
               rules: [{
-                required: true,
-                message: '请选择领取时间'
-              }, {
                 validator: this.receiveTimeValidator
               }]
             }}
@@ -579,18 +635,76 @@ class CouponInfo extends React.Component {
           />
           <FormItem
             name='useTimeType'
+            className='coupon-detail-use-time'
             verifiable
+            controlProps={{
+              onChange: (e) => {
+                const value = e.target.value
+                const form =  formRef.current
+                if (value === 1) {
+                  if (!form) {
+                    return
+                  }
+                  const { startReceiveTime, overReceiveTime } = form.getValues()
+                  form.setValues({
+                    startReceiveTime,
+                    overReceiveTime
+                  })
+                  this.setState({
+                    useTimeErrorMsg: ''
+                  })
+                } else {
+                  const { useTimeRange } = this.state
+                  if (useTimeRange[0] && useTimeRange[1]) {
+                    this.setState({
+                      useTimeErrorMsg: useTimeRange[0] >= useTimeRange[1] ? '使用开始时间必须小于结束时间' : ''
+                    })
+                  }
+                }
+              }
+            }}
             options={[{
               label: (
-                <DatePicker.RangePicker
-                  disabledDate={formRef.useTimeTypeDisabledDate.bind(formRef)}
-                  showTime={{
-                    hideDisabledOptions: true
+                <AntForm.Item
+                  className='use-time-widget'
+                  style={{
+                    display: 'inline-bock',
+                    // marginBottom: 0
                   }}
-                  format='YYYY-MM-DD HH:mm:ss'
-                  value={useTimeRange}
-                  onChange={date => this.setState({useTimeRange: date})}
-                />
+                  validateStatus={this.state.useTimeErrorMsg && 'error'}
+                  help={this.state.useTimeErrorMsg}
+                >
+                  <DatePicker.RangePicker
+                    style={{width: 400}}
+                    // disabledDate={formRef.useTimeTypeDisabledDate.bind(formRef)}
+                    showTime={{
+                      hideDisabledOptions: true
+                    }}
+                    format='YYYY-MM-DD HH:mm:ss'
+                    value={useTimeRange}
+                    onChange={date => {
+                      if (date[0] && date[1]) {
+                        const form =  formRef.current
+                        const useTimeType = form && form.getValues()['useTimeType']
+                        const msg1 = date[0] >= date[1] ? '使用开始时间必须小于结束时间' : ''
+                        const msg2 = date[1] < moment() ? '使用结束时间必须大于当前时间' : ''
+                        this.setState({
+                          useTimeErrorMsg: useTimeType === 0 && (msg1 || msg2)
+                        })
+                      } else {
+                        this.setState({
+                          useTimeErrorMsg: ''
+                        })
+                      }
+                      this.setState({useTimeRange: date}, () => {
+                        const form =  formRef.current
+                        if (form) {
+                          form.props.form.validateFields(['receiveTime'], {force: true})
+                        }
+                      })
+                    }}
+                  />
+                </AntForm.Item>
               ),
               value: 0
             }, {
@@ -687,7 +801,9 @@ class CouponInfo extends React.Component {
             inner={form => {
               return (
                 <>
-                  {form.getFieldDecorator('platformType')(
+                  {form.getFieldDecorator('platformType', {
+                    rules: [{required: true, message: '请选择使用平台'}]
+                  })(
                     <Radio.Group>
                       <Radio className='block-radio' value={0}>不限制</Radio>
                       <Radio className='block-radio' value={1}>选择平台</Radio>
