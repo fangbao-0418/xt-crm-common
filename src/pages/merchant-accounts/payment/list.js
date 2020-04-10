@@ -1,6 +1,6 @@
 import React from 'react';
 import { setQuery, parseQuery } from '@/util/utils';
-import { Table, Card, Form, Button, Spin } from 'antd';
+import { Table, Card, Form, Button, Spin, message } from 'antd';
 import SearchForm from './components/searchForm'
 import PayModal from './components/payModal'
 import DetailModal from './components/detailModal'
@@ -53,6 +53,15 @@ class List extends React.Component {
       page.current = 1;
       this.fetchData();
     }
+  }
+  // 导出
+  paymentBatchExport = (params = {}) => {
+    api.paymentBatchExport('/finance/payment/exportData',params).then((res) => {
+      console.log(res, 'res')
+      return message.success('导出成功，请前往下载列表下载文件')
+    }).catch(err => {
+      console.log(err)
+    })
   }
   // 列表数据
   fetchData = (params = {}) => {
@@ -180,6 +189,7 @@ class List extends React.Component {
         <SearchForm
           wrappedComponentRef={ref => this.searchFormRef = ref}
           onFetchData={this.fetchData}
+          paymentBatchExport={this.paymentBatchExport}
           page={page}
         />
         <Card style={{ marginTop: 10 }}>

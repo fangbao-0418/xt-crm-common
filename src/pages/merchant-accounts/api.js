@@ -80,6 +80,15 @@ export const fetchCheckingList = payload => {
   return get('::ulive/live/plan/list', payload)
 }
 
+/** 批量导出 */
+export const batchExport = (api, params) => {
+  return newPost(api, params)
+}
+
+/** 批量导出 */
+export const paymentBatchExport = (api, params) => {
+  return newPost(api, params)
+}
 /** 获取收款账户列表 */
 export const fetchGatheringAccountList = () => {
   // return get(`/finance/settlement/account/list?accid=${id}`)

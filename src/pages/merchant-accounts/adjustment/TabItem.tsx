@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Popconfirm, Row, Col } from 'antd'
+import { Button, Popconfirm, Row, Col, message } from 'antd'
 import { FormItem } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
@@ -40,7 +40,17 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'accNo',
       title: '对账单ID',
-      width: 200
+      width: 200,
+      render: (text, record) => {
+        return (
+          <a
+            href={window.location.pathname + `#/merchant-accounts/checking/${record.accId}`}
+            target='_blank'
+          >
+            {text}
+          </a>
+        )
+      }
     },
     {
       dataIndex: 'trimType',
@@ -66,7 +76,10 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         const className = record.trimType === 1 ? 'success' : 'error'
         return (
-          <span className={className}>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+          <span className={className}>
+            {text !== 0 ? record.trimType === 1 ? '+' : '-' : ''}
+            {APP.fn.formatMoneyNumber(text, 'm2u')}
+          </span>
         )
       }
     },
@@ -181,7 +194,7 @@ class Main extends React.Component<Props, State> {
     selectedRowKeys: []
   }
   /** 添加调整单 */
-  public showAdjustment (type: 'add' | 'audit' | 'view',record?: ListResponse) {
+  public showAdjustment (type: 'add' | 'audit' | 'view', record?: ListResponse) {
     if (this.props.alert) {
       const hide = this.props.alert({
         width: 600,
@@ -208,25 +221,14 @@ class Main extends React.Component<Props, State> {
       this.listpage.refresh()
     })
   }
-  public toExport (isAll?: boolean) {
-    if (isAll) {
-      api.toSearchExport({
-        ...this.payload,
-        pageNum: undefined,
-        pageSize: undefined
-      }).then((res) => {
-        APP.fn.download(res, '调整单导出')
-      })
-    } else {
-      const { selectedRowKeys } = this.state
-      if (selectedRowKeys.length === 0) {
-        APP.error('请勾选导出ID')
-        return
-      }
-      api.toExport(selectedRowKeys).then((res) => {
-        APP.fn.download(res, '调整单导出')
-      })
-    }
+  public toExport () {
+    api.toSearchExport({
+      ...this.payload,
+      pageNum: undefined,
+      pageSize: undefined
+    }).then((res) => {
+      return message.success('导出成功，请前往下载列表下载文件')
+    })
   }
   public onSelectChange = (selectedRowKeys: string[] | number[]) => {
     this.setState({
@@ -234,7 +236,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys } = this.state
     const rowSelection: TableRowSelection<ListResponse> = {
       selectedRowKeys,
       onChange: this.onSelectChange,
@@ -261,8 +263,7 @@ class Main extends React.Component<Props, State> {
               x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
                 return a + b
               })
-            },
-            rowSelection
+            }
           }}
           formItemLayout={(
             <>
@@ -315,16 +316,16 @@ class Main extends React.Component<Props, State> {
               <Button
                 type='primary'
                 className='mr10'
-                onClick={this.toExport.bind(this, undefined)}
+                onClick={this.toExport.bind(this)}
               >
                 批量导出
               </Button>
-              <Button
+              {/* <Button
                 type='primary'
                 onClick={this.toExport.bind(this, true)}
               >
                 全部导出
-              </Button>
+              </Button> */}
             </div>
           )}
           api={api.fetchList}

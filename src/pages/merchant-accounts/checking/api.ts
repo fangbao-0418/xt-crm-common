@@ -24,6 +24,11 @@ export const exportAccount = (accId: number) => {
   return newPost(`/finance/accountRecord/exportAccountData`, {accId})
 }
 
+/** 批量导出 */
+export const batchExport = (api: string, params: object) => {
+  return newPost(api, params)
+}
+
 
 /** 新建结算单 */
 export const addSettlement = (payload: AddSettlementRequest) => {
