@@ -1,14 +1,15 @@
-import React from 'react';
-import { Form, FormItem } from '@/packages/common/components';
-import { Card, Row, Col, Button } from 'antd';
-import { defaultConfig, NAME_SPACE } from './config';
-import styles from './style.module.scss';
-import UploadView from '@/components/upload';
-import CitySelect from '@/components/city-select';
-import { FormInstance } from '@/packages/common/components/form';
-import { addShop, updateShop, getShopDetail } from './api';
-import { RouteComponentProps } from 'react-router';
-import { parseQuery } from '@/util/utils';
+import React from 'react'
+import { Form, FormItem } from '@/packages/common/components'
+import { Card, Row, Col, Button } from 'antd'
+import { defaultConfig, NAME_SPACE } from './config'
+import styles from './style.module.scss'
+import UploadView from '@/components/upload'
+import CitySelect from '@/components/city-select'
+import { FormInstance } from '@/packages/common/components/form'
+import If from '@/packages/common/components/if'
+import { addShop, updateShop, getShopDetail } from './api'
+import { RouteComponentProps } from 'react-router'
+import { parseQuery } from '@/util/utils'
 import Image from '@/components/Image'
 type Props = RouteComponentProps<{id: string}>;
 
@@ -27,23 +28,23 @@ class StoreForm extends React.Component<Props, StoreFormState> {
   provinceName: string;
   cityName: string;
   areaName: string;
-  constructor(props: Props) {
-    super(props);
-    this.id = props.match.params.id;
+  constructor (props: Props) {
+    super(props)
+    this.id = props.match.params.id
   }
-  componentDidMount() {
-    this.id !== '-1' && this.fetchData();
+  componentDidMount () {
+    this.id !== '-1' && this.fetchData()
   }
-  fetchData() {
+  fetchData () {
     getShopDetail(this.id).then(res => {
-      this.provinceName = res.provinceName;
-      this.cityName = res.cityName;
-      this.areaName = res.areaName;
+      this.provinceName = res.provinceName
+      this.cityName = res.cityName
+      this.areaName = res.areaName
       this.setState({
         address: res.provinceName + '' + res.cityName + '' + res.areaName,
         pictrueUrl: res.pictrueUrl
       })
-      this.form.setValues(res);
+      this.form.setValues(res)
     })
   }
   handleSave = () => {
@@ -56,16 +57,16 @@ class StoreForm extends React.Component<Props, StoreFormState> {
           areaName: this.areaName
         })
         const isAdd = this.id === '-1'
-        const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id });
+        const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id })
         promiseResult.then((res: any) => {
           if (res) {
-            APP.history.push('/fresh/store');
+            APP.history.push('/fresh/store')
           }
         })
       }
     })
   }
-  render() {
+  render () {
     return (
       <Form
         readonly={this.readOnly}
@@ -79,17 +80,17 @@ class StoreForm extends React.Component<Props, StoreFormState> {
               <Button
                 type='primary'
                 onClick={() => {
-                  APP.history.push('/fresh/store');
+                  APP.history.push('/fresh/store')
                 }}>
                   返回
-                </Button>
+              </Button>
             </FormItem>
           </div>
         )}
       >
         <Card title='门店基础信息'>
           <div style={{ width: '60%' }}>
-            <FormItem name='code' type='text' hidden={this.id === '-1'}/>
+            <FormItem name='code' type='text' hidden={this.id === '-1'} />
             <FormItem
               verifiable
               name='name'
@@ -103,6 +104,16 @@ class StoreForm extends React.Component<Props, StoreFormState> {
               name='memberPhone'
               disabled={this.id !== '-1'}
             />
+            <If condition={true}>
+              <FormItem
+                readonly
+                name='inviteShopName'
+              />
+              <FormItem
+                readonly
+                name='inviteShopPhone'
+              />
+            </If>
           </div>
         </Card>
         <Card title='门店信息'>
@@ -117,14 +128,14 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                     message: '请选择省市区'
                   }]
                 })(<CitySelect
-                    getSelectedValues={(value: any[]) => {
-                      if (Array.isArray(value) && value.length === 3) {
-                        this.provinceName = value[0].label;
-                        this.cityName = value[1].label;
-                        this.areaName = value[2].label;
-                      }
-                    }}
-                  />);
+                  getSelectedValues={(value: any[]) => {
+                    if (Array.isArray(value) && value.length === 3) {
+                      this.provinceName = value[0].label
+                      this.cityName = value[1].label
+                      this.areaName = value[2].label
+                    }
+                  }}
+                />)
               }}
             />
             <FormItem
@@ -143,7 +154,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                 }]
               }}
             />
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex' }}>
               <FormItem
                 type='number'
                 label='纬度'
@@ -165,15 +176,15 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                   rules: [{
                     validator: async (rules, value) => {
                       if (!value) {
-                        throw new Error('请输入纬度');
+                        throw new Error('请输入纬度')
                       }
                       if (value < -180) {
-                        throw new Error('纬度不能低于负180度');
+                        throw new Error('纬度不能低于负180度')
                       }
                       if (value > 180) {
-                        throw new Error('纬度不能超过正180度');
+                        throw new Error('纬度不能超过正180度')
                       }
-                      return value;
+                      return value
                     }
                   }]
                 }}
@@ -202,15 +213,15 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                   rules: [{
                     validator: async (rules, value) => {
                       if (!value) {
-                        throw new Error('请输入经度');
+                        throw new Error('请输入经度')
                       }
                       if (value < -180) {
-                        throw new Error('经度不能低于负180度');
+                        throw new Error('经度不能低于负180度')
                       }
                       if (value > 180) {
-                        throw new Error('经度不能超过正180度');
+                        throw new Error('经度不能超过正180度')
                       }
-                      return value;
+                      return value
                     }
                   }]
                 }}
@@ -227,18 +238,16 @@ class StoreForm extends React.Component<Props, StoreFormState> {
             <FormItem
               label='门店图片'
               inner={(form) => {
-                const { pictrueUrl } = this.state;
-                return this.readOnly ? (pictrueUrl.length > 0 ? <Image src={pictrueUrl[0] && pictrueUrl[0].url}/>: '') : (
+                const { pictrueUrl } = this.state
+                return this.readOnly ? (pictrueUrl.length > 0 ? <Image src={pictrueUrl[0] && pictrueUrl[0].url} />: '') : (
                   <div className={styles['input-wrapper']}>
                     <div className={styles['input-wrapper-content']}>
-                      {form.getFieldDecorator('pictrueUrl')(
-                        <UploadView
-                          placeholder='上传门店图片'
-                          listType='picture-card'
-                          listNum={1}
-                          size={0.3}
-                        />
-                      )}
+                      {form.getFieldDecorator('pictrueUrl')(<UploadView
+                        placeholder='上传门店图片'
+                        listType='picture-card'
+                        listNum={1}
+                        size={0.3}
+                      />)}
                     </div>
                     <div className={styles['input-wrapper-placeholder']}>（建议720*500px，300kb以内）</div>
                   </div>
@@ -252,4 +261,4 @@ class StoreForm extends React.Component<Props, StoreFormState> {
   }
 }
 
-export default StoreForm;
+export default StoreForm

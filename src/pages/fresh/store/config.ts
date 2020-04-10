@@ -1,8 +1,14 @@
-import { FieldsConfig } from "@/packages/common/components/form";
+import { FieldsConfig } from '@/packages/common/components/form'
 
-export const NAME_SPACE = 'store';
+export const NAME_SPACE = 'store'
 export const defaultConfig: FieldsConfig = {
   store: {
+    inviteShopName: {
+      label: '邀请门店'
+    },
+    inviteShopPhone: {
+      label: '邀请店主手机'
+    },
     code: {
       label: '门店编码'
     },
@@ -81,7 +87,7 @@ export const defaultConfig: FieldsConfig = {
         value: 2
       }, {
         label: '下线',
-        value: 3    
+        value: 3
       }]
     },
     workDate: {
@@ -90,7 +96,6 @@ export const defaultConfig: FieldsConfig = {
     }
   }
 }
-
 
 export enum statusEnum {
   新建 = 1,
