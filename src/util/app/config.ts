@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-27 13:45:49
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-10 16:15:00
+ * @LastEditTime: 2020-04-10 18:25:24
  * @FilePath: /xt-crm/src/util/app/config.ts
  */
 import { baseHost, env as apiEnv } from '../baseHost'
@@ -9,7 +9,11 @@ import { baseHost, env as apiEnv } from '../baseHost'
 /** 后端环境接口映射 */
 export const serverMapper: any = {
   palamidi: {
-    dev: 'http://daily-palamidi-console.hzxituan.com'
+    dev: 'http://daily-palamidi-console.hzxituan.com',
+    test1: 'https://test-palamidi-console.hzxituan.com',
+    test2: 'https://test-palamidi-console.hzxituan.com',
+    pre: 'https://staging-palamidi-console.hzxituan.com',
+    prod: 'https://palamidi-console.hzxituan.com'
   },
   ulive: {
     dev: 'https://dailylive-center.hzxituan.com',
