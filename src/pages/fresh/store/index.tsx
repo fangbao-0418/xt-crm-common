@@ -1,9 +1,9 @@
-import React from 'react';
-import { getShopList, onOrOffShop } from './api';
-import { ListPage, If, FormItem } from '@/packages/common/components';
-import { defaultConfig, NAME_SPACE, statusEnum } from './config';
-import { Button, Modal } from 'antd';
-import { ListPageInstanceProps } from '@/packages/common/components/list-page';
+import React from 'react'
+import { getShopList, onOrOffShop } from './api'
+import { ListPage, If, FormItem } from '@/packages/common/components'
+import { defaultConfig, NAME_SPACE, statusEnum } from './config'
+import { Button, Modal } from 'antd'
+import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 
 class Store extends React.Component {
   list: ListPageInstanceProps;
@@ -24,7 +24,8 @@ class Store extends React.Component {
     dataIndex: 'statusText'
   }, {
     title: '操作',
-    width: 220,
+    width: 200,
+    align: 'center',
     render: (record: any) => {
       return (
         <>
@@ -40,8 +41,8 @@ class Store extends React.Component {
                   onOk: () => {
                     onOrOffShop({ shopId: record.id, status: 2 }).then((res: any) => {
                       if (res) {
-                        APP.success('上线成功');
-                        this.list.refresh();
+                        APP.success('上线成功')
+                        this.list.refresh()
                       }
                     })
                   }
@@ -61,8 +62,8 @@ class Store extends React.Component {
                   onOk: () => {
                     onOrOffShop({ shopId: record.id, status: 3 }).then((res: any) => {
                       if (res) {
-                        APP.success('下线成功');
-                        this.list.refresh();
+                        APP.success('下线成功')
+                        this.list.refresh()
                       }
                     })
                   }
@@ -76,7 +77,7 @@ class Store extends React.Component {
       )
     }
   }]
-  render() {
+  render () {
     return (
       <>
         <ListPage
@@ -108,4 +109,4 @@ class Store extends React.Component {
   }
 }
 
-export default Store;
+export default Store
