@@ -53,7 +53,7 @@ class Main extends React.Component<any, State> {
       if (!err) {
         const res = await processCategory({
           ...vals,
-          showType: 3,
+          showType: 5,
           productCategoryVOS: selectedRowOpts.selectedRows.map((v: any) => ({
             id: v.id,
             level: 1,
@@ -83,7 +83,7 @@ class Main extends React.Component<any, State> {
     return (
       <Card title='编辑分类'>
         <ActivityModal
-          processPayload={(payload: any) => Object.assign(payload, { type: 9})}
+          processPayload={(payload: any) => Object.assign(payload, { type: 7})}
           selectedRowOpts={selectedRowOpts}
           visible={activityVisible}
           onOk={(selectedRowOpts: SelectedRowOpts) => {
@@ -105,7 +105,7 @@ class Main extends React.Component<any, State> {
           }
         >
           <FormItem
-            label='团购会分类名称'
+            label='门店采购分类名称'
             required
             inner={(form) => {
               return (
@@ -113,13 +113,13 @@ class Main extends React.Component<any, State> {
                   {form.getFieldDecorator('name', {
                     rules: [{
                       required: true,
-                      message: '请输入团购会分类名称'
+                      message: '请输入门店采购分类名称'
                     }]
                   })(
                     <Input
                       style={{ width: 172}}
                       maxLength={4}
-                      placeholder='请输入团购会分类名称'
+                      placeholder='请输入门店采购分类名称'
                     />
                   )}
                   <span className='ml10'>（名称最多4个字符）</span>

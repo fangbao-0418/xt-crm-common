@@ -43,7 +43,7 @@ class Main extends React.Component {
           <>
             <Button
               type='primary'
-              onClick={() => APP.history.push(`/interface/group-buying/category/${records.id}`)}
+              onClick={() => APP.history.push(`/interface/purchase-category/${records.id}`)}
             >
               编辑
             </Button>
@@ -75,7 +75,7 @@ class Main extends React.Component {
           <Button
             type='danger'
             onClick={() => {
-              APP.history.push('/interface/group-buying/category/-1')
+              APP.history.push('/interface/purchase-category/-1')
             }}>
             添加分类
           </Button>

@@ -8,14 +8,14 @@ export async function categoryLit (payload: {
   pageSize: number
 }) {
   const search = queryString(payload)
-  const result = await get(`/category/menu/purchase${search}`)
+  const result = await get(`/category/menu/store/purchase${search}`)
   console.log('result =>', result)
   return adapter.categoryLitResponse(result)
 }
 
 /** 删除前台类目 */
 export function deleteCategory (categoryId: number) {
-  return del(`/category/menu?categoryId=${categoryId}`)
+  return del(`/category/menu/delete?categoryId=${categoryId}`)
 }
 
 /** 新增、编辑前台类目 */
@@ -27,7 +27,7 @@ export function processCategory (payload: {
   status: 1 | 0,
   productCategoryVOS: any[]
 }) {
-  return payload.id ? newPut('/category/menu', payload) : newPost('/category/menu', payload)
+  return payload.id ? newPut('/category/menu/update', payload) : newPost('/category/menu/add', payload)
 }
 
 /** 查询前台类目详情 */
