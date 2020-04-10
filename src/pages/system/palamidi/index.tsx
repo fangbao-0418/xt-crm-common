@@ -1,16 +1,28 @@
 import React from 'react'
-import { Button } from 'antd'
+import { Button, Popconfirm } from 'antd'
 import Page from '@/components/page'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
-import ListPage from '@/packages/common/components/list-page'
+import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { ColumnProps } from 'antd/lib/table'
 import * as api from './api'
 interface Props extends AlertComponentProps {}
 
-interface Item {}
+interface Item {
+  id: any
+  path: string
+  mappingPath: string
+  serviceId: string
+  apiName: string
+  /** 过滤 1 不过滤 0 */
+  stripPrefix: string
+  /** 1=C端,2=M端 */
+  category: 1 | 2
+  appId: string
+}
 
 class Main extends React.Component<Props> {
+  public listpage: ListPageInstanceProps
   public columns: ColumnProps<Item>[] = [
     {
       title: '序号',
@@ -52,19 +64,37 @@ class Main extends React.Component<Props> {
         return (
           <div>
             <span onClick={this.edit(record)} className='href mr8'>修改</span>
-            <span className='href'>删除</span>
+            <Popconfirm
+              title='确定删除吗？'
+              onConfirm={this.remove(record)}
+            >
+              <span className='href'>删除</span>
+            </Popconfirm>
           </div>
         )
       }
     }
   ]
+  public remove = (record: Item) => () => {
+    api.deleteRecord(record.id).then(() => {
+      this.listpage.refresh()
+    })
+  }
   public edit = (record?: Item) => () => {
     let form: FormInstance
     const hide = this.props.alert({
       width: 480,
       content: (
         <Form
-          getInstance={(ref) => form = ref}
+          getInstance={(ref) => {
+            form = ref
+            if (record) {
+              setTimeout(() => {
+                console.log(record, 'record')
+                form.setValues(record)
+              }, 100)
+            }
+          }}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 16 }}
           formItemStyle={{ marginBottom: 8 }}
@@ -119,9 +149,18 @@ class Main extends React.Component<Props> {
           if (err) {
             return
           }
+          let p: Promise<any>
           if (!record) {
-            api.add(value)
+            p = api.add(value)
+          } else {
+            p = api.edit({
+              ...value,
+              id: record.id
+            })
           }
+          p.then(() => {
+            this.listpage.refresh()
+          })
           hide()
         })
       }
@@ -131,12 +170,13 @@ class Main extends React.Component<Props> {
     return (
       <Page>
         <ListPage
+          getInstance={(ref) => this.listpage = ref }
           formConfig={{
             common: {
               path: {
                 type: 'input', label: 'path'
               },
-              serverId: {
+              serviceId: {
                 type: 'input', label: 'Server_id'
               }
             }
@@ -153,7 +193,7 @@ class Main extends React.Component<Props> {
           formItemLayout={(
             <>
               <FormItem name='path' />
-              <FormItem name='serverId' />
+              <FormItem name='serviceId' />
             </>
           )}
           api={api.fetcuList}
