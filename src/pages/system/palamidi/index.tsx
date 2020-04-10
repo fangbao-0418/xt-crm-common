@@ -19,6 +19,7 @@ interface Item {
   /** 1=C端,2=M端 */
   category: 1 | 2
   appId: string
+  url: string
 }
 
 class Main extends React.Component<Props> {
@@ -26,39 +27,68 @@ class Main extends React.Component<Props> {
   public columns: ColumnProps<Item>[] = [
     {
       title: '序号',
-      dataIndex: 'x'
+      dataIndex: 'id',
+      width: 80,
+      align: 'center',
+      render: (text, record, index) => {
+        return index + 1
+      }
     },
     {
       title: 'Api名称',
-      dataIndex: 'x'
+      width: 200,
+      dataIndex: 'apiName'
     },
     {
       title: 'path',
+      width: 200,
       dataIndex: 'path'
     },
     {
       title: '映射地址',
-      dataIndex: '映射地址'
+      width: 200,
+      dataIndex: 'mappingPath'
     },
     {
       title: 'Server_id',
-      dataIndex: 'Server_id'
+      width: 200,
+      dataIndex: 'serviceId'
     },
     {
       title: 'URL',
-      dataIndex: 'Server_id'
+      width: 200,
+      dataIndex: 'url'
     },
     {
       title: '前缀过滤',
-      dataIndex: 'Server_id'
+      dataIndex: 'stripPrefix',
+      align: 'center',
+      width: 150,
+      render: (text) => {
+        /** 过滤 1 不过滤 0 */
+        enum M {
+          过滤 = 1,
+          不过滤 = 0
+        }
+        return M[text]
+      }
     },
     {
       title: '类型',
-      dataIndex: 'Server_id'
+      dataIndex: 'category',
+      width: 80,
+      render: (text) => {
+        /** 1=C端,2=M端 */
+        enum M {
+          C端 = 1,
+          M端 = 2
+        }
+        return M[text]
+      }
     },
     {
       title: '操作',
-      dataIndex: 'Server_id',
+      width: 160,
       align: 'center',
       render: (text, record) => {
         return (

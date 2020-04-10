@@ -1,11 +1,9 @@
 /*
  * @Date: 2020-04-10 10:21:12
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-10 16:14:06
+ * @LastEditTime: 2020-04-10 16:50:59
  * @FilePath: /xt-crm/src/pages/system/palamidi/api.ts
  */
-
-import axios from 'axios'
 
 const { newPost, post } = APP.http
 // {"path":"/123test","mappingPath":"/345test","serviceId":"test123","apiName":"testapi","stripPrefix":0,"category":1,"appId":1000}
