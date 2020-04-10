@@ -122,6 +122,15 @@ class OrderList extends React.Component {
         dataIndex: 'email',
       },
       {
+        title: '前台展示',
+        dataIndex: 'showType',
+        render: (showType, record) => {
+          const { category } = record
+          const text = [0,1,3,4].indexOf(category) !== -1 ? showType === 1 ? '开启' : '关闭' : '-'
+          return text
+        }
+      },
+      {
         title: '操作',
         width: 200,
         render: (operator, record) => {

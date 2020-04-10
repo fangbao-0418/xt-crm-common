@@ -23,6 +23,10 @@ const namespace = 'activity/info/shoplist';
 class List extends React.Component {
   id = this.props.match.params.id;
   payload = APP.fn.getPayload(namespace) || {};
+  productPayload = {
+    pageSize: 10,
+    page: 1
+  }
   state = {
     goodsList: [],
     visible: false,
@@ -40,7 +44,7 @@ class List extends React.Component {
     modalPage: {
       current: 1,
       total: 0,
-      pageSize: 10
+      pageSize: this.productPayload.pageSize
     },
     isEidt: false,
     //当前活动详情
@@ -86,18 +90,17 @@ class List extends React.Component {
     }
   };
 
-  getProductList = params => {
+  getProductList = () => {
     // type 活动类型 10为拼团活动
     const { modalPage, type } = this.state;
     getProductList({
       status: 0,
-      pageSize: modalPage.pageSize,
-      page: modalPage.current,
+      ...this.productPayload,
       types: type === 10 ? [0, 10] : undefined,
-      ...params
     }).then((res) => {
       res = res || {};
-      modalPage.total = res.total;
+      modalPage.total = res.total
+      modalPage.current = this.productPayload.page
       this.setState({
         goodsList: res.records,
         modalPage,
@@ -132,7 +135,9 @@ class List extends React.Component {
   // };
 
   handleSearchModal = e => {
-    this.getProductList({ productName: e, page: 1 });
+    this.productPayload.productName = e
+    this.productPayload.page = 1
+    this.getProductList();
   };
 
   handlenChanageSelectio = (selectedRowKeys, selectedRows) => {
@@ -160,6 +165,8 @@ class List extends React.Component {
   };
 
   handleTabChangeModal = e => {
+    this.productPayload.page = e.current
+    this.productPayload.pageSize = e.pageSize
     this.setState(
       {
         modalPage: e
@@ -198,7 +205,7 @@ class List extends React.Component {
       }
     } = this.props;
     // localStorage.setItem('editsku', JSON.stringify({ type, ...record }));
-    history.push(`/fresh/activity/info/detail/${id}/${record.productId}`);
+    history.push(`/fresh/activity/info/detail/${id}/${record.productId}?type=${type}`);
   };
 
   handleInputValue = (text, record, index) => e => {

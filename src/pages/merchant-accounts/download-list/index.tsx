@@ -16,8 +16,11 @@ enum TypeEnum {
   订单导出 = 1,
   售后订单导出 = 2,
   财务对账单详情导出 = 3,
-  财务对账单列表导出 = 5,
   结算单明细导出 = 4,
+  财务对账单列表导出 = 5,
+  财务结算单导出 = 6,
+  财务付款单导出 = 7,
+  财务调整单导出 = 8,
   买菜商品导出 = 201,
   买菜订单导出 = 202,
   买菜采购单导出 = 301,
@@ -131,16 +134,19 @@ class Main extends React.Component {
       page: this.payload.pageNum
     })
     api.getEarningsDetail(current).then((res) => {
+      console.log(res, 'res')
       this.setState({
         total: res.total,
         loading: false,
         data: res.result
+      }, () => {
+        console.log(this.state.data, 'this.state.data')
       })
     })
   }
 
   public render () {
-    const { pageSize, page, total } = this.state
+    const { pageSize, page, total, data } = this.state
     return (
       <div>
         <div>
@@ -156,7 +162,7 @@ class Main extends React.Component {
             }}
             rowKey='id'
             columns={this.columns}
-            dataSource={this.state.data}
+            dataSource={data}
             loading={this.state.loading}
           />
         </div>
