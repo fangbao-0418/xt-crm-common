@@ -1,10 +1,11 @@
 import React from 'react'
+import { Button } from 'antd'
 import Page from '@/components/page'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import ListPage from '@/packages/common/components/list-page'
 import { ColumnProps } from 'antd/lib/table'
-
+import * as api from './api'
 interface Props extends AlertComponentProps {}
 
 interface Item {}
@@ -57,7 +58,7 @@ class Main extends React.Component<Props> {
       }
     }
   ]
-  public edit = (record: Item) => () => {
+  public edit = (record?: Item) => () => {
     let form: FormInstance
     const hide = this.props.alert({
       width: 480,
@@ -69,24 +70,24 @@ class Main extends React.Component<Props> {
           formItemStyle={{ marginBottom: 8 }}
         >
           <FormItem
-            verifiable label='Api名称' name='a'
+            verifiable label='Api名称' name='apiName'
             fieldDecoratorOptions={{
               rules: [{ required: true, message: 'Api名称必填' }]
             }}
           />
           <FormItem
             verifiable
-            label='path' name='a1'
+            label='path' name='path'
             fieldDecoratorOptions={{
               rules: [{ required: true, message: 'path必填' }]
             }}
           />
           <FormItem
-            label='映射地址' name='a2'
+            label='映射地址' name='mappingPath'
           />
           <FormItem
             verifiable
-            label='Server_id' name='a3'
+            label='Server_id' name='serviceId'
             fieldDecoratorOptions={{
               rules: [{ required: true, message: 'Server_id必填' }]
             }}
@@ -94,7 +95,7 @@ class Main extends React.Component<Props> {
           <FormItem
             verifiable
             label='是否过滤前缀'
-            name='a4'
+            name='stripPrefix'
             type='radio'
             options={[{ label: '过滤', value: 1 }, { label: '不过滤', value: 2 }]}
             fieldDecoratorOptions={{
@@ -104,7 +105,7 @@ class Main extends React.Component<Props> {
           <FormItem
             verifiable
             label='类型'
-            name='a5'
+            name='category'
             type='radio'
             options={[{ label: 'C端', value: 1 }, { label: 'M端', value: 2 }]}
             fieldDecoratorOptions={{
@@ -117,6 +118,9 @@ class Main extends React.Component<Props> {
         form.props.form.validateFields((err, value) => {
           if (err) {
             return
+          }
+          if (!record) {
+            api.add(value)
           }
           hide()
         })
@@ -138,17 +142,21 @@ class Main extends React.Component<Props> {
             }
           }}
           columns={this.columns}
+          addonAfterSearch={(
+            <Button
+              type='primary'
+              onClick={this.edit()}
+            >
+              新增配置
+            </Button>
+          )}
           formItemLayout={(
             <>
               <FormItem name='path' />
               <FormItem name='serverId' />
             </>
           )}
-          api={() => {
-            return Promise.resolve({
-              records: [{ path: '/abc' }]
-            })
-          }}
+          api={api.fetcuList}
         />
       </Page>
     )
