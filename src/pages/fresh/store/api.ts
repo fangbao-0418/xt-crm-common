@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-27 11:00:32
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-10 18:15:09
+ * @LastEditTime: 2020-04-13 15:18:18
  * @FilePath: /xt-crm/src/pages/fresh/store/api.ts
  */
 import { listResponse, formRequest, formResponse } from './adapter'
@@ -41,7 +41,35 @@ export function onOrOffShop (payload: {
   return newPost('/point/onOrOff', payload)
 }
 
-// getTypeEnum()
+/** 获取门店类型 */
 export function getTypeEnum () {
-  return get('/point/typeList')
+  return get('/point/typeList').then((res) => {
+    console.log(res, 'res')
+    return (res || []).map((record: { code: number, describe: string }) => {
+      return {
+        value: record.code,
+        label: record.describe
+      }
+    })
+  })
+}
+
+/** 获取门店状态 */
+export function getStatusEnum () {
+  return get('/point/statusList').then((res) => {
+    // console.log(res, 'res')
+    return (res || []).map((record: { code: number, describe: string }) => {
+      return {
+        value: record.code,
+        label: record.describe
+      }
+    })
+  })
+}
+
+/** 拒绝 */
+export function refuse (shopId: any) {
+  return get('/point/reject', {
+    shopId
+  })
 }

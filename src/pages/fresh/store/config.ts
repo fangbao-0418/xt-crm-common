@@ -100,7 +100,9 @@ export const defaultConfig: FieldsConfig = {
 export enum statusEnum {
   新建 = 1,
   上线 = 2,
-  下线 = 3
+  下线 = 3,
+  待审核 = 4,
+  驳回 = 5
 }
 
 export enum typeEnum {

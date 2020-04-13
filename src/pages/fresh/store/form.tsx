@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, FormItem } from '@/packages/common/components'
+import { Form, FormItem, SelectFetch } from '@/packages/common/components'
 import { Card, Row, Col, Button } from 'antd'
 import { defaultConfig, NAME_SPACE } from './config'
 import styles from './style.module.scss'
@@ -7,24 +7,32 @@ import UploadView from '@/components/upload'
 import CitySelect from '@/components/city-select'
 import { FormInstance } from '@/packages/common/components/form'
 import If from '@/packages/common/components/if'
-import { addShop, updateShop, getShopDetail } from './api'
+import { addShop, updateShop, getShopDetail, getTypeEnum, refuse } from './api'
 import { RouteComponentProps } from 'react-router'
 import { parseQuery } from '@/util/utils'
 import Image from '@/components/Image'
+import { RecordProps } from './interface'
+
 type Props = RouteComponentProps<{id: string}>;
 
 interface StoreFormState {
-  address: string;
-  pictrueUrl: any[];
+  address: string
+  pictrueUrl: any[]
+  status: number
+  record: Partial<RecordProps>
+  readonly: boolean
 }
 class StoreForm extends React.Component<Props, StoreFormState> {
+  readonly: boolean = !!(parseQuery() as any).readOnly
   state: StoreFormState = {
     address: '',
-    pictrueUrl: []
+    pictrueUrl: [],
+    status: -1,
+    record: {},
+    readonly: this.readonly
   }
   form: FormInstance;
-  id: string = '-1';
-  readOnly: boolean = !!(parseQuery() as any).readOnly;
+  id: string = '-1'
   provinceName: string;
   cityName: string;
   areaName: string;
@@ -42,7 +50,10 @@ class StoreForm extends React.Component<Props, StoreFormState> {
       this.areaName = res.areaName
       this.setState({
         address: res.provinceName + '' + res.cityName + '' + res.areaName,
-        pictrueUrl: res.pictrueUrl
+        pictrueUrl: res.pictrueUrl,
+        status: res.status,
+        record: res || {},
+        readonly: this.readonly || res.status === 5
       })
       this.form.setValues(res)
     })
@@ -66,17 +77,30 @@ class StoreForm extends React.Component<Props, StoreFormState> {
       }
     })
   }
+  refuse = () => {
+    refuse(this.id).then(() => {
+      APP.success('拒绝操作已完成')
+      this.fetchData()
+    })
+  }
   render () {
+    const { status, record, readonly } = this.state
     return (
       <Form
-        readonly={this.readOnly}
+        readonly={readonly}
         getInstance={ref => this.form = ref}
         namespace={NAME_SPACE}
         config={defaultConfig}
         addonAfter={(
           <div style={{ width: '60%' }}>
             <FormItem>
-              {!this.readOnly && <Button type='primary' onClick={this.handleSave} className='mr10'>保存</Button>}
+              <If condition={[1, 2, 3].indexOf(status) > -1 && !readonly}>
+                <Button type='primary' onClick={this.handleSave} className='mr10'>保存</Button>
+              </If>
+              <If condition={[4].indexOf(status) > -1 && !readonly}>
+                <Button type='primary' onClick={this.handleSave} className='mr10'>通过</Button>
+                <Button type='danger' onClick={this.refuse} className='mr10'>不通过</Button>
+              </If>
               <Button
                 type='primary'
                 onClick={() => {
@@ -97,14 +121,24 @@ class StoreForm extends React.Component<Props, StoreFormState> {
             />
             <FormItem
               verifiable
-              name='type'
+              // name='type'
+              label='门店类型'
+              inner={(form) => {
+                return form.getFieldDecorator(
+                  'type',
+                  {}
+                )(<SelectFetch
+                  readonly={readonly}
+                  fetchData={getTypeEnum}
+                />)
+              }}
             />
             <FormItem
               verifiable
               name='memberPhone'
               disabled={this.id !== '-1'}
             />
-            <If condition={true}>
+            <If condition={!!(record.inviteShopName || record.inviteShopPhone)}>
               <FormItem
                 readonly
                 name='inviteShopName'
@@ -122,7 +156,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
               label='门店地址'
               required
               inner={(form) => {
-                return this.readOnly ? this.state.address : form.getFieldDecorator('address', {
+                return readonly ? this.state.address : form.getFieldDecorator('address', {
                   rules: [{
                     required: true,
                     message: '请选择省市区'
@@ -239,7 +273,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
               label='门店图片'
               inner={(form) => {
                 const { pictrueUrl } = this.state
-                return this.readOnly ? (pictrueUrl.length > 0 ? <Image src={pictrueUrl[0] && pictrueUrl[0].url} />: '') : (
+                return readonly ? (pictrueUrl.length > 0 ? <Image src={pictrueUrl[0] && pictrueUrl[0].url} />: '') : (
                   <div className={styles['input-wrapper']}>
                     <div className={styles['input-wrapper-content']}>
                       {form.getFieldDecorator('pictrueUrl')(<UploadView
