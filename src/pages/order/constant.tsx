@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import GoodCell from '@/components/good-cell';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import GoodCell from '@/components/good-cell'
 import MoneyRender from '@/components/money-render'
 
 /**
@@ -15,8 +15,8 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       dataIndex: 'skuName',
       key: 'skuName',
       width: '20%',
-      render(skuName: string, row: any) {
-        return <GoodCell {...row} isRefund={type === 1} />;
+      render (skuName: string, row: any) {
+        return <GoodCell {...row} isRefund={type === 1} />
       }
     },
     {
@@ -24,7 +24,7 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       dataIndex: 'productId',
       key: 'productId',
       width: '8%',
-      render(id: any, record: any) {
+      render (id: any, record: any) {
         if (isXiaoDian) return id
         return <Link to={`/goods/sku-sale/${id}`}>{id}</Link>
       }
@@ -33,14 +33,14 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       title: '实名认证',
       dataIndex: 'isAuthentication',
       key: 'isAuthentication',
-      render(text: any) {
-        return String(text) === '1' ? '是': '否'
+      render (text: any) {
+        return String(text) === '1' ? '是' : '否'
       }
     },
     {
       title: '属性',
       dataIndex: 'properties',
-      key: 'properties',
+      key: 'properties'
     },
     {
       title: '供应商',
@@ -58,7 +58,7 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       title: '数量',
       width: '8%',
       dataIndex: 'quantity',
-      key: 'quantity',
+      key: 'quantity'
     },
     {
       title: '商品总价（元）',
@@ -93,10 +93,10 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       width: '8%',
       render: MoneyRender
     }
-  ];
+  ]
 }
 
-export const storeType = ['喜团', '1688', '淘宝联盟', '一般海外供应商', '保税仓海外供应商'];
+export const storeType = ['喜团', '1688', '淘宝联盟', '一般海外供应商', '保税仓海外供应商']
 export const supplierOperate: any = {
   0: '未验收',
   10: '已验收'
@@ -144,7 +144,7 @@ export enum enumRefundStatus {
   WaitCustomerServiceOperating = 27,
   Complete = 30,
   Rejected = 40
-};
+}
 
 /**
  * 售后类型
@@ -155,8 +155,8 @@ export enum enumRefundStatus {
 export enum enumRefundType {
   Both = 10,
   Refund = 20,
-  Exchange = 30,
-};
+  Exchange = 30
+}
 
 export const TextMapRefundStatus = {
   [enumRefundStatus.All]: '所有',
@@ -168,14 +168,14 @@ export const TextMapRefundStatus = {
   [enumRefundStatus.OperatingOfMoney]: '处理中(退款中)',
   [enumRefundStatus.OperatingOfGoods]: '处理中(退货中)',
   [enumRefundStatus.Complete]: '已完成',
-  [enumRefundStatus.Rejected]: '审核被驳回',
-};
+  [enumRefundStatus.Rejected]: '审核被驳回'
+}
 
 export const TextMapRefundType = {
   [enumRefundType.Both]: '退款退货',
   [enumRefundType.Refund]: '退款',
-  [enumRefundType.Exchange]: '换货',
-};
+  [enumRefundType.Exchange]: '换货'
+}
 
 
 export enum enumOrderStatus {
@@ -199,7 +199,7 @@ export enum enumOrderStatus {
   Complete = 50,
   // 关闭
   Closed = 60
-};
+}
 
 export const OrderStatusTextMap = {
   [enumOrderStatus.Refund]: '售后',
@@ -211,55 +211,55 @@ export const OrderStatusTextMap = {
   [enumOrderStatus.Received]: '已收货',
   [enumOrderStatus.Undelivered]: '待发货',
   [enumOrderStatus.Unpaid]: '待付款'
-};
+}
 
 export const TabList = [
   {
     name: '所有订单',
     url: '/order/mainOrder',
-    status: undefined,
+    status: undefined
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Unpaid],
     url: '/order/unpaidOrder',
-    status: enumOrderStatus.Unpaid,
+    status: enumOrderStatus.Unpaid
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Undelivered],
     url: '/order/undeliveredOrder',
-    status: enumOrderStatus.Undelivered,
+    status: enumOrderStatus.Undelivered
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.PartDelivered],
     url: '/order/partDeliveredOrder',
-    status: enumOrderStatus.PartDelivered,
+    status: enumOrderStatus.PartDelivered
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Delivered],
     url: '/order/deliveredOrder',
-    status: enumOrderStatus.Delivered,
+    status: enumOrderStatus.Delivered
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Complete],
     url: '/order/completeOrder',
-    status: enumOrderStatus.Complete,
+    status: enumOrderStatus.Complete
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Closed],
     url: '/order/closedOrder',
-    status: enumOrderStatus.Closed,
-  },
-];
+    status: enumOrderStatus.Closed
+  }
+]
 
-//0非会员 10-团长，20-区长，30-合伙人，40-管理员，50-公司
+// 0非会员 10-团长，20-区长，30-合伙人，40-管理员，50-公司
 export const enumMemberType = {
   Visitor: 0,
   Chief: 10,
   Warden: 20,
   Partner: 30,
   Manager: 40,
-  Company: 50,
-};
+  Company: 50
+}
 
 export const MemberTypeTextMap = {
   [enumMemberType.Visitor]: '非会员',
@@ -267,5 +267,5 @@ export const MemberTypeTextMap = {
   [enumMemberType.Warden]: '区长',
   [enumMemberType.Partner]: '合伙人',
   [enumMemberType.Manager]: '管理员',
-  [enumMemberType.Company]: '公司',
-};
+  [enumMemberType.Company]: '公司'
+}
