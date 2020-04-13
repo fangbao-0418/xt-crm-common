@@ -39,26 +39,26 @@ export const formatMoneyBeforeRequest = price => {
 
 // 格式化退货信息
 export const joinFilterEmpty = arr => {
-  return arr.filter(Boolean).join(' ');
+  return arr.filter(Boolean).join(' ')
 };
 
 // 格式化面值
-export function formatFaceValue(record) {
-  let result = [];
+export function formatFaceValue (record) {
+  let result = []
   switch (record.useSill) {
     // 无门槛
     case 0:
-      return `无门槛${record.faceValue}`;
+      return `无门槛${record.faceValue}`
     // 满减
     case 1:
-      result = record.faceValue.split(':');
-      return `满${result[0] / 100}减${result[1] / 100}`;
+      result = record.faceValue.split(':')
+      return `满${(result[0] / 100) || 0}减${(result[1] / 100) || 0}`
     // 折顶(打折,限制最多优惠金额))
     case 2:
-      return;
+      return
     default:
-      result = record.faceValue ? record.faceValue.split(':') : [];
-      return `满${result[0] / 100}减${result[1] / 100}`;
+      result = record.faceValue ? record.faceValue.split(':') : []
+      return `满${(result[0] / 100) || 0}减${(result[1] / 100) || 0}`
   }
 }
 

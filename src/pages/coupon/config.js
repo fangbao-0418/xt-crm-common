@@ -1,12 +1,11 @@
-import React from 'react';
-import { Modal, Button, Message } from 'antd';
-import ActionBtnGroup from './action-btn-group/index';
-import receiveStatus from '@/enum/receiveStatus';
-import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } from '@/pages/helper';
-import { stopCouponTask, invalidTaskCoupon } from './api';
-import { Badge, Tooltip } from 'antd';
-import emitter from '@/util/events';
-import { download } from '@/util/utils';
+import React from 'react'
+import { Modal, Button, Message, Badge, Tooltip } from 'antd'
+import ActionBtnGroup from './action-btn-group/index'
+import receiveStatus from '@/enum/receiveStatus'
+import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } from '@/pages/helper'
+import { stopCouponTask, invalidTaskCoupon } from './api'
+import emitter from '@/util/events'
+import { download } from '@/util/utils'
 
 const listBadgeColors = {
   '0': 'gray',
@@ -45,7 +44,7 @@ export const useIdentityOptions = [
   { label: '星级团长', value: 12, disabled: true },
   { label: '体验团长', value: 11, disabled: true },
   { label: '社区管理员', value: 20 },
-  { label: '城市合伙人', value: 30 },
+  { label: '城市合伙人', value: 30 }
 ]
 
 export const productColumns = [{
@@ -58,16 +57,16 @@ export const productColumns = [{
   key: 'productName'
 }]
 const calcRatio = ({ useCount, receiveCount }) => {
-  const result = useCount / receiveCount;
-  return (100 * result).toFixed(1) + '%';
+  const result = useCount / receiveCount
+  return (100 * result).toFixed(1) + '%'
 }
 
 const handleStop = async (taskId) => {
-  console.log('taskId=>', taskId);
-  const res = await stopCouponTask(taskId);
+  console.log('taskId=>', taskId)
+  const res = await stopCouponTask(taskId)
   if (res) {
-    Message.success('停止发券成功');
-    emitter.emit('list.coupon-detail.fetchCouponTasks');
+    Message.success('停止发券成功')
+    emitter.emit('list.coupon-detail.fetchCouponTasks')
   }
 }
 
@@ -76,10 +75,10 @@ const handleInvalid = async (record) => {
     title: '系统提示',
     content: '是否失效掉任务中已发送的优惠券，回收优惠券库存？',
     onOk: async () => {
-      const res = await invalidTaskCoupon(record.id, record.couponId);
+      const res = await invalidTaskCoupon(record.id, record.couponId)
       if (res) {
-        Message.success('失效优惠券成功');
-        emitter.emit('list.coupon-detail.fetchCouponTasks');
+        Message.success('失效优惠券成功')
+        emitter.emit('list.coupon-detail.fetchCouponTasks')
       }
     }
   })
@@ -109,9 +108,10 @@ export const releaseRecordsColumns = [{
       case 3:
         const [href, name] = record.userGroupValue.split(',')
         node = (
-          <span className="href" onClick={() => {
-            download(href, name);
-          }}>{name}</span>
+          <span className='href' onClick={() => {
+            download(href, name)
+          }}>{name}
+          </span>
         )
         break
       default:
@@ -138,7 +138,7 @@ export const releaseRecordsColumns = [{
       1: '发券',
       2: '失效优惠券'
     }
-    return status[text];
+    return status[text]
   }
 }, {
   title: '发送状态',
@@ -147,7 +147,7 @@ export const releaseRecordsColumns = [{
   render: (text, record) => {
     if (text === 4) {
       return (
-        <Tooltip placement="topLeft" title={record.remark}>
+        <Tooltip placement='topLeft' title={record.remark}>
           <Badge color={releaseRecordsBadgeColors[text]} text={taskStatus[text]} />
         </Tooltip>
       )
@@ -161,12 +161,11 @@ export const releaseRecordsColumns = [{
   key: 'action',
   render: (text, record) => {
     if (record.operateBehavior === 1 && record.status === 0) {
-      return <Button type="link" onClick={() => handleStop(record.id)}>停止</Button>;
-    }
-    else if (record.operateBehavior === 1 && [2, 4].includes(record.status)) {
-      return <Button type="link" onClick={() => handleInvalid(record)}>失效</Button>;
+      return <Button type='link' onClick={() => handleStop(record.id)}>停止</Button>
+    } else if (record.operateBehavior === 1 && [2, 4].includes(record.status)) {
+      return <Button type='link' onClick={() => handleInvalid(record)}>失效</Button>
     } else {
-      return '-';
+      return '-'
     }
   }
 }]
@@ -175,12 +174,12 @@ export const getListColumns = () => [
   {
     title: '编号',
     dataIndex: 'code',
-    key: 'code',
+    key: 'code'
   },
   {
     title: '名称',
     dataIndex: 'name',
-    key: 'name',
+    key: 'name'
   },
   {
     title: '领取时间',
@@ -214,13 +213,14 @@ export const getListColumns = () => [
     title: '领取状态',
     dataIndex: 'status',
     key: 'status',
-    render: text => <Badge color={listBadgeColors[text]} text={receiveStatus.getValue(text)} />
+    render: (text) => <Badge color={listBadgeColors[text]} text={receiveStatus.getValue(text)} />
   },
   {
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    width: 360,
+    width: 300,
+    align: 'center',
     render: (text, record) => <ActionBtnGroup record={record} />
   }
 ]
@@ -230,8 +230,6 @@ export const pagination = {
   showQuickJumper: true,
   showTotal: (total, range) => `共 ${total} 条记录`
 }
-
-
 
 export const defaultConfig = {
   coupon: {
@@ -248,9 +246,9 @@ export const defaultConfig = {
           {
             validator: (rule, value, callback) => {
               if (value && value.length > 20) {
-                callback('优惠券最多20个字');
+                callback('优惠券最多20个字')
               } else {
-                callback();
+                callback()
               }
             }
           }
