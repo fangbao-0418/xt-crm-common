@@ -154,7 +154,7 @@ class Main extends React.Component<Props> {
             label='是否过滤前缀'
             name='stripPrefix'
             type='radio'
-            options={[{ label: '过滤', value: 1 }, { label: '不过滤', value: 2 }]}
+            options={[{ label: '过滤', value: 1 }, { label: '不过滤', value: 0 }]}
             fieldDecoratorOptions={{
               initialValue: 1
             }}
