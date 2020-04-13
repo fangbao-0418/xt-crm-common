@@ -18,7 +18,8 @@ type Props = RouteComponentProps<{id: string}>;
 interface StoreFormState {
   address: string
   pictrueUrl: any[]
-  status: number
+  /** 未知 -1, 新建 = 1, 上线 = 2, 下线 = 3, 待审核 = 4, 驳回 = 5 */
+  status: -1 | 1 | 2 | 3 | 4 | 5
   record: Partial<RecordProps>
   readonly: boolean
 }
@@ -71,6 +72,9 @@ class StoreForm extends React.Component<Props, StoreFormState> {
         const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id })
         promiseResult.then((res: any) => {
           if (res) {
+            if (this.state.status === 4) {
+              APP.success('审核通过')
+            }
             APP.history.push('/fresh/store')
           }
         })
@@ -94,7 +98,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
         addonAfter={(
           <div style={{ width: '60%' }}>
             <FormItem>
-              <If condition={[1, 2, 3].indexOf(status) > -1 && !readonly}>
+              <If condition={[-1, 1, 2, 3].indexOf(status) > -1 && !readonly}>
                 <Button type='primary' onClick={this.handleSave} className='mr10'>保存</Button>
               </If>
               <If condition={[4].indexOf(status) > -1 && !readonly}>
@@ -209,7 +213,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                 fieldDecoratorOptions={{
                   rules: [{
                     validator: async (rules, value) => {
-                      if (!value) {
+                      if ([undefined, null].indexOf(value) > -1) {
                         throw new Error('请输入纬度')
                       }
                       if (value < -180) {
@@ -246,7 +250,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                 fieldDecoratorOptions={{
                   rules: [{
                     validator: async (rules, value) => {
-                      if (!value) {
+                      if ([undefined, null].indexOf(value) > -1) {
                         throw new Error('请输入经度')
                       }
                       if (value < -180) {
