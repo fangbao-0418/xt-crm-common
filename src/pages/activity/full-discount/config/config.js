@@ -1,11 +1,7 @@
 export const queryConfig = {
   fullDiscount: {
     createTime: {
-      label: '活动时间',
-      type: 'rangepicker',
-      controlProps: {
-        showTime: true
-      }
+      label: '活动时间'
     },
     name: {
       label: '活动名称'

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Card, Button, Modal } from 'antd'
+import { Card, Button, Modal, DatePicker } from 'antd'
 import { ListPage, FormItem } from '@/packages/common/components'
 import { gotoPage } from '@/util/utils';
 import getColumns from './config/getColumns'
@@ -7,6 +7,7 @@ import { queryConfig } from './config/config';
 import { queryDiscounts, disableDiscounts } from './api'
 
 const { confirm } = Modal;
+const { RangePicker } = DatePicker;
 
 class FullDiscountPage extends PureComponent {
   /* 编辑 */
@@ -67,7 +68,10 @@ class FullDiscountPage extends PureComponent {
           api={queryDiscounts}
           formItemLayout={(
             <>
-              <FormItem name='createTime' />
+              <FormItem
+                name='createTime'
+                inner={() => <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />}
+              />
               <FormItem name='name' />
               <FormItem name='discountsStatus' />
             </>
