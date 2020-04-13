@@ -28,11 +28,8 @@ class Main extends React.Component<Props> {
     {
       title: '序号',
       dataIndex: 'id',
-      width: 80,
-      align: 'center',
-      render: (text, record, index) => {
-        return index + 1
-      }
+      width: 150,
+      align: 'center'
     },
     {
       title: 'Api名称',
