@@ -1,5 +1,7 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import DraggableUpload from '@/components/draggable-upload'
+import UploadView from '@/components/upload'
 import Image from '@/components/Image'
 import { Input, Select, InputNumber, Card, Button, message, Table, Row, Col } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
@@ -7,6 +9,7 @@ import { formItemLayout } from '@/config'
 import ShopList from '@/components/shop/List'
 import ShopSelectModal, { ShopModalInstance } from '@/components/shop/SelectModal'
 import * as api from './api'
+import styles from '../style.module.scss'
 
 // import { getCategory, saveRule, editRule } from './api'
 const { Search, TextArea } = Input
@@ -95,9 +98,21 @@ class Add extends React.Component<InitProps, InitState> {
   handleSave = () => {
     const form = this.form.props.form
     form.validateFields((err: any, vals: any) => {
-      console.log(vals, 'vals')
       if (!err) {
-        const { allCommissionRate } = vals
+        const { productId, authorPhone, content, videoUrl, productImage } = vals
+        console.log(vals, 'vals')
+        console.log(productId.spuList.map((item: any) => item.id), 'productId')
+        const params = {
+          productId: productId.spuList.map((item: any) => item.id),
+          authorPhone,
+          content,
+          videoUrlList: videoUrl || [].map((video: any) => {return {url: video.url}})
+        }
+        console.log(params, 'params')
+        api.addProductMaterial(params).then(res => {
+          console.log(res, 'res')
+        })
+
       }
     })
   }
@@ -145,8 +160,6 @@ class Add extends React.Component<InitProps, InitState> {
                     <span
                       className='href'
                       onClick={() => {
-                        // this.presentContentSelectedKey = 'productId'
-                        // this.select(2)
                         this.shopModalInstance.open()
                       }}
                     >
@@ -242,24 +255,59 @@ class Add extends React.Component<InitProps, InitState> {
             }}
           >
           </FormItem>
-          <ShopSelectModal
-            getInstance={(ref) => {
-              this.shopModalInstance = ref
+          <FormItem
+            label='视频素材'
+            inner={(form) => {
+              return form.getFieldDecorator('videoUrl')(
+                <UploadView
+                  placeholder='上传视频'
+                  fileType='video'
+                  listType='picture-card'
+                  listNum={1}
+                  size={15}
+                />
+              )
             }}
-            onOk={(rows) => {
-              const values = this.form.getValues()
-              const value = {
-                ...values.productId,
-                spuList: rows
-              }
-              this.form.setValues({
-                ['productId']: value
-              })
-              this.shopModalInstance.hide()
+          />
+          <FormItem
+            label='图片素材'
+            inner={(form) => {
+              return (
+                <div>
+                  <div>
+                    {form.getFieldDecorator('productImage')(
+                      <DraggableUpload
+                        className={styles['goods-draggable']}
+                        listNum={3}
+                        size={0.3}
+                        ossType='cos'
+                        placeholder='上传商品图片'
+                      />
+                    )}
+                    </div>
+                  <div>（建议750*750px，300kb以内，最多可添加5张）</div>
+                </div>
+              )
             }}
-            checkType='radio'
           />
         </Form>
+        <ShopSelectModal
+          getInstance={(ref) => {
+            this.shopModalInstance = ref
+          }}
+          onOk={(rows) => {
+            const values = this.form.getValues()
+            const value = {
+              ...values.productId,
+              spuList: rows
+            }
+            this.form.setValues({
+              ['productId']: value
+            })
+            this.shopModalInstance.hide()
+          }}
+          checkType='radio'
+        />
       </Card>
     )
   }

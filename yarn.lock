@@ -3207,6 +3207,13 @@ core-util-is@1.0.2, core-util-is@^1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "http://192.168.20.8:802/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
+cos-js-sdk-v5@^0.5.26:
+  version "0.5.26"
+  resolved "https://registry.npm.taobao.org/cos-js-sdk-v5/download/cos-js-sdk-v5-0.5.26.tgz#4946762d353e09fb80a2e84466ab0d5236a167ce"
+  integrity sha1-SUZ2LTU+CfuAouhEZqsNUjahZ84=
+  dependencies:
+    xmldom "^0.1.27"
+
 cosmiconfig@^5.0.0, cosmiconfig@^5.0.5, cosmiconfig@^5.2.1:
   version "5.2.1"
   resolved "http://192.168.20.8:802/cosmiconfig/-/cosmiconfig-5.2.1.tgz#040f726809c591e77a17c0a3626ca45b4f168b1a"
@@ -13551,6 +13558,11 @@ xml2js@^0.4.16:
 xmlbuilder@~11.0.0:
   version "11.0.1"
   resolved "http://192.168.20.8:802/xmlbuilder/-/xmlbuilder-11.0.1.tgz#be9bae1c8a046e76b31127726347d0ad7002beb3"
+
+xmldom@^0.1.27:
+  version "0.1.31"
+  resolved "https://registry.npm.taobao.org/xmldom/download/xmldom-0.1.31.tgz?cache=0&sync_timestamp=1583340617864&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fxmldom%2Fdownload%2Fxmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
+  integrity sha1-t2yaG9nwqXN+WnLcNyMc84N14v8=
 
 xregexp@2.0.0:
   version "2.0.0"

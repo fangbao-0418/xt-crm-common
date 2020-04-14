@@ -20,3 +20,11 @@ export const fetchUserInfo = (payload: {
 }) => {
   return get('/member/simple', payload)
 }
+
+/**
+ * 新增商品素材
+ */
+export const addProductMaterial = (data: any) => {
+  console.log(333333)
+  return newPost('/mcweb/product/material/add', data)
+}
