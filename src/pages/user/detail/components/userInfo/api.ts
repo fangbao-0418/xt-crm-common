@@ -26,3 +26,11 @@ export function enablePermission (payload: {
 }) {
   return newPost('/member/account/groupBuy/enablePermission', adapter.enablePermissionParams(payload))
 }
+
+/** 开启门店采购个人权限 */
+export function enableShopPermission (payload: {
+  enable: boolean,
+  memberId: number
+}) {
+  return newPost('/member/store/purchase/switch', payload)
+}
