@@ -1,3 +1,10 @@
+/*
+ * @Author: fangbao
+ * @Date: 2020-04-13 22:45:07
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-13 23:17:25
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/pages/coupon/api.js
+ */
 import { newPost, newGet, newPut, post, get } from '../../util/fetch'
 import * as adapter from './adapter'
 
@@ -7,14 +14,12 @@ export function importShop () {
   el.onchange = function (e) {
     const file = e.target.files[0]
     console.log(file, 'file')
+    const form = new FormData()
+    form.append('file', file)
     post('/promotion/product/check', {}, {
-      data: {
-        file,
-        a: 2,
-        b: 4
-      },
+      data: form,
       headers: {
-        'Content-Type': false
+        'Content-Type': 'multipart/form-data'
       }
     })
   }

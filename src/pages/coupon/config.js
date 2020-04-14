@@ -197,6 +197,8 @@ export const getListColumns = () => [
     title: '已领取/总量',
     dataIndex: 'receiveRatio',
     key: 'receiveRatio',
+    align: 'center',
+    width: 120,
     render: (text, record) => {
       return `${record.receiveCount}/${record.inventory}`
     }
@@ -205,6 +207,8 @@ export const getListColumns = () => [
     title: '已使用|使用率',
     dataIndex: 'usedRatio',
     key: 'usedRatio',
+    width: 130,
+    align: 'center',
     render: (text, record) => {
       return record.receiveCount ? `${record.useCount} | ${calcRatio(record)}` : '-'
     }
@@ -213,13 +217,15 @@ export const getListColumns = () => [
     title: '领取状态',
     dataIndex: 'status',
     key: 'status',
+    width: 100,
+    align: 'center',
     render: (text) => <Badge color={listBadgeColors[text]} text={receiveStatus.getValue(text)} />
   },
   {
     title: '操作',
     dataIndex: 'action',
     key: 'action',
-    width: 300,
+    width: 240,
     align: 'center',
     render: (text, record) => <ActionBtnGroup record={record} />
   }

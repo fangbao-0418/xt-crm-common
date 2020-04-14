@@ -6,6 +6,7 @@ import { getCouponDetail, modifyCouponBaseInfo, importShop } from '@/pages/coupo
 import { ProductSelector, ActivitySelector } from '@/components'
 import { unionArray } from '@/util/utils'
 import { formatAvlRange, formatFaceValue, formatReceiveRestrict, formatDateRange, formatUseTime, formatPlatformRestrict } from '@/pages/helper'
+import If from '@/packages/common/components/if'
 import './index.scss'
 const { TextArea } = Input
 
@@ -124,17 +125,45 @@ function CouponInfo ({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
         <Form.Item label='优惠券名称'>
           {getFieldDecorator('name', { initialValue: baseVO.name, rules: [{ required: true, message: '请输入优惠券名称', whitespace: true }, { validator: validateName }] })(<Input placeholder='例：国庆优惠券，最多20个字' />)}
         </Form.Item>
-        <Form.Item label='适用范围'>{formatAvlRange(ruleVO.avlRange)}</Form.Item>
-        {ruleVO.rangeVOList && ruleVO.rangeVOList.length > 0 && (
-          <Form.Item wrapperCol={formLeftButtonLayout}>
+        <Form.Item
+          style={{ marginBottom: (ruleVO.avlRange === 2 || ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0) ? 0 : undefined }}
+          label='适用范围'
+        >
+          {formatAvlRange(ruleVO.avlRange)}
+        </Form.Item>
+        <Form.Item
+          style={{
+            // marginTop: ruleVO.avlRange === 2 ? -20 : 0,
+            marginBottom: 0
+          }}
+          wrapperCol={formLeftButtonLayout}
+        >
+          {chosenProduct.length > 0 && (
             <Table
               style={{ width: '400px' }}
               pagination={false}
               rowKey='id'
-              columns={columns}
+              columns={ruleVO.avlRange === 2 ? columns.concat([{
+                title: '操作',
+                render: (text, record, index) => {
+                  return (
+                    <span
+                      className='href'
+                      onClick={() => {
+                        chosenProduct.splice(index, 1)
+                        setChosenProduct([...chosenProduct])
+                      }}
+                    >
+                      删除
+                    </span>
+                  )
+                }
+              }]) : columns}
               // dataSource={ruleVO.rangeVOList}
               dataSource={chosenProduct}
             />
+          )}
+          <If condition={ruleVO.avlRange === 2}>
             <span
               className='href mr8'
               onClick={() => {
@@ -151,17 +180,12 @@ function CouponInfo ({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
               className='href'
               onClick={() => {
                 importShop()
-                // setProductSelectorVisible(true)
-                // const keys = (chosenProduct || []).map((item) => item.id)
-                // productSelector.current.setState({
-                //   selectedRowKeys: keys
-                // })
               }}
             >
               导入商品
             </span>
-          </Form.Item>
-        )}
+          </If>
+        </Form.Item>
         {ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0 && (
           <Form.Item label='已排除商品'>
             <Table style={{ width: '400px' }} pagination={false} rowKey='id' columns={columns} dataSource={ruleVO.excludeProductVOList} />
