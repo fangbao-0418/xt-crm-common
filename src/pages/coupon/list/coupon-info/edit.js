@@ -8,6 +8,7 @@ import { unionArray } from '@/util/utils'
 import { formatAvlRange, formatFaceValue, formatReceiveRestrict, formatDateRange, formatUseTime, formatPlatformRestrict } from '@/pages/helper'
 import If from '@/packages/common/components/if'
 import './index.scss'
+import { DownTemplate } from './index'
 const { TextArea } = Input
 
 const columns = [{
@@ -177,13 +178,20 @@ function CouponInfo ({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
               选择商品
             </span>
             <span
-              className='href'
+              className='href mr8'
               onClick={() => {
-                importShop()
+                importShop().then((res) => {
+                  const data = (res.data || []).map((val) => {
+                    val.name = val.productName
+                    return val
+                  })
+                  setChosenProduct(unionArray(chosenProduct, data))
+                })
               }}
             >
               导入商品
             </span>
+            <DownTemplate />
           </If>
         </Form.Item>
         {ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0 && (

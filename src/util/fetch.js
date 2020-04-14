@@ -14,7 +14,6 @@ export const request = (url, config = {}) => {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     ...config
   }
-  // _config.headers['Content-Type'] = _config.headers['Content-Type'] === false ? undefined : _config.headers['Content-Type']
   _config.headers = getHeaders(_config.headers)
   return axios(_config)
     .then(res => {

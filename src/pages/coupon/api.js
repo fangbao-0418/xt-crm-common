@@ -2,8 +2,8 @@
  * @Author: fangbao
  * @Date: 2020-04-13 22:45:07
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-13 23:17:25
- * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/pages/coupon/api.js
+ * @LastEditTime: 2020-04-14 10:45:48
+ * @FilePath: /xt-crm/src/pages/coupon/api.js
  */
 import { newPost, newGet, newPut, post, get } from '../../util/fetch'
 import * as adapter from './adapter'
@@ -11,22 +11,25 @@ import * as adapter from './adapter'
 export function importShop () {
   const el = document.createElement('input')
   el.setAttribute('type', 'file')
-  el.onchange = function (e) {
-    const file = e.target.files[0]
-    console.log(file, 'file')
-    const form = new FormData()
-    form.append('file', file)
-    post('/promotion/product/check', {}, {
-      data: form,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-  }
-  el.click()
-  // return newPost('/promotion/product/check', {
-
-  // })
+  return new Promise((resolve, reject) => {
+    el.onchange = function (e) {
+      const file = e.target.files[0]
+      console.log(file, 'file')
+      const form = new FormData()
+      form.append('file', file)
+      post('/promotion/product/check', {}, {
+        data: form,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res) => {
+        resolve(res)
+      }, (err) => {
+        reject(err)
+      })
+    }
+    el.click()
+  })
 }
 
 export function modifyCouponBaseInfo (data) {
