@@ -9,7 +9,7 @@ import { formItemLayout } from '@/config'
 import ShopList from '@/components/shop/List'
 import ShopSelectModal, { ShopModalInstance } from '@/components/shop/SelectModal'
 import * as api from './api'
-import styles from '../style.module.scss'
+import styles from './style.module.scss'
 
 // import { getCategory, saveRule, editRule } from './api'
 const { Search, TextArea } = Input

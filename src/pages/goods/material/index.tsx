@@ -2,13 +2,15 @@ import React from 'react'
 import { Button, Modal, Switch, message } from 'antd'
 import Image from '@/components/Image'
 import Page from '@/components/page'
-import { If, ListPage, FormItem } from '@/packages/common/components'
+import { ListPage, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import { parseQuery, uuid, replaceHttpUrl } from '@/util/utils'
+import { uuid, replaceHttpUrl } from '@/util/utils'
 import dateFns from 'date-fns'
 import * as api from './api'
 import { defaultConfig } from './config'
 import Add from './add'
+import styles from './style.module.scss'
+
 
 const tableProps: any = {
   scroll: {
@@ -48,7 +50,14 @@ class SkuStockList extends React.Component<any> {
     {
       title: '内容',
       width: 100,
-      dataIndex: 'content'
+      dataIndex: 'content',
+      render: (text: string) => {
+        return (
+          <div className={styles.content}>
+            {text}
+          </div>
+        )
+      }
     },
     {
       title: '发布人',

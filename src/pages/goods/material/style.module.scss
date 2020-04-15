@@ -1,5 +1,5 @@
 .goods-draggable, .goods-detail-draggable {
-  z-index: 999;
+  z-index: 1200;
   :global(.ant-upload-list-item-actions), :global(.ant-upload-list-item-name) {
     display: none;
   }
@@ -12,4 +12,11 @@
     width: 86px;
     height: 86px;
   }
+}
+.content {
+  overflow:hidden;
+  text-overflow:ellipsis;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
 }
