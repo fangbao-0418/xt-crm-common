@@ -87,7 +87,6 @@ export const cosUpload = (cosClient, file, path) => {
         console.log(JSON.stringify(progressData), 'progressData')
       }
     }, function (err, data) {
-      console.log(err, 'err')
       data && resolve(data)
       err && reject(err)
     })

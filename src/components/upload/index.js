@@ -19,6 +19,7 @@ export async function ossUpload(file, dir = 'crm', ossType = 'oss') {
     if (res) {
       const client = createClient(res);
       try {
+        console.log(file, 'fileoss')
         const urlList = await ossUploadBlob(client, file, dir);
         return urlList;
       } catch (error) {
@@ -33,6 +34,7 @@ export async function ossUpload(file, dir = 'crm', ossType = 'oss') {
     if (res) {
       const cosClient = createCosClient(res);
       try {
+        console.log(file,'filecos')
         const res = await cosUpload(cosClient, file, dir)
         const urlList = [res.Location]
         return urlList;
@@ -132,7 +134,7 @@ class UploadView extends Component {
     if(ossType === 'oss'){
       url = (url || '').trim().replace(/^https?:\/\/.+?\//, '')
     } else if(ossType === 'cos'){
-      url = (url || '').trim().slice(url.indexOf('/tximg')) 
+      url = (url || '').trim().slice(url.indexOf('/tximg')+1) 
     }
     // console.log(url, 'after replaceUrl')
     return url
@@ -146,7 +148,7 @@ class UploadView extends Component {
       case 'oss':
         return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
       case 'cos':
-        return 'https://sh-tximg.hzxituan.com' + this.replaceUrl(url)
+        return 'https://sh-tximg.hzxituan.com/' + this.replaceUrl(url)
       default:
         return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
     }
@@ -183,6 +185,7 @@ class UploadView extends Component {
       val.durl = result.durl;
       val.uid = result.uid;
       val.url = result.url;
+      val.size = val.size;
       val.thumbUrl = result.thumbUrl
       val.rurl = this.replaceUrl(result.url)
       val.name = result.name || val.url
@@ -290,14 +293,15 @@ class UploadView extends Component {
   customRequest(e) {
     const file = e.file;
     const { onChange, formatOrigin, ossDir, ossType } = this.props;
-    console.log(ossType, 'ossType')
+    
     ossUpload(file, ossDir, ossType).then((urlList) => {
-      console.log(urlList, 'urlList')
       let { fileList } = this.state;
+      console.log(file, 'customRequest')
       file.url = urlList && urlList[0];
       file.durl = file.url;
       fileList.push({
         ...file,
+        size: file.size,
         name: file.name
       });
       fileList = this.initFileList(fileList)
@@ -312,7 +316,7 @@ class UploadView extends Component {
           thumbUrl: this.replaceUrl(item.thumbUrl),
         } : item
       })
-      console.log('change --------')
+      console.log('change --------', value)
       isFunction(onChange) && onChange([...value]);
     }, () => {
       this.count--

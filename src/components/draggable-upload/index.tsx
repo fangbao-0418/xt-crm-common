@@ -9,6 +9,7 @@ interface Props {
   listNum?: number
   size?: number
   placeholder?: string
+  isReadOnly?: boolean
   /**
    * cos: 腾讯云图片
    * oss: 阿里云图片
@@ -24,7 +25,8 @@ class Main extends React.Component<Props> {
     }
   }
   public render () {
-    const { listNum, size, placeholder, className, ossType } = this.props
+    const { listNum, size, placeholder, className, ossType, isReadOnly } = this.props
+    console.log(this.props.value, 'this.props.value')
     return (
       <Draggable
         className={className}
@@ -43,6 +45,7 @@ class Main extends React.Component<Props> {
         }}
       >
         <UploadView
+          disabled={isReadOnly}
           multiple
           value={this.props.value}
           placeholder={placeholder}
