@@ -320,26 +320,30 @@ class FullDiscountEditPage extends PureComponent {
     const productRefInfo = getFieldValue('productRefInfo')
     const value = e.target.value
     if (value === 0) {
-      // 选择商品 设置值为上一次选择商品有的值 那么把活动暂时储存起来
-      setFieldsValue({
-        productRefInfo: preProductRefMaps['0'] || []
-      })
-      dispatch[namespace].saveDefault({
-        preProductRefMaps: {
-          ...preProductRefMaps,
-          '1': productRefInfo
-        }
-      })
-    } else if (value === 1) {
       // 选择活动 设置值为上一次选择活动有的值 那么把商品暂时储存起来
       setFieldsValue({
-        productRefInfo: preProductRefMaps['1'] || []
+        productRefInfo: preProductRefMaps['0'] || []
+      }, () => {
+        dispatch[namespace].saveDefault({
+          preProductRefMaps: {
+            ...preProductRefMaps,
+            // '1': productRefInfo
+            '1': []
+          }
+        })
       })
-      dispatch[namespace].saveDefault({
-        preProductRefMaps: {
-          ...preProductRefMaps,
-          '0': productRefInfo
-        }
+    } else if (value === 1) {
+      // 选择商品 设置值为上一次选商品有的值 那么把活动暂时储存起来
+      setFieldsValue({
+        productRefInfo: preProductRefMaps['1'] || []
+      }, () => {
+        dispatch[namespace].saveDefault({
+          preProductRefMaps: {
+            ...preProductRefMaps,
+            // '0': productRefInfo
+            '0': []
+          }
+        })
       })
     }
   }
