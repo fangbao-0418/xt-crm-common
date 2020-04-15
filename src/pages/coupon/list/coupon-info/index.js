@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio, Form as AntForm } from 'antd'
 import { formItemLayout } from '@/config'
 import { getCouponDetail, getCategoryList, saveCouponInfo, importShop } from '@/pages/coupon/api'
@@ -8,7 +9,7 @@ import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/componen
 import { unionArray, parseQuery } from '@/util/utils'
 import * as adapter from '../../adapter'
 import moment from 'moment'
-import { If, Form, FormItem } from '@/packages/common/components'
+import { If, Form, FormItem, Alert } from '@/packages/common/components'
 import './index.scss'
 
 const formRef = {
@@ -306,6 +307,26 @@ class CouponInfo extends React.Component {
     }
     callback()
   }
+  showExportMessage = (res) => {
+    this.props.alert({
+      footer: false,
+      content: (
+        <div style={{ lineHeight: '30px', marginBottom: 20 }}>
+          成功导入 <span className='success'>{res.successNo}</span> 条&nbsp;&nbsp;&nbsp;&nbsp;
+          {res.excelAddress && (
+            <span
+              className='href'
+              onClick={() => {
+                APP.fn.download(res.excelAddress, '导入失败商品清单')
+              }}
+            >
+              查看失败商品清单
+            </span>
+          )}
+        </div>
+      )
+    })
+  }
   render () {
     const {
       avlRange,
@@ -442,11 +463,10 @@ class CouponInfo extends React.Component {
                                     let num = chosenProduct.length
                                     const arr = unionArray(chosenProduct, data)
                                     num = arr.length - num
-                                    if (num > 0) {
-                                      APP.success(`成功导入${num}条数据`)
-                                    } else {
-                                      APP.error('暂未有数据导入')
-                                    }
+                                    this.showExportMessage({
+                                      successNo: num,
+                                      excelAddress: res.excelAddress
+                                    })
                                     this.setState({
                                       chosenProduct: arr
                                     })
@@ -501,11 +521,10 @@ class CouponInfo extends React.Component {
                             let num = excludeProduct.length
                             const arr = unionArray(excludeProduct, data)
                             num = arr.length - num
-                            if (num > 0) {
-                              APP.success(`成功导入${num}条数据`)
-                            } else {
-                              APP.error('暂未有数据导入')
-                            }
+                            this.showExportMessage({
+                              successNo: num,
+                              excelAddress: res.excelAddress
+                            })
                             this.setState({
                               excludeProduct: arr
                             })
@@ -922,4 +941,9 @@ class CouponInfo extends React.Component {
     )
   }
 }
-export default CouponInfo
+
+CouponInfo.propTypes = {
+  alert: PropTypes.func
+}
+
+export default Alert(CouponInfo)

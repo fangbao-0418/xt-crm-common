@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { message, Form, Button, Card, Row, Col, Input, InputNumber, Table } from 'antd'
+import { Alert } from '@/packages/common/components'
 import { formItemLayout, formLeftButtonLayout } from '@/config'
 import { getCouponDetail, modifyCouponBaseInfo, importShop } from '@/pages/coupon/api'
 import { ProductSelector, ActivitySelector } from '@/components'
@@ -21,7 +22,8 @@ const columns = [{
   key: 'name'
 }]
 
-function CouponInfo ({ form: { getFieldDecorator, getFieldsValue, setFieldsValue, validateFields }, history }) {
+function CouponInfo (props) {
+  const { form: { getFieldDecorator, getFieldsValue, setFieldsValue, validateFields }, history } = props
   const [detail, setDetail] = useState({})
   const [excludeProduct, setExcludeProduct] = useState([])
   const [activityList, setActivityList] = useState([])
@@ -105,7 +107,26 @@ function CouponInfo ({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
   const handleCancel = () => {
     history.goBack()
   }
-  console.log(chosenProduct, 'chosenProductchosenProductchosenProduct')
+  const showExportMessage = (res) => {
+    props.alert({
+      footer: false,
+      content: (
+        <div style={{ lineHeight: '30px', marginBottom: 20 }}>
+          成功导入 <span className='success'>{res.successNo}</span> 条&nbsp;&nbsp;&nbsp;&nbsp;
+          {res.excelAddress && (
+            <span
+              className='href'
+              onClick={() => {
+                APP.fn.download(res.excelAddress, '导入失败商品清单')
+              }}
+            >
+              查看失败商品清单
+            </span>
+          )}
+        </div>
+      )
+    })
+  }
   return (
     <Card>
       <ProductSelector
@@ -188,11 +209,10 @@ function CouponInfo ({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
                   let num = chosenProduct.length
                   const arr = unionArray(chosenProduct, data)
                   num = arr.length - num
-                  if (num > 0) {
-                    APP.success(`成功导入${num}条数据`)
-                  } else {
-                    APP.error('暂未有数据导入')
-                  }
+                  showExportMessage({
+                    successNo: num,
+                    excelAddress: res.excelAddress
+                  })
                   setChosenProduct(arr)
                 })
               }}
@@ -244,8 +264,9 @@ function CouponInfo ({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
 }
 
 CouponInfo.propTypes = {
+  alert: PropTypes.func,
   form: PropTypes.object,
   history: PropTypes.object
 }
 
-export default Form.create({ name: 'coupon-info' })(CouponInfo)
+export default Form.create({ name: 'coupon-info' })(Alert(CouponInfo))
