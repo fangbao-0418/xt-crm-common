@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio, Form as AntForm } from 'antd'
 import { formItemLayout } from '@/config'
 import { getCouponDetail, getCategoryList, saveCouponInfo, importShop } from '@/pages/coupon/api'
@@ -8,7 +9,7 @@ import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/componen
 import { unionArray, parseQuery } from '@/util/utils'
 import * as adapter from '../../adapter'
 import moment from 'moment'
-import { If, Form, FormItem } from '@/packages/common/components'
+import { If, Form, FormItem, Alert } from '@/packages/common/components'
 import './index.scss'
 
 const formRef = {
@@ -306,6 +307,26 @@ class CouponInfo extends React.Component {
     }
     callback()
   }
+  showExportMessage = (res) => {
+    this.props.alert({
+      footer: false,
+      content: (
+        <div style={{ lineHeight: '30px', marginBottom: 20 }}>
+          成功导入 <span className='success'>{res.successNo}</span> 条&nbsp;&nbsp;&nbsp;&nbsp;
+          {res.excelAddress && (
+            <span
+              className='href'
+              onClick={() => {
+                APP.fn.download(res.excelAddress, '导入失败商品清单')
+              }}
+            >
+              查看失败商品清单
+            </span>
+          )}
+        </div>
+      )
+    })
+  }
   render () {
     const {
       avlRange,
@@ -439,8 +460,15 @@ class CouponInfo extends React.Component {
                                       val.name = val.productName
                                       return val
                                     })
+                                    let num = chosenProduct.length
+                                    const arr = unionArray(chosenProduct, data)
+                                    num = arr.length - num
+                                    this.showExportMessage({
+                                      successNo: num,
+                                      excelAddress: res.excelAddress
+                                    })
                                     this.setState({
-                                      chosenProduct: unionArray(chosenProduct, data)
+                                      chosenProduct: arr
                                     })
                                   })
                                 }}
@@ -490,8 +518,15 @@ class CouponInfo extends React.Component {
                               val.name = val.productName
                               return val
                             })
+                            let num = excludeProduct.length
+                            const arr = unionArray(excludeProduct, data)
+                            num = arr.length - num
+                            this.showExportMessage({
+                              successNo: num,
+                              excelAddress: res.excelAddress
+                            })
                             this.setState({
-                              excludeProduct: unionArray(excludeProduct, data)
+                              excludeProduct: arr
                             })
                           })
                         }}
@@ -526,7 +561,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange !== 2 && excludeProduct.length > 0}>
             <FormItem label='已排除商品'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={this.getColumns('exclude')}
                 dataSource={excludeProduct}
@@ -536,7 +573,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange === 2 && chosenProduct.length > 0}>
             <FormItem label='已选择商品'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={this.getColumns('product')}
                 dataSource={chosenProduct}
@@ -546,7 +585,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange === 4 && activityList.length > 0}>
             <FormItem label='已选择活动'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={[
                   ...actColumns(),
@@ -906,4 +947,9 @@ class CouponInfo extends React.Component {
     )
   }
 }
-export default CouponInfo
+
+CouponInfo.propTypes = {
+  alert: PropTypes.func
+}
+
+export default Alert(CouponInfo)
