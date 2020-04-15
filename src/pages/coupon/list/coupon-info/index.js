@@ -561,7 +561,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange !== 2 && excludeProduct.length > 0}>
             <FormItem label='已排除商品'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={this.getColumns('exclude')}
                 dataSource={excludeProduct}
@@ -571,7 +573,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange === 2 && chosenProduct.length > 0}>
             <FormItem label='已选择商品'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={this.getColumns('product')}
                 dataSource={chosenProduct}
@@ -581,7 +585,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange === 4 && activityList.length > 0}>
             <FormItem label='已选择活动'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={[
                   ...actColumns(),
