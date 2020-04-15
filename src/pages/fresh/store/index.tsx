@@ -95,7 +95,7 @@ class Store extends React.Component {
           getInstance={ref => this.list = ref}
           rangeMap={{
             workDate: {
-              fields: ['startWorkDate', 'endWorkDate']
+              fields: ['startCreateDate', 'endCreateDate']
             }
           }}
           formItemLayout={(
