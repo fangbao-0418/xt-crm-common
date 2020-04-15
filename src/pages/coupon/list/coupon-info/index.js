@@ -439,8 +439,16 @@ class CouponInfo extends React.Component {
                                       val.name = val.productName
                                       return val
                                     })
+                                    let num = chosenProduct.length
+                                    const arr = unionArray(chosenProduct, data)
+                                    num = arr.length - num
+                                    if (num > 0) {
+                                      APP.success(`成功导入${num}条数据`)
+                                    } else {
+                                      APP.error('暂未有数据导入')
+                                    }
                                     this.setState({
-                                      chosenProduct: unionArray(chosenProduct, data)
+                                      chosenProduct: arr
                                     })
                                   })
                                 }}
@@ -490,8 +498,16 @@ class CouponInfo extends React.Component {
                               val.name = val.productName
                               return val
                             })
+                            let num = excludeProduct.length
+                            const arr = unionArray(excludeProduct, data)
+                            num = arr.length - num
+                            if (num > 0) {
+                              APP.success(`成功导入${num}条数据`)
+                            } else {
+                              APP.error('暂未有数据导入')
+                            }
                             this.setState({
-                              excludeProduct: unionArray(excludeProduct, data)
+                              excludeProduct: arr
                             })
                           })
                         }}

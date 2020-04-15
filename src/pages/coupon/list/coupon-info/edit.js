@@ -185,7 +185,15 @@ function CouponInfo ({ form: { getFieldDecorator, getFieldsValue, setFieldsValue
                     val.name = val.productName
                     return val
                   })
-                  setChosenProduct(unionArray(chosenProduct, data))
+                  let num = chosenProduct.length
+                  const arr = unionArray(chosenProduct, data)
+                  num = arr.length - num
+                  if (num > 0) {
+                    APP.success(`成功导入${num}条数据`)
+                  } else {
+                    APP.error('暂未有数据导入')
+                  }
+                  setChosenProduct(arr)
                 })
               }}
             >
