@@ -92,7 +92,10 @@ export const defaultConfig: FieldsConfig = {
     },
     workDate: {
       label: '创建时间',
-      type: 'rangepicker'
+      type: 'rangepicker',
+      controlProps: {
+        showTime: true
+      }
     }
   }
 }
