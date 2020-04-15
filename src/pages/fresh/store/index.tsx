@@ -21,6 +21,10 @@ class Store extends React.Component {
     width: 200,
     dataIndex: 'createTimeText'
   }, {
+    title: '申请时间',
+    width: 200,
+    dataIndex: 'applyTimeText'
+  }, {
     title: '状态',
     width: 120,
     dataIndex: 'statusText'

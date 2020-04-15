@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-27 11:00:32
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-13 11:23:22
- * @FilePath: /xt-crm/src/pages/fresh/store/adapter.ts
+ * @LastEditTime: 2020-04-15 13:46:30
+ * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/store/adapter.ts
  */
 import { omit } from 'lodash'
 import { filterUploadFile } from '@/util/format'
@@ -13,6 +13,7 @@ export function listResponse (res: any) {
     record.statusText = record.statusDesc
     record.typeText = record.typeDesc
     record.createTimeText = APP.fn.formatDate(record.createTime)
+    record.applyTimeText = APP.fn.formatDate(record.applyTime)
     return record
   })
   return omit(res, 'result')
