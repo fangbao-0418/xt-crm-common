@@ -5146,10 +5146,10 @@ eslint-plugin-react@^7.19.0:
     string.prototype.matchall "^4.0.2"
     xregexp "^4.3.0"
 
-eslint-plugin-xt-react@^1.0.6:
-  version "1.0.6"
-  resolved "http://192.168.20.8:802/eslint-plugin-xt-react/-/eslint-plugin-xt-react-1.0.6.tgz#f9f78c3a36c9d72406276fd8100e37e7f476b288"
-  integrity sha512-f9oMNuqII6O90QbBkt6KOe4C7p1tpFvjZlS9hqfjNJKoJTm4pNOtTKVKmc0uGBknMo3PP2opSAFQQG2xB0uZ0Q==
+eslint-plugin-xt-react@^1.0.7:
+  version "1.0.7"
+  resolved "http://192.168.20.8:802/eslint-plugin-xt-react/-/eslint-plugin-xt-react-1.0.7.tgz#4c11e0091df8f0f0ce04c474c65d6521cb56e198"
+  integrity sha512-RZEVJKAcBHzs1HM8Qaz5cMYxipGL98OI2dkGp2cK8u9kKfAjhccdkzIMqGJ4X26FzQZDJ7kZbp74N/uGnH3G2A==
   dependencies:
     "@typescript-eslint/eslint-plugin-tslint" "^2.27.0"
     "@typescript-eslint/parser" "^2.27.0"
