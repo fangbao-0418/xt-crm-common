@@ -1,7 +1,20 @@
+/*
+ * @Date: 2020-03-27 13:45:49
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-13 10:45:29
+ * @FilePath: /xt-crm/src/util/app/config.ts
+ */
 import { baseHost, env as apiEnv } from '../baseHost'
 
 /** 后端环境接口映射 */
 export const serverMapper: any = {
+  palamidi: {
+    dev: 'http://daily-palamidi-console.hzxituan.com',
+    test1: 'http://test-palamidi-console.hzxituan.com',
+    test2: 'http://test-palamidi-console.hzxituan.com',
+    pre: 'http://staging-palamidi-console.hzxituan.com',
+    prod: 'http://palamidi-console.hzxituan.com'
+  },
   ulive: {
     dev: 'https://dailylive-center.hzxituan.com',
     test1: 'https://test01live-center.hzxituan.com',
@@ -24,8 +37,8 @@ export const serverMapper: any = {
 }
 
 export function handleApiUrl (url: string) {
-  const serverPattern = /^::(message|ulive)/
-  if (/^https?/.test(url)) {
+  const serverPattern = /^::(message|ulive|palamidi)/
+  if ((/^https?/).test(url)) {
     return url
   } else if (serverPattern.test(url)) {
     const result = url.match(serverPattern)

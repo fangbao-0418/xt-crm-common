@@ -1,20 +1,20 @@
 import {
   message
-} from 'antd';
-import axios from 'axios';
+} from 'antd'
+import axios from 'axios'
 import {
   omitBy,
   isNil,
   isPlainObject,
   get as lodashGet
-} from 'lodash';
-import { getHeaders, prefix } from '../utils';
-var qs = require('qs');
+} from 'lodash'
+import { getHeaders, prefix } from '../utils'
+const qs = require('qs')
 
 // const prod = true;
 
 export const request = (url, config = {}) => {
-  !config.hideLoading && APP.fn.handleLoading('start');
+  !config.hideLoading && APP.fn.handleLoading('start')
   const _config = {
     url: prefix(url),
     method: 'get',
@@ -22,7 +22,7 @@ export const request = (url, config = {}) => {
     headers: getHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
     }),
-    ...config,
+    ...config
   }
   _config.headers = getHeaders(_config.headers);
   return axios(_config)

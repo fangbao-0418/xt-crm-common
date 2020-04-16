@@ -1,10 +1,11 @@
 /*
  * @Date: 2020-04-08 20:54:25
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-09 11:33:07
+ * @LastEditTime: 2020-04-09 16:28:08
  * @FilePath: /xt-crm/src/App.js
  */
 import React from 'react'
+import PropTypes from 'prop-types'
 import { withRouter } from 'react-router'
 import { Route, Redirect, Switch } from 'react-router-dom'
 import { view as Layout } from './components/layout'
@@ -33,7 +34,9 @@ const Setting = Loadable(() => import('./pages/setting'))
 const ULive = Loadable(() => import('./pages/ulive'))
 const MerchantAccounts = Loadable(() => import('./pages/merchant-accounts'))
 const Shop = Loadable(() => import('./pages/shop'))
-const Fresh = Loadable(() => import('./pages/fresh'));
+const Fresh = Loadable(() => import('./pages/fresh'))
+const System = Loadable(() => import('./pages/system'))
+
 class Main extends React.Component {
   constructor (props) {
     super(props)
@@ -53,9 +56,9 @@ class Main extends React.Component {
   }
   fetchOrderTypes () {
     get('/order/getOrderTypeList').then(res => {
-      const orderTypeList = res.map(item =>({ label: item.name, value: item.value}));
-      APP.constant.orderTypeList = orderTypeList;
-      APP.constant.orderTypeConfig = this.convert2Config(orderTypeList);
+      const orderTypeList = res.map(item =>({ label: item.name, value: item.value }))
+      APP.constant.orderTypeList = orderTypeList
+      APP.constant.orderTypeConfig = this.convert2Config(orderTypeList)
     })
   }
   convert2Config (list) {
@@ -67,33 +70,39 @@ class Main extends React.Component {
   render () {
     return (
       <Switch>
-        <Route exact={true} path="/login" component={Login} />
+        <Route exact={true} path='/login' component={Login} />
         <Layout>
-          <Route path="/" exact={true} render={() => <Redirect to="/home" />} />
-          <Route path="/home" component={Home} />
-          <Route path="/settings" component={Settings} />
-          <Route path="/goods" component={Goods} />
-          <Route path="/template" component={Template} />
-          <Route path="/order" component={Order} />
-          <Route path="/activity" component={Activity} />
-          <Route path="/coupon" component={Coupon} />
-          <Route path="/user" component={User} />
-          <Route path="/supplier" component={Supplier} />
-          <Route path="/banner" component={Banner} />
-          <Route path="/finance" component={Finance} />
-          <Route path="/auth" component={Auth} />
-          <Route path="/interface" component={Interface} />
-          <Route path="/crudpage" component={CrudPage} />
-          <Route path="/message" component={Message} />
-          <Route path="/setting" component={Setting}/>
-          <Route path="/ulive" component={ULive}/>
-          <Route path="/merchant-accounts" component={MerchantAccounts}/>
-          <Route path="/shop" component={Shop}/>
+          <Route path='/' exact={true} render={() => <Redirect to='/home' />} />
+          <Route path='/home' component={Home} />
+          <Route path='/settings' component={Settings} />
+          <Route path='/goods' component={Goods} />
+          <Route path='/template' component={Template} />
+          <Route path='/order' component={Order} />
+          <Route path='/activity' component={Activity} />
+          <Route path='/coupon' component={Coupon} />
+          <Route path='/user' component={User} />
+          <Route path='/supplier' component={Supplier} />
+          <Route path='/banner' component={Banner} />
+          <Route path='/finance' component={Finance} />
+          <Route path='/auth' component={Auth} />
+          <Route path='/interface' component={Interface} />
+          <Route path='/crudpage' component={CrudPage} />
+          <Route path='/message' component={Message} />
+          <Route path='/setting' component={Setting} />
+          <Route path='/ulive' component={ULive} />
+          <Route path='/merchant-accounts' component={MerchantAccounts} />
+          <Route path='/shop' component={Shop} />
           <Route path='/fresh' component={Fresh} />
+          <Route path='/system' component={System} />
         </Layout>
       </Switch>
     )
   }
+}
+
+Main.propTypes = {
+  dispatch: PropTypes.func,
+  history: PropTypes.func
 }
 
 export default withRouter(connect()(Main))

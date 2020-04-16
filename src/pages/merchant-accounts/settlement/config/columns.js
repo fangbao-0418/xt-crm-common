@@ -21,7 +21,7 @@ const getColumns = ({ onSettle, onReject, onPay }) => {
 
     },
     {
-      title: '供应商',
+      title: '商家名称',
       dataIndex: 'storeName',
       key: 'storeName',
       width: 150

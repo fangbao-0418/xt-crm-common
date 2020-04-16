@@ -29,6 +29,9 @@ function getColumns(scope) {
                 return v ? moment(v).format(timeFormat) : ''
             }
         }, {
+            title: '提现类型',
+            dataIndex: 'withdrawalType'
+        }, {
             title: '提现金额',
             dataIndex: 'money',
             render(v) {
