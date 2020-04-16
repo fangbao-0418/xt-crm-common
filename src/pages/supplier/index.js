@@ -1,7 +1,14 @@
-import React from 'react';
+/*
+ * @Date: 2019-11-12 11:03:51
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-09 16:30:18
+ * @FilePath: /xt-crm/src/pages/supplier/index.js
+ */
+import React from 'react'
+import PropTypes from 'prop-types'
 // import Loadable from 'react-loadable';
-import { Route, Switch } from 'react-router-dom';
-import List from './list';
+import { Route, Switch } from 'react-router-dom'
+import List from './list'
 // import { view as Loader } from '../../components/loader';
 
 // const List = Loadable({
@@ -9,13 +16,19 @@ import List from './list';
 //   loading: Loader,
 // });
 
-export default class RouteApp extends React.Component {
-  render() {
-    const { match } = this.props;
+class RouteApp extends React.Component {
+  render () {
+    const { match } = this.props
     return (
       <Switch>
         <Route path={`${match.url}`} component={List} />
       </Switch>
-    );
+    )
   }
 }
+
+RouteApp.propTypes = {
+  match: PropTypes.object
+}
+
+export default RouteApp

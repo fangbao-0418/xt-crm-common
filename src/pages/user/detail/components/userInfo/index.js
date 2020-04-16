@@ -8,7 +8,7 @@ import ModalInvit from './modalInvit';
 import ModalPhone from './modalphone';
 import { levelName } from '../../../utils';
 import { memberModify, getReasonList, setMemberUnlocking, relieveWechat, addBlack, delBlack } from '../../api'
-import { updateDepositAmount, updateCreditAmount, enablePermission } from './api'
+import { updateDepositAmount, updateCreditAmount, enablePermission, enableShopPermission } from './api'
 const FormItem = Form.Item
 const { Option } = Select;
 const { TextArea } = Input;
@@ -177,8 +177,10 @@ let reasonList = [];
 class UserInfo extends Component {
   state = {
     enableGroupBuyPermission: false, //是否开启团购会
+    enableStorePurchase: false, //是否开启团购会
     visible: false,
     switchLoading: false,
+    switchShopLoading: false,
     reasonRemark: "", //升降级说明
     upOrDwon: 0, //1 升级，-1降级。0 不处理
   }
@@ -246,7 +248,7 @@ class UserInfo extends Component {
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        (enableBlack ? delBlack: addBlack)({ memberId: this.props.data.id }).then(res => {
+        (enableBlack ? delBlack : addBlack)({ memberId: this.props.data.id }).then(res => {
           if (res) {
             APP.success('操作成功')
             this.handleSearch();
@@ -279,7 +281,8 @@ class UserInfo extends Component {
       memberId: params.memberId || obj.memberId,
       cb: (res) => {
         this.setState({
-          enableGroupBuyPermission: res.enableGroupBuyPermission
+          enableGroupBuyPermission: res.enableGroupBuyPermission,
+          enableStorePurchase: res.enableStorePurchase
         })
       }
     })
@@ -355,7 +358,7 @@ class UserInfo extends Component {
     unlisten();
   }
   render() {
-    const { enableGroupBuyPermission } = this.state
+    const { enableGroupBuyPermission, enableStorePurchase } = this.state
     const { data, loading } = this.props;
     console.log(this.props, 'render')
     const { form: { getFieldDecorator } } = this.props;
@@ -451,6 +454,38 @@ class UserInfo extends Component {
                     this.setState({
                       switchLoading: false,
                       enableGroupBuyPermission: !checked
+                    })
+                  }
+                }}
+              />
+            </Descriptions.Item>
+            <Descriptions.Item label='开启门店采购'>
+              <Switch
+                checkedChildren='开'
+                unCheckedChildren='关'
+                loading={this.state.switchShopLoading}
+                checked={enableStorePurchase}
+                onChange={async (checked) => {
+                  console.log('checked => ', checked)
+                  try {
+                    this.setState({
+                      switchShopLoading: true
+                    })
+                    const res = await enableShopPermission({
+                      enable: checked,
+                      memberId: parseQuery().memberId
+                    })
+                    this.setState({
+                      switchShopLoading: false
+                    })
+                    if (res) {
+                      APP.success(`${checked ? '开启' : '关闭'}团购会成功`)
+                      this.setState({ enableStorePurchase: checked })
+                    }
+                  } catch (error) {
+                    this.setState({
+                      switchShopLoading: false,
+                      enableStorePurchase: !checked
                     })
                   }
                 }}
