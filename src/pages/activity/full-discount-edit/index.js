@@ -593,7 +593,7 @@ class FullDiscountEditPage extends PureComponent {
                   onChange={this.handleProductRefChange}
                 >
                   <Radio value={1}>指定商品</Radio>
-                  <Radio value={0}>指定活动</Radio>
+                  {/* <Radio value={0}>指定活动</Radio> */}
                 </Radio.Group>
               )}
             </Form.Item>

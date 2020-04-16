@@ -329,7 +329,7 @@ class Main extends React.Component<Props, State> {
                 <label className={styles.label}>活动商品：</label>
               </Col>
               <Col span={20}>
-                <div>
+                {/* <div>
                   <FormItem
                     style={{marginBottom: 0}}
                     name='mainRefType'
@@ -379,7 +379,7 @@ class Main extends React.Component<Props, State> {
                       }}
                     />
                   </If>
-                </div>
+                </div> */}
                 <FormItem
                   name='mainRefType'
                   type='radio'
