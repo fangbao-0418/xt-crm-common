@@ -1,34 +1,19 @@
+/*
+ * @Date: 2020-04-08 14:12:51
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-09 11:24:21
+ * @FilePath: /eslint-test/Users/fangbao/Documents/xituan/xt-crm/.eslintrc.js
+ */
 module.exports = {
-  extends: process.env.PUB_ENV ? ['react-app'] : ['react-app', 'prettier'],
-  plugins: process.env.PUB_ENV ? [] : ['prettier'],
+  extends: ['plugin:xt-react/recommended'],
+  plugins: [],
   globals: {
     APP: true,
     Moon: true
   },
-  rules: process.env.PUB_ENV
-    ? {}
-    : {
-        'prettier/prettier': 'off'
-        // 暂时先放开，等修复pritter报错在打开
-        // [
-        //   'warn',
-        //   {
-        //     singleQuote: true,
-        //     trailingComma: 'none',
-        //     printWidth: 120,
-        //     proseWrap: 'never',
-        //     overrides: [
-        //       {
-        //         files: '.prettierrc',
-        //         options: {
-        //           parser: 'json'
-        //         }
-        //       }
-        //     ]
-        //   }
-        // ]
-      },
+  rules: {},
   parserOptions: {
+    project: 'tsconfig.json',
     ecmaFeatures: {
       legacyDecorators: true
     }
