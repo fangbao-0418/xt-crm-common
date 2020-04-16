@@ -1,39 +1,38 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio, Form as AntForm } from 'antd'
 import { formItemLayout } from '@/config'
-import { getCouponDetail } from '@/pages/coupon/api'
-import { platformOptions, useIdentityOptions } from '../../config'
-import { getCategoryList, saveCouponInfo } from '@/pages/coupon/api'
+import { getCouponDetail, getCategoryList, saveCouponInfo, importShop } from '@/pages/coupon/api'
+import { platformOptions, useIdentityOptions, defaultConfig } from '../../config'
 import { actColumns } from '@/components/activity-selector/config'
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components'
 import { unionArray, parseQuery } from '@/util/utils'
 import * as adapter from '../../adapter'
-import { defaultConfig} from '../../config'
 import moment from 'moment'
-import { If, Form, FormItem } from '@/packages/common/components'
+import { If, Form, FormItem, Alert } from '@/packages/common/components'
 import './index.scss'
 
 const formRef = {
   current: null,
-  get avlRange() {
+  get avlRange () {
     return this.getFieldValue('avlRange')
   },
-  setFieldsValue(values) {
+  setFieldsValue (values) {
     this.current && this.current.setValues(values)
   },
-  getFieldValue(name) {
+  getFieldValue (name) {
     const form = this.current
     if (form) {
       return form.props.form.getFieldValue(name)
     }
   },
-  getValues() {
+  getValues () {
     return formRef.current && formRef.current.getValues()
   },
-  validateFields(cb) {
+  validateFields (cb) {
     this.current && this.current.props.form.validateFields((err) => cb(err, this.getValues()))
   },
-  validateConditions(rule, value = 0, callback) {
+  validateConditions (rule, value = 0, callback) {
     const useSill = this.getFieldValue('useSill')
     const discountConditions = this.getFieldValue('discountConditions')
     console.log(useSill, discountConditions, 'validateConditions')
@@ -48,7 +47,7 @@ const formRef = {
     callback()
   },
   // 校验优惠券面值
-  validateDiscountPrice(rule, value, callback) {
+  validateDiscountPrice (rule, value, callback) {
     if (this.getFieldValue('useSill') === 1) {
       if (value >= this.getFieldValue('discountConditions')) {
         callback('优惠面值必须小于使用门槛设置金额')
@@ -60,21 +59,29 @@ const formRef = {
     }
   },
   // 使用时间不可选
-  useTimeTypeDisabledDate(current) {
+  useTimeTypeDisabledDate (current) {
     const receiveTime = this.getFieldValue('receiveTime')
     return (
-      current &&
-      current <
-        ((receiveTime && receiveTime[0]) ||
-          moment()
-            .endOf('day')
-            .subtract(1, 'days'))
+      current && current < ((receiveTime && receiveTime[0]) || moment().endOf('day').subtract(1, 'days'))
     )
   }
 }
 
-class CouponInfo extends React.Component {  
-  constructor(props) {
+export function DownTemplate () {
+  return (
+    <span
+      className='href mr8'
+      onClick={() => {
+        APP.fn.download(require('@/assets/files/优惠券导入商品模版.xlsx'), '导入模版')
+      }}
+    >
+      模板下载
+    </span>
+  )
+}
+
+class CouponInfo extends React.Component {
+  constructor (props) {
     super(props)
     this.state = {
       avlRange: undefined,
@@ -93,14 +100,17 @@ class CouponInfo extends React.Component {
       receivePattern: 0,
       useTimeErrorMsg: ''
     }
-  } 
-
-  componentDidMount() {
+  }
+  /** 排除商品实例对象 */
+  excludeProduct = undefined
+  /** 选择商品实例对象 */
+  productSelector = undefined
+  componentDidMount () {
     this.getTreeData()
     this.fetchData()
   }
 
-  async getTreeData() {
+  async getTreeData () {
     const treeData = await getCategoryList()
     this.setState({ treeData })
   }
@@ -267,7 +277,7 @@ class CouponInfo extends React.Component {
   // 领取时间校验
   receiveTimeValidator = (rule, value = [], callback) => {
     const { useTimeRange } = this.state
-    const form =  formRef.current
+    const form = formRef.current
     const { useTimeType } = form ? form.getValues() : {}
     console.log(value, useTimeRange, value[0] >= value[1], 'receiveTimeValidator')
     if (value[0] && value[1]) {
@@ -297,7 +307,27 @@ class CouponInfo extends React.Component {
     }
     callback()
   }
-  render() {
+  showExportMessage = (res) => {
+    this.props.alert({
+      footer: false,
+      content: (
+        <div style={{ lineHeight: '30px', marginBottom: 20 }}>
+          成功导入 <span className='success'>{res.successNo}</span> 条&nbsp;&nbsp;&nbsp;&nbsp;
+          {res.excelAddress && (
+            <span
+              className='href'
+              onClick={() => {
+                APP.fn.download(res.excelAddress, '导入失败商品清单')
+              }}
+            >
+              查看失败商品清单
+            </span>
+          )}
+        </div>
+      )
+    })
+  }
+  render () {
     const {
       avlRange,
       productSelectorVisible,
@@ -320,6 +350,7 @@ class CouponInfo extends React.Component {
       >
         {/* 已选择商品 */}
         <ProductSelector
+          getInstance={(ref) => this.productSelector = ref}
           visible={productSelectorVisible}
           onCancel={() => this.setState({
             productSelectorVisible: false
@@ -328,6 +359,7 @@ class CouponInfo extends React.Component {
         />
         {/* 排除商品 */}
         <ProductSelector
+          getInstance={(ref) => this.excludeProduct = ref}
           visible={excludeProductSelectorVisible}
           onCancel={() => this.setState({
             excludeProductSelectorVisible: false
@@ -347,7 +379,7 @@ class CouponInfo extends React.Component {
             ref => formRef.current = ref
           }
           onChange={(field) => {
-            const form =  formRef.current
+            const form = formRef.current
             if (form && field === 'receiveTime') {
               console.log('on change')
               form.props.form.validateFields(['receiveTime'], {force: true})
@@ -362,7 +394,7 @@ class CouponInfo extends React.Component {
           }}
           addonAfter={(
             <FormItem {...formItemLayout}>
-              <Button type="primary" onClick={this.handleSave}>
+              <Button type='primary' onClick={this.handleSave}>
                 保存
               </Button>
               <Button className="ml20" onClick={this.handleCancel}>
@@ -405,13 +437,46 @@ class CouponInfo extends React.Component {
                         <Radio className='block-radio' value={2}>
                           指定商品{' '}
                           {avlRange === 2 && (
-                            <Button type='link' onClick={() => {
-                              this.setState({
-                                productSelectorVisible: true
-                              })
-                            }}>
-                              选择商品
-                            </Button>
+                            <>
+                              <span
+                                className='href mr8'
+                                onClick={() => {
+                                  this.setState({
+                                    productSelectorVisible: true
+                                  })
+                                  const keys = (chosenProduct || []).map((item) => item.id)
+                                  this.productSelector.setState({
+                                    selectedRowKeys: keys
+                                  })
+                                }}
+                              >
+                                选择商品
+                              </span>
+                              <span
+                                className='href mr8'
+                                onClick={() => {
+                                  importShop().then((res) => {
+                                    const data = (res.data || []).map((val) => {
+                                      val.name = val.productName
+                                      return val
+                                    })
+                                    let num = chosenProduct.length
+                                    const arr = unionArray(chosenProduct, data)
+                                    num = arr.length - num
+                                    this.showExportMessage({
+                                      successNo: num,
+                                      excelAddress: res.excelAddress
+                                    })
+                                    this.setState({
+                                      chosenProduct: arr
+                                    })
+                                  })
+                                }}
+                              >
+                                导入商品
+                              </span>
+                              <DownTemplate />
+                            </>
                           )}
                         </Radio>
                         <Radio className='block-radio' value={4}>
@@ -431,13 +496,44 @@ class CouponInfo extends React.Component {
                   }
                   <If condition={avlRange !== 2}>
                     <div>
-                      <Button type='link' onClick={() => {
-                        this.setState({
-                          excludeProductSelectorVisible: true
-                        })
-                      }}>
+                      <span
+                        className='href mr8'
+                        onClick={() => {
+                          this.setState({
+                            excludeProductSelectorVisible: true
+                          })
+                          const keys = (this.state.excludeProduct || []).map((item) => item.id)
+                          this.excludeProduct.setState({
+                            selectedRowKeys: keys
+                          })
+                        }}
+                      >
                         排除商品
-                      </Button>
+                      </span>
+                      <span
+                        className='href mr8'
+                        onClick={() => {
+                          importShop().then((res) => {
+                            const data = (res.data || []).map((val) => {
+                              val.name = val.productName
+                              return val
+                            })
+                            let num = excludeProduct.length
+                            const arr = unionArray(excludeProduct, data)
+                            num = arr.length - num
+                            this.showExportMessage({
+                              successNo: num,
+                              excelAddress: res.excelAddress
+                            })
+                            this.setState({
+                              excludeProduct: arr
+                            })
+                          })
+                        }}
+                      >
+                        导入排除商品
+                      </span>
+                      <DownTemplate />
                     </div>
                   </If>
                 </>
@@ -465,7 +561,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange !== 2 && excludeProduct.length > 0}>
             <FormItem label='已排除商品'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={this.getColumns('exclude')}
                 dataSource={excludeProduct}
@@ -475,7 +573,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange === 2 && chosenProduct.length > 0}>
             <FormItem label='已选择商品'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={this.getColumns('product')}
                 dataSource={chosenProduct}
@@ -485,7 +585,9 @@ class CouponInfo extends React.Component {
           <If condition={avlRange === 4 && activityList.length > 0}>
             <FormItem label='已选择活动'>
               <Table
-                pagination={false}
+                pagination={{
+                  pageSize: 5
+                }}
                 rowKey='id'
                 columns={[
                   ...actColumns(),
@@ -519,8 +621,8 @@ class CouponInfo extends React.Component {
                   {form.getFieldDecorator('useSill', {
                     initialValue: 1,
                     rules: [
-                      {required: true, message: '使用门槛必选'},
-                      { validator: formRef.validateConditions.bind(formRef) },
+                      { required: true, message: '使用门槛必选' },
+                      { validator: formRef.validateConditions.bind(formRef) }
                     ]
                   })(
                     <Radio.Group>
@@ -836,7 +938,7 @@ class CouponInfo extends React.Component {
             </div>
           </FormItem>
           <If condition={!receivePattern}>
-            <FormItem name='showFlag' verifiable/>
+            <FormItem name='showFlag' verifiable />
           </If>
           <FormItem name='description' />
           <FormItem name='remark' />
@@ -845,4 +947,9 @@ class CouponInfo extends React.Component {
     )
   }
 }
-export default CouponInfo
+
+CouponInfo.propTypes = {
+  alert: PropTypes.func
+}
+
+export default Alert(CouponInfo)

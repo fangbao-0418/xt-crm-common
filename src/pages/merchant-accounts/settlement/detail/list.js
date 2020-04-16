@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, Row, Table, Button } from 'antd';
+import { Card, Row, Table, Button, message } from 'antd';
 import styles from './style.module.styl'
+import * as api from '../../api'
 import { enumPayType } from '../../constant';
 import { download } from '@/util/utils';
 import SettleModal from '../components/settleModal'
@@ -38,6 +39,30 @@ class SettleDetialList extends React.Component {
       modalVisible: false
     })
   };
+
+  batchExport = (type) => {
+    const { dataSource } = this.props
+    let apiUrl = ''
+    let accIdS = null 
+    switch (type) {
+    case 'checking':
+      apiUrl =  '/finance/accountRecord/exportAccountData'
+      accIdS = dataSource.filter(item => item.billTypeInfo === '对账单').map(item => item.id)
+      break
+    case 'adjustment':
+      apiUrl =  '/finance/trimRecord/exportTrim'
+      accIdS = dataSource.filter(item => item.billTypeInfo === '调整单').map(item => item.id)
+      break
+    default: 
+    }
+    if(!accIdS ||!accIdS.length){
+      return message.info(`当前结算单没有${type === 'checking' ? '对账单' : '调整单'}`)
+    }
+    api.batchExport(apiUrl, {accIdS, ids: accIdS}).then(() => {
+      return message.success('导出成功，请前往下载列表下载文件')
+    })
+  }
+
   render() {
     const { settleDetail = {}, dataSource = [], settStatus, id } = this.props
     const { modalVisible } = this.state
@@ -50,7 +75,22 @@ class SettleDetialList extends React.Component {
       }, {
         title: '单据ID',
         width: 150,
-        dataIndex: 'billSerialNo'
+        dataIndex: 'billSerialNo',
+        render: (text, record) => {
+          const {billTypeInfo, id} = record
+          return (
+            <>
+              {
+                billTypeInfo === '对账单' ? 
+                  <a 
+                  href={window.location.pathname + `#/merchant-accounts/checking/${id}`}
+                  target="_blank"
+                >{text}</a> : text
+              }
+            </>
+            
+          )
+        }
       }, {
         title: '单据名称',
         width: 250,
@@ -111,8 +151,30 @@ class SettleDetialList extends React.Component {
             <div className={styles['cont-r']}>
               <span>发票凭证：</span>
               {settleDetail.invoiceUrl && (
-                <Button className={styles['paddingleft0']} type='link' onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}>下载</Button>
+                <Button 
+                  className={styles['paddingleft0']} 
+                  type='link' 
+                  onClick={() => download(this.getUrl(settleDetail.invoiceUrl), '发票凭证.xls')}
+                >
+                  下载
+                </Button>
               )}
+            </div>
+            <div className={`${styles['cont-r']} ${styles['align-r']}`}>
+              <Button
+                className='ml10'
+                type='primary'
+                onClick={() => this.batchExport('checking')}
+              >
+                导出对账单详情
+              </Button>
+              <Button
+                className='ml10'
+                type='primary'
+                onClick={() => this.batchExport('adjustment')}
+              >
+                导出调整单详情
+              </Button>
             </div>
           </div>
         </div>

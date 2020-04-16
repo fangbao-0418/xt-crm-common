@@ -19,7 +19,12 @@ const getColumns = ({ onConfirm }) => {
       title: '结算单ID',
       key: 'settlementSerialNo',
       dataIndex: 'settlementSerialNo',
-
+      render: (text, record) => {
+        const {settId} = record
+        return <a 
+          href={window.location.pathname + `#/merchant-accounts/settlement/${settId}`} target='_blank'
+        >{text}</a>
+      }
     },
     {
       title: '金额',
