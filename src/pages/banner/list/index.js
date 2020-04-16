@@ -167,7 +167,6 @@ class OrderList extends React.Component {
         },
       },
     ].filter(column => !column.hide);
-    console.log(this.state, 'state')
     return (
       <>
         <Card title="">

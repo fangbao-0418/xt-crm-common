@@ -18,7 +18,7 @@ export default class RouteApp extends React.Component {
       <Switch>
         <Route path={`${match.url}/detail/:id`} component={Detail} />
         <Route exact path={`${match.url}/refundOrder`} component={Refund} />
-        <Route exact path={`${match.url}/refundOrder/:id`} component={RefundDetail} />
+        <Route exact path={`${match.url}/refundOrder/:id/:sourceType?`} component={RefundDetail} />
         <Route path={`${match.url}`} component={Main} />
       </Switch>
     );

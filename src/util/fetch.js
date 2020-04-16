@@ -1,20 +1,20 @@
-import { message } from 'antd';
-import axios from 'axios';
-import { omitBy, isNil, isPlainObject, get as lodashGet } from 'lodash';
-import { formatData, getHeaders, prefix } from './utils';
-var qs = require('qs');
+import { message } from 'antd'
+import axios from 'axios'
+import { omitBy, isNil, isPlainObject, get as lodashGet } from 'lodash'
+import { formatData, getHeaders, prefix } from './utils'
+const qs = require('qs')
 // const prod = true;
 
 export const request = (url, config = {}) => {
-  !config.hideLoading && APP.fn.handleLoading('start');
+  !config.hideLoading && APP.fn.handleLoading('start')
   const _config = {
     url: prefix(url),
     method: 'get',
     withCredentials: true,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     ...config
-  };
-  _config.headers = getHeaders(_config.headers);
+  }
+  _config.headers = getHeaders(_config.headers)
   return axios(_config)
     .then(res => {
       if (_config.banLog !== true) {
@@ -48,6 +48,7 @@ export const request = (url, config = {}) => {
         return;
       } else {
         message.error(error.message || '内部错误，请等待响应...');
+        // Promise.reject(error)
       }
       try {
         APP.moon.oper(error, error && error.response && error.response.status)

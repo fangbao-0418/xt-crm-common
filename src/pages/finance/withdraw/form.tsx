@@ -60,19 +60,20 @@ class WithdrawForm extends React.Component<Props, any> {
   // 提现操作日志
   getLog() {
     getRemittanceLog(this.id).then(res => {
-     this.setState({ dataSource: res.list })
+      this.setState({ dataSource: res.list })
     })
   }
   // 提交打款
   handleSubmit = () => {
     if (this.id === '') return;
     Modal.confirm({
-      title: '是否提交打款？',
-      content: '确认后将会打款给对应用户',
+      title: '是否提交打申请？',
+      content: '提交后生成提现请求，在提现请求管理中进行打款操作',
       onOk: () => {
         submitRemittance(this.id).then(res => {
           if (res) {
-            APP.history.push('/finance/withdraw');
+            APP.success('提交申请成功')
+            APP.history.push('/finance/withdraw')
           }
         })
       }
@@ -94,53 +95,61 @@ class WithdrawForm extends React.Component<Props, any> {
                 (canSubmit || canCancel) ?
                 (
                   <FormItem>
-                    {canSubmit && <Button type='primary' onClick={this.handleSubmit}>提交打款</Button>}
-                    {canCancel && <Button type='primary' className='ml10' onClick={() => {
-                        this.props.alert({
-                          title: '是否取消提现？',
-                          content: (
-                            <Form
-                              getInstance={ref => this.cancelform = ref}
-                              labelCol={{ span: 0}}
-                              wrapperCol={{ span: 24 }}
-                            >
-                              <FormItem
-                                placeholder='请输入取消原因（用户可见）*必填'
-                                type='textarea'
-                                name='remark'
-                                verifiable
-                                fieldDecoratorOptions={{
-                                  rules: [{
-                                    required: true,
-                                    message: '请输入取消原因（用户可见）*必填'
-                                  }]
-                                }}
-                                controlProps={{
-                                  rows: 5,
-                                  maxLength: 200
-                                }}
-                              />
-                            </Form>
-                          ),
-                          onOk: (hide) => {
-                            this.cancelform.props.form.validateFields((err, vals) => {
-                              if (!err) {
-                                cancelRemittance({
-                                  id: this.id,
-                                  remark: vals.remark
-                                }).then(res => {
-                                  if (res) {
-                                    hide();
-                                    APP.history.push('/finance/withdraw');
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }}>取消提现</Button>}
+                    {canSubmit && <Button type='primary' onClick={this.handleSubmit}>提交打款请求</Button>}
+                    {canCancel && (
+                      <Button
+                        type='primary'
+                        className='ml10'
+                        onClick={() => {
+                          this.props.alert({
+                            title: '是否取消提现？',
+                            content: (
+                              <Form
+                                getInstance={ref => this.cancelform = ref}
+                                labelCol={{ span: 0}}
+                                wrapperCol={{ span: 24 }}
+                              >
+                                <FormItem
+                                  placeholder='请输入取消原因（用户可见）*必填'
+                                  type='textarea'
+                                  name='remark'
+                                  verifiable
+                                  fieldDecoratorOptions={{
+                                    rules: [{
+                                      required: true,
+                                      message: '请输入取消原因（用户可见）*必填'
+                                    }]
+                                  }}
+                                  controlProps={{
+                                    rows: 5,
+                                    maxLength: 200
+                                  }}
+                                />
+                              </Form>
+                            ),
+                            onOk: (hide) => {
+                              this.cancelform.props.form.validateFields((err, vals) => {
+                                if (!err) {
+                                  cancelRemittance({
+                                    id: this.id,
+                                    remark: vals.remark
+                                  }).then(res => {
+                                    if (res) {
+                                      hide();
+                                      APP.history.push('/finance/withdraw');
+                                    }
+                                  })
+                                }
+                              })
+                            }
+                          })
+                        }}
+                      >
+                        取消提现
+                      </Button>
+                    )}
                   </FormItem>
-                ): null
+                ) : null
               )}
             >
               <FormItem name='transferNo'/>

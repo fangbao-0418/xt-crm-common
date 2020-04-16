@@ -12,11 +12,13 @@ const { confirm } = Modal;
 const columns = [{
   title: 'ID',
   dataIndex: 'id',
-  key: 'id'
+  key: 'id',
+  width: 100
 }, {
   title: '名称',
   dataIndex: 'name',
-  key: 'name'
+  key: 'name',
+  width: 200
 }];
 
 
@@ -74,11 +76,27 @@ function CouponDetail({ match, history }) {
             <Form.Item label="优惠券名称">{baseVO.name}</Form.Item>
             <Form.Item label="适用范围">{formatAvlRange(ruleVO.avlRange)}</Form.Item>
             {ruleVO.rangeVOList && ruleVO.rangeVOList.length > 0 && <Form.Item wrapperCol={formLeftButtonLayout}>
-              <Table style={{ width: '400px' }} pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.rangeVOList} />
+              <Table
+                style={{ width: '400px' }}
+                pagination={{
+                  pageSize: 5
+                }}
+                rowKey='id'
+                columns={columns}
+                dataSource={ruleVO.rangeVOList}
+              />
             </Form.Item>}
             {ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0 && (
-              <Form.Item label="已排除商品">
-                <Table style={{ width: '400px' }} pagination={false} rowKey="id" columns={columns} dataSource={ruleVO.excludeProductVOList} />
+              <Form.Item label='已排除商品'>
+                <Table
+                  style={{ width: '400px' }}
+                  pagination={{
+                    pageSize: 5
+                  }}
+                  rowKey='id'
+                  columns={columns}
+                  dataSource={ruleVO.excludeProductVOList}
+                />
               </Form.Item>
             )}
             <Form.Item label="优惠券价值">{formatFaceValue(ruleVO)}</Form.Item>
