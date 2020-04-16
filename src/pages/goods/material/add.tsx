@@ -302,7 +302,7 @@ class Add extends React.Component<Props, State> {
                         placeholder='上传视频'
                         fileType='video'
                         listType='picture-card'
-                        listNum={1}
+                        listNum={3}
                         size={15}
                       />
                     )
@@ -322,7 +322,7 @@ class Add extends React.Component<Props, State> {
                       <DraggableUpload
                         isReadOnly={isReadOnly}
                         className={styles['goods-draggable']}
-                        listNum={3}
+                        listNum={16}
                         size={0.3}
                         ossType='cos'
                         placeholder='上传商品图片'
