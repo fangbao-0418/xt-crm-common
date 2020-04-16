@@ -82,7 +82,14 @@ class SkuStockList extends React.Component<any> {
       render: (isStickUp: number, record: any) => {
         const isChecked = isStickUp === 1
         const { id } = record
-        return  <Switch onChange={() => this.stickUp(id)} checked={isChecked} checkedChildren='开' unCheckedChildren='关' />
+        return (
+          <Switch
+            onChange={() => this.stickUp(id)}
+            checked={isChecked}
+            checkedChildren='开'
+            unCheckedChildren='关'
+          />
+        )
       }
     },
     {
@@ -92,7 +99,10 @@ class SkuStockList extends React.Component<any> {
       render: (status: number, record: any) => {
         const { id } = record
         return (
-          <Button type={status === 1 ? 'danger' : 'primary'} onClick={() => this.editShowStatus(id)}>
+          <Button
+            type={status === 1 ? 'danger' : 'primary'}
+            onClick={() => this.editShowStatus(id)}
+          >
             {status === 1 ? '隐藏' : '显示'}
           </Button>
         )
@@ -131,8 +141,11 @@ class SkuStockList extends React.Component<any> {
     }
   ]
   state = {
+    // modal关闭状态
     modalVisible: false,
+    // 是否是只读
     isReadOnly: false,
+    // 素材详情
     materialDetail: null
   }
   /**
@@ -224,12 +237,6 @@ class SkuStockList extends React.Component<any> {
           }}
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
-          processPayload={(payload) => {
-            return {
-              ...payload
-              // status: this.state.status
-            }
-          }}
           rangeMap={{
             startCreate: {
               fields: ['startCreateTime', 'endCreateTime']

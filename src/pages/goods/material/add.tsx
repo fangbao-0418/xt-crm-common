@@ -13,21 +13,20 @@ import styles from './style.module.scss'
 
 // import { getCategory, saveRule, editRule } from './api'
 const { Search, TextArea } = Input
-interface InitProps {
+interface Props {
   onCancel: (value: boolean) => void
   dataSource?: any
   type?: string
   isReadOnly: boolean
 }
 
-interface InitState {
-  loading: boolean
+interface State {
   categorys: []
   userName: string
   userPhone: string
   isCheckPhone: boolean
 }
-class Add extends React.Component<InitProps, InitState> {
+class Add extends React.Component<Props, State> {
   public shopModalInstance: ShopModalInstance
   public form: FormInstance
   public propsColumns: ColumnProps<Shop.ShopItemProps>[] = [
@@ -59,10 +58,9 @@ class Add extends React.Component<InitProps, InitState> {
       }
     }
   ]
-  constructor (props: InitProps) {
+  constructor (props: Props) {
     super(props)
     this.state = {
-      loading: false, // 保存活动按钮
       categorys: [],
       userName: '',
       userPhone: '',
@@ -134,17 +132,18 @@ class Add extends React.Component<InitProps, InitState> {
           videoUrlList: videoUrl && videoUrl.map((video: any) => {return {url: video.rurl, size: video.size}}),
           pictureUrlList: productImage && productImage.map((img: any) => {return {url: img.rurl, size: img.size}})
         }
+        let p: Promise<any>
         // 如果有传入值dataSource和素材Id那就是编辑，否则就是新增
         if (dataSource && dataSource.id) {
-          api.editProductMaterial({...params, id: dataSource.id}).then(res => {
+          p = api.editProductMaterial({...params, id: dataSource.id}).then(res => {
             message.success('修改成功')
           })
         } else {
-          api.addProductMaterial(params).then(res => {
+          p = api.addProductMaterial(params).then(res => {
             message.success('添加成功')
           })
         }
-        setTimeout(() => {
+        p.then(res => {
           onCancel(false)
         })
       }

@@ -12,7 +12,9 @@ const onClick = src => () => {
 };
 
 function getUrl (url) {
-  url = /^http/.test(url) ? url : `https://assets.hzxituan.com/${url}`
+  url = /^http/.test(url) ? url 
+    : url.indexOf('tximg') !== -1 ? `https://sh-tximg.hzxituan.com/${url}` 
+    : `https://assets.hzxituan.com/${url}`
   return url
 }
 
