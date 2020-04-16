@@ -383,7 +383,7 @@ class DiscountModal extends PureComponent {
                     }}
                     value={2}
                   >
-                    折
+                    打
                 </Radio>
                 </Radio.Group>
               )}
