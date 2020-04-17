@@ -1,12 +1,13 @@
 import React from 'react'
 import Image from '@/components/Image'
+import Form, { FormInstance } from '@/packages/common/components/form'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
-import { Tag, Divider, Popover, Button, Popconfirm } from 'antd'
+import { Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
@@ -34,7 +35,19 @@ class Main extends React.Component<Props, State> {
       dataIndex: 'planId',
       align: 'center',
       width: 100,
-      fixed: 'left'
+      fixed: 'left',
+      render: (text, record) => {
+        return (
+          <div>
+            {text}
+            {record.liveTop === 1 && (
+            <>
+             <br />
+            排序 { record.topSort }
+            </>)}
+          </div>
+        )
+      }
     },
     {
       title: '直播场次标题',
@@ -175,7 +188,7 @@ class Main extends React.Component<Props, State> {
         const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
         const canUp = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
-        const canSetTop = record.status === 1 && [70,90].indexOf(record.liveStatus) > -1 && record.type === 0
+        const canSetTop = record.isCarousel === 0 && record.status === 1 && [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         return (
           <div>
             <span onClick={this.showView.bind(this, record.planId)} className='href'>详情</span>&nbsp;&nbsp;
@@ -185,10 +198,15 @@ class Main extends React.Component<Props, State> {
               <span onClick={canStopPlay ? this.closeDown.bind(this, record) : undefined} className={canStopPlay ? 'href' : ''}>停播</span>&nbsp;&nbsp;
             </If>
             <If condition={record.liveStatus === 60}>
-              <span onClick={this.stopPlayback.bind(this, record)} className={'href'}>停播回放</span>
-              &nbsp;&nbsp;
+              <span onClick={this.stopPlayback.bind(this, record)} className={'href'}>
+                停播回放
+              </span>&nbsp;&nbsp;
             </If>
-            {record.anchorType !== 10 && <span onClick={canSetTop ? this.setTop.bind(this, record) : undefined} className={canSetTop ? 'href' : ''}>{record.liveTop === 0 ? '置顶' : '取消置顶'}</span>}&nbsp;&nbsp;
+            {record.anchorType !== 10 && (
+              <span onClick={canSetTop ? this.setTop.bind(this, record) : undefined} className={canSetTop ? 'href' : ''}>
+                {record.liveTop === 0 ? '置顶' : '取消置顶'}
+              </span>
+            )}&nbsp;&nbsp;
             {/* {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)} */}
           </div>
         )
@@ -241,22 +259,80 @@ class Main extends React.Component<Props, State> {
     })
   }
   public setTop (record: UliveStudio.ItemProps) {
-    const hide = this.props.alert({
-      content: (
-        <div className='text-center'>
-          确定是否{record.liveTop === 0 ? '置顶' : '取消置顶'}
-        </div>
-      ),
-      onOk: () => {
-        api.setTop({
-          planId: record.planId,
-          isTop: record.liveTop === 0 ? 1 : 0
-        }).then(() => {
-          hide()
-          this.refresh()
-        })
-      }
-    })
+    if (record.liveTop === 0) {
+      let form: FormInstance
+      const hide = this.props.alert({
+        width: 300,
+        content: (
+          <Form
+            getInstance={(ref) => form = ref}
+          >
+            <div>数字越大排序越靠前</div>
+            <div className='mt8'>
+              <FormItem
+                name='sort'
+                type='number'
+                placeholder='请输入正整数'
+                style={{
+                  marginBottom: 8
+                }}
+                labelCol={{ span: 0 }}
+                wrapperCol={{ span: 24 }}
+                verifiable
+                fieldDecoratorOptions={{
+                  rules: [
+                    { required: true, message: '请输入序号' }
+                  ]
+                }}
+                controlProps={{
+                  precision: 0,
+                  min: 1,
+                  style: {
+                    width: '100%'
+                  }
+                }}
+              />
+            </div>
+          </Form>
+        ),
+        onOk: () => {
+          form.props.form.validateFields((err) => {
+            if (err) {
+              return
+            }
+            const values = form.getValues()
+            console.log(values, 'values')
+            api.setTop({
+              planId: record.planId,
+              topSort: values.sort,
+              isTop: record.liveTop === 0 ? 1 : 0
+            }).then(() => {
+              hide()
+              this.refresh()
+            })
+          })
+        }
+      })
+      return
+    } else {
+      const hide = this.props.alert({
+        width: 300,
+        content: (
+          <div className='text-center'>
+            确定是否取消置顶
+          </div>
+        ),
+        onOk: () => {
+          api.setTop({
+            planId: record.planId,
+            isTop: record.liveTop === 0 ? 1 : 0
+          }).then(() => {
+            hide()
+            this.refresh()
+          })
+        }
+      })
+    }
   }
   public showQrcode = (record: UliveStudio.ItemProps) => {
     // module_live/pages/room/index
