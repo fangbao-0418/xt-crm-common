@@ -1,16 +1,16 @@
-import React from 'react';
-import { Card, Tabs, Button, Modal, message, Row, Col } from 'antd';
-import dateFns from 'date-fns';
-import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
-import { gotoPage, replaceHttpUrl } from '@/util/utils';
-import Image from '@/components/Image';
-import SelectFetch from '@/components/select-fetch';
-import { If, ListPage, FormItem } from '@/packages/common/components';
-import { ListPageInstanceProps } from '@/packages/common/components/list-page';
-import SuppilerSelect from '@/components/suppiler-auto-select';
-import { defaultConfig } from './config';
-import { formatMoneyWithSign } from '@/pages/helper';
-const { TabPane } = Tabs; 
+import React from 'react'
+import { Card, Tabs, Button, Modal, message, Row, Col } from 'antd'
+import dateFns from 'date-fns'
+import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api'
+import { gotoPage, replaceHttpUrl } from '@/util/utils'
+import Image from '@/components/Image'
+import SelectFetch from '@/components/select-fetch'
+import { If, ListPage, FormItem } from '@/packages/common/components'
+import { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import SuppilerSelect from '@/components/suppiler-auto-select'
+import { defaultConfig } from './config'
+import { formatMoneyWithSign } from '@/pages/helper'
+const { TabPane } = Tabs
 
 interface SkuSaleListState {
   selectedRowKeys: string[] | number[];
@@ -55,12 +55,12 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       width: 120,
       dataIndex: 'firstCategoryName'
     },
-    // {
-    //   title: '成本价',
-    //   width: 100,
-    //   dataIndex: 'costPrice',
-    //   render: formatMoneyWithSign
-    // },
+    {
+      title: '成本价',
+      width: 100,
+      dataIndex: 'costPrice',
+      render: APP.fn.formatMoney
+    },
     {
       title: '销售价',
       width: 100,

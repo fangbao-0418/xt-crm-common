@@ -62,9 +62,14 @@ class Main extends React.Component<any, State> {
       }
     },
     {
+      title: '成本价',
+      dataIndex: 'costPrice',
+      render: APP.fn.formatMoney
+    },
+    {
       title: '销售价',
       dataIndex: 'salePrice',
-      render: MoneyRender
+      render: APP.fn.formatMoney
     },
     {
       title: '库存',
