@@ -125,7 +125,7 @@ class Add extends React.Component<Props, State> {
     const { dataSource, onCancel } = this.props
     const { isCheckPhone } = this.state
     if (!isCheckPhone) {
-      return message.info('请核对发布人是否正确')
+      return message.info('请核验发布人是否正确')
     }
     form.validateFields((err: any, vals: any) => {
       if (!err) {
@@ -238,7 +238,6 @@ class Add extends React.Component<Props, State> {
             inner={(form) => {
               return (
                 <div>
-                  <div>点击核验按钮核验发布人</div>
                   {
                     form.getFieldDecorator('authorPhone', {
                       rules: [

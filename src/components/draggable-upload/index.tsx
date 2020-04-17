@@ -45,6 +45,7 @@ class Main extends React.Component<Props> {
         }}
       >
         <UploadView
+          extname='png,jpg,jpeg'
           disabled={isReadOnly}
           multiple
           value={this.props.value}
