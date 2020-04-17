@@ -290,7 +290,7 @@ class DiscountModal extends PureComponent {
                     满
                 </Radio>
                   <Radio
-                    disabled={rules && rules[0] && rules[0].stageType === 1 || false} // 第一次选择 满x元类型 的话 第二次以上配置禁止该选项选择
+                    disabled={promotionType === 11 || rules && rules[0] && rules[0].stageType === 1 || false} // 满减的时候禁止该选项 第一次选择 满x元类型 的话 第二次以上配置禁止该选项选择
                     style={{
                       ...radioStyle,
                       marginTop: 16
@@ -337,7 +337,7 @@ class DiscountModal extends PureComponent {
                     initialValue: stageCount
                   })(
                     <InputNumber
-                      disabled={stageType === 1 || rules && rules[0] && rules[0].stageType === 1 || false}
+                      disabled={promotionType === 11 || stageType === 1 || rules && rules[0] && rules[0].stageType === 1 || false}
                       min={1}
                       precision={0}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageCount')}
