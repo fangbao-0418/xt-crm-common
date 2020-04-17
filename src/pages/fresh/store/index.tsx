@@ -1,9 +1,9 @@
-import React from 'react';
-import { getShopList, onOrOffShop } from './api';
-import { ListPage, If, FormItem } from '@/packages/common/components';
-import { defaultConfig, NAME_SPACE, statusEnum } from './config';
-import { Button, Modal } from 'antd';
-import { ListPageInstanceProps } from '@/packages/common/components/list-page';
+import React from 'react'
+import { getShopList, onOrOffShop, getStatusEnum } from './api'
+import { ListPage, If, FormItem, SelectFetch } from '@/packages/common/components'
+import { defaultConfig, NAME_SPACE, statusEnum } from './config'
+import { Button, Modal } from 'antd'
+import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 
 class Store extends React.Component {
   list: ListPageInstanceProps;
@@ -18,19 +18,31 @@ class Store extends React.Component {
     dataIndex: 'typeText'
   }, {
     title: '创建时间',
+    width: 200,
     dataIndex: 'createTimeText'
   }, {
+    title: '申请时间',
+    width: 200,
+    dataIndex: 'applyTimeText'
+  }, {
     title: '状态',
+    width: 120,
     dataIndex: 'statusText'
   }, {
     title: '操作',
-    width: 220,
+    width: 200,
+    align: 'center',
     render: (record: any) => {
       return (
         <>
           <span className='href' onClick={() => APP.history.push(`/fresh/store/${record.id}?readOnly=1`)}>查看</span>
-          <span className='href ml10' onClick={() => APP.history.push(`/fresh/store/${record.id}`)}>编辑</span>
-          <If condition={[statusEnum['新建'], statusEnum['下线']].includes(record.status)}>
+          <If condition={[1, 2, 3].includes(record.status)}>
+            <span className='href ml10' onClick={() => APP.history.push(`/fresh/store/${record.id}`)}>编辑</span>
+          </If>
+          <If condition={[4].includes(record.status)}>
+            <span className='href ml10' onClick={() => APP.history.push(`/fresh/store/${record.id}`)}>审核</span>
+          </If>
+          <If condition={[1, 3].includes(record.status)}>
             <span
               className='href ml10'
               onClick={() => {
@@ -40,8 +52,8 @@ class Store extends React.Component {
                   onOk: () => {
                     onOrOffShop({ shopId: record.id, status: 2 }).then((res: any) => {
                       if (res) {
-                        APP.success('上线成功');
-                        this.list.refresh();
+                        APP.success('上线成功')
+                        this.list.refresh()
                       }
                     })
                   }
@@ -51,7 +63,7 @@ class Store extends React.Component {
               上线
             </span>
           </If>
-          <If condition={record.status === statusEnum['上线']}>
+          <If condition={record.status === 2}>
             <span
               className='href ml10'
               onClick={() => {
@@ -61,8 +73,8 @@ class Store extends React.Component {
                   onOk: () => {
                     onOrOffShop({ shopId: record.id, status: 3 }).then((res: any) => {
                       if (res) {
-                        APP.success('下线成功');
-                        this.list.refresh();
+                        APP.success('下线成功')
+                        this.list.refresh()
                       }
                     })
                   }
@@ -76,20 +88,31 @@ class Store extends React.Component {
       )
     }
   }]
-  render() {
+  render () {
     return (
       <>
         <ListPage
           getInstance={ref => this.list = ref}
           rangeMap={{
             workDate: {
-              fields: ['startWorkDate', 'endWorkDate']
+              fields: ['startCreateDate', 'endCreateDate']
             }
           }}
           formItemLayout={(
             <>
               <FormItem name='name' />
-              <FormItem name='status' />
+              <FormItem
+                // name='status'
+                label='店铺状态'
+                inner={(form) => {
+                  return form.getFieldDecorator(
+                    'status',
+                    {}
+                  )(<SelectFetch
+                    fetchData={getStatusEnum}
+                  />)
+                }}
+              />
               <FormItem name='workDate' />
             </>
           )}
@@ -108,4 +131,4 @@ class Store extends React.Component {
   }
 }
 
-export default Store;
+export default Store
