@@ -69,3 +69,24 @@ export const editShowStatus = (materialId: number) => {
 export const deleteMaterial = (materialId: number) => {
   return newPost(`/mcweb/product/material/delete?materialId=${materialId}`)
 }
+
+/**
+ *  获取全部商品
+ * @param data
+ */
+export function getGoodsList (data: any) {
+  return post('/product/list', data).then((res) => {
+    res.records =  (res.records || []).map((item: any) => {
+      item.skuList = item.skuList || []
+      item.skuList.map((val: any) => {
+        val.productId = item.id
+        val.productName = item.productName
+        val.coverUrl = item.coverUrl
+        val.properties = `${item.property1 || ''}:${val.propertyValue1};${item.property2 || ''}:${val.propertyValue2}`
+        return val
+      })
+      return item
+    })
+    return res
+  })
+}

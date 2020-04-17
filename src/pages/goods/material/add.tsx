@@ -21,9 +21,11 @@ interface Props {
 }
 
 interface State {
-  categorys: []
-  userName: string
+  /** 发布人昵称 */
+  nickName: string
+  /** 发布人手机号 */
   userPhone: string
+  /** 是否已经校验过发布人 */
   isCheckPhone: boolean
 }
 class Add extends React.Component<Props, State> {
@@ -61,8 +63,7 @@ class Add extends React.Component<Props, State> {
   constructor (props: Props) {
     super(props)
     this.state = {
-      categorys: [],
-      userName: '',
+      nickName: '',
       userPhone: '',
       isCheckPhone: false
     }
@@ -99,14 +100,18 @@ class Add extends React.Component<Props, State> {
     }
     api.fetchUserInfo({
       phone: searchPhone
-    }).then((res: {userName: string, phone: string}) => {
+    }).then((res: {nickName: string, phone: string}) => {
       // 用户名
-      const { userName, phone } = res
-      this.setState({
-        userPhone: phone,
-        isCheckPhone: true,
-        userName
-      })
+      if (res) {
+        const { nickName, phone } = res
+        this.setState({
+          userPhone: phone,
+          isCheckPhone: true,
+          nickName
+        })
+      } else {
+        APP.error('手机号码不存在')
+      }
     })
   }
 
@@ -162,7 +167,7 @@ class Add extends React.Component<Props, State> {
     const {
       isReadOnly
     } = this.props
-    const {userName, userPhone} = this.state
+    const {nickName, userPhone} = this.state
     return (
       <Card className='activity-add'>
         <Form
@@ -218,6 +223,7 @@ class Add extends React.Component<Props, State> {
                       }
                     )(
                       <ShopList
+                        isShowPagination={false}
                         propsColumns={this.propsColumns}
                       />
                     )
@@ -246,7 +252,7 @@ class Add extends React.Component<Props, State> {
                         onSearch={value => this.searchUserByPhone(value)}
                         onChange={() => {
                           this.setState({
-                            userName: '',
+                            nickName: '',
                             userPhone: '',
                             isCheckPhone: false
                           })
@@ -260,7 +266,7 @@ class Add extends React.Component<Props, State> {
                     )
                   }
                   {
-                    userName ? <div>昵称：{userName}</div> : userPhone ? <div>手机号: {userPhone}</div> : ''
+                    nickName ? <div>昵称：{nickName}</div> : userPhone ? <div>手机号: {userPhone}</div> : ''
                   }
                 </div>
               )
@@ -336,6 +342,7 @@ class Add extends React.Component<Props, State> {
           />
         </Form>
         <ShopSelectModal
+          api={api.getGoodsList}
           getInstance={(ref) => {
             this.shopModalInstance = ref
           }}

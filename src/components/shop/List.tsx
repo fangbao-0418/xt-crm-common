@@ -11,12 +11,17 @@ interface Props {
   value?: Marketing.PresentContentValueProps
   onChange?: (value: Marketing.PresentContentValueProps) => void
   propsColumns?: ColumnProps<Shop.ShopItemProps>[]
+  isShowPagination?: boolean
 }
+
 enum ShopStatusEnum {
   下架 = 0,
   上架 = 1
 }
 class Main extends React.Component<Props> {
+  static defaultProps = {
+    isShowPagination: true
+  }
   public columns: ColumnProps<Shop.ShopItemProps>[] = [
     {title: '商品ID', dataIndex: 'id'},
     {
@@ -92,7 +97,7 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { dataSource } = this.state
-    const { propsColumns } = this.props
+    const { propsColumns, isShowPagination } = this.props
     const columns = propsColumns ? propsColumns : this.columns
     return (
       <div>
@@ -101,6 +106,12 @@ class Main extends React.Component<Props> {
           rowKey='id'
           dataSource={dataSource}
           columns={columns}
+          pagination={
+            isShowPagination ? {
+              defaultCurrent: 1,
+              defaultPageSize: 10
+            } : false
+          }
         />
       </div>
     )

@@ -177,9 +177,14 @@ class SkuStockList extends React.Component<any> {
    * @memberof SkuStockList
    */
   deleteMaterial = (materialId: number) => {
-    api.deleteMaterial(materialId).then((res) => {
-      message.success('删除成功')
-      this.list.fetchData()
+    Modal.confirm({
+      title: '确定要删除吗？',
+      onOk: () => {
+        api.deleteMaterial(materialId).then((res) => {
+          message.success('删除成功')
+          this.list.fetchData()
+        })
+      }
     })
   }
   /**
@@ -246,7 +251,7 @@ class SkuStockList extends React.Component<any> {
             <>
               <FormItem name='productName'/>
               <FormItem name='productId' />
-              <FormItem name='author_phone' />
+              <FormItem name='authorPhone' />
               <FormItem name='startCreate' />
             </>
           )}
@@ -265,7 +270,7 @@ class SkuStockList extends React.Component<any> {
         />
         <Modal
           key={uuid()}
-          title='添加素材'
+          title={materialDetail ? '编辑素材' : '添加素材'}
           destroyOnClose
           visible={modalVisible}
           maskClosable={false}

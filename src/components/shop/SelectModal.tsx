@@ -29,6 +29,7 @@ interface Props {
    */
   checkType?: 'checkbox' | 'radio' | undefined
   columns?: []
+  api?: (payload: any) => Promise<any>
 }
 export type ShopModalInstance = Main
 interface PayloadProps {
@@ -156,12 +157,21 @@ class Main extends React.Component<Props, State> {
     this.setState({
       page: this.payload.page
     })
-    api.fetchSelectShopList(this.payload).then((res: any) => {
-      this.setState({
-        dataSource: res.records || [],
-        total: res.total
+    if (this.props.api) {
+      this.props.api(this.payload).then((res: any) => {
+        this.setState({
+          dataSource: res.records || [],
+          total: res.total
+        })
       })
-    })
+    } else {
+      api.fetchSelectShopList(this.payload).then((res: any) => {
+        this.setState({
+          dataSource: res.records || [],
+          total: res.total
+        })
+      })
+    }
   }
   public onOk () {
     if (this.props.onOk) {

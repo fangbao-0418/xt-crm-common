@@ -14,7 +14,7 @@ export const defaultConfig: FieldsConfig = {
     productName: {
       label: '商品名称'
     },
-    author_phone: {
+    authorPhone: {
       label: '手机号',
       type: 'number',
       controlProps: {
