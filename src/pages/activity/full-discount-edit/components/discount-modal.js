@@ -84,10 +84,10 @@ class DiscountModal extends PureComponent {
       }
 
       if (promotionType === 11 && stageType === 1) {
-        // 只有优惠条件为满减类型 同时优惠门槛为满x元类型的时候 需要校验优惠的价格不能大于门槛值
-        if (stageAmount < discountsAmount) {
+        // 只有优惠条件为满减类型 同时优惠门槛为满x元类型的时候 需要校验优惠的价格不能大于等于门槛值
+        if (stageAmount <= discountsAmount) {
           this.setState({
-            alertErr: '优惠减免的值不能超过优惠门槛设置的值'
+            alertErr: '优惠减免的值必须小于优惠门槛设置的值'
           })
           return
         }
