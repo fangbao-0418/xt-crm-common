@@ -319,10 +319,11 @@ class Main extends React.Component<Props, State> {
                 <FormItem
                   label='商品ID'
                   name='productId'
+                  type='number'
                   placeholder='请输入商品ID'
                   controlProps={{
                     style: {
-                      width: 120
+                      width: 220
                     }
                   }}
                 />
@@ -332,7 +333,7 @@ class Main extends React.Component<Props, State> {
                   placeholder='请输入商品名称'
                   controlProps={{
                     style: {
-                      width: 130
+                      width: 220
                     }
                   }}
                 />
