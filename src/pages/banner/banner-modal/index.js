@@ -100,7 +100,10 @@ class BannerModal extends Component {
         params.platformArray.forEach((val) => {
           params.platform += val * 1
         })
-        console.log(params)
+        if (params.offlineTime < params.onlineTime) {
+          APP.error('下线时间必须大于上线时间')
+          return
+        }
         api(params).then((res) => {
           onSuccess && onSuccess();
           res && message.success('操作成功');
@@ -129,8 +132,6 @@ class BannerModal extends Component {
     } else {
       seat = [data.newSeat, data.childSeat]
     }
-
-    console.log(data)
 
     return (
       <>
