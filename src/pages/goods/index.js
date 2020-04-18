@@ -11,6 +11,7 @@ const GoodsDetail = loadable(() => import('./goods-detail'));
 const SkuSaleForm = loadable(() => import('./sku-sale/form'));
 const SkuStock = loadable(() => import('./sku-stock'));
 const SkuStockForm = loadable(() => import('./sku-stock/form'));
+const Material = loadable(() => import('./material'));
 export default class RouteApp extends React.Component {
   render() {
     const { match } = this.props;
@@ -26,6 +27,7 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/sku-sale/:id`} component={SkuSaleForm} />
         <Route exact path={`${match.url}/sku-stock`} component={SkuStock} />
         <Route path={`${match.url}/sku-stock/:id`} component={SkuStockForm} />
+        <Route path={`${match.url}/material`} component={Material} />
       </Switch>
     );
   }

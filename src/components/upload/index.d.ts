@@ -26,6 +26,7 @@ interface Props {
   /** 是否格式化掉域名，即去掉cdn域名，默认false 不去掉域名部分 */
   formatOrigin?: boolean,
   ossDir?: string /** oss 上传指定目录 */
+  ossType?: 'cos' | 'oss' /** 使用oss的类型  oss: 阿里云， cos: 腾讯云 */
 }
 export declare const ossUpload: (file: File) => Promise<any>
 export function formatValue (value: any[]): string
