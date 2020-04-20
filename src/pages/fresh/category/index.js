@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Row, Col, Form, Checkbox, Button, Input, Icon, Modal, message } from 'antd';
+import { Card, Row, Col, Form, Checkbox, Button, Input, InputNumber, Icon, Modal, message } from 'antd';
 import { initImgList } from '@/util/utils';
 import { getPromotionList } from '../../activity/api';
 import UploadView from '@/components/upload';
@@ -366,10 +366,10 @@ class InterFaceCategory extends Component {
                 rules: [
                   {
                     required: true,
-                    message: '请输入排序数字',
+                    message: '请输入排序数字'
                   },
                 ],
-              })(<Input type="number" placeholder="请输入排序数字" />)}
+              })(<InputNumber precision={0} min={1} max={999} placeholder="请输入排序数字" />)}
             </FormItem>
             <FormItem label="关联商品">
               {getFieldDecorator('productCategoryVOS', {
