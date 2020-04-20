@@ -1,38 +1,38 @@
-import React, { Component } from 'react';
-import { Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd';
-import UploadView from '../../../components/upload';
-import { getBannerDetail, updateBanner, addBanner } from '../api';
-import { TextMapPosition } from '../constant';
-import platformType from '@/enum/platformType';
+import React, { Component } from 'react'
+import { Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
+import UploadView from '../../../components/upload'
+import { getBannerDetail, updateBanner, addBanner } from '../api'
+import { TextMapPosition } from '../constant'
+import platformType from '@/enum/platformType'
 // import { formatDate } from '../../helper';
-import moment from 'moment';
+import moment from 'moment'
 import BannerPostion from '@/components/banner-position'
 import If from '@/packages/common/components/if'
-const FormItem = Form.Item;
+const FormItem = Form.Item
 
 const formItemLayout = {
   labelCol: { span: 6 },
-  wrapperCol: { span: 14 },
-};
-const _platformType = platformType.getArray({ key: 'value', val: 'label' });
+  wrapperCol: { span: 14 }
+}
+const _platformType = platformType.getArray({ key: 'value', val: 'label' })
 const initImgList = imgUrlWap => {
   if (imgUrlWap) {
     return [
       {
-        uid: `imgUrl0`,
+        uid: 'imgUrl0',
         url: imgUrlWap,
         status: 'done',
-        thumbUrl: imgUrlWap,
-      },
-    ];
+        thumbUrl: imgUrlWap
+      }
+    ]
   }
-  return [];
-};
+  return []
+}
 class BannerModal extends Component {
   static defaultProps = {
     onSuccess: () => { },
     id: '',
-    isEdit: false,
+    isEdit: false
   };
   state = {
     renderKey: 0,
@@ -41,8 +41,8 @@ class BannerModal extends Component {
       platformArray: _platformType.map(val => val.value),
       sort: 0,
       status: 1,
-      seat: 1,
-    },
+      seat: 1
+    }
   };
 
   showModal = () => {
@@ -52,45 +52,49 @@ class BannerModal extends Component {
       this.props.form.resetFields()
     }
     this.setState({
-      visible: true,
-    });
+      visible: true
+    })
   };
 
   query = () => {
     getBannerDetail({
-      id: this.props.id,
+      id: this.props.id
     }).then(data => {
       if (data.platform) {
-        let str = data.platform.toString(2);
-        let array = str.split('');
-        data.platformArray = [];
+        const str = data.platform.toString(2)
+        const array = str.split('')
+        data.platformArray = []
         array.forEach((val, i) => {
-          if (val * 1 == 1) data.platformArray.push(Math.pow(2, array.length - 1 - i).toString())
+          if (val * 1 == 1) {
+            data.platformArray.push(Math.pow(2, array.length - 1 - i).toString())
+          }
         })
-      } else data.platformArray = _platformType.map(val => val.value)
+      } else {
+        data.platformArray = _platformType.map(val => val.value)
+      }
       this.setState({
         data,
         renderKey: this.state.renderKey + 1
-      });
-    });
+      })
+    })
   };
 
   handleOk = () => {
-    const { onSuccess, id, form, isEdit } = this.props;
+    const { onSuccess, id, form, isEdit } = this.props
     form.validateFields((err, values) => {
       if (!err) {
-        const api = isEdit ? updateBanner : addBanner;
+        const api = isEdit ? updateBanner : addBanner
         const params = {
           id,
-          ...values,
-        };
+          ...values
+        }
 
         params.jumpUrlWap = (params.jumpUrlWap || '').trim()
-        params.onlineTime = +new Date(params.onlineTime);
-        params.offlineTime = +new Date(params.offlineTime);
+        params.onlineTime = +new Date(params.onlineTime)
+        params.offlineTime = +new Date(params.offlineTime)
         if (params.imgList) {
-          params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url || '';
-          params.imgList = undefined;
+          params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url || ''
+          params.imgList = undefined
         }
         const seat = params.seat || []
         params.newSeat = seat[0]
@@ -105,25 +109,25 @@ class BannerModal extends Component {
           return
         }
         api(params).then((res) => {
-          onSuccess && onSuccess();
-          res && message.success('操作成功');
+          onSuccess && onSuccess()
+          res && message.success('操作成功')
           this.setState({
-            visible: false,
-          });
-        });
+            visible: false
+          })
+        })
       }
-    });
+    })
   };
 
   handleCancel = e => {
     this.setState({
-      visible: false,
-    });
+      visible: false
+    })
   };
-  render() {
-    const { isEdit, size } = this.props;
-    const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { data, renderKey } = this.state;
+  render () {
+    const { isEdit, size } = this.props
+    const { getFieldDecorator, getFieldValue } = this.props.form
+    const { data, renderKey } = this.state
 
     let seat
 
@@ -135,7 +139,7 @@ class BannerModal extends Component {
 
     return (
       <>
-        <Button size={size} type="primary" onClick={this.showModal}>
+        <Button size={size} type='primary' onClick={this.showModal}>
           {isEdit ? '编辑' : '新增Banner'}
         </Button>
         <Modal
@@ -144,10 +148,10 @@ class BannerModal extends Component {
           visible={this.state.visible}
           footer={
             <>
-              <Button key="submit" type="primary" onClick={this.handleOk}>
+              <Button key='submit' type='primary' onClick={this.handleOk}>
                 {isEdit ? '保存' : '新增'}
               </Button>
-              <Button key="back" onClick={this.handleCancel}>
+              <Button key='back' onClick={this.handleCancel}>
                 返回
               </Button>
             </>
@@ -156,16 +160,16 @@ class BannerModal extends Component {
           onCancel={this.handleCancel}
         >
           <Form {...formItemLayout}>
-            <FormItem label="Banner名称">
+            <FormItem label='Banner名称'>
               {getFieldDecorator('title', {
                 initialValue: data.title,
                 rules: [{
                   required: true,
                   message: 'banner名称不能为空'
                 }]
-              })(<Input placeholder="" />)}
+              })(<Input placeholder='' />)}
             </FormItem>
-            <FormItem required label="位置">
+            <FormItem required label='位置'>
               {getFieldDecorator('seat', {
                 initialValue: [data.newSeat, data.childSeat],
                 rules: [
@@ -185,19 +189,19 @@ class BannerModal extends Component {
               )}
             </FormItem>
             <If condition={[1, 2, 3, 4].includes(seat[0])}>
-              <FormItem key={renderKey} label="Banner图片" required={true}>
+              <FormItem key={renderKey} label='Banner图片' required={true}>
                 {getFieldDecorator('imgList', {
                   initialValue: initImgList(data.imgUrlWap),
                   rules: [
                     {
                       required: [1, 2, 3, 4].includes(seat[0]),
-                      message: '请上传Banner图片',
-                    },
-                  ],
+                      message: '请上传Banner图片'
+                    }
+                  ]
                 })(
                   <UploadView
-                    placeholder="上传主图"
-                    listType="picture-card"
+                    placeholder='上传主图'
+                    listType='picture-card'
                     listNum={1}
                     size={.3}
                   />,
@@ -205,7 +209,7 @@ class BannerModal extends Component {
               </FormItem>
             </If>
             <If condition={seat[0] === 5}>
-              <FormItem label="文案">
+              <FormItem label='文案'>
                 {getFieldDecorator('content', {
                   initialValue: data.content,
                   rules: [
@@ -215,32 +219,32 @@ class BannerModal extends Component {
                     }
                   ]
                 })(
-                  <Input maxLength={25} placeholder="请输入文案" />,
+                  <Input maxLength={25} placeholder='请输入文案' />,
                 )}
               </FormItem>
             </If>
-            <FormItem label="跳转地址">
+            <FormItem label='跳转地址'>
               {getFieldDecorator('jumpUrlWap', { initialValue: data.jumpUrlWap })(
-                <Input placeholder="" />,
+                <Input placeholder='' />,
               )}
             </FormItem>
-            <FormItem label="上线时间">
+            <FormItem label='上线时间'>
               {getFieldDecorator('onlineTime', { initialValue: moment(data.onlineTime) })(
-                <DatePicker showTime style={{ width: 200 }} format="YYYY-MM-DD HH:mm:ss" />,
+                <DatePicker showTime style={{ width: 200 }} format='YYYY-MM-DD HH:mm:ss' />,
               )}
             </FormItem>
-            <FormItem label="下线时间">
+            <FormItem label='下线时间'>
               {getFieldDecorator('offlineTime', { initialValue: moment(data.offlineTime) })(
-                <DatePicker showTime style={{ width: 200 }} format="YYYY-MM-DD HH:mm:ss" />,
+                <DatePicker showTime style={{ width: 200 }} format='YYYY-MM-DD HH:mm:ss' />,
               )}
             </FormItem>
-            <FormItem label="排序">
+            <FormItem label='排序'>
               {getFieldDecorator('sort', { initialValue: data.sort })(
-                <InputNumber placeholder="" />,
+                <InputNumber placeholder='' />,
               )}
             </FormItem>
             <If condition={([1, 2, 3, 4].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
-              <FormItem label="平台">
+              <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
                   rules: [{
@@ -252,7 +256,7 @@ class BannerModal extends Component {
                 )}
               </FormItem>
             </If>
-            <FormItem label="状态">
+            <FormItem label='状态'>
               {getFieldDecorator('status', { initialValue: data.status })(
                 <Radio.Group>
                   <Radio value={0}>关闭</Radio>
@@ -263,8 +267,8 @@ class BannerModal extends Component {
           </Form>
         </Modal>
       </>
-    );
+    )
   }
 }
 
-export default Form.create()(BannerModal);
+export default Form.create()(BannerModal)
