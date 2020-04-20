@@ -87,6 +87,13 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       render: MoneyRender
     },
     {
+      title: '满减优惠',
+      dataIndex: 'promotionReducePrice',
+      key: 'promotionReducePrice',
+      width: '8%',
+      render: MoneyRender
+    },
+    {
       title: '实付金额',
       dataIndex: 'preferentialTotalPrice',
       key: 'preferentialTotalPrice',

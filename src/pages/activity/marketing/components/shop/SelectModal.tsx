@@ -67,6 +67,15 @@ class Main extends React.Component<Props, State> {
       }
     },
     {
+      title: '活动ID',
+      dataIndex: 'promotionId',
+      width: 150
+    },
+    {
+      title: '活动名称',
+      dataIndex: 'promotionName',
+    },
+    {
       title: '库存',
       dataIndex: 'stock',
       width: 150,
@@ -290,6 +299,7 @@ class Main extends React.Component<Props, State> {
                 <FormItem
                   label='商品ID'
                   name='productId'
+                  type='number'
                   placeholder='请输入商品ID'
                   controlProps={{
                     style: {
@@ -301,6 +311,27 @@ class Main extends React.Component<Props, State> {
                   label='商品名称'
                   name='productName'
                   placeholder='请输入商品名称'
+                  controlProps={{
+                    style: {
+                      width: 130
+                    }
+                  }}
+                />
+                <FormItem
+                  label='活动ID'
+                  name='promotionId'
+                  type='number'
+                  placeholder='请输入活动ID'
+                  controlProps={{
+                    style: {
+                      width: 130
+                    }
+                  }}
+                />
+                <FormItem
+                  label='活动名称'
+                  name='promotionName'
+                  placeholder='请输入活动名称'
                   controlProps={{
                     style: {
                       width: 130
