@@ -411,7 +411,7 @@ class InterFaceCategory extends Component {
                 />
                 
               )}
-              <div style={{color:'red'}}>（请上传尺寸144*144，png,jpg格式文件）</div>
+              <div>（请上传尺寸144*144，png,jpg格式文件）</div>
             </FormItem>
             <FormItem
               label='类目图标'
@@ -431,7 +431,7 @@ class InterFaceCategory extends Component {
                   size={0.3}
                 />
               )}
-               <div style={{color:'red'}}>（请上传尺寸150*150，png,jpg格式文件）</div>
+               <div>（请上传尺寸150*150，png,jpg格式文件）</div>
             </FormItem>
             <Form.Item {...tailFormItemLayout}>
               <div style={{ textAlign: 'right' }}>
