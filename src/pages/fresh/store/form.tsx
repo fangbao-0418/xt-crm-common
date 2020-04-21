@@ -145,7 +145,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
             <FormItem
               verifiable
               // name='type'
-              label='运营中心'
+              label='区域仓'
               inner={(form) => {
                 return form.getFieldDecorator(
                   'areaWarehouseCode',
