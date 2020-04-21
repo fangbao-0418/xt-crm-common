@@ -4,6 +4,7 @@ import Page from '@/components/page'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import SelectFetch from '@/packages/common/components/select-fetch'
 import { ColumnProps } from 'antd/lib/table'
 import * as api from './api'
 interface Props extends AlertComponentProps {}
@@ -127,6 +128,21 @@ class Main extends React.Component<Props> {
           formItemStyle={{ marginBottom: 8 }}
         >
           <FormItem
+            label='所属应用'
+            required
+            inner={(form) => {
+              return form.getFieldDecorator('appId', {
+                rules: [
+                  { required: true, message: '请选择所属应用' }
+                ]
+              })(
+                <SelectFetch
+                  fetchData={api.getAllApp}
+                />
+              )
+            }}
+          />
+          <FormItem
             verifiable label='Api名称' name='apiName'
             fieldDecoratorOptions={{
               rules: [{ required: true, message: 'Api名称必填' }]
@@ -156,7 +172,7 @@ class Main extends React.Component<Props> {
             type='radio'
             options={[{ label: '过滤', value: 1 }, { label: '不过滤', value: 0 }]}
             fieldDecoratorOptions={{
-              initialValue: 1
+              initialValue: 0
             }}
           />
           <FormItem
