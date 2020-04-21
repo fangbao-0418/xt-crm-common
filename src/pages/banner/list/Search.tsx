@@ -2,6 +2,8 @@ import React from 'react'
 import { Form, Input, Button, Select } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BannerPosition from '@/components/banner-position'
+import { namespace } from '../config'
+
 interface PayloadProps {
   title?: string
   seat?: any[]
@@ -11,7 +13,7 @@ interface Props extends FormComponentProps {
   className?: string
   onChange?: (value: any) => void
 }
-const namespace = '/banner/list'
+
 class Main extends React.Component<Props> {
   public payload: PayloadProps = APP.fn.getPayload(namespace) || {}
   public constructor (props: Props) {
@@ -20,9 +22,12 @@ class Main extends React.Component<Props> {
   }
   public handleSubmit () {
     this.props.form.validateFields((err, value: Special.SearchProps) => {
+      if (err) {
+        return
+      }
       if (this.props.onChange) {
         value.status = [0, 1].indexOf(value.status as number) === -1 ? undefined : value.status
-        value.seat =  value.seat || []
+        value.seat = value.seat || []
         value.newSeat = value.seat[0]
         value.childSeat = value.seat[1]
         delete value.seat
@@ -32,7 +37,6 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { getFieldDecorator } = this.props.form
-    console.log(this.payload, 'payload')
     const values = this.payload
     return (
       <div
@@ -42,26 +46,26 @@ class Main extends React.Component<Props> {
         }}
         className={this.props.className}
       >
-        <Form layout="inline">
+        <Form layout='inline'>
           <Form.Item
             label='banner名称'
           >
-            {getFieldDecorator('title', {initialValue: values.title})(
+            {getFieldDecorator('title', { initialValue: values.title })(
               <Input placeholder='请输入banner名称' />
             )}
           </Form.Item>
           <Form.Item
             label='位置'
           >
-            {getFieldDecorator('seat', {initialValue: values.seat})(
+            {getFieldDecorator('seat', { initialValue: values.seat })(
               <BannerPosition />
             )}
           </Form.Item>
           <Form.Item
             label='状态'
           >
-            {getFieldDecorator('status', {initialValue: values.status})(
-              <Select allowClear style={{width: 100}}>
+            {getFieldDecorator('status', { initialValue: values.status })(
+              <Select allowClear style={{ width: 100 }}>
                 <Select.Option value={1}>开启</Select.Option>
                 <Select.Option value={0}>关闭</Select.Option>
               </Select>
@@ -69,8 +73,8 @@ class Main extends React.Component<Props> {
           </Form.Item>
           <Form.Item>
             <Button
-              style={{marginRight: 10}}
-              type="primary"
+              style={{ marginRight: 10 }}
+              type='primary'
               onClick={this.handleSubmit}
             >
               查询
@@ -79,8 +83,15 @@ class Main extends React.Component<Props> {
               onClick={() => {
                 this.payload = {}
                 APP.fn.setPayload(namespace, {})
-                this.props.form.resetFields()
-                this.forceUpdate()
+                const params = {
+                  title: undefined,
+                  seat: undefined,
+                  status: undefined
+                }
+                this.props.form.setFields(params)
+                if (this.props.onChange) {
+                  this.props.onChange(params)
+                }
               }}
             >
               重置
