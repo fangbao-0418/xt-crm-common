@@ -94,7 +94,7 @@ const auditAfterInfoTemplate = (dataSource: any) => {
 /** 申请信息模板 */
 const applyInfoTemplate = (dataSource: any) => {
   const { applyInfo } = dataSource
-  const { refundType, refundReason, refundInfo, amount, applyTime } = applyInfo || {}
+  const { refundType, refundReason, refundInfo, amount, applyTime, refundProof } = applyInfo || {}
   return (
     <div className='mb10'>
       <Card>
@@ -120,9 +120,22 @@ const applyInfoTemplate = (dataSource: any) => {
           </Col>
           <Col>
             图片凭证：
-            <img style={{ maxWidth: '180px' }} src='https://assets.hzxituan.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551576743080670.jpg'></img>
-            <img style={{ maxWidth: '180px' }} src='https://assets.hzxituan.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551576743080670.jpg'></img>
-            <img style={{ maxWidth: '180px' }} src='https://assets.hzxituan.com/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551576743080670.jpg'></img>
+            {
+              refundProof && refundProof.map((img: string, index: number) => {
+                return (
+                  <Image
+                    key={index}
+                    style={{
+                      height: 100,
+                      width: 100,
+                      minWidth: 100
+                    }}
+                    src={replaceHttpUrl(img)}
+                    alt='主图'
+                  />
+                )
+              })
+            }
           </Col>
         </Row>
       </Card>
