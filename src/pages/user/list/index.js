@@ -190,6 +190,8 @@ export default class extends Component {
                     payload.memberTypeLevel = types[1];
                 }
                 payload.time = undefined
+                payload.phone = payload.phone ? payload.phone : undefined
+                payload.invitePhone = payload.invitePhone ? payload.invitePhone : undefined
                 this.payload = payload
                 APP.fn.setPayload(namespace, payload)
                 dispatch['user.userlist'].getData(payload);
