@@ -19,22 +19,26 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const paths = require('react-scripts/config/paths')
 const fs = require('fs')
-const pubconfig = fs.existsSync('./pubconfig.json')
-  ? require('./pubconfig.json')
-  : {
-    outputDir: 'build'
-  }
+// const pubconfig = fs.existsSync('./pubconfig.json')
+//   ? require('./pubconfig.json')
+//   : {
+//     outputDir: 'build'
+//   }
+
+const pubconfig = {
+  outputDir: 'build'
+}
 
 paths.appBuild = path.resolve(pubconfig.outputDir)
 
 console.log('PUB_ENV => ', process.env.PUB_ENV)
 // const dev = process.env.PUB_ENV !== 'prod'
-const isEnvDevelopment = ['prod', 'pre', 'test', 'dev'].indexOf(process.env.PUB_ENV) === -1
-const isEnvProduction = !isEnvDevelopment
+const isDevelopment = ['dev'].indexOf(process.env.PUB_ENV) === -1
+const isProduction = !isDevelopment
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
-    isEnvDevelopment && require.resolve('style-loader'),
-    isEnvProduction && {
+    isDevelopment && require.resolve('style-loader'),
+    isProduction && {
       loader: MiniCssExtractPlugin.loader
       /*
        * options: Object.assign({})
@@ -67,7 +71,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
             stage: 3
           })
         ],
-        sourceMap: !isEnvProduction
+        sourceMap: !isProduction
       }
     }
   ].filter(Boolean)
@@ -75,7 +79,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
     loaders.push({
       loader: require.resolve(preProcessor),
       options: {
-        sourceMap: !isEnvProduction
+        sourceMap: !isProduction
       }
     })
   }
@@ -89,7 +93,7 @@ module.exports = override(
     use: getStyleLoaders(
       {
         importLoaders: 2,
-        sourceMap: !isEnvProduction,
+        sourceMap: !isProduction,
         modules: true,
         getLocalIdent: getCSSModuleLocalIdent
       },
@@ -123,7 +127,7 @@ module.exports = override(
     }
   ])),
   useEslintRc(),
-  // isEnvDevelopment ? undefined : disableEsLint(),
+  // isDevelopment ? undefined : disableEsLint(),
   disableEsLint(),
   addWebpackAlias({
     packages: path.resolve(__dirname, 'packages/'),
