@@ -160,13 +160,6 @@ class Main extends React.Component<Props> {
           />
           <FormItem
             verifiable
-            label='Server_id' name='serviceId'
-            fieldDecoratorOptions={{
-              rules: [{ required: true, message: 'Server_id必填' }]
-            }}
-          />
-          <FormItem
-            verifiable
             label='是否过滤前缀'
             name='stripPrefix'
             type='radio'
