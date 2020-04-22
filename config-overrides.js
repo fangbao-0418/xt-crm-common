@@ -24,6 +24,7 @@ const fs = require('fs')
 //   : {
 //     outputDir: 'build'
 //   }
+const PUB_ENV = process.env.PUB_ENV || 'dev'
 
 const pubconfig = {
   outputDir: 'build'
@@ -31,9 +32,9 @@ const pubconfig = {
 
 paths.appBuild = path.resolve(pubconfig.outputDir)
 
-console.log('PUB_ENV => ', process.env.PUB_ENV)
+console.log('PUB_ENV => ', PUB_ENV)
 // const dev = process.env.PUB_ENV !== 'prod'
-const isDevelopment = ['dev'].indexOf(process.env.PUB_ENV) === -1
+const isDevelopment = ['dev'].indexOf(PUB_ENV) > -1
 const isProduction = !isDevelopment
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
@@ -118,7 +119,7 @@ module.exports = override(
   })),
   addWebpackPlugin(new webpack.DefinePlugin({
     'process.env': {
-      PUB_ENV: '"' + (process.env.PUB_ENV || 'serve') + '"'
+      PUB_ENV: JSON.stringify(PUB_ENV)
     }
   })),
   addWebpackPlugin(new CopyWebpackPlugin([
@@ -141,7 +142,7 @@ module.exports = override(
     moment: 'moment',
     'ali-oss': 'OSS'
   }),
-  // addBundleVisualizer(),
+  addBundleVisualizer(),
   setWebpackOptimizationSplitChunks({
     cacheGroups: {
       commons: {
