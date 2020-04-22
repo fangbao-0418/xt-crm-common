@@ -72,7 +72,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
             stage: 3
           })
         ],
-        sourceMap: !isProduction
+        sourceMap: isDevelopment
       }
     }
   ].filter(Boolean)
@@ -80,7 +80,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
     loaders.push({
       loader: require.resolve(preProcessor),
       options: {
-        sourceMap: !isProduction
+        sourceMap: isDevelopment
       }
     })
   }
@@ -94,7 +94,7 @@ module.exports = override(
     use: getStyleLoaders(
       {
         importLoaders: 2,
-        sourceMap: !isProduction,
+        sourceMap: isDevelopment,
         modules: true,
         getLocalIdent: getCSSModuleLocalIdent
       },
@@ -142,7 +142,7 @@ module.exports = override(
     moment: 'moment',
     'ali-oss': 'OSS'
   }),
-  addBundleVisualizer(),
+  // addBundleVisualizer(),
   setWebpackOptimizationSplitChunks({
     cacheGroups: {
       commons: {
@@ -151,5 +151,11 @@ module.exports = override(
         chunks: 'all'
       }
     }
-  })
+  }),
+  (function () {
+    return (config) => {
+      config.devtool = isDevelopment ? config.devtool : ''
+      return config
+    }
+  })()
 )
