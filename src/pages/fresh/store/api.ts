@@ -73,3 +73,15 @@ export function refuse (shopId: any) {
     shopId
   })
 }
+
+/** 查询运营中心列表 */
+export function pointCenterList () {
+  return get('/point/center/list').then((res) => {
+    return res.map((record: { code: number, name: string }) => {
+      return {
+        value: record.code,
+        label: record.name
+      }
+    })
+  })
+}
