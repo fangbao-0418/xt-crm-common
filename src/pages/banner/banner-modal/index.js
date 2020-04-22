@@ -243,7 +243,7 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+            <If condition={([1, 2, 3, 4].includes(seat[0])) || (seat[0] !== 5)}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
