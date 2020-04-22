@@ -1,61 +1,89 @@
 import React, { Component } from 'react'
-import { Tabs, Card, Row, Col, Button, Table } from 'antd'
+import { Card, Row, Col, Button, Table } from 'antd'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import Image from '@/components/Image'
+import { replaceHttpUrl } from '@/util/utils'
+import { formatMoneyWithSign } from '@/pages/helper'
 import { If } from '@/packages/common/components'
 import Upload from '@/components/upload'
+import moment from 'moment'
+import Countdown from '../components/countdown/index'
 import { getFieldsConfig } from './config'
-
 import style from './style.m.styl'
 
 /** 售后详情header部分 */
-const detailTabHear = () => {
+const detailTabHear = (dataSource: any) => {
+  const { refundCode, refundStatusDesc, countdown, refundStatus } = dataSource
+  console.log(countdown, 'countdowncountdown')
   return (
     <div className='mb10'>
       <Card>
         <Row align='middle'>
           <Col className={style['detail-col']} span={8}>
-            售后单编号:20190418131456778899
+            售后单编号:{refundCode}
           </Col>
           <Col className={style['detail-col']} span={8}>
-            售后状态:待合伙人审核
+            售后状态:{refundStatusDesc}
           </Col>
-          <Col className={style['detail-col']} span={8}>
-            审核倒计时:23:22:22
-          </Col>
+          <If condition={ refundStatus === 10 && countdown }>
+            <Col className={style['detail-col']} span={8}>
+              审核倒计时:
+              <Countdown value={countdown / 1000 }></Countdown>
+            </Col>
+          </If>
         </Row>
       </Card>
     </div>
-
   )
 }
 
 /** 售后审批后信息模板 */
-const auditAfterInfoTemplate = () => {
+const auditAfterInfoTemplate = (dataSource: any) => {
+  const { handleInfo, refundStatus } = dataSource
+  const { handleTime, explain, refundReason, toWarehouse, refundServerNum, refundAmount, handleRefundProof } = handleInfo
   return (
     <div className='mb10'>
       <Card>
         <h3>售后处理信息</h3>
         <Row>
           <Col>
-            处理结果：同意售后
+            处理结果：{
+              refundStatus === 40 ? '不同意' : '同意'
+            }
           </Col>
           <Col>
-            处理时间：2020.09.09 12:33:33
+            处理时间：{moment(handleTime).format('YYYY-MM-DD HH:mm:ss')}
           </Col>
           <Col>
-            售后原因：不想要了
+            售后原因：{refundReason}
           </Col>
           <Col>
-            是否需要送回仓库：
+            是否需要送回仓库：{toWarehouse === 0 ? '需要' : '为需要'}
           </Col>
           <Col>
-            售后数目：2
+            售后数目：{refundServerNum}
           </Col>
           <Col>
-            退款金额：250
+            退款金额：{formatMoneyWithSign(refundAmount)}
           </Col>
           <Col>
-            说    明：安排售后退货退款1个，退款2450元
+            说    明：{explain}
+          </Col>
+          <Col>
+            图片凭证：{handleRefundProof && handleRefundProof.map((img: any, index: number) =>{
+              return (
+                <Image
+                  key={index}
+                  style={{
+                    height: 100,
+                    width: 100,
+                    minWidth: 100
+                  }}
+                  src={replaceHttpUrl(img)}
+                  alt='主图'
+                />
+              )
+            })}
           </Col>
         </Row>
       </Card>
@@ -64,29 +92,31 @@ const auditAfterInfoTemplate = () => {
 }
 
 /** 申请信息模板 */
-const applyInfoTemplate = () => {
+const applyInfoTemplate = (dataSource: any) => {
+  const { applyInfo } = dataSource
+  const { refundType, refundReason, refundInfo, amount, applyTime } = applyInfo || {}
   return (
     <div className='mb10'>
       <Card>
         <h3>售后申请信息</h3>
         <Row>
           <Col>
-            售后类型：生鲜售后
+            售后类型：{ refundType === 10 ? '退货退款' : refundType === 20 ? '仅退款' : ''}
           </Col>
           <Col>
-            售后原因：不想要了
+            售后原因：{refundReason}
           </Col>
           <Col>
-            申请时间：2019-07-11 19:22:22
+            申请时间：{moment(applyTime).format('YYYY-MM-DD HH:mm:ss')}
           </Col>
           <Col>
             申请售后数目：1
           </Col>
           <Col>
-            申请售后金额：¥121
+            申请售后金额：{formatMoneyWithSign(amount)}
           </Col>
           <Col>
-            售后说明：不想要不想要了不想要了不想要了不想要了不想要了不想要了不想要了不想   要了不想要了不想要了了
+            售后说明：{refundInfo}
           </Col>
           <Col>
             图片凭证：
@@ -101,7 +131,7 @@ const applyInfoTemplate = () => {
 }
 
 /** 订单信息 */
-const orderInfo = () => {
+const orderInfo = (dataSource: any) => {
   const columns: any = [
     {
       title: '商品名称',
@@ -120,71 +150,107 @@ const orderInfo = () => {
     },
     {
       title: '规格',
-      dataIndex: 'properties',
-      key: 'properties'
+      dataIndex: 'skuProperties',
+      key: 'skuProperties'
     },
     {
       title: '购买单价',
       dataIndex: 'dealPrice',
       key: 'dealPrice',
-      render: (price: string) => {
+      render: (unitPrice: string) => {
         return (
           <div>
-            {price}
+            {formatMoneyWithSign(unitPrice)}
           </div>
         )
       }
     },
     {
       title: '购买数量',
-      dataIndex: 'sum',
-      key: 'sum'
+      dataIndex: 'quantity',
+      key: 'quantity'
     },
     {
       title: '商品总价(元)',
       dataIndex: 'dealTotalPrice',
-      key: 'dealTotalPrice'
+      key: 'dealTotalPrice',
+      render: (dealTotalPrice: number) => {
+        return (
+          <>
+            {formatMoneyWithSign(dealTotalPrice)}
+          </>
+        )
+      }
     },
     {
       title: '使用优惠券',
-      dataIndex: 'num',
-      key: 'num'
+      dataIndex: 'couponPrice',
+      key: 'couponPrice',
+      render: (couponPrice: string) => {
+        return (
+          <div>
+            {formatMoneyWithSign(couponPrice)}
+          </div>
+        )
+      }
     },
     {
       title: '应付金额',
-      dataIndex: 'ayMoney',
-      key: 'ayMoney'
+      dataIndex: 'orderAmount',
+      key: 'orderAmount',
+      render: (orderAmount: number) => {
+        return (
+          <>
+            {formatMoneyWithSign(orderAmount)}
+          </>
+        )
+      }
     },
     {
       title: '优惠金额',
-      dataIndex: 'num',
-      key: 'price'
+      dataIndex: 'discountPrice',
+      key: 'discountPrice',
+      render: (discountPrice: string) => {
+        return (
+          <div>
+            {formatMoneyWithSign(discountPrice)}
+          </div>
+        )
+      }
     },
     {
       title: '实付金额',
       dataIndex: 'payMoney',
-      key: 'payMoney'
+      key: 'payMoney',
+      render: (payMoney: number) => {
+        return (
+          <>
+            {formatMoneyWithSign(payMoney)}
+          </>
+        )
+      }
     }
   ]
-  const data: [] = []
+  const { orderWideDO, orderAmount } = dataSource
+  console.log(orderWideDO, 'orderWideDO')
   return (
     <div className='mb10'>
       <Card>
         <h3>订单信息</h3>
         <Row>
           <Col>
-            买家名称：韩记光
+            买家名称：{orderWideDO.receiverName}
           </Col>
           <Col>
-            联系电话：17682310593
+            联系电话：{orderWideDO.receiverPhone}
           </Col>
           <Col>
-            下单门店：杭州喜团一号店
+            下单门店：{orderWideDO.storeName}
           </Col>
           <Col>
             <div className='mt10'>
               售后商品
-              <Table columns={columns} dataSource={data} />
+              <Table pagination={false} columns={columns} dataSource={[{ ...orderWideDO, ...orderAmount }]} />
             </div>
           </Col>
         </Row>
@@ -194,29 +260,30 @@ const orderInfo = () => {
 }
 
 /** 审批模板 */
-class AuditTemplate extends React.Component {
+class AuditTemplate extends React.Component<any, any> {
   public form: FormInstance
+  /**
+   * 售后提审
+   *
+   * @memberof AuditTemplate
+   */
   public save = () => {
-    console.log(this.form, 'this.form')
     this.form.props.form.validateFields((err) => {
-      console.log(err, 'err_00001')
       if (err) {
         APP.error('请检查输入项是否正确')
         return
       }
-      const values = this.form.getValues()
-      console.log(values.handleResult, 'values.handleResult')
+      this.props.saveAudit(this.form.getValues())
     })
   }
   public render () {
     const values = this.form && this.form.getValues()
-    const { handleResult } = values || {}
-    console.log(values, 'values')
-    console.log(handleResult, 'handleResult')
+    const { refundStatus } = this.props.dataSource
+    const { auditOperation } = values || {}
     return (
       <div className='mb10'>
         <Card>
-          <h3>审核信息</h3>
+          <h3>{refundStatus === 10 ? '审核信息' : refundStatus === 24 ? '收货确认' : ''}</h3>
           <Form
             getInstance={(ref) => {
               this.form = ref
@@ -230,49 +297,54 @@ class AuditTemplate extends React.Component {
           >
             <FormItem
               verifiable
-              name='handleResult'
+              name='auditOperation'
             />
-            <If condition={handleResult === 0}>
+            <If condition={auditOperation === 0}>
               <FormItem
                 verifiable
-                name='auditReason'
+                name='refundReason'
+              />
+              <If condition={refundStatus === 10}>
+                <FormItem
+                  verifiable
+                  name='toWarehouse'
+                >
+                </FormItem>
+              </If>
+              <FormItem
+                verifiable
+                type='number'
+                name='auditServerNum'
               />
               <FormItem
                 verifiable
                 type='number'
-                name='saleAfterNumber'
-              />
-              <FormItem
-                verifiable
-                name='refundAmount'
+                name='auditRefundAmount'
               />
             </If>
-            <If condition={handleResult === 1}>
+            <If condition={auditOperation === 1}>
               <FormItem
                 label='售后凭证'
                 inner={(form) => {
                   return (
                     <div>
-                      {form.getFieldDecorator('productImage')(
-                        <Upload />
+                      {form.getFieldDecorator('refundAuditImageS')(
+                        <Upload listNum={9} listType='picture-card' />
                       )}
-                      {/* <div>
-                        <span>(建议尺寸750*750，300kb内)</span>
-                      </div> */}
                     </div>
                   )
                 }}
               />
             </If>
             <FormItem
-              verifiable={handleResult === 1}
-              name='explain'
+              verifiable={auditOperation === 1}
+              name='auditAuditInfo'
             />
             <FormItem>
               <Button
                 className='mr20'
                 type='primary'
-                onClick={this.save.bind(this, 0)}
+                onClick={() => this.save()}
               >
                 提交审核
               </Button>

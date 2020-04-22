@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
+import moment from 'moment'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
-import Img from '@/components/Image'
+import { formatMoneyWithSign } from '@/pages/helper'
 import If from '@/packages/common/components/if'
 import SearchFetch from '@/components/search-fetch'
-import { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import SelectFetch from '@/packages/common/components/select-fetch'
-import { Tabs, Card, Button } from 'antd'
+import { Tabs, Card, Button, Pagination } from 'antd'
+import Countdown from '../components/countdown/index'
 import { getFieldsConfig } from './config'
 import styles from './style.m.styl'
 
@@ -15,30 +15,79 @@ const { TabPane } = Tabs
 interface State {
   type: string
   dataSource: []
+  total: number
+  current: number
+  pageSize: number
 }
 
 class Order extends Component<any, State> {
   public form: FormInstance
-  public columns: [] = [
-
-  ]
   constructor (props: any) {
     super(props)
     this.state = {
       type: 'ALL',
-      dataSource: []
+      dataSource: [],
+      total: 0,
+      current: 1,
+      pageSize: 10
     }
   }
+  /**
+   * 订单tabs切换更新type
+   *
+   * @memberof Order
+   */
   public handleTabChange = (type: string) => {
     this.setState({
       type
     })
   }
+  /**
+   *请求列表
+  * @memberof Order
+  */
+  public fetchData () {
+    const { type, current, pageSize } = this.state
+    api.fetcOrderList({
+      refundStatus: type,
+      ...this.form.getValues(),
+      pageNo: current,
+      pageSize
+    }).then((res: any) => {
+      console.log(res, 'res')
+      this.setState({
+        dataSource: res.result || [],
+        total: res.total
+      })
+    })
+  }
+
+  /**
+   * 导出售后单列表
+   *
+   * @memberof Order
+   */
+  public toExport () {
+    const { type, current, pageSize } = this.state
+    api.exportOrderList({
+      refundStatus: type,
+      ...this.form.getValues(),
+      pageNo: current,
+      pageSize
+    }).then((res: any) => {
+      console.log(res, 'toExport')
+    })
+  }
+  public toSearch = () => {
+    console.log(this.form.getValues(), 'getValues()')
+    this.fetchData()
+  }
   public render () {
-    const { type, dataSource } = this.state
+    const { type, dataSource, current, total, pageSize } = this.state
+    console.log(dataSource, 'dataSource')
     return (
-      <div className={styles.list}>
-        <Card>
+      <Card className={styles.list}>
+        <div>
           <Tabs activeKey={`${type}`} onChange={this.handleTabChange}>
             <TabPane tab='全部' key='ALL' />
             <TabPane tab='待审核' key='10' />
@@ -87,15 +136,15 @@ class Order extends Component<any, State> {
             <FormItem name='childOrderCode' />
             <FormItem name='productName' />
             <FormItem name='contactPhone' />
-            <FormItem name='backStore' />
+            <FormItem name='refundType' />
             <FormItem name='createTime' />
           </Form>
           <div style={{ textAlign: 'right' }}>
-            <Button type='primary' className='mr10'>查询</Button>
+            <Button onClick={() => this.toSearch()} type='primary' className='mr10'>查询</Button>
             <Button className='mr10'>重置</Button>
-            <Button type='primary'>导出售后单</Button>
+            <Button type='primary' onClick={() => this.toExport()}>导出售后单</Button>
           </div>
-        </Card>
+        </div>
         <div className='mt10'>
           <table className={styles.table}>
             <thead>
@@ -112,65 +161,91 @@ class Order extends Component<any, State> {
               </tr>
             </thead>
             <tbody>
-              {/* {
-                dataSource.map((order, index) => {
+              {
+                dataSource.map((order: any, index) => {
                   return (
-                    <React.Fragment key={index}> */}
-              <tr>
-                <td className={styles['order-resume']} colSpan={9}>
-                  <span>售后单编号：</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span>订单编号：</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span>申请时间：</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <span>售后审核倒计时：</span>
-                </td>
-              </tr>
-              <tr>
-                {/* 商品信息 */}
-                <td>
-                  {/* {order.productId} */}
-                  ID1232323
-                </td>
-                <td>
-                  我是商品名称
-                </td>
-                {/* 单价 */}
-                <td>
-                  售后类型
-                </td>
-                {/* 数量 */}
-                <td>
-                  什么状态
-                </td>
-                {/* 订单总额 */}
-                <td>
-                  数目
-                </td>
-                {/* 收件人/收件人手机 */}
-                <td>
-                  金额
-                </td>
-                {/* 订单状态 */}
-                <td>
-                  什么门店
-                </td>
-                <td>
-                  信息
-                </td>
-                <td>
-                  各种操作
-                </td>
-              </tr>
-              {/* </React.Fragment>
+                    <React.Fragment key={index}>
+                      <tr>
+                        <td className={styles['order-resume']} colSpan={9}>
+                          <span>售后单编号：{order.refundCode}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <span>订单编号：{order.childOrderCode}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <span>申请时间：{order.createTime && moment(order.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <If condition={order.refundStatus === 10}>
+                            <span>
+                              售后审核倒计时：
+                              <Countdown value={order.countdown / 1000 }></Countdown>
+                            </span>
+                          </If>
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* 商品信息 */}
+                        <td>
+                          {order.productId}
+                        </td>
+                        <td>
+                          {order.skuName}
+                        </td>
+                        <td>
+                          {order.refundType === 10 ? '退货退款' : order.refundType === 20 ? '仅退款' : ''}
+                        </td>
+                        <td>
+                          {order.refundStatusDesc}
+                        </td>
+                        <td>
+                          {order.refundNumber}
+                        </td>
+                        <td>
+                          {formatMoneyWithSign(order.refundAmount)}
+                        </td>
+                        <td>
+                          {order.selfDeliveryPointName}
+                        </td>
+                        <td>
+                          {order.contactName} {order.contactPhone}
+                        </td>
+                        <td>
+                          <Button
+                            type='link'
+                            href={window.location.pathname + `#/fresh/saleAfter/detail/${order.refundCode}`}
+                            target='_blank'>
+                              查看详情
+                          </Button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className={styles.empty} colSpan={9}></td>
+                      </tr>
+                    </React.Fragment>
                   )
                 })
-              } */}
-              <tr>
-                <td className={styles.empty} colSpan={9}></td>
-              </tr>
+              }
             </tbody>
           </table>
         </div>
-      </div>
+        <div>
+          <Pagination
+            showQuickJumper
+            showTotal={() => {
+              return `共计 ${total} 条`
+            }}
+            style={{
+              marginTop: 10,
+              float: 'right'
+            }}
+            onChange={(page) => {
+              this.setState({
+                current: page
+              }, () => {
+                this.fetchData()
+              })
+            }}
+            pageSize={pageSize}
+            current={current}
+            total={total}
+          />
+        </div>
+      </Card>
     )
   }
 }

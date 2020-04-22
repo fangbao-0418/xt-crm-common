@@ -5,12 +5,12 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      handleResult: {
+      auditOperation: {
         type: 'radio',
         label: '处理结果',
         options: [
-          { label: '供应商发货', value: 0 },
-          { label: '喜团发货', value: 1 }
+          { label: '同意', value: 0 },
+          { label: '不同意', value: 1 }
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -21,14 +21,18 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      auditReason: {
+      refundReason: {
         type: 'select',
         label: '审核原因',
         options: [
-          { label: '待审核', value: 1 },
-          { label: '审核通过', value: 2 },
-          { label: '审核不通过', value: 3 },
-          { label: '待提交', value: 0 }
+          { label: '地址/电话填写错误', value: 10 },
+          { label: '优惠券未使用', value: 11 },
+          { label: '买错/买多/不想要', value: 12 },
+          { label: '订单拍错（规格/重量等）', value: 13 },
+          { label: '订单破损/污渍/裂痕/变形', value: 14 },
+          { label: '包装破损/污渍/裂痕/变形', value: 15 },
+          { label: '品种/产地/规格/成分等与描述不符', value: 16 },
+          { label: '商品腐烂/变质/死亡', value: 17 }
         ],
         controlProps: {
           style: {
@@ -44,7 +48,23 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      saleAfterNumber: {
+      toWarehouse: {
+        type: 'radio',
+        label: '是否需要送回仓库',
+        options: [
+          { label: '需要', value: 0 },
+          { label: '不需要', value: 1 }
+        ],
+        fieldDecoratorOptions: {
+          rules: [
+            {
+              required: true,
+              message: '请选择处理结果'
+            }
+          ]
+        }
+      },
+      auditServerNum: {
         type: 'input',
         label: '售后数目',
         controlProps: {
@@ -61,7 +81,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      refundAmount: {
+      auditRefundAmount: {
         type: 'input',
         label: '退款金额',
         fieldDecoratorOptions: {
@@ -71,9 +91,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               message: '退款金额不能为空'
             }
           ]
+        },
+        controlProps: {
+          style: {
+            width: '180px'
+          }
         }
       },
-      explain: {
+      auditAuditInfo: {
         type: 'textarea',
         label: '说明',
         fieldDecoratorOptions: {
@@ -83,6 +108,11 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               message: '请输入说明'
             }
           ]
+        },
+        controlProps: {
+          style: {
+            width: '360px'
+          }
         }
       }
     }

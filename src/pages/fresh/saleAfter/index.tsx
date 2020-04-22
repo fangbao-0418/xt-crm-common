@@ -17,9 +17,9 @@ export default class RouteApp extends React.Component<any, any> {
     console.log(match, 'match')
     return (
       <Switch>
-        <Route path={`${match.url}`} component={AfterSalesList} />
-        <Route path={`${match.url}/list`} component={AfterSalesList} />
-        <Route path={`${match.url}/detail`} component={AfterSalesDetail} />
+        <Route path={`${match.url}`} exact component={AfterSalesList} />
+        <Route
+          path={`${match.url}/detail/:refundCode`} component={AfterSalesDetail} />
       </Switch>
     )
   }

@@ -39,7 +39,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input',
         label: '收货人电话'
       },
-      backStore: {
+      refundType: {
         type: 'select',
         label: '是否需要送回仓库',
         options: [
