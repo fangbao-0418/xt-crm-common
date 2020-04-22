@@ -232,7 +232,7 @@ export default class extends Component {
                         )
                     }
                 </FormItem>
-                <FormItem label="昵称">
+                {/* <FormItem label="昵称">
                     {
                         getFieldDecorator('nickName', {
                             initialValue: values.nickName,
@@ -249,8 +249,8 @@ export default class extends Component {
                             <Input />
                         )
                     }
-                </FormItem>
-                <FormItem label="注册时间">
+                </FormItem> */}
+                {/* <FormItem label="注册时间">
                     {
                         getFieldDecorator('time', {
                             initialValue: values.time,
@@ -260,7 +260,7 @@ export default class extends Component {
                             />
                         )
                     }
-                </FormItem>
+                </FormItem> */}
                 <FormItem label="等级" className={styles.level}>
                     {
                         getFieldDecorator('memberType', {
@@ -274,7 +274,7 @@ export default class extends Component {
                         )
                     }
                 </FormItem>
-                <FormItem label="是否参加团购会">
+                {/* <FormItem label="是否参加团购会">
                     {
                         getFieldDecorator('enableGroupBuyPermission', {
                             initialValue: values.enableGroupBuyPermission
@@ -286,7 +286,7 @@ export default class extends Component {
                           </Select>
                         )
                     }
-                </FormItem>
+                </FormItem> */}
                 <FormItem label="手机号">
                     {
                         getFieldDecorator('phone', {
