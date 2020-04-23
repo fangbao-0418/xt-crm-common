@@ -5,8 +5,9 @@ import Goods from './goods'
 import StoreForm from './store/form'
 import Order from './order'
 import Activity from './activity'
+import Coupon from './coupon'
 class Fresh extends React.Component<RouteComponentProps> {
-  render() {
+  render () {
     const { match } = this.props
     return (
       <Switch>
@@ -15,6 +16,7 @@ class Fresh extends React.Component<RouteComponentProps> {
         <Route path={`${match.url}/store/:id`} component={StoreForm} />
         <Route path={`${match.url}/order`} component={Order} />
         <Route path={`${match.url}/activity`} component={Activity} />
+        <Route path={`${match.url}/coupon`} component={Coupon} />
       </Switch>
     )
   }
