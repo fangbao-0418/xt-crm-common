@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Card, Form, Input, Button, Radio, Table, message } from 'antd'
 import { map, uniqWith, memoize } from 'lodash'
 import CascaderCity from '@/components/cascader-city'
@@ -167,14 +168,14 @@ class GoodsEdit extends React.Component {
       }
     });
   };
-  render() {
+  render () {
     const columns = [
       {
         title: '规格编码',
         dataIndex: 'skuCode',
         key: 'skuCode',
         render: text => {
-          return text || '无';
+          return text || '无'
         }
       },
       {
@@ -200,11 +201,17 @@ class GoodsEdit extends React.Component {
         key: 'stock'
       },
       {
+        title: '单位',
+        dataIndex: 'unit',
+        align: 'center'
+      },
+      {
         title: '自提佣金%',
+        align: 'center',
         dataIndex: 'commissionPercentage'
       }
-    ];
-    const { getFieldDecorator } = this.props.form;
+    ]
+    const { getFieldDecorator } = this.props.form
     const {
       detail,
       detail: {
@@ -256,7 +263,7 @@ class GoodsEdit extends React.Component {
           onCancel={() => {
             this.setState({
               visible: false
-            });
+            })
           }}
         />
         <Form {...formLayout}>
@@ -431,4 +438,8 @@ class GoodsEdit extends React.Component {
   }
 }
 
-export default Form.create()(GoodsEdit);
+GoodsEdit.propTypes = {
+  form: PropTypes.object
+}
+
+export default Form.create()(GoodsEdit)

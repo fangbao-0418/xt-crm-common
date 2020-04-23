@@ -5,8 +5,8 @@
   "homepage": "./",
   "scripts": {
     "start": "npm run i18n && react-app-rewired start",
-    "build-test": "cross-env PUB_ENV=test node app.js",
     "build-dev": "cross-env PUB_ENV=dev node app.js",
+    "build-test": "cross-env PUB_ENV=test node app.js",
     "build-pre": "cross-env PUB_ENV=pre node app.js",
     "build-prod": "cross-env PUB_ENV=prod node app.js",
     "remove": "node ./node_modules/rimraf/bin.js ./src/packages",
