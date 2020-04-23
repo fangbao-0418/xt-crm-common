@@ -1,17 +1,19 @@
-import React from 'react';
-import { Table, Card, Button, Modal, message } from 'antd';
-import { queryBannerList, updateBannerStatus, deleteBanner } from '../api';
-import BannerModal from '../banner-modal';
-import { formatDate } from '../../helper';
-import { TextMapPosition } from '../constant';
-import Image from '../../../components/Image';
+import React from 'react'
+import { Table, Card, Button, Modal, message } from 'antd'
+import { queryBannerList, updateBannerStatus, deleteBanner } from '../api'
+import BannerModal from '../banner-modal'
+import { formatDate } from '../../helper'
+import { TextMapPosition } from '../constant'
+import Image from '../../../components/Image'
 import Search from './Search'
-const replaceHttpUrl = ( imgUrl = '' ) => {
-  let imgUrlTrim = imgUrl.trim();
+import { namespace } from '../config'
+
+const replaceHttpUrl = (imgUrl = '') => {
+  const imgUrlTrim = imgUrl.trim()
   if (imgUrlTrim.indexOf('http') !== 0) {
-    imgUrl = 'https://assets.hzxituan.com/' + imgUrlTrim;
+    imgUrl = 'https://assets.hzxituan.com/' + imgUrlTrim
   }
-  return imgUrlTrim;
+  return imgUrlTrim
 }
 
 class OrderList extends React.Component {
@@ -25,34 +27,38 @@ class OrderList extends React.Component {
     list: [],
     current: 1,
     pageSize: 10,
-    total: 0,
+    total: 0
   };
 
-  componentDidMount() {
-    this.query();
+  componentDidMount () {
+    this.query()
   }
 
   query = () => {
+    const payload = APP.fn.getPayload(namespace) || {}
     this.setState({
       page: this.payload.page,
       pageSize: this.payload.pageSize
     })
-    queryBannerList(this.payload).then(res => {
+    queryBannerList({
+      ...payload,
+      ...this.payload
+    }).then(res => {
       this.setState({
         list: res.records,
-        total: res.total,
-      });
-    });
+        total: res.total
+      })
+    })
   };
 
   toggleStatus = (id, status) => {
     updateBannerStatus({
       id,
-      status,
+      status
     }).then((res) => {
-      res && message.success('操作成功');
-      this.query();
-    });
+      res && message.success('操作成功')
+      this.query()
+    })
   };
 
   handlePageChange = (page, pageSize) => {
@@ -60,10 +66,10 @@ class OrderList extends React.Component {
     this.setState(
       {
         current: page,
-        pageSize,
+        pageSize
       },
       this.query,
-    );
+    )
   };
   delete = id => {
     Modal.confirm({
@@ -73,45 +79,45 @@ class OrderList extends React.Component {
       okType: 'danger',
       onOk: () => {
         return deleteBanner({ id }).then(() => {
-          this.query();
-        });
-      },
-    });
+          this.query()
+        })
+      }
+    })
   };
 
-  render() {
-    const { current, total, pageSize } = this.state;
+  render () {
+    const { current, total, pageSize } = this.state
 
     const columns = [
       {
         title: '排序',
         align: 'center',
-        dataIndex: 'sort',
+        dataIndex: 'sort'
       },
       {
         title: 'banner图',
         dataIndex: 'imgUrlWap',
-        render(imgUrlWap) {
-          return <Image src={replaceHttpUrl(imgUrlWap)} alt="banner图" style={{ maxWidth: 150, maxHeight: 150 }} />;
-        },
+        render (imgUrlWap) {
+          return <Image src={replaceHttpUrl(imgUrlWap)} alt='banner图' style={{ maxWidth: 150, maxHeight: 150 }} />
+        }
       },
       {
         title: 'banner名称 ',
-        dataIndex: 'title',
+        dataIndex: 'title'
       },
       {
         title: '上线时间',
         dataIndex: 'onlineTime',
-        render(onlineTime) {
-          return formatDate(onlineTime);
-        },
+        render (onlineTime) {
+          return formatDate(onlineTime)
+        }
       },
       {
         title: '下线时间',
         dataIndex: 'offlineTime',
-        render(offlineTime) {
-          return formatDate(offlineTime);
-        },
+        render (offlineTime) {
+          return formatDate(offlineTime)
+        }
       },
       {
         title: '链接地址',
@@ -125,16 +131,16 @@ class OrderList extends React.Component {
       {
         title: '位置',
         dataIndex: 'seat',
-        render(seat, record) {
+        render (seat, record) {
           return <span>{record.newSeatStr}/{record.childSeatStr}</span>
-        },
+        }
       },
       {
         title: '状态',
         dataIndex: 'status',
-        render(status) {
-          return status ? '开启' : '关闭';
-        },
+        render (status) {
+          return status ? '开启' : '关闭'
+        }
       },
       {
         title: '操作',
@@ -147,7 +153,7 @@ class OrderList extends React.Component {
               <Button
                 size='small'
                 onClick={() => {
-                  this.toggleStatus(id, status ? 0 : 1);
+                  this.toggleStatus(id, status ? 0 : 1)
                 }}
               >
                 {status ? '关闭' : '开启'}
@@ -155,22 +161,21 @@ class OrderList extends React.Component {
               &nbsp;
               <Button
                 size='small'
-                type="danger"
+                type='danger'
                 onClick={() => {
-                  this.delete(id);
+                  this.delete(id)
                 }}
               >
                 删除
               </Button>
             </>
-          );
-        },
-      },
-    ].filter(column => !column.hide);
+          )
+        }
+      }
+    ].filter(column => !column.hide)
     return (
       <>
-        <Card title="">
-          {/* <Button onClick={this.query}>查询</Button> &nbsp; */}
+        <Card title=''>
           <BannerModal onSuccess={this.query} isEdit={false} />
           <Search
             className='ml10'
@@ -193,14 +198,14 @@ class OrderList extends React.Component {
               current,
               total,
               pageSize,
-              onChange: this.handlePageChange,
+              onChange: this.handlePageChange
             }}
             rowKey={record => record.id}
           />
         </Card>
       </>
-    );
+    )
   }
 }
 
-export default OrderList;
+export default OrderList
