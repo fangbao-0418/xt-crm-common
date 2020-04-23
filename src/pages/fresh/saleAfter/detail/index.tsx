@@ -83,27 +83,23 @@ class Order extends Component<any, State> {
    * @memberof Order
    */
   public saveAudit = (fromValues: any) => {
-    console.log(this.form, 'this.form')
     const { refundCode } = this.state.dataSource
     const refundAuditImageS = fromValues.refundAuditImageS && fromValues.refundAuditImageS.map((img: any) => {
       return img.url
     })
-    api.orderAudit({
+    return api.orderAudit({
       ...fromValues,
       refundCode,
       refundAuditImageS,
       auditRefundAmount: fromValues.auditRefundAmount * 100
-    }).then(res => {
-      console.log(res, 'res0002')
+    }).then(() => {
       this.getOrderDetail()
     })
-    console.log(fromValues, 'values.handleResult')
   }
 
   public handleTabChange = (type: string) => {
     const { skuServerId, refundCode } = this.state.dataSource
     const { orderTrajectory } = this.state
-    console.log(type, 'type0003')
     if (type === 'record' && !orderTrajectory.length) {
       api.getOrderTrajectory(skuServerId, refundCode).then(res => {
         this.setState({

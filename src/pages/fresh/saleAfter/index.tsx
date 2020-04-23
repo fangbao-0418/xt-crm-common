@@ -14,7 +14,6 @@ const AfterSalesDetail = loadable(() => import('./detail/index'))
 export default class RouteApp extends React.Component<any, any> {
   render () {
     const { match } = this.props
-    console.log(match, 'match')
     return (
       <Switch>
         <Route path={`${match.url}`} exact component={AfterSalesList} />

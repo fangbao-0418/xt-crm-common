@@ -64,23 +64,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      auditServerNum: {
-        type: 'input',
-        label: '售后数目',
-        controlProps: {
-          style: {
-            width: '180px'
-          }
-        },
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              required: true,
-              message: '售后数目不能为空'
-            }
-          ]
-        }
-      },
       auditRefundAmount: {
         type: 'input',
         label: '退款金额',

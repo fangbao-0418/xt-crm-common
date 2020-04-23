@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Card, Row, Col, Button, Table } from 'antd'
+import { Card, Row, Col, Button, Table, InputNumber } from 'antd'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import Image from '@/components/Image'
 import { replaceHttpUrl } from '@/util/utils'
@@ -14,7 +14,6 @@ import style from './style.m.styl'
 /** 售后详情header部分 */
 const detailTabHear = (dataSource: any) => {
   const { refundCode, refundStatusDesc, countdown, refundStatus } = dataSource
-  console.log(countdown, 'countdowncountdown')
   return (
     <div className='mb10'>
       <Card>
@@ -245,7 +244,6 @@ const orderInfo = (dataSource: any) => {
     }
   ]
   const { orderWideDO, orderAmount } = dataSource
-  console.log(orderWideDO, 'orderWideDO')
   return (
     <div className='mb10'>
       <Card>
@@ -286,27 +284,40 @@ class AuditTemplate extends React.Component<any, any> {
         APP.error('请检查输入项是否正确')
         return
       }
-      this.props.saveAudit(this.form.getValues())
+      this.props.saveAudit(this.form.getValues()).then(() => {
+        this.form.resetValues()
+      })
     })
+  }
+
+  /**
+   * formChange
+   *
+   * @memberof AuditTemplate
+   */
+  public formChange = (field?: string, value?: any, values?: any) => {
+    const maxUnitRefundMoney = this.props.dataSource.orderRefundCheckResultVO.maxUnitRefundMoney || 0
+    if (field === 'auditServerNum') {
+      this.form.setValues({ auditRefundAmount: (value * maxUnitRefundMoney / 100) })
+    }
+    this.forceUpdate()
   }
   public render () {
     const values = this.form && this.form.getValues()
-    const { refundStatus } = this.props.dataSource
-    const { auditOperation } = values || {}
+    const { refundStatus, orderRefundCheckResultVO } = this.props.dataSource
+    const { auditOperation, auditServerNum } = values || {}
+    const { maxServerNum, maxUnitRefundMoney } = orderRefundCheckResultVO || {}
+    const maxRefundMoney = auditServerNum * maxUnitRefundMoney
     return (
       <div className='mb10'>
         <Card>
           <h3>{refundStatus === 10 ? '审核信息' : refundStatus === 24 ? '收货确认' : ''}</h3>
           <Form
+            onChange={(field?: string, value?: any, values?: any) => this.formChange(field, value, values)}
             getInstance={(ref) => {
               this.form = ref
             }}
             config={getFieldsConfig()}
-            onChange={() => {
-              this.setState({
-                isValuesChange: true
-              })
-            }}
           >
             <FormItem
               verifiable
@@ -326,13 +337,59 @@ class AuditTemplate extends React.Component<any, any> {
               </If>
               <FormItem
                 verifiable
-                type='number'
-                name='auditServerNum'
+                label='售后数目'
+                inner={(form) => {
+                  return (
+                    <div>
+                      {form.getFieldDecorator('auditServerNum', {
+                        rules: [
+                          {
+                            validator: (rule, value, cb) => {
+                              if (value < 0) {
+                                cb('不能小于0')
+                              } else if (value > maxServerNum) {
+                                cb(`最多可退${maxServerNum}件`)
+                              } else if (!value && value !== 0) {
+                                cb('售后数目不能为空')
+                              }
+                              cb()
+                            }
+                          }
+                        ]
+                      })(
+                        <InputNumber />
+                      )}
+                    </div>
+                  )
+                }}
               />
               <FormItem
+                label='退款金额'
                 verifiable
-                type='number'
-                name='auditRefundAmount'
+                inner={(form) => {
+                  return (
+                    <div>
+                      {form.getFieldDecorator('auditRefundAmount', {
+                        rules: [
+                          {
+                            validator: (rule, value, cb) => {
+                              if (value < 0) {
+                                cb('不能小于0')
+                              } else if (value > (maxRefundMoney / 100)) {
+                                cb(`最多可退${(maxRefundMoney / 100)}元`)
+                              } else if (!value && value !== 0) {
+                                cb('退款金额不能为空')
+                              }
+                              cb()
+                            }
+                          }
+                        ]
+                      })(
+                        <InputNumber step={0.01} />
+                      )}
+                    </div>
+                  )
+                }}
               />
             </If>
             <If condition={auditOperation === 1}>

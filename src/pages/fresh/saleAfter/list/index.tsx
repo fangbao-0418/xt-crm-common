@@ -54,7 +54,6 @@ class Order extends Component<any, State> {
       pageNo: current,
       pageSize
     }).then((res: any) => {
-      console.log(res, 'res')
       this.setState({
         dataSource: res.result || [],
         total: res.total
@@ -78,13 +77,21 @@ class Order extends Component<any, State> {
       console.log(res, 'toExport')
     })
   }
+
+  /**
+   * 重置from数据
+   *
+   * @memberof Order
+   */
+  public resetFrom () {
+    this.form.resetValues()
+  }
+
   public toSearch = () => {
-    console.log(this.form.getValues(), 'getValues()')
     this.fetchData()
   }
   public render () {
     const { type, dataSource, current, total, pageSize } = this.state
-    console.log(dataSource, 'dataSource')
     return (
       <Card className={styles.list}>
         <div>
@@ -141,7 +148,7 @@ class Order extends Component<any, State> {
           </Form>
           <div style={{ textAlign: 'right' }}>
             <Button onClick={() => this.toSearch()} type='primary' className='mr10'>查询</Button>
-            <Button className='mr10'>重置</Button>
+            <Button onClick={() => this.resetFrom()} className='mr10'>重置</Button>
             <Button type='primary' onClick={() => this.toExport()}>导出售后单</Button>
           </div>
         </div>
