@@ -172,7 +172,7 @@ class Main extends React.Component<Props, State> {
         }
       },
       {
-        title: '成本价',
+        title: (<><span className='error'>*</span>成本价</>),
         dataIndex: 'costPrice',
         width: 200,
         render: (text: any, record: any, index: any) => {
@@ -191,7 +191,7 @@ class Main extends React.Component<Props, State> {
         }
       },
       {
-        title: '市场价',
+        title: (<><span className='error'>*</span>市场价</>),
         dataIndex: 'marketPrice',
         width: 200,
         render: (text: any, record: any, index: any) => {
@@ -210,7 +210,7 @@ class Main extends React.Component<Props, State> {
         }
       },
       {
-        title: '销售价',
+        title: (<><span className='error'>*</span>销售价</>),
         dataIndex: 'salePrice',
         width: 200,
         render: (text, record, index: any) => (
@@ -234,7 +234,7 @@ class Main extends React.Component<Props, State> {
         )
       },
       {
-        title: '库存',
+        title: (<>库存</>),
         dataIndex: 'stock',
         width: 200,
         render: (text: any, record, index: any) => (
