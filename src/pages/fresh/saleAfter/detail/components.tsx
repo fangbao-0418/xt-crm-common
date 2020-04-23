@@ -337,6 +337,7 @@ class AuditTemplate extends React.Component<any, any> {
               </If>
               <FormItem
                 verifiable
+                required
                 label='售后数目'
                 inner={(form) => {
                   return (
@@ -366,6 +367,7 @@ class AuditTemplate extends React.Component<any, any> {
               <FormItem
                 label='退款金额'
                 verifiable
+                required
                 inner={(form) => {
                   return (
                     <div>
