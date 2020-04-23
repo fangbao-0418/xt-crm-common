@@ -59,7 +59,9 @@ class ProductSelector extends Component {
     this.fetchData();
   }
   render() {
+    const { multi = true, visible } = this.props
     const rowSelection = {
+      type: multi ? 'checkbox' : 'radio',
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
         console.log('selectedRowKeys=>', selectedRowKeys)
@@ -71,7 +73,7 @@ class ProductSelector extends Component {
     return (
       <Modal
         title="选择活动"
-        visible={this.props.visible}
+        visible={visible}
         width="60%"
         onCancel={this.handleCancel}
         onOk={this.handleOkModal}

@@ -4,7 +4,7 @@ const { post, get, newPost } = APP.http
 
 /** 获取满赠列表 */
 export const fetchMarketingList = (payload: Marketing.ActivityListPayloadProps) => {
-  payload.type = 8
+  payload.promotionTypes = '8'
   return post('/promotion/queryDiscounts', payload).then((res) => {
     res.records = adapter.handleMarketingListData(res.records)
     return res
