@@ -12,7 +12,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         label: '售后状态',
         options: [
           { label: '待合伙人审核', value: 10 },
-          { label: '待返回仓库', value: 20 },
+          { label: '待返回仓库', value: 24 },
           { label: '售后完成', value: 30 },
           { label: '售后关闭', value: 40 },
           { label: '售后取消', value: 50 }

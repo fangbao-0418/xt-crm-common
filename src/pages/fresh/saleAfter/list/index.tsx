@@ -40,7 +40,7 @@ class Order extends Component<any, State> {
   public handleTabChange = (type: string) => {
     this.setState({
       type
-    })
+    }, () => this.fetchData())
   }
   /**
    *请求列表
@@ -48,9 +48,21 @@ class Order extends Component<any, State> {
   */
   public fetchData () {
     const { type, current, pageSize } = this.state
+    const formData = this.form.getValues()
+    let refundStatusList: any = []
+    // 如果是取消和关闭，需要传递两个值，其他状态转化一下type
+    if (type === 'closeAndCancel') {
+      refundStatusList = refundStatusList.concat([40, 50])
+    } else if (type === 'ALL') {
+      refundStatusList = formData.refundStatus ? refundStatusList.concat([Number(formData.refundStatus)])
+        : refundStatusList
+    } else {
+      refundStatusList = refundStatusList.concat([Number(type)])
+    }
+
     api.fetcOrderList({
-      refundStatus: type,
-      ...this.form.getValues(),
+      refundStatusList: refundStatusList,
+      ...formData,
       pageNo: current,
       pageSize
     }).then((res: any) => {
@@ -98,9 +110,9 @@ class Order extends Component<any, State> {
           <Tabs activeKey={`${type}`} onChange={this.handleTabChange}>
             <TabPane tab='全部' key='ALL' />
             <TabPane tab='待审核' key='10' />
-            <TabPane tab='处理中' key='20' />
+            <TabPane tab='待返回仓库' key='24' />
             <TabPane tab='已完成' key='30' />
-            <TabPane tab='关闭/取消' key='40' />
+            <TabPane tab='关闭/取消' key='closeAndCancel' />
           </Tabs>
           <Form
             layout='inline'
