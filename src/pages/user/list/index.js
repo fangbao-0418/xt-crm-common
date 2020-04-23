@@ -189,6 +189,8 @@ export default class extends Component {
                     payload.memberType = types[0];
                     payload.memberTypeLevel = types[1];
                 }
+                /** 注册来源暂时去掉 */
+                payload.registerFrom = undefined
                 payload.time = undefined
                 payload.phone = payload.phone ? payload.phone : undefined
                 payload.invitePhone = payload.invitePhone ? payload.invitePhone : undefined
@@ -307,7 +309,7 @@ export default class extends Component {
                         )
                     }
                 </FormItem>
-                <FormItem label="注册来源" className={styles.source}>
+                {/* <FormItem label="注册来源" className={styles.source}>
                     {
                         getFieldDecorator('registerFrom', {
                             initialValue: values.registerFrom
@@ -319,7 +321,7 @@ export default class extends Component {
                             </Select>
                         )
                     }
-                </FormItem>
+                </FormItem> */}
                 <FormItem>
                     <Button
                         type="primary"
