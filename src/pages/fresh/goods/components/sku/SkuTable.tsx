@@ -261,6 +261,7 @@ class Main extends React.Component<Props, State> {
           })(
             <Input
               value={text}
+              maxLength={5}
               placeholder='请输入单位'
               onChange={cb('unit', record, index)}
             />
