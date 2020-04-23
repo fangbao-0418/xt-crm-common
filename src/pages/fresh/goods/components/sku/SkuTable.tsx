@@ -125,23 +125,21 @@ class Main extends React.Component<Props, State> {
               this.speedyInputCallBack(dataSource)
             }}
           >
-            {fieldDecoratorOptions ?
-              this.props.form && this.props.form.getFieldDecorator(`${field}-${realIndex}`, {
-                initialValue: text,
-                getValueFromEvent(e) {
-                  let value: string | number = ''
-                  if (!e || !e.target) {
-                    value = e
-                  } else {
-                    const { target } = e
-                    value = target.type === 'checkbox' ? target.checked : target.value
-                  }
-                  cb(field, record, realIndex)(value)
-                  return value
-                },
-                ...fieldDecoratorOptions
-              })(node)
-            : node}
+            {fieldDecoratorOptions ? this.props.form && this.props.form.getFieldDecorator(`${field}-${realIndex}`, {
+              initialValue: text,
+              getValueFromEvent (e) {
+                let value: string | number = ''
+                if (!e || !e.target) {
+                  value = e
+                } else {
+                  const { target } = e
+                  value = target.type === 'checkbox' ? target.checked : target.value
+                }
+                cb(field, record, realIndex)(value)
+                return value
+              },
+              ...fieldDecoratorOptions
+            })(node) : node}
           </ArrowContain>
         </FormItem>
       )
@@ -154,7 +152,7 @@ class Main extends React.Component<Props, State> {
       const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
       if (this.props.form) {
         this.props.form.validateFields(
-          ['costPrice', 'salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${realIndex}`)
+          ['costPrice', 'salePrice', 'headPrice', 'areaMemberPrice', 'unit', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${realIndex}`)
         )
       }
     }
@@ -247,6 +245,24 @@ class Main extends React.Component<Props, State> {
               value={text}
               placeholder='请输入库存'
               onChange={cb('stock', record, index)}
+            />
+          )
+        )
+      },
+      {
+        title: (<><span className='error'>*</span>单位</>),
+        dataIndex: 'unit',
+        width: 200,
+        render: (text: any, record, index: any) => (
+          this.speedyInput('unit', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true, message: '单位不能为空'
+            }]
+          })(
+            <Input
+              value={text}
+              placeholder='请输入单位'
+              onChange={cb('unit', record, index)}
             />
           )
         )
