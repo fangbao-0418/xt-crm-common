@@ -175,7 +175,7 @@ class Store extends Component {
                  inner={(form) => {
                    return readonly ? this.state.address : form.getFieldDecorator('address', {
                    })(<CitySelect
-                     type={'1'}
+                     type='1'
                      getSelectedValues={(value: any[]) => {
                        if (Array.isArray(value) && value.length === 3) {
                          this.provinceName = value[0].label

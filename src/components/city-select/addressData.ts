@@ -9,13 +9,6 @@ interface City {
 function convert (list: City[], type: string) {
   function loop (list: City[], parentId?: string): City[] {
     const result: any[] = []
-    if (type==='1') {
-      list.push({
-        label: '全部',
-        value: '0',
-        name: 'all'
-      })
-    }
     list.forEach((item: City) => {
       if (item.parent === undefined && !parentId || item.parent === parentId) {
         const children = loop(list, item.value)
@@ -26,6 +19,13 @@ function convert (list: City[], type: string) {
         } : item)
       }
     })
+    if (type === '1') {
+      result.length > 0 && result.unshift({
+        label: '全部',
+        value: '0',
+        name: 'all'
+      })
+    }
     return result
   }
   return loop(list)

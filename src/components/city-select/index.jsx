@@ -36,7 +36,7 @@ class CitySelect extends Component {
         }
       });
     }
-    findCityData(city);
+    findCityData(this.city);
 
     // 分发监听
     onChange && onChange(selectedValues);
