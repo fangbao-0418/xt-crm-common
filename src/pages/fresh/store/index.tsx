@@ -146,30 +146,8 @@ class Store extends Component {
                 }}
               />
               <FormItem name='workDate' />
-              <FormItem label='店长手机号' name='mobile' />
-              <FormItem label='邀请店长手机号' name='mobile1' />
-
-              {/* <FormItem
-                label='省'
-                inner={(form) => {
-                  return readonly ? this.state.address : form.getFieldDecorator('province', {
-                    rules: [{
-                      required: true,
-                      message: '请选择省份'
-                    }]
-                  })(<Select
-                    key={1}
-                    style={{ width: '100%' }}
-                    showSearch
-                    placeholder='请选择省份'
-                    notFoundContent=''
-                    onSearch={this.onSearchCountry.bind(this)}
-                  >
-                    {this.countryList()}
-                  </Select>)
-                }}
-              />
-              */}
+              <FormItem label='店长手机号' name='shopPhone' />
+              <FormItem label='邀请店长手机号' name='invitePhone' />
                <FormItem
                  label='省市区'
                  inner={(form) => {
@@ -202,30 +180,6 @@ class Store extends Component {
       </>
     )
   }
-  //  ajaxData = async (e: any) => {
-  //    APP.fn.setPayload(
-  //      namespace,
-  //      e
-  //    )
-  //    const res = (await api.getShopList(e)) || {}
-  //    this.setState({ countrys: res.records })
-  //    console.log('res=>111', res)
-  //  };
-  //   //国家展示
-  //   countryList=()=>{
-  //     const { countrys } = this.state
-  //     const data: any = []
-  //     {
-  //       countrys&&countrys.map((item: any, index: any)=>{
-  //         data.push(<Option key={index} value={item.code}>{item.areaName}</Option>)
-  //       })
-  //     }
-  //     return data
-  //   }
-  //   onSearchCountry (e: any) {
-  //     if (e) {
-  //       this.ajaxData({ areaName: e })
-  //     }
-  //   }
+
 }
 export default Store

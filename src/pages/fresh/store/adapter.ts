@@ -18,7 +18,18 @@ export function listResponse (res: any) {
   })
   return omit(res, 'result')
 }
-
+// 过滤列表请求
+export function listRequest (payload: any) {
+  // 省市区
+  if (payload.address) {
+    // 省市区
+    const [provinceCode, cityCode, areaCode] = payload.address
+    payload.provinceCode = provinceCode
+    payload.cityCode = cityCode
+    payload.areaCode = areaCode
+  }
+  return payload
+}
 // 过滤表单请求
 export function formRequest (payload: any) {
   const result: any = filterUploadFile(payload, 'req', ['pictrueUrl'])
