@@ -1,7 +1,8 @@
-import React from 'react';
-import { Card, Row, Col, Icon, Radio, Input, Modal } from 'antd';
-import Shop from './shop';
-import Coupon from './coupon';
+import React from 'react'
+import { Card, Row, Col, Icon, Radio, Input, Modal } from 'antd'
+import Shop from './shop'
+import Coupon from './coupon'
+import Hotsport from './hotspot'
 import Upload from '@/components/upload';
 import ShopModal from '@/components/shop-modal';
 import CouponModal from '@/components/coupon-modal';
@@ -104,7 +105,7 @@ class Main extends React.Component<Props, State> {
   /**
    * 渲染商品楼层
    */
-  public renderShop() {
+  public renderShop () {
     const { detail, state } = this.props;
     const { goodsListByCurrentActivity } = state;
     const selectedRowKeys = this.getSelectedRowKeys(detail.products);
@@ -115,7 +116,7 @@ class Main extends React.Component<Props, State> {
     const activityCss = images[detail.css] && images[detail.css].activityCss;
     return (
       <div>
-        <Row gutter={12} className="mb10">
+        <Row gutter={12} className='mb10'>
           <Col span={3}>排列样式:</Col>
           <Col span={9}>
             <Radio.Group
@@ -226,8 +227,8 @@ class Main extends React.Component<Props, State> {
   /**
    * 渲染广告楼层
    */
-  public renderAd(): React.ReactNode {
-    const { detail } = this.props;
+  public renderAd (): React.ReactNode {
+    const { detail } = this.props
     return (
       // <Draggable
       //   className={styles['shop-draggable']}
@@ -283,9 +284,9 @@ class Main extends React.Component<Props, State> {
   /**
    * 渲染优惠券楼层
    */
-  public renderCoupon(): React.ReactNode {
-    const { detail } = this.props;
-    detail.css = detail.css || 1;
+  public renderCoupon (): React.ReactNode {
+    const { detail } = this.props
+    detail.css = detail.css || 1
     const selectedRowKeys = this.getSelectedRowKeys(detail.coupons);
     this.tempCoupons = Array.prototype.concat(detail.coupons || []);
     return (
@@ -369,25 +370,35 @@ class Main extends React.Component<Props, State> {
     );
   }
 
-  public renderLayout(): React.ReactNode {
+  public renderHotspot (): React.ReactNode {
+    return (
+      <div>
+        <Hotsport />
+      </div>
+    )
+  }
+
+  public renderLayout (): React.ReactNode {
     const {
       detail: { type }
-    } = this.props;
+    } = this.props
     switch (type) {
       case 1:
-        return this.renderShop();
+        return this.renderShop()
       case 2:
-        return this.renderCoupon();
+        return this.renderCoupon()
       case 3:
-        return this.renderAd();
+        return this.renderAd()
+      case 4:
+        return this.renderHotspot()
     }
   }
 
-  public render() {
-    const detail = this.props.detail;
+  public render () {
+    const detail = this.props.detail
     return (
       <Card
-        size="small"
+        size='small'
         title={typeConfig[detail.type].title}
         style={{ width: 800 }}
         extra={

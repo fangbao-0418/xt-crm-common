@@ -28,7 +28,7 @@ class Main extends React.Component<Props> {
     })
   }
   /** 添加楼层 */
-  public addContent(type: 1 | 2 | 3) {
+  public addContent (type: 1 | 2 | 3 | 4) {
     const { detail } = this.props
     detail.list.push({
       type,
@@ -81,22 +81,22 @@ class Main extends React.Component<Props> {
         <Form
           getInstance={ref => this.form = ref}
         >
-        <FormItem
-          name='floorName'
-          label='名称'
-          controlProps={{
-            style: {
-              width: 220
-            }
-          }}
-          verifiable
-          fieldDecoratorOptions={{
-            rules: [{
-              required: true,
-              message: '请输入名称'
-            }]
-          }}
-        />
+          <FormItem
+            name='floorName'
+            label='名称'
+            controlProps={{
+              style: {
+                width: 220
+              }
+            }}
+            verifiable
+            fieldDecoratorOptions={{
+              rules: [{
+                required: true,
+                message: '请输入名称'
+              }]
+            }}
+          />
           <FormItem
             name='status'
             label='启用状态'
@@ -139,17 +139,24 @@ class Main extends React.Component<Props> {
           >
             <Button
               type='primary'
-              className={styles.mr10}
+              className='mr8'
               onClick={() => this.addContent(3)}
             >
               广告
             </Button>
-            <Button type='primary' className={styles.mr10} onClick={() => this.addContent(2)}>优惠券</Button>
+            <Button type='primary' className='mr8' onClick={() => this.addContent(2)}>优惠券</Button>
             <Button
               type='primary'
+              className='mr8'
               onClick={() => this.addContent(1)}
             >
               商品
+            </Button>
+            <Button
+              type='primary'
+              onClick={() => this.addContent(4)}
+            >
+              图片热区
             </Button>
           </FormItem>
           <FormItem>
@@ -157,7 +164,7 @@ class Main extends React.Component<Props> {
               style={{ width: 800 }}
             />
           </FormItem>
-          <FormItem style={{marginTop: 100}}>
+          <FormItem style={{ marginTop: 100 }}>
             <Button
               type='primary'
               onClick={this.handleSave}>

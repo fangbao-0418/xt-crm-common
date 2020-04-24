@@ -1,7 +1,13 @@
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-24 14:09:13
+ * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/special/global.d.ts
+ */
 declare module Special {
   export interface DetailContentProps {
-    /** 楼层类型 1商品 2优惠券3 广告 */
-    type: 1 | 2 | 3
+    /** 楼层类型 1商品 2优惠券 3广告 4图片热区 */
+    type: 1 | 2 | 3 | 4
     sort: number
     /** 排列样式 1=1*1，2=1*2 */
     css?: 1 | 2
