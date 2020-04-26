@@ -155,7 +155,9 @@ class Order extends Component<any, State> {
             <FormItem name='childOrderCode' />
             <FormItem name='productName' />
             <FormItem name='contactPhone' />
-            <FormItem name='refundType' />
+            <If condition={type !== '10' && type !== '24'}>
+              <FormItem name='refundType' />
+            </If>
             <FormItem name='createTime' />
           </Form>
           <div style={{ textAlign: 'right' }}>
@@ -203,7 +205,12 @@ class Order extends Component<any, State> {
                           {order.productId}
                         </td>
                         <td>
-                          {order.skuName}
+                          <div>
+                            商品名称:{order.skuName}
+                          </div>
+                          <div>
+                            规格:{order.properties}
+                          </div>
                         </td>
                         <td>
                           {order.refundType === 10 ? '退货退款' : order.refundType === 20 ? '仅退款' : ''}

@@ -118,7 +118,7 @@ class Order extends Component<any, State> {
             {detailTabHear(dataSource)}
             {dataSource && dataSource.handleInfo && auditAfterInfoTemplate(dataSource)}
             {dataSource && applyInfoTemplate(dataSource)}
-            {dataSource.orderWideDO && orderInfo(dataSource)}
+            {dataSource.orderWideDO && dataSource.selfDeliveryPointDO && orderInfo(dataSource)}
             {
               refundStatus === 10 || refundStatus === 24 ? (
                 <AuditTemplate saveAudit={this.saveAudit} dataSource={dataSource}></AuditTemplate>

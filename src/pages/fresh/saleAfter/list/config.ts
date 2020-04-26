@@ -49,7 +49,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         ]
       },
       createTime: {
-        label: '发布时间',
+        label: '申请时间',
         type: 'rangepicker',
         controlProps: {
           showTime: true

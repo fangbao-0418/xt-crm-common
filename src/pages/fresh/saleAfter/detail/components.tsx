@@ -57,7 +57,7 @@ const auditAfterInfoTemplate = (dataSource: any) => {
             售后原因：{refundReason}
           </Col>
           <Col>
-            是否需要送回仓库：{toWarehouse === 0 ? '需要' : '为需要'}
+            是否需要送回仓库：{toWarehouse === 0 ? '需要' : '不需要'}
           </Col>
           <Col>
             售后数目：{refundServerNum}
@@ -243,7 +243,7 @@ const orderInfo = (dataSource: any) => {
       }
     }
   ]
-  const { orderWideDO, orderAmount } = dataSource
+  const { orderWideDO, orderAmount, selfDeliveryPointDO } = dataSource
   return (
     <div className='mb10'>
       <Card>
@@ -256,7 +256,7 @@ const orderInfo = (dataSource: any) => {
             联系电话：{orderWideDO.receiverPhone}
           </Col>
           <Col>
-            下单门店：{orderWideDO.storeName}
+            下单门店：{selfDeliveryPointDO.name}
           </Col>
           <Col>
             <div className='mt10'>
@@ -284,9 +284,10 @@ class AuditTemplate extends React.Component<any, any> {
         APP.error('请检查输入项是否正确')
         return
       }
-      this.props.saveAudit(this.form.getValues()).then(() => {
-        this.form.resetValues()
-      })
+      console.log(this.form.getValues(), 'this.form.getValues()')
+      // this.props.saveAudit(this.form.getValues()).then(() => {
+      //   this.form.resetValues()
+      // })
     })
   }
 
