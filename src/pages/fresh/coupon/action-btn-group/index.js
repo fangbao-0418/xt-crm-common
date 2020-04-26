@@ -56,7 +56,7 @@ function ActionBtn ({ keyCode, history, record, match }) {
 
   const handleCopy = () => {
     console.log('record =>', record)
-    APP.history.push(`/coupon/couponinfo?type=add&id=${record.id}`)
+    APP.history.push(`/fresh/coupon/couponinfo?type=add&id=${record.id}`)
   }
 
   switch (keyCode) {
