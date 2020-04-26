@@ -388,7 +388,7 @@ class Main extends React.Component<Props, State> {
     return (
       <Card
         size="small"
-        title={typeConfig[detail.type].title}
+        title={typeConfig&&typeConfig[detail.type]&&typeConfig[detail.type].title}
         style={{ width: 800 }}
         extra={
           <div>
