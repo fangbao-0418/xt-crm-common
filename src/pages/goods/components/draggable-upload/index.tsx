@@ -1,9 +1,9 @@
 import React from 'react'
-import Draggable from '@/components/draggable';
-import UploadView from '@/components/upload';
+import Draggable from '@/components/draggable'
+import UploadView from '@/components/upload'
 import styles from './style.module.styl'
 interface Props {
-  className: string 
+  className: string
   value?: any[]
   onChange?: (value: any[]) => void
   listNum?: number
@@ -21,15 +21,14 @@ class Main extends React.Component<Props> {
     return (
       <Draggable
         className={className}
-        dragElement=".ant-upload-list-item"
+        dragElement='.ant-upload-list-item'
         onMouseUp={(reachIndex, currentIndex) => {
           let value = [...this.props.value]
           const currentValue = value[currentIndex]
           if (reachIndex < currentIndex) {
             value = value.slice(0, reachIndex).concat([currentValue]).concat(value.slice(reachIndex))
             value = value.slice(0, currentIndex + 1).concat(value.slice(currentIndex + 2))
-          }
-          else {
+          } else {
             value = value.slice(0, currentIndex).concat(value.slice(currentIndex + 1))
             value = value.slice(0, reachIndex - 1).concat([currentValue]).concat(value.slice(reachIndex - 1))
           }
@@ -38,9 +37,10 @@ class Main extends React.Component<Props> {
       >
         <UploadView
           multiple
+          ossType='cos'
           value={this.props.value}
           placeholder={placeholder}
-          listType="picture-card"
+          listType='picture-card'
           listNum={listNum}
           size={size}
           onChange={(value: any[]) => {
