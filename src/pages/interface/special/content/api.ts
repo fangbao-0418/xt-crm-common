@@ -17,13 +17,13 @@ export async function queryFloor (payload: {
 
 /** 查询详情 */
 export async function queryFloorDetail (floorId: number) {
-  const res = await get(`/crm/subject/floor/detail/${floorId}`) || {}
+  const res = await get(`/mcweb/product/subject_floor/detail?floorId=${floorId}`) || {}
   return adapter.subjectFloorDetailResponse(res)
 }
 
 /** 启用、停用 */
 export function updateStatus (floorId: number) {
-  return newPut(`/crm/subject/floor/setStatus/${floorId}`)
+  return newPut(`/mcweb/product/subject_floor/setStatus?floorId=${floorId}`)
 }
 
 /** 保存楼层信息 */
