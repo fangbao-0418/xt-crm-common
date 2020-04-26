@@ -8,6 +8,7 @@ import { FormComponentProps } from 'antd/es/form'
 import { namespace } from './model'
 import { connect } from 'react-redux'
 import { saveSubjectFloor } from './api'
+import { findOverlapCoordinates } from '../components/content/hotspot/components/hotsport/helper'
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   detail: Special.DetailProps
 }
@@ -52,7 +53,7 @@ class Main extends React.Component<Props> {
           this.form.setValues(res)
         }
       }
-    })   
+    })
   }
   /** 取消 */
   public handleCancel = () => {
@@ -62,16 +63,19 @@ class Main extends React.Component<Props> {
   public handleSave = () => {
     const { detail } = this.props
     this.form.props.form.validateFields(async (err, vals) => {
-      // const list = detail.list || []
-      // list.map((item) => {
-      //   if (item.type === 4 && item.content) {
-      //     const coordinates = (item.content.area || []).map((val) => val.coordinate)
-      //     console.log(coordinates, 'coordinates')
-      //   }
-      // })
-      // console.log(detail, 'detail')
-      // APP.error('xxx')
-      console.log(err, 'xxx')
+      const list = detail.list || []
+      const isOverlap = list.find((item) => {
+        if (item.type === 4 && item.content) {
+          const coordinates = (item.content.area || []).map((val) => val.coordinate)
+          if (findOverlapCoordinates(coordinates)) {
+            return true
+          }
+        }
+      })
+      if (isOverlap) {
+        APP.error('图片热区存在重叠区域')
+        return
+      }
       if (err) {
         APP.error('请检查输入项')
         return
@@ -83,7 +87,7 @@ class Main extends React.Component<Props> {
       })
       if (res) {
         APP.success(`${this.id === -1 ? '新增' : '编辑'}专题内容成功`)
-        APP.history.go(-1)
+        APP.history.push('/interface/special-content')
       }
     })
   }

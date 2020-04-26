@@ -1,3 +1,10 @@
+/*
+ * @Author: fangbao
+ * @Date: 2020-01-19 15:41:45
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-26 23:10:08
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/pages/interface/special/content/config.ts
+ */
 import { FieldsConfig } from '@/packages/common/components/form'
 export function getDefaultConfig () {
   const defaultConfig: FieldsConfig = {
@@ -42,7 +49,6 @@ export function getDefaultConfig () {
   }
   return defaultConfig
 }
-
 
 export enum status {
   '停用' = 0,

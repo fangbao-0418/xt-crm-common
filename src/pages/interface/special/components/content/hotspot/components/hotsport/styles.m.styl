@@ -14,20 +14,28 @@
     left: 0
     top: 0
     outline: 1px solid #39f;
-    outline-color: rgba(51, 153, 255, 0.75);
+    outline-color: rgba(51, 153, 255, 0.75)
+    cursor: move
     &.active
       box-shadow: 0px 0px 8px #39f
+      z-index: 999
+    &.isoverlap
+      box-shadow: 0px 0px 8px #ff4d4f
+      outline-color: #ff4d4f
+      span
+       background-color: #ff4d4f
     .close
-      right: -15px
-      top: -15px
+      right: -14px
+      top: -14px
       position: absolute
       cursor: pointer
+      font-size: 12px
     span
       display: inline-block
       width: 5px
       height: 5px
       position absolute
-      background-color: #39f;
+      background-color: #39f
       opacity: 0.75;
       &:nth-child(1)
         top: 0

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import { Icon } from 'antd'
 import classNames from 'classnames'
 import styles from './styles.m.styl'
+import { findOverlapCoordinates } from './helper'
 
 interface BlockProps {
   x: number
@@ -13,8 +14,10 @@ interface BlockProps {
   width: number
   height: number
   active?: boolean
-  onClick?: () => void
+  onMouseDown?: () => void
   onRemove?: () => void
+  /** 是否重叠 */
+  isoverlap?: boolean
 }
 
 function Block (props: BlockProps) {
@@ -58,6 +61,9 @@ function Block (props: BlockProps) {
     touchRef.current.initHeight = el.clientHeight
     touchRef.current.offsetLeft = el.offsetLeft
     touchRef.current.offsetTop = el.offsetTop
+    if (props.onMouseDown) {
+      props.onMouseDown()
+    }
   }
   function onMouseUp () {
     touchRef.current.isTouch = false
@@ -149,16 +155,14 @@ function Block (props: BlockProps) {
     <div
       ref={elRef}
       style={{ ...style }}
-      className={classNames(styles.block, { [styles.active]: props.active })}
+      className={classNames(styles.block, {
+        [styles.active]: props.active,
+        [styles.isoverlap]: props.isoverlap
+      })}
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseLeave}
       onMouseEnter={onMouseEnter}
-      onClick={() => {
-        if (props.onClick) {
-          props.onClick()
-        }
-      }}
     >
       {
         children.map((v, k) => {
@@ -173,7 +177,6 @@ function Block (props: BlockProps) {
                 touchRef.current.spanCurrentIndex = k
                 touchRef.current.offsetLeft = el.offsetLeft
                 touchRef.current.offsetTop = el.offsetTop
-                // console.log('down 3')
               }}
             />
           )
@@ -183,10 +186,11 @@ function Block (props: BlockProps) {
         <Icon
           className={styles.close}
           type='close-circle'
-          onClick={() => {
+          onClick={(e) => {
             if (props.onRemove) {
               props.onRemove()
             }
+            e.stopPropagation()
           }}
         />
       )}
@@ -205,8 +209,9 @@ interface Props {
 interface State {
   x: number
   y: number
-  isTouch: boolean,
+  isTouch: boolean
   current: number
+  overlapElement?: {[index: number]: number[]}
 }
 
 class Main extends React.Component<Props, State> {
@@ -214,11 +219,19 @@ class Main extends React.Component<Props, State> {
     x: 0,
     y: 0,
     isTouch: false,
-    current: 0
+    current: -1
   }
   public isTouch = false
   public initPageX = 0
   public initPyageY= 0
+  public componentWillReceiveProps (props: Props) {
+    if (props.value) {
+      const overlapElement = findOverlapCoordinates(props.value)
+      this.setState({
+        overlapElement
+      })
+    }
+  }
   public onMouseMove = (e: any) => {
     const { pageX, pageY } = e
     const el = this.refs.el as any
@@ -238,7 +251,7 @@ class Main extends React.Component<Props, State> {
     const h = el.clientHeight
     let i = 0
     const coordinates = []
-    const precision = 4
+    const precision = 10
     while (i < children.length) {
       const item = children.item(i) as any
       if (item && i !== index) {
@@ -250,10 +263,13 @@ class Main extends React.Component<Props, State> {
       }
       i++
     }
-    console.log(coordinates, 'coordinates')
     if (this.props.onChange) {
       this.props.onChange(coordinates)
     }
+    const overlapElement = findOverlapCoordinates(coordinates)
+    this.setState({
+      overlapElement
+    })
   }
   public onRemove (index: number) {
     if (this.props.onRemove) {
@@ -262,7 +278,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { className } = this.props
-    const { x, y } = this.state
+    const { x, y, overlapElement } = this.state
     const coordinates = this.props.value || []
     console.log(coordinates, 'coordinates')
     return (
@@ -279,23 +295,18 @@ class Main extends React.Component<Props, State> {
             x: 0,
             y: 0
           })
-          this.forceUpdate()
-          // console.log('down top')
         }}
         onMouseUp={() => {
           this.isTouch = false
-          // this.forceUpdate()
           this.onChange()
         }}
         onMouseLeave={() => {
-          console.log('leave')
           this.isTouch = false
-          // this.forceUpdate()
           this.onChange()
         }}
       >
         {
-          coordinates.map((item, index) => {
+          this.refs.el && coordinates.map((item, index) => {
             const el = this.refs.el as Element
             const [x1, y1, x2, y2] = item ? item.split(',') : [0, 0, 0, 0]
             const width = el.clientWidth * (+x2 - +x1)
@@ -304,7 +315,8 @@ class Main extends React.Component<Props, State> {
             const top = el.clientHeight * (+y1)
             return (
               <Block
-                key={item}
+                isoverlap={overlapElement && !!overlapElement[index]}
+                key={`${item}-${index}`}
                 left={left}
                 top={top}
                 width={width}
@@ -314,7 +326,7 @@ class Main extends React.Component<Props, State> {
                 y={y}
                 active={this.state.current === index}
                 onRemove={this.onRemove.bind(this, index)}
-                onClick={() => {
+                onMouseDown={() => {
                   if (this.props.onBlockClick) {
                     this.props.onBlockClick(index)
                   }

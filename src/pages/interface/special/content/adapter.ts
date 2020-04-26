@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-26 17:13:30
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/special/content/adapter.ts
+ * @LastEditTime: 2020-04-27 01:38:04
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/pages/interface/special/content/adapter.ts
  */
 import { status } from './config'
 import { removeURLDomain } from '@/util/utils'
@@ -52,9 +52,12 @@ export function subjectFloorDetailResponse (res: any) {
       v.coupons = []
     }
     if (v.type === 4) {
+      console.log(v, '4444')
       try {
         v.content = JSON.parse(v.content)
+        console.log(v.content, 'xxx')
       } catch (e) {
+        console.log(e, 'eee')
         v.content = undefined
       }
     }

@@ -39,11 +39,12 @@ interface Props {
 }
 
 class Main extends React.Component<Props, State> {
+  public initValue = Object.assign({ url: '', area: [] }, this.props.value) as ValueProps
   public state: State = {
     coordinates: [],
-    current: 0,
+    current: -1,
     couponVisible: false,
-    value: Object.assign({ url: '', area: [] }, this.props.value)
+    value: this.initValue
   }
   public componentWillReceiveProps (props: Props) {
     const value = Object.assign({ url: '', area: [] }, props.value) as ValueProps
@@ -59,38 +60,25 @@ class Main extends React.Component<Props, State> {
     el.onchange = () => {
       const file = el.files && el.files[0]
       if (file) {
+        APP.fn.handleLoading('start')
         ossUpload(file).then((res) => {
           const url = replaceUrl(res[0])
           const value = this.state.value
           value.url = url
+          value.area = []
+          this.initValue = value
           this.onChange(value)
+          this.setState({
+            coordinates: []
+          })
+        }).finally(() => {
+          APP.fn.handleLoading('end')
         })
       }
     }
     el.click()
   }
   public onChange (value: ValueProps) {
-    // const res: State = {
-    //   ...this.state,
-    //   ...value
-    // }
-    // const current = res.current
-    // this.setState(res)
-    // const coordinates = res.coordinates || []
-    // const area: any[] = []
-    // const val = this.props.value || { url: '', area: [] }
-    // coordinates.map((coordinate, index) => {
-    //   area.push({
-    //     coordinate,
-    //     ...val.area[index]
-    //   })
-    // })
-    // val.area[current] = {
-    //   ...val.area[current]
-    // }
-    this.setState({
-      value
-    })
     if (this.props.onChange) {
       this.props.onChange({
         ...value
@@ -98,7 +86,6 @@ class Main extends React.Component<Props, State> {
     }
   }
   public onBlockClick = (current: number) => {
-    console.log(current, 'onBlockClick')
     this.setState({
       current
     })
@@ -153,9 +140,22 @@ class Main extends React.Component<Props, State> {
           <Button
             type='primary'
             onClick={() => {
-              const res = coordinates.concat(['0,0,0.1,0.1'])
-              this.setState({
-                coordinates: res
+              if (!this.state.value.url) {
+                APP.error('请先上传图片')
+                return
+              }
+              const value = this.state.value
+              // const img = this.refs.img as any
+              // const width = img.clientWidth
+              // const height = img.clientHeight
+              // const x2 = width - height > 0 ? 
+              value.area.push({
+                coordinate: '0, 0, .33, .33',
+                type: 1,
+                value: undefined
+              })
+              this.onChange({
+                ...value
               })
             }}
           >
@@ -166,11 +166,13 @@ class Main extends React.Component<Props, State> {
           <div className={styles.left}>
             <div className={styles['image-area']}>
               <img
+                ref='img'
                 src={this.state.value.url ? fillUrl(this.state.value.url) : defaultImg}
-                // onLoad={() => {
-                //   // console.log('on loaded')
-                //   this.forceUpdate()
-                // }}
+                onLoad={() => {
+                  this.setState({
+                    coordinates: this.initValue.area.map((item) => item && item.coordinate)
+                  })
+                }}
               />
               {this.state.value.url && (
                 <Hotsport
@@ -179,7 +181,10 @@ class Main extends React.Component<Props, State> {
                   onRemove={(index) => {
                     const value = this.state.value
                     value.area.splice(index, 1)
-                    this.onChange(value)
+                    this.onChange({ ...value })
+                    this.setState({
+                      current: -1
+                    })
                   }}
                   onChange={(val: string[]) => {
                     const value = this.state.value
@@ -193,7 +198,6 @@ class Main extends React.Component<Props, State> {
                       }
                       value.area[index].coordinate = item
                     })
-                    // console.log(val, value.area, '----')
                     this.onChange(value)
                   }}
                 />
@@ -209,9 +213,11 @@ class Main extends React.Component<Props, State> {
             >
               <Radio.Group
                 value={record.type}
+                disabled={current === -1}
                 onChange={(e) => {
                   const value = this.state.value
                   value.area[current].type = e.target.value
+                  value.area[current].value = undefined
                   this.onChange({
                     ...value
                   })
@@ -222,11 +228,9 @@ class Main extends React.Component<Props, State> {
                   <Button
                     type='primary'
                     size='small'
+                    disabled={current === -1}
                     onClick={() => {
                       const ref = this.refs.shopmodal as any
-                      // this.onChange({
-                      //   type: 1
-                      // })
                       ref.setState({
                         visible: true
                       })
@@ -240,12 +244,9 @@ class Main extends React.Component<Props, State> {
                   <Button
                     type='primary'
                     size='small'
+                    disabled={current === -1}
                     onClick={() => {
-                      // this.onChange({
-                      //   type: 2
-                      // })
                       this.setState({
-                        // type: 2,
                         couponVisible: true
                       })
                     }}
@@ -258,6 +259,7 @@ class Main extends React.Component<Props, State> {
                   <Input
                     style={{ width: 200 }}
                     value={record.type === 3 ? record.value : ''}
+                    disabled={current === -1}
                     onChange={(e) => {
                       // const value = e.target.value
                       const value = this.state.value
