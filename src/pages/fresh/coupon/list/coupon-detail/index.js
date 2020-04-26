@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Form, Card, Button, Modal, Table, Message } from 'antd';
 import { formLeftButtonLayout, formItemLayout } from '@/config'
-import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/coupon/api';
+import { invalidCoupon, getCouponDetail, getCouponTasks } from '@/pages/fresh/coupon/api';
 import { releaseRecordsColumns } from '../../config';
 import { withRouter } from 'react-router-dom';
 import { formatFaceValue, formatDateRange, formatUseTime, formatAvlRange, formatReceiveRestrict, formatPlatformRestrict } from '@/pages/helper';

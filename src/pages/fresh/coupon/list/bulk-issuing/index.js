@@ -90,7 +90,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
         };
         const res = await saveCouponTaskInfo(params);
         if (res) {
-          history.push(`/coupon/get/couponList/detail/${match.params.id}?activeKey=2`)
+          history.push(`/fresh/coupon/detail/${match.params.id}?activeKey=2`)
         }
       }
     })

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio, Form as AntForm } from 'antd'
 import { formItemLayout } from '@/config'
-import { getCouponDetail, getCategoryList, saveCouponInfo, importShop } from '@/pages/coupon/api'
+import { getCouponDetail, getCategoryList, saveCouponInfo, importShop } from '@/pages/fresh/coupon/api'
 import { platformOptions, useIdentityOptions, defaultConfig } from '../../config'
 import { actColumns } from '@/components/activity-selector/config'
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components'
@@ -430,9 +430,9 @@ class CouponInfo extends React.Component {
                       <Radio className='block-radio' value={0}>
                           全场通用
                       </Radio>
-                      <Radio className='block-radio' value={1}>
+                      {/* <Radio className='block-radio' value={1}>
                           类目商品
-                      </Radio>
+                      </Radio> */}
                       <Radio className='block-radio' value={2}>
                           指定商品{' '}
                         {avlRange === 2 && (
