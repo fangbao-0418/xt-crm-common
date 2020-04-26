@@ -5,6 +5,7 @@ import _ from 'lodash'
 import * as api from './api'
 import { formatMoneyWithSign } from '@/pages/helper';
 interface Props {
+  type?: 'checkbox' | 'radio'
   selectedRowKeys?: any[]
   onOk?: (ids: any[], rows: Shop.ShopItemProps[]) => void
   onSelect?: (record: Shop.ShopItemProps, selected: boolean) => void
@@ -27,7 +28,7 @@ class Main extends React.Component<Props, State> {
   public payload: SearchPayload = {
     page: 1,
     pageSize: 10,
-    status: 0,
+    status: 0
   }
   public state: State = {
     current: 1,
@@ -97,7 +98,7 @@ class Main extends React.Component<Props, State> {
   public fetchData () {
     api.fetchShopList(this.payload).then((res: any) => {
       res.current = this.payload.page
-      this.setState({...res})
+      this.setState({ ...res })
     })
   }
   public onOk () {
@@ -135,8 +136,10 @@ class Main extends React.Component<Props, State> {
     }
   }
   public render () {
-    const { selectedRowKeys, visible } = this.state;
+    const { selectedRowKeys, visible } = this.state
+    const type = this.props.type !== undefined ? this.props.type : 'checkbox'
     const rowSelection = {
+      type,
       onSelect: this.onSelect,
       onChange: this.onrowSelectionChange,
       onSelectAll: this.onSelectAll,
@@ -152,12 +155,12 @@ class Main extends React.Component<Props, State> {
       >
         <div>
           <Input
-            style={{marginBottom: 20}}
+            style={{ marginBottom: 20 }}
             placeholder='请选择需要搜索的商品'
             onChange={this.onSearch}
           />
           <Table
-            style={{width: '100%'}}
+            style={{ width: '100%' }}
             rowKey={'id'}
             rowSelection={rowSelection}
             columns={this.columns}

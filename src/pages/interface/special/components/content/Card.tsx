@@ -287,8 +287,8 @@ class Main extends React.Component<Props, State> {
   public renderCoupon (): React.ReactNode {
     const { detail } = this.props
     detail.css = detail.css || 1
-    const selectedRowKeys = this.getSelectedRowKeys(detail.coupons);
-    this.tempCoupons = Array.prototype.concat(detail.coupons || []);
+    const selectedRowKeys = this.getSelectedRowKeys(detail.coupons)
+    this.tempCoupons = Array.prototype.concat(detail.coupons || [])
     return (
       <div>
         <Row gutter={12}>
@@ -312,9 +312,9 @@ class Main extends React.Component<Props, State> {
               <Coupon
                 dataSource={detail.coupons}
                 onChange={value => {
-                  detail.coupons = value;
-                  console.log('coupons=>', detail.coupons);
-                  this.onChange(detail);
+                  detail.coupons = value
+                  console.log('coupons=>', detail.coupons)
+                  this.onChange(detail)
                 }}
               />
             )}
@@ -367,13 +367,22 @@ class Main extends React.Component<Props, State> {
           </Col>
         </Row>
       </div>
-    );
+    )
   }
 
   public renderHotspot (): React.ReactNode {
+    const { detail } = this.props
+    detail.css = detail.css || 1
     return (
       <div>
-        <Hotsport />
+        <Hotsport
+          value={detail.content}
+          onChange={(value) => {
+            detail.content = value
+            // console.log(value, 'xxxx')
+            this.onChange(detail)
+          }}
+        />
       </div>
     )
   }
@@ -433,12 +442,12 @@ class Main extends React.Component<Props, State> {
       >
         {this.renderLayout()}
       </Card>
-    );
+    )
   }
 }
 
 export default connect((state: any) => {
   return {
     state: state[namespace]
-  };
-})(Main) as any;
+  }
+})(Main) as any

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
+import { Icon } from 'antd'
 import classNames from 'classnames'
 import styles from './styles.m.styl'
 
@@ -6,11 +7,28 @@ interface BlockProps {
   x: number
   y: number
   isTouch: boolean
+  coordinate?: string
+  left?: number
+  top?: number
+  width: number
+  height: number
+  active?: boolean
+  onClick?: () => void
+  onRemove?: () => void
 }
 
 function Block (props: BlockProps) {
   const elRef = useRef(null)
+  const styleRef = useRef<React.CSSProperties>({
+    position: 'absolute',
+    top: props.top || 0,
+    left: props.left || 0,
+    width: props.width,
+    height: props.height
+  })
   const [active, setActive] = useState(false)
+  const style = styleRef.current
+  // console.log(style, 'style')
   const touchRef = useRef({
     isTouch: false,
     isSpanTouch: false,
@@ -72,8 +90,10 @@ function Block (props: BlockProps) {
     if (left < 0) {
       left = 0
     }
-    const style = `position:absolute;top:${top}px;left:${left}px;width:${width}px;height:${height}px;`
-    el.setAttribute('style', style)
+    style.top = top
+    style.left = left
+    style.width = width
+    style.height = height
   }
   if (touchRef.current.isSpanTouch) {
     // console.log('if 2')
@@ -85,10 +105,10 @@ function Block (props: BlockProps) {
     let width = touchRef.current.initWidth + props.x
     let height =touchRef.current.initHeight + props.y
     if ([0, 1, 3].indexOf(spanCurrentIndex) > -1) {
-      top = touchRef.current.offsetTop + props.y
-      left = touchRef.current.offsetLeft + props.x
       width = touchRef.current.initWidth - props.x
       height = touchRef.current.initHeight - props.y
+      top = touchRef.current.offsetTop + props.y
+      left = touchRef.current.offsetLeft + props.x
     } else if ([2].indexOf(spanCurrentIndex) > -1) {
       top = touchRef.current.offsetTop + props.y
       width = touchRef.current.initWidth + props.x
@@ -101,30 +121,44 @@ function Block (props: BlockProps) {
     }
     width = width <= 2 ? 2 : width
     height = height <= 2 ? 2 : height
+    if (width === 2) {
+      left = el.offsetLeft
+    }
+    if (height === 2) {
+      top = el.offsetTop
+    }
     if (top < 0) {
       top = 0
     }
     if (top > parentEl.clientHeight - el.clientHeight) {
       top = parentEl.clientHeight - el.clientHeight
     }
-    if (left > parentEl.clientWidth - el.clientWidth) {
-      left = parentEl.clientWidth - el.clientWidth
-    }
     if (left < 0) {
       left = 0
     }
-    const style = `position:absolute;top:${top}px;left:${left}px;width:${width}px;height:${height}px`
-    el.setAttribute('style', style)
+    if (left > parentEl.clientWidth - el.clientWidth) {
+      left = parentEl.clientWidth - el.clientWidth
+    }
+    style.top = top
+    style.left = left
+    style.width = width
+    style.height = height
   }
   const children = [0, 1, 2, 3, 4, 5, 6, 7]
   return (
     <div
       ref={elRef}
-      className={classNames(styles.block, { [styles.active]: active })}
+      style={{ ...style }}
+      className={classNames(styles.block, { [styles.active]: props.active })}
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseLeave}
       onMouseEnter={onMouseEnter}
+      onClick={() => {
+        if (props.onClick) {
+          props.onClick()
+        }
+      }}
     >
       {
         children.map((v, k) => {
@@ -145,25 +179,39 @@ function Block (props: BlockProps) {
           )
         })
       }
+      {props.active && (
+        <span
+          onClick={() => {
+            //
+          }}
+        >
+          <Icon type='close-circle' />
+        </span>
+      )}
     </div>
   )
 }
 
 interface Props {
   className?: string
+  onChange?: (value: any) => void
+  value?: string[]
+  onBlockClick?: (current: number) => void
 }
 
 interface State {
   x: number
   y: number
-  isTouch: boolean
+  isTouch: boolean,
+  current: number
 }
 
 class Main extends React.Component<Props, State> {
   public state: State = {
     x: 0,
     y: 0,
-    isTouch: false
+    isTouch: false,
+    current: 0
   }
   public isTouch = false
   public initPageX = 0
@@ -180,9 +228,38 @@ class Main extends React.Component<Props, State> {
       })
     }
   }
+  public onChange (index?: number) {
+    const el = this.refs.el as Element
+    const children: HTMLCollection = el.children
+    const w = el.clientWidth
+    const h = el.clientHeight
+    let i = 0
+    const coordinates = []
+    const precision = 4
+    while (i < children.length) {
+      const item = children.item(i) as any
+      if (item && i !== index) {
+        const x1 = APP.fn.round(item.offsetLeft / w, precision)
+        const y1 = APP.fn.round(item.offsetTop / h, precision)
+        const x2 = APP.fn.round((item.offsetLeft + item.clientWidth) / w, precision)
+        const y2 = APP.fn.round((item.offsetTop + item.clientHeight) / h, precision)
+        coordinates.push([x1, y1, x2, y2].join(','))
+      }
+      i++
+    }
+    // console.log(coordinates, 'coordinates')
+    if (this.props.onChange) {
+      this.props.onChange(coordinates)
+    }
+  }
+  public onRemove (index: number) {
+    console.log(index, 'index')
+    this.onChange(index)
+  }
   public render () {
     const { className } = this.props
     const { x, y } = this.state
+    const coordinates = this.props.value || []
     return (
       <div
         ref='el'
@@ -202,17 +279,48 @@ class Main extends React.Component<Props, State> {
         }}
         onMouseUp={() => {
           this.isTouch = false
-          this.forceUpdate()
+          // this.forceUpdate()
+          this.onChange()
         }}
         onMouseLeave={() => {
           console.log('leave')
           this.isTouch = false
-          this.forceUpdate()
+          // this.forceUpdate()
+          this.onChange()
         }}
       >
-        <Block isTouch={this.isTouch} x={x} y={y} />
-        <Block isTouch={this.isTouch} x={x} y={y} />
-        <Block isTouch={this.isTouch} x={x} y={y} />
+        {
+          coordinates.map((item, index) => {
+            const el = this.refs.el as Element
+            const [x1, y1, x2, y2] = item ? item.split(',') : [0, 0, 0, 0]
+            const width = el.clientWidth * (+x2 - +x1)
+            const height = el.clientHeight * (+y2 - +y1)
+            const left = el.clientWidth * (+x1)
+            const top = el.clientHeight * (+y1)
+            return (
+              <Block
+                key={index}
+                left={left}
+                top={top}
+                width={width}
+                height={height}
+                isTouch={this.isTouch}
+                x={x}
+                y={y}
+                active={this.state.current === index}
+                onRemove={this.onRemove.bind(this, index)}
+                onClick={() => {
+                  if (this.props.onBlockClick) {
+                    this.props.onBlockClick(index)
+                  }
+                  this.setState({
+                    current: index
+                  })
+                }}
+              />
+            )
+          })
+        }
       </div>
     )
   }

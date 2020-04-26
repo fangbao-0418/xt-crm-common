@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-24 15:48:31
+ * @LastEditTime: 2020-04-26 16:04:21
  * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/special/content/model.ts
  */
 import * as api from './api'
@@ -26,24 +26,15 @@ export default {
         goodsListByCurrentActivity: [],
         detail: {
           list: []
-        },
+        }
       }
     },
     changeDetail: (state: any, payload: any) => {
-      console.log(payload, 'payload')
-      payload = {
-        ...payload,
-        list: [
-          {
-            type: 4
-          }
-        ]
-      }
       return {
         ...state,
         detail: payload
       }
-    },
+    }
   },
   effects: {
     async fetchDetail ({ id, cb }: any) {
@@ -59,15 +50,14 @@ export default {
         cb(result)
       }
     },
-    async getGoodsListByActivityId(param: any) {
-      const result = await api.getGoodsListByActivityId(param);
+    async getGoodsListByActivityId (param: any) {
+      const result = await api.getGoodsListByActivityId(param)
       if (result) {
         (this as any).saveDefault({
           transferGoodsVisible: true,
-          goodsListByCurrentActivity: result || [],
-        });
+          goodsListByCurrentActivity: result || []
+        })
       }
     }
-
-  },
+  }
 }
