@@ -166,7 +166,7 @@ class Main extends React.Component<Props, State> {
           <div className={styles.left}>
             <div className={styles['image-area']}>
               <img
-                src={fillUrl(this.state.value.url) || defaultImg}
+                src={this.state.value.url ? fillUrl(this.state.value.url) : defaultImg}
                 // onLoad={() => {
                 //   // console.log('on loaded')
                 //   this.forceUpdate()

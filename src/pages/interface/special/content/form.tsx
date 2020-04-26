@@ -71,16 +71,19 @@ class Main extends React.Component<Props> {
       // })
       // console.log(detail, 'detail')
       // APP.error('xxx')
-      if (!err) {
-        const res = await saveSubjectFloor({
-          ...detail,
-          ...vals,
-          id: this.id !== -1 ? this.id : void 0
-        })
-        if (res) {
-          APP.success(`${this.id === -1 ? '新增' : '编辑'}专题内容成功`)
-          APP.history.go(-1)
-        }
+      console.log(err, 'xxx')
+      if (err) {
+        APP.error('请检查输入项')
+        return
+      }
+      const res = await saveSubjectFloor({
+        ...detail,
+        ...vals,
+        id: this.id !== -1 ? this.id : void 0
+      })
+      if (res) {
+        APP.success(`${this.id === -1 ? '新增' : '编辑'}专题内容成功`)
+        APP.history.go(-1)
       }
     })
   }
