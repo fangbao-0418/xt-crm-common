@@ -285,9 +285,9 @@ class AuditTemplate extends React.Component<any, any> {
         return
       }
       console.log(this.form.getValues(), 'this.form.getValues()')
-      // this.props.saveAudit(this.form.getValues()).then(() => {
-      //   this.form.resetValues()
-      // })
+      this.props.saveAudit(this.form.getValues()).then(() => {
+        this.form.resetValues()
+      })
     })
   }
 
