@@ -180,13 +180,15 @@ function Block (props: BlockProps) {
         })
       }
       {props.active && (
-        <span
+        <Icon
+          className={styles.close}
+          type='close-circle'
           onClick={() => {
-            //
+            if (props.onRemove) {
+              props.onRemove()
+            }
           }}
-        >
-          <Icon type='close-circle' />
-        </span>
+        />
       )}
     </div>
   )
@@ -197,6 +199,7 @@ interface Props {
   onChange?: (value: any) => void
   value?: string[]
   onBlockClick?: (current: number) => void
+  onRemove?: (index: number) => void
 }
 
 interface State {
@@ -247,19 +250,21 @@ class Main extends React.Component<Props, State> {
       }
       i++
     }
-    // console.log(coordinates, 'coordinates')
+    console.log(coordinates, 'coordinates')
     if (this.props.onChange) {
       this.props.onChange(coordinates)
     }
   }
   public onRemove (index: number) {
-    console.log(index, 'index')
-    this.onChange(index)
+    if (this.props.onRemove) {
+      this.props.onRemove(index)
+    }
   }
   public render () {
     const { className } = this.props
     const { x, y } = this.state
     const coordinates = this.props.value || []
+    console.log(coordinates, 'coordinates')
     return (
       <div
         ref='el'
@@ -299,7 +304,7 @@ class Main extends React.Component<Props, State> {
             const top = el.clientHeight * (+y1)
             return (
               <Block
-                key={index}
+                key={item}
                 left={left}
                 top={top}
                 width={width}

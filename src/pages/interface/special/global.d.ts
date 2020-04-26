@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-24 14:09:13
+ * @LastEditTime: 2020-04-26 21:11:35
  * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/special/global.d.ts
  */
 declare module Special {
@@ -19,6 +19,10 @@ declare module Special {
     /** 广告链接 */
     advertisementJumpUrl?: string
     coupons: any[]
+    content?: {
+      url: string,
+      area: { coordinate: string, type: 1 | 2 | 3, value: any }[]
+    }
   }
   export interface DetailProps {
     /** 背景颜色 */

@@ -62,6 +62,15 @@ class Main extends React.Component<Props> {
   public handleSave = () => {
     const { detail } = this.props
     this.form.props.form.validateFields(async (err, vals) => {
+      // const list = detail.list || []
+      // list.map((item) => {
+      //   if (item.type === 4 && item.content) {
+      //     const coordinates = (item.content.area || []).map((val) => val.coordinate)
+      //     console.log(coordinates, 'coordinates')
+      //   }
+      // })
+      // console.log(detail, 'detail')
+      // APP.error('xxx')
       if (!err) {
         const res = await saveSubjectFloor({
           ...detail,

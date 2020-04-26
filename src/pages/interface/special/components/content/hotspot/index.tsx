@@ -176,6 +176,11 @@ class Main extends React.Component<Props, State> {
                 <Hotsport
                   value={coordinates}
                   onBlockClick={this.onBlockClick}
+                  onRemove={(index) => {
+                    const value = this.state.value
+                    value.area.splice(index, 1)
+                    this.onChange(value)
+                  }}
                   onChange={(val: string[]) => {
                     const value = this.state.value
                     val.map((item, index) => {
