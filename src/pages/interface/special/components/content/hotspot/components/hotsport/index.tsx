@@ -280,7 +280,6 @@ class Main extends React.Component<Props, State> {
     const { className } = this.props
     const { x, y, overlapElement } = this.state
     const coordinates = this.props.value || []
-    console.log(coordinates, 'coordinates')
     return (
       <div
         ref='el'

@@ -69,7 +69,7 @@ class Main extends React.Component<Props, State> {
           this.initValue = value
           this.onChange(value)
           this.setState({
-            coordinates: []
+            current: -1
           })
         }).finally(() => {
           APP.fn.handleLoading('end')
@@ -145,12 +145,20 @@ class Main extends React.Component<Props, State> {
                 return
               }
               const value = this.state.value
-              // const img = this.refs.img as any
-              // const width = img.clientWidth
-              // const height = img.clientHeight
-              // const x2 = width - height > 0 ? 
+              const img = this.refs.img as any
+              const width = img.clientWidth
+              const height = img.clientHeight
+              let x, y
+              if (width > height) {
+                y = 0.4
+                x = y * height / width
+              } else {
+                x = 0.4
+                y = x * width / height
+              }
+              console.log(x, y, 'add')
               value.area.push({
-                coordinate: '0, 0, .33, .33',
+                coordinate: `0, 0, ${x}, ${y}`,
                 type: 1,
                 value: undefined
               })
@@ -170,7 +178,7 @@ class Main extends React.Component<Props, State> {
                 src={this.state.value.url ? fillUrl(this.state.value.url) : defaultImg}
                 onLoad={() => {
                   this.setState({
-                    coordinates: this.initValue.area.map((item) => item && item.coordinate)
+                    coordinates: this.state.value.area.map((item) => item && item.coordinate)
                   })
                 }}
               />
@@ -205,6 +213,10 @@ class Main extends React.Component<Props, State> {
             </div>
           </div>
           <div className={styles.right}>
+            <div style={{ fontSize: 12 }} className='mb10'>
+              <span style={{ color: 'red' }}>*</span>
+              <span style={{ color: '#999' }}>上传后可再次上传更新覆盖，根据屏幕宽度满屏展示；支持gif动图，大小不超过500KB；图片宽度建议750px及以上</span>
+            </div>
             <FormItem
               className={styles['right-item']}
               label='点击类型'
