@@ -9,4 +9,59 @@
   .block
     width: 30px
     height: 30px
-    background: red
+    background: rgba(255, 255, 255, 0.1)
+    position absolute
+    left: 0
+    top: 0
+    outline: 1px solid #39f;
+    outline-color: rgba(51, 153, 255, 0.75);
+    &.active
+      // border: 1px solid #000000
+    span
+      display: inline-block
+      width: 5px
+      height: 5px
+      position absolute
+      background-color: #39f;
+      opacity: 0.75;
+      &:nth-child(1)
+        top: 0
+        left: 0
+        transform: translate(-50%, -50%)
+        cursor: nwse-resize
+      &:nth-child(2)
+        top: 0
+        left: 50%
+        transform: translate(-50%, -50%)
+        cursor: ns-resize
+      &:nth-child(3)
+        top: 0
+        right: 0
+        transform: translate(50%, -50%)
+        cursor: nesw-resize
+      &:nth-child(4)
+        top: 50%
+        left: 0
+        transform: translate(-50%, -50%)
+        cursor: ew-resize
+      &:nth-child(5)
+        top: 50%
+        right: 0
+        transform: translate(50%, -50%)
+        cursor: ew-resize
+      &:nth-child(6)
+        left: 0
+        bottom: 0
+        transform: translate(-50%, 50%)
+        cursor: nesw-resize
+      &:nth-child(7)
+        left: 50%
+        bottom: 0
+        transform: translate(-50%, 50%)
+        cursor: ns-resize
+      &:nth-child(8)
+        right: 0
+        bottom: 0
+        transform: translate(50%, 50%)
+        cursor: nwse-resize
+        
