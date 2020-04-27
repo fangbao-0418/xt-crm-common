@@ -133,22 +133,24 @@ function Block (props: BlockProps) {
     if (height === 2) {
       top = el.offsetTop
     }
-    if (top < 0) {
-      top = 0
-    }
     if (top > parentEl.clientHeight - el.clientHeight) {
       top = parentEl.clientHeight - el.clientHeight
     }
-    if (left < 0) {
-      left = 0
+    if (top < 0) {
+      top = 0
     }
     if (left > parentEl.clientWidth - el.clientWidth) {
       left = parentEl.clientWidth - el.clientWidth
     }
+    if (left < 0) {
+      left = 0
+    }
+    height = height + top >= parentEl.clientHeight ? parentEl.clientHeight - top : height
     style.top = top
     style.left = left
     style.width = width
     style.height = height
+    console.log(top, '111111111')
   }
   const children = [0, 1, 2, 3, 4, 5, 6, 7]
   return (
