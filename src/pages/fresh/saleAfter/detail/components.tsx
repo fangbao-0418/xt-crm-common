@@ -300,8 +300,10 @@ class AuditTemplate extends React.Component<any, any> {
    */
   public formChange = (field?: string, value?: any, values?: any) => {
     const maxUnitRefundMoney = this.props.dataSource.orderRefundCheckResultVO.maxUnitRefundMoney || 0
+    const maxRefundMoney = this.props.dataSource.orderRefundCheckResultVO.maxRefundMoney || 0
+    const maxServerNum = this.props.dataSource.orderRefundCheckResultVO.maxServerNum || 0
     if (field === 'auditServerNum') {
-      this.form.setValues({ auditRefundAmount: (value * maxUnitRefundMoney / 100) })
+      this.form.setValues({ auditRefundAmount: value === maxServerNum ? (maxRefundMoney / 100) :(value * maxUnitRefundMoney / 100) })
     }
     this.forceUpdate()
   }
@@ -309,8 +311,8 @@ class AuditTemplate extends React.Component<any, any> {
     const values = this.form && this.form.getValues()
     const { refundStatus, orderRefundCheckResultVO } = this.props.dataSource
     const { auditOperation, auditServerNum } = values || {}
-    const { maxServerNum, maxUnitRefundMoney } = orderRefundCheckResultVO || {}
-    const maxRefundMoney = auditServerNum * maxUnitRefundMoney
+    const { maxServerNum, maxUnitRefundMoney, maxRefundMoney } = orderRefundCheckResultVO || {}
+    const nowMaxRefundMoney = auditServerNum === maxServerNum ? maxRefundMoney : auditServerNum * maxUnitRefundMoney
     return (
       <div className='mb10'>
         <Card>
@@ -356,8 +358,9 @@ class AuditTemplate extends React.Component<any, any> {
                               } else if (!value && value !== 0) {
                                 cb('售后数目不能为空')
                               } else if (value%1 !== 0) {
-                                console.log(1111)
                                 cb('请输入正整数')
+                              } else if (value === 0) {
+                                cb('退款金额不能为0')
                               }
                               cb()
                             }
@@ -383,10 +386,12 @@ class AuditTemplate extends React.Component<any, any> {
                             validator: (rule, value, cb) => {
                               if (value < 0) {
                                 cb('不能小于0')
-                              } else if (value > (maxRefundMoney / 100)) {
-                                cb(`最多可退${(maxRefundMoney / 100)}元`)
+                              } else if (value > (nowMaxRefundMoney / 100)) {
+                                cb(`最多可退${(nowMaxRefundMoney / 100)}元`)
                               } else if (!value && value !== 0) {
                                 cb('退款金额不能为空')
+                              } else if (value === 0) {
+                                cb('退款金额不能为0')
                               }
                               cb()
                             }

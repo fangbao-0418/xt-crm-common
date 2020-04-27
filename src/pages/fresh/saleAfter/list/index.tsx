@@ -110,7 +110,7 @@ class Order extends Component<any, State> {
           <Tabs activeKey={`${type}`} onChange={this.handleTabChange}>
             <TabPane tab='全部' key='ALL' />
             <TabPane tab='待审核' key='10' />
-            <TabPane tab='待返回仓库' key='24' />
+            <TabPane tab='待送回仓库' key='24' />
             <TabPane tab='已完成' key='30' />
             <TabPane tab='关闭/取消' key='closeAndCancel' />
           </Tabs>
