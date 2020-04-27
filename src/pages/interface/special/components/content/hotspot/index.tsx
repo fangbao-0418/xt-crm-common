@@ -185,6 +185,10 @@ class Main extends React.Component<Props, State> {
               {this.state.value.url && (
                 <Hotsport
                   value={coordinates}
+                  isErrorBlock={(index) => {
+                    const area = this.state.value.area || []
+                    return !(area[index] && area[index].value)
+                  }}
                   onBlockClick={this.onBlockClick}
                   onRemove={(index) => {
                     const value = this.state.value

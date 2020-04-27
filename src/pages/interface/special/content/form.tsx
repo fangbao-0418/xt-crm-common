@@ -64,9 +64,16 @@ class Main extends React.Component<Props> {
     const { detail } = this.props
     this.form.props.form.validateFields(async (err, vals) => {
       const list = detail.list || []
+      /** 热区值 */
+      let hotsportValue = true
       const isOverlap = list.find((item) => {
         if (item.type === 4 && item.content) {
-          const coordinates = (item.content.area || []).map((val) => val.coordinate)
+          const coordinates = (item.content.area || []).map((val) => {
+            if (!val.value) {
+              hotsportValue = false
+            }
+            return val.coordinate
+          })
           if (findOverlapCoordinates(coordinates)) {
             return true
           }
@@ -74,6 +81,10 @@ class Main extends React.Component<Props> {
       })
       if (isOverlap) {
         APP.error('图片热区存在重叠区域')
+        return
+      }
+      if (!hotsportValue) {
+        APP.error('图片热区存在未配置区域')
         return
       }
       if (err) {

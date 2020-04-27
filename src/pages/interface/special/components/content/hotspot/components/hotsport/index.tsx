@@ -204,6 +204,7 @@ interface Props {
   className?: string
   onChange?: (value: any) => void
   value?: string[]
+  isErrorBlock?: (index: number) => boolean
   onBlockClick?: (current: number) => void
   onRemove?: (index: number) => void
 }
@@ -314,9 +315,10 @@ class Main extends React.Component<Props, State> {
             const height = el.clientHeight * (+y2 - +y1)
             const left = el.clientWidth * (+x1)
             const top = el.clientHeight * (+y1)
+            const isErrorBlock = this.props.isErrorBlock ? this.props.isErrorBlock(index) : false
             return (
               <Block
-                isoverlap={overlapElement && !!overlapElement[index]}
+                isoverlap={isErrorBlock || (overlapElement && !!overlapElement[index])}
                 key={`${item}-${index}`}
                 left={left}
                 top={top}
