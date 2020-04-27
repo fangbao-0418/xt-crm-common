@@ -64,6 +64,10 @@ class Main extends React.Component<Props> {
     const { detail } = this.props
     this.form.props.form.validateFields(async (err, vals) => {
       const list = detail.list || []
+      if (list.length === 0) {
+        APP.error('请添加楼层')
+        return
+      }
       /** 热区值 */
       let hotsportValue = true
       const isOverlap = list.find((item) => {

@@ -97,12 +97,13 @@ class Main extends React.Component<Props, State> {
       <div>
         <ShopModal
           type='radio'
-          selectedRowKeys={record.type === 1 ? [record.value] : []}
+          selectedRowKeys={record.type === 1 && record.value ? [record.value.id] : []}
           ref='shopmodal'
-          onOk={(keys) => {
+          onOk={(keys, rows) => {
             const value = this.state.value
             value.area[current].type = 1
-            value.area[current].value = keys[0]
+            value.area[current].value = rows[0]
+            console.log(keys, rows, 'xxx')
             this.onChange({
               ...value
             })
@@ -241,6 +242,16 @@ class Main extends React.Component<Props, State> {
               >
                 <div>
                   <Radio value={1}>商品</Radio>
+                  {record.value && record.type === 1 && (
+                    <span
+                      className={styles['value-title']}
+                      onClick={() => {
+                        APP.href(`/goods/sku-sale/${record.value.id}`, '__blank')
+                      }}
+                    >
+                      {record.value.id} - {record.value.productName}
+                    </span>
+                  )}&nbsp;&nbsp;
                   <Button
                     type='primary'
                     size='small'
@@ -257,6 +268,16 @@ class Main extends React.Component<Props, State> {
                 </div>
                 <div>
                   <Radio value={2}>优惠券</Radio>
+                  {record.value && record.type === 2 && (
+                    <span
+                      className={styles['value-title']}
+                      onClick={() => {
+                        APP.href(`/coupon/get/couponList/detail/${record.value.id}`, '__blank')
+                      }}
+                    >
+                      {record.value.code} - {record.value.name}
+                    </span>
+                  )}&nbsp;&nbsp;
                   <Button
                     type='primary'
                     size='small'
