@@ -72,11 +72,9 @@ function Block (props: BlockProps) {
     setActive(false)
   }
   function onMouseEnter () {
-    const el = elRef.current
     setActive(true)
   }
   if (touchRef.current.isTouch) {
-    // console.log('if 1')
     const el: any = elRef.current
     const parentEl = el.parentElement
     const { x, y } = el.getClientRects()[0]
@@ -102,7 +100,6 @@ function Block (props: BlockProps) {
     style.height = height
   }
   if (touchRef.current.isSpanTouch) {
-    // console.log('if 2')
     const spanCurrentIndex = touchRef.current.spanCurrentIndex
     const el: any = elRef.current
     const parentEl = el.parentElement
@@ -150,7 +147,6 @@ function Block (props: BlockProps) {
     style.left = left
     style.width = width
     style.height = height
-    console.log(top, '111111111')
   }
   const children = [0, 1, 2, 3, 4, 5, 6, 7]
   return (
@@ -158,7 +154,7 @@ function Block (props: BlockProps) {
       ref={elRef}
       style={{ ...style }}
       className={classNames(styles.block, {
-        [styles.active]: props.active,
+        [styles.active]: active || props.active,
         [styles.isoverlap]: props.isoverlap
       })}
       onMouseDown={onMouseDown}
@@ -320,13 +316,13 @@ class Main extends React.Component<Props, State> {
               <Block
                 isoverlap={isErrorBlock || (overlapElement && !!overlapElement[index])}
                 key={`${item}-${index}`}
+                x={x}
+                y={y}
                 left={left}
                 top={top}
                 width={width}
                 height={height}
                 isTouch={this.isTouch}
-                x={x}
-                y={y}
                 active={this.state.current === index}
                 onRemove={this.onRemove.bind(this, index)}
                 onMouseDown={() => {

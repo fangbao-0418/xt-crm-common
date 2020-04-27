@@ -60,6 +60,12 @@ class Main extends React.Component<Props, State> {
     el.onchange = () => {
       const file = el.files && el.files[0]
       if (file) {
+        const size = file.size
+        console.log(size, 'size')
+        if (size / 1024 > 500) {
+          APP.error('图片大小超过500kb')
+          return
+        }
         APP.fn.handleLoading('start')
         ossUpload(file).then((res) => {
           const url = replaceUrl(res[0])
