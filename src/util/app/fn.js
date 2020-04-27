@@ -176,3 +176,13 @@ export function formatMoneyNumber (money, type = 'u2m') {
     return money
   }
 }
+
+/**
+ * 4舍5入保留小数位置
+ * @param {number} num - 原数值
+ * @param {number} precision - 精度 默认0
+ */
+export function round (num, precision = 0) {
+  const base = Math.pow(10, precision)
+  return Math.round(num * base) / base
+}

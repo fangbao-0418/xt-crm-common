@@ -1,12 +1,25 @@
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-27 01:38:04
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/pages/interface/special/content/adapter.ts
+ */
 import { status } from './config'
 import { removeURLDomain } from '@/util/utils'
 
 /** 保存专题内容请求 */
 export function saveSubjectFloorParams (payload: any) {
-  if (!Array.isArray(payload.list)) payload.list = []
+  if (!Array.isArray(payload.list)) {
+    payload.list = []
+  }
   const result: any = {}
   result.list = payload.list.map((v: any) => {
-    v.advertisementImgUrl = removeURLDomain(v.advertisementImgUrl)
+    if (v.advertisementImgUrl) {
+      v.advertisementImgUrl = removeURLDomain(v.advertisementImgUrl)
+    }
+    if (v.type === 4) {
+      v.content = JSON.stringify(v.content)
+    }
     return v
   })
   return {
@@ -28,10 +41,26 @@ export function queryFloorRespones (res: any) {
 /** 条件查询楼层信息 */
 export function subjectFloorDetailResponse (res: any) {
   res.modifyTimeText = APP.fn.formatDate(res.modifyTime)
-  if (!Array.isArray(res.list)) res.list = []
+  if (!Array.isArray(res.list)) {
+    res.list = []
+  }
   res.list = res.list.map((v: any) => {
-    if (!Array.isArray(v.products)) v.products = []
-    if (!Array.isArray(v.coupons)) v.coupons = []
+    if (!Array.isArray(v.products)) {
+      v.products = []
+    }
+    if (!Array.isArray(v.coupons)) {
+      v.coupons = []
+    }
+    if (v.type === 4) {
+      console.log(v, '4444')
+      try {
+        v.content = JSON.parse(v.content)
+        console.log(v.content, 'xxx')
+      } catch (e) {
+        console.log(e, 'eee')
+        v.content = undefined
+      }
+    }
     return v
   })
   return res
