@@ -25,14 +25,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '审核原因',
         options: [
-          { label: '地址/电话填写错误', value: 10 },
-          { label: '优惠券未使用', value: 11 },
-          { label: '买错/买多/不想要', value: 12 },
-          { label: '订单拍错（规格/重量等）', value: 13 },
-          { label: '订单破损/污渍/裂痕/变形', value: 14 },
-          { label: '包装破损/污渍/裂痕/变形', value: 15 },
-          { label: '品种/产地/规格/成分等与描述不符', value: 16 },
-          { label: '商品腐烂/变质/死亡', value: 17 }
+          { label: '其他', value: 0 },
+          { label: '商品质量有问题', value: 10 },
+          { label: '没收到商品', value: 11 },
+          { label: '仓库发错货', value: 12 },
+          { label: '仓库少发漏发', value: 13 },
+          { label: '实物与描述不符', value: 14 },
+          { label: '商品损坏', value: 15 },
+          { label: '商品配送延迟', value: 16 }
         ],
         controlProps: {
           style: {

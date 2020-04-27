@@ -53,18 +53,20 @@ const auditAfterInfoTemplate = (dataSource: any) => {
           <Col>
             处理时间：{moment(handleTime).format('YYYY-MM-DD HH:mm:ss')}
           </Col>
-          <Col>
-            售后原因：{refundReason}
-          </Col>
-          <Col>
-            是否需要送回仓库：{toWarehouse === 0 ? '需要' : '不需要'}
-          </Col>
-          <Col>
-            售后数目：{refundServerNum}
-          </Col>
-          <Col>
-            退款金额：{formatMoneyWithSign(refundAmount)}
-          </Col>
+          <If condition={refundStatus !== 40 }>
+            <Col>
+              售后原因：{refundReason}
+            </Col>
+            <Col>
+              是否需要送回仓库：{toWarehouse === 0 ? '需要' : '不需要'}
+            </Col>
+            <Col>
+              售后数目：{refundServerNum}
+            </Col>
+            <Col>
+              退款金额：{formatMoneyWithSign(refundAmount)}
+            </Col>
+          </If>
           <Col>
             说    明：{explain}
           </Col>
@@ -93,7 +95,7 @@ const auditAfterInfoTemplate = (dataSource: any) => {
 /** 申请信息模板 */
 const applyInfoTemplate = (dataSource: any) => {
   const { applyInfo } = dataSource
-  const { refundType, refundReason, refundInfo, amount, applyTime, refundProof } = applyInfo || {}
+  const { refundType, refundReason, refundInfo, amount, applyTime, refundProof, applyNum } = applyInfo || {}
   return (
     <div className='mb10'>
       <Card>
@@ -109,7 +111,7 @@ const applyInfoTemplate = (dataSource: any) => {
             申请时间：{moment(applyTime).format('YYYY-MM-DD HH:mm:ss')}
           </Col>
           <Col>
-            申请售后数目：1
+            申请售后数目：{applyNum}
           </Col>
           <Col>
             申请售后金额：{formatMoneyWithSign(amount)}
@@ -353,6 +355,9 @@ class AuditTemplate extends React.Component<any, any> {
                                 cb(`最多可退${maxServerNum}件`)
                               } else if (!value && value !== 0) {
                                 cb('售后数目不能为空')
+                              } else if (value%1 !== 0) {
+                                console.log(1111)
+                                cb('请输入正整数')
                               }
                               cb()
                             }
