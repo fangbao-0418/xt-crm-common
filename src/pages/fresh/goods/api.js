@@ -8,7 +8,7 @@
 import { formResponse, formRequest } from './sku-sale/adapter';
 import { exportFile, newGet } from '@/util/fetch';
 import { omit } from 'lodash';
-const { post, get, newPost, newPut } = APP.http; 
+const { post, get, newPost, newPut } = APP.http;
 export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }
@@ -19,10 +19,10 @@ export function getStoreFreshList(data, config) {
 
 // 设置普通消费商品
 export function setProduct(data) {
-  const isAdd = data.productId === -1
-  const url = isAdd ? '/product/fresh/add' : '/product/fresh/update'
-  data = formRequest(isAdd ? omit(data, ['productId']) : data)
-  console.log(data, 'setProduct data')
+  const isAdd = data.productId === -1;
+  const url = isAdd ? '/product/fresh/add' : '/product/fresh/update';
+  data = formRequest(isAdd ? omit(data, ['productId']) : data);
+  console.log(data, 'setProduct data');
   if (isAdd) {
     return post(url, {}, { data, headers: {} });
   } else {
@@ -57,40 +57,40 @@ export function getCategoryList() {
 }
 
 export function get1688Sku(storeProductId) {
-  return get('/product/b2b/'+storeProductId);
+  return get('/product/b2b/' + storeProductId);
 }
 
 /** 运费模板列表 */
 export function getTemplateList() {
-  return post('/template/list')
+  return post('/template/list');
 }
 
 /**
  * 获取待审核商品列表
  */
 export function getToAuditList(data) {
-  return get(`/product/fresh/audit/list`, data)
+  return get(`/product/fresh/audit/list`, data);
 }
 
 /**
  * 获取一级类目
  */
-export function getCategoryTopList () {
-  return post('/category/list', { level: 1}).then((res) => {
+export function getCategoryTopList() {
+  return post('/category/list', { level: 1 }).then((res) => {
     return (res || []).map((item) => {
       return {
         label: item.name,
-        value: item.id
-      }
-    })
-  })
+        value: item.id,
+      };
+    });
+  });
 }
 
 /**
  * 买菜商品-审核
  */
 export function auditGoods(data) {
-  return newPost('/product/fresh/audit', data)
+  return newPost('/product/fresh/audit', data);
 }
 
 /**
@@ -100,23 +100,40 @@ export function getStrategyByCategory(data) {
   return newGet('/product/price/rule/getByCategoryId', data);
 }
 /**
- * 待审核详情 
+ * 待审核详情
  */
 export function toAuditDetail(data) {
-  return get('/product/fresh/pool/detail', data)
+  return get('/product/fresh/pool/detail', data);
 }
 /**
  * 获取海淘商品库存信息
  */
-export function getStockInfo (id) {
-  return get(`/product/stock?skuId=${id}`)
+export function getStockInfo(id) {
+  return get(`/product/stock?skuId=${id}`);
 }
-
 
 /**
  * 查看单个运费模板
- * @param freightTemplateId 
+ * @param freightTemplateId
  */
 export function getDetail(freightTemplateId) {
-  return get(`/template/${freightTemplateId}`)
+  return get(`/template/${freightTemplateId}`);
+}
+
+/**
+ * 置顶商品根据商品Id
+ * @param {*} data
+ */
+export function upByGoodsId(data) {
+  // TODO置顶
+  return newPost(``, data);
+}
+
+/**
+ * 取消置顶商品根据商品Id
+ * @param {*} data
+ */
+export function cancelUpByGoodsId(data) {
+  // TODO置顶
+  return newPost(``, data);
 }
