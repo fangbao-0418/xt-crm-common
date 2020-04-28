@@ -17,7 +17,7 @@ export function fetchShopListByIds(ids: number[]) {
 
 /** 获取专题页详情内容 */
 export async function fetchSpecialDetial(id: number) {
-  const response = await get(`/crm/subject/detail/${id}`)
+  const response = await get(`/mcweb/product/subject/detail?subjectId=${id}`)
   return adapter.specDetailResponse(response)
 }
 

@@ -3,8 +3,9 @@ import { Table, Modal, Input } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import _ from 'lodash'
 import * as api from './api'
-import { formatMoneyWithSign } from '@/pages/helper';
+import { formatMoneyWithSign } from '@/pages/helper'
 interface Props {
+  type?: 'checkbox' | 'radio'
   selectedRowKeys?: any[]
   onOk?: (ids: any[], rows: Shop.ShopItemProps[]) => void
   onSelect?: (record: Shop.ShopItemProps, selected: boolean) => void
@@ -22,12 +23,27 @@ export interface SearchPayload {
   pageSize: number
   status: 0
 }
+
+function filterRows<R> (rows: any[], key: string): R[] {
+  const temp: {[key: number]: boolean} = {}
+  const result: any[] = []
+  rows.map((item) => {
+    const id = item[key]
+    if (!temp[id]) {
+      result.push(item)
+      temp[id] = true
+    }
+  })
+  return result
+}
+
 class Main extends React.Component<Props, State> {
+  public rowSelectionKey: keyof Shop.ShopItemProps = 'id'
   public selectedRows: Shop.ShopItemProps[] = []
   public payload: SearchPayload = {
     page: 1,
     pageSize: 10,
-    status: 0,
+    status: 0
   }
   public state: State = {
     current: 1,
@@ -97,7 +113,7 @@ class Main extends React.Component<Props, State> {
   public fetchData () {
     api.fetchShopList(this.payload).then((res: any) => {
       res.current = this.payload.page
-      this.setState({...res})
+      this.setState({ ...res })
     })
   }
   public onOk () {
@@ -125,18 +141,43 @@ class Main extends React.Component<Props, State> {
     })
   }
   public onSelect (record: Shop.ShopItemProps, selected: boolean) {
+    const type = this.props.type !== undefined ? this.props.type : 'checkbox'
+    if (type === 'checkbox') {
+      const key = this.rowSelectionKey
+      const isExist = this.selectedRows.find((item: any) => item[key] === record[key])
+      if (selected && !isExist) {
+        this.selectedRows.push(record)
+      } else if (!selected && isExist) {
+        this.selectedRows = this.selectedRows.filter((item: any) => item[key] !== record[key])
+      }
+    } else {
+      this.selectedRows = selected ? [record] : []
+    }
     if (this.props.onSelect) {
       this.props.onSelect(record, selected)
     }
   }
   public onSelectAll (selected: boolean, selectedRows: Shop.ShopItemProps[], changeRows: Shop.ShopItemProps[]) {
+    const key = this.rowSelectionKey
+    if (selected) {
+      changeRows.map((item) => {
+        this.selectedRows.push(item)
+      })
+    } else {
+      this.selectedRows = this.selectedRows.filter((item: any) => {
+        return !changeRows.find((val: any) => val[key] === item[key])
+      })
+    }
+    this.selectedRows = filterRows<Shop.ShopItemProps>(this.selectedRows, key)
     if (this.props.onSelectAll) {
       this.props.onSelectAll(selected, selectedRows, changeRows)
     }
   }
   public render () {
-    const { selectedRowKeys, visible } = this.state;
+    const { selectedRowKeys, visible } = this.state
+    const type = this.props.type !== undefined ? this.props.type : 'checkbox'
     const rowSelection = {
+      type,
       onSelect: this.onSelect,
       onChange: this.onrowSelectionChange,
       onSelectAll: this.onSelectAll,
@@ -152,12 +193,12 @@ class Main extends React.Component<Props, State> {
       >
         <div>
           <Input
-            style={{marginBottom: 20}}
+            style={{ marginBottom: 20 }}
             placeholder='请选择需要搜索的商品'
             onChange={this.onSearch}
           />
           <Table
-            style={{width: '100%'}}
+            style={{ width: '100%' }}
             rowKey={'id'}
             rowSelection={rowSelection}
             columns={this.columns}
