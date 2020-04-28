@@ -150,12 +150,7 @@ const orderInfo = (dataSource: any) => {
     {
       title: '商品名称',
       dataIndex: 'skuName',
-      key: 'skuName',
-      render: (name: string, record: any) => {
-        return (
-          <div>商品名称</div>
-        )
-      }
+      key: 'skuName'
     },
     {
       title: '商品ID',
