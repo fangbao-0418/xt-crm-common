@@ -1,11 +1,11 @@
 import React from 'react'
 import { Table, Modal, Input, Badge, Card, Form, Button } from 'antd'
-import { XtSelect } from '@/components';
+import { XtSelect } from '@/components'
 import _ from 'lodash'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
-import receiveStatus from '@/enum/receiveStatus';
-import { formatFaceValue, formatDateRange } from '@/pages/helper';
+import receiveStatus from '@/enum/receiveStatus'
+import { formatFaceValue, formatDateRange } from '@/pages/helper'
 import * as api from './api'
 const listBadgeColors: any = {
   '0': 'gray',
@@ -13,15 +13,14 @@ const listBadgeColors: any = {
   '2': 'green'
 }
 const calcRatio = ({ useCount, receiveCount }: any) => {
-  const result = useCount / receiveCount;
-  return (100 * result).toFixed(1) + '%';
+  const result = useCount / receiveCount
+  return (100 * result).toFixed(1) + '%'
 }
 export interface Props extends FormComponentProps {
   visible?: boolean
   selectedRowKeys?: any[],
   onOk?: (ids: any[], rows: Coupon.CouponItemProps[]) => void
-  onCancel: () => void
-  form: any
+  onCancel?: () => void
   onSelect?: (record: Coupon.CouponItemProps, selected: boolean) => void
   onSelectAll?: (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) => void
   type?: 'checkbox' | 'radio'
@@ -72,6 +71,7 @@ class CouponModal extends React.Component<Props, State> {
       title: '领取时间',
       dataIndex: 'receiveTime',
       key: 'receiveTime',
+      width: 200,
       render: (text, record) => formatDateRange(record)
     },
     {
@@ -100,6 +100,7 @@ class CouponModal extends React.Component<Props, State> {
       title: '领取状态',
       dataIndex: 'status',
       key: 'status',
+      width: 150,
       render: text => <Badge color={listBadgeColors[text]} text={receiveStatus.getValue(text)} />
     }
   ]
@@ -176,13 +177,21 @@ class CouponModal extends React.Component<Props, State> {
       <Modal
         title='选择优惠券'
         visible={visible}
-        width="60%"
+        width={1000}
         onOk={this.onOk}
-        onCancel={this.props.onCancel}
+        onCancel={() => {
+          if (this.props.onCancel) {
+            this.props.onCancel()
+          } else {
+            this.setState({
+              visible: false
+            })
+          }
+        }}
       >
         <div>
           <Card bordered={false}>
-            <Form layout="inline">
+            <Form layout='inline'>
               <Form.Item label="优惠券编号">
                 {getFieldDecorator('code', {})(<Input placeholder="请输入" />)}
               </Form.Item>
