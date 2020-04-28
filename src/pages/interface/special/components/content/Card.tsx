@@ -1,7 +1,8 @@
-import React from 'react';
-import { Card, Row, Col, Icon, Radio, Input, Modal } from 'antd';
-import Shop from './shop';
-import Coupon from './coupon';
+import React from 'react'
+import { Card, Row, Col, Icon, Radio, Input, Modal } from 'antd'
+import Shop from './shop'
+import Coupon from './coupon'
+import Hotsport from './hotspot'
 import Upload from '@/components/upload';
 import ShopModal from '@/components/shop-modal';
 import CouponModal from '@/components/coupon-modal';
@@ -104,7 +105,7 @@ class Main extends React.Component<Props, State> {
   /**
    * 渲染商品楼层
    */
-  public renderShop() {
+  public renderShop () {
     const { detail, state } = this.props;
     const { goodsListByCurrentActivity } = state;
     const selectedRowKeys = this.getSelectedRowKeys(detail.products);
@@ -115,7 +116,7 @@ class Main extends React.Component<Props, State> {
     const activityCss = images[detail.css] && images[detail.css].activityCss;
     return (
       <div>
-        <Row gutter={12} className="mb10">
+        <Row gutter={12} className='mb10'>
           <Col span={3}>排列样式:</Col>
           <Col span={9}>
             <Radio.Group
@@ -226,8 +227,8 @@ class Main extends React.Component<Props, State> {
   /**
    * 渲染广告楼层
    */
-  public renderAd(): React.ReactNode {
-    const { detail } = this.props;
+  public renderAd (): React.ReactNode {
+    const { detail } = this.props
     return (
       // <Draggable
       //   className={styles['shop-draggable']}
@@ -283,11 +284,11 @@ class Main extends React.Component<Props, State> {
   /**
    * 渲染优惠券楼层
    */
-  public renderCoupon(): React.ReactNode {
-    const { detail } = this.props;
-    detail.css = detail.css || 1;
-    const selectedRowKeys = this.getSelectedRowKeys(detail.coupons);
-    this.tempCoupons = Array.prototype.concat(detail.coupons || []);
+  public renderCoupon (): React.ReactNode {
+    const { detail } = this.props
+    detail.css = detail.css || 1
+    const selectedRowKeys = this.getSelectedRowKeys(detail.coupons)
+    this.tempCoupons = Array.prototype.concat(detail.coupons || [])
     return (
       <div>
         <Row gutter={12}>
@@ -311,9 +312,9 @@ class Main extends React.Component<Props, State> {
               <Coupon
                 dataSource={detail.coupons}
                 onChange={value => {
-                  detail.coupons = value;
-                  console.log('coupons=>', detail.coupons);
-                  this.onChange(detail);
+                  detail.coupons = value
+                  console.log('coupons=>', detail.coupons)
+                  this.onChange(detail)
                 }}
               />
             )}
@@ -366,29 +367,48 @@ class Main extends React.Component<Props, State> {
           </Col>
         </Row>
       </div>
-    );
+    )
   }
 
-  public renderLayout(): React.ReactNode {
+  public renderHotspot (): React.ReactNode {
+    const { detail } = this.props
+    detail.css = detail.css || 1
+    return (
+      <div>
+        <Hotsport
+          value={detail.content}
+          onChange={(value) => {
+            detail.content = value
+            // console.log(value, 'xxxx')
+            this.onChange(detail)
+          }}
+        />
+      </div>
+    )
+  }
+
+  public renderLayout (): React.ReactNode {
     const {
       detail: { type }
-    } = this.props;
+    } = this.props
     switch (type) {
       case 1:
-        return this.renderShop();
+        return this.renderShop()
       case 2:
-        return this.renderCoupon();
+        return this.renderCoupon()
       case 3:
-        return this.renderAd();
+        return this.renderAd()
+      case 4:
+        return this.renderHotspot()
     }
   }
 
-  public render() {
-    const detail = this.props.detail;
+  public render () {
+    const detail = this.props.detail
     return (
       <Card
         size="small"
-        title={typeConfig[detail.type].title}
+        title={typeConfig&&typeConfig[detail.type]&&typeConfig[detail.type].title}
         style={{ width: 800 }}
         extra={
           <div>
@@ -422,12 +442,12 @@ class Main extends React.Component<Props, State> {
       >
         {this.renderLayout()}
       </Card>
-    );
+    )
   }
 }
 
 export default connect((state: any) => {
   return {
     state: state[namespace]
-  };
-})(Main) as any;
+  }
+})(Main) as any
