@@ -198,7 +198,6 @@ export function fillOssDomainUrl (url) {
   if (!url) {
     return ''
   }
-  url = deleteOssDomainUrl (url)
   if ((/^http/).test(url)) {
     return url
   }
