@@ -99,8 +99,7 @@ class Order extends Component<any, State> {
 
   public handleTabChange = (type: string) => {
     const { skuServerId, refundCode } = this.state.dataSource
-    const { orderTrajectory } = this.state
-    if (type === 'record' && !orderTrajectory.length) {
+    if (type === 'record') {
       api.getOrderTrajectory(skuServerId, refundCode).then(res => {
         this.setState({
           orderTrajectory: res
