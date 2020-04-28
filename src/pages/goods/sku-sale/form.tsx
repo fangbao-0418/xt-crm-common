@@ -907,7 +907,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             inner={(form) => {
               return form.getFieldDecorator('videoUrl')(
                 <UploadView
-                  ossType='cos'
                   placeholder='上传视频'
                   fileType='video'
                   listType='picture-card'

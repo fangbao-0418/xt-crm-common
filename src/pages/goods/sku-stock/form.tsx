@@ -404,7 +404,7 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
             }}
           />
           <FormItem
-            label='商品视www频封面'
+            label='商品视频封面'
             inner={(form) => {
               return (
                 <div className={styles['input-wrapper']}>
@@ -432,7 +432,6 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
                   <div>
                     {form.getFieldDecorator('videoUrl')(
                       <UploadView
-                        ossType='cos'
                         placeholder='上传视频'
                         fileType='video'
                         listType='picture-card'
