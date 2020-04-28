@@ -8,7 +8,7 @@
 import { formResponse, formRequest } from './sku-sale/adapter';
 import { exportFile, newGet } from '@/util/fetch';
 import { omit } from 'lodash';
-const { post, get, newPost, newPut } = APP.http;
+const { post, get, put, newPost, newPut } = APP.http;
 export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }
@@ -125,8 +125,7 @@ export function getDetail(freightTemplateId) {
  * @param {*} data
  */
 export function upByGoodsId(data) {
-  // TODO置顶
-  return newPost(``, data);
+  return put(`/mcweb/product/fresh/top`, data);
 }
 
 /**
@@ -134,6 +133,5 @@ export function upByGoodsId(data) {
  * @param {*} data
  */
 export function cancelUpByGoodsId(data) {
-  // TODO置顶
-  return newPost(``, data);
+  return put(`/mcweb/product/fresh/top/cancel`, data);
 }

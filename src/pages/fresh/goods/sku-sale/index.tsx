@@ -114,14 +114,12 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
         const { status } = this.state;
         return (
           <div>
-            {/* TODO置顶 */}
-            <If condition={false}>
+            <If condition={status === 0 && record.top === 0}>
               <span className="href" onClick={this.up.bind(this, record.id)}>
                 置顶
               </span>
             </If>
-            {/* TODO置顶 */}
-            <If condition={true}>
+            <If condition={status === 0 && record.top === 1}>
               <span
                 className="href"
                 onClick={this.cancelUp.bind(this, record.id)}
@@ -347,15 +345,23 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
 
   // 置顶事件
   up = (id: string) => {
-    // TODO置顶
-    console.log('置顶', id);
-    upByGoodsId({ id });
+    upByGoodsId({ productId: id }).then((res) => {
+      if (res) {
+        message.success('置顶成功');
+        this.list.refresh();
+      }
+    });
   };
 
+  // 取消置顶事件
   cancelUp = (id: string) => {
-    // TODO置顶
-    console.log('取消置顶', id);
-    cancelUpByGoodsId({ id });
+    cancelUpByGoodsId({ productId: id }).then((res) => {
+      debugger;
+      if (res) {
+        message.success('取消置顶成功');
+        this.list.refresh();
+      }
+    });
   };
 }
 
