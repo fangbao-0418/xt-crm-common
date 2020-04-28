@@ -13,7 +13,7 @@ interface Props extends React.Props<{}> {
   index?: number
   showImage?: boolean
 }
-function SkuUploadItem(props: Props) {
+function SkuUploadItem (props: Props) {
   function onChange (value: ValueProps) {
     setValue(value)
     if (props.onChange) {
@@ -21,11 +21,10 @@ function SkuUploadItem(props: Props) {
     }
   }
 
-  function removePrefixOfUrl(url: string) {
-    let result = url || '';
-    result = result.replace('https://assets.hzxituan.com/', '');
-    return result; 
-  } 
+  function removePrefixOfUrl (url: string) {
+    url = APP.fn.deleteOssDomainUrl(url)
+    return url
+  }
   const [value, setValue] = useState(Object.assign({}, props.value))
   const { specName, specPicture } = Object.assign({}, props.value)
   useEffect(() => {
@@ -34,7 +33,7 @@ function SkuUploadItem(props: Props) {
   return (
     <div className={styles.spuitem}>
       <Input
-        placeholder="请设置规格名称"
+        placeholder='请设置规格名称'
         value={value.specName}
         onChange={(e: any) => {
           const newValue = {
@@ -45,7 +44,7 @@ function SkuUploadItem(props: Props) {
         }}
         disabled={props.disabled}
       />
-      {props.showImage &&
+      {props.showImage && (
         <UploadView
           ossType='cos'
           formatOrigin
@@ -65,9 +64,9 @@ function SkuUploadItem(props: Props) {
           className={styles["sku-upload"]}
           listType="picture-card"
           size={0.2}
-        />}
+        />)}
       {props.children}
     </div>
-  );
+  )
 }
-export default SkuUploadItem;
+export default SkuUploadItem

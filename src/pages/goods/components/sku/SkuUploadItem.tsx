@@ -13,7 +13,7 @@ interface Props extends React.Props<{}> {
   index?: number
   showImage?: boolean
 }
-function SkuUploadItem(props: Props) {
+function SkuUploadItem (props: Props) {
   function onChange (value: ValueProps) {
     setValue(value)
     if (props.onChange) {
@@ -21,11 +21,10 @@ function SkuUploadItem(props: Props) {
     }
   }
 
-  function removePrefixOfUrl(url: string) {
-    let result = url || '';
-    result = result.replace('https://assets.hzxituan.com/', '');
-    return result; 
-  } 
+  function removePrefixOfUrl (url: string) {
+    url = APP.fn.deleteOssDomainUrl(url)
+    return url
+  }
   const [value, setValue] = useState(Object.assign({}, props.value))
   const { specName, specPicture } = Object.assign({}, props.value)
   useEffect(() => {

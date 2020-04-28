@@ -13,15 +13,15 @@ const uploadButton = props => (
   </div>
 );
 
-export async function ossUpload(file, dir = 'crm', ossType = 'oss') {
-  if(ossType === 'oss'){
-    const res = await getStsPolicy();
+export async function ossUpload (file, dir = 'crm', ossType = 'oss') {
+  if (ossType === 'oss') {
+    const res = await getStsPolicy()
     if (res) {
-      const client = createClient(res);
+      const client = createClient(res)
       try {
         console.log(file, 'fileoss')
         const urlList = await ossUploadBlob(client, file, dir);
-        return urlList;
+        return urlList
       } catch (error) {
         message.error('上传失败，请重试', 'middle');
         return Promise.reject(error)
@@ -29,17 +29,19 @@ export async function ossUpload(file, dir = 'crm', ossType = 'oss') {
     } else {
       return Promise.reject()
     }
-  } else if(ossType === 'cos'){
-    const res = await getStsCos();
+  } else if (ossType === 'cos') {
+    const res = await getStsCos()
     if (res) {
-      const cosClient = createCosClient(res);
+      const cosClient = createCosClient(res)
       try {
-        console.log(file,'filecos')
+        console.log(file, 'filecos')
         const res = await cosUpload(cosClient, file, dir)
-        const urlList = [res.Location]
-        return urlList;
+        console.log(res, 'cosUpload')
+        const url = 'https://' + res.Location
+        const urlList = [url]
+        return urlList
       } catch (error) {
-        message.error('上传失败，请重试', 'middle');
+        message.error('上传失败，请重试', 'middle')
         return Promise.reject(error)
       }
     } else {
@@ -107,7 +109,7 @@ function isMatchFileType (file, list, type = 'ext') {
 
 class UploadView extends Component {
   count = 0
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       fileList: this.initFileList(props.value || []),
@@ -126,27 +128,18 @@ class UploadView extends Component {
   }
 
   replaceUrl (url) {
-    console.log(url, 'before replaceUrl')
     if (!url) {
       return url
     }
-    const { ossType } = this.props
-    url = (url || '').trim().replace(/^https?:\/\/.+?\//, '')
-    if (ossType === 'cos') {
-      url = (url || '').trim().slice(url.indexOf('/tximg') + 1)
-    }
+    url = APP.fn.deleteOssDomainUrl(url)
     return url
   }
   getViewUrl (url) {
     if (!url) {
       return url
     }
-    const { ossType } = this.props
-    const rurl = this.replaceUrl(url)
-    if ((/^tximg/).test(rurl)) {
-      return 'https://sh-tximg.hzxituan.com/' + rurl
-    }
-    return 'https://assets.hzxituan.com/' + rurl
+    url = APP.fn.fillOssDomainUrl(url)
+    return url
   }
   initFileList (fileList = []) {
     if (typeof fileList === 'string') {
@@ -301,7 +294,7 @@ class UploadView extends Component {
       });
       fileList = this.initFileList(fileList)
       this.setState({
-        fileList: fileList,
+        fileList: fileList
       });
       const value = fileList.map((item) => {
         return formatOrigin ? {
