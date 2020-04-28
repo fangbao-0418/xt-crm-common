@@ -7,7 +7,7 @@ import UploadView from '@/components/upload'
 import CitySelect from '@/components/city-select'
 import { FormInstance } from '@/packages/common/components/form'
 import If from '@/packages/common/components/if'
-import { addShop, updateShop, getShopDetail, getTypeEnum, refuse } from './api'
+import { addShop, updateShop, getShopDetail, getTypeEnum, refuse, pointCenterList } from './api'
 import { RouteComponentProps } from 'react-router'
 import { parseQuery } from '@/util/utils'
 import Image from '@/components/Image'
@@ -141,6 +141,26 @@ class StoreForm extends React.Component<Props, StoreFormState> {
               verifiable
               name='memberPhone'
               disabled={this.id !== '-1'}
+            />
+            <FormItem
+              verifiable
+              // name='type'
+              required
+              label='区域仓'
+              inner={(form) => {
+                return form.getFieldDecorator(
+                  'areaWarehouseCode',
+                  {
+                    rules: [{
+                      required: true,
+                      message: '请选择区域仓'
+                    }]
+                  }
+                )(<SelectFetch
+                  readonly={readonly}
+                  fetchData={pointCenterList}
+                />)
+              }}
             />
             <If condition={!!(record.inviteShopName || record.inviteShopPhone)}>
               <FormItem

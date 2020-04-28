@@ -81,18 +81,18 @@ class BannerModal extends Component {
 
   handleOk = () => {
     const { onSuccess, id, form, isEdit } = this.props
-    form.validateFields(err => {
+    form.validateFields((err, values) => {
       if (!err) {
         const api = isEdit ? updateBanner : addBanner
         const params = {
           id,
-          ...form.getFieldsValue()
+          ...values
         }
         params.jumpUrlWap = (params.jumpUrlWap || '').trim()
         params.onlineTime = +new Date(params.onlineTime)
         params.offlineTime = +new Date(params.offlineTime)
         if (params.imgList) {
-          params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url
+          params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url || ''
           params.imgList = undefined
         }
         const seat = params.seat || []
@@ -101,8 +101,12 @@ class BannerModal extends Component {
         params.seat = seat[1]
         params.platform = 0
         params.platformArray.forEach((val) => {
-          params.platform += val*1
+          params.platform += val * 1
         })
+        if (params.offlineTime < params.onlineTime) {
+          APP.error('下线时间必须大于上线时间')
+          return
+        }
         api(params).then((res) => {
           onSuccess && onSuccess()
           res && message.success('操作成功')
@@ -164,36 +168,13 @@ class BannerModal extends Component {
                 }]
               })(<Input placeholder='' />)}
             </FormItem>
-            <FormItem key={renderKey} label='Banner图片' required={true}>
-              {getFieldDecorator('imgList', {
-                initialValue: initImgList(data.imgUrlWap),
-                rules: [
-                  {
-                    required: true,
-                    message: '请上传Banner图片'
-                  }
-                ]
-              })(
-                <UploadView
-                  placeholder='上传主图'
-                  listType='picture-card'
-                  listNum={1}
-                  size={.3}
-                />,
-              )}
-            </FormItem>
-            <FormItem label='跳转地址'>
-              {getFieldDecorator('jumpUrlWap', { initialValue: data.jumpUrlWap })(
-                <Input placeholder='' />,
-              )}
-            </FormItem>
             <FormItem required label='位置'>
               {getFieldDecorator('seat', {
                 initialValue: [data.newSeat, data.childSeat],
                 rules: [
                   {
                     validator: (rule, value, cb) => {
-                      console.log(value, 'data')
+                      console.log(value)
                       if (value[1] !== undefined) {
                         cb()
                       } else {
@@ -213,6 +194,46 @@ class BannerModal extends Component {
                 })(<Input placeholder='' />)}
               </FormItem>
             </If>
+            <If condition={[1, 2, 3, 4].includes(seat[0])}>
+              <FormItem key={renderKey} label='Banner图片' required={true}>
+                {getFieldDecorator('imgList', {
+                  initialValue: initImgList(data.imgUrlWap),
+                  rules: [
+                    {
+                      required: [1, 2, 3, 4].includes(seat[0]),
+                      message: '请上传Banner图片'
+                    }
+                  ]
+                })(
+                  <UploadView
+                    placeholder='上传主图'
+                    listType='picture-card'
+                    listNum={1}
+                    size={.3}
+                  />,
+                )}
+              </FormItem>
+            </If>
+            <If condition={seat[0] === 5}>
+              <FormItem label='文案'>
+                {getFieldDecorator('content', {
+                  initialValue: data.content,
+                  rules: [
+                    {
+                      required: seat[0] === 5,
+                      message: '请输入文案'
+                    }
+                  ]
+                })(
+                  <Input maxLength={25} placeholder='请输入文案' />,
+                )}
+              </FormItem>
+            </If>
+            <FormItem label='跳转地址'>
+              {getFieldDecorator('jumpUrlWap', { initialValue: data.jumpUrlWap })(
+                <Input placeholder='' />,
+              )}
+            </FormItem>
             <FormItem label='上线时间'>
               {getFieldDecorator('onlineTime', { initialValue: moment(data.onlineTime) })(
                 <DatePicker showTime style={{ width: 200 }} format='YYYY-MM-DD HH:mm:ss' />,
@@ -228,17 +249,19 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <FormItem label='平台'>
-              {getFieldDecorator('platformArray', {
-                initialValue: data.platformArray,
-                rules: [{
-                  required: true,
-                  message: '请选择平台'
-                }]
-              })(
-                <Checkbox.Group options={_platformType}> </Checkbox.Group>
-              )}
-            </FormItem>
+            <If condition={([1, 2, 3, 4].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+              <FormItem label='平台'>
+                {getFieldDecorator('platformArray', {
+                  initialValue: data.platformArray,
+                  rules: [{
+                    required: ([1, 2, 3, 4].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
+                    message: '请选择平台'
+                  }]
+                })(
+                  <Checkbox.Group options={_platformType}> </Checkbox.Group>
+                )}
+              </FormItem>
+            </If>
             <FormItem label='状态'>
               {getFieldDecorator('status', { initialValue: data.status })(
                 <Radio.Group>

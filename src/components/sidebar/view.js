@@ -6,6 +6,22 @@ import logo from '../../assets/images/logo.svg';
 const { SubMenu } = Menu;
 const { Sider } = Layout;
 
+const getMenuMap = (menu) => {
+  return menu.reduce((pre, next) => {
+    let map = {
+      ...pre,
+      [next.id]: next
+    }
+    if (next.subMenus) {
+      map = {
+        ...map,
+        ...getMenuMap(next.subMenus)
+      }
+    }
+    return map
+  }, {})
+}
+
 
 function renderMenulist(data) {
   // type等于0是菜单权限，等于1是功能权限
@@ -85,6 +101,7 @@ class Sidebar extends React.Component {
   render() {
     const { collapsed, data } = this.props;
     const { current } = this.state;
+    
     return (
       <Sider collapsed={collapsed} style={{
         overflow: 'auto',
@@ -100,7 +117,16 @@ class Sidebar extends React.Component {
         </div>
         <Menu
           theme="dark"
-          onClick={e => this.setCurrent(e.key)}
+          onClick={e => {
+            const menuMap = getMenuMap(data)
+            const curItem = menuMap[e.key]
+            const outside = (/(?<=~).*/).exec(curItem.path)
+            if (outside) {
+              window.open(`${window.location.origin}${outside}`)
+            } else {
+              this.setCurrent(e.key)
+            }
+          }}
           style={{ padding: '16px 0', width: '100%' }}
           selectedKeys={[current]}
           defaultOpenKeys={['goods', 'order']}
