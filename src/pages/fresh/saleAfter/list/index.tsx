@@ -123,6 +123,11 @@ class Order extends Component<any, State> {
                 fields: ['createTimeBegin', 'createTimeEnd']
               }
             }}
+            onChange={() => {
+              this.setState({
+                current: 1
+              })
+            }}
             size='small'
             getInstance={(ref) => {
               this.form = ref
