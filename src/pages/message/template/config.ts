@@ -6,19 +6,21 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       id: {
-        type: 'input', label: '模板ID',
+        type: 'input',
+        label: '模板ID',
         controlProps: {
           type: 'number'
         }
       },
       type: {
-        type: 'select', label: '模板类型',
+        type: 'select',
+        label: '模板类型',
         options: [
-          {label: '短信', value: 20},
-          {label: 'PUSH', value: 0},
-          {label: '站内信', value: 10},
-          {label: '服务号', value: 30},
-          {label: '小程序', value: 40}
+          { label: '短信', value: 20 },
+          { label: 'PUSH', value: 0 },
+          { label: '站内信', value: 10 },
+          { label: '服务号', value: 30 },
+          { label: '小程序', value: 40 }
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -30,25 +32,28 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       status: {
-        type: 'select', label: '状态',
+        type: 'select',
+        label: '状态',
         options: [
-          {label: '已启用', value: 1},
-          {label: '已禁用', value: 0}
-        ] 
+          { label: '已启用', value: 1 },
+          { label: '已禁用', value: 0 }
+        ]
       },
       createTime: {
-        type: 'rangepicker', label: '发送时间',
+        type: 'rangepicker',
+        label: '发送时间',
         controlProps: {
           showTime: true
         }
       },
       messageGroup: {
-        type: 'select', label: '模板分类',
+        type: 'select',
+        label: '模板分类',
         options: [
-          {label: '交易信息', value: 'transaction'},
-          {label: '团队收益', value: 'teamIncome'},
-          {label: '活动消息', value: 'activity'},
-          {label: '系统通知', value: 'system'}
+          { label: '交易信息', value: 'transaction' },
+          { label: '团队收益', value: 'teamIncome' },
+          { label: '活动消息', value: 'activity' },
+          { label: '系统通知', value: 'system' }
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -60,7 +65,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       businessGroup: {
-        type: 'input', label: '模板编码',
+        type: 'input',
+        label: '模板编码',
         controlProps: {
           placeholder: '请输入模板唯一识别编号名称，20个字符'
         },
@@ -78,7 +84,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       templateTitle: {
-        type: 'input', label: '模板名称',
+        type: 'input',
+        label: '模板名称',
         controlProps: {
           placeholder: '请输入模板名称，40个字符'
         },
@@ -96,7 +103,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       templateContent: {
-        type: 'textarea', label: '模板内容',
+        type: 'textarea',
+        label: '模板内容',
         controlProps: {
           placeholder: '请输入模板内容，如果为短信、服务号、小程序模板，请与服务商模板保持一致'
         },
@@ -110,7 +118,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       jumpUrl: {
-        type: 'input', label: '跳转URL',
+        type: 'input',
+        label: '跳转URL',
         controlProps: {
           placeholder: '请输入需要跳转的页面链接'
         }
@@ -140,7 +149,7 @@ export const memberOptions = [
   {
     label: '城市合伙人',
     value: '4'
-  },
+  }
 ]
 
 export enum statusEnum {
