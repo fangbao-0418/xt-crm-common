@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import { Modal, Button, Form, Input, message, Radio } from 'antd';
+import React, { Component } from 'react'
+import { Modal, Button, Form, Input, message, Radio, Select } from 'antd'
 import { If } from '@/packages/common/components'
-import { getSupplierDetail, updateSupplier, addSupplier } from '../api';
-import SupplierTypeSelect from '@/components/supplier-type-select';
-import SaleArea from '@/components/sale-area';
-const FormItem = Form.Item;
+import { getSupplierDetail, updateSupplier, addSupplier } from '../api'
+import SupplierTypeSelect from '@/components/supplier-type-select'
+import SaleArea from '@/components/sale-area'
+const FormItem = Form.Item
 
 const formItemLayout = {
   labelCol: { span: 6 },
-  wrapperCol: { span: 14 },
-};
+  wrapperCol: { span: 14 }
+}
 class SupplierModal extends Component {
   static defaultProps = {
     id: '',
@@ -17,46 +17,47 @@ class SupplierModal extends Component {
   };
   state = {
     visible: false,
-    saleAreaVisible: false
+    saleAreaVisible: false,
+    category: 0
   }
 
   showModal = () => {
-    this.props.isEdit && this.query();
+    this.props.isEdit && this.query()
     this.setState({
       visible: true
-    });
+    })
   }
 
   query = () => {
     getSupplierDetail({
-      id: this.props.id,
+      id: this.props.id
     }).then((data) => {
       if (data.category === 5) {
         this.setState({
           saleAreaVisible: true
         })
       }
-      this.props.form && this.props.form.setFieldsValue(data);
-    });
+      this.props.form && this.props.form.setFieldsValue(data)
+    })
   }
 
   handleOk = () => {
-    const { onSuccess, id, form, isEdit } = this.props;
+    const { onSuccess, id, form, isEdit } = this.props
     form.validateFields((err, vals) => {
       if (!err) {
-        const api = isEdit ? updateSupplier : addSupplier;
+        const api = isEdit ? updateSupplier : addSupplier
         api({
           id,
-          ...vals,
+          ...vals
         }).then((res) => {
           if (res) {
-            onSuccess && onSuccess();
-            res && message.success('操作成功');
+            onSuccess && onSuccess()
+            res && message.success('操作成功')
             this.handleCancel()
           }
-        });
+        })
       }
-    });
+    })
   };
 
   handleCancel = e => {
@@ -66,13 +67,13 @@ class SupplierModal extends Component {
     })
     this.props.form && this.props.form.resetFields()
   }
-  render() {
-    const { isEdit } = this.props;
-    const { getFieldDecorator, getFieldsValue } = this.props.form;
-    const {category, showType} = this.props.form && getFieldsValue(['category', 'showType']);
+  render () {
+    const { isEdit } = this.props
+    const { getFieldDecorator, getFieldsValue } = this.props.form
+    const { category, showType } = this.props.form.getFieldsValue(['category', 'showType'])
     return (
       <>
-        <Button type="primary" onClick={this.showModal}>
+        <Button type='primary' onClick={this.showModal}>
           {isEdit ? '编辑' : '新增供应商'}
         </Button>
         <Modal
@@ -81,10 +82,10 @@ class SupplierModal extends Component {
           visible={this.state.visible}
           footer={
             <>
-              <Button key="submit" type="primary" onClick={this.handleOk}>
+              <Button key='submit' type='primary' onClick={this.handleOk}>
                 {isEdit ? '保存' : '新增'}
               </Button>
-              <Button key="back" onClick={this.handleCancel}>
+              <Button key='back' onClick={this.handleCancel}>
                 返回
               </Button>
             </>
@@ -94,7 +95,7 @@ class SupplierModal extends Component {
         >
           <Form {...formItemLayout}>
             <h4>基本信息</h4>
-            <FormItem label="供应商分类">
+            <FormItem label='供应商分类'>
               {getFieldDecorator('category', {
                 rules: [
                   {
@@ -105,48 +106,57 @@ class SupplierModal extends Component {
                 getValueFromEvent: (e) => {
                   let value
                   if (!e || !e.target) {
-                    value = e;
+                    value = e
                   } else {
-                    const { target } = e;
-                    value = target.type === 'checkbox' ? target.checked : target.value;
+                    const { target } = e
+                    value = target.type === 'checkbox' ? target.checked : target.value
                   }
                   this.setState({
                     saleAreaVisible: +value === 5
                   })
-                  return value;
+                  return value
                 }
               })(
-                <SupplierTypeSelect disabled={this.props.isEdit} />
+                <SupplierTypeSelect
+                  disabled={this.props.isEdit}
+                  onChange={(value) => {
+                    console.log(value, 'value')
+                    this.setState({
+                      category: value
+                    })
+                  }}
+                />
               )}
             </FormItem>
-            <If visible={[0,1,3,4].indexOf(category) === -1} condition={[0,1,3,4].indexOf(category) !== -1}>
-              <FormItem label="前台展示">
+            <If visible={[0, 1, 3, 4].indexOf(category) === -1} condition={[0, 1, 3, 4].indexOf(category) !== -1}>
+              <FormItem label='前台展示'>
                 {getFieldDecorator('showType', {
                   initialValue: 0
-                })
-                (<Radio.Group>
-                  <Radio value={0}>关闭</Radio>
-                  <Radio value={1}>开启</Radio>
-                </Radio.Group>)}
+                })(
+                  <Radio.Group>
+                    <Radio value={0}>关闭</Radio>
+                    <Radio value={1}>开启</Radio>
+                  </Radio.Group>
+                )}
               </FormItem>
             </If>
-            <FormItem label="供应商名称">
+            <FormItem label='供应商名称'>
               {getFieldDecorator('name', {
                 rules: [{
                   required: true,
                   message: '请输入供应商名称'
                 }]
-              })(<Input placeholder="请输入供应商名称" />)}
+              })(<Input placeholder='请输入供应商名称' />)}
             </FormItem>
-            <FormItem label="联系电话">
+            <FormItem label='联系电话'>
               {getFieldDecorator('phone', {
                 rules: [{
                   required: true,
                   message: '请输入联系电话'
                 }]
-              })(<Input placeholder="请输入联系电话" maxLength={11} />)}
+              })(<Input placeholder='请输入联系电话' maxLength={11} />)}
             </FormItem>
-            <FormItem label="供应商简称">
+            <FormItem label='供应商简称'>
               {getFieldDecorator('shortName', {
                 rules: [
                   {
@@ -163,26 +173,26 @@ class SupplierModal extends Component {
                   }
                 ]
               })(
-                <Input placeholder="请输入供应商简称" />,
+                <Input placeholder='请输入供应商简称' />,
               )}
             </FormItem>
-            <FormItem label="联系人">
+            <FormItem label='联系人'>
               {getFieldDecorator('contacts')(
-                <Input placeholder="请输入联系人" />,
+                <Input placeholder='请输入联系人' />,
               )}
             </FormItem>
-            <FormItem label="联系邮箱">
-              {getFieldDecorator('email')(<Input placeholder="请输入联系邮箱" />)}
+            <FormItem label='联系邮箱'>
+              {getFieldDecorator('email')(<Input placeholder='请输入联系邮箱' />)}
             </FormItem>
             <h4>详细信息</h4>
-            <FormItem label="官网链接">
+            <FormItem label='官网链接'>
               {getFieldDecorator('jumpUrl')(
-                <Input placeholder="请输入官网链接" />,
+                <Input placeholder='请输入官网链接' />,
               )}
             </FormItem>
-            <FormItem label="详细地址">
+            <FormItem label='详细地址'>
               {getFieldDecorator('address')(
-                <Input placeholder="请输入详细地址" />,
+                <Input placeholder='请输入详细地址' />,
               )}
             </FormItem>
             {this.state.saleAreaVisible && (
@@ -202,11 +212,35 @@ class SupplierModal extends Component {
                 )}
               </FormItem>
             )}
+            {this.state.category === 5 && (
+              <FormItem required label='设置冻结金额'>
+                {getFieldDecorator('freezeLimit', {
+                  rules: [{
+                    validator: (rules, value, cb) => {
+                      console.log(value, 'xxxxx')
+                      if (value === undefined) {
+                        cb('请选择冻结金额')
+                      }
+                      cb()
+                    }
+                  }]
+                })(
+                  <Select
+                    placeholder='请选择冻结金额'
+                  >
+                    <Select.Option value='0'>0元</Select.Option>
+                    <Select.Option value='1000'>1000元</Select.Option>
+                    <Select.Option value='2000'>2000元</Select.Option>
+                    <Select.Option value='3000'>3000元</Select.Option>
+                  </Select>
+                )}
+              </FormItem>
+            )}
           </Form>
         </Modal>
       </>
-    );
+    )
   }
 }
 
-export default Form.create()(SupplierModal);
+export default Form.create()(SupplierModal)

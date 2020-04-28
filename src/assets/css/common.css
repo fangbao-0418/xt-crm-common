@@ -74,6 +74,18 @@ ol, ul {
     padding-left: 2em;
 }
 
+.download {
+  color: #1890ff;
+  text-decoration: underline;
+  background-color: transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+.download:hover {
+  color: #40a9ff;
+}
+
 .href {
   color: #1890ff;
   text-decoration: none;

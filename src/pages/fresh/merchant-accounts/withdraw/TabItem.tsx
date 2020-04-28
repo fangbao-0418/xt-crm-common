@@ -1,5 +1,5 @@
 import React from 'react'
-import ListPage from '@/packages/common/components/list-page'
+import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { RecordProps } from './interface'
@@ -41,11 +41,82 @@ class Main extends React.Component {
       }
     }
   ]
+  public listpage: ListPageInstanceProps
   public render () {
     return (
       <div>
         <ListPage
           columns={this.columns}
+          showButton={false}
+          getInstance={(ref) => {
+            this.listpage = ref
+          }}
+          addonAfterSearch={(
+            <div>
+              <Button
+                type='primary'
+                className='mr8'
+                onClick={() => {
+                  this.listpage.refresh()
+                }}
+              >
+                查询
+              </Button>
+              <Button
+                className='mr8'
+                onClick={() => {
+                  this.listpage.refresh(true)
+                }}
+              >
+                取消
+              </Button>
+              <Button
+                type='primary'
+                className='mr8'
+                onClick={() => {
+                  this.listpage.refresh()
+                }}
+              >
+                批量支付
+              </Button>
+              <Button
+                type='primary'
+                className='mr8'
+                onClick={() => {
+                  this.listpage.refresh()
+                }}
+              >
+                批量失败
+              </Button>
+              <Button
+                type='primary'
+                className='mr8'
+                onClick={() => {
+                  this.listpage.refresh()
+                }}
+              >
+                批量导出
+              </Button>
+              <div className='fr'>
+                <span
+                  className='download mr8'
+                  onClick={() => {
+                    APP.fn.download(require('@/pages/fresh/assets/批量支付模版.xlsx'), '批量支付模版')
+                  }}
+                >
+                  下载批量支付模版
+                </span>
+                <span
+                  className='download'
+                  onClick={() => {
+                    APP.fn.download(require('@/pages/fresh/assets/批量失败模版.xlsx'), '批量失败模版')
+                  }}
+                >
+                  下载批量失败模版
+                </span>
+              </div>
+            </div>
+          )}
           api={() => {
             return Promise.resolve({
               total: 0,

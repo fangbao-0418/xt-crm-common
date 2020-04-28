@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-28 16:04:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-28 16:22:49
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.ts
+ * @LastEditTime: 2020-04-28 19:56:58
+ * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.tsx
  */
 import { OptionProps } from '@/packages/common/components/form'
 
@@ -19,28 +19,16 @@ export function getFieldsConfig (): FieldsConfig {
           type: 'number'
         }
       },
-      type: {
-        type: 'select',
-        label: '供应商名称',
-        options: [
-          { label: '短信', value: 20 },
-          { label: 'PUSH', value: 0 },
-          { label: '站内信', value: 10 },
-          { label: '服务号', value: 30 },
-          { label: '小程序', value: 40 }
-        ],
-        fieldDecoratorOptions: {
-          rules: [
-            {
-              required: true,
-              message: '请选择模板类型'
-            }
-          ]
-        }
+      storeNameLike: {
+        type: 'input',
+        label: '供应商名称'
       },
       storeId: {
-        type: 'number',
-        label: '供应商ID'
+        label: '供应商ID',
+        type: 'input',
+        controlProps: {
+          type: 'number'
+        }
       },
       operator: {
         type: 'input',

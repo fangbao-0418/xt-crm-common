@@ -7,9 +7,9 @@ const TabPane = Tabs.TabPane
 
 const tabConfig = [
   { title: '全部', key: 0 },
-  { title: '待提现', key: 1 },
-  { title: '提现成功', key: 2 },
-  { title: '提现失败', key: 3 }
+  { title: '待提现', key: 5 },
+  { title: '提现成功', key: 15 },
+  { title: '提现失败', key: 25 }
 ]
 
 class Main extends React.Component {
