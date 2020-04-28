@@ -126,17 +126,15 @@ class UploadView extends Component {
   }
 
   replaceUrl (url) {
-    // console.log(url, 'before replaceUrl')
+    console.log(url, 'before replaceUrl')
     if (!url) {
       return url
     }
     const { ossType } = this.props
-    if(ossType === 'oss'){
-      url = (url || '').trim().replace(/^https?:\/\/.+?\//, '')
-    } else if(ossType === 'cos'){
-      url = (url || '').trim().slice(url.indexOf('/tximg')+1) 
+    url = (url || '').trim().replace(/^https?:\/\/.+?\//, '')
+    if (ossType === 'cos') {
+      url = (url || '').trim().slice(url.indexOf('/tximg') + 1)
     }
-    // console.log(url, 'after replaceUrl')
     return url
   }
   getViewUrl (url) {
@@ -144,16 +142,13 @@ class UploadView extends Component {
       return url
     }
     const { ossType } = this.props
-    switch(ossType){
-      case 'oss':
-        return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
-      case 'cos':
-        return 'https://sh-tximg.hzxituan.com/' + this.replaceUrl(url)
-      default:
-        return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
+    const rurl = this.replaceUrl(url)
+    if ((/^tximg/).test(rurl)) {
+      return 'https://sh-tximg.hzxituan.com/' + rurl
     }
+    return 'https://assets.hzxituan.com/' + rurl
   }
-  initFileList(fileList = []) {
+  initFileList (fileList = []) {
     if (typeof fileList === 'string') {
       fileList = [{
         url: fileList,

@@ -1,20 +1,18 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-08 19:03:28
- * @FilePath: /xt-crm/src/components/Image/index.js
+ * @LastEditTime: 2020-04-28 17:16:18
+ * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/components/Image/index.js
  */
-import React, { useState } from 'react';
-import zwtPic from '../../assets/images/zw.png';
-import imageMiss from '../../assets/images/image-miss.jpg';
+import React, { useState } from 'react'
+import zwtPic from '../../assets/images/zw.png'
+import imageMiss from '../../assets/images/image-miss.jpg'
 const onClick = src => () => {
-  window.open(src);
-};
+  window.open(src)
+}
 
 function getUrl (url) {
-  url = /^http/.test(url) ? url 
-    : url.indexOf('tximg') !== -1 ? `https://sh-tximg.hzxituan.com/${url}` 
-    : `https://assets.hzxituan.com/${url}`
+  url = (/^http/).test(url) ? url : ((/^tximg/).test(url) ? `https://sh-tximg.hzxituan.com/${url}` : `https://assets.hzxituan.com/${url}`)
   return url
 }
 
@@ -88,4 +86,4 @@ class Image extends React.Component {
 //   );
 // };
 
-export default Image;
+export default Image

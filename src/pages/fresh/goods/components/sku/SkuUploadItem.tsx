@@ -47,6 +47,8 @@ function SkuUploadItem(props: Props) {
       />
       {props.showImage &&
         <UploadView
+          ossType='cos'
+          formatOrigin
           // disabled={props.disabled}
           value={value.specPicture ? [{
             uid: 1,
