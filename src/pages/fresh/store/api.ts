@@ -4,7 +4,7 @@
  * @LastEditTime: 2020-04-13 15:18:18
  * @FilePath: /xt-crm/src/pages/fresh/store/api.ts
  */
-import { listResponse, formRequest, formResponse } from './adapter'
+import { listResponse, formRequest, formResponse, listRequest } from './adapter'
 import { newPost } from '@/util/fetch'
 import { queryString } from '@/util/utils'
 
@@ -12,6 +12,7 @@ const { get } = APP.http
 
 // 店铺列表
 export async function getShopList (payload: any) {
+  payload = listRequest(payload)
   const search = queryString(payload)
   return get(`/point/list${search}`).then(listResponse)
 }
