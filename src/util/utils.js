@@ -168,10 +168,11 @@ export function formatData(data) {
   return str.substr(1);
 }
 
-export function initImgList(imgUrlWap, uid) {
+export function initImgList (imgUrlWap, uid) {
   if (imgUrlWap) {
     if (imgUrlWap.indexOf('http') !== 0) {
-      imgUrlWap = 'https://assets.hzxituan.com/' + imgUrlWap;
+      imgUrlWap = APP.fn.fillOssDomainUrl(imgUrlWap)
+      // imgUrlWap = 'https://assets.hzxituan.com/' + imgUrlWap;
     }
     return [
       {
@@ -235,24 +236,24 @@ export function unionArray(target, source) {
 }
 
 /** 检测imgUrl是否带域名，没有则加上*/
-export function replaceHttpUrl(imgUrl) {
-  if (typeof imgUrl !== 'string') return ''
-  if (imgUrl.indexOf('http') !== 0) {
-    imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
+export function replaceHttpUrl (imgUrl) {
+  if (typeof imgUrl !== 'string') {
+    return ''
   }
-  return imgUrl;
+  imgUrl = APP.fn.fillOssDomainUrl(imgUrl)
+  return imgUrl
 }
 
 /** 检测imgUrl是否带域名，有则清除 */
-export function removeURLDomain(imgUrl = '') {
-  return imgUrl.replace(/https:\/\/assets.hzxituan.com\//g, '');
+export function removeURLDomain (imgUrl = '') {
+  return APP.fn.deleteOssDomainUrl(imgUrl)
 }
 /**
  * @description 去掉多余的属性
  * @param {需要过滤的对象} obj
  * @param {对于的属性名称} prop
  */
-export function dissoc(obj, prop) {
+export function dissoc (obj, prop) {
   let result = {};
   for (let p in obj) {
     if (p !== prop) {
