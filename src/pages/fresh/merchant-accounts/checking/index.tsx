@@ -7,14 +7,14 @@ import { getFieldsConfig } from './config'
 
 class Main extends React.Component {
   public columns: ColumnProps<RecordProps>[] = [
-    { title: '对账单ID', dataIndex: 'supplierCashOutId' },
-    { title: '日期', dataIndex: 'cashOutMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'u2m') },
-    { title: '供应商ID', dataIndex: 'storeId' },
-    { title: '供应商', dataIndex: 'storeName' },
-    { title: '收入（元）', dataIndex: 'payType' },
-    { title: '支出（元）', dataIndex: 'accountName' },
-    { title: '本期对账单金额', dataIndex: 'status' },
-    { title: '状态', dataIndex: '提现时间', render: (text) => APP.fn.formatDate(text) },
+    { title: '对账单ID', dataIndex: 'id' },
+    { title: '日期', dataIndex: 'billDate', render: (text) => APP.fn.formatDate(text) },
+    { title: '供应商ID', dataIndex: 'supplierId' },
+    { title: '供应商', dataIndex: 'supplierName' },
+    { title: '收入（元）', dataIndex: 'incomeMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    { title: '支出（元）', dataIndex: 'disburseMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    { title: '本期对账单金额', dataIndex: 'billMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    { title: '状态', dataIndex: 'billStatusInfo' },
     {
       title: '操作',
       width: 140,

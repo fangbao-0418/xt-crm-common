@@ -1,11 +1,12 @@
 /*
  * @Date: 2020-04-29 10:33:20
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-29 10:33:42
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/template/list-page/config.ts
+ * @LastEditTime: 2020-04-29 20:22:58
+ * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/checking/config.tsx
  */
+import React from 'react'
 import { OptionProps } from '@/packages/common/components/form'
-
+import MonthPicker from './components/MonthPicker'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
 }
@@ -14,7 +15,7 @@ export function getFieldsConfig (): FieldsConfig {
     common: {
       id: {
         type: 'input',
-        label: '申请单ID',
+        label: '对账单ID',
         controlProps: {
           type: 'number'
         }
@@ -30,30 +31,23 @@ export function getFieldsConfig (): FieldsConfig {
           type: 'number'
         }
       },
-      operator: {
+      productId: {
         type: 'input',
-        label: '操作人'
-      },
-      operateTime: {
-        type: 'rangepicker',
-        label: '操作时间',
+        label: '商品ID',
         controlProps: {
-          showTime: true
+          type: 'number',
+          placeholder: '请输入单据ID'
         }
       },
-      payType: {
-        type: 'select',
-        label: '提现方式',
-        options: [
-          { label: '个人银行卡', value: 3 },
-          { label: '对公账号', value: 4 }
-        ]
-      },
-      createTime: {
-        type: 'rangepicker',
-        label: '创建时间',
-        controlProps: {
-          showTime: true
+      date: {
+        label: '月份',
+        name: undefined,
+        inner: (form) => {
+          return form.getFieldDecorator(
+            'date'
+          )(
+            <MonthPicker />
+          )
         }
       }
     }

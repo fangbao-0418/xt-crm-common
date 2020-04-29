@@ -1,15 +1,16 @@
 /*
  * @Date: 2020-04-28 14:00:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-29 14:20:20
+ * @LastEditTime: 2020-04-29 20:04:10
  * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/checking/api.ts
  */
-const { newPost } = APP.http
-export const fetchList = () => {
+const { get, newPost } = APP.http
+export const fetchList = (payload: any) => {
   return Promise.resolve({
     total: 0,
     records: []
   })
+  return get('/fresh/account/statement/list', payload)
 }
 export const fetchDetailList = () => {
   return Promise.resolve({
