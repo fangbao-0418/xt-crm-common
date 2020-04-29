@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-08 20:54:25
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-09 16:28:08
- * @FilePath: /xt-crm/src/App.js
+ * @LastEditTime: 2020-04-29 13:49:33
+ * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/App.js
  */
 import React from 'react'
 import PropTypes from 'prop-types'

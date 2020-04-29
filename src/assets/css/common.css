@@ -80,6 +80,7 @@ ol, ul {
   background-color: transparent;
   cursor: pointer;
   user-select: none;
+  font-size: 13px;
 }
 
 .download:hover {

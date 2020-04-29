@@ -1,16 +1,38 @@
 import React from 'react'
-import { Route, Switch, RouteComponentProps } from 'react-router-dom'
+import { RouteProps } from 'react-router'
+import RouteComponent from '@/components/route-component'
 import Checking from './checking'
+import CheckingDetail from './checking/Detail'
 import Withdraw from './withdraw'
-class Main extends React.Component<RouteComponentProps> {
+import Adjustment from './adjustment'
+
+const config: RouteProps[] = [
+  {
+    path: '/checking',
+    exact: true,
+    component: Checking
+  },
+  {
+    path: '/checking/:id',
+    component: CheckingDetail
+  },
+  {
+    path: '/withdraw',
+    component: Withdraw
+  },
+  {
+    path: '/adjustment',
+    exact: true,
+    component: Adjustment
+  }
+]
+
+class Main extends React.Component {
   render () {
-    const { match } = this.props
-    console.log(match.url, 'render')
     return (
-      <Switch>
-        <Route path={`${match.url}/checking`} component={Checking} />
-        <Route path={`${match.url}/withdraw`} component={Withdraw} />
-      </Switch>
+      <RouteComponent
+        config={config}
+      />
     )
   }
 }
