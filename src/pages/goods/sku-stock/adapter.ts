@@ -6,7 +6,8 @@ import { pick } from 'lodash';
 export function replaceHttpUrl(imgUrl?: string) {
   return (imgUrl || '')
     .replace('https://assets.hzxituan.com/', '')
-    .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
+    .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
+    .replace('https://sh-tximg.hzxituan.com/', '');
 };
 
 // 数组转换到字符串
