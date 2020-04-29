@@ -1,11 +1,19 @@
+/*
+ * @Author: fangbao
+ * @Date: 2020-01-19 15:41:45
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-30 01:00:34
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/components/good-cell/index.js
+ */
 import React from 'react';
 import './index.scss';
 
 const replaceHttpUrl = (imgUrl = '') => {
-  if (imgUrl.indexOf('http') !== 0) {
-    imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
-  }
-  return imgUrl;
+  // if (imgUrl.indexOf('http') !== 0) {
+  //   imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
+  // }
+  // return imgUrl;
+  return APP.fn.fillOssDomainUrl(imgUrl)
 }
 
 const GoodCell = (props) => {
