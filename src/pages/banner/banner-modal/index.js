@@ -129,13 +129,7 @@ class BannerModal extends Component {
     const { getFieldDecorator, getFieldValue } = this.props.form
     const { data, renderKey } = this.state
 
-    let seat
-
-    if (getFieldValue('seat')) {
-      seat = getFieldValue('seat')
-    } else {
-      seat = [data.newSeat, data.childSeat]
-    }
+    const seat = [data.newSeat, data.childSeat]
     console.log(seat[0], 'seat[0]')
     return (
       <>
@@ -185,7 +179,15 @@ class BannerModal extends Component {
                   }
                 ]
               })(
-                <BannerPostion />
+                <BannerPostion
+                  onChange={(val) => {
+                    data.newSeat = val[0]
+                    data.childSeat = val[1]
+                    this.setState({
+                      data
+                    })
+                  }}
+                />
               )}
             </FormItem>
             <If condition={[1, 2, 3, 4].includes(seat[0])}>
