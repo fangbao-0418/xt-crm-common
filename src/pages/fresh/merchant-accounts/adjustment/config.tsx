@@ -1,5 +1,7 @@
+import React from 'react'
 import _ from 'lodash'
 import { OptionProps } from '@/packages/common/components/form'
+import SupplierSelect from '@/pages/goods/components/supplier-select'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
 }
@@ -7,70 +9,78 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       id: {
-        type: 'input', label: '调整单ID',
+        type: 'input',
+        label: '调整单ID',
         controlProps: {
           style: { width: 150 }
         }
       },
       serialNo: {
-        type: 'input', label: '对账单ID',
+        type: 'input',
+        label: '对账单ID',
         controlProps: {
           style: { width: 150 }
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '对账单ID不能为空'}
+            { required: true, message: '对账单ID不能为空' }
           ]
         }
       },
       accNo: {
-        type: 'input', label: '对账单ID',
+        type: 'input',
+        label: '对账单ID',
         controlProps: {
           style: { width: 150 },
           maxLength: 32
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '对账单ID不能为空'},
-            {max: 32, message: '长度最大32个字符'}
+            { required: true, message: '对账单ID不能为空' },
+            { max: 32, message: '长度最大32个字符' }
           ]
         }
       },
       accId: {
-        type: 'input', label: '对账单ID',
+        type: 'input',
+        label: '对账单ID',
         controlProps: {
           style: { width: 150 }
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '对账单ID不能为空'}
+            { required: true, message: '对账单ID不能为空' }
           ]
         }
       },
       accName: {
-        type: 'input',
-        label: '对账单名称',
-        controlProps: {
-          maxLength: 64
-        },
-        fieldDecoratorOptions: {
-          rules: [
-            {required: true, message: '对账单名称不能为空'},
-            {max: 64, message: '长度最大64个字符'}
-          ]
+        label: '供应商',
+        inner: (form) => {
+          return form.getFieldDecorator('accName', {
+            rules: [
+              {
+                required: true,
+                message: '请输入供应商名称'
+              }
+            ]
+          })(
+            <SupplierSelect
+              style={{ width: '60%' }}
+            />
+          )
         }
       },
       trimType: {
         type: 'select',
         label: '调整类型',
         options: [
-          {label: '收入', value: 1},
-          {label: '支出', value: 2}
+          { label: '收入', value: 1 },
+          { label: '支出', value: 2 }
         ],
         fieldDecoratorOptions: {
           // initialValue: 1,
           rules: [
-            {required: true, message: '调整类型不能为空'}
+            { required: true, message: '调整类型不能为空' }
           ]
         }
       },
@@ -78,11 +88,11 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         label: '状态',
         type: 'select',
         options: [
-          {label: '待采购审核', value: 10},
-          {label: '待财务审核', value: 20},
-          {label: '审核通过', value: 30},
-          {label: '审核不通过', value: 40},
-          {label: '已撤销', value: 50}
+          { label: '待采购审核', value: 10 },
+          { label: '待财务审核', value: 20 },
+          { label: '审核通过', value: 30 },
+          { label: '审核不通过', value: 40 },
+          { label: '已撤销', value: 50 }
         ]
         // fieldDecoratorOptions: {
         //   initialValue: 10,
@@ -106,8 +116,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '调整原因不能为空'},
-            {max: 50, message: '长度最大50个字符'}
+            { required: true, message: '调整原因不能为空' },
+            { max: 50, message: '长度最大50个字符' }
           ]
         }
       },
@@ -115,59 +125,64 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '创建人类型',
         options: [
-          {label: '财务', value: 0},
-          {label: '采购', value: 1},
-          {label: '供应商', value: 3},
-          {label: '员工', value: 2}
+          { label: '财务', value: 0 },
+          { label: '采购', value: 1 },
+          { label: '供应商', value: 3 },
+          { label: '员工', value: 2 }
         ]
       },
       createName: {
-        type: 'input', label: '创建人',
+        type: 'input',
+        label: '创建人',
         controlProps: {
           placeholder: '请选择供应商/员工名称'
         }
       },
       createTime: {
-        type: 'rangepicker', label: '创建时间',
+        type: 'rangepicker',
+        label: '创建时间',
         controlProps: {
           showTime: true
         }
       },
       trimMoney: {
-        type: 'number', label: '调整金额',
+        type: 'number',
+        label: '调整金额',
         controlProps: {
           precision: 2,
           min: 0,
           max: 100000000,
-          style: {width: '100%'}
+          style: { width: '100%' }
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '调整金额不能为空'}
+            { required: true, message: '调整金额不能为空' }
           ]
         }
       },
       /** 调整说明 | 审核说明 */
       trimExplain: {
-        type: 'textarea', label: '调整说明',
+        type: 'textarea',
+        label: '调整说明',
         controlProps: {
           maxLength: 250
         },
         fieldDecoratorOptions: {
           rules: [
-            {required: true, message: '调整说明不能为空'},
-            {max: 250, message: '长度最大250个字符'}
+            { required: true, message: '调整说明不能为空' },
+            { max: 250, message: '长度最大250个字符' }
           ]
         }
       },
       reviewStatus: {
-        type: 'radio', label: '审核意见',
+        type: 'radio',
+        label: '审核意见',
         fieldDecoratorOptions: {
           initialValue: 0
         },
         options: [
-          {label: '审核通过', value: 0},
-          {label: '审核不通过', value: 1}
+          { label: '审核通过', value: 0 },
+          { label: '审核不通过', value: 1 }
         ]
       },
       supplierName: {
@@ -187,7 +202,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 /**
  * 创建者类型：0：财务 1：采购：2员工：3供应商
  */
-export enum CreatedTypeEnum  {
+export enum CreatedTypeEnum {
   财务 = 0,
   采购 = 1,
   员工 = 2,

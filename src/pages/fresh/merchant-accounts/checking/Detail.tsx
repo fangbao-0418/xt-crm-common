@@ -9,6 +9,7 @@ import { parseQuery } from '@/packages/common/utils'
 import * as api from './api'
 import { ColumnProps } from 'antd/lib/table'
 import { withRouter, RouteComponentProps } from 'react-router'
+import { ShopProps } from './interface'
 import Auth from '@/components/auth'
 
 interface Props extends Partial<AlertComponentProps>, RouteComponentProps<{id: string}> {}
@@ -41,7 +42,7 @@ interface FinanceAccountRecordVO {
 }
 
 class Main extends React.Component<Props, State> {
-  public columns: ColumnProps<{}>[] = [
+  public columns: ColumnProps<ShopProps>[] = [
     {
       dataIndex: 'id',
       title: '序号',
@@ -53,37 +54,36 @@ class Main extends React.Component<Props, State> {
         return (page - 1) * pageSize + index + 1
       }
     }, {
-      dataIndex: 'sourceNo',
+      dataIndex: 'productId',
       title: '商品ID'
     },
     {
-      dataIndex: 'paymentType',
+      dataIndex: 'productName',
       title: '商品名称'
     },
     {
-      dataIndex: 'soucreCreateTime',
+      dataIndex: 'skuName',
       title: '规格'
     }, {
-      dataIndex: 'finishTime',
-      title: '数量',
-      render: (text) => {
-        return APP.fn.formatDate(text)
-      }
+      dataIndex: 'quantity',
+      title: '数量'
     },
     {
-      dataIndex: 'paymentMoney',
-      title: '商品单价（元）'
+      dataIndex: 'unitPrice',
+      title: '商品单价（元）',
+      render: (text) => APP.fn.formatMoneyNumber(text)
     },
     {
-      dataIndex: 'paymentStatus',
-      title: '交易金额（元）'
+      dataIndex: 'tradeMoney',
+      title: '交易金额（元）',
+      render: (text) => APP.fn.formatMoneyNumber(text)
     },
     {
-      dataIndex: 'paymentStatus',
+      dataIndex: 'recordTypeInfo',
       title: '对账类型'
     },
     {
-      dataIndex: 'paymentStatus',
+      dataIndex: 'tradeStatusInfo',
       title: '交易状态'
     }
   ]
@@ -140,7 +140,7 @@ class Main extends React.Component<Props, State> {
           </div>
           <ListPage
             columns={this.columns}
-            api={api.fetchDetailList}
+            api={api.fetchDetail}
             processPayload={(payload) => {
               this.setState({
                 page: payload.page,
