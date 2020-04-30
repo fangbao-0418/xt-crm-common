@@ -93,7 +93,7 @@ class BannerModal extends Component {
         params.onlineTime = +new Date(params.onlineTime)
         params.offlineTime = +new Date(params.offlineTime)
         if (params.imgList) {
-          params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url || ''
+          params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].rurl || ''
           params.imgList = undefined
         }
         const seat = params.seat || []
@@ -136,7 +136,7 @@ class BannerModal extends Component {
     } else {
       seat = [data.newSeat, data.childSeat]
     }
-
+    console.log(seat[0], 'seat[0]')
     return (
       <>
         <Button size={size} type='primary' onClick={this.showModal}>
