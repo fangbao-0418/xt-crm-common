@@ -23,13 +23,14 @@ export function formRequest(payload: any) {
     }
     if (Array.isArray(item.productBasics)) {
       item.productBasics = item.productBasics.map((v: any) => {
-        v.productBasicSpuCode = v.productBasicSpuCode || v.productCode;
-        return v;
+        v.productBasicSpuCode = v.productBasicSpuCode || v.productCode
+        return v
       })
     }
     if (!payload.isGroup) {
-      item.num = item.num || 1;
+      item.num = item.num || 1
     }
+    item.imageUrl1 = APP.fn.deleteOssDomainUrl(item.imageUrl1 || '')
     return item
   })
   result.firstCategoryId = payload.categoryId[0]
