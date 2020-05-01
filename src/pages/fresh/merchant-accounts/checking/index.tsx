@@ -4,6 +4,7 @@ import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { RecordProps } from './interface'
 import { getFieldsConfig } from './config'
+import * as api from './api'
 
 class Main extends React.Component {
   public columns: ColumnProps<RecordProps>[] = [
@@ -41,12 +42,24 @@ class Main extends React.Component {
     }
   ]
   public listpage: ListPageInstanceProps
+  public batchExport () {
+    const payload = this.listpage.form.getValues()
+    console.log(payload)
+    api.batchExport(payload).then(() => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
+  }
+  public batchExportDetail () {
+    const payload = this.listpage.form.getValues()
+    api.batchExport(payload).then(() => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
+  }
   public render () {
     return (
       <div>
         <ListPage
           columns={this.columns}
-          showButton={false}
           getInstance={(ref) => {
             this.listpage = ref
           }}
@@ -56,76 +69,23 @@ class Main extends React.Component {
                 type='primary'
                 className='mr8'
                 onClick={() => {
-                  this.listpage.refresh()
-                }}
-              >
-                查询
-              </Button>
-              <Button
-                className='mr8'
-                onClick={() => {
-                  this.listpage.refresh(true)
-                }}
-              >
-                取消
-              </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.listpage.refresh()
-                }}
-              >
-                批量支付
-              </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.listpage.refresh()
-                }}
-              >
-                批量失败
-              </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.listpage.refresh()
+                  this.batchExport()
                 }}
               >
                 批量导出
               </Button>
-              <div className='fr'>
-                <span
-                  className='download mr8'
-                  onClick={() => {
-                    APP.fn.download(require('@/pages/fresh/assets/批量支付模版.xlsx'), '批量支付模版')
-                  }}
-                >
-                  下载批量支付模版
-                </span>
-                <span
-                  className='download'
-                  onClick={() => {
-                    APP.fn.download(require('@/pages/fresh/assets/批量失败模版.xlsx'), '批量失败模版')
-                  }}
-                >
-                  下载批量失败模版
-                </span>
-              </div>
+              <Button
+                type='primary'
+                className='mr8'
+                onClick={() => {
+                  this.batchExportDetail()
+                }}
+              >
+                批量导出明细
+              </Button>
             </div>
           )}
-          api={() => {
-            return Promise.resolve({
-              total: 0,
-              records: [
-                {
-                  supplierCashOutId: '2222'
-                }
-              ]
-            })
-          }}
+          api={api.fetchList}
           formConfig={getFieldsConfig()}
         />
       </div>

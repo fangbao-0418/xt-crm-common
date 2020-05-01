@@ -133,7 +133,8 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         return (
           <div>
-            {(record.billStatus === 20 && APP.user.menuGathers.indexOf('adjustment:procurement_audit') > -1 || [10, 20].indexOf(record.billStatus) === -1) && (
+            {[
+              (APP.user.menuGathers.indexOf('adjustment:procurement_audit') > -1 && [10, 20].indexOf(record.billStatus) === -1) && (
                 <>
                   <span
                     className='href'
@@ -142,38 +143,38 @@ class Main extends React.Component<Props, State> {
                     }}
                   >
                     查看明细
-                  </span>&nbsp;&nbsp;
+                  </span>
                 </>
-            )
-            }
-            {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
-            {/* <Auth>
-              {(access: boolean, codes: string[]) => {
-                return (record.billStatus === 10 && codes.indexOf('adjustment:procurement_audit') > -1 || record.billStatus === 20 && codes.indexOf('adjustment:finance_audit') > -1) && ( */}
-                  <>
-                    <span
-                      className='href'
-                      onClick={() => {
-                        this.showAdjustment('audit', record)
-                      }}
-                    >
-                      审核
-                    </span>&nbsp;&nbsp;
-                  </>
-                {/* )
-              }}
-            </Auth> */}
-            {APP.user.id === record.createUid && (
-              <Auth code='finance:trim_revoke'>
-                <Popconfirm
-                  title='确定是否撤销？'
-                  onConfirm={this.toRevoke.bind(this, record)}
-                >
-                  <span className='href'>撤销</span>
-                </Popconfirm>
-              </Auth>
-            )}
-            &nbsp;&nbsp;
+              ),
+              <Auth key={2}>
+                {(access: boolean, codes: string[]) => {
+                  return (record.billStatus === 10 && codes.indexOf('adjustment:procurement_audit') > -1 || record.billStatus === 20 && codes.indexOf('adjustment:finance_audit') > -1) && (
+                    <>
+                      <span
+                        className='href'
+                        onClick={() => {
+                          this.showAdjustment('audit', record)
+                        }}
+                      >
+                        审核
+                      </span>
+                    </>
+                  )
+                }}
+              </Auth>,
+              (
+                <Auth key={3} code='*'>
+                  <Popconfirm
+                    title='确定是否撤销？'
+                    onConfirm={this.toRevoke.bind(this, record)}
+                  >
+                    <span className='href'>撤销</span>
+                  </Popconfirm>
+                </Auth>
+              )
+            ].map((node) => {
+              return [node, <span key='span'>&nbsp;</span>]
+            })}
           </div>
         )
       }

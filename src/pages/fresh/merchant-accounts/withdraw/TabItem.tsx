@@ -4,6 +4,7 @@ import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { RecordProps } from './interface'
 import { getFieldsConfig } from './config'
+import * as api from './api'
 
 class Main extends React.Component {
   public columns: ColumnProps<RecordProps>[] = [
@@ -42,6 +43,37 @@ class Main extends React.Component {
     }
   ]
   public listpage: ListPageInstanceProps
+  public batchExport () {
+    const payload = this.listpage.form.getValues()
+    api.batchExport(payload).then(() => {
+      APP.success('导出成功，请前去下载列表下载文件')
+    })
+  }
+  public batchPay () {
+    this.selectFile().then((file) => {
+      api.batchPay(file)
+    })
+  }
+  public batchPayFail () {
+    this.selectFile().then((file) => {
+      api.batchPay(file)
+    })
+  }
+  public selectFile () {
+    return new Promise<File>((resolve) => {
+      const el = document.createElement('input')
+      el.setAttribute('type', 'file')
+      el.onchange = function () {
+        if (el) {
+          const file = el.files && el.files[0]
+          if (file) {
+            resolve(file)
+          }
+        }
+      }
+      el.click()
+    })
+  }
   public render () {
     return (
       <div>
@@ -74,7 +106,7 @@ class Main extends React.Component {
                 type='primary'
                 className='mr8'
                 onClick={() => {
-                  this.listpage.refresh()
+                  this.batchPay()
                 }}
               >
                 批量支付
@@ -83,7 +115,7 @@ class Main extends React.Component {
                 type='primary'
                 className='mr8'
                 onClick={() => {
-                  this.listpage.refresh()
+                  this.batchPayFail()
                 }}
               >
                 批量失败
@@ -92,7 +124,7 @@ class Main extends React.Component {
                 type='primary'
                 className='mr8'
                 onClick={() => {
-                  this.listpage.refresh()
+                  this.batchExport()
                 }}
               >
                 批量导出
@@ -117,16 +149,7 @@ class Main extends React.Component {
               </div>
             </div>
           )}
-          api={() => {
-            return Promise.resolve({
-              total: 0,
-              records: [
-                {
-                  supplierCashOutId: '2222'
-                }
-              ]
-            })
-          }}
+          api={api.fetchList}
           formConfig={getFieldsConfig()}
         />
       </div>

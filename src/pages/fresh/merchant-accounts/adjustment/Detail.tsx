@@ -57,32 +57,29 @@ class Main extends React.Component<Props, State> {
     values.imgVoucher = this.handleFileValue(values.imgVoucher)
     /** 调整单信息 */
     this.adjustmentRef.form.setValues(values)
-    const billStatus = values.billStatus
-    if (billStatus === 10) {
-      const firstVerifyInfo: any = values.firstVerifyInfo || {}
+
+    /** 初审信息 */
+    const firstVerifyInfo: any = values.firstVerifyInfo
+    if (this.audit1Ref && values.firstVerifyInfo) {
       firstVerifyInfo.imgVoucher = this.handleFileValue(firstVerifyInfo.imgVoucher)
       firstVerifyInfo.fileVoucher = this.handleFileValue(firstVerifyInfo.fileVoucher)
       firstVerifyInfo.verifyTime = APP.fn.formatDate(values.firstVerifyTime) as any
-      /** 初审信息 */
-      if (this.audit1Ref) {
-        this.audit1Ref.form.setValues({
-          ...values,
-          ...firstVerifyInfo
-        })
-      }
+      this.audit1Ref.form.setValues({
+        ...values,
+        ...firstVerifyInfo
+      })
     }
-    if ([10, 20].indexOf(billStatus) === -1) {
-      const secondVerifyInfo: any = values.secondVerifyInfo || {}
+
+    /** 复审信息 */
+    const secondVerifyInfo: any = values.secondVerifyInfo
+    if (this.audit2Ref && values.secondVerifyInfo) {
       secondVerifyInfo.imgVoucher = this.handleFileValue(secondVerifyInfo.imgVoucher)
       secondVerifyInfo.fileVoucher = this.handleFileValue(secondVerifyInfo.fileVoucher)
       secondVerifyInfo.verifyTime = APP.fn.formatDate(values.secondVerifyTime) as any
-      /** 复审信息 */
-      if (this.audit2Ref) {
-        this.audit2Ref.form.setValues({
-          ...values,
-          ...secondVerifyInfo
-        })
-      }
+      this.audit2Ref.form.setValues({
+        ...values,
+        ...secondVerifyInfo
+      })
     }
   }
   public handleFileValue (value: any) {
@@ -205,7 +202,6 @@ class Main extends React.Component<Props, State> {
               <Auth code='adjustment:procurement_audit'>
                 <div className={styles['detail-title']}>初审信息</div>
                 <Audit
-                  type={0}
                   // readonly={type === 'view' || trimStatus !== 10}
                   ref={(ref) => {
                     this.audit1Ref = ref as Audit
@@ -217,7 +213,6 @@ class Main extends React.Component<Props, State> {
               <If condition={!!firstVerifyInfo}>
                 <div className={styles['detail-title']}>初审信息</div>
                 <Audit
-                  type={0}
                   readonly={true}
                   ref={(ref) => {
                     this.audit1Ref = ref as Audit
@@ -227,7 +222,6 @@ class Main extends React.Component<Props, State> {
               <Auth code='adjustment:finance_audit'>
                 <div className={styles['detail-title']}>复审信息</div>
                 <Audit
-                  type={1}
                   // readonly={type === 'view' || trimStatus !== 20}
                   ref={(ref) => {
                     this.audit2Ref = ref as Audit
@@ -240,7 +234,6 @@ class Main extends React.Component<Props, State> {
               <If condition={!!firstVerifyInfo}>
                 <div className={styles['detail-title']}>初审信息</div>
                 <Audit
-                  type={0}
                   readonly={true}
                   ref={(ref) => {
                     this.audit1Ref = ref as Audit
@@ -250,7 +243,6 @@ class Main extends React.Component<Props, State> {
               <If condition={!!secondVerifyInfo}>
                 <div className={styles['detail-title']}>复审信息</div>
                 <Audit
-                  type={1}
                   readonly={true}
                   ref={(ref) => {
                     this.audit2Ref = ref as Audit

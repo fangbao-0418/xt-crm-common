@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-29 15:23:54
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-01 17:31:52
+ * @LastEditTime: 2020-05-01 19:43:19
  * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/adjustment/api.ts
  */
 const { get, newPost, post } = APP.http

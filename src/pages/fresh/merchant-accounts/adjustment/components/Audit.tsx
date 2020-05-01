@@ -6,15 +6,12 @@ import Upload from '@/components/upload'
 import If from '@/packages/common/components/if'
 interface Props {
   readonly?: boolean
-  /** 0-初审 1-复审 */
-  type: 0 | 1
 }
 
 class Main extends React.Component<Props> {
   public form: FormInstance
   public render () {
     const readonly = this.props.readonly || false
-    const type = this.props.type
     return (
       <div>
         <Form
