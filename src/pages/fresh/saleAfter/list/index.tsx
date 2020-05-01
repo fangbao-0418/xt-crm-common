@@ -97,6 +97,7 @@ class Order extends Component<any, State> {
    */
   public resetFrom () {
     this.form.resetValues()
+    this.fetchData()
   }
 
   public toSearch = () => {
