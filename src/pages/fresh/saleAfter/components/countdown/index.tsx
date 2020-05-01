@@ -1,56 +1,65 @@
-import React, { useState, useEffect, useCallback } from 'react'
-
+import React, { Component } from 'react'
 interface Props {
   value: number,
   interval?: number
   fontColor?: string
 }
-
-function formatTime (seconds: number) {
-  const secondsOfDay = 24 * 60 * 60
-  const secondsOfHour = 60 * 60
-  const secondsOfMinute = 60
-  const d = Math.floor(seconds / secondsOfDay)
-  const h = Math.floor(seconds % secondsOfDay / secondsOfHour)
-  const m = Math.floor(seconds % secondsOfHour / secondsOfMinute)
-  const s = Math.floor(seconds % secondsOfMinute)
-  let result = ''
-  if (d) {
-    result += `${d}天 `
-  }
-  if (h) {
-    result += `${h}时`
-  }
-  if (m) {
-    result += `${m}分`
-  }
-  if (s) {
-    result += `${s}秒`
-  }
-  return result
-}
-
-/** 倒计时组件 */
-function Countdown ({ value, interval = 1000, fontColor = 'red' }: Props) {
-  const [state, set] = useState<number>(value)
-  useEffect(() => {
-    let nowState = state
-    const timerID = setInterval(() => {
-      if (nowState > 0) {
-        set(x => {
-          return x - 1
-        })
-        nowState = nowState - 1
-      } else {
-        set(0)
-        clearInterval(timerID)
-      }
-    }, interval)
-    return () => {
-      clearInterval(timerID)
+class Countdown extends Component<Props, any> {
+  public timer: any
+  constructor (props: any) {
+    super(props)
+    this.state = {
+      afterRemaining: null,
+      day: 0,
+      hour: 0,
+      minute: 0,
+      second: 0
     }
-  }, [])
-  return <span style={{ color: fontColor }}>{ state > 0 ?formatTime(state) : '超时未审核，自动完成售后'}</span>
+  }
+  componentDidMount () {
+    this.countFun(this.props.value)
+    this.setTime(this.props.value)
+  }
+
+  //卸载组件取消倒计时
+  componentWillUnmount () {
+    clearInterval(this.timer)
+  }
+
+  setTime = (remaining: number) => {
+    const day = Math.floor((remaining / 1000 / 3600) / 24)
+    const hour = Math.floor((remaining / 1000 / 3600) % 24)
+    const minute = Math.floor((remaining / 1000 / 60) % 60)
+    const second = Math.floor(remaining / 1000 % 60)
+    this.setState({
+      afterRemaining: remaining,
+      day: day,
+      hour: hour < 10 ? '0' + hour : hour,
+      minute: minute < 10 ? '0' + minute : minute,
+      second: second < 10 ? '0' + second : second
+    })
+  }
+  countFun = (remaining: number) => {
+    this.timer = setInterval(() => {
+      //防止出现负数
+      if (remaining > 0) {
+        remaining -= 1000
+        this.setTime(remaining)
+      } else {
+        clearInterval(this.timer)
+      }
+    }, 1000)
+  }
+  render () {
+    const { afterRemaining, day, hour, minute, second } = this.state
+    return (
+      <span style={{ color: 'red' }}>
+        {
+          this.timer ? afterRemaining < 1000 ? '超时未审核，自动完成售后' : `${hour}时${minute}分${second}秒` : ''
+        }
+      </span>
+    )
+  }
 }
 
 export default Countdown

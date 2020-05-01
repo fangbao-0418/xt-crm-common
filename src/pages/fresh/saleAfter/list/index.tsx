@@ -199,7 +199,7 @@ class Order extends Component<any, State> {
                           <If condition={order.refundStatus === 10}>
                             <span>
                               售后审核倒计时：
-                              <Countdown value={order.countdown / 1000 }></Countdown>
+                              <Countdown key={order.refundCode} value={order.countdown}></Countdown>
                             </span>
                           </If>
                         </td>
