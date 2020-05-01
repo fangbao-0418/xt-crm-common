@@ -18,12 +18,12 @@ interface Props {
 }
 
 interface State {
-  /** 调整单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效 */
-  trimStatus: 10 | 20 | 30 | 40 | 50
+  /** 单据状态，10：待初审，20：待复审，30：审核通过，40：审核不通过，50：已撤销 */
+  billStatus: 10 | 20 | 30 | 40 | 50
   /** 采购审核信息 */
-  purchaseReviewEnclosure?: ReviewEnclosure
+  firstVerifyInfo?: ReviewEnclosure
   /** 财务审核信息 */
-  financeReviewEnclosure?: ReviewEnclosure
+  secondVerifyInfo?: ReviewEnclosure
 }
 
 class Main extends React.Component<Props, State> {
@@ -33,73 +33,54 @@ class Main extends React.Component<Props, State> {
   /** 财务 */
   public audit2Ref: Audit
   public state: State = {
-    trimStatus: 10
+    billStatus: 10
   }
   public componentDidMount () {
     this.fetchData()
   }
   public fetchData () {
     const id = this.props.id
-    console.log(this.props)
-    // return
     if (id) {
       api.fetchInfo(id).then((res) => {
         this.setState({
-          trimStatus: res.trimStatus,
-          purchaseReviewEnclosure: res.purchaseReviewEnclosure,
-          financeReviewEnclosure: res.financeReviewEnclosure
+          billStatus: res.billStatus,
+          firstVerifyInfo: res.firstVerifyInfo,
+          secondVerifyInfo: res.secondVerifyInfo
         })
         this.setValues(res)
       })
-    } else {
-      const checkingInfo = this.props.checkingInfo
-      if (checkingInfo) {
-        this.adjustmentRef.form.setValues({
-          accNo: checkingInfo.serialNo,
-          accName: checkingInfo.accName
-        })
-      }
     }
   }
   public setValues (values: InfoResponse) {
-    values.trimMoney = APP.fn.formatMoneyNumber(values.trimMoney, 'm2u')
-    const trimEnclosure = values.trimEnclosure || {
-      trimExplain: '',
-      trimFileUrl: '',
-      trimImgUrl: ''
-    }
-    values.accNo = values.accNo
-    values.trimExplain = trimEnclosure.trimExplain
-    values.trimFileUrl = this.handleFileValue(trimEnclosure.trimFileUrl)
-    values.trimImgUrl = this.handleFileValue(trimEnclosure.trimImgUrl)
-    values.purchaseReviewTime = APP.fn.formatDate(values.purchaseReviewTime) as any
-    values.financeReviewTime = APP.fn.formatDate(values.financeReviewTime) as any
+    values.billMoney = APP.fn.formatMoneyNumber(values.billMoney, 'm2u')
+    values.fileVoucher = this.handleFileValue(values.fileVoucher)
+    values.imgVoucher = this.handleFileValue(values.imgVoucher)
     /** 调整单信息 */
     this.adjustmentRef.form.setValues(values)
-    const trimStatus = values.trimStatus
-    if (trimStatus !== 10) {
-      const purchaseReviewEnclosure: any = values.purchaseReviewEnclosure || {}
-      purchaseReviewEnclosure.trimImgUrl = this.handleFileValue(purchaseReviewEnclosure.trimImgUrl)
-      purchaseReviewEnclosure.trimFileUrl = this.handleFileValue(purchaseReviewEnclosure.trimFileUrl)
-      /** 采购审核信息 */
+    const billStatus = values.billStatus
+    if (billStatus === 10) {
+      const firstVerifyInfo: any = values.firstVerifyInfo || {}
+      firstVerifyInfo.imgVoucher = this.handleFileValue(firstVerifyInfo.imgVoucher)
+      firstVerifyInfo.fileVoucher = this.handleFileValue(firstVerifyInfo.fileVoucher)
+      firstVerifyInfo.verifyTime = APP.fn.formatDate(values.firstVerifyTime) as any
+      /** 初审信息 */
       if (this.audit1Ref) {
         this.audit1Ref.form.setValues({
           ...values,
-          reviewStatus: values.purchaseReviewStatus,
-          ...purchaseReviewEnclosure
+          ...firstVerifyInfo
         })
       }
     }
-    if ([10, 20].indexOf(trimStatus) === -1) {
-      const financeReviewEnclosure: any = values.financeReviewEnclosure || {}
-      financeReviewEnclosure.trimImgUrl = this.handleFileValue(financeReviewEnclosure.trimImgUrl)
-      financeReviewEnclosure.trimFileUrl = this.handleFileValue(financeReviewEnclosure.trimFileUrl)
-      /** 财务审核信息 */
+    if ([10, 20].indexOf(billStatus) === -1) {
+      const secondVerifyInfo: any = values.secondVerifyInfo || {}
+      secondVerifyInfo.imgVoucher = this.handleFileValue(secondVerifyInfo.imgVoucher)
+      secondVerifyInfo.fileVoucher = this.handleFileValue(secondVerifyInfo.fileVoucher)
+      secondVerifyInfo.verifyTime = APP.fn.formatDate(values.secondVerifyTime) as any
+      /** 复审信息 */
       if (this.audit2Ref) {
         this.audit2Ref.form.setValues({
           ...values,
-          reviewStatus: values.financeReviewStatus,
-          ...financeReviewEnclosure
+          ...secondVerifyInfo
         })
       }
     }
@@ -138,13 +119,13 @@ class Main extends React.Component<Props, State> {
         APP.error('请检查输入项')
         return
       }
-      const trimImgUrl = (value.trimImgUrl || []).map((item: {name: string, rurl: string}) => {
+      const imgVoucher = (value.imgVoucher || []).map((item: {name: string, rurl: string}) => {
         return {
           url: item.rurl,
           name: item.name
         }
       })
-      const trimFileUrl = (value.trimFileUrl || []).map((item: {name: string, rurl: string}) => {
+      const fileVoucher = (value.fileVoucher || []).map((item: {name: string, rurl: string}) => {
         return {
           url: item.rurl,
           name: item.name
@@ -152,9 +133,9 @@ class Main extends React.Component<Props, State> {
       })
       value = {
         ...value,
-        trimImgUrl: trimImgUrl,
-        trimFileUrl: trimFileUrl,
-        trimMoney: APP.fn.formatMoneyNumber(value.trimMoney, 'u2m')
+        imgVoucher,
+        fileVoucher,
+        billMoney: APP.fn.formatMoneyNumber(value.billMoney, 'u2m')
       }
       api.addAdjustment(value).then(() => {
         if (this.props.onOk) {
@@ -164,31 +145,31 @@ class Main extends React.Component<Props, State> {
     })
   }
   public toAudit () {
-    const { trimStatus } = this.state
-    if ([10, 20].indexOf(trimStatus) === -1) {
+    const { billStatus } = this.state
+    if ([10, 20].indexOf(billStatus) === -1) {
       APP.error('该状态不能进行审核')
       return
     }
-    const auditRef = trimStatus === 10 ? this.audit1Ref : this.audit2Ref
+    const auditRef = billStatus === 10 ? this.audit1Ref : this.audit2Ref
     auditRef.form.props.form.validateFields((err, value) => {
-      value.trimId = this.props.id
-      value.trimFileUrl = (value.trimFileUrl || []).map((item: {name: string, rurl: string}) => {
+      value.adjustmentRecordSerialNo = this.props.id
+      value.fileVoucher = (value.fileVoucher || []).map((item: {name: string, rurl: string}) => {
         return {
           url: item.rurl,
           name: item.name
         }
       })
-      value.trimImgUrl = (value.trimImgUrl || []).map((item: {name: string, rurl: string}) => {
+      value.imgVoucher = (value.imgVoucher || []).map((item: {name: string, rurl: string}) => {
         return {
           url: item.rurl,
           name: item.name
         }
       })
-      let type: 'purchase' | 'finance' = 'purchase'
-      if (trimStatus === 10) {
-        type = 'purchase'
-      } else if (trimStatus === 20) {
-        type = 'finance'
+      let type: 0 | 1 = 0
+      if (billStatus === 10) {
+        type = 0
+      } else if (billStatus === 20) {
+        type = 1
       }
       api.toAudit(value, type).then(() => {
         APP.success('操作完成')
@@ -200,7 +181,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const type = this.props.type
-    const { trimStatus, financeReviewEnclosure, purchaseReviewEnclosure } = this.state
+    const { billStatus, firstVerifyInfo, secondVerifyInfo } = this.state
     return (
       <div className={styles.detail}>
         <If condition={type === 'add'}>
@@ -219,12 +200,12 @@ class Main extends React.Component<Props, State> {
             }}
             readonly={!!this.props.id}
           />
-          <If condition={trimStatus !== 50}>
-            <If condition={trimStatus === 10}>
+          <If condition={billStatus !== 50}>
+            <If condition={billStatus === 10}>
               <Auth code='adjustment:procurement_audit'>
                 <div className={styles['detail-title']}>初审信息</div>
                 <Audit
-                  type='purchase'
+                  type={0}
                   // readonly={type === 'view' || trimStatus !== 10}
                   ref={(ref) => {
                     this.audit1Ref = ref as Audit
@@ -232,11 +213,11 @@ class Main extends React.Component<Props, State> {
                 />
               </Auth>
             </If>
-            <If condition={trimStatus === 20}>
-              <If condition={!!purchaseReviewEnclosure}>
+            <If condition={billStatus === 20}>
+              <If condition={!!firstVerifyInfo}>
                 <div className={styles['detail-title']}>初审信息</div>
                 <Audit
-                  type='purchase'
+                  type={0}
                   readonly={true}
                   ref={(ref) => {
                     this.audit1Ref = ref as Audit
@@ -246,7 +227,7 @@ class Main extends React.Component<Props, State> {
               <Auth code='adjustment:finance_audit'>
                 <div className={styles['detail-title']}>复审信息</div>
                 <Audit
-                  type='finance'
+                  type={1}
                   // readonly={type === 'view' || trimStatus !== 20}
                   ref={(ref) => {
                     this.audit2Ref = ref as Audit
@@ -255,21 +236,21 @@ class Main extends React.Component<Props, State> {
               </Auth>
             </If>
             {/** 非审核状态有审核信息就显示审核信息 */}
-            <If condition={[10, 20].indexOf(trimStatus) === -1}>
-              <If condition={!!purchaseReviewEnclosure}>
+            <If condition={[10, 20].indexOf(billStatus) === -1}>
+              <If condition={!!firstVerifyInfo}>
                 <div className={styles['detail-title']}>初审信息</div>
                 <Audit
-                  type='purchase'
+                  type={0}
                   readonly={true}
                   ref={(ref) => {
                     this.audit1Ref = ref as Audit
                   }}
                 />
               </If>
-              <If condition={!!financeReviewEnclosure}>
+              <If condition={!!secondVerifyInfo}>
                 <div className={styles['detail-title']}>复审信息</div>
                 <Audit
-                  type='finance'
+                  type={1}
                   readonly={true}
                   ref={(ref) => {
                     this.audit2Ref = ref as Audit

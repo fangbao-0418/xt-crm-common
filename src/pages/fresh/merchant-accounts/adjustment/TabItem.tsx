@@ -14,7 +14,7 @@ import {
 } from './config'
 import * as api from './api'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
-import { ListResponse, ListRequest } from './interface'
+import { ListResponse, ListRequest, ListRecordProps } from './interface'
 
 interface Props extends Partial<AlertComponentProps> {
   /** 对账单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效 */
@@ -26,19 +26,19 @@ interface State {
 }
 
 class Main extends React.Component<Props, State> {
-  public columns: ColumnProps<ListResponse>[] = [
+  public columns: ColumnProps<ListRecordProps>[] = [
     {
       dataIndex: 'serialNo',
       title: 'ID',
       width: 200
     },
     {
-      dataIndex: 'trimName',
+      dataIndex: 'billName',
       title: '名称',
       width: 200
     },
     {
-      dataIndex: 'trimType',
+      dataIndex: 'billType',
       title: '调整类型',
       width: 100,
       render: (text) => {
@@ -46,32 +46,32 @@ class Main extends React.Component<Props, State> {
       }
     },
     {
-      dataIndex: 'trimMoney',
+      dataIndex: 'billMoney',
       title: '金额',
       width: 150,
       align: 'center',
       render: (text, record) => {
-        const className = record.trimType === 1 ? 'success' : 'error'
+        const className = record.billType === 10 ? 'success' : 'error'
         return (
           <span className={className}>
-            {text !== 0 ? record.trimType === 1 ? '+' : '-' : ''}
+            {text !== 0 ? record.billType === 10 ? '+' : '-' : ''}
             {APP.fn.formatMoneyNumber(text, 'm2u')}
           </span>
         )
       }
     },
     {
-      dataIndex: 'trimMoney',
+      dataIndex: 'supplierId',
       title: '供应商ID',
       width: 150
     },
     {
-      dataIndex: 'trimMoney',
+      dataIndex: 'supplierName',
       title: '供应商名称',
       width: 150
     },
     {
-      dataIndex: 'trimStatus',
+      dataIndex: 'billStatus',
       title: '状态',
       width: 100,
       render: (text) => {
@@ -84,7 +84,7 @@ class Main extends React.Component<Props, State> {
       width: 150
     },
     {
-      dataIndex: 'createdType',
+      dataIndex: 'createType',
       title: '创建人类型',
       width: 150,
       render: (text) => {
@@ -100,12 +100,12 @@ class Main extends React.Component<Props, State> {
       }
     },
     {
-      dataIndex: 'purchaseReviewName',
+      dataIndex: 'firstVerifyName',
       title: '初审人',
       width: 150
     },
     {
-      dataIndex: 'purchaseReviewTime',
+      dataIndex: 'firstVerifyTime',
       title: '初审时间',
       width: 200,
       render: (text) => {
@@ -113,12 +113,12 @@ class Main extends React.Component<Props, State> {
       }
     },
     {
-      dataIndex: 'financeReviewName',
+      dataIndex: 'secondVerifyName',
       title: '复审人',
       width: 150
     },
     {
-      dataIndex: 'financeReviewTime',
+      dataIndex: 'secondVerifyTime',
       title: '复审时间',
       width: 200,
       render: (text) => {
@@ -133,7 +133,7 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         return (
           <div>
-            {(record.trimStatus === 20 && APP.user.menuGathers.indexOf('adjustment:procurement_audit') > -1 || [10, 20].indexOf(record.trimStatus) === -1) && (
+            {(record.billStatus === 20 && APP.user.menuGathers.indexOf('adjustment:procurement_audit') > -1 || [10, 20].indexOf(record.billStatus) === -1) && (
                 <>
                   <span
                     className='href'
@@ -147,9 +147,9 @@ class Main extends React.Component<Props, State> {
             )
             }
             {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
-            <Auth>
+            {/* <Auth>
               {(access: boolean, codes: string[]) => {
-                return (record.trimStatus === 10 && codes.indexOf('adjustment:procurement_audit') > -1 || record.trimStatus === 20 && codes.indexOf('adjustment:finance_audit') > -1) && (
+                return (record.billStatus === 10 && codes.indexOf('adjustment:procurement_audit') > -1 || record.billStatus === 20 && codes.indexOf('adjustment:finance_audit') > -1) && ( */}
                   <>
                     <span
                       className='href'
@@ -160,10 +160,10 @@ class Main extends React.Component<Props, State> {
                       审核
                     </span>&nbsp;&nbsp;
                   </>
-                )
+                {/* )
               }}
-            </Auth>
-            {record.trimStatus === 20 && APP.user.id === record.createUid && (
+            </Auth> */}
+            {APP.user.id === record.createUid && (
               <Auth code='finance:trim_revoke'>
                 <Popconfirm
                   title='确定是否撤销？'
@@ -185,7 +185,7 @@ class Main extends React.Component<Props, State> {
     selectedRowKeys: []
   }
   /** 添加调整单 */
-  public showAdjustment (type: 'add' | 'audit' | 'view', record?: ListResponse) {
+  public showAdjustment (type: 'add' | 'audit' | 'view', record?: ListRecordProps) {
     if (this.props.alert) {
       const hide = this.props.alert({
         width: 600,
@@ -193,7 +193,7 @@ class Main extends React.Component<Props, State> {
         content: (
           <Detail
             type={type}
-            id={record && record.id}
+            id={record && record.serialNo}
             onOk={() => {
               this.listpage.refresh()
               hide()
@@ -207,8 +207,8 @@ class Main extends React.Component<Props, State> {
       })
     }
   }
-  public toRevoke (record: ListResponse) {
-    api.toRevoke(record.id).then(() => {
+  public toRevoke (record: ListRecordProps) {
+    api.toRevoke(record.serialNo).then(() => {
       this.listpage.refresh()
     })
   }
@@ -262,20 +262,13 @@ class Main extends React.Component<Props, State> {
                 <Col span={6}>
                   <FormItem label='调整单ID' name='serialNo' />
                 </Col>
-                <Col span={6}><FormItem name='accNo' /></Col>
-                <Col span={6}><FormItem name='trimType' /></Col>
-                <Col span={6}><FormItem name='purchaseReviewName' /></Col>
-              </Row>
-              <Row>
-                <Col span={6}><FormItem name='trimStatus' /></Col>
-                <Col span={6}><FormItem name='createName' /></Col>
-                {/* <Col span={6}><FormItem name='trimReason' /></Col> */}
-                <Col span={6}><FormItem name='financeReviewName' /></Col>
-                <Col span={6}><FormItem name='createType' /></Col>
-              </Row>
-              <Row>
-                <Col span={12}><FormItem name='createTime' /></Col>
+                <Col span={6}><FormItem name='supplierId' /></Col>
                 <Col span={6}><FormItem name='supplierName' /></Col>
+                <Col span={6}><FormItem name='billType' /></Col>
+              </Row>
+              <Row>
+                <Col span={6}><FormItem name='billStatus' /></Col>
+                <Col span={12}><FormItem name='createTime' /></Col>
               </Row>
             </>
           )}
@@ -326,12 +319,11 @@ class Main extends React.Component<Props, State> {
           api={api.fetchList}
           processPayload={(payload) => {
             const status = this.props.status
-            console.log(payload, '-----')
             this.payload = {
               ...payload,
               pageNum: payload.page,
               page: undefined,
-              trimStatus: payload.trimStatus || (status === 0 ? undefined : status)
+              billStatus: payload.billStatus || (status === 0 ? undefined : status)
             }
             return this.payload
           }}

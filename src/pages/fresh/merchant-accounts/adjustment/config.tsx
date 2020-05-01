@@ -41,41 +41,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      accId: {
-        type: 'input',
-        label: '对账单ID',
-        controlProps: {
-          style: { width: 150 }
-        },
-        fieldDecoratorOptions: {
-          rules: [
-            { required: true, message: '对账单ID不能为空' }
-          ]
-        }
-      },
-      accName: {
-        label: '供应商',
-        inner: (form) => {
-          return form.getFieldDecorator('accName', {
-            rules: [
-              {
-                required: true,
-                message: '请输入供应商名称'
-              }
-            ]
-          })(
-            <SupplierSelect
-              style={{ width: '60%' }}
-            />
-          )
-        }
-      },
-      trimType: {
+      billType: {
         type: 'select',
         label: '调整类型',
         options: [
-          { label: '收入', value: 1 },
-          { label: '支出', value: 2 }
+          { label: '收入', value: 10 },
+          { label: '支出', value: 20 }
         ],
         fieldDecoratorOptions: {
           // initialValue: 1,
@@ -84,12 +55,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      trimStatus: {
+      billStatus: {
         label: '状态',
         type: 'select',
         options: [
-          { label: '待采购审核', value: 10 },
-          { label: '待财务审核', value: 20 },
+          { label: '待初审', value: 10 },
+          { label: '待复审', value: 20 },
           { label: '审核通过', value: 30 },
           { label: '审核不通过', value: 40 },
           { label: '已撤销', value: 50 }
@@ -145,7 +116,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           showTime: true
         }
       },
-      trimMoney: {
+      billMoney: {
         type: 'number',
         label: '调整金额',
         controlProps: {
@@ -160,7 +131,21 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      /** 调整说明 | 审核说明 */
+      /** 审核说明 */
+      auditRemark: {
+        type: 'textarea',
+        label: '调整说明',
+        controlProps: {
+          maxLength: 250
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            { required: true, message: '调整说明不能为空' },
+            { max: 250, message: '长度最大250个字符' }
+          ]
+        }
+      },
+      /** 调整说明 */
       trimExplain: {
         type: 'textarea',
         label: '调整说明',
@@ -174,7 +159,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      reviewStatus: {
+      /** 审核意见 */
+      auditOpinion: {
         type: 'radio',
         label: '审核意见',
         fieldDecoratorOptions: {
@@ -184,6 +170,30 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           { label: '审核通过', value: 0 },
           { label: '审核不通过', value: 1 }
         ]
+      },
+      supplierNameSelect: {
+        label: '供应商',
+        inner: (form) => {
+          return form.getFieldDecorator('supplierName', {
+            rules: [
+              {
+                required: true,
+                message: '请输入供应商名称'
+              }
+            ]
+          })(
+            <SupplierSelect
+              style={{ width: '60%' }}
+            />
+          )
+        }
+      },
+      supplierId: {
+        type: 'input',
+        label: '供应商ID',
+        controlProps: {
+          type: 'number'
+        }
       },
       supplierName: {
         type: 'input', label: '供应商'

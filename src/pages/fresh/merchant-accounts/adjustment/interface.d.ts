@@ -2,6 +2,44 @@
 /* tslint:disable */
 /* eslint-disable */
 
+/** 调整单列表记录属性 */
+export interface ListRecordProps {
+  /** 单据金额 */
+  billMoney: number
+  /** 单据名称 */
+  billName: string
+  /** 单据状态，10：待初审，20：待复审，30：审核通过，40：审核不通过，50：已撤销 */
+  billStatus: 10 | 20  | 30 | 40 | 50
+  /** 单据收支类型，10：收入，20：支出 */
+  billType: 10 | 20
+  /** 创建人名称 */
+  createName: string
+  /** 创建人类型，10：员工 */
+  createType: 10
+  /** 创建人id */
+  createUid: number
+  /** 文件凭证 */
+  fileVoucher: string
+  /** 完成时间，（审核通过，审核不通过，撤销） */
+  finishTime: number
+  /** 初审人名称 */
+  firstVerifyName: string
+  /** 初审时间 */
+  firstVerifyTime: number
+  /** 图片凭证 */
+  imgVoucher: string
+  /** 复审人名称 */
+  secondVerifyName: string
+  /** 复审时间 */
+  secondVerifyTime: number
+  /** 序列号 */
+  serialNo: any
+  /** 供应商id */
+  supplierId: number
+  /** 供应商名称 */
+  supplierName: string
+}
+
 /* 该文件由 yapi-to-typescript 自动生成，请勿直接修改！！！ */
 
 /**
@@ -377,15 +415,25 @@ export interface InfoRequest {
   id: string
 }
 
-/**
- * 接口 [调整单详情↗](http://192.168.20.21/project/223/interface/api/47852) 的 **返回类型**
- *
- * @分类 [调整单↗](http://192.168.20.21/project/223/interface/api/cat_13956)
- * @标签 `调整单`
- * @请求头 `GET /financeTrimRecord/info`
- * @更新时间 `2020-02-11 14:50:53`
- */
 export interface InfoResponse {
+  /** 调整单id */
+  serialNo: any
+  /** 调整金额 */
+  billMoney: number
+  /** 文件凭证 */
+  fileVoucher: string
+  /** 图片凭证 */
+  imgVoucher: string
+  /** 初审时间 */
+  firstVerifyTime: number
+  /** 复审时间 */
+  secondVerifyTime: number
+  /** 初审信息 */
+  firstVerifyInfo: any
+  /** 复审信息 */
+  secondVerifyInfo: any
+  /** 单据状态，10：待初审，20：待复审，30：审核通过，40：审核不通过，50：已撤销 */
+  billStatus: 10 | 20 | 30 | 40 | 50
   /**
    * 对账单ID
    */
@@ -561,25 +609,16 @@ export interface InfoResponse {
 }
 
 interface ReviewEnclosure {
-  createTime: number
-  createUid: number
-  id: number
-  isDelete: number
-  modifyTime: number
-  modifyUid: number
-  /**
-   * 调整说明
-   */
-  trimExplain: string
-  /**
-   * 文件
-   */
-  trimFileUrl: string
-  trimId: number
-  /**
-   * 图
-   */
-  trimImgUrl: string
+  /** 审核人名称 */
+  auditName: string
+  /** 审核意见，10：审核通过，20：审核不通过 */
+  auditOpinion: 10 | 20
+  /** 审核说明 */
+  auditRemark: string
+  /** 图片凭证 */
+  imgVoucher: any
+  /** 文件凭证 */
+  fileVoucher: any
 }
 
 /**

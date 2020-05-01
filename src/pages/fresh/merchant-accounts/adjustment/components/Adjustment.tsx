@@ -14,18 +14,21 @@ interface Props {
 
 class Main extends React.Component<Props> {
   public form: FormInstance
-  public validateAccId () {
+  public validateSupplierId () {
     const values = this.form.getValues()
-    const id = values.accNo
+    const id = values.supplierId
     if (!id) {
-      APP.error('请输入对账单ID')
+      APP.error('请输入供应商ID')
       return
     }
-    api.validateAccNo(id).then((res) => {
+    api.fetchStoreList(id).then((res) => {
       APP.success('校验通过')
+      console.log(res, 'res')
       this.form.setValues({
-        accName: res.accName
+        supplierName: res.name
       })
+    }, () => {
+      APP.error('该供应商ID不存在')
     })
   }
   public render () {
@@ -46,10 +49,9 @@ class Main extends React.Component<Props> {
           wrapperCol={{ span: 18 }}
         >
           <FormItem
-            name='accNo'
+            name='supplierId'
             type='input'
             readonly={readonly || from === 'checking'}
-            label='供应商ID'
             verifiable
             controlProps={{
               style: { width: '100%' }
@@ -61,43 +63,28 @@ class Main extends React.Component<Props> {
             addonAfter={(!readonly && from === 'self') && (
               <Button
                 className='ml10'
-                onClick={this.validateAccId.bind(this)}
+                onClick={this.validateSupplierId.bind(this)}
               >
                 校验
               </Button>
             )}
           />
           <FormItem
-            name='accName'
+            name='supplierNameSelect'
             verifiable
             readonly={readonly || from === 'checking'}
           />
           <If condition={readonly}>
             <FormItem name='supplierName' label='供应商' />
           </If>
-          <FormItem name='trimType' verifiable />
+          <FormItem name='billType' verifiable />
           <FormItem name='trimReason' verifiable />
           <FormItem
             verifiable
-            name='trimMoney'
+            name='billMoney'
             fieldDecoratorOptions={{
               rules: [
                 { required: true, message: '调整金额不能为空' }
-                // {validator: (rule, value, cb) => {
-                //   const form = this.form
-                //   if (form) {
-                //     console.log(form, 'form')
-                //     const values = form.getValues()
-                //     const trimType = values.trimType
-                //     if (trimType === 1 && value < 0) {
-                //       cb('调整类型为收入时，调整金额不能小于0')
-                //     } else if (trimType === 2 && value > 0) {
-                //       cb('调整类型为支出时，调整金额不能大于0')
-                //     }
-                //     console.log(values)
-                //   }
-                //   cb()
-                // }}
               ]
             }}
             wrapperCol={{
@@ -116,7 +103,7 @@ class Main extends React.Component<Props> {
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('trimFileUrl')(
+                  {form.getFieldDecorator('fileVoucher')(
                     <Upload
                       multiple
                       disabled={readonly}
@@ -140,7 +127,7 @@ class Main extends React.Component<Props> {
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('trimImgUrl')(
+                  {form.getFieldDecorator('imgVoucher')(
                     <Upload
                       disabled={readonly}
                       listType='picture-card'
