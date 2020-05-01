@@ -134,6 +134,30 @@ export const defaultConfig: FieldsConfig = {
         value: 0
       }]
     },
+    settleType: {
+      label: '结算模式',
+      type: 'radio',
+      fieldDecoratorOptions: {
+        initialValue: 1,
+        rules: [
+          {
+            validator: (rule, value, cb) => {
+              if (![1, 2].includes(value)) {
+                cb('请选择结算方式')
+              }
+              cb()
+            }
+          }
+        ]
+      },
+      options: [{
+        label: '寄售结算',
+        value: 1
+      }, {
+        label: '按需结算',
+        value: 2
+      }]
+    },
     // showNum: {
     //   label: '累计销量',
     //   type: 'radio',

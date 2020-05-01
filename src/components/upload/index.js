@@ -138,6 +138,7 @@ class UploadView extends Component {
     if (!url) {
       return url
     }
+    url = APP.fn.deleteOssDomainUrl(url)
     url = APP.fn.fillOssDomainUrl(url)
     return url
   }

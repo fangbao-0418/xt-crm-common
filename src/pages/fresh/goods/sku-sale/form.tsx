@@ -190,6 +190,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'videoCoverUrl',
           'videoUrl',
           'deliveryMode',
+          'settleType',
           // 'barCode',
           'bannerUrl',
           'returnPhone',
@@ -510,6 +511,10 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 />
               )
             }}
+          />
+          <FormItem
+            verifiable
+            name='settleType'
           />
           <FormItem
             label='商品主图'
