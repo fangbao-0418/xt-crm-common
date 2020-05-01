@@ -6,9 +6,9 @@
  */
 
 import { formResponse, formRequest } from './sku-sale/adapter';
-import { exportFile, newGet } from '@/util/fetch';
+import { exportFile, newGet, newPost, newPut } from '@/util/fetch';
 import { omit } from 'lodash';
-const { post, get, newPost, newPut } = APP.http; 
+const { post, get } = APP.http; 
 export function getStoreList(data, config) {
   return post('/store/list', data, config);
 }
@@ -119,4 +119,49 @@ export function getStockInfo (id) {
  */
 export function getDetail(freightTemplateId) {
   return get(`/template/${freightTemplateId}`)
+}
+
+/**
+ * 自动上下架批次列表
+ * @param {*} payload 
+ */
+export function getTimerList (payload) {
+  return newGet('/mcweb/product/fresh/auto/config/list', payload)
+}
+/**
+ * 新建自动上下架批次
+ * @param {*} payload 
+ */
+export function addTimer (payload) {
+  const form = new FormData()
+    form.append('file', payload.file)
+    form.append('type', payload.type)
+    form.append('effectTime', payload.effectTime)
+    form.append('batchName', payload.batchName)
+  return post('/mcweb/product/fresh/auto/config/new', {}, {
+    data: form,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }).then((res) => {
+
+  })
+}
+/**
+ * 开启自动上下架批次
+ * @param {*} payload 
+ */
+export function openTimerById (payload) {
+  return newPut('/mcweb/product/fresh/auto/config/open', payload).then((res) => {
+
+  })
+}
+/**
+ * 关闭自动上下架批次
+ * @param {*} payload 
+ */
+export function closeTimerById (payload) {
+  return newPut('/mcweb/product/fresh/auto/config/close', payload).then((res) => {
+
+  })
 }

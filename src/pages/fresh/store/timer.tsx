@@ -1,21 +1,18 @@
 /* eslint-disable react/prop-types */
 import React, { Component } from 'react'
-import { getShopList, onOrOffShop, getStatusEnum } from './api'
+import { getShopList, onOrOffShop, getTimerList } from './api'
 import { ListPage, If, FormItem, SelectFetch } from '@/packages/common/components'
-import { defaultConfig, NAME_SPACE, statusEnum } from './config'
+import { defaultConfig, NAME_SPACE } from './timer-config'
 import { Button, Modal, Cascader, Select } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import CitySelect from '@/components/city-select'
 import { FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
 import { RouteComponentProps } from 'react-router'
-import * as api from './api'
+import StoreTimerModal from './timer-modal';
 const Option = Select.Option
 type Props = RouteComponentProps<{id: string}>;
 
-const namespace = 'fresh-goods-check'
 interface StoreFormState {
-  address: string,
   readonly: boolean,
   cityList: any,
   countrys: any,
@@ -25,7 +22,6 @@ class Store extends Component {
   readonly: boolean = !!(parseQuery() as any).readOnly
   list: ListPageInstanceProps;
   state: StoreFormState = {
-    address: '',
     readonly: this.readonly,
     cityList: [],
     countrys: [],
@@ -66,13 +62,7 @@ class Store extends Component {
     render: (record: any) => {
       return (
         <>
-          <span className='href' onClick={() => APP.history.push(`/fresh/store/${record.id}?readOnly=1`)}>查看</span>
-          <If condition={[1, 2, 3].includes(record.status)}>
-            <span className='href ml10' onClick={() => APP.history.push(`/fresh/store/${record.id}`)}>编辑</span>
-          </If>
-          <If condition={[4].includes(record.status)}>
-            <span className='href ml10' onClick={() => APP.history.push(`/fresh/store/${record.id}`)}>审核</span>
-          </If>
+          
           <If condition={[1, 3].includes(record.status)}>
             <span
               className='href ml10'
@@ -115,69 +105,37 @@ class Store extends Component {
               下线
             </span>
           </If>
+          <span className='href' onClick={() => APP.history.push(`/fresh/store/${record.id}?readOnly=1`)}>查看</span>
         </>
       )
     }
   }]
 
-  onCancel = () => {
+  
 
-  }
-  onOk = () => {
-
-  }
   render () {
-    const { readonly } = this.state
     return (
       <>
         <ListPage
           getInstance={ref => this.list = ref}
           rangeMap={{
             workDate: {
+
               fields: ['startCreateDate', 'endCreateDate']
             }
           }}
           formItemLayout={(
             <>
-              <FormItem name='name' />
-              <FormItem
-                // name='status'
-                label='店铺状态'
-                inner={(form) => {
-                  return form.getFieldDecorator(
-                    'status',
-                    {}
-                  )(<SelectFetch
-                    fetchData={getStatusEnum}
-                  />)
-                }}
-              />
+              <FormItem label='门店批次名称' name='shopPhone' />
               <FormItem name='workDate' />
-              <FormItem label='店长手机号' name='shopPhone' />
-              <FormItem label='邀请店长手机号' name='invitePhone' />
-               <FormItem
-                 label='省市区'
-                 inner={(form) => {
-                   return readonly ? this.state.address : form.getFieldDecorator('address', {
-                   })(<CitySelect
-                     type='1'
-                     getSelectedValues={(value: any[]) => {
-                       if (Array.isArray(value) && value.length === 3) {
-                         this.provinceName = value[0].label
-                         this.cityName = value[1].label
-                         this.areaName = value[2].label
-                       }
-                     }}
-                   />)
-                 }}
-               />
             </>
           )}
 
           addonAfterSearch={(
             <div className='mb10'>
-              <Button type='danger' onClick={() => APP.history.push('/fresh/store/-1')}>新建门店</Button>
-              <Button onClick={() => APP.history.push('/fresh/store/timer')}>批量上下架</Button>
+              <Button type='danger' onClick={() => APP.history.push('/fresh/store/-1')}>新建</Button>&nbsp;&nbsp;
+              <Button onClick={() => APP.history.push('/fresh/store/-1')}>开启</Button>&nbsp;&nbsp;
+              <Button onClick={() => APP.history.push('/fresh/store/-1')}>关闭</Button>
             </div>
           )}
           namespace={NAME_SPACE}
@@ -185,6 +143,7 @@ class Store extends Component {
           api={getShopList}
           columns={this.columns}
         />
+        <StoreTimerModal visible={true}/>
       </>
     )
   }

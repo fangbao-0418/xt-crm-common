@@ -5,7 +5,7 @@
  * @FilePath: /xt-crm/src/pages/fresh/store/api.ts
  */
 import { listResponse, formRequest, formResponse, listRequest } from './adapter'
-import { newPost } from '@/util/fetch'
+import { newPost, newGet, newPut } from '@/util/fetch'
 import { queryString } from '@/util/utils'
 
 const { get } = APP.http
@@ -84,5 +84,11 @@ export function pointCenterList () {
         label: record.name
       }
     })
+  })
+}
+
+export function getTimerList (payload:any) {
+  return newGet('/mcweb/product/auto/config/list', payload).then((res:any) => {
+
   })
 }

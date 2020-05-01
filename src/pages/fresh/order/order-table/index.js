@@ -359,6 +359,27 @@ class OrderList extends React.Component {
                     ''
                 }
               </Col>
+              <Col span={6}>
+                <FormItem label="店主手机">
+                  {getFieldDecorator('orderCode', { initialValue: values.orderCode })(
+                    <Input placeholder="请输入店主手机" />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="门店编号">
+                  {getFieldDecorator('orderCode', { initialValue: values.orderCode })(
+                    <Input placeholder="请输入门店编号" />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label="门店单号">
+                  {getFieldDecorator('orderCode', { initialValue: values.orderCode })(
+                    <Input placeholder="请输入门店单号" />
+                  )}
+                </FormItem>
+              </Col>
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
