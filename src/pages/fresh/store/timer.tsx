@@ -61,17 +61,17 @@ class Store extends Component {
     render: (record: any) => {
       return (
         <>
-          <If condition={record.type === 2}>
+          <If condition={record.status === 0}>
             <span
               className='href ml10'
               onClick={() => {
                 Modal.confirm({
                   title: '系统提示',
-                  content: '是否确定上架？',
+                  content: '是否确定开启？',
                   onOk: () => {
                     openTimerById(record.id).then((res: any) => {
                       if (res) {
-                        APP.success('上架成功')
+                        APP.success('开启成功')
                         this.list.refresh()
                       }
                     })
@@ -79,20 +79,20 @@ class Store extends Component {
                 })
               }}
             >
-              上架
+              开启
             </span>
           </If>
-          <If condition={record.type === 1}>
+          <If condition={record.status === 1}>
             <span
               className='href ml10'
               onClick={() => {
                 Modal.confirm({
                   title: '系统提示',
-                  content: '是否确定下架？',
+                  content: '是否确定关闭？',
                   onOk: () => {
                     closeTimerById(record.id).then((res: any) => {
                       if (res) {
-                        APP.success('下架成功')
+                        APP.success('关闭成功')
                         this.list.refresh()
                       }
                     })
@@ -100,7 +100,7 @@ class Store extends Component {
                 })
               }}
             >
-              下线
+              关闭
             </span>
           </If>
           &nbsp;&nbsp;
