@@ -396,10 +396,10 @@ class UserInfo extends Component {
             </Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="上级">
-              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName}</span> {levelName(data.parentMemberTypeVO)}
+              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName || data.parentPhone}</span> {levelName(data.parentMemberTypeVO)}
             </Descriptions.Item>
             <Descriptions.Item label="邀请人">
-              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.inviteId })}>{data.inviteName}</span>  {levelName(data.inviteMemberTypeVO)}
+              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.inviteId })}>{data.inviteName || data.invitedPhone}</span>  {levelName(data.inviteMemberTypeVO)}
             </Descriptions.Item>
             <Descriptions.Item label="锁定状态">
               {data.fansTypeDesc}
