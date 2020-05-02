@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Input, Form, Button, Select, DatePicker } from 'antd'
+import { Modal, Input, Form, Button, Select, DatePicker, message } from 'antd'
 import { addTimer } from './api'
 import { XtSelect } from '@/components'
 import _ from 'lodash'
@@ -68,6 +68,11 @@ class StoreTimerModal extends React.Component<Props, State> {
           name: this.props.data.fileName
         }]
       })
+    }else {
+      this.setState({
+        readonly: false
+      })
+      this.props.form.resetFields()
     }
   }
 
@@ -79,6 +84,7 @@ class StoreTimerModal extends React.Component<Props, State> {
   public onOk = () => {
     if(this.props.data.id) return this.props.onOk()
     this.props.form.validateFields(async (errors, values) => {
+      
       if (!errors) {
         addTimer({
           batchName: values.batchName,
@@ -86,14 +92,15 @@ class StoreTimerModal extends React.Component<Props, State> {
           file: values.file[0].file,
           effectTime: values.effectTime.toDate().getTime()
         }).then((data:any) => {
-
+          if (this.props.onOk && data) {
+            message.success('新建成功');
+            this.props.onOk()
+            this.setState({
+              visible: false
+            })
+          }
         })
-        if (this.props.onOk) {
-          this.props.onOk(values)
-          this.setState({
-            visible: false
-          })
-        }
+        
       }
     }
     )
@@ -145,7 +152,7 @@ class StoreTimerModal extends React.Component<Props, State> {
                 }
               ]
             }
-            )(<XtSelect disabled={readonly} data={[{ key: 1, val: '上线' }, { key: 2, val: '下线' }]} style={{ width: '174px' }} placeholder="请输入" />)}
+            )(<XtSelect disabled={readonly} data={[{ key: 1, val: '上线' }, { key: 2, val: '下线' }]} style={{ width: '174px' }} placeholder="请选择" />)}
           </Form.Item>
           <Form.Item label="上传文件">
             {getFieldDecorator('file', {
@@ -169,6 +176,7 @@ class StoreTimerModal extends React.Component<Props, State> {
               </Upload>
             )}
           </Form.Item>
+          <Form.Item label="模板"><a href="https://assets.hzxituan.com/upload/2020-05-01/%E5%95%86%E5%93%81%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%B8%8B%E6%9E%B6.xlsx" target="_blank">商品自动上下架.xlsx</a></Form.Item>
         </Form>
       </Modal>
     )

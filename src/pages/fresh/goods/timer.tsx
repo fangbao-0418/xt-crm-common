@@ -11,7 +11,7 @@ import { RouteComponentProps } from 'react-router'
 import StoreTimerModal from './timer-modal';
 import dateFns from 'date-fns'
 
-type Props = RouteComponentProps<{id: string}>;
+type Props = RouteComponentProps<{ id: string }>;
 
 interface StoreFormState {
   readonly: boolean,
@@ -30,7 +30,7 @@ class Store extends Component {
   provinceName: string;
   cityName: string;
   areaName: string;
-  constructor (props: Props) {
+  constructor(props: Props) {
     super(props)
   }
   columns = [{
@@ -42,17 +42,17 @@ class Store extends Component {
   }, {
     title: '生效时间',
     render: (record: any) => <>{dateFns.format(record.effectTime, 'YYYY-MM-DD HH:mm:ss')}</>
-  },{
+  }, {
     title: '类型',
     width: 200,
     render: (record: any) => {
-      return record.status == 1? '上架':'下架'
+      return record.type == 1 ? '上架' : '下架'
     }
   }, {
     title: '状态',
     width: 120,
     render: (record: any) => {
-      return record.status == 0? '关闭':'开启'
+      return record.status == 0 ? '关闭' : '开启'
     }
   }, {
     title: '操作',
@@ -69,7 +69,7 @@ class Store extends Component {
                   title: '系统提示',
                   content: '是否确定上架？',
                   onOk: () => {
-                    openTimerById({ id: record.id }).then((res: any) => {
+                    openTimerById(record.id).then((res: any) => {
                       if (res) {
                         APP.success('上架成功')
                         this.list.refresh()
@@ -90,7 +90,7 @@ class Store extends Component {
                   title: '系统提示',
                   content: '是否确定下架？',
                   onOk: () => {
-                    closeTimerById({ id: record.id }).then((res: any) => {
+                    closeTimerById(record.id).then((res: any) => {
                       if (res) {
                         APP.success('下架成功')
                         this.list.refresh()
@@ -113,9 +113,9 @@ class Store extends Component {
     }
   }]
 
-  
 
-  render () {
+
+  render() {
     const { visible, data } = this.state
     return (
       <>
@@ -135,7 +135,7 @@ class Store extends Component {
 
           addonAfterSearch={(
             <div className='mb10'>
-              <Button type='danger' onClick={() => this.setState({visible: true})}>新建</Button>&nbsp;&nbsp;
+              <Button type='danger' onClick={() => this.setState({ visible: true, data: {} })}>新建</Button>&nbsp;&nbsp;
               {/* <Button onClick={() => APP.history.push('/fresh/store/-1')}>开启</Button>&nbsp;&nbsp;
               <Button onClick={() => APP.history.push('/fresh/store/-1')}>关闭</Button> */}
             </div>
@@ -145,10 +145,10 @@ class Store extends Component {
           api={getTimerList}
           columns={this.columns}
         />
-        {visible && <StoreTimerModal data={data} visible={visible} onOk={(data:any) => {
-          
-          this.setState({visible: false})
-        }}  onCancel={() => this.setState({visible: false})} />}
+        {visible && <StoreTimerModal data={data} visible={visible} onOk={(data: any) => {
+
+          this.setState({ visible: false })
+        }} onCancel={() => this.setState({ visible: false })} />}
       </>
     )
   }

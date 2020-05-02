@@ -173,6 +173,7 @@ class UploadView extends Component {
     const { onChange } = this.props;
     const newFileList = filter(fileList, item => item.uid !== e.uid);
     this.setState({ fileList: newFileList });
+    this.count--;
     if (onChange) {
       onChange(newFileList);
     }

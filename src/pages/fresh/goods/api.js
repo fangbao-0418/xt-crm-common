@@ -143,25 +143,19 @@ export function addTimer (payload) {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
-  }).then((res) => {
-
   })
 }
 /**
  * 开启自动上下架批次
- * @param {*} payload 
+ * @param {*} id 
  */
-export function openTimerById (payload) {
-  return newPut('/mcweb/product/fresh/auto/config/open', payload).then((res) => {
-
-  })
+export function openTimerById (id) {
+  return newPut('/mcweb/product/fresh/auto/config/open?id='+id)
 }
 /**
  * 关闭自动上下架批次
  * @param {*} payload 
  */
-export function closeTimerById (payload) {
-  return newPut('/mcweb/product/fresh/auto/config/close', payload).then((res) => {
-
-  })
+export function closeTimerById (id) {
+  return newPut('/mcweb/product/fresh/auto/config/close?id='+id)
 }

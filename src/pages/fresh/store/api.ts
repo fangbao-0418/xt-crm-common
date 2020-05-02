@@ -8,34 +8,34 @@ import { listResponse, formRequest, formResponse, listRequest } from './adapter'
 import { newPost, newGet, newPut } from '@/util/fetch'
 import { queryString } from '@/util/utils'
 
-const { get } = APP.http
+const { get, post } = APP.http
 
 // 店铺列表
-export async function getShopList (payload: any) {
+export async function getShopList(payload: any) {
   payload = listRequest(payload)
   const search = queryString(payload)
   return get(`/point/list${search}`).then(listResponse)
 }
 
 // 新增店铺
-export function addShop (payload: any) {
+export function addShop(payload: any) {
   payload = formRequest(payload)
   return newPost('/point/add', payload)
 }
 
 // 编辑店铺
-export function updateShop (payload: any) {
+export function updateShop(payload: any) {
   payload = formRequest(payload)
   return newPost('/point/update', payload)
 }
 
 // 根据id查询店铺
-export function getShopDetail (shopId: string) {
+export function getShopDetail(shopId: string) {
   return get(`/point/getById?shopId=${shopId}`).then(formResponse)
 }
 
 // 店铺开关
-export function onOrOffShop (payload: {
+export function onOrOffShop(payload: {
   shopId: number,
   status: 2 | 3
 }) {
@@ -43,7 +43,7 @@ export function onOrOffShop (payload: {
 }
 
 /** 获取门店类型 */
-export function getTypeEnum () {
+export function getTypeEnum() {
   return get('/point/typeList').then((res) => {
     console.log(res, 'res')
     return (res || []).map((record: { code: number, describe: string }) => {
@@ -56,7 +56,7 @@ export function getTypeEnum () {
 }
 
 /** 获取门店状态 */
-export function getStatusEnum () {
+export function getStatusEnum() {
   return get('/point/statusList').then((res) => {
     // console.log(res, 'res')
     return (res || []).map((record: { code: number, describe: string }) => {
@@ -69,14 +69,14 @@ export function getStatusEnum () {
 }
 
 /** 拒绝 */
-export function refuse (shopId: any) {
+export function refuse(shopId: any) {
   return get('/point/reject', {
     shopId
   })
 }
 
 /** 查询运营中心列表 */
-export function pointCenterList () {
+export function pointCenterList() {
   return get('/point/center/list').then((res) => {
     return res.map((record: { code: number, name: string }) => {
       return {
@@ -87,8 +87,41 @@ export function pointCenterList () {
   })
 }
 
-export function getTimerList (payload:any) {
-  return newGet('/mcweb/product/auto/config/list', payload).then((res:any) => {
+export function getTimerList(payload: any) {
+  return newGet('/mcweb/product/auto/config/list', payload).then((res: any) => {
 
+  })
+}
+
+/**
+ * 开启自动上下架批次
+ * @param {*} id 
+ */
+export function openTimerById(id: any) {
+  return newPut('/mcweb/product/fresh/auto/config/open?id=' + id)
+}
+/**
+ * 关闭自动上下架批次
+ * @param {*} payload 
+ */
+export function closeTimerById(id: any) {
+  return newPut('/mcweb/product/fresh/auto/config/close?id=' + id)
+}
+
+/**
+ * 新建自动上下架批次
+ * @param {*} payload 
+ */
+export function addTimer(payload: any) {
+  const form = new FormData()
+  form.append('file', payload.file)
+  form.append('type', payload.type)
+  form.append('effectTime', payload.effectTime)
+  form.append('batchName', payload.batchName)
+  return post('/mcweb/product/fresh/auto/config/new', {}, {
+    data: form,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
