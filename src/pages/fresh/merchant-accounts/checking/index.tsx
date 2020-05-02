@@ -6,6 +6,8 @@ import { RecordProps } from './interface'
 import { getFieldsConfig } from './config'
 import * as api from './api'
 
+const namespace = 'fresh/merchant-accounts/checking'
+
 class Main extends React.Component {
   public columns: ColumnProps<RecordProps>[] = [
     { title: '对账单ID', dataIndex: 'serialNo', width: 180 },
@@ -51,7 +53,7 @@ class Main extends React.Component {
   }
   public batchExportDetail () {
     const payload = this.listpage.form.getValues()
-    api.batchExport(payload).then(() => {
+    api.batchExportDetail(payload).then(() => {
       APP.success('导出成功，请前往下载列表下载文件')
     })
   }
@@ -59,6 +61,7 @@ class Main extends React.Component {
     return (
       <div>
         <ListPage
+          reserveKey={namespace}
           columns={this.columns}
           getInstance={(ref) => {
             this.listpage = ref
@@ -87,6 +90,15 @@ class Main extends React.Component {
           )}
           api={api.fetchList}
           formConfig={getFieldsConfig()}
+          processPayload={(payload) => {
+            const date = payload.date || []
+            return {
+              ...payload,
+              year: date[0],
+              month: date[1],
+              date: undefined
+            }
+          }}
         />
       </div>
     )
