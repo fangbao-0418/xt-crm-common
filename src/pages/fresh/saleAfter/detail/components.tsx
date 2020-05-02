@@ -27,7 +27,7 @@ const detailTabHear = (dataSource: any) => {
           <If condition={ refundStatus === 10 && countdown }>
             <Col className={style['detail-col']} span={8}>
               审核倒计时:
-              <Countdown value={countdown / 1000 }></Countdown>
+              <Countdown value={countdown}></Countdown>
             </Col>
           </If>
         </Row>
