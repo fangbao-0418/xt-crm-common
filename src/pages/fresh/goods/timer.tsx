@@ -10,7 +10,6 @@ import { parseQuery } from '@/util/utils'
 import { RouteComponentProps } from 'react-router'
 import StoreTimerModal from './timer-modal';
 import dateFns from 'date-fns'
-
 type Props = RouteComponentProps<{ id: string }>;
 
 interface StoreFormState {
@@ -130,6 +129,8 @@ class Store extends Component {
             <>
               <FormItem label='商品批次名称' name='batchName' />
               <FormItem name='workDate' />
+              <FormItem name='type'/>
+              <FormItem name='status' />
             </>
           )}
 

@@ -34,25 +34,27 @@ class Store extends Component {
     super(props)
   }
   columns = [{
-    title: '批次名称',
-    dataIndex: 'batchName'
+    title: '门店批次名称',
+    dataIndex: 'name'
   }, {
     title: '创建时间',
     render: (record: any) => <>{dateFns.format(record.createTime, 'YYYY-MM-DD HH:mm:ss')}</>
   }, {
     title: '生效时间',
-    render: (record: any) => <>{dateFns.format(record.effectTime, 'YYYY-MM-DD HH:mm:ss')}</>
+    render: (record: any) => <>{dateFns.format(record.actionTime, 'YYYY-MM-DD HH:mm:ss')}</>
   }, {
     title: '类型',
     width: 200,
     render: (record: any) => {
-      return record.type == 1 ? '上架' : '下架'
+      return record.actionType == 1 ? '上线' : '下线'
     }
   }, {
     title: '状态',
     width: 120,
     render: (record: any) => {
-      return record.status == 0 ? '关闭' : '开启'
+      if(record.actionStatus == 0) return '关闭';
+      if(record.actionStatus == 1) return '开启'
+      return ''
     }
   }, {
     title: '操作',
@@ -61,7 +63,7 @@ class Store extends Component {
     render: (record: any) => {
       return (
         <>
-          <If condition={record.status === 0}>
+          <If condition={record.actionStatus === 0}>
             <span
               className='href ml10'
               onClick={() => {
@@ -82,7 +84,7 @@ class Store extends Component {
               开启
             </span>
           </If>
-          <If condition={record.status === 1}>
+          <If condition={record.actionStatus === 1}>
             <span
               className='href ml10'
               onClick={() => {
@@ -130,6 +132,8 @@ class Store extends Component {
             <>
               <FormItem label='商品批次名称' name='batchName' />
               <FormItem name='workDate' />
+              <FormItem name='type'/>
+              <FormItem name='status' />
             </>
           )}
 

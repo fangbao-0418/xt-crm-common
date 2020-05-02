@@ -88,24 +88,22 @@ export function pointCenterList() {
 }
 
 export function getTimerList(payload: any) {
-  return newGet('/mcweb/product/auto/config/list', payload).then((res: any) => {
-
-  })
+  return newGet('/point/batch/list', payload)
 }
 
 /**
  * 开启自动上下架批次
- * @param {*} id 
+ * @param {*} ids 
  */
-export function openTimerById(id: any) {
-  return newPut('/mcweb/product/fresh/auto/config/open?id=' + id)
+export function openTimerById(ids: any) {
+  return newPost('/point/batch/online', {ids})
 }
 /**
  * 关闭自动上下架批次
- * @param {*} payload 
+ * @param {*} ids 
  */
-export function closeTimerById(id: any) {
-  return newPut('/mcweb/product/fresh/auto/config/close?id=' + id)
+export function closeTimerById(ids: any) {
+  return newPost('/point/batch/close', {ids})
 }
 
 /**
