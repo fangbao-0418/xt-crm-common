@@ -100,6 +100,18 @@ class Main extends React.Component<Props, State> {
       APP.success('导出成功，请前去下载列表下载文件')
     })
   }
+  public componentWillMount () {
+    this.fetchData()
+  }
+  public fetchData () {
+    api.fetchDetail({ id: this.id }).then((data) => {
+      const total = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.total || 0
+      this.setState({
+        ...data,
+        total
+      })
+    })
+  }
   public render () {
     const state = this.state
     return (
@@ -136,26 +148,21 @@ class Main extends React.Component<Props, State> {
           </div>
           <ListPage
             columns={this.columns}
-            api={api.fetchDetail}
+            api={api.fetchDetailShopList}
             processPayload={(payload) => {
               this.setState({
                 page: payload.page,
                 pageSize: payload.pageSize
               })
               return {
+                ...payload,
                 id: this.id
               }
             }}
             processData={(data) => {
-              const records = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.records || []
-              const total = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.total || 0
-              this.setState({
-                ...data,
-                total
-              })
               return {
-                total,
-                records
+                total: data.total,
+                records: data.records
               }
             }}
           />

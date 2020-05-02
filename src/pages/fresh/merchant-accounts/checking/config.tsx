@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-29 10:33:20
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-02 17:10:11
+ * @LastEditTime: 2020-05-02 19:45:49
  * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/checking/config.tsx
  */
 import React from 'react'
@@ -17,11 +17,11 @@ export function getFieldsConfig (): FieldsConfig {
         type: 'input',
         label: '对账单ID'
       },
-      storeNameLike: {
+      supplierName: {
         type: 'input',
         label: '供应商名称'
       },
-      storeId: {
+      supplierId: {
         label: '供应商ID',
         type: 'input',
         controlProps: {

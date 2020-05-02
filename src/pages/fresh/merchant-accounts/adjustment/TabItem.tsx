@@ -36,6 +36,7 @@ class Main extends React.Component<Props> {
       dataIndex: 'billType',
       title: '调整类型',
       width: 100,
+      align: 'center',
       render: (text) => {
         return BillTypeEnum[text]
       }
@@ -70,6 +71,7 @@ class Main extends React.Component<Props> {
       dataIndex: 'billStatus',
       title: '状态',
       width: 150,
+      align: 'center',
       render: (text) => {
         return BillStatusEnum[text]
       }
@@ -90,7 +92,7 @@ class Main extends React.Component<Props> {
     {
       dataIndex: 'createTime',
       title: '创建时间',
-      width: 200,
+      width: 150,
       render: (text) => {
         return APP.fn.formatDate(text)
       }
