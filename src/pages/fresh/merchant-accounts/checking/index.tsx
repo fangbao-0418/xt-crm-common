@@ -49,13 +49,25 @@ class Main extends React.Component {
   public listpage: ListPageInstanceProps
   public batchExport () {
     const payload = this.listpage.form.getValues()
-    api.batchExport(payload).then(() => {
+    const date = payload.date || []
+    api.batchExport({
+      ...payload,
+      year: date[0],
+      month: date[1],
+      date: undefined
+    }).then(() => {
       APP.success('导出成功，请前往下载列表下载文件')
     })
   }
   public batchExportDetail () {
     const payload = this.listpage.form.getValues()
-    api.batchExportDetail(payload).then(() => {
+    const date = payload.date || []
+    api.batchExportDetail({
+      ...payload,
+      year: date[0],
+      month: date[1],
+      date: undefined
+    }).then(() => {
       APP.success('导出成功，请前往下载列表下载文件')
     })
   }
@@ -72,6 +84,20 @@ class Main extends React.Component {
           columns={this.columns}
           getInstance={(ref) => {
             this.listpage = ref
+          }}
+          mounted={() => {
+            if (this.listpage.cachePayload) {
+              const { year, month } = this.listpage.cachePayload
+              if (year !== undefined) {
+                const date = [year]
+                if (month !== undefined) {
+                  date.push(month)
+                }
+                this.listpage.form.setValues({
+                  date
+                })
+              }
+            }
           }}
           addonAfterSearch={(
             <div>
