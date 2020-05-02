@@ -47,6 +47,7 @@ class Main extends React.Component<Props, State> {
           firstVerifyInfo: res.firstVerifyInfo,
           secondVerifyInfo: res.secondVerifyInfo
         })
+        res.createDate = APP.fn.formatDate(res.createTime)
         this.setValues(res)
       })
     }

@@ -132,7 +132,7 @@ class Main extends React.Component<Props> {
         return (
           <div>
             {[
-              (APP.user.menuGathers.indexOf('adjustment:procurement_audit') > -1 && [10, 20].indexOf(record.billStatus) === -1) && (
+              ([10, 20].indexOf(record.billStatus) === -1) && (
                 <>
                   <span
                     className='href'
@@ -146,7 +146,7 @@ class Main extends React.Component<Props> {
               ),
               <Auth key={2}>
                 {(access: boolean, codes: string[]) => {
-                  return (record.billStatus === 10 && codes.indexOf('adjustment:procurement_audit') > -1 || record.billStatus === 20 && codes.indexOf('adjustment:finance_audit') > -1) && (
+                  return ([10, 20].includes(record.billStatus) && codes.indexOf('fresh:adjustment:record:examine') > -1) && (
                     <>
                       <span
                         className='href'
@@ -160,18 +160,17 @@ class Main extends React.Component<Props> {
                   )
                 }}
               </Auth>,
-              (
-                <Auth key={3} code='*'>
-                  <Popconfirm
-                    title='确定是否撤销？'
-                    onConfirm={this.toRevoke.bind(this, record)}
-                  >
-                    <span className='href'>撤销</span>
-                  </Popconfirm>
-                </Auth>
+              record.billStatus === 10 && (
+                <Popconfirm
+                  key={3}
+                  title='确定是否撤销？'
+                  onConfirm={this.toRevoke.bind(this, record)}
+                >
+                  <span className='href'>撤销</span>
+                </Popconfirm>
               )
             ].map((node) => {
-              return [node, <span key='span'>&nbsp;</span>]
+              return node && [node, <span key='span'>&nbsp;</span>]
             })}
           </div>
         )

@@ -154,6 +154,11 @@ class Main extends React.Component<Props> {
               )
             }}
           />
+          <If condition={readonly}>
+            <FormItem name='createName' />
+            <FormItem name='createType' />
+            <FormItem name='createDate' label='创建时间' />
+          </If>
         </Form>
       </div>
     )

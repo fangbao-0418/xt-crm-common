@@ -96,10 +96,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '创建人类型',
         options: [
-          { label: '财务', value: 0 },
-          { label: '采购', value: 1 },
-          { label: '供应商', value: 3 },
-          { label: '员工', value: 2 }
+          { label: '员工', value: 10 }
         ]
       },
       createName: {
@@ -134,13 +131,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       /** 审核说明 */
       auditRemark: {
         type: 'textarea',
-        label: '调整说明',
+        label: '审核说明',
         controlProps: {
           maxLength: 250
         },
         fieldDecoratorOptions: {
           rules: [
-            { required: true, message: '调整说明不能为空' },
+            { required: true, message: '审核说明不能为空' },
             { max: 250, message: '长度最大250个字符' }
           ]
         }

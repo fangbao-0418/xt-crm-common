@@ -1,7 +1,8 @@
 import React from 'react'
 import { Tabs } from 'antd'
 import Page from '@/components/page'
-import TabItem, { namespace } from './TabItem'
+import { getPayload, setPayload } from '@/packages/common/utils'
+import TabItem from './TabItem'
 
 const TabPane = Tabs.TabPane
 
@@ -12,13 +13,18 @@ const tabConfig = [
   { title: '提现失败', key: 25 }
 ]
 
+const namespace = 'fresh/merchant-accounts/withdraw-status'
+
 class Main extends React.Component {
-  public defaultActiveKey = String(APP.fn.getPayload(namespace).status)
+  public defaultActiveKey = String(getPayload(namespace) || 0)
   public render () {
     return (
       <Page>
         <Tabs
           defaultActiveKey={this.defaultActiveKey}
+          onChange={(activeKey) => {
+            setPayload(namespace, activeKey)
+          }}
         >
           {
             tabConfig.map((item) => {
