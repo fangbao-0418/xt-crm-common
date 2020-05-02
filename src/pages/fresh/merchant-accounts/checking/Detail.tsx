@@ -14,16 +14,6 @@ import Auth from '@/components/auth'
 
 interface Props extends Partial<AlertComponentProps>, RouteComponentProps<{id: string}> {}
 
-interface State {
-  total: number
-  /** 当前页 */
-  page: number
-  /** 页码 */
-  pageSize: number
-  /** 对账单数据 */
-  financeAccountRecordVO: FinanceAccountRecordVO
-}
-
 interface FinanceAccountRecordVO {
   /** 创建日期 */
   billDate: number
@@ -37,6 +27,12 @@ interface FinanceAccountRecordVO {
   disburseMoney: number
   /** 总额 */
   billMoney: number
+}
+
+interface State extends FinanceAccountRecordVO {
+  total: number
+  page: number
+  pageSize: number
 }
 
 class Main extends React.Component<Props, State> {
@@ -89,49 +85,50 @@ class Main extends React.Component<Props, State> {
   ]
   public id = this.props.match.params.id
   public state: State = {
-    total: 0,
     page: 1,
     pageSize: 10,
-    financeAccountRecordVO: {
-      billDate: 0,
-      billStatus: 0,
-      disburseMoney: 0,
-      billStatusInfo: '',
-      incomeMoney: 0,
-      billMoney: 0
-    }
+    total: 0,
+    billDate: 0,
+    billStatus: 0,
+    disburseMoney: 0,
+    billStatusInfo: '',
+    incomeMoney: 0,
+    billMoney: 0
+  }
+  public toExport = () => {
+    api.exportDetail(this.id).then(() => {
+      APP.success('导出成功，请前去下载列表下载文件')
+    })
   }
   public render () {
-    const query = this.state.financeAccountRecordVO
-    const bulidDate = APP.fn.formatDate(Number(query.billDate), 'YYYYMMDD')
+    const state = this.state
     return (
       <DetailPage title={'对账单明细'}>
         <div className={styles.detail}>
           <div className={styles['detail-title']}>
-            {bulidDate}对账单明细
+            {state.billDate}对账单明细
           </div>
           <div className={styles['detail-header']}>
-            <div>日期：{bulidDate}</div>
+            <div>日期：{APP.fn.formatDate(state.billDate)}</div>
             <div>
-              {/* 状态：{AccStatusEnum[query.accStatus]} */}
+              状态：{state.billStatusInfo}
             </div>
             <div>共计：{this.state.total}条</div>
           </div>
           <div className={styles['detail-header2']}>
             <div>
-              <div>收入：<span className='success'>{Number(query.incomeMoney) !== 0 ? '+' : ''}{APP.fn.formatMoney(query.incomeMoney) || '0.00'}</span>元</div>
-              <div>支出：<span className='error'>{Number(query.disburseMoney) !== 0 ? '-' : ''}{APP.fn.formatMoney(query.disburseMoney) || '0.00'}</span>元</div>
+              <div>收入：<span className='success'>{APP.fn.formatMoney(state.incomeMoney) || '0.00'}</span>元</div>
+              <div>支出：<span className='error'>{APP.fn.formatMoney(state.disburseMoney) || '0.00'}</span>元</div>
               <div>本期对账单总额：
-                {/* <span className={Number(query.settlementMoney) > 0 ? 'success' : 'error'}>
-                  {Number(query.settlementMoney) !== 0 ? Number(query.settlementMoney) > 0 ? '+' : '-' : ''}
-                  {APP.fn.formatMoney(query.settlementMoney) || '0.00'}
-                </span>元 */}
+                <span className={state.billMoney >= 0 ? 'success' : 'error'}>
+                  {APP.fn.formatMoney(state.billMoney) || '0.00'}
+                </span>元
               </div>
             </div>
             <div>
               <Button
                 type='primary'
-                // onClick={this.addAdjustment}
+                onClick={this.toExport}
               >
                 导出明细
               </Button>
@@ -153,6 +150,7 @@ class Main extends React.Component<Props, State> {
               const records = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.records || []
               const total = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.total || 0
               this.setState({
+                ...data,
                 total
               })
               return {

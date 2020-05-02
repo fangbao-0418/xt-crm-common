@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-28 14:00:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-02 17:03:01
+ * @LastEditTime: 2020-05-02 17:55:48
  * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/checking/api.ts
  */
 const { get, newPost } = APP.http
@@ -22,7 +22,7 @@ export const batchExport = (payload: {
   year?: number
   month?: number
 }) => {
-  return get('/fresh/account/statement/export', payload)
+  return get('/mcweb/merchant/fresh/account/statement/export', payload)
 }
 
 export const batchExportDetail = (payload: {
@@ -35,5 +35,10 @@ export const batchExportDetail = (payload: {
   year?: number
   month?: number
 }) => {
-  return get('/fresh/account/statement/export/detail', payload)
+  return get('/mcweb/merchant/fresh/account/statement/export/detail', payload)
+}
+
+/** 对账单详情明细导出 */
+export const exportDetail = (id: any) => {
+  return get(`/mcweb/merchant/fresh/account/statement/detail/export/${id}`)
 }
