@@ -12,12 +12,12 @@ class Main extends React.Component {
   public columns: ColumnProps<RecordProps>[] = [
     { title: '对账单ID', dataIndex: 'serialNo', width: 180 },
     { title: '日期', width: 150, dataIndex: 'billDate', render: (text) => APP.fn.formatDate(text) },
-    { title: '供应商ID', dataIndex: 'supplierId' },
-    { title: '供应商', dataIndex: 'supplierName' },
+    { title: '供应商ID', width: 150, dataIndex: 'supplierId' },
+    { title: '供应商', width: 200, dataIndex: 'supplierName' },
     { title: '收入（元）', dataIndex: 'incomeMoney', align: 'center', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
     { title: '支出（元）', dataIndex: 'disburseMoney', align: 'center', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
     { title: '本期对账单金额', dataIndex: 'billMoney', align: 'center', width: 150, render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
-    { title: '状态', align: 'center', dataIndex: 'billStatusInfo' },
+    { title: '状态', width: 100, align: 'center', dataIndex: 'billStatusInfo' },
     {
       title: '操作',
       width: 140,
@@ -35,6 +35,9 @@ class Main extends React.Component {
             </span>
             <span
               className='href'
+              onClick={() => {
+                this.exportDetail(record)
+              }}
             >
               导出
             </span>
@@ -46,14 +49,30 @@ class Main extends React.Component {
   public listpage: ListPageInstanceProps
   public batchExport () {
     const payload = this.listpage.form.getValues()
-    console.log(payload)
-    api.batchExport(payload).then(() => {
+    const date = payload.date || []
+    api.batchExport({
+      ...payload,
+      year: date[0],
+      month: date[1],
+      date: undefined
+    }).then(() => {
       APP.success('导出成功，请前往下载列表下载文件')
     })
   }
   public batchExportDetail () {
     const payload = this.listpage.form.getValues()
-    api.batchExportDetail(payload).then(() => {
+    const date = payload.date || []
+    api.batchExportDetail({
+      ...payload,
+      year: date[0],
+      month: date[1],
+      date: undefined
+    }).then(() => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
+  }
+  public exportDetail (record: RecordProps) {
+    api.exportDetail(record.id).then(() => {
       APP.success('导出成功，请前往下载列表下载文件')
     })
   }
@@ -65,6 +84,20 @@ class Main extends React.Component {
           columns={this.columns}
           getInstance={(ref) => {
             this.listpage = ref
+          }}
+          mounted={() => {
+            if (this.listpage.cachePayload) {
+              const { year, month } = this.listpage.cachePayload
+              if (year !== undefined) {
+                const date = [year]
+                if (month !== undefined) {
+                  date.push(month)
+                }
+                this.listpage.form.setValues({
+                  date
+                })
+              }
+            }
           }}
           addonAfterSearch={(
             <div>

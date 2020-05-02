@@ -100,13 +100,25 @@ class Main extends React.Component<Props, State> {
       APP.success('导出成功，请前去下载列表下载文件')
     })
   }
+  public componentWillMount () {
+    this.fetchData()
+  }
+  public fetchData () {
+    api.fetchDetail({ id: this.id }).then((data) => {
+      const total = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.total || 0
+      this.setState({
+        ...data,
+        total
+      })
+    })
+  }
   public render () {
     const state = this.state
     return (
       <DetailPage title={'对账单明细'}>
         <div className={styles.detail}>
           <div className={styles['detail-title']}>
-            {state.billDate}对账单明细
+            {APP.fn.formatDate(state.billDate, 'YYYYMMDD')}对账单明细
           </div>
           <div className={styles['detail-header']}>
             <div>日期：{APP.fn.formatDate(state.billDate)}</div>
@@ -136,26 +148,21 @@ class Main extends React.Component<Props, State> {
           </div>
           <ListPage
             columns={this.columns}
-            api={api.fetchDetail}
+            api={api.fetchDetailShopList}
             processPayload={(payload) => {
               this.setState({
                 page: payload.page,
                 pageSize: payload.pageSize
               })
               return {
+                ...payload,
                 id: this.id
               }
             }}
             processData={(data) => {
-              const records = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.records || []
-              const total = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.total || 0
-              this.setState({
-                ...data,
-                total
-              })
               return {
-                total,
-                records
+                total: data.total,
+                records: data.records
               }
             }}
           />

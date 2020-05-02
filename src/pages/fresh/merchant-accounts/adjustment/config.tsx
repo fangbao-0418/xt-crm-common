@@ -164,11 +164,11 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'radio',
         label: '审核意见',
         fieldDecoratorOptions: {
-          initialValue: 0
+          initialValue: 10
         },
         options: [
-          { label: '审核通过', value: 0 },
-          { label: '审核不通过', value: 1 }
+          { label: '审核通过', value: 10 },
+          { label: '审核不通过', value: 20 }
         ]
       },
       supplierNameSelect: {
