@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-28 14:01:39
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-01 20:28:47
+ * @LastEditTime: 2020-05-02 15:42:32
  * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/withdraw/api.ts
  */
 const { get, newPost } = APP.http
@@ -22,19 +22,29 @@ interface ListPayload {
 }
 
 export const fetchList = (payload: Partial<ListPayload>) => {
-  return get('/spm/supplier/cash/out/crm/page', payload)
+  return get('::guard/mcweb/merchant/supplier/cash/out/page', payload)
 }
 
 export const batchExport = (payload: Partial<ListPayload>) => {
-  return get('/spm/supplier/cash/out/crm/page/export', payload)
+  return get('/mcweb/merchant/supplier/cash/out/export', payload)
 }
 
+/** 批量支付 */
 export const batchPay = (file: File) => {
   const form = new FormData()
   form.append('file', file)
-  newPost('/spm/supplier/cash/out/batch/fail', form, {
+  return newPost('/mcweb/merchant/supplier/cash/out/batch/success', form, {
     headers: {
       ContentType: 'multipart/form-data'
     }
   })
+}
+
+export const toOperate = (payload: {
+  supplierCashOutId: any
+  /** 提现状态（15-提现成功，25-提现失败） */
+  status: 15 | 25
+  operateRemark: string
+}) => {
+  return newPost('/mcweb/merchant/supplier/cash/out/operate', payload)
 }

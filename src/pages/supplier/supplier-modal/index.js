@@ -32,11 +32,10 @@ class SupplierModal extends Component {
     getSupplierDetail({
       id: this.props.id
     }).then((data) => {
-      if (data.category === 5) {
-        this.setState({
-          saleAreaVisible: true
-        })
-      }
+      this.setState({
+        category: data.category,
+        saleAreaVisible: data.category === 5
+      })
       this.props.form && this.props.form.setFieldsValue(data)
     })
   }

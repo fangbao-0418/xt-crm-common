@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-28 16:04:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-28 19:56:58
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.tsx
+ * @LastEditTime: 2020-05-02 15:40:17
+ * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.tsx
  */
 import { OptionProps } from '@/packages/common/components/form'
 
@@ -12,12 +12,9 @@ export interface FieldsConfig {
 export function getFieldsConfig (): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      id: {
+      code: {
         type: 'input',
-        label: '申请单ID',
-        controlProps: {
-          type: 'number'
-        }
+        label: '申请单ID'
       },
       storeNameLike: {
         type: 'input',
@@ -59,4 +56,17 @@ export function getFieldsConfig (): FieldsConfig {
     }
   }
   return defaultConfig
+}
+
+/** 提现方式 */
+export enum PayTypeEnum {
+  个人银行卡 = 3,
+  对公账号 = 4
+}
+
+/** 提现状态 */
+export enum StatusEnum {
+  待提现 = 5,
+  提现成功 = 15,
+  提现失败 = 25
 }

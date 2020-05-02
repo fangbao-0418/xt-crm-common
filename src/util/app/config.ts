@@ -1,13 +1,16 @@
 /*
  * @Date: 2020-03-27 13:45:49
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-16 20:22:42
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/util/app/config.ts
+ * @LastEditTime: 2020-05-02 14:08:49
+ * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/util/app/config.ts
  */
 import { baseHost, env as apiEnv } from '../baseHost'
 
 /** 后端环境接口映射 */
 export const serverMapper: any = {
+  guard: {
+    dev: 'https://daily-guard.hzxituan.com'
+  },
   palamidi: {
     dev: 'https://daily-palamidi-console.hzxituan.com',
     test1: 'https://test-palamidi-console.hzxituan.com',
@@ -37,7 +40,7 @@ export const serverMapper: any = {
 }
 
 export function handleApiUrl (url: string) {
-  const serverPattern = /^::(message|ulive|palamidi)/
+  const serverPattern = /^::(message|ulive|palamidi|guard)/
   if ((/^https?/).test(url)) {
     return url
   } else if (serverPattern.test(url)) {

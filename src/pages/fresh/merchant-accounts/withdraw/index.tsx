@@ -1,7 +1,7 @@
 import React from 'react'
 import { Tabs } from 'antd'
 import Page from '@/components/page'
-import TabItem from './TabItem'
+import TabItem, { namespace } from './TabItem'
 
 const TabPane = Tabs.TabPane
 
@@ -13,11 +13,13 @@ const tabConfig = [
 ]
 
 class Main extends React.Component {
+  public defaultActiveKey = String(APP.fn.getPayload(namespace).status)
   public render () {
-    console.log('withdraw')
     return (
       <Page>
-        <Tabs>
+        <Tabs
+          defaultActiveKey={this.defaultActiveKey}
+        >
           {
             tabConfig.map((item) => {
               return (
@@ -25,7 +27,7 @@ class Main extends React.Component {
                   key={String(item.key)}
                   tab={item.title}
                 >
-                  <TabItem />
+                  <TabItem status={item.key as any} />
                 </TabPane>
               )
             })

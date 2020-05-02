@@ -1,48 +1,106 @@
 import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import { Button } from 'antd'
+import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
+import If from '@/packages/common/components/if'
+import { Button, Input, Popconfirm } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { RecordProps } from './interface'
-import { getFieldsConfig } from './config'
+import { getFieldsConfig, PayTypeEnum, StatusEnum } from './config'
 import * as api from './api'
 
-class Main extends React.Component {
+export const namespace = 'fresh/merchant-accounts/withdraw'
+
+interface Props extends Partial<AlertComponentProps> {
+  /** 提现状态（0-全部，5-待提现，15-提现成功，25-提现失败） */
+  status: 0 | 5 | 15 | 25
+}
+
+class Main extends React.Component<Props> {
   public columns: ColumnProps<RecordProps>[] = [
-    { title: '申请单ID', dataIndex: 'supplierCashOutId' },
-    { title: '金额', dataIndex: 'cashOutMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'u2m') },
-    { title: '供应商ID', dataIndex: 'storeId' },
-    { title: '供应商名称', dataIndex: 'storeName' },
-    { title: '提现方式', dataIndex: 'payType' },
-    { title: '提现账户', dataIndex: 'accountName' },
-    { title: '状态', dataIndex: 'status' },
-    { title: '申请时间', dataIndex: '提现时间', render: (text) => APP.fn.formatDate(text) },
-    { title: '操作人', dataIndex: 'operator' },
-    { title: '操作时间', dataIndex: 'operateTime', render: (text) => APP.fn.formatDate(text) },
+    { title: '申请单编号', dataIndex: 'code', width: 200 },
+    { title: '金额', dataIndex: 'cashOutMoney', width: 150, render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    { title: '供应商ID', dataIndex: 'supplierUid', width: 150 },
+    { title: '供应商名称', dataIndex: 'supplierName', width: 150 },
+    { title: '提现方式', dataIndex: 'payType', width: 150, render: (text) => PayTypeEnum[text] },
+    { title: '提现账户', dataIndex: 'accountName', width: 100 },
+    { title: '状态', dataIndex: 'status', width: 100, render: (text) => StatusEnum[text] },
+    { title: '申请时间', dataIndex: 'createTime', width: 150, render: (text) => APP.fn.formatDate(text) },
+    { title: '操作人', dataIndex: 'operator', width: 100 },
+    { title: '操作时间', dataIndex: 'operateTime', width: 150, render: (text) => APP.fn.formatDate(text) },
     {
       title: '操作',
       width: 140,
+      fixed: 'right',
       align: 'center',
-      render: () => {
+      render: (text, record) => {
         return (
-          <div>
-            <Button
-              type='primary'
-              size='small'
-              className='mb8'
+          <If condition={record.status === 5}>
+            <Popconfirm
+              title='确定是否提现成功？'
+              onConfirm={this.toOperate(record, 15)}
             >
-              提现成功
-            </Button>
+              <Button
+                type='primary'
+                size='small'
+                className='mb8'
+              >
+                提现成功
+              </Button>
+            </Popconfirm>
             <Button
               size='small'
+              onClick={this.toOperate(record, 25)}
             >
               提现失败
             </Button>
-          </div>
+          </If>
         )
       }
     }
   ]
   public listpage: ListPageInstanceProps
+  /**
+   * 单条提现操作 type 15-提现成功，25-提现失败
+   */
+  public toOperate = (record: RecordProps, type: 15 | 25) => () => {
+    if (type === 25) {
+      if (this.props.alert) {
+        let operateRemark = ''
+        const hide = this.props.alert({
+          title: '提现失败',
+          content: (
+            <div>
+              <Input.TextArea
+                placeholder='请输入提现失败原因'
+                onChange={(e) => {
+                  const value = e.target.value
+                  operateRemark = value
+                }}
+              />
+            </div>
+          ),
+          onOk: () => {
+            api.toOperate({
+              supplierCashOutId: record.supplierCashOutId,
+              status: type,
+              operateRemark
+            }).then(() => {
+              hide()
+              this.listpage.refresh()
+            })
+          }
+        })
+      }
+    } else {
+      api.toOperate({
+        supplierCashOutId: record.supplierCashOutId,
+        status: type,
+        operateRemark: ''
+      }).then(() => {
+        this.listpage.refresh()
+      })
+    }
+  }
   public batchExport () {
     const payload = this.listpage.form.getValues()
     api.batchExport(payload).then(() => {
@@ -51,12 +109,18 @@ class Main extends React.Component {
   }
   public batchPay () {
     this.selectFile().then((file) => {
-      api.batchPay(file)
+      api.batchPay(file).then(() => {
+        APP.success('批量成功操作完成')
+        this.listpage.refresh()
+      })
     })
   }
   public batchPayFail () {
     this.selectFile().then((file) => {
-      api.batchPay(file)
+      api.batchPay(file).then(() => {
+        APP.success('批量失败操作完成')
+        this.listpage.refresh()
+      })
     })
   }
   public selectFile () {
@@ -78,6 +142,7 @@ class Main extends React.Component {
     return (
       <div>
         <ListPage
+          reserveKey={namespace}
           columns={this.columns}
           showButton={false}
           getInstance={(ref) => {
@@ -151,9 +216,24 @@ class Main extends React.Component {
           )}
           api={api.fetchList}
           formConfig={getFieldsConfig()}
+          processPayload={(payload) => {
+            const status = this.props.status === 0 ? undefined : this.props.status
+            payload.status = status
+            return {
+              ...payload,
+              status
+            }
+          }}
+          tableProps={{
+            scroll: {
+              x: this.columns.map((item) => Number(item.width || 0)).reduce((a, b) => {
+                return a + b
+              })
+            }
+          }}
         />
       </div>
     )
   }
 }
-export default Main
+export default Alert(Main)
