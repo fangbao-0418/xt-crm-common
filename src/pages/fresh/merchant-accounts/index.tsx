@@ -5,6 +5,7 @@ import Checking from './checking'
 import CheckingDetail from './checking/Detail'
 import Withdraw from './withdraw'
 import Adjustment from './adjustment'
+import DownloadList from './download-list'
 
 const config: RouteProps[] = [
   {
@@ -24,6 +25,11 @@ const config: RouteProps[] = [
     path: '/adjustment',
     exact: true,
     component: Adjustment
+  },
+  {
+    path: '/download',
+    exact: true,
+    component: DownloadList
   }
 ]
 
