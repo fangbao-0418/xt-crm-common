@@ -118,7 +118,7 @@ class Main extends React.Component<Props, State> {
       <DetailPage title={'对账单明细'}>
         <div className={styles.detail}>
           <div className={styles['detail-title']}>
-            {state.billDate}对账单明细
+            {APP.fn.formatDate(state.billDate, 'YYYYMMDD')}对账单明细
           </div>
           <div className={styles['detail-header']}>
             <div>日期：{APP.fn.formatDate(state.billDate)}</div>
