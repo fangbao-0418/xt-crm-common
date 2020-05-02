@@ -8,25 +8,25 @@ import * as api from './api'
 
 class Main extends React.Component {
   public columns: ColumnProps<RecordProps>[] = [
-    { title: '对账单ID', dataIndex: 'id' },
-    { title: '日期', dataIndex: 'billDate', render: (text) => APP.fn.formatDate(text) },
+    { title: '对账单ID', dataIndex: 'serialNo', width: 180 },
+    { title: '日期', width: 150, dataIndex: 'billDate', render: (text) => APP.fn.formatDate(text) },
     { title: '供应商ID', dataIndex: 'supplierId' },
     { title: '供应商', dataIndex: 'supplierName' },
-    { title: '收入（元）', dataIndex: 'incomeMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
-    { title: '支出（元）', dataIndex: 'disburseMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
-    { title: '本期对账单金额', dataIndex: 'billMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
-    { title: '状态', dataIndex: 'billStatusInfo' },
+    { title: '收入（元）', dataIndex: 'incomeMoney', align: 'center', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    { title: '支出（元）', dataIndex: 'disburseMoney', align: 'center', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    { title: '本期对账单金额', dataIndex: 'billMoney', align: 'center', width: 150, render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    { title: '状态', align: 'center', dataIndex: 'billStatusInfo' },
     {
       title: '操作',
       width: 140,
       align: 'center',
-      render: () => {
+      render: (text, record) => {
         return (
           <div>
             <span
               className='href mr8'
               onClick={() => {
-                APP.history.push('/fresh/merchant-accounts/checking/222')
+                APP.history.push(`/fresh/merchant-accounts/checking/${record.id}`)
               }}
             >
               查看明细

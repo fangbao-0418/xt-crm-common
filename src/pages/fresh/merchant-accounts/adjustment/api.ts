@@ -1,18 +1,13 @@
 /*
  * @Date: 2020-04-29 15:23:54
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-01 19:43:19
+ * @LastEditTime: 2020-05-02 16:44:51
  * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/adjustment/api.ts
  */
 const { get, newPost, post } = APP.http
 import { ListRequest, BuildRequest, ExamineRequest } from './interface'
-/** 获取对账单列表 */
-export const fetchCheckingList = (payload: any) => {
-  return Promise.resolve({
-    records: []
-  })
-}
 
+/** 供应商列表 */
 export const fetchStoreList = (id: any) => {
   return post('/store/list', {
     id,
@@ -28,20 +23,12 @@ export const fetchStoreList = (id: any) => {
 
 /** 获取调整单列表 */
 export const fetchList = (payload: ListRequest) => {
-  console.log(payload, 'fetchList')
-  return Promise.resolve({
-    total: 0,
-    result: [
-      { id: 222 }
-    ]
-  })
-  // return newPost('/adjustment/record/list', payload)
+  return newPost('/mcweb/merchant/adjustment/record/list', payload)
 }
 
 /** 调整单详情 */
 export const fetchInfo = (id: number) => {
-  return get(`/adjustment/record/info?id=${id}`)
-  // return get(`/finance/trimRecord/info?id=${id}`)
+  return get(`/mcweb/merchant/adjustment/record/info?serialNo=${id}`)
 }
 
 /**
@@ -49,35 +36,24 @@ export const fetchInfo = (id: number) => {
  * @param {(0|1)} type - 审核类型 0-初审 1-复审
  * */
 export const toAudit = (payload: ExamineRequest, type: 0 | 1) => {
-  const url = '/adjustment/record/examine'
+  const url = '/mcweb/merchant/adjustment/record/examine'
   return newPost(url, {
     ...payload,
     type
   })
 }
 
-/** 根据ID导出 */
-export const toExport = (ids: number[]) => {
-  return newPost('/finance/trimRecord/exportTrimByTrimIds', ids)
-}
-
 /** 根据条件全部导出 */
 export const toSearchExport = (payload: Partial<ListRequest>) => {
-  return newPost('/finance/trimRecord/exportTrim', payload)
+  return newPost('/mcweb/merchant/adjustment/record/export', payload)
 }
 
 /** 新建调整单 */
 export const addAdjustment = (payload: Partial<BuildRequest>) => {
-  return newPost('/finance/trimRecord/build', payload)
+  return newPost('/mcweb/merchant/adjustment/record/save', payload)
 }
 
 /** 撤销 */
 export const toRevoke = (id: number) => {
-  return get(`/adjustment/record/cancel?adjustmentRecordSerialNo=${id}`)
-  // return get(`/finance/trimRecord/purchaseRevoke?id=${id}`)
-}
-
-/** 校验对账单 */
-export const validateAccNo = (id: number) => {
-  return get(`/finance/accountRecord/getSimplifyInfo?accNo=${id}`)
+  return get(`/mcweb/merchant/adjustment/record/cancel?serialNo=${id}`)
 }

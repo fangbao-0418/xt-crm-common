@@ -25,20 +25,18 @@ interface State {
 }
 
 interface FinanceAccountRecordVO {
-  /** 对账单编码 */
-  serialNo: string
-  /** 供应商名称 */
-  accName: string
   /** 创建日期 */
-  bulidDate: number
+  billDate: number
   /** 对账单状态 */
-  accStatus: number
+  billStatus: number
+  /** 状态描述，10：已结算 */
+  billStatusInfo: string
   /** 收入 */
   incomeMoney: number
   /** 支出 */
   disburseMoney: number
   /** 总额 */
-  settlementMoney: number
+  billMoney: number
 }
 
 class Main extends React.Component<Props, State> {
@@ -71,12 +69,14 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'unitPrice',
       title: '商品单价（元）',
-      render: (text) => APP.fn.formatMoneyNumber(text)
+      render: (text) => APP.fn.formatMoneyNumber(text, 'm2u'),
+      align: 'center'
     },
     {
       dataIndex: 'tradeMoney',
       title: '交易金额（元）',
-      render: (text) => APP.fn.formatMoneyNumber(text)
+      render: (text) => APP.fn.formatMoneyNumber(text, 'm2u'),
+      align: 'center'
     },
     {
       dataIndex: 'recordTypeInfo',
@@ -93,18 +93,17 @@ class Main extends React.Component<Props, State> {
     page: 1,
     pageSize: 10,
     financeAccountRecordVO: {
-      serialNo: '',
-      accName: '',
-      bulidDate: 0,
-      accStatus: 0,
-      incomeMoney: 0,
+      billDate: 0,
+      billStatus: 0,
       disburseMoney: 0,
-      settlementMoney: 0
+      billStatusInfo: '',
+      incomeMoney: 0,
+      billMoney: 0
     }
   }
   public render () {
     const query = this.state.financeAccountRecordVO
-    const bulidDate = APP.fn.formatDate(Number(query.bulidDate), 'YYYYMMDD')
+    const bulidDate = APP.fn.formatDate(Number(query.billDate), 'YYYYMMDD')
     return (
       <DetailPage title={'对账单明细'}>
         <div className={styles.detail}>
@@ -123,10 +122,10 @@ class Main extends React.Component<Props, State> {
               <div>收入：<span className='success'>{Number(query.incomeMoney) !== 0 ? '+' : ''}{APP.fn.formatMoney(query.incomeMoney) || '0.00'}</span>元</div>
               <div>支出：<span className='error'>{Number(query.disburseMoney) !== 0 ? '-' : ''}{APP.fn.formatMoney(query.disburseMoney) || '0.00'}</span>元</div>
               <div>本期对账单总额：
-                <span className={Number(query.settlementMoney) > 0 ? 'success' : 'error'}>
+                {/* <span className={Number(query.settlementMoney) > 0 ? 'success' : 'error'}>
                   {Number(query.settlementMoney) !== 0 ? Number(query.settlementMoney) > 0 ? '+' : '-' : ''}
                   {APP.fn.formatMoney(query.settlementMoney) || '0.00'}
-                </span>元
+                </span>元 */}
               </div>
             </div>
             <div>
@@ -147,20 +146,18 @@ class Main extends React.Component<Props, State> {
                 pageSize: payload.pageSize
               })
               return {
-                ...payload,
-                accId: this.id,
-                pageNo: payload.page,
-                page: undefined
+                id: this.id
               }
             }}
             processData={(data) => {
+              const records = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.records || []
+              const total = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.total || 0
               this.setState({
-                total: data.total
-                // financeAccountRecordVO: data.result[0].financeAccountRecordVO
+                total
               })
               return {
-                total: data.total,
-                records: data.result
+                total,
+                records
               }
             }}
           />

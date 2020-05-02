@@ -9,7 +9,6 @@ import * as api from '../api'
 
 interface Props {
   readonly?: boolean
-  from?: 'checking' | 'self'
 }
 
 class Main extends React.Component<Props> {
@@ -33,7 +32,6 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const readonly = this.props.readonly || false
-    const from = this.props.from || 'self'
     return (
       <div>
         <Form
@@ -51,7 +49,7 @@ class Main extends React.Component<Props> {
           <FormItem
             name='supplierId'
             type='input'
-            readonly={readonly || from === 'checking'}
+            readonly={readonly}
             verifiable
             controlProps={{
               style: { width: '100%' }
@@ -60,7 +58,7 @@ class Main extends React.Component<Props> {
               span: readonly ? 19 : 10
             }}
             addonAfterCol={{ span: 6 }}
-            addonAfter={(!readonly && from === 'self') && (
+            addonAfter={(!readonly) && (
               <Button
                 className='ml10'
                 onClick={this.validateSupplierId.bind(this)}
@@ -69,13 +67,15 @@ class Main extends React.Component<Props> {
               </Button>
             )}
           />
-          <FormItem
-            name='supplierNameSelect'
-            verifiable
-            readonly={readonly || from === 'checking'}
-          />
+          <If condition={!readonly}>
+            <FormItem
+              name='supplierNameSelect'
+              verifiable
+              readonly={readonly}
+            />
+          </If>
           <If condition={readonly}>
-            <FormItem name='supplierName' label='供应商' />
+            <FormItem readonly={readonly} name='supplierName' label='供应商' />
           </If>
           <FormItem name='billType' verifiable />
           <FormItem name='trimReason' verifiable />
@@ -134,7 +134,7 @@ class Main extends React.Component<Props> {
                       extname='png,jpg,jpeg'
                       listNum={5}
                       multiple
-                      size={1}
+                      size={2}
                     >
                     </Upload>
                   )}

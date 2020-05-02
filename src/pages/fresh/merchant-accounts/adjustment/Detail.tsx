@@ -183,7 +183,7 @@ class Main extends React.Component<Props, State> {
       <div className={styles.detail}>
         <If condition={type === 'add'}>
           <Adjustment
-            from={this.props.checkingInfo && 'checking'}
+            // from={this.props.checkingInfo && 'checking'}
             ref={(ref) => {
               this.adjustmentRef = ref as Adjustment
             }}

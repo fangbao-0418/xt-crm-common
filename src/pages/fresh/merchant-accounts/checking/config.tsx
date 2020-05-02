@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-29 10:33:20
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-29 20:22:58
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/checking/config.tsx
+ * @LastEditTime: 2020-05-02 17:10:11
+ * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/checking/config.tsx
  */
 import React from 'react'
 import { OptionProps } from '@/packages/common/components/form'
@@ -13,12 +13,9 @@ export interface FieldsConfig {
 export function getFieldsConfig (): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      id: {
+      serialNo: {
         type: 'input',
-        label: '对账单ID',
-        controlProps: {
-          type: 'number'
-        }
+        label: '对账单ID'
       },
       storeNameLike: {
         type: 'input',

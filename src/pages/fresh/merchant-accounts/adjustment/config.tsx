@@ -210,29 +210,26 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 }
 
 /**
- * 创建者类型：0：财务 1：采购：2员工：3供应商
+ * 创建者类型：10 员工
  */
 export enum CreatedTypeEnum {
-  财务 = 0,
-  采购 = 1,
-  员工 = 2,
-  供应商 = 3
+  员工 = 10
 }
 
 /**
- * 调整类型 1-收入，2-支出
+ * 调整类型 10-收入，20-支出
  */
-export enum TrimTypeEnum {
-  收入 = 1,
-  支出 = 2
+export enum BillTypeEnum {
+  收入 = 10,
+  支出 = 20
 }
 
 /**
  * 调整状态
  */
-export enum TrimStatusEnum {
-  待采购审核 = 10,
-  待财务审核 = 20,
+export enum BillStatusEnum {
+  待初审 = 10,
+  待复审 = 20,
   审核通过 = 30,
   审核不通过 = 40,
   已撤销 = 50

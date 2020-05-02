@@ -7,25 +7,20 @@ import Detail from './Detail'
 import Auth from '@/components/auth'
 import {
   getFieldsConfig,
-  TrimTypeEnum,
-  TrimStatusEnum,
-  CreatedTypeEnum,
-  TrimReasonEnum
+  BillTypeEnum,
+  BillStatusEnum,
+  CreatedTypeEnum
 } from './config'
 import * as api from './api'
-import { ColumnProps, TableRowSelection } from 'antd/lib/table'
-import { ListResponse, ListRequest, ListRecordProps } from './interface'
+import { ColumnProps } from 'antd/lib/table'
+import { ListRequest, ListRecordProps } from './interface'
 
 interface Props extends Partial<AlertComponentProps> {
-  /** 对账单状态 10待采购审核、20待财务审核、30审核通过、40审核不通过、50已失效 */
+  /** 单据状态，10：待初审，20：待复审，30：审核通过，40：审核不通过，50：已撤销 */
   status: number
 }
 
-interface State {
-  selectedRowKeys: any[]
-}
-
-class Main extends React.Component<Props, State> {
+class Main extends React.Component<Props> {
   public columns: ColumnProps<ListRecordProps>[] = [
     {
       dataIndex: 'serialNo',
@@ -42,7 +37,7 @@ class Main extends React.Component<Props, State> {
       title: '调整类型',
       width: 100,
       render: (text) => {
-        return TrimTypeEnum[text]
+        return BillTypeEnum[text]
       }
     },
     {
@@ -63,6 +58,7 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'supplierId',
       title: '供应商ID',
+      align: 'center',
       width: 150
     },
     {
@@ -73,9 +69,9 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'billStatus',
       title: '状态',
-      width: 100,
+      width: 150,
       render: (text) => {
-        return TrimStatusEnum[text]
+        return BillStatusEnum[text]
       }
     },
     {
@@ -107,7 +103,7 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'firstVerifyTime',
       title: '初审时间',
-      width: 200,
+      width: 150,
       render: (text) => {
         return APP.fn.formatDate(text)
       }
@@ -120,7 +116,7 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'secondVerifyTime',
       title: '复审时间',
-      width: 200,
+      width: 150,
       render: (text) => {
         return APP.fn.formatDate(text)
       }
@@ -182,9 +178,6 @@ class Main extends React.Component<Props, State> {
   ]
   public listpage: ListPageInstanceProps
   public payload: Partial<ListRequest>
-  public state: State = {
-    selectedRowKeys: []
-  }
   /** 添加调整单 */
   public showAdjustment (type: 'add' | 'audit' | 'view', record?: ListRecordProps) {
     if (this.props.alert) {
@@ -216,31 +209,18 @@ class Main extends React.Component<Props, State> {
   public toExport () {
     api.toSearchExport({
       ...this.payload,
-      pageNum: undefined,
+      page: undefined,
       pageSize: undefined
     }).then((res) => {
       return message.success('导出成功，请前往下载列表下载文件')
     })
   }
-  public onSelectChange = (selectedRowKeys: string[] | number[]) => {
-    this.setState({
-      selectedRowKeys
-    })
-  }
   public render () {
-    const { selectedRowKeys } = this.state
-    const rowSelection: TableRowSelection<ListResponse> = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-      columnWidth: 50,
-      fixed: true
-    }
     return (
       <div>
         <ListPage
           getInstance={(ref) => {
             this.listpage = ref
-            // this.addAdjustment()
           }}
           rangeMap={{
             createTime: {
@@ -309,12 +289,6 @@ class Main extends React.Component<Props, State> {
               >
                 批量导出
               </Button>
-              {/* <Button
-                type='primary'
-                onClick={this.toExport.bind(this, true)}
-              >
-                全部导出
-              </Button> */}
             </div>
           )}
           api={api.fetchList}
@@ -322,15 +296,13 @@ class Main extends React.Component<Props, State> {
             const status = this.props.status
             this.payload = {
               ...payload,
-              pageNum: payload.page,
-              page: undefined,
-              billStatus: payload.billStatus || (status === 0 ? undefined : status)
+              billStatus: status === 0 ? undefined : status
             }
             return this.payload
           }}
           processData={(data) => {
             return {
-              records: data.result,
+              records: data.records,
               total: data.total
             }
           }}

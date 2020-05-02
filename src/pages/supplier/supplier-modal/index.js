@@ -45,6 +45,7 @@ class SupplierModal extends Component {
     form.validateFields((err, vals) => {
       if (!err) {
         const api = isEdit ? updateSupplier : addSupplier
+        vals.freezeLimit = vals.freezeLimit !== undefined ? Number(vals.freezeLimit) : undefined
         api({
           id,
           ...vals
@@ -214,15 +215,6 @@ class SupplierModal extends Component {
             {this.state.category === 5 && (
               <FormItem required label='设置冻结金额'>
                 {getFieldDecorator('freezeLimit', {
-                  rules: [{
-                    validator: (rules, value, cb) => {
-                      console.log(value, 'xxxxx')
-                      if (value === undefined) {
-                        cb('请选择冻结金额')
-                      }
-                      cb()
-                    }
-                  }]
                 })(
                   <Select
                     placeholder='请选择冻结金额'
