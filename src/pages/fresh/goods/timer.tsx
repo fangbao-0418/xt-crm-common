@@ -8,7 +8,7 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
 import { RouteComponentProps } from 'react-router'
-import StoreTimerModal from './timer-modal';
+import StoreTimerModal from './timer-modal'
 import dateFns from 'date-fns'
 type Props = RouteComponentProps<{ id: string }>;
 
@@ -23,13 +23,13 @@ class Store extends Component {
   state: StoreFormState = {
     readonly: this.readonly,
     data: {},
-    visible: false,
+    visible: false
   }
   form: FormInstance;
   provinceName: string;
   cityName: string;
   areaName: string;
-  constructor(props: Props) {
+  constructor (props: Props) {
     super(props)
   }
   columns = [{
@@ -106,15 +106,14 @@ class Store extends Component {
           <span className='href' onClick={() => this.setState({
             data: record,
             visible: true
-          })}>查看</span>
+          })}>查看
+          </span>
         </>
       )
     }
   }]
 
-
-
-  render() {
+  render () {
     const { visible, data } = this.state
     return (
       <>
@@ -129,7 +128,7 @@ class Store extends Component {
             <>
               <FormItem label='商品批次名称' name='batchName' />
               <FormItem name='workDate' />
-              <FormItem name='type'/>
+              <FormItem name='type' />
               <FormItem name='status' />
             </>
           )}
@@ -147,7 +146,9 @@ class Store extends Component {
           columns={this.columns}
         />
         {visible && <StoreTimerModal data={data} visible={visible} onOk={(data: any) => {
-
+          if (data) {
+            this.list.refresh()
+          }
           this.setState({ visible: false })
         }} onCancel={() => this.setState({ visible: false })} />}
       </>
