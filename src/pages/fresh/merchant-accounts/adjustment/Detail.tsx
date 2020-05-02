@@ -128,8 +128,12 @@ class Main extends React.Component<Props, State> {
           name: item.name
         }
       })
+      const supplier = value.supplier || {}
       value = {
         ...value,
+        supplierId: value.supplierId != undefined ? value.supplierId : supplier.key,
+        supplierName: supplier.label,
+        supplier: undefined,
         imgVoucher,
         fileVoucher,
         billMoney: APP.fn.formatMoneyNumber(value.billMoney, 'u2m')

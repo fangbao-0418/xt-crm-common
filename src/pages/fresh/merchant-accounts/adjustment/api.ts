@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-29 15:23:54
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-02 16:44:51
+ * @LastEditTime: 2020-05-02 20:50:30
  * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/adjustment/api.ts
  */
 const { get, newPost, post } = APP.http
@@ -12,7 +12,8 @@ export const fetchStoreList = (id: any) => {
   return post('/store/list', {
     id,
     page: 1,
-    pageSize: 1
+    pageSize: 1,
+    category: 5
   }).then((res) => {
     if (res.records && res.records.length > 0) {
       return res.records[0]
@@ -21,9 +22,24 @@ export const fetchStoreList = (id: any) => {
   })
 }
 
+const handlePayload = (payload: Partial<ListRequest>) => {
+  const supplier = (payload as any).supplier || {}
+  payload = {
+    ...payload,
+    supplierId: payload.supplierId !== undefined ? payload.supplierId : supplier.key,
+    supplier: undefined
+  } as ListRequest
+  return payload
+}
+
 /** 获取调整单列表 */
-export const fetchList = (payload: ListRequest) => {
-  return newPost('/mcweb/merchant/adjustment/record/list', payload)
+export const fetchList = (payload: Partial<ListRequest>) => {
+  return newPost('/mcweb/merchant/adjustment/record/list', handlePayload(payload))
+}
+
+/** 根据条件全部导出 */
+export const toSearchExport = (payload: Partial<ListRequest>) => {
+  return newPost('/mcweb/merchant/adjustment/record/export', handlePayload(payload))
 }
 
 /** 调整单详情 */
@@ -41,11 +57,6 @@ export const toAudit = (payload: ExamineRequest, type: 0 | 1) => {
     ...payload,
     type
   })
-}
-
-/** 根据条件全部导出 */
-export const toSearchExport = (payload: Partial<ListRequest>) => {
-  return newPost('/mcweb/merchant/adjustment/record/export', payload)
 }
 
 /** 新建调整单 */

@@ -214,7 +214,7 @@ class Main extends React.Component<Props> {
       page: undefined,
       pageSize: undefined
     }).then((res) => {
-      return message.success('导出成功，请前往下载列表下载文件')
+      APP.success('导出成功，请前往下载列表下载文件')
     })
   }
   public render () {
@@ -229,7 +229,7 @@ class Main extends React.Component<Props> {
               fields: ['createTimeBegin', 'createTimeEnd']
             }
           }}
-          reserveKey={`adjustment${this.props.status}`}
+          reserveKey={`fresh/merchant-accounts/adjustment-${this.props.status}`}
           columns={this.columns}
           formConfig={getFieldsConfig()}
           tableProps={{
@@ -246,7 +246,7 @@ class Main extends React.Component<Props> {
                   <FormItem label='调整单ID' name='serialNo' />
                 </Col>
                 <Col span={6}><FormItem name='supplierId' /></Col>
-                <Col span={6}><FormItem name='supplierName' /></Col>
+                <Col span={6}><FormItem name='supplierNameSelect' /></Col>
                 <Col span={6}><FormItem name='billType' /></Col>
               </Row>
               <Row>

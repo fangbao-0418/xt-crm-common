@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import { OptionProps } from '@/packages/common/components/form'
-import SupplierSelect from '@/pages/goods/components/supplier-select'
+import SupplierSelect from '@/components/supplier-selector'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
 }
@@ -174,7 +174,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       supplierNameSelect: {
         label: '供应商',
         inner: (form) => {
-          return form.getFieldDecorator('supplierName', {
+          return form.getFieldDecorator('supplier', {
             rules: [
               {
                 required: true,
@@ -183,7 +183,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
             ]
           })(
             <SupplierSelect
-              style={{ width: '60%' }}
+              style={{ width: 200 }}
+              category={5}
             />
           )
         }
@@ -191,6 +192,11 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       supplierId: {
         type: 'input',
         label: '供应商ID',
+        fieldDecoratorOptions: {
+          rules: [
+            { required: true, message: '供应商ID不能为空' }
+          ]
+        },
         controlProps: {
           type: 'number'
         }
