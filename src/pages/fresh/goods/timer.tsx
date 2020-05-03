@@ -2,8 +2,9 @@
 import React, { Component } from 'react'
 import { closeTimerById, openTimerById, addTimer, getTimerList } from './api'
 import { ListPage, If, FormItem } from '@/packages/common/components'
+import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import { defaultConfig, NAME_SPACE } from './timer-config'
-import { Button, Modal, Cascader, Select } from 'antd'
+import { Button, Modal, Cascader, Select, message } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
@@ -15,7 +16,8 @@ type Props = RouteComponentProps<{ id: string }>;
 interface StoreFormState {
   readonly: boolean,
   data: any,
-  visible: boolean
+  visible: boolean,
+  selectedRowKeys: Array<any>
 }
 class Store extends Component {
   readonly: boolean = !!(parseQuery() as any).readOnly
@@ -23,7 +25,8 @@ class Store extends Component {
   state: StoreFormState = {
     readonly: this.readonly,
     data: {},
-    visible: false
+    visible: false,
+    selectedRowKeys: []
   }
   form: FormInstance;
   provinceName: string;
@@ -31,6 +34,29 @@ class Store extends Component {
   areaName: string;
   constructor (props: Props) {
     super(props)
+  }
+  updateTimer(type:string, ids:Array<any>) {
+    if(!ids || ids.length < 1) return message.warning( '请选择操作数据');
+    let config = {
+      funs: openTimerById,
+      text: '开启'
+    }
+    if(type == 'close') config = {
+      funs: closeTimerById,
+      text: '关闭'
+    }
+    Modal.confirm({
+      title: '系统提示',
+      content: `是否确定${config.text}？`,
+      onOk: () => {
+        config.funs(ids).then((res: any) => {
+          if (res) {
+            APP.success(`${config.text}成功`)
+            this.list.refresh()
+          }
+        })
+      }
+    })
   }
   columns = [{
     title: '批次名称',
@@ -63,19 +89,7 @@ class Store extends Component {
           <If condition={record.status === 0}>
             <span
               className='href ml10'
-              onClick={() => {
-                Modal.confirm({
-                  title: '系统提示',
-                  content: '是否确定开启？',
-                  onOk: () => {
-                    openTimerById(record.id).then((res: any) => {
-                      if (res) {
-                        APP.success('开启成功')
-                        this.list.refresh()
-                      }
-                    })
-                  }
-                })
+              onClick={() => {this.updateTimer('open', [record.id]);
               }}
             >
               开启
@@ -84,19 +98,7 @@ class Store extends Component {
           <If condition={record.status === 1}>
             <span
               className='href ml10'
-              onClick={() => {
-                Modal.confirm({
-                  title: '系统提示',
-                  content: '是否确定关闭？',
-                  onOk: () => {
-                    closeTimerById(record.id).then((res: any) => {
-                      if (res) {
-                        APP.success('关闭成功')
-                        this.list.refresh()
-                      }
-                    })
-                  }
-                })
+              onClick={() => {this.updateTimer('close', [record.id]);
               }}
             >
               关闭
@@ -112,13 +114,23 @@ class Store extends Component {
       )
     }
   }]
-
+  onRowSelectionChange = (selectedRowKeys: any[]) => {
+    console.log(selectedRowKeys, 'selectedRowKeys')
+    this.setState({
+      selectedRowKeys: selectedRowKeys
+    })
+  }
   render () {
-    const { visible, data } = this.state
+    const { visible, data, selectedRowKeys } = this.state
+    const rowSelection: TableRowSelection<CreditPay.ItemProps> = {
+      selectedRowKeys,
+      onChange: this.onRowSelectionChange
+    }
     return (
       <>
         <ListPage
           getInstance={ref => this.list = ref}
+          rowSelection={rowSelection}
           rangeMap={{
             workDate: {
               fields: ['effectTimeStart', 'effectTimeEnd']
@@ -136,8 +148,10 @@ class Store extends Component {
           addonAfterSearch={(
             <div className='mb10'>
               <Button type='danger' onClick={() => this.setState({ visible: true, data: {} })}>新建</Button>&nbsp;&nbsp;
-              {/* <Button onClick={() => APP.history.push('/fresh/store/-1')}>开启</Button>&nbsp;&nbsp;
-              <Button onClick={() => APP.history.push('/fresh/store/-1')}>关闭</Button> */}
+              <Button onClick={() => {
+                this.updateTimer('open', selectedRowKeys);
+              }}>开启</Button>&nbsp;&nbsp;
+              <Button onClick={() => this.updateTimer('close', selectedRowKeys)}>关闭</Button>
             </div>
           )}
           namespace={NAME_SPACE}

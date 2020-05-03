@@ -147,15 +147,15 @@ export function addTimer (payload) {
 }
 /**
  * 开启自动上下架批次
- * @param {*} id 
+ * @param {*} ids 
  */
-export function openTimerById (id) {
-  return newPut('/mcweb/product/fresh/auto/config/open?id='+id)
+export function openTimerById (ids) {
+  return newPut('/mcweb/product/fresh/auto/config/open', {ids})
 }
 /**
  * 关闭自动上下架批次
- * @param {*} payload 
+ * @param {*} ids 
  */
-export function closeTimerById (id) {
-  return newPut('/mcweb/product/fresh/auto/config/close?id='+id)
+export function closeTimerById (ids) {
+  return newPut('/mcweb/product/fresh/auto/config/close', {ids})
 }
