@@ -297,7 +297,7 @@ class Main extends React.Component<Props> {
             const status = this.props.status
             this.payload = {
               ...payload,
-              billStatus: status === 0 ? undefined : status
+              billStatus: payload.billStatus !== undefined ? payload.billStatus : (status === 0 ? undefined : status)
             }
             return this.payload
           }}
