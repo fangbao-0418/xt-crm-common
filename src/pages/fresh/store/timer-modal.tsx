@@ -111,7 +111,7 @@ class StoreTimerModal extends React.Component<Props, State> {
     const { getFieldDecorator } = this.props.form
     return (
       <Modal
-        title='商品批次'
+        title='门店批次'
         visible={visible}
         width={600}
         onOk={this.onOk}
