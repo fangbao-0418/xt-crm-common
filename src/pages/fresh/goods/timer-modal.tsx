@@ -91,7 +91,7 @@ class StoreTimerModal extends React.Component<Props, State> {
           batchName: values.batchName,
           type: values.type,
           file: values.file[0].file,
-          effectTime: values.effectTime.toDate().getTime()
+          effectTime: values.effectTime.toDate().setMilliseconds(0)
         }).then((data:any) => {
           if (this.props.onOk && data) {
             message.success('新建成功')
@@ -151,8 +151,7 @@ class StoreTimerModal extends React.Component<Props, State> {
                   message: '请选择操作类型'
                 }
               ]
-            }
-            )(<XtSelect disabled={readonly} data={[{ key: 1, val: '上架' }, { key: 2, val: '下架' }]} style={{ width: '174px' }} placeholder="请选择" />)}
+            })(<XtSelect disabled={readonly} data={[{ key: 1, val: '上架' }, { key: 2, val: '下架' }]} style={{ width: '174px' }} placeholder='请选择' />)}
           </Form.Item>
           <Form.Item label='上传文件'>
             {getFieldDecorator('file', {

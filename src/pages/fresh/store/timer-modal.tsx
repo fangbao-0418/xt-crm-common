@@ -92,7 +92,7 @@ class StoreTimerModal extends React.Component<Props, State> {
           name: values.name,
           actionType: values.actionType,
           file: values.file[0].file,
-          actionTime: values.actionTime.toDate().getTime()
+          actionTime: values.actionTime.toDate().setMilliseconds(0)
         }).then((data:any) => {
           if (this.props.onOk && data) {
             message.success('新建成功')
