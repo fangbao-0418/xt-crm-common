@@ -117,7 +117,7 @@ class Main extends React.Component<Props> {
   }
   public batchPayFail () {
     this.selectFile().then((file) => {
-      api.batchPay(file).then(() => {
+      api.batchPayFail(file).then(() => {
         APP.success('批量失败操作完成')
         this.listpage.refresh()
       })
