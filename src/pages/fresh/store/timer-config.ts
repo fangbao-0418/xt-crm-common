@@ -10,7 +10,7 @@ export const defaultConfig: FieldsConfig = {
         showTime: true
       }
     },
-    type: {
+    actionType: {
       label: '类型',
       type: 'select',
       controlProps: {
@@ -18,9 +18,9 @@ export const defaultConfig: FieldsConfig = {
           width: 172
         }
       },
-      options: [{ value: 1, label: '上线' }, { value: 2, label: '下线' }]
+      options: [{ value: 1, label: '上线' }, { value: 0, label: '下线' }]
     },
-    status:{
+    actionStatus:{
       label: '状态',
       type: 'select',
       controlProps: {

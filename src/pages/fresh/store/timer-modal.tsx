@@ -119,12 +119,12 @@ class StoreTimerModal extends React.Component<Props, State> {
         }}
       >
         <Form {...formItemLayout}>
-          <Form.Item label="商品批次名称">
-            {getFieldDecorator('batchName', {
+          <Form.Item label="门店批次名称">
+            {getFieldDecorator('name', {
               rules: [
                 {
                   required: true,
-                  message: '请输入商品批次名称'
+                  message: '请输入门店批次名称'
                 }
               ]
             })(<Input placeholder="请输入" disabled={readonly}/>)}
@@ -152,7 +152,7 @@ class StoreTimerModal extends React.Component<Props, State> {
                 }
               ]
             }
-            )(<XtSelect disabled={readonly} data={[{ key: 1, val: '上线' }, { key: 2, val: '下线' }]} style={{ width: '174px' }} placeholder="请选择" />)}
+            )(<XtSelect disabled={readonly} data={[{ key: 1, val: '上线' }, { key: 0, val: '下线' }]} style={{ width: '174px' }} placeholder="请选择" />)}
           </Form.Item>
           <Form.Item label="上传文件">
             {getFieldDecorator('file', {

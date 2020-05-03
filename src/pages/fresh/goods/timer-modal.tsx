@@ -152,7 +152,7 @@ class StoreTimerModal extends React.Component<Props, State> {
                 }
               ]
             }
-            )(<XtSelect disabled={readonly} data={[{ key: 1, val: '上线' }, { key: 2, val: '下线' }]} style={{ width: '174px' }} placeholder="请选择" />)}
+            )(<XtSelect disabled={readonly} data={[{ key: 1, val: '上架' }, { key: 2, val: '下架' }]} style={{ width: '174px' }} placeholder="请选择" />)}
           </Form.Item>
           <Form.Item label="上传文件">
             {getFieldDecorator('file', {

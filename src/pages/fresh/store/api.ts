@@ -96,14 +96,14 @@ export function getTimerList(payload: any) {
  * @param {*} ids 
  */
 export function openTimerById(ids: any) {
-  return newPost('/point/batch/online', {ids})
+  return newPost('/point/batch/updateActionStatus', {ids:[ids], actionStatus: 1})
 }
 /**
  * 关闭自动上下架批次
  * @param {*} ids 
  */
 export function closeTimerById(ids: any) {
-  return newPost('/point/batch/close', {ids})
+  return newPost('/point/batch/updateActionStatus', {ids:[ids], actionStatus: 0})
 }
 
 /**
@@ -113,10 +113,10 @@ export function closeTimerById(ids: any) {
 export function addTimer(payload: any) {
   const form = new FormData()
   form.append('file', payload.file)
-  form.append('type', payload.type)
-  form.append('effectTime', payload.effectTime)
-  form.append('batchName', payload.batchName)
-  return post('/mcweb/product/fresh/auto/config/new', {}, {
+  form.append('actionType', payload.type)
+  form.append('actionTime', payload.effectTime)
+  form.append('name', payload.name)
+  return post('/point/batch/create', {}, {
     data: form,
     headers: {
       'Content-Type': 'multipart/form-data'

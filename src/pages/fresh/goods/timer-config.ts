@@ -18,7 +18,7 @@ export const defaultConfig: FieldsConfig = {
           width: 172
         }
       },
-      options: [{ value: 1, label: '上线' }, { value: 2, label: '下线' }]
+      options: [{ value: 1, label: '上架' }, { value: 2, label: '下架' }]
     },
     status:{
       label: '状态',

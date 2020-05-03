@@ -125,15 +125,15 @@ class Store extends Component {
           getInstance={ref => this.list = ref}
           rangeMap={{
             workDate: {
-              fields: ['effectTimeStart', 'effectTimeEnd']
+              fields: ['startActionTime', 'endActionTime']
             }
           }}
           formItemLayout={(
             <>
-              <FormItem label='商品批次名称' name='batchName' />
+              <FormItem label='门店批次名称' name='name' />
               <FormItem name='workDate' />
-              <FormItem name='type'/>
-              <FormItem name='status' />
+              <FormItem name='actionType'/>
+              <FormItem name='actionStatus' />
             </>
           )}
 
