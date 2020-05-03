@@ -1,17 +1,17 @@
 /*
  * @Date: 2020-04-28 14:00:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-02 19:59:35
- * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/checking/api.ts
+ * @LastEditTime: 2020-05-03 20:40:21
+ * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/checking/api.ts
  */
 const { get, newPost } = APP.http
 export const fetchList = (payload: any) => {
-  return get('/mcweb/merchant/fresh/account/statement/list', payload)
+  return get('::guard/mcweb/merchant/fresh/account/statement/list', payload)
 }
 
 /** 获取对账单明细信息 */
 export const fetchDetail = (payload: {id: any}) => {
-  return get(`/mcweb/merchant/fresh/account/statement/${payload.id}`)
+  return get(`::guard/mcweb/merchant/fresh/account/statement/${payload.id}`)
 }
 
 /** 获取对账单商品明细列表 */
@@ -20,7 +20,7 @@ export const fetchDetailShopList = (payload: {
   page: number
   pageSize: number
 }) => {
-  return get(`/mcweb/merchant/fresh/account/statement/detail/${payload.id}`, {
+  return get(`::guard/mcweb/merchant/fresh/account/statement/detail/${payload.id}`, {
     ...payload,
     id: undefined
   })
@@ -36,7 +36,7 @@ export const batchExport = (payload: {
   year?: number
   month?: number
 }) => {
-  return get('/mcweb/merchant/fresh/account/statement/export', payload)
+  return get('::guard/mcweb/merchant/fresh/account/statement/export', payload)
 }
 
 export const batchExportDetail = (payload: {
@@ -49,10 +49,10 @@ export const batchExportDetail = (payload: {
   year?: number
   month?: number
 }) => {
-  return get('/mcweb/merchant/fresh/account/statement/export/detail', payload)
+  return get('::guard/mcweb/merchant/fresh/account/statement/export/detail', payload)
 }
 
 /** 对账单详情明细导出 */
 export const exportDetail = (id: any) => {
-  return get(`/mcweb/merchant/fresh/account/statement/detail/export/${id}`)
+  return get(`::guard/mcweb/merchant/fresh/account/statement/detail/export/${id}`)
 }
