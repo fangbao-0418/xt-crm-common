@@ -54,6 +54,7 @@ class Store extends Component {
     render: (record: any) => {
       if(record.actionStatus == 0) return '关闭';
       if(record.actionStatus == 1) return '开启'
+      if(record.actionStatus == 2) return '已完成'
       return ''
     }
   }, {

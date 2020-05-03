@@ -64,7 +64,7 @@ class StoreTimerModal extends React.Component<Props, State> {
         ...this.props.data,
         actionTime: moment(+this.props.data.actionTime),
         file: [{
-          url: this.props.data.fileUrl,
+          url: this.props.data.fileDownUrl,
           name: this.props.data.fileName
         }]
       })
