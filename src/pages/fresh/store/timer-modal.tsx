@@ -5,8 +5,8 @@ import { XtSelect } from '@/components'
 import _ from 'lodash'
 import { FormComponentProps } from 'antd/lib/form'
 import Upload from '@/components/upload/file'
-const { RangePicker } = DatePicker;
-import moment from 'moment';
+const { RangePicker } = DatePicker
+import moment from 'moment'
 const formItemLayout = {
   labelCol: {
     sm: { span: 6 }
@@ -14,7 +14,7 @@ const formItemLayout = {
   wrapperCol: {
     sm: { span: 14 }
   }
-};
+}
 
 export interface Props extends FormComponentProps {
   visible?: boolean
@@ -52,10 +52,10 @@ class StoreTimerModal extends React.Component<Props, State> {
     visible: this.props.visible || false
   }
 
-  public constructor(props: Props) {
-    super(props);
+  public constructor (props: Props) {
+    super(props)
   }
-  componentDidMount() {
+  componentDidMount () {
     if (this.props.data.id) {
       this.setState({
         readonly: true
@@ -68,7 +68,7 @@ class StoreTimerModal extends React.Component<Props, State> {
           name: this.props.data.fileName
         }]
       })
-    }else {
+    } else {
       this.setState({
         readonly: false
       })
@@ -76,15 +76,17 @@ class StoreTimerModal extends React.Component<Props, State> {
     }
   }
 
-  public componentWillReceiveProps(props: Props) {
+  public componentWillReceiveProps (props: Props) {
     this.setState({
-      visible: props.visible || false,
+      visible: props.visible || false
     })
   }
   public onOk = () => {
-    if(this.props.data.id) return this.props.onOk()
+    if (this.props.data.id) {
+      return this.props.onOk()
+    }
     this.props.form.validateFields(async (errors, values) => {
-      
+
       if (!errors) {
         addTimer({
           batchName: values.batchName,
@@ -93,21 +95,20 @@ class StoreTimerModal extends React.Component<Props, State> {
           effectTime: values.effectTime.toDate().getTime()
         }).then((data:any) => {
           if (this.props.onOk && data) {
-            message.success('新建成功');
+            message.success('新建成功')
             this.props.onOk()
             this.setState({
               visible: false
             })
           }
         })
-        
+
       }
-    }
-    )
+    })
   }
-  public render() {
-    const { visible, readonly } = this.state;
-    const { getFieldDecorator } = this.props.form;
+  public render () {
+    const { visible, readonly } = this.state
+    const { getFieldDecorator } = this.props.form
     return (
       <Modal
         title='商品批次'
@@ -119,7 +120,7 @@ class StoreTimerModal extends React.Component<Props, State> {
         }}
       >
         <Form {...formItemLayout}>
-          <Form.Item label="门店批次名称">
+          <Form.Item label='门店批次名称'>
             {getFieldDecorator('name', {
               rules: [
                 {
@@ -127,9 +128,9 @@ class StoreTimerModal extends React.Component<Props, State> {
                   message: '请输入门店批次名称'
                 }
               ]
-            })(<Input placeholder="请输入" disabled={readonly}/>)}
+            })(<Input placeholder='请输入' disabled={readonly} />)}
           </Form.Item>
-          <Form.Item label="日期">
+          <Form.Item label='日期'>
             {getFieldDecorator('effectTime', {
               rules: [
                 {
@@ -138,12 +139,12 @@ class StoreTimerModal extends React.Component<Props, State> {
                 }
               ]
             })(<DatePicker
-              format="YYYY-MM-DD HH:mm:ss"
+              format='YYYY-MM-DD HH:mm:ss'
               disabled={readonly}
               showTime
             />)}
           </Form.Item>
-          <Form.Item label="操作类型">
+          <Form.Item label='操作类型'>
             {getFieldDecorator('type', {
               rules: [
                 {
@@ -151,10 +152,9 @@ class StoreTimerModal extends React.Component<Props, State> {
                   message: '请选择操作类型'
                 }
               ]
-            }
-            )(<XtSelect disabled={readonly} data={[{ key: 1, val: '上线' }, { key: 0, val: '下线' }]} style={{ width: '174px' }} placeholder="请选择" />)}
+            })(<XtSelect disabled={readonly} data={[{ key: 1, val: '上线' }, { key: 0, val: '下线' }]} style={{ width: '174px' }} placeholder='请选择' />)}
           </Form.Item>
-          <Form.Item label="上传文件">
+          <Form.Item label='上传文件'>
             {getFieldDecorator('file', {
               rules: [
                 {
@@ -176,7 +176,7 @@ class StoreTimerModal extends React.Component<Props, State> {
               </Upload>
             )}
           </Form.Item>
-          {!readonly && <Form.Item label="模板"><a href="https://assets.hzxituan.com/upload/2020-05-01/%E5%95%86%E5%93%81%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%B8%8B%E6%9E%B6.xlsx" target="_blank">商品自动上下架.xlsx</a></Form.Item>}
+          {!readonly && <Form.Item label='模板'><a href='https://assets.hzxituan.com/upload/2020-05-01/%E9%97%A8%E5%BA%97%E6%89%B9%E6%AC%A1%E6%A8%A1%E6%9D%BF.xlsx' target='_blank'>门店批次模板.xlsx</a></Form.Item>}
         </Form>
       </Modal>
     )
