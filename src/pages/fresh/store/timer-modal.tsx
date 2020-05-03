@@ -62,7 +62,7 @@ class StoreTimerModal extends React.Component<Props, State> {
       })
       this.props.form.setFieldsValue({
         ...this.props.data,
-        effectTime: moment(+this.props.data.effectTime),
+        actionTime: moment(+this.props.data.actionTime),
         file: [{
           url: this.props.data.fileUrl,
           name: this.props.data.fileName
@@ -89,14 +89,14 @@ class StoreTimerModal extends React.Component<Props, State> {
 
       if (!errors) {
         addTimer({
-          batchName: values.batchName,
-          type: values.type,
+          name: values.name,
+          actionType: values.actionType,
           file: values.file[0].file,
-          effectTime: values.effectTime.toDate().getTime()
+          actionTime: values.actionTime.toDate().getTime()
         }).then((data:any) => {
           if (this.props.onOk && data) {
             message.success('新建成功')
-            this.props.onOk()
+            this.props.onOk(true)
             this.setState({
               visible: false
             })
@@ -131,7 +131,7 @@ class StoreTimerModal extends React.Component<Props, State> {
             })(<Input placeholder='请输入' disabled={readonly} />)}
           </Form.Item>
           <Form.Item label='日期'>
-            {getFieldDecorator('effectTime', {
+            {getFieldDecorator('actionTime', {
               rules: [
                 {
                   required: true,
@@ -145,7 +145,7 @@ class StoreTimerModal extends React.Component<Props, State> {
             />)}
           </Form.Item>
           <Form.Item label='操作类型'>
-            {getFieldDecorator('type', {
+            {getFieldDecorator('actionType', {
               rules: [
                 {
                   required: true,
@@ -165,12 +165,12 @@ class StoreTimerModal extends React.Component<Props, State> {
             })(
               <Upload
                 disabled={readonly}
-                listType='text'
+                listactionType='text'
                 listNum={1}
                 accept='doc,xls'
                 size={10}
                 extname='xls,xlsx'
-                fileTypeErrorText='请上传正确xls格式文件'
+                fileactionTypeErrorText='请上传正确xls格式文件'
               >
                 <span className={readonly ? 'disabled' : 'href'}>+添加文件</span>
               </Upload>

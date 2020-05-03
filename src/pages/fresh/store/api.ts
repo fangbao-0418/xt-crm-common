@@ -113,8 +113,8 @@ export function closeTimerById(ids: any) {
 export function addTimer(payload: any) {
   const form = new FormData()
   form.append('file', payload.file)
-  form.append('actionType', payload.type)
-  form.append('actionTime', payload.effectTime)
+  form.append('actionType', payload.actionType)
+  form.append('actionTime', payload.actionTime)
   form.append('name', payload.name)
   return post('/point/batch/create', {}, {
     data: form,

@@ -150,7 +150,9 @@ class Store extends Component {
           columns={this.columns}
         />
         {visible && <StoreTimerModal data={data} visible={visible} onOk={(data: any) => {
-
+           if (data) {
+            this.list.refresh()
+          }
           this.setState({ visible: false })
         }} onCancel={() => this.setState({ visible: false })} />}
       </>
