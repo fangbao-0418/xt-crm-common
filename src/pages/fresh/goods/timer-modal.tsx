@@ -127,7 +127,7 @@ class StoreTimerModal extends React.Component<Props, State> {
                   message: '请输入商品批次名称'
                 }
               ]
-            })(<Input placeholder='请输入' disabled={readonly} />)}
+            })(<Input maxLength={20} placeholder='请输入' disabled={readonly} />)}
           </Form.Item>
           <Form.Item label='日期'>
             {getFieldDecorator('effectTime', {
