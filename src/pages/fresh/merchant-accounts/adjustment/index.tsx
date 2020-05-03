@@ -3,7 +3,7 @@ import { Tabs } from 'antd'
 import TabItem from './TabItem'
 import { getPayload, setPayload } from '@/packages/common/utils'
 const { TabPane } = Tabs
-const namespace = 'adjustment'
+const namespace = 'fresh/merchant-accounts/adjustment-status'
 interface State {
   activeKey: string
 }

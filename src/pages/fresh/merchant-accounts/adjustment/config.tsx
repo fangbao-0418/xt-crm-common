@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import { OptionProps } from '@/packages/common/components/form'
-import SupplierSelect from '@/pages/goods/components/supplier-select'
+import SupplierSelect from '@/components/supplier-selector'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
 }
@@ -96,10 +96,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '创建人类型',
         options: [
-          { label: '财务', value: 0 },
-          { label: '采购', value: 1 },
-          { label: '供应商', value: 3 },
-          { label: '员工', value: 2 }
+          { label: '员工', value: 10 }
         ]
       },
       createName: {
@@ -134,13 +131,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       /** 审核说明 */
       auditRemark: {
         type: 'textarea',
-        label: '调整说明',
+        label: '审核说明',
         controlProps: {
           maxLength: 250
         },
         fieldDecoratorOptions: {
           rules: [
-            { required: true, message: '调整说明不能为空' },
+            { required: true, message: '审核说明不能为空' },
             { max: 250, message: '长度最大250个字符' }
           ]
         }
@@ -174,7 +171,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       supplierNameSelect: {
         label: '供应商',
         inner: (form) => {
-          return form.getFieldDecorator('supplierName', {
+          return form.getFieldDecorator('supplier', {
             rules: [
               {
                 required: true,
@@ -183,16 +180,24 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
             ]
           })(
             <SupplierSelect
-              style={{ width: '60%' }}
+              style={{ width: 200 }}
+              category={5}
             />
           )
         }
       },
       supplierId: {
-        type: 'input',
+        type: 'number',
         label: '供应商ID',
+        fieldDecoratorOptions: {
+          rules: [
+            { required: true, message: '供应商ID不能为空' }
+          ]
+        },
         controlProps: {
-          type: 'number'
+          style: {
+            width: 150
+          }
         }
       },
       supplierName: {

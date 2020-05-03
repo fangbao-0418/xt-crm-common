@@ -132,7 +132,7 @@ class Main extends React.Component<Props> {
         return (
           <div>
             {[
-              (APP.user.menuGathers.indexOf('adjustment:procurement_audit') > -1 && [10, 20].indexOf(record.billStatus) === -1) && (
+              ([10, 20].indexOf(record.billStatus) === -1) && (
                 <>
                   <span
                     className='href'
@@ -146,7 +146,7 @@ class Main extends React.Component<Props> {
               ),
               <Auth key={2}>
                 {(access: boolean, codes: string[]) => {
-                  return (record.billStatus === 10 && codes.indexOf('adjustment:procurement_audit') > -1 || record.billStatus === 20 && codes.indexOf('adjustment:finance_audit') > -1) && (
+                  return ([10, 20].includes(record.billStatus) && codes.indexOf('fresh:adjustment:record:examine') > -1) && (
                     <>
                       <span
                         className='href'
@@ -160,18 +160,17 @@ class Main extends React.Component<Props> {
                   )
                 }}
               </Auth>,
-              (
-                <Auth key={3} code='*'>
-                  <Popconfirm
-                    title='确定是否撤销？'
-                    onConfirm={this.toRevoke.bind(this, record)}
-                  >
-                    <span className='href'>撤销</span>
-                  </Popconfirm>
-                </Auth>
+              record.billStatus === 10 && (
+                <Popconfirm
+                  key={3}
+                  title='确定是否撤销？'
+                  onConfirm={this.toRevoke.bind(this, record)}
+                >
+                  <span className='href'>撤销</span>
+                </Popconfirm>
               )
             ].map((node) => {
-              return [node, <span key='span'>&nbsp;</span>]
+              return node && [node, <span key='span'>&nbsp;</span>]
             })}
           </div>
         )
@@ -189,7 +188,7 @@ class Main extends React.Component<Props> {
         content: (
           <Detail
             type={type}
-            id={record && record.serialNo}
+            id={record?.serialNo}
             onOk={() => {
               this.listpage.refresh()
               hide()
@@ -214,7 +213,7 @@ class Main extends React.Component<Props> {
       page: undefined,
       pageSize: undefined
     }).then((res) => {
-      return message.success('导出成功，请前往下载列表下载文件')
+      APP.success('导出成功，请前往下载列表下载文件')
     })
   }
   public render () {
@@ -229,7 +228,7 @@ class Main extends React.Component<Props> {
               fields: ['createTimeBegin', 'createTimeEnd']
             }
           }}
-          reserveKey={`adjustment${this.props.status}`}
+          reserveKey={`fresh/merchant-accounts/adjustment-${this.props.status}`}
           columns={this.columns}
           formConfig={getFieldsConfig()}
           tableProps={{
@@ -246,7 +245,7 @@ class Main extends React.Component<Props> {
                   <FormItem label='调整单ID' name='serialNo' />
                 </Col>
                 <Col span={6}><FormItem name='supplierId' /></Col>
-                <Col span={6}><FormItem name='supplierName' /></Col>
+                <Col span={6}><FormItem name='supplierNameSelect' /></Col>
                 <Col span={6}><FormItem name='billType' /></Col>
               </Row>
               <Row>
@@ -298,7 +297,7 @@ class Main extends React.Component<Props> {
             const status = this.props.status
             this.payload = {
               ...payload,
-              billStatus: status === 0 ? undefined : status
+              billStatus: payload.billStatus !== undefined ? payload.billStatus : (status === 0 ? undefined : status)
             }
             return this.payload
           }}

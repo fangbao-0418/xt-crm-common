@@ -213,16 +213,16 @@ class SupplierModal extends Component {
               </FormItem>
             )}
             {this.state.category === 5 && (
-              <FormItem required label='设置冻结金额'>
-                {getFieldDecorator('freezeLimit', {
+              <FormItem label='设置冻结金额'>
+                {getFieldDecorator('frozenMoney', {
                 })(
                   <Select
                     placeholder='请选择冻结金额'
                   >
-                    <Select.Option value='0'>0元</Select.Option>
-                    <Select.Option value='1000'>1000元</Select.Option>
-                    <Select.Option value='2000'>2000元</Select.Option>
-                    <Select.Option value='3000'>3000元</Select.Option>
+                    <Select.Option value={0}>0元</Select.Option>
+                    <Select.Option value={1000}>1000元</Select.Option>
+                    <Select.Option value={2000}>2000元</Select.Option>
+                    <Select.Option value={3000}>3000元</Select.Option>
                   </Select>
                 )}
               </FormItem>

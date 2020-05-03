@@ -10,6 +10,7 @@ const {
   addWebpackModuleRule,
   addWebpackExternals,
   addBundleVisualizer,
+  addBabelPlugins,
   setWebpackOptimizationSplitChunks
 } = require('customize-cra')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -88,6 +89,9 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
 }
 
 module.exports = override(
+  ...addBabelPlugins(
+    '@babel/plugin-proposal-optional-chaining'
+  ),
   addWebpackModuleRule({
     test: /\.m(odule)?.styl/,
     exclude: /node_modules/,

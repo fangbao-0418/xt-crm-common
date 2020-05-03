@@ -24,7 +24,10 @@ class Main extends React.Component<Props> {
       APP.success('校验通过')
       console.log(res, 'res')
       this.form.setValues({
-        supplierName: res.name
+        supplier: {
+          key: res.id,
+          label: res.name
+        }
       })
     }, () => {
       APP.error('该供应商ID不存在')
@@ -41,6 +44,13 @@ class Main extends React.Component<Props> {
           }}
           getInstance={(ref) => {
             this.form = ref
+          }}
+          onChange={(field, value) => {
+            if (field === 'supplier' && value) {
+              this.form.setValues({
+                supplierId: value.key
+              })
+            }
           }}
           readonly={readonly}
           labelCol={{ span: 5 }}
@@ -70,7 +80,7 @@ class Main extends React.Component<Props> {
           <If condition={!readonly}>
             <FormItem
               name='supplierNameSelect'
-              verifiable
+              required
               readonly={readonly}
             />
           </If>
@@ -144,6 +154,11 @@ class Main extends React.Component<Props> {
               )
             }}
           />
+          <If condition={readonly}>
+            <FormItem name='createName' />
+            <FormItem name='createType' />
+            <FormItem name='createDate' label='创建时间' />
+          </If>
         </Form>
       </div>
     )

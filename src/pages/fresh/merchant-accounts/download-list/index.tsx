@@ -4,6 +4,7 @@ import React from 'react'
 import { Table, Tag } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import * as api from './api'
+import Page from '@/components/page'
 interface State {
   pageSize: number
   page: number
@@ -48,6 +49,7 @@ class Main extends React.Component {
     {
       title: '文件名',
       dataIndex: 'fileName',
+      width: 250,
       render: (fileName: string) => {
         return (
           <div>{fileName ? fileName : '-'}</div>
@@ -58,6 +60,7 @@ class Main extends React.Component {
       title: '任务类型',
       dataIndex: 'type',
       key: 'type',
+      width: 200,
       render: (text) => {
         return (
           TypeEnum[text]
@@ -68,6 +71,7 @@ class Main extends React.Component {
       title: '处理状态',
       dataIndex: 'status',
       key: 'status',
+      width: 100,
       render: (text) => {
         // 0-新建；1-处理中；2-完成 3-处理失败
         let color = 'geekblue'
@@ -91,6 +95,7 @@ class Main extends React.Component {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
+      width: 200,
       render: (createTime) => {
         return APP.fn.formatDate(createTime)
       }
@@ -108,6 +113,8 @@ class Main extends React.Component {
     }, {
       title: '操作',
       key: 'action',
+      width: 100,
+      align: 'center',
       render: (record) => {
         let hasFile = false
         if (record.status === '处理完毕') {
@@ -153,25 +160,23 @@ class Main extends React.Component {
   public render () {
     const { pageSize, page, total, data } = this.state
     return (
-      <div>
-        <div>
-          <Table
-            pagination={{
-              total,
-              onChange: (current) => {
-                this.payload.pageNum = current
-                this.handleSearch(current)
-              },
-              pageSize,
-              current: page
-            }}
-            rowKey='id'
-            columns={this.columns}
-            dataSource={data}
-            loading={this.state.loading}
-          />
-        </div>
-      </div>
+      <Page>
+        <Table
+          pagination={{
+            total,
+            onChange: (current) => {
+              this.payload.pageNum = current
+              this.handleSearch(current)
+            },
+            pageSize,
+            current: page
+          }}
+          rowKey='id'
+          columns={this.columns}
+          dataSource={data}
+          loading={this.state.loading}
+        />
+      </Page>
     )
   }
 }
