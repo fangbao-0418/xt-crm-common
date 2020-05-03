@@ -188,7 +188,7 @@ class Main extends React.Component<Props> {
         content: (
           <Detail
             type={type}
-            id={record && record.serialNo}
+            id={record?.serialNo}
             onOk={() => {
               this.listpage.refresh()
               hide()

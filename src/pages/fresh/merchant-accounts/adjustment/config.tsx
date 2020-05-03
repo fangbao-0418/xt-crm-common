@@ -187,7 +187,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       supplierId: {
-        type: 'input',
+        type: 'number',
         label: '供应商ID',
         fieldDecoratorOptions: {
           rules: [
@@ -195,7 +195,9 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         },
         controlProps: {
-          type: 'number'
+          style: {
+            width: 150
+          }
         }
       },
       supplierName: {

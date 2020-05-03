@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-29 15:23:54
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-02 20:50:30
- * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/adjustment/api.ts
+ * @LastEditTime: 2020-05-03 18:08:40
+ * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/adjustment/api.ts
  */
 const { get, newPost, post } = APP.http
 import { ListRequest, BuildRequest, ExamineRequest } from './interface'
@@ -24,9 +24,10 @@ export const fetchStoreList = (id: any) => {
 
 const handlePayload = (payload: Partial<ListRequest>) => {
   const supplier = (payload as any).supplier || {}
+  console.log(supplier, 'supplier')
   payload = {
     ...payload,
-    supplierId: payload.supplierId !== undefined ? payload.supplierId : supplier.key,
+    supplierId: !payload.supplierId ? supplier.key : payload.supplierId,
     supplier: undefined
   } as ListRequest
   return payload

@@ -2,15 +2,12 @@ import React from 'react'
 import { Button } from 'antd'
 import styles from './style.module.styl'
 import DetailPage from '@/components/page/Detail'
-import { FormItem } from '@/packages/common/components/form'
 import ListPage from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
-import { parseQuery } from '@/packages/common/utils'
 import * as api from './api'
 import { ColumnProps } from 'antd/lib/table'
 import { withRouter, RouteComponentProps } from 'react-router'
 import { ShopProps } from './interface'
-import Auth from '@/components/auth'
 
 interface Props extends Partial<AlertComponentProps>, RouteComponentProps<{id: string}> {}
 
@@ -105,7 +102,7 @@ class Main extends React.Component<Props, State> {
   }
   public fetchData () {
     api.fetchDetail({ id: this.id }).then((data) => {
-      const total = data && data.accountStatementRecordDetailVOPager && data.accountStatementRecordDetailVOPager.total || 0
+      const total = data?.accountStatementRecordDetailVOPager?.total || 0
       this.setState({
         ...data,
         total
