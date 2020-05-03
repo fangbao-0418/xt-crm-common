@@ -130,12 +130,12 @@ class StoreTimerModal extends React.Component<Props, State> {
               ]
             })(<Input maxLength={20} placeholder='请输入' disabled={readonly} />)}
           </Form.Item>
-          <Form.Item label='日期'>
+          <Form.Item label='生效日期'>
             {getFieldDecorator('actionTime', {
               rules: [
                 {
                   required: true,
-                  message: '请选择日期'
+                  message: '请选择生效日期'
                 }
               ]
             })(<DatePicker
