@@ -151,7 +151,7 @@ class Main extends React.Component<Props, State> {
               <div>支出：<span className='error'>{APP.fn.formatMoney(state.disburseMoney) || '0.00'}</span>元</div>
               <div>本期对账单总额：
                 <span className={state.billMoney >= 0 ? 'success' : 'error'}>
-                  {/* {state.billMoney >= 0 ? '+' : '-'} */}
+                  {state.billMoney < 0 ? '-' : ''}
                   {APP.fn.formatMoney(Math.abs(state.billMoney)) || '0.00'}
                 </span>元
               </div>
