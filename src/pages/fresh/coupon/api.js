@@ -44,29 +44,29 @@ export function saveCouponTaskInfo (data) {
 
 // 结束领取优惠券
 export function overReciveCoupon (couponId) {
-  return newPut(`/mcweb/promotion/fresh/coupon/modify/overReciveCoupon/${couponId}`)
+  return newPut(`/mcweb/promotion/fresh/coupon/modify/overReciveCoupon?couponId=${couponId}`)
 }
 
 // 停止发券
 export function stopCouponTask (taskId) {
-  return newPut(`/mcweb/promotion/fresh/coupon/modify/stopCouponTask/${taskId}`)
+  return newPut(`/mcweb/promotion/fresh/coupon/modify/stopCouponTask?taskId=${taskId}`)
 }
 
 // 失效任务优化券
 export function invalidTaskCoupon (taskId, couponId) {
-  return newPut(`/promotion/fresh/coupon/modify/invalidTaskCoupon/${taskId}/${couponId}`)
+  return newPut(`/promotion/fresh/coupon/modify/invalidTaskCoupon?taskId=${taskId}&couponId=${couponId}`)
 }
 // 失效优惠券
 export function invalidCoupon (couponId) {
-  return newPut(`/mcweb/promotion/fresh/coupon/modify/invalidCoupon/${couponId}`)
+  return newPut(`/mcweb/promotion/fresh/coupon/modify/invalidCoupon?couponId=${couponId}`)
 }
 // 获取批量发送记录
 export function getCouponTasks (couponId) {
-  return newGet(`/mcweb/promotion/fresh/coupon/get/couponTaskList/${couponId}`)
+  return newGet(`/mcweb/promotion/fresh/coupon/get/couponTaskList?couponId=${couponId}`)
 }
 // 获取优惠券详情
 export function getCouponDetail (id) {
-  return newGet(`/mcweb/promotion/fresh/coupon/get/couponDetail/${id}`)
+  return newGet(`/mcweb/promotion/fresh/coupon/get/couponDetail?couponId=${id}`)
 }
 
 // 获取优惠券列表
