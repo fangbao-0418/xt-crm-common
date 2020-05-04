@@ -17,13 +17,19 @@ const namespace = 'fresh/merchant-accounts/withdraw-status'
 
 class Main extends React.Component {
   public defaultActiveKey = String(getPayload(namespace) || 0)
+  public state = {
+    activeKey: this.defaultActiveKey
+  }
   public render () {
     return (
       <Page>
         <Tabs
-          defaultActiveKey={this.defaultActiveKey}
+          defaultActiveKey={this.state.activeKey}
           onChange={(activeKey) => {
             setPayload(namespace, activeKey)
+            this.setState({
+              activeKey
+            })
           }}
         >
           {
@@ -33,7 +39,11 @@ class Main extends React.Component {
                   key={String(item.key)}
                   tab={item.title}
                 >
-                  <TabItem status={item.key as any} />
+                  {
+                    this.state.activeKey === String(item.key) && (
+                      <TabItem status={item.key as any} />
+                    )
+                  }
                 </TabPane>
               )
             })

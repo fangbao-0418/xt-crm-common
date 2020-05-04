@@ -56,38 +56,38 @@ class Sidebar extends React.Component {
       current: key
     })
   }
-  componentDidUpdate(prevProps) {
-    let { pathname, data } = this.props;
-    if ([prevProps.pathname, pathname].includes('/home')) return
-    if (prevProps.pathname != pathname) {
-      let currentKey = ''
-      let selectedItem = data.find(item => item.path === pathname);
-      if (!selectedItem) {
-        for (let i = 0; i < data.length; i++) {
-          if (data[i].subMenus.length > 0) {
-            for (let j = 0; j < data[i].subMenus.length; j++) {
-              if (data[i].subMenus[j].path === pathname) {
-                selectedItem = data[i].subMenus[j];
-                break;
-              }
-            }
+  findPath (data = this.props.data, pathname = this.props.pathname) {
+    data = data || []
+    let selectedItem
+    function loop (arr) {
+      return arr.find((item) => {
+        if (item.path === pathname) {
+          selectedItem = item
+          return true
+        } else {
+          if (item.subMenus) {
+            return !!loop(item.subMenus)
           }
         }
-      }
-      console.log(pathname, 'pathname')
-      console.log(selectedItem, 'selectedItem')
-      if (selectedItem) {
-        currentKey = selectedItem.id
-        this.setState({
-          current: currentKey.toString()
-        })
-      }
+      })
+    }
+    loop(data)
+    return selectedItem
+  }
+  componentWillReceiveProps (props) {
+    let currentKey = ''
+    const selectedItem = this.findPath(props.data, props.pathname)
+    if (selectedItem) {
+      currentKey = selectedItem.id
+      this.setState({
+        current: currentKey.toString()
+      })
     }
   }
-  render() {
+  render () {
     const { collapsed, data } = this.props;
     const { current } = this.state;
-    console.log(data, 'render')
+    console.log(current, 'current')
     return (
       <Sider collapsed={collapsed} style={{
         overflow: 'auto',

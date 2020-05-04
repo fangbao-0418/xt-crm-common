@@ -156,7 +156,7 @@ class Main extends React.Component<Props> {
         <ImportModal
           accept='.xls,.xlsx'
           onDownload={() => {
-            APP.fn.download(require('@/pages/fresh/assets/批量支付模版.xlsx'), '批量支付模版')
+            APP.fn.download('https://assets.hzxituan.com/upload/2020-05-04/f598d49e-a8f8-4c00-9b82-c22ecc3792db-k9sgswwh.xlsx', '批量支付模版')
           }}
           onSelect={(file, cb) => {
             api.batchPay(file).then((res) => {
@@ -187,7 +187,7 @@ class Main extends React.Component<Props> {
         <ImportModal
           accept='.xls,.xlsx'
           onDownload={() => {
-            APP.fn.download(require('@/pages/fresh/assets/批量失败模版.xlsx'), '批量失败模版')
+            APP.fn.download('https://assets.hzxituan.com/upload/2020-05-04/9d28622c-b6ae-426f-b2c2-f97258fb1ff7-k9sgstjz.xlsx', '批量失败模版')
           }}
           onSelect={(file, cb) => {
             api.batchPayFail(file).then((res) => {
@@ -244,7 +244,7 @@ class Main extends React.Component<Props> {
                   this.listpage.refresh(true)
                 }}
               >
-                取消
+                清除
               </Button>
               <Button
                 type='primary'
@@ -277,7 +277,7 @@ class Main extends React.Component<Props> {
                 <span
                   className='download mr8'
                   onClick={() => {
-                    APP.fn.download(require('@/pages/fresh/assets/批量支付模版.xlsx'), '批量支付模版')
+                    APP.fn.download('https://assets.hzxituan.com/upload/2020-05-04/f598d49e-a8f8-4c00-9b82-c22ecc3792db-k9sgswwh.xlsx', '批量支付模版')
                   }}
                 >
                   下载批量支付模版
@@ -285,7 +285,7 @@ class Main extends React.Component<Props> {
                 <span
                   className='download'
                   onClick={() => {
-                    APP.fn.download(require('@/pages/fresh/assets/批量失败模版.xlsx'), '批量失败模版')
+                    APP.fn.download('https://assets.hzxituan.com/upload/2020-05-04/9d28622c-b6ae-426f-b2c2-f97258fb1ff7-k9sgstjz.xlsx', '批量失败模版')
                   }}
                 >
                   下载批量失败模版
