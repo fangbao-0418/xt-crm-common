@@ -68,7 +68,15 @@ class Main extends React.Component<Props, State> {
     {
       dataIndex: 'tradeMoney',
       title: '交易金额（元）',
-      render: (text) => APP.fn.formatMoneyNumber(text, 'm2u'),
+      render: (text, record) => {
+        const recordType = record.recordType
+        const isIncome = recordType === 10
+        return (
+          <span className={isIncome ? 'success' : 'error'}>
+            {isIncome ? '+' : '-'}{APP.fn.formatMoneyNumber(text, 'm2u')}
+          </span>
+        )
+      },
       align: 'center'
     },
     {

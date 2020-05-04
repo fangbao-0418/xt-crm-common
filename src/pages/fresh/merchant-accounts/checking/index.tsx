@@ -14,8 +14,26 @@ class Main extends React.Component {
     { title: '日期', width: 150, dataIndex: 'billDate', render: (text) => APP.fn.formatDate(text) },
     { title: '供应商ID', width: 150, dataIndex: 'supplierId' },
     { title: '供应商', width: 200, dataIndex: 'supplierName' },
-    { title: '收入（元）', dataIndex: 'incomeMoney', align: 'center', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
-    { title: '支出（元）', dataIndex: 'disburseMoney', align: 'center', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    {
+      title: '收入（元）',
+      dataIndex: 'incomeMoney',
+      align: 'center',
+      render: (text) => {
+        return (
+          <span className='success'>+{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+        )
+      }
+    },
+    {
+      title: '支出（元）',
+      dataIndex: 'disburseMoney',
+      align: 'center',
+      render: (text) => {
+        return (
+          <span className='error'>-{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+        )
+      }
+    },
     { title: '本期对账单金额', dataIndex: 'billMoney', align: 'center', width: 150, render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
     { title: '状态', width: 100, align: 'center', dataIndex: 'billStatusInfo' },
     {
