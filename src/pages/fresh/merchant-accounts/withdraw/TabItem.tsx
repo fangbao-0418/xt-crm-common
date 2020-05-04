@@ -97,7 +97,7 @@ class Main extends React.Component<Props> {
                 }}
                 type='textarea'
                 name='operateRemark'
-                placeholder='请输入失败原因'
+                placeholder='请输入失败原因，40字以内'
                 labelCol={{ span: 0 }}
                 wrapperCol={{ span: 24 }}
                 verifiable

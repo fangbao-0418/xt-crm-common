@@ -249,7 +249,7 @@ class Main extends React.Component<Props> {
                 <Col span={6}><FormItem name='billType' /></Col>
               </Row>
               <Row>
-                <Col span={6}><FormItem name='billStatus' /></Col>
+                {/* <Col span={6}><FormItem name='billStatus' /></Col> */}
                 <Col span={12}><FormItem name='createTime' /></Col>
               </Row>
             </>

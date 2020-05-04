@@ -77,20 +77,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       trimReason: {
         label: '调整原因',
         type: 'input',
-        // options: [
-        //   {label: '订单补发', value: 1},
-        //   {label: '运费补贴', value: 3},
-        //   {label: '平台补贴', value: 2},
-        //   {label: '售后扣款', value: 4},
-        //   {label: '售后补偿', value: 5}
-        // ],
         controlProps: {
-          maxLength: 50
+          maxLength: 40
         },
         fieldDecoratorOptions: {
           rules: [
             { required: true, message: '调整原因不能为空' },
-            { max: 50, message: '长度最大50个字符' }
+            { max: 40, message: '长度最大40个字符' }
           ]
         }
       },
@@ -135,12 +128,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'textarea',
         label: '审核说明',
         controlProps: {
-          maxLength: 250
+          maxLength: 400
         },
         fieldDecoratorOptions: {
           rules: [
             { required: true, message: '审核说明不能为空' },
-            { max: 250, message: '长度最大250个字符' }
+            { max: 400, message: '长度最大400个字符' }
           ]
         }
       },
@@ -149,12 +142,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'textarea',
         label: '调整说明',
         controlProps: {
-          maxLength: 250
+          maxLength: 200
         },
         fieldDecoratorOptions: {
           rules: [
             { required: true, message: '调整说明不能为空' },
-            { max: 250, message: '长度最大250个字符' }
+            { max: 200, message: '长度最大200个字符' }
           ]
         }
       },
@@ -197,6 +190,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         },
         controlProps: {
+          maxLength: 20,
           style: {
             width: 150
           }
