@@ -106,7 +106,21 @@ export function fieldConvert (obj, mapper) {
   return result
 }
 
+/** 获取文件扩展名 */
+export function getFileExtName (url) {
+  const result = url.match(/.+(\.(.+?))(\?.+)?$/)
+  if (result && result[1]) {
+    return (result[1].slice(1) || '').trim().toLocaleLowerCase()
+  } else {
+    throw Error('get the expanded-name of the file error')
+  }
+}
+
 export function download (url, filename) {
+  if (filename && (/\./).test(filename) === false && url) {
+    filename = filename + '.' + getFileExtName(url)
+  }
+  console.log(filename, 'filename')
   getBlob(url).then(blob => {
     saveAs(blob, filename)
   })
