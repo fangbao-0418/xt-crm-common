@@ -126,7 +126,7 @@ class Main extends React.Component<Props, State> {
             {APP.fn.formatDate(state.billDate, 'YYYYMMDD')}对账单明细
           </div>
           <div className={styles['detail-header']}>
-            <div>日期：{APP.fn.formatDate(state.billDate)}</div>
+            <div>日期：{APP.fn.formatDate(state.billDate, 'YYYYMMDD')}</div>
             <div>
               状态：{state.billStatusInfo}
             </div>
