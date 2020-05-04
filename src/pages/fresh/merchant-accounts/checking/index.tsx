@@ -20,7 +20,7 @@ class Main extends React.Component {
       align: 'center',
       render: (text) => {
         return (
-          <span className='success'>+{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+          <span className='success'>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
         )
       }
     },
@@ -30,7 +30,7 @@ class Main extends React.Component {
       align: 'center',
       render: (text) => {
         return (
-          <span className='error'>-{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
+          <span className='error'>{APP.fn.formatMoneyNumber(text, 'm2u')}</span>
         )
       }
     },
