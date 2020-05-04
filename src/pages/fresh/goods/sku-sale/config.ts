@@ -138,7 +138,6 @@ export const defaultConfig: FieldsConfig = {
       label: '结算模式',
       type: 'radio',
       fieldDecoratorOptions: {
-        initialValue: 1,
         rules: [
           {
             validator: (rule, value, cb) => {
