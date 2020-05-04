@@ -360,23 +360,9 @@ class OrderList extends React.Component {
                 }
               </Col>
               <Col span={6}>
-                <FormItem label='店主手机'>
+                <FormItem label='自提点手机'>
                   {getFieldDecorator('selfDeliveryPointPhone', { initialValue: values.selfDeliveryPointPhone })(
-                    <Input placeholder='请输入店主手机' />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label='门店编号'>
-                  {getFieldDecorator('selfDeliveryPointCode', { initialValue: values.selfDeliveryPointCode })(
-                    <Input placeholder='请输入门店编号' />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label='门店单号'>
-                  {getFieldDecorator('purchaseSentSn', { initialValue: values.purchaseSentSn })(
-                    <Input placeholder='请输入门店单号' />
+                    <Input placeholder='请输入自提点手机' />
                   )}
                 </FormItem>
               </Col>
