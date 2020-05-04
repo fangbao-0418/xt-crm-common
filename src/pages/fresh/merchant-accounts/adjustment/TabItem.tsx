@@ -242,7 +242,7 @@ class Main extends React.Component<Props> {
             <>
               <Row>
                 <Col span={6}>
-                  <FormItem label='调整单ID' name='serialNo' />
+                  <FormItem name='serialNo' />
                 </Col>
                 <Col span={6}><FormItem name='supplierId' /></Col>
                 <Col span={6}><FormItem name='supplierNameSelect' /></Col>

@@ -8,6 +8,7 @@ import { ColumnProps } from 'antd/lib/table'
 import { RecordProps } from './interface'
 import { getFieldsConfig, PayTypeEnum, StatusEnum } from './config'
 import * as api from './api'
+import ImportModal from './components/ImportModal'
 
 export const namespace = 'fresh/merchant-accounts/withdraw'
 
@@ -147,20 +148,62 @@ class Main extends React.Component<Props> {
     })
   }
   public batchPay () {
-    this.selectFile().then((file) => {
-      api.batchPay(file).then(() => {
-        APP.success('批量成功操作完成')
-        this.listpage.refresh()
-      })
+    if (!this.props.alert) {
+      return
+    }
+    this.props.alert({
+      content: (
+        <ImportModal
+          accept='.xls,.xlsx'
+          onDownload={() => {
+            APP.fn.download(require('@/pages/fresh/assets/批量支付模版.xlsx'), '批量支付模版')
+          }}
+          onSelect={(file, success, fail) => {
+            api.batchPay(file).then(() => {
+              this.listpage.refresh()
+              success()
+            }, () => {
+              fail()
+            })
+          }}
+        />
+      )
     })
+    // this.selectFile().then((file) => {
+    //   api.batchPay(file).then(() => {
+    //     APP.success('批量成功操作完成')
+    //     this.listpage.refresh()
+    //   })
+    // })
   }
   public batchPayFail () {
-    this.selectFile().then((file) => {
-      api.batchPayFail(file).then(() => {
-        APP.success('批量失败操作完成')
-        this.listpage.refresh()
-      })
+    if (!this.props.alert) {
+      return
+    }
+    this.props.alert({
+      content: (
+        <ImportModal
+          accept='.xls,.xlsx'
+          onDownload={() => {
+            APP.fn.download(require('@/pages/fresh/assets/批量失败模版.xlsx'), '批量失败模版')
+          }}
+          onSelect={(file, success, fail) => {
+            api.batchPayFail(file).then(() => {
+              this.listpage.refresh()
+              success()
+            }, () => {
+              fail()
+            })
+          }}
+        />
+      )
     })
+    // this.selectFile().then((file) => {
+    //   api.batchPayFail(file).then(() => {
+    //     APP.success('批量失败操作完成')
+    //     this.listpage.refresh()
+    //   })
+    // })
   }
   public selectFile () {
     return new Promise<File>((resolve) => {

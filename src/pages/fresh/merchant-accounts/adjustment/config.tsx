@@ -9,18 +9,16 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       id: {
-        type: 'input',
+        type: 'number',
         label: '调整单ID',
         controlProps: {
-          type: 'number',
           style: { width: 150 }
         }
       },
       serialNo: {
-        type: 'input',
-        label: '对账单ID',
+        type: 'number',
+        label: '调整单ID',
         controlProps: {
-          type: 'number',
           style: { width: 150 }
         },
         fieldDecoratorOptions: {
