@@ -1,4 +1,5 @@
 import React from 'react'
+import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import If from '@/packages/common/components/if'
@@ -48,7 +49,9 @@ class Main extends React.Component<Props> {
       align: 'center',
       render: (text, record) => {
         return (
-          <If condition={record.status === 5}>
+          <If
+            condition={record.status === 5}
+          >
             <Popconfirm
               title='确定是否提现成功？'
               onConfirm={this.toOperate(record, 15)}
@@ -79,29 +82,51 @@ class Main extends React.Component<Props> {
   public toOperate = (record: RecordProps, type: 15 | 25) => () => {
     if (type === 25) {
       if (this.props.alert) {
-        let operateRemark = ''
+        let form: FormInstance
         const hide = this.props.alert({
           title: '提现失败',
           content: (
-            <div>
-              <Input.TextArea
-                placeholder='请输入提现失败原因'
-                onChange={(e) => {
-                  const value = e.target.value
-                  operateRemark = value
+            <Form
+              getInstance={(ref) => {
+                form = ref
+              }}
+            >
+              <FormItem
+                style={{
+                  marginBottom: 0
+                }}
+                type='textarea'
+                name='operateRemark'
+                placeholder='请输入失败原因'
+                labelCol={{ span: 0 }}
+                wrapperCol={{ span: 24 }}
+                verifiable
+                fieldDecoratorOptions={{
+                  rules: [
+                    { required: true, message: '失败原因必填' },
+                    { max: 40, message: '失败原因最长40个字符' }
+                  ]
                 }}
               />
-            </div>
+            </Form>
           ),
           onOk: () => {
-            api.toOperate({
-              supplierCashOutId: record.supplierCashOutId,
-              status: type,
-              operateRemark
-            }).then(() => {
-              hide()
-              this.listpage.refresh()
-            })
+            if (form) {
+              form.props.form.validateFields((err, values) => {
+                if (err) {
+                  return
+                }
+                const operateRemark = values.operateRemark
+                api.toOperate({
+                  supplierCashOutId: record.supplierCashOutId,
+                  status: type,
+                  operateRemark
+                }).then(() => {
+                  hide()
+                  this.listpage.refresh()
+                })
+              })
+            }
           }
         })
       }

@@ -12,6 +12,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input',
         label: '调整单ID',
         controlProps: {
+          type: 'number',
           style: { width: 150 }
         }
       },
@@ -19,6 +20,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input',
         label: '对账单ID',
         controlProps: {
+          type: 'number',
           style: { width: 150 }
         },
         fieldDecoratorOptions: {

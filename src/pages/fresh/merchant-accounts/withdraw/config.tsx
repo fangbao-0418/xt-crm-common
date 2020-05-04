@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-28 16:04:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-04 13:02:32
+ * @LastEditTime: 2020-05-04 14:20:12
  * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.tsx
  */
 import { OptionProps } from '@/packages/common/components/form'
@@ -41,7 +41,7 @@ export function getFieldsConfig (): FieldsConfig {
       },
       createTime: {
         type: 'rangepicker',
-        label: '创建时间',
+        label: '申请时间',
         controlProps: {
           showTime: true
         }

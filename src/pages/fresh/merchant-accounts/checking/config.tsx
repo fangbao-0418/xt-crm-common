@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-29 10:33:20
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-04 12:00:19
+ * @LastEditTime: 2020-05-04 14:16:50
  * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/checking/config.tsx
  */
 import React from 'react'
@@ -15,7 +15,10 @@ export function getFieldsConfig (): FieldsConfig {
     common: {
       serialNo: {
         type: 'input',
-        label: '对账单ID'
+        label: '对账单ID',
+        controlProps: {
+          type: 'number'
+        }
       },
       supplierName: {
         type: 'input',
