@@ -104,14 +104,16 @@ class Main extends React.Component<Props, State> {
             <span className='error'>
               &nbsp;{this.state.failNum}条&nbsp;
             </span>
-            <span
-              className='ml10 download'
-              onClick={() => {
-                APP.fn.download(this.state.errorFileUrl, '导入错误信息')
-              }}
-            >
-              下载失败文件
-            </span>
+            { this.state.errorFileUrl && (
+              <span
+                className='ml10 download'
+                onClick={() => {
+                  APP.fn.download(this.state.errorFileUrl, '导入错误信息')
+                }}
+              >
+                下载失败文件
+              </span>
+            )}
           </div>
         )}
       </div>

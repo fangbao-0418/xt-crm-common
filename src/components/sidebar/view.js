@@ -74,6 +74,8 @@ class Sidebar extends React.Component {
           }
         }
       }
+      console.log(pathname, 'pathname')
+      console.log(selectedItem, 'selectedItem')
       if (selectedItem) {
         currentKey = selectedItem.id
         this.setState({
@@ -85,6 +87,7 @@ class Sidebar extends React.Component {
   render() {
     const { collapsed, data } = this.props;
     const { current } = this.state;
+    console.log(data, 'render')
     return (
       <Sider collapsed={collapsed} style={{
         overflow: 'auto',

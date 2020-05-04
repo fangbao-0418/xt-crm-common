@@ -107,8 +107,6 @@ export function fieldConvert (obj, mapper) {
 }
 
 export function download (url, filename) {
-  console.log(url, filename, 'xxxxxx')
-  return
   getBlob(url).then(blob => {
     saveAs(blob, filename)
   })

@@ -253,7 +253,7 @@ class Main extends React.Component<Props> {
                   this.batchPay()
                 }}
               >
-                批量支付
+                批量成功
               </Button>
               <Button
                 type='primary'
