@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-28 16:04:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-02 15:40:17
- * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.tsx
+ * @LastEditTime: 2020-05-04 11:46:23
+ * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.tsx
  */
 import { OptionProps } from '@/packages/common/components/form'
 
@@ -14,7 +14,7 @@ export function getFieldsConfig (): FieldsConfig {
     common: {
       code: {
         type: 'input',
-        label: '申请单ID'
+        label: '申请单编号'
       },
       storeNameLike: {
         type: 'input',

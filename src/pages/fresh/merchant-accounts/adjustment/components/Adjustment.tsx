@@ -58,7 +58,7 @@ class Main extends React.Component<Props> {
         >
           <FormItem
             name='supplierId'
-            type='input'
+            // type='input'
             readonly={readonly}
             verifiable
             controlProps={{

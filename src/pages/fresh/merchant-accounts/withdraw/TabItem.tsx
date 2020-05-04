@@ -22,7 +22,21 @@ class Main extends React.Component<Props> {
     { title: '供应商ID', dataIndex: 'supplierUid', width: 150 },
     { title: '供应商名称', dataIndex: 'supplierName', width: 150 },
     { title: '提现方式', dataIndex: 'payType', width: 150, render: (text) => PayTypeEnum[text] },
-    { title: '提现账户', dataIndex: 'accountName', width: 100 },
+    {
+      title: '提现账户',
+      dataIndex: 'accountName',
+      align: 'center',
+      width: 200,
+      render: (text, record) => {
+        return (
+          <div>
+            <div>{record.accountName}</div>
+            <div>{record.accountNo}</div>
+            <div>{record.bankBranchName}</div>
+          </div>
+        )
+      }
+    },
     { title: '状态', dataIndex: 'status', width: 100, render: (text) => StatusEnum[text] },
     { title: '申请时间', dataIndex: 'createTime', width: 150, render: (text) => APP.fn.formatDate(text) },
     { title: '操作人', dataIndex: 'operator', width: 100 },
