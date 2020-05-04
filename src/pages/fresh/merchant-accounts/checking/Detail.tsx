@@ -46,7 +46,20 @@ class Main extends React.Component<Props, State> {
       }
     }, {
       dataIndex: 'productId',
-      title: '商品ID'
+      title: '商品ID',
+      align: 'center',
+      render: (text) => {
+        return (
+          <span
+            className='href'
+            onClick={() => {
+              APP.href(`/fresh/goods/sku-sale/${text}`, '__blank')
+            }}
+          >
+            {text}
+          </span>
+        )
+      }
     },
     {
       dataIndex: 'productName',
