@@ -158,12 +158,14 @@ class Main extends React.Component<Props> {
           onDownload={() => {
             APP.fn.download(require('@/pages/fresh/assets/批量支付模版.xlsx'), '批量支付模版')
           }}
-          onSelect={(file, success, fail) => {
-            api.batchPay(file).then(() => {
+          onSelect={(file, cb) => {
+            api.batchPay(file).then((res) => {
               this.listpage.refresh()
-              success()
-            }, () => {
-              fail()
+              cb({
+                url: res?.fileUrl,
+                successNum: res?.successNum,
+                failNum: res?.failNum
+              })
             })
           }}
         />
@@ -187,12 +189,14 @@ class Main extends React.Component<Props> {
           onDownload={() => {
             APP.fn.download(require('@/pages/fresh/assets/批量失败模版.xlsx'), '批量失败模版')
           }}
-          onSelect={(file, success, fail) => {
-            api.batchPayFail(file).then(() => {
+          onSelect={(file, cb) => {
+            api.batchPayFail(file).then((res) => {
               this.listpage.refresh()
-              success()
-            }, () => {
-              fail()
+              cb({
+                url: res?.fileUrl,
+                successNum: res?.successNum,
+                failNum: res?.failNum
+              })
             })
           }}
         />
@@ -204,21 +208,6 @@ class Main extends React.Component<Props> {
     //     this.listpage.refresh()
     //   })
     // })
-  }
-  public selectFile () {
-    return new Promise<File>((resolve) => {
-      const el = document.createElement('input')
-      el.setAttribute('type', 'file')
-      el.onchange = function () {
-        if (el) {
-          const file = el.files && el.files[0]
-          if (file) {
-            resolve(file)
-          }
-        }
-      }
-      el.click()
-    })
   }
   public render () {
     return (

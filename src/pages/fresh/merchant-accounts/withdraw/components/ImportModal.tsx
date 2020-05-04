@@ -2,7 +2,11 @@ import React from 'react'
 import { Button } from 'antd'
 
 interface Props {
-  onSelect?: (file: File, resolve: () => void, reject: () => void) => void
+  onSelect?: (file: File, cb: (data: {
+    successNum: number
+    failNum: number
+    url: string
+  }) => void) => void
   onDownload?: () => void
   accept?: string
 }
@@ -10,11 +14,19 @@ interface Props {
 interface State {
   /** 导入结果状态 -1-待导入，0-导入失败，1-导入成功 */
   status: -1 | 0 | 1
+  /** 错误文件地址 */
+  errorFileUrl: string
+  /** 导入成功数 */
+  successNum: number
+  failNum: number
 }
 
 class Main extends React.Component<Props, State> {
   public state: State = {
-    status: -1
+    status: -1,
+    errorFileUrl: '',
+    successNum: 0,
+    failNum: 0
   }
   public selectFile () {
     return new Promise<File>((resolve) => {
@@ -37,21 +49,25 @@ class Main extends React.Component<Props, State> {
   public onSelect () {
     this.selectFile().then((file) => {
       if (this.props.onSelect) {
-        this.props.onSelect(file, this.onSuccess.bind(this), this.onFailed.bind(this))
+        this.props.onSelect(file, this.callBack.bind(this))
       }
     })
   }
-  public onSuccess () {
+  public callBack (data: {
+    successNum: number
+    url: string
+    failNum: number
+  }) {
+    const { url, successNum, failNum } = data
     this.setState({
-      status: 1
-    })
-  }
-  public onFailed () {
-    this.setState({
-      status: 0
+      status: url ? 0 : 1,
+      successNum: successNum || 0,
+      failNum: failNum || 0,
+      errorFileUrl: url
     })
   }
   public render () {
+    console.log(this.state, 'render')
     return (
       <div>
         <div>
@@ -80,17 +96,22 @@ class Main extends React.Component<Props, State> {
         {this.state.status !== -1 && (
           <div className='mt10'>
             <span className='mr10'>导入结果:</span>
-            {[
-              <span className='error' key={0}>
-                执行失败
-                <span className='ml10 download'>
-                  下载失败文件
-                </span>
-              </span>,
-              <span className='success' key={1}>
-                执行成功
-              </span>
-            ][this.state.status]}
+            导入成功
+            <span className='success'>
+            &nbsp;{this.state.successNum}&nbsp;
+            </span>
+            条，失败
+            <span className='error'>
+              &nbsp;{this.state.failNum}条&nbsp;
+            </span>
+            <span
+              className='ml10 download'
+              onClick={() => {
+                APP.fn.download(this.state.errorFileUrl, '导入错误信息')
+              }}
+            >
+              下载失败文件
+            </span>
           </div>
         )}
       </div>
