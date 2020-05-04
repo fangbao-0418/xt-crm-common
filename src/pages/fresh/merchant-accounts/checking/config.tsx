@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-29 10:33:20
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-02 19:45:49
- * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/merchant-accounts/checking/config.tsx
+ * @LastEditTime: 2020-05-04 12:00:19
+ * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/checking/config.tsx
  */
 import React from 'react'
 import { OptionProps } from '@/packages/common/components/form'
@@ -29,11 +29,12 @@ export function getFieldsConfig (): FieldsConfig {
         }
       },
       productId: {
-        type: 'input',
+        type: 'number',
         label: '商品ID',
         controlProps: {
-          type: 'number',
-          placeholder: '请输入单据ID'
+          style: {
+            width: 150
+          }
         }
       },
       date: {

@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-28 16:04:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-04 11:53:49
+ * @LastEditTime: 2020-05-04 13:02:32
  * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.tsx
  */
 import { OptionProps } from '@/packages/common/components/form'
@@ -31,13 +31,6 @@ export function getFieldsConfig (): FieldsConfig {
         type: 'input',
         label: '操作人'
       },
-      operateTime: {
-        type: 'rangepicker',
-        label: '操作时间',
-        controlProps: {
-          showTime: true
-        }
-      },
       payType: {
         type: 'select',
         label: '提现方式',
@@ -52,7 +45,14 @@ export function getFieldsConfig (): FieldsConfig {
         controlProps: {
           showTime: true
         }
-      }
+      },
+      operateTime: {
+        type: 'rangepicker',
+        label: '操作时间',
+        controlProps: {
+          showTime: true
+        }
+      },
     }
   }
   return defaultConfig

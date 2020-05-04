@@ -162,6 +162,14 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => {
             this.listpage = ref
           }}
+          rangeMap={{
+            operateTime: {
+              fields: ['operateTimeStart', 'operateTimeEnd']
+            },
+            createTime: {
+              fields: ['createTimeStart', 'createTimeEnd']
+            }
+          }}
           addonAfterSearch={(
             <div>
               <Button
@@ -233,6 +241,7 @@ class Main extends React.Component<Props> {
           processPayload={(payload) => {
             const status = this.props.status === 0 ? undefined : this.props.status
             payload.status = status
+            console.log(payload, 'payload')
             return {
               ...payload,
               status
