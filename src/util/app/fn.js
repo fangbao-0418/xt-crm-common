@@ -117,10 +117,15 @@ export function getFileExtName (url) {
 }
 
 export function download (url, filename) {
+  if (!url) {
+    return
+  }
   if (filename && (/\./).test(filename) === false && url) {
     filename = filename + '.' + getFileExtName(url)
   }
-  console.log(filename, 'filename')
+  if ((/\?/).test(url) === false) {
+    url = url + '?v=' + new Date().getTime()
+  }
   getBlob(url).then(blob => {
     saveAs(blob, filename)
   })
