@@ -109,7 +109,7 @@ class Main extends React.Component<Props> {
           />
           <FormItem name='trimExplain' verifiable />
           <FormItem
-            label='调整文件'
+            label='文件凭证'
             inner={(form) => {
               return (
                 <div>

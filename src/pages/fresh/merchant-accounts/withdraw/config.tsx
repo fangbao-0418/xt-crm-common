@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-28 16:04:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-04 11:46:23
+ * @LastEditTime: 2020-05-04 11:53:49
  * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/withdraw/config.tsx
  */
 import { OptionProps } from '@/packages/common/components/form'
@@ -16,11 +16,11 @@ export function getFieldsConfig (): FieldsConfig {
         type: 'input',
         label: '申请单编号'
       },
-      storeNameLike: {
+      supplierName: {
         type: 'input',
         label: '供应商名称'
       },
-      storeId: {
+      supplierUid: {
         label: '供应商ID',
         type: 'input',
         controlProps: {

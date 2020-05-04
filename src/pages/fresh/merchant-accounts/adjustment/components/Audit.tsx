@@ -53,7 +53,7 @@ class Main extends React.Component<Props> {
             }}
           />
           <FormItem
-            label='文件凭证'
+            label='图片凭证'
             inner={(form) => {
               return (
                 <div>
