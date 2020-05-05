@@ -37,7 +37,7 @@ class Sidebar extends React.Component {
           selectedItem = item
           selectedGroup = group.concat([item])
           return true
-        } else if (isPattern && pattern.test(pathname)) {
+        } else if (isPattern && item.path && item.type === 0 && pattern.test(pathname)) {
           selectedItem = item
           selectedGroup = group.concat([item])
           return true

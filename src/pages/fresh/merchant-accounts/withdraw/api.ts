@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-28 14:01:39
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-04 18:34:01
+ * @LastEditTime: 2020-05-05 14:55:29
  * @FilePath: /xt-crm/src/pages/fresh/merchant-accounts/withdraw/api.ts
  */
 const { get, newPost } = APP.http
@@ -35,6 +35,7 @@ export const batchPay = (file: File) => {
   form.append('file', file)
   return newPost('::guard/mcweb/merchant/supplier/cash/out/batch/success', form, {
     // hideToast: true,
+    // timeout: 10,
     headers: {
       ContentType: 'multipart/form-data'
     }
@@ -47,6 +48,7 @@ export const batchPayFail = (file: File) => {
   form.append('file', file)
   return newPost('::guard/mcweb/merchant/supplier/cash/out/batch/fail', form, {
     // hideToast: true,
+    // timeout: 10,
     headers: {
       ContentType: 'multipart/form-data'
     }
