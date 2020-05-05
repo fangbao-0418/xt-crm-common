@@ -17,7 +17,7 @@ export function delCategory(id) {
 }
 
 export function getCategorys(id) {
-  return get('/category/getCategoryList/' + (id || 0));
+  return get('/mcweb/product/category/getCategoryList?parentId=' + (id || 0));
 }
 /**
  * 

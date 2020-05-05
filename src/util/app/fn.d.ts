@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-26 11:51:01
+ * @LastEditTime: 2020-04-28 21:11:54
  * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/util/app/fn.d.ts
  */
 interface FnProps {
@@ -24,4 +24,8 @@ interface FnProps {
   /** 后端金额转换，u2m|元转分，m2u|分转元；默认type = u2m */
   formatMoneyNumber: (money: number, type?: 'u2m' | 'm2u') => number
   round: (num: number, precision?: number) => void
+  /** 去除oss资源路径 */
+  deleteOssDomainUrl: (url: string) => string
+  /** 补全oss资源路径 */
+  fillOssDomainUrl: (url: string) => string
 }

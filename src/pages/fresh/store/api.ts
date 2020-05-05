@@ -4,14 +4,15 @@
  * @LastEditTime: 2020-04-13 15:18:18
  * @FilePath: /xt-crm/src/pages/fresh/store/api.ts
  */
-import { listResponse, formRequest, formResponse } from './adapter'
-import { newPost } from '@/util/fetch'
+import { listResponse, formRequest, formResponse, listRequest } from './adapter'
+import { newPost, newGet, newPut } from '@/util/fetch'
 import { queryString } from '@/util/utils'
 
-const { get } = APP.http
+const { get, post } = APP.http
 
 // 店铺列表
 export async function getShopList (payload: any) {
+  payload = listRequest(payload)
   const search = queryString(payload)
   return get(`/point/list${search}`).then(listResponse)
 }
@@ -83,5 +84,42 @@ export function pointCenterList () {
         label: record.name
       }
     })
+  })
+}
+
+export function getTimerList (payload: any) {
+  return newGet('/point/batch/list', payload)
+}
+
+/**
+ * 开启自动上下架批次
+ * @param {*} ids
+ */
+export function openTimerById(ids: any) {
+  return newPost('/point/batch/updateActionStatus', {ids, actionStatus: 1})
+}
+/**
+ * 关闭自动上下架批次
+ * @param {*} ids
+ */
+export function closeTimerById(ids: any) {
+  return newPost('/point/batch/updateActionStatus', {ids, actionStatus: 0})
+}
+
+/**
+ * 新建自动上下架批次
+ * @param {*} payload
+ */
+export function addTimer (payload: any) {
+  const form = new FormData()
+  form.append('file', payload.file)
+  form.append('actionType', payload.actionType)
+  form.append('actionTime', payload.actionTime)
+  form.append('name', payload.name)
+  return post('/point/batch/create', {}, {
+    data: form,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }

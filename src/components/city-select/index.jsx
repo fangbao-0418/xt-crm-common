@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { createForm } from "rc-form";
 import { Cascader } from "antd";
-import city from './addressData';
+import getCity from './addressData';
 import PropTypes from "prop-types";
 
 //先配置修饰器 没有配置的话用把 @createForm()删掉 
@@ -17,7 +17,10 @@ class CitySelect extends Component {
     // 默认值
     value: PropTypes.array
   };
-
+  constructor (props) {
+    super(props);
+    this.city = getCity(props.type)
+  }
   onCascaderChange = selectedValues => {
     const { onChange, getSelectedValues } = this.props;
     const result = [];
@@ -33,7 +36,7 @@ class CitySelect extends Component {
         }
       });
     }
-    findCityData(city);
+    findCityData(this.city);
 
     // 分发监听
     onChange && onChange(selectedValues);
@@ -82,7 +85,7 @@ class CitySelect extends Component {
     return (
       <div>
         <Cascader
-          options={city}
+          options={this.city}
           // {...getFieldProps("city", {
           //   initialValue: this.props.value,
           //   onChange: this.onCascaderChange,

@@ -1,12 +1,43 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+import React, { Component } from 'react'
 import { getShopList, onOrOffShop, getStatusEnum } from './api'
 import { ListPage, If, FormItem, SelectFetch } from '@/packages/common/components'
 import { defaultConfig, NAME_SPACE, statusEnum } from './config'
-import { Button, Modal } from 'antd'
+import { Button, Modal, Cascader, Select } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import CitySelect from '@/components/city-select'
+import { FormInstance } from '@/packages/common/components/form'
+import { parseQuery } from '@/util/utils'
+import { RouteComponentProps } from 'react-router'
+import * as api from './api'
+const Option = Select.Option
+type Props = RouteComponentProps<{id: string}>;
 
-class Store extends React.Component {
+const namespace = 'fresh-goods-check'
+interface StoreFormState {
+  address: string,
+  readonly: boolean,
+  cityList: any,
+  countrys: any,
+  country: any,
+}
+class Store extends Component {
+  readonly: boolean = !!(parseQuery() as any).readOnly
   list: ListPageInstanceProps;
+  state: StoreFormState = {
+    address: '',
+    readonly: this.readonly,
+    cityList: [],
+    countrys: [],
+    country: ''
+  }
+  form: FormInstance;
+  provinceName: string;
+  cityName: string;
+  areaName: string;
+  constructor (props: Props) {
+    super(props)
+  }
   columns = [{
     title: '门店编号',
     dataIndex: 'code'
@@ -88,7 +119,15 @@ class Store extends React.Component {
       )
     }
   }]
+
+  onCancel = () => {
+
+  }
+  onOk = () => {
+
+  }
   render () {
+    const { readonly } = this.state
     return (
       <>
         <ListPage
@@ -114,11 +153,31 @@ class Store extends React.Component {
                 }}
               />
               <FormItem name='workDate' />
+              <FormItem label='店长手机号' name='shopPhone' />
+              <FormItem label='邀请店长手机号' name='invitePhone' />
+               <FormItem
+                 label='省市区'
+                 inner={(form) => {
+                   return readonly ? this.state.address : form.getFieldDecorator('address', {
+                   })(<CitySelect
+                     type='1'
+                     getSelectedValues={(value: any[]) => {
+                       if (Array.isArray(value) && value.length === 3) {
+                         this.provinceName = value[0].label
+                         this.cityName = value[1].label
+                         this.areaName = value[2].label
+                       }
+                     }}
+                   />)
+                 }}
+               />
             </>
           )}
+
           addonAfterSearch={(
             <div className='mb10'>
               <Button type='danger' onClick={() => APP.history.push('/fresh/store/-1')}>新建门店</Button>
+              <Button onClick={() => APP.history.push('/fresh/store/timer')}>批量上下架</Button>
             </div>
           )}
           namespace={NAME_SPACE}
@@ -129,6 +188,6 @@ class Store extends React.Component {
       </>
     )
   }
-}
 
+}
 export default Store
