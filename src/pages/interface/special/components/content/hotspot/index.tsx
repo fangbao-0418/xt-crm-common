@@ -18,7 +18,8 @@ function replaceUrl (url: string) {
 }
 
 function fillUrl (url: string) {
-  return 'https://assets.hzxituan.com/' + replaceUrl(url)
+  // return 'https://assets.hzxituan.com/' + replaceUrl(url)
+  return APP.fn.fillOssDomainUrl(url)
 }
 
 interface State {

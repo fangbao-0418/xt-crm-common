@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-28 17:16:18
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/components/Image/index.js
+ * @LastEditTime: 2020-04-30 00:57:45
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/components/Image/index.js
  */
 import React, { useState } from 'react'
 import zwtPic from '../../assets/images/zw.png'
@@ -12,7 +12,7 @@ const onClick = src => () => {
 }
 
 function getUrl (url) {
-  url = (/^http/).test(url) ? url : ((/^tximg/).test(url) ? `https://sh-tximg.hzxituan.com/${url}` : `https://assets.hzxituan.com/${url}`)
+  url = APP.fn.fillOssDomainUrl(url)
   return url
 }
 
