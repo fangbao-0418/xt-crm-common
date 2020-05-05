@@ -119,6 +119,13 @@ class Store extends Component {
       )
     }
   }]
+
+  onCancel = () => {
+
+  }
+  onOk = () => {
+
+  }
   render () {
     const { readonly } = this.state
     return (
@@ -170,6 +177,7 @@ class Store extends Component {
           addonAfterSearch={(
             <div className='mb10'>
               <Button type='danger' onClick={() => APP.history.push('/fresh/store/-1')}>新建门店</Button>
+              <Button onClick={() => APP.history.push('/fresh/store/timer')}>批量上下架</Button>
             </div>
           )}
           namespace={NAME_SPACE}

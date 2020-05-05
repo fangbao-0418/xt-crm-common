@@ -135,3 +135,42 @@ export function upByGoodsId(data) {
 export function cancelUpByGoodsId(data) {
   return put(`/mcweb/product/fresh/top/cancel`, data);
 }
+
+/**
+ * 自动上下架批次列表
+ * @param {*} payload 
+ */
+export function getTimerList (payload) {
+  return newGet('/mcweb/product/fresh/auto/config/list', payload)
+}
+/**
+ * 新建自动上下架批次
+ * @param {*} payload 
+ */
+export function addTimer (payload) {
+  const form = new FormData()
+    form.append('file', payload.file)
+    form.append('type', payload.type)
+    form.append('effectTime', payload.effectTime)
+    form.append('batchName', payload.batchName)
+  return post('/mcweb/product/fresh/auto/config/new', {}, {
+    data: form,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+/**
+ * 开启自动上下架批次
+ * @param {*} ids 
+ */
+export function openTimerById (ids) {
+  return newPut('/mcweb/product/fresh/auto/config/open', {ids})
+}
+/**
+ * 关闭自动上下架批次
+ * @param {*} ids 
+ */
+export function closeTimerById (ids) {
+  return newPut('/mcweb/product/fresh/auto/config/close', {ids})
+}
