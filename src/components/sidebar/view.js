@@ -1,51 +1,21 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Icon, Menu, Layout } from 'antd';
-import styles from './sidebar.module.scss';
-import logo from '../../assets/images/logo.svg';
-const { SubMenu } = Menu;
-const { Sider } = Layout;
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { findDOMNode } from 'react-dom'
+import animejs from 'animejs'
+import PropTypes from 'prop-types'
+import { Icon, Menu, Layout } from 'antd'
+import styles from './sidebar.module.scss'
+import logo from '../../assets/images/logo.svg'
+const { SubMenu } = Menu
+const { Sider } = Layout
 
-
-function renderMenulist(data) {
-  // type等于0是菜单权限，等于1是功能权限
-  return data.filter(item => item.type === 0).map(item => {
-    const subMenus = item.subMenus;
-    if (Array.isArray(subMenus) && subMenus.length > 0 && subMenus.some(item => item.type === 0)) {
-      return (
-        <SubMenu
-          key={item.id}
-          title={
-            <span>
-              {
-                item.icon && <Icon type={item.icon} />
-              }
-              <span>{item.name}</span>
-            </span>
-          }
-        >
-          {/* {subMenus.map(subItem => (
-            <Menu.Item key={subItem.id}>
-              <Link to={subItem.path || '/'}>{subItem.name}</Link>
-            </Menu.Item>
-          ))} */}
-          {renderMenulist(subMenus)}
-        </SubMenu>
-      );
-    } else {
-      return (
-        <Menu.Item key={item.id}>
-          <Link to={item.path || '/'}>
-            {item.icon && <Icon type={item.icon} />}
-            <span>{item.name}</span>
-          </Link>
-        </Menu.Item>
-      );
-    }
-  })
-} 
 class Sidebar extends React.Component {
-  constructor(props) {
+  state = {
+    current: '',
+    openKeys: []
+  }
+  siderRef = undefined
+  constructor (props) {
     super(props)
     this.state = {
       current: ''
@@ -59,68 +29,156 @@ class Sidebar extends React.Component {
   findPath (data = this.props.data, pathname = this.props.pathname) {
     data = data || []
     let selectedItem
-    function loop (arr) {
+    let selectedGroup = []
+    function loop (arr, group = [], isPattern = false) {
       return arr.find((item) => {
-        if (item.path === pathname) {
+        const pattern = new RegExp('^' + item.path + '/(\\w)+$')
+        if (!isPattern && item.type === 0 && item.path === pathname) {
           selectedItem = item
+          selectedGroup = group.concat([item])
+          return true
+        } else if (isPattern && pattern.test(pathname)) {
+          selectedItem = item
+          selectedGroup = group.concat([item])
           return true
         } else {
           if (item.subMenus) {
-            return !!loop(item.subMenus)
+            return !!loop(item.subMenus, group.concat([item]), isPattern)
           }
         }
       })
     }
     loop(data)
-    return selectedItem
+    if (selectedGroup.length === 0) {
+      loop(data, [], true)
+    }
+    // if (selectedGroup)
+    console.log(selectedGroup, 'selectedGroup')
+    return selectedGroup
   }
   componentWillReceiveProps (props) {
     let currentKey = ''
-    const selectedItem = this.findPath(props.data, props.pathname)
-    if (selectedItem) {
-      currentKey = selectedItem.id
-      this.setState({
-        current: currentKey.toString()
-      })
-    }
+    const selectedGroup = this.findPath(props.data, props.pathname)
+    currentKey = selectedGroup[selectedGroup.length - 1]?.id || ''
+    const isFirst = this.props.data.length === 0
+    this.setState({
+      current: currentKey.toString(),
+      openKeys: selectedGroup.map((item) => String(item?.id))
+    }, () => {
+      console.log(currentKey, 'topId')
+      if (isFirst && currentKey) {
+        const siderEl = findDOMNode(this.siderRef)
+        const openKeys = this.state.openKeys
+        const topId = openKeys[0]
+        if (topId) {
+          setTimeout(() => {
+            const topEl = document.getElementById(`${topId}$Menu`)
+            if (topEl) {
+              animejs({
+                targets: siderEl,
+                easing: 'easeInQuad',
+                scrollTop: topEl.offsetTop - 48,
+                duration: 200
+              })
+            }
+          }, 300)
+        }
+      }
+    })
+  }
+  renderMenulist (data) {
+    // type等于0是菜单权限，等于1是功能权限
+    return data.filter(item => item.type === 0).map(item => {
+      const subMenus = item.subMenus
+      if (Array.isArray(subMenus) && subMenus.length > 0 && subMenus.some(item => item.type === 0)) {
+        return (
+          <SubMenu
+            key={item.id}
+            // onTitleClick={(e) => {
+            //   console.log(e, 'keys')
+            //   this.setState({
+            //     openKeys: [e.key]
+            //   })
+            // }}
+            title={
+              <span>
+                {
+                  item.icon && <Icon type={item.icon} />
+                }
+                <span>{item.name}</span>
+              </span>
+            }
+          >
+            {/* {subMenus.map(subItem => (
+              <Menu.Item key={subItem.id}>
+                <Link to={subItem.path || '/'}>{subItem.name}</Link>
+              </Menu.Item>
+            ))} */}
+            {this.renderMenulist(subMenus)}
+          </SubMenu>
+        )
+      } else {
+        return (
+          <Menu.Item key={item.id}>
+            <Link to={item.path || '/'}>
+              {item.icon && <Icon type={item.icon} />}
+              <span>{item.name}</span>
+            </Link>
+          </Menu.Item>
+        )
+      }
+    })
   }
   render () {
-    const { collapsed, data } = this.props;
-    const { current } = this.state;
-    console.log(current, 'current')
+    const { collapsed, data } = this.props
+    const { current, openKeys } = this.state
+    console.log(current, openKeys, 'current')
     return (
-      <Sider collapsed={collapsed} style={{
-        overflow: 'auto',
-        height: '100vh',
-        position: 'fixed',
-        left: 0,
-      }}>
+      <Sider
+        collapsed={collapsed}
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0
+        }}
+        ref={(ref) => {
+          this.siderRef = ref
+        }}
+      >
         <div className={styles.logo}>
-          <a href="/">
-            <img src={logo} alt="logo" />
+          <a href='/'>
+            <img src={logo} alt='logo' />
             <h1>喜团管理平台</h1>
           </a>
         </div>
         <Menu
-          theme="dark"
-          onClick={e => this.setCurrent(e.key)}
+          theme='dark'
+          onClick={(e) => {
+            this.setCurrent(e.key)
+          }}
+          onOpenChange={(openKeys) => {
+            this.setState({
+              openKeys
+            })
+          }}
           style={{ padding: '16px 0', width: '100%' }}
           selectedKeys={[current]}
-          defaultOpenKeys={['goods', 'order']}
-          mode="inline"
+          openKeys={openKeys}
+          mode='inline'
         >
-          {renderMenulist(data)}
+          {this.renderMenulist(data)}
         </Menu>
       </Sider>
-    );
+    )
   }
 
 }
-// const Sidebar = props => {
-//   const selectedMenu = window.location.hash;
-//   const { collapsed } = props;
-//   const [current, setCurrent] = useState(selectedMenu);
 
-// };
+Sidebar.propTypes ={
+  data: PropTypes.array,
+  collapsed: PropTypes.bool,
+  pathname: PropTypes.string
+}
 
-export default Sidebar;
+export default Sidebar

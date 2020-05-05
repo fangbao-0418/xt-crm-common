@@ -43,6 +43,7 @@ class Main extends React.Component<Props> {
     { title: '申请时间', dataIndex: 'createTime', width: 150, render: (text) => APP.fn.formatDate(text) },
     { title: '操作人', dataIndex: 'operator', width: 100 },
     { title: '操作时间', dataIndex: 'operateTime', width: 150, render: (text) => APP.fn.formatDate(text) },
+    { title: '备注', dataIndex: 'operateRemark', width: 200 },
     {
       title: '操作',
       width: 140,
