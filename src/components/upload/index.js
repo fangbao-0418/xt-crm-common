@@ -326,7 +326,7 @@ class UploadView extends Component {
   };
   onPreview = file => {
     if (this.props.listType === 'text') {
-      APP.fn.download(file.url)
+      APP.fn.download(file.url, file.name)
       return
     }
     this.setState({

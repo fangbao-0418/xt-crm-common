@@ -126,6 +126,10 @@ export function download (url, filename) {
   if ((/\?/).test(url) === false) {
     url = url + '?v=' + new Date().getTime()
   }
+  if (!filename) {
+    filename = '下载.' + getFileExtName(url)
+  }
+  console.log(url, filename, 'xxx')
   getBlob(url).then(blob => {
     saveAs(blob, filename)
   })
