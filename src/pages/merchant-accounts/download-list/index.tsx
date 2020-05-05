@@ -160,10 +160,9 @@ class Main extends React.Component {
               pageSize,
               current: page
             }}
-            rowKey='id'
+            // rowKey='id'
             columns={this.columns}
             dataSource={data}
-            loading={this.state.loading}
           />
         </div>
       </div>
