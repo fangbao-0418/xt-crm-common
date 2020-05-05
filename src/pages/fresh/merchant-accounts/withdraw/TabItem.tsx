@@ -144,7 +144,10 @@ class Main extends React.Component<Props> {
   }
   public batchExport () {
     const payload = this.listpage.form.getValues()
-    api.batchExport(payload).then(() => {
+    api.batchExport({
+      ...payload,
+      status: this.props.status === 0 ? undefined : this.props.status
+    }).then(() => {
       APP.success('导出成功，请前去下载列表下载文件')
     })
   }
@@ -214,7 +217,7 @@ class Main extends React.Component<Props> {
     return (
       <div>
         <ListPage
-          reserveKey={namespace}
+          reserveKey={namespace + '-' + this.props.status}
           columns={this.columns}
           showButton={false}
           getInstance={(ref) => {
@@ -299,7 +302,6 @@ class Main extends React.Component<Props> {
           processPayload={(payload) => {
             const status = this.props.status === 0 ? undefined : this.props.status
             payload.status = status
-            console.log(payload, 'payload')
             return {
               ...payload,
               status

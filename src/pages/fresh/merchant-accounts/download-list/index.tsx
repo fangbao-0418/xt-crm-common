@@ -174,7 +174,6 @@ class Main extends React.Component {
           rowKey='id'
           columns={this.columns}
           dataSource={data}
-          loading={this.state.loading}
         />
       </Page>
     )
