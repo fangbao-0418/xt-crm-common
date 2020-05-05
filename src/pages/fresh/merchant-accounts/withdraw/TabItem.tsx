@@ -156,7 +156,7 @@ class Main extends React.Component<Props> {
         <ImportModal
           accept='.xls,.xlsx'
           onDownload={() => {
-            APP.fn.download('https://assets.hzxituan.com/upload/2020-05-04/f598d49e-a8f8-4c00-9b82-c22ecc3792db-k9sgswwh.xlsx', '批量支付模版')
+            APP.fn.download('https://assets.hzxituan.com/upload/2020-05-04/f598d49e-a8f8-4c00-9b82-c22ecc3792db-k9sgswwh.xlsx', '批量成功模版')
           }}
           onSelect={(file, cb) => {
             api.batchPay(file).then((res) => {
@@ -277,10 +277,10 @@ class Main extends React.Component<Props> {
                 <span
                   className='download mr8'
                   onClick={() => {
-                    APP.fn.download('https://assets.hzxituan.com/upload/2020-05-04/f598d49e-a8f8-4c00-9b82-c22ecc3792db-k9sgswwh.xlsx', '批量支付模版')
+                    APP.fn.download('https://assets.hzxituan.com/upload/2020-05-04/f598d49e-a8f8-4c00-9b82-c22ecc3792db-k9sgswwh.xlsx', '批量成功模版')
                   }}
                 >
-                  下载批量支付模版
+                  下载批量成功模版
                 </span>
                 <span
                   className='download'
