@@ -63,7 +63,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'radio', label: '账户类型',
         options: [
           // {label: '微信', value: 1},
-          {label: '支付宝', value: 2},
+          // {label: '支付宝', value: 2},
           {label: '个人银行卡', value: 3},
           {label: '对公银行账户', value: 4}
         ],
