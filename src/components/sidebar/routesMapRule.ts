@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-05-06 10:32:12
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-06 11:01:11
+ * @LastEditTime: 2020-05-06 11:36:12
  * @FilePath: /xt-crm/src/components/sidebar/routesMapRule.ts
  */
 
@@ -36,6 +36,13 @@ const rules = {
   ],
   '/fresh/order/mainOrder': [
     /fresh\/order\/detail(\/)?(\d+)?/
+  ],
+  '/message/template': [
+    /^\/message\/template(\/)?/
   ]
 }
 export default rules
+
+const b: any = {
+
+}

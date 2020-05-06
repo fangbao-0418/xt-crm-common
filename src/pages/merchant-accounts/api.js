@@ -1,10 +1,10 @@
 /*
  * @Date: 2020-04-16 13:58:08
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-02 20:20:20
- * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/merchant-accounts/api.js
+ * @LastEditTime: 2020-05-06 13:15:23
+ * @FilePath: /xt-crm/src/pages/merchant-accounts/api.js
  */
-import { post, get, newPost } from '../../util/fetch';
+const { post, get, newPost } = APP.http
 
 // export function getPromotionList(data) {
 //   return post('/promotion/list', data);

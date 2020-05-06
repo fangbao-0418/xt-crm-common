@@ -54,24 +54,26 @@ class PayModal extends React.Component {
     })
   }
 
-  render() {
+  render () {
     const {
       modalProps = {},
       form: { getFieldDecorator, getFieldValue },
-      record: {
-        id,
-        paymentSerialNo,
-        paymentImgList = [],
-        paymentMoney = 0,
-        paymentName = '暂无数据',
-        settlementSerialNo = '暂无数据',
-        storeTypeInfo = '暂无数据',
-        storeName = '暂无数据',
-        payTypeInfo = '暂无数据',
-        accountName = '暂无数据',
-        accountNo = '暂无数据'
-      }
-    } = this.props;
+      record
+    } = this.props
+
+    const {
+      id,
+      paymentSerialNo,
+      paymentImgList = [],
+      paymentMoney = 0,
+      paymentName = '暂无数据',
+      settlementSerialNo = '暂无数据',
+      storeTypeInfo = '暂无数据',
+      storeName = '暂无数据',
+      payTypeInfo = '暂无数据',
+      accountName = '暂无数据',
+      accountNo = '暂无数据'
+    } = record || {}
 
     const formItemLayout = {
       labelCol: {
