@@ -131,7 +131,7 @@ class BannerModal extends Component {
 
     let seat
 
-    if (getFieldValue('seat')) {
+    if (getFieldValue('seat') && getFieldValue('seat')[0]) {
       seat = getFieldValue('seat')
     } else {
       seat = [data.newSeat, data.childSeat]
