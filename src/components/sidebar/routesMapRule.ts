@@ -78,7 +78,11 @@ const rules = {
     /message\/template\/detail(\/)?(\d+)?/,
   ],
   '/fresh/store': [
-    /fresh\/store(\/)?(\d+)?/,
+    /fresh\/store$/,
+    /fresh\/store\/-1$/,
+  ],
+  '/fresh/store/timer': [
+    /fresh\/store$/,
   ],
   '/fresh/saleAfter': [
     /fresh\/saleAfter\/detail(\/)?(\d+)?/,
@@ -89,5 +93,6 @@ const rules = {
   '/shop/goods': [
     /shop\/goods\/detail(\/)?(\d+)?/,
   ],
+  
 }
 export default rules
