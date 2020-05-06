@@ -1,8 +1,9 @@
 import * as api from './api'
 import { message } from 'antd'
+const namespace='fresh.settings'
 
 export default {
-  namespace: 'fresh.settings',
+  namespace,
   state: {
     value: 1
   },
@@ -18,10 +19,11 @@ export default {
         this.updateVal({ value: setting.productStyle })
       }
     },
-    async setSetting (param) {
-      const setting = await api.setSetting(param)
+    async setSetting (param, state) {
+      const { value }=state[namespace]
+      const setting = await api.setSetting({ productStyle: value })
       if (setting) {
-        this.updateVal({ value: param.productStyle })
+        message.success('保存成功')
       }
     }
   })

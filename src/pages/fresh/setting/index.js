@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Card, Radio } from 'antd'
+import { Card, Radio, Button } from 'antd'
 import PropTypes from 'prop-types'
 import { connect } from '@/util/utils'
 
@@ -14,6 +14,11 @@ export default class extends PureComponent {
   static propTypes = {
     value: PropTypes.number,
     dispatch: PropTypes.object
+  }
+
+  constructor (props) {
+    super(props)
+    this.save=this.save.bind(this)
   }
 
   componentDidMount () {
@@ -32,6 +37,10 @@ export default class extends PureComponent {
             1×2排列
           </Radio>
         </Radio.Group>
+        <div>
+          <Button type='primary' style={{ marginTop: 24 }} onClick={this.save}>保存</Button>
+        </div>
+
       </Card>
     )
   }
@@ -39,8 +48,13 @@ export default class extends PureComponent {
   onChange = (e) => {
     const { dispatch } = this.props
     const { value } = e.target
-    dispatch[namespace].setSetting({
-      productStyle: value
+    dispatch[namespace].updateVal({
+      value
     })
   };
+
+  save=(e)=>{
+    const { dispatch } = this.props
+    dispatch[namespace].setSetting()
+  }
 }
