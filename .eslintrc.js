@@ -9,15 +9,13 @@ module.exports = {
   plugins: [],
   globals: {
     APP: true,
-    Moon: true
+    Moon: true,
   },
-  rules: {
-    'space-before-function-paren': false
-  },
+  rules: {},
   parserOptions: {
     project: 'tsconfig.json',
     ecmaFeatures: {
-      legacyDecorators: true
-    }
-  }
-}
+      legacyDecorators: true,
+    },
+  },
+};
