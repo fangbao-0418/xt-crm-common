@@ -20,6 +20,7 @@ export interface Fields {
   defaultNumber: number;
   increaseNumber: number;
   increaseCost: number;
+  address: string[];
 }
 
 export interface rankItem {

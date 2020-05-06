@@ -15,7 +15,8 @@ class CitySelect extends Component {
     // 获取选择值
     getSelectedValues: PropTypes.func,
     // 默认值
-    value: PropTypes.array
+    value: PropTypes.array,
+    style: PropTypes.object
   };
   constructor (props) {
     super(props);
@@ -81,9 +82,11 @@ class CitySelect extends Component {
   }
 
   render() {
-    // const { getFieldProps } = this.props.form;
+    const { style = null } = this.props;
     return (
-      <div>
+      <div
+        style={style}
+      >
         <Cascader
           options={this.city}
           // {...getFieldProps("city", {

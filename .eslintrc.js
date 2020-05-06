@@ -11,9 +11,6 @@ module.exports = {
     APP: true,
     Moon: true
   },
-  rules: {
-    'space-before-function-paren': false
-  },
   parserOptions: {
     project: 'tsconfig.json',
     ecmaFeatures: {

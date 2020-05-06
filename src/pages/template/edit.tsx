@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Card, Input, InputNumber, Radio, Button, Table, message } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import CascaderCity from '@/components/cascader-city';
+import CitySelect from '@/components/city-select'
 import classnames from 'classnames';
 import styles from './style.module.scss';
 import { withRouter } from 'react-router';
@@ -85,7 +86,8 @@ class edit extends React.Component<Props, State> {
       commonCost: formatPrice(res.commonCost),
       defaultNumber: res.defaultNumber,
       increaseNumber: res.increaseNumber,
-      increaseCost: formatPrice(res.increaseCost)
+      increaseCost: formatPrice(res.increaseCost),
+      address: res.address || []
     });
     let templateData = mapTemplateData(res.rankList);
     this.citys = mapCitys(res.rankList)
@@ -128,6 +130,7 @@ class edit extends React.Component<Props, State> {
           increaseNumber: values.increaseNumber,
           increaseCost: values.increaseCost * 100,
           rankList: mapReqRankList(templateData),
+          address: values.address || []
         };
         let res = false;
         let { id } = this.props.match.params;
@@ -451,6 +454,18 @@ class edit extends React.Component<Props, State> {
                   },
                 ],
               })(<Input placeholder="请输入模板名称" style={{ width: 200 }} />)}
+            </Form.Item>
+            <Form.Item label="商品所在地" required={true}>
+              {getFieldDecorator('address', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择商品所在地',
+                  },
+                ],
+              })(
+                <CitySelect style={{ width: 400 }} />
+              )}
             </Form.Item>
             <Form.Item label="运费设置">
               <Card
