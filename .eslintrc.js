@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-08 14:12:51
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-09 11:24:21
- * @FilePath: /eslint-test/Users/fangbao/Documents/xituan/xt-crm/.eslintrc.js
+ * @LastEditTime: 2020-05-06 17:59:46
+ * @FilePath: /xt-crm/.eslintrc.js
  */
 module.exports = {
   extends: ['plugin:xt-react/recommended'],
@@ -10,9 +10,6 @@ module.exports = {
   globals: {
     APP: true,
     Moon: true
-  },
-  rules: {
-    'space-before-function-paren': false
   },
   parserOptions: {
     project: 'tsconfig.json',
