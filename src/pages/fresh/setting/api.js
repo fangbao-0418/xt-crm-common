@@ -5,7 +5,7 @@ import * as Fetch from '@/util/fetch'
  * @param {*} params
  */
 export function getSetting (params) {
-  return Fetch.get('/cweb/fresh/home/style', params)
+  return Fetch.get('/crm/home/fresh/style/get', params)
 }
 
 /**
@@ -13,5 +13,5 @@ export function getSetting (params) {
  * @param {*} params
  */
 export function setSetting (params) {
-  return Fetch.post('/crm/fresh/home/style', params)
+  return Fetch.newPost('/crm/home/fresh/style', params)
 }
