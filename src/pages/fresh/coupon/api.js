@@ -54,7 +54,7 @@ export function stopCouponTask (taskId) {
 
 // 失效任务优化券
 export function invalidTaskCoupon (taskId, couponId) {
-  return newPut(`/promotion/fresh/coupon/modify/invalidTaskCoupon?taskId=${taskId}&couponId=${couponId}`)
+  return newPut(`/mcweb/promotion/fresh/coupon/modify/invalidTaskCoupon?taskId=${taskId}&couponId=${couponId}`)
 }
 // 失效优惠券
 export function invalidCoupon (couponId) {
