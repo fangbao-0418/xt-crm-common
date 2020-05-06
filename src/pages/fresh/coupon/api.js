@@ -34,50 +34,50 @@ export function importShop () {
 }
 
 export function modifyCouponBaseInfo (data) {
-  return newPut('/mcweb/promotion/fresh/coupon/modify/couponInfo', data)
+  return newPut('/mcweb/fresh/coupon/modify/couponInfo', data)
 }
 
 // 新增发券信息
 export function saveCouponTaskInfo (data) {
-  return newPost('/mcweb/promotion/fresh/coupon/save/saveCouponTaskInfo', data)
+  return newPost('/mcweb/fresh/coupon/save/saveCouponTaskInfo', data)
 }
 
 // 结束领取优惠券
 export function overReciveCoupon (couponId) {
-  return newPut(`/mcweb/promotion/fresh/coupon/modify/overReciveCoupon?couponId=${couponId}`)
+  return newPut(`/mcweb/fresh/coupon/modify/overReciveCoupon?couponId=${couponId}`)
 }
 
 // 停止发券
 export function stopCouponTask (taskId) {
-  return newPut(`/mcweb/promotion/fresh/coupon/modify/stopCouponTask?taskId=${taskId}`)
+  return newPut(`/mcweb/fresh/coupon/modify/stopCouponTask?taskId=${taskId}`)
 }
 
 // 失效任务优化券
 export function invalidTaskCoupon (taskId, couponId) {
-  return newPut(`/mcweb/promotion/fresh/coupon/modify/invalidTaskCoupon?taskId=${taskId}&couponId=${couponId}`)
+  return newPut(`/mcweb/fresh/coupon/modify/invalidTaskCoupon?taskId=${taskId}&couponId=${couponId}`)
 }
 // 失效优惠券
 export function invalidCoupon (couponId) {
-  return newPut(`/mcweb/promotion/fresh/coupon/modify/invalidCoupon?couponId=${couponId}`)
+  return newPut(`/mcweb/fresh/coupon/modify/invalidCoupon?couponId=${couponId}`)
 }
 // 获取批量发送记录
 export function getCouponTasks (couponId) {
-  return newGet(`/mcweb/promotion/fresh/coupon/get/couponTaskList?couponId=${couponId}`)
+  return newGet(`/mcweb/fresh/coupon/get/couponTaskList?couponId=${couponId}`)
 }
 // 获取优惠券详情
 export function getCouponDetail (id) {
-  return newGet(`/mcweb/promotion/fresh/coupon/get/couponDetail?couponId=${id}`)
+  return newGet(`/mcweb/fresh/coupon/get/couponDetail?couponId=${id}`)
 }
 
 // 获取优惠券列表
 export function getCouponlist (data) {
-  return newPost('/mcweb/promotion/fresh/coupon/get/couponList', data)
+  return newPost('/mcweb/fresh/coupon/get/couponList', data)
 }
 
 // 新增优惠券
 export function saveCouponInfo (data) {
   const params = adapter.couponDetailParams(data)
-  return newPost('/mcweb/promotion/fresh/coupon/save/couponInfo', params)
+  return newPost('/mcweb/fresh/coupon/save/couponInfo', params)
 }
 
 // 查询优惠券列表
