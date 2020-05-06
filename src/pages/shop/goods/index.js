@@ -39,7 +39,7 @@ class Main extends React.Component {
     if (currentGoods.productImage) {
       productImage = currentGoods.productImage.split(',').map(item => ({
         label: '详情图',
-        value: currentGoods.coverUrl
+        value: item
       }))
     }
 

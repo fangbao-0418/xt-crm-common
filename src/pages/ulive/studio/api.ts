@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-18 11:47:02
- * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/ulive/studio/api.ts
+ * @LastEditTime: 2020-04-09 13:21:15
+ * @FilePath: /xt-crm/src/pages/ulive/studio/api.ts
  */
 const { post, get, newPost, newPut } = APP.http
 /** 直播列表 */
@@ -34,6 +34,7 @@ export const setTop = (payload: {
   planId: number
   /** 0-不置顶, 1-置顶) */
   isTop: 0 | 1
+  topSort?: number
 }) => {
   return newPut('::ulive/live/plan/top', payload)
 }

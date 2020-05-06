@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-26 16:16:43
+ * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/special/content/api.ts
+ */
 import * as adapter from './adapter'
 const { get, newPut, newPost } = APP.http
 
@@ -17,13 +23,13 @@ export async function queryFloor (payload: {
 
 /** 查询详情 */
 export async function queryFloorDetail (floorId: number) {
-  const res = await get(`/crm/subject/floor/detail/${floorId}`) || {}
+  const res = await get(`/mcweb/product/subject_floor/detail?floorId=${floorId}`) || {}
   return adapter.subjectFloorDetailResponse(res)
 }
 
 /** 启用、停用 */
 export function updateStatus (floorId: number) {
-  return newPut(`/crm/subject/floor/setStatus/${floorId}`)
+  return newPut(`/mcweb/product/subject_floor/setStatus?floorId=${floorId}`)
 }
 
 /** 保存楼层信息 */
@@ -38,12 +44,11 @@ export async function saveSubjectFloor (payload: {
   return newPost('/crm/subject/floor/save', adapter.saveSubjectFloorParams(payload))
 }
 
-
 /**
  * 获取活动下所有商品
  * @param {*} param
  */
-export function getGoodsListByActivityId(param: any) {
+export function getGoodsListByActivityId (param: any) {
   const { promotionId, ...data } = param
   return get(`/promotion/${promotionId}/products`, data)
 }

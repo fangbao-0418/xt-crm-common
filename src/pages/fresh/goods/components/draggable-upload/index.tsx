@@ -38,6 +38,7 @@ class Main extends React.Component<Props> {
       >
         <UploadView
           multiple
+          ossType='cos'
           value={this.props.value}
           placeholder={placeholder}
           listType="picture-card"

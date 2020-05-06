@@ -4,9 +4,11 @@ import { initImgList } from '@/util/utils';
 import { pick } from 'lodash';
 
 export function replaceHttpUrl(imgUrl?: string) {
-  return (imgUrl || '')
-    .replace('https://assets.hzxituan.com/', '')
-    .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
+  // return (imgUrl || '')
+  //   .replace('https://assets.hzxituan.com/', '')
+  //   .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
+  //   .replace('https://sh-tximg.hzxituan.com/', '');
+  return APP.fn.deleteOssDomainUrl(imgUrl || '')
 };
 
 // 数组转换到字符串

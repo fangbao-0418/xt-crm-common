@@ -5,20 +5,32 @@ interface City {
   children?: City[];
   label?: string;
 }
-function convert(list: City[], parentId?: string): City[] {
-  const result: any[] = []
-  list.forEach((item: City) => {
-    if (item.parent === undefined && !parentId || item.parent === parentId) {
-      const children = convert(list, item.value)
-      item.label = item.name;
-      result.push(children.length > 0 ? {
-        ...item,
-        children
-      } : item)
+
+function convert (list: City[], type: string) {
+  function loop (list: City[], parentId?: string): City[] {
+    const result: any[] = []
+    list.forEach((item: City) => {
+      if (item.parent === undefined && !parentId || item.parent === parentId) {
+        const children = loop(list, item.value)
+        item.label = item.name
+        result.push(children.length > 0 ? {
+          ...item,
+          children
+        } : item)
+      }
+    })
+    if (type === '1') {
+      result.length > 0 && result.unshift({
+        label: '全部',
+        value: '0',
+        name: 'all'
+      })
     }
-  })
-  return result;
+    return result
+  }
+  return loop(list)
 }
+
 const addressData: City[] = [
   { value: '110000', name: '北京' },
   { value: '120000', name: '天津' },
@@ -3934,6 +3946,6 @@ const addressData: City[] = [
   { value: '620201', name: '长城区', parent: '620200' },
   { value: '620202', name: '雄关区', parent: '620200' },
   { value: '654030', name: '阿勒泰市', parent: '654000' },
-  { value: '654301', name: '哈巴河县', parent: '654300' },
+  { value: '654301', name: '哈巴河县', parent: '654300' }
 ]
-export default convert(addressData);
+export default (type: string) => convert(addressData, type)

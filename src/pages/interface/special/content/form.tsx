@@ -8,6 +8,7 @@ import { FormComponentProps } from 'antd/es/form'
 import { namespace } from './model'
 import { connect } from 'react-redux'
 import { saveSubjectFloor } from './api'
+import { findOverlapCoordinates } from '../components/content/hotspot/components/hotsport/helper'
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   detail: Special.DetailProps
 }
@@ -28,7 +29,7 @@ class Main extends React.Component<Props> {
     })
   }
   /** 添加楼层 */
-  public addContent(type: 1 | 2 | 3) {
+  public addContent (type: 1 | 2 | 3 | 4) {
     const { detail } = this.props
     detail.list.push({
       type,
@@ -52,7 +53,7 @@ class Main extends React.Component<Props> {
           this.form.setValues(res)
         }
       }
-    })   
+    })
   }
   /** 取消 */
   public handleCancel = () => {
@@ -62,16 +63,46 @@ class Main extends React.Component<Props> {
   public handleSave = () => {
     const { detail } = this.props
     this.form.props.form.validateFields(async (err, vals) => {
-      if (!err) {
-        const res = await saveSubjectFloor({
-          ...detail,
-          ...vals,
-          id: this.id !== -1 ? this.id : void 0
-        })
-        if (res) {
-          APP.success(`${this.id === -1 ? '新增' : '编辑'}专题内容成功`)
-          APP.history.go(-1)
+      const list = detail.list || []
+      if (list.length === 0) {
+        APP.error('请添加楼层')
+        return
+      }
+      /** 热区值 */
+      let hotsportValue = true
+      const isOverlap = list.find((item) => {
+        if (item.type === 4 && item.content) {
+          const coordinates = (item.content.area || []).map((val) => {
+            if (!val.value) {
+              hotsportValue = false
+            }
+            return val.coordinate
+          })
+          if (findOverlapCoordinates(coordinates)) {
+            return true
+          }
         }
+      })
+      if (isOverlap) {
+        APP.error('图片热区存在重叠区域')
+        return
+      }
+      if (!hotsportValue) {
+        APP.error('图片热区存在未配置区域')
+        return
+      }
+      if (err) {
+        APP.error('请检查输入项')
+        return
+      }
+      const res = await saveSubjectFloor({
+        ...detail,
+        ...vals,
+        id: this.id !== -1 ? this.id : void 0
+      })
+      if (res) {
+        APP.success(`${this.id === -1 ? '新增' : '编辑'}专题内容成功`)
+        APP.history.push('/interface/special-content')
       }
     })
   }
@@ -81,22 +112,22 @@ class Main extends React.Component<Props> {
         <Form
           getInstance={ref => this.form = ref}
         >
-        <FormItem
-          name='floorName'
-          label='名称'
-          controlProps={{
-            style: {
-              width: 220
-            }
-          }}
-          verifiable
-          fieldDecoratorOptions={{
-            rules: [{
-              required: true,
-              message: '请输入名称'
-            }]
-          }}
-        />
+          <FormItem
+            name='floorName'
+            label='名称'
+            controlProps={{
+              style: {
+                width: 220
+              }
+            }}
+            verifiable
+            fieldDecoratorOptions={{
+              rules: [{
+                required: true,
+                message: '请输入名称'
+              }]
+            }}
+          />
           <FormItem
             name='status'
             label='启用状态'
@@ -139,17 +170,24 @@ class Main extends React.Component<Props> {
           >
             <Button
               type='primary'
-              className={styles.mr10}
+              className='mr8'
               onClick={() => this.addContent(3)}
             >
               广告
             </Button>
-            <Button type='primary' className={styles.mr10} onClick={() => this.addContent(2)}>优惠券</Button>
+            <Button type='primary' className='mr8' onClick={() => this.addContent(2)}>优惠券</Button>
             <Button
               type='primary'
+              className='mr8'
               onClick={() => this.addContent(1)}
             >
               商品
+            </Button>
+            <Button
+              type='primary'
+              onClick={() => this.addContent(4)}
+            >
+              图片热区
             </Button>
           </FormItem>
           <FormItem>
@@ -157,7 +195,7 @@ class Main extends React.Component<Props> {
               style={{ width: 800 }}
             />
           </FormItem>
-          <FormItem style={{marginTop: 100}}>
+          <FormItem style={{ marginTop: 100 }}>
             <Button
               type='primary'
               onClick={this.handleSave}>
