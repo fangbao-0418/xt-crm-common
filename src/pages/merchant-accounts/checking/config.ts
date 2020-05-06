@@ -78,12 +78,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input', label: '银行支行名称',
         controlProps: {
           placeholder: '请选择收款账号银行名，例如中国银行杭州高新支行',
-          maxLength: 250
+          maxLength: 50
         },
         fieldDecoratorOptions: {
           rules: [
             {required: true, message: '请输入银行支行名称'},
-            {max: 250, message: '长度最大250个字符'}
+            {max: 50, message: '长度最大50个字符'}
           ]
         }
       },
