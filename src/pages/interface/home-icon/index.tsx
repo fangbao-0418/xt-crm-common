@@ -56,7 +56,7 @@ class Main extends React.Component<Props, State> {
           ...value
         }
         if (result.imgUrl instanceof Array) {
-          result.imgUrl = result.imgUrl[0].url
+          result.imgUrl = result.imgUrl[0].rurl
         }
         result.platform = 0
         result.platformArray.forEach((val:any) => {

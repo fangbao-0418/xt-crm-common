@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
-import { Input, Table, Button, Popconfirm, Form } from 'antd';
-import Page from '@/components/page';
-import { connect } from '@/util/utils';
-import Modal from './modal';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { Input, Table, Button, Popconfirm, Form } from 'antd'
+import Page from '@/components/page'
+import { connect } from '@/util/utils'
+import Modal from './modal'
 
-const FormItem = Form.Item;
+const FormItem = Form.Item
 
-const typeMap = ['菜单', '按钮'];
-function getColumns(scope) {
-  const { showList } = scope.state;
+const typeMap = ['菜单', '按钮']
+function getColumns (scope) {
+  const { showList } = scope.state
   const columns = [
     {
       title: '菜单名称',
       dataIndex: 'name',
-      width: 300,
+      width: 300
       // render(v, record) {
       //     const display = isShow(showList, record) ? 'block' : 'none';
       //     const hasChilds = record.subMenus.length;
@@ -33,8 +34,8 @@ function getColumns(scope) {
       dataIndex: 'type',
       width: 200,
       align: 'center',
-      render(val, record) {
-        return typeMap[val] || '菜单';
+      render (val, record) {
+        return typeMap[val] || '菜单'
       }
     },
     {
@@ -48,121 +49,127 @@ function getColumns(scope) {
       title: '操作',
       align: 'center',
       width: 200,
-      render(val, record) {
+      render (val, record) {
         return (
           <div>
             <a style={{ marginRight: 10 }} onClick={() => scope.onEdit(record)}>
               编辑
             </a>
             <Popconfirm
-              title="确定删除吗?"
+              title='确定删除吗?'
               onConfirm={() => scope.onDel(record)}
               // onCancel={cancel}
-              okText="Yes"
-              cancelText="No"
+              okText='Yes'
+              cancelText='No'
             >
-              <a href="#">删除</a>
+              <a href='#'>删除</a>
             </Popconfirm>
           </div>
-        );
+        )
       }
     }
-  ];
-  return columns;
+  ]
+  return columns
 }
 
 @connect(state => ({
   menulist: state['auth.config'].menuList
 }))
 @Form.create()
-export default class extends Component {
-  constructor(props) {
-    super(props);
+class Config extends Component {
+  constructor (props) {
+    super(props)
     this.state = {
       showList: props.menulist.map(item => item.id)
-    };
+    }
   }
 
   onEdit = item => {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch['auth.config'].getMenuInfo({
       id: item.id
-    });
-    this.onShowModal();
+    })
+    this.onShowModal()
   };
 
   onDel = item => {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch['auth.config'].delMenu({
       id: item.id
-    });
+    })
   };
 
-  componentDidMount() {
-    this.handleSearch();
+  componentDidMount () {
+    this.handleSearch()
   }
 
   handleSearch = () => {
     const {
       form: { validateFields },
       dispatch
-    } = this.props;
+    } = this.props
 
     validateFields((errors, values) => {
       if (!errors) {
         const payload = {
           ...values
-        };
-        dispatch['auth.config'].getList(payload, 'menuList');
+        }
+        dispatch['auth.config'].getList(payload, 'menuList')
       }
-    });
+    })
   };
   onShowModal = () => {
-    const { dispatch } = this.props;
+    const { dispatch } = this.props
     dispatch({
       type: 'auth.config/saveDefault',
       payload: {
         visible: true
       }
-    });
-    dispatch['auth.config'].getList({ type: 0 }, 'parentList');
+    })
+    dispatch['auth.config'].getList({ type: 0 }, 'parentList')
   };
 
   renderForm = () => {
-      const { form: { getFieldDecorator } } = this.props;
-      return (
-          <Form layout="inline" style={{ marginBottom: 10 }}>
-              <FormItem label="菜单名称">
-                  {
-                      getFieldDecorator('name')(
-                          <Input />
-                      )
-                  }
-              </FormItem>
-              <FormItem>
-                  <Button type="primary" onClick={this.handleSearch}>查询</Button>
-                  <Button onClick={this.onShowModal} style={{ marginLeft: 10 }}>新增目录</Button>
-              </FormItem>
-          </Form>
-      )
+    const { form: { getFieldDecorator } } = this.props
+    return (
+      <Form layout='inline' style={{ marginBottom: 10 }}>
+        <FormItem label='菜单名称'>
+          {
+            getFieldDecorator('name')(
+              <Input />
+            )
+          }
+        </FormItem>
+        <FormItem>
+          <Button type='primary' onClick={this.handleSearch}>查询</Button>
+          <Button onClick={this.onShowModal} style={{ marginLeft: 10 }}>新增目录</Button>
+        </FormItem>
+      </Form>
+    )
   }
-  render() {
-      const { menulist } = this.props;
-      return (
-          <Page>
-              {
-                  this.renderForm()
-              }
-              <Table
-                  // expandedRowRender={this.expandedRowRender}
-                  dataSource={menulist}
-                  columns={getColumns(this)}
-              >
-                  {/* <Column title="菜单名称" dataIndex="name"></Column>
-                  <Column title="类型" dataIndex="type"></Column> */}
-              </Table>
-              <Modal />
-          </Page>
-      );
+  render () {
+    const { menulist } = this.props
+    return (
+      <Page>
+        {
+          this.renderForm()
+        }
+        <Table
+          // expandedRowRender={this.expandedRowRender}
+          dataSource={menulist}
+          columns={getColumns(this)}
+        >
+          {/* <Column title="菜单名称" dataIndex="name"></Column>
+              <Column title="类型" dataIndex="type"></Column> */}
+        </Table>
+        <Modal />
+      </Page>
+    )
   }
 }
+Config.propTypes = {
+  form: PropTypes.object,
+  dispatch: PropTypes.object,
+  menulist: PropTypes.array
+}
+export default Config
