@@ -90,7 +90,8 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
 
 module.exports = override(
   ...addBabelPlugins(
-    '@babel/plugin-proposal-optional-chaining'
+    '@babel/plugin-proposal-optional-chaining',
+    '@babel/plugin-proposal-nullish-coalescing-operator'
   ),
   addWebpackModuleRule({
     test: /\.m(odule)?.styl/,

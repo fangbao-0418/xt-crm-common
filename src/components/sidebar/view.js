@@ -6,6 +6,8 @@ import PropTypes from 'prop-types'
 import { Icon, Menu, Layout } from 'antd'
 import styles from './sidebar.module.scss'
 import logo from '../../assets/images/logo.svg'
+import routesMapRule from './routesMapRule'
+
 const { SubMenu } = Menu
 const { Sider } = Layout
 
@@ -33,7 +35,13 @@ class Sidebar extends React.Component {
     function loop (arr, group = [], isPattern = false) {
       return arr.find((item) => {
         const pattern = new RegExp('^' + item.path + '/(\\w)+$')
-        if (!isPattern && item.type === 0 && item.path === pathname) {
+        console.log(routesMapRule, item.path, 'routesMapRule')
+        console.log(routesMapRule[item.path], 'routesMapRule[pathname]')
+        if (routesMapRule[item.path]?.find?.((rule) => { return rule.test(pathname) })) {
+          selectedItem = item
+          selectedGroup = group.concat([item])
+          return true
+        } else if (!isPattern && item.type === 0 && item.path === pathname) {
           selectedItem = item
           selectedGroup = group.concat([item])
           return true
