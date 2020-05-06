@@ -133,8 +133,8 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
           })(
             <Radio.Group>
               <Radio style={radioStyle} value={0}>全部用户</Radio>
-              <Radio style={radioStyle} value={1}>按用户等级</Radio>
-              {isUserLevel() && (
+              {/* <Radio style={radioStyle} value={1}>按用户等级</Radio> */}
+              {/* {isUserLevel() && (
                 getFieldDecorator('userLevel')(
                   <Checkbox.Group style={{ width: '100%' }}>
                     <Row>
@@ -159,7 +159,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
                     </Row>
                   </Checkbox.Group>
                 )
-              )}
+              )} */}
               <Radio style={radioStyle} value={2}>指定用户</Radio>
               {isUserPhones() && (
                 <Form.Item>
@@ -189,12 +189,12 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
                   <img style={{ width: 130, height: 200 }} src={(require('@/assets/images/putong.png'))}></img>
                 </div>
               </div>
-              <div style={{ display: "inline-block" }} >
+              {/* <div style={{ display: "inline-block" }} >
                 <Radio value={2}>定制</Radio>
                 <div>
                   <img style={{ width: 130, height: 200 }} src={(require('@/assets/images/dingzhi.png'))}></img>
                 </div>
-              </div>
+              </div> */}
             </Radio.Group>
           )}
         </Form.Item>
