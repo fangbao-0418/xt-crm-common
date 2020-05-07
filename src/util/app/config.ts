@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-27 13:45:49
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-03 20:38:56
+ * @LastEditTime: 2020-05-07 16:39:10
  * @FilePath: /xt-crm/src/util/app/config.ts
  */
 import { baseHost, env as apiEnv } from '../baseHost'
@@ -13,7 +13,7 @@ export const serverMapper: any = {
     test1: 'https://test-guard.hzxituan.com',
     test2: 'https://test-guard.hzxituan.com',
     pre: 'https://staging-guard.hzxituan.com',
-    propd: 'https://guard.hzxituan.com'
+    prod: 'https://guard.hzxituan.com'
   },
   palamidi: {
     dev: 'https://daily-palamidi-console.hzxituan.com',
