@@ -259,6 +259,7 @@ class CouponInfo extends React.Component {
         activityList,
         useTimeRange,
         availableDays,
+        platformRestrict: 'all',
         platformRestrictValues,
         receiveRestrictValues,
         receivePattern,
@@ -350,6 +351,7 @@ class CouponInfo extends React.Component {
       >
         {/* 已选择商品 */}
         <ProductSelector
+          type={1}
           getInstance={(ref) => this.productSelector = ref}
           visible={productSelectorVisible}
           onCancel={() => this.setState({
@@ -359,6 +361,7 @@ class CouponInfo extends React.Component {
         />
         {/* 排除商品 */}
         <ProductSelector
+          type={1}
           getInstance={(ref) => this.excludeProduct = ref}
           visible={excludeProductSelectorVisible}
           onCancel={() => this.setState({
@@ -647,6 +650,7 @@ class CouponInfo extends React.Component {
                         }
                       })(<InputNumber
                         min={0.01}
+                        precision={2}
                         className='ml10 short-input'
                       />)}
                       <span className='ml10'>元</span>
@@ -676,6 +680,7 @@ class CouponInfo extends React.Component {
                       ]
                     })(<InputNumber
                       min={0.01}
+                      precision={2}
                     />)}
                   </span>
                   <span className='ml10'>元</span>
@@ -698,6 +703,7 @@ class CouponInfo extends React.Component {
                     placeholder='最多10000000'
                     style={{ width: '160px' }}
                     min={1}
+                    precision={0}
                     max={10000000}
                   />)}
                   <span className='ml10'>张</span>
@@ -800,16 +806,17 @@ class CouponInfo extends React.Component {
               value: 0
             }, {
               label: (
-                <>
+                <span>
                   <span>领券当日起</span>
                   <InputNumber
                     className='ml10 short-input'
                     min={0}
+                    precision={0}
                     value={availableDays}
                     onChange={availableDays => this.setState({ availableDays })}
                   />
                   <span className='ml10'>天内可用（设置为0时则为当日有效）</span>
-                </>
+                </span>
               ),
               value: 1
             }]}
@@ -857,6 +864,7 @@ class CouponInfo extends React.Component {
                     })(<InputNumber
                       placeholder='最多10'
                       min={1}
+                      precision={0}
                       max={10}
                     />)}
                   </span>
@@ -875,7 +883,8 @@ class CouponInfo extends React.Component {
                   />
                   <span className='ml10'>每日限领</span>
                   <span className='ml10 short-input'>
-                    {form.getFieldDecorator('dailyRestrict')(<InputNumber placeholder='最多10' min={1} max={10} />)}
+                    {form.getFieldDecorator('dailyRestrict')(<InputNumber
+                      precision={0} placeholder='最多10' min={1} max={10} />)}
                   </span>
                   <span className='ml10'>张</span>
                 </>

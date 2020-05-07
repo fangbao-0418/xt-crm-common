@@ -202,7 +202,7 @@ const getReceiveRestrictValues = (vals: any) => {
   }
 };
 
-const getPlatformRestrictValues = (vals: any) => vals.platformType === 0 ? 'all' : vals.platformRestrictValues.join(',')
+const getPlatformRestrictValues = (vals: any) => 'all'
 
 const getDailyRestrict = (vals: any) => vals.dailyRestrictChecked ? vals.dailyRestrict : null
 
@@ -243,6 +243,7 @@ export function couponDetailParams(params: any) {
       // 领取/使用用户级别限制
       receiveRestrictValues: getReceiveRestrictValues(params),
       // 平台限制
+      platformRestrict: getPlatformRestrictValues(params),
       platformRestrictValues: getPlatformRestrictValues(params),
       // 每日限领
       dailyRestrict: getDailyRestrict(params),

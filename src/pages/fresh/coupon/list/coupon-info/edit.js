@@ -97,6 +97,7 @@ function CouponInfo (props) {
           ...fields,
           id: +urlSearch.get('id')
         }
+        detail.baseVO.platformRestrict='all'
         const res = await modifyCouponBaseInfo(detail)
         if (res) {
           message.success('编辑优惠券成功')
@@ -132,6 +133,7 @@ function CouponInfo (props) {
   return (
     <Card>
       <ProductSelector
+        type={1}
         visible={productSelectorVisible}
         onCancel={() => setProductSelectorVisible(false)}
         onChange={onProductSelectorChange}
@@ -257,7 +259,7 @@ function CouponInfo (props) {
         <Form.Item label='领取人限制'>{formatReceiveRestrict(ruleVO.receiveRestrict)}</Form.Item>
         <Form.Item label='每人限领次数'>{ruleVO.restrictNum}张</Form.Item>
         <Form.Item label='每日限领次数'>{ruleVO.dailyRestrict ? `${ruleVO.dailyRestrict}张` : '无'}</Form.Item>
-        <Form.Item label='使用平台'>{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item>
+        {/* <Form.Item label='使用平台'>{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item> */}
         {ruleVO.receivePattern === 1 && <Form.Item label='发券控制'>仅支持手动发券</Form.Item>}
         {ruleVO.receivePattern !== 1 && (<Form.Item label='商详显示'>{ruleVO.showFlag === 1 ? '显示' : '不显示'}</Form.Item>)}
         <Form.Item label='优惠券说明'>
