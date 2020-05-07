@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+  import React, { Children } from 'react'
 import { Input } from 'antd'
 import TreeCheckBox from '@/packages/common/components/tree-checkbox'
 import { If } from '@/packages/common/components'
@@ -32,7 +32,6 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
     }
   }
   componentWillReceiveProps (props: SaleAreaProps) {
-    console.log(props, 'xxxxxx')
     const treeData = this.treeCheckBox.getTreeData(props.value) || []
     this.setState({
       text: treeData.map(v => `${v.name}（${v.children.length}）`).join('、'),
@@ -43,7 +42,6 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
     this.treeCheckBox = ref
   }
   render() {
-    console.log(this.props, 'xxxxx-----')
     const { visible, text, checkedKeys } = this.state
     return (
       <>

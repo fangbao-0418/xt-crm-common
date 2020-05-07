@@ -1,4 +1,10 @@
-import { post, get, newPost } from '../../util/fetch';
+/*
+ * @Date: 2020-04-16 13:58:08
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-05-06 13:15:23
+ * @FilePath: /xt-crm/src/pages/merchant-accounts/api.js
+ */
+const { post, get, newPost } = APP.http
 
 // export function getPromotionList(data) {
 //   return post('/promotion/list', data);
@@ -71,13 +77,8 @@ export function settlementReject({ id, remark = '' }) {
 }
 
 // 待结算的结算单提交结算
-export function settlementSubmit({ id, ...data }) {
+export function settlementSubmit ({ id, ...data }) {
   return newPost(`/finance/settlement/submit/${id}`, { ...data });
-}
-
-/** 测试接口 */
-export const fetchCheckingList = payload => {
-  return get('::ulive/live/plan/list', payload)
 }
 
 /** 批量导出 */

@@ -3,6 +3,7 @@
 import React from 'react'
 import { Button, Table, Divider, Tag } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
+import Page from '@/components/page'
 import * as api from './api'
 interface State {
   pageSize: number
@@ -148,7 +149,7 @@ class Main extends React.Component {
   public render () {
     const { pageSize, page, total, data } = this.state
     return (
-      <div>
+      <Page>
         <div>
           <Table
             pagination={{
@@ -160,13 +161,12 @@ class Main extends React.Component {
               pageSize,
               current: page
             }}
-            rowKey='id'
+            // rowKey='id'
             columns={this.columns}
             dataSource={data}
-            loading={this.state.loading}
           />
         </div>
-      </div>
+      </Page>
     )
   }
 }
