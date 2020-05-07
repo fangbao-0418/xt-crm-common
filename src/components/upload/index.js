@@ -138,6 +138,7 @@ class UploadView extends Component {
     if (!url) {
       return url
     }
+    url = APP.fn.deleteOssDomainUrl(url)
     url = APP.fn.fillOssDomainUrl(url)
     return url
   }
@@ -325,7 +326,7 @@ class UploadView extends Component {
   };
   onPreview = file => {
     if (this.props.listType === 'text') {
-      APP.fn.download(file.url)
+      APP.fn.download(file.url, file.name)
       return
     }
     this.setState({

@@ -1,19 +1,12 @@
 /*
  * @Date: 2020-05-06 14:16:27
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-06 18:01:17
+ * @LastEditTime: 2020-05-07 10:22:58
  * @FilePath: /xt-crm/src/components/good-cell/index.js
  */
 import React from 'react'
 import Image from '@/components/Image'
 import './index.scss'
-
-const replaceHttpUrl = (imgUrl = '') => {
-  if (imgUrl.indexOf('http') !== 0) {
-    imgUrl = 'https://assets.hzxituan.com/' + imgUrl
-  }
-  return imgUrl
-}
 
 const GoodCell = (props) => {
   const { productImage, skuName, properties, coverUrl, showImage = true, orderType, refundType, isRefund } = props
@@ -31,15 +24,19 @@ const GoodCell = (props) => {
           </div>
         )
       }
-      <div style={showImage?{ marginLeft:116}:{marginLeft:0,textAlign:'left'}}>
+      <div style={showImage?{ marginLeft: 116 } : { marginLeft: 0, textAlign: 'left' }}>
         <div>
-          {isGive && <span style={{border: '1px solid red', fontSize: 12, color: 'red', padding: '0 2px', margin: '0 2px'}}>赠</span>}
+          {isGive && (
+            <span style={{ border: '1px solid red', fontSize: 12, color: 'red', padding: '0 2px', margin: '0 2px' }}>
+              赠
+            </span>
+          )}
           {skuName}
         </div>
         <div style={{ marginTop: 8 }}>{properties ? `${properties}` : ''}</div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default GoodCell;
+export default GoodCell

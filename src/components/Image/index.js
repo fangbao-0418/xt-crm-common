@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-06 15:11:10
+ * @LastEditTime: 2020-05-07 10:19:49
  * @FilePath: /xt-crm/src/components/Image/index.js
  */
 import React, { useState } from 'react'
@@ -14,7 +14,7 @@ const onClick = src => () => {
 }
 
 function getUrl (url) {
-  url = (/^http/).test(url) ? url : ((/^tximg/).test(url) ? `https://sh-tximg.hzxituan.com/${url}` : `https://assets.hzxituan.com/${url}`)
+  url = APP.fn.fillOssDomainUrl(url)
   return url
 }
 

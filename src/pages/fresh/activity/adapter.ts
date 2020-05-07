@@ -1,14 +1,15 @@
 /*
  * @Date: 2020-03-19 14:37:12
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-19 14:37:35
- * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/activity/adapter.ts
+ * @LastEditTime: 2020-04-30 01:03:58
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/pages/fresh/activity/adapter.ts
  */
 import moment from 'moment'
 import { initImgList } from '@/util/utils'
 
 const replaceHttpUrl = (imgUrl: string) => {
-  return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
+  // return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
+  return APP.fn.deleteOssDomainUrl(imgUrl)
 }
 
 // 过滤新建编辑活动入参

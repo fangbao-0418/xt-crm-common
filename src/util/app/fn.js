@@ -106,12 +106,77 @@ export function fieldConvert (obj, mapper) {
   return result
 }
 
-export function download (url, name) {
-  const el = document.createElement('a')
-  el.setAttribute('href', url)
-  el.setAttribute('download', name)
-  el.setAttribute('target', '__blank')
-  el.click()
+/** 获取文件扩展名 */
+export function getFileExtName (url) {
+  const result = url.match(/.+(\.(.+?))(\?.+)?$/)
+  if (result && result[1]) {
+    return (result[1].slice(1) || '').trim().toLocaleLowerCase()
+  } else {
+    throw Error('get the expanded-name of the file error')
+  }
+}
+
+export function download (url, filename) {
+  if (!url) {
+    return
+  }
+  if (filename && (/\./).test(filename) === false && url) {
+    filename = filename + '.' + getFileExtName(url)
+  }
+  if ((/\?/).test(url) === false) {
+    url = url + '?v=' + new Date().getTime()
+  }
+  if (!filename) {
+    filename = '下载.' + getFileExtName(url)
+  }
+  console.log(url, filename, 'xxx')
+  getBlob(url).then(blob => {
+    saveAs(blob, filename)
+  })
+}
+
+/**
+ * 获取 blob
+ * @param  {String} url 目标文件地址
+ * @return {Promise}
+ */
+function getBlob (url) {
+  return new Promise(resolve => {
+    const xhr = new XMLHttpRequest()
+
+    xhr.open('GET', url, true)
+    xhr.responseType = 'blob'
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        resolve(xhr.response)
+      }
+    }
+    xhr.send()
+  })
+}
+
+/**
+ * 保存
+ * @param  {Blob} blob
+ * @param  {String} filename 想要保存的文件名称
+ */
+function saveAs (blob, filename) {
+  if (window.navigator.msSaveOrOpenBlob) {
+    navigator.msSaveBlob(blob, filename)
+  } else {
+    const link = document.createElement('a')
+    const body = document.querySelector('body')
+
+    link.href = window.URL.createObjectURL(blob)
+    link.download = filename
+
+    // fix Firefox
+    link.style.display = 'none'
+    body.appendChild(link)
+    link.click()
+    body.removeChild(link)
+    window.URL.revokeObjectURL(link.href)
+  }
 }
 
 /**

@@ -1,10 +1,11 @@
 /*
  * @Date: 2020-03-06 10:18:13
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-06 14:37:04
+ * @LastEditTime: 2020-05-05 15:36:49
  * @FilePath: /xt-crm/src/pages/fresh/goods/index.js
  */
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Route, Switch } from 'react-router-dom'
 import loadable from '@/util/loadable'
 import GoodsTimer from './timer'
@@ -13,9 +14,8 @@ const SkuSale = loadable(() => import('./sku-sale'))
 const Check = loadable(() => import('./check'))
 const Detail = loadable(() => import('./detail'))
 const GoodsForm = loadable(() => import('./sku-sale/form'))
-export default class RouteApp extends React.Component {
+class RouteApp extends React.Component {
   render () {
-    // eslint-disable-next-line react/prop-types
     const { match } = this.props
     return (
       <Switch>
@@ -29,3 +29,8 @@ export default class RouteApp extends React.Component {
     )
   }
 }
+
+RouteApp.propTypes = {
+  match: PropTypes.object
+}
+export default RouteApp
