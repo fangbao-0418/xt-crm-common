@@ -1,3 +1,10 @@
+/*
+ * @Author: fangbao
+ * @Date: 2020-03-18 22:14:36
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-30 00:59:04
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/util/format.ts
+ */
 import { initImgList } from "./utils";
 
 export function formatPrice(val: number, precision: number = 2): number {
@@ -8,21 +15,19 @@ export function formatPrice(val: number, precision: number = 2): number {
 }
 
 export function formatRMB(value: string | number | undefined) {
-    return `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-export function replaceHttpUrl(imgUrl?: string) {
-    return (imgUrl || '')
-      .replace('https://assets.hzxituan.com/', '')
-      .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
-  };
-  
-  // 数组转换到字符串
-  function array2String(list: any[]) {
-    return (list || []).map((item: any) => replaceHttpUrl(item.url)).join(',');
-  }
-  
-  // 字符串转数组
+export function replaceHttpUrl (imgUrl?: string) {
+  return APP.fn.deleteOssDomainUrl(imgUrl || '')
+}
+
+// 数组转换到字符串
+function array2String (list: any[]) {
+  return (list || []).map((item: any) => replaceHttpUrl(item.url)).join(',');
+}
+
+// 字符串转数组
   function string2Array(value: string) {
     return (value || '').split(',').reduce((prev: any[], curr) => prev.concat(initImgList(curr)), [])
   }

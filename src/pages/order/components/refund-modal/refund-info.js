@@ -1,3 +1,10 @@
+/*
+ * @Author: fangbao
+ * @Date: 2020-01-19 15:41:45
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-04-30 01:06:52
+ * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/pages/order/components/refund-modal/refund-info.js
+ */
 import React from 'react';
 import moment from 'moment';
 import { Card, Row, Col } from 'antd';
@@ -7,10 +14,11 @@ import { dateFormat } from '@/util/utils';
 
 
 const replaceHttpUrl = imgUrl => {
-  if (imgUrl.indexOf('http') !== 0) {
-    imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
-  }
-  return imgUrl;
+  // if (imgUrl.indexOf('http') !== 0) {
+  //   imgUrl = 'https://assets.hzxituan.com/' + imgUrl;
+  // }
+  // return imgUrl;
+  return APP.fn.fillOssDomainUrl(imgUrl)
 }
 
 const RefundInfo = props => {

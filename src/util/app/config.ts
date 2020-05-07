@@ -1,13 +1,27 @@
 /*
  * @Date: 2020-03-27 13:45:49
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-16 20:22:42
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/util/app/config.ts
+ * @LastEditTime: 2020-05-07 16:52:29
+ * @FilePath: /xt-crm/src/util/app/config.ts
  */
 import { baseHost, env as apiEnv } from '../baseHost'
 
+type ServerNameType = 'guard' | 'palamidi' | 'ulive' | 'message' | 'default'
+type EnvType = 'dev' | 'test1' | 'test2' | 'pre' | 'prod'
+
 /** 后端环境接口映射 */
-export const serverMapper: any = {
+export const serverMapper: {
+  [name in ServerNameType]: {
+    [env in EnvType]?: string
+  }
+} = {
+  guard: {
+    dev: 'https://daily-guard.hzxituan.com',
+    test1: 'https://test-guard.hzxituan.com',
+    test2: 'https://test-guard.hzxituan.com',
+    pre: 'https://staging-guard.hzxituan.com',
+    prod: 'https://guard.hzxituan.com'
+  },
   palamidi: {
     dev: 'https://daily-palamidi-console.hzxituan.com',
     test1: 'https://test-palamidi-console.hzxituan.com',
@@ -37,12 +51,12 @@ export const serverMapper: any = {
 }
 
 export function handleApiUrl (url: string) {
-  const serverPattern = /^::(message|ulive|palamidi)/
+  const serverPattern = /^::(message|ulive|palamidi|guard)/
   if ((/^https?/).test(url)) {
     return url
   } else if (serverPattern.test(url)) {
     const result = url.match(serverPattern)
-    const servername = result && result[1] || 'default'
+    const servername = (result && result[1] || 'default') as ServerNameType
     // console.log(servername, 'servername')
     const currentServerEnum: any = serverMapper[servername] || serverMapper.default
     // console.log(servername, currentServerEnum, 'currentServerEnum')
