@@ -1,15 +1,15 @@
-import React from 'react';
-import { Card, Tabs, Button, Modal, message, Icon } from 'antd';
-import dateFns from 'date-fns';
-import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api';
-import { gotoPage, replaceHttpUrl } from '@/util/utils';
-import Image from '@/components/Image';
-import SelectFetch from '@/components/select-fetch';
-import { If, ListPage, FormItem } from '@/packages/common/components';
-import { ListPageInstanceProps } from '@/packages/common/components/list-page';
-import SuppilerSelect from '@/components/suppiler-auto-select';
-import { defaultConfig } from './config';
-const { TabPane } = Tabs;
+import React from 'react'
+import { Card, Tabs, Button, Modal, message, Icon } from 'antd'
+import dateFns from 'date-fns'
+import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api'
+import { gotoPage, replaceHttpUrl } from '@/util/utils'
+import Image from '@/components/Image'
+import SelectFetch from '@/components/select-fetch'
+import { If, ListPage, FormItem } from '@/packages/common/components'
+import { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import SuppilerSelect from '@/components/suppiler-auto-select'
+import { defaultConfig } from './config'
+const { TabPane } = Tabs
 import SkuStockEditState from './components/sku-stock-edit'
 
 interface SkuSaleListState {
@@ -78,13 +78,13 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       width: 100,
       dataIndex: 'stock',
       render: (text: any, record:any, index:any) => (
-        <div style={{whiteSpace: 'nowrap'}}>
+        <div style={{ whiteSpace: 'nowrap' }}>
           <span>{text}</span>
-          <Icon type="form" style={{fontSize: '20px', marginLeft: '5px'}} onClick={() => {
+          <Icon type='form' style={{ fontSize: '20px', marginLeft: '5px' }} onClick={() => {
             this.setState({
               idOfStockEdit: record.id,
               visibleOfStockEdit: true,
-              productNameOfStockEdit: record.productName,
+              productNameOfStockEdit: record.productName
             })
           }} />
         </div>
@@ -123,13 +123,13 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       align: 'center',
       width: 120,
       render: (record: any) => {
-        const { status } = this.state;
+        const { status } = this.state
         return (
           <div>
             <span
               className='href'
               onClick={() => {
-                gotoPage(`/goods/sku-sale/${record.id}`);
+                gotoPage(`/goods/sku-sale/${record.id}`)
               }}
             >
               编辑
@@ -164,12 +164,12 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       onOk: () => {
         delGoodsDisable({ ids }).then((res: any) => {
           if (res) {
-            message.success('下架成功');
-            this.list.refresh();
+            message.success('下架成功')
+            this.list.refresh()
           }
-        });
+        })
       }
-    });
+    })
   }
 
   // 批量上架
@@ -180,12 +180,12 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       onOk: () => {
         enableGoods({ ids }).then((res: any) => {
           if (res) {
-            message.success('上架成功');
-            this.list.refresh();
+            message.success('上架成功')
+            this.list.refresh()
           }
-        });
+        })
       }
-    });
+    })
   };
 
   // 导出
@@ -195,7 +195,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       status: this.state.status,
       pageSize: 6000,
       page: 1
-    });
+    })
   }
 
   /**
@@ -204,7 +204,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
   onSelectChange = (selectedRowKeys: any) => {
     this.setState({
       selectedRowKeys
-    });
+    })
   }
 
   // 切换tabPane
@@ -212,21 +212,21 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
     this.setState({
       status: +key
     }, () => {
-      this.list.refresh();
+      this.list.refresh()
     })
   }
 
   // 库存编辑 关闭
   handleSkuStockEditCancel = (status:boolean) => {
-    this.setState({ visibleOfStockEdit: false, })
+    this.setState({ visibleOfStockEdit: false })
     if (status) {
-      this.list.refresh();
+      this.list.refresh()
     }
   }
-  render() {
-    const { selectedRowKeys, visibleOfStockEdit, idOfStockEdit, productNameOfStockEdit } = this.state;
+  render () {
+    const { selectedRowKeys, visibleOfStockEdit, idOfStockEdit, productNameOfStockEdit } = this.state
     const hasSelected = Array.isArray(selectedRowKeys) && selectedRowKeys.length > 0
-    const { status } = this.state;
+    const { status } = this.state
     const tableProps: any = {
       scroll: {
         x: true
@@ -270,10 +270,10 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           defaultActiveKey='0'
           onChange={this.handleChange}
         >
-          <TabPane tab="出售中" key='0' />
-          <TabPane tab="仓库中" key='1' />
-          <TabPane tab="待上架" key='3' />
-          <TabPane tab="商品池" key='2' />
+          <TabPane tab='出售中' key='0' />
+          <TabPane tab='仓库中' key='1' />
+          <TabPane tab='待上架' key='3' />
+          <TabPane tab='商品池' key='2' />
         </Tabs>
         <ListPage
           reserveKey='skuSale'
@@ -300,14 +300,14 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           }}
           formItemLayout={(
             <>
-              <FormItem name='productName'/>
+              <FormItem name='productName' />
               <FormItem name='productId' />
               <FormItem
                 label='供应商'
                 inner={(form) => {
                   return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect style={{ width: 172 }}/>
-                  );
+                    <SuppilerSelect style={{ width: 172 }} />
+                  )
                 }}
               />
               <FormItem name='interceptor' />
@@ -344,14 +344,15 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
               >
                 添加商品
               </Button>
-              {/* <Button
+              <Button
+                className='mr10'
                 type='primary'
                 onClick={() => {
-                  APP.history.push('/goods/sku-sale/-1?isGroup=1')
+                  APP.history.push('/goods/virtual')
                 }}
               >
-                添加组合商品
-              </Button> */}
+                新增虚拟商品
+              </Button>
             </>
           )}
           api={getGoodsList}
@@ -364,12 +365,12 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           name={productNameOfStockEdit}
           onCancel={() => this.handleSkuStockEditCancel(false)}
           onOK={() => {
-            this.handleSkuStockEditCancel(true);
+            this.handleSkuStockEditCancel(true)
           }}
         />
-    </Card>
+      </Card>
     )
   }
 }
 
-export default SkuSaleList;
+export default SkuSaleList

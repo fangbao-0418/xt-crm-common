@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
-import CardTitle from '../CardTitle'
+import CardTitle from '@/pages/goods/components/CardTitle'
 import SkuUploadItem from './SkuUploadItem'
 import styles from './style.module.scss'
 import { size, map } from 'lodash'
@@ -17,7 +17,7 @@ const defaultItem: SkuSaleProps = {
   cityMemberPrice: undefined,
   costPrice: undefined,
   headPrice: undefined,
-  deliveryMode: 1,
+  deliveryMode: 2,
   marketPrice: undefined,
   salePrice: undefined,
   managerMemberPrice: undefined,
@@ -535,24 +535,12 @@ class SkuList extends React.Component<Props, State> {
             </Card>
           )
         })}
-        {
-          this.state.strategyData ? (
-            <>
-              <Button type='primary' style={{ marginLeft: 5 }} onClick={this.resetPrice}>
-                重置价格
-              </Button>
-              <Button type='primary' style={{ marginLeft: 5 }} onClick={this.calculatePrice}>
-                计算价格
-              </Button>
-            </>
-          ) : null
-        }
         <SkuTable
           getInstance={(ref) => {
             this.skuTable = ref
           }}
           type={type}
-          isGroup={this.props.isGroup || false}
+          isGroup={false}
           form={this.props.form}
           productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}
