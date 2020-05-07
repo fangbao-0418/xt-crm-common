@@ -10,7 +10,6 @@ const replaceHttpUrl = imgUrl => {
 
 class PayModal extends React.Component {
 
-
   handlePayConfirm = (id) => () => {
     const {
       form: { validateFields },
@@ -25,20 +24,21 @@ class PayModal extends React.Component {
       }
     });
   }
-  render() {
+  render () {
     const {
       modalType,
       modalProps = {},
       form: { getFieldDecorator },
-      record: {
-        id,
-        paymentSerialNo,
-        paymentImgList = [],
-        paymentMoney = 0,
-        paymentName,
-        settlementSerialNo,
-      }
-    } = this.props;
+      record
+    } = this.props
+    const {
+      id,
+      paymentSerialNo,
+      paymentImgList = [],
+      paymentMoney = 0,
+      paymentName,
+      settlementSerialNo
+    } = record || {}
     let uploadProps = modalType === 'look' ? { showUploadList: { showPreviewIcon: true, showRemoveIcon: false, showDownloadIcon: false } } : { listNum: 5 }
 
     const formItemLayout = {
@@ -99,4 +99,4 @@ class PayModal extends React.Component {
   }
 }
 
-export default Form.create()(PayModal);
+export default Form.create()(PayModal)

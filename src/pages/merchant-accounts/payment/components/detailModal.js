@@ -37,24 +37,24 @@ class DetailModal extends React.Component {
     const {
       modalProps = {},
       form: { getFieldDecorator, getFieldValue },
-      record: {
-        id,
-        paymentSerialNo,
-        paymentImgList = [],
-        paymentMoney = 0,
-        paymentName,
-        settlementSerialNo,
-        storeTypeInfo = '暂无数据',
-        storeName = '暂无数据',
-        payTypeInfo = '暂无数据',
-        accountName = '暂无数据',
-        accountNo = '暂无数据',
-        financePaymentAccountVO = {},
-        realPayTimeInfo
-      },
+      record,
       detailModalUpload
-    } = this.props;
-
+    } = this.props
+    const {
+      id,
+      paymentSerialNo,
+      paymentImgList = [],
+      paymentMoney = 0,
+      paymentName,
+      settlementSerialNo,
+      storeTypeInfo = '暂无数据',
+      storeName = '暂无数据',
+      payTypeInfo = '暂无数据',
+      accountName = '暂无数据',
+      accountNo = '暂无数据',
+      financePaymentAccountVO = {},
+      realPayTimeInfo
+    } = record || {}
     let uploadProps = {
       showUploadList: {
         showPreviewIcon: true,
@@ -70,15 +70,15 @@ class DetailModal extends React.Component {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 6 },
+        sm: { span: 6 }
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 18 },
-      },
-    };
+        sm: { span: 18 }
+      }
+    }
 
-    let paymentImg = getFieldValue('paymentImg') || [];
+    let paymentImg = getFieldValue('paymentImg') || []
 
     paymentImg = paymentImg.map(o => replaceHttpUrl(o.url))
     paymentImg = paymentImg.filter(item => !paymentImgList.includes(item))
@@ -162,4 +162,4 @@ class DetailModal extends React.Component {
   }
 }
 
-export default Form.create()(DetailModal);
+export default Form.create()(DetailModal)

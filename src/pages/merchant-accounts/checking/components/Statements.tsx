@@ -172,7 +172,7 @@ class Main extends React.Component<Props> {
             <If condition={[1, 2].indexOf(type) === -1}>
               <FormItem name='bankName' verifiable />
             </If>
-            <If condition={type === 4}>
+            <If condition={type === 4||type === 3}>
               <FormItem
                 label='银行所在地区'
                 required

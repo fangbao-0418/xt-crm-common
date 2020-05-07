@@ -110,6 +110,7 @@ class Main extends React.Component<Props, State> {
     } else {
       value = values[this.presentContentSelectedKey]
     }
+    console.log(value, field, values)
     if (type === 0) {
       this.activityModalInstance.open(value)
     } else if (type === 1) {
@@ -328,7 +329,7 @@ class Main extends React.Component<Props, State> {
                 <label className={styles.label}>活动商品：</label>
               </Col>
               <Col span={20}>
-                <div>
+                {/* <div>
                   <FormItem
                     style={{marginBottom: 0}}
                     name='mainRefType'
@@ -378,7 +379,7 @@ class Main extends React.Component<Props, State> {
                       }}
                     />
                   </If>
-                </div>
+                </div> */}
                 <FormItem
                   name='mainRefType'
                   type='radio'

@@ -9,6 +9,7 @@
 /// <reference path="./constant.d.ts"  />
 declare module APP {
   interface History {
+    goBack()
     push: (url: string) => void
     go: (url: string | number) => void
   }

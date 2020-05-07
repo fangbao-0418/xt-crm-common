@@ -11,7 +11,7 @@ import getColumns from './config/columns'
 import styles from './style.module.scss'
 
 class List extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
     const params = parseQuery();
     this.state = {
@@ -180,7 +180,7 @@ class List extends React.Component {
     })
   }
 
-  render() {
+  render () {
     const { page, dataSource, recordItem, isBatchFail, detailModalUpload } = this.state; // , selectedRowKeys
 
     return (

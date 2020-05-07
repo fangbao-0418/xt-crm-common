@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Upload, Icon, message, Modal } from 'antd';
 import PropTypes from 'prop-types';
 import { isFunction, filter } from 'lodash';
-import { getStsPolicy } from './api';
-import { createClient, ossUploadBlob } from './oss.js';
+import { getStsPolicy, getStsCos } from './api';
+import { createClient, ossUploadBlob, createCosClient, cosUpload } from './oss.js';
 import { getUniqueId } from '@/packages/common/utils/index'
 
 const uploadButton = props => (
@@ -13,19 +13,40 @@ const uploadButton = props => (
   </div>
 );
 
-export async function ossUpload(file, dir = 'crm') {
-  const res = await getStsPolicy();
-  if (res) {
-    const client = createClient(res);
-    try {
-      const urlList = await ossUploadBlob(client, file, dir);
-      return urlList;
-    } catch (error) {
-      message.error('上传失败，请重试', 'middle');
-      return Promise.reject(error)
+export async function ossUpload (file, dir = 'crm', ossType = 'oss') {
+  if (ossType === 'oss') {
+    const res = await getStsPolicy()
+    if (res) {
+      const client = createClient(res)
+      try {
+        console.log(file, 'fileoss')
+        const urlList = await ossUploadBlob(client, file, dir);
+        return urlList
+      } catch (error) {
+        message.error('上传失败，请重试', 'middle');
+        return Promise.reject(error)
+      }
+    } else {
+      return Promise.reject()
     }
-  } else {
-    return Promise.reject()
+  } else if (ossType === 'cos') {
+    const res = await getStsCos()
+    if (res) {
+      const cosClient = createCosClient(res)
+      try {
+        console.log(file, 'filecos')
+        const res = await cosUpload(cosClient, file, dir)
+        console.log(res, 'cosUpload')
+        const url = 'https://' + res.Location
+        const urlList = [url]
+        return urlList
+      } catch (error) {
+        message.error('上传失败，请重试', 'middle')
+        return Promise.reject(error)
+      }
+    } else {
+      return Promise.reject()
+    }
   }
 }
 
@@ -88,7 +109,7 @@ function isMatchFileType (file, list, type = 'ext') {
 
 class UploadView extends Component {
   count = 0
-  constructor(props) {
+  constructor (props) {
     super(props);
     this.state = {
       fileList: this.initFileList(props.value || []),
@@ -107,21 +128,21 @@ class UploadView extends Component {
   }
 
   replaceUrl (url) {
-    // console.log(url, 'before replaceUrl')
     if (!url) {
       return url
     }
-    url = (url || '').trim().replace(/^https?:\/\/.+?\//, '')
-    // console.log(url, 'after replaceUrl')
+    url = APP.fn.deleteOssDomainUrl(url)
     return url
   }
   getViewUrl (url) {
     if (!url) {
       return url
     }
-    return 'https://assets.hzxituan.com/' + this.replaceUrl(url)
+    url = APP.fn.deleteOssDomainUrl(url)
+    url = APP.fn.fillOssDomainUrl(url)
+    return url
   }
-  initFileList(fileList = []) {
+  initFileList (fileList = []) {
     if (typeof fileList === 'string') {
       fileList = [{
         url: fileList,
@@ -153,6 +174,7 @@ class UploadView extends Component {
       val.durl = result.durl;
       val.uid = result.uid;
       val.url = result.url;
+      val.size = val.size;
       val.thumbUrl = result.thumbUrl
       val.rurl = this.replaceUrl(result.url)
       val.name = result.name || val.url
@@ -259,18 +281,21 @@ class UploadView extends Component {
   };
   customRequest(e) {
     const file = e.file;
-    const { onChange, formatOrigin, ossDir } = this.props;
-    ossUpload(file, ossDir).then((urlList) => {
+    const { onChange, formatOrigin, ossDir, ossType } = this.props;
+    
+    ossUpload(file, ossDir, ossType).then((urlList) => {
       let { fileList } = this.state;
+      console.log(file, 'customRequest')
       file.url = urlList && urlList[0];
       file.durl = file.url;
       fileList.push({
         ...file,
+        size: file.size,
         name: file.name
       });
       fileList = this.initFileList(fileList)
       this.setState({
-        fileList: fileList,
+        fileList: fileList
       });
       const value = fileList.map((item) => {
         return formatOrigin ? {
@@ -280,7 +305,7 @@ class UploadView extends Component {
           thumbUrl: this.replaceUrl(item.thumbUrl),
         } : item
       })
-      console.log('change --------')
+      console.log('change --------', value)
       isFunction(onChange) && onChange([...value]);
     }, () => {
       this.count--
@@ -301,7 +326,7 @@ class UploadView extends Component {
   };
   onPreview = file => {
     if (this.props.listType === 'text') {
-      APP.fn.download(file.url)
+      APP.fn.download(file.url, file.name)
       return
     }
     this.setState({
@@ -357,12 +382,14 @@ UploadView.propTypes = {
   listNum: PropTypes.number,
   size: PropTypes.number,
   showUploadList: PropTypes.bool,
-  ossDir: PropTypes.string
+  ossDir: PropTypes.string,
+  ossType: PropTypes.string 
 };
 
 UploadView.defaultProps = {
   showUploadList: true,
   listType: 'text',
+  ossType: 'oss'
 };
 
 export default UploadView;

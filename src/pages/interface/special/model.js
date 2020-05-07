@@ -23,31 +23,33 @@ export default {
           list: [],
           crmCoupons: []
         }
-      };
+      }
     },
     changeDetail: (state, payload) => {
       return {
         ...state,
         detail: payload
-      };
+      }
     }
   },
   effects: {
-    async fetchDetail({ id, cb }) {
-      const result = await api.fetchSpecialDetial(id);
-      if (!result) return;
-      this.changeDetail(result);
+    async fetchDetail ({ id, cb }) {
+      const result = await api.fetchSpecialDetial(id)
+      if (!result) {
+        return
+      }
+      this.changeDetail(result)
       if (cb) {
-        cb(result);
+        cb(result)
       }
     },
-    async getGoodsListByActivityId(param) {
-      const result = await api.getGoodsListByActivityId(param);
+    async getGoodsListByActivityId (param) {
+      const result = await api.getGoodsListByActivityId(param)
       if (result) {
         return this.saveDefault({
           goodsListByCurrentActivity: result || []
-        });
+        })
       }
     }
   }
-};
+}

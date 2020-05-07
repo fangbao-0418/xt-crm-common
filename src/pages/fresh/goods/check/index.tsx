@@ -62,9 +62,14 @@ class Main extends React.Component<any, State> {
       }
     },
     {
+      title: '成本价',
+      dataIndex: 'costPrice',
+      render: APP.fn.formatMoney
+    },
+    {
       title: '销售价',
       dataIndex: 'salePrice',
-      render: MoneyRender
+      render: APP.fn.formatMoney
     },
     {
       title: '库存',
@@ -120,6 +125,7 @@ class Main extends React.Component<any, State> {
         return record.auditStatus === 1 ? (
           <Button
             type='primary'
+            size='small'
             onClick={() => {
               APP.history.push(`/fresh/goods/detail/${record.id}?auditStatus=${record.auditStatus}`)
             }}
@@ -128,6 +134,7 @@ class Main extends React.Component<any, State> {
           </Button>
         ): (
           <Button
+            size='small'
             onClick={() => {
               APP.history.push(`/fresh/goods/detail/${record.id}?auditStatus=${record.auditStatus}`)
             }}
@@ -138,14 +145,14 @@ class Main extends React.Component<any, State> {
       }
     }
   ]
-  public reset() {
-    this.form.props.form.resetFields();
+  public reset () {
+    this.form.props.form.resetFields()
     this.payload = {
       pageSize: 10,
       page: 1,
-      total: 0,
-    };
-    this.fetchData();
+      total: 0
+    }
+    this.fetchData()
   }
   public fetchData = async () => {
     APP.fn.setPayload(namespace, {

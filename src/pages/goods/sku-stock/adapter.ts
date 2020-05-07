@@ -4,9 +4,11 @@ import { initImgList } from '@/util/utils';
 import { pick } from 'lodash';
 
 export function replaceHttpUrl(imgUrl?: string) {
-  return (imgUrl || '')
-    .replace('https://assets.hzxituan.com/', '')
-    .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '');
+  // return (imgUrl || '')
+  //   .replace('https://assets.hzxituan.com/', '')
+  //   .replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
+  //   .replace('https://sh-tximg.hzxituan.com/', '');
+  return APP.fn.deleteOssDomainUrl(imgUrl || '')
 };
 
 // 数组转换到字符串
@@ -50,24 +52,27 @@ export function filterMoney(
 }
 
 // 过滤列表响应
-export function listResponse(res: any) {
+export function listResponse (res: any) {
   res.records = (res.records || []).map((record: any) => {
-    record.statusText = statusEnums[record.status];
-    record.createTimeText = APP.fn.formatDate(record.createTime);
+    record.statusText = statusEnums[record.status]
+    record.createTimeText = APP.fn.formatDate(record.createTime)
     record.modifyTimeText = record.modifyTime ? APP.fn.formatDate(record.modifyTime): '-'
-    return record;
+    return record
   })
-  return res;
+  return res
 }
 
 // 过滤新增、编辑表单
-export function formRequest(payload: SkuStockFormProps) {
-  let result: Record<string, any> = filterUploadFile(payload);
-  result.categoryId = Array.isArray(payload.categoryId) ? payload.categoryId[2] : '';
+export function formRequest (payload: SkuStockFormProps) {
+  const result: Record<string, any> = filterUploadFile(payload)
+  result.categoryId = Array.isArray(payload.categoryId) ? payload.categoryId[2] : ''
   result.skuAddList = (payload.skuAddList || []).map(item => {
-    return filterMoney(item);
+    return {
+      ...filterMoney(item),
+      imageUrl1: APP.fn.deleteOssDomainUrl(item.imageUrl1 || '')
+    }
   })
-  return { ...payload, ...result };
+  return { ...payload, ...result }
 }
 
 // 过滤详情响应

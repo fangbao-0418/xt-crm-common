@@ -1,16 +1,16 @@
-import React from 'react';
-import { Card, Form, Input, Button, Radio, Table, message } from 'antd';
-import { map, uniqWith, memoize } from 'lodash';
-import CascaderCity from '@/components/cascader-city';
-import MoneyRender from '@/components/money-render';
-import { getStoreList, toAuditDetail } from './api';
-import SkuUploadItem from './components/SkuUploadItem';
-import Image from '@/components/Image';
-import styles from './style.module.scss';
-import { replaceHttpUrl, parseQuery } from '@/util/utils';
-import SaleArea from '@/components/sale-area';
-import { auditGoods } from './api';
-const { TextArea } = Input;
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Card, Form, Input, Button, Radio, Table, message } from 'antd'
+import { map, uniqWith, memoize } from 'lodash'
+import CascaderCity from '@/components/cascader-city'
+import MoneyRender from '@/components/money-render'
+import { getStoreList, toAuditDetail, auditGoods } from './api'
+import SkuUploadItem from './components/SkuUploadItem'
+import Image from '@/components/Image'
+import styles from './style.module.scss'
+import { replaceHttpUrl, parseQuery } from '@/util/utils'
+import SaleArea from '@/components/sale-area'
+const { TextArea } = Input
 const formLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -22,6 +22,12 @@ const formLayout = {
   }
 }
 
+/** 结算方式枚举 */
+const SettleTypeEnum = {
+  1: '寄售结算',
+  2: '按需结算'
+}
+
 const collection = {
   property1: {
     value: 'propertyValue1',
@@ -30,22 +36,22 @@ const collection = {
   property2: {
     value: 'propertyValue2'
   }
-};
+}
 
 /**
  * 过滤property
  * @param {*} obj
  */
-function filterProp(obj) {
-  obj = obj || {};
-  return Object.keys(collection).filter(key => obj[key]);
+function filterProp (obj) {
+  obj = obj || {}
+  return Object.keys(collection).filter(key => obj[key])
 }
 
 /**
  * 获取动态列
  * @param {*} obj
  */
-function getDynamicColumns(obj) {
+function getDynamicColumns (obj) {
   return filterProp(obj).map(prop => {
     const item = collection[prop] || {};
     return {
@@ -61,8 +67,8 @@ function getDynamicColumns(obj) {
  * @param {*} obj
  * @param {*} list
  */
-const getSpecs = memoize(function(obj) {
-  obj = obj || {};
+const getSpecs = memoize(function (obj) {
+  obj = obj || {}
   return filterProp(obj).map(prop => {
     const item = collection[prop] || {}
     return {
@@ -70,21 +76,21 @@ const getSpecs = memoize(function(obj) {
       content: uniqWithProp(obj.skuList || [], item.value).map(v => {
         return item.imageUrl
           ? {
-              specPicture: v[item.imageUrl],
-              specName: v[item.value]
-            }
+            specPicture: v[item.imageUrl],
+            specName: v[item.value]
+          }
           : {
-              specName: v[item.value]
-            };
+            specName: v[item.value]
+          }
       })
-    };
-  });
-});
+    }
+  })
+})
 
 /**
  * 去重property
  */
-function uniqWithProp(list, propName) {
+function uniqWithProp (list, propName) {
   console.log('propName=>', propName);
   list = list || [];
   return uniqWith(list, (arrVal, othVal) => {
@@ -96,7 +102,7 @@ function uniqWithProp(list, propName) {
  * 矫正videoUrl
  * @param {*} url
  */
-function normalizeVideoUrl(url) {
+function normalizeVideoUrl (url) {
   url = url || ''
   const index = url.indexOf('?')
   return url.indexOf('?') !== -1 ? url.slice(0, index): url
@@ -168,15 +174,20 @@ class GoodsEdit extends React.Component {
       }
     });
   };
-  render() {
+  render () {
     const columns = [
       {
         title: '规格编码',
         dataIndex: 'skuCode',
         key: 'skuCode',
         render: text => {
-          return text || '无';
+          return text || '无'
         }
+      },
+      {
+        title: '成本价',
+        dataIndex: 'costPrice',
+        render: MoneyRender
       },
       {
         title: '市场价',
@@ -196,11 +207,17 @@ class GoodsEdit extends React.Component {
         key: 'stock'
       },
       {
+        title: '单位',
+        dataIndex: 'unit',
+        align: 'center'
+      },
+      {
         title: '自提佣金%',
+        align: 'center',
         dataIndex: 'commissionPercentage'
       }
-    ];
-    const { getFieldDecorator } = this.props.form;
+    ]
+    const { getFieldDecorator } = this.props.form
     const {
       detail,
       detail: {
@@ -239,10 +256,12 @@ class GoodsEdit extends React.Component {
         /** 审核结果 */
         auditStatus,
         /** 审核说明 */
-        auditInfo
+        auditInfo,
+        /** 结算方式 */
+        settleType
       }
-    } = this.state;
-    const storeItem = (this.supplier || []).find(v => v.id === storeId) || {};
+    } = this.state
+    const storeItem = (this.supplier || []).find(v => v.id === storeId) || {}
     return (
       <>
         <CascaderCity
@@ -252,7 +271,7 @@ class GoodsEdit extends React.Component {
           onCancel={() => {
             this.setState({
               visible: false
-            });
+            })
           }}
         />
         <Form {...formLayout}>
@@ -264,6 +283,7 @@ class GoodsEdit extends React.Component {
             <Form.Item label="商品简介">{description || '无'}</Form.Item>
             <Form.Item label="商品条码">{barCode || '无'}</Form.Item>
             <Form.Item label="供货商">{storeItem.name}</Form.Item>
+            <Form.Item label="结算方式">{SettleTypeEnum[settleType]}</Form.Item>
             {/* <Form.Item label="供应商商品ID">{storeProductId || '无'}</Form.Item> */}
             <Form.Item label="商品主图">
               {coverUrl ? (
@@ -334,7 +354,7 @@ class GoodsEdit extends React.Component {
               );
             })}
             <Table
-              rowKey="skuId"
+              rowKey='skuId'
               style={{ marginTop: 10 }}
               columns={getDynamicColumns(detail).concat(columns)}
               dataSource={skuList}
@@ -427,4 +447,8 @@ class GoodsEdit extends React.Component {
   }
 }
 
-export default Form.create()(GoodsEdit);
+GoodsEdit.propTypes = {
+  form: PropTypes.object
+}
+
+export default Form.create()(GoodsEdit)

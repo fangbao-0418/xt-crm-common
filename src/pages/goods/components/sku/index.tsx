@@ -103,7 +103,7 @@ interface State {
   dataSource: SkuSaleProps[]
   strategyData: any
 }
-class SkuList extends React.Component<Props, State>{
+class SkuList extends React.Component<Props, State> {
   public state: State = {
     specs: this.props.specs,
     specPictures: [],
@@ -141,7 +141,7 @@ class SkuList extends React.Component<Props, State>{
     // let addNew = false
     /** 多规格合并 */
     const result = combineResutle.map((item) => {
-      let val: SkuSaleProps = {...defaultItem}
+      let val: SkuSaleProps = { ...defaultItem }
       /** 根据原规格查找规格信息 */
       val = dataSource.find((item2) => {
         /** item 自定义输入规格序列 规格1，2 */
@@ -166,7 +166,8 @@ class SkuList extends React.Component<Props, State>{
           val.productBasics = undefined
           val = {
             ...val,
-            ...defaultItem
+            ...defaultItem,
+            imageUrl1: val.imageUrl1
           }
           console.log(val, '------')
         }
@@ -176,8 +177,8 @@ class SkuList extends React.Component<Props, State>{
     return result
   }
   handleChangeValue = (text: string, record: any, index: any) => (e: any) => {
-    const { dataSource, noSyncList } = this.state;
-    const nosync = noSyncList.includes(text);
+    const { dataSource, noSyncList } = this.state
+    const nosync = noSyncList.includes(text)
     /**
      * 每个输入框改变
      */
@@ -312,7 +313,7 @@ class SkuList extends React.Component<Props, State>{
 
   // 重置价格
   resetPrice = () => {
-    const { dataSource } = this.state;
+    const { dataSource } = this.state
     const newData = dataSource.map(res => {
       return Object.assign(res, {
         headPrice: 0,
@@ -353,7 +354,7 @@ class SkuList extends React.Component<Props, State>{
     /** 另一组索引 */
     const otherKey = key === 0 ? 1 : 0
     const keys = ['propertyValue1', 'propertyValue2']
-    const { specs } = this.state;
+    const { specs } = this.state
     const specName = specs[key].content[index].specName
     specs[key].content.splice(index, 1)
     let dataSource = this.state.dataSource

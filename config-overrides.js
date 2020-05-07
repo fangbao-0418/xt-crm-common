@@ -10,6 +10,7 @@ const {
   addWebpackModuleRule,
   addWebpackExternals,
   addBundleVisualizer,
+  addBabelPlugins,
   setWebpackOptimizationSplitChunks
 } = require('customize-cra')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
@@ -19,22 +20,27 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const paths = require('react-scripts/config/paths')
 const fs = require('fs')
-const pubconfig = fs.existsSync('./pubconfig.json')
-  ? require('./pubconfig.json')
-  : {
-    outputDir: 'build'
-  }
+// const pubconfig = fs.existsSync('./pubconfig.json')
+//   ? require('./pubconfig.json')
+//   : {
+//     outputDir: 'build'
+//   }
+const PUB_ENV = process.env.PUB_ENV || 'dev'
+
+const pubconfig = {
+  outputDir: 'build'
+}
 
 paths.appBuild = path.resolve(pubconfig.outputDir)
 
-console.log('PUB_ENV => ', process.env.PUB_ENV)
+console.log('PUB_ENV => ', PUB_ENV)
 // const dev = process.env.PUB_ENV !== 'prod'
-const isEnvDevelopment = ['prod', 'pre', 'test', 'dev'].indexOf(process.env.PUB_ENV) === -1
-const isEnvProduction = !isEnvDevelopment
+const isDevelopment = ['dev'].indexOf(PUB_ENV) > -1
+const isProduction = !isDevelopment
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
-    isEnvDevelopment && require.resolve('style-loader'),
-    isEnvProduction && {
+    isDevelopment && require.resolve('style-loader'),
+    isProduction && {
       loader: MiniCssExtractPlugin.loader
       /*
        * options: Object.assign({})
@@ -67,7 +73,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
             stage: 3
           })
         ],
-        sourceMap: !isEnvProduction
+        sourceMap: isDevelopment
       }
     }
   ].filter(Boolean)
@@ -75,7 +81,7 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
     loaders.push({
       loader: require.resolve(preProcessor),
       options: {
-        sourceMap: !isEnvProduction
+        sourceMap: isDevelopment
       }
     })
   }
@@ -83,13 +89,17 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
 }
 
 module.exports = override(
+  ...addBabelPlugins(
+    '@babel/plugin-proposal-optional-chaining',
+    '@babel/plugin-proposal-nullish-coalescing-operator'
+  ),
   addWebpackModuleRule({
     test: /\.m(odule)?.styl/,
     exclude: /node_modules/,
     use: getStyleLoaders(
       {
         importLoaders: 2,
-        sourceMap: !isEnvProduction,
+        sourceMap: isDevelopment,
         modules: true,
         getLocalIdent: getCSSModuleLocalIdent
       },
@@ -114,7 +124,7 @@ module.exports = override(
   })),
   addWebpackPlugin(new webpack.DefinePlugin({
     'process.env': {
-      PUB_ENV: '"' + (process.env.PUB_ENV || 'serve') + '"'
+      PUB_ENV: JSON.stringify(PUB_ENV)
     }
   })),
   addWebpackPlugin(new CopyWebpackPlugin([
@@ -123,7 +133,7 @@ module.exports = override(
     }
   ])),
   useEslintRc(),
-  // isEnvDevelopment ? undefined : disableEsLint(),
+  // isDevelopment ? undefined : disableEsLint(),
   disableEsLint(),
   addWebpackAlias({
     packages: path.resolve(__dirname, 'packages/'),
@@ -146,5 +156,11 @@ module.exports = override(
         chunks: 'all'
       }
     }
-  })
+  }),
+  (function () {
+    return (config) => {
+      config.devtool = isDevelopment ? config.devtool : ''
+      return config
+    }
+  })()
 )

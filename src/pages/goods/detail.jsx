@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, Form, Input, Button, Radio, Table, message } from 'antd';
 import { map, uniqWith, memoize } from 'lodash';
+import Upload from '@/components/upload'
 import CascaderCity from '@/components/cascader-city';
 import MoneyRender from '@/components/money-render';
 import { getStoreList, toAuditDetail } from './api';
@@ -432,7 +433,17 @@ class GoodsEdit extends React.Component {
               {videoCoverUrl ? <Image style={{ width: '102px', height: '102px' }} src={videoCoverUrl} /> : '无'}
             </Form.Item>
             <Form.Item label="商品视频">
-              {videoUrl ? <video src={replaceHttpUrl(videoUrl)} controls="controls" height={102} width={102} /> : '无'}
+              {videoUrl ? (
+                <Upload
+                  readOnly
+                  listType='picture-card'
+                  fileType='video'
+                  value={[{
+                    url: replaceHttpUrl(videoUrl)
+                  }]}
+                />
+                // <video src={replaceHttpUrl(videoUrl)} controls="controls" height={102} width={102} />
+              ) : '无'}
             </Form.Item>
             <Form.Item label="商品主图">
               {coverUrl ? (

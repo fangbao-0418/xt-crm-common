@@ -10,7 +10,7 @@ import InputMoney from '@/packages/common/components/input-money'
 import styles from './style.module.scss'
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 import { pick } from 'lodash'
-const FormItem = Form.Item;
+const FormItem = Form.Item
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   extraColumns?: ColumnProps<any>[]
   dataSource: SkuSaleProps[]
@@ -18,22 +18,22 @@ interface Props extends Partial<AlertComponentProps>, FormComponentProps {
 }
 
 // 通过返回数据拿到id到规格详情的映射关系
-function getSelectedRowKeysMap(data: any[]) {
-  let result: any = {};
-  for (let item of data) {
+function getSelectedRowKeysMap (data: any[]) {
+  const result: any = {}
+  for (const item of data) {
     if (result[item.id]) {
       result[item.id] = result[item.id].concat([item.productBasicSkuId])
     } else {
       result[item.id] = [item.productBasicSkuId]
     }
   }
-  return result;
+  return result
 }
 
-function combination(data: any[]) {
-  data = data || [];
-  const keysMap: any = {};
-  const result: any[] = [];
+function combination (data: any[]) {
+  data = data || []
+  const keysMap: any = {}
+  const result: any[] = []
   for (const item of data) {
     const record = {
       ...pick(item, [
@@ -61,7 +61,7 @@ function combination(data: any[]) {
     if (keysMap[item.id]) {
       keysMap[item.id].productBasicSkuInfos = [...keysMap[item.id].productBasicSkuInfos, record];
     } else {
-      keysMap[item.id] = record;
+      keysMap[item.id] = record
       result.push(record)
     }
   }
@@ -102,12 +102,12 @@ class Main extends React.Component<Props, State> {
     return (node: React.ReactNode) => {
       return (
         <FormItem
-          wrapperCol={{span: 24}}
+          wrapperCol={{ span: 24 }}
         >
           <ArrowContain
             disabled={dataSource.length <= 1}
             type={(realIndex === 0 && 'down' || realIndex === dataSource.length - 1 && 'up' || undefined)}
-            onClick={(type) => {   
+            onClick={(type) => {
               // const value = text
               let currentIndex = 0
               let end = realIndex
@@ -115,7 +115,7 @@ class Main extends React.Component<Props, State> {
                 currentIndex = realIndex
                 end = dataSource.length - 1
               }
-              let fields: any = [];
+              let fields: any = []
               while (currentIndex <= end) {
                 fields.push(`${field}-${currentIndex}`);
                 dataSource[currentIndex][field] = text as never
@@ -125,23 +125,21 @@ class Main extends React.Component<Props, State> {
               this.speedyInputCallBack(dataSource)
             }}
           >
-            {fieldDecoratorOptions ?
-              this.props.form && this.props.form.getFieldDecorator(`${field}-${realIndex}`, {
-                initialValue: text,
-                getValueFromEvent(e) {
-                  let value: string | number = '';
-                  if (!e || !e.target) {
-                    value = e;
-                  } else {
-                    const { target } = e;
-                    value = target.type === 'checkbox' ? target.checked : target.value;
-                  }
-                  cb(field, record, realIndex)(value);
-                  return value;
-                },
-                ...fieldDecoratorOptions
-              })(node)
-            : node}
+            {fieldDecoratorOptions ? this.props.form && this.props.form.getFieldDecorator(`${field}-${realIndex}`, {
+              initialValue: text,
+              getValueFromEvent (e) {
+                let value: string | number = ''
+                if (!e || !e.target) {
+                  value = e
+                } else {
+                  const { target } = e
+                  value = target.type === 'checkbox' ? target.checked : target.value
+                }
+                cb(field, record, realIndex)(value)
+                return value
+              },
+              ...fieldDecoratorOptions
+            })(node) : node}
           </ArrowContain>
         </FormItem>
       )
@@ -154,7 +152,7 @@ class Main extends React.Component<Props, State> {
       const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index
       if (this.props.form) {
         this.props.form.validateFields(
-          ['salePrice', 'headPrice', 'areaMemberPrice', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${realIndex}`)
+          ['costPrice', 'salePrice', 'headPrice', 'areaMemberPrice', 'unit', 'cityMemberPrice', 'managerMemberPrice'].map(key => `${key}-${realIndex}`)
         )
       }
     }
@@ -174,7 +172,26 @@ class Main extends React.Component<Props, State> {
         }
       },
       {
-        title: '市场价',
+        title: (<><span className='error'>*</span>成本价</>),
+        dataIndex: 'costPrice',
+        width: 200,
+        render: (text: any, record: any, index: any) => {
+          return this.speedyInput('costPrice', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true,
+              message: '请输入成本价'
+            }]
+          })(
+            <InputMoney
+              min={0.01}
+              precision={2}
+              placeholder='请输入成本价'
+            />
+          )
+        }
+      },
+      {
+        title: (<><span className='error'>*</span>市场价</>),
         dataIndex: 'marketPrice',
         width: 200,
         render: (text: any, record: any, index: any) => {
@@ -193,7 +210,7 @@ class Main extends React.Component<Props, State> {
         }
       },
       {
-        title: '销售价',
+        title: (<><span className='error'>*</span>销售价</>),
         dataIndex: 'salePrice',
         width: 200,
         render: (text, record, index: any) => (
@@ -217,7 +234,7 @@ class Main extends React.Component<Props, State> {
         )
       },
       {
-        title: '库存',
+        title: (<>库存</>),
         dataIndex: 'stock',
         width: 200,
         render: (text: any, record, index: any) => (
@@ -228,6 +245,25 @@ class Main extends React.Component<Props, State> {
               value={text}
               placeholder='请输入库存'
               onChange={cb('stock', record, index)}
+            />
+          )
+        )
+      },
+      {
+        title: (<><span className='error'>*</span>单位</>),
+        dataIndex: 'unit',
+        width: 200,
+        render: (text: any, record, index: any) => (
+          this.speedyInput('unit', text, record, index, dataSource, cb, {
+            rules: [{
+              required: true, message: '单位不能为空'
+            }]
+          })(
+            <Input
+              value={text}
+              maxLength={5}
+              placeholder='请输入单位'
+              onChange={cb('unit', record, index)}
             />
           )
         )
