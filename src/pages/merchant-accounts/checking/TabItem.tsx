@@ -126,8 +126,7 @@ class Main extends React.Component<Props, State> {
               >
                 新建调整单
               </span>
-              )
-            }&nbsp;&nbsp;
+            )}&nbsp;&nbsp;
             <span
               className='href'
               onClick={() => api.exportAccount(id).then((res: any) => {

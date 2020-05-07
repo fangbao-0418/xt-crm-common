@@ -144,7 +144,7 @@ class Main extends React.Component<Props, State> {
           name: item.name
         }
       })
-      const trimFileUrl = (value.trimFileUrl || []).map((item:  {name: string, rurl: string}) => {
+      const trimFileUrl = (value.trimFileUrl || []).map((item: {name: string, rurl: string}) => {
         return {
           url: item.rurl,
           name: item.name

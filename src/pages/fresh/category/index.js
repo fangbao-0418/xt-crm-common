@@ -218,8 +218,8 @@ class InterFaceCategory extends Component {
           showType: 6,
           secondName: vals.secondName,
           productCategoryVOS: list,
-          icon: typeof vals.icon === 'string' ? vals.icon : vals.icon[0].rurl,
-          secondIcon: typeof vals.secondIcon === 'string' ?  vals.secondIcon : vals.secondIcon[0].rurl,
+          icon: APP.fn.deleteOssDomainUrl(typeof vals.icon === 'string' ? vals.icon : vals.icon[0].rurl),
+          secondIcon: APP.fn.deleteOssDomainUrl(typeof vals.secondIcon === 'string' ? vals.secondIcon : vals.secondIcon[0].rurl)
         }
         if (this.state.currId) data.id = this.state.currId;
         (this.state.currId ? updateFrontCategory : saveFrontCategory)(data).then(data => {
