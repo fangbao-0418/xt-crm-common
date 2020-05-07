@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-08 20:54:25
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-09 16:28:08
+ * @LastEditTime: 2020-05-06 11:51:39
  * @FilePath: /xt-crm/src/App.js
  */
 import React from 'react'
@@ -104,5 +104,4 @@ Main.propTypes = {
   dispatch: PropTypes.func,
   history: PropTypes.func
 }
-
 export default withRouter(connect()(Main))

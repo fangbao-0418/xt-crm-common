@@ -7,6 +7,7 @@ import StoreTimer from './store/timer'
 import Order from './order'
 import Category from './category'
 import Activity from './activity'
+import MerchantAccounts from './merchant-accounts'
 import SaleAfter from './saleAfter/index'
 import Setting from './setting'
 class Fresh extends React.Component<RouteComponentProps> {
@@ -23,6 +24,7 @@ class Fresh extends React.Component<RouteComponentProps> {
         <Route path={`${match.url}/activity`} component={Activity} />
         <Route path={`${match.url}/category`} component={Category} />
         <Route path={`${match.url}/setting`} component={Setting} />
+        <Route path={`${match.url}/merchant-accounts`} component={MerchantAccounts} />
       </Switch>
     )
   }
