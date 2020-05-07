@@ -37,10 +37,15 @@ class BannerModal extends Component {
     id: '',
     isEdit: false
   };
+  
   state = {
     renderKey: 0,
     visible: false,
-    keyWordData: [],
+    keyWordData: [{
+      key: '123',
+      label: '123',
+      title: '123'
+    }],
     data: {
       platformArray: _platformType.map(val => val.value),
       sort: 0,
@@ -272,11 +277,8 @@ class BannerModal extends Component {
                   ]
                 })(
                   <Select
-                    getPopupContainer={() => {
-                      return ReactDOM.findDOMNode(this.handleBox)
-                    }}
                     mode={'multiple'}
-                    placeholder='请选择售后类别'
+                    placeholder='请选择关键词'
                     id='keyWord'
                     name='keyWord'
                     labelInValue={true}
