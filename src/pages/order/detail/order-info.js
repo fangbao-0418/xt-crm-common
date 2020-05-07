@@ -69,6 +69,9 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
         </Row>
         <Row gutter={24}>
           <Col span={8}>下单会员类型：{levelName({memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel})}</Col>
+          <Col span={8}>充值号码{levelName({memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel})}</Col>
+          <Col span={8}>号码归属地{levelName({memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel})}</Col>
+          <Col span={8}>运营商{levelName({memberType: orderMemberType, memberTypeLevel: orderMemberTypeLevel})}</Col>
           <Col span={16}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress &&　memberAddress.phone}</Col>
         </Row>
         <Row gutter={24}>

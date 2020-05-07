@@ -1,5 +1,7 @@
+/* eslint-disable react/no-find-dom-node */
 import React, { Component } from 'react'
-import { Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
+import ReactDOM from 'react-dom'
+import { Select, Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
 import UploadView from '../../../components/upload'
 import { getBannerDetail, updateBanner, addBanner } from '../api'
 import { TextMapPosition } from '../constant'
@@ -9,6 +11,7 @@ import moment from 'moment'
 import BannerPostion from '@/components/banner-position'
 import If from '@/packages/common/components/if'
 const FormItem = Form.Item
+const Option = Select.Option
 
 const formItemLayout = {
   labelCol: { span: 6 },
@@ -37,6 +40,7 @@ class BannerModal extends Component {
   state = {
     renderKey: 0,
     visible: false,
+    keyWordData: [],
     data: {
       platformArray: _platformType.map(val => val.value),
       sort: 0,
@@ -188,13 +192,13 @@ class BannerModal extends Component {
                 <BannerPostion />
               )}
             </FormItem>
-            <If condition={[1, 2, 3, 4].includes(seat[0])}>
+            <If condition={[1, 2, 3, 4, 6, 7].includes(seat[0])}>
               <FormItem key={renderKey} label='Banner图片' required={true}>
                 {getFieldDecorator('imgList', {
                   initialValue: initImgList(data.imgUrlWap),
                   rules: [
                     {
-                      required: [1, 2, 3, 4].includes(seat[0]),
+                      required: [1, 2, 3, 4, 6, 7].includes(seat[0]),
                       message: '请上传Banner图片'
                     }
                   ]
@@ -243,16 +247,44 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+            <If condition={([1, 2, 3, 4, 6, 7].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
                   rules: [{
-                    required: ([1, 2, 3, 4].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
+                    required: ([1, 2, 3, 4, 6, 7].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
                     message: '请选择平台'
                   }]
                 })(
                   <Checkbox.Group options={_platformType}> </Checkbox.Group>
+                )}
+              </FormItem>
+            </If>
+            <If condition={seat[0] === 1}>
+              <FormItem label='关键词'>
+                {getFieldDecorator('keyWord', {
+                  initialValue: data.keyWord,
+                  rules: [
+                    {
+                      required: seat[0] === 1,
+                      message: '请输入关键词'
+                    }
+                  ]
+                })(
+                  <Select
+                    getPopupContainer={() => {
+                      return ReactDOM.findDOMNode(this.handleBox)
+                    }}
+                    mode={'multiple'}
+                    placeholder='请选择售后类别'
+                    id='keyWord'
+                    name='keyWord'
+                    labelInValue={true}
+                    onChange={this.onChangeKeyWord.bind(this)}
+                    loading={true}
+                  >
+                    {this.showKeyWord()}
+                  </Select>
                 )}
               </FormItem>
             </If>
@@ -268,6 +300,26 @@ class BannerModal extends Component {
         </Modal>
       </>
     )
+  }
+
+  //展示关键字
+  showKeyWord () {
+    const newData = []
+    const { keyWordData } = this.state
+    keyWordData.map((item, index) => {
+      newData.push(
+        <Option key={item.key}>{item.title}</Option>
+      )
+    })
+    return newData
+  }
+  //改变关键字
+  onChangeKeyWord (obj) {
+    const { data } = this.state
+    data['keyWord'] = obj ? ((obj instanceof Array && obj.length < 1) ? undefined :obj) : ''
+    this.setState({
+      data
+    })
   }
 }
 

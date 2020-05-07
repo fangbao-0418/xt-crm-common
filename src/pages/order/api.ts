@@ -50,7 +50,7 @@ export function againRefund (id: number, info: any) {
  * @param skuServerId
  */
 export function cancelRefund (skuServerId: number, info: string) {
-  return post(`/order/afterSale/cancelRefund/${skuServerId}`, {info})
+  return post(`/order/afterSale/cancelRefund/${skuServerId}`, { info })
 }
 
 /**
@@ -79,7 +79,7 @@ export function confirmReceipt (skuServerId: number) {
  * @param skuServerId
  */
 export function getSkuServerProcessDetailList (params: any) {
-  const {id, orderCode} = params
+  const { id, orderCode } = params
   return get(`/order/afterSale/getSkuServerProcessDetailList/${id}?orderCode=${orderCode}`)
 }
 export function saveRefundInfo (data: any) {
@@ -214,7 +214,7 @@ export function profitRecycl (data: any) {
  * @param {object} data
  */
 export function getProceedsListByOrderId (param: any) {
-  return get(`/crm/member/settlement/v1/order/summary`, param)
+  return get('/crm/member/settlement/v1/order/summary', param)
 }
 
 /**
@@ -222,7 +222,7 @@ export function getProceedsListByOrderId (param: any) {
  * @param {object} data
  */
 export function getProceedsListByOrderIdAndMemberId (param: any) {
-  return get(`/crm/member/settlement/v1/order/skuSummaryByMember`, param)
+  return get('/crm/member/settlement/v1/order/skuSummaryByMember', param)
 }
 
 /**
@@ -230,7 +230,7 @@ export function getProceedsListByOrderIdAndMemberId (param: any) {
  * @param {object} data
  */
 export function getProceedsListByOrderIdAndMemberIdAndSkuId (param: any) {
-  return get(`/crm/member/settlement/v1/detail`, param)
+  return get('/crm/member/settlement/v1/detail', param)
 }
 
 /**
@@ -238,7 +238,7 @@ export function getProceedsListByOrderIdAndMemberIdAndSkuId (param: any) {
  * @param {object} data
  */
 export function getProceedsListByOrderIdAndSkuId (param: any) {
-  return get(`/crm/member/settlement/v1/order/skuSummary`, param)
+  return get('/crm/member/settlement/v1/order/skuSummary', param)
 }
 
 /**
@@ -269,4 +269,6 @@ export function modifyAddress (data: any) {
   })
 }
 
-
+export function queryBannerList (data: any) {
+  return post('/banner/list', data)
+}
