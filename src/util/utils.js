@@ -87,20 +87,21 @@ export function saveDefault(state, payload) {
   };
 }
 
-export function arrToTree(list = [], pid = null, key = 'parentId') {
-  let tree = [];
-  Array.isArray(list) &&
-    list.forEach(item => {
-      let tmp = deepClone(item);
+export function arrToTree (list = [], pid = null, key = 'parentId') {
+  const tree = []
+  console.log(list, 'list')
+  Array.isArray(list)
+    && list.forEach(item => {
+      const tmp = deepClone(item)
       if (item[key] === pid) {
-        tmp['subMenus'] = arrToTree(list, item.id, key);
-        tree.push(tmp);
+        tmp['subMenus'] = arrToTree(list, item?.id, key)
+        tree.push(tmp)
       }
-    });
-  return tree;
+    })
+  return tree
 }
 
-export function deepClone(obj) {
+export function deepClone (obj) {
   let str = '';
   let newobj = obj.constructor === Array ? [] : {};
   if (typeof obj !== 'object') {
