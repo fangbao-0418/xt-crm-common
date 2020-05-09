@@ -21,7 +21,7 @@ export function templatePage(data: any) {
  * @param freightTemplateId 
  */
 export function getDetail(freightTemplateId: number) {
-  return get(`/template/${freightTemplateId}`)
+  return get(`/template/detail`, { freightTemplateId })
 }
 
 /**
