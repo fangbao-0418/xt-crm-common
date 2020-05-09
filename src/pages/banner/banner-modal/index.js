@@ -92,7 +92,7 @@ class BannerModal extends Component {
         params.onlineTime = +new Date(params.onlineTime)
         params.offlineTime = +new Date(params.offlineTime)
         if (params.imgList) {
-          params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].url || ''
+          params.imgUrlWap = params.imgList.length > 0 && params.imgList[0].rurl || ''
           params.imgList = undefined
         }
         const seat = params.seat || []
@@ -184,7 +184,15 @@ class BannerModal extends Component {
                   }
                 ]
               })(
-                <BannerPostion />
+                <BannerPostion
+                  onChange={(val) => {
+                    data.newSeat = val[0]
+                    data.childSeat = val[1]
+                    this.setState({
+                      data
+                    })
+                  }}
+                />
               )}
             </FormItem>
             <If condition={seat[0] === 1 && seat[1] === 0}>
@@ -249,7 +257,7 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+            <If condition={([1, 2, 3, 4].includes(seat[0])) || (seat[0] !== 5)}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,

@@ -1,11 +1,5 @@
 const { get, newPost } = APP.http
 import { ListRequest, BuildRequest, ExamineRequest } from './interface'
-/** 获取对账单列表 */
-export const fetchCheckingList = (payload: any) => {
-  return Promise.resolve({
-    records: []
-  })
-}
 
 /** 获取对账单列表 */
 export const fetchList = (payload: ListRequest) => {

@@ -20,17 +20,17 @@ class Main extends React.Component<Props, State> {
     selectIndex: -2,
     loading: false
   }
-  public constructor(props: Props) {
+  public constructor (props: Props) {
     super(props)
     this.addIconItem = this.addIconItem.bind(this)
     this.toSave = this.toSave.bind(this)
     this.toDelete = this.toDelete.bind(this)
     this.toPublish = this.toPublish.bind(this)
   }
-  public componentDidMount() {
+  public componentDidMount () {
     this.fetchList()
   }
-  public fetchList(init = true) {
+  public fetchList (init = true) {
     api.getIconList().then((res: any = []) => {
       this.setState({
         dataSource: res || []
@@ -42,7 +42,7 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
-  public toSave() {
+  public toSave () {
     this.props.form.validateFields((err, value: any) => {
       if (err) {
         return
@@ -56,7 +56,7 @@ class Main extends React.Component<Props, State> {
           ...value
         }
         if (result.imgUrl instanceof Array) {
-          result.imgUrl = result.imgUrl[0].url
+          result.imgUrl = result.imgUrl[0].rurl
         }
         result.platform = 0
         result.platformArray.forEach((val:any) => {
@@ -181,12 +181,12 @@ class Main extends React.Component<Props, State> {
                 >
                   {item.title}
                 </div>
-              )
-              )}
+              ))
+            }
             <div
-                className={classNames(styles.tbtn, styles.add)}
-                onClick={this.addIconItem}
-              >
+              className={classNames(styles.tbtn, styles.add)}
+              onClick={this.addIconItem}
+            >
               +新增icon
             </div>
             <Popconfirm
@@ -194,7 +194,7 @@ class Main extends React.Component<Props, State> {
               onConfirm={this.toPublish}
             >
               <Button
-                type="primary"
+                type='primary'
                 className={styles.release}
               >
                 发布
@@ -202,94 +202,95 @@ class Main extends React.Component<Props, State> {
             </Popconfirm>
           </div>
         </div>
-        <div className={styles.content} style={{display: selectIndex > -2 ? '' :'none'}}>
-              <Form
-                className={styles.form}
-                {...formItemLayout}
+        <div className={styles.content} style={{ display: selectIndex > -2 ? '' :'none' }}>
+          <Form
+            className={styles.form}
+            {...formItemLayout}
+          >
+            <Form.Item
+              label='icon名称'
+              extra='五个字以内'
+            >
+              {getFieldDecorator('title', {
+                rules: [
+                  { required: true, message: 'icon名称不能为空' }
+                ]
+              })(
+                <Input maxLength={5} placeholder='请输入' />
+              )}
+            </Form.Item>
+            <Form.Item
+              label='上传图片'
+            >
+              {getFieldDecorator('imgUrl', {
+                rules: [
+                  { required: true, message: '上传图片不能为空' }
+                ]
+              })(
+                <Upload
+                  size={0.05}
+                  listType='picture-card'
+                  style={{ width: 100, height: 100 }}
+                >
+                </Upload>
+              )}
+            </Form.Item>
+            <Form.Item
+              label='排序'
+            >
+              {getFieldDecorator('sort', {
+                rules: [
+                  { required: true, message: '排序不能为空' }
+                ]
+              })(
+                <Input placeholder='请输入' />
+              )}
+            </Form.Item>
+            <Form.Item
+              label='内容配置'
+            >
+              {getFieldDecorator('jumpUrl', {
+                rules: [
+                  { required: true, message: '内容配置不能为空' }
+                ]
+              })(
+                <Input placeholder='请输入' />
+              )}
+            </Form.Item>
+            <Form.Item label='平台'>
+              {getFieldDecorator('platformArray', {
+                rules: [{
+                  required: true,
+                  message: '请选择平台'
+                }]
+              })(
+                <Checkbox.Group options={_platformType}> </Checkbox.Group>
+              )}
+            </Form.Item>
+            <div className={styles.footer}>
+              <Button
+                loading={this.state.loading}
+                type="primary"
+                onClick={this.toSave}
               >
-                <Form.Item
-                  label='icon名称'
+                保存
+              </Button>
+              <Popconfirm
+                disabled={selectIndex <= -1}
+                title='确认删除icon吗'
+                onConfirm={this.toDelete}
+              >
+                <Button
+                  disabled={selectIndex <= -1}
+                  ghost
+                  type="danger"
                 >
-                  {getFieldDecorator('title', {
-                    rules: [
-                      { required: true, message: 'icon名称不能为空' }
-                    ]
-                  })(
-                    <Input />
-                  )}
-                </Form.Item>
-                <Form.Item
-                  label='上传图片'
-                >
-                  {getFieldDecorator('imgUrl', {
-                    rules: [
-                      { required: true, message: '上传图片不能为空' }
-                    ]
-                  })(
-                    <Upload
-                      size={0.05}
-                      listType="picture-card"
-                      style={{ width: 100, height: 100 }}
-                    >
-                    </Upload>
-                  )}
-                </Form.Item>
-                <Form.Item
-                  label='排序'
-                >
-                  {getFieldDecorator('sort', {
-                    rules: [
-                      { required: true, message: '排序不能为空' }
-                    ]
-                  })(
-                    <Input />
-                  )}
-                </Form.Item>
-                <Form.Item
-                  label='内容配置'
-                >
-                  {getFieldDecorator('jumpUrl', {
-                    rules: [
-                      { required: true, message: '内容配置不能为空' }
-                    ]
-                  })(
-                    <Input />
-                  )}
-                </Form.Item>
-                <Form.Item label="平台">
-                  {getFieldDecorator('platformArray', {
-                    rules: [{
-                      required: true,
-                      message: '请选择平台'
-                    }]
-                  })(
-                    <Checkbox.Group options={_platformType}> </Checkbox.Group>
-                  )}
-                </Form.Item>
-                <div className={styles.footer}>
-                  <Button
-                    loading={this.state.loading}
-                    type="primary"
-                    onClick={this.toSave}
-                  >
-                    保存
-                  </Button>
-                  <Popconfirm
-                    disabled={selectIndex <= -1}
-                    title='确认删除icon吗'
-                    onConfirm={this.toDelete}
-                  >
-                    <Button
-                      disabled={selectIndex <= -1}
-                      ghost
-                      type="danger"
-                    >
-                      删除
-                    </Button>
-                  </Popconfirm>
-                </div>
-              </Form>
+                  删除
+                </Button>
+              </Popconfirm>
             </div>
+          </Form>
+        </div>
       </div>
     )
   }

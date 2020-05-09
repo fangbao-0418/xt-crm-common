@@ -24,42 +24,45 @@ export const request = (url, config = {}) => {
     }),
     ...config
   }
-  _config.headers = getHeaders(_config.headers);
+  _config.headers = getHeaders(_config.headers)
   return axios(_config)
     .then(res => {
-      !config.hideLoading && APP.fn.handleLoading('end');
+      !config.hideLoading && APP.fn.handleLoading('end')
       if (_config.banLog !== true) {
-        APP.moon.oper(res);
+        APP.moon.oper(res)
       }
       if (res.status === 401) {
         window.location.href = '/#/login'
-        return Promise.reject(res);
+        return Promise.reject(res)
       }
       if (res.status === 200 && res.data.success) {
-        const data = res.data.data;
-        return isPlainObject(data) ? omitBy(data, isNil) : data;
+        const data = res.data.data
+        return isPlainObject(data) ? omitBy(data, isNil) : data
       } else {
-        if (res.data && res.data.message) {
-          message.error(res.data.message || '内部错误，请等待响应...');
+        if (res.data && res.data.message && config.hideToast !== true) {
+          message.error(res.data.message || '内部错误，请等待响应...')
         }
-        return Promise.reject(res.data);
+        return Promise.reject(res.data)
       }
     }, (error) => {
       !config.hideLoading && APP.fn.handleLoading('end')
       const httpCode = lodashGet(error, 'response.status');
       if (httpCode === 401 || httpCode === 502) {
-        message.error('未登录');
+        message.error('未登录')
         setTimeout(() => {
           window.location.href = '/#/login'
-        }, 1500);
-        return Promise.reject(error);
+        }, 1500)
+        return Promise.reject(error)
       }
       // 公共错误处理
       if (httpCode === 403) {
         message.error('权限不足');
         return;
       } else {
-        message.error(error.message || '内部错误，请等待响应...');
+        console.log(config.hideToast, 'config.hideToast')
+        if (config.hideToast !== true) {
+          message.error(error.message || '内部错误，请等待响应...');
+        }
       }
       try {
         APP.moon.oper(error, error && error.response && error.response.status)

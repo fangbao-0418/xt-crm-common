@@ -22,6 +22,12 @@ const formLayout = {
   }
 }
 
+/** 结算方式枚举 */
+const SettleTypeEnum = {
+  1: '寄售结算',
+  2: '按需结算'
+}
+
 const collection = {
   property1: {
     value: 'propertyValue1',
@@ -30,15 +36,15 @@ const collection = {
   property2: {
     value: 'propertyValue2'
   }
-};
+}
 
 /**
  * 过滤property
  * @param {*} obj
  */
-function filterProp(obj) {
-  obj = obj || {};
-  return Object.keys(collection).filter(key => obj[key]);
+function filterProp (obj) {
+  obj = obj || {}
+  return Object.keys(collection).filter(key => obj[key])
 }
 
 /**
@@ -62,7 +68,7 @@ function getDynamicColumns (obj) {
  * @param {*} list
  */
 const getSpecs = memoize(function (obj) {
-  obj = obj || {};
+  obj = obj || {}
   return filterProp(obj).map(prop => {
     const item = collection[prop] || {}
     return {
@@ -70,16 +76,16 @@ const getSpecs = memoize(function (obj) {
       content: uniqWithProp(obj.skuList || [], item.value).map(v => {
         return item.imageUrl
           ? {
-              specPicture: v[item.imageUrl],
-              specName: v[item.value]
-            }
+            specPicture: v[item.imageUrl],
+            specName: v[item.value]
+          }
           : {
-              specName: v[item.value]
-            };
+            specName: v[item.value]
+          }
       })
-    };
-  });
-});
+    }
+  })
+})
 
 /**
  * 去重property
@@ -250,10 +256,12 @@ class GoodsEdit extends React.Component {
         /** 审核结果 */
         auditStatus,
         /** 审核说明 */
-        auditInfo
+        auditInfo,
+        /** 结算方式 */
+        settleType
       }
-    } = this.state;
-    const storeItem = (this.supplier || []).find(v => v.id === storeId) || {};
+    } = this.state
+    const storeItem = (this.supplier || []).find(v => v.id === storeId) || {}
     return (
       <>
         <CascaderCity
@@ -275,6 +283,7 @@ class GoodsEdit extends React.Component {
             <Form.Item label="商品简介">{description || '无'}</Form.Item>
             <Form.Item label="商品条码">{barCode || '无'}</Form.Item>
             <Form.Item label="供货商">{storeItem.name}</Form.Item>
+            <Form.Item label="结算方式">{SettleTypeEnum[settleType]}</Form.Item>
             {/* <Form.Item label="供应商商品ID">{storeProductId || '无'}</Form.Item> */}
             <Form.Item label="商品主图">
               {coverUrl ? (
