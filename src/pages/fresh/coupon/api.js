@@ -18,7 +18,7 @@ export function importShop () {
       console.log(file, 'file')
       const form = new FormData()
       form.append('file', file)
-      post('/promotion/product/check', {}, {
+      post('/promotion/fresh/product/check', {}, {
         data: form,
         headers: {
           'Content-Type': 'multipart/form-data'
