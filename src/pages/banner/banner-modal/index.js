@@ -37,15 +37,11 @@ class BannerModal extends Component {
     id: '',
     isEdit: false
   };
-  
+
   state = {
     renderKey: 0,
     visible: false,
-    keyWordData: [{
-      key: '123',
-      label: '123',
-      title: '123'
-    }],
+    keyWordData: [],
     data: {
       platformArray: _platformType.map(val => val.value),
       sort: 0,
@@ -82,6 +78,7 @@ class BannerModal extends Component {
         data.platformArray = _platformType.map(val => val.value)
       }
       this.setState({
+        keyWordData: ['充值', '话费'],
         data,
         renderKey: this.state.renderKey + 1
       })
@@ -269,8 +266,8 @@ class BannerModal extends Component {
             </If>
             <If condition={seat[0] === 1}>
               <FormItem label='关键词'>
-                {getFieldDecorator('keyWord', {
-                  initialValue: data.keyWord,
+                {getFieldDecorator('keyWords', {
+                  initialValue: data.keyWords,
                   rules: [
                     {
                       required: seat[0] === 1,
@@ -281,11 +278,9 @@ class BannerModal extends Component {
                   <Select
                     mode={'multiple'}
                     placeholder='请选择关键词'
-                    id='keyWord'
-                    name='keyWord'
-                    labelInValue={true}
+                    id='keyWords'
+                    name='keyWords'
                     onChange={this.onChangeKeyWord.bind(this)}
-                    loading={true}
                   >
                     {this.showKeyWord()}
                   </Select>
@@ -310,9 +305,9 @@ class BannerModal extends Component {
   showKeyWord () {
     const newData = []
     const { keyWordData } = this.state
-    keyWordData.map((item, index) => {
+    keyWordData.map((item) => {
       newData.push(
-        <Option key={item.key}>{item.title}</Option>
+        <Option key={item}>{item}</Option>
       )
     })
     return newData
@@ -320,7 +315,7 @@ class BannerModal extends Component {
   //改变关键字
   onChangeKeyWord (obj) {
     const { data } = this.state
-    data['keyWord'] = obj ? ((obj instanceof Array && obj.length < 1) ? undefined :obj) : ''
+    data['keyWords'] = obj ? ((obj instanceof Array && obj.length < 1) ? undefined :obj) : ''
     this.setState({
       data
     })

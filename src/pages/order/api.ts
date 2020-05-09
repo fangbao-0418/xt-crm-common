@@ -268,7 +268,11 @@ export function modifyAddress (data: any) {
     hideLoading: true
   })
 }
-
-export function queryBannerList (data: any) {
-  return post('/banner/list', data)
+//充值单列表
+export function rechargeList (data: any) {
+  return post('/order/recharge/list', data)
+}
+//充值单导出
+export function rechargeExport (data: any) {
+  return post('/order/recharge/export', data)
 }
