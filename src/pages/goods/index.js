@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-21 19:44:05
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-07 19:35:02
+ * @LastEditTime: 2020-05-11 11:40:40
  * @FilePath: /xt-crm/src/pages/goods/index.js
  */
 import React from 'react'
@@ -32,7 +32,7 @@ const config = [
   { path: '/sku-stock', exact: true, component: SkuStock },
   { path: '/sku-stock/:id', component: SkuStockForm },
   { path: '/material', component: Material },
-  { path: '/virtual', component: Virtual }
+  { path: '/virtual/:id', component: Virtual }
 ]
 
 export default class RouteApp extends React.Component {

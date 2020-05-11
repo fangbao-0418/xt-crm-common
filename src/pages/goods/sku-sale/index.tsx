@@ -348,7 +348,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
                 className='mr10'
                 type='primary'
                 onClick={() => {
-                  APP.history.push('/goods/virtual')
+                  APP.history.push('/goods/virtual/-1')
                 }}
               >
                 新增虚拟商品

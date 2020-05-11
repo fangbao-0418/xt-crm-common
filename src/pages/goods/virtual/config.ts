@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-05-07 19:44:40
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-07 19:51:05
+ * @LastEditTime: 2020-05-11 13:58:22
  * @FilePath: /xt-crm/src/pages/goods/virtual/config.ts
  */
 import { FieldsConfig } from '@/packages/common/components/form'
@@ -50,16 +50,21 @@ export const defaultConfig: FieldsConfig = {
         value: 0
       }]
     },
-    rechargeType: {
+    type: {
       label: '充值类型',
       type: 'select',
       options: [{
         label: '手机流量',
-        value: 1
+        value: 51
       }, {
         label: '手机话费',
-        value: 0
+        value: 50
       }],
+      controlProps: {
+        style: {
+          width: 100
+        }
+      },
       fieldDecoratorOptions: {
         rules: [{
           required: true,

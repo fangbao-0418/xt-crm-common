@@ -10,7 +10,7 @@ import SelectModal from './components/SelectModal'
 class Main extends React.Component {
   public columns: ColumnProps<RecordProps>[] = [
     { title: '商品', dataIndex: 'supplierCashOutId' },
-    { title: '商品ID', dataIndex: 'cashOutMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'u2m') },
+    { title: '商品ID', dataIndex: 'productId', render: (text) => APP.fn.formatMoneyNumber(text, 'u2m') },
     { title: 'SKUID', dataIndex: 'storeId' },
     { title: '商品名称', dataIndex: 'storeName' },
     { title: '商品主图', dataIndex: 'payType' },

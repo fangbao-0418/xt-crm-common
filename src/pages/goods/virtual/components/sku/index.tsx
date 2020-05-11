@@ -73,8 +73,6 @@ interface Props extends FormComponentProps {
   strategyData?: {}
   /** 0-普通商品，10-一般海淘商品，20-保税仓海淘商品 */
   type?: 0 | 10 | 20
-  /** sku备案信息 */
-  productCustomsDetailVOList: any[]
 }
 interface SpecItem {
   specName: string;
@@ -540,9 +538,7 @@ class SkuList extends React.Component<Props, State> {
             this.skuTable = ref
           }}
           type={type}
-          isGroup={false}
           form={this.props.form}
-          productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}
           extraColumns={this.getCustomColumns()}
           onChange={(dataSource) => {
