@@ -1,3 +1,4 @@
+/* eslint-disable no-self-assign */
 /* eslint-disable react/no-find-dom-node */
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
@@ -41,7 +42,6 @@ class BannerModal extends Component {
   state = {
     renderKey: 0,
     visible: false,
-    keyWordData: [],
     data: {
       platformArray: _platformType.map(val => val.value),
       sort: 0,
@@ -78,7 +78,6 @@ class BannerModal extends Component {
         data.platformArray = _platformType.map(val => val.value)
       }
       this.setState({
-        keyWordData: ['充值', '话费'],
         data,
         renderKey: this.state.renderKey + 1
       })
@@ -110,6 +109,10 @@ class BannerModal extends Component {
         params.platformArray.forEach((val) => {
           params.platform += val * 1
         })
+        if (params.keyWords&&params.keyWords.length>20) {
+          APP.error('关键字不能超过20个')
+          return
+        }
         if (params.offlineTime < params.onlineTime) {
           APP.error('下线时间必须大于上线时间')
           return
@@ -264,26 +267,25 @@ class BannerModal extends Component {
                 )}
               </FormItem>
             </If>
-            <If condition={seat[0] === 1}>
+            <If condition={seat[0] === 7}>
               <FormItem label='关键词'>
                 {getFieldDecorator('keyWords', {
                   initialValue: data.keyWords,
                   rules: [
                     {
-                      required: seat[0] === 1,
+                      required: seat[0] === 7,
                       message: '请输入关键词'
                     }
                   ]
                 })(
                   <Select
-                    mode={'multiple'}
-                    placeholder='请选择关键词'
+                    mode={'tags'}
+                    placeholder='请输入关键词'
                     id='keyWords'
+                    tokenSeparators={[',']}
                     name='keyWords'
                     onChange={this.onChangeKeyWord.bind(this)}
-                  >
-                    {this.showKeyWord()}
-                  </Select>
+                  />
                 )}
               </FormItem>
             </If>
@@ -301,17 +303,6 @@ class BannerModal extends Component {
     )
   }
 
-  //展示关键字
-  showKeyWord () {
-    const newData = []
-    const { keyWordData } = this.state
-    keyWordData.map((item) => {
-      newData.push(
-        <Option key={item}>{item}</Option>
-      )
-    })
-    return newData
-  }
   //改变关键字
   onChangeKeyWord (obj) {
     const { data } = this.state
@@ -319,6 +310,7 @@ class BannerModal extends Component {
     this.setState({
       data
     })
+    console.log(data)
   }
 }
 
