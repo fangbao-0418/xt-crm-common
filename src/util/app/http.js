@@ -39,6 +39,10 @@ export const request = (url, config = {}) => {
         const data = res.data.data
         return isPlainObject(data) ? omitBy(data, isNil) : data
       } else {
+        if (res.data && res.data.code === '10001') {
+          window.location.href = '/#/login'
+          return Promise.reject(res.data)
+        }
         if (res.data && res.data.message && config.hideToast !== true) {
           message.error(res.data.message || '内部错误，请等待响应...')
         }
@@ -46,7 +50,7 @@ export const request = (url, config = {}) => {
       }
     }, (error) => {
       !config.hideLoading && APP.fn.handleLoading('end')
-      const httpCode = lodashGet(error, 'response.status');
+      const httpCode = lodashGet(error, 'response.status')
       if (httpCode === 401 || httpCode === 502) {
         message.error('未登录')
         setTimeout(() => {
@@ -56,12 +60,12 @@ export const request = (url, config = {}) => {
       }
       // 公共错误处理
       if (httpCode === 403) {
-        message.error('权限不足');
-        return;
+        message.error('权限不足')
+        return
       } else {
         console.log(config.hideToast, 'config.hideToast')
         if (config.hideToast !== true) {
-          message.error(error.message || '内部错误，请等待响应...');
+          message.error(error.message || '内部错误，请等待响应...')
         }
       }
       try {
@@ -71,7 +75,7 @@ export const request = (url, config = {}) => {
       }
       return Promise.reject(error)
     })
-};
+}
 
 // GET请求
 export const get = (url, data, config = {}) => {
@@ -79,34 +83,34 @@ export const get = (url, data, config = {}) => {
     method: 'GET',
     params: data,
     ...config
-  });
-};
+  })
+}
 
 // delete请求
 export const del = (url, data, config) => {
   return request(url, {
     data: qs.stringify(data),
     method: 'delete',
-    ...config,
-  });
-};
+    ...config
+  })
+}
 // put请求
 export const put = (url, data, config) => {
   return request(url, {
     data: qs.stringify(data),
     method: 'put',
-    ...config,
-  });
-};
+    ...config
+  })
+}
 
 // POST请求
 export const post = (url, data, config) => {
   return request(url, {
     data: qs.stringify(data),
     method: 'POST',
-    ...config,
-  });
-};
+    ...config
+  })
+}
 
 // POST请求
 export const newPost = (url, data, config) => {
@@ -116,10 +120,10 @@ export const newPost = (url, data, config) => {
     ...config,
     headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json;charset=UTF-8',
-    }),
-  });
-};
+      'Content-Type': 'application/json;charset=UTF-8'
+    })
+  })
+}
 
 // put请求
 export const newPut = (url, data, config) => {
@@ -129,39 +133,39 @@ export const newPut = (url, data, config) => {
     ...config,
     headers: getHeaders({
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json;charset=UTF-8',
+      'Content-Type': 'application/json;charset=UTF-8'
     })
-  });
-};
+  })
+}
 
 const messageMap = {
   401: '未登录',
   403: '权限不足',
   500: '服务端错误'
-};
+}
 const instance = axios.create({
   // baseURL: prefix(''),
   withCredentials: true,
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-});
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+})
 instance.interceptors.request.use((config) => {
-  config.headers = getHeaders(config.headers);
-  return config;
+  config.headers = getHeaders(config.headers)
+  return config
 }, (error) => {
-  return Promise.reject(error);
+  return Promise.reject(error)
 })
 
 instance.interceptors.response.use(res => {
   if (res.status === 200 && !res.data.success) { // 请求成功返回但是后台未返回成功数据，则给提示
-    message.error(res.data.message);
+    message.error(res.data.message)
   }
-  return res.data;
+  return res.data
 }, error => {
   // 非2xx状态处理，返回{}
   if (error.response && error.response.status === 401) { // 未登录的重定向到登陆页
     setTimeout(() => {
-      window.location = '/#/login';
-    }, 1500);
+      window.location = '/#/login'
+    }, 1500)
   }
   message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...')
   try {
@@ -169,12 +173,12 @@ instance.interceptors.response.use(res => {
   } catch (e) {
     console.log(e)
   }
-  return {};
+  return {}
 })
-export function fetch(url, config = {}) {
+export function fetch (url, config = {}) {
   const {
     method = 'get', data = {}, ...others
-  } = config;
+  } = config
   !config.hideLoading && APP.fn.handleLoading('start')
   return instance.request({
     url: prefix(url),
@@ -186,9 +190,9 @@ export function fetch(url, config = {}) {
     // if (config.banLog !== true) {
     //   APP.moon.oper(res);
     // }
-    return res;
+    return res
   }, (error) => {
     !config.hideLoading && APP.fn.handleLoading('end')
     return Promise.reject(error)
   })
-};
+}
