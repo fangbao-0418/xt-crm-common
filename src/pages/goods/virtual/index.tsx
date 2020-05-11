@@ -24,7 +24,6 @@ interface SkuSaleFormState extends Record<string, any> {
   returnPhone: string;
   returnAddress: string;
   showImage: boolean;
-  productCustomsDetailVOList: any[];
   supplierInfo: any;
   checkType: 0 | 1;
   productBasicId?: number;
@@ -48,7 +47,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     returnPhone: '',
     returnAddress: '',
     showImage: false,
-    productCustomsDetailVOList: [],
     supplierInfo: {},
     // interceptionVisible: false,
     checkType: 0,
@@ -77,7 +75,6 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       returnPhone: '',
       returnAddress: '',
       showImage: false,
-      productCustomsDetailVOList: [],
       supplierInfo: {},
       // interceptionVisible: false,
       checkType: 0,
@@ -116,8 +113,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'specs',
           'propertyId1',
           'propertyId2',
-          'showImage',
-          'productCustomsDetailVOList'
+          'showImage'
         ])
       })
       this.form.setValues({
@@ -250,17 +246,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       } else {
         APP.success('添加数据成功')
       }
-      // gotoPage('/goods/list')
+      APP.history.push('/goods/list')
     })
   }
   render () {
-    const {
-      // interceptionVisible,
-      productCustomsDetailVOList,
-      supplierInfo,
-      barCode
-    } = this.state
-    const { productType, status }: any = this.form ? this.form.getValues() : {}
+    const { productType, status }: any = this.form?.getValues() || {}
     return (
       <Form
         getInstance={ref => this.form = ref}
@@ -300,7 +290,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           />
           <FormItem
             verifiable
-            name='type'
+            name='productType'
           />
           <FormItem
             required={true}
@@ -395,14 +385,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               }>
               返回
             </Button>
-            <If condition={status === 2}>
+            {/* <If condition={status === 2}>
               <Button
                 onClick={() => {
                   this.handleSave(3)
                 }}>
                 推送至待上架
               </Button>
-            </If>
+            </If> */}
           </FormItem>
         </Card>
       </Form>

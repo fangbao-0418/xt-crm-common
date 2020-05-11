@@ -123,13 +123,18 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       align: 'center',
       width: 120,
       render: (record: any) => {
+        console.log(record, 'record')
         const { status } = this.state
         return (
           <div>
             <span
               className='href'
               onClick={() => {
-                gotoPage(`/goods/sku-sale/${record.id}`)
+                if ([50, 51].includes(record.type)) {
+                  APP.history.push(`/goods/virtual/${record.id}`)
+                } else {
+                  APP.history.push(`/goods/sku-sale/${record.id}`)
+                }
               }}
             >
               编辑

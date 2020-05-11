@@ -3,10 +3,18 @@ import { Modal, Table, Button } from 'antd'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import * as api from '../api'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
-import CategoryCascader from '@/components/category-cascader'
 import SkuTable from './SkuTable'
-import Image from '@/components/Image'
+import SelectFetch from '@/components/select-fetch'
 import styles from './style.module.sass'
+
+/** 商品状态枚举 */
+enum GoodStatusEnum {
+  出售中 = 0,
+  仓库中 = 1,
+  待上架 = 3,
+  商品池 = 2
+}
+
 interface State {
   visible: boolean
   dataSource: Shop.ShopItemProps[]
@@ -40,55 +48,46 @@ class Main extends React.Component<Props, State> {
   public form: FormInstance
   public columns: ColumnProps<Shop.ShopItemProps>[] = [
     {
-      title: '商品ID',
+      title: 'id',
       dataIndex: 'id',
       width: 150
     },
     {
-      title: '商品名称',
+      title: '商品',
       // width: 240,
       dataIndex: 'productName',
       render: (text, record) => {
         return (
           <div className={styles.shop}>
-            <div className={styles['shop-img']}>
+            {/* <div className={styles['shop-img']}>
               <Image
                 src={record.coverUrl}
                 width={80}
                 height={80}
               />
-            </div>
+            </div> */}
             <div className={styles['shop-right']} >
               <div>{record.productName}</div>
-              {/* <div>库存：{record.stock}</div> */}
             </div>
           </div>
         )
       }
     },
     {
-      title: '活动ID',
-      dataIndex: 'promotionId',
-      width: 150
-    },
-    {
-      title: '活动名称',
-      dataIndex: 'promotionName'
-    },
-    {
-      title: '库存',
-      dataIndex: 'stock',
-      width: 150,
+      title: '状态',
+      dataIndex: 'status',
+      width: 100,
       align: 'center',
       render: (text) => {
-        return text
+        return GoodStatusEnum[text]
       }
     },
-    // {
-    //   title: '类目',
-    //   width: 100,
-    //   dataIndex: 'productCategoryAllName'
-    // },
+    {
+      title: '类目',
+      width: 120,
+      dataIndex: 'categoryName',
+      align: 'center'
+    },
     {
       title: '价格',
       width: 0,
@@ -104,7 +103,8 @@ class Main extends React.Component<Props, State> {
               let { selectedRowKeys } = this.state
               const index = this.selectRows.findIndex((item) => item.id === record.id)
               const isExist = index > -1
-              this.state.spuSelectedRowKeys[record.id] = rowKeys
+              const spuSelectedRowKeys = this.state.spuSelectedRowKeys
+              spuSelectedRowKeys[record.id] = rowKeys
               if (rowKeys.length > 0) {
                 if (!isExist) {
                   selectedRowKeys = selectedRowKeys.concat([record.id])
@@ -151,7 +151,6 @@ class Main extends React.Component<Props, State> {
     if (this.props.getInstance) {
       this.props.getInstance(this)
     }
-    // this.fetchData()
   }
   public fetchData () {
     this.setState({
@@ -171,7 +170,8 @@ class Main extends React.Component<Props, State> {
       ])
     }
   }
-  public open (value?: Marketing.PresentContentValueProps, type: 'sku' | 'spu' = 'sku') {
+  public open (skuList: any[] = [], type: 'sku' | 'spu' = 'sku') {
+
     this.payload = {
       page: 1,
       pageSize: 10
@@ -180,14 +180,10 @@ class Main extends React.Component<Props, State> {
       this.form.props.form.resetFields()
     }
     this.fetchData()
-    value = Object.assign({
-      spuList: [],
-      skuList: [],
-      spuIds: {}
-    }, value)
+
     const allSkuSelectedRows: {[spuId: number]: Shop.SkuProps[]} = {}
     this.selectRows = [];
-    (value.skuList || []).map((item) => {
+    (skuList || []).map((item) => {
       if (!(allSkuSelectedRows[item.productId] instanceof Array)) {
         allSkuSelectedRows[item.productId] = []
       }
@@ -203,10 +199,16 @@ class Main extends React.Component<Props, State> {
         skuList: allSkuSelectedRows[id]
       } as Shop.ShopItemProps)
     }
-    this.selectRows = value.spuList || this.selectRows
+    // this.selectRows = value.spuList || this.selectRows
+    const spuSelectedRowKeys: {[spuId: number]: any[]} = {}
+    this.selectRows.map((item) => {
+      spuSelectedRowKeys[item.id] = item.skuList.map((item2) => {
+        return item2.skuId
+      })
+    }),
     this.setState({
-      selectedRowKeys: (value && value.spuList || []).map((item) => item.id),
-      spuSelectedRowKeys: value.spuIds,
+      selectedRowKeys: this.selectRows.map((item) => item.id),
+      spuSelectedRowKeys,
       visible: true,
       type
     })
@@ -318,54 +320,27 @@ class Main extends React.Component<Props, State> {
                   }}
                 />
                 <FormItem
-                  label='活动ID'
-                  name='promotionId'
-                  type='number'
-                  placeholder='请输入活动ID'
-                  controlProps={{
-                    style: {
-                      width: 130
-                    }
-                  }}
-                />
-                <FormItem
-                  label='活动名称'
-                  name='promotionName'
-                  placeholder='请输入活动名称'
-                  controlProps={{
-                    style: {
-                      width: 130
-                    }
-                  }}
-                />
-                {/* <FormItem
-                  label='供应商'
-                  name='productName'
-                  placeholder='请输入供应商'
-                  controlProps={{
-                    style: {
-                      width: 130
-                    }
-                  }}
-                /> */}
-                {/* <FormItem
                   label='状态'
                   name='status'
                   type='select'
                   options={[
-                    {label: '已上架', value: '0'},
-                    {label: '已下架', value: '1'},
+                    { label: '已上架', value: '0' },
+                    { label: '已下架', value: '1' },
+                    { label: '待上架', value: '3' },
+                    { label: '商品池', value: '2' }
                   ]}
-                /> */}
-                {/* <FormItem
-                  label='类目'
+                />
+                <FormItem
+                  label='一级类目'
                   inner={(form) => {
-                    return form.getFieldDecorator('categoryIds')(
-                      <CategoryCascader />
+                    return form.getFieldDecorator('categoryId')(
+                      <SelectFetch
+                        style={{ width: 172 }}
+                        fetchData={api.getCategoryTopList}
+                      />
                     )
                   }}
-                >
-                </FormItem> */}
+                />
                 <FormItem
                 >
                   <Button

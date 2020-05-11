@@ -116,6 +116,24 @@ class Main extends React.Component<Props, State> {
     }
   }
 
+  /** 清空已选商品 */
+  public clearSelected () {
+    this.setState({
+      selectedRowKeys: [],
+      selectedRowKeysMap: {}
+    })
+    const dataSource = this.state.dataSource || []
+    const len = dataSource.length
+    const fields: string[] = []
+    const arr = ['marketPrice', 'costPrice', 'incStock', 'salePrice']
+    for (let i = 0; i < len; i++) {
+      arr.map((item) => {
+        fields.push(`${item}-${i}`)
+      })
+    }
+    this.props.form.resetFields(fields)
+  }
+
   public getColumns (cb: any, dataSource: SkuSaleProps[]): ColumnProps<SkuSaleProps>[] {
     const validateColumnsFields = (index: number) => {
       const { pageSize = 10, current = 1 } = this.pagination

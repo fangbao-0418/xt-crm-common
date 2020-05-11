@@ -1,3 +1,9 @@
+/*
+ * @Date: 2019-11-12 11:03:51
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-05-11 18:01:53
+ * @FilePath: /xt-crm/src/types/Shop.d.ts
+ */
 declare module Shop {
   /** sku props */
   export interface SkuProps {
@@ -8,6 +14,7 @@ declare module Shop {
     /** 规格 */
     properties: string
     skuId: number
+    propertyValue: string
     /** 规格1 */
     propertyValue1: string
     /** 规格2 */

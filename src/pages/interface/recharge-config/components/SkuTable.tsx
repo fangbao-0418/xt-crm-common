@@ -18,8 +18,7 @@ class Main extends React.Component<Props, State> {
       render: (text, record) => {
         return (
           <div>
-            <div>{record.propertyValue1};</div>
-            <div>{record.propertyValue2}</div>
+            {record.propertyValue}
           </div>
         )
       }
@@ -28,35 +27,21 @@ class Main extends React.Component<Props, State> {
       title: '成本价',
       dataIndex: 'costPrice',
       render: (text) => {
-        return text
+        return APP.fn.formatMoneyNumber(text, 'm2u')
       }
     },
     {
-      title: '团长价',
-      dataIndex: 'headPrice',
+      title: '市场价',
+      dataIndex: 'marketPrice',
       render: (text) => {
-        return text
+        return APP.fn.formatMoneyNumber(text, 'm2u')
       }
     },
     {
-      title: '合伙人价',
-      dataIndex: 'cityMemberPrice',
+      title: '销售价',
+      dataIndex: 'salePrice',
       render: (text) => {
-        return text
-      }
-    },
-    {
-      title: '管理员价',
-      dataIndex: 'managerMemberPrice',
-      render: (text) => {
-        return text
-      }
-    },
-    {
-      title: '库存',
-      dataIndex: 'stock',
-      render: (text) => {
-        return text
+        return APP.fn.formatMoneyNumber(text, 'm2u')
       }
     }
   ]

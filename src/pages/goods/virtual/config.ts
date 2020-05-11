@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-05-07 19:44:40
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-11 13:58:22
+ * @LastEditTime: 2020-05-11 14:46:49
  * @FilePath: /xt-crm/src/pages/goods/virtual/config.ts
  */
 import { FieldsConfig } from '@/packages/common/components/form'
@@ -50,7 +50,7 @@ export const defaultConfig: FieldsConfig = {
         value: 0
       }]
     },
-    type: {
+    productType: {
       label: '充值类型',
       type: 'select',
       options: [{
