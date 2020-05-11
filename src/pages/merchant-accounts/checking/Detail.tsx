@@ -171,7 +171,7 @@ class Main extends React.Component<Props, State> {
             <div>本期对账单总额：
               <span className={Number(query.settlementMoney) > 0 ? 'success' : 'error'}>
                 {Number(query.settlementMoney) !== 0 ? Number(query.settlementMoney) > 0 ? '+' : '-' : ''}
-                {APP.fn.formatMoney(query.settlementMoney) || '0.00'}
+                {APP.fn.formatMoney(Math.abs(query.settlementMoney)) || '0.00'}
               </span>元
             </div>
           </div>

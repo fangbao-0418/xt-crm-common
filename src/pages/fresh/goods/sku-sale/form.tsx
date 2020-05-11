@@ -49,6 +49,8 @@ interface SkuSaleFormState extends Record<string, any> {
   productList: any[];
   isGroup: boolean;
   productCode: string;
+  /** 结算方式 1-寄售，2-按需 */
+  settleType?: 1 | 2
   // checkedKeys: any[];
 }
 type SkuSaleFormProps = RouteComponentProps<{id: string}>;
@@ -76,7 +78,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     visible: false,
     productList: [],
     isGroup: (parseQuery() as { isGroup: '0' | '1' }).isGroup === '1',
-    productCode: ''
+    productCode: '',
     // checkedKeys: []
   }
   id: number;
@@ -153,6 +155,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           }
         ], res.skuList),
         ...pick(res, [
+          'settleType',
           'productCode',
           'isGroup',
           // 'warehouseType',
@@ -190,6 +193,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'videoCoverUrl',
           'videoUrl',
           'deliveryMode',
+          'settleType',
           // 'barCode',
           'bannerUrl',
           'returnPhone',
@@ -428,7 +432,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       // barCode,
       visible,
       productList,
-      productCode
+      productCode,
+      settleType
       // checkedKeys
     } = this.state
     const { productType, status }: any = this.form ? this.form.getValues() : {}
@@ -510,6 +515,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 />
               )
             }}
+          />
+          <FormItem
+            verifiable
+            name='settleType'
+            readonly={settleType && [1, 2].indexOf(settleType) > -1}
           />
           <FormItem
             label='商品主图'

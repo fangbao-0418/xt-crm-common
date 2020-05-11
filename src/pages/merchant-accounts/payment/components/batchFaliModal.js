@@ -175,7 +175,7 @@ export default class extends Component {
           >
             <Button
               type="primary"
-              onClick={this.handlePayConfirm(record.id)}
+              onClick={this.handlePayConfirm(record?.id)}
             >
               确认
             </Button>

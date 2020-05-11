@@ -63,7 +63,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'radio', label: '账户类型',
         options: [
           // {label: '微信', value: 1},
-          {label: '支付宝', value: 2},
+          // {label: '支付宝', value: 2},
           {label: '个人银行卡', value: 3},
           {label: '对公银行账户', value: 4}
         ],
@@ -78,12 +78,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input', label: '银行支行名称',
         controlProps: {
           placeholder: '请选择收款账号银行名，例如中国银行杭州高新支行',
-          maxLength: 250
+          maxLength: 50
         },
         fieldDecoratorOptions: {
           rules: [
             {required: true, message: '请输入银行支行名称'},
-            {max: 250, message: '长度最大250个字符'}
+            {max: 50, message: '长度最大50个字符'}
           ]
         }
       },
