@@ -14,4 +14,6 @@ export interface RecordProps {
   inviteShopName: string
   /** 邀请人手机号 */
   inviteShopPhone: string
+  /** 门店指导员手机 */
+  inviteShopPhone1: string
 }
