@@ -19,7 +19,7 @@ const coupons = {
 
 function ActionBtn ({ keyCode, history, record, match }) {
   const openQrCode = () => {
-    emitter.emit('coupon.list.setVisible', { visible: true, id: record.id })
+    emitter.emit('couponFresh.list.setVisible', { visible: true, id: record.id })
   }
   const menu = (
     <Menu>
@@ -48,7 +48,7 @@ function ActionBtn ({ keyCode, history, record, match }) {
         const res = await overReciveCoupon(record.id)
         if (res) {
           Message.success('结束优惠券发放成功')
-          emitter.emit('coupon.list.fetchData')
+          emitter.emit('couponFresh.list.fetchData')
         }
       }
     })
