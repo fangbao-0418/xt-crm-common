@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-28 09:48:40
- * @FilePath: /xt-crm/src/util/app/index.js
+ * @LastEditTime: 2020-05-12 15:47:39
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/index.js
  */
 import { message } from 'antd'
 import * as regular from './regular'
@@ -84,9 +84,18 @@ Object.assign(APP, {
   http,
   fn,
   constant,
+  open: function (url) {
+    url = String(url || '').trim()
+    url = (/^(https?|#)/).test(url) ? url : '#' + url
+    window.open(url)
+  },
   href: function (url, target) {
     url = String(url || '').trim()
-    url = /^(https?|#)/.test(url) ? url : '#' + url
+    url = (/^(https?|#)/).test(url) ? url : '#' + url
+    if (target === '__blank') {
+      APP.open(url)
+      return
+    }
     let el = document.createElement('a')
     el.setAttribute('href', url)
     if (target) {
