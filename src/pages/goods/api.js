@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-03 21:13:10
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-06 14:35:25
- * @FilePath: /xt-crm/src/pages/goods/api.js
+ * @LastEditTime: 2020-05-12 14:12:10
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/goods/api.js
  */
 import { formResponse, formRequest } from './sku-sale/adapter';
 import { exportFile, newGet } from '../../util/fetch';
@@ -13,7 +13,7 @@ export function getStoreList(data, config) {
 }
 
 // 设置普通消费商品
-export function setProduct(data) {
+export function setProduct (data) {
   const isAdd = data.productId === -1
   const url = isAdd ? '/product/add' : '/product/update';
   data = formRequest(isAdd ? omit(data, ['productId']) : data);
