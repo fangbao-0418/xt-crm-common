@@ -6,6 +6,7 @@ import Detail from './detail'
 import Refund from './refund'
 import RefundDetail from './refund/detail'
 import AutoRefund from './auto-refund'
+import AutoRefundDetail from './auto-refund/detail'
 
 const Main = Loadable({
   loader: () => import('./main'),
@@ -22,6 +23,7 @@ export default class RouteApp extends React.Component {
         <Route exact path={`${match.url}/refundOrder`} component={Refund} />
         <Route exact path={`${match.url}/refundOrder/:id/:sourceType?`} component={RefundDetail} />
         <Route exact path={`${match.url}/autoRefundRule`} component={AutoRefund} />
+        <Route exact path={`${match.url}/autoRefundRule/create/:id?`} component={AutoRefundDetail} />
         <Route path={`${match.url}`} component={Main} />
       </Switch>
     )

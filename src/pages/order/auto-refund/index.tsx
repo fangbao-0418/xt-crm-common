@@ -71,6 +71,11 @@ class Main extends React.Component {
           <div>
             <Button
               type='primary'
+              onClick={() => {
+                APP.history.push(
+                  '/order/autoRefundRule/create'
+                )
+              }}
             >
               新增配置
             </Button>
