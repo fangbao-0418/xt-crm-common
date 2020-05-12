@@ -9,6 +9,7 @@ import { RecordProps } from './interface'
 import { getFieldsConfig, PayTypeEnum, StatusEnum } from './config'
 import * as api from './api'
 import ImportModal from './components/ImportModal'
+import Auth from '@/components/auth'
 
 export const namespace = 'fresh/merchant-accounts/withdraw'
 
@@ -54,24 +55,28 @@ class Main extends React.Component<Props> {
           <If
             condition={record.status === 5}
           >
-            <Popconfirm
-              title='确定是否提现成功？'
-              onConfirm={this.toOperate(record, 15)}
-            >
-              <Button
-                type='primary'
-                size='small'
-                className='mb8'
+            <Auth code='fresh:withdraw:success'>
+              <Popconfirm
+                title='确定是否提现成功？'
+                onConfirm={this.toOperate(record, 15)}
               >
-                提现成功
+                <Button
+                  type='primary'
+                  size='small'
+                  className='mb8'
+                >
+                  提现成功
+                </Button>
+              </Popconfirm>
+            </Auth>
+            <Auth code='fresh:withdraw:fail'>
+              <Button
+                size='small'
+                onClick={this.toOperate(record, 25)}
+              >
+                提现失败
               </Button>
-            </Popconfirm>
-            <Button
-              size='small'
-              onClick={this.toOperate(record, 25)}
-            >
-              提现失败
-            </Button>
+            </Auth>
           </If>
         )
       }
@@ -250,24 +255,28 @@ class Main extends React.Component<Props> {
               >
                 清除
               </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.batchPay()
-                }}
-              >
-                批量成功
-              </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.batchPayFail()
-                }}
-              >
-                批量失败
-              </Button>
+              <Auth code='fresh:withdraw:multi-success'>
+                <Button
+                  type='primary'
+                  className='mr8'
+                  onClick={() => {
+                    this.batchPay()
+                  }}
+                >
+                  批量成功
+                </Button>
+              </Auth>
+              <Auth code='fresh:withdraw:multi-fail'>
+                <Button
+                  type='primary'
+                  className='mr8'
+                  onClick={() => {
+                    this.batchPayFail()
+                  }}
+                >
+                  批量失败
+                </Button>
+              </Auth>
               <Button
                 type='primary'
                 className='mr8'
