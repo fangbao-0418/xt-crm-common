@@ -89,7 +89,6 @@ export function saveDefault(state, payload) {
 
 export function arrToTree (list = [], pid = null, key = 'parentId') {
   const tree = []
-  console.log(list, 'list')
   Array.isArray(list)
     && list.forEach(item => {
       const tmp = deepClone(item)

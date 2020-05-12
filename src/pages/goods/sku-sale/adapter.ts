@@ -35,9 +35,12 @@ export function formRequest(payload: any) {
     }
     return item;
   });
-  result.freightTemplateId = +payload.freightTemplateId;
-  result.categoryId = Array.isArray(payload.categoryId) ? payload.categoryId[2] : '';
-  return omit({ ...payload, ...result }, 'skuList');
+  result.freightTemplateId = +payload.freightTemplateId
+  result.categoryId = payload.categoryId?.[2]
+  result.firstCategoryId = result.categoryId?.[0]
+  result.secondCategoryId = result.categoryId?.[1]
+  result.thirdCategoryId = result.categoryId?.[2]
+  return omit({ ...payload, ...result }, 'skuList')
 }
 
 // 过滤销售商品详情
