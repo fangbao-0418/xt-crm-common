@@ -232,8 +232,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       productCode,
       modifyTime: this.modifyTime,
       productId: this.id,
-      property1: specs[0] && specs[0].title,
-      property2: specs[1] && specs[1].title,
+      property1: specs?.[0]?.title,
+      property2: specs?.[1]?.title,
       skuList,
       ...vals,
       ...property
@@ -253,7 +253,10 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     const { productType, status }: any = this.form?.getValues() || {}
     return (
       <Form
-        getInstance={ref => this.form = ref}
+        getInstance={ref => {
+          this.form = ref
+          this.forceUpdate()
+        }}
         config={defaultConfig}
         namespace='skuSale'
       >
@@ -368,7 +371,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           />
           <FormItem>
             <Button
-              className='mr10'
+              className='mr8'
               type='primary'
               onClick={() => {
                 this.handleSave()
@@ -377,7 +380,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               保存
             </Button>
             <Button
-              className='mr10'
+              className='mr8'
               type='danger'
               onClick={() => {
                 APP.history.go(-1)
@@ -385,14 +388,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               }>
               返回
             </Button>
-            {/* <If condition={status === 2}>
+            <If condition={status === 2}>
               <Button
                 onClick={() => {
                   this.handleSave(3)
                 }}>
                 推送至待上架
               </Button>
-            </If> */}
+            </If>
           </FormItem>
         </Card>
       </Form>

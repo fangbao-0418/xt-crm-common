@@ -268,6 +268,7 @@ class Main extends React.Component<Props, State> {
 
   public render () {
     const columns = (this.props.extraColumns || []).concat(this.getColumns(this.handleChangeValue, this.state.dataSource))
+    console.log(this.props.form, 'form')
     return (
       <>
         <Table
