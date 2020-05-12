@@ -49,10 +49,10 @@ function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields },
     console.log('pagination变了=>', pagination.page, pagination.pageSize)
     fetchData()
     emitter.addListener('couponFresh.list.setVisible', setModalVisible)
-    emitter.addListener('couponFresh.list.fetchData', listRef.list.refresh())
+    emitter.addListener('couponFresh.list.fetchData', ()=>listRef.list.refresh())
     return () => {
       emitter.removeListener('couponFresh.list.setVisible', setModalVisible)
-      emitter.removeListener('couponFresh.list.fetchData', listRef.list.refresh())
+      emitter.removeListener('couponFresh.list.fetchData', ()=>listRef.list.refresh())
     }
   }, [pagination.page, pagination.pageSize])
   const handleAddCoupon = () => {
