@@ -36,10 +36,10 @@ export function formRequest(payload: any) {
     return item;
   });
   result.freightTemplateId = +payload.freightTemplateId
+  result.firstCategoryId = payload.categoryId?.[0]
+  result.secondCategoryId = payload.categoryId?.[1]
+  result.thirdCategoryId = payload.categoryId?.[2]
   result.categoryId = payload.categoryId?.[2]
-  result.firstCategoryId = result.categoryId?.[0]
-  result.secondCategoryId = result.categoryId?.[1]
-  result.thirdCategoryId = result.categoryId?.[2]
   return omit({ ...payload, ...result }, 'skuList')
 }
 
