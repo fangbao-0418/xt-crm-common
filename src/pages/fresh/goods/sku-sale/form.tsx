@@ -6,7 +6,7 @@ import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCat
 import { gotoPage, parseQuery, getAllId, treeToarr } from '@/util/utils'
 // import { radioStyle } from '@/config';
 import SkuList from '../components/sku'
-import SupplierSelect, { supplierItem } from '../components/supplier-select'
+import SupplierSelect, { SupplierItem } from '../components/supplier-select'
 // import { TemplateList } from '@/components';
 import styles from '../style.module.scss'
 import { Form, FormItem, If } from '@/packages/common/components'
@@ -367,7 +367,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     })
   }
 
-  supplierChange = (value: string, options: supplierItem[]) => {
+  supplierChange = (value: string, options: SupplierItem[]) => {
     let skuList = this.state.skuList
     const { form: { resetFields, getFieldsValue, setFieldsValue } } = this.form.props
     const currentSupplier: any = options.find(item => item.id === +value) || {}
