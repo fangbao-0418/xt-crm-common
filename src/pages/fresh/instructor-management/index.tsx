@@ -26,15 +26,15 @@ class Index extends React.Component<any> {
     width: 120,
     dataIndex: 'id'
   }, {
-    title: '售卖区域名称',
+    title: '门店指导员名称',
     width: 200,
     dataIndex: 'productName'
   }, {
-    title: '发布时间',
+    title: '手机号',
     width: 150,
     dataIndex: 'productCode'
   }, {
-    title: '状态',
+    title: '发布时间',
     width: 120,
     dataIndex: 'barCode'
   }, {
@@ -62,30 +62,15 @@ class Index extends React.Component<any> {
           >
             编辑
           </span>
-          <If condition={ records.status !== statusEnums['失效']}>
             <Popconfirm
-              title='确定失效吗'
+              title='确定删除吗'
               onConfirm={() => {
                 this.update({
-                  id: records.id,
-                  status: statusEnums['失效']
+                  id: records.id
                 })
               }}>
-              <span className='href'>失效</span>
+              <span className='href'>删除</span>
             </Popconfirm>
-          </If>
-          <If condition={records.status === statusEnums['失效']}>
-            <Popconfirm
-              title='确定生效吗'
-              onConfirm={() => {
-                this.update({
-                  id: records.id,
-                  status: statusEnums['正常']
-                })
-              }}>
-              <span className='href'>生效</span>
-            </Popconfirm>
-          </If>
         </>
       )
     }

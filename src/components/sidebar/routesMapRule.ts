@@ -95,6 +95,9 @@ const rules = {
   '/shop/goods': [
     /shop\/goods\/detail(\/)?(\d+)?/,
   ],
+  '/fresh/area': [
+    /fresh\/area(\/)?(\d+)?/,
+  ],
 }
 export default rules
 

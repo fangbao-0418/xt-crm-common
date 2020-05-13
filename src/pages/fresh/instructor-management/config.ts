@@ -38,7 +38,7 @@ export const defaultConfigForm: FieldsConfig = {
       fieldDecoratorOptions: {
         rules: [{
           required: true,
-          message: '请输入名称'
+          message: '请输入说明'
         }]
       }
     },
@@ -47,46 +47,29 @@ export const defaultConfigForm: FieldsConfig = {
       controlProps: {
         rows: 5
       },
-      label: '团长招募规则',
+      label: '绑定区域',
       fieldDecoratorOptions: {
         rules: [{
           required: true,
-          message: '请输入名称'
+          message: '请输入绑定区域'
+        }]
+      }
+    },
+    rule1: {
+      type: 'textarea',
+      controlProps: {
+        rows: 5
+      },
+      label: '责任门店',
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请输入责任门店'
         }]
       }
     },
     inviteShopName: {
-      label: '普通团长招募上限',
-      fieldDecoratorOptions: {
-        rules: [{
-          required: true,
-          message: '请输入名称'
-        }]
-      }
-    },
-    inviteShopPhone: {
-      label: '精英团长招募上限',
-      fieldDecoratorOptions: {
-        rules: [{
-          required: true,
-          message: '请输入名称'
-        }]
-      }
-    },
-    inviteShopPhone1: {
-      label: '试题链接'
-    },
-    inviteShopPhone2: {
-      label: '指导员招募上限',
-      fieldDecoratorOptions: {
-        rules: [{
-          required: true,
-          message: '请输入名称'
-        }]
-      }
-    },
-    qrCode: {
-      label: '群二维码',
+      label: '指导员手机',
       fieldDecoratorOptions: {
         rules: [{
           required: true,

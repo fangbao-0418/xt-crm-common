@@ -10,7 +10,9 @@ import Activity from './activity'
 import MerchantAccounts from './merchant-accounts'
 import SaleAfter from './saleAfter/index'
 import Setting from './setting'
-import Area from './area-management'
+import Area from './area-management/form'
+// import AreaAdd from './area-management/form'
+import Instructor from './instructor-management/form'
 class Fresh extends React.Component<RouteComponentProps> {
   render () {
     const { match } = this.props
@@ -27,6 +29,8 @@ class Fresh extends React.Component<RouteComponentProps> {
         <Route path={`${match.url}/setting`} component={Setting} />
         <Route path={`${match.url}/merchant-accounts`} component={MerchantAccounts} />
         <Route path={`${match.url}/area`} component={Area} />
+        <Route path={`${match.url}/instructor`} component={Instructor} />
+        {/* <Route path={`${match.url}/area/:id`} component={AreaAdd} /> */}
       </Switch>
     )
   }
