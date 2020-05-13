@@ -4,7 +4,6 @@ export const defaultConfig: FieldsConfig = {
   coupon: {
     code: {
       label: '优惠券编号',
-      type: 'number',
       controlProps: {
         style: {
           width: 172
