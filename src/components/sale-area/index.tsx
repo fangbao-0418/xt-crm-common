@@ -93,7 +93,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
           api={getAddress}
           checkedKeys={checkedKeys}
           visible={visible}
-          disabled={this.props.readOnly}
+          disabled={true}
           onCancel={() => {
             this.setState({
               visible: false
