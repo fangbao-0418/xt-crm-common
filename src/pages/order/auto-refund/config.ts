@@ -58,3 +58,9 @@ export const queryConfig: FieldsConfig = {
     }
   }
 }
+
+export enum StatusEnum {
+  待启用 = 10,
+  启用中 = 20,
+  已废弃 = 30
+}

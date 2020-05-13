@@ -5,17 +5,18 @@ import { FormItem } from '@/packages/common/components/form'
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 import ProductCategory from './components/product-category'
 import { queryConfig } from './config'
+import { getRefundAutoList } from './api'
 
 class Main extends React.Component {
   list: ListPageInstanceProps
   columns = [
     {
       title: '配置编号',
-      dataIndex: 'a'
+      dataIndex: 'disposeId'
     },
     {
       title: '配置名称',
-      dataIndex: 'b'
+      dataIndex: 'disposeName'
     },
     {
       title: '售后类型',
@@ -23,15 +24,15 @@ class Main extends React.Component {
     },
     {
       title: '一级类目',
-      dataIndex: 'd'
+      dataIndex: 'oneLevelName'
     },
     {
       title: '二级类目',
-      dataIndex: 'e'
+      dataIndex: 'twoLevelName'
     },
     {
       title: '三级类目',
-      dataIndex: 'f'
+      dataIndex: 'threeLevelName'
     },
     {
       title: '会员等级',
@@ -39,20 +40,33 @@ class Main extends React.Component {
     },
     {
       title: '配置金额',
-      dataIndex: 'h'
+      dataIndex: 'refundMoney'
     },
     {
       title: '启用状态',
-      dataIndex: 'i'
+      dataIndex: 'status'
     },
     {
       title: '操作',
-      dataIndex: 'j'
+      dataIndex: 'j',
+      render: () => {
+        return (
+          <div>
+            <span className='href'>查看</span>
+            <span style={{ marginLeft: 8 }} className='href'>停用</span>
+          </div>
+        )
+      }
     }
   ]
+
   render () {
     return (
       <ListPage
+        api={getRefundAutoList}
+        tableProps={{
+          rowKey: 'disposeId'
+        }}
         formConfig={queryConfig}
         namespace='autoRefund'
         columns={this.columns}
