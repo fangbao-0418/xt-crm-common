@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Form, Input, Button, Checkbox, InputNumber, Row, Col } from 'antd'
+import { Card, Form, Input, Button, Checkbox, InputNumber, Row, Col, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import ProductCategory from '../components/product-category'
 import BlacklistModal from '../components/blacklist-modal'
@@ -23,14 +23,28 @@ class Main extends React.Component<Props> {
   }
 
   handleBlack = () => {
-    console.log(this.blacklistModal)
-    this.blacklistModal.show()
+    const {
+      form: { getFieldValue }
+    } = this.props
+    const c = getFieldValue('c')
+    if (c?.length) {
+      this.blacklistModal.show()
+    } else {
+      Modal.warning({
+        title: '提示',
+        content: '请选择类目'
+      })
+    }
   }
 
   render () {
     const {
-      form: { getFieldDecorator }
+      form: { getFieldDecorator, getFieldValue }
     } = this.props
+
+    const c = getFieldValue('c')
+
+    console.log(c)
 
     const formItemLayout = {
       labelCol: {
@@ -120,7 +134,13 @@ class Main extends React.Component<Props> {
                 )}
               </Col>
               <Col span={12}>
-                <Button type='link' onClick={this.handleBlack}>商品黑名单设置</Button>
+                <Button
+                  type='link'
+                  onClick={this.handleBlack}
+                  style={{ color: c?.length ? '#40a9ff' : '#999999' }}
+                >
+                  商品黑名单设置
+                </Button>
               </Col>
             </Row>
           </FormItem>

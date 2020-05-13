@@ -9,7 +9,8 @@ interface Props extends FormComponentProps {}
 
 class Main extends React.Component<FormComponentProps> {
   state = {
-    visible: false
+    visible: false,
+    edit: true
   }
 
   handleCancel = () => {
@@ -41,11 +42,17 @@ class Main extends React.Component<FormComponentProps> {
     })
   }
 
+  handleToEdit = () => {
+    this.setState({
+      edit: true
+    })
+  }
+
   render () {
     const {
       form: { getFieldDecorator }
     } = this.props
-    const { visible } = this.state
+    const { visible, edit } = this.state
 
     const formItemLayout = {
       labelCol: {
@@ -65,27 +72,33 @@ class Main extends React.Component<FormComponentProps> {
         onCancel={this.handleCancel}
         onOk={this.handleOk}
       >
-        <Form>
-          <FormItem {...formItemLayout}>
-            {getFieldDecorator('a', {
-              rules: [
-                {
-                  validator: (rule, value, cb) => {
-                    const reg = /^\d+$/
-                    if (!reg.test(value)) {
-                      cb('请添加商品Id,并按enter键隔开~')
-                      // return
-                    } else {
-                      cb()
+        {
+          edit ? (
+            <FormItem {...formItemLayout}>
+              {getFieldDecorator('a', {
+                rules: [
+                  {
+                    validator: (rule, value, cb) => {
+                      const reg = /^\d(\n\d)*$/
+                      if (!reg.test(value)) {
+                        cb('请添加商品Id,并按enter键隔开~(注: 末尾不要留空行)')
+                        // return
+                      } else {
+                        cb()
+                      }
                     }
                   }
-                }
-              ]
-            })(
-              <TextArea autoSize={{ minRows: 6 }} placeholder='请输入已选择类目下需要设置黑名单的商品ID，以换行区分' />
-            )}
-          </FormItem>
-        </Form>
+                ]
+              })(
+                <TextArea autoSize={{ minRows: 6 }} placeholder='请输入已选择类目下需要设置黑名单的商品ID，以换行区分' />
+              )}
+            </FormItem>
+          ) : (
+            <div onClick={this.handleToEdit}>
+              123
+            </div>
+          )
+        }
       </Modal>
     )
   }
