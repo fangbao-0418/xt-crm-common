@@ -30,25 +30,25 @@ export const queryConfig: FieldsConfig = {
         value: 0
       }]
     },
-    category: {
-      label: '类目选择',
-      type: 'select',
-      controlProps: {
-        style: {
-          width: 172
-        }
-      },
-      options: [{
-        label: '全部',
-        value: ''
-      }, {
-        label: '是',
-        value: 1
-      }, {
-        label: '否',
-        value: 0
-      }]
-    },
+    // category: {
+    //   label: '类目选择',
+    //   type: 'select',
+    //   controlProps: {
+    //     style: {
+    //       width: 172
+    //     }
+    //   },
+    //   options: [{
+    //     label: '全部',
+    //     value: ''
+    //   }, {
+    //     label: '是',
+    //     value: 1
+    //   }, {
+    //     label: '否',
+    //     value: 0
+    //   }]
+    // },
     createTime: {
       label: '创建时间',
       type: 'rangepicker',

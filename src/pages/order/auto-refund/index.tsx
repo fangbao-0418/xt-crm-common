@@ -2,6 +2,8 @@ import React from 'react'
 import { Button } from 'antd'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { FormItem } from '@/packages/common/components/form'
+import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
+import ProductCategory from './components/product-category'
 import { queryConfig } from './config'
 
 class Main extends React.Component {
@@ -63,7 +65,25 @@ class Main extends React.Component {
           <>
             <FormItem name='ruleId' />
             <FormItem name='status' />
-            <FormItem name='category' />
+            <FormItem
+              label='商品类目'
+              inner={(form) => {
+                return form.getFieldDecorator('categoryId', {
+                  rules: [{
+                    validator (rule: any, value: any, callback: any) {
+                      if (!value || value.length === 0) {
+                        callback('请选择商品类目')
+                      }
+                      callback()
+                    }
+                  }]
+                } as GetFieldDecoratorOptions)(
+                  <ProductCategory
+                    style={{ width: 240 }}
+                  />
+                )
+              }}
+            />
             <FormItem name='createTime' />
           </>
         )}

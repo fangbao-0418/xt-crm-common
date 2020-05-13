@@ -1,12 +1,16 @@
 import React from 'react'
-import { Card, Form, Input, Button } from 'antd'
+import { Card, Form, Input, Button, Checkbox, InputNumber, Row, Col } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
+import ProductCategory from '../components/product-category'
+import BlacklistModal from '../components/blacklist-modal'
 
 const FormItem = Form.Item
 
 interface Props extends FormComponentProps {}
 
 class Main extends React.Component<Props> {
+  blacklistModal: any
+
   handleSubmit = (e: any) => {
     e.preventDefault()
     const { form } = this.props
@@ -16,6 +20,11 @@ class Main extends React.Component<Props> {
       }
       console.log(values)
     })
+  }
+
+  handleBlack = () => {
+    console.log(this.blacklistModal)
+    this.blacklistModal.show()
   }
 
   render () {
@@ -46,6 +55,7 @@ class Main extends React.Component<Props> {
         title='新增配置'
         bordered={false}
       >
+        <BlacklistModal wrappedComponentRef={(ref: any) => this.blacklistModal = ref} />
         <Form
           onSubmit={this.handleSubmit}
         >
@@ -72,36 +82,78 @@ class Main extends React.Component<Props> {
                 }
               ]
             })(
-              <Input
-                placeholder='请输入'
+              <Checkbox.Group
+                options={[
+                  { label: '全选', value: '' },
+                  { label: '退货退款', value: '1' },
+                  { label: '换货', value: '2' }
+                ]}
               />
             )}
           </FormItem>
-          <FormItem {...formItemLayout} label='类目选择'>
-            {getFieldDecorator('c', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入'
-                }
-              ]
-            })(
-              <Input
-                placeholder='请输入'
-              />
-            )}
+          <FormItem
+            label='类目选择'
+            {...{
+              labelCol: {
+                xs: { span: 24 },
+                sm: { span: 4 }
+              },
+              wrapperCol: {
+                xs: { span: 24 },
+                sm: { span: 12 }
+              }
+            }}
+          >
+            <Row gutter={8}>
+              <Col span={12}>
+                {getFieldDecorator('c', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择'
+                    }
+                  ]
+                })(
+                  <ProductCategory
+                    // style={{ width: 370 }}
+                  />
+                )}
+              </Col>
+              <Col span={12}>
+                <Button type='link' onClick={this.handleBlack}>商品黑名单设置</Button>
+              </Col>
+            </Row>
           </FormItem>
-          <FormItem {...formItemLayout} label='会员等级'>
+          <FormItem
+            {...{
+              labelCol: {
+                xs: { span: 24 },
+                sm: { span: 4 }
+              },
+              wrapperCol: {
+                xs: { span: 24 },
+                sm: { span: 12 }
+              }
+            }}
+            label='会员等级'
+          >
             {getFieldDecorator('d', {
               rules: [
                 {
                   required: true,
-                  message: '请输入'
+                  message: '请选择'
                 }
               ]
             })(
-              <Input
-                placeholder='请输入'
+              <Checkbox.Group
+                options={[
+                  { label: '全选', value: '' },
+                  { label: '普通会员', value: '1' },
+                  { label: '团长', value: '2' },
+                  { label: '社区管理员', value: '3' },
+                  { label: '城市合伙人', value: '4' },
+                  { label: '管理员', value: '5' }
+                ]}
               />
             )}
           </FormItem>
@@ -114,7 +166,7 @@ class Main extends React.Component<Props> {
                 }
               ]
             })(
-              <Input
+              <InputNumber
                 placeholder='请输入'
               />
             )}
