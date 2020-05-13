@@ -1,7 +1,7 @@
-const { post } = APP.http
+const { newPost } = APP.http
 
 export function getCategoryList () {
-  return post('/category/treeCategory')
+  return newPost('/category/treeCategory')
 }
 
 export function getRefundAutoList () {
@@ -22,4 +22,8 @@ export function getRefundAutoList () {
     }))
   })
   // return post('/order/refund/auto/dispose/queryList')
+}
+
+export function checkCategory (paload) {
+  return newPost('http://192.168.14.49:8082/product/check/category', paload)
 }

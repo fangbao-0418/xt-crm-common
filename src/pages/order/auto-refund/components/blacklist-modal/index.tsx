@@ -1,13 +1,16 @@
 import React from 'react'
 import { Form, Input, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
+import { checkCategory } from '../../api'
 
 const FormItem = Form.Item
 const { TextArea } = Input
 
-interface Props extends FormComponentProps {}
+interface Props extends FormComponentProps {
+  levelIds: any
+}
 
-class Main extends React.Component<FormComponentProps> {
+class Main extends React.Component<Props> {
   state = {
     visible: false,
     edit: true
@@ -20,13 +23,18 @@ class Main extends React.Component<FormComponentProps> {
   }
 
   handleOk = () => {
-    const { form } = this.props
-    form.validateFieldsAndScroll((err, { a }) => {
+    const { form, levelIds } = this.props
+    form.validateFieldsAndScroll((err, { productIds }) => {
       if (err) {
         return
       }
-      a = a.replace(/\n/g, ',')
-      console.log(a)
+      productIds = productIds.split(/\n/g)
+      checkCategory({
+        productIds,
+        thirdCategoryId: levelIds[levelIds.length - 1]
+      }).then(res => {
+        console.log(res)
+      })
     })
   }
 
@@ -75,11 +83,11 @@ class Main extends React.Component<FormComponentProps> {
         {
           edit ? (
             <FormItem {...formItemLayout}>
-              {getFieldDecorator('a', {
+              {getFieldDecorator('productIds', {
                 rules: [
                   {
                     validator: (rule, value, cb) => {
-                      const reg = /^\d(\n\d)*$/
+                      const reg = /^\d+(\n\d)*$/
                       if (!reg.test(value)) {
                         cb('请添加商品Id,并按enter键隔开~(注: 末尾不要留空行)')
                         // return
@@ -104,4 +112,4 @@ class Main extends React.Component<FormComponentProps> {
   }
 }
 
-export default Form.create()(Main)
+export default Form.create<Props>()(Main)

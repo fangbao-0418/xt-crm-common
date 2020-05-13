@@ -82,16 +82,7 @@ class Main extends React.Component {
             <FormItem
               label='商品类目'
               inner={(form) => {
-                return form.getFieldDecorator('categoryId', {
-                  rules: [{
-                    validator (rule: any, value: any, callback: any) {
-                      if (!value || value.length === 0) {
-                        callback('请选择商品类目')
-                      }
-                      callback()
-                    }
-                  }]
-                } as GetFieldDecoratorOptions)(
+                return form.getFieldDecorator('categoryId')(
                   <ProductCategory
                     style={{ width: 240 }}
                   />

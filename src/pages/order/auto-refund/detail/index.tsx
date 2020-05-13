@@ -26,8 +26,8 @@ class Main extends React.Component<Props> {
     const {
       form: { getFieldValue }
     } = this.props
-    const c = getFieldValue('c')
-    if (c?.length) {
+    const levelIds = getFieldValue('levelIds')
+    if (levelIds?.length) {
       this.blacklistModal.show()
     } else {
       Modal.warning({
@@ -42,9 +42,7 @@ class Main extends React.Component<Props> {
       form: { getFieldDecorator, getFieldValue }
     } = this.props
 
-    const c = getFieldValue('c')
-
-    console.log(c)
+    const levelIds = getFieldValue('levelIds')
 
     const formItemLayout = {
       labelCol: {
@@ -69,7 +67,7 @@ class Main extends React.Component<Props> {
         title='新增配置'
         bordered={false}
       >
-        <BlacklistModal wrappedComponentRef={(ref: any) => this.blacklistModal = ref} />
+        <BlacklistModal levelIds={levelIds} wrappedComponentRef={(ref: any) => this.blacklistModal = ref} />
         <Form
           onSubmit={this.handleSubmit}
         >
@@ -120,7 +118,7 @@ class Main extends React.Component<Props> {
           >
             <Row gutter={8}>
               <Col span={12}>
-                {getFieldDecorator('c', {
+                {getFieldDecorator('levelIds', {
                   rules: [
                     {
                       required: true,
@@ -137,7 +135,7 @@ class Main extends React.Component<Props> {
                 <Button
                   type='link'
                   onClick={this.handleBlack}
-                  style={{ color: c?.length ? '#40a9ff' : '#999999' }}
+                  style={{ color: levelIds?.length ? '#40a9ff' : '#999999' }}
                 >
                   商品黑名单设置
                 </Button>
