@@ -49,7 +49,8 @@ class Edit extends Component {
     validateFields((err, vals) => {
       if (!err) {
         const params = {
-          ...vals,
+          type: 2,
+          ...vals
         };
         if (this.id) params.id = this.id;
         (this.id ? updateInfo : saveInfo)(params).then(data => {

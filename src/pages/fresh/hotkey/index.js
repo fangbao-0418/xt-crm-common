@@ -62,6 +62,7 @@ export default class extends Component {
     getList({
       pageNo: this.pageNo,
       pageSize: 10,
+      type: 2,
       name: this.state.searchKey
     }).then(data => {
       if (data)
