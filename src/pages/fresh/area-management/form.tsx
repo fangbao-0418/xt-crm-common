@@ -12,6 +12,7 @@ import { RouteComponentProps } from 'react-router'
 import { parseQuery } from '@/util/utils'
 import Image from '@/components/Image'
 import { RecordProps } from './interface'
+import SaleArea from '../../../components/sale-area'
 
 type Props = RouteComponentProps<{id: string}>;
 
@@ -108,34 +109,45 @@ class AreaForm extends React.Component<Props, StoreFormState> {
       >
         <Card title='基本信息'>
           <div style={{ width: '60%' }}>
-            <FormItem name='code' type='text' hidden={this.id === '-1'} />
+            <FormItem name='id' type='text' hidden={this.id === '-1'} />
             <FormItem
               verifiable
-              name='name'
+              name='areaName'
+            />
+            <FormItem
+              name='areaRemark'
+            />
+            <FormItem
+              label='区域'
+              required
+              inner={(form) => {
+                return form.getFieldDecorator('area', {
+                  rules: [{
+                    validator: async (rules, value) => {
+                      if (!value || Array.isArray(value) && value.length === 0) {
+                        throw new Error('请选择区域')
+                      }
+                      return value
+                    }
+                  }]
+                })(<SaleArea title={'区域'} />)
+              }
+              } />
+            <FormItem
+              verifiable
+              name='areaRuleDesc'
             />
             <FormItem
               verifiable
-              name='remark'
+              name='limitCommonNum'
             />
             <FormItem
               verifiable
-              name='rule'
+              name='limitSuperiorNum'
             />
             <FormItem
               verifiable
-              name='inviteShopName'
-            />
-            <FormItem
-              verifiable
-              name='inviteShopPhone'
-            />
-            <FormItem
-              verifiable
-              name='inviteShopPhone2'
-            />
-            <FormItem
-              verifiable
-              name='qrCode'
+              name='limitInstructorNum'
             />
             <FormItem
               label='培训群二维码'
@@ -145,7 +157,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
                   <>
                     <div>
                       {form.getFieldDecorator(
-                        'liveBackgroudImg1',
+                        'trainImage',
                         {
                           rules: [
                             {
@@ -171,7 +183,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
             />
             <FormItem
               verifiable
-              name='inviteShopPhone1'
+              name='answerUrl'
             />
           </div>
         </Card>

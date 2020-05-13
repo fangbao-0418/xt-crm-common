@@ -3,8 +3,8 @@ import { FieldsConfig } from '@/packages/common/components/form'
 export const NAME_SPACE = 'area_management'
 export const defaultConfig: FieldsConfig = {
   area_management: {
-    phone: {
-      label: '手机号',
+    name: {
+      label: '名称',
       fieldDecoratorOptions: {
         rules: [{
           required: true,
@@ -17,10 +17,10 @@ export const defaultConfig: FieldsConfig = {
 
 export const defaultConfigForm: FieldsConfig = {
   area_management: {
-    code: {
+    id: {
       label: '序号'
     },
-    name: {
+    areaName: {
       label: '名称',
       fieldDecoratorOptions: {
         rules: [{
@@ -29,7 +29,7 @@ export const defaultConfigForm: FieldsConfig = {
         }]
       }
     },
-    remark: {
+    areaRemark: {
       type: 'textarea',
       controlProps: {
         rows: 5
@@ -42,7 +42,7 @@ export const defaultConfigForm: FieldsConfig = {
         }]
       }
     },
-    rule: {
+    areaRuleDesc: {
       type: 'textarea',
       controlProps: {
         rows: 5
@@ -55,7 +55,7 @@ export const defaultConfigForm: FieldsConfig = {
         }]
       }
     },
-    inviteShopName: {
+    limitCommonNum: {
       label: '普通团长招募上限',
       fieldDecoratorOptions: {
         rules: [{
@@ -64,7 +64,7 @@ export const defaultConfigForm: FieldsConfig = {
         }]
       }
     },
-    inviteShopPhone: {
+    limitSuperiorNum: {
       label: '精英团长招募上限',
       fieldDecoratorOptions: {
         rules: [{
@@ -73,20 +73,11 @@ export const defaultConfigForm: FieldsConfig = {
         }]
       }
     },
-    inviteShopPhone1: {
+    answerUrl: {
       label: '试题链接'
     },
-    inviteShopPhone2: {
+    limitInstructorNum: {
       label: '指导员招募上限',
-      fieldDecoratorOptions: {
-        rules: [{
-          required: true,
-          message: '请输入名称'
-        }]
-      }
-    },
-    qrCode: {
-      label: '群二维码',
       fieldDecoratorOptions: {
         rules: [{
           required: true,

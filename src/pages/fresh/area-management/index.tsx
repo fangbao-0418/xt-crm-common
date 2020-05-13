@@ -28,15 +28,11 @@ class Index extends React.Component<any> {
   }, {
     title: '售卖区域名称',
     width: 200,
-    dataIndex: 'productName'
+    dataIndex: 'name'
   }, {
     title: '发布时间',
     width: 150,
-    dataIndex: 'productCode'
-  }, {
-    title: '状态',
-    width: 120,
-    dataIndex: 'barCode'
+    dataIndex: 'createTime'
   }, {
     title: '操作',
     width: 150,
@@ -101,7 +97,7 @@ class Index extends React.Component<any> {
         reserveKey='area_management'
         formItemLayout={(
           <>
-            <FormItem name='phone' />
+            <FormItem name='name' />
           </>
         )}
         tableProps={{
