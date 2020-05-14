@@ -274,7 +274,7 @@ class Main extends React.Component<Props> {
               >
                 清除
               </Button>
-              <Auth code='finance:trim_build'>
+              <Auth code='fresh:finance:trim_build'>
                 <Button
                   className='mr10'
                   type='primary'

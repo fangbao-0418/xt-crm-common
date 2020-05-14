@@ -1,33 +1,39 @@
-import React from 'react';
-import { Message, Button, Spin, Row, Col } from 'antd';
-import { refundList, exportRefund } from '../api';
-import CommonTable from '@/components/common-table';
-import SearchForm from '@/components/search-form';
-import MoneyRender from '@/components/money-render';
-import GoodCell from '@/components/good-cell';
-import { formFields } from './config';
-import { withRouter } from 'react-router-dom';
-import { formatDate } from '@/pages/helper';
-import { typeMapRefundStatus } from './config';
-import { parseQuery } from '@/util/utils';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Message, Button } from 'antd'
+import moment from 'moment'
+import CommonTable from '@/components/common-table'
+import SearchForm from '@/components/search-form'
+import MoneyRender from '@/components/money-render'
+import GoodCell from '@/components/good-cell'
+import { formFields, typeMapRefundStatus, namespace, refundStatusOptions } from './config'
+import { withRouter } from 'react-router-dom'
+import { formatDate } from '@/pages/helper'
+import { parseQuery } from '@/util/utils'
+import { refundList, exportRefund } from '../api'
 import styles from './style.m.styl'
 
+const dateFormat = 'YYYY-MM-DD HH:mm'
+
 const formatFields = range => {
-  range = range || [];
-  return range.map(v => v && v.format('YYYY-MM-DD HH:mm'));
-};
+  range = range || []
+  return range.map(v => v && v.format(dateFormat))
+}
+const getFormatDate = (s, e) => {
+  return e ? [moment(s, dateFormat), moment(e, dateFormat)] : []
+}
 
 const getListColumns = ({ query, history }) => [
   {
     title: '商品ID',
     dataIndex: 'productId',
-    width: 100,
+    width: 100
   },
   {
     title: '商品',
     dataIndex: 'skuName',
     width: 300,
-    render(skuName, row) {
+    render (skuName, row) {
       return <GoodCell {...row} showImage={false} isRefund />
     }
   },
@@ -61,7 +67,7 @@ const getListColumns = ({ query, history }) => [
     title: '买家信息',
     dataIndex: 'userName',
     width: 200,
-    render(v, record) {
+    render (v, record) {
       return `${v ? v : ''} ${record.phone ? `(${record.phone})` : ''}`
     }
   },
@@ -82,7 +88,7 @@ const getListColumns = ({ query, history }) => [
     dataIndex: 'supplierOperate',
     width: 100,
     render: (text) => {
-      return text === 10 ? '同意' : '-';
+      return text === 10 ? '同意' : '-'
     }
   },
   {
@@ -92,7 +98,7 @@ const getListColumns = ({ query, history }) => [
     fixed: 'right',
     render: (text, { id }) => {
       return (
-        <Button type="primary" size="small" onClick={() => history.push(`/order/refundOrder/${id}`)}>查看详情</Button>
+        <Button type='primary' size='small' onClick={() => history.push(`/order/refundOrder/${id}`)}>查看详情</Button>
       )
     }
   }
@@ -100,34 +106,40 @@ const getListColumns = ({ query, history }) => [
 
 @withRouter
 export default class extends React.Component {
-  static defaultProps = {};
+  payload = APP.fn.getPayload(namespace) || {}
+  static defaultProps = {}
+  static propTypes = {
+    type: PropTypes.string
+  }
   state = {
     selectedRowKeys: [],
     list: [],
-    current: 1,
-    pageSize: 10,
+    current: this.payload.page || 1,
+    pageSize: this.payload.pageSize || 10,
     total: 0,
     loading: false,
     tableConfig: {},
     expands: []
   };
 
-  componentDidMount() {
-    this.query();
+  componentDidMount () {
+    this.setFieldsValue(() => {
+      this.query()
+    })
   }
 
   query = (isExport = false, noFetch = false) => {
-    const { intercept, type } = this.props;
+    const { intercept, type } = this.props
     /** 获取url参数 */
-    const obj = parseQuery();
-    const fieldsValues = this.SearchForm.props.form.getFieldsValue();
-    const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply']);
-    const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle']);
-    const [payStartTime, payEndTime] = formatFields(fieldsValues['payTime']);
-    delete fieldsValues['apply'];
-    delete fieldsValues['handle'];
-    delete fieldsValues['payTime'];
-    let refundStatus = fieldsValues.refundStatus ? fieldsValues.refundStatus : null;
+    const obj = parseQuery()
+    const fieldsValues = this.SearchForm.props.form.getFieldsValue()
+    const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply'])
+    const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle'])
+    const [payStartTime, payEndTime] = formatFields(fieldsValues['payTime'])
+    delete fieldsValues['apply']
+    delete fieldsValues['handle']
+    delete fieldsValues['payTime']
+    let refundStatus = fieldsValues.refundStatus ? fieldsValues.refundStatus : null
     const params = {
       ...fieldsValues,
       applyStartTime,
@@ -140,60 +152,61 @@ export default class extends React.Component {
       page: this.state.current,
       pageSize: this.state.pageSize,
       ...obj
-    };
-    if (intercept) {
-      params.interception = 1;
-      params.interceptionMemberPhone = obj.iphone;
     }
-    refundStatus = refundStatus || typeMapRefundStatus[this.props.type];
-    params.refundStatus = refundStatus && Number.isInteger(refundStatus) ? [refundStatus] : refundStatus;
-    console.log(params.refundStatus, 'params.refundStatus');
+    if (intercept) {
+      params.interception = 1
+      params.interceptionMemberPhone = obj.iphone
+    }
+    refundStatus = refundStatus || typeMapRefundStatus[this.props.type]
+    params.refundStatus = refundStatus && Number.isInteger(refundStatus) ? [refundStatus] : refundStatus
+    console.log(params.refundStatus, 'params.refundStatus', params)
+    APP.fn.setPayload(namespace, {
+      ...params,
+      type
+    })
     if (isExport) {
       this.setState({
         loading: true
-      });
+      })
       exportRefund(params)
         .then(res => {
-          res && Message.success('导出成功');
+          res && Message.success('导出成功')
         })
         .finally(() => {
           this.setState({
             loading: false
-          });
-        });
+          })
+        })
     } else {
       if (noFetch) {
-        return;
+        return
       }
       refundList(params).then(res => {
-        const records = (res.data && res.data.records) || [];
+        const records = (res.data && res.data.records) || []
         this.setState({
           tableConfig: res.data || {},
           expands: records.map(v => v.orderCode)
-        });
-      });
+        })
+      })
     }
-  };
+  }
+
   handleSearch = () => {
-    const { intercept } = this.props;
+    const { intercept } = this.props
     if (!intercept) {
-      APP.history.push('/order/refundOrder');
+      APP.history.push('/order/refundOrder')
     }
     this.setState(
       {
         current: 1
       },
       this.query
-    );
-  };
+    )
+  }
 
   export = () => {
-    this.query(true);
-  };
-
-  reset = () => {
-    this.props.form.resetFields();
-  };
+    this.query(true)
+  }
 
   handlePageChange = pagination => {
     this.setState(
@@ -202,18 +215,51 @@ export default class extends React.Component {
         pageSize: pagination.pageSize
       },
       this.query
-    );
-  };
+    )
+  }
 
   handleFormat = data => {
-    return data;
-  };
+    return data
+  }
 
-  render() {
+  setFieldsValue = (cb) => {
+    const { type, intercept } = this.props
+    const payload = this.payload
+    const options = formFields(this.props.type, intercept)
+    console.log(options)
+    const fieldsValue = {
+      mainOrderCode: payload.mainOrderCode,
+      orderCode: payload.orderCode,
+      refundType: payload.refundType || options.find(item => item.id === 'refundType')?.initialValue,
+      memberPhone: payload.memberPhone,
+      phone: payload.phone,
+      storeId: payload.storeId,
+      productId: payload.productId,
+      operator: payload.operator,
+      createType: payload.createType || options.find(item => item.id === 'createType')?.initialValue,
+      apply: getFormatDate(payload.applyStartTime, payload.applyEndTime),
+      handle: getFormatDate(payload.handleStartTime, payload.handleEndTime),
+      payTime: getFormatDate(payload.payStartTime, payload.payEndTime),
+      expressCode: payload.expressCode,
+      orderType: payload.orderType || options.find(item => item.id === 'orderType')?.initialValue,
+      interception: payload.interception || options.find(item => item.id === 'interception')?.initialValue,
+      interceptionMemberPhone: payload.interceptionMemberPhone,
+      storeType: payload.storeType || options.find(item => item.id === 'storeType')?.initialValue,
+      smallShopOrder: payload.smallShopOrder || options.find(item => item.id === 'smallShopOrder')?.initialValue
+    }
+    const refundStatusOptionsOptions = refundStatusOptions[type]
+    if (refundStatusOptionsOptions.length > 1 && (payload.refundStatus?.length)) {
+      fieldsValue.refundStatus = payload.refundStatus[0] || options.find(item => item.id === 'refundStatus')?.initialValue
+    }
+    this.SearchForm.props.form.setFieldsValue(fieldsValue, cb)
+  }
+
+  render () {
     const {
-      tableConfig: { records = [], total = 0, current = 0 }
-    } = this.state;
-    const { intercept } = this.props;
+      tableConfig: { records = [], total = 0, current = 0, size = 10 }
+    } = this.state
+    const { intercept } = this.props
+
     return (
       <div className={styles.page}>
         <SearchForm
@@ -224,7 +270,7 @@ export default class extends React.Component {
           clear={this.handleSearch}
           options={formFields(this.props.type, intercept)}
         >
-          <Button type="primary" onClick={this.export}>
+          <Button type='primary' onClick={this.export}>
             导出订单
           </Button>
         </SearchForm>
@@ -235,9 +281,10 @@ export default class extends React.Component {
             dataSource={records}
             current={current}
             total={total}
+            size={size}
             expandedRowRender={record => (
               <div
-                className="expanded-row-wrapped"
+                className='expanded-row-wrapped'
               >
                 <span>售后单编号：{record.orderCode}</span>
                 <span>订单编号：{record.mainOrderCode}</span>
@@ -246,13 +293,13 @@ export default class extends React.Component {
             )}
             expandedRowKeys={this.state.expands}
             onExpand={(expanded, record) => {
-              let expands = this.state.expands;
+              let expands = this.state.expands
               if (expanded) {
-                expands.push(record.orderCode);
+                expands.push(record.orderCode)
               } else {
-                expands = expands.filter(v => v !== record.orderCode);
+                expands = expands.filter(v => v !== record.orderCode)
               }
-              this.setState({ expands });
+              this.setState({ expands })
             }}
             onChange={this.handlePageChange}
             rowKey={record => record.orderCode}

@@ -53,7 +53,7 @@ class Main extends React.Component<Props, State> {
           <span
             className='href'
             onClick={() => {
-              APP.href(`/fresh/goods/sku-sale/${text}`, '__blank')
+              APP.href(`/fresh/goods/sku-sale/${text}?v=${new Date().getTime()}`, '__blank')
             }}
           >
             {text}

@@ -178,12 +178,17 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => {
           return this.speedyInput('costPrice', text, record, index, dataSource, cb, {
             rules: [{
-              required: true,
-              message: '请输入成本价'
+              validator: (rule, value, cb) => {
+                if (!value) {
+                  cb('请输入成本价')
+                } else if (value < 0.01) {
+                  cb('不能小于0.01')
+                }
+                cb()
+              }
             }]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder='请输入成本价'
             />
@@ -197,12 +202,17 @@ class Main extends React.Component<Props, State> {
         render: (text: any, record: any, index: any) => {
           return this.speedyInput('marketPrice', text, record, index, dataSource, cb, {  
             rules: [{
-              required: true,
-              message: '请输入市场价'
+              validator: (rule, value, cb) => {
+                if (!value) {
+                  cb('请输入市场价')
+                } else if (value < 0.01) {
+                  cb('不能小于0.01')
+                }
+                cb()
+              }
             }]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder='请输入市场价'
             />
@@ -219,13 +229,14 @@ class Main extends React.Component<Props, State> {
               validator: (rule, value, cb) => {
                 if (!value) {
                   cb('请输入销售价')
+                } else if (value < 0.01) {
+                  cb('不能小于0.01')
                 }
                 cb()
               }
             }]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder='请输入销售价'
               onBlur={() => validateColumnsFields(index)}

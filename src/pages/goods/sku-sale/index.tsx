@@ -1,378 +1,52 @@
 import React from 'react'
-import { Card, Tabs, Button, Modal, message, Icon } from 'antd'
-import dateFns from 'date-fns'
-import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api'
-import { gotoPage, replaceHttpUrl } from '@/util/utils'
-import Image from '@/components/Image'
-import SelectFetch from '@/components/select-fetch'
-import { If, ListPage, FormItem } from '@/packages/common/components'
-import { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import SuppilerSelect from '@/components/suppiler-auto-select'
-import { defaultConfig } from './config'
+import { Card, Tabs } from 'antd'
+import TabItem, { StatusType } from './TabItem'
+import { getPayload, setPayload } from '@/packages/common/utils'
 const { TabPane } = Tabs
-import SkuStockEditState from './components/sku-stock-edit'
 
-interface SkuSaleListState {
-  selectedRowKeys: string[] | number[];
-  status: number;
-  idOfStockEdit: number;
-  visibleOfStockEdit: boolean;
-  productNameOfStockEdit: string;
+interface State {
+  status: StatusType
 }
 
-class SkuSaleList extends React.Component<any, SkuSaleListState> {
-  state: SkuSaleListState = {
-    selectedRowKeys: [],
-    status: 0,
-    idOfStockEdit: 0,
-    visibleOfStockEdit: false,
-    productNameOfStockEdit: ''
+const tabConfigs: { key: StatusType, title: string }[] = [
+  { key: '0', title: '出售中' },
+  { key: '1', title: '仓库中' },
+  { key: '3', title: '待上架' },
+  { key: '2', title: '商品池' }
+]
+
+const namespace = 'goods/list-status'
+
+class SkuSaleList extends React.Component<any, State> {
+  public state: State = {
+    status: String(getPayload(namespace) || '0') as StatusType
   }
-  list: ListPageInstanceProps;
-  columns = [
-    {
-      title: '商品ID',
-      width: 120,
-      dataIndex: 'id'
-    },
-    {
-      title: '商品主图',
-      dataIndex: 'coverUrl',
-      width: 120,
-      render: (record: any) => (
-        <Image
-          style={{
-            height: 100,
-            width: 100,
-            minWidth: 100
-          }}
-          src={replaceHttpUrl(record)}
-          alt='主图'
-        />
-      )
-    },
-    {
-      title: '商品名称',
-      width: 120,
-      dataIndex: 'productName'
-    },
-    {
-      title: '类目',
-      width: 120,
-      dataIndex: 'categoryName'
-    },
-    {
-      title: '成本价',
-      width: 100,
-      dataIndex: 'costPrice',
-      render: APP.fn.formatMoney
-    },
-    {
-      title: '销售价',
-      width: 100,
-      dataIndex: 'salePrice',
-      render: APP.fn.formatMoney
-    },
-    {
-      title: '总库存',
-      width: 100,
-      dataIndex: 'stock',
-      render: (text: any, record:any, index:any) => (
-        <div style={{ whiteSpace: 'nowrap' }}>
-          <span>{text}</span>
-          <Icon type='form' style={{ fontSize: '20px', marginLeft: '5px' }} onClick={() => {
-            this.setState({
-              idOfStockEdit: record.id,
-              visibleOfStockEdit: true,
-              productNameOfStockEdit: record.productName
-            })
-          }} />
-        </div>
-      )
-    },
-    {
-      title: '可用库存',
-      width: 100,
-      dataIndex: 'usableStock'
-    },
-    {
-      title: '累计销量',
-      width: 100,
-      dataIndex: 'saleCount'
-    },
-    {
-      title: '供应商',
-      width: 120,
-      dataIndex: 'storeName'
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      width: 200,
-      render: (record: any) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
-    },
-    {
-      title: '最后操作时间',
-      dataIndex: 'modifyTime',
-      width: 200,
-      render: (record: any) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
-    },
-    {
-      title: '操作',
-      fixed: 'right',
-      align: 'center',
-      width: 120,
-      render: (record: any) => {
-        console.log(record, 'record')
-        const { status } = this.state
-        return (
-          <div>
-            <span
-              className='href'
-              onClick={() => {
-                if ([50, 51].includes(record.type)) {
-                  APP.history.push(`/goods/virtual/${record.id}`)
-                } else {
-                  APP.history.push(`/goods/sku-sale/${record.id}`)
-                }
-              }}
-            >
-              编辑
-            </span>
-            <If condition={status === 0}>
-              <span
-                className='href ml10'
-                onClick={() => this.lower([record.id])}
-              >
-                下架
-              </span>
-            </If>
-            <If condition={status === 1}>
-              <span
-                className='href ml10'
-                onClick={() => this.upper([record.id])}
-              >
-                上架
-              </span>
-            </If>
-          </div>
-        )
-      }
-    }
-  ];
-
-  /** 下架商品 */
-  lower = (ids: string[] | number[]) => {
-    Modal.confirm({
-      title: '下架提示',
-      content: '确认下架该商品吗?',
-      onOk: () => {
-        delGoodsDisable({ ids }).then((res: any) => {
-          if (res) {
-            message.success('下架成功')
-            this.list.refresh()
-          }
-        })
-      }
-    })
-  }
-
-  // 批量上架
-  upper = (ids: string[] | number[]) => {
-    Modal.confirm({
-      title: '上架提示',
-      content: '确认上架该商品吗?',
-      onOk: () => {
-        enableGoods({ ids }).then((res: any) => {
-          if (res) {
-            message.success('上架成功')
-            this.list.refresh()
-          }
-        })
-      }
-    })
-  };
-
-  // 导出
-  export = () => {
-    exportFileList({
-      ...this.list.payload,
-      status: this.state.status,
-      pageSize: 6000,
-      page: 1
-    })
-  }
-
-  /**
-   * 选择项发生变化时的回调
-   */
-  onSelectChange = (selectedRowKeys: any) => {
-    this.setState({
-      selectedRowKeys
-    })
-  }
-
   // 切换tabPane
-  handleChange = (key: string) => {
+  public handleChange = (key: string) => {
+    setPayload(namespace, key)
     this.setState({
-      status: +key
-    }, () => {
-      this.list.refresh()
+      status: key as StatusType
     })
   }
-
-  // 库存编辑 关闭
-  handleSkuStockEditCancel = (status:boolean) => {
-    this.setState({ visibleOfStockEdit: false })
-    if (status) {
-      this.list.refresh()
-    }
-  }
-  render () {
-    const { selectedRowKeys, visibleOfStockEdit, idOfStockEdit, productNameOfStockEdit } = this.state
-    const hasSelected = Array.isArray(selectedRowKeys) && selectedRowKeys.length > 0
+  public render () {
     const { status } = this.state
-    const tableProps: any = {
-      scroll: {
-        x: true
-      },
-      rowSelection: {
-        selectedRowKeys,
-        onChange: this.onSelectChange
-      }
-    }
-    if ([1, 0].includes(status)) {
-      tableProps.footer = () => (
-        <>
-          <If condition={status === 1}>
-            <Button
-              type='danger'
-              onClick={() => {
-                this.upper(selectedRowKeys)
-              }}
-              disabled={!hasSelected}
-            >
-              批量上架
-            </Button>
-          </If>
-          <If condition={status === 0}>
-            <Button
-              type='danger'
-              onClick={() => {
-                this.lower(selectedRowKeys)
-              }}
-              disabled={!hasSelected}
-            >
-              批量下架
-            </Button>
-          </If>
-        </>
-      )
-    }
     return (
       <Card>
         <Tabs
-          defaultActiveKey='0'
+          activeKey={status}
           onChange={this.handleChange}
+          animated={false}
         >
-          <TabPane tab='出售中' key='0' />
-          <TabPane tab='仓库中' key='1' />
-          <TabPane tab='待上架' key='3' />
-          <TabPane tab='商品池' key='2' />
+          {
+            tabConfigs.map((item) => {
+              return (
+                <TabPane tab={item.title} key={item.key}>
+                  <TabItem status={item.key} />
+                </TabPane>
+              )
+            })
+          }
         </Tabs>
-        <ListPage
-          reserveKey='skuSale'
-          namespace='skuSale'
-          className='vertical-align-table'
-          style={{
-            padding: '0px 16px 0'
-          }}
-          formConfig={defaultConfig}
-          getInstance={ref => this.list = ref}
-          processPayload={(payload) => {
-            return {
-              ...payload,
-              status: this.state.status
-            }
-          }}
-          rangeMap={{
-            goodsTime: {
-              fields: ['createStartTime', 'createEndTime']
-            },
-            optionTime: {
-              fields: ['modifyStartTime', 'modifyEndTime']
-            }
-          }}
-          formItemLayout={(
-            <>
-              <FormItem name='productName' />
-              <FormItem name='productId' />
-              <FormItem
-                label='供应商'
-                inner={(form) => {
-                  return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect style={{ width: 172 }} />
-                  )
-                }}
-              />
-              <FormItem name='interceptor' />
-              <FormItem
-                label='一级类目'
-                inner={(form) => {
-                  return form.getFieldDecorator('categoryId')(
-                    <SelectFetch
-                      style={{ width: 172 }}
-                      fetchData={getCategoryTopList}
-                    />
-                  )
-                }}
-              />
-              <FormItem name='goodsTime' />
-              <FormItem name='optionTime' />
-            </>
-          )}
-          addonAfterSearch={(
-            <>
-              <Button
-                type='primary'
-                className='mr10'
-                onClick={this.export}
-              >
-                导出商品
-              </Button>
-              <Button
-                className='mr10'
-                type='primary'
-                onClick={() => {
-                  APP.history.push('/goods/sku-sale/-1?isGroup=0')
-                }}
-              >
-                添加商品
-              </Button>
-              <Button
-                className='mr10'
-                type='primary'
-                onClick={() => {
-                  APP.history.push('/goods/virtual/-1')
-                }}
-              >
-                新增虚拟商品
-              </Button>
-            </>
-          )}
-          api={getGoodsList}
-          columns={this.columns}
-          tableProps={tableProps}
-        />
-        <SkuStockEditState
-          id={idOfStockEdit}
-          visible={visibleOfStockEdit}
-          name={productNameOfStockEdit}
-          onCancel={() => this.handleSkuStockEditCancel(false)}
-          onOK={() => {
-            this.handleSkuStockEditCancel(true)
-          }}
-        />
       </Card>
     )
   }

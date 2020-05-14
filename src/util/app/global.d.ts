@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-03-26 15:56:12
- * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/util/app/global.d.ts
+ * @LastEditTime: 2020-05-12 15:43:57
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/global.d.ts
  */
 /// <reference path="./http.d.ts"  />
 /// <reference path="./fn.d.ts"  />
@@ -26,6 +26,7 @@ declare module APP {
   export const fn: FnProps
   export const constant: constantProps
   export const href: (url: string, target?: '_blank' | '_self' | '_parent' | '_top' | string) => void
+  export const open: (url: string) => void
   /** 正则校验 */
   export const regular: {
     /** 手机号校验 */
