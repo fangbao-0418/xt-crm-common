@@ -27,6 +27,7 @@ export default class extends Component {
 
   render () {
     const { columns = [], dataSource = [], total = 0, current, ...others } = this.props
+
     return (
       <Table
         className={styles.CommonTable}
