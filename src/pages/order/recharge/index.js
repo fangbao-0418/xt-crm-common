@@ -8,6 +8,7 @@ import { formatDate } from '../../helper'
 import moment from 'moment'
 import Search from './Search'
 import { namespace } from './config'
+import { formatMoneyWithSign } from '@/pages/helper'
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss'
 class Recharge extends Component {
@@ -113,17 +114,11 @@ class Recharge extends Component {
       },
       {
         title: '三方订单号',
-        dataIndex: 'thirdPartyOrderNo',
-        render (onlineTime) {
-          return formatDate(onlineTime)
-        }
+        dataIndex: 'thirdPartyOrderNo'
       },
       {
         title: '充值流水号',
-        dataIndex: 'rechargeOperatorOrderNo',
-        render (offlineTime) {
-          return formatDate(offlineTime)
-        }
+        dataIndex: 'rechargeOperatorOrderNo'
       },
       {
         title: '充值账号',
@@ -131,10 +126,8 @@ class Recharge extends Component {
       },
       {
         title: '充值面额',
-        dataIndex: 'rechargeDenomination'
-        // render (seat, record) {
-        //   return <span>{record.newSeatStr}/{record.childSeatStr}</span>
-        // }
+        dataIndex: 'rechargeDenomination',
+        render: (rechargeDenomination, row) => <div>{formatMoneyWithSign(rechargeDenomination)}</div>
       },
       {
         title: '充值类型',
@@ -187,6 +180,9 @@ class Recharge extends Component {
             style={{ marginTop: 10 }}
             columns={columns}
             dataSource={this.state.list}
+            scroll={{
+              x: '100%'
+            }}
             pagination={{
               current,
               total,
