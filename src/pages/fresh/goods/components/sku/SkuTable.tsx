@@ -10,6 +10,7 @@ import InputMoney from '@/packages/common/components/input-money'
 import styles from './style.module.scss'
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 import { pick } from 'lodash'
+import * as api from '../../api'
 const FormItem = Form.Item
 interface Props extends Partial<AlertComponentProps>, FormComponentProps {
   extraColumns?: ColumnProps<any>[]
@@ -294,6 +295,33 @@ class Main extends React.Component<Props, State> {
             />
           )
         )
+      },
+      {
+        title: '操作',
+        dataIndex: 'status',
+        width: 100,
+        align: 'center',
+        render: (text, record, index) => {
+          return (
+            <div>
+              {!!record.skuId && (
+                <span
+                  className='href'
+                  onClick={() => {
+                    api.updateSkuStatus({
+                      skuId: record.skuId,
+                      type: text === -1 ? 1 : 0
+                    }).then(() => {
+                      cb('status', record, index)(text === -1 ? 1 : 0)
+                    })
+                  }}
+                >
+                  {text === -1 ? '取消停用' : '停用'}
+                </span>
+              )}
+            </div>
+          )
+        }
       }
     ]
   }
