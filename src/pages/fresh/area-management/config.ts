@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 import { FieldsConfig } from '@/packages/common/components/form'
 
 export const NAME_SPACE = 'area_management'
@@ -26,6 +27,9 @@ export const defaultConfigForm: FieldsConfig = {
         rules: [{
           required: true,
           message: '请输入名称'
+        }, {
+          max: 20,
+          message: '长度最大20个字符'
         }]
       }
     },
@@ -37,8 +41,8 @@ export const defaultConfigForm: FieldsConfig = {
       label: '说明',
       fieldDecoratorOptions: {
         rules: [{
-          required: true,
-          message: '请输入名称'
+          max: 500,
+          message: '长度最大500个字符'
         }]
       }
     },
@@ -51,25 +55,40 @@ export const defaultConfigForm: FieldsConfig = {
       fieldDecoratorOptions: {
         rules: [{
           required: true,
-          message: '请输入名称'
+          message: '请输入团长招募规则'
+        }, {
+          max: 500,
+          message: '长度最大500个字符'
         }]
       }
     },
     limitCommonNum: {
       label: '普通团长招募上限',
+      controlProps: {
+        precision: 0,
+        min: 0,
+        max: 999999,
+        style: { width: '100%' }
+      },
       fieldDecoratorOptions: {
         rules: [{
           required: true,
-          message: '请输入名称'
+          message: '请输入普通团长招募上限'
         }]
       }
     },
     limitSuperiorNum: {
       label: '精英团长招募上限',
+      controlProps: {
+        precision: 0,
+        min: 0,
+        max: 999999,
+        style: { width: '100%' }
+      },
       fieldDecoratorOptions: {
         rules: [{
           required: true,
-          message: '请输入名称'
+          message: '请输入精英团长招募上限'
         }]
       }
     },
@@ -78,18 +97,18 @@ export const defaultConfigForm: FieldsConfig = {
     },
     limitInstructorNum: {
       label: '指导员招募上限',
+      controlProps: {
+        precision: 0,
+        min: 0,
+        max: 999999,
+        style: { width: '100%' }
+      },
       fieldDecoratorOptions: {
         rules: [{
           required: true,
-          message: '请输入名称'
+          message: '请输入指导员招募上限'
         }]
       }
     }
   }
-}
-export enum statusEnums {
-  失效 = 0,
-  正常 = 1,
-  // 异常 = 2,
-  // 售罄 = 3
 }

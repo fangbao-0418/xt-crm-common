@@ -98,6 +98,9 @@ const rules = {
   '/fresh/area': [
     /fresh\/area(\/)?(\d+)?/,
   ],
+  '/fresh/instructor': [
+    /fresh\/instructor(\/)?(\d+)?/,
+  ]
 }
 export default rules
 

@@ -26,6 +26,9 @@ interface StoreFormState {
 }
 class AreaForm extends React.Component<Props, StoreFormState> {
   readonly: boolean = !!(parseQuery() as any).readOnly
+    public disabledDatas=[
+      '210602', '210603', '210604', '210624', '210681', '210682', '817817',
+      '123123', '120101', '120102', '130102', '56468', '110101', '110102', '110103', '110104', '110105', '110106', '110107', '110108', '110109', '110111', '110112', '110113', '110114', '110115', '110116', '110117', '110118', '456461']
   state: StoreFormState = {
     address: '',
     pictrueUrl: [],
@@ -130,7 +133,8 @@ class AreaForm extends React.Component<Props, StoreFormState> {
                       return value
                     }
                   }]
-                })(<SaleArea title={'区域'} />)
+
+                })(<SaleArea title={'区域'} disabledDatas={this.disabledDatas} />)
               }
               } />
             <FormItem

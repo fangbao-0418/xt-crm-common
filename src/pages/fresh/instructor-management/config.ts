@@ -17,10 +17,10 @@ export const defaultConfig: FieldsConfig = {
 
 export const defaultConfigForm: FieldsConfig = {
   area_management: {
-    code: {
+    id: {
       label: '序号'
     },
-    name: {
+    instructorName: {
       label: '名称',
       fieldDecoratorOptions: {
         rules: [{
@@ -29,7 +29,16 @@ export const defaultConfigForm: FieldsConfig = {
         }]
       }
     },
-    remark: {
+    instructorPhone: {
+      label: '指导员手机',
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请输入名称'
+        }]
+      }
+    },
+    instructorRemark: {
       type: 'textarea',
       controlProps: {
         rows: 5
@@ -42,7 +51,7 @@ export const defaultConfigForm: FieldsConfig = {
         }]
       }
     },
-    rule: {
+    selfPointAreaIds: {
       type: 'textarea',
       controlProps: {
         rows: 5
@@ -55,7 +64,7 @@ export const defaultConfigForm: FieldsConfig = {
         }]
       }
     },
-    rule1: {
+    selfPointIds: {
       type: 'textarea',
       controlProps: {
         rows: 5
@@ -67,21 +76,6 @@ export const defaultConfigForm: FieldsConfig = {
           message: '请输入责任门店'
         }]
       }
-    },
-    inviteShopName: {
-      label: '指导员手机',
-      fieldDecoratorOptions: {
-        rules: [{
-          required: true,
-          message: '请输入名称'
-        }]
-      }
     }
   }
-}
-export enum statusEnums {
-  失效 = 0,
-  正常 = 1,
-  // 异常 = 2,
-  // 售罄 = 3
 }

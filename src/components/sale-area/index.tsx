@@ -10,6 +10,7 @@ interface SaleAreaProps {
   value?: any
   style?: React.CSSProperties
   title?: any
+  disabledDatas?: string[]
 }
 interface SaleAreaState {
   visible: boolean,
@@ -43,7 +44,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState> {
     this.treeCheckBox = ref
   }
   render () {
-    const { title }=this.props
+    const { title, disabledDatas }=this.props
     const { visible, text, checkedKeys } = this.state
     return (
       <>
@@ -90,6 +91,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState> {
           </span>
         </If>
         <TreeCheckBox
+          disabledDatas={disabledDatas||[]}
           ref={this.saveRef}
           title='选择区域'
           api={getAddress}

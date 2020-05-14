@@ -1,8 +1,8 @@
 import React from 'react'
 import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components'
-import { getPages, effectProduct, invalidProduct } from './api'
+import { getPages, invalidProduct } from './api'
 // import { getCategoryTopList } from './api';
-import { defaultConfig, statusEnums } from './config'
+import { defaultConfig } from './config'
 import { Modal, Button, Popconfirm } from 'antd'
 type Key = string | number;
 
@@ -10,10 +10,9 @@ class Index extends React.Component<any> {
   list: any;
 
   update (payload: any) {
-    // 是否失效
-    const isInvalid = payload.status === statusEnums['失效']
+    // 是否删除
     const params = { ids: [payload.id] }
-    const promiseResult = isInvalid ? invalidProduct(params) : effectProduct(params)
+    const promiseResult = invalidProduct(params)
     promiseResult.then((res: any)=> {
       if (res) {
         APP.success('操作成功')
@@ -28,15 +27,15 @@ class Index extends React.Component<any> {
   }, {
     title: '门店指导员名称',
     width: 200,
-    dataIndex: 'productName'
+    dataIndex: 'name'
   }, {
     title: '手机号',
     width: 150,
-    dataIndex: 'productCode'
+    dataIndex: 'phone'
   }, {
     title: '发布时间',
     width: 120,
-    dataIndex: 'barCode'
+    dataIndex: 'createTime'
   }, {
     title: '操作',
     width: 150,
@@ -48,7 +47,7 @@ class Index extends React.Component<any> {
         <span
           className='href'
           onClick={() => {
-            APP.history.push(`/goods/sku-stock/${records.id}`)
+            APP.history.push(`/fresh/instructor/${records.id}`)
           }}
         >
             查看
@@ -57,7 +56,7 @@ class Index extends React.Component<any> {
             className='href'
             style={{ marginLeft: 8, marginRight: 8 }}
             onClick={() => {
-              APP.history.push(`/goods/sku-stock/${records.id}`)
+              APP.history.push(`/fresh/instructor/${records.id}`)
             }}
           >
             编辑
@@ -77,7 +76,7 @@ class Index extends React.Component<any> {
   }]
 
   handleAdd = () => {
-    APP.history.push('/fresh/area/-1')
+    APP.history.push('/fresh/instructor/-1')
   }
   render () {
     return (

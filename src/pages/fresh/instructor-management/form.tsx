@@ -1,42 +1,28 @@
 import React from 'react'
 import { Form, FormItem, SelectFetch } from '@/packages/common/components'
-import { Card, Row, Col, Button } from 'antd'
+import { Card, Button } from 'antd'
 import { NAME_SPACE, defaultConfigForm } from './config'
-import styles from './style.module.scss'
-import UploadView from '@/components/upload'
-import CitySelect from '@/components/city-select'
 import { FormInstance } from '@/packages/common/components/form'
 import If from '@/packages/common/components/if'
 import { addShop, updateShop, getShopDetail } from './api'
 import { RouteComponentProps } from 'react-router'
 import { parseQuery } from '@/util/utils'
-import Image from '@/components/Image'
 import { RecordProps } from './interface'
 
 type Props = RouteComponentProps<{id: string}>;
 
-interface StoreFormState {
-  address: string
-  pictrueUrl: any[]
-  /** 未知 -1, 新建 = 1, 上线 = 2, 下线 = 3, 待审核 = 4, 驳回 = 5 */
-  status: -1 | 1 | 2 | 3 | 4 | 5
+interface FormState {
   record: Partial<RecordProps>
   readonly: boolean
 }
-class AreaForm extends React.Component<Props, StoreFormState> {
+class AreaForm extends React.Component<Props, FormState> {
   readonly: boolean = !!(parseQuery() as any).readOnly
-  state: StoreFormState = {
-    address: '',
-    pictrueUrl: [],
-    status: -1,
+  state: FormState = {
     record: {},
     readonly: this.readonly
   }
   form: FormInstance;
   id: string = '-1'
-  provinceName: string;
-  cityName: string;
-  areaName: string;
   constructor (props: Props) {
     super(props)
     this.id = props.match.params.id
@@ -46,13 +32,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
   }
   fetchData () {
     getShopDetail(this.id).then(res => {
-      this.provinceName = res.provinceName
-      this.cityName = res.cityName
-      this.areaName = res.areaName
       this.setState({
-        address: res.provinceName + '' + res.cityName + '' + res.areaName,
-        pictrueUrl: res.pictrueUrl,
-        status: res.status,
         record: res || {},
         readonly: this.readonly || res.status === 5
       })
@@ -62,20 +42,11 @@ class AreaForm extends React.Component<Props, StoreFormState> {
   handleSave = () => {
     this.form.props.form.validateFields((err, vals) => {
       if (!err) {
-        // 合并省市区名称
-        vals = Object.assign(vals, {
-          provinceName: this.provinceName,
-          cityName: this.cityName,
-          areaName: this.areaName
-        })
         const isAdd = this.id === '-1'
         const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id })
         promiseResult.then((res: any) => {
           if (res) {
-            if (this.state.status === 4) {
-              APP.success('审核通过')
-            }
-            APP.history.push('/fresh/store')
+            APP.history.push('/fresh/instructor')
           }
         })
       }
@@ -98,7 +69,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
               <Button
                 type='primary'
                 onClick={() => {
-                  APP.history.push('/fresh/area')
+                  APP.history.push('/fresh/instructor')
                 }}>
                   返回
               </Button>
@@ -108,28 +79,25 @@ class AreaForm extends React.Component<Props, StoreFormState> {
       >
         <Card title='基本信息'>
           <div style={{ width: '60%' }}>
-            <FormItem name='code' type='text' hidden={this.id === '-1'} />
+            <FormItem name='id' type='text' hidden={this.id === '-1'} />
             <FormItem
               verifiable
-              name='name'
+              name='instructorName'
             />
             <FormItem
               verifiable
-              name='inviteShopName'
+              disabled={this.id !== '-1'}
+              name='instructorPhone'
             />
             <FormItem
-              verifiable
-              name='remark'
+              name='instructorRemark'
             />
             <FormItem
-              verifiable
-              name='rule'
+              name='selfPointAreaIds'
             />
             <FormItem
-              verifiable
-              name='rule1'
+              name='selfPointIds'
             />
-           
           </div>
         </Card>
       </Form>

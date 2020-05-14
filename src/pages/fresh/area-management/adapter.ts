@@ -1,9 +1,6 @@
 /* eslint-disable no-duplicate-imports */
 /* eslint-disable no-empty-pattern */
-import { statusEnums } from './config'
-// import { SkuStockFormProps } from './form';
 import { initImgList } from '@/util/utils'
-import moment from 'moment'
 
 import { omit } from 'lodash'
 export function replaceHttpUrl (imgUrl?: string) {
@@ -53,7 +50,6 @@ export function filterMoney (
 // 过滤列表响应
 export function listResponse (res: any) {
   res.records = (res.records || []).map((record: any) => {
-    record.statusText = statusEnums[record.status]
     record.createTimeText = APP.fn.formatDate(record.createTime)
     record.modifyTimeText = record.modifyTime ? APP.fn.formatDate(record.modifyTime): '-'
     return record

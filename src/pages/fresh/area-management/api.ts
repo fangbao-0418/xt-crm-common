@@ -17,7 +17,7 @@ export interface listPayload {
 // 获取库存管理列表
 export function getPages (payload: any) {
   payload = omitBy(payload, value => value === '')
-  return newPost('/product/basic/list', payload).then(listResponse)
+  return newPost('/shop/area/v1/page/area', payload).then(listResponse)
 }
 
 // 批量生效
