@@ -61,8 +61,8 @@ export const queryConfig: FieldsConfig = {
 
 export enum StatusEnum {
   待启用 = 10,
-  启用中 = 20,
-  已废弃 = 30
+  已启用 = 20,
+  已停用 = 30
 }
 
 export enum RefundTypeEnum {
@@ -71,6 +71,7 @@ export enum RefundTypeEnum {
 }
 
 export enum MemberTypeEnum {
+  普通会员 = 0,
   团长 = 10,
   区长 = 20,
   合伙人 = 30,

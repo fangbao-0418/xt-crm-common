@@ -1,6 +1,7 @@
 import React from 'react'
 import { Form, Input, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
+import { If } from '@/packages/common/components'
 import { checkCategory } from '../../api'
 import styles from './style.module.styl'
 
@@ -16,7 +17,8 @@ class Main extends React.Component<Props> {
   state = {
     visible: false,
     edit: true,
-    productIds: []
+    productIds: [],
+    verify: true
   }
 
   handleCancel = () => {
@@ -34,12 +36,22 @@ class Main extends React.Component<Props> {
       productIds = productIds.split(/\n/g).map((item: string) => +item)
       checkCategory({
         productIds,
-        thirdCategoryId: levelIds[levelIds.length - 1]
-      }).then(res => {
+        thirdCategoryId: levelIds[levelIds.length - 1].value
+      }).then((res: any) => {
         if (!res.errorProductIds.length) {
           Modal.success({
             title: '提示',
-            content: '设置黑名单完成'
+            content: res.message,
+            onOk: () => {
+              this.setState({
+                visible: false,
+                productIds: productIds.map((id: number) => ({
+                  val: id,
+                  err: false
+                })),
+                verify: true
+              })
+            }
           })
           return
         }
@@ -49,6 +61,7 @@ class Main extends React.Component<Props> {
         })
         this.setState({
           edit: false,
+          verify: false,
           productIds: productIds.map((id: number) => {
             if (res.errorProductIds.includes(id)) {
               return {
@@ -92,14 +105,14 @@ class Main extends React.Component<Props> {
   }
 
   handleAfterClose = () => {
-    this.props.form.resetFields()
+    // this.props.form.resetFields()
   }
 
   render () {
     const {
       form: { getFieldDecorator }
     } = this.props
-    const { visible, edit, productIds } = this.state
+    const { visible, edit, productIds, verify } = this.state
 
     const formItemLayout = {
       labelCol: {
@@ -142,20 +155,22 @@ class Main extends React.Component<Props> {
               )}
             </FormItem>
           ) : (
-            <div className={styles.errlist} onClick={this.handleToEdit}>
-              {
-                productIds.map((item: any, i: number) => (
-                  <p
-                    key={i}
-                    style={{
-                      color: item.err ? 'red' : '#000'
-                    }}
-                  >
-                    {item.val}
-                  </p>
-                ))
-              }
-            </div>
+            <If condition={!verify}>
+              <div className={styles.errlist} onClick={this.handleToEdit}>
+                {
+                  productIds.map((item: any, i: number) => (
+                    <p
+                      key={i}
+                      style={{
+                        color: item.err ? 'red' : '#000'
+                      }}
+                    >
+                      {item.val}
+                    </p>
+                  ))
+                }
+              </div>
+            </If>
           )
         }
       </Modal>

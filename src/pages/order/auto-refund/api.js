@@ -1,33 +1,36 @@
-const { newPost } = APP.http
+import { get, newPut, newPost } from '@/util/fetch'
 
-export function getCategoryList () {
-  return newPost('/category/treeCategory')
+/* 获取类目 */
+export function getCategoryList (data) {
+  return newPost('/category/treeCategory', data)
 }
 
-export function getRefundAutoList () {
-  return Promise.resolve({
-    current: 1,
-    pages: 1,
-    size: 10,
-    total: 10,
-    records: [...new Array(10)].map((item, i) => ({
-      disposeId: i,
-      disposeName: new Date + i,
-      oneLevelId: 1,
-      oneLevelName: 1,
-      twoLevelId: 2,
-      twoLevelName: 2,
-      threeLevelId: 3,
-      threeLevelName: 3
-    }))
-  })
-  // return newPost('/order/refund/auto/dispose/queryList')
+/* 查询列表 */
+export function getRefundAutoList (data) {
+  return newPost('http://192.168.14.240:8082/order/refund/auto/dispose/queryList', data)
 }
 
+/* 添加一个配置 */
+export function refundAutoAdd (data) {
+  return newPost('http://192.168.14.240:8082/order/refund/auto/dispose/add', data)
+}
+
+/* 审核一个配置 */
+export function refundAutoAudit (data) {
+  return newPut('http://192.168.14.240:8082/order/refund/auto/dispose/audit', data)
+}
+
+/* 查看详情 */
+export function refundAutoDetail (serialNo) {
+  return get('http://192.168.14.240:8082/order/refund/auto/dispose/getDetail', { serialNo })
+}
+
+/* 修改配置 */
+export function refundAutoUpdate (data) {
+  return newPut('http://192.168.14.240:8082/order/refund/auto/dispose/update', data)
+}
+
+/* 校验商品 */
 export function checkCategory (paload) {
-  return Promise.resolve({
-    errorProductIds: [11, 22],
-    message: '这是错误语句'
-  })
-  // return newPost('/product/check/category', paload)
+  return newPost('http://192.168.14.240:8082/product/check/category', paload)
 }

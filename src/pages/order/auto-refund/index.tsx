@@ -1,17 +1,19 @@
 import React from 'react'
-import { Button } from 'antd'
+import { Button, Tag } from 'antd'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import { If } from '@/packages/common/components'
 import { FormItem } from '@/packages/common/components/form'
 import ProductCategory from './components/product-category'
 import { queryConfig, RefundTypeEnum, StatusEnum, MemberTypeEnum } from './config'
-import { getRefundAutoList } from './api'
+import { getRefundAutoList, refundAutoAudit } from './api'
+import { formatMoneyWithSign } from '../../helper'
 
 class Main extends React.Component {
-  list: ListPageInstanceProps
+  listPage: ListPageInstanceProps
   columns = [
     {
       title: '配置编号',
-      dataIndex: 'disposeId'
+      dataIndex: 'serialNo'
     },
     {
       title: '配置名称',
@@ -19,8 +21,12 @@ class Main extends React.Component {
     },
     {
       title: '售后类型',
-      dataIndex: 'refundType',
-      render: (val: number) => RefundTypeEnum[val] || '-'
+      dataIndex: 'refundTypeS',
+      render: (val: any) => {
+        return (
+          val.map((item: any, i: number) => <Tag key={i}>{RefundTypeEnum[item]}</Tag>)
+        )
+      }
     },
     {
       title: '一级类目',
@@ -36,12 +42,17 @@ class Main extends React.Component {
     },
     {
       title: '会员等级',
-      dataIndex: 'memberType',
-      render: (val: number) => MemberTypeEnum[val] || '-'
+      dataIndex: 'memberTypeS',
+      render: (val: any) => {
+        return (
+          val.map((item: any, i: number) => <Tag key={i}>{MemberTypeEnum[item]}</Tag>)
+        )
+      }
     },
     {
       title: '配置金额',
-      dataIndex: 'refundMoney'
+      dataIndex: 'refundMoney',
+      render: (val: any) => formatMoneyWithSign(val)
     },
     {
       title: '启用状态',
@@ -51,21 +62,52 @@ class Main extends React.Component {
     {
       title: '操作',
       align: 'center',
-      render: () => {
+      render: (record: any) => {
         return (
           <div>
-            <span className='href'>查看</span>
-            <span style={{ marginLeft: 8 }} className='href'>停用</span>
+            <span
+              onClick={() => {
+                APP.history.push(`/order/autoRefundRule/create/${record.serialNo}`)
+              }}
+              className='href'
+            >
+              查看
+            </span>
+            <If condition={record.status === StatusEnum['已启用']}>
+              <span onClick={this.handleAudit.bind(this, record, 30)} style={{ marginLeft: 8 }} className='href'>停用</span>
+            </If>
+            <If condition={record.status === StatusEnum['已停用']}>
+              <span onClick={this.handleAudit.bind(this, record, 20)} style={{ marginLeft: 8 }} className='href'>启用</span>
+            </If>
+            <If condition={record.status === StatusEnum['待启用']}>
+              <span onClick={this.handleAudit.bind(this, record, 20)} style={{ marginLeft: 8 }} className='href'>启用</span>
+              <span onClick={this.handleAudit.bind(this, record, 40)} style={{ marginLeft: 8 }} className='href'>删除</span>
+            </If>
           </div>
         )
       }
     }
   ]
 
+  handleAudit = (record: any, status: any) => {
+    refundAutoAudit({
+      serialNo: record.serialNo,
+      status
+    }).then(() => {
+      APP.success('操作成功')
+      this.listPage.refresh()
+    })
+  }
+
   render () {
     return (
       <ListPage
         api={getRefundAutoList}
+        getInstance={ref => this.listPage = ref}
+        processPayload={({ page, ...payload }) => ({
+          ...payload,
+          pageNo: page
+        })}
         tableProps={{
           rowKey: 'disposeId'
         }}
