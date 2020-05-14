@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-08 14:12:51
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-07 10:20:17
+ * @LastEditTime: 2020-05-09 17:16:48
  * @FilePath: /xt-crm/.eslintrc.js
  */
 module.exports = {
@@ -10,6 +10,9 @@ module.exports = {
   globals: {
     APP: true,
     Moon: true
+  },
+  rules: {
+    'react/prop-types': 1
   },
   parserOptions: {
     project: 'tsconfig.json',
