@@ -18,6 +18,9 @@ class Main extends React.Component<Props> {
       return
     }
     refundAutoDetail(this.id).then((res: any) => {
+      if (!res) {
+        return
+      }
       this.props.form.setFieldsValue({
         disposeName: res.disposeName,
         refundTypeS: res.refundTypeS,
@@ -38,6 +41,12 @@ class Main extends React.Component<Props> {
         memberTypeS: res.memberTypeS,
         refundMoney: res.refundMoney / 100
       })
+
+      if (res.blackListProductMsg && res.blackListProductMsg.length) {
+        this.blacklistModal.setFieldsValue({
+          productIds: res.blackListProductMsg.map((item: any) => item.productId).join('\n')
+        })
+      }
     })
   }
 
@@ -60,14 +69,21 @@ class Main extends React.Component<Props> {
         blackListProductIdS: this.blacklistModal.state.productIds.map((item: any) => item.val)
       }
       let fn
+      let msg: string = ''
       if (this.id) {
         params.serialNo = this.id
         fn = refundAutoUpdate
+        msg = '修改成功'
       } else {
         fn = refundAutoAdd
+        msg = '添加成功'
       }
-      fn(params).then(() => {
-        APP.success('添加成功')
+      fn(params).then((res: any) => {
+        if (!res) {
+          return
+        }
+        APP.success(msg)
+        APP.history.push('/order/autoRefundRule')
       })
     })
   }
@@ -85,6 +101,12 @@ class Main extends React.Component<Props> {
         content: '请选择类目'
       })
     }
+  }
+
+  handleProductCategoryChange = () => {
+    this.blacklistModal.setFieldsValue({
+      productIds: ''
+    })
   }
 
   render () {
@@ -114,7 +136,7 @@ class Main extends React.Component<Props> {
 
     return (
       <Card
-        title='新增配置'
+        title={this.id ? '修改配置' : '添加配置'}
         bordered={false}
       >
         <BlacklistModal levelIds={levelIds} wrappedComponentRef={(ref: any) => this.blacklistModal = ref} />
@@ -146,7 +168,7 @@ class Main extends React.Component<Props> {
             })(
               <Checkbox.Group
                 options={[
-                  { label: '全选', value: '' },
+                  // { label: '全选', value: '' },
                   { label: '退货退款', value: 10 },
                   { label: '换货', value: 30 }
                 ]}
@@ -178,6 +200,7 @@ class Main extends React.Component<Props> {
                 })(
                   <ProductCategory
                     labelInValue
+                    onChange={this.handleProductCategoryChange}
                   />
                 )}
               </Col>
@@ -215,7 +238,7 @@ class Main extends React.Component<Props> {
             })(
               <Checkbox.Group
                 options={[
-                  { label: '全选', value: '' },
+                  // { label: '全选', value: '' },
                   { label: '普通会员', value: 0 },
                   { label: '团长', value: 10 },
                   { label: '社区管理员', value: 20 },

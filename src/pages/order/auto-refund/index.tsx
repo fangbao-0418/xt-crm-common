@@ -104,9 +104,10 @@ class Main extends React.Component {
       <ListPage
         api={getRefundAutoList}
         getInstance={ref => this.listPage = ref}
-        processPayload={({ page, ...payload }) => ({
+        processPayload={({ page, categoryId, ...payload }) => ({
           ...payload,
-          pageNo: page
+          pageNo: page,
+          categoryId: categoryId ? categoryId[2] : undefined
         })}
         tableProps={{
           rowKey: 'disposeId'
@@ -121,7 +122,7 @@ class Main extends React.Component {
         }}
         formItemLayout={(
           <>
-            <FormItem name='ruleId' />
+            <FormItem name='serialNo' />
             <FormItem name='status' />
             <FormItem
               label='商品类目'

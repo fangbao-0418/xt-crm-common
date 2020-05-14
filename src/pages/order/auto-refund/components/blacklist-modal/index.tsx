@@ -29,10 +29,12 @@ class Main extends React.Component<Props> {
 
   handleOk = () => {
     const { form, levelIds } = this.props
+    console.log(999)
     form.validateFieldsAndScroll((err, { productIds }) => {
       if (err) {
         return
       }
+      console.log(productIds)
       productIds = productIds.split(/\n/g).map((item: string) => +item)
       checkCategory({
         productIds,
@@ -106,6 +108,10 @@ class Main extends React.Component<Props> {
 
   handleAfterClose = () => {
     // this.props.form.resetFields()
+  }
+
+  setFieldsValue = (data: any) => {
+    this.props.form.setFieldsValue(data)
   }
 
   render () {

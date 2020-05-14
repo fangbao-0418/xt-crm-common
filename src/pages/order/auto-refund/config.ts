@@ -2,9 +2,8 @@ import { FieldsConfig } from '@/packages/common/components/form'
 
 export const queryConfig: FieldsConfig = {
   autoRefund: {
-    ruleId: {
+    serialNo: {
       label: '配置编号',
-      type: 'number',
       controlProps: {
         style: {
           width: 172
@@ -23,11 +22,14 @@ export const queryConfig: FieldsConfig = {
         label: '全部',
         value: ''
       }, {
-        label: '是',
-        value: 1
+        label: '已启用',
+        value: 20
       }, {
-        label: '否',
-        value: 0
+        label: '已停用',
+        value: 30
+      }, {
+        label: '待启用',
+        value: 10
       }]
     },
     // category: {
@@ -62,7 +64,8 @@ export const queryConfig: FieldsConfig = {
 export enum StatusEnum {
   待启用 = 10,
   已启用 = 20,
-  已停用 = 30
+  已停用 = 30,
+  已删除 = 40
 }
 
 export enum RefundTypeEnum {
