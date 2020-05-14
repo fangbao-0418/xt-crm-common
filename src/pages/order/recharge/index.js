@@ -3,13 +3,13 @@ import { Tabs, Card, Form, DatePicker, Button, Row, Col, Table, Input } from 'an
 const { TabPane } = Tabs
 const FormItem = Form.Item
 const { RangePicker } = DatePicker
-import { rechargeList, rechargeExport, getOrderList } from '../api'
+import { rechargeList, rechargeExport } from '../api'
 import { formatDate } from '../../helper'
 import moment from 'moment'
 import Search from './Search'
 import { namespace } from './config'
 
-const timeFormat = 'YYYY-MM-DD HH:mm:ss';
+const timeFormat = 'YYYY-MM-DD HH:mm:ss'
 class Recharge extends Component {
   static defaultProps = {};
   payload = {
@@ -28,15 +28,15 @@ class Recharge extends Component {
   componentDidMount () {
     this.query()
   }
-  export(){
+  export () {
     const payload = APP.fn.getPayload(namespace) || {}
-    if(this.payload.creatdeTime&&this.payload.creatdeTime.length>0){
+    if (this.payload.creatdeTime&&this.payload.creatdeTime.length>0) {
       this.payload.createTimeBegin= this.payload.creatdeTime[0].format(timeFormat),
-      this.payload.createTimeEnd=  this.payload.creatdeTime[1].format(timeFormat),
+      this.payload.createTimeEnd= this.payload.creatdeTime[1].format(timeFormat),
       delete this.payload.creatdeTime
 
     }
-    if(this.payload.finishTime&&this.payload.finishTime.length>0){
+    if (this.payload.finishTime&&this.payload.finishTime.length>0) {
       this.payload.finishTimeBegin= this.payload.finishTime[0].format(timeFormat),
       this.payload.finishTimeEnd= this.payload.finishTime[1].format(timeFormat),
       delete this.payload.finishTime
@@ -54,24 +54,24 @@ class Recharge extends Component {
       page: this.payload.page,
       pageSize: this.payload.pageSize
     })
-    if(this.payload.creatdeTime&&this.payload.creatdeTime.length>0){
+    if (this.payload.creatdeTime&&this.payload.creatdeTime.length>0) {
       this.payload.createTimeBegin= this.payload.creatdeTime[0].format(timeFormat)
       this.payload.createTimeEnd= this.payload.creatdeTime[1].format(timeFormat)
       delete this.payload.creatdeTime
     }
-    if(this.payload.finishTime&&this.payload.finishTime.length>0){
+    if (this.payload.finishTime&&this.payload.finishTime.length>0) {
       this.payload.finishTimeBegin= this.payload.finishTime[0].format(timeFormat)
       this.payload.finishTimeEnd= this.payload.finishTime[1].format(timeFormat)
       delete this.payload.finishTime
     }
-    getOrderList({
+    rechargeList({
       ...payload,
       ...this.payload,
       rechargeStatus: this.state.rechargeStatus==='-1'?null:this.state.rechargeStatus
     }).then(res => {
       this.setState({
         list: res&&res.records,
-        total:res&&res.total
+        total: res&&res.total
       })
     })
   };
@@ -127,18 +127,18 @@ class Recharge extends Component {
       },
       {
         title: '充值账号',
-        dataIndex: 'rechargeAccount',
+        dataIndex: 'rechargeAccount'
       },
       {
         title: '充值面额',
-        dataIndex: 'rechargeDenomination',
-        render (seat, record) {
-          return <span>{record.newSeatStr}/{record.childSeatStr}</span>
-        }
+        dataIndex: 'rechargeDenomination'
+        // render (seat, record) {
+        //   return <span>{record.newSeatStr}/{record.childSeatStr}</span>
+        // }
       },
       {
         title: '充值类型',
-        dataIndex: 'rechargeTypeDesc',
+        dataIndex: 'rechargeTypeDesc'
       },
       {
         title: '创建时间',
