@@ -3,12 +3,14 @@ import { Tabs, Card, Form, DatePicker, Button, Row, Col, Table, Input } from 'an
 const { TabPane } = Tabs
 const FormItem = Form.Item
 const { RangePicker } = DatePicker
-import { queryBannerList } from '../api'
+import { rechargeList, rechargeExport } from '../api'
 import { formatDate } from '../../helper'
 import moment from 'moment'
 import Search from './Search'
 import { namespace } from './config'
+import { formatMoneyWithSign } from '@/pages/helper'
 
+const timeFormat = 'YYYY-MM-DD HH:mm:ss'
 class Recharge extends Component {
   static defaultProps = {};
   payload = {
@@ -21,27 +23,56 @@ class Recharge extends Component {
     current: 1,
     pageSize: 10,
     total: 0,
-    tab: '0'
+    rechargeStatus: '-1'
   };
 
   componentDidMount () {
     this.query()
   }
+  export () {
+    const payload = APP.fn.getPayload(namespace) || {}
+    if (this.payload.creatdeTime&&this.payload.creatdeTime.length>0) {
+      this.payload.createTimeBegin= this.payload.creatdeTime[0].format(timeFormat),
+      this.payload.createTimeEnd= this.payload.creatdeTime[1].format(timeFormat),
+      delete this.payload.creatdeTime
 
+    }
+    if (this.payload.finishTime&&this.payload.finishTime.length>0) {
+      this.payload.finishTimeBegin= this.payload.finishTime[0].format(timeFormat),
+      this.payload.finishTimeEnd= this.payload.finishTime[1].format(timeFormat),
+      delete this.payload.finishTime
+    }
+    rechargeExport({
+      ...payload,
+      ...this.payload,
+      rechargeStatus: this.state.rechargeStatus==='-1'?null:this.state.rechargeStatus
+    }).then(res => {
+    })
+  }
   query = () => {
     const payload = APP.fn.getPayload(namespace) || {}
     this.setState({
       page: this.payload.page,
       pageSize: this.payload.pageSize
     })
-    queryBannerList({
+    if (this.payload.creatdeTime&&this.payload.creatdeTime.length>0) {
+      this.payload.createTimeBegin= this.payload.creatdeTime[0].format(timeFormat)
+      this.payload.createTimeEnd= this.payload.creatdeTime[1].format(timeFormat)
+      delete this.payload.creatdeTime
+    }
+    if (this.payload.finishTime&&this.payload.finishTime.length>0) {
+      this.payload.finishTimeBegin= this.payload.finishTime[0].format(timeFormat)
+      this.payload.finishTimeEnd= this.payload.finishTime[1].format(timeFormat)
+      delete this.payload.finishTime
+    }
+    rechargeList({
       ...payload,
       ...this.payload,
-      tab: this.state.tab
+      rechargeStatus: this.state.rechargeStatus==='-1'?null:this.state.rechargeStatus
     }).then(res => {
       this.setState({
-        list: res.records,
-        total: res.total
+        list: res&&res.records,
+        total: res&&res.total
       })
     })
   };
@@ -62,78 +93,59 @@ class Recharge extends Component {
   }
   handleTabClick = key => {
     this.setState({
-      tab: key
+      rechargeStatus: key
     }, ()=>{
       this.payload.page= 1
       this.query()
     })
   };
   render () {
-    const tabList=[{ name: '全部', key: '0' }, { name: '待充值', key: '1' }, { name: '充值中', key: '2' }, { name: '充值成功', key: '3' }, { name: '充值失败', key: '4' }]
+    const tabList=[{ name: '全部', key: '-1' }, { name: '待充值', key: '0' }, { name: '充值中', key: '10' }, { name: '充值成功', key: '20' }, { name: '充值失败', key: '30' }]
     const { current, total, pageSize } = this.state
 
     const columns = [
       {
         title: '充值单号',
-        align: 'center',
-        dataIndex: 'sort'
+        dataIndex: 'serialNo'
       },
       {
         title: '子订单号',
-        dataIndex: 'title'
+        dataIndex: 'childOrderCode'
       },
       {
         title: '三方订单号',
-        dataIndex: 'onlineTime',
-        render (onlineTime) {
-          return formatDate(onlineTime)
-        }
+        dataIndex: 'thirdPartyOrderNo'
       },
       {
         title: '充值流水号',
-        dataIndex: 'offlineTime',
-        render (offlineTime) {
-          return formatDate(offlineTime)
-        }
+        dataIndex: 'rechargeOperatorOrderNo'
       },
       {
         title: '充值账号',
-        dataIndex: 'jumpUrlWap',
-        render: (text) => {
-          return (
-            <span className='href' onClick={() => APP.href(text, '__blank')}>{text}</span>
-          )
-        }
+        dataIndex: 'rechargeAccount'
       },
       {
         title: '充值面额',
-        dataIndex: 'seat',
-        render (seat, record) {
-          return <span>{record.newSeatStr}/{record.childSeatStr}</span>
-        }
+        dataIndex: 'rechargeDenomination',
+        render: (rechargeDenomination, row) => <div>{formatMoneyWithSign(rechargeDenomination)}</div>
       },
       {
         title: '充值类型',
-        dataIndex: 'status',
-        render (status) {
-          return status ? '开启' : '关闭'
-        }
+        dataIndex: 'rechargeTypeDesc'
       },
       {
         title: '创建时间',
         dataIndex: 'createTime',
-        width: '300px',
         render: (createTime, row) => <div>{formatDate(createTime)}</div>
       },
       {
         title: '状态',
-        dataIndex: 'ti32tle'
+        dataIndex: 'rechargeStatusDesc'
       },
       {
         title: '完成时间',
-        dataIndex: 'createTwime',
-        width: '300px',
-        render: (createTime, row) => <div>{formatDate(createTime)}</div>
+        dataIndex: 'finishTime',
+        render: (finishTime, row) => <div>{formatDate(finishTime)}</div>
       },
       {
         title: '备注',
@@ -143,7 +155,7 @@ class Recharge extends Component {
     return (
       <div>
         <Card>
-          <Tabs activeKey={this.state.tab} defaultActiveKey={'1'} onTabClick={this.handleTabClick}>
+          <Tabs activeKey={this.state.rechargeStatus} defaultActiveKey={'-1'} onTabClick={this.handleTabClick}>
             {tabList.map(tab => {
               return (<TabPane tab={tab.name} key={tab.key} />
               )
@@ -151,6 +163,9 @@ class Recharge extends Component {
           </Tabs>
           <Search
             className='ml10'
+            export={()=>{
+              this.export()
+            }}
             onChange={(value) => {
               this.payload = {
                 ...this.payload,
@@ -165,6 +180,9 @@ class Recharge extends Component {
             style={{ marginTop: 10 }}
             columns={columns}
             dataSource={this.state.list}
+            scroll={{
+              x: '100%'
+            }}
             pagination={{
               current,
               total,

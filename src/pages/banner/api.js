@@ -1,5 +1,5 @@
 // import { post } from '../../util/fetch';
-const { post } = APP.http
+const { post, newPost } = APP.http
 const debug = false;
 
 const mockData = [
@@ -56,7 +56,7 @@ export function updateBanner(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return post('/banner/update', data);
+  return newPost('/banner/update', data);
 }
 
 export function deleteBanner(data) {
