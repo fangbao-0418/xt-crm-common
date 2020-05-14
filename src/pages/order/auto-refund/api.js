@@ -21,9 +21,13 @@ export function getRefundAutoList () {
       threeLevelName: 3
     }))
   })
-  // return post('/order/refund/auto/dispose/queryList')
+  // return newPost('/order/refund/auto/dispose/queryList')
 }
 
 export function checkCategory (paload) {
-  return newPost('http://192.168.14.49:8082/product/check/category', paload)
+  return Promise.resolve({
+    errorProductIds: [11, 22],
+    message: '这是错误语句'
+  })
+  // return newPost('/product/check/category', paload)
 }

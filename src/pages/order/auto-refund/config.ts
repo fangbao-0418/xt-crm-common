@@ -64,3 +64,16 @@ export enum StatusEnum {
   启用中 = 20,
   已废弃 = 30
 }
+
+export enum RefundTypeEnum {
+  退货退款 = 10,
+  换货 = 30
+}
+
+export enum MemberTypeEnum {
+  团长 = 10,
+  区长 = 20,
+  合伙人 = 30,
+  管理员 = 40,
+  公司 = 50
+}

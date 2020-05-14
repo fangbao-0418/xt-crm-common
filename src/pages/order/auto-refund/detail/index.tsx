@@ -72,7 +72,7 @@ class Main extends React.Component<Props> {
           onSubmit={this.handleSubmit}
         >
           <FormItem {...formItemLayout} label='配置名称'>
-            {getFieldDecorator('a', {
+            {getFieldDecorator('disposeName', {
               rules: [
                 {
                   required: true,
@@ -86,7 +86,7 @@ class Main extends React.Component<Props> {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label='售后类型选择'>
-            {getFieldDecorator('b', {
+            {getFieldDecorator('refundType', {
               rules: [
                 {
                   required: true,
@@ -155,7 +155,7 @@ class Main extends React.Component<Props> {
             }}
             label='会员等级'
           >
-            {getFieldDecorator('d', {
+            {getFieldDecorator('memberType', {
               rules: [
                 {
                   required: true,
@@ -176,7 +176,7 @@ class Main extends React.Component<Props> {
             )}
           </FormItem>
           <FormItem {...formItemLayout} label='金额配置'>
-            {getFieldDecorator('e', {
+            {getFieldDecorator('refundMoney', {
               rules: [
                 {
                   required: true,

@@ -2,9 +2,8 @@ import React from 'react'
 import { Button } from 'antd'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { FormItem } from '@/packages/common/components/form'
-import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 import ProductCategory from './components/product-category'
-import { queryConfig } from './config'
+import { queryConfig, RefundTypeEnum, StatusEnum, MemberTypeEnum } from './config'
 import { getRefundAutoList } from './api'
 
 class Main extends React.Component {
@@ -20,7 +19,8 @@ class Main extends React.Component {
     },
     {
       title: '售后类型',
-      dataIndex: 'c'
+      dataIndex: 'refundType',
+      render: (val: number) => RefundTypeEnum[val] || '-'
     },
     {
       title: '一级类目',
@@ -36,7 +36,8 @@ class Main extends React.Component {
     },
     {
       title: '会员等级',
-      dataIndex: 'g'
+      dataIndex: 'memberType',
+      render: (val: number) => MemberTypeEnum[val] || '-'
     },
     {
       title: '配置金额',
@@ -44,11 +45,12 @@ class Main extends React.Component {
     },
     {
       title: '启用状态',
-      dataIndex: 'status'
+      dataIndex: 'status',
+      render: (val: number) => StatusEnum[val] || '-'
     },
     {
       title: '操作',
-      dataIndex: 'j',
+      align: 'center',
       render: () => {
         return (
           <div>
