@@ -17,10 +17,11 @@ class Main extends React.Component<{}, State> {
   public columns: ColumnProps<RecordProps>[] = [
     { title: '商品ID', dataIndex: 'productId' },
     { title: 'SKUID', dataIndex: 'skuId' },
-    { title: '商品名称', dataIndex: 'productName' },
+    { title: '商品名称', dataIndex: 'productName', width: 200 },
     {
       title: '商品主图',
       dataIndex: 'coverUrl',
+      width: 150,
       render: (text) => {
         return (
           <Image src={text} />
@@ -133,7 +134,7 @@ class Main extends React.Component<{}, State> {
             dataSource
           }}
         />
-        <div className='mt16'>
+        <div className='mt20'>
           <Button
             onClick={this.save}
             className='mr8'
