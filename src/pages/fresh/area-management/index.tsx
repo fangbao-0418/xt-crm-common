@@ -10,10 +10,9 @@ class Index extends React.Component<any> {
   list: any;
 
   update (payload: any) {
-    // 是否失效
-    const isInvalid = payload.status === statusEnums['失效']
+    // 是否删除
     const params = { ids: [payload.id] }
-    const promiseResult = isInvalid ? invalidProduct(params) : effectProduct(params)
+    const promiseResult = invalidProduct(params)
     promiseResult.then((res: any)=> {
       if (res) {
         APP.success('操作成功')
@@ -44,7 +43,7 @@ class Index extends React.Component<any> {
         <span
           className='href'
           onClick={() => {
-            APP.history.push(`/goods/sku-stock/${records.id}`)
+            APP.history.push(`/fresh/area/${records.id}`)
           }}
         >
             查看
@@ -53,35 +52,20 @@ class Index extends React.Component<any> {
             className='href'
             style={{ marginLeft: 8, marginRight: 8 }}
             onClick={() => {
-              APP.history.push(`/goods/sku-stock/${records.id}`)
+              APP.history.push(`/fresh/area/${records.id}`)
             }}
           >
             编辑
           </span>
-          <If condition={ records.status !== statusEnums['失效']}>
             <Popconfirm
-              title='确定失效吗'
+              title='确定删除吗'
               onConfirm={() => {
                 this.update({
-                  id: records.id,
-                  status: statusEnums['失效']
+                  id: records.id
                 })
               }}>
-              <span className='href'>失效</span>
+              <span className='href'>删除</span>
             </Popconfirm>
-          </If>
-          <If condition={records.status === statusEnums['失效']}>
-            <Popconfirm
-              title='确定生效吗'
-              onConfirm={() => {
-                this.update({
-                  id: records.id,
-                  status: statusEnums['正常']
-                })
-              }}>
-              <span className='href'>生效</span>
-            </Popconfirm>
-          </If>
         </>
       )
     }
