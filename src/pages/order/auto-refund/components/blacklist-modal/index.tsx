@@ -29,7 +29,6 @@ class Main extends React.Component<Props> {
 
   handleOk = () => {
     const { form, levelIds } = this.props
-    console.log(999)
     form.validateFieldsAndScroll((err, { productIds }) => {
       if (err) {
         return

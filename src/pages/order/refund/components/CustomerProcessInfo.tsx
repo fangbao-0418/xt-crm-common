@@ -1,23 +1,26 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Row } from 'antd';
-import { enumRefundType } from '../../constant';
-import { refundType } from '@/enum';
-import { formatMoneyWithSign } from '@/pages/helper';
+import React from 'react'
+import { Row } from 'antd'
+import { If } from '@/packages/common/components'
+import { enumRefundType } from '../../constant'
+import { refundType } from '@/enum'
+import { formatMoneyWithSign } from '@/pages/helper'
 interface Props {
   data: AfterSalesInfo.data;
 }
 
 const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
-  let checkVO = Object.assign({}, data.checkVO);
-  let orderServerVO = Object.assign({}, data.orderServerVO);
-  let contactVO = Object.assign({}, orderServerVO.contactVO);
+  const checkVO = Object.assign({}, data.checkVO)
+  const orderServerVO = Object.assign({}, data.orderServerVO)
+  const contactVO = Object.assign({}, orderServerVO.contactVO)
   const isRefundTypeOf = (refundType: number | string) => {
-    return checkVO.refundType == refundType;
-  };
+    return checkVO.refundType == refundType
+  }
   return (
     <div>
-      <h4 style={{marginTop: 0}}>客服处理信息</h4>
+      <h4 style={{ marginTop: 0 }}>客服处理信息</h4>
+      <If condition={!!checkVO.refundAutoDisposeNo}>
+        <Row>自动审核售后，配置编号：{checkVO.refundAutoDisposeNo}</Row>
+      </If>
       <Row>售后类型：{refundType.getValue(checkVO.refundType)}</Row>
       <Row>售后数目：{checkVO.serverNum}</Row>
       {/* 退货退款/仅退款 */}
@@ -30,6 +33,6 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
       {isRefundTypeOf(enumRefundType.Exchange) && <Row>收货地址：{`${contactVO.contact} ${contactVO.phone} ${contactVO.province}${contactVO.city}${contactVO.district}${contactVO.street}`}</Row>}
       <Row>说 明：{checkVO.reply}</Row>
     </div>
-  );
-};
-export default CustomerProcessInfo;
+  )
+}
+export default CustomerProcessInfo

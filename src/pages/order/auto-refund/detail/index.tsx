@@ -136,7 +136,7 @@ class Main extends React.Component<Props> {
 
     return (
       <Card
-        title={this.id ? '修改配置' : '添加配置'}
+        title={this.id ? '修改配置' : '新增配置'}
         bordered={false}
       >
         <BlacklistModal levelIds={levelIds} wrappedComponentRef={(ref: any) => this.blacklistModal = ref} />

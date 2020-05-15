@@ -51,6 +51,8 @@ declare module AfterSalesInfo {
     reply: string;
     isDemotion: number;
     demotionInfo: string;
+    /* 自动审核售后编号 */
+    refundAutoDisposeNo?: string;
   }
   export interface OrderInfoVO {
     mainOrderId: number;
