@@ -109,7 +109,7 @@ class BannerModal extends Component {
         params.platformArray.forEach((val) => {
           params.platform += val * 1
         })
-        if (params.keyWords&&params.keyWords.length>20) {
+        if (params.keywordsList&&params.keywordsList.length>20) {
           APP.error('关键字不能超过20个')
           return
         }
@@ -121,7 +121,8 @@ class BannerModal extends Component {
           onSuccess && onSuccess()
           res && message.success('操作成功')
           this.setState({
-            visible: false
+            visible: false,
+            data: {}
           })
         })
       }
@@ -269,8 +270,8 @@ class BannerModal extends Component {
             </If>
             <If condition={seat[0] === 7}>
               <FormItem label='关键词'>
-                {getFieldDecorator('keyWords', {
-                  initialValue: data.keyWords,
+                {getFieldDecorator('keywordsList', {
+                  initialValue: data.keywordsList,
                   rules: [
                     {
                       required: seat[0] === 7,
@@ -281,9 +282,9 @@ class BannerModal extends Component {
                   <Select
                     mode={'tags'}
                     placeholder='请输入关键词'
-                    id='keyWords'
+                    id='keywordsList'
                     tokenSeparators={[',']}
-                    name='keyWords'
+                    name='keywordsList'
                     onChange={this.onChangeKeyWord.bind(this)}
                   />
                 )}
@@ -306,7 +307,7 @@ class BannerModal extends Component {
   //改变关键字
   onChangeKeyWord (obj) {
     const { data } = this.state
-    data['keyWords'] = obj ? ((obj instanceof Array && obj.length < 1) ? undefined :obj) : ''
+    data['keywordsList'] = obj ? ((obj instanceof Array && obj.length < 1) ? undefined :obj) : ''
     this.setState({
       data
     })
