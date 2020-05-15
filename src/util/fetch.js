@@ -29,6 +29,9 @@ export const request = (url, config = {}) => {
         const data = res.data.data
         return isPlainObject(data) ? omitBy(data, isNil) : data
       } else {
+        if (res.data && res.data.code === '10001') {
+          window.location.href = '/#/login'
+        }
         return Promise.reject(res.data)
       }
     })
