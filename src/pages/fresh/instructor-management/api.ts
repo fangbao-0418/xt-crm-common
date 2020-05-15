@@ -14,11 +14,11 @@ export function getPages (payload: any) {
   return newPost('/shop/area/v1/page/instructor', payload)
 }
 // 删除
-export function invalidProduct (payload: { ids: number[] }) {
-  return newPost('/shop/area/v1/delete/instructor', payload)
+export function deleteInstructor (id:any) {
+  return get(`/shop/area/v1/delete/instructor?id=${id}`)
 }
 // 新增编辑
-export function addUpdateArea (payload: any) {
+export function addUpdateInstructor (payload: any) {
   return newPost('/shop/area/v1/modify/instructor', payload)
 }
 // 根据id查询

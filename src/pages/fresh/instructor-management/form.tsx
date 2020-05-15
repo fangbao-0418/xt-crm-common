@@ -4,7 +4,7 @@ import { Card, Button } from 'antd'
 import { NAME_SPACE, defaultConfigForm } from './config'
 import { FormInstance } from '@/packages/common/components/form'
 import If from '@/packages/common/components/if'
-import { addUpdateArea, getShopDetail } from './api'
+import { addUpdateInstructor, getShopDetail } from './api'
 import { RouteComponentProps } from 'react-router'
 import { parseQuery } from '@/util/utils'
 import { RecordProps } from './interface'
@@ -46,7 +46,7 @@ class AreaForm extends React.Component<Props, FormState> {
         if (!isAdd) {
           vals.id=this.id
         }
-        const promiseResult = addUpdateArea(vals)
+        const promiseResult = addUpdateInstructor(vals)
         promiseResult.then((res: any) => {
           if (res) {
             APP.history.push('/fresh/instructor')

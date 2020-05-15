@@ -162,7 +162,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                 />)
               }}
             />
-            <If condition={!!(record.inviteShopName || record.inviteShopPhone || record.inviteShopPhone1)}>
+            <If condition={!!(record.inviteShopName || record.inviteShopPhone || record.instructorPhone)}>
               <FormItem
                 readonly
                 name='inviteShopName'
@@ -173,7 +173,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
               />
               <FormItem
                 readonly
-                name='inviteShopPhone1'
+                name='instructorPhone'
               />
             </If>
           </div>

@@ -16,9 +16,9 @@ export function getPages (payload: any) {
   payload = omitBy(payload, value => value === '')
   return newPost('/shop/area/v1/page/area', payload)
 }
-// 批量失效
-export function invalidProduct (payload: { ids: number[] }) {
-  return newPost('/product/basic/invalid', payload)
+// 删除
+export function deleteArea (id: any) {
+  return get(`/shop/area/v1/delete/area?id=${id}`)
 }
 
 // 新增编辑
@@ -30,6 +30,6 @@ export function getDetail (id: string) {
   return get(`/shop/area/v1/query/area?id=${id}`)
 }
 // 获取使用中的三级城市
-export function getDistricts () {
-  return get('/shop/area/v1/using/districts')
+export function getDistricts (id: any) {
+  return get(`/shop/area/v1/using/districts?id=${id}`)
 }

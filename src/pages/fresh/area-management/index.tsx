@@ -1,18 +1,17 @@
 import React from 'react'
 import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components'
-import { getPages, invalidProduct } from './api'
-// import { getCategoryTopList } from './api';
+import { getPages, deleteArea } from './api'
 import { defaultConfig } from './config'
 import { Modal, Button, Popconfirm } from 'antd'
+import DateFns from 'date-fns'
 type Key = string | number;
 
 class Index extends React.Component<any> {
   list: any;
 
-  update (payload: any) {
+  update (id: any) {
     // 是否删除
-    const params = { ids: [payload.id] }
-    const promiseResult = invalidProduct(params)
+    const promiseResult = deleteArea(id)
     promiseResult.then((res: any)=> {
       if (res) {
         APP.success('操作成功')
@@ -31,7 +30,8 @@ class Index extends React.Component<any> {
   }, {
     title: '发布时间',
     width: 150,
-    dataIndex: 'createTime'
+    dataIndex: 'createTime',
+    render: (text: string | number | Date) => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>
   }, {
     title: '操作',
     width: 150,
@@ -43,7 +43,7 @@ class Index extends React.Component<any> {
         <span
           className='href'
           onClick={() => {
-            APP.history.push(`/fresh/area/${records.id}`)
+            APP.history.push(`/fresh/area/${records.id}?readOnly=readOnly`)
           }}
         >
             查看
@@ -60,9 +60,7 @@ class Index extends React.Component<any> {
             <Popconfirm
               title='确定删除吗'
               onConfirm={() => {
-                this.update({
-                  id: records.id
-                })
+                this.update(records.id)
               }}>
               <span className='href'>删除</span>
             </Popconfirm>

@@ -12,7 +12,14 @@ import { RecordProps } from './interface'
 import SaleArea from '../../../components/sale-area'
 
 type Props = RouteComponentProps<{id: string}>;
-
+const formItemLayout = {
+  labelCol: {
+    span: 6
+  },
+  wrapperCol: {
+    span: 18
+  }
+}
 interface StoreFormState {
   record: Partial<RecordProps>
   readonly: boolean
@@ -43,8 +50,14 @@ class AreaForm extends React.Component<Props, StoreFormState> {
     })
   }
   getDisabledDatas () {
-    getDistricts().then(res => {
-      this.disabledDatas=['56468', '110101', '110102', '110103', '110104', '110105', '110106', '110107', '110108', '110109', '110111', '110112', '110113', '110114', '110115', '110116', '110117', '110118', '456461']
+    getDistricts(this.id==='-1'?0:this.id).then(res => {
+      const arr: string[]=[]
+      if (res&&res.length>0) {
+        res.map((item: string)=>{
+          arr.push(item+'')
+        })
+      }
+      this.disabledDatas=arr
       this.id !== '-1' && this.fetchData()
     })
   }
@@ -58,8 +71,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
         vals.districtIds = (vals.districtIds || []).map((item: { districtId: any }) => {
           return parseInt(item.districtId)
         })
-        console.log(vals.trainImage[0])
-        vals.trainImage = vals.trainImage[0].rurl
+        vals.trainImage = vals.trainImage[0].url||vals.trainImage
         const promiseResult = addUpdateArea(vals)
         promiseResult.then((res: any) => {
           if (res) {
@@ -70,10 +82,12 @@ class AreaForm extends React.Component<Props, StoreFormState> {
       }
     })
   }
+
   render () {
     const { readonly } = this.state
     return (
       <Form
+        {...formItemLayout}
         readonly={readonly}
         getInstance={ref => this.form = ref}
         namespace={NAME_SPACE}
