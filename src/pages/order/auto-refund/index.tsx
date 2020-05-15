@@ -104,11 +104,13 @@ class Main extends React.Component {
       <ListPage
         api={getRefundAutoList}
         getInstance={ref => this.listPage = ref}
-        processPayload={({ page, categoryId, ...payload }) => ({
-          ...payload,
-          pageNo: page,
-          categoryId: categoryId ? categoryId[2] : undefined
-        })}
+        processPayload={({ page, categoryId, ...payload }) => {
+          return {
+            ...payload,
+            pageNo: page,
+            categoryId: categoryId ? categoryId[categoryId.length - 1] : undefined
+          }
+        }}
         tableProps={{
           rowKey: 'disposeId'
         }}
