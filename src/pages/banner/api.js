@@ -1,3 +1,10 @@
+/*
+ * @Author: fangbao
+ * @Date: 2020-05-15 20:07:20
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-05-15 20:32:35
+ * @FilePath: /xt-crm/src/pages/banner/api.js
+ */
 // import { post } from '../../util/fetch';
 const { post, newPost } = APP.http
 const debug = false;
@@ -48,7 +55,7 @@ export function addBanner(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return newPost('/banner/add', data);
+  return post('/banner/add', data);
 }
 
 export function updateBanner(data) {
@@ -56,7 +63,7 @@ export function updateBanner(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return newPost('/banner/update', data);
+  return post('/banner/update', data);
 }
 
 export function deleteBanner(data) {
