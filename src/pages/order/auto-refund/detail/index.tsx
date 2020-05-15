@@ -4,6 +4,7 @@ import { FormComponentProps } from 'antd/lib/form'
 import { RouteComponentProps } from 'react-router'
 import ProductCategory from '../components/product-category'
 import BlacklistModal from '../components/blacklist-modal'
+import XtCheckBox from '../components/xt-check-box'
 import { refundAutoAdd, refundAutoUpdate, refundAutoDetail } from '../api'
 
 const FormItem = Form.Item
@@ -157,6 +158,24 @@ class Main extends React.Component<Props> {
               />
             )}
           </FormItem>
+          {/* <FormItem {...formItemLayout} label='aaaaa'>
+            {getFieldDecorator('aaaa', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入'
+                }
+              ]
+            })(
+              <XtCheckBox
+                options={[
+                  // { label: '全选', value: '' },
+                  { label: '退货退款', value: 10 },
+                  { label: '换货', value: 30 }
+                ]}
+              />
+            )}
+          </FormItem> */}
           <FormItem {...formItemLayout} label='售后类型选择'>
             {getFieldDecorator('refundTypeS', {
               rules: [

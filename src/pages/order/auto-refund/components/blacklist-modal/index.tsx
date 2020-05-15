@@ -43,6 +43,9 @@ class Main extends React.Component<Props> {
         productIds,
         thirdCategoryId: levelIds[levelIds.length - 1].value
       }).then((res: any) => {
+        if (!res) {
+          return
+        }
         if (!res.errorProductIds.length) {
           Modal.success({
             title: '提示',

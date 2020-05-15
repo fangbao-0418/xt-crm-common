@@ -1,5 +1,6 @@
 import React from 'react'
 import { Checkbox } from 'antd'
+import { CheckboxProps } from 'antd/lib/checkbox'
 
 const CheckboxGroup = Checkbox.Group
 
@@ -11,7 +12,7 @@ const options = [
 
 const plainOptions = ['Apple', 'Pear', 'Orange']
 
-class XtCheckBox extends React.Component {
+class XtCheckBox extends React.Component<CheckboxProps> {
   state = {
     value: [],
     indeterminate: true,
