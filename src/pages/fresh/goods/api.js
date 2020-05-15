@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-06 10:18:13
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-14 20:56:03
+ * @LastEditTime: 2020-05-15 10:22:10
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/goods/api.js
  */
 
@@ -181,5 +181,5 @@ export function closeTimerById (ids) {
  * @param {(1|0)} payload.type - 操作类型，1-启用，0-停用
  */
 export function updateSkuStatus (payload) {
-  return newPut('/mcweb/product/sku/status/update', payload)
+  return newPut('/mcweb/product/fresh/sku/status/update', payload)
 }

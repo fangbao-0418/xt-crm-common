@@ -308,12 +308,13 @@ class Main extends React.Component<Props, State> {
                 <span
                   className='href'
                   onClick={() => {
-                    api.updateSkuStatus({
-                      skuId: record.skuId,
-                      type: text === -1 ? 1 : 0
-                    }).then(() => {
-                      cb('status', record, index)(text === -1 ? 1 : 0)
-                    })
+                    // api.updateSkuStatus({
+                    //   skuId: record.skuId,
+                    //   type: text === -1 ? 1 : 0
+                    // }).then(() => {
+                    //   cb('status', record, index)(text === -1 ? 0 : -1)
+                    // })
+                    cb('status', record, index)(text === -1 ? 0 : -1)
                   }}
                 >
                   {text === -1 ? '取消停用' : '停用'}
