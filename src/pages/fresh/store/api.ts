@@ -91,19 +91,22 @@ export function getTimerList (payload: any) {
   return newGet('/point/batch/list', payload)
 }
 
+export function updateInvite (payload: any) {
+  return newGet('/point/update/invite', payload)
+}
 /**
  * 开启自动上下架批次
  * @param {*} ids
  */
-export function openTimerById(ids: any) {
-  return newPost('/point/batch/updateActionStatus', {ids, actionStatus: 1})
+export function openTimerById (ids: any) {
+  return newPost('/point/batch/updateActionStatus', { ids, actionStatus: 1 })
 }
 /**
  * 关闭自动上下架批次
  * @param {*} ids
  */
-export function closeTimerById(ids: any) {
-  return newPost('/point/batch/updateActionStatus', {ids, actionStatus: 0})
+export function closeTimerById (ids: any) {
+  return newPost('/point/batch/updateActionStatus', { ids, actionStatus: 0 })
 }
 
 /**

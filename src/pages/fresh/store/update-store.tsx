@@ -1,12 +1,8 @@
 import React from 'react'
-import { Modal, Input, Form, Button, Select, DatePicker, message } from 'antd'
-import { addTimer } from './api'
-import { XtSelect } from '@/components'
+import { Modal, Input, Form, message } from 'antd'
+import { updateInvite } from './api'
 import _ from 'lodash'
 import { FormComponentProps } from 'antd/lib/form'
-import Upload from '@/components/upload/file'
-const { RangePicker } = DatePicker
-import moment from 'moment'
 const formItemLayout = {
   labelCol: {
     sm: { span: 6 }
@@ -15,40 +11,17 @@ const formItemLayout = {
     sm: { span: 14 }
   }
 }
-
 export interface Props extends FormComponentProps {
   visible?: boolean
-  data: any,
   onOk: (data?: any) => void
   onCancel: () => void
 }
 export interface State extends PageProps<Coupon.CouponItemProps> {
   visible: boolean
-  readonly: boolean
-
 }
-export interface SearchPayload {
-  code?: string
-  isDelete?: 0
-  name?: string
-  page: number
-  pageSize?: number
-  status?: number
-  /** 手动发券 1 是 0 否 */
-  receivePattern?: 0 | 1
-}
-class StoreTimerModal extends React.Component<Props, State> {
-  public payload: SearchPayload = {
-    isDelete: 0,
-    page: 1,
-    receivePattern: 0
-  }
+class UpdateStoreModal extends React.Component<Props, State> {
   public state: State = {
-    current: 1,
-    readonly: false,
-    size: 10,
     records: [],
-    total: 0,
     visible: this.props.visible || false
   }
 
@@ -56,24 +29,7 @@ class StoreTimerModal extends React.Component<Props, State> {
     super(props)
   }
   componentDidMount () {
-    if (this.props.data.id) {
-      this.setState({
-        readonly: true
-      })
-      this.props.form.setFieldsValue({
-        ...this.props.data,
-        actionTime: moment(+this.props.data.actionTime),
-        file: [{
-          url: this.props.data.fileDownUrl,
-          name: this.props.data.fileName
-        }]
-      })
-    } else {
-      this.setState({
-        readonly: false
-      })
-      this.props.form.resetFields()
-    }
+    this.props.form.resetFields()
   }
 
   public componentWillReceiveProps (props: Props) {
@@ -82,20 +38,13 @@ class StoreTimerModal extends React.Component<Props, State> {
     })
   }
   public onOk = () => {
-    if (this.props.data.id) {
-      return this.props.onOk()
-    }
     this.props.form.validateFields(async (errors, values) => {
-
       if (!errors) {
-        addTimer({
-          name: values.name,
-          actionType: values.actionType,
-          file: values.file[0].file,
-          actionTime: values.actionTime.toDate().setMilliseconds(0)
+        updateInvite({
+          name: values.name
         }).then((data:any) => {
           if (this.props.onOk && data) {
-            message.success('新建成功')
+            message.success('修改成功')
             this.props.onOk(true)
             this.setState({
               visible: false
@@ -107,11 +56,11 @@ class StoreTimerModal extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { visible, readonly } = this.state
+    const { visible } = this.state
     const { getFieldDecorator } = this.props.form
     return (
       <Modal
-        title='门店批次'
+        title='修改邀请门店'
         visible={visible}
         width={600}
         onOk={this.onOk}
@@ -120,20 +69,30 @@ class StoreTimerModal extends React.Component<Props, State> {
         }}
       >
         <Form {...formItemLayout}>
-          <Form.Item label='门店批次名称'>
-            {getFieldDecorator('name', {
+          <Form.Item label='店长手机号'>
+            {getFieldDecorator('selfMemberPhone', {
               rules: [
                 {
                   required: true,
-                  message: '请输入门店批次名称'
+                  message: '请输入店长手机号'
                 }
               ]
-            })(<Input maxLength={20} placeholder='请输入' disabled={readonly} />)}
+            })(<Input maxLength={20} placeholder='请输入' />)}
           </Form.Item>
-      </Form>
+          <Form.Item label='上级手机号'>
+            {getFieldDecorator('inviteMemberPhone', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入上级手机号'
+                }
+              ]
+            })(<Input maxLength={20} placeholder='请输入' />)}
+          </Form.Item>
+        </Form>
       </Modal>
     )
   }
 }
 
-export default Form.create<Props>()(StoreTimerModal)
+export default Form.create<Props>()(UpdateStoreModal)

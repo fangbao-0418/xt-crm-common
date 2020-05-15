@@ -10,6 +10,7 @@ import { FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
 import { RouteComponentProps } from 'react-router'
 import * as api from './api'
+import UpdateStoreModal from './update-store'
 const Option = Select.Option
 type Props = RouteComponentProps<{id: string}>;
 
@@ -20,6 +21,7 @@ interface StoreFormState {
   cityList: any,
   countrys: any,
   country: any,
+  visible: boolean
 }
 class Store extends Component {
   readonly: boolean = !!(parseQuery() as any).readOnly
@@ -29,7 +31,8 @@ class Store extends Component {
     readonly: this.readonly,
     cityList: [],
     countrys: [],
-    country: ''
+    country: '',
+    visible: false
   }
   form: FormInstance;
   provinceName: string;
@@ -127,7 +130,7 @@ class Store extends Component {
 
   }
   render () {
-    const { readonly } = this.state
+    const { readonly, visible } = this.state
     return (
       <>
         <ListPage
@@ -178,7 +181,7 @@ class Store extends Component {
             <div className='mb10'>
               <Button type='danger' onClick={() => APP.history.push('/fresh/store/-1')}>新建门店</Button>
               <Button style={{ marginRight: 8, marginLeft: 8 }} onClick={() => APP.history.push('/fresh/store/timer')}>批量上下架</Button>
-              <Button>修改邀请门店</Button>
+              <Button >修改邀请门店</Button>
             </div>
           )}
           namespace={NAME_SPACE}
@@ -186,6 +189,12 @@ class Store extends Component {
           api={getShopList}
           columns={this.columns}
         />
+         {visible && <UpdateStoreModal visible={visible} onOk={(data: any) => {
+           if (data) {
+             this.list.refresh()
+           }
+           this.setState({ visible: false })
+         }} onCancel={() => this.setState({ visible: false })} />}
       </>
     )
   }
