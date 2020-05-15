@@ -93,12 +93,18 @@ class AreaForm extends React.Component<Props, FormState> {
               name='instructorPhone'
             />
             <FormItem
+              required={false}
+              verifiable
               name='instructorRemark'
             />
             <FormItem
+              required={false}
+              verifiable
               name='selfPointAreaIds'
             />
             <FormItem
+              required={false}
+              verifiable
               name='selfPointIds'
             />
           </div>

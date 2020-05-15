@@ -26,6 +26,9 @@ export const defaultConfigForm: FieldsConfig = {
         rules: [{
           required: true,
           message: '请输入名称'
+        }, {
+          max: 20,
+          message: '长度最大20个字符'
         }]
       }
     },
@@ -35,6 +38,9 @@ export const defaultConfigForm: FieldsConfig = {
         rules: [{
           required: true,
           message: '请输入名称'
+        }, {
+          max: 20,
+          message: '长度最大20个字符'
         }]
       }
     },
@@ -46,8 +52,8 @@ export const defaultConfigForm: FieldsConfig = {
       label: '说明',
       fieldDecoratorOptions: {
         rules: [{
-          required: true,
-          message: '请输入说明'
+          max: 500,
+          message: '长度最大500个字符'
         }]
       }
     },
@@ -59,8 +65,11 @@ export const defaultConfigForm: FieldsConfig = {
       label: '绑定区域',
       fieldDecoratorOptions: {
         rules: [{
-          required: true,
-          message: '请输入绑定区域'
+          pattern: /^[0-9,]+$/,
+          message: '只能输入数字和英文逗号'
+        }, {
+          max: 500,
+          message: '长度最大500个字符'
         }]
       }
     },
@@ -72,8 +81,11 @@ export const defaultConfigForm: FieldsConfig = {
       label: '责任门店',
       fieldDecoratorOptions: {
         rules: [{
-          required: true,
-          message: '请输入责任门店'
+          pattern: /^[0-9,]+$/,
+          message: '只能输入数字和英文逗号'
+        }, {
+          max: 500,
+          message: '长度最大500个字符'
         }]
       }
     }

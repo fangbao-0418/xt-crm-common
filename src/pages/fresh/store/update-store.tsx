@@ -41,7 +41,8 @@ class UpdateStoreModal extends React.Component<Props, State> {
     this.props.form.validateFields(async (errors, values) => {
       if (!errors) {
         updateInvite({
-          name: values.name
+          selfMemberPhone: values.selfMemberPhone,
+          inviteMemberPhone: values.inviteMemberPhone
         }).then((data:any) => {
           if (this.props.onOk && data) {
             message.success('修改成功')

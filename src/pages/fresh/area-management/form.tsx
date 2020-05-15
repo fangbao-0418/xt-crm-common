@@ -42,6 +42,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
   }
   fetchData () {
     getDetail(this.id).then(res => {
+      res.districtIds=res.addressList
       this.setState({
         record: res || {},
         readonly: this.readonly
@@ -117,6 +118,8 @@ class AreaForm extends React.Component<Props, StoreFormState> {
               name='areaName'
             />
             <FormItem
+              required={false}
+              verifiable
               name='areaRemark'
             />
             <FormItem

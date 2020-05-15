@@ -92,7 +92,7 @@ export function getTimerList (payload: any) {
 }
 
 export function updateInvite (payload: any) {
-  return newGet('/point/update/invite', payload)
+  return newPost('/point/update/invite', payload)
 }
 /**
  * 开启自动上下架批次
