@@ -1,53 +1,70 @@
 import React from 'react'
-import { Card, Form, Input, Button, Checkbox, InputNumber, Row, Col, Modal } from 'antd'
+import { Card, Form, Input, Button, InputNumber, Row, Col, Modal, Tag } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { RouteComponentProps } from 'react-router'
+import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import ProductCategory from '../components/product-category'
 import BlacklistModal from '../components/blacklist-modal'
 import XtCheckBox from '../components/xt-check-box'
+import { StatusEnum, RefundTypeEnum, MemberTypeEnum } from '../config'
 import { refundAutoAdd, refundAutoUpdate, refundAutoDetail } from '../api'
+import { Detail } from '../interface'
+import { formatMoneyWithSign } from '../../../helper'
 
 const FormItem = Form.Item
 
-interface Props extends RouteComponentProps<{ id: string }>, FormComponentProps {}
+interface Props extends RouteComponentProps<{ id: string }>, FormComponentProps, AlertComponentProps {}
 
-class Main extends React.Component<Props> {
+interface State {
+  detail: Detail
+}
+
+class Main extends React.Component<Props, State> {
   blacklistModal: any
   id = this.props.match.params.id
+  state: State = {
+    detail: null as any
+  }
   componentDidMount () {
     if (!this.id) {
       return
     }
-    refundAutoDetail(this.id).then((res: any) => {
+    refundAutoDetail(this.id).then((res: Detail) => {
       if (!res) {
         return
       }
-      this.props.form.setFieldsValue({
-        disposeName: res.disposeName,
-        refundTypeS: res.refundTypeS,
-        levelIds: [
-          {
-            value: res.oneLevelId,
-            label: res.oneLevelName
-          },
-          {
-            value: res.twoLevelId,
-            label: res.twoLevelName
-          },
-          {
-            value: res.threeLevelId,
-            label: res.threeLevelName
-          }
-        ],
-        memberTypeS: res.memberTypeS,
-        refundMoney: res.refundMoney / 100
-      })
+      this.setState({
+        detail: res
+      }, () => {
+        if (res.status === StatusEnum['待启用']) {
+          this.props.form.setFieldsValue({
+            disposeName: res.disposeName,
+            refundTypeS: res.refundTypeS,
+            levelIds: [
+              {
+                value: res.oneLevelId,
+                label: res.oneLevelName
+              },
+              {
+                value: res.twoLevelId,
+                label: res.twoLevelName
+              },
+              {
+                value: res.threeLevelId,
+                label: res.threeLevelName
+              }
+            ],
+            memberTypeS: res.memberTypeS,
+            refundMoney: res.refundMoney / 100
+          })
 
-      if (res.blackListProductMsg && res.blackListProductMsg.length) {
-        this.blacklistModal.setFieldsValue({
-          productIds: res.blackListProductMsg.map((item: any) => item.productId).join('\n')
-        })
-      }
+          if (res.blackListProductMsg && res.blackListProductMsg.length) {
+            this.blacklistModal.setFieldsValue({
+              productIds: res.blackListProductMsg.map((item: any) => item.productId).join('\n')
+            })
+          }
+        }
+      })
     })
   }
 
@@ -104,6 +121,20 @@ class Main extends React.Component<Props> {
     }
   }
 
+  handleBlackDetail = () => {
+    const { detail } = this.state
+    if (detail.blackListProductMsg?.length) {
+      this.props.alert({
+        footer: null,
+        content: (
+          1344
+        )
+      })
+    } else {
+      APP.error('暂无配置')
+    }
+  }
+
   handleProductCategoryChange = () => {
     this.blacklistModal.setFieldsValue({
       productIds: ''
@@ -114,8 +145,7 @@ class Main extends React.Component<Props> {
     const {
       form: { getFieldDecorator, getFieldValue }
     } = this.props
-
-    const levelIds = getFieldValue('levelIds')
+    const { detail } = this.state
 
     const formItemLayout = {
       labelCol: {
@@ -134,6 +164,86 @@ class Main extends React.Component<Props> {
         sm: { span: 10, offset: 4 }
       }
     }
+
+    if (this.id) {
+
+      if (!detail) {
+        return (
+          <Card loading={true} />
+        )
+      }
+      if (detail.status !== StatusEnum['待启用']) {
+        return (
+          <Card
+            title={'配置详情'}
+            bordered={false}
+          >
+            <Form>
+              <FormItem {...formItemLayout} label='配置编号'>
+                {detail.serialNo}
+              </FormItem>
+              <FormItem {...formItemLayout} label='启用状态'>
+                {StatusEnum[detail.status]}
+              </FormItem>
+              <FormItem {...formItemLayout} label='创建时间'>
+                {APP.fn.formatDate(detail.createTime)}
+              </FormItem>
+              <FormItem {...formItemLayout} label='配置名称'>
+                {detail.disposeName}
+              </FormItem>
+              <FormItem {...formItemLayout} label='创建人'>
+                {detail.createUName || '-'} {detail.createUid}
+              </FormItem>
+              <FormItem {...formItemLayout} label='售后类型'>
+                {detail.refundTypeS.map((item: any, i: number) => (
+                  <Tag key={i}>{RefundTypeEnum[item]}</Tag>
+                ))}
+              </FormItem>
+              <FormItem
+                label='类目选择'
+                {...{
+                  labelCol: {
+                    xs: { span: 24 },
+                    sm: { span: 4 }
+                  },
+                  wrapperCol: {
+                    xs: { span: 24 },
+                    sm: { span: 12 }
+                  }
+                }}
+              >
+                <Row gutter={8}>
+                  <Col span={12}>
+                    {detail.oneLevelName}/{detail.twoLevelName}/{detail.threeLevelName}
+                  </Col>
+                  <Col span={12}>
+                    <Button
+                      type='link'
+                      onClick={this.handleBlackDetail}
+                      style={{ color: detail.blackListProductMsg?.length ? '#40a9ff' : '#999999' }}
+                    >
+                      商品黑名单
+                    </Button>
+                  </Col>
+                </Row>
+              </FormItem>
+              <FormItem {...formItemLayout} label='会员等级'>
+                {
+                  detail.memberTypeS.map((item: any, i: number) => (
+                    <Tag key={i}>{MemberTypeEnum[item]}</Tag>
+                  ))
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label='金额配置'>
+                {formatMoneyWithSign(detail.refundMoney)}
+              </FormItem>
+            </Form>
+          </Card>
+        )
+      }
+    }
+
+    const levelIds = getFieldValue('levelIds')
 
     return (
       <Card
@@ -154,40 +264,22 @@ class Main extends React.Component<Props> {
               ]
             })(
               <Input
+                maxLength={40}
                 placeholder='请输入'
               />
             )}
           </FormItem>
-          {/* <FormItem {...formItemLayout} label='aaaaa'>
-            {getFieldDecorator('aaaa', {
-              rules: [
-                {
-                  required: true,
-                  message: '请输入'
-                }
-              ]
-            })(
-              <XtCheckBox
-                options={[
-                  // { label: '全选', value: '' },
-                  { label: '退货退款', value: 10 },
-                  { label: '换货', value: 30 }
-                ]}
-              />
-            )}
-          </FormItem> */}
           <FormItem {...formItemLayout} label='售后类型选择'>
             {getFieldDecorator('refundTypeS', {
               rules: [
                 {
                   required: true,
-                  message: '请输入'
+                  message: '请选择'
                 }
               ]
             })(
-              <Checkbox.Group
+              <XtCheckBox
                 options={[
-                  // { label: '全选', value: '' },
                   { label: '退货退款', value: 10 },
                   { label: '换货', value: 30 }
                 ]}
@@ -234,19 +326,7 @@ class Main extends React.Component<Props> {
               </Col>
             </Row>
           </FormItem>
-          <FormItem
-            {...{
-              labelCol: {
-                xs: { span: 24 },
-                sm: { span: 4 }
-              },
-              wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 12 }
-              }
-            }}
-            label='会员等级'
-          >
+          <FormItem {...formItemLayout} label='会员等级'>
             {getFieldDecorator('memberTypeS', {
               rules: [
                 {
@@ -255,9 +335,8 @@ class Main extends React.Component<Props> {
                 }
               ]
             })(
-              <Checkbox.Group
+              <XtCheckBox
                 options={[
-                  // { label: '全选', value: '' },
                   { label: '普通会员', value: 0 },
                   { label: '团长', value: 10 },
                   { label: '社区管理员', value: 20 },
@@ -303,4 +382,4 @@ class Main extends React.Component<Props> {
   }
 }
 
-export default Form.create()(Main)
+export default Form.create()(Alert(Main))
