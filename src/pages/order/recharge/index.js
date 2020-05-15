@@ -31,15 +31,15 @@ class Recharge extends Component {
   }
   export () {
     const payload = APP.fn.getPayload(namespace) || {}
-    if (this.payload.creatdeTime&&this.payload.creatdeTime.length>0) {
-      this.payload.createTimeBegin= this.payload.creatdeTime[0].format(timeFormat),
-      this.payload.createTimeEnd= this.payload.creatdeTime[1].format(timeFormat),
-      delete this.payload.creatdeTime
+    if (this.payload.createdTime&&this.payload.createdTime.length>0) {
+      this.payload.createTimeBegin= moment(this.payload.createdTime[0]).valueOf()
+      this.payload.createTimeEnd= moment(this.payload.createdTime[1]).valueOf()
+      delete this.payload.createdTime
 
     }
     if (this.payload.finishTime&&this.payload.finishTime.length>0) {
-      this.payload.finishTimeBegin= this.payload.finishTime[0].format(timeFormat),
-      this.payload.finishTimeEnd= this.payload.finishTime[1].format(timeFormat),
+      this.payload.finishTimeBegin= moment(this.payload.finishTime[0]).valueOf()
+      this.payload.finishTimeEnd= moment(this.payload.finishTime[1]).valueOf()
       delete this.payload.finishTime
     }
     rechargeExport({
@@ -55,14 +55,14 @@ class Recharge extends Component {
       page: this.payload.page,
       pageSize: this.payload.pageSize
     })
-    if (this.payload.creatdeTime&&this.payload.creatdeTime.length>0) {
-      this.payload.createTimeBegin= this.payload.creatdeTime[0].format(timeFormat)
-      this.payload.createTimeEnd= this.payload.creatdeTime[1].format(timeFormat)
-      delete this.payload.creatdeTime
+    if (this.payload.createdTime&&this.payload.createdTime.length>0) {
+      this.payload.createTimeBegin= moment(this.payload.createdTime[0]).valueOf()
+      this.payload.createTimeEnd= moment(this.payload.createdTime[1]).valueOf()
+      delete this.payload.createdTime
     }
     if (this.payload.finishTime&&this.payload.finishTime.length>0) {
-      this.payload.finishTimeBegin= this.payload.finishTime[0].format(timeFormat)
-      this.payload.finishTimeEnd= this.payload.finishTime[1].format(timeFormat)
+      this.payload.finishTimeBegin= moment(this.payload.finishTime[0]).valueOf()
+      this.payload.finishTimeEnd= moment(this.payload.finishTime[1]).valueOf()
       delete this.payload.finishTime
     }
     rechargeList({
