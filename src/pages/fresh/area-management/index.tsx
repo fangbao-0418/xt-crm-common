@@ -1,6 +1,6 @@
 import React from 'react'
 import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components'
-import { getPages, effectProduct, invalidProduct } from './api'
+import { getPages, invalidProduct } from './api'
 // import { getCategoryTopList } from './api';
 import { defaultConfig } from './config'
 import { Modal, Button, Popconfirm } from 'antd'

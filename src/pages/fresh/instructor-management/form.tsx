@@ -4,7 +4,7 @@ import { Card, Button } from 'antd'
 import { NAME_SPACE, defaultConfigForm } from './config'
 import { FormInstance } from '@/packages/common/components/form'
 import If from '@/packages/common/components/if'
-import { addShop, updateShop, getShopDetail } from './api'
+import { addUpdateArea, getShopDetail } from './api'
 import { RouteComponentProps } from 'react-router'
 import { parseQuery } from '@/util/utils'
 import { RecordProps } from './interface'
@@ -43,7 +43,10 @@ class AreaForm extends React.Component<Props, FormState> {
     this.form.props.form.validateFields((err, vals) => {
       if (!err) {
         const isAdd = this.id === '-1'
-        const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id })
+        if (!isAdd) {
+          vals.id=this.id
+        }
+        const promiseResult = addUpdateArea(vals)
         promiseResult.then((res: any) => {
           if (res) {
             APP.history.push('/fresh/instructor')

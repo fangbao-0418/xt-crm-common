@@ -24,6 +24,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState> {
     checkedKeys: []
   }
   treeCheckBox: TreeCheckBox
+  disabledDatas: string[] | undefined
   componentDidMount () {
     if (this.treeCheckBox) {
       const treeData = this.treeCheckBox.getTreeData(this.props.value) || []
@@ -34,6 +35,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState> {
     }
   }
   componentWillReceiveProps (props: SaleAreaProps) {
+    this.disabledDatas=props.disabledDatas
     const treeData = this.treeCheckBox.getTreeData(props.value) || []
     this.setState({
       text: treeData.map(v => `${v.name}（${v.children.length}）`).join('、'),
@@ -44,7 +46,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState> {
     this.treeCheckBox = ref
   }
   render () {
-    const { title, disabledDatas }=this.props
+    const { title }=this.props
     const { visible, text, checkedKeys } = this.state
     return (
       <>
@@ -91,7 +93,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState> {
           </span>
         </If>
         <TreeCheckBox
-          disabledDatas={disabledDatas||[]}
+          disabledDatas={this.disabledDatas||[]}
           ref={this.saveRef}
           title='选择区域'
           api={getAddress}

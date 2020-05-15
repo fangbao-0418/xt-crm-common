@@ -64,6 +64,7 @@ export const defaultConfigForm: FieldsConfig = {
     },
     limitCommonNum: {
       label: '普通团长招募上限',
+      type: 'number',
       controlProps: {
         precision: 0,
         min: 0,
@@ -79,6 +80,7 @@ export const defaultConfigForm: FieldsConfig = {
     },
     limitSuperiorNum: {
       label: '精英团长招募上限',
+      type: 'number',
       controlProps: {
         precision: 0,
         min: 0,
@@ -93,10 +95,17 @@ export const defaultConfigForm: FieldsConfig = {
       }
     },
     answerUrl: {
-      label: '试题链接'
+      label: '试题链接',
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请输入试题链接'
+        }]
+      }
     },
     limitInstructorNum: {
       label: '指导员招募上限',
+      type: 'number',
       controlProps: {
         precision: 0,
         min: 0,
