@@ -133,7 +133,8 @@ class Main extends React.Component<Props, SkuSaleListState> {
             <span
               className='href'
               onClick={() => {
-                gotoPage(`/goods/sku-sale/${record.id}`)
+                const url = [50, 51].includes(record.type) ?`/goods/virtual/${record.id}` : `/goods/sku-sale/${record.id}`
+                APP.open(url)
               }}
             >
               编辑

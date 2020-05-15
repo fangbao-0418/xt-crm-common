@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from '@/components/page'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import { Button, InputNumber } from 'antd'
+import { Button, InputNumber, Popconfirm } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { RecordProps } from './interface'
 import { getFieldsConfig } from './config'
@@ -30,6 +30,7 @@ class Main extends React.Component<{}, State> {
     },
     { title: '规格', dataIndex: 'propertyValue' },
     { title: '成本价', dataIndex: 'costPrice', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
+    { title: '市场价', dataIndex: 'marketPrice', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
     { title: '销售价', dataIndex: 'salePrice', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
     {
       title: '排序',
@@ -84,12 +85,13 @@ class Main extends React.Component<{}, State> {
       }
     })
     api.saveGoodsConfig(payload).then(() => {
+      APP.success('操作成功')
       this.fetchData()
     })
   }
   public refresh = () => {
     api.refreshGoods().then(() => {
-      //
+      APP.success('操作成功')
     })
   }
   public render () {
@@ -135,13 +137,17 @@ class Main extends React.Component<{}, State> {
           }}
         />
         <div className='mt20'>
-          <Button
-            onClick={this.save}
-            className='mr8'
-            type='primary'
+          <Popconfirm
+            title='确认是否保存并发布'
+            onConfirm={this.save}
           >
-            保存并发布
-          </Button>
+            <Button
+              className='mr8'
+              type='primary'
+            >
+              保存并发布
+            </Button>
+          </Popconfirm>
           <Button
             type='primary'
             onClick={this.refresh}
