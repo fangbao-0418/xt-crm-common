@@ -27,19 +27,6 @@ function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields },
   const [records, setRecords] = useState([])
   const [info, setInfo] = useState(null)
   const [visible, setVisible] = useState(false)
-  const fetchData = async () => {
-    const data = getFieldsValue()
-    const res = await getCouponlist({
-      ...pagination,
-      ...data
-    }) || {}
-    setRecords(res.records || [])
-    setPagination({
-      ...pagination,
-      page: res.current,
-      total: res.total
-    })
-  }
   const setModalVisible = async ({ visible, id }) => {
     const info = await getCouponDetail(id)
     setInfo(info)
@@ -47,7 +34,6 @@ function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields },
   }
   useEffect(() => {
     console.log('pagination变了=>', pagination.page, pagination.pageSize)
-    fetchData()
     emitter.addListener('couponFresh.list.setVisible', setModalVisible)
     emitter.addListener('couponFresh.list.fetchData', ()=>listRef.list.refresh())
     return () => {
