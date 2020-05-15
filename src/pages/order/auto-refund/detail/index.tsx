@@ -67,7 +67,7 @@ class Main extends React.Component<Props> {
         twoLevelName: levelIds[1].label,
         threeLevelId: levelIds[2].value,
         threeLevelName: levelIds[2].label,
-        blackListProductIdS: this.blacklistModal.state.productIds.map((item: any) => item.val)
+        blackListProductIdS: this.blacklistModal.state.productIds.filter((item: any) => !item.err).map((item: any) => item.val)
       }
       let fn
       let msg: string = ''

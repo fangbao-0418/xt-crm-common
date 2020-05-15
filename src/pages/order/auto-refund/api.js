@@ -1,4 +1,4 @@
-import { get, newPut, newPost } from '@/util/fetch'
+import { get, newPut, newPost } from '@/util/app/http'
 
 /* 获取类目 */
 export function getCategoryList (data) {
