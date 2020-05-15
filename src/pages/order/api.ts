@@ -270,9 +270,9 @@ export function modifyAddress (data: any) {
 }
 //充值单列表
 export function rechargeList (data: any) {
-  return post('/mcweb/trade/orderRechargeDetail/list', data)
+  return newPost('/mcweb/trade/orderRechargeDetail/list', data)
 }
 //充值单导出
 export function rechargeExport (data: any) {
-  return post('/mcweb/trade/orderRechargeDetail/export', data)
+  return newPost('/mcweb/trade/orderRechargeDetail/export', data)
 }
