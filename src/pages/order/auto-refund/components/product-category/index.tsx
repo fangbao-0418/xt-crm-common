@@ -70,6 +70,7 @@ class ProductCategory extends React.Component<ProductCategoryProps, ProductCateg
         options={categoryList}
         value={val}
         onChange={this.onChange}
+        changeOnSelect
       />
     )
   }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Form, Input, Button, InputNumber, Row, Col, Modal, Tag } from 'antd'
+import { Card, Form, Input, Button, InputNumber, Row, Col, Modal, Tag, List } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { RouteComponentProps } from 'react-router'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
@@ -37,23 +37,30 @@ class Main extends React.Component<Props, State> {
         detail: res
       }, () => {
         if (res.status === StatusEnum['待启用']) {
+          const levelIds = [
+            {
+              value: res.oneLevelId,
+              label: res.oneLevelName
+            }
+          ]
+
+          if (res.twoLevelId) {
+            levelIds[1] = {
+              value: res.twoLevelId,
+              label: res.twoLevelName
+            }
+          }
+
+          if (res.threeLevelId) {
+            levelIds[1] = {
+              value: res.threeLevelId,
+              label: res.threeLevelName
+            }
+          }
           this.props.form.setFieldsValue({
             disposeName: res.disposeName,
             refundTypeS: res.refundTypeS,
-            levelIds: [
-              {
-                value: res.oneLevelId,
-                label: res.oneLevelName
-              },
-              {
-                value: res.twoLevelId,
-                label: res.twoLevelName
-              },
-              {
-                value: res.threeLevelId,
-                label: res.threeLevelName
-              }
-            ],
+            levelIds,
             memberTypeS: res.memberTypeS,
             refundMoney: res.refundMoney / 100
           })
@@ -80,10 +87,10 @@ class Main extends React.Component<Props, State> {
         refundMoney: refundMoney * 10 * 10,
         oneLevelId: levelIds[0].value,
         oneLevelName: levelIds[0].label,
-        twoLevelId: levelIds[1].value,
-        twoLevelName: levelIds[1].label,
-        threeLevelId: levelIds[2].value,
-        threeLevelName: levelIds[2].label,
+        twoLevelId: levelIds[1]?.value,
+        twoLevelName: levelIds[1]?.label,
+        threeLevelId: levelIds[2]?.value,
+        threeLevelName: levelIds[2]?.label,
         blackListProductIdS: this.blacklistModal.state.productIds.filter((item: any) => !item.err).map((item: any) => item.val)
       }
       let fn
@@ -126,8 +133,15 @@ class Main extends React.Component<Props, State> {
     if (detail.blackListProductMsg?.length) {
       this.props.alert({
         footer: null,
+        title: '黑名单商品',
         content: (
-          1344
+          <List
+            size='small'
+            dataSource={detail.blackListProductMsg}
+            renderItem={item => (
+              <List.Item>{item.productId} - {item.productName}</List.Item>
+            )}
+          />
         )
       })
     } else {

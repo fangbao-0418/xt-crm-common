@@ -41,7 +41,9 @@ class Main extends React.Component<Props> {
       productIds = productIds.split(/\n/g).map((item: string) => +item)
       checkCategory({
         productIds,
-        thirdCategoryId: levelIds[levelIds.length - 1].value
+        firstCategoryId: levelIds[0]?.value,
+        secondCategoryId: levelIds[1]?.value,
+        thirdCategoryId: levelIds[2]?.value
       }).then((res: any) => {
         if (!res) {
           return
