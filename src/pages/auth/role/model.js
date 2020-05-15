@@ -1,6 +1,12 @@
-import { Message } from 'antd';
-import { arrToTree } from '@/util/utils';
-import * as api from './api';
+/*
+ * @Date: 2020-03-16 14:01:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-05-09 17:20:24
+ * @FilePath: /xt-crm/src/pages/auth/role/model.js
+ */
+import { Message } from 'antd'
+import { arrToTree } from '@/util/utils'
+import * as api from './api'
 
 export default {
   namespace: 'auth.role',
@@ -11,14 +17,14 @@ export default {
     currentRoleInfo: {} //当前被编辑的角色
   },
   effects: dispatch => ({
-    async getMenuList(_, state) {
-      const res = await api.getMenuList();
+    async getMenuList (_, state) {
+      const res = await api.getMenuList()
       dispatch({
         type: 'auth.role/saveDefault',
         payload: {
           menuList: Array.isArray(res) ? arrToTree(res) : []
         }
-      });
+      })
     },
     async getRoleList(payload) {
       const roleConfig = await api.getRoleList(payload);
@@ -30,7 +36,7 @@ export default {
       });
     },
     async getRoleInfo(payload, state, callback) {
-      const data = await api.getRoleInfo({ ids: [payload.id] });
+      const data = await api.getRoleInfo({ ids: [payload?.id] });
       const currentRoleInfo = {
         ...payload,
         data: Array.isArray(data) ? data : []
@@ -42,13 +48,14 @@ export default {
       const params = {
         // roleDesc: payload.roleDesc,
         roleName: payload.roleName
-      };
-      const res = await api.addRole(params);
-      if (res.id) {
+      }
+      const res = await api.addRole(params)
+      // console.log(res, 'res')
+      if (res?.id) {
         const res2 = await api.addPermisson({
           roleId: res.id,
           menuIds: payload.menuIds
-        });
+        })
         if (res2 === true) {
           Message.success('新增成功!');
           dispatch['auth.role'].getRoleList({

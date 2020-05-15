@@ -269,11 +269,17 @@ class Main extends React.Component<Props, State> {
           return this.speedyInput('marketPrice', text, record, index, dataSource, cb, {
             rules: [
               {
-                required: true,
-                message: '请输入市场价'
+                validator: (rule, value, cb) => {
+                  if (!value) {
+                    cb('请输入市场价')
+                  } else if (value < 0.01) {
+                    cb('不能小于0.01')
+                  }
+                  cb()
+                }
               }
             ]
-          })(<InputMoney min={0.01} precision={2} placeholder="请输入市场价" />);
+          })(<InputMoney precision={2} placeholder="请输入市场价" />);
         }
       },
       {
@@ -284,13 +290,18 @@ class Main extends React.Component<Props, State> {
           this.speedyInput('costPrice', text, record, index, dataSource, cb, {
             rules: [
               {
-                required: true,
-                message: '请输入成本价'
+                validator: (rule, value, cb) => {
+                  if (!value) {
+                    cb('请输入成本价')
+                  } else if (value < 0.01) {
+                    cb('不能小于0.01')
+                  }
+                  cb()
+                }
               }
             ]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder="请输入成本价"
               onBlur={() => validateColumnsFields(index)}
@@ -338,7 +349,9 @@ class Main extends React.Component<Props, State> {
               {
                 validator: (rule, value, cb) => {
                   if (!value) {
-                    cb('请输入销售价');
+                    cb('请输入销售价')
+                  } else if (value < 0.01) {
+                    cb('不能小于0.01')
                   } else if (record.costPrice && value <= record.costPrice) {
                     cb({
                       message: '应高于成本价',
@@ -364,7 +377,6 @@ class Main extends React.Component<Props, State> {
             ]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder="请输入销售价"
               onBlur={() => validateColumnsFields(index)}
@@ -381,7 +393,9 @@ class Main extends React.Component<Props, State> {
               {
                 validator: (rule, value, cb) => {
                   if (!value) {
-                    cb('请输入团长价');
+                    cb('请输入团长价')
+                  } else if (value < 0.01) {
+                    cb('不能小于0.01')
                   } else if (record.costPrice && value <= record.costPrice) {
                     cb({
                       message: '应高于成本价',
@@ -416,7 +430,6 @@ class Main extends React.Component<Props, State> {
             ]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder="请输入团长价"
               onBlur={() => validateColumnsFields(index)}
@@ -433,7 +446,9 @@ class Main extends React.Component<Props, State> {
               {
                 validator: (rule, value, cb) => {
                   if (!value) {
-                    cb('请输入区长价');
+                    cb('请输入区长价')
+                  } else if (value < 0.01) {
+                    cb('不能小于0.01')
                   } else if (record.costPrice && value <= record.costPrice) {
                     cb({
                       message: '应高于成本价',
@@ -468,7 +483,6 @@ class Main extends React.Component<Props, State> {
             ]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder="请输入区长价"
               onBlur={() => validateColumnsFields(index)}
@@ -486,6 +500,8 @@ class Main extends React.Component<Props, State> {
                 validator: (rule, value, cb) => {
                   if (!value) {
                     cb('请输入合伙人价');
+                  } else if (value < 0.01) {
+                    cb('不能小于0.01')
                   } else if (record.costPrice && value <= record.costPrice) {
                     cb({
                       message: '应高于成本价',
@@ -520,7 +536,6 @@ class Main extends React.Component<Props, State> {
             ]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder="请输入合伙人价"
               onBlur={() => validateColumnsFields(index)}
@@ -537,7 +552,9 @@ class Main extends React.Component<Props, State> {
               {
                 validator: (rule, value, cb) => {
                   if (!value) {
-                    cb('请输入管理员价');
+                    cb('请输入管理员价')
+                  } else if (value < 0.01) {
+                    cb('不能小于0.01')
                   } else if (record.costPrice && value <= record.costPrice) {
                     cb({
                       message: '应高于成本价',
@@ -572,7 +589,6 @@ class Main extends React.Component<Props, State> {
             ]
           })(
             <InputMoney
-              min={0.01}
               precision={2}
               placeholder="请输入管理员价"
               onBlur={() => validateColumnsFields(index)}
@@ -1226,7 +1242,6 @@ class Main extends React.Component<Props, State> {
             if (deliveryMode !== 1) {
               return null
             }
-            console.log(record.productBasics, 'record.productBasicsrecord.productBasics')
             return (
               <Table
                 loading={record.loading}

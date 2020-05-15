@@ -7,8 +7,10 @@ import { Button } from 'antd'
 import MoneyRender from '@/components/money-render'
 import { formatDate } from '@/pages/helper'
 
+export const namespace = 'refundOrder'
+
 export const refundStatusOptions: any = {
-  ALL: [
+  ALL: [ // 所有售后订单
     { key: '', val: '全部' },
     { key: 10, val: '待审核' },
     { key: 20, val: '待用户发货' },
@@ -21,8 +23,8 @@ export const refundStatusOptions: any = {
     { key: 30, val: '售后完成' },
     { key: 40, val: '售后关闭' }
   ],
-  WAITCONFIRM: [{ key: 10, val: '待审核' }],
-  OPERATING: [
+  WAITCONFIRM: [{ key: 10, val: '待审核' }], // 待审核
+  OPERATING: [ // 处理中
     { key: '', val: '全部' },
     { key: 20, val: '待用户发货' },
     { key: 21, val: '退款失败' },
@@ -32,8 +34,8 @@ export const refundStatusOptions: any = {
     { key: 26, val: '待用户收货' },
     { key: 27, val: '等待客服跟进' }
   ],
-  COMPLETE: [{ key: 30, val: '售后完成' }],
-  REJECTED: [{ key: 40, val: '售后关闭' }]
+  COMPLETE: [{ key: 30, val: '售后完成' }], // 已完成
+  REJECTED: [{ key: 40, val: '售后关闭' }] // 已关闭
 }
 
 export const typeMapRefundStatus = {
@@ -48,17 +50,18 @@ export const formFields = function (
   refundStatus: any,
   intercept: any
 ) {
-  let options = refundStatusOptions[refundStatus]
-  let selectRefundStatus =
-    options.length > 1
+  const options = refundStatusOptions[refundStatus]
+  const selectRefundStatus
+    = options.length > 1
       ? [
-          {
-            type: 'select',
-            id: 'refundStatus',
-            label: '售后单状态',
-            options: options
-          }
-        ]
+        {
+          type: 'select',
+          id: 'refundStatus',
+          label: '售后单状态',
+          options: options,
+          initialValue: ['ALL'].includes(refundStatus) ? '' : undefined
+        }
+      ]
       : []
   return [
     {
@@ -75,7 +78,8 @@ export const formFields = function (
       type: 'select',
       id: 'refundType',
       label: '售后类型',
-      options: refundType.getArray('all')
+      options: refundType.getArray('all'),
+      initialValue: ''
     },
     {
       type: 'input',
@@ -110,7 +114,8 @@ export const formFields = function (
       type: 'select',
       id: 'createType',
       label: '申请人类型',
-      options: createType.getArray('all')
+      options: createType.getArray('all'),
+      initialValue: ''
     },
     {
       type: 'date',
@@ -145,7 +150,8 @@ export const formFields = function (
         .map((item) => ({
           val: item.label,
           key: item.value
-        }))
+        })),
+      initialValue: undefined
     },
     {
       type: 'select',
@@ -164,7 +170,8 @@ export const formFields = function (
           val: '非拦截订单',
           key: '0'
         }
-      ]
+      ],
+      initialValue: ''
     },
     {
       type: 'input',
@@ -196,7 +203,8 @@ export const formFields = function (
           val: '保税仓海外供应商',
           key: 4
         }
-      ]
+      ],
+      initialValue: undefined
     },
     {
       type: 'select',
@@ -211,12 +219,13 @@ export const formFields = function (
           val: '小店订单',
           key: 1
         }
-      ]
+      ],
+      initialValue: ''
     }
   ].filter((item: any) => {
     return intercept
-      ? item.id !== 'interception' &&
-        item.id !== 'interceptionMemberPhone'
+      ? item.id !== 'interception'
+        && item.id !== 'interceptionMemberPhone'
       : true
   })
 }
