@@ -245,7 +245,8 @@ export default class extends React.Component {
       interception: payload.interception || options.find(item => item.id === 'interception')?.initialValue,
       interceptionMemberPhone: payload.interceptionMemberPhone,
       storeType: payload.storeType || options.find(item => item.id === 'storeType')?.initialValue,
-      smallShopOrder: payload.smallShopOrder || options.find(item => item.id === 'smallShopOrder')?.initialValue
+      smallShopOrder: payload.smallShopOrder || options.find(item => item.id === 'smallShopOrder')?.initialValue,
+      autoAudit: payload.autoAudit || options.find(item => item.id === 'autoAudit')?.initialValue
     }
     const refundStatusOptionsOptions = refundStatusOptions[type]
     if (refundStatusOptionsOptions.length > 1 && (payload.refundStatus?.length)) {
