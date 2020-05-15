@@ -251,6 +251,16 @@ class Main extends React.Component<Props, State> {
               <FormItem {...formItemLayout} label='金额配置'>
                 {formatMoneyWithSign(detail.refundMoney)}
               </FormItem>
+              <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+                <Button
+                  type='primary'
+                  onClick={() => {
+                    APP.history.push('/order/autoRefundRule')
+                  }}
+                >
+                  返回
+                </Button>
+              </FormItem>
             </Form>
           </Card>
         )
@@ -370,6 +380,7 @@ class Main extends React.Component<Props, State> {
               ]
             })(
               <InputNumber
+                precision={2}
                 placeholder='请输入'
               />
             )}
