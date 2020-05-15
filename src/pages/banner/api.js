@@ -48,7 +48,7 @@ export function addBanner(data) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return post('/banner/add', data);
+  return newPost('/banner/add', data);
 }
 
 export function updateBanner(data) {
