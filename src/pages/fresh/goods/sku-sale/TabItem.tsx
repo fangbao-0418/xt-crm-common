@@ -17,7 +17,6 @@ import { If, ListPage, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import { defaultConfig } from './config'
-import TabItem from './TabItem'
 const { TabPane } = Tabs
 
 interface SkuSaleListState {
@@ -268,6 +267,78 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
           <TabPane tab='出售中' key='0' />
           <TabPane tab='仓库中' key='1' />
         </Tabs>
+        <ListPage
+          reserveKey='freshSku'
+          namespace='freshSku'
+          className='vertical-align-table'
+          formConfig={defaultConfig}
+          getInstance={(ref) => (this.list = ref)}
+          processPayload={(payload) => {
+            console.log('payload =>', payload)
+            return {
+              ...payload,
+              status: this.state.status
+            }
+          }}
+          rangeMap={{
+            goodsTime: {
+              fields: ['createStartTime', 'createEndTime']
+            },
+            optionTime: {
+              fields: ['modifyStartTime', 'modifyEndTime']
+            }
+          }}
+          formItemLayout={
+            <>
+              <Row>
+                <FormItem name='productName' />
+                <FormItem name='productId' />
+                <FormItem
+                  label='供应商'
+                  inner={(form) => {
+                    return form.getFieldDecorator('storeId')(
+                      <SuppilerSelect type='fresh' style={{ width: 172 }} />
+                    )
+                  }}
+                />
+              </Row>
+              <Row>
+                <FormItem
+                  label='一级类目'
+                  inner={(form) => {
+                    return form.getFieldDecorator('firstCategoryId')(
+                      <SelectFetch
+                        style={{ width: 172 }}
+                        fetchData={getCategoryTopList}
+                      />
+                    )
+                  }}
+                />
+                <FormItem name='goodsTime' />
+              </Row>
+              <FormItem name='optionTime' />
+            </>
+          }
+          addonAfterSearch={
+            <>
+              <Button type='primary' className='mr10' onClick={this.export}>
+                导出商品
+              </Button>
+              <Button
+                className='mr10'
+                type='primary'
+                onClick={() => {
+                  APP.history.push('/fresh/goods/sku-sale/-1')
+                }}
+              >
+                添加商品
+              </Button>
+            </>
+          }
+          api={getGoodsList}
+          columns={this.columns}
+          tableProps={tableProps}
+        />
       </Card>
     )
   }

@@ -1,12 +1,12 @@
 /*
  * @Date: 2020-03-06 10:18:13
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-15 10:22:10
+ * @LastEditTime: 2020-05-15 14:03:09
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/goods/api.js
  */
 
 import { formResponse, formRequest } from './sku-sale/adapter'
-import { exportFile, newGet } from '@/util/fetch'
+import { exportFileStream, newGet } from '@/util/fetch'
 import { omit } from 'lodash'
 const { post, get, put, newPost, newPut } = APP.http
 export function getStoreList (data, config) {
@@ -48,8 +48,16 @@ export function enableGoods (data) {
   return post('/product/fresh/enable', {}, { data, headers: {} })
 }
 
+/**
+ * 导出再售商品
+ * @param {*} data
+ */
 export function exportFileList (data) {
-  return exportFile('/mcweb/product/fresh/export', data)
+  return exportFileStream('/mcweb/product/fresh/export', data, '商品导出.xlsx', {
+    method: 'get',
+    data: undefined,
+    params: data
+  })
 }
 
 export function getCategoryList () {
