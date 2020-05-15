@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, Tabs, Button, Modal, message, Row } from 'antd'
 import dateFns from 'date-fns'
+import { ColumnProps } from 'antd/lib/table'
 import {
   getGoodsList,
   delGoodsDisable,
@@ -17,20 +18,25 @@ import { If, ListPage, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import { defaultConfig } from './config'
-const { TabPane } = Tabs
+import { GoodsSpuItem } from './interface'
 
 interface SkuSaleListState {
-  selectedRowKeys: string[] | number[];
-  status: number;
+  selectedRowKeys: string[] | number[]
 }
 
-class SkuSaleList extends React.Component<any, SkuSaleListState> {
+/** 0-出售中, 1-仓库中 */
+export type StatusType = '0' | '1'
+
+interface Props {
+  status: StatusType
+}
+
+class SkuSaleList extends React.Component<Props, SkuSaleListState> {
   state: SkuSaleListState = {
-    selectedRowKeys: [],
-    status: 0
+    selectedRowKeys: []
   };
   list: ListPageInstanceProps;
-  columns = [
+  columns: ColumnProps<GoodsSpuItem>[] = [
     {
       title: '商品ID',
       width: 120,
@@ -40,7 +46,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       title: '商品主图',
       dataIndex: 'coverUrl',
       width: 120,
-      render: (record: any) => (
+      render: (record) => (
         <Image
           style={{
             height: 100,
@@ -93,7 +99,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       title: '创建时间',
       dataIndex: 'createTime',
       width: 200,
-      render: (record: any) => (
+      render: (record) => (
         <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
       )
     },
@@ -101,7 +107,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       title: '最后操作时间',
       dataIndex: 'modifyTime',
       width: 200,
-      render: (record: any) => (
+      render: (record) => (
         <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
       )
     },
@@ -110,16 +116,16 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       fixed: 'right',
       align: 'center',
       width: 180,
-      render: (record: any) => {
-        const { status } = this.state
+      render: (text, record) => {
+        const { status } = this.props
         return (
           <div>
-            <If condition={status === 0 && record.top === 0}>
+            <If condition={status === '0' && record.top === 0}>
               <span className='href' onClick={this.up.bind(this, record.id)}>
                 置顶
               </span>
             </If>
-            <If condition={status === 0 && record.top === 1}>
+            <If condition={status === '0' && record.top === 1}>
               <span
                 className='href'
                 onClick={this.cancelUp.bind(this, record.id)}
@@ -135,7 +141,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
             >
               编辑
             </span>
-            <If condition={status === 0}>
+            <If condition={status === '0'}>
               <span
                 className='href ml10'
                 onClick={() => this.lower([record.id])}
@@ -143,7 +149,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
                 下架
               </span>
             </If>
-            <If condition={status === 1}>
+            <If condition={status === '1'}>
               <span
                 className='href ml10'
                 onClick={() => this.upper([record.id])}
@@ -193,7 +199,7 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
   export = () => {
     exportFileList({
       ...this.list.payload,
-      status: this.state.status
+      status: +this.props.status
       // pageSize: 6000,
       // page: 1
     })
@@ -207,141 +213,6 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       selectedRowKeys
     })
   };
-
-  // 切换tabPane
-  handleChange = (key: string) => {
-    this.setState(
-      {
-        status: +key
-      },
-      () => {
-        this.list.refresh()
-      }
-    )
-  };
-  render () {
-    const { selectedRowKeys } = this.state
-    const hasSelected
-      = Array.isArray(selectedRowKeys) && selectedRowKeys.length > 0
-    const { status } = this.state
-    const tableProps: any = {
-      scroll: {
-        x: true
-      },
-      rowSelection: {
-        selectedRowKeys,
-        onChange: this.onSelectChange
-      }
-    }
-    if ([1, 0].includes(status)) {
-      tableProps.footer = () => (
-        <>
-          <If condition={status === 1}>
-            <Button
-              type='danger'
-              onClick={() => {
-                this.upper(selectedRowKeys)
-              }}
-              disabled={!hasSelected}
-            >
-              批量上架
-            </Button>
-          </If>
-          <If condition={status === 0}>
-            <Button
-              type='danger'
-              onClick={() => {
-                this.lower(selectedRowKeys)
-              }}
-              disabled={!hasSelected}
-            >
-              批量下架
-            </Button>
-          </If>
-        </>
-      )
-    }
-    return (
-      <Card>
-        <Tabs defaultActiveKey='0' onChange={this.handleChange}>
-          <TabPane tab='出售中' key='0' />
-          <TabPane tab='仓库中' key='1' />
-        </Tabs>
-        <ListPage
-          reserveKey='freshSku'
-          namespace='freshSku'
-          className='vertical-align-table'
-          formConfig={defaultConfig}
-          getInstance={(ref) => (this.list = ref)}
-          processPayload={(payload) => {
-            console.log('payload =>', payload)
-            return {
-              ...payload,
-              status: this.state.status
-            }
-          }}
-          rangeMap={{
-            goodsTime: {
-              fields: ['createStartTime', 'createEndTime']
-            },
-            optionTime: {
-              fields: ['modifyStartTime', 'modifyEndTime']
-            }
-          }}
-          formItemLayout={
-            <>
-              <Row>
-                <FormItem name='productName' />
-                <FormItem name='productId' />
-                <FormItem
-                  label='供应商'
-                  inner={(form) => {
-                    return form.getFieldDecorator('storeId')(
-                      <SuppilerSelect type='fresh' style={{ width: 172 }} />
-                    )
-                  }}
-                />
-              </Row>
-              <Row>
-                <FormItem
-                  label='一级类目'
-                  inner={(form) => {
-                    return form.getFieldDecorator('firstCategoryId')(
-                      <SelectFetch
-                        style={{ width: 172 }}
-                        fetchData={getCategoryTopList}
-                      />
-                    )
-                  }}
-                />
-                <FormItem name='goodsTime' />
-              </Row>
-              <FormItem name='optionTime' />
-            </>
-          }
-          addonAfterSearch={
-            <>
-              <Button type='primary' className='mr10' onClick={this.export}>
-                导出商品
-              </Button>
-              <Button
-                className='mr10'
-                type='primary'
-                onClick={() => {
-                  APP.history.push('/fresh/goods/sku-sale/-1')
-                }}
-              >
-                添加商品
-              </Button>
-            </>
-          }
-          api={getGoodsList}
-          columns={this.columns}
-          tableProps={tableProps}
-        />
-      </Card>
-    )
-  }
 
   // 置顶事件
   up = (id: string) => {
@@ -362,6 +233,126 @@ class SkuSaleList extends React.Component<any, SkuSaleListState> {
       }
     })
   };
+
+  render () {
+    const { selectedRowKeys } = this.state
+    const hasSelected = Array.isArray(selectedRowKeys) && selectedRowKeys.length > 0
+    const { status } = this.props
+    const tableProps: any = {
+      scroll: {
+        x: true
+      },
+      rowSelection: {
+        selectedRowKeys,
+        onChange: this.onSelectChange
+      }
+    }
+    if (['1', '0'].includes(status)) {
+      tableProps.footer = () => (
+        <>
+          <If condition={status === '1'}>
+            <Button
+              type='danger'
+              onClick={() => {
+                this.upper(selectedRowKeys)
+              }}
+              disabled={!hasSelected}
+            >
+              批量上架
+            </Button>
+          </If>
+          <If condition={status === '0'}>
+            <Button
+              type='danger'
+              onClick={() => {
+                this.lower(selectedRowKeys)
+              }}
+              disabled={!hasSelected}
+            >
+              批量下架
+            </Button>
+          </If>
+        </>
+      )
+    }
+    const reserveKey = 'fresh/goods/list-' + status
+    return (
+      <ListPage
+        reserveKey={reserveKey}
+        namespace='freshSku'
+        className='vertical-align-table'
+        style={{
+          margin: '0 8px'
+        }}
+        formConfig={defaultConfig}
+        getInstance={(ref) => (this.list = ref)}
+        processPayload={(payload) => {
+          return {
+            ...payload,
+            status: +status
+          }
+        }}
+        rangeMap={{
+          goodsTime: {
+            fields: ['createStartTime', 'createEndTime']
+          },
+          optionTime: {
+            fields: ['modifyStartTime', 'modifyEndTime']
+          }
+        }}
+        formItemLayout={
+          <>
+            <Row>
+              <FormItem name='productName' />
+              <FormItem name='productId' />
+              <FormItem
+                label='供应商'
+                inner={(form) => {
+                  return form.getFieldDecorator('storeId')(
+                    <SuppilerSelect type='fresh' style={{ width: 172 }} />
+                  )
+                }}
+              />
+            </Row>
+            <Row>
+              <FormItem
+                label='一级类目'
+                inner={(form) => {
+                  return form.getFieldDecorator('firstCategoryId')(
+                    <SelectFetch
+                      style={{ width: 172 }}
+                      fetchData={getCategoryTopList}
+                    />
+                  )
+                }}
+              />
+              <FormItem name='goodsTime' />
+            </Row>
+            <FormItem name='optionTime' />
+          </>
+        }
+        addonAfterSearch={
+          <>
+            <Button type='primary' className='mr10' onClick={this.export}>
+              导出商品
+            </Button>
+            <Button
+              className='mr10'
+              type='primary'
+              onClick={() => {
+                APP.history.push('/fresh/goods/sku-sale/-1')
+              }}
+            >
+              添加商品
+            </Button>
+          </>
+        }
+        api={getGoodsList}
+        columns={this.columns}
+        tableProps={tableProps}
+      />
+    )
+  }
 }
 
 export default SkuSaleList

@@ -21,16 +21,17 @@ export function getH5Origin () {
 
 export function formatDate (date, format = 'YYYY-MM-DD HH:mm:ss') {
   date = date || 0
-  if (/^\d+$/.test(date)) {
+  if ((/^\d+$/).test(date)) {
     date = Number(date)
     date = String(date).length === 10 ? date * 1000 : date
   }
   return (date && moment(date).format(format)) || '';
 }
 
+/** 格式化金额 分转元 */
 export function formatMoney (money = '0') {
   let str = String(money || '0');
-  if (!/^\d+$/.test(parseFloat(str))) {
+  if (!(/^\d+$/).test(parseFloat(str))) {
     str = '0'
   }
   let len = str.length
