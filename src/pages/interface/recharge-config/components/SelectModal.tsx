@@ -6,14 +6,7 @@ import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import SkuTable from './SkuTable'
 import SelectFetch from '@/components/select-fetch'
 import styles from './style.module.sass'
-
-/** 商品状态枚举 */
-enum GoodStatusEnum {
-  出售中 = 0,
-  仓库中 = 1,
-  待上架 = 3,
-  商品池 = 2
-}
+import { StatusEnum } from '../config'
 
 interface State {
   visible: boolean
@@ -79,7 +72,7 @@ class Main extends React.Component<Props, State> {
       width: 100,
       align: 'center',
       render: (text) => {
-        return GoodStatusEnum[text]
+        return StatusEnum[text]
       }
     },
     {

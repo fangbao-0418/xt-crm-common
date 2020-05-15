@@ -9,8 +9,11 @@ import { gotoPage, replaceHttpUrl } from '@/util/utils'
 import dateFns from 'date-fns'
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import SelectFetch from '@/components/select-fetch'
+import { ColumnProps } from 'antd/lib/table'
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api'
+import { GoodProps } from './interface'
 
+/** 此处类型后端传参0和1反了，0查找上架商品，上架商品实际状态为1 */
 /** 0-出售中, 1-仓库中, 3-待上架 2-商品池 */
 export type StatusType = '0' | '1' | '3' | '2';
 
@@ -33,7 +36,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
     productNameOfStockEdit: ''
   }
   list: ListPageInstanceProps;
-  columns = [
+  columns: ColumnProps<GoodProps>[] = [
     {
       title: '商品ID',
       width: 120,
@@ -43,7 +46,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
       title: '商品主图',
       dataIndex: 'coverUrl',
       width: 120,
-      render: (record: any) => (
+      render: (record) => (
         <Image
           style={{
             height: 100,
@@ -81,18 +84,23 @@ class Main extends React.Component<Props, SkuSaleListState> {
       title: '总库存',
       width: 100,
       dataIndex: 'stock',
-      render: (text: any, record:any, index:any) => (
-        <div style={{ whiteSpace: 'nowrap' }}>
-          <span>{text}</span>
-          <Icon type='form' style={{ fontSize: '20px', marginLeft: '5px' }} onClick={() => {
-            this.setState({
-              idOfStockEdit: record.id,
-              visibleOfStockEdit: true,
-              productNameOfStockEdit: record.productName
-            })
-          }} />
-        </div>
-      )
+      render: (text: any, record, index:any) => {
+        if ([50, 51].includes(record.type)) {
+          return null
+        }
+        return (
+          <div style={{ whiteSpace: 'nowrap' }}>
+            <span>{text}</span>
+            <Icon type='form' style={{ fontSize: '20px', marginLeft: '5px' }} onClick={() => {
+              this.setState({
+                idOfStockEdit: record.id,
+                visibleOfStockEdit: true,
+                productNameOfStockEdit: record.productName
+              })
+            }} />
+          </div>
+        )
+      }
     },
     {
       title: '可用库存',
@@ -126,7 +134,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
       fixed: 'right',
       align: 'center',
       width: 120,
-      render: (record: any) => {
+      render: (text, record) => {
         const { status } = this.props
         return (
           <div>

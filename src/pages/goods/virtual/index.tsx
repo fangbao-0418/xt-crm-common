@@ -1,11 +1,11 @@
 import React from 'react'
 import { Modal, Card, Input, Button, message, Radio, Select, Row, InputNumber } from 'antd'
 import UploadView from '@/components/upload'
-import { pick, map, size, filter, assign } from 'lodash'
-import { setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList } from '../api'
+import { pick, map, size, filter, assign, isEmpty } from 'lodash'
+import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList } from '../api'
 import { parseQuery, getAllId, treeToarr } from '@/util/utils'
 import SkuList from './components/sku'
-import SupplierSelect from '../components/supplier-select'
+import SupplierSelect, { supplierItem } from '../components/supplier-select'
 import styles from '../style.module.scss'
 import { Form, FormItem, If } from '@/packages/common/components'
 import ProductCategory from '../components/product-category'
@@ -94,6 +94,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       getCategoryList()
     ]).then(([res, list]) => {
       this.modifyTime = res.modifyTime
+      this.getSupplierInfo(res.storeId)
       // console.log('res.categoryId =>', res.categoryId);
       const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : []
       this.setState({
@@ -144,7 +145,20 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       })
     })
   }
-
+  // 根据供应商ID查询供应商信息
+  getSupplierInfo = (id: number) => {
+    getStoreList({ pageSize: 5000, id }).then((res: any) => {
+      const records = res.records || []
+      let supplierInfo: any = {}
+      if (records.length >= 1) {
+        supplierInfo = records[0]
+      }
+      this.setState({
+        supplierInfo
+        // interceptionVisible: supplierInfo.category == 1 ? false : true,
+      })
+    })
+  }
   /** 获取规格结果 */
   getSpecs (specs: any[], skuList: any[] = []) {
     map(skuList, (item, key) => {
@@ -249,7 +263,17 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       APP.history.push('/goods/list')
     })
   }
+  supplierChange = (value: string, options: supplierItem[]) => {
+    const currentSupplier: any = options.find(item => item.id === +value) || {}
+    this.setState({
+      supplierInfo: currentSupplier
+    })
+  }
+
   render () {
+    const {
+      supplierInfo
+    } = this.state
     const { productType, status }: any = this.form?.getValues() || {}
     return (
       <Form
@@ -305,10 +329,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                     required: true,
                     message: '请输入供应商名称'
                   }
-                ]
+                ],
+                onChange: this.supplierChange
               } as GetFieldDecoratorOptions)(
                 <SupplierSelect
                   style={{ width: '60%' }}
+                  options={isEmpty(supplierInfo) ? []: [supplierInfo]}
                 />
               )
             }}
