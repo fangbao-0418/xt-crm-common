@@ -98,7 +98,7 @@ class Main extends React.Component<Props> {
             )}
           </Form.Item>
           <Form.Item label='创建时间'>
-            {getFieldDecorator('creatdeTime', { initialValue: '' })(
+            {getFieldDecorator('createdTime', { initialValue: '' })(
               <RangePicker
                 style={{ width: '100%' }}
                 showTime />
