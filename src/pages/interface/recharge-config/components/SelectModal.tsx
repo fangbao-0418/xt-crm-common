@@ -120,6 +120,7 @@ class Main extends React.Component<Props, State> {
                 this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
                 delete this.state.spuSelectedRowKeys[record.id]
               }
+              console.log(record, 'record')
               this.setState({
                 selectedRowKeys: selectedRowKeys,
                 spuSelectedRowKeys: this.state.spuSelectedRowKeys
@@ -198,7 +199,7 @@ class Main extends React.Component<Props, State> {
         coverUrl: item.coverUrl,
         /** 此处实际要取商品status，因为回显都是一样就无所谓 */
         status: item.status,
-        skuList: allSkuSelectedRows[id]
+        skuList: [...allSkuSelectedRows[id]]
       } as Shop.ShopItemProps)
     }
     // this.selectRows = value.spuList || this.selectRows
@@ -234,7 +235,9 @@ class Main extends React.Component<Props, State> {
       delete spuSelectedRowKeys[record.id]
     }
     if (selected && !isExist) {
-      this.selectRows.push(record)
+      this.selectRows.push({
+        ...record
+      })
     } else if (!selected && isExist) {
       this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
     }

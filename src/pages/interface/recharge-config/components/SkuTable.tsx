@@ -58,7 +58,6 @@ class Main extends React.Component<Props, State> {
     })
   }
   public onSelectChange (selectedRowKeys: any[], selectedRows: Shop.SkuProps[]) {
-    console.log(selectedRows, 'selectedRows')
     this.setState({
       selectedRowKeys
     }, () => {
