@@ -81,6 +81,7 @@ class Main extends React.Component {
           </Button>
         </div>
         <List
+          reserveKey='/interface/group-buying/category'
           columns={this.columns}
           className='mt10'
           getInstance={ref => this.list = ref}
