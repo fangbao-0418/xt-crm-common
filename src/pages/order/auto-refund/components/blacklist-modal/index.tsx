@@ -29,11 +29,15 @@ class Main extends React.Component<Props> {
 
   handleOk = () => {
     const { form, levelIds } = this.props
+    const { edit } = this.state
+    if (!edit) {
+      APP.error('请先修改')
+      return
+    }
     form.validateFieldsAndScroll((err, { productIds }) => {
       if (err) {
         return
       }
-      console.log(productIds)
       productIds = productIds.split(/\n/g).map((item: string) => +item)
       checkCategory({
         productIds,
