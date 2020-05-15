@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-29 10:33:20
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-29 10:33:42
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/template/list-page/config.ts
+ * @LastEditTime: 2020-05-15 15:22:18
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/recharge-config/config.ts
  */
 import { OptionProps } from '@/packages/common/components/form'
 
@@ -59,4 +59,13 @@ export function getFieldsConfig (): FieldsConfig {
     }
   }
   return defaultConfig
+}
+
+/** 商品sku状态 */
+export enum StatusEnum {
+  下架 = 0,
+  上架 = 1,
+  删除 = -1,
+  商品池 = 2,
+  待上架 = 3
 }

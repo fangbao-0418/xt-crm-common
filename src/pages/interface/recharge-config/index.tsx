@@ -4,10 +4,10 @@ import ListPage, { ListPageInstanceProps } from '@/packages/common/components/li
 import { Button, InputNumber, Popconfirm } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { RecordProps } from './interface'
-import { getFieldsConfig } from './config'
 import Image from '@/components/Image'
 import SelectModal from './components/SelectModal'
 import * as api from './api'
+import { StatusEnum } from './config'
 
 interface State {
   dataSource: RecordProps[]
@@ -33,6 +33,15 @@ class Main extends React.Component<{}, State> {
     { title: '市场价', dataIndex: 'marketPrice', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
     { title: '销售价', dataIndex: 'salePrice', render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') },
     {
+      title: '状态',
+      dataIndex: 'status',
+      width: 100,
+      align: 'center',
+      render: (text) => {
+        return StatusEnum[text]
+      }
+    },
+    {
       title: '排序',
       dataIndex: 'sort',
       width: 100,
@@ -51,6 +60,29 @@ class Main extends React.Component<{}, State> {
           />
         )
       }
+    },
+    {
+      title: '操作',
+      width: 100,
+      align: 'center',
+      render: (text, record, index) => {
+        return (
+          <div>
+            <span
+              className='href'
+              onClick={() => {
+                const dataSource = this.state.dataSource
+                dataSource.splice(index, 1)
+                this.setState({
+                  dataSource
+                })
+              }}
+            >
+              删除
+            </span>
+          </div>
+        )
+      }
     }
   ]
   public listpage: ListPageInstanceProps
@@ -63,7 +95,7 @@ class Main extends React.Component<{}, State> {
   }
   public fetchData = () => {
     api.fetchGoodsList().then((res) => {
-      res = (res || []).map((item: RecordProps) => {
+      res = (res || []).map((item) => {
         return {
           ...item,
           coverUrl: item.coverImage,
@@ -102,6 +134,12 @@ class Main extends React.Component<{}, State> {
           onOk={(rows) => {
             let res: RecordProps[] = []
             rows.map((item) => {
+              item.skuList = (item.skuList || []).map((item2) => {
+                return {
+                  ...item2,
+                  status: item.status
+                }
+              })
               res = res.concat(item.skuList as any[])
             })
             this.setState({

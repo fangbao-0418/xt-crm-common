@@ -196,6 +196,8 @@ class Main extends React.Component<Props, State> {
         id: Number(id),
         productName: item.productName,
         coverUrl: item.coverUrl,
+        /** 此处实际要取商品status，因为回显都是一样就无所谓 */
+        status: item.status,
         skuList: allSkuSelectedRows[id]
       } as Shop.ShopItemProps)
     }
