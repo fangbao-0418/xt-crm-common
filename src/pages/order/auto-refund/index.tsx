@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Tag } from 'antd'
+import { Button, Tag, Modal } from 'antd'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { If } from '@/packages/common/components'
 import { FormItem } from '@/packages/common/components/form'
@@ -7,6 +7,8 @@ import ProductCategory from './components/product-category'
 import { queryConfig, RefundTypeEnum, StatusEnum, MemberTypeEnum } from './config'
 import { getRefundAutoList, refundAutoAudit } from './api'
 import { formatMoneyWithSign } from '../../helper'
+
+const { confirm } = Modal
 
 class Main extends React.Component {
   listPage: ListPageInstanceProps
@@ -74,14 +76,14 @@ class Main extends React.Component {
               查看
             </span>
             <If condition={record.status === StatusEnum['已启用']}>
-              <span onClick={this.handleAudit.bind(this, record, 30)} style={{ marginLeft: 8 }} className='href'>停用</span>
+              <span onClick={this.handleStop.bind(this, record, 30)} style={{ marginLeft: 8 }} className='href'>停用</span>
             </If>
             <If condition={record.status === StatusEnum['已停用']}>
-              <span onClick={this.handleAudit.bind(this, record, 20)} style={{ marginLeft: 8 }} className='href'>启用</span>
+              <span onClick={this.handleStart.bind(this, record, 20)} style={{ marginLeft: 8 }} className='href'>启用</span>
             </If>
             <If condition={record.status === StatusEnum['待启用']}>
-              <span onClick={this.handleAudit.bind(this, record, 20)} style={{ marginLeft: 8 }} className='href'>启用</span>
-              <span onClick={this.handleAudit.bind(this, record, 40)} style={{ marginLeft: 8 }} className='href'>删除</span>
+              <span onClick={this.handleStart.bind(this, record, 20)} style={{ marginLeft: 8 }} className='href'>启用</span>
+              <span onClick={this.handleDelete.bind(this, record, 40)} style={{ marginLeft: 8 }} className='href'>删除</span>
             </If>
           </div>
         )
@@ -89,13 +91,44 @@ class Main extends React.Component {
     }
   ]
 
-  handleAudit = (record: any, status: any) => {
+  handleStart = (record: any, status: any) => {
     refundAutoAudit({
       serialNo: record.serialNo,
       status
     }).then(() => {
-      APP.success('操作成功')
+      APP.success('启用成功')
       this.listPage.refresh()
+    })
+  }
+
+  handleDelete = (record: any, status: any) => {
+    confirm({
+      title: '确认删除吗?',
+      content: '删除之后不可恢复',
+      onOk: () => {
+        refundAutoAudit({
+          serialNo: record.serialNo,
+          status
+        }).then(() => {
+          APP.success('删除成功')
+          this.listPage.refresh()
+        })
+      }
+    })
+  }
+
+  handleStop = (record: any, status: any) => {
+    confirm({
+      title: '确认停用吗?',
+      onOk: () => {
+        refundAutoAudit({
+          serialNo: record.serialNo,
+          status
+        }).then(() => {
+          APP.success('停用成功')
+          this.listPage.refresh()
+        })
+      }
     })
   }
 
