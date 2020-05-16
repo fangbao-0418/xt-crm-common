@@ -92,13 +92,29 @@ class Main extends React.Component {
   ]
 
   handleStart = (record: any, status: any) => {
-    refundAutoAudit({
-      serialNo: record.serialNo,
-      status
-    }).then(() => {
-      APP.success('启用成功')
-      this.listPage.refresh()
-    })
+    refundAutoAudit({ serialNo: record.serialNo, status })
+      .then(() => {
+        APP.success('启用成功')
+        this.listPage.refresh()
+      }, (err: any) => {
+        if (err.code === '-2') {
+          confirm({
+            title: '确认启用吗?',
+            content: err.message,
+            onOk: () => {
+              refundAutoAudit({
+                serialNo: record.serialNo,
+                status: 1
+              }).then(() => {
+                APP.success('启用成功')
+                this.listPage.refresh()
+              })
+            }
+          })
+        } else {
+          // APP.error(err.message)
+        }
+      })
   }
 
   handleDelete = (record: any, status: any) => {
