@@ -180,6 +180,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
                       )(
                         <UploadView
                           listType='picture-card'
+                          fileType={['jpg', 'jpeg', 'gif', 'png']}
                         />
                       )}
                     </div>
