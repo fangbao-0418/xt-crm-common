@@ -28,6 +28,11 @@ interface SkuSaleListState {
   productNameOfStockEdit: string;
 }
 
+/** 是否是虚拟商品 true-是 false-否 */
+function isVirtualGood (type: number) {
+  return [50, 51].includes(type)
+}
+
 class Main extends React.Component<Props, SkuSaleListState> {
   state: SkuSaleListState = {
     selectedRowKeys: [],
@@ -84,9 +89,10 @@ class Main extends React.Component<Props, SkuSaleListState> {
       title: '总库存',
       width: 100,
       dataIndex: 'stock',
+      align: 'center',
       render: (text: any, record, index:any) => {
-        if ([50, 51].includes(record.type)) {
-          return null
+        if (isVirtualGood(record.type)) {
+          return '无'
         }
         return (
           <div style={{ whiteSpace: 'nowrap' }}>
@@ -105,11 +111,16 @@ class Main extends React.Component<Props, SkuSaleListState> {
     {
       title: '可用库存',
       width: 100,
-      dataIndex: 'usableStock'
+      dataIndex: 'usableStock',
+      align: 'center',
+      render: (text, record) => {
+        return isVirtualGood(record.type) ? '无' : text
+      }
     },
     {
       title: '累计销量',
       width: 100,
+      align: 'center',
       dataIndex: 'saleCount'
     },
     {
@@ -121,13 +132,13 @@ class Main extends React.Component<Props, SkuSaleListState> {
       title: '创建时间',
       dataIndex: 'createTime',
       width: 200,
-      render: (record: any) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
+      render: (record) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
     },
     {
       title: '最后操作时间',
       dataIndex: 'modifyTime',
       width: 200,
-      render: (record: any) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
+      render: (record) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
     },
     {
       title: '操作',
@@ -141,7 +152,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
             <span
               className='href'
               onClick={() => {
-                const url = [50, 51].includes(record.type) ?`/goods/virtual/${record.id}` : `/goods/sku-sale/${record.id}`
+                const url = isVirtualGood(record.type) ?`/goods/virtual/${record.id}` : `/goods/sku-sale/${record.id}`
                 APP.open(url)
               }}
             >
@@ -149,7 +160,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
             </span>
             <If condition={status === '0'}>
               <span
-                className='href ml10'
+                className='href ml8'
                 onClick={() => this.lower([record.id])}
               >
                 下架
@@ -157,7 +168,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
             </If>
             <If condition={status === '1'}>
               <span
-                className='href ml10'
+                className='href ml8'
                 onClick={() => this.upper([record.id])}
               >
                 上架

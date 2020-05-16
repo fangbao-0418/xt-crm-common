@@ -8,6 +8,7 @@ import Image from '@/components/Image'
 import SelectModal from './components/SelectModal'
 import * as api from './api'
 import { StatusEnum } from './config'
+import { verifyConfigData } from './verify'
 
 interface State {
   dataSource: RecordProps[]
@@ -50,6 +51,8 @@ class Main extends React.Component<{}, State> {
         return (
           <InputNumber
             value={text || 0}
+            min={0}
+            max={9999}
             onChange={(value) => {
               const dataSource = this.state.dataSource
               dataSource[index].sort = value as number
@@ -109,6 +112,9 @@ class Main extends React.Component<{}, State> {
   }
   public save = () => {
     const { dataSource } = this.state
+    if (!verifyConfigData(dataSource)) {
+      return
+    }
     const payload = dataSource.map((item) => {
       return {
         productId: item.productId,
