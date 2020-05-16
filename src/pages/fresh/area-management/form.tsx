@@ -136,7 +136,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
                     }
                   }]
 
-                })(<SaleArea readOnly={readonly} title={'区域'} disabledDatas={this.disabledDatas} />)
+                })(<SaleArea readOnly={readonly} title={'区域'} disabledDatas={readonly?[]:this.disabledDatas} />)
               }
               } />
             <FormItem
