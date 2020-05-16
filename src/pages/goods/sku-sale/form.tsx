@@ -133,9 +133,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : []
       categoryId[0] && this.getStrategyByCategory(categoryId[0])
       this.getSupplierInfo(res.storeId)
-
-      console.log('categoryId =>', categoryId)
-      const isRepeat = templateOptions.some((opt: any) => opt.freightTemplateId === res.freightTemplateId)
+      const isRepeat = templateOptions.some((opt: any) => String(opt.freightTemplateId) === String(res.freightTemplateId))
       if (!isRepeat && res.freightTemplateId) {
         templateOptions = templateOptions.concat({
           freightTemplateId: res.freightTemplateId,
