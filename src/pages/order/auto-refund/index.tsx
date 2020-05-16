@@ -108,6 +108,8 @@ class Main extends React.Component {
               }).then(() => {
                 APP.success('启用成功')
                 this.listPage.refresh()
+              }, () => {
+                this.handleStart(record, status)
               })
             }
           })
