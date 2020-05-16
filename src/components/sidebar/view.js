@@ -129,21 +129,22 @@ class Sidebar extends React.Component {
               </span>
             }
           >
-            {/* {subMenus.map(subItem => (
-              <Menu.Item key={subItem.id}>
-                <Link to={subItem.path || '/'}>{subItem.name}</Link>
-              </Menu.Item>
-            ))} */}
             {this.renderMenulist(subMenus)}
           </SubMenu>
         )
       } else {
+        let outside
+        let path = item.path
+        try {
+          outside = (/^~(\/.*)$/).exec(item.path)
+          path = outside ? outside[1] : path || '/'
+        } catch (e) {
+          //
+        }
         return (
           <Menu.Item
             key={item.id}
             onClick={(e) => {
-              const outside = (/^~(\/.*)$/).exec(item.path)
-              console.log(outside, 'outside')
               if (outside) {
                 window.open(outside[1])
               } else {
@@ -152,7 +153,7 @@ class Sidebar extends React.Component {
             }}
           >
             <a
-              href={'#' + (item.path || '/')}
+              href={outside ? path : ('#' + path)}
               onClick={(e) => {
                 e.preventDefault()
               }}
