@@ -1,14 +1,14 @@
-import React from 'react';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { FormComponentProps } from 'antd/es/form';
-import { ColumnProps } from 'antd/es/table';
-import { Card, Form, Input, DatePicker, Button, Table } from 'antd';
-import { templatePage } from './api';
-import { momentRangeValueof } from '@/util/utils';
-import moment from 'moment';
-import { templateColumns } from './interface';
-import MoneyRender from '@/components/money-render';
-const { RangePicker } = DatePicker;
+import React from 'react'
+import { withRouter, RouteComponentProps } from 'react-router'
+import { FormComponentProps } from 'antd/es/form'
+import { ColumnProps } from 'antd/es/table'
+import { Card, Form, Input, DatePicker, Button, Table } from 'antd'
+import { templatePage } from './api'
+import { momentRangeValueof } from '@/util/utils'
+import moment from 'moment'
+import { templateColumns } from './interface'
+import MoneyRender from '@/components/money-render'
+const { RangePicker } = DatePicker
 const namespace = 'freight-template'
 interface State extends PageProps<templateColumns> {
 
@@ -23,23 +23,23 @@ class Page extends React.Component<Props, State> {
     total: 0,
     size: 10
   }
-  constructor(props: Props) {
-    super(props);
-    this.fetchList = this.fetchList.bind(this);
+  constructor (props: Props) {
+    super(props)
+    this.fetchList = this.fetchList.bind(this)
   }
-  componentDidMount() {
+  componentDidMount () {
     this.payload.pageNo = 1
     this.props.form.setFieldsValue({
       templateName: this.payload.templateName,
       createTime: this.payload.createTimeStart && [moment(this.payload.createTimeStart), moment(this.payload.createTimeEnd)],
       modifyTime: this.payload.modifyTimeStart && [moment(this.payload.modifyTimeStart), moment(this.payload.modifyTimeEnd)]
     })
-    this.fetchList();
+    this.fetchList()
   }
-  async fetchList() {
-    let { templateName, createTime, modifyTime } = this.props.form.getFieldsValue();
-    let [createTimeStart, createTimeEnd] = createTime ? momentRangeValueof(createTime) : [];
-    let [modifyTimeStart, modifyTimeEnd] = modifyTime ? momentRangeValueof(modifyTime) : [];
+  async fetchList () {
+    const { templateName, createTime, modifyTime } = this.props.form.getFieldsValue()
+    const [createTimeStart, createTimeEnd] = createTime ? momentRangeValueof(createTime) : []
+    const [modifyTimeStart, modifyTimeEnd] = modifyTime ? momentRangeValueof(modifyTime) : []
     const payload = {
       pageNo: this.payload.pageNo || 1,
       pageSize: this.payload.size,
@@ -47,7 +47,7 @@ class Page extends React.Component<Props, State> {
       createTimeStart,
       createTimeEnd,
       modifyTimeStart,
-      modifyTimeEnd,
+      modifyTimeEnd
     }
     const { records, total } = await templatePage(payload) || {}
     this.payload = payload
@@ -55,7 +55,7 @@ class Page extends React.Component<Props, State> {
     APP.fn.setPayload(namespace, payload)
     this.setState({
       records
-    });
+    })
   }
   onChange = (current: number) => {
     this.payload.pageNo = current
@@ -69,47 +69,47 @@ class Page extends React.Component<Props, State> {
     this.payload.pageNo = 1
     this.fetchList()
   }
-  render() {
+  render () {
     const {
-      form: { getFieldDecorator },
-    } = this.props;
+      form: { getFieldDecorator }
+    } = this.props
     const listColumns: ColumnProps<templateColumns>[]= [
       {
         title: '序号',
         key: 'index',
         render: (text: any, record: any, index: number) => {
-          return ((this.payload.pageNo || 1) - 1) * 10 + (index + 1);
-        },
+          return ((this.payload.pageNo || 1) - 1) * 10 + (index + 1)
+        }
       },
       {
         title: '模板名称',
         dataIndex: 'templateName',
-        key: 'templateName',
+        key: 'templateName'
       },
       {
         title: '默认运费/元',
         dataIndex: 'commonCost',
         key: 'commonCost',
-        render: MoneyRender,
+        render: MoneyRender
       },
       {
         title: '指定运费地区',
         dataIndex: 'describe',
-        key: 'describe',
+        key: 'describe'
       },
       {
         title: '创建时间',
         dataIndex: 'createTime',
-        render(text: any) {
-          return moment(text).format('YYYY-MM-DD HH:mm:ss');
-        },
+        render (text: any) {
+          return moment(text).format('YYYY-MM-DD HH:mm:ss')
+        }
       },
       {
         title: '修改时间',
         dataIndex: 'modifyTime',
-        render(text: any) {
-          return moment(text).format('YYYY-MM-DD HH:mm:ss');
-        },
+        render (text: any) {
+          return moment(text).format('YYYY-MM-DD HH:mm:ss')
+        }
       },
       {
         title: '操作',
@@ -117,50 +117,50 @@ class Page extends React.Component<Props, State> {
         render: (text: any, record: any) => {
           return (
             <Button
-              type="link"
+              type='link'
               onClick={() => {
-                this.props.history.push(`/template/edit/${record.freightTemplateId}`);
+                this.props.history.push(`/template/edit/${record.freightTemplateId}`)
               }}
             >
               编辑
             </Button>
-          );
-        },
-      },
-    ];
+          )
+        }
+      }
+    ]
     return (
       <Card>
-        <Card title="筛选">
-          <Form layout="inline">
-            <Form.Item label="模板名称">
-              {getFieldDecorator('templateName')(<Input placeholder="请输入模板名称" />)}
+        <Card title='筛选'>
+          <Form layout='inline'>
+            <Form.Item label='模板名称'>
+              {getFieldDecorator('templateName')(<Input placeholder='请输入模板名称' />)}
             </Form.Item>
-            <Form.Item label="操作时间">
+            <Form.Item label='操作时间'>
               {getFieldDecorator('modifyTime')(
-                <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />,
+                <RangePicker showTime format='YYYY-MM-DD HH:mm:ss' />,
               )}
             </Form.Item>
-            <Form.Item label="创建时间">
+            <Form.Item label='创建时间'>
               {getFieldDecorator('createTime')(
-                <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />,
+                <RangePicker showTime format='YYYY-MM-DD HH:mm:ss' />,
               )}
             </Form.Item>
             <Form.Item>
               <Button
-                type="primary"
+                type='primary'
                 onClick={() => {
-                  this.props.history.push('/template/edit');
+                  this.props.history.push('/template/edit')
                 }}
               >
                 新增模板
               </Button>
               <Button
-                className="ml10"
+                className='ml10'
                 onClick={this.handleReset}
               >
                 清除
               </Button>
-              <Button className="ml10" type="primary" onClick={this.handleSearch}>
+              <Button className='ml10' type='primary' onClick={this.handleSearch}>
                 查询
               </Button>
             </Form.Item>
@@ -168,7 +168,7 @@ class Page extends React.Component<Props, State> {
         </Card>
         <Card>
           <Table
-            rowKey="createTime"
+            rowKey='createTime'
             pagination={{
               current: this.payload.pageNo,
               total: this.payload.total,
@@ -179,8 +179,8 @@ class Page extends React.Component<Props, State> {
           />
         </Card>
       </Card>
-    );
+    )
   }
 }
 
-export default Form.create<Props>()(withRouter(Page));
+export default Form.create<Props>()(withRouter(Page))

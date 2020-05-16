@@ -128,7 +128,7 @@ export function deliveryChildOrder(data: any) {
   if (debug) {
     return Promise.resolve(true);
   }
-  return post(`/order/${data.orderId}/delivery`, data);
+  return post('/order/childDelivery', data);
 }
 
 export function updateLogisticsInfo(data: any) {
