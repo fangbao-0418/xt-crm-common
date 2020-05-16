@@ -12,6 +12,7 @@ interface Props {
 }
 class Main extends React.Component<Props, any> {
   public render () {
+    console.log(this.props, 'rende')
     return (
       <AutoComplete
         placeholder='请输入'
@@ -21,8 +22,7 @@ class Main extends React.Component<Props, any> {
         filterOption={(inputValue: string, option: any) => {
           const children = option.props.children
           return (
-            children &&
-            String(children)
+            children && String(children)
               .toUpperCase()
               .indexOf(inputValue && String(inputValue).toUpperCase()) !== -1
           )

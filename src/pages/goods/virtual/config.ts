@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-05-07 19:44:40
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-11 14:46:49
- * @FilePath: /xt-crm/src/pages/goods/virtual/config.ts
+ * @LastEditTime: 2020-05-15 11:22:35
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/goods/virtual/config.ts
  */
 import { FieldsConfig } from '@/packages/common/components/form'
 
@@ -53,13 +53,16 @@ export const defaultConfig: FieldsConfig = {
     productType: {
       label: '充值类型',
       type: 'select',
-      options: [{
-        label: '手机流量',
-        value: 51
-      }, {
-        label: '手机话费',
-        value: 50
-      }],
+      options: [
+        // {
+        //   label: '手机流量',
+        //   value: 51
+        // },
+        {
+          label: '手机话费',
+          value: 50
+        }
+      ],
       controlProps: {
         style: {
           width: 100

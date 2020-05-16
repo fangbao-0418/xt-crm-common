@@ -6,14 +6,7 @@ import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import SkuTable from './SkuTable'
 import SelectFetch from '@/components/select-fetch'
 import styles from './style.module.sass'
-
-/** 商品状态枚举 */
-enum GoodStatusEnum {
-  出售中 = 0,
-  仓库中 = 1,
-  待上架 = 3,
-  商品池 = 2
-}
+import { StatusEnum } from '../config'
 
 interface State {
   visible: boolean
@@ -79,7 +72,7 @@ class Main extends React.Component<Props, State> {
       width: 100,
       align: 'center',
       render: (text) => {
-        return GoodStatusEnum[text]
+        return StatusEnum[text]
       }
     },
     {
@@ -120,6 +113,7 @@ class Main extends React.Component<Props, State> {
                 this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
                 delete this.state.spuSelectedRowKeys[record.id]
               }
+              console.log(record, 'record')
               this.setState({
                 selectedRowKeys: selectedRowKeys,
                 spuSelectedRowKeys: this.state.spuSelectedRowKeys
@@ -196,7 +190,9 @@ class Main extends React.Component<Props, State> {
         id: Number(id),
         productName: item.productName,
         coverUrl: item.coverUrl,
-        skuList: allSkuSelectedRows[id]
+        /** 此处实际要取商品status，因为回显都是一样就无所谓 */
+        status: item.status,
+        skuList: [...allSkuSelectedRows[id]]
       } as Shop.ShopItemProps)
     }
     // this.selectRows = value.spuList || this.selectRows
@@ -232,7 +228,9 @@ class Main extends React.Component<Props, State> {
       delete spuSelectedRowKeys[record.id]
     }
     if (selected && !isExist) {
-      this.selectRows.push(record)
+      this.selectRows.push({
+        ...record
+      })
     } else if (!selected && isExist) {
       this.selectRows = this.selectRows.filter((item) => item.id !== record.id)
     }

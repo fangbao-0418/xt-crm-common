@@ -1,13 +1,11 @@
 /*
  * @Date: 2020-04-28 14:00:21
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-11 20:27:37
- * @FilePath: /xt-crm/src/pages/interface/recharge-config/api.ts
+ * @LastEditTime: 2020-05-15 14:56:24
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/recharge-config/api.ts
  */
 const { post, get, newPost } = APP.http
-export const fetchList = () => {
-
-}
+import { RecordProps } from './interface'
 
 /**
  * 获取一级类目
@@ -56,7 +54,7 @@ export function fetchSelectShopList (payload: {
  * 获取虚拟商品列表
  */
 export const fetchGoodsList = () => {
-  return get('/mcweb/product/virtual/get', {
+  return get<RecordProps[]>('/mcweb/product/virtual/get', {
     type: 1
   })
 }
