@@ -26,7 +26,7 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       width: '8%',
       render (id: any, record: any) {
         if (isXiaoDian) return id
-        return <Link to={`/goods/sku-sale/${id}`}>{id}</Link>
+        return <Link to={record.orderType===55?`/goods/virtual/${id}`:`/goods/sku-sale/${id}`}>{id}</Link>
       }
     },
     {

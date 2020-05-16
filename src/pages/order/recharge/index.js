@@ -8,6 +8,7 @@ import { formatDate } from '../../helper'
 import moment from 'moment'
 import Search from './Search'
 import { namespace } from './config'
+import { Link } from 'react-router-dom';
 import { formatMoneyWithSign } from '@/pages/helper'
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -110,7 +111,12 @@ class Recharge extends Component {
       },
       {
         title: '子订单号',
-        dataIndex: 'childOrderCode'
+        dataIndex: 'childOrderCode',
+        render:(childOrderCode,row)=>{
+        return   <a href={window.location.pathname + '#/order/detail/' + row.mainOrderCode} target="_blank" rel="noopener noreferrer">
+        {childOrderCode}
+      </a>
+        }
       },
       {
         title: '三方订单号',
@@ -149,7 +155,7 @@ class Recharge extends Component {
       },
       {
         title: '备注',
-        dataIndex: 'titlw'
+        dataIndex: 'remark'
       }
     ].filter(column => !column.hide)
     return (
