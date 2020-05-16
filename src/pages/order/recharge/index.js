@@ -30,7 +30,7 @@ class Recharge extends Component {
   componentDidMount () {
     this.query()
   }
-  export () {
+  getParam(){
     const payload = APP.fn.getPayload(namespace) || {}
     if (this.payload.createdTime&&this.payload.createdTime.length>0) {
       this.payload.createTimeBegin= moment(this.payload.createdTime[0]).valueOf()
@@ -43,34 +43,17 @@ class Recharge extends Component {
       this.payload.finishTimeEnd= moment(this.payload.finishTime[1]).valueOf()
       delete this.payload.finishTime
     }
-    rechargeExport({
-      ...payload,
+    return {...payload,
       ...this.payload,
-      rechargeStatus: this.state.rechargeStatus==='-1'?null:this.state.rechargeStatus
-    }).then(res => {
+      rechargeStatus: this.state.rechargeStatus==='-1'?null:this.state.rechargeStatus}
+  }
+  export () {
+    rechargeExport(this.getParam()).then(res => {
+      APP.success('导出成功')
     })
   }
   query = () => {
-    const payload = APP.fn.getPayload(namespace) || {}
-    this.setState({
-      page: this.payload.page,
-      pageSize: this.payload.pageSize
-    })
-    if (this.payload.createdTime&&this.payload.createdTime.length>0) {
-      this.payload.createTimeBegin= moment(this.payload.createdTime[0]).valueOf()
-      this.payload.createTimeEnd= moment(this.payload.createdTime[1]).valueOf()
-      delete this.payload.createdTime
-    }
-    if (this.payload.finishTime&&this.payload.finishTime.length>0) {
-      this.payload.finishTimeBegin= moment(this.payload.finishTime[0]).valueOf()
-      this.payload.finishTimeEnd= moment(this.payload.finishTime[1]).valueOf()
-      delete this.payload.finishTime
-    }
-    rechargeList({
-      ...payload,
-      ...this.payload,
-      rechargeStatus: this.state.rechargeStatus==='-1'?null:this.state.rechargeStatus
-    }).then(res => {
+    rechargeList(this.getParam()).then(res => {
       this.setState({
         list: res&&res.records,
         total: res&&res.total
