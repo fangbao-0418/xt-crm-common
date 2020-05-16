@@ -139,11 +139,27 @@ class Sidebar extends React.Component {
         )
       } else {
         return (
-          <Menu.Item key={item.id}>
-            <Link to={item.path || '/'}>
+          <Menu.Item
+            key={item.id}
+            onClick={(e) => {
+              const outside = (/^~(\/.*)$/).exec(item.path)
+              console.log(outside, 'outside')
+              if (outside) {
+                window.open(outside[1])
+              } else {
+                APP.history.push(item.path)
+              }
+            }}
+          >
+            <a
+              href={'#' + (item.path || '/')}
+              onClick={(e) => {
+                e.preventDefault()
+              }}
+            >
               {item.icon && <Icon type={item.icon} />}
               <span>{item.name}</span>
-            </Link>
+            </a>
           </Menu.Item>
         )
       }
@@ -175,16 +191,6 @@ class Sidebar extends React.Component {
         </div>
         <Menu
           theme='dark'
-          onClick={e => {
-            const menuMap = getMenuMap(data)
-            const curItem = menuMap[e.key]
-            const outside = (/(?<=~).*/).exec(curItem.path)
-            if (outside) {
-              window.open(`${window.location.origin}${outside}`)
-            } else {
-              this.setCurrent(e.key)
-            }
-          }}
           onOpenChange={(openKeys) => {
             this.setState({
               openKeys
