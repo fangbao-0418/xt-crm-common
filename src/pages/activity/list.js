@@ -1,6 +1,6 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React from 'react'
 import {
   Modal,
   Card,
@@ -11,74 +11,74 @@ import {
   Button,
   Table,
   Divider,
-  message,
-} from 'antd';
-import DateFns from 'date-fns';
-import { getPromotionList, disablePromotion, enablePromotion } from './api';
-import Add from './add';
-import moment from 'moment';
-import { setQuery, parseQuery, gotoPage } from '@/util/utils';
-import activityType from '../../enum/activityType';
-import { isNil, omitBy } from 'lodash';
+  message
+} from 'antd'
+import DateFns from 'date-fns'
+import { getPromotionList, disablePromotion, enablePromotion } from './api'
+import Add from './add'
+import moment from 'moment'
+import { setQuery, parseQuery, gotoPage } from '@/util/utils'
+import activityType from '../../enum/activityType'
+import { isNil, omitBy } from 'lodash'
 
-const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
-const { Option } = Select;
+const FormItem = Form.Item
+const { RangePicker } = DatePicker
+const { Option } = Select
 
 class List extends React.Component {
-  constructor(props) {
-    super(props);
-    const params = parseQuery();
+  constructor (props) {
+    super(props)
+    const params = parseQuery()
     this.state = {
       listData: [],
       page: {
         current: +params.page || 1,
         total: 0,
-        pageSize: 20,
+        pageSize: 20
       },
       initParams: params,
-      visible: false,
-    };
+      visible: false
+    }
   }
 
-  componentDidMount() {
-    const params = parseQuery();
-    this.getPromotionList(params);
+  componentDidMount () {
+    const params = parseQuery()
+    this.getPromotionList(params)
   }
 
   setDisablePromotion = ids => {
     disablePromotion({ promotionIds: ids }).then(res => {
-      res && message.success('关闭成功');
-      this.getPromotionList();
-    });
+      res && message.success('关闭成功')
+      this.getPromotionList()
+    })
   };
 
   setEnablePromotion = ids => {
     enablePromotion({ promotionIds: ids }).then(res => {
-      res && message.success('开启成功');
-      this.getPromotionList();
-    });
+      res && message.success('开启成功')
+      this.getPromotionList()
+    })
   };
 
   getPromotionList = params => {
-    const { page } = this.state;
+    const { page } = this.state
     getPromotionList({ page: page.current, pageSize: page.pageSize, ...params }).then(
       (res = {}) => {
-        page.total = res.total;
+        page.total = res.total
 
         this.setState({
           listData: res.records,
-          page,
-        });
-        setQuery({ page: page.current, pageSize: page.pageSize, ...params }, true);
+          page
+        })
+        setQuery({ page: page.current, pageSize: page.pageSize, ...params }, true)
       },
-    );
+    )
   };
 
   handleSearch = () => {
     const {
-      form: { validateFields },
-    } = this.props;
+      form: { validateFields }
+    } = this.props
     validateFields((err, vals) => {
       if (!err) {
         let params = {
@@ -86,41 +86,41 @@ class List extends React.Component {
           startTime: vals.time && vals.time[0] && +new Date(vals.time[0]),
           endTime: vals.time && vals.time[1] && +new Date(vals.time[1]),
           page: 1,
-          pageSize: 20,
-        };
+          pageSize: 20
+        }
         params = omitBy(params, (val, key) => {
-          return key === 'time' || isNil(val) || val === '';
-        });
-        this.getPromotionList(params);
+          return key === 'time' || isNil(val) || val === ''
+        })
+        this.getPromotionList(params)
       }
-    });
+    })
   };
 
   resetSearch = () => {
     const {
-      form: { resetFields },
-    } = this.props;
+      form: { resetFields }
+    } = this.props
     APP.history.push('/activity/list')
     this.setState({ initParams: {} }, () => {
-      resetFields();
-      this.handleSearch();
-    });
+      resetFields()
+      this.handleSearch()
+    })
   };
 
   handleTabChange = e => {
     this.setState(
       {
-        page: e,
+        page: e
       },
       () => {
-        const params = parseQuery();
+        const params = parseQuery()
         this.getPromotionList({
           ...params,
           page: e.current,
-          pageSize: e.pageSize,
-        });
+          pageSize: e.pageSize
+        })
       },
-    );
+    )
   };
 
   hanadleDisablePromotion = id => () => {
@@ -130,9 +130,9 @@ class List extends React.Component {
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        this.setDisablePromotion([].concat(id));
-      },
-    });
+        this.setDisablePromotion([].concat(id))
+      }
+    })
   };
 
   handleEnablePromotion = id => () => {
@@ -142,47 +142,47 @@ class List extends React.Component {
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        this.setEnablePromotion([].concat(id));
-      },
-    });
+        this.setEnablePromotion([].concat(id))
+      }
+    })
   };
 
-  render() {
-    const { listData, page } = this.state;
+  render () {
+    const { listData, page } = this.state
     const columns = [
       {
         title: '排序',
         dataIndex: 'sort',
-        width: 100,
+        width: 100
       },
       {
         title: '活动ID',
         dataIndex: 'id',
-        width: 100,
+        width: 100
       },
       {
         title: '活动名称',
-        dataIndex: 'title',
+        dataIndex: 'title'
       },
       {
         title: '开始时间',
         dataIndex: 'startTime',
-        render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
+        render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>
       },
       {
         title: '结束时间',
         dataIndex: 'endTime',
-        render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>,
+        render: text => <>{DateFns.format(text, 'YYYY-MM-DD HH:mm:ss')}</>
       },
       {
         title: '活动类型',
         dataIndex: 'type',
-        render: text => <>{activityType.getValue(text)}</>,
+        render: text => <>{activityType.getValue(text)}</>
       },
       {
         title: '活动状态',
         dataIndex: 'status',
-        render: text => <>{text === 0 ? '关闭' : '开启'}</>,
+        render: text => <>{text === 0 ? '关闭' : '开启'}</>
       },
       {
         title: '操作',
@@ -194,64 +194,64 @@ class List extends React.Component {
 
             {record.status ? (
               <>
-                <Divider type="vertical" />
+                <Divider type='vertical' />
                 <a style={{ color: '#ff6600' }} onClick={this.hanadleDisablePromotion(record.id)}>
                   关闭
                 </a>
               </>
             ) : record.systemTime < record.endTime ? (
               <>
-                <Divider type="vertical" />
+                <Divider type='vertical' />
                 <a style={{ color: '#ff6600' }} onClick={this.handleEnablePromotion(record.id)}>
                   开启
                 </a>
               </>
             ) : null}
           </>
-        ),
-      },
-    ];
+        )
+      }
+    ]
 
     const {
-      form: { getFieldDecorator },
-    } = this.props;
+      form: { getFieldDecorator }
+    } = this.props
 
-    const { initParams } = this.state;
+    const { initParams } = this.state
 
     return (
       <>
         <Card>
-          <Form layout="inline">
-            <FormItem label="活动名称">
+          <Form layout='inline'>
+            <FormItem label='活动名称'>
               {getFieldDecorator('name', {
-                initialValue: initParams.name,
-              })(<Input placeholder="请输入活动名称" style={{ width: 180 }} />)}
+                initialValue: initParams.name
+              })(<Input placeholder='请输入活动名称' style={{ width: 180 }} />)}
             </FormItem>
-            <FormItem label="活动ID">
+            <FormItem label='活动ID'>
               {getFieldDecorator('promotionId', {
-                initialValue: initParams.promotionId,
-              })(<Input placeholder="请输入活动ID" style={{ width: 180 }} />)}
+                initialValue: initParams.promotionId
+              })(<Input placeholder='请输入活动ID' style={{ width: 180 }} />)}
             </FormItem>
-            <FormItem label="商品名称">
+            <FormItem label='商品名称'>
               {getFieldDecorator('productName', {
                 initialValue: initParams.productName
               })(
-                <Input placeholder="请输入商品名称" style={{ width: 180 }} />,
+                <Input placeholder='请输入商品名称' style={{ width: 180 }} />,
               )}
             </FormItem>
-            <FormItem label="商品ID">
+            <FormItem label='商品ID'>
               {getFieldDecorator('productId', {
                 initialValue: initParams.productId
               })(
-                <Input placeholder="请输入商品ID" style={{ width: 180 }} />,
+                <Input placeholder='请输入商品ID' style={{ width: 180 }} />,
               )}
             </FormItem>
-            <FormItem label="活动类型">
+            <FormItem label='活动类型'>
               {getFieldDecorator('type', {
-                initialValue: Number(initParams.type) || '',
+                initialValue: Number(initParams.type) || ''
               })(
-                <Select placeholder="请选择活动类型" style={{ width: 180 }} allowClear>
-                  <Option value="">全部</Option>
+                <Select placeholder='请选择活动类型' style={{ width: 180 }} allowClear>
+                  <Option value=''>全部</Option>
                   {activityType.getArray().map((val, i) => (
                     <Option value={val.key} key={i}>
                       {val.val}
@@ -260,35 +260,35 @@ class List extends React.Component {
                 </Select>,
               )}
             </FormItem>
-            <FormItem label="活动状态">
+            <FormItem label='活动状态'>
               {getFieldDecorator('status', {
-                initialValue: initParams.status || '',
+                initialValue: initParams.status || ''
               })(
-                <Select placeholder="请选择活动类型" style={{ width: 180 }}>
-                  <Option value="">全部</Option>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">开启</Option>
+                <Select placeholder='请选择活动类型' style={{ width: 180 }}>
+                  <Option value=''>全部</Option>
+                  <Option value='0'>关闭</Option>
+                  <Option value='1'>开启</Option>
                 </Select>,
               )}
             </FormItem>
-            <FormItem label="有效时间">
+            <FormItem label='有效时间'>
               {getFieldDecorator('time', {
                 initialValue: [
                   initParams.startTime ? moment(+initParams.startTime) : '',
-                  initParams.endTime ? moment(+initParams.endTime) : '',
-                ],
+                  initParams.endTime ? moment(+initParams.endTime) : ''
+                ]
               })(
                 <RangePicker
                   style={{ width: 430 }}
-                  format="YYYY-MM-DD HH:mm"
+                  format='YYYY-MM-DD HH:mm'
                   showTime={{
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]
                   }}
                 />,
               )}
             </FormItem>
             <div style={{ textAlign: 'right', marginTop: 8 }}>
-              <Button type="primary" onClick={this.handleSearch}>
+              <Button type='primary' onClick={this.handleSearch}>
                 查询
               </Button>
               <Button style={{ marginLeft: 10 }} onClick={this.resetSearch}>
@@ -299,7 +299,7 @@ class List extends React.Component {
         </Card>
         <Card style={{ marginTop: 10 }}>
           <div style={{ marginBottom: 16 }}>
-            <Button type="primary" onClick={() => this.setState({ visible: true })}>
+            <Button type='primary' onClick={() => this.setState({ visible: true })}>
               新建活动
             </Button>
           </div>
@@ -316,19 +316,19 @@ class List extends React.Component {
           title='活动新增'
           onOk={() => {
             this.setState({
-              visible: false,
-            });
-            this.handleSearch();
+              visible: false
+            })
+            this.handleSearch()
           }}
           onCancel={() =>
             this.setState({
-              visible: false,
+              visible: false
             })
           }
         />
       </>
-    );
+    )
   }
 }
 
-export default Form.create()(List);
+export default Form.create()(List)
