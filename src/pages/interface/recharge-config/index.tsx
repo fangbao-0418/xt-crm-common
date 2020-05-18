@@ -138,12 +138,13 @@ class Main extends React.Component<{}, State> {
       <Page>
         <SelectModal
           onOk={(rows) => {
+            console.log(rows, 'rows')
             let res: RecordProps[] = []
             rows.map((item) => {
               item.skuList = (item.skuList || []).map((item2) => {
                 return {
                   ...item2,
-                  status: item.status
+                  status: item2.status ?? item.status
                 }
               })
               res = res.concat(item.skuList as any[])
