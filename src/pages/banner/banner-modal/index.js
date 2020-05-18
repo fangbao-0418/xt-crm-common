@@ -1,7 +1,8 @@
+/* eslint-disable no-const-assign */
 /* eslint-disable no-self-assign */
 /* eslint-disable react/no-find-dom-node */
 import React, { Component } from 'react'
-import { Select, Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
+import { Tag, Select, Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
 import If from '@/packages/common/components/if'
 import UploadView from '../../../components/upload'
 import { getBannerDetail, updateBanner, addBanner } from '../api'
@@ -50,10 +51,9 @@ class BannerModal extends Component {
   };
 
   showModal = () => {
+    this.props.form.resetFields()
     if (this.props.isEdit) {
       this.query()
-    } else {
-      this.props.form.resetFields()
     }
     this.setState({
       visible: true
@@ -175,7 +175,6 @@ class BannerModal extends Component {
                 rules: [
                   {
                     validator: (rule, value, cb) => {
-                      console.log(value)
                       if (value[1] !== undefined) {
                         cb()
                       } else {
@@ -284,10 +283,44 @@ class BannerModal extends Component {
                 })(
                   <Select
                     mode={'tags'}
+                    ref={(ref)=>{
+                      this.ref=ref
+                    }}
                     placeholder='请输入关键词'
                     id='keywordsList'
                     tokenSeparators={[',']}
+                    maxLength={10}
+                    open={false}
                     name='keywordsList'
+                    autoClearSearchValue={true}
+                    onInputKeyDown={(e)=>{
+                      const { data } = this.state
+                      const keyCode=e.keyCode,
+                            targetInputValue=e.target.value
+                      data.keywordsList=(data&&data.keywordsList)||[]
+                      if (keyCode===13&&targetInputValue) {
+                        if (targetInputValue.length>10) {
+                          APP.error('不能超过10个字符')
+                          return
+                        }
+                        if (data.keywordsList.length>20) {
+                          APP.error('不能超过20个关键词')
+                          return
+                        }
+                        if (targetInputValue) {
+                          if (data.keywordsList.indexOf(targetInputValue)===-1) {
+                            data.keywordsList.push(targetInputValue)
+                            this.setState({
+                              data
+                            }, ()=>{
+                              document.querySelector('.ant-select-search__field').value = ''
+                            })
+                          } else {
+                            APP.error('关键词重复')
+                          }
+                        }
+                      }
+                    }}
                     onChange={this.onChangeKeyWord.bind(this)}
                   />
                 )}
@@ -314,7 +347,6 @@ class BannerModal extends Component {
     this.setState({
       data
     })
-    console.log(data)
   }
 }
 

@@ -70,9 +70,7 @@ class Main extends React.Component<Props> {
             {getFieldDecorator('rechargeType', { initialValue: values.rechargeType })(
               <Select allowClear style={{ width: 100 }}>
                 <Select.Option value={0}>全部</Select.Option>
-                <Select.Option value={1}>话费</Select.Option>
-                <Select.Option value={2}>流量</Select.Option>
-                <Select.Option value={3}>游戏卡</Select.Option>
+                <Select.Option value={2}>话费</Select.Option>
               </Select>
             )}
           </Form.Item>

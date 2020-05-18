@@ -36,12 +36,25 @@ class Recharge extends Component {
       this.payload.createTimeBegin= moment(this.payload.createdTime[0]).valueOf()
       this.payload.createTimeEnd= moment(this.payload.createdTime[1]).valueOf()
       delete this.payload.createdTime
-
+    } else {
+      if (this.payload.createTimeBegin) {
+        delete this.payload.createTimeBegin
+      }
+      if (this.payload.createTimeEnd) {
+        delete this.payload.createTimeEnd
+      }
     }
     if (this.payload.finishTime&&this.payload.finishTime.length>0) {
       this.payload.finishTimeBegin= moment(this.payload.finishTime[0]).valueOf()
       this.payload.finishTimeEnd= moment(this.payload.finishTime[1]).valueOf()
       delete this.payload.finishTime
+    } else {
+      if (this.payload.finishTimeBegin) {
+        delete this.payload.finishTimeBegin
+      }
+      if (this.payload.finishTimeEnd) {
+        delete this.payload.finishTimeEnd
+      }
     }
     return { ...payload,
       ...this.payload,
@@ -71,10 +84,7 @@ class Recharge extends Component {
       this.query,
     )
   };
-  constructor (props) {
-    super(props)
-    this.state = {}
-  }
+
   handleTabClick = key => {
     this.setState({
       rechargeStatus: key
