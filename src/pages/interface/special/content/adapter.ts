@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-27 01:38:04
- * @FilePath: /eslint-plugin-xt-react/Users/fb/Documents/xituan/xt-crm/src/pages/interface/special/content/adapter.ts
+ * @LastEditTime: 2020-05-18 15:37:45
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/special/content/adapter.ts
  */
 import { status } from './config'
 import { removeURLDomain } from '@/util/utils'
@@ -18,7 +18,7 @@ export function saveSubjectFloorParams (payload: any) {
       v.advertisementImgUrl = removeURLDomain(v.advertisementImgUrl)
     }
     if (v.type === 4) {
-      v.content = JSON.stringify(v.content)
+      v.content = JSON.stringify(APP.fn.formatUnSafeData(v.content))
     }
     return v
   })
