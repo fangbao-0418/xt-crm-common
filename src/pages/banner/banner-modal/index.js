@@ -299,6 +299,14 @@ class BannerModal extends Component {
                             targetInputValue=e.target.value
                       data.keywordsList=(data&&data.keywordsList)||[]
                       if (keyCode===13&&targetInputValue) {
+                        if (targetInputValue.length>10) {
+                          APP.error('不能超过10个字符')
+                          return
+                        }
+                        if (data.keywordsList.length>20) {
+                          APP.error('不能超过20个关键词')
+                          return
+                        }
                         if (targetInputValue) {
                           if (data.keywordsList.indexOf(targetInputValue)===-1) {
                             data.keywordsList.push(targetInputValue)
@@ -308,7 +316,7 @@ class BannerModal extends Component {
                               document.querySelector('.ant-select-search__field').value = ''
                             })
                           } else {
-                            APP.error('关键字重复')
+                            APP.error('关键词重复')
                           }
                         }
                       }
