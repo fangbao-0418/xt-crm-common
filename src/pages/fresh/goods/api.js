@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-06 10:18:13
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-15 14:03:09
+ * @LastEditTime: 2020-05-18 17:57:46
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/goods/api.js
  */
 
@@ -53,7 +53,7 @@ export function enableGoods (data) {
  * @param {*} data
  */
 export function exportFileList (data) {
-  return exportFileStream('/mcweb/product/fresh/export', data, '商品导出.xlsx', {
+  return exportFileStream('/mcweb/product/fresh/export', data, '商品导出.xls', {
     method: 'get',
     data: undefined,
     params: data

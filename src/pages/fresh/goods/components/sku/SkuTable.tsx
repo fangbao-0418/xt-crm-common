@@ -314,6 +314,14 @@ class Main extends React.Component<Props, State> {
                     // }).then(() => {
                     //   cb('status', record, index)(text === -1 ? 0 : -1)
                     // })
+                    const dataSource = this.state.dataSource || []
+                    const res = dataSource.filter((item) => {
+                      return item.status !== -1
+                    })
+                    if (res.length <= 1) {
+                      APP.error('最少存在一个sku不能被停用')
+                      return
+                    }
                     cb('status', record, index)(text === -1 ? 0 : -1)
                   }}
                 >
