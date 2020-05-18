@@ -17,7 +17,7 @@ export function refundAutoAdd (data) {
 
 /* 审核一个配置 */
 export function refundAutoAudit (data) {
-  return newPut('/order/refund/auto/dispose/audit', data, { hideToast: false })
+  return newPut('/order/refund/auto/dispose/audit', data, { hideToast: true })
 }
 
 /* 查看详情 */

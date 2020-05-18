@@ -102,6 +102,8 @@ class Main extends React.Component {
       }, (err: any) => {
         if (err.code === '-2') {
           this.handleConfirmStart(err, record, status)
+        } else {
+          APP.error(err.message)
         }
       })
   }
@@ -118,6 +120,8 @@ class Main extends React.Component {
         }).then(() => {
           APP.success('启用成功')
           this.listPage.refresh()
+        }, (err: any) => {
+          APP.error(err.message)
         })
       }
     })
