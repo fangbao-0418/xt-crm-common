@@ -278,8 +278,9 @@ class CouponInfo extends React.Component {
   receiveTimeValidator = (rule, value = [], callback) => {
     const { useTimeRange } = this.state
     const form = formRef.current
+    // useTimeType 0-自定义使用时间区间 1-使用自当日到起n天内
     const { useTimeType } = form ? form.getValues() : {}
-    console.log(value, useTimeRange, value[0] >= value[1], 'receiveTimeValidator')
+    // console.log(value, useTimeRange, value[0] >= value[1], 'receiveTimeValidator')
     if (value[0] && value[1]) {
       console.log(value, value[0].unix())
       if (value[0] >= value[1]) {
@@ -299,9 +300,9 @@ class CouponInfo extends React.Component {
         return
       }
     }
-    if (useTimeType === 0 && useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
+    if (useTimeType === 0 && value?.[0] && useTimeRange?.[0] && value[0].unix() > useTimeRange[0].unix()) {
       callback('领取开始时间必须小于等于使用开始时间')
-    } else if (useTimeType === 0 && useTimeRange && value[1] && useTimeRange[1] && value[1] > useTimeRange[1]) {
+    } else if (useTimeType === 0 && value?.[1] && useTimeRange?.[1] && value[1].unix() > useTimeRange[1].unix()) {
       console.log(value[1] > useTimeRange[1], '----')
       callback('领取结束时间必须小于等于使用结束时间')
     }
@@ -381,7 +382,7 @@ class CouponInfo extends React.Component {
           onChange={(field) => {
             const form = formRef.current
             if (form && field === 'receiveTime') {
-              console.log('on change')
+              // console.log('on change')
               form.props.form.validateFields(['receiveTime'], {force: true})
             }
           }}
