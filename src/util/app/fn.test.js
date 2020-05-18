@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-05-18 15:52:48
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-18 17:30:01
+ * @LastEditTime: 2020-05-18 17:37:57
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/fn.test.js
  */
 
@@ -24,6 +24,9 @@ test('format unsafe data', () => {
     ' a1',
     ' a2  '
   ])
+  const o1 = formatUnSafeData()
+  const o2 = formatUnSafeData(null)
+  const o3 = formatUnSafeData(' a2 ')
   const newData = formatUnSafeData(data)
   expect(newData.input).toBe('abc')
   expect(newData.content.value).toBe('http://localhost:3000/#/interface/special-content/181')
@@ -31,4 +34,7 @@ test('format unsafe data', () => {
   expect(newData.list[1].value).toBe('a1')
   expect(arr[0]).toBe('a1')
   expect(arr[1]).toBe('a2')
+  expect(o1).toBe(undefined)
+  expect(o2).toBe(null)
+  expect(o3).toBe('a2')
 })

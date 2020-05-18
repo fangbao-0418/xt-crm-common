@@ -305,6 +305,8 @@ export function formatUnSafeData (source) {
           }
         }
       }
+    } else if (typeof source === 'string') {
+      data = formatUnsafeString (data)
     }
     return data
   }
