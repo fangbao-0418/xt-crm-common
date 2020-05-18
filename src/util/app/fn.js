@@ -273,3 +273,40 @@ export function fillOssDomainUrl (url) {
   url = 'https://assets.hzxituan.com/' + url
   return url
 }
+
+export function formatUnsafeString (str) {
+  return (str || '').replace(/\s/g, '')
+}
+
+/**
+ * 格式化不安全数据
+ */
+export function formatUnSafeData (source) {
+  function loop (data) {
+    if (data instanceof Object) {
+      const isArray = data instanceof Array
+      if (isArray) {
+        data = data.map((item) => {
+          if (typeof item === 'string') {
+            item = formatUnsafeString(item)
+          }
+          if (item instanceof Object) {
+            item = loop(item)
+          }
+          return item
+        })
+      } else {
+        for (const key in data) {
+          if (typeof data[key] === 'string') {
+            data[key] = formatUnsafeString(data[key])
+          }
+          if (data[key] instanceof Object) {
+            data[key] = loop(data[key])
+          }
+        }
+      }
+    }
+    return data
+  }
+  return loop(source)
+}
