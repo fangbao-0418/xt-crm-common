@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import GoodCell from '@/components/good-cell';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import GoodCell from '@/components/good-cell'
 import MoneyRender from '@/components/money-render'
 
 /**
@@ -15,8 +15,8 @@ export function getDetailColumns (type = 0) {
       dataIndex: 'skuName',
       key: 'skuName',
       width: '20%',
-      render(skuName: string, row: any) {
-        return <GoodCell {...row} isRefund={type === 1} />;
+      render (skuName: string, row: any) {
+        return <GoodCell {...row} isRefund={type === 1} />
       }
     },
     {
@@ -24,7 +24,7 @@ export function getDetailColumns (type = 0) {
       dataIndex: 'productId',
       key: 'productId',
       width: '8%',
-      render(id: any, record: any) {
+      render (id: any, record: any) {
         console.log('record => ', record)
         return <Link to={`/fresh/goods/sku-sale/${id}`}>{id}</Link>
       }
@@ -32,7 +32,7 @@ export function getDetailColumns (type = 0) {
     {
       title: '属性',
       dataIndex: 'properties',
-      key: 'properties',
+      key: 'properties'
     },
     {
       title: '供应商',
@@ -50,7 +50,7 @@ export function getDetailColumns (type = 0) {
       title: '数量',
       width: '8%',
       dataIndex: 'quantity',
-      key: 'quantity',
+      key: 'quantity'
     },
     {
       title: '商品总价（元）',
@@ -85,11 +85,11 @@ export function getDetailColumns (type = 0) {
       width: '8%',
       render: MoneyRender
     }
-  ];
+  ]
 }
 
 /** 供应商分类(0-喜团,1-1688,2-淘宝联盟,3-一般海外供应商,4-保税仓海外供应商,5-喜团买菜供应商) */
-export const storeType = ['喜团', '1688', '淘宝联盟', '一般海外供应商', '保税仓海外供应商', '喜团买菜供应商'];
+export const storeType = ['喜团', '1688', '淘宝联盟', '一般海外供应商', '保税仓海外供应商', '喜团买菜供应商']
 export const supplierOperate: any = {
   0: '未验收',
   10: '已验收'
@@ -137,7 +137,7 @@ export enum enumRefundStatus {
   WaitCustomerServiceOperating = 27,
   Complete = 30,
   Rejected = 40
-};
+}
 
 /**
  * 售后类型
@@ -149,7 +149,7 @@ export enum enumRefundType {
   Both = 10,
   Refund = 20,
   Exchange = 30,
-};
+}
 
 export const TextMapRefundStatus = {
   [enumRefundStatus.All]: '所有',
@@ -161,15 +161,14 @@ export const TextMapRefundStatus = {
   [enumRefundStatus.OperatingOfMoney]: '处理中(退款中)',
   [enumRefundStatus.OperatingOfGoods]: '处理中(退货中)',
   [enumRefundStatus.Complete]: '已完成',
-  [enumRefundStatus.Rejected]: '审核被驳回',
-};
+  [enumRefundStatus.Rejected]: '审核被驳回'
+}
 
 export const TextMapRefundType = {
   [enumRefundType.Both]: '退款退货',
   [enumRefundType.Refund]: '退款',
-  [enumRefundType.Exchange]: '换货',
-};
-
+  [enumRefundType.Exchange]: '换货'
+}
 
 export enum enumOrderStatus {
   // 代付款
@@ -182,7 +181,7 @@ export enum enumOrderStatus {
   Complete = 50,
   // 关闭
   Closed = 60
-};
+}
 
 export const OrderStatusTextMap = {
   10: '待付款',
@@ -190,40 +189,40 @@ export const OrderStatusTextMap = {
   30: '待提货',
   50: '已提货',
   60: '关闭'
-};
+}
 
 export const TabList = [
   {
     name: '所有订单',
     url: '/fresh/order/mainOrder',
-    status: undefined,
+    status: undefined
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Unpaid],
     url: '/fresh/order/unpaidOrder',
-    status: enumOrderStatus.Unpaid,
+    status: enumOrderStatus.Unpaid
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Undelivered],
     url: '/fresh/order/undeliveredOrder',
-    status: enumOrderStatus.Undelivered,
+    status: enumOrderStatus.Undelivered
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Delivered],
     url: '/fresh/order/deliveredOrder',
-    status: enumOrderStatus.Delivered,
+    status: enumOrderStatus.Delivered
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Complete],
     url: '/fresh/order/completeOrder',
-    status: enumOrderStatus.Complete,
+    status: enumOrderStatus.Complete
   },
   {
     name: OrderStatusTextMap[enumOrderStatus.Closed],
     url: '/fresh/order/closedOrder',
     status: enumOrderStatus.Closed
-  },
-];
+  }
+]
 
 //0非会员 10-团长，20-区长，30-合伙人，40-管理员，50-公司
 export const enumMemberType = {
@@ -232,8 +231,8 @@ export const enumMemberType = {
   Warden: 20,
   Partner: 30,
   Manager: 40,
-  Company: 50,
-};
+  Company: 50
+}
 
 export const MemberTypeTextMap = {
   [enumMemberType.Visitor]: '非会员',
@@ -241,9 +240,8 @@ export const MemberTypeTextMap = {
   [enumMemberType.Warden]: '区长',
   [enumMemberType.Partner]: '合伙人',
   [enumMemberType.Manager]: '管理员',
-  [enumMemberType.Company]: '公司',
-};
-
+  [enumMemberType.Company]: '公司'
+}
 
 export enum storeTypes {
   喜团小店 = 1,

@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
-import { getProceedsListByOrderId } from '../api';
-import { get, map } from 'lodash';
-import { Row, Card, Col, Divider } from 'antd';
-import BuyerInfo from './buyer-info';
-import OrderInfo from './order-info';
-import GoodsTable from './goods-table';
-import BenefitInfo from './benefit-info';
-import StepInfo from './step-info';
-import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant';
-import { dateFormat } from '@/util/utils';
-import moment from 'moment';
+import React, { Component } from 'react'
+import { getProceedsListByOrderId } from '../api'
+import { get, map } from 'lodash'
+import { Row, Card, Col, Divider } from 'antd'
+import BuyerInfo from './buyer-info'
+import OrderInfo from './order-info'
+import GoodsTable from './goods-table'
+import BenefitInfo from './benefit-info'
+import StepInfo from './step-info'
+import { enumOrderStatus, OrderStatusTextMap, storeType } from '../constant'
+import { dateFormat } from '@/util/utils'
+import moment from 'moment'
 import WithModal from './components/modal'
 import { namespace } from './model'
 import { connect } from 'react-redux'
@@ -19,17 +19,17 @@ import If from '@/packages/common/components/if'
   childOrderList: state[namespace].childOrderList
 }))
 class Detail extends Component {
-  get id() {
+  get id () {
     const {
       match: {
-        params: { id },
-      },
-    } = this.props;
-    return id;
+        params: { id }
+      }
+    } = this.props
+    return id
   }
 
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       visible: false,
       remark: '',
@@ -38,11 +38,11 @@ class Detail extends Component {
       deliveryVisible: false,
       deliveryData: {},
       modifyAddressVisible: false
-    };
+    }
   }
 
-  componentDidMount() {
-    this.query();
+  componentDidMount () {
+    this.query()
   }
 
   /**
@@ -55,7 +55,7 @@ class Detail extends Component {
         orderCode: this.id
       }
     })
-    this.queryProceeds();
+    this.queryProceeds()
   }
 
   /**
@@ -63,7 +63,7 @@ class Detail extends Component {
    */
   queryProceeds = () => {
     getProceedsListByOrderId({ orderCode: this.id }).then((result) => {
-      const { goodsTableKey } = this.state;
+      const { goodsTableKey } = this.state
       this.setState({
         userProceedsListByOrderId: result,
         goodsTableKey: goodsTableKey + 1
@@ -71,9 +71,9 @@ class Detail extends Component {
     })
   }
 
-  render() {
+  render () {
     const { data, childOrderList } = this.props
-    let { 
+    const {
       userProceedsListByOrderId,
       goodsTableKey
     } = this.state
@@ -86,10 +86,10 @@ class Detail extends Component {
           orderStatusLogList={orderStatusLogList}
         />
         {/* 订单信息 */}
-        <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress}/>
+        <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress} />
         {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
-        <Card title="详细信息">
+        <Card title='详细信息'>
           {map(childOrderList, (item, index) => {
             return (
               <div
@@ -118,14 +118,14 @@ class Detail extends Component {
                           </span>
                           <span>
                             {
-                              (item.childOrder.orderStatus == enumOrderStatus.Intercept && item.childOrder.interceptorTimeOut) ?
-                                `(${moment(item.childOrder.interceptorTimeOut).format(dateFormat)})` :
-                                ''
+                              (item.childOrder.orderStatus == enumOrderStatus.Intercept && item.childOrder.interceptorTimeOut)
+                                ? `(${moment(item.childOrder.interceptorTimeOut).format(dateFormat)})`
+                                : ''
                             }
                           </span>
                         </Col>
-                        <Col className="gutter-row" span={8}>
-                          <span style={{marginRight: 30}}>发货模式：{item.childOrder.deliveryModeName}</span>
+                        <Col className='gutter-row' span={8}>
+                          <span style={{ marginRight: 30 }}>发货模式：{item.childOrder.deliveryModeName}</span>
                           <span>提货方式：{item.childOrder.extractModeStr}</span>
                         </Col>
                       </Row>
@@ -150,10 +150,10 @@ class Detail extends Component {
                 />
                 {childOrderList.length > 1 && index < childOrderList.length - 1 ? <Divider /> : null}
               </div>
-            );
+            )
           })}
         </Card>
-        <Card title="整单收益信息">
+        <Card title='整单收益信息'>
           <BenefitInfo
             key={`benefit-${goodsTableKey}`}
             data={data.orderYield}
@@ -163,14 +163,14 @@ class Detail extends Component {
           />
         </Card>
       </>
-    );
+    )
   }
 
   onOk = () => {
     this.setState({
       deliveryVisible: false
     }, () => {
-      this.query();
+      this.query()
     })
   }
 
