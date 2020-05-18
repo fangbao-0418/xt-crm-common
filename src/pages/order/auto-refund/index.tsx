@@ -98,19 +98,20 @@ class Main extends React.Component {
         this.listPage.refresh()
       }, (err: any) => {
         if (err.code === '-2') {
-          this.handleConfirmStart(err, record)
+          this.handleConfirmStart(err, record, status)
         }
       })
   }
 
-  handleConfirmStart = (err: any, record: any) => {
+  handleConfirmStart = (err: any, record: any, status: any) => {
     confirm({
       title: '确认启用吗?',
       content: err.message,
       onOk: () => {
         refundAutoAudit({
           serialNo: record.serialNo,
-          status: 1
+          status,
+          checkStatus: 1
         }).then(() => {
           APP.success('启用成功')
           this.listPage.refresh()
