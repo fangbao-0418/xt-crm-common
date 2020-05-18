@@ -26,9 +26,7 @@ class GoodsTable extends Component {
   showApplyBtn = (orderStatus) => {
     return orderStatus === 50
   }
-  /**
-   * 如果是海淘订单，需要提示该订单商品为海淘商品，请慎重处理售后
-   */
+
   handleApply = (record) => {
     const handle = () => {
       const { orderInfo = {}, childOrder = {}, memberId } = this.props
@@ -49,7 +47,7 @@ class GoodsTable extends Component {
           okText: '查看详情',
           cancelText: '取消',
           onOk: () => {
-            APP.history.push(`/order/refundOrder/${record.skuServerId}`)
+            APP.history.push(`/fresh/saleAfter/detail/${record.skuServerId}`)
           }
         })
       }
@@ -152,6 +150,17 @@ class GoodsTable extends Component {
                 })}>
                 添加备注
               </Button>
+            </div>
+            <div>
+              {record.canShowHistoryBtn && (
+                <Button
+                  style={{ padding: 0 }}
+                  type='link'
+                  size='small'
+                  onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>
+                  历史售后
+                </Button>
+              )}
             </div>
           </>
         )
