@@ -226,27 +226,26 @@ export default class extends React.Component {
     const { type, intercept } = this.props
     const payload = this.payload
     const options = formFields(this.props.type, intercept)
-    console.log(options)
     const fieldsValue = {
       mainOrderCode: payload.mainOrderCode,
       orderCode: payload.orderCode,
-      refundType: payload.refundType || options.find(item => item.id === 'refundType')?.initialValue,
+      refundType: payload.refundType === undefined ? options.find(item => item.id === 'refundType')?.initialValue: payload.refundType,
       memberPhone: payload.memberPhone,
       phone: payload.phone,
       storeId: payload.storeId,
       productId: payload.productId,
       operator: payload.operator,
-      createType: payload.createType || options.find(item => item.id === 'createType')?.initialValue,
+      createType: payload.createType === undefined ? options.find(item => item.id === 'createType')?.initialValue : payload.createType,
       apply: getFormatDate(payload.applyStartTime, payload.applyEndTime),
       handle: getFormatDate(payload.handleStartTime, payload.handleEndTime),
       payTime: getFormatDate(payload.payStartTime, payload.payEndTime),
       expressCode: payload.expressCode,
-      orderType: payload.orderType || options.find(item => item.id === 'orderType')?.initialValue,
-      interception: payload.interception || options.find(item => item.id === 'interception')?.initialValue,
+      orderType: payload.orderType === undefined ? options.find(item => item.id === 'orderType')?.initialValue : payload.orderType,
+      interception: payload.interception === undefined ? options.find(item => item.id === 'interception')?.initialValue : payload.interception,
       interceptionMemberPhone: payload.interceptionMemberPhone,
-      storeType: payload.storeType || options.find(item => item.id === 'storeType')?.initialValue,
-      smallShopOrder: payload.smallShopOrder || options.find(item => item.id === 'smallShopOrder')?.initialValue,
-      autoAudit: payload.autoAudit || options.find(item => item.id === 'autoAudit')?.initialValue
+      storeType: payload.storeType === undefined ? options.find(item => item.id === 'storeType')?.initialValue : payload.storeType,
+      smallShopOrder: payload.smallShopOrder === undefined ? options.find(item => item.id === 'smallShopOrder')?.initialValue: payload.smallShopOrder,
+      autoAudit: payload.autoAudit === undefined ? options.find(item => item.id === 'autoAudit')?.initialValue : payload.autoAudit
     }
     const refundStatusOptionsOptions = refundStatusOptions[type]
     if (refundStatusOptionsOptions.length > 1 && (payload.refundStatus?.length)) {

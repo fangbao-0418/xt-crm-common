@@ -46,7 +46,7 @@ declare module AfterSalesInfo {
     freight: number;
     serverNum: number;
     unitPrice: number;
-    maxServerNum:number;
+    maxServerNum: number;
     maxRefundAmount: number;
     reply: string;
     isDemotion: number;
