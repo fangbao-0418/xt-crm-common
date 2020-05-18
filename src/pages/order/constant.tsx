@@ -25,6 +25,7 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       key: 'productId',
       width: '8%',
       render (id: any, record: any) {
+        //record.orderType===55虚拟商品
         if (isXiaoDian) return id
         return <Link to={record.orderType===55?`/goods/virtual/${id}`:`/goods/sku-sale/${id}`}>{id}</Link>
       }
