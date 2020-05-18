@@ -318,7 +318,7 @@ class Main extends React.Component<Props, State> {
                     const res = dataSource.filter((item) => {
                       return item.status !== -1
                     })
-                    if (res.length <= 1) {
+                    if (text !== -1 && res.length <= 1) {
                       APP.error('最少存在一个sku不能被停用')
                       return
                     }
