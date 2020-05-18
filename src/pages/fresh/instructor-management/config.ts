@@ -39,8 +39,11 @@ export const defaultConfigForm: FieldsConfig = {
           required: true,
           message: '请输入名称'
         }, {
-          max: 20,
-          message: '长度最大20个字符'
+          max: 11,
+          message: '长度最大11个字符'
+        }, {
+          pattern: /^[0-9]+$/,
+          message: '只能输入数字'
         }]
       }
     },
