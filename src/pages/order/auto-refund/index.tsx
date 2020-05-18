@@ -98,25 +98,25 @@ class Main extends React.Component {
         this.listPage.refresh()
       }, (err: any) => {
         if (err.code === '-2') {
-          confirm({
-            title: '确认启用吗?',
-            content: err.message,
-            onOk: () => {
-              refundAutoAudit({
-                serialNo: record.serialNo,
-                status: 1
-              }).then(() => {
-                APP.success('启用成功')
-                this.listPage.refresh()
-              }, () => {
-                this.handleStart(record, status)
-              })
-            }
-          })
-        } else {
-          // APP.error(err.message)
+          this.handleConfirmStart(err, record)
         }
       })
+  }
+
+  handleConfirmStart = (err: any, record: any) => {
+    confirm({
+      title: '确认启用吗?',
+      content: err.message,
+      onOk: () => {
+        refundAutoAudit({
+          serialNo: record.serialNo,
+          status: 1
+        }).then(() => {
+          APP.success('启用成功')
+          this.listPage.refresh()
+        })
+      }
+    })
   }
 
   handleDelete = (record: any, status: any) => {
