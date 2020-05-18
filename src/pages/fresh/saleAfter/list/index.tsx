@@ -6,7 +6,7 @@ import If from '@/packages/common/components/if'
 import SearchFetch from '@/components/search-fetch'
 import { Tabs, Card, Button, Pagination } from 'antd'
 import Countdown from '../components/countdown/index'
-import { getFieldsConfig } from './config'
+import { getFieldsConfig, namespace } from './config'
 import styles from './style.m.styl'
 
 import * as api from './api'
@@ -21,31 +21,35 @@ interface State {
 }
 
 class Order extends Component<any, State> {
+  public payload = APP.fn.getPayload(namespace) || {}
   public form: FormInstance
   constructor (props: any) {
     super(props)
     this.state = {
-      type: 'ALL',
+      type: this.payload.type || 'ALL',
       dataSource: [],
       total: 0,
-      current: 1,
-      pageSize: 10
+      current: this.payload.pageNo || 1,
+      pageSize: this.payload.pageSize || 10
     }
   }
-  /**
-   * 订单tabs切换更新type
-   *
-   * @memberof Order
-   */
-  public handleTabChange = (type: string) => {
-    this.setState({
-      type
-    }, () => this.fetchData())
+
+  componentDidMount () {
+    this.setFieldsValue(() => {
+      this.fetchData()
+    })
   }
-  /**
-   *请求列表
-  * @memberof Order
-  */
+
+  /** 订单tabs切换更新type */
+  public handleTabChange = (type: string) => {
+    APP.fn.setPayload(namespace, {})
+    this.form.resetValues()
+    this.setState({ type }, () => {
+      this.fetchData()
+    })
+  }
+
+  /** 请求列表 */
   public fetchData () {
     const { type, current, pageSize } = this.state
     const formData = this.form.getValues()
@@ -60,12 +64,20 @@ class Order extends Component<any, State> {
       refundStatusList = refundStatusList.concat([Number(type)])
     }
 
-    api.fetcOrderList({
+    const params = {
       refundStatusList: refundStatusList,
       ...formData,
       pageNo: current,
       pageSize
-    }).then((res: any) => {
+    }
+
+    console.log(params)
+
+    APP.fn.setPayload(namespace, {
+      ...params,
+      type
+    })
+    api.fetcOrderList(params).then((res: any) => {
       this.setState({
         dataSource: res.result || [],
         total: res.total
@@ -73,11 +85,7 @@ class Order extends Component<any, State> {
     })
   }
 
-  /**
-   * 导出售后单列表
-   *
-   * @memberof Order
-   */
+  /** 导出售后单列表 */
   public toExport () {
     const { type, current, pageSize } = this.state
     api.exportOrderList({
@@ -90,11 +98,7 @@ class Order extends Component<any, State> {
     })
   }
 
-  /**
-   * 重置from数据
-   *
-   * @memberof Order
-   */
+  /** 重置from数据 */
   public resetFrom () {
     this.form.resetValues()
     this.fetchData()
@@ -103,6 +107,29 @@ class Order extends Component<any, State> {
   public toSearch = () => {
     this.fetchData()
   }
+
+  public setFieldsValue = (cb: any) => {
+    const { type } = this.state
+    const payload = this.payload
+    console.log(payload.createTimeBegin)
+    const fieldsValue: any = {
+      selfDeliveryPointId: payload.selfDeliveryPointId,
+      refundCode: payload.refundCode,
+      childOrderCode: payload.childOrderCode,
+      productName: payload.productName,
+      contactPhone: payload.contactPhone,
+      createTime: [
+        payload.createTimeBegin ? moment(payload.createTimeBegin) : undefined,
+        payload.createTimeEnd ? moment(payload.createTimeEnd) : undefined
+      ]
+    }
+    if (type === 'ALL') {
+      fieldsValue.refundStatus = payload.refundStatus
+      fieldsValue.refundType = payload.refundType || 0
+    }
+    this.form.props.form.setFieldsValue(fieldsValue, cb)
+  }
+
   public render () {
     const { type, dataSource, current, total, pageSize } = this.state
     return (
@@ -123,11 +150,6 @@ class Order extends Component<any, State> {
               createTime: {
                 fields: ['createTimeBegin', 'createTimeEnd']
               }
-            }}
-            onChange={() => {
-              this.setState({
-                current: 1
-              })
             }}
             size='small'
             getInstance={(ref) => {
@@ -162,7 +184,7 @@ class Order extends Component<any, State> {
             <FormItem name='productName' />
             <FormItem name='contactPhone' />
             <If condition={type !== '10' && type !== '24'}>
-              <FormItem name='refundType' />
+              <FormItem fieldDecoratorOptions={{ initialValue: 0 }} name='refundType' />
             </If>
             <FormItem name='createTime' />
           </Form>
