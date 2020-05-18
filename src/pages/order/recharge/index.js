@@ -8,7 +8,7 @@ import { formatDate } from '../../helper'
 import moment from 'moment'
 import Search from './Search'
 import { namespace } from './config'
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 import { formatMoneyWithSign } from '@/pages/helper'
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -30,7 +30,7 @@ class Recharge extends Component {
   componentDidMount () {
     this.query()
   }
-  getParam(){
+  getParam () {
     const payload = APP.fn.getPayload(namespace) || {}
     if (this.payload.createdTime&&this.payload.createdTime.length>0) {
       this.payload.createTimeBegin= moment(this.payload.createdTime[0]).valueOf()
@@ -43,13 +43,13 @@ class Recharge extends Component {
       this.payload.finishTimeEnd= moment(this.payload.finishTime[1]).valueOf()
       delete this.payload.finishTime
     }
-    return {...payload,
+    return { ...payload,
       ...this.payload,
-      rechargeStatus: this.state.rechargeStatus==='-1'?null:this.state.rechargeStatus}
+      rechargeStatus: this.state.rechargeStatus==='-1'?null:this.state.rechargeStatus }
   }
   export () {
     rechargeExport(this.getParam()).then(res => {
-      APP.success('导出成功')
+      APP.success('导出成功，请前往下载列表下载文件')
     })
   }
   query = () => {
@@ -95,10 +95,10 @@ class Recharge extends Component {
       {
         title: '子订单号',
         dataIndex: 'childOrderCode',
-        render:(childOrderCode,row)=>{
-        return   <a href={window.location.pathname + '#/order/detail/' + row.mainOrderCode} target="_blank" rel="noopener noreferrer">
-        {childOrderCode}
-      </a>
+        render: (childOrderCode, row)=>{
+          return (<a href={window.location.pathname + '#/order/detail/' + row.mainOrderCode} target='_blank' rel='noopener noreferrer'>
+            {childOrderCode}
+          </a>)
         }
       },
       {
