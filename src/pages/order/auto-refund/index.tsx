@@ -32,15 +32,18 @@ class Main extends React.Component {
     },
     {
       title: '一级类目',
-      dataIndex: 'oneLevelName'
+      dataIndex: 'oneLevelName',
+      render: (val: any, record: any) => record.oneLevelId ? val : '-'
     },
     {
       title: '二级类目',
-      dataIndex: 'twoLevelName'
+      dataIndex: 'twoLevelName',
+      render: (val: any, record: any) => record.twoLevelId ? val : '-'
     },
     {
       title: '三级类目',
-      dataIndex: 'threeLevelName'
+      dataIndex: 'threeLevelName',
+      render: (val: any, record: any) => record.threeLevelId ? val : '-'
     },
     {
       title: '会员等级',
