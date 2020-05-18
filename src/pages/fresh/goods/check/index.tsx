@@ -5,24 +5,26 @@ import MoneyRender from '@/components/money-render'
 import GoodCell from '@/components/good-cell'
 import moment from 'moment'
 import * as api from '../api'
-import { auditStatusConfig } from './config'
+import { getFieldsConfig, auditStatusConfig } from './config'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import SelectFetch from '@/components/select-fetch'
 import SuppilerSelect from '@/components/suppiler-auto-select'
-import { getCategoryTopList } from '../api'
+import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+
 interface State {
   list: any[]
 }
 
-function formatTime(text: any, record: GoodsCheck.ItemProps, index: number) {
-  return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-';
+function formatTime (text: any, record: GoodsCheck.ItemProps, index: number) {
+  return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-'
 }
 
 const namespace = 'fresh-goods-check'
 
 class Main extends React.Component<any, State> {
+  public listpage: ListPageInstanceProps
   public state: State = {
-    list: [],
+    list: []
   };
   public form: FormInstance;
   public payload: GoodsCheck.payloadProps = {
@@ -34,14 +36,14 @@ class Main extends React.Component<any, State> {
    * 条件查询
    */
   public handleSearch = () => {
-    const value = this.form.getValues();
-    console.log(value, 'applyEndTime', value.applyEndTime);
+    const value = this.form.getValues()
+    console.log(value, 'applyEndTime', value.applyEndTime)
     this.payload = {
       ...this.payload,
       ...value,
-      page: 1,
-    };
-    this.fetchData();
+      page: 1
+    }
+    this.fetchData()
   };
   public columns: ColumnProps<GoodsCheck.ItemProps>[] = [
     {
@@ -79,33 +81,33 @@ class Main extends React.Component<any, State> {
     {
       title: '供应商名称',
       dataIndex: 'storeName',
-      key: 'storeName',
+      key: 'storeName'
     },
     {
       title: '一级类目',
       dataIndex: 'firstCategoryName',
-      key: 'firstCategoryName',
+      key: 'firstCategoryName'
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
-      render: formatTime,
+      render: formatTime
     },
     {
       title: '审核状态',
       dataIndex: 'auditStatus',
       key: 'auditStatus',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
-        return (auditStatusConfig as any)[String(text)];
-      },
+        return (auditStatusConfig as any)[String(text)]
+      }
     },
     {
       title: '审核人',
       dataIndex: 'auditUser',
       key: 'auditUser',
       render: (text: any, record: GoodsCheck.ItemProps, index: number) => {
-        return text || '无';
+        return text || '无'
       }
     },
     {
@@ -162,163 +164,92 @@ class Main extends React.Component<any, State> {
     const res = (await api.getToAuditList({
       ...this.payload,
       total: undefined
-    })) || {};
-    this.payload.total = res.total;
-    this.setState({ list: res.records });
-    console.log('res=>', res);
+    })) || {}
+    this.payload.total = res.total
+    this.setState({ list: res.records })
+    console.log('res=>', res)
   };
-  public componentDidMount() {
-    this.form.setValues({
-      ...APP.fn.getPayload<any>(namespace),
-      ...this.payload,
-      total: undefined
-    })
-    this.payload = {
-      ...this.form.getValues(),
-      pageSize: 10,
-      page: 1
-    }
-    this.fetchData();
+  public componentDidMount () {
+    // this.form.setValues({
+    //   ...APP.fn.getPayload<any>(namespace),
+    //   ...this.payload,
+    //   total: undefined
+    // })
+    // this.payload = {
+    //   ...this.form.getValues(),
+    //   pageSize: 10,
+    //   page: 1
+    // }
+    // this.fetchData()
   }
   public onPaginationChange = (page: number, pageSize?: number) => {
-    this.payload.page = page;
-    this.fetchData();
+    this.payload.page = page
+    this.fetchData()
   };
-  public render() {
-    const pagination: PaginationConfig = {
-      current: this.payload.page,
-      total: this.payload.total,
-      onChange: this.onPaginationChange,
-    };
+  public render () {
     return (
       <div>
-        <Card title="筛选">
-          <Form
-            layout="inline"
-            rangeMap={{
-              createTime: {
-                fields: ['createStartTime', 'createEndTime'],
-              },
-              auditTime: {
-                fields: ['auditStartTime', 'auditEndTime'],
-              },
-            }}
-            getInstance={ref => {
-              this.form = ref;
-            }}
-            addonAfter={(
-              <div
-                style={{
-                  display: 'inline-block',
-                  lineHeight: '40px',
-                  verticalAlign: 'top',
+        <ListPage
+          reserveKey={namespace}
+          columns={this.columns}
+          api={api.getToAuditList}
+          formConfig={getFieldsConfig()}
+          rangeMap={{
+            createTime: {
+              fields: ['createStartTime', 'createEndTime']
+            },
+            auditTime: {
+              fields: ['auditStartTime', 'auditEndTime']
+            }
+          }}
+          getInstance={ref => {
+            this.listpage = ref
+          }}
+          formItemLayout={(
+            <div>
+              <FormItem name='productName' />
+              <FormItem
+                label='商品ID'
+                name='productId'
+                type='number'
+                controlProps={{
+                  style: {
+                    width: '167px'
+                  }
                 }}
-              >
-                <Button type="primary" className="mr10" onClick={this.handleSearch}>
-                  查询
-                </Button>
-                <Button
-                  onClick={() => {
-                    this.reset();
-                  }}
-                >
-                  清除
-                </Button>
-              </div>
-            )}
-          >
-            <FormItem label="商品名称" name="productName" />
-            <FormItem
-              label="商品ID"
-              name="productId"
-              type="number"
-              controlProps={{
-                style: {
-                  width: '167px'
-                }
-              }}
-            />
-            <FormItem
-              label="一级类目"
-              inner={form => {
-                return form.getFieldDecorator('firstCategoryId')(
-                  <SelectFetch
-                    style={{ width: '174px' }}
-                    fetchData={() => {
-                      return getCategoryTopList();
-                    }}
-                  />,
-                );
-              }}
-            />
-            <FormItem
-              label="供应商名称"
-              inner={form => {
-                return form.getFieldDecorator('storeId')(
-                  <SuppilerSelect type='fresh' style={{ width: '174px' }} />,
-                );
-              }}
-            />
-            <FormItem
-              label="审核状态"
-              name="auditStatus"
-              type="select"
-              controlProps={{
-                style: {
-                  width: '174px',
-                },
-              }}
-              options={[
-                {
-                  label: '全部',
-                  value: -1,
-                },
-                {
-                  label: '待审核',
-                  value: 1,
-                },
-                {
-                  label: '审核通过',
-                  value: 2,
-                },
-                {
-                  label: '审核不通过',
-                  value: 3,
-                },
-              ]}
-            />
-            <FormItem label="审核人" name="auditUser" />
-            <FormItem
-              name="createTime"
-              label="创建时间"
-              type="rangepicker"
-              controlProps={{
-                showTime: true,
-              }}
-            />
-            <FormItem
-              label="审核时间"
-              name="auditTime"
-              type="rangepicker"
-              controlProps={{
-                showTime: true,
-              }}
-            />
-          </Form>
-        </Card>
-        <Card>
-          <Table
-            scroll={{
-              x: true
-            }}
-            columns={this.columns}
-            dataSource={this.state.list}
-            pagination={pagination}
-            rowKey="id"
-          />
-        </Card>
+              />
+              <FormItem
+                label='一级类目'
+                inner={form => {
+                  return form.getFieldDecorator('firstCategoryId')(
+                    <SelectFetch
+                      style={{ width: '174px' }}
+                      fetchData={() => {
+                        return api.getCategoryTopList()
+                      }}
+                    />,
+                  )
+                }}
+              />
+              <FormItem
+                label='供应商名称'
+                inner={form => {
+                  return form.getFieldDecorator('storeId')(
+                    <SuppilerSelect style={{ width: '174px' }} />,
+                  )
+                }}
+              />
+              <FormItem
+                name='auditStatus'
+              />
+              <FormItem label='审核人' name='auditUser' />
+              <FormItem name='createTime' />
+              <FormItem name='auditTime' />
+            </div>
+          )}
+        />
       </div>
-    );
+    )
   }
 }
 export default Main
