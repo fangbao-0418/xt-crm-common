@@ -18,8 +18,8 @@ const CustomerProcessInfo: React.FC<Props> = ({ data }: Props) => {
   return (
     <div>
       <h4 style={{ marginTop: 0 }}>客服处理信息</h4>
-      <If condition={!!checkVO.refundAutoDisposeNo}>
-        <Row>自动审核售后，配置编号：{checkVO.refundAutoDisposeNo}</Row>
+      <If condition={!!orderServerVO.refundAutoDisposeNo}>
+        <Row>自动审核售后，配置编号：{orderServerVO.refundAutoDisposeNo}</Row>
       </If>
       <Row>售后类型：{refundType.getValue(checkVO.refundType)}</Row>
       <Row>售后数目：{checkVO.serverNum}</Row>
