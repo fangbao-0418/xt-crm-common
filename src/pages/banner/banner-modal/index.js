@@ -307,16 +307,17 @@ class BannerModal extends Component {
                           APP.error('不能超过20个关键词')
                           return
                         }
+                        console.log(data.keywordsList)
+                        console.log(targetInputValue)
                         if (targetInputValue) {
-                          if (data.keywordsList.indexOf(targetInputValue)===-1) {
+                          if (data.keywordsList&&data.keywordsList.length>0&&data.keywordsList.indexOf(targetInputValue)>-1) {
+                            APP.error('关键词重复')
+                          } else {
                             data.keywordsList.push(targetInputValue)
+                            this.ref.blur()
                             this.setState({
                               data
-                            }, ()=>{
-                              document.querySelector('.ant-select-search__field').value = ''
                             })
-                          } else {
-                            APP.error('关键词重复')
                           }
                         }
                       }
