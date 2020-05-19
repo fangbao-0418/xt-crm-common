@@ -262,6 +262,7 @@ class ActivityForm extends React.Component {
               {getFieldDecorator('tagUrl')(
                 <UploadView
                   fileType='png'
+                  ossType='cos'
                   placeholder='上传活动标签'
                   listType='picture-card'
                   listNum={1}
