@@ -153,7 +153,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
               className='href'
               onClick={() => {
                 const url = isVirtualGood(record.type) ?`/goods/virtual/${record.id}` : `/goods/sku-sale/${record.id}`
-                APP.open(url)
+                APP.history.push(url)
               }}
             >
               编辑

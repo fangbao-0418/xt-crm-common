@@ -409,9 +409,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               className='mr8'
               type='danger'
               onClick={() => {
-                APP.history.go(-1)
-              }
-              }>
+                APP.history.push('/goods/list')
+              }}
+            >
               返回
             </Button>
             <If condition={status === 2}>
