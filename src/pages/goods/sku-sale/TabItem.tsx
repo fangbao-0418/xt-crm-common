@@ -7,7 +7,7 @@ import SkuStockEditState from './components/sku-stock-edit'
 import Image from '@/components/Image'
 import { gotoPage, replaceHttpUrl } from '@/util/utils'
 import dateFns from 'date-fns'
-import SuppilerSelect from '@/components/suppiler-auto-select'
+import SuppilerSelector from '@/components/supplier-selector'
 import SelectFetch from '@/components/select-fetch'
 import { ColumnProps } from 'antd/lib/table'
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api'
@@ -215,7 +215,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
   // 导出
   export = () => {
     exportFileList({
-      ...this.list.payload,
+      ...this.list.getPayload(),
       status: this.props.status,
       pageSize: 6000,
       page: 1
@@ -291,10 +291,17 @@ class Main extends React.Component<Props, SkuSaleListState> {
           }}
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
+          cachePayloadProcess={(payload) => {
+            return {
+              ...payload
+            }
+          }}
           processPayload={(payload) => {
             return {
               ...payload,
-              status: +status
+              status: +status,
+              storeId: payload.store?.key,
+              store: undefined
             }
           }}
           rangeMap={{
@@ -312,8 +319,8 @@ class Main extends React.Component<Props, SkuSaleListState> {
               <FormItem
                 label='供应商'
                 inner={(form) => {
-                  return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect style={{ width: 172 }} />
+                  return form.getFieldDecorator('store')(
+                    <SuppilerSelector type='yx' style={{ width: 172 }} />
                   )
                 }}
               />

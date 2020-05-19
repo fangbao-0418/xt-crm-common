@@ -1,7 +1,7 @@
 import React from 'react'
 import { Select, Spin } from 'antd'
 import debounce from 'lodash/debounce'
-import { getStoreList } from './api'
+import { getAllStoreList, getYxStoreList } from './api'
 
 const { Option } = Select
 export interface SupplierItem {
@@ -18,6 +18,7 @@ interface SupplierSelectProps {
   value?: ValueProps
   options?: SupplierItem[]
   category?: 5
+  type?: 'all' | 'yx'
 }
 interface SupplierSelectState {
   supplierList: SupplierItem[],
@@ -42,21 +43,30 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
   }
   fetchSupplier = (name: string) => {
     const category = this.props.category
+    const type = this.props.type || 'all'
     if (name) {
       this.lastFetchId += 1
       const fetchId = this.lastFetchId
       this.setState({ supplierList: [], fetching: true })
-      getStoreList({
-        name,
-        category,
-        pageSize: 200
-      }, { hideLoading: true })
-        .then((res: any) => {
-          if (fetchId !== this.lastFetchId) {
-            return
-          }
-          this.setState({ supplierList: res.records, fetching: false })
-        })
+      let p
+      if (type === 'yx') {
+        p = getYxStoreList({
+          name,
+          pageSize: 200
+        }, { hideLoading: true })
+      } else {
+        p = getAllStoreList({
+          name,
+          category,
+          pageSize: 200
+        }, { hideLoading: true })
+      }
+      p.then((res: any) => {
+        if (fetchId !== this.lastFetchId) {
+          return
+        }
+        this.setState({ supplierList: res.records, fetching: false })
+      })
     } else {
       this.setState({
         supplierList: [],
@@ -82,6 +92,7 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
         labelInValue
         showArrow={false}
         filterOption={false}
+        allowClear
         notFoundContent={fetching ? <Spin size='small' /> : null}
         placeholder='请输入供应商名称'
         onChange={this.handleChange}
