@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-05-06 10:32:12
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-07 19:36:12
- * @FilePath: /xt-crm/src/components/sidebar/routesMapRule.ts
+ * @LastEditTime: 2020-05-19 15:12:07
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/components/sidebar/routesMapRule.ts
  */
 
 const rules = {
@@ -95,6 +95,10 @@ const rules = {
   ],
   '/shop/goods': [
     /shop\/goods\/detail(\/)?(\d+)?/
+  ],
+  '/fresh/coupon': [
+    /fresh\/coupon\/bulkissuing(\/)?(\d+)?/,
+    /fresh\/coupon\/detail(\/)?(\d+)?/
   ]
 }
 export default rules

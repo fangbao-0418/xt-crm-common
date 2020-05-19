@@ -1,10 +1,10 @@
-import React from 'react';
-import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components';
+import React from 'react'
+import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components'
 import SuppilerSelect from '@/components/suppiler-auto-select'
-import { getPages, effectProduct, invalidProduct, exportProduct } from './api';
-import { getCategoryTopList } from '../api';
-import { defaultConfig, statusEnums } from './config';
-import { Modal, Button, Popconfirm } from 'antd';
+import { getPages, effectProduct, invalidProduct, exportProduct } from './api'
+import { getCategoryTopList } from '../api'
+import { defaultConfig, statusEnums } from './config'
+import { Modal, Button, Popconfirm } from 'antd'
 type Key = string | number;
 interface SkuStockState {
   selectedRowKeys: Key[]
@@ -14,22 +14,22 @@ class SkuStockList extends React.Component<any, SkuStockState> {
   state = {
     selectedRowKeys: []
   }
-  update(payload: any) {
+  update (payload: any) {
     // 是否失效
-    const isInvalid = payload.status === statusEnums['失效'];
-    const params = { ids: [payload.id]};
-    const promiseResult = isInvalid ? invalidProduct(params) : effectProduct(params);
+    const isInvalid = payload.status === statusEnums['失效']
+    const params = { ids: [payload.id]}
+    const promiseResult = isInvalid ? invalidProduct(params) : effectProduct(params)
     promiseResult.then(res => {
       if (res) {
-        APP.success('操作成功');
-        this.list.refresh();
-        this.setState({ selectedRowKeys: []})
+        APP.success('操作成功')
+        this.list.refresh()
+        this.setState({ selectedRowKeys: [] })
       }
     })
   }
   onSelectChange = (selectedRowKeys: Key[]) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
+    console.log('selectedRowKeys changed: ', selectedRowKeys)
+    this.setState({ selectedRowKeys })
   }
   columns = [{
     title: '库存商品ID',
@@ -100,7 +100,7 @@ class SkuStockList extends React.Component<any, SkuStockState> {
                   status: statusEnums['失效']
                 })
               }}>
-                <span className='href'>失效</span>
+              <span className='href'>失效</span>
             </Popconfirm>
           </If>
           <If condition={records.status === statusEnums['失效']}>
@@ -112,7 +112,7 @@ class SkuStockList extends React.Component<any, SkuStockState> {
                   status: statusEnums['正常']
                 })
               }}>
-                <span className='href'>生效</span>
+              <span className='href'>生效</span>
             </Popconfirm>
           </If>
         </>
@@ -127,9 +127,9 @@ class SkuStockList extends React.Component<any, SkuStockState> {
         effectProduct({ ids: this.state.selectedRowKeys })
           .then(res => {
             if (res) {
-              APP.success('操作成功');
-              this.list.refresh();
-              this.setState({ selectedRowKeys: []})
+              APP.success('操作成功')
+              this.list.refresh()
+              this.setState({ selectedRowKeys: [] })
             }
           })
       }
@@ -143,9 +143,9 @@ class SkuStockList extends React.Component<any, SkuStockState> {
         invalidProduct({ ids: this.state.selectedRowKeys })
           .then(res => {
             if (res) {
-              APP.success('操作成功');
-              this.list.refresh();
-              this.setState({ selectedRowKeys: []})
+              APP.success('操作成功')
+              this.list.refresh()
+              this.setState({ selectedRowKeys: [] })
             }
           })
       }
@@ -155,16 +155,16 @@ class SkuStockList extends React.Component<any, SkuStockState> {
   export = () => {
     exportProduct(this.list.payload).then(res => {
       if (res) {
-        APP.success('导出库存商品成功');
+        APP.success('导出库存商品成功')
       }
     })
   }
   handleAdd = () => {
-    APP.history.push('/goods/sku-stock/-1');
+    APP.history.push('/goods/sku-stock/-1')
   }
-  render() {
-    const { selectedRowKeys } = this.state;
-    const hasSelected = selectedRowKeys.length > 0;
+  render () {
+    const { selectedRowKeys } = this.state
+    const hasSelected = selectedRowKeys.length > 0
     return (
       <ListPage
         namespace='skuStock'
@@ -180,7 +180,7 @@ class SkuStockList extends React.Component<any, SkuStockState> {
               label='供应商'
               inner={(form) => {
                 return form.getFieldDecorator('storeId')(
-                  <SuppilerSelect style={{ width: 172 }}/>
+                  <SuppilerSelect style={{ width: 172 }} />
                 )
               }}
             />
@@ -258,4 +258,4 @@ class SkuStockList extends React.Component<any, SkuStockState> {
   }
 }
 
-export default SkuStockList;
+export default SkuStockList
