@@ -6,7 +6,7 @@ import moment from 'moment'
 const { RangePicker } = DatePicker
 interface PayloadProps {
   finishTime: any
-  creatdeTime: any
+  createdTime: any
   rechargeAccount: any
   rechargeOperatorOrderNo: any
   thirdPartyOrderNo: any
@@ -122,7 +122,7 @@ class Main extends React.Component<Props> {
                 APP.fn.setPayload(namespace, {})
                 const params = {
                   finishTime: undefined,
-                  creatdeTime: undefined,
+                  createdTime: undefined,
                   rechargeAccount: undefined,
                   rechargeOperatorOrderNo: undefined,
                   thirdPartyOrderNo: undefined,
