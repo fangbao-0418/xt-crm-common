@@ -21,7 +21,7 @@ class Recharge extends Component {
   state = {
     selectedRowKeys: [],
     list: [],
-    current: 1,
+    page: 1,
     pageSize: 10,
     total: 0,
     rechargeStatus: '-1'
@@ -69,7 +69,8 @@ class Recharge extends Component {
     rechargeList(this.getParam()).then(res => {
       this.setState({
         list: res&&res.records,
-        total: res&&res.total
+        total: res&&res.total,
+        page: res&&res.current
       })
     })
   };
@@ -78,7 +79,7 @@ class Recharge extends Component {
     this.payload.page = page
     this.setState(
       {
-        current: page,
+        page: page,
         pageSize
       },
       this.query,
@@ -95,7 +96,7 @@ class Recharge extends Component {
   };
   render () {
     const tabList=[{ name: '全部', key: '-1' }, { name: '待充值', key: '0' }, { name: '充值中', key: '10' }, { name: '充值成功', key: '20' }, { name: '充值失败', key: '30' }]
-    const { current, total, pageSize } = this.state
+    const { page, total, pageSize } = this.state
 
     const columns = [
       {
@@ -151,6 +152,8 @@ class Recharge extends Component {
         dataIndex: 'remark'
       }
     ].filter(column => !column.hide)
+    console.log('page')
+    console.log(page)
     return (
       <div>
         <Card>
@@ -183,7 +186,7 @@ class Recharge extends Component {
               x: '100%'
             }}
             pagination={{
-              current,
+              current: page,
               total,
               pageSize,
               onChange: this.handlePageChange
