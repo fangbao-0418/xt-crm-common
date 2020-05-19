@@ -123,6 +123,9 @@ class GoodsTable extends Component {
     const childOrder = this.props.childOrder || {}
     const list = this.props.list || []
     const logistics = this.props.logistics || {}
+    const orderVirtualInfoVO= this.props.orderVirtualInfoVO || {}
+    console.log('orderInfo')
+    console.log(orderInfo)
     const columns = [
       ...(getDetailColumns(0, orderInfo.isShop === 1).filter(item => item.key !== 'storeName')),
       {
@@ -256,6 +259,16 @@ class GoodsTable extends Component {
                       </Col>
                     ))}
                   </Row>
+                  {orderInfo.orderType===55
+                    ? <Row>
+                      <Col style={{ fontWeight: 'bold' }}>充值信息</Col>
+                      <Col>
+                        <span>充值方式：{(orderVirtualInfoVO.rechargeWay)||'暂无'}</span>
+                        <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{(orderVirtualInfoVO.rechargeStatusDesc)||'暂无'}</span>
+                        <span>充值单号：{(orderVirtualInfoVO.rechargeNo)||'暂无'}</span>
+                      </Col>
+                    </Row> : null}
+
                   <LogisticsInfo
                     mainorderInfo={orderInfo}
                     logistics={logistics}

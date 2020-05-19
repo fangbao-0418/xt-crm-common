@@ -260,6 +260,8 @@ class Detail extends Component {
                   childOrder={item.childOrder}
                   orderInfo={data.orderInfo}
                   logistics={item.logistics}
+                  //充值信息
+                  orderVirtualInfoVO={data.orderVirtualInfoVO}
                   query={this.query}
                   memberId={data.buyerInfo && data.buyerInfo.memberAddress && data.buyerInfo.memberAddress.memberId}
                   showModal={this.showModal}
