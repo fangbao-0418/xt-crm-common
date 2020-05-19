@@ -2,8 +2,8 @@
  * @Author: fangbao
  * @Date: 2020-05-16 22:28:11
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-16 22:34:57
- * @FilePath: /xt-crm/src/pages/interface/recharge-config/verify.ts
+ * @LastEditTime: 2020-05-19 14:35:52
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/interface/recharge-config/verify.ts
  */
 
 import { RecordProps } from './interface'
@@ -14,8 +14,9 @@ export function verifyConfigData (dataSource: RecordProps[]) {
     return false
   }
   const temp: any = {}
+  console.log(dataSource, 'dataSource')
   const sortIsDuplicate = dataSource.find((item) => {
-    const sort = item.sort
+    const sort = item.sort || 0
     if (temp[sort] === undefined) {
       temp[sort] = sort
     } else {
