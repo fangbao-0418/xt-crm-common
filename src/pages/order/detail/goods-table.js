@@ -256,6 +256,16 @@ class GoodsTable extends Component {
                       </Col>
                     ))}
                   </Row>
+                  {orderInfo.orderType===55
+                    ? <Row>
+                      <Col style={{ fontWeight: 'bold' }}>充值信息</Col>
+                      <Col>
+                        <span>充值方式：{}</span>
+                        <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{}</span>
+                        <span>充值单号：{}</span>
+                      </Col>
+                    </Row> : null}
+
                   <LogisticsInfo
                     mainorderInfo={orderInfo}
                     logistics={logistics}
