@@ -9,7 +9,7 @@ import { getFieldsConfig, auditStatusConfig } from './config'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import SelectFetch from '@/components/select-fetch'
-import SuppilerSelect from '@/components/suppiler-select'
+import SuppilerSelector from '@/components/supplier-selector'
 
 function formatTime (text: any, record: GoodsCheck.ItemProps, index: number) {
   return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-'
@@ -127,6 +127,16 @@ class Main extends React.Component<{}> {
           getInstance={ref => {
             this.listpage = ref
           }}
+          cachePayloadProcess={(payload) => {
+            return payload
+          }}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              storeId: payload.store?.key,
+              store: undefined
+            }
+          }}
           formItemLayout={(
             <div>
               <FormItem name='productName' />
@@ -156,8 +166,8 @@ class Main extends React.Component<{}> {
               <FormItem
                 label='供应商名称'
                 inner={form => {
-                  return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect style={{ width: '174px' }} />,
+                  return form.getFieldDecorator('store')(
+                    <SuppilerSelector type='yx' style={{ width: '174px' }} />,
                   )
                 }}
               />

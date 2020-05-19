@@ -1,6 +1,7 @@
 import React from 'react'
 import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components'
 import SuppilerSelect from '@/components/suppiler-auto-select'
+import SuppilerSelector from '@/components/supplier-selector'
 import { getPages, effectProduct, invalidProduct, exportProduct } from './api'
 import { getCategoryTopList } from '../api'
 import { defaultConfig, statusEnums } from './config'
@@ -179,8 +180,8 @@ class SkuStockList extends React.Component<any, SkuStockState> {
             <FormItem
               label='供应商'
               inner={(form) => {
-                return form.getFieldDecorator('storeId')(
-                  <SuppilerSelect style={{ width: 172 }} />
+                return form.getFieldDecorator('store')(
+                  <SuppilerSelector type='yx' style={{ width: 172 }} />
                 )
               }}
             />
@@ -199,6 +200,14 @@ class SkuStockList extends React.Component<any, SkuStockState> {
             />
           </>
         )}
+        cachePayloadProcess={(payload) => payload}
+        processPayload={(payload) => {
+          return {
+            ...payload,
+            storeId: payload.store?.key,
+            store: undefined
+          }
+        }}
         rangeMap={{
           createTime: {
             fields: ['createStartTime', 'createEndTime']
