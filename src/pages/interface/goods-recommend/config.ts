@@ -61,7 +61,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           { label: '购物车', value: 2 },
           { label: '商品详情', value: 1 },
           { label: '拼团详情', value: 16 },
-          { label: '升级团长页面', value: 32 }
+          { label: '升级团长页', value: 32 }
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -113,7 +113,7 @@ export enum StatusEnum {
 }
 
 export enum LocationEnum {
-  升级团长页面 = 32,
+  升级团长页 = 32,
   拼团详情 = 16,
   支付结果页 = 8,
   个人中心 = 4,
