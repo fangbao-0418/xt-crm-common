@@ -9,11 +9,8 @@ import { getFieldsConfig, auditStatusConfig } from './config'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import SelectFetch from '@/components/select-fetch'
 import SuppilerSelect from '@/components/suppiler-auto-select'
+import SuppilerSelector from '@/components/supplier-selector'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
-
-interface State {
-  list: any[]
-}
 
 function formatTime (text: any, record: GoodsCheck.ItemProps, index: number) {
   return text ? moment(text).format('YYYY-MM-DD HH:mm:ss'): '-'
@@ -21,30 +18,8 @@ function formatTime (text: any, record: GoodsCheck.ItemProps, index: number) {
 
 const namespace = 'fresh-goods-check'
 
-class Main extends React.Component<any, State> {
+class Main extends React.Component<{}> {
   public listpage: ListPageInstanceProps
-  public state: State = {
-    list: []
-  };
-  public form: FormInstance;
-  public payload: GoodsCheck.payloadProps = {
-    page: 1,
-    pageSize: 10,
-    total: 0
-  }
-  /**
-   * 条件查询
-   */
-  public handleSearch = () => {
-    const value = this.form.getValues()
-    console.log(value, 'applyEndTime', value.applyEndTime)
-    this.payload = {
-      ...this.payload,
-      ...value,
-      page: 1
-    }
-    this.fetchData()
-  };
   public columns: ColumnProps<GoodsCheck.ItemProps>[] = [
     {
       title: 'ID',
@@ -147,45 +122,6 @@ class Main extends React.Component<any, State> {
       }
     }
   ]
-  public reset () {
-    this.form.props.form.resetFields()
-    this.payload = {
-      pageSize: 10,
-      page: 1,
-      total: 0
-    }
-    this.fetchData()
-  }
-  public fetchData = async () => {
-    APP.fn.setPayload(namespace, {
-      ...this.payload,
-      total: undefined
-    })
-    const res = (await api.getToAuditList({
-      ...this.payload,
-      total: undefined
-    })) || {}
-    this.payload.total = res.total
-    this.setState({ list: res.records })
-    console.log('res=>', res)
-  };
-  public componentDidMount () {
-    // this.form.setValues({
-    //   ...APP.fn.getPayload<any>(namespace),
-    //   ...this.payload,
-    //   total: undefined
-    // })
-    // this.payload = {
-    //   ...this.form.getValues(),
-    //   pageSize: 10,
-    //   page: 1
-    // }
-    // this.fetchData()
-  }
-  public onPaginationChange = (page: number, pageSize?: number) => {
-    this.payload.page = page
-    this.fetchData()
-  };
   public render () {
     return (
       <div>
@@ -204,6 +140,16 @@ class Main extends React.Component<any, State> {
           }}
           getInstance={ref => {
             this.listpage = ref
+          }}
+          cachePayloadProcess={(payload) => {
+            return payload
+          }}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              storeId: payload.store?.key,
+              store: undefined
+            }
           }}
           formItemLayout={(
             <div>
@@ -234,8 +180,8 @@ class Main extends React.Component<any, State> {
               <FormItem
                 label='供应商名称'
                 inner={form => {
-                  return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect style={{ width: '174px' }} />,
+                  return form.getFieldDecorator('store')(
+                    <SuppilerSelector type='all' category={5} style={{ width: '174px' }} />,
                   )
                 }}
               />

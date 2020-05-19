@@ -17,7 +17,8 @@ interface SupplierSelectProps {
   onChange?: (value: ValueProps, options: SupplierItem[]) => void
   value?: ValueProps
   options?: SupplierItem[]
-  category?: 5
+  /** 5-生鲜 6-小店 */
+  category?: 5 | 6
   type?: 'all' | 'yx'
 }
 interface SupplierSelectState {
