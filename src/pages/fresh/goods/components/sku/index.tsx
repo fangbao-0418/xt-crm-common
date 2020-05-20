@@ -1,11 +1,11 @@
-import React from 'react';
+import React from 'react'
 import { Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
-import CardTitle from '../CardTitle';
-import SkuUploadItem from './SkuUploadItem';
-import styles from './style.module.scss';
-import { size, map } from 'lodash';
+import CardTitle from '../CardTitle'
+import SkuUploadItem from './SkuUploadItem'
+import styles from './style.module.scss'
+import { size, map } from 'lodash'
 import SkuTable from './SkuTable'
 
 const defaultItem: SkuSaleProps = {
@@ -94,7 +94,7 @@ interface State {
   dataSource: SkuSaleProps[]
   strategyData: any
 }
-class SkuList extends React.Component<Props, State>{
+class SkuList extends React.Component<Props, State> {
   state: State = {
     specs: this.props.specs,
     specPictures: [],
@@ -135,7 +135,7 @@ class SkuList extends React.Component<Props, State>{
     // let addNew = false
     /** 多规格合并 */
     const result = combineResutle.map((item) => {
-      let val: SkuSaleProps = {...defaultItem}
+      let val: SkuSaleProps = { ...defaultItem }
       /** 根据原规格查找规格信息 */
       val = dataSource.find((item2) => {
         /** item 自定义输入规格序列 规格1，2 */
@@ -161,13 +161,13 @@ class SkuList extends React.Component<Props, State>{
     return result
   }
   handleChangeValue = (text: string, record: any, index: any) => (e: any) => {
-    const { dataSource, noSyncList } = this.state;
-    const nosync = noSyncList.includes(text);
+    const { dataSource, noSyncList } = this.state
+    const nosync = noSyncList.includes(text)
     /**
      * 每个输入框改变
      */
     if (!nosync) {
-      dataSource[index][text] = e.target ? e.target.value : e;
+      dataSource[index][text] = e.target ? e.target.value : e
     }
     /**
      * 同步修改一列的数值
@@ -177,7 +177,7 @@ class SkuList extends React.Component<Props, State>{
         item[text] = e.target ? e.target.value : e
       })
     }
-    this.setState({ dataSource });
+    this.setState({ dataSource })
   };
   /**
    * 添加规格不能超过两个
@@ -187,11 +187,11 @@ class SkuList extends React.Component<Props, State>{
       this.state.specs.push({
         title,
         content: []
-      });
+      })
       this.setState({
         specs: this.state.specs,
-        GGName: '',
-      });
+        GGName: ''
+      })
     }
   };
   /**
@@ -204,11 +204,11 @@ class SkuList extends React.Component<Props, State>{
     const specName = (tempSpecInfo[key] && tempSpecInfo[key].specName || '').trim()
     const specPicture = tempSpecInfo[0] && tempSpecInfo[0].specPicture
     if (!specName) {
-      message.error('请设置规格名称');
+      message.error('请设置规格名称')
       return
     }
     if (content.find((v) => v.specName === specName)) {
-      message.error('请不要填写相同的规格');
+      message.error('请不要填写相同的规格')
       return
     }
 
@@ -264,7 +264,7 @@ class SkuList extends React.Component<Props, State>{
     /** 另一组索引 */
     const otherKey = key === 0 ? 1 : 0
     const keys = ['propertyValue1', 'propertyValue2']
-    const { specs } = this.state;
+    const { specs } = this.state
     const specName = specs[key].content[index].specName
     specs[key].content.splice(index, 1)
     let dataSource = this.state.dataSource
@@ -277,7 +277,13 @@ class SkuList extends React.Component<Props, State>{
     /////////////////////
   }
   public getCustomColumns () {
-    const columns: ColumnProps<any>[] = []
+    const columns: ColumnProps<any>[] = [
+      {
+        title: '规格ID',
+        dataIndex: 'skuId',
+        width: 100
+      }
+    ]
     const keys = ['propertyValue1', 'propertyValue2']
     this.state.specs.map((item, index) => {
       if (keys[index]) {
@@ -315,7 +321,7 @@ class SkuList extends React.Component<Props, State>{
       this.onChange(dataSource)
     })
   }
-  render() {
+  render () {
     return (
       <Card
         title='添加规格项'
@@ -325,9 +331,9 @@ class SkuList extends React.Component<Props, State>{
             trigger='click'
             visible={this.state.dimensionNamePropoverStatus}
             content={(
-            <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex' }}>
                 <Input
-                  style={{width: 150}}
+                  style={{ width: 150 }}
                   placeholder='请添加规格名称'
                   value={this.state.GGName}
                   onChange={e => {
@@ -346,7 +352,7 @@ class SkuList extends React.Component<Props, State>{
               <span
                 className='href'
                 onClick={() => {
-                  this.setState({dimensionNamePropoverStatus: true})
+                  this.setState({ dimensionNamePropoverStatus: true })
                 }}
               >
                 添加规格
@@ -368,7 +374,7 @@ class SkuList extends React.Component<Props, State>{
                   index={key}
                   onChange={(e: any) => {
                     const { dataSource, specs } = this.state
-                    const checked = e.target.checked 
+                    const checked = e.target.checked
                     if (!checked) {
                       dataSource.map((item) => {
                         item.imageUrl1 = ''
@@ -405,7 +411,7 @@ class SkuList extends React.Component<Props, State>{
                   >
                     <Button
                       className={styles.spubtn}
-                      type="danger"
+                      type='danger'
                       onClick={this.removeSubSpec(key, index)}
                     >
                       删除规格
@@ -426,7 +432,7 @@ class SkuList extends React.Component<Props, State>{
                   >
                     <Button
                       className={styles.spubtn}
-                      type="primary"
+                      type='primary'
                       onClick={this.addSubSpec(key)}>
                       添加规格
                     </Button>
