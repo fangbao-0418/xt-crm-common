@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react'
 import { Modal, Input } from 'antd'
 import { formatMoneyWithSign } from '../../pages/helper'
 import { isFunction } from 'lodash'
 import { Image, CommonTable } from '@/components'
-import { getProductList } from './api'
+import { getProductList, getFreshProductList } from './api'
 import { unionArray } from '@/util/utils'
 const goodsColumns = (data = []) => {
   return [
@@ -80,9 +81,15 @@ class ProductSelector extends Component {
   };
   // 获取商品数据
   fetchData = async (params) => {
+    //type 默认为优选调用的商品接口，1为买菜优惠券调用的接口
     try {
       this.setState({ loading: true })
-      const res = await getProductList({
+      const res = this.props.type===1?await getFreshProductList({
+        status: 0,
+        productName: this.state.val.trim(),
+        ...this.state.pagination,
+        ...params
+      }): await getProductList({
         status: 0,
         productName: this.state.val.trim(),
         ...this.state.pagination,
