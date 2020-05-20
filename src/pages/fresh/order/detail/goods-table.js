@@ -6,7 +6,7 @@ import { withRouter } from 'react-router'
 import { getDetailColumns } from '../constant'
 import LogisticsInfo from './logistics-info'
 import ChildOrderBenefitInfo from './child-order-benefit-info'
-import { setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId } from '../api'
+import { setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId, applyOrderRefundDetails } from '../api'
 import alert from '@/packages/common/components/alert'
 import * as adapter from './adapter'
 @withRouter
@@ -28,41 +28,25 @@ class GoodsTable extends Component {
   }
 
   handleApply = (record) => {
-    const handle = () => {
-      const { orderInfo = {}, childOrder = {}, memberId } = this.props
-      if (record.canApply) {
-        this.setState({
-          modalInfo: {
-            ...record,
-            mainOrderId: orderInfo.id,
-            memberId,
-            childOrder
-          },
-          visible: true
-        })
-      } else {
-        Modal.confirm({
-          title: '系统提示',
-          content: record.errormsg,
-          okText: '查看详情',
-          cancelText: '取消',
-          onOk: () => {
-            APP.history.push(`/fresh/saleAfter/detail/${record.skuServerId}`)
-          }
-        })
-      }
-    }
-    if (this.props.childOrder && Number(this.props.childOrder.orderType) !== 70) {
-      handle()
-    } else {
-      this.props.alert({
-        content: '该订单商品为海淘商品，请慎重处理售后',
-        onOk: (hide) => {
-          hide()
-          handle()
+    const { orderInfo = {}, childOrder = {}, memberId } = this.props
+    const res = applyOrderRefundDetails({
+      childOrderCode: childOrder.orderCode
+    }).then(res => {
+      this.setState({
+        modalInfo: res,
+        visible: true
+      })
+    }, err => {
+      Modal.confirm({
+        title: '系统提示',
+        content: err.message,
+        okText: '查看详情',
+        cancelText: '取消',
+        onOk: () => {
+          APP.history.push(`/fresh/saleAfter/detail/${err.data.refundOrderCode}`)
         }
       })
-    }
+    })
   }
   handleInputChange = e => {
     this.setState({
@@ -71,7 +55,10 @@ class GoodsTable extends Component {
   }
   lookForHistory = ({ orderCode, productId }) => {
     const { history } = this.props
-    history.push(`/order/refundOrder?mainOrderCode=${orderCode}&productId=${productId}`)
+    history.push('/fresh/saleAfter')
+    APP.fn.setPayload('freshSaleAfter', {
+      childOrderCode: orderCode
+    })
   }
   handleAddNotes = () => {
     const { modalInfo } = this.state
@@ -169,7 +156,6 @@ class GoodsTable extends Component {
     return (
       <>
         {this.state.modalInfo.mainOrderId
-          && this.state.modalInfo.skuId
           && <ApplyAfterSaleModal
             onCancel={() => this.setState({ visible: false })}
             successCb={() => this.setState({ visible: false }, this.props.query)}
