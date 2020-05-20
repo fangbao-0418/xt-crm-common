@@ -1,22 +1,22 @@
-import React from 'react';
-import { Form, Card, Input, InputNumber, Radio, Button, Table, message } from 'antd';
-import { ColumnProps } from 'antd/es/table';
-import CascaderCity from '@/components/cascader-city';
-import classnames from 'classnames';
-import styles from './style.module.scss';
-import { withRouter } from 'react-router';
-import { radioStyle } from '@/config';
+import React from 'react'
+import { Form, Card, Input, InputNumber, Radio, Button, Table, message } from 'antd'
+import { ColumnProps } from 'antd/es/table'
+import CascaderCity from '@/components/cascader-city'
+import CitySelect from '@/components/city-select'
+import classnames from 'classnames'
+import styles from './style.module.scss'
+import { withRouter } from 'react-router'
+import { radioStyle } from '@/config'
 import { getUniqueId } from '@/packages/common/utils/index'
 import { flatten, intersectionWith, differenceWith, unionWith, isEqual } from 'lodash'
-import { templateAdd, templateModify, getDetail } from './api';
-import { RadioChangeEvent } from 'antd/lib/radio';
-import { formatPrice } from '@/util/format';
-import { rankItem, Props, State } from './interface';
-
+import { templateAdd, templateModify, getDetail } from './api'
+import { RadioChangeEvent } from 'antd/lib/radio'
+import { formatPrice } from '@/util/format'
+import { rankItem, Props, State } from './interface'
 
 const mapReqRankList = (list: rankItem[]) => {
   return list.map((item: any, index: number) => {
-    let { destinationList, ...rest } = item;
+    const { destinationList, ...rest } = item
     return {
       ...rest,
       cost: item.cost * 100,
@@ -26,11 +26,11 @@ const mapReqRankList = (list: rankItem[]) => {
       destinationList,
       rankNo: index + 1,
       describe:
-        destinationList &&
-        destinationList.map((v: any) => `${v.name}（${v.children.length})`).join(' '),
-    };
-  });
-};
+        destinationList
+        && destinationList.map((v: any) => `${v.name}（${v.children.length})`).join(' ')
+    }
+  })
+}
 /**
  * 映射特定区域数组
  * {
@@ -40,7 +40,7 @@ const mapReqRankList = (list: rankItem[]) => {
  *  rankNo,
  *  rankType
  * }[]
- * @param list 
+ * @param list
  */
 const mapTemplateData= (list: rankItem[]) => {
   return (list || []).map((item: rankItem) => {
@@ -51,10 +51,10 @@ const mapTemplateData= (list: rankItem[]) => {
       cost: item.cost && formatPrice(item.cost),
       firstFeeNumber: item.firstFeeNumber,
       renewalNumber: item.renewalNumber,
-      renewalCost: formatPrice(item.renewalCost),
-    };
-  });
-};
+      renewalCost: formatPrice(item.renewalCost)
+    }
+  })
+}
 
 const flattenCity = (destinationList: any[]) => {
   const childArr = (destinationList || []).map(v => (v && v.children || []))
@@ -73,29 +73,43 @@ class edit extends React.Component<Props, State> {
     visible: false,
     templateData: [],
     /** 通用省市区 */
-    destinationList: [],
+    destinationList: []
   };
   /**
    * 获取运费模板详情
    */
-  async getDetail() {
-    const res = (await getDetail(this.props.match.params.id)) || {};
+  async getDetail () {
+    const res = (await getDetail(this.props.match.params.id)) || {}
     this.props.form.setFieldsValue({
       templateName: res.templateName,
       commonCost: formatPrice(res.commonCost),
       defaultNumber: res.defaultNumber,
       increaseNumber: res.increaseNumber,
-      increaseCost: formatPrice(res.increaseCost)
-    });
-    let templateData = mapTemplateData(res.rankList);
+      increaseCost: formatPrice(res.increaseCost),
+      address: res.provinceCode ? [
+        {
+          label: res.provinceName,
+          value: res.provinceCode
+        },
+        {
+          label: res.cityName,
+          value: res.cityCode
+        },
+        {
+          label: res.districtName,
+          value: res.districtCode
+        }
+      ]: []
+    })
+    const templateData = mapTemplateData(res.rankList)
     this.citys = mapCitys(res.rankList)
     this.setState({
-      templateData,
-    });
+      templateData
+    })
   }
-  componentDidMount() {
+  componentDidMount () {
     if (this.props.match.params.id) {
-      this.getDetail();
+      this.getDetail()
     }
   }
   /** 处理table字段改变 */
@@ -115,11 +129,11 @@ class edit extends React.Component<Props, State> {
    */
   haveSave = () => {
     this.props.form.validateFields(async (errors, values) => {
-      let { templateData } = this.state;
+      const { templateData } = this.state
       if (!errors) {
         if (templateData.some((item: rankItem) => item.rankType === 1 && item.cost !== 0 && !item.cost)) {
-          message.error('发货地区运费是必填项');
-          return;
+          message.error('发货地区运费是必填项')
+          return
         }
         const params = {
           templateName: values.templateName,
@@ -128,35 +142,41 @@ class edit extends React.Component<Props, State> {
           increaseNumber: values.increaseNumber,
           increaseCost: values.increaseCost * 100,
           rankList: mapReqRankList(templateData),
-        };
-        let res = false;
-        let { id } = this.props.match.params;
+          provinceName: values.address[0].label,
+          provinceCode: values.address[0].value,
+          cityName: values.address[1].label,
+          cityCode: values.address[1].value,
+          districtName: values.address[2].label,
+          districtCode: values.address[2].value
+        }
+        let res = false
+        const { id } = this.props.match.params
         if (id) {
           res = await templateModify({
             freightTemplateId: id,
-            ...params,
-          });
+            ...params
+          })
         } else {
-          res = await templateAdd(params);
+          res = await templateAdd(params)
         }
         if (res) {
-          message.success('保存成功');
-          this.props.history.push('/template/page');
+          message.success('保存成功')
+          this.props.history.push('/template/page')
         }
       }
-    });
+    })
   };
-  render() {
+  render () {
     const {
-      form: { getFieldDecorator },
-    } = this.props;
+      form: { getFieldDecorator }
+    } = this.props
     const editColumns: ColumnProps<rankItem>[] = [
       {
         title: '编号',
         key: 'index',
         width: 80,
         render: (text: any, record: rankItem, index: number) => {
-          return index + 1;
+          return index + 1
         }
       },
       {
@@ -176,21 +196,21 @@ class edit extends React.Component<Props, State> {
               </div>
               <div className={styles.operate}>
                 <Button
-                  type="link"
+                  type='link'
                   onClick={() => {
                     this.setState({
                       destinationList,
-                      visible: true,
-                    });
-                    this.editIndex = index;
+                      visible: true
+                    })
+                    this.editIndex = index
                   }}
                 >
                   编辑
                 </Button>
               </div>
             </div>
-          );
-        },
+          )
+        }
       },
       {
         title: '发货设置',
@@ -200,17 +220,17 @@ class edit extends React.Component<Props, State> {
           return (
             <Radio.Group
               onChange={(e: RadioChangeEvent) => {
-                const { templateData } = this.state;
-                templateData[index].rankType = e.target.value;
+                const { templateData } = this.state
+                templateData[index].rankType = e.target.value
                 if (e.target.value === 0) {
                   templateData[index].cost = 0
                   templateData[index].firstFeeNumber = 1
                   templateData[index].firstFeeNumber = 1
                   templateData[index].renewalCost = 0
-                } 
+                }
                 this.setState({
-                  templateData,
-                });
+                  templateData
+                })
               }}
               value={record.rankType}
             >
@@ -221,8 +241,8 @@ class edit extends React.Component<Props, State> {
                 不发货
               </Radio>
             </Radio.Group>
-          );
-        },
+          )
+        }
       },
       {
         title: '首件数',
@@ -235,12 +255,12 @@ class edit extends React.Component<Props, State> {
                 rules: [
                   {
                     required: true,
-                    message: '请输入件数',
-                  },
-                ],
+                    message: '请输入件数'
+                  }
+                ]
               })(
                 <InputNumber
-                  placeholder="请输入件数"
+                  placeholder='请输入件数'
                   precision={0}
                   onChange={(value: any) => {
                     this.handleChange({
@@ -253,8 +273,8 @@ class edit extends React.Component<Props, State> {
                 />
               )}
             </Form.Item>
-          ) : '-';
-        },
+          ) : '-'
+        }
       },
       {
         title: '首费/元',
@@ -267,12 +287,12 @@ class edit extends React.Component<Props, State> {
                 rules: [
                   {
                     required: true,
-                    message: '请输入金额',
-                  },
-                ],
+                    message: '请输入金额'
+                  }
+                ]
               })(
                 <InputNumber
-                  placeholder="请输入金额"
+                  placeholder='请输入金额'
                   value={text}
                   precision={2}
                   onChange={(value: any) => {
@@ -286,8 +306,8 @@ class edit extends React.Component<Props, State> {
                 />
               )}
             </Form.Item>
-          ) : '-';
-        },
+          ) : '-'
+        }
       },
       {
         title: '续件数',
@@ -300,12 +320,12 @@ class edit extends React.Component<Props, State> {
                 rules: [
                   {
                     required: true,
-                    message: '请输入件数',
-                  },
-                ],
+                    message: '请输入件数'
+                  }
+                ]
               })(
                 <InputNumber
-                  placeholder="请输入件数"
+                  placeholder='请输入件数'
                   value={text}
                   precision={0}
                   onChange={(value: any) => {
@@ -319,8 +339,8 @@ class edit extends React.Component<Props, State> {
                 />
               )}
             </Form.Item>
-          ) : '-';
-        },
+          ) : '-'
+        }
       },
       {
         title: '续费',
@@ -334,12 +354,12 @@ class edit extends React.Component<Props, State> {
                 rules: [
                   {
                     required: true,
-                    message: '请输入金额',
-                  },
-                ],
+                    message: '请输入金额'
+                  }
+                ]
               })(
                 <InputNumber
-                  placeholder="请输入金额"
+                  placeholder='请输入金额'
                   value={text}
                   precision={2}
                   onChange={(value: any) => {
@@ -353,8 +373,8 @@ class edit extends React.Component<Props, State> {
                 />
               )}
             </Form.Item>
-          ) : '-';
-        },
+          ) : '-'
+        }
       },
       {
         title: '操作',
@@ -363,27 +383,27 @@ class edit extends React.Component<Props, State> {
         render: (text: any, record: rankItem, index: number) => {
           return (
             <Button
-              type="link"
+              type='link'
               onClick={() => {
                 this.setState((state) => {
                   const templateData = [...state.templateData]
-                   /** 编辑的市区列表 */
+                  /** 编辑的市区列表 */
                   const editCity = flattenCity(record.destinationList)
                   this.citys = differenceWith(this.citys, editCity, isEqual)
                   templateData.splice(index, 1)
                   console.log(index, templateData, 'templateData')
                   return {
-                    templateData 
+                    templateData
                   }
-                });
+                })
               }}
             >
               删除
             </Button>
-          );
-        },
-      },
-    ];
+          )
+        }
+      }
+    ]
     return (
       <>
         <CascaderCity
@@ -399,7 +419,7 @@ class edit extends React.Component<Props, State> {
             const intersect = intersectionWith(this.citys, checkedCity, isEqual)
             const msg = intersect.map(v => v.name).join(',')
             const isIntersect = intersect.length > 0
-            let { templateData } = this.state;
+            let { templateData } = this.state
             /** 编辑 */
             if (this.editIndex > -1) {
               /** 编辑的市区列表 */
@@ -414,8 +434,8 @@ class edit extends React.Component<Props, State> {
                 message.error(`${errorMsg}不能重复，请重新选择`)
                 return
               }
-              this.citys = diffCitys;
-              templateData[this.editIndex].destinationList = destinationList;
+              this.citys = diffCitys
+              templateData[this.editIndex].destinationList = destinationList
             }
             /** 添加 */
             else {
@@ -423,7 +443,7 @@ class edit extends React.Component<Props, State> {
                 message.error(`${msg}不能重复，请重新选择`)
                 return
               }
-              templateData = [...templateData, { uid: getUniqueId(), destinationList, rankType: 1, cost: '' }];
+              templateData = [...templateData, { uid: getUniqueId(), destinationList, rankType: 1, cost: '' }]
             }
             /** 求并集 */
             this.citys = unionWith(this.citys, checkedCity, isEqual)
@@ -431,30 +451,42 @@ class edit extends React.Component<Props, State> {
             this.setState({
               destinationList,
               templateData,
-              visible: false,
-            });
+              visible: false
+            })
           }}
           onCancel={() => {
             this.setState({
-              visible: false,
-            });
+              visible: false
+            })
           }}
         />
-        <Card title="运费模板设置">
+        <Card title='运费模板设置'>
           <Form labelCol={{ span: 2 }} wrapperCol={{ span: 20 }}>
-            <Form.Item label="模板名称" required={true}>
+            <Form.Item label='模板名称' required={true}>
               {getFieldDecorator('templateName', {
                 rules: [
                   {
                     required: true,
-                    message: '请输入模板名称',
-                  },
-                ],
-              })(<Input placeholder="请输入模板名称" style={{ width: 200 }} />)}
+                    message: '请输入模板名称'
+                  }
+                ]
+              })(<Input placeholder='请输入模板名称' style={{ width: 200 }} />)}
             </Form.Item>
-            <Form.Item label="运费设置">
+            <Form.Item label='商品所在地' required={true}>
+              {getFieldDecorator('address', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择商品所在地'
+                  }
+                ]
+              })(
+                <CitySelect labelInValue={true} style={{ width: 400 }} />
+              )}
+            </Form.Item>
+            <Form.Item label='运费设置'>
               <Card
-                type="inner"
+                type='inner'
                 title={
                   <>
                     <Form.Item
@@ -466,36 +498,38 @@ class edit extends React.Component<Props, State> {
                         rules: [
                           {
                             required: true,
-                            message: '请输入默认件数',
-                          },
-                        ],
+                            message: '请输入默认件数'
+                          }
+                        ]
                       })(
-                      <InputNumber
-                        placeholder="请输入默认件数"
-                        min={1}
-                        max={9999}
-                        precision={0}
-                        style={{ width: 120 }}
-                      />)}
-                      <span className="ml10">件内，</span>
+                        <InputNumber
+                          placeholder='请输入默认件数'
+                          min={1}
+                          max={9999}
+                          precision={0}
+                          style={{ width: 120 }}
+                        />
+                      )}
+                      <span className='ml10'>件内，</span>
                     </Form.Item>
                     <Form.Item className='inline-block' required={true}>
                       {getFieldDecorator('commonCost', {
                         rules: [
                           {
                             required: true,
-                            message: '请输入默认运费',
-                          },
-                        ],
+                            message: '请输入默认运费'
+                          }
+                        ]
                       })(
-                      <InputNumber
-                        placeholder="请输入默认运费"
-                        min={0}
-                        max={9999}
-                        precision={2}
-                        style={{ width: 120 }}
-                      />)}
-                      <span className="ml10">元，</span>
+                        <InputNumber
+                          placeholder='请输入默认运费'
+                          min={0}
+                          max={9999}
+                          precision={2}
+                          style={{ width: 120 }}
+                        />
+                      )}
+                      <span className='ml10'>元，</span>
                     </Form.Item>
                     <Form.Item className='inline-block' required={true}>
                       <span>每增加 </span>
@@ -503,18 +537,19 @@ class edit extends React.Component<Props, State> {
                         rules: [
                           {
                             required: true,
-                            message: '请输入增加件数',
-                          },
-                        ],
+                            message: '请输入增加件数'
+                          }
+                        ]
                       })(
-                      <InputNumber
-                        placeholder="请输入增加件数"
-                        min={1}
-                        max={9999}
-                        precision={0}
-                        style={{ width: 120 }}
-                      />)}
-                      <span className="ml10">件，</span>
+                        <InputNumber
+                          placeholder='请输入增加件数'
+                          min={1}
+                          max={9999}
+                          precision={0}
+                          style={{ width: 120 }}
+                        />
+                      )}
+                      <span className='ml10'>件，</span>
                     </Form.Item>
                     <Form.Item className='inline-block' required={true}>
                       <span>运费增加 </span>
@@ -522,30 +557,31 @@ class edit extends React.Component<Props, State> {
                         rules: [
                           {
                             required: true,
-                            message: '请输入金额',
-                          },
-                        ],
+                            message: '请输入金额'
+                          }
+                        ]
                       })(
-                      <InputNumber
-                        placeholder="请输入金额"
-                        min={0}
-                        max={9999}
-                        precision={2}
-                        style={{ width: 120 }}
-                      />)}
-                      <span className="ml10">元</span>
+                        <InputNumber
+                          placeholder='请输入金额'
+                          min={0}
+                          max={9999}
+                          precision={2}
+                          style={{ width: 120 }}
+                        />
+                      )}
+                      <span className='ml10'>元</span>
                     </Form.Item>
                   </>
                 }
               >
                 <Button
-                  type="primary"
+                  type='primary'
                   onClick={() => {
-                    this.editIndex = -1;
+                    this.editIndex = -1
                     this.setState({
                       destinationList: [],
                       visible: true
-                    });
+                    })
                   }}
                 >
                   为指定地区添加运费
@@ -556,18 +592,19 @@ class edit extends React.Component<Props, State> {
                   columns={editColumns}
                   pagination={false}
                   dataSource={this.state.templateData}
-                ></Table>
+                >
+                </Table>
               </Card>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 2 }}>
-              <Button type="primary" onClick={this.haveSave}>
+              <Button type='primary' onClick={this.haveSave}>
                 保存
               </Button>
             </Form.Item>
           </Form>
         </Card>
       </>
-    );
+    )
   }
 }
-export default Form.create()(withRouter(edit));
+export default Form.create()(withRouter(edit))

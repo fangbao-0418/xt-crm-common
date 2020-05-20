@@ -8,6 +8,22 @@ import styles from './sidebar.module.scss'
 import logo from '../../assets/images/logo.svg'
 import routesMapRule from './routesMapRule'
 
+const getMenuMap = (menu) => {
+  return menu.reduce((pre, next) => {
+    let map = {
+      ...pre,
+      [next.id]: next
+    }
+    if (next.subMenus) {
+      map = {
+        ...map,
+        ...getMenuMap(next.subMenus)
+      }
+    }
+    return map
+  }, {})
+}
+
 const { SubMenu } = Menu
 const { Sider } = Layout
 
@@ -59,7 +75,6 @@ class Sidebar extends React.Component {
       loop(data, [], true)
     }
     // if (selectedGroup)
-    console.log(selectedGroup, 'selectedGroup')
     return selectedGroup
   }
   componentWillReceiveProps (props) {
@@ -71,7 +86,6 @@ class Sidebar extends React.Component {
       current: currentKey.toString(),
       openKeys: selectedGroup.map((item) => String(item?.id))
     }, () => {
-      console.log(currentKey, 'topId')
       if (isFirst && currentKey) {
         const siderEl = findDOMNode(this.siderRef)
         const openKeys = this.state.openKeys
@@ -115,30 +129,48 @@ class Sidebar extends React.Component {
               </span>
             }
           >
-            {/* {subMenus.map(subItem => (
-              <Menu.Item key={subItem.id}>
-                <Link to={subItem.path || '/'}>{subItem.name}</Link>
-              </Menu.Item>
-            ))} */}
             {this.renderMenulist(subMenus)}
           </SubMenu>
         )
       } else {
+        let outside
+        let path = item.path
+        try {
+          outside = (/^~(\/.*)$/).exec(item.path)
+          path = outside ? outside[1] : path || '/'
+        } catch (e) {
+          //
+        }
         return (
-          <Menu.Item key={item.id}>
-            <Link to={item.path || '/'}>
+          <Menu.Item
+            key={item.id}
+            onClick={(e) => {
+              if (outside) {
+                window.open(outside[1])
+              } else {
+                APP.history.push(item.path)
+              }
+            }}
+          >
+            <a
+              href={outside ? path : ('#' + path)}
+              onClick={(e) => {
+                e.preventDefault()
+              }}
+            >
               {item.icon && <Icon type={item.icon} />}
               <span>{item.name}</span>
-            </Link>
+            </a>
           </Menu.Item>
         )
       }
     })
   }
+
   render () {
     const { collapsed, data } = this.props
     const { current, openKeys } = this.state
-    console.log(current, openKeys, 'current')
+
     return (
       <Sider
         collapsed={collapsed}
@@ -160,9 +192,6 @@ class Sidebar extends React.Component {
         </div>
         <Menu
           theme='dark'
-          onClick={(e) => {
-            this.setCurrent(e.key)
-          }}
           onOpenChange={(openKeys) => {
             this.setState({
               openKeys

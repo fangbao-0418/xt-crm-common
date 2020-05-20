@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
+import { If } from '@/packages/common/components'
 import UploadView from '../../../components/upload'
 import { getBannerDetail, updateBanner, addBanner } from '../api'
 import { TextMapPosition } from '../constant'
@@ -7,7 +8,6 @@ import platformType from '@/enum/platformType'
 // import { formatDate } from '../../helper';
 import moment from 'moment'
 import BannerPostion from '@/components/banner-position'
-import If from '@/packages/common/components/if'
 const FormItem = Form.Item
 
 const formItemLayout = {
@@ -88,7 +88,6 @@ class BannerModal extends Component {
           id,
           ...values
         }
-
         params.jumpUrlWap = (params.jumpUrlWap || '').trim()
         params.onlineTime = +new Date(params.onlineTime)
         params.offlineTime = +new Date(params.offlineTime)
@@ -129,8 +128,14 @@ class BannerModal extends Component {
     const { getFieldDecorator, getFieldValue } = this.props.form
     const { data, renderKey } = this.state
 
-    const seat = [data.newSeat, data.childSeat]
-    console.log(seat[0], 'seat[0]')
+    let seat
+
+    if (getFieldValue('seat') && getFieldValue('seat')[0]) {
+      seat = getFieldValue('seat')
+    } else {
+      seat = [data.newSeat, data.childSeat]
+    }
+
     return (
       <>
         <Button size={size} type='primary' onClick={this.showModal}>
@@ -190,6 +195,13 @@ class BannerModal extends Component {
                 />
               )}
             </FormItem>
+            <If condition={seat[0] === 1 && seat[1] === 0}>
+              <FormItem label='banner背景颜色'>
+                {getFieldDecorator('bgColor', {
+                  initialValue: data.bgColor
+                })(<Input placeholder='' />)}
+              </FormItem>
+            </If>
             <If condition={[1, 2, 3, 4].includes(seat[0])}>
               <FormItem key={renderKey} label='Banner图片' required={true}>
                 {getFieldDecorator('imgList', {
