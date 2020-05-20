@@ -10,5 +10,5 @@ export default new Enum([
   { key: 7, val: '采购专区' },
   { key: 9, val: '线下团购会' },
   { key: 10, val: '拼团' },
-  { key: 11, val: '0元购' }
+  { key: 13, val: '0元购' }
 ])

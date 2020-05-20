@@ -95,8 +95,13 @@ class ActivityForm extends React.Component {
     const {
       form: { validateFields }
     } = this.props
-    validateFields((err, vals) => {
+    validateFields((err, { type, activityRewardAmount, ...vals }) => {
       if (!err) {
+        vals.type = type
+        if (type === 13) {
+          vals.activityRewardAmount = activityRewardAmount * 10 * 10
+        }
+        console.log(vals, activityRewardAmount, type)
         this.setBasePromotion(vals, id => {
           if (isFunction(callback)) {
             id && callback(id)
@@ -190,8 +195,8 @@ class ActivityForm extends React.Component {
       >
         <Card className='activity-add'>
           <Form {...formLayout}>
-            {/* 活动类型为0元购的情况下 需展示提示语句 0元购类型值为11 */}
-            <FormItem label='活动类型' extra={ type === 11 ? '仅添加不包邮商品' : '' }>
+            {/* 活动类型为0元购的情况下 需展示提示语句 0元购类型值为13 */}
+            <FormItem label='活动类型' extra={ type === 13 ? '仅添加不包邮商品' : '' }>
               {getFieldDecorator('type', {
                 initialValue: 1,
                 onChange: this.typeChange
@@ -271,10 +276,17 @@ class ActivityForm extends React.Component {
               )}
             </FormItem>
             {/* 活动类型为0元购的情况下 需设置奖励配置 0元购类型值为11 */}
-            <If condition={type === 11}>
+            <If condition={type === 13}>
               <FormItem label='奖励'>
-                {getFieldDecorator('award')(
-                  <InputNumber placeholder='请输入' min={0} />
+                {getFieldDecorator('activityRewardAmount', {
+                  rules: [
+                    {
+                      required: type === 13,
+                      message: '请输入'
+                    }
+                  ]
+                })(
+                  <InputNumber precision={2} placeholder='请输入' min={0.01} max={10} />
                 )}
                 <span> 元</span>
               </FormItem>
