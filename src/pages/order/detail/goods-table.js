@@ -263,7 +263,7 @@ class GoodsTable extends Component {
                     ? <Row>
                       <Col style={{ fontWeight: 'bold' }}>充值信息</Col>
                       <Col>
-                        <span>充值方式：{(orderVirtualInfoVO.rechargeWay)||'暂无'}</span>
+                        <span>充值方式：{(orderVirtualInfoVO.rechargeWayDesc)||'暂无'}</span>
                         <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{(orderVirtualInfoVO.rechargeStatusDesc)||'暂无'}</span>
                         <span>充值单号：{(orderVirtualInfoVO.rechargeNo)||'暂无'}</span>
                       </Col>
