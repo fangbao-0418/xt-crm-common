@@ -11,14 +11,11 @@ import Coupon from './coupon'
 import MerchantAccounts from './merchant-accounts'
 import SaleAfter from './saleAfter/index'
 import Setting from './setting'
-<<<<<<< HEAD
 import Hotkey from './hotkey'
-=======
 import Area from './area-management'
 import AreaAdd from './area-management/form'
 import Instructor from './instructor-management'
 import InstructorAdd from './instructor-management/form'
->>>>>>> origin/feature/issue115
 class Fresh extends React.Component<RouteComponentProps> {
   render () {
     const { match } = this.props
