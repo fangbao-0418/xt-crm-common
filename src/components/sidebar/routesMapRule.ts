@@ -17,13 +17,13 @@ const rules = {
   ],
   '/activity/list': [
     /^\/activity\/info(\/)?edit(\/)?(\d+)?/,
-    /^\/activity\/info(\/)?detail(\/)?(\d+)?/,
+    /^\/activity\/info(\/)?detail(\/)?(\d+)?/
   ],
   '/coupon/get/couponList': [
-    /^\/coupon\/get(\/)?couponList(\/)?/,
+    /^\/coupon\/get(\/)?couponList(\/)?/
   ],
   '/activity/marketing': [
-    /^\/activity\/marketing(\/)?/,
+    /^\/activity\/marketing(\/)?/
   ],
   '/fresh/goods/list': [
     /fresh\/goods\/sku-sale(\/)?(\d+)?/
@@ -58,49 +58,55 @@ const rules = {
   '/activity/full-discount': [
     /activity\/full-discount\/edit(\/)?(\d+)?/,
     /activity\/full-discount\/detail(\/)?(\d+)?/,
-    /activity\/full-discount\/copy(\/)?(\d+)?/,
+    /activity\/full-discount\/copy(\/)?(\d+)?/
   ],
   '/user/userlist': [
-    /user\/detail(\/)?(\d+)?/,
+    /user\/detail(\/)?(\d+)?/
   ],
   '/interface/goods-recommend': [
-    /interface\/goods-recommend(\/)?(\d+)?/,
+    /interface\/goods-recommend(\/)?(\d+)?/
   ],
   '/interface/purchase-category': [
-    /interface\/purchase-category(\/)?(\d+)?/,
+    /interface\/purchase-category(\/)?(\d+)?/
   ],
   '/interface/special': [
     /interface\/special$/,
-    /interface\/special\/-1$/,
+    /interface\/special\/-1$/
   ],
   '/interface/special-content': [
-    /interface\/special-content(\/)?(\d+)?/,
+    /interface\/special-content(\/)?(\d+)?/
   ],
   '/message/list': [
-    /message\/detail(\/)?(\d+)?/,
+    /message\/detail(\/)?(\d+)?/
   ],
   '/message/template': [
-    /message\/template\/detail(\/)?(\d+)?/,
+    /message\/template\/detail(\/)?(\d+)?/
   ],
   '/fresh/store': [
     /fresh\/store$/,
-    /fresh\/store\/-1$/,
+    /fresh\/store\/-1$/
   ],
   '/fresh/store/timer': [
-    /fresh\/store$/,
+    /fresh\/store$/
   ],
   '/fresh/saleAfter': [
-    /fresh\/saleAfter\/detail(\/)?(\d+)?/,
+    /fresh\/saleAfter\/detail(\/)?(\d+)?/
   ],
   '/interface/group-buying/category': [
-    /interface\/group-buying\/category(\/)?(\d+)?/,
+    /interface\/group-buying\/category(\/)?(\d+)?/
   ],
   '/shop/goods': [
-    /shop\/goods\/detail(\/)?(\d+)?/,
+    /shop\/goods\/detail(\/)?(\d+)?/
+  ],
+  '/fresh/area': [
+    /fresh\/area(\/)?(\d+)?/
+  ],
+  '/fresh/instructor': [
+    /fresh\/instructor(\/)?(\d+)?/
   ],
   '/fresh/coupon': [
     /fresh\/coupon\/bulkissuing(\/)?(\d+)?/,
-    /fresh\/coupon\/detail(\/)?(\d+)?/,
+    /fresh\/coupon\/detail(\/)?(\d+)?/
   ]
 }
 export default rules
