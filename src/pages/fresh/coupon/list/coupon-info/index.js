@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { message, Table, DatePicker, Checkbox, Button, Card, Row, Col, InputNumber, Radio, Form as AntForm } from 'antd'
 import { formItemLayout } from '@/config'
-import { getCouponDetail, getCategoryList, saveCouponInfo, importShop } from '@/pages/coupon/api'
+import { getCouponDetail, getCategoryList, saveCouponInfo, importShop } from '@/pages/fresh/coupon/api'
 import { platformOptions, useIdentityOptions, defaultConfig } from '../../config'
 import { actColumns } from '@/components/activity-selector/config'
 import { ProductTreeSelect, ProductSelector, ActivitySelector } from '@/components'
@@ -115,13 +115,13 @@ class CouponInfo extends React.Component {
     this.setState({ treeData })
   }
   // 使用平台 -> 选择平台
-  onChangePlatform = checkedValue => {
-    const platformType = checkedValue.length === 4 ? 0 : 1
-    formRef.setFieldsValue({ platformType })
-    this.setState({
-      platformRestrictValues: checkedValue
-    })
-  }
+  // onChangePlatform = checkedValue => {
+  //   const platformType = checkedValue.length === 4 ? 0 : 1
+  //   formRef.setFieldsValue({ platformType })
+  //   this.setState({
+  //     platformRestrictValues: checkedValue
+  //   })
+  // }
 
   fetchData = async () => {
     const { id } = parseQuery()
@@ -202,10 +202,10 @@ class CouponInfo extends React.Component {
       activityList: unionArray(activityList, selectedRows)
     })
   }
-  getPlatformRestrictValues = (platformType) => {
-    const { platformRestrictValues } = this.state
-    return platformType === 0 ? 'all': platformRestrictValues.join(',')
-  }
+  // getPlatformRestrictValues = (platformType) => {
+  //   const { platformRestrictValues } = this.state
+  //   return platformType === 0 ? 'all': platformRestrictValues.join(',')
+  // }
   onUseIdentityChange = (checkedValue) => {
     this.setState({
       receiveRestrictValues: checkedValue
@@ -245,9 +245,9 @@ class CouponInfo extends React.Component {
       if (dailyRestrictChecked && !vals.dailyRestrict) {
         return void message.error('请输入每日限领多少张')
       }
-      if (vals.platformType === 1 && this.getPlatformRestrictValues(vals.platformType) == '') {
-        return void message.error('请选择使用平台')
-      }
+      // if (vals.platformType === 1 && this.getPlatformRestrictValues(vals.platformType) == '') {
+      //   return void message.error('请选择使用平台')
+      // }
       if (err) {
         APP.error('请检查输入项')
         return
@@ -259,6 +259,7 @@ class CouponInfo extends React.Component {
         activityList,
         useTimeRange,
         availableDays,
+        platformRestrict: 'all',
         platformRestrictValues,
         receiveRestrictValues,
         receivePattern,
@@ -278,9 +279,8 @@ class CouponInfo extends React.Component {
   receiveTimeValidator = (rule, value = [], callback) => {
     const { useTimeRange } = this.state
     const form = formRef.current
-    // useTimeType 0-自定义使用时间区间 1-使用自当日到起n天内
     const { useTimeType } = form ? form.getValues() : {}
-    // console.log(value, useTimeRange, value[0] >= value[1], 'receiveTimeValidator')
+    console.log(value, useTimeRange, value[0] >= value[1], 'receiveTimeValidator')
     if (value[0] && value[1]) {
       console.log(value, value[0].unix())
       if (value[0] >= value[1]) {
@@ -300,9 +300,9 @@ class CouponInfo extends React.Component {
         return
       }
     }
-    if (useTimeType === 0 && value?.[0] && useTimeRange?.[0] && value[0].unix() > useTimeRange[0].unix()) {
+    if (useTimeType === 0 && useTimeRange && value[0] && useTimeRange[0] && value[0] > useTimeRange[0]) {
       callback('领取开始时间必须小于等于使用开始时间')
-    } else if (useTimeType === 0 && value?.[1] && useTimeRange?.[1] && value[1].unix() > useTimeRange[1].unix()) {
+    } else if (useTimeType === 0 && useTimeRange && value[1] && useTimeRange[1] && value[1] > useTimeRange[1]) {
       console.log(value[1] > useTimeRange[1], '----')
       callback('领取结束时间必须小于等于使用结束时间')
     }
@@ -351,6 +351,7 @@ class CouponInfo extends React.Component {
       >
         {/* 已选择商品 */}
         <ProductSelector
+          type={1}
           getInstance={(ref) => this.productSelector = ref}
           visible={productSelectorVisible}
           onCancel={() => this.setState({
@@ -360,6 +361,7 @@ class CouponInfo extends React.Component {
         />
         {/* 排除商品 */}
         <ProductSelector
+          type={1}
           getInstance={(ref) => this.excludeProduct = ref}
           visible={excludeProductSelectorVisible}
           onCancel={() => this.setState({
@@ -382,8 +384,8 @@ class CouponInfo extends React.Component {
           onChange={(field) => {
             const form = formRef.current
             if (form && field === 'receiveTime') {
-              // console.log('on change')
-              form.props.form.validateFields(['receiveTime'], {force: true})
+              console.log('on change')
+              form.props.form.validateFields(['receiveTime'], { force: true })
             }
           }}
           config={defaultConfig}
@@ -398,7 +400,7 @@ class CouponInfo extends React.Component {
               <Button type='primary' onClick={this.handleSave}>
                 保存
               </Button>
-              <Button className="ml20" onClick={this.handleCancel}>
+              <Button className='ml20' onClick={this.handleCancel}>
                 取消
               </Button>
             </FormItem>
@@ -422,22 +424,21 @@ class CouponInfo extends React.Component {
                         required: true,
                         message: '请选择适用范围'
                       }]
-                    })(
-                      <Radio.Group
-                        onChange={e => {
-                          console.log('value =>', e.target.value)
-                          this.setState({ avlRange: e.target.value })
-                        }}
-                      >
-                        <Radio className='block-radio' value={0}>
+                    })(<Radio.Group
+                      onChange={e => {
+                        console.log('value =>', e.target.value)
+                        this.setState({ avlRange: e.target.value })
+                      }}
+                    >
+                      <Radio className='block-radio' value={0}>
                           全场通用
-                        </Radio>
-                        <Radio className='block-radio' value={1}>
+                      </Radio>
+                      {/* <Radio className='block-radio' value={1}>
                           类目商品
-                        </Radio>
-                        <Radio className='block-radio' value={2}>
+                      </Radio> */}
+                      <Radio className='block-radio' value={2}>
                           指定商品{' '}
-                          {avlRange === 2 && (
+                        {avlRange === 2 && (
                             <>
                               <span
                                 className='href mr8'
@@ -478,9 +479,9 @@ class CouponInfo extends React.Component {
                               </span>
                               <DownTemplate />
                             </>
-                          )}
-                        </Radio>
-                        <Radio className='block-radio' value={4}>
+                        )}
+                      </Radio>
+                      {/* <Radio className='block-radio' value={4}>
                           指定活动{' '}
                           {avlRange === 4 && (
                             <Button type='link' onClick={() => {
@@ -491,9 +492,8 @@ class CouponInfo extends React.Component {
                               选择活动
                             </Button>
                           )}
-                        </Radio>
-                      </Radio.Group>
-                    )
+                        </Radio> */}
+                    </Radio.Group>)
                   }
                   <If condition={avlRange !== 2}>
                     <div>
@@ -551,11 +551,9 @@ class CouponInfo extends React.Component {
                     required: true,
                     message: '请选择类目'
                   }]
-                })(
-                  <ProductTreeSelect
-                    treeData={treeData}
-                  />
-                )
+                })(<ProductTreeSelect
+                  treeData={treeData}
+                />)
               }}
             />
           </If>
@@ -625,42 +623,39 @@ class CouponInfo extends React.Component {
                       { required: true, message: '使用门槛必选' },
                       { validator: formRef.validateConditions.bind(formRef) }
                     ]
-                  })(
-                    <Radio.Group>
-                      <Radio disabled className='block-radio' value={0}>
+                  })(<Radio.Group>
+                    <Radio disabled className='block-radio' value={0}>
                         无门槛（暂未开放）
-                      </Radio>
-                      <Radio className='block-radio' value={1}>
-                        <span>订单满</span>
-                        {form.getFieldDecorator('discountConditions', {
-                          onChange: (e) => {
-                            console.log(e, 'onchange')
-                            const { useSill } = form.getFieldsValue()
-                            if (useSill === 1 && !e) {
-                              form.setFields({
-                                useSill: {
-                                  value: 1,
-                                  errors: [new Error('订单使用门槛设置金额必填')]
-                                }
-                              })
-                            } else {
-                              form.setFields({
-                                useSill: {
-                                  value: useSill
-                                }
-                              })
-                            }
+                    </Radio>
+                    <Radio className='block-radio' value={1}>
+                      <span>订单满</span>
+                      {form.getFieldDecorator('discountConditions', {
+                        onChange: (e) => {
+                          console.log(e, 'onchange')
+                          const { useSill } = form.getFieldsValue()
+                          if (useSill === 1 && !e) {
+                            form.setFields({
+                              useSill: {
+                                value: 1,
+                                errors: [new Error('订单使用门槛设置金额必填')]
+                              }
+                            })
+                          } else {
+                            form.setFields({
+                              useSill: {
+                                value: useSill
+                              }
+                            })
                           }
-                        })(
-                          <InputNumber
-                            min={0.01}
-                            className='ml10 short-input'
-                          />
-                        )}
-                        <span className='ml10'>元</span>
-                      </Radio>
-                    </Radio.Group>
-                  )}
+                        }
+                      })(<InputNumber
+                        min={0.01}
+                        precision={2}
+                        className='ml10 short-input'
+                      />)}
+                      <span className='ml10'>元</span>
+                    </Radio>
+                  </Radio.Group>)}
                 </>
               )
             }}
@@ -683,11 +678,10 @@ class CouponInfo extends React.Component {
                           validator: formRef.validateDiscountPrice.bind(formRef)
                         }
                       ]
-                    })(
-                      <InputNumber
-                        min={0.01}
-                      />
-                    )}
+                    })(<InputNumber
+                      min={0.01}
+                      precision={2}
+                    />)}
                   </span>
                   <span className='ml10'>元</span>
                 </>
@@ -705,17 +699,17 @@ class CouponInfo extends React.Component {
                       required: true,
                       message: '请输入发放总量'
                     }]
-                  })(
-                    <InputNumber
-                      placeholder='最多10000000'
-                      style={{ width: '160px' }}
-                      min={1}
-                      max={10000000}
-                    />
-                  )}
+                  })(<InputNumber
+                    placeholder='最多10000000'
+                    style={{ width: '160px' }}
+                    min={1}
+                    precision={0}
+                    max={10000000}
+                  />)}
                   <span className='ml10'>张</span>
                 </>
-              )}}
+              )
+            }}
           />
           <Row>
             <Col offset={3}>
@@ -743,7 +737,7 @@ class CouponInfo extends React.Component {
             controlProps={{
               onChange: (e) => {
                 const value = e.target.value
-                const form =  formRef.current
+                const form = formRef.current
                 if (value === 1) {
                   if (!form) {
                     return
@@ -771,14 +765,14 @@ class CouponInfo extends React.Component {
                 <AntForm.Item
                   className='use-time-widget'
                   style={{
-                    display: 'inline-bock',
+                    display: 'inline-bock'
                     // marginBottom: 0
                   }}
                   validateStatus={this.state.useTimeErrorMsg && 'error'}
                   help={this.state.useTimeErrorMsg}
                 >
                   <DatePicker.RangePicker
-                    style={{width: 400}}
+                    style={{ width: 400 }}
                     // disabledDate={formRef.useTimeTypeDisabledDate.bind(formRef)}
                     showTime={{
                       hideDisabledOptions: true
@@ -787,7 +781,7 @@ class CouponInfo extends React.Component {
                     value={useTimeRange}
                     onChange={date => {
                       if (date[0] && date[1]) {
-                        const form =  formRef.current
+                        const form = formRef.current
                         const useTimeType = form && form.getValues()['useTimeType']
                         const msg1 = date[0] >= date[1] ? '使用开始时间必须小于结束时间' : ''
                         const msg2 = date[1] < moment() ? '使用结束时间必须大于当前时间' : ''
@@ -799,10 +793,10 @@ class CouponInfo extends React.Component {
                           useTimeErrorMsg: ''
                         })
                       }
-                      this.setState({useTimeRange: date}, () => {
-                        const form =  formRef.current
+                      this.setState({ useTimeRange: date }, () => {
+                        const form = formRef.current
                         if (form) {
-                          form.props.form.validateFields(['receiveTime'], {force: true})
+                          form.props.form.validateFields(['receiveTime'], { force: true })
                         }
                       })
                     }}
@@ -812,16 +806,17 @@ class CouponInfo extends React.Component {
               value: 0
             }, {
               label: (
-                <>
+                <span>
                   <span>领券当日起</span>
                   <InputNumber
                     className='ml10 short-input'
                     min={0}
+                    precision={0}
                     value={availableDays}
                     onChange={availableDays => this.setState({ availableDays })}
                   />
                   <span className='ml10'>天内可用（设置为0时则为当日有效）</span>
-                </>
+                </span>
               ),
               value: 1
             }]}
@@ -837,13 +832,11 @@ class CouponInfo extends React.Component {
                       required: true,
                       message: '请选择领取人限制'
                     }]
-                  })(
-                    <Radio.Group>
-                      <Radio className='block-radio' value={0}>不限制</Radio>
-                      <Radio className='block-radio' value={3}>平台未下单用户</Radio>
-                      <Radio className='block-radio' value={1}>指定身份可用</Radio>
-                    </Radio.Group>
-                  )}
+                  })(<Radio.Group>
+                    <Radio className='block-radio' value={0}>不限制</Radio>
+                    <Radio className='block-radio' value={3}>平台未下单用户</Radio>
+                    {/* <Radio className='block-radio' value={1}>指定身份可用</Radio> */}
+                  </Radio.Group>)}
                   <If condition={formRef.getFieldValue('recipientLimit') === 1}>
                     <Checkbox.Group
                       options={useIdentityOptions}
@@ -868,13 +861,12 @@ class CouponInfo extends React.Component {
                         required: true,
                         message: '请输入每人限领次数'
                       }]
-                    })(
-                      <InputNumber
-                        placeholder='最多10'
-                        min={1}
-                        max={10}
-                      />
-                    )}
+                    })(<InputNumber
+                      placeholder='最多10'
+                      min={1}
+                      precision={0}
+                      max={10}
+                    />)}
                   </span>
                   <span className='ml10'>张</span>
                 </>
@@ -887,18 +879,19 @@ class CouponInfo extends React.Component {
                 <>
                   <Checkbox
                     checked={dailyRestrictChecked}
-                    onChange={e => this.setState({ dailyRestrictChecked: e.target.checked})}
+                    onChange={e => this.setState({ dailyRestrictChecked: e.target.checked })}
                   />
                   <span className='ml10'>每日限领</span>
                   <span className='ml10 short-input'>
-                    {form.getFieldDecorator('dailyRestrict')(<InputNumber placeholder='最多10' min={1} max={10} />)}
+                    {form.getFieldDecorator('dailyRestrict')(<InputNumber
+                      precision={0} placeholder='最多10' min={1} max={10} />)}
                   </span>
                   <span className='ml10'>张</span>
                 </>
               )
             }}
           />
-          <FormItem
+          {/* <FormItem
             label='使用平台'
             required
             inner={form => {
@@ -924,7 +917,7 @@ class CouponInfo extends React.Component {
                 </>
               )
             }}
-          />
+          /> */}
           <FormItem label='发券控制'>
             <Checkbox
               checked={receivePattern}

@@ -34,11 +34,11 @@ function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields },
   }
   useEffect(() => {
     console.log('pagination变了=>', pagination.page, pagination.pageSize)
-    emitter.addListener('coupon.list.setVisible', setModalVisible)
-    emitter.addListener('coupon.list.fetchData', () => listRef.list.refresh())
+    emitter.addListener('couponFresh.list.setVisible', setModalVisible)
+    emitter.addListener('couponFresh.list.fetchData', ()=>listRef.list.refresh())
     return () => {
-      emitter.removeListener('coupon.list.setVisible', setModalVisible)
-      emitter.removeListener('coupon.list.fetchData', () => listRef.list.refresh())
+      emitter.removeListener('couponFresh.list.setVisible', setModalVisible)
+      emitter.removeListener('couponFresh.list.fetchData', ()=>listRef.list.refresh())
     }
   }, [pagination.page, pagination.pageSize])
   const handleAddCoupon = () => {
@@ -51,8 +51,8 @@ function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields },
     <>
       {info && <CouponCardModal info={info} visible={visible} setVisible={setVisible} />}
          <ListPage
-           namespace='coupon'
-           reserveKey='coupon'
+           namespace='couponFresh'
+           reserveKey='couponFresh'
            formItemLayout={(
           <>
             <FormItem name='code' />
@@ -70,9 +70,9 @@ function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields },
                <Button type='primary' icon='plus' onClick={handleAddCoupon}>新增优惠券</Button>
              </div>
            )}
-           getInstance={ref => listRef.list = ref}
            formConfig={defaultConfig}
            api={getCouponlist}
+           getInstance={ref => listRef.list = ref}
            columns={getListColumns()}
          />
     </>
@@ -83,6 +83,5 @@ CouponList.propTypes = {
   form: PropTypes.object,
   history: PropTypes.object,
   match: PropTypes.object
-
 }
 export default Form.create()(CouponList)

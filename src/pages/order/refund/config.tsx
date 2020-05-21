@@ -221,6 +221,26 @@ export const formFields = function (
         }
       ],
       initialValue: ''
+    },
+    {
+      type: 'select',
+      id: 'autoAudit',
+      label: '是否自动审核',
+      options: [
+        {
+          val: '全部',
+          key: ''
+        },
+        {
+          val: '是',
+          key: 1
+        },
+        {
+          val: '否',
+          key: 0
+        }
+      ],
+      initialValue: ''
     }
   ].filter((item: any) => {
     return intercept
