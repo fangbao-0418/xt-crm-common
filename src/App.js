@@ -1,41 +1,18 @@
 /*
  * @Date: 2020-04-08 20:54:25
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-06 11:51:39
+ * @LastEditTime: 2020-05-19 23:35:18
  * @FilePath: /xt-crm/src/App.js
  */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withRouter } from 'react-router'
-import { Route, Redirect, Switch } from 'react-router-dom'
-import { view as Layout } from './components/layout'
-import { view as Login } from './pages/login'
-import Loadable from './util/loadable'
+import Routes from '@/routes'
 import { connect } from 'react-redux'
+import { notification } from 'antd'
 import './assets/styles/common.scss'
-
 const { get } = APP.http
-const Home = Loadable(() => import('./pages/home'))
-const Settings = Loadable(() => import('./pages/settings'))
-const Goods = Loadable(() => import('./pages/goods'))
-const Template = Loadable(() => import('./pages/template'))
-const Order = Loadable(() => import('./pages/order'))
-const Activity = Loadable(() => import('./pages/activity'))
-const Coupon = Loadable(() => import('./pages/coupon'))
-const User = Loadable(() => import('./pages/user'))
-const Supplier = Loadable(() => import('./pages/supplier'))
-const Banner = Loadable(() => import('./pages/banner'))
-const Finance = Loadable(() => import('./pages/finance'))
-const Auth = Loadable(() => import('./pages/auth'))
-const Interface = Loadable(() => import('./pages/interface'))
-const CrudPage = Loadable(() => import('./components/crudPage'))
-const Message = Loadable(() => import('./pages/message'))
-const Setting = Loadable(() => import('./pages/setting'))
-const ULive = Loadable(() => import('./pages/ulive'))
-const MerchantAccounts = Loadable(() => import('./pages/merchant-accounts'))
-const Shop = Loadable(() => import('./pages/shop'))
-const Fresh = Loadable(() => import('./pages/fresh'))
-const System = Loadable(() => import('./pages/system'))
+import * as api from './api'
 
 class Main extends React.Component {
   constructor (props) {
@@ -45,8 +22,43 @@ class Main extends React.Component {
     this.fetchConfig()
     this.fetchOrderTypes()
   }
+  componentDidMount () {
+    const history = this.props.history
+    this.checkVersion()
+    history.listen((location) => {
+      this.checkVersion()
+    })
+  }
+  checkVersion () {
+    api.getBuildInfo().then((res) => {
+      const build_time = res?.build_time
+      if (res && BUILD_TIME !== build_time) {
+        APP.moon.error('version mismatch')
+        const { pathname, hash } = window.location
+        const nowTime = new Date().getTime()
+        notification.warn({
+          duration: null,
+          message: '系统更新',
+          description: (
+            <div>
+              有新的版本已发布，为了不影响您的正常使用，请刷新浏览器后再进行操作，如果还有问题，请尝试&nbsp;
+              <span
+                className='href'
+                onClick={() => {
+                  window.location.href = `${pathname}?v=${nowTime}${hash}`
+                }}
+              >
+                点击此处
+              </span>
+              &nbsp;刷新页面
+            </div>
+          )
+        })
+      }
+    })
+  }
   async fetchConfig () {
-    const list = await get('/express/getList') || []
+    const list = await api.getExpressList() || []
     const expressList = list.map(item => ({
       label: item.expressCompanyName,
       value: item.expressCompanyCode
@@ -55,7 +67,7 @@ class Main extends React.Component {
     APP.constant.expressConfig = this.convert2Config(expressList)
   }
   fetchOrderTypes () {
-    get('/order/getOrderTypeList').then(res => {
+    api.getOrderTypeList().then(res => {
       const orderTypeList = res.map(item =>({ label: item.name, value: item.value }))
       APP.constant.orderTypeList = orderTypeList
       APP.constant.orderTypeConfig = this.convert2Config(orderTypeList)
@@ -69,37 +81,10 @@ class Main extends React.Component {
   }
   render () {
     return (
-      <Switch>
-        <Route exact={true} path='/login' component={Login} />
-        <Layout>
-          <Route path='/' exact={true} render={() => <Redirect to='/home' />} />
-          <Route path='/home' component={Home} />
-          <Route path='/settings' component={Settings} />
-          <Route path='/goods' component={Goods} />
-          <Route path='/template' component={Template} />
-          <Route path='/order' component={Order} />
-          <Route path='/activity' component={Activity} />
-          <Route path='/coupon' component={Coupon} />
-          <Route path='/user' component={User} />
-          <Route path='/supplier' component={Supplier} />
-          <Route path='/banner' component={Banner} />
-          <Route path='/finance' component={Finance} />
-          <Route path='/auth' component={Auth} />
-          <Route path='/interface' component={Interface} />
-          <Route path='/crudpage' component={CrudPage} />
-          <Route path='/message' component={Message} />
-          <Route path='/setting' component={Setting} />
-          <Route path='/ulive' component={ULive} />
-          <Route path='/merchant-accounts' component={MerchantAccounts} />
-          <Route path='/shop' component={Shop} />
-          <Route path='/fresh' component={Fresh} />
-          <Route path='/system' component={System} />
-        </Layout>
-      </Switch>
+      <Routes />
     )
   }
 }
-
 Main.propTypes = {
   dispatch: PropTypes.func,
   history: PropTypes.func

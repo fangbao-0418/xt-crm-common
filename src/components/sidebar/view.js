@@ -186,8 +186,8 @@ class Sidebar extends React.Component {
       >
         <div className={styles.logo}>
           <a href='/'>
-            <img src={logo} alt='logo' />
-            <h1>喜团管理平台</h1>
+            {/* <img src={logo} alt='logo' /> */}
+            <h1 style={{ marginLeft: 10 }}>喜团管理平台</h1>
           </a>
         </div>
         <Menu

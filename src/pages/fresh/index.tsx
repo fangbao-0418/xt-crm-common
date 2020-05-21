@@ -11,6 +11,7 @@ import Coupon from './coupon'
 import MerchantAccounts from './merchant-accounts'
 import SaleAfter from './saleAfter/index'
 import Setting from './setting'
+import Hotkey from './hotkey'
 class Fresh extends React.Component<RouteComponentProps> {
   render () {
     const { match } = this.props
@@ -26,6 +27,7 @@ class Fresh extends React.Component<RouteComponentProps> {
         <Route path={`${match.url}/coupon`} component={Coupon} />
         <Route path={`${match.url}/category`} component={Category} />
         <Route path={`${match.url}/setting`} component={Setting} />
+        <Route path={`${match.url}/hotkey`} component={Hotkey} />
         <Route path={`${match.url}/merchant-accounts`} component={MerchantAccounts} />
       </Switch>
     )
