@@ -157,7 +157,7 @@ export function getStoreList (data: any) {
   })
 }
 export function customerAdd (data: any) {
-  return newPost('http://192.168.14.69:8082/new/order/refund/applyOrderRefund', data)
+  return newPost('/new/order/refund/applyOrderRefund', data)
 }
 export function customerAddCheck (data: any) {
   return fetch('/order/afterSale/check/downgrade', {
@@ -273,7 +273,7 @@ export function modifyAddress (data: any) {
 
 /** 申请售后查询接口 */
 export function applyOrderRefundDetails (data: any) {
-  return get2('http://192.168.14.69:8082/new/order/refund/applyOrderRefundDetails', data, {
+  return get2('/new/order/refund/applyOrderRefundDetails', data, {
     hideToast: true
   })
 }
