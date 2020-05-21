@@ -46,7 +46,7 @@ declare module AfterSalesInfo {
     freight: number;
     serverNum: number;
     unitPrice: number;
-    maxServerNum:number;
+    maxServerNum: number;
     maxRefundAmount: number;
     reply: string;
     isDemotion: number;
@@ -115,6 +115,8 @@ declare module AfterSalesInfo {
     contactVO: any;
     beforeStatus: number;
     reply: string;
+    /* 自动审核售后编号 */
+    refundAutoDisposeNo?: string;
   }
 
   export interface ProductVO {
@@ -152,7 +154,3 @@ declare module AfterSalesInfo {
     shopPictrueUrl: string;
   }
 }
-
-
-
-
