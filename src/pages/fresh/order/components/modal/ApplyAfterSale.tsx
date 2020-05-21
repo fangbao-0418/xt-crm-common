@@ -168,7 +168,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
             <Form.Item label='售后金额'>
               {getFieldDecorator('refundMoney', {
                 rules: [{ required: true, message: '请输入售后金额' }],
-                initialValue: formatPrice(modalInfo.maxUnitRefundMoney)
+                initialValue: formatPrice(maxUnitRefundMoney)
               })(
                 <InputNumber
                   min={0}
