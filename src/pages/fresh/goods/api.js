@@ -1,12 +1,12 @@
 /*
  * @Date: 2020-03-06 10:18:13
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-12 21:05:54
+ * @LastEditTime: 2020-05-21 16:20:17
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/goods/api.js
  */
 
 import { formResponse, formRequest } from './sku-sale/adapter'
-import { exportFile, newGet } from '@/util/fetch'
+import { exportFile, exportFileStream, newGet } from '@/util/fetch'
 import { omit } from 'lodash'
 const { post, get, put, newPost, newPut } = APP.http
 export function getStoreList (data, config) {
@@ -48,8 +48,16 @@ export function enableGoods (data) {
   return post('/product/fresh/enable', {}, { data, headers: {} })
 }
 
+/**
+ * 导出再售商品
+ * @param {*} data
+ */
 export function exportFileList (data) {
-  return exportFile('/product/export', data)
+  return exportFileStream('/mcweb/product/fresh/export', data, '商品导出.xls', {
+    method: 'get',
+    data: undefined,
+    params: data
+  })
 }
 
 export function getCategoryList () {
@@ -173,4 +181,13 @@ export function openTimerById (ids) {
  */
 export function closeTimerById (ids) {
   return newPut('/mcweb/product/fresh/auto/config/close', { ids })
+}
+
+/**
+ * @param {object} payload
+ * @param {number} payload.skuId - skuID
+ * @param {(1|0)} payload.type - 操作类型，1-启用，0-停用
+ */
+export function updateSkuStatus (payload) {
+  return newPut('/mcweb/product/fresh/sku/status/update', payload)
 }

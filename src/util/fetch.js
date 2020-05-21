@@ -155,11 +155,6 @@ function param (json) {
 
 // exportHelper
 export const exportFile = (url, data) => {
-  // return new Promise((resolve, reject) => {
-  //   window.open(prefix('') + url + '?' + formatData(data));
-  //   resolve()
-  // })
-
   url = param(data) ? `${prefix(url)}?${param(data)}` : prefix(url)
   return axios({
     url,
@@ -223,7 +218,7 @@ export const exportFile = (url, data) => {
 }
 
 // 导出文件流
-export const exportFileStream = (url, data, fileName = '导出信息.xlsx') => {
+export const exportFileStream = (url, data, fileName = '导出信息.xlsx', config) => {
   console.log('fileName => ', fileName)
   return axios({
     url: prefix(url),
@@ -231,7 +226,8 @@ export const exportFileStream = (url, data, fileName = '导出信息.xlsx') => {
     data: param(data),
     withCredentials: true,
     headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-    responseType: 'blob'
+    responseType: 'blob',
+    ...config
   }).then(async res => {
     // console.log('res ~~~~~~~~~~~~~~~~~~', res.text());
     if (res.data.type === 'application/json') {

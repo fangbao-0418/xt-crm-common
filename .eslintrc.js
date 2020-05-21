@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-04-08 14:12:51
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-20 16:28:48
+ * @LastEditTime: 2020-05-21 16:17:38
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/.eslintrc.js
  */
 module.exports = {

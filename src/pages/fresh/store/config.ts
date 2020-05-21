@@ -9,6 +9,9 @@ export const defaultConfig: FieldsConfig = {
     inviteShopPhone: {
       label: '邀请店主手机'
     },
+    instructorPhone: {
+      label: '门店指导员手机'
+    },
     code: {
       label: '门店编码'
     },
