@@ -30,6 +30,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input',
         label: '售后单号'
       },
+      selfDeliveryPointPhone: {
+        type: 'input',
+        label: '门店手机号'
+      },
       childOrderCode: {
         type: 'input',
         label: '订单编号'

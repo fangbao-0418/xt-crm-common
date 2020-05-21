@@ -118,6 +118,7 @@ class Order extends Component<any, State> {
       childOrderCode: payload.childOrderCode,
       productName: payload.productName,
       contactPhone: payload.contactPhone,
+      selfDeliveryPointPhone: payload.selfDeliveryPointPhone,
       createTime: [
         payload.createTimeBegin ? moment(payload.createTimeBegin) : undefined,
         payload.createTimeEnd ? moment(payload.createTimeEnd) : undefined
@@ -179,6 +180,7 @@ class Order extends Component<any, State> {
                 }
               }
             />
+            <FormItem name='selfDeliveryPointPhone' />
             <FormItem name='refundCode' />
             <FormItem name='childOrderCode' />
             <FormItem name='productName' />
@@ -205,6 +207,7 @@ class Order extends Component<any, State> {
                 <th>申请售后数目</th>
                 <th>申请售后金额</th>
                 <th>所属门店</th>
+                <th>门店手机号</th>
                 <th>买家信息</th>
                 <th>操作</th>
               </tr>
@@ -215,7 +218,7 @@ class Order extends Component<any, State> {
                   return (
                     <React.Fragment key={index}>
                       <tr>
-                        <td className={styles['order-resume']} colSpan={9}>
+                        <td className={styles['order-resume']} colSpan={10}>
                           <span>售后单编号：{order.refundCode}</span>&nbsp;&nbsp;&nbsp;&nbsp;
                           <span>订单编号：{order.childOrderCode}</span>&nbsp;&nbsp;&nbsp;&nbsp;
                           <span>申请时间：{order.createTime && moment(order.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -256,6 +259,9 @@ class Order extends Component<any, State> {
                           {order.selfDeliveryPointName}
                         </td>
                         <td>
+                          {order.selfDeliveryPointPhone}
+                        </td>
+                        <td>
                           {order.contactName} {order.contactPhone}
                         </td>
                         <td>
@@ -268,7 +274,7 @@ class Order extends Component<any, State> {
                         </td>
                       </tr>
                       <tr>
-                        <td className={styles.empty} colSpan={9}></td>
+                        <td className={styles.empty} colSpan={10}></td>
                       </tr>
                     </React.Fragment>
                   )
