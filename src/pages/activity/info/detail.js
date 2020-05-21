@@ -440,7 +440,7 @@ class ActivityDetail extends React.Component {
           ? [
             {
               title: '单次限购',
-              dataIndex: 'purchaseLimitation',
+              dataIndex: 'singlePurchaseLimitNum',
               render: () => 1
             }
           ] : []

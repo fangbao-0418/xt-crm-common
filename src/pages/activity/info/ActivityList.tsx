@@ -216,7 +216,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
                     <Option value=''>全部</Option>
                     {activityType
                       .getArray()
-                      .filter(val => (this.props.activityType || [1, 2, 3]).includes(val.key))
+                      .filter(val => (this.props.activityType || this.props.types || [1, 2, 3]).includes(val.key))
                       .map((val, i) => (
                         <Option value={val.key} key={i}>
                           {val.val}
