@@ -86,9 +86,6 @@ export const defaultConfigForm: FieldsConfig = {
         rules: [{
           pattern: /^[0-9,]+$/,
           message: '只能输入数字和英文逗号'
-        }, {
-          max: 500,
-          message: '长度最大500个字符'
         }]
       }
     }
