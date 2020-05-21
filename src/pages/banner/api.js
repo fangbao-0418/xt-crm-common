@@ -1,5 +1,12 @@
+/*
+ * @Author: fangbao
+ * @Date: 2020-05-15 20:07:20
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-05-15 20:32:35
+ * @FilePath: /xt-crm/src/pages/banner/api.js
+ */
 // import { post } from '../../util/fetch';
-const { post } = APP.http
+const { post, newPost } = APP.http
 const debug = false;
 
 const mockData = [

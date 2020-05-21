@@ -1,3 +1,9 @@
+/*
+ * @Date: 2019-11-12 11:03:51
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-05-15 15:40:27
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/types/Shop.d.ts
+ */
 declare module Shop {
   /** sku props */
   export interface SkuProps {
@@ -8,6 +14,7 @@ declare module Shop {
     /** 规格 */
     properties: string
     skuId: number
+    propertyValue: string
     /** 规格1 */
     propertyValue1: string
     /** 规格2 */
@@ -26,6 +33,8 @@ declare module Shop {
     managerMemberPrice: number
     /** 市场价 */
     marketPrice: number
+    /** 状态 0:下架，1：上架，2：商品池，3：待上架 -1 删除 */
+    status: -1 | 0 | 1 | 2 | 3
   }
   export interface ShopItemProps {
     id: nubmer
@@ -48,6 +57,8 @@ declare module Shop {
     property2: string
     sort?: any
     skuList: SkuProps[]
+    /** 状态 0:下架，1：上架，2：商品池，3：待上架 */
+    status: 0 | 1 | 2 | 3
   }
   /** 优惠券属性 */
   export interface CouponProps {

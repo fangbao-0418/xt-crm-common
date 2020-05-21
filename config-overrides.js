@@ -19,14 +19,11 @@ const path = require('path')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const paths = require('react-scripts/config/paths')
-const fs = require('fs')
-// const pubconfig = fs.existsSync('./pubconfig.json')
-//   ? require('./pubconfig.json')
-//   : {
-//     outputDir: 'build'
-//   }
-const PUB_ENV = process.env.PUB_ENV || 'dev'
+const CreateBuildConf = require('./plugins/createBuildConf')
 
+const PUB_ENV = process.env.PUB_ENV || 'dev'
+/** 构建时间 */
+const BUILD_TIME = new Date().getTime()
 const pubconfig = {
   outputDir: 'build'
 }
@@ -123,9 +120,13 @@ module.exports = override(
     APP: path.resolve(__dirname, 'src/util/app')
   })),
   addWebpackPlugin(new webpack.DefinePlugin({
+    BUILD_TIME: JSON.stringify(BUILD_TIME),
     'process.env': {
       PUB_ENV: JSON.stringify(PUB_ENV)
     }
+  })),
+  addWebpackPlugin(new CreateBuildConf({
+    build_time: BUILD_TIME
   })),
   addWebpackPlugin(new CopyWebpackPlugin([
     {

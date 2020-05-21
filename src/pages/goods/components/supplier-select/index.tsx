@@ -1,7 +1,7 @@
 import React from 'react'
 import { Select, Spin } from 'antd'
 import debounce from 'lodash/debounce'
-import { getStoreList } from '../../api'
+import { getStoreList } from './api'
 
 const { Option } = Select
 export interface supplierItem {
@@ -41,7 +41,7 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
       this.lastFetchId += 1
       const fetchId = this.lastFetchId
       this.setState({ supplierList: [], fetching: true });
-      getStoreList({name, pageSize: 5000 }, { hideLoading: true })
+      getStoreList({ name, pageSize: 100 }, { hideLoading: true })
         .then((res: any) => {
           if (fetchId !== this.lastFetchId) {
             // for fetch callback order

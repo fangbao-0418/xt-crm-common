@@ -1,3 +1,9 @@
+/*
+ * @Date: 2020-03-27 13:56:58
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-05-18 11:35:36
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/goods/sku-sale/api.ts
+ */
 import { formRequest, baseProductResponse, baseProductPageResponse, formResponse, baseSkuDetailResponse } from "./adapter";
 import { queryString } from '@/util/utils';
 import { omit } from "lodash";
@@ -46,7 +52,10 @@ export function getBaseSkuDetail(skuId: number) {
 
 // 商品sku库存列表
 export function getSkusStock(productId: number) {
-  return get(`/product/sku/stock/${productId}`)
+  // return get(`/product/sku/stock/${productId}`)
+  return get('/mcweb/product/sku/stock/get', {
+    productId
+  })
 }
 // 修改商品sku库存
 export function postSkusStockEdit(data:any) {
