@@ -1,7 +1,11 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
+<<<<<<< HEAD
  * @LastEditTime: 2020-05-15 14:46:03
+=======
+ * @LastEditTime: 2020-05-18 15:30:21
+>>>>>>> origin/master
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/fn.d.ts
  */
 interface FnProps {
@@ -28,4 +32,7 @@ interface FnProps {
   deleteOssDomainUrl: (url: string) => string
   /** 补全oss资源路径 */
   fillOssDomainUrl: (url: string) => string
+  /** 格式化危险字符串数据 */
+  formatUnsafeString: (str: string) => string
+  formatUnSafeData: <T = any>(data: T) => T
 }
