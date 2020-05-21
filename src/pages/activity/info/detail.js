@@ -576,6 +576,7 @@ class ActivityDetail extends React.Component {
               <FormItem label='活动图片'>
                 <UploadView
                   listType='picture-card'
+                  ossType='cos'
                   value={activityImage}
                   onChange={this.handleActivityImage}
                   listNum={1}

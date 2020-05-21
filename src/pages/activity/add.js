@@ -39,9 +39,8 @@ class ActivityForm extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.data) {
-      const { tagUrl, type, title, sort, startTime, endTime, tagPosition, id, canUpdate } = nextProps.data
+      const { tagUrl, type, title, sort, startTime, endTime, tagPosition, id, canUpdate, activityRewardAmount } = nextProps.data
       if (this.props.visible !== nextProps.visible) {
-        console.log('nextProps.data =>', nextProps.data)
         this.props.form.setFieldsValue({
           tagUrl,
           type,
@@ -49,7 +48,8 @@ class ActivityForm extends React.Component {
           sort,
           startTime,
           endTime,
-          tagPosition
+          tagPosition,
+          activityRewardAmount: activityRewardAmount / 100
         })
         this.setState({ id, canUpdate })
         this.typeChange(type)
