@@ -101,10 +101,10 @@ class ApplyAfterSale extends React.Component<Props, State> {
       form: { setFieldsValue }
     } = this.props
     let maxUnitRefundMoney = modalInfo.maxRefundMoney
-    if (value === modalInfo.serverNum) {
+    if (value === modalInfo.maxServerNum) {
       maxUnitRefundMoney = modalInfo.maxRefundMoney
     } else {
-      maxUnitRefundMoney = value * maxUnitRefundMoney
+      maxUnitRefundMoney = value * modalInfo.maxUnitRefundMoney
     }
     setFieldsValue({
       refundMoney: formatPrice(maxUnitRefundMoney)
@@ -120,12 +120,11 @@ class ApplyAfterSale extends React.Component<Props, State> {
     const serverNum = getFieldValue('serverNum')
 
     let maxUnitRefundMoney = modalInfo.maxRefundMoney
-
     if (serverNum) {
-      if (serverNum === modalInfo.serverNum) {
+      if (serverNum === modalInfo.maxServerNum) {
         maxUnitRefundMoney = modalInfo.maxRefundMoney
       } else {
-        maxUnitRefundMoney = serverNum * maxUnitRefundMoney
+        maxUnitRefundMoney = serverNum * modalInfo.maxUnitRefundMoney
       }
     }
 
