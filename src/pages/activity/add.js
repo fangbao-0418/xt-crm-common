@@ -275,6 +275,18 @@ class ActivityForm extends React.Component {
                 />
               )}
             </FormItem>
+            <Form.Item label='标签位置'>
+              {getFieldDecorator('tagPosition', {
+                initialValue: 0
+              })(
+                <Radio.Group>
+                  <Radio value={5}>左上角</Radio>
+                  <Radio value={10}>左下角</Radio>
+                  <Radio value={15}>右上角</Radio>
+                  <Radio value={20}>右下角</Radio>
+                </Radio.Group>
+              )}
+            </Form.Item>
             {/* 活动类型为0元购的情况下 需设置奖励配置 0元购类型值为11 */}
             <If condition={type === 13}>
               <FormItem label='奖励'>
@@ -297,18 +309,6 @@ class ActivityForm extends React.Component {
                 <span> 元</span>
               </FormItem>
             </If>
-            <Form.Item label='标签位置'>
-              {getFieldDecorator('tagPosition', {
-                initialValue: 0
-              })(
-                <Radio.Group>
-                  <Radio value={5}>左上角</Radio>
-                  <Radio value={10}>左下角</Radio>
-                  <Radio value={15}>右上角</Radio>
-                  <Radio value={20}>右下角</Radio>
-                </Radio.Group>
-              )}
-            </Form.Item>
             <FormItem wrapperCol={{ offset: 9 }}>
               <Button
                 type='primary'
