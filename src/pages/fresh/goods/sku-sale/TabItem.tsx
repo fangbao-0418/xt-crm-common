@@ -239,6 +239,7 @@ class SkuSaleList extends React.Component<Props, SkuSaleListState> {
     const hasSelected = Array.isArray(selectedRowKeys) && selectedRowKeys.length > 0
     const { status } = this.props
     const tableProps: any = {
+      rowKey: 'id',
       scroll: {
         x: true
       },
