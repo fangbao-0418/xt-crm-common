@@ -282,11 +282,17 @@ class ActivityForm extends React.Component {
                   rules: [
                     {
                       required: type === 13,
-                      message: '请输入'
+                      validator: (_, value, callback) => {
+                        if (value > 10 || value <= 0) {
+                          callback('请输入大于0且小于等于10的整数或两位小数')
+                        } else {
+                          callback()
+                        }
+                      }
                     }
                   ]
                 })(
-                  <InputNumber precision={2} placeholder='请输入' min={0.01} max={10} />
+                  <InputNumber precision={2} placeholder='请输入' />
                 )}
                 <span> 元</span>
               </FormItem>
