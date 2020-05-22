@@ -43,6 +43,10 @@ class GoodsTable extends Component {
         okText: '查看详情',
         cancelText: '取消',
         onOk: () => {
+          if (!err.data) {
+            APP.error('未获取数据信息, 请联系管理人员')
+            return
+          }
           APP.history.push(`/fresh/saleAfter/detail/${err.data.refundOrderCode}`)
         }
       })
