@@ -165,6 +165,9 @@ class Store extends Component {
           formConfig={defaultConfig}
           api={getTimerList}
           columns={this.columns}
+          tableProps={{
+            rowKey: 'id'
+          }}
         />
         {visible && <StoreTimerModal data={data} visible={visible} onOk={(data: any) => {
           if (data) {
