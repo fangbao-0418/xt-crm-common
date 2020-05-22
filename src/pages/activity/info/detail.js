@@ -195,7 +195,7 @@ class ActivityDetail extends React.Component {
       }
     }
     const promotionSkuAdd = (selectedRows || []).map((item) => {
-      return {
+      const promotionSkuAddItem = {
         ...item,
         buyingPrice: item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0,
         // 拼团
@@ -207,6 +207,8 @@ class ActivityDetail extends React.Component {
           managerPrice: item.pmManagerPrice ? new Decimal(item.pmManagerPrice).mul(100).toNumber() : 0
         } : {})
       }
+
+      return promotionSkuAddItem
     })
     const params = {
       isMultiple: detailData.type === 9 ? isMultiple : 0,
@@ -257,7 +259,7 @@ class ActivityDetail extends React.Component {
       dataIndex: 'promotionPrice',
       width: 200,
       render: (text, record, index) => (
-        speedyInput('promotionPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+        speedyInput('promotionPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
           <InputNumber
             style={{ width: 140 }}
             min={0}
@@ -273,7 +275,7 @@ class ActivityDetail extends React.Component {
       dataIndex: 'pmHeadPrice',
       width: 200,
       render: (text, record, index) => (
-        speedyInput('pmHeadPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+        speedyInput('pmHeadPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
           <InputNumber
             style={{ width: 140 }}
             min={0}
@@ -289,7 +291,7 @@ class ActivityDetail extends React.Component {
       dataIndex: 'pmAreaPrice',
       width: 200,
       render: (text, record, index) => (
-        speedyInput('pmAreaPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+        speedyInput('pmAreaPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
           <InputNumber
             style={{ width: 140 }}
             min={0}
@@ -305,7 +307,7 @@ class ActivityDetail extends React.Component {
       dataIndex: 'pmCityPrice',
       width: 200,
       render: (text, record, index) => (
-        speedyInput('pmCityPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+        speedyInput('pmCityPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
           <InputNumber
             style={{ width: 140 }}
             min={0}
@@ -321,7 +323,7 @@ class ActivityDetail extends React.Component {
       dataIndex: 'pmManagerPrice',
       width: 200,
       render: (text, record, index) => (
-        speedyInput('pmManagerPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+        speedyInput('pmManagerPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
           <InputNumber
             style={{ width: 140 }}
             min={0}
@@ -408,7 +410,7 @@ class ActivityDetail extends React.Component {
             value: text,
             onChange: this.handleChangeValue('inventory', index)
           }
-          return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
+          return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(<InputNumber {...props} />)
         }
       },
       {
@@ -424,7 +426,7 @@ class ActivityDetail extends React.Component {
         title: '最大购买数',
         dataIndex: 'maxBuy',
         render: (text, record, index) => (
-          speedyInput('maxBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          speedyInput('maxBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
             <InputNumber
               style={{ width: 140 }}
               min={0}
@@ -441,7 +443,18 @@ class ActivityDetail extends React.Component {
             {
               title: '单次限购',
               dataIndex: 'singlePurchaseLimitNum',
-              render: () => 1
+              render: (text, record, index) => (
+                speedyInput('singlePurchaseLimitNum', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
+                  <InputNumber
+                    disabled
+                    style={{ width: 140 }}
+                    min={0}
+                    precision={0}
+                    value={text}
+                    onChange={this.handleChangeValue('singlePurchaseLimitNum', index)}
+                  />
+                )
+              )
             }
           ] : []
       ),
@@ -449,7 +462,7 @@ class ActivityDetail extends React.Component {
         title: '最小购买数',
         dataIndex: 'minBuy',
         render: (text, record, index) => (
-          speedyInput('minBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          speedyInput('minBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
             <InputNumber
               style={{ width: 140 }}
               min={0}

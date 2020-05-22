@@ -79,6 +79,9 @@ class ActivityForm extends React.Component {
     }
     (params.id ? updateBasePromotion : setBasePromotion)(params).then((res) => {
       this.loadStatus(false)
+      if (!res) {
+        return
+      }
       if (res) {
         message.success('活动基础信息保存成功')
       }
@@ -95,13 +98,18 @@ class ActivityForm extends React.Component {
     const {
       form: { validateFields }
     } = this.props
+
     validateFields((err, { type, activityRewardAmount, ...vals }) => {
+      console.log(err)
       if (!err) {
         vals.type = type
         if (type === 13) {
+          if (!activityRewardAmount) {
+            APP.error('活动奖励不能为空')
+            return
+          }
           vals.activityRewardAmount = activityRewardAmount * 10 * 10
         }
-        console.log(vals, activityRewardAmount, type)
         this.setBasePromotion(vals, id => {
           if (isFunction(callback)) {
             id && callback(id)
@@ -287,14 +295,17 @@ class ActivityForm extends React.Component {
                 </Radio.Group>
               )}
             </Form.Item>
-            {/* 活动类型为0元购的情况下 需设置奖励配置 0元购类型值为11 */}
+            {/* 活动类型为0元购的情况下 需设置奖励配置 0元购类型值为13 */}
             <If condition={type === 13}>
               <FormItem label='奖励'>
                 {getFieldDecorator('activityRewardAmount', {
                   rules: [
                     {
-                      required: type === 13,
                       validator: (_, value, callback) => {
+                        if (type !== 13) {
+                          callback()
+                          return
+                        }
                         if (value > 10 || value <= 0) {
                           callback('请输入大于0且小于等于10的整数或两位小数')
                         } else {
