@@ -57,11 +57,11 @@ class GoodsTable extends Component {
       remark: e.target.value
     })
   }
-  lookForHistory = ({ orderCode, productId }) => {
+  lookForHistory = (record) => {
     const { history } = this.props
     history.push('/fresh/saleAfter')
     APP.fn.setPayload('freshSaleAfter', {
-      childOrderCode: orderCode
+      childOrderCode: record.childOrder
     })
   }
   handleAddNotes = () => {
@@ -148,7 +148,7 @@ class GoodsTable extends Component {
                   style={{ padding: 0 }}
                   type='link'
                   size='small'
-                  onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>
+                  onClick={() => this.lookForHistory({ ...record })}>
                   历史售后
                 </Button>
               )}

@@ -97,7 +97,7 @@ class Detail extends Component {
               >
                 <GoodsTable
                   key={index}
-                  list={item.skuList}
+                  list={item.skuList.map(innerItem => ({ ...innerItem, childOrder: item.childOrder?.orderCode }))}
                   childOrder={item.childOrder}
                   orderInfo={data.orderInfo}
                   logistics={item.logistics}
