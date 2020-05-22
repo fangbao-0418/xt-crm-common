@@ -301,12 +301,13 @@ class ActivityForm extends React.Component {
                 {getFieldDecorator('activityRewardAmount', {
                   rules: [
                     {
+                      required: type === 13,
                       validator: (_, value, callback) => {
                         if (type !== 13) {
                           callback()
                           return
                         }
-                        if (value > 10 || value <= 0) {
+                        if (value > 10 || value <= 0 || value === undefined) {
                           callback('请输入大于0且小于等于10的整数或两位小数')
                         } else {
                           callback()
