@@ -10,13 +10,13 @@ import { omit } from "lodash";
 const { newPost, get } = APP.http;
 
 // 库存商品ID查询
-export function getBaseProduct(id: number) {
-  return newPost(`/product/basic/${id}`).then(baseProductResponse)
+export function getBaseProduct(productBasicId: number) {
+  return get('/mcweb/product/basic/select/detail', { productBasicId }).then(baseProductResponse)
 }
 
 // 库存商品编码查询
 export function getBaseBarcode(barCode: string) {
-  return newPost(`/product/basic/bar_code?barCode=${barCode}`)
+  return get(`/product/basic/bar_code?barCode=${barCode}`)
 }
 
 // 库存商品选择分页查询
