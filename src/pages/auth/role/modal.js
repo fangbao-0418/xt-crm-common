@@ -15,21 +15,28 @@ const formItemLayout = {
 }
 
 function getDefaultChecked (arr = []) {
-  const rootParents = arr.filter(item => !item.parentId)
-  rootParents.forEach(rootItem => {
-    const twoLevel = arr.filter(item => item.parentId === rootItem.id)
-    twoLevel.forEach(twoLevelItem => {
-      const unSelected = arr.filter(item => item.parentId === twoLevelItem.id && item.flag === false)
-      if (unSelected && unSelected.length) {
-        twoLevelItem.flag = false
-      }
+  /**
+   * 获取子节点是否存在为勾选数据
+   * @param {*} current - 当前数据
+   * @returns {boolean} - true-存在未勾选数据 false-不存在未勾选数据
+   */
+  function loop (current) {
+    const children = arr.filter(item => item.parentId === (current?.id || null))
+    children.map((item) => {
+      item.flag = loop(item) ? false : item.flag
     })
-    const unSelectedTwoLevel = twoLevel.filter(item => item.flag === false)
-    if (unSelectedTwoLevel && unSelectedTwoLevel.length) {
-      rootItem.flag = false
+    if (current) {
+      const unSelectedChildren = arr.filter(item => {
+        return item.parentId === current.id && !item.flag
+      })
+      return unSelectedChildren.length > 0
+    } else {
+      return false
     }
-  })
-  return arr.filter(item => item.flag).map(item => `${item.id}`)
+  }
+  loop()
+  const result = arr.filter(item => item.flag).map(item => `${item.id}`)
+  return result
 }
 
 @connect(state => ({
@@ -65,7 +72,7 @@ export default class extends Component {
     return data.map(item => {
       if (item.subMenus.length) {
         return (
-          <TreeNode title={item.name} key={item.id}>
+          <TreeNode title={item.name} key={String(item.id)}>
             {this.renderTree(item.subMenus)}
           </TreeNode>
         )
@@ -164,7 +171,10 @@ export default class extends Component {
               valuePropName: 'defaultCheckedKeys',
               initialValue: defaultCheckedKeys
             })(
-              <Tree checkable onCheck={this.onCheck}>
+              <Tree
+                checkable
+                onCheck={this.onCheck}
+              >
                 {this.renderTree(menuList)}
               </Tree>
             )}
