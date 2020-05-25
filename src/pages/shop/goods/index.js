@@ -1,18 +1,20 @@
-import React from 'react';
-import { Card, Tabs, message, Button } from 'antd';
-import { getGoodsList, getCategoryTopList, passGoods, getGoodsInfo } from './api';
-import SelectFetch from '@/components/select-fetch';
-import { ListPage, FormItem, If } from '@/packages/common/components';
-import SuppilerSelect from '@/components/suppiler-auto-select';
-import { replaceHttpUrl } from '@/util/utils';
-import CarouselPreview from '@/components/carousel-preview'
-import UnpassModal from './components/unpassModal';
-import LowerModal from './components/lowerModal';
-import ViolationModal from './components/violationModal';
-import { combinationStatusList, formConfig } from './config/config';
-import getColumns from './config/columns';
+import React from 'react'
+import { Card, Tabs, message, Button } from 'antd'
+import { getGoodsList, getCategoryTopList, passGoods, getGoodsInfo } from './api'
+import SelectFetch from '@/components/select-fetch'
+import { ListPage, FormItem, If } from '@/packages/common/components'
+// import SuppilerSelect from '@/components/suppiler-auto-select'
+import SuppilerSelector from '@/components/supplier-selector'
 
-const { TabPane } = Tabs;
+import { replaceHttpUrl } from '@/util/utils'
+import CarouselPreview from '@/components/carousel-preview'
+import UnpassModal from './components/unpassModal'
+import LowerModal from './components/lowerModal'
+import ViolationModal from './components/violationModal'
+import { combinationStatusList, formConfig } from './config/config'
+import getColumns from './config/columns'
+
+const { TabPane } = Tabs
 
 class Main extends React.Component {
 
@@ -29,7 +31,7 @@ class Main extends React.Component {
 
   /** 获取相关图片组合成自己想要的数据结构 */
   getCarouselsInfos = (currentGoods) => {
-    let coverUrl = [{
+    const coverUrl = [{
       label: '封面图',
       value: currentGoods.coverUrl
     }]
@@ -54,7 +56,7 @@ class Main extends React.Component {
       ...coverUrl,
       ...productImage,
       ...skuImages
-    ];
+    ]
 
     return carouselsInfos
   }
@@ -87,7 +89,7 @@ class Main extends React.Component {
   /** 操作：查看商品详情-打开新标签页面 */
   handleDetail = (record) => {
     const { origin, pathname } = window.location
-    window.open(`${origin}${/^\/$/.test(pathname) ? '/' : pathname}#/shop/goods/detail/${record.id}`);
+    window.open(`${origin}${(/^\/$/).test(pathname) ? '/' : pathname}#/shop/goods/detail/${record.id}`)
   }
 
   /** 操作：下架商品-显示下架理由模态框 */
@@ -104,7 +106,7 @@ class Main extends React.Component {
     passGoods({
       ids: [record.id]
     }).then(() => {
-      message.success('审核通过成功!');
+      message.success('审核通过成功!')
       this.listRef.fetchData()
     })
   }
@@ -123,7 +125,7 @@ class Main extends React.Component {
     this.setState({
       tabStatus
     }, () => {
-      this.listRef.refresh(true);
+      this.listRef.refresh(true)
     })
   }
 
@@ -136,15 +138,15 @@ class Main extends React.Component {
   }
 
   onSelectChange = (selectedRowKeys) => {
-    this.setState({ selectedRowKeys });
+    this.setState({ selectedRowKeys })
   }
 
   handleBatchPass = () => {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys } = this.state
     passGoods({
       ids: selectedRowKeys
     }).then(() => {
-      message.success(`共${selectedRowKeys.length}件商品审核通过成功！`);
+      message.success(`共${selectedRowKeys.length}件商品审核通过成功！`)
       this.setState({
         selectedRowKeys: []
       })
@@ -155,7 +157,6 @@ class Main extends React.Component {
   handleBatchReject = () => {
     this.unpassModalRef.showModal()
   }
-
 
   clearSelectedRowKeys = () => {
     this.setState({
@@ -170,9 +171,9 @@ class Main extends React.Component {
     })
   }
 
-  render() {
-    const { currentGoods, tabStatus, selectedRowKeys, carouselTitle, carouselVisible, carouselImgs } = this.state;
-    const hasSelected = selectedRowKeys.length > 0;
+  render () {
+    const { currentGoods, tabStatus, selectedRowKeys, carouselTitle, carouselVisible, carouselImgs } = this.state
+    const hasSelected = selectedRowKeys.length > 0
 
     return (
       <Card>
@@ -231,12 +232,17 @@ class Main extends React.Component {
           namespace='/shop/goods'
           formConfig={formConfig}
           getInstance={ref => this.listRef = ref}
+          cachePayloadProcess={(payload) => {
+            return {
+              ...payload
+            }
+          }}
           processPayload={({ innerAuditStatus, ...payload }) => {
             payload.labType = +tabStatus
             if (tabStatus === '0') { // tab 全部
               if (
-                innerAuditStatus &&
-                (innerAuditStatus !== -1)
+                innerAuditStatus
+                && (innerAuditStatus !== -1)
               ) {
                 payload.auditStatus = innerAuditStatus
               } else {
@@ -245,10 +251,11 @@ class Main extends React.Component {
             } else {
               payload.auditStatus = undefined
             }
-
-            // payload.storeId = 124
-
-            return payload
+            return {
+              ...payload,
+              storeId: payload.store?.key,
+              store: undefined
+            }
           }}
           rangeMap={{
             createTime: {
@@ -276,32 +283,32 @@ class Main extends React.Component {
               <FormItem
                 label='供应商'
                 inner={(form) => {
-                  return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect
+                  return form.getFieldDecorator('store')(
+                    <SuppilerSelector
                       style={{ width: 172 }}
-                      processPayload={(params) => ({ ...params, category: 6 })}
+                      category={6}
                     />
-                  );
+                  )
                 }}
               />
               <If condition={tabStatus === '0'}>
                 <FormItem name='innerAuditStatus' />
               </If>
-              <FormItem label="审核人" name="auditUser" />
+              <FormItem label='审核人' name='auditUser' />
               <FormItem
-                name="createTime"
-                label="创建时间"
-                type="rangepicker"
+                name='createTime'
+                label='创建时间'
+                type='rangepicker'
                 controlProps={{
-                  showTime: true,
+                  showTime: true
                 }}
               />
               <FormItem
-                label="审核时间"
-                name="auditTime"
-                type="rangepicker"
+                label='审核时间'
+                name='auditTime'
+                type='rangepicker'
                 controlProps={{
-                  showTime: true,
+                  showTime: true
                 }}
               />
               <FormItem name='phone' />
@@ -326,7 +333,7 @@ class Main extends React.Component {
             }
           }}
           addonAfterSearch={
-            tabStatus === '2' ?
+            tabStatus === '2' ? (
               <div>
                 <Button
                   type='primary'
@@ -335,15 +342,16 @@ class Main extends React.Component {
                   onClick={this.handleBatchPass}
                 >
                   审核通过
-              </Button>
+                </Button>
                 <Button
                   disabled={!hasSelected}
                   className='ml10'
                   onClick={this.handleBatchReject}
                 >
                   审核不通过
-              </Button>
-              </div> : null
+                </Button>
+              </div>
+            ) : null
           }
         />
       </Card>
@@ -351,4 +359,4 @@ class Main extends React.Component {
   }
 }
 
-export default Main;
+export default Main

@@ -330,7 +330,7 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label='供应商'>
-                  {getFieldDecorator('storeId', { initialValue: values.storeId })(<SuppilerSelect />)}
+                  {getFieldDecorator('storeId', { initialValue: values.storeId })(<SuppilerSelect type='fresh' />)}
                 </FormItem>
               </Col>
               <Col span={6}>

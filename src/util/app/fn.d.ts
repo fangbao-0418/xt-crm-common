@@ -1,15 +1,19 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-28 21:11:54
- * @FilePath: /xt-wms/Users/fangbao/Documents/xituan/xt-crm/src/util/app/fn.d.ts
+<<<<<<< HEAD
+ * @LastEditTime: 2020-05-15 14:46:03
+=======
+ * @LastEditTime: 2020-05-18 15:30:21
+>>>>>>> origin/master
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/fn.d.ts
  */
 interface FnProps {
   /** 获取h5域名 */
   getH5Origin: () => string
   /** 格式化日期 */
   formatDate: (date: string | number | undefined, format?: string) => string
-  /** 格式化金额 */
+  /** 格式化金额 分转元 */
   formatMoney: (money: any) => string
   /** 处理loading 默认参数loadind=end */
   handleLoading: (status?: 'start' | 'end') => void
@@ -28,4 +32,7 @@ interface FnProps {
   deleteOssDomainUrl: (url: string) => string
   /** 补全oss资源路径 */
   fillOssDomainUrl: (url: string) => string
+  /** 格式化危险字符串数据 */
+  formatUnsafeString: (str: string) => string
+  formatUnSafeData: <T = any>(data: T) => T
 }
