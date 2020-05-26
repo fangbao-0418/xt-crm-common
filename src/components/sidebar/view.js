@@ -51,7 +51,11 @@ class Sidebar extends React.Component {
     function loop (arr, group = [], isPattern = false) {
       return arr.find((item) => {
         const pattern = new RegExp('^' + item.path + '/(\\w)+$')
-        if (routesMapRule[item.path]?.find?.((rule) => { return rule.test(pathname) })) {
+        // console.log(routesMapRule, item.path, 'routesMapRule')
+        // console.log(routesMapRule[item.path], 'routesMapRule[pathname]')
+        if (routesMapRule[item.path]?.find?.((rule) => {
+          return rule.test(pathname)
+        })) {
           selectedItem = item
           selectedGroup = group.concat([item])
           return true
@@ -129,21 +133,38 @@ class Sidebar extends React.Component {
               </span>
             }
           >
-            {/* {subMenus.map(subItem => (
-              <Menu.Item key={subItem.id}>
-                <Link to={subItem.path || '/'}>{subItem.name}</Link>
-              </Menu.Item>
-            ))} */}
             {this.renderMenulist(subMenus)}
           </SubMenu>
         )
       } else {
+        let outside
+        let path = item.path
+        try {
+          outside = (/^~(\/.*)$/).exec(item.path)
+          path = outside ? outside[1] : path || '/'
+        } catch (e) {
+          //
+        }
         return (
-          <Menu.Item key={item.id}>
-            <Link to={item.path || '/'}>
+          <Menu.Item
+            key={item.id}
+            onClick={(e) => {
+              if (outside) {
+                window.open(outside[1])
+              } else {
+                APP.history.push(item.path)
+              }
+            }}
+          >
+            <a
+              href={outside ? path : ('#' + path)}
+              onClick={(e) => {
+                e.preventDefault()
+              }}
+            >
               {item.icon && <Icon type={item.icon} />}
               <span>{item.name}</span>
-            </Link>
+            </a>
           </Menu.Item>
         )
       }
@@ -169,22 +190,12 @@ class Sidebar extends React.Component {
       >
         <div className={styles.logo}>
           <a href='/'>
-            <img src={logo} alt='logo' />
-            <h1>喜团管理平台</h1>
+            {/* <img src={logo} alt='logo' /> */}
+            <h1 style={{ marginLeft: 10 }}>喜团管理平台</h1>
           </a>
         </div>
         <Menu
           theme='dark'
-          onClick={e => {
-            const menuMap = getMenuMap(data)
-            const curItem = menuMap[e.key]
-            const outside = (/(?<=~).*/).exec(curItem.path)
-            if (outside) {
-              window.open(`${window.location.origin}${outside}`)
-            } else {
-              this.setCurrent(e.key)
-            }
-          }}
           onOpenChange={(openKeys) => {
             this.setState({
               openKeys

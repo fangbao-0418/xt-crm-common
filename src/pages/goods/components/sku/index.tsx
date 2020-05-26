@@ -1,12 +1,12 @@
-import React from 'react';
+import React from 'react'
 import { Card, Popover, Input, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { FormComponentProps } from 'antd/lib/form'
-import CardTitle from '../CardTitle';
-import SkuUploadItem from './SkuUploadItem';
-import styles from './style.module.scss';
-import { size, map } from 'lodash';
-import { Subtr, accMul, accDiv } from '@/util/utils';
+import CardTitle from '../CardTitle'
+import SkuUploadItem from './SkuUploadItem'
+import styles from './style.module.scss'
+import { size, map } from 'lodash'
+import { Subtr, accMul, accDiv } from '@/util/utils'
 import SkuTable from './SkuTable'
 
 const defaultItem: SkuSaleProps = {
@@ -65,7 +65,7 @@ export interface SkuSaleProps {
 }
 
 interface Props extends FormComponentProps {
-  isGroup: boolean,
+  isGroup?: boolean,
   specs: Spec[]
   dataSource: SkuSaleProps[]
   showImage: boolean
@@ -183,7 +183,7 @@ class SkuList extends React.Component<Props, State> {
      * 每个输入框改变
      */
     if (!nosync) {
-      dataSource[index][text] = e.target ? e.target.value : e;
+      dataSource[index][text] = e.target ? e.target.value : e
     } else {
       /* 同步修改一列的数值 */
       dataSource.forEach((item, inex) => {
@@ -198,7 +198,7 @@ class SkuList extends React.Component<Props, State> {
       this.state.specs.push({
         title,
         content: []
-      });
+      })
       this.setState({
         specs: this.state.specs,
         GGName: ''
@@ -215,11 +215,11 @@ class SkuList extends React.Component<Props, State> {
     const specName = (tempSpecInfo[key] && tempSpecInfo[key].specName || '').trim()
     const specPicture = tempSpecInfo[0] && tempSpecInfo[0].specPicture
     if (!specName) {
-      message.error('请设置规格名称');
+      message.error('请设置规格名称')
       return
     }
     if (content.find((v) => v.specName === specName)) {
-      message.error('请不要填写相同的规格');
+      message.error('请不要填写相同的规格')
       return
     }
     if (content.length === 0) {
@@ -237,7 +237,7 @@ class SkuList extends React.Component<Props, State> {
 
     //////////////////////////////
     const dataSource1 = this.getCombineResult(specs, this.state.dataSource)
-    console.log(dataSource1, 'dataSource1');
+    console.log(dataSource1, 'dataSource1')
     this.setState({
       dataSource: dataSource1,
       tempSpecInfo,
@@ -248,16 +248,16 @@ class SkuList extends React.Component<Props, State> {
   handleTabsAdd = () => {
     const GGName = this.state.GGName
     if (!GGName) {
-      message.error('请输入正确的规格名称');
-      return false;
+      message.error('请输入正确的规格名称')
+      return false
     }
     if (GGName.length > 5) {
-      message.error('规格名称不能大于5个字符');
+      message.error('规格名称不能大于5个字符')
       return
     }
     if (this.state.specs.find((item) => item.title === GGName)) {
-      message.error('规格名称重复');
-      return false;
+      message.error('规格名称重复')
+      return false
     }
     this.setState({
       dimensionNamePropoverStatus: false
@@ -267,45 +267,45 @@ class SkuList extends React.Component<Props, State> {
 
   // 计算价格
   calculatePrice = () => {
-    const { dataSource, strategyData } = this.state;
-    let isZero = false;
-    let isError = false;
-    let fields: any = [];
-    // accAdd, Subtr, accMul, accDiv 
-    const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData;
+    const { dataSource, strategyData } = this.state
+    let isZero = false
+    let isError = false
+    let fields: any = []
+    // accAdd, Subtr, accMul, accDiv
+    const { categoryProfitRate, headCommissionRate, areaCommissionRate, cityCommissionRate, managerCommissionRate } = strategyData
     const newData = dataSource.map((res, index) => {
-      isZero = false;
-      const { salePrice, costPrice } = res;
-      if(!Number(salePrice) || !Number(costPrice) || Number(salePrice) - Number(costPrice) < 0){
-        isZero = true;
+      isZero = false
+      const { salePrice, costPrice } = res
+      if (!Number(salePrice) || !Number(costPrice) || Number(salePrice) - Number(costPrice) < 0) {
+        isZero = true
         isError = true
       }
-      let grossProfit = Subtr(salePrice,costPrice);//毛利润
-      let netProfit : any = Subtr(grossProfit, accDiv(accMul(grossProfit, categoryProfitRate), 100));//去除类目利润比的利润
+      const grossProfit = Subtr(salePrice, costPrice)//毛利润
+      const netProfit : any = Subtr(grossProfit, accDiv(accMul(grossProfit, categoryProfitRate), 100))//去除类目利润比的利润
 
-      let headNetProfit = accDiv(accMul(netProfit,headCommissionRate),100);
-      let areaNetProfit = accDiv(accMul(netProfit,areaCommissionRate),100);
-      let cityNetProfit = accDiv(accMul(netProfit,cityCommissionRate),100);
-      let managerNetProfit = accDiv(accMul(netProfit,managerCommissionRate),100);
+      const headNetProfit = accDiv(accMul(netProfit, headCommissionRate), 100)
+      const areaNetProfit = accDiv(accMul(netProfit, areaCommissionRate), 100)
+      const cityNetProfit = accDiv(accMul(netProfit, cityCommissionRate), 100)
+      const managerNetProfit = accDiv(accMul(netProfit, managerCommissionRate), 100)
 
       fields = fields.concat([
         `headPrice-${index}`,
         `areaMemberPrice-${index}`,
         `cityMemberPrice-${index}`,
         `managerMemberPrice-${index}`
-      ]);
+      ])
       return Object.assign(res, {
         headPrice: isZero ? 0 : Math.floor(Subtr(salePrice, headNetProfit)*10) / 10,
-        areaMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(salePrice, areaNetProfit),headNetProfit)*10) / 10,
-        cityMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit),areaNetProfit),headNetProfit)*10) / 10,
-        managerMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit),cityNetProfit),areaNetProfit),headNetProfit)*10) / 10
+        areaMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(salePrice, areaNetProfit), headNetProfit)*10) / 10,
+        cityMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(Subtr(salePrice, cityNetProfit), areaNetProfit), headNetProfit)*10) / 10,
+        managerMemberPrice: isZero ? 0 : Math.floor(Subtr(Subtr(Subtr(Subtr(salePrice, managerNetProfit), cityNetProfit), areaNetProfit), headNetProfit)*10) / 10
       })
     })
-    if(isError){
-      message.error('价格错误，不能进行计算，请确认成本价及销售价是否正确');
-    } 
-    console.log('fields =>', fields);
-    this.props.form.resetFields(fields);
+    if (isError) {
+      message.error('价格错误，不能进行计算，请确认成本价及销售价是否正确')
+    }
+    console.log('fields =>', fields)
+    this.props.form.resetFields(fields)
     this.setState({
       dataSource: newData
     })
@@ -405,7 +405,7 @@ class SkuList extends React.Component<Props, State> {
       this.onChange(dataSource)
     })
   }
-  render() {
+  render () {
     const type = this.props.type !== undefined ? this.props.type : 0
     return (
       <Card
@@ -418,7 +418,7 @@ class SkuList extends React.Component<Props, State> {
             content={(
               <div style={{ display: 'flex' }}>
                 <Input
-                  style={{width: 150}}
+                  style={{ width: 150 }}
                   placeholder='请添加规格名称'
                   value={this.state.GGName}
                   onChange={(e) => {
@@ -437,7 +437,7 @@ class SkuList extends React.Component<Props, State> {
               <span
                 className='href'
                 onClick={() => {
-                  this.setState({dimensionNamePropoverStatus: true})
+                  this.setState({ dimensionNamePropoverStatus: true })
                 }}
               >
                 添加规格
@@ -459,7 +459,7 @@ class SkuList extends React.Component<Props, State> {
                   index={key}
                   onChange={(e: any) => {
                     const { dataSource, specs } = this.state
-                    const checked = e.target.checked 
+                    const checked = e.target.checked
                     if (!checked) {
                       dataSource.map((item) => {
                         item.imageUrl1 = ''
@@ -552,7 +552,7 @@ class SkuList extends React.Component<Props, State> {
             this.skuTable = ref
           }}
           type={type}
-          isGroup={this.props.isGroup}
+          isGroup={this.props.isGroup || false}
           form={this.props.form}
           productCustomsDetailVOList={this.props.productCustomsDetailVOList}
           dataSource={this.state.dataSource}
@@ -566,4 +566,4 @@ class SkuList extends React.Component<Props, State> {
   }
 }
 
-export default SkuList;
+export default SkuList

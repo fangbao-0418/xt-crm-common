@@ -21,16 +21,17 @@ export function getH5Origin () {
 
 export function formatDate (date, format = 'YYYY-MM-DD HH:mm:ss') {
   date = date || 0
-  if (/^\d+$/.test(date)) {
+  if ((/^\d+$/).test(date)) {
     date = Number(date)
     date = String(date).length === 10 ? date * 1000 : date
   }
   return (date && moment(date).format(format)) || '';
 }
 
+/** 格式化金额 分转元 */
 export function formatMoney (money = '0') {
   let str = String(money || '0');
-  if (!/^\d+$/.test(parseFloat(str))) {
+  if (!(/^\d+$/).test(parseFloat(str))) {
     str = '0'
   }
   let len = str.length
@@ -272,4 +273,43 @@ export function fillOssDomainUrl (url) {
   }
   url = 'https://assets.hzxituan.com/' + url
   return url
+}
+
+export function formatUnsafeString (str) {
+  return (str || '').replace(/\s/g, '')
+}
+
+/**
+ * 格式化不安全数据
+ */
+export function formatUnSafeData (source) {
+  function loop (data) {
+    if (data instanceof Object) {
+      const isArray = data instanceof Array
+      if (isArray) {
+        data = data.map((item) => {
+          if (typeof item === 'string') {
+            item = formatUnsafeString(item)
+          }
+          if (item instanceof Object) {
+            item = loop(item)
+          }
+          return item
+        })
+      } else {
+        for (const key in data) {
+          if (typeof data[key] === 'string') {
+            data[key] = formatUnsafeString(data[key])
+          }
+          if (data[key] instanceof Object) {
+            data[key] = loop(data[key])
+          }
+        }
+      }
+    } else if (typeof source === 'string') {
+      data = formatUnsafeString (data)
+    }
+    return data
+  }
+  return loop(source)
 }

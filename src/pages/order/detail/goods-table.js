@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { Table, Row, Col, Card, Button, Modal, Input, message, Divider } from 'antd';
+import React, { Component } from 'react'
+import { Table, Row, Col, Card, Button, Modal, Input, message, Divider } from 'antd'
 import { formatMoney } from '@/packages/common/utils'
-import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale';
+import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale'
 import { withRouter } from 'react-router'
 import { getDetailColumns } from '../constant'
 import LogisticsInfo from './logistics-info'
@@ -70,7 +70,7 @@ class GoodsTable extends Component {
   }
   handleInputChange = e => {
     this.setState({
-      remark: e.target.value,
+      remark: e.target.value
     })
   }
   lookForHistory = ({ orderCode, productId }) => {
@@ -83,14 +83,14 @@ class GoodsTable extends Component {
       orderCode: this.props.match.params.id,
       refundId: modalInfo.refundId,
       childOrderId: modalInfo.childOrderId,
-      info: this.state.remark,
+      info: this.state.remark
     }
     const apiFunc = modalInfo.refundId ? setRefundOrderRemark : setOrderRemark
     apiFunc(params).then((res) => {
       res && message.success('添加备注成功')
       this.props.query()
       this.setState({
-        notesVisible: false,
+        notesVisible: false
       })
     })
   }
@@ -116,13 +116,16 @@ class GoodsTable extends Component {
     }
   }
 
-  render() {
-    const { tableTitle } = this.props;
-    const { proceedsVisible, childOrderProceeds, skuInfo } = this.state;
+  render () {
+    const { tableTitle } = this.props
+    const { proceedsVisible, childOrderProceeds, skuInfo } = this.state
     const orderInfo = this.props.orderInfo || {}
     const childOrder = this.props.childOrder || {}
     const list = this.props.list || []
     const logistics = this.props.logistics || {}
+    const orderVirtualInfoVO= this.props.orderVirtualInfoVO || {}
+    console.log('orderInfo')
+    console.log(orderInfo)
     const columns = [
       ...(getDetailColumns(0, orderInfo.isShop === 1).filter(item => item.key !== 'storeName')),
       {
@@ -131,13 +134,14 @@ class GoodsTable extends Component {
         key: 'operate',
         width: 130,
         render: (text, record, index) => (
+        //orderType===55虚拟商品
           <>
             <div>
-              {this.showApplyBtn(orderInfo.orderStatus, record.orderType) && (
+              {this.showApplyBtn(orderInfo.orderStatus, record.orderType)&& record.orderType!==55 && (
                 <Button
                   style={{ padding: 0 }}
-                  type="link"
-                  size="small"
+                  type='link'
+                  size='small'
                   onClick={() => this.handleApply(record)}>
                   申请售后
                 </Button>
@@ -146,8 +150,8 @@ class GoodsTable extends Component {
             <div>
               <Button
                 style={{ padding: 0 }}
-                type="link"
-                size="small"
+                type='link'
+                size='small'
                 onClick={() => this.setState({
                   notesVisible: true,
                   modalInfo: { ...record }
@@ -159,8 +163,8 @@ class GoodsTable extends Component {
               {record.canShowHistoryBtn && (
                 <Button
                   style={{ padding: 0 }}
-                  type="link"
-                  size="small"
+                  type='link'
+                  size='small'
                   onClick={() => this.lookForHistory({ ...record, orderCode: orderInfo.orderCode })}>
                   历史售后
                 </Button>
@@ -169,10 +173,10 @@ class GoodsTable extends Component {
             <div>
               <Button
                 style={{ padding: 0 }}
-                type="link"
-                size="small"
+                type='link'
+                size='small'
                 onClick={() => this.childOrderProceeds(record, proceedsVisible)}>
-                {proceedsVisible ? "收起收益" : "查看收益"}
+                {proceedsVisible ? '收起收益' : '查看收益'}
               </Button>
             </div>
           </>
@@ -181,22 +185,22 @@ class GoodsTable extends Component {
     ]
     return (
       <>
-        {this.state.modalInfo.mainOrderId &&
-          this.state.modalInfo.skuId &&
-          <ApplyAfterSaleModal
+        {this.state.modalInfo.mainOrderId
+          && this.state.modalInfo.skuId
+          && <ApplyAfterSaleModal
             onCancel={() => this.setState({ visible: false })}
             successCb={() => this.setState({ visible: false }, this.props.query)}
             visible={this.state.visible}
             modalInfo={this.state.modalInfo} />}
         <Modal
-          title="添加备注"
+          title='添加备注'
           visible={this.state.notesVisible}
           onOk={this.handleAddNotes}
           onCancel={() => this.setState({ notesVisible: false })}
         >
           <Input
             value={this.state.remark}
-            placeholder="请输入备注"
+            placeholder='请输入备注'
             onChange={this.handleInputChange}
           />
         </Modal>
@@ -212,12 +216,12 @@ class GoodsTable extends Component {
               footer={() => {
                 return (<>
                   <Row style={{ marginBottom: 20 }}>
-                      <Col style={{textAlign: 'right'}}>
-                        <span style={{ fontWeight: 'bold' }}></span>
-                        <span className="mr10">运费合计：<font color="red">{formatMoney(childOrder.originFreight)}</font></span>
-                        <span className="mr10">运费优惠：<font color="red">{formatMoney(-(childOrder.couponFreight))}</font></span>
-                        <span>运费实付：{formatMoney(childOrder.payFreight)}</span>
-                      </Col>
+                    <Col style={{ textAlign: 'right' }}>
+                      <span style={{ fontWeight: 'bold' }}></span>
+                      <span className='mr10'>运费合计：<font color='red'>{formatMoney(childOrder.originFreight)}</font></span>
+                      <span className='mr10'>运费优惠：<font color='red'>{formatMoney(-(childOrder.couponFreight))}</font></span>
+                      <span>运费实付：{formatMoney(childOrder.payFreight)}</span>
+                    </Col>
                   </Row>
                   {
                     proceedsVisible && (
@@ -242,12 +246,12 @@ class GoodsTable extends Component {
                             <span>（{formatDate(item.createTime)} {item.name}）</span>
                             <span>
                               售后单号：(
-                                <span
-                                  className='href'
-                                  onClick={() => APP.history.push(`/order/refundOrder/${v.id}`)}
-                                >
-                                  {v.orderCode}
-                                </span>
+                              <span
+                                className='href'
+                                onClick={() => APP.history.push(`/order/refundOrder/${v.id}`)}
+                              >
+                                {v.orderCode}
+                              </span>
                               )
                             </span>
                           </div>
@@ -255,13 +259,23 @@ class GoodsTable extends Component {
                       </Col>
                     ))}
                   </Row>
+                  {orderInfo.orderType===55
+                    ? <Row>
+                      <Col style={{ fontWeight: 'bold' }}>充值信息</Col>
+                      <Col>
+                        <span>充值方式：{(orderVirtualInfoVO.rechargeWayDesc)||'暂无'}</span>
+                        <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{(orderVirtualInfoVO.rechargeStatusDesc)||'暂无'}</span>
+                        <span>充值单号：{(orderVirtualInfoVO.rechargeNo)||'暂无'}</span>
+                      </Col>
+                    </Row> : null}
+
                   <LogisticsInfo
                     mainorderInfo={orderInfo}
                     logistics={logistics}
                     onSuccess={this.props.query}
                     orderInfo={childOrder}
                   />
-                </>)
+                        </>)
               }}
             />
           </div>

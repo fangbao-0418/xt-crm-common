@@ -1,4 +1,4 @@
-  import React, { Children } from 'react'
+import React, { Children } from 'react'
 import { Input } from 'antd'
 import TreeCheckBox from '@/packages/common/components/tree-checkbox'
 import { If } from '@/packages/common/components'
@@ -9,19 +9,22 @@ interface SaleAreaProps {
   onChange?: (value: any) => void
   value?: any
   style?: React.CSSProperties
+  title?: any
+  disabledDatas?: string[]
 }
 interface SaleAreaState {
   visible: boolean,
   text: string,
   checkedKeys: string[]
 }
-class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
+class SaleArea extends React.Component<SaleAreaProps, SaleAreaState> {
   state: SaleAreaState = {
     visible: false,
     text: '',
     checkedKeys: []
   }
   treeCheckBox: TreeCheckBox
+  disabledDatas: string[] | undefined
   componentDidMount () {
     if (this.treeCheckBox) {
       const treeData = this.treeCheckBox.getTreeData(this.props.value) || []
@@ -41,17 +44,19 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
   saveRef = (ref: TreeCheckBox) => {
     this.treeCheckBox = ref
   }
-  render() {
+  render () {
+    const { title }=this.props
     const { visible, text, checkedKeys } = this.state
     return (
       <>
         <TextArea
           disabled
-          placeholder='请通过按钮选择可售区域内容'
+          placeholder={'请通过按钮选择'+(title?title:'可售区域')+'内容'}
           rows={5}
           value={text}
           style={Object.assign({ width: 450 }, this.props.style)}
         />
+        <div />
         <If condition={!!this.props.readOnly}>
           <span
             className='href ml10'
@@ -61,7 +66,7 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
               })
             }}
           >
-            查看可售区域
+            {'查看'+(title?title:'可售区域')}
           </span>
         </If>
         <If condition={!this.props.readOnly}>
@@ -73,21 +78,21 @@ class SaleArea extends React.Component<SaleAreaProps, SaleAreaState>{
               })
             }}
           >
-            {text ? '编辑可售区域': '新增可售区域'}
+            {text ? '编辑'+(title?title:'可售区域'): '新增'+(title?title:'可售区域')}
           </span>
           <span
             className='href ml10'
             onClick={() => {
-              const { onChange } = this.props;
+              const { onChange } = this.props
               if (typeof onChange === 'function') {
-                onChange([]);
+                onChange([])
               }
             }}
-          >
-            清空可售区域
+          >{'清空'+(title?title:'可售区域')}
           </span>
         </If>
         <TreeCheckBox
+          disabledDatas={this.props.disabledDatas||[]}
           ref={this.saveRef}
           title='选择区域'
           api={getAddress}

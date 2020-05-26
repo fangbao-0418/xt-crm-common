@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { Component } from 'react'
 import { closeTimerById, openTimerById, addTimer, getTimerList } from './api'
 import { ListPage, If, FormItem } from '@/packages/common/components'
@@ -35,15 +34,19 @@ class Store extends Component {
   constructor (props: Props) {
     super(props)
   }
-  updateTimer(type:string, ids:Array<any>) {
-    if(!ids || ids.length < 1) return message.warning( '请选择操作数据');
+  updateTimer (type:string, ids:Array<any>) {
+    if (!ids || ids.length < 1) {
+      return message.warning('请选择操作数据')
+    }
     let config = {
       funs: openTimerById,
       text: '开启'
     }
-    if(type == 'close') config = {
-      funs: closeTimerById,
-      text: '关闭'
+    if (type == 'close') {
+      config = {
+        funs: closeTimerById,
+        text: '关闭'
+      }
     }
     Modal.confirm({
       title: '系统提示',
@@ -89,7 +92,8 @@ class Store extends Component {
           <If condition={record.status === 0}>
             <span
               className='href ml10'
-              onClick={() => {this.updateTimer('open', [record.id]);
+              onClick={() => {
+                this.updateTimer('open', [record.id])
               }}
             >
               开启
@@ -98,7 +102,8 @@ class Store extends Component {
           <If condition={record.status === 1}>
             <span
               className='href ml10'
-              onClick={() => {this.updateTimer('close', [record.id]);
+              onClick={() => {
+                this.updateTimer('close', [record.id])
               }}
             >
               关闭
@@ -129,6 +134,7 @@ class Store extends Component {
     return (
       <>
         <ListPage
+          reserveKey='fresh/goods/timer'
           getInstance={ref => this.list = ref}
           rowSelection={rowSelection}
           rangeMap={{
@@ -149,8 +155,9 @@ class Store extends Component {
             <div className='mb10'>
               <Button type='danger' onClick={() => this.setState({ visible: true, data: {} })}>新建</Button>&nbsp;&nbsp;
               <Button onClick={() => {
-                this.updateTimer('open', selectedRowKeys);
-              }}>开启</Button>&nbsp;&nbsp;
+                this.updateTimer('open', selectedRowKeys)
+              }}>开启
+              </Button>&nbsp;&nbsp;
               <Button onClick={() => this.updateTimer('close', selectedRowKeys)}>关闭</Button>
             </div>
           )}
@@ -158,6 +165,9 @@ class Store extends Component {
           formConfig={defaultConfig}
           api={getTimerList}
           columns={this.columns}
+          tableProps={{
+            rowKey: 'id'
+          }}
         />
         {visible && <StoreTimerModal data={data} visible={visible} onOk={(data: any) => {
           if (data) {

@@ -76,5 +76,5 @@ export function fetchSelectShopList (payload: {
 
 /** 获取优惠券列表 */
 export function fetchCouponList (payload: SearchPayload) {
-	return newPost(`/coupon/get/couponList`, payload)
+	return newPost(`/mcweb/coupon/get/couponList`, payload)
 }

@@ -8,12 +8,13 @@ import { momentRangeValueof } from '@/util/utils'
 import moment from 'moment'
 import { templateColumns } from './interface'
 import MoneyRender from '@/components/money-render'
+
 const { RangePicker } = DatePicker
 const namespace = 'freight-template'
-interface State extends PageProps<templateColumns> {
 
-}
+interface State extends PageProps<templateColumns> {}
 interface Props extends RouteComponentProps, FormComponentProps {}
+
 class Page extends React.Component<Props, State> {
   state: State = {
     records: []
@@ -28,7 +29,6 @@ class Page extends React.Component<Props, State> {
     this.fetchList = this.fetchList.bind(this)
   }
   componentDidMount () {
-    this.payload.pageNo = 1
     this.props.form.setFieldsValue({
       templateName: this.payload.templateName,
       createTime: this.payload.createTimeStart && [moment(this.payload.createTimeStart), moment(this.payload.createTimeEnd)],
@@ -133,7 +133,9 @@ class Page extends React.Component<Props, State> {
         <Card title='筛选'>
           <Form layout='inline'>
             <Form.Item label='模板名称'>
-              {getFieldDecorator('templateName')(<Input placeholder='请输入模板名称' />)}
+              {getFieldDecorator('templateName')(
+                <Input placeholder='请输入模板名称' />
+              )}
             </Form.Item>
             <Form.Item label='操作时间'>
               {getFieldDecorator('modifyTime')(
@@ -160,7 +162,11 @@ class Page extends React.Component<Props, State> {
               >
                 清除
               </Button>
-              <Button className='ml10' type='primary' onClick={this.handleSearch}>
+              <Button
+                className='ml10'
+                type='primary'
+                onClick={this.handleSearch}
+              >
                 查询
               </Button>
             </Form.Item>

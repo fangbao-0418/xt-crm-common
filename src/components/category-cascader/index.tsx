@@ -12,7 +12,7 @@ interface State {
 }
 interface Props {
   placeholder?: string
-  onChange?: (value: any[], selectedOptions: any[]) => void
+  onChange?: (value: any[], selectedOptions?: any[]) => void
   value?: any
 }
 class Main extends React.Component<Props> {
@@ -39,10 +39,11 @@ class Main extends React.Component<Props> {
       })
     })
   }
-  public onChange (value: any[], selectedOptions: any[]) {
+  public onChange (value: any[], selectedOptions?: any[]) {
     this.setState({
       value
     })
+    console.log(value, 'value')
     if (this.props.onChange) {
       this.props.onChange(value, selectedOptions)
     }
@@ -51,9 +52,9 @@ class Main extends React.Component<Props> {
     const placeholder = this.props.placeholder || '请选择类目'
     return (
       <Cascader
-        fieldNames={{label: 'name', value: 'id', children: 'childList'}}
+        fieldNames={{ label: 'name', value: 'id', children: 'childList' }}
         options={this.state.options}
-        // onChange={this.onChange}
+        onChange={this.onChange}
         placeholder={placeholder}
         value={this.state.value}
       />
