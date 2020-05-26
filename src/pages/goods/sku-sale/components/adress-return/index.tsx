@@ -1,7 +1,9 @@
 import React from 'react'
 import SelectFetch from '@/packages/common/components/select-fetch'
-import { If } from '@/packages/common/components'
+import { Select } from 'antd'
 import * as api from '../../api'
+
+const { Option } = Select
 
 interface ValueProps {
   storeAddressId: string,
@@ -12,10 +14,12 @@ interface Props {
   value?: ValueProps
   onChange?: (value: ValueProps) => void
   readonly?: boolean
+  storeId?: number
 }
 
 interface State {
-  value: ValueProps
+  value: ValueProps,
+  list: any[]
 }
 
 class Main extends React.Component<Props, State> {
@@ -29,17 +33,38 @@ class Main extends React.Component<Props, State> {
     }
     return null
   }
-  public list: any[] = []
+  public selectRef: any
   public state: State = {
     value: {
       storeAddressId: '',
       storeAddressTxt: ''
+    },
+    list: []
+  }
+
+  componentDidMount () {
+    const { storeId } = this.props
+    if (storeId) {
+      this.fetchData(storeId)
     }
+  }
+
+  fetchData = (storeId: any) => {
+    api.fetchstoreAddress({ storeId }).then((res = []) => {
+      const list = res.map((item: any) => ({
+        label: `${item.consignee} ${item.phone} ${item.province}${item.city}${item.district}${item.street}`,
+        value: item.id + ''
+      }))
+      this.setState({
+        list
+      })
+    })
   }
 
   handleChange = (value: string) => {
     const { onChange } = this.props
-    const curItem = this.list.find(item => item.value === value)
+    const { list } = this.state
+    const curItem = list.find(item => item.value === value)
     const val = {
       storeAddressId: value,
       storeAddressTxt: curItem.label
@@ -54,37 +79,21 @@ class Main extends React.Component<Props, State> {
   }
 
   public render () {
-    const { value } = this.state
+    const { value, list } = this.state
     const { readonly } = this.props
-    console.log(value)
     if (readonly) {
       return value.storeAddressTxt || ''
     }
     return (
       <div style={{ display: 'flex' }}>
-        <SelectFetch
-          style={{ flex: 1 }}
-          placeholder='请选择退货地址'
-          value={value.storeAddressId || undefined}
+        <Select
           onChange={this.handleChange}
-          fetchData={() => {
-            return api.fetchstoreAddress().then((res = []) => {
-              this.list = res.map((item: any) => ({
-                label: `${item.consignee} ${item.phone} ${item.province}${item.city}${item.district}${item.street}`,
-                value: item.id + ''
-              }))
-              return this.list
-            })
-          }}
-        />
-        <If condition={!readonly}>
-          <span
-            className='href ml10'
-            onClick={() => APP.history.push('/goods/retaddress')}
-          >
-            新建退货地址
-          </span>
-        </If>
+          value={value.storeAddressId || undefined}
+          placeholder='请选择退货地址' style={{ width: 600 }}>
+          {
+            list.map((item) => (<Option key={item.value} value={item.value}>{item.label}</Option>))
+          }
+        </Select>
       </div>
     )
   }

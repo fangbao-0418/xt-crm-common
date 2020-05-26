@@ -63,6 +63,6 @@ export function postSkusStockEdit (data:any) {
 }
 
 // 获取退货地址列表
-export function fetchstoreAddress () {
-  return get('/mcweb/product/storeAddress/list')
+export function fetchstoreAddress (data: any) {
+  return get('/mcweb/product/storeAddress/list', data)
 }
