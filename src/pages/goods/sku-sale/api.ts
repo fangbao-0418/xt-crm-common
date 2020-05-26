@@ -61,3 +61,8 @@ export function getSkusStock (productId: number) {
 export function postSkusStockEdit (data:any) {
   return newPost('/product/sku/stock/edit', data)
 }
+
+// 获取退货地址列表
+export function fetchstoreAddress () {
+  return get('/mcweb/product/storeAddress/list')
+}

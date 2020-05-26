@@ -12,6 +12,7 @@ import styles from '../style.module.scss'
 import { Form, FormItem, If } from '@/packages/common/components'
 import ProductCategory from '../components/product-category'
 import ProductSelector from './components/product-seletor'
+import AdressReturn from './components/adress-return'
 import { defaultConfig } from './config'
 import DraggableUpload from '../components/draggable-upload'
 import { RouteComponentProps } from 'react-router'
@@ -1081,47 +1082,63 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             label='退货地址'
             inner={(form) => {
               return (
-                <Row
-                  type='flex'
-                  style={{
-                    marginTop: 5,
-                    width: '60%'
-                  }}>
-                  <Input
-                    style={{ width: 160, marginRight: 10 }}
-                    className={styles['no-error']}
-                    name='returnContact'
-                    placeholder='收货人姓名'
-                    value={this.state.returnContact}
-                    onChange={this.handleInput}
-                  />
-                  {form.getFieldDecorator('returnPhone', {
-                    rules: [
-                      {
-                        max: 12,
-                        message: '收货人电话格式不正确'
-                      }
-                    ]
-                  })(
-                    <Input
-                      style={{ width: 160, marginRight: 10 }}
-                      placeholder='收货人电话'
-                      name='returnPhone'
-                      type='tel'
-                      maxLength={12}
-                      onChange={this.handleInput}
-                    />
-                  )}
-                  <Input
-                    style={{ flex: 1 }}
-                    className={styles['no-error']}
-                    name='returnAddress'
-                    value={this.state.returnAddress}
-                    placeholder='收货人详细地址'
-                    onChange={this.handleInput}
-                  />
-                </Row>
+                <div style={{ width: 500 }}>
+                  {
+                    form.getFieldDecorator('storeAddress', {
+                      rules: [
+                        {
+                          required: true,
+                          message: '请选择退货地址'
+                        }
+                      ]
+                    })(
+                      <AdressReturn />
+                    )
+                  }
+                </div>
               )
+              // return (
+              //   <Row
+              //     type='flex'
+              //     style={{
+              //       marginTop: 5,
+              //       width: '60%'
+              //     }}>
+              //     <Input
+              //       style={{ width: 160, marginRight: 10 }}
+              //       className={styles['no-error']}
+              //       name='returnContact'
+              //       placeholder='收货人姓名'
+              //       value={this.state.returnContact}
+              //       onChange={this.handleInput}
+              //     />
+              //     {form.getFieldDecorator('returnPhone', {
+              //       rules: [
+              //         {
+              //           max: 12,
+              //           message: '收货人电话格式不正确'
+              //         }
+              //       ]
+              //     })(
+              //       <Input
+              //         style={{ width: 160, marginRight: 10 }}
+              //         placeholder='收货人电话'
+              //         name='returnPhone'
+              //         type='tel'
+              //         maxLength={12}
+              //         onChange={this.handleInput}
+              //       />
+              //     )}
+              //     <Input
+              //       style={{ flex: 1 }}
+              //       className={styles['no-error']}
+              //       name='returnAddress'
+              //       value={this.state.returnAddress}
+              //       placeholder='收货人详细地址'
+              //       onChange={this.handleInput}
+              //     />
+              //   </Row>
+              // )
             }}
           />
         </Card>
