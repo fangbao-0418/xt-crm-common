@@ -1,16 +1,17 @@
-import React from 'react';
-import { Modal, Card, Form, Input, DatePicker, Select, Button, Table, Radio } from 'antd';
-import DateFns from 'date-fns';
-import { getPromotionList } from '../api';
-import moment from 'moment';
-import activityType from '@/enum/activityType';
-import { FormComponentProps } from 'antd/es/form';
+import React from 'react'
+import { Modal, Card, Form, Input, DatePicker, Select, Button, Table, Radio } from 'antd'
+import DateFns from 'date-fns'
+import { getPromotionList } from '../api'
+import moment from 'moment'
+import activityType from '@/enum/activityType'
+import { FormComponentProps } from 'antd/es/form'
 
-const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
-const { Option } = Select;
+const FormItem = Form.Item
+const { RangePicker } = DatePicker
+const { Option } = Select
 
 interface UserFormProps extends FormComponentProps {
+  types?: any[];
   text?: string;
   info?: any;
   confirm: (selectedRow: any) => void;
@@ -18,8 +19,8 @@ interface UserFormProps extends FormComponentProps {
 }
 
 class ActivityList extends React.Component<UserFormProps, any> {
-  constructor(props: any) {
-    super(props);
+  constructor (props: any) {
+    super(props)
     this.state = {
       selectedRow: undefined,
       listData: [],
@@ -29,26 +30,31 @@ class ActivityList extends React.Component<UserFormProps, any> {
         pageSize: 20
       },
       visible: false
-    };
+    }
   }
 
   getPromotionList = (params: any) => {
-    const { page } = this.state;
+    const { page } = this.state
+    const { types } = this.props
     if (params && !params.type) {
-      params.types = [1, 2, 3];
+      if (types) {
+        params.types = types
+      } else {
+        params.types = [1, 2, 3]
+      }
     }
     getPromotionList(params).then((res: any = {}) => {
-      page.total = res.total;
+      page.total = res.total
       this.setState({
         listData: res.records
-      });
-    });
+      })
+    })
   };
 
   handleSearch = () => {
     const {
       form: { validateFields }
-    } = this.props;
+    } = this.props
     validateFields((err: any, vals: any) => {
       if (!err) {
         const params = {
@@ -57,13 +63,15 @@ class ActivityList extends React.Component<UserFormProps, any> {
           endTime: vals.time && vals.time[1] && +new Date(vals.time[1]),
           page: this.state.page.current,
           pageSize: this.state.page.pageSize
-        };
+        }
 
-        delete params.time;
+        delete params.time
 
-        this.getPromotionList(params);
+        console.log(params)
+
+        this.getPromotionList(params)
       }
-    });
+    })
   };
 
   handleTabChange = (e: any) => {
@@ -72,25 +80,25 @@ class ActivityList extends React.Component<UserFormProps, any> {
         page: e
       },
       this.handleSearch
-    );
+    )
   };
 
   showModal = () => {
     this.setState({
       visible: true
-    });
-    this.handleReset();
+    })
+    this.handleReset()
   };
 
   handleCancel = (e?: any) => {
     this.setState({
       visible: false,
       selectedRow: undefined
-    });
+    })
   };
 
   handleReset = () => {
-    this.props.form.resetFields();
+    this.props.form.resetFields()
     this.setState(
       {
         page: {
@@ -100,11 +108,11 @@ class ActivityList extends React.Component<UserFormProps, any> {
         }
       },
       this.handleSearch
-    );
+    )
   };
 
-  render() {
-    const { info = {} } = this.props;
+  render () {
+    const { info = {} } = this.props
     const columns = [
       {
         title: '',
@@ -117,7 +125,8 @@ class ActivityList extends React.Component<UserFormProps, any> {
             }
             disabled={row.id === info.id}
             checked={row.id === selectedRow.id}
-          ></Radio>
+          >
+          </Radio>
         )
       },
       {
@@ -152,21 +161,21 @@ class ActivityList extends React.Component<UserFormProps, any> {
         width: 100,
         render: (text: any) => <>{text === 0 ? '关闭' : '开启'}</>
       }
-    ];
+    ]
 
-    const { listData, page, selectedRow = {} } = this.state as any;
+    const { listData, page, selectedRow = {} } = this.state as any
     const {
       form: { getFieldDecorator },
       text = '批量转移'
-    } = this.props as any;
+    } = this.props as any
     return (
       <>
-        <span className="href" onClick={this.showModal} style={{ marginRight: 20 }}>
+        <span className='href' onClick={this.showModal} style={{ marginRight: 20 }}>
           {text}
         </span>
         <Modal
-          title="选择活动"
-          className="modalStyle"
+          title='选择活动'
+          className='modalStyle'
           width={1030}
           visible={this.state.visible}
           maskClosable={false}
@@ -175,11 +184,11 @@ class ActivityList extends React.Component<UserFormProps, any> {
               <div style={{ textAlign: 'right' }}>
                 <Button onClick={this.handleCancel.bind(this)}>取消</Button>
                 <Button
-                  type="primary"
+                  type='primary'
                   disabled={!selectedRow.id}
                   onClick={() => {
-                    this.props.confirm(selectedRow);
-                    this.handleCancel();
+                    this.props.confirm(selectedRow)
+                    this.handleCancel()
                   }}
                   style={{ marginLeft: 16 }}
                 >
@@ -191,23 +200,23 @@ class ActivityList extends React.Component<UserFormProps, any> {
           onCancel={this.handleCancel}
         >
           <Card>
-            <Form layout="inline">
-              <FormItem label="活动名称">
-                {getFieldDecorator('name')(<Input placeholder="请输入活动名称" style={{ width: 150 }} />)}
+            <Form layout='inline'>
+              <FormItem label='活动名称'>
+                {getFieldDecorator('name')(<Input placeholder='请输入活动名称' style={{ width: 150 }} />)}
               </FormItem>
-              <FormItem label="商品ID">
-                {getFieldDecorator('productId')(<Input placeholder="请输入商品ID" style={{ width: 150 }} />)}
+              <FormItem label='商品ID'>
+                {getFieldDecorator('productId')(<Input placeholder='请输入商品ID' style={{ width: 150 }} />)}
               </FormItem>
-              <FormItem label="商品名称">
-                {getFieldDecorator('productName')(<Input placeholder="请输入商品名称" style={{ width: 150 }} />)}
+              <FormItem label='商品名称'>
+                {getFieldDecorator('productName')(<Input placeholder='请输入商品名称' style={{ width: 150 }} />)}
               </FormItem>
-              <FormItem label="活动类型">
+              <FormItem label='活动类型'>
                 {getFieldDecorator('type')(
-                  <Select placeholder="请选择活动类型" style={{ width: 150 }}>
-                    <Option value="">全部</Option>
+                  <Select placeholder='请选择活动类型' style={{ width: 150 }}>
+                    <Option value=''>全部</Option>
                     {activityType
                       .getArray()
-                      .filter(val => (this.props.activityType || [1, 2, 3]).includes(val.key))
+                      .filter(val => (this.props.activityType || this.props.types || [1, 2, 3]).includes(val.key))
                       .map((val, i) => (
                         <Option value={val.key} key={i}>
                           {val.val}
@@ -216,29 +225,29 @@ class ActivityList extends React.Component<UserFormProps, any> {
                   </Select>
                 )}
               </FormItem>
-              <FormItem label="有效时间">
+              <FormItem label='有效时间'>
                 {getFieldDecorator('time')(
                   <RangePicker
                     style={{ width: 372 }}
-                    format="YYYY-MM-DD HH:mm"
+                    format='YYYY-MM-DD HH:mm'
                     showTime={{
                       defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]
                     }}
                   />
                 )}
               </FormItem>
-              <FormItem label="活动状态">
+              <FormItem label='活动状态'>
                 {getFieldDecorator('status')(
-                  <Select placeholder="请选择活动类型" style={{ width: 150 }}>
-                    <Option value="">全部</Option>
-                    <Option value="0">关闭</Option>
-                    <Option value="1">开启</Option>
+                  <Select placeholder='请选择活动类型' style={{ width: 150 }}>
+                    <Option value=''>全部</Option>
+                    <Option value='0'>关闭</Option>
+                    <Option value='1'>开启</Option>
                   </Select>
                 )}
               </FormItem>
               <FormItem>
                 <Button
-                  type="primary"
+                  type='primary'
                   onClick={() => {
                     this.setState(
                       {
@@ -249,7 +258,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
                         }
                       },
                       this.handleSearch
-                    );
+                    )
                   }}
                 >
                   查询
@@ -272,7 +281,7 @@ class ActivityList extends React.Component<UserFormProps, any> {
           </Card>
         </Modal>
       </>
-    );
+    )
   }
 }
-export default Form.create<UserFormProps>()(ActivityList);
+export default Form.create<UserFormProps>()(ActivityList)

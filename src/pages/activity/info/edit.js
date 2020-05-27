@@ -1,7 +1,7 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
-import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd';
+import React from 'react'
+import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd'
 import {
   getProductList,
   // setPromotionAddSKu,
@@ -11,15 +11,15 @@ import {
   getOperatorSpuList,
   getGoodsListByActivityId,
   batchMoveGoodsToOtherActivity
-} from '../api';
-import ActivityInfo from './ActivityInfo';
-import ActivityList from './ActivityList';
-import { size, filter, difference } from 'lodash';
-import { gotoPage } from '@/util/utils';
-import { formatMoney, formatMoneyWithSign } from '../../helper';
-import { goodsColumns } from './goodsColumns';
-import GoodsTransfer from '@/components/goods-transfer';
-const namespace = 'activity/info/shoplist';
+} from '../api'
+import ActivityInfo from './ActivityInfo'
+import ActivityList from './ActivityList'
+import { size, filter, difference } from 'lodash'
+import { gotoPage } from '@/util/utils'
+import { formatMoney, formatMoneyWithSign } from '../../helper'
+import { goodsColumns } from './goodsColumns'
+import GoodsTransfer from '@/components/goods-transfer'
+const namespace = 'activity/info/shoplist'
 class List extends React.Component {
   id = this.props.match.params.id;
   payload = APP.fn.getPayload(namespace) || {};
@@ -57,56 +57,56 @@ class List extends React.Component {
     transferGoodsList: []
   };
 
-  componentDidMount() {
+  componentDidMount () {
     if (this.payload.promotionId === this.id) {
       this.props.form.setFieldsValue({
         productId: this.payload.productId,
         productName: this.payload.productName
-      });
+      })
     } else {
-      this.payload.page = 1;
+      this.payload.page = 1
     }
-    this.getPromotionDetail();
+    this.getPromotionDetail()
   }
 
   getPromotionDetail = () => {
-    const id = this.id;
+    const id = this.id
     if (id !== 'undefined') {
-      const fields = this.props.form.getFieldsValue();
-      const { promotionDetail } = this.state;
+      const fields = this.props.form.getFieldsValue()
+      const { promotionDetail } = this.state
       const payload = {
         promotionId: id,
         page: this.payload.page,
         pageSize: promotionDetail.size,
         ...fields
-      };
-      APP.fn.setPayload(namespace, payload);
+      }
+      APP.fn.setPayload(namespace, payload)
       getOperatorSpuList(payload).then(res => {
         this.setState({
           promotionDetail: res || {}
         })
-      });
+      })
     }
   };
 
   getProductList = () => {
     // type 活动类型 10为拼团活动-拼团活动不包含1688
-    const { modalPage, type } = this.state;
+    const { modalPage, type } = this.state
     getProductList({
       status: 0,
       types: type === 10 ? [0, 10] : undefined,
       ...this.productPayload,
       include1688: type === 10 ? false : undefined
     }).then((res) => {
-      res = res || {};
-      modalPage.total = res.total;
+      res = res || {}
+      modalPage.total = res.total
       modalPage.current = this.productPayload.page
       this.setState({
         goodsList: res.records,
         modalPage,
         selectedRowKeys: []
-      });
-    });
+      })
+    })
   };
 
   setPromotionAddSpu = () => {
@@ -114,20 +114,20 @@ class List extends React.Component {
       match: {
         params: { id }
       }
-    } = this.props;
-    const { selectedRowKeys } = this.state;
+    } = this.props
+    const { selectedRowKeys } = this.state
     if (size(selectedRowKeys) <= 0) {
-      message.error('请选择需要添加的商品');
-      return false;
+      message.error('请选择需要添加的商品')
+      return false
     }
 
     setPromotionAddSpu({ promotionId: id, productIdList: selectedRowKeys }).then(res => {
       if (res) {
-        message.success('设置商品列表成功');
-        this.handleCancelModal();
-        this.getPromotionDetail();
+        message.success('设置商品列表成功')
+        this.handleCancelModal()
+        this.getPromotionDetail()
       }
-    });
+    })
   };
 
   // setPromotionAddSKu = promotionId => {
@@ -137,31 +137,31 @@ class List extends React.Component {
   handleSearchModal = e => {
     this.productPayload.productName = e
     this.productPayload.page = 1
-    this.getProductList();
+    this.getProductList()
   };
 
   handlenChanageSelectio = (selectedRowKeys, selectedRows) => {
     this.setState({
       selectedRowKeys,
       selectedRows
-    });
+    })
   };
 
   handleClickModal = () => {
-    this.getProductList();
+    this.getProductList()
     this.setState({
       visible: true
-    });
+    })
   };
 
   handleCancelModal = () => {
     this.setState({
       visible: false
-    });
+    })
   };
 
   handleOkModal = () => {
-    this.setPromotionAddSpu();
+    this.setPromotionAddSpu()
   };
 
   handleTabChangeModal = e => {
@@ -172,29 +172,29 @@ class List extends React.Component {
         modalPage: e
       },
       () => {
-        this.getProductList();
+        this.getProductList()
       }
-    );
+    )
   };
 
   disabledStartDate = startTime => {
-    const { form } = this.props;
-    const fieldsValue = form.getFieldsValue();
-    const endTime = fieldsValue.endTime;
+    const { form } = this.props
+    const fieldsValue = form.getFieldsValue()
+    const endTime = fieldsValue.endTime
     if (!startTime || !endTime) {
-      return false;
+      return false
     }
-    return startTime.valueOf() > endTime.valueOf();
+    return startTime.valueOf() > endTime.valueOf()
   };
 
   disabledEndDate = endTime => {
-    const { form } = this.props;
-    const fieldsValue = form.getFieldsValue();
-    const startTime = fieldsValue.startTime;
+    const { form } = this.props
+    const fieldsValue = form.getFieldsValue()
+    const startTime = fieldsValue.startTime
     if (!endTime || !startTime) {
-      return false;
+      return false
     }
-    return endTime.valueOf() <= startTime.valueOf();
+    return endTime.valueOf() <= startTime.valueOf()
   };
 
   handleEditsku = (record, type) => () => {
@@ -203,20 +203,20 @@ class List extends React.Component {
       match: {
         params: { id }
       }
-    } = this.props;
+    } = this.props
     // localStorage.setItem('editsku', JSON.stringify({ type, ...record }));
-    history.push(`/activity/info/detail/${id}/${record.productId}/${type}`);
+    history.push(`/activity/info/detail/${id}/${record.productId}/${type}`)
   };
 
   handleInputValue = (text, record, index) => e => {
-    const { promotionDetail } = this.state;
-    this.setState({ promotionDetail });
+    const { promotionDetail } = this.state
+    this.setState({ promotionDetail })
   };
 
   handleReturn = () => {
     // const { history } = this.props;
     // const params = parseQuery();
-    gotoPage('/activity/list');
+    gotoPage('/activity/list')
     // history.push(`/activity/list?page=${params.page}&pageSize=${params.pageSize}`);
   };
   updateSync = () => {
@@ -230,21 +230,21 @@ class List extends React.Component {
           match: {
             params: { id }
           }
-        } = this.props;
+        } = this.props
         if (id !== 'undefined') {
           refreshPromtion(id).then(res => {
-            res && message.success('更新成功');
-          });
+            res && message.success('更新成功')
+          })
         }
       }
-    });
+    })
   };
 
   handleRemove = (id, index) => () => {
     // 当前页大于1时，点击删除时当前项为最后一项，且index = 0时
-    const { promotionDetail: { current, size, total } } = this.state;
+    const { promotionDetail: { current, size, total } } = this.state
     if ((current - 1) * size + (index + 1) === total && index === 0 && current > 1) {
-      this.payload.page--;
+      this.payload.page--
     }
     Modal.confirm({
       title: '系统提示',
@@ -253,47 +253,47 @@ class List extends React.Component {
       cancelText: '取消',
       onOk: () => {
         delSpuPromotion({ promotionSpuId: id }).then(res => {
-          res && message.success('成功');
-          this.getPromotionDetail();
-        });
+          res && message.success('成功')
+          this.getPromotionDetail()
+        })
       }
-    });
+    })
   };
   handleReset = () => {
-    this.props.form.resetFields();
-    this.getPromotionDetail();
+    this.props.form.resetFields()
+    this.getPromotionDetail()
   };
   handleSearch = () => {
-    this.payload.page = 1;
-    this.getPromotionDetail();
+    this.payload.page = 1
+    this.getPromotionDetail()
   };
 
   // 获取要转移到的活动信息
   handleSelectActivity = selectedRow => {
     this.setState({ transferActivity: selectedRow }, () => {
-      const { info } = this.state;
+      const { info } = this.state
       Promise.all([
         getGoodsListByActivityId({ promotionId: info.id }),
         getGoodsListByActivityId({ promotionId: this.id })
       ]).then(res => {
-        const [transferActivityGoodsList, currentActivityGoodsList] = res;
+        const [transferActivityGoodsList, currentActivityGoodsList] = res
         this.setState({
           transferGoodsVisible: true,
           transferGoodsList: difference(currentActivityGoodsList, transferActivityGoodsList)
-        });
-      });
-    });
+        })
+      })
+    })
   };
 
   goodsTransferCancel = () => {
     this.setState({
       transferGoodsVisible: false
-    });
+    })
   };
 
   goodsTransferOk = transferIds => {
-    const _this = this;
-    const { info, transferActivity } = this.state;
+    const _this = this
+    const { info, transferActivity } = this.state
     batchMoveGoodsToOtherActivity({
       productIds: transferIds,
       promotionId: info.id,
@@ -317,8 +317,8 @@ class List extends React.Component {
                 成功转移<span style={{ color: 'red' }}>{res.successCount}</span>个商品至
                 <a
                   href={window.location.pathname + `#/activity/info/edit/${transferActivity.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target='_blank'
+                  rel='noopener noreferrer'
                 >
                   {transferActivity.title}
                 </a>
@@ -333,7 +333,7 @@ class List extends React.Component {
                           <span style={{ color: 'red' }}>{transferIds.length - res.successCount}</span>
                           个商品
                         </span>
-                        <a href={res.downloadUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={res.downloadUrl} target='_blank' rel='noopener noreferrer'>
                           转移失败商品清单
                         </a>
                       </div>
@@ -345,15 +345,15 @@ class List extends React.Component {
           ),
           okText: '关闭',
           onOk: () => {
-            _this.handleSearch();
+            _this.handleSearch()
           }
-        });
-      });
-    });
+        })
+      })
+    })
   };
 
-  render() {
-    let {
+  render () {
+    const {
       goodsList,
       visible,
       modalPage,
@@ -364,11 +364,11 @@ class List extends React.Component {
       transferActivity = {},
       transferGoodsList,
       transferGoodsVisible
-    } = this.state;
+    } = this.state
     const rowSelection = {
       selectedRowKeys,
       onChange: this.handlenChanageSelectio
-    };
+    }
 
     const getSkuColumns = () => [
       {
@@ -397,56 +397,64 @@ class List extends React.Component {
         key: 'remainInventory',
         dataIndex: 'remainInventory'
       }
-    ];
+    ]
     const {
       form: { getFieldDecorator }
-    } = this.props;
+    } = this.props
     // 是否显示批量转移按钮
-    const isShowTransfer = type === 1 || type === 2 || type === 3;
+    const isShowTransfer = type === 1 || type === 2 || type === 3 || type === 13
     return (
       <>
         <ActivityInfo
           promotionDetail={records}
           changeType={info => {
             // 这里改变的type值 =================
-            this.setState({ info, type: info.type });
+            this.setState({ info, type: info.type })
           }}
         />
         <Card
-          title="活动商品列表"
+          title='活动商品列表'
           extra={
             <>
-              {isShowTransfer ? <ActivityList info={info} confirm={this.handleSelectActivity} /> : null}
-              <span className="href" onClick={this.handleClickModal}>
+              {
+                isShowTransfer
+                  ? <ActivityList
+                    types={ type === 13 ? [13] : undefined }
+                    info={info}
+                    confirm={this.handleSelectActivity}
+                  />
+                  : null
+              }
+              <span className='href' onClick={this.handleClickModal}>
                 添加商品
               </span>
             </>
           }
         >
-          <Form layout="inline">
-            <Form.Item label="商品ID">
-              {getFieldDecorator('productId')(<InputNumber style={{ width: '200px' }} placeholder="请输入商品ID" />)}
+          <Form layout='inline'>
+            <Form.Item label='商品ID'>
+              {getFieldDecorator('productId')(<InputNumber style={{ width: '200px' }} placeholder='请输入商品ID' />)}
             </Form.Item>
-            <Form.Item label="商品名称">
-              {getFieldDecorator('productName')(<Input placeholder="请输入商品名称" />)}
+            <Form.Item label='商品名称'>
+              {getFieldDecorator('productName')(<Input placeholder='请输入商品名称' />)}
             </Form.Item>
             <Form.Item>
               <Button onClick={this.handleReset}>重置</Button>
-              <Button className="ml10" type="primary" onClick={this.handleSearch}>
+              <Button className='ml10' type='primary' onClick={this.handleSearch}>
                 查询
               </Button>
             </Form.Item>
           </Form>
           <Table
             rowKey={record => record.id}
-            className="mt20"
+            className='mt20'
             columns={goodsColumns(
               [
                 {
                   title: '规格信息',
                   key: 'sku',
                   render: record => {
-                    console.log('record=>', record);
+                    console.log('record=>', record)
                     return (
                       <Table
                         rowKey={record => record.id}
@@ -454,7 +462,7 @@ class List extends React.Component {
                         dataSource={filter(record.promotionSkuList, item => item.selected)}
                         pagination={false}
                       />
-                    );
+                    )
                   }
                 },
                 {
@@ -464,11 +472,11 @@ class List extends React.Component {
                   width: 110,
                   render: (record, rows, index) => (
                     <>
-                      <span className="href" onClick={this.handleEditsku(record, type)}>
+                      <span className='href' onClick={this.handleEditsku(record, type)}>
                         编辑
                       </span>
-                      <Divider type="vertical" />
-                      <span className="href" style={{ color: 'red' }} onClick={this.handleRemove(record.id, index)}>
+                      <Divider type='vertical' />
+                      <span className='href' style={{ color: 'red' }} onClick={this.handleRemove(record.id, index)}>
                         删除
                       </span>
                     </>
@@ -483,29 +491,29 @@ class List extends React.Component {
               pageSize: size,
               total: total,
               onChange: (page, pageSize) => {
-                this.payload.page = page;
-                this.getPromotionDetail();
+                this.payload.page = page
+                this.getPromotionDetail()
               }
             }}
           />
         </Card>
         <Card style={{ marginTop: 10 }}>
-          <Button type="danger" onClick={this.handleReturn} style={{ marginRight: '10px' }}>
+          <Button type='danger' onClick={this.handleReturn} style={{ marginRight: '10px' }}>
             返回
           </Button>
-          <Button type="primary" onClick={this.updateSync}>
+          <Button type='primary' onClick={this.updateSync}>
             更新同步
           </Button>
         </Card>
         <Modal
-          title="选择商品"
+          title='选择商品'
           visible={visible}
-          width="80%"
+          width='80%'
           onCancel={this.handleCancelModal}
           onOk={this.handleOkModal}
         >
           <Input.Search
-            placeholder="请输入需要搜索的商品"
+            placeholder='请输入需要搜索的商品'
             style={{ marginBottom: 10 }}
             onSearch={this.handleSearchModal}
           />
@@ -515,11 +523,11 @@ class List extends React.Component {
             dataSource={goodsList}
             pagination={modalPage}
             onChange={this.handleTabChangeModal}
-            rowKey="id"
+            rowKey='id'
           />
         </Modal>
         <GoodsTransfer
-          title="转移活动商品"
+          title='转移活动商品'
           header={
             <div style={{ marginBottom: 8 }}>
               <span style={{ display: 'inline-block', width: '50%' }}>当前活动：{info.title}</span>
@@ -534,8 +542,8 @@ class List extends React.Component {
           onOk={this.goodsTransferOk}
         />
       </>
-    );
+    )
   }
 }
 
-export default Form.create()(List);
+export default Form.create()(List)
