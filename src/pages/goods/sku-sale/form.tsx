@@ -635,8 +635,15 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         'storeProductId',
         'isAuthentication',
         'isCalculateFreight'
-      ])
+      ]),
+      storeAddress: {
+        storeAddressId: res.storeAddressId ? res.storeAddressId + '' : undefined,
+        storeAddressTxt: res.returnContact ? `${res.returnContact} ${res.returnPhone} ${res.returnAddress}` : ''
+      }
     })
+    if (res.storeId) {
+      this.adressReturnRef.fetchData(res.storeId)
+    }
   }
   handleCancel = () => {
     this.setState({ visible: false })
