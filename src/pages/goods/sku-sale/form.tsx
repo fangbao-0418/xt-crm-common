@@ -339,7 +339,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       }
 
       if (storeAddress.storeAddressId) {
-        vals.storeAddressId = storeAddress.storeAddressId
+        vals.storeAddressId = +storeAddress.storeAddressId
       } else {
         message.error('请选择退货地址')
         return
