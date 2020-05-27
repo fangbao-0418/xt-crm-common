@@ -1,18 +1,58 @@
-import React from 'react';
-import { Table, Form, Input, InputNumber, Card, Modal, message } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
-import { getDetailColumns } from '../../constant';
-import { refundType } from '@/enum';
-import { formatPrice } from '@/util/format';
-import UploadView from '@/components/upload';
-import { XtSelect } from '@/components';
-import { formItemLayout } from '@/config';
-import ModifyAddress from './ModifyShippingAddress';
-import AfterSaleSelect from '../after-sale-select';
-import { mul } from '@/util/utils';
-import { getProductDetail, customerAdd } from '../../api';
-import { enumRefundType } from '../../constant';
-const { TextArea } = Input;
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { Table, Form, Input, InputNumber, Card, Modal, message } from 'antd'
+import { FormComponentProps } from 'antd/lib/form'
+import { formatPrice } from '@/util/format'
+import UploadView from '@/components/upload'
+import { XtSelect } from '@/components'
+import { formItemLayout } from '@/config'
+import { mul } from '@/util/utils'
+import { customerAdd } from '../../api'
+import MoneyRender from '@/components/money-render'
+import GoodCell from '@/components/good-cell'
+const { TextArea } = Input
+
+const getDetailColumns = (type = 0) => {
+  return [
+    {
+      title: '商品',
+      dataIndex: 'skuName',
+      key: 'skuName',
+      render (skuName: string, row: any) {
+        return <GoodCell {...row} isRefund={type === 1} />
+      }
+    },
+    {
+      title: '单价',
+      dataIndex: 'productUnitPrice',
+      key: 'productUnitPrice',
+      render: MoneyRender
+    },
+    {
+      title: '购买价',
+      dataIndex: 'orderBuyAmount',
+      key: 'orderBuyAmount',
+      render: MoneyRender
+    },
+    {
+      title: '数量',
+      dataIndex: 'buyNum',
+      key: 'buyNum'
+    },
+    {
+      title: '优惠',
+      dataIndex: 'discountPrice',
+      key: 'discountPrice',
+      render: MoneyRender
+    },
+    {
+      title: '实际支付',
+      dataIndex: 'orderTotalAmount',
+      key: 'orderTotalAmount',
+      render: MoneyRender
+    }
+  ]
+}
 
 interface Props extends FormComponentProps {
   modalInfo: any;
@@ -20,137 +60,79 @@ interface Props extends FormComponentProps {
   onCancel: () => void;
   visible: boolean;
 }
-interface State {
-  skuDetail?: any;
-}
+interface State {}
 
 class ApplyAfterSale extends React.Component<Props, State> {
-  state: State = {
-    skuDetail: {}
-  };
-  isHaiTao: boolean
-  async fetchDetail() {
-    const skuDetail: ApplyOrderSkuDetail.data = await getProductDetail(this.props.modalInfo);
-    this.setState({ skuDetail });
-  }
-  componentDidMount() {
-    this.fetchDetail();
-  }
-  get refundType() {
-    return this.props.form.getFieldValue('refundType');
-  }
+  state: State = {};
   handleOk = () => {
     const {
-      form: { validateFields }
-    } = this.props;
+      form: { validateFields },
+      modalInfo
+    } = this.props
     validateFields(async (errors, values) => {
       if (!errors) {
         if (values.serverNum == 0) {
-          message.error('售后数目必须大于0');
-          return;
+          message.error('售后数目必须大于0')
+          return
         }
-        values.imgUrl = Array.isArray(values.imgUrl) ? values.imgUrl.map((v: any) => v.url) : [];
-        values.imgUrl = values.imgUrl.map((urlStr: string) =>
-          urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
-        );
-        if (values.amount) {
-          values.amount = mul(values.amount, 100);
+        values.refundImg = Array.isArray(values.refundImg) ? values.refundImg.map((v: any) => v.url) : []
+        values.refundImg = values.refundImg.map((urlStr: string) =>
+          urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
+        if (values.refundMoney) {
+          values.refundMoney = mul(values.refundMoney, 100)
         }
-        const skuDetail = this.state.skuDetail;
-        const res: any = await customerAdd({
-          childOrderId: skuDetail.childOrderId,
-          mainOrderId: skuDetail.orderId,
-          skuId: skuDetail.skuId,
-          province: skuDetail.province,
-          provinceId: skuDetail.provinceId,
-          city: skuDetail.city,
-          cityId: skuDetail.cityId,
-          district: skuDetail.district,
-          districtId: skuDetail.districtId,
-          contact: skuDetail.returnContact,
-          phone: skuDetail.returnPhone,
-          street: skuDetail.street,
+        const params = {
+          childOrderId: modalInfo.childOrderId,
+          mainOrderId: modalInfo.mainOrderId,
+          childOrderCode: modalInfo.childOrderCode,
           ...values
-        });
-        if (res.success) {
-          message.success('申请售后成功');
-          this.props.successCb();
+        }
+        const res: any = await customerAdd(params)
+        if (res) {
+          message.success('申请售后成功')
+          this.props.successCb()
         }
       }
-    });
+    })
   };
-  onSuccess = (data: any) => {
-    this.setState({
-      skuDetail: Object.assign(this.state.skuDetail, data)
-    });
-  }
-  /**
-   * 输入框输入的售后数目
-   */
-  get serverNum() {
-    return this.props.form.getFieldValue('serverNum');
-  }
-  /**
-   * 售后商品单价
-   */
-  get unitPrice() {
-    return this.state.skuDetail.unitPrice || 0;
-  }
-  /**
-   * 相关金额
-   */
-  get relatedAmount() {
-    let result = mul(this.unitPrice, this.serverNum);
-    return Math.min(result, this.state.skuDetail.amount);
-  }
-  /**
-   * 修改售后数目
-   */
-  handleChangeServerNum = (value: any = 0) => {
-    let result = mul(this.unitPrice, value);
-    if (value == this.state.skuDetail.serverNum) result = this.state.skuDetail.amount;
-    this.props.form.setFieldsValue({
-      amount: formatPrice(result)
-    });
-  };
-  /**
-   * 最终退款金额
-   */
-  get maxRefundAmount() {
-    let { skuDetail } = this.state;
-    let result = this.serverNum === skuDetail.serverNum ? skuDetail.amount : this.relatedAmount;
-    return result;
-  }
-  // 未发货状态下，CRM发起申请售后，选择仅退款时，不可选择售后数目和金额（直接按最大值来）
-  getDisabledStatus () {
-    const refundType = this.props.form.getFieldValue('refundType')
-    return refundType === 20
-  }
-  disabledAmount () {
-    return this.isHaiTao || this.getDisabledStatus()
-  }
-  render() {
+  handleChangeServerNum = (value: any = 1) => {
     const {
       modalInfo,
-      form: { getFieldDecorator }
-    } = this.props;
-    const initialObj: any = {};
-    const disabledObj: any = {};
-    if (modalInfo.childOrder && modalInfo.childOrder.orderStatus === 20) {
-      initialObj.initialValue = 20;
-      disabledObj.disabled = true;
+      form: { setFieldsValue }
+    } = this.props
+    let maxUnitRefundMoney = modalInfo.maxRefundMoney
+    if (value === modalInfo.maxServerNum) {
+      maxUnitRefundMoney = modalInfo.maxRefundMoney
+    } else {
+      maxUnitRefundMoney = value * modalInfo.maxUnitRefundMoney
     }
-    let { skuDetail } = this.state;
-    skuDetail = Object.assign({}, skuDetail);
-    this.isHaiTao = Number(modalInfo.orderType) === 70;
-    const options = refundType.getArray();
-    /** 海淘订单请选择售后类型没有换货 */
-    const refundTypeOptions = this.isHaiTao ? options.filter(v => v.key !== 30) : options;
+    setFieldsValue({
+      refundMoney: formatPrice(maxUnitRefundMoney)
+    })
+  }
+  render () {
+    const {
+      modalInfo,
+      form: { getFieldDecorator, getFieldValue }
+    } = this.props
+    const refundTypeOptions = Object.entries(modalInfo.refundReasonS || {}).map(item => ({ key: item[0], val: item[1] }))
+
+    const serverNum = getFieldValue('serverNum')
+
+    let maxUnitRefundMoney = modalInfo.maxRefundMoney
+    if (serverNum) {
+      if (serverNum === modalInfo.maxServerNum) {
+        maxUnitRefundMoney = modalInfo.maxRefundMoney
+      } else {
+        maxUnitRefundMoney = serverNum * modalInfo.maxUnitRefundMoney
+      }
+    }
+
     return (
       <Modal
-        width="80%"
+        width='80%'
         style={{ top: 20, minWidth: '900px' }}
-        title="代客申请售后"
+        title='申请售后'
         visible={this.props.visible}
         onCancel={this.props.onCancel}
         onOk={this.handleOk}
@@ -158,19 +140,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
-            <Form.Item label="售后类型">
-              {/* 海淘子订单售后类型不显示换货 */}
-              {getFieldDecorator('refundType', {
-                ...initialObj,
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择售后类型'
-                  }
-                ]
-              })(<XtSelect {...disabledObj} data={refundTypeOptions} />)}
-            </Form.Item>
-            <Form.Item label="售后原因">
+            <Form.Item label='售后原因'>
               {getFieldDecorator('returnReason', {
                 rules: [
                   {
@@ -178,52 +148,44 @@ class ApplyAfterSale extends React.Component<Props, State> {
                     message: '请选择售后原因'
                   }
                 ]
-              })(<AfterSaleSelect refundType={this.refundType} />)}
+              })(<XtSelect data={refundTypeOptions} />)}
             </Form.Item>
-            <Form.Item label="售后数目">
+            <Form.Item label='售后数目'>
               {getFieldDecorator('serverNum', {
                 rules: [{ required: true, message: '请填写售后数目' }],
-                initialValue: skuDetail.serverNum
+                initialValue: modalInfo.maxServerNum
               })(
                 <InputNumber
-                  min={0}
-                  max={skuDetail.serverNum}
-                  disabled={this.getDisabledStatus()}
-                  placeholder="请输入"
+                  min={1}
+                  max={modalInfo.maxServerNum}
+                  placeholder='请输入'
                   onChange={this.handleChangeServerNum}
                 />
               )}
-              （最多可售后数目：{skuDetail.serverNum}）
+              （最多可售后数目：{modalInfo.maxServerNum}）
             </Form.Item>
-            {this.refundType === enumRefundType.Exchange ? (
-              <Form.Item label="用户收货地址">
-                <ModifyAddress detail={skuDetail} onSuccess={this.onSuccess} />
-              </Form.Item>
-            ) : (
-              <Form.Item label="退款金额">
-                {getFieldDecorator('amount', {
-                  rules: [{ required: true, message: '请输入退款金额' }],
-                  initialValue: formatPrice(skuDetail.amount)
-                })(
-                  <InputNumber
-                    min={0}
-                    disabled={this.disabledAmount()}
-                    max={formatPrice(this.maxRefundAmount)}
-                  />
-                )}
-                <span className="ml10">
-                  （最多可退￥{`${formatPrice(this.maxRefundAmount)}${this.isHaiTao ? '，已包含税费' : ''}`}）
-                </span>
-              </Form.Item>
-            )}
-            <Form.Item label="售后凭证">
-              {getFieldDecorator('imgUrl')(<UploadView placeholder="" listType="picture-card" listNum={4} size={2} />)}
+            <Form.Item label='售后金额'>
+              {getFieldDecorator('refundMoney', {
+                rules: [{ required: true, message: '请输入售后金额' }],
+                initialValue: formatPrice(maxUnitRefundMoney)
+              })(
+                <InputNumber
+                  min={0}
+                  max={formatPrice(maxUnitRefundMoney)}
+                />
+              )}
+              <span className='ml10'>
+                （最多可退￥{`${formatPrice(maxUnitRefundMoney)}`}）
+              </span>
             </Form.Item>
-            <Form.Item label="售后说明">{getFieldDecorator('info', {})(<TextArea />)}</Form.Item>
+            <Form.Item label='售后凭证'>
+              {getFieldDecorator('refundImg')(<UploadView placeholder='' listType='picture-card' listNum={4} size={2} />)}
+            </Form.Item>
+            <Form.Item label='售后说明'>{getFieldDecorator('info', {})(<TextArea />)}</Form.Item>
           </Form>
         </Card>
       </Modal>
-    );
+    )
   }
 }
-export default Form.create()(ApplyAfterSale);
+export default Form.create()(ApplyAfterSale)
