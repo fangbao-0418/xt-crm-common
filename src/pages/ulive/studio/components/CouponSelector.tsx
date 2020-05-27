@@ -28,10 +28,15 @@ const getFieldsConfig = function () {
   }
 }
 
-class Main extends React.Component {
+interface Props {
+  onChange?: (selectedRowKeys: any[]) => void
+  selectedRowKeys?: any[]
+}
+
+class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public state = {
-    selectedRowKeys: []
+    selectedRowKeys: this.props.selectedRowKeys || []
   }
   public columns = [
     {
@@ -64,7 +69,15 @@ class Main extends React.Component {
     }
   ]
   public handleSelectChange = (selectedRowKeys: any) => {
-    this.setState({ selectedRowKeys })
+    console.log(selectedRowKeys, 'selectedRowKeys')
+    this.setState({
+      selectedRowKeys
+    }, () => {
+      const { onChange } = this.props
+      onChange && (
+        onChange(selectedRowKeys)
+      )
+    })
   }
   render () {
     const { selectedRowKeys } = this.state

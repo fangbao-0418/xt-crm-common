@@ -232,14 +232,20 @@ class Main extends React.Component<Props, State> {
     }
   ]
   public setCoupon (record: UliveStudio.ItemProps) {
-    // let selectedRowKeys = []
-    this.props.alert({
+    let selectedRowKeys: any[] = [2235]
+    const hide = this.props.alert({
       width: 800,
       content: (
-        <CouponSelector />
+        <CouponSelector
+          selectedRowKeys={selectedRowKeys}
+          onChange={(rowKeys) => {
+            selectedRowKeys = rowKeys
+            // console.log(selectedRowKeys, 'selectedRowKeys')
+          }}
+        />
       ),
       onOk: () => {
-
+        hide()
       }
     })
   }
