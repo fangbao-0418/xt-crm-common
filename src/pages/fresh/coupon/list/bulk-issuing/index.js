@@ -176,6 +176,7 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
                         if (!reg.test(value)) {
                           cb('请输入正确格式: 仅支持手机号并用英文逗号隔开')
                         }
+                        cb()
                       }
                     }]
                   })(
