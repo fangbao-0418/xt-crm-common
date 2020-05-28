@@ -59,6 +59,8 @@ declare namespace UliveStudio {
     anchorLevel: 0 | 10
     /** 直播标签 */
     liveTags: string[]
+    /** 优惠券 */
+    couponCodes: string[]
   }
   /** 直播计划详情 */
   interface StatisticsProps {

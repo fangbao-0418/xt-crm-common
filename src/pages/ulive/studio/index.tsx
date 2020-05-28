@@ -223,18 +223,39 @@ class Main extends React.Component<Props, State> {
               </span>
             )}&nbsp;&nbsp;
             {/* {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)} */}
-            <span onClick={this.setCoupon.bind(this, record)} className={'href'}>
-              优惠券
-            </span>
+            <If
+              condition={[
+                LiveStatusEnum['预告-待审核'],
+                LiveStatusEnum['预告-未过审'],
+                LiveStatusEnum['预告-禁播'],
+                LiveStatusEnum['预告-待开播'],
+                LiveStatusEnum['直播中']
+              ].includes(record.liveStatus)}
+            >
+              <span onClick={this.setCoupon.bind(this, record)} className={'href'}>
+                优惠券{record.couponCodes && record.couponCodes[0] && record.couponCodes.length}
+              </span>
+            </If>
+            <If
+              condition={[
+                LiveStatusEnum['回放已停播'],
+                LiveStatusEnum['已结束'],
+                LiveStatusEnum['预告-已过期']
+              ].includes(record.liveStatus)}
+            >
+              <span onClick={this.setCoupon.bind(this, record)} className={'href'}>
+                优惠券{record.couponCodes && record.couponCodes[0] && record.couponCodes.length}
+              </span>
+            </If>
           </div>
         )
       }
     }
   ]
   public setCoupon (record: UliveStudio.ItemProps) {
-    let selectedRowKeys: any[] = [2235]
+    let selectedRowKeys: any[] = []
     const hide = this.props.alert({
-      width: 800,
+      width: 1000,
       content: (
         <CouponSelector
           selectedRowKeys={selectedRowKeys}
@@ -245,7 +266,13 @@ class Main extends React.Component<Props, State> {
         />
       ),
       onOk: () => {
-        hide()
+        console.log(selectedRowKeys, 'selectedRowKeys')
+        api.setCoupon({
+          liveId: record.planId,
+          couponCodes: selectedRowKeys
+        }).then(res => {
+          hide()
+        })
       }
     })
   }

@@ -1,26 +1,60 @@
 import React from 'react'
 import { ListPage, FormItem } from '@/packages/common/components'
+import { OptionProps } from '@/packages/common/components/form'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import receiveStatus from '@/enum/receiveStatus'
+import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } from '@/pages/helper'
+import { Badge } from 'antd'
 import * as api from '../api'
 
-const getFieldsConfig = function () {
+export interface FieldsConfig {
+  [namespace: string]: {[field: string]: OptionProps}
+}
+
+const listBadgeColors = {
+  '0': 'gray',
+  '1': 'blue',
+  '2': 'green'
+}
+
+const calcRatio = ({ useCount, receiveCount }: { useCount: number, receiveCount: number }) => {
+  const result = useCount / receiveCount
+  return (100 * result).toFixed(1) + '%'
+}
+
+const getFieldsConfig = function (partial?: FieldsConfig): FieldsConfig {
   return {
     common: {
-      discountId: {
+      code: {
         type: 'input',
         label: '优惠卷编号'
       },
-      discountName: {
+      name: {
         type: 'input',
         label: '优惠卷名称'
       },
-      discountStatus: {
+      status: {
         type: 'select',
         label: '状态',
+        controlProps: {
+          allowClear: false
+        },
         options: [
+          {
+            label: '全部',
+            value: ''
+          },
+          {
+            label: '未开始',
+            value: 0
+          },
           {
             label: '进行中',
             value: 1
+          },
+          {
+            label: '已结束',
+            value: 2
           }
         ]
       }
@@ -41,35 +75,56 @@ class Main extends React.Component<Props> {
   public columns = [
     {
       title: '编号',
-      dataIndex: 'a'
+      dataIndex: 'code'
     },
     {
       title: '名称',
-      dataIndex: 'b'
+      dataIndex: 'name',
+      render: (text: string, record: any) => (
+        <span className='href' onClick={this.handleClickName.bind(this, record)}>
+          {text || '-'}
+        </span>
+      )
     },
     {
       title: '领取时间',
-      dataIndex: 'c'
+      dataIndex: 'receiveTime',
+      width: 180,
+      align: 'center',
+      render: (text: string, record: any) => formatDateRange(record)
     },
     {
       title: '优惠券价值',
-      dataIndex: 'd'
+      dataIndex: 'faceValue',
+      render: (text: any, record: any) => formatFaceValue(record)
     },
     {
       title: '已领取/总量',
-      dataIndex: 'e'
+      render: (record: any) => {
+        return record.receiveCount + '/' + record.inventory
+      }
     },
     {
       title: '已使用/使用率',
-      dataIndex: 'f'
+      render: (record: any) => {
+        return record.receiveCount ? `${record.useCount} | ${calcRatio(record)}` : '-'
+      }
     },
     {
       title: '领取状态',
-      dataIndex: 'g'
+      dataIndex: 'status',
+      width: 100,
+      align: 'center',
+      render: (text: 0 | 1 | 2) => (
+        <Badge color={listBadgeColors[text]} text={receiveStatus.getValue(text)} />
+      )
     }
   ]
+  public handleClickName = (record: any) => {
+    const { origin, pathname } = window.location
+    window.open(`${origin}${(/^\/$/).test(pathname) ? '/' : pathname}#/coupon/get/couponList/detail/${record.id}`)
+  }
   public handleSelectChange = (selectedRowKeys: any) => {
-    console.log(selectedRowKeys, 'selectedRowKeys')
     this.setState({
       selectedRowKeys
     }, () => {
@@ -83,7 +138,10 @@ class Main extends React.Component<Props> {
     const { selectedRowKeys } = this.state
     const rowSelection = {
       selectedRowKeys,
-      onChange: this.handleSelectChange
+      onChange: this.handleSelectChange,
+      getCheckboxProps: (record: any) => ({
+        disabled: record.status === 2
+      })
     }
 
     return (
@@ -95,17 +153,20 @@ class Main extends React.Component<Props> {
           formConfig={getFieldsConfig()}
           columns={this.columns}
           tableProps={{
-            rowKey: 'planId',
+            rowKey: 'id',
             rowSelection
           }}
           formItemLayout={(
             <>
-              <FormItem name='discountId' />
-              <FormItem name='discountName' />
-              <FormItem name='discountStatus' />
+              <FormItem name='code' />
+              <FormItem name='name' />
+              <FormItem fieldDecoratorOptions={{ initialValue: 1 }} name='status' />
             </>
           )}
-          api={api.getStudioList}
+          api={api.getCouponList}
+          addonAfterSearch={(
+            <span>{' '}已选：{selectedRowKeys.length} 张</span>
+          )}
         />
       </div>
     )
