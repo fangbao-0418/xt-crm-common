@@ -7,10 +7,13 @@ import SkuStockEditState from './components/sku-stock-edit'
 import Image from '@/components/Image'
 import { gotoPage, replaceHttpUrl } from '@/util/utils'
 import dateFns from 'date-fns'
-import SuppilerSelect from '@/components/suppiler-auto-select'
+import SuppilerSelector from '@/components/supplier-selector'
 import SelectFetch from '@/components/select-fetch'
+import { ColumnProps } from 'antd/lib/table'
 import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api'
+import { GoodProps } from './interface'
 
+/** 此处类型后端传参0和1反了，0查找上架商品，上架商品实际状态为1 */
 /** 0-出售中, 1-仓库中, 3-待上架 2-商品池 */
 export type StatusType = '0' | '1' | '3' | '2';
 
@@ -25,6 +28,11 @@ interface SkuSaleListState {
   productNameOfStockEdit: string;
 }
 
+/** 是否是虚拟商品 true-是 false-否 */
+function isVirtualGood (type: number) {
+  return [50, 51].includes(type)
+}
+
 class Main extends React.Component<Props, SkuSaleListState> {
   state: SkuSaleListState = {
     selectedRowKeys: [],
@@ -33,7 +41,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
     productNameOfStockEdit: ''
   }
   list: ListPageInstanceProps;
-  columns = [
+  columns: ColumnProps<GoodProps>[] = [
     {
       title: '商品ID',
       width: 120,
@@ -43,7 +51,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
       title: '商品主图',
       dataIndex: 'coverUrl',
       width: 120,
-      render: (record: any) => (
+      render: (record) => (
         <Image
           style={{
             height: 100,
@@ -81,27 +89,38 @@ class Main extends React.Component<Props, SkuSaleListState> {
       title: '总库存',
       width: 100,
       dataIndex: 'stock',
-      render: (text: any, record:any, index:any) => (
-        <div style={{ whiteSpace: 'nowrap' }}>
-          <span>{text}</span>
-          <Icon type='form' style={{ fontSize: '20px', marginLeft: '5px' }} onClick={() => {
-            this.setState({
-              idOfStockEdit: record.id,
-              visibleOfStockEdit: true,
-              productNameOfStockEdit: record.productName
-            })
-          }} />
-        </div>
-      )
+      align: 'center',
+      render: (text: any, record, index:any) => {
+        if (isVirtualGood(record.type)) {
+          return '无'
+        }
+        return (
+          <div style={{ whiteSpace: 'nowrap' }}>
+            <span>{text}</span>
+            <Icon type='form' style={{ fontSize: '20px', marginLeft: '5px' }} onClick={() => {
+              this.setState({
+                idOfStockEdit: record.id,
+                visibleOfStockEdit: true,
+                productNameOfStockEdit: record.productName
+              })
+            }} />
+          </div>
+        )
+      }
     },
     {
       title: '可用库存',
       width: 100,
-      dataIndex: 'usableStock'
+      dataIndex: 'usableStock',
+      align: 'center',
+      render: (text, record) => {
+        return isVirtualGood(record.type) ? '无' : text
+      }
     },
     {
       title: '累计销量',
       width: 100,
+      align: 'center',
       dataIndex: 'saleCount'
     },
     {
@@ -113,34 +132,35 @@ class Main extends React.Component<Props, SkuSaleListState> {
       title: '创建时间',
       dataIndex: 'createTime',
       width: 200,
-      render: (record: any) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
+      render: (record) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
     },
     {
       title: '最后操作时间',
       dataIndex: 'modifyTime',
       width: 200,
-      render: (record: any) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
+      render: (record) => <>{dateFns.format(record, 'YYYY-MM-DD HH:mm:ss')}</>
     },
     {
       title: '操作',
       fixed: 'right',
       align: 'center',
       width: 120,
-      render: (record: any) => {
+      render: (text, record) => {
         const { status } = this.props
         return (
           <div>
             <span
               className='href'
               onClick={() => {
-                gotoPage(`/goods/sku-sale/${record.id}`)
+                const url = isVirtualGood(record.type) ?`/goods/virtual/${record.id}` : `/goods/sku-sale/${record.id}`
+                APP.history.push(url)
               }}
             >
               编辑
             </span>
             <If condition={status === '0'}>
               <span
-                className='href ml10'
+                className='href ml8'
                 onClick={() => this.lower([record.id])}
               >
                 下架
@@ -148,7 +168,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
             </If>
             <If condition={status === '1'}>
               <span
-                className='href ml10'
+                className='href ml8'
                 onClick={() => this.upper([record.id])}
               >
                 上架
@@ -195,7 +215,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
   // 导出
   export = () => {
     exportFileList({
-      ...this.list.payload,
+      ...this.list.getPayload(),
       status: this.props.status,
       pageSize: 6000,
       page: 1
@@ -271,10 +291,17 @@ class Main extends React.Component<Props, SkuSaleListState> {
           }}
           formConfig={defaultConfig}
           getInstance={ref => this.list = ref}
+          cachePayloadProcess={(payload) => {
+            return {
+              ...payload
+            }
+          }}
           processPayload={(payload) => {
             return {
               ...payload,
-              status: +status
+              status: +status,
+              storeId: payload.store?.key,
+              store: undefined
             }
           }}
           rangeMap={{
@@ -292,8 +319,8 @@ class Main extends React.Component<Props, SkuSaleListState> {
               <FormItem
                 label='供应商'
                 inner={(form) => {
-                  return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect style={{ width: 172 }} />
+                  return form.getFieldDecorator('store')(
+                    <SuppilerSelector type='yx' style={{ width: 172 }} />
                   )
                 }}
               />
@@ -317,19 +344,28 @@ class Main extends React.Component<Props, SkuSaleListState> {
             <>
               <Button
                 type='primary'
-                className='mr10'
+                className='mr8'
                 onClick={this.export}
               >
                 导出商品
               </Button>
               <Button
-                className='mr10'
+                className='mr8'
                 type='primary'
                 onClick={() => {
                   APP.history.push('/goods/sku-sale/-1?isGroup=0')
                 }}
               >
                 添加商品
+              </Button>
+              <Button
+                className='mr8'
+                type='primary'
+                onClick={() => {
+                  APP.history.push('/goods/virtual/-1')
+                }}
+              >
+                新增虚拟商品
               </Button>
               {/* <Button
                 type='primary'

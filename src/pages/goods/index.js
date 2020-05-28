@@ -1,34 +1,46 @@
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+/*
+ * @Date: 2020-04-21 19:44:05
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-05-11 11:40:40
+ * @FilePath: /xt-crm/src/pages/goods/index.js
+ */
+import React from 'react'
+import { Redirect } from 'react-router'
 import loadable from '@/util/loadable'
-import Category from './category/index.js';
+import Category from './category/index.js'
+import RouteComponent, { RouteCO } from '@/components/route-component'
+const SkuSale = loadable(() => import('./sku-sale'))
+const Check = loadable(() => import('./check'))
+const Detail = loadable(() => import('./detail'))
+const PricingStrategy = loadable(() => import('./pricing-strategy'))
+const GoodsDetail = loadable(() => import('./goods-detail'))
+const SkuSaleForm = loadable(() => import('./sku-sale/form'))
+const SkuStock = loadable(() => import('./sku-stock'))
+const SkuStockForm = loadable(() => import('./sku-stock/form'))
+const Material = loadable(() => import('./material'))
+const Virtual = loadable(() => import('./virtual'))
 
-const SkuSale = loadable(() => import('./sku-sale'));
-const Check = loadable(() => import('./check'));
-const Detail = loadable(() => import('./detail'));
-const PricingStrategy = loadable(() => import('./pricing-strategy'));
-const GoodsDetail = loadable(() => import('./goods-detail'));
-const SkuSaleForm = loadable(() => import('./sku-sale/form'));
-const SkuStock = loadable(() => import('./sku-stock'));
-const SkuStockForm = loadable(() => import('./sku-stock/form'));
-const Material = loadable(() => import('./material'));
+const config = [
+  { paht: '', exact: true, render: () => <Redirect to='/goods/list' /> },
+  { path: '/list', component: SkuSale },
+  { path: '/category', component: Category },
+  { path: '/check', component: Check },
+  { path: '/detail/:id?', component: Detail },
+  { path: '/pricingStrategy', component: PricingStrategy },
+  { path: '/goodsDetail/:id', component: GoodsDetail },
+  { path: '/sku-sale/:id', component: SkuSaleForm },
+  { path: '/sku-stock', exact: true, component: SkuStock },
+  { path: '/sku-stock/:id', component: SkuStockForm },
+  { path: '/material', component: Material },
+  { path: '/virtual/:id', component: Virtual }
+]
+
 export default class RouteApp extends React.Component {
-  render() {
-    const { match } = this.props;
+  render () {
     return (
-      <Switch>
-        <Route exact path={`${match.url}`} component={SkuSale} />
-        <Route path={`${match.url}/list`} component={SkuSale} />
-        <Route path={`${match.url}/category`} component={Category} />
-        <Route path={`${match.url}/check`} component={Check} />
-        <Route path={`${match.url}/detail/:id?`} component={Detail} />
-        <Route path={`${match.url}/pricingStrategy`} component={PricingStrategy} />
-        <Route path={`${match.url}/goodsDetail/:id`} component={GoodsDetail} />
-        <Route path={`${match.url}/sku-sale/:id`} component={SkuSaleForm} />
-        <Route exact path={`${match.url}/sku-stock`} component={SkuStock} />
-        <Route path={`${match.url}/sku-stock/:id`} component={SkuStockForm} />
-        <Route path={`${match.url}/material`} component={Material} />
-      </Switch>
-    );
+      <RouteComponent
+        config={config}
+      />
+    )
   }
 }

@@ -1,33 +1,33 @@
-import React from 'react';
-import Loadable from 'react-loadable';
-import { Route, Switch } from 'react-router-dom';
-import { view as Loader } from '../../components/loader';
+import React from 'react'
+import Loadable from 'react-loadable'
+import { Route, Switch } from 'react-router-dom'
+import { view as Loader } from '../../components/loader'
 
 const List = Loadable({
   loader: () => import('./list'),
-  loading: Loader,
-});
+  loading: Loader
+})
 
 const InfoEdit = Loadable({
   loader: () => import('./info/edit'),
-  loading: Loader,
-});
+  loading: Loader
+})
 
 const Add = Loadable({
   loader: () => import('./add'),
-  loading: Loader,
-});
+  loading: Loader
+})
 
 const InfoDetail = Loadable({
   loader: () => import('./info/detail'),
-  loading: Loader,
-});
+  loading: Loader
+})
 
 /** 满赠列表 */
 const Marketing = Loadable({
   loader: () => import('./marketing'),
-  loading: Loader,
-});
+  loading: Loader
+})
 
 /** 满赠详情 */
 const MarketingDetail = Loadable({
@@ -38,24 +38,24 @@ const MarketingDetail = Loadable({
 /** 花呗分期列表 */
 const CreaditPay = Loadable({
   loader: () => import('./credit_pay'),
-  loading: Loader,
-});
+  loading: Loader
+})
 
 /** 花呗分期详情 */
 const CreaditPayDetail = Loadable({
   loader: () => import('./credit_pay/Detail'),
-  loading: Loader,
-});
+  loading: Loader
+})
 /** 抽奖列表 */
 const LuckDrawList = Loadable({
   loader: () => import('./luckdraw/list'),
-  loading: Loader,
-});
+  loading: Loader
+})
 /** 手动添加抽奖码 */
 const LuckDrawAdd = Loadable({
   loader: () => import('./luckdraw/add'),
-  loading: Loader,
-});
+  loading: Loader
+})
 
 /** 抽奖活动管理 */
 const Lottery = Loadable({
@@ -112,8 +112,8 @@ const FullDiscountDetail = Loadable({
 })
 
 export default class RouteApp extends React.Component {
-  render() {
-    const { match } = this.props;
+  render () {
+    const { match } = this.props
     return (
       <Switch>
         <Route exact path={`${match.url}`} component={List} />
@@ -140,6 +140,6 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/full-discount/detail/:id`} component={FullDiscountDetail} />
         <Route path={`${match.url}/full-discount/:action/:id?`} component={FullDiscountEdit} />
       </Switch>
-    );
+    )
   }
 }

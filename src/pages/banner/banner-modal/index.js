@@ -1,6 +1,9 @@
+/* eslint-disable no-const-assign */
+/* eslint-disable no-self-assign */
+/* eslint-disable react/no-find-dom-node */
 import React, { Component } from 'react'
-import { Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
-import { If } from '@/packages/common/components'
+import { Tag, Select, Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
+import If from '@/packages/common/components/if'
 import UploadView from '../../../components/upload'
 import { getBannerDetail, updateBanner, addBanner } from '../api'
 import { TextMapPosition } from '../constant'
@@ -9,6 +12,7 @@ import platformType from '@/enum/platformType'
 import moment from 'moment'
 import BannerPostion from '@/components/banner-position'
 const FormItem = Form.Item
+const Option = Select.Option
 
 const formItemLayout = {
   labelCol: { span: 6 },
@@ -34,6 +38,7 @@ class BannerModal extends Component {
     id: '',
     isEdit: false
   };
+
   state = {
     renderKey: 0,
     visible: false,
@@ -46,10 +51,9 @@ class BannerModal extends Component {
   };
 
   showModal = () => {
+    this.props.form.resetFields()
     if (this.props.isEdit) {
       this.query()
-    } else {
-      this.props.form.resetFields()
     }
     this.setState({
       visible: true
@@ -103,6 +107,10 @@ class BannerModal extends Component {
         params.platformArray.forEach((val) => {
           params.platform += val * 1
         })
+        if (params.keywordsList&&params.keywordsList.length>20) {
+          APP.error('关键字不能超过20个')
+          return
+        }
         if (params.offlineTime < params.onlineTime) {
           APP.error('下线时间必须大于上线时间')
           return
@@ -111,7 +119,8 @@ class BannerModal extends Component {
           onSuccess && onSuccess()
           res && message.success('操作成功')
           this.setState({
-            visible: false
+            visible: false,
+            data: {}
           })
         })
       }
@@ -127,15 +136,7 @@ class BannerModal extends Component {
     const { isEdit, size } = this.props
     const { getFieldDecorator, getFieldValue } = this.props.form
     const { data, renderKey } = this.state
-
-    let seat
-
-    if (getFieldValue('seat') && getFieldValue('seat')[0]) {
-      seat = getFieldValue('seat')
-    } else {
-      seat = [data.newSeat, data.childSeat]
-    }
-
+    const seat = [data.newSeat, data.childSeat]
     return (
       <>
         <Button size={size} type='primary' onClick={this.showModal}>
@@ -174,7 +175,6 @@ class BannerModal extends Component {
                 rules: [
                   {
                     validator: (rule, value, cb) => {
-                      console.log(value)
                       if (value[1] !== undefined) {
                         cb()
                       } else {
@@ -202,13 +202,13 @@ class BannerModal extends Component {
                 })(<Input placeholder='' />)}
               </FormItem>
             </If>
-            <If condition={[1, 2, 3, 4].includes(seat[0])}>
+            <If condition={[1, 2, 3, 4, 6, 7].includes(seat[0])}>
               <FormItem key={renderKey} label='Banner图片' required={true}>
                 {getFieldDecorator('imgList', {
                   initialValue: initImgList(data.imgUrlWap),
                   rules: [
                     {
-                      required: [1, 2, 3, 4].includes(seat[0]),
+                      required: [1, 2, 3, 4, 6, 7].includes(seat[0]),
                       message: '请上传Banner图片'
                     }
                   ]
@@ -257,16 +257,73 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4].includes(seat[0])) || (seat[0] !== 5)}>
+            <If condition={([1, 2, 3, 4, 6, 7].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
                   rules: [{
-                    required: ([1, 2, 3, 4].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
+                    required: ([1, 2, 3, 4, 6, 7].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
                     message: '请选择平台'
                   }]
                 })(
                   <Checkbox.Group options={_platformType}> </Checkbox.Group>
+                )}
+              </FormItem>
+            </If>
+            <If condition={seat[0] === 7}>
+              <FormItem label='关键词'>
+                {getFieldDecorator('keywordsList', {
+                  initialValue: data.keywordsList,
+                  rules: [
+                    {
+                      required: seat[0] === 7,
+                      message: '请输入关键词'
+                    }
+                  ]
+                })(
+                  <Select
+                    mode={'tags'}
+                    ref={(ref)=>{
+                      this.ref=ref
+                    }}
+                    placeholder='请输入关键词'
+                    id='keywordsList'
+                    tokenSeparators={[',']}
+                    maxLength={10}
+                    open={false}
+                    name='keywordsList'
+                    autoClearSearchValue={true}
+                    onInputKeyDown={(e)=>{
+                      const { data } = this.state
+                      const keyCode=e.keyCode,
+                            targetInputValue=e.target.value
+                      data.keywordsList=(data&&data.keywordsList)||[]
+                      if (keyCode===13&&targetInputValue) {
+                        if (targetInputValue.length>10) {
+                          APP.error('不能超过10个字符')
+                          return
+                        }
+                        if (data.keywordsList.length>20) {
+                          APP.error('不能超过20个关键词')
+                          return
+                        }
+                        console.log(data.keywordsList)
+                        console.log(targetInputValue)
+                        if (targetInputValue) {
+                          if (data.keywordsList&&data.keywordsList.length>0&&data.keywordsList.indexOf(targetInputValue)>-1) {
+                            APP.error('关键词重复')
+                          } else {
+                            data.keywordsList.push(targetInputValue)
+                            this.ref.blur()
+                            this.setState({
+                              data
+                            })
+                          }
+                        }
+                      }
+                    }}
+                    onChange={this.onChangeKeyWord.bind(this)}
+                  />
                 )}
               </FormItem>
             </If>
@@ -282,6 +339,15 @@ class BannerModal extends Component {
         </Modal>
       </>
     )
+  }
+
+  //改变关键字
+  onChangeKeyWord (obj) {
+    const { data } = this.state
+    data['keywordsList'] = obj ? ((obj instanceof Array && obj.length < 1) ? undefined :obj) : ''
+    this.setState({
+      data
+    })
   }
 }
 

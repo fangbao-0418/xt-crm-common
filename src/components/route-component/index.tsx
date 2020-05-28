@@ -12,11 +12,12 @@ class Main extends React.Component<Props> {
       <Switch>
         {
           config.map((item, index) => {
+            const path = `${match.url}${item.path || ''}`
             return (
               <Route
                 key={item.path + `-${index}`}
                 {...item}
-                path={`${match.url}${item.path}`}
+                path={path}
               />
             )
           })

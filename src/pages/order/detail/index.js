@@ -211,7 +211,7 @@ class Detail extends Component {
           orderStatusLogList={orderStatusLogList}
         />
         {/* 订单信息 */}
-        <OrderInfo orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress}/>
+        <OrderInfo orderVirtualInfoVO={data.orderVirtualInfoVO} orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress}/>
         {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
         {/* 海关信息 */}
@@ -260,6 +260,8 @@ class Detail extends Component {
                   childOrder={item.childOrder}
                   orderInfo={data.orderInfo}
                   logistics={item.logistics}
+                  //充值信息
+                  orderVirtualInfoVO={data.orderVirtualInfoVO}
                   query={this.query}
                   memberId={data.buyerInfo && data.buyerInfo.memberAddress && data.buyerInfo.memberAddress.memberId}
                   showModal={this.showModal}

@@ -1,9 +1,12 @@
 import { OptionProps } from '@/packages/common/components/form/index'
 import _ from 'lodash'
-import * as api from './api'
+
+export const namespace = 'freshSaleAfter'
+
 export interface FieldsConfig {
-  [namespace: string]: {[field: string]: OptionProps}
+  [namespace: string]: { [field: string]: OptionProps }
 }
+
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     afterSale: {
@@ -27,6 +30,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input',
         label: '售后单号'
       },
+      selfDeliveryPointPhone: {
+        type: 'input',
+        label: '门店手机号'
+      },
       childOrderCode: {
         type: 'input',
         label: '订单编号'
@@ -43,7 +50,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '是否需要送回仓库',
         options: [
-          { label: '所有', value: 0 },
+          { label: '全部', value: 0 },
           { label: '是', value: 10 },
           { label: '否', value: 20 }
         ]

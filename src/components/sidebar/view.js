@@ -51,7 +51,11 @@ class Sidebar extends React.Component {
     function loop (arr, group = [], isPattern = false) {
       return arr.find((item) => {
         const pattern = new RegExp('^' + item.path + '/(\\w)+$')
-        if (routesMapRule[item.path]?.find?.((rule) => { return rule.test(pathname) })) {
+        // console.log(routesMapRule, item.path, 'routesMapRule')
+        // console.log(routesMapRule[item.path], 'routesMapRule[pathname]')
+        if (routesMapRule[item.path]?.find?.((rule) => {
+          return rule.test(pathname)
+        })) {
           selectedItem = item
           selectedGroup = group.concat([item])
           return true
@@ -186,8 +190,8 @@ class Sidebar extends React.Component {
       >
         <div className={styles.logo}>
           <a href='/'>
-            <img src={logo} alt='logo' />
-            <h1>喜团管理平台</h1>
+            {/* <img src={logo} alt='logo' /> */}
+            <h1 style={{ marginLeft: 10 }}>喜团管理平台</h1>
           </a>
         </div>
         <Menu

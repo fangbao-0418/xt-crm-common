@@ -11,6 +11,11 @@ import Coupon from './coupon'
 import MerchantAccounts from './merchant-accounts'
 import SaleAfter from './saleAfter/index'
 import Setting from './setting'
+import Hotkey from './hotkey'
+import Area from './area-management'
+import AreaAdd from './area-management/form'
+import Instructor from './instructor-management'
+import InstructorAdd from './instructor-management/form'
 class Fresh extends React.Component<RouteComponentProps> {
   render () {
     const { match } = this.props
@@ -26,7 +31,12 @@ class Fresh extends React.Component<RouteComponentProps> {
         <Route path={`${match.url}/coupon`} component={Coupon} />
         <Route path={`${match.url}/category`} component={Category} />
         <Route path={`${match.url}/setting`} component={Setting} />
+        <Route path={`${match.url}/hotkey`} component={Hotkey} />
         <Route path={`${match.url}/merchant-accounts`} component={MerchantAccounts} />
+        <Route path={`${match.url}/area`} exact component={Area} />
+        <Route path={`${match.url}/area/:id`} component={AreaAdd} />
+        <Route path={`${match.url}/instructor`} exact component={Instructor} />
+        <Route path={`${match.url}/instructor/:id`} component={InstructorAdd} />
       </Switch>
     )
   }

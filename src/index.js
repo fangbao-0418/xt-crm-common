@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-03-27 11:00:32
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-09 11:30:30
- * @FilePath: /xt-crm/src/index.js
+ * @LastEditTime: 2020-05-18 17:33:26
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/index.js
  */
 import React from 'react'
 import ReactDOM from 'react-dom'
