@@ -17,7 +17,10 @@ interface Props {
   onCancel: (value: boolean) => void
   dataSource?: any
   type?: string
+  /** 是否只读 */
   isReadOnly: boolean
+  /** 是否审核 */
+  isAudit: boolean
 }
 
 interface State {
@@ -90,7 +93,7 @@ class Add extends React.Component<Props, State> {
       })
     }
   }
-/**
+  /**
  * @memberof Add
  * 通过手机号查找发布人
  */
@@ -116,7 +119,30 @@ class Add extends React.Component<Props, State> {
   }
 
   /**
-   * 新增素材保存
+   * 审核素材
+   * 审核状态（1：审核通过，2：审核拒绝）
+   * */
+  auditSave = (auditStatus: 1 | 2) => {
+    const form = this.form.props.form
+    const { dataSource, onCancel } = this.props
+    form.validateFields((err: any, vals: any) => {
+      if (!err) {
+        const { auditMsg } = vals
+        const params = {
+          auditStatus,
+          auditMsg
+        }
+        // 如果有传入值dataSource和素材Id那就是编辑，否则就是新增
+        api.auditMaterial({ ...params, materialId: dataSource.id }).then(res => {
+          message.success('审核成功')
+          onCancel(false)
+
+        })
+      }
+    })
+  }
+  /**
+   * 新增/编辑素材保存
    *
    * @memberof Add
    */
@@ -134,13 +160,17 @@ class Add extends React.Component<Props, State> {
           productId: productId.spuList[0].id,
           authorPhone,
           content,
-          videoUrlList: videoUrl && videoUrl.map((video: any) => {return {url: video.rurl, size: video.size}}),
-          pictureUrlList: productImage && productImage.map((img: any) => {return {url: img.rurl, size: img.size}})
+          videoUrlList: videoUrl && videoUrl.map((video: any) => {
+            return { url: video.rurl, size: video.size }
+          }),
+          pictureUrlList: productImage && productImage.map((img: any) => {
+            return { url: img.rurl, size: img.size }
+          })
         }
         let p: Promise<any>
         // 如果有传入值dataSource和素材Id那就是编辑，否则就是新增
         if (dataSource && dataSource.id) {
-          p = api.editProductMaterial({...params, id: dataSource.id}).then(res => {
+          p = api.editProductMaterial({ ...params, id: dataSource.id }).then(res => {
             message.success('修改成功')
           })
         } else {
@@ -165,9 +195,10 @@ class Add extends React.Component<Props, State> {
 
   render () {
     const {
-      isReadOnly
+      isReadOnly,
+      isAudit
     } = this.props
-    const {nickName, userPhone} = this.state
+    const { nickName, userPhone } = this.state
     return (
       <Card className='activity-add'>
         <Form
@@ -180,6 +211,19 @@ class Add extends React.Component<Props, State> {
                 <FormItem {...formItemLayout}>
                   <Button type='primary' onClick={this.handleSave}>
                     保存
+                  </Button>
+                  <Button className='ml20' onClick={this.handleCancel}>
+                    取消
+                  </Button>
+                </FormItem>
+              </If>
+              <If condition={isAudit}>
+                <FormItem {...formItemLayout}>
+                  <Button type='primary' onClick={() => this.auditSave(1)}>
+                    审核通过
+                  </Button>
+                  <Button className='ml20' onClick={() => this.auditSave(2)}>
+                    不通过
                   </Button>
                   <Button className='ml20' onClick={this.handleCancel}>
                     取消
@@ -199,7 +243,9 @@ class Add extends React.Component<Props, State> {
                     <span
                       className='href'
                       onClick={() => {
-                        if (!isReadOnly)this.shopModalInstance.open()
+                        if (!isReadOnly) {
+                          this.shopModalInstance.open()
+                        }
                       }}
                     >
                       请选择商品
@@ -258,7 +304,7 @@ class Add extends React.Component<Props, State> {
                         }}
                         enterButton='核验'
                         disabled={isReadOnly}
-                        style={{width: '260px'}}
+                        style={{ width: '260px' }}
                         maxLength={11}
                         placeholder='请输入发布人手机号查询'
                       />
@@ -276,7 +322,7 @@ class Add extends React.Component<Props, State> {
             label='内容'
             required
             inner={(form) => {
-              return  form.getFieldDecorator('content', {
+              return form.getFieldDecorator('content', {
                 rules: [
                   {
                     required: true,
@@ -333,12 +379,23 @@ class Add extends React.Component<Props, State> {
                         placeholder='上传商品图片'
                       />
                     )}
-                    </div>
+                  </div>
                   <div>（建议750*750px，300kb以内，最多可添加16张）</div>
                 </div>
               )
             }}
           />
+          <If condition={isAudit}>
+            <FormItem
+              label='不通过原因'
+              inner={(form) => {
+                return form.getFieldDecorator('auditMsg')(
+                  <TextArea rows={4} placeholder='不通过原因' />
+                )
+              }}
+            >
+            </FormItem>
+          </If>
         </Form>
         <ShopSelectModal
           api={api.getGoodsList}
