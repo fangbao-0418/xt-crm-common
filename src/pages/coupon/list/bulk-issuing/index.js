@@ -165,13 +165,14 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
                 <Form.Item>
                   {getFieldDecorator('userPhones', { 
                     rules: [{ 
-                      required: true, 
-                      message: '请输入用户手机号', 
                       whitespace: true, 
                       validator: (rules, value, cb) => {
                         const reg = /^([0-9]+(,|\b))*$/
-                        if(!reg.test(value)) {
-                          cb('请输入正确格式')
+                        if (!value) {
+                          cb('请输入用户手机号')
+                        }
+                        if (!reg.test(value)) {
+                          cb('请输入正确格式: 仅支持手机号并用英文逗号隔开')
                         }
                       }
                     }] 
