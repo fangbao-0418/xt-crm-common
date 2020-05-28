@@ -163,7 +163,19 @@ function BulkIssuing({ form: { getFieldDecorator, getFieldsValue, validateFields
               <Radio style={radioStyle} value={2}>指定用户</Radio>
               {isUserPhones() && (
                 <Form.Item>
-                  {getFieldDecorator('userPhones', { rules: [{ required: true, message: '请输入用户手机号', whitespace: true }] })(
+                  {getFieldDecorator('userPhones', { 
+                    rules: [{ 
+                      required: true, 
+                      message: '请输入用户手机号', 
+                      whitespace: true, 
+                      validator: (rules, value, cb) => {
+                        const reg = /^([0-9]+(,|\b))*$/
+                        if(!reg.test(value)) {
+                          cb('请输入正确格式')
+                        }
+                      }
+                    }] 
+                  })(
                     <Input.TextArea style={{ width: '528px' }} rows={4} placeholder="输入用户手机号，以半角逗号隔开，例13928387247,15619237922" />
                   )}
                 </Form.Item>
