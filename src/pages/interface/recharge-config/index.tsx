@@ -1,3 +1,4 @@
+/* eslint-disable no-cond-assign */
 import React from 'react'
 import Page from '@/components/page'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
@@ -6,19 +7,20 @@ import { ColumnProps } from 'antd/lib/table'
 import { RecordProps } from './interface'
 import Image from '@/components/Image'
 import SelectModal from './components/SelectModal'
+import ConfigureCouponsModal from './components/ConfigureCouponsModal'
 import * as api from './api'
 import { StatusEnum } from './config'
 import { verifyConfigData } from './verify'
-
 interface State {
   dataSource: RecordProps[]
 }
 
 class Main extends React.Component<{}, State> {
+  public skuId: any
   public columns: ColumnProps<RecordProps>[] = [
     { title: '商品ID', dataIndex: 'productId' },
     { title: 'SKUID', dataIndex: 'skuId' },
-    { title: '商品名称', dataIndex: 'productName', width: 200 },
+    { title: '商品名称', dataIndex: 'productName' },
     {
       title: '商品主图',
       dataIndex: 'coverUrl',
@@ -36,7 +38,6 @@ class Main extends React.Component<{}, State> {
     {
       title: '状态',
       dataIndex: 'status',
-      width: 100,
       align: 'center',
       render: (text) => {
         return StatusEnum[text]
@@ -66,12 +67,12 @@ class Main extends React.Component<{}, State> {
     },
     {
       title: '操作',
-      width: 100,
+      width: 110,
       align: 'center',
       render: (text, record, index) => {
         return (
           <div>
-            <span
+            <div
               className='href'
               onClick={() => {
                 const dataSource = this.state.dataSource
@@ -82,7 +83,16 @@ class Main extends React.Component<{}, State> {
               }}
             >
               删除
-            </span>
+            </div>
+            <div
+              className='href'
+              onClick={() => {
+                this.skuId=record.skuId
+                this.selectorConfigure.open((record.couponCodes)&&(record.couponCodes).toString())
+              }}
+            >
+              配置优惠券
+            </div>
           </div>
         )
       }
@@ -90,6 +100,7 @@ class Main extends React.Component<{}, State> {
   ]
   public listpage: ListPageInstanceProps
   public selector: SelectModal
+  public selectorConfigure: ConfigureCouponsModal
   public state: State = {
     dataSource: []
   }
@@ -119,7 +130,8 @@ class Main extends React.Component<{}, State> {
       return {
         productId: item.productId,
         skuId: item.skuId,
-        sort: item.sort || 0
+        sort: item.sort || 0,
+        couponCodes: item.couponCodes
       }
     })
     api.saveGoodsConfig(payload).then(() => {
@@ -138,7 +150,6 @@ class Main extends React.Component<{}, State> {
       <Page>
         <SelectModal
           onOk={(rows) => {
-            console.log(rows, 'rows')
             let res: RecordProps[] = []
             rows.map((item) => {
               item.skuList = (item.skuList || []).map((item2) => {
@@ -156,6 +167,22 @@ class Main extends React.Component<{}, State> {
           }}
           getInstance={(ref) => {
             this.selector = ref
+          }}
+        />
+        <ConfigureCouponsModal
+          onOk={(res: any) => {
+            dataSource.map((data:any, key: any)=>{
+              if (this.skuId===data.skuId) {
+                dataSource[key].couponCodes=res
+              }
+            })
+            this.setState({
+              dataSource
+            })
+            this.selectorConfigure.hide()
+          }}
+          getInstance={(ref) => {
+            this.selectorConfigure = ref
           }}
         />
         <div className='mb8'>
