@@ -387,10 +387,10 @@ class Add extends React.Component<Props, State> {
           />
           <If condition={isAudit}>
             <FormItem
-              label='不通过原因'
+              label='审核意见'
               inner={(form) => {
                 return form.getFieldDecorator('auditMsg')(
-                  <TextArea rows={4} placeholder='不通过原因' />
+                  <TextArea disabled={isReadOnly} rows={4} placeholder='审核意见' />
                 )
               }}
             >

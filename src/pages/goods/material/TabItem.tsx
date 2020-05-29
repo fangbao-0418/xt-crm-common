@@ -164,7 +164,7 @@ class MaterialTabItem extends React.Component<any> {
             <If condition={auditStatus === 1 || auditStatus === 2}>
               <span
                 className='href mr10'
-                onClick={() => this.editMaterial(id, 'readOnly')}
+                onClick={() => this.editMaterial(id, 'readOnly', 'audit')}
               >
               查看
               </span>
@@ -264,6 +264,16 @@ class MaterialTabItem extends React.Component<any> {
     if (update) {
       this.list.fetchData()
     }
+  }
+  /**
+   * 关闭弹窗，清楚所有状态
+   */
+  onCancel = () => {
+    this.setState({
+      isReadOnly: false,
+      isAudit: false,
+      modalVisible: false
+    })
   }
 
   /**
