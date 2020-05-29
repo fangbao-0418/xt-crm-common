@@ -1,17 +1,22 @@
+/* eslint-disable react/no-string-refs */
 import React from 'react'
-import { Card, Row, Col, Icon, Radio, Input, Modal } from 'antd'
+import { Card, Row, Col, Icon, Radio, Input, Modal, Table, Button } from 'antd'
 import Shop from './shop'
 import Coupon from './coupon'
 import Hotsport from './hotspot'
-import Upload from '@/components/upload';
-import ShopModal from '@/components/shop-modal';
-import CouponModal from '@/components/coupon-modal';
-import { typeConfig } from '../../constant';
-import { connect } from 'react-redux';
-import ActivityList from '@/pages/activity/info/ActivityList';
-import { namespace } from '../../content/model';
-import GoodsTransfer from '@/components/goods-transfer';
-import { concat, filter, includes } from 'lodash';
+import Upload from '@/components/upload'
+import ShopModal from '@/components/shop-modal'
+import CouponModal from '@/components/coupon-modal'
+import { typeConfig } from '../../constant'
+import { connect } from 'react-redux'
+import ActivityList from '@/pages/activity/info/ActivityList'
+import { namespace } from '../../content/model'
+import GoodsTransfer from '@/components/goods-transfer'
+import { concat, filter, includes } from 'lodash'
+import { importShop } from '@/pages/coupon/api'
+import { unionArray } from '@/util/utils'
+import Alert from '@/packages/common/components/alert'
+import { If, FormItem } from '@/packages/common/components'
 
 /**
  * 样式图片 1*1 1*2 1*3
@@ -29,7 +34,7 @@ const images: any = {
     plainCss: require('@/assets/images/plain1x3.png'),
     activityCss: require('@/assets/images/activity1x3.png')
   }
-};
+}
 
 interface State {
   /** 优惠券显隐 */
@@ -41,6 +46,7 @@ interface Props {
   state: any;
   dispatch: any;
   detail: any;
+  alert: any
   onChange?: (value?: any) => void;
 }
 class Main extends React.Component<Props, State> {
@@ -55,65 +61,65 @@ class Main extends React.Component<Props, State> {
     activeityListVisible: false
   };
 
-  public onChange(detail?: Special.DetailContentProps) {
+  public onChange (detail?: Special.DetailContentProps) {
     if (this.props.onChange) {
-      this.props.onChange(detail);
+      this.props.onChange(detail)
     }
   }
 
-  public getSelectedRowKeys(list: any) {
+  public getSelectedRowKeys (list: any) {
     const ids: any[] = [];
     (list || []).map((item: any) => {
       if (item && item.id !== undefined && ids.indexOf(item.id) === -1) {
-        ids.push(item.id);
+        ids.push(item.id)
       }
-    });
-    return ids;
+    })
+    return ids
   }
 
   public handleSelectActivity = (selectedRow: any) => {
-    const { dispatch } = this.props;
-    const result = dispatch[namespace].getGoodsListByActivityId({ promotionId: selectedRow.id });
+    const { dispatch } = this.props
+    const result = dispatch[namespace].getGoodsListByActivityId({ promotionId: selectedRow.id })
     result.then(() => {
-      this.goodsTransfer.showModal();
-    });
+      this.goodsTransfer.showModal()
+    })
   };
 
   public goodsTransferCancel = () => {
-    this.goodsTransfer.closeModal();
+    this.goodsTransfer.closeModal()
   };
   public onClick = (src: string) => () => {
-    window.open(src);
+    window.open(src)
   };
   public goodsTransferOk = (selectedRowKeys: any) => {
-    const { detail, state, dispatch } = this.props;
-    const { goodsListByCurrentActivity } = state;
+    const { detail, state, dispatch } = this.props
+    const { goodsListByCurrentActivity } = state
     const selectedRows = filter(goodsListByCurrentActivity, item => {
-      return includes(selectedRowKeys, item.productId);
-    });
+      return includes(selectedRowKeys, item.productId)
+    })
     detail.products = concat(
       detail.products,
       selectedRows.map(item => {
-        item.id = item.productId;
-        return item;
+        item.id = item.productId
+        return item
       })
-    );
-    this.goodsTransfer.closeModal();
-    this.onChange(detail);
+    )
+    this.goodsTransfer.closeModal()
+    this.onChange(detail)
   };
 
   /**
    * 渲染商品楼层
    */
   public renderShop () {
-    const { detail, state } = this.props;
-    const { goodsListByCurrentActivity } = state;
-    const selectedRowKeys = this.getSelectedRowKeys(detail.products);
-    this.tempList = Array.prototype.concat(detail.products || []);
-    detail.style = detail.style || 1;
-    detail.css = detail.css || 1;
-    const plainCss = images[detail.css] && images[detail.css].plainCss;
-    const activityCss = images[detail.css] && images[detail.css].activityCss;
+    const { detail, state } = this.props
+    const { goodsListByCurrentActivity } = state
+    const selectedRowKeys = this.getSelectedRowKeys(detail.products)
+    this.tempList = Array.prototype.concat(detail.products || [])
+    detail.style = detail.style || 1
+    detail.css = detail.css || 1
+    const plainCss = images[detail.css] && images[detail.css].plainCss
+    const activityCss = images[detail.css] && images[detail.css].activityCss
     return (
       <div>
         <Row gutter={12} className='mb10'>
@@ -122,8 +128,8 @@ class Main extends React.Component<Props, State> {
             <Radio.Group
               value={detail.css}
               onChange={e => {
-                detail.css = e.target.value;
-                this.onChange(detail);
+                detail.css = e.target.value
+                this.onChange(detail)
               }}
             >
               <Radio value={1}>1*1</Radio>
@@ -132,24 +138,24 @@ class Main extends React.Component<Props, State> {
             </Radio.Group>
           </Col>
         </Row>
-        <Row gutter={12} className="mb10">
+        <Row gutter={12} className='mb10'>
           <Col span={3}>展示样式:</Col>
           <Col span={9}>
             <Radio.Group
               value={detail.style}
               style={{ display: 'flex' }}
               onChange={e => {
-                console.log('e => ', e);
-                detail.style = e.target.value;
-                this.onChange(detail);
+                console.log('e => ', e)
+                detail.style = e.target.value
+                this.onChange(detail)
               }}
             >
               <div>
-                <img width={100} height={100} src={plainCss} onClick={this.onClick(plainCss)} alt="" />
+                <img width={100} height={100} src={plainCss} onClick={this.onClick(plainCss)} alt='' />
                 <Radio value={1}>普通样式</Radio>
               </div>
               <div>
-                <img width={100} height={100} src={activityCss} onClick={this.onClick(activityCss)} alt="" />
+                <img width={100} height={100} src={activityCss} onClick={this.onClick(activityCss)} alt='' />
                 <Radio value={2}>活动样式</Radio>
               </div>
             </Radio.Group>
@@ -161,69 +167,112 @@ class Main extends React.Component<Props, State> {
             <Shop
               dataSource={detail.products}
               onChange={value => {
-                detail.products = value;
-                this.onChange(detail);
+                detail.products = value
+                this.onChange(detail)
               }}
             />
             <ShopModal
               selectedRowKeys={selectedRowKeys}
-              ref="shopmodal"
+              ref='shopmodal'
               onSelectAll={(selected, selectedRows, changeRows) => {
                 if (selected) {
                   changeRows.map(item => {
-                    this.tempList.push(item);
-                  });
+                    this.tempList.push(item)
+                  })
                 } else {
-                  const ids = changeRows.map(val => val.id);
+                  const ids = changeRows.map(val => val.id)
                   this.tempList = this.tempList.filter(item => {
-                    return ids.indexOf(item.id) === -1;
-                  });
+                    return ids.indexOf(item.id) === -1
+                  })
                 }
               }}
               onSelect={(record, selected) => {
                 if (selected) {
-                  this.tempList.push(record);
+                  this.tempList.push(record)
                 } else {
-                  this.tempList = this.tempList.filter(item => item.id !== record.id);
+                  this.tempList = this.tempList.filter(item => item.id !== record.id)
                 }
               }}
               onOk={() => {
-                detail.products = this.tempList;
-                this.onChange(detail);
+                detail.products = this.tempList
+                this.onChange(detail)
               }}
             />
           </Col>
         </Row>
         <Row gutter={12}>
           <Col span={3}></Col>
-          <Col span={9}>
+          <Col span={6}>
             <span
-              className="href"
+              className='href'
               style={{ marginRight: 8 }}
               onClick={() => {
-                const ref: any = this.refs.shopmodal;
-                ref.setState({ visible: true });
+                const ref: any = this.refs.shopmodal
+                ref.setState({ visible: true })
               }}
             >
               选择商品
             </span>
-            <ActivityList activityType={[1, 2, 3, 10]} text="选择活动商品" confirm={this.handleSelectActivity} />
+            <ActivityList activityType={[1, 2, 3, 10]} text='选择活动商品' confirm={this.handleSelectActivity} />
             <GoodsTransfer
               ref={element => {
-                this.goodsTransfer = element;
+                this.goodsTransfer = element
               }}
-              title="选择商品"
+              title='选择商品'
               currentGoodsList={this.tempList}
               dataSource={goodsListByCurrentActivity}
               onCancel={this.goodsTransferCancel}
               onOk={this.goodsTransferOk}
             />
           </Col>
+          <Col span={3}>
+            <span
+              className='href mr8'
+              onClick={() => {
+                importShop().then((res) => {
+                  const data = (res.data || []).map((val: { name: any; productName: any }) => {
+                    val.name = val.productName
+                    return val
+                  })
+                  let num = (detail.products&&detail.products.length)||0
+                  const arr = unionArray(detail.products||[], data)
+                  num = arr.length - num
+                  this.showExportMessage({
+                    successNo: num,
+                    excelAddress: res.excelAddress
+                  })
+                  detail.products=arr
+                  this.onChange(detail)
+                })
+              }}
+            >
+               导入商品
+            </span>
+          </Col>
         </Row>
       </div>
-    );
+    )
   }
-
+  showExportMessage = (res: any) => {
+    this.props.alert({
+      footer: false,
+      content: (
+        <div style={{ lineHeight: '30px', marginBottom: 20 }}>
+          成功导入 <span className='success'>{res.successNo}</span> 条&nbsp;&nbsp;&nbsp;&nbsp;
+          {res.excelAddress && (
+            <span
+              className='href'
+              onClick={() => {
+                APP.fn.download(res.excelAddress, '导入失败商品清单')
+              }}
+            >
+              查看失败商品清单
+            </span>
+          )}
+        </div>
+      )
+    })
+  }
   /**
    * 渲染广告楼层
    */
@@ -240,45 +289,45 @@ class Main extends React.Component<Props, State> {
             detail.advertisementImgUrl ? [
               {
                 uid: 'advertisementImgUrl0',
-                url: detail.advertisementImgUrl,
-              },
+                url: detail.advertisementImgUrl
+              }
             ] : undefined
           }
           size={0.3}
-          listType="picture-card"
+          listType='picture-card'
           onChange={(value: any) => {
-            const detail = this.props.detail;
+            const detail = this.props.detail
             if (value[0] && value[0].url) {
               this.onChange({
                 ...detail,
                 advertisementImgUrl: value[0].url
-              });
+              })
             } else {
               this.onChange({
                 ...detail,
                 advertisementImgUrl: undefined
-              });
+              })
             }
           }}
         />
         <div>
           <Input
-            name="advertisementJumpUrl"
+            name='advertisementJumpUrl'
             style={{ width: 200 }}
-            placeholder="请输入正确的链接地址"
+            placeholder='请输入正确的链接地址'
             value={detail.advertisementJumpUrl}
             onChange={e => {
-              const value = e.target.value;
+              const value = e.target.value
               this.onChange({
                 ...detail,
                 advertisementJumpUrl: value
-              });
+              })
             }}
           />
         </div>
       </div>
       // </Draggable>
-    );
+    )
   }
 
   /**
@@ -297,8 +346,8 @@ class Main extends React.Component<Props, State> {
             <Radio.Group
               value={detail.css}
               onChange={e => {
-                detail.css = e.target.value;
-                this.onChange(detail);
+                detail.css = e.target.value
+                this.onChange(detail)
               }}
             >
               <Radio value={1}>1*1</Radio>
@@ -322,44 +371,44 @@ class Main extends React.Component<Props, State> {
               visible={this.state.couponVisible}
               selectedRowKeys={selectedRowKeys}
               onCancel={() => {
-                this.setState({ couponVisible: false });
+                this.setState({ couponVisible: false })
               }}
               onSelectAll={(selected, selectedRows, changeRows) => {
-                console.log('onSelectAll=>', selected, selectedRows, changeRows);
+                console.log('onSelectAll=>', selected, selectedRows, changeRows)
                 if (selected) {
                   changeRows.map(item => {
-                    this.tempCoupons.push(item);
-                  });
+                    this.tempCoupons.push(item)
+                  })
                 } else {
-                  const ids = changeRows.map(val => val.id);
+                  const ids = changeRows.map(val => val.id)
                   this.tempCoupons = this.tempCoupons.filter(item => {
-                    return ids.indexOf(item.id) === -1;
-                  });
+                    return ids.indexOf(item.id) === -1
+                  })
                 }
               }}
               onSelect={(record, selected) => {
                 if (!record) {
-                  return;
+                  return
                 }
                 if (selected) {
                   if (record) {
-                    this.tempCoupons.push(record);
+                    this.tempCoupons.push(record)
                   }
                 } else {
-                  this.tempCoupons = this.tempCoupons.filter(item => item && item.id !== record.id);
+                  this.tempCoupons = this.tempCoupons.filter(item => item && item.id !== record.id)
                 }
               }}
               onOk={() => {
-                this.tempCoupons = this.tempCoupons.filter(item => !!item);
-                detail.coupons = this.tempCoupons;
-                this.onChange(detail);
-                this.setState({ couponVisible: false });
+                this.tempCoupons = this.tempCoupons.filter(item => !!item)
+                detail.coupons = this.tempCoupons
+                this.onChange(detail)
+                this.setState({ couponVisible: false })
               }}
             />
             <span
-              className="href"
+              className='href'
               onClick={() => {
-                this.setState({ couponVisible: true });
+                this.setState({ couponVisible: true })
               }}
             >
               添加优惠券
@@ -407,34 +456,34 @@ class Main extends React.Component<Props, State> {
     const detail = this.props.detail
     return (
       <Card
-        size="small"
+        size='small'
         title={typeConfig&&typeConfig[detail.type]&&typeConfig[detail.type].title}
         style={{ width: 800 }}
         extra={
           <div>
             序号：
             <Input
-              size="small"
+              size='small'
               style={{ width: 60, marginRight: 10 }}
               value={detail.sort}
               onChange={e => {
                 this.onChange({
                   ...detail,
                   sort: Number(e.target.value)
-                });
+                })
               }}
             />
             <Icon
-              className="pointer"
-              type="delete"
+              className='pointer'
+              type='delete'
               onClick={() => {
                 Modal.confirm({
                   title: '系统提示',
                   content: '是否删除楼层',
                   onOk: () => {
-                    this.onChange();
+                    this.onChange()
                   }
-                });
+                })
               }}
             />
           </div>
@@ -450,4 +499,4 @@ export default connect((state: any) => {
   return {
     state: state[namespace]
   }
-})(Main) as any
+})(Alert(Main)) as any
