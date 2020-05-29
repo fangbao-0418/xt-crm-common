@@ -32,7 +32,7 @@ class Main extends React.Component<Props, State> {
   }
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
-      title: '场次id111',
+      title: '场次id',
       dataIndex: 'planId',
       align: 'center',
       width: 100,
@@ -227,24 +227,24 @@ class Main extends React.Component<Props, State> {
               condition={[
                 LiveStatusEnum['预告-待审核'],
                 LiveStatusEnum['预告-未过审'],
-                LiveStatusEnum['预告-禁播'],
                 LiveStatusEnum['预告-待开播'],
                 LiveStatusEnum['直播中']
               ].includes(record.liveStatus)}
             >
               <span onClick={this.setCoupon.bind(this, record)} className={'href'}>
-                优惠券{record.couponCodes && record.couponCodes[0] && record.couponCodes.length}
+                优惠券{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
               </span>
             </If>
             <If
               condition={[
+                LiveStatusEnum['停播-运营停播'],
                 LiveStatusEnum['回放已停播'],
                 LiveStatusEnum['已结束'],
                 LiveStatusEnum['预告-已过期']
               ].includes(record.liveStatus)}
             >
-              <span onClick={this.setCoupon.bind(this, record)} className={'href'}>
-                优惠券{record.couponCodes && record.couponCodes[0] && record.couponCodes.length}
+              <span onClick={this.checkCoupon.bind(this, record)} className={'href'}>
+                优惠券{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
               </span>
             </If>
           </div>
@@ -253,27 +253,49 @@ class Main extends React.Component<Props, State> {
     }
   ]
   public setCoupon (record: UliveStudio.ItemProps) {
-    let selectedRowKeys: any[] = []
+    let selectedRowKeys: any[] = record.couponCodes ? record.couponCodes.map((item: any) => +item) : []
     const hide = this.props.alert({
       width: 1000,
+      title: '选择优惠券',
       content: (
         <CouponSelector
+          readonly={false}
           selectedRowKeys={selectedRowKeys}
           onChange={(rowKeys) => {
             selectedRowKeys = rowKeys
-            // console.log(selectedRowKeys, 'selectedRowKeys')
           }}
         />
       ),
       onOk: () => {
-        console.log(selectedRowKeys, 'selectedRowKeys')
         api.setCoupon({
           liveId: record.planId,
           couponCodes: selectedRowKeys
-        }).then(res => {
+        }).then(() => {
+          this.listpage.refresh()
           hide()
         })
       }
+    })
+  }
+  public checkCoupon (record: UliveStudio.ItemProps) {
+    const selectedRowKeys: any[] = record.couponCodes ? record.couponCodes.map((item: any) => +item) : []
+    if (!selectedRowKeys.length) {
+      this.props.alert({
+        title: '查看优惠券',
+        content: '该直播间未绑定优惠券'
+      })
+      return
+    }
+    this.props.alert({
+      width: 1000,
+      title: '查看优惠券',
+      footer: null,
+      content: (
+        <CouponSelector
+          selectedRowKeys={selectedRowKeys}
+          readonly={true}
+        />
+      )
     })
   }
   public stopPlayback (record: UliveStudio.ItemProps) {

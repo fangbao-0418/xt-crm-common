@@ -63,6 +63,7 @@ const getFieldsConfig = function (partial?: FieldsConfig): FieldsConfig {
 }
 
 interface Props {
+  readonly?: boolean
   onChange?: (selectedRowKeys: any[]) => void
   selectedRowKeys?: any[]
 }
@@ -136,33 +137,56 @@ class Main extends React.Component<Props> {
   }
   render () {
     const { selectedRowKeys } = this.state
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.handleSelectChange,
-      getCheckboxProps: (record: any) => ({
-        disabled: record.status === 2
-      })
+    const { readonly } = this.props
+    let listPageProps = null
+
+    if (readonly) {
+      listPageProps = {
+        tableProps: {
+          rowKey: 'id'
+        }
+      }
+    } else {
+      listPageProps = {
+        tableProps: {
+          rowKey: 'id',
+          rowSelection: {
+            selectedRowKeys,
+            onChange: this.handleSelectChange,
+            getCheckboxProps: (record: any) => ({
+              disabled: record.status === 2
+            })
+          }
+        },
+        formConfig: getFieldsConfig(),
+        formItemLayout: (
+          <>
+            <FormItem name='code' />
+            <FormItem name='name' />
+            <FormItem fieldDecoratorOptions={{ initialValue: 1 }} name='status' />
+          </>
+        )
+      }
     }
 
     return (
       <div style={{ margin: '-20px' }}>
         <ListPage
+          {...listPageProps}
+          processPayload={(payload) => {
+            if (readonly) {
+              return {
+                ...payload,
+                couponIds: selectedRowKeys
+              }
+            } else {
+              return payload
+            }
+          }}
           getInstance={(ref) => {
             this.listpage = ref
           }}
-          formConfig={getFieldsConfig()}
           columns={this.columns}
-          tableProps={{
-            rowKey: 'id',
-            rowSelection
-          }}
-          formItemLayout={(
-            <>
-              <FormItem name='code' />
-              <FormItem name='name' />
-              <FormItem fieldDecoratorOptions={{ initialValue: 1 }} name='status' />
-            </>
-          )}
           api={api.getCouponList}
           addonAfterSearch={(
             <span>{' '}已选：{selectedRowKeys.length} 张</span>
