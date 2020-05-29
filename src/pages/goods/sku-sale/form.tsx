@@ -12,6 +12,7 @@ import styles from '../style.module.scss'
 import { Form, FormItem, If } from '@/packages/common/components'
 import ProductCategory from '../components/product-category'
 import ProductSelector from './components/product-seletor'
+import AdressReturn from './components/adress-return'
 import { defaultConfig } from './config'
 import DraggableUpload from '../components/draggable-upload'
 import { RouteComponentProps } from 'react-router'
@@ -78,6 +79,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   }
   id: number
   modifyTime: number
+  adressReturnRef: any
   constructor (props: SkuSaleFormProps) {
     super(props)
     this.id = +props.match.params.id
@@ -196,8 +198,15 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'storeProductId',
           'isAuthentication',
           'isCalculateFreight'
-        ])
+        ]),
+        storeAddress: {
+          storeAddressId: res.storeAddressId + '',
+          storeAddressTxt: `${res.returnContact} ${res.returnPhone} ${res.returnAddress}`
+        }
       })
+      if (res.storeId) {
+        this.adressReturnRef.fetchData(res.storeId)
+      }
     })
   }
 
@@ -296,17 +305,19 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
     if (!this.form) {
       return
     }
-    this.form.props.form.validateFields((err, vals) => {
+    this.form.props.form.validateFields((err, { storeAddress, ...vals }) => {
       this.forceUpdate()
       let msgs = []
       if (err) {
         const errs = flattenDeep(Object.keys(err).map(key => err[key].errors))
         msgs = errs.filter(item => item.pass).map(item => item.msg)
+        console.log(errs, msgs)
         if (errs.length !== msgs.length) {
           APP.error('请检查输入项')
           return
         }
       }
+      
       if (specs.find((item) => {
         return item.content.length === 0
       })) {
@@ -326,6 +337,14 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         message.error('请选择运费模板')
         return
       }
+
+      if (storeAddress.storeAddressId) {
+        vals.storeAddressId = +storeAddress.storeAddressId
+      } else {
+        message.error('请选择退货地址')
+        return
+      }
+    
       if (msgs.length) {
         Modal.confirm({
           title: <div style={{ textAlign: 'center' }}>商品价格提醒</div>,
@@ -446,6 +465,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
   }
 
   supplierChange = (value: string, options: supplierItem[]) => {
+    console.log(198288282)
     let skuList = this.state.skuList
     const { form: { resetFields, getFieldsValue, setFieldsValue } } = this.form.props
     const currentSupplier: any = options.find(item => item.id === +value) || {}
@@ -477,7 +497,11 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       })
     }
     setFieldsValue({
-      productType
+      productType,
+      storeAddress: {
+        storeAddressId: undefined,
+        storeAddressTxt: ''
+      }
     })
     if (currentSupplier.category === 4) {
       skuList = skuList.map((item) => {
@@ -498,6 +522,9 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       skuList,
       supplierInfo: currentSupplier
     })
+    if (this.adressReturnRef) {
+      this.adressReturnRef.fetchData(value)
+    }
   }
   // 校验商品条码
   getSkuStockDetailByCode = () => {
@@ -608,8 +635,15 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         'storeProductId',
         'isAuthentication',
         'isCalculateFreight'
-      ])
+      ]),
+      storeAddress: {
+        storeAddressId: res.storeAddressId ? res.storeAddressId + '' : undefined,
+        storeAddressTxt: res.returnContact ? `${res.returnContact} ${res.returnPhone} ${res.returnAddress}` : ''
+      }
     })
+    if (res.storeId) {
+      this.adressReturnRef.fetchData(res.storeId)
+    }
   }
   handleCancel = () => {
     this.setState({ visible: false })
@@ -629,8 +663,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       isGroup,
       productCode
     } = this.state
-    const { productType, status }: any = this.form ? this.form.getValues() : {}
-    console.log(barCode, 'render')
+    const { productType, status, storeId }: any = this.form ? this.form.getValues() : {}
+    console.log(barCode, 'render123', storeId)
     return (
       <Form
         getInstance={ref => this.form = ref}
@@ -1078,49 +1112,25 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             }}
           />
           <FormItem
+            hidden={!storeId}
             label='退货地址'
+            required={!!storeId}
             inner={(form) => {
               return (
-                <Row
-                  type='flex'
-                  style={{
-                    marginTop: 5,
-                    width: '60%'
-                  }}>
-                  <Input
-                    style={{ width: 160, marginRight: 10 }}
-                    className={styles['no-error']}
-                    name='returnContact'
-                    placeholder='收货人姓名'
-                    value={this.state.returnContact}
-                    onChange={this.handleInput}
-                  />
-                  {form.getFieldDecorator('returnPhone', {
-                    rules: [
-                      {
-                        max: 12,
-                        message: '收货人电话格式不正确'
-                      }
-                    ]
-                  })(
-                    <Input
-                      style={{ width: 160, marginRight: 10 }}
-                      placeholder='收货人电话'
-                      name='returnPhone'
-                      type='tel'
-                      maxLength={12}
-                      onChange={this.handleInput}
-                    />
-                  )}
-                  <Input
-                    style={{ flex: 1 }}
-                    className={styles['no-error']}
-                    name='returnAddress'
-                    value={this.state.returnAddress}
-                    placeholder='收货人详细地址'
-                    onChange={this.handleInput}
-                  />
-                </Row>
+                <div style={{ width: 500 }}>
+                  {
+                    form.getFieldDecorator('storeAddress', {
+                      rules: [
+                        {
+                          required: !!storeId,
+                          message: '请选择退货地址'
+                        }
+                      ]
+                    })(
+                      <AdressReturn storeId={storeId} ref={ref => this.adressReturnRef = ref} />
+                    )
+                  }
+                </div>
               )
             }}
           />

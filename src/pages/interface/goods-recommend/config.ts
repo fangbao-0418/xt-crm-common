@@ -2,13 +2,14 @@ import _ from 'lodash'
 import { OptionProps } from '@/packages/common/components/form'
 
 export interface FieldsConfig {
-  [namespace: string]: {[field: string]: OptionProps}
+  [namespace: string]: { [field: string]: OptionProps }
 }
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       name: {
-        type: 'input', label: '名称',
+        type: 'input',
+        label: '名称',
         fieldDecoratorOptions: {
           rules: [
             {
@@ -23,7 +24,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       date: {
-        type: 'rangepicker', label: '时间',
+        type: 'rangepicker',
+        label: '时间',
         controlProps: {
           showTime: true
         },
@@ -36,7 +38,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
                   cb('请选择开始/结束时间')
                 } else if (!value[0]) {
                   cb('请选择开始时间')
-                } else if (!value[1] ) {
+                } else if (!value[1]) {
                   cb('请选择结束时间')
                 } else if (value[1].unix() * 1000 < new Date().getTime()) {
                   cb('结束时间不能小于当前时间')
@@ -49,15 +51,17 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       },
       /** 位置 */
       location: {
-        type: 'select', label: '位置',
+        type: 'select',
+        label: '位置',
         allValue: 0,
         options: [
-          {label: '全部', value: 0},
-          {label: '支付结果页', value: 8},
-          {label: '个人中心', value: 4},
-          {label: '购物车', value: 2},
-          {label: '商品详情', value: 1},
-          {label: '拼团详情', value: 16}
+          { label: '全部', value: 0 },
+          { label: '支付结果页', value: 8 },
+          { label: '个人中心', value: 4 },
+          { label: '购物车', value: 2 },
+          { label: '商品详情', value: 1 },
+          { label: '拼团详情', value: 16 },
+          { label: '升级团长页', value: 32 }
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -69,14 +73,15 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       displayFrom: {
-        type: 'checkbox', label: '展示端',
+        type: 'checkbox',
+        label: '展示端',
         allValue: 0,
         options: [
-          {label: '全部', value: 0},
-          {label: 'ios', value: 8},
-          {label: '安卓', value: 4},
-          {label: '小程序', value: 2},
-          {label: 'H5', value: 1}
+          { label: '全部', value: 0 },
+          { label: 'ios', value: 8 },
+          { label: '安卓', value: 4 },
+          { label: '小程序', value: 2 },
+          { label: 'H5', value: 1 }
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -88,14 +93,15 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       status: {
-        type: 'select', label: '状态',
+        type: 'select',
+        label: '状态',
         options: [
-          {label: '已失效', value: 0},
-          {label: '待生效', value: 1},
-          {label: '已生效', value: 2}
+          { label: '已失效', value: 0 },
+          { label: '待生效', value: 1 },
+          { label: '已生效', value: 2 }
         ]
       }
-    } 
+    }
   }
   return _.mergeWith(defaultConfig, partial)
 }
@@ -107,6 +113,7 @@ export enum StatusEnum {
 }
 
 export enum LocationEnum {
+  升级团长页 = 32,
   拼团详情 = 16,
   支付结果页 = 8,
   个人中心 = 4,
@@ -122,7 +129,7 @@ export enum DisplayFromEnum {
 }
 
 export const locationMap: any = {
-  value: getAllGroupMap([1,2,4,8,16]),
+  value: getAllGroupMap([1, 2, 4, 8, 16, 32]),
   get label () {
     const value = this.value
     const result: any = {}
@@ -190,7 +197,7 @@ function getAllGroupMap (arr: number[]) {
   return result
 }
 export const displayFromMap: any = {
-  value: getAllGroupMap([1,2,4,8]),
+  value: getAllGroupMap([1, 2, 4, 8]),
   get label () {
     const value = this.value
     const result: any = {}

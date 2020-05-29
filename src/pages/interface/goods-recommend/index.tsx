@@ -84,7 +84,9 @@ class Main extends React.Component<Props> {
           <>
             <span
               className='href mr10'
-              onClick={() => { APP.history.push(`/interface/goods-recommend/${record.id}`) }}
+              onClick={() => {
+                APP.history.push(`/interface/goods-recommend/${record.id}`)
+              }}
             >
               {record.status !== 0 ? '编辑' : '查看'}
             </span>

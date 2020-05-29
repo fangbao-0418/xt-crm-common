@@ -3,6 +3,7 @@ import { Button, Card, Table, DatePicker, Icon, Row, Col, Input, InputNumber, Po
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import styles from './style.module.styl'
 import SelectFetch from '@/packages/common/components/select-fetch'
+import { getUniqueId } from '@/packages/common/utils'
 import { prizeOptions } from './config'
 import Upload from '@/components/upload'
 import PrizeSelect from './components/PrizeSelect'
@@ -74,7 +75,7 @@ class Main extends React.Component<Props, State> {
   public activityType: number = +(parseQuery() as any).activityType
 
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
-  public constructor(props: any) {
+  public constructor (props: any) {
     super(props)
     this.luckyDrawId = +props.match.params.luckyDrawId
     this.id = +props.match.params.id
@@ -146,18 +147,20 @@ class Main extends React.Component<Props, State> {
       align: 'center',
       key: 'awardPicUrl',
       width: 150,
-      render: (arg1: any, arg2: any, index: number) => (
-        <div style={{ textAlign: 'left' }}>
-          {this.getFieldDecorator('awardPicUrl', index)(
-            <Upload
-              pxSize={[{ width: 140, height: 140 }]}
-              fileType='image/png'
-              listType='picture-card'
-              disabled={[1, 4].includes(this.activityType) || this.readOnly}
-            />
-          )}
-        </div>
-      )
+      render: (arg1: any, arg2: any, index: number) => {
+        return (
+          <div style={{ textAlign: 'left' }}>
+            {this.getFieldDecorator('awardPicUrl', index)(
+              <Upload
+                pxSize={[{ width: 140, height: 140 }]}
+                fileType='image/png'
+                listType='picture-card'
+                disabled={[1, 4].includes(this.activityType) || this.readOnly}
+              />
+            )}
+          </div>
+        )
+      }
     },
     {
       title: '风控级别',
@@ -330,13 +333,13 @@ class Main extends React.Component<Props, State> {
     //   }
     // }
   ]
-  public componentDidMount() {
+  public componentDidMount () {
     if (this.id !== -1) {
       this.fetchDetail()
     }
   }
   /** 获取场次详情 */
-  public async fetchDetail() {
+  public async fetchDetail () {
     const res = await api.getSessionsDetail(this.id)
     const awardList = res.awardList
     this.form.setValues(res)
@@ -349,15 +352,15 @@ class Main extends React.Component<Props, State> {
     })
   }
   /** 初始化奖品列表 */
-  public initAwardList() {
-    let res: any = []
+  public initAwardList () {
+    const res: any = []
     const rows = [1, 4].includes(this.activityType) ? 10 : 8
     for (let i = 0; i < rows; i++) {
       res.push({
         awardType: null,
         awardValue: '',
         awardTitle: '',
-        awardPicUrl: '',
+        awardPicUrl: undefined,
         controlLevel: i === rows - 1 ? 0 : null,
         awardNum: null,
         receiveNum: null,
@@ -384,13 +387,13 @@ class Main extends React.Component<Props, State> {
    * @param index
    * @param val
    */
-  public setCellValue(id: string, index: number, val: any) {
+  public setCellValue (id: string, index: number, val: any) {
     const { awardList } = this.state
     const item: any = awardList[index] || {}
     const oldVal = item[id]
     item[id] = val
     if (ids.includes(id)) {
-      let result = calcTotal(awardList, curr => getNumber(curr[id]))
+      const result = calcTotal(awardList, curr => getNumber(curr[id]))
       const name = 'total' + upperFirst(id)
       if (result > 100) {
         item[id] = oldVal
@@ -416,7 +419,7 @@ class Main extends React.Component<Props, State> {
    * @param id
    * @param index
    */
-  public getCellValue(id: string, index: number) {
+  public getCellValue (id: string, index: number) {
     const { awardList } = this.state
     const item: any = awardList[index] || {}
     return item[id]
@@ -426,7 +429,7 @@ class Main extends React.Component<Props, State> {
    * @param id
    * @param index
    */
-  public getFieldDecorator(id: string, index: number) {
+  public getFieldDecorator (id: string, index: number) {
     return (node: any) => {
       return React.cloneElement(node, {
         onChange: (e: any) => {
@@ -438,7 +441,7 @@ class Main extends React.Component<Props, State> {
     }
   }
   /** 校验活动场次配置 */
-  public validate(awardList: Lottery.LuckyDrawAwardListVo[]) {
+  public validate (awardList: Lottery.LuckyDrawAwardListVo[]) {
     for (let i = 0; i < awardList.length; i++) {
       const prefixMsg = `奖品列表第${i + 1}行`
       const v = awardList[i]
@@ -498,6 +501,7 @@ class Main extends React.Component<Props, State> {
   public handleSave() {
     this.form.props.form.validateFields(async (err, vals) => {
       const awardList = this.state.awardList || []
+      console.log(awardList, 'awardList')
       if(!err) {
         const data = {
           luckyDrawId: this.luckyDrawId,
@@ -610,7 +614,7 @@ class Main extends React.Component<Props, State> {
         normalUserProbability: chance,
         headUserProbability: chance,
         areaUserProbability: chance,
-        cityUserProbability: chance,
+        cityUserProbability: chance
       }
     })
     const totalChance = 0
@@ -623,7 +627,7 @@ class Main extends React.Component<Props, State> {
       awardList
     })
   }
-  public render() {
+  public render () {
     const startTime = this.form && this.form.props.form.getFieldValue('startTime')
     return (
       <Form
