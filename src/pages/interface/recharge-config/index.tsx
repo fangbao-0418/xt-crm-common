@@ -88,7 +88,7 @@ class Main extends React.Component<{}, State> {
               className='href'
               onClick={() => {
                 this.skuId=record.skuId
-                this.selectorConfigure.open((record.couponCodes)&&(record.couponCodes).toString())
+                this.selectorConfigure.open(record.couponCodes?record.couponCodes:null)
               }}
             >
               配置优惠券

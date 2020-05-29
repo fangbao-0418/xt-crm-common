@@ -79,6 +79,10 @@ class Main extends React.Component<Props, State> {
                 return
               }
               if (type===2) {
+                APP.success('添加成功')
+                if (dataCouponSource&&dataCouponSource.length===10) {
+                  APP.error('最多可添加10个优惠券')
+                }
                 dataCouponSource.push(record)
               } else {
                 if (num>-1) {
@@ -113,13 +117,20 @@ class Main extends React.Component<Props, State> {
     }
   }
   //type:1、已添加的优惠券 2、搜索出的优惠券
-  public fetchCouponData (code: any, type:any) {
-    api.getCouponlist(code).then((res: any) => {
+  public fetchCouponData (data: any, type:any) {
+    if (type===2) {
+      data.status=1
+      data.exactMatchCode=true
+    }
+    api.getCouponlist(data).then((res: any) => {
       if (type===1) {
         this.setState({
           dataCouponSource: res.records || []
         })
       } else {
+        if (!res.records||(res.records&&res.records.length===0)) {
+          APP.error('优惠券不存在')
+        }
         this.setState({
           dataSource: res.records || []
         })
@@ -133,23 +144,27 @@ class Main extends React.Component<Props, State> {
     }
     const couponCode: any[]=[]
     dataCouponSource.map((data: any)=>{
+      if (data.status!==1) {
+        APP.error('添加的优惠券有已结束的，请删除后再确认')
+        return
+      }
       couponCode.push(data.code)
     })
     if (this.props.onOk) {
       this.props.onOk(couponCode)
     }
   }
-  public open (code: any) {
+  public open (codes: any) {
     if (this.form) {
       this.form.props.form.resetFields()
     }
-    if (code) {
-      this.fetchCouponData({ code }, 1)
+    if (codes) {
+      this.fetchCouponData({ codes }, 1)
     }
     this.setState({
       visible: true,
       dataSource: [],
-      dataCouponSource: code?this.state.dataCouponSource:[]
+      dataCouponSource: codes?this.state.dataCouponSource:[]
     })
   }
   public hide () {
