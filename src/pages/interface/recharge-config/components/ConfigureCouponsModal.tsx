@@ -141,15 +141,20 @@ class Main extends React.Component<Props, State> {
     const { dataCouponSource }=this.state
     if (!dataCouponSource||(dataCouponSource&&dataCouponSource.length===0)) {
       APP.error('请添加优惠券')
+      return
     }
     const couponCode: any[]=[]
+    let flag=false
     dataCouponSource.map((data: any)=>{
       if (data.status!==1) {
-        APP.error('添加的优惠券有已结束的，请删除后再确认')
-        return
+        flag=true
       }
       couponCode.push(data.code)
     })
+    if (flag) {
+      APP.error('添加的优惠券有已结束的，请删除后再确认')
+      return
+    }
     if (this.props.onOk) {
       this.props.onOk(couponCode)
     }
