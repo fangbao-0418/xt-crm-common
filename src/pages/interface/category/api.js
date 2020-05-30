@@ -1,42 +1,28 @@
-const { get, del, post, put } = APP.http;
+const { get, del, post, put } = APP.http
 
-//提现记录
-export function getFrontCategorys() {
-  return get('/category/menu', {
+export function getFrontCategorys () {
+  return get('/mcweb/product/category_menu/list', {
     status: 0,
     pageNo: 1,
     pageSize: 20
-  });
+  })
 }
 
-export function getCategory(id) {
-  return get('/category/menu/' + id);
+export function getCategory (categoryMenuId) {
+  return get('/mcweb/product/category_menu/detail', { categoryMenuId })
 }
-export function delCategory(id) {
-  return del('/category/menu?categoryId=' + id);
-}
-
-export function getCategorys(id) {
-  return get('/mcweb/product/category/getCategoryList?parentId=' + (id || 0));
-}
-/**
- * 
-  {
-    name: "string",
-    productCategoryVOS: [
-      {
-        "id": 0,
-        "name": "string",
-        "type": 0
-      }
-    ],
-    sort: 0
-  }
- */
-export function saveFrontCategory(data) {
-  return post('/category/menu', {}, { data, headers: {} });
+export function delCategory (categoryId) {
+  return del('/mcweb/product/category_menu/delete', { categoryId })
 }
 
-export function updateFrontCategory(data) {
-  return put('/category/menu', {}, { data, headers: {} });
+export function getCategorys (id) {
+  return get('/mcweb/product/category/getCategoryList?parentId=' + (id || 0))
+}
+
+export function saveFrontCategory (data) {
+  return post('/mcweb/product/category_menu/add', {}, { data, headers: {} })
+}
+
+export function updateFrontCategory (data) {
+  return put('/mcweb/product/category_menu/update', {}, { data, headers: {} })
 }
