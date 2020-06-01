@@ -80,6 +80,10 @@ declare namespace UliveStudio {
     orderTotalPayMoney: number
     /** 直播时长 */
     totalTime: number
+    /** 订单实际支付订单总数(直接) */
+    orderIndirectPayTotal: number
+    /** 订单实付总金额(直接) */
+    orderIndirectPayMoney: number
   }
   /** 举报信息 */
   interface ComplainProps {

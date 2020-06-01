@@ -267,6 +267,10 @@ class Main extends React.Component<Props, State> {
         />
       ),
       onOk: () => {
+        if (selectedRowKeys.length > 20) {
+          APP.error('优惠券最多只能绑定20张')
+          return
+        }
         api.setCoupon({
           liveId: record.planId,
           couponCodes: selectedRowKeys
