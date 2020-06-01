@@ -1,37 +1,17 @@
 // 订单管理-下载列表
 
 import React from 'react'
-import { Table, Tag } from 'antd'
+import { Table, Tag, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import * as api from './api'
 import Page from '@/components/page'
+import { TypeEnum } from './config'
 interface State {
   pageSize: number
   page: number
   total: number
   data: any[]
   loading: boolean
-}
-
-enum TypeEnum {
-  订单导出 = 1,
-  售后订单导出 = 2,
-  财务对账单详情导出 = 3,
-  结算单明细导出 = 4,
-  财务对账单列表导出 = 5,
-  财务结算单导出 = 6,
-  财务付款单导出 = 7,
-  财务调整单导出 = 8,
-  买菜商品导出 = 201,
-  买菜订单导出 = 202,
-  买菜采购单导出 = 301,
-  买菜门店订单导出 = 302,
-  'WMS-导出出库单' = 350,
-  '商家-导出提现单' = 400,
-  '商家-对账单列表导出' = 410,
-  '商家-对账单明细导出' = 411,
-  '商家-调整单列表导出' = 420,
-  '充值单导出' = 104
 }
 
 interface Info {
@@ -144,10 +124,11 @@ class Main extends React.Component {
   /**
    * 搜索事件
    */
-  public handleSearch (current: number) {
+  public handleSearch (current?: number) {
+    current = current || this.payload.pageNum
     this.setState({
       loading: true,
-      page: this.payload.pageNum
+      page: current
     })
     api.getEarningsDetail({ current }).then((res) => {
       this.setState({
@@ -162,6 +143,16 @@ class Main extends React.Component {
     const { pageSize, page, total, data } = this.state
     return (
       <Page>
+        <div>
+          <Button
+            type='primary'
+            onClick={() => {
+              this.handleSearch()
+            }}
+          >
+            刷新
+          </Button>
+        </div>
         <Table
           pagination={{
             total,
@@ -172,7 +163,6 @@ class Main extends React.Component {
             pageSize,
             current: page
           }}
-          rowKey='id'
           columns={this.columns}
           dataSource={data}
         />

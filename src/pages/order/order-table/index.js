@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin, Row, Col, Select } from 'antd';
-import { isNil } from 'lodash';
-import moment from 'moment';
-import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant';
-import { formatDate, formatMoneyWithSign } from '../../helper';
-import { getOrderList, exportOrder, importLogistics } from '../api';
-import GoodCell from '../../../components/good-cell';
-import SuppilerSelect from '@/components/suppiler-auto-select';
-import RefundCell from '../components/refund-cell';
-import RemarkModal from '../components/modal/remark-modal';
-import RefundModal from '../components/refund-modal';
-import RefundStatusCell from '../components/refund-status-cell';
-import { getHeaders, parseQuery } from '@/util/utils';
-import SelectOrderType from './SelectOrderType';
-import withModal from './withModal';
+import React, { useState } from 'react'
+import { Table, Card, Form, Input, Button, Divider, message, Upload, DatePicker, Spin, Row, Col, Select } from 'antd'
+import { isNil } from 'lodash'
+import moment from 'moment'
+import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant'
+import { formatDate, formatMoneyWithSign } from '../../helper'
+import { getOrderList, newExportOrder, importLogistics } from '../api'
+import GoodCell from '../../../components/good-cell'
+import SuppilerSelect from '@/components/suppiler-auto-select'
+import RefundCell from '../components/refund-cell'
+import RemarkModal from '../components/modal/remark-modal'
+import RefundModal from '../components/refund-modal'
+import RefundStatusCell from '../components/refund-status-cell'
+import { getHeaders, parseQuery } from '@/util/utils'
+import SelectOrderType from './SelectOrderType'
+import withModal from './withModal'
 import styles from './style.m.styl'
-const { RangePicker } = DatePicker;
-const FormItem = Form.Item;
+const { RangePicker } = DatePicker
+const FormItem = Form.Item
 
 const formatRangeDate = (val) => {
   return Array.isArray(val) ? val.map(v => v.format('YYYY-MM-DD HH:mm')) : []
@@ -34,68 +34,64 @@ class OrderList extends React.Component {
     loading: false
   };
 
-  componentDidMount() {
-    // this.query();
-  }
-
   query = (isExport = false, noFetch = false) => {
-    const { intercept } = this.props;
-    const obj = parseQuery();
-    let fieldsValues = this.props.form.getFieldsValue();
-    let rangePickerValue = fieldsValues['rangePicker'];
+    const { intercept } = this.props
+    const obj = parseQuery()
+    const fieldsValues = this.props.form.getFieldsValue()
+    const rangePickerValue = fieldsValues['rangePicker']
     if (this.props.type === 'refund') {
       const [skuServerStartDate, skuServerEndDate] = formatRangeDate(rangePickerValue);
-      fieldsValues.skuServerStartDate = skuServerStartDate;
-      fieldsValues.skuServerEndDate = skuServerEndDate;
+      fieldsValues.skuServerStartDate = skuServerStartDate
+      fieldsValues.skuServerEndDate = skuServerEndDate
     }
     if (this.props.type === 'order') {
-      const [orderStartDate, orderEndDate] = formatRangeDate(rangePickerValue);
-      fieldsValues.orderStartDate = orderStartDate;
-      fieldsValues.orderEndDate = orderEndDate;
+      const [orderStartDate, orderEndDate] = formatRangeDate(rangePickerValue)
+      fieldsValues.orderStartDate = orderStartDate
+      fieldsValues.orderEndDate = orderEndDate
     }
     if (intercept) {
-      fieldsValues['interceptorFlag'] = 1;
-      fieldsValues['interceptorPhone'] = obj.iphone;
+      fieldsValues['interceptorFlag'] = 1
+      fieldsValues['interceptorPhone'] = obj.iphone
     }
-    let playPickerValue = fieldsValues['playPicker'];
-    const [payStartDate, payEndDate] = formatRangeDate(playPickerValue);
-    fieldsValues.payStartDate = payStartDate;
-    fieldsValues.payEndDate = payEndDate;
-    delete fieldsValues['playPicker'];
-    delete fieldsValues['rangePicker'];
-    let params = {
+    const playPickerValue = fieldsValues['playPicker']
+    const [payStartDate, payEndDate] = formatRangeDate(playPickerValue)
+    fieldsValues.payStartDate = payStartDate
+    fieldsValues.payEndDate = payEndDate
+    delete fieldsValues['playPicker']
+    delete fieldsValues['rangePicker']
+    const params = {
       ...fieldsValues,
       orderStatus: this.props.orderStatus,
       refundStatus: this.props.refundStatus,
       page: this.state.current,
       pageSize: this.state.pageSize
-    };
+    }
     this.payload = this.payload || {}
     this.payload[this.props.pathname] = params
     APP.fn.setPayload('order', this.payload)
     if (noFetch) {
-      return;
+      return
     }
     if (isExport) {
       this.setState({
         loading: true
-      });
-      exportOrder(params)
+      })
+      newExportOrder(params)
         .then(res => {
-          res && message.success('导出成功');
+          APP.success('导出成功，请前往下载列表下载文件')
         })
         .finally(() => {
           this.setState({
             loading: false
-          });
-        });
+          })
+        })
     } else {
       getOrderList(params).then((res = {}) => {
         this.setState({
           list: res.records,
           total: res.total
-        });
-      });
+        })
+      })
     }
   };
 
@@ -105,41 +101,41 @@ class OrderList extends React.Component {
         current: 1
       },
       () => {
-        this.query();
+        this.query()
       }
-    );
+    )
   };
 
   handleImportChange = info => {
-    const { status, response, name } = info.file;
+    const { status, response, name } = info.file
     if (status === 'done') {
       if (response.success) {
-        message.success(`${name} 文件上传成功`);
+        message.success(`${name} 文件上传成功`)
       } else {
-        message.error(`${response.message}`);
+        message.error(`${response.message}`)
       }
     } else if (status === 'error') {
-      message.error(`${name} 文件上传错误.`);
+      message.error(`${name} 文件上传错误.`)
     }
   };
 
   export = () => {
-    this.query(true);
+    this.query(true)
   };
 
   reset = () => {
-    this.props.form.resetFields();
-    this.payload[this.props.pathname] = {};
-    APP.fn.setPayload('order', this.payload);
+    this.props.form.resetFields()
+    this.payload[this.props.pathname] = {}
+    APP.fn.setPayload('order', this.payload)
     this.setState({}, () => {
-      console.log(this.props.form.getFieldsValue(), 'getFieldsValue');
-      this.query();
-    });
-  };
+      console.log(this.props.form.getFieldsValue(), 'getFieldsValue')
+      this.query()
+    })
+  }
 
   onSelectChange = selectedRowKeys => {
-    const { setSelectedRowKeys } = useState([]);
-    setSelectedRowKeys(selectedRowKeys);
+    const { setSelectedRowKeys } = useState([])
+    setSelectedRowKeys(selectedRowKeys)
   };
 
   handlePageChange = (page, pageSize) => {
@@ -149,24 +145,29 @@ class OrderList extends React.Component {
         pageSize
       },
       this.query
-    );
+    )
   };
-  render() {
-    const { total, pageSize, current, list } = this.state;
+  render () {
+    const { total, pageSize, current, list } = this.state
     const {
       refundStatus,
       intercept,
       form: { getFieldDecorator }
-    } = this.props;
+    } = this.props
     const columns = [
       {
         title: '订单编号',
         dataIndex: 'orderCode',
         width: '400px',
         render: (operate, { orderStatus, orderCode }) => (
-          <Button type="link" href={window.location.pathname + `#/order/detail/${orderCode}`} target="_blank">
+          <span
+            className='href'
+            onClick={() => {
+              APP.open(`/order/detail/${orderCode}`)
+            }}
+          >
             {orderCode}
-          </Button>
+          </span>
         )
       },
       {
@@ -447,19 +448,19 @@ class OrderList extends React.Component {
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
                 <Button type='link' onClick={this.props.modal}>批量查询物流轨迹</Button>
-                <Button type="default" onClick={this.reset}>
+                <Button type='default' onClick={this.reset}>
                   清除条件
                 </Button>
-                <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>
+                <Button type='primary' style={{ margin: '0 10px' }} onClick={this.handleSearch}>
                   查询订单
                 </Button>
-                <Button type="primary" className='mr10' onClick={this.export}>
+                <Button type='primary' className='mr10' onClick={this.export}>
                   导出订单
                 </Button>
                 {this.props.orderStatus === enumOrderStatus.Undelivered && (
                   <Upload
-                    name="file"
-                    accept=".xls,.xlsx"
+                    name='file'
+                    accept='.xls,.xlsx'
                     showUploadList={false}
                     withCredentials={true}
                     action={importLogistics}
@@ -467,7 +468,7 @@ class OrderList extends React.Component {
                     onChange={this.handleImportChange}
                     style={{ margin: '0 10px' }}
                   >
-                    <Button type="primary">导入物流单号</Button>
+                    <Button type='primary'>导入物流单号</Button>
                   </Upload>
                 )}
               </Col>
@@ -491,12 +492,12 @@ class OrderList extends React.Component {
               rowKey={record => record.orderCode}
             />
           ) : (
-              '暂无数据'
-            )}
+            '暂无数据'
+          )}
         </Card>
       </div>
-    );
+    )
   }
 }
 
-export default Form.create()(OrderList);
+export default Form.create()(OrderList)

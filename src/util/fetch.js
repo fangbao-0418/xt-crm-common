@@ -173,7 +173,6 @@ export const exportFile = (url, data) => {
       // const fileName = getFileName(res.headers['content-disposition']);
       const downloadElement = document.createElement('a')
       blob = new Blob([blobText], { type: 'text/plain' })
-      console.log('blob==>', blob)
       const href = window.URL.createObjectURL(blob) //创建下载的链接
       downloadElement.href = href
       downloadElement.target = '_blank'
