@@ -176,7 +176,11 @@ export function refundDetail (params: any) {
 }
 
 export function newExportOrder (data: any) {
-  return APP.http.get('/order/export', data)
+  return APP.http.get('/order/export', {
+    ...data,
+    rangePicker: undefined,
+    playPicker: undefined
+  })
 }
 
 export function exportOrder (data: any) {
