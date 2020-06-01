@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Modal } from 'antd'
 
 /**  确认开启关闭 */
-function confirmOpen(fn: any, open: number) {
+function confirmOpen (fn: any, open: number) {
   Modal.confirm({
     title: '系统提示',
     content: `是否确认${open === 1 ? '开启' : '关闭'}`,
@@ -10,61 +10,82 @@ function confirmOpen(fn: any, open: number) {
   })
 }
 
-function Main(props: any) {
+function Main (props: any) {
   return (
     <>
-      {[5, 6].includes(props.type) ? <Button
-        type='link'
-        onClick={props.onView}
-      >查看</Button> :
+      {[5, 6].includes(props.type) ? (
+        <span
+          className='href mr8'
+          onClick={props.onView}
+        >
+            查看
+        </span>
+      ) : (
         <div>
-          <Button
-            type='link'
+          <span
+            className='href mr8'
             onClick={props.onView}
-          >查看</Button>
-          <Button
-            type='link'
+          >
+            查看
+          </span>
+          {[1].includes(props.type) && (
+            <span
+              className='href mr8'
+              onClick={props.onCopy}
+            >
+              复制
+            </span>
+          )}
+          <span
+            className='href mr8'
             onClick={props.onEdit}
           >
             编辑
-      </Button>
-          {props.moduleId === 'sessions' && <Button type='link' onClick={() => {
-            Modal.confirm({
-              title: '系统提示',
-              content: '是否确认删除',
-              onOk: props.onDelete
-            })
-          }}>删除</Button>}
+          </span>
+          {props.moduleId === 'sessions' && (
+            <span
+              className='href mr8'
+              onClick={() => {
+                Modal.confirm({
+                  title: '系统提示',
+                  content: '是否确认删除',
+                  onOk: props.onDelete
+                })
+              }}
+            >
+              删除
+            </span>
+          )}
           {3 === Number(status) && (
-            <Button
-              type='link'
+            <span
+              className='href mr8'
               onClick={() => {
                 confirmOpen(props.onUpdate, 1)
               }}
             >
               开启
-        </Button>
+            </span>
           )}
           {[0, 1].includes(Number(status)) && (
-            <Button
-              type='link'
+            <span
+              className='href mr8'
               onClick={() => {
                 confirmOpen(props.onUpdate, props.status === 3 ? 1 : 0)
               }}
             >
               {props.status === 3 ? '开启' : '关闭'}
-            </Button>
+            </span>
           )}
           {props.moduleId === 'sessions' && (
-            <Button
-              type='link'
+            <span
+              className='href mr8'
               onClick={props.onJumpToReward}
             >
               查看用户中奖信息
-        </Button>
+            </span>
           )}
         </div>
-      }
+      )}
     </>
   )
 }

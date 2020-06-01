@@ -77,7 +77,7 @@ class CitySelect extends Component {
       })
     }
     // 卡省份解决县或市名称一样的问题
-    city.forEach((item) => {
+    this.city.forEach((item) => {
       const { label, value, children } = item
       if (selectedValues.includes(label)) {
         result.push(value)

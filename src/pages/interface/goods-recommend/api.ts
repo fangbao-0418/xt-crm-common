@@ -9,7 +9,7 @@ export const fetchList = (payload: {
   pageSize: number
   status: number
 }) => {
-  return newPost(`/product/recommend/list`, payload)
+  return newPost('/product/recommend/list', payload)
 }
 
 export const add = (payload: Item) => {
@@ -36,9 +36,9 @@ export const fetchGoodsList = (
 }
 
 export const fetchDetail = (id: any) => {
-  return get(`/product/recommend/detail/${id}`)
+  return get('/mcweb/product/recommend/detail', { id })
 }
 
 export const disabled = (id: any) => {
-  return newPut(`/product/recommend/disable/${id}`)
+  return newPut('/mcweb/product/recommend/disable', { id })
 }

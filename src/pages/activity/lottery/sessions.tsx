@@ -16,22 +16,22 @@ import modal, { ModalProps } from './components/modal'
 import { Decimal } from 'decimal.js'
 import Tips from './components/Tips'
 /** 判断假值，过滤undefined，null，NaN，'’，不过滤0 */
-function isFalsly(val: any) {
+function isFalsly (val: any) {
   return val == null || val === '' || Number.isNaN(val)
 }
 
 /** 获取活动开始时间 */
-function getActivityStartTime() {
+function getActivityStartTime () {
   return +(parseQuery() as any).activityStartTime
 }
 
 /** 返回必填标题组件 */
-function requiredTitle(title: string) {
+function requiredTitle (title: string) {
   return <span className={styles.required}>{title}</span>
 }
 
 /** 计算总价 */
-function calcTotal(collection: any[], iteratee?: (res: any) => number) {
+function calcTotal (collection: any[], iteratee?: (res: any) => number) {
   return (collection || []).reduce((prev: number, curr: any) => {
     curr = typeof iteratee === 'function' ? iteratee(curr) : curr
     return new Decimal(prev || 0).add(curr || 0).toNumber()
@@ -42,7 +42,7 @@ function calcTotal(collection: any[], iteratee?: (res: any) => number) {
 const props = (list: any[], id: string) => list.map(x => x[id] || 0)
 
 /** 返回一个数字 */
-function getNumber(val: number) {
+function getNumber (val: number) {
   val = +val
   return typeof val === 'number' && !Number.isNaN(val) ? val : 0
 }
@@ -73,7 +73,8 @@ class Main extends React.Component<Props, State> {
   public id: number
   // 活动类型
   public activityType: number = +(parseQuery() as any).activityType
-
+  /** 是否是复制 */
+  public isCopy: boolean = (parseQuery() as any).copy === 'true'
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public constructor (props: any) {
     super(props)
@@ -86,7 +87,7 @@ class Main extends React.Component<Props, State> {
     this.initAwardList()
   }
   // 删除当前行
-  public handleRemove(index: number) {
+  public handleRemove (index: number) {
     const { awardList } = this.state
     awardList.splice(index, 1)
     this.setState({ awardList })
@@ -498,24 +499,38 @@ class Main extends React.Component<Props, State> {
     return true
   }
   /** 新增、编辑活动场次 */
-  public handleSave() {
+  public handleSave () {
     this.form.props.form.validateFields(async (err, vals) => {
       const awardList = this.state.awardList || []
-      console.log(awardList, 'awardList')
-      if(!err) {
+      if (!err) {
         const data = {
           luckyDrawId: this.luckyDrawId,
           ...vals
         }
-        if(this.activityType <= 4) {
-          if(!this.validate(awardList)) return
-          data.awardList = awardList;
+        if (this.activityType <= 4) {
+          if (!this.validate(awardList)) {
+            return
+          }
+          data.awardList = awardList
         }
         let msg, res
         /** 新增场次 */
-        if (this.id === -1) {
+        /** isCopy = true && activityType = 1 红包雨活动复制功能 */
+        if (this.id === -1 || this.isCopy && this.activityType === 1) {
+          if (this.isCopy && this.activityType === 1) {
+            data.awardList = data.awardList.map((item: Lottery.LuckyDrawAwardListVo) => {
+              return {
+                ...item,
+                luckyDrawId: undefined,
+                luckyDrawRoundId: undefined,
+                id: undefined
+              }
+            })
+          }
           msg = '新增场次'
-          res = await api.saveSession(data)
+          res = await api.saveSession({
+            ...data
+          })
         } else {
           msg = '编辑场次'
           data.id = this.id
@@ -529,11 +544,11 @@ class Main extends React.Component<Props, State> {
     })
   }
   /** 取消 */
-  public handleCancel() {
+  public handleCancel () {
     APP.history.go(-1)
   }
   /**  添加新行 */
-  public handleAdd() {
+  public handleAdd () {
     const awardList: any = this.state.awardList
     const startIndex: number = Math.max(awardList.length - 2, 0)
     awardList.splice(startIndex, 0, {

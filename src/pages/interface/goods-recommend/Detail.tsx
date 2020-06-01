@@ -82,9 +82,9 @@ class Main extends React.Component<Props, State> {
             }
           }}
         >
-          <FormItem verifiable name='name' controlProps={{ style: {width: 300} }}/>
-          <FormItem verifiable name='location' type='checkbox'/>
-          <FormItem verifiable name='date'/>
+          <FormItem verifiable name='name' controlProps={{ style: { width: 300 } }} />
+          <FormItem verifiable name='location' type='checkbox' />
+          <FormItem verifiable name='date' />
           <FormItem
             name='displayFrom'
             verifiable

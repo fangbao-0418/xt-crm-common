@@ -13,7 +13,17 @@ import moment from 'moment'
 import BannerPostion from '@/components/banner-position'
 const FormItem = Form.Item
 const Option = Select.Option
-
+/**
+ * key
+ * 1.首页
+ * 2.分类频道
+ * 3.严选
+ * 4.支付结果
+ * 5.直播
+ * 6.充值中心
+ * 7.搜索列表
+ * 8.商品详情页
+ */
 const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 }
@@ -202,13 +212,13 @@ class BannerModal extends Component {
                 })(<Input placeholder='' />)}
               </FormItem>
             </If>
-            <If condition={[1, 2, 3, 4, 6, 7].includes(seat[0])}>
+            <If condition={[1, 2, 3, 4, 6, 7, 8].includes(seat[0])}>
               <FormItem key={renderKey} label='Banner图片' required={true}>
                 {getFieldDecorator('imgList', {
                   initialValue: initImgList(data.imgUrlWap),
                   rules: [
                     {
-                      required: [1, 2, 3, 4, 6, 7].includes(seat[0]),
+                      required: [1, 2, 3, 4, 6, 7, 8].includes(seat[0]),
                       message: '请上传Banner图片'
                     }
                   ]
@@ -257,12 +267,12 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4, 6, 7].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+            <If condition={([1, 2, 3, 4, 6, 7, 8].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
                   rules: [{
-                    required: ([1, 2, 3, 4, 6, 7].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
+                    required: ([1, 2, 3, 4, 6, 7, 8].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
                     message: '请选择平台'
                   }]
                 })(
