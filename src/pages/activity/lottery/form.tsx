@@ -107,6 +107,7 @@ class Main extends React.Component<any, State> {
         key: 'operate',
         title: '操作',
         width: 420,
+        align: 'center',
         render: (text: any, record: Lottery.LuckyDrawRoundListVo) => {
           const path = `/activity/lottery/${this.id}/${record.id}`
           return (
@@ -119,6 +120,11 @@ class Main extends React.Component<any, State> {
                 const { startTime, type } = this.form && this.form.getValues() || {}
                 const stamp = startTime ? startTime.valueOf() : 0
                 APP.history.push(`${path}?activityStartTime=${stamp}&activityType=${type}`)
+              }}
+              onCopy={() => {
+                const { startTime, type } = this.form && this.form.getValues() || {}
+                const stamp = startTime ? startTime.valueOf() : 0
+                APP.history.push(`${path}?activityStartTime=${stamp}&activityType=${type}&copy=true`)
               }}
               onDelete={async () => {
                 const res = await api.deleteSession(record.id)
@@ -225,19 +231,19 @@ class Main extends React.Component<any, State> {
               }]
             }}
           />
-          <div style={{display: typeVal <= 4 ? 'block': 'none'}}>
-          <FormItem
-            name='restrictWinningTimes'
-            type='number'
-            label='单人中奖次数上限'
-            controlProps={{
-              style: {
-                width: 195
-              },
-              min: 0,
-              precision: 0
-            }}
-          />
+          <div style={{ display: typeVal <= 4 ? 'block': 'none' }}>
+            <FormItem
+              name='restrictWinningTimes'
+              type='number'
+              label='单人中奖次数上限'
+              controlProps={{
+                style: {
+                  width: 195
+                },
+                min: 0,
+                precision: 0
+              }}
+            />
           </div>
           <FormItem
             name='remark'
@@ -265,14 +271,14 @@ class Main extends React.Component<any, State> {
             title={(
               <span>
                 <span>场次列表</span>
-                <span style={{ color: '#999'}}>（必须先有活动才能新建场次）</span>
-            </span>
-          )}>
+                <span style={{ color: '#999' }}>（必须先有活动才能新建场次）</span>
+              </span>
+            )}>
             <Table
               columns={columns}
               rowKey='id'
               pagination={false}
-              dataSource={this.state.roundList}/>
+              dataSource={this.state.roundList} />
           </Card>
         </div>
         <div className='mt10'>
