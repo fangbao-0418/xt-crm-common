@@ -17,10 +17,6 @@ interface Props {
   onCancel: (value: boolean) => void
   dataSource?: any
   type?: string
-  /** 是否只读 */
-  isReadOnly: boolean
-  /** 是否审核 */
-  isAudit: boolean
 }
 
 interface State {
@@ -119,29 +115,6 @@ class Add extends React.Component<Props, State> {
   }
 
   /**
-   * 审核素材
-   * 审核状态（1：审核通过，2：审核拒绝）
-   * */
-  auditSave = (auditStatus: 1 | 2) => {
-    const form = this.form.props.form
-    const { dataSource, onCancel } = this.props
-    form.validateFields((err: any, vals: any) => {
-      if (!err) {
-        const { auditMsg } = vals
-        const params = {
-          auditStatus,
-          auditMsg
-        }
-        // 如果有传入值dataSource和素材Id那就是编辑，否则就是新增
-        api.auditMaterial({ ...params, materialId: dataSource.id }).then(res => {
-          message.success('审核成功')
-          onCancel(false)
-
-        })
-      }
-    })
-  }
-  /**
    * 新增/编辑素材保存
    *
    * @memberof Add
@@ -194,10 +167,6 @@ class Add extends React.Component<Props, State> {
   }
 
   render () {
-    const {
-      isReadOnly,
-      isAudit
-    } = this.props
     const { nickName, userPhone } = this.state
     return (
       <Card className='activity-add'>
@@ -206,31 +175,14 @@ class Add extends React.Component<Props, State> {
             this.form = ref
           }}
           addonAfter={(
-            <>
-              <If condition={!isReadOnly}>
-                <FormItem {...formItemLayout}>
-                  <Button type='primary' onClick={this.handleSave}>
-                    保存
-                  </Button>
-                  <Button className='ml20' onClick={this.handleCancel}>
-                    取消
-                  </Button>
-                </FormItem>
-              </If>
-              <If condition={isAudit}>
-                <FormItem {...formItemLayout}>
-                  <Button type='primary' onClick={() => this.auditSave(1)}>
-                    审核通过
-                  </Button>
-                  <Button className='ml20' onClick={() => this.auditSave(2)}>
-                    不通过
-                  </Button>
-                  <Button className='ml20' onClick={this.handleCancel}>
-                    取消
-                  </Button>
-                </FormItem>
-              </If>
-            </>
+            <FormItem {...formItemLayout}>
+              <Button type='primary' onClick={this.handleSave}>
+                保存
+              </Button>
+              <Button className='ml20' onClick={this.handleCancel}>
+                取消
+              </Button>
+            </FormItem>
           )}
         >
           <FormItem
@@ -239,18 +191,14 @@ class Add extends React.Component<Props, State> {
             inner={(form) => {
               return (
                 <div>
-                  <If condition={!isReadOnly}>
-                    <span
-                      className='href'
-                      onClick={() => {
-                        if (!isReadOnly) {
-                          this.shopModalInstance.open()
-                        }
-                      }}
-                    >
-                      请选择商品
-                    </span>
-                  </If>
+                  <span
+                    className='href'
+                    onClick={() => {
+                      this.shopModalInstance.open()
+                    }}
+                  >
+                    请选择商品
+                  </span>
                   {
                     form.getFieldDecorator(
                       'productId',
@@ -303,7 +251,6 @@ class Add extends React.Component<Props, State> {
                           })
                         }}
                         enterButton='核验'
-                        disabled={isReadOnly}
                         style={{ width: '260px' }}
                         maxLength={11}
                         placeholder='请输入发布人手机号查询'
@@ -337,7 +284,7 @@ class Add extends React.Component<Props, State> {
                     message: '不能大于250个字符'
                   }
                 ]
-              })(<TextArea disabled={isReadOnly} rows={4} placeholder='备注' />)
+              })(<TextArea rows={4} placeholder='备注' />)
             }}
           >
           </FormItem>
@@ -349,7 +296,6 @@ class Add extends React.Component<Props, State> {
                   {
                     form.getFieldDecorator('videoUrl')(
                       <UploadView
-                        disabled={isReadOnly}
                         placeholder='上传视频'
                         fileType='video'
                         listType='picture-card'
@@ -371,7 +317,6 @@ class Add extends React.Component<Props, State> {
                   <div>
                     {form.getFieldDecorator('productImage')(
                       <DraggableUpload
-                        isReadOnly={isReadOnly}
                         className={styles['goods-draggable']}
                         listNum={16}
                         size={0.3}
@@ -385,17 +330,6 @@ class Add extends React.Component<Props, State> {
               )
             }}
           />
-          <If condition={isAudit}>
-            <FormItem
-              label='审核意见'
-              inner={(form) => {
-                return form.getFieldDecorator('auditMsg')(
-                  <TextArea disabled={isReadOnly} rows={4} placeholder='审核意见' />
-                )
-              }}
-            >
-            </FormItem>
-          </If>
         </Form>
         <ShopSelectModal
           api={api.getGoodsList}

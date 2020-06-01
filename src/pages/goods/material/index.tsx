@@ -47,8 +47,7 @@ class Material extends React.Component<any> {
             tabConfigs.map((item) => {
               return (
                 <TabPane tab={item.title} key={item.key}>
-                  <TabItem
-                    status={item.key} />
+                  {status === String(item.key) && <TabItem status={item.key} />}
                 </TabPane>
               )
             })

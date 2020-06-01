@@ -9,6 +9,7 @@ import { uuid, replaceHttpUrl } from '@/util/utils'
 import dateFns from 'date-fns'
 import * as api from './api'
 import Add from './add'
+import AuditAndDetail from './audit'
 import { defaultConfig } from './config'
 import styles from './style.module.scss'
 
@@ -30,7 +31,23 @@ const tableProps: any = {
   }
 }
 
-class MaterialTabItem extends React.Component<any> {
+interface Props {
+  status: string
+}
+
+type ActionType = 'edit' | 'view' | 'audit'
+
+interface State {
+  /** modal关闭状态 */
+  modalVisible: boolean
+  // 素材详情
+  materialDetail: any
+  // 是否审核
+  actionType?: ActionType
+  // 查看和审核弹窗关闭状态
+  auditModalVisible: boolean
+}
+class MaterialTabItem extends React.Component<Props, State> {
   list: ListPageInstanceProps
   columns = [
     {
@@ -156,7 +173,7 @@ class MaterialTabItem extends React.Component<any> {
             <If condition={auditStatus === 3}>
               <span
                 className='href mr10'
-                onClick={() => this.editMaterial(id, 'readOnly', 'audit')}
+                onClick={() => this.editMaterial(id, 'audit')}
               >
               审核
               </span>
@@ -164,7 +181,7 @@ class MaterialTabItem extends React.Component<any> {
             <If condition={auditStatus === 1 || auditStatus === 2}>
               <span
                 className='href mr10'
-                onClick={() => this.editMaterial(id, 'readOnly', 'audit')}
+                onClick={() => this.editMaterial(id, 'view')}
               >
               查看
               </span>
@@ -191,15 +208,15 @@ class MaterialTabItem extends React.Component<any> {
     }
   ]
 
-  state = {
+  state: State = {
     // modal关闭状态
     modalVisible: false,
-    // 是否是只读
-    isReadOnly: false,
     // 素材详情
     materialDetail: null,
     // 是否审核
-    isAudit: false
+    actionType: undefined,
+    // 查看和审核弹窗关闭状态
+    auditModalVisible: false
   }
 
   /**
@@ -247,8 +264,7 @@ class MaterialTabItem extends React.Component<any> {
    */
   addMaterial = () => {
     this.setState({
-      materialDetail: null,
-      isReadOnly: false
+      materialDetail: null
     })
     this.changeModalVisible(true)
   }
@@ -258,20 +274,24 @@ class MaterialTabItem extends React.Component<any> {
    * @memberof SkuStockList
    */
   changeModalVisible = (value: boolean, update?: boolean) => {
-    this.setState({
-      modalVisible: value
-    })
+    const { actionType } = this.state
     if (update) {
       this.list.fetchData()
     }
+    if (actionType === 'view' || actionType === 'audit') {
+      return this.setState({
+        auditModalVisible: value
+      })
+    }
+    this.setState({
+      modalVisible: value
+    })
   }
   /**
    * 关闭弹窗，清楚所有状态
    */
   onCancel = () => {
     this.setState({
-      isReadOnly: false,
-      isAudit: false,
       modalVisible: false
     })
   }
@@ -279,15 +299,14 @@ class MaterialTabItem extends React.Component<any> {
   /**
    * 编辑素材
    *  materialId: 素材id
-   *  type: 类型 readOnly: '查看', edit: '编辑'
+   *  actionType: 类型 audit: '审核':, view: '查看', edit: '编辑'
    * @memberof SkuStockList
    */
-  editMaterial = async (materialId: number, readOnlytype: string, isAudit?: string) => {
+  editMaterial = async (materialId: number, actionType: ActionType) => {
     const materialDetail = await api.getProductMaterialId(materialId)
     this.setState({
       materialDetail,
-      isReadOnly: readOnlytype === 'readOnly' ? true : false,
-      isAudit: isAudit && isAudit === 'audit'
+      actionType
     }, () => {
       this.changeModalVisible(true)
     })
@@ -295,7 +314,7 @@ class MaterialTabItem extends React.Component<any> {
 
   render () {
     const { status } = this.props
-    const { modalVisible, materialDetail, isReadOnly, isAudit } = this.state
+    const { modalVisible, materialDetail, auditModalVisible, actionType } = this.state
     const reserveKey = 'material/list-' + status
     return (
       <Page>
@@ -353,12 +372,29 @@ class MaterialTabItem extends React.Component<any> {
           }}
         >
           <Add
-            isReadOnly={isReadOnly}
-            isAudit={isAudit}
             dataSource={materialDetail}
             onCancel={(value) => this.changeModalVisible(value, true)}
           >
           </Add>
+        </Modal>
+        <Modal
+          key={uuid()}
+          title={materialDetail ? '编辑素材' : '添加素材'}
+          destroyOnClose
+          visible={auditModalVisible}
+          maskClosable={false}
+          width={1000}
+          footer={null}
+          onCancel={() => {
+            this.changeModalVisible(false)
+          }}
+        >
+          <AuditAndDetail
+            actionType={actionType}
+            dataSource={materialDetail}
+            onCancel={(value) => this.changeModalVisible(value, true)}
+          >
+          </AuditAndDetail>
         </Modal>
       </Page>
     )
