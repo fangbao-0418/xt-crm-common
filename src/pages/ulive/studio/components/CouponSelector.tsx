@@ -174,6 +174,8 @@ class Main extends React.Component<Props> {
         <ListPage
           {...listPageProps}
           processPayload={(payload) => {
+            payload.showFlag = 0
+            payload.receivePattern = 0
             if (readonly) {
               return {
                 ...payload,
