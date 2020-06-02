@@ -225,8 +225,6 @@ class Main extends React.Component<Props, State> {
             {/* {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)} */}
             <If
               condition={[
-                LiveStatusEnum['预告-待审核'],
-                LiveStatusEnum['预告-未过审'],
                 LiveStatusEnum['预告-待开播'],
                 LiveStatusEnum['直播中']
               ].includes(record.liveStatus)}
@@ -237,10 +235,10 @@ class Main extends React.Component<Props, State> {
             </If>
             <If
               condition={[
-                LiveStatusEnum['停播-运营停播'],
-                LiveStatusEnum['回放已停播'],
                 LiveStatusEnum['已结束'],
-                LiveStatusEnum['预告-已过期']
+                LiveStatusEnum['停播-运营停播'],
+                LiveStatusEnum['预告-已过期'],
+                LiveStatusEnum['预告-禁播']
               ].includes(record.liveStatus)}
             >
               <span onClick={this.checkCoupon.bind(this, record)} className={'href'}>
@@ -253,7 +251,7 @@ class Main extends React.Component<Props, State> {
     }
   ]
   public setCoupon (record: UliveStudio.ItemProps) {
-    let selectedRowKeys: any[] = record.couponCodes ? record.couponCodes.map((item: any) => +item) : []
+    let selectedRowKeys: any[] = record.couponCodes || []
     const hide = this.props.alert({
       width: 1000,
       title: '选择优惠券',
@@ -282,7 +280,7 @@ class Main extends React.Component<Props, State> {
     })
   }
   public checkCoupon (record: UliveStudio.ItemProps) {
-    const selectedRowKeys: any[] = record.couponCodes ? record.couponCodes.map((item: any) => +item) : []
+    const selectedRowKeys: any[] = record.couponCodes || []
     if (!selectedRowKeys.length) {
       this.props.alert({
         title: '查看优惠券',

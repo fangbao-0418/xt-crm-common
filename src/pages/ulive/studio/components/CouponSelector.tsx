@@ -3,7 +3,7 @@ import { ListPage, FormItem } from '@/packages/common/components'
 import { OptionProps } from '@/packages/common/components/form'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import receiveStatus from '@/enum/receiveStatus'
-import { formatReceiveRestrict, formatDate, formatFaceValue, formatDateRange } from '@/pages/helper'
+import { formatFaceValue, formatDateRange } from '@/pages/helper'
 import { Badge } from 'antd'
 import * as api from '../api'
 
@@ -143,13 +143,13 @@ class Main extends React.Component<Props> {
     if (readonly) {
       listPageProps = {
         tableProps: {
-          rowKey: 'id'
+          rowKey: 'code'
         }
       }
     } else {
       listPageProps = {
         tableProps: {
-          rowKey: 'id',
+          rowKey: 'code',
           rowSelection: {
             selectedRowKeys,
             onChange: this.handleSelectChange,
