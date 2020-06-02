@@ -139,10 +139,10 @@ class Main extends React.Component<Props, State> {
   }
   public onOk () {
     const { dataCouponSource }=this.state
-    if (!dataCouponSource||(dataCouponSource&&dataCouponSource.length===0)) {
-      APP.error('请添加优惠券')
-      return
-    }
+    // if (!dataCouponSource||(dataCouponSource&&dataCouponSource.length===0)) {
+    //   APP.error('请添加优惠券')
+    //   return
+    // }
     const couponCode: any[]=[]
     let flag=false
     dataCouponSource.map((data: any)=>{
@@ -163,7 +163,7 @@ class Main extends React.Component<Props, State> {
     if (this.form) {
       this.form.props.form.resetFields()
     }
-    if (codes) {
+    if (codes&&codes.length>0) {
       this.fetchCouponData({ codes }, 1)
     }
     this.setState({
