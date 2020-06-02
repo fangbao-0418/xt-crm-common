@@ -119,7 +119,7 @@ class Main extends React.Component<Props, State> {
   //type:1、已添加的优惠券 2、搜索出的优惠券
   public fetchCouponData (data: any, type:any) {
     if (type===2) {
-      data.status=1
+      data.statusList=[0, 1]
       data.exactMatchCode=true
     }
     api.getCouponlist(data).then((res: any) => {
@@ -146,7 +146,7 @@ class Main extends React.Component<Props, State> {
     const couponCode: any[]=[]
     let flag=false
     dataCouponSource.map((data: any)=>{
-      if (data.status!==1) {
+      if (data.status===2) {
         flag=true
       }
       couponCode.push(data.code)
@@ -179,9 +179,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { visible, dataSource, dataCouponSource, updata } = this.state
-
     const customizeRenderEmpty = () => (
-      //这里面就是我们自己定义的空状态
       <div style={{ textAlign: 'center' }}>
         <p>暂无优惠券可添加，请先校验优惠券信息</p>
       </div>
