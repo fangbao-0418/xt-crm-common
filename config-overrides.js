@@ -21,7 +21,17 @@ const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const paths = require('react-scripts/config/paths')
 const CreateBuildConf = require('./plugins/createBuildConf')
 
+const isLocal = process.env.PUB_ENV === undefined
 const PUB_ENV = process.env.PUB_ENV || 'dev'
+
+const originConfigs = {
+  dev: 'http://daily-xt-crmadmin.hzxituan.com',
+  test: 'https://test-crmadmin.hzxituan.com',
+  test2: 'https://test2-crmadmin.hzxituan.com',
+  pre: 'http://pre-xt-crmadmin.hzxituan.com',
+  prod: 'http://xt-crmadmin.hzxituan.com'
+}
+
 /** 构建时间 */
 const BUILD_TIME = new Date().getTime()
 const pubconfig = {
@@ -162,7 +172,11 @@ module.exports = override(
   // addWebpackPlugin(new ManifestPlugin()),
   (function () {
     return (config) => {
-      console.log(config)
+      if (!isLocal) {
+        const publicPath = originConfigs[PUB_ENV] + '/'
+        config.output.publicPath = publicPath
+        console.log(publicPath, 'publicPath')
+      }
       config.optimization.runtimeChunk = {
         name: 'runtime'
       }
