@@ -7,7 +7,7 @@ import { AlertComponentProps } from '@/packages/common/components/alert'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
-import { Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
+import { Tabs, Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
@@ -16,18 +16,20 @@ import UploadCover from './components/UploadCover'
 import * as api from './api'
 import { fetchTagList } from '../config/api'
 import TextArea from 'antd/lib/input/TextArea'
-
+const { TabPane } = Tabs
 interface Props extends AlertComponentProps {
 }
 
 interface State {
-  rowKeys: any[]
+  rowKeys: any[],
+  rechargeStatus: string
 }
 
 class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
   public state: State = {
-    rowKeys: []
+    rowKeys: [],
+    rechargeStatus: '1'
   }
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
@@ -63,7 +65,8 @@ class Main extends React.Component<Props, State> {
           <span
             className='href'
             onClick={() => {
-              APP.href(`/user/detail?memberId=${record.memberId}`, '__target') }
+              APP.href(`/user/detail?memberId=${record.memberId}`, '__target')
+            }
             }
           >
             {text || record.anchorPhone}
@@ -80,7 +83,7 @@ class Main extends React.Component<Props, State> {
         return (
           <Popover
             content={(
-              <Image src={text} width={240} height={240}/>
+              <Image src={text} width={240} height={240} />
             )}
           >
             <Image src={text} width={80} height={80} />
@@ -173,7 +176,9 @@ class Main extends React.Component<Props, State> {
       align: 'center',
       render: (text, record) => {
         return text ? (
-          <span onClick={() => { APP.history.push(`/ulive/inform/${record.planId}`) }} className='href'>
+          <span onClick={() => {
+            APP.history.push(`/ulive/inform/${record.planId}`)
+          }} className='href'>
             {text}
           </span>
         ) : null
@@ -338,7 +343,7 @@ class Main extends React.Component<Props, State> {
     // module_live/pages/room/index
     api.getWxQrcode({
       page: 'module_live/pages/room/index',
-      scene: `id=${record.planId}`,
+      scene: `id=${record.planId}`
       // page: 'pages/product/product',
       // scene: 'pid=782&index=2'
     }).then((res) => {
@@ -491,7 +496,7 @@ class Main extends React.Component<Props, State> {
       liveCoverUrl: record.liveCoverUrl,
       isLive: isPlayBack ? '' : 'live'
     })
-    let url = location.pathname.replace(/index.html/, '') +  'video.html?' + query
+    let url = location.pathname.replace(/index.html/, '') + 'video.html?' + query
     // url = 'http://assets.hzxituan.com/upload/2020-03-17/020bfc50-ec64-41cd-9a42-db1b7e92864e-k7vplmky.html?' + query
     url = 'http://test-crmadmin.hzxituan.com/issue50/video.html?' + query
     // url = 'http://localhost:3000/video.html?' + query
@@ -533,13 +538,27 @@ class Main extends React.Component<Props, State> {
       footer: null
     })
   }
+
+  handleTabClick = (key: any) => {
+    this.setState({
+      rechargeStatus: key
+    })
+  }
   public render () {
+    const tabList=[{ name: '喜团优选', key: '1' }, { name: '喜团买菜', key: '2' }]
     return (
       <div
         style={{
-          background: '#FFFFFF'
+          background: '#FFFFFF',
+          paddingTop: 20
         }}
       >
+        <Tabs style={{ marginLeft: 20, paddingRight: 20 }} activeKey={this.state.rechargeStatus} onTabClick={this.handleTabClick}>
+          {tabList.map(tab => {
+            return (<TabPane tab={tab.name} key={tab.key} />
+            )
+          })}
+        </Tabs>
         <ListPage
           reserveKey='ulive-studio'
           getInstance={(ref) => {

@@ -18,7 +18,7 @@ class Main extends React.Component<Props> {
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
     title: '主播昵称',
     dataIndex: 'nickName',
-    width: 300,
+    width: 200,
     render: (text, record) => {
       return (
         <div className={styles['anchor-column-nickname']}>
@@ -80,6 +80,14 @@ class Main extends React.Component<Props> {
     dataIndex: 'anchorLevel',
     title: '主播等级',
     width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
+    }
+  },
+  {
+    dataIndex: 'phone1',
+    title: '业务范围',
+    width: 150,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
@@ -180,6 +188,7 @@ class Main extends React.Component<Props> {
               <FormItem name='anchorLevel' />
               <FormItem name='status' />
               <FormItem name='phone' />
+              <FormItem name='phone1' />
             </>
           )}
           api={api.getAnchorList}

@@ -6,6 +6,14 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
+      phone1: {
+        type: 'select',
+        label: '业务范围',
+        options: [
+          { label: '喜团优选', value: 1 },
+          { label: '喜团买菜', value: 2 }
+        ]
+      },
       phone: {
         type: 'input',
         label: '手机号码',
@@ -36,7 +44,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       anchorId: {
-        type: 'number', label: '主播ID',
+        type: 'number',
+        label: '主播ID',
         controlProps: {
           style: {
             width: 150
@@ -45,28 +54,31 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       nickName: {
-        type: 'input', label: '主播昵称',
+        type: 'input',
+        label: '主播昵称',
         controlProps: {
           placeholder: '主播昵称'
         }
       },
       status: {
-        type: 'select', label: '状态',
+        type: 'select',
+        label: '状态',
         fieldDecoratorOptions: {
           initialValue: 0
         },
         options: [
-          {label: '黑名单主播', value: 1},
-          {label: '正常', value: 0}
+          { label: '黑名单主播', value: 1 },
+          { label: '正常', value: 0 }
         ]
       },
       anchorIdentityType: {
-        type: 'select', label: '主播身份',
+        type: 'select',
+        label: '主播身份',
         options: [
-          {label: '供应商', value: 20},
-          {label: '公司', value: 10},
-          {label: '合作网红', value: 30},
-          {label: '代理', value: 40}
+          { label: '供应商', value: 20 },
+          { label: '公司', value: 10 },
+          { label: '合作网红', value: 30 },
+          { label: '代理', value: 40 }
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -78,10 +90,11 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       anchorLevel: {
-        type: 'select', label: '主播等级',
+        type: 'select',
+        label: '主播等级',
         options: [
-          {label: '星级主播', value: 10},
-          {label: '普通主播', value: 0}
+          { label: '星级主播', value: 10 },
+          { label: '普通主播', value: 0 }
         ],
         fieldDecoratorOptions: {
           rules: [
