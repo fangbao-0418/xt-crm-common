@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Table, Button, Badge } from 'antd'
+import { Modal, Table, Button, ConfigProvider, Icon } from 'antd'
 import * as api from '../api'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import styles from './style.module.sass'
@@ -22,7 +22,7 @@ class Main extends React.Component<Props, State> {
   //type:1、已添加的优惠券 2、搜索出的优惠券
   public columns = (type: any) => [
     {
-      title: '编号',
+      title: '优惠券编号',
       dataIndex: 'code'
     },
     {
@@ -179,6 +179,13 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { visible, dataSource, dataCouponSource, updata } = this.state
+
+    const customizeRenderEmpty = () => (
+      //这里面就是我们自己定义的空状态
+      <div style={{ textAlign: 'center' }}>
+        <p>暂无优惠券可添加，请先校验优惠券信息</p>
+      </div>
+    )
     return (
       <div>
         <Modal
@@ -218,6 +225,10 @@ class Main extends React.Component<Props, State> {
                     className='mr10'
                     onClick={() => {
                       const value = this.form.props.form.getFieldsValue()
+                      if (!value.code) {
+                        APP.error('请输入需要校验的优惠券编号')
+                        return
+                      }
                       this.fetchCouponData(value, 2)
                     }}
                   >
@@ -226,14 +237,16 @@ class Main extends React.Component<Props, State> {
                 </FormItem>
               </Form>
             </div>
-            <Table
-              bordered
-              rowKey='id'
-              key={updata}
-              columns={this.columns(2)}
-              dataSource={dataSource}
-              pagination={false}
-            />
+            <ConfigProvider renderEmpty={customizeRenderEmpty}>
+              <Table
+                bordered
+                rowKey='id'
+                key={updata}
+                columns={this.columns(2)}
+                dataSource={dataSource}
+                pagination={false}
+              />
+            </ConfigProvider>
             <div className={styles['select-title-header']}>
               已添加优惠券
             </div>
