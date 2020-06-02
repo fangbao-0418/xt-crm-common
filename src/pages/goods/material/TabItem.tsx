@@ -379,7 +379,7 @@ class MaterialTabItem extends React.Component<Props, State> {
         </Modal>
         <Modal
           key={uuid()}
-          title={materialDetail ? '编辑素材' : '添加素材'}
+          title={actionType === 'view' ? '查看素材' : actionType === 'audit' ? '审核素材' : ''}
           destroyOnClose
           visible={auditModalVisible}
           maskClosable={false}

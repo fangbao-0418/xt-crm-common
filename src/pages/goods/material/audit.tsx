@@ -112,7 +112,7 @@ class Add extends React.Component<Props, State> {
     const { actionType } = this.props
     const { auditData } = this.state
     const isAudit = actionType === 'audit'
-    const { authorPhone, author, productName, productId, content, videoUrl, productImage } = auditData
+    const { authorPhone, author, productName, productId, content, videoUrl, productImage, auditMsg } = auditData
     console.log(auditData, 'auditData=====')
     return (
       <Card className='activity-add'>
@@ -187,6 +187,11 @@ class Add extends React.Component<Props, State> {
               ))
               : '无'}
           </FormItem>
+          <If condition={!isAudit}>
+            <FormItem label='审核意见'>
+              {auditMsg ? auditMsg : '无'}
+            </FormItem>
+          </If>
           <If condition={isAudit}>
             <FormItem
               label='审核意见'
