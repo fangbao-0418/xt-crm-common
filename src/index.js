@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-27 11:00:32
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-18 17:33:26
+ * @LastEditTime: 2020-06-02 11:57:58
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/index.js
  */
 import React from 'react'
@@ -51,3 +51,20 @@ ReactDOM.render(
   </ErrorBoundary>,
   document.getElementById('root')
 )
+
+document.addEventListener('DOMContentLoaded', event => {
+  document.querySelector('#root').addEventListener('click', function (e) {
+    const target = e.target
+    if (target.tagName === 'BUTTON' && (' ' + target.className + '  ').indexOf(' xt-delay ') > -1) {
+      const disabled = target.getAttribute('data-disabled')
+      if (disabled) {
+        e.stopPropagation()
+      } else {
+        target.setAttribute('data-disabled', true)
+        setTimeout(function () {
+          target.setAttribute('data-disabled', '')
+        }, 1000)
+      }
+    }
+  })
+})

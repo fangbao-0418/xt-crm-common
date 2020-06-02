@@ -34,6 +34,7 @@ console.log('PUB_ENV => ', PUB_ENV)
 // const dev = process.env.PUB_ENV !== 'prod'
 const isDevelopment = ['dev'].indexOf(PUB_ENV) > -1
 const isProduction = !isDevelopment
+
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
     isDevelopment && require.resolve('style-loader'),
@@ -158,8 +159,13 @@ module.exports = override(
       }
     }
   }),
+  // addWebpackPlugin(new ManifestPlugin()),
   (function () {
     return (config) => {
+      console.log(config)
+      config.optimization.runtimeChunk = {
+        name: 'runtime'
+      }
       config.devtool = isDevelopment ? config.devtool : ''
       return config
     }

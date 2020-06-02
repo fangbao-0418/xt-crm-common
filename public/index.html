@@ -1,3 +1,9 @@
+<!--
+ * @Date: 2020-03-30 16:57:18
+ * @LastEditors: fangbao
+ * @LastEditTime: 2020-06-02 11:58:11
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/public/index.html
+--> 
 <!DOCTYPE html>
 <html lang="zh-cn">
   <head>
@@ -65,24 +71,6 @@
         </div>
       </main>
     </div>
-    <script>
-      document.addEventListener('DOMContentLoaded', event => {
-        document.querySelector('#root').addEventListener('click', function(e) {
-          const target = e.target;
-          if (target.tagName === 'BUTTON' && (' ' + target.className + '  ').indexOf(' xt-delay ') > -1) {
-            const disabled = target.getAttribute('data-disabled');
-            if (disabled) {
-              e.stopPropagation();
-            } else {
-              target.setAttribute('data-disabled', true);
-              setTimeout(function() {
-                target.setAttribute('data-disabled', '');
-              }, 1000);
-            }
-          }
-        });
-      });
-    </script>
     <!-- <script src="//imgcache.qq.com/open/qcloud/video/vcplayer/TcPlayer-2.3.2.js" charset="utf-8"></script> -->
   </body>
 </html>

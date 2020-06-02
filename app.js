@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-05-13 10:35:19
  * @LastEditors: fangbao
- * @LastEditTime: 2020-06-01 14:03:39
+ * @LastEditTime: 2020-06-02 11:06:24
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/app.js
  */
 const del = require('del')
