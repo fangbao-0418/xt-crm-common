@@ -24,7 +24,7 @@ class GoodsTable extends Component {
    * orderStatus 订单状态（10：待付款；20：待发货；30：已发货；50完成）
    */
   showApplyBtn = (orderStatus) => {
-    return orderStatus === 50
+    return orderStatus > 10 && orderStatus < 60
   }
 
   handleApply = (record) => {
