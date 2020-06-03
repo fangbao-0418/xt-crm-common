@@ -176,6 +176,8 @@ module.exports = override(
         const publicPath = originConfigs[PUB_ENV] + '/'
         config.output.publicPath = publicPath
         console.log(publicPath, 'publicPath')
+      } else {
+        config.output.publicPath = 'http://localhost:3000/'
       }
       config.optimization.runtimeChunk = {
         name: 'runtime'

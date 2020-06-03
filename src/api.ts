@@ -2,8 +2,8 @@
  * @Author: fangbao
  * @Date: 2020-05-19 23:18:16
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-19 23:22:19
- * @FilePath: /xt-crm/src/api.ts
+ * @LastEditTime: 2020-06-02 16:03:18
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/api.ts
  */
 
 const { get } = APP.http
@@ -13,7 +13,9 @@ export function getBuildInfo () {
   return fetch('./pub_info?v=' + new Date().getTime()).then((res) => {
     let data
     try {
-      data = res.json()
+      data = res.json().then((val) => val, (e) => {
+        console.log(e, 'eeee')
+      })
     } catch (e) {
       APP.moon.error(e)
     }
