@@ -276,13 +276,16 @@ export default class extends Component {
     console.log(dataSource, 'secondary rener')
     const columns = [
       {
-        title: titleRender('图片'),
+        title: titleRender(
+          <>图片 (<span style={{ fontSize: 12 }}>图片规格150x150</span>)</>
+        ),
+        width: 220,
         dataIndex: 'icon',
         render: (val, record, index) => {
           return (
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <span style={{ cursor: 'pointer', marginRight: '6px' }}>
-                <Icon onClick={() => this.deleteRow(index)} type="delete" />
+                <Icon onClick={() => this.deleteRow(index)} type='delete' />
               </span>
               <UploadView
                 value={ val && val.length ? val : [] }
@@ -290,7 +293,7 @@ export default class extends Component {
                 className='secondary-category'
                 listType='picture-card'
                 fileType={['jpg', 'jpeg', 'gif', 'png']}
-                // pxSize={[{ width: 150, height: 150 }]}
+                pxSize={[{ width: 150, height: 150 }]}
                 listNum={1}
               >
               </UploadView>
