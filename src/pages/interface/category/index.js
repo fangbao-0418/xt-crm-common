@@ -261,9 +261,9 @@ class InterFaceCategory extends Component {
       /** 处理二级类目内容合并活动&类目到productCategoryVOS字段上 */
       secondCategoryVOS = secondCategoryVOS.map((item) => {
         /** 类目type设置为1 */
-        const categoryVOS = (item.categoryVOS || []).map(() => {
+        const categoryVOS = (item.categoryVOS || []).map((item2) => {
           return {
-            ...item,
+            ...item2,
             type: 1
           }
         })
@@ -480,7 +480,7 @@ class InterFaceCategory extends Component {
       // const productCategoryVOS = secondCategoryVOS[secondaryIndex]?.productCategoryVOS || []
       // productCategoryVOS.filter((item) => item.type)
       secondCategoryVOS[secondaryIndex].categoryVOS = this.cateText
-      console.log(secondCategoryVOS, 'secondCategoryVOS')
+      console.log(this.cateText, 'secondCategoryVOS')
       this.setState({
         visible2: false,
         secondCategoryVOS: [...secondCategoryVOS]

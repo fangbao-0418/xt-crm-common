@@ -106,7 +106,6 @@ export default class extends Component {
   }
 
   componentWillReceiveProps (newProps) {
-    console.log('will receive props')
     const { dataSource } = this.state
     const { secondaryIndex, secondaryActText } = newProps
     if (secondaryIndex !== null && dataSource[secondaryIndex].type !== 4 && !_.isEqual(newProps, this.props)) {
@@ -291,7 +290,7 @@ export default class extends Component {
                 className='secondary-category'
                 listType='picture-card'
                 fileType={['jpg', 'jpeg', 'gif', 'png']}
-                pxSize={[{ width: 150, height: 150 }]}
+                // pxSize={[{ width: 150, height: 150 }]}
                 listNum={1}
               >
               </UploadView>
