@@ -433,9 +433,9 @@ class CouponInfo extends React.Component {
                       <Radio className='block-radio' value={0}>
                           全场通用
                       </Radio>
-                      {/* <Radio className='block-radio' value={1}>
+                      <Radio className='block-radio' value={1}>
                           类目商品
-                      </Radio> */}
+                      </Radio>
                       <Radio className='block-radio' value={2}>
                           指定商品{' '}
                         {avlRange === 2 && (
