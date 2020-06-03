@@ -92,9 +92,23 @@ class InterFaceCategory extends Component {
       secondaryIndex: null
     })
   }
-
+  /** 二级类目内容添加活动/类目打开弹框 */
   handleClickModal = (data = {}) => {
-    const { type, index, secondaryActText } = data
+    const { type, index, secondaryActText, categoryVOS } = data
+    // 类目
+    if (type === 'category') {
+      console.log(secondaryActText, 'selectedSecondary')
+      this.setState({
+        visible2: true,
+        visible1Type: type,
+        checkData: categoryVOS,
+        secondaryIndex: index,
+        secondaryActText,
+        selectedRowKeys: secondaryActText ? secondaryActText.map(val => val.id) : [],
+        selectedSecondary: secondaryActText || []
+      })
+      return
+    }
 
     if (this.state.actList.length == 0) {
       this.getPromotionList()
@@ -118,8 +132,11 @@ class InterFaceCategory extends Component {
     }
   };
 
+  /** 关联类目 */
   handleClickModalC = () => {
     this.setState({
+      /** 清除二级类目添加类目的visible1Type值s s */
+      visible1Type: '',
       visible2: true,
       checkData: this.state.cateText
     })
@@ -171,7 +188,6 @@ class InterFaceCategory extends Component {
       })
       const productCategoryVOS = [...actText, ...cateText]
       let { showType } = data
-      console.log(typeof(showType), 'showType')
       if (!showType && showType !== 0) {
         showType = 1
       }
@@ -185,6 +201,17 @@ class InterFaceCategory extends Component {
       })
 
       const filterIconsecondCategoryVOS = secondCategoryVOS.map(item => {
+        const category = []
+        const productCategory = [];
+        (item.productCategoryVOS || []).forEach((item) => {
+          if (item.type === 1) {
+            category.push(item)
+          } else {
+            productCategory.push(item)
+          }
+        })
+        item.categoryVOS = category
+        item.productCategoryVOS = productCategory
         item.icon = initImgList(item.icon)
         return item
       }) || []
@@ -229,13 +256,29 @@ class InterFaceCategory extends Component {
     } = this.props
     validateFields((err, vals) => {
       console.log(vals, 'vals')
-      const { secondStatus, secondCategoryVOS } = this.state
+      const { secondStatus } = this.state
+      let secondCategoryVOS = this.state.secondCategoryVOS
+      /** 处理二级类目内容合并活动&类目到productCategoryVOS字段上 */
+      secondCategoryVOS = secondCategoryVOS.map((item) => {
+        /** 类目type设置为1 */
+        const categoryVOS = (item.categoryVOS || []).map(() => {
+          return {
+            ...item,
+            type: 1
+          }
+        })
+        return {
+          ...item,
+          productCategoryVOS: (item.productCategoryVOS || []).concat(categoryVOS || []),
+          categoryVOS: undefined
+        }
+      })
       const newSecondCategoryVOS = _.cloneDeep(secondCategoryVOS)
       //开关校验
       if (secondStatus && !secondCategoryVOS.length) {
         return message.error('请填写二级类目的所有内容')
       }
-      //细节校验
+      // 二级类目内容细节校验
       const noValue = secondCategoryVOS.filter(item => {
         if (item.type === 2) {
           if (!item.productCategoryVOS || !item.productCategoryVOS.length) {
@@ -265,7 +308,7 @@ class InterFaceCategory extends Component {
             productCategoryVOS = item.productCategoryVOS.map(vos => {
               return {
                 id: vos.id,
-                type
+                type: vos.type === 1 ? 1 : 2
               }
             })
           }
@@ -426,7 +469,24 @@ class InterFaceCategory extends Component {
     })
   }
 
+  /** 选择类目回调确认 */
   setCateText () {
+    // visible1Type: type,
+    // visible1: true,
+    // secondaryIndex: index,
+    // selectedSecondary 所选类目
+    const { visible1Type, secondaryIndex, selectedSecondary, secondCategoryVOS } = this.state
+    if (visible1Type === 'category') {
+      // const productCategoryVOS = secondCategoryVOS[secondaryIndex]?.productCategoryVOS || []
+      // productCategoryVOS.filter((item) => item.type)
+      secondCategoryVOS[secondaryIndex].categoryVOS = this.cateText
+      console.log(secondCategoryVOS, 'secondCategoryVOS')
+      this.setState({
+        visible2: false,
+        secondCategoryVOS: [...secondCategoryVOS]
+      })
+      return
+    }
     this.setState({
       cateText: this.cateText,
       productCategoryVOS: [...this.cateText, ...this.state.selectedRowKeys],
@@ -441,6 +501,7 @@ class InterFaceCategory extends Component {
       actList, productCategoryVOS, secondStatus, secondaryIndex,
       secondaryActText, currId, secondCategoryVOS
     } = this.state
+    console.log(secondaryActText, 'category render')
     const showType = getFieldValue('showType')
     const secondName = getFieldValue('secondName') || this.state.secondName
     getFieldValue('styleType')
@@ -531,11 +592,15 @@ class InterFaceCategory extends Component {
                 ]
               })(
                 <div>
-                  <Checkbox checked={this.state.checkCate} onChange={(e) => {
-                    this.setState({
-                      checkCate: e.target.checked
-                    })
-                  }}>关联类目
+                  <Checkbox
+                    checked={this.state.checkCate}
+                    onChange={(e) => {
+                      this.setState({
+                        checkCate: e.target.checked
+                      })
+                    }}
+                  >
+                    关联类目
                   </Checkbox>
                   {this.state.checkCate ? (
                     <div className='intf-cat-rebox'>
@@ -651,9 +716,12 @@ class InterFaceCategory extends Component {
             this.setCateText()
           }}
         >
-          <Ctree setList={(cateText) => {
-            this.cateText = cateText
-          }} checkData={this.state.checkData} />
+          <Ctree
+            setList={(cateText) => {
+              this.cateText = cateText
+            }}
+            checkData={this.state.checkData}
+          />
         </Modal>
       </div>
     )
@@ -728,97 +796,99 @@ class GetActivity extends Component {
       handlenChanageSelectio, form
     } = this.props
     const { getFieldDecorator, resetFields } = form
-    return (<Modal
-      title='选择活动'
-      visible={visible1}
-      width={1000}
-      onCancel={handleCancelModal}
-      onOk={handleOkModal}
-    >
-      <Form layout='inline' style={{ marginBottom: '20px' }}>
-        <FormItem label='活动名称'>
-          {getFieldDecorator('name', {
-            initialValue: ''
-          })(<Input placeholder='请输入活动名称' style={{ width: 180 }} />)}
-        </FormItem>
-        <FormItem label='活动ID'>
-          {getFieldDecorator('promotionId', {
-            initialValue: ''
-          })(<Input placeholder='请输入活动ID' style={{ width: 180 }} />)}
-        </FormItem>
-        <FormItem label='商品名称'>
-          {getFieldDecorator('productName', {
-            initialValue: ''
-          })(
-            <Input placeholder='请输入商品名称' style={{ width: 180 }} />,
-          )}
-        </FormItem>
-        <FormItem label='商品ID'>
-          {getFieldDecorator('productId', {
-            initialValue: ''
-          })(
-            <Input placeholder='请输入商品ID' style={{ width: 180 }} />,
-          )}
-        </FormItem>
-        <FormItem label='活动类型'>
-          {getFieldDecorator('type', {
-            initialValue: ''
-          })(
-            <Select placeholder='请选择活动类型' style={{ width: 180 }}>
-              <Option value=''>全部</Option>
-              {activityType.getArray().map((val, i) => (
-                <Option value={val.key} key={i}>
-                  {val.val}
-                </Option>
-              ))}
-            </Select>,
-          )}
-        </FormItem>
-        <FormItem label='活动状态'>
-          {getFieldDecorator('status', {
-            initialValue: ''
-          })(
-            <Select placeholder='请选择活动类型' style={{ width: 180 }}>
-              <Option value=''>全部</Option>
-              <Option value='0'>关闭</Option>
-              <Option value='1'>开启</Option>
-            </Select>,
-          )}
-        </FormItem>
-        <FormItem label='有效时间'>
-          {getFieldDecorator('time', {
-            initialValue: ['', '']
-          })(
-            <RangePicker
-              style={{ width: 430 }}
-              format='YYYY-MM-DD HH:mm'
-              showTime={{
-                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]
-              }}
-            />,
-          )}
-        </FormItem>
-        <div style={{ textAlign: 'right', marginTop: 8 }}>
-          <Button type='primary' onClick={this.handleSearch}>
-                查询
-          </Button>
-          <Button style={{ marginLeft: 10 }} onClick={() => resetFields()}>
-                重置
-          </Button>
-        </div>
-      </Form>
-      <Table
-        rowSelection={{
-          selectedRowKeys: selectedRowKeys,
-          onChange: handlenChanageSelectio
-        }}
-        columns={actColumns()}
-        dataSource={actList}
-        pagination={modalPage}
-        onChange={handleTabChangeModal}
-        rowKey={record => record.id}
-      />
-    </Modal>)
+    return (
+      <Modal
+        title='选择活动'
+        visible={visible1}
+        width={1000}
+        onCancel={handleCancelModal}
+        onOk={handleOkModal}
+      >
+        <Form layout='inline' style={{ marginBottom: '20px' }}>
+          <FormItem label='活动名称'>
+            {getFieldDecorator('name', {
+              initialValue: ''
+            })(<Input placeholder='请输入活动名称' style={{ width: 180 }} />)}
+          </FormItem>
+          <FormItem label='活动ID'>
+            {getFieldDecorator('promotionId', {
+              initialValue: ''
+            })(<Input placeholder='请输入活动ID' style={{ width: 180 }} />)}
+          </FormItem>
+          <FormItem label='商品名称'>
+            {getFieldDecorator('productName', {
+              initialValue: ''
+            })(
+              <Input placeholder='请输入商品名称' style={{ width: 180 }} />,
+            )}
+          </FormItem>
+          <FormItem label='商品ID'>
+            {getFieldDecorator('productId', {
+              initialValue: ''
+            })(
+              <Input placeholder='请输入商品ID' style={{ width: 180 }} />,
+            )}
+          </FormItem>
+          <FormItem label='活动类型'>
+            {getFieldDecorator('type', {
+              initialValue: ''
+            })(
+              <Select placeholder='请选择活动类型' style={{ width: 180 }}>
+                <Option value=''>全部</Option>
+                {activityType.getArray().map((val, i) => (
+                  <Option value={val.key} key={i}>
+                    {val.val}
+                  </Option>
+                ))}
+              </Select>,
+            )}
+          </FormItem>
+          <FormItem label='活动状态'>
+            {getFieldDecorator('status', {
+              initialValue: ''
+            })(
+              <Select placeholder='请选择活动类型' style={{ width: 180 }}>
+                <Option value=''>全部</Option>
+                <Option value='0'>关闭</Option>
+                <Option value='1'>开启</Option>
+              </Select>,
+            )}
+          </FormItem>
+          <FormItem label='有效时间'>
+            {getFieldDecorator('time', {
+              initialValue: ['', '']
+            })(
+              <RangePicker
+                style={{ width: 430 }}
+                format='YYYY-MM-DD HH:mm'
+                showTime={{
+                  defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]
+                }}
+              />,
+            )}
+          </FormItem>
+          <div style={{ textAlign: 'right', marginTop: 8 }}>
+            <Button type='primary' onClick={this.handleSearch}>
+                  查询
+            </Button>
+            <Button style={{ marginLeft: 10 }} onClick={() => resetFields()}>
+                  重置
+            </Button>
+          </div>
+        </Form>
+        <Table
+          rowSelection={{
+            selectedRowKeys: selectedRowKeys,
+            onChange: handlenChanageSelectio
+          }}
+          columns={actColumns()}
+          dataSource={actList}
+          pagination={modalPage}
+          onChange={handleTabChangeModal}
+          rowKey={record => record.id}
+        />
+      </Modal>
+    )
   }
 }
 
