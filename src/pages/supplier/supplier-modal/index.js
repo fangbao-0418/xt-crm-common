@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Modal, Button, Form, Input, message, Radio, Select } from 'antd'
 import { If } from '@/packages/common/components'
 import { getSupplierDetail, updateSupplier, addSupplier } from '../api'
+import UploadView from '@/components/upload'
 import SupplierTypeSelect from '@/components/supplier-type-select'
 import SaleArea from '@/components/sale-area'
 const FormItem = Form.Item
@@ -183,6 +184,23 @@ class SupplierModal extends Component {
             </FormItem>
             <FormItem label='联系邮箱'>
               {getFieldDecorator('email')(<Input placeholder='请输入联系邮箱' />)}
+            </FormItem>
+            <h4>店铺信息</h4>
+            <FormItem label='店铺名称'>
+              {getFieldDecorator('shopName')(
+                <Input placeholder='请输入店铺名称' />
+              )}
+            </FormItem>
+            <FormItem label='店铺logo'>
+              {getFieldDecorator('shopLogo')(
+                <UploadView
+                  placeholder='上传店铺logo'
+                  listType='picture-card'
+                  listNum={1}
+                  size={0.3}
+                  ossType='cos'
+                />
+              )}
             </FormItem>
             <h4>详细信息</h4>
             <FormItem label='官网链接'>
