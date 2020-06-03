@@ -79,10 +79,11 @@ class Main extends React.Component<Props, State> {
                 return
               }
               if (type===2) {
-                APP.success('添加成功')
                 if (dataCouponSource&&dataCouponSource.length===10) {
                   APP.error('最多可添加10个优惠券')
+                  return
                 }
+                APP.success('添加成功')
                 dataCouponSource.push(record)
               } else {
                 if (num>-1) {
