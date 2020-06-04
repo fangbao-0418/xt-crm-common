@@ -267,9 +267,16 @@ class InterFaceCategory extends Component {
             type: 1
           }
         })
+        /** 活动type设置2 */
+        const productCategoryVOS = (item.productCategoryVOS || []).map((item2) => {
+          return {
+            ...item2,
+            type: 2
+          }
+        })
         return {
           ...item,
-          productCategoryVOS: (item.productCategoryVOS || []).concat(categoryVOS || []),
+          productCategoryVOS: productCategoryVOS.concat(categoryVOS || []),
           categoryVOS: undefined
         }
       })
@@ -308,7 +315,7 @@ class InterFaceCategory extends Component {
             productCategoryVOS = item.productCategoryVOS.map(vos => {
               return {
                 id: vos.id,
-                type: vos.type === 1 ? 1 : 2
+                type: vos.type
               }
             })
           }
@@ -383,7 +390,7 @@ class InterFaceCategory extends Component {
 
   handlenChanageSelectio = (selectedRowKeys, selectedRows) => {
     const { visible1Type, selectedSecondary } = this.state
-
+    console.log(selectedRowKeys, selectedRows, 'selectedRowsselectedRows')
     const objKeys = {}
     let currSelectedRows = []
     if (visible1Type !== null) {
