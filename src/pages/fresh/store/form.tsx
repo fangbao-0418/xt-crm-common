@@ -124,13 +124,17 @@ class StoreForm extends React.Component<Props, StoreFormState> {
               name='name'
             />
             <FormItem
-              verifiable
+              required
               // name='type'
               label='门店类型'
               inner={(form) => {
                 return form.getFieldDecorator(
                   'type',
-                  {}
+                  {
+                    rules: [
+                      { required: true, message: '请选择门店类型' }
+                    ]
+                  }
                 )(<SelectFetch
                   readonly={readonly}
                   fetchData={getTypeEnum}
