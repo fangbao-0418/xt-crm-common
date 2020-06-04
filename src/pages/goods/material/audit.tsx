@@ -69,7 +69,10 @@ class Add extends React.Component<Props, State> {
           productId,
           productName,
           coverUrl,
-          videoUrl: videoUrlList,
+          videoUrl: videoUrlList.map((video: any) => {
+            video.url = replaceHttpUrl(video.url)
+            return video
+          }),
           productImage: pictureUrlList
         })
       })
@@ -156,16 +159,14 @@ class Add extends React.Component<Props, State> {
           <FormItem
             label='内容'
           >
-            {content}
+            <TextArea value={content} rows={4} placeholder='备注' />
           </FormItem>
           <FormItem label='视频素材'>
             {videoUrl && videoUrl.length ? (
               <Upload
                 listType='picture-card'
                 fileType='video'
-                value={[{
-                  url: replaceHttpUrl(videoUrl)
-                }]}
+                value={videoUrl}
               />
             ) : '无'}
           </FormItem>

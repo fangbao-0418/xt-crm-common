@@ -70,7 +70,7 @@ class Main extends React.Component {
               inner={(form) => {
                 return form.getFieldDecorator('auditType')(
                   <Radio.Group>
-                    <Radio value={1}>自动</Radio>
+                    <Radio disabled value={1}>自动</Radio>
                     <Radio value={2}>手动</Radio>
                   </Radio.Group>
                 )
