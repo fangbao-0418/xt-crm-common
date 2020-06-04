@@ -318,7 +318,7 @@ export default class extends Component {
         }
       },
       {
-        title: titleRender('内容：提供单选功能：活动和自定义链接'),
+        title: titleRender('内容'),
         dataIndex: 'productCategoryVOS',
         width: 400,
         render: (val, record, index) => {
