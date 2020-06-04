@@ -4,7 +4,7 @@
 import React, { Component } from 'react'
 import { Tag, Select, Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
 import If from '@/packages/common/components/if'
-import UploadView from '../../../components/upload'
+import UploadView from '../../../../components/upload'
 import { getBannerDetail, updateBanner, addBanner } from '../api'
 import { TextMapPosition } from '../constant'
 import platformType from '@/enum/platformType'
