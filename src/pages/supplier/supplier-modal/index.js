@@ -7,6 +7,21 @@ import SupplierTypeSelect from '@/components/supplier-type-select'
 import SaleArea from '@/components/sale-area'
 const FormItem = Form.Item
 
+const getInitImage = (url) => {
+  if (url) {
+    return [
+      {
+        uid: url,
+        url: url,
+        status: 'done',
+        thumbUrl: url
+      }
+    ]
+  }
+
+  return []
+}
+
 const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 14 }
@@ -37,18 +52,27 @@ class SupplierModal extends Component {
         category: data.category,
         saleAreaVisible: data.category === 5
       })
-      this.props.form && this.props.form.setFieldsValue(data)
+      this.props.form && this.props.form.setFieldsValue({
+        ...data,
+        shopName: (data.shopName || '').replace('喜团自营店', ''),
+        shopUrl: getInitImage(data.shopUrl)
+      })
     })
   }
 
   handleOk = () => {
     const { onSuccess, id, form, isEdit } = this.props
-    form.validateFields((err, vals) => {
+    form.validateFields((err, { category, shopUrl, shopName, ...vals }) => {
       if (!err) {
         const api = isEdit ? updateSupplier : addSupplier
         vals.freezeLimit = vals.freezeLimit !== undefined ? Number(vals.freezeLimit) : undefined
+        if ([0, 1, 2, 3, 4].includes(category)) {
+          vals.shopUrl = shopUrl[0].rurl
+          vals.shopName = shopName
+        }
         api({
           id,
+          category,
           ...vals
         }).then((res) => {
           if (res) {
@@ -185,23 +209,39 @@ class SupplierModal extends Component {
             <FormItem label='联系邮箱'>
               {getFieldDecorator('email')(<Input placeholder='请输入联系邮箱' />)}
             </FormItem>
-            <h4>店铺信息</h4>
-            <FormItem label='店铺名称'>
-              {getFieldDecorator('shopName')(
-                <Input placeholder='请输入店铺名称' />
-              )}
-            </FormItem>
-            <FormItem label='店铺logo'>
-              {getFieldDecorator('shopLogo')(
-                <UploadView
-                  placeholder='上传店铺logo'
-                  listType='picture-card'
-                  listNum={1}
-                  size={0.3}
-                  ossType='cos'
-                />
-              )}
-            </FormItem>
+            <If condition={[0, 1, 2, 3, 4].includes(category)}>
+              <h4>店铺信息</h4>
+              <FormItem label='店铺名称'>
+                {getFieldDecorator('shopName', {
+                  rules: [
+                    {
+                      required: [0, 1, 2, 3, 4].includes(category),
+                      message: '请输入店铺名称'
+                    }
+                  ]
+                })(
+                  <Input max={10} placeholder='请输入店铺名称' />
+                )}
+              </FormItem>
+              <FormItem label='店铺logo'>
+                {getFieldDecorator('shopUrl', {
+                  rules: [
+                    {
+                      required: [0, 1, 2, 3, 4].includes(category),
+                      message: '请上传店铺logo'
+                    }
+                  ]
+                })(
+                  <UploadView
+                    placeholder='上传店铺logo'
+                    listType='picture-card'
+                    listNum={1}
+                    size={2}
+                    ossType='cos'
+                  />
+                )}
+              </FormItem>
+            </If>
             <h4>详细信息</h4>
             <FormItem label='官网链接'>
               {getFieldDecorator('jumpUrl')(
