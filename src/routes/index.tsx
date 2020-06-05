@@ -2,8 +2,8 @@
  * @Author: fangbao
  * @Date: 2020-05-19 23:06:25
  * @LastEditors: fangbao
- * @LastEditTime: 2020-06-05 17:20:39
- * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm-microservice/common/src/routes/index.tsx
+ * @LastEditTime: 2020-06-05 21:33:40
+ * @FilePath: /xt-crm-microservice/common/src/routes/index.tsx
  */
 
 import React from 'react'
@@ -43,7 +43,7 @@ class Main extends React.Component<{}, State> {
               )
             })
           }
-          <Route path='/home' component={modules.Home} />
+          {/* <Route path='/home' component={modules.Home} />
           <Route path='/settings' component={modules.Settings} />
           <Route path='/goods' component={modules.Goods} />
           <Route path='/template' component={modules.Template} />
@@ -63,7 +63,7 @@ class Main extends React.Component<{}, State> {
           <Route path='/merchant-accounts' component={modules.MerchantAccounts} />
           <Route path='/shop' component={modules.Shop} />
           <Route path='/fresh' component={modules.Fresh} />
-          <Route path='/system' component={modules.System} />
+          <Route path='/system' component={modules.System} /> */}
         </Layout>
       </Switch>
     )
