@@ -16,6 +16,8 @@ export interface RecordProps {
   costPrice: number
   /** 销售价 */
   salePrice: number
+  /** 优惠券码列表 */
+  couponCodes: any;
   sort: number
   /** 状态-1:删除，0:下架，1：上架，2：商品池，3：待上架 */
   status: -1 | 0 | 1 | 2 | 3

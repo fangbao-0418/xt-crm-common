@@ -1,22 +1,5 @@
 import React from 'react'
-import { Card, Tabs, Button, Modal, message, Row } from 'antd'
-import dateFns from 'date-fns'
-import {
-  getGoodsList,
-  delGoodsDisable,
-  enableGoods,
-  exportFileList,
-  getCategoryTopList,
-  upByGoodsId,
-  cancelUpByGoodsId
-} from '../api'
-import { gotoPage, replaceHttpUrl } from '@/util/utils'
-import Image from '@/components/Image'
-import SelectFetch from '@/components/select-fetch'
-import { If, ListPage, FormItem } from '@/packages/common/components'
-import { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import SuppilerSelect from '@/components/suppiler-auto-select'
-import { defaultConfig } from './config'
+import { Card, Tabs } from 'antd'
 import TabItem, { StatusType } from './TabItem'
 import { getPayload, setPayload } from '@/packages/common/utils'
 const { TabPane } = Tabs

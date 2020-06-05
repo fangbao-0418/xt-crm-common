@@ -1,4 +1,4 @@
-import { post, exportFile, exportFileStream, get, put, newPut, newPost, fetch } from '../../util/fetch'
+import { post, exportFile, exportFileStream, get, put, newPut, newPost, fetch } from '@/util/fetch'
 import { prefix } from '../../util/utils'
 import { batchExportRequest } from './adapter'
 const debug = false
@@ -124,7 +124,6 @@ export function deliveryChildOrder (data: any) {
   if (debug) {
     return Promise.resolve(true)
   }
-  
   return post('/order/childDelivery', data)
 }
 
@@ -175,6 +174,15 @@ export function refundList (data: any) {
 export function refundDetail (params: any) {
   return fetch(`/order/afterSale/afterSalesInfo?${qs.stringify(params)}`)
 }
+
+export function newExportOrder (data: any) {
+  return APP.http.get('/order/export', {
+    ...data,
+    rangePicker: undefined,
+    playPicker: undefined
+  })
+}
+
 export function exportOrder (data: any) {
   return exportFile('/order/export', data)
 }

@@ -8,7 +8,6 @@ import * as api from '../api'
 import { getFieldsConfig, auditStatusConfig } from './config'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import SelectFetch from '@/components/select-fetch'
-import SuppilerSelect from '@/components/suppiler-auto-select'
 import SuppilerSelector from '@/components/supplier-selector'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 
