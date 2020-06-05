@@ -159,7 +159,7 @@ module.exports = override(
     moment: 'moment',
     'ali-oss': 'OSS'
   }),
-  // addBundleVisualizer(),
+  addBundleVisualizer(),
   setWebpackOptimizationSplitChunks({
     cacheGroups: {
       commons: {
@@ -169,7 +169,6 @@ module.exports = override(
       }
     }
   }),
-  // addWebpackPlugin(new ManifestPlugin()),
   (function () {
     return (config) => {
       if (!isLocal) {

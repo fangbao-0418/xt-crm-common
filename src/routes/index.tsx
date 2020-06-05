@@ -2,14 +2,14 @@
  * @Author: fangbao
  * @Date: 2020-05-19 23:06:25
  * @LastEditors: fangbao
- * @LastEditTime: 2020-06-05 21:33:40
+ * @LastEditTime: 2020-06-05 21:41:32
  * @FilePath: /xt-crm-microservice/common/src/routes/index.tsx
  */
 
 import React from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
 import { view as Layout } from '@/components/layout'
-import * as modules from './modules'
+import { Login, Home } from './modules'
 
 // Observer
 
@@ -33,7 +33,7 @@ class Main extends React.Component<{}, State> {
     const { ServerRoutes } = this.state
     return (
       <Switch>
-        <Route exact={true} path='/login' component={modules.Login} />
+        <Route exact={true} path='/login' component={Login} />
         <Layout>
           <Route path='/' exact={true} render={() => <Redirect to='/home' />} />
           {
@@ -43,7 +43,8 @@ class Main extends React.Component<{}, State> {
               )
             })
           }
-          {/* <Route path='/home' component={modules.Home} />
+          <Route path='/home' component={Home} />
+          {/*
           <Route path='/settings' component={modules.Settings} />
           <Route path='/goods' component={modules.Goods} />
           <Route path='/template' component={modules.Template} />
