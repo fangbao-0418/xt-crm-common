@@ -2,8 +2,8 @@
  * @Author: fangbao
  * @Date: 2020-05-19 23:06:25
  * @LastEditors: fangbao
- * @LastEditTime: 2020-06-03 11:44:14
- * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/routes/index.tsx
+ * @LastEditTime: 2020-06-05 17:20:39
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm-microservice/common/src/routes/index.tsx
  */
 
 import React from 'react'
@@ -22,11 +22,8 @@ class Main extends React.Component<{}, State> {
     ServerRoutes: []
   }
   public componentDidMount () {
-    //
-    console.log(Observer, 'crm Observer')
     Observer.subscribe(() => {
       const routes = Observer.getRoutes()
-      console.log(routes, 'subscribe crm')
       this.setState({
         ServerRoutes: routes
       })
@@ -50,7 +47,7 @@ class Main extends React.Component<{}, State> {
           <Route path='/settings' component={modules.Settings} />
           <Route path='/goods' component={modules.Goods} />
           <Route path='/template' component={modules.Template} />
-          {/* <Route path='/order' component={modules.Order} /> */}
+          <Route path='/order' component={modules.Order} />
           <Route path='/activity' component={modules.Activity} />
           <Route path='/coupon' component={modules.Coupon} />
           <Route path='/user' component={modules.User} />

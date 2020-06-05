@@ -1,8 +1,8 @@
 <!--
  * @Date: 2020-03-30 16:57:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-06-02 11:58:11
- * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/public/index.html
+ * @LastEditTime: 2020-06-05 16:45:25
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm-microservice/common/public/index.html
 --> 
 <!DOCTYPE html>
 <html lang="zh-cn">
@@ -39,6 +39,31 @@
     <script src="https://cdn.hzxituan.com/npm/moon/v1.0.3/moon.js"></script>
     <script>
       antd.Message = antd.message
+    </script>
+    <script>
+      const Observer = (function () {
+        const routes = []
+        const listeners = []
+        return {
+          subscribe: function (fn) {
+            listeners.push(fn)
+          },
+          addRoute: function (routeInfo) {
+            routes.push(routeInfo)
+            this.trigger()
+          },
+          trigger: function () {
+            console.log('trigger')
+            console.log(listeners, 'listeners')
+            listeners.map((fn) => {
+              fn && fn()
+            })
+          },
+          getRoutes: function () {
+            return routes
+          }
+        }
+      })()
     </script>
   </head>
   <body>
