@@ -89,6 +89,9 @@ class Main extends React.Component<Props, State> {
   }
   public fetchData () {
     api.fetchGoodsList(this.payload).then((res: any) => {
+      if (!res) {
+        return
+      }
       res.current = this.payload.page
       res.records = (res.records || []).map((item: Item) => {
         return {

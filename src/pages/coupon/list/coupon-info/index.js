@@ -870,9 +870,9 @@ class CouponInfo extends React.Component {
                       }]
                     })(
                       <InputNumber
-                        placeholder='最多10'
+                        placeholder='最多50'
                         min={1}
-                        max={10}
+                        max={50}
                       />
                     )}
                   </span>
@@ -891,7 +891,7 @@ class CouponInfo extends React.Component {
                   />
                   <span className='ml10'>每日限领</span>
                   <span className='ml10 short-input'>
-                    {form.getFieldDecorator('dailyRestrict')(<InputNumber placeholder='最多10' min={1} max={10} />)}
+                    {form.getFieldDecorator('dailyRestrict')(<InputNumber placeholder='最多50' min={1} max={50} />)}
                   </span>
                   <span className='ml10'>张</span>
                 </>

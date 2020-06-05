@@ -19,6 +19,7 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import { defaultConfig } from './config'
 import { GoodsSpuItem } from './interface'
+import SuppilerSelector from '@/components/supplier-selector'
 
 interface SkuSaleListState {
   selectedRowKeys: string[] | number[]
@@ -290,8 +291,13 @@ class SkuSaleList extends React.Component<Props, SkuSaleListState> {
         processPayload={(payload) => {
           return {
             ...payload,
-            status: +status
+            status: +status,
+            storeId: payload.store?.key,
+            store: undefined
           }
+        }}
+        cachePayloadProcess={(payload) => {
+          return payload
         }}
         rangeMap={{
           goodsTime: {
@@ -309,8 +315,8 @@ class SkuSaleList extends React.Component<Props, SkuSaleListState> {
               <FormItem
                 label='供应商'
                 inner={(form) => {
-                  return form.getFieldDecorator('storeId')(
-                    <SuppilerSelect type='fresh' style={{ width: 172 }} />
+                  return form.getFieldDecorator('store')(
+                    <SuppilerSelector type='all' category={5} style={{ width: '174px' }} />
                   )
                 }}
               />
