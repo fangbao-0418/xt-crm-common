@@ -49,7 +49,7 @@ export function changeSpecialStatus (subjectIds: number[], status: 0 | 1 | undef
  */
 export function getGoodsListByActivityId (param: any) {
   const { promotionId, ...data } = param
-  return get(`/promotion/${promotionId}/products`, data)
+  return get(`/promotion/products/byPromotionId?promotionId=${promotionId}`, data)
 }
 
 /**
