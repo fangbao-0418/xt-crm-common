@@ -82,3 +82,8 @@ export const refreshGoods = () => {
     type: 1
   })
 }
+
+// 获取优惠券列表
+export function getCouponlist (data: any) {
+  return newPost('/mcweb/coupon/get/couponList', data)
+}
