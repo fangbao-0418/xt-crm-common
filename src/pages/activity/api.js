@@ -17,7 +17,7 @@ export function setBasePromotion (data) {
  * @param {*} promotionId
  */
 export function getPromotionInfo (promotionId) {
-  return get(`/promotion/getById?promotionId=${promotionId}`).then(promotionResponse)
+  return get(`/mcweb/promotion/getById?promotionId=${promotionId}`).then(promotionResponse)
 }
 
 // 获取活动商品列表
@@ -95,7 +95,7 @@ export function lotteryManualGive (data) {
  * @param {*} param
  */
 export function getGoodsListByActivityId ({ promotionId, ...data }) {
-  return get(`/promotion/products/byPromotionId?promotionId=${promotionId}`, data)
+  return get(`/mcweb/promotion/products/byPromotionId?promotionId=${promotionId}`, data)
 }
 
 /**
