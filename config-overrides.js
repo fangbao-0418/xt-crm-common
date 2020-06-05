@@ -173,7 +173,9 @@ module.exports = override(
   (function () {
     return (config) => {
       if (!isLocal) {
-        const publicPath = originConfigs[PUB_ENV] + '/'
+        const branch = process.env.branch
+        const origin = originConfigs[PUB_ENV]
+        const publicPath =  origin + '/' + branch + '/'
         config.output.publicPath = publicPath
         console.log(publicPath, 'publicPath')
       } else {
