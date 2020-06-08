@@ -167,6 +167,7 @@ class Add extends React.Component<Props, State> {
                 listType='picture-card'
                 fileType='video'
                 value={videoUrl}
+                disabled
               />
             ) : '无'}
           </FormItem>
