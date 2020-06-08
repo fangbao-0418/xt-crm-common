@@ -220,7 +220,7 @@ class SupplierModal extends Component {
                     }
                   ]
                 })(
-                  <Input max={10} placeholder='请输入店铺名称' />
+                  <Input maxLength={10} placeholder='请输入店铺名称' />
                 )}
               </FormItem>
               <FormItem label='店铺logo'>
