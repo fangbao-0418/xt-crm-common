@@ -50,5 +50,5 @@ export async function saveSubjectFloor (payload: {
  */
 export function getGoodsListByActivityId (param: any) {
   const { promotionId, ...data } = param
-  return get(`/promotion/${promotionId}/products`, data)
+  return get(`/mcweb/promotion/products/byPromotionId?promotionId=${promotionId}`, data)
 }

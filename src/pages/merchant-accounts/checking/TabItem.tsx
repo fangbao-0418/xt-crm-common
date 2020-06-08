@@ -264,19 +264,19 @@ class Main extends React.Component<Props, State> {
   /** 批量导出方法 */
   public batchExport = (type: string) => {
     const values = this.listpage && this.listpage.form.getValues()
-    const params = Object.assign(values, {bulidYear: values.date[0], bulidMonth: values.date[1]})
+    const params = Object.assign(values, { bulidYear: values.date[0], bulidMonth: values.date[1] })
     delete params.date
     if (!params.storeName) {
       return message.info('请输入供应商名称')
     }
     let apiUrl = ''
     switch (type) {
-    case 'list':
-      apiUrl =  '/finance/accountRecord/exportAccountSingleData'
-      break
-    case 'detail':
-      apiUrl =  '/finance/accountRecord/exportAccountData'
-      break
+      case 'list':
+        apiUrl = '/finance/accountRecord/exportAccountSingleData'
+        break
+      case 'detail':
+        apiUrl = '/finance/accountRecord/exportAccountData'
+        break
     }
     api.batchExport(apiUrl, params).then(() => {
       return message.success('导出成功，请前往下载列表下载文件')
@@ -330,7 +330,7 @@ class Main extends React.Component<Props, State> {
                   )
                 }}
               />
-              <FormItem name='sourceNo'/>
+              <FormItem name='sourceNo' />
             </>
           )}
           tableProps={{
@@ -370,7 +370,7 @@ class Main extends React.Component<Props, State> {
               >
                 批量导出明细
               </Button>
-              {[20, 70].indexOf(this.props.status) > -1 && (
+              {[-1, 20, 70].indexOf(this.props.status) > -1 && (
                 <Button
                   type='primary'
                   onClick={this.addStatements}
