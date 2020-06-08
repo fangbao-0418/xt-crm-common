@@ -14,6 +14,23 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           { label: '喜团买菜', value: 2 }
         ]
       },
+      memberId1: {
+        type: 'checkbox',
+        label: '业务范围',
+        options: [
+          { label: '喜团优选', value: 1 },
+          { label: '喜团买菜', value: 2 }
+        ],
+        fieldDecoratorOptions: {
+          initialValue: [1],
+          rules: [
+            {
+              required: true,
+              message: '请选择业务范围'
+            }
+          ]
+        }
+      },
       phone: {
         type: 'input',
         label: '手机号码',
