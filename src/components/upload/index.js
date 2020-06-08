@@ -346,7 +346,6 @@ class UploadView extends Component {
     } = this.props;
     const { fileList } = this.state;
     delete attributes.onChange
-    console.log(this.state.url, 'this.state.url====')
     return (
       <>
         <Upload
