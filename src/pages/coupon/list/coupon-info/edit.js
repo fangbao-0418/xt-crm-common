@@ -240,7 +240,22 @@ function CouponInfo (props) {
                   pageSize: 5
                 }}
                 rowKey='id'
-                columns={columns}
+                columns={columns.concat([{
+                  title: '操作',
+                  render: (text, record, index) => {
+                    return (
+                      <span
+                        className='href'
+                        onClick={() => {
+                          excludeProduct.splice(index, 1)
+                          setExcludeProduct([...excludeProduct])
+                        }}
+                      >
+                        删除
+                      </span>
+                    )
+                  }
+                }])}
                 dataSource={excludeProduct}
               />
             </Form.Item>
