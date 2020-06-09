@@ -45,7 +45,9 @@ function CouponInfo (props) {
     }
     setDetail(detail)
     const rangeVOList = detail.ruleVO && detail.ruleVO.rangeVOList || []
+    const excludeProductVOList = detail.ruleVO && detail.ruleVO.excludeProductVOList || []
     setChosenProduct(rangeVOList)
+    setExcludeProduct(excludeProductVOList)
   }
 
   useEffect(() => {
@@ -71,14 +73,13 @@ function CouponInfo (props) {
   }
   // 选择商品添加数据到已排除商品或者已选择商品列表
   const onProductSelectorChange = (selectedRowKeys, selectedRows) => {
-    console.log(chosenProduct, selectedRows, 'selectedRows')
     selectedRows.map((item) => {
       item.name = item.name || item.productName
     })
     if (hasExclude()) {
-      setExcludeProduct(unionArray(excludeProduct, selectedRows))
+      setExcludeProduct(selectedRows)
     } else {
-      setChosenProduct(unionArray(chosenProduct, selectedRows))
+      setChosenProduct(selectedRows)
     }
   }
   // 选择活动添加数据到已选择活动列表里
@@ -91,6 +92,7 @@ function CouponInfo (props) {
       if (!err) {
         const urlSearch = new URLSearchParams(history.location.search)
         detail.ruleVO.rangeVOList = chosenProduct
+        detail.ruleVO.excludeValues = excludeProduct.map((item) => item.id).join(',')
         detail.ruleVO.avlValues = chosenProduct.map((item) => item.id).join(',')
         detail.baseVO = {
           ... detail.baseVO,
@@ -196,7 +198,8 @@ function CouponInfo (props) {
                 setProductSelectorVisible(true)
                 const keys = (chosenProduct || []).map((item) => item.id)
                 productSelector.current.setState({
-                  selectedRowKeys: keys
+                  selectedRowKeys: keys,
+                  selectedRows: chosenProduct || []
                 })
               }}
             >
@@ -235,10 +238,54 @@ function CouponInfo (props) {
               }}
               rowKey='id'
               columns={columns}
-              dataSource={ruleVO.excludeProductVOList}
+              dataSource={excludeProduct}
             />
           </Form.Item>
         )}
+        <If condition={ruleVO.avlRange !== 2}>
+          <Form.Item
+            style={{
+              marginBottom: 0
+            }}
+            wrapperCol={formLeftButtonLayout}
+          >
+            <span
+              className='href mr8'
+              onClick={() => {
+                setProductSelectorVisible(true)
+                const keys = (excludeProduct || []).map((item) => item.id)
+                productSelector.current.setState({
+                  selectedRowKeys: keys,
+                  selectedRows: excludeProduct || []
+                })
+              }}
+            >
+              排除商品
+            </span>
+            <span
+              className='href mr8'
+              onClick={() => {
+                importShop().then((res) => {
+                  const data = (res.data || []).map((val) => {
+                    val.name = val.productName
+                    return val
+                  })
+                  let num = excludeProduct.length
+                  const arr = unionArray(excludeProduct, data)
+                  num = arr.length - num
+                  showExportMessage({
+                    successNo: num,
+                    excelAddress: res.excelAddress
+                  })
+                  setExcludeProduct(arr)
+                })
+              }}
+            >
+              导入排除商品
+            </span>
+            <DownTemplate />
+          </Form.Item>
+        </If>
         <Form.Item label='优惠券价值'>{formatFaceValue(ruleVO)}</Form.Item>
         <Form.Item label='发放总量'>
           <Row type='flex'>
