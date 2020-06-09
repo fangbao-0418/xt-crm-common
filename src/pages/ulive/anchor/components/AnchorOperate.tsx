@@ -223,7 +223,8 @@ class Main extends React.Component<Props, State> {
         headUrl: userInfo.headImage,
         nickName: userInfo.nickName,
         phone: userInfo.phone,
-        memberId: userInfo.id
+        memberId: userInfo.id,
+        bizScopes: value.bizScopes
       }
       api.addAnchor(payload).then(() => {
         this.setState({

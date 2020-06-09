@@ -18,7 +18,6 @@ class Main extends React.Component<Props> {
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
     title: '主播昵称',
     dataIndex: 'nickName',
-    width: 200,
     render: (text, record) => {
       return (
         <div className={styles['anchor-column-nickname']}>
@@ -51,13 +50,11 @@ class Main extends React.Component<Props> {
   {
     title: '粉丝数',
     dataIndex: 'fansTotal',
-    width: 200,
     align: 'center'
   },
   {
     dataIndex: 'anchorIdentityType',
     title: '主播身份',
-    width: 150,
     render: (text) => {
       return AnchorIdentityTypeEnum[text]
     }
@@ -65,7 +62,6 @@ class Main extends React.Component<Props> {
   {
     dataIndex: 'anchorId',
     title: '主播个人页',
-    width: 120,
     align: 'center',
     render: (text, record) => {
       return (
@@ -82,7 +78,6 @@ class Main extends React.Component<Props> {
   {
     dataIndex: 'anchorLevel',
     title: '主播等级',
-    width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
