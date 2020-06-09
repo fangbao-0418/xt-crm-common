@@ -58,7 +58,7 @@ class Main extends React.Component<Props> {
             label='位置'
           >
             {getFieldDecorator('seat', { initialValue: values.seat })(
-              <BannerPosition />
+              <BannerPosition type={1} />
             )}
           </Form.Item>
           <Form.Item
