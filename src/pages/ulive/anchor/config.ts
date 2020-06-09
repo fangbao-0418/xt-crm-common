@@ -6,7 +6,7 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      phone1: {
+      bizScopeSearch: {
         type: 'select',
         label: '业务范围',
         options: [
@@ -14,7 +14,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           { label: '喜团买菜', value: 2 }
         ]
       },
-      memberId1: {
+      bizScopes: {
         type: 'checkbox',
         label: '业务范围',
         options: [
@@ -137,4 +137,9 @@ export enum AnchorIdentityTypeEnum {
 export enum AnchorLevelEnum {
   星级主播 = 10,
   普通主播 = 0
+}
+
+export enum BizScopeEnum {
+  喜团优选=1,
+  喜团买菜=2
 }

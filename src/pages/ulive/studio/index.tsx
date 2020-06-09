@@ -22,14 +22,14 @@ interface Props extends AlertComponentProps {
 
 interface State {
   rowKeys: any[],
-  rechargeStatus: string
+  bizType: string
 }
 
 class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
   public state: State = {
     rowKeys: [],
-    rechargeStatus: '1'
+    bizType: '1'
   }
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
@@ -541,11 +541,14 @@ class Main extends React.Component<Props, State> {
 
   handleTabClick = (key: any) => {
     this.setState({
-      rechargeStatus: key
+      bizType: key
+    }, ()=>{
+      this.listpage.form.reset()
     })
   }
   public render () {
     const tabList=[{ name: '喜团优选', key: '1' }, { name: '喜团买菜', key: '2' }]
+    const { bizType }=this.state
     return (
       <div
         style={{
@@ -553,7 +556,7 @@ class Main extends React.Component<Props, State> {
           paddingTop: 20
         }}
       >
-        <Tabs style={{ marginLeft: 20, paddingRight: 20 }} activeKey={this.state.rechargeStatus} onTabClick={this.handleTabClick}>
+        <Tabs style={{ marginLeft: 20, paddingRight: 20 }} activeKey={bizType} onTabClick={this.handleTabClick}>
           {tabList.map(tab => {
             return (<TabPane tab={tab.name} key={tab.key} />
             )
@@ -650,6 +653,12 @@ class Main extends React.Component<Props, State> {
               <Button onClick={this.multiAudit(0)}>审核不通过</Button>
             </div>
           )}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              bizType
+            }
+          }}
           api={api.getStudioList}
         />
       </div>

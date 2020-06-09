@@ -6,7 +6,7 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Tag, Popconfirm, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
+import { getFieldsConfig, BizScopeEnum, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
 import AnchorOperate from './components/AnchorOperate'
 import Video from './components/Video'
 import styles from './style.module.styl'
@@ -23,19 +23,22 @@ class Main extends React.Component<Props> {
       return (
         <div className={styles['anchor-column-nickname']}>
           <div className={styles['anchor-column-nickname-icon']}>
-            <Image onClick={() => { APP.history.push(`/user/detail?memberId=${record.memberId}`) }} src={record.headUrl} width={50} height={50} />
+            <Image onClick={() => {
+              APP.history.push(`/user/detail?memberId=${record.memberId}`)
+            }} src={record.headUrl} width={50} height={50} />
           </div>
           <div className={styles['anchor-column-nickname-info']}>
             <div>
               <span
                 className={classNames(styles['anchor-column-nickname-info-name'], 'href')}
                 onClick={() => {
-                  APP.href(`/user/detail?memberId=${record.memberId}`, '__target') }
+                  APP.href(`/user/detail?memberId=${record.memberId}`, '__target')
+                }
                 }
               >
                 {record.nickName || record.phone || '暂无'}
               </span>
-              <Tag style={{margin: '0 5px'}} hidden={record.status !== 1} color='#666'>黑名单</Tag>
+              <Tag style={{ margin: '0 5px' }} hidden={record.status !== 1} color='#666'>黑名单</Tag>
             </div>
             <div>
               <span>ID : {record.memberId}</span>
@@ -85,11 +88,15 @@ class Main extends React.Component<Props> {
     }
   },
   {
-    dataIndex: 'phone1',
+    dataIndex: 'bizScopes',
     title: '业务范围',
-    width: 150,
+    width: 180,
     render: (text) => {
-      return AnchorLevelEnum[text]
+      const arr: string[] = []
+      text.map((item: number) => {
+        arr.push(BizScopeEnum[item])
+      })
+      return arr.join('，')
     }
   },
   {
@@ -182,13 +189,13 @@ class Main extends React.Component<Props> {
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='memberId' label='主播ID'/>
+              <FormItem name='memberId' label='主播ID' />
               <FormItem name='nickName' />
               <FormItem name='anchorIdentityType' />
               <FormItem name='anchorLevel' />
               <FormItem name='status' />
               <FormItem name='phone' />
-              <FormItem name='phone1' />
+              <FormItem name='bizScopeSearch' />
             </>
           )}
           api={api.getAnchorList}

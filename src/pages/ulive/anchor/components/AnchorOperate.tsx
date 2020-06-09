@@ -271,7 +271,8 @@ class Main extends React.Component<Props, State> {
         api.updateAnchor({
           anchorId: detail.anchorId,
           anchorIdentityType: value.anchorIdentityType,
-          anchorLevel: value.anchorLevel
+          anchorLevel: value.anchorLevel,
+          bizScopes: value.bizScopes
         }).then(() => {
           APP.success('修改成功')
           this.hide()
@@ -380,7 +381,7 @@ class Main extends React.Component<Props, State> {
               />
               <FormItem
                 label='业务范围'
-                name='memberId1'
+                name='bizScopes'
                 required={true}
                 verifiable
               />
@@ -476,7 +477,7 @@ class Main extends React.Component<Props, State> {
               this.anchorInfo
               &&<FormItem
                 label='业务范围'
-                name='memberId1'
+                name='bizScopes'
                 required={true}
                 verifiable
               />
@@ -649,7 +650,7 @@ class Main extends React.Component<Props, State> {
               />
               <FormItem
                 label='业务范围'
-                name='memberId1'
+                name='bizScopes'
                 required={true}
                 verifiable
               />
