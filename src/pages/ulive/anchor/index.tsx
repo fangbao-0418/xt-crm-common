@@ -93,10 +93,10 @@ class Main extends React.Component<Props> {
     width: 180,
     render: (text) => {
       const arr: string[] = []
-      text.map((item: number) => {
+      text && text.length>0 && text.map((item: number) => {
         arr.push(BizScopeEnum[item])
       })
-      return arr.join('，')
+      return arr&&arr.length>0?arr.join('，'):''
     }
   },
   {
