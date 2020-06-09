@@ -94,8 +94,10 @@ function CouponInfo (props) {
         detail.ruleVO.rangeVOList = chosenProduct
         detail.ruleVO.excludeValues = excludeProduct.map((item) => item.id).join(',')
         detail.ruleVO.avlValues = chosenProduct.map((item) => item.id).join(',')
+        detail.ruleVO.dailyRestrict = fields.dailyRestrict
+        detail.ruleVO.restrictNum = fields.restrictNum
         detail.baseVO = {
-          ... detail.baseVO,
+          ...detail.baseVO,
           ...fields,
           id: +urlSearch.get('id')
         }
@@ -229,20 +231,20 @@ function CouponInfo (props) {
             <DownTemplate />
           </If>
         </Form.Item>
-        {ruleVO.excludeProductVOList && ruleVO.excludeProductVOList.length > 0 && (
-          <Form.Item label='已排除商品'>
-            <Table
-              style={{ width: '400px' }}
-              pagination={{
-                pageSize: 5
-              }}
-              rowKey='id'
-              columns={columns}
-              dataSource={excludeProduct}
-            />
-          </Form.Item>
-        )}
         <If condition={ruleVO.avlRange !== 2}>
+          <If condition={excludeProduct.length}>
+            <Form.Item label='已排除商品'>
+              <Table
+                style={{ width: '400px' }}
+                pagination={{
+                  pageSize: 5
+                }}
+                rowKey='id'
+                columns={columns}
+                dataSource={excludeProduct}
+              />
+            </Form.Item>
+          </If>
           <Form.Item
             style={{
               marginBottom: 0
@@ -302,8 +304,36 @@ function CouponInfo (props) {
         <Form.Item label='领取时间'>{formatDateRange(ruleVO)}</Form.Item>
         <Form.Item label='使用时间'>{formatUseTime(ruleVO)}</Form.Item>
         <Form.Item label='领取人限制'>{formatReceiveRestrict(ruleVO.receiveRestrict)}</Form.Item>
-        <Form.Item label='每人限领次数'>{ruleVO.restrictNum}张</Form.Item>
-        <Form.Item label='每日限领次数'>{ruleVO.dailyRestrict ? `${ruleVO.dailyRestrict}张` : '无'}</Form.Item>
+        <Form.Item label='每人限领次数'>
+          <Row type='flex'>
+            <Col>
+              {
+                getFieldDecorator('restrictNum', {
+                  initialValue: ruleVO.restrictNum
+                })(
+                  <InputNumber min={ruleVO.restrictNum} max={50} />
+                )
+              }
+            </Col>
+            <Col className='ml10'>张</Col>
+          </Row>
+          <p>修改每人限领次数时只能增加不能减少，请谨慎设置</p>
+        </Form.Item>
+        <Form.Item label='每日限领次数'>
+          <Row type='flex'>
+            <Col>
+              {
+                getFieldDecorator('dailyRestrict', {
+                  initialValue: ruleVO.dailyRestrict
+                })(
+                  <InputNumber min={ruleVO.dailyRestrict} max={50} />
+                )
+              }
+            </Col>
+            <Col className='ml10'>张</Col>
+          </Row>
+          <p>修改每日限领次数时只能增加不能减少，请谨慎设置</p>
+        </Form.Item>
         <Form.Item label='使用平台'>{formatPlatformRestrict(ruleVO.platformRestrict)}</Form.Item>
         {ruleVO.receivePattern === 1 && <Form.Item label='发券控制'>仅支持手动发券</Form.Item>}
         {ruleVO.receivePattern !== 1 && (<Form.Item label='商详显示'>{ruleVO.showFlag === 1 ? '显示' : '不显示'}</Form.Item>)}
