@@ -180,8 +180,8 @@ function CouponInfo (props) {
                     <span
                       className='href'
                       onClick={() => {
-                        chosenProduct.splice(index, 1)
-                        setChosenProduct([...chosenProduct])
+                        const newProduct = chosenProduct.filter(item => item.id !== record.id)
+                        setChosenProduct([...newProduct])
                       }}
                     >
                       删除
@@ -242,13 +242,13 @@ function CouponInfo (props) {
                 rowKey='id'
                 columns={columns.concat([{
                   title: '操作',
-                  render: (text, record, index) => {
+                  render: (text, record) => {
                     return (
                       <span
                         className='href'
                         onClick={() => {
-                          excludeProduct.splice(index, 1)
-                          setExcludeProduct([...excludeProduct])
+                          const newProduct = excludeProduct.filter(item => item.id !== record.id)
+                          setExcludeProduct([...newProduct])
                         }}
                       >
                         删除
