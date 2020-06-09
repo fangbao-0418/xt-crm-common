@@ -29,6 +29,13 @@ export const addProductMaterial = (data: any) => {
 }
 
 /**
+ * 审核商品素材
+ */
+export const auditMaterial = (data: any) => {
+  return newPost('/mcweb/product/material/audit', data)
+}
+
+/**
  * 修改商品素材
  */
 export const editProductMaterial = (data: any) => {
@@ -46,7 +53,7 @@ export const getProductMaterialList = (data: any) => {
  * 查询商品素材单个
  */
 export const getProductMaterialId = (materialId: number) => {
-  return get('/mcweb/product/material/getById', {materialId})
+  return get('/mcweb/product/material/getById', { materialId })
 }
 
 /**
@@ -76,7 +83,7 @@ export const deleteMaterial = (materialId: number) => {
  */
 export function getGoodsList (data: any) {
   return post('/product/list', data).then((res) => {
-    res.records =  (res.records || []).map((item: any) => {
+    res.records = (res.records || []).map((item: any) => {
       item.skuList = item.skuList || []
       item.skuList.map((val: any) => {
         val.productId = item.id
