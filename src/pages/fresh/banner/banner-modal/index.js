@@ -15,14 +15,7 @@ const FormItem = Form.Item
 const Option = Select.Option
 /**
  * key
- * 1.首页
- * 2.分类频道
- * 3.严选
- * 4.支付结果
- * 5.直播
- * 6.充值中心
- * 7.搜索列表
- * 8.商品详情页
+ * 101.首页
  */
 const formItemLayout = {
   labelCol: { span: 6 },
@@ -114,9 +107,13 @@ class BannerModal extends Component {
         params.childSeat = seat[1]
         params.seat = seat[1]
         params.platform = 0
-        params.platformArray.forEach((val) => {
+        params.platformArray && params.platformArray.length > 0 && params.platformArray.forEach((val) => {
           params.platform += val * 1
         })
+        //如果是首页所在平台为小程序
+        if (seat[0]===101) {
+          params.platform = 16
+        }
         if (params.keywordsList&&params.keywordsList.length>20) {
           APP.error('关键字不能超过20个')
           return
@@ -195,6 +192,8 @@ class BannerModal extends Component {
                 ]
               })(
                 <BannerPostion
+                  //type 1为买菜
+                  type={1}
                   onChange={(val) => {
                     data.newSeat = val[0]
                     data.childSeat = val[1]
@@ -212,13 +211,13 @@ class BannerModal extends Component {
                 })(<Input placeholder='' />)}
               </FormItem>
             </If>
-            <If condition={[1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])}>
+            <If condition={[101].includes(seat[0])}>
               <FormItem key={renderKey} label='Banner图片' required={true}>
                 {getFieldDecorator('imgList', {
                   initialValue: initImgList(data.imgUrlWap),
                   rules: [
                     {
-                      required: [1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0]),
+                      required: [101].includes(seat[0]),
                       message: '请上传Banner图片'
                     }
                   ]
@@ -267,7 +266,7 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4, 6, 7, 8].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+            {/* <If condition={([1, 2, 3, 4, 6, 7, 8].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
@@ -279,7 +278,7 @@ class BannerModal extends Component {
                   <Checkbox.Group options={_platformType}> </Checkbox.Group>
                 )}
               </FormItem>
-            </If>
+            </If> */}
             <If condition={seat[0] === 7}>
               <FormItem label='关键词'>
                 {getFieldDecorator('keywordsList', {
@@ -317,8 +316,6 @@ class BannerModal extends Component {
                           APP.error('不能超过20个关键词')
                           return
                         }
-                        console.log(data.keywordsList)
-                        console.log(targetInputValue)
                         if (targetInputValue) {
                           if (data.keywordsList&&data.keywordsList.length>0&&data.keywordsList.indexOf(targetInputValue)>-1) {
                             APP.error('关键词重复')

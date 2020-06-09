@@ -1,1 +1,1 @@
-export const namespace = '/banner/list'
+export const namespace = '/fresh/banner/list'

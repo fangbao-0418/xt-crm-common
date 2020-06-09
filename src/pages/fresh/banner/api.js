@@ -29,7 +29,7 @@ export function queryBannerList (data) {
   if (debug) {
     return Promise.resolve(mockData)
   }
-  return post('/banner/list', data)
+  return post('/banner/fresh/list', data)
 }
 
 export function getBannerDetail (data) {
@@ -47,7 +47,7 @@ export function getBannerDetail (data) {
       title: 'string'
     })
   }
-  return post('/banner/get', data)
+  return post('/banner/fresh/get', data)
 }
 
 export function addBanner (data) {
@@ -55,7 +55,7 @@ export function addBanner (data) {
   if (debug) {
     return Promise.resolve(true)
   }
-  return post('/banner/add', data)
+  return post('/banner/fresh/add', data)
 }
 
 export function updateBanner (data) {
@@ -63,7 +63,7 @@ export function updateBanner (data) {
   if (debug) {
     return Promise.resolve(true)
   }
-  return post('/banner/update', data)
+  return post('/banner/fresh/update', data)
 }
 
 export function deleteBanner (data) {
@@ -71,7 +71,7 @@ export function deleteBanner (data) {
   if (debug) {
     return Promise.resolve(true)
   }
-  return post('/banner/delete', data)
+  return post('/banner/fresh/delete', data)
 }
 
 export function updateBannerStatus (data) {
@@ -79,5 +79,5 @@ export function updateBannerStatus (data) {
   if (debug) {
     return Promise.resolve(true)
   }
-  return post('/banner/update/status', data)
+  return post('/banner/fresh/update/status', data)
 }
