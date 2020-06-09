@@ -223,8 +223,7 @@ class Main extends React.Component<Props, State> {
         headUrl: userInfo.headImage,
         nickName: userInfo.nickName,
         phone: userInfo.phone,
-        memberId: userInfo.id,
-        bizScopes: value.bizScopes
+        memberId: userInfo.id
       }
       api.addAnchor(payload).then(() => {
         this.setState({
@@ -380,12 +379,6 @@ class Main extends React.Component<Props, State> {
                 required={false}
                 verifiable
               />
-              <FormItem
-                label='业务范围'
-                name='bizScopes'
-                required={true}
-                verifiable
-              />
             </If>
             <If condition={this.state.addType === 2}>
               <FormItem
@@ -474,15 +467,12 @@ class Main extends React.Component<Props, State> {
               name='anchorLevel'
               verifiable
             />
-            {
-              this.anchorInfo
-              &&<FormItem
-                label='业务范围'
-                name='bizScopes'
-                required={true}
-                verifiable
-              />
-            }
+            <FormItem
+              label='业务范围'
+              name='bizScopes'
+              required={true}
+              verifiable
+            />
             <div className='text-center'>
               <Button
                 type='primary'
