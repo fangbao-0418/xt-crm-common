@@ -159,7 +159,7 @@ class UploadView extends Component {
       let thumbUrl = val.url || ''
       if (fileType == 'video') {
         url = url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '');
-        thumbUrl = url+ '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast';
+        thumbUrl = url+ '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast,ar_auto';
       }
       durl = this.getViewUrl(durl)
       url = this.getViewUrl(url)

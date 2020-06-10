@@ -131,7 +131,7 @@ class ProductSelector extends Component {
   }
   // 确认对话框
   handleOkModal = () => {
-    isFunction(this.props.onChange) && this.props.onChange(this.state.electedRowKeys, this.state.selectedRows)
+    isFunction(this.props.onChange) && this.props.onChange(this.state.selectedRowKeys, this.state.selectedRows)
     this.handleCancel()
   }
   handleInputChange = (event) => {
@@ -151,6 +151,7 @@ class ProductSelector extends Component {
         this.setState({ selectedRowKeys, selectedRows: unionArrs.filter(v => selectedRowKeys.includes(v.id)) })
       }
     }
+
     return (
       <Modal
         title='选择商品'
