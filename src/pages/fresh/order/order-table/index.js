@@ -142,9 +142,17 @@ class OrderList extends React.Component {
         dataIndex: 'orderCode',
         width: '400px',
         render: (operate, { orderStatus, orderCode }) => (
-          <Button type='link' href={window.location.pathname + `#/fresh/order/detail/${orderCode}`} target='_blank'>
+          <span
+            // type='link'
+            // href={window.location.pathname + `#/fresh/order/detail/${orderCode}`}
+            // target='_blank'
+            className='href'
+            onClick={() => {
+              APP.open(`/fresh/order/detail/${orderCode}`)
+            }}
+          >
             {orderCode}
-          </Button>
+          </span>
         )
       },
       {
@@ -192,9 +200,17 @@ class OrderList extends React.Component {
         width: '150px',
         render: (operate, { orderType, orderStatus, orderCode }) => (
           <>
-            <Button type='link' href={window.location.pathname + `#/fresh/order/detail/${orderCode}`} target='_blank'>
+            <span
+              // type='link'
+              // href={window.location.pathname + `#/fresh/order/detail/${orderCode}`}
+              // target='_blank'
+              className='href'
+              onClick={() => {
+                APP.open(`/fresh/order/detail/${orderCode}`)
+              }}
+            >
               查看详情
-            </Button>
+            </span>
           </>
         )
       }

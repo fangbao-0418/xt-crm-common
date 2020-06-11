@@ -43,12 +43,16 @@ class Main extends React.Component<Props, State> {
       width: 200,
       render: (text, record) => {
         return (
-          <a
-            href={window.location.pathname + `#/merchant-accounts/checking/${record.accId}`}
-            target='_blank'
+          <span
+            // href={window.location.pathname + `#/merchant-accounts/checking/${record.accId}`}
+            // target='_blank'
+            className='href'
+            onClick={() => {
+              APP.open(`/merchant-accounts/checking/${record.accId}`)
+            }}
           >
             {text}
-          </a>
+          </span>
         )
       }
     },
@@ -147,16 +151,17 @@ class Main extends React.Component<Props, State> {
         return (
           <div>
             {(record.trimStatus === 20 && APP.user.menuGathers.indexOf('adjustment:procurement_audit') > -1 || [10, 20].indexOf(record.trimStatus) === -1) && (
-                <>
-                  <span
-                    className='href'
-                    onClick={() => { this.showAdjustment('view', record) }}
-                  >
-                    查看明细
-                  </span>&nbsp;&nbsp;
-                </>
-              )
-            }
+              <>
+                <span
+                  className='href'
+                  onClick={() => {
+                    this.showAdjustment('view', record)
+                  }}
+                >
+                  查看明细
+                </span>&nbsp;&nbsp;
+              </>
+            )}
             {/* <span className='href'>导出</span>&nbsp;&nbsp; */}
             <Auth>
               {(access: boolean, codes: string[]) => {

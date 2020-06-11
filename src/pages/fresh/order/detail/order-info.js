@@ -42,7 +42,19 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
             title: '订单编号',
             dataIndex: 'orderCode',
             render: (code) => {
-              return <Button type='link' href={window.location.pathname + `#/fresh/order/detail/${code}`} target="_blank">{code}</Button>
+              return (
+                <span
+                  // type='link'
+                  // href={window.location.pathname + `#/fresh/order/detail/${code}`}
+                  // target="_blank"
+                  className='href'
+                  onClick={() => {
+                    APP.open(`/fresh/order/detail/${code}`)
+                  }}
+                >
+                  {code}
+                </span>
+              )
             }
           }, {
             title: '状态',
