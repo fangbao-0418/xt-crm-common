@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-04-08 20:54:25
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-19 23:35:18
- * @FilePath: /xt-crm/src/App.js
+ * @LastEditTime: 2020-06-11 20:31:05
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/App.js
  */
 import React from 'react'
 import PropTypes from 'prop-types'
@@ -35,7 +35,9 @@ class Main extends React.Component {
       if (res && BUILD_TIME !== build_time) {
         APP.moon.error('version mismatch')
         const { pathname, hash } = window.location
+        let { search } = window.location
         const nowTime = new Date().getTime()
+        search = (search ? search + '&' : '?') + `t=${nowTime}`
         notification.warn({
           duration: null,
           message: '系统更新',
@@ -45,7 +47,7 @@ class Main extends React.Component {
               <span
                 className='href'
                 onClick={() => {
-                  window.location.href = `${pathname}?v=${nowTime}${hash}`
+                  window.location.href = `${pathname}${search}${hash}`
                 }}
               >
                 点击此处

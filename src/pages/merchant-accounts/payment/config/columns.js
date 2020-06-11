@@ -20,10 +20,18 @@ const getColumns = ({ onConfirm }) => {
       key: 'settlementSerialNo',
       dataIndex: 'settlementSerialNo',
       render: (text, record) => {
-        const {settId} = record
-        return <a 
-          href={window.location.pathname + `#/merchant-accounts/settlement/${settId}`} target='_blank'
-        >{text}</a>
+        const { settId } = record
+        return (
+          <span
+            // href={window.location.pathname + `#/merchant-accounts/settlement/${settId}`} target='_blank'
+            className='href'
+            onClick={() => {
+              APP.open(`/merchant-accounts/settlement/${settId}`)
+            }}
+          >
+            {text}
+          </span>
+        )
       }
     },
     {
@@ -79,17 +87,21 @@ const getColumns = ({ onConfirm }) => {
         if (enumPayType.ToBePaid === record.paymentStatus) {
           return (
             <Fragment>
-              <Button type="primary" onClick={onConfirm(record, 'confirm')}>
+              <Button size='small' type='primary' onClick={onConfirm(record, 'confirm')}>
                 确认支付
               </Button><br />
-              <Button className="mt10" onClick={onConfirm(record, 'fail')}>
+              <Button size='small' className='mt10' onClick={onConfirm(record, 'fail')}>
                 支付失败
               </Button>
             </Fragment>
           )
         } else if (enumPayType.Freezing === record.paymentStatus) {
           return (
-            <Button type="primary" disabled>
+            <Button
+              type='primary'
+              disabled
+              size='small'
+            >
               确认支付
             </Button>
           )
@@ -107,7 +119,7 @@ const getColumns = ({ onConfirm }) => {
           )
         } else if (enumPayType.Fail === record.paymentStatus) {
           return (
-            <Button type="primary" onClick={onConfirm(record, 'confirm')}>
+            <Button size='small' type='primary' onClick={onConfirm(record, 'confirm')}>
               重新支付
             </Button>
           )
@@ -116,7 +128,7 @@ const getColumns = ({ onConfirm }) => {
         }
       }
     }
-  ];
+  ]
 }
 
 export default getColumns
