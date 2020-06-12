@@ -1,12 +1,12 @@
 /*
  * @Date: 2020-03-27 13:45:49
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-07 16:52:29
- * @FilePath: /xt-crm/src/util/app/config.ts
+ * @LastEditTime: 2020-06-11 15:20:28
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/config.ts
  */
 import { baseHost, env as apiEnv } from '../baseHost'
 
-type ServerNameType = 'guard' | 'palamidi' | 'ulive' | 'message' | 'default'
+type ServerNameType = 'palamidi' | 'ulive' | 'message' | 'default'
 type EnvType = 'dev' | 'test1' | 'test2' | 'pre' | 'prod'
 
 /** 后端环境接口映射 */
@@ -15,13 +15,13 @@ export const serverMapper: {
     [env in EnvType]?: string
   }
 } = {
-  guard: {
-    dev: 'https://daily-guard.hzxituan.com',
-    test1: 'https://test-guard.hzxituan.com',
-    test2: 'https://test-guard.hzxituan.com',
-    pre: 'https://staging-guard.hzxituan.com',
-    prod: 'https://guard.hzxituan.com'
-  },
+  // guard: {
+  //   dev: 'https://daily-guard.hzxituan.com',
+  //   test1: 'https://test-guard.hzxituan.com',
+  //   test2: 'https://test-guard.hzxituan.com',
+  //   pre: 'https://staging-guard.hzxituan.com',
+  //   prod: 'https://guard.hzxituan.com'
+  // },
   palamidi: {
     dev: 'https://daily-palamidi-console.hzxituan.com',
     test1: 'https://test-palamidi-console.hzxituan.com',
