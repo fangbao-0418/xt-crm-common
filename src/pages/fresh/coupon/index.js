@@ -1,37 +1,16 @@
 /*
  * @Date: 2019-11-12 11:03:51
  * @LastEditors: fangbao
- * @LastEditTime: 2020-04-13 16:58:12
- * @FilePath: /xt-crm/src/pages/coupon/index.js
+ * @LastEditTime: 2020-06-03 19:57:56
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/coupon/index.js
  */
 import React from 'react'
-import Loadable from 'react-loadable'
 import { Route, Switch } from 'react-router-dom'
-import { view as Loader } from '../../../components/loader'
-
-const CouponList = Loadable({
-  loader: () => import('./list'),
-  loading: Loader
-})
-const BulkIssuing = Loadable({
-  loader: () => import('./list/bulk-issuing'),
-  loading: Loader
-})
-
-const CouponInfo = Loadable({
-  loader: () => import('./list/coupon-info'),
-  loading: Loader
-})
-
-const CouponEdit = Loadable({
-  loader: () => import('./list/coupon-info/edit'),
-  loading: Loader
-})
-
-const CouponDetail = Loadable({
-  loader: () => import('./list/coupon-detail'),
-  loading: Loader
-})
+import CouponList from './list'
+import BulkIssuing from './list/bulk-issuing'
+import CouponInfo from './list/coupon-info'
+import CouponEdit from './list/coupon-info/edit'
+import CouponDetail from './list/coupon-detail'
 
 export default class RouteApp extends React.Component {
   render () {
