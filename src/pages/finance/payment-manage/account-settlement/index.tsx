@@ -1,3 +1,6 @@
+/**
+ * 账务结算
+ */
 import React from 'react'
 import Image from '@/components/Image'
 import classNames from 'classnames'
@@ -5,7 +8,7 @@ import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Popconfirm, Button, Radio } from 'antd'
+import { Select, Button, Radio } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import UploadView from '@/components/upload'
 import { exportFile } from '@/util/fetch'
@@ -14,6 +17,7 @@ import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './conf
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
+
 class Main extends React.Component<Props> {
   state = {
     errorUrl: null
@@ -216,6 +220,155 @@ class Main extends React.Component<Props> {
       })
     }
   }
+  //type 1添加，2审核， 3查看
+  public operation = (type: any) => () => {
+    const uploadProps = type === 2 ? { showUploadList: { showPreviewIcon: true, showRemoveIcon: false, showDownloadIcon: false } } : { listNum: 5 }
+    if (this.props.alert) {
+      let form: FormInstance
+      const hide = this.props.alert({
+        title: '创建账务结算单',
+        content: (
+          <Form
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 12 }}
+            getInstance={(ref) => {
+              form = ref
+            }}
+          >
+            <FormItem
+              label='收支类型'
+              verifiable
+              inner={(form) => {
+                return (form.getFieldDecorator('file')(
+                  <Select allowClear style={{ width: 100 }}>
+                    <Select.Option value={0}>收入</Select.Option>
+                    <Select.Option value={2}>支出</Select.Option>
+                  </Select>
+                )
+                )
+              }}
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '收支类型必填' }
+                ]
+              }}
+            />
+            <FormItem
+              label='账务对象ID'
+              type='input'
+              name='id'
+              placeholder='请输入账务对象ID'
+              verifiable
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '账务对象ID必填' }
+                ]
+              }}
+            />
+            <FormItem
+              label='账务对象类型'
+              placeholder='请输入账务对象ID后进行校验'
+            />
+            <FormItem
+              label='账务对象名称'
+              placeholder='请输入账务对象ID后进行校验'
+            />
+            <FormItem
+              label='账务金额'
+              type='number'
+              name='id'
+              placeholder='请输入金额，精确到小数点后两位'
+              verifiable
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '账务金额必填' }
+                ]
+              }}
+            />
+            <FormItem
+              style={{
+                marginBottom: 0
+              }}
+              label='原因'
+              type='textarea'
+              name='operateRemark'
+              placeholder='请输入原因，140字以内'
+              verifiable
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '原因必填' },
+                  { max: 140, message: '原因最长140个字符' }
+                ]
+              }}
+            />
+            <FormItem
+              label='凭证'
+              extra='(请控制文件大小在10mb内)'
+              inner={(form) => {
+                return (form.getFieldDecorator('file')(
+                  <div>
+                    <UploadView
+                      placeholder='请上传文件'
+                      listNum={1}
+                      size={2}
+                      ossDir='finance/payment'
+                    >
+                      <span className={'href'}>+请选择文件</span>
+                    </UploadView>
+                    <div style={{ color: '#999', fontSize: 10 }}>（支持xls、xlsx、word格式，大小请控制在10MB，最多可上传2个文件）</div>
+                    <If condition={this.state.errorUrl?true:false}>
+                      <div>
+                       上传失败
+                        <span className='href' onClick={() => {
+                          exportFile(this.state.errorUrl)
+                        }}>下载
+                        </span>
+                      </div>
+                    </If>
+                  </div>
+                )
+                )
+              }}
+            />
+            <FormItem
+              label='图片'
+              extra='(请控制图片大小在2mb内)'
+              inner={(form) => {
+                return (form.getFieldDecorator('file')(
+                  <div>
+                    <UploadView
+                      {...uploadProps}
+                      placeholder='上传凭证'
+                      listType='picture-card'
+                      size={2}
+                      fileType={['jpg', 'jpeg', 'gif', 'png']}
+                    />
+                    <div style={{ color: '#999', fontSize: 10 }}>（支持jpg、jpeg、png格式，最大2mb，最多可上传5张）</div>
+                  </div>
+                )
+                )
+              }}
+            />
+          </Form>
+        ),
+        onOk: () => {
+          if (form) {
+            form.props.form.validateFields((err, values) => {
+              if (err) {
+                return
+              }
+              const operateRemark = values.operateRemark
+              api.addAnchor({
+              }).then(() => {
+                hide()
+                this.listpage.refresh()
+              })
+            })
+          }
+        }
+      })
+    }
+  }
   public render () {
     return (
       <div
@@ -233,7 +386,7 @@ class Main extends React.Component<Props> {
             <div>
               <Button
                 type='primary'
-                onClick={this.toOperate()}
+                onClick={this.operation(1)}
               >
                 创建账务结算单
               </Button>

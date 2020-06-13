@@ -1,5 +1,5 @@
 /**
- * 货款结算明细
+ * 分账流水
  */
 import React from 'react'
 import Image from '@/components/Image'
@@ -16,11 +16,11 @@ interface Props extends AlertComponentProps {
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
-    title: '结算流水号',
+    title: '分账流水号',
     dataIndex: 'nickName',
     width: 300
   }, {
-    title: '分账流水',
+    title: '待清分流水号',
     dataIndex: 'fansTotal',
     width: 200,
     align: 'center'
@@ -33,54 +33,40 @@ class Main extends React.Component<Props> {
     }
   }, {
     dataIndex: 'anchorId',
-    title: '交易类型',
+    title: '分账类型',
     width: 120,
     align: 'center'
   }, {
     dataIndex: 'anchorLevel',
-    title: '供应商ID',
+    title: '分账对象类型',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '供应商名称',
+    title: '分账对象ID',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '供应商类型',
+    title: '分账对象名称',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '创建时间',
+    title: '分账金额',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '交易总额',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
-  }, {
-    dataIndex: 'anchorLevel',
-    title: '本次结算金额',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
-  }, {
-    dataIndex: 'anchorLevel',
-    title: '结算比例',
+    title: '平台记账状态',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
@@ -94,35 +80,28 @@ class Main extends React.Component<Props> {
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '结算时间',
+    title: '创建时间',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
-  },
-  {
-    title: '操作',
-    align: 'center',
-    render: (text, record) => {
-      return (
-        <div>
-          <Popconfirm
-            title='确定终止结算吗'
-            onConfirm={this.deleteAnchor.bind(this, record)}
-          >
-            <span className='href'>终止结算</span>
-          </Popconfirm>
-        </div>
-      )
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '分账完成时间',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
+    }
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '结算完成时间',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
     }
   }]
   public refresh () {
     this.listpage.refresh()
-  }
-  public deleteAnchor (record: Anchor.ItemProps) {
-    api.deleteAnchor(record.anchorId).then(() => {
-      this.listpage.refresh()
-    })
   }
   public render () {
     return (
