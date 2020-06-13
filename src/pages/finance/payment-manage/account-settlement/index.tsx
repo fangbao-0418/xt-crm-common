@@ -103,7 +103,8 @@ class Main extends React.Component<Props> {
             }}
           >
             <FormItem
-              label='标签位置'
+              label='审核意见'
+              verifiable
               inner={(form) => {
                 return (form.getFieldDecorator('file')(
                   <Radio.Group>
@@ -112,6 +113,11 @@ class Main extends React.Component<Props> {
                   </Radio.Group>
                 )
                 )
+              }}
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '审核意见必填' }
+                ]
               }}
             />
             <FormItem

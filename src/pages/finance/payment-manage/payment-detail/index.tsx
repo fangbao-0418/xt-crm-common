@@ -145,6 +145,7 @@ class Main extends React.Component<Props> {
               </Button>
               <Button
                 type='primary'
+                className='ml8'
                 onClick={() => {
                 }}
               >
