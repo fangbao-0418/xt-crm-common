@@ -14,10 +14,10 @@ import './index.scss'
 const coupons = {
   '0': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH', 'COPY'],
   '1': ['ISSUE_COUPON', 'VIEW', 'EDIT', 'FINISH', 'COPY'],
-  '2': ['VIEW', 'COPY']
+  '2': ['VIEW', 'EDIT', 'COPY']
 }
 
-function ActionBtn ({ keyCode, history, record, match }) {
+function ActionBtn ({ keyCode, history, record, match }) { 
   const openQrCode = () => {
     emitter.emit('coupon.list.setVisible', { visible: true, id: record.id })
   }
