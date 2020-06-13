@@ -191,6 +191,14 @@ export const defaultConfig: FieldsConfig = {
         }
       }
     },
+    boxSpec: {
+      label: '商品箱规',
+      controlProps: {
+        style: {
+          width: '60%'
+        }
+      }
+    }
     // isAuthentication: {
     //   label: '实名认证',
     //   type: 'radio',
