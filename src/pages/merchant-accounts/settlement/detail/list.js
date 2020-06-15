@@ -77,15 +77,22 @@ class SettleDetialList extends React.Component {
         width: 150,
         dataIndex: 'billSerialNo',
         render: (text, record) => {
-          const {billTypeInfo, id} = record
+          const { billTypeInfo, id } = record
           return (
             <>
               {
-                billTypeInfo === '对账单' ? 
-                  <a 
-                  href={window.location.pathname + `#/merchant-accounts/checking/${id}`}
-                  target="_blank"
-                >{text}</a> : text
+                billTypeInfo === '对账单' ? (
+                  <span
+                    // href={window.location.pathname + `#/merchant-accounts/checking/${id}`}
+                    // target="_blank"
+                    className='href'
+                    onClick={() => {
+                      APP.open(`/merchant-accounts/checking/${id}`)
+                    }}
+                  >
+                    {text}
+                  </span>
+                ) : text
               }
             </>
             
