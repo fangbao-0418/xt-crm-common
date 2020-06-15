@@ -1,6 +1,6 @@
 import React from 'react'
 import { Form, FormItem } from '@/packages/common/components'
-import { Card, Button } from 'antd'
+import { Card, Button, Radio } from 'antd'
 import { NAME_SPACE, defaultConfigForm } from './config'
 import UploadView from '@/components/upload'
 import { FormInstance } from '@/packages/common/components/form'
@@ -23,13 +23,15 @@ const formItemLayout = {
 interface StoreFormState {
   record: Partial<RecordProps>
   readonly: boolean
+  isAllArea: 0 | 1
 }
 class AreaForm extends React.Component<Props, StoreFormState> {
   readonly: boolean = !!(parseQuery() as any).readOnly
   disabledDatas: string[]
   state: StoreFormState = {
     record: {},
-    readonly: this.readonly
+    readonly: this.readonly,
+    isAllArea: 0
   }
   form: FormInstance;
   id: string = '-1'
@@ -45,7 +47,8 @@ class AreaForm extends React.Component<Props, StoreFormState> {
       res.districtIds=res.addressList
       this.setState({
         record: res || {},
-        readonly: this.readonly
+        readonly: this.readonly,
+        isAllArea: res?.isAllArea
       })
       this.form.setValues(res)
     })
@@ -73,6 +76,7 @@ class AreaForm extends React.Component<Props, StoreFormState> {
           return parseInt(item.districtId)
         })
         vals.trainImage = vals.trainImage[0].url||vals.trainImage
+        vals.isAllArea = this.state.isAllArea
         const promiseResult = addUpdateArea(vals)
         promiseResult.then((res: any) => {
           if (res) {
@@ -126,17 +130,35 @@ class AreaForm extends React.Component<Props, StoreFormState> {
               label='区域'
               required
               inner={(form) => {
-                return form.getFieldDecorator('districtIds', {
-                  rules: [{
-                    validator: async (rules, value) => {
-                      if (!value || Array.isArray(value) && value.length === 0) {
-                        throw new Error('请选择区域')
-                      }
-                      return value
-                    }
-                  }]
-
-                })(<SaleArea readOnly={readonly} title={'区域'} disabledDatas={readonly?[]:this.disabledDatas} />)
+                return (
+                  <>
+                    {form.getFieldDecorator('districtIds', {
+                      rules: [{
+                        validator: async (rules, value) => {
+                          if (!value || Array.isArray(value) && value.length === 0) {
+                            throw new Error('请选择区域')
+                          }
+                          return value
+                        }
+                      }]
+                    })(
+                      <SaleArea readOnly={readonly} title={'区域'} disabledDatas={readonly?[]:this.disabledDatas} />
+                    )}
+                    <div>
+                      <Radio
+                        checked={this.state.isAllArea == 1}
+                        onClick={() => {
+                          const isAllArea = this.state.isAllArea
+                          this.setState({
+                            isAllArea: isAllArea === 0 ? 1 : 0
+                          })
+                        }}
+                      >
+                        支持区域内跨三级地址开拓团长
+                      </Radio>
+                    </div>
+                  </>
+                )
               }
               } />
             <FormItem

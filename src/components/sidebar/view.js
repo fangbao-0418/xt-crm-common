@@ -78,7 +78,6 @@ class Sidebar extends React.Component {
     if (selectedGroup.length === 0) {
       loop(data, [], true)
     }
-    // if (selectedGroup)
     return selectedGroup
   }
   componentWillReceiveProps (props) {
