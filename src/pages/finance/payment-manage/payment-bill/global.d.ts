@@ -14,8 +14,5 @@ declare namespace Anchor {
     status: 0 | 1
     headUrl: string
     phone: string
-    /** 1.喜团优选 2.喜团买菜 */
-    bizScopes: any
-
   }
 }

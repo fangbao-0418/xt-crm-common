@@ -7,7 +7,7 @@ import { AlertComponentProps } from '@/packages/common/components/alert'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
-import { Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
+import { Tabs, Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
@@ -17,18 +17,20 @@ import CouponSelector from './components/CouponSelector'
 import * as api from './api'
 import { fetchTagList } from '../config/api'
 import TextArea from 'antd/lib/input/TextArea'
-
+const { TabPane } = Tabs
 interface Props extends AlertComponentProps {
 }
 
 interface State {
-  rowKeys: any[]
+  rowKeys: any[],
+  bizType: string
 }
 
 class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
   public state: State = {
-    rowKeys: []
+    rowKeys: [],
+    bizType: '1'
   }
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
@@ -620,13 +622,30 @@ class Main extends React.Component<Props, State> {
       footer: null
     })
   }
+
+  handleTabClick = (key: any) => {
+    this.setState({
+      bizType: key
+    }, ()=>{
+      this.listpage.form.reset()
+    })
+  }
   public render () {
+    const tabList=[{ name: '喜团优选', key: '1' }, { name: '喜团买菜', key: '2' }]
+    const { bizType }=this.state
     return (
       <div
         style={{
-          background: '#FFFFFF'
+          background: '#FFFFFF',
+          paddingTop: 20
         }}
       >
+        <Tabs style={{ marginLeft: 20, paddingRight: 20 }} activeKey={bizType} onTabClick={this.handleTabClick}>
+          {tabList.map(tab => {
+            return (<TabPane tab={tab.name} key={tab.key} />
+            )
+          })}
+        </Tabs>
         <ListPage
           reserveKey='ulive-studio'
           getInstance={(ref) => {
@@ -718,6 +737,12 @@ class Main extends React.Component<Props, State> {
               <Button onClick={this.multiAudit(0)}>审核不通过</Button>
             </div>
           )}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              bizType
+            }
+          }}
           api={api.getStudioList}
         />
       </div>

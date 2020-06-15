@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form, FormItem, If } from '@/packages/common/components'
 import { FormInstance } from '@/packages/common/components/form'
-import { Button, Row, Col } from 'antd'
+import { Button, Row, Col, Checkbox } from 'antd'
 import * as api from '../api'
 import { getFieldsConfig } from '../config'
 interface Props {
@@ -87,14 +87,14 @@ class Main extends React.Component<Props, State> {
       const { validUsers, inValidPhone } = res
       const validPhone = validUsers.map((item) => item.phone)
       if (validUsers.length === 0) {
-        this.getMultiInfo([], validUsers, inValidPhone )
+        this.getMultiInfo([], validUsers, inValidPhone)
         this.setState({
           type: 6
         })
         return
       }
       api.checkMultiAnchorPhone(validPhone).then((res2) => {
-        this.getMultiInfo(res2, validUsers, inValidPhone )
+        this.getMultiInfo(res2, validUsers, inValidPhone)
         this.setState({
           type: 6
         })
@@ -164,7 +164,7 @@ class Main extends React.Component<Props, State> {
         const result = {
           nickName: info2 && info2.nickName,
           phone: info2 && info2.phone,
-          ...info1,
+          ...info1
         }
         if (info2) {
           if (info1) {
@@ -271,7 +271,8 @@ class Main extends React.Component<Props, State> {
         api.updateAnchor({
           anchorId: detail.anchorId,
           anchorIdentityType: value.anchorIdentityType,
-          anchorLevel: value.anchorLevel
+          anchorLevel: value.anchorLevel,
+          bizScopes: value.bizScopes
         }).then(() => {
           APP.success('修改成功')
           this.hide()
@@ -340,8 +341,8 @@ class Main extends React.Component<Props, State> {
           getInstance={(ref) => {
             this.form = ref
           }}
-          labelCol={{span: 8}}
-          wrapperCol={{span: 12}}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 12 }}
         >
           <If condition={this.state.type === 1}>
             <FormItem
@@ -361,8 +362,8 @@ class Main extends React.Component<Props, State> {
                 initialValue: 1
               }}
               options={[
-                {label: '单个添加', value: 1},
-                {label: '批量添加', value: 2}
+                { label: '单个添加', value: 1 },
+                { label: '批量添加', value: 2 }
               ]}
             />
             <If condition={this.state.addType === 1}>
@@ -396,7 +397,7 @@ class Main extends React.Component<Props, State> {
                       if (text.split(',').length > maxSize) {
                         text = text.split(',').slice(0, maxSize).join(',')
                       }
-                      this.form.setValues({phoneList: text})
+                      this.form.setValues({ phoneList: text })
                     }, 0)
                   }
                 }}
@@ -411,9 +412,9 @@ class Main extends React.Component<Props, State> {
               提示：仅允许添加手机号，多个手机号请用英文逗号隔开；最多添加1000个手机号
               </div>
             </If>
-            <div hidden={!this.state.message} style={{position: 'relative', top: -10}}>
+            <div hidden={!this.state.message} style={{ position: 'relative', top: -10 }}>
               <div className='text-center mb10'>
-                <span style={{color: 'red'}}>{this.state.message}</span>
+                <span style={{ color: 'red' }}>{this.state.message}</span>
               </div>
             </div>
             <div className='text-center'>
@@ -454,8 +455,8 @@ class Main extends React.Component<Props, State> {
               </Col>
             </Row>
             {message && (
-              <div className='text-center' style={{position: 'relative', top: -15}}>
-                <span style={{color: 'red'}}>{message}</span>
+              <div className='text-center' style={{ position: 'relative', top: -15 }}>
+                <span style={{ color: 'red' }}>{message}</span>
               </div>
             )}
             <FormItem
@@ -464,6 +465,12 @@ class Main extends React.Component<Props, State> {
             />
             <FormItem
               name='anchorLevel'
+              verifiable
+            />
+            <FormItem
+              label='业务范围'
+              name='bizScopes'
+              required={true}
               verifiable
             />
             <div className='text-center'>
@@ -526,7 +533,7 @@ class Main extends React.Component<Props, State> {
               </Col>
             </Row>
             <div className='text-center mb50'>
-              <span style={{color: 'red'}}>
+              <span style={{ color: 'red' }}>
                 {/* 该用户是黑名单用户！ */}
                 {detail && detail.status === 0 ? '该用户将被添加到黑名单' : '该用户将被取消拉黑'}
               </span>
@@ -569,7 +576,7 @@ class Main extends React.Component<Props, State> {
               </Col>
             </Row>
             <div className='text-center mb50'>
-              <span style={{color: 'red'}}>{this.state.message}</span>
+              <span style={{ color: 'red' }}>{this.state.message}</span>
             </div>
             <div className='text-center'>
               <Button
@@ -601,7 +608,7 @@ class Main extends React.Component<Props, State> {
               </Col>
             </Row>
             <div className='text-center mb50'>
-              <span style={{color: 'red'}}>请清除其公司身份后重新添加！</span>
+              <span style={{ color: 'red' }}>请清除其公司身份后重新添加！</span>
             </div>
             <div className='text-center'>
               <Button
@@ -623,13 +630,19 @@ class Main extends React.Component<Props, State> {
                 name='anchorIdentityType'
                 verifiable
                 options={[
-                  {label: '供应商', value: 20},
-                  {label: '合作网红', value: 30},
-                  {label: '代理', value: 40}
+                  { label: '供应商', value: 20 },
+                  { label: '合作网红', value: 30 },
+                  { label: '代理', value: 40 }
                 ]}
               />
               <FormItem
                 name='anchorLevel'
+                verifiable
+              />
+              <FormItem
+                label='业务范围'
+                name='bizScopes'
+                required={true}
                 verifiable
               />
             </If>

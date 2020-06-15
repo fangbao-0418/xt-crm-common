@@ -1,10 +1,6 @@
 const { post, get, newPost, newPut, del } = APP.http
 import { handleApiUrl } from '@/util/app/config'
 export const getAnchorList = (payload: any) => {
-  payload.bizScope=payload.bizScopeSearch
-  if (payload.bizScopeSearch) {
-    delete payload.bizScopeSearch
-  }
   return get('::ulive/live/anchor/list', payload)
 }
 /** 获取用户信息 */
@@ -48,7 +44,6 @@ export const updateAnchor = (payload: {
   anchorId: number
   anchorIdentityType: Anchor.AnchorIdentityType
   anchorLevel: 0 | 10
-  bizScopes: any
 }) => {
   return newPut('::ulive/live/anchor/update', payload)
 }
