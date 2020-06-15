@@ -12,6 +12,7 @@ import PaymentDetail from './payment-manage/payment-detail' //货款结算明细
 import SupplierWithdraw from './payment-manage/supplier-withdraw' //供应商提现管理
 import AccountDivided from './payment-manage/account-divided' //分账流水
 import OrderAccountDivided from './payment-manage/order-account-divided' //订单待清分流水
+import CommissionSettlement from './payment-manage/commission-settlement' //佣金结算流水
 export default class extends Component {
   render () {
     return (
@@ -27,6 +28,7 @@ export default class extends Component {
         <Route path='/finance/paymentdetail' component={PaymentDetail} />
         <Route path='/finance/supplierwithdraw' component={SupplierWithdraw} />
         <Route path='/finance/accountdivided' component={AccountDivided} />
+        <Route path='/finance/commissionsettlement' component={CommissionSettlement} />
         <Route path='/finance/orderaccountdivided' component={OrderAccountDivided} />
       </Switch>
     )
