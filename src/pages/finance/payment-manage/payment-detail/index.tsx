@@ -17,83 +17,76 @@ class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
     title: '结算流水号',
-    dataIndex: 'nickName',
+    dataIndex: 'id',
     width: 300
   }, {
     title: '分账流水',
-    dataIndex: 'fansTotal',
+    dataIndex: 'splitFlowNo',
     width: 200,
     align: 'center'
   }, {
-    dataIndex: 'anchorIdentityType',
+    dataIndex: 'tradeNo',
     title: '交易编号',
     width: 150,
     render: (text) => {
       return AnchorIdentityTypeEnum[text]
     }
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'tradeTypeDesc',
     title: '交易类型',
     width: 120,
     align: 'center'
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'storeId',
     title: '供应商ID',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'storeName',
     title: '供应商名称',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'storeType',
     title: '供应商类型',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'createTime',
     title: '创建时间',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
-    dataIndex: 'anchorLevel',
-    title: '交易总额',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
-  }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'amount',
     title: '本次结算金额',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'profitRatio',
     title: '结算比例',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'settlementStatusDesc',
     title: '结算状态',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'settlementTime',
     title: '结算时间',
     width: 100,
     render: (text) => {
@@ -108,7 +101,7 @@ class Main extends React.Component<Props> {
         <div>
           <Popconfirm
             title='确定终止结算吗'
-            onConfirm={this.deleteAnchor.bind(this, record)}
+            onConfirm={this.terminated.bind(this, record)}
           >
             <span className='href'>终止结算</span>
           </Popconfirm>
@@ -119,8 +112,8 @@ class Main extends React.Component<Props> {
   public refresh () {
     this.listpage.refresh()
   }
-  public deleteAnchor (record: Anchor.ItemProps) {
-    api.deleteAnchor(record.anchorId).then(() => {
+  public terminated (record: Anchor.ItemProps) {
+    api.terminated(record.anchorId).then(() => {
       this.listpage.refresh()
     })
   }
@@ -159,16 +152,16 @@ class Main extends React.Component<Props> {
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='memberId' />
-              <FormItem name='nickName' />
-              <FormItem name='anchorIdentityType' />
-              <FormItem name='anchorLevel' />
-              <FormItem name='status' />
-              <FormItem name='status1' />
-              <FormItem name='status2' />
+              <FormItem name='tradeNo' />
+              <FormItem name='tradeType' />
+              <FormItem name='settlementStatus' />
+              <FormItem name='storeId' />
+              <FormItem name='storeName' />
+              <FormItem name='storeType' />
+              <FormItem name='time' />
             </>
           )}
-          api={api.getAnchorList}
+          api={api.getList}
         />
       </div>
     )

@@ -6,14 +6,14 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      tradeNo: {
+      memberId: {
         label: '交易编号',
         type: 'input',
         controlProps: {
           placeholder: '请输入交易编号'
         }
       },
-      tradeType: {
+      nickName: {
         label: '交易类型',
         type: 'select',
         options: [
@@ -26,7 +26,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '请选择交易类型'
         }
       },
-      settlementStatus: {
+      anchorIdentityType: {
         type: 'select',
         label: '结算状态',
         options: [
@@ -39,21 +39,21 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '请选择结算状态'
         }
       },
-      storeId: {
+      anchorLevel: {
         label: '供应商ID',
         type: 'input',
         controlProps: {
           placeholder: '请输入供应商ID'
         }
       },
-      storeName: {
+      status: {
         label: '供应商名称',
         type: 'input',
         controlProps: {
           placeholder: '请输入供应商名称'
         }
       },
-      storeType: {
+      status1: {
         type: 'select',
         label: '供应商类型',
         options: [
@@ -64,7 +64,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '请选择供应商类型'
         }
       },
-      time: {
+      status2: {
         label: '创建时间',
         type: 'rangepicker',
         controlProps: {

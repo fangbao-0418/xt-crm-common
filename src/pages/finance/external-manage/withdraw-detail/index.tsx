@@ -1,108 +1,94 @@
 /**
- * 佣金结算流水
+ * 提现账户明细
  */
 import React from 'react'
-import Image from '@/components/Image'
-import classNames from 'classnames'
-import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
-import { ListPage, Alert } from '@/packages/common/components'
+import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Select, Button, Radio } from 'antd'
+import { Tabs, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import UploadView from '@/components/upload'
-import { exportFile } from '@/util/fetch'
-import If from '@/packages/common/components/if'
 import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
 import * as api from './api'
+const { TabPane } = Tabs
 interface Props extends AlertComponentProps {
 }
-
+const tabConfigs: { key: string, title: string }[] = [
+  { key: '0', title: '全部' },
+  { key: '1', title: '待提现' },
+  { key: '2', title: '提现中' },
+  { key: '3', title: '提现成功' },
+  { key: '4', title: '提现失败' }
+]
 class Main extends React.Component<Props> {
   state = {
-    errorUrl: null
+    status: '0',
+    errorUrl: ''
   }
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
-    title: '结算流水号',
+    title: '申请单编号',
     dataIndex: 'nickName',
     width: 300
   }, {
-    title: '分账流水号',
+    title: '提现流水号',
     dataIndex: 'fansTotal',
     width: 200,
     align: 'center'
   }, {
     dataIndex: 'anchorIdentityType',
-    title: '交易编号',
+    title: '金额',
     width: 150,
     render: (text) => {
       return AnchorIdentityTypeEnum[text]
     }
   }, {
     dataIndex: 'anchorId',
-    title: '交易类型',
+    title: '供应商ID',
+    width: 120,
+    align: 'center'
+  }, {
+    dataIndex: 'anchorId',
+    title: '供应商名称',
     width: 120,
     align: 'center'
   }, {
     dataIndex: 'anchorLevel',
-    title: '会员ID',
+    title: '供应商类型',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '会员名称',
+    title: '提现方式',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '联系方式',
+    title: '提现账户',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '创建时间',
+    title: '身份信息',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '交易总额',
+    title: '状态',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '应结算金额',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
-  }, {
-    dataIndex: 'anchorLevel',
-    title: '本次结算金额',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
-  }, {
-    dataIndex: 'anchorLevel',
-    title: '结算比例',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
-  }, {
-    dataIndex: 'anchorLevel',
-    title: '结算状态',
+    title: '申请时间',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
@@ -114,29 +100,48 @@ class Main extends React.Component<Props> {
     render: (text) => {
       return AnchorLevelEnum[text]
     }
-  },
-  {
-    title: '操作',
-    align: 'center',
-    render: (text, record) => {
-      return (
-        <div>
-          <span className='href'>终止结算</span>
-        </div>
-      )
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '备注',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
     }
   }]
+
   public refresh () {
     this.listpage.refresh()
   }
 
+  // 切换tabPane
+  public handleChange = (key: string) => {
+    this.setState({
+      status: key
+    })
+  }
+
   public render () {
+    const { status }=this.state
     return (
       <div
         style={{
-          background: '#FFFFFF'
+          background: '#FFFFFF',
+          paddingTop: 20
         }}
       >
+        <Tabs
+          activeKey={status}
+          onChange={this.handleChange}
+          style={{ marginLeft: 20 }}
+        >
+          {
+            tabConfigs.map((item) => {
+              return (
+                <TabPane tab={item.title} key={item.key} />
+              )
+            })
+          }
+        </Tabs>
         <ListPage
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
@@ -147,13 +152,10 @@ class Main extends React.Component<Props> {
             <div>
               <Button
                 type='primary'
+                onClick={() => {
+                }}
               >
                 批量导出
-              </Button>
-              <Button
-                type='primary'
-              >
-                终止结算
               </Button>
             </div>
           )}
@@ -162,10 +164,10 @@ class Main extends React.Component<Props> {
             <>
               <FormItem name='memberId' />
               <FormItem name='nickName' />
+              <FormItem name='anchorIdentityType' />
               <FormItem name='anchorLevel' />
-              <FormItem name='status' />
-              <FormItem name='status1' />
               <FormItem name='status2' />
+              <FormItem name='status3' />
             </>
           )}
           api={api.getAnchorList}

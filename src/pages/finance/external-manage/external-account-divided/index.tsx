@@ -1,135 +1,150 @@
 /**
- * 佣金结算流水
+ * 外部分账流水汇总
  */
 import React from 'react'
 import Image from '@/components/Image'
 import classNames from 'classnames'
-import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
-import { ListPage, Alert } from '@/packages/common/components'
+import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Select, Button, Radio } from 'antd'
+import { Tag, Popconfirm, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import UploadView from '@/components/upload'
-import { exportFile } from '@/util/fetch'
-import If from '@/packages/common/components/if'
 import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
-
 class Main extends React.Component<Props> {
-  state = {
-    errorUrl: null
-  }
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
-    title: '结算流水号',
+    title: '待清分流水号',
     dataIndex: 'nickName',
     width: 300
   }, {
-    title: '分账流水号',
+    title: '交易编号',
     dataIndex: 'fansTotal',
     width: 200,
     align: 'center'
   }, {
     dataIndex: 'anchorIdentityType',
-    title: '交易编号',
+    title: '分账类型',
     width: 150,
     render: (text) => {
       return AnchorIdentityTypeEnum[text]
     }
   }, {
     dataIndex: 'anchorId',
-    title: '交易类型',
+    title: '交易总金额',
     width: 120,
     align: 'center'
   }, {
     dataIndex: 'anchorLevel',
-    title: '会员ID',
+    title: '会员优惠',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '会员名称',
+    title: '平台优惠券',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '联系方式',
+    title: '商家优惠券',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '创建时间',
+    title: '交易实付金额',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '交易总额',
+    title: '手续费',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '应结算金额',
+    title: '待清分金额',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '本次结算金额',
+    title: '支付渠道',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '结算比例',
+    title: '支付流水号',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '结算状态',
+    title: '交易创建时间',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '完成时间',
+    title: '支付时间',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
-  },
-  {
-    title: '操作',
-    align: 'center',
-    render: (text, record) => {
-      return (
-        <div>
-          <span className='href'>终止结算</span>
-        </div>
-      )
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '待清分流水创建时间',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
+    }
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '三方处理流水',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
+    }
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '三方处理结果',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
+    }
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '三方处理时间',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
+    }
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '三方备注',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
     }
   }]
   public refresh () {
     this.listpage.refresh()
   }
-
   public render () {
     return (
       <div
@@ -147,13 +162,10 @@ class Main extends React.Component<Props> {
             <div>
               <Button
                 type='primary'
+                onClick={() => {
+                }}
               >
                 批量导出
-              </Button>
-              <Button
-                type='primary'
-              >
-                终止结算
               </Button>
             </div>
           )}
@@ -162,9 +174,8 @@ class Main extends React.Component<Props> {
             <>
               <FormItem name='memberId' />
               <FormItem name='nickName' />
+              <FormItem name='anchorIdentityType' />
               <FormItem name='anchorLevel' />
-              <FormItem name='status' />
-              <FormItem name='status1' />
               <FormItem name='status2' />
             </>
           )}
