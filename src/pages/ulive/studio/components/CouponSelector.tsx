@@ -179,7 +179,7 @@ class Main extends React.Component<Props> {
             if (readonly) {
               return {
                 ...payload,
-                couponIds: selectedRowKeys
+                codes: selectedRowKeys
               }
             } else {
               return payload
