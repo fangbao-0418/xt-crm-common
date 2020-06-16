@@ -70,7 +70,6 @@ class Main extends React.Component<Props, State> {
   }
   public onChange () {
     if (this.props.onChange) {
-      console.log(this.state.dataSource, 'xxxxxxxxx')
       this.props.onChange(this.state.dataSource)
     }
   }
@@ -80,8 +79,9 @@ class Main extends React.Component<Props, State> {
     return (
       <div>
         <ShopModal
+          fetchNode='open'
           selectedRowKeys={selectedRowKeys}
-          ref="shopmodal"
+          ref='shopmodal'
           onOk={(keys, rows) => {
             const result = rows.map((item) => {
               return {
@@ -109,7 +109,7 @@ class Main extends React.Component<Props, State> {
             <span
               className='href'
               onClick={() => {
-                const ref: any = this.refs.shopmodal;
+                const ref: any = this.refs.shopmodal
                 ref.open(this.state.dataSource)
               }}
             >

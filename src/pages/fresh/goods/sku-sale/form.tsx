@@ -182,6 +182,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'productId',
           'productName',
           'productShortName',
+          'boxSpec',
           // 'property1',
           // 'property2',
           'storeId',
@@ -660,6 +661,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         >
           <FormItem name='bulk' />
           <FormItem name='weight' />
+          <FormItem name='boxSpec' />
           <FormItem
             label='可售区域'
             required
