@@ -142,12 +142,12 @@ class edit extends React.Component<Props, State> {
           increaseNumber: values.increaseNumber,
           increaseCost: values.increaseCost * 100,
           rankList: mapReqRankList(templateData),
-          provinceName: values.address?.[0]?.label,
-          provinceCode: values.address?.[0]?.value,
-          cityName: values.address?.[1]?.label,
-          cityCode: values.address?.[1]?.value,
-          districtName: values.address?.[2]?.label,
-          districtCode: values.address?.[2]?.value
+          provinceName: values.address?.[0]?.label || '',
+          provinceCode: values.address?.[0]?.value || '',
+          cityName: values.address?.[1]?.label || '',
+          cityCode: values.address?.[1]?.value || '',
+          districtName: values.address?.[2]?.label || '',
+          districtCode: values.address?.[2]?.value || ''
         }
         let res = false
         const { id } = this.props.match.params
