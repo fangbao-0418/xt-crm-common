@@ -6,28 +6,40 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      memberId: {
+      id: {
         type: 'input',
         label: '账务结算ID',
         controlProps: {
           placeholder: '请输入账务结算ID'
         }
       },
-      nickName: {
+      subjectId: {
         label: '账务对象ID',
         type: 'input',
         controlProps: {
           placeholder: '请输入账务对象ID'
         }
       },
-      anchorLevel: {
+      subjectName: {
         label: '账务结算对象名称',
         type: 'input',
         controlProps: {
           placeholder: '请输入账务结算对象名称'
         }
       },
-      status: {
+      auditStatus: {
+        type: 'select',
+        label: '审核状态',
+        fieldDecoratorOptions: {
+          initialValue: 0
+        },
+        options: [
+          { label: '待审核', value: 1 },
+          { label: '审核通过', value: 0 },
+          { label: '审核不通过', value: 0 }
+        ]
+      },
+      inOrOutType: {
         type: 'select',
         label: '收支类型',
         fieldDecoratorOptions: {
@@ -38,7 +50,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           { label: '支出', value: 0 }
         ]
       },
-      status1: {
+      settlementStatus: {
         type: 'select',
         label: '结算状态',
         fieldDecoratorOptions: {
@@ -49,12 +61,23 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           { label: '已结算', value: 0 }
         ]
       },
-      status2: {
+      time: {
         label: '创建时间',
         type: 'rangepicker',
         controlProps: {
           showTime: true
         }
+      },
+      settlementType: {
+        type: 'select',
+        label: '创建方式',
+        fieldDecoratorOptions: {
+          initialValue: 0
+        },
+        options: [
+          { label: '系统创建', value: 1 },
+          { label: '人工创建', value: 0 }
+        ]
       }
     }
   }

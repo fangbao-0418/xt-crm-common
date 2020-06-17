@@ -1,5 +1,11 @@
 const { post, get, newPost, newPut, del } = APP.http
 import { handleApiUrl } from '@/util/app/config'
+
+//账务对象校验
+export const checkSubject = (payload: any) => {
+  return get('/financial/disposable/settlement/subject/check/v1', payload)
+}
+
 export const getAnchorList = (payload: any) => {
   return get('::ulive/live/anchor/list', payload)
 }
