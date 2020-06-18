@@ -11,6 +11,9 @@ import { Route, Switch } from 'react-router-dom'
 import { view as Loader } from '../../components/loader'
 import Detail from './detail'
 import Refund from './refund'
+import QuestionList from './refund/question-list'
+import ServiceCenter from './refund/service-center'
+import ServiceCenterAdd from './refund/service-center/add'
 import RefundDetail from './refund/detail'
 import AutoRefund from './auto-refund'
 import AutoRefundDetail from './auto-refund/detail'
@@ -32,6 +35,9 @@ export default class RouteApp extends React.Component {
         <Route path={`${match.url}/download`} component={Download} />
         <Route path={`${match.url}/detail/:id`} component={Detail} />
         <Route exact path={`${match.url}/refundOrder`} component={Refund} />
+        <Route exact path={`${match.url}/questionlist`} component={QuestionList} />
+        <Route exact path={`${match.url}/servicecenter`} component={ServiceCenter} />
+        <Route exact path={`${match.url}/servicecenter/:id`} component={ServiceCenterAdd} />
         <Route exact path={`${match.url}/refundOrder/:id/:sourceType?`} component={RefundDetail} />
         <Route exact path={`${match.url}/autoRefundRule`} component={AutoRefund} />
         <Route exact path={`${match.url}/autoRefundRule/create/:id?`} component={AutoRefundDetail} />
