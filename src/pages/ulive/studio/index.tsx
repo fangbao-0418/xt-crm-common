@@ -194,6 +194,7 @@ class Main extends React.Component<Props, State> {
       width: 300,
       fixed: 'right',
       render: (text, record) => {
+        const { bizType } = this.state
         const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
         const canUp = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
@@ -229,7 +230,7 @@ class Main extends React.Component<Props, State> {
               condition={[
                 LiveStatusEnum['预告-待开播'],
                 LiveStatusEnum['直播中']
-              ].includes(record.liveStatus)}
+              ].includes(record.liveStatus) && bizType === '1'}
             >
               <span onClick={this.setCoupon.bind(this, record)} className={'href'}>
                 优惠券{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
@@ -241,7 +242,7 @@ class Main extends React.Component<Props, State> {
                 LiveStatusEnum['停播-运营停播'],
                 LiveStatusEnum['预告-已过期'],
                 LiveStatusEnum['预告-禁播']
-              ].includes(record.liveStatus)}
+              ].includes(record.liveStatus) && bizType === '1'}
             >
               <span onClick={this.checkCoupon.bind(this, record)} className={'href'}>
                 优惠券{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
