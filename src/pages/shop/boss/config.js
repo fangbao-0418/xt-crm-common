@@ -3,6 +3,13 @@ export const queryConfig = {
     { label: '全部', value: 0 },
     { label: '已开启', value: 2 },
     { label: '已关闭', value: 3 }
+  ],
+  shopTypes: [
+    { label: '个人店', value: 1 },
+    { label: '品牌旗舰店', value: 2 },
+    { label: '品牌专营店', value: 3 },
+    { label: '普通企业店', value: 4 },
+    { label: '工厂店', value: 5 }
   ]
 }
 
@@ -15,7 +22,7 @@ export const shopStatusList = [{
 }, {
   id: 3,
   text: '已关闭'
-}];
+}]
 
 export const shopStatusMap = shopStatusList.reduce((pre, next) => ({
   ...pre,

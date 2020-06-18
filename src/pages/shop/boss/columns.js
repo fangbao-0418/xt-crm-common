@@ -1,84 +1,218 @@
-import React from 'react';
-import UserView from './components/userView';
+import React from 'react'
+import UserView from './components/userView'
 import If from '@/packages/common/components/if'
-import { formatMoney } from '@/pages/helper';
-import { shopStatusMap } from './config';
+import { formatMoney } from '@/pages/helper'
+import { shopStatusMap } from './config'
 
-const getColumns = ({ onUserClick, onClose, onOpen }) => {
-  return [{
-    title: '用户昵称',
-    dataIndex: 'user',
-    key: 'user',
-    render: (val, record) => {
-      let src = ''
-      if (record.headUrl) {
-        src = record.headUrl.indexOf('http') === 0 ? `${record.headUrl}` : `https://assets.hzxituan.com/${record.headUrl}`;
+// 审核通过
+export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
+  return [
+    {
+      title: '店铺名称',
+      dataIndex: 'shopName',
+      render: val => val || '-'
+    },
+    {
+      title: '管理员',
+      dataIndex: 'user',
+      key: 'user',
+      render: (val, record) => {
+        let src = ''
+        if (record.headUrl) {
+          src = record.headUrl.indexOf('http') === 0 ? `${record.headUrl}` : `https://assets.hzxituan.com/${record.headUrl}`
+        }
+
+        return (<UserView
+          onClick={onUserClick.bind(null, record)}
+          title={record.nickName}
+          desc={record.memberId}
+          avatar={src}
+        />)
       }
-      
-      return <UserView
-        onClick={onUserClick.bind(null, record)}
-        title={record.nickName}
-        desc={record.memberId}
-        avatar={src}
-      />
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+      key: 'phone'
+    },
+    {
+      title: '成交额|退款',
+      render: (_, record) => {
+        return formatMoney(record.amount) + '|' + formatMoney(record.refundAmount)
+      }
+    },
+    {
+      title: '在售商品数',
+      dataIndex: 'sellPorductNum',
+      key: 'sellPorductNum'
+    },
+    {
+      title: '商品违规次数(累计|近30天)',
+      dataIndex: 'violation',
+      key: 'violation',
+      render: (val, record) => {
+        return record.illegalThirtyNum + ' | ' + record.illegalTotalNum
+      }
+    },
+    {
+      title: '状态',
+      dataIndex: 'shopStatus',
+      key: 'shopStatus',
+      render: val => shopStatusMap[val]
+    },
+    {
+      title: '店铺类型',
+      dataIndex: 'tag',
+      key: 'tag',
+      render: val => val || '-'
+    },
+    {
+      title: '主营类目',
+      dataIndex: 'categoryName',
+      key: 'categoryName',
+      render: val => val || '-'
+    },
+    {
+      title: '操作',
+      render: (val, record) => {
+        return (
+          <div>
+            <span onClick={onDetail.bind(null, record)} className='href mr8'>查看资质</span>
+            <If condition={record.shopStatus === 2}>
+              <span onClick={onClose.bind(null, record)} className='href'>关闭店铺</span>
+            </If>
+            <If condition={record.shopStatus === 3 || record.shopStatus === 1}>
+              <span onClick={onOpen.bind(null, record)} className='href'>开启店铺</span>
+            </If>
+          </div >
+        )
+      }
     }
-  },
-  {
-    title: '手机号',
-    dataIndex: 'phone',
-    key: 'phone',
-  },
-  {
-    title: '成交额',
-    dataIndex: 'amount',
-    key: 'amount',
-    render: val => formatMoney(val)
-  },
-  {
-    title: '退款金额',
-    dataIndex: 'refundAmount',
-    key: 'refundAmount',
-    render: val => formatMoney(val)
-  },
-  {
-    title: '用户等级',
-    dataIndex: 'memberTypeDesc',
-    key: 'memberTypeDesc',
-  },
-  {
-    title: '在售商品数',
-    dataIndex: 'sellPorductNum',
-    key: 'sellPorductNum',
-  },
-  {
-    title: '商品违规次数(累计|近30天)',
-    dataIndex: 'violation',
-    key: 'violation',
-    render: (val, record) => {
-      return record.illegalThirtyNum + ' | ' + record.illegalTotalNum
-    }
-  },
-  {
-    title: '状态',
-    dataIndex: 'shopStatus',
-    key: 'shopStatus',
-    render: val => shopStatusMap[val]
-  },
-  {
-    title: '操作',
-    render: (val, record) => {
-      return (
-        <div>
-          <If condition={record.shopStatus === 2}>
-            <span onClick={onClose.bind(null, record)} className="href">关闭店铺</span>
-          </If>
-          <If condition={record.shopStatus === 3 || record.shopStatus === 1}>
-            <span onClick={onOpen.bind(null, record)} className="href">开启店铺</span>
-          </If>
-        </div >
-      );
-    }
-  }]
+  ]
 }
 
-export default getColumns;
+// 待审核
+export const getCheckColums = ({ onDetail, onUserClick, onPass, onNoPass }) => {
+  return [
+    {
+      title: '店铺名称',
+      dataIndex: 'shopName',
+      render: val => val || '-'
+    },
+    {
+      title: '管理员',
+      dataIndex: 'user',
+      key: 'user',
+      render: (val, record) => {
+        let src = ''
+        if (record.headUrl) {
+          src = record.headUrl.indexOf('http') === 0 ? `${record.headUrl}` : `https://assets.hzxituan.com/${record.headUrl}`
+        }
+
+        return (<UserView
+          onClick={onUserClick.bind(null, record)}
+          title={record.nickName}
+          desc={record.memberId}
+          avatar={src}
+        />)
+      }
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+      key: 'phone'
+    },
+    {
+      title: '状态',
+      dataIndex: 'shopStatus',
+      key: 'shopStatus',
+      render: val => shopStatusMap[val]
+    },
+    {
+      title: '店铺类型',
+      dataIndex: 'tag',
+      key: 'tag',
+      render: val => val || '-'
+    },
+    {
+      title: '主营类目',
+      dataIndex: 'categoryName',
+      key: 'categoryName',
+      render: val => val || '-'
+    },
+    {
+      title: '操作',
+      render: (val, record) => {
+        return (
+          <div>
+            <span onClick={onDetail.bind(null, record)} className='href mr8'>查看资质</span>
+            <span onClick={onPass.bind(null, record)} className='href mr8'>通过</span>
+            <span onClick={onNoPass.bind(null, record)} className='href'>不通过</span>
+          </div >
+        )
+      }
+    }
+  ]
+}
+
+// 不通过
+export const getNoPassColums = ({ onDetail, onUserClick }) => {
+  return [
+    {
+      title: '店铺名称',
+      dataIndex: 'shopName',
+      render: val => val || '-'
+    },
+    {
+      title: '管理员',
+      dataIndex: 'user',
+      key: 'user',
+      render: (val, record) => {
+        let src = ''
+        if (record.headUrl) {
+          src = record.headUrl.indexOf('http') === 0 ? `${record.headUrl}` : `https://assets.hzxituan.com/${record.headUrl}`
+        }
+
+        return (<UserView
+          onClick={onUserClick.bind(null, record)}
+          title={record.nickName}
+          desc={record.memberId}
+          avatar={src}
+        />)
+      }
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+      key: 'phone'
+    },
+    {
+      title: '状态',
+      dataIndex: 'shopStatus',
+      key: 'shopStatus',
+      render: val => shopStatusMap[val]
+    },
+    {
+      title: '店铺类型',
+      dataIndex: 'tag',
+      key: 'tag',
+      render: val => val || '-'
+    },
+    {
+      title: '主营类目',
+      dataIndex: 'categoryName',
+      key: 'categoryName',
+      render: val => val || '-'
+    },
+    {
+      title: '操作',
+      render: (val, record) => {
+        return (
+          <div>
+            <span onClick={onDetail.bind(null, record)} className='href mr8'>查看资质</span>
+          </div >
+        )
+      }
+    }
+  ]
+}

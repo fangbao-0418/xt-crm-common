@@ -7,7 +7,7 @@ import { switchModalConfig } from '../config'
 const { TextArea } = Input
 
 @connect(state => ({
-  modal: state['shop.boss'].switchModal,
+  modal: state['shop.boss'].passModal,
   currentBoss: state['shop.boss'].currentBoss
 }))
 @Form.create()
@@ -20,10 +20,9 @@ export default class extends Component {
       if (err) {
         return
       }
-      dispatch['shop.boss'].closeShop({
+      dispatch['shop.boss'].noPassShop({
         ...values,
-        shopId: currentBoss.id,
-        shopStatus: 3
+        merchantApply: currentBoss.id
       })
     })
   }
@@ -34,7 +33,7 @@ export default class extends Component {
     dispatch({
       type: 'shop.boss/saveDefault',
       payload: {
-        switchModal: {
+        passModal: {
           visible: false
         }
       }
@@ -69,28 +68,23 @@ export default class extends Component {
       <Modal
         visible={modal.visible}
         title={modalTitle}
-        okText='确认关店'
+        okText='审核不通过'
         onOk={this.handleOk}
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
         destroyOnClose
       >
-        <div>
-          <p style={fontStyle}>关店前请务必阅读关店注意事项！</p>
-          {
-            switchModalConfig.hint.map((item, i) => <p style={{ marginTop: 8 }} key={i}>{item}</p>)
-          }
-        </div>
         <Form layout='vertical'>
-          <FormItem label={<span style={fontStyle}>关店原因</span>}>
-            {getFieldDecorator('closeReason', {
+          <FormItem label={<span style={fontStyle}>请填写审核不通过原因</span>}>
+            {getFieldDecorator('reason', {
               rules: [{
                 required: true,
-                message: '请输入关店理由！'
+                message: '请输入不通过理由！'
               }]
             })(
               <TextArea
-                placeholder='请输入关店理由'
+                placeholder='200字以内'
+                maxLength={200}
                 autoSize={{ minRows: 8, maxRows: 20 }}
               />
             )}
