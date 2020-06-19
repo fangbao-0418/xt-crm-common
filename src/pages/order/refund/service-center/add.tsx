@@ -5,7 +5,7 @@ import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Popconfirm, Row, Col, Table, Button, Modal } from 'antd'
+import { Popconfirm, Row, Col, Input, Table, Button, Modal, InputNumber } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import UploadView from '@/components/upload'
 import { getFieldsConfig } from './config'
@@ -140,7 +140,7 @@ class Main extends React.Component<Props> {
                     listType='picture-card'
                     listNum={1}
                     fileType={['jpg', 'jpeg', 'gif', 'png']}
-                    size={0.3}
+                    size={10}
                     placeholder='上传icon图'
                   />
                 )
@@ -203,7 +203,6 @@ class Main extends React.Component<Props> {
   }
 
   public modalView () {
-    let form: FormInstance
     const { visible, itemData }=this.state
     const that=this
     return (
@@ -211,54 +210,64 @@ class Main extends React.Component<Props> {
         title={(itemData?.id)? '修改配值':'新增配置'}
         visible={visible}
         width='75%'
-        onOk={()=>this.onOk(form, that)}
+        onOk={()=>this.onOk(that)}
         onCancel={()=>{
           this.onCancel(that)
         }}
       >
         <div>
           <Form
-            getInstance={(ref) => {
-              form = ref
-            }}
+
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 14 }}
           >
-            <FormItem
-              label='选择主要问题'
-              required
-              inner={(form) => {
-                return form.getFieldDecorator('warehouseLocationId')(
-                  <SearchFetch
-                    value={itemData?.areaName}
-                    api={(areaName) => {
-                      return api.searchPoints(areaName).then((res: { result: any[] }) => {
-                        this.questionList=res.result||[]
-                        return res?.result?.map((v: { areaName: string, id: string }) => ({ text: v.areaName, value: v.id }))
-                      })
-                    }}
-                    onChange={(v)=>{
-                      const res = this.questionList?.find((item: { id: any }) => {
-                        return String(item.id) === String(v)
-                      })
-                      itemData.areaName=v
-                      itemData.areaCode=res?.areaCode
-                      itemData.id=res?.id
-                      this.setState({
-                        itemData
-                      })
-                    }}
-                    placeholder='请输入问题标题关键字下拉搜索'
-                  />
-                )
-              }}
-            />
-            <FormItem
-              label='排序号'
-              verifiable
-              required
-              name='operateRemark2'
-            />
+            <Row className='mt10'>
+              <Col span={6} style={{ textAlign: 'right', paddingRight: 8 }}>
+              问题标题 :
+              </Col>
+              <Col span={14}>
+                <SearchFetch
+                  value={itemData?.areaName}
+                  api={(areaName) => {
+                    return api.searchPoints(areaName).then((res: { result: any[] }) => {
+                      this.questionList=res.result||[]
+                      return res?.result?.map((v: { areaName: string, id: string }) => ({ text: v.areaName, value: v.id }))
+                    })
+                  }}
+                  onChange={(v)=>{
+                    const res = this.questionList?.find((item: { id: any }) => {
+                      return String(item.id) === String(v)
+                    })
+                    itemData.areaName=v
+                    itemData.areaCode=res?.areaCode
+                    itemData.id=res?.id
+                    this.setState({
+                      itemData
+                    })
+                  }}
+                  placeholder='请输入问题标题关键字下拉搜索'
+                />
+              </Col>
+            </Row>
+
+            <Row className='mt10'>
+              <Col span={6} style={{ textAlign: 'right', paddingRight: 8 }}>
+                排序号 :
+              </Col>
+              <Col span={14}>
+                <InputNumber
+                  value={itemData?.num}
+                  style={{ marginBottom: 20 }}
+                  placeholder='请输入排序号'
+                  onChange={(v)=>{
+                    itemData.num=v
+                    this.setState({
+                      itemData
+                    })
+                  }}
+                />
+              </Col>
+            </Row>
             <Row className='mt10'>
               <Col span={6} style={{ textAlign: 'right', paddingRight: 8 }}>
                 标题字体颜色 :
@@ -359,20 +368,17 @@ class Main extends React.Component<Props> {
       </Modal>
     )
   }
-  public onOk (form: FormInstance, that:any) {
-    const { itemData, dataSource }=this.state
-    if (form) {
-      form.props.form.validateFields((err: any, values: { operateRemark: any }) => {
-        if (err) {
-          return
-        }
-      })
-      if (this.tempItemData) {
-        dataSource[0]=itemData
-      } else {
-        dataSource.push(itemData)
-      }
+  public onOk (that:any) {
+    const { itemData, dataSource }=that.state
+    if (that.tempItemData) {
+      dataSource[0]=itemData
+    } else {
+      dataSource.push(itemData)
     }
+    that.setState({
+      dataSource,
+      visible: false
+    })
 
   }
   public onCancel (that:any) {

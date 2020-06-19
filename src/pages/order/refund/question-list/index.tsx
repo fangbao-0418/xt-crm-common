@@ -70,7 +70,7 @@ class Main extends React.Component<Props> {
               label='问题内容'
               inner={(form) => {
                 return form.getFieldDecorator('operateRemark3')(
-                  <BraftEditor controls={['text-color', 'bold', 'italic', 'underline']} />
+                  <BraftEditor style={{ height: 250, overflow: 'auto', border: '1px solid #d9d9d9', borderRadius: 4 }} controls={['text-color', 'bold', 'italic', 'underline']} />
                 )
               }}
             />
