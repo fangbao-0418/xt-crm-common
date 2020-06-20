@@ -9,115 +9,139 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Tag, Popconfirm, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
+import moment from 'moment'
+import { formatMoneyWithSign } from '@/pages/helper'
+import { getFieldsConfig, StoreTypeEnum } from './config'
 import * as api from './api'
+import If from '@/packages/common/components/if'
 interface Props extends AlertComponentProps {
+}
+const dateFormat = 'YYYY-MM-DD HH:mm'
+const getFormatDate = (s: any, e: any) => {
+  return e ? [moment(s, dateFormat), moment(e, dateFormat)] : []
 }
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
-  public columns: ColumnProps<Anchor.ItemProps>[] = [{
+  state = {
+    selectedRowKeys: []
+  }
+  public columns: any = [{
     title: '结算流水号',
     dataIndex: 'id',
-    width: 300
+    width: 150
   }, {
     title: '分账流水',
     dataIndex: 'splitFlowNo',
-    width: 200,
+    width: 100,
     align: 'center'
   }, {
     dataIndex: 'tradeNo',
     title: '交易编号',
-    width: 150,
-    render: (text) => {
-      return AnchorIdentityTypeEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'tradeTypeDesc',
     title: '交易类型',
-    width: 120,
-    align: 'center'
+    width: 100
   }, {
     dataIndex: 'storeId',
     title: '供应商ID',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'storeName',
     title: '供应商名称',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 150
   }, {
     dataIndex: 'storeType',
     title: '供应商类型',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
+    width: 150,
+    render: (text: any) => {
+      return StoreTypeEnum[text]
     }
   }, {
     dataIndex: 'createTime',
     title: '创建时间',
     width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
   }, {
     dataIndex: 'amount',
     title: '本次结算金额',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 150,
+    render: (text: any) => <>{formatMoneyWithSign(text)}</>
   }, {
     dataIndex: 'profitRatio',
     title: '结算比例',
     width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
+    render: (text: any) => {
+      const num=text?text*100:null
+      return text?((text*100)+'%'):'-'
     }
   }, {
     dataIndex: 'settlementStatusDesc',
     title: '结算状态',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'settlementTime',
     title: '结算时间',
     width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    render: (text: string | number | undefined) => <>{APP.fn.formatDate(text)}</>
   },
   {
     title: '操作',
+    width: 100,
+    fixed: 'right',
     align: 'center',
-    render: (text, record) => {
+    render: (text: any, record: any) => {
       return (
-        <div>
+        <If condition={record.settlementStatus===0}>
           <Popconfirm
             title='确定终止结算吗'
             onConfirm={this.terminated.bind(this, record)}
           >
             <span className='href'>终止结算</span>
           </Popconfirm>
-        </div>
+        </If>
       )
     }
   }]
   public refresh () {
     this.listpage.refresh()
   }
-  public terminated (record: Anchor.ItemProps) {
-    api.terminated(record.anchorId).then(() => {
+  public terminated (record: any) {
+    api.terminated(record.id).then(() => {
       this.listpage.refresh()
     })
   }
+  public batchTerminated () {
+    const { selectedRowKeys }=this.state
+    if (selectedRowKeys&&selectedRowKeys.length>0) {
+      api.batchTerminated(selectedRowKeys).then(() => {
+        this.setState({
+          selectedRowKeys: []
+        }, ()=>{
+          this.listpage.refresh()
+          APP.success('终止结算成功')
+        })
+      })
+    } else {
+      APP.error('请选择需要终止的结算单')
+    }
+  }
+  public handleSelectionChange = (selectedRowKeys: any) => {
+    this.setState({
+      selectedRowKeys
+    })
+  };
   public render () {
+    const { selectedRowKeys } = this.state
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.handleSelectionChange,
+      getCheckboxProps: (record: any) =>
+        ({
+          disabled: record.settlementStatus !== 0
+        })
+    }
+
     return (
       <div
         style={{
@@ -128,7 +152,18 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
-            rowKey: 'anchorId'
+            rowKey: 'id',
+            scroll: {
+              x: this.columns.reduce((a: any, b:any) => {
+                return (typeof a === 'object' ? a.width : a) as any + b.width
+              }) as number
+            }
+          }}
+          rowSelection={rowSelection}
+          rangeMap={{
+            time: {
+              fields: ['startTime', 'endTime']
+            }
           }}
           addonAfterSearch={(
             <div>
@@ -139,16 +174,31 @@ class Main extends React.Component<Props> {
               >
                 批量导出
               </Button>
-              <Button
-                type='primary'
+              <Popconfirm
+                title='确定终止结算吗'
                 className='ml8'
-                onClick={() => {
-                }}
+                onConfirm={this.batchTerminated.bind(this)}
               >
+                <Button
+                  type='primary'
+                  onClick={() => {
+                  }}
+                >
                 终止结算
-              </Button>
+                </Button>
+              </Popconfirm>
             </div>
           )}
+          mounted={() => {
+            this.listpage.form.setValues({
+              time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date())
+            })
+          }}
+          processPayload={(payload) => {
+            return {
+              ...payload
+            }
+          }}
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
