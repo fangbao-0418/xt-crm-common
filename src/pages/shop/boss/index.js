@@ -66,7 +66,8 @@ class Main extends React.Component {
         phone: payload.phone,
         shopTypes: payload.shopTypes,
         categoryIds: payload.categoryIds,
-        shopStatus: payload.shopStatus
+        shopStatus: payload.shopStatus,
+        applyResult: payload.applyResult
       })
       dispatch['shop.boss'].getBossList(payload)
     })
@@ -160,7 +161,7 @@ class Main extends React.Component {
       okText: '审核通过',
       onOk: () => {
         dispatch['shop.boss'].passShop({
-          merchantApply: currentBoss.id
+          merchantApplyId: currentBoss.id
         })
       }
     })
@@ -292,6 +293,12 @@ class Main extends React.Component {
     this.setState({
       tabKey: applyResult
     })
+    dispatch({
+      type: 'shop.boss/saveDefault',
+      payload: {
+        bossData: {}
+      }
+    })
     dispatch['shop.boss'].getBossList({
       page: 1,
       pageSize: 10,
@@ -322,7 +329,7 @@ class Main extends React.Component {
         <Card>
           <div style={{ marginBottom: 16 }}>
             <Button type='primary' onClick={this.handleAdd}>
-              添加店长
+              添加店铺
             </Button>
           </div>
           {/* 内容列表视图 */}

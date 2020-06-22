@@ -3,7 +3,7 @@ const { post, newPost, get } = APP.http
 
 // 获取店长列表数据
 export function getBossList (params) {
-  return newPost('/shop/v1/managers/page', params)
+  return newPost('/shop/v1/apply/page', params)
 }
 
 // 查询用户

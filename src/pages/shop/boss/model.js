@@ -64,7 +64,9 @@ export default {
           }
         }
       })
+      const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
+        ...localPayload,
         page: 1,
         pageSize: 10
       })
@@ -74,7 +76,9 @@ export default {
       await api.openShop(payload)
       const bossData = rootState['shop.boss'].bossData
       message.success('开通小店成功！')
+      const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
+        ...localPayload,
         page: bossData.current,
         pageSize: bossData.size
       })
@@ -92,20 +96,24 @@ export default {
           }
         }
       })
+      const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
+        ...localPayload,
         page: bossData.current,
         pageSize: bossData.size
       })
     },
 
     async passShop (payload, rootState) {
-      await api.auditShop({
-        ...payload,
-        auditResult: 1
-      })
+      // await api.auditShop({
+      //   ...payload,
+      //   auditResult: 1
+      // })
       const bossData = rootState['shop.boss'].bossData
       message.success('已审核通过')
+      const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
+        ...localPayload,
         page: bossData.current,
         pageSize: bossData.size
       })
@@ -116,9 +124,19 @@ export default {
         ...payload,
         auditResult: 0
       })
+      dispatch({
+        type: 'shop.boss/saveDefault',
+        payload: {
+          passModal: {
+            visible: false
+          }
+        }
+      })
       const bossData = rootState['shop.boss'].bossData
       message.success('已审核不通过')
+      const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
+        ...localPayload,
         page: bossData.current,
         pageSize: bossData.size
       })

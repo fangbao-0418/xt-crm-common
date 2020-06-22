@@ -24,7 +24,23 @@ export const shopStatusList = [{
   text: '已关闭'
 }]
 
+export const auditTypeList = [{
+  id: 1,
+  text: '待审核'
+}, {
+  id: 2,
+  text: '审核通过'
+}, {
+  id: 3,
+  text: '审核不通过'
+}]
+
 export const shopStatusMap = shopStatusList.reduce((pre, next) => ({
+  ...pre,
+  [next.id]: next.text
+}), {})
+
+export const auditTypeMap = auditTypeList.reduce((pre, next) => ({
   ...pre,
   [next.id]: next.text
 }), {})

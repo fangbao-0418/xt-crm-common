@@ -2,7 +2,7 @@ import React from 'react'
 import UserView from './components/userView'
 import If from '@/packages/common/components/if'
 import { formatMoney } from '@/pages/helper'
-import { shopStatusMap } from './config'
+import { shopStatusMap, auditTypeMap } from './config'
 
 // 审核通过
 export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
@@ -124,9 +124,9 @@ export const getCheckColums = ({ onDetail, onUserClick, onPass, onNoPass }) => {
     },
     {
       title: '状态',
-      dataIndex: 'shopStatus',
-      key: 'shopStatus',
-      render: val => shopStatusMap[val]
+      dataIndex: 'auditType',
+      key: 'auditType',
+      render: val => auditTypeMap[val]
     },
     {
       title: '店铺类型',
@@ -188,9 +188,9 @@ export const getNoPassColums = ({ onDetail, onUserClick }) => {
     },
     {
       title: '状态',
-      dataIndex: 'shopStatus',
-      key: 'shopStatus',
-      render: val => shopStatusMap[val]
+      dataIndex: 'auditType',
+      key: 'auditType',
+      render: val => auditTypeMap[val]
     },
     {
       title: '店铺类型',

@@ -6,22 +6,22 @@ import Form, { FormItem } from '@/packages/common/components/form'
 const { TextArea } = Input
 
 @connect(state => ({
-  modal: state['shop.boss'].passModal,
-  currentBoss: state['shop.boss'].currentBoss
+  modal: state['shop.boss.detail'].passModal,
+  detail: state['shop.boss.detail'].detail
 }))
 @Form.create()
 export default class extends Component {
 
   /** 确定操作 */
   handleOk = () => {
-    const { form: { validateFields }, dispatch, currentBoss } = this.props
+    const { form: { validateFields }, dispatch, detail } = this.props
     validateFields((err, values) => {
       if (err) {
         return
       }
-      dispatch['shop.boss'].noPassShop({
+      dispatch['shop.boss.detail'].noPassShop({
         ...values,
-        merchantApplyId: currentBoss.id
+        merchantApply: detail.id
       })
     })
   }
@@ -30,7 +30,7 @@ export default class extends Component {
   handleCancel = () => {
     const { dispatch } = this.props
     dispatch({
-      type: 'shop.boss/saveDefault',
+      type: 'shop.boss.detail/saveDefault',
       payload: {
         passModal: {
           visible: false
@@ -43,7 +43,7 @@ export default class extends Component {
   handleClose = () => {
     const { dispatch } = this.props
     dispatch({
-      type: 'shop.boss/saveDefault',
+      type: 'shop.boss.detail/saveDefault',
       payload: {
         currentBoss: null
       }
@@ -51,13 +51,13 @@ export default class extends Component {
   }
 
   render () {
-    const { modal, currentBoss, form: { getFieldDecorator } } = this.props
+    const { modal, detail, form: { getFieldDecorator } } = this.props
 
-    if (!currentBoss) {
+    if (!detail) {
       return null
     }
 
-    const modalTitle = `操作 ${currentBoss.nickName || '暂无昵称'} 店长`
+    const modalTitle = `操作 ${detail.nickName || '暂无昵称'} 店长`
 
     const fontStyle = {
       color: 'red'
