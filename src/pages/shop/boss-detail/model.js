@@ -1,10 +1,12 @@
-import { getShopInfo, auditShop } from './api'
+import { message } from 'antd'
+import { getShopInfo, auditShop, getApplyList } from './api'
 
 const namespace = 'shop.boss.detail'
 export default {
   namespace,
   state: {
-    detail: {},
+    detail: null,
+    list: [], // 审核列表
     passModal: { // 审核不通过模态框数据
       visible: false
     }
@@ -12,18 +14,48 @@ export default {
   effects: (dispatch) => ({
     async getShopInfo (data) {
       const detail = await getShopInfo(data)
-      dispatch[namespace].saveDefault({ detail })
+      dispatch({
+        type: `${namespace}/saveDefault`,
+        payload: {
+          detail
+        }
+      })
     },
 
-    async auditShop ({ productPoolId, auditStatus, auditInfo }) {
+    async getApplyList (data) {
+      const list = await getApplyList(data)
+      dispatch({
+        type: `${namespace}/saveDefault`,
+        payload: {
+          list: list || []
+        }
+      })
+    },
+
+    async passShop (payload, rootState, callback) {
+      // await auditShop({
+      //   ...payload,
+      //   auditResult: 1
+      // })
+      message.success('已审核通过')
+      callback && callback()
+    },
+
+    async noPassShop (payload, rootState, callback) {
       await auditShop({
-        auditStatus,
-        auditInfo,
-        ids: [+productPoolId]
+        ...payload,
+        auditResult: 0
       })
-      dispatch[namespace].getGoodsInfo({
-        productPoolId
+      dispatch({
+        type: `${namespace}/saveDefault`,
+        payload: {
+          passModal: {
+            visible: false
+          }
+        }
       })
+      message.success('已审核不通过')
+      callback && callback()
     }
   })
 }

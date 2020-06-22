@@ -105,10 +105,10 @@ export default {
     },
 
     async passShop (payload, rootState) {
-      // await api.auditShop({
-      //   ...payload,
-      //   auditResult: 1
-      // })
+      await api.auditShop({
+        ...payload,
+        auditResult: 1
+      })
       const bossData = rootState['shop.boss'].bossData
       message.success('已审核通过')
       const localPayload = APP.fn.getPayload(namespace) || {}

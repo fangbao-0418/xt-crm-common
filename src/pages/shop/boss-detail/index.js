@@ -1,12 +1,14 @@
-import React from 'react'
-import { Card, Descriptions, Button, Table } from 'antd'
+import React, { Fragment } from 'react'
+import { Card, Descriptions, Button, Table, Modal } from 'antd'
 import { connect } from '@/util/utils'
 import Pannel from './components/pannel'
 import PassModal from './components/passModal'
 import CarouselPreview from '@/components/carousel-preview'
 import Image from '@/components/Image'
 import { replaceHttpUrl } from '@/util/utils'
-import * as api from './api'
+import { brandTypeListMap } from './config'
+
+const { confirm } = Modal
 
 const columns = [
   {
@@ -26,30 +28,6 @@ const columns = [
   }
 ]
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer']
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser']
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: ['cool', 'teacher']
-  }
-]
-
 @connect(state => ({
   detail: state['shop.boss.detail'].detail
 }))
@@ -65,15 +43,29 @@ class BossDetail extends React.Component {
   }
 
   fetchData = () => {
-    // const { match: { params: { id: merchantApplyLogId } } } = this.props
-    // api.getShopInfo({ merchantApplyLogId }).then(detail => {
-    //   this.setState({
-    //     detail
-    //   })
-    // })
+    const { dispatch, match: { params: { id: merchantApplyLogId } } } = this.props
+    dispatch['shop.boss.detail'].getShopInfo({
+      merchantApplyLogId
+    })
+    dispatch['shop.boss.detail'].getApplyList({
+      merchantApplyLogId
+    })
   }
 
-  handlePass = () => {}
+  handlePass = () => {
+    const { dispatch, match: { params: { id: merchantApplyLogId } }, history } = this.props
+    confirm({
+      title: '确认重新审核通过吗?',
+      okText: '审核通过',
+      onOk: () => {
+        dispatch['shop.boss.detail'].passShop({
+          merchantApplyLogId
+        }, () => {
+          history.push('/shop/boss')
+        })
+      }
+    })
+  }
 
   handleUnpass = () => {
     const { dispatch } = this.props
@@ -101,7 +93,7 @@ class BossDetail extends React.Component {
   }
 
   render () {
-    const { detail } = this.props
+    const { detail, list } = this.props
     const { carouselTitle, carouselVisible, carouselImgs } = this.state
 
     if (!detail) {
@@ -128,7 +120,8 @@ class BossDetail extends React.Component {
         </Card>
       )
     }
-    console.log(carouselVisible, 'carouselVisible')
+
+    const { enterpriseInfo, merchantStoreInfo, storeBrandList } = detail
 
     return (
       <Card bordered={false}>
@@ -142,58 +135,160 @@ class BossDetail extends React.Component {
         <PassModal />
         <Pannel title='企业信息'>
           <Descriptions column={2}>
-            <Descriptions.Item label='公司名称'>公司名称</Descriptions.Item>
-            <Descriptions.Item label='统一社会信用代码'>统一社会信用代码</Descriptions.Item>
-            <Descriptions.Item label='公司经营地址'>公司经营地址</Descriptions.Item>
+            <Descriptions.Item label='公司名称'>
+              {enterpriseInfo.enterpriseName}
+            </Descriptions.Item>
+            <Descriptions.Item label='统一社会信用代码'>
+              {enterpriseInfo.enterpriseCreditCode}
+            </Descriptions.Item>
+            <Descriptions.Item label='公司经营地址'>
+              {`${enterpriseInfo.provinceName} ${enterpriseInfo.cityName} ${enterpriseInfo.areaName} ${enterpriseInfo.detailAddress}`}
+            </Descriptions.Item>
             <Descriptions.Item label='营业执照'>
-              <Image
-                style={{
-                  height: 100,
-                  width: 100,
-                  minWidth: 100
-                }}
-                src={replaceHttpUrl('https://assets.hzxituan.com/supplier/72BFA32C0F02CB27.png')}
-                onClick={this.handlePreview.bind(this, 'https://assets.hzxituan.com/supplier/72BFA32C0F02CB27.png')}
-                alt='主图'
-              />
+              {
+                enterpriseInfo.businessLicenseList.map((item, i) => (
+                  <Image
+                    key={i}
+                    style={{
+                      height: 100,
+                      width: 100,
+                      minWidth: 100,
+                      marginRight: 8
+                    }}
+                    src={replaceHttpUrl(item.imageUrl)}
+                    onClick={this.handlePreview.bind(this, item.imageUrl)}
+                    alt={item.imageName}
+                  />
+                ))
+              }
             </Descriptions.Item>
           </Descriptions>
         </Pannel>
         <Pannel title='法人信息' style={{ marginTop: 16 }}>
-          <Descriptions>
-            <Descriptions.Item label='法定代表人手机'>公司名称</Descriptions.Item>
-            <Descriptions.Item label='身份证照'>统一社会信用代码</Descriptions.Item>
-            <Descriptions.Item label='身份证照'>统一社会信用代码</Descriptions.Item>
+          <Descriptions column={2}>
+            <Descriptions.Item label='法定代表人手机'>
+              {enterpriseInfo.legalPersonPhone}
+            </Descriptions.Item>
+            <Descriptions.Item label='身份证照'>
+              {
+                enterpriseInfo.legalPersonList.map((item, i) => (
+                  <Image
+                    key={i}
+                    style={{
+                      height: 100,
+                      width: 100,
+                      minWidth: 100,
+                      marginRight: 8
+                    }}
+                    src={replaceHttpUrl(item.imageUrl)}
+                    onClick={this.handlePreview.bind(this, item.imageUrl)}
+                    alt={item.imageName}
+                  />
+                ))
+              }
+            </Descriptions.Item>
           </Descriptions>
         </Pannel>
         <Pannel title='品牌商标信息' style={{ marginTop: 16 }}>
-          <Descriptions column={2}>
-            <Descriptions.Item label='品牌类型'>公司名称</Descriptions.Item>
-            <Descriptions.Item label='品牌名称'>统一社会信用代码</Descriptions.Item>
-          </Descriptions>
-          <Descriptions column={1}>
-            <Descriptions.Item label='授权书'>公司名称</Descriptions.Item>
-            <Descriptions.Item label='授权有效期'>公司名称</Descriptions.Item>
-            <Descriptions.Item label='商标注册号'>公司名称</Descriptions.Item>
-            <Descriptions.Item label='商标注册证明'>公司名称</Descriptions.Item>
-          </Descriptions>
+          {
+            storeBrandList.map((item, i) => (
+              <Fragment key={i}>
+                <Descriptions column={2}>
+                  <Descriptions.Item label='品牌类型'>
+                    {brandTypeListMap[item.brandType]}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='品牌名称'>
+                    {item.brandName}
+                  </Descriptions.Item>
+                </Descriptions>
+                <Descriptions column={1}>
+                  <Descriptions.Item label='授权书'>
+                    {
+                      item.authorizationList.map((iItem, iI) => (
+                        <Image
+                          key={iI}
+                          style={{
+                            height: 100,
+                            width: 100,
+                            minWidth: 100,
+                            marginRight: 8
+                          }}
+                          src={replaceHttpUrl(iItem.imageUrl)}
+                          onClick={this.handlePreview.bind(this, iItem.imageUrl)}
+                          alt={iItem.imageName}
+                        />
+                      ))
+                    }
+                  </Descriptions.Item>
+                  <Descriptions.Item label='授权有效期'>
+                    {APP.fn.formatDate(item.authValidityTime)}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='商标注册号'>
+                    {item.registrationList[0]?.imageName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label='商标注册证明'>
+                    123
+                  </Descriptions.Item>
+                </Descriptions>
+              </Fragment>
+            ))
+          }
         </Pannel>
         <Pannel title='店铺基本信息' style={{ marginTop: 16 }}>
           <Descriptions column={2}>
-            <Descriptions.Item label='店铺名称'>公司名称</Descriptions.Item>
-            <Descriptions.Item label='主营类目'>统一社会信用代码</Descriptions.Item>
+            <Descriptions.Item label='店铺名称'>
+              {merchantStoreInfo.storeName}
+            </Descriptions.Item>
+            <Descriptions.Item label='主营类目'>
+              {merchantStoreInfo.mainCategoryName}
+            </Descriptions.Item>
           </Descriptions>
           <Descriptions column={1}>
-            <Descriptions.Item label='管理人身份证照'>公司名称</Descriptions.Item>
-            <Descriptions.Item label='第三方平台链接'>公司名称</Descriptions.Item>
+            <Descriptions.Item label='管理人身份证照'>
+              {merchantStoreInfo.managerList.map((item, i) => (
+                <Image
+                  key={i}
+                  style={{
+                    height: 100,
+                    width: 100,
+                    minWidth: 100,
+                    marginRight: 8
+                  }}
+                  src={replaceHttpUrl(item.imageUrl)}
+                  onClick={this.handlePreview.bind(this, item.imageUrl)}
+                  alt={item.imageName}
+                />
+              ))}
+            </Descriptions.Item>
+            <Descriptions.Item label='第三方平台链接'>
+              {merchantStoreInfo.thirdPartyUrl}
+            </Descriptions.Item>
           </Descriptions>
         </Pannel>
         <Pannel title='保证金信息' style={{ marginTop: 16 }}>
-          保证金转账截图
+          {merchantStoreInfo.moneyList.map((item, i) => (
+            <Image
+              key={i}
+              style={{
+                height: 100,
+                width: 100,
+                minWidth: 100,
+                marginRight: 8
+              }}
+              src={replaceHttpUrl(item.imageUrl)}
+              onClick={this.handlePreview.bind(this, item.imageUrl)}
+              alt={item.imageName}
+            />
+          ))}
         </Pannel>
         <Pannel title='审核记录' style={{ marginTop: 16 }}>
           <div>
-            <Table scroll={{ y: 240 }} pagination={false} columns={columns} dataSource={data} />
+            <Table
+              scroll={{ y: 240 }}
+              pagination={false}
+              columns={columns}
+              dataSource={list}
+            />
           </div>
         </Pannel>
         <div style={{ marginTop: 24, textAlign: 'center' }}>
