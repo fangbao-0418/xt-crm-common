@@ -104,11 +104,14 @@ class Main extends React.Component<Props> {
     }
   }]
   public refresh () {
+    this.listpage.form.setValues({
+      time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date(((new Date()).getTime())+3600*1000))
+    })
     this.listpage.refresh()
   }
   public terminated (record: any) {
     api.terminated(record.id).then(() => {
-      this.listpage.refresh()
+      this.refresh()
     })
   }
   public batchTerminated () {
@@ -118,7 +121,7 @@ class Main extends React.Component<Props> {
         this.setState({
           selectedRowKeys: []
         }, ()=>{
-          this.listpage.refresh()
+          this.refresh()
           APP.success('终止结算成功')
         })
       })
@@ -191,7 +194,7 @@ class Main extends React.Component<Props> {
           )}
           mounted={() => {
             this.listpage.form.setValues({
-              time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date())
+              time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date(((new Date()).getTime())+3600*1000))
             })
           }}
           processPayload={(payload) => {

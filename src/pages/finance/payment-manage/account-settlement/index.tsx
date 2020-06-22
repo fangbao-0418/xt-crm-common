@@ -30,7 +30,6 @@ class Main extends React.Component<Props> {
 
   }
   public listpage: ListPageInstanceProps
-  public form: FormInstance
   public columns: any = [{
     title: '账务结算ID',
     dataIndex: 'id',
@@ -101,17 +100,19 @@ class Main extends React.Component<Props> {
         onClick={
           this.getDetailData(2, record.id)
         }>审核
+      </span>: <span
+        className='href'
+        onClick={
+          this.getDetailData(3, record.id)
+        }
+      > 查看
       </span>
-        : <span
-          className='href'
-          onClick={
-            this.getDetailData(3, record.id)
-          }
-        > 查看
-          </span>
     }
   }]
   public refresh () {
+    this.listpage.form.setValues({
+      time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date(((new Date()).getTime())+3600*1000))
+    })
     this.listpage.refresh()
   }
   public toOperate = () => () => {
@@ -172,7 +173,7 @@ class Main extends React.Component<Props> {
               api.add({
               }).then(() => {
                 hide()
-                this.listpage.refresh()
+                this.refresh()
               })
             })
           }
@@ -180,6 +181,7 @@ class Main extends React.Component<Props> {
       })
     }
   }
+
   public batchOperation = () => () => {
     if (this.props.alert) {
       let form: FormInstance
@@ -232,7 +234,7 @@ class Main extends React.Component<Props> {
               api.add({
               }).then(() => {
                 hide()
-                this.listpage.refresh()
+                this.refresh()
               })
             })
           }
@@ -262,16 +264,15 @@ class Main extends React.Component<Props> {
   }
   public getDetailData = (type: any, id: any) => () => {
     api.getDetail(id).then((res: any) => {
-      this.form&&this.form.setValues(res)
       this.operation(type, res)
     })
   }
   //type 1添加，2审核， 3查看
   public operation (type: any, res: any) {
     const readonly=type !== 1
-
     const uploadProps = readonly ? { showUploadList: { showPreviewIcon: true, showRemoveIcon: false, showDownloadIcon: false } } : { listNum: 5 }
     if (this.props.alert) {
+      let form: FormInstance
       const hide = this.props.alert({
         title: '创建账务结算单',
         width: 700,
@@ -280,12 +281,18 @@ class Main extends React.Component<Props> {
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 12 }}
             getInstance={(ref) => {
-              this.form = ref
+              form = ref
+              if (res) {
+                setTimeout(() => {
+                  console.log(res, 'record')
+                  form.setValues(res)
+                }, 100)
+              }
             }}
             readonly={readonly}
             onChange={(filed, value) => {
-              if (filed === 'subjectId') {
-                this.form.setValues({
+              if (filed === 'subjectId'&&type===1) {
+                form.setValues({
                   subjectName: null
                 })
               }
@@ -295,8 +302,8 @@ class Main extends React.Component<Props> {
               label='收支类型'
               verifiable
               inner={(form) => {
-                return (form.getFieldDecorator('inOrOutType')(
-                  <Select disabled={readonly} placeholder='请选择收支类型' allowClear >
+                return readonly?res.inOrOutTypeDesc: (form.getFieldDecorator('inOrOutType')(
+                  <Select placeholder='请选择收支类型' allowClear >
                     <Select.Option value={1}>收入</Select.Option>
                     <Select.Option value={2}>支出</Select.Option>
                   </Select>
@@ -313,8 +320,8 @@ class Main extends React.Component<Props> {
               label='账务对象类型'
               verifiable
               inner={(form) => {
-                return (form.getFieldDecorator('subjectType')(
-                  <Select disabled={readonly} placeholder='请选择账务对象类型' allowClear >
+                return readonly?res.subjectTypeDesc:(form.getFieldDecorator('subjectType')(
+                  <Select placeholder='请选择账务对象类型' allowClear >
                     <Select.Option value={1}>普通供应商</Select.Option>
                     <Select.Option value={2}>喜团小店</Select.Option>
                   </Select>
@@ -341,7 +348,7 @@ class Main extends React.Component<Props> {
                 <Button
                   className='ml10'
                   onClick={()=>{
-                    this.validateSubjectId(this.form)
+                    this.validateSubjectId(form)
                   }}
                 >
                   校验
@@ -500,28 +507,38 @@ class Main extends React.Component<Props> {
           </Form>
         ),
         onOk: () => {
-          if (this.form) {
-            this.form.props.form.validateFields((err, value) => {
+          if (form&&type!==3) {
+            form.props.form.validateFields((err, value) => {
               if (err) {
                 return
               }
-              value.evidenceDocUrlList = (value.evidenceDocUrlList || []).map((item: {name: string, rurl: string}) => {
-                return {
-                  url: item.rurl,
-                  name: item.name
-                }
-              })
-              value.evidenceImgUrlList = (value.evidenceImgUrlList || []).map((item: {name: string, rurl: string}) => {
-                return {
-                  url: item.rurl,
-                  name: item.name
-                }
-              })
-              api.add(value).then(() => {
-                hide()
-                this.listpage.refresh()
-              })
+              if (type===1) {
+                value.evidenceDocUrlList = (value.evidenceDocUrlList || []).map((item: {name: string, rurl: string}) => {
+                  return {
+                    url: item.rurl,
+                    name: item.name
+                  }
+                })
+                value.evidenceImgUrlList = (value.evidenceImgUrlList || []).map((item: {name: string, rurl: string}) => {
+                  return {
+                    url: item.rurl,
+                    name: item.name
+                  }
+                })
+                api.add(value).then(() => {
+                  hide()
+                  this.refresh()
+                })
+              } else if (type===2) {
+                const param={ id: res.id, auditStatus: value.auditStatus, auditDesc: value.auditDesc }
+                api.audit(param).then(() => {
+                  hide()
+                  this.refresh()
+                })
+              }
+
             })
+
           }
         }
       })
@@ -553,7 +570,7 @@ class Main extends React.Component<Props> {
            rowSelection={rowSelection}
            mounted={() => {
              this.listpage.form.setValues({
-               time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date())
+               time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date(((new Date()).getTime())+3600*1000))
              })
            }}
            tableProps={{

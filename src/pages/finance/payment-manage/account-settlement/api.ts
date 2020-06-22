@@ -16,7 +16,7 @@ export const add = (payload: any) => {
 export const getDetail = (id: any) => {
   return get('/mcweb/account/financial/disposable/settlement/detail/v1', { id })
 }
-/** 账务结算单详情 */
+/** 审核账务结算单 */
 export const audit = (payload: any) => {
-  return get('/mcweb/account/financial/disposable/settlement/audit/v1', payload)
+  return newPost('/mcweb/account/financial/disposable/settlement/audit/v1', payload)
 }
