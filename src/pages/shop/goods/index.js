@@ -1,6 +1,6 @@
 import React from 'react'
-import { Card, Tabs, message, Button } from 'antd'
-import { getGoodsList, getCategoryTopList, passGoods, getGoodsInfo } from './api'
+import { Card, Tabs, message, Button, Icon } from 'antd'
+import { getGoodsList, getCategoryTopList, passGoods, getGoodsInfo, getShopTypes } from './api'
 import SelectFetch from '@/components/select-fetch'
 import { ListPage, FormItem, If } from '@/packages/common/components'
 // import SuppilerSelect from '@/components/suppiler-auto-select'
@@ -26,7 +26,8 @@ class Main extends React.Component {
     selectedRowKeys: [],
     carouselTitle: '',
     carouselVisible: false,
-    carouselImgs: []
+    carouselImgs: [],
+    imageViolationReasons: ''
   }
 
   /** 获取相关图片组合成自己想要的数据结构 */
@@ -67,7 +68,8 @@ class Main extends React.Component {
       this.setState({
         carouselTitle: `【${res.productName}】 图片预览`,
         carouselVisible: true,
-        carouselImgs: this.getCarouselsInfos(res)
+        carouselImgs: this.getCarouselsInfos(res),
+        imageViolationReasons: res.imageViolationReasons
       })
     })
   }
@@ -172,7 +174,7 @@ class Main extends React.Component {
   }
 
   render () {
-    const { currentGoods, tabStatus, selectedRowKeys, carouselTitle, carouselVisible, carouselImgs } = this.state
+    const { currentGoods, tabStatus, selectedRowKeys, carouselTitle, carouselVisible, carouselImgs, imageViolationReasons } = this.state
     const hasSelected = selectedRowKeys.length > 0
 
     return (
@@ -184,6 +186,14 @@ class Main extends React.Component {
           list={carouselImgs}
           onCancel={this.handleCarouselPreviewCancel}
           afterClose={this.handleDestroy}
+          afterAddon={
+            imageViolationReasons ? (
+              <p style={{ textAlign: 'center', color: 'red' }}>
+                <Icon style={{ color: 'red' }} type='info-circle' />
+                {imageViolationReasons}
+              </p>
+            ) : null
+          }
         />
 
         {/* 不通过理由模态框 */}
@@ -295,6 +305,18 @@ class Main extends React.Component {
                 <FormItem name='innerAuditStatus' />
               </If>
               <FormItem label='审核人' name='auditUser' />
+              <FormItem
+                label='商家类型'
+                inner={(form) => {
+                  return form.getFieldDecorator('shopTypes')(
+                    <SelectFetch
+                      mode='multiple'
+                      style={{ width: 172 }}
+                      fetchData={getShopTypes}
+                    />
+                  )
+                }}
+              />
               <FormItem
                 name='createTime'
                 label='创建时间'

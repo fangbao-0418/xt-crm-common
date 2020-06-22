@@ -12,6 +12,7 @@ type CarouselPreviewProps = {
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void
   /* 模态框消失之后的回调 */
   afterClose?: () => void
+  afterAddon?: React.ReactNode
 } & Partial<typeof defaultCarouselPreviewProps>
 
 interface CarouselPreviewState {
@@ -29,8 +30,8 @@ class CarouselPreview extends PureComponent<
     nextProps: CarouselPreviewProps
   ) {
     if (
-      nextProps.visible &&
-      (nextProps.list && nextProps.list.length)
+      nextProps.visible
+      && (nextProps.list && nextProps.list.length)
     ) {
       return {
         list: nextProps.list
@@ -108,7 +109,7 @@ class CarouselPreview extends PureComponent<
   }
 
   public render () {
-    const { title, visible, onCancel } = this.props
+    const { title, visible, onCancel, afterAddon } = this.props
     const { list, activeSlide } = this.state
 
     return (
@@ -134,6 +135,9 @@ class CarouselPreview extends PureComponent<
               <CarouselItem key={i} item={item} />
             ))}
           </Carousel>
+          {
+            afterAddon
+          }
           <p className={styles.hint}>
             {activeSlide + 1} / {list.length}
           </p>
