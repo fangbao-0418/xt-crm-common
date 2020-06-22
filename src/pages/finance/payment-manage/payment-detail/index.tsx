@@ -105,7 +105,8 @@ class Main extends React.Component<Props> {
   }]
   public refresh () {
     this.listpage.form.setValues({
-      time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date(((new Date()).getTime())+3600*1000))
+      startTime: moment().subtract(30, 'days').startOf('d'),
+      endTime: moment().endOf('d')
     })
     this.listpage.refresh()
   }
@@ -162,6 +163,17 @@ class Main extends React.Component<Props> {
               }) as number
             }
           }}
+          onReset={() => {
+            this.listpage.form.setValues({
+              tradeNo: undefined,
+              tradeType: undefined,
+              settlementStatus: undefined,
+              storeId: undefined,
+              storeName: undefined,
+              storeType: undefined
+            })
+            this.refresh()
+          }}
           rowSelection={rowSelection}
           rangeMap={{
             time: {
@@ -194,7 +206,8 @@ class Main extends React.Component<Props> {
           )}
           mounted={() => {
             this.listpage.form.setValues({
-              time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date(((new Date()).getTime())+3600*1000))
+              startTime: moment().subtract(30, 'days').startOf('d'),
+              endTime: moment().endOf('d')
             })
           }}
           processPayload={(payload) => {

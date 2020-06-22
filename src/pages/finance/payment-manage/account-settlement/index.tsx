@@ -111,7 +111,8 @@ class Main extends React.Component<Props> {
   }]
   public refresh () {
     this.listpage.form.setValues({
-      time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date(((new Date()).getTime())+3600*1000))
+      startTime: moment().subtract(30, 'days').startOf('d'),
+      endTime: moment().endOf('d')
     })
     this.listpage.refresh()
   }
@@ -578,7 +579,8 @@ class Main extends React.Component<Props> {
            rowSelection={rowSelection}
            mounted={() => {
              this.listpage.form.setValues({
-               time: getFormatDate(new Date(((new Date()).getTime())-30*24*3600*1000), new Date(((new Date()).getTime())+3600*1000))
+               startTime: moment().subtract(30, 'days').startOf('d'),
+               endTime: moment().endOf('d')
              })
            }}
            tableProps={{
@@ -588,6 +590,18 @@ class Main extends React.Component<Props> {
                  return (typeof a === 'object' ? a.width : a) as any + b.width
                }) as number
              }
+           }}
+           onReset={() => {
+             this.listpage.form.setValues({
+               id: undefined,
+               subjectId: undefined,
+               subjectName: undefined,
+               auditStatus: undefined,
+               inOrOutType: undefined,
+               settlementStatus: undefined,
+               settlementType: undefined
+             })
+             this.refresh()
            }}
            rangeMap={{
              time: {
