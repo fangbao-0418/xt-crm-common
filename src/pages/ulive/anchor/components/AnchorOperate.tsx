@@ -91,12 +91,18 @@ class Main extends React.Component<Props, State> {
         this.setState({
           type: 6
         })
+        this.setValue({
+          bizScopes: [1]
+        })
         return
       }
       api.checkMultiAnchorPhone(validPhone).then((res2) => {
         this.getMultiInfo(res2, validUsers, inValidPhone)
         this.setState({
           type: 6
+        })
+        this.setValue({
+          bizScopes: [1]
         })
       })
     })
@@ -164,6 +170,7 @@ class Main extends React.Component<Props, State> {
         const result = {
           nickName: info2 && info2.nickName,
           phone: info2 && info2.phone,
+          bizScopes: [1],
           ...info1
         }
         if (info2) {
@@ -171,9 +178,8 @@ class Main extends React.Component<Props, State> {
             // 黑名单用户
             if (info1.status === 1) {
               message = '该用户是黑名单用户！'
-            }
-            // 用户主播身份为公司
-            else if (info1.anchorIdentityType === 10) {
+            } else if (info1.anchorIdentityType === 10) {
+              // 用户主播身份为公司
               this.setState({
                 type: 5
               }, () => {
@@ -332,7 +338,8 @@ class Main extends React.Component<Props, State> {
     api.exportMultiAddErrorInfo(payload)
   }
   public render () {
-    const detail = this.props.detail
+    console.log(this.props.detail)
+    const detail = this.props.detail || this.anchorInfo
     const { message, multiInfo } = this.state
     return (
       <div>
@@ -472,6 +479,15 @@ class Main extends React.Component<Props, State> {
               name='bizScopes'
               required={true}
               verifiable
+              inner={(form) => {
+                console.log(111)
+                return form.getFieldDecorator('bizScopes')(
+                  <Checkbox.Group>
+                    <Checkbox value={1} disabled={detail?.anchorId && detail.bizScopes?.includes(1)}>喜团优选</Checkbox>
+                    <Checkbox value={2} disabled={detail?.anchorId && detail.bizScopes?.includes(2)}>喜团买菜</Checkbox>
+                  </Checkbox.Group>
+                )
+              }}
             />
             <div className='text-center'>
               <Button
@@ -644,6 +660,16 @@ class Main extends React.Component<Props, State> {
                 name='bizScopes'
                 required={true}
                 verifiable
+                inner={(form) => {
+                  console.log('111', this.anchorInfo)
+                  console.log('222', detail)
+                  return form.getFieldDecorator('bizScopes')(
+                    <Checkbox.Group defaultValue={[1]}>
+                      <Checkbox value={1} disabled={detail?.anchorId && detail.bizScopes?.includes(1)}>喜团优选</Checkbox>
+                      <Checkbox value={2} disabled={detail?.anchorId && detail.bizScopes?.includes(2)}>喜团买菜</Checkbox>
+                    </Checkbox.Group>
+                  )
+                }}
               />
             </If>
             <div

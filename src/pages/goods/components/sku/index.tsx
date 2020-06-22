@@ -510,7 +510,7 @@ class SkuList extends React.Component<Props, State> {
                     </Button>
                   </SkuUploadItem>
                 ))}
-                {size(spec.content) < 10 && (
+                {size(spec.content) < 20 && (
                   <SkuUploadItem
                     value={this.state.tempSpecInfo[key]}
                     showImage={this.state.showImage && key === 0}

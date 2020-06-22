@@ -32,7 +32,7 @@ export const request = (url, config = {}) => {
         APP.moon.oper(res)
       }
       if (res.status === 401) {
-        window.location.href = '/#/login'
+        APP.href('/login')
         return Promise.reject(res)
       }
       if (res.status === 200 && res.data.success) {
@@ -40,7 +40,7 @@ export const request = (url, config = {}) => {
         return isPlainObject(data) ? omitBy(data, isNil) : data
       } else {
         if (res.data && res.data.code === '10001') {
-          window.location.href = '/#/login'
+          APP.href('/login')
           return Promise.reject(res.data)
         }
         if (res.data && res.data.message && config.hideToast !== true) {
@@ -54,7 +54,7 @@ export const request = (url, config = {}) => {
       if (httpCode === 401 || httpCode === 502) {
         message.error('未登录')
         setTimeout(() => {
-          window.location.href = '/#/login'
+          APP.href('/login')
         }, 1500)
         return Promise.reject(error)
       }
@@ -164,7 +164,7 @@ instance.interceptors.response.use(res => {
   // 非2xx状态处理，返回{}
   if (error.response && error.response.status === 401) { // 未登录的重定向到登陆页
     setTimeout(() => {
-      window.location = '/#/login'
+      APP.href('/login')
     }, 1500)
   }
   message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...')

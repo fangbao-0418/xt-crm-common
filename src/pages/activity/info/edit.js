@@ -315,13 +315,17 @@ class List extends React.Component {
             <div>
               <div style={{ marginBottom: 8 }}>
                 成功转移<span style={{ color: 'red' }}>{res.successCount}</span>个商品至
-                <a
-                  href={window.location.pathname + `#/activity/info/edit/${transferActivity.id}`}
-                  target='_blank'
-                  rel='noopener noreferrer'
+                <span
+                  className='href'
+                  // href={window.location.pathname + `#/activity/info/edit/${transferActivity.id}`}
+                  // target='_blank'
+                  // rel='noopener noreferrer'
+                  onClick={() => {
+                    APP.open(`/activity/info/edit/${transferActivity.id}`)
+                  }}
                 >
                   {transferActivity.title}
-                </a>
+                </span>
               </div>
               <div>
                 <div>

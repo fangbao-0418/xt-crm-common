@@ -123,14 +123,14 @@ class Main extends React.Component {
   /** 操作: 点击用户跳转至用户详情 */
   handleUserClick = (record) => {
     const { origin, pathname } = window.location
-    window.open(`${origin}${/^\/$/.test(pathname) ? '/' : pathname}#/user/detail?memberId=${record.memberId}`);
+    APP.open(`${(/^\/$/).test(pathname) ? '/' : pathname}#/user/detail?memberId=${record.memberId}`)
   }
 
   /** 视图: 条件查询模块 */
   renderForm = () => {
     const {
       form: { getFieldDecorator }
-    } = this.props;
+    } = this.props
 
     const values = APP.fn.getPayload(namespace) || {}
 
