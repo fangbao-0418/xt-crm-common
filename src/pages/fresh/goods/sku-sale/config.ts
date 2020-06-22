@@ -198,6 +198,16 @@ export const defaultConfig: FieldsConfig = {
           width: '60%'
         }
       }
+    },
+    sort: {
+      label: '排序权重',
+      type: 'number',
+      controlProps: {
+        min: 0,
+        style: {
+          width: 200
+        }
+      }
     }
     // isAuthentication: {
     //   label: '实名认证',

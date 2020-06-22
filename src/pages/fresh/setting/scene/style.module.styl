@@ -1,0 +1,44 @@
+.header
+  background: white
+  overflow: hidden
+  border-bottom: 1px solid #efefef
+.content
+  background: white
+  padding: 20px
+  // .form
+  //   width: 500px
+  //   margin: 0 auto
+.footer
+  text-align: center
+  button:first-child
+    margin-right: 20px
+.tbtns
+  margin: 20px auto 0
+  width: 696px
+  position: relative
+  &:before, &:after
+    clear: both
+    content: ''
+    display: block
+  .release
+    position: absolute
+    right: -100px
+    top: 2px
+  .tbtn
+    width: 134px
+    height: 36px
+    line-height: 36px
+    text-align: center
+    border: 1px solid #ccc
+    cursor: pointer
+    font-size: 14px
+    display: inline-block
+    margin: 0 20px 20px
+    vertical-align: middle
+    &.add
+      color: #00a0e9
+      border: 1px solid transparent
+    &.active
+      background: #00a0e9
+      border: 1px solid #00a0e9
+      color: #fff

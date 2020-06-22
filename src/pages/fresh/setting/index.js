@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import { Card, Radio, Button } from 'antd'
 import PropTypes from 'prop-types'
 import { connect } from '@/util/utils'
+import Scene from './scene'
 
 const namespace = 'fresh.settings'
 
@@ -26,6 +27,19 @@ export default class extends PureComponent {
     dispatch[namespace].getSetting()
   }
 
+  onChange = (e) => {
+    const { dispatch } = this.props
+    const { value } = e.target
+    dispatch[namespace].updateVal({
+      value
+    })
+  };
+
+  save=(e)=>{
+    const { dispatch } = this.props
+    dispatch[namespace].setSetting()
+  }
+
   render () {
     const { value } = this.props
     return (
@@ -40,21 +54,8 @@ export default class extends PureComponent {
         <div>
           <Button type='primary' style={{ marginTop: 24 }} onClick={this.save}>保存</Button>
         </div>
-
+        <Scene />
       </Card>
     )
-  }
-
-  onChange = (e) => {
-    const { dispatch } = this.props
-    const { value } = e.target
-    dispatch[namespace].updateVal({
-      value
-    })
-  };
-
-  save=(e)=>{
-    const { dispatch } = this.props
-    dispatch[namespace].setSetting()
   }
 }
