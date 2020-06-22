@@ -498,7 +498,7 @@ class Main extends React.Component<Props, State> {
     })
     let url = location.pathname.replace(/index.html/, '') + 'video.html?' + query
     // url = 'http://assets.hzxituan.com/upload/2020-03-17/020bfc50-ec64-41cd-9a42-db1b7e92864e-k7vplmky.html?' + query
-    url = 'http://test-crmadmin.hzxituan.com/issue50/video.html?' + query
+    url = 'http://xt-crmadmin.hzxituan.com/video.html?' + query
     // url = 'http://localhost:3000/video.html?' + query
     window.open(url, '喜团直播', 'top=120,left=150,width=800,height=500,scrollbars=0,titlebar=1', false)
   }
