@@ -6,13 +6,13 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Row, Col, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
+import { getFieldsConfig } from './config'
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
-  public columns: ColumnProps<Anchor.ItemProps>[] = [{
+  public columns: any = [{
     title: '申请单编号',
     dataIndex: 'nickName',
     width: 300
@@ -24,10 +24,7 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'anchorIdentityType',
     title: '金额',
-    width: 150,
-    render: (text) => {
-      return AnchorIdentityTypeEnum[text]
-    }
+    width: 150
   }, {
     dataIndex: 'anchorId',
     title: '提现账户',
@@ -37,31 +34,19 @@ class Main extends React.Component<Props> {
 
     dataIndex: 'anchorLevel',
     title: '状态',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '申请时间',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '完成时间',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '备注',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }]
   public refresh () {
     this.listpage.refresh()
@@ -107,7 +92,7 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
-            rowKey: 'anchorId'
+            rowKey: 'id'
           }}
           formConfig={false}
           api={api.getAnchorList}

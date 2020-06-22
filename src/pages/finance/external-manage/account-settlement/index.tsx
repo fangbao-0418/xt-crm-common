@@ -9,13 +9,13 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Tag, Popconfirm, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
+import { getFieldsConfig } from './config'
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
-  public columns: ColumnProps<Anchor.ItemProps>[] = [{
+  public columns: any = [{
     title: '财务结算ID',
     dataIndex: 'nickName',
     width: 300
@@ -27,10 +27,7 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'anchorIdentityType',
     title: '收支类型',
-    width: 150,
-    render: (text) => {
-      return AnchorIdentityTypeEnum[text]
-    }
+    width: 150
   }, {
     dataIndex: 'anchorId',
     title: '账务金额',
@@ -39,59 +36,35 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'anchorLevel',
     title: '账务对象类型',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '账务对象ID',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '分账对象名称',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '原因',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '创建时间',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '三方处理流水',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
-    dataIndex:'anchorLevel',
+    dataIndex: 'anchorLevel',
     title: '三方处理结果',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
     dataIndex: 'anchorLevel',
     title: '三方处理完成时间',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }]
   public refresh () {
     this.listpage.refresh()

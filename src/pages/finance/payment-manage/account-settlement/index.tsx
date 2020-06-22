@@ -530,6 +530,14 @@ class Main extends React.Component<Props> {
                   this.refresh()
                 })
               } else if (type===2) {
+                if (!value.auditStatus||value.auditStatus===0) {
+                  APP.error('请选择审核意见')
+                  return
+                }
+                if (value.auditStatus===2) {
+                  APP.error('请输入原因')
+                  return
+                }
                 const param={ id: res.id, auditStatus: value.auditStatus, auditDesc: value.auditDesc }
                 api.audit(param).then(() => {
                   hide()
