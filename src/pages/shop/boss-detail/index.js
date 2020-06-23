@@ -7,6 +7,7 @@ import CarouselPreview from '@/components/carousel-preview'
 import Image from '@/components/Image'
 import { replaceHttpUrl } from '@/util/utils'
 import { brandTypeListMap } from './config'
+import { groupBy } from 'lodash'
 
 const { confirm } = Modal
 
@@ -92,9 +93,45 @@ class BossDetail extends React.Component {
     })
   }
 
+  getCarouselImgs (detail) {
+    const { enterpriseInfo, merchantStoreInfo, storeBrandList } = detail
+    // 营业执照
+    const businessLicenseListImgs = enterpriseInfo.businessLicenseList.map(item => ({
+      label: item.imageName || '营业执照',
+      value: item.imageUrl
+    }))
+    // 身份证
+    const legalPersonListImgs = enterpriseInfo.legalPersonList.map(item => ({
+      label: item.imageName || '身份证',
+      value: item.imageUrl
+    }))
+    // 授权书
+    const authorizationListImgs = storeBrandList.reduce((pre, next) => ([
+      ...pre,
+      ...(next.authorizationList.map(item => ({
+        label: item.imageName || '授权书',
+        value: item.imageUrl
+      })))
+    ]), [])
+    // 注册证明
+    const registrationListImgs = storeBrandList.reduce((pre, next) => ([
+      ...pre,
+      ...(next.registrationList.map(item => ({
+        label: item.imageName || '注册证明',
+        value: item.imageUrl
+      })))
+    ]), [])
+    return [
+      ...businessLicenseListImgs,
+      ...legalPersonListImgs,
+      ...authorizationListImgs,
+      ...registrationListImgs
+    ]
+  }
+
   render () {
     const { detail, list } = this.props
-    const { carouselTitle, carouselVisible, carouselImgs } = this.state
+    const { carouselTitle, carouselVisible } = this.state
 
     if (!detail) {
       return (
@@ -122,6 +159,8 @@ class BossDetail extends React.Component {
     }
 
     const { enterpriseInfo, merchantStoreInfo, storeBrandList } = detail
+
+    const carouselImgs = this.getCarouselImgs(detail)
 
     return (
       <Card bordered={false}>
@@ -194,7 +233,7 @@ class BossDetail extends React.Component {
             storeBrandList.map((item, i) => (
               <Fragment key={i}>
                 <Descriptions column={2}>
-                  <Descriptions.Item label='品牌类型'>
+                  <Descriptions.Item label={`${i + 1} 品牌类型`}>
                     {brandTypeListMap[item.brandType]}
                   </Descriptions.Item>
                   <Descriptions.Item label='品牌名称'>
@@ -223,12 +262,33 @@ class BossDetail extends React.Component {
                   <Descriptions.Item label='授权有效期'>
                     {APP.fn.formatDate(item.authValidityTime)}
                   </Descriptions.Item>
-                  <Descriptions.Item label='商标注册号'>
-                    {item.registrationList[0]?.imageName}
-                  </Descriptions.Item>
-                  <Descriptions.Item label='商标注册证明'>
-                    123
-                  </Descriptions.Item>
+                  {
+                    Object.entries(groupBy(item.registrationList, 'imageName')).map((iItem, j) => {
+                      return (
+                        <>
+                          <Descriptions.Item label={`${i + 1}.${j + 1} 商标注册号`}>
+                            {iItem[0]}
+                          </Descriptions.Item>
+                          <Descriptions.Item label='商标注册证明'>
+                            {iItem[1].map((img, k) => (
+                              <Image
+                                key={k}
+                                style={{
+                                  height: 100,
+                                  width: 100,
+                                  minWidth: 100,
+                                  marginRight: 8
+                                }}
+                                src={replaceHttpUrl(img)}
+                                onClick={this.handlePreview.bind(this, img)}
+                                alt={img}
+                              />
+                            ))}
+                          </Descriptions.Item>
+                        </>
+                      )
+                    })
+                  }
                 </Descriptions>
               </Fragment>
             ))

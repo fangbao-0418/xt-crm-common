@@ -33,10 +33,10 @@ export default {
     },
 
     async passShop (payload, rootState, callback) {
-      // await auditShop({
-      //   ...payload,
-      //   auditResult: 1
-      // })
+      await auditShop({
+        ...payload,
+        auditResult: 1
+      })
       message.success('已审核通过')
       callback && callback()
     },
