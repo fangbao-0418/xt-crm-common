@@ -11,6 +11,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       name: {
         type: 'input',
         label: '场景名称',
+        fieldDecoratorOptions: {
+          rules: [
+            { required: true, message: '场景名称必填' },
+            { max: 5, message: '场景名称最多支持5个字符' }
+          ]
+        },
         controlProps: {
           style: {
             width: 200
@@ -20,7 +26,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       sort: {
         type: 'number',
         label: '排序',
+        fieldDecoratorOptions: {
+          rules: [
+            { required: true, message: '请输入排序' }
+          ]
+        },
         controlProps: {
+          min: 1,
           style: {
             width: 200
           }
@@ -29,7 +41,18 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       productCategoryVOS: {
         label: '关联商品',
         inner: (form) => {
-          return form.getFieldDecorator('productCategoryVOS')(
+          return form.getFieldDecorator('productCategoryVOS', {
+            rules: [
+              {
+                validator: (rule, value, cb) => {
+                  if (!value || value.length === 0) {
+                    cb('请选择活动')
+                  }
+                  cb()
+                }
+              }
+            ]
+          })(
             <RelevanceGoods />
           )
         }

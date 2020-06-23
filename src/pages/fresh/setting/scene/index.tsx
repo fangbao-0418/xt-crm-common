@@ -1,6 +1,7 @@
 import React from 'react'
 import { Input, Button, Checkbox, Popconfirm } from 'antd'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
+import If from '@/packages/common/components/if'
 import classNames from 'classnames'
 import styles from './style.module.styl'
 import { getFieldsConfig } from './config'
@@ -33,6 +34,11 @@ class Main extends React.Component<{}, State> {
     })
   }
   public addScene = () => {
+    const { dataSource } = this.state
+    if (dataSource.length >= 10) {
+      APP.error('最多可添加10个场景')
+      return
+    }
     this.form.reset()
     this.setState({
       selectIndex: -1
@@ -60,7 +66,9 @@ class Main extends React.Component<{}, State> {
   }
   public save () {
     this.form.props.form.validateFields((err, values) => {
-      console.log(values, 'values')
+      if (err) {
+        return
+      }
       const productCategoryVOS = values.productCategoryVOS || []
       const res = {
         name: values.name,
@@ -94,11 +102,27 @@ class Main extends React.Component<{}, State> {
       } else {
         p = api.addScene({
           ...res
+        }).then((record) => {
+          this.fetchData().then((res) => {
+            const index = res.findIndex((item) => {
+              return item.id === record.id
+            })
+            this.setState({
+              selectIndex: index
+            })
+          })
         })
       }
-      // p.then(() => {
-      //   this.fetchData()
-      // })
+    })
+  }
+  public remove () {
+    const { dataSource, selectIndex } = this.state
+    const record = dataSource[selectIndex]
+    api.removeScene(record.id).then(() => {
+      this.setState({
+        selectIndex: -2
+      })
+      this.fetchData()
     })
   }
   public render () {
@@ -127,23 +151,12 @@ class Main extends React.Component<{}, State> {
             >
               +新增场景
             </div>
-            {/* <Popconfirm
-              title='确认发布icon吗'
-              onConfirm={this.toPublish}
-            >
-              <Button
-                type='primary'
-                className={styles.release}
-              >
-                发布
-              </Button>
-            </Popconfirm> */}
           </div>
 
         </div>
         <div
           className={styles.content}
-          // style={{ display: selectIndex > -2 ? '' :'none' }}
+          style={{ display: selectIndex > -2 ? '' :'none' }}
         >
           <Form
             className={styles.form}
@@ -152,26 +165,38 @@ class Main extends React.Component<{}, State> {
               this.form = ref
             }}
           >
+            <FormItem name='name' verifiable />
+            <FormItem name='sort' verifiable />
+            <FormItem required name='productCategoryVOS' verifiable />
           </Form>
         </div>
-        <div
-          className='text-center'
-        >
-          <Button
-            //
-            className='mr10'
+        <If condition={selectIndex > -2}>
+          <div
+            className='text-center'
           >
-            删除
-          </Button>
-          <Button
-            type='danger'
-            onClick={() => {
-              this.save()
-            }}
-          >
-            保存
-          </Button>
-        </div>
+            <Popconfirm
+              title='确定是否删除该场景吗？'
+              onConfirm={() => {
+                this.remove()
+              }}
+            >
+              <Button
+                //
+                className='mr10'
+              >
+                删除
+              </Button>
+            </Popconfirm>
+            <Button
+              type='danger'
+              onClick={() => {
+                this.save()
+              }}
+            >
+              保存
+            </Button>
+          </div>
+        </If>
       </div>
     )
   }

@@ -54,6 +54,7 @@ export default class extends PureComponent {
         <div>
           <Button type='primary' style={{ marginTop: 24 }} onClick={this.save}>保存</Button>
         </div>
+        <hr style={{ margin: '20px 0' }} />
         <Scene />
       </Card>
     )

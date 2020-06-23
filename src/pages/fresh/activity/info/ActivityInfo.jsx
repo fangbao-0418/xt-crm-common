@@ -61,9 +61,9 @@ class ActivityInfo extends React.Component {
       }
     })
   }
-  render() {
+  render () {
     const { getFieldDecorator } = this.props.form
-    const { type, title, isEidt, startTime, endTime, sort } = this.state.info;
+    const { type, title, isEidt, startTime, endTime, sort } = this.state.info
     return (
       <>
         <Card
@@ -112,7 +112,7 @@ class ActivityInfo extends React.Component {
           onOk={this.handleOk}
         />
       </>
-    );
+    )
   }
 }
-export default withRouter(Form.create({name: 'activityInfo'})(ActivityInfo));
+export default withRouter(Form.create({ name: 'activityInfo' })(ActivityInfo))

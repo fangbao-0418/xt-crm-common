@@ -4,6 +4,7 @@ import { ColumnProps } from 'antd/lib/table'
 import ListPage from '@/packages/common/components/list-page'
 import AntTableRowSelection from '@/util/AntTableRowSelection'
 import * as api from './api'
+import { getFieldsConfig } from './config'
 
 interface State {
   visible: boolean
@@ -91,6 +92,12 @@ class Main extends AntTableRowSelection<Props, State, any> {
         }}
       >
         <ListPage
+          formConfig={getFieldsConfig()}
+          rangeMap={{
+            time: {
+              fields: ['startTime', 'endTime']
+            }
+          }}
           columns={this.columns}
           api={api.fetchPromotionList}
           tableProps={{

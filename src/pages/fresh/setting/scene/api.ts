@@ -1,4 +1,4 @@
-const { get, newPost, newPut } = APP.http
+const { get, newPost, newPut, del } = APP.http
 
 /**
  * 创建场景
@@ -31,4 +31,11 @@ export function fetchSceneList () {
  */
 export function fetchSceneDetail (id: any) {
   return get(`/mcweb/product/category_menu/detail?categoryMenuId=${id}`)
+}
+
+/**
+ * 删除类目
+ */
+export function removeScene (id: any) {
+  return del(`/mcweb/product/category_menu/delete?categoryId=${id}`)
 }
