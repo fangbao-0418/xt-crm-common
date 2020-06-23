@@ -6,5 +6,6 @@ const { get, newPost, post } = APP.http
  */
 export function fetchPromotionList (payload: any) {
   // return post('/promotion/list', payload)
+  payload.type = 51
   return post('/promotion/freshList', payload)
 }

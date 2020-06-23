@@ -90,6 +90,7 @@ class Main extends React.Component<{}, State> {
           ...res,
           id: record.id
         }).then(() => {
+          APP.success('修改成功')
           this.fetchData().then((res) => {
             const index = res.findIndex((item) => {
               return item.id === record.id
@@ -103,6 +104,7 @@ class Main extends React.Component<{}, State> {
         p = api.addScene({
           ...res
         }).then((record) => {
+          APP.success('添加成功')
           this.fetchData().then((res) => {
             const index = res.findIndex((item) => {
               return item.id === record.id

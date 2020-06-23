@@ -33,14 +33,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           }
         }
       },
-      type: {
-        type: 'select',
-        label: '活动类型',
-        options: [
-          { label: '限时秒杀', value: 50 },
-          { label: '场景活动', value: 51 }
-        ]
-      },
+      // type: {
+      //   type: 'select',
+      //   label: '活动类型',
+      //   options: [
+      //     { label: '限时秒杀', value: 50 },
+      //     { label: '场景活动', value: 51 }
+      //   ]
+      // },
       status: {
         type: 'select',
         label: '活动状态',

@@ -44,7 +44,7 @@ export default class extends PureComponent {
     const { value } = this.props
     return (
       <Card>
-        <h5>喜团好菜</h5>
+        {/* <h5>喜团好菜</h5>
         <Radio.Group onChange={this.onChange} value={value}>
           <Radio value={1}>1×1排列</Radio>
           <Radio value={2} style={{ marginLeft: 24 }}>
@@ -54,7 +54,7 @@ export default class extends PureComponent {
         <div>
           <Button type='primary' style={{ marginTop: 24 }} onClick={this.save}>保存</Button>
         </div>
-        <hr style={{ margin: '20px 0' }} />
+        <hr style={{ margin: '20px 0' }} /> */}
         <Scene />
       </Card>
     )
