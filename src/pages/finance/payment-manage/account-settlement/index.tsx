@@ -29,6 +29,7 @@ class Main extends React.Component<Props> {
     selectedRowKeys: null
 
   }
+  public id: any
   public listpage: ListPageInstanceProps
   public columns: any = [{
     title: '账务结算ID',
@@ -271,8 +272,9 @@ class Main extends React.Component<Props> {
     const params={ subjectId, subjectType }
     api.checkSubject(params).then((res: any) => {
       APP.success('校验通过')
+      this.id=res.id
       form.setValues({
-        subjectName: res
+        subjectName: res.subjectName
       })
     })
   }
@@ -306,6 +308,7 @@ class Main extends React.Component<Props> {
             readonly={readonly}
             onChange={(filed, value) => {
               if (filed === 'subjectId'&&type===1) {
+                this.id=null
                 form.setValues({
                   subjectName: null
                 })
@@ -539,6 +542,7 @@ class Main extends React.Component<Props> {
                     name: item.name
                   }
                 })
+                value.id=this.id
                 api.add(value).then(() => {
                   hide()
                   this.refresh()

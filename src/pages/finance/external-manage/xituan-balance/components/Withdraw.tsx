@@ -2,6 +2,7 @@ import React from 'react'
 import { Button } from 'antd'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import AuthCodeInput from '@/components/auth-code-input'
+import * as api from '../api'
 
 interface State {
   options: { label: string, value: any }[]
@@ -46,7 +47,7 @@ class Main extends React.Component<{}, State> {
                 <AuthCodeInput
                   maxLength={6}
                   onClick={() => {
-                    console.log('click')
+                    this.getCode()
                   }}
                 />
               )
@@ -63,6 +64,12 @@ class Main extends React.Component<{}, State> {
         </Form>
       </div>
     )
+  }
+
+  public getCode () {
+    api.platformSend().then(() => {
+
+    })
   }
 }
 export default Main

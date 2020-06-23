@@ -52,11 +52,6 @@ class Main extends React.Component<Props> {
   public refresh () {
     this.listpage.refresh()
   }
-  public deleteAnchor (record: Anchor.ItemProps) {
-    api.deleteAnchor(record.anchorId).then(() => {
-      this.listpage.refresh()
-    })
-  }
   /** 提现 */
   public toWithdraw () {
     this.props.alert({
@@ -83,6 +78,7 @@ class Main extends React.Component<Props> {
               type='primary'
               className='ml20'
               onClick={() => {
+                this.listpage.refresh()
               }}
             >
                 刷新

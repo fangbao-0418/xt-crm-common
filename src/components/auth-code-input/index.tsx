@@ -42,6 +42,7 @@ class Main extends React.Component<Props> {
     return (
       <div className={styles.input}>
         <Input
+          placeholder='请输入验证码'
           value={this.state.value}
           maxLength={this.props.maxLength}
           onChange={(e) => {
