@@ -8,7 +8,7 @@ import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Select, Button, Radio } from 'antd'
+import { Tooltip, Select, Button, Radio } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import { ColumnProps } from 'antd/lib/table'
 import UploadView from '@/components/upload'
@@ -59,7 +59,17 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'applicationRemark',
     title: '原因',
-    width: 100
+    width: 150,
+    render: (v:any) => {
+      if (v && v !== '0') {
+        if (v.length > 10) {
+          const base = v.slice(0, 10)
+          return <Tooltip title={v}>{base}...</Tooltip>
+        } else {
+          return v
+        }
+      }
+    }
   }, {
     dataIndex: 'settlementTypeDesc',
     title: '创建方式',
@@ -75,7 +85,8 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'createTime',
     title: '创建时间',
-    width: 100
+    width: 200,
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
   }, {
     dataIndex: 'creator',
     title: '创建人',
@@ -83,7 +94,8 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'auditFinishTime',
     title: '完成时间',
-    width: 100
+    width: 200,
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
   }, {
     dataIndex: 'auditor',
     title: '操作人',

@@ -8,13 +8,14 @@ import classNames from 'classnames'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tag, Popconfirm, Button } from 'antd'
+import { Input, Popconfirm, Button, Select, Row, Col } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import moment from 'moment'
 import { formatMoneyWithSign } from '@/pages/helper'
 import { getFieldsConfig, StoreTypeEnum } from './config'
 import * as api from './api'
 import If from '@/packages/common/components/if'
+const { Option } = Select
 interface Props extends AlertComponentProps {
 }
 const dateFormat = 'YYYY-MM-DD HH:mm'
@@ -24,7 +25,8 @@ const getFormatDate = (s: any, e: any) => {
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   state = {
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    type: 2
   }
   public columns: any = [{
     title: '结算流水号',
@@ -61,7 +63,7 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'createTime',
     title: '创建时间',
-    width: 100,
+    width: 200,
     render: (text: any) => <>{APP.fn.formatDate(text)}</>
   }, {
     dataIndex: 'amount',
@@ -137,7 +139,7 @@ class Main extends React.Component<Props> {
     })
   };
   public render () {
-    const { selectedRowKeys } = this.state
+    const { selectedRowKeys, type } = this.state
     const rowSelection = {
       selectedRowKeys,
       onChange: this.handleSelectionChange,
@@ -223,21 +225,35 @@ class Main extends React.Component<Props> {
               <FormItem name='tradeType' />
               <FormItem name='settlementStatus' />
               <FormItem
-                label='供应商名称'
+                label='供应商'
                 inner={
                   (from) => {
                     return (
-                      <div style={{ width: '200px' }}>
-                        {
+                      <Row>
+                        <Col span={12}>
+                          <Select
+                            value={type}
+                            onChange={(value: any)=>{
+                              this.setState({
+                                type: value
+                              })
+                            }}
+                          >
+                            <Option value={1} key={1}>ID</Option>
+                            <Option value={2} key={2}>名称</Option>
+                          </Select>
+                        </Col>
+                        <Col span={12}>{
                           from.getFieldDecorator('storeId')(
-                            <SearchFetch
-                              placeholder='请输入供应商名称'
+                            type===2?<SearchFetch
+                              placeholder='请输入名称'
                               api={api.searchSupplier}
-                              reserveKey=''
-                            />
+                            />:<Input
+                              placeholder='请输入ID' />
                           )
                         }
-                      </div>
+                        </Col>
+                      </Row>
                     )
                   }
                 }
