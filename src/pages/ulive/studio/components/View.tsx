@@ -56,19 +56,27 @@ class Main extends React.Component<Props, State> {
         value: 0
       },
       {
-        label: '实付订单',
-        value: 0
-      },
-      {
-        label: '实付金额',
-        value: 0
-      },
-      {
         label: '访问UV',
         value: 0
       },
       {
         label: '点赞UV',
+        value: 0
+      },
+      {
+        label: '实付金额(总)',
+        value: 0
+      },
+      {
+        label: '实付订单(总)',
+        value: 0
+      },
+      {
+        label: '实付金额(直接)',
+        value: 0
+      },
+      {
+        label: '实付订单(直接)',
         value: 0
       }
     ],
@@ -93,7 +101,7 @@ class Main extends React.Component<Props, State> {
       if (!res) {
         return
       }
-      res.liveStatus = res.liveStatus === 51 ? 50 :  res.liveStatus
+      res.liveStatus = res.liveStatus === 51 ? 50 : res.liveStatus
       const liveData = res.liveData
       let type: ViewType = -1
       /** 待审核 */
@@ -116,20 +124,28 @@ class Main extends React.Component<Props, State> {
           value: formatDuration(liveData.totalTime)
         },
         {
-          label: '实付订单',
-          value: liveData.orderActualPayTotal
-        },
-        {
-          label: '实付金额',
-          value: APP.fn.formatMoneyNumber(liveData.orderTotalPayMoney, 'm2u')
-        },
-        {
           label: '访问UV',
           value: liveData.callOnUv
         },
         {
           label: '点赞数',
           value: liveData.giveThumbsUpPv
+        },
+        {
+          label: '实付金额(总)',
+          value: APP.fn.formatMoneyNumber(liveData.orderTotalPayMoney, 'm2u')
+        },
+        {
+          label: '实付订单(总)',
+          value: liveData.orderActualPayTotal
+        },
+        {
+          label: '实付金额(直接)',
+          value: APP.fn.formatMoneyNumber(liveData.orderIndirectPayMoney, 'm2u')
+        },
+        {
+          label: '实付订单(直接)',
+          value: liveData.orderIndirectPayTotal
         }
       ] : this.state.statistics
       this.setState({
