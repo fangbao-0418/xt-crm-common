@@ -40,7 +40,7 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'tradeNo',
     title: '交易编号',
-    width: 100
+    width: 170
   }, {
     dataIndex: 'tradeTypeDesc',
     title: '交易类型',
@@ -85,8 +85,8 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'settlementTime',
     title: '结算时间',
-    width: 100,
-    render: (text: string | number | undefined) => <>{APP.fn.formatDate(text)}</>
+    width: 200,
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
   },
   {
     title: '操作',

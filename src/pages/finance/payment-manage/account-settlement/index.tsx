@@ -10,8 +10,8 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Tooltip, Select, Button, Radio } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
-import { ColumnProps } from 'antd/lib/table'
 import UploadView from '@/components/upload'
+import { formatMoneyWithSign } from '@/pages/helper'
 import { exportFile } from '@/util/fetch'
 import If from '@/packages/common/components/if'
 import { getFieldsConfig } from './config'
@@ -42,7 +42,8 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'amount',
     title: '账务金额',
-    width: 100
+    width: 100,
+    render: (text: any) => <>{formatMoneyWithSign(text)}</>
   }, {
     dataIndex: 'subjectTypeDesc',
     title: '账务对象类型',

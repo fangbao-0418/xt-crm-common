@@ -7,6 +7,7 @@ import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Row, Col, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig } from './config'
+import Withdraw from './components/Withdraw'
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
@@ -56,6 +57,17 @@ class Main extends React.Component<Props> {
       this.listpage.refresh()
     })
   }
+  /** 提现 */
+  public toWithdraw () {
+    this.props.alert({
+      width: 500,
+      title: '提现',
+      footer: null,
+      content: (
+        <Withdraw />
+      )
+    })
+  }
   public render () {
     return (
       <div
@@ -65,7 +77,7 @@ class Main extends React.Component<Props> {
         }}
       >
         <div style={{ border: '1px solid #999', padding: 20, margin: 20, marginTop: 0 }}>
-          <div style={{ float: 'left' }}>
+          <div style={{}}>
             余额 ￥999999999
             <Button
               type='primary'
@@ -79,13 +91,12 @@ class Main extends React.Component<Props> {
               type='primary'
               className='ml20'
               onClick={() => {
+                this.toWithdraw()
               }}
             >
                 提现
             </Button>
           </div>
-          <div style={{ float: 'right' }} className='href'>设置提现账户</div>
-          <div style={{ clear: 'both' }} />
         </div>
         <div style={{ fontSize: 20, marginLeft: 20 }}>提现明细</div>
         <ListPage
