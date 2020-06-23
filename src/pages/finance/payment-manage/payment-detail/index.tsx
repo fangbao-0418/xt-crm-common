@@ -2,6 +2,7 @@
  * 货款结算明细
  */
 import React from 'react'
+import SearchFetch from '@/components/search-fetch'
 import Image from '@/components/Image'
 import classNames from 'classnames'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
@@ -221,8 +222,26 @@ class Main extends React.Component<Props> {
               <FormItem name='tradeNo' />
               <FormItem name='tradeType' />
               <FormItem name='settlementStatus' />
-              <FormItem name='storeId' />
-              <FormItem name='storeName' />
+              <FormItem
+                label='供应商名称'
+                inner={
+                  (from) => {
+                    return (
+                      <div style={{ width: '200px' }}>
+                        {
+                          from.getFieldDecorator('storeId')(
+                            <SearchFetch
+                              placeholder='请输入供应商名称'
+                              api={api.searchSupplier}
+                              reserveKey=''
+                            />
+                          )
+                        }
+                      </div>
+                    )
+                  }
+                }
+              />
               <FormItem name='storeType' />
               <FormItem name='time' />
             </>

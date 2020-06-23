@@ -13,3 +13,10 @@ export const terminated = (id: number) => {
 export const batchTerminated = (ids: any) => {
   return newPost('/mcweb/account/supplier/settlement/detail/terminated/batch/v1', { ids })
 }
+
+/** 模糊查询供应商信息 */
+export const searchSupplier = (keyWords: string) => {
+  return post(`/mcweb/account/supplier/settlement/name/like/v1?supplierName=${keyWords}`).then((res) => {
+    return res.list.map((v: { name: string, id: string }) => ({ text: v.name, value: v.id }))
+  })
+}
