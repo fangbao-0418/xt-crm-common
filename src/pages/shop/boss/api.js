@@ -38,11 +38,11 @@ export function batchExport (data) {
 
 // 获取一级类目
 export function getCategoryTopList () {
-  return get('/shop/v1/query/category/list').then((res) => {
+  return get('/mcweb/product/category/selectMainCategory').then((res) => {
     return (res || []).map((item) => {
       return {
         label: item.name,
-        value: item.id
+        value: item.categoryId
       }
     })
   })

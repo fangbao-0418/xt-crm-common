@@ -21,7 +21,7 @@ class Main extends React.Component {
       <Switch>
         <Route exact path={`${match.url}`} component={Boss} />
         <Route exact path={`${match.url}/boss`} component={Boss} />
-        <Route exact path={`${match.url}/boss/detail/:id`} component={BossDetail} />
+        <Route exact path={`${match.url}/boss/detail/:id/:auditResult`} component={BossDetail} />
         <Route exact path={`${match.url}/goods`} component={Goods} />
         <Route exact path={`${match.url}/goods/detail/:id`} component={GoodsDetail} />
         <Route path={`${match.url}/commission`} component={Commission} />

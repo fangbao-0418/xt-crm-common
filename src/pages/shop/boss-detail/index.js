@@ -44,9 +44,10 @@ class BossDetail extends React.Component {
   }
 
   fetchData = () => {
-    const { dispatch, match: { params: { id: merchantApplyLogId } } } = this.props
+    const { dispatch, match: { params: { id: merchantApplyLogId, auditResult } } } = this.props
     dispatch['shop.boss.detail'].getShopInfo({
-      merchantApplyLogId
+      merchantApplyLogId,
+      auditResult
     })
     dispatch['shop.boss.detail'].getApplyList({
       merchantApplyLogId

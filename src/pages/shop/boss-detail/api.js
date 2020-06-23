@@ -2,7 +2,7 @@ import { newPost, post } from '@/util/fetch'
 
 /** 获取店铺详情信息 */
 export function getShopInfo (data) {
-  return post('/shop/apply/v1/detail', data)
+  return newPost('/shop/apply/v1/detail', data)
 }
 
 /** 店铺审核列表 */

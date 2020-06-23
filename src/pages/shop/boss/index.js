@@ -94,6 +94,7 @@ class Main extends React.Component {
   /** 操作: 条件查询-重置 */
   handleReset = () => {
     const { form, dispatch } = this.props
+    const { tabKey } = this.state
     form.resetFields()
     APP.fn.setPayload(namespace, {
       memberId: undefined,
@@ -102,11 +103,13 @@ class Main extends React.Component {
       phone: undefined,
       shopStatus: undefined,
       shopTypes: [],
-      categoryIds: []
+      categoryIds: [],
+      applyResult: tabKey
     })
     dispatch['shop.boss'].getBossList({
       page: 1,
-      pageSize: 10
+      pageSize: 10,
+      applyResult: tabKey
     })
   }
 
@@ -175,7 +178,7 @@ class Main extends React.Component {
 
   handleDetail = (record) => {
     const { pathname } = window.location
-    APP.open(`${(/^\/$/).test(pathname) ? '/' : pathname}#/shop/boss/detail/${record.id}`)
+    APP.open(`${(/^\/$/).test(pathname) ? '/' : pathname}#/shop/boss/detail/${record.id}/${record.auditType}`)
   }
 
   /** 视图: 条件查询模块 */

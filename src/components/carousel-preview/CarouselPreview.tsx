@@ -34,6 +34,7 @@ class CarouselPreview extends PureComponent<
       && (nextProps.list && nextProps.list.length)
     ) {
       return {
+        activeSlide: nextProps?.activeSlide || 0,
         list: nextProps.list
       }
     }
