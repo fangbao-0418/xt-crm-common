@@ -7,12 +7,12 @@ import * as api from '../api'
 interface State {
   options: { label: string, value: any }[]
 }
-class Main extends React.Component<{}, State> {
+interface Props {
+  balance?: any
+}
+class Main extends React.Component<Props, State> {
   public state: State = {
     options: []
-  }
-  static defaultProps = {
-    balance: 0
   }
   public form: FormInstance
   public onSubmit = () => {
@@ -20,10 +20,14 @@ class Main extends React.Component<{}, State> {
       if (err) {
         return
       }
-      api.apply(values)
+      api.apply({
+        ...values,
+        accountAmount: APP.fn.formatMoneyNumber(values.accountAmount, 'u2m')
+      })
     })
   }
   public render () {
+    const { balance } = this.props
     return (
       <div>
         <Form
@@ -41,9 +45,16 @@ class Main extends React.Component<{}, State> {
             label='提现金额'
             extra={(
               <div>
-                可提现余额99999.00元
+                可提现余额{balance}元
               </div>
             )}
+            type= 'number'
+            controlProps={{
+              precision: 2,
+              min: 0,
+              max: 100000000,
+              style: { width: '100%' }
+            }}
           />
           <FormItem
             name='captcha'
