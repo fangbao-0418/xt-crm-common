@@ -195,6 +195,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'videoUrl',
           'deliveryMode',
           'settleType',
+          'sort',
           // 'barCode',
           'bannerUrl',
           'returnPhone',

@@ -33,6 +33,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         },
         controlProps: {
           min: 1,
+          max: 999,
           style: {
             width: 200
           }
