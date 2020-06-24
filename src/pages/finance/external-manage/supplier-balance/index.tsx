@@ -2,8 +2,6 @@
  * 外部账户余额查询-供应商
  */
 import React from 'react'
-import Image from '@/components/Image'
-import classNames from 'classnames'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
@@ -17,43 +15,26 @@ class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
     title: '商家ID',
-    dataIndex: 'nickName',
+    dataIndex: 'supplierId',
     width: 300
   }, {
     title: '商家名称',
-    dataIndex: 'fansTotal',
+    dataIndex: 'supplierName',
     width: 200,
     align: 'center'
   }, {
-    dataIndex: 'anchorIdentityType',
+    dataIndex: 'supplierType',
     title: '商家类型',
-    width: 150,
-    render: (text) => {
-      return AnchorIdentityTypeEnum[text]
-    }
+    width: 150
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'balanceMoney',
     title: '商家余额（元）',
     width: 120,
     align: 'center'
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'queryBalanceQueryTime',
     title: '更新日期',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
-  }, {
-    dataIndex: 'anchorLevel',
-    title: '操作',
-    width: 100,
-    render: (record, rows, index) => (
-      <>
-        <span className='href'>
-          更新
-        </span>
-      </>
-    )
+    width: 100
   }]
   public refresh () {
     this.listpage.refresh()
@@ -69,26 +50,15 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
-            rowKey: 'anchorId'
+            rowKey: 'supperId'
           }}
-          addonAfterSearch={(
-            <div>
-              <Button
-                type='primary'
-                onClick={() => {
-                }}
-              >
-                更新全部商户余额
-              </Button>
-            </div>
-          )}
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='memberId' />
+              <FormItem name='supperId' />
             </>
           )}
-          api={api.getAnchorList}
+          api={api.supplierBalance}
         />
       </div>
     )

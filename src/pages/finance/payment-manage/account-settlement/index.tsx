@@ -44,7 +44,7 @@ class Main extends React.Component<Props> {
     dataIndex: 'amount',
     title: '账务金额',
     width: 100,
-    render: (text: any) => <>{formatMoneyWithSign(text)}</>
+    render: (text: any) => <>{text/100}</>
   }, {
     dataIndex: 'subjectTypeDesc',
     title: '账务对象类型',

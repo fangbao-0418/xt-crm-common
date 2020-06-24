@@ -24,7 +24,7 @@ class Main extends React.Component<Props> {
     if (this.num !== 0) {
       return
     }
-    this.num = 3
+    this.num = 60
     const loop = () => {
       this.num--
       this.setState({

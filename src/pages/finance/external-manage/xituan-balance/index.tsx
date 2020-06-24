@@ -13,6 +13,10 @@ interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
+  state = {
+    balance: 0
+
+  }
   public columns: any = [{
     title: '申请单编号',
     dataIndex: 'nickName',
@@ -54,16 +58,28 @@ class Main extends React.Component<Props> {
   }
   /** 提现 */
   public toWithdraw () {
+    const { balance }=this.state
     this.props.alert({
       width: 500,
       title: '提现',
       footer: null,
       content: (
-        <Withdraw />
+        <Withdraw balance={balance} />
       )
     })
   }
+  public componentDidMount () {
+    this.fetchAccountList()
+  }
+  public fetchAccountList () {
+    api.platformBalance().then((res) => {
+      this.setState({
+        balance: res||0
+      })
+    })
+  }
   public render () {
+    const { balance }=this.state
     return (
       <div
         style={{
@@ -73,12 +89,13 @@ class Main extends React.Component<Props> {
       >
         <div style={{ border: '1px solid #999', padding: 20, margin: 20, marginTop: 0 }}>
           <div style={{}}>
-            余额 ￥999999999
+            余额 ￥{balance}
             <Button
               type='primary'
               className='ml20'
               onClick={() => {
                 this.listpage.refresh()
+                this.fetchAccountList()
               }}
             >
                 刷新
@@ -102,7 +119,7 @@ class Main extends React.Component<Props> {
             rowKey: 'id'
           }}
           formConfig={false}
-          api={api.getAnchorList}
+          api={api.getList}
         />
       </div>
     )

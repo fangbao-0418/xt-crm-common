@@ -69,13 +69,12 @@ class Main extends React.Component<Props> {
     dataIndex: 'amount',
     title: '本次结算金额',
     width: 150,
-    render: (text: any) => <>{formatMoneyWithSign(text)}</>
+    render: (text: any) => <>{text/100}</>
   }, {
     dataIndex: 'profitRatio',
     title: '结算比例',
     width: 100,
     render: (text: any) => {
-      const num=text?text*100:null
       return text?((text*100)+'%'):'-'
     }
   }, {

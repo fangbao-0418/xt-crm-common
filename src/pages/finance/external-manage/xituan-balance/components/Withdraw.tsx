@@ -11,12 +11,16 @@ class Main extends React.Component<{}, State> {
   public state: State = {
     options: []
   }
+  static defaultProps = {
+    balance: 0
+  }
   public form: FormInstance
   public onSubmit = () => {
     this.form.props.form.validateFields((err, values) => {
       if (err) {
         return
       }
+      api.apply(values)
     })
   }
   public render () {
@@ -29,9 +33,11 @@ class Main extends React.Component<{}, State> {
           formItemStyle={{
             marginBottom: 0
           }}
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 14 }}
         >
           <FormItem
-            name='a'
+            name='accountAmount'
             label='提现金额'
             extra={(
               <div>
@@ -40,10 +46,10 @@ class Main extends React.Component<{}, State> {
             )}
           />
           <FormItem
-            name='c'
+            name='captcha'
             label='验证码'
             inner={(form) => {
-              return form.getFieldDecorator('c')(
+              return form.getFieldDecorator('captcha')(
                 <AuthCodeInput
                   maxLength={6}
                   onClick={() => {
@@ -68,7 +74,6 @@ class Main extends React.Component<{}, State> {
 
   public getCode () {
     api.platformSend().then(() => {
-
     })
   }
 }
