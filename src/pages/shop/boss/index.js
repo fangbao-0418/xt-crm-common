@@ -50,7 +50,7 @@ class Main extends React.Component {
         memberId: values.memberId !== undefined ? values.memberId : localPayload.memberId,
         nickName: values.nickName !== undefined ? values.nickName : localPayload.nickName,
         userName: values.userName !== undefined ? values.userName : localPayload.userName,
-        phone: values.phone !== undefined ? values.phone : localPayload.phone,
+        memberPhone: values.memberPhone !== undefined ? values.memberPhone : localPayload.memberPhone,
         shopStatus: values.shopStatus !== undefined ? values.shopStatus : localPayload.shopStatus,
         shopTypes: values.shopTypes !== undefined ? values.shopTypes : localPayload.shopTypes,
         categoryIds: values.categoryIds !== undefined ? values.categoryIds : localPayload.categoryIds,
@@ -63,7 +63,7 @@ class Main extends React.Component {
         memberId: payload.memberId,
         nickName: payload.nickName,
         userName: payload.userName,
-        phone: payload.phone,
+        memberPhone: payload.memberPhone,
         shopTypes: payload.shopTypes,
         categoryIds: payload.categoryIds,
         shopStatus: payload.shopStatus,
@@ -100,7 +100,7 @@ class Main extends React.Component {
       memberId: undefined,
       nickName: undefined,
       userName: undefined,
-      phone: undefined,
+      memberPhone: undefined,
       shopStatus: undefined,
       shopTypes: [],
       categoryIds: [],
@@ -196,8 +196,8 @@ class Main extends React.Component {
           })(<Input placeholder='请输入用户ID' />)}
         </FormItem>
         <FormItem label='手机号'>
-          {getFieldDecorator('phone', {
-            initialValue: localPayload.phone
+          {getFieldDecorator('memberPhone', {
+            initialValue: localPayload.memberPhone
           })(<Input placeholder='请输入手机号' />)}
         </FormItem>
         <FormItem label='权限状态'>
@@ -287,7 +287,7 @@ class Main extends React.Component {
       memberId: undefined,
       nickName: undefined,
       userName: undefined,
-      phone: undefined,
+      memberPhone: undefined,
       shopStatus: undefined,
       shopTypes: [],
       categoryIds: [],
