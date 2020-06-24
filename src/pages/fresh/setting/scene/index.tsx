@@ -176,19 +176,21 @@ class Main extends React.Component<{}, State> {
           <div
             className='text-center'
           >
-            <Popconfirm
-              title='确定是否删除该场景吗？'
-              onConfirm={() => {
-                this.remove()
-              }}
-            >
-              <Button
-                //
-                className='mr10'
+            {selectIndex > -1 && (
+              <Popconfirm
+                title='确定是否删除该场景吗？'
+                onConfirm={() => {
+                  this.remove()
+                }}
               >
-                删除
-              </Button>
-            </Popconfirm>
+                <Button
+                  //
+                  className='mr10'
+                >
+                  删除
+                </Button>
+              </Popconfirm>
+            )}
             <Button
               type='danger'
               onClick={() => {
