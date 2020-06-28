@@ -239,7 +239,11 @@ class Main extends React.Component {
           )}
         </FormItem>
         <FormItem>
-          <Button type='primary' onClick={this.handleSearch}>
+          <Button type='primary' onClick={() => {
+            this.handleSearch({
+              page: 1
+            })
+          }}>
             查询
           </Button>
           <Button style={{ marginLeft: 16 }} onClick={this.handleReset}>
