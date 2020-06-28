@@ -11,10 +11,12 @@ const brandTypeList = [
 
 const brandTypeListMap = brandTypeList.reduce((pre, next) => ({
   ...pre,
-  [next.id]: next.text
+  [next.key]: next.text
 }), {})
 
 export {
   brandTypeList,
   brandTypeListMap
 }
+
+// 1 待审核 2 通过 3 驳回

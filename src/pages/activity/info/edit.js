@@ -96,7 +96,8 @@ class List extends React.Component {
       status: 0,
       types: type === 10 ? [0, 10] : undefined,
       ...this.productPayload,
-      include1688: type === 10 ? false : undefined
+      include1688: type === 10 ? false : undefined,
+      isFilter: 0
     }).then((res) => {
       res = res || {}
       modalPage.total = res.total

@@ -8,7 +8,8 @@ export default {
     detail: null,
     list: [], // 审核列表
     passModal: { // 审核不通过模态框数据
-      visible: false
+      visible: false,
+      merchantApplyId: ''
     }
   },
   effects: (dispatch) => ({
@@ -32,20 +33,29 @@ export default {
       })
     },
 
-    async passShop (payload, rootState, callback) {
-      await auditShop({
+    async passShop (payload, rootState) {
+      const res = await auditShop({
         ...payload,
         auditResult: 1
       })
+      if (!res) {
+        return
+      }
       message.success('已审核通过')
-      callback && callback()
+      dispatch[namespace].getShopInfo({
+        merchantApplyLogId: payload.merchantApplyId,
+        auditResult: 1
+      })
     },
 
-    async noPassShop (payload, rootState, callback) {
-      await auditShop({
+    async noPassShop (payload, rootState) {
+      const res = await auditShop({
         ...payload,
         auditResult: 0
       })
+      if (!res) {
+        return
+      }
       dispatch({
         type: `${namespace}/saveDefault`,
         payload: {
@@ -55,7 +65,10 @@ export default {
         }
       })
       message.success('已审核不通过')
-      callback && callback()
+      dispatch[namespace].getShopInfo({
+        merchantApplyLogId: payload.merchantApplyId,
+        auditResult: 0
+      })
     }
   })
 }

@@ -14,14 +14,14 @@ export default class extends Component {
 
   /** 确定操作 */
   handleOk = () => {
-    const { form: { validateFields }, dispatch, detail } = this.props
+    const { form: { validateFields }, dispatch, modal } = this.props
     validateFields((err, values) => {
       if (err) {
         return
       }
       dispatch['shop.boss.detail'].noPassShop({
         ...values,
-        merchantApply: detail.id
+        merchantApplyId: modal.merchantApplyId
       })
     })
   }

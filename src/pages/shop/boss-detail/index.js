@@ -55,13 +55,13 @@ class BossDetail extends React.Component {
   }
 
   handlePass = () => {
-    const { dispatch, match: { params: { id: merchantApplyLogId } }, history } = this.props
+    const { dispatch, match: { params: { id: merchantApplyId } }, history } = this.props
     confirm({
       title: '确认重新审核通过吗?',
       okText: '审核通过',
       onOk: () => {
         dispatch['shop.boss.detail'].passShop({
-          merchantApplyLogId
+          merchantApplyId
         }, () => {
           history.push('/shop/boss')
         })
@@ -70,12 +70,13 @@ class BossDetail extends React.Component {
   }
 
   handleUnpass = () => {
-    const { dispatch } = this.props
+    const { dispatch, match: { params: { id: merchantApplyId } } } = this.props
     dispatch({
       type: 'shop.boss.detail/saveDefault',
       payload: {
         passModal: {
-          visible: true
+          visible: true,
+          merchantApplyId
         }
       }
     })
@@ -131,7 +132,7 @@ class BossDetail extends React.Component {
   }
 
   render () {
-    const { detail, list } = this.props
+    const { detail, list, match: { params: { auditResult } } } = this.props
     const { carouselTitle, carouselVisible } = this.state
 
     if (!detail) {
@@ -352,10 +353,14 @@ class BossDetail extends React.Component {
             />
           </div>
         </Pannel>
-        <div style={{ marginTop: 24, textAlign: 'center' }}>
-          <Button onClick={this.handlePass} type='primary'>审核通过</Button>
-          <Button onClick={this.handleUnpass} style={{ marginLeft: 16 }}>审核不通过</Button>
-        </div>
+        {
+          auditResult === '1' && (
+            <div style={{ marginTop: 24, textAlign: 'center' }}>
+              <Button onClick={this.handlePass} type='primary'>审核通过</Button>
+              <Button onClick={this.handleUnpass} style={{ marginLeft: 16 }}>审核不通过</Button>
+            </div>
+          )
+        }
       </Card>
     )
   }
