@@ -259,9 +259,13 @@ class Main extends React.Component<Props> {
           >
             <FormItem
               label='收支类型'
-              verifiable
+              required
               inner={(form) => {
-                return readonly?res.inOrOutTypeDesc: (form.getFieldDecorator('inOrOutType')(
+                return readonly?res.inOrOutTypeDesc: (form.getFieldDecorator('inOrOutType', {
+                  rules: [
+                    { required: true, message: '收支类型必填' }
+                  ]
+                })(
                   <Select placeholder='请选择收支类型' allowClear >
                     <Select.Option value={1}>收入</Select.Option>
                     <Select.Option value={2}>支出</Select.Option>
@@ -269,28 +273,22 @@ class Main extends React.Component<Props> {
                 )
                 )
               }}
-              fieldDecoratorOptions={{
-                rules: [
-                  { required: true, message: '收支类型必填' }
-                ]
-              }}
             />
             <FormItem
               label='账务对象类型'
-              verifiable
+              required
               inner={(form) => {
-                return readonly?res.subjectTypeDesc:(form.getFieldDecorator('subjectType')(
+                return readonly?res.subjectTypeDesc:(form.getFieldDecorator('subjectType', {
+                  rules: [
+                    { required: true, message: '账务对象类型必填' }
+                  ]
+                })(
                   <Select placeholder='请选择账务对象类型' allowClear >
                     <Select.Option value={1}>普通供应商</Select.Option>
                     <Select.Option value={2}>喜团小店</Select.Option>
                   </Select>
                 )
                 )
-              }}
-              fieldDecoratorOptions={{
-                rules: [
-                  { required: true, message: '账务对象类型必填' }
-                ]
               }}
             />
             <FormItem
@@ -301,6 +299,11 @@ class Main extends React.Component<Props> {
               verifiable
               wrapperCol={{
                 span: readonly ? 12 : 10
+              }}
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '账务对象ID必填' }
+                ]
               }}
               addonAfterCol={{ span: 6 }}
               addonAfter={(!readonly) && (
@@ -317,6 +320,7 @@ class Main extends React.Component<Props> {
             <FormItem
               label='账务对象名称'
               type='input'
+              required
               verifiable
               name='subjectName'
               disabled={true}

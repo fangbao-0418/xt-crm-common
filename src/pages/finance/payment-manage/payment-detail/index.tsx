@@ -228,7 +228,7 @@ class Main extends React.Component<Props> {
                 inner={
                   (from) => {
                     return (
-                      <Row>
+                      <Row style={{ marginTop: 3 }}>
                         <Col span={12}>
                           <Select
                             value={type}
