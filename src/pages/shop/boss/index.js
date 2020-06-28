@@ -8,6 +8,7 @@ import PassModal from './components/passModal'
 import BatchModal from './components/batchModal'
 import CheckModal from './components/checkModal'
 import SelectFetch from '@/components/select-fetch'
+import If from '@/packages/common/components/if'
 import { connect } from '@/util/utils'
 import { getPassColums, getCheckColums, getNoPassColums } from './columns'
 import { queryConfig } from './config'
@@ -330,11 +331,13 @@ class Main extends React.Component {
           {this.renderForm()}
         </Card>
         <Card>
-          <div style={{ marginBottom: 16 }}>
-            <Button type='primary' onClick={this.handleAdd}>
+          <If condition={this.state.tabKey === '2'}>
+            <div style={{ marginBottom: 16 }}>
+              <Button type='primary' onClick={this.handleAdd}>
               添加店铺
-            </Button>
-          </div>
+              </Button>
+            </div>
+          </If>
           {/* 内容列表视图 */}
           {this.renderContent()}
         </Card>
