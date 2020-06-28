@@ -4,12 +4,14 @@
 import React from 'react'
 import Image from '@/components/Image'
 import classNames from 'classnames'
+import { getHeaders, prefix, replaceHttpUrl } from '@/util/utils'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tooltip, Select, Button, Radio } from 'antd'
+import { Tooltip, Select, Button, Radio, Upload } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
+import BatchModal from './components/uploadModal'
 import UploadView from '@/components/upload'
 import { formatMoneyWithSign } from '@/pages/helper'
 import { exportFile } from '@/util/fetch'
@@ -26,8 +28,8 @@ const getFormatDate = (s: any, e: any) => {
 class Main extends React.Component<Props> {
   state = {
     errorUrl: null,
-    selectedRowKeys: null
-
+    selectedRowKeys: null,
+    visible: false
   }
   public id: any
   public listpage: ListPageInstanceProps
@@ -197,66 +199,6 @@ class Main extends React.Component<Props> {
     }
   }
 
-  public batchOperation = () => () => {
-    if (this.props.alert) {
-      let form: FormInstance
-      const hide = this.props.alert({
-        title: '批量创建账务结算单',
-        content: (
-          <Form
-            getInstance={(ref) => {
-              form = ref
-            }}
-          >
-            <FormItem
-              label='上传文件'
-              extra='(请控制文件大小在10mb内)'
-              inner={(form) => {
-                return (form.getFieldDecorator('file')(
-                  <div>
-                    <UploadView
-                      placeholder='请上传文件'
-                      listNum={1}
-                      size={2}
-                      ossDir='finance/payment'
-                    >
-                      <span className={'href'}>+添加文件</span>
-                    </UploadView>
-                    <div style={{ color: '#999' }}>（支持xls、xlsx，大小请控制在10MB）</div>
-                    <If condition={this.state.errorUrl?true:false}>
-                      <div>
-                       上传失败
-                        <span className='href' onClick={() => {
-                          exportFile(this.state.errorUrl)
-                        }}>下载
-                        </span>
-                      </div>
-                    </If>
-                  </div>
-                )
-                )
-              }}
-            />
-          </Form>
-        ),
-        onOk: () => {
-          if (form) {
-            form.props.form.validateFields((err, values) => {
-              if (err) {
-                return
-              }
-              const operateRemark = values.operateRemark
-              api.add({
-              }).then(() => {
-                hide()
-                this.refresh()
-              })
-            })
-          }
-        }
-      })
-    }
-  }
   public validateSubjectId (form: any) {
     const values = (form && form.getValues())||{}
     const subjectId = values.subjectId
@@ -638,16 +580,16 @@ class Main extends React.Component<Props> {
                <Button
                  type='primary'
                  className='ml8 mr8'
-                 onClick={this.batchOperation()}
+                 onClick={this.handleBatchShow.bind(this, 'visible')}
                >
                 批量创建账务结算单
                </Button>
-               <Button
+               {/* <Button
                  type='primary'
                  onClick={this.toOperate()}
                >
                 批量审核
-               </Button>
+               </Button> */}
              </div>
            )}
            formConfig={getFieldsConfig()}
@@ -665,8 +607,27 @@ class Main extends React.Component<Props> {
            )}
            api={api.getList}
          />
+         <BatchModal
+           modalProps={{
+             visible: this.state.visible,
+             onCancel: this.handleCancel.bind(this, 'visible')
+           }}
+         />
        </div>
      )
    }
+
+  // 模态框取消操作
+  handleCancel = (key: any) => {
+    this.setState({
+      [key]: false
+    })
+  }
+  // 显示批量模态框
+  handleBatchShow = (key: any) => {
+    this.setState({
+      [key]: true
+    })
+  }
 }
 export default Alert(Main)
