@@ -33,7 +33,7 @@ export default {
       })
     },
 
-    async passShop (payload, rootState) {
+    async passShop (payload, rootState, cb) {
       const res = await auditShop({
         ...payload,
         auditResult: 1
@@ -42,13 +42,14 @@ export default {
         return
       }
       message.success('已审核通过')
-      dispatch[namespace].getShopInfo({
-        merchantApplyLogId: payload.merchantApplyId,
-        auditResult: 1
-      })
+      cb && cb()
+      // dispatch[namespace].getShopInfo({
+      //   merchantApplyLogId: payload.merchantApplyId,
+      //   auditResult: 1
+      // })
     },
 
-    async noPassShop (payload, rootState) {
+    async noPassShop (payload, rootState, cb) {
       const res = await auditShop({
         ...payload,
         auditResult: 0
@@ -65,10 +66,11 @@ export default {
         }
       })
       message.success('已审核不通过')
-      dispatch[namespace].getShopInfo({
-        merchantApplyLogId: payload.merchantApplyId,
-        auditResult: 0
-      })
+      cb && cb()
+      // dispatch[namespace].getShopInfo({
+      //   merchantApplyLogId: payload.merchantApplyId,
+      //   auditResult: 0
+      // })
     }
   })
 }

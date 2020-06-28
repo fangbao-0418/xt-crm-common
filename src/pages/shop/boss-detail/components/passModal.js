@@ -14,7 +14,7 @@ export default class extends Component {
 
   /** 确定操作 */
   handleOk = () => {
-    const { form: { validateFields }, dispatch, modal } = this.props
+    const { form: { validateFields }, dispatch, modal, history } = this.props
     validateFields((err, values) => {
       if (err) {
         return
@@ -22,6 +22,8 @@ export default class extends Component {
       dispatch['shop.boss.detail'].noPassShop({
         ...values,
         merchantApplyId: modal.merchantApplyId
+      }, () => {
+        history.push('/shop/boss')
       })
     })
   }
