@@ -27,14 +27,15 @@ class CarouselPreview extends PureComponent<
   private static defaultProps = defaultCarouselPreviewProps
 
   private static getDerivedStateFromProps (
-    nextProps: CarouselPreviewProps
+    nextProps: CarouselPreviewProps,
+    preState: CarouselPreviewState
   ) {
     if (
       nextProps.visible
       && (nextProps.list && nextProps.list.length)
     ) {
       return {
-        activeSlide: nextProps?.activeSlide || 0,
+        // activeSlide: nextProps?.activeSlide || 0,
         list: nextProps.list
       }
     }

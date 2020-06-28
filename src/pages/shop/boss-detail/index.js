@@ -14,29 +14,31 @@ const { confirm } = Modal
 const columns = [
   {
     title: '审核时间',
-    dataIndex: 'name',
-    render: text => <a>{text}</a>,
+    dataIndex: 'createTime',
+    render: text => APP.fn.formatDate(text),
     width: 150
   },
   {
     title: '审核人',
-    dataIndex: 'age',
+    dataIndex: 'auditName',
     width: 150
   },
   {
     title: '审核不通过原因',
-    dataIndex: 'address'
+    dataIndex: 'auditReason'
   }
 ]
 
 @connect(state => ({
-  detail: state['shop.boss.detail'].detail
+  detail: state['shop.boss.detail'].detail,
+  list: state['shop.boss.detail'].list
 }))
 class BossDetail extends React.Component {
   state = {
     carouselTitle: '',
     carouselVisible: false,
-    carouselImgs: []
+    carouselImgs: [],
+    activeSlide: undefined
   }
 
   componentDidMount () {
@@ -50,7 +52,8 @@ class BossDetail extends React.Component {
       auditResult
     })
     dispatch['shop.boss.detail'].getApplyList({
-      merchantApplyLogId
+      merchantApplyLogId,
+      auditResult
     })
   }
 
@@ -89,8 +92,11 @@ class BossDetail extends React.Component {
   }
 
   handlePreview (img) {
+    const { detail } = this.props
+    const carouselImgs = this.getCarouselImgs(detail)
+    const activeSlide = carouselImgs.findIndex(item => item.value === img)
     this.setState({
-      carouselImgs: [img],
+      activeSlide,
       carouselVisible: true
     })
   }
@@ -123,17 +129,31 @@ class BossDetail extends React.Component {
         value: item.imageUrl
       })))
     ]), [])
+    // 管理员身份证
+    const managerList = merchantStoreInfo.managerList.map(item => ({
+      label: item.imageName || '身份证',
+      value: item.imageUrl
+    }))
+    // 保证金信息
+    const moneyList = merchantStoreInfo.moneyList.map(item => ({
+      label: item.imageName || '保证金',
+      value: item.imageUrl
+    }))
     return [
       ...businessLicenseListImgs,
       ...legalPersonListImgs,
       ...authorizationListImgs,
-      ...registrationListImgs
+      ...registrationListImgs,
+      ...managerList,
+      ...moneyList
     ]
   }
 
   render () {
     const { detail, list, match: { params: { auditResult } } } = this.props
-    const { carouselTitle, carouselVisible } = this.state
+    const { carouselTitle, carouselVisible, activeSlide } = this.state
+
+    console.log(activeSlide, 'activeSlide')
 
     if (!detail) {
       return (
@@ -164,12 +184,15 @@ class BossDetail extends React.Component {
 
     const carouselImgs = this.getCarouselImgs(detail)
 
+    console.log(carouselImgs)
+
     return (
       <Card bordered={false}>
         <CarouselPreview
           title={carouselTitle}
           visible={carouselVisible}
           list={carouselImgs}
+          activeSlide={activeSlide}
           onCancel={this.handleCarouselPreviewCancel}
           afterClose={this.handleDestroy}
         />
