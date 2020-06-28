@@ -204,7 +204,7 @@ export const defaultConfig: FieldsConfig = {
       type: 'number',
       controlProps: {
         min: 0,
-        max: 9999,
+        max: 999999,
         style: {
           width: 200
         }

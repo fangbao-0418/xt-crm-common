@@ -4,7 +4,7 @@ import { ColumnProps } from 'antd/lib/table'
 import ListPage from '@/packages/common/components/list-page'
 import AntTableRowSelection from '@/util/AntTableRowSelection'
 import * as api from './api'
-import { getFieldsConfig } from './config'
+import { getFieldsConfig, ActivityTypeEnum } from './config'
 
 interface State {
   visible: boolean
@@ -40,12 +40,10 @@ class Main extends AntTableRowSelection<Props, State, any> {
     },
     {
       title: '活动类型',
-      dataIndex: 'type'
-      // render: text => (
-      //   <>
-      //     {activityType.getValue(text)}
-      //   </>
-      // )
+      dataIndex: 'type',
+      render: text => (
+        ActivityTypeEnum[text]
+      )
     },
     {
       title: '活动状态',

@@ -57,3 +57,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   }
   return defaultConfig
 }
+
+export enum ActivityTypeEnum {
+  限时秒杀 = 50,
+  场景活动 = 51
+}
