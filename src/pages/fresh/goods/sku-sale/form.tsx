@@ -638,7 +638,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               )
             }}
           />
-          <FormItem name='sort' />
+          <FormItem verifiable name='sort' />
         </Card>
         <SkuList
           form={this.form && this.form.props.form}

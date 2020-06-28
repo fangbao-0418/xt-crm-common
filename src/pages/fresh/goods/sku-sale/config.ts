@@ -208,6 +208,11 @@ export const defaultConfig: FieldsConfig = {
         style: {
           width: 200
         }
+      },
+      fieldDecoratorOptions: {
+        rules: [
+          { required: true, message: '排序权重必填' }
+        ]
       }
     }
     // isAuthentication: {
