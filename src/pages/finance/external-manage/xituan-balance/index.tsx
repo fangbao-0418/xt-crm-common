@@ -1,11 +1,8 @@
 import React from 'react'
-import Image from '@/components/Image'
-import classNames from 'classnames'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Row, Col, Button } from 'antd'
-import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig } from './config'
 import Withdraw from './components/Withdraw'
 import * as api from './api'
@@ -19,37 +16,36 @@ class Main extends React.Component<Props> {
   }
   public columns: any = [{
     title: '申请单编号',
-    dataIndex: 'nickName',
-    width: 300
+    dataIndex: 'id',
+    width: 230
   }, {
     title: '提现流水号',
-    dataIndex: 'fansTotal',
-    width: 200,
-    align: 'center'
+    dataIndex: 'transferNo',
+    width: 200
   }, {
-    dataIndex: 'anchorIdentityType',
+    dataIndex: 'accountAmount',
     title: '金额',
-    width: 150
+    width: 100
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'memberId',
     title: '提现账户',
-    width: 120,
-    align: 'center'
+    width: 120
   }, {
-
-    dataIndex: 'anchorLevel',
+    dataIndex: 'status',
     title: '状态',
-    width: 100
+    width: 80
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'createTime',
     title: '申请时间',
-    width: 100
+    width: 220,
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'modifyTime',
     title: '完成时间',
-    width: 100
+    width: 200,
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'remark',
     title: '备注',
     width: 100
   }]

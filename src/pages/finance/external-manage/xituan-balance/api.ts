@@ -1,7 +1,7 @@
 const { post, get, newPost } = APP.http
 //供应商提现列表
-export const getList = () => {
-  return get('/mcweb/account/withdrawal/list')
+export const getList = (payload: any) => {
+  return newPost('/mcweb/account/platform/withdrawal/list', payload)
 }
 //平台发送提现确认短信
 export const platformSend = () => {
