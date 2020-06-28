@@ -1689,6 +1689,14 @@
     "@webassemblyjs/wast-parser" "1.7.11"
     "@xtuc/long" "4.2.1"
 
+"@xt-micro-service/bootstrap@^1.0.0":
+  version "1.0.0"
+  resolved "http://192.168.20.8:802/@xt-micro-service%2fbootstrap/-/bootstrap-1.0.0.tgz#041d6d3e4ae8d6b45ea5e46381d0b2d6ca5f6738"
+  integrity sha512-ZTaxuT3VDJtVccVxGdHTY1fx9WiI9ygxBPvd+yo0yYosFmgU4aKyJ6AnTR3gfhMr0nclEQbgOdO7k+7fXe6utw==
+  dependencies:
+    history "4.10.1"
+    universal-router "^9.0.1"
+
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
   resolved "http://192.168.20.8:802/@xtuc%2fieee754/-/ieee754-1.2.0.tgz#eef014a3145ae477a1cbc00cd1e552336dceb790"
@@ -6751,7 +6759,7 @@ hex-color-regex@^1.1.0:
   resolved "http://192.168.20.8:802/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha1-TAb8y0YC/iYCs8k9+C1+fb8aio4=
 
-history@^4.7.2, history@^4.9.0:
+history@4.10.1, history@^4.7.2, history@^4.9.0:
   version "4.10.1"
   resolved "http://192.168.20.8:802/history/-/history-4.10.1.tgz#33371a65e3a83b267434e2b3f3b1b4c58aad4cf3"
   integrity sha1-MzcaZeOoOyZ0NOKz87G0xYqtTPM=
@@ -10860,6 +10868,11 @@ path-to-regexp@^3.1.0:
   version "3.2.0"
   resolved "http://192.168.20.8:802/path-to-regexp/-/path-to-regexp-3.2.0.tgz#fa7877ecbc495c601907562222453c43cc204a5f"
   integrity sha1-+nh37LxJXGAZB1YiIkU8Q8wgSl8=
+
+path-to-regexp@^6.1.0:
+  version "6.1.0"
+  resolved "http://192.168.20.8:802/path-to-regexp/-/path-to-regexp-6.1.0.tgz#0b18f88b7a0ce0bfae6a25990c909ab86f512427"
+  integrity sha1-Cxj4i3oM4L+uaiWZDJCauG9RJCc=
 
 path-type@^1.0.0:
   version "1.1.0"
@@ -14998,6 +15011,13 @@ unique-string@^1.0.0:
   integrity sha1-nhBXzKhRq7kzmPizOuGHuZyuwRo=
   dependencies:
     crypto-random-string "^1.0.0"
+
+universal-router@^9.0.1:
+  version "9.0.1"
+  resolved "http://192.168.20.8:802/universal-router/-/universal-router-9.0.1.tgz#1f4cdd51a45f9e989e40a556a71a2c134552afea"
+  integrity sha1-H0zdUaRfnpieQKVWpxosE0VSr+o=
+  dependencies:
+    path-to-regexp "^6.1.0"
 
 universalify@^0.1.0:
   version "0.1.2"

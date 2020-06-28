@@ -11,8 +11,7 @@ import { Route, Redirect, Switch } from 'react-router-dom'
 import { view as Layout } from '@/components/layout'
 import * as modules from './modules'
 import { Login, Home } from './modules'
-
-// Observer
+import { Observer } from '@xt-micro-service/bootstrap'
 
 interface State {
   ServerRoutes: {path: string, component: any}[]
@@ -20,13 +19,11 @@ interface State {
 
 class Main extends React.Component<{}, State> {
   public state: State = {
-    ServerRoutes: Observer.getRoutes() || []
+    ServerRoutes: Observer.getRoutes()
   }
   public componentWillMount () {
-    console.log('componentWillMount')
     Observer.subscribe(() => {
       const routes = Observer.getRoutes()
-      console.log(routes, 'componentWillMount')
       this.setState({
         ServerRoutes: routes
       })
@@ -34,6 +31,7 @@ class Main extends React.Component<{}, State> {
   }
   render () {
     const { ServerRoutes } = this.state
+    console.log(ServerRoutes, 'ServerRoutes')
     return (
       <Switch>
         <Route exact={true} path='/login' component={Login} />
@@ -51,7 +49,7 @@ class Main extends React.Component<{}, State> {
           <Route path='/settings' component={modules.Settings} />
           <Route path='/goods' component={modules.Goods} />
           <Route path='/template' component={modules.Template} />
-          {/* <Route path='/order' component={modules.Order} /> */}
+          <Route path='/order' component={modules.Order} />
           <Route path='/activity' component={modules.Activity} />
           <Route path='/coupon' component={modules.Coupon} />
           <Route path='/user' component={modules.User} />

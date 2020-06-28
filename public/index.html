@@ -40,31 +40,6 @@
     <script>
       antd.Message = antd.message
     </script>
-    <script>
-      const Observer = (function () {
-        const routes = []
-        const listeners = []
-        return {
-          subscribe: function (fn) {
-            listeners.push(fn)
-          },
-          addRoute: function (routeInfo) {
-            routes.push(routeInfo)
-            this.trigger()
-          },
-          trigger: function () {
-            console.log('trigger')
-            console.log(listeners, 'listeners')
-            listeners.map((fn) => {
-              fn && fn()
-            })
-          },
-          getRoutes: function () {
-            return routes
-          }
-        }
-      })()
-    </script>
   </head>
   <body>
     <noscript>
