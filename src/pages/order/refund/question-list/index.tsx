@@ -7,6 +7,7 @@ import { Button, Radio } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig } from './config'
 import BraftEditor from 'braft-editor'
+import { ossUpload } from '@/components/upload'
 import 'braft-editor/dist/index.css'
 import * as api from './api'
 interface Props extends AlertComponentProps {
@@ -37,6 +38,23 @@ class Main extends React.Component<Props> {
       )
     }
   }]
+  public componentDidMount () {
+    api.fetchQuestion().then(res => {
+      console.log(res, 'res======')
+    })
+    const obj = {
+      a: 2,
+      c: 4,
+      s: 2,
+      content: 'sdfsdfdsfds'
+    }
+    const text = JSON.stringify(obj)
+    const file = new File([text], 'abc')
+    ossUpload(file, 'question', 'cos', '/question.json').then((res: any) => {
+      console.log(res, 'res')
+    })
+  }
+
   public refresh () {
     this.listpage.refresh()
   }
@@ -83,11 +101,11 @@ class Main extends React.Component<Props> {
                 return
               }
               const operateRemark = values.operateRemark
-              api.addAnchor({
-              }).then(() => {
-                hide()
-                this.listpage.refresh()
-              })
+              // api.addAnchor({
+              // }).then(() => {
+              //   hide()
+              //   this.listpage.refresh()
+              // })
             })
           }
         }
@@ -124,7 +142,7 @@ class Main extends React.Component<Props> {
               <FormItem name='status2' />
             </>
           )}
-          api={api.getAnchorList}
+          api={api.fetchQuestion}
         />
       </div>
     )
