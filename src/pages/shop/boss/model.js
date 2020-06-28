@@ -1,6 +1,8 @@
 import * as api from './api'
-import { message } from 'antd'
+import { message, Modal } from 'antd'
 export const namespace = 'shop.boss'
+
+const { confirm } = Modal
 
 export default {
   namespace,
@@ -55,7 +57,7 @@ export default {
 
     async createShop (payload) {
       await api.createShop(payload)
-      message.success('批量开通小店成功！')
+      message.success('批量开通店铺成功！')
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {
@@ -75,7 +77,7 @@ export default {
     async openShop (payload, rootState) {
       await api.openShop(payload)
       const bossData = rootState['shop.boss'].bossData
-      message.success('开通小店成功！')
+      message.success('开通店铺成功！')
       const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
         ...localPayload,
@@ -85,23 +87,40 @@ export default {
     },
 
     async closeShop (payload, rootState) {
-      await api.closeShop(payload)
-      const bossData = rootState['shop.boss'].bossData
-      message.success('关闭小店成功！')
-      dispatch({
-        type: 'shop.boss/saveDefault',
-        payload: {
-          switchModal: {
-            visible: false
+      try {
+        const res = await api.closeShop(payload)
+        console.log(res)
+        const bossData = rootState['shop.boss'].bossData
+        message.success('关闭店铺成功！')
+        dispatch({
+          type: 'shop.boss/saveDefault',
+          payload: {
+            switchModal: {
+              visible: false
+            }
           }
-        }
-      })
-      const localPayload = APP.fn.getPayload(namespace) || {}
-      dispatch['shop.boss'].getBossList({
-        ...localPayload,
-        page: bossData.current,
-        pageSize: bossData.size
-      })
+        })
+        const localPayload = APP.fn.getPayload(namespace) || {}
+        dispatch['shop.boss'].getBossList({
+          ...localPayload,
+          page: bossData.current,
+          pageSize: bossData.size
+        })
+      } catch (error) {
+        // if (error?.code === '100100') {
+        //   confirm({
+        //     title: '关闭店铺失败！',
+        //     content: '商家有商品正在参加平台活动，请处理完成后再关店。',
+        //     okText: '下载活动商品表',
+        //     onOk () {
+        //       console.log('OK')
+        //     },
+        //     onCancel () {
+        //       console.log('Cancel')
+        //     }
+        //   })
+        // }
+      }
     },
 
     async passShop (payload, rootState) {

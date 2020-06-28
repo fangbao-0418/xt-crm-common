@@ -59,7 +59,7 @@ export default class extends Component {
       return null
     }
 
-    const modalTitle = `操作 ${currentBoss.nickName || '暂无昵称'} 店长`
+    const modalTitle = `操作 ${currentBoss.shopName || '暂无数据'} 店铺`
 
     const fontStyle = {
       color: 'red'

@@ -289,13 +289,14 @@ class BossDetail extends React.Component {
                   </Descriptions.Item>
                   {
                     Object.entries(groupBy(item.registrationList, 'imageName')).map((iItem, j) => {
+                      console.log(iItem, 123)
                       return (
                         <>
                           <Descriptions.Item label={`${i + 1}.${j + 1} 商标注册号`}>
                             {iItem[0]}
                           </Descriptions.Item>
                           <Descriptions.Item label='商标注册证明'>
-                            {iItem[1].map((img, k) => (
+                            {iItem[1].map((imgItem, k) => (
                               <Image
                                 key={k}
                                 style={{
@@ -304,9 +305,9 @@ class BossDetail extends React.Component {
                                   minWidth: 100,
                                   marginRight: 8
                                 }}
-                                src={replaceHttpUrl(img)}
-                                onClick={this.handlePreview.bind(this, img)}
-                                alt={img}
+                                src={replaceHttpUrl(imgItem.imageUrl)}
+                                onClick={this.handlePreview.bind(this, imgItem.imageUrl)}
+                                alt={imgItem.imageUrl}
                               />
                             ))}
                           </Descriptions.Item>
