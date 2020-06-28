@@ -183,6 +183,7 @@ module.exports = override(
       config.optimization.runtimeChunk = {
         name: 'runtime'
       }
+      config.mode = 'development'
       config.devtool = isDevelopment ? config.devtool : ''
       return config
     }
