@@ -64,6 +64,14 @@ class Main extends React.Component<Props, State> {
         value: 0
       },
       {
+        label: '在线人数',
+        value: 0
+      },
+      {
+        label: '平均停留时长',
+        value: 0
+      },
+      {
         label: '实付金额(总)',
         value: 0
       },
@@ -130,6 +138,14 @@ class Main extends React.Component<Props, State> {
         {
           label: '点赞数',
           value: liveData.giveThumbsUpPv
+        },
+        {
+          label: '在线人数',
+          value: 0
+        },
+        {
+          label: '平均停留时长',
+          value: 0
         },
         {
           label: '实付金额(总)',
