@@ -174,6 +174,10 @@ class Main extends React.Component<Props, State> {
             <ShopModal
               selectedRowKeys={selectedRowKeys}
               ref='shopmodal'
+              processPayload={payload=> ({
+                ...payload,
+                isFilter: 0
+              })}
               onSelectAll={(selected, selectedRows, changeRows) => {
                 if (selected) {
                   changeRows.map(item => {

@@ -19,6 +19,7 @@ interface Props {
   onOk?: (ids: any[], rows: Shop.ShopItemProps[]) => void
   onSelect?: (record: Shop.ShopItemProps, selected: boolean) => void
   onSelectAll?: (selected: boolean, selectedRows: Shop.ShopItemProps[], changeRows: Shop.ShopItemProps[]) => void
+  processPayload?: (data: any) => any
 }
 interface State extends PageProps<Shop.ShopItemProps> {
   records: Shop.ShopItemProps[]
@@ -126,7 +127,11 @@ class Main extends React.Component<Props, State> {
     })
   }
   public fetchData () {
-    api.fetchShopList(this.payload).then((res: any) => {
+    let params = this.payload
+    if (this.props.processPayload) {
+      params = this.props.processPayload(params)
+    }
+    api.fetchShopList(params).then((res: any) => {
       res.current = this.payload.page
       this.setState({ ...res })
     })
