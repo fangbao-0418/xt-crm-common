@@ -126,7 +126,7 @@ export default {
     async passShop (payload, rootState) {
       await api.auditShop({
         ...payload,
-        auditResult: 1
+        auditResult: 2
       })
       const bossData = rootState['shop.boss'].bossData
       message.success('已审核通过')
@@ -141,7 +141,7 @@ export default {
     async noPassShop (payload, rootState) {
       await api.auditShop({
         ...payload,
-        auditResult: 0
+        auditResult: 3
       })
       dispatch({
         type: 'shop.boss/saveDefault',

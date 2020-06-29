@@ -95,6 +95,7 @@ class BossDetail extends React.Component {
     const { detail } = this.props
     const carouselImgs = this.getCarouselImgs(detail)
     const activeSlide = carouselImgs.findIndex(item => item.value === img)
+    this.carouselPreviewRef.goto(activeSlide)
     this.setState({
       activeSlide,
       carouselVisible: true
@@ -151,9 +152,8 @@ class BossDetail extends React.Component {
 
   render () {
     const { detail, list, match: { params: { auditResult } } } = this.props
-    const { carouselTitle, carouselVisible, activeSlide } = this.state
+    const { carouselTitle, carouselVisible } = this.state
 
-    console.log(activeSlide, 'activeSlide')
 
     if (!detail) {
       return (
@@ -184,15 +184,13 @@ class BossDetail extends React.Component {
 
     const carouselImgs = this.getCarouselImgs(detail)
 
-    console.log(carouselImgs)
-
     return (
       <Card bordered={false}>
         <CarouselPreview
+          ref={ref => this.carouselPreviewRef = ref}
           title={carouselTitle}
           visible={carouselVisible}
           list={carouselImgs}
-          activeSlide={activeSlide}
           onCancel={this.handleCarouselPreviewCancel}
           afterClose={this.handleDestroy}
         />

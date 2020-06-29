@@ -36,7 +36,7 @@ export default {
     async passShop (payload, rootState, cb) {
       const res = await auditShop({
         ...payload,
-        auditResult: 1
+        auditResult: 2
       })
       if (!res) {
         return
@@ -52,7 +52,7 @@ export default {
     async noPassShop (payload, rootState, cb) {
       const res = await auditShop({
         ...payload,
-        auditResult: 0
+        auditResult: 3
       })
       if (!res) {
         return

@@ -35,7 +35,6 @@ class CarouselPreview extends PureComponent<
       && (nextProps.list && nextProps.list.length)
     ) {
       return {
-        // activeSlide: nextProps?.activeSlide || 0,
         list: nextProps.list
       }
     }
@@ -99,7 +98,7 @@ class CarouselPreview extends PureComponent<
   }
 
   /** 滚轮上一张下一张 */
-  handleWheel = (event: any) => {
+  public handleWheel = (event: any) => {
     const deltaY = event.deltaY
     if (deltaY > 0) {
       // 下一张
@@ -108,6 +107,10 @@ class CarouselPreview extends PureComponent<
       // 上一张
       debounce(this.handlePrev)()
     }
+  }
+
+  public goto = (index: number) => {
+    this.sliderRef.slick.slickGoTo(index)
   }
 
   public render () {
@@ -126,6 +129,7 @@ class CarouselPreview extends PureComponent<
           title={title}
           onCancel={onCancel}
           afterClose={this.handleAfterClose}
+          forceRender={true}
         >
           <Carousel
             dots={false}
