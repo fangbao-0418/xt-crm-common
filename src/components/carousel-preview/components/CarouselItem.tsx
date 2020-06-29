@@ -14,7 +14,7 @@ const CarouselItem = ({ item }: { item: ListItem }) => {
   }
 
   return (
-    <div style={{ maxWidth: 750, height: 400, overflow: 'hidden' }}>
+    <div style={{ maxWidth: 750 }}>
       <img
         style={{ margin: '0 auto', maxWidth: '100%' }}
         alt='img'

@@ -13,6 +13,8 @@ type CarouselPreviewProps = {
   /* 模态框消失之后的回调 */
   afterClose?: () => void
   afterAddon?: React.ReactNode
+  forceRender?: boolean
+  bodyStyle?: React.CSSProperties
 } & Partial<typeof defaultCarouselPreviewProps>
 
 interface CarouselPreviewState {
@@ -114,7 +116,7 @@ class CarouselPreview extends PureComponent<
   }
 
   public render () {
-    const { title, visible, onCancel, afterAddon } = this.props
+    const { title, visible, onCancel, afterAddon, forceRender = false, bodyStyle = {} } = this.props
     const { list, activeSlide } = this.state
 
     return (
@@ -122,14 +124,16 @@ class CarouselPreview extends PureComponent<
         <Modal
           visible={visible}
           bodyStyle={{
-            padding: '24px 64px 12px'
+            padding: '24px 64px 12px',
+            ...bodyStyle
           }}
           className={styles.slider}
           footer={null}
           title={title}
           onCancel={onCancel}
           afterClose={this.handleAfterClose}
-          forceRender={true}
+          forceRender={forceRender}
+          destroyOnClose
         >
           <Carousel
             dots={false}

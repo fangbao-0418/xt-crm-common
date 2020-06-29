@@ -95,10 +95,11 @@ class BossDetail extends React.Component {
     const { detail } = this.props
     const carouselImgs = this.getCarouselImgs(detail)
     const activeSlide = carouselImgs.findIndex(item => item.value === img)
-    this.carouselPreviewRef.goto(activeSlide)
     this.setState({
       activeSlide,
       carouselVisible: true
+    }, () => {
+      this.carouselPreviewRef.goto(activeSlide)
     })
   }
 
@@ -193,6 +194,10 @@ class BossDetail extends React.Component {
           list={carouselImgs}
           onCancel={this.handleCarouselPreviewCancel}
           afterClose={this.handleDestroy}
+          forceRender={true}
+          bodyStyle={{
+            overflow: 'hidden'
+          }}
         />
         <PassModal />
         <Pannel title='企业信息'>
