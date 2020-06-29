@@ -11,7 +11,8 @@ const shopTypeMap = {
   3: '品牌旗舰店',
   4: '品牌专营店',
   5: '喜团工厂店',
-  6: '普通企业店'
+  6: '普通企业店',
+  7: 'pop店'
 }
 
 export interface Item {
@@ -79,7 +80,7 @@ class Main extends React.Component<Props, State> {
       title: '店铺类型',
       key: 'shopType',
       dataIndex: 'shopType',
-      render: (val: 1 | 2 | 3 | 4 | 5 | 6) => shopTypeMap[val]
+      render: (val: 1 | 2 | 3 | 4 | 5 | 6 | 7) => shopTypeMap[val]
     },
     {
       title: '库存',

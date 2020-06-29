@@ -51,7 +51,7 @@ export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
       dataIndex: 'violation',
       key: 'violation',
       render: (val, record) => {
-        return record.illegalThirtyNum + ' | ' + record.illegalTotalNum
+        return record.illegalTotalNum + ' | ' + record.illegalThirtyNum
       }
     },
     {

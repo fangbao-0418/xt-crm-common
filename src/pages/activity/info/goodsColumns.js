@@ -1,14 +1,15 @@
 import React from 'react'
 import { formatMoneyWithSign } from '../../helper'
 import Image from '../../../components/Image'
-// const shopTypeMap = {
-//   1: '喜团自营',
-//   2: '直播小店',
-//   3: '品牌旗舰店',
-//   4: '品牌专营店',
-//   5: '喜团工厂店',
-//   6: '普通企业店'
-// }
+const shopTypeMap = {
+  1: '喜团自营',
+  2: '直播小店',
+  3: '品牌旗舰店',
+  4: '品牌专营店',
+  5: '喜团工厂店',
+  6: '普通企业店',
+  7: 'pop店'
+}
 
 export const goodsColumns = (data = [], id = 'id') => {
   return [
@@ -41,6 +42,12 @@ export const goodsColumns = (data = [], id = 'id') => {
           <Image style={{ height: 60, width: 60 }} src={text} alt='主图' />
         </>
       )
+    },
+    {
+      title: '店铺类型',
+      key: 'shopType',
+      dataIndex: 'shopType',
+      render: text => shopTypeMap[text]
     },
     {
       title: '库存',
