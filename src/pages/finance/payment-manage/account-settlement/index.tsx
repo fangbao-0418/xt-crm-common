@@ -555,6 +555,7 @@ class Main extends React.Component<Props> {
                subjectId: undefined,
                subjectName: undefined,
                auditStatus: undefined,
+               subjectType: undefined,
                inOrOutType: undefined,
                settlementStatus: undefined,
                settlementType: undefined
