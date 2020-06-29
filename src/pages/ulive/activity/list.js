@@ -246,31 +246,6 @@ class List extends React.Component {
                 <Input placeholder='请输入商品ID' style={{ width: 180 }} />,
               )}
             </FormItem>
-            <FormItem label='活动类型'>
-              {getFieldDecorator('type', {
-                initialValue: Number(initParams.type) || ''
-              })(
-                <Select placeholder='请选择活动类型' style={{ width: 180 }} allowClear>
-                  <Option value=''>全部</Option>
-                  {activityType.getArray().map((val, i) => (
-                    <Option value={val.key} key={i}>
-                      {val.val}
-                    </Option>
-                  ))}
-                </Select>,
-              )}
-            </FormItem>
-            <FormItem label='活动状态'>
-              {getFieldDecorator('status', {
-                initialValue: initParams.status || ''
-              })(
-                <Select placeholder='请选择活动类型' style={{ width: 180 }}>
-                  <Option value=''>全部</Option>
-                  <Option value='0'>关闭</Option>
-                  <Option value='1'>开启</Option>
-                </Select>,
-              )}
-            </FormItem>
             <FormItem label='有效时间'>
               {getFieldDecorator('time', {
                 initialValue: [

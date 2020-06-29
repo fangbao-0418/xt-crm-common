@@ -4,7 +4,6 @@ import { Modal, Form, Input, Select, DatePicker, Card, Button, message, Radio, I
 import { setBasePromotion, updateBasePromotion } from './api'
 import { isFunction } from 'lodash'
 import UploadView from '@/components/upload'
-import activityType from '@/enum/activityType'
 import activityTagBImg from '@/assets/images/activity-tag-bigimg.png'
 import activityTagSImg from '@/assets/images/activity-tag-smimg.jpg'
 import If from '@/packages/common/components/if'
@@ -189,6 +188,7 @@ class ActivityForm extends React.Component {
   }
 
   render () {
+    const activityType=[{ key: 1, val: '活动直播' }]
     const {
       form: { getFieldDecorator, getFieldValue }
     } = this.props
@@ -214,7 +214,7 @@ class ActivityForm extends React.Component {
                   style={{ width: 120 }}
                   disabled={!!this.state.id}
                 >
-                  {activityType.getArray().map((val, i) => <Option value={val.key} key={i}>{val.val}</Option>)}
+                  {activityType.map((val, i) => <Option value={val.key} key={i}>{val.val}</Option>)}
                 </Select>
               )}
             </FormItem>

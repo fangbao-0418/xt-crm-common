@@ -149,7 +149,15 @@ class Main extends React.Component<Props, SkuSaleListState> {
         const { status } = this.props
         return (
           <div>
-            <span
+            <If condition={status !== '2'}>
+              <div
+                className='href'
+                onClick={() => this.copy(record.id)}
+              >
+                复制
+              </div>
+            </If>
+            <div
               className='href'
               onClick={() => {
                 const url = isVirtualGood(record.type) ?`/goods/virtual/${record.id}` : `/goods/sku-sale/${record.id}`
@@ -157,22 +165,22 @@ class Main extends React.Component<Props, SkuSaleListState> {
               }}
             >
               编辑
-            </span>
+            </div>
             <If condition={status === '0'}>
-              <span
-                className='href ml8'
+              <div
+                className='href'
                 onClick={() => this.lower([record.id])}
               >
                 下架
-              </span>
+              </div>
             </If>
             <If condition={status === '1'}>
-              <span
-                className='href ml8'
+              <div
+                className='href'
                 onClick={() => this.upper([record.id])}
               >
                 上架
-              </span>
+              </div>
             </If>
           </div>
         )
@@ -195,7 +203,21 @@ class Main extends React.Component<Props, SkuSaleListState> {
       }
     })
   }
-
+ /** 复制商品 */
+ copy = (ids: any) => {
+   Modal.confirm({
+     title: '复制提示',
+     content: '确认复制该商品吗?',
+     onOk: () => {
+       delGoodsDisable({ ids }).then((res: any) => {
+         if (res) {
+           message.success('商品已复制到待上架列表中')
+           this.list.refresh()
+         }
+       })
+     }
+   })
+ }
   // 批量上架
   upper = (ids: string[] | number[]) => {
     Modal.confirm({
