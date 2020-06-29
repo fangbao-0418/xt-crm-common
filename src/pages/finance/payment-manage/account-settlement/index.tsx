@@ -222,6 +222,7 @@ class Main extends React.Component<Props> {
   }
   public getDetailData = (type: any, id: any) => () => {
     api.getDetail(id).then((res: any) => {
+      res.amount=res.amount/100
       this.operation(type, res)
     })
   }
@@ -232,7 +233,7 @@ class Main extends React.Component<Props> {
     if (this.props.alert) {
       let form: FormInstance
       const hide = this.props.alert({
-        title: '创建账务结算单',
+        title: type===1?'创建账务结算单':(type===2?'审核账务结算单':'查看账务结算单'),
         width: 700,
         content: (
           <Form
@@ -449,18 +450,11 @@ class Main extends React.Component<Props> {
                       marginBottom: 0
                     }}
                     label='原因'
-                    verifiable
                     inner={(form) => {
-                      return (form.getFieldDecorator('operateRemark')(
-                        <TextArea disabled={type===3} placeholder='请输入原因，140字以内' />
+                      return (form.getFieldDecorator('auditDesc')(
+                        <TextArea maxLength={140} disabled={type===3} placeholder='请输入原因，140字以内' />
                       )
                       )
-                    }}
-                    fieldDecoratorOptions={{
-                      rules: [
-                        { required: true, message: '原因必填' },
-                        { max: 140, message: '原因最长140个字符' }
-                      ]
                     }}
                   />
                 </div>
@@ -498,7 +492,8 @@ class Main extends React.Component<Props> {
                   APP.error('请选择审核意见')
                   return
                 }
-                if (value.auditStatus===2) {
+                console.log(value.auditDesc)
+                if (value.auditStatus===2&&!value.auditDesc) {
                   APP.error('请输入原因')
                   return
                 }
@@ -508,9 +503,9 @@ class Main extends React.Component<Props> {
                   this.refresh()
                 })
               }
-
             })
-
+          } else {
+            hide()
           }
         }
       })
