@@ -350,7 +350,18 @@ class BossDetail extends React.Component {
               ))}
             </Descriptions.Item>
             <Descriptions.Item label='第三方平台链接'>
-              {merchantStoreInfo.thirdPartyUrl}
+              {
+                merchantStoreInfo.thirdPartyUrl
+                  ? (
+                    <a
+                      href={(/^(https|http)/).test(merchantStoreInfo.thirdPartyUrl) ?merchantStoreInfo.thirdPartyUrl : 'http://' + merchantStoreInfo.thirdPartyUrl}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    >
+                      {merchantStoreInfo.thirdPartyUrl}
+                    </a>
+                  ) : '暂无数据'
+              }
             </Descriptions.Item>
           </Descriptions>
         </Pannel>
