@@ -82,6 +82,14 @@ export default class extends Component {
           >
             <Button loading={loading} type='primary'>导入excel表</Button>
           </Upload>
+          <span
+            className='href ml8'
+            onClick={() => {
+              APP.fn.download(require('@/assets/files/一次性账务计算导入模板.xlsx'), '导入模版')
+            }}
+          >
+         模板下载
+          </span>
         </div>
         <div style={{ padding: 10 }}>
           <div style={{ marginBottom: 8 }}>（请控制文件大小在10mb内）</div>

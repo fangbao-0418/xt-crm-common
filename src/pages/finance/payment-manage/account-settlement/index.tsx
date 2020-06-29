@@ -285,7 +285,7 @@ class Main extends React.Component<Props> {
                   ]
                 })(
                   <Select placeholder='请选择账务对象类型' allowClear >
-                    <Select.Option value={1}>普通供应商</Select.Option>
+                    <Select.Option value={1}>供应商</Select.Option>
                     <Select.Option value={2}>喜团小店</Select.Option>
                   </Select>
                 )
@@ -598,6 +598,7 @@ class Main extends React.Component<Props> {
               <FormItem name='subjectId' />
               <FormItem name='subjectName' />
               <FormItem name='auditStatus' />
+              <FormItem name='subjectType' />
               <FormItem name='inOrOutType' />
               <FormItem name='settlementStatus' />
               <FormItem name='time' />

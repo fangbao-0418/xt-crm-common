@@ -57,7 +57,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '供应商类型',
         options: [
-          { label: '喜团优选', value: 1 },
+          { label: '供应商', value: 1 },
           { label: '喜团小店', value: 2 }
         ],
         controlProps: {
