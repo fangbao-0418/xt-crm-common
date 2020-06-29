@@ -116,7 +116,7 @@ class BossDetail extends React.Component {
       value: item.imageUrl
     }))
     // 授权书
-    const authorizationListImgs = storeBrandList.reduce((pre, next) => ([
+    const authorizationListImgs = (storeBrandList || []).reduce((pre, next) => ([
       ...pre,
       ...(next.authorizationList.map(item => ({
         label: item.imageName || '授权书',
@@ -124,7 +124,7 @@ class BossDetail extends React.Component {
       })))
     ]), [])
     // 注册证明
-    const registrationListImgs = storeBrandList.reduce((pre, next) => ([
+    const registrationListImgs = (storeBrandList || []).reduce((pre, next) => ([
       ...pre,
       ...(next.registrationList.map(item => ({
         label: item.imageName || '注册证明',
@@ -154,7 +154,6 @@ class BossDetail extends React.Component {
   render () {
     const { detail, list, match: { params: { auditResult } } } = this.props
     const { carouselTitle, carouselVisible } = this.state
-
 
     if (!detail) {
       return (
@@ -258,42 +257,43 @@ class BossDetail extends React.Component {
         </Pannel>
         <Pannel title='品牌商标信息' style={{ marginTop: 16 }}>
           {
-            storeBrandList.map((item, i) => (
-              <Fragment key={i}>
-                <Descriptions column={2}>
-                  <Descriptions.Item label={`${i + 1} 品牌类型`}>
-                    {brandTypeListMap[item.brandType]}
-                  </Descriptions.Item>
-                  <Descriptions.Item label='品牌名称'>
-                    {item.brandName}
-                  </Descriptions.Item>
-                </Descriptions>
-                <Descriptions column={1}>
-                  <Descriptions.Item label='授权书'>
+            storeBrandList && storeBrandList[0]
+              ? storeBrandList.map((item, i) => (
+                <Fragment key={i}>
+                  <Descriptions column={2}>
+                    <Descriptions.Item label={`${i + 1} 品牌类型`}>
+                      {brandTypeListMap[item.brandType]}
+                    </Descriptions.Item>
+                    <Descriptions.Item label='品牌名称'>
+                      {item.brandName}
+                    </Descriptions.Item>
+                  </Descriptions>
+                  <Descriptions column={1}>
+                    <Descriptions.Item label='授权书'>
+                      {
+                        item.authorizationList.map((iItem, iI) => (
+                          <Image
+                            key={iI}
+                            style={{
+                              height: 100,
+                              width: 100,
+                              minWidth: 100,
+                              marginRight: 8
+                            }}
+                            src={replaceHttpUrl(iItem.imageUrl)}
+                            onClick={this.handlePreview.bind(this, iItem.imageUrl)}
+                            alt={iItem.imageName}
+                          />
+                        ))
+                      }
+                    </Descriptions.Item>
+                    <Descriptions.Item label='授权有效期'>
+                      {APP.fn.formatDate(item.authValidityTime)}
+                    </Descriptions.Item>
                     {
-                      item.authorizationList.map((iItem, iI) => (
-                        <Image
-                          key={iI}
-                          style={{
-                            height: 100,
-                            width: 100,
-                            minWidth: 100,
-                            marginRight: 8
-                          }}
-                          src={replaceHttpUrl(iItem.imageUrl)}
-                          onClick={this.handlePreview.bind(this, iItem.imageUrl)}
-                          alt={iItem.imageName}
-                        />
-                      ))
-                    }
-                  </Descriptions.Item>
-                  <Descriptions.Item label='授权有效期'>
-                    {APP.fn.formatDate(item.authValidityTime)}
-                  </Descriptions.Item>
-                  {
-                    Object.entries(groupBy(item.registrationList, 'imageName')).map((iItem, j) => {
-                      console.log(iItem, 123)
-                      return (
+                      Object.entries(groupBy(item.registrationList, 'imageName')).map((iItem, j) => {
+                        console.log(iItem, 123)
+                        return (
                         <>
                           <Descriptions.Item label={`${i + 1}.${j + 1} 商标注册号`}>
                             {iItem[0]}
@@ -315,12 +315,12 @@ class BossDetail extends React.Component {
                             ))}
                           </Descriptions.Item>
                         </>
-                      )
-                    })
-                  }
-                </Descriptions>
-              </Fragment>
-            ))
+                        )
+                      })
+                    }
+                  </Descriptions>
+                </Fragment>
+              )) : '暂无数据'
           }
         </Pannel>
         <Pannel title='店铺基本信息' style={{ marginTop: 16 }}>

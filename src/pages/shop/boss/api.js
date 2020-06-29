@@ -59,3 +59,8 @@ export function getShopTypes () {
     })
   })
 }
+
+// 导出在售商品id
+export function shopExportProduct (data) {
+  return exportFile('/shop/export/product', data, '在售商品')
+}

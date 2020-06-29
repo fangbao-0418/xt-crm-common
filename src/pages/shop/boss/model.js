@@ -1,4 +1,5 @@
 import * as api from './api'
+import { exportFile } from '@/util/fetch'
 import { message, Modal } from 'antd'
 export const namespace = 'shop.boss'
 
@@ -107,19 +108,26 @@ export default {
           pageSize: bossData.size
         })
       } catch (error) {
-        // if (error?.code === '100100') {
-        //   confirm({
-        //     title: '关闭店铺失败！',
-        //     content: '商家有商品正在参加平台活动，请处理完成后再关店。',
-        //     okText: '下载活动商品表',
-        //     onOk () {
-        //       console.log('OK')
-        //     },
-        //     onCancel () {
-        //       console.log('Cancel')
-        //     }
-        //   })
-        // }
+        if (error?.code === '100100') {
+          dispatch({
+            type: 'shop.boss/saveDefault',
+            payload: {
+              switchModal: {
+                visible: false
+              }
+            }
+          })
+          confirm({
+            title: '关闭店铺失败！',
+            content: '商家有商品正在参加平台活动，请处理完成后再关店。',
+            okText: '下载活动商品表',
+            onOk () {
+              api.shopExportProduct({
+                shopId: payload.shopId
+              })
+            }
+          })
+        }
       }
     },
 
