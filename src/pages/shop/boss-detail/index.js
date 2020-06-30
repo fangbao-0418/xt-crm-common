@@ -318,27 +318,33 @@ class BossDetail extends React.Component {
                     </Descriptions.Item>
                   </Descriptions>
                   <Descriptions column={1}>
-                    <Descriptions.Item label='授权书'>
-                      {
-                        item.authorizationList.map((iItem, iI) => (
-                          <Image
-                            key={iI}
-                            style={{
-                              height: 100,
-                              width: 100,
-                              minWidth: 100,
-                              marginRight: 8
-                            }}
-                            src={replaceHttpUrl(iItem.imageUrl)}
-                            onClick={this.handlePreview.bind(this, iItem.imageUrl)}
-                            alt={iItem.imageName}
-                          />
-                        ))
-                      }
-                    </Descriptions.Item>
-                    <Descriptions.Item label='授权有效期'>
-                      {APP.fn.formatDate(item.authValidityTime)}
-                    </Descriptions.Item>
+                    {
+                      item.brandType === 2 && (
+                        <Fragment>
+                          <Descriptions.Item label='授权书'>
+                            {
+                              item.authorizationList.map((iItem, iI) => (
+                                <Image
+                                  key={iI}
+                                  style={{
+                                    height: 100,
+                                    width: 100,
+                                    minWidth: 100,
+                                    marginRight: 8
+                                  }}
+                                  src={replaceHttpUrl(iItem.imageUrl)}
+                                  onClick={this.handlePreview.bind(this, iItem.imageUrl)}
+                                  alt={iItem.imageName}
+                                />
+                              ))
+                            }
+                          </Descriptions.Item>
+                          <Descriptions.Item label='授权有效期'>
+                            {APP.fn.formatDate(item.authValidityTime, 'YYYY-MM-DD')}
+                          </Descriptions.Item>
+                        </Fragment>
+                      )
+                    }
                     {
                       Object.entries(groupBy(item.registrationList, 'imageName')).map((iItem, j) => {
                         console.log(iItem, 123)
