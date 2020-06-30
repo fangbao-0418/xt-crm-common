@@ -270,10 +270,20 @@ class BossDetail extends React.Component {
           </Descriptions>
         </Pannel>
         <Pannel title='法人信息' style={{ marginTop: 16 }}>
-          <Descriptions column={2}>
+          <Descriptions>
             <Descriptions.Item label='法定代表人手机'>
               {enterpriseInfo.legalPersonPhone}
             </Descriptions.Item>
+          </Descriptions>
+          <Descriptions column={2}>
+            <Descriptions.Item label='姓名'>
+              {enterpriseInfo.legalPersonName}
+            </Descriptions.Item>
+            <Descriptions.Item label='身份证号'>
+              {enterpriseInfo.legalPersonIdentity}
+            </Descriptions.Item>
+          </Descriptions>
+          <Descriptions>
             <Descriptions.Item label='身份证照'>
               {
                 enterpriseInfo.legalPersonList.map((item, i) => (
