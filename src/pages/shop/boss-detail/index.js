@@ -4,10 +4,20 @@ import { connect } from '@/util/utils'
 import Pannel from './components/pannel'
 import PassModal from './components/passModal'
 import CarouselPreview from '@/components/carousel-preview'
+// import { If } from '@/packages/common/components'
 import Image from '@/components/Image'
 import { replaceHttpUrl } from '@/util/utils'
 import { brandTypeListMap } from './config'
 import { groupBy } from 'lodash'
+
+// const shopTypeMap = {
+//   1: '喜团自营',
+//   2: '直播小店',
+//   3: '品牌旗舰店',
+//   4: '品牌专营店',
+//   5: '喜团工厂店',
+//   6: '普通企业店'
+// }
 
 const { confirm } = Modal
 
@@ -95,6 +105,7 @@ class BossDetail extends React.Component {
     const { detail } = this.props
     const carouselImgs = this.getCarouselImgs(detail)
     const activeSlide = carouselImgs.findIndex(item => item.value === img)
+    console.log(carouselImgs, activeSlide)
     this.setState({
       activeSlide,
       carouselVisible: true
@@ -104,12 +115,17 @@ class BossDetail extends React.Component {
   }
 
   getCarouselImgs (detail) {
-    const { enterpriseInfo, merchantStoreInfo, storeBrandList } = detail
+    const { enterpriseInfo, merchantStoreInfo, storeBrandList, shopType } = detail
     // 营业执照
     const businessLicenseListImgs = enterpriseInfo.businessLicenseList.map(item => ({
       label: item.imageName || '营业执照',
       value: item.imageUrl
     }))
+    // 生产许可证
+    const productionLicenseListImgs = shopType === 5 ? enterpriseInfo.productionLicenseList.map(item => ({
+      label: item.imageName || '生产许可证',
+      value: item.imageUrl
+    })) : []
     // 身份证
     const legalPersonListImgs = enterpriseInfo.legalPersonList.map(item => ({
       label: item.imageName || '身份证',
@@ -133,7 +149,7 @@ class BossDetail extends React.Component {
     ]), [])
     // 管理员身份证
     const managerList = merchantStoreInfo.managerList.map(item => ({
-      label: item.imageName || '身份证',
+      label: item.imageName || '管理员身份证',
       value: item.imageUrl
     }))
     // 保证金信息
@@ -143,6 +159,7 @@ class BossDetail extends React.Component {
     }))
     return [
       ...businessLicenseListImgs,
+      ...productionLicenseListImgs,
       ...legalPersonListImgs,
       ...authorizationListImgs,
       ...registrationListImgs,
@@ -180,7 +197,7 @@ class BossDetail extends React.Component {
       )
     }
 
-    const { enterpriseInfo, merchantStoreInfo, storeBrandList } = detail
+    const { enterpriseInfo, merchantStoreInfo, storeBrandList, shopType } = detail
 
     const carouselImgs = this.getCarouselImgs(detail)
 
@@ -228,6 +245,28 @@ class BossDetail extends React.Component {
                 ))
               }
             </Descriptions.Item>
+            {
+              shopType === 5 && (
+                <Descriptions.Item label='生产许可证'>
+                  {
+                    enterpriseInfo.productionLicenseList.map((item, i) => (
+                      <Image
+                        key={i}
+                        style={{
+                          height: 100,
+                          width: 100,
+                          minWidth: 100,
+                          marginRight: 8
+                        }}
+                        src={replaceHttpUrl(item.imageUrl)}
+                        onClick={this.handlePreview.bind(this, item.imageUrl)}
+                        alt={item.imageName}
+                      />
+                    ))
+                  }
+                </Descriptions.Item>
+              )
+            }
           </Descriptions>
         </Pannel>
         <Pannel title='法人信息' style={{ marginTop: 16 }}>
@@ -330,6 +369,14 @@ class BossDetail extends React.Component {
             </Descriptions.Item>
             <Descriptions.Item label='主营类目'>
               {merchantStoreInfo.mainCategoryName}
+            </Descriptions.Item>
+          </Descriptions>
+          <Descriptions column={2}>
+            <Descriptions.Item label='管理人姓名'>
+              {merchantStoreInfo.managerName}
+            </Descriptions.Item>
+            <Descriptions.Item label='管理人身份证号'>
+              {merchantStoreInfo.managerIdentity}
             </Descriptions.Item>
           </Descriptions>
           <Descriptions column={1}>
