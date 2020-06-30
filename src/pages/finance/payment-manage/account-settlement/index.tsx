@@ -243,7 +243,6 @@ class Main extends React.Component<Props> {
               form = ref
               if (res) {
                 setTimeout(() => {
-                  console.log(res, 'record')
                   form.setValues(res)
                 }, 100)
               }
@@ -482,6 +481,10 @@ class Main extends React.Component<Props> {
                     name: item.name
                   }
                 })
+                if (!this.id||value.subjectName) {
+                  APP.error('账务对象名称不存在，请输入正确账务对象ID进行校验')
+                  return
+                }
                 value.id=this.id
                 api.add(value).then(() => {
                   hide()
