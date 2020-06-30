@@ -34,10 +34,10 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
           />
           {
             record.imageViolationReasons && (
-              <span style={{ color: 'red' }}>
+              <div style={{ color: 'red', textAlign: 'center' }}>
                 <Icon style={{ color: 'red' }} type='info-circle' />{' '}
                 {record.imageViolationReasons}
-              </span>
+              </div>
             )
           }
         </>
