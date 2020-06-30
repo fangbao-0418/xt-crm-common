@@ -296,7 +296,10 @@ class Main extends React.Component {
                   return form.getFieldDecorator('store')(
                     <SuppilerSelector
                       style={{ width: 172 }}
-                      category={6}
+                      processPayload={payload => ({
+                        ...payload,
+                        categorys: [6, 7]
+                      })}
                     />
                   )
                 }}
