@@ -10,6 +10,20 @@ import If from '@/packages/common/components/if'
 import { parseQuery } from '@/packages/common/utils'
 import { Decimal } from 'decimal.js'
 const FormItem = Form.Item
+// PRODUCTY(0, "普通商品"),
+
+// PROMOTION(100, "活动商品"),
+// ACTIVATION_CODE(101, "激活码商品"),
+// GROUP_PUSH(102, "地推商品"),
+
+// GENERAL_OVERSEAS(10, "一般海淘商品"),
+// BONDED_WAREHOUSE(20, "保税仓海淘商品"),
+// FRESH_PRODUCT(30, "喜团买菜商品"),
+// SHOP_PRODUCT(40,"直播小店商品"),
+// POP_PRODUCT(41,"POP店铺商品"),
+// VIRTUAL_HFCZ(50,"虚拟商品_话费充值"),
+// VIRTUAL_LLCZ(51,"虚拟商品_流量充值"),
+
 console.log('Image=>', Image)
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
@@ -371,6 +385,12 @@ class ActivityDetail extends React.Component {
                             msg: `规格名称: ${record.property} 活动价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                           })
                         } else if (value <= record.headPrice) {
+                          console.log(detailData, 123)
+                          // 小店商品和POP商品不需要校验团长价
+                          if ([40, 41].includes(detailData.type)) {
+                            cb()
+                            return
+                          }
                           cb({
                             message: `应高于团长价(${record.headPrice}元)`,
                             pass: true,
