@@ -37,10 +37,10 @@ class Main extends React.Component {
       value: currentGoods.coverUrl
     }]
 
-    let productImage = [], skuImages = []
+    let listImage = [], skuImages = []
 
-    if (currentGoods.productImage) {
-      productImage = currentGoods.productImage.split(',').map(item => ({
+    if (currentGoods.listImage) {
+      listImage = currentGoods.listImage.split(',').map(item => ({
         label: '详情图',
         value: item
       }))
@@ -55,7 +55,7 @@ class Main extends React.Component {
 
     const carouselsInfos = [
       ...coverUrl,
-      ...productImage,
+      ...listImage,
       ...skuImages
     ]
 

@@ -147,7 +147,9 @@ export const getCheckColums = ({ onDetail, onUserClick, onPass, onNoPass }) => {
       render: (val, record) => {
         return (
           <div>
-            <span onClick={onDetail.bind(null, record)} className='href mr8'>查看资质</span>
+            <If condition={record.shopType !== 2}>
+              <span onClick={onDetail.bind(null, record)} className='href mr8'>查看资质</span>
+            </If>
             <span onClick={onPass.bind(null, record)} className='href mr8'>通过</span>
             <span onClick={onNoPass.bind(null, record)} className='href'>不通过</span>
           </div >
@@ -211,7 +213,12 @@ export const getNoPassColums = ({ onDetail, onUserClick }) => {
       render: (val, record) => {
         return (
           <div>
-            <span onClick={onDetail.bind(null, record)} className='href mr8'>查看资质</span>
+            <If condition={record.shopType !== 2}>
+              <span onClick={onDetail.bind(null, record)} className='href mr8'>查看资质</span>
+            </If>
+            <If condition={record.shopType === 2}>
+              <span>暂无操作</span>
+            </If>
           </div >
         )
       }
