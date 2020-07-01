@@ -86,25 +86,27 @@ class Main extends React.Component<Props> {
     title: '结算时间',
     width: 200,
     render: (text: any) => <>{APP.fn.formatDate(text)}</>
-  },
-  {
-    title: '操作',
-    width: 100,
-    fixed: 'right',
-    align: 'center',
-    render: (text: any, record: any) => {
-      return (
-        <If condition={record.settlementStatus===0}>
-          <Popconfirm
-            title='确定终止结算吗'
-            onConfirm={this.terminated.bind(this, record)}
-          >
-            <span className='href'>终止结算</span>
-          </Popconfirm>
-        </If>
-      )
-    }
   }]
+  // ,
+  // {
+  //   title: '操作',
+  //   width: 100,
+  //   fixed: 'right',
+  //   align: 'center',
+  //   render: (text: any, record: any) => {
+  //     return (
+  //       <If condition={record.settlementStatus===0}>
+  //         <Popconfirm
+  //           title='确定终止结算吗'
+  //           onConfirm={this.terminated.bind(this, record)}
+  //         >
+  //           <span className='href'>终止结算</span>
+  //         </Popconfirm>
+  //       </If>
+  //     )
+  //   }
+  // }
+
   public refresh () {
     this.listpage.form.setValues({
       startTime: moment().subtract(30, 'days').startOf('d'),
@@ -176,7 +178,7 @@ class Main extends React.Component<Props> {
             })
             this.refresh()
           }}
-          rowSelection={rowSelection}
+          // rowSelection={rowSelection}
           rangeMap={{
             time: {
               fields: ['startTime', 'endTime']
@@ -191,7 +193,7 @@ class Main extends React.Component<Props> {
               >
                 批量导出
               </Button>
-              <Popconfirm
+              {/* <Popconfirm
                 title='确定终止结算吗'
                 className='ml8'
                 onConfirm={this.batchTerminated.bind(this)}
@@ -203,7 +205,7 @@ class Main extends React.Component<Props> {
                 >
                 终止结算
                 </Button>
-              </Popconfirm>
+              </Popconfirm> */}
             </div>
           )}
           mounted={() => {
@@ -235,6 +237,10 @@ class Main extends React.Component<Props> {
                             onChange={(value: any)=>{
                               this.setState({
                                 type: value
+                              }, ()=>{
+                                this.listpage.form.setValues({
+                                  storeId: undefined
+                                })
                               })
                             }}
                           >
