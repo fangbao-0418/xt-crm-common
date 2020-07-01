@@ -3,6 +3,7 @@ import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
+import { getUniqueId } from '@/packages/common/utils/index'
 import { Button, Radio } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig } from './config'
@@ -12,15 +13,43 @@ import 'braft-editor/dist/index.css'
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
-class Main extends React.Component<Props> {
+
+interface Data {
+  announcement: string
+  applicationQuestion: any[]
+  originalQuestion: any[]
+}
+interface State {
+  /** 原始数据 */
+  data: Data
+  /** 要展示的数据 */
+  showDataSource: any[]
+}
+
+class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
+  public data: Data = {
+    announcement: '',
+    applicationQuestion: [],
+    originalQuestion: []
+  }
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
     title: '问题标题',
-    dataIndex: 'nickName'
+    dataIndex: 'title',
+    width: 300
   }, {
     title: '问题内容',
-    dataIndex: 'fansTotal',
-    align: 'center'
+    dataIndex: 'content',
+    render: (text) => {
+      return (
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `<pre>${text}</pre>`
+          }}
+        >
+        </div>
+      )
+    }
   },
   {
     title: '操作',
@@ -38,20 +67,21 @@ class Main extends React.Component<Props> {
       )
     }
   }]
+  public state: State = {
+    data: {
+      announcement: '',
+      applicationQuestion: [],
+      originalQuestion: []
+    },
+    showDataSource: []
+  }
   public componentDidMount () {
     api.fetchQuestion().then(res => {
-      console.log(res, 'res======')
-    })
-    const obj = {
-      a: 2,
-      c: 4,
-      s: 2,
-      content: 'sdfsdfdsfds'
-    }
-    const text = JSON.stringify(obj)
-    const file = new File([text], 'abc')
-    ossUpload(file, 'question', 'cos', '/question.json').then((res: any) => {
-      console.log(res, 'res')
+      this.data = res
+      this.setState({
+        data: res,
+        showDataSource: res.originalQuestion
+      })
     })
   }
 
@@ -68,27 +98,42 @@ class Main extends React.Component<Props> {
           <Form
             getInstance={(ref) => {
               form = ref
+              ref.setValues({
+                content: BraftEditor.createEditorState(null)
+              })
             }}
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 14 }}
+            config={getFieldsConfig()}
+            mounted={() => {
+              if (detail) {
+                form.setValues({
+                  ...detail,
+                  multiText: BraftEditor.createEditorState(detail.content)
+                })
+              }
+            }}
           >
             <FormItem
               label='问题标题'
               verifiable
               required
-              name='operateRemark1'
+              name='title'
             />
             <FormItem
               label='标题字色'
               verifiable
               required
-              name='operateRemark2'
+              name='fontSize'
             />
             <FormItem
               label='问题内容'
               inner={(form) => {
-                return form.getFieldDecorator('operateRemark3')(
-                  <BraftEditor style={{ height: 250, overflow: 'auto', border: '1px solid #d9d9d9', borderRadius: 4 }} controls={['text-color', 'bold', 'italic', 'underline']} />
+                return form.getFieldDecorator('multiText')(
+                  <BraftEditor
+                    style={{ height: 250, overflow: 'auto', border: '1px solid #d9d9d9', borderRadius: 4 }}
+                    controls={['text-color', 'bold', 'italic', 'underline']}
+                  />
                 )
               }}
             />
@@ -100,19 +145,126 @@ class Main extends React.Component<Props> {
               if (err) {
                 return
               }
-              const operateRemark = values.operateRemark
-              // api.addAnchor({
-              // }).then(() => {
-              //   hide()
-              //   this.listpage.refresh()
-              // })
+              const { title, fontSize, multiText } = values
+              const saveContent = multiText.toHTML()
+              const { originalQuestion } = this.state.data
+              if (detail) {
+                originalQuestion.forEach((item, index) => {
+                  if (item.id === detail.id) {
+                    item = Object.assign(item, {
+                      title,
+                      fontSize,
+                      content: saveContent
+                    })
+                  }
+                })
+              } else {
+                originalQuestion.unshift({
+                  id: getUniqueId(),
+                  title,
+                  fontSize,
+                  content: saveContent
+                })
+              }
+              this.setState({
+                data: { ...this.state.data, originalQuestion },
+                showDataSource: originalQuestion
+              }, () => {
+                this.save()
+              })
+              hide()
             })
           }
+        },
+        onCancel: () => {
+          hide()
         }
       })
     }
   }
+  /**
+   * 保存数据
+   */
+  save = () => {
+    const obj = {
+      announcement: '喜团不会以任何理由要求您转账汇款、扫描二维码或点击退款/补款链接，请提高警惕，谨防上当受骗。',
+      applicationQuestion: [
+        {
+          name: '售后问题',
+          icon: 'https://assets.hzxituan.com/upload/2020-06-02/76b5d1c0-13b0-4e29-994a-bff3e29247b6-kaxe7z26.png',
+          problemSort: 1,
+          question: [
+            {
+              mainProblemId: '001',
+              mainProblemSort: 1,
+              minorProblems: [
+                {
+                  minorProblemId: '001',
+                  minorProblemSort: 1
+                }
+              ]
+            },
+            {
+              mainProblemId: '001',
+              mainProblemSort: 1,
+              minorProblems: [
+                {
+                  minorProblemId: '001',
+                  minorProblemSort: 1
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      originalQuestion: []
+    }
+    const { data } = this.state
+    const saveData = JSON.stringify(data)
+    const file = new File([saveData], 'abc')
+    ossUpload(file, 'question', 'cos', '/question.json').then((res: any) => {
+      if (res) {
+        APP.success('保存成功')
+      }
+    })
+  }
+
+  /**
+   * 搜索
+   *
+   * @memberof Main
+   */
+  searchSubmit = (values: any) => {
+    const { title } = values
+    const originalQuestion = this.data.originalQuestion
+    if (!title) {
+      // return this.searchReset()
+      this.setState({
+        showDataSource: originalQuestion
+      })
+      return
+    }
+    const filterRes = originalQuestion.filter(item => item.title === title)
+    this.setState({
+      showDataSource: filterRes
+    })
+  }
+
+  /**
+   * 重置搜索
+   *
+   * @memberof Main
+   */
+  searchReset = () => {
+    const { originalQuestion } = this.state.data
+    this.setState({
+      showDataSource: originalQuestion
+    })
+    this.listpage.form.reset()
+  }
+
   public render () {
+    const { showDataSource } = this.state
     return (
       <div
         style={{
@@ -123,8 +275,11 @@ class Main extends React.Component<Props> {
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
-            rowKey: 'anchorId'
+            rowKey: 'id',
+            dataSource: showDataSource
           }}
+          onSubmit={this.searchSubmit}
+          onReset={this.searchReset}
           addonAfterSearch={(
             <div>
               <Button
@@ -138,11 +293,9 @@ class Main extends React.Component<Props> {
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='operateRemark1' />
-              <FormItem name='status2' />
+              <FormItem name='title' />
             </>
           )}
-          api={api.fetchQuestion}
         />
       </div>
     )

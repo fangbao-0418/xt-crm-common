@@ -6,7 +6,7 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      operateRemark1: {
+      title: {
         type: 'input',
         label: '问题标题',
         controlProps: {
@@ -19,7 +19,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      operateRemark2: {
+      fontSize: {
         type: 'input',
         label: '标题字号',
         controlProps: {
@@ -29,13 +29,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           rules: [
             { required: true, message: '标题字号不能为空' }
           ]
-        }
-      },
-      status2: {
-        label: '创建时间',
-        type: 'rangepicker',
-        controlProps: {
-          showTime: true
         }
       }
     }

@@ -6,7 +6,7 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      operateRemark1: {
+      mainProblemName: {
         type: 'input',
         label: '配置标题',
         controlProps: {
@@ -19,7 +19,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      operateRemark2: {
+      mainProblemSort: {
         type: 'number',
         label: '排序号',
         controlProps: {

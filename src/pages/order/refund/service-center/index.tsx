@@ -1,39 +1,99 @@
 import React from 'react'
 import Image from '@/components/Image'
-import classNames from 'classnames'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
-import { ListPage, Alert } from '@/packages/common/components'
+import { ListPage, Alert, If } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Row, Col, Button } from 'antd'
+import { ossUpload } from '@/components/upload'
+import { Button } from 'antd'
 import { gotoPage } from '@/util/utils'
 import { ColumnProps } from 'antd/lib/table'
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
-class Main extends React.Component<Props> {
+interface Data {
+  announcement: string
+  applicationQuestion: any[]
+  originalQuestion: any[]
+}
+
+interface State {
+  /** 原始数据 */
+  data: Data
+  /** 要展示的数据 */
+  showDataSource: any[]
+  isLoading: Boolean
+}
+class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
+  public form: FormInstance
+  public data: Data = {
+    announcement: '',
+    applicationQuestion: [],
+    originalQuestion: []
+  }
+  public state: State = {
+    data: {
+      announcement: '',
+      applicationQuestion: [],
+      originalQuestion: []
+    },
+    showDataSource: [],
+    isLoading: true
+  }
+
+  public componentDidMount () {
+    api.fetchQuestion().then(res => {
+      this.data = res
+      this.setState({
+        data: res,
+        showDataSource: res.originalQuestion,
+        isLoading: false
+      })
+    })
+  }
   public columns: ColumnProps<any>[] = [{
     title: '配置标题',
-    dataIndex: 'nickName',
+    dataIndex: 'mainProblemName',
     width: 300
   }, {
     title: '配置图标',
-    dataIndex: 'fansTotal',
+    dataIndex: 'mainProblemIcon',
     width: 200,
-    align: 'center'
+    align: 'center',
+    render: (text) => {
+      return (
+        <div>
+          <Image
+            style={{
+              height: 50,
+              width: 50,
+              minWidth: 50
+            }}
+            src={text}
+            alt='图标'
+          />
+        </div>
+      )
+    }
   }, {
     dataIndex: 'anchorIdentityType',
     title: '展示问题数目',
     width: 150
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'status',
     title: '启用状态',
     width: 120,
-    align: 'center'
+    align: 'center',
+    render: (text) => {
+      return (
+        <div>
+          {text=== 1 ? '启用' : '禁用' }
+        </div>
+      )
+    }
   }, {
-
-    dataIndex: 'anchorLevel',
+    dataIndex: 'mainProblemSort',
     title: '排序号',
     width: 100
   },
@@ -46,7 +106,7 @@ class Main extends React.Component<Props> {
           <span
             className='href'
             onClick={()=>{
-              gotoPage(`/order/servicecenter/${record.id}`)
+              gotoPage(`/order/servicecenter/${record.mainProblemId}`)
             }}
           >
             修改
@@ -70,11 +130,18 @@ class Main extends React.Component<Props> {
       title: '提示',
       width: 400,
       onOk: (hide) => {
-        api.addAnchor({
-        }).then(() => {
-          hide()
-          this.refresh()
+        const { mainProblemId } = record
+        this.data.applicationQuestion
+        const saveApplicationQuestion = this.data.applicationQuestion.concat([])
+        saveApplicationQuestion.forEach(item => {
+          if (item.mainProblemId === mainProblemId) {
+            item.status = record.status === 1 ? 0 : 1
+          }
         })
+        this.setState({
+          data: { ...this.state.data, applicationQuestion: saveApplicationQuestion }
+        }, () => this.save())
+        hide()
       },
       content: (
         <div>
@@ -87,12 +154,60 @@ class Main extends React.Component<Props> {
     this.listpage.refresh()
   }
   public deleteAnchor (record: Anchor.ItemProps) {
-    api.deleteAnchor(record.anchorId).then(() => {
-      this.listpage.refresh()
+    // api.deleteAnchor(record.anchorId).then(() => {
+    //   this.listpage.refresh()
+    // })
+  }
+  /**
+   * 保存数据
+   */
+  public save = () => {
+    const obj = {
+      announcement: '喜团不会以任何理由要求您转账汇款、扫描二维码或点击退款/补款链接，请提高警惕，谨防上当受骗。',
+      applicationQuestion: [
+        {
+          name: '售后问题',
+          icon: 'https://assets.hzxituan.com/upload/2020-06-02/76b5d1c0-13b0-4e29-994a-bff3e29247b6-kaxe7z26.png',
+          problemSort: 1,
+          question: [
+            {
+              mainProblemId: '001',
+              mainProblemSort: 1,
+              minorProblems: [
+                {
+                  minorProblemId: '001',
+                  minorProblemSort: 1
+                }
+              ]
+            },
+            {
+              mainProblemId: '001',
+              mainProblemSort: 1,
+              minorProblems: [
+                {
+                  minorProblemId: '001',
+                  minorProblemSort: 1
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      originalQuestion: []
+    }
+    const { data } = this.state
+    const saveData = JSON.stringify(data)
+    const file = new File([saveData], 'abc')
+    ossUpload(file, 'question', 'cos', '/question.json').then((res: any) => {
+      if (res) {
+        APP.success('保存成功')
+      }
     })
   }
+
   public render () {
-    let form: FormInstance
+    const { isLoading, data } = this.state
+    const { announcement, applicationQuestion } = data
     return (
       <div
         style={{
@@ -100,42 +215,63 @@ class Main extends React.Component<Props> {
           paddingTop: 20
         }}
       >
-        <div style={{ paddingLeft: 20 }}>
-          <div style={{ marginBottom: 20 }}>公告设置</div>
-          <Form
-            getInstance={(ref) => {
-              form = ref
-            }}
-            labelCol={{ span: 0 }}
-            wrapperCol={{ span: 5 }}
-          >
-            <FormItem
-              label=''
-              type='textarea'
-              name='operateRemark3'
-              placeholder='最多输入50字，为空时不显示公告'
-              fieldDecoratorOptions={{
-                rules: [
-                  { required: true, message: '问题内容必填' },
-                  { max: 50, message: '问题内容最长50个字符' }
-                ]
+        <If condition={!isLoading}>
+          <div style={{ paddingLeft: 20 }}>
+            <div style={{ marginBottom: 20 }}>公告设置</div>
+            <Form
+              getInstance={(ref) => {
+                this.form = ref
               }}
-            />
-          </Form>
-          <Button
-            type='primary'
-            onClick={() => {
-            }}
-          >
-          保存
-          </Button>
-          <div style={{ marginTop: 20 }}>猜你想问配置</div>
-        </div>
+              labelCol={{ span: 0 }}
+              wrapperCol={{ span: 5 }}
+              mounted={() => {
+                this.form.setValues({
+                  fromAnnouncement: announcement
+                })
+              }}
+            >
+              <FormItem
+                label=''
+                type='textarea'
+                name='fromAnnouncement'
+                placeholder='最多输入50字，为空时不显示公告'
+                controlProps={{
+                  style: { height: '120px' }
+                }}
+                fieldDecoratorOptions={{
+                  rules: [
+                    { required: true, message: '问题内容必填' },
+                    { max: 50, message: '问题内容最长50个字符' }
+                  ]
+                }}
+              />
+            </Form>
+            <Button
+              type='primary'
+              onClick={() => {
+                this.form.props.form.validateFields((err, values) => {
+                  if (err) {
+                    return
+                  }
+                  const fromAnnouncement: string = values.fromAnnouncement
+                  this.setState({
+                    data: { ...data, announcement: fromAnnouncement }
+                  }, () => this.save())
+                })
+              }}
+            >
+              保存
+            </Button>
+            <div style={{ marginTop: 20 }}>猜你想问配置</div>
+          </div>
+        </If>
+
         <ListPage
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
-            rowKey: 'anchorId'
+            rowKey: 'anchorId',
+            dataSource: applicationQuestion
           }}
           addonAfterSearch={(
             <div>
@@ -149,8 +285,10 @@ class Main extends React.Component<Props> {
               </Button>
             </div>
           )}
+          processPayload={(payload) => {
+            console.log(payload, 'payload====')
+          }}
           formConfig={false}
-          api={api.getAnchorList}
         />
       </div>
     )
