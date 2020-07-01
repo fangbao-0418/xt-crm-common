@@ -7,5 +7,6 @@
 import Enum from '@/enum/enum'
 
 export default new Enum([
-  { key: 50, val: '限时秒杀' }
+  { key: 50, val: '限时秒杀' },
+  { key: 51, val: '场景活动' }
 ])
