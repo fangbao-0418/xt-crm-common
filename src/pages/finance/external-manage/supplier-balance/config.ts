@@ -12,6 +12,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         controlProps: {
           placeholder: '请输入商家ID'
         }
+      },
+      supplierName: {
+        label: '商家名称',
+        type: 'input',
+        controlProps: {
+          placeholder: '请输入商家名称'
+        }
       }
     }
   }
