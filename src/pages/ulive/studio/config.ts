@@ -7,7 +7,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       liveTitle: {
-        type: 'input', label: '直播标题',
+        type: 'input',
+        label: '直播标题',
         fieldDecoratorOptions: {
           rules: [
             {
@@ -24,7 +25,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input', label: '手机号码'
       },
       planId: {
-        type: 'number', label: '房间ID',
+        type: 'number',
+        label: '房间ID',
         controlProps: {
           style: {
             width: 150
@@ -41,7 +43,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       anchorId: {
-        type: 'number', label: '主播ID',
+        type: 'number',
+        label: '主播ID',
         controlProps: {
           style: {
             width: 150
@@ -50,51 +53,57 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         }
       },
       anchorNickName: {
-        type: 'input', label: '主播昵称',
+        type: 'input',
+        label: '主播昵称',
         controlProps: {
           placeholder: '主播昵称'
         }
       },
       liveTop: {
-        type: 'select', label: '是否置顶',
+        type: 'select',
+        label: '是否置顶',
         options: [
           // {label: '官方置顶', value: 2},
-          {label: '置顶', value: 1},
-          {label: '未置顶', value: 0}
+          { label: '置顶', value: 1 },
+          { label: '未置顶', value: 0 }
         ]
       },
       liveStatus: {
-        type: 'select', label: '直播状态',
+        type: 'select',
+        label: '直播状态',
         options: [
-          {label: '直播中', value: 90},
-          {label: '即将开始', value: 80},
-          {label: '待审核', value: 10},
-          {label: '已结束', value: 60},
-          {label: '待开播', value: 70},
-          {label: '已过期', value: 30},
-          {label: '预告禁播', value: 40},
-          {label: '运营停播', value: 50},
-          {label: '未过审', value: 20}
+          { label: '直播中', value: 90 },
+          { label: '即将开始', value: 80 },
+          { label: '待审核', value: 10 },
+          { label: '已结束', value: 60 },
+          { label: '待开播', value: 70 },
+          { label: '已过期', value: 30 },
+          { label: '预告禁播', value: 40 },
+          { label: '运营停播', value: 50 },
+          { label: '未过审', value: 20 }
         ]
       },
       liveTime: {
-        type: 'rangepicker', label: '开播时间',
+        type: 'rangepicker',
+        label: '开播时间',
         controlProps: {
           showTime: true
         }
       },
       type: {
-        type: 'select', label: '直播类型',
+        type: 'select',
+        label: '直播类型',
         options: [
-          {label: '公开直播', value: 0},
-          {label: '私密直播', value: 10}
+          { label: '公开直播', value: 0 },
+          { label: '私密直播', value: 10 }
         ]
       },
       anchorLevel: {
-        type: 'select', label: '主播等级',
+        type: 'select',
+        label: '主播等级',
         options: [
-          {label: '星级主播', value: 10},
-          {label: '普通主播', value: 0}
+          { label: '星级主播', value: 10 },
+          { label: '普通主播', value: 0 }
         ],
         fieldDecoratorOptions: {
           rules: [
@@ -135,6 +144,7 @@ export enum LevelEnum {
   普通主播 = 0,
   星级主播 = 10
 }
+
 /** 举报类型 */
 export enum ComplainTypeEnum {
   讨论政治内容 = 0,
@@ -144,4 +154,11 @@ export enum ComplainTypeEnum {
   长时间无人直播 = 40,
   '头像,封面内容侵权' = 50,
   其他违规 = 60
+}
+
+/** 优惠券状态 */
+export enum CouponStatsEnum {
+  未开始 = 0,
+  进行中 = 1,
+  已结束 = 2
 }
