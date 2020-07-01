@@ -281,6 +281,9 @@ class SupplierModal extends Component {
                     <Select.Option value={1000}>1000元</Select.Option>
                     <Select.Option value={2000}>2000元</Select.Option>
                     <Select.Option value={3000}>3000元</Select.Option>
+                    <Select.Option value={5000}>5000元</Select.Option>
+                    <Select.Option value={8000}>8000元</Select.Option>
+                    <Select.Option value={10000}>10000元</Select.Option>
                   </Select>
                 )}
               </FormItem>
