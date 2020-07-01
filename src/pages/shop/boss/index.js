@@ -187,6 +187,7 @@ class Main extends React.Component {
     const {
       form: { getFieldDecorator }
     } = this.props
+    const { tabKey } = this.state
     const localPayload = APP.fn.getPayload(namespace) || {}
 
     return (
@@ -201,21 +202,23 @@ class Main extends React.Component {
             initialValue: localPayload.memberPhone
           })(<Input placeholder='请输入手机号' />)}
         </FormItem>
-        <FormItem label='权限状态'>
-          {getFieldDecorator('shopStatus', {
-            initialValue: localPayload.shopStatus
-          })(
-            <Select
-              placeholder='请选择'
-              style={{ width: '100%' }}>
-              {
-                queryConfig.statusOptions.map((item) => (
-                  <Option key={item.value} value={item.value}>{item.label}</Option>
-                ))
-              }
-            </Select>
-          )}
-        </FormItem>
+        <If condition={tabKey === '2'}>
+          <FormItem label='权限状态'>
+            {getFieldDecorator('shopStatus', {
+              initialValue: localPayload.shopStatus
+            })(
+              <Select
+                placeholder='请选择'
+                style={{ width: '100%' }}>
+                {
+                  queryConfig.statusOptions.map((item) => (
+                    <Option key={item.value} value={item.value}>{item.label}</Option>
+                  ))
+                }
+              </Select>
+            )}
+          </FormItem>
+        </If>
         <FormItem label='店铺类型'>
           {getFieldDecorator('shopTypes', {
             initialValue: localPayload.shopTypes
