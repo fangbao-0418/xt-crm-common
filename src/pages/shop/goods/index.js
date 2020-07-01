@@ -189,8 +189,8 @@ class Main extends React.Component {
           afterAddon={
             imageViolationReasons ? (
               <p style={{ textAlign: 'center', color: 'red' }}>
-                <Icon style={{ color: 'red' }} type='info-circle' />
-                {imageViolationReasons}
+                <Icon style={{ color: 'red' }} type='info-circle' />{' '}
+                商品图片中有部分图片涉嫌违规，请谨慎复核
               </p>
             ) : null
           }
