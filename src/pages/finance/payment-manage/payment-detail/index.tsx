@@ -69,7 +69,10 @@ class Main extends React.Component<Props> {
     dataIndex: 'amount',
     title: '本次结算金额',
     width: 150,
-    render: (text: any) => <>{text/100}</>
+    render: (text: any) => {
+      text=text/100
+      return <div style={{ color: text<0?'red':'green' }}>{text>0?'+'+text:text}</div>
+    }
   }, {
     dataIndex: 'profitRatio',
     title: '结算比例',

@@ -36,7 +36,8 @@ class Main extends React.Component<Props> {
   public columns: any = [{
     title: '账务结算ID',
     dataIndex: 'id',
-    width: 150
+    width: 150,
+    fixed: 'left'
   }, {
     title: '收支类型',
     dataIndex: 'inOrOutTypeDesc',
@@ -66,7 +67,7 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'applicationRemark',
     title: '原因',
-    width: 150,
+    width: 200,
     render: (v:any) => {
       if (v && v !== '0') {
         if (v.length > 10) {
