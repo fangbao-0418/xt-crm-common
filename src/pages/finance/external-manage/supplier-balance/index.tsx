@@ -16,12 +16,11 @@ class Main extends React.Component<Props> {
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
     title: '商家ID',
     dataIndex: 'supplierId',
-    width: 100
+    width: 80
   }, {
     title: '商家名称',
     dataIndex: 'supplierName',
-    width: 100,
-    align: 'center'
+    width: 150
   }, {
     dataIndex: 'supplierType',
     title: '商家类型',
@@ -30,26 +29,27 @@ class Main extends React.Component<Props> {
     dataIndex: 'merchantAcctAvailBal',
     title: '商家账户余额（元）',
     width: 150,
-    render: (text: any, record: any) => <>{record?.merchantsSubAccount?.acctAvailBal}</>
+    render: (text: any, record: any) => <>{record?.merchantsSubAccount?.acctAvailBal/100}</>
   }, {
     dataIndex: 'plainAcctAvailBal',
     title: '普通账户余额（元）',
     width: 150,
-    render: (text: any, record: any) => <>{record?.plainSubAccount?.acctAvailBal}</>
+    render: (text: any, record: any) => <>{record?.plainSubAccount?.acctAvailBal/100}</>
   }, {
     dataIndex: 'merchantCashAmt',
     title: '商家账户可提现余额（元）',
-    width: 180,
-    render: (text: any, record: any) => <>{record?.merchantsSubAccount?.cashAmt}</>
+    width: 190,
+    render: (text: any, record: any) => <>{record?.merchantsSubAccount?.cashAmt/100}</>
   }, {
     dataIndex: 'plainCashAmt',
     title: '普通账户可提现余额（元）',
-    width: 180,
-    render: (text: any, record: any) => <>{record?.plainSubAccount?.cashAmt}</>
+    width: 190,
+    render: (text: any, record: any) => <>{record?.plainSubAccount?.cashAmt/100}</>
   }, {
     dataIndex: 'queryBalanceQueryTime',
     title: '更新日期',
-    width: 100
+    width: 200,
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
   }]
   public refresh () {
     this.listpage.refresh()
@@ -81,7 +81,7 @@ class Main extends React.Component<Props> {
           onSubmit={()=>{
             const values=this.listpage.form.getValues()
             if (!values.supperId&&!values.supplierName) {
-              APP.error('ID和名字至少有一项不能为空')
+              APP.error('供应商ID和名称至少有一项不能为空')
               return
             }
             this.listpage.refresh()

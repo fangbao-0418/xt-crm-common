@@ -41,12 +41,15 @@ class Main extends React.Component<Props> {
     title: '收支类型',
     dataIndex: 'inOrOutTypeDesc',
     width: 150,
-    align: 'center'
+    render: (text: any) => <>{text}</>
   }, {
     dataIndex: 'amount',
     title: '账务金额',
     width: 100,
-    render: (text: any) => <>{text/100}</>
+    render: (text: any, record: any) => {
+      text=text/100
+      return <div style={{ color: record.inOrOutTypeDesc==='支出'?'red':'green' }}>{text>0?'+'+text:text}</div>
+    }
   }, {
     dataIndex: 'subjectTypeDesc',
     title: '账务对象类型',
