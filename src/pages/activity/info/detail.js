@@ -10,6 +10,7 @@ import If from '@/packages/common/components/if'
 import { parseQuery } from '@/packages/common/utils'
 import { Decimal } from 'decimal.js'
 const FormItem = Form.Item
+// productType map
 // PRODUCTY(0, "普通商品"),
 
 // PROMOTION(100, "活动商品"),
@@ -142,7 +143,6 @@ class ActivityDetail extends React.Component {
       const record = Object.assign({}, (res.records || [])[0])
       record.promotionSkuList = record.promotionSkuList || []
       record.type = record.type !== undefined ? record.type : Number(type)
-      console.log(type, 'type')
       this.handleData(record)
     })
   }
@@ -351,7 +351,6 @@ class ActivityDetail extends React.Component {
   ]
   getColumns = (detailData) => {
     const { getFieldDecorator, validateFields } = this.props.form
-    console.log(detailData, 'detailData')
     return [
       {
         title: '规格名称',
@@ -385,9 +384,8 @@ class ActivityDetail extends React.Component {
                             msg: `规格名称: ${record.property} 活动价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                           })
                         } else if (value <= record.headPrice) {
-                          console.log(detailData, 123)
                           // 小店商品和POP商品不需要校验团长价
-                          if ([40, 41].includes(detailData.type)) {
+                          if ([40, 41].includes(detailData.productType)) {
                             cb()
                             return
                           }
