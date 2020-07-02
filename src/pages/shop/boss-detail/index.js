@@ -101,10 +101,12 @@ class BossDetail extends React.Component {
     })
   }
 
-  handlePreview (img) {
+  handlePreview (img, type) {
     const { detail } = this.props
     const carouselImgs = this.getCarouselImgs(detail)
-    const activeSlide = carouselImgs.findIndex(item => item.value === img)
+    const activeSlide = carouselImgs.findIndex(item => {
+      return item.value === img && type === item.type
+    })
     console.log(carouselImgs, activeSlide)
     this.setState({
       activeSlide,
@@ -119,50 +121,81 @@ class BossDetail extends React.Component {
     // 营业执照
     const businessLicenseListImgs = enterpriseInfo.businessLicenseList.map(item => ({
       label: item.imageName || '营业执照',
-      value: item.imageUrl
+      value: item.imageUrl,
+      type: 1
     }))
     // 生产许可证
     const productionLicenseListImgs = shopType === 5 ? enterpriseInfo.productionLicenseList.map(item => ({
       label: item.imageName || '生产许可证',
-      value: item.imageUrl
+      value: item.imageUrl,
+      type: 2
     })) : []
     // 身份证
     const legalPersonListImgs = enterpriseInfo.legalPersonList.map(item => ({
-      label: item.imageName || '身份证',
-      value: item.imageUrl
+      label: item.imageName || '身份证照',
+      value: item.imageUrl,
+      type: 3
     }))
-    // 授权书
-    const authorizationListImgs = (storeBrandList || []).reduce((pre, next) => ([
-      ...pre,
-      ...(next.authorizationList.map(item => ({
-        label: item.imageName || '授权书',
-        value: item.imageUrl
-      })))
-    ]), [])
-    // 注册证明
-    const registrationListImgs = (storeBrandList || []).reduce((pre, next) => ([
-      ...pre,
-      ...(next.registrationList.map(item => ({
-        label: item.imageName || '注册证明',
-        value: item.imageUrl
-      })))
-    ]), [])
+    const storeBrandListImgs = storeBrandList.reduce((pre, next) => {
+      return [
+        ...pre,
+        ...((next.authorizationList || []).map(item => ({
+          label: item.imageName || '授权书',
+          value: item.imageUrl,
+          type: 4
+        }))),
+        ...(
+          Object.entries(groupBy((next.registrationList || []), 'imageName')).reduce((pre, next) => ([
+            ...pre,
+            ...(next[1]?.map(item => ({
+              label: item.imageName || '注册证明',
+              value: item.imageUrl,
+              type: 5
+            })) || [])
+          ]), [])
+        )
+        // ...(next.registrationList.map(item => ({
+        //   label: item.imageName || '注册证明',
+        //   value: item.imageUrl,
+        //   type: 5
+        // })))
+      ]
+    }, [])
+    // // 授权书
+    // const authorizationListImgs = (storeBrandList || []).reduce((pre, next) => ([
+    //   ...pre,
+    //   ...(next.authorizationList.map(item => ({
+    //     label: item.imageName || '授权书',
+    //     value: item.imageUrl
+    //   })))
+    // ]), [])
+    // // 注册证明
+    // const registrationListImgs = (storeBrandList || []).reduce((pre, next) => ([
+    //   ...pre,
+    //   ...(next.registrationList.map(item => ({
+    //     label: item.imageName || '注册证明',
+    //     value: item.imageUrl
+    //   })))
+    // ]), [])
     // 管理员身份证
     const managerList = merchantStoreInfo.managerList.map(item => ({
-      label: item.imageName || '管理员身份证',
-      value: item.imageUrl
+      label: item.imageName || '管理人身份证照',
+      value: item.imageUrl,
+      type: 6
     }))
     // 保证金信息
     const moneyList = merchantStoreInfo.moneyList.map(item => ({
       label: item.imageName || '保证金',
-      value: item.imageUrl
+      value: item.imageUrl,
+      type: 7
     }))
     return [
       ...businessLicenseListImgs,
       ...productionLicenseListImgs,
       ...legalPersonListImgs,
-      ...authorizationListImgs,
-      ...registrationListImgs,
+      // ...authorizationListImgs,
+      // ...registrationListImgs,
+      ...storeBrandListImgs,
       ...managerList,
       ...moneyList
     ]
@@ -239,7 +272,7 @@ class BossDetail extends React.Component {
                       marginRight: 8
                     }}
                     src={replaceHttpUrl(item.imageUrl)}
-                    onClick={this.handlePreview.bind(this, item.imageUrl)}
+                    onClick={this.handlePreview.bind(this, item.imageUrl, 1)}
                     alt={item.imageName}
                   />
                 ))
@@ -259,7 +292,7 @@ class BossDetail extends React.Component {
                           marginRight: 8
                         }}
                         src={replaceHttpUrl(item.imageUrl)}
-                        onClick={this.handlePreview.bind(this, item.imageUrl)}
+                        onClick={this.handlePreview.bind(this, item.imageUrl, 2)}
                         alt={item.imageName}
                       />
                     ))
@@ -296,7 +329,7 @@ class BossDetail extends React.Component {
                       marginRight: 8
                     }}
                     src={replaceHttpUrl(item.imageUrl)}
-                    onClick={this.handlePreview.bind(this, item.imageUrl)}
+                    onClick={this.handlePreview.bind(this, item.imageUrl, 3)}
                     alt={item.imageName}
                   />
                 ))
@@ -333,7 +366,7 @@ class BossDetail extends React.Component {
                                     marginRight: 8
                                   }}
                                   src={replaceHttpUrl(iItem.imageUrl)}
-                                  onClick={this.handlePreview.bind(this, iItem.imageUrl)}
+                                  onClick={this.handlePreview.bind(this, iItem.imageUrl, 4)}
                                   alt={iItem.imageName}
                                 />
                               ))
@@ -364,7 +397,7 @@ class BossDetail extends React.Component {
                                   marginRight: 8
                                 }}
                                 src={replaceHttpUrl(imgItem.imageUrl)}
-                                onClick={this.handlePreview.bind(this, imgItem.imageUrl)}
+                                onClick={this.handlePreview.bind(this, imgItem.imageUrl, 5)}
                                 alt={imgItem.imageUrl}
                               />
                             ))}
@@ -407,7 +440,7 @@ class BossDetail extends React.Component {
                     marginRight: 8
                   }}
                   src={replaceHttpUrl(item.imageUrl)}
-                  onClick={this.handlePreview.bind(this, item.imageUrl)}
+                  onClick={this.handlePreview.bind(this, item.imageUrl, 6)}
                   alt={item.imageName}
                 />
               ))}
@@ -439,7 +472,7 @@ class BossDetail extends React.Component {
                 marginRight: 8
               }}
               src={replaceHttpUrl(item.imageUrl)}
-              onClick={this.handlePreview.bind(this, item.imageUrl)}
+              onClick={this.handlePreview.bind(this, item.imageUrl, 7)}
               alt={item.imageName}
             />
           ))}
