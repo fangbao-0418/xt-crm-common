@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react'
 import { Button, Table } from 'antd'
 import { isEqual } from 'lodash'
-import { connect } from '@/util/utils';
-import { namespace } from '../model';
-import { getRulesColumns } from '../config/columns';
+import { connect } from '@/util/utils'
+import { namespace } from '../model'
+import { getRulesColumns } from '../config/columns'
 import DiscountModal from './discount-modal'
 
 @connect(state => ({
@@ -16,9 +16,9 @@ class RulesTable extends PureComponent {
     preRules: []
   }
 
-  static getDerivedStateFromProps(nextProps, preState) {
+  static getDerivedStateFromProps (nextProps, preState) {
     if (isEqual(nextProps.value, preState.preRules)) {
-      return null;
+      return null
     }
     const rules = nextProps.value
     return {
@@ -89,7 +89,7 @@ class RulesTable extends PureComponent {
     })
   }
 
-  render() {
+  render () {
     const {
       value: dataSource,
       promotionType,
@@ -100,7 +100,7 @@ class RulesTable extends PureComponent {
 
     let maxSize = 0
     let disabled = true
-    let length = dataSource.length
+    const length = dataSource.length
 
     if (ruleType === 1) { // 阶梯满 可以添加5条规则
       maxSize = 5
@@ -121,12 +121,12 @@ class RulesTable extends PureComponent {
         <p>
           <Button
             disabled={disabled || (!promotionType) || statusDisabled}
-            onClick={this.handleDiscount} type="link"
+            onClick={this.handleDiscount} type='link'
           >
             添加条件
           </Button>
           <span>可添加最多{maxSize}个阶梯</span>
-          <Button disabled={!length || statusDisabled} onClick={this.handleClear} type="link">
+          <Button disabled={!length || statusDisabled} onClick={this.handleClear} type='link'>
             清空
           </Button>
         </p>

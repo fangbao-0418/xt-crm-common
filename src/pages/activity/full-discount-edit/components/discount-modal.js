@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { Modal, Form, Radio, InputNumber, Alert } from 'antd'
-import { connect } from '@/util/utils';
-import { namespace } from '../model';
+import { connect } from '@/util/utils'
+import { namespace } from '../model'
 
 const errMsgs = [{
   key: 'stageType',
@@ -118,7 +118,7 @@ class DiscountModal extends PureComponent {
         dispatch[namespace].saveDefault({
           discountModal: {
             ...discountModal,
-            visible: false,
+            visible: false
           }
         })
 
@@ -133,7 +133,7 @@ class DiscountModal extends PureComponent {
     dispatch[namespace].saveDefault({
       discountModal: {
         ...discountModal,
-        visible: false,
+        visible: false
       }
     })
   }
@@ -219,7 +219,7 @@ class DiscountModal extends PureComponent {
     return errMsgs.find(item => item.key === key)
   }
 
-  render() {
+  render () {
     const {
       form: {
         getFieldDecorator,
@@ -243,7 +243,7 @@ class DiscountModal extends PureComponent {
     let discounts
 
     if (rules.length) {
-      if (currentRuleIndex >= 0) {  // 编辑规则的时候 需要设置默认值
+      if (currentRuleIndex >= 0) { // 编辑规则的时候 需要设置默认值
         const currentRule = rules[currentRuleIndex]
         stageType = stageType || currentRule.stageType
         mode = mode || currentRule.mode
@@ -257,8 +257,8 @@ class DiscountModal extends PureComponent {
     const radioStyle = {
       display: 'block',
       height: '30px',
-      lineHeight: '30px',
-    };
+      lineHeight: '30px'
+    }
 
     return (
       <Modal
@@ -269,7 +269,7 @@ class DiscountModal extends PureComponent {
         afterClose={this.handleAfterClose}
         destroyOnClose
       >
-        <Form layout="vertical">
+        <Form layout='vertical'>
           <h3 style={{ marginTop: 0 }}>优惠门槛</h3>
           <div style={{ marginBottom: 0, paddingLeft: 8 }}>
             <div style={{ display: 'inline-block' }}>
@@ -288,7 +288,7 @@ class DiscountModal extends PureComponent {
                     value={1}
                   >
                     满
-                </Radio>
+                  </Radio>
                   <Radio
                     disabled={promotionType === 11 || rules && rules[0] && rules[0].stageType === 1 || false} // 满减的时候禁止该选项 第一次选择 满x元类型 的话 第二次以上配置禁止该选项选择
                     style={{
@@ -298,7 +298,7 @@ class DiscountModal extends PureComponent {
                     value={2}
                   >
                     满
-                </Radio>
+                  </Radio>
                 </Radio.Group>
               )}
             </div>
@@ -352,9 +352,9 @@ class DiscountModal extends PureComponent {
             </div>
           </div>
           {
-            conditionErrItem &&
-            ['stageType', 'stageAmount', 'stageCount'].includes(conditionErrItem.key) &&
-            <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{conditionErrItem.msg}</p>
+            conditionErrItem
+            && ['stageType', 'stageAmount', 'stageCount'].includes(conditionErrItem.key)
+            && <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{conditionErrItem.msg}</p>
           }
           <h3>优惠方式</h3>
           <div style={{ marginBottom: 0, paddingLeft: 8 }}>
@@ -369,14 +369,14 @@ class DiscountModal extends PureComponent {
               })(
                 <Radio.Group onChange={this.handleRadioChange.bind(this, 'modeErr', 'mode')}>
                   <Radio
-                    disabled={promotionType === 12} // 优惠种类选择满折的时候 禁止选择该选项
+                    disabled={[12, 13].includes(promotionType)} // 优惠种类选择满折 多件一口价的时候 禁止选择该选项
                     style={radioStyle}
                     value={1}
                   >
                     减
-                </Radio>
+                  </Radio>
                   <Radio
-                    disabled={promotionType === 11} // 优惠种类选择满减的时候 禁止选择该选项
+                    disabled={[11, 13].includes(promotionType)} // 优惠种类选择满减 多件一口价的时候 禁止选择该选项
                     style={{
                       ...radioStyle,
                       marginTop: 16
@@ -384,7 +384,17 @@ class DiscountModal extends PureComponent {
                     value={2}
                   >
                     打
-                </Radio>
+                  </Radio>
+                  <Radio
+                    disabled={[11, 12].includes(promotionType)} // 优惠种类选择满减 满折的时候 禁止选择该选项
+                    style={{
+                      ...radioStyle,
+                      marginTop: 16
+                    }}
+                    value={2}
+                  >
+                    售
+                  </Radio>
                 </Radio.Group>
               )}
             </div>
@@ -439,12 +449,12 @@ class DiscountModal extends PureComponent {
             </div>
           </div>
           {
-            modeErrItem &&
-            ['mode', 'discountsAmount', 'discounts'].includes(modeErrItem.key) &&
-            <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{modeErrItem.msg}</p>
+            modeErrItem
+            && ['mode', 'discountsAmount', 'discounts'].includes(modeErrItem.key)
+            && <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{modeErrItem.msg}</p>
           }
           {
-            alertErr && <Alert style={{ marginTop: 16 }} message={alertErr} type="error" />
+            alertErr && <Alert style={{ marginTop: 16 }} message={alertErr} type='error' />
           }
         </Form>
       </Modal>

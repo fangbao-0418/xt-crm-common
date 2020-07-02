@@ -1,21 +1,23 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Input, DatePicker, Radio, Button, InputNumber } from 'antd'
-import moment from 'moment';
+import moment from 'moment'
 import RulesTable from './components/rules-table'
 import ProductTable from './components/product-table'
-import { formatMoneyWithSign } from '@/pages/helper';
-import { gotoPage, connect } from '@/util/utils';
-import { namespace } from './model';
+import { formatMoneyWithSign } from '@/pages/helper'
+import { gotoPage, connect } from '@/util/utils'
+import { namespace } from './model'
 import { detailFullDiscounts } from './api'
 
-const { RangePicker } = DatePicker;
-const { TextArea } = Input;
+const { RangePicker } = DatePicker
+const { TextArea } = Input
 
 const getExceptionStr = (list) => {
-  if (list.length < 2) return false
+  if (list.length < 2) {
+    return false
+  }
   for (let i = 0, l = list.length - 1; i < l; i++) {
-    let curItem = list[i]
-    let nextItem = list[i + 1]
+    const curItem = list[i]
+    const nextItem = list[i + 1]
     if (curItem.stageType === 1) { // 满 x 元
       if (curItem.stageAmount >= nextItem.stageAmount) {
         return `第 ${i + 2} 级的配置必须高于第 ${i + 1} 级的配置(优惠门槛: 高阶梯的满X元必须大于低阶梯的满X元)`
@@ -51,7 +53,7 @@ class FullDiscountEditPage extends PureComponent {
     detail: null
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     const { dispatch } = this.props
     // 这里需要重置preRulesMaps 和 preProductRefMaps的值，否则下次进入该页面会保留之前的数据
     dispatch[namespace].saveDefault({
@@ -60,9 +62,11 @@ class FullDiscountEditPage extends PureComponent {
     })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { match: { params: { id, action } }, form: { setFieldsValue } } = this.props
-    if (!id) return
+    if (!id) {
+      return
+    }
     if (action === 'copy' || action === 'edit') {
       detailFullDiscounts(id).then(detail => {
         this.setState({
@@ -168,7 +172,9 @@ class FullDiscountEditPage extends PureComponent {
       productRefInfo, // 关联活动商品
       promotionDesc // 活动说明
     }) => {
-      if (err) return
+      if (err) {
+        return
+      }
       // api: http://192.168.20.21/project/278/interface/api/50540
       const params = {
         title,
@@ -246,7 +252,7 @@ class FullDiscountEditPage extends PureComponent {
 
   /* 返回操作 */
   handleBack = () => {
-    gotoPage(`/activity/full-discount`)
+    gotoPage('/activity/full-discount')
   }
 
   /* 优惠种类选项变化的时候-自动设置优惠类型为阶梯满 & 清空满减选项关联的满减封顶数值 */
@@ -374,37 +380,37 @@ class FullDiscountEditPage extends PureComponent {
     }
   }
 
-  render() {
+  render () {
     const { form: { getFieldDecorator, getFieldValue }, match: { params: { action } } } = this.props
     const { detail } = this.state
 
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 },
+        sm: { span: 4 }
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 20 },
-      },
+        sm: { span: 20 }
+      }
     }
 
     const formTailLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 },
+        sm: { span: 4 }
       },
       wrapperCol: {
         xs: { span: 24, offset: 0 },
-        sm: { span: 20, offset: 4 },
-      },
-    };
+        sm: { span: 20, offset: 4 }
+      }
+    }
 
-    let promotionType = getFieldValue('promotionType')
-    let ruleType = getFieldValue('ruleType')
-    let productRef = getFieldValue('productRef')
-    let rules = getFieldValue('rules')
-    let maxDiscountsAmount = getFieldValue('maxDiscountsAmount')
+    const promotionType = getFieldValue('promotionType')
+    const ruleType = getFieldValue('ruleType')
+    const productRef = getFieldValue('productRef')
+    const rules = getFieldValue('rules')
+    const maxDiscountsAmount = getFieldValue('maxDiscountsAmount')
 
     /* 未开始( 1 )的活动可以编辑全部信息 进行中( 2 )的活动只可以编辑活动商品 已结束( 3 )和已关闭( 0 )的活动不可编辑全部信息 */
     let goodsDisable = false
@@ -422,12 +428,12 @@ class FullDiscountEditPage extends PureComponent {
     return (
       <Card
         bordered={false}
-        title="添加活动"
-        extra={<span onClick={this.handleBack} className="href">返回</span>}
+        title='添加活动'
+        extra={<span onClick={this.handleBack} className='href'>返回</span>}
       >
         <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-          <Card type="inner" title="基本信息">
-            <Form.Item label="活动名称">
+          <Card type='inner' title='基本信息'>
+            <Form.Item label='活动名称'>
               {getFieldDecorator('title', {
                 rules: [
                   {
@@ -435,25 +441,25 @@ class FullDiscountEditPage extends PureComponent {
                     whitespace: true,
                     message: '请输入活动名称(限16个字符)',
                     max: 16
-                  },
-                ],
+                  }
+                ]
               })(
-                <Input disabled={otherDisable} style={{ maxWidth: 350 }} placeholder="限16个字符" />
+                <Input disabled={otherDisable} style={{ maxWidth: 350 }} placeholder='限16个字符' />
               )}
             </Form.Item>
-            <Form.Item label="活动时间">
+            <Form.Item label='活动时间'>
               {getFieldDecorator('time', {
                 rules: [
                   {
                     required: true,
-                    message: '请选择活动时间',
-                  },
-                ],
+                    message: '请选择活动时间'
+                  }
+                ]
               })(
                 <RangePicker
                   disabled={otherDisable}
                   showTime={{ format: 'HH:mm:ss' }}
-                  format="YYYY-MM-DD HH:mm:ss"
+                  format='YYYY-MM-DD HH:mm:ss'
                   placeholder={['开始时间', '结束时间']}
                 />
               )}
@@ -461,32 +467,33 @@ class FullDiscountEditPage extends PureComponent {
           </Card>
           <Card
             style={{ marginTop: 16 }}
-            type="inner"
-            title="优惠信息"
+            type='inner'
+            title='优惠信息'
           >
-            <Form.Item label="优惠种类">
+            <Form.Item label='优惠种类'>
               {getFieldDecorator('promotionType', {
                 rules: [
                   {
                     required: true,
-                    message: '请选择优惠种类',
-                  },
-                ],
+                    message: '请选择优惠种类'
+                  }
+                ]
               })(
                 <Radio.Group disabled={otherDisable} onChange={this.handlePromotionTypeChange}>
                   <Radio value={11}>满减</Radio>
                   <Radio value={12}>满折</Radio>
+                  <Radio value={13}>多件一口价</Radio>
                 </Radio.Group>
               )}
             </Form.Item>
-            <Form.Item label="优惠类型">
+            <Form.Item label='优惠类型'>
               {getFieldDecorator('ruleType', {
                 rules: [
                   {
                     required: true,
                     message: '请选择至少一项优惠类型'
                   }
-                ],
+                ]
               })(
                 <Radio.Group disabled={otherDisable} onChange={this.handleRuleTypeChange}>
                   <Radio value={1}>
@@ -503,7 +510,9 @@ class FullDiscountEditPage extends PureComponent {
                     {
                       rules: [{
                         validator: (_, value, callback) => {
-                          if (!value) callback()
+                          if (!value) {
+                            callback()
+                          }
                           if (rules.length && ruleType === 0) {
                             const currentMaxDiscountsAmount = Math.max(...(rules.map(item => item.discountsAmount)))
                             if (currentMaxDiscountsAmount > value) {
@@ -516,8 +525,7 @@ class FullDiscountEditPage extends PureComponent {
                           }
                         }
                       }]
-                    }
-                  )(
+                    })(
                     <InputNumber
                       onChange={this.handleMaxDiscountsAmountChange}
                       min={0}
@@ -537,7 +545,22 @@ class FullDiscountEditPage extends PureComponent {
                 &nbsp;元封顶，0 元表示不封顶
               </Form.Item>
             </Form.Item>
-            <Form.Item label="优惠条件">
+            <Form.Item label='是否可叠加优惠券'>
+              {getFieldDecorator('isOverlay', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择是否可叠加优惠券'
+                  }
+                ]
+              })(
+                <Radio.Group>
+                  <Radio value={1}>是</Radio>
+                  <Radio value={0}>否</Radio>
+                </Radio.Group>
+              )}
+            </Form.Item>
+            <Form.Item label='优惠条件'>
               {
                 getFieldDecorator('rules', {
                   rules: [{
@@ -578,10 +601,10 @@ class FullDiscountEditPage extends PureComponent {
           </Card>
           <Card
             style={{ marginTop: 16 }}
-            type="inner"
-            title="活动商品"
+            type='inner'
+            title='活动商品'
           >
-            <Form.Item label="活动商品">
+            <Form.Item label='活动商品'>
               {getFieldDecorator('productRef', {
                 rules: [{
                   required: true,
@@ -597,7 +620,7 @@ class FullDiscountEditPage extends PureComponent {
                 </Radio.Group>
               )}
             </Form.Item>
-            <Form.Item label="选择关联">
+            <Form.Item label='选择关联'>
               {getFieldDecorator('productRefInfo', {
                 rules: [{
                   required: true,
@@ -620,10 +643,10 @@ class FullDiscountEditPage extends PureComponent {
           </Card>
           <Card
             style={{ marginTop: 16 }}
-            type="inner"
-            title="活动说明"
+            type='inner'
+            title='活动说明'
           >
-            <Form.Item label="活动说明">
+            <Form.Item label='活动说明'>
               {getFieldDecorator('promotionDesc', {
                 rules: [
                   {
@@ -637,7 +660,7 @@ class FullDiscountEditPage extends PureComponent {
                 <TextArea
                   disabled={otherDisable}
                   style={{ maxWidth: 350 }}
-                  placeholder="显示在用户端, 建议填写活动商品信息, 如美妆个护、食品保健可用, 100字以内"
+                  placeholder='显示在用户端, 建议填写活动商品信息, 如美妆个护、食品保健可用, 100字以内'
                   autoSize={{ minRows: 5, maxRows: 7 }}
                 />
               )}
@@ -647,7 +670,7 @@ class FullDiscountEditPage extends PureComponent {
             <Form.Item {...formTailLayout}>
               <Button
                 disabled={goodsDisable && otherDisable}
-                onClick={this.handleSave} type="primary"
+                onClick={this.handleSave} type='primary'
               >
                 保存
               </Button>
