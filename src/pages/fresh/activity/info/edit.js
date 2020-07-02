@@ -1,7 +1,7 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
-import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd';
+import React from 'react'
+import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd'
 import {
   getProductList,
   // setPromotionAddSKu,
@@ -11,17 +11,17 @@ import {
   getOperatorSpuList,
   getGoodsListByActivityId,
   batchMoveGoodsToOtherActivity
-} from '../api';
-import ActivityInfo from './ActivityInfo';
-import ActivityList from './ActivityList';
-import { size, filter, difference } from 'lodash';
-import { gotoPage } from '@/util/utils';
-import { formatMoney, formatMoneyWithSign } from '@/pages/helper';
-import { goodsColumns } from './goodsColumns';
-import GoodsTransfer from '@/components/goods-transfer';
-const namespace = 'activity/info/shoplist';
+} from '../api'
+import ActivityInfo from './ActivityInfo'
+import ActivityList from './ActivityList'
+import { size, filter, difference } from 'lodash'
+import { gotoPage } from '@/util/utils'
+import { formatMoney, formatMoneyWithSign } from '@/pages/helper'
+import { goodsColumns } from './goodsColumns'
+import GoodsTransfer from '@/components/goods-transfer'
+const namespace = 'activity/info/shoplist'
 class List extends React.Component {
-  id = this.props.match.params.id;
+  id = this.props.match.params.id
   payload = APP.fn.getPayload(namespace) || {};
   productPayload = {
     pageSize: 10,
@@ -57,7 +57,7 @@ class List extends React.Component {
     transferGoodsList: []
   };
 
-  componentDidMount() {
+  componentDidMount () {
     if (this.payload.promotionId === this.id) {
       this.props.form.setFieldsValue({
         productId: this.payload.productId,
@@ -70,9 +70,9 @@ class List extends React.Component {
   }
 
   getPromotionDetail = () => {
-    const id = this.id;
+    const id = this.id
     if (id !== 'undefined') {
-      const fields = this.props.form.getFieldsValue();
+      const fields = this.props.form.getFieldsValue()
       const { promotionDetail } = this.state;
       const payload = {
         promotionId: id,
@@ -86,7 +86,7 @@ class List extends React.Component {
         this.setState({
           promotionDetail: res || {}
         })
-      });
+      })
     }
   };
 
