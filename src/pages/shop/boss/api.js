@@ -38,7 +38,7 @@ export function batchExport (data) {
 
 // 获取一级类目
 export function getCategoryTopList () {
-  return get('/mcweb/product/category/selectMainCategory').then((res) => {
+  return get('/msweb/product/category/selectMainCategory').then((res) => {
     return (res || []).map((item) => {
       return {
         label: item.name,
