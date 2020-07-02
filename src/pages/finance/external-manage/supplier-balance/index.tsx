@@ -7,7 +7,7 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Tag, Popconfirm, Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
+import { getFieldsConfig, SupplierTypeEnum } from './config'
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
@@ -24,26 +24,27 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'supplierType',
     title: '商家类型',
-    width: 100
+    width: 180,
+    render: (text: any, record: any) => <>{SupplierTypeEnum[text]}</>
   }, {
     dataIndex: 'merchantAcctAvailBal',
     title: '商家账户余额（元）',
-    width: 150,
+    width: 120,
     render: (text: any, record: any) => <>{record?.merchantsSubAccount?.acctAvailBal/100}</>
   }, {
     dataIndex: 'plainAcctAvailBal',
     title: '普通账户余额（元）',
-    width: 150,
+    width: 120,
     render: (text: any, record: any) => <>{record?.plainSubAccount?.acctAvailBal/100}</>
   }, {
     dataIndex: 'merchantCashAmt',
     title: '商家账户可提现余额（元）',
-    width: 190,
+    width: 120,
     render: (text: any, record: any) => <>{record?.merchantsSubAccount?.cashAmt/100}</>
   }, {
     dataIndex: 'plainCashAmt',
     title: '普通账户可提现余额（元）',
-    width: 190,
+    width: 120,
     render: (text: any, record: any) => <>{record?.plainSubAccount?.cashAmt/100}</>
   }, {
     dataIndex: 'queryBalanceQueryTime',

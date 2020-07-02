@@ -25,14 +25,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   return _.mergeWith(defaultConfig, partial)
 }
 
-export enum AnchorIdentityTypeEnum {
-  供应商 = 20,
-  公司 = 10,
-  合作网红 = 30,
-  代理 = 40
-}
-
-export enum AnchorLevelEnum {
-  星级主播 = 10,
-  普通主播 = 0
+export enum SupplierTypeEnum {
+  个人供应商 = 1,
+  企业供应商 = 2,
+  个体工商户供应商 = 3
 }
