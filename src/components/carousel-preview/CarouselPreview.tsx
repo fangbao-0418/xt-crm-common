@@ -85,7 +85,7 @@ class CarouselPreview extends PureComponent<
       hint && message.warn('已经第一张了')
       return
     }
-    this.sliderRef.slick.slickPrev()
+    this.sliderRef?.slick.slickPrev()
   }
 
   /** 下一张图片 */
@@ -96,7 +96,7 @@ class CarouselPreview extends PureComponent<
       hint && message.warn('已经最后一张了')
       return
     }
-    this.sliderRef.slick.slickNext()
+    this.sliderRef?.slick.slickNext()
   }
 
   /** 滚轮上一张下一张 */
@@ -112,7 +112,7 @@ class CarouselPreview extends PureComponent<
   }
 
   public goto = (index: number) => {
-    this.sliderRef.slick.slickGoTo(index)
+    this.sliderRef?.slick.slickGoTo(index)
   }
 
   public render () {
