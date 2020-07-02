@@ -175,7 +175,16 @@ class StoreTimerModal extends React.Component<Props, State> {
               </Upload>
             )}
           </Form.Item>
-          {!readonly && <Form.Item label='模板'><a href='https://assets.hzxituan.com/upload/2020-05-01/%E5%95%86%E5%93%81%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%B8%8B%E6%9E%B6.xlsx' target='_blank'>商品自动上下架.xlsx</a></Form.Item>}
+          {!readonly && (
+            <Form.Item label='模板'>
+              <a
+                href='https://assets.hzxituan.com/product/auto/1592895119075%E5%95%86%E5%93%81%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%B8%8B%E6%9E%B6.xlsx'
+                target='_blank'
+              >
+                商品自动上下架.xlsx
+              </a>
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     )
