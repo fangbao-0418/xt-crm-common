@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Modal, Input } from 'antd';
-import { connect } from '@/util/utils';
-import Form, { FormItem } from '@/packages/common/components/form';
-import { switchModalConfig } from '../config';
+import React, { Component } from 'react'
+import { Modal, Input } from 'antd'
+import { connect } from '@/util/utils'
+import Form, { FormItem } from '@/packages/common/components/form'
+import { switchModalConfig } from '../config'
 
-const { TextArea } = Input;
+const { TextArea } = Input
 
 @connect(state => ({
   modal: state['shop.boss'].switchModal,
@@ -17,13 +17,15 @@ export default class extends Component {
   handleOk = () => {
     const { form: { validateFields }, dispatch, currentBoss } = this.props
     validateFields((err, values) => {
-      if (err) return;
+      if (err) {
+        return
+      }
       dispatch['shop.boss'].closeShop({
         ...values,
         shopId: currentBoss.id,
         shopStatus: 3
-      });
-    });
+      })
+    })
   }
 
   /** 取消操作 */
@@ -36,7 +38,7 @@ export default class extends Component {
           visible: false
         }
       }
-    });
+    })
   }
 
   /** 窗口彻底关闭回调 */
@@ -47,15 +49,17 @@ export default class extends Component {
       payload: {
         currentBoss: null
       }
-    });
+    })
   }
 
-  render() {
+  render () {
     const { modal, currentBoss, form: { getFieldDecorator } } = this.props
 
-    if (!currentBoss) return null
+    if (!currentBoss) {
+      return null
+    }
 
-    const modalTitle = `操作 ${currentBoss.nickName || '暂无昵称'} 店长`
+    const modalTitle = `操作 ${currentBoss.shopName || '暂无数据'} 店铺`
 
     const fontStyle = {
       color: 'red'
@@ -65,7 +69,7 @@ export default class extends Component {
       <Modal
         visible={modal.visible}
         title={modalTitle}
-        okText="确认关店"
+        okText='确认关店'
         onOk={this.handleOk}
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
@@ -77,7 +81,7 @@ export default class extends Component {
             switchModalConfig.hint.map((item, i) => <p style={{ marginTop: 8 }} key={i}>{item}</p>)
           }
         </div>
-        <Form layout="vertical">
+        <Form layout='vertical'>
           <FormItem label={<span style={fontStyle}>关店原因</span>}>
             {getFieldDecorator('closeReason', {
               rules: [{
@@ -86,9 +90,10 @@ export default class extends Component {
               }]
             })(
               <TextArea
-                placeholder="请输入关店理由"
+                placeholder='请输入关店理由'
                 autoSize={{ minRows: 8, maxRows: 20 }}
-              />)}
+              />
+            )}
           </FormItem>
         </Form>
       </Modal>

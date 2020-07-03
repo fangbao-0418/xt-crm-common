@@ -6,20 +6,23 @@ import Form, { FormItem } from '@/packages/common/components/form'
 const { TextArea } = Input
 
 @connect(state => ({
-  modal: state['shop.boss'].batchModal
+  modal: state['shop.boss'].passModal,
+  currentBoss: state['shop.boss'].currentBoss
 }))
 @Form.create()
 export default class extends Component {
 
   /** 确定操作 */
   handleOk = () => {
-    const { form: { validateFields }, dispatch } = this.props
-    validateFields((err, { phones }) => {
+    const { form: { validateFields }, dispatch, currentBoss } = this.props
+    validateFields((err, values) => {
       if (err) {
         return
       }
-      phones = phones.replace(/\n/g, ',')
-      dispatch['shop.boss'].checkUser({ phones })
+      dispatch['shop.boss'].noPassShop({
+        ...values,
+        merchantApplyId: currentBoss.id
+      })
     })
   }
 
@@ -29,7 +32,7 @@ export default class extends Component {
     dispatch({
       type: 'shop.boss/saveDefault',
       payload: {
-        batchModal: {
+        passModal: {
           visible: false
         }
       }
@@ -48,36 +51,39 @@ export default class extends Component {
   }
 
   render () {
-    const { modal, form: { getFieldDecorator } } = this.props
+    const { modal, currentBoss, form: { getFieldDecorator } } = this.props
+
+    if (!currentBoss) {
+      return null
+    }
+
+    const modalTitle = `操作 ${currentBoss.shopName || '暂无昵称'} 店铺`
+
+    const fontStyle = {
+      color: 'red'
+    }
 
     return (
       <Modal
         visible={modal.visible}
-        title='添加手机号, 开通小店'
-        okText='查询用户'
+        title={modalTitle}
+        okText='审核不通过'
         onOk={this.handleOk}
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
         destroyOnClose
       >
         <Form layout='vertical'>
-          <p style={{ color: 'red' }}>目前仅支持添加个人店（即喜团小店），更多类型敬请期待</p>
-          <FormItem label='请输入手机号'>
-            {getFieldDecorator('phones', {
+          <FormItem label={<span style={fontStyle}>请填写审核不通过原因</span>}>
+            {getFieldDecorator('reason', {
               rules: [{
-                validator: (rule, value, cb) => {
-                  const reg = /^[1]([0-9])[0-9]{9}(\n[1]([0-9])[0-9]{9})*$/
-                  if (!reg.test(value)) {
-                    cb('请添加手机号,并按enter键隔开~')
-                    // return
-                  } else {
-                    cb()
-                  }
-                }
+                required: true,
+                message: '请输入不通过理由！'
               }]
             })(
               <TextArea
-                placeholder='仅允许添加手机, 多个手机号请用按 enter 键, 换行隔开,;最多添加1000个手机号'
+                placeholder='200字以内'
+                maxLength={200}
                 autoSize={{ minRows: 8, maxRows: 20 }}
               />
             )}

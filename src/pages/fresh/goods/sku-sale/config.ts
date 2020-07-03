@@ -198,6 +198,22 @@ export const defaultConfig: FieldsConfig = {
           width: '60%'
         }
       }
+    },
+    sort: {
+      label: '排序权重',
+      type: 'number',
+      controlProps: {
+        min: 0,
+        max: 999999,
+        style: {
+          width: 200
+        }
+      },
+      fieldDecoratorOptions: {
+        rules: [
+          { required: true, message: '排序权重必填' }
+        ]
+      }
     }
     // isAuthentication: {
     //   label: '实名认证',

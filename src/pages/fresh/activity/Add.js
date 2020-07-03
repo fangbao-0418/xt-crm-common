@@ -27,22 +27,22 @@ const formLayout = {
 };
 
 class ActivityForm extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       loading: false, // 保存活动按钮
       tagImg: activityTagSImg,
       tagClass: 'img_sm',
       id: 0,
-      canUpdate: true
+      canUpdate: true,
+      activityType: props?.data?.type
     }
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.data) {
-      const { tagUrl, preheatHours, areaIdList, type, title, sort, startTime, endTime, tagPosition, id, canUpdate } = nextProps.data;
+      const { tagUrl, preheatHours, areaIdList, type, title, sort, startTime, endTime, tagPosition, id, canUpdate } = nextProps.data
       if (this.props.visible !== nextProps.visible) {
-        console.log(areaIdList, 'nextProps.data =>', nextProps.data)
         this.props.form.setFieldsValue({
           tagUrl,
           type,
@@ -53,20 +53,24 @@ class ActivityForm extends React.Component {
           areaIdList,
           endTime,
           tagPosition
-        });
-        this.setState({ id, canUpdate });
-        this.typeChange(type);
+        })
+        this.setState({
+          id,
+          canUpdate,
+          activityType: nextProps?.data?.type
+        })
+        this.typeChange(type)
       }
     }
   }
 
-  get tagUrl() {
-    const tagUrl = this.props.form.getFieldValue('tagUrl') || [];
-    return tagUrl.length > 0 ? tagUrl[0].url : '';
+  get tagUrl () {
+    const tagUrl = this.props.form.getFieldValue('tagUrl') || []
+    return tagUrl.length > 0 ? tagUrl[0].url : ''
   }
 
-  loadStatus(status) {
-    this.loading = status;
+  loadStatus (status) {
+    this.loading = status
     this.setState({
       loading: status
     })
@@ -100,6 +104,7 @@ class ActivityForm extends React.Component {
       form: { validateFields }
     } = this.props;
     validateFields((err, vals) => {
+      console.log(err, 'err')
       if (!err) {
         this.setBasePromotion(vals, id => {
           if (isFunction(callback)) {
@@ -115,18 +120,18 @@ class ActivityForm extends React.Component {
   handleSaveNext = () => {
     this.handleSave(id => {
       APP.history.push(`/fresh/activity/info/edit/${id}`);
-    });
-  };
+    })
+  }
 
   // 开始时间禁用满足条件
   disabledStartDate = startTime => {
-    const { form } = this.props;
-    const fieldsValue = form.getFieldsValue();
-    const endTime = fieldsValue.endTime;
+    const { form } = this.props
+    const fieldsValue = form.getFieldsValue()
+    const endTime = fieldsValue.endTime
     if (!startTime || !endTime) {
-      return false;
+      return false
     }
-    return startTime.valueOf() > endTime.valueOf();
+    return startTime.valueOf() > endTime.valueOf()
   };
 
   // 结束时间禁用满足条件
@@ -142,6 +147,9 @@ class ActivityForm extends React.Component {
 
   // 改变活动类型右侧图片联动
   typeChange = (val) => {
+    this.setState({
+      activityType: val
+    })
     if ([1, 5, 6, 7, 10].includes(val)) {
       this.setState({
         tagImg: activityTagSImg,
@@ -174,17 +182,18 @@ class ActivityForm extends React.Component {
   }
 
   handleOk = () => {
-    const { onOk } = this.props;
-    this.resetFields();
-    isFunction(onOk) && onOk();
+    const { onOk } = this.props
+    this.resetFields()
+    isFunction(onOk) && onOk()
   }
 
-  render() {
+  render () {
+    console.log(this.state.activityType)
     console.log('tagPosition =>', this.props.form.getFieldValue('tagPosition'))
     const {
-      form: { getFieldDecorator },
-    } = this.props;
-    const otherProps = omit(this.props, ['form', 'data', 'onCancel']);
+      form: { getFieldDecorator }
+    } = this.props
+    const otherProps = omit(this.props, ['form', 'data', 'onCancel'])
     return (
       <Modal
         width={1000}
@@ -218,17 +227,19 @@ class ActivityForm extends React.Component {
                 ],
               })(<Input placeholder="请输入活动名称" />)}
             </FormItem>
-            <FormItem label="提前预热">
-              {getFieldDecorator('preheatHours', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入提前预热时间',
-                  },
-                ],
-              })(<InputNumber precision={0} placeholder="小时" />)}
-              <span className='ml10'><Icon type="info-circle" theme='filled' style={{color: '#1890ff'}} /> 仅支持填写正整数</span>
-            </FormItem>
+            {this.state.activityType !== 51 && (
+              <FormItem label="提前预热">
+                {getFieldDecorator('preheatHours', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入提前预热时间',
+                    },
+                  ],
+                })(<InputNumber precision={0} placeholder="小时" />)}
+                <span className='ml10'><Icon type="info-circle" theme='filled' style={{color: '#1890ff'}} /> 仅支持填写正整数</span>
+              </FormItem>
+            )}
             <FormItem label="开始时间">
               {getFieldDecorator('startTime', {
                 rules: [
@@ -370,4 +381,4 @@ ActivityForm.propTypes = {
   title: PropTypes.string.isRequired
 }
 
-export default Form.create()(ActivityForm);
+export default Form.create()(ActivityForm)

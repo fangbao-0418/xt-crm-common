@@ -399,5 +399,9 @@ export const refundTypes = refundType.getArray()
 
 export const storeTypeMap = {
   1: '喜团自营店',
-  2: '直播小店'
+  2: '直播小店',
+  3: '品牌旗舰店',
+  4: '品牌专营店',
+  5: '喜团工厂店',
+  6: '普通企业店'
 }
