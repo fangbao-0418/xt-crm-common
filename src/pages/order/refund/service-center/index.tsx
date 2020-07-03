@@ -77,9 +77,16 @@ class Main extends React.Component<Props, State> {
       )
     }
   }, {
-    dataIndex: 'anchorIdentityType',
     title: '展示问题数目',
-    width: 150
+    width: 150,
+    render: (record => {
+      const { question } = record
+      return (
+        <div>
+          {question?.length || 0}
+        </div>
+      )
+    })
   }, {
     dataIndex: 'status',
     title: '启用状态',

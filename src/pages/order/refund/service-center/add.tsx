@@ -126,7 +126,7 @@ class Main extends React.Component<Props> {
             <span
               className='ml10 href'
             >
-          删除配置
+              删除配置
             </span>
           </Popconfirm>
         </div>
@@ -138,7 +138,7 @@ class Main extends React.Component<Props> {
     const { id } = this.props.match.params
     api.fetchQuestion().then(res => {
       this.data = res
-      if (id) {
+      if (Number(id) !== -1) {
         const mainProblem = this.data.applicationQuestion.find(item => item.mainProblemId === id)
         mainProblem.mainProblemIcon = [{
           url: mainProblem.mainProblemIcon
@@ -151,8 +151,6 @@ class Main extends React.Component<Props> {
       this.setState({
         data: res,
         isLoading: false
-      }, () => {
-        console.log(this.state, 'this.state=====')
       })
     })
   }
@@ -330,12 +328,11 @@ class Main extends React.Component<Props> {
                   }
                 })
               }
-              console.log(saveApplicationQuestion, 'saveApplicationQuestion=====')
-              // this.setState({
-              //   data: { ...data, applicationQuestion: saveApplicationQuestion }
-              // }, () => {
-              //   this.save()
-              // })
+              this.setState({
+                data: { ...data, applicationQuestion: saveApplicationQuestion }
+              }, () => {
+                this.save()
+              })
             })
           }}
         >
@@ -344,6 +341,7 @@ class Main extends React.Component<Props> {
         <Button
           className='ml20 mb20'
           onClick={() => {
+            gotoPage('/order/servicecenter')
           }}
         >
           取消
@@ -355,7 +353,6 @@ class Main extends React.Component<Props> {
 
   public modalView () {
     const { visible, itemData }=this.state
-    console.log(itemData, 'itemData=====')
     const that=this
     return (
       <Modal
@@ -394,8 +391,9 @@ class Main extends React.Component<Props> {
                     const res = originalQuestion?.find((item: { id: any }) => {
                       return String(item.id) === String(v)
                     })
+                    console.log(res, 'res======')
                     this.setState({
-                      itemData: res
+                      itemData: { ...res, item: that.tempItemData.item || [] }
                     })
                   }}
                   placeholder='请输入问题标题关键字下拉搜索'
@@ -534,7 +532,7 @@ class Main extends React.Component<Props> {
     )
   }
   public onOk (that:any) {
-    const { itemData, mainProblem }=that.state
+    const { itemData, mainProblem } = that.state
     console.log(that.state, 'state=====')
     if (!itemData.id) {
       return APP.error('请选择问题')
@@ -545,7 +543,7 @@ class Main extends React.Component<Props> {
     if (that.tempItemData && that.tempItemData?.id) {
       mainProblem.question.forEach((item: any) => {
         if (item.id === this.tempItemData.id) {
-          item = itemData
+          item = Object.assign(item, itemData)
         }
       })
     } else {
@@ -555,7 +553,6 @@ class Main extends React.Component<Props> {
       mainProblem,
       visible: false
     })
-
   }
   public onCancel (that:any) {
     that.setState({
