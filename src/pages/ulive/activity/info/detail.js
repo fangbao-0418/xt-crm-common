@@ -259,7 +259,7 @@ class ActivityDetail extends React.Component {
         params: { id }
       }
     } = this.props
-    history.push(`/activity/info/edit/${id}`)
+    history.push(`/ulive/activity/info/edit/${id}`)
   };
 
   handleActivityImage = e => {

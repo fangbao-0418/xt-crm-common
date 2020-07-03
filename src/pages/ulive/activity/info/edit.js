@@ -216,8 +216,7 @@ class List extends React.Component {
         params: { id }
       }
     } = this.props
-    // localStorage.setItem('editsku', JSON.stringify({ type, ...record }));
-    history.push(`/activity/info/detail/${id}/${record.productId}/${type}`)
+    history.push(`/ulive/activity/info/detail/${id}/${record.productId}/${type}`)
   };
 
   handleInputValue = (text, record, index) => e => {
@@ -226,10 +225,7 @@ class List extends React.Component {
   };
 
   handleReturn = () => {
-    // const { history } = this.props;
-    // const params = parseQuery();
-    gotoPage('/activity/list')
-    // history.push(`/activity/list?page=${params.page}&pageSize=${params.pageSize}`);
+    gotoPage('/ulive/activity/list')
   };
   updateSync = () => {
     Modal.confirm({
@@ -329,11 +325,8 @@ class List extends React.Component {
                 成功转移<span style={{ color: 'red' }}>{res.successCount}</span>个商品至
                 <span
                   className='href'
-                  // href={window.location.pathname + `#/activity/info/edit/${transferActivity.id}`}
-                  // target='_blank'
-                  // rel='noopener noreferrer'
                   onClick={() => {
-                    APP.open(`/activity/info/edit/${transferActivity.id}`)
+                    APP.open(`/ulive/activity/info/edit/${transferActivity.id}`)
                   }}
                 >
                   {transferActivity.title}

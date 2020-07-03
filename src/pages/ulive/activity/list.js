@@ -100,7 +100,7 @@ class List extends React.Component {
     const {
       form: { resetFields }
     } = this.props
-    APP.history.push('/activity/list')
+    APP.history.push('/ulive/activity/list')
     this.setState({ initParams: {} }, () => {
       resetFields()
       this.handleSearch()
@@ -189,7 +189,6 @@ class List extends React.Component {
         align: 'center',
         render: record => (
           <>
-            {/* <Link to={`/activity/info/edit/${record.id}?page=${page.current}&pageSize=${page.pageSize}`}>编辑</Link> */}
             <a onClick={() => gotoPage(`/ulive/activity/info/edit/${record.id}`)}>{record.systemTime < record.endTime ? '编辑' : '查看'}</a>
 
             {record.status ? (
