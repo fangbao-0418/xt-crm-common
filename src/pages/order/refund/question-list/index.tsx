@@ -54,6 +54,7 @@ class Main extends React.Component<Props, State> {
   {
     title: '操作',
     align: 'center',
+    width: 200,
     render: (text, record) => {
       return (
         <div>
@@ -147,8 +148,30 @@ class Main extends React.Component<Props, State> {
               }
               const { title, fontSize, multiText } = values
               const saveContent = multiText.toHTML()
-              const { originalQuestion } = this.state.data
+              const { originalQuestion, applicationQuestion } = this.state.data
               if (detail) {
+                console.log(detail, 'detail====')
+                console.log(applicationQuestion, 'applicationQuestion======')
+                applicationQuestion.forEach((item) => {
+                  item.question.forEach((questionItem: any) => {
+                    if (questionItem.id === detail.id) {
+                      questionItem = Object.assign(questionItem, {
+                        title,
+                        fontSize,
+                        content: saveContent
+                      })
+                    }
+                    questionItem.item.forEach((secondary: any) => {
+                      if (secondary.id === detail.id) {
+                        secondary = Object.assign(secondary, {
+                          title,
+                          fontSize,
+                          content: saveContent
+                        })
+                      }
+                    })
+                  })
+                })
                 originalQuestion.forEach((item, index) => {
                   if (item.id === detail.id) {
                     item = Object.assign(item, {
@@ -167,7 +190,7 @@ class Main extends React.Component<Props, State> {
                 })
               }
               this.setState({
-                data: { ...this.state.data, originalQuestion },
+                data: { ...this.state.data, originalQuestion, applicationQuestion },
                 showDataSource: originalQuestion
               }, () => {
                 this.save()
