@@ -4,6 +4,7 @@ import { Modal, Form, Input, Select, DatePicker, Card, Button, message, Radio, I
 import { setBasePromotion, updateBasePromotion } from './api'
 import { isFunction } from 'lodash'
 import UploadView from '@/components/upload'
+import uliveActivityType from '@/enum/uliveActivityType'
 import activityTagBImg from '@/assets/images/activity-tag-bigimg.png'
 import activityTagSImg from '@/assets/images/activity-tag-smimg.jpg'
 import If from '@/packages/common/components/if'
@@ -188,7 +189,6 @@ class ActivityForm extends React.Component {
   }
 
   render () {
-    const activityType=[{ key: 1, val: '活动直播' }]
     const {
       form: { getFieldDecorator, getFieldValue }
     } = this.props
@@ -206,7 +206,7 @@ class ActivityForm extends React.Component {
             {/* 活动类型为0元购的情况下 需展示提示语句 0元购类型值为13 */}
             <FormItem label='活动类型' extra={ type === 13 ? '仅添加不包邮商品' : '' }>
               {getFieldDecorator('type', {
-                initialValue: 1,
+                initialValue: 14,
                 onChange: this.typeChange
               })(
                 <Select
@@ -214,7 +214,7 @@ class ActivityForm extends React.Component {
                   style={{ width: 120 }}
                   disabled={!!this.state.id}
                 >
-                  {activityType.map((val, i) => <Option value={val.key} key={i}>{val.val}</Option>)}
+                  {uliveActivityType.getArray().map((val, i) => <Option value={val.key} key={i}>{val.val}</Option>)}
                 </Select>
               )}
             </FormItem>

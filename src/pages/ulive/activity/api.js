@@ -2,7 +2,7 @@ import { post, get, newPost } from '../../../util/fetch'
 import { promotionParams, promotionResponse } from './adapter'
 
 export function getPromotionList (data) {
-  return post('/promotion/list', data)
+  return post('/mcweb/promotion/live/list', data)
 }
 
 export function setBasePromotion (data) {

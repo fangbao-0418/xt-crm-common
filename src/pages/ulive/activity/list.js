@@ -18,7 +18,7 @@ import { getPromotionList, disablePromotion, enablePromotion } from './api'
 import Add from './add'
 import moment from 'moment'
 import { setQuery, parseQuery, gotoPage } from '@/util/utils'
-import activityType from '@/enum/activityType'
+import uliveActivityType from '@/enum/uliveActivityType'
 import { isNil, omitBy } from 'lodash'
 
 const FormItem = Form.Item
@@ -177,7 +177,7 @@ class List extends React.Component {
       {
         title: '活动类型',
         dataIndex: 'type',
-        render: text => <>{activityType.getValue(text)}</>
+        render: text => <>{uliveActivityType.getValue(text)}</>
       },
       {
         title: '活动状态',
@@ -190,7 +190,7 @@ class List extends React.Component {
         render: record => (
           <>
             {/* <Link to={`/activity/info/edit/${record.id}?page=${page.current}&pageSize=${page.pageSize}`}>编辑</Link> */}
-            <a onClick={() => gotoPage(`/activity/info/edit/${record.id}`)}>{record.systemTime < record.endTime ? '编辑' : '查看'}</a>
+            <a onClick={() => gotoPage(`/ulive/activity/info/edit/${record.id}`)}>{record.systemTime < record.endTime ? '编辑' : '查看'}</a>
 
             {record.status ? (
               <>
