@@ -4,12 +4,22 @@ import { ColumnProps } from 'antd/lib/table'
 import _ from 'lodash'
 import * as api from './api'
 import { formatMoneyWithSign } from '@/pages/helper'
+const shopTypeMap = {
+  1: '喜团自营',
+  2: '直播小店',
+  3: '品牌旗舰店',
+  4: '品牌专营店',
+  5: '喜团工厂店',
+  6: '普通企业店'
+}
+
 interface Props {
   type?: 'checkbox' | 'radio'
   selectedRowKeys?: any[]
   onOk?: (ids: any[], rows: Shop.ShopItemProps[]) => void
   onSelect?: (record: Shop.ShopItemProps, selected: boolean) => void
   onSelectAll?: (selected: boolean, selectedRows: Shop.ShopItemProps[], changeRows: Shop.ShopItemProps[]) => void
+  processPayload?: (data: any) => any
 }
 interface State extends PageProps<Shop.ShopItemProps> {
   records: Shop.ShopItemProps[]
@@ -74,6 +84,12 @@ class Main extends React.Component<Props, State> {
       }
     },
     {
+      title: '店铺类型',
+      key: 'shopType',
+      dataIndex: 'shopType',
+      render: (val: 1 | 2 | 3 | 4 | 5 | 6) => shopTypeMap[val]
+    },
+    {
       title: '库存',
       dataIndex: 'stock'
     },
@@ -111,7 +127,11 @@ class Main extends React.Component<Props, State> {
     })
   }
   public fetchData () {
-    api.fetchShopList(this.payload).then((res: any) => {
+    let params = this.payload
+    if (this.props.processPayload) {
+      params = this.props.processPayload(params)
+    }
+    api.fetchShopList(params).then((res: any) => {
       res.current = this.payload.page
       this.setState({ ...res })
     })
