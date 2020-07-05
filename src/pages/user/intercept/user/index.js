@@ -83,13 +83,17 @@ export default class extends Component {
                 {orderInterception === 1 ? '关闭权限' : '开启权限'}
               </Button>
               <Divider type="vertical" />
-              <a
-                href={window.location.pathname + `#/user/intercept/detail?id=${record.id}&iphone=${record.phone}`}
-                rel="noreferrer noopener"
-                target="_blank"
+              <span
+                // href={window.location.pathname + `#/user/intercept/detail?id=${record.id}&iphone=${record.phone}`}
+                // rel="noreferrer noopener"
+                // target="_blank"
+                className='href'
+                onClick={() => {
+                  APP.open(`/user/intercept/detail?id=${record.id}&iphone=${record.phone}`)
+                }}
               >
                 查看详情
-              </a>
+              </span>
             </div>
           );
         }

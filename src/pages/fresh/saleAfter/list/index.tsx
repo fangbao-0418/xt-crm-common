@@ -265,12 +265,17 @@ class Order extends Component<any, State> {
                           {order.contactName} {order.contactPhone}
                         </td>
                         <td>
-                          <Button
-                            type='link'
-                            href={window.location.pathname + `#/fresh/saleAfter/detail/${order.refundCode}`}
-                            target='_blank'>
+                          <span
+                            // type='link'
+                            // href={window.location.pathname + `#/fresh/saleAfter/detail/${order.refundCode}`}
+                            // target='_blank'
+                            className='href'
+                            onClick={() => {
+                              APP.open(`/fresh/saleAfter/detail/${order.refundCode}`)
+                            }}
+                          >
                               查看详情
-                          </Button>
+                          </span>
                         </td>
                       </tr>
                       <tr>

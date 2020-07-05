@@ -12,6 +12,7 @@ import MerchantAccounts from './merchant-accounts'
 import SaleAfter from './saleAfter/index'
 import Setting from './setting'
 import Hotkey from './hotkey'
+import Banner from './banner'
 import Area from './area-management'
 import AreaAdd from './area-management/form'
 import Instructor from './instructor-management'
@@ -32,6 +33,7 @@ class Fresh extends React.Component<RouteComponentProps> {
         <Route path={`${match.url}/category`} component={Category} />
         <Route path={`${match.url}/setting`} component={Setting} />
         <Route path={`${match.url}/hotkey`} component={Hotkey} />
+        <Route path={`${match.url}/banner`} component={Banner} />
         <Route path={`${match.url}/merchant-accounts`} component={MerchantAccounts} />
         <Route path={`${match.url}/area`} exact component={Area} />
         <Route path={`${match.url}/area/:id`} component={AreaAdd} />

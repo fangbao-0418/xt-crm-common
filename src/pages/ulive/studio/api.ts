@@ -9,10 +9,12 @@ const { post, get, newPost, newPut } = APP.http
 export const getStudioList = (payload: any) => {
   return get('::ulive/live/plan/list', payload)
 }
+
 /** 获取直播计划详情 */
 export const fetchPlanInfo = (planId: any) => {
   return get<UliveStudio.ItemProps>(`::ulive/live/plan/${planId}`)
 }
+
 /** 停播 */
 export const stopPlay = (payload: {
   breakReason: string
@@ -22,6 +24,7 @@ export const stopPlay = (payload: {
 }) => {
   return newPut('::ulive/live/plan/break', payload)
 }
+
 /** 上下架 */
 export const changeStatus = (payload: {
   planId: number
@@ -29,6 +32,7 @@ export const changeStatus = (payload: {
 }) => {
   return newPut('::ulive/live/plan/status/update', payload)
 }
+
 /** 置顶 */
 export const setTop = (payload: {
   planId: number
@@ -38,6 +42,7 @@ export const setTop = (payload: {
 }) => {
   return newPut('::ulive/live/plan/top', payload)
 }
+
 /** 修改封面 */
 export const changeCover = (payload: {
   planId: number
@@ -45,6 +50,7 @@ export const changeCover = (payload: {
 }) => {
   return newPut('::ulive/live/plan/banner', payload)
 }
+
 /** 审核 */
 export const audit = (payload: {
   /** 审核原因，审核不通过必填 */
@@ -55,6 +61,7 @@ export const audit = (payload: {
 }) => {
   return newPut('::ulive/live/plan/audit', payload)
 }
+
 /** 获取小程序微信太阳码 */
 export const getWxQrcode = (payload: {
   host?: string
@@ -64,6 +71,7 @@ export const getWxQrcode = (payload: {
 }) => {
   return newPost('::ulive/live/plan/code', payload)
 }
+
 /** 获取举报列表 */
 export const fetchComplainList = (payload: {
   livePlanId: any
@@ -89,4 +97,14 @@ export const stopPlayback = (payload: {
   forbidReason?: string
 }) => {
   return newPost('::ulive/live/plan/playback/forbid', payload)
+}
+
+/** 优惠券列表 */
+export const getCouponList = (payload: any) => {
+  return newPost('/mcweb/coupon/get/couponList', payload)
+}
+
+/** 设置优惠券 */
+export const setCoupon = (payload: any) => {
+  return newPost('::ulive/live/coupon/modify', payload)
 }

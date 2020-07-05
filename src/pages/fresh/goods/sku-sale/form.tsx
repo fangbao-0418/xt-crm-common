@@ -182,6 +182,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'productId',
           'productName',
           'productShortName',
+          'boxSpec',
           // 'property1',
           // 'property2',
           'storeId',
@@ -194,6 +195,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'videoUrl',
           'deliveryMode',
           'settleType',
+          'sort',
           // 'barCode',
           'bannerUrl',
           'returnPhone',
@@ -636,7 +638,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               )
             }}
           />
-          {/* <FormItem verifiable name='showNum' /> */}
+          <FormItem verifiable name='sort' />
         </Card>
         <SkuList
           form={this.form && this.form.props.form}
@@ -660,6 +662,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         >
           <FormItem name='bulk' />
           <FormItem name='weight' />
+          <FormItem name='boxSpec' />
           <FormItem
             label='可售区域'
             required

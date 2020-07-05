@@ -107,9 +107,19 @@ class Recharge extends Component {
         title: '子订单号',
         dataIndex: 'childOrderCode',
         render: (childOrderCode, row)=>{
-          return (<a href={window.location.pathname + '#/order/detail/' + row.mainOrderCode} target='_blank' rel='noopener noreferrer'>
-            {childOrderCode}
-          </a>)
+          return (
+            <span
+              // href={window.location.pathname + '#/order/detail/' + row.mainOrderCode}
+              // target='_blank'
+              // rel='noopener noreferrer'
+              className='href'
+              onClick={() => {
+                APP.open(`/order/detail/${row.mainOrderCode}`)
+              }}
+            >
+              {childOrderCode}
+            </span>
+          )
         }
       },
       {

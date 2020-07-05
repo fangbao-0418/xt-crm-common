@@ -212,13 +212,13 @@ class BannerModal extends Component {
                 })(<Input placeholder='' />)}
               </FormItem>
             </If>
-            <If condition={[1, 2, 3, 4, 6, 7, 8].includes(seat[0])}>
+            <If condition={[1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])}>
               <FormItem key={renderKey} label='Banner图片' required={true}>
                 {getFieldDecorator('imgList', {
                   initialValue: initImgList(data.imgUrlWap),
                   rules: [
                     {
-                      required: [1, 2, 3, 4, 6, 7, 8].includes(seat[0]),
+                      required: [1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0]),
                       message: '请上传Banner图片'
                     }
                   ]

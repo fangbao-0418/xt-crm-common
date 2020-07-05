@@ -6,9 +6,11 @@ interface ItemProps {
   key: any
   value: string
 }
+//type:1为买菜，默认为优选
 interface Props {
   value?: any[]
   onChange?: (value?: any[]) => void
+  type?: any
 }
 interface State {
   options: ItemProps[]
@@ -18,19 +20,21 @@ class Main extends React.Component<Props> {
     options: []
   };
   public componentDidMount () {
-    api.getSeatList().then((res: ItemProps[]) => {
+    api.getSeatList(this.props.type).then((res: ItemProps[]) => {
       this.fetchCategory(res)
     })
   }
   public fetchCategory (options: ItemProps[]) {
     api.getCategory().then((res: any) => {
       if (res.records) {
-        options[1].children = res.records.map((item: {id: any, name: string}) => {
-          return {
-            key: item.id,
-            value: item.name
-          }
-        })
+        if (options[1]) {
+          options[1].children = res.records.map((item: {id: any, name: string}) => {
+            return {
+              key: item.id,
+              value: item.name
+            }
+          })
+        }
         this.setState({
           options
         })
@@ -47,7 +51,7 @@ class Main extends React.Component<Props> {
       <Cascader
         placeholder='请选择位置'
         options={this.state.options}
-        fieldNames={{label: 'value', value: 'key', children: 'children'}}
+        fieldNames={{ label: 'value', value: 'key', children: 'children' }}
         onChange={this.onChange}
         value={this.props.value}
         changeOnSelect

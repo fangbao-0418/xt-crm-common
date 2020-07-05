@@ -135,10 +135,16 @@ class List extends React.Component {
         dataIndex: 'mainOrderCode',
         render: (text, record) => {
           return (
-            <a href={window.location.pathname + '#/order/detail/' + text} target="_blank" rel="noopener noreferrer">
+            <span
+              className='href'
+              // href={window.location.pathname + '#/order/detail/' + text}
+              onClick={() => {
+                APP.open(`/order/detail/${text}`)
+              }}
+            >
               {text}
-            </a>
-          );
+            </span>
+          )
         }
       },
       {

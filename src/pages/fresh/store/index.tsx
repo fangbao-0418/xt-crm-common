@@ -9,7 +9,6 @@ import CitySelect from '@/components/city-select'
 import { FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
 import { RouteComponentProps } from 'react-router'
-import * as api from './api'
 import UpdateStoreModal from './update-store'
 const Option = Select.Option
 type Props = RouteComponentProps<{id: string}>;
