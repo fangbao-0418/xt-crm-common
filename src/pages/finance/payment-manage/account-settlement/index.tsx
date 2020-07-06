@@ -254,7 +254,6 @@ class Main extends React.Component<Props> {
             readonly={readonly}
             onChange={(filed, value) => {
               if (filed === 'subjectId'&&type===1) {
-                this.id=null
                 form.setValues({
                   subjectName: null
                 })
@@ -485,7 +484,7 @@ class Main extends React.Component<Props> {
                     name: item.name
                   }
                 })
-                if (!this.id||value.subjectName) {
+                if (!value.subjectName) {
                   APP.error('账务对象名称不存在，请输入正确账务对象ID进行校验')
                   return
                 }
