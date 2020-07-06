@@ -1,7 +1,11 @@
 {
-  "extends": "./paths.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es5",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": true,
     "lib": [
       "dom",
       "dom.iterable",
@@ -19,7 +23,10 @@
     "downlevelIteration": true,
     "isolatedModules": true,
     "noEmit": false,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "exclude": [
     "node_modules"

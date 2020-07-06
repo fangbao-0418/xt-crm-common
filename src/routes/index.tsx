@@ -10,7 +10,7 @@ import React from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
 import { view as Layout } from '@/components/layout'
 import * as modules from './modules'
-import { Login, Home } from './modules'
+
 import { Observer } from '@xt-micro-service/bootstrap'
 
 interface State {
@@ -31,10 +31,9 @@ class Main extends React.Component<{}, State> {
   }
   render () {
     const { ServerRoutes } = this.state
-    console.log(ServerRoutes, 'ServerRoutes')
     return (
       <Switch>
-        <Route exact={true} path='/login' component={Login} />
+        <Route exact={true} path='/login' component={modules.Login} />
         <Layout>
           <Route path='/' exact={true} render={() => <Redirect to='/home' />} />
           {
@@ -44,8 +43,7 @@ class Main extends React.Component<{}, State> {
               )
             })
           }
-          <Route path='/home' component={Home} />
-          
+          <Route path='/home' component={modules.Home} />  
           <Route path='/settings' component={modules.Settings} />
           <Route path='/goods' component={modules.Goods} />
           <Route path='/template' component={modules.Template} />

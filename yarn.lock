@@ -2293,7 +2293,7 @@ autoprefixer@^9.4.2, autoprefixer@^9.6.1:
     postcss "^7.0.32"
     postcss-value-parser "^4.1.0"
 
-awesome-typescript-loader@5.2.1, awesome-typescript-loader@^5.2.1:
+awesome-typescript-loader@5.2.1:
   version "5.2.1"
   resolved "http://192.168.20.8:802/awesome-typescript-loader/-/awesome-typescript-loader-5.2.1.tgz#a41daf7847515f4925cdbaa3075d61f289e913fc"
   dependencies:
@@ -13946,10 +13946,6 @@ typescript@^2.3.2:
   version "2.9.2"
   resolved "http://192.168.20.8:802/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
 
-typescript@^3.9.5:
-  version "3.9.6"
-  resolved "http://192.168.20.8:802/typescript/-/typescript-3.9.6.tgz#8f3e0198a34c3ae17091b35571d3afd31999365a"
-
 ua-parser-js@^0.7.18:
   version "0.7.21"
   resolved "http://192.168.20.8:802/ua-parser-js/-/ua-parser-js-0.7.21.tgz#853cf9ce93f642f67174273cc34565ae6f308777"
@@ -14923,9 +14919,10 @@ xregexp@4.0.0:
   version "4.0.0"
   resolved "http://192.168.20.8:802/xregexp/-/xregexp-4.0.0.tgz#e698189de49dd2a18cc5687b05e17c8e43943020"
 
-xt-crm-cli@^1.0.0:
-  version "1.0.0"
-  resolved "http://192.168.20.8:802/xt-crm-cli/-/xt-crm-cli-1.0.0.tgz#e45d92f049fa88adef120c35a4539e5a22ba1827"
+xt-crm-cli@^1.0.1:
+  version "1.0.1"
+  resolved "http://192.168.20.8:802/xt-crm-cli/-/xt-crm-cli-1.0.1.tgz#85b073232425b99bbf6a5267aeeb32468dfefa44"
+  integrity sha512-f6n4p+SVTY5VsdExU540rng8Bh6gJRGvHRh417IEIomC+jIwhsLyhAq/Yzqs7IbOfbgtx1WRYhQebZSYnX0Xwg==
   dependencies:
     "@babel/cli" "^7.8.4"
     "@babel/core" "^7.9.6"
@@ -14937,7 +14934,6 @@ xt-crm-cli@^1.0.0:
     "@types/react" "^16.9.2"
     "@types/react-dom" "^16.9.0"
     autoprefixer "^9.6.1"
-    awesome-typescript-loader "^5.2.1"
     babel-loader "^8.0.6"
     babel-plugin-import "^1.12.1"
     chalk "^2.4.2"
@@ -14953,6 +14949,7 @@ xt-crm-cli@^1.0.0:
     eslint-plugin-react "^7.14.3"
     eslint-plugin-standard "^4.0.1"
     file-loader "^4.2.0"
+    fork-ts-checker-webpack-plugin "^5.0.5"
     html-webpack-plugin "^3.2.0"
     mini-css-extract-plugin "^0.8.0"
     path "^0.12.7"
@@ -14970,7 +14967,7 @@ xt-crm-cli@^1.0.0:
     tslint-eslint-rules "^5.4.0"
     tslint-loader "^3.5.4"
     tslint-react "^4.0.0"
-    typescript "^3.9.5"
+    typescript "3.8.3"
     url-loader "^2.1.0"
     webpack "^4.42.1"
     webpack-dev-server "^3.8.0"

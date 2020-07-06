@@ -5,9 +5,8 @@
  * @FilePath: /xt-new-mini/Users/fangbao/Documents/xituan/xt-crm/src/pages/login/domain.js
  */
 export default [
-  ['日常1', 'http://daily-crm-test.hzxituan.com'],
-  ['日常2', 'http://daily2-crm-test.hzxituan.com'],
-  ['测试1','https://testapi-crmadmin.hzxituan.com'],
-  ['测试2','https://test2api-crmadmin.hzxituan.com'],
-  ['本地', 'https://pre-xt-crm-api.hzxituan.com']
+  ['日常1', 'http://daily-crm-test.hzxituan.com', 'dev'],
+  ['日常2', 'http://daily2-crm-test.hzxituan.com', 'dev2'],
+  ['测试1', 'https://testapi-crmadmin.hzxituan.com', 'test'],
+  ['测试2', 'https://test2api-crmadmin.hzxituan.com', 'test2']
 ]

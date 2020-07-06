@@ -30,13 +30,13 @@ module.exports = function (config, env) {
   const branch = process.env.branch
   const app_name = process.env.app_name
   const origin = getOrigin(__ENV__)
-  const publicPath = env === 'dev' ? '/' : `${origin}/${app_name}/${branch}/`
+  const publicPath = env === 'dev' ? '/' : `/${app_name}/${branch}/`
   
   config.output.publicPath = publicPath
   console.log(publicPath, 'publicPath')
   config.entry = {
     app: './src/index',
-    // core: './src/core.tsx'
+    core: './src/core.tsx'
   }
   config.output.jsonpFunction = `xt-${pkg.name}`
   // config.plugins[0].options.publishTime = new Date().getTime()
@@ -44,7 +44,10 @@ module.exports = function (config, env) {
   config.plugins.push(
     new webpack.DefinePlugin({
       BUILD_TIME: JSON.stringify(BUILD_TIME),
-      __ENV__: JSON.stringify(__ENV__)
+      __ENV__: JSON.stringify(__ENV__),
+      'process.env': {
+        PUB_ENV: JSON.stringify(__ENV__)
+      }
     })
   )
   config.plugins.push(
@@ -92,7 +95,6 @@ module.exports = function (config, env) {
           }
         }
       },
-      // Compiles Sass to CSS
       {
         loader: 'sass-loader'
       }
@@ -131,15 +133,6 @@ module.exports = function (config, env) {
       }
     ]
   })
-  // config.resolve.modules = [
-  //   'node_modules'
-  // ]
-  console.log(env, 'env')
-  // config.optimization.splitChunks = {
-  //   splitChunks: {
-  //     chunks: 'all',
-  //   }
-  // }
   config.optimization = {
     ...  config.optimization,
     splitChunks: {
@@ -160,9 +153,9 @@ module.exports = function (config, env) {
     }
   }
   if (env === 'prod') {
-    config.plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static'
-    }))
+    // config.plugins.push(new BundleAnalyzerPlugin({
+    //   analyzerMode: 'static'
+    // }))
   }
   config.externals = {
     antd: 'antd',
