@@ -12,11 +12,6 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const CreateBuildConf = require('./plugins/createBuildConf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const originConfig = {
-  dev: 'http://daily-xt-crmadmin.hzxituan.com',
-  test: 'https://test-crmadmin.hzxituan.com'
-}
-
 function getOrigin (env) {
   return originConfig[env]
 }
@@ -31,11 +26,11 @@ module.exports = function (config, env) {
   const __ENV__ = process.env.NODE_ENV || 'dev'
   const branch = process.env.branch
   const app_name = process.env.app_name
-  const origin = getOrigin(__ENV__)
-  const publicPath = env === 'dev' ? '/' : `/${app_name}/${branch}/`
+  const origin = process.env.app_origin
+  const publicPath = env === 'dev' ? '/' : `${origin}/${app_name}/${branch}/`
   
   config.output.publicPath = publicPath
-  console.log(publicPath, 'publicPath')
+
   config.entry = {
     app: './src/index',
     core: './src/core.tsx'
