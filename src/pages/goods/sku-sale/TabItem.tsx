@@ -10,7 +10,7 @@ import dateFns from 'date-fns'
 import SuppilerSelector from '@/components/supplier-selector'
 import SelectFetch from '@/components/select-fetch'
 import { ColumnProps } from 'antd/lib/table'
-import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList } from '../api'
+import { getGoodsList, delGoodsDisable, enableGoods, exportFileList, getCategoryTopList, copy } from '../api'
 import { GoodProps } from './interface'
 
 /** 此处类型后端传参0和1反了，0查找上架商品，上架商品实际状态为1 */
@@ -204,12 +204,12 @@ class Main extends React.Component<Props, SkuSaleListState> {
     })
   }
  /** 复制商品 */
- copy = (ids: any) => {
+ copy = (productId: any) => {
    Modal.confirm({
      title: '复制提示',
      content: '确认复制该商品吗?',
      onOk: () => {
-       delGoodsDisable({ ids }).then((res: any) => {
+       copy({ productId }).then((res: any) => {
          if (res) {
            message.success('商品已复制到待上架列表中')
            this.list.refresh()
