@@ -149,7 +149,7 @@ module.exports = function (config, env) {
       minSize: 0,
       minChunks: 1,
       maxAsyncRequests: 10,
-      maxInitialRequests: 1,
+      maxInitialRequests: 2,
       automaticNameDelimiter: '~',
       name: true,
       cacheGroups: {
