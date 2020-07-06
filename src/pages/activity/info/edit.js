@@ -10,9 +10,11 @@ import {
   refreshPromtion,
   getOperatorSpuList,
   getGoodsListByActivityId,
-  batchMoveGoodsToOtherActivity
+  batchMoveGoodsToOtherActivity,
+  getShopTypes
 } from '../api'
 import ActivityInfo from './ActivityInfo'
+import SelectFetch from '@/components/select-fetch'
 import ActivityList from './ActivityList'
 import { size, filter, difference } from 'lodash'
 import { gotoPage } from '@/util/utils'
@@ -530,8 +532,13 @@ class List extends React.Component {
         >
           <Input.Search
             placeholder='请输入需要搜索的商品'
-            style={{ marginBottom: 10 }}
+            style={{ marginBottom: 10, width: 200 }}
             onSearch={this.handleSearchModal}
+          />
+          <SelectFetch
+            mode='multiple'
+            style={{ width: 172 }}
+            fetchData={getShopTypes}
           />
           <Table
             rowSelection={rowSelection}

@@ -9,6 +9,18 @@ export interface batchExportPayload {
   fileName: string
 }
 
+// 获取店铺类型
+export function getShopTypes () {
+  return get('/shop/v1/query/type').then((res: any) => {
+    return (res || []).map((item: { tag: any; code: any }) => {
+      return {
+        label: item.tag,
+        value: item.code
+      }
+    })
+  })
+}
+
 // 获取订单类型集合
 export function getOrderTypeList () {
   return get('/order/getOrderTypeList')
