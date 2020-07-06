@@ -10,6 +10,8 @@ const webpack = require('webpack')
 const pkg = require('./package.json')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const CreateBuildConf = require('./plugins/createBuildConf')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+
 const originConfig = {
   dev: 'http://daily-xt-crmadmin.hzxituan.com',
   test: 'https://test-crmadmin.hzxituan.com'
@@ -59,6 +61,13 @@ module.exports = function (config, env) {
     new webpack.ProvidePlugin({
       APP: path.resolve(__dirname, 'src/util/app')
     })
+  )
+  config.plugins.push(
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, 'src/assets/root')
+      }
+    ])
   )
   // const outdir = 'build'
   // config.output.path = path.resolve(process.cwd(), outdir),
@@ -140,7 +149,7 @@ module.exports = function (config, env) {
       minSize: 0,
       minChunks: 1,
       maxAsyncRequests: 10,
-      maxInitialRequests: 3,
+      maxInitialRequests: 1,
       automaticNameDelimiter: '~',
       name: true,
       cacheGroups: {
