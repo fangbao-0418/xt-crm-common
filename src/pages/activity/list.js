@@ -162,7 +162,15 @@ class List extends React.Component {
       },
       {
         title: '活动名称',
-        dataIndex: 'title'
+        dataIndex: 'title',
+        render: (text, record) => {
+          return (
+            <div>
+              <div>{text}</div>
+              <div style={{ display: 'inline-block', backgroundColor: 'red', color: '#fff', paddingLeft: 5, paddingRight: 5, borderRadius: 2 }}>{record.id}</div>
+            </div>
+          )
+        }
       },
       {
         title: '开始时间',
