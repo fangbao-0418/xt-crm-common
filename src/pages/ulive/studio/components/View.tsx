@@ -33,7 +33,7 @@ function Statistics (props: {
       {
         dataSource.map((item, index) => {
           return (
-            <div key={index} className={styles['statistics-item']}>
+            <div key={index} className={styles['statistics-item']} style={{ width: dataSource.length===8?'25%':'20%' }}>
               <div className={styles['statistics-item-result']}>{item.value}</div>
               <div className={styles['statistics-item-label']}>{item.label}</div>
             </div>
@@ -65,10 +65,6 @@ class Main extends React.Component<Props, State> {
       },
       {
         label: '在线人数',
-        value: 0
-      },
-      {
-        label: '平均停留时长',
         value: 0
       },
       {
@@ -140,14 +136,6 @@ class Main extends React.Component<Props, State> {
           value: liveData.giveThumbsUpPv
         },
         {
-          label: '在线人数',
-          value: 0
-        },
-        {
-          label: '平均停留时长',
-          value: 0
-        },
-        {
           label: '实付金额(总)',
           value: APP.fn.formatMoneyNumber(liveData.orderTotalPayMoney, 'm2u')
         },
@@ -164,6 +152,13 @@ class Main extends React.Component<Props, State> {
           value: liveData.orderIndirectPayTotal
         }
       ] : this.state.statistics
+      //60:直播中 90 直播结束
+      if ([60, 90].indexOf(res.liveStatus) > -1&&liveData) {
+        statistics.splice(4, 0, {
+          label: res.liveStatus===90?'在线人数':'峰值在线人数',
+          value: res.liveStatus===90?(liveData.onlineNum||0):(liveData.onlineMaxNum||0)
+        })
+      }
       this.setState({
         type,
         statistics,
