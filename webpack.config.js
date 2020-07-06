@@ -145,26 +145,26 @@ module.exports = function (config, env) {
   config.optimization = {
     ...  config.optimization,
     splitChunks: {
-      chunks: "all",
+      chunks: "async",
       minSize: 0,
       minChunks: 1,
       maxAsyncRequests: 10,
-      maxInitialRequests: 2,
+      maxInitialRequests: 3,
       automaticNameDelimiter: '~',
       name: true,
       cacheGroups: {
         vendors: {
             test: /node_modules/,
             name: 'vendors',
-            chunks: 'all'
+            chunks: 'async'
         }
       }
     }
   }
   if (env === 'prod') {
-    // config.plugins.push(new BundleAnalyzerPlugin({
-    //   analyzerMode: 'static'
-    // }))
+    config.plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static'
+    }))
   }
   config.externals = {
     antd: 'antd',
