@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "strict": true,
+    "noImplicitAny": true,
     "strictPropertyInitialization": false,
     "strictNullChecks": true,
     "downlevelIteration": true,

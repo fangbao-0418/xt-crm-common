@@ -18,7 +18,7 @@
     "resolveJsonModule": true,
     "downlevelIteration": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "preserve"
   },
   "exclude": [
@@ -26,7 +26,6 @@
   ],
   "include": [
     "src",
-    "app.js",
-    "config-overrides.js"
+    "app.js"
   ]
 }

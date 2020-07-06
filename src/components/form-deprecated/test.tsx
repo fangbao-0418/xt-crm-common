@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Radio } from 'antd'
-import Form, { FormInstance, FormItem, getFieldsConfig } from '@/components/form'
+import Form, { FormInstance, FormItem, getFieldsConfig } from './index'
 class Main extends React.Component {
   public form: FormInstance
   public state = {
@@ -39,7 +39,7 @@ class Main extends React.Component {
               }
             })
           }
-          getInstance={(ref) => {
+          getInstance={(ref: any) => {
             this.form = ref
           }}
           labelCol={{span: 8}}

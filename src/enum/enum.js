@@ -32,7 +32,7 @@ Enum.prototype.getKey = function (val) {
  *  { type: '', key: '', val: '' }
  * 
  */
-Enum.prototype.getArray = function (config) {
+Enum.prototype.getArray = function (config = undefined) {
   if(typeof config !== 'object') config = {type: config};
   let array = this._array;
   if(config.type == 'all') array = [
