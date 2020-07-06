@@ -7,5 +7,7 @@ config.push({
   css: [],
   js: []
 })
-const app = bootstrap(config)
+const app = bootstrap(config, {
+  baseUrl: 'http://daily-xt-crmadmin.hzxituan.com'
+})
 app.start()

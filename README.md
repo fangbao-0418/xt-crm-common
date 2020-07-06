@@ -24,3 +24,12 @@ git submodule add -b feature/issue28 -f --name common -- git@192.168.20.7:front-
 ```
 git submodule add -b master -f --name portal -- git@192.168.20.7:front-end/xt-youxan/xt-crm-microservice/portal.git ./src/packages/portal
 ```
+
+## env
+```
+  ['https://daily-xt-crmadmin.hzxituan.com'],
+  ['https://test-crmadmin.hzxituan.com'],
+  ['https://test2-crmadmin.hzxituan.com'],
+  ['https://pre-xt-crmadmin.hzxituan.com'],
+  ['https://xt-crmadmin.hzxituan.com']
+```

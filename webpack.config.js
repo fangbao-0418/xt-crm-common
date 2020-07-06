@@ -12,9 +12,6 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const CreateBuildConf = require('./plugins/createBuildConf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-function getOrigin (env) {
-  return originConfig[env]
-}
 module.exports = function (config, env) {
   const dev = env === 'dev'
   /** 构建时间 */
