@@ -1,6 +1,7 @@
 import React from 'react'
 import { formatMoneyWithSign } from '../../helper'
 import Image from '../../../components/Image'
+import { productTypeMap } from './config'
 // const shopTypeMap = {
 //   1: '喜团自营',
 //   2: '直播小店',
@@ -30,7 +31,15 @@ export const goodsColumns = (data = [], id = 'id') => {
       title: '商品名称',
       key: 'productName',
       dataIndex: 'productName',
-      width: 200
+      width: 200,
+      render: (text, record) => {
+        return (
+          <div>
+            <div>{text}</div>
+            <div style={{ display: 'inline-block', backgroundColor: 'red', color: '#fff', paddingLeft: 5, paddingRight: 5, borderRadius: 2 }}>{productTypeMap[record.productType]}</div>
+          </div>
+        )
+      }
     },
     {
       title: '商品主图',
@@ -74,3 +83,4 @@ export const goodsColumns = (data = [], id = 'id') => {
     ...data
   ]
 }
+

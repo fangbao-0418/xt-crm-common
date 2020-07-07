@@ -162,15 +162,7 @@ class List extends React.Component {
       },
       {
         title: '活动名称',
-        dataIndex: 'title',
-        render: (text, record) => {
-          return (
-            <div>
-              <div>{text}</div>
-              <div style={{ display: 'inline-block', backgroundColor: 'red', color: '#fff', paddingLeft: 5, paddingRight: 5, borderRadius: 2 }}>{record.id}</div>
-            </div>
-          )
-        }
+        dataIndex: 'title'
       },
       {
         title: '开始时间',
@@ -195,6 +187,7 @@ class List extends React.Component {
       {
         title: '操作',
         align: 'center',
+        width: 150,
         render: record => (
           <>
             {/* <Link to={`/activity/info/edit/${record.id}?page=${page.current}&pageSize=${page.pageSize}`}>编辑</Link> */}

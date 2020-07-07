@@ -212,18 +212,6 @@ export const formFields = function (
       }
     },
     {
-      type: 'input',
-      id: 'a',
-      label: '店铺类型',
-      render: () => {
-        return (<SelectFetch
-          mode='multiple'
-          style={{ width: 172 }}
-          fetchData={getShopTypes}
-        />)
-      }
-    },
-    {
       type: 'select',
       id: 'autoAudit',
       label: '是否自动审核',
@@ -244,11 +232,24 @@ export const formFields = function (
       initialValue: ''
     }, {
       type: 'input',
-      id: 'mainOrderCode',
+      id: 'shopPhone',
       sourceProps: {
         placeholder: '只支持小店和pop店'
       },
       label: '供应商手机'
+    },
+    {
+      type: 'input',
+      id: 'shopType',
+      label: '店铺类型',
+      render: () => {
+        return (<SelectFetch
+          mode='multiple'
+          placeholder= '请选择店铺类型'
+          style={{ width: 180 }}
+          fetchData={getShopTypes}
+        />)
+      }
     }
   ].filter((item: any) => {
     return intercept

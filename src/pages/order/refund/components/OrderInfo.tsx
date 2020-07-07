@@ -116,7 +116,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
           </Col>
           <Col span={8}>手机号：{shopDTO.shopOwnerPhone}</Col>
           <Col span={8}>
-          店铺类型：{storeTypeMap[shopDTO.shopType]}
+          店铺类型：{storeTypeMap[orderInfoVO.shopType]}
           </Col>
         </Row>
       ) : (

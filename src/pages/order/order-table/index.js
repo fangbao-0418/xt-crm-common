@@ -4,7 +4,7 @@ import { isNil } from 'lodash'
 import moment from 'moment'
 import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant'
 import { formatDate, formatMoneyWithSign } from '../../helper'
-import { getOrderList, newExportOrder, importLogistics, getShopTypes } from '../api'
+import { getOrderList, newExportOrder, importLogistics, getShopTypes, getPhoneById } from '../api'
 import GoodCell from '../../../components/good-cell'
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import RefundCell from '../components/refund-cell'
@@ -69,15 +69,30 @@ class OrderList extends React.Component {
     }
     this.payload = this.payload || {}
     this.payload[this.props.pathname] = params
-    APP.fn.setPayload('order', this.payload)
     if (noFetch) {
       return
     }
+    if (fieldsValues&&fieldsValues.shopPhone) {
+      getPhoneById({ phone: fieldsValues.shopPhone }).then((res = {}) => {
+        if (res.id) {
+          params.shopId=res.id
+        } else {
+          params.shopId=-100
+        }
+        this.loadData(isExport, params)
+      })
+    } else {
+      this.loadData(isExport, params)
+    }
+    APP.fn.setPayload('order', this.payload)
+  };
+
+  loadData (isExport, params) {
     if (isExport) {
       this.setState({
         loading: true
       })
-      newExportOrder(params)
+      newExportOrder({ ...params, shopType: params.shopType?(params.shopType).toString():null })
         .then(res => {
           APP.success('导出成功，请前往下载列表下载文件')
         })
@@ -87,14 +102,14 @@ class OrderList extends React.Component {
           })
         })
     } else {
-      getOrderList(params).then((res = {}) => {
+      getOrderList({ ...params, shopType: params.shopType?(params.shopType).toString():null }).then((res = {}) => {
         this.setState({
           list: res.records,
           total: res.total
         })
       })
     }
-  };
+  }
 
   handleSearch = () => {
     this.setState(
@@ -383,7 +398,7 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label='收货人电话'>
-                  {getFieldDecorator('phone')(<Input placeholder='请输入收货人电话' />)}
+                  {getFieldDecorator('phone', { initialValue: values.phone })(<Input placeholder='请输入收货人电话' />)}
                 </FormItem>
               </Col>
               <Col span={6}>
@@ -441,12 +456,12 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label='供应商手机'>
-                  {getFieldDecorator('shopOwnerPhone')(<Input placeholder='只支持小店和pop店' />)}
+                  {getFieldDecorator('shopPhone', { initialValue: values.shopPhone })(<Input placeholder='只支持小店和pop店' />)}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='店铺类型'>
-                  {getFieldDecorator('shopOrder')(
+                  {getFieldDecorator('shopType', { initialValue: values.shopType })(
                     <SelectFetch
                       mode='multiple'
                       style={{ width: 172 }}

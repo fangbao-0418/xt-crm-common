@@ -26,6 +26,10 @@ export function getOrderTypeList () {
   return get('/order/getOrderTypeList')
 }
 
+// 手机号查询店铺信息
+export function getPhoneById (data: any) {
+  return post('/shop/v1/query/one', data)
+}
 // 批量轨迹导出
 export function batchExport (payload: batchExportPayload) {
   return exportFileStream('/expressTracking/batchExport', batchExportRequest(payload), payload.fileName)

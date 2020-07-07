@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Row, Col, Checkbox, Button, Icon, Modal } from 'antd'
 import styles from './style.module.styl'
 import * as api from './api'
-import { platformCodesOptions, memberTypesOptions, isBusinessOptions } from './config'
+import { platformCodesOptions, memberTypesOptions } from './config'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
 import * as adapter from './adapter'
@@ -293,20 +293,6 @@ class Main extends React.Component<any, State> {
                         }
                       ]
                     })(<Checkbox.Group options={memberTypesOptions} />)
-                  }}
-                />
-                <FormItem
-                  label='是否商家'
-                  required
-                  inner={form => {
-                    return form.getFieldDecorator('isBusiness', {
-                      rules: [
-                        {
-                          required: true,
-                          message: '请选择是否商家'
-                        }
-                      ]
-                    })(<Checkbox.Group options={isBusinessOptions} />)
                   }}
                 />
                 <FormItem

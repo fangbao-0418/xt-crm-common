@@ -61,12 +61,6 @@ export const memberTypesOptions: options[] = [
   { label: '合伙人', value: '30' }
 ]
 
-/** 是否商家 */
-export const isBusinessOptions: options[] = [
-  { label: '买家', value: '1' },
-  { label: '商家', value: '2' }
-]
-
 /** 发布状态 */
 export enum statusEnums {
   '草稿' = 0,
