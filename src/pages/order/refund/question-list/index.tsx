@@ -302,7 +302,7 @@ class Main extends React.Component<Props, State> {
                         })
                         console.log(res, 'res======')
                         this.setState({
-                          searchTitle: res.title
+                          searchTitle: res?.title || ''
                         })
                       }}
                       placeholder='请输入问题标题关键字下拉搜索'
