@@ -57,7 +57,6 @@ class Main extends React.Component<{}, State> {
           <Route path='/auth' component={modules.Auth} />
           <Route path='/interface' component={modules.Interface} />
           <Route path='/crudpage' component={modules.CrudPage} />
-          <Route path='/message' component={modules.Message} />
           <Route path='/setting' component={modules.Setting} />
           <Route path='/ulive' component={modules.ULive} />
           <Route path='/merchant-accounts' component={modules.MerchantAccounts} />
