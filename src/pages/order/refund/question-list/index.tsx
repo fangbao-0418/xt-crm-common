@@ -151,7 +151,6 @@ class Main extends React.Component<Props, State> {
         onOk: () => {
           if (form) {
             form.props.form.validateFields((err, values) => {
-              debugger
               if (err) {
                 return
               }

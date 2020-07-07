@@ -35,7 +35,7 @@ function saveService (data, isServiceCenter) {
 
   const saveData = JSON.stringify(data)
   const file = new File([saveData], 'service')
-  ossUpload(file, 'question', 'cos', '/question.json').then((res) => {
+  ossUpload(file, 'question', 'cos', '/question-test.json').then((res) => {
     if (res) {
       APP.success('保存成功')
       isServiceCenter && gotoPage('/order/servicecenter')
