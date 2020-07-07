@@ -85,8 +85,8 @@ class Main extends React.Component<Props, State> {
     api.fetchQuestion().then(res => {
       this.data = res
       this.setState({
-        data: res,
-        showDataSource: res.originalQuestion
+        data: Object.assign({ announcement: '', applicationQuestion: [], originalQuestion: [] }, res),
+        showDataSource: res.originalQuestion || []
       })
     })
   }
@@ -151,6 +151,7 @@ class Main extends React.Component<Props, State> {
         onOk: () => {
           if (form) {
             form.props.form.validateFields((err, values) => {
+              debugger
               if (err) {
                 return
               }
@@ -216,6 +217,7 @@ class Main extends React.Component<Props, State> {
    */
   save = () => {
     const { data } = this.state
+    console.log(1111)
     saveService(data)
   }
 
