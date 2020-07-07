@@ -5,12 +5,13 @@ import { Alert, If } from '@/packages/common/components'
 import { getUniqueId } from '@/packages/common/utils/index'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Popconfirm, Row, Col, Input, Table, Button, Modal, InputNumber } from 'antd'
+import { Popconfirm, Row, Col, Table, Button, Modal, InputNumber } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import UploadView, { ossUpload } from '@/components/upload'
+import UploadView from '@/components/upload'
 import { getFieldsConfig } from './config'
 import SearchFetch from '@/packages/common/components/search-fetch'
 import { gotoPage } from '@/util/utils'
+import saveService from '../common/saveService'
 import * as api from './api'
 interface Props extends AlertComponentProps, RouteComponentProps<{id: string}> {
 }
@@ -89,7 +90,6 @@ class Main extends React.Component<Props> {
     width: 200,
     align: 'center',
     render: (record) => {
-      console.log(record, 'record=====')
       return (
         <div>
           {record.item?.length || 0}
@@ -179,48 +179,8 @@ class Main extends React.Component<Props> {
    * 保存数据
    */
   public save = () => {
-    const obj = {
-      announcement: '喜团不会以任何理由要求您转账汇款、扫描二维码或点击退款/补款链接，请提高警惕，谨防上当受骗。',
-      applicationQuestion: [
-        {
-          name: '售后问题',
-          icon: 'https://assets.hzxituan.com/upload/2020-06-02/76b5d1c0-13b0-4e29-994a-bff3e29247b6-kaxe7z26.png',
-          problemSort: 1,
-          question: [
-            {
-              mainProblemId: '001',
-              mainProblemSort: 1,
-              minorProblems: [
-                {
-                  minorProblemId: '001',
-                  minorProblemSort: 1
-                }
-              ]
-            },
-            {
-              mainProblemId: '001',
-              mainProblemSort: 1,
-              minorProblems: [
-                {
-                  minorProblemId: '001',
-                  minorProblemSort: 1
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      originalQuestion: []
-    }
     const { data } = this.state
-    const saveData = JSON.stringify(data)
-    const file = new File([saveData], 'abc')
-    ossUpload(file, 'question', 'cos', '/question.json').then((res: any) => {
-      if (res) {
-        APP.success('保存成功')
-        gotoPage('/order/servicecenter')
-      }
-    })
+    saveService(data, 'isServiceCenter')
   }
   public render () {
     const { isLoading, mainProblem } = this.state

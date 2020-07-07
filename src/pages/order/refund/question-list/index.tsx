@@ -9,7 +9,7 @@ import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig } from './config'
 import SearchFetch from '@/packages/common/components/search-fetch'
 import BraftEditor from 'braft-editor'
-import { ossUpload } from '@/components/upload'
+import saveService from '../common/saveService'
 import 'braft-editor/dist/index.css'
 import * as api from './api'
 interface Props extends AlertComponentProps {
@@ -26,6 +26,7 @@ interface State {
   itemData: any
   /** 要展示的数据 */
   showDataSource: any[]
+  searchTitle: string
 }
 
 class Main extends React.Component<Props, State> {
@@ -77,7 +78,8 @@ class Main extends React.Component<Props, State> {
       originalQuestion: []
     },
     itemData: null,
-    showDataSource: []
+    showDataSource: [],
+    searchTitle: ''
   }
   public componentDidMount () {
     api.fetchQuestion().then(res => {
@@ -210,47 +212,8 @@ class Main extends React.Component<Props, State> {
    * 保存数据
    */
   save = () => {
-    const obj = {
-      announcement: '喜团不会以任何理由要求您转账汇款、扫描二维码或点击退款/补款链接，请提高警惕，谨防上当受骗。',
-      applicationQuestion: [
-        {
-          name: '售后问题',
-          icon: 'https://assets.hzxituan.com/upload/2020-06-02/76b5d1c0-13b0-4e29-994a-bff3e29247b6-kaxe7z26.png',
-          problemSort: 1,
-          question: [
-            {
-              mainProblemId: '001',
-              mainProblemSort: 1,
-              minorProblems: [
-                {
-                  minorProblemId: '001',
-                  minorProblemSort: 1
-                }
-              ]
-            },
-            {
-              mainProblemId: '001',
-              mainProblemSort: 1,
-              minorProblems: [
-                {
-                  minorProblemId: '001',
-                  minorProblemSort: 1
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      originalQuestion: []
-    }
     const { data } = this.state
-    const saveData = JSON.stringify(data)
-    const file = new File([saveData], 'abc')
-    ossUpload(file, 'question', 'cos', '/question.json').then((res: any) => {
-      if (res) {
-        APP.success('保存成功')
-      }
-    })
+    saveService(data)
   }
 
   /**
@@ -258,17 +221,17 @@ class Main extends React.Component<Props, State> {
    *
    * @memberof Main
    */
-  searchSubmit = (values: any) => {
-    const { title } = values
+  searchSubmit = () => {
+    const { searchTitle } = this.state
     const originalQuestion = this.data.originalQuestion
-    if (!title) {
+    if (!searchTitle) {
       // return this.searchReset()
       this.setState({
         showDataSource: originalQuestion
       })
       return
     }
-    const filterRes = originalQuestion.filter(item => item.title === title)
+    const filterRes = originalQuestion.filter(item => item.title === searchTitle)
     this.setState({
       showDataSource: filterRes
     })
@@ -339,7 +302,7 @@ class Main extends React.Component<Props, State> {
                         })
                         console.log(res, 'res======')
                         this.setState({
-                          itemData: { ...res }
+                          searchTitle: res.title
                         })
                       }}
                       placeholder='请输入问题标题关键字下拉搜索'

@@ -4,10 +4,10 @@ import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert, If } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { ossUpload } from '@/components/upload'
 import { Button } from 'antd'
 import { gotoPage } from '@/util/utils'
 import { ColumnProps } from 'antd/lib/table'
+import saveService from '../common/saveService'
 import * as api from './api'
 interface Props extends AlertComponentProps {
 }
@@ -160,56 +160,12 @@ class Main extends React.Component<Props, State> {
   public refresh () {
     this.listpage.refresh()
   }
-  public deleteAnchor (record: Anchor.ItemProps) {
-    // api.deleteAnchor(record.anchorId).then(() => {
-    //   this.listpage.refresh()
-    // })
-  }
   /**
    * 保存数据
    */
   public save = () => {
-    const obj = {
-      announcement: '喜团不会以任何理由要求您转账汇款、扫描二维码或点击退款/补款链接，请提高警惕，谨防上当受骗。',
-      applicationQuestion: [
-        {
-          name: '售后问题',
-          icon: 'https://assets.hzxituan.com/upload/2020-06-02/76b5d1c0-13b0-4e29-994a-bff3e29247b6-kaxe7z26.png',
-          problemSort: 1,
-          question: [
-            {
-              mainProblemId: '001',
-              mainProblemSort: 1,
-              minorProblems: [
-                {
-                  minorProblemId: '001',
-                  minorProblemSort: 1
-                }
-              ]
-            },
-            {
-              mainProblemId: '001',
-              mainProblemSort: 1,
-              minorProblems: [
-                {
-                  minorProblemId: '001',
-                  minorProblemSort: 1
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      originalQuestion: []
-    }
     const { data } = this.state
-    const saveData = JSON.stringify(data)
-    const file = new File([saveData], 'abc')
-    ossUpload(file, 'question', 'cos', '/question.json').then((res: any) => {
-      if (res) {
-        APP.success('保存成功')
-      }
-    })
+    saveService(data, 'isServiceCenter')
   }
 
   public render () {
