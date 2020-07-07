@@ -225,7 +225,6 @@ class Main extends React.Component<Props, State> {
     const { searchTitle } = this.state
     const originalQuestion = this.data.originalQuestion
     if (!searchTitle) {
-      // return this.searchReset()
       this.setState({
         showDataSource: originalQuestion
       })
@@ -243,15 +242,16 @@ class Main extends React.Component<Props, State> {
    * @memberof Main
    */
   searchReset = () => {
-    const { originalQuestion } = this.state.data
     this.setState({
-      showDataSource: originalQuestion
+      searchTitle: ''
+    }, () => {
+      this.searchSubmit()
+      this.listpage.refresh(true)
     })
-    this.listpage.form.reset()
   }
 
   public render () {
-    const { showDataSource, itemData } = this.state
+    const { showDataSource, searchTitle } = this.state
     return (
       <div
         style={{
@@ -300,7 +300,6 @@ class Main extends React.Component<Props, State> {
                         const res = originalQuestion?.find((item: { id: any }) => {
                           return String(item.id) === String(v)
                         })
-                        console.log(res, 'res======')
                         this.setState({
                           searchTitle: res?.title || ''
                         })
