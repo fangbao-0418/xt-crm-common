@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Modal, Input } from 'antd';
-import { connect } from '@/util/utils';
-import Form, { FormItem } from '@/packages/common/components/form';
+import React, { Component } from 'react'
+import { Modal, Input } from 'antd'
+import { connect } from '@/util/utils'
+import Form, { FormItem } from '@/packages/common/components/form'
 
-const { TextArea } = Input;
+const { TextArea } = Input
 
 @connect(state => ({
   modal: state['shop.boss'].batchModal
@@ -15,10 +15,12 @@ export default class extends Component {
   handleOk = () => {
     const { form: { validateFields }, dispatch } = this.props
     validateFields((err, { phones }) => {
-      if (err) return;
+      if (err) {
+        return
+      }
       phones = phones.replace(/\n/g, ',')
-      dispatch['shop.boss'].checkUser({ phones });
-    });
+      dispatch['shop.boss'].checkUser({ phones })
+    })
   }
 
   /** 取消操作 */
@@ -31,7 +33,7 @@ export default class extends Component {
           visible: false
         }
       }
-    });
+    })
   }
 
   /** 窗口彻底关闭回调 */
@@ -42,24 +44,25 @@ export default class extends Component {
       payload: {
         currentBoss: null
       }
-    });
+    })
   }
 
-  render() {
+  render () {
     const { modal, form: { getFieldDecorator } } = this.props
 
     return (
       <Modal
         visible={modal.visible}
-        title="添加手机号, 开通小店"
-        okText="查询用户"
+        title='添加手机号, 开通小店'
+        okText='查询用户'
         onOk={this.handleOk}
         onCancel={this.handleCancel}
         afterClose={this.handleClose}
         destroyOnClose
       >
-        <Form layout="vertical">
-          <FormItem label="请输入手机号">
+        <Form layout='vertical'>
+          <p style={{ color: 'red' }}>目前仅支持添加个人店（即喜团小店），更多类型敬请期待</p>
+          <FormItem label='请输入手机号'>
             {getFieldDecorator('phones', {
               rules: [{
                 validator: (rule, value, cb) => {
@@ -74,9 +77,10 @@ export default class extends Component {
               }]
             })(
               <TextArea
-                placeholder="仅允许添加手机, 多个手机号请用按 enter 键, 换行隔开,;最多添加1000个手机号"
+                placeholder='仅允许添加手机, 多个手机号请用按 enter 键, 换行隔开,;最多添加1000个手机号'
                 autoSize={{ minRows: 8, maxRows: 20 }}
-              />)}
+              />
+            )}
           </FormItem>
         </Form>
       </Modal>

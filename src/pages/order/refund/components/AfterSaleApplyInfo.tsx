@@ -44,7 +44,7 @@ const AfterSaleApplyInfo = (props: Props) => {
     })
   }
   const isRefundStatusOf = (status: number) => {
-    let orderServerVO = Object.assign(
+    const orderServerVO = Object.assign(
       {},
       props.orderServerVO
     )
@@ -109,8 +109,8 @@ const AfterSaleApplyInfo = (props: Props) => {
         </Col>
         <Col span={8}>申请售后数目：{orderServerVO.serverNum}</Col>
         <Col span={8}>
-          申请售后金额：{orderServerVO.amount &&
-            formatMoneyWithSign(orderServerVO.amount)}
+          申请售后金额：{orderServerVO.amount
+            && formatMoneyWithSign(orderServerVO.amount)}
         </Col>
         <Col span={8}>售后说明：{orderServerVO.info}</Col>
       </Row>
@@ -126,8 +126,8 @@ const AfterSaleApplyInfo = (props: Props) => {
           )}
         </Col>
       </Row>
-      {orderInterceptRecordVO &&
-      orderInterceptRecordVO.interceptId && (
+      {orderInterceptRecordVO
+      && orderInterceptRecordVO.interceptId && (
         <Row gutter={24}>
           <Col span={8}>是否是拦截订单：是</Col>
           <Col span={8}>
@@ -148,18 +148,21 @@ const AfterSaleApplyInfo = (props: Props) => {
             String(record.productId)}
           pagination={false}
           columns={columns}
-          dataSource={orderServerVO.productVO || []}
+          dataSource={(orderServerVO.productVO || []).map(item => ({
+            ...item,
+            storeName: (props.shopDTO?.shopName) || item.storeName
+          }))}
         />
       </Row>
       <Row>
         {(orderServerVO.commentListVO || []).map((v) => (
           <Col key={v.createTime}>
-            备注：{Array.isArray(v.info) &&
-            v.info.length > 0 ? (
-              v.info[v.info.length - 1].value
-            ) : (
-              ''
-            )}（{formatDate(v.createTime)} {v.name}）
+            备注：{Array.isArray(v.info)
+            && v.info.length > 0 ? (
+                v.info[v.info.length - 1].value
+              ) : (
+                ''
+              )}（{formatDate(v.createTime)} {v.name}）
           </Col>
         ))}
       </Row>

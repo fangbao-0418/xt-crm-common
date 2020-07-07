@@ -1,12 +1,12 @@
-import React from 'react';
-import Image from '@/components/Image';
-import moment from 'moment';
-import { Tooltip } from 'antd';
-import { replaceHttpUrl } from '@/util/utils';
-import { formatMoneyWithSign } from '@/pages/helper';
+import React from 'react'
+import Image from '@/components/Image'
+import moment from 'moment'
+import { Tooltip, Icon } from 'antd'
+import { replaceHttpUrl } from '@/util/utils'
+import { formatMoneyWithSign } from '@/pages/helper'
 
-function formatTime(text) {
-  return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '-';
+function formatTime (text) {
+  return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '-'
 }
 
 const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpass }) => {
@@ -21,16 +21,26 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       dataIndex: 'coverUrl',
       width: 120,
       render: (val, record) => (
-        <Image
-          style={{
-            height: 100,
-            width: 100,
-            minWidth: 100
-          }}
-          src={replaceHttpUrl(val)}
-          onClick={() => onPreview(record)}
-          alt='主图'
-        />
+        <>
+          <Image
+            style={{
+              height: 100,
+              width: 100,
+              minWidth: 100
+            }}
+            src={replaceHttpUrl(val)}
+            onClick={() => onPreview(record)}
+            alt='主图'
+          />
+          {
+            record.imageViolationReasons && (
+              <div style={{ color: 'red', textAlign: 'center' }}>
+                <Icon style={{ color: 'red' }} type='info-circle' />{' '}
+                {record.imageViolationReasons}
+              </div>
+            )
+          }
+        </>
       )
     },
     {
@@ -70,7 +80,9 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
         const withdrawalType = record.withdrawalType // 0: 默认值 1: 店长下架 2: 管理员下架
         const withdrawalInfo = record.withdrawalInfo // 下架说明 管理员下架才有
         const auditStatus = record.auditStatus // 商品审核 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
-        if (val === 1) return '在售'
+        if (val === 1) {
+          return '在售'
+        }
         if (auditStatus === 1) {
           return '待审核'
         } else if (auditStatus === 3) {
@@ -95,7 +107,9 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       width: 120,
       dataIndex: 'auditTime',
       render: (val, record) => {
-        if (record.auditStatus === 1) { return '-' }
+        if (record.auditStatus === 1) {
+          return '-'
+        }
         return formatTime(val)
       }
     },
@@ -104,7 +118,9 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       width: 120,
       dataIndex: 'auditUser',
       render: (val, record) => {
-        if (record.auditStatus === 1) { return '-' }
+        if (record.auditStatus === 1) {
+          return '-'
+        }
         return val || '-'
       }
     },
@@ -113,8 +129,10 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       dataIndex: 'violationCount',
       width: 200,
       render: (val, record) => {
-        if (val === 0) return val;
-        return <span onClick={() => onViolation(record)} className="href">{val}</span>
+        if (val === 0) {
+          return val
+        }
+        return <span onClick={() => onViolation(record)} className='href'>{val}</span>
       }
     },
     {

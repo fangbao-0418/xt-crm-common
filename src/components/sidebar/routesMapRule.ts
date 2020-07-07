@@ -111,6 +111,9 @@ const rules = {
   '/fresh/coupon': [
     /fresh\/coupon\/bulkissuing(\/)?(\d+)?/,
     /fresh\/coupon\/detail(\/)?(\d+)?/
+  ],
+  '/shop/boss': [
+    /shop\/boss\/detail(\/)?(\d+)?/
   ]
 }
 export default rules
