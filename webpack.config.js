@@ -21,8 +21,8 @@ module.exports = function (config, env) {
     return !(rule.enforce === 'pre' && (rule.test.test('.tsx') || rule.test.test('.jsx')))
   })
   const __ENV__ = process.env.NODE_ENV || 'dev'
-  const app_branch = process.env.branch
-  const app_name = process.env.app_name
+  const app_branch = process.env.branch || 'issue2'
+  const app_name = process.env.app_name || 'common'
   const origin = process.env.app_origin
   const publicPath = env === 'dev' ? '/' : `${origin}/${app_name}/${app_branch}/`
   
@@ -40,8 +40,8 @@ module.exports = function (config, env) {
       BUILD_TIME: JSON.stringify(BUILD_TIME),
       __ENV__: JSON.stringify(__ENV__),
       'process.env': {
-        APP_NAME: app_name,
-        APP_BRANCH: app_branch,
+        APP_NAME: JSON.stringify(app_name),
+        APP_BRANCH: JSON.stringify(app_branch),
         IS_LOCAL: env === 'dev',
         PUB_ENV: JSON.stringify(__ENV__)
       }
