@@ -7,6 +7,7 @@ import { getUniqueId } from '@/packages/common/utils/index'
 import { Button, Radio } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig } from './config'
+import SearchFetch from '@/packages/common/components/search-fetch'
 import BraftEditor from 'braft-editor'
 import { ossUpload } from '@/components/upload'
 import 'braft-editor/dist/index.css'
@@ -22,6 +23,7 @@ interface Data {
 interface State {
   /** 原始数据 */
   data: Data
+  itemData: any
   /** 要展示的数据 */
   showDataSource: any[]
 }
@@ -44,7 +46,7 @@ class Main extends React.Component<Props, State> {
       return (
         <div
           dangerouslySetInnerHTML={{
-            __html: `<pre>${text}</pre>`
+            __html: `<pre style="white-space: pre-wrap!important;">${text}</pre>`
           }}
         >
         </div>
@@ -74,6 +76,7 @@ class Main extends React.Component<Props, State> {
       applicationQuestion: [],
       originalQuestion: []
     },
+    itemData: null,
     showDataSource: []
   }
   public componentDidMount () {
@@ -150,8 +153,6 @@ class Main extends React.Component<Props, State> {
               const saveContent = multiText.toHTML()
               const { originalQuestion, applicationQuestion } = this.state.data
               if (detail) {
-                console.log(detail, 'detail====')
-                console.log(applicationQuestion, 'applicationQuestion======')
                 applicationQuestion.forEach((item) => {
                   item.question.forEach((questionItem: any) => {
                     if (questionItem.id === detail.id) {
@@ -287,7 +288,7 @@ class Main extends React.Component<Props, State> {
   }
 
   public render () {
-    const { showDataSource } = this.state
+    const { showDataSource, itemData } = this.state
     return (
       <div
         style={{
@@ -316,7 +317,35 @@ class Main extends React.Component<Props, State> {
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='title' />
+              <FormItem
+                name='title'
+                inner={(form) => {
+                  return form.getFieldDecorator('title')(
+                    <SearchFetch
+                      style={{ width: 300 }}
+                      api={(areaName) => {
+                        const { originalQuestion } = this.data
+                        return new Promise((resolve, reject) => {
+                          if (areaName) {
+                            const res = originalQuestion.filter((item: any) => item.title.indexOf(areaName) !== -1).map((item: any) => ({ text: item.title, value: item.id }))
+                            resolve(res)
+                          }
+                        })
+                      }}
+                      onChange={(v)=>{
+                        const { originalQuestion } = this.data
+                        const res = originalQuestion?.find((item: { id: any }) => {
+                          return String(item.id) === String(v)
+                        })
+                        console.log(res, 'res======')
+                        this.setState({
+                          itemData: { ...res }
+                        })
+                      }}
+                      placeholder='请输入问题标题关键字下拉搜索'
+                    />
+                  )
+                }} />
             </>
           )}
         />
