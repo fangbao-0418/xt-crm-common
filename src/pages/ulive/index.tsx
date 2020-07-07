@@ -19,7 +19,7 @@ class Ulive extends React.Component<RouteComponentProps> {
         <Route path={`${match.url}/config`} component={ConfigView} />
         <Route path={`${match.url}/activity/list`} component={Activity} />
         <Route path={`${match.url}/activity/info/edit/:id`} component={InfoEdit} />
-        <Route path={`${match.url}/activity/info/detail/:id`} component={InfoDetail} />
+        <Route path={`${match.url}/activity/info/detail/:id/:productId/:type`} component={InfoDetail} />
       </Switch>
     )
   }
