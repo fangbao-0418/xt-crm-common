@@ -105,7 +105,7 @@ class RulesTable extends PureComponent {
     if (ruleType === 1) { // 阶梯满 可以添加5条规则
       maxSize = 5
       disabled = length >= 5
-    } else if (ruleType === 0) { // 每满减 只可以添加1条规则
+    } else if (ruleType === 0) { // 每满减 可以添加1条规则
       maxSize = 1
       disabled = length >= 1
     }

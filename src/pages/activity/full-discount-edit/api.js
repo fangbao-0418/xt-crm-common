@@ -19,3 +19,15 @@ export function addFullDiscounts (params) {
 export function updateFullDiscounts (params) {
   return newPost('/promotion/updateFullDiscounts', params)
 }
+
+// 商品成本检查
+export function productCheckCost (params) {
+  return Promise.resolve([{
+    loseMoney: true,
+    productId: 364
+  }, {
+    loseMoney: false,
+    productId: 365
+  }])
+  return newPost('/mcweb/promotion/productCheckCost', params)
+}
