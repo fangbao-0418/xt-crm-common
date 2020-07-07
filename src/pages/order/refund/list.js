@@ -162,8 +162,8 @@ export default class extends React.Component {
     console.log(params.refundStatus, 'params.refundStatus', params)
     if (params&&params.shopPhone) {
       getPhoneById({ phone: fieldsValues.shopPhone }).then((res = {}) => {
-        if (res.id) {
-          params.shopId=res.id
+        if (res.shopId) {
+          params.shopId=res.shopId
         } else {
           params.shopId=-100
         }

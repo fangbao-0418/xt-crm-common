@@ -74,8 +74,8 @@ class OrderList extends React.Component {
     }
     if (fieldsValues&&fieldsValues.shopPhone) {
       getPhoneById({ phone: fieldsValues.shopPhone }).then((res = {}) => {
-        if (res.id) {
-          params.shopId=res.id
+        if (res.shopId) {
+          params.shopId=res.shopId
         } else {
           params.shopId=-100
         }
