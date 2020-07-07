@@ -137,6 +137,9 @@ class Main extends React.Component<Props, State> {
               inner={(form) => {
                 return form.getFieldDecorator('multiText')(
                   <BraftEditor
+                    onChange={(value) => {
+                      value?.toHTML()
+                    }}
                     style={{ height: 250, overflow: 'auto', border: '1px solid #d9d9d9', borderRadius: 4 }}
                     controls={['text-color', 'bold', 'italic', 'underline']}
                   />
