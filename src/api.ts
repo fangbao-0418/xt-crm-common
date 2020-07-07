@@ -10,12 +10,11 @@ const { get } = APP.http
 
 /** 获取构建信息 */
 export function getBuildInfo () {
-  return fetch('./pub_info?v=' + new Date().getTime()).then((res) => {
+  const url = process.env.IS_LOCAL ? './pub_info' : ['/' + process.env.APP_NAME, process.env.APP_BRANCH, 'pub_info'].join('/')
+  return fetch(url + '?v=' + new Date().getTime()).then((res) => {
     let data
     try {
-      data = res.json().then((val) => val, (e) => {
-        console.log(e, 'eeee')
-      })
+      data = res.json().then((val) => val)
     } catch (e) {
       APP.moon.error(e)
     }

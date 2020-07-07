@@ -21,10 +21,10 @@ module.exports = function (config, env) {
     return !(rule.enforce === 'pre' && (rule.test.test('.tsx') || rule.test.test('.jsx')))
   })
   const __ENV__ = process.env.NODE_ENV || 'dev'
-  const branch = process.env.branch
+  const app_branch = process.env.branch
   const app_name = process.env.app_name
   const origin = process.env.app_origin
-  const publicPath = env === 'dev' ? '/' : `${origin}/${app_name}/${branch}/`
+  const publicPath = env === 'dev' ? '/' : `${origin}/${app_name}/${app_branch}/`
   
   config.output.publicPath = publicPath
 
@@ -40,6 +40,9 @@ module.exports = function (config, env) {
       BUILD_TIME: JSON.stringify(BUILD_TIME),
       __ENV__: JSON.stringify(__ENV__),
       'process.env': {
+        APP_NAME: app_name,
+        APP_BRANCH: app_branch,
+        IS_LOCAL: env === 'dev',
         PUB_ENV: JSON.stringify(__ENV__)
       }
     })
@@ -135,7 +138,7 @@ module.exports = function (config, env) {
     ]
   })
   config.optimization = {
-    ...  config.optimization,
+    ...config.optimization,
     splitChunks: {
       chunks: "async",
       minSize: 0,
@@ -146,17 +149,17 @@ module.exports = function (config, env) {
       name: true,
       cacheGroups: {
         vendors: {
-            test: /node_modules/,
-            name: 'vendors',
-            chunks: 'async'
+          test: /node_modules/,
+          name: 'vendors',
+          chunks: 'async'
         }
       }
     }
   }
   if (env === 'prod') {
-    config.plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static'
-    }))
+    // config.plugins.push(new BundleAnalyzerPlugin({
+    //   analyzerMode: 'static'
+    // }))
   }
   config.externals = {
     antd: 'antd',
