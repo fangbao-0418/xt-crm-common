@@ -9,8 +9,7 @@ import { parseQuery } from '@/util/utils'
 import { disabledDate, disabledDateTime } from '@/util/antdUtil'
 interface State {
   roundList: Lottery.LuckyDrawRoundListVo[],
-  type: number,
-  typeVal?: number
+  type: number
 }
 class Main extends React.Component<any, State> {
   public form: FormInstance
@@ -19,8 +18,7 @@ class Main extends React.Component<any, State> {
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public state: State = {
     roundList: [],
-    type: 0,
-    typeVal: undefined
+    type: 0
   }
   public constructor (props: any) {
     super(props)
@@ -65,7 +63,6 @@ class Main extends React.Component<any, State> {
   }
 
   public render () {
-    const typeVal = this.state.typeVal
     const columns: ColumnProps<Lottery.LuckyDrawRoundListVo>[] = [
       {
         key: 'No',
@@ -180,8 +177,8 @@ class Main extends React.Component<any, State> {
             verifiable
             { ...type }
             controlProps={{
-              onChange: (typeVal: number) => {
-                this.setState({ typeVal })
+              onChange: (type: number) => {
+                this.setState({ type })
               }
             }}
           />
@@ -238,7 +235,7 @@ class Main extends React.Component<any, State> {
               }]
             }}
           />
-          <div style={{ display: typeof typeVal === 'number' && typeVal <= 4 ? 'block': 'none' }}>
+          <div style={{ display: this.state.type <= 4 ? 'block': 'none' }}>
             <FormItem
               name='restrictWinningTimes'
               type='number'
