@@ -4,11 +4,12 @@ import { Form, Modal, Radio, Button, InputNumber, Input, message, Row } from 'an
 import { FormComponentProps } from 'antd/lib/form';
 import { formItemLayout, radioStyle } from '@/config';
 import { namespace } from '../../refund/model';
-import { enumRefundType } from '../../constant';
+import { enumRefundStatus, enumRefundType } from '../../constant';
 import ReturnShippingSelect from '../ReturnShippingSelect';
 import { formatPrice, formatRMB } from '@/util/format';
 import { mul } from '@/util/utils';
 import { verifyDownDgrade } from '@/pages/order/api';
+
 interface Props extends FormComponentProps, RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
@@ -114,6 +115,11 @@ class CheckRefund extends React.Component<Props, State> {
   get showAfterSaleInfo(): boolean {
     const isAllow = this.props.form.getFieldValue('isAllow')
     return isAllow === 1;
+  }
+  // 仅退款售后类型，待客服跟进状态，客服点击处理结果后，可进行金额的修改，不可修改数量
+  get disabled() {
+    const { refundStatus, refundType } = this.props.data;
+    return refundStatus === enumRefundStatus.WaitCustomerServiceOperating && refundType === enumRefundType.Refund;
   }
   /**
  * 修改售后数目
@@ -229,12 +235,15 @@ class CheckRefund extends React.Component<Props, State> {
                         message: '请输入售后数目',
                       },
                     ],
-                  })(<InputNumber
-                    min={0}
-                    max={this.checkVO.maxServerNum}
-                    placeholder="请输入"
-                    onChange={this.handleChangeServerNum}
-                  />)}
+                  })(
+                    <InputNumber
+                      min={0}
+                      disabled={this.disabled}
+                      max={this.checkVO.maxServerNum}
+                      placeholder="请输入"
+                      onChange={this.handleChangeServerNum}
+                    />
+                  )}
                   <span className="ml10">最多可售后数目：{this.checkVO.maxServerNum}</span>
                 </Form.Item>
                 <Form.Item label="退款金额">

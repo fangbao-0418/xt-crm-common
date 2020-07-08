@@ -2,9 +2,8 @@ import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
 import { Row, Col, Button } from 'antd';
-import { enumRefundStatus } from '../../constant';
+import { enumRefundStatus, enumRefundType } from '../../constant';
 import { namespace } from '../model';
-import { enumRefundType } from '../../constant';
 import Countdown from './countdown'
 import {
   RemarkModal,
@@ -66,6 +65,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                   自动确认倒计时：<Countdown value={24 * 3600} />
                 </span>
               )} */}
+              <span className="ml20">供应商审核倒计时：23:22:22</span>
             </h3>
           </Col>
           <Col style={{display: 'flex'}}>

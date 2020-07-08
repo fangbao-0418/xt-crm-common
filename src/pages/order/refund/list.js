@@ -289,6 +289,7 @@ export default class extends React.Component {
                 <span>售后单编号：{record.orderCode}</span>
                 <span>订单编号：{record.mainOrderCode}</span>
                 <span>申请时间：{formatDate(record.createTime)}</span>
+                <span>供应商审核倒计时：00:30:30</span>
               </div>
             )}
             expandedRowKeys={this.state.expands}
