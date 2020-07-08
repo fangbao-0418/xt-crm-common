@@ -1,6 +1,6 @@
 import bootstrap from '@xt-micro-service/bootstrap'
 import injectConfigs from '@/packages/portal/src/config'
-const config = injectConfigs.filter((item) => item.path !== '/')
+const config = injectConfigs.filter((item) => item.serverName !== 'common')
 config.push({
   serverName: 'common',
   path: '/',
