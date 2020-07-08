@@ -48,8 +48,8 @@ class Main extends React.Component<{}, State> {
           <Route path='/goods' component={modules.Goods} />
           <Route path='/template' component={modules.Template} />
           <Route path='/order' component={modules.Order} />
-          <Route path='/activity' component={modules.Activity} />
-          <Route path='/coupon' component={modules.Coupon} />
+          {/* <Route path='/activity' component={modules.Activity} />
+          <Route path='/coupon' component={modules.Coupon} /> */}
           <Route path='/user' component={modules.User} />
           <Route path='/supplier' component={modules.Supplier} />
           <Route path='/banner' component={modules.Banner} />

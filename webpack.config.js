@@ -1,10 +1,3 @@
-/*
- * @Date: 2020-05-12 10:37:10
- * @LastEditors: fangbao
- * @LastEditTime: 2020-05-15 10:12:41
- * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-react-template/webpack.config.js
- */
-
 const path = require('path')
 const webpack = require('webpack')
 const pkg = require('./package.json')
@@ -23,8 +16,9 @@ module.exports = function (config, env) {
   const __ENV__ = process.env.NODE_ENV || 'dev'
   const app_branch = process.env.branch || 'issue2'
   const app_name = process.env.app_name || 'common'
-  const origin = process.env.app_origin
-  const publicPath = env === 'dev' ? '/' : `${origin}/${app_name}/${app_branch}/`
+  const app_origin = process.env.app_origin || 'http://localhost:3001'
+  
+  const publicPath = env === 'dev' ? `${app_origin}/` : `${app_origin}/${app_name}/${app_branch}/`
   
   config.output.publicPath = publicPath
 
@@ -42,6 +36,7 @@ module.exports = function (config, env) {
       'process.env': {
         APP_NAME: JSON.stringify(app_name),
         APP_BRANCH: JSON.stringify(app_branch),
+        APP_ORIGIN: JSON.stringify(app_origin),
         IS_LOCAL: env === 'dev',
         PUB_ENV: JSON.stringify(__ENV__)
       }
