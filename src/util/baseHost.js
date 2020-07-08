@@ -1,10 +1,10 @@
-let baseHost = 'http://daily-crm-test.hzxituan.com';
+let baseHost = 'https://daily-crm-test.hzxituan.com';
 let h5Host = 'https://myouxuan.hzxituan.com';
 let env = 'local';
 const host = window.location.host;
 // 日常
 if (host.indexOf('daily-xt-crmadmin') >= 0) {
-  baseHost = 'http://daily-crm-test.hzxituan.com';
+  baseHost = 'https://daily-crm-test.hzxituan.com';
   h5Host = 'https://xtyouxuan.hzxituan.com/v0909_coupon/index.html';
   env = 'dev';
 }
