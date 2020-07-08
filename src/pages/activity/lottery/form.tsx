@@ -9,15 +9,18 @@ import { parseQuery } from '@/util/utils'
 import { disabledDate, disabledDateTime } from '@/util/antdUtil'
 interface State {
   roundList: Lottery.LuckyDrawRoundListVo[],
-  type: number
+  type: number,
+  typeVal?: number
 }
 class Main extends React.Component<any, State> {
   public form: FormInstance
   public id: number
+  public timestamp: number;
   public readOnly: boolean = (parseQuery() as any).readOnly === '1'
   public state: State = {
     roundList: [],
-    type: 0
+    type: 0,
+    typeVal: undefined
   }
   public constructor (props: any) {
     super(props)
@@ -62,12 +65,7 @@ class Main extends React.Component<any, State> {
   }
 
   public render () {
-    const startTime = this.form && this.form.props.form.getFieldValue('startTime')
-    const typeVal = this.form && this.form.props.form.getFieldValue('type')
-    let timestamp = 0
-    if (startTime) {
-      timestamp = startTime.valueOf()
-    }
+    const typeVal = this.state.typeVal
     const columns: ColumnProps<Lottery.LuckyDrawRoundListVo>[] = [
       {
         key: 'No',
@@ -181,11 +179,20 @@ class Main extends React.Component<any, State> {
           <FormItem
             verifiable
             { ...type }
+            controlProps={{
+              onChange: (typeVal: number) => {
+                this.setState({ typeVal })
+              }
+            }}
           />
           <FormItem
             label='开始时间'
             verifiable
             inner={(form) => {
+              const startTime = form.getFieldValue('startTime')
+              if (startTime) {
+                this.timestamp = startTime.valueOf()
+              }
               return (
                 <div>
                   {form.getFieldDecorator('startTime', {
@@ -231,7 +238,7 @@ class Main extends React.Component<any, State> {
               }]
             }}
           />
-          <div style={{ display: typeVal <= 4 ? 'block': 'none' }}>
+          <div style={{ display: typeof typeVal === 'number' && typeVal <= 4 ? 'block': 'none' }}>
             <FormItem
               name='restrictWinningTimes'
               type='number'
@@ -287,7 +294,7 @@ class Main extends React.Component<any, State> {
             disabled={this.id === -1}
             onClick={() => {
               const type = this.form && this.form.props.form.getFieldValue('type')
-              APP.history.push(`/activity/lottery/${this.id}/-1?activityStartTime=${timestamp}&activityType=${type}`)
+              APP.history.push(`/activity/lottery/${this.id}/-1?activityStartTime=${this.timestamp}&activityType=${type}`)
             }}>
             新建场次
           </Button>
