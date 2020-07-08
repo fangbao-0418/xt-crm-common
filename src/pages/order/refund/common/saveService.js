@@ -2,7 +2,6 @@ import { gotoPage } from '@/util/utils'
 import { ossUpload } from '@/components/upload'
 
 function saveService (data, isServiceCenter) {
-  console.log(data, '====data')
   if (isServiceCenter === 'isServiceCenter') {
     console.log('sort===')
     for (let i = 0; i < data.applicationQuestion.length - 1; i++) {
@@ -35,7 +34,7 @@ function saveService (data, isServiceCenter) {
 
   const saveData = JSON.stringify(data)
   const file = new File([saveData], 'service')
-  ossUpload(file, 'question', 'cos', '/question-test.json').then((res) => {
+  ossUpload(file, 'question', 'cos', '/question-pro.json').then((res) => {
     if (res) {
       APP.success('保存成功')
       isServiceCenter && gotoPage('/order/servicecenter')

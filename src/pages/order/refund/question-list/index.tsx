@@ -216,7 +216,6 @@ class Main extends React.Component<Props, State> {
    */
   save = () => {
     const { data } = this.state
-    console.log(1111)
     saveService(data)
   }
 

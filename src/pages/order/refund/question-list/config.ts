@@ -23,7 +23,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'input',
         label: '标题字号',
         controlProps: {
-          placeholder: '请输入标题字号'
+          placeholder: '请输入标题字号，例如:#efefaf'
         },
         fieldDecoratorOptions: {
           rules: [
