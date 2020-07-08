@@ -88,6 +88,7 @@ class DiscountModal extends PureComponent {
             return pre
           }
         }, {})
+        console.log(errMap, 'errMap')
         this.setState({
           ...errMap
         })
@@ -111,21 +112,21 @@ class DiscountModal extends PureComponent {
 
       if (stageType === 1) { // 满 X 元
         record.stageAmount = stageAmount
-        record.conditionStr = `满 ${stageAmount} 元`
+        record.conditionStr = `满￥ ${stageAmount} 元`
       } else if (stageType === 2) { // 满 X 件
         record.stageCount = stageCount
-        record.conditionStr = `满 ${stageCount} 件`
+        record.conditionStr = `满￥  ${stageCount} 件`
       }
 
       if (mode === 1) { // 减 X 元
         record.discountsAmount = discountsAmount
-        record.modeStr = `减 ${discountsAmount} 元`
+        record.modeStr = `减￥ ${discountsAmount} 元`
       } else if (mode === 2) { // 折 X 折
         record.discounts = discounts
         record.modeStr = `折 ${discounts} 折`
       } else if (mode === 3) { // 减 X 元
         record.amount = amount
-        record.modeStr = `${amount} 元购买`
+        record.modeStr = `￥ ${amount} 元购买`
       }
 
       if (onOk) {
@@ -301,7 +302,7 @@ class DiscountModal extends PureComponent {
                   <Radio
                     disabled=
                       {
-                        (promotionType === 13)
+                        (promotionType === 15)
                         || (rules && rules[0] && rules[0].stageType === 2 || false)
                       } // 第一次选择 满x件类型 的话 第二次以上配置禁止该选项选择
                     style={radioStyle}
@@ -338,7 +339,7 @@ class DiscountModal extends PureComponent {
                   })(
                     <InputNumber
                       disabled={
-                        (promotionType === 13)
+                        (promotionType === 15)
                         || (stageType === 2)
                         || (rules && rules[0] && rules[0].stageType === 2 || false)
                       }
@@ -400,14 +401,14 @@ class DiscountModal extends PureComponent {
               })(
                 <Radio.Group onChange={this.handleRadioChange.bind(this, 'modeErr', 'mode')}>
                   <Radio
-                    disabled={[12, 13].includes(promotionType)} // 优惠种类选择满折 多件一口价的时候 禁止选择该选项
+                    disabled={[12, 15].includes(promotionType)} // 优惠种类选择满折 多件一口价的时候 禁止选择该选项
                     style={radioStyle}
                     value={1}
                   >
                     减
                   </Radio>
                   <Radio
-                    disabled={[11, 13].includes(promotionType)} // 优惠种类选择满减 多件一口价的时候 禁止选择该选项
+                    disabled={[11, 15].includes(promotionType)} // 优惠种类选择满减 多件一口价的时候 禁止选择该选项
                     style={{
                       ...radioStyle,
                       marginTop: 16
@@ -441,7 +442,7 @@ class DiscountModal extends PureComponent {
                     initialValue: discountsAmount
                   })(
                     <InputNumber
-                      disabled={mode === 2 || [12, 13].includes(promotionType)} // 优惠方式选择折 或 优惠种类选择满折的时候 禁止选择该选项
+                      disabled={mode === 2 || [12, 15].includes(promotionType)} // 优惠方式选择折 或 优惠种类选择满折的时候 禁止选择该选项
                       min={0.01}
                       precision={2}
                       onChange={this.handleInputChange.bind(this, 'modeErr', 'discountsAmount')}
@@ -464,7 +465,7 @@ class DiscountModal extends PureComponent {
                     initialValue: discounts
                   })(
                     <InputNumber
-                      disabled={mode === 1 || [11, 13].includes(promotionType)} // 优惠方式选择减 或 优惠种类选择满减的时候 禁止选择该选项
+                      disabled={mode === 1 || [11, 15].includes(promotionType)} // 优惠方式选择减 或 优惠种类选择满减的时候 禁止选择该选项
                       min={0.1}
                       max={9.9}
                       precision={1}
@@ -482,7 +483,7 @@ class DiscountModal extends PureComponent {
                   getFieldDecorator('amount', {
                     rules: [
                       {
-                        required: mode === 2
+                        required: mode === 3
                       }
                     ],
                     initialValue: amount

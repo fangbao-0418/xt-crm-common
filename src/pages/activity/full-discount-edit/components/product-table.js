@@ -24,6 +24,7 @@ class ProductTable extends PureComponent {
       return null
     }
     const productRefInfo = nextProps.value
+    console.log(productRefInfo, 123)
     return {
       productRefInfo,
       preProductRefInfo: productRefInfo
@@ -38,7 +39,7 @@ class ProductTable extends PureComponent {
       APP.error('请先选择优惠种类')
       return
     }
-    if (promotionType === 13) {
+    if (promotionType === 15) {
       validateFields(['ruleType', 'maxDiscountsCount', 'rules', 'overlayCoupon'], (errors) => {
         if (errors) {
           return
@@ -147,7 +148,7 @@ class ProductTable extends PureComponent {
       productRefTxt = '选择商品'
       columns = getGoodsColumns({
         onDelete: this.handleDelete,
-        loseMoneyShow: promotionType === 13,
+        loseMoneyShow: promotionType === 15,
         statusDisabled
       })
     } else {
@@ -169,7 +170,7 @@ class ProductTable extends PureComponent {
           getInstance={ref => this.shopModalInstance = ref}
           onOk={rows => {
             const { promotionType, rule } = rules
-            if (rows.length && promotionType === 13) {
+            if (rows.length && promotionType === 15) {
               productCheckCost({ promotionType, ruleAddOrUpdateVO: rule, productIds: rows.map(item => item.id) }).then(res => {
                 rows.forEach(item => {
                   const curr = res.find(rItem => rItem.productId === item.id)
@@ -182,6 +183,7 @@ class ProductTable extends PureComponent {
               })
               return
             }
+            console.log((99))
             this.shopModalInstance.hide()
             this.handleSelectorChange(rows)
           }}

@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Table } from 'antd'
-import { gotoPage } from '@/util/utils';
-import { formatMoneyWithSign } from '@/pages/helper';
+import { gotoPage } from '@/util/utils'
+import { formatMoneyWithSign } from '@/pages/helper'
 import { detailFullDiscounts } from './api'
-import { getRulesColumns, getGoodsColumns, getActivityColumns } from './config/columns';
-import { promotionTypeMap } from './config/config';
+import { getRulesColumns, getGoodsColumns, getActivityColumns } from './config/columns'
+import { promotionTypeMap } from './config/config'
 
 const formatDate = (text) =>
   text ? APP.fn.formatDate(text) : '-'
@@ -14,7 +14,7 @@ class FullDiscountDetailPage extends PureComponent {
     detail: null
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { match: { params: { id } } } = this.props
     detailFullDiscounts(id).then(detail => {
       this.setState({
@@ -25,21 +25,21 @@ class FullDiscountDetailPage extends PureComponent {
 
   /* 返回操作 */
   handleBack = () => {
-    gotoPage(`/activity/full-discount`)
+    gotoPage('/activity/full-discount')
   }
 
-  render() {
+  render () {
     const { detail } = this.state
 
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 },
+        sm: { span: 4 }
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 20 },
-      },
+        sm: { span: 20 }
+      }
     }
 
     let title = '加载中...'// 活动名称
@@ -109,11 +109,18 @@ class FullDiscountDetailPage extends PureComponent {
               return item
             }
           })
+        } else if (detail.promotionType === 15) { // 一口价
+          rules = rule.onePriceRuleList.map(item => {
+            return {
+              ...item,
+              conditionStr: `满 ${item.stageCount} 件`,
+              modeStr: `${formatMoneyWithSign(item.amount)} 元购买`
+            }
+          })
         }
       } else {
         ruleTypeTxt = '未获取rule字段数据'
       }
-
 
       if (detail.productRef === 0) { // 活动
         label = '指定活动'
@@ -134,18 +141,18 @@ class FullDiscountDetailPage extends PureComponent {
     return (
       <Card
         bordered={false}
-        title="查看活动"
-        extra={<span onClick={this.handleBack} className="href">返回</span>}
+        title='查看活动'
+        extra={<span onClick={this.handleBack} className='href'>返回</span>}
       >
         <Form {...formItemLayout}>
-          <Card type="inner" title="基本信息">
-            <Form.Item label="活动名称">{title}</Form.Item>
-            <Form.Item label="活动时间">{time} </Form.Item>
+          <Card type='inner' title='基本信息'>
+            <Form.Item label='活动名称'>{title}</Form.Item>
+            <Form.Item label='活动时间'>{time} </Form.Item>
           </Card>
-          <Card style={{ marginTop: 16 }} type="inner" title="优惠信息">
-            <Form.Item label="优惠种类">{promotionType}</Form.Item>
-            <Form.Item label="优惠类型">{ruleTypeTxt}</Form.Item>
-            <Form.Item label="优惠条件">
+          <Card style={{ marginTop: 16 }} type='inner' title='优惠信息'>
+            <Form.Item label='优惠种类'>{promotionType}</Form.Item>
+            <Form.Item label='优惠类型'>{ruleTypeTxt}</Form.Item>
+            <Form.Item label='优惠条件'>
               <Table
                 style={{ margin: '8px 0 8px' }}
                 pagination={false}
@@ -154,7 +161,7 @@ class FullDiscountDetailPage extends PureComponent {
               />
             </Form.Item>
           </Card>
-          <Card style={{ marginTop: 16 }} type="inner" title="活动商品">
+          <Card style={{ marginTop: 16 }} type='inner' title='活动商品'>
             <Form.Item label={label}>
               <Table
                 pagination={false}
@@ -163,8 +170,8 @@ class FullDiscountDetailPage extends PureComponent {
               />
             </Form.Item>
           </Card>
-          <Card style={{ marginTop: 16 }} type="inner" title="活动说明">
-            <Form.Item label="活动说明">{promotionDesc}</Form.Item>
+          <Card style={{ marginTop: 16 }} type='inner' title='活动说明'>
+            <Form.Item label='活动说明'>{promotionDesc}</Form.Item>
           </Card>
         </Form>
       </Card>

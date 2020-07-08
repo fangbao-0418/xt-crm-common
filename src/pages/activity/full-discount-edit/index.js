@@ -7,7 +7,7 @@ import ProductTable from './components/product-table'
 import { formatMoneyWithSign } from '@/pages/helper'
 import { gotoPage, connect } from '@/util/utils'
 import { namespace } from './model'
-import { detailFullDiscounts } from './api'
+import { detailFullDiscounts, productCheckCost } from './api'
 
 const { RangePicker } = DatePicker
 const { TextArea } = Input
@@ -64,7 +64,7 @@ const getExceptionStr = (list) => {
       return
     }
 
-    if (productRefInfo && productRefInfo.length && promotionType === 13) {
+    if (productRefInfo && productRefInfo.length && promotionType === 15) {
       if ([ruleType, maxDiscountsAmount, maxDiscountsCount, rules, overlayCoupon].some(item => item !== undefined)) {
         console.log(999)
         setFieldsValue({
@@ -163,19 +163,20 @@ class FullDiscountEditPage extends PureComponent {
                 return item
               }
             })
-          } else if (detail.promotionType === 13) {
-            rules = rule.discountsRuleList.map(item => {
+          } else if (detail.promotionType === 15) {
+            rules = rule.onePriceRuleList.map(item => {
               return {
                 ...item,
                 stageType: detail.stageType,
                 mode: 3,
                 amount: item.amount / 100,
                 conditionStr: `满 ${item.stageCount} 件`,
-                modeStr: `打 ${item.amount / 10} 折`
+                modeStr: `${formatMoneyWithSign(item.amount)} 元购买`
               }
             })
           }
           fieldsValue.rules = rules
+          fieldsValue.overlayCoupon = rule.overlayCoupon
         }
 
         if (detail.productRef === 1) {
@@ -185,6 +186,30 @@ class FullDiscountEditPage extends PureComponent {
         }
 
         setFieldsValue(fieldsValue)
+
+        if (detail.rule && detail.promotionType === 15) {
+          productCheckCost({
+            promotionType: fieldsValue.promotionType,
+            ruleAddOrUpdateVO: {
+              maxDiscountsAmount: detail.rule.maxDiscountsAmount,
+              onePriceDiscountsRules: detail.rule.onePriceRuleList,
+              overlayCoupon: detail.rule.overlayCoupon,
+              ruleType: detail.rule.ruleType,
+              stageType: detail.rule.onePriceRuleList ? detail.rule.onePriceRuleList[0].stageCount : undefined
+            },
+            productIds: detail.refProductIds
+          }).then(res => {
+            (detail.referenceProductVO || []).forEach((item) => {
+              const curr = res.find(rItem => rItem.productId === item.id)
+              if (curr) {
+                item.loseMoney = curr.loseMoney
+              }
+            })
+            setFieldsValue({
+              productRefInfo: detail.referenceProductVO
+            })
+          })
+        }
       })
     }
   }
@@ -287,7 +312,7 @@ class FullDiscountEditPage extends PureComponent {
           return null
         }
       })
-    } else if (promotionType === 13) {
+    } else if (promotionType === 15) { // 一口价
       params.rule.onePriceDiscountsRules = rules.map(item => {
         if (params.rule.stageType === undefined) {
           params.rule.stageType = item.stageType
@@ -302,7 +327,7 @@ class FullDiscountEditPage extends PureComponent {
     if (ruleType === 0) {
       if (promotionType === 11) { // 满减
         params.rule.maxDiscountsAmount = maxDiscountsAmount * 10 * 10
-      } else if (promotionType === 13) { // 一口价
+      } else if (promotionType === 15) { // 一口价
         params.rule.maxDiscountsCount = maxDiscountsCount
       }
     }
@@ -316,102 +341,125 @@ class FullDiscountEditPage extends PureComponent {
   }
 
   /* 优惠种类选项变化的时候-自动设置优惠类型为阶梯满 & 清空满减选项关联的满减封顶数值 */
-  handlePromotionTypeChange = (e) => {
-    const { form: { setFieldsValue, getFieldValue }, preRulesMaps, dispatch } = this.props
-    const rules = getFieldValue('rules')
-    const ruleType = getFieldValue('ruleType')
-    const promotionType = e.target.value
-    if ((promotionType === 11) && (ruleType !== undefined)) {
-      // 选择满减 设置值为上一次满减的值 然后把满折数据储存起来 以备下次切换使用
-      setFieldsValue({
-        rules: preRulesMaps[`11-${ruleType}`] || []
-      })
-      dispatch[namespace].saveDefault({
-        preRulesMaps: {
-          ...preRulesMaps,
-          [`12-${ruleType}`]: rules
-        }
-      })
-    } else if ((promotionType === 12) && (ruleType !== undefined)) {
-      // 选择满折 设置值为上一次满折的值 然后把满减数据储存起来 以备下次切换使用
-      setFieldsValue({ // 优惠类型已经选择每满减的时候 因为禁止这种组合 所以需要清空数据
-        rules: ruleType === 0 ? [] : (preRulesMaps[`12-${ruleType}`] || []),
-        ruleType: ruleType === 0 ? undefined : ruleType,
-        maxDiscountsAmount: undefined
-      })
-      dispatch[namespace].saveDefault({
-        preRulesMaps: {
-          ...preRulesMaps,
-          [`11-${ruleType}`]: rules
-        }
-      })
-    }
+  // handlePromotionTypeChange = (e) => {
+  //   const { form: { setFieldsValue, getFieldValue }, preRulesMaps, dispatch } = this.props
+  //   const rules = getFieldValue('rules')
+  //   const ruleType = getFieldValue('ruleType')
+  //   const promotionType = e.target.value
+  //   if ((promotionType === 11) && (ruleType !== undefined)) {
+  //     // 选择满减 设置值为上一次满减的值 然后把满折数据储存起来 以备下次切换使用
+  //     setFieldsValue({
+  //       rules: preRulesMaps[`11-${ruleType}`] || []
+  //     })
+  //     dispatch[namespace].saveDefault({
+  //       preRulesMaps: {
+  //         ...preRulesMaps,
+  //         [`12-${ruleType}`]: rules
+  //       }
+  //     })
+  //   } else if ((promotionType === 12) && (ruleType !== undefined)) {
+  //     // 选择满折 设置值为上一次满折的值 然后把满减数据储存起来 以备下次切换使用
+  //     setFieldsValue({ // 优惠类型已经选择每满减的时候 因为禁止这种组合 所以需要清空数据
+  //       rules: ruleType === 0 ? [] : (preRulesMaps[`12-${ruleType}`] || []),
+  //       ruleType: ruleType === 0 ? undefined : ruleType,
+  //       maxDiscountsAmount: undefined
+  //     })
+  //     dispatch[namespace].saveDefault({
+  //       preRulesMaps: {
+  //         ...preRulesMaps,
+  //         [`11-${ruleType}`]: rules
+  //       }
+  //     })
+  //   }
+  // }
+  handlePromotionTypeChange = () => {
+    const { form: { setFieldsValue } } = this.props
+    setFieldsValue({
+      ruleType: undefined,
+      rules: [],
+      productRefInfo: []
+    })
   }
 
-  /* 优惠类型选项变化的时候-清空满减选项关联的满减封顶数值 */
-  handleRuleTypeChange = (e) => {
-    const { form: { setFieldsValue, getFieldValue }, preRulesMaps, dispatch } = this.props
-    const rules = getFieldValue('rules')
-    const promotionType = getFieldValue('promotionType')
-    const ruleType = e.target.value
-    if ((ruleType === 1) && promotionType !== undefined) {
-      // 选择阶梯满的时候 设置为上一次阶梯满组合的值 然后把每满减的数据储存起来 以备下次切换使用
-      setFieldsValue({
-        rules: preRulesMaps[`${promotionType}-1`] || [],
-        maxDiscountsAmount: undefined
-      })
-      dispatch[namespace].saveDefault({
-        preRulesMaps: {
-          ...preRulesMaps,
-          [`${promotionType}-0`]: rules
-        }
-      })
-    } else if (ruleType === 0) {
-      // 选择每满减的时候 设置为上一次每满减组合的值 然后把阶梯满的数据储存起来 以备下次切换使用
-      setFieldsValue({
-        rules: preRulesMaps[`${promotionType}-0`] || []
-      })
-      dispatch[namespace].saveDefault({
-        preRulesMaps: {
-          ...preRulesMaps,
-          [`${promotionType}-1`]: rules
-        }
-      })
-    }
+  // /* 优惠类型选项变化的时候-清空满减选项关联的满减封顶数值 */
+  // handleRuleTypeChange = (e) => {
+  //   const { form: { setFieldsValue, getFieldValue }, preRulesMaps, dispatch } = this.props
+  //   const rules = getFieldValue('rules')
+  //   const promotionType = getFieldValue('promotionType')
+  //   const ruleType = e.target.value
+  //   if ((ruleType === 1) && promotionType !== undefined) {
+  //     // 选择阶梯满的时候 设置为上一次阶梯满组合的值 然后把每满减的数据储存起来 以备下次切换使用
+  //     setFieldsValue({
+  //       rules: preRulesMaps[`${promotionType}-1`] || [],
+  //       maxDiscountsAmount: undefined
+  //     })
+  //     dispatch[namespace].saveDefault({
+  //       preRulesMaps: {
+  //         ...preRulesMaps,
+  //         [`${promotionType}-0`]: rules
+  //       }
+  //     })
+  //   } else if (ruleType === 0) {
+  //     // 选择每满减的时候 设置为上一次每满减组合的值 然后把阶梯满的数据储存起来 以备下次切换使用
+  //     setFieldsValue({
+  //       rules: preRulesMaps[`${promotionType}-0`] || []
+  //     })
+  //     dispatch[namespace].saveDefault({
+  //       preRulesMaps: {
+  //         ...preRulesMaps,
+  //         [`${promotionType}-1`]: rules
+  //       }
+  //     })
+  //   }
+  // }
+
+  handleRuleTypeChange = () => {
+    const { form: { setFieldsValue } } = this.props
+    setFieldsValue({
+      rules: [],
+      productRefInfo: []
+    })
   }
 
   /* 活动商品变化 */
-  handleProductRefChange = (e) => {
-    const { form: { getFieldValue, setFieldsValue }, preProductRefMaps, dispatch } = this.props
-    const productRefInfo = getFieldValue('productRefInfo')
-    const value = e.target.value
-    if (value === 0) {
-      // 选择活动 设置值为上一次选择活动有的值 那么把商品暂时储存起来
-      setFieldsValue({
-        productRefInfo: preProductRefMaps['0'] || []
-      }, () => {
-        dispatch[namespace].saveDefault({
-          preProductRefMaps: {
-            ...preProductRefMaps,
-            // '1': productRefInfo
-            '1': []
-          }
-        })
-      })
-    } else if (value === 1) {
-      // 选择商品 设置值为上一次选商品有的值 那么把活动暂时储存起来
-      setFieldsValue({
-        productRefInfo: preProductRefMaps['1'] || []
-      }, () => {
-        dispatch[namespace].saveDefault({
-          preProductRefMaps: {
-            ...preProductRefMaps,
-            // '0': productRefInfo
-            '0': []
-          }
-        })
-      })
-    }
+  // handleProductRefChange = (e) => {
+  //   const { form: { getFieldValue, setFieldsValue }, preProductRefMaps, dispatch } = this.props
+  //   const productRefInfo = getFieldValue('productRefInfo')
+  //   const value = e.target.value
+  //   if (value === 0) {
+  //     // 选择活动 设置值为上一次选择活动有的值 那么把商品暂时储存起来
+  //     setFieldsValue({
+  //       productRefInfo: preProductRefMaps['0'] || []
+  //     }, () => {
+  //       dispatch[namespace].saveDefault({
+  //         preProductRefMaps: {
+  //           ...preProductRefMaps,
+  //           // '1': productRefInfo
+  //           '1': []
+  //         }
+  //       })
+  //     })
+  //   } else if (value === 1) {
+  //     // 选择商品 设置值为上一次选商品有的值 那么把活动暂时储存起来
+  //     setFieldsValue({
+  //       productRefInfo: preProductRefMaps['1'] || []
+  //     }, () => {
+  //       dispatch[namespace].saveDefault({
+  //         preProductRefMaps: {
+  //           ...preProductRefMaps,
+  //           // '0': productRefInfo
+  //           '0': []
+  //         }
+  //       })
+  //     })
+  //   }
+  // }
+
+  handleProductRefChange = () => {
+    const { form: { setFieldsValue } } = this.props
+    setFieldsValue({
+      productRefInfo: []
+    })
   }
 
   /* 最大优惠金额设置变化 */
@@ -556,7 +604,7 @@ class FullDiscountEditPage extends PureComponent {
                 <Radio.Group disabled={otherDisable} onChange={this.handlePromotionTypeChange}>
                   <Radio value={11}>满减</Radio>
                   <Radio value={12}>满折</Radio>
-                  <Radio value={13}>多件一口价</Radio>
+                  <Radio value={15}>多件一口价</Radio>
                 </Radio.Group>
               )}
             </Form.Item>
@@ -622,7 +670,7 @@ class FullDiscountEditPage extends PureComponent {
                 </Form.Item>
               </If>
               {/* 满减满折的时候显示最大封顶件 */}
-              <If condition={promotionType === 13}>
+              <If condition={promotionType === 15}>
                 <Form.Item style={{ display: 'inline-block', marginBottom: 0 }}>
                   {
                     getFieldDecorator('maxDiscountsCount',
@@ -640,7 +688,7 @@ class FullDiscountEditPage extends PureComponent {
                                 } else {
                                   callback()
                                 }
-                              } else if (promotionType === 13) { // 一口价
+                              } else if (promotionType === 15) { // 一口价
                                 const currentMaxStageCount = Math.max(...(rules.map(item => item.stageCount)))
                                 if (currentMaxStageCount > value) {
                                   callback('最大优惠值必须大于已经设置的优惠条件中的最大优惠值')
@@ -675,21 +723,24 @@ class FullDiscountEditPage extends PureComponent {
                 </Form.Item>
               </If>
             </Form.Item>
-            <Form.Item label='是否可叠加优惠券'>
-              {getFieldDecorator('overlayCoupon', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择是否可叠加优惠券'
-                  }
-                ]
-              })(
-                <Radio.Group>
-                  <Radio value={1}>是</Radio>
-                  <Radio value={0}>否</Radio>
-                </Radio.Group>
-              )}
-            </Form.Item>
+            {/* 多件一口价选择的时候才需要优惠券可叠加 */}
+            <If condition={promotionType === 15}>
+              <Form.Item label='是否可叠加优惠券'>
+                {getFieldDecorator('overlayCoupon', {
+                  rules: [
+                    {
+                      required: true,
+                      message: '请选择是否可叠加优惠券'
+                    }
+                  ]
+                })(
+                  <Radio.Group disabled={otherDisable}>
+                    <Radio value={1}>是</Radio>
+                    <Radio value={0}>否</Radio>
+                  </Radio.Group>
+                )}
+              </Form.Item>
+            </If>
             <Form.Item label='优惠条件'>
               {
                 getFieldDecorator('rules', {
@@ -709,7 +760,7 @@ class FullDiscountEditPage extends PureComponent {
                             callback('优惠金额不能超过已设置的最大优惠金额: ' + maxDiscountsAmount + ' 元')
                             return
                           }
-                        } else if (promotionType === 13 && maxDiscountsCount > 0) {
+                        } else if (promotionType === 15 && maxDiscountsCount > 0) {
                           const currentMaxStageCount = Math.max(...(value.map(item => item.stageCount)))
                           if (currentMaxStageCount > maxDiscountsCount) {
                             callback('优惠件数不能超过已设置的最大优惠件数: ' + maxDiscountsCount + ' 件')

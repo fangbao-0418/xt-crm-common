@@ -56,7 +56,7 @@ export const getGoodsColumns = ({ onDelete, loseMoneyShow, statusDisabled }) => 
       dataIndex: 'loseMoney',
       key: 'loseMoney',
       render: val => {
-        return val ? '成本佣金高于一口价' : '-'
+        return val ? <span style={{ color: 'red' }}>成本佣金高于一口价</span> : '-'
       }
     }] : []),
     {
