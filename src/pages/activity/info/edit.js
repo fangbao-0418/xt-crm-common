@@ -1,7 +1,7 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd'
+import { Row, Col, Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd'
 import {
   getProductList,
   // setPromotionAddSKu,
@@ -43,6 +43,8 @@ class List extends React.Component {
     visibleAct: false,
     selectedRowKeys: [],
     selectedRows: [],
+    shopTypes: undefined,
+    productName: undefined,
     promotionDetail: {
       current: 1,
       size: 10,
@@ -111,6 +113,7 @@ class List extends React.Component {
     if ([1, 2].includes(type)) {
       params.isFilter = 0
     }
+    params.shopTypes=this.state.shopTypes
     getProductList(params).then((res) => {
       res = res || {}
       modalPage.total = res.total
@@ -149,7 +152,7 @@ class List extends React.Component {
   // };
 
   handleSearchModal = e => {
-    this.productPayload.productName = e
+    this.productPayload.productName = this.state.productName
     this.productPayload.page = 1
     this.getProductList()
   };
@@ -381,7 +384,9 @@ class List extends React.Component {
       info = {},
       transferActivity = {},
       transferGoodsList,
-      transferGoodsVisible
+      transferGoodsVisible,
+      shopTypes,
+      productName
     } = this.state
     const rowSelection = {
       selectedRowKeys,
@@ -530,16 +535,49 @@ class List extends React.Component {
           onCancel={this.handleCancelModal}
           onOk={this.handleOkModal}
         >
-          <Input.Search
-            placeholder='请输入需要搜索的商品'
-            style={{ marginBottom: 10, width: 200 }}
-            onSearch={this.handleSearchModal}
-          />
-          <SelectFetch
-            mode='multiple'
-            style={{ width: 172 }}
-            fetchData={getShopTypes}
-          />
+          <Row>
+            <Col span={2}>
+            商品名称
+            </Col>
+            <Col span={7}>
+              <Input.Search
+                placeholder='请输入需要搜索的商品'
+                style={{ marginBottom: 10, width: 200 }}
+                value={productName}
+                onChange={(e)=>{
+                  this.setState({
+                    productName: e.target.value
+                  })
+                }}
+                onSearch={this.handleSearchModal}
+              />
+            </Col>
+            <Col span={2}>
+            店铺类型
+            </Col>
+            <Col span={7}>
+              <SelectFetch
+                mode='multiple'
+                style={{ width: 200 }}
+                fetchData={getShopTypes}
+                value={shopTypes}
+                onChange={(shopTypes)=>{
+                  this.setState({
+                    shopTypes
+                  })
+                }}
+              />
+            </Col>
+            <Col span={3}>
+              <Button
+                type='primary'
+                className='mr10'
+                onClick={(this.handleSearchModal)}
+              >查询
+              </Button>
+            </Col>
+          </Row>
+
           <Table
             rowSelection={rowSelection}
             columns={[
