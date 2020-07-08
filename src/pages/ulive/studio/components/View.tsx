@@ -148,12 +148,12 @@ class Main extends React.Component<Props, State> {
           value: liveData.orderIndirectPayTotal
         }
       ] : this.state.statistics
-      //60:直播中 90 直播结束
+      //60:直播结束 90 直播中
       if ([60, 90].indexOf(res.liveStatus) > -1&&liveData) {
         statistics.splice(4, 0, {
           label:
         <div style={{ textAlign: 'center' }}>{res.liveStatus===90?'在线人数':'峰值在线人数'}
-          <div style={{ fontSize: 10 }}>（会有5分钟延迟）</div>
+          {res.liveStatus===90&&<div style={{ fontSize: 10 }}>（会有5分钟延迟）</div>}
         </div>,
           value: res.liveStatus===90?(liveData.onlineNum||0):(liveData.onlineMaxNum||0)
         })
