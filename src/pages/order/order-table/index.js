@@ -453,6 +453,7 @@ class OrderList extends React.Component {
                   {getFieldDecorator('shopTypeStr', { initialValue: values.shopTypeStr })(
                     <SelectFetch
                       mode='multiple'
+                      placeholder= '请选择店铺类型'
                       style={{ width: 172 }}
                       fetchData={getShopTypes}
                     />
