@@ -25,9 +25,12 @@ class Main extends React.Component {
   componentDidMount () {
     const history = this.props.history
     this.checkVersion()
-    history.listen((location) => {
+    this.unlisten = history.listen((location) => {
       this.checkVersion()
     })
+  }
+  componentWillUnmount () {
+    this.unlisten?.()
   }
   checkVersion () {
     api.getBuildInfo().then((res) => {
