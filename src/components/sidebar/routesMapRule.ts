@@ -42,6 +42,9 @@ const rules = {
   '/order/autoRefundRule': [
     /^\/order\/autoRefundRule(\/)?(\d+)?/
   ],
+  '/order/servicecenter': [
+    /order\/servicecenter(\/)?(\d+)?/
+  ],
   '/fresh/order/mainOrder': [
     /fresh\/order\/detail(\/)?(\d+)?/
   ],
