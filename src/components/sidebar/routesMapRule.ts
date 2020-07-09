@@ -51,10 +51,10 @@ const rules = {
     /goods\/sku-stock(\/)?(\d+)?/
   ],
   '/activity/lottery': [
-    /activity\/lottery(\/)?(\d+)?/
+    /^\/activity\/lottery(\/)?(\d+)?/
   ],
   '/activity/reward': [
-    /activity\/reward(\/)?(\d+)?/
+    /^\/activity\/reward(\/)?(\d+)?/
   ],
   '/activity/sprinkle-cash': [
     /activity\/sprinkle-cash\/form(\/)?(\d+)?/
