@@ -2,7 +2,7 @@ const { get } = APP.http
 
 /** 获取构建信息 */
 export function getBuildInfo () {
-  const url = process.env.IS_LOCAL ? `${process.env.APP_ORIGIN}/pub_info.json` : [process.env.APP_ORIGIN, process.env.APP_NAME, process.env.APP_BRANCH, 'pub_info.json'].join('/')
+  const url = process.env.IS_LOCAL ? '/pub_info' : ['/' + process.env.APP_NAME, process.env.APP_BRANCH, 'pub_info'].join('/')
   return fetch(url + '?v=' + new Date().getTime()).then((res) => {
     let data
     try {
