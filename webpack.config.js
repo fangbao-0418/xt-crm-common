@@ -4,6 +4,7 @@ const pkg = require('./package.json')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const CreateBuildConf = require('./plugins/createBuildConf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const { getMiniCssExtractLoaderConfig, getCssLoaderConfig, getPostCssLoaderConfig } = require('xt-crm-cli/config/webpack/utils')
 
 module.exports = function (config, env) {
   const dev = env === 'dev'
@@ -78,22 +79,9 @@ module.exports = function (config, env) {
       /node_modules/
     ],
     use: [
-      // Creates `style` nodes from JS strings
-      'style-loader',
-      // Translates CSS into CommonJS
-      'css-loader',
-      {
-        loader: 'postcss-loader',
-        options: {
-          sourceMap: dev,
-          config: {
-            path: path.resolve(__dirname, 'node_modules/xt-crm-cli/config/postcss.config.js'),
-            ctx: {
-              env: 'development'
-            }
-          }
-        }
-      },
+      getMiniCssExtractLoaderConfig(dev),
+      getCssLoaderConfig(dev, false),
+      getPostCssLoaderConfig(true),
       {
         loader: 'sass-loader'
       }
@@ -103,30 +91,9 @@ module.exports = function (config, env) {
     test: /\.module\.(scss|sass)$/,
     exclude: /node_modules/,
     use: [
-      // Creates `style` nodes from JS strings
-      'style-loader',
-      // Translates CSS into CommonJS
-      {
-        loader: 'css-loader',
-        options: {
-          modules: {
-            mode: 'local'
-          }
-        }
-      },
-      {
-        loader: 'postcss-loader',
-        options: {
-          sourceMap: dev,
-          config: {
-            path: path.resolve(__dirname, 'node_modules/xt-crm-cli/config/postcss.config.js'),
-            ctx: {
-              env: 'development'
-            }
-          }
-        }
-      },
-      // Compiles Sass to CSS
+      getMiniCssExtractLoaderConfig(dev),
+      getCssLoaderConfig(dev, true),
+      getPostCssLoaderConfig(true),
       {
         loader: 'sass-loader'
       }
@@ -152,9 +119,9 @@ module.exports = function (config, env) {
     }
   }
   if (env === 'prod') {
-    config.plugins.push(new BundleAnalyzerPlugin({
-      analyzerMode: 'static'
-    }))
+    // config.plugins.push(new BundleAnalyzerPlugin({
+    //   analyzerMode: 'static'
+    // }))
   }
   config.externals = {
     antd: 'antd',
