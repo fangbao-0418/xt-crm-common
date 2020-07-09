@@ -237,6 +237,7 @@ class CheckRefund extends React.Component<Props, State> {
                     ],
                   })(
                     <InputNumber
+                      className='not-has-handler'
                       min={0}
                       disabled={this.disabled}
                       max={this.checkVO.maxServerNum}

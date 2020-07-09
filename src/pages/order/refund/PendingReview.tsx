@@ -397,6 +397,7 @@ class PendingReview extends React.Component<Props, State> {
                   ]
                 })(
                   <InputNumber
+                    className='not-has-handler'
                     min={0}
                     max={this.checkVO.maxServerNum}
                     placeholder='请输入'
