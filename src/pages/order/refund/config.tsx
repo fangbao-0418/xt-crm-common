@@ -13,7 +13,7 @@ export const refundStatusOptions: any = {
   ALL: [ // 所有售后订单
     { key: '', val: '全部' },
     { key: 10, val: '待客服审核' },
-    { key: 11, val: '待供应商审核' },
+    { key: 15, val: '待供应商审核' },
     { key: 20, val: '待用户发货' },
     { key: 21, val: '退款失败' },
     { key: 23, val: '退款中' },

@@ -65,7 +65,8 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                   自动确认倒计时：<Countdown value={24 * 3600} />
                 </span>
               )} */}
-              <span className="ml20">供应商审核倒计时：23:22:22</span>
+              {/* 待供应商审核 */}
+              {orderServerVO.refundStatus === 15 && <span className="ml20">供应商审核倒计时：{orderServerVO.supplierResHandTime}</span>}
             </h3>
           </Col>
           <Col style={{display: 'flex'}}>

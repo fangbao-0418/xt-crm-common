@@ -84,6 +84,7 @@ declare module AfterSalesInfo {
     orderCommentListVO: any[];
   }
   export interface OrderServerVO {
+    supplierResHandTime: number;
     id: number;
     orderCode: string;
     createTime: number;
