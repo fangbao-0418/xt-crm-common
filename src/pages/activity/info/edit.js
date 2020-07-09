@@ -572,7 +572,7 @@ class List extends React.Component {
               <Button
                 type='primary'
                 className='mr10'
-                onClick={(this.handleSearchModal)}
+                onClick={this.handleSearchModal}
               >查询
               </Button>
             </Col>

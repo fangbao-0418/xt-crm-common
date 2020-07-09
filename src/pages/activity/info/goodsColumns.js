@@ -1,15 +1,14 @@
 import React from 'react'
 import { formatMoneyWithSign } from '../../helper'
 import Image from '../../../components/Image'
-import { productTypeMap } from './config'
-// const shopTypeMap = {
-//   1: '喜团自营',
-//   2: '直播小店',
-//   3: '品牌旗舰店',
-//   4: '品牌专营店',
-//   5: '喜团工厂店',
-//   6: '普通企业店'
-// }
+const shopTypeMap = {
+  1: '喜团自营',
+  2: '直播小店',
+  3: '品牌旗舰店',
+  4: '品牌专营店',
+  5: '喜团工厂店',
+  6: '普通企业店'
+}
 
 export const goodsColumns = (data = [], id = 'id') => {
   return [
@@ -36,7 +35,7 @@ export const goodsColumns = (data = [], id = 'id') => {
         return (
           <div>
             <div>{text}</div>
-            <div style={{ display: 'inline-block', backgroundColor: 'red', color: '#fff', paddingLeft: 5, paddingRight: 5, borderRadius: 2 }}>{productTypeMap[record.productType]}</div>
+            <div style={{ display: 'inline-block', backgroundColor: 'red', color: '#fff', paddingLeft: 5, paddingRight: 5, borderRadius: 2 }}>{shopTypeMap[record.shopType]}</div>
           </div>
         )
       }
@@ -83,4 +82,3 @@ export const goodsColumns = (data = [], id = 'id') => {
     ...data
   ]
 }
-
