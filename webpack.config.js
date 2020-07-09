@@ -119,9 +119,9 @@ module.exports = function (config, env) {
     }
   }
   if (env === 'prod') {
-    // config.plugins.push(new BundleAnalyzerPlugin({
-    //   analyzerMode: 'static'
-    // }))
+    config.plugins.push(new BundleAnalyzerPlugin({
+      analyzerMode: 'static'
+    }))
   }
   config.externals = {
     antd: 'antd',
