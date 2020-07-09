@@ -16,7 +16,7 @@ CreateVersionPlugin.prototype.apply = function (compiler) {
     
     // 将这个列表作为一个新的文件资源，插入到 webpack 构建中：
     const content = JSON.stringify(options)
-    compilation.assets['pub_info'] = {
+    compilation.assets['pub_info.json'] = {
       source: function () {
         return content
       },
