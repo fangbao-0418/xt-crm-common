@@ -9162,8 +9162,8 @@ xregexp@2.0.0:
 
 xt-crm-cli@^1.0.1:
   version "1.0.1"
-  resolved "http://192.168.20.8:802/xt-crm-cli/-/xt-crm-cli-1.0.1.tgz#a1f6c272bee3d7b1d0469d30156c101a51afacd5"
-  integrity sha512-cAgEeJkhTTkWuZc/+9YZ42vjW93yMIlx3kb+F3BKCH5/9iqTFNaQVao+kKCgNOmOs7ufEiot7Y2Q/9srF/h+rA==
+  resolved "http://192.168.20.8:802/xt-crm-cli/-/xt-crm-cli-1.0.1.tgz#54a37d84fd933a65e2a19582a4ec7bad120fecf6"
+  integrity sha512-oMKdoEFn8MhiS4hu+Favf2QyGqVgg0YM60FIZp7mA0MnPYULSWWU3ND8Ujz8WjHjJd3pbOwUxCtgFF4rIs9VNA==
   dependencies:
     "@babel/cli" "^7.8.4"
     "@babel/core" "^7.9.6"
