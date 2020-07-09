@@ -28,7 +28,13 @@ interface Props {
   ossDir?: string /** oss 上传指定目录 */
   ossType?: 'cos' | 'oss' /** 使用oss的类型  oss: 阿里云， cos: 腾讯云 */
 }
-export declare const ossUpload: (file: File) => Promise<any>
+/**
+ * file: 上传文件对象
+ * path: dir业务目录
+ * ossType: 服务器类型cos腾讯云 oss阿里云
+ * specifiedAddress: 指定上传地址的目录(类似客服中心，前端自己靠维护服务器某json文件进行数据更新，脱离后端开发的一种方案)
+*/
+export declare const ossUpload: (file: File, dir?: string, ossType?: string, specifiedAddress?: string) => Promise<any>
 export function formatValue (value: any[]): string
 class Upload extends React.Component<Props> {}
 export default Upload
