@@ -1,5 +1,8 @@
 export const fetchQuestion = () => {
-  return fetch('https://sh-tximg-1300503753.cos.ap-shanghai.myqcloud.com/question/question-pro.json').then((res) => {
+  const orign = window.location.origin
+
+  const path = orign === 'https://xt-crmadmin.hzxituan.com' ? 'https://sh-tximg-1300503753.cos.ap-shanghai.myqcloud.com/question/question-pro.json' : 'https://sh-tximg-1300503753.cos.ap-shanghai.myqcloud.com/question/question-test.json'
+  return fetch(path).then((res) => {
     return res.json()
   })
 }
