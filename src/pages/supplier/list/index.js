@@ -17,59 +17,18 @@ class OrderList extends React.Component {
     list: [],
     current: 1,
     pageSize: 20,
-    total: 0,
+    total: 0
   }
 
-  componentDidMount() {
-    this.query();
+  componentDidMount () {
+    this.query()
   }
 
   query = () => {
     let params = {
       ...this.props.form.getFieldsValue(),
       page: this.state.current,
-      pageSize: this.state.pageSize,
-    };
-    const [startTime, endTime] = params.createTime || [];
-
-    params = {
-      ...params,
-      createTime: undefined,
-      startTime: startTime ? +new Date(startTime) : undefined,
-      endTime: endTime ? +new Date(endTime) : undefined,
-    };
-
-    querySupplierList(params).then((res = {}) => {
-      this.setState({
-        list: res.records,
-        pageSize: res.size,
-        total: res.total,
-      });
-    });
-  };
-
-  reset = () => {
-    this.payload = {}
-    APP.fn.setPayload(this.pathname, this.payload)
-    this.props.form.resetFields();
-    this.query()
-  };
-  handleSearch = () => {
-    const {
-      form: { validateFields },
-    } = this.props
-
-    validateFields((err, vals) => {
-      if (!err) {
-        this.setState({current: 1}, this.query)
-      }
-    })
-  }
-  export = () => {
-    let params = {
-      ...this.props.form.getFieldsValue(),
-      page: this.state.current,
-      pageSize: this.state.pageSize,
+      pageSize: this.state.pageSize
     }
     const [startTime, endTime] = params.createTime || []
 
@@ -77,7 +36,48 @@ class OrderList extends React.Component {
       ...params,
       createTime: undefined,
       startTime: startTime ? +new Date(startTime) : undefined,
-      endTime: endTime ? +new Date(endTime) : undefined,
+      endTime: endTime ? +new Date(endTime) : undefined
+    }
+
+    querySupplierList(params).then((res = {}) => {
+      this.setState({
+        list: res.records,
+        pageSize: res.size,
+        total: res.total
+      })
+    })
+  };
+
+  reset = () => {
+    this.payload = {}
+    APP.fn.setPayload(this.pathname, this.payload)
+    this.props.form.resetFields()
+    this.query()
+  };
+  handleSearch = () => {
+    const {
+      form: { validateFields }
+    } = this.props
+
+    validateFields((err, vals) => {
+      if (!err) {
+        this.setState({ current: 1 }, this.query)
+      }
+    })
+  }
+  export = () => {
+    let params = {
+      ...this.props.form.getFieldsValue(),
+      page: this.state.current,
+      pageSize: this.state.pageSize
+    }
+    const [startTime, endTime] = params.createTime || []
+
+    params = {
+      ...params,
+      createTime: undefined,
+      startTime: startTime ? +new Date(startTime) : undefined,
+      endTime: endTime ? +new Date(endTime) : undefined
     }
 
     exportSupplier(params).then(res => {
@@ -89,44 +89,47 @@ class OrderList extends React.Component {
     this.setState(
       {
         current: page,
-        pageSize,
+        pageSize
       },
       this.query,
     )
   }
-  render() {
+  render () {
     const { total, pageSize, current } = this.state
     const {
-      form: { getFieldDecorator },
+      form: { getFieldDecorator }
     } = this.props
 
     const columns = [
       {
         title: '供应商ID',
-        dataIndex: 'id',
+        dataIndex: 'id'
       },
       {
         title: '供应商名称',
-        dataIndex: 'name',
+        dataIndex: 'name'
+      }, {
+        title: '保证金金额',
+        dataIndex: 'name'
       },
       {
         title: '联系人',
-        dataIndex: 'contacts',
+        dataIndex: 'contacts'
       },
       {
         title: '联系电话',
-        dataIndex: 'phone',
+        dataIndex: 'phone'
       },
       {
         title: '联系邮箱',
-        dataIndex: 'email',
+        dataIndex: 'email'
       },
       {
         title: '前台展示',
         dataIndex: 'showType',
         render: (showType, record) => {
           const { category } = record
-          const text = [0,1,3,4].indexOf(category) !== -1 ? showType === 1 ? '开启' : '关闭' : '-'
+          const text = [0, 1, 3, 4].indexOf(category) !== -1 ? showType === 1 ? '开启' : '关闭' : '-'
           return text
         }
       },
@@ -137,53 +140,53 @@ class OrderList extends React.Component {
           return (
             <>
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
-              <AccountModal onSuccess={this.query} {...record}/>
+              <AccountModal onSuccess={this.query} {...record} />
             </>
           )
-        },
-      },
+        }
+      }
     ].filter(column => !column.hide)
     const values = this.payload
     values.createTime = values.startTime && [moment(values.startTime), moment(values.endTime)]
     return (
       <>
-        <Card title="筛选">
+        <Card title='筛选'>
           <Form
-            layout="inline"
+            layout='inline'
           >
-            <FormItem label="供应商名称">
+            <FormItem label='供应商名称'>
               {getFieldDecorator('name', {
                 initialValue: values.name
-              })(<Input placeholder="请输入供应商名称" />)}
+              })(<Input placeholder='请输入供应商名称' />)}
             </FormItem>
-            <FormItem label="供应商ID">
+            <FormItem label='供应商ID'>
               {getFieldDecorator('id', {
                 initialValue: values.id
-              })(<InputNumber style={{width: 172}} placeholder="请输入供应商ID" />)}
+              })(<InputNumber style={{ width: 172 }} placeholder='请输入供应商ID' />)}
             </FormItem>
-            <FormItem label="联系人">
+            <FormItem label='联系人'>
               {getFieldDecorator('contacts', {
                 initialValue: values.contacts
-              })(<Input placeholder="请输入联系人" />)}
+              })(<Input placeholder='请输入联系人' />)}
             </FormItem>
             <FormItem label='供应商分类'>
               {getFieldDecorator('category', {
                 initialValue: values.category
               })(<SupplierTypeSelect />)}
             </FormItem>
-            <FormItem label="创建时间">
+            <FormItem label='创建时间'>
               {getFieldDecorator('createTime', {
                 initialValue: values.createTime
               })(<RangePicker showTime />)}
             </FormItem>
             <FormItem>
-              <Button type="default" onClick={this.reset}>
+              <Button type='default' onClick={this.reset}>
                 清除条件
               </Button>
-              <Button type="primary" style={{ margin: '0 10px' }} onClick={this.handleSearch}>
+              <Button type='primary' style={{ margin: '0 10px' }} onClick={this.handleSearch}>
                 查询
               </Button>
-              <Button type="primary" style={{ margin: '0 10px' }} onClick={this.export}>
+              <Button type='primary' style={{ margin: '0 10px' }} onClick={this.export}>
                 导出供应商
               </Button>
             </FormItem>
@@ -199,7 +202,7 @@ class OrderList extends React.Component {
               current,
               total,
               pageSize,
-              onChange: this.handlePageChange,
+              onChange: this.handlePageChange
             }}
             rowKey={record => record.id}
           />
@@ -215,7 +218,7 @@ export default Form.create({
     const params = {
       ...allValues,
       startTime: startTime ? +new Date(startTime) : undefined,
-      endTime: endTime ? +new Date(endTime) : undefined,
+      endTime: endTime ? +new Date(endTime) : undefined
     }
     APP.fn.setPayload(props.location.pathname, params)
   }
