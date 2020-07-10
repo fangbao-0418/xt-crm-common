@@ -43,7 +43,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     return this.props.data.refundType === type;
   }
   render() {
-    let { orderServerVO, orderInfoVO, checkVO, expirationClose } = this.props.data;
+    let { orderServerVO, orderInfoVO, checkVO, supplierResHandTime } = this.props.data;
     orderServerVO = Object.assign({}, orderServerVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
     checkVO = Object.assign({}, checkVO);
@@ -66,7 +66,14 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                 </span>
               )} */}
               {/* 待供应商审核 */}
-              {orderServerVO.refundStatus === 15 && <span className="ml20">供应商审核倒计时：{orderServerVO.supplierResHandTime}</span>}
+              {orderServerVO.refundStatus === 15 && (
+                <span
+                  className="ml20"
+                  style={{ color: 'red' }}
+                >
+                  供应商审核倒计时：<Countdown refresh={this.onSuccess} value={Math.floor((supplierResHandTime - Date.now()) / 1000)}/>
+                </span>
+              )}
             </h3>
           </Col>
           <Col style={{display: 'flex'}}>

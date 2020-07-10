@@ -22,6 +22,7 @@ declare module AfterSalesInfo {
     handleChannel: 0 | 1 | 2;
     /** 物流备注 */
     returnExpressRemark: string;
+    supplierResHandTime: number;
   }
   export interface CheckVO {
     amount: number;
