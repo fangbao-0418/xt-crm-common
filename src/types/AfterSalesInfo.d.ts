@@ -154,5 +154,6 @@ declare module AfterSalesInfo {
     shopName: string;
     shopOwnerPhone: string;
     shopPictrueUrl: string;
+    shopPictrueFirstUrl: string;
   }
 }

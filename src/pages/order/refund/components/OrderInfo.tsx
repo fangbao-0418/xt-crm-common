@@ -107,8 +107,8 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
       {shopDTO ? (
         <Row gutter={24}>
           <Col span={8}>
-            {shopDTO.shopPictrueUrl ? (
-              <Avatar src={shopDTO.shopPictrueUrl} />
+            {shopDTO.shopPictrueFirstUrl ? (
+              <Avatar src={shopDTO.shopPictrueFirstUrl} />
             ) : (
               <Avatar icon='user' />
             )}{' '}
