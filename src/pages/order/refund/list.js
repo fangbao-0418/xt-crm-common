@@ -159,6 +159,10 @@ export default class extends React.Component {
     }
     refundStatus = refundStatus || typeMapRefundStatus[this.props.type]
     params.refundStatus = refundStatus && Number.isInteger(refundStatus) ? [refundStatus] : refundStatus
+    APP.fn.setPayload(namespace, {
+      ...params,
+      type
+    })
     console.log(params.refundStatus, 'params.refundStatus', params)
     if (params&&params.shopPhone) {
       getPhoneById({ phone: fieldsValues.shopPhone }).then((res = {}) => {
@@ -172,18 +176,17 @@ export default class extends React.Component {
     } else {
       this.loadData(isExport, params, noFetch)
     }
-    APP.fn.setPayload(namespace, {
-      ...params,
-      type
-    })
   }
 
   loadData (isExport, params, noFetch) {
+    if (params.shopType) {
+      params.shopType=(params.shopType).toString()
+    }
     if (isExport) {
       this.setState({
         loading: true
       })
-      exportRefund({ ...params, shopType: (params.shopType).toString() })
+      exportRefund(params)
         .then(res => {
           res && Message.success('导出成功')
         })
@@ -196,7 +199,7 @@ export default class extends React.Component {
       if (noFetch) {
         return
       }
-      refundList({ ...params, shopType: (params.shopType).toString() }).then(res => {
+      refundList(params).then(res => {
         const records = (res.data && res.data.records) || []
         this.setState({
           tableConfig: res.data || {},
