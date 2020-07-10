@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Table } from 'antd'
 import { gotoPage } from '@/util/utils'
+import { If } from '@/packages/common/components'
 import { formatMoneyWithSign } from '@/pages/helper'
 import { detailFullDiscounts } from './api'
 import { getRulesColumns, getGoodsColumns, getActivityColumns } from './config/columns'
@@ -152,6 +153,13 @@ class FullDiscountDetailPage extends PureComponent {
           <Card style={{ marginTop: 16 }} type='inner' title='优惠信息'>
             <Form.Item label='优惠种类'>{promotionType}</Form.Item>
             <Form.Item label='优惠类型'>{ruleTypeTxt}</Form.Item>
+            <If condition={detail && detail.promotionType === 15}>
+              <Form.Item label='是否可叠加优惠券'>
+                {
+                  (detail && detail.rule && detail.rule.overlayCoupon) ? '是' : '否'
+                }
+              </Form.Item>
+            </If>
             <Form.Item label='优惠条件'>
               <Table
                 style={{ margin: '8px 0 8px' }}

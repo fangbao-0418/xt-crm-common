@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Card, Form, Input, DatePicker, Radio, Button, InputNumber } from 'antd'
+import { Card, Form, Input, DatePicker, Radio, Button, InputNumber, Modal, message } from 'antd'
 import moment from 'moment'
 import { If } from '@/packages/common/components'
 import RulesTable from './components/rules-table'
@@ -7,7 +7,8 @@ import ProductTable from './components/product-table'
 import { formatMoneyWithSign } from '@/pages/helper'
 import { gotoPage, connect } from '@/util/utils'
 import { namespace } from './model'
-import { detailFullDiscounts, productCheckCost } from './api'
+import { detailFullDiscounts, productCheckCost, addFullDiscounts, updateFullDiscounts } from './api'
+const { confirm } = Modal
 
 const { RangePicker } = DatePicker
 const { TextArea } = Input
@@ -225,6 +226,7 @@ class FullDiscountEditPage extends PureComponent {
     } = this.props
     validateFields((err, filds) => {
       if (err) {
+        console.log(err, 'err')
         return
       }
       // api: http://192.168.20.21/project/278/interface/api/50540
@@ -253,13 +255,55 @@ class FullDiscountEditPage extends PureComponent {
         params.refProductIds = productRefInfo.map(item => item.id)
       }
 
+      console.log(promotionType === 15 && productRefInfo.some(item => item.loseMoney))
+
+      if (promotionType === 15 && productRefInfo.some(item => item.loseMoney)) {
+        confirm({
+          icon: 'exclamation-circle',
+          title: '活动价格提醒?',
+          content: '部分商品成本+佣金超过一口价平摊金额可能造成资损, 确定保存',
+          onOk () {
+            return new Promise((resolve, reject) => {
+              if (action === 'copy' || (!id)) { // 复制或者新建
+                addFullDiscounts(params).then(() => {
+                  resolve()
+                  message.success('活动添加成功')
+                  APP.history.replace('/activity/full-discount')
+                }, () => {
+                  reject()
+                })
+              } else { // 编辑
+                updateFullDiscounts({
+                  ...params,
+                  id
+                })
+                  .then(() => {
+                    resolve()
+                    message.success('活动编辑成功')
+                    APP.history.replace('/activity/full-discount')
+                  }, () => {
+                    reject()
+                  })
+              }
+            }).catch(() => console.log('Oops errors!'))
+          }
+        })
+        return
+      }
       if (action === 'copy' || (!id)) { // 复制或者新建
-        dispatch[namespace].addFullDiscounts(params)
+        addFullDiscounts(params).then(() => {
+          message.success('活动添加成功')
+          APP.history.replace('/activity/full-discount')
+        })
       } else { // 编辑
-        dispatch[namespace].updateFullDiscounts({
+        updateFullDiscounts({
           ...params,
           id
         })
+          .then(() => {
+            message.success('活动编辑成功')
+            APP.history.replace('/activity/full-discount')
+          })
       }
     })
   }
@@ -729,7 +773,7 @@ class FullDiscountEditPage extends PureComponent {
                 {getFieldDecorator('overlayCoupon', {
                   rules: [
                     {
-                      required: true,
+                      required: promotionType === 15,
                       message: '请选择是否可叠加优惠券'
                     }
                   ]

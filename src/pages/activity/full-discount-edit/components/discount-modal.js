@@ -112,21 +112,21 @@ class DiscountModal extends PureComponent {
 
       if (stageType === 1) { // 满 X 元
         record.stageAmount = stageAmount
-        record.conditionStr = `满￥ ${stageAmount} 元`
+        record.conditionStr = `满 ${stageAmount} 元`
       } else if (stageType === 2) { // 满 X 件
         record.stageCount = stageCount
-        record.conditionStr = `满￥  ${stageCount} 件`
+        record.conditionStr = `满 ${stageCount} 件`
       }
 
       if (mode === 1) { // 减 X 元
         record.discountsAmount = discountsAmount
-        record.modeStr = `减￥ ${discountsAmount} 元`
+        record.modeStr = `减 ${discountsAmount} 元`
       } else if (mode === 2) { // 折 X 折
         record.discounts = discounts
         record.modeStr = `折 ${discounts} 折`
       } else if (mode === 3) { // 减 X 元
         record.amount = amount
-        record.modeStr = `￥ ${amount} 元购买`
+        record.modeStr = `${amount} 元购买`
       }
 
       if (onOk) {
