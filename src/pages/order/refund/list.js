@@ -179,14 +179,11 @@ export default class extends React.Component {
   }
 
   loadData (isExport, params, noFetch) {
-    if (params.shopType) {
-      params.shopType=(params.shopType).toString()
-    }
     if (isExport) {
       this.setState({
         loading: true
       })
-      exportRefund(params)
+      exportRefund({ ...params, shopType: (params.shopType).toString() })
         .then(res => {
           res && Message.success('导出成功')
         })
@@ -199,7 +196,7 @@ export default class extends React.Component {
       if (noFetch) {
         return
       }
-      refundList(params).then(res => {
+      refundList({ ...params, shopType: (params.shopType).toString() }).then(res => {
         const records = (res.data && res.data.records) || []
         this.setState({
           tableConfig: res.data || {},
