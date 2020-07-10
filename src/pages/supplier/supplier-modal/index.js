@@ -209,6 +209,9 @@ class SupplierModal extends Component {
             <FormItem label='联系邮箱'>
               {getFieldDecorator('email')(<Input placeholder='请输入联系邮箱' />)}
             </FormItem>
+            <FormItem label='采购员姓名' extra='最多10个字符'>
+              {getFieldDecorator('purchaserName')(<Input maxLength={10} placeholder='请输入采购员姓名' />)}
+            </FormItem>
             <If condition={[0, 1, 2, 3, 4].includes(category)}>
               <h4>店铺信息</h4>
               <FormItem label='店铺名称'>
