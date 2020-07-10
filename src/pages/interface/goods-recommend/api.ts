@@ -21,11 +21,7 @@ export const update = (payload: Item) => {
 }
 
 export const fetchGoodsList = (
-  payload: {
-    pageNo?: number
-    page: number | undefined
-    pageSize: number
-  }
+  payload: any
 ) => {
   payload = {
     ...payload,

@@ -12,6 +12,7 @@ export interface SupplierItem {
 type ValueProps = { label: string, key: any }
 
 interface SupplierSelectProps {
+  processPayload?: (data?: any) => any
   style?: React.CSSProperties
   disabled?: boolean
   onChange?: (value: ValueProps, options: SupplierItem[]) => void
@@ -44,25 +45,32 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
   }
   fetchSupplier = (name: string) => {
     const category = this.props.category
+    const processPayload = this.props.processPayload
     const type = this.props.type || 'all'
     if (name) {
       this.lastFetchId += 1
       const fetchId = this.lastFetchId
       this.setState({ supplierList: [], fetching: true })
       let p
+      let param: any
       if (type === 'yx') {
-        p = getYxStoreList({
+        param = {
           name,
           pageSize: 200
-        }, { hideLoading: true })
+        }
+        p = getYxStoreList
       } else {
-        p = getAllStoreList({
+        param = {
           name,
           category,
           pageSize: 200
-        }, { hideLoading: true })
+        }
+        p = getAllStoreList
       }
-      p.then((res: any) => {
+      if (typeof processPayload === 'function') {
+        param = processPayload(param)
+      }
+      p(param, { hideLoading: true }).then((res: any) => {
         if (fetchId !== this.lastFetchId) {
           return
         }
