@@ -23,6 +23,9 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
   }
   render() {
     let { data } = this.props;
+    const infoStr = data?.supplierHandLogS?.[0]?.info || '[]'
+    const info = JSON.parse(infoStr);
+    console.log('info', info);
     return (
       <>
         {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (
@@ -31,35 +34,11 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
           <>
             <AfterSalesProcessing data={data} />
             {/* 仅退款，待客服跟进 */}
-            <If condition={data.refundStatus === enumRefundStatus.WaitCustomerServiceOperating && data.refundType === enumRefundType.Refund}>
+            <If condition={info && info.length > 0}>
               <Card>
                 <h3>供应商处理信息</h3>
                 <Row>
-                  <Col>供应商审核结果</Col>
-                  <Col>快递公司</Col>
-                  <Col>快递单号</Col>
-                  <Col>说明</Col>
-                </Row>
-              </Card>
-            </If>
-            {/* 仅退款，供应商超时未处理 */}
-            <If condition={data.refundStatus === 28 && data.refundType === enumRefundType.Refund}>
-              <Card>
-                <h3>供应商处理信息</h3>
-                <Row>
-                  <Col>供应商审核时间</Col>
-                  <Col>审核截至时间</Col>
-                </Row>
-              </Card>
-            </If>
-            {/* 仅退款，供应商通过 */}
-            <If condition={data.refundStatus === 29 && data.refundType === enumRefundType.Refund}>
-              <Card>
-                <h3>供应商处理信息</h3>
-                <Row>
-                  <Col>供应商审核时间</Col>
-                  <Col>审核截至时间</Col>
-                  <Col>说明</Col>
+                  {info.map((v: any) => (<Col>{v.key}：{v.value}</Col>))}
                 </Row>
               </Card>
             </If>

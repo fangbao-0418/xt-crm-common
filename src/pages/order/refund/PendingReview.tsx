@@ -47,7 +47,8 @@ interface State {
   addressVisible: boolean
   selectedValues: any[]
   isDemotion: number
-  demotionInfo: string,
+  demotionInfo: string
+  secondRefund?: string
   firstLevel: OptionProps[],
   secondLevel: OptionProps[]
 }
@@ -60,6 +61,7 @@ class PendingReview extends React.Component<Props, State> {
     selectedValues: [],
     isDemotion: this.checkVO.isDemotion,
     demotionInfo: '',
+    secondRefund: '',
     firstLevel: [],
     secondLevel: []
   }
@@ -509,6 +511,7 @@ class PendingReview extends React.Component<Props, State> {
                   this.secondRefundQuickReply = this.refundQuickReply[key] || {}
                   const secondLevel = Object.keys(this.secondRefundQuickReply).map((str: string) => ({ label: str, value: str }));
                   this.setState({
+                    secondRefund: undefined,
                     secondLevel
                   })
                 }}
@@ -519,7 +522,9 @@ class PendingReview extends React.Component<Props, State> {
               </Select>
               <Select
                 placeholder="请选择二级"
+                value={this.state.secondRefund}
                 onChange={(key: string) => {
+                  this.setState({ secondRefund: key })
                   const info =  this.secondRefundQuickReply[key];
                   this.props.form.setFieldsValue({ info })
                 }}

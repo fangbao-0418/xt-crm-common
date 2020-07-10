@@ -1,5 +1,6 @@
 declare module AfterSalesInfo {
   export interface data {
+    supplierHandLogS: any[];
     cancel: boolean;
     id: number;
     refundStatus: number;
@@ -85,7 +86,6 @@ declare module AfterSalesInfo {
     orderCommentListVO: any[];
   }
   export interface OrderServerVO {
-    supplierResHandTime: number;
     id: number;
     orderCode: string;
     createTime: number;

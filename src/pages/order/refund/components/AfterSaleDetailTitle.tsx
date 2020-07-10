@@ -48,6 +48,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     orderInfoVO = Object.assign({}, orderInfoVO);
     checkVO = Object.assign({}, checkVO);
     const { modifyLogisticsInfoVisible, platformDeliveryVisible } = this.state;
+    const timestamp = supplierResHandTime - Date.now()
     return (
       <>
         <Row type="flex" justify="space-between" align="middle">
@@ -71,7 +72,7 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                   className="ml20"
                   style={{ color: 'red' }}
                 >
-                  供应商审核倒计时：<Countdown refresh={this.onSuccess} value={Math.floor((supplierResHandTime - Date.now()) / 1000)}/>
+                  供应商审核倒计时：{timestamp > 0 ? <Countdown refresh={this.onSuccess} value={Math.floor(timestamp / 1000)} /> : '供应商审核超时' }
                 </span>
               )}
             </h3>
