@@ -13,13 +13,12 @@ const uploadButton = props => (
   </div>
 );
 
-export async function ossUpload (file, dir = 'crm', ossType = 'oss') {
+export async function ossUpload (file, dir = 'crm', ossType = 'oss', specifiedAddress) {
   if (ossType === 'oss') {
     const res = await getStsPolicy()
     if (res) {
       const client = createClient(res)
       try {
-        console.log(file, 'fileoss')
         const urlList = await ossUploadBlob(client, file, dir);
         return urlList
       } catch (error) {
@@ -30,14 +29,12 @@ export async function ossUpload (file, dir = 'crm', ossType = 'oss') {
       return Promise.reject()
     }
   } else if (ossType === 'cos') {
-    const res = await getStsCos()
-    if (res) {
-      const cosClient = createCosClient(res)
+    const stsCos = await getStsCos()
+    if (stsCos) {
+      const cosClient = createCosClient(stsCos)
       try {
-        console.log(file, 'filecos')
-        const res = await cosUpload(cosClient, file, dir)
-        console.log(res, 'cosUpload')
-        const url = 'https://' + res.Location
+        const address = await cosUpload(cosClient, file, dir, stsCos, specifiedAddress)
+        const url = 'https://' + address.Location
         const urlList = [url]
         return urlList
       } catch (error) {

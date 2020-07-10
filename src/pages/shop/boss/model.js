@@ -1,6 +1,9 @@
-import * as api from './api';
-import { message } from 'antd';
+import * as api from './api'
+import { exportFile } from '@/util/fetch'
+import { message, Modal } from 'antd'
 export const namespace = 'shop.boss'
+
+const { confirm } = Modal
 
 export default {
   namespace,
@@ -8,6 +11,9 @@ export default {
     bossData: {}, // 店长列表数据
     currentBoss: null, // 当前店长数据
     switchModal: { // 开启关闭模态框数据
+      visible: false
+    },
+    passModal: { // 审核不通过模态框数据
       visible: false
     },
     batchModal: { // 批量输入手机号表单模态框
@@ -21,20 +27,20 @@ export default {
   },
   effects: dispatch => ({
     // 获取boss列表
-    async getBossList(payload) {
-      const bossData = await api.getBossList(payload);
+    async getBossList (payload) {
+      const bossData = await api.getBossList(payload)
       console.log('这里获取内容', payload)
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {
           bossData
         }
-      });
+      })
     },
 
     // 检查用户
-    async checkUser(payload) {
-      const checkArr = await api.checkUser(payload);
+    async checkUser (payload) {
+      const checkArr = await api.checkUser(payload)
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {
@@ -47,12 +53,12 @@ export default {
           },
           phones: payload.phones
         }
-      });
+      })
     },
 
-    async createShop(payload) {
-      await api.createShop(payload);
-      message.success('批量开通小店成功！')
+    async createShop (payload) {
+      await api.createShop(payload)
+      message.success('批量开通店铺成功！')
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {
@@ -60,39 +66,107 @@ export default {
             visible: false
           }
         }
-      });
+      })
+      const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
+        ...localPayload,
         page: 1,
         pageSize: 10
-      });
+      })
     },
 
-    async openShop(payload, rootState) {
-      await api.openShop(payload);
+    async openShop (payload, rootState) {
+      await api.openShop(payload)
       const bossData = rootState['shop.boss'].bossData
-      message.success('开通小店成功！')
+      message.success('开通店铺成功！')
+      const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
+        ...localPayload,
         page: bossData.current,
         pageSize: bossData.size
-      });
+      })
     },
 
-    async closeShop(payload, rootState) {
-      await api.closeShop(payload);
+    async closeShop (payload, rootState) {
+      try {
+        const res = await api.closeShop(payload)
+        console.log(res)
+        const bossData = rootState['shop.boss'].bossData
+        message.success('关闭店铺成功！')
+        dispatch({
+          type: 'shop.boss/saveDefault',
+          payload: {
+            switchModal: {
+              visible: false
+            }
+          }
+        })
+        const localPayload = APP.fn.getPayload(namespace) || {}
+        dispatch['shop.boss'].getBossList({
+          ...localPayload,
+          page: bossData.current,
+          pageSize: bossData.size
+        })
+      } catch (error) {
+        if (error?.code === '100100') {
+          dispatch({
+            type: 'shop.boss/saveDefault',
+            payload: {
+              switchModal: {
+                visible: false
+              }
+            }
+          })
+          confirm({
+            title: '关闭店铺失败！',
+            content: '商家有商品正在参加平台活动，请处理完成后再关店。',
+            okText: '下载活动商品表',
+            onOk () {
+              api.shopExportProduct({
+                shopId: payload.shopId
+              })
+            }
+          })
+        }
+      }
+    },
+
+    async passShop (payload, rootState) {
+      await api.auditShop({
+        ...payload,
+        auditResult: 2
+      })
       const bossData = rootState['shop.boss'].bossData
-      message.success('关闭小店成功！')
+      message.success('已审核通过')
+      const localPayload = APP.fn.getPayload(namespace) || {}
+      dispatch['shop.boss'].getBossList({
+        ...localPayload,
+        page: bossData.current,
+        pageSize: bossData.size
+      })
+    },
+
+    async noPassShop (payload, rootState) {
+      await api.auditShop({
+        ...payload,
+        auditResult: 3
+      })
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {
-          switchModal: {
+          passModal: {
             visible: false
           }
         }
-      });
+      })
+      const bossData = rootState['shop.boss'].bossData
+      message.success('已审核不通过')
+      const localPayload = APP.fn.getPayload(namespace) || {}
       dispatch['shop.boss'].getBossList({
+        ...localPayload,
         page: bossData.current,
         pageSize: bossData.size
-      });
+      })
     }
   })
 }

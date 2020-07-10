@@ -20,6 +20,14 @@ import { formatMoney, formatMoneyWithSign } from '../../helper'
 import { goodsColumns } from './goodsColumns'
 import GoodsTransfer from '@/components/goods-transfer'
 const namespace = 'activity/info/shoplist'
+const shopTypeMap = {
+  1: '喜团自营',
+  2: '直播小店',
+  3: '品牌旗舰店',
+  4: '品牌专营店',
+  5: '喜团工厂店',
+  6: '普通企业店'
+}
 class List extends React.Component {
   id = this.props.match.params.id;
   payload = APP.fn.getPayload(namespace) || {};
@@ -92,12 +100,16 @@ class List extends React.Component {
   getProductList = () => {
     // type 活动类型 10为拼团活动-拼团活动不包含1688
     const { modalPage, type } = this.state
-    getProductList({
+    const params = {
       status: 0,
       types: type === 10 ? [0, 10] : undefined,
       ...this.productPayload,
       include1688: type === 10 ? false : undefined
-    }).then((res) => {
+    }
+    if ([1, 2].includes(type)) {
+      params.isFilter = 0
+    }
+    getProductList(params).then((res) => {
       res = res || {}
       modalPage.total = res.total
       modalPage.current = this.productPayload.page
@@ -523,7 +535,16 @@ class List extends React.Component {
           />
           <Table
             rowSelection={rowSelection}
-            columns={goodsColumns()}
+            columns={[
+              ...goodsColumns().slice(0, 4),
+              {
+                title: '店铺类型',
+                key: 'shopType',
+                dataIndex: 'shopType',
+                render: text => shopTypeMap[text]
+              },
+              ...goodsColumns().slice(4)
+            ]}
             dataSource={goodsList}
             pagination={modalPage}
             onChange={this.handleTabChangeModal}

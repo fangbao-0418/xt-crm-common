@@ -38,6 +38,9 @@ const rules = {
   '/order/autoRefundRule': [
     /^\/order\/autoRefundRule(\/)?(\d+)?/
   ],
+  '/order/servicecenter': [
+    /order\/servicecenter(\/)?(\d+)?/
+  ],
   '/fresh/order/mainOrder': [
     /fresh\/order\/detail(\/)?(\d+)?/
   ],
@@ -108,6 +111,9 @@ const rules = {
   '/fresh/coupon': [
     /fresh\/coupon\/bulkissuing(\/)?(\d+)?/,
     /fresh\/coupon\/detail(\/)?(\d+)?/
+  ],
+  '/shop/boss': [
+    /shop\/boss\/detail(\/)?(\d+)?/
   ]
 }
 export default rules

@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import { push1688, withhold, getProceedsListByOrderId, cancelIntercept } from '../api';
-import { get, map } from 'lodash';
-import { Button, Row, Card, Col, message, Modal, Divider } from 'antd';
-import BuyerInfo from './buyer-info';
-import OrderInfo from './order-info';
-import GoodsTable from './goods-table';
-import BenefitInfo from './benefit-info';
-import StepInfo from './step-info';
-import { enumOrderStatus, OrderStatusTextMap } from '../constant';
-import DeliveryModal from './components/delivery-modal';
-import { dateFormat } from '@/util/utils';
-import moment from 'moment';
+import React, { Component } from 'react'
+import { push1688, withhold, getProceedsListByOrderId, cancelIntercept } from '../api'
+import { get, map } from 'lodash'
+import { Button, Row, Card, Col, message, Modal, Divider } from 'antd'
+import BuyerInfo from './buyer-info'
+import OrderInfo from './order-info'
+import GoodsTable from './goods-table'
+import BenefitInfo from './benefit-info'
+import StepInfo from './step-info'
+import { enumOrderStatus, OrderStatusTextMap } from '../constant'
+import DeliveryModal from './components/delivery-modal'
+import { dateFormat } from '@/util/utils'
+import moment from 'moment'
 import WithModal from './components/modal'
 import ModifyAddress from './components/modifyAddress'
 import { namespace } from './model'
@@ -58,24 +58,24 @@ const paymentPushCustomsStatusConifg = {
   '4': '处理失败',
   '5': '已推送总署'
 }
-const { confirm } = Modal;
+const { confirm } = Modal
 
 @connect((state) => ({
   data: state[namespace].data,
   childOrderList: state[namespace].childOrderList
 }))
 class Detail extends Component {
-  get id() {
+  get id () {
     const {
       match: {
-        params: { id },
-      },
-    } = this.props;
-    return id;
+        params: { id }
+      }
+    } = this.props
+    return id
   }
 
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       visible: false,
       remark: '',
@@ -84,11 +84,11 @@ class Detail extends Component {
       deliveryVisible: false,
       deliveryData: {},
       modifyAddressVisible: false
-    };
+    }
   }
 
-  componentDidMount() {
-    this.query();
+  componentDidMount () {
+    this.query()
   }
 
   /**
@@ -101,7 +101,7 @@ class Detail extends Component {
         orderCode: this.id
       }
     })
-    this.queryProceeds();
+    this.queryProceeds()
   }
 
   /**
@@ -109,7 +109,7 @@ class Detail extends Component {
    */
   queryProceeds = () => {
     getProceedsListByOrderId({ orderCode: this.id }).then((result) => {
-      const { goodsTableKey } = this.state;
+      const { goodsTableKey } = this.state
       this.setState({
         userProceedsListByOrderId: result,
         goodsTableKey: goodsTableKey + 1
@@ -119,64 +119,68 @@ class Detail extends Component {
 
   /**
    * 推送到1688
-   * @param {string} id 订单Id  
+   * @param {string} id 订单Id
    */
-  push1688(id) {
-    if (this.pushload) return;
-    this.pushload = true;
+  push1688 (id) {
+    if (this.pushload) {
+      return
+    }
+    this.pushload = true
     push1688(id).then(res => {
       if (res.success) {
-        message.success('操作成功');
+        message.success('操作成功')
       } else {
         message.error(res.message)
       }
     }).finally(() => {
-      this.pushload = false;
+      this.pushload = false
     })
   }
 
   /**
    * 发起代扣
-   * @param {string} id 订单Id 
+   * @param {string} id 订单Id
    */
-  withhold(id) {
-    if (this.holdload) return;
-    this.holdload = true;
+  withhold (id) {
+    if (this.holdload) {
+      return
+    }
+    this.holdload = true
     withhold(id).then(res => {
       if (res && res.success) {
-        message.success('操作成功');
+        message.success('操作成功')
       } else {
         message.error(res.message)
       }
     }).finally(() => {
-      this.holdload = false;
+      this.holdload = false
     })
   }
 
   /**
    * 确认发起代扣弹窗
-   * @param {string} id 订单Id 
+   * @param {string} id 订单Id
    */
   comfirmWithhold = (id) => {
     confirm({
       title: '确认重新发起代扣?',
-      onOk() {
+      onOk () {
         this.withhold(id)
       }
-    });
+    })
   }
 
   /**
    * 确认推送1688弹窗
-   * @param {string} id 订单Id 
+   * @param {string} id 订单Id
    */
   comfirmPush1688 = (id) => {
     confirm({
       title: '确认重新推送1688?',
-      onOk() {
+      onOk () {
         this.push1688(id)
       }
-    });
+    })
   }
 
   // 修改收货地址弹窗
@@ -184,23 +188,23 @@ class Detail extends Component {
     this.setState({
       modifyAddressVisible: !this.state.modifyAddressVisible
     }, () => {
-      isOk && this.query();
+      isOk && this.query()
     })
   }
 
-  render() {
+  render () {
     const { data, childOrderList } = this.props
-    let { 
+    const {
       userProceedsListByOrderId,
       goodsTableKey,
       deliveryVisible,
       deliveryData,
       modifyAddressVisible
     } = this.state
-    const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid);
-    const orderType = get(data, 'orderInfo.orderType');
-    const orderStatusLogList = get(data, 'orderStatusLogList', []);
-    const showFlag = !!data.orderGlobalExtendVO 
+    const orderStatus = get(data, 'orderInfo.orderStatus', enumOrderStatus.Unpaid)
+    const orderType = get(data, 'orderInfo.orderType')
+    const orderStatusLogList = get(data, 'orderStatusLogList', [])
+    const showFlag = !!data.orderGlobalExtendVO
     const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
     console.log(childOrderList, 'childOrderListchildOrderListchildOrderListchildOrderList')
     return (
@@ -211,7 +215,7 @@ class Detail extends Component {
           orderStatusLogList={orderStatusLogList}
         />
         {/* 订单信息 */}
-        <OrderInfo orderVirtualInfoVO={data.orderVirtualInfoVO} orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress}/>
+        <OrderInfo orderVirtualInfoVO={data.orderVirtualInfoVO} orderInfo={data.orderInfo} buyerInfo={data.buyerInfo} changeModifyAddress={this.changeModifyAddress} />
         {/* 支付信息 */}
         <BuyerInfo buyerInfo={data.buyerInfo} orderInfo={data.orderInfo} freight={data.freight} totalPrice={data.totalPrice} />
         {/* 海关信息 */}
@@ -219,6 +223,7 @@ class Detail extends Component {
           <Row gutter={24}>
             <Col span={8}>海淘状态：{globalOrderStatusConfig[orderGlobalExtendVO.globalOrderStatus]}</Col>
             <Col span={8}>清关完成时间：{!!orderGlobalExtendVO.customsClearanceTime && APP.fn.formatDate(orderGlobalExtendVO.customsClearanceTime)}</Col>
+            <Col span={8}>OMS作业单号：{orderGlobalExtendVO.omsOrderCode}</Col>
           </Row>
           <Row gutter={24}>
             <Col span={8}>订单报文：{orderPushCustomsStatusConfig[orderGlobalExtendVO.orderPushCustomsStatus]}
@@ -248,7 +253,7 @@ class Detail extends Component {
             </Col>
           </Row>
         </Card>
-        <Card title="详细信息">
+        <Card title='详细信息'>
           {map(childOrderList, (item, index) => {
             return (
               <div
@@ -280,26 +285,26 @@ class Detail extends Component {
                           </span>
                           <span>
                             {
-                              (item.childOrder.orderStatus === enumOrderStatus.Intercept && item.childOrder.interceptorTimeOut) ?
-                                `(${moment(item.childOrder.interceptorTimeOut).format(dateFormat)})` :
-                                ''
+                              (item.childOrder.orderStatus === enumOrderStatus.Intercept && item.childOrder.interceptorTimeOut)
+                                ? `(${moment(item.childOrder.interceptorTimeOut).format(dateFormat)})`
+                                : ''
                             }
                           </span>
                         </Col>
-                        <Col className="gutter-row" span={8} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Col className='gutter-row' span={8} style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <div>
-                            <span style={{marginRight: 30}}>发货模式：{item.childOrder.deliveryModeName}</span>
+                            <span style={{ marginRight: 30 }}>发货模式：{item.childOrder.deliveryModeName}</span>
                             {item.childOrder.shippedWarehouseName && <span>仓库：{item.childOrder.shippedWarehouseName}</span>}
                           </div>
                           <span>
                             { /**
                                * 海淘子订单的发货按钮去掉
-                               * 订单状态（10：待付款；20：待发货；30：已发货；40：已收货; 50完成; 60关闭） 
+                               * 订单状态（10：待付款；20：待发货；30：已发货；40：已收货; 50完成; 60关闭）
                                * 当订单状态orderStatus >= 20 && orderStatus <= 50
                                */
-                              (Number(item.childOrder.orderType) !== 70 &&
-                              orderStatus >= enumOrderStatus.Undelivered &&
-                              orderStatus <= enumOrderStatus.Complete) && (
+                              (Number(item.childOrder.orderType) !== 70
+                              && orderStatus >= enumOrderStatus.Undelivered
+                              && orderStatus <= enumOrderStatus.Complete) && (
                                 <Button
                                   type='primary'
                                   onClick={() => this.changeModal(true, item)}>
@@ -309,8 +314,8 @@ class Detail extends Component {
                             }
                             {
                               (item.childOrder.interceptorType === 10 && (
-                                item.childOrder.orderStatus === enumOrderStatus.Undelivered ||
-                                item.childOrder.orderStatus === enumOrderStatus.Delivered)
+                                item.childOrder.orderStatus === enumOrderStatus.Undelivered
+                                || item.childOrder.orderStatus === enumOrderStatus.Delivered)
                               ) && (
                                 <Button
                                   type='primary'
@@ -324,12 +329,14 @@ class Detail extends Component {
                               type='primary'
                               style={{ margin: '0 10px 10px 0' }}
                               onClick={() => this.comfirmWithhold(item.childOrder.id)}
-                            >重新发起代扣</Button> : ''}
+                            >重新发起代扣
+                            </Button> : ''}
                             {item.canPush ? <Button
                               style={{ margin: '0 10px 10px 0' }}
                               type='primary'
                               onClick={() => this.comfirmPush1688(item.childOrder.id)}
-                            >重新推送1688 </Button> : ''}
+                            >重新推送1688
+                            </Button> : ''}
                           </span>
                         </Col>
                       </Row>
@@ -348,8 +355,8 @@ class Detail extends Component {
                       </Row>
                       <Row>
                         {
-                          item.childOrder.interceptorType === 10 &&
-                            (
+                          item.childOrder.interceptorType === 10
+                            && (
                               <>
                                 <Col span={8}>拦截人：{item.childOrder.interceptorMemberName}</Col>
                                 <Col span={8}>拦截人手机号：{item.childOrder.interceptorMemberPhone}</Col>
@@ -362,15 +369,15 @@ class Detail extends Component {
                 />
                 {childOrderList.length > 1 && index < childOrderList.length - 1 ? <Divider /> : null}
               </div>
-            );
+            )
           })}
         </Card>
-        <Card title="整单收益信息">
+        <Card title='整单收益信息'>
           <BenefitInfo key={`benefit-${goodsTableKey}`} data={data.orderYield} orderInfo={data.orderInfo} proceedsList={userProceedsListByOrderId} refresh={this.queryProceeds} />
         </Card>
         <DeliveryModal
           type='add'
-          title="发货"
+          title='发货'
           visible={deliveryVisible}
           mainorderInfo={data.orderInfo}
           onSuccess={this.onOk}
@@ -378,25 +385,25 @@ class Detail extends Component {
           logistics={deliveryData.logistics}
           onCancel={() => this.changeModal(false)}
         />
-        <ModifyAddress 
-          title="修改订单信息"
+        <ModifyAddress
+          title='修改订单信息'
           visible={modifyAddressVisible}
           onCancel={this.changeModifyAddress}
           buyerInfo={data.buyerInfo}
           orderInfo={data.orderInfo}
         />
       </>
-    );
+    )
   }
 
   cancelInterceptor = ({
     childOrder
   }) => {
-    console.log(childOrder);
+    console.log(childOrder)
     cancelIntercept({ interceptOrderId: childOrder.interceptorOrderRecordId, memberId: childOrder.interceptorMemberId }).then((res) => {
       if (res) {
-        message.success('取消成功');
-        this.query();
+        message.success('取消成功')
+        this.query()
       }
     })
   }
@@ -405,7 +412,7 @@ class Detail extends Component {
     this.setState({
       deliveryVisible: false
     }, () => {
-      this.query();
+      this.query()
     })
   }
 

@@ -31,6 +31,19 @@ export function getCategoryTopList() {
   })
 }
 
+// 获取店铺类型
+export function getShopTypes () {
+  return get('/shop/v1/query/type').then((res) => {
+    return (res || []).map((item) => {
+      return {
+        label: item.tag,
+        value: item.code
+      }
+    })
+  })
+}
+
+
 /** 通过商品 审核（2-审核通过,3-审核不通过) */
 export function passGoods(data) {
   return newPost('/shop/product/audit', {
