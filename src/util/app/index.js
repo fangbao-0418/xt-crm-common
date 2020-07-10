@@ -18,7 +18,6 @@ function getUser () {
   } catch (e) {
     console.log(e)
   }
-  console.log(user, 'user')
   user.menuGathers = user.menuGathers || []
   return user
 }
@@ -26,10 +25,45 @@ function getUser () {
 Object.assign(APP, {
   history: {},
   moon: {
+    logApi: function (obj) {
+      try {
+        obj = obj || {}
+        if (!obj?.config) {
+          if (typeof obj !== 'object') {
+            obj = {}
+          }
+          obj.config = {}
+        }
+        return this.logger({
+          url: obj.config.url,
+          header: obj.config.headers,
+          data: obj.config.data,
+          params: obj.config.params,
+          res: obj.data
+        })
+      } catch (e) {
+        //
+      }
+    },
+    logger: function (data, label) {
+      if (window.Moon) {
+        console.log(data, 'data')
+        try {
+          Moon.logger({
+            t: 'all',
+            data: {
+              label,
+              ...data
+            }
+          })
+        } catch (e) {
+          //
+        }
+      }
+    },
     oper: function () {
       if (window.Moon) {
         try {
-          // console.log(arguments[0], 'app moon oper')
           window.Moon.oper.apply(null, arguments)
         } catch (e) {
           const response = arguments[0]
