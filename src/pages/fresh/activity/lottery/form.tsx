@@ -35,7 +35,7 @@ class Main extends React.Component<any, State> {
   public async fetchData () {
     const res = await api.getActivityDetail(this.id)
     this.form.setValues(res)
-    this.setState({ roundList: res.roundList, type: res.type})
+    this.setState({ roundList: res.roundList, type: res.type })
   }
 
   /** 新建或编辑活动 */
@@ -48,7 +48,7 @@ class Main extends React.Component<any, State> {
           res = await api.saveActivity(vals)
         } else {
           msg = '编辑活动'
-          res = await api.updateActivity({id: this.id, ...vals})
+          res = await api.updateActivity({ id: this.id, ...vals })
         }
         if (res) {
           APP.success(`${msg}成功`)
@@ -104,7 +104,7 @@ class Main extends React.Component<any, State> {
         width: 420,
         align: 'center',
         render: (text: any, record: Lottery.LuckyDrawRoundListVo) => {
-          const path = `/activity/lottery/${this.id}/${record.id}`
+          const path = `/fresh/activity/lottery/${this.id}/${record.id}`
           return (
             <Ribbon
               status={record.status}
@@ -134,13 +134,13 @@ class Main extends React.Component<any, State> {
                   luckyDrawRoundId: record.id
                 })
                 if (res) {
-                  const msg = open === 1 ? '开启成功' : '关闭成功' 
+                  const msg = open === 1 ? '开启成功' : '关闭成功'
                   APP.success(msg)
                   this.fetchData()
                 }
               }}
               onJumpToReward ={() => {
-                APP.history.push(`/activity/reward?luckyDrawRoundId=${record.id}&roundTitle=${record.title}`)
+                APP.history.push(`/fresh/activity/reward?luckyDrawRoundId=${record.id}&roundTitle=${record.title}`)
               }}
             />
           )
@@ -152,7 +152,7 @@ class Main extends React.Component<any, State> {
         readonly={this.readOnly}
         getInstance={ref => this.form = ref}
         addonAfter={(
-          <div style={{marginTop: 100}}>
+          <div style={{ marginTop: 100 }}>
             <Button
               disabled={this.readOnly}
               type='danger'
@@ -199,11 +199,11 @@ class Main extends React.Component<any, State> {
                     }]
                   })(
                     this.readOnly ? (
-                        startTime ?
-                          <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span> :
-                          <></>
-                        ) :
-                      (
+                      startTime
+                        ? <span>{startTime.format('YYYY-MM-DD HH:mm:ss')}</span>
+                        : <></>
+                    )
+                      : (
                         <DatePicker
                           disabledDate={(current) => {
                             return disabledDate(current, new Date())
@@ -291,7 +291,7 @@ class Main extends React.Component<any, State> {
             disabled={this.id === -1}
             onClick={() => {
               const type = this.form && this.form.props.form.getFieldValue('type')
-              APP.history.push(`/activity/lottery/${this.id}/-1?activityStartTime=${this.timestamp}&activityType=${type}`)
+              APP.history.push(`/fresh/activity/lottery/${this.id}/-1?activityStartTime=${this.timestamp}&activityType=${type}`)
             }}>
             新建场次
           </Button>

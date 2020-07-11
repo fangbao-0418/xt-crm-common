@@ -1,19 +1,19 @@
-import React from 'react';
-import { Card, Button, Table, Modal } from 'antd';
+import React from 'react'
+import { Card, Button, Table, Modal } from 'antd'
 import Form, { FormItem } from '@/packages/common/components/form'
-import { parseQuery } from '@/util/utils';
-import { formatMoneyWithSign } from '@/pages/helper';
-import DateFns from 'date-fns';
-import orderStatus from '@/enum/orderStatus';
-import { fillChance } from '../api';
-import { getOrderList } from '@/pages/order/api';
-import '../../activity.scss';
+import { parseQuery } from '@/util/utils'
+import { formatMoneyWithSign } from '@/pages/helper'
+import DateFns from 'date-fns'
+import orderStatus from '@/enum/orderStatus'
+import { fillChance } from '../api'
+import { getOrderList } from '@/pages/fresh/order/api'
+import '../../activity.scss'
 class Main extends React.Component {
   form = undefined
   fillChanceForm = undefined
-  constructor(props) {
-    super(props);
-    const params = parseQuery();
+  constructor (props) {
+    super(props)
+    const params = parseQuery()
     this.state = {
       visible: false,
       listData: [],
@@ -23,24 +23,24 @@ class Main extends React.Component {
       initParams: params,
       selectedRows: [], // 选中行
       selectedRowKeys: []
-    };
+    }
   }
   showModal = () => {
     console.log('show modal')
     this.setState({
       visible: true
-    });
+    })
   };
   handleCancel = () => {
     console.log(this.setState, 'consss')
     this.setState({
-      visible: false,
+      visible: false
       // selectedRows: [],
       // selectedRowKeys: [],
       // current: 1
     }, () => {
       console.log(this.state.visible, 'ccccccccc')
-    });
+    })
   };
   handleReset = () => {
     this.form.reset()
@@ -52,19 +52,20 @@ class Main extends React.Component {
       ...values,
       page: this.state.current,
       pageSize: this.state.pageSize
-    };
+    }
     getOrderList(params).then(res => {
-      console.log('getOrderList', res);
+      console.log('getOrderList', res)
       if (res && res.records) {
         this.setState({
           selectedRows: [],
           selectedRowKeys: [],
           listData: res.records,
           total: res.total
-        });
+        })
       } else {
+        //
       }
-    });
+    })
   };
   // 确定添加
   handleAdd = () => {
@@ -77,12 +78,12 @@ class Main extends React.Component {
           orderIds,
           ...vals
         }).then((num) => {
-          APP.success(`已补发${num}条订单`);
+          APP.success(`已补发${num}条订单`)
           this.setState({
             visible: false,
             selectedRows: [],
             selectedRowKeys: []
-          });
+          })
         })
       }
     })
@@ -94,10 +95,10 @@ class Main extends React.Component {
         pageSize
       },
       this.handleSearch
-    );
+    )
   }
-  render() {
-    const { listData, total, pageSize, current } = this.state;
+  render () {
+    const { listData, total, pageSize, current } = this.state
 
     const columns = [
       {
@@ -123,20 +124,20 @@ class Main extends React.Component {
         title: '下单人手机',
         dataIndex: 'buyerPhone'
       }
-    ];
+    ]
     const rowSelection = {
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
         this.setState({
           selectedRows,
           selectedRowKeys
-        });
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        })
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
       }
-    };
+    }
 
     const node = this.props.children || (
-      <Button type="primary">
+      <Button type='primary'>
         补发
       </Button>
     )
@@ -149,8 +150,8 @@ class Main extends React.Component {
           {node}
         </span>
         <Modal
-          title="补发抽奖次数"
-          className="modalStyle"
+          title='补发抽奖次数'
+          className='modalStyle'
           width={1000}
           visible={this.state.visible}
           footer={
@@ -158,7 +159,7 @@ class Main extends React.Component {
               <div style={{ textAlign: 'right' }}>
                 <Button onClick={this.handleCancel.bind(this)}>取消</Button>
                 <Button
-                  type="primary"
+                  type='primary'
                   disabled={!this.state.selectedRows.length}
                   onClick={this.handleAdd}
                   style={{ marginLeft: 30 }}
@@ -203,19 +204,19 @@ class Main extends React.Component {
               />
               <FormItem>
                 <Button
-                  type="primary"
+                  type='primary'
                   onClick={() => {
                     this.setState(
                       {
                         current: 1
                       },
                       this.handleSearch
-                    );
+                    )
                   }}
                 >
                   查询
                 </Button>
-                <Button type="primary" onClick={this.handleReset} style={{ marginLeft: 20 }}>
+                <Button type='primary' onClick={this.handleReset} style={{ marginLeft: 20 }}>
                   重置
                 </Button>
               </FormItem>
@@ -256,15 +257,15 @@ class Main extends React.Component {
                   }
                 }}
                 options={[
-                  { label: '九宫格抽奖', value: 2 },
-                  { label: '砸金蛋', value: 3}
+                  { label: '九宫格抽奖', value: 2 }
+                  // { label: '砸金蛋', value: 3 }
                 ]}
               />
             </Form>
           </Card>
         </Modal>
       </>
-    );
+    )
   }
 }
-export default Main;
+export default Main

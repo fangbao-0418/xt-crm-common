@@ -1,5 +1,5 @@
 import React from 'react'
-import CouponModal from '@/components/coupon-modal'
+import CouponModal from '../coupon-modal'
 interface State {
   visible: boolean,
   selectedRowKeys: any[]
@@ -51,7 +51,7 @@ function Main (WrappedComponent: React.ComponentType<any>) {
               }, this.payload.success.bind(null, rows, this.modal.hide))
             }}
           />
-          <WrappedComponent modal={this.modal} {...this.props}/>
+          <WrappedComponent modal={this.modal} {...this.props} />
         </>
       )
     }

@@ -34,11 +34,11 @@ interface Options {
 
 export const typeOptions: Options[] = [
   { label: '红包雨', value: 1 },
-  { label: '九宫格抽奖', value: 2 },
-  { label: '砸金蛋', value: 3 },
-  { label: '财神拜年', value: 4 },
-  { label: '团长特殊晋升活动', value: 5 },
-  { label: '区长发底薪', value: 6 }
+  { label: '九宫格抽奖', value: 2 }
+  // { label: '砸金蛋', value: 3 },
+  // { label: '财神拜年', value: 4 },
+  // { label: '团长特殊晋升活动', value: 5 },
+  // { label: '区长发底薪', value: 6 }
 ]
 
 export const typeConfig = convert(typeOptions)
@@ -63,8 +63,8 @@ export const type: Props = {
 export const prizeOptions: Options[] = [
   { label: '谢谢惠顾', value: '0' },
   { label: '优惠券', value: 1 },
-  { label: '元宝', value: 2 },
-  { label: '现金', value: 3 },
+  // { label: '元宝', value: 2 },
+  // { label: '现金', value: 3 },
   { label: '实物', value: 4 }
 ]
 
@@ -75,7 +75,6 @@ export const statusOptions: Options[] = [
   { label: '已结束', value: 2 },
   { label: '已关闭', value: 3 }
 ]
-
 
 export const statusConfig = convert(statusOptions)
 export const status: Props = {
@@ -109,7 +108,7 @@ export function getDefaultConfig () {
         label: '开始时间',
         controlProps: {
           showTime: true
-        }        
+        }
       }
     }
   }

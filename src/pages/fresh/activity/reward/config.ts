@@ -4,7 +4,8 @@ export function getDefaultConfig () {
   const defaultConfig = {
     reward: {
       type: {
-        label: '活动类型', type: 'select',
+        label: '活动类型',
+        type: 'select',
         options: typeOptions
       },
       title: {
@@ -23,22 +24,24 @@ export function getDefaultConfig () {
         label: '下单手机号'
       },
       status: {
-        label: '状态', type: 'select',
+        label: '状态',
+        type: 'select',
         options: [
-          {label: '未使用', value: 0},
-          {label: '已使用', value: 1},
-          {label: '已失效', value: 2},
-          {label: '已过期', value: 3},
+          { label: '未使用', value: 0 },
+          { label: '已使用', value: 1 },
+          { label: '已失效', value: 2 },
+          { label: '已过期', value: 3 }
         ]
       },
       awardType: {
-        label: '奖品类型', type: 'select',
+        label: '奖品类型',
+        type: 'select',
         options: [
-          {label: '未领取', value: -1},
-          {label: '优惠券', value: 1},
-          {label: '元宝', value: 2},
-          {label: '现金', value: 3},
-          {label: '实物', value: 4}
+          { label: '未领取', value: -1 },
+          { label: '优惠券', value: 1 },
+          // { label: '元宝', value: 2 },
+          // { label: '现金', value: 3 },
+          { label: '实物', value: 4 }
         ]
       }
     }

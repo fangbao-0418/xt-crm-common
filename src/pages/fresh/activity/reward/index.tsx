@@ -20,9 +20,8 @@ class Main extends React.Component<Props, State> {
   }
   public payload: any = parseQuery()
   public componentDidMount () {
-    console.log('this.payload', this.payload)
     this.listpage.form.setValues(this.payload)
-    this.refresh()
+    // this.refresh()
   }
   public columns: ColumnProps<any>[] = [{
     title: '中奖号码',
@@ -50,7 +49,7 @@ class Main extends React.Component<Props, State> {
   }, {
     title: '手机号',
     dataIndex: 'phone',
-    width: 150,
+    width: 150
   }, {
     title: '支付时间',
     dataIndex: 'orderPayDate',
@@ -92,14 +91,14 @@ class Main extends React.Component<Props, State> {
     render: (text, record) => {
       return (
         <>
-        {[5, 6].includes(record.type) ?  (
+        {[5, 6].includes(record.type) ? (
           <span
             onClick={() => APP.history.push(`/activity/reward/${record.luckyDrawRoundId}/${record.memberId}`)}
             className='href'>
             查看
           </span>
-        ) : 
-        <>
+        )
+          : <>
           {[0, 1].includes(record.status) && (
             <span
               onClick={this.loseEfficacy.bind(this, record.id)}
@@ -111,10 +110,10 @@ class Main extends React.Component<Props, State> {
             <Popover content={record.invalidReason}>
               <span className='href'>查看失效原因</span>
             </Popover>
-          )} 
+          )}
+            </>
+        }
         </>
-      }
-      </>
       )
     }
   }]
@@ -135,7 +134,7 @@ class Main extends React.Component<Props, State> {
             this.form = ref
           }}
         >
-          {id === undefined && <div className='mb20'>共选中<span style={{color: 'red'}}>{length}</span>条中奖记录</div>}
+          {id === undefined && <div className='mb20'>共选中<span style={{ color: 'red' }}>{length}</span>条中奖记录</div>}
           <FormItem
             label='失效原因'
             name='invalidReason'
@@ -181,7 +180,7 @@ class Main extends React.Component<Props, State> {
     this.listpage.refresh()
   }
   public render () {
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys } = this.state
     const rowSelection: TableRowSelection<any> = {
       fixed: true,
       columnWidth: 50,
@@ -192,7 +191,7 @@ class Main extends React.Component<Props, State> {
           disabled: [2, 3].includes(record.status)
         }
       }
-    };
+    }
     return (
       <List
         getInstance={(ref) => {

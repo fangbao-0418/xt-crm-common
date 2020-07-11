@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card, Table, DatePicker, Icon, Row, Col, Input, InputNumber, Popconfirm } from 'antd'
+import { message, Button, Card, Table, DatePicker, Icon, Row, Col, Input, InputNumber, Popconfirm } from 'antd'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import styles from './style.module.styl'
 import SelectFetch from '@/packages/common/components/select-fetch'
@@ -7,7 +7,6 @@ import { getUniqueId } from '@/packages/common/utils'
 import { prizeOptions } from './config'
 import Upload from '@/components/upload'
 import PrizeSelect from './components/PrizeSelect'
-import { message } from 'antd'
 import * as api from './api'
 import { parseQuery } from '@/util/utils'
 import { disabledDateTime, disabledDate } from '@/util/antdUtil'
@@ -268,47 +267,47 @@ class Main extends React.Component<Props, State> {
               />
             ) : <span />)
           )
-        },
-        {
-          title: () => (
-            <div style={{ textAlign: 'center' }}>
-              <div>区长</div>
-              <div style={{ fontSize: 12, color: '#999' }}>（合计概率{this.state && this.state.totalAreaUserProbability}）</div>
-            </div>
-          ),
-          width: 150,
-          key: 'areaUserProbability',
-          render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-            this.getFieldDecorator('areaUserProbability', index)(record.defaultAward === 1 ? (
-              <InputNumber
-                disabled={this.readOnly}
-                min={0}
-                max={100}
-                precision={2}
-              />
-            ) : <span />)
-          )
-        },
-        {
-          title: () => (
-            <div style={{ textAlign: 'center' }}>
-              <div>合伙人</div>
-              <div style={{ fontSize: 12, color: '#999' }}>（合计概率{this.state && this.state.totalCityUserProbability}）</div>
-            </div>
-          ),
-          width: 150,
-          key: 'cityUserProbability',
-          render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
-            this.getFieldDecorator('cityUserProbability', index)(record.defaultAward === 1 ? (
-              <InputNumber
-                disabled={this.readOnly}
-                min={0}
-                max={100}
-                precision={2}
-              />
-            ) : <span />)
-          )
         }
+        // {
+        //   title: () => (
+        //     <div style={{ textAlign: 'center' }}>
+        //       <div>区长</div>
+        //       <div style={{ fontSize: 12, color: '#999' }}>（合计概率{this.state && this.state.totalAreaUserProbability}）</div>
+        //     </div>
+        //   ),
+        //   width: 150,
+        //   key: 'areaUserProbability',
+        //   render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+        //     this.getFieldDecorator('areaUserProbability', index)(record.defaultAward === 1 ? (
+        //       <InputNumber
+        //         disabled={this.readOnly}
+        //         min={0}
+        //         max={100}
+        //         precision={2}
+        //       />
+        //     ) : <span />)
+        //   )
+        // },
+        // {
+        //   title: () => (
+        //     <div style={{ textAlign: 'center' }}>
+        //       <div>合伙人</div>
+        //       <div style={{ fontSize: 12, color: '#999' }}>（合计概率{this.state && this.state.totalCityUserProbability}）</div>
+        //     </div>
+        //   ),
+        //   width: 150,
+        //   key: 'cityUserProbability',
+        //   render: (arg1: any, record: Lottery.LuckyDrawAwardListVo, index: number) => (
+        //     this.getFieldDecorator('cityUserProbability', index)(record.defaultAward === 1 ? (
+        //       <InputNumber
+        //         disabled={this.readOnly}
+        //         min={0}
+        //         max={100}
+        //         precision={2}
+        //       />
+        //     ) : <span />)
+        //   )
+        // }
       ]
     },
     // {
@@ -606,7 +605,7 @@ class Main extends React.Component<Props, State> {
         normalUserProbability: chance,
         headUserProbability: chance,
         areaUserProbability: chance,
-        cityUserProbability: chance,
+        cityUserProbability: chance
       }
     })
     // console.log(inventory, expectedNumber, '--------')
