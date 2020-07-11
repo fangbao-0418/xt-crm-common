@@ -126,8 +126,8 @@ class FullDiscountEditPage extends PureComponent {
                   mode: 1,
                   discountsAmount: item.discountsAmount / 100,
                   stageAmount: item.stageAmount / 100,
-                  conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
-                  modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
+                  conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)}`,
+                  modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)}`
                 }
               } else if (detail.stageType === 2) { // 满 x 件
                 return {
@@ -136,7 +136,7 @@ class FullDiscountEditPage extends PureComponent {
                   mode: 1,
                   discountsAmount: item.discountsAmount / 100,
                   conditionStr: `满 ${item.stageCount} 件`,
-                  modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
+                  modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)}`
                 }
               } else {
                 return item
@@ -151,7 +151,7 @@ class FullDiscountEditPage extends PureComponent {
                   mode: 2,
                   discounts: item.discounts / 10,
                   stageAmount: item.stageAmount / 100,
-                  conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
+                  conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)}`,
                   modeStr: `打 ${item.discounts / 10} 折`
                 }
               } else if (detail.stageType === 2) { // 满 x 件
@@ -175,7 +175,7 @@ class FullDiscountEditPage extends PureComponent {
                 mode: 3,
                 amount: item.amount / 100,
                 conditionStr: `满 ${item.stageCount} 件`,
-                modeStr: `${formatMoneyWithSign(item.amount)} 元购买`
+                modeStr: `${formatMoneyWithSign(item.amount)} 购买`
               }
             })
           }
