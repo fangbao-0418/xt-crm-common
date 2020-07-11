@@ -56,7 +56,7 @@ const getExceptionStr = (list) => {
 }))
 @Form.create({
   onValuesChange: (props, changedValues) => {
-    const { ruleType, maxDiscountsAmount, maxDiscountsCount, rules, overlayCoupon } = changedValues
+    const { ruleType, maxDiscountsAmount, maxDiscountsCount, rules } = changedValues
     const { getFieldValue, setFieldsValue } = props.form
     const productRefInfo = getFieldValue('productRefInfo')
     const promotionType = getFieldValue('promotionType')
@@ -66,8 +66,7 @@ const getExceptionStr = (list) => {
     }
 
     if (productRefInfo && productRefInfo.length && promotionType === 15) {
-      if ([ruleType, maxDiscountsAmount, maxDiscountsCount, rules, overlayCoupon].some(item => item !== undefined)) {
-        console.log(999)
+      if ([ruleType, maxDiscountsAmount, maxDiscountsCount, rules].some(item => item !== undefined)) {
         setFieldsValue({
           productRefInfo: []
         })
