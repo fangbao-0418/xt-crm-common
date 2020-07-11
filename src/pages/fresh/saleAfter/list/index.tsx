@@ -189,6 +189,9 @@ class Order extends Component<any, State> {
               <FormItem fieldDecoratorOptions={{ initialValue: 0 }} name='refundType' />
             </If>
             <FormItem name='createTime' />
+            <FormItem name='handlePerson' />
+            <FormItem name='handleTime' />
+            <FormItem name='orderPayTime' />
           </Form>
           <div style={{ textAlign: 'right' }}>
             <Button onClick={() => this.toSearch()} type='primary' className='mr10'>查询</Button>

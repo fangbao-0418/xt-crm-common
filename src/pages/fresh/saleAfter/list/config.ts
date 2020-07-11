@@ -61,6 +61,27 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         controlProps: {
           showTime: true
         }
+      },
+      handlePerson: {
+        type: 'input',
+        label: '处理人',
+        controlProps: {
+          placeholder: '请输入处理人'
+        }
+      },
+      handleTime: {
+        type: 'rangepicker',
+        label: '处理时间',
+        controlProps: {
+          showTime: true
+        }
+      },
+      orderPayTime: {
+        type: 'rangepicker',
+        label: '订单支付日期',
+        controlProps: {
+          showTime: true
+        }
       }
     }
   }
