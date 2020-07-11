@@ -1,7 +1,7 @@
 import React from 'react'
 import { List } from 'antd'
 import ActionView from '@/components/action-view'
-import { discountsStatusMap } from './config'
+import { discountsStatusMap, activeNameMap } from './config'
 
 const formatDate = (text) =>
   text ? APP.fn.formatDate(text) : '-'
@@ -17,6 +17,12 @@ export default function getColumns ({
       title: '编号',
       width: 120,
       dataIndex: 'id'
+    },
+    {
+      title: '活动类型',
+      width: 120,
+      dataIndex: 'type',
+      render: text => activeNameMap[text]
     },
     {
       title: '活动名称',

@@ -74,6 +74,7 @@ class FullDiscountPage extends PureComponent {
               />
               <FormItem name='name' />
               <FormItem name='discountsStatus' />
+              <FormItem name='id' />
             </>
           )}
           addonAfterSearch={(
