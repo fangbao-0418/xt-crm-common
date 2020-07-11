@@ -62,10 +62,18 @@ class FullDiscountDetailPage extends PureComponent {
         // 优惠类型
         if (rule.ruleType === 0) {
           ruleTypeTxt = '每满减 & '
-          if (rule.maxDiscountsAmount === 0) {
-            ruleTypeTxt += '未设置最大优惠金额(不封顶)'
+          if (detail.promotionType === 15) { // 一口价
+            if (rule.maxDiscountsCount === 0) {
+              ruleTypeTxt += '未设置最大优惠件数(不封顶)'
+            } else {
+              ruleTypeTxt += `最大优惠件数: ${rule.maxDiscountsCount}`
+            }
           } else {
-            ruleTypeTxt += `最大优惠金额: ${formatMoneyWithSign(rule.maxDiscountsAmount)}`
+            if (rule.maxDiscountsAmount === 0) {
+              ruleTypeTxt += '未设置最大优惠金额(不封顶)'
+            } else {
+              ruleTypeTxt += `最大优惠金额: ${formatMoneyWithSign(rule.maxDiscountsAmount)}`
+            }
           }
         } else if (rule.ruleType === 1) {
           ruleTypeTxt = '阶梯满'

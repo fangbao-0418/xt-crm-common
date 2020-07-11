@@ -111,7 +111,11 @@ class FullDiscountEditPage extends PureComponent {
           let rules = []
           fieldsValue.ruleType = rule.ruleType
           if (rule.ruleType === 0) { // 每满减的时候设置封顶值
-            fieldsValue.maxDiscountsAmount = rule.maxDiscountsAmount / 100
+            if (fieldsValue.promotionType === 15) {
+              fieldsValue.maxDiscountsCount = rule.maxDiscountsCount
+            } else {
+              fieldsValue.maxDiscountsAmount = rule.maxDiscountsAmount / 100
+            }
           }
           if (detail.promotionType === 11) { // 满减
             rules = rule.amountRuleList.map(item => {
