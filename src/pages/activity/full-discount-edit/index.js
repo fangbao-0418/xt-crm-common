@@ -56,7 +56,7 @@ const getExceptionStr = (list) => {
 }))
 @Form.create({
   onValuesChange: (props, changedValues) => {
-    const { ruleType, maxDiscountsAmount, maxDiscountsCount, rules } = changedValues
+    const { ruleType, maxDiscountsAmount, maxDiscountsCount } = changedValues
     const { getFieldValue, setFieldsValue } = props.form
     const productRefInfo = getFieldValue('productRefInfo')
     const promotionType = getFieldValue('promotionType')
@@ -64,9 +64,9 @@ const getExceptionStr = (list) => {
     if (('promotionType' in changedValues)) {
       return
     }
-
     if (productRefInfo && productRefInfo.length && promotionType === 15) {
-      if ([ruleType, maxDiscountsAmount, maxDiscountsCount, rules].some(item => item !== undefined)) {
+      if ([ruleType, maxDiscountsAmount, maxDiscountsCount].some(item => item !== undefined)) {
+        console.log(123)
         setFieldsValue({
           productRefInfo: []
         })
@@ -539,7 +539,13 @@ class FullDiscountEditPage extends PureComponent {
   handleRulesChange = () => {
     const { form: { getFieldValue, setFieldsValue } } = this.props
     const ruleType = getFieldValue('ruleType')
+    const promotionType = getFieldValue('promotionType')
     const maxDiscountsAmount = getFieldValue('maxDiscountsAmount')
+    if (promotionType === 15) {
+      setFieldsValue({
+        productRefInfo: []
+      })
+    }
     // 优惠类型设置为每满减 且 设置了最大金额 那么假如最大优惠金额比优惠条件设置的最大优惠小的话 这个时候 可能最大优惠金额会报错误提示 此时rules设置变化了 就要把错误提示转嫁到rules过来 清除 maxDiscountsAmount 的错误提示
     if (ruleType === 0 && maxDiscountsAmount) {
       setFieldsValue({
