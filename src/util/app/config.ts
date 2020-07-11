@@ -7,7 +7,7 @@
 import { baseHost, env as apiEnv } from '../baseHost'
 
 type ServerNameType = 'palamidi' | 'ulive' | 'message' | 'default'
-type EnvType = 'dev' | 'test1' | 'test2' | 'pre' | 'prod'
+type EnvType = 'dev' | 'test' | 'test2' | 'pre' | 'prod'
 
 /** 后端环境接口映射 */
 export const serverMapper: {
@@ -17,33 +17,35 @@ export const serverMapper: {
 } = {
   // guard: {
   //   dev: 'https://daily-guard.hzxituan.com',
-  //   test1: 'https://test-guard.hzxituan.com',
+  //   test: 'https://test-guard.hzxituan.com',
   //   test2: 'https://test-guard.hzxituan.com',
   //   pre: 'https://staging-guard.hzxituan.com',
   //   prod: 'https://guard.hzxituan.com'
   // },
   palamidi: {
     dev: 'https://daily-palamidi-console.hzxituan.com',
-    test1: 'https://test-palamidi-console.hzxituan.com',
+    test: 'https://test-palamidi-console.hzxituan.com',
     test2: 'https://test-palamidi-console.hzxituan.com',
     pre: 'https://staging-palamidi-console.hzxituan.com',
     prod: 'https://palamidi-console.hzxituan.com'
   },
   ulive: {
     dev: 'https://dailylive-center.hzxituan.com',
-    test1: 'https://test01live-center.hzxituan.com',
+    test: 'https://test01live-center.hzxituan.com',
     test2: 'https://test01live-center.hzxituan.com',
     pre: 'https://pre-live-center.hzxituan.com',
     prod: 'https://live-center.hzxituan.com'
   },
   message: {
     dev: 'https://test01center-bi.hzxituan.com',
+    test: 'https://test01center-bi.hzxituan.com',
+    test2: 'https://test01center-bi.hzxituan.com',
     pre: 'https://pre-center-bi.hzxituan.com',
     prod: 'https://center-bi.hzxituan.com'
   },
   default: {
     dev: 'https://daily-crm-test.hzxituan.com',
-    test1: 'https://testapi-crmadmin.hzxituan.com',
+    test: 'https://testapi-crmadmin.hzxituan.com',
     test2: 'https://test2api-crmadmin.hzxituan.com',
     pre: 'https://pre-xt-crm-api.hzxituan.com',
     prod: 'https://youxuan-crm-api.hzxituan.com'

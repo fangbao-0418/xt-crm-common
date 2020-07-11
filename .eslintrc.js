@@ -1,9 +1,3 @@
-/*
- * @Date: 2020-04-08 14:12:51
- * @LastEditors: fangbao
- * @LastEditTime: 2020-06-02 16:29:49
- * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/.eslintrc.js
- */
 module.exports = {
   extends: ['plugin:xt-react/recommended'],
   plugins: [],
@@ -14,7 +8,8 @@ module.exports = {
     APP: true,
     Moon: true,
     BUILD_TIME: true,
-    Observer: true
+    Observer: true,
+    __ENV__: true
   },
   rules: {
     "react/prop-types": 1,

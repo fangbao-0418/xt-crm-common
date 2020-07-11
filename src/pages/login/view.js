@@ -103,7 +103,10 @@ const LoginPage = (props) => {
           </FormItem>
         </Form>
       </div>
-      <div style={{ display: 'none' }}>{process.env.PUB_ENV}</div>
+      <div style={{ display: 'none' }}>
+        {process.env.PUB_ENV}
+        {__ENV__}
+      </div>
       <div className={styles['footer']}>版权所有 © 喜团有限公司 {new Date().getFullYear()}</div>
     </>
   )
