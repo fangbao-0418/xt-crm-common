@@ -42,6 +42,9 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
   isRefundTypeOf(type: number) {
     return this.props.data.refundType === type;
   }
+  // 审核
+  // onAudit() {
+  // }
   render() {
     let { orderServerVO, orderInfoVO, checkVO, supplierResHandTime } = this.props.data;
     orderServerVO = Object.assign({}, orderServerVO);
@@ -78,6 +81,9 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             </h3>
           </Col>
           <Col style={{display: 'flex'}}>
+            {/* {orderServerVO.refundStatus === 15 && (
+              <Button type="primary" onClick={this.onAudit}>审核</Button>
+            )} */}
             {/* 待审核 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
               <RemarkModal

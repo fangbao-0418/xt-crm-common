@@ -68,6 +68,7 @@ class PendingReview extends React.Component<Props, State> {
 
   componentDidMount() {
     getOrderRefundQuickReply().then((res: any) => {
+      res = res || {};
       const firstLevel = Object.keys(res).map((str) => ({ label: str, value: str }))
       console.log('firstLevel', firstLevel)
       this.refundQuickReply = res;
