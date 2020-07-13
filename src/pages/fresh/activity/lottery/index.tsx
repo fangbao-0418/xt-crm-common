@@ -114,7 +114,7 @@ class Main extends React.Component {
         addonAfterSearch={(
           <Button
             type='danger'
-            onClick={() => APP.history.push('/activity/lottery/-1')}
+            onClick={() => APP.history.push('/fresh/activity/lottery/-1')}
           >
             新建活动
           </Button>

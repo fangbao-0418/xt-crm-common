@@ -35,7 +35,10 @@ class Main extends React.Component<any, State> {
   public async fetchData () {
     const res = await api.getActivityDetail(this.id)
     this.form.setValues(res)
-    this.setState({ roundList: res.roundList, type: res.type })
+    this.setState({
+      roundList: res.roundList || [],
+      type: res.type
+    })
   }
 
   /** 新建或编辑活动 */
@@ -176,6 +179,7 @@ class Main extends React.Component<any, State> {
           <FormItem
             verifiable
             { ...type }
+            disabled={this.state.roundList.length > 0}
             controlProps={{
               onChange: (type: number) => {
                 this.setState({ type })

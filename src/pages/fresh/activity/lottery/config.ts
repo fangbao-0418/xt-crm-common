@@ -19,7 +19,7 @@ export const title: Props = {
 }
 /**
  * { label: string, value: number | string | null } [] => { [prop: string]: string } 
- * @param options 
+ * @param options
  */
 export function convert (options: Options[]) {
   return options.reduce((prev: any, curr: Options) => {

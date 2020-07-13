@@ -51,7 +51,7 @@ const rules = {
     /goods\/sku-stock(\/)?(\d+)?/
   ],
   '/activity/lottery': [
-    /^\/activity\/lottery(\/)?(\d+)?/
+    /^\/activity\/lottery(\/)?-?(\d+)?/
   ],
   '/activity/reward': [
     /^\/activity\/reward(\/)?(\d+)?/
@@ -85,6 +85,9 @@ const rules = {
   ],
   '/message/template': [
     /message\/template\/detail(\/)?(\d+)?/
+  ],
+  '/fresh/activity/lottery': [
+    /fresh\/activity\/lottery(\/)?(\d+)?/
   ],
   '/fresh/store': [
     /fresh\/store$/,
