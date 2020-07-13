@@ -207,7 +207,7 @@ class Main extends React.Component<Props, State> {
         }}
         autoFetch={false}
         onReset={() => {
-          APP.history.push('/activity/reward')
+          APP.history.push('/fresh/activity/reward')
           this.listpage.form.reset()
         }}
         addonAfterSearch={(
