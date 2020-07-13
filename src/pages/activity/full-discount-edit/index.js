@@ -263,8 +263,8 @@ class FullDiscountEditPage extends PureComponent {
       if (promotionType === 15 && productRefInfo.some(item => item.loseMoney)) {
         confirm({
           icon: 'exclamation-circle',
-          title: '活动价格提醒?',
-          content: '部分商品成本+佣金超过一口价平摊金额可能造成资损, 确定保存',
+          title: '活动价格提醒',
+          content: '部分商品成本+佣金超过一口价平摊金额可能造成资损, 确定保存?',
           onOk () {
             return new Promise((resolve, reject) => {
               if (action === 'copy' || (!id)) { // 复制或者新建
