@@ -39,6 +39,12 @@ interface ListPayload {
 }
 
 interface RecordsPaylod {}
+//提现记录
+export function getData (payload: any) {
+  return newPost('::guard/exporter/task/list/v2', { ...payload, type: 104, system: 'crm' })
+
+}
+
 // 提现申请列表，分页
 export function getRemittanceList (payload: ListPayload) {
   return newPost('/crm/member/fund/remittance/v1/list', payload).then(listResponse)

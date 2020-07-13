@@ -63,7 +63,9 @@ class SupplierModal extends Component {
   handleOk = () => {
     const { onSuccess, id, form, isEdit } = this.props
     form.validateFields((err, { category, shopUrl, shopName, ...vals }) => {
+      console.log(err)
       if (!err) {
+        console.log('2222222')
         const api = isEdit ? updateSupplier : addSupplier
         vals.freezeLimit = vals.freezeLimit !== undefined ? Number(vals.freezeLimit) : undefined
         if ([0, 1, 2, 3, 4].includes(category)) {
@@ -256,6 +258,25 @@ class SupplierModal extends Component {
                 <Input placeholder='请输入详细地址' />,
               )}
             </FormItem>
+            <If visible={[0, 6, 7].indexOf(category) === -1} condition={[0, 6, 7].indexOf(category) !== -1}>
+              <FormItem label='保证金缴纳方式' required>
+                {getFieldDecorator('bondType', {
+                  rules: [
+                    {
+                      required: [0, 6, 7].includes(category),
+                      message: '请选择保证金缴纳方式'
+                    }
+                  ]
+                })(
+                  <Select
+                    placeholder='请选择保证金缴纳方式'
+                  >
+                    <Select.Option value={0}>冻结货款</Select.Option>
+                    <Select.Option value={1}>预缴</Select.Option>
+                  </Select>
+                )}
+              </FormItem>
+            </If>
             {this.state.saleAreaVisible && (
               <FormItem required label='可售区域'>
                 {getFieldDecorator('saleAreaList', {
