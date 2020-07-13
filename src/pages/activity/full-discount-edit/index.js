@@ -744,7 +744,7 @@ class FullDiscountEditPage extends PureComponent {
                               } else if (promotionType === 15) { // 一口价
                                 const currentMaxStageCount = Math.max(...(rules.map(item => item.stageCount)))
                                 if (currentMaxStageCount > value) {
-                                  callback('最大优惠值必须大于已经设置的优惠条件中的最大优惠值')
+                                  callback('最大优惠件数必须大于已经设置的优惠条件中的最大优惠门槛')
                                 } else {
                                   callback()
                                 }
