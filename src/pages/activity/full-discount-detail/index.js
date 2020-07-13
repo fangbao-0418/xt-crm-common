@@ -3,7 +3,7 @@ import { Card, Form, Table } from 'antd'
 import { gotoPage } from '@/util/utils'
 import { If } from '@/packages/common/components'
 import { formatMoneyWithSign } from '@/pages/helper'
-import { detailFullDiscounts } from './api'
+import { detailFullDiscounts, productCheckCost } from './api'
 import { getRulesColumns, getGoodsColumns, getActivityColumns } from './config/columns'
 import { promotionTypeMap } from './config/config'
 
@@ -20,6 +20,30 @@ class FullDiscountDetailPage extends PureComponent {
     detailFullDiscounts(id).then(detail => {
       this.setState({
         detail
+      }, () => {
+        if (detail.rule && detail.promotionType === 15) {
+          productCheckCost({
+            promotionType: detail.promotionType,
+            ruleAddOrUpdateVO: {
+              maxDiscountsAmount: detail.rule.maxDiscountsAmount,
+              onePriceDiscountsRules: detail.rule.onePriceRuleList,
+              overlayCoupon: detail.rule.overlayCoupon,
+              ruleType: detail.rule.ruleType,
+              stageType: detail.rule.onePriceRuleList ? detail.rule.onePriceRuleList[0].stageCount : undefined
+            },
+            productIds: detail.refProductIds
+          }).then(res => {
+            (detail.referenceProductVO || []).forEach((item) => {
+              const curr = res.find(rItem => rItem.productId === item.id)
+              if (curr) {
+                item.loseMoney = curr.loseMoney
+              }
+            })
+            this.setState({
+              detail: { ...detail }
+            })
+          })
+        }
       })
     })
   }
@@ -136,7 +160,7 @@ class FullDiscountDetailPage extends PureComponent {
         columns = getActivityColumns()
       } else if (detail.productRef === 1) { // 商品
         label = '指定商品'
-        columns = getGoodsColumns()
+        columns = getGoodsColumns(detail.promotionType === 15)
       }
 
       if (detail.productRef === 1) {
