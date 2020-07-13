@@ -62,7 +62,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           showTime: true
         }
       },
-      handlePerson: {
+      operator: {
         type: 'input',
         label: '处理人',
         controlProps: {
@@ -76,7 +76,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           showTime: true
         }
       },
-      orderPayTime: {
+      payTime: {
         type: 'rangepicker',
         label: '订单支付日期',
         controlProps: {
