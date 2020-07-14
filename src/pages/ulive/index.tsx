@@ -1,43 +1,27 @@
-import React from 'react';
-import Loadable from 'react-loadable';
-import { Route, Switch, RouteComponentProps } from 'react-router-dom';
-import { view as Loader } from '@/components/loader';
-/** 主播列表 */
-const AnchorList = Loadable({
-  loader: () => import('./anchor'),
-  loading: Loader,
-});
+import React from 'react'
+import { Route, Switch, RouteComponentProps } from 'react-router-dom'
+import Anchor from './anchor'
+import Studio from './studio'
+import Inform from './studio/Inform'
+import ConfigView from './config'
+import Activity from './activity/list'
+import InfoEdit from './activity/info/edit'
+import InfoDetail from './activity/info/detail'
 
-/** 直播列表 */
-const StudioList = Loadable({
-  loader: () => import('./studio'),
-  loading: Loader,
-});
-
-/** 举报详情 */
-const InformDetail = Loadable({
-  loader: () => import('./studio/Inform'),
-  loading: Loader,
-});
-
-/** 直播频道管理 */
-const Config = Loadable({
-  loader: () => import('./config'),
-  loading: Loader,
-});
-
-interface Props extends RouteComponentProps {}
-class Main extends React.Component<Props> {
-  public render () {
-    const { match } = this.props;
+class Ulive extends React.Component<RouteComponentProps> {
+  render () {
+    const { match } = this.props
     return (
       <Switch>
-        <Route exact path={`${match.url}/anchor`} component={AnchorList} />
-        <Route exact path={`${match.url}/studio`} component={StudioList} />
-        <Route exact path={`${match.url}/inform/:id`} component={InformDetail} />
-        <Route exact path={`${match.url}/config`} component={Config} />
+        <Route path={`${match.url}/anchor`} component={Anchor} exact />
+        <Route path={`${match.url}/studio`} component={Studio} />
+        <Route path={`${match.url}/Inform`} component={Inform} />
+        <Route path={`${match.url}/config`} component={ConfigView} />
+        <Route path={`${match.url}/activity/list`} component={Activity} />
+        <Route path={`${match.url}/activity/info/edit/:id`} component={InfoEdit} />
+        <Route path={`${match.url}/activity/info/detail/:id/:productId/:type`} component={InfoDetail} />
       </Switch>
     )
   }
 }
-export default Main
+export default Ulive

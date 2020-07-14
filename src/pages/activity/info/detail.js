@@ -213,13 +213,13 @@ class ActivityDetail extends React.Component {
         ...item,
         buyingPrice: item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0,
         // 拼团
-        ...(detailData.type === 10 ? {
+        ... {
           promotionPrice: item.promotionPrice ? new Decimal(item.promotionPrice).mul(100).toNumber(): 0,
           headPrice: item.pmHeadPrice ? new Decimal(item.pmHeadPrice).mul(100).toNumber() : 0,
           areaPrice: item.pmAreaPrice ? new Decimal(item.pmAreaPrice).mul(100).toNumber() : 0,
           cityPrice: item.pmCityPrice ? new Decimal(item.pmCityPrice).mul(100).toNumber() : 0,
           managerPrice: item.pmManagerPrice ? new Decimal(item.pmManagerPrice).mul(100).toNumber() : 0
-        } : {})
+        }
       }
 
       return promotionSkuAddItem

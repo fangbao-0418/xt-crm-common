@@ -20,6 +20,10 @@ const rules = {
     /^\/activity\/info(\/)?edit(\/)?(\d+)?/,
     /^\/activity\/info(\/)?detail(\/)?(\d+)?/
   ],
+  '/ulive/activity/list': [
+    /^\/ulive\/activity\/info(\/)?edit(\/)?(\d+)?/,
+    /^\/ulive\/activity\/info(\/)?detail(\/)?(\d+)?/
+  ],
   '/coupon/get/couponList': [
     /^\/coupon\/get(\/)?couponList(\/)?/
   ],
