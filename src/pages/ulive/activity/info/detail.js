@@ -1,14 +1,31 @@
 import React from 'react'
 import { Card, Row, Col, Form, Table, Input, Icon, Tooltip, Button, Checkbox, message, InputNumber, Modal } from 'antd'
-import { formatMoneyWithSign } from '@/pages/helper'
+import { formatMoneyWithSign } from '../../../helper'
 import { map, flattenDeep } from 'lodash'
-import UploadView from '@/components/upload'
+import UploadView from '../../../../components/upload'
 import { setPromotionAddSKu, getOperatorSpuList } from '../api'
-import Image from '@/components/Image'
+import Image from '../../../../components/Image'
 import ArrowContain from '@/pages/goods/components/arrow-contain'
 import If from '@/packages/common/components/if'
+import { parseQuery } from '@/packages/common/utils'
 import { Decimal } from 'decimal.js'
 const FormItem = Form.Item
+// productType map
+// PRODUCTY(0, "普通商品"),
+
+// PROMOTION(100, "活动商品"),
+// ACTIVATION_CODE(101, "激活码商品"),
+// GROUP_PUSH(102, "地推商品"),
+
+// GENERAL_OVERSEAS(10, "一般海淘商品"),
+// BONDED_WAREHOUSE(20, "保税仓海淘商品"),
+// FRESH_PRODUCT(30, "喜团买菜商品"),
+// SHOP_PRODUCT(40,"直播小店商品"),
+// POP_PRODUCT(41,"POP店铺商品"),
+// VIRTUAL_HFCZ(50,"虚拟商品_话费充值"),
+// VIRTUAL_LLCZ(51,"虚拟商品_流量充值"),
+
+console.log('Image=>', Image)
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
 }
@@ -30,7 +47,7 @@ const initImgList = imgUrlWap => {
   return []
 }
 
-function speedyInput (field, text, record, index, dataSource, cb) {
+function speedyInput (field, text, record, index, dataSource, cb, _this) {
   dataSource = dataSource || []
   return (node) => (
     <ArrowContain
@@ -44,7 +61,10 @@ function speedyInput (field, text, record, index, dataSource, cb) {
           current = index
           end = dataSource.length - 1
         }
+        console.log(current, cb, stock, '----------------')
+        const fields = []
         while (current <= end) {
+          fields.push(`${field}-${current}`)
           const { sellableQty } = dataSource[current]
           if (field === 'inventory') {
             stock = (sellableQty && stock > sellableQty) ? sellableQty : stock
@@ -52,6 +72,7 @@ function speedyInput (field, text, record, index, dataSource, cb) {
           cb(field, current)(stock)
           current++
         }
+        _this.props.form.resetFields(fields)
       }}
     >
       {node}
@@ -74,7 +95,10 @@ class ActivityDetail extends React.Component {
 
   componentDidMount () {
     this.fetchData()
+    // const { selectedRowKeys, selectedRows } = this.state;
+    // const data = JSON.parse(localStorage.getItem('editsku') || {});
   }
+
   handleData (data) {
     const { selectedRowKeys, selectedRows } = this.state
     map(data.promotionSkuList, (item, key) => {
@@ -108,8 +132,9 @@ class ActivityDetail extends React.Component {
       activityImage: initImgList(data.banner)
     })
   }
+
   fetchData () {
-    const { id, productId } = this.props.match.params
+    const { id, productId, type } = this.props.match.params
     getOperatorSpuList({
       promotionId: id,
       productId: productId
@@ -117,9 +142,11 @@ class ActivityDetail extends React.Component {
       res = res || {}
       const record = Object.assign({}, (res.records || [])[0])
       record.promotionSkuList = record.promotionSkuList || []
+      record.type = record.type !== undefined ? record.type : Number(type)
       this.handleData(record)
     })
   }
+
   setPromotionAddSKu = params => {
     setPromotionAddSKu(params).then(res => {
       if (res) {
@@ -134,6 +161,7 @@ class ActivityDetail extends React.Component {
     if (detailData.promotionSkuList && detailData.promotionSkuList[index]) {
       detailData.promotionSkuList[index][text] = value
     }
+    console.log(detailData, text, index, value, '================================')
     this.setState({ detailData, sort: detailData.sort || 0 })
   };
 
@@ -169,6 +197,11 @@ class ActivityDetail extends React.Component {
     }
     this.loading = true
     const { isMultiple, detailData, selectedRows, newuserExclusive, sort, activityImage, memberExclusive, minBuy, maxBuy } = this.state
+    // if (activityImage.length === 0) {
+    //   message.error('请上传活动商品图');
+    //   this.loading = false;
+    //   return false;
+    // }
     for (let index = 0; index < activityImage.length; index++) {
       if (!activityImage[index].url) {
         this.loading = false
@@ -176,7 +209,7 @@ class ActivityDetail extends React.Component {
       }
     }
     const promotionSkuAdd = (selectedRows || []).map((item) => {
-      return {
+      const promotionSkuAddItem = {
         ...item,
         buyingPrice: item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0,
         // 拼团
@@ -188,6 +221,8 @@ class ActivityDetail extends React.Component {
           managerPrice: item.pmManagerPrice ? new Decimal(item.pmManagerPrice).mul(100).toNumber() : 0
         }
       }
+
+      return promotionSkuAddItem
     })
     const params = {
       isMultiple: detailData.type === 9 ? isMultiple : 0,
@@ -224,7 +259,7 @@ class ActivityDetail extends React.Component {
         params: { id }
       }
     } = this.props
-    history.push(`/fresh/activity/info/edit/${id}`)
+    history.push(`/ulive/activity/info/edit/${id}`)
   };
 
   handleActivityImage = e => {
@@ -232,6 +267,88 @@ class ActivityDetail extends React.Component {
       activityImage: e
     })
   };
+  getExtendColumns = (detailData) => [
+    {
+      title: '拼团价',
+      dataIndex: 'promotionPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('promotionPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
+          <InputNumber
+            style={{ width: 140 }}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('promotionPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '团长价',
+      dataIndex: 'pmHeadPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('pmHeadPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
+          <InputNumber
+            style={{ width: 140 }}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('pmHeadPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '区长价',
+      dataIndex: 'pmAreaPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('pmAreaPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
+          <InputNumber
+            style={{ width: 140 }}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('pmAreaPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '合伙人价',
+      dataIndex: 'pmCityPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('pmCityPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
+          <InputNumber
+            style={{ width: 140 }}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('pmCityPrice', index)}
+          />
+        )
+      )
+    },
+    {
+      title: '管理员价',
+      dataIndex: 'pmManagerPrice',
+      width: 200,
+      render: (text, record, index) => (
+        speedyInput('pmManagerPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
+          <InputNumber
+            style={{ width: 140 }}
+            min={0}
+            precision={2}
+            value={text}
+            onChange={this.handleChangeValue('pmManagerPrice', index)}
+          />
+        )
+      )
+    }
+  ]
   getColumns = (detailData) => {
     const { getFieldDecorator, validateFields } = this.props.form
     return [
@@ -240,22 +357,54 @@ class ActivityDetail extends React.Component {
         dataIndex: 'property'
       },
       {
-        title: '活动价',
+        title: `${detailData.type === 6 ? '助力分': '活动价'}`,
         dataIndex: 'buyingPrice',
         width: 200,
         render: (text, record, index) => {
-          return speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          if (detailData.type === 13) {
+            return 0
+          }
+          return speedyInput('buyingPrice', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
             <FormItem
               wrapperCol={{ span: 24 }}
             >
               {
                 getFieldDecorator(`buyingPrice-${index}`, {
-                  initialValue: text
+                  initialValue: text,
+                  rules: [
+                    {
+                      validator: (rule, value, cb) => {
+                        // 如果是助力活动或者拼团活动
+                        if (detailData.type === 6 || detailData.type === 10) {
+                          cb()
+                        } else if (value <= record.costPrice) {
+                          cb({
+                            message: `应高于成本价(${record.costPrice}元)`,
+                            pass: true,
+                            msg: `规格名称: ${record.property} 活动价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
+                          })
+                        } else if (value <= record.headPrice) {
+                          // 小店商品和POP商品不需要校验团长价
+                          if ([40, 41].includes(detailData.productType)) {
+                            cb()
+                            return
+                          }
+                          cb({
+                            message: `应高于团长价(${record.headPrice}元)`,
+                            pass: true,
+                            msg: `规格名称: ${record.property} 活动价(${value}元) ${value === record.headPrice ? '等于' : '低于'} 团长价(${record.headPrice}元)`
+                          })
+                        } else {
+                          cb()
+                        }
+                      }
+                    }
+                  ]
                 })(
                   <InputNumber
                     style={{ width: 140 }}
                     min={0}
-                    precision={2}
+                    precision={detailData.type === 6 ? 0: 2}
                     onChange={this.handleChangeValue('buyingPrice', index)}
                     onBlur={() => validateFields([`buyingPrice-${index}`])}
                   />
@@ -265,6 +414,7 @@ class ActivityDetail extends React.Component {
           )
         }
       },
+      ...(detailData.type === 10 ? this.getExtendColumns(detailData) : []),
       {
         title: '活动库存',
         dataIndex: 'inventory',
@@ -278,10 +428,7 @@ class ActivityDetail extends React.Component {
             value: text,
             onChange: this.handleChangeValue('inventory', index)
           }
-          // if (record.sellableQty) {
-          //   props.max = record.sellableQty
-          // }
-          return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(<InputNumber {...props} />)
+          return speedyInput('inventory', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(<InputNumber {...props} />)
         }
       },
       {
@@ -290,14 +437,14 @@ class ActivityDetail extends React.Component {
         render: (text, record, index) => {
           // 1.售后详情中 订单信息模块 需要添加订单类型的属性
           // 海淘商品可用库存需要读取保宏仓的可用库存数量，活动库存不可大于可用库存
-          return <span>{record.sellableQty}</span>
+          return <span>{record.sellableQty }</span>
         }
       },
       {
         title: '最大购买数',
         dataIndex: 'maxBuy',
         render: (text, record, index) => (
-          speedyInput('maxBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          speedyInput('maxBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
             <InputNumber
               style={{ width: 140 }}
               min={0}
@@ -308,11 +455,32 @@ class ActivityDetail extends React.Component {
           )
         )
       },
+      ...(
+        detailData.type === 13
+          ? [
+            {
+              title: '单次限购',
+              dataIndex: 'singlePurchaseLimitNum',
+              render: (text, record, index) => (
+                speedyInput('singlePurchaseLimitNum', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
+                  <InputNumber
+                    disabled
+                    style={{ width: 140 }}
+                    min={0}
+                    precision={0}
+                    value={text}
+                    onChange={this.handleChangeValue('singlePurchaseLimitNum', index)}
+                  />
+                )
+              )
+            }
+          ] : []
+      ),
       {
         title: '最小购买数',
         dataIndex: 'minBuy',
         render: (text, record, index) => (
-          speedyInput('minBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue)(
+          speedyInput('minBuy', text, record, index, detailData.promotionSkuList, this.handleChangeValue, this)(
             <InputNumber
               style={{ width: 140 }}
               min={0}
@@ -385,6 +553,34 @@ class ActivityDetail extends React.Component {
           </Row>
           <Row style={{ marginTop: 20, height: 60 }}>
             <Col span={6}>
+              新人专享:{' '}
+              <Checkbox
+                checked={!!newuserExclusive}
+                onChange={e => this.setState({ newuserExclusive: e.target.checked ? 1 : 0 })}
+              >
+                是
+              </Checkbox>
+            </Col>
+            <Col span={6}>
+              会员专享:{' '}
+              <Checkbox
+                checked={!!memberExclusive}
+                onChange={e => this.setState({ memberExclusive: e.target.checked ? 1 : 0 })}
+              >
+                是
+              </Checkbox>
+            </Col>
+            <Col span={6}>
+              排序:{' '}
+              <Input
+                style={{ width: 80 }}
+                value={sort}
+                onChange={e => this.setState({ sort: e.target.value })}
+              />
+            </Col>
+          </Row>
+          <Row style={{ marginTop: 20, height: 60 }}>
+            <Col span={8}>
               <div>
                 最少购买量:{' '}
                 <Input value={minBuy} style={{ width: 160 }} placeholder='请填写最少购买量' type='number' onChange={e => this.setState({ minBuy: e.target.value })} />
@@ -403,22 +599,15 @@ class ActivityDetail extends React.Component {
                 </div>
               </If>
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               最大购买量:{' '}
               <Input value={maxBuy} style={{ width: 160 }} placeholder='请填写最大购买量' type='number' onChange={e => this.setState({ maxBuy: e.target.value })} />
             </Col>
-            <Col span={6}>
-              排序:{' '}
-              <Input
-                style={{ width: 80 }}
-                value={sort}
-                onChange={e => this.setState({ sort: e.target.value })}
-              />
-            </Col>
-            <Col span={6}>
+            <Col span={8}>
               <FormItem label='活动图片'>
                 <UploadView
                   listType='picture-card'
+                  ossType='cos'
                   value={activityImage}
                   onChange={this.handleActivityImage}
                   listNum={1}
@@ -430,7 +619,6 @@ class ActivityDetail extends React.Component {
           </Row>
         </Card>
         <Card style={{ marginTop: 10 }}>
-          <div style={{ color: 'red', fontSize: 12, marginBottom: 8 }}>* 修改活动库存后，请点击同步更新，否则缓存期间会导致前端展示问题</div>
           <Table
             scroll={{ x: true }}
             rowSelection={rowSelection}

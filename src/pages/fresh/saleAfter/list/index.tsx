@@ -150,6 +150,12 @@ class Order extends Component<any, State> {
             rangeMap={{
               createTime: {
                 fields: ['createTimeBegin', 'createTimeEnd']
+              },
+              payTime: {
+                fields: ['payStartTime', 'payEndTime']
+              },
+              handleTime: {
+                fields: ['handleStartTime', 'handleEndTime']
               }
             }}
             size='small'
@@ -189,6 +195,9 @@ class Order extends Component<any, State> {
               <FormItem fieldDecoratorOptions={{ initialValue: 0 }} name='refundType' />
             </If>
             <FormItem name='createTime' />
+            <FormItem name='operator' />
+            <FormItem name='handleTime' />
+            <FormItem name='payTime' />
           </Form>
           <div style={{ textAlign: 'right' }}>
             <Button onClick={() => this.toSearch()} type='primary' className='mr10'>查询</Button>
@@ -209,6 +218,8 @@ class Order extends Component<any, State> {
                 <th>所属门店</th>
                 <th>门店手机号</th>
                 <th>买家信息</th>
+                <th>处理人</th>
+                <th>最后处理时间</th>
                 <th>操作</th>
               </tr>
             </thead>
@@ -218,7 +229,7 @@ class Order extends Component<any, State> {
                   return (
                     <React.Fragment key={index}>
                       <tr>
-                        <td className={styles['order-resume']} colSpan={10}>
+                        <td className={styles['order-resume']} colSpan={12}>
                           <span>售后单编号：{order.refundCode}</span>&nbsp;&nbsp;&nbsp;&nbsp;
                           <span>订单编号：{order.childOrderCode}</span>&nbsp;&nbsp;&nbsp;&nbsp;
                           <span>申请时间：{order.createTime && moment(order.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -265,6 +276,12 @@ class Order extends Component<any, State> {
                           {order.contactName} {order.contactPhone}
                         </td>
                         <td>
+                          {order.operator}
+                        </td>
+                        <td>
+                          {order.handleTime && moment(order.handleTime).format('YYYY-MM-DD HH:mm:ss')}
+                        </td>
+                        <td>
                           <span
                             // type='link'
                             // href={window.location.pathname + `#/fresh/saleAfter/detail/${order.refundCode}`}
@@ -279,7 +296,7 @@ class Order extends Component<any, State> {
                         </td>
                       </tr>
                       <tr>
-                        <td className={styles.empty} colSpan={10}></td>
+                        <td className={styles.empty} colSpan={12}></td>
                       </tr>
                     </React.Fragment>
                   )
