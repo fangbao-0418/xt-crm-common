@@ -9,6 +9,11 @@ export interface batchExportPayload {
   fileName: string
 }
 
+// 供应商审核
+export function replaceSupplier(payload: { refundOrderCode: string }) {
+  return post('/order/afterSale/audit/replaceSupplier', payload)
+}
+
 // 获取订单类型集合
 export function getOrderTypeList () {
   return get('/order/getOrderTypeList')

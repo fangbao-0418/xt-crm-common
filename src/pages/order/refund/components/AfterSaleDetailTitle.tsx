@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
-import { Row, Col, Button } from 'antd';
+import { Row, Col, Button, Modal } from 'antd';
 import { enumRefundStatus, enumRefundType } from '../../constant';
 import { namespace } from '../model';
 import Countdown from './countdown'
@@ -16,6 +16,10 @@ import {
   OperatingFailed,
   CancelAfterSale
 } from '../../components/modal';
+import { replaceSupplier } from '../../api';
+
+const { confirm } = Modal;
+
 interface Props extends RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
@@ -43,8 +47,19 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
     return this.props.data.refundType === type;
   }
   // 审核
-  // onAudit() {
-  // }
+  onAudit = (refundOrderCode: string) => {
+    confirm({
+      title: '系统提示',
+      content: '确认审核吗？',
+      onOk: () => {
+        replaceSupplier({ refundOrderCode }).then((res: any) => {
+          if (res) {
+            this.onSuccess();
+          }
+        })
+      }
+    })
+  }
   render() {
     let { orderServerVO, orderInfoVO, checkVO, supplierResHandTime } = this.props.data;
     orderServerVO = Object.assign({}, orderServerVO);
@@ -81,9 +96,9 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             </h3>
           </Col>
           <Col style={{display: 'flex'}}>
-            {/* {orderServerVO.refundStatus === 15 && (
-              <Button type="primary" onClick={this.onAudit}>审核</Button>
-            )} */}
+            {orderServerVO.refundStatus === 15 && (
+              <Button type="primary" onClick={this.onAudit.bind(null, orderServerVO.orderCode)}>审核</Button>
+            )}
             {/* 待审核 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
               <RemarkModal
