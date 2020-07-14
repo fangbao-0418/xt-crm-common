@@ -1,12 +1,11 @@
 import React, { Fragment } from 'react'
 import { Card, Descriptions, Button, Table, Modal } from 'antd'
-import { connect } from '@/util/utils'
+import { connect, replaceHttpUrl } from '@/util/utils'
 import Pannel from './components/pannel'
 import PassModal from './components/passModal'
 import CarouselPreview from '@/components/carousel-preview'
 // import { If } from '@/packages/common/components'
 import Image from '@/components/Image'
-import { replaceHttpUrl } from '@/util/utils'
 import { brandTypeListMap } from './config'
 import { groupBy } from 'lodash'
 
@@ -117,7 +116,8 @@ class BossDetail extends React.Component {
   }
 
   getCarouselImgs (detail) {
-    const { enterpriseInfo, merchantStoreInfo, storeBrandList, shopType } = detail
+    const { enterpriseInfo, merchantStoreInfo, shopType } = detail
+    const storeBrandList = detail?.storeBrandList || []
     // 营业执照
     const businessLicenseListImgs = enterpriseInfo.businessLicenseList.map(item => ({
       label: item.imageName || '营业执照',
