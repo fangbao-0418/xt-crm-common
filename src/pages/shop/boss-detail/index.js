@@ -119,24 +119,24 @@ class BossDetail extends React.Component {
   getCarouselImgs (detail) {
     const { enterpriseInfo, merchantStoreInfo, storeBrandList, shopType } = detail
     // 营业执照
-    const businessLicenseListImgs = enterpriseInfo.businessLicenseList.map(item => ({
+    const businessLicenseListImgs = (enterpriseInfo.businessLicenseList || []).map(item => ({
       label: item.imageName || '营业执照',
       value: item.imageUrl,
       type: 1
     }))
     // 生产许可证
-    const productionLicenseListImgs = shopType === 5 ? enterpriseInfo.productionLicenseList.map(item => ({
+    const productionLicenseListImgs = shopType === 5 ? (enterpriseInfo.productionLicenseList || []).map(item => ({
       label: item.imageName || '生产许可证',
       value: item.imageUrl,
       type: 2
     })) : []
     // 身份证
-    const legalPersonListImgs = enterpriseInfo.legalPersonList.map(item => ({
+    const legalPersonListImgs = (enterpriseInfo.legalPersonList || []).map(item => ({
       label: item.imageName || '身份证照',
       value: item.imageUrl,
       type: 3
     }))
-    const storeBrandListImgs = storeBrandList.reduce((pre, next) => {
+    const storeBrandListImgs = (storeBrandList || []).reduce((pre, next) => {
       return [
         ...pre,
         ...((next.authorizationList || []).map(item => ({
@@ -178,13 +178,13 @@ class BossDetail extends React.Component {
     //   })))
     // ]), [])
     // 管理员身份证
-    const managerList = merchantStoreInfo.managerList.map(item => ({
+    const managerList = (merchantStoreInfo.managerList || []).map(item => ({
       label: item.imageName || '管理人身份证照',
       value: item.imageUrl,
       type: 6
     }))
     // 保证金信息
-    const moneyList = merchantStoreInfo.moneyList.map(item => ({
+    const moneyList = (merchantStoreInfo.moneyList || []).map(item => ({
       label: item.imageName || '保证金',
       value: item.imageUrl,
       type: 7
@@ -262,7 +262,7 @@ class BossDetail extends React.Component {
             </Descriptions.Item>
             <Descriptions.Item label='营业执照'>
               {
-                enterpriseInfo.businessLicenseList.map((item, i) => (
+                (enterpriseInfo.businessLicenseList || []).map((item, i) => (
                   <Image
                     key={i}
                     style={{
@@ -282,7 +282,7 @@ class BossDetail extends React.Component {
               shopType === 5 && (
                 <Descriptions.Item label='生产许可证'>
                   {
-                    enterpriseInfo.productionLicenseList.map((item, i) => (
+                    (enterpriseInfo.productionLicenseList || []).map((item, i) => (
                       <Image
                         key={i}
                         style={{
@@ -319,7 +319,7 @@ class BossDetail extends React.Component {
           <Descriptions>
             <Descriptions.Item label='身份证照'>
               {
-                enterpriseInfo.legalPersonList.map((item, i) => (
+                (enterpriseInfo.legalPersonList || []).map((item, i) => (
                   <Image
                     key={i}
                     style={{
@@ -356,7 +356,7 @@ class BossDetail extends React.Component {
                         <Fragment>
                           <Descriptions.Item label='授权书'>
                             {
-                              item.authorizationList.map((iItem, iI) => (
+                              (item.authorizationList || []).map((iItem, iI) => (
                                 <Image
                                   key={iI}
                                   style={{
@@ -379,7 +379,7 @@ class BossDetail extends React.Component {
                       )
                     }
                     {
-                      Object.entries(groupBy(item.registrationList, 'imageName')).map((iItem, j) => {
+                      Object.entries(groupBy((item.registrationList || []), 'imageName')).map((iItem, j) => {
                         console.log(iItem, 123)
                         return (
                         <>
@@ -430,7 +430,7 @@ class BossDetail extends React.Component {
           </Descriptions>
           <Descriptions column={1}>
             <Descriptions.Item label='管理人身份证照'>
-              {merchantStoreInfo.managerList.map((item, i) => (
+              {(merchantStoreInfo.managerList || []).map((item, i) => (
                 <Image
                   key={i}
                   style={{
@@ -462,7 +462,7 @@ class BossDetail extends React.Component {
           </Descriptions>
         </Pannel>
         <Pannel title='保证金信息' style={{ marginTop: 16 }}>
-          {merchantStoreInfo.moneyList.map((item, i) => (
+          {(merchantStoreInfo.moneyList || []).map((item, i) => (
             <Image
               key={i}
               style={{
