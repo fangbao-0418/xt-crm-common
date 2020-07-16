@@ -1,41 +1,52 @@
 import React from 'react'
 import { ListPage, Form, FormItem, Alert, If } from '@/packages/common/components'
-import { getSummary, getData, cancelRemittance, applyVoucher } from './api'
+import { getData, getDetailDataList } from './api'
 import { defaultConfig, NAME_SPACE } from './config'
 import { Button, Modal, DatePicker, Table, Col, Row } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { FormInstance } from '@/packages/common/components/form'
 import { download } from '@/util/utils'
+import MoneyRender from '@/components/money-render'
 import Upload from '@/components/upload'
 
 const { RangePicker } = DatePicker
 interface BondState {
   visible: boolean
   dataDetail: any
+  current: number
+  total: number
+  pageSize: number
 }
 /**
  * 保证金管理
  */
 class Index extends React.Component<AlertComponentProps, BondState> {
   list: ListPageInstanceProps
+  id: any
   form: FormInstance
   state: BondState = {
     visible: false,
-    dataDetail: null
+    dataDetail: null,
+    current: 1,
+    total: 0,
+    pageSize: 10
   }
   columns = [{
     title: '序号',
-    dataIndex: 'transferNo'
+    dataIndex: 'id'
   }, {
     title: '商家名称',
-    dataIndex: 'moneyAccountTypeDesc'
+    dataIndex: 'supplierName'
   }, {
     title: '业务类型',
-    dataIndex: 'memberMobile'
+    dataIndex: 'supplierCategoryDesc'
   }, {
     title: '设置时间',
-    dataIndex: 'createTime'
+    dataIndex: 'createTime',
+    render: (createTime: string | number | undefined) => {
+      return APP.fn.formatDate(createTime)
+    }
   }, {
     title: '操作',
     fixed: 'right',
@@ -46,17 +57,10 @@ class Index extends React.Component<AlertComponentProps, BondState> {
             <span
               className='href ml10'
               onClick={() => {
+                this.id=records.id
                 this.setState({
                   visible: true
-                }, ()=>{
-                  getData({}).then(res => {
-                    if (res) {
-                      this.setState({
-                        dataDetail: res.records
-                      })
-                    }
-                  })
-                })
+                }, this.handleSearch)
               }}
             >
               查看
@@ -67,19 +71,24 @@ class Index extends React.Component<AlertComponentProps, BondState> {
   }]
   columnsDetail = [{
     title: '供应商名称',
-    dataIndex: 'transferNo'
+    dataIndex: 'supplierName'
   }, {
     title: '缴纳时间',
-    dataIndex: 'moneyAccountTypeDesc'
+    dataIndex: 'submitTime',
+    render: (submitTime: string | number | undefined) => {
+      return APP.fn.formatDate(submitTime)
+    }
   }, {
     title: '状态',
-    dataIndex: 'memberMobile'
+    dataIndex: 'syncStatus'
   }, {
     title: '缴纳金额',
-    dataIndex: 'createTime'
+    dataIndex: 'submitAmount',
+    render: MoneyRender
   }, {
     title: '认领金额',
-    dataIndex: 'createTime'
+    dataIndex: 'claimAmount',
+    render: MoneyRender
   }, {
     title: '操作',
     render: (records: any) => {
@@ -157,7 +166,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                   onOk: (hide) => {
                     this.form.props.form.validateFields((err, vals) => {
                       if (!err) {
-                        cancelRemittance({
+                        getData({
                           id: records.id,
                           remark: vals.remark
                         }).then(res => {
@@ -189,7 +198,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     }
   }
   render () {
-    const { visible, dataDetail }=this.state
+    const { visible, dataDetail, total, pageSize, current }=this.state
     return (
       <>
         <ListPage
@@ -210,15 +219,53 @@ class Index extends React.Component<AlertComponentProps, BondState> {
            title='供应商缴纳明细'
            visible={visible}
            width='70%'
+           onCancel={()=>{
+             this.setState({
+               visible: false
+             })
+           }}
+           footer={null}
          >
            <Table
              columns={this.columnsDetail}
-             pagination={false}
-             dataSource={dataDetail||[]} />
+             rowKey='id'
+             dataSource={dataDetail||[]}
+             pagination={{
+               current,
+               total,
+               pageSize,
+               onChange: this.handlePageChange
+             }} />
          </Modal>
       </>
     )
   }
+   // 分页
+   handlePageChange = (page: any, pageSize: any) => {
+     this.setState(
+       {
+         current: page,
+         pageSize
+       },
+       this.handleSearch
+     )
+   };
+   // 查询
+   handleSearch = () => {
+     const params = {
+       page: this.state.current,
+       pageSize: this.state.pageSize,
+       depositId: this.id
+     }
+     getDetailDataList(params).then(res => {
+       if (res) {
+         this.setState({
+           dataDetail: res.records,
+           total: res.total
+         })
+       }
+     })
+   }
 }
 
 export default Alert(Index)
