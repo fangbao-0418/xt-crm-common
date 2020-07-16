@@ -98,15 +98,29 @@ class Order extends Component<any, State> {
     })
   }
 
+  /** 重置payload */
+  public resetPayload (cb: () => void) {
+    this.setState({
+      total: 0,
+      current: 1,
+      pageSize: 10
+    }, cb)
+  }
+
   /** 重置from数据 */
   public resetFrom () {
-    this.form.resetValues()
-    this.fetchData()
+    this.resetPayload(() => {
+      this.form.resetValues()
+      this.fetchData()
+    })
   }
 
   public toSearch = () => {
-    this.fetchData()
+    this.resetPayload(() => {
+      this.fetchData()
+    })
   }
+  
 
   public setFieldsValue = (cb: any) => {
     const { type } = this.state
@@ -202,7 +216,16 @@ class Order extends Component<any, State> {
           <div style={{ textAlign: 'right' }}>
             <Button onClick={() => this.toSearch()} type='primary' className='mr10'>查询</Button>
             <Button onClick={() => this.resetFrom()} className='mr10'>重置</Button>
-            <Button type='primary' onClick={() => this.toExport()}>导出售后单</Button>
+            <Button
+              type='primary'
+              onClick={() => {
+                this.resetPayload(() => {
+                  this.toExport()
+                })
+              }}
+            >
+              导出售后单
+            </Button>
           </div>
         </div>
         <div className='mt10'>
