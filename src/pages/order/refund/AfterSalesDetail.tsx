@@ -24,8 +24,13 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
 
   render () {
     let { data } = this.props;
-    const infoStr = data?.supplierHandLogS?.[0]?.info || '[]'
-    const info = JSON.parse(infoStr);
+    let infoStr = data?.supplierHandLogS?.[0]?.info || '[]';
+    let info = [];
+    try {
+      info = JSON.parse(infoStr);
+    } catch (error) {
+      info = infoStr;
+    }
     return (
       <>
         {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (
@@ -40,6 +45,12 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
                 <Row>
                   {info.map((v: any) => (<Col>{v.key}：{v.value}</Col>))}
                 </Row>
+              </Card>
+            </If>
+            <If condition={typeof info === 'string'}>
+              <Card>
+                <h3>供应商处理信息</h3>
+                <Row>说明：{info}</Row>
               </Card>
             </If>
           </>
