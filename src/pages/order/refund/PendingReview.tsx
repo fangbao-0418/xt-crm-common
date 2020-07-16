@@ -3,6 +3,7 @@ import {
   Card,
   Form,
   Input,
+  Select,
   InputNumber,
   Button,
   Row,
@@ -34,7 +35,9 @@ import {
 import AfterSaleApplyInfo from './components/AfterSaleApplyInfo'
 import ModifyReturnAddress from '../components/modal/ModifyReturnAddress'
 import { mul } from '@/util/utils'
-import { verifyDownDgrade } from './../api'
+import { verifyDownDgrade, getOrderRefundQuickReply } from './../api'
+import { OptionProps } from 'antd/lib/select'
+const { Option } = Select;
 interface Props
   extends FormComponentProps,
     RouteComponentProps<{ id: any }> {
@@ -45,15 +48,34 @@ interface State {
   selectedValues: any[]
   isDemotion: number
   demotionInfo: string
+  secondRefund?: string
+  firstLevel: OptionProps[],
+  secondLevel: OptionProps[]
 }
 
 class PendingReview extends React.Component<Props, State> {
+  refundQuickReply: any;
+  secondRefundQuickReply: any;
   state: State = {
     addressVisible: false,
     selectedValues: [],
     isDemotion: this.checkVO.isDemotion,
-    demotionInfo: ''
+    demotionInfo: '',
+    secondRefund: '',
+    firstLevel: [],
+    secondLevel: []
   }
+
+  componentDidMount() {
+    getOrderRefundQuickReply().then((res: any) => {
+      res = res || {};
+      const firstLevel = Object.keys(res).map((str) => ({ label: str, value: str }))
+      console.log('firstLevel', firstLevel)
+      this.refundQuickReply = res;
+      this.setState({ firstLevel });
+    })
+  }
+
   /**
    * 客服审核
    * @param status {number} 0:拒绝,1:同意
@@ -65,6 +87,10 @@ class PendingReview extends React.Component<Props, State> {
         if (status === 1 && values.serverNum == 0) {
           message.error('售后数目必须大于0')
           return
+        }
+        if (typeof values.info === 'string' && values.info.indexOf('{}') !== -1) {
+          message.error('说明请替换{}内容')
+          return;
         }
         if (values.refundAmount) {
           values.refundAmount = mul(
@@ -397,6 +423,7 @@ class PendingReview extends React.Component<Props, State> {
                   ]
                 })(
                   <InputNumber
+                    className='not-has-handler'
                     min={0}
                     max={this.checkVO.maxServerNum}
                     placeholder='请输入'
@@ -478,6 +505,36 @@ class PendingReview extends React.Component<Props, State> {
                 />
               </Form.Item>
             )}
+            <Form.Item label='快捷说明'>
+              <Select
+                placeholder="请选择一级"
+                onChange={(key: string) => {
+                  this.secondRefundQuickReply = this.refundQuickReply[key] || {}
+                  const secondLevel = Object.keys(this.secondRefundQuickReply).map((str: string) => ({ label: str, value: str }));
+                  this.setState({
+                    secondRefund: undefined,
+                    secondLevel
+                  })
+                }}
+              >
+                {this.state.firstLevel.map((item: OptionProps) => (
+                  <Option value={item.value}>{ item.label }</Option>
+                ))}
+              </Select>
+              <Select
+                placeholder="请选择二级"
+                value={this.state.secondRefund}
+                onChange={(key: string) => {
+                  this.setState({ secondRefund: key })
+                  const info =  this.secondRefundQuickReply[key];
+                  this.props.form.setFieldsValue({ info })
+                }}
+              >
+                {this.state.secondLevel.map((item: OptionProps) => (
+                  <Option value={item.value}>{ item.label }</Option>
+                ))}
+              </Select>
+            </Form.Item>
             <Row>
               <Form.Item label='说明'>
                 {getFieldDecorator('info', {})(

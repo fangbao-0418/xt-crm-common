@@ -362,7 +362,7 @@ class AuditTemplate extends React.Component<any, any> {
                           }
                         ]
                       })(
-                        <InputNumber />
+                        <InputNumber className='not-has-handler'/>
                       )}
                     </div>
                   )
