@@ -8,18 +8,17 @@ import { AlertComponentProps } from '@/packages/common/components/alert'
 import { FormInstance } from '@/packages/common/components/form'
 import { download } from '@/util/utils'
 import MoneyRender from '@/components/money-render'
+import ModalConfig from '@/components/modalConfig'
 import Upload from '@/components/upload'
 import { formatPrice } from '@/util/format'
 import { update } from 'lodash'
 
 const { RangePicker } = DatePicker
 interface BondState {
-  visible: boolean
   dataDetail: any
   current: number
   total: number
   pageSize: number
-  update: number
 }
 /**
  * 保证金管理
@@ -29,12 +28,10 @@ class Index extends React.Component<AlertComponentProps, BondState> {
   id: any
   form: FormInstance
   state: BondState = {
-    visible: false,
     dataDetail: null,
     current: 1,
     total: 0,
-    pageSize: 10,
-    update: 0
+    pageSize: 10
   }
   columns = [{
     title: '序号',
@@ -62,9 +59,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
               className='href ml10'
               onClick={() => {
                 this.id=records.id
-                this.setState({
-                  visible: true
-                }, ()=>this.handleSearch())
+                this.handleSearch()
               }}
             >
               查看
@@ -124,7 +119,6 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     }
   }
   render () {
-    const { update, visible, dataDetail, total, pageSize, current }=this.state
     return (
       <>
         <ListPage
@@ -146,32 +140,22 @@ class Index extends React.Component<AlertComponentProps, BondState> {
           columns={this.columns}
           api={getData}
         />
-         <Modal
-           title='供应商缴纳明细'
-           visible={visible}
-           width='70%'
-           key={update}
-           onCancel={()=>{
-             this.setState({
-               visible: false
-             })
-           }}
-           footer={null}
-         >
-           <Table
-             columns={this.columnsDetail}
-             rowKey='id'
-             dataSource={dataDetail||[]}
-             pagination={{
-               current,
-               total,
-               pageSize,
-               onChange: this.handlePageChange
-             }} />
-         </Modal>
       </>
     )
   }
+
+  showModal (txt: any, dom: any, domId: any, cd: any, cancel: any) {
+    ModalConfig.show(
+      {
+        maskClosable: true,
+        title: txt,
+        width: '80%',
+        onOk: cd,
+        onCancel: cancel
+      }, dom, domId
+    )
+  }
+
    // 分页
    handlePageChange = (page: any, pageSize: any) => {
      this.setState(
@@ -184,6 +168,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
    };
    // 查询
    handleSearch () {
+     const { dataDetail, total, pageSize, current }=this.state
      const params = {
        page: this.state.current,
        pageSize: this.state.pageSize,
@@ -194,106 +179,123 @@ class Index extends React.Component<AlertComponentProps, BondState> {
          this.setState({
            dataDetail: res.records,
            total: res.total
+         }, ()=>{
+           ModalConfig.show(
+             {
+               maskClosable: true,
+               title: '供应商缴纳明细',
+               width: '80%',
+               footer: null
+             }, <Table
+               columns={this.columnsDetail}
+               rowKey='id'
+               dataSource={res?.records||[]}
+               pagination={{
+                 current,
+                 total,
+                 pageSize,
+                 onChange: this.handlePageChange
+               }} />, 'Synchronizesupplier'
+           )
          })
        }
      })
    }
    getDetailInfoData (id: any) {
-     const { update }=this.state
      getDetailInfo({ id }).then(res => {
        if (res) {
-         this.props.alert({
-           title: '认领保证金',
-           content: (
-             <Form
-               getInstance={ref => this.form = ref}
-               labelCol={{ span: 6 }}
-               wrapperCol={{ span: 14 }}
-               mounted={() => {
-                 this.form.setValues({
-                   voucherImages: this.handleFileValue(res.voucherImages)
-                 })
+         const ok = () => {
+           this.form.props.form.validateFields((err, vals) => {
+             if (!err) {
+               claim({
+                 id: res.id,
+                 claimAmount: vals.claimAmount
+               }).then(res => {
+                 if (res) {
+                   ModalConfig.close('Synchronizesupplier1')
+                   APP.success('认领成功')
+                   this.handleSearch()
+                 }
+               })
+             }
+           })
+         }
+         const onCancel = () => {
+           ModalConfig.close('Synchronizesupplier1')
+         }
+         this.showModal('认领保证金',
+           <Form
+             getInstance={ref => this.form = ref}
+             labelCol={{ span: 6 }}
+             wrapperCol={{ span: 14 }}
+             mounted={() => {
+               this.form.setValues({
+                 voucherImages: this.handleFileValue(res.voucherImages)
+               })
+             }}
+           >
+             <Row style={{ marginBottom: 10 }}>
+               <Col span={6} style={{ textAlign: 'right' }}>保证金金额：</Col>
+               <Col span={3}>{formatPrice(res.balanceAmount)}元</Col>
+               <Col span={12}>保证金差额：{formatPrice(res.diffAmount)}元</Col>
+             </Row>
+             <FormItem
+               placeholder='请输入认领金额'
+               name='claimAmount'
+               label='认领金额'
+               type='number'
+               verifiable
+               fieldDecoratorOptions={{
+                 rules: [{
+                   required: true,
+                   message: '请输入认领金额'
+                 }]
                }}
-             >
-               <Row style={{ marginBottom: 10 }}>
-                 <Col span={6} style={{ textAlign: 'right' }}>保证金金额：</Col>
-                 <Col span={3}>{formatPrice(res.balanceAmount)}元</Col>
-                 <Col span={12}>保证金差额：{formatPrice(res.diffAmount)}元</Col>
-               </Row>
-               <FormItem
-                 placeholder='请输入认领金额'
-                 name='claimAmount'
-                 label='认领金额'
-                 type='number'
-                 verifiable
-                 fieldDecoratorOptions={{
-                   rules: [{
-                     required: true,
-                     message: '请输入认领金额'
-                   }]
-                 }}
-                 controlProps={{
-                   precision: 2,
-                   min: 0,
-                   max: 100000000,
-                   maxLength: 9,
-                   style: { width: 200 }
-                 }}
-               />
-               <FormItem
-                 label='打款凭证'
-                 inner={(form) => {
-                   return (
-                     <div>
-                       {form.getFieldDecorator('voucherImages')(
-                         <Upload
-                           listType='picture-card'
-                           multiple
-                           disabled={true}
-                           extname='png,jgp,jpeg'
-                         >
-                         </Upload>
-                       )}
-                     </div>
-                   )
-                 }}
-               />
-               <Row style={{ marginBottom: 10 }}>
-                 <Col offset={6} >
-                   <div
-                     className='href'
-                     onClick={() => {
-                       res.voucherImages.map((item: string)=>{
-                         let str=item
-                         const index = item.lastIndexOf('/')
-                         str = item.substring(index + 1, item.length)
-                         download(this.getUrl(item), str)
-                       })
-                     }}>
-               下载
+               controlProps={{
+                 precision: 2,
+                 min: 0,
+                 max: 100000000,
+                 maxLength: 9,
+                 style: { width: 200 }
+               }}
+             />
+             <FormItem
+               label='打款凭证'
+               inner={(form) => {
+                 return (
+                   <div>
+                     {form.getFieldDecorator('voucherImages')(
+                       <Upload
+                         listType='picture-card'
+                         multiple
+                         disabled={true}
+                         extname='png,jgp,jpeg'
+                       >
+                       </Upload>
+                     )}
                    </div>
-                 </Col>
-               </Row>
+                 )
+               }}
+             />
+             <Row style={{ marginBottom: 10 }}>
+               <Col offset={6} >
+                 <div
+                   className='href'
+                   onClick={() => {
+                     res.voucherImages.map((item: string)=>{
+                       let str=item
+                       const index = item.lastIndexOf('/')
+                       str = item.substring(index + 1, item.length)
+                       download(this.getUrl(item), str)
+                     })
+                   }}>
+           下载
+                 </div>
+               </Col>
+             </Row>
 
-             </Form>
-           ),
-           onOk: (hide) => {
-             this.form.props.form.validateFields((err, vals) => {
-               if (!err) {
-                 claim({
-                   id: res.id,
-                   claimAmount: vals.claimAmount
-                 }).then(res => {
-                   if (res) {
-                     APP.success('认领成功')
-                     this.handleSearch()
-                     hide()
-                   }
-                 })
-               }
-             })
-           }
-         })
+           </Form>
+           , 'Synchronizesupplier1', ok, onCancel)
        }
      })
    }
