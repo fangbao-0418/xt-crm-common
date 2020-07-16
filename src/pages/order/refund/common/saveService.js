@@ -31,7 +31,7 @@ function saveService (data, isServiceCenter) {
       }
     }
   }
-
+  const orign = window.location.origin
   const saveData = JSON.stringify(data)
   const file = new File([saveData], 'service')
   const path = orign === 'https://xt-crmadmin.hzxituan.com' ? '/question-pro.json' : '/question-test.json'
