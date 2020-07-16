@@ -9,6 +9,11 @@ export interface batchExportPayload {
   fileName: string
 }
 
+// 供应商审核
+export function replaceSupplier(payload: { refundOrderCode: string }) {
+  return post('/order/afterSale/audit/replaceSupplier', payload)
+}
+
 // 获取订单类型集合
 export function getOrderTypeList () {
   return get('/order/getOrderTypeList')
@@ -17,6 +22,11 @@ export function getOrderTypeList () {
 // 批量轨迹导出
 export function batchExport (payload: batchExportPayload) {
   return exportFileStream('/expressTracking/batchExport', batchExportRequest(payload), payload.fileName)
+}
+
+// 获取快捷说明列表
+export function getOrderRefundQuickReply() {
+  return newPost('/order/afterSale/query/orderRefundQuickReply', {})
 }
 
 // 订单售后校验团长等级是否会降级

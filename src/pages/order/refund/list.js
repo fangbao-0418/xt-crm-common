@@ -11,6 +11,7 @@ import { withRouter } from 'react-router-dom'
 import { formatDate } from '@/pages/helper'
 import { parseQuery } from '@/util/utils'
 import { refundList, exportRefund } from '../api'
+import Countdown from './components/countdown'
 import styles from './style.m.styl'
 
 const dateFormat = 'YYYY-MM-DD HH:mm'
@@ -289,6 +290,15 @@ export default class extends React.Component {
                 <span>售后单编号：{record.orderCode}</span>
                 <span>订单编号：{record.mainOrderCode}</span>
                 <span>申请时间：{formatDate(record.createTime)}</span>
+                {/* 待供应商审核 */}
+                {record.refundStatus === 15 && <span style={{ color: 'red' }}>
+                  供应商审核倒计时：{record.supplierResHandTime - Date.now() > 0 ? 
+                  (<Countdown
+                    value={Math.floor((record.supplierResHandTime - Date.now()) / 1000)}
+                    refresh={this.query}
+                  />)
+                  : '供应商审核超时'}
+                </span>}
               </div>
             )}
             expandedRowKeys={this.state.expands}

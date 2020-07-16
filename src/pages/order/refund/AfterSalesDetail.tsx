@@ -4,7 +4,9 @@ import AfterSalesProcessing from './AfterSalesProcessing';
 import OrderInfo from './components/OrderInfo';
 import PendingReview from './PendingReview';
 import { namespace } from './model';
-import { enumRefundStatus } from '../constant';
+import { Card, Row, Col } from 'antd';
+import { If } from '@/packages/common/components'
+import { enumRefundStatus, enumRefundType } from '../constant';
 interface AfterSalesDetailProps {
   data: AfterSalesInfo.data;
 }
@@ -21,12 +23,26 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
   }
   render() {
     let { data } = this.props;
+    const infoStr = data?.supplierHandLogS?.[0]?.info || '[]'
+    const info = JSON.parse(infoStr);
+    console.log('info', info);
     return (
       <>
         {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (
           <PendingReview />
         ) : (
-          <AfterSalesProcessing data={data} />
+          <>
+            <AfterSalesProcessing data={data} />
+            {/* 仅退款，待客服跟进 */}
+            <If condition={info && info.length > 0}>
+              <Card>
+                <h3>供应商处理信息</h3>
+                <Row>
+                  {info.map((v: any) => (<Col>{v.key}：{v.value}</Col>))}
+                </Row>
+              </Card>
+            </If>
+          </>
         )}
         <OrderInfo orderInfoVO={data.orderInfoVO} shopDTO={data.shopDTO} />
       </>
