@@ -12,6 +12,18 @@ export function setBasePromotion (data) {
   })
 }
 
+// 获取店铺类型
+export function getShopTypes () {
+  return get('/shop/v1/query/type').then((res) => {
+    return (res || []).map((item) => {
+      return {
+        label: item.tag,
+        value: item.code
+      }
+    })
+  })
+}
+
 /**
  * 获取活动基本信息
  * @param {*} promotionId

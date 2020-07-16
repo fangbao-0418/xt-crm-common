@@ -15,17 +15,17 @@ interface AfterSalesDetailState {
 }
 class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSalesDetailState> {
   state: AfterSalesDetailState = {
-    visible: false,
+    visible: false
   };
-  isRefundStatusOf(refundStatus: number) {
-    let orderServerVO = Object.assign({}, this.props.data.orderServerVO);
-    return orderServerVO.refundStatus === refundStatus;
+  isRefundStatusOf (refundStatus: number) {
+    const orderServerVO = Object.assign({}, this.props.data.orderServerVO)
+    return orderServerVO.refundStatus === refundStatus
   }
-  render() {
+
+  render () {
     let { data } = this.props;
     const infoStr = data?.supplierHandLogS?.[0]?.info || '[]'
     const info = JSON.parse(infoStr);
-    console.log('info', info);
     return (
       <>
         {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (
@@ -46,11 +46,11 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
         )}
         <OrderInfo orderInfoVO={data.orderInfoVO} shopDTO={data.shopDTO} />
       </>
-    );
+    )
   }
 }
 export default connect((state: any) => {
   return {
-    data: (state[namespace] && state[namespace].data) || {},
-  };
-})(AfterSalesDetail);
+    data: (state[namespace] && state[namespace].data) || {}
+  }
+})(AfterSalesDetail)

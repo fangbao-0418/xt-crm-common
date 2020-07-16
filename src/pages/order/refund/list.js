@@ -10,7 +10,7 @@ import { formFields, typeMapRefundStatus, namespace, refundStatusOptions } from 
 import { withRouter } from 'react-router-dom'
 import { formatDate } from '@/pages/helper'
 import { parseQuery } from '@/util/utils'
-import { refundList, exportRefund } from '../api'
+import { refundList, exportRefund, getPhoneById } from '../api'
 import Countdown from './components/countdown'
 import styles from './style.m.styl'
 
@@ -160,11 +160,29 @@ export default class extends React.Component {
     }
     refundStatus = refundStatus || typeMapRefundStatus[this.props.type]
     params.refundStatus = refundStatus && Number.isInteger(refundStatus) ? [refundStatus] : refundStatus
-    console.log(params.refundStatus, 'params.refundStatus', params)
     APP.fn.setPayload(namespace, {
       ...params,
       type
     })
+    console.log(params.refundStatus, 'params.refundStatus', params)
+    if (params&&params.shopPhone) {
+      getPhoneById({ phone: fieldsValues.shopPhone }).then((res = {}) => {
+        if (res.shopId) {
+          params.shopId=res.shopId
+        } else {
+          params.shopId=-100
+        }
+        this.loadData(isExport, params, noFetch)
+      })
+    } else {
+      this.loadData(isExport, params, noFetch)
+    }
+  }
+
+  loadData (isExport, params, noFetch) {
+    if (params.shopType) {
+      params.shopType=(params.shopType).toString()
+    }
     if (isExport) {
       this.setState({
         loading: true
@@ -246,7 +264,9 @@ export default class extends React.Component {
       interceptionMemberPhone: payload.interceptionMemberPhone,
       storeType: payload.storeType === undefined ? options.find(item => item.id === 'storeType')?.initialValue : payload.storeType,
       smallShopOrder: payload.smallShopOrder === undefined ? options.find(item => item.id === 'smallShopOrder')?.initialValue: payload.smallShopOrder,
-      autoAudit: payload.autoAudit === undefined ? options.find(item => item.id === 'autoAudit')?.initialValue : payload.autoAudit
+      autoAudit: payload.autoAudit === undefined ? options.find(item => item.id === 'autoAudit')?.initialValue : payload.autoAudit,
+      shopType: payload.shopType,
+      shopPhone: payload.shopPhone
     }
     const refundStatusOptionsOptions = refundStatusOptions[type]
     if (refundStatusOptionsOptions.length > 1 && (payload.refundStatus?.length)) {

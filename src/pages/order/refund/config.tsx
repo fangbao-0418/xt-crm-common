@@ -6,7 +6,10 @@ import createType from '@/enum/createType'
 import { Button } from 'antd'
 import MoneyRender from '@/components/money-render'
 import { formatDate } from '@/pages/helper'
-
+import SelectFetch from '@/components/select-fetch'
+import {
+  getShopTypes
+} from '../api'
 export const namespace = 'refundOrder'
 
 export const refundStatusOptions: any = {
@@ -205,23 +208,9 @@ export const formFields = function (
           key: 4
         }
       ],
-      initialValue: undefined
-    },
-    {
-      type: 'select',
-      id: 'smallShopOrder',
-      label: '是否小店订单',
-      options: [
-        {
-          val: '全部',
-          key: ''
-        },
-        {
-          val: '小店订单',
-          key: 1
-        }
-      ],
-      initialValue: ''
+      config: {
+        initialValue: undefined
+      }
     },
     {
       type: 'select',
@@ -242,6 +231,26 @@ export const formFields = function (
         }
       ],
       initialValue: ''
+    }, {
+      type: 'input',
+      id: 'shopPhone',
+      sourceProps: {
+        placeholder: '只支持小店和pop店'
+      },
+      label: '供应商手机'
+    },
+    {
+      type: 'input',
+      id: 'shopType',
+      label: '店铺类型',
+      render: () => {
+        return (<SelectFetch
+          mode='multiple'
+          placeholder= '请选择店铺类型'
+          style={{ width: 180 }}
+          fetchData={getShopTypes}
+        />)
+      }
     }
   ].filter((item: any) => {
     return intercept

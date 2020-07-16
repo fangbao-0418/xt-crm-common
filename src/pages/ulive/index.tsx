@@ -15,7 +15,7 @@ class Ulive extends React.Component<RouteComponentProps> {
       <Switch>
         <Route path={`${match.url}/anchor`} component={Anchor} exact />
         <Route path={`${match.url}/studio`} component={Studio} />
-        <Route path={`${match.url}/Inform`} component={Inform} />
+        <Route path={`${match.url}/Inform/:id`} component={Inform} />
         <Route path={`${match.url}/config`} component={ConfigView} />
         <Route path={`${match.url}/activity/list`} component={Activity} />
         <Route path={`${match.url}/activity/info/edit/:id`} component={InfoEdit} />
