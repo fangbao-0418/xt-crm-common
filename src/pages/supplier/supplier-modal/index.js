@@ -270,6 +270,7 @@ class SupplierModal extends Component {
                   ]
                 })(
                   <SelectFetch
+                    disabled={this.props.isEdit}
                     placeholder='请选择保证金缴纳方式'
                     style={{ width: '174px' }}
                     fetchData={
