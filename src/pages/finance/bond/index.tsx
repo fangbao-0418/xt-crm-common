@@ -96,7 +96,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
       return (
         <>
             {
-              records.syncStatus===0&&(
+              records.syncStatus!==0&&(
                 <span
                   className='href ml10'
                   onClick={() => {
@@ -133,6 +133,11 @@ class Index extends React.Component<AlertComponentProps, BondState> {
           }}
           getInstance={(ref) => {
             this.list = ref
+          }}
+          rangeMap={{
+            createTime: {
+              fields: ['startTime', 'endTime']
+            }
           }}
           formConfig={defaultConfig}
           columns={this.columns}
@@ -253,7 +258,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                    <div
                      className='href'
                      onClick={() => {
-                       download(this.getUrl(res.invoiceUrl), '打印凭证.xls')
+                       download(this.getUrl(res.invoiceUrl), '凭证.xls')
                      }}>
                下载
                    </div>

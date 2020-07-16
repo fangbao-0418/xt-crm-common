@@ -1,8 +1,8 @@
 import { FieldsConfig } from '@/packages/common/components/form'
 export const NAME_SPACE = 'bond'
 export const defaultConfig: FieldsConfig = {
-  withdraw: {
-    transferNo: {
+  bond: {
+    supplierName: {
       label: '商家名称',
       controlProps: {
         style: {
@@ -10,26 +10,18 @@ export const defaultConfig: FieldsConfig = {
         }
       }
     },
-    moneyAccountType: {
+    supplierCategory: {
       label: '业务类型',
       type: 'select',
       options: [{
-        label: '普通提现',
+        label: '喜团',
         value: 0
       }, {
-        label: '拦截提现',
-        value: 1
-      }]
-    },
-    transferStatus: {
-      label: '状态',
-      type: 'select',
-      options: [{
-        label: '新发布',
-        value: -2
+        label: '小店',
+        value: 6
       }, {
-        label: '已缴纳',
-        value: -1
+        label: 'POP店',
+        value: 7
       }]
     },
     createTime: {
