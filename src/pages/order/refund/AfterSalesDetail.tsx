@@ -34,6 +34,7 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
   render () {
     let { data } = this.props;
     const info = this.getInfo(data);
+    console.log('info', info, typeof info)
     return (
       <>
         {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) ? (
@@ -42,20 +43,20 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
           <>
             <AfterSalesProcessing data={data} />
             {/* 仅退款，待客服跟进 */}
-            <If condition={Array.isArray(info) && info.length > 0}>
+            {Array.isArray(info) && info.length > 0 && (
               <Card>
                 <h3>供应商处理信息</h3>
                 <Row>
                   {info.map((v: any) => (<Col>{v.key}：{v.value}</Col>))}
                 </Row>
               </Card>
-            </If>
-            <If condition={typeof info === 'string'}>
+            )}
+            {(typeof info === 'string' || typeof info === 'number') && (
               <Card>
                 <h3>供应商处理信息</h3>
                 <Row>说明：{info}</Row>
-              </Card>
-            </If>
+            </Card>
+            )}
           </>
         )}
         <OrderInfo orderInfoVO={data.orderInfoVO} shopDTO={data.shopDTO} />
