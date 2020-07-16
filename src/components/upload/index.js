@@ -1,17 +1,28 @@
-import React, { Component } from 'react';
-import { Upload, Icon, message, Modal } from 'antd';
-import PropTypes from 'prop-types';
-import { isFunction, filter } from 'lodash';
-import { getStsPolicy, getStsCos } from './api';
-import { createClient, ossUploadBlob, createCosClient, cosUpload } from './oss.js';
+import React, { Component } from 'react'
+import { Upload, Icon, message, Modal } from 'antd'
+import PropTypes from 'prop-types'
+import { isFunction, filter } from 'lodash'
+import { getStsPolicy, getStsCos } from './api'
+import { createClient, ossUploadBlob, createCosClient, cosUpload } from './oss.js'
 import { getUniqueId } from '@/packages/common/utils/index'
+import FileTypeBrowser from 'file-type/browser'
 
 const uploadButton = props => (
   <div>
-    <Icon type="plus" />
-    <div className="ant-upload-text">{props}</div>
+    <Icon type='plus' />
+    <div className='ant-upload-text'>
+      {props}
+    </div>
   </div>
-);
+)
+
+/** 获取文件真实类型 */
+function getRealFileType (file) {
+  return FileTypeBrowser.fromBlob(file)
+}
+
+/** 默认支持图片上传格式 */
+const defaultImgExtnameList = ['jpg', 'gif', 'jpeg', 'png']
 
 export async function ossUpload (file, dir = 'crm', ossType = 'oss', specifiedAddress) {
   if (ossType === 'oss') {
@@ -19,10 +30,10 @@ export async function ossUpload (file, dir = 'crm', ossType = 'oss', specifiedAd
     if (res) {
       const client = createClient(res)
       try {
-        const urlList = await ossUploadBlob(client, file, dir);
+        const urlList = await ossUploadBlob(client, file, dir)
         return urlList
       } catch (error) {
-        message.error('上传失败，请重试', 'middle');
+        message.error('上传失败，请重试', 'middle')
         return Promise.reject(error)
       }
     } else {
@@ -107,13 +118,13 @@ function isMatchFileType (file, list, type = 'ext') {
 class UploadView extends Component {
   count = 0
   constructor (props) {
-    super(props);
+    super(props)
     this.state = {
       fileList: this.initFileList(props.value || []),
       visible: false,
       url: ''
-    };
-    this.handleRemove = this.handleRemove.bind(this);
+    }
+    this.handleRemove = this.handleRemove.bind(this)
   }
   /** 支持的文件扩展名集合 */
   extnameList = !this.props.extname ? [] : this.props.extname.split(',')
@@ -121,7 +132,7 @@ class UploadView extends Component {
     // console.log(props, 'props')
     this.setState({
       fileList: this.initFileList(props.value)
-    });
+    })
   }
 
   replaceUrl (url) {
@@ -147,7 +158,7 @@ class UploadView extends Component {
       }]
     }
     fileList = (fileList || []).filter(item => !!item) || []
-    const { fileType } = this.props;
+    const { fileType } = this.props
     fileList = Array.isArray(fileList) ? fileList : (Array.isArray(fileList.fileList) ? fileList.fileList : [])
     this.count = fileList.length
     return fileList.map(val => {
@@ -155,8 +166,8 @@ class UploadView extends Component {
       let url = val.url || ''
       let thumbUrl = val.url || ''
       if (fileType == 'video') {
-        url = url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '');
-        thumbUrl = url+ '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast,ar_auto';
+        url = url.replace(/\?x-oss-process=video\/snapshot,t_7000,f_jpg,w_100,h_100,m_fast/g, '')
+        thumbUrl = url+ '?x-oss-process=video/snapshot,t_7000,f_jpg,w_100,h_100,m_fast,ar_auto'
       }
       durl = this.getViewUrl(durl)
       url = this.getViewUrl(url)
@@ -167,16 +178,16 @@ class UploadView extends Component {
         durl,
         url,
         thumbUrl
-      };
-      val.durl = result.durl;
-      val.uid = result.uid;
-      val.url = result.url;
-      val.size = val.size;
+      }
+      val.durl = result.durl
+      val.uid = result.uid
+      val.url = result.url
+      // val.size = val.size
       val.thumbUrl = result.thumbUrl
       val.rurl = this.replaceUrl(result.url)
       val.name = result.name || val.url
       return val
-    });
+    })
   }
   // 获取图片像素大小
   getImgSize (file) {
@@ -200,23 +211,23 @@ class UploadView extends Component {
 
   //检测图片格式是否符合预期
   checkFileType = (file, fileType) => {
-    let isFileType = true;
-    if(Object.prototype.toString.call(fileType) === '[object Array]'){
-      let checkResults = fileType.filter(item => {
+    let isFileType = true
+    if (Object.prototype.toString.call(fileType) === '[object Array]') {
+      const checkResults = fileType.filter(item => {
         return file.type.indexOf(item) > 0
-      });
-      if(!checkResults.length){
-        isFileType = false;
+      })
+      if (!checkResults.length) {
+        isFileType = false
       }
     } else {
-      isFileType = file.type.indexOf(fileType) < 0 ? false : true;
+      isFileType = file.type.indexOf(fileType) < 0 ? false : true
     }
-    return isFileType;
+    return isFileType
   }
 
   beforeUpload = async (file, fileList) => {
     console.log(fileList, 'file')
-    const { fileType, size = 10, pxSize, listNum, fileTypeErrorText } = this.props;
+    const { fileType, size = 10, pxSize, listNum, fileTypeErrorText } = this.props
 
     /** 判断文件扩展名是否支持 不传就不限制 */
     let extNameIsSupport = true
@@ -241,29 +252,41 @@ class UploadView extends Component {
     /** 扩展名和MIME-TYPE同时存在取交集 */
     if (fileTypeList.length > 0 && extnameList.length > 0 && (!mimeTypeIsSupport || !extNameIsSupport)) {
       APP.error(fileTypeErrorText || '上传格式不支持')
-       return Promise.reject()
+      return Promise.reject()
     }
 
     /** size为n n小于1的 (n*1000)kb n大于等于1 (n)mb，1000kb-1024kb区间不支持设置 */
     const sizeOverflow = (file.size / 1024 / 1024) > (size < 1 ? size / 1.024 : size)
     if (sizeOverflow) {
-      message.error(`请上传小于${computedFileSize(size)}的文件`);
+      message.error(`请上传小于${computedFileSize(size)}的文件`)
       return Promise.reject()
     }
     //pxSize: [{width:100, height:100}] 限制图片上传px大小
     if (pxSize && pxSize.length) {
-      const imgSize = await this.getImgSize(file) || {width:0, height:0}
-      let result = pxSize.filter((item, index, arr) => {
+      const imgSize = await this.getImgSize(file) || { width: 0, height: 0 }
+      const result = pxSize.filter((item, index, arr) => {
         return item.width === imgSize.width && item.height === imgSize.height
       })
-      if (result.length === 0 ) {
-        message.error(`图片尺寸不正确`)
+      if (result.length === 0) {
+        message.error('图片尺寸不正确')
         return Promise.reject()
       }
     }
+
+    const typeName = this.props.listType !== 'text' ? '图片' : '文件'
+
+    if (typeName === '图片') {
+      const fileRealType = await getRealFileType(file)
+      const tempExtnameList = extnameList?.length ? extnameList : defaultImgExtnameList
+      if (tempExtnameList && !tempExtnameList.includes(fileRealType?.ext)) {
+        APP.error(fileTypeErrorText || '仅支持' + tempExtnameList.join('、'))
+        return Promise.reject()
+      }
+    }
+
     /** 限制判断一定要放到最后 */
     this.count++
-    const typeName = this.props.listType !== 'text' ? '图片' : '文件'
+
     if (listNum !== undefined && this.count > listNum) {
       /** 多文件上传只提示一次 */
       if (this.count >= listNum + 1 && fileList.length > 0) {
@@ -276,24 +299,24 @@ class UploadView extends Component {
     }
     return Promise.resolve(file)
   };
-  customRequest(e) {
-    const file = e.file;
-    const { onChange, formatOrigin, ossDir, ossType } = this.props;
+  customRequest (e) {
+    const file = e.file
+    const { onChange, formatOrigin, ossDir, ossType } = this.props
     
     ossUpload(file, ossDir, ossType).then((urlList) => {
-      let { fileList } = this.state;
+      let { fileList } = this.state
       console.log(file, 'customRequest')
-      file.url = urlList && urlList[0];
-      file.durl = file.url;
+      file.url = urlList && urlList[0]
+      file.durl = file.url
       fileList.push({
         ...file,
         size: file.size,
         name: file.name
-      });
+      })
       fileList = this.initFileList(fileList)
       this.setState({
         fileList: fileList
-      });
+      })
       const value = fileList.map((item) => {
         return formatOrigin ? {
           ...item,
@@ -310,15 +333,15 @@ class UploadView extends Component {
         this.count = 0
       }
       console.log(this.count, 'upload error')
-    });
+    })
   }
   handleRemove = e => {
-    const { fileList } = this.state;
-    const { onChange } = this.props;
-    const newFileList = filter(fileList, item => item.uid !== e.uid);
-    this.setState({ fileList: newFileList });
+    const { fileList } = this.state
+    const { onChange } = this.props
+    const newFileList = filter(fileList, item => item.uid !== e.uid)
+    this.setState({ fileList: newFileList })
     if (onChange) {
-      onChange(newFileList);
+      onChange(newFileList)
     }
   };
   onPreview = file => {
@@ -328,10 +351,10 @@ class UploadView extends Component {
     }
     this.setState({
       url: file.durl,
-      visible: true,
+      visible: true
     })
   };
-  render() {
+  render () {
     const {
       placeholder,
       listType,
@@ -340,8 +363,8 @@ class UploadView extends Component {
       children,
       accept,
       ...attributes
-    } = this.props;
-    const { fileList } = this.state;
+    } = this.props
+    const { fileList } = this.state
     delete attributes.onChange
     return (
       <>
@@ -359,16 +382,16 @@ class UploadView extends Component {
           {children ? children : fileList.length >= listNum ? null : uploadButton(placeholder)}
         </Upload>
         <Modal
-          title="预览"
+          title='预览'
           style={{ textAlign: 'center' }}
           visible={this.state.visible}
           onOk={() => this.setState({ visible: false })}
           onCancel={() => this.setState({ visible: false })}
         >
-          {this.props.fileType == 'video' ? <video width="100%" controls="controls">  <source src={this.state.url} type="video/mp4" /></video> : <img src={this.state.url} alt=""/>}
+          {this.props.fileType == 'video' ? <video width='100%' controls='controls'>  <source src={this.state.url} type='video/mp4' /></video> : <img src={this.state.url} alt='' />}
         </Modal>
       </>
-    );
+    )
   }
 }
 
@@ -380,13 +403,13 @@ UploadView.propTypes = {
   size: PropTypes.number,
   showUploadList: PropTypes.bool,
   ossDir: PropTypes.string,
-  ossType: PropTypes.string 
-};
+  ossType: PropTypes.string
+}
 
 UploadView.defaultProps = {
   showUploadList: true,
   listType: 'text',
   ossType: 'oss'
-};
+}
 
-export default UploadView;
+export default UploadView
