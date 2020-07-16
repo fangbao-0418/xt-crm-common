@@ -195,6 +195,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
                 initialValue: skuDetail.serverNum
               })(
                 <InputNumber
+                  className='not-has-handler'
                   min={0}
                   max={skuDetail.serverNum}
                   disabled={this.getDisabledStatus()}
