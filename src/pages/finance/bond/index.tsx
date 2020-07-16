@@ -1,6 +1,6 @@
 import React from 'react'
 import { ListPage, Form, FormItem, Alert, If } from '@/packages/common/components'
-import { getData, getDetailDataList } from './api'
+import { getData, getDetailDataList, getDetailInfo, claim } from './api'
 import { defaultConfig, NAME_SPACE } from './config'
 import { Button, Modal, DatePicker, Table, Col, Row } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
@@ -9,6 +9,7 @@ import { FormInstance } from '@/packages/common/components/form'
 import { download } from '@/util/utils'
 import MoneyRender from '@/components/money-render'
 import Upload from '@/components/upload'
+import { formatPrice } from '@/util/format'
 
 const { RangePicker } = DatePicker
 interface BondState {
@@ -80,7 +81,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     }
   }, {
     title: '状态',
-    dataIndex: 'syncStatus'
+    dataIndex: 'syncStatusDesc'
   }, {
     title: '缴纳金额',
     dataIndex: 'submitAmount',
@@ -94,96 +95,18 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     render: (records: any) => {
       return (
         <>
-            <span
-              className='href ml10'
-              onClick={() => {
-                const hid=this.props.alert({
-                  title: '认领保证金',
-                  content: (
-
-                    <Form
-                      getInstance={ref => this.form = ref}
-                      labelCol={{ span: 6 }}
-                      wrapperCol={{ span: 14 }}
-                    >
-                      <Row style={{ marginBottom: 10 }}>
-                        <Col span={6} style={{ textAlign: 'right' }}>保证金金额：</Col>
-                        <Col span={3}>3000元</Col>
-                        <Col span={12}>保证金差额：100元</Col>
-                      </Row>
-                      <FormItem
-                        placeholder='请输入认领金额'
-                        name='remark'
-                        label='认领金额'
-                        type='number'
-                        verifiable
-                        fieldDecoratorOptions={{
-                          rules: [{
-                            required: true,
-                            message: '请输入认领金额'
-                          }]
-                        }}
-                        controlProps={{
-                          precision: 2,
-                          min: 0,
-                          max: 100000000,
-                          maxLength: 9,
-                          style: { width: 200 }
-                        }}
-                      />
-                      <FormItem
-                        label='打款凭证'
-                        inner={(form) => {
-                          return (
-                            <div>
-                              {form.getFieldDecorator('trimImgUrl')(
-                                <Upload
-                                  listType='picture-card'
-                                  multiple
-                                  disabled={true}
-                                  extname='png,jgp,jpeg'
-                                >
-                                </Upload>
-                              )}
-                            </div>
-                          )
-                        }}
-                      />
-                      <Row style={{ marginBottom: 10 }}>
-                        <Col offset={6} >
-                          <div
-                            className='href'
-                            onClick={() => {
-                              download(this.getUrl(records.invoiceUrl), '打印凭证.xls')
-                            }}>
-                        下载
-                          </div>
-                        </Col>
-                      </Row>
-
-                    </Form>
-                  ),
-                  onOk: (hide) => {
-                    this.form.props.form.validateFields((err, vals) => {
-                      if (!err) {
-                        getData({
-                          id: records.id,
-                          remark: vals.remark
-                        }).then(res => {
-                          if (res) {
-                            APP.success('取消提现成功')
-                            this.list.refresh()
-                            hide()
-                          }
-                        })
-                      }
-                    })
-                  }
-                })
-              }}
-            >
+            {
+              records.syncStatus===0&&(
+                <span
+                  className='href ml10'
+                  onClick={() => {
+                    this.getDetailInfoData(records.id)
+                  }}
+                >
               认领
-            </span>
+                </span>
+              )
+            }
         </>
       )
     }
@@ -265,6 +188,127 @@ class Index extends React.Component<AlertComponentProps, BondState> {
          })
        }
      })
+   }
+   getDetailInfoData (id: any) {
+     getDetailInfo({ id }).then(res => {
+       if (res) {
+         this.props.alert({
+           title: '认领保证金',
+           content: (
+             <Form
+               getInstance={ref => this.form = ref}
+               labelCol={{ span: 6 }}
+               wrapperCol={{ span: 14 }}
+               mounted={() => {
+                 this.form.setValues({
+                   voucherImages: this.handleFileValue(res.voucherImages)
+                 })
+               }}
+             >
+               <Row style={{ marginBottom: 10 }}>
+                 <Col span={6} style={{ textAlign: 'right' }}>保证金金额：</Col>
+                 <Col span={3}>{formatPrice(res.balanceAmount)}元</Col>
+                 <Col span={12}>保证金差额：{formatPrice(res.diffAmount)}元</Col>
+               </Row>
+               <FormItem
+                 placeholder='请输入认领金额'
+                 name='claimAmount'
+                 label='认领金额'
+                 type='number'
+                 verifiable
+                 fieldDecoratorOptions={{
+                   rules: [{
+                     required: true,
+                     message: '请输入认领金额'
+                   }]
+                 }}
+                 controlProps={{
+                   precision: 2,
+                   min: 0,
+                   max: 100000000,
+                   maxLength: 9,
+                   style: { width: 200 }
+                 }}
+               />
+               <FormItem
+                 label='打款凭证'
+                 inner={(form) => {
+                   return (
+                     <div>
+                       {form.getFieldDecorator('voucherImages')(
+                         <Upload
+                           listType='picture-card'
+                           multiple
+                           disabled={true}
+                           extname='png,jgp,jpeg'
+                         >
+                         </Upload>
+                       )}
+                     </div>
+                   )
+                 }}
+               />
+               <Row style={{ marginBottom: 10 }}>
+                 <Col offset={6} >
+                   <div
+                     className='href'
+                     onClick={() => {
+                       download(this.getUrl(res.invoiceUrl), '打印凭证.xls')
+                     }}>
+               下载
+                   </div>
+                 </Col>
+               </Row>
+
+             </Form>
+           ),
+           onOk: (hide) => {
+             this.form.props.form.validateFields((err, vals) => {
+               if (!err) {
+                 claim({
+                   id: res.id,
+                   claimAmount: vals.claimAmount
+                 }).then(res => {
+                   if (res) {
+                     APP.success('认领成功')
+                     this.list.refresh()
+                     hide()
+                   }
+                 })
+               }
+             })
+           }
+         })
+       }
+     })
+   }
+   public handleFileValue (value: any) {
+     if (value instanceof Array) {
+       return value.map((item) => {
+         return {
+           url: item,
+           name: item
+         }
+       })
+     }
+     value = value || ''
+     let result: any
+     try {
+       result = JSON.parse(value)
+       result = (result || []).map((item: any) => {
+         return {
+           url: item,
+           name: item
+         }
+       })
+     } catch (e) {
+       try {
+         result = value.split(',').map((item: any) => ({ url: item }))
+       } catch (e) {
+         result = undefined
+       }
+     }
+     return result
    }
 }
 

@@ -1,5 +1,5 @@
 import { FieldsConfig } from '@/packages/common/components/form'
-export const NAME_SPACE = 'withdraw'
+export const NAME_SPACE = 'bond'
 export const defaultConfig: FieldsConfig = {
   withdraw: {
     transferNo: {
