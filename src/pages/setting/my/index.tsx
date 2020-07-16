@@ -1,11 +1,15 @@
 import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { getFieldsConfig, environmentTypeOptions, statusEnums, colorEnums, options } from './config'
 import * as api from './api'
 import { ColumnProps } from 'antd/lib/table'
 import { Icon, Menu, Dropdown, Button, Modal, Badge } from 'antd'
+import { isThisQuarter } from 'date-fns'
 
-class Main extends React.Component {
+interface Props extends AlertComponentProps {}
+
+class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<any>[] = [
     {
@@ -141,6 +145,26 @@ class Main extends React.Component {
       }
     })
   }
+  public add () {
+    this.props.alert({
+      content: (
+        <div>
+          <Button
+            onClick={() => {
+              this.add2()
+            }}
+          >
+            add
+          </Button>
+        </div>
+      )
+    })
+  }
+  public add2 () {
+    this.props.alert({
+      content: '222'
+    })
+  }
   public render () {
     return (
       <div>
@@ -154,6 +178,20 @@ class Main extends React.Component {
           addonAfterSearch={(
             <div>
               <Button icon='plus' type='primary' onClick={this.handleAdd}>新建版本</Button>
+              <Button
+                onClick={() => {
+                  this.add()
+                }}
+              >
+                add
+              </Button>
+              <Button
+                onClick={() => {
+                  this.add2()
+                }}
+              >
+                add
+              </Button>
             </div>
           )}
           processData={(data) => {
@@ -172,4 +210,4 @@ class Main extends React.Component {
     )
   }
 }
-export default Main
+export default Alert(Main)

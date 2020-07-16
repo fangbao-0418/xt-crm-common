@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, Row, Col, Checkbox, Button, Icon, Modal } from 'antd'
+import classNames from 'classnames'
 import styles from './style.module.styl'
 import * as api from './api'
 import { platformCodesOptions, memberTypesOptions } from './config'
@@ -15,11 +16,14 @@ import myIcon from '@/assets/images/my.png'
 interface State {
   visible: boolean
     /** 版本ID */
-  versionID: number,
-  memberType: string,
-  platformCode: string,
-  list: any[],
+  versionID: number
+  memberType: string
+  platformCode: string
+  list: any[]
+  myHeadIcons: any[]
   id?: number
+  // 1-工具与服务 2-常用工具
+  addType: 1 | 2
 }
 class Main extends React.Component<any, State> {
   public state: State
@@ -32,7 +36,9 @@ class Main extends React.Component<any, State> {
       visible: !this.readonly,
       memberType: '',
       platformCode: '',
-      list: []
+      list: [],
+      myHeadIcons: [],
+      addType: 1
     }
     this.handleAdd = this.handleAdd.bind(this)
     this.handleSave = this.handleSave.bind(this)
@@ -47,20 +53,24 @@ class Main extends React.Component<any, State> {
    */
   public async fetchData(canReset: boolean = true) {
     if (canReset) this.handleReset()
-    const list = await api.getIconList({
+    const res = await api.getIconList({
       id: this.state.versionID,
       memberType: this.state.memberType,
       platformCode: this.state.platformCode,
     })
-    if (list) {
-      this.setState({ list })
-    }
+    this.setState({
+      list: res?.myBottomIcons || [],
+      myHeadIcons: res?.myHeadIcons || []
+    })
   }
-  /** 新增 */
-  public handleAdd() {
-    console.log('add -------------')
+  /**
+   * 新增
+   * @param (1|2) type - 1-工具与服务 2-常用工具
+   * */
+  public handleAdd = (type: 1 | 2 = 2) => () => {
     this.handleReset()
     this.setState({
+      addType: type,
       visible: true,
       id: undefined
     })
@@ -71,7 +81,10 @@ class Main extends React.Component<any, State> {
       if (!error) {
         let result: boolean
         vals.personalModuleConfigId = this.state.versionID
-        console.log('vals=>', vals)
+        vals.iconLayout = this.state.addType
+        /** 过滤all */
+        vals.platformCodes = (vals.platformCodes || []).filter((item: string) => item !== 'all');
+        vals.memberTypes = (vals.memberTypes || []).filter((item: string) => item !== 'all');
         /** 新增 */
         if (!!this.state.id) {
           vals.id =this.state.id
@@ -108,9 +121,10 @@ class Main extends React.Component<any, State> {
   }
   /** 编辑icon */
   public edit (config: any) {
+    console.log(config, 'config')
     this.handleReset()
-    console.log('adapter.handleFormData(config)=>', adapter.handleFormData(config))
     this.setState({
+      addType: config.iconLayout,
       visible: true,
       id: config.id
     },()=>{
@@ -118,7 +132,7 @@ class Main extends React.Component<any, State> {
     })
   }
   public render() {
-    const { visible, list } = this.state
+    const { visible, list, myHeadIcons } = this.state
     return (
       <Card>
         <Row className={styles.row}>
@@ -126,6 +140,26 @@ class Main extends React.Component<any, State> {
             <h2 className={styles.title}>个人中心配置</h2>
             <div className={styles.wrap}>
               <div className={styles.linkBlock}>
+                <div className={styles['link-label']}>
+                  常用工具
+                </div>
+                {myHeadIcons.map(v => (
+                  <div key={v.id} className={styles.link} onClick={() => this.edit(v)}>
+                    <img src={v.iconUrl} alt="" />
+                    <p>{v.iconName}</p>
+                  </div>
+                ))}
+                {!this.readonly && myHeadIcons.length < 4 && (
+                  <div className={styles.linkPlus} onClick={this.handleAdd(2)}>
+                    <div className={styles.linkPlusBtn}>
+                      <Icon type="plus" />
+                    </div>
+                  </div>
+                )}
+                <div className='clear pt20'></div>
+                <div className={classNames(styles['link-label'])}>
+                  工具与服务
+                </div>
                 {list.map(v => (
                   <div key={v.id} className={styles.link} onClick={() => this.edit(v)}>
                     <img src={v.iconUrl} alt="" />
@@ -133,7 +167,7 @@ class Main extends React.Component<any, State> {
                   </div>
                 ))}
                 {!this.readonly && (
-                  <div className={styles.linkPlus} onClick={this.handleAdd}>
+                  <div className={styles.linkPlus} onClick={this.handleAdd(1)}>
                     <div className={styles.linkPlusBtn}>
                       <Icon type="plus" />
                     </div>
@@ -181,7 +215,9 @@ class Main extends React.Component<any, State> {
           {visible && (
             <Col span={12} className={styles.col}>
               <h2 className={styles.title}>
-                <span>{!!this.readonly ? '查看' : !!this.state.id ? '编辑' : '新增'}icon配置</span>
+                <span>
+                  {!!this.readonly ? '查看' : !!this.state.id ? '编辑' : '新增'}icon配置 - {this.state.addType === 1 ? '工具与服务' : '常用工具'}
+                </span>
                 <Icon type="close-circle" className={styles.closeCircle} onClick={this.handleReset} />
               </h2>
               <Form
@@ -267,15 +303,17 @@ class Main extends React.Component<any, State> {
                 />
                 <FormItem
                   label="显示端口"
-                  inner={form => {
-                    return form.getFieldDecorator('platformCodes')(<Checkbox.Group options={platformCodesOptions} />)
-                  }}
+                  type='checkbox'
+                  name='platformCodes'
+                  allValue={'all'}
+                  options={[{label: '全部', value: 'all'}].concat(platformCodesOptions)}
                 />
                 <FormItem
                   label="显示用户"
-                  inner={form => {
-                    return form.getFieldDecorator('memberTypes')(<Checkbox.Group options={memberTypesOptions} />)
-                  }}
+                  type='checkbox'
+                  name='memberTypes'
+                  allValue={'all'}
+                  options={[{label: '全部', value: 'all'}].concat(memberTypesOptions)}
                 />
                 <FormItem
                   hidden={!!this.readonly}
