@@ -96,7 +96,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
       return (
         <>
             {
-              records.syncStatus!==0&&(
+              records.syncStatus===0&&(
                 <span
                   className='href ml10'
                   onClick={() => {
@@ -258,7 +258,12 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                    <div
                      className='href'
                      onClick={() => {
-                       download(this.getUrl(res.invoiceUrl), '凭证.xls')
+                       res.voucherImages.map((item: string)=>{
+                         let str=item
+                         const index = item.lastIndexOf('/')
+                         str = item.substring(index + 1, item.length)
+                         download(this.getUrl(item), str)
+                       })
                      }}>
                下载
                    </div>
