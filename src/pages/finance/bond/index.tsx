@@ -10,6 +10,7 @@ import { download } from '@/util/utils'
 import MoneyRender from '@/components/money-render'
 import Upload from '@/components/upload'
 import { formatPrice } from '@/util/format'
+import { update } from 'lodash'
 
 const { RangePicker } = DatePicker
 interface BondState {
@@ -18,6 +19,7 @@ interface BondState {
   current: number
   total: number
   pageSize: number
+  update: number
 }
 /**
  * 保证金管理
@@ -31,7 +33,8 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     dataDetail: null,
     current: 1,
     total: 0,
-    pageSize: 10
+    pageSize: 10,
+    update: 0
   }
   columns = [{
     title: '序号',
@@ -61,7 +64,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                 this.id=records.id
                 this.setState({
                   visible: true
-                }, this.handleSearch)
+                }, ()=>this.handleSearch())
               }}
             >
               查看
@@ -121,7 +124,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     }
   }
   render () {
-    const { visible, dataDetail, total, pageSize, current }=this.state
+    const { update, visible, dataDetail, total, pageSize, current }=this.state
     return (
       <>
         <ListPage
@@ -147,6 +150,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
            title='供应商缴纳明细'
            visible={visible}
            width='70%'
+           key={update}
            onCancel={()=>{
              this.setState({
                visible: false
@@ -175,11 +179,11 @@ class Index extends React.Component<AlertComponentProps, BondState> {
          current: page,
          pageSize
        },
-       this.handleSearch
+       ()=>this.handleSearch()
      )
    };
    // 查询
-   handleSearch = () => {
+   handleSearch () {
      const params = {
        page: this.state.current,
        pageSize: this.state.pageSize,
@@ -195,6 +199,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
      })
    }
    getDetailInfoData (id: any) {
+     const { update }=this.state
      getDetailInfo({ id }).then(res => {
        if (res) {
          this.props.alert({
@@ -281,7 +286,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                  }).then(res => {
                    if (res) {
                      APP.success('认领成功')
-                     this.list.refresh()
+                     this.handleSearch()
                      hide()
                    }
                  })
