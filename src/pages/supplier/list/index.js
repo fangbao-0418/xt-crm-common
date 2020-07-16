@@ -5,6 +5,7 @@ import { querySupplierList, exportSupplier } from '../api'
 import SupplierModal from '../supplier-modal'
 import AccountModal from '../account-modal'
 import SupplierTypeSelect from '@/components/supplier-type-select'
+import MoneyRender from '@/components/money-render'
 const FormItem = Form.Item
 
 const { RangePicker } = DatePicker
@@ -109,8 +110,9 @@ class OrderList extends React.Component {
         title: '供应商名称',
         dataIndex: 'name'
       }, {
-        title: '保证金金额',
-        dataIndex: 'name'
+        title: '保证金余额',
+        dataIndex: 'depositBalanceAmount',
+        render: MoneyRender
       },
       {
         title: '联系人',

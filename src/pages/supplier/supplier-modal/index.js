@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Modal, Button, Form, Input, message, Radio, Select } from 'antd'
 import { If } from '@/packages/common/components'
-import { getSupplierDetail, updateSupplier, addSupplier } from '../api'
+import { getSupplierDetail, updateSupplier, addSupplier, depositTypes } from '../api'
 import UploadView from '@/components/upload'
 import SupplierTypeSelect from '@/components/supplier-type-select'
 import SaleArea from '@/components/sale-area'
+import SelectFetch from '@/components/select-fetch'
 const FormItem = Form.Item
 
 const getInitImage = (url) => {
@@ -260,7 +261,7 @@ class SupplierModal extends Component {
             </FormItem>
             <If visible={[0, 6, 7].indexOf(category) === -1} condition={[0, 6, 7].indexOf(category) !== -1}>
               <FormItem label='保证金缴纳方式' required>
-                {getFieldDecorator('bondType', {
+                {getFieldDecorator('depositType', {
                   rules: [
                     {
                       required: [0, 6, 7].includes(category),
@@ -268,12 +269,13 @@ class SupplierModal extends Component {
                     }
                   ]
                 })(
-                  <Select
+                  <SelectFetch
                     placeholder='请选择保证金缴纳方式'
-                  >
-                    <Select.Option value={0}>冻结货款</Select.Option>
-                    <Select.Option value={1}>预缴</Select.Option>
-                  </Select>
+                    style={{ width: '174px' }}
+                    fetchData={
+                      depositTypes
+                    }
+                  />
                 )}
               </FormItem>
             </If>
