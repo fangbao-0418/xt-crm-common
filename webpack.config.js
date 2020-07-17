@@ -30,6 +30,16 @@ module.exports = function (config, env) {
   config.output.jsonpFunction = `xt-${pkg.name}`
   // config.plugins[0].options.publishTime = new Date().getTime()
   console.log(__ENV__, 'NODE_ENV')
+  config.module.rules[0].include = [
+    path.resolve(__dirname, './src'),
+    path.resolve(__dirname, 'src'),
+    path.resolve(__dirname, 'node_modules/peek-readable'),
+    path.resolve(__dirname, 'node_modules/file-type'),
+    path.resolve(__dirname, 'node_modules/stream-browserify'),
+    path.resolve(__dirname, 'node_modules/readable-web-to-node-stream'),
+    path.resolve(__dirname, 'node_modules/strtok3')
+  ]
+  config.module.rules[0].exclude = undefined
   config.plugins.push(
     new webpack.DefinePlugin({
       BUILD_TIME: JSON.stringify(BUILD_TIME),
