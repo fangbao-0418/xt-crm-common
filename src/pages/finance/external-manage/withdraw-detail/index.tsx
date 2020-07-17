@@ -31,7 +31,7 @@ class Main extends React.Component<Props> {
   }, {
     title: '提现流水号',
     dataIndex: 'transferNo',
-    width: 250
+    width: 260
   }, {
     dataIndex: 'transAmount',
     title: '金额',
@@ -89,11 +89,11 @@ class Main extends React.Component<Props> {
         </div>
       )
     },
-    width: 120
+    width: 220
   }, {
     dataIndex: 'accountIdCard',
     title: '身份信息',
-    width: 100,
+    width: 220,
     render: (text: any, recode: any) => {
       return (
         <div>
