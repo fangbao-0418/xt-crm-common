@@ -58,14 +58,11 @@ class Main extends React.Component<Props> {
     render: (text: any) => {
       let str=''
       switch (text) {
-        case 'ALIPAY':
-          str='支付宝'
+        case '1':
+          str='个人银行卡'
           break
-        case 'BANK':
-          str='银行卡'
-          break
-        case 'PINGAN':
-          str='平安银行卡'
+        case '73':
+          str='对公账户'
           break
       }
       return str

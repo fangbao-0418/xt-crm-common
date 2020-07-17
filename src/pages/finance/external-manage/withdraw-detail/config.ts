@@ -33,7 +33,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '供应商类型',
         options: [
-          { label: '供应商', value: 1 },
+          { label: '喜团优选', value: 1 },
           { label: '喜团小店', value: 2 }
         ],
         controlProps: {
@@ -55,9 +55,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeolder: '请选择提现方式'
         },
         options: [
-          { label: '支付宝', value: 'ALIPAY' },
-          { label: '银行卡', value: 'BANK' },
-          { label: '平安银行卡', value: 'PINGAN' }
+          { label: '个人银行卡', value: '1' },
+          { label: '对公账户', value: '73' }
         ]
       },
       withdrawalDate: {
@@ -73,6 +72,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 }
 
 export enum SupplierTypeEnum {
-  供应商 = 1,
+  喜团优选 = 1,
   喜团小店 = 2
 }
