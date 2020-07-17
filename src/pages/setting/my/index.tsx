@@ -145,26 +145,6 @@ class Main extends React.Component<Props> {
       }
     })
   }
-  public add () {
-    this.props.alert({
-      content: (
-        <div>
-          <Button
-            onClick={() => {
-              this.add2()
-            }}
-          >
-            add
-          </Button>
-        </div>
-      )
-    })
-  }
-  public add2 () {
-    this.props.alert({
-      content: '222'
-    })
-  }
   public render () {
     return (
       <div>
@@ -178,20 +158,6 @@ class Main extends React.Component<Props> {
           addonAfterSearch={(
             <div>
               <Button icon='plus' type='primary' onClick={this.handleAdd}>新建版本</Button>
-              <Button
-                onClick={() => {
-                  this.add()
-                }}
-              >
-                add
-              </Button>
-              <Button
-                onClick={() => {
-                  this.add2()
-                }}
-              >
-                add
-              </Button>
             </div>
           )}
           processData={(data) => {
