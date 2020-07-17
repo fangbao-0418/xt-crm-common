@@ -34,7 +34,7 @@ function saveService (data, isServiceCenter) {
   const orign = window.location.origin
   const saveData = JSON.stringify(data)
   const file = new File([saveData], 'service')
-  const path = orign === 'https://xt-crmadmin.hzxituan.com' ? '/question-pro.json' : '/question-test.json'
+  const path = orign.includes('//xt-crmadmin.hzxituan.com') ? '/question-prod.json' : '/question-test.json'
 
   ossUpload(file, 'question', 'cos', path).then((res) => {
     if (res) {
