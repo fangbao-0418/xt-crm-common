@@ -14,7 +14,6 @@ export const namespace = 'refundOrder'
 
 export const refundStatusOptions: any = {
   ALL: [ // 所有售后订单
-    { key: '', val: '全部' },
     { key: 10, val: '待客服审核' },
     { key: 15, val: '待供应商审核' },
     { key: 20, val: '待用户发货' },
@@ -63,7 +62,9 @@ export const formFields = function (
           id: 'refundStatus',
           label: '售后单状态',
           options: options,
-          initialValue: ['ALL'].includes(refundStatus) ? '' : undefined
+          controllerProps: {
+            mode: 'multiple'
+          }
         }
       ]
       : []
