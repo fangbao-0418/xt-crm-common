@@ -2,113 +2,133 @@
  * 提现账户明细
  */
 import React from 'react'
-import { ListPage, Alert, FormItem } from '@/packages/common/components'
+import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Tabs, Button } from 'antd'
-import { ColumnProps } from 'antd/lib/table'
-import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
+import MoneyRender from '@/components/money-render'
+import { getFieldsConfig, SupplierTypeEnum } from './config'
 import * as api from './api'
 const { TabPane } = Tabs
 interface Props extends AlertComponentProps {
 }
 const tabConfigs: { key: string, title: string }[] = [
-  { key: '0', title: '全部' },
-  { key: '1', title: '待提现' },
-  { key: '2', title: '提现中' },
-  { key: '3', title: '提现成功' },
-  { key: '4', title: '提现失败' }
+  { key: '-2', title: '全部' },
+  { key: '0', title: '提现中' },
+  { key: '1', title: '提现成功' },
+  { key: '-1', title: '提现失败' }
 ]
 class Main extends React.Component<Props> {
   state = {
-    status: '0',
-    errorUrl: ''
+    status: '-2'
   }
   public listpage: ListPageInstanceProps
-  public columns: ColumnProps<Anchor.ItemProps>[] = [{
+  public columns: any = [{
     title: '申请单编号',
-    dataIndex: 'nickName',
-    width: 300
+    dataIndex: 'outTransferNo',
+    width: 250,
+    fixed: 'left'
   }, {
     title: '提现流水号',
-    dataIndex: 'fansTotal',
-    width: 200,
-    align: 'center'
+    dataIndex: 'transferNo',
+    width: 250
   }, {
-    dataIndex: 'anchorIdentityType',
+    dataIndex: 'transAmount',
     title: '金额',
-    width: 150,
-    render: (text) => {
-      return AnchorIdentityTypeEnum[text]
-    }
+    width: 100,
+    render: MoneyRender
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'supplierId',
     title: '供应商ID',
-    width: 120,
-    align: 'center'
+    width: 100
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'supplierName',
     title: '供应商名称',
-    width: 120,
-    align: 'center'
+    width: 150
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'supplierType',
     title: '供应商类型',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    render: (text: any) => {
+      return SupplierTypeEnum[text]
+    },
+    width: 120
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'accountType',
     title: '提现方式',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    render: (text: any) => {
+      let str=''
+      switch (text) {
+        case 'ALIPAY':
+          str='支付宝'
+          break
+        case 'BANK':
+          str='银行卡'
+          break
+        case 'PINGAN':
+          str='平安银行卡'
+          break
+      }
+      return str
+    },
+    width: 120
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'accountNumber',
     title: '提现账户',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    render: (text: any, recode: any) => {
+      return (
+        <div>
+          <div>
+            {recode.accountName}
+          </div>
+          <div>
+            {recode.accountNumber}
+          </div>
+          <div>
+            {recode.bankName}
+          </div>
+        </div>
+      )
+    },
+    width: 120
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'accountIdCard',
     title: '身份信息',
     width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
+    render: (text: any, recode: any) => {
+      return (
+        <div>
+          <div>
+            {recode.accountIdCardAddress==='1'?recode.accountName:recode.supplierName}
+          </div>
+          <div>
+            {recode.accountIdCard}
+          </div>
+        </div>
+      )
     }
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'transferStatusDesc',
     title: '状态',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'createTime',
     title: '申请时间',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    render: (text: any) => {
+      return APP.fn.formatDate(text)
+    },
+    width: 200
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'modifyTime',
     title: '完成时间',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    render: (text: any, recode: any) => {
+      return recode.transferStatus===1||recode.transferStatus===-1? APP.fn.formatDate(text):''
+    },
+    width: 200
   }, {
     dataIndex: 'anchorLevel',
     title: '备注',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 200
   }]
-
   public refresh () {
     this.listpage.refresh()
   }
@@ -117,6 +137,8 @@ class Main extends React.Component<Props> {
   public handleChange = (key: string) => {
     this.setState({
       status: key
+    }, () => {
+      this.listpage.refresh()
     })
   }
 
@@ -143,10 +165,30 @@ class Main extends React.Component<Props> {
           }
         </Tabs>
         <ListPage
+          reserveKey='/finance/withdraw'
+          namespace='/finance/withdraw'
           getInstance={(ref) => this.listpage = ref}
           columns={this.columns}
           tableProps={{
-            rowKey: 'anchorId'
+            rowKey: 'id',
+            scroll: {
+              x: true
+            }
+          }}
+          processPayload={({ ...payload }) => {
+            if (status === '-2') { // tab 全部
+              payload.transferStatus=undefined
+            } else {
+              payload.transferStatus=parseInt(status)
+            }
+            return {
+              ...payload
+            }
+          }}
+          rangeMap={{
+            withdrawalDate: {
+              fields: ['withdrawalStartDate', 'withdrawalEndDate']
+            }
           }}
           addonAfterSearch={(
             <div>
@@ -160,17 +202,7 @@ class Main extends React.Component<Props> {
             </div>
           )}
           formConfig={getFieldsConfig()}
-          formItemLayout={(
-            <>
-              <FormItem name='memberId' />
-              <FormItem name='nickName' />
-              <FormItem name='anchorIdentityType' />
-              <FormItem name='anchorLevel' />
-              <FormItem name='status2' />
-              <FormItem name='status3' />
-            </>
-          )}
-          api={api.getAnchorList}
+          api={api.getList}
         />
       </div>
     )

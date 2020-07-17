@@ -6,33 +6,35 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      memberId: {
+      withdrawalCode: {
         label: '申请单编号',
         type: 'input',
         controlProps: {
+          style: { width: 180 },
           placeholder: '请输入申请单编号'
         }
       },
-      nickName: {
+      supplierName: {
         type: 'input',
         label: '供应商名称',
         controlProps: {
           placeholder: '请输入供应商名称'
         }
       },
-      anchorIdentityType: {
+      supplierId: {
         label: '供应商ID',
-        type: 'input',
+        type: 'number',
         controlProps: {
+          style: { width: 180 },
           placeholder: '请输入供应商ID'
         }
       },
-      anchorLevel: {
+      supplierType: {
         type: 'select',
         label: '供应商类型',
         options: [
-          { label: '喜团优选', value: 10 },
-          { label: '喜团小店', value: 0 }
+          { label: '供应商', value: 1 },
+          { label: '喜团小店', value: 2 }
         ],
         controlProps: {
           placeolder: '请选择供应商类型'
@@ -46,21 +48,19 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      status2: {
+      accountType: {
         type: 'select',
         label: '提现方式',
-        fieldDecoratorOptions: {
-          initialValue: 0
-        },
         controlProps: {
           placeolder: '请选择提现方式'
         },
         options: [
-          { label: '个人银行开', value: 1 },
-          { label: '对公账户', value: 0 }
+          { label: '支付宝', value: 'ALIPAY' },
+          { label: '银行卡', value: 'BANK' },
+          { label: '平安银行卡', value: 'PINGAN' }
         ]
       },
-      status3: {
+      withdrawalDate: {
         label: '创建时间',
         type: 'rangepicker',
         controlProps: {
@@ -72,14 +72,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   return _.mergeWith(defaultConfig, partial)
 }
 
-export enum AnchorIdentityTypeEnum {
-  供应商 = 20,
-  公司 = 10,
-  合作网红 = 30,
-  代理 = 40
-}
-
-export enum AnchorLevelEnum {
-  星级主播 = 10,
-  普通主播 = 0
+export enum SupplierTypeEnum {
+  供应商 = 1,
+  喜团小店 = 2
 }
