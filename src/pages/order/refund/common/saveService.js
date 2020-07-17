@@ -31,10 +31,10 @@ function saveService (data, isServiceCenter) {
       }
     }
   }
-  const orign = window.location.origin
+  const env = process.env.PUB_ENV
   const saveData = JSON.stringify(data)
   const file = new File([saveData], 'service')
-  const path = orign.includes('//xt-crmadmin.hzxituan.com') ? '/question-prod.json' : '/question-test.json'
+  const path = `/question-${env}.json`
 
   ossUpload(file, 'question', 'cos', path).then((res) => {
     if (res) {
