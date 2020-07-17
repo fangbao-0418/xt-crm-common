@@ -5,7 +5,7 @@ import React from 'react'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tabs, Button } from 'antd'
+import { Tabs } from 'antd'
 import MoneyRender from '@/components/money-render'
 import { getFieldsConfig, SupplierTypeEnum } from './config'
 import * as api from './api'
@@ -190,17 +190,6 @@ class Main extends React.Component<Props> {
               fields: ['withdrawalStartDate', 'withdrawalEndDate']
             }
           }}
-          addonAfterSearch={(
-            <div>
-              <Button
-                type='primary'
-                onClick={() => {
-                }}
-              >
-                批量导出
-              </Button>
-            </div>
-          )}
           formConfig={getFieldsConfig()}
           api={api.getList}
         />
