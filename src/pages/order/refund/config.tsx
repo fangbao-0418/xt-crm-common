@@ -6,13 +6,17 @@ import createType from '@/enum/createType'
 import { Button } from 'antd'
 import MoneyRender from '@/components/money-render'
 import { formatDate } from '@/pages/helper'
-
+import SelectFetch from '@/components/select-fetch'
+import {
+  getShopTypes
+} from '../api'
 export const namespace = 'refundOrder'
 
 export const refundStatusOptions: any = {
   ALL: [ // 所有售后订单
     { key: '', val: '全部' },
-    { key: 10, val: '待审核' },
+    { key: 10, val: '待客服审核' },
+    { key: 15, val: '待供应商审核' },
     { key: 20, val: '待用户发货' },
     { key: 21, val: '退款失败' },
     { key: 23, val: '退款中' },
@@ -204,23 +208,9 @@ export const formFields = function (
           key: 4
         }
       ],
-      initialValue: undefined
-    },
-    {
-      type: 'select',
-      id: 'smallShopOrder',
-      label: '是否小店订单',
-      options: [
-        {
-          val: '全部',
-          key: ''
-        },
-        {
-          val: '小店订单',
-          key: 1
-        }
-      ],
-      initialValue: ''
+      config: {
+        initialValue: undefined
+      }
     },
     {
       type: 'select',
@@ -241,6 +231,26 @@ export const formFields = function (
         }
       ],
       initialValue: ''
+    }, {
+      type: 'input',
+      id: 'shopPhone',
+      sourceProps: {
+        placeholder: '只支持小店和pop店'
+      },
+      label: '供应商手机'
+    },
+    {
+      type: 'input',
+      id: 'shopType',
+      label: '店铺类型',
+      render: () => {
+        return (<SelectFetch
+          mode='multiple'
+          placeholder= '请选择店铺类型'
+          style={{ width: 180 }}
+          fetchData={getShopTypes}
+        />)
+      }
     }
   ].filter((item: any) => {
     return intercept

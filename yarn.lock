@@ -861,6 +861,11 @@
   version "1.2.1"
   resolved "http://192.168.20.8:802/@rematch%2floading/-/loading-1.2.1.tgz#90e939c61b21663ae0270cd3046871358e598de0"
 
+"@tokenizer/token@^0.1.0", "@tokenizer/token@^0.1.1":
+  version "0.1.1"
+  resolved "http://192.168.20.8:802/@tokenizer%2ftoken/-/token-0.1.1.tgz#f0d92c12f87079ddfd1b29f614758b9696bc29e3"
+  integrity sha1-8NksEvhwed39Gyn2FHWLlpa8KeM=
+
 "@types/animejs@^3.1.0":
   version "3.1.1"
   resolved "http://192.168.20.8:802/@types%2fanimejs/-/animejs-3.1.1.tgz#f1455e306a96f4bff9aae6b5b61c1b5efca74cf4"
@@ -884,6 +889,11 @@
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "http://192.168.20.8:802/@types%2fcolor-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
+
+"@types/debug@^4.1.5":
+  version "4.1.5"
+  resolved "http://192.168.20.8:802/@types%2fdebug/-/debug-4.1.5.tgz#b14efa8852b7768d898906613c23f688713e02cd"
+  integrity sha1-sU76iFK3do2JiQZhPCP2iHE+As0=
 
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
@@ -3745,6 +3755,16 @@ file-loader@^4.2.0:
     loader-utils "^1.2.3"
     schema-utils "^2.5.0"
 
+file-type@^14.6.2:
+  version "14.6.2"
+  resolved "http://192.168.20.8:802/file-type/-/file-type-14.6.2.tgz#5bf69c0d8c39de525d3d9de23d81a3b6e81cf69a"
+  integrity sha1-W/acDYw53lJdPZ3iPYGjtugc9po=
+  dependencies:
+    readable-web-to-node-stream "^2.0.0"
+    strtok3 "^6.0.3"
+    token-types "^2.0.0"
+    typedarray-to-buffer "^3.1.5"
+
 file-uri-to-path@1, file-uri-to-path@1.0.0:
   version "1.0.0"
   resolved "http://192.168.20.8:802/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz#553a7b8446ff6f684359c445f1e37a05dacc33dd"
@@ -4448,7 +4468,7 @@ icss-utils@^4.0.0, icss-utils@^4.1.1:
   dependencies:
     postcss "^7.0.14"
 
-ieee754@^1.1.4:
+ieee754@^1.1.13, ieee754@^1.1.4:
   version "1.1.13"
   resolved "http://192.168.20.8:802/ieee754/-/ieee754-1.1.13.tgz#ec168558e95aa181fd87d37f55c32bbcb6708b84"
 
@@ -4831,7 +4851,7 @@ is-type-of@^1.0.0:
     is-class-hotfix "~0.0.6"
     isstream "~0.1.2"
 
-is-typedarray@~1.0.0:
+is-typedarray@^1.0.0, is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "http://192.168.20.8:802/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
 
@@ -6214,6 +6234,7 @@ path-type@^3.0.0:
 path-type@^4.0.0:
   version "4.0.0"
   resolved "http://192.168.20.8:802/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
+  integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
 path@^0.12.7:
   version "0.12.7"
@@ -6237,6 +6258,11 @@ pbkdf2@^3.0.3:
     ripemd160 "^2.0.1"
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
+
+peek-readable@^3.1.0:
+  version "3.1.0"
+  resolved "http://192.168.20.8:802/peek-readable/-/peek-readable-3.1.0.tgz#250b08b7de09db8573d7fd8ea475215bbff14348"
+  integrity sha1-JQsIt94J24Vz1/2OpHUhW7/xQ0g=
 
 performance-now@^2.1.0:
   version "2.1.0"
@@ -7201,6 +7227,11 @@ readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.6.0:
     inherits "^2.0.3"
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
+
+readable-web-to-node-stream@^2.0.0:
+  version "2.0.0"
+  resolved "http://192.168.20.8:802/readable-web-to-node-stream/-/readable-web-to-node-stream-2.0.0.tgz#751e632f466552ac0d5c440cc01470352f93c4b7"
+  integrity sha1-dR5jL0ZlUqwNXEQMwBRwNS+TxLc=
 
 readdirp@^2.2.1:
   version "2.2.1"
@@ -8231,6 +8262,16 @@ strip-json-comments@^3.0.1:
   version "3.1.0"
   resolved "http://192.168.20.8:802/strip-json-comments/-/strip-json-comments-3.1.0.tgz#7638d31422129ecf4457440009fba03f9f9ac180"
 
+strtok3@^6.0.3:
+  version "6.0.3"
+  resolved "http://192.168.20.8:802/strtok3/-/strtok3-6.0.3.tgz#bc81e225c19a909eab86538ff3348c4b3b0553d3"
+  integrity sha1-vIHiJcGakJ6rhlOP8zSMSzsFU9M=
+  dependencies:
+    "@tokenizer/token" "^0.1.1"
+    "@types/debug" "^4.1.5"
+    debug "^4.1.1"
+    peek-readable "^3.1.0"
+
 style-loader@^1.0.0:
   version "1.2.1"
   resolved "http://192.168.20.8:802/style-loader/-/style-loader-1.2.1.tgz#c5cbbfbf1170d076cfdd86e0109c5bba114baa1a"
@@ -8460,6 +8501,14 @@ toidentifier@1.0.0:
   version "1.0.0"
   resolved "http://192.168.20.8:802/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"
 
+token-types@^2.0.0:
+  version "2.0.0"
+  resolved "http://192.168.20.8:802/token-types/-/token-types-2.0.0.tgz#b23618af744818299c6fbf125e0fdad98bab7e85"
+  integrity sha1-sjYYr3RIGCmcb78SXg/a2YurfoU=
+  dependencies:
+    "@tokenizer/token" "^0.1.0"
+    ieee754 "^1.1.13"
+
 toposort@^1.0.0:
   version "1.0.7"
   resolved "http://192.168.20.8:802/toposort/-/toposort-1.0.7.tgz#2e68442d9f64ec720b8cc89e6443ac6caa950029"
@@ -8632,6 +8681,13 @@ type@^1.0.1:
 type@^2.0.0:
   version "2.0.0"
   resolved "http://192.168.20.8:802/type/-/type-2.0.0.tgz#5f16ff6ef2eb44f260494dae271033b29c09a9c3"
+
+typedarray-to-buffer@^3.1.5:
+  version "3.1.5"
+  resolved "http://192.168.20.8:802/typedarray-to-buffer/-/typedarray-to-buffer-3.1.5.tgz#a97ee7a9ff42691b9f783ff1bc5112fe3fca9080"
+  integrity sha1-qX7nqf9CaRufeD/xvFES/j/KkIA=
+  dependencies:
+    is-typedarray "^1.0.0"
 
 typedarray@^0.0.6:
   version "0.0.6"

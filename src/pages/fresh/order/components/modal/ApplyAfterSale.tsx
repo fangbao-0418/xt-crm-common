@@ -156,6 +156,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
                 initialValue: modalInfo.maxServerNum
               })(
                 <InputNumber
+                  className='not-has-handler'
                   min={1}
                   max={modalInfo.maxServerNum}
                   placeholder='请输入'
