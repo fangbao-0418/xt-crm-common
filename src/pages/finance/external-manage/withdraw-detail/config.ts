@@ -48,7 +48,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      accountType: {
+      accountIdCardAddress: {
         type: 'select',
         label: '提现方式',
         controlProps: {

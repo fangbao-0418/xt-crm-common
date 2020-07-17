@@ -53,7 +53,7 @@ class Main extends React.Component<Props> {
     },
     width: 120
   }, {
-    dataIndex: 'accountType',
+    dataIndex: 'accountIdCardAddress',
     title: '提现方式',
     render: (text: any) => {
       let str=''
