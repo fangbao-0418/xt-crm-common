@@ -9,14 +9,39 @@ export interface batchExportPayload {
   fileName: string
 }
 
+// 获取店铺类型
+export function getShopTypes () {
+  return get('/shop/v1/query/type').then((res: any) => {
+    return (res || []).map((item: { tag: any; code: any }) => {
+      return {
+        label: item.tag,
+        value: item.code
+      }
+    })
+  })
+}
+// 供应商审核
+export function replaceSupplier (payload: { refundOrderCode: string }) {
+  return post('/order/afterSale/audit/replaceSupplier', payload)
+}
+
 // 获取订单类型集合
 export function getOrderTypeList () {
   return get('/order/getOrderTypeList')
 }
 
+// 手机号查询店铺信息
+export function getPhoneById (data: any) {
+  return post('/shop/v1/query/one', data)
+}
 // 批量轨迹导出
 export function batchExport (payload: batchExportPayload) {
   return exportFileStream('/expressTracking/batchExport', batchExportRequest(payload), payload.fileName)
+}
+
+// 获取快捷说明列表
+export function getOrderRefundQuickReply() {
+  return newPost('/order/afterSale/query/orderRefundQuickReply', {})
 }
 
 // 订单售后校验团长等级是否会降级

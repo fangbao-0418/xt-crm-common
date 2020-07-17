@@ -18,7 +18,7 @@ interface Props {
 type ViewType = -1 | 1 | 2 | 3
 
 interface State {
-  statistics: {label: string, value: any}[]
+  statistics: {label: any, value: any}[]
   type: ViewType
   detail: UliveStudio.ItemProps
 }
@@ -33,7 +33,7 @@ function Statistics (props: {
       {
         dataSource.map((item, index) => {
           return (
-            <div key={index} className={styles['statistics-item']}>
+            <div key={index} className={styles['statistics-item']} style={{ width: dataSource.length===8?'25%':'20%' }}>
               <div className={styles['statistics-item-result']}>{item.value}</div>
               <div className={styles['statistics-item-label']}>{item.label}</div>
             </div>
@@ -148,6 +148,16 @@ class Main extends React.Component<Props, State> {
           value: liveData.orderIndirectPayTotal
         }
       ] : this.state.statistics
+      //60:直播结束 90 直播中
+      if ([60, 90].indexOf(res.liveStatus) > -1&&liveData) {
+        statistics.splice(4, 0, {
+          label:
+        <div style={{ textAlign: 'center' }}>{res.liveStatus===90?'在线人数':'峰值在线人数'}
+          {res.liveStatus===90&&<div style={{ fontSize: 10 }}>（会有5分钟延迟）</div>}
+        </div>,
+          value: res.liveStatus===90?(liveData.onlineNum||0):(liveData.onlineMaxNum||0)
+        })
+      }
       this.setState({
         type,
         statistics,

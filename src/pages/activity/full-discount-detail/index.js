@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react'
 import { Card, Form, Table } from 'antd'
-import { gotoPage } from '@/util/utils';
-import { formatMoneyWithSign } from '@/pages/helper';
-import { detailFullDiscounts } from './api'
-import { getRulesColumns, getGoodsColumns, getActivityColumns } from './config/columns';
-import { promotionTypeMap } from './config/config';
+import { gotoPage } from '@/util/utils'
+import { If } from '@/packages/common/components'
+import { formatMoneyWithSign } from '@/pages/helper'
+import { detailFullDiscounts, productCheckCost } from './api'
+import { getRulesColumns, getGoodsColumns, getActivityColumns } from './config/columns'
+import { promotionTypeMap } from './config/config'
 
 const formatDate = (text) =>
   text ? APP.fn.formatDate(text) : '-'
@@ -14,32 +15,56 @@ class FullDiscountDetailPage extends PureComponent {
     detail: null
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { match: { params: { id } } } = this.props
     detailFullDiscounts(id).then(detail => {
       this.setState({
         detail
+      }, () => {
+        if (detail.rule && detail.promotionType === 15) {
+          productCheckCost({
+            promotionType: detail.promotionType,
+            ruleAddOrUpdateVO: {
+              maxDiscountsAmount: detail.rule.maxDiscountsAmount,
+              onePriceDiscountsRules: detail.rule.onePriceRuleList,
+              overlayCoupon: detail.rule.overlayCoupon,
+              ruleType: detail.rule.ruleType,
+              stageType: detail.rule.onePriceRuleList ? detail.rule.onePriceRuleList[0].stageCount : undefined
+            },
+            productIds: detail.refProductIds
+          }).then(res => {
+            (detail.referenceProductVO || []).forEach((item) => {
+              const curr = res.find(rItem => rItem.productId === item.id)
+              if (curr) {
+                item.loseMoney = curr.loseMoney
+              }
+            })
+            this.setState({
+              detail: { ...detail }
+            })
+          })
+        }
       })
     })
   }
 
   /* 返回操作 */
   handleBack = () => {
-    gotoPage(`/activity/full-discount`)
+    gotoPage('/activity/full-discount')
   }
 
-  render() {
+  render () {
     const { detail } = this.state
 
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 4 },
+        sm: { span: 4 }
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 20 },
-      },
+        sm: { span: 20 }
+      }
     }
 
     let title = '加载中...'// 活动名称
@@ -61,10 +86,18 @@ class FullDiscountDetailPage extends PureComponent {
         // 优惠类型
         if (rule.ruleType === 0) {
           ruleTypeTxt = '每满减 & '
-          if (rule.maxDiscountsAmount === 0) {
-            ruleTypeTxt += '未设置最大优惠金额(不封顶)'
+          if (detail.promotionType === 15) { // 一口价
+            if (rule.maxDiscountsCount === 0) {
+              ruleTypeTxt += '未设置最大优惠件数(不封顶)'
+            } else {
+              ruleTypeTxt += `最大优惠件数: ${rule.maxDiscountsCount}`
+            }
           } else {
-            ruleTypeTxt += `最大优惠金额: ${formatMoneyWithSign(rule.maxDiscountsAmount)}`
+            if (rule.maxDiscountsAmount === 0) {
+              ruleTypeTxt += '未设置最大优惠金额(不封顶)'
+            } else {
+              ruleTypeTxt += `最大优惠金额: ${formatMoneyWithSign(rule.maxDiscountsAmount)}`
+            }
           }
         } else if (rule.ruleType === 1) {
           ruleTypeTxt = '阶梯满'
@@ -78,14 +111,14 @@ class FullDiscountDetailPage extends PureComponent {
             if (detail.stageType === 1) { // 满 x 元
               return {
                 ...item,
-                conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
-                modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
+                conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)}`,
+                modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)}`
               }
             } else if (detail.stageType === 2) { // 满 x 件
               return {
                 ...item,
                 conditionStr: `满 ${item.stageCount} 件`,
-                modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)} 元`
+                modeStr: `减 ${formatMoneyWithSign(item.discountsAmount)}`
               }
             } else {
               return item
@@ -96,7 +129,7 @@ class FullDiscountDetailPage extends PureComponent {
             if (detail.stageType === 1) { // 满 x 元
               return {
                 ...item,
-                conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)} 元`,
+                conditionStr: `满 ${formatMoneyWithSign(item.stageAmount)}`,
                 modeStr: `打 ${item.discounts / 10} 折`
               }
             } else if (detail.stageType === 2) { // 满 x 件
@@ -109,18 +142,25 @@ class FullDiscountDetailPage extends PureComponent {
               return item
             }
           })
+        } else if (detail.promotionType === 15) { // 一口价
+          rules = rule.onePriceRuleList.map(item => {
+            return {
+              ...item,
+              conditionStr: `满 ${item.stageCount} 件`,
+              modeStr: `${formatMoneyWithSign(item.amount)} 购买`
+            }
+          })
         }
       } else {
         ruleTypeTxt = '未获取rule字段数据'
       }
-
 
       if (detail.productRef === 0) { // 活动
         label = '指定活动'
         columns = getActivityColumns()
       } else if (detail.productRef === 1) { // 商品
         label = '指定商品'
-        columns = getGoodsColumns()
+        columns = getGoodsColumns(detail.promotionType === 15)
       }
 
       if (detail.productRef === 1) {
@@ -134,18 +174,25 @@ class FullDiscountDetailPage extends PureComponent {
     return (
       <Card
         bordered={false}
-        title="查看活动"
-        extra={<span onClick={this.handleBack} className="href">返回</span>}
+        title='查看活动'
+        extra={<span onClick={this.handleBack} className='href'>返回</span>}
       >
         <Form {...formItemLayout}>
-          <Card type="inner" title="基本信息">
-            <Form.Item label="活动名称">{title}</Form.Item>
-            <Form.Item label="活动时间">{time} </Form.Item>
+          <Card type='inner' title='基本信息'>
+            <Form.Item label='活动名称'>{title}</Form.Item>
+            <Form.Item label='活动时间'>{time} </Form.Item>
           </Card>
-          <Card style={{ marginTop: 16 }} type="inner" title="优惠信息">
-            <Form.Item label="优惠种类">{promotionType}</Form.Item>
-            <Form.Item label="优惠类型">{ruleTypeTxt}</Form.Item>
-            <Form.Item label="优惠条件">
+          <Card style={{ marginTop: 16 }} type='inner' title='优惠信息'>
+            <Form.Item label='优惠种类'>{promotionType}</Form.Item>
+            <Form.Item label='优惠类型'>{ruleTypeTxt}</Form.Item>
+            <If condition={detail && detail.promotionType === 15}>
+              <Form.Item label='是否可叠加优惠券'>
+                {
+                  (detail && detail.rule && detail.rule.overlayCoupon) ? '是' : '否'
+                }
+              </Form.Item>
+            </If>
+            <Form.Item label='优惠条件'>
               <Table
                 style={{ margin: '8px 0 8px' }}
                 pagination={false}
@@ -154,7 +201,7 @@ class FullDiscountDetailPage extends PureComponent {
               />
             </Form.Item>
           </Card>
-          <Card style={{ marginTop: 16 }} type="inner" title="活动商品">
+          <Card style={{ marginTop: 16 }} type='inner' title='活动商品'>
             <Form.Item label={label}>
               <Table
                 pagination={false}
@@ -163,8 +210,8 @@ class FullDiscountDetailPage extends PureComponent {
               />
             </Form.Item>
           </Card>
-          <Card style={{ marginTop: 16 }} type="inner" title="活动说明">
-            <Form.Item label="活动说明">{promotionDesc}</Form.Item>
+          <Card style={{ marginTop: 16 }} type='inner' title='活动说明'>
+            <Form.Item label='活动说明'>{promotionDesc}</Form.Item>
           </Card>
         </Form>
       </Card>

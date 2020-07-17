@@ -197,7 +197,6 @@ class Main extends React.Component<Props, State> {
                 label=''
                 type='textarea'
                 name='fromAnnouncement'
-                verifiable
                 placeholder='最多输入50字，为空时不显示公告'
                 controlProps={{
                   style: { height: '120px' }
