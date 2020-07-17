@@ -122,7 +122,7 @@ class Main extends React.Component<Props> {
     },
     width: 200
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'remark',
     title: '备注',
     width: 200
   }]
