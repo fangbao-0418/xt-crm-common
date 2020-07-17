@@ -241,6 +241,25 @@ export const formFields = function (
       label: '供应商手机'
     },
     {
+      type: 'select',
+      id: 'deliveryMode',
+      label: '发货方式',
+      options: [
+        {
+          val: '仓库发货',
+          key: 1
+        },
+        {
+          val: '供货商发货',
+          key: 2
+        },
+        {
+          val: '其他',
+          key: 3
+        }
+      ]
+    },
+    {
       type: 'input',
       id: 'shopType',
       label: '店铺类型',
