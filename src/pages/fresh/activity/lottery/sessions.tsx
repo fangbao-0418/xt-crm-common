@@ -597,8 +597,9 @@ class Main extends React.Component<Props, State> {
       const awardNum = item.awardNum || 0
       // 生成概率排除兜底的情况，后端兜底概率不是根据前端传的参数来的，这里传0无影响
       let chance = (inventory === 0 || item.defaultAward === 0) ? 0 : Decimal.div(awardNum, inventory).mul(10000).floor().div(100).toNumber()
-      // console.log(chance, '------')
-      chance = chance * (ratio > 1 ? 1 : (ratio < 0.1 ? ratio * 10 : ratio))
+      chance = Decimal.mul(chance, (ratio > 1 ? 1 : (ratio < 0.1 ? Decimal.mul(ratio, 10).toNumber() : ratio))).toNumber()
+      // 保留2位小数点，超出部分抹除
+      chance = new Decimal(new Decimal(chance).toFixed(2, 1)).toNumber()
       totalChance += chance
       return {
         ...item,
@@ -611,6 +612,7 @@ class Main extends React.Component<Props, State> {
     // console.log(inventory, expectedNumber, '--------')
     totalChance = Decimal.mul(totalChance, 100).floor().div(100).toNumber()
     // totalNormalUserProbability  totalHeadUserProbability totalAreaUserProbability totalCityUserProbability
+    console.log(totalChance, awardList, 'generateChance')
     this.setState({
       totalNormalUserProbability: totalChance,
       totalHeadUserProbability: totalChance,

@@ -600,6 +600,8 @@ class Main extends React.Component<Props, State> {
       let chance = (inventory === 0 || item.defaultAward === 0) ? 0 : Decimal.div(awardNum, inventory).mul(10000).floor().div(100).toNumber()
       // console.log(chance, '------')
       chance = chance * (ratio > 1 ? 1 : (ratio < 0.1 ? ratio * 10 : ratio))
+      // 保留2位小数点，超出部分抹除
+      chance = new Decimal(new Decimal(chance).toFixed(2, 1)).toNumber()
       totalChance += chance
       return {
         ...item,

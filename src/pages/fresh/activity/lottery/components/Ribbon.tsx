@@ -28,14 +28,12 @@ function Main (props: any) {
           >
             查看
           </span>
-          {[1].includes(props.type) && (
-            <span
-              className='href mr8'
-              onClick={props.onCopy}
-            >
-              复制
-            </span>
-          )}
+          <span
+            className='href mr8'
+            onClick={props.onCopy}
+          >
+            复制
+          </span>
           <span
             className='href mr8'
             onClick={props.onEdit}
