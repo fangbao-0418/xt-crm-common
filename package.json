@@ -80,7 +80,7 @@
     "ts-loader": "6.0.4",
     "typescript": "3.8.3",
     "webpack-bundle-analyzer": "^3.6.0",
-    "xt-crm-cli": "^1.0.1",
+    "xt-crm-cli": "^1.0.2",
     "yapi-to-typescript": "^2.0.2"
   },
   "browserslist": [

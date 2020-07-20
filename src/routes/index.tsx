@@ -22,12 +22,12 @@ class Main extends React.Component<{}, State> {
     ServerRoutes: Observer.getRoutes()
   }
   public componentWillMount () {
-    Observer.subscribe(() => {
+    Observer.onRoutePushed = () => {
       const routes = Observer.getRoutes()
       this.setState({
         ServerRoutes: routes
       })
-    })
+    }
   }
   render () {
     const { ServerRoutes } = this.state

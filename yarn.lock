@@ -1237,8 +1237,8 @@
 
 "@xt-micro-service/bootstrap@^1.0.3":
   version "1.0.3"
-  resolved "http://192.168.20.8:802/@xt-micro-service%2fbootstrap/-/bootstrap-1.0.3.tgz#e1e4fec6ebb48345d145d190002d9f72a049ad73"
-  integrity sha512-H8f/hZfFAlFzgC2jAK+pIKKiTXYTeB8WoAlfrJtniRIGTBnqBDhaBH6ccjjQ06CnPvDgAEUth03xtOblhIaxUQ==
+  resolved "http://192.168.20.8:802/@xt-micro-service%2fbootstrap/-/bootstrap-1.0.3.tgz#6f07cb1989bb384b3231626f702d8de0b54acd5d"
+  integrity sha512-NNXUG04VdK29Rj6ltPR2v6bZGeTMjwsa2/wMO9AuNowdZYMNh3W8pwwT/RkOTKP4/REu0yM+w2FLo4HQ7WcWsw==
   dependencies:
     "@babel/core" "^7.10.3"
     history "4.10.1"
@@ -9216,10 +9216,10 @@ xregexp@2.0.0:
   version "2.0.0"
   resolved "http://192.168.20.8:802/xregexp/-/xregexp-2.0.0.tgz#52a63e56ca0b84a7f3a5f3d61872f126ad7a5943"
 
-xt-crm-cli@^1.0.1:
-  version "1.0.1"
-  resolved "http://192.168.20.8:802/xt-crm-cli/-/xt-crm-cli-1.0.1.tgz#54a37d84fd933a65e2a19582a4ec7bad120fecf6"
-  integrity sha512-oMKdoEFn8MhiS4hu+Favf2QyGqVgg0YM60FIZp7mA0MnPYULSWWU3ND8Ujz8WjHjJd3pbOwUxCtgFF4rIs9VNA==
+xt-crm-cli@^1.0.2:
+  version "1.0.2"
+  resolved "http://192.168.20.8:802/xt-crm-cli/-/xt-crm-cli-1.0.2.tgz#23511634924a282b7a304ef1b185040abbc55329"
+  integrity sha512-3sfatIt8DT0naCKR+cazfIFVwi64OfTlNs8DdxAgJSiYQS1ycX6t6ciYvpQ5wAAh7STAYxpbA8oiQyHLr4p0mg==
   dependencies:
     "@babel/cli" "^7.8.4"
     "@babel/core" "^7.9.6"

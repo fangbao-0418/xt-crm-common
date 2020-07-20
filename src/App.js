@@ -44,6 +44,7 @@ class Main extends React.Component {
         notification.warn({
           duration: null,
           message: '系统更新',
+          key: 'versionUpdatable',
           description: (
             <div>
               有新的版本已发布，为了不影响您的正常使用，请刷新浏览器后再进行操作，如果还有问题，请尝试&nbsp;
