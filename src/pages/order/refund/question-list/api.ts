@@ -1,5 +1,8 @@
 export const fetchQuestion = () => {
-  return fetch('https://sh-tximg-1300503753.cos.ap-shanghai.myqcloud.com/question/question-pro.json').then((res) => {
+  const env = process.env.PUB_ENV
+
+  const path = `https://sh-tximg.hzxituan.com/question/question-${env}.json?v=${new Date().getTime()}`
+  return fetch(path).then((res) => {
     return res.json()
   })
 }

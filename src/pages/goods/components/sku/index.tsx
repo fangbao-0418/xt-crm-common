@@ -367,7 +367,13 @@ class SkuList extends React.Component<Props, State> {
     /////////////////////
   }
   public getCustomColumns () {
-    const columns: ColumnProps<any>[] = []
+    const columns: ColumnProps<any>[] = [
+      {
+        width: 100,
+        title: '规格ID',
+        dataIndex: 'skuId'
+      }
+    ]
     const keys = ['propertyValue1', 'propertyValue2']
     this.state.specs.map((item, index) => {
       if (keys[index]) {

@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 interface Props {
-  value: number,
-  interval?: number
+  value: number;
+  interval?: number;
+  refresh: () => void;
 }
 
 function formatTime (seconds: number) {
@@ -30,14 +31,17 @@ function formatTime (seconds: number) {
 }
 
 /** 倒计时组件 */
-function Countdown ({ value, interval = 1000 }: Props) {
+function Countdown ({ value, refresh, interval = 1000 }: Props) {
   const [state, set] = useState<number>(value);
   useEffect(() => {
+    let t = value
     const timerID = setInterval(() => {
-      if (state > 0) {
-        set(state => state - 1)
+      if (t > 0) {
+        t--
+        set(x => x - 1)
       } else {
         set(0)
+        refresh();
         clearInterval(timerID)
       }
     }, interval);

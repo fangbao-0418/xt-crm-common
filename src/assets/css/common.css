@@ -142,6 +142,11 @@ ol, ul {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+.not-has-handler .ant-input-number-handler-wrap {
+  display: none !important;
+}
+
 .i-search-form .ant-form-item {
   display: flex;
 }

@@ -99,3 +99,9 @@ export function toAuditDetail (data) {
 export function getStockInfo (id) {
   return get(`/product/stock?skuId=${id}`)
 }
+/**
+ * 商品复制
+ */
+export function copy (data) {
+  return post('/mcweb/product/copy', data)
+}

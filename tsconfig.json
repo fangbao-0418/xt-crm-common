@@ -26,6 +26,7 @@
   ],
   "include": [
     "src",
-    "app.js"
+    "app.js",
+    "config-overrides.js"
   ]
 }

@@ -29,7 +29,7 @@ export const request = (url, config = {}) => {
     .then(res => {
       !config.hideLoading && APP.fn.handleLoading('end')
       if (_config.banLog !== true) {
-        APP.moon.oper(res)
+        APP.moon.logApi(res)
       }
       if (res.status === 401) {
         APP.href('/login')

@@ -25,11 +25,13 @@ export const getRulesColumns = ({ onEdit, onDelete, statusDisabled }) => {
     {
       title: '操作',
       render: (_, record, i) => {
-        if (statusDisabled) return '不可操作'
+        if (statusDisabled) {
+          return '不可操作'
+        }
         return (
           <ActionView>
-            <span className="href" onClick={onEdit.bind(null, i)}>编辑</span>
-            <span className="href" onClick={onDelete.bind(null, i)}>删除</span>
+            <span className='href' onClick={onEdit.bind(null, i)}>编辑</span>
+            <span className='href' onClick={onDelete.bind(null, i)}>删除</span>
           </ActionView>
         )
       }
@@ -37,7 +39,7 @@ export const getRulesColumns = ({ onEdit, onDelete, statusDisabled }) => {
   ]
 }
 
-export const getGoodsColumns = ({ onDelete, statusDisabled }) => {
+export const getGoodsColumns = ({ onDelete, loseMoneyShow, statusDisabled }) => {
   return [
     {
       title: '商品ID',
@@ -49,13 +51,23 @@ export const getGoodsColumns = ({ onDelete, statusDisabled }) => {
       dataIndex: 'productName',
       key: 'productName'
     },
+    ...(loseMoneyShow ? [{
+      title: '是否亏本',
+      dataIndex: 'loseMoney',
+      key: 'loseMoney',
+      render: val => {
+        return val ? <span style={{ color: 'red' }}>成本佣金高于一口价</span> : '-'
+      }
+    }] : []),
     {
       title: '操作',
       render: (_, record, i) => {
-        if (statusDisabled) return '不可操作'
+        if (statusDisabled) {
+          return '不可操作'
+        }
         return (
           <ActionView>
-            <span className="href" onClick={onDelete.bind(null, i)}>删除</span>
+            <span className='href' onClick={onDelete.bind(null, i)}>删除</span>
           </ActionView>
         )
       }
@@ -76,14 +88,14 @@ export const getActivityColumns = ({ onDelete, statusDisabled }) => {
       render: (text, record) => {
         return (
           <span
-            className="href"
+            className='href'
             onClick={() => {
-              APP.href(`/activity/info/edit/${record.id}?page=1&pageSize=20`, '_blank');
+              APP.href(`/activity/info/edit/${record.id}?page=1&pageSize=20`, '_blank')
             }}
           >
             {text}
           </span>
-        );
+        )
       }
     },
     {
@@ -104,15 +116,17 @@ export const getActivityColumns = ({ onDelete, statusDisabled }) => {
     {
       title: '活动状态',
       dataIndex: 'status',
-      render: text => <>{text !== undefined ? (text === 0 ? '关闭' : '开启') : '-'}</>,
+      render: text => <>{text !== undefined ? (text === 0 ? '关闭' : '开启') : '-'}</>
     },
     {
       title: '操作',
       render: (_, record, i) => {
-        if (statusDisabled) return '不可操作'
+        if (statusDisabled) {
+          return '不可操作'
+        }
         return (
           <ActionView>
-            <span className="href" onClick={onDelete.bind(null, i)}>删除</span>
+            <span className='href' onClick={onDelete.bind(null, i)}>删除</span>
           </ActionView>
         )
       }

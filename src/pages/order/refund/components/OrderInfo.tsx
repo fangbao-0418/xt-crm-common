@@ -107,8 +107,8 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
       {shopDTO ? (
         <Row gutter={24}>
           <Col span={8}>
-            {shopDTO.shopPictrueUrl ? (
-              <Avatar src={shopDTO.shopPictrueUrl} />
+            {shopDTO.shopPictrueFirstUrl ? (
+              <Avatar src={shopDTO.shopPictrueFirstUrl} />
             ) : (
               <Avatar icon='user' />
             )}{' '}
@@ -116,7 +116,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
           </Col>
           <Col span={8}>手机号：{shopDTO.shopOwnerPhone}</Col>
           <Col span={8}>
-            供应商类型：{storeTypeMap[shopDTO.shopType]}
+          店铺类型：{storeTypeMap[orderInfoVO.shopType]}
           </Col>
         </Row>
       ) : (

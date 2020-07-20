@@ -11,7 +11,8 @@ const {
   addWebpackExternals,
   addBundleVisualizer,
   addBabelPlugins,
-  setWebpackOptimizationSplitChunks
+  setWebpackOptimizationSplitChunks,
+  babelInclude
 } = require('customize-cra')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
@@ -87,8 +88,17 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
 
 module.exports = override(
   ...addBabelPlugins(
+    '@babel/plugin-transform-modules-commonjs',
     '@babel/plugin-proposal-optional-chaining',
     '@babel/plugin-proposal-nullish-coalescing-operator'
+  ),
+  babelInclude(
+    path.resolve(__dirname, 'src'),
+    path.resolve(__dirname, 'node_modules/peek-readable'),
+    path.resolve(__dirname, 'node_modules/file-type'),
+    path.resolve(__dirname, 'node_modules/stream-browserify'),
+    path.resolve(__dirname, 'node_modules/readable-web-to-node-stream'),
+    path.resolve(__dirname, 'node_modules/strtok3')
   ),
   addWebpackModuleRule({
     test: /\.m(odule)?.styl/,

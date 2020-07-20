@@ -232,6 +232,7 @@ class CheckBoth extends React.Component<Props, State> {
                     ],
                   })(
                     <InputNumber
+                      className='not-has-handler'
                       min={0}
                       max={checkVO.maxServerNum}
                       placeholder="请输入"

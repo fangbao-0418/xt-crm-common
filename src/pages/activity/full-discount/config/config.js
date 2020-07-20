@@ -30,6 +30,9 @@ export const queryConfig = {
         label: '已关闭',
         value: 0
       }]
+    },
+    id: {
+      type: 'input', label: '编号'
     }
   }
 }
@@ -54,3 +57,19 @@ export const discountsStatusMap = discountsStatusList.reduce((pre, next) => {
     [next.id]: next.text
   }
 }, {})
+
+export const activeNameMap = {
+  '1': '限时秒杀',
+  '2': '今日拼团',
+  '3': '礼包',
+  '4': '激活码',
+  '5': '地推专区',
+  '6': '体验团长专区',
+  '7': '采购专区',
+  '8': '买赠，',
+  '9': '团购',
+  '10': '拼团',
+  '11': '满减',
+  '12': '满折',
+  '15': '多件一口价'
+}

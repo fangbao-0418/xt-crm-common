@@ -18,8 +18,8 @@ declare module APP {
     payload?: T
   }
   type DispatchProps = (action: ReduxActionProps) => void
-  export var history: History
-  export var dispatch: DispatchProps
+  export let history: History
+  export let dispatch: DispatchProps
   export const success: (text: string, duration?: number) => void
   export const error: (text: string, duration?: number) => void
   export const http: HttpProps
@@ -33,8 +33,15 @@ declare module APP {
     phone: RegExp
   }
   export const moon: {
+    logApi: (data: any) => void
     oper: (response: any, status?: any) => void
     error: (error: any) => void
+    /**
+     * 埋点日志
+     * param {*} data - 埋点数据
+     * param ('') label - 标签
+     * */
+    logger: (data, label?: LoggerLabel) => void
   }
   export const user: {
     id: number
