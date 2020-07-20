@@ -30,3 +30,19 @@
         color: #666
 .cover-upload
   width: auto
+.title
+  display flex
+  &-item
+    margin-right 20px
+    cursor pointer
+  &-item.active
+    color #1890ff
+    position relative
+    &::after
+      content: ' '
+      position absolute
+      bottom -17px
+      left 0
+      right 0
+      height 2px
+      background-color #1890ff

@@ -4,7 +4,7 @@ import { OptionProps } from '@/packages/common/components/form'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import receiveStatus from '@/enum/receiveStatus'
 import { formatFaceValue, formatDateRange } from '@/pages/helper'
-import { Badge } from 'antd'
+import { Badge, Button } from 'antd'
 import * as api from '../api'
 
 export interface FieldsConfig {
@@ -27,11 +27,11 @@ const getFieldsConfig = function (partial?: FieldsConfig): FieldsConfig {
     common: {
       code: {
         type: 'input',
-        label: '优惠卷编号'
+        label: '优惠券编号'
       },
       name: {
         type: 'input',
-        label: '优惠卷名称'
+        label: '优惠券名称'
       },
       status: {
         type: 'select',
@@ -66,6 +66,9 @@ interface Props {
   readonly?: boolean
   onChange?: (selectedRowKeys: any[]) => void
   selectedRowKeys?: any[]
+  onCancel?:
+  | ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)
+  | undefined;
 }
 
 class Main extends React.Component<Props> {
@@ -135,7 +138,20 @@ class Main extends React.Component<Props> {
       )
     })
   }
-  render () {
+  public onSave () {
+    // if (selectedRowKeys.length > 20) {
+    //   APP.error('优惠券最多只能绑定20张')
+    //   return
+    // }
+    // api.setCoupon({
+    //   liveId: record.planId,
+    //   couponCodes: selectedRowKeys
+    // }).then(() => {
+    //   this.listpage.refresh()
+    //   hide()
+    // })
+  }
+  public render () {
     const { selectedRowKeys } = this.state
     const { readonly } = this.props
     let listPageProps = null
@@ -194,6 +210,12 @@ class Main extends React.Component<Props> {
             <span>{' '}已选：{selectedRowKeys.length} 张</span>
           )}
         />
+        <div className='ant-modal-footer'>
+          <div>
+            <Button onClick={this.props.onCancel} >取消</Button>
+            <Button type='primary' onClick={this.onSave}>保存设置</Button>
+          </div>
+        </div>
       </div>
     )
   }

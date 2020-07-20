@@ -14,23 +14,29 @@ import View from './components/View'
 import CloseDown from './components/CloseDown'
 import UploadCover from './components/UploadCover'
 import CouponSelector from './components/CouponSelector'
+import MarketingSettings from './components/MarketingSettings'
 import * as api from './api'
 import { fetchTagList } from '../config/api'
 import TextArea from 'antd/lib/input/TextArea'
+
 const { TabPane } = Tabs
 interface Props extends AlertComponentProps {
 }
 
 interface State {
-  rowKeys: any[],
+  rowKeys: any[]
+  selectedRowKeys: any[]
   bizType: string
+  visible: boolean
 }
 
 class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
   public state: State = {
     rowKeys: [],
-    bizType: '1'
+    bizType: '1',
+    visible: false,
+    selectedRowKeys: []
   }
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
@@ -233,7 +239,7 @@ class Main extends React.Component<Props, State> {
               ].includes(record.liveStatus) && bizType === '1'}
             >
               <span onClick={this.setCoupon.bind(this, record)} className={'href'}>
-                优惠券{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
+                营销设置{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
               </span>
             </If>
             <If
@@ -245,7 +251,7 @@ class Main extends React.Component<Props, State> {
               ].includes(record.liveStatus) && bizType === '1'}
             >
               <span onClick={this.checkCoupon.bind(this, record)} className={'href'}>
-                优惠券{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
+                营销设置{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
               </span>
             </If>
           </div>
@@ -254,33 +260,37 @@ class Main extends React.Component<Props, State> {
     }
   ]
   public setCoupon (record: UliveStudio.ItemProps) {
+
     let selectedRowKeys: any[] = record.couponCodes || []
-    const hide = this.props.alert({
-      width: 1000,
-      title: '选择优惠券',
-      content: (
-        <CouponSelector
-          readonly={false}
-          selectedRowKeys={selectedRowKeys}
-          onChange={(rowKeys) => {
-            selectedRowKeys = rowKeys
-          }}
-        />
-      ),
-      onOk: () => {
-        if (selectedRowKeys.length > 20) {
-          APP.error('优惠券最多只能绑定20张')
-          return
-        }
-        api.setCoupon({
-          liveId: record.planId,
-          couponCodes: selectedRowKeys
-        }).then(() => {
-          this.listpage.refresh()
-          hide()
-        })
-      }
-    })
+    this.setState({ visible: true, selectedRowKeys })
+    // const hide = this.props.alert({
+    //   width: 1000,
+    //   title: (
+    //     <Tab />
+    //   ),
+    //   content: (
+    //     <CouponSelector
+    //       readonly={false}
+    //       selectedRowKeys={selectedRowKeys}
+    //       onChange={(rowKeys) => {
+    //         selectedRowKeys = rowKeys
+    //       }}
+    //     />
+    //   ),
+    //   onOk: () => {
+    //     if (selectedRowKeys.length > 20) {
+    //       APP.error('优惠券最多只能绑定20张')
+    //       return
+    //     }
+    //     api.setCoupon({
+    //       liveId: record.planId,
+    //       couponCodes: selectedRowKeys
+    //     }).then(() => {
+    //       this.listpage.refresh()
+    //       hide()
+    //     })
+    //   }
+    // })
   }
   public checkCoupon (record: UliveStudio.ItemProps) {
     const selectedRowKeys: any[] = record.couponCodes || []
@@ -624,7 +634,7 @@ class Main extends React.Component<Props, State> {
     })
   }
 
-  handleTabClick = (key: any) => {
+  public handleTabClick = (key: any) => {
     this.setState({
       bizType: key
     }, ()=>{
@@ -633,7 +643,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const tabList=[{ name: '喜团优选', key: '1' }, { name: '喜团买菜', key: '2' }]
-    const { bizType }=this.state
+    const { bizType, visible, selectedRowKeys }=this.state
     return (
       <div
         style={{
@@ -745,6 +755,13 @@ class Main extends React.Component<Props, State> {
             }
           }}
           api={api.getStudioList}
+        />
+        <MarketingSettings
+          visible={visible}
+          selectedRowKeys={selectedRowKeys}
+          onCancel={() => {
+            this.setState({ visible: false})
+          }}
         />
       </div>
     )
