@@ -125,7 +125,7 @@ class OrderList extends React.Component {
               }
               break
             case 7:
-              if (str<3000) {
+              if (str<1000) {
                 str=<div style={{ color: 'red' }}>{str}</div>
               }
               break
