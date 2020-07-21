@@ -20,7 +20,6 @@ import { init } from '@rematch/core'
 import createLoadingPlugin from '@rematch/loading'
 import models from './model-store'
 import ErrorBoundary from '@/components/error-boundary'
-import './util/moon'
 moment.locale('zh-cn')
 
 const loading = createLoadingPlugin()

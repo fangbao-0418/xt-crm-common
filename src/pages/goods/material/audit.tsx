@@ -5,7 +5,7 @@ import { Input, Card, Button, message } from 'antd'
 import Image from '@/components/Image'
 import { ColumnProps } from 'antd/lib/table'
 import { formItemLayout } from '@/config'
-import Upload from '@/components/upload'
+import Upload, { VideoUpload } from '@/components/upload'
 import { replaceHttpUrl } from '@/util/utils'
 import * as api from './api'
 
@@ -163,11 +163,16 @@ class Add extends React.Component<Props, State> {
           </FormItem>
           <FormItem label='视频素材'>
             {videoUrl && videoUrl.length ? (
-              <Upload
-                listType='picture-card'
-                fileType='video'
+              // <Upload
+              //   listType='picture-card'
+              //   fileType='video'
+              //   value={videoUrl}
+              //   disabled
+              // />
+              <VideoUpload
                 value={videoUrl}
                 disabled
+                //
               />
             ) : '无'}
           </FormItem>

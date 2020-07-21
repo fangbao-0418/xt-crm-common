@@ -6,6 +6,7 @@ import { getStsPolicy, getStsCos } from './api'
 import { createClient, ossUploadBlob, createCosClient, cosUpload } from './oss.js'
 import { getUniqueId } from '@/packages/common/utils/index'
 import FileTypeBrowser from 'file-type/browser'
+export { default as VideoUpload } from './Video'
 
 const uploadButton = props => (
   <div>

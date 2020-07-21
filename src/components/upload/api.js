@@ -4,7 +4,7 @@ import { get } from '../../util/fetch';
  * 获取阿里云oss临时秘钥
  *
  * @export
- * @param {*} data
+ * @param {*} [data]
  * @returns
  */
 export function getStsPolicy(data) {
@@ -15,7 +15,7 @@ export function getStsPolicy(data) {
  * 获取腾讯云con临时秘钥
  *
  * @export
- * @param {*} data
+ * @param {*} [data]
  * @returns
  */
 export function getStsCos(data) {
