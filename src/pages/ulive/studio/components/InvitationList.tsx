@@ -58,7 +58,7 @@ class InvitationList extends React.Component<Props> {
                     />
                   )}
                 </div>
-                <span className='href'>查看示例</span>
+                <a href={require('@/assets/images/example.png')} target="_blank">查看示例</a>
               </div>
             )}
           />
@@ -78,7 +78,7 @@ class InvitationList extends React.Component<Props> {
                     />
                   )}
                 </div>
-                <span className='href'>查看示例</span>
+                <a href={require('@/assets/images/example02.png')} target="_blank">查看示例</a>
               </div>
             )}
           />
@@ -97,7 +97,7 @@ class InvitationList extends React.Component<Props> {
                     />
                   )}
                 </div>
-                <span className='href'>查看示例</span>
+                <a href={require('@/assets/images/example03.png')} target="_blank">查看示例</a>
               </div>
             )}
           />
