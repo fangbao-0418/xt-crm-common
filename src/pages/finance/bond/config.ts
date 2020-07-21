@@ -14,9 +14,6 @@ export const defaultConfig: FieldsConfig = {
       label: '业务类型',
       type: 'select',
       options: [{
-        label: '喜团',
-        value: 0
-      }, {
         label: '小店',
         value: 6
       }, {
