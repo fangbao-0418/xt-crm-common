@@ -185,6 +185,7 @@ class Main extends React.Component<Props, State> {
         this.getFieldDecorator('awardNum', index)(
           <InputNumber
             min={0}
+            max={99999999}
             precision={0}
             disabled={this.readOnly || +record.awardType === 0}
           />
@@ -208,6 +209,7 @@ class Main extends React.Component<Props, State> {
             disabled={record.defaultAward === 0 || this.readOnly}
             precision={0}
             min={0}
+            max={99999999}
           />
         )
       )
