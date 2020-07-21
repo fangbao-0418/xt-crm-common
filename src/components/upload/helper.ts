@@ -38,14 +38,18 @@ export async function ossUpload (file: File, dir = 'crm', ossType: OssType = 'os
   }
 }
 
+/** 格式化存储单位 */
 export function getStorageUnit (bit: number) {
   let value = bit
-  let unit = '字节'
+  let unit = 'B'
   if (bit < 1024) {
     value = bit
   } else if (bit < 1024 * 1024) {
+    value = bit / (1024)
+    unit = 'KB'
+  } else if (bit < 1024 * 1024 * 1024) {
     value = bit / (1024 * 1024)
     unit = 'MB'
   }
-  return value + unit
+  return APP.fn.round(value, 2) + unit
 }

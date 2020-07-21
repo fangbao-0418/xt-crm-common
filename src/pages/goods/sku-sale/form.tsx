@@ -26,6 +26,7 @@ import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 //   }
 //   callback();
 // }
+
 interface SkuSaleFormState extends Record<string, any> {
   skuList: any[];
   specs: any[];
@@ -920,12 +921,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 <div className={styles['input-wrapper']}>
                   <div className={styles['input-wrapper-content']}>
                     {form.getFieldDecorator('videoCoverUrl')(
-                      <VideoUpload
-                        // ossType='cos'
+                      <UploadView
+                        ossType='cos'
                         placeholder='上传视频封面'
-                        // listType='picture-card'
-                        // listNum={1}
-                        maxSize={0.3}
+                        listType='picture-card'
+                        listNum={1}
+                        size={0.3}
                       />
                     )}
                   </div>
@@ -938,12 +939,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             label='商品视频'
             inner={(form) => {
               return form.getFieldDecorator('videoUrl')(
-                <UploadView
-                  placeholder='上传视频'
-                  fileType='video'
-                  listType='picture-card'
-                  listNum={1}
-                  size={5}
+                <VideoUpload
+                  maxSize={5 * 1024 * 1024}
                 />
               )
             }}
