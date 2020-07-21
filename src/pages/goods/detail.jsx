@@ -444,7 +444,7 @@ class GoodsEdit extends React.Component {
                 // />
                 // <video src={replaceHttpUrl(videoUrl)} controls="controls" height={102} width={102} />
                 <VideoUpload
-                  disabled={readOnly}
+                  disabled
                   value={[{
                     url: replaceHttpUrl(videoUrl)
                   }]}
