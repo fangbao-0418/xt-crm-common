@@ -115,7 +115,7 @@ class OrderList extends React.Component {
         render: (text, record) => {
           const { category } = record
           if (text === ''||!text) {
-            return '0'
+            text=0
           }
           let str=(text / 100).toFixed(2)
           switch (category) {
