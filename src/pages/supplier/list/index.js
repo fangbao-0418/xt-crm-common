@@ -112,7 +112,30 @@ class OrderList extends React.Component {
       }, {
         title: '保证金余额',
         dataIndex: 'depositBalanceAmount',
-        render: MoneyRender
+        render: (text, record) => {
+          const { category } = record
+          if (text === ''||!text) {
+            return '0'
+          }
+          let str=(text / 100).toFixed(2)
+          switch (category) {
+            case 6:
+              if (str<800) {
+                str=<div style={{ color: 'red' }}>{str}</div>
+              }
+              break
+            case 7:
+              if (str<3000) {
+                str=<div style={{ color: 'red' }}>{str}</div>
+              }
+              break
+            default:
+              str
+              break
+          }
+
+          return str
+        }
       },
       {
         title: '联系人',
