@@ -2,7 +2,7 @@ import React from 'react'
 import { ListPage, Form, FormItem, Alert, If } from '@/packages/common/components'
 import { getData, getDetailDataList, getDetailInfo, claim } from './api'
 import { defaultConfig, NAME_SPACE } from './config'
-import { Button, Modal, DatePicker, Table, Col, Row } from 'antd'
+import { Icon, ConfigProvider, DatePicker, Table, Col, Row } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { FormInstance } from '@/packages/common/components/form'
@@ -118,11 +118,17 @@ class Index extends React.Component<AlertComponentProps, BondState> {
       this.list.refresh()
     }
   }
+  customizeRenderEmpty = () => (
+    //这里面就是我们自己定义的空状态
+    <div style={{ textAlign: 'center' }}>
+      <Icon type='smile' style={{ fontSize: 20 }} />
+      <p>暂无数据</p>
+    </div>
+  );
   render () {
     return (
       <>
         <ListPage
-          autoFetch={false}
           tableProps={{
             scroll: {
               x: true
@@ -176,6 +182,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
      }
      getDetailDataList(params).then(res => {
        if (res) {
+         console.log(res)
          this.setState({
            dataDetail: res.records,
            total: res.total
@@ -186,16 +193,19 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                title: '供应商缴纳明细',
                width: '80%',
                footer: null
-             }, <Table
-               columns={this.columnsDetail}
-               rowKey='id'
-               dataSource={res?.records||[]}
-               pagination={{
-                 current,
-                 total,
-                 pageSize,
-                 onChange: this.handlePageChange
-               }} />, 'Synchronizesupplier'
+             },
+             <ConfigProvider renderEmpty={this.customizeRenderEmpty}>
+               <Table
+                 columns={this.columnsDetail}
+                 rowKey='id'
+                 dataSource={res?.records||[]}
+                 pagination={{
+                   current,
+                   total: res?.total||0,
+                   pageSize,
+                   onChange: this.handlePageChange
+                 }} />
+             </ConfigProvider>, 'Synchronizesupplier'
            )
          })
        }
