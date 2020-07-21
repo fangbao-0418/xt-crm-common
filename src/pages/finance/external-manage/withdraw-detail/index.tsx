@@ -9,6 +9,7 @@ import { Tabs } from 'antd'
 import MoneyRender from '@/components/money-render'
 import { getFieldsConfig, SupplierTypeEnum } from './config'
 import * as api from './api'
+import { getPayload, setPayload } from '@/packages/common/utils'
 const { TabPane } = Tabs
 interface Props extends AlertComponentProps {
 }
@@ -135,6 +136,7 @@ class Main extends React.Component<Props> {
     this.setState({
       status: key
     }, () => {
+      this.listpage.payload.page=1
       this.listpage.refresh()
     })
   }
