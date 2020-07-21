@@ -24,6 +24,9 @@ function getRealFileType (file) {
 /** 默认支持图片上传格式 */
 const defaultImgExtnameList = ['jpg', 'gif', 'jpeg', 'png']
 
+/** 默认支持图片上传格式 */
+const defaultVideoExtnameList = ['mp4']
+
 export async function ossUpload (file, dir = 'crm', ossType = 'oss', specifiedAddress) {
   if (ossType === 'oss') {
     const res = await getStsPolicy()
@@ -275,7 +278,7 @@ class UploadView extends Component {
 
     const typeName = this.props.listType !== 'text' ? '图片' : '文件'
 
-    if (typeName === '图片') {
+    if (typeName === '图片' && fileType !== 'video') {
       const fileRealType = await getRealFileType(file)
       const tempExtnameList = extnameList?.length ? extnameList : defaultImgExtnameList
       if (tempExtnameList && !tempExtnameList.includes(fileRealType?.ext)) {
