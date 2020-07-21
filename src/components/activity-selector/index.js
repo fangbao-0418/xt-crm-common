@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Modal, Input } from 'antd';
-import { isFunction } from 'lodash';
-import { getPromotionList } from './api';
-import { actColumns } from './config';
-import CommonTable from '@/components/common-table';
-import { unionArray } from '@/util/utils';
+import React, { Component } from 'react'
+import { Modal, Input } from 'antd'
+import { isFunction } from 'lodash'
+import { getPromotionList } from './api'
+import { actColumns } from './config'
+import CommonTable from '@/components/common-table'
+import { unionArray } from '@/util/utils'
 class ProductSelector extends Component {
   state = {
     selectedRowKeys: [],
@@ -22,20 +22,20 @@ class ProductSelector extends Component {
     this.setState({ pagination }, this.fetchData)
   }
   fetchData = async () => {
-    this.setState({ loading: true });
+    this.setState({ loading: true })
     try {
       const res = await getPromotionList({
         ...this.state.pagination,
         name: this.state.val.trim()
-      }) || {};
-      console.log('res=>', res);
+      }) || {}
+      console.log('res=>', res)
       this.setState(state => ({
         loading: false,
         pagination: { ...state.pagination, total: res.total },
         activityList: res.records
-      }));
+      }))
     } catch (err) {
-      this.setState({ loading: true });
+      this.setState({ loading: true })
     }
   }
   handleSearch = (val) => {
@@ -49,37 +49,37 @@ class ProductSelector extends Component {
       selectedRowKeys: [],
       selectedRows: []
     })
-    isFunction(this.props.onCancel) && this.props.onCancel();
+    isFunction(this.props.onCancel) && this.props.onCancel()
   }
   handleOkModal = () => {
-    isFunction(this.props.onChange) && this.props.onChange(this.state.selectedRowKeys, this.state.selectedRows);
+    isFunction(this.props.onChange) && this.props.onChange(this.state.selectedRowKeys, this.state.selectedRows)
     this.handleCancel()
   }
-  componentDidMount() {
-    this.fetchData();
+  componentDidMount () {
+    this.fetchData()
   }
-  render() {
+  render () {
     const { multi = true, visible } = this.props
     const rowSelection = {
       type: multi ? 'checkbox' : 'radio',
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
         console.log('selectedRowKeys=>', selectedRowKeys)
-        const unionArrs = unionArray(this.state.selectedRows, selectedRows);
+        const unionArrs = unionArray(this.state.selectedRows, selectedRows)
         console.log('selectedRows=>', unionArrs.filter(v => selectedRowKeys.includes(v.id)))
         this.setState({ selectedRowKeys, selectedRows: unionArrs.filter(v => selectedRowKeys.includes(v.id)) })
       }
     }
     return (
       <Modal
-        title="选择活动"
+        title='选择活动'
         visible={visible}
-        width="60%"
+        width='60%'
         onCancel={this.handleCancel}
         onOk={this.handleOkModal}
       >
         <Input.Search
-          placeholder="请输入需要搜索的活动"
+          placeholder='请输入需要搜索的活动'
           style={{ marginBottom: 10 }}
           onSearch={this.handleSearch}
         />
@@ -98,4 +98,4 @@ class ProductSelector extends Component {
     )
   }
 }
-export default ProductSelector;
+export default ProductSelector

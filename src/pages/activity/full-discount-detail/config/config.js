@@ -5,7 +5,8 @@ export const ruleTypeMap = {
 
 export const promotionTypeMap = {
   '11': '满减',
-  '12': '满折'
+  '12': '满折',
+  '15': '多件一口价'
 }
 
 export const activeNameMap = {

@@ -9,11 +9,8 @@ import Loadable from 'react-loadable'
 import { Route, Switch } from 'react-router-dom'
 import { view as Loader } from '@/components/loader'
 import Detail from './detail'
-
-const Main = Loadable({
-  loader: () => import('./main'),
-  loading: Loader
-})
+import Download from './download-list'
+import Main from './main'
 
 export default class RouteApp extends React.Component {
   render () {
@@ -21,6 +18,7 @@ export default class RouteApp extends React.Component {
     return (
       <Switch>
         <Route path={`${match.url}/detail/:id`} component={Detail} />
+        <Route path={`${match.url}/download`} component={Download} />
         <Route path={`${match.url}`} component={Main} />
       </Switch>
     )

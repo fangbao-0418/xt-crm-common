@@ -277,3 +277,13 @@ export function applyOrderRefundDetails (data: any) {
     hideToast: true
   })
 }
+
+/** 订单导出 */
+export function newExportOrder (data: any) {
+  return APP.http.get('/order/export', {
+    ...data,
+    rangePicker: undefined,
+    playPicker: undefined,
+    bizType: 10
+  })
+}
