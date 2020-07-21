@@ -134,6 +134,7 @@ module.exports = function (config, env) {
     // }))
   }
   config.externals = {
+    '@ant-design/icons/lib/dist': 'AntDesignIcons',
     antd: 'antd',
     react: 'React',
     'react-dom': 'ReactDOM',

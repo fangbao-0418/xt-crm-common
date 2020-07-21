@@ -9,13 +9,12 @@ import './assets/css/common.scss'
 import 'viewerjs/dist/viewer.css'
 import zh_CN from 'antd/lib/locale-provider/zh_CN'
 import moment from 'moment'
-import 'moment/locale/zh-cn'
 import { init } from '@rematch/core'
 import createLoadingPlugin from '@rematch/loading'
 import models from './model-store'
 import ErrorBoundary from '@/components/error-boundary'
 import './util/moon'
-moment.locale('zh-cn')
+// moment.locale('zh-cn')
 
 const loading = createLoadingPlugin()
 const store = init({

@@ -1,9 +1,3 @@
-/*
- * @Date: 2020-04-08 20:54:25
- * @LastEditors: fangbao
- * @LastEditTime: 2020-06-11 20:31:05
- * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/App.js
- */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withRouter } from 'react-router'
@@ -11,7 +5,6 @@ import Routes from '@/routes'
 import { connect } from 'react-redux'
 import { notification } from 'antd'
 import './assets/styles/common.scss'
-const { get } = APP.http
 import * as api from './api'
 
 class Main extends React.Component {
