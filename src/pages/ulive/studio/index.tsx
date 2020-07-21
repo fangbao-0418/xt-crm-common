@@ -7,7 +7,7 @@ import { AlertComponentProps } from '@/packages/common/components/alert'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
-import { Tabs, Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
+import { Tabs, Divider, Popover, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
@@ -28,15 +28,18 @@ interface State {
   selectedRowKeys: any[]
   bizType: string
   visible: boolean
+  readonly: boolean
 }
 
 class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
+  public planId: number
   public state: State = {
     rowKeys: [],
     bizType: '1',
     visible: false,
-    selectedRowKeys: []
+    selectedRowKeys: [],
+    readonly: false
   }
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
@@ -246,6 +249,7 @@ class Main extends React.Component<Props, State> {
               condition={[
                 LiveStatusEnum['已结束'],
                 LiveStatusEnum['停播-运营停播'],
+                LiveStatusEnum['回放已停播'],
                 LiveStatusEnum['预告-已过期'],
                 LiveStatusEnum['预告-禁播']
               ].includes(record.liveStatus) && bizType === '1'}
@@ -260,58 +264,38 @@ class Main extends React.Component<Props, State> {
     }
   ]
   public setCoupon (record: UliveStudio.ItemProps) {
-
-    let selectedRowKeys: any[] = record.couponCodes || []
-    this.setState({ visible: true, selectedRowKeys })
-    // const hide = this.props.alert({
-    //   width: 1000,
-    //   title: (
-    //     <Tab />
-    //   ),
-    //   content: (
-    //     <CouponSelector
-    //       readonly={false}
-    //       selectedRowKeys={selectedRowKeys}
-    //       onChange={(rowKeys) => {
-    //         selectedRowKeys = rowKeys
-    //       }}
-    //     />
-    //   ),
-    //   onOk: () => {
-    //     if (selectedRowKeys.length > 20) {
-    //       APP.error('优惠券最多只能绑定20张')
-    //       return
-    //     }
-    //     api.setCoupon({
-    //       liveId: record.planId,
-    //       couponCodes: selectedRowKeys
-    //     }).then(() => {
-    //       this.listpage.refresh()
-    //       hide()
-    //     })
-    //   }
-    // })
+    this.planId = record.planId
+    this.setState({
+      visible: true,
+      readonly: false,
+      selectedRowKeys: record.couponCodes || []
+    })
   }
   public checkCoupon (record: UliveStudio.ItemProps) {
-    const selectedRowKeys: any[] = record.couponCodes || []
-    if (!selectedRowKeys.length) {
-      this.props.alert({
-        title: '查看优惠券',
-        content: '该直播间未绑定优惠券'
-      })
-      return
-    }
-    this.props.alert({
-      width: 1000,
-      title: '查看优惠券',
-      footer: null,
-      content: (
-        <CouponSelector
-          selectedRowKeys={selectedRowKeys}
-          readonly={true}
-        />
-      )
+    this.setState({
+      visible: true,
+      readonly: true,
+      selectedRowKeys: record.couponCodes || []
     })
+    // const selectedRowKeys: any[] = record.couponCodes || []
+    // if (!selectedRowKeys.length) {
+    //   this.props.alert({
+    //     title: '查看优惠券',
+    //     content: '该直播间未绑定优惠券'
+    //   })
+    //   return
+    // }
+    // this.props.alert({
+    //   width: 1000,
+    //   title: '查看优惠券',
+    //   footer: null,
+    //   content: (
+    //     <CouponSelector
+    //       selectedRowKeys={selectedRowKeys}
+    //       readonly={true}
+    //     />
+    //   )
+    // })
   }
   public stopPlayback (record: UliveStudio.ItemProps) {
     if (this.props.alert) {
@@ -643,7 +627,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const tabList=[{ name: '喜团优选', key: '1' }, { name: '喜团买菜', key: '2' }]
-    const { bizType, visible, selectedRowKeys }=this.state
+    const { bizType, visible, selectedRowKeys, readonly } = this.state
     return (
       <div
         style={{
@@ -758,9 +742,29 @@ class Main extends React.Component<Props, State> {
         />
         <MarketingSettings
           visible={visible}
+          readonly={readonly}
           selectedRowKeys={selectedRowKeys}
+          onChange={(rowKeys) => {
+            this.setState({
+              selectedRowKeys: rowKeys
+            })
+          }}
           onCancel={() => {
-            this.setState({ visible: false})
+            this.setState({ visible: false, selectedRowKeys: [] })
+          }}
+          onOk={() => {
+            const { selectedRowKeys } = this.state
+            if (selectedRowKeys.length > 20) {
+              APP.error('优惠券最多只能绑定20张')
+              return
+            }
+            api.setCoupon({
+              liveId: this.planId,
+              couponCodes: selectedRowKeys
+            }).then(() => {
+              message.success('保存设置成功')
+              this.listpage.refresh()
+            })
           }}
         />
       </div>

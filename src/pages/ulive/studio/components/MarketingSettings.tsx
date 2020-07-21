@@ -1,26 +1,29 @@
-import React from 'react';
-import { Modal } from 'antd';
-import classnames from 'classnames';
-import styles from './style.module.styl';
-import CouponSelector from './CouponSelector';
-import InvitationList from './InvitationList';
+import React from 'react'
+import { Modal } from 'antd'
+import classnames from 'classnames'
+import styles from './style.module.styl'
+import CouponSelector from './CouponSelector'
+import InvitationList from './InvitationList'
 
-type Key = string | number;
+type Key = string | number
 interface Option {
-  label: string;
-  value: Key;
+  label: string
+  value: Key
 }
 
 interface Props {
-  selectedRowKeys: any[];
-  visible: boolean;
+  selectedRowKeys: any[]
+  visible: boolean
+  onChange?: (selectedRowKeys: any[]) => void
   onCancel?:
     | ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)
-    | undefined;
+    | undefined
+  onOk?: () => void
+  readonly: boolean
 }
 interface State {
-  value: Key;
-  options: Option[];
+  value: Key
+  options: Option[]
 }
 class MarketingSettings extends React.Component<Props, State> {
   public state = {
@@ -29,13 +32,10 @@ class MarketingSettings extends React.Component<Props, State> {
       { label: '邀请榜单', value: 1 },
     ],
     value: 0,
-  };
-  public onChange(value: Key) {
-    this.setState({ value });
   }
   public render() {
-    const { options, value } = this.state;
-    const { visible, onCancel, selectedRowKeys } = this.props;
+    const { options, value } = this.state
+    const { visible, onCancel, selectedRowKeys, readonly } = this.props
     return (
       <Modal
         visible={visible}
@@ -50,7 +50,9 @@ class MarketingSettings extends React.Component<Props, State> {
                   styles['title-item'],
                   value === opt.value ? styles['active'] : ''
                 )}
-                onClick={this.onChange.bind(this, opt.value)}
+                onClick={() => {
+                  this.setState({ value: opt.value })
+                }}
               >
                 {opt.label}
               </div>
@@ -59,13 +61,22 @@ class MarketingSettings extends React.Component<Props, State> {
         }
       >
         {value === 0 ? (
-          <CouponSelector onCancel={onCancel} selectedRowKeys={selectedRowKeys}/>
+          <CouponSelector
+            onCancel={onCancel}
+            readonly={readonly}
+            selectedRowKeys={selectedRowKeys}
+            onChange={(rowKeys) => {
+              const { onChange } = this.props
+              onChange && onChange(rowKeys)
+            }}
+            onOk={this.props.onOk}
+          />
         ) : (
           <InvitationList onCancel={onCancel} />
         )}
       </Modal>
-    );
+    )
   }
 }
 
-export default MarketingSettings;
+export default MarketingSettings
