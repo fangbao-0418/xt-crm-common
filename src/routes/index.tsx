@@ -1,11 +1,3 @@
-/*
- * @Author: fangbao
- * @Date: 2020-05-19 23:06:25
- * @LastEditors: fangbao
- * @LastEditTime: 2020-06-05 21:41:32
- * @FilePath: /xt-crm-microservice/common/src/routes/index.tsx
- */
-
 import React from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
 import { view as Layout } from '@/components/layout'
@@ -22,12 +14,12 @@ class Main extends React.Component<{}, State> {
     ServerRoutes: Observer.getRoutes()
   }
   public componentWillMount () {
-    Observer.onRoutePushed = () => {
+    Observer.onRoutePushed(() => {
       const routes = Observer.getRoutes()
       this.setState({
         ServerRoutes: routes
       })
-    }
+    })
   }
   render () {
     const { ServerRoutes } = this.state

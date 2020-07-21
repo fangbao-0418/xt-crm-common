@@ -1235,10 +1235,10 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@xt-micro-service/bootstrap@^1.0.3":
-  version "1.0.3"
-  resolved "http://192.168.20.8:802/@xt-micro-service%2fbootstrap/-/bootstrap-1.0.3.tgz#6f07cb1989bb384b3231626f702d8de0b54acd5d"
-  integrity sha512-NNXUG04VdK29Rj6ltPR2v6bZGeTMjwsa2/wMO9AuNowdZYMNh3W8pwwT/RkOTKP4/REu0yM+w2FLo4HQ7WcWsw==
+"@xt-micro-service/bootstrap@^1.0.4":
+  version "1.0.4"
+  resolved "http://192.168.20.8:802/@xt-micro-service%2fbootstrap/-/bootstrap-1.0.4.tgz#f302d63453587334b61aadf69935f30117caa503"
+  integrity sha512-4FDu9mAoIrtMezNEvx06hvzbE5apyzL2jJ8W7J1Mp2LPkCIuSbaQHTgtfuBKfArZjJHoL8NqbmYwPhvaX3vWJA==
   dependencies:
     "@babel/core" "^7.10.3"
     history "4.10.1"
