@@ -9,7 +9,6 @@ import { Tabs } from 'antd'
 import MoneyRender from '@/components/money-render'
 import { getFieldsConfig, SupplierTypeEnum } from './config'
 import * as api from './api'
-import { getPayload, setPayload } from '@/packages/common/utils'
 const { TabPane } = Tabs
 interface Props extends AlertComponentProps {
 }
@@ -54,20 +53,8 @@ class Main extends React.Component<Props> {
     },
     width: 120
   }, {
-    dataIndex: 'accountIdCardAddress',
+    dataIndex: 'accountIdCardDesc',
     title: '提现方式',
-    render: (text: any) => {
-      let str=''
-      switch (text) {
-        case '1':
-          str='个人银行卡'
-          break
-        case '73':
-          str='对公账户'
-          break
-      }
-      return str
-    },
     width: 120
   }, {
     dataIndex: 'accountNumber',
