@@ -259,12 +259,12 @@ class SupplierModal extends Component {
                 <Input placeholder='请输入详细地址' />,
               )}
             </FormItem>
-            <If visible={[0, 6, 7].indexOf(category) === -1} condition={[0, 6, 7].indexOf(category) !== -1}>
+            <If condition={[6, 7].indexOf(category) !== -1}>
               <FormItem label='保证金缴纳方式' required>
                 {getFieldDecorator('depositType', {
                   rules: [
                     {
-                      required: [0, 6, 7].includes(category),
+                      required: [6, 7].includes(category),
                       message: '请选择保证金缴纳方式'
                     }
                   ]
