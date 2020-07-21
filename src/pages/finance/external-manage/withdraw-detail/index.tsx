@@ -36,7 +36,7 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'transAmount',
     title: '金额',
-    width: 100,
+    width: 150,
     render: MoneyRender
   }, {
     dataIndex: 'supplierId',
