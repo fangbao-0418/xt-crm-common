@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Card, Input, Button, message, Radio, Select, Row, InputNumber } from 'antd'
-import UploadView from '@/components/upload'
+import UploadView, { VideoUpload } from '@/components/upload'
 import { pick, map, size, filter, assign, isEmpty, flattenDeep } from 'lodash'
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api'
 import { gotoPage, parseQuery, getAllId, treeToarr } from '@/util/utils'
@@ -920,12 +920,12 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
                 <div className={styles['input-wrapper']}>
                   <div className={styles['input-wrapper-content']}>
                     {form.getFieldDecorator('videoCoverUrl')(
-                      <UploadView
-                        ossType='cos'
+                      <VideoUpload
+                        // ossType='cos'
                         placeholder='上传视频封面'
-                        listType='picture-card'
-                        listNum={1}
-                        size={0.3}
+                        // listType='picture-card'
+                        // listNum={1}
+                        maxSize={0.3}
                       />
                     )}
                   </div>
