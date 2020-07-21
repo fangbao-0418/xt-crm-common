@@ -516,8 +516,8 @@ class Main extends React.Component<Props, State> {
         let msg, res
         /** 新增场次 */
         /** isCopy = true && activityType = 1 红包雨活动复制功能 */
-        if (this.id === -1 || this.isCopy && this.activityType === 1) {
-          if (this.isCopy && this.activityType === 1) {
+        if (this.id === -1 || this.isCopy) {
+          if (this.isCopy) {
             data.awardList = data.awardList.map((item: Lottery.LuckyDrawAwardListVo) => {
               return {
                 ...item,
