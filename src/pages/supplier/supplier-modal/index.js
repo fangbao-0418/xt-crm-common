@@ -1,10 +1,27 @@
 import React, { Component } from 'react'
 import { Modal, Button, Form, Input, message, Radio, Select } from 'antd'
 import { If } from '@/packages/common/components'
-import { getSupplierDetail, updateSupplier, addSupplier } from '../api'
+import { getSupplierDetail, updateSupplier, addSupplier, depositTypes } from '../api'
+import UploadView from '@/components/upload'
 import SupplierTypeSelect from '@/components/supplier-type-select'
 import SaleArea from '@/components/sale-area'
+import SelectFetch from '@/components/select-fetch'
 const FormItem = Form.Item
+
+const getInitImage = (url) => {
+  if (url) {
+    return [
+      {
+        uid: url,
+        url: url,
+        status: 'done',
+        thumbUrl: url
+      }
+    ]
+  }
+
+  return []
+}
 
 const formItemLayout = {
   labelCol: { span: 6 },
@@ -36,18 +53,29 @@ class SupplierModal extends Component {
         category: data.category,
         saleAreaVisible: data.category === 5
       })
-      this.props.form && this.props.form.setFieldsValue(data)
+      this.props.form && this.props.form.setFieldsValue({
+        ...data,
+        shopName: (data.shopName || '').replace('喜团自营店', ''),
+        shopUrl: getInitImage(data.shopUrl)
+      })
     })
   }
 
   handleOk = () => {
     const { onSuccess, id, form, isEdit } = this.props
-    form.validateFields((err, vals) => {
+    form.validateFields((err, { category, shopUrl, shopName, ...vals }) => {
+      console.log(err)
       if (!err) {
+        console.log('2222222')
         const api = isEdit ? updateSupplier : addSupplier
         vals.freezeLimit = vals.freezeLimit !== undefined ? Number(vals.freezeLimit) : undefined
+        if ([0, 1, 2, 3, 4].includes(category)) {
+          vals.shopUrl = shopUrl[0].rurl
+          vals.shopName = shopName
+        }
         api({
           id,
+          category,
           ...vals
         }).then((res) => {
           if (res) {
@@ -184,6 +212,42 @@ class SupplierModal extends Component {
             <FormItem label='联系邮箱'>
               {getFieldDecorator('email')(<Input placeholder='请输入联系邮箱' />)}
             </FormItem>
+            <FormItem label='采购员姓名' extra='最多10个字符'>
+              {getFieldDecorator('purchaserName')(<Input maxLength={10} placeholder='请输入采购员姓名' />)}
+            </FormItem>
+            <If condition={[0, 1, 2, 3, 4].includes(category)}>
+              <h4>店铺信息</h4>
+              <FormItem label='店铺名称'>
+                {getFieldDecorator('shopName', {
+                  rules: [
+                    {
+                      required: [0, 1, 2, 3, 4].includes(category),
+                      message: '请输入店铺名称'
+                    }
+                  ]
+                })(
+                  <Input maxLength={10} placeholder='请输入店铺名称' />
+                )}
+              </FormItem>
+              <FormItem label='店铺logo'>
+                {getFieldDecorator('shopUrl', {
+                  rules: [
+                    {
+                      required: [0, 1, 2, 3, 4].includes(category),
+                      message: '请上传店铺logo'
+                    }
+                  ]
+                })(
+                  <UploadView
+                    placeholder='上传店铺logo'
+                    listType='picture-card'
+                    listNum={1}
+                    size={2}
+                    ossType='cos'
+                  />
+                )}
+              </FormItem>
+            </If>
             <h4>详细信息</h4>
             <FormItem label='官网链接'>
               {getFieldDecorator('jumpUrl')(
@@ -195,6 +259,27 @@ class SupplierModal extends Component {
                 <Input placeholder='请输入详细地址' />,
               )}
             </FormItem>
+            <If condition={[6, 7].indexOf(category) !== -1}>
+              <FormItem label='保证金缴纳方式' required>
+                {getFieldDecorator('depositType', {
+                  rules: [
+                    {
+                      required: [6, 7].includes(category),
+                      message: '请选择保证金缴纳方式'
+                    }
+                  ]
+                })(
+                  <SelectFetch
+                    disabled={this.props.isEdit}
+                    placeholder='请选择保证金缴纳方式'
+                    style={{ width: '174px' }}
+                    fetchData={
+                      depositTypes
+                    }
+                  />
+                )}
+              </FormItem>
+            </If>
             {this.state.saleAreaVisible && (
               <FormItem required label='可售区域'>
                 {getFieldDecorator('saleAreaList', {
@@ -223,6 +308,9 @@ class SupplierModal extends Component {
                     <Select.Option value={1000}>1000元</Select.Option>
                     <Select.Option value={2000}>2000元</Select.Option>
                     <Select.Option value={3000}>3000元</Select.Option>
+                    <Select.Option value={5000}>5000元</Select.Option>
+                    <Select.Option value={8000}>8000元</Select.Option>
+                    <Select.Option value={10000}>10000元</Select.Option>
                   </Select>
                 )}
               </FormItem>

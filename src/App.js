@@ -1,9 +1,3 @@
-/*
- * @Date: 2020-04-08 20:54:25
- * @LastEditors: fangbao
- * @LastEditTime: 2020-05-19 23:35:18
- * @FilePath: /xt-crm/src/App.js
- */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withRouter } from 'react-router'
@@ -11,7 +5,6 @@ import Routes from '@/routes'
 import { connect } from 'react-redux'
 import { notification } from 'antd'
 import './assets/styles/common.scss'
-const { get } = APP.http
 import * as api from './api'
 
 class Main extends React.Component {
@@ -25,9 +18,12 @@ class Main extends React.Component {
   componentDidMount () {
     const history = this.props.history
     this.checkVersion()
-    history.listen((location) => {
+    this.unlisten = history.listen((location) => {
       this.checkVersion()
     })
+  }
+  componentWillUnmount () {
+    this.unlisten?.()
   }
   checkVersion () {
     api.getBuildInfo().then((res) => {
@@ -35,17 +31,20 @@ class Main extends React.Component {
       if (res && BUILD_TIME !== build_time) {
         APP.moon.error('version mismatch')
         const { pathname, hash } = window.location
+        let { search } = window.location
         const nowTime = new Date().getTime()
+        search = (search ? search + '&' : '?') + `t=${nowTime}`
         notification.warn({
           duration: null,
           message: '系统更新',
+          key: 'versionUpdatable',
           description: (
             <div>
               有新的版本已发布，为了不影响您的正常使用，请刷新浏览器后再进行操作，如果还有问题，请尝试&nbsp;
               <span
                 className='href'
                 onClick={() => {
-                  window.location.href = `${pathname}?v=${nowTime}${hash}`
+                  window.location.href = `${pathname}${search}${hash}`
                 }}
               >
                 点击此处

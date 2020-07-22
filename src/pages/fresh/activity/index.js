@@ -9,14 +9,23 @@ import { Route, Switch } from 'react-router-dom'
 import ActivityList from './List'
 import ActivityEdit from './info/edit'
 import ActivityDetail from './info/detail'
+import Lottery from './lottery'
+import LotteryForm from './lottery/form'
+import ActivitySessions from './lottery/sessions'
+import ActivityReward from './reward'
+
 class Fresh extends React.Component {
-  render() {
+  render () {
     const { match } = this.props
     return (
       <Switch>
         <Route path={`${match.url}/list`} component={ActivityList} />
         <Route path={`${match.url}/info/edit/:id`} component={ActivityEdit} />
         <Route path={`${match.url}/info/detail/:id/:productId`} component={ActivityDetail} />
+        <Route path={`${match.url}/lottery`} exact component={Lottery} />
+        <Route path={`${match.url}/lottery/:id`} exact component={LotteryForm} />
+        <Route path={`${match.url}/lottery/:luckyDrawId/:id`} component={ActivitySessions} />
+        <Route path={`${match.url}/reward`} exact component={ActivityReward} />
       </Switch>
     )
   }

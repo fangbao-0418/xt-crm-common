@@ -14,6 +14,8 @@ import domains from './domain'
 import * as LocalStorage from '@/util/localstorage'
 const FormItem = Form.Item
 
+console.log(domains, 'domains')
+
 const LoginPage = (props) => {
   let userNameInput = null
   const [username, setUserName] = useState('')
@@ -30,6 +32,12 @@ const LoginPage = (props) => {
     e.preventDefault()
     if (domain) {
       LocalStorage.put('apidomain', domain)
+      domains.find((item) => {
+        if (item[1] === domain) {
+          localStorage.setItem('env', item[2])
+          return true
+        }
+      })
     }
     props.dispatch({
       type: 'login/login',
@@ -94,6 +102,10 @@ const LoginPage = (props) => {
             </Button>
           </FormItem>
         </Form>
+      </div>
+      <div style={{ display: 'none' }}>
+        {process.env.PUB_ENV}
+        {__ENV__}
       </div>
       <div className={styles['footer']}>版权所有 © 喜团有限公司 {new Date().getFullYear()}</div>
     </>

@@ -65,13 +65,17 @@ class Records extends React.Component<Props> {
     render: (record: any) => {
       return (
         <>
-          <a
-            href={window.location.pathname + `#/finance/withdraw?batchId=${record.id}`}
-            target='_blank'
-            rel='noopener noreferrer'
+          <span
+            // href={window.location.pathname + `#/finance/withdraw?batchId=${record.id}`}
+            // target='_blank'
+            // rel='noopener noreferrer'
+            className='href'
+            onClick={() => {
+              APP.open(`/finance/withdraw?batchId=${record.id}`)
+            }}
           >
             查看列表
-          </a>
+          </span>
           {record.remitStatus === 1 && (
             <span onClick={this.applyPay(record)} className='ml8 href'>
               提交打款

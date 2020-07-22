@@ -1,7 +1,7 @@
 /* eslint-disable no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd'
+import { Row, Col, Card, Form, Input, message, Button, Table, Modal, Divider, InputNumber } from 'antd'
 import {
   getProductList,
   // setPromotionAddSKu,
@@ -10,9 +10,11 @@ import {
   refreshPromtion,
   getOperatorSpuList,
   getGoodsListByActivityId,
-  batchMoveGoodsToOtherActivity
+  batchMoveGoodsToOtherActivity,
+  getShopTypes
 } from '../api'
 import ActivityInfo from './ActivityInfo'
+import SelectFetch from '@/components/select-fetch'
 import ActivityList from './ActivityList'
 import { size, filter, difference } from 'lodash'
 import { gotoPage } from '@/util/utils'
@@ -20,6 +22,14 @@ import { formatMoney, formatMoneyWithSign } from '../../helper'
 import { goodsColumns } from './goodsColumns'
 import GoodsTransfer from '@/components/goods-transfer'
 const namespace = 'activity/info/shoplist'
+const shopTypeMap = {
+  1: '喜团自营',
+  2: '直播小店',
+  3: '品牌旗舰店',
+  4: '品牌专营店',
+  5: '喜团工厂店',
+  6: '普通企业店'
+}
 class List extends React.Component {
   id = this.props.match.params.id;
   payload = APP.fn.getPayload(namespace) || {};
@@ -33,6 +43,8 @@ class List extends React.Component {
     visibleAct: false,
     selectedRowKeys: [],
     selectedRows: [],
+    shopTypes: undefined,
+    productName: undefined,
     promotionDetail: {
       current: 1,
       size: 10,
@@ -92,12 +104,17 @@ class List extends React.Component {
   getProductList = () => {
     // type 活动类型 10为拼团活动-拼团活动不包含1688
     const { modalPage, type } = this.state
-    getProductList({
+    const params = {
       status: 0,
       types: type === 10 ? [0, 10] : undefined,
       ...this.productPayload,
       include1688: type === 10 ? false : undefined
-    }).then((res) => {
+    }
+    if ([1, 2].includes(type)) {
+      params.isFilter = 0
+    }
+    params.shopTypes=this.state.shopTypes
+    getProductList(params).then((res) => {
       res = res || {}
       modalPage.total = res.total
       modalPage.current = this.productPayload.page
@@ -135,7 +152,7 @@ class List extends React.Component {
   // };
 
   handleSearchModal = e => {
-    this.productPayload.productName = e
+    this.productPayload.productName = this.state.productName
     this.productPayload.page = 1
     this.getProductList()
   };
@@ -315,13 +332,17 @@ class List extends React.Component {
             <div>
               <div style={{ marginBottom: 8 }}>
                 成功转移<span style={{ color: 'red' }}>{res.successCount}</span>个商品至
-                <a
-                  href={window.location.pathname + `#/activity/info/edit/${transferActivity.id}`}
-                  target='_blank'
-                  rel='noopener noreferrer'
+                <span
+                  className='href'
+                  // href={window.location.pathname + `#/activity/info/edit/${transferActivity.id}`}
+                  // target='_blank'
+                  // rel='noopener noreferrer'
+                  onClick={() => {
+                    APP.open(`/activity/info/edit/${transferActivity.id}`)
+                  }}
                 >
                   {transferActivity.title}
-                </a>
+                </span>
               </div>
               <div>
                 <div>
@@ -363,7 +384,9 @@ class List extends React.Component {
       info = {},
       transferActivity = {},
       transferGoodsList,
-      transferGoodsVisible
+      transferGoodsVisible,
+      shopTypes,
+      productName
     } = this.state
     const rowSelection = {
       selectedRowKeys,
@@ -512,14 +535,61 @@ class List extends React.Component {
           onCancel={this.handleCancelModal}
           onOk={this.handleOkModal}
         >
-          <Input.Search
-            placeholder='请输入需要搜索的商品'
-            style={{ marginBottom: 10 }}
-            onSearch={this.handleSearchModal}
-          />
+          <Row>
+            <Col span={2}>
+            商品名称
+            </Col>
+            <Col span={7}>
+              <Input.Search
+                placeholder='请输入需要搜索的商品'
+                style={{ marginBottom: 10, width: 200 }}
+                value={productName}
+                onChange={(e)=>{
+                  this.setState({
+                    productName: e.target.value
+                  })
+                }}
+                onSearch={this.handleSearchModal}
+              />
+            </Col>
+            <Col span={2}>
+            店铺类型
+            </Col>
+            <Col span={7}>
+              <SelectFetch
+                mode='multiple'
+                style={{ width: 200 }}
+                fetchData={getShopTypes}
+                value={shopTypes}
+                onChange={(shopTypes)=>{
+                  this.setState({
+                    shopTypes
+                  })
+                }}
+              />
+            </Col>
+            <Col span={3}>
+              <Button
+                type='primary'
+                className='mr10'
+                onClick={this.handleSearchModal}
+              >查询
+              </Button>
+            </Col>
+          </Row>
+
           <Table
             rowSelection={rowSelection}
-            columns={goodsColumns()}
+            columns={[
+              ...goodsColumns().slice(0, 4),
+              {
+                title: '店铺类型',
+                key: 'shopType',
+                dataIndex: 'shopType',
+                render: text => shopTypeMap[text]
+              },
+              ...goodsColumns().slice(4)
+            ]}
             dataSource={goodsList}
             pagination={modalPage}
             onChange={this.handleTabChangeModal}

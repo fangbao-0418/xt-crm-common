@@ -14,6 +14,7 @@ export function getStoreList (data, config) {
 
 // 设置普通消费商品
 export function setProduct (data) {
+  console.log(data, 'setProduct')
   const isAdd = data.productId === -1
   const url = isAdd ? '/product/add' : '/product/update'
   data = formRequest(isAdd ? omit(data, ['productId']) : data)
@@ -98,4 +99,10 @@ export function toAuditDetail (data) {
  */
 export function getStockInfo (id) {
   return get(`/product/stock?skuId=${id}`)
+}
+/**
+ * 商品复制
+ */
+export function copy (data) {
+  return post('/mcweb/product/copy', data)
 }

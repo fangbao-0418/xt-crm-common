@@ -4,7 +4,7 @@ import { isNil } from 'lodash'
 import moment from 'moment'
 import { OrderStatusTextMap } from '../constant'
 import { formatDate, formatMoneyWithSign } from '@/pages/helper'
-import { getOrderList } from '../api'
+import { getOrderList, newExportOrder } from '../api'
 import GoodCell from '@/components/good-cell'
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import RemarkModal from '../components/modal/remark-modal'
@@ -34,6 +34,10 @@ class OrderList extends React.Component {
 
   componentDidMount () {
     // this.query();
+  }
+
+  export = () => {
+    this.query(true)
   }
 
   query = (isExport = false, noFetch = false) => {
@@ -73,6 +77,17 @@ class OrderList extends React.Component {
     APP.fn.setPayload('order', this.payload)
     if (noFetch) {
       return
+    }
+    if (isExport) {
+      return newExportOrder(params)
+        .then(res => {
+          APP.success('导出成功，请前往下载列表下载文件')
+        })
+        .finally(() => {
+          this.setState({
+            loading: false
+          })
+        })
     }
     getOrderList(params).then((res = {}) => {
       this.setState({
@@ -142,9 +157,17 @@ class OrderList extends React.Component {
         dataIndex: 'orderCode',
         width: '400px',
         render: (operate, { orderStatus, orderCode }) => (
-          <Button type='link' href={window.location.pathname + `#/fresh/order/detail/${orderCode}`} target='_blank'>
+          <span
+            // type='link'
+            // href={window.location.pathname + `#/fresh/order/detail/${orderCode}`}
+            // target='_blank'
+            className='href'
+            onClick={() => {
+              APP.open(`/fresh/order/detail/${orderCode}`)
+            }}
+          >
             {orderCode}
-          </Button>
+          </span>
         )
       },
       {
@@ -192,9 +215,17 @@ class OrderList extends React.Component {
         width: '150px',
         render: (operate, { orderType, orderStatus, orderCode }) => (
           <>
-            <Button type='link' href={window.location.pathname + `#/fresh/order/detail/${orderCode}`} target='_blank'>
+            <span
+              // type='link'
+              // href={window.location.pathname + `#/fresh/order/detail/${orderCode}`}
+              // target='_blank'
+              className='href'
+              onClick={() => {
+                APP.open(`/fresh/order/detail/${orderCode}`)
+              }}
+            >
               查看详情
-            </Button>
+            </span>
           </>
         )
       }
@@ -375,6 +406,9 @@ class OrderList extends React.Component {
                 </Button>
                 <Button type='primary' style={{ margin: '0 10px' }} onClick={this.handleSearch}>
                   查询订单
+                </Button>
+                <Button type='primary' className='mr10' onClick={this.export}>
+                  导出订单
                 </Button>
               </Col>
             </Row>

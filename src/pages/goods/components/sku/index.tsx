@@ -367,7 +367,13 @@ class SkuList extends React.Component<Props, State> {
     /////////////////////
   }
   public getCustomColumns () {
-    const columns: ColumnProps<any>[] = []
+    const columns: ColumnProps<any>[] = [
+      {
+        width: 100,
+        title: '规格ID',
+        dataIndex: 'skuId'
+      }
+    ]
     const keys = ['propertyValue1', 'propertyValue2']
     this.state.specs.map((item, index) => {
       if (keys[index]) {
@@ -510,7 +516,7 @@ class SkuList extends React.Component<Props, State> {
                     </Button>
                   </SkuUploadItem>
                 ))}
-                {size(spec.content) < 10 && (
+                {size(spec.content) < 20 && (
                   <SkuUploadItem
                     value={this.state.tempSpecInfo[key]}
                     showImage={this.state.showImage && key === 0}

@@ -53,13 +53,13 @@ function filterProp (obj) {
  */
 function getDynamicColumns (obj) {
   return filterProp(obj).map(prop => {
-    const item = collection[prop] || {};
+    const item = collection[prop] || {}
     return {
       title: obj[prop],
       dataIndex: item.value,
       key: item.value
-    };
-  });
+    }
+  })
 }
 
 /**
@@ -91,11 +91,11 @@ const getSpecs = memoize(function (obj) {
  * 去重property
  */
 function uniqWithProp (list, propName) {
-  console.log('propName=>', propName);
-  list = list || [];
+  console.log('propName=>', propName)
+  list = list || []
   return uniqWith(list, (arrVal, othVal) => {
-    return arrVal[propName] === othVal[propName];
-  });
+    return arrVal[propName] === othVal[propName]
+  })
 }
 
 /**
@@ -109,10 +109,10 @@ function normalizeVideoUrl (url) {
 }
 
 class GoodsEdit extends React.Component {
-  constructor(props) {
-    super(props);
-    this.productId = props.match.params.id;
-    this.auditStatus = parseQuery().auditStatus;
+  constructor (props) {
+    super(props)
+    this.productId = props.match.params.id
+    this.auditStatus = parseQuery().auditStatus
   }
   supplier = [];
   state = {
@@ -123,40 +123,40 @@ class GoodsEdit extends React.Component {
     destinationList: [],
     productSaleAreas: []
   };
-  componentDidMount() {
-    this.getStoreList();
+  componentDidMount () {
+    this.getStoreList()
   }
 
   setDefaultValue = filedValue => {
-    return filedValue || (this.readOnly ? '无' : '');
-  };
+    return filedValue || (this.readOnly ? '无' : '')
+  }
   /**
    * 获取详情数据
    */
   toAuditDetail = () => {
     toAuditDetail({ productId: this.productId }).then((res = {}) => {
-      const currentSupplier = (this.supplier || []).find(item => item.id === res.storeId) || {};
-      res.combineName = res.productCategoryVO && res.productCategoryVO.combineName;
-      res.interceptionVisible = +currentSupplier.category === 1 ? false : true;
-      res.barCode = this.setDefaultValue(res.barCode);
+      const currentSupplier = (this.supplier || []).find(item => item.id === res.storeId) || {}
+      res.combineName = res.productCategoryVO && res.productCategoryVO.combineName
+      res.interceptionVisible = +currentSupplier.category === 1 ? false : true
+      res.barCode = this.setDefaultValue(res.barCode)
       /** 商品详情页 */
-      res.listImage = res.listImage ? res.listImage.split(',') : [];
+      res.listImage = res.listImage ? res.listImage.split(',') : []
       /** 商品图片 */
-      res.productImage = res.productImage ? res.productImage.split(',') : [];
+      res.productImage = res.productImage ? res.productImage.split(',') : []
       /** 商品视频 */
-      res.videoUrl = normalizeVideoUrl(res.videoUrl);
+      res.videoUrl = normalizeVideoUrl(res.videoUrl)
       res.skuList = res.productSkuVOList || []
       this.setState({
         showNum: res.showNum !== undefined ? res.showNum : 1,
         detail: res
-      });
-    });
+      })
+    })
   };
   getStoreList = params => {
     getStoreList({ pageSize: 5000, ...params }).then((res = {}) => {
-      this.supplier = res.records;
-      this.toAuditDetail();
-    });
+      this.supplier = res.records
+      this.toAuditDetail()
+    })
   };
   handleSave = () => {
     this.props.form.validateFields(async (errors, values) => {
@@ -164,15 +164,15 @@ class GoodsEdit extends React.Component {
         const res = await auditGoods({
           productId: this.productId,
           ...values
-        });
+        })
         if (res) {
-          message.success('审核成功');
-          APP.history.go(-1);
+          message.success('审核成功')
+          APP.history.go(-1)
         } else {
-          message.error('审核失败');
+          message.error('审核失败')
         }
       }
-    });
+    })
   };
   render () {
     const columns = [
@@ -258,7 +258,9 @@ class GoodsEdit extends React.Component {
         /** 审核说明 */
         auditInfo,
         /** 结算方式 */
-        settleType
+        settleType,
+        /** 商品箱规 */
+        boxSpec
       }
     } = this.state
     const storeItem = (this.supplier || []).find(v => v.id === storeId) || {}
@@ -275,17 +277,17 @@ class GoodsEdit extends React.Component {
           }}
         />
         <Form {...formLayout}>
-          <Card title="商品审核/详情">
-            <Form.Item label="商品名称">{productName || '无'}</Form.Item>
-            <Form.Item label="商品类目">{combineName || '无'}</Form.Item>
-            <Form.Item label="商品简称">{productShortName || '无'}</Form.Item>
-            <Form.Item label="商品编码">{productCode || '无'}</Form.Item>
-            <Form.Item label="商品简介">{description || '无'}</Form.Item>
-            <Form.Item label="商品条码">{barCode || '无'}</Form.Item>
-            <Form.Item label="供货商">{storeItem.name}</Form.Item>
-            <Form.Item label="结算方式">{SettleTypeEnum[settleType]}</Form.Item>
+          <Card title='商品审核/详情'>
+            <Form.Item label='商品名称'>{productName || '无'}</Form.Item>
+            <Form.Item label='商品类目'>{combineName || '无'}</Form.Item>
+            <Form.Item label='商品简称'>{productShortName || '无'}</Form.Item>
+            <Form.Item label='商品编码'>{productCode || '无'}</Form.Item>
+            <Form.Item label='商品简介'>{description || '无'}</Form.Item>
+            <Form.Item label='商品条码'>{barCode || '无'}</Form.Item>
+            <Form.Item label='供货商'>{storeItem.name}</Form.Item>
+            <Form.Item label='结算方式'>{SettleTypeEnum[settleType]}</Form.Item>
             {/* <Form.Item label="供应商商品ID">{storeProductId || '无'}</Form.Item> */}
-            <Form.Item label="商品主图">
+            <Form.Item label='商品主图'>
               {coverUrl ? (
                 <Image
                   style={{
@@ -299,29 +301,29 @@ class GoodsEdit extends React.Component {
                 '无'
               )}
             </Form.Item>
-            <Form.Item label="商品图片">
+            <Form.Item label='商品图片'>
               {Array.isArray(productImage) && productImage.length > 0
                 ? productImage.map(url => (
-                    <Image
-                      style={{
-                        width: 102,
-                        height: 102,
-                        marginRight: 10,
-                        marginBottom: 10
-                      }}
-                      key={url}
-                      src={url}
-                    />
-                  ))
+                  <Image
+                    style={{
+                      width: 102,
+                      height: 102,
+                      marginRight: 10,
+                      marginBottom: 10
+                    }}
+                    key={url}
+                    src={url}
+                  />
+                ))
                 : '无'}
             </Form.Item>
-            <Form.Item label="商品视频封面">
+            <Form.Item label='商品视频封面'>
               {videoCoverUrl ? <Image style={{ width: '102px', height: '102px' }} src={videoCoverUrl} /> : '无'}
             </Form.Item>
-            <Form.Item label="商品视频">
-              {videoUrl ? <video src={replaceHttpUrl(videoUrl)} controls="controls" height={102} width={102} /> : '无'}
+            <Form.Item label='商品视频'>
+              {videoUrl ? <video src={replaceHttpUrl(videoUrl)} controls='controls' height={102} width={102} /> : '无'}
             </Form.Item>
-            <Form.Item label="banner图片">
+            <Form.Item label='banner图片'>
               {bannerUrl ? (
                 <Image
                   style={{
@@ -335,10 +337,10 @@ class GoodsEdit extends React.Component {
               )}
             </Form.Item>
           </Card>
-          <Card title="商品规格">
+          <Card title='商品规格'>
             {getSpecs(detail).map((spec, key) => {
               return (
-                <Card key={key} type="inner" title={spec.title}>
+                <Card key={key} type='inner' title={spec.title}>
                   <div className={styles.spulist}>
                     {map(spec.content, (item, index) => (
                       <SkuUploadItem
@@ -347,11 +349,12 @@ class GoodsEdit extends React.Component {
                         disabled
                         index={key}
                         showImage={item.specPicture}
-                      ></SkuUploadItem>
+                      >
+                      </SkuUploadItem>
                     ))}
                   </div>
                 </Card>
-              );
+              )
             })}
             <Table
               rowKey='skuId'
@@ -361,35 +364,36 @@ class GoodsEdit extends React.Component {
               pagination={false}
             />
           </Card>
-          <Card title="物流信息" style={{ marginTop: 10 }}>
-            <Form.Item label="商品体积">{bulk || '无'}</Form.Item>
-            <Form.Item label="商品重量">{weight || '无'}</Form.Item>
+          <Card title='物流信息' style={{ marginTop: 10 }}>
+            <Form.Item label='商品体积'>{bulk || '无'}</Form.Item>
+            <Form.Item label='商品重量'>{weight || '无'}</Form.Item>
+            <Form.Item label='商品箱规'>{boxSpec || '无'}</Form.Item>
             <Form.Item label='可售区域'>
-              <SaleArea value={detail.productSaleAreas} readOnly/>
+              <SaleArea value={detail.productSaleAreas} readOnly />
             </Form.Item>
           </Card>
-          <Card title="商品详情" style={{ marginTop: 10 }}>
-            <Form.Item label="商品详情页">
+          <Card title='商品详情' style={{ marginTop: 10 }}>
+            <Form.Item label='商品详情页'>
               {Array.isArray(listImage) && listImage.length > 0
                 ? listImage.map(url => (
-                    <Image
-                      style={{
-                        width: 102,
-                        height: 102,
-                        marginRight: 10,
-                        marginBottom: 10
-                      }}
-                      key={url}
-                      src={url}
-                    />
-                  ))
+                  <Image
+                    style={{
+                      width: 102,
+                      height: 102,
+                      marginRight: 10,
+                      marginBottom: 10
+                    }}
+                    key={url}
+                    src={url}
+                  />
+                ))
                 : '无'}
             </Form.Item>
           </Card>
-          <Card title="审核结果">
+          <Card title='审核结果'>
             {this.auditStatus === '1' ? (
               <>
-                <Form.Item label="审核结果" required>
+                <Form.Item label='审核结果' required>
                   {getFieldDecorator('auditStatus', {
                     rules: [
                       {
@@ -404,30 +408,30 @@ class GoodsEdit extends React.Component {
                     </Radio.Group>
                   )}
                 </Form.Item>
-                <Form.Item label="审核说明">
+                <Form.Item label='审核说明'>
                   {getFieldDecorator('auditInfo', {
                     rules: [
                       {
                         validator: (rule, value = '', callback) => {
-                          const { getFieldValue } = this.props.form;
+                          const { getFieldValue } = this.props.form
                           if (getFieldValue('auditStatus') === 3 && !value.trim()) {
-                            callback('请输入审核说明');
+                            callback('请输入审核说明')
                           } else {
-                            callback();
+                            callback()
                           }
                         }
                       }
                     ]
-                  })(<TextArea placeholder="请输入审核说明" maxLength={255} />)}
+                  })(<TextArea placeholder='请输入审核说明' maxLength={255} />)}
                 </Form.Item>
                 <Form.Item>
-                  <Button type="primary" onClick={this.handleSave} style={{ marginRight: 10 }}>
+                  <Button type='primary' onClick={this.handleSave} style={{ marginRight: 10 }}>
                     保存
                   </Button>
                   <Button
-                    type="danger"
+                    type='danger'
                     onClick={() => {
-                      APP.history.go(-1);
+                      APP.history.go(-1)
                     }}
                   >
                     返回
@@ -436,14 +440,14 @@ class GoodsEdit extends React.Component {
               </>
             ) : (
               <>
-                <Form.Item label="审核结果">{auditStatus === 2 ? '通过' : '不通过'}</Form.Item>
-                <Form.Item label="审核说明">{auditInfo || '无'}</Form.Item>
+                <Form.Item label='审核结果'>{auditStatus === 2 ? '通过' : '不通过'}</Form.Item>
+                <Form.Item label='审核说明'>{auditInfo || '无'}</Form.Item>
               </>
             )}
           </Card>
         </Form>
       </>
-    );
+    )
   }
 }
 

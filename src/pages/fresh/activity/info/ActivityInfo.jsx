@@ -1,24 +1,24 @@
-import React from 'react';
-import { Card, Form, Input, DatePicker } from 'antd';
-import { activityType } from '@/enum';
-import { withRouter } from 'react-router';
-import Add from '../Add';
-import { getPromotionInfo } from '../api';
-const FormItem = Form.Item;
+import React from 'react'
+import { Card, Form, Input, DatePicker } from 'antd'
+import activityType from '@/pages/fresh/activity/enum'
+import { withRouter } from 'react-router'
+import Add from '../Add'
+import { getPromotionInfo } from '../api'
+const FormItem = Form.Item
 class ActivityInfo extends React.Component {
   state = {
     info: {}
   }
-  componentDidMount() {
-    this.getPromotionInfo();
+  componentDidMount () {
+    this.getPromotionInfo()
   }
-  async getPromotionInfo() {
-    const info = await getPromotionInfo(this.props.match.params.id) || {};
-    this.props.changeType(info);
+  async getPromotionInfo () {
+    const info = await getPromotionInfo(this.props.match.params.id) || {}
+    this.props.changeType(info)
     this.setState({ info })
   }
   disabledStartDate = (startTime) => {
-    const { form } = this.props;
+    const { form } = this.props
     const fieldsValue = form.getFieldsValue();
     const endTime = fieldsValue.endTime;
     if (!startTime || !endTime) {
@@ -61,9 +61,9 @@ class ActivityInfo extends React.Component {
       }
     })
   }
-  render() {
+  render () {
     const { getFieldDecorator } = this.props.form
-    const { type, title, isEidt, startTime, endTime, sort } = this.state.info;
+    const { type, title, isEidt, startTime, endTime, sort } = this.state.info
     return (
       <>
         <Card
@@ -112,7 +112,7 @@ class ActivityInfo extends React.Component {
           onOk={this.handleOk}
         />
       </>
-    );
+    )
   }
 }
-export default withRouter(Form.create({name: 'activityInfo'})(ActivityInfo));
+export default withRouter(Form.create({ name: 'activityInfo' })(ActivityInfo))

@@ -1,3 +1,4 @@
-declare module "*.sass"
-declare module "*.styl"
-declare module "*.png"
+declare module '*.sass'
+declare module '*.scss'
+declare module '*.styl'
+declare module '*.png'

@@ -18,7 +18,7 @@ interface Props {
 type ViewType = -1 | 1 | 2 | 3
 
 interface State {
-  statistics: {label: string, value: any}[]
+  statistics: {label: any, value: any}[]
   type: ViewType
   detail: UliveStudio.ItemProps
 }
@@ -33,7 +33,7 @@ function Statistics (props: {
       {
         dataSource.map((item, index) => {
           return (
-            <div key={index} className={styles['statistics-item']}>
+            <div key={index} className={styles['statistics-item']} style={{ width: dataSource.length===8?'25%':'20%' }}>
               <div className={styles['statistics-item-result']}>{item.value}</div>
               <div className={styles['statistics-item-label']}>{item.label}</div>
             </div>
@@ -56,19 +56,27 @@ class Main extends React.Component<Props, State> {
         value: 0
       },
       {
-        label: '实付订单',
-        value: 0
-      },
-      {
-        label: '实付金额',
-        value: 0
-      },
-      {
         label: '访问UV',
         value: 0
       },
       {
         label: '点赞UV',
+        value: 0
+      },
+      {
+        label: '实付金额(总)',
+        value: 0
+      },
+      {
+        label: '实付订单(总)',
+        value: 0
+      },
+      {
+        label: '实付金额(直接)',
+        value: 0
+      },
+      {
+        label: '实付订单(直接)',
         value: 0
       }
     ],
@@ -93,7 +101,7 @@ class Main extends React.Component<Props, State> {
       if (!res) {
         return
       }
-      res.liveStatus = res.liveStatus === 51 ? 50 :  res.liveStatus
+      res.liveStatus = res.liveStatus === 51 ? 50 : res.liveStatus
       const liveData = res.liveData
       let type: ViewType = -1
       /** 待审核 */
@@ -116,22 +124,40 @@ class Main extends React.Component<Props, State> {
           value: formatDuration(liveData.totalTime)
         },
         {
-          label: '实付订单',
-          value: liveData.orderActualPayTotal
-        },
-        {
-          label: '实付金额',
-          value: APP.fn.formatMoneyNumber(liveData.orderTotalPayMoney, 'm2u')
-        },
-        {
           label: '访问UV',
           value: liveData.callOnUv
         },
         {
           label: '点赞数',
           value: liveData.giveThumbsUpPv
+        },
+        {
+          label: '实付金额(总)',
+          value: APP.fn.formatMoneyNumber(liveData.orderTotalPayMoney, 'm2u')
+        },
+        {
+          label: '实付订单(总)',
+          value: liveData.orderActualPayTotal
+        },
+        {
+          label: '实付金额(直接)',
+          value: APP.fn.formatMoneyNumber(liveData.orderIndirectPayMoney, 'm2u')
+        },
+        {
+          label: '实付订单(直接)',
+          value: liveData.orderIndirectPayTotal
         }
       ] : this.state.statistics
+      //60:直播结束 90 直播中
+      if ([60, 90].indexOf(res.liveStatus) > -1&&liveData) {
+        statistics.splice(4, 0, {
+          label:
+        <div style={{ textAlign: 'center' }}>{res.liveStatus===90?'在线人数':'峰值在线人数'}
+          {res.liveStatus===90&&<div style={{ fontSize: 10 }}>（会有5分钟延迟）</div>}
+        </div>,
+          value: res.liveStatus===90?(liveData.onlineNum||0):(liveData.onlineMaxNum||0)
+        })
+      }
       this.setState({
         type,
         statistics,

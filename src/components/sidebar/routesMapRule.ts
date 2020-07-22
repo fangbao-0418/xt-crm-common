@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-05-06 10:32:12
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-21 16:18:27
+ * @LastEditTime: 2020-06-04 14:42:07
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/components/sidebar/routesMapRule.ts
  */
 
@@ -19,6 +19,10 @@ const rules = {
   '/activity/list': [
     /^\/activity\/info(\/)?edit(\/)?(\d+)?/,
     /^\/activity\/info(\/)?detail(\/)?(\d+)?/
+  ],
+  '/ulive/activity/list': [
+    /^\/ulive\/activity\/info(\/)?edit(\/)?(\d+)?/,
+    /^\/ulive\/activity\/info(\/)?detail(\/)?(\d+)?/
   ],
   '/coupon/get/couponList': [
     /^\/coupon\/get(\/)?couponList(\/)?/
@@ -38,6 +42,9 @@ const rules = {
   '/order/autoRefundRule': [
     /^\/order\/autoRefundRule(\/)?(\d+)?/
   ],
+  '/order/servicecenter': [
+    /order\/servicecenter(\/)?(\d+)?/
+  ],
   '/fresh/order/mainOrder': [
     /fresh\/order\/detail(\/)?(\d+)?/
   ],
@@ -48,10 +55,10 @@ const rules = {
     /goods\/sku-stock(\/)?(\d+)?/
   ],
   '/activity/lottery': [
-    /activity\/lottery(\/)?(\d+)?/
+    /^\/activity\/lottery(\/)?-?(\d+)?/
   ],
   '/activity/reward': [
-    /activity\/reward(\/)?(\d+)?/
+    /^\/activity\/reward(\/)?(\d+)?/
   ],
   '/activity/sprinkle-cash': [
     /activity\/sprinkle-cash\/form(\/)?(\d+)?/
@@ -83,12 +90,15 @@ const rules = {
   '/message/template': [
     /message\/template\/detail(\/)?(\d+)?/
   ],
+  '/fresh/activity/lottery': [
+    /fresh\/activity\/lottery(\/)?(\d+)?/
+  ],
   '/fresh/store': [
     /fresh\/store$/,
     /fresh\/store\/-1$/
   ],
   '/fresh/store/timer': [
-    /fresh\/store$/
+    /fresh\/store\/timer$/
   ],
   '/fresh/saleAfter': [
     /fresh\/saleAfter\/detail(\/)?(\d+)?/
@@ -108,10 +118,9 @@ const rules = {
   '/fresh/coupon': [
     /fresh\/coupon\/bulkissuing(\/)?(\d+)?/,
     /fresh\/coupon\/detail(\/)?(\d+)?/
+  ],
+  '/shop/boss': [
+    /shop\/boss\/detail(\/)?(\d+)?/
   ]
 }
 export default rules
-
-const b: any = {
-
-}

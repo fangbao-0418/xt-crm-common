@@ -1,19 +1,18 @@
 /*
  * @Date: 2020-03-06 10:18:13
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-05 15:36:49
- * @FilePath: /xt-crm/src/pages/fresh/goods/index.js
+ * @LastEditTime: 2020-06-03 17:14:23
+ * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/fresh/goods/index.js
  */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Route, Switch } from 'react-router-dom'
-import loadable from '@/util/loadable'
 import GoodsTimer from './timer'
+import SkuSale from './sku-sale'
+import Check from './check'
+import Detail from './detail'
+import GoodsForm from './sku-sale/form'
 
-const SkuSale = loadable(() => import('./sku-sale'))
-const Check = loadable(() => import('./check'))
-const Detail = loadable(() => import('./detail'))
-const GoodsForm = loadable(() => import('./sku-sale/form'))
 class RouteApp extends React.Component {
   render () {
     const { match } = this.props

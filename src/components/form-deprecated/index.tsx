@@ -40,7 +40,7 @@ export interface OptionProps {
 }
 interface ColProps {span?: number, offset?: number}
 
-export type NamespaceProps = 'common' | 'marketing'
+export type NamespaceProps = 'common' | 'marketing' | 'profile'
 
 export interface Props extends FormComponentProps {
   config?: FieldsConfig

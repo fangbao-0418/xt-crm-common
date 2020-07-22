@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import { Card, Radio, Button } from 'antd'
 import PropTypes from 'prop-types'
 import { connect } from '@/util/utils'
+import Scene from './scene'
 
 const namespace = 'fresh.settings'
 
@@ -26,25 +27,6 @@ export default class extends PureComponent {
     dispatch[namespace].getSetting()
   }
 
-  render () {
-    const { value } = this.props
-    return (
-      <Card>
-        <h5>喜团好菜</h5>
-        <Radio.Group onChange={this.onChange} value={value}>
-          <Radio value={1}>1×1排列</Radio>
-          <Radio value={2} style={{ marginLeft: 24 }}>
-            1×2排列
-          </Radio>
-        </Radio.Group>
-        <div>
-          <Button type='primary' style={{ marginTop: 24 }} onClick={this.save}>保存</Button>
-        </div>
-
-      </Card>
-    )
-  }
-
   onChange = (e) => {
     const { dispatch } = this.props
     const { value } = e.target
@@ -56,5 +38,25 @@ export default class extends PureComponent {
   save=(e)=>{
     const { dispatch } = this.props
     dispatch[namespace].setSetting()
+  }
+
+  render () {
+    const { value } = this.props
+    return (
+      <Card>
+        {/* <h5>喜团好菜</h5>
+        <Radio.Group onChange={this.onChange} value={value}>
+          <Radio value={1}>1×1排列</Radio>
+          <Radio value={2} style={{ marginLeft: 24 }}>
+            1×2排列
+          </Radio>
+        </Radio.Group>
+        <div>
+          <Button type='primary' style={{ marginTop: 24 }} onClick={this.save}>保存</Button>
+        </div>
+        <hr style={{ margin: '20px 0' }} /> */}
+        <Scene />
+      </Card>
+    )
   }
 }

@@ -15,24 +15,21 @@ yarn install
 yarn dev
 ```
 
-## Dependencies
+# 添加submodule
+```
+git submodule add -b feature/issue28 -f --name common -- git@192.168.20.7:front-end/xt-youxan/platform-library.git ./src/packages/common
+```
 
-* React 16.7      --hooks
-* Redux           --状态管理
-* React-Router-V4 --多页面
-* Ant Design      --UI
-* React Intl      --国际化
-* Gulp            --合并国际化词条
-* Restify         --Mock服务器
+# 添加portal
+```
+git submodule add -b master -f --name portal -- git@192.168.20.7:front-end/xt-youxan/xt-crm-microservice/portal.git ./src/packages/portal
+```
 
-## Solved Problems
-
-* React、Redux、React-Router-V4等整合
-* Code Splitting
-* [组件](https://zhuanlan.zhihu.com/p/40134493)按功能划分
-* [国际化](https://zhuanlan.zhihu.com/p/40176138)
-* [服务器交互](https://zhuanlan.zhihu.com/p/40512216)
-* [侧边栏](https://zhuanlan.zhihu.com/p/41111300)更易配置
-* [样式](https://zhuanlan.zhihu.com/p/50837353)使用局部结合全局
-* 全局等待效果 & 局部组件加载等待
-* ...
+## env
+```
+  ['https://daily-xt-crmadmin.hzxituan.com'],
+  ['https://test-crmadmin.hzxituan.com'],
+  ['https://test2-crmadmin.hzxituan.com'],
+  ['https://pre-xt-crmadmin.hzxituan.com'],
+  ['https://xt-crmadmin.hzxituan.com']
+```

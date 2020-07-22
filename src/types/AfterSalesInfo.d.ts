@@ -1,5 +1,6 @@
 declare module AfterSalesInfo {
   export interface data {
+    supplierHandLogS: any[];
     cancel: boolean;
     id: number;
     refundStatus: number;
@@ -22,6 +23,7 @@ declare module AfterSalesInfo {
     handleChannel: 0 | 1 | 2;
     /** 物流备注 */
     returnExpressRemark: string;
+    supplierResHandTime: number;
   }
   export interface CheckVO {
     amount: number;
@@ -82,6 +84,8 @@ declare module AfterSalesInfo {
     realName: string;
     idNo: number;
     orderCommentListVO: any[];
+    // 1: '喜团自营店',2: '直播小店',3: '品牌旗舰店', 4: '品牌专营店',5: '喜团工厂店', 6: '普通企业店'
+    shopType: 1 | 2 | 3 | 4 | 5 | 6
   }
   export interface OrderServerVO {
     id: number;
@@ -147,10 +151,11 @@ declare module AfterSalesInfo {
   }
 
   export interface ShopDTO {
-    shopType: 1 | 2;
+    shopType: 1 | 2 | 3 | 4 | 5 | 6;
     shopCode: string;
     shopName: string;
     shopOwnerPhone: string;
     shopPictrueUrl: string;
+    shopPictrueFirstUrl: string;
   }
 }

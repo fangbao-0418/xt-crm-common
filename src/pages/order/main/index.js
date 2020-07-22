@@ -1,7 +1,7 @@
 /*
  * @Date: 2020-03-16 14:01:18
  * @LastEditors: fangbao
- * @LastEditTime: 2020-05-28 14:28:45
+ * @LastEditTime: 2020-06-11 20:24:41
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/order/main/index.js
  */
 import React, { Component } from 'react'
@@ -17,7 +17,8 @@ class Order extends Component {
     this.state = {}
   }
   handleTabClick = key => {
-    window.location.href = window.location.pathname + '#' + key
+    // window.location.href = window.location.pathname + '#' + key
+    APP.href(key)
   };
   render () {
     const {

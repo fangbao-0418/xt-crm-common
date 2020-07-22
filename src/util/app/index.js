@@ -1,24 +1,19 @@
-/*
- * @Date: 2020-03-16 14:01:18
- * @LastEditors: fangbao
- * @LastEditTime: 2020-05-12 15:47:39
- * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/index.js
- */
 import { message } from 'antd'
+import '@/util/moon'
+import Moon from '@xt/rlcas-moon/dist/h5-moon';
 import * as regular from './regular'
-var constant = require('./constant').default
-var http = require('./http')
-var fn = require('./fn')
+const constant = require('./constant').default
+const http = require('./http')
+const fn = require('./fn')
 
 function getUser () {
-  var userStr = localStorage.getItem('user')
-  var user = {}
+  const userStr = localStorage.getItem('user')
+  let user = {}
   try {
     user = JSON.parse(userStr) || {}
   } catch (e) {
     console.log(e)
   }
-  console.log(user, 'user')
   user.menuGathers = user.menuGathers || []
   return user
 }
@@ -26,14 +21,49 @@ function getUser () {
 Object.assign(APP, {
   history: {},
   moon: {
+    logApi: function (obj) {
+      try {
+        obj = obj || {}
+        if (!obj?.config) {
+          if (typeof obj !== 'object') {
+            obj = {}
+          }
+          obj.config = {}
+        }
+        return this.logger({
+          url: obj.config.url,
+          header: obj.config.headers,
+          data: obj.config.data,
+          params: obj.config.params,
+          res: obj.data
+        })
+      } catch (e) {
+        //
+      }
+    },
+    logger: function (data, label) {
+      if (window.Moon) {
+        console.log(data, 'data')
+        try {
+          Moon.logger({
+            t: 'all',
+            data: {
+              label,
+              ...data
+            }
+          })
+        } catch (e) {
+          //
+        }
+      }
+    },
     oper: function () {
       if (window.Moon) {
         try {
-          // console.log(arguments[0], 'app moon oper')
           window.Moon.oper.apply(null, arguments)
         } catch (e) {
-          var response = arguments[0]
-          var message = ' response is '
+          const response = arguments[0]
+          let message = ' response is '
           try {
             message += JSON.stringify(response)
           } catch (e2) {
@@ -56,8 +86,8 @@ Object.assign(APP, {
           return
         }
         try {
-          var tempError = new Error('')
-          var message = err
+          const tempError = new Error('')
+          let message = err
           if (err instanceof Object) {
             message = JSON.stringify(err)
           }
@@ -86,7 +116,25 @@ Object.assign(APP, {
   constant,
   open: function (url) {
     url = String(url || '').trim()
-    url = (/^(https?|#)/).test(url) ? url : '#' + url
+    console.log(url, 'source url')
+    const unix = new Date().getTime()
+    function fillUnix (p) {
+      return !(/\?/).test(p) ? p + `?t=${unix}` : p + `&t=${unix}`
+    }
+    if (!(/^(https)/).test(url)) {
+      // 1 /abc#/efg
+      // 2 /abc/efg
+      // 3 /abc/efg?abc=123
+      // 4 /abc?a=123#/abc
+      // 5 /#/abc
+      const paths = url.split('#')
+      if (paths.length === 1) { // 不存在hash
+        url = `/?t=${unix}#` + url
+      } else { // 存在hash hash前部分为路径添加时间戳
+        url = fillUnix(paths[0]) + '#' + paths.slice(1).join('#')
+      }
+    }
+    console.log(url, 'url')
     window.open(url)
   },
   href: function (url, target) {

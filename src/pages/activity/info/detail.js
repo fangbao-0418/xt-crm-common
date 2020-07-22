@@ -10,6 +10,21 @@ import If from '@/packages/common/components/if'
 import { parseQuery } from '@/packages/common/utils'
 import { Decimal } from 'decimal.js'
 const FormItem = Form.Item
+// productType map
+// PRODUCTY(0, "普通商品"),
+
+// PROMOTION(100, "活动商品"),
+// ACTIVATION_CODE(101, "激活码商品"),
+// GROUP_PUSH(102, "地推商品"),
+
+// GENERAL_OVERSEAS(10, "一般海淘商品"),
+// BONDED_WAREHOUSE(20, "保税仓海淘商品"),
+// FRESH_PRODUCT(30, "喜团买菜商品"),
+// SHOP_PRODUCT(40,"直播小店商品"),
+// POP_PRODUCT(41,"POP店铺商品"),
+// VIRTUAL_HFCZ(50,"虚拟商品_话费充值"),
+// VIRTUAL_LLCZ(51,"虚拟商品_流量充值"),
+
 console.log('Image=>', Image)
 const replaceHttpUrl = imgUrl => {
   return imgUrl.replace('https://assets.hzxituan.com/', '').replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', '')
@@ -128,7 +143,6 @@ class ActivityDetail extends React.Component {
       const record = Object.assign({}, (res.records || [])[0])
       record.promotionSkuList = record.promotionSkuList || []
       record.type = record.type !== undefined ? record.type : Number(type)
-      console.log(type, 'type')
       this.handleData(record)
     })
   }
@@ -199,13 +213,13 @@ class ActivityDetail extends React.Component {
         ...item,
         buyingPrice: item.buyingPrice ? new Decimal(item.buyingPrice).mul(100).toNumber() : 0,
         // 拼团
-        ...(detailData.type === 10 ? {
+        ... {
           promotionPrice: item.promotionPrice ? new Decimal(item.promotionPrice).mul(100).toNumber(): 0,
           headPrice: item.pmHeadPrice ? new Decimal(item.pmHeadPrice).mul(100).toNumber() : 0,
           areaPrice: item.pmAreaPrice ? new Decimal(item.pmAreaPrice).mul(100).toNumber() : 0,
           cityPrice: item.pmCityPrice ? new Decimal(item.pmCityPrice).mul(100).toNumber() : 0,
           managerPrice: item.pmManagerPrice ? new Decimal(item.pmManagerPrice).mul(100).toNumber() : 0
-        } : {})
+        }
       }
 
       return promotionSkuAddItem
@@ -337,7 +351,6 @@ class ActivityDetail extends React.Component {
   ]
   getColumns = (detailData) => {
     const { getFieldDecorator, validateFields } = this.props.form
-    console.log(detailData, 'detailData')
     return [
       {
         title: '规格名称',
@@ -371,6 +384,11 @@ class ActivityDetail extends React.Component {
                             msg: `规格名称: ${record.property} 活动价(${value}元) ${value === record.costPrice ? '等于' : '低于'} 成本价(${record.costPrice}元)`
                           })
                         } else if (value <= record.headPrice) {
+                          // 小店商品和POP商品不需要校验团长价
+                          if ([40, 41].includes(detailData.productType)) {
+                            cb()
+                            return
+                          }
                           cb({
                             message: `应高于团长价(${record.headPrice}元)`,
                             pass: true,

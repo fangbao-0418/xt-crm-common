@@ -5,7 +5,7 @@ import Shop from './shop'
 import Coupon from './coupon'
 import Hotsport from './hotspot'
 import Upload from '@/components/upload'
-import ShopModal from '@/components/shop-modal'
+import ShopModal from '../shop-modal'
 import CouponModal from '@/components/coupon-modal'
 import { typeConfig } from '../../constant'
 import { connect } from 'react-redux'
@@ -174,6 +174,10 @@ class Main extends React.Component<Props, State> {
             <ShopModal
               selectedRowKeys={selectedRowKeys}
               ref='shopmodal'
+              processPayload={payload=> ({
+                ...payload,
+                isFilter: 0
+              })}
               onSelectAll={(selected, selectedRows, changeRows) => {
                 if (selected) {
                   changeRows.map(item => {

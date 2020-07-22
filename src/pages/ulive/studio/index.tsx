@@ -7,27 +7,30 @@ import { AlertComponentProps } from '@/packages/common/components/alert'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import If from '@/packages/common/components/if'
 import { param } from '@/packages/common/utils'
-import { Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
+import { Tabs, Tag, Divider, Popover, Button, Popconfirm, Input } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, TypeEnum, LiveStatusEnum } from './config'
 import View from './components/View'
 import CloseDown from './components/CloseDown'
 import UploadCover from './components/UploadCover'
+import CouponSelector from './components/CouponSelector'
 import * as api from './api'
 import { fetchTagList } from '../config/api'
 import TextArea from 'antd/lib/input/TextArea'
-
+const { TabPane } = Tabs
 interface Props extends AlertComponentProps {
 }
 
 interface State {
-  rowKeys: any[]
+  rowKeys: any[],
+  bizType: string
 }
 
 class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
   public state: State = {
-    rowKeys: []
+    rowKeys: [],
+    bizType: '1'
   }
   public columns: ColumnProps<UliveStudio.ItemProps>[] = [
     {
@@ -63,7 +66,8 @@ class Main extends React.Component<Props, State> {
           <span
             className='href'
             onClick={() => {
-              APP.href(`/user/detail?memberId=${record.memberId}`, '__target') }
+              APP.href(`/user/detail?memberId=${record.memberId}`, '__target')
+            }
             }
           >
             {text || record.anchorPhone}
@@ -80,7 +84,7 @@ class Main extends React.Component<Props, State> {
         return (
           <Popover
             content={(
-              <Image src={text} width={240} height={240}/>
+              <Image src={text} width={240} height={240} />
             )}
           >
             <Image src={text} width={80} height={80} />
@@ -173,7 +177,12 @@ class Main extends React.Component<Props, State> {
       align: 'center',
       render: (text, record) => {
         return text ? (
-          <span onClick={() => { APP.history.push(`/ulive/inform/${record.planId}`) }} className='href'>
+          <span
+            onClick={() => {
+              APP.history.push(`/ulive/inform/${record.planId}`)
+            }}
+            className='href'
+          >
             {text}
           </span>
         ) : null
@@ -185,17 +194,26 @@ class Main extends React.Component<Props, State> {
       width: 300,
       fixed: 'right',
       render: (text, record) => {
+        const { bizType } = this.state
         const canStopPlay = [70, 90].indexOf(record.liveStatus) > -1
         const canUp = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         const canDown = [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         const canSetTop = record.isCarousel === 0 && record.status === 1 && [70, 90].indexOf(record.liveStatus) > -1 && record.type === 0
         return (
           <div>
-            <span onClick={this.showView.bind(this, record.planId)} className='href'>详情</span>&nbsp;&nbsp;
-            <If condition={[0, 1].indexOf(record.status) > -1}><span onClick={(canUp || canDown) ? this.changeStatus.bind(this, record) : undefined} className={(canUp || canDown) ? 'href' : ''}>{record.status === 0 ? '上架' : '下架'}</span>&nbsp;&nbsp;</If>
+            <span onClick={this.showView.bind(this, record.planId)} className='href'>
+              详情
+            </span>&nbsp;&nbsp;
+            <If condition={[0, 1].indexOf(record.status) > -1}>
+              <span onClick={(canUp || canDown) ? this.changeStatus.bind(this, record) : undefined} className={(canUp || canDown) ? 'href' : ''}>
+                {record.status === 0 ? '上架' : '下架'}
+              </span>&nbsp;&nbsp;
+            </If>
             <If condition={record.status === 6}><span> 断网下架</span>&nbsp;&nbsp;</If>
             <If condition={[51, 60].indexOf(record.liveStatus) === -1}>
-              <span onClick={canStopPlay ? this.closeDown.bind(this, record) : undefined} className={canStopPlay ? 'href' : ''}>停播</span>&nbsp;&nbsp;
+              <span onClick={canStopPlay ? this.closeDown.bind(this, record) : undefined} className={canStopPlay ? 'href' : ''}>
+                停播
+              </span>&nbsp;&nbsp;
             </If>
             <If condition={record.liveStatus === 60}>
               <span onClick={this.stopPlayback.bind(this, record)} className={'href'}>
@@ -208,11 +226,83 @@ class Main extends React.Component<Props, State> {
               </span>
             )}&nbsp;&nbsp;
             {/* {record.anchorType === 10 && (<span onClick={this.uploadCover.bind(this, record)} className='href'>上传封面</span>)} */}
+            <If
+              condition={[
+                LiveStatusEnum['预告-待开播'],
+                LiveStatusEnum['直播中']
+              ].includes(record.liveStatus) && bizType === '1'}
+            >
+              <span onClick={this.setCoupon.bind(this, record)} className={'href'}>
+                优惠券{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
+              </span>
+            </If>
+            <If
+              condition={[
+                LiveStatusEnum['已结束'],
+                LiveStatusEnum['停播-运营停播'],
+                LiveStatusEnum['预告-已过期'],
+                LiveStatusEnum['预告-禁播']
+              ].includes(record.liveStatus) && bizType === '1'}
+            >
+              <span onClick={this.checkCoupon.bind(this, record)} className={'href'}>
+                优惠券{record.couponCodes && record.couponCodes[0] && `(${record.couponCodes.length})`}
+              </span>
+            </If>
           </div>
         )
       }
     }
   ]
+  public setCoupon (record: UliveStudio.ItemProps) {
+    let selectedRowKeys: any[] = record.couponCodes || []
+    const hide = this.props.alert({
+      width: 1000,
+      title: '选择优惠券',
+      content: (
+        <CouponSelector
+          readonly={false}
+          selectedRowKeys={selectedRowKeys}
+          onChange={(rowKeys) => {
+            selectedRowKeys = rowKeys
+          }}
+        />
+      ),
+      onOk: () => {
+        if (selectedRowKeys.length > 20) {
+          APP.error('优惠券最多只能绑定20张')
+          return
+        }
+        api.setCoupon({
+          liveId: record.planId,
+          couponCodes: selectedRowKeys
+        }).then(() => {
+          this.listpage.refresh()
+          hide()
+        })
+      }
+    })
+  }
+  public checkCoupon (record: UliveStudio.ItemProps) {
+    const selectedRowKeys: any[] = record.couponCodes || []
+    if (!selectedRowKeys.length) {
+      this.props.alert({
+        title: '查看优惠券',
+        content: '该直播间未绑定优惠券'
+      })
+      return
+    }
+    this.props.alert({
+      width: 1000,
+      title: '查看优惠券',
+      footer: null,
+      content: (
+        <CouponSelector
+          selectedRowKeys={selectedRowKeys}
+          readonly={true}
+        />
+      )
+    })
+  }
   public stopPlayback (record: UliveStudio.ItemProps) {
     if (this.props.alert) {
       let reason = ''
@@ -338,7 +428,7 @@ class Main extends React.Component<Props, State> {
     // module_live/pages/room/index
     api.getWxQrcode({
       page: 'module_live/pages/room/index',
-      scene: `id=${record.planId}`,
+      scene: `id=${record.planId}`
       // page: 'pages/product/product',
       // scene: 'pid=782&index=2'
     }).then((res) => {
@@ -491,9 +581,9 @@ class Main extends React.Component<Props, State> {
       liveCoverUrl: record.liveCoverUrl,
       isLive: isPlayBack ? '' : 'live'
     })
-    let url = location.pathname.replace(/index.html/, '') +  'video.html?' + query
+    let url = location.pathname.replace(/index.html/, '') + 'video.html?' + query
     // url = 'http://assets.hzxituan.com/upload/2020-03-17/020bfc50-ec64-41cd-9a42-db1b7e92864e-k7vplmky.html?' + query
-    url = 'http://test-crmadmin.hzxituan.com/issue50/video.html?' + query
+    url = 'http://xt-crmadmin.hzxituan.com/video.html?' + query
     // url = 'http://localhost:3000/video.html?' + query
     window.open(url, '喜团直播', 'top=120,left=150,width=800,height=500,scrollbars=0,titlebar=1', false)
   }
@@ -533,13 +623,30 @@ class Main extends React.Component<Props, State> {
       footer: null
     })
   }
+
+  handleTabClick = (key: any) => {
+    this.setState({
+      bizType: key
+    }, ()=>{
+      this.listpage.form.reset()
+    })
+  }
   public render () {
+    const tabList=[{ name: '喜团优选', key: '1' }, { name: '喜团买菜', key: '2' }]
+    const { bizType }=this.state
     return (
       <div
         style={{
-          background: '#FFFFFF'
+          background: '#FFFFFF',
+          paddingTop: 20
         }}
       >
+        <Tabs style={{ marginLeft: 20, paddingRight: 20 }} activeKey={bizType} onTabClick={this.handleTabClick}>
+          {tabList.map(tab => {
+            return (<TabPane tab={tab.name} key={tab.key} />
+            )
+          })}
+        </Tabs>
         <ListPage
           reserveKey='ulive-studio'
           getInstance={(ref) => {
@@ -631,6 +738,12 @@ class Main extends React.Component<Props, State> {
               <Button onClick={this.multiAudit(0)}>审核不通过</Button>
             </div>
           )}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              bizType
+            }
+          }}
           api={api.getStudioList}
         />
       </div>

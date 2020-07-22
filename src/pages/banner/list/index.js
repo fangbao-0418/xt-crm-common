@@ -159,15 +159,11 @@ class OrderList extends React.Component {
                 {status ? '关闭' : '开启'}
               </Button>
               &nbsp;
-              <Button
-                size='small'
-                type='danger'
-                onClick={() => {
-                  this.delete(id)
-                }}
-              >
-                删除
-              </Button>
+              {!status
+              && <Button size='small' type='danger' onClick={()=>{
+                this.delete(id)
+              }}>
+              删除 </Button>}
             </>
           )
         }

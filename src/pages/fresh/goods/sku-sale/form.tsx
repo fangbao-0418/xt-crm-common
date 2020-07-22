@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Card, Input, Button, message, Radio, Select, Row, InputNumber } from 'antd'
-import UploadView from '@/components/upload'
+import UploadView, { VideoUpload } from '@/components/upload'
 import { pick, map, size, filter, assign, isEmpty, flattenDeep } from 'lodash'
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api'
 import { gotoPage, parseQuery, getAllId, treeToarr } from '@/util/utils'
@@ -182,6 +182,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'productId',
           'productName',
           'productShortName',
+          'boxSpec',
           // 'property1',
           // 'property2',
           'storeId',
@@ -194,6 +195,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
           'videoUrl',
           'deliveryMode',
           'settleType',
+          'sort',
           // 'barCode',
           'bannerUrl',
           'returnPhone',
@@ -578,12 +580,15 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             label='商品视频'
             inner={(form) => {
               return form.getFieldDecorator('videoUrl')(
-                <UploadView
-                  placeholder='上传视频'
-                  fileType='video'
-                  listType='picture-card'
-                  listNum={1}
-                  size={5}
+                // <UploadView
+                //   placeholder='上传视频'
+                //   fileType='video'
+                //   listType='picture-card'
+                //   listNum={1}
+                //   size={5}
+                // />
+                <VideoUpload
+                  maxSize={5 * 1024 * 1024}
                 />
               )
             }}
@@ -636,7 +641,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
               )
             }}
           />
-          {/* <FormItem verifiable name='showNum' /> */}
+          <FormItem verifiable name='sort' />
         </Card>
         <SkuList
           form={this.form && this.form.props.form}
@@ -660,6 +665,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
         >
           <FormItem name='bulk' />
           <FormItem name='weight' />
+          <FormItem name='boxSpec' />
           <FormItem
             label='可售区域'
             required

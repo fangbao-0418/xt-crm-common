@@ -5,6 +5,16 @@ import _ from 'lodash'
 import * as api from '../api'
 import Image from '@/components/Image'
 
+const shopTypeMap = {
+  1: '喜团自营',
+  2: '直播小店',
+  3: '品牌旗舰店',
+  4: '品牌专营店',
+  5: '喜团工厂店',
+  6: '普通企业店',
+  7: 'pop店'
+}
+
 export interface Item {
   id?: number
   productId?: number
@@ -19,6 +29,7 @@ interface Props {
   onOk?: (ids: any[], rows: Item[]) => void
   onSelect?: (record: Item, selected: boolean) => void
   onSelectAll?: (selected: boolean, selectedRows: Item[], changeRows: Item[]) => void
+  fetchNode?: 'open' | 'initial'
 }
 interface State extends PageProps<Item> {
   records: Item[]
@@ -61,17 +72,25 @@ class Main extends React.Component<Props, State> {
       dataIndex: 'coverUrl',
       render: (text) => {
         return (
-          <Image src={text} width={80} height={80}/>
+          <Image src={text} width={80} height={80} />
         )
       }
+    },
+    {
+      title: '店铺类型',
+      key: 'shopType',
+      dataIndex: 'shopType',
+      render: (val: 1 | 2 | 3 | 4 | 5 | 6 | 7) => shopTypeMap[val]
     },
     {
       title: '库存',
       dataIndex: 'stock'
     }
   ]
+  public fetchNode: 'initial' | 'open'
   public constructor (props: Props) {
     super(props)
+    this.fetchNode = props.fetchNode || 'initial'
     this.onOk = this.onOk.bind(this)
     this.onCancel = this.onCancel.bind(this)
     this.onSearch = this.onSearch.bind(this)
@@ -80,7 +99,9 @@ class Main extends React.Component<Props, State> {
     this.onSelectAll = this.onSelectAll.bind(this)
   }
   public componentDidMount () {
-    this.fetchData()
+    if (this.fetchNode === 'initial') {
+      this.fetchData()
+    }
   }
   public componentWillReceiveProps (props: Props) {
     this.setState({
@@ -101,11 +122,14 @@ class Main extends React.Component<Props, State> {
         }
       })
       this.setState({
-        ...res,
+        ...res
       })
     })
   }
-  public open (selectedRows:  Item[]) {
+  public open (selectedRows: Item[]) {
+    if (this.fetchNode === 'open') {
+      this.fetchData()
+    }
     this.selectedRows = selectedRows.map((item) => {
       return {
         ...item
@@ -145,7 +169,7 @@ class Main extends React.Component<Props, State> {
   }
   public onSelect (record: Item, selected: boolean) {
     if (selected) {
-      this.selectedRows.push(record);
+      this.selectedRows.push(record)
     } else {
       this.selectedRows = this.selectedRows.filter(item => item.productId !== record.productId);
     }
@@ -156,20 +180,20 @@ class Main extends React.Component<Props, State> {
   public onSelectAll (selected: boolean, selectedRows: Item[], changeRows: Item[]) {
     if (selected) {
       changeRows.map(item => {
-        this.selectedRows.push(item);
-      });
+        this.selectedRows.push(item)
+      })
     } else {
-      const ids = changeRows.map(val => val.productId);
+      const ids = changeRows.map(val => val.productId)
       this.selectedRows = this.selectedRows.filter(item => {
-        return ids.indexOf(item.productId) === -1;
-      });
+        return ids.indexOf(item.productId) === -1
+      })
     }
     if (this.props.onSelectAll) {
       this.props.onSelectAll(selected, selectedRows, changeRows)
     }
   }
   public render () {
-    const { selectedRowKeys, visible } = this.state;
+    const { selectedRowKeys, visible } = this.state
     const rowSelection = {
       onSelect: this.onSelect,
       onChange: this.onrowSelectionChange,
@@ -186,12 +210,12 @@ class Main extends React.Component<Props, State> {
       >
         <div>
           <Input
-            style={{marginBottom: 20}}
+            style={{ marginBottom: 20 }}
             placeholder='请选择需要搜索的商品'
             onChange={this.onSearch}
           />
           <Table
-            style={{width: '100%'}}
+            style={{ width: '100%' }}
             rowKey={'productId'}
             rowSelection={rowSelection}
             columns={this.columns}

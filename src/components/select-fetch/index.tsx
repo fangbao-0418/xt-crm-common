@@ -7,6 +7,8 @@ interface Props {
   onChange?: (value: any) => void
   placeholder?: string
   value?: any
+  disabled?: boolean
+  mode?: 'default' | 'multiple' | 'tags' | 'combobox' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE' | undefined
 }
 interface State {
   options: {label: string, value: any}[]
@@ -50,10 +52,13 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { options, value } = this.state
+    const { mode, disabled } = this.props
     return (
       <Select
         value={value}
+        mode={mode}
         allowClear
+        disabled={disabled}
         placeholder={this.props.placeholder || '请选择'}
         style={this.props.style}
         onChange={this.onChange}

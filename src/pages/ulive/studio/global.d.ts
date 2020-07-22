@@ -59,6 +59,8 @@ declare namespace UliveStudio {
     anchorLevel: 0 | 10
     /** 直播标签 */
     liveTags: string[]
+    /** 优惠券 */
+    couponCodes: string[]
   }
   /** 直播计划详情 */
   interface StatisticsProps {
@@ -78,6 +80,14 @@ declare namespace UliveStudio {
     orderTotalPayMoney: number
     /** 直播时长 */
     totalTime: number
+    /** 订单实际支付订单总数(直接) */
+    orderIndirectPayTotal: number
+    /** 订单实付总金额(直接) */
+    orderIndirectPayMoney: number
+    /** 峰值在线人数 */
+    onlineMaxNum: number
+    /** 在线人数 */
+    onlineNum: number
   }
   /** 举报信息 */
   interface ComplainProps {

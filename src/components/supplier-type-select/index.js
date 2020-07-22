@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { Select } from 'antd';
+import React, { Component } from 'react'
+import { Select } from 'antd'
 
-const { Option } = Select;
+const { Option } = Select
 
 // EMS("ems", "EMS"),
 // SHUNFENG("shunfeng", "顺丰"),
@@ -21,17 +21,18 @@ const Options = {
   3: '一般海外供应商',
   4: '保税仓海外供应商',
   5: '喜团买菜供应商',
-  6: '小店供应商'
-};
+  6: '小店供应商',
+  7: 'pop店'
+}
 
-const valueArray = Object.keys(Options);
+const valueArray = Object.keys(Options)
 
 export default class SupplierTypeSelect extends Component {
-  render() {
+  render () {
     return (
       <Select
         allowClear
-        placeholder="请选择供应商分类"
+        placeholder='请选择供应商分类'
         style={{ width: 150 }}
         {...this.props}
       >
@@ -39,6 +40,6 @@ export default class SupplierTypeSelect extends Component {
           <Option value={Number(v)} key={v}>{Options[v]}</Option>
         ))}
       </Select>
-    );
+    )
   }
 }

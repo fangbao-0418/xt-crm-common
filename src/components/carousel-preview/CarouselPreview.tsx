@@ -12,6 +12,9 @@ type CarouselPreviewProps = {
   onCancel?: (e: React.MouseEvent<HTMLElement>) => void
   /* 模态框消失之后的回调 */
   afterClose?: () => void
+  afterAddon?: React.ReactNode
+  forceRender?: boolean
+  bodyStyle?: React.CSSProperties
 } & Partial<typeof defaultCarouselPreviewProps>
 
 interface CarouselPreviewState {
@@ -26,11 +29,12 @@ class CarouselPreview extends PureComponent<
   private static defaultProps = defaultCarouselPreviewProps
 
   private static getDerivedStateFromProps (
-    nextProps: CarouselPreviewProps
+    nextProps: CarouselPreviewProps,
+    preState: CarouselPreviewState
   ) {
     if (
-      nextProps.visible &&
-      (nextProps.list && nextProps.list.length)
+      nextProps.visible
+      && (nextProps.list && nextProps.list.length)
     ) {
       return {
         list: nextProps.list
@@ -81,7 +85,7 @@ class CarouselPreview extends PureComponent<
       hint && message.warn('已经第一张了')
       return
     }
-    this.sliderRef.slick.slickPrev()
+    this.sliderRef?.slick.slickPrev()
   }
 
   /** 下一张图片 */
@@ -92,11 +96,11 @@ class CarouselPreview extends PureComponent<
       hint && message.warn('已经最后一张了')
       return
     }
-    this.sliderRef.slick.slickNext()
+    this.sliderRef?.slick.slickNext()
   }
 
   /** 滚轮上一张下一张 */
-  handleWheel = (event: any) => {
+  public handleWheel = (event: any) => {
     const deltaY = event.deltaY
     if (deltaY > 0) {
       // 下一张
@@ -107,8 +111,12 @@ class CarouselPreview extends PureComponent<
     }
   }
 
+  public goto = (index: number) => {
+    this.sliderRef?.slick.slickGoTo(index)
+  }
+
   public render () {
-    const { title, visible, onCancel } = this.props
+    const { title, visible, onCancel, afterAddon, forceRender = false, bodyStyle = {} } = this.props
     const { list, activeSlide } = this.state
 
     return (
@@ -116,13 +124,16 @@ class CarouselPreview extends PureComponent<
         <Modal
           visible={visible}
           bodyStyle={{
-            padding: '24px 64px 12px'
+            padding: '24px 64px 12px',
+            ...bodyStyle
           }}
           className={styles.slider}
           footer={null}
           title={title}
           onCancel={onCancel}
           afterClose={this.handleAfterClose}
+          forceRender={forceRender}
+          destroyOnClose
         >
           <Carousel
             dots={false}
@@ -134,6 +145,9 @@ class CarouselPreview extends PureComponent<
               <CarouselItem key={i} item={item} />
             ))}
           </Carousel>
+          {
+            afterAddon
+          }
           <p className={styles.hint}>
             {activeSlide + 1} / {list.length}
           </p>

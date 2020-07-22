@@ -18,11 +18,11 @@ export const request = (url, config = {}) => {
   return axios(_config)
     .then(res => {
       if (_config.banLog !== true) {
-        APP.moon.oper(res)
+        APP.moon.logApi(res)
       }
       !config.hideLoading && APP.fn.handleLoading('end')
       if (res.status === 401) {
-        window.location = '/#/login'
+        APP.href('/login')
         return res.data.data
       }
       if (res.status === 200 && res.data.success) {
@@ -30,7 +30,7 @@ export const request = (url, config = {}) => {
         return isPlainObject(data) ? omitBy(data, isNil) : data
       } else {
         if (res.data && res.data.code === '10001') {
-          window.location.href = '/#/login'
+          APP.href('/login')
         }
         return Promise.reject(res.data)
       }
@@ -41,7 +41,7 @@ export const request = (url, config = {}) => {
       if (httpCode === 401 || httpCode === 502) {
         message.error('未登录')
         setTimeout(() => {
-          window.location = '/#/login'
+          APP.href('/login')
         }, 1500)
         return Promise.reject(error)
       }
@@ -196,7 +196,7 @@ export const exportFile = (url, data) => {
       if (httpCode === 401) {
         message.error('未登录')
         setTimeout(() => {
-          window.location = '/#/login'
+          APP.href('/login')
         }, 1500)
         return Promise.reject()
       }
@@ -261,7 +261,7 @@ export const exportFileStream = (url, data, fileName = '导出信息.xlsx', conf
     if (httpCode === 401) {
       message.error('未登录')
       setTimeout(() => {
-        window.location = '/#/login'
+        APP.href('/login')
       }, 1500)
       return Promise.reject()
     }
@@ -313,7 +313,7 @@ instance.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       // 未登录的重定向到登陆页
       setTimeout(() => {
-        window.location = '/#/login'
+        APP.href('/login')
       }, 1500)
     }
     message.error(messageMap[error.response && error.response.status] || '内部错误，请等待响应...')
@@ -339,14 +339,10 @@ export function fetch (url, config = {}) {
     .then(
       function (res) {
         !config.hideLoading && APP.fn.handleLoading('end')
-        // if (config.banLog !== true) {
-        //   APP.moon.oper(res);
-        // }
         return res
       },
       err => {
         !config.hideLoading && APP.fn.handleLoading('end')
-        // APP.moon.oper(error);
         return Promise.reject(err)
       }
     )

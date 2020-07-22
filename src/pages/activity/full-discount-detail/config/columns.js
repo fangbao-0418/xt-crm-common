@@ -24,7 +24,7 @@ export const getRulesColumns = () => {
   ]
 }
 
-export const getGoodsColumns = () => {
+export const getGoodsColumns = (loseMoneyShow) => {
   return [
     {
       title: '商品ID',
@@ -35,7 +35,15 @@ export const getGoodsColumns = () => {
       title: '商品名称',
       dataIndex: 'productName',
       key: 'productName'
-    }
+    },
+    ...(loseMoneyShow ? [{
+      title: '是否亏本',
+      dataIndex: 'loseMoney',
+      key: 'loseMoney',
+      render: val => {
+        return val ? <span style={{ color: 'red' }}>成本佣金高于一口价</span> : '-'
+      }
+    }] : [])
   ]
 }
 

@@ -39,6 +39,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   return defaultConfig
 }
 
+// eslint-disable-next-line @typescript-eslint/tslint/config
 export interface options {
   label: string;
   value: string;
@@ -52,7 +53,7 @@ export const platformCodesOptions: options[] = [
 ]
 
 /** 显示用户 */
-export  const memberTypesOptions: options[] = [
+export const memberTypesOptions: options[] = [
   { label: '未登录用户', value: '-1' },
   { label: '普通会员', value: '0' },
   { label: '团长', value: '10' },
