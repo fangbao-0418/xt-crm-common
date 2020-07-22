@@ -72,15 +72,20 @@ interface Props {
   | undefined;
   onOk?: () => void
 }
-
-class Main extends React.Component<Props> {
+interface State {
+  selectedRowKeys: any[]
+  checked: boolean
+}
+class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
+  public defaultSelectedRowKeys = this.props.selectedRowKeys || []
   public state = {
-    selectedRowKeys: this.props.selectedRowKeys || []
+    selectedRowKeys: this.props.selectedRowKeys || [],
+    checked: false
   }
   public componentWillReceiveProps(props: Props) {
     if (props.selectedRowKeys !== this.state.selectedRowKeys) {
-      this.setState({ selectedRowKeys:  props.selectedRowKeys})
+      this.setState({ selectedRowKeys:  props.selectedRowKeys || []})
     }
   }
   public columns = [
@@ -146,7 +151,7 @@ class Main extends React.Component<Props> {
     })
   }
   public render () {
-    const { selectedRowKeys } = this.state
+    const { selectedRowKeys, checked } = this.state
     const { readonly } = this.props
     let listPageProps = null
 
@@ -178,7 +183,7 @@ class Main extends React.Component<Props> {
               inner={(form) => {
                 return (
                   <span>
-                    {form.getFieldDecorator('bindCoupon')(<Checkbox />)}
+                    <Checkbox checked={checked} onChange={(e) => this.setState({ checked: e.target.checked })}/>
                     <span style={{ marginLeft: 4 }}>已绑定优惠券</span>
                   </span>
                 )
@@ -194,10 +199,18 @@ class Main extends React.Component<Props> {
       )
     }
     return (
-      <div style={{ margin: -20, minHeight: 500 }}>
+      <div style={{ margin: -20 }}>
         <ListPage
           {...listPageProps}
+          onReset={() => {
+            this.setState({
+              checked: false
+            }, () => {
+              this.listpage.refresh(true)
+            })
+          }}
           processPayload={(payload) => {
+            payload.codes = this.state.checked ? this.defaultSelectedRowKeys : []
             payload.showFlag = 0
             payload.receivePattern = 0
             if (readonly) {

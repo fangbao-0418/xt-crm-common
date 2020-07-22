@@ -280,25 +280,6 @@ class Main extends React.Component<Props, State> {
       readonly: true,
       selectedRowKeys: record.couponCodes || []
     })
-    // const selectedRowKeys: any[] = record.couponCodes || []
-    // if (!selectedRowKeys.length) {
-    //   this.props.alert({
-    //     title: '查看优惠券',
-    //     content: '该直播间未绑定优惠券'
-    //   })
-    //   return
-    // }
-    // this.props.alert({
-    //   width: 1000,
-    //   title: '查看优惠券',
-    //   footer: null,
-    //   content: (
-    //     <CouponSelector
-    //       selectedRowKeys={selectedRowKeys}
-    //       readonly={true}
-    //     />
-    //   )
-    // })
   }
   public stopPlayback (record: UliveStudio.ItemProps) {
     if (this.props.alert) {
