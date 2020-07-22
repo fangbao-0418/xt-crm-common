@@ -1,7 +1,7 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import DraggableUpload from '@/components/draggable-upload'
-import UploadView from '@/components/upload'
+import UploadView, { VideoUpload } from '@/components/upload'
 import { If } from '@/packages/common/components'
 import { Input, Card, Button, message } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
@@ -134,7 +134,7 @@ class Add extends React.Component<Props, State> {
           authorPhone,
           content,
           videoUrlList: videoUrl && videoUrl.map((video: any) => {
-            return { url: video.rurl, size: video.size }
+            return { url: video.url, size: video.size }
           }),
           pictureUrlList: productImage && productImage.map((img: any) => {
             return { url: img.rurl, size: img.size }
@@ -295,12 +295,16 @@ class Add extends React.Component<Props, State> {
                 <>
                   {
                     form.getFieldDecorator('videoUrl')(
-                      <UploadView
-                        placeholder='上传视频'
-                        fileType='video'
-                        listType='picture-card'
-                        listNum={3}
-                        size={15}
+                      // <UploadView
+                      //   placeholder='上传视频'
+                      //   fileType='video'
+                      //   listType='picture-card'
+                      //   listNum={3}
+                      //   size={15}
+                      // />
+                      <VideoUpload
+                        maxCount={3}
+                        maxSize={15 * 1024 * 1024}
                       />
                     )
                   }

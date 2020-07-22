@@ -1,10 +1,6 @@
-/*
- * @Date: 2020-03-16 14:01:18
- * @LastEditors: fangbao
- * @LastEditTime: 2020-06-11 17:58:01
- * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/index.js
- */
 import { message } from 'antd'
+import '@/util/moon'
+import Moon from '@xt/rlcas-moon/dist/h5-moon';
 import * as regular from './regular'
 const constant = require('./constant').default
 const http = require('./http')

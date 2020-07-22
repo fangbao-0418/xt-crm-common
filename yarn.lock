@@ -1370,6 +1370,11 @@
   resolved "http://192.168.20.8:802/@types%2fnode/-/node-13.11.1.tgz#49a2a83df9d26daacead30d0ccc8762b128d53c7"
   integrity sha1-SaKoPfnSbarOrTDQzMh2KxKNU8c=
 
+"@types/node@^11.9.0":
+  version "11.15.18"
+  resolved "http://192.168.20.8:802/@types%2fnode/-/node-11.15.18.tgz#b92ad2f5ef31a2b8a432f15db68265013d9f43db"
+  integrity sha1-uSrS9e8xorikMvFdtoJlAT2fQ9s=
+
 "@types/node@^12.7.8":
   version "12.12.35"
   resolved "http://192.168.20.8:802/@types%2fnode/-/node-12.12.35.tgz#1e61b226c14380f4384f70cfe49a65c2c553ad2b"
@@ -1686,6 +1691,13 @@
     "@webassemblyjs/ast" "1.7.11"
     "@webassemblyjs/wast-parser" "1.7.11"
     "@xtuc/long" "4.2.1"
+
+"@xt/rlcas-moon@^3.0.4":
+  version "3.0.4"
+  resolved "http://192.168.20.8:802/@xt%2frlcas-moon/-/rlcas-moon-3.0.4.tgz#63ec61a417ae9ecacbf00f2c345d438fdff2d436"
+  integrity sha512-YVwC5AM3IOI9M9CxLmbDZl5hwJ1/Ggab0EWbDHdEUo8LVRVZG6s8nYroKM2GMYhcnbd2QzWwo42YMWkeDH3p/g==
+  dependencies:
+    "@types/node" "^11.9.0"
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"

@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Modal, Button, Form, Input, message, Radio, Select } from 'antd'
 import { If } from '@/packages/common/components'
-import { getSupplierDetail, updateSupplier, addSupplier } from '../api'
+import { getSupplierDetail, updateSupplier, addSupplier, depositTypes } from '../api'
 import UploadView from '@/components/upload'
 import SupplierTypeSelect from '@/components/supplier-type-select'
 import SaleArea from '@/components/sale-area'
+import SelectFetch from '@/components/select-fetch'
 const FormItem = Form.Item
 
 const getInitImage = (url) => {
@@ -63,7 +64,9 @@ class SupplierModal extends Component {
   handleOk = () => {
     const { onSuccess, id, form, isEdit } = this.props
     form.validateFields((err, { category, shopUrl, shopName, ...vals }) => {
+      console.log(err)
       if (!err) {
+        console.log('2222222')
         const api = isEdit ? updateSupplier : addSupplier
         vals.freezeLimit = vals.freezeLimit !== undefined ? Number(vals.freezeLimit) : undefined
         if ([0, 1, 2, 3, 4].includes(category)) {
@@ -256,6 +259,27 @@ class SupplierModal extends Component {
                 <Input placeholder='请输入详细地址' />,
               )}
             </FormItem>
+            <If condition={[6, 7].indexOf(category) !== -1}>
+              <FormItem label='保证金缴纳方式' required>
+                {getFieldDecorator('depositType', {
+                  rules: [
+                    {
+                      required: [6, 7].includes(category),
+                      message: '请选择保证金缴纳方式'
+                    }
+                  ]
+                })(
+                  <SelectFetch
+                    disabled={this.props.isEdit}
+                    placeholder='请选择保证金缴纳方式'
+                    style={{ width: '174px' }}
+                    fetchData={
+                      depositTypes
+                    }
+                  />
+                )}
+              </FormItem>
+            </If>
             {this.state.saleAreaVisible && (
               <FormItem required label='可售区域'>
                 {getFieldDecorator('saleAreaList', {
