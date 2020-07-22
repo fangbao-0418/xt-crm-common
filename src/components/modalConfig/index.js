@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import Modal from 'antd/lib/modal'
-import 'antd/lib/modal/style'
+import { Modal } from 'antd'
+// import 'antd/lib/modal/style'
 let id = 'layer_modal'
 class Index extends Component {
   constructor (props) {
