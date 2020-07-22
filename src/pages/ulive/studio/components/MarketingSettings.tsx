@@ -14,6 +14,7 @@ interface Option {
 interface Props {
   selectedRowKeys: any[]
   visible: boolean
+  planId?: number
   onChange?: (selectedRowKeys: any[]) => void
   onCancel?:
     | ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)
@@ -35,7 +36,7 @@ class MarketingSettings extends React.Component<Props, State> {
   }
   public render() {
     const { options, value } = this.state
-    const { visible, onCancel, selectedRowKeys, readonly } = this.props
+    const { visible, onCancel, selectedRowKeys, readonly, planId } = this.props
     return (
       <Modal
         visible={visible}
@@ -72,7 +73,7 @@ class MarketingSettings extends React.Component<Props, State> {
             onOk={this.props.onOk}
           />
         ) : (
-          <InvitationList onCancel={onCancel} />
+          <InvitationList onCancel={onCancel} planId={planId} />
         )}
       </Modal>
     )

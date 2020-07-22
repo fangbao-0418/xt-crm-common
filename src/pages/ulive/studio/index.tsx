@@ -27,6 +27,7 @@ interface State {
   rowKeys: any[]
   selectedRowKeys: any[]
   bizType: string
+  planId?: number
   visible: boolean
   readonly: boolean
 }
@@ -37,6 +38,7 @@ class Main extends React.Component<Props, State> {
   public state: State = {
     rowKeys: [],
     bizType: '1',
+    planId: undefined,
     visible: false,
     selectedRowKeys: [],
     readonly: false
@@ -268,6 +270,7 @@ class Main extends React.Component<Props, State> {
     this.setState({
       visible: true,
       readonly: false,
+      planId: this.planId,
       selectedRowKeys: record.couponCodes || []
     })
   }
@@ -627,7 +630,7 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const tabList=[{ name: '喜团优选', key: '1' }, { name: '喜团买菜', key: '2' }]
-    const { bizType, visible, selectedRowKeys, readonly } = this.state
+    const { bizType, visible, selectedRowKeys, readonly, planId } = this.state
     return (
       <div
         style={{
@@ -743,6 +746,7 @@ class Main extends React.Component<Props, State> {
         <MarketingSettings
           visible={visible}
           readonly={readonly}
+          planId={planId}
           selectedRowKeys={selectedRowKeys}
           onChange={(rowKeys) => {
             this.setState({

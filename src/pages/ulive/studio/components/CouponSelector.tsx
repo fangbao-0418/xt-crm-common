@@ -218,6 +218,13 @@ class Main extends React.Component<Props> {
             <span>{' '}已选：{selectedRowKeys.length} 张</span>
           )}
         />
+        <If condition={!!readonly}>
+          <div className='ant-modal-footer'>
+            <div>
+              <Button type='primary' onClick={this.props.onCancel}>关闭</Button>
+            </div>
+          </div>
+        </If>
         <If condition={!readonly}>
             <div className='ant-modal-footer'>
               <div>

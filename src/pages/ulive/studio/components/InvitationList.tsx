@@ -6,18 +6,22 @@ import Form, {
 } from '@/packages/common/components/form';
 import UploadView from '@/components/upload';
 import styles from './style.module.styl'
+import moment from 'moment'
 
 interface Props {
   onCancel?:
     | ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)
     | undefined;
+  planId?: number;
 }
+
 class InvitationList extends React.Component<Props> {
   public formRef: FormInstance
   public componentDidMount () {
     this.formRef.setValues({ switch: 'off' })
   }
   public render() {
+    const { onCancel, planId } = this.props
     return (
       <div style={{ margin: '-20px' }}>
         <Form
@@ -104,12 +108,12 @@ class InvitationList extends React.Component<Props> {
           <FormItem
             label='邀请榜单'
           >
-            <span>邀请英雄榜_510798_07131405.xlsx</span>
+            <span>邀请英雄榜_{planId}_{moment().format('MMDDHHmm')}.xlsx</span>
           </FormItem>
         </Form>
         <div className='ant-modal-footer'>
           <div>
-            <Button>取消</Button>
+            <Button onClick={onCancel}>取消</Button>
             <Button type='primary'>保存设置</Button>
           </div>
         </div>
