@@ -15,12 +15,12 @@ export const namespace = 'refundOrder'
 export const refundStatusOptions: any = {
   ALL: [ // 所有售后订单
     { key: 10, val: '待客服审核' },
-    { key: 15, val: '待供应商审核' },
+    { key: 15, val: '待商家审核' },
     { key: 20, val: '待用户发货' },
     { key: 21, val: '退款失败' },
     { key: 23, val: '退款中' },
-    { key: 24, val: '待平台收货' },
-    { key: 25, val: '待平台发货' },
+    { key: 24, val: '待商家收货' },
+    { key: 25, val: '待商家发货' },
     { key: 26, val: '待用户收货' },
     { key: 27, val: '等待客服跟进' },
     { key: 30, val: '售后完成' },
@@ -32,8 +32,8 @@ export const refundStatusOptions: any = {
     { key: 20, val: '待用户发货' },
     { key: 21, val: '退款失败' },
     { key: 23, val: '退款中' },
-    { key: 24, val: '待平台收货' },
-    { key: 25, val: '待平台发货' },
+    { key: 24, val: '待商家收货' },
+    { key: 25, val: '待商家发货' },
     { key: 26, val: '待用户收货' },
     { key: 27, val: '等待客服跟进' }
   ],
