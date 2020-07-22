@@ -42,8 +42,7 @@ Object.assign(APP, {
       }
     },
     logger: function (data, label) {
-      if (window.Moon) {
-        console.log(data, 'data')
+      if (Moon) {
         try {
           Moon.logger({
             t: 'all',
@@ -58,9 +57,9 @@ Object.assign(APP, {
       }
     },
     oper: function () {
-      if (window.Moon) {
+      if (Moon) {
         try {
-          window.Moon.oper.apply(null, arguments)
+          Moon.oper.apply(null, arguments)
         } catch (e) {
           const response = arguments[0]
           let message = ' response is '
@@ -80,9 +79,9 @@ Object.assign(APP, {
     error: function (err) {
       /** 注意参数是否是Error类型 */
       // console.log(err, 'app moon error')
-      if (window.Moon) {
+      if (Moon) {
         if (err instanceof Error) {
-          window.Moon.error(err)
+          Moon.error(err)
           return
         }
         try {
@@ -94,11 +93,11 @@ Object.assign(APP, {
           tempError.name = 'Self Error'
           tempError.message = message
           console.log(tempError, 'tempError')
-          window.Moon.error(err)
+          Moon.error(err)
         } catch (e) {
           if (e && e instanceof Error) {
             e.name = 'error catch'
-            window.Moon.error(e)
+            Moon.error(e)
           }
         }
       }
@@ -134,7 +133,6 @@ Object.assign(APP, {
         url = fillUnix(paths[0]) + '#' + paths.slice(1).join('#')
       }
     }
-    console.log(url, 'url')
     window.open(url)
   },
   href: function (url, target) {
