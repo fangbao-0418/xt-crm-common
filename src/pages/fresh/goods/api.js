@@ -191,3 +191,8 @@ export function closeTimerById (ids) {
 export function updateSkuStatus (payload) {
   return newPut('/mcweb/product/fresh/sku/status/update', payload)
 }
+
+/* 商品复制 */
+export function copy (id) {
+  return newPost(`/mcweb/product/fresh/copy?productId=${id}`)
+}

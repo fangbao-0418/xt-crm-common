@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 import Log from './log'
 import Order from './order'
 import Withdraw from './withdraw'
+import Bond from './bond'
 import Records from './withdraw/records'
 import WithdrawForm from './withdraw/form'
 import AccountSettlement from './payment-manage/account-settlement'
@@ -15,6 +16,7 @@ export default class extends Component {
     return (
       <Switch>
         <Route path='/finance/log' component={Log} />
+        <Route path='/finance/bond' component={Bond} />
         <Route path='/finance/order' component={Order} />
         <Route path='/finance/withdraw' exact component={Withdraw} />
         <Route path='/finance/withdraw/records' component={Records} />

@@ -8,11 +8,11 @@
     reqType: 'http',
     spa: true
   }
-  const m = b.createElement('script')
-  m.async = true
-  m.onload = function () {
-  }
-  m.src = 'https://cdn.hzxituan.com/npm/moon/v3.0.0/h5-moon.js'
-  const c = b.getElementsByTagName('script')[0]
-  c.parentNode.insertBefore(m, c)
+  // const m = b.createElement('script')
+  // m.async = true
+  // m.onload = function () {
+  // }
+  // m.src = 'https://cdn.hzxituan.com/npm/moon/v3.0.0/h5-moon.js'
+  // const c = b.getElementsByTagName('script')[0]
+  // c.parentNode.insertBefore(m, c)
 })(window, document)

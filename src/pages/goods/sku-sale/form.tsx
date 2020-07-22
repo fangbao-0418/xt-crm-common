@@ -1,6 +1,6 @@
 import React from 'react'
 import { Modal, Card, Input, Button, message, Radio, Select, Row, InputNumber } from 'antd'
-import UploadView from '@/components/upload'
+import UploadView, { VideoUpload } from '@/components/upload'
 import { pick, map, size, filter, assign, isEmpty, flattenDeep } from 'lodash'
 import { getStoreList, setProduct, getGoodsDetial, getStrategyByCategory, getCategoryList, get1688Sku, getTemplateList } from '../api'
 import { gotoPage, parseQuery, getAllId, treeToarr } from '@/util/utils'
@@ -26,6 +26,7 @@ import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 //   }
 //   callback();
 // }
+
 interface SkuSaleFormState extends Record<string, any> {
   skuList: any[];
   specs: any[];
@@ -938,12 +939,8 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
             label='商品视频'
             inner={(form) => {
               return form.getFieldDecorator('videoUrl')(
-                <UploadView
-                  placeholder='上传视频'
-                  fileType='video'
-                  listType='picture-card'
-                  listNum={1}
-                  size={5}
+                <VideoUpload
+                  maxSize={5 * 1024 * 1024}
                 />
               )
             }}

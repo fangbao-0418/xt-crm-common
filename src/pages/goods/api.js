@@ -14,6 +14,7 @@ export function getStoreList (data, config) {
 
 // 设置普通消费商品
 export function setProduct (data) {
+  console.log(data, 'setProduct')
   const isAdd = data.productId === -1
   const url = isAdd ? '/product/add' : '/product/update'
   data = formRequest(isAdd ? omit(data, ['productId']) : data)
