@@ -1,4 +1,6 @@
 import React from 'react'
+export { default as VideoUpload } from './Video'
+
 interface Props {
   onChange?: any
   placeholder?: string

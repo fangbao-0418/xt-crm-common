@@ -1,10 +1,9 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
-import { Row, Col, Button } from 'antd';
-import { enumRefundStatus } from '../../constant';
+import { Row, Col, Button, Modal } from 'antd';
+import { enumRefundStatus, enumRefundType } from '../../constant';
 import { namespace } from '../model';
-import { enumRefundType } from '../../constant';
 import Countdown from './countdown'
 import {
   RemarkModal,
@@ -17,6 +16,10 @@ import {
   OperatingFailed,
   CancelAfterSale
 } from '../../components/modal';
+import { replaceSupplier } from '../../api';
+
+const { confirm } = Modal;
+
 interface Props extends RouteComponentProps<{ id: any }> {
   data: AfterSalesInfo.data;
 }
@@ -43,12 +46,27 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
   isRefundTypeOf(type: number) {
     return this.props.data.refundType === type;
   }
+  // 审核
+  onAudit = (refundOrderCode: string) => {
+    confirm({
+      title: '系统提示',
+      content: '确认审核吗？',
+      onOk: () => {
+        replaceSupplier({ refundOrderCode }).then((res: any) => {
+          if (res) {
+            this.onSuccess();
+          }
+        })
+      }
+    })
+  }
   render() {
-    let { orderServerVO, orderInfoVO, checkVO, expirationClose } = this.props.data;
+    let { orderServerVO, orderInfoVO, checkVO, supplierResHandTime } = this.props.data;
     orderServerVO = Object.assign({}, orderServerVO);
     orderInfoVO = Object.assign({}, orderInfoVO);
     checkVO = Object.assign({}, checkVO);
     const { modifyLogisticsInfoVisible, platformDeliveryVisible } = this.state;
+    const timestamp = supplierResHandTime - Date.now()
     return (
       <>
         <Row type="flex" justify="space-between" align="middle">
@@ -66,9 +84,21 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
                   自动确认倒计时：<Countdown value={24 * 3600} />
                 </span>
               )} */}
+              {/* 待供应商审核 */}
+              {orderServerVO.refundStatus === 15 && (
+                <span
+                  className="ml20"
+                  style={{ color: 'red' }}
+                >
+                  供应商审核倒计时：{timestamp > 0 ? <Countdown refresh={this.onSuccess} value={Math.floor(timestamp / 1000)} /> : '供应商审核超时' }
+                </span>
+              )}
             </h3>
           </Col>
           <Col style={{display: 'flex'}}>
+            {orderServerVO.refundStatus === 15 && (
+              <Button type="primary" onClick={this.onAudit.bind(null, orderServerVO.orderCode)}>审核</Button>
+            )}
             {/* 待审核 */}
             {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
               <RemarkModal

@@ -3,14 +3,15 @@ import { Button, Table } from 'antd'
 import ActivitySelectModal from '@/pages/activity/marketing/components/activity/SelectModal'
 import ShopSelectModal from '@/pages/activity/marketing/components/shop/SelectModal'
 import { isEqual } from 'lodash'
-import { connect } from '@/util/utils';
-import { namespace } from '../model';
-import { getGoodsColumns, getActivityColumns } from '../config/columns';
+import { connect } from '@/util/utils'
+import { namespace } from '../model'
+import { productCheckCost } from '../api'
+import { getGoodsColumns, getActivityColumns } from '../config/columns'
 
 @connect(state => ({
   preProductRefMaps: state[namespace].preProductRefMaps,
   goodsModal: state[namespace].goodsModal,
-  activityModal: state[namespace].activityModal,
+  activityModal: state[namespace].activityModal
 }))
 class ProductTable extends PureComponent {
   state = {
@@ -18,22 +19,44 @@ class ProductTable extends PureComponent {
     preProductRefInfo: []
   }
 
-  static getDerivedStateFromProps(nextProps, preState) {
+  static getDerivedStateFromProps (nextProps, preState) {
     if (isEqual(nextProps.value, preState.preProductRefInfo)) {
-      return null;
+      return null
     }
     const productRefInfo = nextProps.value
+    console.log(productRefInfo, 123)
     return {
       productRefInfo,
       preProductRefInfo: productRefInfo
     }
   }
 
-
   /* 添加活动商品操作-显示相应模态框 */
   handleGoods = () => {
-    const { productRef } = this.props
+    const { productRef, validateFields, promotionType } = this.props
     const { productRefInfo } = this.state
+    if (!promotionType) {
+      APP.error('请先选择优惠种类')
+      return
+    }
+    if (promotionType === 15) {
+      validateFields(['ruleType', 'maxDiscountsCount', 'rules', 'overlayCoupon'], (errors) => {
+        if (errors) {
+          return
+        }
+        if (productRef === 0) {
+          this.activityModalInstance.open({
+            activityList: productRefInfo
+          })
+        } else if (productRef === 1) {
+          this.shopModalInstance.open({
+            spuList: productRefInfo
+          })
+        }
+      })
+      return
+    }
+
     if (productRef === 0) {
       this.activityModalInstance.open({
         activityList: productRefInfo
@@ -100,16 +123,18 @@ class ProductTable extends PureComponent {
     }
   }
 
-  render() {
+  render () {
     const {
       productRef,
+      rules,
+      promotionType,
       disabled: statusDisabled // 根据活动详情状态值计算的是否禁用值
     } = this.props
     const { productRefInfo: dataSource } = this.state
 
     let disabled = false
     let columns = []
-    let length = dataSource.length
+    const length = dataSource.length
 
     let productRefTxt = '选择商品/活动'
     if (productRef === 0) {
@@ -123,6 +148,7 @@ class ProductTable extends PureComponent {
       productRefTxt = '选择商品'
       columns = getGoodsColumns({
         onDelete: this.handleDelete,
+        loseMoneyShow: promotionType === 15,
         statusDisabled
       })
     } else {
@@ -143,16 +169,31 @@ class ProductTable extends PureComponent {
         <ShopSelectModal
           getInstance={ref => this.shopModalInstance = ref}
           onOk={rows => {
+            const { promotionType, rule } = rules
+            if (rows.length && promotionType === 15) {
+              productCheckCost({ promotionType, ruleAddOrUpdateVO: rule, productIds: rows.map(item => item.id) }).then(res => {
+                rows.forEach(item => {
+                  const curr = res.find(rItem => rItem.productId === item.id)
+                  if (curr) {
+                    item.loseMoney = curr.loseMoney
+                  }
+                })
+                this.shopModalInstance.hide()
+                this.handleSelectorChange(rows)
+              })
+              return
+            }
+            console.log((99))
             this.shopModalInstance.hide()
             this.handleSelectorChange(rows)
           }}
         />
         <p>
-          <Button disabled={disabled || statusDisabled} onClick={this.handleGoods} type="link">
+          <Button disabled={disabled || statusDisabled} onClick={this.handleGoods} type='link'>
             {productRefTxt}
           </Button>
           <span>已选择{length}条数据</span>
-          <Button disabled={!length || statusDisabled} onClick={this.handleClear} type="link">
+          <Button disabled={!length || statusDisabled} onClick={this.handleClear} type='link'>
             清空
           </Button>
         </p>

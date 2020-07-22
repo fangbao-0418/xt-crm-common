@@ -7,7 +7,7 @@ import { RouteComponentProps } from 'react-router'
 import SupplierSelect, { supplierItem } from '../components/supplier-select'
 import DraggableUpload from '../components/draggable-upload'
 import styles from '../style.module.scss'
-import UploadView from '@/components/upload'
+import UploadView, { VideoUpload } from '@/components/upload'
 import { pick, map, filter, assign, isEmpty } from 'lodash'
 import If from '@/packages/common/components/if'
 import SkuList, { CSkuProps, Spec } from './components/sku'
@@ -431,12 +431,15 @@ class SkuStockForm extends React.Component<SkuStockFormProps, SkuStockFormState>
                 <div>
                   <div>
                     {form.getFieldDecorator('videoUrl')(
-                      <UploadView
-                        placeholder='上传视频'
-                        fileType='video'
-                        listType='picture-card'
-                        listNum={1}
-                        size={5}
+                      // <UploadView
+                      //   placeholder='上传视频'
+                      //   fileType='video'
+                      //   listType='picture-card'
+                      //   listNum={1}
+                      //   size={5}
+                      // />
+                      <VideoUpload
+                        maxSize={5 * 1024 * 1024}
                       />
                     )}
                   </div>

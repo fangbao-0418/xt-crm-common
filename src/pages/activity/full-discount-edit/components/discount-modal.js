@@ -1,20 +1,20 @@
 import React, { PureComponent } from 'react'
 import { Modal, Form, Radio, InputNumber, Alert } from 'antd'
-import { connect } from '@/util/utils';
-import { namespace } from '../model';
+import { connect } from '@/util/utils'
+import { namespace } from '../model'
 
 const errMsgs = [{
   key: 'stageType',
   msg: '请设置优惠门槛'
 }, {
   key: 'stageAmount',
-  reverse: 'stageCount',
+  reverse: ['stageCount'],
   msg: '请输入优惠门槛金额',
   type: 'stageType',
   val: 1
 }, {
   key: 'stageCount',
-  reverse: 'stageAmount',
+  reverse: ['stageAmount'],
   msg: '请输入优惠门槛件数',
   type: 'stageType',
   val: 2
@@ -23,16 +23,22 @@ const errMsgs = [{
   msg: '请设置优惠方式'
 }, {
   key: 'discountsAmount',
-  reverse: 'discounts',
+  reverse: ['discounts', 'amount'],
   msg: '请输入优惠金额',
   type: 'mode',
   val: 1
 }, {
   key: 'discounts',
-  reverse: 'discountsAmount',
+  reverse: ['discountsAmount', 'amount'],
   msg: '请输入优惠折扣',
   type: 'mode',
   val: 2
+}, {
+  key: 'amount',
+  reverse: ['discounts', 'discountsAmount'],
+  msg: '请输入优惠金额',
+  type: 'mode',
+  val: 3
 }]
 
 @connect(state => ({
@@ -55,7 +61,7 @@ class DiscountModal extends PureComponent {
       discountModal,
       promotionType
     } = this.props
-    validateFields((err, { stageType, mode, stageAmount, stageCount, discountsAmount, discounts }) => {
+    validateFields((err, { stageType, mode, stageAmount, stageCount, discountsAmount, discounts, amount }) => {
       if (err) {
         // 发生的错误根据conditionErr 和 modeErr 收集
         const errMap = errMsgs.reduce((pre, next) => {
@@ -70,6 +76,11 @@ class DiscountModal extends PureComponent {
                 ...pre,
                 modeErr: next.key
               }
+            } else if (['mode', 'discountsAmount', 'amount'].includes(next.key)) {
+              return {
+                ...pre,
+                modeErr: next.key
+              }
             } else {
               return pre
             }
@@ -77,6 +88,7 @@ class DiscountModal extends PureComponent {
             return pre
           }
         }, {})
+        console.log(errMap, 'errMap')
         this.setState({
           ...errMap
         })
@@ -100,7 +112,7 @@ class DiscountModal extends PureComponent {
 
       if (stageType === 1) { // 满 X 元
         record.stageAmount = stageAmount
-        record.conditionStr = `满 ${stageAmount} 元`
+        record.conditionStr = `满 ￥${stageAmount?.toFixed(2)}`
       } else if (stageType === 2) { // 满 X 件
         record.stageCount = stageCount
         record.conditionStr = `满 ${stageCount} 件`
@@ -108,17 +120,20 @@ class DiscountModal extends PureComponent {
 
       if (mode === 1) { // 减 X 元
         record.discountsAmount = discountsAmount
-        record.modeStr = `减 ${discountsAmount} 元`
+        record.modeStr = `减 ￥${discountsAmount?.toFixed(2)}`
       } else if (mode === 2) { // 折 X 折
         record.discounts = discounts
-        record.modeStr = `折 ${discounts} 折`
+        record.modeStr = `打 ${discounts} 折`
+      } else if (mode === 3) { // 减 X 元
+        record.amount = amount
+        record.modeStr = `￥${amount?.toFixed(2)} 购买`
       }
 
       if (onOk) {
         dispatch[namespace].saveDefault({
           discountModal: {
             ...discountModal,
-            visible: false,
+            visible: false
           }
         })
 
@@ -133,7 +148,7 @@ class DiscountModal extends PureComponent {
     dispatch[namespace].saveDefault({
       discountModal: {
         ...discountModal,
-        visible: false,
+        visible: false
       }
     })
   }
@@ -165,7 +180,7 @@ class DiscountModal extends PureComponent {
     if (currentItem) {
       setFieldsValue({
         [currentItem.type]: currentItem.val,
-        [currentItem.reverse]: undefined
+        ...(currentItem.reverse.reduce((pre, next) => ({ ...pre, ['next']: undefined }), {}))
       })
     }
     if (e.target.value === '') {
@@ -191,7 +206,7 @@ class DiscountModal extends PureComponent {
     const currentItem = errMsgs.find(item => item.type === itemkey && item.val === val)
     if (currentItem) {
       setFieldsValue({
-        [currentItem.reverse]: undefined
+        ...(currentItem.reverse.reduce((pre, next) => ({ ...pre, ['next']: undefined }), {}))
       })
       this.setState({
         [errkey]: currentItem.key
@@ -219,7 +234,7 @@ class DiscountModal extends PureComponent {
     return errMsgs.find(item => item.key === key)
   }
 
-  render() {
+  render () {
     const {
       form: {
         getFieldDecorator,
@@ -241,9 +256,10 @@ class DiscountModal extends PureComponent {
     let stageCount
     let discountsAmount
     let discounts
+    let amount
 
     if (rules.length) {
-      if (currentRuleIndex >= 0) {  // 编辑规则的时候 需要设置默认值
+      if (currentRuleIndex >= 0) { // 编辑规则的时候 需要设置默认值
         const currentRule = rules[currentRuleIndex]
         stageType = stageType || currentRule.stageType
         mode = mode || currentRule.mode
@@ -251,14 +267,15 @@ class DiscountModal extends PureComponent {
         stageCount = currentRule.stageCount
         discountsAmount = currentRule.discountsAmount
         discounts = currentRule.discounts
+        amount = currentRule.amount
       }
     }
 
     const radioStyle = {
       display: 'block',
       height: '30px',
-      lineHeight: '30px',
-    };
+      lineHeight: '30px'
+    }
 
     return (
       <Modal
@@ -269,7 +286,7 @@ class DiscountModal extends PureComponent {
         afterClose={this.handleAfterClose}
         destroyOnClose
       >
-        <Form layout="vertical">
+        <Form layout='vertical'>
           <h3 style={{ marginTop: 0 }}>优惠门槛</h3>
           <div style={{ marginBottom: 0, paddingLeft: 8 }}>
             <div style={{ display: 'inline-block' }}>
@@ -283,14 +300,21 @@ class DiscountModal extends PureComponent {
               })(
                 <Radio.Group onChange={this.handleRadioChange.bind(this, 'conditionErr', 'stageType')}>
                   <Radio
-                    disabled={rules && rules[0] && rules[0].stageType === 2 || false} // 第一次选择 满x件类型 的话 第二次以上配置禁止该选项选择
+                    disabled=
+                      {
+                        (promotionType === 15)
+                        || (rules && rules[0] && rules[0].stageType === 2 || false)
+                      } // 第一次选择 满x件类型 的话 第二次以上配置禁止该选项选择
                     style={radioStyle}
                     value={1}
                   >
                     满
-                </Radio>
+                  </Radio>
                   <Radio
-                    disabled={promotionType === 11 || rules && rules[0] && rules[0].stageType === 1 || false} // 满减的时候禁止该选项 第一次选择 满x元类型 的话 第二次以上配置禁止该选项选择
+                    disabled={
+                      (promotionType === 11)
+                      || (rules && rules[0] && rules[0].stageType === 1 || false)
+                    } // 满减 一口价的时候禁止该选项 第一次选择 满x元类型 的话 第二次以上配置禁止该选项选择
                     style={{
                       ...radioStyle,
                       marginTop: 16
@@ -298,7 +322,7 @@ class DiscountModal extends PureComponent {
                     value={2}
                   >
                     满
-                </Radio>
+                  </Radio>
                 </Radio.Group>
               )}
             </div>
@@ -314,7 +338,11 @@ class DiscountModal extends PureComponent {
                     initialValue: stageAmount
                   })(
                     <InputNumber
-                      disabled={stageType === 2 || (rules && rules[0] && rules[0].stageType === 2 || false)}
+                      disabled={
+                        (promotionType === 15)
+                        || (stageType === 2)
+                        || (rules && rules[0] && rules[0].stageType === 2 || false)
+                      }
                       min={0.01}
                       precision={2}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageAmount')}
@@ -337,7 +365,11 @@ class DiscountModal extends PureComponent {
                     initialValue: stageCount
                   })(
                     <InputNumber
-                      disabled={promotionType === 11 || stageType === 1 || rules && rules[0] && rules[0].stageType === 1 || false}
+                      disabled={
+                        (promotionType === 11)
+                        || stageType === 1
+                        || (rules && rules[0] && rules[0].stageType === 1 || false)
+                      }
                       min={1}
                       precision={0}
                       onChange={this.handleInputChange.bind(this, 'conditionErr', 'stageCount')}
@@ -352,9 +384,9 @@ class DiscountModal extends PureComponent {
             </div>
           </div>
           {
-            conditionErrItem &&
-            ['stageType', 'stageAmount', 'stageCount'].includes(conditionErrItem.key) &&
-            <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{conditionErrItem.msg}</p>
+            conditionErrItem
+            && ['stageType', 'stageAmount', 'stageCount'].includes(conditionErrItem.key)
+            && <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{conditionErrItem.msg}</p>
           }
           <h3>优惠方式</h3>
           <div style={{ marginBottom: 0, paddingLeft: 8 }}>
@@ -369,14 +401,14 @@ class DiscountModal extends PureComponent {
               })(
                 <Radio.Group onChange={this.handleRadioChange.bind(this, 'modeErr', 'mode')}>
                   <Radio
-                    disabled={promotionType === 12} // 优惠种类选择满折的时候 禁止选择该选项
+                    disabled={[12, 15].includes(promotionType)} // 优惠种类选择满折 多件一口价的时候 禁止选择该选项
                     style={radioStyle}
                     value={1}
                   >
                     减
-                </Radio>
+                  </Radio>
                   <Radio
-                    disabled={promotionType === 11} // 优惠种类选择满减的时候 禁止选择该选项
+                    disabled={[11, 15].includes(promotionType)} // 优惠种类选择满减 多件一口价的时候 禁止选择该选项
                     style={{
                       ...radioStyle,
                       marginTop: 16
@@ -384,7 +416,17 @@ class DiscountModal extends PureComponent {
                     value={2}
                   >
                     打
-                </Radio>
+                  </Radio>
+                  <Radio
+                    disabled={[11, 12].includes(promotionType)} // 优惠种类选择满减 满折的时候 禁止选择该选项
+                    style={{
+                      ...radioStyle,
+                      marginTop: 16
+                    }}
+                    value={3}
+                  >
+                    售
+                  </Radio>
                 </Radio.Group>
               )}
             </div>
@@ -400,7 +442,7 @@ class DiscountModal extends PureComponent {
                     initialValue: discountsAmount
                   })(
                     <InputNumber
-                      disabled={mode === 2 || promotionType === 12} // 优惠方式选择折 或 优惠种类选择满折的时候 禁止选择该选项
+                      disabled={mode === 2 || [12, 15].includes(promotionType)} // 优惠方式选择折 或 优惠种类选择满折的时候 禁止选择该选项
                       min={0.01}
                       precision={2}
                       onChange={this.handleInputChange.bind(this, 'modeErr', 'discountsAmount')}
@@ -423,7 +465,7 @@ class DiscountModal extends PureComponent {
                     initialValue: discounts
                   })(
                     <InputNumber
-                      disabled={mode === 1 || promotionType === 11} // 优惠方式选择减 或 优惠种类选择满减的时候 禁止选择该选项
+                      disabled={mode === 1 || [11, 15].includes(promotionType)} // 优惠方式选择减 或 优惠种类选择满减的时候 禁止选择该选项
                       min={0.1}
                       max={9.9}
                       precision={1}
@@ -436,15 +478,38 @@ class DiscountModal extends PureComponent {
                 &nbsp;折&nbsp;&nbsp;
                 10分制, 大于0小于10, 保留小数点后1位
               </div>
+              <div style={{ marginTop: 16 }}>
+                {
+                  getFieldDecorator('amount', {
+                    rules: [
+                      {
+                        required: mode === 3
+                      }
+                    ],
+                    initialValue: amount
+                  })(
+                    <InputNumber
+                      disabled={mode === 1 || [11, 12].includes(promotionType)} // 优惠方式选择减 或 优惠种类选择满减 满折的时候 禁止选择该选项
+                      min={0.01}
+                      precision={2}
+                      onChange={this.handleInputChange.bind(this, 'modeErr', 'amount')}
+                      onFocus={this.handleFocus.bind(this, 'modeErr', 'amount')}
+                      onBlur={this.handleBlur.bind(this, 'modeErr', 'amount')}
+                    />
+                  )
+                }
+                &nbsp;元&nbsp;&nbsp;
+                大于0, 小数点后最多2位有效数字
+              </div>
             </div>
           </div>
           {
-            modeErrItem &&
-            ['mode', 'discountsAmount', 'discounts'].includes(modeErrItem.key) &&
-            <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{modeErrItem.msg}</p>
+            modeErrItem
+            && ['mode', 'discountsAmount', 'discounts', 'amount'].includes(modeErrItem.key)
+            && <p style={{ color: 'red', padding: '8px 0 0 30px' }}>{modeErrItem.msg}</p>
           }
           {
-            alertErr && <Alert style={{ marginTop: 16 }} message={alertErr} type="error" />
+            alertErr && <Alert style={{ marginTop: 16 }} message={alertErr} type='error' />
           }
         </Form>
       </Modal>
