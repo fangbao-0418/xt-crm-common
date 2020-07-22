@@ -73,7 +73,11 @@ class MarketingSettings extends React.Component<Props, State> {
             onOk={this.props.onOk}
           />
         ) : (
-          <InvitationList onCancel={onCancel} planId={planId} />
+          <InvitationList
+            onCancel={onCancel}
+            readonly={readonly}
+            planId={planId}
+          />
         )}
       </Modal>
     )

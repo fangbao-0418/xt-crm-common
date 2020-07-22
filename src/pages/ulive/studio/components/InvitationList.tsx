@@ -15,6 +15,7 @@ interface Props {
     | ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)
     | undefined;
   planId?: number;
+  readonly: boolean;
 }
 
 class InvitationList extends React.Component<Props> {
@@ -29,16 +30,18 @@ class InvitationList extends React.Component<Props> {
   public componentDidMount() {
     this.fetchData()
   }
-  public fetchData() {
+  public async fetchData() {
     if (this.props.planId) {
-      getShareDetail(this.props.planId)
+      const res = await getShareDetail(this.props.planId)
     }
   }
   public render() {
-    const { onCancel, planId } = this.props
+    const { onCancel, planId, readonly } = this.props
+    console.log('readonly', readonly)
     return (
       <div style={{ margin: '-20px' }}>
         <Form
+          readonly={readonly}
           getInstance={(ref) => {
             this.formRef = ref
           }}
