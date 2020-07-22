@@ -125,7 +125,7 @@ class VideoUpload extends React.Component<Props, State> {
   }
   public onPreview = (file: UploadFile) => {
     this.setState({
-      url: file.url,
+      url: APP.fn.fillOssDomainUrl(file.url || ''),
       visible: true
     })
   }
@@ -175,10 +175,10 @@ class VideoUpload extends React.Component<Props, State> {
               ref='video'
               controls={true}
             >
-                <source
-                  src={this.state.url}
-                  type='video/mp4'
-                />
+              <source
+                src={this.state.url}
+                type='video/mp4'
+              />
             </video>
           )}
         </Modal>
