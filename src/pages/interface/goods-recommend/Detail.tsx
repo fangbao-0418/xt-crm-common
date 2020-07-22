@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from 'antd'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
-import { getFieldsConfig, locationMap } from './config'
+import { getFieldsConfig, locationMap, displayFromMap } from './config'
 import RelevanceGoods from './components/RelevanceGoods'
 import { withRouter, RouteComponentProps } from 'react-router'
 import * as api from './api'
@@ -23,7 +23,7 @@ class Main extends React.Component<Props, State> {
     if (this.id !== '-1') {
       api.fetchDetail(this.id).then((res) => {
         res.location = locationMap.value[res.location]
-        res.displayFrom = locationMap.value[res.displayFrom]
+        res.displayFrom = displayFromMap.value[res.displayFrom]
         res.productRecommendSpuList = res.productRecommendSpuVOList || []
         this.form.setValues(res)
         this.setState({
