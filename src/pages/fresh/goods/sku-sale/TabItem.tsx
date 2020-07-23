@@ -9,7 +9,8 @@ import {
   exportFileList,
   getCategoryTopList,
   upByGoodsId,
-  cancelUpByGoodsId
+  cancelUpByGoodsId,
+  copy
 } from '../api'
 import { gotoPage, replaceHttpUrl } from '@/util/utils'
 import Image from '@/components/Image'
@@ -135,16 +136,24 @@ class SkuSaleList extends React.Component<Props, SkuSaleListState> {
               </span>
             </If>
             <span
-              className='href ml10'
+              className='href ml8'
               onClick={() => {
                 gotoPage(`/fresh/goods/sku-sale/${record.id}`)
               }}
             >
               编辑
             </span>
+            <span
+              className='href ml8'
+              onClick={() => {
+                this.copy(record.id)
+              }}
+            >
+              复制
+            </span>
             <If condition={status === '0'}>
               <span
-                className='href ml10'
+                className='href ml8'
                 onClick={() => this.lower([record.id])}
               >
                 下架
@@ -152,7 +161,7 @@ class SkuSaleList extends React.Component<Props, SkuSaleListState> {
             </If>
             <If condition={status === '1'}>
               <span
-                className='href ml10'
+                className='href ml8'
                 onClick={() => this.upper([record.id])}
               >
                 上架
@@ -234,6 +243,22 @@ class SkuSaleList extends React.Component<Props, SkuSaleListState> {
       }
     })
   };
+
+  /** 复制商品 */
+  copy = (productId: any) => {
+    Modal.confirm({
+      title: '复制提示',
+      content: '确认复制该商品吗?',
+      onOk: () => {
+        copy(productId).then((res: any) => {
+          if (res) {
+            message.success('商品已复制到仓库列表中')
+            this.list.refresh()
+          }
+        })
+      }
+    })
+  }
 
   render () {
     const { selectedRowKeys } = this.state

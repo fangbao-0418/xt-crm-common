@@ -55,10 +55,10 @@ const rules = {
     /goods\/sku-stock(\/)?(\d+)?/
   ],
   '/activity/lottery': [
-    /activity\/lottery(\/)?(\d+)?/
+    /^\/activity\/lottery(\/)?-?(\d+)?/
   ],
   '/activity/reward': [
-    /activity\/reward(\/)?(\d+)?/
+    /^\/activity\/reward(\/)?(\d+)?/
   ],
   '/activity/sprinkle-cash': [
     /activity\/sprinkle-cash\/form(\/)?(\d+)?/
@@ -89,6 +89,9 @@ const rules = {
   ],
   '/message/template': [
     /message\/template\/detail(\/)?(\d+)?/
+  ],
+  '/fresh/activity/lottery': [
+    /fresh\/activity\/lottery(\/)?(\d+)?/
   ],
   '/fresh/store': [
     /fresh\/store$/,

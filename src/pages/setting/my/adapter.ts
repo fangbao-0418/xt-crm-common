@@ -10,8 +10,8 @@ export function handleIconRequestParams (payload: My.iconApiPayload) {
   result.iconUrl = result.iconUrl && result.iconUrl[0] && removeURLDomain(result.iconUrl[0].url)
   const platformCodes = result.platformCodes || []
   const memberTypes = result.memberTypes || []
+  /** 1 2 微信平台/h5，如果勾选h5默认补充微信平台h5 */
   result.platformCodes = (platformCodes.includes('2') ? platformCodes.concat('1') : platformCodes).join(',')
-  console.log('handleIconRequestParams after=>', result)
   result.memberTypes = memberTypes.join && memberTypes.join(',')
   return result
 }
@@ -21,15 +21,22 @@ export function handleIconRequestParams (payload: My.iconApiPayload) {
  * @param res 
  */
 export function handleQueryVersionDetailResponse (res: any) {
-  console.log('handleQueryVersionDetailResponse before=>', res)
-  const result = (res || []).map((v: any) => {
+  const myHeadIcons = (res?.myHeadIcons || []).map((v: any) => {
     return {
       ...v,
       iconUrl: replaceHttpUrl(v.iconUrl)
     }
   })
-  console.log('handleQueryVersionDetailResponse after=>', result)
-  return result
+  const myBottomIcons = (res?.myBottomIcons || []).map((v: any) => {
+    return {
+      ...v,
+      iconUrl: replaceHttpUrl(v.iconUrl)
+    }
+  })
+  return {
+    myHeadIcons,
+    myBottomIcons
+  }
 }
 
 /**
@@ -39,11 +46,11 @@ export function handleQueryVersionDetailResponse (res: any) {
 export function handleFormData (config: any) {
   const result = Object.assign({}, config)
   result.iconUrl = initImgList(result.iconUrl)
-  const platformCodes = result.platformCodes || ''
-  const memberTypes = result.memberTypes || ''
-  console.log(platformCodes, '--------------')
-  result.platformCodes = platformCodes.split && platformCodes.split(',').filter((v: string) => v !== '1')
-  result.memberTypes = memberTypes.split && memberTypes.split(',')
+  const platformCodes = (result.platformCodes || '').split(',').filter((v: string) => v !== '1')
+  const memberTypes = (result.memberTypes || '').split(',')
+  /** 如果显示端口/显示用户都勾选了默认添加all */
+  result.platformCodes = platformCodes.length === 4 ? platformCodes.concat(['all']) : platformCodes
+  result.memberTypes = memberTypes.length === 5 ? memberTypes.concat(['all']) : memberTypes
   console.log('handleFormData=>', result)
   return result
 }

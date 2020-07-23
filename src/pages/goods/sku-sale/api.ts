@@ -38,10 +38,11 @@ export function getGroupProductDetail (payload: { productId: number }) {
   return newPost(`/product/group/detail?productId=${payload.productId}`).then(formResponse)
 }
 
-// 新增组合商品
+// 新增/修改组合商品
 export function setGroupProduct (payload: any) {
   const isAdd = payload.productId === -1
   payload = formRequest(payload)
+  console.log(payload, 'setGroupProduct')
   return isAdd ? newPost('/product/group/add', omit(payload, 'productId')) : newPost('/product/group/update', payload)
 }
 
