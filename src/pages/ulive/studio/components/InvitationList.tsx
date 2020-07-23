@@ -24,8 +24,14 @@ class InvitationList extends React.Component<Props> {
     isOpen: false
   }
   public onOk = async () => {
-    const vals = this.formRef.getValues();
-    await setShareConfig({ ...vals, livePlanId: this.props.planId });
+    this.formRef.props.form.validateFields(async (error, values) => {
+      if (!error) {
+        const res = await setShareConfig({ ...values, livePlanId: this.props.planId });
+        if (res.data) {
+          APP.success('保存设置成功');
+        }
+      }
+    })
   }
   public componentDidMount() {
     this.fetchData()
@@ -33,6 +39,8 @@ class InvitationList extends React.Component<Props> {
   public async fetchData() {
     if (this.props.planId) {
       const res = await getShareDetail(this.props.planId)
+      this.setState({ isOpen: res.isOpen })
+      this.formRef.setValues(res)
     }
   }
   public render() {
@@ -73,7 +81,12 @@ class InvitationList extends React.Component<Props> {
               inner={(form) => (
                 <div className={styles['input-wrapper']}>
                   <div className={styles['input-wrapper-content']}>
-                    {form.getFieldDecorator('shareBackground')(
+                    {form.getFieldDecorator('shareBackground', {
+                      rules: [{
+                        required: true,
+                        message: '请上传分享背景图片'
+                      }]
+                    })(
                       <UploadView
                         style={{ width: '102px' }}
                         ossType='cos'
@@ -94,7 +107,12 @@ class InvitationList extends React.Component<Props> {
               inner={(form) => (
                 <div className={styles['input-wrapper']}>
                   <div className={styles['input-wrapper-content']}>
-                    {form.getFieldDecorator('shareInstructions')(
+                    {form.getFieldDecorator('shareInstructions', {
+                      rules: [{
+                        required: true,
+                        message: '请上传活动说明图片'
+                      }]
+                    })(
                       <UploadView
                         ossType='cos'
                         placeholder='上传图片'

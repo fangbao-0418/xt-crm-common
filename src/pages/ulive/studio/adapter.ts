@@ -20,3 +20,7 @@ export function formRequest(req: Payload) {
     shareIcon: getUrl(req.shareIcon)
   }
 }
+
+export function formResponse() {
+  
+}

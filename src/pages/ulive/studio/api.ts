@@ -4,7 +4,7 @@
  * @LastEditTime: 2020-04-09 13:21:15
  * @FilePath: /xt-crm/src/pages/ulive/studio/api.ts
  */
-import { Payload, formRequest } from './adapter'
+import { Payload, formRequest, formResponse } from './adapter'
 const { post, get, newPost, newPut } = APP.http
 
 /**
@@ -17,14 +17,14 @@ const { post, get, newPost, newPut } = APP.http
  * @param payload.livePlanId 直播计划id
  */
 export const setShareConfig = (payload: Payload) => {
-  return post('/live/share/config', formRequest(payload))
+  return newPost('::ulive/live/share/config', formRequest(payload))
 }
 
 /**
  * 邀请榜单设置查看
  */
 export const getShareDetail = (livePlanId: number) => {
-  return get(`/live/share/detail?livePlanId=${livePlanId}`)
+  return get(`::ulive/live/share/detail?livePlanId=${livePlanId}`)
 }
 
 /** 直播列表 */

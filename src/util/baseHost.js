@@ -1,6 +1,6 @@
 let baseHost = 'https://daily-crm-test.hzxituan.com'
 let h5Host = 'https://myouxuan.hzxituan.com'
-let env = 'test1'
+let env = 'test'
 const host = window.location.host
 // 日常
 if (host.indexOf('daily-xt-crmadmin') >= 0) {
