@@ -184,6 +184,7 @@ class Main extends React.Component<Props, State> {
         this.getFieldDecorator('awardNum', index)(
           <InputNumber
             min={0}
+            max={99999999}
             precision={0}
             disabled={this.readOnly || +record.awardType === 0}
           />
@@ -207,6 +208,7 @@ class Main extends React.Component<Props, State> {
             disabled={record.defaultAward === 0 || this.readOnly}
             precision={0}
             min={0}
+            max={99999999}
           />
         )
       )
@@ -515,8 +517,8 @@ class Main extends React.Component<Props, State> {
         let msg, res
         /** 新增场次 */
         /** isCopy = true && activityType = 1 红包雨活动复制功能 */
-        if (this.id === -1 || this.isCopy && this.activityType === 1) {
-          if (this.isCopy && this.activityType === 1) {
+        if (this.id === -1 || this.isCopy) {
+          if (this.isCopy) {
             data.awardList = data.awardList.map((item: Lottery.LuckyDrawAwardListVo) => {
               return {
                 ...item,
@@ -597,8 +599,9 @@ class Main extends React.Component<Props, State> {
       const awardNum = item.awardNum || 0
       // 生成概率排除兜底的情况，后端兜底概率不是根据前端传的参数来的，这里传0无影响
       let chance = (inventory === 0 || item.defaultAward === 0) ? 0 : Decimal.div(awardNum, inventory).mul(10000).floor().div(100).toNumber()
-      // console.log(chance, '------')
-      chance = chance * (ratio > 1 ? 1 : (ratio < 0.1 ? ratio * 10 : ratio))
+      chance = Decimal.mul(chance, (ratio > 1 ? 1 : (ratio < 0.1 ? Decimal.mul(ratio, 10).toNumber() : ratio))).toNumber()
+      // 保留2位小数点，超出部分抹除
+      chance = new Decimal(new Decimal(chance).toFixed(2, 1)).toNumber()
       totalChance += chance
       return {
         ...item,
@@ -611,6 +614,7 @@ class Main extends React.Component<Props, State> {
     // console.log(inventory, expectedNumber, '--------')
     totalChance = Decimal.mul(totalChance, 100).floor().div(100).toNumber()
     // totalNormalUserProbability  totalHeadUserProbability totalAreaUserProbability totalCityUserProbability
+    console.log(totalChance, awardList, 'generateChance')
     this.setState({
       totalNormalUserProbability: totalChance,
       totalHeadUserProbability: totalChance,
