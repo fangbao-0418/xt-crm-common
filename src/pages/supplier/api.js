@@ -32,6 +32,11 @@ const mockData = {
 export function addSupplierAccount (data) {
   return post('/store/add/supplier', data)
 }
+
+// 是否置顶
+export function ranking (params) {
+  return newPost('/top/ranking', params)
+}
 // 保证金缴纳方式
 export function depositTypes () {
   return get('/store/depositTypes').then((res) => {

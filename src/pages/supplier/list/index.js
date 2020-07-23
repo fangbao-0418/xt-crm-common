@@ -1,12 +1,13 @@
 import React from 'react'
-import { Table, Card, Form, Input, Button, DatePicker, InputNumber } from 'antd'
+import { Table, Card, Form, Input, Select, Button, DatePicker, InputNumber, message } from 'antd'
 import moment from 'moment'
-import { querySupplierList, exportSupplier } from '../api'
+import { querySupplierList, exportSupplier, ranking } from '../api'
 import SupplierModal from '../supplier-modal'
 import AccountModal from '../account-modal'
 import SupplierTypeSelect from '@/components/supplier-type-select'
 import MoneyRender from '@/components/money-render'
 const FormItem = Form.Item
+const Option=Select.Option
 
 const { RangePicker } = DatePicker
 class OrderList extends React.Component {
@@ -86,6 +87,15 @@ class OrderList extends React.Component {
     })
   }
 
+// 置顶或取消置顶事件
+upOrCancle = (record) => {
+  ranking({ bizId: record.id, bizType: 1, ranking: record.isRanking===0?1:0 }).then((res) => {
+    if (res) {
+      message.success(record.isRanking === 0?'置顶成功':'取消置顶成功')
+      this.query()
+    }
+  })
+}
   handlePageChange = (page, pageSize) => {
     this.setState(
       {
@@ -143,6 +153,9 @@ class OrderList extends React.Component {
             <>
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
               <AccountModal onSuccess={this.query} {...record} />
+              <Button type='primary' className='mt8' onClick={this.upOrCancle}>
+                {record.isRanking === 0?'置顶':'取消置顶'}
+              </Button>
             </>
           )
         }
@@ -180,6 +193,16 @@ class OrderList extends React.Component {
               {getFieldDecorator('createTime', {
                 initialValue: values.createTime
               })(<RangePicker showTime />)}
+            </FormItem>
+            <FormItem label='是否置顶'>
+              {getFieldDecorator('isRanking', {
+                initialValue: values.isRanking
+              })(
+                <Select style={{ width: 100 }} placeholder='请选择是否置顶'>
+                  <Option value={1}>置顶</Option>
+                  <Option value={0}>未置顶</Option>
+                </Select>
+              )}
             </FormItem>
             <FormItem>
               <Button type='default' onClick={this.reset}>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { withRouter } from 'react-router'
-import { Card, Button, Input, Select, Modal, Tabs } from 'antd'
+import { Card, Button, Input, Select, Modal, Tabs, message } from 'antd'
 import Form, { FormItem } from '@/packages/common/components/form'
 import CommonTable from '@/components/common-table'
 import SwitchModal from './components/switchModal'
@@ -13,7 +13,7 @@ import { connect } from '@/util/utils'
 import { getPassColums, getCheckColums, getNoPassColums } from './columns'
 import { queryConfig } from './config'
 import { namespace } from './model'
-import { getShopTypes, getCategoryTopList } from './api'
+import { getShopTypes, getCategoryTopList, ranking } from './api'
 
 const { Option } = Select
 const { confirm } = Modal
@@ -55,7 +55,8 @@ class Main extends React.Component {
         shopStatus: values.shopStatus !== undefined ? values.shopStatus : localPayload.shopStatus,
         shopTypes: values.shopTypes !== undefined ? values.shopTypes : localPayload.shopTypes,
         categoryIds: values.categoryIds !== undefined ? values.categoryIds : localPayload.categoryIds,
-        applyResult: this.state.tabKey
+        applyResult: this.state.tabKey,
+        isRanking: values.isRanking !== undefined ? values.isRanking : localPayload.isRanking
       }
       payload.shopStatus = payload.shopStatus || undefined
       APP.fn.setPayload(namespace, {
@@ -67,6 +68,7 @@ class Main extends React.Component {
         memberPhone: payload.memberPhone,
         shopTypes: payload.shopTypes,
         categoryIds: payload.categoryIds,
+        isRanking: payload.isRanking,
         shopStatus: payload.shopStatus,
         applyResult: payload.applyResult
       })
@@ -241,6 +243,16 @@ class Main extends React.Component {
             />
           )}
         </FormItem>
+        <FormItem label='是否置顶'>
+          {getFieldDecorator('isRanking', {
+            initialValue: localPayload.isRanking
+          })(
+            <Select style={{ width: 100 }} placeholder='请选择是否置顶'>
+              <Option value={1}>置顶</Option>
+              <Option value={0}>未置顶</Option>
+            </Select>
+          )}
+        </FormItem>
         <FormItem>
           <Button type='primary' onClick={() => {
             this.handleSearch({
@@ -257,6 +269,16 @@ class Main extends React.Component {
     )
   }
 
+// 置顶或取消事件
+upOrCancel = (record) => {
+  ranking({ bizId: record.id, bizType: 2, ranking: record.isRanking===0?1:0 }).then((res) => {
+    if (res) {
+      message.success(record.isRanking===0?'置顶成功':'取消置顶成功')
+      this.fetchData()
+    }
+  })
+}
+
   /** 视图: 列表内容模块 */
   renderContent = () => {
     const { bossData } = this.props
@@ -272,7 +294,8 @@ class Main extends React.Component {
         onDetail: this.handleDetail,
         onClose: this.handleClose,
         onOpen: this.handleOpen,
-        onUserClick: this.handleUserClick
+        onUserClick: this.handleUserClick,
+        upOrCancel: this.upOrCancel
       }),
       '3': getNoPassColums({
         onDetail: this.handleDetail,
@@ -299,7 +322,7 @@ class Main extends React.Component {
       shopStatus: undefined,
       shopTypes: [],
       categoryIds: [],
-      applyResult
+      applyResult: undefined
     })
     this.setState({
       tabKey: applyResult
