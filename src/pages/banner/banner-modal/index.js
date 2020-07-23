@@ -267,12 +267,12 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4, 6, 7, 8].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+            <If condition={([1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
                   rules: [{
-                    required: ([1, 2, 3, 4, 6, 7, 8].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
+                    required: ([1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
                     message: '请选择平台'
                   }]
                 })(
