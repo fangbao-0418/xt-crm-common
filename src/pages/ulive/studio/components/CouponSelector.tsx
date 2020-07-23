@@ -1,10 +1,11 @@
 import React from 'react'
-import { ListPage, FormItem } from '@/packages/common/components'
+import { ListPage, FormItem, If } from '@/packages/common/components'
 import { OptionProps } from '@/packages/common/components/form'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import receiveStatus from '@/enum/receiveStatus'
 import { formatFaceValue, formatDateRange } from '@/pages/helper'
-import { Badge } from 'antd'
+import { Badge, Button, Checkbox, Empty } from 'antd'
+import styles from './style.module.styl'
 import * as api from '../api'
 
 export interface FieldsConfig {
@@ -27,11 +28,11 @@ const getFieldsConfig = function (partial?: FieldsConfig): FieldsConfig {
     common: {
       code: {
         type: 'input',
-        label: '优惠卷编号'
+        label: '优惠券编号'
       },
       name: {
         type: 'input',
-        label: '优惠卷名称'
+        label: '优惠券名称'
       },
       status: {
         type: 'select',
@@ -66,12 +67,26 @@ interface Props {
   readonly?: boolean
   onChange?: (selectedRowKeys: any[]) => void
   selectedRowKeys?: any[]
+  onCancel?:
+  | ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)
+  | undefined;
+  onOk?: () => void
 }
-
-class Main extends React.Component<Props> {
+interface State {
+  selectedRowKeys: any[]
+  checked: boolean
+}
+class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
+  public defaultSelectedRowKeys = this.props.selectedRowKeys || []
   public state = {
-    selectedRowKeys: this.props.selectedRowKeys || []
+    selectedRowKeys: this.props.selectedRowKeys || [],
+    checked: false
+  }
+  public componentWillReceiveProps(props: Props) {
+    if (props.selectedRowKeys !== this.state.selectedRowKeys) {
+      this.setState({ selectedRowKeys:  props.selectedRowKeys || []})
+    }
   }
   public columns = [
     {
@@ -135,8 +150,8 @@ class Main extends React.Component<Props> {
       )
     })
   }
-  render () {
-    const { selectedRowKeys } = this.state
+  public render () {
+    const { selectedRowKeys, checked } = this.state
     const { readonly } = this.props
     let listPageProps = null
 
@@ -164,16 +179,38 @@ class Main extends React.Component<Props> {
             <FormItem name='code' />
             <FormItem name='name' />
             <FormItem fieldDecoratorOptions={{ initialValue: 1 }} name='status' />
+            <FormItem
+              inner={(form) => {
+                return (
+                  <span>
+                    <Checkbox checked={checked} onChange={(e) => this.setState({ checked: e.target.checked })}/>
+                    <span style={{ marginLeft: 4 }}>已绑定优惠券</span>
+                  </span>
+                )
+              }}
+            />
           </>
         )
       }
     }
-
+    if (readonly && !selectedRowKeys.length) {
+      return (
+        <div className={styles['empty-coupon']}>该直播间未绑定优惠券！</div>
+      )
+    }
     return (
-      <div style={{ margin: '-20px' }}>
+      <div style={{ margin: -20 }}>
         <ListPage
           {...listPageProps}
+          onReset={() => {
+            this.setState({
+              checked: false
+            }, () => {
+              this.listpage.refresh(true)
+            })
+          }}
           processPayload={(payload) => {
+            payload.codes = this.state.checked ? this.defaultSelectedRowKeys : []
             payload.showFlag = 0
             payload.receivePattern = 0
             if (readonly) {
@@ -194,6 +231,21 @@ class Main extends React.Component<Props> {
             <span>{' '}已选：{selectedRowKeys.length} 张</span>
           )}
         />
+        <If condition={!!readonly}>
+          <div className='ant-modal-footer'>
+            <div>
+              <Button type='primary' onClick={this.props.onCancel}>关闭</Button>
+            </div>
+          </div>
+        </If>
+        <If condition={!readonly}>
+            <div className='ant-modal-footer'>
+              <div>
+                <Button onClick={this.props.onCancel} >取消</Button>
+                <Button type='primary' onClick={this.props.onOk}>保存设置</Button>
+              </div>
+            </div>
+          </If>
       </div>
     )
   }
