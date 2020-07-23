@@ -66,7 +66,8 @@ class GoodsDetail extends React.Component {
         productName: goodsInfo.productName || '暂无数据',
         productImage: goodsInfo.productImage.split(','),
         listImage: goodsInfo.listImage.split(','),
-        saleCount: goodsInfo.saleCount || 0
+        saleCount: goodsInfo.saleCount || 0,
+        productCategoryVO: goodsInfo.productCategoryVO
       }
 
       skuInfo = {
