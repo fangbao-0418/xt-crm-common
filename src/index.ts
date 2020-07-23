@@ -8,6 +8,6 @@ config.push({
   js: []
 })
 const app = bootstrap(config, {
-  baseUrl: process.env.IS_LOCAL ? 'http://daily-xt-crmadmin.hzxituan.com' : ''
+  baseUrl: process.env.IS_LOCAL ? 'http://xt-crmadmin.hzxituan.com' : ''
 })
 app.start()
