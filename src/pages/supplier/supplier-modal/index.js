@@ -101,9 +101,9 @@ class SupplierModal extends Component {
     const { category, showType } = this.props.form.getFieldsValue(['category', 'showType'])
     return (
       <>
-        <Button type='primary' onClick={this.showModal}>
+        <div className='href' onClick={this.showModal}>
           {isEdit ? '编辑' : '新增供应商'}
-        </Button>
+        </div>
         <Modal
           title={isEdit ? '编辑供应商' : '新增供应商'}
           width={700}

@@ -97,7 +97,7 @@ class AccountModal extends Component {
           </Form.Item>
         </Form>
       </Modal>
-      <Button className="ml10" type="primary" onClick={() => this.toggleVisible(true)}>查看账号</Button>
+      <div className="href" onClick={() => this.toggleVisible(true)}>查看账号</div>
     </> : <>
         <Modal
           title="创建账号"
@@ -120,7 +120,7 @@ class AccountModal extends Component {
             </Form.Item>
           </Form>
         </Modal>
-        <Button className="ml10" type="primary" onClick={() => this.toggleVisible(true)}>创建账号</Button>
+        <div className="href" onClick={() => this.toggleVisible(true)}>创建账号</div>
       </>
   }
 }

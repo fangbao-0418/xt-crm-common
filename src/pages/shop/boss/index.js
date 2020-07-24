@@ -247,7 +247,7 @@ class Main extends React.Component {
           {getFieldDecorator('isRanking', {
             initialValue: localPayload.isRanking
           })(
-            <Select style={{ width: 100 }} placeholder='请选择是否置顶'>
+            <Select style={{ width: 100 }} placeholder='请选择是否置顶' allowClear>
               <Option value={1}>置顶</Option>
               <Option value={0}>未置顶</Option>
             </Select>

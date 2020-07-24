@@ -147,17 +147,17 @@ upOrCancle(record){
       },
       {
         title: '操作',
-        width: 200,
+        width: 100,
         render: (operator, record) => {
           return (
             <>
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
               <AccountModal onSuccess={this.query} {...record} />
-              <Button type='primary' className='mt8' onClick={()=>{
+              <div className='href' onClick={()=>{
                 this.upOrCancle(record)
               }}>
                 {record.isRanking === 0?'置顶':'取消置顶'}
-              </Button>
+              </div>
             </>
           )
         }
@@ -200,7 +200,7 @@ upOrCancle(record){
               {getFieldDecorator('isRanking', {
                 initialValue: values.isRanking
               })(
-                <Select style={{ width: 100 }} placeholder='请选择是否置顶'>
+                <Select style={{ width: 100 }} placeholder='请选择是否置顶' allowClear>
                   <Option value={1}>置顶</Option>
                   <Option value={0}>未置顶</Option>
                 </Select>
