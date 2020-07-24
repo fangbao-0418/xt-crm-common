@@ -195,7 +195,14 @@ class Main extends React.Component<Props, State> {
     }
     if (readonly && !selectedRowKeys.length) {
       return (
-        <div className={styles['empty-coupon']}>该直播间未绑定优惠券！</div>
+        <div style={{ margin: -20 }}>
+          <div className={styles['empty-coupon']}>该直播间未绑定优惠券！</div>
+          <div className='ant-modal-footer'>
+            <div>
+              <Button type='primary' onClick={this.props.onCancel}>关闭</Button>
+            </div>
+          </div>
+        </div>
       )
     }
     return (

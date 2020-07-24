@@ -34,6 +34,7 @@ class InvitationList extends React.Component<Props> {
     })
   }
   public componentDidMount() {
+    console.log('planId', this.props.planId)
     this.fetchData()
   }
   public async fetchData() {
@@ -153,12 +154,21 @@ class InvitationList extends React.Component<Props> {
             </FormItem>
           </If>
         </Form>
-        <div className='ant-modal-footer'>
-          <div>
-            <Button onClick={onCancel}>取消</Button>
-            <Button type='primary' onClick={this.onOk}>保存设置</Button>
+        <If condition={!!readonly}>
+          <div className='ant-modal-footer'>
+            <div>
+              <Button type='primary' onClick={this.props.onCancel}>关闭</Button>
+            </div>
           </div>
-        </div>
+        </If>
+        <If condition={!readonly}>
+          <div className='ant-modal-footer'>
+            <div>
+              <Button onClick={onCancel}>取消</Button>
+              <Button type='primary' onClick={this.onOk}>保存设置</Button>
+            </div>
+          </div>
+        </If>
       </div>
     );
   }

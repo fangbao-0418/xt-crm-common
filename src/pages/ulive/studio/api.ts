@@ -24,7 +24,7 @@ export const setShareConfig = (payload: Payload) => {
  * 邀请榜单设置查看
  */
 export const getShareDetail = (livePlanId: number) => {
-  return get(`::ulive/live/share/detail?livePlanId=${livePlanId}`).then(formResponse)
+  return get(`::ulive/live/share/detail?livePlanId=${livePlanId}`).then<any>(formResponse)
 }
 
 /** 直播列表 */
