@@ -7,6 +7,7 @@ import { Button, Popover } from 'antd'
 import { getDefaultConfig, StatusEnum, TypeEnum, AwardTypeEnum } from './config'
 import { ColumnProps, TableRowSelection } from 'antd/es/table'
 import ReissueModal from './components/ReissueModal'
+import { isEmpty } from 'lodash'
 import * as api from './api'
 interface Props extends AlertComponentProps {}
 interface State {
@@ -21,7 +22,9 @@ class Main extends React.Component<Props, State> {
   public payload: any = parseQuery()
   public componentDidMount () {
     this.listpage.form.setValues(this.payload)
-    // this.refresh()
+    if (!isEmpty(this.payload)) {
+      this.refresh()
+    }
   }
   public columns: ColumnProps<any>[] = [{
     title: '中奖号码',
