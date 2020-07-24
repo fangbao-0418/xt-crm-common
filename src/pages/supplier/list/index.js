@@ -88,7 +88,7 @@ class OrderList extends React.Component {
   }
 
 // 置顶或取消置顶事件
-upOrCancle = (record) => {
+upOrCancle(record){
   ranking({ bizId: record.id, bizType: 1, ranking: record.isRanking===0?1:0 }).then((res) => {
     if (res) {
       message.success(record.isRanking === 0?'置顶成功':'取消置顶成功')
@@ -153,7 +153,9 @@ upOrCancle = (record) => {
             <>
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
               <AccountModal onSuccess={this.query} {...record} />
-              <Button type='primary' className='mt8' onClick={this.upOrCancle}>
+              <Button type='primary' className='mt8' onClick={()=>{
+                this.upOrCancle(record)
+              }}>
                 {record.isRanking === 0?'置顶':'取消置顶'}
               </Button>
             </>

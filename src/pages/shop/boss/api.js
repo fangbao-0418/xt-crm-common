@@ -13,7 +13,7 @@ export function checkUser (params) {
 
 // 是否置顶
 export function ranking (params) {
-  return newPost('/top/ranking', params)
+  return newPost('/mmweb/supplier/shop/V1/top/ranking', params)
 }
 // 批量创建小店
 export function createShop (params) {
