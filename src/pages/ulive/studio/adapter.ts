@@ -1,3 +1,5 @@
+import { initImgList } from '@/util/utils'
+
 export interface Payload {
   isOpen: 0 | 1,
   shareBackground: any[],
@@ -21,6 +23,9 @@ export function formRequest(req: Payload) {
   }
 }
 
-export function formResponse() {
-  
+export function formResponse(res: any) {
+  res.shareBackground = initImgList(res.shareBackground)
+  res.shareInstructions = initImgList(res.shareInstructions)
+  res.shareIcon = initImgList(res.shareIcon)
+  return res;
 }
