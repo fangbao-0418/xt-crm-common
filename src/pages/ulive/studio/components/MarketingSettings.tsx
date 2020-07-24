@@ -15,11 +15,9 @@ interface Props {
   selectedRowKeys: any[]
   visible: boolean
   planId?: number
-  onChange?: (selectedRowKeys: any[]) => void
-  onCancel?:
-    | ((e: React.MouseEvent<HTMLElement, MouseEvent>) => void)
-    | undefined
-  onOk?: () => void
+  onChange: (selectedRowKeys: any[]) => void
+  onCancel: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void
+  onOk: () => void
   readonly: boolean
 }
 interface State {
@@ -34,15 +32,22 @@ class MarketingSettings extends React.Component<Props, State> {
     ],
     value: 0,
   }
+  public onCancel = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    this.setState({
+      value: 0
+    }, () => {
+      this.props.onCancel(e)
+    })
+  }
   public render() {
     const { options, value } = this.state
-    const { visible, onCancel, selectedRowKeys, readonly, planId } = this.props
+    const { visible, selectedRowKeys, readonly, planId } = this.props
     return (
       <Modal
         visible={visible}
         width='80%'
         footer={null}
-        onCancel={this.props.onCancel}
+        onCancel={this.onCancel}
         title={
           <div className={styles['title']}>
             {options.map((opt: Option) => (
@@ -63,7 +68,7 @@ class MarketingSettings extends React.Component<Props, State> {
       >
         {value === 0 ? (
           <CouponSelector
-            onCancel={onCancel}
+            onCancel={this.onCancel}
             readonly={readonly}
             selectedRowKeys={selectedRowKeys}
             onChange={(rowKeys) => {
@@ -74,7 +79,7 @@ class MarketingSettings extends React.Component<Props, State> {
           />
         ) : (
           <InvitationList
-            onCancel={onCancel}
+            onCancel={this.onCancel}
             readonly={readonly}
             planId={planId}
           />

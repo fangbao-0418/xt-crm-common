@@ -269,7 +269,7 @@ class Main extends React.Component<Props, State> {
     this.setState({
       visible: true,
       readonly: false,
-      planId: this.planId,
+      planId: record.planId,
       selectedRowKeys: record.couponCodes || []
     })
   }
@@ -277,6 +277,7 @@ class Main extends React.Component<Props, State> {
     this.setState({
       visible: true,
       readonly: true,
+      planId: record.planId,
       selectedRowKeys: record.couponCodes || []
     })
   }
