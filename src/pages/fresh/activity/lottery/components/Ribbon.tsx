@@ -28,7 +28,7 @@ function Main (props: any) {
           >
             查看
           </span>
-          {[1].includes(props.type) && (
+          {props.onCopy && (
             <span
               className='href mr8'
               onClick={props.onCopy}
