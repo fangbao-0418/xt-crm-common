@@ -14,7 +14,12 @@ import domains from './domain'
 import * as LocalStorage from '@/util/localstorage'
 const FormItem = Form.Item
 
-console.log(domains, 'domains')
+/** 可选择环境域名的hostname */
+const hns = [
+  'localhost',
+  'daily-xt-crmadmin.hzxituan.com',
+  'test-crmadmin.hzxituan.com'
+]
 
 const LoginPage = (props) => {
   let userNameInput = null
@@ -84,7 +89,7 @@ const LoginPage = (props) => {
               size='large'
             />
           </FormItem>
-          {['prod', 'pre'].indexOf(process.env.PUB_ENV) === -1 && (
+          {hns.includes(window.location.hostname) && (
             <FormItem>
               <Select
                 placeholder='选择环境域名'
