@@ -40,7 +40,23 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'tradeNo',
     title: '交易编号',
-    width: 170
+    width: 170,
+    render: (text: any, record: any) => {
+        return (
+          <span
+            className='href'
+            onClick={() => {
+              if ([1, 3].indexOf(record.tradeType) > -1) {
+                APP.href(`/order/detail/${record.orderId}`, '__target')
+              } else {
+                APP.href(`/order/refundOrder/${record.afterSaleId}`, '__target')
+              }
+            }}
+          >
+            {text}
+          </span>
+        )
+      }
   }, {
     dataIndex: 'tradeTypeDesc',
     title: '交易类型',
@@ -189,13 +205,13 @@ class Main extends React.Component<Props> {
           }}
           addonAfterSearch={(
             <div>
-              <Button
+              {/* <Button
                 type='primary'
                 onClick={() => {
                 }}
               >
                 批量导出
-              </Button>
+              </Button> */}
               {/* <Popconfirm
                 title='确定终止结算吗'
                 className='ml8'
