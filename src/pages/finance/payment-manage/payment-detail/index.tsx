@@ -47,7 +47,7 @@ class Main extends React.Component<Props> {
             className='href'
             onClick={() => {
               if ([1, 3].indexOf(record.tradeType) > -1) {
-                APP.href(`/order/detail/${record.orderId}`, '__target')
+                APP.href(`/order/detail/${record.orderCode}`, '__target')
               } else {
                 APP.href(`/order/refundOrder/${record.afterSaleId}`, '__target')
               }
