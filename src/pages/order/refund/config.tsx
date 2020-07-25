@@ -26,7 +26,7 @@ export const refundStatusOptions: any = {
     { key: 30, val: '售后完成' },
     { key: 40, val: '售后关闭' }
   ],
-  WAITCONFIRM: [{ key: 10, val: '待审核' }], // 待审核
+  WAITCONFIRM: [{ key: 10, val: '待客服审核' },{ key: 15, val: '待商家审核' }], // 待审核
   OPERATING: [ // 处理中
     { key: '', val: '全部' },
     { key: 20, val: '待用户发货' },
@@ -43,7 +43,7 @@ export const refundStatusOptions: any = {
 
 export const typeMapRefundStatus = {
   ALL: null,
-  WAITCONFIRM: [10],
+  WAITCONFIRM: [10, 15],
   OPERATING: [20, 21, 23, 24, 25, 26, 27],
   COMPLETE: [30],
   REJECTED: [40]
