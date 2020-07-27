@@ -144,7 +144,7 @@ class BannerModal extends Component {
   };
   render () {
     const { isEdit, size } = this.props
-    const { getFieldDecorator, getFieldValue } = this.props.form
+    const { getFieldDecorator, setFieldsValue } = this.props.form
     const { data, renderKey } = this.state
     const seat = [data.newSeat, data.childSeat]
     return (
@@ -187,6 +187,12 @@ class BannerModal extends Component {
                     validator: (rule, value, cb) => {
                       if (value[1] !== undefined) {
                         cb()
+                        if([1].includes(value[0])){
+                          setFieldsValue({
+                            platformArray:undefined,
+                            imgList:undefined,
+                          })
+                        }
                       } else {
                         cb('位置不能为空')
                       }
@@ -212,13 +218,13 @@ class BannerModal extends Component {
                 })(<Input placeholder='' />)}
               </FormItem>
             </If>
-            <If condition={[1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])}>
+            <If condition={[1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])}>
               <FormItem key={renderKey} label='Banner图片' required={true}>
                 {getFieldDecorator('imgList', {
                   initialValue: initImgList(data.imgUrlWap),
                   rules: [
                     {
-                      required: [1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0]),
+                      required: [1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0]),
                       message: '请上传Banner图片'
                     }
                   ]
@@ -226,8 +232,9 @@ class BannerModal extends Component {
                   <UploadView
                     placeholder='上传主图'
                     listType='picture-card'
-                    listNum={1}
-                    size={.3}
+                    fileType={['jpg', 'jpeg', 'gif', 'png']}
+                    listNum={[1].includes(seat[0])?2:1}
+                    size={[1].includes(seat[0])?0.5:.3}
                   />,
                 )}
               </FormItem>
@@ -267,16 +274,16 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+            <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
                   rules: [{
-                    required: ([1, 2, 3, 4, 6, 7, 8, 9].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
+                    required: ([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
                     message: '请选择平台'
                   }]
                 })(
-                  <Checkbox.Group options={_platformType}> </Checkbox.Group>
+                  <Checkbox.Group options={[1].includes(seat[0])?[_platformType[0],_platformType[1]]:_platformType}> </Checkbox.Group>
                 )}
               </FormItem>
             </If>
