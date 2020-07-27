@@ -6,69 +6,88 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      memberId: {
+      id: {
         type: 'input',
         label: '账务结算ID',
         controlProps: {
           placeholder: '请输入账务结算ID'
         }
       },
-      nickName: {
+      subjectId: {
         label: '账务对象ID',
         type: 'input',
         controlProps: {
           placeholder: '请输入账务对象ID'
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            { required: true, message: '账务对象ID必填' }
+          ]
         }
       },
-      anchorLevel: {
+      subjectName: {
         label: '账务结算对象名称',
         type: 'input',
         controlProps: {
           placeholder: '请输入账务结算对象名称'
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            { required: true, message: '请校验账务对象ID' }
+          ]
         }
       },
-      status: {
+      auditStatus: {
+        type: 'select',
+        label: '审核状态',
+        options: [
+          { label: '待审核', value: 0 },
+          { label: '审核通过', value: 1 },
+          { label: '审核不通过', value: 2 }
+        ]
+      },
+      inOrOutType: {
         type: 'select',
         label: '收支类型',
-        fieldDecoratorOptions: {
-          initialValue: 0
-        },
         options: [
           { label: '收入', value: 1 },
-          { label: '支出', value: 0 }
+          { label: '支出', value: 2 }
         ]
       },
-      status1: {
+      subjectType: {
+        type: 'select',
+        label: '账务对象类型',
+        options: [
+          { label: '供应商', value: 1 },
+          { label: '喜团小店', value: 2 }
+        ]
+      },
+      settlementStatus: {
         type: 'select',
         label: '结算状态',
-        fieldDecoratorOptions: {
-          initialValue: 0
-        },
         options: [
-          { label: '待结算', value: 1 },
-          { label: '已结算', value: 0 }
+          { label: '待结算', value: 0 },
+          { label: '冻结中', value: -1 },
+          { label: '已结算', value: 2 },
+          { label: '结算关闭', value: -2 }
         ]
       },
-      status2: {
+      time: {
         label: '创建时间',
         type: 'rangepicker',
         controlProps: {
           showTime: true
         }
+      },
+      settlementType: {
+        type: 'select',
+        label: '创建方式',
+        options: [
+          { label: '系统创建', value: 2 },
+          { label: '人工创建', value: 1 }
+        ]
       }
     }
   }
   return _.mergeWith(defaultConfig, partial)
-}
-
-export enum AnchorIdentityTypeEnum {
-  供应商 = 20,
-  公司 = 10,
-  合作网红 = 30,
-  代理 = 40
-}
-
-export enum AnchorLevelEnum {
-  星级主播 = 10,
-  普通主播 = 0
 }
