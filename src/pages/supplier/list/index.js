@@ -1,7 +1,7 @@
 import React from 'react'
 import { Table, Card, Form, Input, Select, Button, DatePicker, InputNumber, message } from 'antd'
 import moment from 'moment'
-import { querySupplierList, exportSupplier, ranking } from '../api'
+import { querySupplierList, exportSupplier } from '../api'
 import SupplierModal from '../supplier-modal'
 import AccountModal from '../account-modal'
 import SupplierTypeSelect from '@/components/supplier-type-select'
@@ -87,15 +87,6 @@ class OrderList extends React.Component {
     })
   }
 
-// 置顶或取消置顶事件
-upOrCancle(record){
-  ranking({ bizId: record.id, bizType: 1, ranking: record.isRanking===0?1:0 }).then((res) => {
-    if (res) {
-      message.success(record.isRanking === 0?'置顶成功':'取消置顶成功')
-      this.query()
-    }
-  })
-}
   handlePageChange = (page, pageSize) => {
     this.setState(
       {
@@ -147,17 +138,12 @@ upOrCancle(record){
       },
       {
         title: '操作',
-        width: 100,
+        width: 200,
         render: (operator, record) => {
           return (
             <>
               <SupplierModal onSuccess={this.query} isEdit id={record.id} />
               <AccountModal onSuccess={this.query} {...record} />
-              <div className='href' onClick={()=>{
-                this.upOrCancle(record)
-              }}>
-                {record.isRanking === 0?'置顶':'取消置顶'}
-              </div>
             </>
           )
         }
@@ -195,16 +181,6 @@ upOrCancle(record){
               {getFieldDecorator('createTime', {
                 initialValue: values.createTime
               })(<RangePicker showTime />)}
-            </FormItem>
-            <FormItem label='是否置顶'>
-              {getFieldDecorator('isRanking', {
-                initialValue: values.isRanking
-              })(
-                <Select style={{ width: 100 }} placeholder='请选择是否置顶' allowClear>
-                  <Option value={1}>置顶</Option>
-                  <Option value={0}>未置顶</Option>
-                </Select>
-              )}
             </FormItem>
             <FormItem>
               <Button type='default' onClick={this.reset}>

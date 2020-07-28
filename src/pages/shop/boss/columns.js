@@ -5,7 +5,7 @@ import { formatMoney } from '@/pages/helper'
 import { shopStatusMap, auditTypeMap } from './config'
 
 // 审核通过
-export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen, upOrCancel }) => {
+export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
   return [
     {
       title: '店铺名称',
@@ -85,19 +85,6 @@ export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen, upOrCanc
             </If>
             <If condition={record.shopStatus === 3 || record.shopStatus === 1}>
               <div onClick={onOpen.bind(null, record)} className='href'>开启店铺</div>
-            </If>
-            <If condition={record.isRanking === 0}>
-              <div className='href' onClick={upOrCancel.bind(null, record)}>
-                置顶
-              </div>
-            </If>
-            <If condition={record.isRanking === 1}>
-              <div
-                className='href'
-                onClick={upOrCancel.bind(null, record)}
-              >
-                取消置顶
-              </div>
             </If>
           </div >
         )

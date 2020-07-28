@@ -13,7 +13,7 @@ import { connect } from '@/util/utils'
 import { getPassColums, getCheckColums, getNoPassColums } from './columns'
 import { queryConfig } from './config'
 import { namespace } from './model'
-import { getShopTypes, getCategoryTopList, ranking } from './api'
+import { getShopTypes, getCategoryTopList } from './api'
 
 const { Option } = Select
 const { confirm } = Modal
@@ -55,8 +55,7 @@ class Main extends React.Component {
         shopStatus: values.shopStatus !== undefined ? values.shopStatus : localPayload.shopStatus,
         shopTypes: values.shopTypes !== undefined ? values.shopTypes : localPayload.shopTypes,
         categoryIds: values.categoryIds !== undefined ? values.categoryIds : localPayload.categoryIds,
-        applyResult: this.state.tabKey,
-        isRanking: values.isRanking !== undefined ? values.isRanking : localPayload.isRanking
+        applyResult: this.state.tabKey
       }
       payload.shopStatus = payload.shopStatus || undefined
       APP.fn.setPayload(namespace, {
@@ -68,7 +67,6 @@ class Main extends React.Component {
         memberPhone: payload.memberPhone,
         shopTypes: payload.shopTypes,
         categoryIds: payload.categoryIds,
-        isRanking: payload.isRanking,
         shopStatus: payload.shopStatus,
         applyResult: payload.applyResult
       })
@@ -243,16 +241,6 @@ class Main extends React.Component {
             />
           )}
         </FormItem>
-        <FormItem label='是否置顶'>
-          {getFieldDecorator('isRanking', {
-            initialValue: localPayload.isRanking
-          })(
-            <Select style={{ width: 100 }} placeholder='请选择是否置顶' allowClear>
-              <Option value={1}>置顶</Option>
-              <Option value={0}>未置顶</Option>
-            </Select>
-          )}
-        </FormItem>
         <FormItem>
           <Button type='primary' onClick={() => {
             this.handleSearch({
@@ -269,16 +257,6 @@ class Main extends React.Component {
     )
   }
 
-// 置顶或取消事件
-upOrCancel = (record) => {
-  ranking({ bizId: record.id, bizType: 2, ranking: record.isRanking===0?1:0 }).then((res) => {
-    if (res) {
-      message.success(record.isRanking===0?'置顶成功':'取消置顶成功')
-      this.fetchData()
-    }
-  })
-}
-
   /** 视图: 列表内容模块 */
   renderContent = () => {
     const { bossData } = this.props
@@ -294,8 +272,7 @@ upOrCancel = (record) => {
         onDetail: this.handleDetail,
         onClose: this.handleClose,
         onOpen: this.handleOpen,
-        onUserClick: this.handleUserClick,
-        upOrCancel: this.upOrCancel
+        onUserClick: this.handleUserClick
       }),
       '3': getNoPassColums({
         onDetail: this.handleDetail,

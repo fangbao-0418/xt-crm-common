@@ -33,10 +33,6 @@ export function addSupplierAccount (data) {
   return post('/store/add/supplier', data)
 }
 
-// 是否置顶
-export function ranking (params) {
-  return newPost('/mmweb/supplier/shop/V1/top/ranking', params)
-}
 // 保证金缴纳方式
 export function depositTypes () {
   return get('/store/depositTypes').then((res) => {

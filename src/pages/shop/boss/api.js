@@ -11,10 +11,6 @@ export function checkUser (params) {
   return post('/shop/v1/managers/check', params)
 }
 
-// 是否置顶
-export function ranking (params) {
-  return newPost('/mmweb/supplier/shop/V1/top/ranking', params)
-}
 // 批量创建小店
 export function createShop (params) {
   return post('/shop/v1/managers/create', params)
