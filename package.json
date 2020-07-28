@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "./",
   "scripts": {
-    "dev": "node --max-old-space-size=4096 ./node_modules/xt-crm-cli/lib/scripts/start.js --port 3001",
+    "dev": "node --max-old-space-size=4096 ./node_modules/xt-crm-cli/lib/scripts/start.js --port 3002",
     "build-dev": "node ./build.js --env dev",
     "build-test": "node ./build.js --env test",
     "build-test2": "node ./build.js --env test2",
