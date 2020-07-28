@@ -77,14 +77,7 @@ export function refuse (shopId: any) {
 
 /** 查询运营中心列表 */
 export function pointCenterList () {
-  return get('/point/center/list').then((res) => {
-    return res.map((record: { code: number, name: string }) => {
-      return {
-        value: record.code,
-        label: record.name
-      }
-    })
-  })
+  return get('/point/center/list')
 }
 
 export function getTimerList (payload: any) {

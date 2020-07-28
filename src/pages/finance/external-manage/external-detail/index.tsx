@@ -1,5 +1,5 @@
 /**
- * 货款账单
+ * 外部分账流水明细
  */
 import React from 'react'
 import Image from '@/components/Image'
@@ -16,102 +16,99 @@ interface Props extends AlertComponentProps {
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Anchor.ItemProps>[] = [{
-    title: '账单ID',
+    title: '分账流水号',
     dataIndex: 'nickName',
     width: 300
   }, {
-    title: '生成日期',
+    title: '待清分流水号',
     dataIndex: 'fansTotal',
     width: 200,
     align: 'center'
   }, {
     dataIndex: 'anchorIdentityType',
-    title: '供应商ID',
+    title: '交易编号',
     width: 150,
     render: (text) => {
       return AnchorIdentityTypeEnum[text]
     }
   }, {
     dataIndex: 'anchorId',
-    title: '交易类型',
+    title: '三方处理流水号',
     width: 120,
     align: 'center'
   }, {
     dataIndex: 'anchorLevel',
-    title: '供应商ID',
+    title: '分账类型',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '供应商',
+    title: '分账对象类型',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '供应商类型',
+    title: '分账对象ID',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '收入笔数',
+    title: '分账对象名称',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '收入（元）',
+    title: '分账金额',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '支出笔数',
+    title: '分账流水状态',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '支出（元）',
+    title: '三方记账状态',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
   }, {
     dataIndex: 'anchorLevel',
-    title: '本期账单金额',
+    title: '创建时间',
     width: 100,
     render: (text) => {
       return AnchorLevelEnum[text]
     }
-  },
-  {
-    title: '操作',
-    align: 'center',
-    render: (text, record) => {
-      return (
-        <div>
-          <span className='href mr8'>查看明细</span>
-          <span className='href mr8'>导出</span>
-        </div>
-      )
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '分账完成时间',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
+    }
+  }, {
+    dataIndex: 'anchorLevel',
+    title: '三方处理完成时间',
+    width: 100,
+    render: (text) => {
+      return AnchorLevelEnum[text]
     }
   }]
   public refresh () {
     this.listpage.refresh()
-  }
-  public deleteAnchor (record: Anchor.ItemProps) {
-    api.deleteAnchor(record.anchorId).then(() => {
-      this.listpage.refresh()
-    })
   }
   public render () {
     return (
@@ -135,14 +132,6 @@ class Main extends React.Component<Props> {
               >
                 批量导出
               </Button>
-              <Button
-                type='primary'
-                className='ml8'
-                onClick={() => {
-                }}
-              >
-                批量导出明细
-              </Button>
             </div>
           )}
           formConfig={getFieldsConfig()}
@@ -153,6 +142,8 @@ class Main extends React.Component<Props> {
               <FormItem name='anchorIdentityType' />
               <FormItem name='anchorLevel' />
               <FormItem name='status' />
+              <FormItem name='status1' />
+              <FormItem name='status2' />
             </>
           )}
           api={api.getAnchorList}
