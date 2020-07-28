@@ -12,11 +12,12 @@ interface RelationCheckboxItemProps {
   labelProcess?: (value: ValuesProp) => React.ReactNode
   /* 可选择项列表 */
   options: Option[]
-  labelShow?: boolean
-  /* 二级label宽度 */
-  lableSpan?: number
-  /* 二级value宽度 */
-  valueSpan?: number
+  /* 全部选项是否显示 */
+  allSelectShow?: boolean
+  /* 一级显示宽度比例 */
+  oneSpan?: number
+  /* 二级显示宽度比例 */
+  twoSpan?: number
   onChange?: (
     checkedItem: ValuesProp,
     checkedList: ValuesProp,
@@ -123,14 +124,14 @@ class RelationCheckboxItem extends PureComponent<RelationCheckboxItemProps, Rela
       options,
       label,
       labelProcess,
-      labelShow = true,
-      lableSpan = 2,
-      valueSpan = 22
+      allSelectShow = true,
+      oneSpan = 2,
+      twoSpan = 22
     } = this.props
 
     const { checkedList, checkAll, indeterminate } = this.state
 
-    let labelStr: React.ReactNode = '全部'
+    let labelStr: React.ReactNode = '全部  '
     if (labelProcess) {
       labelStr = labelProcess(checkedList)
     }
@@ -139,9 +140,9 @@ class RelationCheckboxItem extends PureComponent<RelationCheckboxItemProps, Rela
       <div style={{ marginBottom: 8 }}>
         <Row>
           {
-            labelShow && (
-              <Col span={lableSpan}>
-                <span style={{ marginRight: 4 }}>{label}</span>
+            allSelectShow && (
+              <Col span={oneSpan}>
+                {label}
                 <Checkbox
                   indeterminate={indeterminate}
                   onChange={this.handleItemAllChange}
@@ -152,7 +153,7 @@ class RelationCheckboxItem extends PureComponent<RelationCheckboxItemProps, Rela
               </Col>
             )
           }
-          <Col span={labelShow ? valueSpan : 24}>
+          <Col span={allSelectShow ? twoSpan : 24}>
             <CheckboxGroup
               options={options}
               value={checkedList}

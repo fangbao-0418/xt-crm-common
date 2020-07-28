@@ -8,26 +8,31 @@ import * as api from './api'
 import RelationCheckbox, { Option } from '@/components/relation-checkbox'
 
 interface State {
-  oneLevels: Option[]
-  twoLevels: Option[]
+  oneSubject: Option[]
+  twoSubject: Option[]
   loading: boolean
 }
 
 class Main extends React.Component<any, State> {
   public form: FormInstance
   public state: State = {
-    oneLevels: [],
-    twoLevels: [],
+    oneSubject: [],
+    twoSubject: [],
     loading: true
   }
   componentDidMount () {
+    this.fetchData(() => {
+      this.setData()
+    })
+  }
+  public fetchData = (cb: () => void) => {
     this.setState({
       loading: true
     })
     api.fetchCategory({ level: 2 }).then(res => {
       this.setState({
         loading: false,
-        oneLevels: [
+        oneSubject: [
           {
             label: '全部',
             value: -1,
@@ -37,14 +42,16 @@ class Main extends React.Component<any, State> {
             }))
           }
         ],
-        twoLevels: res.map((item: any) => ({
+        twoSubject: res.filter((item: any) => item.children?.length).map((item: any) => ({
           label: item.name,
           value: item.id,
-          children: item.children.map((item: any) => ({
+          children: (item.children || []).map((item: any) => ({
             label: item.name,
             value: item.id,
           }))
         }))
+      }, () => {
+        cb()
       })
     }, () => {
       this.setState({
@@ -52,16 +59,23 @@ class Main extends React.Component<any, State> {
       })
     })
   }
+  public setData = () => {
+    api.getCategory().then(res => {
+      this.form.setValues(res)
+    })
+  }
   public handleSave = () => {
     this.form.props.form.validateFields((err, value) => {
       if (err) {
         return
       }
-      console.log(value, 123)
+      api.setCategory(value).then(() => {
+        APP.success('设置成功')
+      })
     })
   }
   render () {
-    const { loading, oneLevels, twoLevels } = this.state
+    const { loading, oneSubject, twoSubject } = this.state
     if (loading) {
       return (
         <div>
@@ -88,23 +102,12 @@ class Main extends React.Component<any, State> {
           <Card title='一级类目'>
             <FormItem
               inner={(form) => {
-                return form.getFieldDecorator('oneLevels', {
-                  rules: [
-                    {
-                      validator: (_, value, callback) => {
-                        if (value && value.length) {
-                          callback()
-                          return
-                        }
-                        callback('请至少选择一项')
-                      }
-                    }
-                  ]
-                })(
+                return form.getFieldDecorator('oneSubject')(
                   <RelationCheckbox
+                    filterAllIds={false}
                     divider={false}
-                    twoLabelShow={false}
-                    options={oneLevels}
+                    oneAllSelectShow={false}
+                    options={oneSubject}
                   />
                 )
               }}
@@ -113,24 +116,13 @@ class Main extends React.Component<any, State> {
           <Card title='二级类目'>
             <FormItem
               inner={(form) => {
-                return form.getFieldDecorator('twoLevels', {
-                  rules: [
-                    {
-                      validator: (_, value, callback) => {
-                        if (value && value.length) {
-                          callback()
-                          return
-                        }
-                        callback('请至少选择一项')
-                      }
-                    }
-                  ]
-                })(
+                return form.getFieldDecorator('twoSubject')(
                   <RelationCheckbox
-                    lableSpan={4}
-                    valueSpan={20}
+                    filterAllIds={false}
+                    oneSpan={4}
+                    twoSpan={20}
                     divider={false}
-                    options={twoLevels}
+                    options={twoSubject}
                   />
                 )
               }}
