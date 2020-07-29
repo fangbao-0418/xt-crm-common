@@ -5,7 +5,7 @@ import React from 'react'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tabs } from 'antd'
+import { Tabs, Button } from 'antd'
 import MoneyRender from '@/components/money-render'
 import { getFieldsConfig, SupplierTypeEnum } from './config'
 import * as api from './api'
@@ -113,6 +113,14 @@ class Main extends React.Component<Props> {
     dataIndex: 'remark',
     title: '备注',
     width: 200
+  }, {
+    dataIndex: 'operate',
+    title: '操作',
+    render: () => {
+      return (
+        <Button type='link'>去审核</Button>
+      )
+    }
   }]
   public refresh () {
     this.listpage.refresh()
