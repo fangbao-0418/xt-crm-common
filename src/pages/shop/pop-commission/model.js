@@ -3,7 +3,7 @@ import * as api from './api';
 import { levelList } from './config';
 
 export default {
-  namespace: 'shop.commission',
+  namespace: 'shop.popcommission',
   state: {
     levelList,
     currentCategory: null, // 当前选中编辑的类目
@@ -17,7 +17,7 @@ export default {
       const list = await api.getList(payload);
 
       const { level, parentCategoryId, name } = payload;
-      const { levelList } = rootState['shop.commission']
+      const { levelList } = rootState['shop.popcommission']
       const curentLevel = levelList.find(levelItem => levelItem.id === level)
 
       if (!curentLevel) return
@@ -28,7 +28,7 @@ export default {
       curentLevel.init = true;
 
       dispatch({
-        type: 'shop.commission/saveDefault',
+        type: 'shop.popcommission/saveDefault',
         payload: {
           levelList: [...levelList]
         }
@@ -39,7 +39,7 @@ export default {
     async getDetai(payload) {
       const res = await api.getDetai(payload);
       dispatch({
-        type: 'shop.commission/saveDefault',
+        type: 'shop.popcommission/saveDefault',
         payload: {
           currentCategory: res,
           configModal: {
@@ -53,11 +53,11 @@ export default {
     async updateCategory(payload, rootState) {
       const res = await api.editCategory(payload);
       if (res) {
-        const { levelList } = rootState['shop.commission']
+        const { levelList } = rootState['shop.popcommission']
         const curentLevel = levelList.find(levelItem => levelItem.id === payload.level)
         if (!curentLevel) return
         dispatch({
-          type: 'shop.commission/saveDefault',
+          type: 'shop.popcommission/saveDefault',
           payload: {
             currentCategory: null,
             configModal: {
@@ -65,7 +65,7 @@ export default {
             }
           }
         });
-        dispatch['shop.commission'].getList({
+        dispatch['shop.popcommission'].getList({
           level: curentLevel.id,
           name: curentLevel.name,
           parentCategoryId: curentLevel.parentId
