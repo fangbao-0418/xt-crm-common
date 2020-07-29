@@ -36,13 +36,13 @@ class Main extends React.Component<any, State> {
           {
             label: '全部',
             value: -1,
-            children: res.map((item: any) => ({
+            children: (res || []).map((item: any) => ({
               label: item.name,
               value: item.id
             }))
           }
         ],
-        twoSubject: res.filter((item: any) => item.children?.length).map((item: any) => ({
+        twoSubject: (res || []).filter((item: any) => item.children?.length).map((item: any) => ({
           label: item.name,
           value: item.id,
           children: (item.children || []).map((item: any) => ({
