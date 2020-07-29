@@ -23,6 +23,9 @@ class Main extends React.Component<Props> {
     status: '-2'
   }
   public listpage: ListPageInstanceProps
+  public handleAudit = () => {
+    APP.history.push('/finance/externalwithdrawdetail/123')
+  }
   public columns: any = [{
     title: '申请单编号',
     dataIndex: 'outTransferNo',
@@ -118,7 +121,7 @@ class Main extends React.Component<Props> {
     title: '操作',
     render: () => {
       return (
-        <Button type='link'>去审核</Button>
+        <Button type='link' onClick={this.handleAudit}>去审核</Button>
       )
     }
   }]

@@ -21,6 +21,7 @@ import ExternalAccountSettlement from './external-manage/account-settlement' //�
 import ExternalAccountDivided from './external-manage/external-account-divided' //外部分账流水汇总
 import ExternalDetail from './external-manage/external-detail' //外部分账流水明细
 import ExternalWithdrawDetail from './external-manage/withdraw-detail' //提现账户明细
+import InvoiceReview from './external-manage/withdraw-detail/InvoiceReview'
 import ExternalXituanBalance from './external-manage/xituan-balance' //外部账户余额查询-喜团
 export default class extends Component {
   render () {
@@ -44,7 +45,8 @@ export default class extends Component {
         <Route path='/finance/externalsupplierbalance' component={ExternalSupplierBalance} />
         <Route path='/finance/externalaccountdivided' component={ExternalAccountDivided} />
         <Route path='/finance/externaldetail' component={ExternalDetail} />
-        <Route path='/finance/externalwithdrawdetail' component={ExternalWithdrawDetail} />
+        <Route path='/finance/externalwithdrawdetail' exact component={ExternalWithdrawDetail} />
+        <Route path='/finance/externalwithdrawdetail/:id' component={InvoiceReview} />
         <Route path='/finance/externalxituanbalance' component={ExternalXituanBalance} />
       </Switch>
     )
