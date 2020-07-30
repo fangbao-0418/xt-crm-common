@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Button } from 'antd'
+import { Card, Button, Empty } from 'antd'
 import Form, {
   FormInstance,
   FormItem
@@ -47,7 +47,7 @@ class Main extends React.Component<any, State> {
           value: item.id,
           children: (item.children || []).map((item: any) => ({
             label: item.name,
-            value: item.id,
+            value: item.id
           }))
         }))
       }, () => {
@@ -100,55 +100,71 @@ class Main extends React.Component<any, State> {
           }}
         >
           <Card title='一级类目'>
-            <FormItem
-              inner={(form) => {
-                return form.getFieldDecorator('oneSubject')(
-                  <RelationCheckbox
-                    filterAllIds={false}
-                    divider={false}
-                    oneAllSelectShow={false}
-                    options={oneSubject}
-                  />
-                )
-              }}
-            />
+            {
+              oneSubject.length ? (
+                <FormItem
+                  inner={(form) => {
+                    return form.getFieldDecorator('oneSubject')(
+                      <RelationCheckbox
+                        filterAllIds={false}
+                        divider={false}
+                        oneAllSelectShow={false}
+                        options={oneSubject}
+                      />
+                    )
+                  }}
+                />
+              ) : (
+                <Empty />
+              )
+            }
           </Card>
           <Card title='二级类目'>
-            <FormItem
-              inner={(form) => {
-                return form.getFieldDecorator('twoSubject')(
-                  <RelationCheckbox
-                    filterAllIds={false}
-                    oneSpan={4}
-                    twoSpan={20}
-                    divider={false}
-                    options={twoSubject}
-                  />
-                )
-              }}
-            />
+            {
+              twoSubject.length ? (
+                <FormItem
+                  inner={(form) => {
+                    return form.getFieldDecorator('twoSubject')(
+                      <RelationCheckbox
+                        filterAllIds={false}
+                        oneSpan={4}
+                        twoSpan={20}
+                        divider={false}
+                        options={twoSubject}
+                      />
+                    )
+                  }}
+                />
+              ) : (
+                <Empty />
+              )
+            }
           </Card>
-          <Card
-            style={{ background: 'none' }}
-            bodyStyle={{ padding: '0 24px' }}
-            bordered={false}
-          >
-            <FormItem
-              labelCol={{
-                span: 0
-              }}
-              wrapperCol={{
-                offset: 0
-              }}
-            >
-              <Button
-                type='primary'
-                onClick={this.handleSave}
+          {
+            !!(oneSubject.length || twoSubject.length) && (
+              <Card
+                style={{ background: 'none' }}
+                bodyStyle={{ padding: '0 24px' }}
+                bordered={false}
               >
-                保存
-              </Button>
-            </FormItem>
-          </Card>
+                <FormItem
+                  labelCol={{
+                    span: 0
+                  }}
+                  wrapperCol={{
+                    offset: 0
+                  }}
+                >
+                  <Button
+                    type='primary'
+                    onClick={this.handleSave}
+                  >
+                    保存
+                  </Button>
+                </FormItem>
+              </Card>
+            )
+          }
         </Form>
       </div>
     )
