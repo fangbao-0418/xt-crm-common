@@ -52,12 +52,20 @@ class Main extends React.Component {
               查看明细
             </span>
             <span
-              className='href'
+              className='href mr8'
               onClick={() => {
                 this.exportDetail(record)
               }}
             >
               导出
+            </span>
+            <span
+              className='href'
+              onClick={() => {
+                this.exportRunningWaterDetail(record)
+              }}
+            >
+              导出流水
             </span>
           </div>
         )
@@ -91,6 +99,11 @@ class Main extends React.Component {
   }
   public exportDetail (record: RecordProps) {
     api.exportDetail(record.id).then(() => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
+  }
+  public exportRunningWaterDetail (record: RecordProps) {
+    api.exportRunningWaterDetail(record.id).then(() => {
       APP.success('导出成功，请前往下载列表下载文件')
     })
   }
