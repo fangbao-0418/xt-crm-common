@@ -2,13 +2,14 @@
  * 一次性财务结算外部明细
  */
 import React from 'react'
-import { ListPage, Alert, FormItem, Form } from '@/packages/common/components'
+import { ListPage, Alert, FormItem, Form, SelectFetch } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { Button, message, Col, Row, Modal } from 'antd'
 import { getFieldsConfig } from './config'
 import modal, { ModalProps } from './modal'
 import * as api from './api'
 import { FormInstance } from '@/packages/common/components/form'
+import { getShopTypes } from '@/pages/order/api'
 
 interface Props {
   modal: ModalProps,
@@ -100,7 +101,6 @@ class Main extends React.Component<Props, State> {
         }).then((res: any) => {
           if (res) {
             this.setState({
-              detailData:null,
               visible:false
             },()=>{
               APP.success('操作成功')
@@ -126,13 +126,17 @@ class Main extends React.Component<Props, State> {
           tableProps={{
             rowKey: 'id'
           }}
+          rangeMap={{
+            createTime: {
+              fields: ['startTime', 'endTime']
+            }
+          }}
           addonAfterSearch={(
             <div>
               <Button
                 type='primary'
                 onClick={() => {
                   this.setState({
-                    detailData:null,
                     visible:true
                   })
                 }}
@@ -145,8 +149,18 @@ class Main extends React.Component<Props, State> {
           formItemLayout={(
             <>
               <FormItem name='memberId' />
-              <FormItem name='nickName' />
-              <FormItem name='status2' />
+              <FormItem label='店铺类型'
+               inner={(form) => {
+                return form.getFieldDecorator('memberId1')(
+                  <SelectFetch
+                    placeholder= '请选择店铺类型'
+                    style={{ width: 172 }}
+                    fetchData={getShopTypes}
+                  />
+                )
+               }}
+             />
+              <FormItem name='createTime' />
             </>
           )}
           api={api.getAnchorList}
@@ -157,10 +171,10 @@ class Main extends React.Component<Props, State> {
         width='60%'
         onCancel={()=>{
           this.setState({
-            detailData:null,
             visible:false
           })
         }}
+        destroyOnClose
         onOk={this.handleOkModal}
       >
          <Form
@@ -174,22 +188,81 @@ class Main extends React.Component<Props, State> {
                })
              }}
            >
-              <FormItem name='memberId' required/>
-              <FormItem name='coupon1' required/>
-              <FormItem name='coupon2' required/>
+             <FormItem label='店铺类型'
+               required
+               inner={(form) => {
+                return form.getFieldDecorator('memberId', {
+                  rules: [{
+                    required: true,
+                    message: '请选择店铺类型'
+                  }],
+                  initialValue: detailData&&detailData.memberId 
+                })(
+                  <SelectFetch
+                    placeholder= '请选择店铺类型'
+                    style={{ width: 172 }}
+                    fetchData={getShopTypes}
+                  />
+                )
+               }}
+             />
+                <FormItem label='选择店铺'
+               required
+               inner={(form) => {
+                return form.getFieldDecorator('anchorId', {
+                  rules: [{
+                    required: true,
+                    message: '请选择店铺'
+                  }],
+                  initialValue: detailData&&detailData.anchorId 
+                })(
+                  <SelectFetch
+                    placeholder= '请选择选择店铺'
+                    style={{ width: 172 }}
+                    fetchData={getShopTypes}
+                  />
+                )
+               }}
+             /> 
+              <FormItem name='anchorLevel' required/>
               <Row>
               <Col span={6} style={{textAlign:'right'}}>
                 优惠券：
               </Col>
-              <Col span={14}>
-                {detailData&&detailData.couponList&&detailData.couponList.length>0&&detailData.couponList[0].name}
+              {
+                detailData&&detailData.couponList&&detailData.couponList.length>0&&
+                <Col span={14}>
+                {detailData.couponList[0].code+" "+detailData.couponList[0].name }
+                <span className='href ml8'
+                onClick={()=>{
+                  detailData.couponList.splice(0,1)
+                  this.setState({
+                    detailData
+                  })
+                }}
+                >
+                  删除
+                </span>
               </Col>
+              }
+             
               </Row>
               {
                 detailData&&detailData.couponList&&detailData.couponList.length>1&&detailData.couponList.map((item: any,index: number)=>{
                   return index>0&&<Row>
                   <Col offset={6} span={14}>
-                    {detailData.couponList[index].name}
+                    {detailData.couponList[index].code+" "+detailData.couponList[index].name}
+                    <span
+                     className='href ml8'
+                    onClick={()=>{
+                  detailData.couponList.splice(index,1)
+                  this.setState({
+                    detailData
+                  })
+                }}
+                >
+                  删除
+                </span>
                   </Col>
                   </Row>
                 })
@@ -210,7 +283,7 @@ class Main extends React.Component<Props, State> {
                         hide() 
                       })
                     }
-                  })
+                  },detailData&&detailData.couponList||[])
                 }}
                 >选择优惠券</span>
               </Col>

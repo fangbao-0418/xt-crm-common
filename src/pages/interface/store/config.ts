@@ -13,39 +13,22 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '请输入门店名称'
         }
       },
-      nickName: {
-        label: '店铺类型',
-        type: 'input',
-        controlProps: {
-          placeholder: '请输入账务对象ID'
-        }
-      },
-      status2: {
+      createTime: {
         label: '创建时间',
         type: 'rangepicker',
         controlProps: {
           showTime: true
         }
       },
-      coupon1: {
-        label: '选择店铺',
-        type: 'input',
-        controlProps: {
-          placeholder: '请输入门店名称'
-        }
-      },
-      coupon2: {
+      anchorLevel: {
         label: '权重',
-        type: 'input',
+        type: 'number',
         controlProps: {
-          placeholder: '请输入门店名称'
-        }
-      },
-      coupon3: {
-        label: '门店名称',
-        type: 'input',
-        controlProps: {
-          placeholder: '请输入门店名称'
+          style:{width:150},
+          precision: 0,
+          min: 0,
+          max:100000000,
+          placeholder: '请输入权重'
         }
       }
     }

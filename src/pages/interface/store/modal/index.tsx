@@ -1,15 +1,15 @@
 import React from 'react'
 import CouponModal from '@/components/coupon-modal'
 interface State {
-  visible: boolean,
-  selectedRowKeys: any[]
+  visible: boolean
+  selectedRowKeys: any
 }
 
 export interface Payload {
   success?: any
 }
 export interface ModalProps {
-  show(payload: Payload): void
+  show(payload: Payload,rows:any): void
   hide: () => void
 }
 
@@ -20,16 +20,24 @@ function Main (WrappedComponent: React.ComponentType<any>) {
       selectedRowKeys: []
     }
     public payload: Payload = {
-      success: () => {}
+      success: () => {},
+
     }
     public modal: ModalProps = {
-      show: (payload) => {
+      show: (payload: Payload,rows: any) => {
         this.payload = payload
-        this.setState({ visible: true })
+        let selectedRowKeys: any[]=[]
+        rows&&rows.map((item: any)=>{
+          selectedRowKeys.push(item.id)
+        })
+        this.setState({ 
+          visible: true, 
+          selectedRowKeys
+        })
       },
       hide: () => {
         this.setState({ visible: false })
-      }
+      },
     }
     public render () {
       const { visible, selectedRowKeys } = this.state
