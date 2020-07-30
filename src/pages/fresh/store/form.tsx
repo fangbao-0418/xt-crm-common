@@ -1,6 +1,6 @@
 import React from 'react'
 import { Form, FormItem, SelectFetch } from '@/packages/common/components'
-import { Card, Row, Col, Button } from 'antd'
+import { Card, Row, Col, Button, Modal } from 'antd'
 import { defaultConfig, NAME_SPACE } from './config'
 import styles from './style.module.scss'
 import UploadView from '@/components/upload'
@@ -11,6 +11,8 @@ import { addShop, updateShop, getShopDetail, getTypeEnum, refuse, pointCenterLis
 import { RouteComponentProps } from 'react-router'
 import { parseQuery } from '@/util/utils'
 import Image from '@/components/Image'
+const { confirm } = Modal;
+
 import { RecordProps } from './interface'
 
 type Props = RouteComponentProps<{id: string}>;
@@ -23,7 +25,7 @@ interface StoreFormState {
   record: Partial<RecordProps>
   readonly: boolean
 }
-class StoreForm extends React.Component<Props, StoreFormState> {
+class StoreForm extends React.Component<Props, StoreFormState>  {
   readonly: boolean = !!(parseQuery() as any).readOnly
   state: StoreFormState = {
     address: '',
@@ -37,6 +39,9 @@ class StoreForm extends React.Component<Props, StoreFormState> {
   provinceName: string;
   cityName: string;
   areaName: string;
+  options: any;
+  cityCode: any;
+  regionalCode: any;
   constructor (props: Props) {
     super(props)
     this.id = props.match.params.id
@@ -49,6 +54,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
       this.provinceName = res.provinceName
       this.cityName = res.cityName
       this.areaName = res.areaName
+      this.cityCode= res&&res.address&&res.address.length>1&&res.address[1]
       this.setState({
         address: res.provinceName + '' + res.cityName + '' + res.areaName,
         pictrueUrl: res.pictrueUrl,
@@ -59,25 +65,42 @@ class StoreForm extends React.Component<Props, StoreFormState> {
       this.form.setValues(res)
     })
   }
+
   handleSave = () => {
     this.form.props.form.validateFields((err, vals) => {
       if (!err) {
-        // 合并省市区名称
-        vals = Object.assign(vals, {
-          provinceName: this.provinceName,
-          cityName: this.cityName,
-          areaName: this.areaName
-        })
-        const isAdd = this.id === '-1'
-        const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id })
-        promiseResult.then((res: any) => {
-          if (res) {
-            if (this.state.status === 4) {
-              APP.success('审核通过')
+        const obj=this.options.find((item:any) => item.code === vals.areaWarehouseCode)
+        this.regionalCode=obj?.cityCode
+        if(this.regionalCode!==this.cityCode){
+          const _this=this
+          confirm({
+            title: '提示',
+            content: '您所选的区域仓与所选的门店地址不一致，确定要提交吗？',
+            onOk() {
+              _this.submitData(vals)
             }
-            APP.history.push('/fresh/store')
-          }
-        })
+          });
+        }else{
+          this.submitData(vals)
+        }
+      }
+    })
+  }
+  submitData(vals: any){
+    // 合并省市区名称
+    vals = Object.assign(vals, {
+      provinceName: this.provinceName,
+      cityName: this.cityName,
+      areaName: this.areaName
+    })
+    const isAdd = this.id === '-1'
+    const promiseResult = isAdd ? addShop(vals) : updateShop({ ...vals, id: this.id })
+    promiseResult.then((res: any) => {
+      if (res) {
+        if (this.state.status === 4) {
+          APP.success('审核通过')
+        }
+        APP.history.push('/fresh/store')
       }
     })
   }
@@ -162,7 +185,17 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                   }
                 )(<SelectFetch
                   readonly={readonly}
-                  fetchData={pointCenterList}
+                  fetchData={() => {
+                    return pointCenterList().then((res) => {
+                      this.options = res || []
+                      return res.map((record: { code: number, name: string }) => {
+                        return {
+                          value: record.code,
+                          label: record.name
+                        }
+                      })
+                    })
+                  }}
                 />)
               }}
             />
@@ -199,6 +232,7 @@ class StoreForm extends React.Component<Props, StoreFormState> {
                       this.provinceName = value[0].label
                       this.cityName = value[1].label
                       this.areaName = value[2].label
+                      this.cityCode=value[1].value
                     }
                   }}
                 />)
