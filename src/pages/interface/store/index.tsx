@@ -61,8 +61,6 @@ class Main extends React.Component<Props, State> {
              this.setState({
                visible:true,
                detailData:_.cloneDeep(records)
-             },()=>{
-               console.log(this.state.detailData)
              })
           }}>
           编辑 </span>
@@ -165,10 +163,16 @@ class Main extends React.Component<Props, State> {
              wrapperCol={{ span: 14 }}
              config={getFieldsConfig()}
              mounted={() => {
-              this.form.setValues({
-                ...detailData
-              })
+              this.form.setValues(detailData)
              }}
+             onChange={(filed, value) => {
+              if (filed === 'shopType') {
+                console.log(filed)
+                this.form.setValues({
+                  shopId: undefined
+                })
+              }
+            }}
            >
              <FormItem label='店铺类型'
                required
