@@ -84,7 +84,7 @@ class Main extends React.Component<Props, State> {
       }
       const params = {
         ...values,
-        refundMoney: refundMoney * 10 * 10,
+        refundMoney: APP.fn.formatMoneyNumber(refundMoney),
         oneLevelId: levelIds[0].value,
         oneLevelName: levelIds[0].label,
         twoLevelId: levelIds[1]?.value,
