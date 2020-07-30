@@ -4,20 +4,24 @@ import { ColumnProps } from "antd/es/table";
 import { getFieldsConfig } from "./config";
 import { Form, FormItem } from "@/packages/common/components";
 import { Button, Modal, Table } from "antd";
+import Viewer from 'viewerjs';
 
 interface Invoice {
   No: string;
 }
 
 class InvoiceReview extends React.Component {
+  public imageRef: any;
   public state = {
     visible: false,
-    dataSource: [{
-      date: '1',
-      operate: '1',
-      faceValue: '100'
-    }]
-  }
+    dataSource: [
+      {
+        date: "1",
+        operate: "1",
+        faceValue: "100",
+      },
+    ],
+  };
   // 列表列配置
   public columns: ColumnProps<Invoice>[] = [
     {
@@ -85,9 +89,16 @@ class InvoiceReview extends React.Component {
       title: "操作",
       render: () => {
         return (
-          <Button type='link' onClick={this.handleView}>查看</Button>
-        )
-      }
+          <Button
+            type="link"
+            onClick={() => {
+              this.setState({ visible: true });
+            }}
+          >
+            查看
+          </Button>
+        );
+      },
     },
   ];
   // 表单列配置
@@ -113,23 +124,30 @@ class InvoiceReview extends React.Component {
       render: () => {
         return (
           <div>
-            <Button type='link'>查看</Button>
-            <Button type='link'>下载</Button>
+            <Button
+              type="link"
+              onClick={this.handleView}
+            >
+              查看
+            </Button>
+            <Button type="link">下载</Button>
           </div>
-        )
-      }
-    }
-  ]
+        );
+      },
+    },
+  ];
   public handleView = () => {
-    this.setState({ visible: true });
+    
   }
   public fetchData = async () => {
     return {
       page: 1,
       pages: 1,
-      records: [{
-        withdrawalCode: '3943159584220042231635'
-      }]
+      records: [
+        {
+          withdrawalCode: "3943159584220042231635",
+        },
+      ],
     };
   };
   public render() {
@@ -138,36 +156,42 @@ class InvoiceReview extends React.Component {
         <Modal width="800px" visible={this.state.visible}>
           <h3 style={{ marginTop: 0, fontSize: 18 }}>发票审核</h3>
           <Form>
-            <FormItem label='提现申请单编号'>3943159584220042231635</FormItem>
-            <FormItem label='提现金额'>999999.99</FormItem>
-            <FormItem label='供应商类型'>供应商</FormItem>
-            <FormItem label='供应商ID'>3401</FormItem>
-            <FormItem label='供应商名称'>杭州喜团科技有限公司</FormItem>
-            <FormItem label='发票'>
-              <Table columns={this.formColumns} dataSource={this.state.dataSource}/>
+            <FormItem label="提现申请单编号">3943159584220042231635</FormItem>
+            <FormItem label="提现金额">999999.99</FormItem>
+            <FormItem label="供应商类型">供应商</FormItem>
+            <FormItem label="供应商ID">3401</FormItem>
+            <FormItem label="供应商名称">杭州喜团科技有限公司</FormItem>
+            <FormItem label="发票">
+              <Table
+                columns={this.formColumns}
+                dataSource={this.state.dataSource}
+              />
             </FormItem>
             <h3 style={{ marginTop: 0, fontSize: 18 }}>审核意见</h3>
             <FormItem
-              name='opinion'
-              label='审核意见'
+              name="opinion"
+              label="审核意见"
               required
-              type='radio'
-              options={[{
-                label: '审核通过',
-                value: '1'
-              }, {
-                label: '审核不通过',
-                value: '0'
-              }]}
+              type="radio"
+              options={[
+                {
+                  label: "审核通过",
+                  value: "1",
+                },
+                {
+                  label: "审核不通过",
+                  value: "0",
+                },
+              ]}
             />
             <FormItem
-              label='说明'
-              name='description'
-              type='textarea'
-              placeholder='限制140字（仅审核不通过，这里必填）'
+              label="说明"
+              name="description"
+              type="textarea"
+              placeholder="限制140字（仅审核不通过，这里必填）"
               controlProps={{
                 maxLength: 140,
-                rows: 5
+                rows: 5,
               }}
             />
           </Form>
