@@ -10,7 +10,6 @@ import modal, { ModalProps } from './modal'
 import _ from 'lodash'
 import * as api from './api'
 import { FormInstance } from '@/packages/common/components/form'
-import { getShopTypes } from '@/pages/order/api'
 
 interface Props {
   modal: ModalProps,
@@ -75,7 +74,7 @@ class Main extends React.Component<Props, State> {
     const {detailData}=this.state
     this.form.props.form.validateFields((err: any, vals: any) => {
       if (!err) {
-        api.ranking({shopId:detailData.shopId,...vals,couponList:detailData.couponList}).then((res: any) => {
+        api.ranking({shopId:detailData?.shopId,...vals,couponList:detailData?.couponList}).then((res: any) => {
           if (res) {
             this.setState({
               visible:false
@@ -135,7 +134,7 @@ class Main extends React.Component<Props, State> {
                   <SelectFetch
                     placeholder= '请选择店铺类型'
                     style={{ width: 172 }}
-                    fetchData={getShopTypes}
+                    fetchData={api.getShopTypes}
                   />
                 )
                }}
@@ -182,13 +181,13 @@ class Main extends React.Component<Props, State> {
                     required: true,
                     message: '请选择店铺类型'
                   }],
-                  initialValue: detailData&&detailData.shopTypeDsc||'全部'
+                  initialValue: 0
                 })(
                   <SelectFetch
                     readonly={this.isEdit}
                     placeholder= '请选择店铺类型'
                     style={{ width: 172 }}
-                    fetchData={getShopTypes}
+                    fetchData={api.getShopTypes}
                   />
                 )
                }}
@@ -227,6 +226,8 @@ class Main extends React.Component<Props, State> {
                     success: (res: any, hide?: any) => {
                       detailData=detailData||{}
                       detailData.couponList=res
+                      console.log(detailData,'11111')
+                      console.log(res,'11111')
                       this.setState({
                         detailData
                       },()=>{
@@ -247,6 +248,7 @@ class Main extends React.Component<Props, State> {
                      className='href ml8'
                     onClick={()=>{
                   detailData.couponList.splice(index,1)
+                  console.log(detailData.couponList,'11111')
                   this.setState({
                     detailData
                   })

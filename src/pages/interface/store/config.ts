@@ -23,6 +23,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       ranking: {
         label: '权重',
         type: 'number',
+        fieldDecoratorOptions: {
+          rules: [
+            {
+              required: true,
+              message: '请输入权重'
+            }
+          ]
+        },
         controlProps: {
           style:{width:150},
           precision: 0,
