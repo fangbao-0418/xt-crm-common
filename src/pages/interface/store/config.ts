@@ -20,14 +20,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           showTime: true
         }
       },
-      anchorLevel: {
+      ranking: {
         label: '权重',
         type: 'number',
         controlProps: {
           style:{width:150},
           precision: 0,
           min: 0,
-          max:100000000,
+          max:200,
           placeholder: '请输入权重'
         }
       }

@@ -7,6 +7,7 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { Button, message, Col, Row, Modal } from 'antd'
 import { getFieldsConfig } from './config'
 import modal, { ModalProps } from './modal'
+import _ from 'lodash'
 import * as api from './api'
 import { FormInstance } from '@/packages/common/components/form'
 import { getShopTypes } from '@/pages/order/api'
@@ -20,16 +21,20 @@ interface Props {
 }
 interface State{
   detailData: any
-  update: number
   visible:boolean
+
 }
+
+const formatDate = (text: string | number | undefined) =>
+  text ? APP.fn.formatDate(text) : '-'
+
 class Main extends React.Component<Props, State> {
   public listpage: ListPageInstanceProps
   public listpagecoupon: ListPageInstanceProps
   public form: FormInstance
+  public isEdit: boolean
   public state: State = {
     detailData: null,
-    update:0,
     visible:false
   }
   public columns: any = [{
@@ -37,71 +42,42 @@ class Main extends React.Component<Props, State> {
     dataIndex: 'shopName'
   }, {
     title: '权重',
-    dataIndex: 'bizSort'
+    dataIndex: 'ranking'
   }, {
-    dataIndex: 'shopTypeDsc',
+    dataIndex: 'shopTypeDesc',
     title: '店铺类型'
   }, {
     dataIndex: 'modifyTime',
-    title: '创建时间'
-  }, {
-    dataIndex: 'shopStatus',
-    title: '状态',
-    render: (text: any) => {
-      return text===2?'开启':'关闭'
-    }
-  },
+    title: '创建时间',
+    render: formatDate
+  }, 
   {
     title: '操作',
-    render: (text: any,records: any) => {
+    render: (_text: any,records: any) => {
       return (
         <>
            <span className='href' onClick={()=>{
-             if(this.form){
-              this.form.setValues({
-                ...records
-              })
-             }
+             this.isEdit=true
              this.setState({
-               detailData:records,
-               visible:true
+               visible:true,
+               detailData:_.cloneDeep(records)
+             },()=>{
+               console.log(this.state.detailData)
              })
           }}>
           编辑 </span>
-          <span
-            className='href ml8' 
-            onClick={() => {
-              this.toggleStatus(records.id, records.status===2 ? 3 : 2)
-            }}
-          >
-            {records.status===2 ? '关闭' : '开启'}
-          </span>
-          &nbsp;
-        
         </>
       )
     }
   }]
-
-  public toggleStatus (id: any, status: number){
-    api.getAnchorList({
-      id,
-      status
-    }).then((res: any) => {
-      res && message.success('操作成功')
-      this.refresh()
-    })
-  };
   public refresh () {
     this.listpage.refresh()
   }
   public handleOkModal=()=>{
+    const {detailData}=this.state
     this.form.props.form.validateFields((err: any, vals: any) => {
       if (!err) {
-        api.getAnchorList({
-          id: vals.id,
-          claimAmount: vals.claimAmount
-        }).then((res: any) => {
+        api.ranking({shopId:detailData.shopId,...vals,couponList:detailData.couponList}).then((res: any) => {
           if (res) {
             this.setState({
               visible:false
@@ -114,6 +90,7 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+
   public render () {
     const {visible}=this.state
     let {detailData}=this.state
@@ -139,6 +116,7 @@ class Main extends React.Component<Props, State> {
               <Button
                 type='primary'
                 onClick={() => {
+                  this.isEdit=false
                   this.setState({
                     detailData:null,
                     visible:true
@@ -170,7 +148,7 @@ class Main extends React.Component<Props, State> {
           api={api.getAnchorList}
         />
         <Modal
-        title='选择商品'
+        title='设置门店'
         visible={visible}
         width='60%'
         onCancel={()=>{
@@ -187,9 +165,9 @@ class Main extends React.Component<Props, State> {
              wrapperCol={{ span: 14 }}
              config={getFieldsConfig()}
              mounted={() => {
-               this.form.setValues({
-                 ...detailData
-               })
+              this.form.setValues({
+                ...detailData
+              })
              }}
            >
              <FormItem label='店铺类型'
@@ -200,10 +178,10 @@ class Main extends React.Component<Props, State> {
                     required: true,
                     message: '请选择店铺类型'
                   }],
-                  initialValue: detailData&&detailData.shopTypeDsc
+                  initialValue: detailData&&detailData.shopTypeDsc||'全部'
                 })(
                   <SelectFetch
-                    readonly={detailData}
+                    readonly={this.isEdit}
                     placeholder= '请选择店铺类型'
                     style={{ width: 172 }}
                     fetchData={getShopTypes}
@@ -214,7 +192,7 @@ class Main extends React.Component<Props, State> {
                 <FormItem label='选择店铺'
                required
                inner={(form) => {
-                return form.getFieldDecorator('shopName', {
+                return this.isEdit?detailData&&detailData.shopName :form.getFieldDecorator('shopId', {
                   rules: [{
                     required: true,
                     message: '请选择店铺'
@@ -222,60 +200,22 @@ class Main extends React.Component<Props, State> {
                   initialValue: detailData&&detailData.shopName 
                 })(
                   <SearchFetch
-                    readonly={detailData}
                     placeholder= '请选择选择店铺'
                     style={{ width: 172 }}
-                    api={api.searchPoints}
+                    api={async(value)=>{
+                      const param=this.form&&this.form.getValues()
+                      return api.searchfuzzy({shopType:param.shopType==='全部'?null:param.shopType,shopName:value})
+                    }}
                   />
                 )
                }}
              /> 
-              <FormItem name='anchorLevel' required/>
+              <FormItem name='ranking' required/>
               <Row>
               <Col span={6} style={{textAlign:'right'}}>
                 优惠券：
               </Col>
-              {
-                detailData&&detailData.couponList&&detailData.couponList.length>0&&
-                <Col span={14}>
-                {detailData.couponList[0].code+" "+detailData.couponList[0].name }
-                <span className='href ml8'
-                onClick={()=>{
-                  detailData.couponList.splice(0,1)
-                  this.setState({
-                    detailData
-                  })
-                }}
-                >
-                  删除
-                </span>
-              </Col>
-              }
-             
-              </Row>
-              {
-                detailData&&detailData.couponList&&detailData.couponList.length>1&&detailData.couponList.map((item: any,index: number)=>{
-                  return index>0&&<Row>
-                  <Col offset={6} span={14}>
-                    {detailData.couponList[index].code+" "+detailData.couponList[index].name}
-                    <span
-                     className='href ml8'
-                    onClick={()=>{
-                  detailData.couponList.splice(index,1)
-                  this.setState({
-                    detailData
-                  })
-                }}
-                >
-                  删除
-                </span>
-                  </Col>
-                  </Row>
-                })
-                
-              }
-              <Row>
-              <Col offset={6} span={14}>
+              <Col span={14}>
                 <span 
                 className='href'
                 onClick={()=>{
@@ -293,6 +233,28 @@ class Main extends React.Component<Props, State> {
                 }}
                 >选择优惠券</span>
               </Col>
+              </Row>
+              {
+                detailData&&detailData.couponList&&detailData.couponList.length>0&&detailData.couponList.map((_item: any,index: number)=>{
+                  return <Row>
+                  <Col offset={6} span={14}>
+                    {detailData.couponList[index].code+" "+detailData.couponList[index].name}
+                    <span
+                     className='href ml8'
+                    onClick={()=>{
+                  detailData.couponList.splice(index,1)
+                  this.setState({
+                    detailData
+                  })
+                }}
+                >
+                  删除
+                </span>
+                  </Col>
+                  </Row>
+                })
+              }
+              <Row>
               </Row>
 
            </Form>

@@ -28,9 +28,10 @@ function Main (WrappedComponent: React.ComponentType<any>) {
         this.payload = payload
         let selectedRowKeys: any[]=[]
         rows&&rows.map((item: any)=>{
-         
-          selectedRowKeys.push(item.id)
+          item.id=item.couponId||item.id
+          selectedRowKeys.push(parseInt(item.id))
         })
+        console.log(selectedRowKeys,'1111')
         this.setState({ 
           visible: true, 
           selectedRowKeys
@@ -42,6 +43,7 @@ function Main (WrappedComponent: React.ComponentType<any>) {
     }
     public render () {
       const { visible, selectedRowKeys } = this.state
+      console.log(selectedRowKeys,'1111')
       return (
         <>
           <CouponModal
