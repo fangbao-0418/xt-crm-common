@@ -69,28 +69,28 @@ class Main extends React.Component {
     },
     {
       title: '操作',
-      dataIndex: 'l',
-      fixed: 'right'
+      fixed: 'right',
+      render: (_, record) => {
+        return (
+          <>
+            <span
+              className='href'
+              onClick={() => { APP.history.push(`/order/compensate-order/${record.id}`) }}
+            >
+              查看详情
+            </span>
+          </>
+        )
+      }
     }
   ]
   render () {
     return (
       <ListPage
-        reserveKey='compensate-order'
+        reserveKey='/order/compensate-order'
         formConfig={getFieldsConfig()}
         columns={this.columns}
         api={getOrderlist}
-        formItemLayout={(
-          <>
-            <FormItem name='a' />
-            <FormItem name='b' />
-            <FormItem name='c' />
-            <FormItem name='d' />
-            <FormItem name='e' />
-            <FormItem name='f' />
-            <FormItem name='g' />
-          </>
-        )}
         tableProps={{
           scroll: {
             x: true

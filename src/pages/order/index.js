@@ -20,6 +20,7 @@ import AutoRefundDetail from './auto-refund/detail'
 import Recharge from './recharge'
 import Download from './download-list'
 import CompensateOrder from './compensate-order'
+import CompensateOrderDetail from './compensate-order/detail'
 
 const Main = Loadable({
   loader: () => import('./main'),
@@ -43,6 +44,7 @@ export default class RouteApp extends React.Component {
         <Route exact path={`${match.url}/autoRefundRule`} component={AutoRefund} />
         <Route exact path={`${match.url}/autoRefundRule/create/:id?`} component={AutoRefundDetail} />
         <Route exact path={`${match.url}/compensate-order`} component={CompensateOrder} />
+        <Route exact path={`${match.url}/compensate-order/:id`} component={CompensateOrderDetail} />
         <Route path={`${match.url}`} component={Main} />
       </Switch>
     )
