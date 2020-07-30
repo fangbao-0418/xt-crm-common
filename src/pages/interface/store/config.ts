@@ -6,7 +6,7 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      memberId: {
+      shopName: {
         label: '门店名称',
         type: 'input',
         controlProps: {

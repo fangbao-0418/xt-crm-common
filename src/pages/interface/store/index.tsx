@@ -2,7 +2,7 @@
  * 一次性财务结算外部明细
  */
 import React from 'react'
-import { ListPage, Alert, FormItem, Form, SelectFetch } from '@/packages/common/components'
+import { ListPage, Alert, FormItem, Form, SelectFetch, SearchFetch } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { Button, message, Col, Row, Modal } from 'antd'
 import { getFieldsConfig } from './config'
@@ -34,19 +34,22 @@ class Main extends React.Component<Props, State> {
   }
   public columns: any = [{
     title: '门店名称',
-    dataIndex: 'nickName'
+    dataIndex: 'shopName'
   }, {
     title: '权重',
-    dataIndex: 'fansTotal'
+    dataIndex: 'bizSort'
   }, {
-    dataIndex: 'anchorIdentityType',
+    dataIndex: 'shopTypeDsc',
     title: '店铺类型'
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'modifyTime',
     title: '创建时间'
   }, {
-    dataIndex: 'anchorLevel',
-    title: '状态'
+    dataIndex: 'shopStatus',
+    title: '状态',
+    render: (text: any) => {
+      return text===2?'开启':'关闭'
+    }
   },
   {
     title: '操作',
@@ -68,10 +71,10 @@ class Main extends React.Component<Props, State> {
           <span
             className='href ml8' 
             onClick={() => {
-              this.toggleStatus(records.id, records.status ? 0 : 1)
+              this.toggleStatus(records.id, records.status===2 ? 3 : 2)
             }}
           >
-            {status ? '关闭' : '开启'}
+            {records.status===2 ? '关闭' : '开启'}
           </span>
           &nbsp;
         
@@ -137,6 +140,7 @@ class Main extends React.Component<Props, State> {
                 type='primary'
                 onClick={() => {
                   this.setState({
+                    detailData:null,
                     visible:true
                   })
                 }}
@@ -148,10 +152,10 @@ class Main extends React.Component<Props, State> {
           formConfig={getFieldsConfig()}
           formItemLayout={(
             <>
-              <FormItem name='memberId' />
+              <FormItem name='shopName' />
               <FormItem label='店铺类型'
                inner={(form) => {
-                return form.getFieldDecorator('memberId1')(
+                return form.getFieldDecorator('shopType')(
                   <SelectFetch
                     placeholder= '请选择店铺类型'
                     style={{ width: 172 }}
@@ -191,14 +195,15 @@ class Main extends React.Component<Props, State> {
              <FormItem label='店铺类型'
                required
                inner={(form) => {
-                return form.getFieldDecorator('memberId', {
+                return form.getFieldDecorator('shopType', {
                   rules: [{
                     required: true,
                     message: '请选择店铺类型'
                   }],
-                  initialValue: detailData&&detailData.memberId 
+                  initialValue: detailData&&detailData.shopTypeDsc
                 })(
                   <SelectFetch
+                    readonly={detailData}
                     placeholder= '请选择店铺类型'
                     style={{ width: 172 }}
                     fetchData={getShopTypes}
@@ -209,17 +214,18 @@ class Main extends React.Component<Props, State> {
                 <FormItem label='选择店铺'
                required
                inner={(form) => {
-                return form.getFieldDecorator('anchorId', {
+                return form.getFieldDecorator('shopName', {
                   rules: [{
                     required: true,
                     message: '请选择店铺'
                   }],
-                  initialValue: detailData&&detailData.anchorId 
+                  initialValue: detailData&&detailData.shopName 
                 })(
-                  <SelectFetch
+                  <SearchFetch
+                    readonly={detailData}
                     placeholder= '请选择选择店铺'
                     style={{ width: 172 }}
-                    fetchData={getShopTypes}
+                    api={api.searchPoints}
                   />
                 )
                }}

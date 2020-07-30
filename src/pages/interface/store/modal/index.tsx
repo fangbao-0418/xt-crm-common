@@ -28,6 +28,7 @@ function Main (WrappedComponent: React.ComponentType<any>) {
         this.payload = payload
         let selectedRowKeys: any[]=[]
         rows&&rows.map((item: any)=>{
+         
           selectedRowKeys.push(item.id)
         })
         this.setState({ 
