@@ -21,7 +21,6 @@ export default class extends Component {
   /** 请求: 获取类目数据 */
   fetchaData = (params) => {
     const { dispatch } = this.props;
-    params.type=1
     dispatch['shop.smallshopcommission'].getList(params);
   }
 

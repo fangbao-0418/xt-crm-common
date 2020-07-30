@@ -4,6 +4,7 @@ const { get, newPost, newPut } = APP.http
 
 // 类目列表
 export function getList(data) {
+  data.type=1
   return newPost('/category/commission/list', data)
 }
 
