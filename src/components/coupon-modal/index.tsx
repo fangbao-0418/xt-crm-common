@@ -145,6 +145,7 @@ class CouponModal extends React.Component<Props, State> {
   }
   public onrowSelectionChange(selectedRowKeys: any[], selectedRows: any[]) {
     if(selectedRowKeys&&this.props.maxCheckedNum&&selectedRowKeys.length>this.props.maxCheckedNum){
+      message.info('优惠券最多选择'+this.props.maxCheckedNum+'张')
       return
     }
     this.selectedRows = _.unionBy(this.selectedRows, selectedRows, (v: any) => v.id).filter(v => selectedRowKeys.includes(v.id))
@@ -154,8 +155,8 @@ class CouponModal extends React.Component<Props, State> {
     })
   }
   public onSelect (record: Coupon.CouponItemProps, selected: boolean, selectedRows: any[]) {
-    if(selectedRows&&this.props.maxCheckedNum&&selectedRows.length>this.props.maxCheckedNum){
-      message.info('优惠券最多选择'+this.props.maxCheckedNum+'张')
+    const {selectedRowKeys}=this.state
+    if(selectedRowKeys&&this.props.maxCheckedNum&&selectedRowKeys.length>this.props.maxCheckedNum){
       return
     }
     if (this.props.onSelect) {
