@@ -54,8 +54,7 @@ export const batchExportDetail = (payload: {
 
 /** 对账单详情明细导出 */
 export const exportDetail = (id: any) => {
-  return get(`::guard/
-  /merchant/fresh/account/statement/detail/export/${id}`)
+  return get(`::guard/mcweb/merchant/fresh/account/statement/detail/export/${id}`)
 }
 
 /** 对账单流水明细导出 */
