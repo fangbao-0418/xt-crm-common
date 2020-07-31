@@ -56,3 +56,8 @@ export const batchExportDetail = (payload: {
 export const exportDetail = (id: any) => {
   return get(`::guard/mcweb/merchant/fresh/account/statement/detail/export/${id}`)
 }
+
+/** 对账单流水明细导出 */
+export const exportRunningWaterDetail = (id: any) => {
+  return get(`::guard/mmweb/supplier/finance/account/statement/detail/flow/export?statementId=${id}`)
+}

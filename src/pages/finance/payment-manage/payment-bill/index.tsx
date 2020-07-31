@@ -1,3 +1,6 @@
+/**
+ * 货款账单
+ */
 import React from 'react'
 import Image from '@/components/Image'
 import classNames from 'classnames'
