@@ -4,7 +4,7 @@
  * @LastEditTime: 2020-06-11 15:20:28
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/util/app/config.ts
  */
-import { baseHost, env as apiEnv } from '../baseHost'
+import { env } from '../baseHost'
 
 type ServerNameType = 'palamidi' | 'ulive' | 'message' | 'default'
 type EnvType = 'dev' | 'test' | 'test2' | 'pre' | 'prod'
@@ -59,10 +59,8 @@ export function handleApiUrl (url: string) {
   } else if (serverPattern.test(url)) {
     const result = url.match(serverPattern)
     const servername = (result && result[1] || 'default') as ServerNameType
-    // console.log(servername, 'servername')
     const currentServerEnum: any = serverMapper[servername] || serverMapper.default
-    // console.log(servername, currentServerEnum, 'currentServerEnum')
-    const apiOrigin = currentServerEnum[apiEnv as any] || currentServerEnum.dev || ''
+    const apiOrigin = currentServerEnum[env] || currentServerEnum.dev || ''
     return url.replace(serverPattern, apiOrigin)
   } else {
     return url
