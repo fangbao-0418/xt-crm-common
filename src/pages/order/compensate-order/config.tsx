@@ -1,4 +1,7 @@
+import React from 'react'
 import { FieldsConfig } from '@/packages/common/components/form'
+import SuppilerSelector from '@/components/supplier-selector'
+import RangeInput from '@/components/range-input'
 
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
@@ -80,13 +83,38 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       },
       h: {
         label: '补偿金额',
-        type: 'rangepicker',
-        controlProps: {
-          showTime: true
+        inner: (form) => {
+          return form.getFieldDecorator('h')(
+            <RangeInput />
+          )
         }
+      },
+      w: {
+        label: '责任归属',
+        type: 'select',
+        controlProps: {
+          style: {
+            width: 172
+          }
+        },
+        options: [{
+          label: '全部',
+          value: ''
+        }, {
+          label: '喜团补偿',
+          value: 1
+        }, {
+          label: '供应商补偿',
+          value: 0
+        }]
       },
       i: {
         label: '供应商',
+        inner: (form) => {
+          return form.getFieldDecorator('store')(
+            <SuppilerSelector type='yx' style={{ width: 172 }} />
+          )
+        }
       },
       j: {
         label: '店铺名称'

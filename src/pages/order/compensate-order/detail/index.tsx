@@ -37,6 +37,72 @@ const columns = [
 ]
 
 class Main extends React.Component {
+  /* 补偿申请信息 */
+  getApplInfo = () =>{
+    return [
+      {
+        label: '补偿原因',
+        value: 'Zhou Maomao',
+        span: 1,
+        text: 'text'
+      },
+      {
+        label: '发起人',
+        value: 'Zhou Maomao',
+        span: 1,
+        text: 'text'
+      },
+      {
+        label: '补偿类型',
+        value: 'Zhou Maomao',
+        span: 1,
+        text: 'text'
+      },
+      {
+        label: '补偿归属',
+        value: 'Zhou Maomao',
+        span: 1,
+        text: 'text'
+      },
+      {
+        label: '补偿金额',
+        value: 'Zhou Maomao',
+        span: 2,
+        text: 'text'
+      },
+      {
+        label: '转账方式',
+        value: 'Zhou Maomao',
+        span: 2,
+        text: 'text'
+      },
+      {
+        label: '姓名',
+        value: 'Zhou Maomao',
+        span: 2,
+        text: 'text'
+      },
+      {
+        label: '转账账号',
+        value: 'Zhou Maomao',
+        span: 2,
+        text: 'text'
+      },
+      {
+        label: '补偿凭证',
+        value: 'Zhou Maomao',
+        span: 2,
+        text: 'text'
+      },
+      {
+        label: '补偿说明',
+        value: 'Zhou Maomao',
+        span: 2,
+        text: 'text'
+      }
+    ]
+  }
+
   render () {
     return (
       <Card bordered={false}>
@@ -47,28 +113,17 @@ class Main extends React.Component {
               extra={<a href='#'>取消请求</a>}
             >
              <Descriptions column={2} title='补偿申请信息'>
-                <DescriptionsItem label='补偿原因'>Zhou Maomao</DescriptionsItem>
-                <DescriptionsItem label='发起人'>1810000000</DescriptionsItem>
-                <DescriptionsItem label='补偿类型'>Hangzhou, Zhejiang</DescriptionsItem>
-                <DescriptionsItem label='补偿归属'>empty</DescriptionsItem>
-                <DescriptionsItem span={2} label='补偿金额'>
-                  No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
-                </DescriptionsItem>
-                <DescriptionsItem span={2} label='转账方式'>
-                  No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
-                </DescriptionsItem>
-                <DescriptionsItem span={2} label='姓名'>
-                  No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
-                </DescriptionsItem>
-                <DescriptionsItem span={2} label='转账账号'>
-                  No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
-                </DescriptionsItem>
-                <DescriptionsItem span={2} label='补偿凭证'>
-                  No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
-                </DescriptionsItem>
-                <DescriptionsItem span={2} label='补偿说明'>
-                  No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
-                </DescriptionsItem>
+               {
+                 this.getApplInfo().map((item,  i) => (
+                  <DescriptionsItem
+                    key={i}
+                    label={item.label}
+                    span={item.span}
+                  >
+                    {item.value}
+                  </DescriptionsItem>
+                 ))
+               }
               </Descriptions>
               <Divider dashed />
               <Descriptions column={1} title='审核信息'>
@@ -83,13 +138,18 @@ class Main extends React.Component {
                 </DescriptionsItem>
               </Descriptions>
               <Divider dashed />
-              <Descriptions column={1} title='订单信息'>
-                <DescriptionsItem>
-                  <DescriptionsItem label='补偿原因'>Zhou Maomao</DescriptionsItem>
-                  <DescriptionsItem label='发起人'>1810000000</DescriptionsItem>
-                  <DescriptionsItem label='补偿类型'>Hangzhou, Zhejiang</DescriptionsItem>
-                  <DescriptionsItem label='补偿归属'>empty</DescriptionsItem>
-                </DescriptionsItem>
+              <Descriptions column={3} title='订单信息'>
+              {
+                 this.getApplInfo().map((item,  i) => (
+                  <DescriptionsItem
+                    key={i}
+                    label={item.label}
+                    span={item.span}
+                  >
+                    {item.value}
+                  </DescriptionsItem>
+                 ))
+               }
               </Descriptions>
               <Divider dashed />
               <Descriptions column={1} title='商品信息'>
@@ -104,13 +164,18 @@ class Main extends React.Component {
                 </DescriptionsItem>
               </Descriptions>
               <Divider dashed />
-              <Descriptions column={1} title='物流信息'>
-                <DescriptionsItem>
-                  <DescriptionsItem label='补偿原因'>Zhou Maomao</DescriptionsItem>
-                  <DescriptionsItem label='发起人'>1810000000</DescriptionsItem>
-                  <DescriptionsItem label='补偿类型'>Hangzhou, Zhejiang</DescriptionsItem>
-                  <DescriptionsItem label='补偿归属'>empty</DescriptionsItem>
-                </DescriptionsItem>
+              <Descriptions column={2} title='物流信息'>
+              {
+                 this.getApplInfo().map((item,  i) => (
+                  <DescriptionsItem
+                    key={i}
+                    label={item.label}
+                    span={item.span}
+                  >
+                    {item.value}
+                  </DescriptionsItem>
+                 ))
+               }
               </Descriptions>
             </Card>
           </Tabs.TabPane>
