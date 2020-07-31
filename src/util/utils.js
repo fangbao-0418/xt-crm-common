@@ -193,29 +193,11 @@ export function getHeaders(headers) {
   return headers;
 }
 
-export const prefix = url => {
+export const prefix = (url) => {
   url = handleApiUrl(url);
   let apiDomain = baseHost;
-  if (!(process.env.PUB_ENV == 'pre' || process.env.PUB_ENV == 'prod')) {
-    if (!(process.env.PUB_ENV == 'test' || process.env.PUB_ENV == 'dev')) {
-      const mockConfig = require('../mock.json');
-      if (typeof mockConfig == 'object' && mockConfig['apiList'] instanceof Array) {
-        const isMock = mockConfig['apiList'].find(item => {
-          const path = item.replace(/{/g, ':').replace(/}/g, '');
-          return pathToRegexp(path).test(url);
-        });
-        if (isMock) {
-          console.log(url);
-          return `/mock${url}`;
-        } else {
-          apiDomain = LocalStorage.get('apidomain') || baseHost;
-        }
-      } else {
-        apiDomain = LocalStorage.get('apidomain') || baseHost;
-      }
-    } else {
-      apiDomain = LocalStorage.get('apidomain') || baseHost;
-    }
+  if (!(['pre', 'prod'].includes(__ENV__))) {
+    apiDomain = LocalStorage.get('apidomain') || baseHost;
   }
   return /https?/.test(url) ? url : `${apiDomain}${url}`;
 };
