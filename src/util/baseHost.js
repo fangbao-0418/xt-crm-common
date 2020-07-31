@@ -2,11 +2,6 @@ let baseHost = 'https://daily-crm-test.hzxituan.com'
 let h5Host = 'https://myouxuan.hzxituan.com'
 let env = __ENV__
 
-/** 获取所选环境，预发/生产不可选环境 */
-if (!['pre', 'prod'].includes(env) && localStorage.getItem('env')) {
-  env = localStorage.getItem('env')
-}
-
 // 日常
 if (env === 'dev') {
   baseHost = 'https://daily-crm-test.hzxituan.com'
@@ -33,4 +28,16 @@ else if (env === 'prod') {
   h5Host = 'https://myouxuan.hzxituan.com'
 }
 
-export { baseHost, h5Host, env }
+function getEnv () {
+  /** 获取所选环境，预发/生产不可选环境 */
+  if (!['pre', 'prod'].includes(env) && localStorage.getItem('env')) {
+    env = localStorage.getItem('env')
+  }
+  return env
+}
+
+export {
+  getEnv,
+  baseHost,
+  h5Host
+}
