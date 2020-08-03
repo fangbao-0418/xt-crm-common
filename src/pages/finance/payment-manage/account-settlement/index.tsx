@@ -1,94 +1,139 @@
+/**
+ * 账务结算（一次性账务结算）
+ */
 import React from 'react'
 import Image from '@/components/Image'
 import classNames from 'classnames'
+import { getHeaders, prefix, replaceHttpUrl } from '@/util/utils'
 import Form, { FormInstance, FormItem } from '@/packages/common/components/form'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Popconfirm, Button, Radio } from 'antd'
-import { ColumnProps } from 'antd/lib/table'
+import { Tooltip, Select, Button, Radio, Upload } from 'antd'
+import TextArea from 'antd/lib/input/TextArea'
+import BatchModal from './components/uploadModal'
 import UploadView from '@/components/upload'
+import { formatMoneyWithSign } from '@/pages/helper'
 import { exportFile } from '@/util/fetch'
 import If from '@/packages/common/components/if'
-import { getFieldsConfig, AnchorLevelEnum, AnchorIdentityTypeEnum } from './config'
+import { getFieldsConfig } from './config'
 import * as api from './api'
+import moment from 'moment'
 interface Props extends AlertComponentProps {
+}
+const dateFormat = 'YYYY-MM-DD HH:mm'
+const getFormatDate = (s: any, e: any) => {
+  return e ? [moment(s, dateFormat), moment(e, dateFormat)] : []
 }
 class Main extends React.Component<Props> {
   state = {
-    errorUrl: null
+    errorUrl: null,
+    selectedRowKeys: null,
+    visible: false
   }
+  public id: any
   public listpage: ListPageInstanceProps
-  public columns: ColumnProps<Anchor.ItemProps>[] = [{
+  public columns: any = [{
     title: '账务结算ID',
-    dataIndex: 'nickName',
-    width: 300
+    dataIndex: 'id',
+    width: 150,
+    fixed: 'left'
   }, {
     title: '收支类型',
-    dataIndex: 'fansTotal',
-    width: 200,
-    align: 'center'
-  }, {
-    dataIndex: 'anchorIdentityType',
-    title: '账务金额',
+    dataIndex: 'inOrOutTypeDesc',
     width: 150,
-    render: (text) => {
-      return AnchorIdentityTypeEnum[text]
+    render: (text: any) => <>{text}</>
+  }, {
+    dataIndex: 'amount',
+    title: '账务金额',
+    width: 100,
+    render: (text: any, record: any) => {
+      text=text/100
+      return <div style={{ color: record.inOrOutTypeDesc==='支出'?'red':'green' }}>{text>0?'+'+text:text}</div>
     }
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'subjectTypeDesc',
     title: '账务对象类型',
-    width: 120,
+    width: 150,
     align: 'center'
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'subjectId',
     title: '账务对象ID',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 150
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'subjectName',
     title: '账务对象名称',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 150
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'applicationRemark',
     title: '原因',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
+    width: 200,
+    render: (v:any) => {
+      if (v && v !== '0') {
+        if (v.length > 10) {
+          const base = v.slice(0, 10)
+          return <Tooltip title={v}>{base}...</Tooltip>
+        } else {
+          return v
+        }
+      }
     }
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'settlementTypeDesc',
     title: '创建方式',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'auditStatusDesc',
     title: '审核状态',
-    width: 100,
-    render: (text) => {
-      return AnchorLevelEnum[text]
-    }
+    width: 100
+  }, {
+    dataIndex: 'settlementStatusDesc',
+    title: '结算状态',
+    width: 100
+  }, {
+    dataIndex: 'createTime',
+    title: '创建时间',
+    width: 200,
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
+  }, {
+    dataIndex: 'creator',
+    title: '创建人',
+    width: 100
+  }, {
+    dataIndex: 'auditFinishTime',
+    title: '完成时间',
+    width: 200,
+    render: (text: any) => <>{APP.fn.formatDate(text)}</>
+  }, {
+    dataIndex: 'auditor',
+    title: '操作人',
+    width: 100
   },
   {
     title: '操作',
+    width: 100,
+    fixed: 'right',
     align: 'center',
-    render: (text, record) => {
-      return (
-        <div>
-          <span className='href'>查看</span>
-          <span className='href'>审核</span>
-        </div>
-      )
+    render: (text: any, record: any) => {
+      return record.auditStatus===0 ? <span
+        className='href'
+        onClick={
+          this.getDetailData(2, record.id)
+        }>审核
+      </span>: <span
+        className='href'
+        onClick={
+          this.getDetailData(3, record.id)
+        }
+      > 查看
+      </span>
     }
   }]
   public refresh () {
+    this.listpage.form.setValues({
+      startTime: moment().subtract(30, 'days').startOf('d'),
+      endTime: moment().endOf('d')
+    })
     this.listpage.refresh()
   }
   public toOperate = () => () => {
@@ -101,6 +146,8 @@ class Main extends React.Component<Props> {
             getInstance={(ref) => {
               form = ref
             }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 12 }}
           >
             <FormItem
               label='审核意见'
@@ -144,11 +191,10 @@ class Main extends React.Component<Props> {
               if (err) {
                 return
               }
-              const operateRemark = values.operateRemark
-              api.addAnchor({
+              api.add({
               }).then(() => {
                 hide()
-                this.listpage.refresh()
+                this.refresh()
               })
             })
           }
@@ -156,32 +202,191 @@ class Main extends React.Component<Props> {
       })
     }
   }
-  public batchOperation = () => () => {
+
+  public validateSubjectId (form: any) {
+    const values = (form && form.getValues())||{}
+    const subjectId = values.subjectId
+    const subjectType = values.subjectType
+    if (!subjectId) {
+      APP.error('请输入账务对象ID')
+      return
+    }
+    if (!subjectType) {
+      APP.error('请选择账务对象类型 ')
+      return
+    }
+    const params={ subjectId, subjectType }
+    api.checkSubject(params).then((res: any) => {
+      APP.success('校验通过')
+      this.id=res.id
+      form.setValues({
+        subjectName: res.subjectName
+      })
+    })
+  }
+  public getDetailData = (type: any, id: any) => () => {
+    api.getDetail(id).then((res: any) => {
+      res.amount=res.amount/100
+      this.operation(type, res)
+    })
+  }
+  //type 1添加，2审核， 3查看
+  public operation (type: any, res: any) {
+    const readonly=type !== 1
+    const uploadProps = readonly ? { showUploadList: { showPreviewIcon: true, showRemoveIcon: false, showDownloadIcon: false } } : { listNum: 5 }
     if (this.props.alert) {
       let form: FormInstance
       const hide = this.props.alert({
-        title: '批量创建账务结算单',
+        title: type===1?'创建账务结算单':(type===2?'审核账务结算单':'查看账务结算单'),
+        width: 700,
         content: (
           <Form
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 12 }}
             getInstance={(ref) => {
               form = ref
+              if (res) {
+                setTimeout(() => {
+                  form.setValues(res)
+                }, 100)
+              }
+            }}
+            readonly={readonly}
+            onChange={(filed, value) => {
+              if (filed === 'subjectId'&&type===1) {
+                form.setValues({
+                  subjectName: null
+                })
+              }
             }}
           >
             <FormItem
-              label='上传文件'
-              extra='(请控制文件大小在10mb内)'
+              label='收支类型'
+              required
               inner={(form) => {
-                return (form.getFieldDecorator('file')(
+                return readonly?res.inOrOutTypeDesc: (form.getFieldDecorator('inOrOutType', {
+                  rules: [
+                    { required: true, message: '收支类型必填' }
+                  ]
+                })(
+                  <Select placeholder='请选择收支类型' allowClear >
+                    <Select.Option value={1}>收入</Select.Option>
+                    <Select.Option value={2}>支出</Select.Option>
+                  </Select>
+                )
+                )
+              }}
+            />
+            <FormItem
+              label='账务对象类型'
+              required
+              inner={(form) => {
+                return readonly?res.subjectTypeDesc:(form.getFieldDecorator('subjectType', {
+                  rules: [
+                    { required: true, message: '账务对象类型必填' }
+                  ]
+                })(
+                  <Select placeholder='请选择账务对象类型' allowClear >
+                    <Select.Option value={1}>供应商</Select.Option>
+                    <Select.Option value={2}>喜团小店</Select.Option>
+                    <Select.Option value={3}>pop店</Select.Option>
+                  </Select>
+                ))
+              }}
+            />
+            <FormItem
+              label='账务对象ID'
+              type='input'
+              name='subjectId'
+              placeholder='请输入账务对象ID'
+              verifiable
+              wrapperCol={{
+                span: readonly ? 12 : 10
+              }}
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '账务对象ID必填' }
+                ]
+              }}
+              addonAfterCol={{ span: 6 }}
+              addonAfter={(!readonly) && (
+                <Button
+                  className='ml10'
+                  onClick={()=>{
+                    this.validateSubjectId(form)
+                  }}
+                >
+                  校验
+                </Button>
+              )}
+            />
+            <FormItem
+              label='账务对象名称'
+              type='input'
+              required
+              verifiable
+              name='subjectName'
+              disabled={true}
+              placeholder='请输入账务对象ID后进行校验'
+            />
+            <FormItem
+              label='账务金额'
+              type='number'
+              name='amount'
+              controlProps={{
+                precision: 2,
+                min: 0,
+                max: 100000000,
+                style: {
+                  width: 240
+                }
+              }}
+              placeholder='请输入金额，精确到小数点后两位'
+              verifiable
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '账务金额必填' }
+                ]
+              }}
+            />
+            <FormItem
+              style={{
+                marginBottom: 0
+              }}
+              label='原因'
+              type='textarea'
+              name='applicationRemark'
+              placeholder='请输入原因，140字以内'
+              verifiable
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '原因必填' },
+                  { max: 140, message: '原因最长140个字符' }
+                ]
+              }}
+            />
+            <FormItem
+              label='凭证'
+              inner={(form) => {
+                return (
                   <div>
-                    <UploadView
-                      placeholder='请上传文件'
-                      listNum={1}
-                      size={2}
-                      ossDir='finance/payment'
-                    >
-                      <span className={'href'}>+添加文件</span>
-                    </UploadView>
-                    <div style={{ color: '#999' }}>（支持xls、xlsx，大小请控制在10MB）</div>
+                    {
+                      form.getFieldDecorator('evidenceDocUrlList')(
+                        <UploadView
+                          multiple
+                          disabled={readonly}
+                          listType='text'
+                          listNum={3}
+                          accept='doc,xls'
+                          size={10}
+                          extname='doc,docx,xls,xlsx'
+                          fileTypeErrorText='请上传正确doc、xls格式文件'
+                        >
+                          <span className={readonly ? 'disabled' : 'href'}>+请选择文件</span>
+                        </UploadView>
+                      )
+                    }
+                    <div style={{ color: '#999', fontSize: 10 }}>（支持xls、xlsx、word格式，大小请控制在10MB，最多可上传2个文件）</div>
                     <If condition={this.state.errorUrl?true:false}>
                       <div>
                        上传失败
@@ -193,80 +398,243 @@ class Main extends React.Component<Props> {
                     </If>
                   </div>
                 )
+              }}
+            />
+            <FormItem
+              label='图片'
+              inner={(form) => {
+                return (
+                  <div>
+                    {
+                      form.getFieldDecorator('evidenceImgUrlList')(
+                        <UploadView
+                          {...uploadProps}
+                          placeholder='上传凭证'
+                          listType='picture-card'
+                          size={2}
+                          disabled={readonly}
+                          fileType={['jpg', 'jpeg', 'gif', 'png']}
+                          multiple
+                        />
+                      )
+                    }
+                    <div style={{ color: '#999', fontSize: 10 }}>（支持jpg、jpeg、png格式，最大2mb，最多可上传5张）</div>
+                  </div>
                 )
               }}
             />
+            {
+              <If condition={readonly}>
+                <div>
+                  <div style={{ borderBottom: '1px solid #333', padding: 8, marginBottom: 15 }}>
+                 审核
+                  </div>
+                  <FormItem
+                    label='审核意见'
+                    verifiable
+                    inner={(form) => {
+                      return (form.getFieldDecorator('auditStatus')(
+                        <Radio.Group disabled={type===3}>
+                          <Radio value={1}>审核通过</Radio>
+                          <Radio value={2}>审核不通过</Radio>
+                        </Radio.Group>
+                      )
+                      )
+                    }}
+                    fieldDecoratorOptions={{
+                      rules: [
+                        { required: true, message: '审核意见必填' }
+                      ]
+                    }}
+                  />
+                  <FormItem
+                    style={{
+                      marginBottom: 0
+                    }}
+                    label='原因'
+                    inner={(form) => {
+                      return (form.getFieldDecorator('auditDesc')(
+                        <TextArea maxLength={140} disabled={type===3} placeholder='请输入原因，140字以内' />
+                      )
+                      )
+                    }}
+                  />
+                </div>
+
+              </If>
+            }
           </Form>
         ),
         onOk: () => {
-          if (form) {
-            form.props.form.validateFields((err, values) => {
+          if (form&&type!==3) {
+            form.props.form.validateFields((err, value) => {
               if (err) {
                 return
               }
-              const operateRemark = values.operateRemark
-              api.addAnchor({
-              }).then(() => {
-                hide()
-                this.listpage.refresh()
-              })
+              if (type===1) {
+                value.evidenceDocUrlList = (value.evidenceDocUrlList || []).map((item: {name: string, rurl: string}) => {
+                  return {
+                    url: item.rurl,
+                    name: item.name
+                  }
+                })
+                value.evidenceImgUrlList = (value.evidenceImgUrlList || []).map((item: {name: string, rurl: string}) => {
+                  return {
+                    url: item.rurl,
+                    name: item.name
+                  }
+                })
+                if (!value.subjectName) {
+                  APP.error('账务对象名称不存在，请输入正确账务对象ID进行校验')
+                  return
+                }
+                value.id=this.id
+                api.add(value).then(() => {
+                  hide()
+                  this.refresh()
+                })
+              } else if (type===2) {
+                if (!value.auditStatus||value.auditStatus===0) {
+                  APP.error('请选择审核意见')
+                  return
+                }
+                console.log(value.auditDesc)
+                if (value.auditStatus===2&&!value.auditDesc) {
+                  APP.error('请输入原因')
+                  return
+                }
+                const param={ id: res.id, auditStatus: value.auditStatus, auditDesc: value.auditDesc }
+                api.audit(param).then(() => {
+                  hide()
+                  this.refresh()
+                })
+              }
             })
+          } else {
+            hide()
           }
         }
       })
     }
   }
-  public render () {
-    return (
-      <div
-        style={{
-          background: '#FFFFFF'
-        }}
-      >
-        <ListPage
-          getInstance={(ref) => this.listpage = ref}
-          columns={this.columns}
-          tableProps={{
-            rowKey: 'anchorId'
-          }}
-          addonAfterSearch={(
-            <div>
-              <Button
-                type='primary'
-                onClick={this.toOperate()}
-              >
+   public handleSelectionChange = (selectedRowKeys: any) => {
+     this.setState({
+       selectedRowKeys
+     })
+   }
+   public render () {
+     const { selectedRowKeys } = this.state
+     const rowSelection = {
+       selectedRowKeys,
+       onChange: this.handleSelectionChange,
+       getCheckboxProps: (record: any) => ({
+         disabled: record.status === 1
+       })
+     }
+     return (
+       <div
+         style={{
+           background: '#FFFFFF'
+         }}
+       >
+         <ListPage
+           getInstance={(ref) => this.listpage = ref}
+           columns={this.columns}
+           rowSelection={rowSelection}
+           mounted={() => {
+             this.listpage.form.setValues({
+               startTime: moment().subtract(30, 'days').startOf('d'),
+               endTime: moment().endOf('d')
+             })
+           }}
+           tableProps={{
+             rowKey: 'anchorId',
+             scroll: {
+               x: this.columns.reduce((a: any, b:any) => {
+                 return (typeof a === 'object' ? a.width : a) as any + b.width
+               }) as number
+             }
+           }}
+           onReset={() => {
+             this.listpage.form.setValues({
+               id: undefined,
+               subjectId: undefined,
+               subjectName: undefined,
+               auditStatus: undefined,
+               subjectType: undefined,
+               inOrOutType: undefined,
+               settlementStatus: undefined,
+               settlementType: undefined
+             })
+             this.refresh()
+           }}
+           rangeMap={{
+             time: {
+               fields: ['startTime', 'endTime']
+             }
+           }}
+           addonAfterSearch={(
+             <div>
+               <Button
+                 type='primary'
+                 onClick={()=>{
+                   this.operation(1, null)
+                 }}
+               >
                 创建账务结算单
-              </Button>
-              <Button
-                type='primary'
-                className='ml8 mr8'
-                onClick={this.batchOperation()}
-              >
+               </Button>
+               <Button
+                 type='primary'
+                 className='ml8 mr8'
+                 onClick={this.handleBatchShow.bind(this, 'visible')}
+               >
                 批量创建账务结算单
-              </Button>
-              <Button
-                type='primary'
-                onClick={this.toOperate()}
-              >
+               </Button>
+               {/* <Button
+                 type='primary'
+                 onClick={this.toOperate()}
+               >
                 批量审核
-              </Button>
-            </div>
-          )}
-          formConfig={getFieldsConfig()}
-          formItemLayout={(
+               </Button> */}
+             </div>
+           )}
+           formConfig={getFieldsConfig()}
+           formItemLayout={(
             <>
-              <FormItem name='memberId' />
-              <FormItem name='nickName' />
-              <FormItem name='anchorLevel' />
-              <FormItem name='status' />
-              <FormItem name='status1' />
-              <FormItem name='status2' />
+              <FormItem name='id' />
+              <FormItem name='subjectId' />
+              <FormItem name='subjectName' />
+              <FormItem name='auditStatus' />
+              <FormItem name='subjectType' />
+              <FormItem name='inOrOutType' />
+              <FormItem name='settlementStatus' />
+              <FormItem name='time' />
+              <FormItem name='settlementType' />
             </>
-          )}
-          api={api.getAnchorList}
-        />
-      </div>
-    )
+           )}
+           api={api.getList}
+         />
+         <BatchModal
+           modalProps={{
+             visible: this.state.visible,
+             onCancel: this.handleCancel.bind(this, 'visible')
+           }}
+         />
+       </div>
+     )
+   }
+
+  // 模态框取消操作
+  handleCancel = (key: any) => {
+    this.setState({
+      [key]: false
+    })
+  }
+  // 显示批量模态框
+  handleBatchShow = (key: any) => {
+    this.setState({
+      [key]: true
+    })
   }
 }
 export default Alert(Main)

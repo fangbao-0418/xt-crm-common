@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "./",
   "scripts": {
-    "dev": "node --max-old-space-size=4096 ./node_modules/xt-crm-cli/lib/scripts/start.js --port 3001",
+    "dev": "node --max-old-space-size=4096 ./node_modules/xt-crm-cli/lib/scripts/start.js",
     "build-dev": "node ./build.js --env dev",
     "build-test": "node ./build.js --env test",
     "build-test2": "node ./build.js --env test2",
@@ -81,7 +81,7 @@
     "ts-loader": "6.0.4",
     "typescript": "3.8.3",
     "webpack-bundle-analyzer": "^3.6.0",
-    "xt-crm-cli": "^1.0.2",
+    "xt-crm-cli": "^1.0.3",
     "yapi-to-typescript": "^2.0.2"
   },
   "browserslist": [

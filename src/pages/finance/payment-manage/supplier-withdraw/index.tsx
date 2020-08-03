@@ -1,3 +1,6 @@
+/**
+ * 供应商提现管理
+ */
 import React from 'react'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'

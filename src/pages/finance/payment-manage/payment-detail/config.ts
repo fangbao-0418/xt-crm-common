@@ -6,65 +6,66 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      memberId: {
+      tradeNo: {
         label: '交易编号',
         type: 'input',
         controlProps: {
           placeholder: '请输入交易编号'
         }
       },
-      nickName: {
+      tradeType: {
         label: '交易类型',
         type: 'select',
         options: [
-          { label: '订单收入', value: 20 },
-          { label: '运费收入', value: 10 },
-          { label: '售后退款', value: 30 },
-          { label: '运费退款', value: 40 }
+          { label: '订单收入', value: 1 },
+          { label: '运费收入', value: 3 },
+          { label: '售后退款', value: 2 },
+          { label: '运费退款', value: 4 }
         ],
         controlProps: {
           placeholder: '请选择交易类型'
         }
       },
-      anchorIdentityType: {
+      settlementStatus: {
         type: 'select',
         label: '结算状态',
         options: [
-          { label: '待结算', value: 20 },
-          { label: '部分结算', value: 10 },
-          { label: '已结算', value: 30 },
-          { label: '结算关闭', value: 40 }
+          { label: '待结算', value: 0 },
+          { label: '冻结中', value: -1 },
+          { label: '已结算', value: 2 },
+          { label: '结算关闭', value: -2 }
         ],
         controlProps: {
           placeholder: '请选择结算状态'
         }
       },
-      anchorLevel: {
+      storeId: {
         label: '供应商ID',
         type: 'input',
         controlProps: {
           placeholder: '请输入供应商ID'
         }
       },
-      status: {
+      storeName: {
         label: '供应商名称',
         type: 'input',
         controlProps: {
           placeholder: '请输入供应商名称'
         }
       },
-      status1: {
+      storeType: {
         type: 'select',
         label: '供应商类型',
         options: [
-          { label: '喜团优选', value: 20 },
-          { label: '喜团小店', value: 10 }
+          { label: '供应商', value: 1 },
+          { label: '喜团小店', value: 2 },
+          { label: 'POP店', value: 3 }
         ],
         controlProps: {
           placeholder: '请选择供应商类型'
         }
       },
-      status2: {
+      time: {
         label: '创建时间',
         type: 'rangepicker',
         controlProps: {
@@ -76,11 +77,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   return _.mergeWith(defaultConfig, partial)
 }
 
-export enum AnchorIdentityTypeEnum {
-  供应商 = 20,
-  公司 = 10,
-  合作网红 = 30,
-  代理 = 40
+export enum StoreTypeEnum {
+  供应商 = 1,
+  喜团小店 = 2,
+  POP店 = 3
 }
 
 export enum AnchorLevelEnum {
