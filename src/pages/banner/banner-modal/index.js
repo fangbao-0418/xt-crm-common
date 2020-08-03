@@ -215,7 +215,7 @@ class BannerModal extends Component {
               })(
                 <BannerPostion
                   onChange={(val) => {
-                    if([val[0], seat[0] ].includes(10)){
+                    if([val[0], seat[0]].includes(10)){
                       setFieldsValue({
                         imgList:undefined,
                         platformArray:undefined
@@ -246,14 +246,16 @@ class BannerModal extends Component {
                   {getFieldDecorator('imgList1', {
                     initialValue: initImgList(data.imgUrlWap, 2),
                     rules: [
-                      {
+                     {
                         validator: (rule, value, cb) => {
-                          if (!value?.length) {
-                            cb('请上传两张Banner图片')
-                          } else if (!value?.[0]) {
-                            cb('请上传Banner图1')
-                          } else if (!value?.[1]) {
-                            cb('请上传Banner图2')
+                          if([10].includes(seat[0])){
+                            if (!value?.length) {
+                              cb('请上传两张Banner图片')
+                            } else if (!value?.[0]) {
+                              cb('请上传Banner图1')
+                            } else if (!value?.[1]) {
+                              cb('请上传Banner图2')
+                            }
                           }
                           cb()
                         }

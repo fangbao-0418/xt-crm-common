@@ -38,7 +38,7 @@ class Upload extends React.Component<Props, State> {
       <div className={styles['start-page-upload']}>
         <div>
           <UploadView
-            // pxSize={[{width: 1080, height: 1920}]}
+            pxSize={[{width: 1080, height: 1920}]}
             placeholder='上传主图'
             listType='picture-card'
             fileType={['jpg', 'jpeg', 'gif', 'png']}
@@ -61,7 +61,7 @@ class Upload extends React.Component<Props, State> {
         </div>
         <div>
           <UploadView
-            // pxSize={[{width: 1125, height: 2436}]}
+            pxSize={[{width: 1125, height: 2436}]}
             placeholder='上传主图'
             listType='picture-card'
             fileType={['jpg', 'jpeg', 'gif', 'png']}
