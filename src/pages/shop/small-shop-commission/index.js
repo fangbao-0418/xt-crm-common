@@ -6,7 +6,7 @@ import ConfigModal from './components/configModal';
 import styles from './index.module.scss';
 
 @connect(state => ({
-  levelList: state['shop.commission'].levelList
+  levelList: state['shop.smallshopcommission'].levelList
 }))
 export default class extends Component {
 
@@ -21,7 +21,7 @@ export default class extends Component {
   /** 请求: 获取类目数据 */
   fetchaData = (params) => {
     const { dispatch } = this.props;
-    dispatch['shop.commission'].getList(params);
+    dispatch['shop.smallshopcommission'].getList(params);
   }
 
   /** 操作: 通过关键词搜索类目 */
@@ -45,7 +45,7 @@ export default class extends Component {
       lessItem.init = false
     });
     dispatch({
-      type: 'shop.commission/saveDefault',
+      type: 'shop.smallshopcommission/saveDefault',
       payload: {
         levelList: [...levelList]
       }
@@ -62,7 +62,7 @@ export default class extends Component {
   /** 操作: 类目列表选项配置佣金-显示模态框 */
   handleShowCategoryModal = (currentCategory) => {
     const { dispatch } = this.props;
-    dispatch['shop.commission'].getDetai({
+    dispatch['shop.smallshopcommission'].getDetai({
       id: currentCategory.id
     });
   }

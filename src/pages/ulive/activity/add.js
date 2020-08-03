@@ -108,7 +108,7 @@ class ActivityForm extends React.Component {
             APP.error('活动奖励不能为空')
             return
           }
-          vals.activityRewardAmount = activityRewardAmount * 10 * 10
+          vals.activityRewardAmount = APP.fn.formatMoneyNumber(activityRewardAmount)
         }
         this.setBasePromotion(vals, id => {
           if (isFunction(callback)) {

@@ -10,8 +10,10 @@ const BossDetail = loadable(() => import('./boss-detail'))
 const Goods = loadable(() => import('./goods'))
 /** 小店商品详情 */
 const GoodsDetail = loadable(() => import('./goods-detail'))
-/** 佣金配置 */
-const Commission = loadable(() => import('./commission'))
+/** pop佣金配置 */
+const PopCommission = loadable(() => import('./pop-commission'))
+/** 小店佣金配置 */
+const SmallShopCommission = loadable(() => import('./small-shop-commission'))
 
 class Main extends React.Component {
   render () {
@@ -24,7 +26,8 @@ class Main extends React.Component {
         <Route exact path={`${match.url}/boss/detail/:id/:auditResult`} component={BossDetail} />
         <Route exact path={`${match.url}/goods`} component={Goods} />
         <Route exact path={`${match.url}/goods/detail/:id`} component={GoodsDetail} />
-        <Route path={`${match.url}/commission`} component={Commission} />
+        <Route path={`${match.url}/popcommission`} component={PopCommission} />
+        <Route path={`${match.url}/smallshopcommission`} component={SmallShopCommission} />
       </Switch>
     )
   }
