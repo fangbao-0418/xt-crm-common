@@ -50,7 +50,7 @@ class Main extends React.Component<{}, State> {
           <Route path='/interface' component={modules.Interface} />
           <Route path='/crudpage' component={modules.CrudPage} />
           <Route path='/setting' component={modules.Setting} />
-          <Route path='/ulive' component={modules.ULive} />
+          {/* <Route path='/ulive' component={modules.ULive} /> */}
           <Route path='/merchant-accounts' component={modules.MerchantAccounts} />
           <Route path='/shop' component={modules.Shop} />
           <Route path='/fresh' component={modules.Fresh} />
