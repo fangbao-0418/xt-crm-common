@@ -118,6 +118,11 @@ class Main extends React.Component<Props, State> {
       APP.success('导出成功，请前去下载列表下载文件')
     })
   }
+  public exportRunningWaterDetail = () => {
+    api.exportRunningWaterDetail(this.id).then(() => {
+      APP.success('导出成功，请前去下载列表下载文件')
+    })
+  }
   public componentWillMount () {
     this.fetchData()
   }
@@ -159,9 +164,16 @@ class Main extends React.Component<Props, State> {
             <div>
               <Button
                 type='primary'
+                className='mr8'
                 onClick={this.toExport}
               >
                 导出明细
+              </Button>
+              <Button
+                type='primary'
+                onClick={this.exportRunningWaterDetail}
+              >
+                导出流水
               </Button>
             </div>
           </div>

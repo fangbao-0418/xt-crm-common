@@ -7,8 +7,8 @@ import styles from '../index.module.scss';
 const FormItem = Form.Item;
 
 @connect(state => ({
-  modal: state['shop.commission'].configModal,
-  currentCategory: state['shop.commission'].currentCategory
+  modal: state['shop.smallshopcommission'].configModal,
+  currentCategory: state['shop.smallshopcommission'].currentCategory
 }))
 @Form.create()
 export default class ConfigModal extends Component {
@@ -35,7 +35,7 @@ export default class ConfigModal extends Component {
         params.companyRate = companyRate
       }
 
-      dispatch['shop.commission'].updateCategory(params);
+      dispatch['shop.smallshopcommission'].updateCategory(params);
     });
   }
 
@@ -43,7 +43,7 @@ export default class ConfigModal extends Component {
   handleCancel = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'shop.commission/saveDefault',
+      type: 'shop.smallshopcommission/saveDefault',
       payload: {
         configModal: {
           visible: false
@@ -56,7 +56,7 @@ export default class ConfigModal extends Component {
   handleClose = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'shop.commission/saveDefault',
+      type: 'shop.smallshopcommission/saveDefault',
       payload: {
         currentCategory: null
       }

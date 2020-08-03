@@ -19,7 +19,7 @@ module.exports = function (config, env) {
   const app_name = process.env.app_name || 'common'
   const app_origin = process.env.app_origin || 'http://localhost:3002'
   
-  const publicPath = env === 'dev' ? `/` : `${app_origin}/${app_name}/${app_branch}/`
+  const publicPath = env === 'dev' ? '/' : `${app_origin}/${app_name}/${app_branch}/`
   
   config.output.publicPath = publicPath
 
