@@ -4,7 +4,7 @@ import { ColumnProps } from "antd/es/table";
 import { getFieldsConfig } from "./config";
 import { Form, FormItem } from "@/packages/common/components";
 import { Button, Modal, Table } from "antd";
-import Viewer from 'viewerjs';
+import PreviewImage from "./components/PreviewImage";
 
 interface Invoice {
   No: string;
@@ -124,10 +124,12 @@ class InvoiceReview extends React.Component {
       render: () => {
         return (
           <div>
-            <Button
-              type="link"
-              onClick={this.handleView}
-            >
+            <PreviewImage
+              ref={(ref) =>this.imageRef = ref }
+              src="https://sh-tximg.hzxituan.com/tximg/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551595679759696.jpg"
+              alt='发票编号：8899001'
+            />
+            <Button type="link" onClick={this.handleView}>
               查看
             </Button>
             <Button type="link">下载</Button>
@@ -137,8 +139,8 @@ class InvoiceReview extends React.Component {
     },
   ];
   public handleView = () => {
-    
-  }
+    this.imageRef.handleView()
+  };
   public fetchData = async () => {
     return {
       page: 1,

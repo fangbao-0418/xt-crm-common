@@ -38,6 +38,7 @@ class Image extends React.Component<Props> {
     if (!this.viewer) {
       this.viewer = new Viewer(this.imgRef, {
         navbar: false,
+        title: [4, (image: any, imageData: any) => `${image.alt}`],
         hidden: () => {
           this.viewer.destroy()
           this.viewer = undefined
@@ -70,6 +71,7 @@ class Image extends React.Component<Props> {
           })
         }}
         style={{
+          display: 'none',
           width: width || 100,
           height: height || 100,
           cursor: 'pointer',
