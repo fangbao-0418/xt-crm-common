@@ -218,6 +218,7 @@ class BannerModal extends Component {
                     if([val[0], seat[0]].includes(10)){
                       setFieldsValue({
                         imgList:undefined,
+                        imgList1:undefined,
                         platformArray:undefined
                       })
                     }
