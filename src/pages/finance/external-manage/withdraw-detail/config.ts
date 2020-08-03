@@ -35,7 +35,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         options: [
           { label: '喜团优选', value: 1 },
           { label: '喜团小店', value: 2 },
-          { label: '喜团小店', value: 3 }
+          { label: 'POP店', value: 3 }
         ],
         controlProps: {
           placeolder: '请选择供应商类型'
