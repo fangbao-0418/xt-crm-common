@@ -1,6 +1,6 @@
 import React from 'react'
 import { isEqual } from 'lodash'
-import { InputNumber } from 'antd'
+import { InputNumber, message } from 'antd'
 
 interface Props {
   style?: React.CSSProperties
@@ -35,6 +35,11 @@ class Main extends React.Component<Props, State> {
     }
   }
   public leftChange = (leftValue: any) => {
+    const { rightValue } = this.state
+    if ((rightValue !== undefined) && (leftValue > rightValue)) {
+      message.warn('最小值不能大于最大值')
+      return
+    }
     this.setState({
       leftValue
     }, () => {
@@ -44,6 +49,11 @@ class Main extends React.Component<Props, State> {
     })
   }
   public righttChange = (rightValue: any) => {
+    const { leftValue } = this.state
+    if ((leftValue !== undefined) && (leftValue > rightValue)) {
+      message.warn('最大值不能小于最小值')
+      return
+    }
     this.setState({
       rightValue
     }, () => {

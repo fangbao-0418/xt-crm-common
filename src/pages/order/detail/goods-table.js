@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Table, Row, Col, Card, Button, Modal, Input, message, Divider } from 'antd'
+import { Table, Row, Col, Button, Modal, Input, message, Divider } from 'antd'
 import { formatMoney } from '@/packages/common/utils'
 import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale'
+import CompensateAfterSale from '../components/modal/CompensateAfterSale'
 import { withRouter } from 'react-router'
 import { getDetailColumns } from '../constant'
 import LogisticsInfo from './logistics-info'
@@ -175,6 +176,30 @@ class GoodsTable extends Component {
                 style={{ padding: 0 }}
                 type='link'
                 size='small'
+                onClick={() => this.setState({
+                  notesVisible: true,
+                  modalInfo: { ...record }
+                })}>
+                发起补偿
+              </Button>
+            </div>
+            <div>
+              <Button
+                style={{ padding: 0 }}
+                type='link'
+                size='small'
+                onClick={() => this.setState({
+                  notesVisible: true,
+                  modalInfo: { ...record }
+                })}>
+                补偿历史
+              </Button>
+            </div>
+            <div>
+              <Button
+                style={{ padding: 0 }}
+                type='link'
+                size='small'
                 onClick={() => this.childOrderProceeds(record, proceedsVisible)}>
                 {proceedsVisible ? '收起收益' : '查看收益'}
               </Button>
@@ -192,6 +217,11 @@ class GoodsTable extends Component {
             successCb={() => this.setState({ visible: false }, this.props.query)}
             visible={this.state.visible}
             modalInfo={this.state.modalInfo} />}
+        <CompensateAfterSale
+          onCancel={() => this.setState({ visible: false })}
+          successCb={() => this.setState({ visible: false })}
+          visible={this.state.visible}
+        />
         <Modal
           title='添加备注'
           visible={this.state.notesVisible}
@@ -214,68 +244,72 @@ class GoodsTable extends Component {
               pagination={false}
               title={() => tableTitle}
               footer={() => {
-                return (<>
-                  <Row style={{ marginBottom: 20 }}>
-                    <Col style={{ textAlign: 'right' }}>
-                      <span style={{ fontWeight: 'bold' }}></span>
-                      <span className='mr10'>运费合计：<font color='red'>{formatMoney(childOrder.originFreight)}</font></span>
-                      <span className='mr10'>运费优惠：<font color='red'>{formatMoney(-(childOrder.couponFreight))}</font></span>
-                      <span>运费实付：{formatMoney(childOrder.payFreight)}</span>
-                    </Col>
-                  </Row>
-                  {
-                    proceedsVisible && (
-                      <Row style={{ marginBottom: 20 }}>
-                        <Col>
-                          <span style={{ fontWeight: 'bold' }}>SKU收益：</span>
-                          <ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />
-                        </Col>
-                      </Row>
-                    )
-                  }
-                  <Row>
-                    <Col style={{ fontWeight: 'bold' }}>订单客服备注：</Col>
-                    {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => (
-                      <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
-                    ))}
-                    {Array.isArray(childOrder.orderChildServerVOS) && childOrder.orderChildServerVOS.map(v => (
-                      <Col key={v.orderCode}>
-                        {Array.isArray(v.commentListVO) && v.commentListVO.map(item => (
-                          <div key={item.createTime}>
-                            <span>{(Array.isArray(item.info) && item.info.length > 0) ? item.info[item.info.length -1].value: ''}</span>
-                            <span>（{formatDate(item.createTime)} {item.name}）</span>
-                            <span>
+                return (
+                  <>
+                    <Row style={{ marginBottom: 20 }}>
+                      <Col style={{ textAlign: 'right' }}>
+                        <span style={{ fontWeight: 'bold' }}></span>
+                        <span className='mr10'>运费合计：<font color='red'>{formatMoney(childOrder.originFreight)}</font></span>
+                        <span className='mr10'>运费优惠：<font color='red'>{formatMoney(-(childOrder.couponFreight))}</font></span>
+                        <span>运费实付：{formatMoney(childOrder.payFreight)}</span>
+                      </Col>
+                    </Row>
+                    {
+                      proceedsVisible && (
+                        <Row style={{ marginBottom: 20 }}>
+                          <Col>
+                            <span style={{ fontWeight: 'bold' }}>SKU收益：</span>
+                            <ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />
+                          </Col>
+                        </Row>
+                      )
+                    }
+                    <Row>
+                      <Col style={{ fontWeight: 'bold' }}>订单客服备注：</Col>
+                      {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => (
+                        <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
+                      ))}
+                      {Array.isArray(childOrder.orderChildServerVOS) && childOrder.orderChildServerVOS.map(v => (
+                        <Col key={v.orderCode}>
+                          {Array.isArray(v.commentListVO) && v.commentListVO.map(item => (
+                            <div key={item.createTime}>
+                              <span>{(Array.isArray(item.info) && item.info.length > 0) ? item.info[item.info.length -1].value: ''}</span>
+                              <span>（{formatDate(item.createTime)} {item.name}）</span>
+                              <span>
                               售后单号：(
-                              <span
-                                className='href'
-                                onClick={() => APP.history.push(`/order/refundOrder/${v.id}`)}
-                              >
-                                {v.orderCode}
-                              </span>
+                                <span
+                                  className='href'
+                                  onClick={() => APP.history.push(`/order/refundOrder/${v.id}`)}
+                                >
+                                  {v.orderCode}
+                                </span>
                               )
-                            </span>
-                          </div>
-                        ))}
-                      </Col>
-                    ))}
-                  </Row>
-                  {orderInfo.orderType===55
-                    ? <Row>
-                      <Col style={{ fontWeight: 'bold' }}>充值信息</Col>
-                      <Col>
-                        <span>充值方式：{(orderVirtualInfoVO.rechargeWayDesc)||'暂无'}</span>
-                        <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{(orderVirtualInfoVO.rechargeStatusDesc)||'暂无'}</span>
-                        <span>充值单号：{(orderVirtualInfoVO.rechargeNo)||'暂无'}</span>
-                      </Col>
-                    </Row> : null}
+                              </span>
+                            </div>
+                          ))}
+                        </Col>
+                      ))}
+                    </Row>
+                    {orderInfo.orderType===55
+                      ? (
+                        <Row>
+                          <Col style={{ fontWeight: 'bold' }}>充值信息</Col>
+                          <Col>
+                            <span>充值方式：{(orderVirtualInfoVO.rechargeWayDesc)||'暂无'}</span>
+                            <span style={{ marginLeft: 20, marginRight: 20 }}>充值状态：{(orderVirtualInfoVO.rechargeStatusDesc)||'暂无'}</span>
+                            <span>充值单号：{(orderVirtualInfoVO.rechargeNo)||'暂无'}</span>
+                          </Col>
+                        </Row>
+                      ) : null}
 
-                  <LogisticsInfo
-                    mainorderInfo={orderInfo}
-                    logistics={logistics}
-                    onSuccess={this.props.query}
-                    orderInfo={childOrder}
-                  />
-                        </>)
+                    <LogisticsInfo
+                      mainorderInfo={orderInfo}
+                      logistics={logistics}
+                      onSuccess={this.props.query}
+                      orderInfo={childOrder}
+                    />
+                  </>
+                )
               }}
             />
           </div>

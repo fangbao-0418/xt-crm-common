@@ -44,7 +44,7 @@ export default class RouteApp extends React.Component {
         <Route exact path={`${match.url}/autoRefundRule`} component={AutoRefund} />
         <Route exact path={`${match.url}/autoRefundRule/create/:id?`} component={AutoRefundDetail} />
         <Route exact path={`${match.url}/compensate-order`} component={CompensateOrder} />
-        <Route exact path={`${match.url}/compensate-order/:id`} component={CompensateOrderDetail} />
+        <Route exact path={`${match.url}/compensate-order/:compensateCode`} component={CompensateOrderDetail} />
         <Route path={`${match.url}`} component={Main} />
       </Switch>
     )

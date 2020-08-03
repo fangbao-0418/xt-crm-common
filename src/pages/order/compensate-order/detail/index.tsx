@@ -1,9 +1,11 @@
 import React from 'react'
-import { Card, Table, Tabs, Divider } from 'antd'
+import { RouteComponentProps } from 'react-router'
+import { Card, Table, Tabs, Divider, Button } from 'antd'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import Info from '../components/info'
-import { getFieldsConfig } from './config'
+import { getFieldsConfig, getApplInfo } from './config'
+import { getCompensateDetail, getCompensateRecord } from '../api'
 
 const dataSource = [
   {
@@ -38,73 +40,29 @@ const columns = [
   }
 ]
 
-interface Props extends AlertComponentProps {}
+interface Props extends RouteComponentProps<{ compensateCode: string }>, AlertComponentProps {}
 
-class Main extends React.Component<Props> {
+interface State {
+  detail: object | null
+  detailLoad: boolean
+  record: any[]
+  recordLoad: boolean
+  tabKey: 'detail' | 'record'
+}
+
+class Main extends React.Component<Props, State> {
+  compensateCode = this.props.match.params.compensateCode
   /* 补偿申请信息 */
-  getApplInfo = () => {
-    return [
-      {
-        label: '补偿原因',
-        value: 'Zhou Maomao',
-        span: 1,
-        type: 'text'
-      },
-      {
-        label: '发起人',
-        value: 'Zhou Maomao',
-        span: 1,
-        type: 'text'
-      },
-      {
-        label: '补偿类型',
-        value: 'Zhou Maomao',
-        span: 1,
-        type: 'text'
-      },
-      {
-        label: '补偿归属',
-        value: 'Zhou Maomao',
-        span: 1,
-        type: 'text'
-      },
-      {
-        label: '补偿金额',
-        value: 'Zhou Maomao',
-        span: 2,
-        type: 'text'
-      },
-      {
-        label: '转账方式',
-        value: 'Zhou Maomao',
-        span: 2,
-        type: 'text'
-      },
-      {
-        label: '姓名',
-        value: 'Zhou Maomao',
-        span: 2,
-        type: 'text'
-      },
-      {
-        label: '转账账号',
-        value: 'Zhou Maomao',
-        span: 2,
-        type: 'text'
-      },
-      {
-        label: '补偿凭证',
-        value: 'https://assets.hzxituan.com/small-store-logo/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551587803910284.png',
-        span: 2,
-        type: 'image'
-      },
-      {
-        label: '补偿说明',
-        value: 'Zhou Maomao',
-        span: 2,
-        type: 'text'
-      }
-    ]
+  state: State = {
+    detail: null,
+    detailLoad: false,
+    record: [],
+    recordLoad: false,
+    tabKey: 'detail'
+  }
+
+  componentDidMount () {
+    this.fetchDetail()
   }
 
   handleAduit = () => {
@@ -127,7 +85,7 @@ class Main extends React.Component<Props> {
           <FormItem verifiable name='recepitorAccountName' />
           <FormItem verifiable name='receiptorAccountNo' />
           <FormItem verifiable name='remarks' />
-      </Form>
+        </Form>
       ),
       onOk: () => {
         form.props.form.validateFields((err, values) => {
@@ -139,48 +97,97 @@ class Main extends React.Component<Props> {
       }
     })
   }
+
+  handleTabChange = (tabKey: any) => {
+    this.setState({
+      tabKey
+    }, () => {
+      if (!this.state.recordLoad && tabKey === 'record') {
+        this.fetchRecord()
+      }
+    })
+  }
+
+  fetchDetail = () => {
+    getCompensateDetail({
+      compensateCode: this.compensateCode
+    }).then(() => {
+      this.setState({
+        detailLoad: true
+      })
+    })
+  }
+
+  fetchRecord = () => {
+    getCompensateRecord({}).then(() => {
+      this.setState({
+        recordLoad: true
+      })
+    })
+  }
   render () {
+    const { tabKey, detailLoad, recordLoad } = this.state
+    console.log(APP.user.id, 111111)
     return (
       <Card bordered={false}>
-        <Tabs>
-          <Tabs.TabPane tab='补偿详情' key='1'>
-            <Card
-              title='补偿单编号：20190418131456778899 补偿状态：已完成'
-              extra={<span onClick={this.handleAduit} className='href'>审核</span>}
-            >
-              <Info title='申请补偿信息' column={2} data={this.getApplInfo()} />
-              <Divider dashed />
-              <Info title='审核信息'>
-                <Table
-                  size='small'
-                  bordered
-                  pagination={false}
-                  dataSource={dataSource}
-                  columns={columns}
-                />
-              </Info>
-              <Divider dashed />
-              <Info title='订单信息' column={2} data={this.getApplInfo()} />
-              <Divider dashed />
-              <Info title='商品信息'>
-                <Table
-                  size='small'
-                  bordered
-                  pagination={false}
-                  dataSource={dataSource}
-                  columns={columns}
-                />
-              </Info>
-              <Divider dashed />
-              <Info title='物流信息' column={2} data={this.getApplInfo()} />
-            </Card>
+        <Tabs activeKey={tabKey} onChange={this.handleTabChange}>
+          <Tabs.TabPane tab='补偿详情' key='detail'>
+            {
+              detailLoad ? (
+                <Card
+                  title='补偿单编号：20190418131456778899 补偿状态：已完成'
+                  extra={
+                    <>
+                      <Button type='primary' size='small' onClick={this.handleAduit} className='mr8'>取消请求</Button>
+                      <Button type='primary' size='small' onClick={this.handleAduit}>审核</Button>
+                    </>
+                  }
+                >
+                  <Info title='申请补偿信息' column={2} data={getApplInfo()} />
+                  <Divider dashed />
+                  <Info title='审核信息'>
+                    <Table
+                      size='small'
+                      bordered
+                      pagination={false}
+                      dataSource={dataSource}
+                      columns={columns}
+                    />
+                  </Info>
+                  <Divider dashed />
+                  <Info title='订单信息' column={2} data={getApplInfo()} />
+                  <Divider dashed />
+                  <Info title='商品信息'>
+                    <Table
+                      size='small'
+                      bordered
+                      pagination={false}
+                      dataSource={dataSource}
+                      columns={columns}
+                    />
+                  </Info>
+                  <Divider dashed />
+                  <Info title='物流信息' column={2} data={getApplInfo()} />
+                </Card>
+              ) : (
+                <Card loading={true}></Card>
+              )
+            }
           </Tabs.TabPane>
-          <Tabs.TabPane tab='信息记录' key='2'>
-            <Table
-              pagination={false}
-              dataSource={dataSource}
-              columns={columns}
-            />
+          <Tabs.TabPane tab='信息记录' key='record'>
+            {
+              recordLoad ? (
+                <Table
+                  bordered
+                  size='middle'
+                  pagination={false}
+                  dataSource={dataSource}
+                  columns={columns}
+                />
+              ) : (
+                <Card loading={true}></Card>
+              )
+            }
           </Tabs.TabPane>
         </Tabs>
       </Card>
