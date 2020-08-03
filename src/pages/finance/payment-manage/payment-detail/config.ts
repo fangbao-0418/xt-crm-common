@@ -79,7 +79,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 
 export enum StoreTypeEnum {
   供应商 = 1,
-  喜团小店 = 2
+  喜团小店 = 2,
+  POP店 = 3
 }
 
 export enum AnchorLevelEnum {

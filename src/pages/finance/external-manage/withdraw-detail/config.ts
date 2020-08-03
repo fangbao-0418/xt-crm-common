@@ -74,5 +74,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 
 export enum SupplierTypeEnum {
   喜团优选 = 0,
-  喜团小店 = 6
+  喜团小店 = 6,
+  POP店 = 7
 }
