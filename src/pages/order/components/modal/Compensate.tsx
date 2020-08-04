@@ -81,15 +81,14 @@ class Compensate extends React.Component<Props, State> {
       alipayAccount,
       couponCode,
       wxInfo,
+      transferEvidenceImg,
       ...values
     }) => {
       if (!errors) {
-        values.imgUrl = Array.isArray(values.imgUrl) ? values.imgUrl.map((v: any) => v.url) : []
-        values.imgUrl = values.imgUrl.map((urlStr: string) =>
+        transferEvidenceImg = Array.isArray(transferEvidenceImg) ? transferEvidenceImg.map((v: any) => v.url) : []
+        transferEvidenceImg = transferEvidenceImg.map((urlStr: string) =>
           urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
-        if (values.amount) {
-          values.amount = mul(values.amount, 100)
-        }
+        values.transferEvidenceImg = transferEvidenceImg
 
         values.reasonType = twoReasonType
         if (compensatePayType === 11) {
@@ -125,7 +124,6 @@ class Compensate extends React.Component<Props, State> {
   };
   render () {
     const {
-      modalInfo,
       form: { getFieldDecorator, getFieldValue, setFieldsValue }
     } = this.props
     const { oneReasons, responsibilityList, quota, wxAccountList } = this.state

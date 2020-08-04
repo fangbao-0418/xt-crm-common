@@ -387,6 +387,7 @@ export function getUserWxAccount (data: { childOrderCode: string }) {
 
 //发起补偿单申请
 export function compensateApply (data:any) {
+  console.log(data, 'compensateApply')
   return Promise.resolve(true)
   // return newPost('/crm/order/compensate/apply', data)
 }

@@ -72,7 +72,7 @@ class GoodsTable extends Component {
   }
   handleCompensate = (record) => {
     const { orderInfo = {}, childOrder = {} } = this.props
-    if (record.canApply) {
+    if (!record.canApply) {
       this.setState({
         modalInfo: {
           orderInfo,
@@ -84,11 +84,11 @@ class GoodsTable extends Component {
     } else {
       Modal.confirm({
         title: '系统提示',
-        content: record.errormsg,
+        content: '该订单商品正在补偿中，无法发起新补偿',
         okText: '查看详情',
         cancelText: '取消',
         onOk: () => {
-          APP.history.push(`/order/refundOrder/${record.skuServerId}`)
+          APP.history.push(`/order/compensate-order/${record.skuServerId}`)
         }
       })
     }
@@ -209,10 +209,9 @@ class GoodsTable extends Component {
                 style={{ padding: 0 }}
                 type='link'
                 size='small'
-                onClick={() => this.setState({
-                  notesVisible: true,
-                  modalInfo: { ...record }
-                })}>
+                onClick={() => {
+                  this.props.history.push(`/order/compensate-order?childOrderCode=${childOrder.orderCode}`)
+                }}>
                 补偿历史
               </Button>
             </div>
