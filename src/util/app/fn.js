@@ -313,3 +313,38 @@ export function formatUnSafeData (source) {
   }
   return loop(source)
 }
+
+/**
+ * 校验空参数
+ * @param {*} res
+ */
+export function checkEmptyParams (res) {
+  let { page, pageSize, ...params } = res;
+  return Object.values(params).every((v) => v == undefined || v === null || v === '')
+}
+
+/**
+ * 包裹api函数
+ */
+export function wrapApi (fn, empties = {}, value = {
+  current: 1,
+  pages: 0,
+  records: [],
+  searchCount: true,
+  size: 10,
+  total: 0
+}) {
+  return (res) => {
+    let isEmptyParams = checkEmptyParams(res);
+    for (let key in empties) {
+      if (!isEmptyParams) {
+        isEmptyParams = params[key] === empties[key]
+      }
+    }
+    if (isEmptyParams) {
+      APP.error('筛选条件为空暂不支持操作')
+      return Promise.resolve(value)
+    }
+    return fn(res);
+  }
+}
