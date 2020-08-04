@@ -339,7 +339,6 @@ export function wrapApi (fn, omits = [], value = {
 }) {
   return (res) => {
     if (checkEmptyParams(res, omits)) {
-      APP.error('筛选条件为空暂不支持操作')
       return Promise.resolve(value)
     }
     return fn(res);

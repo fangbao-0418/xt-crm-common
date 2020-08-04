@@ -214,7 +214,6 @@ export function refundDetail (params: any) {
 
 export function newExportOrder (data: any) {
   if (APP.fn.checkEmptyParams(data, ['orderStatus'])) {
-    APP.error('筛选条件为空暂不支持操作')
     return Promise.reject();
   }
   return APP.http.get('/order/export', {
