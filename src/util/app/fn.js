@@ -1,5 +1,7 @@
 import moment from 'moment'
 import Decimal from 'decimal.js'
+import { omit } from 'lodash'
+
 export function getH5Origin () {
   let origin = 'https://daily-myouxuan.hzxituan.com/';
   // const nowTime = new Date().getTime()
@@ -318,15 +320,16 @@ export function formatUnSafeData (source) {
  * 校验空参数
  * @param {*} res
  */
-export function checkEmptyParams (res) {
+export function checkEmptyParams (res, omits = []) {
   let { page, pageSize, ...params } = res;
+  params = omit(params, omits)
   return Object.values(params).every((v) => v == undefined || v === null || v === '')
 }
 
 /**
  * 包裹api函数
  */
-export function wrapApi (fn, empties = {}, value = {
+export function wrapApi (fn, omits = [], value = {
   current: 1,
   pages: 0,
   records: [],
@@ -335,13 +338,7 @@ export function wrapApi (fn, empties = {}, value = {
   total: 0
 }) {
   return (res) => {
-    let isEmptyParams = checkEmptyParams(res);
-    for (let key in empties) {
-      if (!isEmptyParams) {
-        isEmptyParams = params[key] === empties[key]
-      }
-    }
-    if (isEmptyParams) {
+    if (checkEmptyParams(res, omits)) {
       APP.error('筛选条件为空暂不支持操作')
       return Promise.resolve(value)
     }

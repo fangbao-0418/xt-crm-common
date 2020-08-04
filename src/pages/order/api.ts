@@ -51,7 +51,7 @@ export function verifyDownDgrade (data: any) {
 
 export const getOrderList = APP.fn.wrapApi((data: any) => {
   return post('/order/list', data)
-})
+}, ['orderStatus'])
 
 // 客服代申请售后单个商品详情
 export function getProductDetail ({ mainOrderId, skuId }: any) {
@@ -213,7 +213,7 @@ export function refundDetail (params: any) {
 }
 
 export function newExportOrder (data: any) {
-  if (APP.fn.checkEmptyParams(data)) {
+  if (APP.fn.checkEmptyParams(data, ['orderStatus'])) {
     APP.error('筛选条件为空暂不支持操作')
     return Promise.reject();
   }
@@ -244,7 +244,7 @@ export function closeRefund (data: any) {
 
 export const exportRefund = APP.fn.wrapApi((data: any) => {
   return exportFile('/order/afterSale/export', data)
-}, {}, false)
+}, ['refundStatus'], false)
 
 export function profitRecal (data: any) {
   return fetch('/order/profit/recal', {

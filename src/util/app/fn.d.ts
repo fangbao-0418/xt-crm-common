@@ -26,5 +26,5 @@ interface FnProps {
   formatUnsafeString: (str: string) => string
   formatUnSafeData: <T = any>(data: T) => T
   wrapApi: (fn: any, empties?: any, value?: any) => any
-  checkEmptyParams: (res: any) => any
+  checkEmptyParams: (res: any, omits?: string[]) => any
 }

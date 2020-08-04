@@ -23,7 +23,7 @@ export function setProduct (data) {
 
 export const getGoodsList = APP.fn.wrapApi((data) => {
   return post('/product/list', data)
-})
+}, ['status'])
 
 export function getGoodsDetial (data) {
   return post('/product/detail', data).then(formResponse)
