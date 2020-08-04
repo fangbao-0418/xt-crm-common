@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Table, Row, Col, Button, Modal, Input, message, Divider } from 'antd'
 import { formatMoney } from '@/packages/common/utils'
 import ApplyAfterSaleModal from '../components/modal/ApplyAfterSale'
-import CompensateAfterSale from '../components/modal/CompensateAfterSale'
+import Compensate from '../components/modal/Compensate'
 import { withRouter } from 'react-router'
 import { getDetailColumns } from '../constant'
 import LogisticsInfo from './logistics-info'
@@ -14,10 +14,11 @@ import * as adapter from './adapter'
 @withRouter
 class GoodsTable extends Component {
   state = {
-    visible: false,
-    notesVisible: false,
+    visible: false, // 申请售后模态框visible
+    compensateVisible: false, // 补偿模态框visible
+    notesVisible: false, // 添加备注模态框
     modalInfo: {},
-    proceedsVisible: false,
+    proceedsVisible: false, // 查看收益信息
     childOrderProceeds: [],
     skuInfo: {}
   }
@@ -65,6 +66,29 @@ class GoodsTable extends Component {
         onOk: (hide) => {
           hide()
           handle()
+        }
+      })
+    }
+  }
+  handleCompensate = (record) => {
+    const { orderInfo = {}, childOrder = {} } = this.props
+    if (record.canApply) {
+      this.setState({
+        modalInfo: {
+          orderInfo,
+          childOrderInfo: childOrder,
+          skuInfo: record
+        },
+        compensateVisible: true
+      })
+    } else {
+      Modal.confirm({
+        title: '系统提示',
+        content: record.errormsg,
+        okText: '查看详情',
+        cancelText: '取消',
+        onOk: () => {
+          APP.history.push(`/order/refundOrder/${record.skuServerId}`)
         }
       })
     }
@@ -176,10 +200,7 @@ class GoodsTable extends Component {
                 style={{ padding: 0 }}
                 type='link'
                 size='small'
-                onClick={() => this.setState({
-                  notesVisible: true,
-                  modalInfo: { ...record }
-                })}>
+                onClick={() => this.handleCompensate(record)}>
                 发起补偿
               </Button>
             </div>
@@ -217,10 +238,11 @@ class GoodsTable extends Component {
             successCb={() => this.setState({ visible: false }, this.props.query)}
             visible={this.state.visible}
             modalInfo={this.state.modalInfo} />}
-        <CompensateAfterSale
-          onCancel={() => this.setState({ visible: false })}
-          successCb={() => this.setState({ visible: false })}
-          visible={this.state.visible}
+        <Compensate
+          onCancel={() => this.setState({ compensateVisible: false })}
+          successCb={() => this.setState({ compensateVisible: false })}
+          visible={this.state.compensateVisible}
+          modalInfo={this.state.modalInfo}
         />
         <Modal
           title='添加备注'

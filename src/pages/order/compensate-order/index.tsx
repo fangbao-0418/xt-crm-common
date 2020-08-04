@@ -79,7 +79,9 @@ class Main extends React.Component<Props> {
           <>
             <span
               className='href'
-              onClick={() => { APP.history.push(`/order/compensate-order/${record.id}`) }}
+              onClick={() => {
+                APP.history.push(`/order/compensate-order/${record.id}`)
+              }}
             >
               查看详情
             </span>
