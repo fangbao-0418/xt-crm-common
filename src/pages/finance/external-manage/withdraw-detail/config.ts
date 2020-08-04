@@ -33,8 +33,9 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '供应商类型',
         options: [
-          { label: '喜团优选', value: 0 },
-          { label: '喜团小店', value: 6 }
+          { label: '喜团优选', value: 1 },
+          { label: '喜团小店', value: 2 },
+          { label: 'POP店', value: 3 }
         ],
         controlProps: {
           placeolder: '请选择供应商类型'
@@ -72,6 +73,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 }
 
 export enum SupplierTypeEnum {
-  喜团优选 = 0,
-  喜团小店 = 6
+  喜团优选 = 1,
+  喜团小店 = 2,
+  POP店 = 3
 }

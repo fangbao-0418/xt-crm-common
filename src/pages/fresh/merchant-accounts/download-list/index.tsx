@@ -30,6 +30,7 @@ enum TypeEnum {
   '商家-导出提现单' = 400,
   '商家-对账单列表导出' = 410,
   '商家-对账单明细导出' = 411,
+  '商家-对账单流水导出' = 412,
   '商家-调整单列表导出' = 420
 }
 
@@ -122,7 +123,16 @@ class Main extends React.Component {
         }
         return (
           <span>
-            {hasFile ? <a onClick={() => APP.fn.download(record.fileUrl || '', TypeEnum[record.type] + APP.fn.formatDate(record.createTime, 'YYYY-MM-DD-HH-mm-ss'))}>下载</a> : ''}
+            {hasFile ? (
+              <span
+                className='href'
+                onClick={() => {
+                  APP.fn.download(record.fileUrl || '', record.fileName || TypeEnum[record.type] + APP.fn.formatDate(record.createTime, 'YYYY-MM-DD-HH-mm-ss'))
+                }}
+              >
+              下载
+              </span>
+            ) : ''}
             {/* <Divider type="vertical" /> */}
             {/* <a onClick={()=>this.handleDelete(record.id)}>删除</a> */}
           </span>
