@@ -163,14 +163,15 @@ export const exportFile = (url, data) => {
     headers: getHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }),
     responseType: 'blob'
   })
-    .then(async function (res) {
-      if (res.data.type === 'application/json') {
-        return Promise.reject(res.data)
-      }
-      let blob = new Blob([res.data], { type: res.headers['content-type'] })
-      const text = await blob.text()
+  .then(async function (res) {
+    if (res.data.type === 'application/json') {
+      return Promise.reject(res.data)
+    }
+    let text = ''
+    let blob = new Blob([res.data], { type: res.headers['content-type'] })
+    if (blob.text) {
+      text = await blob.text()
       const [fileName, blobText] = text.split('/attachment/')
-      // const fileName = getFileName(res.headers['content-disposition']);
       const downloadElement = document.createElement('a')
       blob = new Blob([blobText], { type: 'text/plain' })
       const href = window.URL.createObjectURL(blob) //创建下载的链接
@@ -181,6 +182,25 @@ export const exportFile = (url, data) => {
       downloadElement.click() //点击下载
       document.body.removeChild(downloadElement) //下载完成移除元素
       window.URL.revokeObjectURL(href) //释放掉blob对象
+    }
+    else {
+      const reader = new FileReader();
+      reader.readAsText(blob);
+      reader.onload = () => {
+        text = reader.result;
+        const [fileName, blobText] = text.split('/attachment/')
+        const downloadElement = document.createElement('a')
+        blob = new Blob([blobText], { type: 'text/plain' })
+        const href = window.URL.createObjectURL(blob) //创建下载的链接
+        downloadElement.href = href
+        downloadElement.target = '_blank'
+        fileName && (downloadElement.download = fileName) //下载后文件名
+        document.body.appendChild(downloadElement)
+        downloadElement.click() //点击下载
+        document.body.removeChild(downloadElement) //下载完成移除元素
+        window.URL.revokeObjectURL(href) //释放掉blob对象
+      }
+    }
     })
     .catch(function (error) {
       if (error.type === 'application/json') {
