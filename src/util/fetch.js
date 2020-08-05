@@ -186,7 +186,7 @@ export const exportFile = (url, data) => {
     else {
       const reader = new FileReader();
       reader.readAsText(blob);
-      reader.onload = () => {
+      reader.onloadend = () => {
         text = reader.result;
         const [fileName, blobText] = text.split('/attachment/')
         const downloadElement = document.createElement('a')
