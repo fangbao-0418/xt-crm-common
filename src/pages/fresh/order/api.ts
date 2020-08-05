@@ -26,10 +26,9 @@ export function verifyDownDgrade (data: any) {
 }
 
 // 订单列表
-export function getOrderList (data: any) {
-  // return post('/order/list', data);
+export const getOrderList = APP.fn.wrapApi((data: any) => {
   return post('/order/freshList', { ...data, bizType: 10 })
-}
+}, ['orderStatus'])
 
 // 客服代申请售后单个商品详情
 export function getProductDetail ({ mainOrderId, skuId }: any) {
@@ -280,6 +279,9 @@ export function applyOrderRefundDetails (data: any) {
 
 /** 订单导出 */
 export function newExportOrder (data: any) {
+  if (APP.fn.checkEmptyParams(data, ['orderStatus'])) {
+    return Promise.reject();
+  }
   return APP.http.get('/order/export', {
     ...data,
     rangePicker: undefined,

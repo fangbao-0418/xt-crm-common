@@ -125,7 +125,7 @@ export default class extends React.Component {
 
   componentDidMount () {
     this.setFieldsValue(() => {
-      this.query()
+      // this.query()
     })
   }
 
@@ -189,6 +189,7 @@ export default class extends React.Component {
       })
       exportRefund(params)
         .then(res => {
+          console.log('res', res);
           res && Message.success('导出成功')
         })
         .finally(() => {
@@ -201,6 +202,7 @@ export default class extends React.Component {
         return
       }
       refundList(params).then(res => {
+        console.log('res', res)
         const records = (res.data && res.data.records) || []
         this.setState({
           records,
