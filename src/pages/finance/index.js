@@ -21,14 +21,16 @@ import ExternalAccountSettlement from './external-manage/account-settlement' //�
 import ExternalAccountDivided from './external-manage/external-account-divided' //外部分账流水汇总
 import ExternalDetail from './external-manage/external-detail' //外部分账流水明细
 import ExternalWithdrawDetail from './external-manage/withdraw-detail' //提现账户明细
-import InvoiceReview from './external-manage/withdraw-detail/InvoiceReview' //发票管理
+import InvoiceAudit from './external-manage/invioce-audit' //发票管理
 import ExternalXituanBalance from './external-manage/xituan-balance' //外部账户余额查询-喜团
+import Download from './download-list' //导出
 export default class extends Component {
   render () {
     return (
       <Switch>
         <Route path='/finance/log' component={Log} />
         <Route path='/finance/bond' component={Bond} />
+        <Route path='/finance/download' component={Download} />
         <Route path='/finance/order' component={Order} />
         <Route path='/finance/withdraw' exact component={Withdraw} />
         <Route path='/finance/withdraw/records' component={Records} />
@@ -46,7 +48,7 @@ export default class extends Component {
         <Route path='/finance/externalaccountdivided' component={ExternalAccountDivided} />
         <Route path='/finance/externaldetail' component={ExternalDetail} />
         <Route path='/finance/externalwithdrawdetail' exact component={ExternalWithdrawDetail} />
-        <Route path='/finance/externalwithdrawdetail/:id' component={InvoiceReview} />
+        <Route path='/finance/externalinvoiceaudit' component={InvoiceAudit} />
         <Route path='/finance/externalxituanbalance' component={ExternalXituanBalance} />
       </Switch>
     )

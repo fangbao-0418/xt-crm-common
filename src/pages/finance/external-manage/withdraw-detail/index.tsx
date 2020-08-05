@@ -10,11 +10,12 @@ import MoneyRender from '@/components/money-render'
 import { getFieldsConfig, SupplierTypeEnum } from './config'
 import * as api from './api'
 const { TabPane } = Tabs
+import { getPayload, setPayload } from '@/packages/common/utils'
 interface Props extends AlertComponentProps {
 }
 const tabConfigs: { key: string, title: string }[] = [
   { key: '-2', title: '全部' },
-  { key: '2', title: '待审核' },
+  { key: '-3', title: '待审核' },
   { key: '0', title: '提现中' },
   { key: '1', title: '提现成功' },
   { key: '-1', title: '提现失败' }
@@ -24,9 +25,6 @@ class Main extends React.Component<Props> {
     status: '-2'
   }
   public listpage: ListPageInstanceProps
-  public handleAudit = () => {
-    APP.history.push('/finance/externalwithdrawdetail/123')
-  }
   public columns: any = [{
     title: '申请单编号',
     dataIndex: 'outTransferNo',
@@ -120,9 +118,16 @@ class Main extends React.Component<Props> {
   }, {
     dataIndex: 'operate',
     title: '操作',
-    render: () => {
+    fixed: 'right',
+    width: 150,
+    render: (text: any,records: any) => {
       return (
-        <Button type='link' onClick={this.handleAudit}>去审核</Button>
+        records.transferStatus===-3&&<Button type='link' onClick={()=>{
+          setPayload('external/invioce', {
+            fundTransferNo: records.outTransferNo
+          })
+          APP.history.push('/finance/externalinvoiceaudit')
+        }}>去审核</Button>
       )
     }
   }]

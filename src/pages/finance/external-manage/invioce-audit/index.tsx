@@ -13,7 +13,8 @@ import SearchFetch from '@/components/search-fetch'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { download } from '@/util/utils';
 import MoneyRender from '@/components/money-render'
-
+import { getPayload, setPayload } from '@/packages/common/utils'
+const namespace = 'external/invioce'
 interface Invoice {
   No: string;
 }
@@ -24,6 +25,7 @@ interface State{
 const { Option } = Select
 
 class InvoiceReview extends React.Component {
+  public cachePayload = getPayload(namespace)
   public listpage: ListPageInstanceProps
   public imageRef: any;
   public form: FormInstance
@@ -51,11 +53,6 @@ class InvoiceReview extends React.Component {
     {
       title: "供应商名称",
       width: 150,
-      dataIndex: "supplierName",
-    },
-    {
-      width: 150,
-      title: "供应商名称",
       dataIndex: "supplierName",
     },
     {
@@ -216,7 +213,7 @@ class InvoiceReview extends React.Component {
             }}
              >
             <FormItem label="提现申请单编号">{res?.fundTransferNo}</FormItem>
-            <FormItem label="提现金额">{res?.fundTransferAmount}</FormItem>
+            <FormItem label="提现金额">{APP.fn.formatMoney(res?.fundTransferAmount||0)}</FormItem>
             <FormItem label="供应商类型">{res?.supplierTypeDesc}</FormItem>
             <FormItem label="供应商ID">{res?.supplierId}</FormItem>
             <FormItem label="供应商名称">{res?.supplierName}</FormItem>
@@ -266,12 +263,24 @@ class InvoiceReview extends React.Component {
       }
     })
   }
+  public export = () => {
+    const payload = this.listpage.form.getValues()
+    api.batchExport({...payload})
+    .then(res => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
+  };
   public render() {
     const {type}=this.state
     return (
       <>
         <ListPage
           getInstance={(ref) => this.listpage = ref}
+          mounted={() => {
+            this.listpage.form.setValues({
+              ...this.cachePayload
+            })
+          }}
           api={api.getInvoiceList}
           formConfig={getFieldsConfig()}
           tableProps={{
@@ -282,6 +291,21 @@ class InvoiceReview extends React.Component {
               }) as number
             }
           }}
+          onReset={() => {
+            setPayload(namespace, undefined)
+            this.cachePayload = undefined
+            this.listpage.refresh(true)
+          }}
+          addonAfterSearch={(
+            <div>
+              <Button
+                type='primary'
+                onClick={this.export}
+              >
+                批量导出
+              </Button>
+            </div>
+          )}
           formItemLayout={
             <>
               <FormItem name="fundTransferNo" />

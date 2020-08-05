@@ -6,27 +6,12 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      withdrawalCode: {
+      fundTransferNo: {
         label: '申请单编号',
         type: 'input',
         controlProps: {
           style: { width: 180 },
           placeholder: '请输入申请单编号'
-        }
-      },
-      supplierName: {
-        type: 'input',
-        label: '供应商名称',
-        controlProps: {
-          placeholder: '请输入供应商名称'
-        }
-      },
-      supplierId: {
-        label: '供应商ID',
-        type: 'number',
-        controlProps: {
-          style: { width: 180 },
-          placeholder: '请输入供应商ID'
         }
       },
       supplierType: {
@@ -49,24 +34,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      accountIdCardAddress: {
-        type: 'select',
-        label: '提现方式',
-        controlProps: {
-          placeolder: '请选择提现方式'
-        },
-        options: [
-          { label: '个人银行卡', value: '1' },
-          { label: '对公账户', value: '73' }
-        ]
-      },
-      withdrawalDate: {
+      createTime: {
         label: '创建时间',
         type: 'rangepicker',
         controlProps: {
           showTime: true
         }
-      },
+      }
     }
   }
   return _.mergeWith(defaultConfig, partial)
