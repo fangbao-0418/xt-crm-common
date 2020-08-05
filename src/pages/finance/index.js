@@ -21,7 +21,7 @@ import ExternalAccountSettlement from './external-manage/account-settlement' //�
 import ExternalAccountDivided from './external-manage/external-account-divided' //外部分账流水汇总
 import ExternalDetail from './external-manage/external-detail' //外部分账流水明细
 import ExternalWithdrawDetail from './external-manage/withdraw-detail' //提现账户明细
-import InvoiceReview from './external-manage/withdraw-detail/InvoiceReview'
+import InvoiceReview from './external-manage/withdraw-detail/InvoiceReview' //发票管理
 import ExternalXituanBalance from './external-manage/xituan-balance' //外部账户余额查询-喜团
 export default class extends Component {
   render () {

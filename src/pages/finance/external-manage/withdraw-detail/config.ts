@@ -14,6 +14,14 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '请输入申请单编号'
         }
       },
+      fundTransferNo: {
+        label: '申请单编号',
+        type: 'input',
+        controlProps: {
+          style: { width: 180 },
+          placeholder: '请输入申请单编号'
+        }
+      },
       supplierName: {
         type: 'input',
         label: '供应商名称',
@@ -61,6 +69,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         ]
       },
       withdrawalDate: {
+        label: '创建时间',
+        type: 'rangepicker',
+        controlProps: {
+          showTime: true
+        }
+      },
+      createTime: {
         label: '创建时间',
         type: 'rangepicker',
         controlProps: {

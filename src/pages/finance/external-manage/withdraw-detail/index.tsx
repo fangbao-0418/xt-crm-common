@@ -14,6 +14,7 @@ interface Props extends AlertComponentProps {
 }
 const tabConfigs: { key: string, title: string }[] = [
   { key: '-2', title: '全部' },
+  { key: '2', title: '待审核' },
   { key: '0', title: '提现中' },
   { key: '1', title: '提现成功' },
   { key: '-1', title: '提现失败' }
@@ -184,7 +185,7 @@ class Main extends React.Component<Props> {
           }}
           rangeMap={{
             withdrawalDate: {
-              fields: ['withdrawalStartDate', 'withdrawalEndDate']
+              fields: ['startCreatedTime', 'endCreatedTime']
             }
           }}
           formConfig={getFieldsConfig()}

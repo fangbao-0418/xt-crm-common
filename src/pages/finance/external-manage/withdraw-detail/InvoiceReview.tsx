@@ -3,36 +3,44 @@ import ListPage from "@/packages/common/components/list-page";
 import { ColumnProps } from "antd/es/table";
 import { getFieldsConfig } from "./config";
 import { Form, FormItem } from "@/packages/common/components";
-import { Button, Modal, Table } from "antd";
+import { Button, message, Input, Table, Row, Col, Select } from "antd";
 import PreviewImage from "./components/PreviewImage";
+import ModalConfig from '@/components/modalConfig'
+import * as api from './api'
+import { FormInstance } from '@/packages/common/components/form'
+import { formatPrice } from '@/util/format'
+import SearchFetch from '@/components/search-fetch'
+import { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import { download } from '@/util/utils';
 
 interface Invoice {
   No: string;
 }
+interface State{
+  detail: any
+  type: number
+}
+const { Option } = Select
 
 class InvoiceReview extends React.Component {
+  public listpage: ListPageInstanceProps
   public imageRef: any;
-  public state = {
-    visible: false,
-    dataSource: [
-      {
-        date: "1",
-        operate: "1",
-        faceValue: "100",
-      },
-    ],
+  public form: FormInstance
+  public state: State = {
+    detail: {},
+    type: 2
   };
   // 列表列配置
   public columns: ColumnProps<Invoice>[] = [
     {
-      key: "No",
+      key: "fundTransferNo",
       title: "提现申请单编号",
-      dataIndex: "No",
+      dataIndex: "fundTransferNo",
     },
     {
-      key: "supplierType",
+      key: "supplierTypeDesc",
       title: "供应商类型",
-      dataIndex: "supplierType",
+      dataIndex: "supplierTypeDesc",
     },
     {
       key: "supplierId",
@@ -55,19 +63,19 @@ class InvoiceReview extends React.Component {
       dataIndex: "supplierName",
     },
     {
-      key: "withdrawalAmount",
+      key: "fundTransferAmount",
       title: "提现金额",
-      dataIndex: "withdrawalAmount",
+      dataIndex: "fundTransferAmount",
     },
     {
-      key: "faceValue",
+      key: "invoiceAmount",
       title: "发票票面总额",
-      dataIndex: "faceValue",
+      dataIndex: "invoiceAmount",
     },
     {
-      key: "submissionTime",
+      key: "createTime",
       title: "提交时间",
-      dataIndex: "submissionTime",
+      dataIndex: "createTime",
     },
     {
       key: "auditStatus",
@@ -75,9 +83,9 @@ class InvoiceReview extends React.Component {
       dataIndex: "auditStatus",
     },
     {
-      key: "auditPerson",
+      key: "auditorName",
       title: "审核人",
-      dataIndex: "auditPerson",
+      dataIndex: "auditorName",
     },
     {
       key: "auditTime",
@@ -87,12 +95,12 @@ class InvoiceReview extends React.Component {
     {
       key: "operate",
       title: "操作",
-      render: () => {
+      render: (text,records) => {
         return (
           <Button
             type="link"
             onClick={() => {
-              this.setState({ visible: true });
+              this.getDetailInfoData(records)
             }}
           >
             查看
@@ -104,24 +112,24 @@ class InvoiceReview extends React.Component {
   // 表单列配置
   public formColumns: ColumnProps<any>[] = [
     {
-      key: "date",
+      key: "invoiceDate",
       title: "开票日期",
-      dataIndex: "date",
+      dataIndex: "invoiceDate",
     },
     {
-      key: "No",
+      key: "invoiceNo",
       title: "发票编号",
-      dataIndex: "No",
+      dataIndex: "invoiceNo",
     },
     {
-      key: "faceValue",
+      key: "invoiceAmount",
       title: "票面总额",
-      dataIndex: " faceValue",
+      dataIndex: " invoiceAmount",
     },
     {
-      key: "operate",
+      key: "invoiceImage",
       title: "发票图片",
-      render: () => {
+      render: (text) => {
         return (
           <div>
             <PreviewImage
@@ -132,7 +140,14 @@ class InvoiceReview extends React.Component {
             <Button type="link" onClick={this.handleView}>
               查看
             </Button>
-            <Button type="link">下载</Button>
+            <Button type="link"
+             onClick={() =>{
+              let str=text
+              const index = text.lastIndexOf('/')
+              str = text.substring(index + 1, text.length)
+              download(this.getUrl(text), str)
+             }}
+            >下载</Button>
           </div>
         );
       },
@@ -141,6 +156,23 @@ class InvoiceReview extends React.Component {
   public handleView = () => {
     this.imageRef.handleView()
   };
+
+  public getUrl (url: string) {
+    url = /^http/.test(url) ? url : `https://assets.hzxituan.com/${url}`
+    return url
+  }
+  public showModal (txt: any, dom: any, domId: any, cd: any, cancel: any) {
+    ModalConfig.show(
+      {
+        maskClosable: true,
+        title: txt,
+        width: '80%',
+        onOk: cd,
+        onCancel: cancel
+      }, dom, domId
+    )
+  }
+
   public fetchData = async () => {
     return {
       page: 1,
@@ -152,26 +184,48 @@ class InvoiceReview extends React.Component {
       ],
     };
   };
-  public render() {
-    return (
-      <>
-        <Modal width="800px" visible={this.state.visible}>
-          <h3 style={{ marginTop: 0, fontSize: 18 }}>发票审核</h3>
-          <Form>
-            <FormItem label="提现申请单编号">3943159584220042231635</FormItem>
-            <FormItem label="提现金额">999999.99</FormItem>
-            <FormItem label="供应商类型">供应商</FormItem>
-            <FormItem label="供应商ID">3401</FormItem>
-            <FormItem label="供应商名称">杭州喜团科技有限公司</FormItem>
+
+  public getDetailInfoData (detail: any) {
+    api.getInvoiceDetail({ id:detail.id }).then(res => {
+      if (res) {
+        const ok = () => {
+          if(detail.auditStatus!==0){
+            ModalConfig.close('Synchronizesupplier')
+            return
+          }
+          this.form.props.form.validateFields((err, vals) => {
+            if (!err) {
+              api.auditInvoice({ id:detail.id }).then(res => {
+                ModalConfig.close('Synchronizesupplier')
+                message.success('审核成功！')
+              })
+            }
+          })
+        }
+        const onCancel = () => {
+          ModalConfig.close('Synchronizesupplier')
+        }
+        this.showModal('查看',
+        <div>
+             <h3 style={{ marginTop: 0, fontSize: 18 }}>发票审核</h3>
+          <Form
+             readonly={true}
+             getInstance={ref => this.form = ref}
+             >
+            <FormItem label="提现申请单编号">{res?.fundTransferNo}</FormItem>
+            <FormItem label="提现金额">{res?.fundTransferAmount}</FormItem>
+            <FormItem label="供应商类型">{res?.supplierTypeDesc}</FormItem>
+            <FormItem label="供应商ID">{res?.supplierId}</FormItem>
+            <FormItem label="供应商名称">{res?.supplierName}</FormItem>
             <FormItem label="发票">
               <Table
                 columns={this.formColumns}
-                dataSource={this.state.dataSource}
+                dataSource={res?.invoiceDetailVOList||[]}
               />
-            </FormItem>
+            </FormItem> 
             <h3 style={{ marginTop: 0, fontSize: 18 }}>审核意见</h3>
             <FormItem
-              name="opinion"
+              name="auditStatus"
               label="审核意见"
               required
               type="radio"
@@ -188,8 +242,9 @@ class InvoiceReview extends React.Component {
             />
             <FormItem
               label="说明"
-              name="description"
+              name="auditDesc"
               type="textarea"
+              required
               placeholder="限制140字（仅审核不通过，这里必填）"
               controlProps={{
                 maxLength: 140,
@@ -197,36 +252,78 @@ class InvoiceReview extends React.Component {
               }}
             />
           </Form>
-        </Modal>
+        
+        </div>
+         , 'Synchronizesupplier', ok, onCancel)
+      }
+    })
+  }
+  public render() {
+    const {type}=this.state
+    return (
+      <>
         <ListPage
-          api={this.fetchData}
+          getInstance={(ref) => this.listpage = ref}
+          api={api.getInvoiceList}
           formConfig={getFieldsConfig()}
           formItemLayout={
             <>
-              <FormItem name="withdrawalCode" />
-              <FormItem name="supplierName" />
-              <FormItem name="supplierId" />
+              <FormItem name="fundTransferNo" />
+              <FormItem
+                label='供应商'
+                inner={
+                  (from) => {
+                    return (
+                      <Row style={{ marginTop: 3 }}>
+                        <Col span={12}>
+                          <Select
+                            value={type}
+                            onChange={(value: any)=>{
+                              this.setState({
+                                type: value
+                              }, ()=>{
+                                this.listpage.form.setValues({
+                                  storeId: undefined
+                                })
+                              })
+                            }}
+                          >
+                            <Option value={1} key={1}>ID</Option>
+                            <Option value={2} key={2}>名称</Option>
+                          </Select>
+                        </Col>
+                        <Col span={12}>{
+                          from.getFieldDecorator('storeId')(
+                            type===2?<SearchFetch
+                              placeholder='请输入名称'
+                              api={api.searchSupplier}
+                            />:<Input
+                              placeholder='请输入ID' />
+                          )
+                        }
+                        </Col>
+                      </Row>
+                    )
+                  }
+                }
+              />
               <FormItem name="supplierType" />
               <FormItem
-                name="status"
+                name="auditStatus"
                 label="审核状态"
                 type="select"
                 options={[
                   {
-                    label: "全部",
-                    value: "",
-                  },
-                  {
                     label: "待审核",
-                    value: "1",
+                    value: "0",
                   },
                   {
                     label: "审核通过",
-                    value: "2",
+                    value: "1",
                   },
                   {
                     label: "审核不通过",
-                    value: "3",
+                    value: "2",
                   },
                 ]}
               />
