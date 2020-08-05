@@ -7,7 +7,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
       fundTransferNo: {
-        label: '申请单编号',
+        label: '提现单编号',
         type: 'input',
         controlProps: {
           style: { width: 180 },
