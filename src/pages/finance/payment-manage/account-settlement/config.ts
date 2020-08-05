@@ -59,7 +59,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         label: '账务对象类型',
         options: [
           { label: '供应商', value: 1 },
-          { label: '喜团小店', value: 2 }
+          { label: '喜团小店', value: 2 },
+          { label: 'pop店', value: 3 }
         ]
       },
       settlementStatus: {

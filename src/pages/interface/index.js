@@ -22,6 +22,7 @@ import SpecialContentForm from './special/content/form'
 import GoodsRecommend from './goods-recommend'
 import GoodsRecommendDetail from './goods-recommend/Detail'
 import RechargeConfig from './recharge-config'
+import CategoryRanking from './category-ranking'
 export default class extends Component {
   render () {
     return (
@@ -49,6 +50,7 @@ export default class extends Component {
         <Route path='/interface/goods-recommend' exact component={GoodsRecommend} />
         <Route path='/interface/goods-recommend/:id' component={GoodsRecommendDetail} />
         <Route path='/interface/recharge-config' component={RechargeConfig} />
+        <Route path='/interface/category-ranking' component={CategoryRanking} />
       </Switch>
     )
   }
