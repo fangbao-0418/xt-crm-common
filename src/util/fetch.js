@@ -199,6 +199,9 @@ export const exportFile = (url, data) => {
         downloadElement.click() //点击下载
         document.body.removeChild(downloadElement) //下载完成移除元素
         window.URL.revokeObjectURL(href) //释放掉blob对象
+        if(navigator.msSaveBlob){
+          navigator.msSaveBlob(blob,fileName)
+        }
       }
     }
     })
