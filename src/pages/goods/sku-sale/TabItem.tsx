@@ -399,7 +399,6 @@ class Main extends React.Component<Props, SkuSaleListState> {
               </Button> */}
             </>
           )}
-          autoFetch={false}
           api={getGoodsList}
           columns={this.columns}
           tableProps={tableProps}
