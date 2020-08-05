@@ -36,7 +36,7 @@ class InvoiceReview extends React.Component {
   // 列表列配置
   public columns: ColumnProps<Invoice>[] = [
     {
-      title: "提现申请单编号",
+      title: "提现单编号",
       width: 150,
       dataIndex: "fundTransferNo",
     },

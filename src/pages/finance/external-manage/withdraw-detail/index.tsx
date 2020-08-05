@@ -124,7 +124,7 @@ class Main extends React.Component<Props> {
       return (
         records.transferStatus===-3&&<Button type='link' onClick={()=>{
           setPayload('external/invioce', {
-            fundTransferNo: records.outTransferNo
+            fundTransferNo: records.transferNo
           })
           APP.history.push('/finance/externalinvoiceaudit')
         }}>去审核</Button>
