@@ -364,13 +364,13 @@ class Main extends React.Component<Props, SkuSaleListState> {
           )}
           addonAfterSearch={(
             <>
-              <Button
+              {/* <Button
                 type='primary'
                 className='mr8'
                 onClick={this.export}
               >
                 导出商品
-              </Button>
+              </Button> */}
               <Button
                 className='mr8'
                 type='primary'
@@ -399,6 +399,7 @@ class Main extends React.Component<Props, SkuSaleListState> {
               </Button> */}
             </>
           )}
+          autoFetch={false}
           api={getGoodsList}
           columns={this.columns}
           tableProps={tableProps}
