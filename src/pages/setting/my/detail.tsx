@@ -158,7 +158,7 @@ class Main extends React.Component<any, State> {
                       <p style={{ color: '#FFFFFF' }}>{v.iconName}</p>
                     </div>
                   ))}
-                  {!this.readonly && myHeadIcons.length < 4 && (
+                  {!this.readonly && myHeadIcons.length < 5 && (
                     <div className={styles.linkPlus} onClick={this.handleAdd(2)}>
                       <div className={styles.linkPlusBtn}>
                         <Icon type="plus" />
