@@ -12,6 +12,7 @@ import { formatPrice } from '@/util/format'
 import SearchFetch from '@/components/search-fetch'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { download } from '@/util/utils';
+import MoneyRender from '@/components/money-render'
 
 interface Invoice {
   No: string;
@@ -33,68 +34,72 @@ class InvoiceReview extends React.Component {
   // 列表列配置
   public columns: ColumnProps<Invoice>[] = [
     {
-      key: "fundTransferNo",
       title: "提现申请单编号",
+      width: 150,
       dataIndex: "fundTransferNo",
     },
     {
-      key: "supplierTypeDesc",
       title: "供应商类型",
+      width: 120,
       dataIndex: "supplierTypeDesc",
     },
     {
-      key: "supplierId",
       title: "供应商ID",
       dataIndex: "supplierId",
+      width: 120,
     },
     {
-      key: "supplierName",
+      title: "供应商名称",
+      width: 150,
+      dataIndex: "supplierName",
+    },
+    {
+      width: 150,
       title: "供应商名称",
       dataIndex: "supplierName",
     },
     {
-      key: "withdrawalAmount",
       title: "提现金额",
-      dataIndex: "withdrawalAmount",
-    },
-    {
-      key: "supplierName",
-      title: "供应商名称",
-      dataIndex: "supplierName",
-    },
-    {
-      key: "fundTransferAmount",
-      title: "提现金额",
+      width: 120,
       dataIndex: "fundTransferAmount",
+      render: MoneyRender
     },
     {
-      key: "invoiceAmount",
       title: "发票票面总额",
+      width: 150,
       dataIndex: "invoiceAmount",
+      render: MoneyRender
     },
     {
-      key: "createTime",
+      width: 200,
       title: "提交时间",
       dataIndex: "createTime",
+      render: (text) => {
+        return APP.fn.formatDate(text)
+      }
     },
     {
-      key: "auditStatus",
       title: "审核状态",
-      dataIndex: "auditStatus",
+      width: 120,
+      dataIndex: "auditStatusDesc",
     },
     {
-      key: "auditorName",
       title: "审核人",
+      width: 120,
       dataIndex: "auditorName",
     },
     {
-      key: "auditTime",
       title: "审核时间",
+      width: 200,
       dataIndex: "auditTime",
+      render: (text) => {
+        return APP.fn.formatDate(text)
+      }
     },
     {
-      key: "operate",
       title: "操作",
+      width: 150,
+      fixed: 'right',
       render: (text,records) => {
         return (
           <Button
@@ -112,30 +117,32 @@ class InvoiceReview extends React.Component {
   // 表单列配置
   public formColumns: ColumnProps<any>[] = [
     {
-      key: "invoiceDate",
       title: "开票日期",
       dataIndex: "invoiceDate",
+      render: (text) => {
+        return APP.fn.formatDate(text)
+      }
     },
     {
-      key: "invoiceNo",
       title: "发票编号",
       dataIndex: "invoiceNo",
     },
     {
-      key: "invoiceAmount",
       title: "票面总额",
-      dataIndex: " invoiceAmount",
+      dataIndex: "invoiceAmount",
+      render: MoneyRender
+
     },
     {
-      key: "invoiceImage",
       title: "发票图片",
-      render: (text) => {
+      dataIndex: "invoiceImage",
+      render: (text,records) => {
         return (
           <div>
             <PreviewImage
               ref={(ref) =>this.imageRef = ref }
-              src="https://sh-tximg.hzxituan.com/tximg/crm/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551595679759696.jpg"
-              alt='发票编号：8899001'
+              src={text||''}
+              alt={'发票编号：'+records.invoiceNo}
             />
             <Button type="link" onClick={this.handleView}>
               查看
@@ -143,8 +150,8 @@ class InvoiceReview extends React.Component {
             <Button type="link"
              onClick={() =>{
               let str=text
-              const index = text.lastIndexOf('/')
-              str = text.substring(index + 1, text.length)
+              const index = text?.lastIndexOf('/')
+              str = text?.substring(index + 1, text.length)
               download(this.getUrl(text), str)
              }}
             >下载</Button>
@@ -173,18 +180,6 @@ class InvoiceReview extends React.Component {
     )
   }
 
-  public fetchData = async () => {
-    return {
-      page: 1,
-      pages: 1,
-      records: [
-        {
-          withdrawalCode: "3943159584220042231635",
-        },
-      ],
-    };
-  };
-
   public getDetailInfoData (detail: any) {
     api.getInvoiceDetail({ id:detail.id }).then(res => {
       if (res) {
@@ -195,9 +190,14 @@ class InvoiceReview extends React.Component {
           }
           this.form.props.form.validateFields((err, vals) => {
             if (!err) {
-              api.auditInvoice({ id:detail.id }).then(res => {
+              if(vals.auditStatus===2&&!vals.auditDesc){
+                message.error('请输入说明')
+                return
+              }
+              api.auditInvoice({ ...vals, id:detail.id }).then(res => {
+                message.success('操作成功！')
+                this.listpage.refresh()
                 ModalConfig.close('Synchronizesupplier')
-                message.success('审核成功！')
               })
             }
           })
@@ -209,8 +209,11 @@ class InvoiceReview extends React.Component {
         <div>
              <h3 style={{ marginTop: 0, fontSize: 18 }}>发票审核</h3>
           <Form
-             readonly={true}
+             readonly={res.auditStatus!==0}
              getInstance={ref => this.form = ref}
+             mounted={() => {
+              this.form.setValues(detail)
+            }}
              >
             <FormItem label="提现申请单编号">{res?.fundTransferNo}</FormItem>
             <FormItem label="提现金额">{res?.fundTransferAmount}</FormItem>
@@ -220,6 +223,7 @@ class InvoiceReview extends React.Component {
             <FormItem label="发票">
               <Table
                 columns={this.formColumns}
+                pagination={false}
                 dataSource={res?.invoiceDetailVOList||[]}
               />
             </FormItem> 
@@ -227,16 +231,21 @@ class InvoiceReview extends React.Component {
             <FormItem
               name="auditStatus"
               label="审核意见"
-              required
+              verifiable
+              fieldDecoratorOptions={{
+                rules: [
+                  { required: true, message: '请选择审核意见' }
+                ]
+              }}
               type="radio"
               options={[
                 {
                   label: "审核通过",
-                  value: "1",
+                  value: 1,
                 },
                 {
                   label: "审核不通过",
-                  value: "0",
+                  value: 2,
                 },
               ]}
             />
@@ -244,7 +253,6 @@ class InvoiceReview extends React.Component {
               label="说明"
               name="auditDesc"
               type="textarea"
-              required
               placeholder="限制140字（仅审核不通过，这里必填）"
               controlProps={{
                 maxLength: 140,
@@ -266,6 +274,14 @@ class InvoiceReview extends React.Component {
           getInstance={(ref) => this.listpage = ref}
           api={api.getInvoiceList}
           formConfig={getFieldsConfig()}
+          tableProps={{
+            rowKey: 'id',
+            scroll: {
+              x: this.columns.reduce((a: any, b: any) => {
+                return (typeof a === 'object' ? a.width : a) as any + b.width
+              }) as number
+            }
+          }}
           formItemLayout={
             <>
               <FormItem name="fundTransferNo" />
@@ -283,7 +299,7 @@ class InvoiceReview extends React.Component {
                                 type: value
                               }, ()=>{
                                 this.listpage.form.setValues({
-                                  storeId: undefined
+                                  supplierId: undefined
                                 })
                               })
                             }}
@@ -293,7 +309,7 @@ class InvoiceReview extends React.Component {
                           </Select>
                         </Col>
                         <Col span={12}>{
-                          from.getFieldDecorator('storeId')(
+                          from.getFieldDecorator('supplierId')(
                             type===2?<SearchFetch
                               placeholder='请输入名称'
                               api={api.searchSupplier}
