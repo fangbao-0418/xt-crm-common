@@ -164,7 +164,6 @@ export default class extends React.Component {
       ...params,
       type
     })
-    console.log(params.refundStatus, 'params.refundStatus', params)
     if (params&&params.shopPhone) {
       getPhoneById({ phone: fieldsValues.shopPhone }).then((res = {}) => {
         if (res.shopId) {
@@ -189,7 +188,6 @@ export default class extends React.Component {
       })
       exportRefund(params)
         .then(res => {
-          console.log('res', res);
           res && Message.success('导出成功')
         })
         .finally(() => {
@@ -202,7 +200,6 @@ export default class extends React.Component {
         return
       }
       refundList(params).then(res => {
-        console.log('res', res)
         if (!res) return;
         const records = (res.data && res.data.records) || []
         this.setState({
