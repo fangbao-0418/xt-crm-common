@@ -115,10 +115,7 @@ class InvoiceReview extends React.Component {
   public formColumns: ColumnProps<any>[] = [
     {
       title: "开票日期",
-      dataIndex: "invoiceDate",
-      render: (text) => {
-        return APP.fn.formatDate(text)
-      }
+      dataIndex: "invoiceDate"
     },
     {
       title: "发票编号",
