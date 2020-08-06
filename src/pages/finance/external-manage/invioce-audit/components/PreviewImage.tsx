@@ -34,11 +34,11 @@ class Image extends React.Component<Props> {
       src: this.getSrc(props)
     })
   }
-  handleView () {
+  handleView (src: any) {
     if (!this.viewer) {
       this.viewer = new Viewer(this.imgRef, {
         navbar: false,
-        title: [4, (image: any, imageData: any) => `${image.alt}`],
+        title: this.imgRef.alt,
         hidden: () => {
           this.viewer.destroy()
           this.viewer = undefined
@@ -54,30 +54,35 @@ class Image extends React.Component<Props> {
     return src
   }
   render () {
-    const { className, alt = '', style, width, height, ...otherProps } = this.props
+    const { className, alt = '', style, width, height, children, ...otherProps } = this.props
     const { src } = this.state
     return (
-      <img
-        ref={(ref) => this.imgRef = ref }
-        className={className}
-        onClick={this.handleView.bind(this, src)}
-        {...otherProps}
-        src={src}
-        alt={alt}
-        onError={() => {
-          console.log('error')
-          this.setState({
-            src: imageMiss
-          })
-        }}
-        style={{
-          display: 'none',
-          width: width || 100,
-          height: height || 100,
-          cursor: 'pointer',
-          ...style,
-        }}
-      />
+      <>
+        <img
+          ref={(ref) => this.imgRef = ref }
+          className={className}
+          {...otherProps}
+          src={src}
+          alt={alt}
+          onError={() => {
+            this.setState({
+              src: imageMiss
+            })
+          }}
+          style={{
+            display: 'none',
+            width: width || 100,
+            height: height || 100,
+            cursor: 'pointer',
+            ...style,
+          }}
+        />
+        <span
+          onClick={this.handleView.bind(this, src)}
+        >
+          {children}
+        </span>
+      </>
     )
   }
 }

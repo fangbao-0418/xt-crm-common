@@ -128,19 +128,20 @@ class InvoiceReview extends React.Component {
 
     },
     {
+      key: 'invoiceImage',
       title: "发票图片",
       dataIndex: "invoiceImage",
       render: (text,records) => {
         return (
           <div>
             <PreviewImage
-              ref={(ref) =>this.imageRef = ref }
               src={text||''}
               alt={'发票编号：'+records.invoiceNo}
-            />
-            <Button type="link" onClick={this.handleView}>
-              查看
-            </Button>
+            >
+              <Button type="link">
+                查看
+              </Button> 
+            </PreviewImage>
             <Button type="link"
              onClick={() =>{
               let str=text
@@ -154,9 +155,6 @@ class InvoiceReview extends React.Component {
       },
     },
   ];
-  public handleView = () => {
-    this.imageRef.handleView()
-  };
 
   public getUrl (url: string) {
     url = /^http/.test(url) ? url : `https://assets.hzxituan.com/${url}`
@@ -173,7 +171,6 @@ class InvoiceReview extends React.Component {
       }, dom, domId
     )
   }
-
   public getDetailInfoData (detail: any) {
     api.getInvoiceDetail({ id:detail.id }).then(res => {
       if (res) {
