@@ -157,3 +157,42 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   }
   return defaultConfig
 }
+
+export enum CompensateStatusEnum {
+  '待客服组长审核' = 5,
+  '待客服主管审核' = 10,
+  '待客服经理审核' = 15,
+  '已拒绝' = 30,
+  '已完成' = 35,
+  '已取消' = 40,
+  '发放中' = 20,
+  '发放失败' = 25
+}
+
+export enum OrderStatusEnum {
+  '待付款' = 5,
+  '待发货' = 20,
+  '部分发货' = 25,
+  '已发货' = 30,
+  '已收货' = 40,
+  '完成' = 50,
+  '关闭' = 60
+}
+
+export enum MemberTypeEnum {
+  '普通会员' = 0,
+  '团长' = 10,
+  '区长' = 20,
+  '合伙人' = 30,
+  '管理员' = 40,
+  '公司' = 50
+}
+
+export enum PayTypeEnum {
+  '微信APP' = 100,
+  '微信小程序' = 101,
+  '微信公众号' = 102,
+  '支付宝APP' = 200,
+  '支付宝H5' = 201,
+  '花呗' = 202
+}

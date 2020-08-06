@@ -38,7 +38,7 @@ export function getCompensateDetail (data: { compensateCode: string }) {
 
 /* 补偿单记录 */
 export function getCompensateRecord (data: any) {
-  return newPost('/crm/order/compensate/getCompensateRecord', data)
+  return get('/mcweb/sale-after/order/compensate/getCompensateRecord', data)
 }
 
 /* 补偿单导出 */

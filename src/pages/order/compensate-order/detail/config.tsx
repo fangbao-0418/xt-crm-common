@@ -1,6 +1,7 @@
 import React from 'react'
 import UploadView from '@/components/upload'
 import { OptionProps } from '@/packages/common/components/form/index'
+import { OrderStatusEnum, MemberTypeEnum, PayTypeEnum } from '../config'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
 }
@@ -108,68 +109,161 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   }
   return defaultConfig
 }
-
-export function getApplInfo () {
+/* 申请信息 */
+export function getApplInfo (detail: any) {
   return [
     {
       label: '补偿原因',
-      value: 'Zhou Maomao',
+      value: detail.reasonName || '-',
       span: 1,
       type: 'text'
     },
     {
       label: '发起人',
-      value: 'Zhou Maomao',
+      value: detail.creatorName || '-',
       span: 1,
       type: 'text'
     },
     {
       label: '补偿类型',
-      value: 'Zhou Maomao',
+      value: detail.compensatePayName,
       span: 1,
       type: 'text'
     },
     {
       label: '补偿归属',
-      value: 'Zhou Maomao',
+      value: detail.responsibilityName,
       span: 1,
       type: 'text'
     },
     {
       label: '补偿金额',
-      value: 'Zhou Maomao',
-      span: 2,
-      type: 'text'
-    },
-    {
-      label: '转账方式',
-      value: 'Zhou Maomao',
+      value: APP.fn.formatMoney(detail.compensateAmount),
       span: 2,
       type: 'text'
     },
     {
       label: '姓名',
-      value: 'Zhou Maomao',
+      value: detail.receiptorAccountName || '-',
       span: 2,
       type: 'text'
     },
     {
       label: '转账账号',
-      value: 'Zhou Maomao',
+      value: detail.receiptorAccountNo,
       span: 2,
       type: 'text'
     },
     {
       label: '补偿凭证',
-      value: 'https://assets.hzxituan.com/small-store-logo/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8551587803910284.png',
+      value: detail.transferEvidenceImg,
       span: 2,
       type: 'image'
     },
     {
       label: '补偿说明',
-      value: 'Zhou Maomao',
+      value: detail.recepitorRemark || '-',
       span: 2,
       type: 'text'
     }
   ]
+}
+/* 订单信息 */
+export function getOrderInfo (detail: any) {
+  return [
+    {
+      label: '子订单号',
+      value: detail.childOrderCode,
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '订单状态',
+      value: OrderStatusEnum[detail.orderInfoVO?.orderStatus],
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '订单来源',
+      value: detail.orderInfoVO?.platform || '-',
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '买家名称',
+      value: detail.orderInfoVO?.consignee || '-',
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '联系电话',
+      value: detail.orderInfoVO?.consigneePhone,
+      span: 2,
+      type: 'text'
+    },
+    {
+      label: '收货信息',
+      value: detail.orderInfoVO?.address || '-',
+      span: 3,
+      type: 'text'
+    },
+    {
+      label: '用户备注',
+      value: detail.orderInfoVO?.remark || '-',
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '会员等级',
+      value: MemberTypeEnum[detail.orderInfoVO?.orderMemberType],
+      span: 2,
+      type: 'text'
+    },
+    {
+      label: '支付方式',
+      value: PayTypeEnum[detail.orderInfoVO?.payType],
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '支付时间',
+      value: APP.fn.formatDate(detail.orderInfoVO?.payTime),
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '交易流水号',
+      value: detail.orderInfoVO?.paymentNumber || '-',
+      span: 1,
+      type: 'text'
+    }
+  ]
+}
+/* 物流信息 */
+export function getLogisticsInfo (detail: any) {
+  return detail.orderInfoVO?.expressVO || []
+}
+/* 商品信息 */
+export function getGoodsInfo (detail: any) {
+  const orderInfoVO = detail.orderInfoVO
+  if (!orderInfoVO) {
+    return []
+  }
+  return [
+    {
+      skuName: orderInfoVO.skuName,
+      productImage: orderInfoVO.productImage,
+      productId: orderInfoVO.productId,
+      properties: orderInfoVO.properties,
+      salePrice: orderInfoVO.salePrice,
+      quantity: orderInfoVO.quantity,
+      preferentialTotalPrice: orderInfoVO.preferentialTotalPrice,
+      discountPrice: orderInfoVO.discountPrice,
+      payMoney: orderInfoVO.payMoney
+    }
+  ]
+}
+/* 审核信息 */
+export function getAuditInfo (detail: any) {
+  return detail.auditList || []
 }

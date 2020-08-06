@@ -20,7 +20,7 @@ interface Props {
 class Main extends React.Component<Props> {
   render () {
     const { data = [], column, title, children } = this.props
-    console.log(children, 'children')
+
     if (children) {
       return (
         <Descriptions title={title} column={1}>
@@ -54,13 +54,13 @@ class Main extends React.Component<Props> {
               )
             }
             return (
-              <DescriptionsItem
+              <Descriptions.Item
                 key={i}
                 label={item.label}
                 span={item.span}
               >
                 {item.value}
-              </DescriptionsItem>
+              </Descriptions.Item>
             )
           })
         }

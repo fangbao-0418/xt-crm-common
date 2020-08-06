@@ -52,7 +52,7 @@ class Main extends React.Component<Props> {
     {
       title: '金额',
       dataIndex: 'compensateAmount',
-      render: text => APP.fn.formatMoneyNumber(text)
+      render: text => APP.fn.formatMoney(text)
     },
     {
       title: '责任归属',

@@ -1,49 +1,20 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router'
-import { Card, Table, Tabs, Divider, Button } from 'antd'
+import { Card, Table, Tabs, Divider, Button, List } from 'antd'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import Image from '@/components/Image'
 import Info from '../components/info'
-import { getFieldsConfig, getApplInfo } from './config'
+import { If } from '@/packages/common/components'
+import { replaceHttpUrl } from '@/util/utils'
+import { getFieldsConfig, getApplInfo, getOrderInfo, getLogisticsInfo, getGoodsInfo, getAuditInfo } from './config'
+import { CompensateStatusEnum } from '../config'
 import { getCompensateDetail, getCompensateRecord } from '../api'
-
-const dataSource = [
-  {
-    key: '1',
-    name: '胡彦斌',
-    age: 32,
-    address: '西湖区湖底公园1号'
-  },
-  {
-    key: '2',
-    name: '胡彦祖',
-    age: 42,
-    address: '西湖区湖底公园1号'
-  }
-]
-
-const columns = [
-  {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name'
-  },
-  {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age'
-  },
-  {
-    title: '住址',
-    dataIndex: 'address',
-    key: 'address'
-  }
-]
 
 interface Props extends RouteComponentProps<{ compensateCode: string }>, AlertComponentProps {}
 
 interface State {
-  detail: object | null
+  detail: any
   detailLoad: boolean
   record: any[]
   recordLoad: boolean
@@ -60,6 +31,147 @@ class Main extends React.Component<Props, State> {
     recordLoad: false,
     tabKey: 'detail'
   }
+
+  goodsColumns = [
+    {
+      title: '商品名称',
+      dataIndex: 'skuName'
+    },
+    {
+      title: '商品名称',
+      width: 116,
+      dataIndex: 'productImage',
+      render: (text: any) => (
+        <Image
+          style={{
+            height: 100,
+            width: 100,
+            minWidth: 100
+          }}
+          src={replaceHttpUrl(text)}
+          alt='商品图片'
+        />
+      )
+    },
+    {
+      title: '商品ID',
+      dataIndex: 'productId'
+    },
+    {
+      title: '属性',
+      dataIndex: 'properties'
+    },
+    {
+      title: '单价',
+      dataIndex: 'salePrice'
+    },
+    {
+      title: '数量',
+      dataIndex: 'quantity'
+    },
+    {
+      title: '商品总价（元）',
+      dataIndex: 'salePrice',
+      render: APP.fn.formatMoney
+    },
+    {
+      title: '优惠券',
+      dataIndex: 'age'
+    },
+    {
+      title: '应付金额',
+      dataIndex: 'preferentialTotalPrice',
+      render: APP.fn.formatMoney
+    },
+    {
+      title: '优惠金额',
+      dataIndex: 'discountPrice',
+      render: APP.fn.formatMoney
+    },
+    {
+      title: '实付金额',
+      dataIndex: 'payMoney',
+      render: APP.fn.formatMoney
+    }
+  ]
+
+  applyColums = [
+    {
+      title: '审核结果',
+      dataIndex: 'a'
+    },
+    {
+      title: '审核人',
+      dataIndex: 'b'
+    },
+    {
+      title: '审核人身份',
+      dataIndex: 'c'
+    },
+    {
+      title: '审核时间',
+      dataIndex: 'd'
+    },
+    {
+      title: '备注说明',
+      dataIndex: 'e'
+    },
+    {
+      title: '修改内容',
+      dataIndex: 'f'
+    }
+  ]
+
+  infoColums = [
+    {
+      title: '内容',
+      dataIndex: 'info',
+      render: (text: any) => {
+        try {
+          const data = JSON.parse(text)
+          const list = data.map((item: any) => {
+            return Object.keys(item)?.[0] + ': ' + Object.values(item)?.[0]
+          })
+          return (
+            <List
+              size='small'
+              header={null}
+              footer={null}
+              bordered={false}
+              dataSource={list}
+              renderItem={(item: any) => <List.Item>{item}</List.Item>}
+            />
+          )
+        } catch (error) {
+          return '-'
+        }
+      }
+    },
+    {
+      title: '时间',
+      dataIndex: 'createTime',
+      render: (text: any) => APP.fn.formatDate(text)
+    },
+    {
+      title: '操作人',
+      render: (_: any, record: any) => {
+        return (
+          record.operatorRoleName + ': ' + record.operatorName
+        )
+      }
+    }
+  ]
+
+  logisticsColums = [
+    {
+      title: '物流公司',
+      dataIndex: 'expressCompanyName'
+    },
+    {
+      title: '物流单号',
+      dataIndex: 'expressCode'
+    }
+  ]
 
   componentDidMount () {
     this.fetchDetail()
@@ -111,23 +223,26 @@ class Main extends React.Component<Props, State> {
   fetchDetail = () => {
     getCompensateDetail({
       compensateCode: this.compensateCode
-    }).then(() => {
+    }).then((detail) => {
       this.setState({
-        detailLoad: true
+        detailLoad: true,
+        detail: detail || {}
       })
     })
   }
 
   fetchRecord = () => {
-    getCompensateRecord({}).then(() => {
+    getCompensateRecord({
+      compensateCode: this.compensateCode
+    }).then((record) => {
       this.setState({
-        recordLoad: true
+        recordLoad: true,
+        record
       })
     })
   }
   render () {
-    const { tabKey, detailLoad, recordLoad } = this.state
-    console.log(APP.user.id, 111111)
+    const { tabKey, detailLoad, recordLoad, detail, record } = this.state
     return (
       <Card bordered={false}>
         <Tabs activeKey={tabKey} onChange={this.handleTabChange}>
@@ -135,7 +250,7 @@ class Main extends React.Component<Props, State> {
             {
               detailLoad ? (
                 <Card
-                  title='补偿单编号：20190418131456778899 补偿状态：已完成'
+                  title={`补偿单编号：${detail.compensateCode} 补偿状态：${CompensateStatusEnum[detail.compensateStatus]}`}
                   extra={
                     <>
                       <Button type='primary' size='small' onClick={this.handleAduit} className='mr8'>取消请求</Button>
@@ -143,31 +258,67 @@ class Main extends React.Component<Props, State> {
                     </>
                   }
                 >
-                  <Info title='申请补偿信息' column={2} data={getApplInfo()} />
+                  <Info title='补偿申请信息' column={2} data={getApplInfo(detail)} />
+                  <If
+                    condition={
+                      [
+                        CompensateStatusEnum['待客服主管审核'],
+                        CompensateStatusEnum['待客服经理审核'],
+                        CompensateStatusEnum['已拒绝'],
+                        CompensateStatusEnum['发放失败'],
+                        CompensateStatusEnum['已完成']
+                      ]
+                        .includes(detail.compensateStatus)
+                    }
+                  >
+                    <>
+                      <Divider dashed />
+                      <Info title='审核信息'>
+                        {
+                          getAuditInfo(detail)[0] ? (
+                            <Table
+                              size='small'
+                              bordered
+                              pagination={false}
+                              dataSource={getAuditInfo(detail)}
+                              columns={this.applyColums}
+                            />
+                          ) : (
+                            '暂无数据'
+                          )
+                        }
+                      </Info>
+                    </>
+                  </If>
                   <Divider dashed />
-                  <Info title='审核信息'>
-                    <Table
-                      size='small'
-                      bordered
-                      pagination={false}
-                      dataSource={dataSource}
-                      columns={columns}
-                    />
-                  </Info>
-                  <Divider dashed />
-                  <Info title='订单信息' column={2} data={getApplInfo()} />
+                  <Info title='订单信息' column={3} data={getOrderInfo(detail)} />
                   <Divider dashed />
                   <Info title='商品信息'>
                     <Table
-                      size='small'
+                      size='middle'
                       bordered
                       pagination={false}
-                      dataSource={dataSource}
-                      columns={columns}
+                      dataSource={getGoodsInfo(detail)}
+                      columns={this.goodsColumns}
                     />
                   </Info>
                   <Divider dashed />
-                  <Info title='物流信息' column={2} data={getApplInfo()} />
+                  <Info title='物流信息'>
+                    {
+                      getLogisticsInfo(detail)[0] ? (
+                        <Table
+                          size='middle'
+                          bordered
+                          style={{ maxWidth: 600 }}
+                          pagination={false}
+                          dataSource={getLogisticsInfo(detail)}
+                          columns={this.logisticsColums}
+                        />
+                      ) : (
+                        '暂无数据'
+                      )
+                    }
+                  </Info>
                 </Card>
               ) : (
                 <Card loading={true}></Card>
@@ -181,8 +332,8 @@ class Main extends React.Component<Props, State> {
                   bordered
                   size='middle'
                   pagination={false}
-                  dataSource={dataSource}
-                  columns={columns}
+                  dataSource={record}
+                  columns={this.infoColums}
                 />
               ) : (
                 <Card loading={true}></Card>
