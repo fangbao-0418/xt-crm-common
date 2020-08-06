@@ -243,7 +243,7 @@ export function closeRefund (data: any) {
 
 export const exportRefund = APP.fn.wrapApi((data: any) => {
   return exportFile('/order/afterSale/export', data)
-}, ['refundStatus'], false)
+}, [], false)
 
 export function profitRecal (data: any) {
   return fetch('/order/profit/recal', {
