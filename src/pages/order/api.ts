@@ -189,24 +189,12 @@ export function customerAddCheck (data: any) {
   })
 }
 
-export const refundList  = APP.fn.wrapApi((data: any) => {
+export const refundList  = (data: any) => {
   return fetch('/order/afterSale/list', {
     method: 'POST',
     data
   })
-}, {}, {
-  code: '00000',
-  message: "成功",
-  data: {
-    current: 1,
-    pages: 0,
-    records: [],
-    searchCount: true,
-    size: 10,
-    total: 0
-  },
-  success: true
-})
+}
 
 export function refundDetail (params: any) {
   return fetch(`/order/afterSale/afterSalesInfo?${qs.stringify(params)}`)
@@ -241,9 +229,9 @@ export function closeRefund (data: any) {
   return post(`/order/afterSale/close/${data.id}`)
 }
 
-export const exportRefund = APP.fn.wrapApi((data: any) => {
+export const exportRefund = (data: any) => {
   return exportFile('/order/afterSale/export', data)
-}, ['refundStatus'], false)
+}
 
 export function profitRecal (data: any) {
   return fetch('/order/profit/recal', {
