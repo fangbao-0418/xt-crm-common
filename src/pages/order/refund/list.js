@@ -203,6 +203,7 @@ export default class extends React.Component {
       }
       refundList(params).then(res => {
         console.log('res', res)
+        if (!res) return;
         const records = (res.data && res.data.records) || []
         this.setState({
           records,
