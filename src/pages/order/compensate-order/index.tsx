@@ -47,11 +47,12 @@ class Main extends React.Component<Props> {
     },
     {
       title: '类型',
-      dataIndex: 'compensatePayType'
+      dataIndex: 'compensatePayName'
     },
     {
       title: '金额',
-      dataIndex: 'compensateAmount'
+      dataIndex: 'compensateAmount',
+      render: text => APP.fn.formatMoneyNumber(text)
     },
     {
       title: '责任归属',
@@ -67,11 +68,13 @@ class Main extends React.Component<Props> {
     },
     {
       title: '申请时间',
-      dataIndex: 'createTime'
+      dataIndex: 'createTime',
+      render: text => APP.fn.formatDate(text)
     },
     {
       title: '最后处理时间',
-      dataIndex: 'lastDealTime'
+      dataIndex: 'lastDealTime',
+      render: text => APP.fn.formatDate(text)
     },
     {
       title: '操作',
@@ -82,7 +85,7 @@ class Main extends React.Component<Props> {
             <span
               className='href'
               onClick={() => {
-                APP.history.push(`/order/compensate-order/${record.id}`)
+                APP.history.push(`/order/compensate-order/${record.compensateCode}`)
               }}
             >
               查看详情
@@ -99,7 +102,7 @@ class Main extends React.Component<Props> {
       minCompensateAmount: compensateAmount?.[0],
       maxCompensateAmount: compensateAmount?.[1]
     }).then(() => {
-      APP.success('导出成功')
+      APP.success('导出成功，请前往下载列表下载文件')
     })
   }
   coupon = () => {
@@ -155,7 +158,7 @@ class Main extends React.Component<Props> {
               className='mr8'
               onClick={this.export}
             >
-              导出商品
+              导出
             </Button>
             <Button
               type='primary'

@@ -1,5 +1,6 @@
 export interface OrderProps {
   id: string|number
+  compensateCode: string
 }
 
 export interface Detail {

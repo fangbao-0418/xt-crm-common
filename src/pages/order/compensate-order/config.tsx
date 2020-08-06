@@ -35,13 +35,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               style={{ width: '174px' }}
               fetchData={() => {
                 return api.getCompensatePayList().then(res => {
-                  return res.map(item => ({
+                  return res.map((item: any) => ({
                     label: item.compensatePayName,
                     value: item.compensatePayType
                   }))
                 })
               }}
-            />,
+            />
           )
         }
       },
@@ -58,28 +58,28 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           value: ''
         }, {
           label: '待客服组长审核',
-          value: 1
-        }, {
-          label: '待客服主管审核',
-          value: 2
-        }, {
-          label: '待客服经理审核',
-          value: 3
-        }, {
-          label: '已拒绝',
-          value: 4
-        }, {
-          label: '已完成',
           value: 5
         }, {
+          label: '待客服主管审核',
+          value: 10
+        }, {
+          label: '待客服经理审核',
+          value: 15
+        }, {
+          label: '已拒绝',
+          value: 30
+        }, {
+          label: '已完成',
+          value: 35
+        }, {
           label: '已取消',
-          value: 6
+          value: 40
         }, {
           label: '发放中',
-          value: 7
+          value: 20
         }, {
           label: '发放失败',
-          value: 8
+          value: 25
         }]
       },
       createTime: {
@@ -105,7 +105,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               style={{ width: '174px' }}
               fetchData={() => {
                 return api.getResponsibilityList().then(res => {
-                  return res.map(item => ({
+                  return res.map((item: any) => ({
                     label: item.responsibilityName,
                     value: item.responsibilityType
                   }))

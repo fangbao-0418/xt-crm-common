@@ -19,6 +19,7 @@ import AutoRefund from './auto-refund'
 import AutoRefundDetail from './auto-refund/detail'
 import Recharge from './recharge'
 import Download from './download-list'
+import AfterDownload from './after-download-list'
 import CompensateOrder from './compensate-order'
 import CompensateOrderDetail from './compensate-order/detail'
 
@@ -35,6 +36,7 @@ export default class RouteApp extends React.Component {
       <Switch>
         <Route path={`${match.url}/recharge`} component={Recharge} />
         <Route path={`${match.url}/download`} component={Download} />
+        <Route path={`${match.url}/after-download`} component={AfterDownload} />
         <Route path={`${match.url}/detail/:id`} component={Detail} />
         <Route exact path={`${match.url}/refundOrder`} component={Refund} />
         <Route exact path={`${match.url}/questionlist`} component={QuestionList} />
