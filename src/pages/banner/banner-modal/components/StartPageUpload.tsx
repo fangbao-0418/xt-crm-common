@@ -38,14 +38,14 @@ class Upload extends React.Component<Props, State> {
       <div className={styles['start-page-upload']}>
         <div>
           <UploadView
-            // pxSize={[{width: 1080, height: 1920}]}
+            pxSize={[{width: 1080, height: 1920}]}
             placeholder='上传主图'
             listType='picture-card'
             fileType={['jpg', 'jpeg', 'gif', 'png']}
             listNum={1}
             size={0.5}
             value={value?.[0] && [value?.[0]]}
-            onChange={(val) => {
+            onChange={(val: ValueProps[]) => {
               const url = val?.[0]?.url
               if (url) {
                 val[0].rurl = APP.fn.deleteOssDomainUrl(url)
@@ -61,14 +61,14 @@ class Upload extends React.Component<Props, State> {
         </div>
         <div>
           <UploadView
-            // pxSize={[{width: 1125, height: 2436}]}
+            pxSize={[{width: 1125, height: 2436}]}
             placeholder='上传主图'
             listType='picture-card'
             fileType={['jpg', 'jpeg', 'gif', 'png']}
             listNum={1}
             size={0.5}
             value={value?.[1] && [value?.[1]]}
-            onChange={(val) => {
+            onChange={(val: ValueProps[]) => {
               const url = val?.[0]?.url
               if (url) {
                 val[0].rurl = APP.fn.deleteOssDomainUrl(url)

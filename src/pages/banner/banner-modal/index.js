@@ -39,13 +39,15 @@ const initImgList = (imgUrlWap, num) => {
   imgUrlWap = (imgUrlWap || '').split(',')
   const arr = []
     imgUrlWap.map((item,index)=>{
-      if(num===2){
+      if (num===2) {
         arr.push({
+          uid: 'img' + index,
           url: item
         })
-      }else{
+      } else{
         index===0&& 
         arr.push({
+          uid: 'img' + index,
           url: item
         })
       }
