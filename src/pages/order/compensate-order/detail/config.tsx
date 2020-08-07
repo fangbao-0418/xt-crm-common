@@ -1,7 +1,10 @@
 import React from 'react'
+import SearchFetch from '@/components/search-fetch'
+import SelectFetch from '@/components/select-fetch'
 import UploadView from '@/components/upload'
 import { OptionProps } from '@/packages/common/components/form/index'
 import { OrderStatusEnum, MemberTypeEnum, PayTypeEnum } from '../config'
+import * as api from '../api'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
 }
@@ -62,6 +65,25 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           rules: [
             { required: true, message: '金额修改不能为空' }
           ]
+        }
+      },
+      couponCode: {
+        label: '优惠券',
+        inner: (form) => {
+          return form.getFieldDecorator('couponCode')(
+            <SearchFetch
+              style={{ width: '174px' }}
+              placeholder='请输入优惠券'
+              api={(faceValue) => {
+                return api.couponList({ faceValue, page: 1, pageSize: 500 }).then(res => {
+                  return res.map((item: any) => ({
+                    text: `${item.name}(${item.faceValue})`,
+                    value: item.code
+                  }))
+                })
+              }}
+            />
+          )
         }
       },
       illustrate: {
@@ -150,7 +172,7 @@ export function getApplInfo (detail: any) {
     },
     {
       label: '转账账号',
-      value: detail.receiptorAccountNo,
+      value: detail.receiptorAccountNo || '-',
       span: 2,
       type: 'text'
     },
@@ -162,7 +184,7 @@ export function getApplInfo (detail: any) {
     },
     {
       label: '补偿说明',
-      value: detail.recepitorRemark || '-',
+      value: detail.illustrate || '-',
       span: 2,
       type: 'text'
     }
@@ -215,19 +237,19 @@ export function getOrderInfo (detail: any) {
     },
     {
       label: '会员等级',
-      value: MemberTypeEnum[detail.orderInfoVO?.orderMemberType],
+      value: MemberTypeEnum[detail.orderInfoVO?.orderMemberType] || '-',
       span: 2,
       type: 'text'
     },
     {
       label: '支付方式',
-      value: PayTypeEnum[detail.orderInfoVO?.payType],
+      value: PayTypeEnum[detail.orderInfoVO?.payType] || '-',
       span: 1,
       type: 'text'
     },
     {
       label: '支付时间',
-      value: APP.fn.formatDate(detail.orderInfoVO?.payTime),
+      value: APP.fn.formatDate(detail.orderInfoVO?.payTime) || '-',
       span: 1,
       type: 'text'
     },
@@ -255,11 +277,15 @@ export function getGoodsInfo (detail: any) {
       productImage: orderInfoVO.productImage,
       productId: orderInfoVO.productId,
       properties: orderInfoVO.properties,
+      storeName: detail.storeName || '-',
       salePrice: orderInfoVO.salePrice,
       quantity: orderInfoVO.quantity,
-      preferentialTotalPrice: orderInfoVO.preferentialTotalPrice,
+      saleTotalPrice: orderInfoVO.saleTotalPrice,
+      faceValue: orderInfoVO.faceValue,
       discountPrice: orderInfoVO.discountPrice,
-      payMoney: orderInfoVO.payMoney
+      couponPrice: orderInfoVO.couponPrice,
+      preferentialTotalPrice: orderInfoVO.preferentialTotalPrice,
+      promotionReducePrice: orderInfoVO.promotionReducePrice
     }
   ]
 }

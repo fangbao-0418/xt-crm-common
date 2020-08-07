@@ -8,7 +8,7 @@ import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig } from './config'
 import { OrderProps } from './interface'
 import { parseQuery } from '@/util/utils'
-import { getOrderlist, exportCompensate } from './api'
+import { getOrderlist, exportCompensate, addCoupons } from './api'
 
 interface Props extends AlertComponentProps {}
 
@@ -106,21 +106,25 @@ class Main extends React.Component<Props> {
     })
   }
   coupon = () => {
-    let selectedRowKeys: any[] = []
-    this.props.alert({
+    let selectedRows: any[] = []
+    const hide = this.props.alert({
       width: 1000,
       title: '关联优惠券',
       content: (
         <CouponSelector
           readonly={false}
-          selectedRowKeys={selectedRowKeys}
-          onChange={(rowKeys) => {
-            selectedRowKeys = rowKeys
+          selectedRows={selectedRows}
+          onChange={(rows) => {
+            selectedRows = rows
           }}
         />
       ),
       onOk: () => {
-        console.log(selectedRowKeys, 'selectedRowKeys')
+        // orderBizType 订单业务类型 0-喜团订单，10-买菜订单
+        addCoupons({ couponDTOList: selectedRows, orderBizType: 0 }).then(() => {
+          APP.success('关联成功')
+          hide()
+        })
       }
     })
   }

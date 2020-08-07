@@ -72,7 +72,7 @@ class GoodsTable extends Component {
   }
   handleCompensate = (record) => {
     const { orderInfo = {}, childOrder = {} } = this.props
-    if (!record.canApply) {
+    if (!record.isHasDoing) {
       this.setState({
         modalInfo: {
           orderInfo,
@@ -204,17 +204,21 @@ class GoodsTable extends Component {
                 发起补偿
               </Button>
             </div>
-            <div>
-              <Button
-                style={{ padding: 0 }}
-                type='link'
-                size='small'
-                onClick={() => {
-                  this.props.history.push(`/order/compensate-order?childOrderCode=${childOrder.orderCode}`)
-                }}>
-                补偿历史
-              </Button>
-            </div>
+            {
+              childOrder.isHisCompensate && (
+                <div>
+                  <Button
+                    style={{ padding: 0 }}
+                    type='link'
+                    size='small'
+                    onClick={() => {
+                      this.props.history.push(`/order/compensate-order?childOrderCode=${childOrder.orderCode}`)
+                    }}>
+                    补偿历史
+                  </Button>
+                </div>
+              )
+            }
             <div>
               <Button
                 style={{ padding: 0 }}
@@ -237,12 +241,15 @@ class GoodsTable extends Component {
             successCb={() => this.setState({ visible: false }, this.props.query)}
             visible={this.state.visible}
             modalInfo={this.state.modalInfo} />}
-        <Compensate
-          onCancel={() => this.setState({ compensateVisible: false })}
-          successCb={() => this.setState({ compensateVisible: false })}
-          visible={this.state.compensateVisible}
-          modalInfo={this.state.modalInfo}
-        />
+        {
+          this.state.modalInfo.orderInfo
+          && <Compensate
+            onCancel={() => this.setState({ compensateVisible: false })}
+            successCb={() => this.setState({ compensateVisible: false })}
+            visible={this.state.compensateVisible}
+            modalInfo={this.state.modalInfo}
+          />
+        }
         <Modal
           title='添加备注'
           visible={this.state.notesVisible}

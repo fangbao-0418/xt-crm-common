@@ -27,23 +27,48 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '请输入创建人名称'
         }
       },
+      // compensatePayType: {
+      //   label: '补偿类型',
+      //   inner: (form) => {
+      //     return form.getFieldDecorator('compensatePayType')(
+      //       <SelectFetch
+      //         style={{ width: '174px' }}
+      //         fetchData={() => {
+      //           return api.getCompensatePayList().then(res => {
+      //             return res.map((item: any) => ({
+      //               label: item.compensatePayName,
+      //               value: item.compensatePayType
+      //             }))
+      //           })
+      //         }}
+      //       />
+      //     )
+      //   }
+      // },
       compensatePayType: {
         label: '补偿类型',
-        inner: (form) => {
-          return form.getFieldDecorator('compensatePayType')(
-            <SelectFetch
-              style={{ width: '174px' }}
-              fetchData={() => {
-                return api.getCompensatePayList().then(res => {
-                  return res.map((item: any) => ({
-                    label: item.compensatePayName,
-                    value: item.compensatePayType
-                  }))
-                })
-              }}
-            />
-          )
-        }
+        type: 'select',
+        controlProps: {
+          style: {
+            width: 172
+          }
+        },
+        options: [{
+          label: '全部',
+          value: ''
+        }, {
+          label: '喜团账户余额',
+          value: 11
+        }, {
+          label: '支付宝转账',
+          value: 12
+        }, {
+          label: '微信转账',
+          value: 13
+        }, {
+          label: '优惠券',
+          value: 14
+        }]
       },
       compensateStatus: {
         label: '补偿单状态',
@@ -195,4 +220,11 @@ export enum PayTypeEnum {
   '支付宝APP' = 200,
   '支付宝H5' = 201,
   '花呗' = 202
+}
+
+export enum CompensatePayTypeEnum {
+  '喜团账户余额' = 11,
+  '支付宝转账' = 12,
+  '微信转账' = 13,
+  '优惠券' = 14
 }

@@ -5,7 +5,6 @@ import UploadView from '@/components/upload'
 import { If } from '@/packages/common/components'
 import SearchFetch from '@/components/search-fetch'
 import { formItemLayout } from '@/config'
-import { mul } from '@/util/utils'
 import { compensateApply, getReasonList, responsibilityList, getRoleAmount, couponList, getUserWxAccount } from '../../api'
 const { TextArea } = Input
 const { Option } = Select
@@ -34,30 +33,31 @@ class Compensate extends React.Component<Props, State> {
     wxAccountList: []
   }
   fetchReasons = () => {
-    getReasonList().then(oneReasons => {
+    getReasonList().then((oneReasons: any[]) => {
       this.setState({
-        oneReasons
+        oneReasons: oneReasons || []
       })
     })
   }
   fetchResponsibilityList = () => {
-    responsibilityList().then(responsibilityList => {
+    responsibilityList().then((responsibilityList: any[]) => {
       this.setState({
-        responsibilityList
+        responsibilityList: responsibilityList || []
       })
     })
   }
   fetchRoleAmount = () => {
-    getRoleAmount().then(res => {
+    getRoleAmount().then((res: any) => {
       this.setState({
-        quota: res.quota
+        quota: res?.quota
       })
     })
   }
   fetchWxAccount = () => {
-    getUserWxAccount({ childOrderCode: '1' }).then(wxAccountList => {
+    const { modalInfo } = this.props
+    getUserWxAccount({ childOrderCode: modalInfo.childOrderInfo.orderCode }).then((wxAccountList: any[]) => {
       this.setState({
-        wxAccountList
+        wxAccountList: wxAccountList || []
       })
     })
   }
@@ -66,6 +66,12 @@ class Compensate extends React.Component<Props, State> {
     this.fetchResponsibilityList()
     this.fetchRoleAmount()
     this.fetchWxAccount()
+  }
+  handleAfterClose = () => {
+    const {
+      form: { resetFields }
+    } = this.props
+    resetFields()
   }
   handleOk = () => {
     const {
@@ -81,14 +87,14 @@ class Compensate extends React.Component<Props, State> {
       alipayAccount,
       couponCode,
       wxInfo,
-      transferEvidenceImg,
+      transferEvidenceImgs,
       ...values
     }) => {
       if (!errors) {
-        transferEvidenceImg = Array.isArray(transferEvidenceImg) ? transferEvidenceImg.map((v: any) => v.url) : []
-        transferEvidenceImg = transferEvidenceImg.map((urlStr: string) =>
+        transferEvidenceImgs = Array.isArray(transferEvidenceImgs) ? transferEvidenceImgs.map((v: any) => v.url) : []
+        transferEvidenceImgs = transferEvidenceImgs.map((urlStr: string) =>
           urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
-        values.transferEvidenceImg = transferEvidenceImg
+        values.transferEvidenceImgs = transferEvidenceImgs
 
         values.reasonType = twoReasonType
         if (compensatePayType === 11) {
@@ -98,11 +104,13 @@ class Compensate extends React.Component<Props, State> {
           // 支付宝转账
           values.receiptorAccountNo = alipayAccount
           values.recepitorAccountName = alipayName
+          values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
         } else if (compensatePayType === 13) {
           // 微信转账
           const [receiptorAccountNo, recepitorAccountName] = (wxInfo || '').split('|')
           values.receiptorAccountNo = recepitorAccountName
           values.recepitorAccountName = receiptorAccountNo
+          values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
         } else if (compensatePayType === 14) {
           // 优惠券
           values.couponCode = couponCode
@@ -113,9 +121,10 @@ class Compensate extends React.Component<Props, State> {
           mainOrderId: modalInfo.orderInfo.id,
           childOrderCode: modalInfo.childOrderInfo.orderCode,
           childOrderId: modalInfo.childOrderInfo.id,
+          compensatePayType,
           ...values
         })
-        if (res.success) {
+        if (res) {
           message.success('发送补偿成功')
           this.props.successCb()
         }
@@ -141,6 +150,7 @@ class Compensate extends React.Component<Props, State> {
         visible={this.props.visible}
         onCancel={this.props.onCancel}
         onOk={this.handleOk}
+        afterClose={this.handleAfterClose}
       >
         <Form {...formItemLayout}>
           <Form.Item label='补偿方式'>
@@ -257,11 +267,11 @@ class Compensate extends React.Component<Props, State> {
                 <SearchFetch
                   style={{ width: '88px' }}
                   placeholder='请输入优惠券名称'
-                  api={(couponName) => {
-                    return couponList({ couponName }).then(res => {
-                      return res.map((item: any) => ({
-                        text: item.couponName,
-                        value: item.couponId
+                  api={(faceValue) => {
+                    return couponList({ faceValue, page: 1, pageSize: 500 }).then((res: any) => {
+                      return (res?.records || []).map((item: any) => ({
+                        text: `${item.name}(${item.faceValue})`,
+                        value: item.code
                       }))
                     })
                   }}
@@ -271,9 +281,17 @@ class Compensate extends React.Component<Props, State> {
                 <div className='ml10'>
                 当前级别免审核额度：{APP.fn.formatMoney(quota)}
                 </div>
-                <div className='ml10'>
-                超出额度，需要客服主管审核！
-                </div>
+                {
+                  (compensateAmount && compensateAmount > quota / 100) ? (
+                    <div style={{ color: 'red' }} className='ml10'>
+                      超出额度，需要客服主管审核！
+                    </div>
+                  ) : (
+                    <div style={{ color: 'green' }} className='ml10'>
+                      额度内，无需审核！
+                    </div>
+                  )
+                }
               </div>
             </Form.Item>
           </If>
@@ -321,7 +339,7 @@ class Compensate extends React.Component<Props, State> {
             </Form.Item>
           </If>
           <Form.Item label='补偿凭证'>
-            {getFieldDecorator('transferEvidenceImg')(
+            {getFieldDecorator('transferEvidenceImgs')(
               <UploadView placeholder='请上传' listType='picture-card' listNum={4} size={2} />
             )}
           </Form.Item>

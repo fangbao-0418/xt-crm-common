@@ -2,10 +2,13 @@ import React from 'react'
 import { ListPage, FormItem } from '@/packages/common/components'
 import { OptionProps } from '@/packages/common/components/form'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import { If } from '@/packages/common/components'
 import receiveStatus from '@/enum/receiveStatus'
 import { formatFaceValue, formatDateRange } from '@/pages/helper'
-import { Badge } from 'antd'
+import { Badge, Select } from 'antd'
 import * as api from './api'
+
+const { Option } = Select
 
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
@@ -64,14 +67,15 @@ const getFieldsConfig = function (partial?: FieldsConfig): FieldsConfig {
 
 interface Props {
   readonly?: boolean
-  onChange?: (selectedRowKeys: any[]) => void
-  selectedRowKeys?: any[]
+  onChange?: (selectedRows: any[]) => void
+  selectedRows?: any[]
 }
 
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public state = {
-    selectedRowKeys: this.props.selectedRowKeys || []
+    selectedRows: this.props.selectedRows || [],
+    pageKey: 'all'
   }
   public columns = [
     {
@@ -125,20 +129,22 @@ class Main extends React.Component<Props> {
     const { origin, pathname } = window.location
     window.open(`${origin}${(/^\/$/).test(pathname) ? '/' : pathname}#/coupon/get/couponList/detail/${record.id}`)
   }
-  public handleSelectChange = (selectedRowKeys: any) => {
+  public handleSelectChange = (_: any, selectedRows: any) => {
     this.setState({
-      selectedRowKeys
+      selectedRows
     }, () => {
       const { onChange } = this.props
       onChange && (
-        onChange(selectedRowKeys)
+        onChange(selectedRows)
       )
     })
   }
   render () {
-    const { selectedRowKeys } = this.state
+    const { selectedRows, pageKey } = this.state
     const { readonly } = this.props
     let listPageProps = null
+
+    const selectedRowKeys = selectedRows.map(item => item.code)
 
     if (readonly) {
       listPageProps = {
@@ -171,29 +177,84 @@ class Main extends React.Component<Props> {
 
     return (
       <div style={{ margin: '-20px' }}>
-        <ListPage
-          {...listPageProps}
-          processPayload={(payload) => {
-            payload.showFlag = 0
-            payload.receivePattern = 0
-            if (readonly) {
+        <If condition={pageKey === 'selected'}>
+          <ListPage
+            tableProps={{
+              rowKey: 'code'
+            }}
+            processPayload={(payload) => {
               return {
                 ...payload,
-                codes: selectedRowKeys
+                orderBizType: 0
               }
-            } else {
-              return payload
-            }
-          }}
-          getInstance={(ref) => {
-            this.listpage = ref
-          }}
-          columns={this.columns}
-          api={api.getCouponList}
-          addonAfterSearch={(
-            <span>{' '}已选：{selectedRowKeys.length} 张</span>
-          )}
-        />
+            }}
+            getInstance={(ref) => {
+              this.listpage = ref
+            }}
+            columns={this.columns}
+            api={api.getCompensateCouponList}
+            addonAfterSearch={(
+              <>
+                <Select
+                  onChange={(pageKey: string) => {
+                    this.setState({
+                      pageKey
+                    }, () => {
+                        this.listpage?.refresh()
+                    })
+                  }}
+                  value={pageKey}
+                  style={{ width: 120 }}
+                >
+                  <Option value='all'>全部</Option>
+                  <Option value='selected'>已选</Option>
+                </Select>
+              </>
+            )}
+          />
+        </If>
+        <If condition={pageKey === 'all'}>
+          <ListPage
+            {...listPageProps}
+            processPayload={(payload) => {
+              payload.orderBizType = undefined
+              payload.showFlag = 0
+              payload.receivePattern = 0
+              if (readonly) {
+                return {
+                  ...payload,
+                  codes: selectedRowKeys
+                }
+              } else {
+                return payload
+              }
+            }}
+            getInstance={(ref) => {
+              this.listpage = ref
+            }}
+            columns={this.columns}
+            api={api.getCouponList}
+            addonAfterSearch={(
+              <>
+                <span>{' '}已选：{selectedRowKeys.length} 张</span>
+                <Select
+                  onChange={(pageKey: string) => {
+                    this.setState({
+                      pageKey
+                    }, () => {
+                      this.listpage?.refresh()
+                    })
+                  }}
+                  value={pageKey}
+                  style={{ width: 120, marginLeft: 24 }}
+                >
+                  <Option value='all'>全部</Option>
+                  <Option value='selected'>已选</Option>
+                </Select>
+              </>
+            )}
+          />
+        </If>
       </div>
     )
   }

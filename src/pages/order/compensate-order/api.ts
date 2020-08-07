@@ -45,3 +45,24 @@ export function getCompensateRecord (data: any) {
 export function exportCompensate (data: any) {
   return newPost('/mcweb/sale-after/order/compensate/exportCompensate', data)
 }
+
+/* 补偿单审核 */
+export function auditCompensate (data: any) {
+  // operateType操作类型 1 取消补偿单，2 拒绝，3-同意，4 重新发放
+  return newPost('/mcweb/sale-after/order/compensate/auditCompensate', data)
+}
+
+//优惠券下拉列表 type：0-所有优惠券，1-补偿优惠券
+export function couponList (data: any) {
+  return newPost('/mcweb/sale-after/order/compensate/getCouponsByPage', data)
+}
+
+//获取用户微信账户
+export function getUserWxAccount (data: any) {
+  return get('/mcweb/sale-after/order/compensate/getUserWxAccount', data)
+}
+
+//使用优惠券
+export function addCoupons (data: any) {
+  return newPost('/mcweb/sale-after/order/compensate/addCoupons', data)
+}

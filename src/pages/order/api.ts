@@ -313,81 +313,36 @@ export function rechargeExport (data: any) {
 
 //补偿原因分级列表 入参orderBizType 订单业务类型: 0-喜团订单，10-买菜订单
 export function getReasonList () {
-  return Promise.resolve([...new Array(10)].map((item, i) => ({
-    id: i,
-    level: 1,
-    reasonName: '一级原因' + i,
-    reasonType: i,
-    twoLevelReasonList: [...new Array(10)].map((item, j) => ({
-      id: i + '-' + j,
-      level: 1,
-      reasonName: '二级原因' + i + '-' + j,
-      reasonType: i + '-' + j
-    }))
-  })))
-  // return get('/crm/order/compensate/getReasonList', {
-  //   orderBizType: 0
-  // })
+  return get('/mcweb/sale-after/order/compensate/getReasonList', {
+    orderBizType: 0
+  })
 }
 
 //补偿责任归属列表 入参orderBizType 订单业务类型: 0-喜团订单，10-买菜订单
 export function responsibilityList () {
-  return Promise.resolve([
-    {
-      responsibilityType: 1,
-      responsibilityName: '平台'
-    },
-    {
-      responsibilityType: 2,
-      responsibilityName: '客服'
-    },
-    {
-      responsibilityType: 3,
-      responsibilityName: '仓库'
-    },
-    {
-      responsibilityType: 4,
-      responsibilityName: '商家'
-    }
-  ])
-  // return get('/crm/order/compensate/responsibilityList', {
-  //   orderBizType: 0
-  // })
+  return get('/mcweb/sale-after/order/compensate/responsibilityList', {
+    orderBizType: 0
+  })
 }
 
 //客服角色补偿最大额度 入参orderBizType 订单业务类型: 0-喜团订单，10-买菜订单
 export function getRoleAmount () {
-  return Promise.resolve({
-    quota: 20
+  return get('/mcweb/sale-after/order/compensate/getRoleAmount', {
+    orderBizType: 0
   })
-  // return get('/crm/order/compensate/getRoleAmount', {
-  //   orderBizType: 0
-  // })
 }
 
 //优惠券下拉列表 type：0-所有优惠券，1-补偿优惠券
 export function couponList (data: any) {
-  return Promise.resolve([...new Array(10)].map((item, i) => ({
-    couponId: i,
-    couponName: '优惠券' + i
-  })))
-  // return newPost('/crm/order/compensate/couponList', data)
+  return newPost('/mcweb/sale-after/order/compensate/getCouponsByPage', data)
 }
 
 //获取用户微信账户
-export function getUserWxAccount (data: { childOrderCode: string }) {
-  return Promise.resolve([...new Array(5)].map((item, i) => ({
-    appId: i,
-    openId: i,
-    memberId: i,
-    nickname: '昵称' + i
-  })))
-  // return get('/crm/order/compensate/getUserWxAccount', data)
+export function getUserWxAccount (data: any) {
+  return get('/mcweb/sale-after/order/compensate/getUserWxAccount', data)
 }
 
 //发起补偿单申请
 export function compensateApply (data:any) {
-  console.log(data, 'compensateApply')
-  return Promise.resolve(true)
-  // return newPost('/crm/order/compensate/apply', data)
+  return newPost('/mcweb/sale-after/order/compensate/apply', data)
 }

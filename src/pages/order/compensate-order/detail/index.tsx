@@ -1,6 +1,7 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router'
-import { Card, Table, Tabs, Divider, Button, List } from 'antd'
+import { Link } from 'react-router-dom'
+import { Card, Table, Tabs, Divider, Button, List, Radio } from 'antd'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import Image from '@/components/Image'
@@ -8,8 +9,8 @@ import Info from '../components/info'
 import { If } from '@/packages/common/components'
 import { replaceHttpUrl } from '@/util/utils'
 import { getFieldsConfig, getApplInfo, getOrderInfo, getLogisticsInfo, getGoodsInfo, getAuditInfo } from './config'
-import { CompensateStatusEnum } from '../config'
-import { getCompensateDetail, getCompensateRecord } from '../api'
+import { CompensateStatusEnum, CompensatePayTypeEnum } from '../config'
+import { getCompensateDetail, getCompensateRecord, auditCompensate, getUserWxAccount } from '../api'
 
 interface Props extends RouteComponentProps<{ compensateCode: string }>, AlertComponentProps {}
 
@@ -19,6 +20,7 @@ interface State {
   record: any[]
   recordLoad: boolean
   tabKey: 'detail' | 'record'
+  wxAccountList: any[]
 }
 
 class Main extends React.Component<Props, State> {
@@ -29,16 +31,13 @@ class Main extends React.Component<Props, State> {
     detailLoad: false,
     record: [],
     recordLoad: false,
-    tabKey: 'detail'
+    tabKey: 'detail',
+    wxAccountList: []
   }
 
   goodsColumns = [
     {
-      title: '商品名称',
-      dataIndex: 'skuName'
-    },
-    {
-      title: '商品名称',
+      title: '商品图片',
       width: 116,
       dataIndex: 'productImage',
       render: (text: any) => (
@@ -54,16 +53,30 @@ class Main extends React.Component<Props, State> {
       )
     },
     {
+      title: '商品名称',
+      dataIndex: 'skuName'
+    },
+    {
       title: '商品ID',
-      dataIndex: 'productId'
+      dataIndex: 'productId',
+      render (id: any, record: any) {
+        return (
+          <Link to={record.orderType===55?`/goods/virtual/${id}`:`/goods/sku-sale/${id}`}>{id}</Link>
+        )
+      }
     },
     {
       title: '属性',
       dataIndex: 'properties'
     },
     {
+      title: '供应商',
+      dataIndex: 'storeName'
+    },
+    {
       title: '单价',
-      dataIndex: 'salePrice'
+      dataIndex: 'salePrice',
+      render: APP.fn.formatMoney
     },
     {
       title: '数量',
@@ -71,16 +84,17 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: '商品总价（元）',
-      dataIndex: 'salePrice',
+      dataIndex: 'saleTotalPrice',
       render: APP.fn.formatMoney
     },
     {
       title: '优惠券',
-      dataIndex: 'age'
+      dataIndex: 'faceValue',
+      render: APP.fn.formatMoney
     },
     {
       title: '应付金额',
-      dataIndex: 'preferentialTotalPrice',
+      dataIndex: 'dealTotalPrice',
       render: APP.fn.formatMoney
     },
     {
@@ -89,8 +103,13 @@ class Main extends React.Component<Props, State> {
       render: APP.fn.formatMoney
     },
     {
+      title: '满减优惠',
+      dataIndex: 'promotionReducePrice',
+      render: APP.fn.formatMoney
+    },
+    {
       title: '实付金额',
-      dataIndex: 'payMoney',
+      dataIndex: 'preferentialTotalPrice',
       render: APP.fn.formatMoney
     }
   ]
@@ -98,27 +117,51 @@ class Main extends React.Component<Props, State> {
   applyColums = [
     {
       title: '审核结果',
-      dataIndex: 'a'
+      dataIndex: 'operateTypeStr'
     },
     {
       title: '审核人',
-      dataIndex: 'b'
+      dataIndex: 'operatorName',
+      render: (text: any) => text || '-'
     },
     {
       title: '审核人身份',
-      dataIndex: 'c'
+      dataIndex: 'operatorRoleName'
     },
     {
       title: '审核时间',
-      dataIndex: 'd'
+      dataIndex: 'createTime',
+      render: (text: any) => APP.fn.formatDate(text)
     },
     {
       title: '备注说明',
-      dataIndex: 'e'
+      dataIndex: 'remarks',
+      render: (text: any) => text || '-'
     },
     {
       title: '修改内容',
-      dataIndex: 'f'
+      dataIndex: 'info',
+      render: (text: any) => {
+        try {
+          const data = JSON.parse(text)
+          const list = data.map((item: any) => {
+            return Object.keys(item)?.[0] + ': ' + Object.values(item)?.[0]
+          })
+          return (
+            <List
+              size='small'
+              split={false}
+              header={null}
+              footer={null}
+              bordered={false}
+              dataSource={list}
+              renderItem={(item: any) => <List.Item style={{ padding: '2px 0' }}>{item}</List.Item>}
+            />
+          )
+        } catch (error) {
+          return '-'
+        }
+      }
     }
   ]
 
@@ -135,11 +178,12 @@ class Main extends React.Component<Props, State> {
           return (
             <List
               size='small'
+              split={false}
               header={null}
               footer={null}
               bordered={false}
               dataSource={list}
-              renderItem={(item: any) => <List.Item>{item}</List.Item>}
+              renderItem={(item: any) => <List.Item style={{ padding: '2px 0' }}>{item}</List.Item>}
             />
           )
         } catch (error) {
@@ -178,6 +222,7 @@ class Main extends React.Component<Props, State> {
   }
 
   handleAduit = () => {
+    const { detail, wxAccountList } = this.state
     let form: FormInstance
     this.props.alert({
       title: '审核',
@@ -192,10 +237,67 @@ class Main extends React.Component<Props, State> {
         >
           <FormItem verifiable name='compensateStatus' />
           <FormItem verifiable name='responsibilityType' />
-          <FormItem verifiable name='compensateAmount' />
+          <If
+            condition={[
+              CompensatePayTypeEnum['喜团账户余额'],
+              CompensatePayTypeEnum['支付宝转账'],
+              CompensatePayTypeEnum['微信转账']
+            ].includes(detail.compensatePayType)}
+          >
+            <FormItem verifiable name='compensateAmount' />
+          </If>
+          <If
+            condition={[
+              CompensatePayTypeEnum['优惠券']
+            ].includes(detail.compensatePayType)}
+          >
+            <FormItem verifiable name='compensateAmount' />
+          </If>
+          <If
+            condition={[
+              CompensatePayTypeEnum['支付宝转账']
+            ].includes(detail.compensatePayType)}
+          >
+            <>
+              <FormItem label='转账方式'>支付宝转账</FormItem>
+              <FormItem verifiable name='recepitorAccountName' />
+              <FormItem verifiable name='receiptorAccountNo' />
+            </>
+          </If>
+          <If
+            condition={[
+              CompensatePayTypeEnum['微信转账']
+            ].includes(detail.compensatePayType)}
+          >
+            <>
+              <FormItem label='转账方式'>微信转账</FormItem>
+              <FormItem
+                required
+                inner={(form) => {
+                  return form.getFieldDecorator('wxInfo')(
+                    <Radio.Group>
+                      {
+                        wxAccountList.map(item => (
+                          <Radio
+                            key={item.memberId}
+                            style={{
+                              display: 'block',
+                              height: '30px',
+                              lineHeight: '30px'
+                            }}
+                            value={`${item.openId}:${item.memberId}|${item.nickname}`}
+                          >
+                            {item.nickname}
+                          </Radio>
+                        ))
+                      }
+                    </Radio.Group>
+                  )
+                }}
+              />
+            </>
+          </If>
           <FormItem verifiable required name='illustrate' />
-          <FormItem verifiable name='recepitorAccountName' />
-          <FormItem verifiable name='receiptorAccountNo' />
           <FormItem verifiable name='remarks' />
         </Form>
       ),
@@ -227,6 +329,20 @@ class Main extends React.Component<Props, State> {
       this.setState({
         detailLoad: true,
         detail: detail || {}
+      }, () => {
+        this.fetchWxAccount()
+      })
+    })
+  }
+
+  fetchWxAccount = () => {
+    const { wxAccountList, detail } = this.state
+    if (wxAccountList.length) {
+      return
+    }
+    getUserWxAccount({ childOrderCode: detail?.childOrderCode }).then((wxAccountList: any[]) => {
+      this.setState({
+        wxAccountList: wxAccountList || []
       })
     })
   }
@@ -241,6 +357,21 @@ class Main extends React.Component<Props, State> {
       })
     })
   }
+  handleCancel = () => {
+    const hide = this.props.alert({
+      content: '确认取消订单补偿请求吗?',
+      onOk: () => {
+        auditCompensate({
+          compensateCode: this.compensateCode,
+          operateType: 1
+        }).then(() => {
+          APP.success('取消请求成功')
+          this.fetchDetail()
+          hide()
+        })
+      }
+    })
+  }
   render () {
     const { tabKey, detailLoad, recordLoad, detail, record } = this.state
     return (
@@ -253,8 +384,16 @@ class Main extends React.Component<Props, State> {
                   title={`补偿单编号：${detail.compensateCode} 补偿状态：${CompensateStatusEnum[detail.compensateStatus]}`}
                   extra={
                     <>
-                      <Button type='primary' size='small' onClick={this.handleAduit} className='mr8'>取消请求</Button>
-                      <Button type='primary' size='small' onClick={this.handleAduit}>审核</Button>
+                      <If
+                        condition={detail.isCanCancel}
+                      >
+                        <Button type='primary' size='small' onClick={this.handleCancel} className='mr8'>取消请求</Button>
+                      </If>
+                      <If
+                        condition={detail.isCanAudit}
+                      >
+                        <Button type='primary' size='small' onClick={this.handleAduit}>审核</Button>
+                      </If>
                     </>
                   }
                 >
@@ -277,7 +416,7 @@ class Main extends React.Component<Props, State> {
                         {
                           getAuditInfo(detail)[0] ? (
                             <Table
-                              size='small'
+                              size='middle'
                               bordered
                               pagination={false}
                               dataSource={getAuditInfo(detail)}
@@ -329,7 +468,9 @@ class Main extends React.Component<Props, State> {
             {
               recordLoad ? (
                 <Table
+                  style={{ marginBottom: 10 }}
                   bordered
+                  scroll={{ x: true }}
                   size='middle'
                   pagination={false}
                   dataSource={record}
@@ -341,6 +482,14 @@ class Main extends React.Component<Props, State> {
             }
           </Tabs.TabPane>
         </Tabs>
+        <Button
+          type='primary'
+          onClick={() => {
+            APP.history.push('/order/compensate-order')
+          }}
+        >
+          返回
+        </Button>
       </Card>
     )
   }
