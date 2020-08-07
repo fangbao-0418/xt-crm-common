@@ -72,7 +72,7 @@ class GoodsTable extends Component {
   }
   handleCompensate = (record) => {
     const { orderInfo = {}, childOrder = {} } = this.props
-    if (!record.isHasDoing) {
+    if (!record.isHasDoingCompensate) {
       this.setState({
         modalInfo: {
           orderInfo,

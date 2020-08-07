@@ -140,8 +140,11 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: '修改内容',
-      dataIndex: 'info',
+      dataIndex: 'modifyInfos',
       render: (text: any) => {
+        if (!text) {
+          return '-'
+        }
         try {
           const data = JSON.parse(text)
           const list = data.map((item: any) => {
@@ -337,6 +340,9 @@ class Main extends React.Component<Props, State> {
 
   fetchWxAccount = () => {
     const { wxAccountList, detail } = this.state
+    if (detail.compensatePayType !== CompensatePayTypeEnum['微信转账']) {
+      return
+    }
     if (wxAccountList.length) {
       return
     }
@@ -381,7 +387,14 @@ class Main extends React.Component<Props, State> {
             {
               detailLoad ? (
                 <Card
-                  title={`补偿单编号：${detail.compensateCode} 补偿状态：${CompensateStatusEnum[detail.compensateStatus]}`}
+                  title={
+                    <>
+                      <span style={{ fontWeight: 600 }}>补偿单编号: </span>
+                      {detail.compensateCode}
+                      <span style={{ fontWeight: 600, marginLeft: 12 }}>补偿状态: </span>
+                      {CompensateStatusEnum[detail.compensateStatus]}
+                    </>
+                  }
                   extra={
                     <>
                       <If
@@ -411,7 +424,7 @@ class Main extends React.Component<Props, State> {
                     }
                   >
                     <>
-                      <Divider dashed />
+                      <Divider dashed style={{ margin: '12px 0' }} />
                       <Info title='审核信息'>
                         {
                           getAuditInfo(detail)[0] ? (
@@ -429,9 +442,9 @@ class Main extends React.Component<Props, State> {
                       </Info>
                     </>
                   </If>
-                  <Divider dashed />
+                  <Divider dashed style={{ margin: '12px 0' }} />
                   <Info title='订单信息' column={3} data={getOrderInfo(detail)} />
-                  <Divider dashed />
+                  <Divider dashed style={{ margin: '12px 0' }} />
                   <Info title='商品信息'>
                     <Table
                       size='middle'
@@ -441,7 +454,7 @@ class Main extends React.Component<Props, State> {
                       columns={this.goodsColumns}
                     />
                   </Info>
-                  <Divider dashed />
+                  <Divider dashed style={{ margin: '12px 0' }} />
                   <Info title='物流信息'>
                     {
                       getLogisticsInfo(detail)[0] ? (

@@ -1,9 +1,8 @@
 import React from 'react'
 import SearchFetch from '@/components/search-fetch'
-import SelectFetch from '@/components/select-fetch'
 import UploadView from '@/components/upload'
 import { OptionProps } from '@/packages/common/components/form/index'
-import { OrderStatusEnum, MemberTypeEnum, PayTypeEnum } from '../config'
+import { OrderStatusEnum, MemberTypeEnum, PayTypeEnum, CompensatePayTypeEnum } from '../config'
 import * as api from '../api'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
@@ -164,21 +163,72 @@ export function getApplInfo (detail: any) {
       span: 2,
       type: 'text'
     },
-    {
-      label: '姓名',
-      value: detail.receiptorAccountName || '-',
-      span: 2,
-      type: 'text'
-    },
-    {
-      label: '转账账号',
-      value: detail.receiptorAccountNo || '-',
-      span: 2,
-      type: 'text'
-    },
+    ...(
+      CompensatePayTypeEnum['支付宝转账'] === detail.compensatePayType
+        ? [
+          {
+            label: '转账方式',
+            value: '支付宝',
+            span: 2,
+            type: 'text'
+          },
+          {
+            label: '姓名',
+            value: detail.receiptorAccountName || '-',
+            span: 2,
+            type: 'text'
+          },
+          {
+            label: '转账账号',
+            value: detail.receiptorAccountNo || '-',
+            span: 2,
+            type: 'text'
+          }
+        ] : []
+    ),
+    ...(
+      CompensatePayTypeEnum['微信转账'] === detail.compensatePayType
+        ? [
+          {
+            label: '转账方式',
+            value: '微信转账',
+            span: 2,
+            type: 'text'
+          },
+          {
+            label: '姓名',
+            value: detail.receiptorAccountName || '-',
+            span: 2,
+            type: 'text'
+          },
+          {
+            label: '转账账号',
+            value: detail.receiptorAccountNo || '-',
+            span: 2,
+            type: 'text'
+          }
+        ] : []
+    ),
+    ...(
+      CompensatePayTypeEnum['优惠券'] === detail.compensatePayType
+        ? [
+          {
+            label: '优惠券名称',
+            value: detail.receiptorAccountName || '-',
+            span: 2,
+            type: 'text'
+          },
+          {
+            label: '有效期',
+            value: detail.receiptorAccountNo || '-',
+            span: 2,
+            type: 'text'
+          }
+        ] : []
+    ),
     {
       label: '补偿凭证',
-      value: detail.transferEvidenceImg,
+      value: detail.transferEvidenceImg ? JSON.parse(detail.transferEvidenceImg) : [],
       span: 2,
       type: 'image'
     },

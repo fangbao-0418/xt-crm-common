@@ -11,7 +11,7 @@ interface Props {
   children?: React.ReactNode
   data?: {
     label: React.ReactNode,
-    value: React.ReactNode,
+    value: any,
     span: number,
     type?: string
   }[]
@@ -41,15 +41,24 @@ class Main extends React.Component<Props> {
                   label={item.label}
                   span={item.span}
                 >
-                  <Image
-                    style={{
-                      height: 100,
-                      width: 100,
-                      minWidth: 100
-                    }}
-                    src={replaceHttpUrl(item.value)}
-                    alt='图片'
-                  />
+                  {
+                    (item.value || []).length
+                      ? (item.value || []).map((img: string, i: number) => {
+                        return (
+                          <Image
+                            key={i}
+                            style={{
+                              height: 100,
+                              width: 100,
+                              minWidth: 100,
+                              marginRight: 8
+                            }}
+                            src={replaceHttpUrl(img)}
+                            alt='图片'
+                          />
+                        )
+                      }) : '-'
+                  }
                 </DescriptionsItem>
               )
             }
