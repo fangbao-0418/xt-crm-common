@@ -1,8 +1,15 @@
 import React from 'react'
 export { default as VideoUpload } from './Video'
 
+interface ValueProps {
+  url: string,
+  uid?: any,
+  /** 文件相对地址 */
+  rurl?: string
+}
+
 interface Props {
-  onChange?: any
+  onChange?: (value: ValueProps[]) => void
   placeholder?: string
   listType?: 'text' | 'picture' | 'picture-card'
   listNum?: number
@@ -16,12 +23,7 @@ interface Props {
   fileTypeErrorText?: string
   disabled?: boolean
   multiple?: boolean
-  value?: {
-    url: string,
-    uid?: any,
-    /** 文件相对地址 */
-    rurl?: string
-  }[]
+  value?: ValueProps[]
   className?: string
   accept?: string
   style?: React.CSSProperties

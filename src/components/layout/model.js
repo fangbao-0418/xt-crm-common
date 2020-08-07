@@ -20,7 +20,10 @@ export default {
             const allId = Array.isArray(menuList) ? getAllId(menuList, roleId) : []; // 有权限的id集合（包括parentId）
             const filterAllId = [...new Set(allId)]; // 将重复的父id筛选掉
             const allItemFilted = filterAllId.map(id => getItemById(menuList, id)); // 根据id找对应的item
-            let tree = arrToTree(allItemFilted); // 将数组转化为树状结构
+            const tree = arrToTree(allItemFilted)?.filter((item) => {
+              return (!['出口网关', '入口网关'].includes(item.name) && item.path !== '/fresh')
+            }) || []; // 将数组转化为树状结构
+            console.log(tree, 'xxxxxxxxxxxx')
             dispatch['layout'].saveDefault({
               roleList,
               tree
