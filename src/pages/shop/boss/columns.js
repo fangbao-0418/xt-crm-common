@@ -78,13 +78,13 @@ export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
         return (
           <div>
             <If condition={record.shopType !== 2}>
-              <span onClick={onDetail.bind(null, record)} className='href mr8'>查看资质</span>
+              <div onClick={onDetail.bind(null, record)} className='href'>查看资质</div>
             </If>
             <If condition={record.shopStatus === 2}>
-              <span onClick={onClose.bind(null, record)} className='href'>关闭店铺</span>
+              <div onClick={onClose.bind(null, record)} className='href'>关闭店铺</div>
             </If>
             <If condition={record.shopStatus === 3 || record.shopStatus === 1}>
-              <span onClick={onOpen.bind(null, record)} className='href'>开启店铺</span>
+              <div onClick={onOpen.bind(null, record)} className='href'>开启店铺</div>
             </If>
           </div >
         )

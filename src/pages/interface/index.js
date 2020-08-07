@@ -22,6 +22,7 @@ import SpecialContentForm from './special/content/form'
 import GoodsRecommend from './goods-recommend'
 import GoodsRecommendDetail from './goods-recommend/Detail'
 import RechargeConfig from './recharge-config'
+import Store from './store'
 import CategoryRanking from './category-ranking'
 export default class extends Component {
   render () {
@@ -34,6 +35,7 @@ export default class extends Component {
         <Route path='/interface/special/:id' component={SpecialDetail} />
         <Route path='/interface/config' component={HomeConfig} />
         <Route path='/interface/free' component={FreeSubsidies} />
+        <Route path='/interface/store' component={Store} />
         <Route path='/interface/group-buying/category' exact component={GroupBuyingCategory} />
         <Route path='/interface/group-buying/category/:id' component={GroupBuyingCategoryForm} />
         <Route path='/interface/purchase-category' exact component={PurchaseCategory} />
