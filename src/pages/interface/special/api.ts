@@ -59,3 +59,27 @@ export function getGoodsListByActivityId (param: any) {
 export function batchMoveGoodsToOtherActivity (param: any) {
   return newPost('/promotion/batchmove', param)
 }
+
+
+export function importShop () {
+  const el = document.createElement('input')
+  el.setAttribute('type', 'file')
+  return new Promise<any>((resolve, reject) => {
+    el.onchange = function (e: any) {
+      const file = e?.target?.files?.[0]
+      const form = new FormData()
+      form.append('file', file)
+      post('/promotion/product/check', {}, {
+        data: form,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res: any) => {
+        resolve(res)
+      }, (err: any) => {
+        reject(err)
+      })
+    }
+    el.click()
+  })
+}

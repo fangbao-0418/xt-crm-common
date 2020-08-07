@@ -119,13 +119,13 @@ export default class extends React.Component {
     pageSize: this.payload.pageSize || 10,
     total: 0,
     loading: false,
-    tableConfig: {},
+    records: [],
     expands: []
   };
 
   componentDidMount () {
     this.setFieldsValue(() => {
-      this.query()
+      // this.query()
     })
   }
 
@@ -164,7 +164,6 @@ export default class extends React.Component {
       ...params,
       type
     })
-    console.log(params.refundStatus, 'params.refundStatus', params)
     if (params&&params.shopPhone) {
       getPhoneById({ phone: fieldsValues.shopPhone }).then((res = {}) => {
         if (res.shopId) {
@@ -201,9 +200,12 @@ export default class extends React.Component {
         return
       }
       refundList(params).then(res => {
+        if (!res) return;
         const records = (res.data && res.data.records) || []
         this.setState({
-          tableConfig: res.data || {},
+          records,
+          current: res.data.page,
+          total: res.data.total,
           expands: records.map(v => v.orderCode)
         })
       })
@@ -277,7 +279,9 @@ export default class extends React.Component {
 
   render () {
     const {
-      tableConfig: { records = [], total = 0, current = 0, size = 10 }
+      records,
+      current,
+      total
     } = this.state
     const { intercept } = this.props
 
@@ -302,7 +306,6 @@ export default class extends React.Component {
             dataSource={records}
             current={current}
             total={total}
-            size={size}
             expandedRowRender={record => (
               <div
                 className='expanded-row-wrapped'

@@ -203,21 +203,21 @@ class Main extends React.Component<Props, SkuSaleListState> {
       }
     })
   }
- /** 复制商品 */
- copy = (productId: any) => {
-   Modal.confirm({
-     title: '复制提示',
-     content: '确认复制该商品吗?',
-     onOk: () => {
-       copy({ productId }).then((res: any) => {
-         if (res) {
-           message.success('商品已复制到待上架列表中')
-           this.list.refresh()
-         }
-       })
-     }
-   })
- }
+  /** 复制商品 */
+  copy = (productId: any) => {
+    Modal.confirm({
+      title: '复制提示',
+      content: '确认复制该商品吗?',
+      onOk: () => {
+        copy({ productId }).then((res: any) => {
+          if (res) {
+            message.success('商品已复制到待上架列表中')
+            this.list.refresh()
+          }
+        })
+      }
+    })
+  }
   // 批量上架
   upper = (ids: string[] | number[]) => {
     Modal.confirm({
@@ -364,13 +364,13 @@ class Main extends React.Component<Props, SkuSaleListState> {
           )}
           addonAfterSearch={(
             <>
-              <Button
+              {/* <Button
                 type='primary'
                 className='mr8'
                 onClick={this.export}
               >
                 导出商品
-              </Button>
+              </Button> */}
               <Button
                 className='mr8'
                 type='primary'

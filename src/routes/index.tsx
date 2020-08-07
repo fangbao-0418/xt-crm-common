@@ -40,8 +40,6 @@ class Main extends React.Component<{}, State> {
           <Route path='/goods' component={modules.Goods} />
           <Route path='/template' component={modules.Template} />
           <Route path='/order' component={modules.Order} />
-          {/* <Route path='/activity' component={modules.Activity} />
-          <Route path='/coupon' component={modules.Coupon} /> */}
           <Route path='/user' component={modules.User} />
           <Route path='/supplier' component={modules.Supplier} />
           <Route path='/banner' component={modules.Banner} />
@@ -50,10 +48,8 @@ class Main extends React.Component<{}, State> {
           <Route path='/interface' component={modules.Interface} />
           <Route path='/crudpage' component={modules.CrudPage} />
           <Route path='/setting' component={modules.Setting} />
-          <Route path='/ulive' component={modules.ULive} />
           <Route path='/merchant-accounts' component={modules.MerchantAccounts} />
           <Route path='/shop' component={modules.Shop} />
-          <Route path='/fresh' component={modules.Fresh} />
           <Route path='/system' component={modules.System} />
         </Layout>
       </Switch>
