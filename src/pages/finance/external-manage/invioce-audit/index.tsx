@@ -285,6 +285,11 @@ class InvoiceReview extends React.Component {
               }) as number
             }
           }}
+          rangeMap={{
+            createTime: {
+              fields: ['startCreatedTime', 'endCreatedTime']
+            }
+          }}
           onReset={() => {
             setPayload(namespace, undefined)
             this.cachePayload = undefined
@@ -361,7 +366,7 @@ class InvoiceReview extends React.Component {
                   },
                 ]}
               />
-              <FormItem name="createTime" label="创建时间" type="rangepicker" />
+              <FormItem name="createTime"/>
             </>
           }
           columns={this.columns}
