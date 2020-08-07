@@ -3,9 +3,10 @@ import { Form, Input, InputNumber, Modal, message, Select, Row, Col, Radio } fro
 import { FormComponentProps } from 'antd/lib/form'
 import UploadView from '@/components/upload'
 import { If } from '@/packages/common/components'
-import SearchFetch from '@/components/search-fetch'
+import { formatFaceValue } from '@/pages/helper'
+import SelectFetch from '@/packages/common/components/select-fetch'
 import { formItemLayout } from '@/config'
-import { compensateApply, getReasonList, responsibilityList, getRoleAmount, couponList, getUserWxAccount } from '../../api'
+import { compensateApply, getReasonList, responsibilityList, getRoleAmount, getCouponsAllList, getUserWxAccount } from '../../api'
 const { TextArea } = Input
 const { Option } = Select
 
@@ -23,6 +24,8 @@ interface State {
   /* 免费审核额度 */
   quota: number
   wxAccountList: any[]
+  /* 微信选项是否禁用 */
+  wxDisable: boolean
 }
 
 class Compensate extends React.Component<Props, State> {
@@ -30,7 +33,8 @@ class Compensate extends React.Component<Props, State> {
     oneReasons: [],
     responsibilityList: [],
     quota: 0,
-    wxAccountList: []
+    wxAccountList: [],
+    wxDisable: false
   }
   fetchReasons = () => {
     getReasonList().then((oneReasons: any[]) => {
@@ -57,7 +61,8 @@ class Compensate extends React.Component<Props, State> {
     const { modalInfo } = this.props
     getUserWxAccount({ childOrderCode: modalInfo.childOrderInfo.orderCode }).then((wxAccountList: any[]) => {
       this.setState({
-        wxAccountList: wxAccountList || []
+        wxAccountList: wxAccountList || [],
+        wxDisable: (wxAccountList || []).length === 0
       })
     })
   }
@@ -111,7 +116,7 @@ class Compensate extends React.Component<Props, State> {
           values.receiptorAccountNo = recepitorAccountName
           values.recepitorAccountName = receiptorAccountNo
           values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
-        } else if (compensatePayType === 14) {
+        } else if (compensatePayType === 10) {
           // 优惠券
           values.couponCode = couponCode
         }
@@ -135,7 +140,7 @@ class Compensate extends React.Component<Props, State> {
     const {
       form: { getFieldDecorator, getFieldValue, setFieldsValue }
     } = this.props
-    const { oneReasons, responsibilityList, quota, wxAccountList } = this.state
+    const { oneReasons, responsibilityList, quota, wxAccountList, wxDisable } = this.state
     const compensatePayType = getFieldValue('compensatePayType')
     const oneReasonType = getFieldValue('oneReasonType')
     const compensateAmount = getFieldValue('compensateAmount')
@@ -165,8 +170,8 @@ class Compensate extends React.Component<Props, State> {
               <Select placeholder='请选择' style={{ width: '100%' }}>
                 <Option value={11}>喜团账户余额</Option>
                 <Option value={12}>支付宝转账</Option>
-                <Option value={13}>微信转账</Option>
-                <Option value={14}>优惠券</Option>
+                <Option disabled={wxDisable} value={13}>微信转账</Option>
+                <Option value={10}>优惠券</Option>
               </Select>
             )}
           </Form.Item>
@@ -234,7 +239,7 @@ class Compensate extends React.Component<Props, State> {
           <If condition={[11, 12, 13].includes(compensatePayType)}>
             <Form.Item label='补偿金额'>
               {getFieldDecorator('compensateAmount', {
-                rules: [{ required: compensatePayType === [11, 12, 13].includes(compensatePayType), message: '请输入' }]
+                rules: [{ required: [11, 12, 13].includes(compensatePayType), message: '请输入' }]
               })(
                 <InputNumber
                   placeholder='请输入'
@@ -259,20 +264,28 @@ class Compensate extends React.Component<Props, State> {
               </div>
             </Form.Item>
           </If>
-          <If condition={compensatePayType === 14}>
+          <If condition={compensatePayType === 10}>
             <Form.Item label='优惠券选择'>
               {getFieldDecorator('couponCode', {
-                rules: [{ required: compensatePayType === 14, message: '请输入' }]
+                rules: [{ required: compensatePayType === 10, message: '请输入' }]
               })(
-                <SearchFetch
+                <SelectFetch
+                  showSearch
                   style={{ width: '88px' }}
-                  placeholder='请输入优惠券名称'
-                  api={(faceValue) => {
-                    return couponList({ faceValue, page: 1, pageSize: 500 }).then((res: any) => {
-                      return (res?.records || []).map((item: any) => ({
-                        text: `${item.name}(${item.faceValue})`,
-                        value: item.code
-                      }))
+                  optionFilterProp='children'
+                  filterOption={(input, option) => {
+                    return (option.props.children as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }}
+                  placeholder='请选择'
+                  fetchData={() => {
+                    return getCouponsAllList({ orderBizType: 0 }).then((res: any) => {
+                      return (res || []).map((item: any) => {
+                        const result = item.faceValue.split(':')
+                        return {
+                          label: `满${(result[0] / 100) || 0}减${(result[1] / 100) || 0}`,
+                          value: item.code
+                        }
+                      })
                     })
                   }}
                 />

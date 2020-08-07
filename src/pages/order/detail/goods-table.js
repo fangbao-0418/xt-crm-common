@@ -205,7 +205,7 @@ class GoodsTable extends Component {
               </Button>
             </div>
             {
-              childOrder.isHisCompensate && (
+              childOrder.canShowHistoryBtn && (
                 <div>
                   <Button
                     style={{ padding: 0 }}
