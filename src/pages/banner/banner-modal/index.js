@@ -14,6 +14,8 @@ import moment from 'moment'
 import BannerPostion from '@/components/banner-position'
 import StartPageUpload from './components/StartPageUpload'
 
+import styles from './style.module.styl'
+
 const FormItem = Form.Item
 const Option = Select.Option
 /**
@@ -344,8 +346,23 @@ class BannerModal extends Component {
                   initialValue: data.keywordsList,
                   rules: [
                     {
-                      required: seat[0] === 7,
-                      message: '请输入关键词'
+                      validator: (rule, value, cb) => {
+                        console.log(value,'111')
+                        if(seat[0] === 7){
+                          if(!value||(value&&value.length===0)){
+                            cb('请输入关键词')
+                          }
+                          if(value.length>20){
+                            cb('不能超过20个关键词')
+                          }
+                          value.map((item)=>{
+                            if(item.length>10){
+                              cb('单个关键词不能超过10个字符')
+                            }
+                          })
+                        }
+                        cb()
+                      }
                     }
                   ]
                 })(
@@ -358,37 +375,8 @@ class BannerModal extends Component {
                     id='keywordsList'
                     tokenSeparators={[',']}
                     maxLength={10}
-                    open={false}
                     name='keywordsList'
-                    autoClearSearchValue={true}
-                    onInputKeyDown={(e)=>{
-                      const { data } = this.state
-                      const keyCode=e.keyCode,
-                            targetInputValue=e.target.value
-                      data.keywordsList=(data&&data.keywordsList)||[]
-                      if (keyCode===13&&targetInputValue) {
-                        if (targetInputValue.length>10) {
-                          APP.error('不能超过10个字符')
-                          return
-                        }
-                        if (data.keywordsList.length>20) {
-                          APP.error('不能超过20个关键词')
-                          return
-                        }
-                        if (targetInputValue) {
-                          if (data.keywordsList&&data.keywordsList.length>0&&data.keywordsList.indexOf(targetInputValue)>-1) {
-                            APP.error('关键词重复')
-                          } else {
-                            data.keywordsList.push(targetInputValue)
-                            this.ref.blur()
-                            this.setState({
-                              data
-                            })
-                          }
-                        }
-                      }
-                    }}
-                    onChange={this.onChangeKeyWord.bind(this)}
+                    dropdownClassName={styles['select-auto']}
                   />
                 )}
               </FormItem>
@@ -405,15 +393,6 @@ class BannerModal extends Component {
         </Modal>
       </>
     )
-  }
-
-  //改变关键字
-  onChangeKeyWord (obj) {
-    const { data } = this.state
-    data['keywordsList'] = obj ? ((obj instanceof Array && obj.length < 1) ? undefined :obj) : ''
-    this.setState({
-      data
-    })
   }
 }
 

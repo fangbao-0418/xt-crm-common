@@ -5,15 +5,17 @@ import React from 'react'
 import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tabs } from 'antd'
+import { Tabs, Button } from 'antd'
 import MoneyRender from '@/components/money-render'
 import { getFieldsConfig, SupplierTypeEnum } from './config'
 import * as api from './api'
 const { TabPane } = Tabs
+import { getPayload, setPayload } from '@/packages/common/utils'
 interface Props extends AlertComponentProps {
 }
 const tabConfigs: { key: string, title: string }[] = [
   { key: '-2', title: '全部' },
+  { key: '-3', title: '待审核' },
   { key: '0', title: '提现中' },
   { key: '1', title: '提现成功' },
   { key: '-1', title: '提现失败' }
@@ -113,6 +115,21 @@ class Main extends React.Component<Props> {
     dataIndex: 'remark',
     title: '备注',
     width: 200
+  }, {
+    dataIndex: 'operate',
+    title: '操作',
+    fixed: 'right',
+    width: 150,
+    render: (text: any,records: any) => {
+      return (
+        records.transferStatus===-3&&<Button type='link' onClick={()=>{
+          setPayload('external/invioce', {
+            fundTransferNo: records.transferNo
+          })
+          APP.history.push('/finance/externalinvoiceaudit')
+        }}>去审核</Button>
+      )
+    }
   }]
   public refresh () {
     this.listpage.refresh()
@@ -173,7 +190,7 @@ class Main extends React.Component<Props> {
           }}
           rangeMap={{
             withdrawalDate: {
-              fields: ['withdrawalStartDate', 'withdrawalEndDate']
+              fields: ['startCreatedTime', 'endCreatedTime']
             }
           }}
           formConfig={getFieldsConfig()}
