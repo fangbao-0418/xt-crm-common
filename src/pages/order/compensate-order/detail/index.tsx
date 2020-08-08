@@ -7,7 +7,7 @@ import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import Image from '@/components/Image'
 import Info from '../components/info'
 import { If } from '@/packages/common/components'
-import { replaceHttpUrl } from '@/util/utils'
+import { replaceHttpUrl, initImgList } from '@/util/utils'
 import { getFieldsConfig, getApplInfo, getOrderInfo, getLogisticsInfo, getGoodsInfo, getAuditInfo } from './config'
 import { CompensateStatusEnum, CompensatePayTypeEnum } from '../config'
 import { getCompensateDetail, getCompensateRecord, auditCompensate, getUserWxAccount } from '../api'
@@ -237,9 +237,21 @@ class Main extends React.Component<Props, State> {
           getInstance={(ref) => {
             form = ref
           }}
+          mounted={() => {
+            form.setValues({
+              responsibilityType: detail.responsibilityType,
+              compensateAmount: detail.compensateAmount / 100,
+              memberId: detail.memberId,
+              transferEvidenceImgs: (detail.transferEvidenceImg ? JSON.parse(detail.transferEvidenceImg) : []).map((item: any) => initImgList(item)[0]),
+              illustrate: detail.illustrate,
+              receiptorAccountName: detail.receiptorAccountName,
+              receiptorAccountNo: detail.receiptorAccountNo,
+              couponCode: detail.couponCode
+            })
+          }}
         >
-          <FormItem verifiable name='compensateStatus' />
-          <FormItem verifiable name='responsibilityType' />
+          <FormItem verifiable name='operateType' />
+          <FormItem verifiable required name='responsibilityType' />
           <If
             condition={[
               CompensatePayTypeEnum['喜团账户余额'],
@@ -254,7 +266,7 @@ class Main extends React.Component<Props, State> {
               CompensatePayTypeEnum['优惠券']
             ].includes(detail.compensatePayType)}
           >
-            <FormItem verifiable name='compensateAmount' />
+            <FormItem required verifiable name='couponCode' />
           </If>
           <If
             condition={[
@@ -276,8 +288,9 @@ class Main extends React.Component<Props, State> {
               <FormItem label='转账方式'>微信转账</FormItem>
               <FormItem
                 required
+                label='微信账号'
                 inner={(form) => {
-                  return form.getFieldDecorator('wxInfo')(
+                  return form.getFieldDecorator('memberId')(
                     <Radio.Group>
                       {
                         wxAccountList.map(item => (
@@ -288,7 +301,7 @@ class Main extends React.Component<Props, State> {
                               height: '30px',
                               lineHeight: '30px'
                             }}
-                            value={`${item.openId}:${item.memberId}|${item.nickname}`}
+                            value={item.memberId}
                           >
                             {item.nickname}
                           </Radio>
@@ -300,16 +313,29 @@ class Main extends React.Component<Props, State> {
               />
             </>
           </If>
-          <FormItem verifiable required name='illustrate' />
-          <FormItem verifiable name='remarks' />
+          <FormItem name='transferEvidenceImgs' />
+          <FormItem name='illustrate' />
         </Form>
       ),
       onOk: () => {
-        form.props.form.validateFields((err, values) => {
+        form.props.form.validateFields((err, { compensateAmount, memberId, transferEvidenceImgs, ...values }) => {
           if (err) {
             return
           }
-          console.log(values)
+          const { wxAccountList } = this.state
+          const currentWx = wxAccountList.find(item => item.memberId === memberId)
+          if (currentWx) {
+            values.receiptorAccountNo = currentWx.openId + ':' + currentWx.memberId
+            values.recepitorAccountName = currentWx.nickname
+          }
+          values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
+          auditCompensate({
+            compensateCode: this.compensateCode,
+            ...values
+          }).then(() => {
+            APP.success('操作成功')
+            this.fetchDetail()
+          })
         })
       }
     })
@@ -378,6 +404,21 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+  handleResent = () => {
+    const hide = this.props.alert({
+      content: '确认重新发生订单补偿请求吗?',
+      onOk: () => {
+        auditCompensate({
+          compensateCode: this.compensateCode,
+          operateType: 4
+        }).then(() => {
+          APP.success('发送请求成功')
+          this.fetchDetail()
+          hide()
+        })
+      }
+    })
+  }
   render () {
     const { tabKey, detailLoad, recordLoad, detail, record } = this.state
     return (
@@ -406,6 +447,11 @@ class Main extends React.Component<Props, State> {
                         condition={detail.isCanAudit}
                       >
                         <Button type='primary' size='small' onClick={this.handleAduit}>审核</Button>
+                      </If>
+                      <If
+                        condition={detail.isCanReSent}
+                      >
+                        <Button type='primary' size='small' onClick={this.handleResent}>重新发送</Button>
                       </If>
                     </>
                   }

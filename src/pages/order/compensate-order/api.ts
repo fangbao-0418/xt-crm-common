@@ -57,6 +57,11 @@ export function couponList (data: any) {
   return newPost('/mcweb/sale-after/order/compensate/getCouponsByPage', data)
 }
 
+//优惠券所有优惠券
+export function getCouponsAllList (data: any) {
+  return get('/mcweb/sale-after/order/compensate/getCouponsAllList', data)
+}
+
 //获取用户微信账户
 export function getUserWxAccount (data: any) {
   return get('/mcweb/sale-after/order/compensate/getUserWxAccount', data)

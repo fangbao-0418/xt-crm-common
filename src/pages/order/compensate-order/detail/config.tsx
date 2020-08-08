@@ -1,5 +1,6 @@
 import React from 'react'
 import SearchFetch from '@/components/search-fetch'
+import SelectFetch from '@/packages/common/components/select-fetch'
 import UploadView from '@/components/upload'
 import { OptionProps } from '@/packages/common/components/form/index'
 import { OrderStatusEnum, MemberTypeEnum, PayTypeEnum, CompensatePayTypeEnum } from '../config'
@@ -10,7 +11,7 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      compensateStatus: {
+      operateType: {
         label: '处理方式',
         type: 'radio',
         controlProps: {
@@ -20,10 +21,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         },
         options: [{
           label: '同意',
-          value: 1
+          value: 3
         }, {
           label: '拒绝',
-          value: 0
+          value: 2
         }],
         fieldDecoratorOptions: {
           rules: [
@@ -33,23 +34,25 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       },
       responsibilityType: {
         label: '责任归属',
-        type: 'select',
-        controlProps: {
-          style: {
-            width: 236
-          }
-        },
-        options: [{
-          label: '喜团补偿',
-          value: 1
-        }, {
-          label: '供应商补偿',
-          value: 0
-        }],
-        fieldDecoratorOptions: {
-          rules: [
-            { required: true, message: '责任归属必须选择' }
-          ]
+        inner: (form) => {
+          return form.getFieldDecorator('responsibilityType', {
+            rules: [
+              { required: true, message: '责任归属必须选择' }
+            ]
+          })(
+            <SelectFetch
+              allowClear={false}
+              style={{ width: '100%' }}
+              fetchData={() => {
+                return api.getResponsibilityList().then(res => {
+                  return res.map((item: any) => ({
+                    label: item.responsibilityName,
+                    value: item.responsibilityType
+                  }))
+                })
+              }}
+            />
+          )
         }
       },
       compensateAmount: {
@@ -69,26 +72,39 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       couponCode: {
         label: '优惠券',
         inner: (form) => {
-          return form.getFieldDecorator('couponCode')(
-            <SearchFetch
-              style={{ width: '174px' }}
-              placeholder='请输入优惠券'
-              api={(faceValue) => {
-                return api.couponList({ faceValue, page: 1, pageSize: 500 }).then(res => {
-                  return res.map((item: any) => ({
-                    text: `${item.name}(${item.faceValue})`,
-                    value: item.code
-                  }))
+          return form.getFieldDecorator('couponCode', {
+            rules: [
+              { required: true, message: '优惠券必须选择' }
+            ]
+          })(
+            <SelectFetch
+              allowClear={false}
+              showSearch
+              style={{ width: '100%' }}
+              optionFilterProp='children'
+              filterOption={(input, option) => {
+                return (option.props.children as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }}
+              placeholder='请选择'
+              fetchData={() => {
+                return api.getCouponsAllList({ orderBizType: 0 }).then((res: any) => {
+                  return (res || []).map((item: any) => {
+                    const result = item.faceValue.split(':')
+                    return {
+                      label: `满${(result[0] / 100) || 0}减${(result[1] / 100) || 0}`,
+                      value: item.code
+                    }
+                  })
                 })
               }}
             />
           )
         }
       },
-      illustrate: {
+      transferEvidenceImgs: {
         label: '补偿凭证',
         inner: (form) => {
-          return form.getFieldDecorator('illustrate', {
+          return form.getFieldDecorator('transferEvidenceImgs', {
             rules: [
               {
                 required: true,
@@ -100,13 +116,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               ossType='cos'
               placeholder='请上传'
               listType='picture-card'
-              listNum={1}
+              listNum={3}
               size={0.3}
             />
           )
         }
       },
-      remarks: {
+      illustrate: {
         type: 'textarea',
         label: '备注说明'
       },

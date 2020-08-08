@@ -72,7 +72,7 @@ class GoodsTable extends Component {
   }
   handleCompensate = (record) => {
     const { orderInfo = {}, childOrder = {} } = this.props
-    if (!record.isHasDoingCompensate) {
+    if (!childOrder.isHasDoingCompensate) {
       this.setState({
         modalInfo: {
           orderInfo,
@@ -88,7 +88,7 @@ class GoodsTable extends Component {
         okText: '查看详情',
         cancelText: '取消',
         onOk: () => {
-          APP.history.push(`/order/compensate-order/${record.skuServerId}`)
+          APP.history.push(`/order/compensate-order/${childOrder.doingCompensateCode}`)
         }
       })
     }
@@ -205,7 +205,7 @@ class GoodsTable extends Component {
               </Button>
             </div>
             {
-              childOrder.canShowHistoryBtn && (
+              childOrder.isHisCompensate && (
                 <div>
                   <Button
                     style={{ padding: 0 }}

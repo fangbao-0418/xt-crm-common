@@ -131,6 +131,7 @@ class SkuSaleForm extends React.Component<SkuSaleFormProps, SkuSaleFormState> {
       getCategoryList(),
       getTemplateList()
     ]).then(([res, list, templateOptions]) => {
+      console.log(res, '77777')
       this.modifyTime = res.modifyTime
       // console.log('res.categoryId =>', res.categoryId);
       const categoryId = res.categoryId ? getAllId(treeToarr(list), [res.categoryId], 'pid').reverse() : []

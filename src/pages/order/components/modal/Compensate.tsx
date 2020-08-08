@@ -7,8 +7,16 @@ import { formatFaceValue } from '@/pages/helper'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import { formItemLayout } from '@/config'
 import { compensateApply, getReasonList, responsibilityList, getRoleAmount, getCouponsAllList, getUserWxAccount } from '../../api'
+import App from '@/App'
 const { TextArea } = Input
 const { Option } = Select
+
+enum CustomerRoleEnums {
+  '普通客服' = 1,
+  '客服组长' = 2,
+  '客服主管' = 3,
+  '客服经理' = 4,
+}
 
 interface Props extends FormComponentProps {
   modalInfo: any;
@@ -23,6 +31,10 @@ interface State {
   responsibilityList: any[]
   /* 免费审核额度 */
   quota: number
+  /* 不同等级的审核值 */
+  roleQuotas: any[]
+  /* 客服等级 */
+  roleType: number
   wxAccountList: any[]
   /* 微信选项是否禁用 */
   wxDisable: boolean
@@ -33,8 +45,10 @@ class Compensate extends React.Component<Props, State> {
     oneReasons: [],
     responsibilityList: [],
     quota: 0,
+    roleQuotas: [],
     wxAccountList: [],
-    wxDisable: false
+    wxDisable: false,
+    roleType: 0
   }
   fetchReasons = () => {
     getReasonList().then((oneReasons: any[]) => {
@@ -53,7 +67,9 @@ class Compensate extends React.Component<Props, State> {
   fetchRoleAmount = () => {
     getRoleAmount().then((res: any) => {
       this.setState({
-        quota: res?.quota
+        quota: res?.quota,
+        roleQuotas: (res?.roleQuotas || []).filter((item: any) => item.orderBizType === 0),
+        roleType: res?.roleType
       })
     })
   }
@@ -113,8 +129,8 @@ class Compensate extends React.Component<Props, State> {
         } else if (compensatePayType === 13) {
           // 微信转账
           const [receiptorAccountNo, recepitorAccountName] = (wxInfo || '').split('|')
-          values.receiptorAccountNo = recepitorAccountName
-          values.recepitorAccountName = receiptorAccountNo
+          values.receiptorAccountNo = receiptorAccountNo
+          values.recepitorAccountName = recepitorAccountName
           values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
         } else if (compensatePayType === 10) {
           // 优惠券
@@ -136,6 +152,38 @@ class Compensate extends React.Component<Props, State> {
       }
     })
   };
+  getAuditMsg = (amount: number = 0) => {
+    amount = amount * 100
+    const { roleQuotas, roleType } = this.state
+    const quotas = roleQuotas.map(item => item.quota).sort((x, y) => y - x)
+    const curentRoleQuota = roleQuotas.find(item => item.roleType === roleType)
+    const max = Math.max(...quotas)
+    if (amount <= curentRoleQuota?.quota) {
+      return (
+        <div style={{ color: 'green' }} className='ml10'>额度内，无需审核</div>
+      )
+    }
+    if (amount > max) {
+      return (
+        <div style={{ color: 'red' }} className='ml10'>
+          超出最大审核限制{APP.fn.formatMoney(max)}
+        </div>
+      )
+    }
+    const l = quotas.length
+    for (let i = 0; i < l; i++) {
+      const cur = quotas[i]
+      if (amount > cur) {
+        const curItem = roleQuotas.find(item => item.quota === cur)
+        return (
+          <div style={{ color: 'red' }} className='ml10'>超出额度，需要{CustomerRoleEnums[curItem?.roleType]}审核！</div>
+        )
+      } else {
+        continue
+      }
+    }
+  }
+
   render () {
     const {
       form: { getFieldDecorator, getFieldValue, setFieldsValue }
@@ -148,6 +196,7 @@ class Compensate extends React.Component<Props, State> {
     if (oneReasonType !== undefined) {
       twoReasons = oneReasons.find(item => item.reasonType === oneReasonType)?.twoLevelReasonList
     }
+
     return (
       <Modal
         width={680}
@@ -250,17 +299,7 @@ class Compensate extends React.Component<Props, State> {
                 <div className='ml10'>
                   当前级别免审核额度：{APP.fn.formatMoney(quota)}
                 </div>
-                {
-                  (compensateAmount && compensateAmount > quota / 100) ? (
-                    <div style={{ color: 'red' }} className='ml10'>
-                      超出额度，需要客服主管审核！
-                    </div>
-                  ) : (
-                    <div style={{ color: 'green' }} className='ml10'>
-                      额度内，无需审核！
-                    </div>
-                  )
-                }
+                { this.getAuditMsg(compensateAmount) }
               </div>
             </Form.Item>
           </If>

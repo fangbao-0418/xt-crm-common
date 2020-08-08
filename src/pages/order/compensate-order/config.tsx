@@ -226,5 +226,5 @@ export enum CompensatePayTypeEnum {
   '喜团账户余额' = 11,
   '支付宝转账' = 12,
   '微信转账' = 13,
-  '优惠券' = 14
+  '优惠券' = 10
 }
