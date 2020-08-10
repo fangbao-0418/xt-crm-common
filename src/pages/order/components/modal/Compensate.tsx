@@ -146,7 +146,7 @@ class Compensate extends React.Component<Props, State> {
           ...values
         })
         if (res) {
-          message.success('发送补偿成功')
+          message.success('申请成功')
           this.props.successCb()
         }
       }

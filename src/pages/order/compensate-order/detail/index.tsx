@@ -248,7 +248,7 @@ class Main extends React.Component<Props, State> {
     const max = Math.max(...quotas)
     if (amount <= curentRoleQuota?.quota) {
       return (
-        '<div style="color: gerren;">额度内，无需审核</div>'
+        '<div style="color: green;">额度内，无需审核</div>'
       )
     }
     if (amount > max) {
@@ -276,7 +276,7 @@ class Main extends React.Component<Props, State> {
     const { detail, wxAccountList, quota } = this.state
     let form: FormInstance
     let msgRef: HTMLDivElement
-    this.props.alert({
+    const hide = this.props.alert({
       title: '审核',
       content: (
         <Form
@@ -319,9 +319,11 @@ class Main extends React.Component<Props, State> {
                 name='compensateAmount'
               />
               <FormItem style={{ margin: '-24px 0 0' }}>
-                <div>
+                <div style={{ lineHeight: '20px', paddingBottom: 16 }}>
                   <div>当前级别免审核额度：{APP.fn.formatMoney(quota)}</div>
-                  <div ref={(ref: any) => msgRef = ref}>msg</div>
+                  <div ref={(ref: any) => msgRef = ref}>
+                    <div dangerouslySetInnerHTML={{ __html: this.getAuditMsg(detail.compensateAmount / 100) || '' }}></div>
+                  </div>
                 </div>
               </FormItem>
             </>
@@ -398,6 +400,7 @@ class Main extends React.Component<Props, State> {
             compensateCode: this.compensateCode,
             ...values
           }).then(() => {
+            hide
             APP.success('操作成功')
             this.fetchDetail()
           })
@@ -418,7 +421,7 @@ class Main extends React.Component<Props, State> {
 
   fetchRoleAmount = () => {
     const { detail } = this.state
-    if ([CompensatePayTypeEnum['微信转账'], CompensatePayTypeEnum['支付宝转账'], CompensatePayTypeEnum['微信转账']].includes(detail.compensatePayType)) {
+    if (![CompensatePayTypeEnum['微信转账'], CompensatePayTypeEnum['支付宝转账'], CompensatePayTypeEnum['喜团账户余额']].includes(detail.compensatePayType)) {
       return
     }
     getRoleAmount().then((res: any) => {
