@@ -24,8 +24,13 @@ class BaseCard extends React.Component {
               <FormItem label="商品类目">
                 <div>
                   <p className="ant-form-text">{baseInfo.productCategory}</p>
-                  <p style={{color: 'red'}}>平台服务费: {baseInfo.commission}</p>
+                  <p style={{color: 'red'}}>
+                    技术服务费 {baseInfo?.productCategoryVO?.companyRate}%  推广佣金{baseInfo?.productCategoryVO?.agencyRate}%
+                  </p>
                 </div>
+              </FormItem>
+              <FormItem label='佣金上浮'>
+                <span className="ant-form-text">{baseInfo.commissionIncreaseRate}%</span>
               </FormItem>
               <FormItem label="商品名称">
                 <span className="ant-form-text">{baseInfo.productName}</span>

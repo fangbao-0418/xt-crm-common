@@ -289,9 +289,9 @@ class Main extends React.Component<Props> {
                   <Select placeholder='请选择账务对象类型' allowClear >
                     <Select.Option value={1}>供应商</Select.Option>
                     <Select.Option value={2}>喜团小店</Select.Option>
+                    <Select.Option value={3}>pop店</Select.Option>
                   </Select>
-                )
-                )
+                ))
               }}
             />
             <FormItem

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Card, Form, Input, Button, DatePicker, InputNumber } from 'antd'
+import { Table, Card, Form, Input, Select, Button, DatePicker, InputNumber, message } from 'antd'
 import moment from 'moment'
 import { querySupplierList, exportSupplier } from '../api'
 import SupplierModal from '../supplier-modal'
@@ -7,6 +7,7 @@ import AccountModal from '../account-modal'
 import SupplierTypeSelect from '@/components/supplier-type-select'
 import MoneyRender from '@/components/money-render'
 const FormItem = Form.Item
+const Option=Select.Option
 
 const { RangePicker } = DatePicker
 class OrderList extends React.Component {

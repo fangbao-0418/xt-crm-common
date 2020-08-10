@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Modal, Input, Badge, Card, Form, Button } from 'antd'
+import { Table, Modal, Input, Badge, Card, Form, Button, message } from 'antd'
 import { XtSelect } from '@/components'
 import _ from 'lodash'
 import { ColumnProps } from 'antd/lib/table'
@@ -26,6 +26,7 @@ export interface Props extends FormComponentProps {
   type?: 'checkbox' | 'radio'
   /** 优惠券请求参数处理 */
   processPayload?: (payload: any) => any
+  maxCheckedNum?:number
 }
 export interface State extends PageProps<Coupon.CouponItemProps> {
   selectedRowKeys: any[]
@@ -142,18 +143,31 @@ class CouponModal extends React.Component<Props, State> {
       this.setState({ ...res })
     })
   }
-  public onrowSelectionChange(selectedRowKeys: any[]) {
+  public onrowSelectionChange(selectedRowKeys: any[], selectedRows: any[]) {
+    if(selectedRowKeys&&this.props.maxCheckedNum&&selectedRowKeys.length>this.props.maxCheckedNum){
+      message.info('优惠券最多选择'+this.props.maxCheckedNum+'张')
+      return
+    }
+    this.selectedRows = _.unionBy(this.selectedRows, selectedRows, (v: any) => v.id).filter(v => selectedRowKeys.includes(v.id))
+    console.log('this.selectedRows', this.selectedRows, selectedRowKeys)
     this.setState({
       selectedRowKeys
     })
   }
   public onSelect (record: Coupon.CouponItemProps, selected: boolean, selectedRows: any[]) {
-    this.selectedRows = selectedRows
+    const {selectedRowKeys}=this.state
+    if(selectedRowKeys&&this.props.maxCheckedNum&&selectedRowKeys.length>this.props.maxCheckedNum){
+      return
+    }
     if (this.props.onSelect) {
       this.props.onSelect(record, selected)
     }
   }
   public onSelectAll (selected: boolean, selectedRows: Coupon.CouponItemProps[], changeRows: Coupon.CouponItemProps[]) {
+    if(this.props.maxCheckedNum){
+      message.info('不可全选，优惠券最多选择'+this.props.maxCheckedNum+'张')
+      return
+    }
     if (this.props.onSelectAll) {
       this.props.onSelectAll(selected, selectedRows, changeRows)
     }

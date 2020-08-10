@@ -25,4 +25,6 @@ interface FnProps {
   /** 格式化危险字符串数据 */
   formatUnsafeString: (str: string) => string
   formatUnSafeData: <T = any>(data: T) => T
+  wrapApi: (fn: any, empties?: any, value?: any) => any
+  checkEmptyParams: (res: any, omits?: string[]) => any
 }

@@ -125,9 +125,9 @@ export default class extends Component {
 
     payload = Object.assign({}, defaultPayload, APP.fn.getPayload(namespace))
 
-    componentDidMount () {
-      this.handleSearch()
-    }
+    // componentDidMount () {
+    //   this.handleSearch()
+    // }
 
     onInviteClick = (item) => {
       const { history } = this.props
