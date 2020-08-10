@@ -219,7 +219,8 @@ class Main extends React.Component<Props, State> {
       title: '操作人',
       render: (_: any, record: any) => {
         return (
-          record.operatorRoleName + ': ' + record.operatorName
+          // record.operatorRoleName + ': ' + record.operatorName
+          record.operatorName || '-'
         )
       }
     }

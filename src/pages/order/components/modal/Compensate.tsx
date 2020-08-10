@@ -3,10 +3,9 @@ import { Form, Input, InputNumber, Modal, message, Select, Row, Col, Radio } fro
 import { FormComponentProps } from 'antd/lib/form'
 import UploadView from '@/components/upload'
 import { If } from '@/packages/common/components'
-import { formatFaceValue } from '@/pages/helper'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import { formItemLayout } from '@/config'
-import { compensateApply, getReasonList, responsibilityList, getRoleAmount, getCouponsAllList, getUserWxAccount } from '../../api'
+import { compensateApply, getReasonList, getRoleAmount, getCouponsAllList, getUserWxAccount } from '../../api'
 import App from '@/App'
 import { AnyCnameRecord } from 'dns'
 const { TextArea } = Input
@@ -28,8 +27,6 @@ interface Props extends FormComponentProps {
 interface State {
   /* 一级补偿原因 */
   oneReasons: any[]
-  /* 责任归属 */
-  responsibilityList: any[]
   /* 免费审核额度 */
   quota: number
   /* 不同等级的审核值 */
@@ -45,7 +42,6 @@ class Compensate extends React.Component<Props, State> {
   couponCodeList: any = []
   state: State = {
     oneReasons: [],
-    responsibilityList: [],
     quota: 0,
     roleQuotas: [],
     wxAccountList: [],
@@ -56,13 +52,6 @@ class Compensate extends React.Component<Props, State> {
     getReasonList().then((oneReasons: any[]) => {
       this.setState({
         oneReasons: oneReasons || []
-      })
-    })
-  }
-  fetchResponsibilityList = () => {
-    responsibilityList().then((responsibilityList: any[]) => {
-      this.setState({
-        responsibilityList: responsibilityList || []
       })
     })
   }
@@ -86,7 +75,6 @@ class Compensate extends React.Component<Props, State> {
   }
   componentDidMount () {
     this.fetchReasons()
-    this.fetchResponsibilityList()
     this.fetchRoleAmount()
     this.fetchWxAccount()
   }
@@ -200,7 +188,7 @@ class Compensate extends React.Component<Props, State> {
     const {
       form: { getFieldDecorator, getFieldValue, setFieldsValue }
     } = this.props
-    const { oneReasons, responsibilityList, quota, wxAccountList, wxDisable } = this.state
+    const { oneReasons, quota, wxAccountList, wxDisable } = this.state
     const compensatePayType = getFieldValue('compensatePayType')
     const oneReasonType = getFieldValue('oneReasonType')
     const compensateAmount = getFieldValue('compensateAmount')
@@ -297,11 +285,10 @@ class Compensate extends React.Component<Props, State> {
               rules: [{ required: true, message: '请填写' }]
             })(
               <Select placeholder='请选择' style={{ width: '100%' }}>
-                {
-                  responsibilityList.map(item => (
-                    <Option key={item.responsibilityType} value={item.responsibilityType}>{item.responsibilityName}</Option>
-                  ))
-                }
+                <Option value={10}>商家</Option>
+                <Option value={20}>平台</Option>
+                <Option value={30}>仓配</Option>
+                <Option value={40}>客服</Option>
               </Select>
             )}
           </Form.Item>

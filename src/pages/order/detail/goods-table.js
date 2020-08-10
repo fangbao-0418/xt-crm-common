@@ -195,15 +195,19 @@ class GoodsTable extends Component {
                 </Button>
               )}
             </div>
-            <div>
-              <Button
-                style={{ padding: 0 }}
-                type='link'
-                size='small'
-                onClick={() => this.handleCompensate(record)}>
-                发起补偿
-              </Button>
-            </div>
+            {
+              childOrder.canApplyOrderCompensate && (
+                <div>
+                  <Button
+                    style={{ padding: 0 }}
+                    type='link'
+                    size='small'
+                    onClick={() => this.handleCompensate(record)}>
+                    发起补偿
+                  </Button>
+                </div>
+              )
+            }
             {
               childOrder.isHisCompensate && (
                 <div>

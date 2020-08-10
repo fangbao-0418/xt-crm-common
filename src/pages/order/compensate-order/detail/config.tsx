@@ -34,25 +34,27 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       },
       responsibilityType: {
         label: '责任归属',
-        inner: (form) => {
-          return form.getFieldDecorator('responsibilityType', {
-            rules: [
-              { required: true, message: '责任归属必须选择' }
-            ]
-          })(
-            <SelectFetch
-              allowClear={false}
-              style={{ width: '100%' }}
-              fetchData={() => {
-                return api.getResponsibilityList().then(res => {
-                  return res.map((item: any) => ({
-                    label: item.responsibilityName,
-                    value: item.responsibilityType
-                  }))
-                })
-              }}
-            />
-          )
+        type: 'select',
+        options: [{
+          label: '商家',
+          value: 10
+        }, {
+          label: '平台',
+          value: 20
+        }, {
+          label: '仓配',
+          value: 30
+        }, {
+          label: '客服',
+          value: 40
+        }],
+        controlProps: {
+          allowClear: false
+        },
+        fieldDecoratorOptions: {
+          rules: [
+            { required: true, message: '请选择责任归属' }
+          ]
         }
       },
       compensateAmount: {
@@ -125,6 +127,9 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       illustrate: {
         type: 'textarea',
         label: '备注说明',
+        formItemProps: {
+          extra: '1111'
+        },
         controlProps: {
           maxLength: 200
         }
