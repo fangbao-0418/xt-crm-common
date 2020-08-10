@@ -1,12 +1,25 @@
 import React from 'react'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import { Button } from 'antd'
-import { ColumnProps } from 'antd/lib/table'
+import { Button, Icon, InputNumber, Popconfirm } from 'antd'
+import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import { GoodsProps } from './interface'
 import { getFieldsConfig } from './config'
 import Image from '@/components/Image'
+import * as api from './api'
+import ShopModal from './components/shop-modal'
+import styles from './style.module.styl'
 
-class Main extends React.Component {
+interface State {
+  editId?: any
+  record?: GoodsProps
+  selectedRowKeys: any[]
+}
+
+class Main extends React.Component<{}, State> {
+  public shopModal: ShopModal
+  public state: State = {
+    selectedRowKeys: []
+  }
   public columns: ColumnProps<GoodsProps>[] = [
     { title: '商品ID', dataIndex: 'id' },
     {
@@ -22,119 +35,171 @@ class Main extends React.Component {
     { title: '上架状态', dataIndex: 'status' },
     { title: '供应商', dataIndex: 'payType' },
     { title: '销售价', dataIndex: 'storeName' },
-    { title: '积分可抵扣比例', dataIndex: 'exchangeRate' },
+    {
+      title: '积分可抵扣比例',
+      dataIndex: 'exchangeRate',
+      render: (text, record) => {
+        const { editId } = this.state
+        return editId === record.id ? (
+          <InputNumber
+            defaultValue={100}
+            min={0}
+            max={100}
+            formatter={value => `${value}%`}
+            value={this.state.record?.exchangeRate}
+            parser={value => {
+              return Number(value?.replace?.('%', '') || 0)
+            }}
+            onChange={(e) => {
+              record.exchangeRate = e || 0
+              this.setState({
+                record
+              })
+            }}
+          />
+        ) : (
+          <div>
+            <span className='mr8'>
+              {text}%
+            </span>
+            <Icon
+              onClick={() => {
+                this.setState({
+                  editId: record.id,
+                  record
+                })
+              }}
+              type='form'
+            />
+          </div>
+        )
+      }
+    },
     {
       title: '操作',
       width: 140,
       align: 'center',
-      render: () => {
+      render: (text, record) => {
+        const { editId } = this.state
         return (
           <div>
-            <Button
-              type='primary'
-              size='small'
-              className='mb8'
+            {editId === record.id && (
+              <>
+                <span
+                  className='href mr8'
+                  onClick={() => {
+                    this.updateExchange(record.id)
+                  }}
+                >
+                  保存
+                </span>
+                <span
+                  className='href mr8'
+                  onClick={() => {
+                    this.setState({
+                      editId: undefined
+                    })
+                  }}
+                >
+                  取消
+                </span>
+              </>
+            )}
+            <Popconfirm
+              title='确定是否删除该商品？'
+              onConfirm={() => {
+                this.toDelete([record.id])
+              }}
             >
-              提现成功
-            </Button>
-            <Button
-              size='small'
-            >
-              提现失败
-            </Button>
+              <span
+                className='danger'
+              >
+                删除
+              </span>
+            </Popconfirm>
           </div>
         )
       }
     }
   ]
   public listpage: ListPageInstanceProps
+  public updateExchange (id: any) {
+    const { record } = this.state
+    if (!record) {
+      return
+    }
+    api.updateExchange({
+      id,
+      exchangeRate: record.exchangeRate
+    }).then(() => {
+      this.setState({
+        editId: undefined
+      })
+    })
+  }
+  public toDelete (ids: any[]) {
+    api.toDelete(ids).then(() => {
+      this.listpage.refresh()
+    })
+  }
+  public onRowSelectionChange = (selectedRowKeys: any[]) => {
+    console.log(selectedRowKeys, 'selectedRowKeys')
+    this.setState({
+      selectedRowKeys: selectedRowKeys
+    })
+  }
   public render () {
+    const { selectedRowKeys } = this.state
+    const rowSelection: TableRowSelection<CreditPay.ItemProps> = {
+      selectedRowKeys,
+      onChange: this.onRowSelectionChange
+    }
     return (
-      <div>
-        <ListPage
-          columns={this.columns}
-          showButton={false}
-          getInstance={(ref) => {
-            this.listpage = ref
+      <div className={styles.page}>
+        <ShopModal
+          getInstance={(ref) => this.shopModal = ref}
+          onOk={(rows, hide) => {
+            const ids = rows.map((item) => item.id)
+            api.addExchange(ids).then(() => {
+              this.listpage.refresh()
+              hide()
+            })
           }}
+        />
+        <ListPage
+          rowSelection={rowSelection}
+          columns={this.columns}
           addonAfterSearch={(
             <div>
               <Button
                 type='primary'
-                className='mr8'
                 onClick={() => {
-                  this.listpage.refresh()
+                  this.shopModal.open()
                 }}
               >
-                查询
+                新增商品
               </Button>
-              <Button
-                className='mr8'
-                onClick={() => {
-                  this.listpage.refresh(true)
-                }}
-              >
-                取消
-              </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.listpage.refresh()
-                }}
-              >
-                批量支付
-              </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.listpage.refresh()
-                }}
-              >
-                批量失败
-              </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.listpage.refresh()
-                }}
-              >
-                批量导出
-              </Button>
-              <div className='fr'>
-                <span
-                  className='download mr8'
-                  onClick={() => {
-                    APP.fn.download(require('@/pages/fresh/assets/批量支付模版.xlsx'), '批量支付模版')
-                  }}
-                >
-                  下载批量支付模版
-                </span>
-                <span
-                  className='download'
-                  onClick={() => {
-                    APP.fn.download(require('@/pages/fresh/assets/批量失败模版.xlsx'), '批量失败模版')
-                  }}
-                >
-                  下载批量失败模版
-                </span>
-              </div>
             </div>
           )}
-          api={() => {
-            return Promise.resolve({
-              total: 0,
-              records: [
-                {
-                  supplierCashOutId: '2222'
-                }
-              ]
-            })
+          getInstance={(ref) => {
+            this.listpage = ref
           }}
+          api={api.fetchList}
           formConfig={getFieldsConfig()}
         />
+        <Popconfirm
+          title='确定是否批量删除？'
+          onConfirm={() => {
+            this.toDelete(selectedRowKeys)
+          }}
+        >
+          <Button
+            className={styles.delete}
+            type='primary'
+          >
+            批量删除
+          </Button>
+        </Popconfirm>
       </div>
     )
   }
