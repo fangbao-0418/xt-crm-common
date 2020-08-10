@@ -64,9 +64,11 @@ class GoodsDetail extends React.Component {
         productCategory: goodsInfo.productCategoryVO && goodsInfo.productCategoryVO.combineName || '暂无数据',
         commission: (goodsInfo.productCategoryVO && (goodsInfo.productCategoryVO.agencyRate + goodsInfo.productCategoryVO.companyRate) || 0) + ' %',
         productName: goodsInfo.productName || '暂无数据',
+        commissionIncreaseRate: goodsInfo.commissionIncreaseRate||0,
         productImage: goodsInfo.productImage.split(','),
         listImage: goodsInfo.listImage.split(','),
-        saleCount: goodsInfo.saleCount || 0
+        saleCount: goodsInfo.saleCount || 0,
+        productCategoryVO: goodsInfo.productCategoryVO
       }
 
       skuInfo = {

@@ -49,9 +49,9 @@ export function verifyDownDgrade (data: any) {
   return newPost('/order/afterSale/check/downHeadgrade', data)
 }
 
-export function getOrderList (data: any) {
+export const getOrderList = APP.fn.wrapApi((data: any) => {
   return post('/order/list', data)
-}
+}, ['orderStatus'])
 
 // 客服代申请售后单个商品详情
 export function getProductDetail ({ mainOrderId, skuId }: any) {
@@ -189,7 +189,7 @@ export function customerAddCheck (data: any) {
   })
 }
 
-export function refundList (data: any) {
+export const refundList  = (data: any) => {
   return fetch('/order/afterSale/list', {
     method: 'POST',
     data
@@ -201,6 +201,9 @@ export function refundDetail (params: any) {
 }
 
 export function newExportOrder (data: any) {
+  if (APP.fn.checkEmptyParams(data, ['orderStatus'])) {
+    return Promise.reject();
+  }
   return APP.http.get('/order/export', {
     ...data,
     rangePicker: undefined,
@@ -226,7 +229,7 @@ export function closeRefund (data: any) {
   return post(`/order/afterSale/close/${data.id}`)
 }
 
-export function exportRefund (data: any) {
+export const exportRefund = (data: any) => {
   return exportFile('/order/afterSale/export', data)
 }
 

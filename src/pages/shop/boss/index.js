@@ -1,6 +1,6 @@
 import React from 'react'
 import { withRouter } from 'react-router'
-import { Card, Button, Input, Select, Modal, Tabs } from 'antd'
+import { Card, Button, Input, Select, Modal, Tabs, message } from 'antd'
 import Form, { FormItem } from '@/packages/common/components/form'
 import CommonTable from '@/components/common-table'
 import SwitchModal from './components/switchModal'
@@ -299,7 +299,7 @@ class Main extends React.Component {
       shopStatus: undefined,
       shopTypes: [],
       categoryIds: [],
-      applyResult
+      applyResult: undefined
     })
     this.setState({
       tabKey: applyResult

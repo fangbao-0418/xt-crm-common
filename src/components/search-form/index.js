@@ -50,7 +50,6 @@ export default class extends PureComponent {
 
   renderSelect = (item) => {
     const { options, controllerProps } = item
-    console.log('options=>', options)
     const placeholder = '请选择' + item.label
     return (
       <Select

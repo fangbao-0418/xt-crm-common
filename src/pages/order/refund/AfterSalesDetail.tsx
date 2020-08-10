@@ -1,12 +1,12 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import AfterSalesProcessing from './AfterSalesProcessing';
-import OrderInfo from './components/OrderInfo';
-import PendingReview from './PendingReview';
-import { namespace } from './model';
-import { Card, Row, Col } from 'antd';
+import React from 'react'
+import { connect } from 'react-redux'
+import AfterSalesProcessing from './AfterSalesProcessing'
+import OrderInfo from './components/OrderInfo'
+import PendingReview from './PendingReview'
+import { namespace } from './model'
+import { Card, Row, Col } from 'antd'
 import { If } from '@/packages/common/components'
-import { enumRefundStatus, enumRefundType } from '../constant';
+import { enumRefundStatus, enumRefundType } from '../constant'
 interface AfterSalesDetailProps {
   data: AfterSalesInfo.data;
 }
@@ -21,19 +21,20 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
     const orderServerVO = Object.assign({}, this.props.data.orderServerVO)
     return orderServerVO.refundStatus === refundStatus
   }
-  getInfo(data: AfterSalesInfo.data) {
-    let infoStr = data?.supplierHandLogS?.[0]?.info || '[]';
+  getInfo (data: AfterSalesInfo.data) {
+    const infoStr = data?.supplierHandLogS?.[0]?.info || '[]'
     let result = []
     try {
-      result = JSON.parse(infoStr);
+      result = JSON.parse(infoStr)
     } catch (error) {
-      result = infoStr;
+      result = infoStr
     }
-    return result;
+    return result
   }
   render () {
-    let { data } = this.props;
-    const info = this.getInfo(data);
+    const { data } = this.props
+    const { orderInfoVO, shopDTO, ...restData } = data
+    const info = this.getInfo(data)
     console.log('info', info, typeof info)
     return (
       <>
@@ -55,11 +56,11 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
               <Card>
                 <h3>供应商处理信息</h3>
                 <Row>说明：{info}</Row>
-            </Card>
+              </Card>
             )}
           </>
         )}
-        <OrderInfo orderInfoVO={data.orderInfoVO} shopDTO={data.shopDTO} />
+        <OrderInfo orderInfoVO={orderInfoVO} shopDTO={shopDTO} restData={restData} />
       </>
     )
   }

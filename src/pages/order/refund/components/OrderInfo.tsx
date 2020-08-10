@@ -19,18 +19,21 @@ type ProductVO = AfterSalesInfo.ProductVO
 type ShopDTO = AfterSalesInfo.ShopDTO
 const columns: ColumnProps<ProductVO>[] = getDetailColumns()
 interface Props extends React.Props<{}> {
+  restData?: any
   orderInfoVO: OrderInfoVO
   shopDTO: ShopDTO
 }
 const OrderInfo: React.FC<Props> = (props: Props) => {
   const orderInfoVO = Object.assign({}, props.orderInfoVO)
   const shopDTO = props.shopDTO
+  const restData = props.restData
   return (
     <Card>
       <h4 style={{ marginTop: 0 }}>订单信息</h4>
       <Row gutter={24}>
         <Col span={8}>
-          主订单号：<Link
+          主订单号：
+          <Link
             to={`/order/detail/${orderInfoVO.mainOrderCode}`}
           >
             {orderInfoVO.mainOrderCode}
@@ -120,7 +123,11 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
           </Col>
         </Row>
       ) : (
-        '暂无信息'
+        <Row gutter={24}>
+          <Col span={8}>
+            名称：{restData?.storeName || '暂无数据'}
+          </Col>
+        </Row>
       )}
       <Row>
         <h4>物流信息</h4>

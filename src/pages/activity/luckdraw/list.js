@@ -99,7 +99,6 @@ class List extends React.Component {
         };
         console.log('params', params);
         getLotteryList(params).then(res => {
-          console.log('res', res);
           if (res) {
             this.setState({
               selectedRows: [],
