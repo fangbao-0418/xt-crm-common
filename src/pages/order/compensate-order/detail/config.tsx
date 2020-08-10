@@ -117,14 +117,17 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               placeholder='请上传'
               listType='picture-card'
               listNum={3}
-              size={0.3}
+              size={2}
             />
           )
         }
       },
       illustrate: {
         type: 'textarea',
-        label: '备注说明'
+        label: '备注说明',
+        controlProps: {
+          maxLength: 200
+        }
       },
       receiptorAccountName: {
         label: '姓名',

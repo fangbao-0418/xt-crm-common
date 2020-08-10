@@ -8,6 +8,7 @@ import SelectFetch from '@/packages/common/components/select-fetch'
 import { formItemLayout } from '@/config'
 import { compensateApply, getReasonList, responsibilityList, getRoleAmount, getCouponsAllList, getUserWxAccount } from '../../api'
 import App from '@/App'
+import { AnyCnameRecord } from 'dns'
 const { TextArea } = Input
 const { Option } = Select
 
@@ -41,6 +42,7 @@ interface State {
 }
 
 class Compensate extends React.Component<Props, State> {
+  couponCodeList: any = []
   state: State = {
     oneReasons: [],
     responsibilityList: [],
@@ -183,7 +185,17 @@ class Compensate extends React.Component<Props, State> {
       }
     }
   }
-
+  handleTwoReasonType = (value: any, select: any) => {
+    const { oneReasons } = this.state
+    const { form: { setFieldsValue } } = this.props
+    const [oneId, twoId] = select.key.split('|')
+    const curTwolist = oneReasons.find((item: any) => item.id === +oneId)?.twoLevelReasonList || []
+    const twoObj = curTwolist.find((item: any) => item.id === +twoId)
+    console.log([oneId, twoId], curTwolist, twoObj, oneReasons)
+    setFieldsValue({
+      responsibilityType: twoObj?.responsibilityType
+    })
+  }
   render () {
     const {
       form: { getFieldDecorator, getFieldValue, setFieldsValue }
@@ -192,9 +204,17 @@ class Compensate extends React.Component<Props, State> {
     const compensatePayType = getFieldValue('compensatePayType')
     const oneReasonType = getFieldValue('oneReasonType')
     const compensateAmount = getFieldValue('compensateAmount')
+    const couponCode = getFieldValue('couponCode')
     let twoReasons = []
     if (oneReasonType !== undefined) {
       twoReasons = oneReasons.find(item => item.reasonType === oneReasonType)?.twoLevelReasonList
+    }
+
+    let couponMoneny = 0
+
+    if (couponCode && this.couponCodeList.length) {
+      const faceValue = this.couponCodeList.find((item: any) => item.code === couponCode)?.faceValue
+      couponMoneny = faceValue?.split(':')?.[1]
     }
 
     return (
@@ -246,7 +266,7 @@ class Compensate extends React.Component<Props, State> {
                   >
                     {
                       oneReasons.map(item => (
-                        <Option key={item.id} value={item.reasonType}>{item.reasonName}</Option>
+                        <Option key={item.parentId + '|' + item.id} value={item.reasonType}>{item.reasonName}</Option>
                       ))
                     }
                   </Select>
@@ -261,10 +281,10 @@ class Compensate extends React.Component<Props, State> {
                     }
                   ]
                 })(
-                  <Select placeholder='请选择' style={{ width: '100%' }}>
+                  <Select onChange={this.handleTwoReasonType} placeholder='请选择' style={{ width: '100%' }}>
                     {
                       twoReasons.map((item: any) => (
-                        <Option key={item.id} value={item.reasonType}>{item.reasonName}</Option>
+                        <Option key={item.parentId + '|' + item.id} value={item.reasonType}>{item.reasonName}</Option>
                       ))
                     }
                   </Select>
@@ -318,6 +338,7 @@ class Compensate extends React.Component<Props, State> {
                   placeholder='请选择'
                   fetchData={() => {
                     return getCouponsAllList({ orderBizType: 0 }).then((res: any) => {
+                      this.couponCodeList = res || []
                       return (res || []).map((item: any) => {
                         const result = item.faceValue.split(':')
                         return {
@@ -333,17 +354,7 @@ class Compensate extends React.Component<Props, State> {
                 <div className='ml10'>
                 当前级别免审核额度：{APP.fn.formatMoney(quota)}
                 </div>
-                {
-                  (compensateAmount && compensateAmount > quota / 100) ? (
-                    <div style={{ color: 'red' }} className='ml10'>
-                      超出额度，需要客服主管审核！
-                    </div>
-                  ) : (
-                    <div style={{ color: 'green' }} className='ml10'>
-                      额度内，无需审核！
-                    </div>
-                  )
-                }
+                { this.getAuditMsg(couponMoneny / 100) }
               </div>
             </Form.Item>
           </If>
@@ -390,14 +401,16 @@ class Compensate extends React.Component<Props, State> {
               )}
             </Form.Item>
           </If>
-          <Form.Item label='补偿凭证'>
-            {getFieldDecorator('transferEvidenceImgs')(
-              <UploadView placeholder='请上传' listType='picture-card' listNum={4} size={2} />
+          <Form.Item label='补偿凭证' extra='最多上传3张图片, 大小不能超过2M'>
+            {getFieldDecorator('transferEvidenceImgs', {
+              rules: [{ required: true, message: '请上传图片' }]
+            })(
+              <UploadView placeholder='请上传' listType='picture-card' listNum={3} size={2} />
             )}
           </Form.Item>
-          <Form.Item label='补偿说明'>
+          <Form.Item label='补偿说明' extra='最多不超过200个字'>
             {getFieldDecorator('illustrate')(
-              <TextArea />
+              <TextArea maxLength={200} />
             )}
           </Form.Item>
         </Form>

@@ -380,7 +380,7 @@ class Main extends React.Component<Props, State> {
               />
             </>
           </If>
-          <FormItem name='transferEvidenceImgs' />
+          <FormItem required name='transferEvidenceImgs' />
           <FormItem name='illustrate' />
         </Form>
       ),
