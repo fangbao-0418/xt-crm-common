@@ -178,6 +178,16 @@ class Main extends React.Component<Props> {
               x: true
             }
           }}
+          addonAfterSearch={(
+            <div>
+              <Button
+                type='primary'
+                onClick={this.export}
+              >
+                导出
+              </Button>
+            </div>
+          )}
           processPayload={({ ...payload }) => {
             if (status === '-2') { // tab 全部
               payload.transferStatus=undefined
@@ -199,5 +209,18 @@ class Main extends React.Component<Props> {
       </div>
     )
   }
+  public export = () => {
+    const payload = this.listpage.form.getValues()
+    const {status} =this.state
+    if (status === '-2') { // tab 全部
+      payload.transferStatus=undefined
+    } else {
+      payload.transferStatus=parseInt(status)
+    }
+    api.batchExport({...payload})
+    .then(res => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
+  };
 }
 export default Alert(Main)
