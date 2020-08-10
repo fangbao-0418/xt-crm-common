@@ -228,3 +228,10 @@ export enum CompensatePayTypeEnum {
   '微信转账' = 13,
   '优惠券' = 10
 }
+
+enum CustomerRoleEnums {
+  '普通客服' = 1,
+  '客服组长' = 2,
+  '客服主管' = 3,
+  '客服经理' = 4,
+}

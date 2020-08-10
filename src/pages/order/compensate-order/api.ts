@@ -71,3 +71,10 @@ export function getUserWxAccount (data: any) {
 export function addCoupons (data: any) {
   return newPost('/mcweb/sale-after/order/compensate/addCoupons', data)
 }
+
+//客服角色补偿最大额度 入参orderBizType 订单业务类型: 0-喜团订单，10-买菜订单
+export function getRoleAmount () {
+  return get('/mcweb/sale-after/order/compensate/getRoleAmount', {
+    orderBizType: 0
+  })
+}

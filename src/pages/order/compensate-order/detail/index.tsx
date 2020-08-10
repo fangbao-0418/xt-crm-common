@@ -10,7 +10,14 @@ import { If } from '@/packages/common/components'
 import { replaceHttpUrl, initImgList } from '@/util/utils'
 import { getFieldsConfig, getApplInfo, getOrderInfo, getLogisticsInfo, getGoodsInfo, getAuditInfo } from './config'
 import { CompensateStatusEnum, CompensatePayTypeEnum } from '../config'
-import { getCompensateDetail, getCompensateRecord, auditCompensate, getUserWxAccount } from '../api'
+import { getCompensateDetail, getCompensateRecord, auditCompensate, getUserWxAccount, getRoleAmount } from '../api'
+
+enum CustomerRoleEnums {
+  '普通客服' = 1,
+  '客服组长' = 2,
+  '客服主管' = 3,
+  '客服经理' = 4,
+}
 
 interface Props extends RouteComponentProps<{ compensateCode: string }>, AlertComponentProps {}
 
@@ -21,6 +28,12 @@ interface State {
   recordLoad: boolean
   tabKey: 'detail' | 'record'
   wxAccountList: any[]
+  /* 免费审核额度 */
+  quota: number
+  /* 不同等级的审核值 */
+  roleQuotas: any[]
+  /* 客服等级 */
+  roleType: number
 }
 
 class Main extends React.Component<Props, State> {
@@ -32,7 +45,10 @@ class Main extends React.Component<Props, State> {
     record: [],
     recordLoad: false,
     tabKey: 'detail',
-    wxAccountList: []
+    wxAccountList: [],
+    quota: 0,
+    roleQuotas: [],
+    roleType: 0
   }
 
   goodsColumns = [
@@ -224,9 +240,42 @@ class Main extends React.Component<Props, State> {
     this.fetchDetail()
   }
 
+  getAuditMsg = (amount: number = 0) => {
+    amount = amount * 100
+    const { roleQuotas, roleType } = this.state
+    const quotas = roleQuotas.map(item => item.quota).sort((x, y) => y - x)
+    const curentRoleQuota = roleQuotas.find(item => item.roleType === roleType)
+    const max = Math.max(...quotas)
+    if (amount <= curentRoleQuota?.quota) {
+      return (
+        '<div style="color: gerren;">额度内，无需审核</div>'
+      )
+    }
+    if (amount > max) {
+      return (
+        `<div style="color: red;">
+          超出最大审核限制${APP.fn.formatMoney(max)}
+        </div>`
+      )
+    }
+    const l = quotas.length
+    for (let i = 0; i < l; i++) {
+      const cur = quotas[i]
+      if (amount > cur) {
+        const curItem = roleQuotas.find(item => item.quota === cur)
+        return (
+          `<div style="color: red;">超出额度，需要${CustomerRoleEnums[curItem?.roleType]}审核！</div>`
+        )
+      } else {
+        continue
+      }
+    }
+  }
+
   handleAduit = () => {
-    const { detail, wxAccountList } = this.state
+    const { detail, wxAccountList, quota } = this.state
     let form: FormInstance
+    let msgRef: HTMLDivElement
     this.props.alert({
       title: '审核',
       content: (
@@ -259,7 +308,23 @@ class Main extends React.Component<Props, State> {
               CompensatePayTypeEnum['微信转账']
             ].includes(detail.compensatePayType)}
           >
-            <FormItem verifiable name='compensateAmount' />
+            <>
+              <FormItem
+                controlProps={{
+                  onChange: (val: any) => {
+                    msgRef.innerHTML = this.getAuditMsg(val) || ''
+                  }
+                }}
+                verifiable
+                name='compensateAmount'
+              />
+              <FormItem style={{ margin: '-24px 0 0' }}>
+                <div>
+                  <div>当前级别免审核额度：{APP.fn.formatMoney(quota)}</div>
+                  <div ref={(ref: any) => msgRef = ref}>msg</div>
+                </div>
+              </FormItem>
+            </>
           </If>
           <If
             condition={[
@@ -275,7 +340,7 @@ class Main extends React.Component<Props, State> {
           >
             <>
               <FormItem label='转账方式'>支付宝转账</FormItem>
-              <FormItem verifiable name='recepitorAccountName' />
+              <FormItem verifiable name='receiptorAccountName' />
               <FormItem verifiable name='receiptorAccountNo' />
             </>
           </If>
@@ -326,7 +391,7 @@ class Main extends React.Component<Props, State> {
           const currentWx = wxAccountList.find(item => item.memberId === memberId)
           if (currentWx) {
             values.receiptorAccountNo = currentWx.openId + ':' + currentWx.memberId
-            values.recepitorAccountName = currentWx.nickname
+            values.receiptorAccountName = currentWx.nickname
           }
           values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
           auditCompensate({
@@ -351,6 +416,20 @@ class Main extends React.Component<Props, State> {
     })
   }
 
+  fetchRoleAmount = () => {
+    const { detail } = this.state
+    if ([CompensatePayTypeEnum['微信转账'], CompensatePayTypeEnum['支付宝转账'], CompensatePayTypeEnum['微信转账']].includes(detail.compensatePayType)) {
+      return
+    }
+    getRoleAmount().then((res: any) => {
+      this.setState({
+        quota: res?.quota,
+        roleQuotas: (res?.roleQuotas || []).filter((item: any) => item.orderBizType === 0),
+        roleType: res?.roleType
+      })
+    })
+  }
+
   fetchDetail = () => {
     getCompensateDetail({
       compensateCode: this.compensateCode
@@ -360,6 +439,7 @@ class Main extends React.Component<Props, State> {
         detail: detail || {}
       }, () => {
         this.fetchWxAccount()
+        this.fetchRoleAmount()
       })
     })
   }

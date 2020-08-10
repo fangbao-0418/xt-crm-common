@@ -124,13 +124,13 @@ class Compensate extends React.Component<Props, State> {
         } else if (compensatePayType === 12) {
           // 支付宝转账
           values.receiptorAccountNo = alipayAccount
-          values.recepitorAccountName = alipayName
+          values.receiptorAccountName = alipayName
           values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
         } else if (compensatePayType === 13) {
           // 微信转账
-          const [receiptorAccountNo, recepitorAccountName] = (wxInfo || '').split('|')
+          const [receiptorAccountNo, receiptorAccountName] = (wxInfo || '').split('|')
           values.receiptorAccountNo = receiptorAccountNo
-          values.recepitorAccountName = recepitorAccountName
+          values.receiptorAccountName = receiptorAccountName
           values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
         } else if (compensatePayType === 10) {
           // 优惠券

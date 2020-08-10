@@ -126,7 +126,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'textarea',
         label: '备注说明'
       },
-      recepitorAccountName: {
+      receiptorAccountName: {
         label: '姓名',
         fieldDecoratorOptions: {
           rules: [
