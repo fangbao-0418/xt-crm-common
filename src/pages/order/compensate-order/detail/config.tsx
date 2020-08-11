@@ -220,14 +220,8 @@ export function getApplInfo (detail: any) {
             type: 'text'
           },
           {
-            label: '姓名',
+            label: '微信昵称',
             value: detail.receiptorAccountName || '-',
-            span: 2,
-            type: 'text'
-          },
-          {
-            label: '转账账号',
-            value: detail.receiptorAccountNo || '-',
             span: 2,
             type: 'text'
           }
