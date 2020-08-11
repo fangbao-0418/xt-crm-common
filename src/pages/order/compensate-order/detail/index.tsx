@@ -22,11 +22,17 @@ enum CustomerRoleEnums {
 interface Props extends RouteComponentProps<{ compensateCode: string }>, AlertComponentProps {}
 
 interface State {
+  /* 补偿详情 */
   detail: any
+  /* 补偿详情加载完成标识 */
   detailLoad: boolean
+  /* 信息记录 */
   record: any[]
+  /* 信息记录加载完成标识 */
   recordLoad: boolean
+  /* tab切换key */
   tabKey: 'detail' | 'record'
+  /* 微信账号选择列表 */
   wxAccountList: any[]
   /* 免费审核额度 */
   quota: number
@@ -51,6 +57,7 @@ class Main extends React.Component<Props, State> {
     roleType: 0
   }
 
+  /* 商品信息表头 */
   goodsColumns = [
     {
       title: '商品图片',
@@ -131,6 +138,7 @@ class Main extends React.Component<Props, State> {
     }
   ]
 
+  /* 审核信息表头 */
   applyColums = [
     {
       title: '审核结果',
@@ -185,6 +193,7 @@ class Main extends React.Component<Props, State> {
     }
   ]
 
+  /* 信息记录表头 */
   infoColums = [
     {
       title: '内容',
@@ -227,6 +236,7 @@ class Main extends React.Component<Props, State> {
     }
   ]
 
+  /* 物流信息表头 */
   logisticsColums = [
     {
       title: '物流公司',
@@ -274,6 +284,7 @@ class Main extends React.Component<Props, State> {
     }
   }
 
+  /* 审核操作 */
   handleAduit = () => {
     const { detail, wxAccountList, quota } = this.state
     let form: FormInstance
@@ -414,6 +425,7 @@ class Main extends React.Component<Props, State> {
     })
   }
 
+  /* tab切换 */
   handleTabChange = (tabKey: any) => {
     this.setState({
       tabKey
@@ -424,6 +436,7 @@ class Main extends React.Component<Props, State> {
     })
   }
 
+  /* 获取不同等级客服的数据 */
   fetchRoleAmount = () => {
     const { detail } = this.state
     if (![CompensatePayTypeEnum['微信转账'], CompensatePayTypeEnum['支付宝转账'], CompensatePayTypeEnum['喜团账户余额']].includes(detail.compensatePayType)) {
@@ -432,12 +445,14 @@ class Main extends React.Component<Props, State> {
     getRoleAmount().then((res: any) => {
       this.setState({
         quota: res?.quota,
+        // 这里筛选优选的客服等级
         roleQuotas: (res?.roleQuotas || []).filter((item: any) => item.orderBizType === 0),
         roleType: res?.roleType
       })
     })
   }
 
+  /* 客服详情 */
   fetchDetail = () => {
     getCompensateDetail({
       compensateCode: this.compensateCode
@@ -452,6 +467,7 @@ class Main extends React.Component<Props, State> {
     })
   }
 
+  /* 获取微信选项列表 */
   fetchWxAccount = () => {
     const { wxAccountList, detail } = this.state
     if (detail.compensatePayType !== CompensatePayTypeEnum['微信转账']) {
@@ -467,6 +483,7 @@ class Main extends React.Component<Props, State> {
     })
   }
 
+  /* 获取信息记录数据 */
   fetchRecord = () => {
     getCompensateRecord({
       compensateCode: this.compensateCode
@@ -477,6 +494,7 @@ class Main extends React.Component<Props, State> {
       })
     })
   }
+
   handleCancel = () => {
     const hide = this.props.alert({
       content: '确认取消订单补偿请求吗?',
@@ -492,6 +510,7 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+
   handleResent = () => {
     const hide = this.props.alert({
       content: '确认重新发送订单补偿请求吗?',
@@ -507,6 +526,7 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
+
   render () {
     const { tabKey, detailLoad, recordLoad, detail, record } = this.state
     return (
