@@ -200,7 +200,7 @@ class Main extends React.Component<Props> {
           }}
           rangeMap={{
             withdrawalDate: {
-              fields: ['startCreatedTime', 'endCreatedTime']
+              fields: ['withdrawalStartDate', 'withdrawalEndDate']
             }
           }}
           formConfig={getFieldsConfig()}
