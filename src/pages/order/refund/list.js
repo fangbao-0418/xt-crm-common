@@ -124,15 +124,24 @@ export default class extends React.Component {
   };
 
   componentDidMount () {
-    this.setFieldsValue(() => {
-      // this.query()
-    })
+    const obj = parseQuery()
+    const keys = Object.keys(obj)
+    // 如果url上面有值，则条件查询直接查url上携带的参数，否则查询storage的
+    if (keys.length > 0) {
+      this.query()
+    } else {
+      this.setFieldsValue(() => {
+        this.query()
+      })
+    }
+
   }
 
   query = (isExport = false, noFetch = false) => {
     const { intercept, type } = this.props
     /** 获取url参数 */
     const obj = parseQuery()
+
     const fieldsValues = this.SearchForm.props.form.getFieldsValue()
     const [applyStartTime, applyEndTime] = formatFields(fieldsValues['apply'])
     const [handleStartTime, handleEndTime] = formatFields(fieldsValues['handle'])
@@ -140,7 +149,15 @@ export default class extends React.Component {
     delete fieldsValues['apply']
     delete fieldsValues['handle']
     delete fieldsValues['payTime']
-    let refundStatus = fieldsValues.refundStatus ? fieldsValues.refundStatus : null
+
+    let refundStatus = null
+    if (fieldsValues.refundStatus) {
+      refundStatus = fieldsValues.refundStatus
+    }
+    if (Array.isArray(fieldsValues.refundStatus) && fieldsValues.refundStatus.length === 0) {
+      refundStatus = null
+    }
+
     const params = {
       ...fieldsValues,
       applyStartTime,
@@ -158,6 +175,7 @@ export default class extends React.Component {
       params.interception = 1
       params.interceptionMemberPhone = obj.iphone
     }
+
     refundStatus = refundStatus || typeMapRefundStatus[this.props.type]
     params.refundStatus = refundStatus && Number.isInteger(refundStatus) ? [refundStatus] : refundStatus
     APP.fn.setPayload(namespace, {
@@ -200,7 +218,8 @@ export default class extends React.Component {
         return
       }
       refundList(params).then(res => {
-        if (!res) return;
+        if (!res || !res.data) return;
+        console.log('res', res)
         const records = (res.data && res.data.records) || []
         this.setState({
           records,
