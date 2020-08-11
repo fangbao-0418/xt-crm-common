@@ -103,8 +103,7 @@ class Compensate extends React.Component<Props, State> {
     }) => {
       if (!errors) {
         transferEvidenceImgs = Array.isArray(transferEvidenceImgs) ? transferEvidenceImgs.map((v: any) => v.url) : []
-        transferEvidenceImgs = transferEvidenceImgs.map((urlStr: string) =>
-          urlStr.replace('https://xituan.oss-cn-shenzhen.aliyuncs.com/', ''))
+        transferEvidenceImgs = transferEvidenceImgs.map((urlStr: string) => APP.fn.deleteOssDomainUrl(urlStr))
         values.transferEvidenceImgs = transferEvidenceImgs
 
         values.reasonType = twoReasonType

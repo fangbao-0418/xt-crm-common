@@ -76,8 +76,9 @@ class Main extends React.Component<Props, State> {
       title: '商品ID',
       dataIndex: 'productId',
       render (id: any, record: any) {
+        const url = record.orderType===55?`/goods/virtual/${id}`:`/goods/sku-sale/${id}`
         return (
-          <Link to={record.orderType===55?`/goods/virtual/${id}`:`/goods/sku-sale/${id}`}>{id}</Link>
+          <span onClick={() => APP.open(url)} className='href'>{id}</span>
         )
       }
     },
@@ -391,6 +392,9 @@ class Main extends React.Component<Props, State> {
             return
           }
           const { wxAccountList } = this.state
+          transferEvidenceImgs = Array.isArray(transferEvidenceImgs) ? transferEvidenceImgs.map((v: any) => v.url) : []
+          transferEvidenceImgs = transferEvidenceImgs.map((urlStr: string) => APP.fn.deleteOssDomainUrl(urlStr))
+          values.transferEvidenceImgs = transferEvidenceImgs
           const currentWx = wxAccountList.find(item => item.memberId === memberId)
           if (currentWx) {
             values.receiptorAccountNo = currentWx.appId + ':' + currentWx.openId
