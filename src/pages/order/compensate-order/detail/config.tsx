@@ -238,13 +238,13 @@ export function getApplInfo (detail: any) {
         ? [
           {
             label: '优惠券名称',
-            value: detail.receiptorAccountName || '-',
+            value: detail?.couponDetail?.name || '-',
             span: 2,
             type: 'text'
           },
           {
             label: '有效期',
-            value: detail.receiptorAccountNo || '-',
+            value: detail?.couponDetail?.effectiveTime || '-',
             span: 2,
             type: 'text'
           }

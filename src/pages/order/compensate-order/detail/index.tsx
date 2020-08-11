@@ -393,7 +393,7 @@ class Main extends React.Component<Props, State> {
           const { wxAccountList } = this.state
           const currentWx = wxAccountList.find(item => item.memberId === memberId)
           if (currentWx) {
-            values.receiptorAccountNo = currentWx.openId + ':' + currentWx.memberId
+            values.receiptorAccountNo = currentWx.appId + ':' + currentWx.openId
             values.receiptorAccountName = currentWx.nickname
           }
           values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)

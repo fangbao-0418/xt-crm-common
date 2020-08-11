@@ -378,7 +378,7 @@ class Compensate extends React.Component<Props, State> {
                           height: '30px',
                           lineHeight: '30px'
                         }}
-                        value={`${item.openId}:${item.memberId}|${item.nickname}`}
+                        value={`${item.appId}:${item.openId}|${item.nickname}`}
                       >
                         {item.nickname}
                       </Radio>
