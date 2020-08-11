@@ -2,13 +2,19 @@ import React, { Component } from 'react'
 import { Tabs, Card } from 'antd'
 import List from './list'
 import { namespace } from './config'
+import { parseQuery } from '@/util/utils'
 const { TabPane } = Tabs
 
 class Order extends Component {
   constructor (props) {
     super(props)
+
+    const obj = parseQuery()
+    const keys = Object.keys(obj)
+    const type = keys.length > 0 ? 'ALL': (APP.fn.getPayload(namespace)?.type || 'ALL')
+
     this.state = {
-      type: APP.fn.getPayload(namespace)?.type || 'ALL'
+      type
     }
   }
   handleTabChange = type => {
