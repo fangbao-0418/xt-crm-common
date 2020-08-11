@@ -4,6 +4,7 @@ import { Button } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { IntegralProps } from './interface'
 import { getFieldsConfig } from './config'
+import * as api from './api'
 
 class Main extends React.Component {
   public columns: ColumnProps<IntegralProps>[] = [
@@ -53,16 +54,7 @@ class Main extends React.Component {
           getInstance={(ref) => {
             this.listpage = ref
           }}
-          api={() => {
-            return Promise.resolve({
-              total: 0,
-              records: [
-                {
-                  supplierCashOutId: '2222'
-                }
-              ]
-            })
-          }}
+          api={api.fetchList}
           formConfig={getFieldsConfig()}
         />
       </div>
