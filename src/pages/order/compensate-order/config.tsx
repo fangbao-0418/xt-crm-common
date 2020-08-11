@@ -67,7 +67,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           value: 13
         }, {
           label: '优惠券',
-          value: 14
+          value: 10
         }]
       },
       compensateStatus: {
