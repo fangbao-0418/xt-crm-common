@@ -140,11 +140,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           )
         }
       },
-      storeId: {
+      store: {
         label: '供应商',
         inner: (form) => {
-          return form.getFieldDecorator('storeId')(
+          return form.getFieldDecorator('store')(
             <SearchFetch
+              labelInValue
               style={{ width: '174px' }}
               placeholder='请输入供应商名称'
               api={(name) => {
@@ -159,11 +160,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           )
         }
       },
-      shopId: {
+      shop: {
         label: '店铺名称',
         inner: (form) => {
-          return form.getFieldDecorator('shopId')(
+          return form.getFieldDecorator('shop')(
             <SearchFetch
+              labelInValue
               style={{ width: '174px' }}
               placeholder='请输入店铺名称'
               api={(name) => {

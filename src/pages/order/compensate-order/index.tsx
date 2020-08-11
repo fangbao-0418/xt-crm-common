@@ -139,8 +139,18 @@ class Main extends React.Component<Props> {
         reserveKey='/order/compensate-order'
         formConfig={getFieldsConfig()}
         columns={this.columns}
+        rangeMap={{
+          createTime: {
+            fields: ['createTimeStart', 'createTimeEnd']
+          }
+        }}
         api={getOrderlist}
-        processPayload={({ compensateAmount, ...payload }) => {
+        cachePayloadProcess={(payload) => {
+          return {
+            ...payload
+          }
+        }}
+        processPayload={({ compensateAmount, store, shop, ...payload }) => {
           if (this.childOrderCode) {
             this.listPage?.form.setValues({
               childOrderCode: this.childOrderCode
@@ -150,6 +160,8 @@ class Main extends React.Component<Props> {
           }
           return {
             ...payload,
+            storeId: store?.key,
+            shopId: shop?.key,
             minCompensateAmount: compensateAmount?.[0],
             maxCompensateAmount: compensateAmount?.[1]
           }

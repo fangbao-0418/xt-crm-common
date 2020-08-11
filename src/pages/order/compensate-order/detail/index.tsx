@@ -490,7 +490,7 @@ class Main extends React.Component<Props, State> {
   }
   handleResent = () => {
     const hide = this.props.alert({
-      content: '确认重新发生订单补偿请求吗?',
+      content: '确认重新发送订单补偿请求吗?',
       onOk: () => {
         auditCompensate({
           compensateCode: this.compensateCode,
