@@ -75,6 +75,7 @@ class Main extends Component {
                   initialValue: currentMenuInfo.parentId
                 })(
                   <Select
+                    allowClear
                     style={{ width: 200 }}
                     showSearch
                     filterOption={(inputValue, option) => {

@@ -96,11 +96,15 @@ class Main extends React.Component<Props> {
     }
   ]
   export = () => {
-    const { compensateAmount, ...payload } = this.listPage.form.getValues()
+    const { compensateAmount, compensateStatus, compensatePayType, store, shop, ...payload } = this.listPage.form.getValues()
     exportCompensate({
       ...payload,
+      storeId: store?.key,
+      shopId: shop?.key,
       minCompensateAmount: compensateAmount?.[0],
-      maxCompensateAmount: compensateAmount?.[1]
+      maxCompensateAmount: compensateAmount?.[1],
+      compensateStatus: compensateStatus || undefined,
+      compensatePayType: compensatePayType || undefined
     }).then(() => {
       APP.success('导出成功，请前往下载列表下载文件')
     })
@@ -150,7 +154,7 @@ class Main extends React.Component<Props> {
             ...payload
           }
         }}
-        processPayload={({ compensateAmount, store, shop, ...payload }) => {
+        processPayload={({ compensateAmount, compensateStatus, compensatePayType, store, shop, ...payload }) => {
           if (this.childOrderCode) {
             this.listPage?.form.setValues({
               childOrderCode: this.childOrderCode
@@ -163,7 +167,9 @@ class Main extends React.Component<Props> {
             storeId: store?.key,
             shopId: shop?.key,
             minCompensateAmount: compensateAmount?.[0],
-            maxCompensateAmount: compensateAmount?.[1]
+            maxCompensateAmount: compensateAmount?.[1],
+            compensateStatus: compensateStatus || undefined,
+            compensatePayType: compensatePayType || undefined
           }
         }}
         tableProps={{
