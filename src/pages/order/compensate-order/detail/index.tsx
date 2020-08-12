@@ -1,13 +1,13 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router'
-import { Card, Table, Tabs, Divider, Button, List, Radio } from 'antd'
+import { Card, Table, Tabs, Divider, Button, List } from 'antd'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
-import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import Image from '@/components/Image'
 import Info from '../components/info'
+import AuditForm from '../components/audit-form'
 import { If } from '@/packages/common/components'
-import { replaceHttpUrl, initImgList } from '@/util/utils'
-import { getFieldsConfig, getApplInfo, getOrderInfo, getLogisticsInfo, getGoodsInfo, getAuditInfo, getResultInfo } from './config'
+import { replaceHttpUrl } from '@/util/utils'
+import { getApplInfo, getOrderInfo, getLogisticsInfo, getGoodsInfo, getAuditInfo, getResultInfo } from './config'
 import { CompensateStatusEnum, CompensatePayTypeEnum } from '../config'
 import { getCompensateDetail, getCompensateRecord, auditCompensate, getUserWxAccount, getRoleAmount } from '../api'
 
@@ -273,9 +273,10 @@ class Main extends React.Component<Props, State> {
     for (let i = 0; i < l; i++) {
       const cur = quotas[i]
       if (amount > cur) {
-        const curItem = roleQuotas.find(item => item.quota === cur)
+        // const curItem = roleQuotas.find(item => item.quota === cur)
+        const nextItem = roleQuotas.find(item => item.quota === quotas[i - 1])
         return (
-          `<div style="color: red;">超出额度，需要${CustomerRoleEnums[curItem?.roleType]}审核！</div>`
+          `<div style="color: red;">超出额度，需要${CustomerRoleEnums[nextItem?.roleType]}审核！</div>`
         )
       } else {
         continue
@@ -285,136 +286,49 @@ class Main extends React.Component<Props, State> {
 
   /* 审核操作 */
   handleAduit = () => {
-    const { detail, wxAccountList, quota } = this.state
-    let form: FormInstance
-    let msgRef: HTMLDivElement
+    const { detail, wxAccountList, quota, roleQuotas, roleType } = this.state
+    let auditForm: any
     const hide = this.props.alert({
       title: '审核',
       content: (
-        <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 12 }}
-          config={getFieldsConfig()}
+        <AuditForm
           getInstance={(ref) => {
-            form = ref
+            auditForm = ref
           }}
-          mounted={() => {
-            form.setValues({
-              responsibilityType: detail.responsibilityType,
-              compensateAmount: detail.compensateAmount / 100,
-              memberId: detail.memberId,
-              transferEvidenceImgs: (detail.transferEvidenceImg ? JSON.parse(detail.transferEvidenceImg) : []).map((item: any) => initImgList(item)[0]),
-              illustrate: detail.illustrate,
-              receiptorAccountName: detail.receiptorAccountName,
-              receiptorAccountNo: detail.receiptorAccountNo,
-              couponCode: detail.couponCode
-            })
-          }}
-        >
-          <FormItem verifiable name='operateType' />
-          <FormItem verifiable required name='responsibilityType' />
-          <If
-            condition={[
-              CompensatePayTypeEnum['喜团账户余额'],
-              CompensatePayTypeEnum['支付宝转账'],
-              CompensatePayTypeEnum['微信转账']
-            ].includes(detail.compensatePayType)}
-          >
-            <>
-              <FormItem
-                controlProps={{
-                  onChange: (val: any) => {
-                    msgRef.innerHTML = this.getAuditMsg(val) || ''
-                  }
-                }}
-                verifiable
-                name='compensateAmount'
-              />
-              <FormItem style={{ margin: '-24px 0 0' }}>
-                <div style={{ lineHeight: '20px', paddingBottom: 16 }}>
-                  <div>当前级别免审核额度：{APP.fn.formatMoney(quota)}</div>
-                  <div ref={(ref: any) => msgRef = ref}>
-                    <div dangerouslySetInnerHTML={{ __html: this.getAuditMsg(detail.compensateAmount / 100) || '' }}></div>
-                  </div>
-                </div>
-              </FormItem>
-            </>
-          </If>
-          <If
-            condition={[
-              CompensatePayTypeEnum['优惠券']
-            ].includes(detail.compensatePayType)}
-          >
-            <FormItem required verifiable name='couponCode' />
-          </If>
-          <If
-            condition={[
-              CompensatePayTypeEnum['支付宝转账']
-            ].includes(detail.compensatePayType)}
-          >
-            <>
-              <FormItem label='转账方式'>支付宝转账</FormItem>
-              <FormItem verifiable name='receiptorAccountName' />
-              <FormItem verifiable name='receiptorAccountNo' />
-            </>
-          </If>
-          <If
-            condition={[
-              CompensatePayTypeEnum['微信转账']
-            ].includes(detail.compensatePayType)}
-          >
-            <>
-              <FormItem label='转账方式'>微信转账</FormItem>
-              <FormItem
-                required
-                label='微信账号'
-                inner={(form) => {
-                  return form.getFieldDecorator('memberId')(
-                    <Radio.Group>
-                      {
-                        wxAccountList.map(item => (
-                          <Radio
-                            key={item.memberId}
-                            style={{
-                              display: 'block',
-                              height: '30px',
-                              lineHeight: '30px'
-                            }}
-                            value={item.memberId}
-                          >
-                            {item.nickname}
-                          </Radio>
-                        ))
-                      }
-                    </Radio.Group>
-                  )
-                }}
-              />
-            </>
-          </If>
-          <FormItem required name='transferEvidenceImgs' />
-          <FormItem name='illustrate' />
-        </Form>
+          detail={detail}
+          wxAccountList={wxAccountList}
+          quota={quota}
+          roleQuotas={roleQuotas}
+          roleType={roleType}
+        />
       ),
       onOk: () => {
-        form.props.form.validateFields((err, { compensateAmount, memberId, transferEvidenceImgs, ...values }) => {
+        auditForm.form.props.form.validateFields((err: any, { operateType, compensateAmount, memberId, transferEvidenceImgs, remarks, ...values }: any) => {
           if (err) {
             return
           }
-          const { wxAccountList } = this.state
-          transferEvidenceImgs = Array.isArray(transferEvidenceImgs) ? transferEvidenceImgs.map((v: any) => v.url) : []
-          transferEvidenceImgs = transferEvidenceImgs.map((urlStr: string) => APP.fn.deleteOssDomainUrl(urlStr))
-          values.transferEvidenceImgs = transferEvidenceImgs
-          const currentWx = wxAccountList.find(item => item.memberId === memberId)
-          if (currentWx) {
-            values.receiptorAccountNo = currentWx.appId + ':' + currentWx.openId
-            values.receiptorAccountName = currentWx.nickname
-          }
-          values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
-          auditCompensate({
+          let params: any = {
             compensateCode: this.compensateCode,
-            ...values
-          }).then(() => {
+            operateType,
+            remarks
+          }
+          if (operateType === 3) { // 同意
+            const { wxAccountList } = this.state
+            transferEvidenceImgs = Array.isArray(transferEvidenceImgs) ? transferEvidenceImgs.map((v: any) => v.url) : []
+            transferEvidenceImgs = transferEvidenceImgs.map((urlStr: string) => APP.fn.deleteOssDomainUrl(urlStr))
+            values.transferEvidenceImgs = transferEvidenceImgs
+            const currentWx = wxAccountList.find(item => item.memberId === memberId)
+            if (currentWx) {
+              values.receiptorAccountNo = currentWx.appId + ':' + currentWx.openId
+              values.receiptorAccountName = currentWx.nickname
+            }
+            values.compensateAmount = APP.fn.formatMoneyNumber(compensateAmount)
+            params = {
+              ...params,
+              ...values
+            }
+          }
+          auditCompensate(params).then(() => {
             hide()
             APP.success('操作成功')
             this.fetchDetail()
@@ -551,7 +465,7 @@ class Main extends React.Component<Props, State> {
                         <Button type='primary' size='small' onClick={this.handleCancel} className='mr8'>取消请求</Button>
                       </If>
                       <If
-                        condition={detail.isCanAudit}
+                        condition={!detail.isCanAudit}
                       >
                         <Button type='primary' size='small' onClick={this.handleAduit}>审核</Button>
                       </If>

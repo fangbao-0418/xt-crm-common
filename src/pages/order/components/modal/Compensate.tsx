@@ -163,9 +163,10 @@ class Compensate extends React.Component<Props, State> {
     for (let i = 0; i < l; i++) {
       const cur = quotas[i]
       if (amount > cur) {
-        const curItem = roleQuotas.find(item => item.quota === cur)
+        // const curItem = roleQuotas.find(item => item.quota === cur)
+        const nextItem = roleQuotas.find(item => item.quota === quotas[i - 1])
         return (
-          <div style={{ color: 'red' }} className='ml10'>超出额度，需要{CustomerRoleEnums[curItem?.roleType]}审核！</div>
+          <div style={{ color: 'red' }} className='ml10'>超出额度，需要{CustomerRoleEnums[nextItem?.roleType]}审核！</div>
         )
       } else {
         continue

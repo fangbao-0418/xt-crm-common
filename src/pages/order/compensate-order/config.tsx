@@ -231,7 +231,7 @@ export enum CompensatePayTypeEnum {
   '优惠券' = 10
 }
 
-enum CustomerRoleEnums {
+export enum CustomerRoleEnums {
   '普通客服' = 1,
   '客服组长' = 2,
   '客服主管' = 3,

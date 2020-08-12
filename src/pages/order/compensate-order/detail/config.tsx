@@ -1,5 +1,4 @@
 import React from 'react'
-import SearchFetch from '@/components/search-fetch'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import UploadView from '@/components/upload'
 import { OptionProps } from '@/packages/common/components/form/index'
@@ -124,12 +123,9 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           )
         }
       },
-      illustrate: {
+      remarks: {
         type: 'textarea',
         label: '备注说明',
-        formItemProps: {
-          extra: '1111'
-        },
         controlProps: {
           maxLength: 200
         }
