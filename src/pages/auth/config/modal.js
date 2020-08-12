@@ -83,7 +83,13 @@ class Main extends Component {
                     }}
                   >
                     {
-                      list.map(item => <Option value={item.id} key={item.id}>{item.name}</Option>)
+                      list.map(item => (
+                        <Option
+                          title={`${item.name}${item.path ? `(${item.path})` : '' }`}
+                          value={item.id}
+                          key={item.id}>{item.name}
+                        </Option>
+                      ))
                     }
                   </Select>
                 )

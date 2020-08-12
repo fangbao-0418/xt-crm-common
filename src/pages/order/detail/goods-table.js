@@ -249,7 +249,7 @@ class GoodsTable extends Component {
           this.state.modalInfo.orderInfo
           && <Compensate
             onCancel={() => this.setState({ compensateVisible: false })}
-            successCb={() => this.setState({ compensateVisible: false })}
+            successCb={() => this.setState({ compensateVisible: false }, this.props.query)}
             visible={this.state.compensateVisible}
             modalInfo={this.state.modalInfo}
           />
