@@ -87,7 +87,7 @@ class Main extends React.Component<Props> {
     width: 150,
     render: (text: any, record: any) => {
       text=text/100
-      return <div style={{ color: record.tradeType===1?'red':'green' }}>{text>0?'+'+text:text}</div>
+      return <div style={{ color: record.tradeType===2?'red':'green' }}>{text>0?'+'+text:text}</div>
     }
   }, {
     dataIndex: 'profitRatio',
