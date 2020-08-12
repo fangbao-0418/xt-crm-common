@@ -251,39 +251,6 @@ class Main extends React.Component<Props, State> {
     this.fetchDetail()
   }
 
-  getAuditMsg = (amount: number = 0) => {
-    amount = amount * 100
-    const { roleQuotas, roleType } = this.state
-    const quotas = roleQuotas.map(item => item.quota).sort((x, y) => y - x)
-    const curentRoleQuota = roleQuotas.find(item => item.roleType === roleType)
-    const max = Math.max(...quotas)
-    if (amount <= curentRoleQuota?.quota) {
-      return (
-        '<div style="color: green;">额度内，无需审核</div>'
-      )
-    }
-    if (amount > max) {
-      return (
-        `<div style="color: red;">
-          超出最大审核限制${APP.fn.formatMoney(max)}
-        </div>`
-      )
-    }
-    const l = quotas.length
-    for (let i = 0; i < l; i++) {
-      const cur = quotas[i]
-      if (amount > cur) {
-        // const curItem = roleQuotas.find(item => item.quota === cur)
-        const nextItem = roleQuotas.find(item => item.quota === quotas[i - 1])
-        return (
-          `<div style="color: red;">超出额度，需要${CustomerRoleEnums[nextItem?.roleType]}审核！</div>`
-        )
-      } else {
-        continue
-      }
-    }
-  }
-
   /* 审核操作 */
   handleAduit = () => {
     const { detail, wxAccountList, quota, roleQuotas, roleType } = this.state
@@ -465,7 +432,7 @@ class Main extends React.Component<Props, State> {
                         <Button type='primary' size='small' onClick={this.handleCancel} className='mr8'>取消请求</Button>
                       </If>
                       <If
-                        condition={!detail.isCanAudit}
+                        condition={detail.isCanAudit}
                       >
                         <Button type='primary' size='small' onClick={this.handleAduit}>审核</Button>
                       </If>
