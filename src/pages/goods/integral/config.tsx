@@ -34,7 +34,7 @@ export function getFieldsConfig (): FieldsConfig {
           type: 'number'
         }
       },
-      storeId: {
+      store: {
         label: '供应商ID',
         type: 'input',
         inner: (form) => {
@@ -43,12 +43,23 @@ export function getFieldsConfig (): FieldsConfig {
           )
         }
       },
-      a1: {
+      status: {
+        type: 'select',
+        label: '状态',
+        options: [
+          { label: '已上架', value: 0 },
+          { label: '仓库中', value: 1 },
+          { label: '商品池', value: 2 },
+          { label: '待上架', value: 3 }
+        ]
+      },
+      exchangeRate: {
         label: '可抵扣比例',
         type: 'select',
         inner: (form) => {
-          return form.getFieldDecorator('a1')(
+          return form.getFieldDecorator('exchangeRate')(
             <SelectFetch
+              showSearch
               options={getRatioOptions()}
             />
           )
@@ -57,4 +68,11 @@ export function getFieldsConfig (): FieldsConfig {
     }
   }
   return defaultConfig
+}
+
+export enum StatusEnum {
+  已上架 = 0,
+  仓库中 = 1,
+  商品池 = 2,
+  待上架 = 3
 }

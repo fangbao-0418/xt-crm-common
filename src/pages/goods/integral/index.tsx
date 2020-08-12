@@ -3,7 +3,7 @@ import ListPage, { ListPageInstanceProps } from '@/packages/common/components/li
 import { Button, Icon, InputNumber, Popconfirm } from 'antd'
 import { ColumnProps, TableRowSelection } from 'antd/lib/table'
 import { GoodsProps } from './interface'
-import { getFieldsConfig } from './config'
+import { getFieldsConfig, StatusEnum } from './config'
 import Image from '@/components/Image'
 import * as api from './api'
 import ShopModal from './components/shop-modal'
@@ -21,20 +21,21 @@ class Main extends React.Component<{}, State> {
     selectedRowKeys: []
   }
   public columns: ColumnProps<GoodsProps>[] = [
-    { title: '商品ID', dataIndex: 'id' },
+    { title: '商品ID', dataIndex: 'id', width: 100 },
     {
       title: '主图',
       dataIndex: 'coverUrl',
+      width: 150,
       render: (text) => {
         return (
           <Image src={text} />
         )
       }
     },
-    { title: '商品名称', dataIndex: 'productName' },
-    { title: '上架状态', dataIndex: 'status' },
-    { title: '供应商', dataIndex: 'payType' },
-    { title: '销售价', dataIndex: 'storeName' },
+    { title: '商品名称', dataIndex: 'productName', width: 200 },
+    { title: '上架状态', dataIndex: 'status', width: 100, align: 'center', render: (text) => StatusEnum[text] },
+    { title: '供应商', dataIndex: 'storeName', width: 150 },
+    { title: '销售价', dataIndex: 'salePrice', render: (text) => APP.fn.formatMoney(text) },
     {
       title: '积分可抵扣比例',
       dataIndex: 'exchangeRate',
@@ -169,6 +170,13 @@ class Main extends React.Component<{}, State> {
         <ListPage
           rowSelection={rowSelection}
           columns={this.columns}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              storeId: payload.store?.key,
+              store: undefined
+            }
+          }}
           addonAfterSearch={(
             <div>
               <Button
