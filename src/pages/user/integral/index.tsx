@@ -8,7 +8,7 @@ import * as api from './api'
 
 class Main extends React.Component {
   public columns: ColumnProps<IntegralProps>[] = [
-    { title: '时间', dataIndex: 'supplierCashOutId' },
+    { title: '时间', dataIndex: 'modifyTime', width: 150, render: (text) => APP.fn.formatDate(text) },
     {
       title: '用户ID',
       dataIndex: 'memberId',
@@ -25,10 +25,11 @@ class Main extends React.Component {
         )
       }
     },
-    { title: '场景', dataIndex: 'subType' },
+    { title: '场景', dataIndex: 'subTypeDesc', width: 100, align: 'center' },
+    { title: '状态', dataIndex: 'mainType', width: 100, align: 'center' },
     {
       title: '订单号',
-      dataIndex: 'orderCode',
+      dataIndex: 'bizNo',
       render: (text) => {
         return (
           <span
@@ -50,9 +51,20 @@ class Main extends React.Component {
     return (
       <div>
         <ListPage
+          rangeMap={{
+            createTime: {
+              fields: ['createStartTime', 'createEndTime']
+            }
+          }}
           columns={this.columns}
           getInstance={(ref) => {
             this.listpage = ref
+          }}
+          processData={(data) => {
+            return {
+              records: data.list,
+              total: data.total
+            }
           }}
           api={api.fetchList}
           formConfig={getFieldsConfig()}

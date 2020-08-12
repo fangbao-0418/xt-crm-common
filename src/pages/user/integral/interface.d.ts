@@ -13,6 +13,8 @@ export interface IntegralProps {
   mainType: MainType
   /** 类型(0:获取,1:下单获取,2:签到获取)(sub_type) */
   subType: SubType
+  /** 场景文案 */
+  subTypeDesc: string
   /** 过期时间(effective_time) */
   effectiveTime: number
   /** 创建时间(create_time) */
