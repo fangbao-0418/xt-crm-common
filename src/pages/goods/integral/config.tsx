@@ -71,8 +71,8 @@ export function getFieldsConfig (): FieldsConfig {
 }
 
 export enum StatusEnum {
-  已上架 = 0,
-  仓库中 = 1,
+  已上架 = 1,
+  仓库中 = 0,
   商品池 = 2,
   待上架 = 3
 }
