@@ -415,7 +415,7 @@ class Main extends React.Component<Props, State> {
             compensateCode: this.compensateCode,
             ...values
           }).then(() => {
-            hide
+            hide()
             APP.success('操作成功')
             this.fetchDetail()
           })
