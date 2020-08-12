@@ -112,7 +112,7 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: '优惠券',
-      dataIndex: 'faceValue',
+      dataIndex: 'couponPrice',
       render: APP.fn.formatMoney
     },
     {
