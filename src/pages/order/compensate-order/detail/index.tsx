@@ -1,6 +1,5 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router'
-import { Link } from 'react-router-dom'
 import { Card, Table, Tabs, Divider, Button, List, Radio } from 'antd'
 import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
@@ -8,7 +7,7 @@ import Image from '@/components/Image'
 import Info from '../components/info'
 import { If } from '@/packages/common/components'
 import { replaceHttpUrl, initImgList } from '@/util/utils'
-import { getFieldsConfig, getApplInfo, getOrderInfo, getLogisticsInfo, getGoodsInfo, getAuditInfo } from './config'
+import { getFieldsConfig, getApplInfo, getOrderInfo, getLogisticsInfo, getGoodsInfo, getAuditInfo, getResultInfo } from './config'
 import { CompensateStatusEnum, CompensatePayTypeEnum } from '../config'
 import { getCompensateDetail, getCompensateRecord, auditCompensate, getUserWxAccount, getRoleAmount } from '../api'
 
@@ -594,6 +593,19 @@ class Main extends React.Component<Props, State> {
                           )
                         }
                       </Info>
+                    </>
+                  </If>
+                  <If
+                    condition={
+                      [
+                        CompensateStatusEnum['已完成']
+                      ]
+                        .includes(detail.compensateStatus)
+                    }
+                  >
+                    <>
+                      <Divider dashed style={{ margin: '12px 0' }} />
+                      <Info title='结果信息' column={3} data={getResultInfo(detail)} />
                     </>
                   </If>
                   <Divider dashed style={{ margin: '12px 0' }} />

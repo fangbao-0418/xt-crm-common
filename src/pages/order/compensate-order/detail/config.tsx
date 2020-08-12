@@ -361,3 +361,26 @@ export function getGoodsInfo (detail: any) {
 export function getAuditInfo (detail: any) {
   return detail.auditList || []
 }
+/* 结果信息 */
+export function getResultInfo (detail: any) {
+  return [
+    {
+      label: '补偿金额',
+      value: APP.fn.formatMoney(detail.compensateAmount),
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '转账完成时间',
+      value: APP.fn.formatDate(detail.compensateTime) || '-',
+      span: 1,
+      type: 'text'
+    },
+    {
+      label: '转账凭证',
+      value: detail.thirdTransferSn || '-',
+      span: 1,
+      type: 'text'
+    }
+  ]
+}
