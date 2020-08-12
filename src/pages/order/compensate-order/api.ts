@@ -1,5 +1,4 @@
-const { post, newPost, get } = APP.http
-import { exportFile } from '@/util/fetch'
+const { newPost, get } = APP.http
 
 /* 获取补偿订单列表 */
 export function getOrderlist (data: any) {
@@ -43,7 +42,10 @@ export function getCompensateRecord (data: any) {
 
 /* 补偿单导出 */
 export function exportCompensate (data: any) {
-  return newPost('/mcweb/sale-after/order/compensate/exportCompensate', data)
+  return newPost('/mcweb/sale-after/order/compensate/exportCompensate', {
+    ...data,
+    orderBizType: 0
+  })
 }
 
 /* 补偿单审核 */
