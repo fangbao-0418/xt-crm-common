@@ -20,3 +20,7 @@ export const searchSupplier = (keyWords: string) => {
     return res.list.map((v: { name: string, id: string }) => ({ text: v.name, value: v.id }))
   })
 }
+//导出
+export function batchExport (data: any) {
+  return APP.http.newPost('/mcweb/account/supplier/settlement/detail/export/v1', data)
+}

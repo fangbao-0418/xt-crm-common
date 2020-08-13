@@ -190,6 +190,24 @@ export function customerAddCheck (data: any) {
 }
 
 export const refundList  = (data: any) => {
+  const { page, pageSize, ...rest } = data
+  const isEmptyArray = (v: any) => Array.isArray(v) && v.length === 0
+  const isEmptyParams = Object.values(rest).every((v) => v == undefined || v === null || v === '' || isEmptyArray(v))
+  if (isEmptyParams) {
+    return Promise.resolve({
+      code: "00000",
+      data: {
+        current: 1,
+        pages: 0,
+        records: [],
+        searchCount: true,
+        size: 10,
+        total: 0
+      },
+      message: "成功",
+      success: true
+    });
+  }
   return fetch('/order/afterSale/list', {
     method: 'POST',
     data
