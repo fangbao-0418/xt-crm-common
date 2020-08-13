@@ -319,7 +319,8 @@ class Main extends React.Component<Props, State> {
   /* 获取不同等级客服的数据 */
   fetchRoleAmount = () => {
     const { detail } = this.state
-    if (![CompensatePayTypeEnum['微信转账'], CompensatePayTypeEnum['支付宝转账'], CompensatePayTypeEnum['喜团账户余额']].includes(detail.compensatePayType)) {
+    if (!detail.isCanAudit) {
+      // 不需要审核的时候不需要调接口
       return
     }
     getRoleAmount().then((res: any) => {

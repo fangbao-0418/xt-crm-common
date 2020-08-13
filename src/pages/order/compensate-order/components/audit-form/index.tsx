@@ -32,8 +32,8 @@ interface Props {
 class Main extends React.Component<Props> {
   form: FormInstance
   state = {
-    compensateAmount: 0,
-    couponCode: undefined,
+    compensateAmount: this.props.detail.compensateAmount / 100,
+    couponCode: this.props.detail.couponCode,
     readonly: false
   }
   couponCodeList: any = []
@@ -157,6 +157,7 @@ class Main extends React.Component<Props> {
           <>
             <FormItem
               required
+              label='优惠券'
               inner={(form) =>{
                 return form.getFieldDecorator('couponCode', {
                   rules: [{ required: !readonly, message: '请输入' }]
