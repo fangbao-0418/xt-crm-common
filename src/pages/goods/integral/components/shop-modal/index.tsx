@@ -248,8 +248,8 @@ class Main extends React.Component<Props, State> {
                   name='status'
                   type='select'
                   options={[
-                    {label: '已上架', value: '0'},
-                    {label: '已下架', value: '1'},
+                    {label: '已上架', value: 1},
+                    {label: '已下架', value: 0},
                   ]}
                 />
                 <FormItem

@@ -35,7 +35,7 @@ export function getFieldsConfig (): FieldsConfig {
         }
       },
       store: {
-        label: '供应商ID',
+        label: '供应商',
         type: 'input',
         inner: (form) => {
           return form.getFieldDecorator('store')(
@@ -48,9 +48,7 @@ export function getFieldsConfig (): FieldsConfig {
         label: '状态',
         options: [
           { label: '已上架', value: 0 },
-          { label: '仓库中', value: 1 },
-          { label: '商品池', value: 2 },
-          { label: '待上架', value: 3 }
+          { label: '已下架', value: 1 }
         ]
       },
       exchangeRate: {
