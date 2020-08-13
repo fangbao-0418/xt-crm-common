@@ -166,8 +166,8 @@ class Main extends React.Component<Props> {
             ...payload,
             storeId: store?.key,
             shopId: shop?.key,
-            minCompensateAmount: compensateAmount?.[0],
-            maxCompensateAmount: compensateAmount?.[1],
+            minCompensateAmount: compensateAmount?.[0] ? compensateAmount[0] * 100 : undefined,
+            maxCompensateAmount: compensateAmount?.[1] ? compensateAmount[1] * 100 : undefined,
             compensateStatus: compensateStatus || undefined,
             compensatePayType: compensatePayType || undefined
           }
