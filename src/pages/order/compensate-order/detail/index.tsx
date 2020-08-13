@@ -318,11 +318,6 @@ class Main extends React.Component<Props, State> {
 
   /* 获取不同等级客服的数据 */
   fetchRoleAmount = () => {
-    const { detail } = this.state
-    if (!detail.isCanAudit) {
-      // 不需要审核的时候不需要调接口
-      return
-    }
     getRoleAmount().then((res: any) => {
       this.setState({
         quota: res?.quota,
@@ -342,8 +337,10 @@ class Main extends React.Component<Props, State> {
         detailLoad: true,
         detail: detail || {}
       }, () => {
-        this.fetchWxAccount()
-        this.fetchRoleAmount()
+        if (detail?.isCanAudit) {
+          this.fetchWxAccount()
+          this.fetchRoleAmount()
+        }
       })
     })
   }
