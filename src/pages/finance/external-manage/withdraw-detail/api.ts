@@ -23,5 +23,5 @@ export const searchSupplier = (keyWords: string) => {
 }
 //导出
 export function batchExport (data: any) {
-  return APP.http.newPost('/mcweb/account/supplier/invoice/export/v1', data)
+  return APP.http.newPost('/mcweb/account/supplier/withdrawal/export/v1', data)
 }
