@@ -47,8 +47,8 @@ export function getFieldsConfig (): FieldsConfig {
         type: 'select',
         label: '状态',
         options: [
-          { label: '已上架', value: 0 },
-          { label: '仓库中', value: 1 },
+          { label: '已上架', value: 1 },
+          { label: '仓库中', value: 0 },
           { label: '商品池', value: 2 },
           { label: '待上架', value: 3 }
         ]
@@ -71,8 +71,8 @@ export function getFieldsConfig (): FieldsConfig {
 }
 
 export enum StatusEnum {
-  已上架 = 0,
-  仓库中 = 1,
+  已上架 = 1,
+  仓库中 = 0,
   商品池 = 2,
   待上架 = 3
 }
