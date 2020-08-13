@@ -75,6 +75,7 @@ class Main extends Component {
                   initialValue: currentMenuInfo.parentId
                 })(
                   <Select
+                    allowClear
                     style={{ width: 200 }}
                     showSearch
                     filterOption={(inputValue, option) => {
@@ -82,7 +83,13 @@ class Main extends Component {
                     }}
                   >
                     {
-                      list.map(item => <Option value={item.id} key={item.id}>{item.name}</Option>)
+                      list.map(item => (
+                        <Option
+                          title={`${item.name}${item.path ? `(${item.path})` : '' }`}
+                          value={item.id}
+                          key={item.id}>{item.name}
+                        </Option>
+                      ))
                     }
                   </Select>
                 )

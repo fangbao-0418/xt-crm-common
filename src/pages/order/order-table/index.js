@@ -224,7 +224,9 @@ class OrderList extends React.Component {
               type='link'
               // href={window.location.pathname + `#/order/detail/${orderCode}`} target='_blank'
               onClick={() => {
-                APP.open(`/order/detail/${orderCode}`)
+                const { pathname } = window.location
+                const url = `${(/^\/$/).test(pathname) ? '/' : pathname}#/order/detail/${orderCode}`
+                APP.open(url)
               }}
             >
               查看详情
@@ -236,7 +238,9 @@ class OrderList extends React.Component {
                 // href={window.location.pathname + `#/order/detail/${orderCode}`}
                 // target='_blank'
                 onClick={() => {
-                  APP.open(`/order/detail/${orderCode}`)
+                  const { pathname } = window.location
+                  const url = `${(/^\/$/).test(pathname) ? '/' : pathname}#/order/detail/${orderCode}`
+                  APP.open(url)
                 }}
               >
                 发货
