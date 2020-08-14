@@ -50,7 +50,7 @@ class Main extends React.Component<Props> {
     this.form.setValues({
       responsibilityType: detail.responsibilityType,
       compensateAmount: detail.compensateAmount / 100,
-      // memberId: detail.memberId,
+      memberId: detail.memberId,
       transferEvidenceImgs: (detail.transferEvidenceImg ? JSON.parse(detail.transferEvidenceImg) : []).map((item: any) => initImgList(item)[0]),
       illustrate: detail.illustrate,
       receiptorAccountName: detail.receiptorAccountName,
