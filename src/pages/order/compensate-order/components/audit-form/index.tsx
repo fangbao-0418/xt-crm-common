@@ -113,9 +113,10 @@ class Main extends React.Component<Props> {
           name='operateType'
           controlProps={{
             onChange: (e: any) => {
-              this.initData()
               this.setState({
                 readonly: e.target.value === 2
+              }, () => {
+                this.initData()
               })
             }
           }}
