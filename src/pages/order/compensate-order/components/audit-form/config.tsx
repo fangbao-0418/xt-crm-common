@@ -63,7 +63,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         controlProps: {
           style: {
             width: 236
-          }
+          },
+          min: 0.01
         },
         fieldDecoratorOptions: {
           rules: [
