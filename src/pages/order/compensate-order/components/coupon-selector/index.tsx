@@ -1,12 +1,12 @@
 import React from 'react'
-import { ListPage, FormItem } from '@/packages/common/components'
+import { ListPage, FormItem, If } from '@/packages/common/components'
 import { OptionProps } from '@/packages/common/components/form'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
-import { If } from '@/packages/common/components'
 import receiveStatus from '@/enum/receiveStatus'
 import { formatFaceValue, formatDateRange } from '@/pages/helper'
 import { Badge, Select } from 'antd'
 import * as api from './api'
+import { getCouponsAllList } from '../../api'
 
 const { Option } = Select
 
@@ -125,6 +125,16 @@ class Main extends React.Component<Props> {
       )
     }
   ]
+  public componentDidMount () {
+    this.fetchCouponsAllList()
+  }
+  public fetchCouponsAllList = () => {
+    getCouponsAllList({ orderBizType: 0 }).then(res => {
+      this.setState({
+        selectedRows: res || []
+      })
+    })
+  }
   public handleClickName = (record: any) => {
     const { origin, pathname } = window.location
     window.open(`${origin}${(/^\/$/).test(pathname) ? '/' : pathname}#/coupon/get/couponList/detail/${record.id}`)
@@ -137,6 +147,17 @@ class Main extends React.Component<Props> {
       onChange && (
         onChange(selectedRows)
       )
+    })
+  }
+  public handlePageKeyChange = (pageKey: string) => {
+    this.setState({
+      pageKey
+    }, () => {
+      const { pageKey } = this.state
+      this.listpage?.refresh()
+      if (pageKey === 'all') {
+        this.fetchCouponsAllList()
+      }
     })
   }
   render () {
@@ -196,13 +217,7 @@ class Main extends React.Component<Props> {
             addonAfterSearch={(
               <>
                 <Select
-                  onChange={(pageKey: string) => {
-                    this.setState({
-                      pageKey
-                    }, () => {
-                        this.listpage?.refresh()
-                    })
-                  }}
+                  onChange={this.handlePageKeyChange}
                   value={pageKey}
                   style={{ width: 120 }}
                 >
@@ -238,13 +253,7 @@ class Main extends React.Component<Props> {
               <>
                 <span>{' '}已选：{selectedRowKeys.length} 张</span>
                 <Select
-                  onChange={(pageKey: string) => {
-                    this.setState({
-                      pageKey
-                    }, () => {
-                      this.listpage?.refresh()
-                    })
-                  }}
+                  onChange={this.handlePageKeyChange}
                   value={pageKey}
                   style={{ width: 120, marginLeft: 24 }}
                 >
