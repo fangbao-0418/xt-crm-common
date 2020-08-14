@@ -9,6 +9,7 @@ interface Props {
   value?: any
   disabled?: boolean
   mode?: 'default' | 'multiple' | 'tags' | 'combobox' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE' | undefined
+  labelInValue?: boolean
 }
 interface State {
   options: {label: string, value: any}[]
@@ -52,13 +53,14 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { options, value } = this.state
-    const { mode, disabled } = this.props
+    const { mode, disabled, labelInValue = false } = this.props
     return (
       <Select
         value={value}
         mode={mode}
         allowClear
         disabled={disabled}
+        labelInValue={labelInValue}
         placeholder={this.props.placeholder || '请选择'}
         style={this.props.style}
         onChange={this.onChange}
