@@ -28,7 +28,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         fieldDecoratorOptions: {
           rules: [
             { required: true, message: '处理方式必须选择' }
-          ]
+          ],
+          initialValue: 3
         }
       },
       responsibilityType: {

@@ -120,164 +120,166 @@ class Main extends React.Component<Props> {
             }
           }}
         />
-        <FormItem readonly={readonly} verifiable required name='responsibilityType' />
-        <If
-          condition={[
-            CompensatePayTypeEnum['喜团账户余额'],
-            CompensatePayTypeEnum['支付宝转账'],
-            CompensatePayTypeEnum['微信转账']
-          ].includes(detail.compensatePayType)}
-        >
-          <>
-            <FormItem
-              controlProps={{
-                onChange: (compensateAmount: any) => {
-                  this.setState({
-                    compensateAmount
-                  })
-                }
-              }}
-              verifiable
-              readonly={readonly}
-              name='compensateAmount'
-            />
-            <FormItem style={{ margin: '-24px 0 0' }}>
-              <div style={{ lineHeight: '20px', paddingBottom: 16 }}>
-                <div>当前级别免审核额度：{APP.fn.formatMoney(quota)}</div>
-                <div>{this.getAuditMsg(compensateAmount)}</div>
-              </div>
-            </FormItem>
-          </>
-        </If>
-        <If
-          condition={[
-            CompensatePayTypeEnum['优惠券']
-          ].includes(detail.compensatePayType)}
-        >
-          <>
-            <FormItem
-              required
-              label='优惠券'
-              inner={(form) =>{
-                return form.getFieldDecorator('couponCode', {
-                  rules: [{ required: !readonly, message: '请输入' }]
-                })(
-                  <SelectFetch
-                    readonly={readonly}
-                    allowClear={false}
-                    showSearch
-                    style={{ width: '100%' }}
-                    optionFilterProp='children'
-                    filterOption={(input, option) => {
-                      return (option.props.children as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
-                    }}
-                    onChange={couponCode => {
-                      this.setState({
-                        couponCode
-                      })
-                    }}
-                    placeholder='请选择'
-                    fetchData={() => {
-                      return api.getCouponsAllList({ orderBizType: 0 }).then((res: any) => {
-                        this.couponCodeList = res || []
-                        return (res || []).map((item: any) => {
-                          const result = item.faceValue.split(':')
-                          return {
-                            label: `满${(result[0] / 100) || 0}减${(result[1] / 100) || 0}`,
-                            value: item.code
-                          }
-                        })
-                      })
-                    }}
-                  />
-                )
-              }}
-            />
-            <FormItem style={{ margin: '-24px 0 0' }}>
-              <div style={{ lineHeight: '20px', paddingBottom: 16 }}>
-                <div>当前级别免审核额度：{APP.fn.formatMoney(quota)}</div>
-                <div>{this.getAuditMsg(couponMoneny / 100)}</div>
-              </div>
-            </FormItem>
-          </>
-        </If>
-        <If
-          condition={[
-            CompensatePayTypeEnum['支付宝转账']
-          ].includes(detail.compensatePayType)}
-        >
-          <>
-            <FormItem label='转账方式'>支付宝转账</FormItem>
-            <FormItem readonly={readonly} verifiable name='receiptorAccountName' />
-            <FormItem readonly={readonly} verifiable name='receiptorAccountNo' />
-          </>
-        </If>
-        <If
-          condition={[
-            CompensatePayTypeEnum['微信转账']
-          ].includes(detail.compensatePayType)}
-        >
-          <>
-            <FormItem label='转账方式'>微信转账</FormItem>
-            <FormItem
-              required
-              label='微信账号'
-              inner={(form) => {
-                return form.getFieldDecorator('memberId', {
-                  rules: [
-                    {
-                      required: !readonly,
-                      message: '请选择'
-                    }
-                  ]
-                })(
-                  <Radio.Group
-                    disabled={readonly}
-                  >
-                    {
-                      wxAccountList.map(item => (
-                        <Radio
-                          key={item.memberId}
-                          style={{
-                            display: 'block',
-                            height: '30px',
-                            lineHeight: '30px'
-                          }}
-                          value={item.memberId}
-                        >
-                          {item.nickname}
-                        </Radio>
-                      ))
-                    }
-                  </Radio.Group>
-                )
-              }}
-            />
-          </>
-        </If>
-        <FormItem
-          label='补偿凭证'
-          required={!readonly}
-          inner={(form) => {
-            return form.getFieldDecorator('transferEvidenceImgs', {
-              rules: [
-                {
-                  required: !readonly,
-                  message: '请上传补偿凭证'
-                }
-              ]
-            })(
-              <UploadView
-                disabled={readonly}
-                ossType='cos'
-                placeholder='请上传'
-                listType='picture-card'
-                listNum={3}
-                size={2}
+        <If condition={!readonly}>
+          <FormItem readonly={readonly} verifiable required name='responsibilityType' />
+          <If
+            condition={[
+              CompensatePayTypeEnum['喜团账户余额'],
+              CompensatePayTypeEnum['支付宝转账'],
+              CompensatePayTypeEnum['微信转账']
+            ].includes(detail.compensatePayType)}
+          >
+            <>
+              <FormItem
+                controlProps={{
+                  onChange: (compensateAmount: any) => {
+                    this.setState({
+                      compensateAmount
+                    })
+                  }
+                }}
+                verifiable
+                readonly={readonly}
+                name='compensateAmount'
               />
-            )
-          }}
-        />
+              <FormItem style={{ margin: '-24px 0 0' }}>
+                <div style={{ lineHeight: '20px', paddingBottom: 16 }}>
+                  <div>当前级别免审核额度：{APP.fn.formatMoney(quota)}</div>
+                  <div>{this.getAuditMsg(compensateAmount)}</div>
+                </div>
+              </FormItem>
+            </>
+          </If>
+          <If
+            condition={[
+              CompensatePayTypeEnum['优惠券']
+            ].includes(detail.compensatePayType)}
+          >
+            <>
+              <FormItem
+                required
+                label='优惠券'
+                inner={(form) =>{
+                  return form.getFieldDecorator('couponCode', {
+                    rules: [{ required: !readonly, message: '请输入' }]
+                  })(
+                    <SelectFetch
+                      readonly={readonly}
+                      allowClear={false}
+                      showSearch
+                      style={{ width: '100%' }}
+                      optionFilterProp='children'
+                      filterOption={(input, option) => {
+                        return (option.props.children as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }}
+                      onChange={couponCode => {
+                        this.setState({
+                          couponCode
+                        })
+                      }}
+                      placeholder='请选择'
+                      fetchData={() => {
+                        return api.getCouponsAllList({ orderBizType: 0 }).then((res: any) => {
+                          this.couponCodeList = res || []
+                          return (res || []).map((item: any) => {
+                            const result = item.faceValue.split(':')
+                            return {
+                              label: `满${(result[0] / 100) || 0}减${(result[1] / 100) || 0}`,
+                              value: item.code
+                            }
+                          })
+                        })
+                      }}
+                    />
+                  )
+                }}
+              />
+              <FormItem style={{ margin: '-24px 0 0' }}>
+                <div style={{ lineHeight: '20px', paddingBottom: 16 }}>
+                  <div>当前级别免审核额度：{APP.fn.formatMoney(quota)}</div>
+                  <div>{this.getAuditMsg(couponMoneny / 100)}</div>
+                </div>
+              </FormItem>
+            </>
+          </If>
+          <If
+            condition={[
+              CompensatePayTypeEnum['支付宝转账']
+            ].includes(detail.compensatePayType)}
+          >
+            <>
+              <FormItem label='转账方式'>支付宝转账</FormItem>
+              <FormItem readonly={readonly} verifiable name='receiptorAccountName' />
+              <FormItem readonly={readonly} verifiable name='receiptorAccountNo' />
+            </>
+          </If>
+          <If
+            condition={[
+              CompensatePayTypeEnum['微信转账']
+            ].includes(detail.compensatePayType)}
+          >
+            <>
+              <FormItem label='转账方式'>微信转账</FormItem>
+              <FormItem
+                required
+                label='微信账号'
+                inner={(form) => {
+                  return form.getFieldDecorator('memberId', {
+                    rules: [
+                      {
+                        required: !readonly,
+                        message: '请选择'
+                      }
+                    ]
+                  })(
+                    <Radio.Group
+                      disabled={readonly}
+                    >
+                      {
+                        wxAccountList.map(item => (
+                          <Radio
+                            key={item.memberId}
+                            style={{
+                              display: 'block',
+                              height: '30px',
+                              lineHeight: '30px'
+                            }}
+                            value={item.memberId}
+                          >
+                            {item.nickname}
+                          </Radio>
+                        ))
+                      }
+                    </Radio.Group>
+                  )
+                }}
+              />
+            </>
+          </If>
+          <FormItem
+            label='补偿凭证'
+            required={!readonly}
+            inner={(form) => {
+              return form.getFieldDecorator('transferEvidenceImgs', {
+                rules: [
+                  {
+                    required: !readonly,
+                    message: '请上传补偿凭证'
+                  }
+                ]
+              })(
+                <UploadView
+                  disabled={readonly}
+                  ossType='cos'
+                  placeholder='请上传'
+                  listType='picture-card'
+                  listNum={3}
+                  size={2}
+                />
+              )
+            }}
+          />
+        </If>
         <FormItem name='remarks' />
       </Form>
     )

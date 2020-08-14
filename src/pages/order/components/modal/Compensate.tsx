@@ -184,6 +184,18 @@ class Compensate extends React.Component<Props, State> {
       responsibilityType: twoObj?.responsibilityType
     })
   }
+  handleCompensatePayTypeChange = (value: any) => {
+    if (value === 13) {
+      if (this.state.wxAccountList.length) {
+        const item = this.state.wxAccountList[0]
+        setTimeout(() => {
+          this.props.form.setFieldsValue({
+            wxInfo: item ? `${item.appId}:${item.openId}|${item.nickname}` : undefined
+          })
+        })
+      }
+    }
+  }
   render () {
     const {
       form: { getFieldDecorator, getFieldValue, setFieldsValue }
@@ -224,7 +236,7 @@ class Compensate extends React.Component<Props, State> {
                 }
               ]
             })(
-              <Select placeholder='请选择' style={{ width: '100%' }}>
+              <Select onChange={this.handleCompensatePayTypeChange} placeholder='请选择' style={{ width: '100%' }}>
                 <Option value={11}>喜团账户余额</Option>
                 <Option value={12}>支付宝转账</Option>
                 <Option disabled={wxDisable} value={13}>微信转账</Option>
@@ -299,7 +311,7 @@ class Compensate extends React.Component<Props, State> {
               })(
                 <InputNumber
                   placeholder='请输入'
-                  min={0}
+                  min={0.01}
                 />
               )}
               <div style={{ lineHeight: '18px', verticalAlign: 'middle', display: 'inline-block' }}>
@@ -311,13 +323,22 @@ class Compensate extends React.Component<Props, State> {
             </Form.Item>
           </If>
           <If condition={compensatePayType === 10}>
-            <Form.Item label='优惠券选择'>
+            <Form.Item label='优惠券选择' extra={
+              <>
+                <div style={{ lineHeight: '18px', verticalAlign: 'middle', display: 'inline-block' }}>
+                  <div className='ml10'>
+                当前级别免审核额度：{APP.fn.formatMoney(quota)}
+                  </div>
+                  { this.getAuditMsg(couponMoneny / 100) }
+                </div>
+              </>
+            }>
               {getFieldDecorator('couponCode', {
                 rules: [{ required: compensatePayType === 10, message: '请输入' }]
               })(
                 <SelectFetch
                   showSearch
-                  style={{ width: '88px' }}
+                  style={{ width: '100%' }}
                   optionFilterProp='children'
                   filterOption={(input, option) => {
                     return (option.props.children as string).toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -329,7 +350,7 @@ class Compensate extends React.Component<Props, State> {
                       return (res || []).map((item: any) => {
                         const result = item.faceValue.split(':')
                         return {
-                          label: `满${(result[0] / 100) || 0}减${(result[1] / 100) || 0}`,
+                          label: `${item.name}, 满${(result[0] / 100) || 0}减${(result[1] / 100) || 0}, ${item.code}`,
                           value: item.code
                         }
                       })
@@ -337,12 +358,6 @@ class Compensate extends React.Component<Props, State> {
                   }}
                 />
               )}
-              <div style={{ lineHeight: '18px', verticalAlign: 'middle', display: 'inline-block' }}>
-                <div className='ml10'>
-                当前级别免审核额度：{APP.fn.formatMoney(quota)}
-                </div>
-                { this.getAuditMsg(couponMoneny / 100) }
-              </div>
             </Form.Item>
           </If>
           <If condition={compensatePayType === 12}>
