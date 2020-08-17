@@ -10,6 +10,7 @@ interface Props {
   api?: (value: string) => Promise<any>
   /** 保留搜索条件key值 */
   reserveKey?: string
+  labelInValue?: boolean
 }
 
 interface Option {
@@ -71,9 +72,11 @@ class Main extends React.Component<Props, State> {
     }
   }
   public render () {
+    const { labelInValue = false } = this.props
     const options = this.state.data.map((d) => <Option key={d.value}>{d.text}</Option>)
     return (
       <Select
+        labelInValue={labelInValue}
         allowClear
         showSearch
         value={this.state.value}
