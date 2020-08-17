@@ -212,7 +212,7 @@ class Main extends React.Component<Props> {
             onSelect: this.onSelectChange,
             onSelectAll: this.onSelectAll,
             getCheckboxProps: (record: any) => ({
-              disabled: record.status === 2
+              disabled: (record.status === 2) && (!selectedRowKeys.includes(record.code))
             })
           }
         },
