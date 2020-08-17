@@ -5,6 +5,7 @@ import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import receiveStatus from '@/enum/receiveStatus'
 import { formatFaceValue, formatDateRange } from '@/pages/helper'
 import { Badge, Select } from 'antd'
+import { differenceBy, unionBy } from 'lodash'
 import * as api from './api'
 import { getCouponsAllList } from '../../api'
 
@@ -130,24 +131,20 @@ class Main extends React.Component<Props> {
   }
   public fetchCouponsAllList = () => {
     getCouponsAllList({ orderBizType: 0 }).then(res => {
+      const selectedRows = res || []
       this.setState({
-        selectedRows: res || []
+        selectedRows
+      }, () => {
+        const { onChange } = this.props
+        onChange && (
+          onChange(selectedRows)
+        )
       })
     })
   }
   public handleClickName = (record: any) => {
     const { origin, pathname } = window.location
     window.open(`${origin}${(/^\/$/).test(pathname) ? '/' : pathname}#/coupon/get/couponList/detail/${record.id}`)
-  }
-  public handleSelectChange = (_: any, selectedRows: any) => {
-    this.setState({
-      selectedRows
-    }, () => {
-      const { onChange } = this.props
-      onChange && (
-        onChange(selectedRows)
-      )
-    })
   }
   public handlePageKeyChange = (pageKey: string) => {
     this.setState({
@@ -158,6 +155,39 @@ class Main extends React.Component<Props> {
       if (pageKey === 'all') {
         this.fetchCouponsAllList()
       }
+    })
+  }
+  public onSelectChange = (record:any, selected: boolean) => {
+    let newSelectedRows: any[] = []
+    if (selected) {
+      newSelectedRows = unionBy(this.state.selectedRows, [record], 'code')
+    } else {
+      newSelectedRows = differenceBy(this.state.selectedRows, [record], 'code')
+    }
+    this.setState({
+      selectedRows: newSelectedRows
+    }, () => {
+      const { onChange } = this.props
+      onChange && (
+        onChange(newSelectedRows)
+      )
+    })
+  }
+  public onSelectAll = (selected: any, _:any, changeRows: any[]) => {
+    const { selectedRows: beforeSelectedRows } = this.state
+    let newSelectedRows: any[] = []
+    if (selected) {
+      newSelectedRows = unionBy(beforeSelectedRows, changeRows, 'code')
+    } else {
+      newSelectedRows = differenceBy(beforeSelectedRows, changeRows, 'code')
+    }
+    this.setState({
+      selectedRows: newSelectedRows
+    }, () => {
+      const { onChange } = this.props
+      onChange && (
+        onChange(newSelectedRows)
+      )
     })
   }
   render () {
@@ -179,7 +209,8 @@ class Main extends React.Component<Props> {
           rowKey: 'code',
           rowSelection: {
             selectedRowKeys,
-            onChange: this.handleSelectChange,
+            onSelect: this.onSelectChange,
+            onSelectAll: this.onSelectAll,
             getCheckboxProps: (record: any) => ({
               disabled: record.status === 2
             })

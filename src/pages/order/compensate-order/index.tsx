@@ -124,10 +124,7 @@ class Main extends React.Component<Props> {
         />
       ),
       onOk: () => {
-        if (!selectedRows.length) {
-          hide()
-          return
-        }
+        console.log(selectedRows, 'selectedRows')
         // orderBizType 订单业务类型 0-喜团订单，10-买菜订单
         addCoupons({ couponDTOList: selectedRows, orderBizType: 0 }).then(() => {
           APP.success('关联成功')
