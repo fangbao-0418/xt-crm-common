@@ -306,7 +306,7 @@ class UploadView extends Component {
   customRequest (e) {
     const file = e.file
     const { onChange, formatOrigin, ossDir, ossType } = this.props
-    
+
     ossUpload(file, ossDir, ossType).then((urlList) => {
       let { fileList } = this.state
       console.log(file, 'customRequest')
@@ -326,11 +326,11 @@ class UploadView extends Component {
           ...item,
           url: this.replaceUrl(item.url),
           durl: this.replaceUrl(item.durl),
-          thumbUrl: this.replaceUrl(item.thumbUrl),
+          thumbUrl: this.replaceUrl(item.thumbUrl)
         } : item
       })
       console.log('change --------', value)
-      isFunction(onChange) && onChange([...value]);
+      isFunction(onChange) && onChange([...value])
     }, () => {
       this.count--
       if (this.count <= 0) {
@@ -366,6 +366,7 @@ class UploadView extends Component {
       showUploadList,
       children,
       accept,
+      disabled=false,
       ...attributes
     } = this.props
     const { fileList } = this.state
@@ -373,6 +374,7 @@ class UploadView extends Component {
     return (
       <>
         <Upload
+          disabled={disabled}
           accept={accept}
           listType={listType}
           fileList={fileList}
