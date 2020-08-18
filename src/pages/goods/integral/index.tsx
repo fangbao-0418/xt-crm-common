@@ -140,11 +140,11 @@ class Main extends React.Component<{}, State> {
   }
   public toDelete (ids: any[]) {
     api.toDelete(ids).then(() => {
+      APP.success('删除成功')
       this.listpage.refresh()
     })
   }
   public onRowSelectionChange = (selectedRowKeys: any[]) => {
-    console.log(selectedRowKeys, 'selectedRowKeys')
     this.setState({
       selectedRowKeys: selectedRowKeys
     })

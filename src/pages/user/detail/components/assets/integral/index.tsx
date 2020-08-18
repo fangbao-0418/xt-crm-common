@@ -3,9 +3,11 @@ import ListPage, { ListPageInstanceProps } from '@/packages/common/components/li
 import { ColumnProps } from 'antd/lib/table'
 import { IntegralProps } from './interface'
 import { getFieldsConfig } from './config'
+import { parseQuery } from '@/util/utils'
 import * as api from './api'
 
 class Main extends React.Component {
+  public query = parseQuery() as { memberId: string }
   public columns: ColumnProps<IntegralProps>[] = [
     { title: '时间', dataIndex: 'createTime', width: 150, render: (text) => APP.fn.formatDate(text) },
     { title: '场景', dataIndex: 'subTypeDesc', width: 150, align: 'center' },
@@ -44,6 +46,12 @@ class Main extends React.Component {
           columns={this.columns}
           getInstance={(ref) => {
             this.listpage = ref
+          }}
+          processPayload={(payload) => {
+            return {
+              ...payload,
+              memberId: this.query.memberId
+            }
           }}
           api={api.fetchList}
         />

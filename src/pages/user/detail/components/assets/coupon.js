@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { withRouter } from 'react-router'
 import { Card } from 'antd';
 import { getCouponList } from '../../api';
 import { formatRangeTime, formatFaceValue } from '@/pages/helper';
@@ -58,11 +59,10 @@ function coupon({ history }) {
     const searchParams = new URLSearchParams(history.location.search);
     const memberId = searchParams.get('memberId');
     try {
-      setLoading(true);
-      const res = await getCouponList(memberId, pagination);
-      setLoading(false);
-      console.log('res=>', res);
-      setRecords(res.records);
+      setLoading(true)
+      const res = await getCouponList(memberId, pagination)
+      setLoading(false)
+      setRecords(res.records)
       setPagination({
         ...pagination,
         page: res.current,
@@ -81,4 +81,4 @@ function coupon({ history }) {
     </Card>
   );
 }
-export default coupon;
+export default withRouter(coupon);

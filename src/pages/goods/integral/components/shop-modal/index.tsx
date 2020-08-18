@@ -32,9 +32,9 @@ class Main extends React.Component<Props, State> {
   public payload: PayloadProps = {
     page: 1,
     pageSize: 10,
-    status: 0,
-    enableHb: 0,
-    enableStatus: 0
+    // status: 0,
+    // enableHb: 0,
+    // enableStatus: 0
   }
   public selectRows: Shop.ShopItemProps[] = []
   public form: any
