@@ -85,9 +85,9 @@ class Main extends React.Component<Props> {
     dataIndex: 'amount',
     title: '本次结算金额',
     width: 150,
-    render: (text: any) => {
+    render: (text: any, record: any) => {
       text=text/100
-      return <div style={{ color: text<0?'red':'green' }}>{text>0?'+'+text:text}</div>
+      return <div style={{ color: [2,4].includes(record.tradeType)?'red':'green' }}>{text>0?'+'+text:text}</div>
     }
   }, {
     dataIndex: 'profitRatio',
@@ -205,13 +205,12 @@ class Main extends React.Component<Props> {
           }}
           addonAfterSearch={(
             <div>
-              {/* <Button
+              <Button
                 type='primary'
-                onClick={() => {
-                }}
+                onClick={this.export}
               >
-                批量导出
-              </Button> */}
+                导出
+              </Button>
               {/* <Popconfirm
                 title='确定终止结算吗'
                 className='ml8'
@@ -291,5 +290,13 @@ class Main extends React.Component<Props> {
       </div>
     )
   }
+
+  public export = () => {
+    const payload = this.listpage.form.getValues()
+    api.batchExport({...payload,})
+    .then(res => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
+  };
 }
 export default Alert(Main)

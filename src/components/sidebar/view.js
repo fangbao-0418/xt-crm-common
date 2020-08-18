@@ -50,7 +50,7 @@ class Sidebar extends React.Component {
     let selectedGroup = []
     function loop (arr, group = [], isPattern = false) {
       return arr.find((item) => {
-        const pattern = new RegExp('^' + item.path + '/(\\w)+$')
+        const pattern = new RegExp('^' + item.path + '/(\\w|-)+$')
         // console.log(routesMapRule, item.path, 'routesMapRule')
         // console.log(routesMapRule[item.path], 'routesMapRule[pathname]')
         if (routesMapRule[item.path]?.find?.((rule) => {
