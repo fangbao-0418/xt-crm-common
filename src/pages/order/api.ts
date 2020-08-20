@@ -248,7 +248,7 @@ export function closeRefund (data: any) {
 }
 
 export const exportRefund = (data: any) => {
-  return exportFile('/order/afterSale/export', data)
+  return get('/order/afterSale/export', data)
 }
 
 export function profitRecal (data: any) {
