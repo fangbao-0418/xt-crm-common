@@ -97,7 +97,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
       return (
         <>
             {
-              records.syncStatus===0?(
+              records.syncStatus===0&&records.submitStatus===1?(
                 <div>
                 <span
                   className='href mr8'
