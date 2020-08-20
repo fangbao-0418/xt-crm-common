@@ -110,6 +110,9 @@ class OrderList extends React.Component {
       {
         title: '供应商名称',
         dataIndex: 'name'
+      },  {
+        title: '店铺编号',
+        dataIndex: 'shopIdStr'
       }, {
         title: '保证金余额',
         dataIndex: 'depositBalanceAmount',

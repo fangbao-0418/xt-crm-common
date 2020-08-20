@@ -1,6 +1,6 @@
 import React from 'react'
 import { ListPage, Form, FormItem, Alert, If } from '@/packages/common/components'
-import { getData, getDetailDataList, getDetailInfo, claim } from './api'
+import { getData, getDetailDataList, getDetailInfo, claim, reject, importData, exportData } from './api'
 import { defaultConfig, NAME_SPACE } from './config'
 import { Icon, ConfigProvider, DatePicker, Table, Col, Row, Button, Upload, message, Modal } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
@@ -38,7 +38,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     dataIndex: 'supplierName'
   }, {
     title: '主营类目',
-    dataIndex: 'supplierName1'
+    dataIndex: 'mainCategory'
   }, {
     title: '业务类型',
     dataIndex: 'supplierCategoryDesc'
@@ -50,7 +50,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     }
   }, {
     title: '状态',
-    dataIndex: 'status'
+    dataIndex: 'statusDescription'
   }, {
     title: '操作',
     fixed: 'right',
@@ -97,12 +97,12 @@ class Index extends React.Component<AlertComponentProps, BondState> {
       return (
         <>
             {
-              records.syncStatus!==0?(
+              records.syncStatus===0?(
                 <div>
                 <span
                   className='href mr8'
                   onClick={() => {
-                    this.getDetailInfoData(records.id)
+                    this.getDetailInfoData(records)
                   }}
                 >
               认领
@@ -110,12 +110,18 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                 <span
                 className='href'
                 onClick={() => {
+                  const _this=this
                   confirm({
                     okText: '确定',
                     cancelText: '取消',
                     title: '你确定要驳回吗?',
                     onOk() {
-
+                      reject({id: records.id}).then(res => {
+                        if(res){
+                          message.success('驳回成功')
+                          _this.handleSearch()
+                        }
+                      })
                     },
                   });
                 }}
@@ -127,7 +133,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                 <span
                 className='href mr10'
                 onClick={() => {
-                  this.getDetailInfoData(records.id)
+                  this.getDetailInfoData(records)
                 }}
               >
               查看
@@ -168,6 +174,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
             <div>
               <Button
                 type='primary'
+                onClick={this.export}
               >
                 未开收据导出
               </Button>
@@ -176,7 +183,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                     accept='.xls,.xlsx'
                     showUploadList={false}
                     withCredentials={true}
-                    action={claim}
+                    action={importData}
                     headers={getHeaders({})}
                     onChange={this.handleImportChange}
                     style={{ margin: '0 10px' }}
@@ -207,6 +214,13 @@ class Index extends React.Component<AlertComponentProps, BondState> {
         />
       </>
     )
+  }
+  export = () => {
+    const payload = this.list.form.getValues()
+    exportData({...payload, applyStatus: 0})
+    .then(res => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
   }
   handleImportChange = (info: any) => {
     const { status, response, name } = info.file
@@ -275,10 +289,14 @@ class Index extends React.Component<AlertComponentProps, BondState> {
        }
      })
    }
-   getDetailInfoData (id: any) {
-     getDetailInfo({ id }).then(res => {
+   getDetailInfoData (record: any) {
+     getDetailInfo({ id: record.id }).then(res => {
        if (res) {
          const ok = () => {
+           if(record.syncStatus!==0){
+            ModalConfig.close('Synchronizesupplier1')
+            return
+           }
            this.form.props.form.validateFields((err, vals) => {
              if (!err) {
                claim({
@@ -299,11 +317,13 @@ class Index extends React.Component<AlertComponentProps, BondState> {
          }
          this.showModal('认领保证金',
            <Form
+             readonly={record.syncStatus!==0}
              getInstance={ref => this.form = ref}
              labelCol={{ span: 6 }}
              wrapperCol={{ span: 14 }}
              mounted={() => {
                this.form.setValues({
+                 claimAmount: record.syncStatus!==0?formatPrice(record.claimAmount)+'元':undefined,
                  voucherImages: this.handleFileValue(res.voucherImages)
                })
              }}
@@ -356,7 +376,7 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                  <div
                    className='href'
                    onClick={() => {
-                     res.voucherImages.map((item: string)=>{
+                     res?.voucherImages?.map((item: string)=>{
                        let str=item
                        const index = item.lastIndexOf('/')
                        str = item.substring(index + 1, item.length)

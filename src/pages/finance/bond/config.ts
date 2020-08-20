@@ -33,17 +33,14 @@ export const defaultConfig: FieldsConfig = {
       label: '状态',
       type: 'select',
       options: [{
-        label: '已认领',
+        label: '未缴纳',
         value: 1
       }, {
-        label: '未缴纳',
+        label: '待认领',
         value: 2
       }, {
-        label: '待认领',
+        label: '已认领',
         value: 3
-      }, {
-        label: '已驳回',
-        value: 4
       }]
     },
     createTime: {
