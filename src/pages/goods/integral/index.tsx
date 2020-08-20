@@ -20,6 +20,7 @@ class Main extends React.Component<{}, State> {
   public state: State = {
     selectedRowKeys: []
   }
+  public sourceExchangeRate = 0
   public columns: ColumnProps<GoodsProps>[] = [
     { title: '商品ID', dataIndex: 'id', width: 100 },
     {
@@ -52,9 +53,11 @@ class Main extends React.Component<{}, State> {
               return Number(value?.replace?.('%', '') || 0)
             }}
             onChange={(e) => {
-              record.exchangeRate = e || 0
               this.setState({
-                record
+                record: {
+                  ...record,
+                  exchangeRate: e || 0
+                }
               })
             }}
           />
@@ -65,6 +68,7 @@ class Main extends React.Component<{}, State> {
             </span>
             <Icon
               onClick={() => {
+                this.sourceExchangeRate = text
                 this.setState({
                   editId: record.id,
                   record
@@ -89,7 +93,7 @@ class Main extends React.Component<{}, State> {
                 <span
                   className='href mr8'
                   onClick={() => {
-                    this.updateExchange(record.id)
+                    this.updateExchange(record)
                   }}
                 >
                   保存
@@ -97,6 +101,7 @@ class Main extends React.Component<{}, State> {
                 <span
                   className='href mr8'
                   onClick={() => {
+                    // this
                     this.setState({
                       editId: undefined
                     })
@@ -124,17 +129,20 @@ class Main extends React.Component<{}, State> {
     }
   ]
   public listpage: ListPageInstanceProps
-  public updateExchange (id: any) {
+  public updateExchange (row: GoodsProps) {
     const { record } = this.state
     if (!record) {
       return
     }
-    api.updateExchange({
-      id,
+    return api.updateExchange({
+      id: row.id,
       exchangeRate: record.exchangeRate
     }).then(() => {
+      row.exchangeRate = record.exchangeRate
+      this.sourceExchangeRate = 0
       this.setState({
-        editId: undefined
+        editId: undefined,
+        record: undefined
       })
     })
   }

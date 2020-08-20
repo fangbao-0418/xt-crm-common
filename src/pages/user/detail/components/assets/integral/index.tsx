@@ -15,10 +15,10 @@ class Main extends React.Component {
       title: '订单号',
       dataIndex: 'bizNo',
       render: (text, record) => {
-        if (![11, 12].includes(record.subType)) {
-          return null
-        }
-        return (
+        // if (![11, 12].includes(record.subType)) {
+        //   return null
+        // }
+        return text && (
           <span
             className='href'
             onClick={() => {
