@@ -292,8 +292,9 @@ class Index extends React.Component<AlertComponentProps, BondState> {
    getDetailInfoData (record: any) {
      getDetailInfo({ id: record.id }).then(res => {
        if (res) {
+        const readonly=!(record.syncStatus===0&&record.submitStatus===1)
          const ok = () => {
-           if(record.syncStatus!==0){
+           if(readonly){
             ModalConfig.close('Synchronizesupplier1')
             return
            }
@@ -317,13 +318,13 @@ class Index extends React.Component<AlertComponentProps, BondState> {
          }
          this.showModal('认领保证金',
            <Form
-             readonly={record.syncStatus!==0}
+             readonly={readonly}
              getInstance={ref => this.form = ref}
              labelCol={{ span: 6 }}
              wrapperCol={{ span: 14 }}
              mounted={() => {
                this.form.setValues({
-                 claimAmount: record.syncStatus!==0?formatPrice(record.claimAmount)+'元':undefined,
+                 claimAmount: readonly?formatPrice(record.claimAmount)+'元':undefined,
                  voucherImages: this.handleFileValue(res.voucherImages)
                })
              }}
