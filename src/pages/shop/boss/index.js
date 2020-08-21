@@ -192,6 +192,25 @@ class Main extends React.Component {
 
     return (
       <Form layout='inline'>
+        <FormItem label='店铺名称'>
+          {getFieldDecorator('shopName', {
+            initialValue: localPayload.shopName
+          })(
+            <Input placeholder='请输入店铺名称' />
+          )}
+        </FormItem>
+        <FormItem label='供应商名称'>
+          {getFieldDecorator('supplierName', {
+            initialValue: localPayload.shopName
+          })(
+            <Input placeholder='请输入供应商名称' />
+          )}
+        </FormItem>
+        <FormItem label='供应商ID'>
+          {getFieldDecorator('supplierId')(
+            <Input placeholder='请输入供应商ID' />
+          )}
+        </FormItem>
         <FormItem label='用户ID'>
           {getFieldDecorator('memberId', {
             initialValue: localPayload.memberId
