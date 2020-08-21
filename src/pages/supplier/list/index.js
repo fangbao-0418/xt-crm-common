@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Card, Form, Input, Select, Button, DatePicker, InputNumber, message } from 'antd'
+import { Table, Card, Form, Input, Select, Button, DatePicker, InputNumber } from 'antd'
 import moment from 'moment'
 import { querySupplierList, exportSupplier } from '../api'
 import SupplierModal from '../supplier-modal'

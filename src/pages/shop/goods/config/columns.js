@@ -12,6 +12,11 @@ function formatTime (text) {
 const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpass }) => {
   return [
     {
+      title: '商品序号',
+      width: 120,
+      dataIndex: 'id'
+    },
+    {
       title: '商品ID',
       width: 120,
       dataIndex: 'id'
