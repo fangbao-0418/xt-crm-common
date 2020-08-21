@@ -40,7 +40,7 @@ export function batchExport (payload: batchExportPayload) {
 }
 
 // 获取快捷说明列表
-export function getOrderRefundQuickReply() {
+export function getOrderRefundQuickReply () {
   return newPost('/order/afterSale/query/orderRefundQuickReply', {})
 }
 
@@ -190,6 +190,24 @@ export function customerAddCheck (data: any) {
 }
 
 export const refundList  = (data: any) => {
+  const { page, pageSize, ...rest } = data
+  const isEmptyArray = (v: any) => Array.isArray(v) && v.length === 0
+  const isEmptyParams = Object.values(rest).every((v) => v == undefined || v === null || v === '' || isEmptyArray(v))
+  if (isEmptyParams) {
+    return Promise.resolve({
+      code: "00000",
+      data: {
+        current: 1,
+        pages: 0,
+        records: [],
+        searchCount: true,
+        size: 10,
+        total: 0
+      },
+      message: "成功",
+      success: true
+    });
+  }
   return fetch('/order/afterSale/list', {
     method: 'POST',
     data
@@ -312,4 +330,45 @@ export function rechargeList (data: any) {
 //充值单导出
 export function rechargeExport (data: any) {
   return newPost('/mcweb/trade/orderRechargeDetail/export', data)
+}
+
+//补偿原因分级列表 入参orderBizType 订单业务类型: 0-喜团订单，10-买菜订单
+export function getReasonList () {
+  return get('/mcweb/sale-after/order/compensate/getReasonList', {
+    orderBizType: 0
+  })
+}
+
+//补偿责任归属列表 入参orderBizType 订单业务类型: 0-喜团订单，10-买菜订单
+export function responsibilityList () {
+  return get('/mcweb/sale-after/order/compensate/responsibilityList', {
+    orderBizType: 0
+  })
+}
+
+//客服角色补偿最大额度 入参orderBizType 订单业务类型: 0-喜团订单，10-买菜订单
+export function getRoleAmount () {
+  return get('/mcweb/sale-after/order/compensate/getRoleAmount', {
+    orderBizType: 0
+  })
+}
+
+//优惠券下拉列表 type：0-所有优惠券，1-补偿优惠券
+export function couponList (data: any) {
+  return newPost('/mcweb/sale-after/order/compensate/getCouponsByPage', data)
+}
+
+//优惠券所有优惠券
+export function getCouponsAllList (data: any) {
+  return get('/mcweb/sale-after/order/compensate/getCouponsAllList', data)
+}
+
+//获取用户微信账户
+export function getUserWxAccount (data: any) {
+  return get('/mcweb/sale-after/order/compensate/getUserWxAccount', data)
+}
+
+//发起补偿单申请
+export function compensateApply (data:any) {
+  return newPost('/mcweb/sale-after/order/compensate/apply', data)
 }
