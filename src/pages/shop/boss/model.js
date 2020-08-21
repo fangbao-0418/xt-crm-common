@@ -28,7 +28,7 @@ export default {
   effects: dispatch => ({
     // 获取boss列表
     async getBossList (payload) {
-      const bossData = await api.getBossList(payload)
+      const bossData = await api.getBossList(payload) || {}
       console.log('这里获取内容', payload)
       dispatch({
         type: 'shop.boss/saveDefault',
@@ -40,7 +40,7 @@ export default {
 
     // 检查用户
     async checkUser (payload) {
-      const checkArr = await api.checkUser(payload)
+      const checkArr = await api.checkUser(payload) || []
       dispatch({
         type: 'shop.boss/saveDefault',
         payload: {
