@@ -19,7 +19,10 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
     {
       title: '商品ID',
       width: 120,
-      dataIndex: 'id'
+      dataIndex: 'productId',
+      render(text) {
+        return text || '-'
+      },
     },
     {
       title: '商品主图',

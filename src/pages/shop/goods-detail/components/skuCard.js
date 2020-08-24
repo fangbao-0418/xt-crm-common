@@ -36,6 +36,12 @@ const SpecValsCard = ({ goodsInfo }) => {
 
   // 固定表头
   const fixedColumns = [{
+    title: '规格ID',
+    dataIndex: 'skuId'
+  }, {
+    title: '条形码',
+    dataIndex: 'barCode'
+  }, {
     title: '销售价',
     dataIndex: 'salePrice',
     key: 'salePrice',

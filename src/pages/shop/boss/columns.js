@@ -82,6 +82,7 @@ export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
     },
     {
       title: '操作',
+      fixed: 'right',
       render: (val, record) => {
         return (
           <div>

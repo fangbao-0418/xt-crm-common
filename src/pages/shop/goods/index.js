@@ -340,7 +340,7 @@ class Main extends React.Component {
               <FormItem
                 label='店铺名称'
                 inner={(form) => {
-                  return form.getFieldDecorator('storeName')(
+                  return form.getFieldDecorator('shopId')(
                     <SearchFetch
                       api={getShopList}
                       style={{ width: 172 }}
