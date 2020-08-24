@@ -76,21 +76,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
           values.amount = mul(values.amount, 100)
         }
         const skuDetail = this.state.skuDetail
-        console.log({
-          childOrderId: skuDetail.childOrderId,
-          mainOrderId: skuDetail.orderId,
-          skuId: skuDetail.skuId,
-          province: skuDetail.province,
-          provinceId: skuDetail.provinceId,
-          city: skuDetail.city,
-          cityId: skuDetail.cityId,
-          district: skuDetail.district,
-          districtId: skuDetail.districtId,
-          contact: skuDetail.returnContact,
-          phone: skuDetail.returnPhone,
-          street: skuDetail.street,
-          ...values
-        }, values)
+        console.log(values, values.amount, 777)
         const res: any = await customerAdd({
           childOrderId: skuDetail.childOrderId,
           mainOrderId: skuDetail.orderId,
@@ -179,8 +165,11 @@ class ApplyAfterSale extends React.Component<Props, State> {
     }, () => {
       const serverNum = getFieldValue('serverNum')
       if (serverNum) {
+        console.log(modalInfo.dealPrice, formatPrice(modalInfo.dealPrice * serverNum), 'formatPrice(modalInfo.dealPrice * serverNum)')
+        const maxRefundAmount = formatPrice(this.maxRefundAmount)
+        const calcAmount = formatPrice(modalInfo.dealPrice * serverNum)
         setFieldsValue({
-          amount: formatPrice(modalInfo.dealPrice * serverNum)
+          amount: calcAmount > maxRefundAmount ? maxRefundAmount : calcAmount
         })
       }
     })
@@ -265,7 +254,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
               </Form.Item>
             </If>
             <If condition={refundTypeValue !== enumRefundType.Exchange}>
-              <Form.Item label='退款金额'>
+              <Form.Item label={'退款金额' + formatPrice(skuDetail.amount)}>
                 {getFieldDecorator('amount', {
                   rules: [{ required: true, message: '请输入退款金额' }],
                   initialValue: formatPrice(skuDetail.amount)

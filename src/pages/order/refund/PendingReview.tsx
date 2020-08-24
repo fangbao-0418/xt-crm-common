@@ -380,7 +380,9 @@ class PendingReview extends React.Component<Props, State> {
                         returnReason: undefined
                       }
                       if (serverNum !== undefined) {
-                        fields.refundAmount = formatPrice(this.unitPrice * serverNum)
+                        const maxRefundAmount = formatPrice(this.maxRefundAmount)
+                        const calcAmount = formatPrice(this.unitPrice * serverNum)
+                        fields.refundAmount = calcAmount > maxRefundAmount ? maxRefundAmount : calcAmount
                       }
                       this.props.form.setFieldsValue(fields)
                     })
