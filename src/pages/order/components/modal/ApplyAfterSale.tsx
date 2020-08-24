@@ -27,9 +27,12 @@ interface State {
 }
 
 class ApplyAfterSale extends React.Component<Props, State> {
-  state: State = {
-    skuDetail: {},
-    refundTypeValue: undefined
+  constructor (props: Props) {
+    super(props)
+    this.state = {
+      skuDetail: {},
+      refundTypeValue: this.initRefundTypeValue()
+    }
   }
   isHaiTao: boolean
   async fetchDetail () {
@@ -44,6 +47,13 @@ class ApplyAfterSale extends React.Component<Props, State> {
       skuDetail = {}
     }
     this.setState({ skuDetail })
+  }
+  initRefundTypeValue = () => {
+    const { modalInfo } = this.props
+    if (modalInfo.childOrder && modalInfo.childOrder.orderStatus === 20) {
+      return 20
+    }
+    return undefined
   }
   componentDidMount () {
     this.fetchDetail()
@@ -107,6 +117,9 @@ class ApplyAfterSale extends React.Component<Props, State> {
     this.setState({
       skuDetail: Object.assign(this.state.skuDetail, data)
     })
+  }
+  get refundType () {
+    return this.props.form.getFieldValue('refundType')
   }
   /**
    * 输入框输入的售后数目
