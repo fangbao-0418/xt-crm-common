@@ -68,6 +68,10 @@ const rules = {
     /activity\/full-discount\/detail(\/)?(\d+)?/,
     /activity\/full-discount\/copy(\/)?(\d+)?/
   ],
+  '/activity/shares': [
+    /activity\/shares\/edit(\/)?(\d+)?/,
+    /activity\/shares\/detail(\/)?(\d+)?/
+  ],
   '/user/userlist': [
     /user\/detail(\/)?(\d+)?/
   ],
