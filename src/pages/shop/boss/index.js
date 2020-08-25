@@ -300,7 +300,7 @@ class Main extends React.Component {
       shopStatus: undefined,
       shopTypes: [],
       categoryIds: [],
-      applyResult: undefined
+      applyResult: applyResult
     })
     this.setState({
       tabKey: applyResult
