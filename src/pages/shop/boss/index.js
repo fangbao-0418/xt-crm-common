@@ -206,20 +206,20 @@ class Main extends React.Component {
             <Input placeholder='请输入店铺名称' />
           )}
         </FormItem>
-        <FormItem label='供应商名称'>
+        {tabKey === '2' && <FormItem label='供应商名称'>
           {getFieldDecorator('supplierName', {
             initialValue: localPayload.supplierName
           })(
             <Input placeholder='请输入供应商名称' />
           )}
-        </FormItem>
-        <FormItem label='供应商ID'>
+        </FormItem>}
+        {tabKey === '2' && <FormItem label='供应商ID'>
           {getFieldDecorator('supplierId', {
             initialValue: localPayload.supplierId
           })(
             <Input placeholder='请输入供应商ID' />
           )}
-        </FormItem>
+        </FormItem>}
         <FormItem label='用户ID'>
           {getFieldDecorator('memberId', {
             initialValue: localPayload.memberId
@@ -320,6 +320,7 @@ class Main extends React.Component {
   }
 
   handleStatusChange = (applyResult) => {
+    // console.log('applyResult', applyResult)
     const { form, dispatch } = this.props
     form.resetFields()
     APP.fn.setPayload(namespace, {
