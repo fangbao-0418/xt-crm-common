@@ -56,7 +56,9 @@ const SpecValsCard = ({ goodsInfo }) => {
     key: 'usableStock'
   }]
 
-  const columns = [...dynaColums, ...fixedColumns];
+  const startColumns = fixedColumns.slice(0, 2);
+  const endColumns = fixedColumns.slice(2);
+  const columns = [...startColumns, ...dynaColums, ...endColumns];
 
   return <div>
     <Table pagination={false} dataSource={specVals} columns={columns} />
