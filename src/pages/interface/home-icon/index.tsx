@@ -1,9 +1,10 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Form, Input, Button, Checkbox, Popconfirm } from 'antd'
+import { Form, Input, Button, Checkbox, Popconfirm, Modal } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import * as api from './api'
 import Upload from '@/components/upload'
+import If from '@/packages/common/components/if'
 import styles from './style.module.sass'
 import platformType from '@/enum/platformType'
 const _platformType = platformType.getArray({ key: 'value', val: 'label' })
@@ -37,7 +38,7 @@ class Main extends React.Component<Props, State> {
       })
       if (init) {
         const item = res[0] || {}
-        item.imgUrl = [{url: item.imgUrl, uid: 'imgurl'}]
+        item.imgUrl = [{ url: item.imgUrl, uid: 'imgurl' }]
         this.props.form.setFieldsValue(item)
       }
     })
@@ -100,19 +101,19 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
-  public addIconItem() {
+  public addIconItem () {
     this.resetForm()
   }
-  public resetForm() {
+  public resetForm () {
     this.props.form.resetFields()
     this.props.form.setFieldsValue({
       platformArray: _platformType.map(val => val.value)
-    });
+    })
     this.setState({
       selectIndex: -1
     })
   }
-  public initValue(index: number) {
+  public initValue (index: number) {
     const { dataSource } = this.state
     this.setState({
       selectIndex: index
@@ -125,19 +126,23 @@ class Main extends React.Component<Props, State> {
         }]
       }
       if (result.platform) {
-        let str = result.platform.toString(2);
-        let array = str.split('');
-        result.platformArray = [];
+        const str = result.platform.toString(2)
+        const array = str.split('')
+        result.platformArray = []
         array.forEach((val: any, i) => {
-          if (val * 1 == 1) result.platformArray.push(Math.pow(2, array.length - 1 - i).toString())
+          if (val * 1 == 1) {
+            result.platformArray.push(Math.pow(2, array.length - 1 - i).toString())
+          }
         })
-      } else result.platformArray = _platformType.map(val => val.value)
-      //   result.platformArray = 
+      } else {
+        result.platformArray = _platformType.map(val => val.value)
+      }
+      //   result.platformArray =
       //    result.platformStr = result.platformStr ? result.platformStr.split(',') : _platformType.map(val => val.value)
       this.props.form.setFieldsValue(dataSource[index])
     })
   }
-  public toDelete() {
+  public toDelete () {
     const { dataSource, selectIndex } = this.state
     if (selectIndex > -1) {
       api.deleteIcon(dataSource[selectIndex].id).then(() => {
@@ -150,12 +155,13 @@ class Main extends React.Component<Props, State> {
       })
     }
   }
-  public toPublish() {
+  public toPublish () {
+    const { dataSource } = this.state
     api.publishIcon().then(() => {
       APP.success('发布icon成功')
     })
   }
-  public render() {
+  public render () {
     const { getFieldDecorator } = this.props.form
     const formItemLayout = {
       labelCol: {
@@ -163,8 +169,8 @@ class Main extends React.Component<Props, State> {
       },
       wrapperCol: {
         span: 10
-      },
-    };
+      }
+    }
     const { dataSource, selectIndex } = this.state
     return (
       <div style={{ minHeight: 400, background: 'white' }}>
@@ -189,17 +195,33 @@ class Main extends React.Component<Props, State> {
             >
               +新增icon
             </div>
-            <Popconfirm
-              title='确认发布icon吗'
-              onConfirm={this.toPublish}
-            >
+            <If condition={dataSource.length >= 10}>
+              <Popconfirm
+                title='确认发布icon吗'
+                onConfirm={this.toPublish}
+              >
+                <Button
+                  type='primary'
+                  className={styles.release}
+                >
+                  发布
+                </Button>
+              </Popconfirm>
+            </If>
+            <If condition={dataSource.length < 10}>
               <Button
                 type='primary'
                 className={styles.release}
+                onClick={() => {
+                  Modal.error({
+                    title: '限制发布提示',
+                    content: 'icon个数必须大于10个以上才能发布~'
+                  })
+                }}
               >
                 发布
               </Button>
-            </Popconfirm>
+            </If>
           </div>
         </div>
         <div className={styles.content} style={{ display: selectIndex > -2 ? '' :'none' }}>
@@ -270,7 +292,7 @@ class Main extends React.Component<Props, State> {
             <div className={styles.footer}>
               <Button
                 loading={this.state.loading}
-                type="primary"
+                type='primary'
                 onClick={this.toSave}
               >
                 保存
@@ -283,7 +305,7 @@ class Main extends React.Component<Props, State> {
                 <Button
                   disabled={selectIndex <= -1}
                   ghost
-                  type="danger"
+                  type='danger'
                 >
                   删除
                 </Button>
