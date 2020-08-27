@@ -37,7 +37,7 @@ const SpecValsCard = ({ goodsInfo }) => {
   // 固定表头
   const fixedColumns = [{
     title: '规格ID',
-    dataIndex: 'skuId'
+    dataIndex: 'productSkuId'
   }, {
     title: '条形码',
     dataIndex: 'barCode'
