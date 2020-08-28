@@ -391,6 +391,8 @@ class UploadView extends Component {
           title='预览'
           style={{ textAlign: 'center' }}
           visible={this.state.visible}
+          okText='确认'
+          cancelText='取消'
           onOk={() => this.setState({ visible: false })}
           onCancel={() => this.setState({ visible: false })}
         >

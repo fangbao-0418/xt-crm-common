@@ -163,6 +163,7 @@ class Main extends React.Component {
     confirm({
       title: '确认重新审核通过吗?',
       okText: '审核通过',
+      cancelText: '取消',
       onOk: () => {
         dispatch['shop.boss'].passShop({
           merchantApplyId: currentBoss.id

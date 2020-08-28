@@ -1,18 +1,19 @@
 import React from 'react'
 import { ListPage, Form, FormItem, Alert, If } from '@/packages/common/components'
-import { getData, getDetailDataList, getDetailInfo, claim } from './api'
+import { getData, getDetailDataList, getDetailInfo, claim, reject, importData, exportData } from './api'
 import { defaultConfig, NAME_SPACE } from './config'
-import { Icon, ConfigProvider, DatePicker, Table, Col, Row } from 'antd'
+import { Icon, ConfigProvider, DatePicker, Table, Col, Row, Button, Upload, message, Modal } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { FormInstance } from '@/packages/common/components/form'
 import { download } from '@/util/utils'
 import MoneyRender from '@/components/money-render'
 import ModalConfig from '@/components/modalConfig'
-import Upload from '@/components/upload'
+import UploadView from '@/components/upload'
 import { formatPrice } from '@/util/format'
+import { getHeaders } from '@/util/utils'
 import { update } from 'lodash'
-
+const { confirm } = Modal;
 const { RangePicker } = DatePicker
 interface BondState {
   current: number
@@ -36,6 +37,9 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     title: '商家名称',
     dataIndex: 'supplierName'
   }, {
+    title: '主营类目',
+    dataIndex: 'mainCategory'
+  }, {
     title: '业务类型',
     dataIndex: 'supplierCategoryDesc'
   }, {
@@ -44,6 +48,9 @@ class Index extends React.Component<AlertComponentProps, BondState> {
     render: (createTime: string | number | undefined) => {
       return APP.fn.formatDate(createTime)
     }
+  }, {
+    title: '状态',
+    dataIndex: 'statusDescription'
   }, {
     title: '操作',
     fixed: 'right',
@@ -90,17 +97,50 @@ class Index extends React.Component<AlertComponentProps, BondState> {
       return (
         <>
             {
-              records.syncStatus===0&&(
+              records.syncStatus===0&&records.submitStatus===1?(
+                <div>
                 <span
-                  className='href ml10'
+                  className='href mr8'
                   onClick={() => {
-                    this.getDetailInfoData(records.id)
+                    this.getDetailInfoData(records)
                   }}
                 >
               认领
                 </span>
+                <span
+                className='href'
+                onClick={() => {
+                  const _this=this
+                  confirm({
+                    okText: '确定',
+                    cancelText: '取消',
+                    title: '你确定要驳回吗?',
+                    onOk() {
+                      reject({id: records.id}).then(res => {
+                        if(res){
+                          message.success('驳回成功')
+                          _this.handleSearch()
+                        }
+                      })
+                    },
+                  });
+                }}
+              >
+              驳回
+              </span>
+              </div>
+              ):(
+                <span
+                className='href mr10'
+                onClick={() => {
+                  this.getDetailInfoData(records)
+                }}
+              >
+              查看
+              </span>
               )
             }
+
         </>
       )
     }
@@ -130,6 +170,36 @@ class Index extends React.Component<AlertComponentProps, BondState> {
               x: true
             }
           }}
+          addonAfterSearch={(
+            <div>
+              <Button
+                type='primary'
+                onClick={this.export}
+              >
+                未开收据导出
+              </Button>
+              <Upload
+                    name='file'
+                    accept='.xls,.xlsx'
+                    showUploadList={false}
+                    withCredentials={true}
+                    action={importData}
+                    headers={getHeaders({})}
+                    onChange={this.handleImportChange}
+                    style={{ margin: '0 10px' }}
+                  >
+                    <Button type='primary'className='ml8'>已开收据导入</Button>
+                  </Upload>
+              <span
+                className='href ml8'
+                onClick={() => {
+                  APP.fn.download(require('@/assets/files/保证金收据模板.xlsx'), '保证金收据模板.xlsx')
+                }}
+              >
+                下载模板
+              </span>
+            </div>
+          )}
           getInstance={(ref) => {
             this.list = ref
           }}
@@ -145,7 +215,25 @@ class Index extends React.Component<AlertComponentProps, BondState> {
       </>
     )
   }
-
+  export = () => {
+    const payload = this.list.form.getValues()
+    exportData({...payload, applyStatus: 0})
+    .then(res => {
+      APP.success('导出成功，请前往下载列表下载文件')
+    })
+  }
+  handleImportChange = (info: any) => {
+    const { status, response, name } = info.file
+    if (status === 'done') {
+      if (response.success) {
+        message.success(`${name} 文件上传成功`)
+      } else {
+        message.error(`${response.message}`)
+      }
+    } else if (status === 'error') {
+      message.error(`${name} 文件上传错误.`)
+    }
+  };
   showModal (txt: any, dom: any, domId: any, cd: any, cancel: any) {
     ModalConfig.show(
       {
@@ -201,10 +289,15 @@ class Index extends React.Component<AlertComponentProps, BondState> {
        }
      })
    }
-   getDetailInfoData (id: any) {
-     getDetailInfo({ id }).then(res => {
+   getDetailInfoData (record: any) {
+     getDetailInfo({ id: record.id }).then(res => {
        if (res) {
+        const readonly=!(record.syncStatus===0&&record.submitStatus===1)
          const ok = () => {
+           if(readonly){
+            ModalConfig.close('Synchronizesupplier1')
+            return
+           }
            this.form.props.form.validateFields((err, vals) => {
              if (!err) {
                claim({
@@ -225,11 +318,13 @@ class Index extends React.Component<AlertComponentProps, BondState> {
          }
          this.showModal('认领保证金',
            <Form
+             readonly={readonly}
              getInstance={ref => this.form = ref}
              labelCol={{ span: 6 }}
              wrapperCol={{ span: 14 }}
              mounted={() => {
                this.form.setValues({
+                 claimAmount: readonly?formatPrice(record.claimAmount)+'元':undefined,
                  voucherImages: this.handleFileValue(res.voucherImages)
                })
              }}
@@ -265,13 +360,13 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                  return (
                    <div>
                      {form.getFieldDecorator('voucherImages')(
-                       <Upload
+                       <UploadView
                          listType='picture-card'
                          multiple
                          disabled={true}
                          extname='png,jgp,jpeg'
                        >
-                       </Upload>
+                       </UploadView>
                      )}
                    </div>
                  )
@@ -282,14 +377,14 @@ class Index extends React.Component<AlertComponentProps, BondState> {
                  <div
                    className='href'
                    onClick={() => {
-                     res.voucherImages.map((item: string)=>{
+                     res?.voucherImages?.map((item: string)=>{
                        let str=item
                        const index = item.lastIndexOf('/')
                        str = item.substring(index + 1, item.length)
                        download(this.getUrl(item), str)
                      })
                    }}>
-           下载
+                     下载
                  </div>
                </Col>
              </Row>
