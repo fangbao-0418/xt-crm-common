@@ -43,7 +43,7 @@ export const formConfig = {
       }
     },
     id: {
-      label: '商品ID',
+      label: '商品序号',
       type: 'number',
       controlProps: {
         style: {
