@@ -24,11 +24,11 @@ class GoodsTable extends Component {
   }
   /**
    * 是否显示申请售后按钮
-   * orderType 订单类型（0：普通订单，10：激活码订单，20：地推订单，30：助力分兑换订单，50：买赠订单，60：线下团购会订单）
+   * orderType 订单类型（0：普通订单，10：激活码订单，20：地推订单，30：助力分兑换订单，50：买赠订单，55：虚拟订单 56：直播间红包 60：线下团购会订单）
    * orderStatus 订单状态（10：待付款；20：待发货；25：部分发货； 30：已发货；40：已收货; 50完成; 60关闭）
    */
   showApplyBtn = (orderStatus, orderType) => {
-    return orderType !== 50 && orderType !== 60 && [20, 25, 30, 40, 50].includes(orderStatus)
+    return orderType !== 50 && orderType !== 60 && orderType !== 55 && orderType !== 56 && [20, 25, 30, 40, 50].includes(orderStatus)
   }
   /**
    * 如果是海淘订单，需要提示该订单商品为海淘商品，请慎重处理售后
@@ -159,10 +159,10 @@ class GoodsTable extends Component {
         key: 'operate',
         width: 130,
         render: (text, record, index) => (
-        //orderType===55虚拟商品
+        //orderType===56 直播间红包
           <>
             <div>
-              {this.showApplyBtn(orderInfo.orderStatus, record.orderType)&& record.orderType!==55 && (
+              {this.showApplyBtn(orderInfo.orderStatus, record.orderType) && (
                 <Button
                   style={{ padding: 0 }}
                   type='link'
@@ -185,7 +185,7 @@ class GoodsTable extends Component {
               </Button>
             </div>
             <div>
-              {record.canShowHistoryBtn && (
+              {record.canShowHistoryBtn && record.orderType !== 56 && (
                 <Button
                   style={{ padding: 0 }}
                   type='link'
@@ -196,7 +196,7 @@ class GoodsTable extends Component {
               )}
             </div>
             {
-              childOrder.canApplyOrderCompensate && (
+              childOrder.canApplyOrderCompensate && record.orderType !== 56 && (
                 <div>
                   <Button
                     style={{ padding: 0 }}
@@ -209,7 +209,7 @@ class GoodsTable extends Component {
               )
             }
             {
-              childOrder.isHisCompensate && (
+              childOrder.isHisCompensate && record.orderType !== 56 && (
                 <div>
                   <Button
                     style={{ padding: 0 }}
@@ -223,15 +223,19 @@ class GoodsTable extends Component {
                 </div>
               )
             }
-            <div>
-              <Button
-                style={{ padding: 0 }}
-                type='link'
-                size='small'
-                onClick={() => this.childOrderProceeds(record, proceedsVisible)}>
-                {proceedsVisible ? '收起收益' : '查看收益'}
-              </Button>
-            </div>
+            {
+              record.orderType !== 56 && (
+                <div>
+                  <Button
+                    style={{ padding: 0 }}
+                    type='link'
+                    size='small'
+                    onClick={() => this.childOrderProceeds(record, proceedsVisible)}>
+                    {proceedsVisible ? '收起收益' : '查看收益'}
+                  </Button>
+                </div>
+              )
+            }
           </>
         )
       }
