@@ -101,12 +101,17 @@ class Detail extends Component<DetailProps, State> {
     this.getDetail()
     this.fetchLog()
   }
+  tabChange = (key: any) => {
+    if (key === '2') {
+      this.fetchLog()
+    }
+  }
   render () {
     const dataSource: any = (this.state.logs || []).map((v: any, i: any) => ({ ...v, uniqueKey: i }))
     return (
       <>
         <Card>
-          <Tabs>
+          <Tabs onChange={this.tabChange}>
             <Tabs.TabPane tab='售后详情' key='1'>
               <AfterSalesDetail />
             </Tabs.TabPane>

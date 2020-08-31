@@ -88,6 +88,7 @@ declare module AfterSalesInfo {
     shopType: 1 | 2 | 3 | 4 | 5 | 6
     /** 积分 */
     pointValue: string
+    salePrice?: number // 单价
   }
   export interface OrderServerVO {
     id: number;
