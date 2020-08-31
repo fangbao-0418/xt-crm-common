@@ -23,7 +23,6 @@ export default {
             const tree = arrToTree(allItemFilted)?.filter((item) => {
               return (!['出口网关', '入口网关'].includes(item.name) && item.path !== '/fresh')
             }) || []; // 将数组转化为树状结构
-            console.log(tree, 'xxxxxxxxxxxx')
             dispatch['layout'].saveDefault({
               roleList,
               tree

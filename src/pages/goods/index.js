@@ -1,24 +1,19 @@
-/*
- * @Date: 2020-04-21 19:44:05
- * @LastEditors: fangbao
- * @LastEditTime: 2020-05-11 11:40:40
- * @FilePath: /xt-crm/src/pages/goods/index.js
- */
 import React from 'react'
 import { Redirect } from 'react-router'
-import loadable from '@/util/loadable'
 import Category from './category/index.js'
 import RouteComponent, { RouteCO } from '@/components/route-component'
-const SkuSale = loadable(() => import('./sku-sale'))
-const Check = loadable(() => import('./check'))
-const Detail = loadable(() => import('./detail'))
-const PricingStrategy = loadable(() => import('./pricing-strategy'))
-const GoodsDetail = loadable(() => import('./goods-detail'))
-const SkuSaleForm = loadable(() => import('./sku-sale/form'))
-const SkuStock = loadable(() => import('./sku-stock'))
-const SkuStockForm = loadable(() => import('./sku-stock/form'))
-const Material = loadable(() => import('./material'))
-const Virtual = loadable(() => import('./virtual'))
+import SkuSale from './sku-sale'
+import Check from './check'
+import Detail from './detail'
+import PricingStrategy from './pricing-strategy'
+import GoodsDetail from './goods-detail'
+import SkuSaleForm from './sku-sale/form'
+import SkuStock from './sku-stock'
+import SkuStockForm from './sku-stock/form'
+import Material from './material'
+import Virtual from './virtual'
+/** 积分商城 */
+import Integral from './integral'
 
 const config = [
   { paht: '', exact: true, render: () => <Redirect to='/goods/list' /> },
@@ -32,7 +27,8 @@ const config = [
   { path: '/sku-stock', exact: true, component: SkuStock },
   { path: '/sku-stock/:id', component: SkuStockForm },
   { path: '/material', component: Material },
-  { path: '/virtual/:id', component: Virtual }
+  { path: '/virtual/:id', component: Virtual },
+  { path: '/integral', component: Integral }
 ]
 
 export default class RouteApp extends React.Component {
