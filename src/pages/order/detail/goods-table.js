@@ -185,7 +185,7 @@ class GoodsTable extends Component {
               </Button>
             </div>
             <div>
-              {record.canShowHistoryBtn && record.orderType !== 56 && (
+              {record.canShowHistoryBtn && (
                 <Button
                   style={{ padding: 0 }}
                   type='link'
