@@ -200,6 +200,9 @@ export default class extends React.Component {
     if (params.shopType) {
       params.shopType=(params.shopType).toString()
     }
+    if (Array.isArray(params.refundStatus)) {
+      params.refundStatus = params.refundStatus.join(',')
+    }
     if (isExport) {
       this.setState({
         loading: true
