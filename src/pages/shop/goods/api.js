@@ -1,5 +1,12 @@
 const { post, newPost, get } = APP.http;
 // http://192.168.4.205:8082
+
+/** 供应商/店铺模糊查询 */
+export function getShopList(name) {
+  return newPost('/mmweb/supplier/shop/V1/search', { name, searchType: 1 })
+    .then((res) => res.map(v => ({ text: v.name, value: v.id })))
+}
+
 /** 获取商品列表 */
 export function getGoodsList(data) {
   return newPost('/shop/product/list', data);
