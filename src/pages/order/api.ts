@@ -105,7 +105,7 @@ export function confirmReceipt (skuServerId: number) {
  */
 export function getSkuServerProcessDetailList (params: any) {
   const { id, orderCode } = params
-  return get(`/order/afterSale/getSkuServerProcessDetailList/${id}?orderCode=${orderCode}`)
+  return get(`/order/afterSale/queryLocus?orderCode=${orderCode}&skuServerId=${id}`)
 }
 export function saveRefundInfo (data: any) {
   return post('/order/afterSale/saveRefundInfo', data)
@@ -248,7 +248,7 @@ export function closeRefund (data: any) {
 }
 
 export const exportRefund = (data: any) => {
-  return exportFile('/order/afterSale/export', data)
+  return get('/order/afterSale/export', data)
 }
 
 export function profitRecal (data: any) {

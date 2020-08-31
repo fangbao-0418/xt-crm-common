@@ -36,6 +36,12 @@ const SpecValsCard = ({ goodsInfo }) => {
 
   // 固定表头
   const fixedColumns = [{
+    title: '规格ID',
+    dataIndex: 'productSkuId'
+  }, {
+    title: '条形码',
+    dataIndex: 'barCode'
+  }, {
     title: '销售价',
     dataIndex: 'salePrice',
     key: 'salePrice',
@@ -50,7 +56,9 @@ const SpecValsCard = ({ goodsInfo }) => {
     key: 'usableStock'
   }]
 
-  const columns = [...dynaColums, ...fixedColumns];
+  const startColumns = fixedColumns.slice(0, 2);
+  const endColumns = fixedColumns.slice(2);
+  const columns = [...startColumns, ...dynaColums, ...endColumns];
 
   return <div>
     <Table pagination={false} dataSource={specVals} columns={columns} />

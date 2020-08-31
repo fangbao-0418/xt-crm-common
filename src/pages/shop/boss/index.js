@@ -55,6 +55,9 @@ class Main extends React.Component {
         shopStatus: values.shopStatus !== undefined ? values.shopStatus : localPayload.shopStatus,
         shopTypes: values.shopTypes !== undefined ? values.shopTypes : localPayload.shopTypes,
         categoryIds: values.categoryIds !== undefined ? values.categoryIds : localPayload.categoryIds,
+        shopName: values.shopName !== undefined ? values.shopName : localPayload.shopName,
+        supplierName: values.supplierName !== undefined ? values.supplierName : localPayload.supplierName,
+        supplierId: values.supplierId !== undefined ? values.supplierId : localPayload.supplierId,
         applyResult: this.state.tabKey
       }
       payload.shopStatus = payload.shopStatus || undefined
@@ -68,7 +71,10 @@ class Main extends React.Component {
         shopTypes: payload.shopTypes,
         categoryIds: payload.categoryIds,
         shopStatus: payload.shopStatus,
-        applyResult: payload.applyResult
+        applyResult: payload.applyResult,
+        shopName: payload.shopName,
+        supplierName: payload.supplierName,
+        supplierId: payload.supplierId
       })
       dispatch['shop.boss'].getBossList(payload)
     })
@@ -193,6 +199,27 @@ class Main extends React.Component {
 
     return (
       <Form layout='inline'>
+        <FormItem label='店铺名称'>
+          {getFieldDecorator('shopName', {
+            initialValue: localPayload.shopName
+          })(
+            <Input placeholder='请输入店铺名称' />
+          )}
+        </FormItem>
+        {tabKey === '2' && <FormItem label='供应商名称'>
+          {getFieldDecorator('supplierName', {
+            initialValue: localPayload.supplierName
+          })(
+            <Input placeholder='请输入供应商名称' />
+          )}
+        </FormItem>}
+        {tabKey === '2' && <FormItem label='供应商ID'>
+          {getFieldDecorator('supplierId', {
+            initialValue: localPayload.supplierId
+          })(
+            <Input placeholder='请输入供应商ID' />
+          )}
+        </FormItem>}
         <FormItem label='用户ID'>
           {getFieldDecorator('memberId', {
             initialValue: localPayload.memberId
@@ -280,16 +307,20 @@ class Main extends React.Component {
         onUserClick: this.handleUserClick
       })
     }
-    return (<CommonTable
-      columns={columnsMap[tabKey]}
-      dataSource={bossData.records || []}
-      onChange={this.handleSearch}
-      total={bossData.total}
-      current={bossData.current}
-    />)
+    return (
+      <CommonTable
+        scroll={{ x: true }}
+        columns={columnsMap[tabKey]}
+        dataSource={bossData.records || []}
+        onChange={this.handleSearch}
+        total={bossData.total}
+        current={bossData.current}
+      />
+    )
   }
 
   handleStatusChange = (applyResult) => {
+    // console.log('applyResult', applyResult)
     const { form, dispatch } = this.props
     form.resetFields()
     APP.fn.setPayload(namespace, {
@@ -300,7 +331,7 @@ class Main extends React.Component {
       shopStatus: undefined,
       shopTypes: [],
       categoryIds: [],
-      applyResult: undefined
+      applyResult: applyResult
     })
     this.setState({
       tabKey: applyResult

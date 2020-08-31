@@ -31,6 +31,14 @@ export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
       }
     },
     {
+      title: '供应商ID',
+      dataIndex: 'supplierId'
+    },
+    {
+      title: '供应商名称',
+      dataIndex: 'supplierName'
+    },
+    {
       title: '手机号',
       dataIndex: 'phone',
       key: 'phone'
@@ -74,6 +82,7 @@ export const getPassColums = ({ onDetail, onUserClick, onClose, onOpen }) => {
     },
     {
       title: '操作',
+      fixed: 'right',
       render: (val, record) => {
         return (
           <div>
