@@ -42,8 +42,7 @@ export const getDefaultConfig = () => {
 }
 
 export enum statusEnums {
-  待提现 = 1,
-  提现成功 = 2,
-  提现失败 = 3,
-  提现中 = 4
+  提现失败 = -1,
+  提现中 = 0,
+  提现成功 = 1
 }
