@@ -26,10 +26,10 @@ const getCreditPayText = (memberPayHuabeiLogDO) => {
 }
 const BuyerInfo = props => {
   const { buyerInfo = {}, orderInfo = {}, totalPrice, freight, memberPayHuabeiLogDO = {} } = props;
-  const { payType } = buyerInfo;
+  const { payType } = buyerInfo
   console.log(props, 'props')
   return (
-    <Card title="支付信息">
+    <Card title='支付信息'>
       <Row gutter={24}>
         <Col span={8}>支付方式：{(String(payType) === '202' ? getCreditPayText(memberPayHuabeiLogDO) : payTypeList[payType]) || '未支付'}</Col>
         <Col span={8}>支付时间：{formatDate(orderInfo.payDate) || ''}</Col>
@@ -37,6 +37,7 @@ const BuyerInfo = props => {
         <Col span={8}>实付金额：{formatMoneyWithSign(orderInfo.payMoney)}</Col>
         <Col span={8}>订单总金额：{formatMoneyWithSign(totalPrice)}</Col>
         <Col span={8}>运费：{formatMoneyWithSign(freight)}</Col>
+        <Col span={8}>积分抵扣：{orderInfo.pointValue}</Col>
       </Row>
     </Card>
   );

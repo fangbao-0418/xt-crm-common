@@ -200,6 +200,9 @@ export default class extends React.Component {
     if (params.shopType) {
       params.shopType=(params.shopType).toString()
     }
+    if (Array.isArray(params.refundStatus)) {
+      params.refundStatus = params.refundStatus.join(',')
+    }
     if (isExport) {
       this.setState({
         loading: true
@@ -219,7 +222,6 @@ export default class extends React.Component {
       }
       refundList(params).then(res => {
         if (!res || !res.data) return;
-        console.log('res', res)
         const records = (res.data && res.data.records) || []
         this.setState({
           records,
