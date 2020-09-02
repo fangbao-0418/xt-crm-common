@@ -39,6 +39,35 @@ class Sidebar extends React.Component {
       current: ''
     }
   }
+  componentWillReceiveProps (props) {
+    let currentKey = ''
+    const selectedGroup = this.findPath(props.data, props.pathname)
+    currentKey = selectedGroup[selectedGroup.length - 1]?.id || ''
+    const isFirst = this.props.data.length === 0
+    this.setState({
+      current: currentKey.toString(),
+      openKeys: selectedGroup.map((item) => String(item?.id))
+    }, () => {
+      if (isFirst && currentKey) {
+        const siderEl = findDOMNode(this.siderRef)
+        const openKeys = this.state.openKeys
+        const topId = openKeys[0]
+        if (topId) {
+          setTimeout(() => {
+            const topEl = document.getElementById(`${topId}$Menu`)
+            if (topEl) {
+              animejs({
+                targets: siderEl,
+                easing: 'easeInQuad',
+                scrollTop: topEl.offsetTop - 48,
+                duration: 200
+              })
+            }
+          }, 300)
+        }
+      }
+    })
+  }
   setCurrent = (key) => {
     this.setState({
       current: key
@@ -84,35 +113,6 @@ class Sidebar extends React.Component {
     }
     return selectedGroup
   }
-  componentWillReceiveProps (props) {
-    let currentKey = ''
-    const selectedGroup = this.findPath(props.data, props.pathname)
-    currentKey = selectedGroup[selectedGroup.length - 1]?.id || ''
-    const isFirst = this.props.data.length === 0
-    this.setState({
-      current: currentKey.toString(),
-      openKeys: selectedGroup.map((item) => String(item?.id))
-    }, () => {
-      if (isFirst && currentKey) {
-        const siderEl = findDOMNode(this.siderRef)
-        const openKeys = this.state.openKeys
-        const topId = openKeys[0]
-        if (topId) {
-          setTimeout(() => {
-            const topEl = document.getElementById(`${topId}$Menu`)
-            if (topEl) {
-              animejs({
-                targets: siderEl,
-                easing: 'easeInQuad',
-                scrollTop: topEl.offsetTop - 48,
-                duration: 200
-              })
-            }
-          }, 300)
-        }
-      }
-    })
-  }
   renderMenulist (data) {
     // type等于0是菜单权限，等于1是功能权限
     return data.filter(item => item.type === 0).map(item => {
@@ -151,6 +151,7 @@ class Sidebar extends React.Component {
         return (
           <Menu.Item
             key={item.id}
+            id={`${item.id}$Menu`}
             onClick={(e) => {
               if (outside) {
                 window.open(outside[1])
