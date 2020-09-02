@@ -5,7 +5,7 @@ import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Button, Input, Form } from 'antd'
 import styles from './style.module.styl'
-import { getWithdrawalList, sendSmsVerifyCode, checkSmsVerifyCode } from './api'
+import { getWithdrawalList, sendSmsVerifyCode, checkSmsVerifyCode, exportWithdrawal } from './api'
 
 interface State {
   // 短信验证码
@@ -142,13 +142,17 @@ class Main extends React.Component<AlertComponentProps, State> {
     width: 120,
     dataIndex: 'remark'
   }]
+  // 提现列表导出
+  public batchExport = () => {
+    // exportWithdrawal()
+  }
   public render () {
     return (
       <ListPage
         formConfig={getDefaultConfig()}
         addonAfterSearch={(
           <>
-            <Button type='primary'>批量导出</Button>
+            <Button type='primary' onClick={this.batchExport}>批量导出</Button>
             <Button type='primary' className='ml10'>批量确认提现</Button>
           </>
         )}

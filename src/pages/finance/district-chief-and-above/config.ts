@@ -3,7 +3,7 @@ import { FieldsConfig } from '@/packages/common/components/form'
 export const getDefaultConfig = () => {
   const defaultConfig: FieldsConfig = {
     common: {
-      no: {
+      id: {
         label: '申请单编号'
       },
       memberId: {
@@ -12,7 +12,7 @@ export const getDefaultConfig = () => {
           placeholder: '请输入会员名称'
         }
       },
-      grade: {
+      memberType: {
         label: '会员等级',
         type: 'select',
         options: [{
@@ -20,16 +20,16 @@ export const getDefaultConfig = () => {
           value: ''
         }, {
           label: '区长',
-          value: '1'
+          value: 20
         }, {
           label: '合伙人',
-          value: '2'
+          value: 30
         }, {
           label: '管理员',
-          value: '3'
+          value: 40
         }]
       },
-      time: {
+      createTime: {
         label: '申请时间',
         type: 'rangepicker',
         controlProps: {
