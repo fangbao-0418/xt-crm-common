@@ -26,7 +26,7 @@ const modifyAddress = (changeModifyAddress) => {
 }
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddress, orderVirtualInfoVO={} }) => {
   const [visible, setVisible] = useState(false)
-  const { orderStatus, orderCode, platform, remark, orderType, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate } = orderInfo
+  const { orderStatus, orderCode, platform, remark, orderType, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate, liveId } = orderInfo
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo
   const { prov, rechargeAccount, rechargeOperatorDesc } = orderVirtualInfoVO
   // 支付时间小于1个小时显示按钮。
@@ -86,7 +86,8 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
           {orderType===55&&<Col span={8}>号码归属地：{prov}</Col>}
           {orderType===55&&<Col span={16}>充值号码：{rechargeAccount}</Col>}
           {orderType===55&&<Col span={8}>运营商：{rechargeOperatorDesc}</Col>}
-          {orderType!==55&&<Col span={16}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress &&　memberAddress.phone}</Col>}
+          {orderType===56&&<Col span={8}>直播间ID：{liveId}</Col>}
+          {![55, 56].includes(orderType)&&<Col span={16}>收货信息：{unionAddress(memberAddress)}，{contact}，{memberAddress && memberAddress.phone}</Col>}
         </Row>
         <Row gutter={24}>
           <Col span={8}>买家备注：{remark}</Col>
