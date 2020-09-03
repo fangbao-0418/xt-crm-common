@@ -291,6 +291,21 @@ export const formFields = function (
           fetchData={getShopTypes}
         />)
       }
+    },
+    {
+      type: 'select',
+      id: 'channel',
+      label: '订单渠道',
+      options: [{
+        val: '全部',
+        key: ''
+      }, {
+        val: '喜团优选',
+        key: '1'
+      }, {
+        val: '喜团好店',
+        key: '2'
+      }]
     }
   ].filter((item: any) => {
     return intercept

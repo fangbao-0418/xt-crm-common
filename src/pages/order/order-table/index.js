@@ -497,6 +497,17 @@ class OrderList extends React.Component {
                   )}
                 </FormItem>
               </Col>
+              <Col span={6}>
+                <FormItem label='订单渠道'>
+                  {getFieldDecorator('channel')(
+                    <Select placeholder='请选择订单渠道' allowClear>
+                      <Select.Option value=''>全部</Select.Option>
+                      <Select.Option value='1'>喜团优选</Select.Option>
+                      <Select.Option value='2'>喜团好店</Select.Option>
+                    </Select>
+                  )}
+                </FormItem>
+              </Col>
             </Row>
             <Row>
               <Col span={24} style={{ textAlign: 'right' }}>
