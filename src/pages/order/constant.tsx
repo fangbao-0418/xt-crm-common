@@ -95,6 +95,11 @@ export function getDetailColumns (type = 0, isXiaoDian = false) {
       render: MoneyRender
     },
     {
+      title: '积分抵扣',
+      dataIndex: 'pointValue',
+      width: '8%'
+    },
+    {
       title: '实付金额',
       dataIndex: 'preferentialTotalPrice',
       key: 'preferentialTotalPrice',

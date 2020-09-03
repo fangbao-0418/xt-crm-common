@@ -86,6 +86,8 @@ declare module AfterSalesInfo {
     orderCommentListVO: any[];
     // 1: '喜团自营店',2: '直播小店',3: '品牌旗舰店', 4: '品牌专营店',5: '喜团工厂店', 6: '普通企业店'
     shopType: 1 | 2 | 3 | 4 | 5 | 6
+    /** 积分 */
+    pointValue: string
     salePrice?: number // 单价
   }
   export interface OrderServerVO {

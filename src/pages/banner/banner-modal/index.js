@@ -91,6 +91,9 @@ class BannerModal extends Component {
       if (data.platform) {
         const str = data.platform.toString(2)
         const array = str.split('')
+        APP.moon.logger({
+          platform: str
+        }, 'Banner-App启动页-获取')
         data.platformArray = []
         array.forEach((val, i) => {
           if (val * 1 == 1) {
@@ -127,6 +130,9 @@ class BannerModal extends Component {
           params.imgList = undefined
         }
         if([10].includes(seat[0])){
+          APP.moon.logger({
+            platformArray: params.platformArray
+          }, 'Banner-App启动页-提交')
           if(!params.imgList1||(params.imgList1&&(params.imgList1.length !==2||!params.imgList1[0].rurl||!params.imgList1[1].rurl))){
             APP.error('请上传两张banner图片')
             return
@@ -140,6 +146,13 @@ class BannerModal extends Component {
         params.platformArray.forEach((val) => {
           params.platform += val * 1
         })
+        if([10].includes(seat[0])&&params.platform>6){
+          APP.moon.logger({
+            platform: params.platform
+          }, 'Banner-App启动页-修改值')
+          params.platform=6
+        }
+
         if (params.keywordsList&&params.keywordsList.length>20) {
           APP.error('关键字不能超过20个')
           return

@@ -73,6 +73,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
         <Col span={8}>
           运费: {formatMoneyWithSign(orderInfoVO.freight)}
         </Col>
+        <Col span={8}>积分抵扣：{orderInfoVO.pointValue}</Col>
       </Row>
       <Row gutter={24}>
         <Col>
