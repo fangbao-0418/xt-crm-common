@@ -23,6 +23,9 @@ function getColumns (scope) {
       title: '热词名称',
       dataIndex: 'name'
     }, {
+      title: '热词渠道',
+      dataIndex: 'channel'
+    }, {
       title: '排序',
       dataIndex: 'sort'
     }, {

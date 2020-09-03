@@ -30,7 +30,6 @@ export default class extends Component {
       <Switch>
         <Route path='/interface/category' component={Category} />
         <Route path='/interface/hotkey' component={Hotkey} />
-        <Route path='/interface/home-icon' component={HomeIcon} />
         <Route path='/interface/special' exact component={Special} />
         <Route path='/interface/special/:id' component={SpecialDetail} />
         <Route path='/interface/config' component={HomeConfig} />
