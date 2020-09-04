@@ -90,7 +90,6 @@ class SupplierSelect extends React.Component<SupplierSelectProps, SupplierSelect
   render () {
     const { disabled, value, style } = this.props
     const { fetching, supplierList } = this.state
-    console.log(value, 'value')
     return (
       <Select
         style={style}

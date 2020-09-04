@@ -4,9 +4,9 @@ import { isNil } from 'lodash'
 import moment from 'moment'
 import { OrderStatusTextMap, enumOrderStatus, enumRefundStatus } from '../constant'
 import { formatDate, formatMoneyWithSign } from '../../helper'
-import { getOrderList, newExportOrder, importLogistics, getShopTypes, getPhoneById } from '../api'
+import { getOrderList, newExportOrder, importLogistics, getShopTypes, getPhoneById, supplierSearch } from '../api'
 import GoodCell from '../../../components/good-cell'
-import SuppilerSelect from '@/components/suppiler-auto-select'
+import SearchFetch from '@/packages/common/components/search-fetch'
 import RefundCell from '../components/refund-cell'
 import RemarkModal from '../components/modal/remark-modal'
 import RefundModal from '../components/refund-modal'
@@ -35,10 +35,32 @@ class OrderList extends React.Component {
     loading: false
   };
 
+  componentDidMount () {
+    const values = this.payload[this.props.pathname] || {}
+    const fields = {
+      orderCode: values.orderCode,
+      queryOrderType: values.queryOrderType,
+      expressCode: values.expressCode,
+      productId: values.productId,
+      buyerId: values.buyerId,
+      buyerPhone: values.buyerPhone,
+      contact: values.contact,
+      phone: values.phone,
+      store: values.store,
+      interceptorFlag: values.interceptorFlag || '',
+      interceptorPhone: values.interceptorPhone,
+      shopOwnerPhone: values.shopOwnerPhone,
+      shopTypeStr: values.shopTypeStr,
+      rangePicker: values.orderStartDate && [moment(values.orderStartDate), moment(values.orderEndDate)],
+      playPicker: values.payStartDate && [moment(values.payStartDate), moment(values.payEndDate)]
+    }
+    this.props.form.setFieldsValue(fields)
+  }
+
   query = (isExport = false, noFetch = false) => {
     const { intercept } = this.props
     const obj = parseQuery()
-    const fieldsValues = this.props.form.getFieldsValue()
+    const { store, ...fieldsValues } = this.props.form.getFieldsValue()
     const rangePickerValue = fieldsValues['rangePicker']
     if (this.props.type === 'refund') {
       const [skuServerStartDate, skuServerEndDate] = formatRangeDate(rangePickerValue)
@@ -62,13 +84,17 @@ class OrderList extends React.Component {
     delete fieldsValues['rangePicker']
     const params = {
       ...fieldsValues,
+      storeId: store?.key,
       orderStatus: this.props.orderStatus,
       refundStatus: this.props.refundStatus,
       page: this.state.current,
       pageSize: this.state.pageSize
     }
     this.payload = this.payload || {}
-    this.payload[this.props.pathname] = params
+    this.payload[this.props.pathname] = {
+      store,
+      ...params
+    }
     APP.fn.setPayload('order', this.payload)
     if (noFetch) {
       return
@@ -334,9 +360,6 @@ class OrderList extends React.Component {
         />
       )
     }
-    const values = this.payload[this.props.pathname] || {}
-    values.rangePicker = values.orderStartDate && [moment(values.orderStartDate), moment(values.orderEndDate)]
-    values.playPicker = values.payStartDate && [moment(values.payStartDate), moment(values.payEndDate)]
     return (
       <div className={styles.page}>
         <Card title='筛选'>
@@ -344,68 +367,80 @@ class OrderList extends React.Component {
             <Row gutter={24}>
               <Col span={6}>
                 <FormItem label='订单编号'>
-                  {getFieldDecorator('orderCode', { initialValue: values.orderCode })(
+                  {getFieldDecorator('orderCode')(
                     <Input placeholder='请输入订单编号' />
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='订单类型'>
-                  {getFieldDecorator('queryOrderType', {
-                    initialValue: values.queryOrderType
-                  })(<SelectOrderType />)}
+                  {getFieldDecorator('queryOrderType')(<SelectOrderType />)}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='快递单号'>
-                  {getFieldDecorator('expressCode', { initialValue: values.expressCode })(
+                  {getFieldDecorator('expressCode')(
                     <Input placeholder='请输入快递单号' />
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='商品ID'>
-                  {getFieldDecorator('productId', { initialValue: values.productId })(
+                  {getFieldDecorator('productId')(
                     <Input type='number' placeholder='请输入商品ID' />
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='下单人ID'>
-                  {getFieldDecorator('buyerId', { initialValue: values.buyerId })(
+                  {getFieldDecorator('buyerId')(
                     <Input placeholder='请输入下单人ID' />
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='下单人电话'>
-                  {getFieldDecorator('buyerPhone', { initialValue: values.buyerPhone })(
+                  {getFieldDecorator('buyerPhone')(
                     <Input placeholder='请输入下单人电话' />
                   )}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='收货人'>
-                  {getFieldDecorator('contact', { initialValue: values.contact })(<Input placeholder='请输入收货人' />)}
+                  {getFieldDecorator('contact')(<Input placeholder='请输入收货人' />)}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='收货人电话'>
-                  {getFieldDecorator('phone', { initialValue: values.phone })(<Input placeholder='请输入收货人电话' />)}
+                  {getFieldDecorator('phone')(<Input placeholder='请输入收货人电话' />)}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='供应商'>
-                  {getFieldDecorator('storeId', { initialValue: values.storeId })(<SuppilerSelect />)}
+                  {getFieldDecorator('store')(
+                    <SearchFetch
+                      selectProps={{
+                        labelInValue: true
+                      }}
+                      api={(name) => {
+                        return supplierSearch(name).then(res => {
+                          return res.map(item => ({
+                            text: item.name,
+                            value: item.id
+                          }))
+                        })
+                      }}
+                      style={{ width: 172 }}
+                      placeholder='请输入店铺名称'
+                    />
+                  )}
                 </FormItem>
               </Col>
               {!intercept && (
                 <>
                   <Col span={6}>
                     <FormItem label='拦截订单'>
-                      {getFieldDecorator('interceptorFlag', {
-                        initialValue: values.interceptorFlag || ''
-                      })(
+                      {getFieldDecorator('interceptorFlag')(
                         <Select>
                           <Select.Option value={''}>全部</Select.Option>
                           <Select.Option value={'1'}>拦截订单</Select.Option>
@@ -416,16 +451,14 @@ class OrderList extends React.Component {
                   </Col>
                   <Col span={6}>
                     <FormItem label='拦截人电话'>
-                      {getFieldDecorator('interceptorPhone', {
-                        initialValue: values.interceptorPhone
-                      })(<Input placeholder='请输入拦截人手机号' />)}
+                      {getFieldDecorator('interceptorPhone')(<Input placeholder='请输入拦截人手机号' />)}
                     </FormItem>
                   </Col>
                 </>
               )}
               <Col span={6}>
                 <FormItem label={this.props.type === 'order' ? '下单时间' : '售后时间'}>
-                  {getFieldDecorator('rangePicker', { initialValue: values.rangePicker })(
+                  {getFieldDecorator('rangePicker')(
                     <RangePicker
                       style={{ width: '100%' }}
                       format='YYYY-MM-DD HH:mm'
@@ -437,7 +470,7 @@ class OrderList extends React.Component {
               <Col span={6}>
                 {
                   this.props.type === 'order'? <FormItem label='支付时间'>
-                    {getFieldDecorator('playPicker', { initialValue: values.playPicker })(
+                    {getFieldDecorator('playPicker')(
                       <RangePicker
                         style={{ width: '100%' }}
                         format='YYYY-MM-DD HH:mm'
@@ -449,12 +482,12 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label='供应商手机'>
-                  {getFieldDecorator('shopOwnerPhone', { initialValue: values.shopOwnerPhone })(<Input placeholder='只支持小店和pop店' />)}
+                  {getFieldDecorator('shopOwnerPhone')(<Input placeholder='只支持小店和pop店' />)}
                 </FormItem>
               </Col>
               <Col span={6}>
                 <FormItem label='店铺类型'>
-                  {getFieldDecorator('shopTypeStr', { initialValue: values.shopTypeStr })(
+                  {getFieldDecorator('shopTypeStr')(
                     <SelectFetch
                       mode='multiple'
                       placeholder= '请选择店铺类型'
