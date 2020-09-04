@@ -1,11 +1,11 @@
 import React from 'react'
 import { Card, Tabs, message, Button, Icon } from 'antd'
-import { getGoodsList, getCategoryTopList, passGoods, getGoodsInfo, getShopTypes } from './api'
+import { getGoodsList, getCategoryTopList, getShopList, passGoods, getGoodsInfo, getShopTypes } from './api'
 import SelectFetch from '@/components/select-fetch'
 import { ListPage, FormItem, If } from '@/packages/common/components'
 // import SuppilerSelect from '@/components/suppiler-auto-select'
 import SuppilerSelector from '@/components/supplier-selector'
-
+import SearchFetch from '@/packages/common/components/search-fetch'
 import { replaceHttpUrl } from '@/util/utils'
 import CarouselPreview from '@/components/carousel-preview'
 import UnpassModal from './components/unpassModal'
@@ -337,6 +337,18 @@ class Main extends React.Component {
                 }}
               />
               <FormItem name='phone' />
+              <FormItem
+                label='店铺名称'
+                inner={(form) => {
+                  return form.getFieldDecorator('shopId')(
+                    <SearchFetch
+                      api={getShopList}
+                      style={{ width: 172 }}
+                      placeholder='请输入店铺名称'
+                    />
+                  )
+                }}
+              />
             </>
           )}
           api={getGoodsList}
