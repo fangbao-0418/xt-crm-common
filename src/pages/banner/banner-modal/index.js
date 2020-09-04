@@ -34,6 +34,7 @@ const formItemLayout = {
   wrapperCol: { span: 14 }
 }
 const _platformType = platformType.getArray({ key: 'value', val: 'label' })
+
 const initImgList = (imgUrlWap, num) => {
   if (!imgUrlWap) {
     return
@@ -60,7 +61,8 @@ class BannerModal extends Component {
   static defaultProps = {
     onSuccess: () => { },
     id: '',
-    isEdit: false
+    isEdit: false,
+    channel: -1
   };
 
   state = {
@@ -183,6 +185,7 @@ class BannerModal extends Component {
     const { getFieldDecorator, setFieldsValue } = this.props.form
     const { data, renderKey } = this.state
     const seat = [data.newSeat, data.childSeat]
+    console.log('data.platformArray', data.platformArray)
     return (
       <>
         <Button size={size} type='primary' onClick={this.showModal}>
@@ -217,10 +220,14 @@ class BannerModal extends Component {
             </FormItem>
             <FormItem label='banner渠道'>
               {getFieldDecorator('channel', {
+                initialValue: 1,
                 rules: [{
                   required: true,
                   message: 'banner渠道不能为空'
-                }]
+                }],
+                onChange: (channel) => {
+                  this.setState({ channel })
+                }
               })(
                 <Select placeholder='请选择banner渠道' allowClear>
                   <Select.Option value={1}>喜团优选</Select.Option>
@@ -353,16 +360,63 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+            <If condition={this.state.channel === 1}>
+              <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
+                <FormItem label='平台'>
+                  {getFieldDecorator('platformArray', {
+                    initialValue: data.platformArray,
+                    rules: [{
+                      required: ([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
+                      message: '请选择平台'
+                    }]
+                  })(
+                    <Checkbox.Group options={[10].includes(seat[0])?[_platformType[0],_platformType[1]]:_platformType} />
+                  )}
+                </FormItem>
+              </If>
+            </If>
+            <If condition={this.state.channel === 2}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
                   rules: [{
-                    required: ([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2)),
+                    required: true,
                     message: '请选择平台'
                   }]
                 })(
-                  <Checkbox.Group options={[10].includes(seat[0])?[_platformType[0],_platformType[1]]:_platformType}> </Checkbox.Group>
+                  <Checkbox.Group
+                    options={[_platformType[2],_platformType[3]]}
+                  />
+                )}
+              </FormItem>
+              <FormItem label='可见用户'>
+                {getFieldDecorator('visibleUser', {
+                  rules: [{
+                    required: true,
+                    message: '请选择可见用户'
+                  }]
+                })(
+                  <Checkbox.Group
+                    options={[{
+                      label: '全部',
+                      value: ''
+                    }, {
+                      label: '普通用户',
+                      value: '0'
+                    }, {
+                      label: '店长',
+                      value: '2'
+                    }, {
+                      label: '高级店长',
+                      value: '4'
+                    }, {
+                      label: '服务商',
+                      value: '8'
+                    }, {
+                      label: '管理员',
+                      value: '16'
+                    }]}
+                  />
                 )}
               </FormItem>
             </If>

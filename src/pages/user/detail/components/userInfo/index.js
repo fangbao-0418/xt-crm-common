@@ -373,6 +373,7 @@ class UserInfo extends Component {
           extra={<div><span className='href' onClick={() => this.handleBlack(data.enableBlack)}>{data.enableBlack ? '解除拉黑' : '拉黑'}</span>&nbsp;&nbsp;<span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>}
           loading={loading}
         >
+          <div style={{ marginBottom: 16, fontSize: 22 }}>喜团优选</div>
           <Descriptions column={2} className={styles.description}>
             <Descriptions.Item label="用户ID">{data.id}</Descriptions.Item>
             <Descriptions.Item label="头像">
@@ -550,6 +551,20 @@ class UserInfo extends Component {
               <span>{data.presentedAccount ? data.presentedAccount / 100 : 0}</span>
             </div>
           </div>
+        </Card>
+        <Card>
+          <div style={{ marginBottom: 16, fontSize: 22, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>喜团好店</span>
+            <div style={{ fontSize: 14 }}><span className='href' onClick={() => this.handleBlack(data.enableBlack)}>{data.enableBlack ? '解除拉黑' : '拉黑'}</span>&nbsp;&nbsp;<span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>
+          </div>
+          <Descriptions column={2} className={styles.description}>
+            <Descriptions.Item label="用户ID">{data.id}</Descriptions.Item>
+            <Descriptions.Item label="头像">
+              {
+                this.renderHeadImage()
+              }
+            </Descriptions.Item>
+          </Descriptions>
         </Card>
         <UserModal />
         <ModalInvit />

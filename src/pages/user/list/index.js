@@ -217,6 +217,19 @@ export default class extends Component {
       values.time = values.registerStartDate && [moment(values.registerStartDate), moment(values.registerEndDate)]
       return (
         <Form layout='inline'>
+          <FormItem label='渠道'>
+            {getFieldDecorator('channel')(
+              <Select
+                style={{ width: 172 }}
+                placeholder='请选择渠道'
+                allowClear
+              >
+                <Select.Option value={-1}>全部</Select.Option>
+                <Select.Option value={1}>喜团优选</Select.Option>
+                <Select.Option value={2}>喜团好店</Select.Option>
+              </Select>
+            )}
+          </FormItem>
           <FormItem label='用户ID'>
             {
               getFieldDecorator('id', {
