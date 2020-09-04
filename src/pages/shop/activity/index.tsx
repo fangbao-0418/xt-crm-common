@@ -7,21 +7,23 @@ const tabConfig = [{
   label: '所有活动',
   value: ''
 }, {
-  label: '所有活动',
-  value: ''
+  label: '开放报名中',
+  value: '1'
 }, {
-  label: '所有活动',
-  value: ''
+  label: '活动进行中',
+  value: '2'
 }, {
-  label: '所有活动',
-  value: ''
-}, ]
+  label: '已结束',
+  value: '3'
+}]
 
 class Main extends React.Component {
   public render () {
     return (
       <Tabs>
-        <TabPane></TabPane>
+        {tabConfig.map((item) => (
+          <TabPane tab={item.label} key={item.value}></TabPane>
+        ))}
       </Tabs>
     )
   }
