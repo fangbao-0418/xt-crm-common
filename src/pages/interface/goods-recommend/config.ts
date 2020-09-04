@@ -7,6 +7,25 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
+      channel: {
+        type: 'select',
+        label: '推荐渠道',
+        options: [{
+          label: '全部',
+          value: ''
+        }, {
+          label: '喜团优选',
+          value: '1'
+        }, {
+          label: '喜团好店',
+          value: '2'
+        }],
+        controlProps: {
+          style: {
+            width: 172
+          }
+        }
+      },
       name: {
         type: 'input',
         label: '名称',

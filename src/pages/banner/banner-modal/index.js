@@ -213,7 +213,20 @@ class BannerModal extends Component {
                   required: true,
                   message: 'banner名称不能为空'
                 }]
-              })(<Input placeholder='' />)}
+              })(<Input placeholder='请输入Banner名称' />)}
+            </FormItem>
+            <FormItem label='banner渠道'>
+              {getFieldDecorator('channel', {
+                rules: [{
+                  required: true,
+                  message: 'banner渠道不能为空'
+                }]
+              })(
+                <Select placeholder='请选择banner渠道' allowClear>
+                  <Select.Option value={1}>喜团优选</Select.Option>
+                  <Select.Option value={2}>喜团好店</Select.Option>
+                </Select>
+              )}
             </FormItem>
             <FormItem required label='位置'>
               {getFieldDecorator('seat', {
@@ -322,7 +335,7 @@ class BannerModal extends Component {
             </If>
             <FormItem label='跳转地址'>
               {getFieldDecorator('jumpUrlWap', { initialValue: data.jumpUrlWap })(
-                <Input placeholder='' />,
+                <Input placeholder='请输入跳转地址' />,
               )}
             </FormItem>
             <FormItem label='上线时间'>

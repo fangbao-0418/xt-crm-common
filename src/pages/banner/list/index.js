@@ -129,6 +129,15 @@ class OrderList extends React.Component {
         }
       },
       {
+        title: 'banner渠道',
+        dataIndex: 'channel',
+        render(text) {
+          return (
+            <span>{text === '1' ? '喜团优选' : '喜团好店'}</span>
+          )
+        }
+      },
+      {
         title: '位置',
         dataIndex: 'seat',
         render (seat, record) {
@@ -196,6 +205,7 @@ class OrderList extends React.Component {
               pageSize,
               onChange: this.handlePageChange
             }}
+            scroll={{ x: true }}
             rowKey={record => record.id}
           />
         </Card>

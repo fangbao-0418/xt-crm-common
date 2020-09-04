@@ -37,6 +37,13 @@ class Main extends React.Component<Props> {
       }
     },
     {
+      title: '位置渠道',
+      dataIndex: 'channel',
+      render(text) {
+        return text === 1 ? '喜团优选' : '喜团好店'
+      }
+    },
+    {
       title: '用户端',
       dataIndex: 'displayFrom',
       render: (text) => {
@@ -136,6 +143,7 @@ class Main extends React.Component<Props> {
           }}
           formItemLayout={(
             <>
+              <FormItem name='channel' />
               <FormItem name='name' />
               <FormItem name='location' type='select' />
               <FormItem name='status' />
