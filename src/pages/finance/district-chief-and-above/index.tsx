@@ -3,25 +3,35 @@ import { Tabs, Card } from 'antd'
 import TabItem from './TabItem'
 
 const { TabPane } = Tabs
-type StatusType = '0' | '1' | '2' | '3' | '4'
+export type StatusType = '' | '-31' | '-1' | '0' | '1'
 
 const tabConfigs: { key: StatusType, title: string }[] = [
-  { key: '0', title: '全部' },
-  { key: '1', title: '待提现' },
-  { key: '2', title: '提现中' },
-  { key: '3', title: '提现成功' },
-  { key: '4', title: '提现失败' }
+  { key: '', title: '全部' },
+  { key: '-31', title: '待提现' },
+  { key: '-1', title: '提现失败' },
+  { key: '0', title: '处理中' },
+  { key: '1', title: '提现成功' }
 ]
 
 class Main extends React.Component {
+  public state = {
+    activeKey: ''
+  }
+  public onChange = (activeKey: string) => {
+    this.setState({ activeKey })
+  }
   public render () {
+    const { activeKey } = this.state
     return (
       <Card>
-        <Tabs>
+        <Tabs
+          activeKey={activeKey}
+          onChange={this.onChange}
+        >
           {tabConfigs.map((item) => {
             return (
               <TabPane tab={item.title} key={item.key}>
-                <TabItem />
+                <TabItem transferStatus={item.key} />
               </TabPane>
             )
           })}

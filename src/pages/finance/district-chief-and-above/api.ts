@@ -23,7 +23,7 @@ export function getWithdrawalList (payload: {
  * 单条确认提现
  * @param id
  */
-export function createBatchWithdrawal (id: number) {
+export function createBatchWithdrawal (id: string) {
   return newPost('/mcweb/account/member/withdrawal/batch/create/v1', { id })
 }
 
@@ -64,7 +64,7 @@ export function createAllWithdrawal (payload: {
 /**
  * 发送确认提现短信验证码
  */
-export function sendSmsVerifyCode (batchId: number) {
+export function sendSmsVerifyCode (batchId: string) {
   return get(`/mcweb/account/member/withdrawal/batch/sendSmsVerifyCode/v1?batchId=${batchId}`)
 }
 
