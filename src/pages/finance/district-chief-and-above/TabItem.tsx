@@ -1,14 +1,13 @@
 import React from 'react'
 import { ColumnProps } from 'antd/es/table'
 import { getDefaultConfig, statusEnums } from './config'
-import { ListPage, Alert, FormItem } from '@/packages/common/components'
+import { ListPage, Alert } from '@/packages/common/components'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Button, Input, Form } from 'antd'
-import styles from './style.module.styl'
-import { getWithdrawalList, sendSmsVerifyCode, checkSmsVerifyCode, exportWithdrawal, createBatchWithdrawal } from './api'
+import { Button, Modal } from 'antd'
+import { getWithdrawalList, checkSmsVerifyCode, exportWithdrawal, createBatchWithdrawal, createAllWithdrawal } from './api'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { StatusType } from '.'
-
+import WithdrawalModal from './WithdrawalModal'
 interface Props extends AlertComponentProps {
   transferStatus: StatusType
 }
@@ -18,52 +17,39 @@ interface State {
 }
 class Main extends React.Component<Props, State> {
   public listPage: ListPageInstanceProps
-  // 批次ID
-  public batchId: number
-  // 平安短信指令号
-  public messageOrderNo: string
   public state: State = {
     smsCode: ''
   }
-  /** 发送验证码 */
-  public sendAuthCode = async (batchId: string) => {
-    const res = await sendSmsVerifyCode(batchId);
-    if (res) {
-      this.batchId = res.batchId
-      this.messageOrderNo = res.messageOrderNo
-    }
-  }
   /** 确认提现 */
   public confirmWithdraw = (res: any) => {
+    let batchId = ''
+    let messageOrderNo = ''
+    let smsCode = ''
     this.props.alert({
-      title: '提示',
+      title: '系统提示',
       content: (
-        <div>
-          <div className='mb10'>本次提现总额为<span className={styles['money']}>{APP.fn.formatMoneyNumber(res.totalAmount, 'm2u')}</span>元，请确认</div>
-          <Form layout='inline'>
-            <FormItem label='验证码'>
-              <div>
-                <Input
-                  value={this.state.smsCode}
-                  onChange={(e) => this.setState({ smsCode: e.target.value })}
-                  className={styles['auth-code']}
-                />
-                <Button onClick={this.sendAuthCode.bind(null, res.batchId)}>获取</Button>
-              </div>
-              <div>验证码已发送至您手机号{(res.phone + '').replace(/(\d{3})\d{8}/, '$1********')}，请注意查收</div>
-            </FormItem>
-          </Form>
-        </div>
+        <WithdrawalModal
+          detail={res}
+          onChange={(val) => {
+            batchId = val.batchId
+            messageOrderNo = val.messageOrderNo
+            smsCode = val.smsCode
+          }}
+        />
       ),
       onOk: async (hide) => {
+        if (!batchId || !messageOrderNo || !smsCode) {
+          return;
+        }
         const res = await checkSmsVerifyCode({
-          batchId: this.batchId,
-          messageOrderNo: this.messageOrderNo,
-          smsCode: this.state.smsCode
+          batchId,
+          messageOrderNo,
+          smsCode
         })
         if (res) {
           APP.success('确认提现成功')
           hide();
+          this.listPage.refresh()
         }
       }
     })
@@ -118,10 +104,7 @@ class Main extends React.Component<Props, State> {
   }, {
     title: '状态',
     width: 100,
-    dataIndex: 'transferStatus',
-    render: (text: any) => {
-      return statusEnums[text]
-    }
+    dataIndex: 'transferStatusDesc'
   }, {
     title: '申请时间',
     width: 120,
@@ -146,8 +129,12 @@ class Main extends React.Component<Props, State> {
     dataIndex: 'remark'
   }]
   // 提现列表导出
-  public batchExport = () => {
-    // exportWithdrawal()
+  public batchExport = async () => {
+    const vals = this.listPage.form.getValues()
+    const res = await exportWithdrawal(vals);
+    if (res) {
+      APP.success('批量导出成功')
+    }
   }
   // 单条确认提现
   public withdrawal = async (id: string) => {
@@ -156,21 +143,29 @@ class Main extends React.Component<Props, State> {
   }
   /** 批量提现 */
   public batchWithdrawal = () => {
-    const vals = this.listPage.form.getValues()
-    console.log('vals', vals)
-    // Modal.confirm({
-    //   title: '系统提示',
-    //   content: '是否确认批量提现',
-    //   onOk: () => {
-
-    //   }
-    // })
+    Modal.confirm({
+      title: '系统提示',
+      content: '是否确认批量提现',
+      onOk: async () => {
+        const vals = this.listPage.form.getValues()
+        console.log('vals', vals)
+        const res = await createAllWithdrawal(vals)
+        if (res) {
+          APP.success('批量提现成功')
+        }
+      }
+    })
   }
   public render () {
     return (
       <ListPage
         getInstance={(ref) => this.listPage = ref }
         formConfig={getDefaultConfig()}
+        rangeMap={{
+          withdrawalDate: {
+            fields: ['withdrawalStartDate', 'withdrawalEndDate']
+          }
+        }}
         processPayload={(payload) => {
           return {
             ...payload,
@@ -180,7 +175,7 @@ class Main extends React.Component<Props, State> {
         addonAfterSearch={(
           <>
             <Button type='primary' onClick={this.batchExport}>批量导出</Button>
-            <Button type='primary' className='ml10' onClick={this.batchWithdrawal}>批量确认提现</Button>
+            {this.props.transferStatus === '' + statusEnums['待提现'] && <Button type='primary' className='ml10' onClick={this.batchWithdrawal}>批量确认提现</Button>}
           </>
         )}
         columns={this.columns}

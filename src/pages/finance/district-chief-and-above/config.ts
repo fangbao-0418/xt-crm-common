@@ -12,7 +12,7 @@ export const getDefaultConfig = () => {
       memberPhone: {
         label: '会员手机号'
       },
-      createTime: {
+      withdrawalDate: {
         label: '申请时间',
         type: 'rangepicker',
         controlProps: {

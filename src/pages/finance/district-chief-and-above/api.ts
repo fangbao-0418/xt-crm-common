@@ -1,4 +1,5 @@
 import { number, string } from "prop-types"
+import { StatusType } from "."
 
 const { get, newPost } = APP.http
 
@@ -35,7 +36,7 @@ export function exportWithdrawal (payload: {
   withdrawalStartDate: string,
   withdrawalEndDate: string,
   withdrawalCode: string,
-  transferStatus: -1 | 0 | 1,
+  transferStatus: StatusType,
   memberId: number,
   memberPhone: string,
   page: number,
@@ -72,7 +73,7 @@ export function sendSmsVerifyCode (batchId: string) {
  * 校验确认提现短信验证码
  */
 export function checkSmsVerifyCode(payload: {
-  batchId: number,
+  batchId: string,
   messageOrderNo: string,
   smsCode: string
 }) {
