@@ -1,9 +1,9 @@
 import React from 'react'
 import { Card, Tabs, message, Button, Icon } from 'antd'
-import { getGoodsList, getCategoryTopList, getShopList, passGoods, getGoodsInfo, getShopTypes } from './api'
+import { getGoodsList, getCategoryTopList, getShopList, exportGoods, passGoods, getGoodsInfo, getShopTypes } from './api'
 import SelectFetch from '@/components/select-fetch'
-import { ListPage, FormItem, If } from '@/packages/common/components'
-// import SuppilerSelect from '@/components/suppiler-auto-select'
+import { ListPage, If } from '@/packages/common/components'
+import Form, { FormItem } from '@/packages/common/components/form'
 import SuppilerSelector from '@/components/supplier-selector'
 import SearchFetch from '@/packages/common/components/search-fetch'
 import { replaceHttpUrl } from '@/util/utils'
@@ -13,6 +13,7 @@ import LowerModal from './components/lowerModal'
 import ViolationModal from './components/violationModal'
 import { combinationStatusList, formConfig } from './config/config'
 import getColumns from './config/columns'
+import Alert from '@/packages/common/components/alert'
 
 const { TabPane } = Tabs
 
@@ -90,8 +91,7 @@ class Main extends React.Component {
 
   /** 操作：查看商品详情-打开新标签页面 */
   handleDetail = (record) => {
-    const { origin, pathname } = window.location
-    APP.open(`${(/^\/$/).test(pathname) ? '/' : pathname}#/shop/goods/detail/${record.id}`)
+    APP.open(`/shop/pop-goods/detail/${record.id}`)
   }
 
   /** 操作：下架商品-显示下架理由模态框 */
@@ -105,11 +105,48 @@ class Main extends React.Component {
 
   /** 操作：通过商品审核 */
   handlePass = (record) => {
-    passGoods({
-      ids: [record.id]
-    }).then(() => {
-      message.success('审核通过成功!')
-      this.listRef.fetchData()
+    let form
+    const hide = this.props.alert({
+      title: '渠道选择',
+      content: (
+        <Form
+          getInstance={(ref) => form = ref }
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 18 }}
+        >
+          <FormItem
+            name='channel'
+            label='渠道选择'
+            required={true}
+            type='radio'
+            options={[
+              { label: '优选', value: 1 },
+              { label: '好店', value: 2 }
+            ]}
+            fieldDecoratorOptions={{
+              initialValue: 1,
+              rules: [
+                { required: true, message: '请选择渠道' }
+              ]
+            }}
+          />
+        </Form>
+      ),
+      onOk: () => {
+        form?.props.form.validateFields((err, values) => {
+          if (err) {
+            return
+          }
+          passGoods({
+            ids: [record.id],
+            channel: values.channel
+          }).then(() => {
+            hide?.()
+            message.success('审核通过成功!')
+            this.listRef.fetchData()
+          })
+        })
+      }
     })
   }
 
@@ -369,26 +406,72 @@ class Main extends React.Component {
               onChange: this.onSelectChange
             }
           }}
+          showButton={false}
           addonAfterSearch={
-            tabStatus === '2' ? (
-              <div>
-                <Button
-                  type='primary'
-                  disabled={!hasSelected}
-                  className='ml10'
-                  onClick={this.handleBatchPass}
-                >
-                  审核通过
-                </Button>
-                <Button
-                  disabled={!hasSelected}
-                  className='ml10'
-                  onClick={this.handleBatchReject}
-                >
-                  审核不通过
-                </Button>
-              </div>
-            ) : null
+            <>
+              {tabStatus === '2' && (
+                <>
+                  <Button
+                    type='primary'
+                    disabled={!hasSelected}
+                    className='mr8'
+                    onClick={this.handleBatchPass}
+                  >
+                    审核通过
+                  </Button>
+                  <Button
+                    disabled={!hasSelected}
+                    className='mr8'
+                    onClick={this.handleBatchReject}
+                  >
+                    审核不通过
+                  </Button>
+                </>
+              )}
+              <Button
+                type='primary'
+                className='mr8'
+                onClick={() => {
+                  this.listRef.refresh()
+                }}
+              >
+                查询
+              </Button>
+              <Button
+                className='mr8'
+                onClick={() => {
+                  this.listRef.refresh(true)
+                }}
+              >
+                清除
+              </Button>
+              <Button
+                type='primary'
+                className='mr8'
+                onClick={() => {
+                  exportGoods()
+                }}
+              >
+                商品导出
+              </Button>
+              <Button
+                type='primary'
+                className='mr8'
+                onClick={() => {
+                  this.listRef.refresh()
+                }}
+              >
+                建议价格导入
+              </Button>
+              <span
+                className='href'
+                onClick={() => {
+                  APP.fn.download(require('./assets/建议价格导入模板.xlsx'), '建议价格导入模板.xlsx')
+                }}
+              >
+                下载模板
+              </span>
+            </>
           }
         />
       </Card>
@@ -396,4 +479,4 @@ class Main extends React.Component {
   }
 }
 
-export default Main
+export default Alert(Main)

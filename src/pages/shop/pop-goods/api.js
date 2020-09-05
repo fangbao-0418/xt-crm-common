@@ -72,3 +72,7 @@ export function lowerGoods(data) {
   return newPost('/shop/product/disable', data);
 }
 
+/** 商品导出 */
+export function exportGoods(data) {
+  return get('/mcweb/product/shop/pop/export', data);
+}
