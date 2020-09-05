@@ -8,9 +8,9 @@ export type StatusType = '' | '-31' | '-1' | '0' | '1'
 const tabConfigs: { key: StatusType, title: string }[] = [
   { key: '', title: '全部' },
   { key: '-31', title: '待提现' },
-  { key: '-1', title: '提现失败' },
-  { key: '0', title: '处理中' },
-  { key: '1', title: '提现成功' }
+  { key: '0', title: '提现中' },
+  { key: '1', title: '提现成功' },
+  { key: '-1', title: '提现失败' }
 ]
 
 class Main extends React.Component {
