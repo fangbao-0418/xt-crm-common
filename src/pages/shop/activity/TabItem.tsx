@@ -4,7 +4,10 @@ import { ColumnProps } from 'antd/es/table'
 import { getDefaultConfig } from './config'
 import { Button } from 'antd'
 
-class Main extends React.Component {
+interface Props {
+  type: string
+}
+class Main extends React.Component<Props, {}> {
   public columns: ColumnProps<any>[] = [{
     title: '活动编号',
     dataIndex: 'no'
@@ -81,7 +84,13 @@ class Main extends React.Component {
           </>
         )}
         addonAfterSearch={(
-          <Button type='primary'>新建活动</Button>
+          <Button
+            type='primary'
+            onClick={() => {
+              APP.history.push('/shop/activity/-1')
+            }}>
+              新建活动
+            </Button>
         )}
         columns={this.columns}
         api={async () => {

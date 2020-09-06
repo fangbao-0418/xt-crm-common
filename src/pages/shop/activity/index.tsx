@@ -36,7 +36,7 @@ class Main extends React.Component<any, State> {
         >
           {tabConfig.map((item) => (
             <TabPane tab={item.label} key={item.value}>
-              <TabItem />
+              <TabItem type={item.value} />
             </TabPane>
           ))}
         </Tabs>
