@@ -1,5 +1,6 @@
 import React from 'react'
-import { Tabs } from 'antd'
+import { Tabs, Card } from 'antd'
+import TabItem from './TabItem'
 
 const { TabPane } = Tabs
 
@@ -16,15 +17,30 @@ const tabConfig = [{
   label: '已结束',
   value: '3'
 }]
-
-class Main extends React.Component {
+interface State {
+  activeKey: string
+}
+class Main extends React.Component<any, State> {
+  public state = {
+    activeKey: ''
+  }
   public render () {
+    const { activeKey } = this.state
     return (
-      <Tabs>
-        {tabConfig.map((item) => (
-          <TabPane tab={item.label} key={item.value}></TabPane>
-        ))}
-      </Tabs>
+      <Card>
+        <Tabs
+          activeKey={activeKey}
+          onChange={(val) => {
+            this.setState({ activeKey: val })
+          }}
+        >
+          {tabConfig.map((item) => (
+            <TabPane tab={item.label} key={item.value}>
+              <TabItem />
+            </TabPane>
+          ))}
+        </Tabs>
+      </Card>
     )
   }
 }
