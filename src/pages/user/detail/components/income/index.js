@@ -126,6 +126,31 @@ const tabConfig =  [{
   label: '喜团好店',
   value: '2'
 }]
+const options1 = [{
+  label: '全部',
+  value: ''
+}, {
+  label: '价差收益',
+  value: '10'
+}, {
+  label: '平推奖励',
+  value: '20'
+}]
+
+const options2 = [{
+  label: '全部',
+  value: ''
+}, {
+  label: '零售收益',
+  value: '30'
+}, {
+  label: '邀请奖励',
+  value: '40'
+}, {
+  label: '团队奖励',
+  value: '50'
+}]
+
 @connect((state) => ({
   data: state["user.userinfo"].incomeConfig,
 }))
@@ -208,7 +233,7 @@ export default class extends Component {
       form: { getFieldDecorator },
     } = this.props;
     const { detailList, visible, activeKey } = this.state;
-
+    const options = activeKey === '1' ? options1 : options2
     const detailColumns = [
       {
         title: "时间",
@@ -255,9 +280,9 @@ export default class extends Component {
                 <Form.Item label="收益类型">
                   {getFieldDecorator(`incomeTypeCode`)(
                     <Select style={{ width: 100 }}>
-                      <Select.Option value="">全部</Select.Option>
-                      <Select.Option value="10">价差收益</Select.Option>
-                      <Select.Option value="20">平推奖励</Select.Option>
+                      {options.map((item) => (
+                        <Select.Option value={item.value}>{item.label}</Select.Option>
+                      ))}
                     </Select>
                   )}
                 </Form.Item>
