@@ -17,9 +17,9 @@ const SmallShopCommission = loadable(() => import('./small-shop-commission'))
 /** POP店管理活动管理 */
 const ShopActivity = loadable(() => import('./activity'))
 /** POP店管理活动管理详情 */
-const ShopActivityDetail = loadable(() => import('./activity/Detail'))
+const ShopActivityAdd = loadable(() => import('./activity/Add'))
 /** 前端会场设置 */
-const ShopVenueSetting = loadable(() => import('./activity/VenueSetting'))
+const ShopActivityDetail = loadable(() => import('./activity/Detail'))
 class Main extends React.Component {
   render () {
     const { match } = this.props
@@ -34,8 +34,8 @@ class Main extends React.Component {
         <Route path={`${match.url}/popcommission`} component={PopCommission} />
         <Route path={`${match.url}/smallshopcommission`} component={SmallShopCommission} />
         <Route path={`${match.url}/activity`} exact component={ShopActivity} />
-        <Route path={`${match.url}/activity/:id`} exact component={ShopActivityDetail} />
-        <Route path={`${match.url}/venue-setting`} exact component={ShopVenueSetting} />
+        <Route path={`${match.url}/activity/add`} exact component={ShopActivityAdd} />
+        <Route path={`${match.url}/activity/detail`} exact component={ShopActivityDetail} />
       </Switch>
     )
   }

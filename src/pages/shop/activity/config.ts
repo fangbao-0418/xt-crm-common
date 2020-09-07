@@ -72,30 +72,48 @@ export function getDefaultConfig () {
       createPerson: {
         label: '创建人'
       }
-    }
-  }
-  return defaultConfig
-}
-
-export const getFormConfig = () => {
-  const defaultConfig: FieldsConfig = {
-    common: {
+    },
+    addFormConfig: {
       id: {
         label: '店铺id'
       },
       name: {
         label: '店铺名称'
       }
-    }
-  }
-  return defaultConfig
-}
-
-export const getVenueSettingConfig = () => {
-  const defaultConfig: FieldsConfig = {
-    common: {
-      name: {
-        label: '会场名称',
+    },
+    detailFormConfig: {
+      productId: {
+        label: '商品id',
+        controlProps: {
+          style: {
+            width: 220
+          }
+        }
+      },
+      productName: {
+        label: '商品名称',
+        controlProps: {
+          style: {
+            width: 220
+          }
+        }
+      },
+      status: {
+        label: '审核状态',
+        type: 'select',
+        options: [{
+          label: '全部',
+          value: ''
+        }, {
+          label: '待审核',
+          value: '1'
+        }, {
+          label: '通过',
+          value: '2'
+        }, {
+          label: '拒绝',
+          value: '3'
+        }],
         controlProps: {
           style: {
             width: 220
@@ -105,4 +123,10 @@ export const getVenueSettingConfig = () => {
     }
   }
   return defaultConfig
+}
+
+export enum statusEnum {
+  拒绝 = 0,
+  通过 = 1,
+  待审核 = 2
 }

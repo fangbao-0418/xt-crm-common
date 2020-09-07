@@ -1,7 +1,7 @@
 import React from 'react'
-import { ListPage } from '@/packages/common/components'
+import { ListPage, FormItem } from '@/packages/common/components'
 import { ColumnProps } from 'antd/lib/table'
-import { getFormConfig } from './config'
+import { getDefaultConfig } from './config'
 
 interface State {
   selectedRowKeys: string[] | number[]
@@ -34,7 +34,15 @@ class Main extends React.Component {
     return (
       <ListPage
         columns={this.columns}
-        formConfig={getFormConfig()}
+        formConfig={getDefaultConfig()}
+        namespace='addFormConfig'
+        formItemLayout={(
+          <>
+            <FormItem name='id' />
+            <FormItem name='name' />
+            <FormItem name='status' />
+          </>
+        )}
         tableProps={{
           rowSelection: {
             selectedRowKeys,

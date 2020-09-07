@@ -64,7 +64,12 @@ class Main extends React.Component<Props, {}> {
           </span>
           <span className='href ml10'>发布</span>
           <span className='href ml10'>复制</span>
-          <span className='href ml10'>查看详情</span>
+          <span
+            className='href ml10'
+            onClick={() => {
+              APP.history.push('/shop/activity/detail')
+            }}
+          >查看详情</span>
           <span className='href ml10'>排序</span>
         </>
       )
@@ -87,7 +92,7 @@ class Main extends React.Component<Props, {}> {
           <Button
             type='primary'
             onClick={() => {
-              APP.history.push('/shop/activity/-1')
+              APP.history.push('/shop/activity/add')
             }}>
               新建活动
             </Button>
