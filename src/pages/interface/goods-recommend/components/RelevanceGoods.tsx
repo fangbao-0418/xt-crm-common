@@ -1,7 +1,7 @@
 import React from 'react'
 import { Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import ShopModal, { Item } from './ShopModal'
+import GoodsModal, { Item } from './GoodsModal'
 import Image from '@/components/Image'
 
 interface Props {
@@ -78,10 +78,10 @@ class Main extends React.Component<Props, State> {
     const { readonly } = this.props
     return (
       <div>
-        <ShopModal
+        <GoodsModal
           fetchNode='open'
           selectedRowKeys={selectedRowKeys}
-          ref='shopmodal'
+          ref='goodsmodal'
           onOk={(keys, rows) => {
             const result = rows.map((item) => {
               return {
@@ -109,7 +109,7 @@ class Main extends React.Component<Props, State> {
             <span
               className='href'
               onClick={() => {
-                const ref: any = this.refs.shopmodal
+                const ref: any = this.refs.goodsmodal
                 ref.open(this.state.dataSource)
               }}
             >

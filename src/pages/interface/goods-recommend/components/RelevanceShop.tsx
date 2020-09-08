@@ -1,6 +1,7 @@
 import React from "react";
 import { Table } from "antd";
 import { ColumnProps } from "antd/es/table";
+import ShopModal from './ShopModal';
 
 interface Props {
   readonly: boolean
@@ -36,6 +37,7 @@ class Main extends React.Component<Props, State> {
     const { readonly } = this.props
     return (
       <div>
+        <ShopModal ref='shopmodal' />
         <div>
           <Table
             style={{
