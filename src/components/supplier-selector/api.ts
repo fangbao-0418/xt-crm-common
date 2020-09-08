@@ -8,10 +8,18 @@ const { post, get, newPost } = APP.http
 
 /** 获取全部供应商列表 */
 export function getAllStoreList (data: any, config?: any) {
-  return post('/store/list', data, config)
+  return post('/store/list', data, {
+    ...config,
+    /** 禁止日志 */
+    banLog: true
+  })
 }
 
 /** 获取优选供应商列表 */
 export function getYxStoreList (data: any, config?: any) {
-  return post('/store/yx/list', data, config)
+  return post('/store/yx/list', data, {
+    ...config,
+    /** 禁止日志 */
+    banLog: true
+  })
 }

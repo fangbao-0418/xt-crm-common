@@ -27,7 +27,7 @@ export function replaceSupplier (payload: { refundOrderCode: string }) {
 
 // 供应商查询
 export function supplierSearch (name: string) {
-  return newPost('/mmweb/supplier/shop/V1/search', { name, searchType: 2 })
+  return post('/store/yx/list', { name, pageSize: 200 })
 }
 
 // 获取订单类型集合
