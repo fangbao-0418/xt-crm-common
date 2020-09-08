@@ -1,8 +1,9 @@
 import React from 'react'
-import { Button } from 'antd'
+import { Button, Radio } from 'antd'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import { getFieldsConfig, locationMap, displayFromMap } from './config'
 import RelevanceGoods from './components/RelevanceGoods'
+import RelevanceShop from './components/RelevanceShop'
 import { withRouter, RouteComponentProps } from 'react-router'
 import * as api from './api'
 interface Props extends RouteComponentProps<{id: string}> {
@@ -89,7 +90,7 @@ class Main extends React.Component<Props, State> {
             name='displayFrom'
             verifiable
           />
-          <FormItem
+          {/* <FormItem
             label='关联商品'
             required
             // name='productRecommendSpuList'
@@ -110,6 +111,69 @@ class Main extends React.Component<Props, State> {
                 }
               )(
                 <RelevanceGoods readonly={readonly} />
+              )
+            }}
+          /> */}
+          <FormItem
+            label='推荐内容'
+            required
+            inner={(form) => {
+              return form.getFieldDecorator('relationType', {
+                initialValue: 10
+              })(
+                <Radio.Group>
+                  <Radio value={10}>关联商品</Radio>
+                  <Radio value={20}>关联店铺</Radio>
+                </Radio.Group>
+              )
+            }}
+          />
+          <FormItem
+            labelCol={{ span: 0 }}
+            wrapperCol={{ span: 24 }}
+            style={{ marginBottom: 0 }}
+            inner={(form) => {
+              const relationType = form.getFieldValue('relationType')
+              return relationType === 10 ? (
+                <FormItem
+                  inner={(form) => {
+                    return form.getFieldDecorator('productRecommendSpuList', {
+                      rules: [
+                        {
+                          validator: (rule, value, cb) => {
+                            if (!value || value.length === 0) {
+                              cb('关联商品不能为空')
+                            } else {
+                              cb()
+                            }
+                          }
+                        }
+                      ]
+                    })(
+                      <RelevanceGoods readonly={readonly} />
+                    )
+                  }}
+                />
+              ) : (
+                <FormItem
+                  inner={(form) => {
+                    return form.getFieldDecorator('relationIdList', {
+                      rules: [
+                        {
+                          validator: (rule, value, cb) => {
+                            if (!value || value.length === 0) {
+                              cb('关联店铺不能为空')
+                            } else {
+                              cb()
+                            }
+                          }
+                        }
+                      ]
+                    })(
+                      <RelevanceShop readonly={readonly} />
+                    )
+                  }}
+                />
               )
             }}
           />
