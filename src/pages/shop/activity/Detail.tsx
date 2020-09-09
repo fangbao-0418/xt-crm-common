@@ -39,7 +39,7 @@ class Main extends React.Component<{}, State> {
     return (
       <Card title='前端会场设置'>
         <Form config={getDefaultConfig()}>
-          <FormItem name='name' type='text' />
+          <FormItem name='title' type='text' />
           <FormItem
             label='会场图标'
             inner={(form) => {

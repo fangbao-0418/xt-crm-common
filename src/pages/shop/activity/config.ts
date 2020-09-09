@@ -3,7 +3,7 @@ import { FieldsConfig } from "@/packages/common/components/form"
 export function getDefaultConfig () {
   const defaultConfig: FieldsConfig = {
     common: {
-      name: {
+      title: {
         label: '活动名称'
       },
       type: {
@@ -11,10 +11,10 @@ export function getDefaultConfig () {
         type: 'select',
         options: [{
           label: '品牌会场',
-          value: '1'
+          value: 60
         }]
       },
-      desc: {
+      description: {
         label: '活动简介',
         type: 'textarea',
         controlProps: {
@@ -26,7 +26,7 @@ export function getDefaultConfig () {
           placeholder: '150个字，展示在供应商后台'
         }
       },
-      signUpTime: {
+      applyTime: {
         label: '活动报名时间',
         type: 'rangepicker'
       },
@@ -35,41 +35,41 @@ export function getDefaultConfig () {
         type: 'select',
         options: [{
           label: '全部',
-          value: ''
+          value: 0
         }, {
           label: '待发布',
-          value: '1'
+          value: 1
         }, {
           label: '已发布',
-          value: '2'
+          value: 2
         }, {
           label: '报名中',
-          value: '3'
+          value: 3
         }, {
           label: '预热中',
-          value: '4'
+          value: 4
         }, {
           label: '进行中',
-          value: '5'
+          value: 5
         }, {
           label: '已结束',
-          value: '6'
+          value: 6
         }, {
           label: '已关闭',
-          value: '7'
+          value: 7
         }]
       },
-      schedulingTime: {
+      activityTime: {
         label: '活动排期时间',
         type: 'rangepicker',
         controlProps: {
           showTime: true
         }
       },
-      no: {
+      promotionId: {
         label: '活动编号'
       },
-      createPerson: {
+      operator: {
         label: '创建人'
       }
     },
@@ -123,6 +123,21 @@ export function getDefaultConfig () {
     }
   }
   return defaultConfig
+}
+
+/**
+ * 活动状态枚举
+ * 0-全部/1-待发布/2-已发布/3-报名中/4-预热中/5-进行中/6-已结束/7-已关闭
+ */
+export enum promotionStatusEnum {
+  全部 = 0,
+  待发布 = 1,
+  已发布 = 2,
+  报名中 = 3,
+  预热中 = 4,
+  进行中 = 5,
+  已结束 = 6,
+  已关闭 = 7
 }
 
 export enum statusEnum {

@@ -1,8 +1,9 @@
 import React from 'react'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Form, FormItem, Alert } from '@/packages/common/components'
-import { getDefaultConfig } from './config'
 import { Card, Radio, InputNumber, Table, Button } from 'antd'
+import { addPromotion } from './api'
+import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/lib/table'
 import StoreModal from './StoreModal'
 interface Props extends AlertComponentProps {}
@@ -14,10 +15,10 @@ class Main extends React.Component<Props, State> {
     dataSource: []
   }  
   public columns: ColumnProps<any>[] = [{
-    title: '供应商id',
+    title: '店铺id',
     dataIndex: 'supplierId'
   }, {
-    title: '供应商名称',
+    title: '店铺名称',
     dataIndex: 'supplierName'
   }, {
     title: '操作',
@@ -27,6 +28,7 @@ class Main extends React.Component<Props, State> {
       )
     }
   }]
+  /** 添加店铺 */
   public handleAdd = () => {
     this.props.alert({
       title: '选择店铺',
@@ -36,13 +38,27 @@ class Main extends React.Component<Props, State> {
       )
     })
   }
+  /** 保存活动 */
+  public handleSave = () => {
+
+  }
   public render () {
     const { dataSource } = this.state
     return (
-      <Form config={getDefaultConfig()}>
+      <Form
+        rangeMap={{
+          applyTime: {
+            fields: ['applyStartTime', 'applyEndTime']
+          },
+          activityTime: {
+            fields: ['startTime', 'endTime']
+          }
+        }}
+        config={getDefaultConfig()}
+      >
         <Card title='活动报名设置'>
           <FormItem
-            name='name'
+            name='title'
             controlProps={{
               style: {
                 width: 220
@@ -57,42 +73,48 @@ class Main extends React.Component<Props, State> {
               }
             }}
           />
-          <FormItem name='desc' />
-          <FormItem name='signUpTime' />
+          <FormItem name='description' />
+          <FormItem name='applyTime' />
           <FormItem
             label='是否预热'
             inner={(form) => {
               return form.getFieldDecorator('preheat', {
-                initialValue: '0'
+                initialValue: 1
               })(
                 <Radio.Group>
-                  <Radio value='0' style={{ display: 'block' }}>是，活动开始前24小时，会场同步到线上预热</Radio>
-                  <Radio value='1' style={{ display: 'block' }}>否，活动正式开始时线上开放</Radio>
+                  <Radio value={1} style={{ display: 'block' }}>是，活动开始前24小时，会场同步到线上预热</Radio>
+                  <Radio value={0} style={{ display: 'block' }}>否，活动正式开始时线上开放</Radio>
                 </Radio.Group>
               )
             }}
           />
-          <FormItem name='schedulingTime' />
+          <FormItem name='activityTime' />
         </Card>
         <Card title='活动规则和要求'>
-          <FormItem label='活动供货价'>
-            <div>
-              <span>不高于日常供货价的</span>
-              <InputNumber className='ml10 mr10' precision={0} />
-              <span>%</span>
-            </div>
-            <div>（输入正整数，比例后取两位小数，例如日常供货价79，比高于日常供货价85%，即活动供货价最高为67.15元）</div>
-          </FormItem>
+          <FormItem
+            label='活动供货价'
+            inner={(form) => {
+              return (
+                <>
+                  <div>
+                    <span>不高于日常供货价的</span>
+                    {form.getFieldDecorator('costPriceDiscount')(<InputNumber min={0} max={100} className='ml10 mr10' precision={0} />)}
+                    <span>%</span>
+                  </div>
+                  <div>（输入正整数，比例后取两位小数，例如日常供货价79，比高于日常供货价85%，即活动供货价最高为67.15元）</div>
+                </>
+              )
+            }}
+          />
           <FormItem
             label='报名商家类型'
             inner={(form) => {
               return (
                 <>
                   {form.getFieldDecorator('businessType', {
-                    initialValue: 0
+                    initialValue: 1
                   })(
                     <Radio.Group>
-                      <Radio value={0} style={{ display: 'block' }}>全部</Radio>
                       <Radio value={1}>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个商家，会单独拆分为几个会场）</Radio>
                     </Radio.Group>
                   )}
@@ -106,7 +128,12 @@ class Main extends React.Component<Props, State> {
           />
         </Card>
         <div>
-          <Button type='primary'>保存</Button>
+          <Button
+            type='primary'
+            onClick={this.handleSave}
+          >
+            保存
+          </Button>
           <Button
             className='ml10'
             onClick={() => {
