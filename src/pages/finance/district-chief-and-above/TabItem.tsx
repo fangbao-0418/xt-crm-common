@@ -33,14 +33,20 @@ class Main extends React.Component<Props, State> {
           onChange={(val) => {
             batchId = val.batchId
             messageOrderNo = val.messageOrderNo
-            smsCode = val.smsCode
+          }}
+          onInput={(code) => {
+            smsCode = code
           }}
         />
       ),
       onOk: async (hide) => {
-        if (!batchId || !messageOrderNo || !smsCode) {
+        if (!batchId || !messageOrderNo) {
           APP.error('请先获取验证码')
-          return;
+          return
+        }
+        if (!smsCode) {
+          APP.error('请输入验证码')
+          return
         }
         const res = await checkSmsVerifyCode({
           batchId,
