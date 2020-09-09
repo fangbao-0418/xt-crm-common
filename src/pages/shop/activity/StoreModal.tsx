@@ -12,10 +12,10 @@ class Main extends React.Component {
   }
   public columns: ColumnProps<any>[] = [{
     title: '店铺id',
-    dataIndex: 'id'
+    dataIndex: 'shopId'
   }, {
     title: '店铺名称',
-    dataIndex: 'store'
+    dataIndex: 'shopName'
   }, {
     title: '店铺状态',
     dataIndex: 'status'
@@ -38,9 +38,8 @@ class Main extends React.Component {
         namespace='addFormConfig'
         formItemLayout={(
           <>
-            <FormItem name='id' />
-            <FormItem name='name' />
-            <FormItem name='status' />
+            <FormItem name='shopId' />
+            <FormItem name='shopName' />
           </>
         )}
         tableProps={{

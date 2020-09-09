@@ -1,6 +1,7 @@
 const { get, newPost } = APP.http
 
 export type StatusType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+
 /** 会场活动列表 */
 export function getPromotionList (payload: {
   title?: string,
@@ -30,4 +31,14 @@ export function addPromotion (payload: {
   shopIds: number[]
 }) {
   return newPost('/mcweb/product/promotion/venue/add', payload)
+}
+
+/** 发布会场活动 */
+export function publishPromotion (venueId: number) {
+  return newPost('/mcweb/product/promotion/venue/publish', { venueId })
+}
+
+/** 会场活动关闭 */
+export function closePromotion (promotionId: number) {
+  return newPost('/mcweb/product/promotion/venue/close', { promotionId })
 }

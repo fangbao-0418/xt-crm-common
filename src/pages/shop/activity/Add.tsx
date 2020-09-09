@@ -6,6 +6,8 @@ import { addPromotion } from './api'
 import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/lib/table'
 import StoreModal from './StoreModal'
+import { FormInstance } from '@/packages/common/components/form'
+import { ApplyAfterSale } from '@/pages/order/components/modal'
 interface Props extends AlertComponentProps {}
 interface State {
   dataSource: any[]
@@ -13,7 +15,8 @@ interface State {
 class Main extends React.Component<Props, State> {
   public state = {
     dataSource: []
-  }  
+  }
+  public formRef: FormInstance
   public columns: ColumnProps<any>[] = [{
     title: '店铺id',
     dataIndex: 'supplierId'
@@ -40,12 +43,24 @@ class Main extends React.Component<Props, State> {
   }
   /** 保存活动 */
   public handleSave = () => {
-
+    this.formRef.props.form.validateFields(async (err) => {
+      if (!err) {
+        const vals = this.formRef.getValues()
+        const res = await addPromotion(vals)
+        if (res) {
+          APP.success('新建活动成功')
+          APP.history.goBack()
+        }
+      }
+    })
   }
   public render () {
     const { dataSource } = this.state
     return (
       <Form
+        getInstance={(ref) => {
+          this.formRef = ref
+        }}
         rangeMap={{
           applyTime: {
             fields: ['applyStartTime', 'applyEndTime']
@@ -106,26 +121,13 @@ class Main extends React.Component<Props, State> {
               )
             }}
           />
-          <FormItem
-            label='报名商家类型'
-            inner={(form) => {
-              return (
-                <>
-                  {form.getFieldDecorator('businessType', {
-                    initialValue: 1
-                  })(
-                    <Radio.Group>
-                      <Radio value={1}>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个商家，会单独拆分为几个会场）</Radio>
-                    </Radio.Group>
-                  )}
-                  <Table
-                    columns={this.columns}
-                    dataSource={dataSource}
-                  />
-                </>
-              )
-            }}
-          />
+          <FormItem label='报名商家类型'>
+            <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个商家，会单独拆分为几个会场）</div>
+            <Table
+              columns={this.columns}
+              dataSource={dataSource}
+            />
+          </FormItem>
         </Card>
         <div>
           <Button

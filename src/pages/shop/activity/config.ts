@@ -74,10 +74,10 @@ export function getDefaultConfig () {
       }
     },
     addFormConfig: {
-      id: {
+      shopId: {
         label: '店铺id'
       },
-      name: {
+      shopName: {
         label: '店铺名称'
       }
     },
@@ -124,6 +124,32 @@ export function getDefaultConfig () {
   }
   return defaultConfig
 }
+
+export const statusArray = [{
+  label: '全部',
+  value: 0
+}, {
+  label: '待发布',
+  value: 1
+}, {
+  label: '已发布',
+  value: 2
+}, {
+  label: '报名中',
+  value: 3
+}, {
+  label: '预热中',
+  value: 4
+}, {
+  label: '进行中',
+  value: 5
+}, {
+  label: '已结束',
+  value: 6
+}, {
+  label: '已关闭',
+  value: 7
+}]
 
 /**
  * 活动状态枚举
