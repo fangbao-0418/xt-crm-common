@@ -39,6 +39,7 @@ class Main extends React.Component<Props, State> {
       ),
       onOk: async (hide) => {
         if (!batchId || !messageOrderNo || !smsCode) {
+          APP.error('请先获取验证码')
           return;
         }
         const res = await checkSmsVerifyCode({
