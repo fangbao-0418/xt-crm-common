@@ -5,6 +5,11 @@ import { Tooltip, Icon } from 'antd'
 import { replaceHttpUrl } from '@/util/utils'
 import { formatMoneyWithSign } from '@/pages/helper'
 
+const ChannelEnum = {
+  1: '优选',
+  2: '好店'
+}
+
 function formatTime (text) {
   return text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '-'
 }
@@ -147,6 +152,15 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
           return val
         }
         return <span onClick={() => onViolation(record)} className='href'>{val}</span>
+      }
+    },
+    {
+      title: '渠道',
+      dataIndex: 'channel',
+      width: 100,
+      align: 'center',
+      render: (text) => {
+        return ChannelEnum[text]
       }
     },
     {

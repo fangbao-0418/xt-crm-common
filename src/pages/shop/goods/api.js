@@ -9,7 +9,10 @@ export function getShopList(name) {
 
 /** 获取商品列表 */
 export function getGoodsList(data) {
-  return newPost('/shop/product/list', data);
+  return newPost('/shop/product/list', {
+    ...data,
+    shopTypes: [2]
+  });
 }
 
 /** 获取商品详情信息 */
@@ -55,7 +58,9 @@ export function getShopTypes () {
 export function passGoods(data) {
   return newPost('/shop/product/audit', {
     ...data,
-    auditStatus: 2
+    auditStatus: 2,
+    /** requestType 1-小店（不校验channel） 2-pop */
+    requestType: 1
   });
 }
 
@@ -63,7 +68,9 @@ export function passGoods(data) {
 export function unPassGoods(data) {
   return newPost('/shop/product/audit', {
     ...data,
-    auditStatus: 3
+    auditStatus: 3,
+    /** requestType 1-小店（不校验channel） 2-pop */
+    requestType: 1
   });
 }
 

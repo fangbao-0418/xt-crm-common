@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, Tabs, message, Button, Icon } from 'antd'
 import { getGoodsList, getCategoryTopList, getShopList, exportGoods, passGoods, getGoodsInfo, getShopTypes } from './api'
+import * as api from './api'
 import SelectFetch from '@/components/select-fetch'
 import { ListPage, If } from '@/packages/common/components'
 import Form, { FormItem } from '@/packages/common/components/form'
@@ -210,6 +211,17 @@ class Main extends React.Component {
     })
   }
 
+  importAdvisePrice () {
+    const el = document.createElement('input')
+    el.setAttribute('type', 'file')
+    el.onchange = function (e) {
+      console.dir(e.target)
+      const file = e?.target.files?.[0]
+      api.importAdvisePrice(file)
+    }
+    el.click()
+  }
+
   render () {
     const { currentGoods, tabStatus, selectedRowKeys, carouselTitle, carouselVisible, carouselImgs, imageViolationReasons } = this.state
     const hasSelected = selectedRowKeys.length > 0
@@ -346,6 +358,15 @@ class Main extends React.Component {
               </If>
               <FormItem label='审核人' name='auditUser' />
               <FormItem
+                label='渠道'
+                name='channel'
+                type='select'
+                options={[
+                  { label: '优选', value: 1 },
+                  { label: '好店', value: 2 }
+                ]}
+              />
+              <FormItem
                 label='商家类型'
                 inner={(form) => {
                   return form.getFieldDecorator('shopTypes')(
@@ -449,7 +470,8 @@ class Main extends React.Component {
                 type='primary'
                 className='mr8'
                 onClick={() => {
-                  exportGoods()
+                  const payload = this.listRef.getPayload()
+                  exportGoods(payload)
                 }}
               >
                 商品导出
@@ -458,7 +480,7 @@ class Main extends React.Component {
                 type='primary'
                 className='mr8'
                 onClick={() => {
-                  this.listRef.refresh()
+                  this.importAdvisePrice()
                 }}
               >
                 建议价格导入

@@ -308,7 +308,7 @@ class Main extends React.Component {
                 <FormItem name='innerAuditStatus' />
               </If>
               <FormItem label='审核人' name='auditUser' />
-              <FormItem
+              {/* <FormItem
                 label='商家类型'
                 inner={(form) => {
                   return form.getFieldDecorator('shopTypes')(
@@ -319,7 +319,7 @@ class Main extends React.Component {
                     />
                   )
                 }}
-              />
+              /> */}
               <FormItem
                 name='createTime'
                 label='创建时间'

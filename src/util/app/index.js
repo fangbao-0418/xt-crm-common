@@ -152,3 +152,13 @@ Object.assign(APP, {
   },
   regular
 })
+
+Object.defineProperty(APP, 'token', {
+  get () {
+    console.log('get token')
+    return JSON.parse(localStorage.getItem('token') || '')
+  },
+  set (val) {
+    localStorage.setItem('token', val)
+  }
+})
