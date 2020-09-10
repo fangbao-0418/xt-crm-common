@@ -144,10 +144,18 @@ class BannerModal extends Component {
         params.newSeat = seat[0]
         params.childSeat = seat[1]
         params.seat = seat[1]
-        params.platform = 0
-        params.platformArray.forEach((val) => {
-          params.platform += val * 1
-        })
+        if (params.platformArray) {
+          params.platform = 0
+          params.platformArray.forEach((val) => {
+            params.platform += val * 1
+          })
+        }
+        if (params.memberRestrictArray) {
+          params.memberRestrict = 0
+          params.memberRestrictArray.forEach((val) => {
+            params.memberRestrict += val * 1
+          })
+        }
         if([10].includes(seat[0])&&params.platform>6){
           APP.moon.logger({
             platform: params.platform
@@ -224,7 +232,9 @@ class BannerModal extends Component {
                   message: 'banner渠道不能为空'
                 }],
                 onChange: (bizSource) => {
-                  this.setState({ bizSource })
+                  this.setState({ bizSource }, () => {
+                    this.props.form.setFieldsValue({ seat: [] })
+                  })
                 }
               })(
                 <Select placeholder='请选择banner渠道' allowClear>
@@ -374,7 +384,7 @@ class BannerModal extends Component {
                 </FormItem>
               </If>
             </If>
-            <If condition={this.state.bizSource === 20}>
+            {this.state.bizSource === 20 && (<>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
@@ -389,7 +399,7 @@ class BannerModal extends Component {
                 )}
               </FormItem>
               <FormItem label='可见用户'>
-                {getFieldDecorator('visibleUser', {
+                {getFieldDecorator('memberRestrictArray', {
                   rules: [{
                     required: true,
                     message: '请选择可见用户'
@@ -397,9 +407,6 @@ class BannerModal extends Component {
                 })(
                   <Checkbox.Group
                     options={[{
-                      label: '全部',
-                      value: 63
-                    }, {
                       label: '普通用户',
                       value: 1
                     }, {
@@ -421,7 +428,7 @@ class BannerModal extends Component {
                   />
                 )}
               </FormItem>
-            </If>
+            </>)}
             <If condition={seat[0] === 7}>
               <FormItem label='关键词'>
                 {getFieldDecorator('keywordsList', {
