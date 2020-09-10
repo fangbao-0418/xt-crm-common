@@ -133,7 +133,6 @@ class OrderList extends React.Component {
         title: 'banner渠道',
         dataIndex: 'bizSource',
         render(text) {
-          console.log(text, typeof text, 'banner渠道banner渠道banner渠道')
           return (
             <span>{bizSourceMap[text]}</span>
           )

@@ -6,11 +6,11 @@ interface ItemProps {
   key: any
   value: string
 }
-//type:1为买菜，默认为优选
+//bizSource:0为喜团优选，10为喜团买菜，20为喜团好店
 interface Props {
   value?: any[]
   onChange?: (value?: any[]) => void
-  type?: any
+  bizSource?: any
 }
 interface State {
   options: ItemProps[]
@@ -20,9 +20,16 @@ class Main extends React.Component<Props> {
     options: []
   };
   public componentDidMount () {
-    api.getSeatList(this.props.type).then((res: ItemProps[]) => {
+    api.getSeatList(this.props.bizSource).then((res: ItemProps[]) => {
       this.fetchCategory(res)
     })
+  }
+  public componentWillReceiveProps(nextProps: any) {
+    if (this.props.bizSource !== nextProps.bizSource) {
+      api.getSeatList(nextProps.bizSource).then((res: ItemProps[]) => {
+        this.fetchCategory(res)
+      })
+    }
   }
   public fetchCategory (options: ItemProps[]) {
     api.getCategory().then((res: any) => {

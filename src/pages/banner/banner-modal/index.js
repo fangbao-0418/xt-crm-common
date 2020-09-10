@@ -5,9 +5,9 @@ import React, { Component } from 'react'
 import { Tag, Select, Modal, Button, Form, Input, InputNumber, Radio, Checkbox, message, DatePicker } from 'antd'
 import If from '@/packages/common/components/if'
 import UploadView from '../../../components/upload'
-import { getUniqueId } from '@/packages/common/utils'
+// import { getUniqueId } from '@/packages/common/utils'
 import { getBannerDetail, updateBanner, addBanner } from '../api'
-import { TextMapPosition } from '../constant'
+// import { TextMapPosition } from '../constant'
 import platformType from '@/enum/platformType'
 // import { formatDate } from '../../helper';
 import moment from 'moment'
@@ -185,7 +185,6 @@ class BannerModal extends Component {
     const { getFieldDecorator, setFieldsValue } = this.props.form
     const { data, renderKey } = this.state
     const seat = [data.newSeat, data.childSeat]
-    console.log('this.state.bizSource', this.state.bizSource, typeof this.state.bizSource)
     return (
       <>
         <Button size={size} type='primary' onClick={this.showModal}>
@@ -250,6 +249,7 @@ class BannerModal extends Component {
                 ]
               })(
                 <BannerPostion
+                  bizSource={this.state.bizSource}
                   onChange={(val) => {
                     if([val[0], seat[0]].includes(10)){
                       setFieldsValue({
