@@ -101,6 +101,14 @@ export function getDefaultConfig () {
       },
       operator: {
         label: '创建人'
+      },
+      tags: {
+        label: '会场标签',
+        type: 'text'
+      },
+      venueDescription: {
+        label: '会场介绍',
+        type: 'text'
       }
     },
     addFormConfig: {
@@ -122,28 +130,6 @@ export function getDefaultConfig () {
       },
       productName: {
         label: '商品名称',
-        controlProps: {
-          style: {
-            width: 220
-          }
-        }
-      },
-      status: {
-        label: '审核状态',
-        type: 'select',
-        options: [{
-          label: '全部',
-          value: ''
-        }, {
-          label: '待审核',
-          value: '1'
-        }, {
-          label: '通过',
-          value: '2'
-        }, {
-          label: '拒绝',
-          value: '3'
-        }],
         controlProps: {
           style: {
             width: 220

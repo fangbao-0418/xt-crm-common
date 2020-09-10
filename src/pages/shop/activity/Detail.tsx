@@ -1,11 +1,14 @@
 import React from 'react'
-import { Card, Tabs, Table, Button, Upload, Icon } from 'antd'
+import { Card, Tabs, Table, Button, Upload } from 'antd'
 import { Form, FormItem, ListPage, Alert } from '@/packages/common/components'
 import { AlertComponentProps } from '@/packages/common/components/alert'
+import { FormInstance } from '@/packages/common/components/form'
 import { getDefaultConfig } from './config'
 import UploadView from '@/components/upload'
 import { ColumnProps } from 'antd/es/table'
 import { statusEnum } from './config'
+import { getPromotionDetail, getPromotionProduct } from './api'
+import { parseQuery } from '@/util/utils'
 
 const { TabPane } = Tabs
 
@@ -24,10 +27,32 @@ const tabConfig = [{
 }]
 interface State {
   activeKey: string
+  productCount: number
+  skuCount: number
+  passSkuCount: number
+  rejectSkuCount: number
+  totalStock: number
 }
 class Main extends React.Component<{}, State> {
+  public formRef: FormInstance
   public state = {
-    activeKey: ''
+    activeKey: '',
+    productCount: 0,
+    skuCount: 0,
+    passSkuCount: 0,
+    rejectSkuCount: 0,
+    totalStock: 0
+  }
+  public componentDidMount() {
+    this.fetchData()
+  }
+  /** 会场活动详情 */
+  public fetchData = async () => {
+    const query: any = parseQuery()
+    if (query.promotionId) {
+      const res = await getPromotionDetail(query.promotionId)
+      this.formRef.setValues(res)
+    }
   }
   public onTabChange = (key: string) => {
     this.setState({
@@ -35,15 +60,20 @@ class Main extends React.Component<{}, State> {
     })
   }
   public render () {
-    const { activeKey } = this.state
+    const { activeKey, productCount, skuCount, passSkuCount, rejectSkuCount, totalStock } = this.state
     return (
       <Card title='前端会场设置'>
-        <Form config={getDefaultConfig()}>
+        <Form
+          getInstance={(ref) => {
+            this.formRef = ref
+          }}
+          config={getDefaultConfig()}
+        >
           <FormItem name='title' type='text' />
           <FormItem
             label='会场图标'
             inner={(form) => {
-              return (
+              return form.getFieldDecorator('iconUrl')(
                 <UploadView
                   ossType='cos'
                   listType='picture-card'
@@ -56,7 +86,7 @@ class Main extends React.Component<{}, State> {
           <FormItem
             label='会场背景图'
             inner={(form) => {
-              return (
+              return form.getFieldDecorator('bgurl')(
                 <UploadView
                   ossType='cos'
                   listType='picture-card'
@@ -66,16 +96,8 @@ class Main extends React.Component<{}, State> {
               )
             }}
           />
-          <FormItem
-            label='会场标签'
-          >
-            大牌 品牌直销 高性价比
-          </FormItem>
-          <FormItem
-            label='会场介绍'
-          >
-            最好的货源最好的价格
-          </FormItem>
+          <FormItem name='tags' />
+          <FormItem name='venueDescription' />
           <Tabs
             activeKey={activeKey}
             onChange={this.onTabChange}
@@ -85,15 +107,15 @@ class Main extends React.Component<{}, State> {
                 <TabPane tab={item.label} key={item.value}>
                   <div>
                     已报名商品列表 （ 已报名
-                    <span style={{ color: 'red' }}>24</span>
+                    <span style={{ color: 'red' }}>{productCount}</span>
                     款 sku
-                    <span style={{ color: 'red' }}>342</span>
+                    <span style={{ color: 'red' }}>{skuCount}</span>
                     款 审核通过sku
-                    <span style={{ color: 'red' }}>20</span>
+                    <span style={{ color: 'red' }}>{passSkuCount}</span>
                     款 审核拒绝sku
-                    <span style={{ color: 'red' }}>3</span>
+                    <span style={{ color: 'red' }}>{rejectSkuCount}</span>
                     款 可供总库存：
-                    <span style={{ color: 'red' }}>384732</span>
+                    <span style={{ color: 'red' }}>{totalStock}</span>
                     个）
                   </div>
                   <AlertTabItem />
@@ -115,6 +137,12 @@ class TabItem extends React.Component<AlertComponentProps, TabItemState> {
   public state = {
     fileList: [],
     uploading: false
+  }
+  public componentDidMount() {
+    this.fetchData()
+  }
+  public fetchData = () => {
+
   }
   public columns: ColumnProps<any>[] = [{
     title: '序号',
@@ -207,7 +235,6 @@ class TabItem extends React.Component<AlertComponentProps, TabItemState> {
           <>
             <FormItem name='productId' />
             <FormItem name='productName' />
-            <FormItem name='status' />
           </>
         )}
         addonAfterSearch={(

@@ -5,6 +5,7 @@ import BannerModal from '../banner-modal'
 import { formatDate } from '../../helper'
 import { TextMapPosition } from '../constant'
 import Image from '../../../components/Image'
+import { bizSourceMap } from '../config'
 import Search from './Search'
 import { namespace } from '../config'
 
@@ -130,10 +131,11 @@ class OrderList extends React.Component {
       },
       {
         title: 'banner渠道',
-        dataIndex: 'channel',
+        dataIndex: 'bizSource',
         render(text) {
+          console.log(text, typeof text, 'banner渠道banner渠道banner渠道')
           return (
-            <span>{text === '1' ? '喜团优选' : '喜团好店'}</span>
+            <span>{bizSourceMap[text]}</span>
           )
         }
       },

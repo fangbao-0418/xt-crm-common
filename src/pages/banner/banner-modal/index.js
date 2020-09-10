@@ -62,7 +62,7 @@ class BannerModal extends Component {
     onSuccess: () => { },
     id: '',
     isEdit: false,
-    channel: -1
+    bizSource: 0
   };
 
   state = {
@@ -185,7 +185,7 @@ class BannerModal extends Component {
     const { getFieldDecorator, setFieldsValue } = this.props.form
     const { data, renderKey } = this.state
     const seat = [data.newSeat, data.childSeat]
-    console.log('data.platformArray', data.platformArray)
+    console.log('this.state.bizSource', this.state.bizSource, typeof this.state.bizSource)
     return (
       <>
         <Button size={size} type='primary' onClick={this.showModal}>
@@ -219,19 +219,18 @@ class BannerModal extends Component {
               })(<Input placeholder='请输入Banner名称' />)}
             </FormItem>
             <FormItem label='banner渠道'>
-              {getFieldDecorator('channel', {
-                initialValue: 1,
+              {getFieldDecorator('bizSource', {
                 rules: [{
                   required: true,
                   message: 'banner渠道不能为空'
                 }],
-                onChange: (channel) => {
-                  this.setState({ channel })
+                onChange: (bizSource) => {
+                  this.setState({ bizSource })
                 }
               })(
                 <Select placeholder='请选择banner渠道' allowClear>
-                  <Select.Option value={1}>喜团优选</Select.Option>
-                  <Select.Option value={2}>喜团好店</Select.Option>
+                  <Select.Option value={0}>喜团优选</Select.Option>
+                  <Select.Option value={20}>喜团好店</Select.Option>
                 </Select>
               )}
             </FormItem>
@@ -360,7 +359,7 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={this.state.channel === 1}>
+            <If condition={this.state.bizSource === 0}>
               <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
                 <FormItem label='平台'>
                   {getFieldDecorator('platformArray', {
@@ -375,7 +374,7 @@ class BannerModal extends Component {
                 </FormItem>
               </If>
             </If>
-            <If condition={this.state.channel === 2}>
+            <If condition={this.state.bizSource === 20}>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
                   initialValue: data.platformArray,
@@ -399,22 +398,25 @@ class BannerModal extends Component {
                   <Checkbox.Group
                     options={[{
                       label: '全部',
-                      value: ''
+                      value: 63
                     }, {
                       label: '普通用户',
-                      value: '0'
+                      value: 1
                     }, {
                       label: '店长',
-                      value: '2'
+                      value: 2
                     }, {
                       label: '高级店长',
-                      value: '4'
+                      value: 4
                     }, {
                       label: '服务商',
-                      value: '8'
+                      value: 8
                     }, {
                       label: '管理员',
-                      value: '16'
+                      value: 16
+                    }, {
+                      label: '公司',
+                      value: 32
                     }]}
                   />
                 )}

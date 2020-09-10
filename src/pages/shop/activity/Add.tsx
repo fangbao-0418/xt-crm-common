@@ -2,11 +2,12 @@ import React from 'react'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Form, FormItem, Alert } from '@/packages/common/components'
 import { Card, Radio, InputNumber, Table, Button } from 'antd'
-import { addPromotion } from './api'
+import { addPromotion, getPromotionDetail } from './api'
 import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/lib/table'
 import StoreModal from './StoreModal'
 import { FormInstance } from '@/packages/common/components/form'
+import { parseQuery } from '@/util/utils'
 interface Props extends AlertComponentProps {}
 class Main extends React.Component<Props> {
   public formRef: FormInstance
@@ -32,6 +33,15 @@ class Main extends React.Component<Props> {
     }
   }]
   public componentDidMount() {
+    this.fetchData()
+  }
+  // 查看详情
+  public fetchData = async () => {
+    const query: any = parseQuery()
+    if (query.promotionId) {
+      const res = await getPromotionDetail(query.promotionId)
+      this.formRef.setValues(res)
+    }
   }
   /** 添加店铺 */
   public handleAdd = () => {

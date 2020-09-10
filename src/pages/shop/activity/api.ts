@@ -39,6 +39,21 @@ export function getPromotionDetail (promotionId: string) {
   return get(`/mcweb/product/promotion/venue/detail?promotionId=${promotionId}`)
 }
 
+/**
+ * 会场活动商品列表
+ * 审核状态（-1-所有，0-待审核，1-审核通过，2-审核拒绝）
+ */
+export function getPromotionProduct (payload: {
+  promotionId: number,
+  status: -1 | 0 | 1 | 2,
+  productId: number,
+  productName: string,
+  page: number,
+  pageSize: number
+}) {
+  return get('/mcweb/product/promotion/venue/products', payload)
+}
+
 /** 发布会场活动 */
 export function publishPromotion (venueId: number) {
   return newPost('/mcweb/product/promotion/venue/publish', { venueId })
