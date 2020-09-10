@@ -7,38 +7,48 @@ import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/lib/table'
 import StoreModal from './StoreModal'
 import { FormInstance } from '@/packages/common/components/form'
-import { ApplyAfterSale } from '@/pages/order/components/modal'
 interface Props extends AlertComponentProps {}
-interface State {
-  dataSource: any[]
-}
-class Main extends React.Component<Props, State> {
-  public state = {
-    dataSource: []
-  }
+class Main extends React.Component<Props> {
   public formRef: FormInstance
   public columns: ColumnProps<any>[] = [{
     title: '店铺id',
-    dataIndex: 'supplierId'
+    dataIndex: 'shopId'
   }, {
     title: '店铺名称',
-    dataIndex: 'supplierName'
+    dataIndex: 'shopName'
   }, {
     title: '操作',
-    render: () => {
+    render: (text: any, record: any, index: number) => {
       return (
-        <span className='href'>删除</span>
+        <span
+          className='href'
+          onClick={() => {
+            const { dataSource } = this.formRef.getValues()
+            dataSource.splice(index, 1)
+            this.formRef.setValues({ dataSource })
+          }}
+        >删除</span>
       )
     }
   }]
+  public componentDidMount() {
+  }
   /** 添加店铺 */
   public handleAdd = () => {
+    let dataSource: any[] = []
     this.props.alert({
       title: '选择店铺',
       width: 1200,
       content: (
-        <StoreModal />
-      )
+        <StoreModal
+          onChange={(rows) => {
+            dataSource = rows
+          }}
+        />
+      ),
+      onOk: () => {
+        this.formRef.setValues({ dataSource })
+      }
     })
   }
   /** 保存活动 */
@@ -55,7 +65,6 @@ class Main extends React.Component<Props, State> {
     })
   }
   public render () {
-    const { dataSource } = this.state
     return (
       <Form
         getInstance={(ref) => {
@@ -74,6 +83,7 @@ class Main extends React.Component<Props, State> {
         <Card title='活动报名设置'>
           <FormItem
             name='title'
+            verifiable
             controlProps={{
               style: {
                 width: 220
@@ -82,19 +92,31 @@ class Main extends React.Component<Props, State> {
           />
           <FormItem
             name='type'
+            verifiable
             controlProps={{
               style: {
                 width: 220
               }
             }}
           />
-          <FormItem name='description' />
-          <FormItem name='applyTime' />
+          <FormItem
+            name='description'
+            verifiable
+          />
+          <FormItem
+            name='applyTime'
+            verifiable
+          />
           <FormItem
             label='是否预热'
+            required
             inner={(form) => {
               return form.getFieldDecorator('preheat', {
-                initialValue: 1
+                initialValue: 1,
+                rules: [{
+                  required: true,
+                  message: '请选择是否预热'
+                }]
               })(
                 <Radio.Group>
                   <Radio value={1} style={{ display: 'block' }}>是，活动开始前24小时，会场同步到线上预热</Radio>
@@ -103,17 +125,32 @@ class Main extends React.Component<Props, State> {
               )
             }}
           />
-          <FormItem name='activityTime' />
+          <FormItem
+            name='activityTime'
+            verifiable
+          />
         </Card>
         <Card title='活动规则和要求'>
           <FormItem
             label='活动供货价'
+            required
             inner={(form) => {
               return (
                 <>
                   <div>
                     <span>不高于日常供货价的</span>
-                    {form.getFieldDecorator('costPriceDiscount')(<InputNumber min={0} max={100} className='ml10 mr10' precision={0} />)}
+                    {form.getFieldDecorator('costPriceDiscount', {
+                      rules: [{
+                        required: true,
+                        message: '请输入供货价折扣'
+                      }]
+                    })(
+                      <InputNumber
+                        min={0}
+                        max={100}
+                        className='ml10 mr10'
+                        precision={0}
+                      />)}
                     <span>%</span>
                   </div>
                   <div>（输入正整数，比例后取两位小数，例如日常供货价79，比高于日常供货价85%，即活动供货价最高为67.15元）</div>
@@ -121,13 +158,33 @@ class Main extends React.Component<Props, State> {
               )
             }}
           />
-          <FormItem label='报名商家类型'>
-            <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个商家，会单独拆分为几个会场）</div>
-            <Table
-              columns={this.columns}
-              dataSource={dataSource}
-            />
-          </FormItem>
+          <FormItem
+            label='报名商家类型'
+            required
+            inner={(form) => {
+              return (
+                <>
+                  <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个商家，会单独拆分为几个会场）</div>
+                  {
+                    form.getFieldDecorator('dataSource', {
+                      valuePropName: 'dataSource',
+                      rules: [{
+                        validator: (rule: any, value: any, callback: any) => {
+                          if (Array.isArray(value) && value.length > 0) {
+                            callback()
+                          } else {
+                            callback('请添加店铺')
+                          }
+                        }
+                      }]
+                    })(
+                      <Table columns={this.columns} />
+                    )
+                  }
+                </>
+              )
+            }}
+          />
         </Card>
         <div>
           <Button

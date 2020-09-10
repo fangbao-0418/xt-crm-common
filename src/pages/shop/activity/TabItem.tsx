@@ -72,7 +72,7 @@ class Main extends React.Component<Props> {
           <span
             className='href'
             onClick={() => {
-              APP.history.push('/shop/detail')
+              APP.history.push(`/shop/activity/edit?promotionId=${record.promotionId}`)
             }}
           >
             编辑

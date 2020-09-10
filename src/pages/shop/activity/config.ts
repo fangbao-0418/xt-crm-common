@@ -4,7 +4,13 @@ export function getDefaultConfig () {
   const defaultConfig: FieldsConfig = {
     common: {
       title: {
-        label: '活动名称'
+        label: '活动名称',
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请输入活动名称'
+          }]
+        }
       },
       type: {
         label: '活动类型',
@@ -12,7 +18,13 @@ export function getDefaultConfig () {
         options: [{
           label: '品牌会场',
           value: 60
-        }]
+        }],
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请选择活动类型'
+          }]
+        }
       },
       description: {
         label: '活动简介',
@@ -24,11 +36,23 @@ export function getDefaultConfig () {
           max: 5,
           maxLength: 150,
           placeholder: '150个字，展示在供应商后台'
+        },
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请输入活动简介'
+          }]
         }
       },
       applyTime: {
         label: '活动报名时间',
-        type: 'rangepicker'
+        type: 'rangepicker',
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请选择活动报名时间'
+          }]
+        }
       },
       status: {
         label: '活动状态',
@@ -64,6 +88,12 @@ export function getDefaultConfig () {
         type: 'rangepicker',
         controlProps: {
           showTime: true
+        },
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请选择活动排期时间'
+          }]
         }
       },
       promotionId: {

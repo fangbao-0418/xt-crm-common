@@ -1,3 +1,4 @@
+import * as adapter from './adapter'
 const { get, newPost } = APP.http
 
 export type StatusType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
@@ -28,9 +29,14 @@ export function addPromotion (payload: {
   startTime: number,
   endTime: number,
   costPriceDiscount: number,
-  shopIds: number[]
+  dataSource: any[]
 }) {
-  return newPost('/mcweb/product/promotion/venue/add', payload)
+  return newPost('/mcweb/product/promotion/venue/add', adapter.addPromotion(payload))
+}
+
+/** 会场活动详情 */
+export function getPromotionDetail (promotionId: string) {
+  return get(`/mcweb/product/promotion/venue/detail?promotionId=${promotionId}`)
 }
 
 /** 发布会场活动 */
@@ -41,4 +47,22 @@ export function publishPromotion (venueId: number) {
 /** 会场活动关闭 */
 export function closePromotion (promotionId: number) {
   return newPost('/mcweb/product/promotion/venue/close', { promotionId })
+}
+
+/**
+ * 店铺列表
+ * payload.bizType 0:优选,1:好店 默认前段选1 号店
+ * payload.shopName 店铺名称
+ * payload.shopId shopId
+ * payload.page 当前页
+ * payload.pageSize 每页长度
+ */
+export function getShopList (payload: {
+  bizType: number,
+  shopName: string,
+  shopId: string,
+  page: number,
+  pageSize: number
+}) {
+  return newPost('/mmweb/supplier/shop/statistics/', payload)
 }

@@ -35,6 +35,7 @@ class Main extends React.Component {
         <Route path={`${match.url}/smallshopcommission`} component={SmallShopCommission} />
         <Route path={`${match.url}/activity`} exact component={ShopActivity} />
         <Route path={`${match.url}/activity/add`} exact component={ShopActivityAdd} />
+        <Route path={`${match.url}/activity/edit`} exact component={ShopActivityAdd} />
         <Route path={`${match.url}/activity/detail`} exact component={ShopActivityDetail} />
       </Switch>
     )
