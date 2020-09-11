@@ -2,6 +2,7 @@ import React from 'react'
 import GoodCell from '@/components/good-cell'
 import SuppilerSelect from '@/components/suppiler-auto-select'
 import SearchFetch from '@/packages/common/components/search-fetch'
+import SuppilerSelector from '@/components/supplier-selector'
 import refundType from '@/enum/refundType'
 import createType from '@/enum/createType'
 import { Button } from 'antd'
@@ -104,21 +105,22 @@ export const formFields = function (
       label: '供应商',
       render: () => {
         return (
-          <SearchFetch
-            selectProps={{
-              labelInValue: true
-            }}
-            api={(name) => {
-              return supplierSearch(name).then((res: any) => {
-                return res.map((item: any) => ({
-                  text: item.name,
-                  value: item.id
-                }))
-              })
-            }}
-            style={{ width: 172 }}
-            placeholder='请输入店铺名称'
-          />
+          <SuppilerSelector type='yx' style={{ width: 172 }} />
+          // <SearchFetch
+          //   selectProps={{
+          //     labelInValue: true
+          //   }}
+          //   api={(name) => {
+          //     return supplierSearch(name).then((res: any) => {
+          //       return res.map((item: any) => ({
+          //         text: item.name,
+          //         value: item.id
+          //       }))
+          //     })
+          //   }}
+          //   style={{ width: 172 }}
+          //   placeholder='请输入店铺名称'
+          // />
         )
       }
     },

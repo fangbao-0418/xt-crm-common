@@ -59,7 +59,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         options: [
           { label: '供应商', value: 1 },
           { label: '喜团小店', value: 2 },
-          { label: 'POP店', value: 3 }
+          { label: 'POP店', value: 3 },
+          { label: '买菜供应商', value: 4 }
         ],
         controlProps: {
           placeholder: '请选择供应商类型'
@@ -80,7 +81,8 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 export enum StoreTypeEnum {
   供应商 = 1,
   喜团小店 = 2,
-  POP店 = 3
+  POP店 = 3,
+  买菜供应商 = 4
 }
 
 export enum AnchorLevelEnum {
