@@ -1,6 +1,7 @@
 import * as adapter from './adapter'
 const { get, newPost } = APP.http
 
+/** 0-全部/1-待发布/2-已发布/3-报名中/4-预热中/5-进行中/6-已结束/7-已关闭 */
 export type StatusType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 /** 会场活动列表 */
@@ -16,6 +17,14 @@ export function getPromotionList (payload: {
   pageSize: number
 }) {
   return get('/mcweb/product/promotion/venue/list', payload)
+}
+
+/** 设置会场排序 */
+export function setSort (payload: {
+  promotionId: number,
+  sort: number
+}) {
+  return newPost('/mcweb/product/promotion/venue/setSort', payload)
 }
 
 /** 新建会场活动 */

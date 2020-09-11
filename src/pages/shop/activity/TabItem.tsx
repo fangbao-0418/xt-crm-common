@@ -1,16 +1,29 @@
 import React from 'react'
-import { ListPage, FormItem } from '@/packages/common/components'
+import { ListPage, FormItem, Alert } from '@/packages/common/components'
 import { ColumnProps } from 'antd/es/table'
 import { getDefaultConfig, promotionStatusEnum, statusArray } from './config'
-import { getPromotionList, publishPromotion, closePromotion } from './api'
-import { Button, Select, Modal } from 'antd'
+import { getPromotionList, publishPromotion, closePromotion, setSort } from './api'
+import { Button, Select, Modal, Input, InputNumber } from 'antd'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 
 interface Props {
   type: string
 }
-class Main extends React.Component<Props> {
+interface State {
+  visible: boolean
+  sort?: number
+}
+class Main extends React.Component<Props, State> {
+  public state: State = {
+    visible: false
+  }
   public listRef: ListPageInstanceProps
+  public promotionId?: number
+  /** 排序 */
+  public handleSort = (sort: number, promotionId: number) => {
+    this.promotionId = promotionId
+    this.setState({ visible: true, sort })
+  }
   public columns: ColumnProps<any>[] = [{
     title: '活动编号',
     dataIndex: 'promotionId'
@@ -20,7 +33,7 @@ class Main extends React.Component<Props> {
   }, {
     title: '报名时间',
     render: (record) => {
-      return APP.fn.formatDate(record.applyStartTime,) + '~' + APP.fn.formatDate(record.applyEndTime)
+      return APP.fn.formatDate(record.applyStartTime) + '~' + APP.fn.formatDate(record.applyEndTime)
     }
   }, {
     title: '预热时间',
@@ -89,18 +102,22 @@ class Main extends React.Component<Props> {
               onClick={this.close.bind(null, record.promotionId)}
             >关闭</span>
           )}
-          <span className='href ml10'>复制</span>
+          <span className='href ml10' onClick={this.handleCopy.bind(null, record.promotionId)}>复制</span>
           <span
             className='href ml10'
             onClick={() => {
               APP.history.push(`/shop/activity/detail?promotionId=${record.promotionId}`)
             }}
           >查看详情</span>
-          <span className='href ml10'>排序</span>
+          <span className='href ml10' onClick={this.handleSort.bind(null, record.sort, record.promotionId)}>排序</span>
         </>
       )
     }
   }]
+  // 复制
+  public handleCopy = (promotionId: number) => {
+    APP.history.push(`/shop/activity/add?promotionId=${promotionId}`)
+  }
   // 发布
   public publish = async (venueId: number) => {
     Modal.confirm({
@@ -129,7 +146,27 @@ class Main extends React.Component<Props> {
       }
     })
   }
+  // 设置排序
+  public onOk = async () => {
+    if (!this.promotionId) {
+      return
+    }
+    if (!this.state.sort) {
+      APP.error('排序不能为空')
+      return
+    }
+    const res = await setSort({
+      promotionId: this.promotionId,
+      sort: this.state.sort
+    })
+    if (res) {
+      APP.success('设置排序成功')
+      this.setState({ visible: false })
+      this.listRef.refresh()
+    }
+  }
   public render() {
+    const { visible } = this.state
     const type = this.props.type || ''
     let filters = type.split(',').map(x => +x)
     if (filters.includes(0)) {
@@ -137,55 +174,74 @@ class Main extends React.Component<Props> {
     }
     const statusOption = statusArray.filter(option => filters.includes(option.value))
     return (
-      <ListPage
-        getInstance={(ref) => {
-          this.listRef = ref
-        }}
-        formConfig={getDefaultConfig()}
-        rangeMap={{
-          activityTime: {
-            fields: ['startTime', 'endTime']
-          }
-        }}
-        formItemLayout={(
-          <>
-            <FormItem name='title' />
-            <FormItem
-              label='活动状态'
-              inner={(form) => {
-                return form.getFieldDecorator('status')(
-                  <Select style={{ width: 172 }} placeholder='请选择活动状态' allowClear>
-                    {statusOption.map((item) => (
-                      <Select.Option value={item.value}>{item.label}</Select.Option>
-                    ))}
-                  </Select>
-                )
+      <>
+        <Modal
+          title='编辑排序'
+          visible={visible}
+          onCancel={() => {
+            this.promotionId = undefined
+            this.setState({ visible: false, sort: undefined })
+          }}
+          onOk={this.onOk}
+          width={400}
+        >
+          <InputNumber
+            precision={0}
+            value={this.state.sort}
+            onChange={(sort) => this.setState({ sort })}
+            style={{ width: '100%' }}
+          />
+        </Modal>
+        <ListPage
+          getInstance={(ref) => {
+            this.listRef = ref
+          }}
+          formConfig={getDefaultConfig()}
+          rangeMap={{
+            activityTime: {
+              fields: ['startTime', 'endTime']
+            }
+          }}
+          formItemLayout={(
+            <>
+              <FormItem name='title' />
+              <FormItem
+                label='活动状态'
+                inner={(form) => {
+                  return form.getFieldDecorator('status')(
+                    <Select style={{ width: 172 }} placeholder='请选择活动状态' allowClear>
+                      {statusOption.map((item) => (
+                        <Select.Option value={item.value}>{item.label}</Select.Option>
+                      ))}
+                    </Select>
+                  )
+                }}
+              />
+              <FormItem name='activityTime' />
+              <FormItem name='promotionId' />
+              <FormItem name='operator' />
+            </>
+          )}
+          addonAfterSearch={(
+            <Button
+              type='primary'
+              onClick={() => {
+                APP.history.push('/shop/activity/add')
               }}
-            />
-            <FormItem name='activityTime' />
-            <FormItem name='promotionId' />
-            <FormItem name='operator' />
-          </>
-        )}
-        addonAfterSearch={(
-          <Button
-            type='primary'
-            onClick={() => {
-              APP.history.push('/shop/activity/add')
-            }}
-          >
-            新建活动
-          </Button>
-        )}
-        processPayload={(payload) => {
-          if (payload.status === undefined) {
-            payload.status = type
-          }
-          return payload
-        }}
-        columns={this.columns}
-        api={getPromotionList}
-      />
+            >
+              新建活动
+            </Button>
+          )}
+          processPayload={(payload) => {
+            if (payload.status === undefined) {
+              payload.status = type
+            }
+            return payload
+          }}
+          columns={this.columns}
+          api={getPromotionList}
+        />
+      </>
     )
   }
 }

@@ -12,7 +12,7 @@ interface State {
 }
 class Main extends React.Component<Props, State> {
   public state = {
-    selectedRowKeys: []
+    selectedRowKeys: [],
   }
   public rows: any[]
   public columns: ColumnProps<any>[] = [{
