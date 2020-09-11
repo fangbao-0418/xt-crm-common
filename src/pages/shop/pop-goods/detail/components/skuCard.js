@@ -69,6 +69,8 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     }
   }, {
     title: '佣金上浮',
+    hidden: !(status === 1 && confirmStatus === 1),
+    // hidden: true,
     dataIndex: 'commissionIncreasePrice',
     render: (value, record, index) => {
       if (status !== 1 || confirmStatus !== 1) {
@@ -105,6 +107,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     }
   }, {
     title: '上浮后销售价',
+    hidden: !(status === 1 && confirmStatus === 1),
     dataIndex: 'increaseSalePrice',
     render: (value, record) => {
       return APP.fn.formatMoneyNumber((record.salePrice + record.commissionIncreasePrice), 'm2u')
@@ -123,8 +126,8 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   }, {
     title: '可用库存',
     dataIndex: 'usableStock'
-  }]
-
+  }].filter((item) => !item.hidden)
+  console.log(fixedColumns, (status === 1 && confirmStatus === 1), '(status === 1 && confirmStatus === 2(status === 1 && confirmStatus === 2(status === 1 && confirmStatus === 2')
   const startColumns = fixedColumns.slice(0, 2);
   const endColumns = fixedColumns.slice(2);
   const columns = [...startColumns, ...dynaColums, ...endColumns].concat(confirmStatus !== 0 ? [{
