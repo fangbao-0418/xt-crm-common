@@ -212,12 +212,17 @@ class Main extends React.Component {
   }
 
   importAdvisePrice () {
+    const _this = this
     const el = document.createElement('input')
     el.setAttribute('type', 'file')
     el.onchange = function (e) {
       console.dir(e.target)
       const file = e?.target.files?.[0]
-      api.importAdvisePrice(file)
+      api.importAdvisePrice(file).then(() => {
+        APP.success('建议价格导入成功')
+        _this.listRef.refresh()
+      })
+      el?.remove?.()
     }
     el.click()
   }
@@ -476,23 +481,27 @@ class Main extends React.Component {
               >
                 商品导出
               </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  this.importAdvisePrice()
-                }}
-              >
-                建议价格导入
-              </Button>
-              <span
-                className='href'
-                onClick={() => {
-                  APP.fn.download(require('./assets/建议价格导入模板.xlsx'), '建议价格导入模板.xlsx')
-                }}
-              >
-                下载模板
-              </span>
+              {['1', '4', '5'].includes(tabStatus) && (
+                <>
+                  <Button
+                    type='primary'
+                    className='mr8'
+                    onClick={() => {
+                      this.importAdvisePrice()
+                    }}
+                  >
+                    建议价格导入
+                  </Button>
+                  <span
+                    className='href'
+                    onClick={() => {
+                      APP.fn.download(require('./assets/建议价格导入模板.xlsx'), '建议价格导入模板.xlsx')
+                    }}
+                  >
+                    下载模板
+                  </span>
+                </>
+              )}
             </>
           }
         />

@@ -17,6 +17,7 @@ class AuditCard extends React.Component {
   handleSave = () => {
     const { dispatch, form, productPoolId } = this.props;
     form.validateFields(async (errors, values) => {
+      console.log(values, 'values')
       if (errors) return;
       dispatch['shop.pop.goods.detail'].auditGoods({
         ...values,

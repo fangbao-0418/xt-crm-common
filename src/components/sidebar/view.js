@@ -50,22 +50,26 @@ class Sidebar extends React.Component {
     let selectedGroup = []
     function loop (arr, group = [], isPattern = false) {
       return arr.find((item) => {
-        const pattern = new RegExp('^' + item.path + '/(\\w|-)+$')
-        // console.log(routesMapRule, item.path, 'routesMapRule')
-        // console.log(routesMapRule[item.path], 'routesMapRule[pathname]')
+        const pattern = new RegExp('^' + item.path + '/(\\w|-|\/)+?$')
+        // 首先查询正则映射表
         if (routesMapRule[item.path]?.find?.((rule) => {
           return rule.test(pathname)
         })) {
           selectedItem = item
           selectedGroup = group.concat([item])
           return true
+        // 查询路由是否存在
         } else if (!isPattern && item.type === 0 && item.path === pathname) {
           selectedItem = item
           selectedGroup = group.concat([item])
           return true
+        // 正则匹配前部分相同 
         } else if (isPattern && item.path && item.type === 0 && pattern.test(pathname)) {
           selectedItem = item
           selectedGroup = group.concat([item])
+          if (item.subMenus) {
+            !!loop(item.subMenus, group.concat([item]), isPattern)
+          }
           return true
         } else {
           if (item.subMenus) {

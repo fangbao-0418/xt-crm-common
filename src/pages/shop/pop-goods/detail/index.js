@@ -5,6 +5,8 @@ import SkuCard from './components/skuCard';
 import LogisCard from './components/logisCard';
 import AuditCard from './components/auditCard';
 import { unionBy } from 'lodash'
+import { Button } from 'antd';
+import * as api from './api'
 
 @connect(state => ({
   goodsInfo: state['shop.pop.goods.detail'].goodsInfo
@@ -96,13 +98,43 @@ class GoodsDetail extends React.Component {
         withdrawalInfo: goodsInfo.withdrawalInfo
       }
     }
-
     return (
       <div>
         <BaseCard data={baseInfo} />
-        <SkuCard status={goodsInfo?.status} data={skuInfo} />
+        <SkuCard goodsInfo={goodsInfo} confirmStatus={goodsInfo?.confirmStatus} status={goodsInfo?.status} data={skuInfo} />
         <LogisCard data={logisInfo} />
         <AuditCard data={auditInfo} productPoolId={productPoolId} />
+        {goodsInfo?.status === 1 && goodsInfo?.confirmStatus === 1 && (
+          <div>
+            <Button
+              type='primary'
+              className='mr10'
+              onClick={() => {
+                api.updateGoods({
+                  productPoolId: productPoolId,
+                  productPoolSkuCommissionUpdateDTOList: goodsInfo.skuList?.map((item) => {
+                    return {
+                      commissionIncreasePrice: item.commissionIncreasePrice,
+                      productPoolSkuId: item.skuId
+                    }
+                  })
+                }).then(() => {
+                  APP.success('佣金上浮修改成功')
+                  this.fetchData()
+                })
+              }}
+            >
+              确定
+            </Button>
+            <Button
+              onClick={() => {
+                APP.history.push('/shop/pop-goods')
+              }}
+            >
+              取消
+            </Button>
+          </div>
+        )}
       </div>
     );
   }

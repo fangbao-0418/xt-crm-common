@@ -354,10 +354,18 @@ export function exportFile (url, filename) {
       'authorization': APP.token
     }
   }).then((res) => {
-    res.blob().then((blob) => {
+    return res.blob().then((blob) => {
       const attachment = res.headers.get('Content-Disposition') || ''
-      // let filename = decodeURIComponent(attachment.replace(/^attachment.*filename=/, ''))
-      saveAs(blob, filename)
+      return blob.text().then((text) => {
+        console.log(text)
+        try {
+          const data = JSON.parse(text) || {}
+          APP.error(data?.message || '导出文件失败')
+          return Promise.reject(data)
+        } catch (e) {
+          saveAs(blob, filename)
+        }
+      })
     })
   })
 }

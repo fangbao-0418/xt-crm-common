@@ -1,6 +1,6 @@
 import { getGoodsInfo, auditGoods } from './api';
 
-const namespace = 'shop.pop.goods.detail';
+export const namespace = 'shop.pop.goods.detail';
 export default {
   namespace,
   state: {
@@ -12,10 +12,11 @@ export default {
       dispatch[namespace].saveDefault({ goodsInfo });
     },
 
-    async auditGoods({ productPoolId, auditStatus, auditInfo }) {
+    async auditGoods({ productPoolId, channel, auditStatus, auditInfo }) {
       await auditGoods({
         auditStatus,
         auditInfo,
+        channel,
         ids: [+productPoolId]
       });
       dispatch[namespace].getGoodsInfo({

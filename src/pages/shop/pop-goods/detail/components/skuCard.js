@@ -3,7 +3,7 @@ import { Card, Table, Empty, Form, InputNumber } from 'antd'
 import WrapCard from './wrapCard'
 import SkuItem from './skuItem'
 import { formatMoneyWithSign } from '@/util/helper'
-// import form from '@/packages/common/components/form'
+import { namespace } from '../model'
 
 const ConfirmStatusEnum = {
   0: '未导入价格',
@@ -31,8 +31,8 @@ const SpecKeysCards = ({ specKeys }) => {
 }
 
 /** 商品Sku组合 */
-const SpecValsCard = ({ form, status, goodsInfo }) => {
-  const { specVals, specKeys } = goodsInfo;
+const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
+  const { specVals, specKeys } = data;
 
   // 动态表头
   const dynaColums = specKeys.map(sitem => ({
@@ -43,6 +43,10 @@ const SpecValsCard = ({ form, status, goodsInfo }) => {
 
   // 固定表头
   const fixedColumns = [{
+    title: '规格序号',
+    dataIndex: 'skuId',
+    width: 90
+  }, {
     title: '规格ID',
     dataIndex: 'productSkuId'
   }, {
@@ -65,21 +69,34 @@ const SpecValsCard = ({ form, status, goodsInfo }) => {
     }
   }, {
     title: '佣金上浮',
-    dataIndex: 'commissionIncreaseRate',
+    dataIndex: 'commissionIncreasePrice',
     render: (value, record, index) => {
-      if (status !== 1) {
+      if (status !== 1 || confirmStatus !== 1) {
         return (value ? formatMoneyWithSign(value) : '-')
       }
+      value = APP.fn.formatMoneyNumber(value, 'm2u')
       return (
         <Form.Item>
           {
-            form.getFieldDecorator(`commissionIncreaseRate[${index}]`, {
+            form.getFieldDecorator(`commissionIncreasePrice[${index}]`, {
               initialValue: value
             })(
               <InputNumber
+                value={value}
+                onChange={(e) => {
+                  const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
+                  const current = APP.fn.formatMoneyNumber(e > max ? max : e)
+                  const skuList = goodsInfo.skuList
+                  skuList[index] = {
+                    ...skuList[index],
+                    commissionIncreasePrice: current,
+                    increaseSalePrice: current + record.salePrice
+                  }
+                  APP.dispatch[namespace].saveDefault({ goodsInfo });
+                }}
                 min={0}
-                max={100}
-                precision={2}
+                max={APP.fn.formatMoneyNumber(record.salePrice, 'm2u')}
+                precision={1}
               />
             )
           }
@@ -89,7 +106,9 @@ const SpecValsCard = ({ form, status, goodsInfo }) => {
   }, {
     title: '上浮后销售价',
     dataIndex: 'increaseSalePrice',
-    render: (value) => (value ? formatMoneyWithSign(value) : '-')
+    render: (value, record) => {
+      return APP.fn.formatMoneyNumber((record.salePrice + record.commissionIncreasePrice), 'm2u')
+    },
   }, {
     title: '建议供货价',
     dataIndex: 'adviseCostPrice',
@@ -104,17 +123,17 @@ const SpecValsCard = ({ form, status, goodsInfo }) => {
   }, {
     title: '可用库存',
     dataIndex: 'usableStock'
-  }, {
-    title: '商家确认状态',
-    dataIndex: 'confirmStatus',
-    render: (text) => {
-      return ConfirmStatusEnum[text]
-    }
   }]
 
   const startColumns = fixedColumns.slice(0, 2);
   const endColumns = fixedColumns.slice(2);
-  const columns = [...startColumns, ...dynaColums, ...endColumns];
+  const columns = [...startColumns, ...dynaColums, ...endColumns].concat(confirmStatus !== 0 ? [{
+    title: '商家确认状态',
+    dataIndex: 'confirmStatus',
+    render: (text) => {
+      return ConfirmStatusEnum[confirmStatus]
+    }
+  }] : []);
 
   return <div>
     <Table pagination={false} dataSource={specVals} columns={columns} />
@@ -124,16 +143,22 @@ const SpecValsCard = ({ form, status, goodsInfo }) => {
 class SkuCard extends React.Component {
 
   render() {
-    const { data, form, status } = this.props
+    const { data, form, status, confirmStatus, goodsInfo } = this.props
     return (
       <Form>
         <WrapCard
           data={data}
-          render={(goodsInfo) => {
+          render={(value) => {
             return (
               <Card title="商品规格">
-                <SpecKeysCards specKeys={goodsInfo.specKeys} />
-                <SpecValsCard status={status} form={form} goodsInfo={goodsInfo} />
+                <SpecKeysCards specKeys={value.specKeys} />
+                <SpecValsCard
+                  data={value}
+                  confirmStatus={confirmStatus}
+                  status={status}
+                  form={form}
+                  goodsInfo={goodsInfo}
+                />
               </Card>
             )
           }}
