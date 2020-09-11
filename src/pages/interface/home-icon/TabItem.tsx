@@ -10,7 +10,7 @@ import platformType from '@/enum/platformType'
 const _platformType = platformType.getArray({ key: 'value', val: 'label' })
 
 interface Props extends FormComponentProps {
-  type: string
+  bizSource: string
 }
 interface State {
   dataSource: HomeIcon.ItemProps[]
@@ -34,7 +34,7 @@ class Main extends React.Component<Props, State> {
     this.fetchList()
   }
   public fetchList (init = true) {
-    api.getIconList().then((res: any = []) => {
+    api.getIconList(this.props.bizSource).then((res: any = []) => {
       this.setState({
         dataSource: res || []
       })
@@ -84,7 +84,7 @@ class Main extends React.Component<Props, State> {
             })
           })
         } else {
-          api.addIcon(result).then(() => {
+          api.addIcon({ ...result, bizSource: this.props.bizSource }).then(() => {
             this.fetchList(false)
             if (this.state.dataSource.length >= 7) {
               this.setState({

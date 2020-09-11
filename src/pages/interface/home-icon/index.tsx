@@ -8,7 +8,7 @@ interface State {
 }
 class Main extends React.Component {
   public state: State = {
-    activeKey: '1'
+    activeKey: '0'
   }
   public onChange = (activeKey: string) => {
     this.setState({ activeKey })
@@ -18,11 +18,11 @@ class Main extends React.Component {
     return (
       <div>
         <Tabs activeKey={activeKey} onChange={this.onChange}>
-          <TabPane tab='喜团优选' key='1'>
-            <TabItem type={activeKey} />
+          <TabPane tab='喜团优选' key='0'>
+            <TabItem bizSource={activeKey} />
           </TabPane>
-          <TabPane tab='喜团好店' key='2'>
-            <TabItem type={activeKey} />
+          <TabPane tab='喜团好店' key='20'>
+            <TabItem bizSource={activeKey} />
           </TabPane>
         </Tabs>
       </div>
