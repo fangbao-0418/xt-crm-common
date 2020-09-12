@@ -65,7 +65,7 @@ function getColumns (scope) {
         return (
           <>
             {
-              record.memberTypeDO.key >= 10 // 团长以上才可以发码
+              record.memberTypeDO.key >= 10 && scope.props.bizSource === '0' // 喜团优选业务，团长以上才可以发码
                 ? (
                   <>
                     <span
@@ -122,7 +122,10 @@ const defaultPayload = {
   // }
 })
 export default class extends Component {
-
+    constructor(props) {
+      super(props)
+      this.props.getInstance(this)
+    }
     payload = Object.assign({}, defaultPayload, APP.fn.getPayload(namespace))
 
     // componentDidMount () {
@@ -191,7 +194,8 @@ export default class extends Component {
           payload.invitePhone = payload.invitePhone ? payload.invitePhone : undefined
           this.payload = payload
           APP.fn.setPayload(namespace, payload)
-          dispatch['user.userlist'].getData(payload)
+          console.log('this.props.bizSource', this.props.bizSource )
+          dispatch['user.userlist'].getData({ ...payload, bizSource: this.props.bizSource })
         }
       })
     }
@@ -217,19 +221,6 @@ export default class extends Component {
       values.time = values.registerStartDate && [moment(values.registerStartDate), moment(values.registerEndDate)]
       return (
         <Form layout='inline'>
-          <FormItem label='渠道'>
-            {getFieldDecorator('channel')(
-              <Select
-                style={{ width: 172 }}
-                placeholder='请选择渠道'
-                allowClear
-              >
-                <Select.Option value={-1}>全部</Select.Option>
-                <Select.Option value={1}>喜团优选</Select.Option>
-                <Select.Option value={2}>喜团好店</Select.Option>
-              </Select>
-            )}
-          </FormItem>
           <FormItem label='用户ID'>
             {
               getFieldDecorator('id', {
