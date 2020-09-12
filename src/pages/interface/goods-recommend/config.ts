@@ -12,13 +12,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         label: '推荐渠道',
         options: [{
           label: '全部',
-          value: ''
+          value: 0
         }, {
           label: '喜团优选',
-          value: '1'
+          value: 1
         }, {
           label: '喜团好店',
-          value: '2'
+          value: 2
         }],
         controlProps: {
           style: {

@@ -5,6 +5,7 @@ import ShopModal from './ShopModal';
 
 interface Props {
   readonly: boolean
+  onChange?: (value: any) => void
 }
 interface State {
   dataSource: any[]
@@ -12,6 +13,11 @@ interface State {
 class Main extends React.Component<Props, State> {
   public state = {
     dataSource: []
+  }
+  public onChange () {
+    if (this.props.onChange) {
+      this.props.onChange(this.state.dataSource)
+    }
   }
   public columns: ColumnProps<any>[] = [
     {
@@ -35,15 +41,31 @@ class Main extends React.Component<Props, State> {
   ];
   public render() {
     const { readonly } = this.props
+    const { dataSource } = this.state
     return (
       <div>
-        <ShopModal ref='shopmodal' />
+        <ShopModal
+          ref='shopmodal'
+          onOk={(keys, rows) => {
+            const result = rows.map((item) => {
+              return {
+                ...item
+              }
+            })
+            this.setState({
+              dataSource: result
+            }, () => {
+              this.onChange()
+            })
+          }}
+        />
         <div>
           <Table
             style={{
               width: 600,
             }}
             columns={this.columns}
+            dataSource={dataSource}
           />
         </div>
         <div>

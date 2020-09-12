@@ -8,11 +8,14 @@ interface SearchPayload {
   page: number
   pageSize: number
 }
+interface Props {
+  onOk?: (ids: any[], rows: any[]) => void
+}
 interface State {
   visible: boolean
   selectedRowKeys: any[]
 }
-class Main extends React.Component<{}, State> {
+class Main extends React.Component<Props, State> {
   public state = {
     visible: false,
     selectedRowKeys: []

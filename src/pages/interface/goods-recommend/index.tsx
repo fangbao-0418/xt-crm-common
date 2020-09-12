@@ -40,7 +40,7 @@ class Main extends React.Component<Props> {
       title: '位置渠道',
       dataIndex: 'channel',
       render(text) {
-        return text === 1 ? '喜团优选' : '喜团好店'
+        return text === 2 ? '喜团好店' : '喜团优选'
       }
     },
     {
