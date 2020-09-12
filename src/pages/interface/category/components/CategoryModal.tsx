@@ -1,15 +1,33 @@
 import React from 'react'
-import { Modal } from 'antd'
-
+import { Modal, Checkbox } from 'antd'
+import { getPopList } from '../api'
+import { CheckboxValueType } from 'antd/lib/checkbox/Group'
 export interface CategoryModalProps {
   open(): void
 }
+
+interface Props {
+  onOk(dataSource: any[]): void
+}
 interface State {
   visible: boolean
+  dataSource: any[]
+  checkedValue: CheckboxValueType[]
 }
-class Main extends React.Component<{}, State> {
+class Main extends React.Component<Props, State> {
   public state = {
-    visible: false
+    visible: false,
+    dataSource: [],
+    checkedValue: []
+  }
+  public componentDidMount () {
+    this.fetchData()
+  }
+  public fetchData = async () => {
+    const res = await getPopList()
+    this.setState({
+      dataSource: res
+    })
   }
   public open = () => {
     this.setState({ visible: true })
@@ -18,10 +36,17 @@ class Main extends React.Component<{}, State> {
     this.setState({ visible: false })
   }
   public onOk = () => {
-
+    const checkedValue = this.state.checkedValue as any[]
+    const dataSource = this.state.dataSource.map((item: any) => {
+      return checkedValue.includes(item.value)
+    })
+    this.props.onOk(dataSource)
+  }
+  public onChange = (checkedValue: CheckboxValueType[]) => {
+    this.setState({ checkedValue })
   }
   public render () {
-    const { visible } = this.state
+    const { visible, dataSource, checkedValue } = this.state
     return (
       <Modal
         title='选择类目'
@@ -29,7 +54,11 @@ class Main extends React.Component<{}, State> {
         onCancel={this.onCancel}
         onOk={this.onOk}
       >
-
+        <Checkbox.Group onChange={this.onChange} value={checkedValue}>
+          {dataSource.map((item: any) => (
+            <Checkbox value={item.categoryId}>{item.categoryName}</Checkbox>
+          ))}
+        </Checkbox.Group>
       </Modal>
     )
   }

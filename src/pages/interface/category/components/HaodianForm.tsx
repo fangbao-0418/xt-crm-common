@@ -9,7 +9,7 @@ interface State {
   actText: any[];
   cateText: any[];
 }
-class Main extends React.Component {
+class Main extends React.Component<{}, State> {
   public modalRef: CategoryModalProps | null
   public state = {
     checkCate: false,
@@ -17,10 +17,18 @@ class Main extends React.Component {
     actText: [],
     cateText: [],
   };
+  public handleAdd = () => {
+    this.modalRef?.open()
+  }
   public render() {
     return (
       <>
-        <CategoryModal ref={ref => this.modalRef = ref } />
+        <CategoryModal
+          ref={(ref) => this.modalRef = ref }
+          onOk={(res) => {
+            this.setState({ cateText: res })
+          }}
+        />
         <Form>
           <FormItem
             name="name"
@@ -99,7 +107,7 @@ class Main extends React.Component {
                           </div>
                         );
                       })}
-                      <Button type="link">+添加类目</Button>
+                      <Button type="link" onClick={this.handleAdd}>+添加类目</Button>
                     </div>
                   ) : (
                     ""

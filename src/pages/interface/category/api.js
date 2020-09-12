@@ -28,3 +28,8 @@ export function saveFrontCategory (data) {
 export function updateFrontCategory (data) {
   return put('/mcweb/product/category_menu/update', {}, { data, headers: {} })
 }
+
+/** POP主营类目列表 */
+export function getPopList () {
+  return get('/mcweb/product/category_menu/pop/list')
+} 
