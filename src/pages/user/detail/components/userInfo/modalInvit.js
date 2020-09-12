@@ -27,7 +27,8 @@ export default class extends Component {
     if (!inviteInfo.id) return;
     dispatch['user.userinfo'].updateInviteUser({
       memberId: currentData.id,
-      invitedId: inviteInfo.id
+      invitedId: inviteInfo.id,
+      bizSource: this.props.bizSource
     });
   }
 

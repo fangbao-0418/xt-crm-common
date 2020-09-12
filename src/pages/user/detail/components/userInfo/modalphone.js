@@ -28,7 +28,8 @@ export default class extends Component {
     if (!this.phone) return;
     dispatch['user.userinfo'].exchangePhone({
       memberId: currentData.id,
-      phone: this.phone
+      phone: this.phone,
+      bizSource: this.props.bizSource
     });
   }
 

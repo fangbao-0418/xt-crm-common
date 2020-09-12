@@ -132,12 +132,14 @@ function withModal(WrappedComponent) {
           </Modal>
           <WrappedComponent
             title='喜团优选'
+            bizSource='0'
             wrappedCompRef={this.wrappedCompRef}
             {...otherProps}
             modal={this.modal}
           />
           <WrappedComponent
             style={{marginTop: 20}}
+            bizSource='20'
             title='喜团好店'
             wrappedCompRef={this.wrappedCompRef}
             {...otherProps}
@@ -287,6 +289,7 @@ class UserInfo extends Component {
     const obj = parseQuery(history);
     dispatch['user.userinfo'].getUserInfo({
       memberId: params.memberId || obj.memberId,
+      bizSource: this.props.bizSource,
       cb: (res) => {
         this.setState({
           enableGroupBuyPermission: res.enableGroupBuyPermission,
@@ -560,9 +563,9 @@ class UserInfo extends Component {
             </div>
           </div>
         </Card>
-        <UserModal />
-        <ModalInvit />
-        <ModalPhone />
+        <UserModal bizSource={this.props.bizSource} />
+        <ModalInvit bizSource={this.props.bizSource} />
+        <ModalPhone bizSource={this.props.bizSource} />
         <Modal
           title={this.state.upOrDwon > 0 ? '提升用户等级' : '降低用户等级'}
           visible={this.state.visible}

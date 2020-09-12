@@ -101,6 +101,8 @@ export default {
       });
     },
     async updateUserInfo(payload) {
+      const bizSource = payload.bizSource
+      delete payload.bizSource
       const res = await api.updateUserInfo(payload);
       if (res) { // true为成功
         dispatch({
@@ -110,12 +112,15 @@ export default {
           }
         });
         dispatch['user.userinfo'].getUserInfo({
+          bizSource,
           memberId: payload.id
         });
         message.success('编辑成功!');
       }
     },
     async updateInviteUser(payload) {
+      const bizSource = payload.bizSource
+      delete payload.bizSource
       const res = await api.updateInviteUser(payload);
       if (res) { // true为成功
         dispatch({
@@ -126,12 +131,15 @@ export default {
           }
         });
         dispatch['user.userinfo'].getUserInfo({
+          bizSource,
           memberId: payload.memberId
         });
         message.success('编辑成功!');
       }
     },
     async exchangePhone(payload) {
+      const bizSource = payload.bizSource
+      delete payload.bizSource
       const res = await api.exchangePhone(payload);
       if (res) { // true为成功
         dispatch({
@@ -142,6 +150,7 @@ export default {
           }
         });
         dispatch['user.userinfo'].getUserInfo({
+          bizSource,
           memberId: payload.memberId
         });
         message.success('编辑成功!');

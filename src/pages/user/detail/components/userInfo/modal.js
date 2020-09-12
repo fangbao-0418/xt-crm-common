@@ -45,7 +45,8 @@ export default class extends Component {
     validateFields((errors, values) => {
       const payload = {
         ...values,
-        id: currentData.id
+        id: currentData.id,
+        bizSource: this.props.bizSource
       };
       dispatch['user.userinfo'].updateUserInfo(payload);
     })
