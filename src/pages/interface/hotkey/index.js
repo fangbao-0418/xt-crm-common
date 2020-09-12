@@ -3,7 +3,7 @@ import { connect, parseQuery, setQuery } from '@/util/utils'
 import { Card, Row, Col, Form, Input, DatePicker, Select, Button, Divider, Table, Modal, message } from 'antd'
 import { getList, deleteById } from './api'
 import IModal from './modal'
-
+import { hotwordTypes, hotwordEnum } from './config'
 const FormItem = Form.Item
 const { RangePicker } = DatePicker
 const { Option } = Select
@@ -24,7 +24,10 @@ function getColumns (scope) {
       dataIndex: 'name'
     }, {
       title: '热词渠道',
-      dataIndex: 'channel'
+      dataIndex: 'type',
+      render(text) {
+        return hotwordEnum[text]
+      },
     }, {
       title: '排序',
       dataIndex: 'sort'
@@ -46,6 +49,7 @@ function getColumns (scope) {
 export default class extends Component {
 
   state = {
+    type: 0,
     searchKey: '',
     records: [],
     total: 0,
@@ -64,7 +68,8 @@ export default class extends Component {
     getList({
       pageNo: this.pageNo,
       pageSize: 10,
-      name: this.state.searchKey
+      name: this.state.searchKey,
+      type: this.state.type
     }).then(data => {
       if (data) {
         this.setState({
@@ -119,6 +124,21 @@ export default class extends Component {
   renderForm = () => {
     return (
       <Form layout='inline'>
+        <FormItem label='热词渠道'>
+          <Select
+            value={this.state.type}
+            onChange={(type) => {
+              this.setState({ type })
+            }}
+            style={{ width: 172 }}
+            placeholder='请输入热词渠道'
+            allowClear
+          >
+            {hotwordTypes.map((item) => (
+              <Select.Option value={item.value}>{item.label}</Select.Option>
+            ))}
+          </Select>
+        </FormItem>
         <FormItem label='热词名称'>
           <Input value={this.state.searchKey} onChange={(e) => this.setState({
             searchKey: e.target.value
@@ -126,9 +146,14 @@ export default class extends Component {
         </FormItem>
         <FormItem>
           <Button type='primary' style={{ marginRight: 10 }} onClick={() => this.handleSearch()}>查 询</Button>
-          <Button style={{ marginRight: 10 }} onClick={() => this.setState({
-            searchKey: ''
-          })}>重 置
+          <Button
+            style={{ marginRight: 10 }}
+            onClick={() => {
+              this.setState({
+                searchKey: '',
+                type: 0
+              })
+            }}>重 置
           </Button>
           <Button type='primary' onClick={() => this.edit({}, '新增热词')}>新增热词</Button>
         </FormItem>
