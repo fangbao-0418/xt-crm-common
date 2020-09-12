@@ -55,6 +55,10 @@ class Main extends React.Component<Props, State> {
         }
       );
       values.id = this.id === "-1" ? undefined : this.id;
+      if (values.channel === 2) {
+        values.relationIdList = (values.relationList || []).map((item: any) => item.id);
+        delete values.relationList
+      }
       if (this.id === "-1") {
         api.add(values).then(() => {
           APP.success("保存成功");
@@ -209,7 +213,7 @@ class Main extends React.Component<Props, State> {
                             <FormItem
                               inner={(form) => {
                                 return form.getFieldDecorator(
-                                  "productRecommendSpuList",
+                                  "relationList",
                                   {
                                     rules: [
                                       {
@@ -230,7 +234,7 @@ class Main extends React.Component<Props, State> {
                             <FormItem
                               inner={(form) => {
                                 return form.getFieldDecorator(
-                                  "relationIdList",
+                                  "relationList",
                                   {
                                     rules: [
                                       {

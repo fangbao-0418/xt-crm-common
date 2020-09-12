@@ -9,10 +9,12 @@ interface Props {
 }
 interface State {
   dataSource: any[]
+  selectedRowKeys: any[]
 }
 class Main extends React.Component<Props, State> {
   public state = {
-    dataSource: []
+    dataSource: [],
+    selectedRowKeys: []
   }
   public onChange () {
     if (this.props.onChange) {
@@ -41,11 +43,12 @@ class Main extends React.Component<Props, State> {
   ];
   public render() {
     const { readonly } = this.props
-    const { dataSource } = this.state
+    const { dataSource, selectedRowKeys } = this.state
     return (
       <div>
         <ShopModal
           ref='shopmodal'
+          selectedRowKeys={selectedRowKeys}
           onOk={(keys, rows) => {
             const result = rows.map((item) => {
               return {

@@ -10,6 +10,7 @@ interface SearchPayload {
 }
 interface Props {
   onOk?: (ids: any[], rows: any[]) => void
+  selectedRowKeys?: any[]
 }
 interface State {
   visible: boolean
@@ -18,8 +19,9 @@ interface State {
 class Main extends React.Component<Props, State> {
   public state = {
     visible: false,
-    selectedRowKeys: []
+    selectedRowKeys: this.props.selectedRowKeys || []
   }
+  public selectedRows: any[] = []
   public payload: SearchPayload = {
     page: 1,
     pageSize: 10
@@ -40,8 +42,21 @@ class Main extends React.Component<Props, State> {
   public open = () => {
     this.setState({ visible: true })
   }
+  public onOk = () => {
+    if (this.props.onOk) {
+      this.props.onOk(this.state.selectedRowKeys, this.selectedRows)
+      this.setState({
+        visible: false
+      })
+    }
+  }
   public onCancel = () => {
     this.setState({ visible: false })
+  }
+  public componentWillReceiveProps (props: Props) {
+    this.setState({
+      selectedRowKeys: props.selectedRowKeys || []
+    })
   }
   public fetchData = () => {
     
@@ -52,16 +67,24 @@ class Main extends React.Component<Props, State> {
     this.payload.shopName = e.target.value
     this.debounceFetch()
   }
+  public onrowSelectionChange (selectedRowKeys: any[], selectedRows: any[]) {
+    this.selectedRows = _.unionBy(this.selectedRows, selectedRows, x => x.id).filter(x => selectedRowKeys.includes(x.id))
+    this.setState({
+      selectedRowKeys
+    })
+  }
   public render () {
     const { selectedRowKeys, visible } = this.state
     const rowSelection = {
-      selectedRowKeys
+      selectedRowKeys,
+      onChange: this.onrowSelectionChange
     }
     return (
       <Modal
         title='选择店铺'
         visible={visible}
         onCancel={this.onCancel}
+        onOk={this.onOk}
         width='60%'
       >
         <div>

@@ -5,24 +5,24 @@ import TabItem from './TabItem'
 const { TabPane } = Tabs
 
 interface State {
-  activeKey: string
+  channel: string
 }
 class Main extends React.Component<{}, State> {
   public state: State = {
-    activeKey: '1'
+    channel: '1'
   }
-  public onChange = (activeKey: string) => {
-    this.setState({ activeKey })
+  public onChange = (channel: string) => {
+    this.setState({ channel })
   }
   public render() {
-    const { activeKey } = this.state
+    const { channel } = this.state
     return (
-      <Tabs activeKey={activeKey} onChange={this.onChange}>
+      <Tabs activeKey={channel} onChange={this.onChange}>
         <TabPane tab='喜团优选' key='1'>
-          <TabItem type={activeKey} />
+          <TabItem channel={channel} />
         </TabPane>
         <TabPane tab='喜团好店' key='2'>
-          <TabItem type={activeKey} />
+          <TabItem channel={channel} />
         </TabPane>
       </Tabs>
     )

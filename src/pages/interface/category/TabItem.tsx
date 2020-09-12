@@ -12,7 +12,7 @@ import _ from 'lodash'
 import './category.scss'
 import { FormComponentProps } from 'antd/lib/form'
 import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
-import { If } from '@/packages/common/components'
+import HaodianForm from './components/HaodianForm'
 
 const { Option } = Select
 const FormItem = Form.Item
@@ -188,7 +188,7 @@ class InterFaceCategory extends Component<any, State> {
   }
 
   public getCategorys (id?: any) {
-    getFrontCategorys().then(data => {
+    getFrontCategorys(this.props.channel).then(data => {
       this.setState({
         cateList: data.records,
         currId: id || 0
@@ -291,7 +291,6 @@ class InterFaceCategory extends Component<any, State> {
       form: { validateFields }
     } = this.props
     validateFields((err: any, vals: any) => {
-      console.log(vals, 'vals')
       const { secondStatus } = this.state
       let secondCategoryVOS = this.state.secondCategoryVOS
       /** 处理二级类目内容合并活动&类目到productCategoryVOS字段上 */
@@ -390,7 +389,9 @@ class InterFaceCategory extends Component<any, State> {
           secondStatus: secondStatus ? 1 : 0,
           secondCategoryVOS: filterSecondCategoryVOS
         }
-
+        if (this.props.channel === '2') {
+          data.showType  = 8
+        }
         if (this.state.currId) {
           data.id = this.state.currId
         }
@@ -538,7 +539,7 @@ class InterFaceCategory extends Component<any, State> {
   }
 
   render () {
-    const { type } = this.props
+    const { channel } = this.props
     const { getFieldDecorator, getFieldValue } = this.props.form
     const { modalPage, visible1, visible2, selectedRowKeys,
       actList, productCategoryVOS, secondStatus, secondaryIndex,
@@ -559,7 +560,7 @@ class InterFaceCategory extends Component<any, State> {
           </Row>
         </Card>
         <Card style={{ display: this.state.isShow ? 'block' : 'none' }}>
-          <If condition={type === '1'}>
+          {channel === '1' && (
             <Form {...formLayout}>
               <FormItem label='前台类目名称'>
                 {getFieldDecorator('name', {
@@ -734,131 +735,8 @@ class InterFaceCategory extends Component<any, State> {
                 </div>
               </Form.Item>
             </Form>
-          </If>
-          <If condition={type === '2'}>
-            <Form {...formLayout}>
-              <FormItem label='前台类目名称'>
-                {getFieldDecorator('name', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入前台类目名称'
-                    },
-                    {
-                      max: 5,
-                      message: '最大支持五个字符!'
-                    }
-                  ]
-                })(
-                  <Input placeholder='请输入前台类目名称' />
-                )}
-              </FormItem>
-              <FormItem label='排序'>
-                {getFieldDecorator('sort', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入排序数字'
-                    }
-                  ]
-                })(
-                  <Input type='number' placeholder='请输入排序数字' />
-                )}
-              </FormItem>
-              <FormItem label='关联店铺'>
-                {getFieldDecorator('relationShop', {
-                  rules: [{
-                    required: true,
-                    message: '请输入关联店铺'
-                  }]
-                })(
-                  <div>
-                    <Checkbox
-                      checked={this.state.checkCate}
-                      onChange={(e) => {
-                        this.setState({
-                          checkCate: e.target.checked
-                        })
-                      }}
-                    >
-                      关联类目
-                    </Checkbox>
-                    {this.state.checkCate ? (
-                      <div className='intf-cat-rebox'>
-                        {
-                          this.state.cateText.map((val, i) => {
-                            return (
-                              <div className='intf-cat-reitem' key={i}>
-                                {val.name}
-                                <span
-                                  className='close'
-                                  onClick={() => {
-                                    const cateText = this.state.cateText
-                                    cateText.splice(i, 1)
-                                    this.setState({ cateText })
-                                  }}
-                                >
-                                  <Icon type='close' />
-                                </span>
-                              </div>
-                            )
-                          })
-                        }
-                        <Button type='link' onClick={this.handleClickModalC}>+添加类目</Button>
-                      </div>
-                    ) : ''}
-                    <Checkbox checked={this.state.checkAct} onChange={(e) => {
-                      this.setState({
-                        checkAct: e.target.checked
-                      })
-                    }}>关联活动
-                    </Checkbox>
-                    {this.state.checkAct ? (
-                      <div className='intf-cat-rebox'>
-                        {this.state.actText.map((val, i) => {
-                          return (
-                            <div className='intf-cat-reitem' key={i}>
-                              {val.title}
-                              <span
-                                className='close'
-                                onClick={() => {
-                                  const actText = this.state.actText
-                                  actText.splice(i, 1)
-                                  this.setState({ actText })
-                                }}
-                              >
-                                <Icon type='close' />
-                              </span>
-                            </div>)
-                        })}
-                        <Button type='link' onClick={this.handleClickModal}>+添加活动</Button>
-                      </div>
-                    ) : ''}
-                  </div>
-                )}
-              </FormItem>
-              <FormItem label='类目开关'>
-                {getFieldDecorator('status', {
-                  initialValue: 1,
-                  rules: [{
-                    required: true,
-                    message: '请选择类目开关'
-                  }]
-                })(
-                  <Radio.Group>
-                    <Radio value={1} style={{ display: 'block' }}>展示</Radio>
-                    <Radio value={2} style={{ display: 'block' }}>不展示</Radio>
-                  </Radio.Group>
-                )}
-              </FormItem>
-              <FormItem {...tailFormItemLayout}>
-                <div style={{ textAlign: 'right' }}>
-                  <Button type='danger' ghost style={{ marginRight: '10px' }} onClick={() => this.delCategory()}>删除</Button>
-                  <Button type='primary' onClick={() => this.handleSave()}>保存</Button>
-                </div>
-              </FormItem>
-            </Form>
-          </If>
+          )}
+          {channel === '2' && <HaodianForm />}
         </Card>
         <GetActivityModal
           handleCancelModal={this.handleCancelModal}
@@ -1059,10 +937,10 @@ class GetActivity extends Component<GetActivityProps, {}> {
           </FormItem>
           <div style={{ textAlign: 'right', marginTop: 8 }}>
             <Button type='primary' onClick={this.handleSearch}>
-                  查询
+              查询
             </Button>
             <Button style={{ marginLeft: 10 }} onClick={() => resetFields()}>
-                  重置
+              重置
             </Button>
           </div>
         </Form>
