@@ -44,6 +44,11 @@ class Main extends React.Component<Props, State> {
     const { selectedRowKeys } = this.state
     return (
       <ListPage
+        processPayload={(payload) => {
+          payload.bizType = 4
+          payload.shopStatusList = [2]
+          return payload
+        }}
         columns={this.columns}
         api={getShopList}
         formConfig={getDefaultConfig()}

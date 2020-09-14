@@ -85,8 +85,9 @@ export function getShopList (payload: {
   bizType: number,
   shopName: string,
   shopId: string,
+  shopStatusList: number[],
   page: number,
   pageSize: number
 }) {
-  return newPost('/mmweb/supplier/shop/statistics/', payload)
+  return newPost('/mmweb/pop/query/base/ps/v1', payload)
 }

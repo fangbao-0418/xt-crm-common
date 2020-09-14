@@ -52,6 +52,9 @@ export function getDefaultConfig () {
             required: true,
             message: '请选择活动报名时间'
           }]
+        },
+        controlProps: {
+          showTime: true
         }
       },
       status: {
