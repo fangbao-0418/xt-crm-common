@@ -171,13 +171,18 @@ class Main extends React.Component<Props> {
                     }
                     return disabledDate(current, moment())
                   }}
-                  // disabledTime={(current) => {
-                  //   if (applyTime?.[1]) {
-                  //     return disabledDateTime(current, applyTime[1])
-                  //   }
-                  //   return 
+                  disabledTime={(current) => {
+                    if (applyTime?.[1]) {
+                      console.log('applyTime?.[1]', applyTime?.[1])
+                      return disabledDateTime(current, applyTime[1].toDate())
+                    }
+                    return {
+                      disabledHours: () => [],
+                      disabledMinutes: () => [],
+                      disabledSeconds: () => [],
+                    };
                     
-                  // }}
+                  }}
                   showTime={{
                     hideDisabledOptions: true,
                     defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],

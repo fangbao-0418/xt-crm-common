@@ -61,18 +61,20 @@ class BannerModal extends Component {
   static defaultProps = {
     onSuccess: () => { },
     id: '',
-    isEdit: false,
-    bizSource: 0
+    isEdit: false
   };
 
   state = {
     renderKey: 0,
+    bizSource: 0,
     visible: false,
     data: {
-      platformArray: _platformType.map(val => val.value),
+      // platformArray: _platformType.map(val => val.value),
+      platformArray: [],
       sort: 0,
       status: 1,
-      seat: 1
+      seat: 1,
+      bizSource: 0
     }
   };
 
@@ -90,6 +92,7 @@ class BannerModal extends Component {
     getBannerDetail({
       id: this.props.id
     }).then(data => {
+      // 平台
       if (data.platform) {
         const str = data.platform.toString(2)
         const array = str.split('')
@@ -105,8 +108,23 @@ class BannerModal extends Component {
       } else {
         data.platformArray = _platformType.map(val => val.value)
       }
+      // 可见用户
+      if (data.memberRestrict) {
+        const str = data.memberRestrict.toString(2)
+        const array = str.split('')
+        data.memberRestrictArray = []
+        array.forEach((val, i) => {
+          if (val * 1 == 1) {
+            data.memberRestrictArray.push(Math.pow(2, array.length - 1 - i).toString())
+          }
+        })
+      } else {
+        data.platformArray = [_platformType[2],_platformType[3]].map(val => val.value)
+      }
+      console.log('data.memberRestrictArray', data.memberRestrictArray)
       this.setState({
         data,
+        bizSource: data.bizSource,
         renderKey: this.state.renderKey + 1
       })
     })
@@ -144,12 +162,14 @@ class BannerModal extends Component {
         params.newSeat = seat[0]
         params.childSeat = seat[1]
         params.seat = seat[1]
+        // 平台
         if (params.platformArray) {
           params.platform = 0
           params.platformArray.forEach((val) => {
             params.platform += val * 1
           })
         }
+        // 可见用户
         if (params.memberRestrictArray) {
           params.memberRestrict = 0
           params.memberRestrictArray.forEach((val) => {
@@ -227,6 +247,7 @@ class BannerModal extends Component {
             </FormItem>
             <FormItem label='banner渠道'>
               {getFieldDecorator('bizSource', {
+                initialValue: data.bizSource,
                 rules: [{
                   required: true,
                   message: 'banner渠道不能为空'
@@ -369,7 +390,8 @@ class BannerModal extends Component {
                 <InputNumber placeholder='' />,
               )}
             </FormItem>
-            <If condition={this.state.bizSource === 0}>
+            
+            {this.state.bizSource === 0 && (
               <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
                 <FormItem label='平台'>
                   {getFieldDecorator('platformArray', {
@@ -379,11 +401,12 @@ class BannerModal extends Component {
                       message: '请选择平台'
                     }]
                   })(
-                    <Checkbox.Group options={[10].includes(seat[0])?[_platformType[0],_platformType[1]]:_platformType} />
+                    <Checkbox.Group options={[10].includes(seat[0])?[_platformType[0],_platformType[1]]:_platformType}> </Checkbox.Group>
                   )}
                 </FormItem>
               </If>
-            </If>
+            )}
+
             {this.state.bizSource === 20 && (<>
               <FormItem label='平台'>
                 {getFieldDecorator('platformArray', {
@@ -400,6 +423,7 @@ class BannerModal extends Component {
               </FormItem>
               <FormItem label='可见用户'>
                 {getFieldDecorator('memberRestrictArray', {
+                  initialValue: data.memberRestrictArray,
                   rules: [{
                     required: true,
                     message: '请选择可见用户'
@@ -408,22 +432,22 @@ class BannerModal extends Component {
                   <Checkbox.Group
                     options={[{
                       label: '普通用户',
-                      value: 1
+                      value: '1'
                     }, {
                       label: '店长',
-                      value: 2
+                      value: '2'
                     }, {
                       label: '高级店长',
-                      value: 4
+                      value: '4'
                     }, {
                       label: '服务商',
-                      value: 8
+                      value: '8'
                     }, {
                       label: '管理员',
-                      value: 16
+                      value: '16'
                     }, {
                       label: '公司',
-                      value: 32
+                      value: '32'
                     }]}
                   />
                 )}
