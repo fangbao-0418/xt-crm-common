@@ -35,7 +35,8 @@ class Main extends React.Component<{}, State> {
               )
             })
           }
-          <Route path='/home' component={modules.Home} />  
+          <Route path='/home' component={modules.Home} />
+          <Route path='/download' component={modules.Download} />
           <Route path='/settings' component={modules.Settings} />
           <Route path='/goods' component={modules.Goods} />
           <Route path='/template' component={modules.Template} />
