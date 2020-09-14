@@ -20,15 +20,21 @@ class Main extends React.Component<Props> {
     options: []
   };
   public componentDidMount () {
-    api.getSeatList(this.props.bizSource).then((res: ItemProps[]) => {
-      this.fetchCategory(res)
+    this.fetchData(this.props.bizSource)
+  }
+  // 喜团优选需要请求category接口，好店不需要
+  public fetchData (bizSource: number) {
+    api.getSeatList(bizSource).then((res: ItemProps[]) => {
+      if (bizSource === 20) {
+        this.setState({ options: res })
+      } else {
+        this.fetchCategory(res)
+      }
     })
   }
   public componentWillReceiveProps(nextProps: any) {
     if (this.props.bizSource !== nextProps.bizSource) {
-      api.getSeatList(nextProps.bizSource).then((res: ItemProps[]) => {
-        this.fetchCategory(res)
-      })
+      this.fetchData(nextProps.bizSource)
     }
   }
   public fetchCategory (options: ItemProps[]) {

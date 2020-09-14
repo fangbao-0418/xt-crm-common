@@ -7,7 +7,9 @@ import Upload from '@/components/upload'
 import If from '@/packages/common/components/if'
 import styles from './style.module.sass'
 import platformType from '@/enum/platformType'
-const _platformType = platformType.getArray({ key: 'value', val: 'label' })
+const YOUXUAN_PLATFORMTYPE = platformType.getArray({ key: 'value', val: 'label' })
+
+const HAODIAN_PLATFORMTYPE = platformType.getArray({ key: 'value', val: 'label' }).filter(v => ['8', '16'].includes(v.value))
 
 interface Props extends FormComponentProps {
   bizSource: string
@@ -23,12 +25,14 @@ class Main extends React.Component<Props, State> {
     selectIndex: -2,
     loading: false
   }
+  public platformType: { value: string | number, label: string}[]
   public constructor (props: Props) {
     super(props)
     this.addIconItem = this.addIconItem.bind(this)
     this.toSave = this.toSave.bind(this)
     this.toDelete = this.toDelete.bind(this)
     this.toPublish = this.toPublish.bind(this)
+    this.platformType = props.bizSource === '20' ? HAODIAN_PLATFORMTYPE : YOUXUAN_PLATFORMTYPE
   }
   public componentDidMount () {
     this.fetchList()
@@ -109,7 +113,7 @@ class Main extends React.Component<Props, State> {
   public resetForm () {
     this.props.form.resetFields()
     this.props.form.setFieldsValue({
-      platformArray: _platformType.map(val => val.value)
+      platformArray: this.platformType.map((val: any) => val.value)
     })
     this.setState({
       selectIndex: -1
@@ -137,10 +141,10 @@ class Main extends React.Component<Props, State> {
           }
         })
       } else {
-        result.platformArray = _platformType.map(val => val.value)
+        result.platformArray = this.platformType.map((val: any) => val.value)
       }
       //   result.platformArray =
-      //    result.platformStr = result.platformStr ? result.platformStr.split(',') : _platformType.map(val => val.value)
+      //    result.platformStr = result.platformStr ? result.platformStr.split(',') : this.platformType.map(val => val.value)
       this.props.form.setFieldsValue(dataSource[index])
     })
   }
@@ -288,7 +292,7 @@ class Main extends React.Component<Props, State> {
                   message: '请选择平台'
                 }]
               })(
-                <Checkbox.Group options={_platformType}> </Checkbox.Group>
+                <Checkbox.Group options={this.platformType} />
               )}
             </Form.Item>
             <div className={styles.footer}>
