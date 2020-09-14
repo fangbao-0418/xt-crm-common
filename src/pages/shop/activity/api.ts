@@ -3,6 +3,19 @@ const { get, newPost } = APP.http
 
 /** 0-全部/1-待发布/2-已发布/3-报名中/4-预热中/5-进行中/6-已结束/7-已关闭 */
 export type StatusType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+interface PromotionPayload {
+  venueId?: number,
+  title: string,
+  type: number,
+  description: string,
+  applyStartTime: number,
+  applyEndTime: number,
+  preheat: 0 | 1,
+  startTime: number,
+  endTime: number,
+  costPriceDiscount: number,
+  dataSource: any[]
+}
 
 /** 会场活动列表 */
 export function getPromotionList (payload: {
@@ -28,19 +41,13 @@ export function setSort (payload: {
 }
 
 /** 新建会场活动 */
-export function addPromotion (payload: {
-  title: string,
-  type: number,
-  description: string,
-  applyStartTime: number,
-  applyEndTime: number,
-  preheat: 0 | 1,
-  startTime: number,
-  endTime: number,
-  costPriceDiscount: number,
-  dataSource: any[]
-}) {
-  return newPost('/mcweb/product/promotion/venue/add', adapter.addPromotion(payload))
+export function addPromotion (payload: PromotionPayload) {
+  return newPost('/mcweb/product/promotion/venue/add', adapter.requestPromotion(payload))
+}
+
+/** 编辑会场活动 */
+export function updatePromotion (payload: PromotionPayload) {
+  return newPost('/mcweb/product/promotion/venue/update', adapter.requestPromotion(payload))
 }
 
 /** 会场活动详情 */
@@ -65,7 +72,7 @@ export function getPromotionProduct (payload: {
 
 /** 发布会场活动 */
 export function publishPromotion (venueId: number) {
-  return newPost('/mcweb/product/promotion/venue/publish', { venueId })
+  return newPost(`/mcweb/product/promotion/venue/publish?venueId=${venueId}`)
 }
 
 /** 会场活动关闭 */

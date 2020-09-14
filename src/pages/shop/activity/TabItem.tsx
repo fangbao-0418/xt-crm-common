@@ -33,7 +33,12 @@ class Main extends React.Component<Props, State> {
   }, {
     title: '报名时间',
     render: (record) => {
-      return APP.fn.formatDate(record.applyStartTime) + '~' + APP.fn.formatDate(record.applyEndTime)
+      return (
+        <div>
+          <div>{APP.fn.formatDate(record.applyStartTime) + '~'}</div>
+          <div>{APP.fn.formatDate(record.applyEndTime)}</div>
+        </div>
+      )
     }
   }, {
     title: '预热时间',
@@ -41,12 +46,22 @@ class Main extends React.Component<Props, State> {
       if (!record.preheatStartTime || !record.preheatEndTime) {
         return '-'
       }
-      return APP.fn.formatDate(record.preheatStartTime) + '~' + APP.fn.formatDate(record.preheatEndTime)
+      return (
+        <div>
+          <div>{APP.fn.formatDate(record.preheatStartTime) + '~'}</div>
+          <div>{APP.fn.formatDate(record.preheatEndTime)}</div>
+        </div>
+      )
     }
   }, {
     title: '活动排期时间',
     render: (record) => {
-      return APP.fn.formatDate(record.startTime) + '~' + APP.fn.formatDate(record.endTime)
+      return (
+        <div>
+          <div>{APP.fn.formatDate(record.startTime) + '~'}</div>
+          <div>{APP.fn.formatDate(record.endTime)}</div>
+        </div>
+      )
     }
   }, {
     title: '活动状态',
@@ -79,6 +94,7 @@ class Main extends React.Component<Props, State> {
     dataIndex: 'operator'
   }, {
     title: '操作',
+    fixed: 'right',
     render: (record) => {
       return (
         <>
@@ -116,7 +132,7 @@ class Main extends React.Component<Props, State> {
   }]
   // 复制
   public handleCopy = (promotionId: number) => {
-    APP.history.push(`/shop/activity/add?promotionId=${promotionId}`)
+    APP.history.push(`/shop/activity/add?promotionId=${promotionId}&copy=1`)
   }
   // 发布
   public publish = async (venueId: number) => {
@@ -193,6 +209,9 @@ class Main extends React.Component<Props, State> {
           />
         </Modal>
         <ListPage
+          tableProps={{
+            scroll: { x: true }
+          }}
           getInstance={(ref) => {
             this.listRef = ref
           }}

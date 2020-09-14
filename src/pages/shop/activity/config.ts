@@ -10,6 +10,9 @@ export function getDefaultConfig () {
             required: true,
             message: '请输入活动名称'
           }]
+        },
+        controlProps: {
+          maxLength: 30
         }
       },
       type: {
@@ -115,7 +118,7 @@ export function getDefaultConfig () {
       }
     },
     addFormConfig: {
-      shopId: {
+      id: {
         label: '店铺id'
       },
       shopName: {

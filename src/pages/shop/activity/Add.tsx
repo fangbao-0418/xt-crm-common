@@ -1,19 +1,25 @@
 import React from 'react'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Form, FormItem, Alert } from '@/packages/common/components'
-import { Card, Radio, InputNumber, Table, Button } from 'antd'
-import { addPromotion, getPromotionDetail } from './api'
+import { DatePicker, Card, Radio, InputNumber, Table, Button } from 'antd'
+import { addPromotion, getPromotionDetail, updatePromotion } from './api'
 import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/lib/table'
 import StoreModal from './StoreModal'
 import { FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
+import moment from 'moment'
+import { disabledDate, disabledDateTime } from '@/util/antdUtil'
+
+const { RangePicker } = DatePicker
 interface Props extends AlertComponentProps {}
 class Main extends React.Component<Props> {
   public formRef: FormInstance
+  public promotionId = (parseQuery() as any).promotionId
+  public copy = (parseQuery() as any).copy
   public columns: ColumnProps<any>[] = [{
     title: '店铺id',
-    dataIndex: 'shopId'
+    dataIndex: 'id'
   }, {
     title: '店铺名称',
     dataIndex: 'shopName'
@@ -37,9 +43,8 @@ class Main extends React.Component<Props> {
   }
   // 查看详情
   public fetchData = async () => {
-    const query: any = parseQuery()
-    if (query.promotionId) {
-      const res = await getPromotionDetail(query.promotionId)
+    if (this.promotionId) {
+      const res = await getPromotionDetail(this.promotionId)
       this.formRef.setValues(res)
     }
   }
@@ -56,8 +61,9 @@ class Main extends React.Component<Props> {
           }}
         />
       ),
-      onOk: () => {
-        this.formRef.setValues({ dataSource })
+      onOk: (hide) => {
+        this.formRef.setValues({ dataSource });
+        hide();
       }
     })
   }
@@ -66,7 +72,12 @@ class Main extends React.Component<Props> {
     this.formRef.props.form.validateFields(async (err) => {
       if (!err) {
         const vals = this.formRef.getValues()
-        const res = await addPromotion(vals)
+        let res
+        if (this.promotionId && !this.copy) {
+          res = await updatePromotion({ ...vals, promotionId: this.promotionId})
+        } else {
+          res = await addPromotion(vals)
+        }
         if (res) {
           APP.success('新建活动成功')
           APP.history.goBack()
@@ -114,8 +125,20 @@ class Main extends React.Component<Props> {
             verifiable
           />
           <FormItem
-            name='applyTime'
-            verifiable
+            required
+            label='活动报名时间'
+            inner={(form) => {
+              return form.getFieldDecorator('applyTime')(
+                <RangePicker
+                  disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
+                  showTime={{
+                    hideDisabledOptions: true,
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                  }}
+                  format="YYYY-MM-DD HH:mm:ss"
+                />
+              )
+            }}
           />
           <FormItem
             label='是否预热'
@@ -136,8 +159,33 @@ class Main extends React.Component<Props> {
             }}
           />
           <FormItem
-            name='activityTime'
-            verifiable
+            label='活动排期时间'
+            required
+            inner={(form) => {
+              const applyTime = form.getFieldValue('applyTime')
+              return form.getFieldDecorator('activityTime')(
+                <RangePicker
+                  disabledDate={(current: moment.Moment | null) => {
+                    if (applyTime?.[1]) {
+                      return disabledDate(current, applyTime[1])
+                    }
+                    return disabledDate(current, moment())
+                  }}
+                  // disabledTime={(current) => {
+                  //   if (applyTime?.[1]) {
+                  //     return disabledDateTime(current, applyTime[1])
+                  //   }
+                  //   return 
+                    
+                  // }}
+                  showTime={{
+                    hideDisabledOptions: true,
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                  }}
+                  format="YYYY-MM-DD HH:mm:ss"
+                />
+              )
+            }}
           />
         </Card>
         <Card title='活动规则和要求'>
@@ -168,33 +216,35 @@ class Main extends React.Component<Props> {
               )
             }}
           />
-          <FormItem
-            label='报名商家类型'
-            required
-            inner={(form) => {
-              return (
-                <>
-                  <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个商家，会单独拆分为几个会场）</div>
-                  {
-                    form.getFieldDecorator('dataSource', {
-                      valuePropName: 'dataSource',
-                      rules: [{
-                        validator: (rule: any, value: any, callback: any) => {
-                          if (Array.isArray(value) && value.length > 0) {
-                            callback()
-                          } else {
-                            callback('请添加店铺')
+          {!this.promotionId && (
+            <FormItem
+              label='报名商家类型'
+              required
+              inner={(form) => {
+                return (
+                  <>
+                    <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个商家，会单独拆分为几个会场）</div>
+                    {
+                      form.getFieldDecorator('dataSource', {
+                        valuePropName: 'dataSource',
+                        rules: [{
+                          validator: (rule: any, value: any, callback: any) => {
+                            if (Array.isArray(value) && value.length > 0) {
+                              callback()
+                            } else {
+                              callback('请添加店铺')
+                            }
                           }
-                        }
-                      }]
-                    })(
-                      <Table columns={this.columns} />
-                    )
-                  }
-                </>
-              )
-            }}
-          />
+                        }]
+                      })(
+                        <Table columns={this.columns} rowKey='id' />
+                      )
+                    }
+                  </>
+                )
+              }}
+            />
+          )}
         </Card>
         <div>
           <Button
