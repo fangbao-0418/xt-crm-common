@@ -25,7 +25,10 @@ export function checkInvited(params) {
 
 // 推荐
 export function getRecommend(params) {
-  return Fetch.request(`/member/inviteList?${qs.stringify(params)}`);
+  const bizSource = params.bizSource
+  delete params.bizSource
+  const path = bizSource === '20' ? '/mcweb/memberm/pop/inviteList' : '/member/inviteList'
+  return Fetch.request(`${path}?${qs.stringify(params)}`);
 }
 
 // 团队

@@ -1,9 +1,29 @@
 import React, { Component } from "react";
-import { Card, Row, Col, Table, Tabs } from "antd";
+import { Card, Row, Col, Table, Tabs, Select } from "antd";
 import { connect, parseQuery } from "@/util/utils";
 import LevelSelect from "@/components/level-select";
 
 const { TabPane } = Tabs;
+
+const HAODIAN_LEVEL_OPTIONS = [{
+  label: '普通会员',
+  value: '0'
+}, {
+  label: '正式店主',
+  value: '10'
+}, {
+  label: '高级店主',
+  value: '20'
+}, {
+  label: '服务商',
+  value: '30'
+}, {
+  label: '管理员',
+  value: '40'
+}, {
+  label: '公司',
+  value: '50'
+}]
 
 function getColumns(scope) {
   return [
@@ -33,10 +53,10 @@ function getColumns(scope) {
 let currentMemberType = "";
 const tabConfig =  [{
   label: '喜团优选',
-  value: '1'
+  value: '0'
 }, {
   label: '喜团好店',
-  value: '2'
+  value: '20'
 }]
 @connect((state) => ({
   data: state["user.userinfo"].recommenderConfig,
@@ -44,7 +64,7 @@ const tabConfig =  [{
 }))
 export default class extends Component {
   state = {
-    activeKey: '1'
+    bizSource: '0'
   }
   constructor(props) {
     super(props);
@@ -55,7 +75,6 @@ export default class extends Component {
   componentDidMount() {
     this.handleSearch();
   }
-
   onTypeChange = (memberType) => {
     const params = {
       memberType,
@@ -75,6 +94,7 @@ export default class extends Component {
           : currentMemberType,
       page: params.page || 1,
       pageSize: params.pageSize || 10,
+      bizSource: this.state.bizSource
     };
     dispatch["user.userinfo"].getRecommend(payload);
   };
@@ -92,23 +112,33 @@ export default class extends Component {
   componentWillUnmount() {
     currentMemberType = "";
   }
-  handleTabChange = (activeKey) => {
+  handleTabChange = (bizSource) => {
     this.setState({
-      activeKey
+      bizSource
+    }, () => {
+      this.handleSearch()
     })
   }
   render() {
     const { data, loading } = this.props;
-    const { activeKey } = this.state
+    const { bizSource } = this.state
     return (
-      <Tabs activeKey={activeKey} onChange={this.handleTabChange}>
+      <Tabs activeKey={bizSource} onChange={this.handleTabChange}>
         {tabConfig.map((item) => (
           <TabPane tab={item.label} key={item.value}>
             <Card title="推荐的人">
               <Row>
                 <Col style={{ marginBottom: 20 }}>
                   <span>等级：</span>
-                  <LevelSelect onChange={this.onTypeChange} />
+                  {bizSource === '20' ? (
+                    <Select placeholder="请选择等级" style={{ width: 150 }} onChange={this.onTypeChange} allowClear>
+                      {HAODIAN_LEVEL_OPTIONS.map((item) => (
+                        <Select.Option value={item.value}>{item.label}</Select.Option>
+                      ))}
+                    </Select>
+                  ): (
+                    <LevelSelect onChange={this.onTypeChange} />
+                  )}
                 </Col>
                 <Col>
                   <Table
