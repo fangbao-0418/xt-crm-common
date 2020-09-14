@@ -98,21 +98,28 @@ class Main extends React.Component<Props, State> {
     render: (record) => {
       return (
         <>
-          <span
-            className='href'
-            onClick={() => {
-              APP.history.push(`/shop/activity/edit?promotionId=${record.promotionId}`)
-            }}
-          >
-            编辑
-          </span>
+          {record.status === promotionStatusEnum['待发布'] && (
+            <span
+              className='href'
+              onClick={() => {
+                APP.history.push(`/shop/activity/edit?promotionId=${record.promotionId}`)
+              }}
+            >
+              编辑
+            </span>
+          )}
           {/* 待发布状态显示发布，已发布进行中状态显示关闭 */}
-          {record.status === promotionStatusEnum['待发布'] ? (
+          {record.status === promotionStatusEnum['待发布'] && (
             <span
               className='href ml10'
               onClick={this.publish.bind(null, record.venueId)}
             >发布</span>
-          ) : (
+          )}
+          {[
+            promotionStatusEnum['报名中'],
+            promotionStatusEnum['预热中'],
+            promotionStatusEnum['进行中']
+          ].includes(record.status) && (
             <span
               className='href ml10'
               onClick={this.close.bind(null, record.promotionId)}
@@ -125,7 +132,18 @@ class Main extends React.Component<Props, State> {
               APP.history.push(`/shop/activity/detail?promotionId=${record.promotionId}`)
             }}
           >查看详情</span>
-          <span className='href ml10' onClick={this.handleSort.bind(null, record.sort, record.promotionId)}>排序</span>
+          {[
+            promotionStatusEnum['待发布'],
+            promotionStatusEnum['已发布'],
+            promotionStatusEnum['报名中'],
+            promotionStatusEnum['预热中'],
+            promotionStatusEnum['进行中']
+          ].includes(record.status) && (
+            <span
+              className='href ml10'
+              onClick={this.handleSort.bind(null, record.sort, record.promotionId)}
+            >排序</span>
+          )}
         </>
       )
     }

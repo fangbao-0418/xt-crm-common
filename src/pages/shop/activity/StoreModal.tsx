@@ -17,19 +17,13 @@ class Main extends React.Component<Props, State> {
   public rows: any[] = []
   public columns: ColumnProps<any>[] = [{
     title: '店铺id',
-    dataIndex: 'id'
+    dataIndex: 'shopId'
   }, {
     title: '店铺名称',
     dataIndex: 'shopName'
   }, {
     title: '店铺状态',
     dataIndex: 'shopStatusLabel'
-  }, {
-    title: '店铺在架商品',
-    dataIndex: 'onlineProductCount'
-  }, {
-    title: '店铺累计销量',
-    dataIndex: 'saleProductCount	'
   }, {
     title: '店铺主营类目',
     dataIndex: 'mainCategory',
@@ -55,18 +49,16 @@ class Main extends React.Component<Props, State> {
         namespace='addFormConfig'
         formItemLayout={(
           <>
-            <FormItem name='id' />
+            <FormItem name='shopId' />
             <FormItem name='shopName' />
           </>
         )}
         tableProps={{
-          rowKey: 'id',
+          rowKey: 'shopId',
           rowSelection: {
             selectedRowKeys,
             onChange: (keys: any[], rows: any[]) => {
-              console.log('unionBy(this.rows, rows, x => x.id)', unionBy(this.rows, rows, x => x.id))
-              console.log('keyskeyskeys', keys)
-              this.rows = unionBy(this.rows, rows, x => x.id).filter((v: any) => keys.includes(v.id))
+              this.rows = unionBy(this.rows, rows, x => x.shopId).filter((v: any) => keys.includes(v.shopId))
               this.setState({ selectedRowKeys: keys })
               this.props.onChange(this.rows)
             }

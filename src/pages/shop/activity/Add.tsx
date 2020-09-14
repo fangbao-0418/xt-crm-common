@@ -9,7 +9,7 @@ import StoreModal from './StoreModal'
 import { FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
 import moment from 'moment'
-import { disabledDate, disabledDateTime } from '@/util/antdUtil'
+import { disabledDate } from '@/util/antdUtil'
 
 const { RangePicker } = DatePicker
 interface Props extends AlertComponentProps {}
@@ -19,7 +19,7 @@ class Main extends React.Component<Props> {
   public copy = (parseQuery() as any).copy
   public columns: ColumnProps<any>[] = [{
     title: '店铺id',
-    dataIndex: 'id'
+    dataIndex: 'shopId'
   }, {
     title: '店铺名称',
     dataIndex: 'shopName'
@@ -72,16 +72,24 @@ class Main extends React.Component<Props> {
     this.formRef.props.form.validateFields(async (err) => {
       if (!err) {
         const vals = this.formRef.getValues()
+        if (vals.startTime <= vals.applyEndTime) {
+          return void APP.error('报名时间不能大于活动时间')
+        }
         let res
         if (this.promotionId && !this.copy) {
           res = await updatePromotion({ ...vals, promotionId: this.promotionId})
+          if (res) {
+            APP.success('编辑活动成功')
+            APP.history.goBack()
+          }
         } else {
           res = await addPromotion(vals)
+          if (res) {
+            APP.success('新建活动成功')
+            APP.history.goBack()
+          }
         }
-        if (res) {
-          APP.success('新建活动成功')
-          APP.history.goBack()
-        }
+
       }
     })
   }
@@ -128,7 +136,12 @@ class Main extends React.Component<Props> {
             required
             label='活动报名时间'
             inner={(form) => {
-              return form.getFieldDecorator('applyTime')(
+              return form.getFieldDecorator('applyTime', {
+                rules: [{
+                  required: true,
+                  message: '活动报名时间不能为空'
+                }]
+              })(
                 <RangePicker
                   disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
                   showTime={{
@@ -163,25 +176,18 @@ class Main extends React.Component<Props> {
             required
             inner={(form) => {
               const applyTime = form.getFieldValue('applyTime')
-              return form.getFieldDecorator('activityTime')(
+              return form.getFieldDecorator('activityTime', {
+                rules: [{
+                  required: true,
+                  message: '活动排期时间不能为空'
+                }]
+              })(
                 <RangePicker
                   disabledDate={(current: moment.Moment | null) => {
                     if (applyTime?.[1]) {
                       return disabledDate(current, applyTime[1])
                     }
                     return disabledDate(current, moment())
-                  }}
-                  disabledTime={(current) => {
-                    if (applyTime?.[1]) {
-                      console.log('applyTime?.[1]', applyTime?.[1])
-                      return disabledDateTime(current, applyTime[1].toDate())
-                    }
-                    return {
-                      disabledHours: () => [],
-                      disabledMinutes: () => [],
-                      disabledSeconds: () => [],
-                    };
-                    
                   }}
                   showTime={{
                     hideDisabledOptions: true,
@@ -221,7 +227,7 @@ class Main extends React.Component<Props> {
               )
             }}
           />
-          {!this.promotionId && (
+          {(!this.promotionId || this.copy === '1') && (
             <FormItem
               label='报名商家类型'
               required
@@ -242,7 +248,7 @@ class Main extends React.Component<Props> {
                           }
                         }]
                       })(
-                        <Table columns={this.columns} rowKey='id' />
+                        <Table columns={this.columns} rowKey='shopId' />
                       )
                     }
                   </>

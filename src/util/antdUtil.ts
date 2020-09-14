@@ -34,7 +34,6 @@ export function disabledDateTime(current: any, date: any) {
   let h = date.getHours();
   let m = date.getMinutes();
   let s = date.getSeconds();
-
   if (
     current.year() > y ||
     (current.year() === y && current.month() > M) ||

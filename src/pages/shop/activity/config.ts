@@ -118,7 +118,7 @@ export function getDefaultConfig () {
       }
     },
     addFormConfig: {
-      id: {
+      shopId: {
         label: '店铺id'
       },
       shopName: {
