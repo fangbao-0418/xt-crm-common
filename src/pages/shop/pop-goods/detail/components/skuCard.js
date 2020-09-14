@@ -4,6 +4,7 @@ import WrapCard from './wrapCard'
 import SkuItem from './skuItem'
 import { formatMoneyWithSign } from '@/util/helper'
 import { namespace } from '../model'
+import { parseQuery } from '@/util/utils'
 
 const ConfirmStatusEnum = {
   0: '未导入价格',
@@ -32,6 +33,8 @@ const SpecKeysCards = ({ specKeys }) => {
 
 /** 商品Sku组合 */
 const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
+  const query = parseQuery()
+  const readonly = !!query.readonly
   const { specVals, specKeys } = data;
 
   // 动态表头
@@ -73,7 +76,8 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     // hidden: true,
     dataIndex: 'commissionIncreasePrice',
     render: (value, record, index) => {
-      if (status !== 1 || confirmStatus !== 1) {
+      console.log(readonly, 'readonlyreadonlyreadonlyreadonly')
+      if (readonly || (status !== 1 || confirmStatus !== 1)) {
         return (value ? formatMoneyWithSign(value) : '-')
       }
       value = APP.fn.formatMoneyNumber(value, 'm2u')
@@ -110,7 +114,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     hidden: !(status === 1 && confirmStatus === 1),
     dataIndex: 'increaseSalePrice',
     render: (value, record) => {
-      return APP.fn.formatMoneyNumber((record.salePrice + record.commissionIncreasePrice), 'm2u')
+      return '¥' + APP.fn.formatMoneyNumber((record.salePrice + record.commissionIncreasePrice), 'm2u')
     },
   }, {
     title: '建议供货价',
@@ -127,7 +131,6 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     title: '可用库存',
     dataIndex: 'usableStock'
   }].filter((item) => !item.hidden)
-  console.log(fixedColumns, (status === 1 && confirmStatus === 1), '(status === 1 && confirmStatus === 2(status === 1 && confirmStatus === 2(status === 1 && confirmStatus === 2')
   const startColumns = fixedColumns.slice(0, 2);
   const endColumns = fixedColumns.slice(2);
   const columns = [...startColumns, ...dynaColums, ...endColumns].concat(confirmStatus !== 0 ? [{

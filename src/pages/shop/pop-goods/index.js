@@ -15,6 +15,7 @@ import ViolationModal from './components/violationModal'
 import { combinationStatusList, formConfig } from './config/config'
 import getColumns from './config/columns'
 import Alert from '@/packages/common/components/alert'
+import { param } from '@/packages/common/utils'
 
 const { TabPane } = Tabs
 
@@ -91,8 +92,12 @@ class Main extends React.Component {
   }
 
   /** 操作：查看商品详情-打开新标签页面 */
-  handleDetail = (record) => {
-    APP.open(`/shop/pop-goods/detail/${record.id}`)
+  handleDetail = (record, query) => {
+    let qs = ''
+    if (query) {
+      qs = '?' + param(query)
+    }
+    APP.open(`/shop/pop-goods/detail/${record.id}${qs}`)
   }
 
   /** 操作：下架商品-显示下架理由模态框 */

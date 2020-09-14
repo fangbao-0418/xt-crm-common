@@ -175,13 +175,21 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
           return (
             <div style={{ marginTop: 40 }}>
               <span
-                className='href'
-                onClick={() => onDetail(record)}
+                className='href mr8'
+                onClick={() => onDetail(record, { readonly: true })}
               >
                 查看
               </span>
+              {record.confirmStatus === 1 && (
+                <span
+                  className='href mr8'
+                  onClick={() => onDetail(record)}
+                >
+                  编辑
+                </span>
+              )}
               <span
-                className='href ml10'
+                className='href'
                 onClick={() => onLower(record)}
               >
                 下架
@@ -194,19 +202,19 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
           return (
             <div style={{ marginTop: 40 }}>
               <span
-                className='href'
-                onClick={() => onDetail(record)}
+                className='href mr8'
+                onClick={() => onDetail(record, { readonly: true })}
               >
                 查看
               </span>
               <span
-                className='href ml10'
+                className='href mr8'
                 onClick={() => onPass(record)}
               >
                 通过
               </span>
               <span
-                className='href ml10'
+                className='href'
                 onClick={() => onUnpass(record)}
               >
                 不通过
@@ -218,7 +226,7 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
             <div style={{ marginTop: 40 }}>
               <span
                 className='href'
-                onClick={() => onDetail(record)}
+                onClick={() => onDetail(record, { readonly: true })}
               >
                 查看
               </span>

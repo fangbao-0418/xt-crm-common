@@ -1,18 +1,26 @@
-import React from 'react';
-import { connect } from '@/util/utils';
-import BaseCard from './components/baseCard';
-import SkuCard from './components/skuCard';
-import LogisCard from './components/logisCard';
-import AuditCard from './components/auditCard';
+import React from 'react'
+import { connect } from '@/util/utils'
+import BaseCard from './components/baseCard'
+import SkuCard from './components/skuCard'
+import LogisCard from './components/logisCard'
+import AuditCard from './components/auditCard'
 import { unionBy } from 'lodash'
-import { Button } from 'antd';
+import { Button } from 'antd'
 import * as api from './api'
+import { parseQuery } from '@/util/utils'
 
 @connect(state => ({
   goodsInfo: state['shop.pop.goods.detail'].goodsInfo
 }))
 class GoodsDetail extends React.Component {
+  query = parseQuery()
+
+  state = {
+    readonly: !!this.query.readonly
+  }
+
   componentDidMount() {
+    // console.log(this.query, 'query query query query query')
     this.fetchData()
   }
 
@@ -104,7 +112,7 @@ class GoodsDetail extends React.Component {
         <SkuCard goodsInfo={goodsInfo} confirmStatus={goodsInfo?.confirmStatus} status={goodsInfo?.status} data={skuInfo} />
         <LogisCard data={logisInfo} />
         <AuditCard data={auditInfo} productPoolId={productPoolId} />
-        {goodsInfo?.status === 1 && goodsInfo?.confirmStatus === 1 && (
+        {!this.state.readonly && goodsInfo?.status === 1 && goodsInfo?.confirmStatus === 1 && (
           <div>
             <Button
               type='primary'
