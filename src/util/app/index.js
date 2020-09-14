@@ -115,7 +115,6 @@ Object.assign(APP, {
   constant,
   open: function (url) {
     url = String(url || '').trim()
-    console.log(url, 'source url')
     const unix = new Date().getTime()
     function fillUnix (p) {
       return !(/\?/).test(p) ? p + `?t=${unix}` : p + `&t=${unix}`
@@ -128,7 +127,9 @@ Object.assign(APP, {
       // 5 /#/abc
       const paths = url.split('#')
       if (paths.length === 1) { // 不存在hash
-        url = `/?t=${unix}#` + url
+        const pathname = location.pathname
+        const search = location.search || `?t=${unix}`
+        url = `${pathname}${search}#` + url
       } else { // 存在hash hash前部分为路径添加时间戳
         url = fillUnix(paths[0]) + '#' + paths.slice(1).join('#')
       }
@@ -155,7 +156,6 @@ Object.assign(APP, {
 
 Object.defineProperty(APP, 'token', {
   get () {
-    console.log('get token')
     return JSON.parse(localStorage.getItem('token') || '')
   },
   set (val) {
