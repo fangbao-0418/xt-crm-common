@@ -1,5 +1,7 @@
+import { exportFileStream } from '@/util/fetch'
 import * as adapter from './adapter'
-const { get, newPost } = APP.http
+
+const { get, post, newPost } = APP.http
 
 /** 0-全部/1-待发布/2-已发布/3-报名中/4-预热中/5-进行中/6-已结束/7-已关闭 */
 export type StatusType = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
@@ -62,6 +64,32 @@ export function auditSku (payload: {
   auditStatus: 0 | 1 | 2
 }) {
   return newPost('/mcweb/product/promotion/venue/auditSku', payload)
+}
+
+/** 导出会场商品 */
+export function exportVenue (promotionId: string) {
+  const data = { promotionId }
+  return exportFileStream('/mcweb/product/promotion/venue/export', data, '会场商品信息.xlsx', {
+    method: 'get',
+    data: undefined,
+    params: data
+  })
+}
+
+/** 会场活动导入商品审核 */
+export function importAuditSku (payload: {
+  file: any,
+  promotionId: string
+}) {
+  const form = new FormData()
+  form.append('file', payload.file)
+  form.append('promotionId', payload.promotionId)
+  return post('/mcweb/product/promotion/venue/import/auditSku', {}, {
+    data: form,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
 }
 
 /**

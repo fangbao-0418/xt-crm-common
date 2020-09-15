@@ -1,16 +1,17 @@
 import React from 'react'
-import { Card, Tabs, Table, Button, Upload } from 'antd'
+import { Card, Tabs, Table, Button } from 'antd'
 import { Form, FormItem, ListPage, Alert } from '@/packages/common/components'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { FormInstance } from '@/packages/common/components/form'
 import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/es/table'
 import { statusEnum } from './config'
-import { getPromotionDetail, getPromotionProduct, auditSku } from './api'
+import { getPromotionDetail, getPromotionProduct, auditSku, exportVenue, importAuditSku } from './api'
 import { parseQuery } from '@/util/utils'
 import Image from '@/components/Image'
 import Modal from 'antd/es/modal'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import Upload from '@/components/upload/file'
 const { TabPane } = Tabs
 
 const tabConfig = [{
@@ -59,7 +60,12 @@ class Main extends React.Component<{}, State> {
       this.formRef.setValues(res)
       this.setState({
         iconUrl: res.iconUrl,
-        bgUrl: res.bgUrl
+        bgUrl: res.bgUrl,
+        productCount: res.productCount,
+        skuCount: res.skuCount,
+        passSkuCount: res.passSkuCount,
+        rejectSkuCount: res.rejectSkuCount,
+        totalStock: res.totalStock
       })
     }
   }
@@ -129,13 +135,11 @@ interface Props extends AlertComponentProps {
 }
 interface TabItemState {
   fileList: any[]
-  uploading: boolean
 }
 class TabItem extends React.Component<Props, TabItemState> {
   public listRef: ListPageInstanceProps
   public state = {
-    fileList: [],
-    uploading: false
+    fileList: []
   }
   // 审核通过或者拒绝
   public handleAudit = (auditStatus: AuditStatus, record: any) => {
@@ -159,6 +163,7 @@ class TabItem extends React.Component<Props, TabItemState> {
       }
     })
   }
+  public formRef: FormInstance
   public columns: ColumnProps<any>[] = [{
     title: '商品id',
     dataIndex: 'productId'
@@ -207,7 +212,12 @@ class TabItem extends React.Component<Props, TabItemState> {
                 case statusEnum['审核拒绝']:
                   return '-'
                 case statusEnum['审核通过']:
-                  return (<span className='href'>拒绝</span>)
+                  return (
+                    <span
+                      className='href'
+                      onClick={this.handleAudit.bind(null, 2, record)}
+                    >拒绝</span>
+                  )
                 case statusEnum['待审核']:
                   return (
                     <>
@@ -225,31 +235,19 @@ class TabItem extends React.Component<Props, TabItemState> {
             }
           }]}
           dataSource={data}
+          pagination={false}
         />
       )
     }
   }]
+  /**
+   * 导出
+   */
+  public handleExport = async () => {
+    const res = await exportVenue(this.props.promotionId)
+    console.log('res', res)
+  }
   public render() {
-    const { uploading, fileList } = this.state;
-    const props = {
-      onRemove: (file: any) => {
-        this.setState(state => {
-          const index = state.fileList.indexOf(file);
-          const newFileList = state.fileList.slice();
-          newFileList.splice(index, 1);
-          return {
-            fileList: newFileList,
-          };
-        });
-      },
-      beforeUpload: (file: any) => {
-        this.setState(state => ({
-          fileList: [...state.fileList, file],
-        }));
-        return false;
-      },
-      fileList,
-    };
     return (
       <ListPage
         getInstance={(ref) => {
@@ -268,6 +266,7 @@ class TabItem extends React.Component<Props, TabItemState> {
             <Button
               type='primary'
               ghost
+              onClick={this.handleExport}
             >
               导出商品
             </Button>
@@ -279,16 +278,54 @@ class TabItem extends React.Component<Props, TabItemState> {
                 this.props.alert({
                   title: '导入商品',
                   content: (
-                    <>
-                      <div>
-                        <span>上传表格：</span>
-                        <Upload {...props}>
-                          <span className='href'>+添加表格</span>
-                        </Upload>
-                      </div>
-                      <div>请按下载的表格模板导入，否则可能导入不成功。</div>
-                    </>
-                  )
+                    <Form
+                      getInstance={(ref) => {
+                        this.formRef = ref
+                      }}
+                    >
+                      <FormItem
+                        labelCol={{ span: 6 }}
+                        wrapperCol={{ span: 18 }}
+                        required
+                        label='上传表格'
+                        inner={(form) => {
+                          return (
+                            <>
+                              {form.getFieldDecorator('file', {
+                                rules: [{
+                                  required: true,
+                                  message: '请上传表格'
+                                }]
+                              })(
+                                <Upload
+                                  listType='text'
+                                  listNum={1}
+                                  accept='doc,xls'
+                                  size={10}
+                                  extname='xls,xlsx'
+                                  fileTypeErrorText='请上传正确xls格式文件'
+                                >
+                                  <span className='href'>+添加表格</span>
+                                </Upload>
+                              )}
+                              <div>请按下载的表格模板导入，否则可能导入不成功。</div>
+                            </>
+                          )
+                        }}
+                      />
+                    </Form>
+                  ),
+                  onOk: () => {
+                    this.formRef.props.form.validateFields(async (err, vals) => {
+                      if (!err) {
+                        const res = await importAuditSku({
+                          file: vals.file[0].file,
+                          promotionId: this.props.promotionId
+                        })
+                        console.log('resresres', res)
+                      }
+                    })
+                  }
                 })
               }}
             >
