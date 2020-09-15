@@ -115,6 +115,7 @@ class Main extends React.Component<{}, State> {
                   </div>
                   <AlertTabItem
                     promotionId={this.promotionId}
+                    refresh={this.fetchData}
                     auditStatus={activeKey}
                   />
                 </TabPane>
@@ -131,7 +132,8 @@ class Main extends React.Component<{}, State> {
 type AuditStatus = 0 | 1 | 2
 interface Props extends AlertComponentProps {
   promotionId: string,
-  auditStatus: string
+  auditStatus: string,
+  refresh: () => void
 }
 interface TabItemState {
   fileList: any[]
@@ -158,6 +160,7 @@ class TabItem extends React.Component<Props, TabItemState> {
         if (res) {
           APP.success(`${msg}成功`)
           this.listRef.refresh()
+          this.props.refresh()
 
         }
       }
@@ -315,14 +318,18 @@ class TabItem extends React.Component<Props, TabItemState> {
                       />
                     </Form>
                   ),
-                  onOk: () => {
+                  onOk: (hide) => {
                     this.formRef.props.form.validateFields(async (err, vals) => {
                       if (!err) {
                         const res = await importAuditSku({
                           file: vals.file[0].file,
                           promotionId: this.props.promotionId
                         })
-                        console.log('resresres', res)
+                        if (res) {
+                          APP.success('导入商品成功')
+                          hide()
+                          this.listRef.refresh()
+                        }
                       }
                     })
                   }
