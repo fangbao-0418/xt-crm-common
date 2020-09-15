@@ -92,7 +92,7 @@ export function lowerGoods(data) {
 /** 商品导出 */
 export function exportGoods(data) {
   const query = param(data)
-  return APP.fn.exportFile('/mcweb/product/shop/pop/export?' + query, 'pop商品数据.xlsx');
+  return APP.fn.exportFile('/mcweb/product/shop/pop/export?' + query, 'pop商品数据.xls');
 }
 
 /** 导入商品建议供应价 */
