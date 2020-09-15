@@ -38,16 +38,26 @@ export function getTeam(params) {
 
 // 收益
 export function getIncome(param) {
+  const url = param.tab === '2' ? '/mcweb/account/pop/settlement/list' : '/crm/member/settlement/v1/query'
   return post(
-    `/crm/member/settlement/v1/query`,
+    url,
     {},
-    { data: param, headers: {} }
+    { data: {
+      ...param,
+      tab: undefined
+    }, headers: {} }
   );
 }
 
 //提现记录
-export function getLog(params) {
-  return Fetch.post("/member/withdrawalList", params);
+export function getLog(param) {
+  // const url = param.tab === '2' ? '/mcweb/account/pop/withdrawalList' : '/crm/member/settlement/v1/query'
+  const url = '/mcweb/account/pop/withdrawalList'
+  return Fetch.post(url, {
+    ...param,
+    bizType: param.tab,
+    tab: undefined
+  });
 }
 
 //编辑用户信息
