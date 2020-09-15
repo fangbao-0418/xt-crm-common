@@ -189,7 +189,7 @@ export enum promotionStatusEnum {
 }
 
 export enum statusEnum {
-  拒绝 = 0,
-  通过 = 1,
-  待审核 = 2
+  待审核 = 0,
+  审核通过 = 1,
+  审核拒绝 = 2,
 }

@@ -6,9 +6,11 @@ import { FormInstance } from '@/packages/common/components/form'
 import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/es/table'
 import { statusEnum } from './config'
-import { getPromotionDetail, getPromotionProduct } from './api'
+import { getPromotionDetail, getPromotionProduct, auditSku } from './api'
 import { parseQuery } from '@/util/utils'
 import Image from '@/components/Image'
+import Modal from 'antd/es/modal'
+import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 const { TabPane } = Tabs
 
 const tabConfig = [{
@@ -107,7 +109,7 @@ class Main extends React.Component<{}, State> {
                   </div>
                   <AlertTabItem
                     promotionId={this.promotionId}
-                    status={activeKey}
+                    auditStatus={activeKey}
                   />
                 </TabPane>
               )
@@ -119,23 +121,45 @@ class Main extends React.Component<{}, State> {
   }
 }
 
+/** 0-待审核，1-审核通过，2-审核拒绝 */
+type AuditStatus = 0 | 1 | 2
 interface Props extends AlertComponentProps {
   promotionId: string,
-  status: string
+  auditStatus: string
 }
 interface TabItemState {
   fileList: any[]
   uploading: boolean
 }
 class TabItem extends React.Component<Props, TabItemState> {
+  public listRef: ListPageInstanceProps
   public state = {
     fileList: [],
     uploading: false
   }
+  // 审核通过或者拒绝
+  public handleAudit = (auditStatus: AuditStatus, record: any) => {
+    const msg = auditStatus === 1 ? '通过' : '拒绝'
+    Modal.confirm({
+      title: '提示',
+      content: `是否确认${msg}`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: async () => {
+        const res = await auditSku({
+          auditStatus,
+          promotionId: this.props.promotionId,
+          skuId: record.skuId
+        })
+        if (res) {
+          APP.success(`${msg}成功`)
+          this.listRef.refresh()
+
+        }
+      }
+    })
+  }
   public columns: ColumnProps<any>[] = [{
-    title: '序号',
-    dataIndex: 'id'
-  }, {
     title: '商品id',
     dataIndex: 'productId'
   }, {
@@ -143,47 +167,58 @@ class TabItem extends React.Component<Props, TabItemState> {
     dataIndex: 'productName'
   }, {
     title: '商品主图',
-    dataIndex: 'coverImage'
+    dataIndex: 'coverUrl',
+    render: (text) => {
+      return (
+        <Image src={text} />
+      )
+    }
   }, {
     title: '规格信息',
-    dataIndex: 'skuInfo',
-    render(data) {
+    dataIndex: 'skuList',
+    render: (data) => {
       return (
         <Table
           columns={[{
             title: 'SKU名称',
-            dataIndex: 'skuName'
+            dataIndex: 'property'
           }, {
             title: '活动价',
-            dataIndex: 'price'
-          }, {
-            title: '活动供货价',
             dataIndex: 'salePrice'
           }, {
+            title: '活动供货价',
+            dataIndex: 'promotionCostPrice'
+          }, {
             title: '活动库存',
-            dataIndex: 'activityStock'
+            dataIndex: 'inventory'
           }, {
             title: '剩余库存',
-            dataIndex: 'remaindStock'
+            dataIndex: 'remainInventory'
           }, {
             title: '状态',
-            dataIndex: 'status',
+            dataIndex: 'auditStatus',
             render: (text) => {
               return statusEnum['待审核'] === text ? <span style={{ color: 'red' }}>{statusEnum[text]}</span> : statusEnum[text]
             }
           }, {
             title: '操作',
             render: (record) => {
-              switch(record.status) {
-                case statusEnum['拒绝']:
+              switch(record.auditStatus) {
+                case statusEnum['审核拒绝']:
                   return '-'
-                case statusEnum['通过']:
+                case statusEnum['审核通过']:
                   return (<span className='href'>拒绝</span>)
                 case statusEnum['待审核']:
                   return (
                     <>
-                      <span className='href'>通过</span>
-                      <span className='href'>拒绝</span>
+                      <span
+                        className='href'
+                        onClick={this.handleAudit.bind(null, 1, record)}
+                      >通过</span>
+                      <span
+                        className='href ml10'
+                        onClick={this.handleAudit.bind(null, 2, record)}
+                      >拒绝</span>
                     </>
                   )
               }
@@ -217,6 +252,9 @@ class TabItem extends React.Component<Props, TabItemState> {
     };
     return (
       <ListPage
+        getInstance={(ref) => {
+          this.listRef = ref
+        }}
         formConfig={getDefaultConfig()}
         namespace='detailFormConfig'
         formItemLayout={(
@@ -260,9 +298,9 @@ class TabItem extends React.Component<Props, TabItemState> {
         )}
         columns={this.columns}
         processPayload={(payload) => {
-          const { status, promotionId } = this.props
+          const { auditStatus, promotionId } = this.props
           return {
-            status,
+            auditStatus,
             promotionId,
             ...payload
           }

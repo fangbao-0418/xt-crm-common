@@ -55,6 +55,15 @@ export function getPromotionDetail (promotionId: string) {
   return get(`/mcweb/product/promotion/venue/detail?promotionId=${promotionId}`).then(adapter.responseDetail)
 }
 
+/** 会场活动商品sku审核 */
+export function auditSku (payload: {
+  promotionId: string,
+  skuId: number,
+  auditStatus: 0 | 1 | 2
+}) {
+  return newPost('/mcweb/product/promotion/venue/auditSku', payload)
+}
+
 /**
  * 会场活动商品列表
  * 审核状态（-1-所有，0-待审核，1-审核通过，2-审核拒绝）
