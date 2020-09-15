@@ -26,13 +26,7 @@ class Main extends React.Component<Props, State> {
     dataIndex: 'shopStatusLabel'
   }, {
     title: '店铺主营类目',
-    dataIndex: 'mainCategory',
-    render: (text) => {
-      if (Array.isArray(text) && text.length > 0) {
-        return text[0].mainCategoryName
-      }
-      return '-'
-    }
+    dataIndex: 'mainProductCategoryName'
   }]
   public render () {
     const { selectedRowKeys } = this.state

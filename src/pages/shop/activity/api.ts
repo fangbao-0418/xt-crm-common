@@ -52,7 +52,7 @@ export function updatePromotion (payload: PromotionPayload) {
 
 /** 会场活动详情 */
 export function getPromotionDetail (promotionId: string) {
-  return get(`/mcweb/product/promotion/venue/detail?promotionId=${promotionId}`)
+  return get(`/mcweb/product/promotion/venue/detail?promotionId=${promotionId}`).then(adapter.responseDetail)
 }
 
 /**
@@ -60,10 +60,10 @@ export function getPromotionDetail (promotionId: string) {
  * 审核状态（-1-所有，0-待审核，1-审核通过，2-审核拒绝）
  */
 export function getPromotionProduct (payload: {
-  promotionId: number,
-  status: -1 | 0 | 1 | 2,
-  productId: number,
-  productName: string,
+  promotionId: string,
+  status: string,
+  productId?: number,
+  productName?: string,
   page: number,
   pageSize: number
 }) {

@@ -4,26 +4,25 @@ import { Form, FormItem, ListPage, Alert } from '@/packages/common/components'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { FormInstance } from '@/packages/common/components/form'
 import { getDefaultConfig } from './config'
-import UploadView from '@/components/upload'
 import { ColumnProps } from 'antd/es/table'
 import { statusEnum } from './config'
 import { getPromotionDetail, getPromotionProduct } from './api'
 import { parseQuery } from '@/util/utils'
-
+import Image from '@/components/Image'
 const { TabPane } = Tabs
 
 const tabConfig = [{
   label: '所有商品',
-  value: ''
+  value: '-1'
 }, {
   label: '待审核',
-  value: '1'
+  value: '0'
 }, {
   label: '审核通过',
-  value: '2'
+  value: '1'
 }, {
   label: '审核拒绝',
-  value: '3'
+  value: '2'
 }]
 interface State {
   activeKey: string
@@ -32,26 +31,34 @@ interface State {
   passSkuCount: number
   rejectSkuCount: number
   totalStock: number
+  iconUrl: string
+  bgUrl: string
 }
 class Main extends React.Component<{}, State> {
   public formRef: FormInstance
   public state = {
-    activeKey: '',
+    activeKey: '-1',
     productCount: 0,
     skuCount: 0,
     passSkuCount: 0,
     rejectSkuCount: 0,
-    totalStock: 0
+    totalStock: 0,
+    iconUrl: '',
+    bgUrl: ''
   }
+  public promotionId = (parseQuery() as any).promotionId
   public componentDidMount() {
     this.fetchData()
   }
   /** 会场活动详情 */
   public fetchData = async () => {
-    const query: any = parseQuery()
-    if (query.promotionId) {
-      const res = await getPromotionDetail(query.promotionId)
+    if (this.promotionId) {
+      const res = await getPromotionDetail(this.promotionId)
       this.formRef.setValues(res)
+      this.setState({
+        iconUrl: res.iconUrl,
+        bgUrl: res.bgUrl
+      })
     }
   }
   public onTabChange = (key: string) => {
@@ -70,32 +77,12 @@ class Main extends React.Component<{}, State> {
           config={getDefaultConfig()}
         >
           <FormItem name='title' type='text' />
-          <FormItem
-            label='会场图标'
-            inner={(form) => {
-              return form.getFieldDecorator('iconUrl')(
-                <UploadView
-                  ossType='cos'
-                  listType='picture-card'
-                  listNum={1}
-                  size={0.3}
-                />
-              )
-            }}
-          />
-          <FormItem
-            label='会场背景图'
-            inner={(form) => {
-              return form.getFieldDecorator('bgurl')(
-                <UploadView
-                  ossType='cos'
-                  listType='picture-card'
-                  listNum={1}
-                  size={0.3}
-                />
-              )
-            }}
-          />
+          <FormItem label='会场图标'>
+            <Image src={this.state.iconUrl} />
+          </FormItem>
+          <FormItem label='会场背景图'>
+            <Image src={this.state.bgUrl} />
+          </FormItem>
           <FormItem name='tags' />
           <FormItem name='venueDescription' />
           <Tabs
@@ -118,7 +105,10 @@ class Main extends React.Component<{}, State> {
                     <span style={{ color: 'red' }}>{totalStock}</span>
                     个）
                   </div>
-                  <AlertTabItem />
+                  <AlertTabItem
+                    promotionId={this.promotionId}
+                    status={activeKey}
+                  />
                 </TabPane>
               )
             })}
@@ -129,20 +119,18 @@ class Main extends React.Component<{}, State> {
   }
 }
 
+interface Props extends AlertComponentProps {
+  promotionId: string,
+  status: string
+}
 interface TabItemState {
   fileList: any[]
   uploading: boolean
 }
-class TabItem extends React.Component<AlertComponentProps, TabItemState> {
+class TabItem extends React.Component<Props, TabItemState> {
   public state = {
     fileList: [],
     uploading: false
-  }
-  public componentDidMount() {
-    this.fetchData()
-  }
-  public fetchData = () => {
-
   }
   public columns: ColumnProps<any>[] = [{
     title: '序号',
@@ -271,27 +259,15 @@ class TabItem extends React.Component<AlertComponentProps, TabItemState> {
           </>
         )}
         columns={this.columns}
-        api={async () => {
+        processPayload={(payload) => {
+          const { status, promotionId } = this.props
           return {
-            page: 1,
-            pages: 10,
-            records: [{
-              id: 1,
-              productId: 68452,
-              productName: '美颜秘笈口红',
-              coverImage: '',
-              skuInfo: [{
-                name: '1212',
-                price: '212',
-                salePrice: '122',
-                stock: '221',
-                status: 1,
-                activityStock: '1',
-                remaindStock: '1'
-              }]
-            }]
+            status,
+            promotionId,
+            ...payload
           }
         }}
+        api={getPromotionProduct}
       />
     )
   }
