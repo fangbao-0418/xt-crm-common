@@ -213,7 +213,7 @@ class Main extends React.Component<Props, State> {
                             <FormItem
                               inner={(form) => {
                                 return form.getFieldDecorator(
-                                  "relationList",
+                                  "relationGoods",
                                   {
                                     rules: [
                                       {
@@ -234,7 +234,7 @@ class Main extends React.Component<Props, State> {
                             <FormItem
                               inner={(form) => {
                                 return form.getFieldDecorator(
-                                  "relationList",
+                                  "relationShop",
                                   {
                                     rules: [
                                       {

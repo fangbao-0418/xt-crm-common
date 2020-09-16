@@ -32,15 +32,26 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: "在架商品",
-      dataIndex: "product",
+      dataIndex: "onlineProductCount",
     },
     {
       title: "操作",
-      render: (records) => {
-        return <span className="href">删除</span>;
+      render: (text, record, index) => {
+        return (
+          <span
+            className="href"
+            onClick={() => {
+              const { dataSource } = this.state
+              dataSource.splice(index, 1)
+              this.setState({ dataSource })
+            }}
+          >
+            删除
+          </span>
+        )
       },
     },
-  ];
+  ]
   public render() {
     const { readonly } = this.props
     const { dataSource, selectedRowKeys } = this.state
@@ -50,6 +61,7 @@ class Main extends React.Component<Props, State> {
           ref='shopmodal'
           selectedRowKeys={selectedRowKeys}
           onOk={(keys, rows) => {
+            console.log('keys, rows', keys, rows)
             const result = rows.map((item) => {
               return {
                 ...item

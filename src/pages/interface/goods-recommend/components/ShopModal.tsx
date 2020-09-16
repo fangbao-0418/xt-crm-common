@@ -81,7 +81,7 @@ class Main extends React.Component<Props, State> {
     this.debounceFetch()
   }
   public onrowSelectionChange = (selectedRowKeys: any[], selectedRows: any[]) => {
-    this.selectedRows = _.unionBy(this.selectedRows, selectedRows, x => x.id).filter(x => selectedRowKeys.includes(x.id))
+    this.selectedRows = _.unionBy(this.selectedRows, selectedRows, x => x.shopId).filter(x => selectedRowKeys.includes(x.shopId))
     this.setState({
       selectedRowKeys
     })
@@ -107,6 +107,7 @@ class Main extends React.Component<Props, State> {
             onChange={this.onSearch}
           />
           <Table
+            rowKey='shopId'
             rowSelection={rowSelection}
             columns={this.columns}
             dataSource={records}
