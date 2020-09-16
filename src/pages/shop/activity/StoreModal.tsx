@@ -33,7 +33,7 @@ class Main extends React.Component<Props, State> {
     return (
       <ListPage
         processPayload={(payload) => {
-          payload.bizType = 4
+          payload.bizType = 2
           payload.shopStatusList = [2]
           return payload
         }}
