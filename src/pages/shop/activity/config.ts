@@ -87,6 +87,9 @@ export function getDefaultConfig () {
         }, {
           label: '已关闭',
           value: 7
+        }, {
+          label: '未开始',
+          value: 8
         }]
       },
       activityTime: {

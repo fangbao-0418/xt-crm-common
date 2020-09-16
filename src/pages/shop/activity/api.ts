@@ -114,7 +114,7 @@ export function publishPromotion (venueId: number) {
 
 /** 会场活动关闭 */
 export function closePromotion (promotionId: number) {
-  return newPost('/mcweb/product/promotion/venue/close', { promotionId })
+  return newPost(`/mcweb/product/promotion/venue/close?promotionId=${promotionId}`)
 }
 
 /**
