@@ -152,6 +152,8 @@ export default class extends Component {
               this.setState({
                 searchKey: '',
                 type: 0
+              }, () => {
+                this.handleSearch()
               })
             }}>重 置
           </Button>
