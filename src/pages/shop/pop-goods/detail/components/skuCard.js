@@ -36,7 +36,8 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   const query = parseQuery()
   const readonly = !!query.readonly
   const { specVals, specKeys } = data;
-
+  const { auditStatus } = goodsInfo
+  // console.log(goodsInfo, 'goodsInfogoodsInfogoodsInfogoodsInfo')
   // 动态表头
   const dynaColums = specKeys.map(sitem => ({
     title: sitem.name,
@@ -119,10 +120,12 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   }, {
     title: '建议供货价',
     dataIndex: 'adviseCostPrice',
+    hidden: (auditStatus !== 2),
     render: (value) => (value ? formatMoneyWithSign(value) : '-')
   }, {
     title: '建议销售价',
     dataIndex: 'adviseSalePrice',
+    hidden: (auditStatus !== 2),
     render: (value) => (value ? formatMoneyWithSign(value) : '-')
   }, {
     title: '总库存',
@@ -131,6 +134,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     title: '可用库存',
     dataIndex: 'usableStock'
   }].filter((item) => !item.hidden)
+
   const startColumns = fixedColumns.slice(0, 2);
   const endColumns = fixedColumns.slice(2);
   const columns = [...startColumns, ...dynaColums, ...endColumns].concat(confirmStatus !== 0 ? [{

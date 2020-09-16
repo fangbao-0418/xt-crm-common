@@ -404,7 +404,7 @@ class Main extends React.Component {
                   showTime: true
                 }}
               />
-              <FormItem name='phone' />
+              {/* <FormItem name='phone' /> */}
               <FormItem
                 label='店铺名称'
                 inner={(form) => {
@@ -476,18 +476,18 @@ class Main extends React.Component {
               >
                 清除
               </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  const payload = this.listRef.getPayload()
-                  exportGoods(payload)
-                }}
-              >
-                商品导出
-              </Button>
               {['1', '4', '5'].includes(tabStatus) && (
                 <>
+                  <Button
+                    type='primary'
+                    className='mr8'
+                    onClick={() => {
+                      const payload = this.listRef.getPayload()
+                      exportGoods(payload)
+                    }}
+                  >
+                    商品导出
+                  </Button>
                   <Button
                     type='primary'
                     className='mr8'

@@ -33,28 +33,31 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       title: '商品主图',
       dataIndex: 'coverUrl',
       width: 120,
-      render: (val, record) => (
-        <>
-          <Image
-            style={{
-              height: 100,
-              width: 100,
-              minWidth: 100
-            }}
-            src={replaceHttpUrl(val)}
-            onClick={() => onPreview(record)}
-            alt='主图'
-          />
-          {
-            record.imageViolationReasons && (
-              <div style={{ color: 'red', textAlign: 'center' }}>
-                <Icon style={{ color: 'red' }} type='info-circle' />{' '}
-                {record.imageViolationReasons}
-              </div>
-            )
-          }
-        </>
-      )
+      render: (val, record) => {
+        const color = record.imageViolationReasons === '检测正常' ? 'green' : 'red'
+        return (
+          <>
+            <Image
+              style={{
+                height: 100,
+                width: 100,
+                minWidth: 100
+              }}
+              src={replaceHttpUrl(val)}
+              onClick={() => onPreview(record)}
+              alt='主图'
+            />
+            {
+              record.imageViolationReasons && (
+                <div style={{ color, textAlign: 'center' }}>
+                  <Icon style={{ color }} type='info-circle' />{' '}
+                  {record.imageViolationReasons}
+                </div>
+              )
+            }
+          </>
+        )
+      }
     },
     {
       title: '商品名称',
