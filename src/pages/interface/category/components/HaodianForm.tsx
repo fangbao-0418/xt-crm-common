@@ -7,8 +7,7 @@ import { saveFrontCategory, updateFrontCategory } from '../api'
 import { FormInstance } from "@/packages/common/components/form";
 
 interface Props {
-  // refresh(id: any): void
-  // delete(id: any): void
+  detail: any
 }
 interface State {
   checkCate: boolean;
@@ -26,6 +25,47 @@ class Main extends React.Component<Props, State> {
     cateText: [],
   }
   public formRef: FormInstance
+  public componentWillReceiveProps(nextProps: any) {
+    const detail = nextProps.detail
+    if (detail && this.props.detail !== detail) {
+      if (detail.id === -1) {
+        // 新增
+      } else {
+        // 编辑
+        this.init(detail)
+      }
+    }
+  }
+  public init (res: any) {
+    const productCategoryVOS: any[] = res.productCategoryVOS || []
+    let actText: any[] = []
+    let cateText: any[] = []
+    productCategoryVOS.forEach((item) => {
+      if (item.type === 1) {
+        actText.push({
+          title: item.name,
+          promotionId: item.id
+        })
+      }
+      else if (item.type === 2) {
+        cateText.push({
+          categoryId: item.id,
+          categoryName: item.name
+        })
+      }
+    })
+    this.setState({
+      actText,
+      cateText,
+      checkAct: !!actText.length,
+      checkCate: !!cateText.length
+    })
+    this.formRef.setValues({
+      name: res.name,
+      sort: res.sort,
+      status: res.status
+    })
+  }
   public handleAdd = () => {
     this.modalRef?.open()
   }
@@ -76,9 +116,11 @@ class Main extends React.Component<Props, State> {
   }
   public render() {
     const selectedRowKeys = this.state.actText.map((item: any) => item.promotionId)
+    const checkedValue = this.state.cateText.map((item: any) => item.categoryId)
     return (
       <>
         <CategoryModal
+          checkedValue={checkedValue}
           ref={(ref) => this.modalRef = ref }
           onOk={(res) => {
             this.setState({ cateText: res })

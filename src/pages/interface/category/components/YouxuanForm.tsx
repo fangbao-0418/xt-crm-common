@@ -474,10 +474,6 @@ class Main extends React.Component<Props, State> {
   }
   /** 选择类目回调确认 */
   setCateText() {
-    // visible1Type: type,
-    // visible1: true,
-    // secondaryIndex: index,
-    // selectedSecondary 所选类目
     const {
       visible1Type,
       secondaryIndex,
@@ -485,8 +481,6 @@ class Main extends React.Component<Props, State> {
       secondCategoryVOS,
     } = this.state;
     if (visible1Type === "category") {
-      // const productCategoryVOS = secondCategoryVOS[secondaryIndex]?.productCategoryVOS || []
-      // productCategoryVOS.filter((item) => item.type)
       secondCategoryVOS[secondaryIndex as number].categoryVOS = this.cateText;
       console.log(this.cateText, "secondCategoryVOS");
       this.setState({

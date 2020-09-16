@@ -81,7 +81,7 @@ class InterFaceCategory extends Component<any, State> {
           {channel === "1" && (
             <YouxuanForm detail={detail} getCategorys={this.getCategorys} />
           )}
-          {channel === "2" && <HaodianForm />}
+          {channel === "2" && <HaodianForm detail={detail} />}
         </Card>
       </div>
     );

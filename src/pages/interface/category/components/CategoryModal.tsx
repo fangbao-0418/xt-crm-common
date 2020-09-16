@@ -8,6 +8,7 @@ export interface CategoryModalProps {
 
 interface Props {
   onOk(dataSource: any[]): void
+  checkedValue: any[]
 }
 interface State {
   visible: boolean
@@ -19,6 +20,12 @@ class Main extends React.Component<Props, State> {
     visible: false,
     dataSource: [],
     checkedValue: []
+  }
+  public componentWillReceiveProps (nextProps: any) {
+    const checkedValue = nextProps.checkedValue
+    if (checkedValue && this.props.checkedValue !== checkedValue) {
+      this.setState({ checkedValue })
+    }
   }
   public componentDidMount () {
     this.fetchData()
