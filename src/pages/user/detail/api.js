@@ -6,6 +6,7 @@ var qs = require("qs");
 export function getCouponList(memberId, data) {
   return Fetch.post(`/member/get/getCouponList/${memberId}`, data);
 }
+
 export async function getUserInfo(params) {
   const bizSource = params.bizSource
   delete params.bizSource
@@ -15,8 +16,13 @@ export async function getUserInfo(params) {
   return userInfoResponse(res);
 }
 
+/** 修改邀请人 */
 export function updateInviteUser(params) {
-  return Fetch.post("/member/invited/update", params);
+  const url = params?.tab === 2 ? '/mcweb/memberm/pop/invited/update' : '/member/invited/update'
+  return Fetch.post(url, {
+    ...params,
+    bizSource: undefined
+  });
 }
 
 export function checkInvited(params) {
@@ -62,6 +68,7 @@ export function getLog(param) {
 
 //编辑用户信息
 export function updateUserInfo(params) {
+  // params?.bizSource === 2 ? '/mcweb/memberm/invited/update'
   return Fetch.post("/member/update", params);
 }
 
@@ -83,7 +90,11 @@ export function getProceedsListByOrderIdAndMemberIdAndSkuId(param) {
 
 //操作会员身份
 export function memberModify(params) {
-  return newPost("/manager/member/modify", params);
+  const url = params.tab === 2 ? '/mcweb/memberm/pop/member/modify' : '/manager/member/modify'
+  return newPost(url, {
+    ...params,
+    tab: undefined
+  });
 }
 
 //获取通用操作原因列表
@@ -93,7 +104,8 @@ export function getReasonList() {
 
 // 解绑临时锁粉
 export function setMemberUnlocking(params) {
-  return Fetch.post("/member/unlocking", params);
+  const url = params?.tab === 2 ? '/mcweb/memberm/pop/unlocking' : '/member/unlocking'
+  return Fetch.post(url, { ...params, tab: undefined });
 }
 
 // 添加黑名单操作
@@ -106,9 +118,21 @@ export function delBlack(params) {
 }
 // 微信解除绑定操作
 export function relieveWechat(params) {
-  return get("/manager/wechat/relieve", params);
+  return get("/manager/wechat/relieve", {
+    ...params
+  });
 }
 // 修改手机操作
 export function exchangePhone(params) {
   return get("/manager/phone/exchange", params);
+}
+
+export async function getGoodStoreUserInfo(params) {
+  const url = `/mcweb/memberm/pop/detail?${qs.stringify({
+    ...params,
+    bizSource: undefined
+  })}`
+  const res =
+    (await Fetch.request(url)) || {};
+  return userInfoResponse(res);
 }

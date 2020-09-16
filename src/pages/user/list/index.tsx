@@ -4,10 +4,10 @@ import TabItem from './TabItem'
 
 const tabConfig =  [{
   label: '喜团优选',
-  value: '0'
+  value: '1'
 }, {
   label: '喜团好店',
-  value: '20'
+  value: '2'
 }]
 
 interface State {
@@ -20,7 +20,7 @@ class Main extends React.Component<{}, State> {
     this.ref = React.createRef();
   }
   public state = {
-    bizSource: '0'
+    bizSource: '1'
   }
   public tabInstance: any
   public render () {
@@ -31,8 +31,6 @@ class Main extends React.Component<{}, State> {
         activeKey={bizSource}
         onChange={(key) => {
           this.setState({ bizSource: key }, () => {
-            // this.tabInstance.handleSearch()
-            console.log('this.tabInstance', this.tabInstance)
             this.tabInstance.handleSearch()
           })
         }}

@@ -6,12 +6,11 @@ import styles from './index.module.scss';
 import UserModal from './modal';
 import ModalInvit from './modalInvit';
 import ModalPhone from './modalphone';
-import { levelName } from '../../../utils';
 import { memberModify, getReasonList, setMemberUnlocking, relieveWechat, addBlack, delBlack } from '../../api'
 import { updateDepositAmount, updateCreditAmount, enablePermission, enableShopPermission } from './api'
-import Earnings from './components/Earnings'
-import Profile from './Profile'
-import UserInfo from './UserInfo'
+import { withModal } from './Profile'
+import Normal from './Normal'
+import GoodStore from './GoodStore'
 
 const FormItem = Form.Item
 const { Option } = Select;
@@ -21,10 +20,6 @@ const timeFormat = 'YYYY-MM-DD HH:mm:ss';
 let unlisten = '';
 function formatTime(text) {
   return text ? moment(text).format(timeFormat) : '';
-}
-
-function withModal(WrappedComponent) {
-  return Form.create({ name: 'userinfo-modal' })(Profile)
 }
 
 const columns = [
@@ -56,10 +51,8 @@ const columns = [
 ];
 let reasonList = [];
 
-
 @connect(state => ({
   data: state['user.userinfo'].userinfo,
-  loading: state.loading.effects['user.userinfo'].getUserInfo
 }))
 @Form.create({ name: 'userinfo' })
 class Main extends Component {
@@ -79,10 +72,9 @@ class Main extends Component {
   }
 
   componentDidMount() {
-    // this.props.wrappedCompRef.current = this
+    this.props.wrappedCompRef.current = this
     this.handleSearch();
     getReasonList().then(res => {
-      console.log('getReasonList', res)
       reasonList = res
     })
     unlisten = this.props.history.listen(() => {
@@ -167,7 +159,16 @@ class Main extends Component {
     const obj = parseQuery(history);
     dispatch['user.userinfo'].getUserInfo({
       memberId: params.memberId || obj.memberId,
-      bizSource: this.props.bizSource,
+      // bizSource: this.props.bizSource,
+      cb: (res) => {
+        this.setState({
+          enableGroupBuyPermission: res.enableGroupBuyPermission,
+          enableStorePurchase: res.enableStorePurchase
+        })
+      }
+    })
+    dispatch['user.userinfo'].getGoodStoreUserInfo({
+      memberId: params.memberId || obj.memberId,
       cb: (res) => {
         this.setState({
           enableGroupBuyPermission: res.enableGroupBuyPermission,
@@ -244,59 +245,19 @@ class Main extends Component {
     })
   }
   componentWillUnmount() {
-    unlisten();
+    unlisten()
   }
   render() {
     const { enableGroupBuyPermission, enableStorePurchase } = this.state
     const { data, loading } = this.props;
-    console.log(this.props, 'render')
     const { form: { getFieldDecorator }, title, style } = this.props;
     return (
       <div style={style}>
         <div style={{fontWeight: 600, fontSize: 22}}>{title}</div>
         <h3>优选业务</h3>
-        <Card
-          title="用户信息"
-          style={{ marginBottom: 20 }}
-          headStyle={{
-            fontWeight: 900
-          }}
-          extra={<div><span className='href' onClick={() => this.handleBlack(data.enableBlack)}>{data.enableBlack ? '解除拉黑' : '拉黑'}</span>&nbsp;&nbsp;<span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>}
-          loading={loading}
-        >
-          <UserInfo />
-        </Card>
-        <Card
-          title="用户收益"
-          headStyle={{
-            fontWeight: 900
-          }}
-          loading={loading}
-        >
-          <Earnings data={data} />
-        </Card>
+        <Normal />
         <h3>店长业务</h3>
-        <Card
-          title="用户信息"
-          style={{ marginBottom: 20 }}
-          headStyle={{
-            fontWeight: 900
-          }}
-          extra={<div><span className='href' onClick={() => this.handleBlack(data.enableBlack)}>{data.enableBlack ? '解除拉黑' : '拉黑'}</span>&nbsp;&nbsp;<span className='href' onClick={this.showModalInvit}>修改邀请人</span>&nbsp;&nbsp;<span className='href' onClick={this.showModal}>用户信息编辑</span></div>}
-          loading={loading}
-        >
-          <UserInfo />
-        </Card>
-        <Card
-          title="用户收益"
-          headStyle={{
-            fontWeight: 900
-          }}
-          loading={loading}
-        >
-          <Earnings data={data} />
-        </Card>
-
+        <GoodStore />
         <Card>
           <Descriptions column={1}>
             <Descriptions.Item label='保证金'>
@@ -407,57 +368,12 @@ class Main extends Component {
             dataSource={data.authenticationVOList}
           />
         </Card>
-        <UserModal bizSource={this.props.bizSource} />
-        <ModalInvit bizSource={this.props.bizSource} />
-        <ModalPhone bizSource={this.props.bizSource} />
-        <Modal
-          title={this.state.upOrDwon > 0 ? '提升用户等级' : '降低用户等级'}
-          visible={this.state.visible}
-          onOk={this.handleOk}
-          onCancel={() => {
-            this.setState({
-              visible: false
-            })
-          }}
-        >
-          <Form>
-            <FormItem label="主订单号">
-              {
-                getFieldDecorator('orderCode')
-                  (<Input placeholder="请输入主订单号编号" />)
-              }
-            </FormItem>
-            <FormItem label="原因类型" required={true}>
-              {getFieldDecorator('reasonType', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入内容!'
-                  }
-                ],
-              })(
-                <Select>
-                  {reasonList.map(item => <Option value={item.code} key={item.code}>{item.message}</Option>)}
-                </Select>
-              )
-              }
-            </FormItem>
-            <FormItem label="说明" required={true}>
-              {getFieldDecorator('reasonRemark', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请输入内容!'
-                  }
-                ],
-              })(<TextArea placeholder={'请输入说明内容'} />)}
-            </FormItem>
-          </Form>
-
-        </Modal>
+        <UserModal />
+        <ModalInvit />
+        <ModalPhone />
       </div>
     )
   }
 }
 
-export default Main
+export default withModal(Main)

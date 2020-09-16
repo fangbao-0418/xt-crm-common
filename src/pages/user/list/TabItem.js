@@ -194,7 +194,6 @@ export default class extends Component {
           payload.invitePhone = payload.invitePhone ? payload.invitePhone : undefined
           this.payload = payload
           APP.fn.setPayload(namespace, payload)
-          console.log('this.props.bizSource', this.props.bizSource )
           dispatch['user.userlist'].getData({ ...payload, bizSource: this.props.bizSource })
         }
       })
