@@ -149,19 +149,20 @@ class Main extends React.Component<Props, State> {
     this.confirmWithdraw(res);
   }
   /** 批量提现 */
-  public batchWithdrawal = () => {
-    Modal.confirm({
-      title: '系统提示',
-      content: '是否确认批量提现',
-      onOk: async () => {
+  public batchWithdrawal = async () => {
+    // Modal.confirm({
+    //   title: '系统提示',
+    //   content: '是否确认批量提现',
+    //   onOk: async () => {
         const vals = this.listPage.form.getValues()
         console.log('vals', vals)
         const res = await createAllWithdrawal(vals)
-        if (res) {
-          APP.success('批量提现成功')
-        }
-      }
-    })
+        // if (res) {
+          // APP.success('批量提现成功')
+          this.confirmWithdraw(res)
+        // }
+      // }
+    // })
   }
   public render () {
     return (
