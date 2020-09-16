@@ -9,5 +9,9 @@ export function requestPromotion(params: any) {
 
 // 查询表单详情
 export function responseDetail(res: any) {
+  res.dataSource = [{
+    shopId: res.shopId,
+    shopName: res.shopName
+  }]
   return res;
 }

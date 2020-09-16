@@ -118,6 +118,7 @@ class Main extends React.Component<Props, State> {
           {[
             promotionStatusEnum['报名中'],
             promotionStatusEnum['预热中'],
+            promotionStatusEnum['未开始'],
             promotionStatusEnum['进行中']
           ].includes(record.status) && (
             <span
@@ -204,7 +205,7 @@ class Main extends React.Component<Props, State> {
     const type = this.props.type || ''
     let filters = type.split(',').map(x => +x)
     if (filters.includes(0)) {
-      filters = filters.concat([1, 2, 3, 4, 5, 6, 7])
+      filters = filters.concat([1, 2, 3, 4, 5, 6, 7, 8])
     }
     const statusOption = statusArray.filter(option => filters.includes(option.value))
     return (

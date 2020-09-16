@@ -163,6 +163,9 @@ export const statusArray = [{
   label: '报名中',
   value: 3
 }, {
+  label: '未开始',
+  value: 8
+}, {
   label: '预热中',
   value: 4
 }, {
@@ -188,7 +191,8 @@ export enum promotionStatusEnum {
   预热中 = 4,
   进行中 = 5,
   已结束 = 6,
-  已关闭 = 7
+  已关闭 = 7,
+  未开始 = 8
 }
 
 export enum statusEnum {
