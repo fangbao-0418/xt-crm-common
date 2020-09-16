@@ -2,6 +2,9 @@ import React from "react";
 import { Form, FormItem } from "@/packages/common/components";
 import { Checkbox, Button, Radio, Icon } from "antd";
 import CategoryModal, { CategoryModalProps } from './CategoryModal';
+import ActicityModal, { ActicityModalProps } from './ActicityModal';
+import { saveFrontCategory, updateFrontCategory } from '../api'
+import { FormInstance } from "@/packages/common/components/form";
 
 interface State {
   checkCate: boolean;
@@ -11,16 +14,55 @@ interface State {
 }
 class Main extends React.Component<{}, State> {
   public modalRef: CategoryModalProps | null
+  public acticityModal: ActicityModalProps | null
   public state = {
     checkCate: false,
     checkAct: false,
     actText: [],
     cateText: [],
-  };
+  }
+  public formRef: FormInstance
   public handleAdd = () => {
     this.modalRef?.open()
   }
+  public handleAddActivity = () => {
+    this.acticityModal?.open()
+  }
+  /**
+   * 接口文档
+   * http://192.168.20.21/project/428/interface/api/61671
+   */
+  public handleSave = () => {
+    this.formRef.props.form.validateFields((errs, vals) => {
+      if (!errs) {
+        let actText: any[] = this.state.actText
+        let cateText: any[] = this.state.cateText
+        console.log('actText', actText)
+        console.log('cateText', cateText)
+        // 关联活动
+        actText = actText.map((v: any) => ({
+          name: v.title,
+          id: v.promotionId,
+          type: 1,
+          level: 1
+        }))
+        // 关联商品
+        cateText = cateText.map((v: any) => ({
+          id: v.categoryId,
+          name: v.categoryName,
+          type: 2,
+          level: 1
+        }))
+        const params = {
+          productCategoryVOS: [...actText, ...cateText],
+          ...vals
+        }
+        saveFrontCategory(params)
+      }
+    })
+  }
   public render() {
+    const selectedRowKeys = this.state.actText.map((item: any) => item.promotionId)
     return (
       <>
         <CategoryModal
@@ -29,9 +71,17 @@ class Main extends React.Component<{}, State> {
             this.setState({ cateText: res })
           }}
         />
-        <Form>
+        <ActicityModal
+          selectedRowKeys={selectedRowKeys}
+          ref={(ref) => this.acticityModal = ref}
+          onOk={(selectedRow: any[]) => {
+            this.setState({ actText: selectedRow })
+          }}
+        />
+        <Form getInstance={ref => this.formRef = ref}>
           <FormItem
             name="name"
+            verifiable
             label="前台类目名称"
             fieldDecoratorOptions={{
               rules: [
@@ -50,6 +100,7 @@ class Main extends React.Component<{}, State> {
             name="sort"
             label="排序"
             type="number"
+            verifiable
             controlProps={{
               style: {
                 width: "100%",
@@ -67,6 +118,7 @@ class Main extends React.Component<{}, State> {
           <FormItem
             name="relationShop"
             label="关联店铺"
+            verifiable
             fieldDecoratorOptions={{
               rules: [
                 {
@@ -93,7 +145,7 @@ class Main extends React.Component<{}, State> {
                       {this.state.cateText.map((val: any, i: number) => {
                         return (
                           <div className="intf-cat-reitem" key={i}>
-                            {val.name}
+                            {val.categoryName}
                             <span
                               className="close"
                               onClick={() => {
@@ -141,7 +193,7 @@ class Main extends React.Component<{}, State> {
                           </div>
                         );
                       })}
-                      <Button type="link">+添加活动</Button>
+                      <Button type="link" onClick={this.handleAddActivity}>+添加活动</Button>
                     </div>
                   ) : (
                     ""
@@ -151,8 +203,8 @@ class Main extends React.Component<{}, State> {
             }}
           />
           <FormItem
-            name="status"
             label="类目开关"
+            required
             fieldDecoratorOptions={{
               initialValue: 1,
               rules: [
@@ -163,7 +215,7 @@ class Main extends React.Component<{}, State> {
               ],
             }}
             inner={(form) => {
-              return (
+              return form.getFieldDecorator('status')(
                 <Radio.Group>
                   <Radio value={1} style={{ display: "block" }}>
                     展示
@@ -175,31 +227,12 @@ class Main extends React.Component<{}, State> {
               );
             }}
           />
-          {/* {getFieldDecorator("status", {
-            initialValue: 1,
-            rules: [
-              {
-                required: true,
-                message: "请选择类目开关",
-              },
-            ],
-          })(
-            <Radio.Group>
-              <Radio value={1} style={{ display: "block" }}>
-                展示
-              </Radio>
-              <Radio value={2} style={{ display: "block" }}>
-                不展示
-              </Radio>
-            </Radio.Group>
-          )}
-        </FormItem> */}
           <FormItem>
             <div style={{ textAlign: "right" }}>
               <Button type="danger" ghost style={{ marginRight: "10px" }}>
                 删除
               </Button>
-              <Button type="primary">保存</Button>
+              <Button type="primary" onClick={this.handleSave}>保存</Button>
             </div>
           </FormItem>
         </Form>

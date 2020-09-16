@@ -37,12 +37,14 @@ class Main extends React.Component<Props, State> {
   }
   public onOk = () => {
     const checkedValue = this.state.checkedValue as any[]
-    const dataSource = this.state.dataSource.map((item: any) => {
-      return checkedValue.includes(item.value)
+    const dataSource = this.state.dataSource.filter((item: any) => {
+      return checkedValue.includes(item.categoryId)
     })
     this.props.onOk(dataSource)
+    this.onCancel()
   }
   public onChange = (checkedValue: CheckboxValueType[]) => {
+    console.log('checkedValue', checkedValue)
     this.setState({ checkedValue })
   }
   public render () {
@@ -56,7 +58,9 @@ class Main extends React.Component<Props, State> {
       >
         <Checkbox.Group onChange={this.onChange} value={checkedValue}>
           {dataSource.map((item: any) => (
-            <Checkbox value={item.categoryId}>{item.categoryName}</Checkbox>
+            <div>
+              <Checkbox value={item.categoryId}>{item.categoryName}</Checkbox>
+            </div>
           ))}
         </Checkbox.Group>
       </Modal>

@@ -31,5 +31,5 @@ export function updateFrontCategory (data) {
 
 /** POP主营类目列表 */
 export function getPopList () {
-  return get('/mcweb/product/category_menu/pop/list')
+  return get('/mcweb/product/category/pop/list')
 } 
