@@ -501,11 +501,10 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label='订单渠道'>
-                  {getFieldDecorator('channel')(
+                  {getFieldDecorator('bizType')(
                     <Select placeholder='请选择订单渠道' allowClear>
-                      <Select.Option value=''>全部</Select.Option>
-                      <Select.Option value='1'>喜团优选</Select.Option>
-                      <Select.Option value='2'>喜团好店</Select.Option>
+                      <Select.Option value='0'>喜团优选</Select.Option>
+                      <Select.Option value='30'>喜团好店</Select.Option>
                     </Select>
                   )}
                 </FormItem>

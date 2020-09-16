@@ -126,10 +126,10 @@ export function closePromotion (promotionId: number) {
  * payload.pageSize 每页长度
  */
 export function getShopList (payload: {
-  bizType: number,
-  shopName: string,
-  shopId: string,
-  shopStatusList: number[],
+  bizType?: number,
+  shopName?: string,
+  shopId?: string,
+  shopStatusList?: number[],
   page: number,
   pageSize: number
 }) {

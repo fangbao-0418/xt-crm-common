@@ -296,17 +296,14 @@ export const formFields = function (
     },
     {
       type: 'select',
-      id: 'channel',
+      id: 'bizType',
       label: '订单渠道',
       options: [{
-        val: '全部',
-        key: ''
-      }, {
         val: '喜团优选',
-        key: '1'
+        key: '10'
       }, {
         val: '喜团好店',
-        key: '2'
+        key: '30'
       }]
     }
   ].filter((item: any) => {

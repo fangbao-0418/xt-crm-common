@@ -11,9 +11,6 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         type: 'select',
         label: '推荐渠道',
         options: [{
-          label: '全部',
-          value: 0
-        }, {
           label: '喜团优选',
           value: 1
         }, {

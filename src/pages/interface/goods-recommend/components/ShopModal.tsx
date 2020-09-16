@@ -2,6 +2,7 @@ import React from 'react'
 import { Modal, Input, Table } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import _ from 'lodash'
+import { getShopList } from '@/pages/shop/activity/api'
 
 interface SearchPayload {
   shopName?: string
@@ -14,11 +15,13 @@ interface Props {
 }
 interface State {
   visible: boolean
+  records: any[]
   selectedRowKeys: any[]
 }
 class Main extends React.Component<Props, State> {
   public state = {
     visible: false,
+    records: [],
     selectedRowKeys: this.props.selectedRowKeys || []
   }
   public selectedRows: any[] = []
@@ -34,10 +37,10 @@ class Main extends React.Component<Props, State> {
     dataIndex: 'shopName'
   }, {
     title: '在架商品',
-    dataIndex: 'product'
+    dataIndex: 'onlineProductCount'
   }, {
     title: '店铺类型',
-    dataIndex: 'shopType'
+    dataIndex: 'shopTypeLabel'
   }]
   public open = () => {
     this.setState({ visible: true })
@@ -58,8 +61,18 @@ class Main extends React.Component<Props, State> {
       selectedRowKeys: props.selectedRowKeys || []
     })
   }
-  public fetchData = () => {
-    
+  public componentDidMount () {
+    this.fetchData()
+  }
+  public fetchData = async () => {
+    const res = await getShopList({
+      bizType: 1,
+      ...this.payload
+    })
+    if (res) {
+      console.log('res', res)
+      this.setState({ records: res.records })
+    }
   }
   public debounceFetch = _.debounce(this.fetchData.bind(this), 500)
   public onSearch = (e: any) => {
@@ -67,14 +80,14 @@ class Main extends React.Component<Props, State> {
     this.payload.shopName = e.target.value
     this.debounceFetch()
   }
-  public onrowSelectionChange (selectedRowKeys: any[], selectedRows: any[]) {
+  public onrowSelectionChange = (selectedRowKeys: any[], selectedRows: any[]) => {
     this.selectedRows = _.unionBy(this.selectedRows, selectedRows, x => x.id).filter(x => selectedRowKeys.includes(x.id))
     this.setState({
       selectedRowKeys
     })
   }
   public render () {
-    const { selectedRowKeys, visible } = this.state
+    const { selectedRowKeys, visible, records } = this.state
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onrowSelectionChange
@@ -96,6 +109,7 @@ class Main extends React.Component<Props, State> {
           <Table
             rowSelection={rowSelection}
             columns={this.columns}
+            dataSource={records}
           />
         </div>
       </Modal>

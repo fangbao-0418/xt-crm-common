@@ -16,7 +16,8 @@ class Edit extends Component {
 
   state = {
     name: '',
-    sort: ''
+    sort: '',
+    type: ''
   }
 
   componentWillReceiveProps (nextProps) {
@@ -25,7 +26,8 @@ class Edit extends Component {
       this.data = nextProps.data
       this.setState({
         name: nextProps.data.name,
-        sort: nextProps.data.sort
+        sort: nextProps.data.sort,
+        type: nextProps.data.type
       })
     }
   }
@@ -79,10 +81,16 @@ class Edit extends Component {
       >
         <Form {...formItemLayout}>
           <FormItem label='热词渠道'>
-          {getFieldDecorator('channel')(
+          {getFieldDecorator('type', {
+            initialValue: this.state.type,
+            rules: [{
+              required: true,
+              message: '请输入热词渠道'
+            }]
+          })(
             <Select>
               <Select.Option value={1}>喜团优选</Select.Option>
-              <Select.Option value={2}>喜团好店</Select.Option>
+              <Select.Option value={3}>喜团好店</Select.Option>
             </Select>
           )}
           </FormItem>

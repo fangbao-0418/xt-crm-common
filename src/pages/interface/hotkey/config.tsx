@@ -5,9 +5,6 @@ export const hotwordTypes = [{
   label: '喜团优选',
   value: 1
 }, {
-  label: '喜团买菜',
-  value: 2
-}, {
   label: '喜团好店',
   value: 3
 }]
@@ -16,6 +13,5 @@ export const hotwordTypes = [{
 export enum hotwordEnum {
   全部 = 0,
   喜团优选 = 1,
-  喜团买菜 = 2,
   喜团好店 = 3
 }
