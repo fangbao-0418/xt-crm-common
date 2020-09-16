@@ -103,16 +103,17 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
         const withdrawalInfo = record.withdrawalInfo // 下架说明 管理员下架才有
         const auditStatus = record.auditStatus // 商品审核 0: 待提交 1: 待审核 2: 审核通过 3: 审核不通过
         if (val === 1) {
+          return '在售'
+        }
+        if (auditStatus === 1) {
+          return '待审核'
+        } else if (auditStatus === 2) {
           if (record.confirmStatus === 2) {
             return '待商家确认'
           }
           if (record.confirmStatus === 0) {
             return '待导入价格'
           }
-          return '在售'
-        }
-        if (auditStatus === 1) {
-          return '待审核'
         } else if (auditStatus === 3) {
           return '不通过'
         } else if (withdrawalType === 0) {
