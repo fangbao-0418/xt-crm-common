@@ -6,18 +6,18 @@ import "./category.scss";
 import HaodianForm from "./components/HaodianForm";
 import YouxuanForm from "./components/YouxuanForm";
 interface State {
-  cateList: any[]
-  currId: number
-  detail: any
-  isShow: boolean
+  cateList: any[];
+  currId: number;
+  detail: any;
+  isShow: boolean;
 }
 class InterFaceCategory extends Component<any, State> {
   public state: State = {
     cateList: [],
-    currId: 0,
+    currId: -1,
     detail: {},
-    isShow: false
-  }
+    isShow: false,
+  };
 
   public componentDidMount() {
     this.getCategorys();
@@ -27,7 +27,7 @@ class InterFaceCategory extends Component<any, State> {
     getFrontCategorys(this.props.channel).then((data) => {
       this.setState({
         cateList: data.records,
-        currId: id || 0,
+        currId: id || -1,
       });
     });
   };
@@ -70,7 +70,7 @@ class InterFaceCategory extends Component<any, State> {
             <Col
               span={3}
               onClick={() => {
-                this.setState({ isShow: true, detail: { id: -1 } });
+                this.setState({ isShow: true, currId: -1 });
               }}
             >
               +添加类目
@@ -79,9 +79,19 @@ class InterFaceCategory extends Component<any, State> {
         </Card>
         <Card style={{ display: this.state.isShow ? "block" : "none" }}>
           {channel === "1" && (
-            <YouxuanForm detail={detail} getCategorys={this.getCategorys} />
+            <YouxuanForm
+              detail={detail}
+              currId={this.state.currId}
+              getCategorys={this.getCategorys}
+            />
           )}
-          {channel === "2" && <HaodianForm detail={detail} />}
+          {channel === "2" && (
+            <HaodianForm
+              detail={detail}
+              currId={this.state.currId}
+              getCategorys={this.getCategorys}
+            />
+          )}
         </Card>
       </div>
     );

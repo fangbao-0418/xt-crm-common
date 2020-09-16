@@ -54,6 +54,7 @@ const tailFormItemLayout: any = {
 interface Props extends FormComponentProps {
   detail: any;
   getCategorys(id?: any): void;
+  currId: number;
 }
 interface State {
   checkCate: boolean;
@@ -79,7 +80,6 @@ interface State {
     pageSize: 10;
   };
   actList: any[];
-  currId: number;
   productCategoryVOS: any[];
   checkData: any[];
   secondStatus: boolean;
@@ -91,7 +91,7 @@ class Main extends React.Component<Props, State> {
   public componentWillReceiveProps(nextProps: any) {
     const detail = nextProps.detail;
     if (detail && this.props.detail !== detail) {
-      if (detail.id === -1) {
+      if (nextProps.currId === -1) {
         // 新增
         this.addCategory();
       } else {
@@ -151,7 +151,6 @@ class Main extends React.Component<Props, State> {
       checkAct: actText.length !== 0,
       cateText,
       actText,
-      currId: data.id,
       productCategoryVOS,
       // isShow: true,
       secondStatus: secondStatus === 1 ? true : false,
@@ -185,7 +184,6 @@ class Main extends React.Component<Props, State> {
       pageSize: 10,
     },
     actList: [],
-    currId: 0,
     productCategoryVOS: [],
     checkData: [],
     secondStatus: false,
@@ -417,10 +415,10 @@ class Main extends React.Component<Props, State> {
           secondStatus: secondStatus ? 1 : 0,
           secondCategoryVOS: filterSecondCategoryVOS,
         };
-        if (this.state.currId) {
-          data.id = this.state.currId;
+        if (this.props.currId == -1) {
+          data.id = this.props.currId;
         }
-        (this.state.currId ? updateFrontCategory : saveFrontCategory)(
+        (this.props.currId !== -1 ? updateFrontCategory : saveFrontCategory)(
           data
         ).then((data) => {
           if (data && data.id) {
@@ -438,7 +436,7 @@ class Main extends React.Component<Props, State> {
       okText: "确认",
       cancelText: "取消",
       onOk: () => {
-        delCategory(this.state.currId).then((data) => {
+        delCategory(this.props.currId).then((data) => {
           data && APP.success("删除成功");
           this.props.getCategorys();
           this.addCategory();
@@ -462,7 +460,6 @@ class Main extends React.Component<Props, State> {
       checkAct: false,
       cateText: [],
       actText: [],
-      currId: 0,
       productCategoryVOS: [],
       checkData: [],
       isShow: true,
@@ -556,7 +553,6 @@ class Main extends React.Component<Props, State> {
       secondStatus,
       secondaryIndex,
       secondaryActText,
-      currId,
       secondCategoryVOS,
     } = this.state;
     const showType = getFieldValue("showType");
@@ -732,7 +728,7 @@ class Main extends React.Component<Props, State> {
           {secondStatus && showType === 1 && (
             <FormItem label="二级类目内容">
               <SecondaryCategory
-                key={currId}
+                key={this.props.currId}
                 secondaryIndex={secondaryIndex}
                 secondCategoryVOS={secondCategoryVOS}
                 secondaryActText={secondaryActText}
@@ -743,7 +739,7 @@ class Main extends React.Component<Props, State> {
           )}
           <Form.Item {...tailFormItemLayout}>
             <div style={{ textAlign: "right" }}>
-              {this.state.currId ? (
+              {this.props.currId !== -1 ? (
                 <Button
                   type="danger"
                   ghost
