@@ -6,13 +6,17 @@ import ActicityModal, { ActicityModalProps } from './ActicityModal';
 import { saveFrontCategory, updateFrontCategory } from '../api'
 import { FormInstance } from "@/packages/common/components/form";
 
+interface Props {
+  // refresh(id: any): void
+  // delete(id: any): void
+}
 interface State {
   checkCate: boolean;
   checkAct: boolean;
   actText: any[];
   cateText: any[];
 }
-class Main extends React.Component<{}, State> {
+class Main extends React.Component<Props, State> {
   public modalRef: CategoryModalProps | null
   public acticityModal: ActicityModalProps | null
   public state = {
@@ -33,7 +37,7 @@ class Main extends React.Component<{}, State> {
    * http://192.168.20.21/project/428/interface/api/61671
    */
   public handleSave = () => {
-    this.formRef.props.form.validateFields((errs, vals) => {
+    this.formRef.props.form.validateFields(async (errs, vals) => {
       if (!errs) {
         let actText: any[] = this.state.actText
         let cateText: any[] = this.state.cateText
@@ -55,11 +59,20 @@ class Main extends React.Component<{}, State> {
         }))
         const params = {
           productCategoryVOS: [...actText, ...cateText],
-          ...vals
+          ...vals,
+          showType: 8 // 展示位置（0：首页展示，1：行业类目展示 2:助力类目，3：团购会类目，8：好店首页类目）
         }
-        saveFrontCategory(params)
+        const res = await saveFrontCategory(params)
+        console.log('res', res)
+        if (res && res.id) {
+          APP.success('保存成功')
+          // this.props.refresh(res.id)
+        }
       }
     })
+  }
+  public delete = () => {
+    // delCategory()
   }
   public render() {
     const selectedRowKeys = this.state.actText.map((item: any) => item.promotionId)
@@ -229,7 +242,7 @@ class Main extends React.Component<{}, State> {
           />
           <FormItem>
             <div style={{ textAlign: "right" }}>
-              <Button type="danger" ghost style={{ marginRight: "10px" }}>
+              <Button type="danger" ghost style={{ marginRight: "10px" }} >
                 删除
               </Button>
               <Button type="primary" onClick={this.handleSave}>保存</Button>
