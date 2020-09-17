@@ -11,13 +11,15 @@ import { withRouter, RouteComponentProps } from "react-router";
 import * as api from "./api";
 interface Props extends RouteComponentProps<{ id: string }> {}
 interface State {
-  readonly: boolean;
+  readonly: boolean
+  detail: any
 }
 class Main extends React.Component<Props, State> {
   public form: FormInstance;
   public id = this.props.match.params.id;
   public state: State = {
     readonly: false,
+    detail: {}
   };
   public componentDidMount() {
     this.fetchData();
@@ -28,7 +30,9 @@ class Main extends React.Component<Props, State> {
         res.location = locationMap.value[res.location];
         res.displayFrom = displayFromMap.value[res.displayFrom];
         res.productRecommendSpuList = res.productRecommendSpuVOList || [];
+        console.log('res', res)
         this.form.setValues(res);
+        this.setState({ detail: res })
         this.setState({
           readonly: res.status === 0 ? true : false,
         });
@@ -88,7 +92,7 @@ class Main extends React.Component<Props, State> {
     });
   };
   public render() {
-    const readonly = this.state.readonly;
+    const { readonly, detail } = this.state
     return (
       <div
         style={{
@@ -230,6 +234,7 @@ class Main extends React.Component<Props, State> {
                                 return form.getFieldDecorator(
                                   "relationGoods",
                                   {
+                                    initialValue: detail.relationGoods,
                                     rules: [
                                       {
                                         validator: (rule, value, cb) => {
@@ -251,6 +256,7 @@ class Main extends React.Component<Props, State> {
                                 return form.getFieldDecorator(
                                   "relationShop",
                                   {
+                                    initialValue: detail.relationShop,
                                     rules: [
                                       {
                                         validator: (rule, value, cb) => {

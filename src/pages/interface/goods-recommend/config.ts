@@ -145,7 +145,7 @@ export enum DisplayFromEnum {
 }
 
 export const locationMap: any = {
-  value: getAllGroupMap([1, 2, 4, 8, 16, 32]),
+  value: getAllGroupMap([1, 2, 4, 8, 16, 32, 64]),
   get label () {
     const value = this.value
     const result: any = {}
