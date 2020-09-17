@@ -228,6 +228,7 @@ class Main extends React.Component<Props, State> {
                           const relationType = form.getFieldValue(
                             "relationType"
                           );
+                          console.log('relationType', relationType)
                           return relationType === 10 ? (
                             <FormItem
                               inner={(form) => {

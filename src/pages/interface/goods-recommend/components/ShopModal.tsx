@@ -16,12 +16,18 @@ interface Props {
 interface State {
   visible: boolean
   records: any[]
+  current: number,
+  size: number,
+  total: number,
   selectedRowKeys: any[]
 }
 class Main extends React.Component<Props, State> {
   public state = {
     visible: false,
     records: [],
+    current: 1,
+    size: 10,
+    total: 0,
     selectedRowKeys: this.props.selectedRowKeys || []
   }
   public selectedRows: any[] = []
@@ -69,12 +75,12 @@ class Main extends React.Component<Props, State> {
   }
   public fetchData = async () => {
     const res = await getShopList({
-      bizType: 1,
+      bizType: 2,
       ...this.payload
     })
     if (res) {
-      console.log('res', res)
-      this.setState({ records: res.records })
+      res.current = this.payload.page
+      this.setState({ ...res })
     }
   }
   public debounceFetch = _.debounce(this.fetchData.bind(this), 500)
@@ -114,6 +120,16 @@ class Main extends React.Component<Props, State> {
             rowSelection={rowSelection}
             columns={this.columns}
             dataSource={records}
+            pagination={{
+              total: this.state.total,
+              pageSize: this.state.size,
+              current: this.state.current,
+              onChange: (current) => {
+                this.payload.page = current
+                this.fetchData()
+              }
+            }}
+            
           />
         </div>
       </Modal>
