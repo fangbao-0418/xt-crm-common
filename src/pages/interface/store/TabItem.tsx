@@ -132,18 +132,20 @@ class Main extends React.Component<Props, State> {
           }}
           addonAfterSearch={(
             <div>
-              <Button
-                type='primary'
-                onClick={() => {
-                  this.isEdit=false
-                  this.setState({
-                    detailData:null,
-                    visible:true
-                  })
-                }}
-              >
-                新增
-              </Button>
+              {bizSource === '0' && (
+                <Button
+                  type='primary'
+                  onClick={() => {
+                    this.isEdit=false
+                    this.setState({
+                      detailData:null,
+                      visible:true
+                    })
+                  }}
+                >
+                  新增
+                </Button>
+              )}
             </div>
           )}
           formConfig={getFieldsConfig()}

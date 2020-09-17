@@ -30,10 +30,12 @@ let currentMemberType = '';
 const tabConfig =  [{
   label: '喜团优选',
   value: '1'
-}, {
-  label: '喜团好店',
-  value: '2'
-}]
+  },
+  // {
+  //   label: '喜团好店',
+  //   value: '2'
+  // }
+]
 
 @connect(state => ({
   data: state['user.userinfo'].teamConfig,

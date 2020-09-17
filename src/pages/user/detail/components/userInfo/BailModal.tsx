@@ -1,3 +1,6 @@
+/**
+ * 扩展保证金/采购额度弹框
+ */
 import React from 'react'
 import { connect, parseQuery, setQuery } from '@/util/utils'
 import { FormComponentProps } from 'antd/lib/form'

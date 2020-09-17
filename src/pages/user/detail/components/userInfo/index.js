@@ -8,7 +8,7 @@ import ModalInvit from './modalInvit';
 import ModalPhone from './modalphone';
 import { memberModify, getReasonList, setMemberUnlocking, relieveWechat, addBlack, delBlack } from '../../api'
 import { updateDepositAmount, updateCreditAmount, enablePermission, enableShopPermission } from './api'
-import { withModal } from './Profile'
+import { withModal } from './BailModal'
 import Normal from './Normal'
 import GoodStore from './GoodStore'
 
@@ -83,7 +83,7 @@ class Main extends Component {
       const params = {
         memberId: obj.memberId
       };
-      tab === 'userinfo' && this.handleSearch(params)
+      (tab === 'userinfo' || !tab) && this.handleSearch(params)
     })
   }
   // 修改会员身份
@@ -170,10 +170,10 @@ class Main extends Component {
     dispatch['user.userinfo'].getGoodStoreUserInfo({
       memberId: params.memberId || obj.memberId,
       cb: (res) => {
-        this.setState({
-          enableGroupBuyPermission: res.enableGroupBuyPermission,
-          enableStorePurchase: res.enableStorePurchase
-        })
+        // this.setState({
+        //   enableGroupBuyPermission: res.enableGroupBuyPermission,
+        //   enableStorePurchase: res.enableStorePurchase
+        // })
       }
     })
   }
@@ -255,9 +255,23 @@ class Main extends Component {
       <div style={style}>
         <div style={{fontWeight: 600, fontSize: 22}}>{title}</div>
         <h3>优选业务</h3>
-        <Normal />
+        <Normal
+          onRefresh={(param) => {
+            this.handleSearch(param)
+          }}
+        />
         <h3>店长业务</h3>
-        <GoodStore />
+        <GoodStore
+          onRefresh={(param) => {
+            this.handleSearch(param)
+          }}
+        />
+        <Card>
+          <Descriptions title="实名认证" column={2} className={styles.authentication}>
+            <Descriptions.Item label="姓名">{data.userName || '暂无'}</Descriptions.Item>
+            <Descriptions.Item label="身份证号">{data.idCard || '暂无'}</Descriptions.Item>
+          </Descriptions>
+        </Card>
         <Card>
           <Descriptions column={1}>
             <Descriptions.Item label='保证金'>
