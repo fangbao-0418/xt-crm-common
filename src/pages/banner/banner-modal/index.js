@@ -115,19 +115,22 @@ class BannerModal extends Component {
       })
       this.formRef.props.form.setFieldsValue({
         title: data.title,
-        bizSource: data.bizSource,
+        bizSource: String(data.bizSource),
         seat: [data.newSeat, data.childSeat],
         onlineTime: moment(data.onlineTime),
         offlineTime: moment(data.offlineTime),
         sort: data.sort,
-        status: data.status
+        status: data.status,
+        bgColor: data.bgColor,
+        jumpUrlWap: data.jumpUrlWap
       })
     })
-  };
+  }
 
   handleOk = () => {
-    const { onSuccess, id, form, isEdit } = this.props
-    form.validateFields((err, values) => {
+    const { onSuccess, id, isEdit } = this.props
+    console.log('this.formRef.props.form.validateFields', this.formRef.props.form.validateFields)
+    this.formRef.props.form.validateFields((err, values) => {
       if (!err) {
         const api = isEdit ? updateBanner : addBanner
         const params = {
@@ -225,43 +228,22 @@ class BannerModal extends Component {
               </Button>
             </>
           }
-          onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
           <Form
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
             config={getDefaultConfig()}
             getInstance={(ref) => {
               this.formRef = ref
             }}
           >
             <FormItem verifiable name='title' />
-            {/* <FormItem name='bizSource'
-              required
-              inner={(form) => {
-                return form.getFieldDecorator('bizSource', {
-                  rules: [{
-                    required: true,
-                    message: 'banner渠道不能为空'
-                  }],
-                  onChange: (bizSource) => {
-                    this.setState({ bizSource }, () => {
-                      this.formRef.setValues({ seat: [] })
-                    })
-                  }
-                })(
-                  <Select placeholder='请选择banner渠道' allowClear>
-                    <Select.Option value={0}>喜团优选</Select.Option>
-                    <Select.Option value={20}>喜团好店</Select.Option>
-                  </Select>
-                )
-              }}
-            /> */}
             <FormItem
               name='bizSource'
               verifiable
               controlProps={{
                 onChange: (bizSource) => {
-                  console.log('bizSource', bizSource)
                   this.setState({ bizSource }, () => {
                     this.formRef.setValues({ seat: [] })
                   })
@@ -276,10 +258,14 @@ class BannerModal extends Component {
                   rules: [
                     {
                       validator: (rule, value, cb) => {
-                        if (value[1] !== undefined) {
-                          cb()
-                        } else {
-                          cb('位置不能为空')
+                        try {
+                          if (value && value[1] !== undefined) {
+                            cb()
+                          } else {
+                            cb('位置不能为空')
+                          }
+                        } catch (err) {
+                          console.log('err', err)
                         }
                       }
                     }
@@ -320,16 +306,20 @@ class BannerModal extends Component {
                       rules: [
                        {
                           validator: (rule, value, cb) => {
-                            if([10].includes(seat[0])){
-                              if (!value?.length) {
-                                cb('请上传两张Banner图片')
-                              } else if (!value?.[0]) {
-                                cb('请上传Banner图1')
-                              } else if (!value?.[1]) {
-                                cb('请上传Banner图2')
+                            try {
+                              if([10].includes(seat[0])){
+                                if (!value?.length) {
+                                  cb('请上传两张Banner图片')
+                                } else if (!value?.[0]) {
+                                  cb('请上传Banner图1')
+                                } else if (!value?.[1]) {
+                                  cb('请上传Banner图2')
+                                }
                               }
+                              cb()
+                            } catch (err) {
+                              console.log('err', err)
                             }
-                            cb()
                           }
                         }
                       ]
@@ -369,7 +359,7 @@ class BannerModal extends Component {
             <FormItem name='jumpUrlWap' />
             <FormItem name='onlineTime' />
             <FormItem name='offlineTime' />
-            <FormItem name='sort' />
+            <FormItem name='sort' verifiable />
             {this.state.bizSource === '0' && (
               <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
                 <FormItem
@@ -416,21 +406,24 @@ class BannerModal extends Component {
                     rules: [
                       {
                         validator: (rule, value, cb) => {
-                          console.log(value,'111')
-                          if(seat[0] === 7){
-                            if(!value||(value&&value.length===0)){
-                              cb('请输入关键词')
-                            }
-                            if(value.length>20){
-                              cb('不能超过20个关键词')
-                            }
-                            value.map((item)=>{
-                              if(item.length>10){
-                                cb('单个关键词不能超过10个字符')
+                          try {
+                            if(seat[0] === 7){
+                              if(!value||(value&&value.length===0)){
+                                cb('请输入关键词')
                               }
-                            })
+                              if(value.length>20){
+                                cb('不能超过20个关键词')
+                              }
+                              value.map((item)=>{
+                                if(item.length>10){
+                                  cb('单个关键词不能超过10个字符')
+                                }
+                              })
+                            }
+                            cb()
+                          } catch (err) {
+                            console.log('err', err)
                           }
-                          cb()
                         }
                       }
                     ]
