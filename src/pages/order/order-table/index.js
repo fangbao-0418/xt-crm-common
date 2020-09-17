@@ -513,8 +513,11 @@ class OrderList extends React.Component {
               </Col>
               <Col span={6}>
                 <FormItem label='订单渠道'>
-                  {getFieldDecorator('bizType')(
-                    <Select placeholder='请选择订单渠道' allowClear>
+                  {getFieldDecorator('bizType', {
+                    initialValue: '-1'
+                  })(
+                    <Select placeholder='请选择订单渠道'>
+                      <Select.Option value='-1'>全部</Select.Option>
                       <Select.Option value='0'>喜团优选</Select.Option>
                       <Select.Option value='30'>喜团好店</Select.Option>
                     </Select>
