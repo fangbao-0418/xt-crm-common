@@ -37,6 +37,7 @@ class OrderList extends React.Component {
 
   query = () => {
     const payload = APP.fn.getPayload(namespace) || {}
+    console.log('payload--------------2', payload)
     this.setState({
       page: this.payload.page,
       pageSize: this.payload.pageSize

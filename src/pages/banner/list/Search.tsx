@@ -3,6 +3,7 @@ import { Form, Input, Button, Select } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BannerPosition from '@/components/banner-position'
 import { namespace } from '../config'
+import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 
 interface PayloadProps {
   title?: string
@@ -39,6 +40,7 @@ class Main extends React.Component<Props> {
   public render () {
     const { getFieldDecorator, getFieldValue } = this.props.form
     const values = this.payload
+    const bizSource = getFieldValue('bizSource')
     return (
       <div
         style={{
@@ -58,7 +60,12 @@ class Main extends React.Component<Props> {
           <Form.Item
             label='banner渠道'
           >
-            {getFieldDecorator('bizSource', { initialValue: values.bizSource })(
+            {getFieldDecorator('bizSource', {
+              initialValue: values.bizSource,
+              onChange: (bizSource: number) => {
+                this.props.form.setFieldsValue({ seat: [] })
+              }
+            } as GetFieldDecoratorOptions)(
               <Select placeholder='请选择banner渠道' allowClear style={{ width: 172 }}>
                 <Select.Option value={-1}>全部</Select.Option>
                 <Select.Option value={0}>喜团优选</Select.Option>
@@ -66,13 +73,15 @@ class Main extends React.Component<Props> {
               </Select>
             )}
           </Form.Item>
-          <Form.Item
-            label='位置'
-          >
-            {getFieldDecorator('seat', { initialValue: values.seat })(
-              <BannerPosition bizSource={getFieldValue('bizSource') || 0} />
-            )}
-          </Form.Item>
+          {[0, 20].includes(bizSource) && (
+            <Form.Item
+              label='位置'
+            >
+              {getFieldDecorator('seat', { initialValue: values.seat })(
+                <BannerPosition bizSource={bizSource} />
+              )}
+            </Form.Item>
+          )}
           <Form.Item
             label='状态'
           >
@@ -95,9 +104,12 @@ class Main extends React.Component<Props> {
               onClick={() => {
                 this.payload = {}
                 APP.fn.setPayload(namespace, {})
+                console.log('payload--------------1', APP.fn.getPayload(namespace))
                 const params = {
                   title: undefined,
-                  seat: undefined,
+                  newSeat: undefined,
+                  childSeat: undefined,
+                  bizSource: undefined,
                   status: undefined
                 }
                 this.props.form.setFields(params)
