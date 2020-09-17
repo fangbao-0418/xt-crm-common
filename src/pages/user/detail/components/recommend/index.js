@@ -2,28 +2,29 @@ import React, { Component } from "react";
 import { Card, Row, Col, Table, Tabs, Select } from "antd";
 import { connect, parseQuery } from "@/util/utils";
 import LevelSelect from "@/components/level-select";
+import { HAODIAN_LEVEL_OPTIONS } from '../../../config'
 
 const { TabPane } = Tabs;
 
-const HAODIAN_LEVEL_OPTIONS = [{
-  label: '普通会员',
-  value: '0'
-}, {
-  label: '正式店主',
-  value: '10'
-}, {
-  label: '高级店主',
-  value: '20'
-}, {
-  label: '服务商',
-  value: '30'
-}, {
-  label: '管理员',
-  value: '40'
-}, {
-  label: '公司',
-  value: '50'
-}]
+// const HAODIAN_LEVEL_OPTIONS = [{
+//   label: '普通会员',
+//   value: '0'
+// }, {
+//   label: '正式店主',
+//   value: '10'
+// }, {
+//   label: '高级店主',
+//   value: '20'
+// }, {
+//   label: '服务商',
+//   value: '30'
+// }, {
+//   label: '管理员',
+//   value: '40'
+// }, {
+//   label: '公司',
+//   value: '50'
+// }]
 
 function getColumns(scope) {
   return [
@@ -153,7 +154,7 @@ export default class extends Component {
                     }}
                     onChange={this.onChange}
                     rowKey={(record) => record.id}
-                    loading={loading}
+                    // loading={loading}
                   />
                 </Col>
               </Row>

@@ -8,10 +8,6 @@ import { levelName } from '../../../utils';
 import Earnings from './components/Earnings'
 import { FormComponentProps } from 'antd/lib/form'
 
-import UserModal from './modal';
-import ModalInvit from './modalInvit';
-import ModalPhone from './modalphone';
-
 const FormItem = Form.Item
 const { Option } = Select;
 const { TextArea } = Input;
@@ -22,6 +18,17 @@ interface Props extends FormComponentProps {
   history: any
   dispatch: any
   bizSource: any
+  onRefresh?: (param: any) => void
+}
+
+/** 身份枚举 */
+enum IdentityEnum {
+  普通会员 = 0,
+  正式店主 = 10,
+  高级店主 = 20,
+  服务商 = 30,
+  管理员 = 40,
+  公司 = 50
 }
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -44,18 +51,18 @@ class Main extends React.Component<Props> {
 
   componentDidMount() {
     // this.props.wrappedCompRef.current = this
-    this.handleSearch();
+    // this.handleSearch();
     getReasonList().then((res: any) => {
       reasonList = res
     })
-    const unlisten = this.props.history.listen(() => {
-      const obj = parseQuery() as any;
-      const tab = obj.tab || 'userinfo';
-      const params = {
-        memberId: obj.memberId
-      };
-      tab === 'userinfo' && this.handleSearch(params)
-    })
+    // const unlisten = this.props.history.listen(() => {
+    //   const obj = parseQuery() as any;
+    //   const tab = obj.tab || 'userinfo';
+    //   const params = {
+    //     memberId: obj.memberId
+    //   };
+    //   (tab === 'userinfo' || !tab) && this.handleSearch(params)
+    // })
   }
 
   // 修改会员身份
@@ -102,18 +109,19 @@ class Main extends React.Component<Props> {
   }
 
   handleSearch = (params: any = {}) => {
-    const { history, dispatch } = this.props
-    const obj = parseQuery() as any
-    dispatch['user.userinfo'].getGoodStoreUserInfo({
-      memberId: params.memberId || obj.memberId,
-      bizSource: this.props.bizSource,
-      cb: (res: any) => {
-        this.setState({
-          enableGroupBuyPermission: res.enableGroupBuyPermission,
-          enableStorePurchase: res.enableStorePurchase
-        })
-      }
-    })
+    // const { history, dispatch } = this.props
+    // const obj = parseQuery() as any
+    // dispatch['user.userinfo'].getGoodStoreUserInfo({
+    //   memberId: params.memberId || obj.memberId,
+    //   bizSource: this.props.bizSource,
+    //   cb: (res: any) => {
+    //     this.setState({
+    //       enableGroupBuyPermission: res.enableGroupBuyPermission,
+    //       enableStorePurchase: res.enableStorePurchase
+    //     })
+    //   }
+    // })
+    this.props?.onRefresh?.(params)
   }
   /** 解绑 */
   handleUnlock = (memberId: any) => {
@@ -210,7 +218,6 @@ class Main extends React.Component<Props> {
   }
   public render () {
     const { data } = this.props
-    const { enableGroupBuyPermission, enableStorePurchase } = this.state
     const { form: { getFieldDecorator } } = this.props;
     return (
       <div>
@@ -255,7 +262,7 @@ class Main extends React.Component<Props> {
               <Button onClick={() => this.unbind('phone')} style={{ marginLeft: 20 }}>置换</Button>
             </Descriptions.Item>
             <Descriptions.Item label="等级">
-              {levelName(data.memberTypeVO)}
+              {data?.memberTypeDO?.value}
               <Button
                 disabled={(data.memberTypeVO && data.memberTypeVO.memberType > 20)}
                 onClick={() => this.modifyMemberType(1)} style={{ marginLeft: 20 }}
@@ -276,20 +283,32 @@ class Main extends React.Component<Props> {
             </Descriptions.Item>
             <Descriptions.Item label="注册来源">{data.registerForm || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="上级">
-              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.parentMemberId })}>{data.parentName || data.parentPhone}（{levelName(data.parentMemberTypeVO)}）</span>
+              <span
+                style={{ cursor: 'pointer', color: '#40a9ff' }}
+                onClick={() => setQuery({ memberId: data.parentMemberId })}
+              >
+                {data.parentName || data.parentPhone}（{data?.parentMemberTypeDO?.value}）
+              </span>
             </Descriptions.Item>
             <Descriptions.Item label="邀请人">
-              <span style={{ cursor: 'pointer', color: '#40a9ff' }} onClick={() => setQuery({ memberId: data.inviteId })}>{data.inviteName || data.invitedPhone}（{levelName(data.inviteMemberTypeVO)}）</span>
+              <span
+                style={{ cursor: 'pointer', color: '#40a9ff' }}
+                onClick={() => {
+                  setQuery({ memberId: data.inviteId })}
+                }
+              >
+                {data.inviteName || data.invitedPhone} {data?.inviteMemberTypeDO?.value && `（${data?.inviteMemberTypeDO?.value}）`}
+              </span>
             </Descriptions.Item>
             <Descriptions.Item label="锁定状态">
               {data.fansTypeDesc}
               <Button disabled={(data.fansType !== 1)} onClick={() => this.handleUnlock(data.id)} style={{ marginLeft: 20 }}>解锁</Button>
             </Descriptions.Item>
           </Descriptions>
-          <Descriptions title="实名认证" column={2} className={styles.authentication}>
+          {/* <Descriptions title="实名认证" column={2} className={styles.authentication}>
             <Descriptions.Item label="姓名">{data.userName || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="身份证号">{data.idCard || '暂无'}</Descriptions.Item>
-          </Descriptions>
+          </Descriptions> */}
         </Card>
         <Card
           title="用户收益"
