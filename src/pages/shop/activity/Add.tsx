@@ -215,26 +215,26 @@ class Main extends React.Component<Props> {
                       }]
                     })(
                       <InputNumber
-                        min={0}
+                        min={1}
                         max={100}
                         className='ml10 mr10'
                         precision={0}
                       />)}
                     <span>%</span>
                   </div>
-                  <div>（输入正整数，比例后取两位小数，例如日常供货价79，比高于日常供货价85%，即活动供货价最高为67.15元）</div>
+                  <div>（输入正整数，比例后取两位小数，例如日常供货价79，不高于日常供货价85%，即活动供货价最高为67.15元）</div>
                 </>
               )
             }}
           />
           {(!this.promotionId || this.copy === '1') && (
             <FormItem
-              label='报名商家类型'
+              label='报名店铺类型'
               required
               inner={(form) => {
                 return (
                   <>
-                    <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个商家，会单独拆分为几个会场）</div>
+                    <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个店铺，会单独拆分为几个会场）</div>
                     {
                       form.getFieldDecorator('dataSource', {
                         valuePropName: 'dataSource',
