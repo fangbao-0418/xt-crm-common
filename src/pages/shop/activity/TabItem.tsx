@@ -119,7 +119,8 @@ class Main extends React.Component<Props, State> {
             promotionStatusEnum['报名中'],
             promotionStatusEnum['预热中'],
             promotionStatusEnum['未开始'],
-            promotionStatusEnum['进行中']
+            promotionStatusEnum['进行中'],
+            promotionStatusEnum['已发布']
           ].includes(record.status) && (
             <span
               className='href ml10'
