@@ -190,7 +190,7 @@ class OrderList extends React.Component {
       {
         title: '订单编号',
         dataIndex: 'orderCode',
-        width: '400px',
+        width: 300,
         render: (operate, { orderStatus, orderCode }) => (
           <span
             className='href'
@@ -205,8 +205,20 @@ class OrderList extends React.Component {
       {
         title: '下单时间',
         dataIndex: 'createTime',
-        width: '300px',
+        width: 250,
         render: (createTime, row) => <div>下单时间：{formatDate(createTime)}</div>
+      },
+      {
+        title: '订单渠道',
+        dataIndex: 'orderBizType',
+        width: 100,
+        render(text) {
+          const orderBizTypeMap = {
+            '0':  '喜团优选',
+            '30': '喜团好店'
+          }
+          return orderBizTypeMap[text]
+        },
       },
       {
         title: '订单状态',

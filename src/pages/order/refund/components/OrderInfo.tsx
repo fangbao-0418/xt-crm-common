@@ -15,16 +15,19 @@ import {
 import memberType from '@/enum/memberType'
 import moment from 'moment'
 type OrderInfoVO = AfterSalesInfo.OrderInfoVO
+type OrderServerVO = AfterSalesInfo.OrderServerVO
 type ProductVO = AfterSalesInfo.ProductVO
 type ShopDTO = AfterSalesInfo.ShopDTO
 const columns: ColumnProps<ProductVO>[] = getDetailColumns()
 interface Props extends React.Props<{}> {
   restData?: any
   orderInfoVO: OrderInfoVO
+  orderServerVO: OrderServerVO,
   shopDTO: ShopDTO
 }
 const OrderInfo: React.FC<Props> = (props: Props) => {
   const orderInfoVO = Object.assign({}, props.orderInfoVO)
+  const orderServerVO = Object.assign({}, props.orderServerVO)
   const shopDTO = props.shopDTO
   const restData = props.restData
   return (
@@ -46,7 +49,7 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
           订单状态：{orderInfoVO.orderStatusStr}
         </Col>
         <Col span={8}>
-          订单渠道
+          订单渠道：{orderServerVO.bizTypeStr}
         </Col>
         <Col span={8}>
           订单类型：{

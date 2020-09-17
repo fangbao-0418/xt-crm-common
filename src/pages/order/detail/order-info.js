@@ -26,7 +26,7 @@ const modifyAddress = (changeModifyAddress) => {
 }
 const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddress, orderVirtualInfoVO={} }) => {
   const [visible, setVisible] = useState(false)
-  const { orderStatus, orderCode, platform, remark, orderType, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate, liveId } = orderInfo
+  const { orderStatus, orderCode, platform, remark, orderType, orderTypeStr, finishTime, createTime, orderMemberType, orderMemberTypeLevel, closeReason, groupCode, groupBuyOrderCodes, payDate, liveId, orderBizTypeStr } = orderInfo
   const { phone, contact, memberAddress = {}, userName, nickname } = buyerInfo
   const { prov, rechargeAccount, rechargeOperatorDesc } = orderVirtualInfoVO
   // 支付时间小于1个小时显示按钮。
@@ -72,6 +72,7 @@ const OrderInfo = ({ orderInfo = initOrderInfo, buyerInfo = {}, changeModifyAddr
         <Row gutter={24}>
           <Col span={8}>订单编号：{orderCode}</Col>
           <Col span={8}>创建时间：{formatDate(createTime)}</Col>
+          <Col span={8}>订单渠道：{orderBizTypeStr}</Col>
           <Col span={8}>订单状态：{OrderStatusTextMap[orderStatus]}</Col>
           {orderStatus === 60 && <Col span={8}>关闭原因：{closeReason}</Col>}
           <Col span={8}>买家名称：{userName}</Col>

@@ -124,6 +124,7 @@ declare module AfterSalesInfo {
     reply: string;
     /* 自动审核售后编号 */
     refundAutoDisposeNo?: string;
+    bizTypeStr: string
   }
 
   export interface ProductVO {
