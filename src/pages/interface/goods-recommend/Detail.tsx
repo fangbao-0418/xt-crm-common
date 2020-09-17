@@ -46,14 +46,18 @@ class Main extends React.Component<Props, State> {
       values.displayFrom = values.displayFrom.reduce(
         (a: number, b: number) => a + b
       );
-      const productRecommendSpuList = values.productRecommendSpuList || [];
-      values.productRecommendSpuList = productRecommendSpuList.map(
-        (item: any) => {
-          return {
-            ...item,
-          };
-        }
-      );
+      
+      // 喜团优选
+      if (values.channel === 1) {
+        const productRecommendSpuList = values.productRecommendSpuList || [];
+        values.productRecommendSpuList = productRecommendSpuList.map(
+          (item: any) => {
+            return {
+              ...item,
+            };
+          }
+        );
+      }
       values.id = this.id === "-1" ? undefined : this.id;
 
 
@@ -61,7 +65,8 @@ class Main extends React.Component<Props, State> {
       if (values.channel === 2) {
         // 关联商品
         if (values.relationType === 10) {
-
+          values.relationIdList = (values.relationGoods || []).map((item: any) => item.productId);
+          delete values.relationGoods
         }
         // 关联店铺
         if (values.relationType === 20) {

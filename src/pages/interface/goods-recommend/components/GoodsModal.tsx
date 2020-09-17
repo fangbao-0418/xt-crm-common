@@ -111,7 +111,10 @@ class Main extends React.Component<Props, State> {
     })
   }
   public fetchData () {
-    api.fetchGoodsList(this.payload).then((res: any) => {
+    api.fetchGoodsList({
+      ...this.payload,
+      channel: this.props.channel
+    }).then((res: any) => {
       if (!res) {
         return
       }
