@@ -7,6 +7,7 @@ import { levelName } from '../utils'
 import styles from './index.module.scss'
 import Modal from './modal'
 import { namespace } from './model'
+import { HAODIAN_LEVEL_OPTIONS } from '../config'
 const FormItem = Form.Item
 const { Option } = Select
 
@@ -215,7 +216,7 @@ export default class extends Component {
       })
     }
     renderForm = () => {
-      const { form: { getFieldDecorator } } = this.props
+      const { form: { getFieldDecorator }, bizSource } = this.props
       const values = { ...this.payload }
       values.time = values.registerStartDate && [moment(values.registerStartDate), moment(values.registerEndDate)]
       return (
@@ -233,19 +234,35 @@ export default class extends Component {
               )
             }
           </FormItem>
-          <FormItem label='等级' className={styles.level}>
-            {
-              getFieldDecorator('memberType', {
-                initialValue: values.memberType
-              })(
-                <Select>
-                  {
-                    levelArr.map(item => (<Option value={item.value} key={item.value}>{item.key}</Option>))
-                  }
-                </Select>
-              )
-            }
-          </FormItem>
+          { bizSource === '2' ? (
+            <FormItem label='等级' className={styles.level}>
+              {
+                getFieldDecorator('memberType', {
+                  initialValue: values.memberType
+                })(
+                  <Select>
+                    {
+                      HAODIAN_LEVEL_OPTIONS.map(item => (<Option value={item.value} key={item.value}>{item.label}</Option>))
+                    }
+                  </Select>
+                )
+              }
+            </FormItem>
+          ) : (
+            <FormItem label='等级' className={styles.level}>
+              {
+                getFieldDecorator('memberType', {
+                  initialValue: values.memberType
+                })(
+                  <Select>
+                    {
+                      levelArr.map(item => (<Option value={item.value} key={item.value}>{item.key}</Option>))
+                    }
+                  </Select>
+                )
+              }
+            </FormItem>
+          )}
           <FormItem label='手机号'>
             {
               getFieldDecorator('phone', {

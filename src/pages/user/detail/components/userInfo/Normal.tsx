@@ -22,6 +22,7 @@ interface Props extends FormComponentProps {
   history: any
   dispatch: any
   bizSource: any
+  onRefresh?: (param: any) => void
 }
 
 const timeFormat = 'YYYY-MM-DD HH:mm:ss'
@@ -44,18 +45,18 @@ class Main extends React.Component<Props> {
 
   componentDidMount() {
     // this.props.wrappedCompRef.current = this
-    this.handleSearch();
+    // this.handleSearch();
     getReasonList().then((res: any) => {
       reasonList = res
     })
-    const unlisten = this.props.history.listen(() => {
-      const obj = parseQuery() as any;
-      const tab = obj.tab || 'userinfo';
-      const params = {
-        memberId: obj.memberId
-      };
-      tab === 'userinfo' && this.handleSearch(params)
-    })
+    // const unlisten = this.props.history.listen(() => {
+    //   const obj = parseQuery() as any;
+    //   const tab = obj.tab || 'userinfo';
+    //   const params = {
+    //     memberId: obj.memberId
+    //   };
+    //   tab === 'userinfo' && this.handleSearch(params)
+    // })
   }
 
   // 修改会员身份
@@ -102,18 +103,19 @@ class Main extends React.Component<Props> {
   }
 
   handleSearch = (params: any = {}) => {
-    const { history, dispatch } = this.props
-    const obj = parseQuery() as any
-    dispatch['user.userinfo'].getUserInfo({
-      memberId: params.memberId || obj.memberId,
-      bizSource: this.props.bizSource,
-      cb: (res: any) => {
-        this.setState({
-          enableGroupBuyPermission: res.enableGroupBuyPermission,
-          enableStorePurchase: res.enableStorePurchase
-        })
-      }
-    })
+    // const { history, dispatch } = this.props
+    // const obj = parseQuery() as any
+    // dispatch['user.userinfo'].getUserInfo({
+    //   memberId: params.memberId || obj.memberId,
+    //   bizSource: this.props.bizSource,
+    //   cb: (res: any) => {
+    //     this.setState({
+    //       enableGroupBuyPermission: res.enableGroupBuyPermission,
+    //       enableStorePurchase: res.enableStorePurchase
+    //     })
+    //   }
+    // })
+    this.props?.onRefresh?.(params)
   }
   /** 解绑 */
   handleUnlock = (memberId: any) => {
@@ -286,10 +288,10 @@ class Main extends React.Component<Props> {
               <Button disabled={(data.fansType !== 1)} onClick={() => this.handleUnlock(data.id)} style={{ marginLeft: 20 }}>解锁</Button>
             </Descriptions.Item>
           </Descriptions>
-          <Descriptions title="实名认证" column={2} className={styles.authentication}>
+          {/* <Descriptions title="实名认证" column={2} className={styles.authentication}>
             <Descriptions.Item label="姓名">{data.userName || '暂无'}</Descriptions.Item>
             <Descriptions.Item label="身份证号">{data.idCard || '暂无'}</Descriptions.Item>
-          </Descriptions>
+          </Descriptions> */}
         </Card>
         <Card
           title="用户收益"
