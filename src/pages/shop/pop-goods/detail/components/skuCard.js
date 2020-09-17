@@ -82,7 +82,8 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
         return (formatMoneyWithSign(value))
       }
       value = APP.fn.formatMoneyNumber(value, 'm2u')
-      const min = APP.fn.formatMoneyNumber(record.salePrice * agencyRate / 100, 'm2u')
+      const min = APP.fn.formatMoneyNumber(Math.floor(record.salePrice * agencyRate / 1000) * 10, 'm2u')
+      // const min = 1.58
       return (
         <Form.Item>
           {
