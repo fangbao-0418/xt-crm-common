@@ -49,6 +49,7 @@ class Main extends React.Component<{}, State> {
     iconUrl: '',
     bgUrl: ''
   }
+  public tabItem: TabItem
   public promotionId = (parseQuery() as any).promotionId
   public componentDidMount() {
     this.fetchData()
@@ -114,6 +115,7 @@ class Main extends React.Component<{}, State> {
                     个）
                   </div>
                   <AlertTabItem
+                    // getInstance={(tabItem: any) => this.tabItem = tabItem }
                     promotionId={this.promotionId}
                     refresh={this.fetchData}
                     auditStatus={activeKey}
@@ -255,6 +257,7 @@ class TabItem extends React.Component<Props, TabItemState> {
   public render() {
     return (
       <ListPage
+        autoFetch={false}
         getInstance={(ref) => {
           this.listRef = ref
         }}

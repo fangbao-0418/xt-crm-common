@@ -66,6 +66,6 @@ export function disabledDateTime(current: any, date: any) {
   return {
     disabledHours: () => range(0, h),
     disabledMinutes: () => range(0, m),
-    disabledSeconds: () => range(0, s),
-  };
+    disabledSeconds: () => range(0, s)
+  }
 }

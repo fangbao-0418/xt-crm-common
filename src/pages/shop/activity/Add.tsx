@@ -1,7 +1,7 @@
 import React from 'react'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Form, FormItem, Alert } from '@/packages/common/components'
-import { DatePicker, Card, Radio, InputNumber, Table, Button } from 'antd'
+import { DatePicker, Card, Radio, InputNumber, Table, Button, Popconfirm } from 'antd'
 import { addPromotion, getPromotionDetail, updatePromotion } from './api'
 import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/lib/table'
@@ -27,14 +27,20 @@ class Main extends React.Component<Props> {
     title: '操作',
     render: (text: any, record: any, index: number) => {
       return (
-        <span
-          className='href'
-          onClick={() => {
+        <Popconfirm
+          title="是否确认删除该店铺?"
+          onConfirm={() => {
             const { dataSource } = this.formRef.getValues()
             dataSource.splice(index, 1)
             this.formRef.setValues({ dataSource })
           }}
+          okText="确认"
+          cancelText="取消"
+        >
+        <span
+          className='href'
         >删除</span>
+        </Popconfirm>
       )
     }
   }]
@@ -95,7 +101,9 @@ class Main extends React.Component<Props> {
   }
   public disabledTime = (dates: [moment.Moment, moment.Moment], type: 'start'|'end') => {
     if (type === 'start' && dates) {
-      return disabledDateTime(dates[0], new Date())
+      let result = disabledDateTime(dates[0], new Date());
+      console.log('result', result)
+      return result
     }
     return {
     }
@@ -151,7 +159,7 @@ class Main extends React.Component<Props> {
               })(
                 <RangePicker
                   disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
-                  // disabledTime={this.disabledTime as any}
+                  disabledTime={this.disabledTime as any}
                   showTime={{
                     hideDisabledOptions: true,
                     defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
@@ -199,7 +207,7 @@ class Main extends React.Component<Props> {
                   }}
                   showTime={{
                     hideDisabledOptions: true,
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
                   }}
                   format="YYYY-MM-DD HH:mm:ss"
                 />
