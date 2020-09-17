@@ -38,6 +38,10 @@ function getColumns (scope) {
       title: '等级',
       dataIndex: 'memberLevel',
       render (v, rec) {
+        const { bizSource } = scope.props
+        if (bizSource === '2') {
+          return rec?.memberTypeDO?.value
+        }
         return <span>{levelName({ memberType: rec.memberTypeDO.key, memberTypeLevel: rec.memberTypeLevel })}</span>
       }
     }, {
