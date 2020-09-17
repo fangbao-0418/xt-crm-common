@@ -119,6 +119,7 @@ function getColumns(scope) {
 }
 
 const namespace = "user.userinfo";
+
 const tabConfig =  [{
   label: '喜团优选',
   value: '1'
@@ -126,6 +127,7 @@ const tabConfig =  [{
   label: '喜团好店',
   value: '2'
 }]
+
 const options1 = [{
   label: '全部',
   value: ''
@@ -187,7 +189,10 @@ export default class extends Component {
           pageNum: params.current || 1,
           pageSize: params.pageSize || 10,
         };
-        dispatch[namespace].getIncome(payload);
+        dispatch[namespace].getIncome({
+          ...payload,
+          tab: params.tab || this.state.activeKey
+        });
       }
     });
   };
@@ -225,6 +230,11 @@ export default class extends Component {
   handleTabChange = (activeKey) => {
     this.setState({
       activeKey
+    }, () => {
+      this.handleSearch({
+        tab: activeKey,
+        current: 1
+      });
     })
   }
   render() {

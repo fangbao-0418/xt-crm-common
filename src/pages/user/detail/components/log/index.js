@@ -104,7 +104,10 @@ export default class extends Component {
       page: params.page || 1,
       pageSize: params.pageSize || 10,
     };
-    dispatch["user.userinfo"].getLog(payload);
+    dispatch["user.userinfo"].getLog({
+      ...payload,
+      tab: params.tab || this.state.activeKey
+    });
   };
 
   showTotal = (total) => {
@@ -120,6 +123,11 @@ export default class extends Component {
   handleTabChange = (activeKey) => {
     this.setState({
       activeKey
+    }, () => {
+      this.handleSearch({
+        tab: activeKey,
+        page: 1
+      });
     })
   }
   render() {

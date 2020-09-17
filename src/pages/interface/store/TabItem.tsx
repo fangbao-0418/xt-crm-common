@@ -17,6 +17,7 @@ interface Props {
   value?: any,
   disabled: boolean,
   onChange?: (result: any) => void
+  bizSource: '0' | '20'
 }
 interface State{
   detailData: any
@@ -74,23 +75,44 @@ class Main extends React.Component<Props, State> {
     const {detailData}=this.state
     this.form.props.form.validateFields((err: any, vals: any) => {
       if (!err) {
-        api.ranking({shopId:detailData?.shopId,...vals,couponList:detailData?.couponList}).then((res: any) => {
-          if (res) {
-            this.setState({
-              visible:false
-            },()=>{
-              APP.success('操作成功')
-              this.refresh()
-            })
-          }
-        })
+        if (this.props.bizSource !== '20') {
+          api.ranking({
+            shopId: detailData?.shopId,
+            ...vals,
+            couponList: detailData?.couponList
+          }).then((res: any) => {
+            if (res) {
+              this.setState({
+                visible:false
+              },()=>{
+                APP.success('操作成功')
+                this.refresh()
+              })
+            }
+          })
+        } else {
+          api.newSetRanking({
+            bizSort: vals.ranking,
+            shopId: detailData?.shopId
+          }).then((res) => {
+            if (res) {
+              this.setState({
+                visible:false
+              },()=>{
+                APP.success('操作成功')
+                this.refresh()
+              })
+            }
+          })
+        }
       }
     })
   }
 
   public render () {
-    const {visible}=this.state
-    let {detailData}=this.state
+    const { visible }=this.state
+    let { detailData }=this.state
+    const { bizSource } = this.props
     return (
       <div
         style={{
@@ -143,6 +165,12 @@ class Main extends React.Component<Props, State> {
             </>
           )}
           api={api.getAnchorList}
+          processPayload={(payload: any) => {
+            return {
+              ...payload,
+              bizSource: this.props.bizSource
+            }
+          }}
         />
         <Modal
         title='设置门店'
@@ -214,52 +242,54 @@ class Main extends React.Component<Props, State> {
                }}
              /> 
               <FormItem name='ranking' required/>
-              <Row>
-              <Col span={6} style={{textAlign:'right'}}>
-                优惠券：
-              </Col>
-              <Col span={14}>
-                <span 
-                className='href'
-                onClick={()=>{
-                  this.props.modal.show({
-                    success: (res: any, hide?: any) => {
-                      detailData=detailData||{}
-                      detailData.couponList=res
-                      console.log(detailData,'11111')
-                      console.log(res,'11111')
-                      this.setState({
-                        detailData
-                      },()=>{
-                        hide() 
-                      })
-                    }
-                  },detailData&&detailData.couponList||[])
-                }}
-                >选择优惠券</span>
-              </Col>
-              </Row>
-              {
-                detailData&&detailData.couponList&&detailData.couponList.length>0&&detailData.couponList.map((_item: any,index: number)=>{
-                  return <Row>
-                  <Col offset={6} span={14}>
-                    {detailData.couponList[index].code+" "+detailData.couponList[index].name}
-                    <span
-                     className='href ml8'
-                    onClick={()=>{
-                  detailData.couponList.splice(index,1)
-                  console.log(detailData.couponList,'11111')
-                  this.setState({
-                    detailData
-                  })
-                }}
-                >
-                  删除
-                </span>
+              {bizSource !== '20' && (<>
+                <Row>
+                  <Col span={6} style={{textAlign:'right'}}>
+                    优惠券：
                   </Col>
-                  </Row>
-                })
-              }
+                  <Col span={14}>
+                  <span 
+                  className='href'
+                  onClick={()=>{
+                    this.props.modal.show({
+                      success: (res: any, hide?: any) => {
+                        detailData=detailData||{}
+                        detailData.couponList=res
+                        console.log(detailData,'11111')
+                        console.log(res,'11111')
+                        this.setState({
+                          detailData
+                        },()=>{
+                          hide() 
+                        })
+                      }
+                    },detailData&&detailData.couponList||[])
+                  }}
+                  >选择优惠券</span>
+                </Col>
+                </Row>
+                {
+                  detailData&&detailData.couponList&&detailData.couponList.length>0&&detailData.couponList.map((_item: any,index: number)=>{
+                    return <Row>
+                    <Col offset={6} span={14}>
+                      {detailData.couponList[index].code+" "+detailData.couponList[index].name}
+                      <span
+                      className='href ml8'
+                      onClick={()=>{
+                    detailData.couponList.splice(index,1)
+                    console.log(detailData.couponList,'11111')
+                    this.setState({
+                      detailData
+                    })
+                  }}
+                  >
+                    删除
+                  </span>
+                    </Col>
+                    </Row>
+                  })
+                }
+              </>)}
               <Row>
               </Row>
 

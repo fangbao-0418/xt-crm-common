@@ -6,10 +6,14 @@ export default {
   state: {
     // 当前激活tab
     tab: 'userinfo',
+    /** 用户类型 1-优选 2-好店 */
+    memberType: 1,
     // 当前被编辑的用户信息
     currentData: {},
     // 用户信息
     userinfo: {},
+    // 好店用户信息
+    goodStoreUserInfo: {},
     // 推荐的人
     recommenderConfig: {
       records: [],
@@ -42,6 +46,16 @@ export default {
         type: 'user.userinfo/saveDefault',
         payload: {
           userinfo: userinfo || {}
+        }
+      })
+      isFunction(payload.cb) && payload.cb(userinfo)
+    },
+    async getGoodStoreUserInfo(payload) {
+      const userinfo = await api.getGoodStoreUserInfo(payload);
+      dispatch({
+        type: 'user.userinfo/saveDefault',
+        payload: {
+          goodStoreUserInfo: userinfo || {}
         }
       })
       isFunction(payload.cb) && payload.cb(userinfo)
@@ -118,9 +132,10 @@ export default {
         message.success('编辑成功!');
       }
     },
+    /** 修改邀请人信息 */
     async updateInviteUser(payload) {
       const bizSource = payload.bizSource
-      delete payload.bizSource
+      // delete payload.bizSource
       const res = await api.updateInviteUser(payload);
       if (res) { // true为成功
         dispatch({

@@ -1,3 +1,4 @@
+/** 修改邀请人 */
 import React, { Component } from 'react';
 import { Modal, Form, Input, Col, Row, Select } from 'antd';
 import { connect } from '@/util/utils';
@@ -18,6 +19,7 @@ for (const key in MemberTypeTextMap) {
   currentData: state['user.userinfo'].currentData,
   inviteInfo: state['user.userinfo'].inviteInfo,
   visible: state['user.userinfo'].visibleInvit,
+  tab: state['user.userinfo'].memberType
 }))
 @Form.create()
 export default class extends Component {
@@ -28,7 +30,7 @@ export default class extends Component {
     dispatch['user.userinfo'].updateInviteUser({
       memberId: currentData.id,
       invitedId: inviteInfo.id,
-      bizSource: this.props.bizSource
+      tab: this.props.tab
     });
   }
 
