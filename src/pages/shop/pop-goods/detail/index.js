@@ -109,7 +109,7 @@ class GoodsDetail extends React.Component {
     return (
       <div>
         <BaseCard data={baseInfo} />
-        <SkuCard goodsInfo={goodsInfo} confirmStatus={goodsInfo?.confirmStatus} status={goodsInfo?.status} data={skuInfo} />
+        <SkuCard goodsInfo={goodsInfo} data={skuInfo} />
         <LogisCard data={logisInfo} />
         <AuditCard data={auditInfo} productPoolId={productPoolId} />
         {!this.state.readonly && goodsInfo?.status === 1 && goodsInfo?.confirmStatus === 1 && (

@@ -36,7 +36,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   const query = parseQuery()
   const readonly = !!query.readonly
   const { specVals, specKeys } = data;
-  const { auditStatus } = goodsInfo
+  const { auditStatus  } = goodsInfo
   // console.log(goodsInfo, 'goodsInfogoodsInfogoodsInfogoodsInfo')
   // 动态表头
   const dynaColums = specKeys.map(sitem => ({
@@ -44,7 +44,8 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     dataIndex: sitem.specNameKey,
     key: sitem.specNameKey
   }));
-
+  const productCategoryVO = goodsInfo.productCategoryVO || {}
+  const { agencyRate } = productCategoryVO
   // 固定表头
   const fixedColumns = [{
     title: '规格序号',
@@ -59,17 +60,17 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   }, {
     title: '供货价',
     dataIndex: 'costPrice',
-    render: (value) => (value ? formatMoneyWithSign(value) : '-')
+    render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '市场价',
     dataIndex: 'marketPrice',
-    render: (value) => (value ? formatMoneyWithSign(value) : '-')
+    render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '销售价',
     dataIndex: 'salePrice',
     key: 'salePrice',
     render: (value) => {
-      return (value ? formatMoneyWithSign(value) : '-')
+      return (formatMoneyWithSign(value))
     }
   }, {
     title: '佣金上浮',
@@ -77,11 +78,11 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     // hidden: true,
     dataIndex: 'commissionIncreasePrice',
     render: (value, record, index) => {
-      console.log(readonly, 'readonlyreadonlyreadonlyreadonly')
       if (readonly || (status !== 1 || confirmStatus !== 1)) {
-        return (value ? formatMoneyWithSign(value) : '-')
+        return (formatMoneyWithSign(value))
       }
       value = APP.fn.formatMoneyNumber(value, 'm2u')
+      const min = APP.fn.formatMoneyNumber(record.salePrice * agencyRate / 100, 'm2u')
       return (
         <Form.Item>
           {
@@ -101,7 +102,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
                   }
                   APP.dispatch[namespace].saveDefault({ goodsInfo });
                 }}
-                min={0}
+                min={-min}
                 max={APP.fn.formatMoneyNumber(record.salePrice, 'm2u')}
                 precision={1}
               />
@@ -115,18 +116,18 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     hidden: !(status === 1 && confirmStatus === 1),
     dataIndex: 'increaseSalePrice',
     render: (value, record) => {
-      return '¥' + APP.fn.formatMoneyNumber((record.salePrice + record.commissionIncreasePrice), 'm2u')
+      return formatMoneyWithSign(record.salePrice + record.commissionIncreasePrice)
     },
   }, {
     title: '建议供货价',
     dataIndex: 'adviseCostPrice',
     hidden: (auditStatus !== 2),
-    render: (value) => (value ? formatMoneyWithSign(value) : '-')
+    render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '建议销售价',
     dataIndex: 'adviseSalePrice',
     hidden: (auditStatus !== 2),
-    render: (value) => (value ? formatMoneyWithSign(value) : '-')
+    render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '总库存',
     dataIndex: 'stock'
@@ -153,7 +154,8 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
 class SkuCard extends React.Component {
 
   render() {
-    const { data, form, status, confirmStatus, goodsInfo } = this.props
+    const { data, form, goodsInfo } = this.props
+    const { confirmStatus, status } = goodsInfo || {}
     return (
       <Form>
         <WrapCard
