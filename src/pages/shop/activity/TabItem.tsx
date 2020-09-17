@@ -222,6 +222,8 @@ class Main extends React.Component<Props, State> {
         >
           <InputNumber
             precision={0}
+            min={1}
+            max={100000}
             value={this.state.sort}
             onChange={(sort) => this.setState({ sort })}
             style={{ width: '100%' }}

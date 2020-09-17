@@ -36,6 +36,7 @@ interface State {
   totalStock: number
   iconUrl: string
   bgUrl: string
+  status?: number
 }
 class Main extends React.Component<{}, State> {
   public formRef: FormInstance
@@ -46,6 +47,7 @@ class Main extends React.Component<{}, State> {
     passSkuCount: 0,
     rejectSkuCount: 0,
     totalStock: 0,
+    status: undefined,
     iconUrl: '',
     bgUrl: ''
   }
@@ -53,6 +55,7 @@ class Main extends React.Component<{}, State> {
   public promotionId = (parseQuery() as any).promotionId
   public componentDidMount() {
     this.fetchData()
+    this.tabItem.listRef.refresh()
   }
   /** 会场活动详情 */
   public fetchData = async () => {
@@ -66,13 +69,16 @@ class Main extends React.Component<{}, State> {
         skuCount: res.skuCount,
         passSkuCount: res.passSkuCount,
         rejectSkuCount: res.rejectSkuCount,
-        totalStock: res.totalStock
+        totalStock: res.totalStock,
+        status: res.status
       })
     }
   }
   public onTabChange = (key: string) => {
     this.setState({
       activeKey: key
+    }, () => {
+      this.tabItem.listRef.refresh()
     })
   }
   public render () {
@@ -115,10 +121,11 @@ class Main extends React.Component<{}, State> {
                     个）
                   </div>
                   <AlertTabItem
-                    // getInstance={(tabItem: any) => this.tabItem = tabItem }
+                    getInstance={(tabItem: any) => this.tabItem = tabItem }
                     promotionId={this.promotionId}
                     refresh={this.fetchData}
                     auditStatus={activeKey}
+                    status={this.state.status}
                   />
                 </TabPane>
               )
@@ -136,12 +143,18 @@ interface Props extends AlertComponentProps {
   promotionId: string,
   auditStatus: string,
   refresh: () => void
+  getInstance: (ref: any) => void
+  status?: number
 }
 interface TabItemState {
   fileList: any[]
 }
 class TabItem extends React.Component<Props, TabItemState> {
   public listRef: ListPageInstanceProps
+  public constructor(props: Props) {
+    super(props)
+    props.getInstance(this)
+  }
   public state = {
     fileList: []
   }
@@ -282,6 +295,7 @@ class TabItem extends React.Component<Props, TabItemState> {
               type='primary'
               ghost
               className='ml10'
+              disabled={!!this.props.status && [6, 7].includes(this.props.status)}
               onClick={() => {
                 this.props.alert({
                   title: '导入商品',

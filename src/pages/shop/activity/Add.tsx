@@ -1,7 +1,7 @@
 import React from 'react'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Form, FormItem, Alert } from '@/packages/common/components'
-import { DatePicker, Card, Radio, InputNumber, Table, Button, Popconfirm } from 'antd'
+import { DatePicker, Card, Radio, InputNumber, Table, Button, Popconfirm, Modal } from 'antd'
 import { addPromotion, getPromotionDetail, updatePromotion } from './api'
 import { getDefaultConfig } from './config'
 import { ColumnProps } from 'antd/lib/table'
@@ -13,8 +13,15 @@ import { disabledDate, disabledDateTime } from '@/util/antdUtil'
 
 const { RangePicker } = DatePicker
 interface Props extends AlertComponentProps {}
-class Main extends React.Component<Props> {
+interface State {
+  selectedRowKeys: any[]
+}
+class Main extends React.Component<Props, State> {
+  public state = {
+    selectedRowKeys: []
+  }
   public formRef: FormInstance
+  public storeModal: any
   public promotionId = (parseQuery() as any).promotionId
   public copy = (parseQuery() as any).copy
   public columns: ColumnProps<any>[] = [{
@@ -52,26 +59,12 @@ class Main extends React.Component<Props> {
     if (this.promotionId) {
       const res = await getPromotionDetail(this.promotionId)
       this.formRef.setValues(res)
+      this.setState({ selectedRowKeys: (res.dataSource || []).map((v: any) => v.shopId) })
     }
   }
   /** 添加店铺 */
   public handleAdd = () => {
-    let dataSource: any[] = []
-    this.props.alert({
-      title: '选择店铺',
-      width: 1200,
-      content: (
-        <StoreModal
-          onChange={(rows) => {
-            dataSource = rows
-          }}
-        />
-      ),
-      onOk: (hide) => {
-        this.formRef.setValues({ dataSource });
-        hide();
-      }
-    })
+    this.storeModal.open()
   }
   /** 保存活动 */
   public handleSave = () => {
@@ -102,7 +95,6 @@ class Main extends React.Component<Props> {
   public disabledTime = (dates: [moment.Moment, moment.Moment], type: 'start'|'end') => {
     if (type === 'start' && dates) {
       let result = disabledDateTime(dates[0], new Date());
-      console.log('result', result)
       return result
     }
     return {
@@ -110,186 +102,195 @@ class Main extends React.Component<Props> {
   }
   public render () {
     return (
-      <Form
-        getInstance={(ref) => {
-          this.formRef = ref
-        }}
-        rangeMap={{
-          applyTime: {
-            fields: ['applyStartTime', 'applyEndTime']
-          },
-          activityTime: {
-            fields: ['startTime', 'endTime']
-          }
-        }}
-        config={getDefaultConfig()}
-      >
-        <Card title='活动报名设置'>
-          <FormItem
-            name='title'
-            verifiable
-            controlProps={{
-              style: {
-                width: 220
-              }
-            }}
-          />
-          <FormItem
-            name='type'
-            verifiable
-            controlProps={{
-              style: {
-                width: 220
-              }
-            }}
-          />
-          <FormItem
-            name='description'
-            verifiable
-          />
-          <FormItem
-            required
-            label='活动报名时间'
-            inner={(form) => {
-              return form.getFieldDecorator('applyTime', {
-                rules: [{
-                  required: true,
-                  message: '活动报名时间不能为空'
-                }]
-              })(
-                <RangePicker
-                  disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
-                  disabledTime={this.disabledTime as any}
-                  showTime={{
-                    hideDisabledOptions: true,
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                  }}
-                  format="YYYY-MM-DD HH:mm:ss"
-                />
-              )
-            }}
-          />
-          <FormItem
-            label='是否预热'
-            required
-            inner={(form) => {
-              return form.getFieldDecorator('preheat', {
-                initialValue: 1,
-                rules: [{
-                  required: true,
-                  message: '请选择是否预热'
-                }]
-              })(
-                <Radio.Group>
-                  <Radio value={1} style={{ display: 'block' }}>是，活动开始前24小时，会场同步到线上预热</Radio>
-                  <Radio value={0} style={{ display: 'block' }}>否，活动正式开始时线上开放</Radio>
-                </Radio.Group>
-              )
-            }}
-          />
-          <FormItem
-            label='活动排期时间'
-            required
-            inner={(form) => {
-              const applyTime = form.getFieldValue('applyTime')
-              return form.getFieldDecorator('activityTime', {
-                rules: [{
-                  required: true,
-                  message: '活动排期时间不能为空'
-                }]
-              })(
-                <RangePicker
-                  disabledDate={(current: moment.Moment | null) => {
-                    if (applyTime?.[1]) {
-                      return disabledDate(current, applyTime[1])
-                    }
-                    return disabledDate(current, moment())
-                  }}
-                  showTime={{
-                    hideDisabledOptions: true,
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
-                  }}
-                  format="YYYY-MM-DD HH:mm:ss"
-                />
-              )
-            }}
-          />
-        </Card>
-        <Card title='活动规则和要求'>
-          <FormItem
-            label='活动供货价'
-            required
-            inner={(form) => {
-              return (
-                <>
-                  <div>
-                    <span>不高于日常供货价的</span>
-                    {form.getFieldDecorator('costPriceDiscount', {
-                      rules: [{
-                        required: true,
-                        message: '请输入供货价折扣'
-                      }]
-                    })(
-                      <InputNumber
-                        min={1}
-                        max={100}
-                        className='ml10 mr10'
-                        precision={0}
-                      />)}
-                    <span>%</span>
-                  </div>
-                  <div>（输入正整数，比例后取两位小数，例如日常供货价79，不高于日常供货价85%，即活动供货价最高为67.15元）</div>
-                </>
-              )
-            }}
-          />
-          {(!this.promotionId || this.copy === '1') && (
+      <>
+        <StoreModal
+          ref={(ref) => this.storeModal = ref}
+          selectedRowKeys={this.state.selectedRowKeys}
+          onOk={(dataSource: any[]) => {
+            this.formRef.setValues({ dataSource })
+          }}
+        />
+        <Form
+          getInstance={(ref) => {
+            this.formRef = ref
+          }}
+          rangeMap={{
+            applyTime: {
+              fields: ['applyStartTime', 'applyEndTime']
+            },
+            activityTime: {
+              fields: ['startTime', 'endTime']
+            }
+          }}
+          config={getDefaultConfig()}
+        >
+          <Card title='活动报名设置'>
             <FormItem
-              label='报名店铺类型'
+              name='title'
+              verifiable
+              controlProps={{
+                style: {
+                  width: 220
+                }
+              }}
+            />
+            <FormItem
+              name='type'
+              verifiable
+              controlProps={{
+                style: {
+                  width: 220
+                }
+              }}
+            />
+            <FormItem
+              name='description'
+              verifiable
+            />
+            <FormItem
+              required
+              label='活动报名时间'
+              inner={(form) => {
+                return form.getFieldDecorator('applyTime', {
+                  rules: [{
+                    required: true,
+                    message: '活动报名时间不能为空'
+                  }]
+                })(
+                  <RangePicker
+                    disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
+                    disabledTime={this.disabledTime as any}
+                    showTime={{
+                      hideDisabledOptions: true,
+                      defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                    }}
+                    format="YYYY-MM-DD HH:mm:ss"
+                  />
+                )
+              }}
+            />
+            <FormItem
+              label='是否预热'
+              required
+              inner={(form) => {
+                return form.getFieldDecorator('preheat', {
+                  initialValue: 1,
+                  rules: [{
+                    required: true,
+                    message: '请选择是否预热'
+                  }]
+                })(
+                  <Radio.Group>
+                    <Radio value={1} style={{ display: 'block' }}>是，活动开始前24小时，会场同步到线上预热</Radio>
+                    <Radio value={0} style={{ display: 'block' }}>否，活动正式开始时线上开放</Radio>
+                  </Radio.Group>
+                )
+              }}
+            />
+            <FormItem
+              label='活动排期时间'
+              required
+              inner={(form) => {
+                const applyTime = form.getFieldValue('applyTime')
+                return form.getFieldDecorator('activityTime', {
+                  rules: [{
+                    required: true,
+                    message: '活动排期时间不能为空'
+                  }]
+                })(
+                  <RangePicker
+                    disabledDate={(current: moment.Moment | null) => {
+                      if (applyTime?.[1]) {
+                        return disabledDate(current, applyTime[1])
+                      }
+                      return disabledDate(current, moment())
+                    }}
+                    showTime={{
+                      hideDisabledOptions: true,
+                      defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
+                    }}
+                    format="YYYY-MM-DD HH:mm:ss"
+                  />
+                )
+              }}
+            />
+          </Card>
+          <Card title='活动规则和要求'>
+            <FormItem
+              label='活动供货价'
               required
               inner={(form) => {
                 return (
                   <>
-                    <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个店铺，会单独拆分为几个会场）</div>
-                    {
-                      form.getFieldDecorator('dataSource', {
-                        valuePropName: 'dataSource',
+                    <div>
+                      <span>不高于日常供货价的</span>
+                      {form.getFieldDecorator('costPriceDiscount', {
                         rules: [{
-                          validator: (rule: any, value: any, callback: any) => {
-                            if (Array.isArray(value) && value.length > 0) {
-                              callback()
-                            } else {
-                              callback('请添加店铺')
-                            }
-                          }
+                          required: true,
+                          message: '请输入供货价折扣'
                         }]
                       })(
-                        <Table columns={this.columns} rowKey='shopId' />
-                      )
-                    }
+                        <InputNumber
+                          min={1}
+                          max={100}
+                          className='ml10 mr10'
+                          precision={0}
+                        />)}
+                      <span>%</span>
+                    </div>
+                    <div>（输入正整数，比例后取两位小数，例如日常供货价79，不高于日常供货价85%，即活动供货价最高为67.15元）</div>
                   </>
                 )
               }}
             />
-          )}
-        </Card>
-        <div>
-          <Button
-            type='primary'
-            onClick={this.handleSave}
-          >
-            保存
-          </Button>
-          <Button
-            className='ml10'
-            onClick={() => {
-              APP.history.goBack()
-            }}
-          >
-            取消
-          </Button>
-        </div>
-      </Form>
+            {(!this.promotionId || this.copy === '1') && (
+              <FormItem
+                label='报名店铺类型'
+                required
+                inner={(form) => {
+                  return (
+                    <>
+                      <div>指定店铺参与<span className='href' onClick={this.handleAdd}>+添加店铺</span>（指定几个店铺，会单独拆分为几个会场）</div>
+                      {
+                        form.getFieldDecorator('dataSource', {
+                          valuePropName: 'dataSource',
+                          rules: [{
+                            validator: (rule: any, value: any, callback: any) => {
+                              if (Array.isArray(value) && value.length > 0) {
+                                callback()
+                              } else {
+                                callback('请添加店铺')
+                              }
+                            }
+                          }]
+                        })(
+                          <Table columns={this.columns} rowKey='shopId' />
+                        )
+                      }
+                    </>
+                  )
+                }}
+              />
+            )}
+          </Card>
+          <div>
+            <Button
+              type='primary'
+              onClick={this.handleSave}
+            >
+              保存
+            </Button>
+            <Button
+              className='ml10'
+              onClick={() => {
+                APP.history.goBack()
+              }}
+            >
+              取消
+            </Button>
+          </div>
+        </Form>
+      </>
     )
   }
 }
