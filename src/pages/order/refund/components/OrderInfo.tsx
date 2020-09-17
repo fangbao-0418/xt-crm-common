@@ -46,6 +46,9 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
           订单状态：{orderInfoVO.orderStatusStr}
         </Col>
         <Col span={8}>
+          订单渠道
+        </Col>
+        <Col span={8}>
           订单类型：{
             APP.constant.orderTypeConfig[
               String(orderInfoVO.orderType)

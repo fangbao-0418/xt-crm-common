@@ -37,7 +37,7 @@ class Main extends React.Component<Props> {
     })
   }
   public render () {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, getFieldValue } = this.props.form
     const values = this.payload
     return (
       <div
@@ -56,10 +56,21 @@ class Main extends React.Component<Props> {
             )}
           </Form.Item>
           <Form.Item
+            label='banner渠道'
+          >
+            {getFieldDecorator('bizSource', { initialValue: values.bizSource })(
+              <Select placeholder='请选择banner渠道' allowClear style={{ width: 172 }}>
+                <Select.Option value={-1}>全部</Select.Option>
+                <Select.Option value={0}>喜团优选</Select.Option>
+                <Select.Option value={20}>喜团好店</Select.Option>
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item
             label='位置'
           >
             {getFieldDecorator('seat', { initialValue: values.seat })(
-              <BannerPosition />
+              <BannerPosition bizSource={getFieldValue('bizSource') || 0} />
             )}
           </Form.Item>
           <Form.Item
@@ -69,17 +80,6 @@ class Main extends React.Component<Props> {
               <Select placeholder='请选择状态' allowClear style={{ width: 172 }}>
                 <Select.Option value={1}>开启</Select.Option>
                 <Select.Option value={0}>关闭</Select.Option>
-              </Select>
-            )}
-          </Form.Item>
-          <Form.Item
-            label='banner渠道'
-          >
-            {getFieldDecorator('bizSource', { initialValue: values.bizSource })(
-              <Select placeholder='请选择banner渠道' allowClear style={{ width: 172 }}>
-                <Select.Option value={-1}>全部</Select.Option>
-                <Select.Option value={0}>喜团优选</Select.Option>
-                <Select.Option value={20}>喜团好店</Select.Option>
               </Select>
             )}
           </Form.Item>

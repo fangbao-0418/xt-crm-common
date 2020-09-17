@@ -146,7 +146,7 @@ class Main extends React.Component<Props> {
                   disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
                   showTime={{
                     hideDisabledOptions: true,
-                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+                    defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
                   }}
                   format="YYYY-MM-DD HH:mm:ss"
                 />

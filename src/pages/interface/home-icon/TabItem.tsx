@@ -162,7 +162,6 @@ class Main extends React.Component<Props, State> {
     }
   }
   public toPublish () {
-    const { dataSource } = this.state
     api.publishIcon().then(() => {
       APP.success('发布icon成功')
     })
@@ -201,7 +200,37 @@ class Main extends React.Component<Props, State> {
             >
               +新增icon
             </div>
-            <If condition={dataSource.length >= 10}>
+            {/* 喜团优选 */}
+            <If condition={this.props.bizSource === '0'}>
+              <If condition={dataSource.length >= 10}>
+                <Popconfirm
+                  title='确认发布icon吗'
+                  onConfirm={this.toPublish}
+                >
+                  <Button
+                    type='primary'
+                    className={styles.release}
+                  >
+                    发布
+                  </Button>
+                </Popconfirm>
+              </If>
+              <If condition={dataSource.length < 10}>
+                <Button
+                  type='primary'
+                  className={styles.release}
+                  onClick={() => {
+                    Modal.error({
+                      title: '限制发布提示',
+                      content: 'icon个数必须大于10个以上才能发布~'
+                    })
+                  }}
+                >
+                  发布
+                </Button>
+              </If>
+            </If>
+            <If condition={this.props.bizSource === '20'}>
               <Popconfirm
                 title='确认发布icon吗'
                 onConfirm={this.toPublish}
@@ -213,20 +242,6 @@ class Main extends React.Component<Props, State> {
                   发布
                 </Button>
               </Popconfirm>
-            </If>
-            <If condition={dataSource.length < 10}>
-              <Button
-                type='primary'
-                className={styles.release}
-                onClick={() => {
-                  Modal.error({
-                    title: '限制发布提示',
-                    content: 'icon个数必须大于10个以上才能发布~'
-                  })
-                }}
-              >
-                发布
-              </Button>
             </If>
           </div>
         </div>

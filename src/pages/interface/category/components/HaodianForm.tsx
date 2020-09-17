@@ -54,16 +54,18 @@ class Main extends React.Component<Props, State> {
     let actText: any[] = []
     let cateText: any[] = []
     productCategoryVOS.forEach((item) => {
+      // 关联类目
       if (item.type === 1) {
-        actText.push({
-          title: item.name,
-          promotionId: item.id
-        })
-      }
-      else if (item.type === 2) {
         cateText.push({
           categoryId: item.id,
           categoryName: item.name
+        })
+      }
+      // 关联活动
+      else if (item.type === 2) {
+        actText.push({
+          title: item.name,
+          promotionId: item.id
         })
       }
     })
@@ -94,17 +96,17 @@ class Main extends React.Component<Props, State> {
       if (!errs) {
         let actText: any[] = this.state.actText
         let cateText: any[] = this.state.cateText
+        // 关联类目
+        cateText = cateText.map((v: any) => ({
+          id: v.categoryId,
+          name: v.categoryName,
+          type: 1,
+          level: 1
+        }))
         // 关联活动
         actText = actText.map((v: any) => ({
           name: v.title,
           id: v.promotionId,
-          type: 1,
-          level: 1
-        }))
-        // 关联商品
-        cateText = cateText.map((v: any) => ({
-          id: v.categoryId,
-          name: v.categoryName,
           type: 2,
           level: 1
         }))
