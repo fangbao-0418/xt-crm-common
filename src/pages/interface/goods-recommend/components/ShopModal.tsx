@@ -56,10 +56,13 @@ class Main extends React.Component<Props, State> {
   public onCancel = () => {
     this.setState({ visible: false })
   }
-  public componentWillReceiveProps (props: Props) {
-    this.setState({
-      selectedRowKeys: props.selectedRowKeys || []
-    })
+  public componentWillReceiveProps (nextProps: Props) {
+    const selectedRowKeys = nextProps.selectedRowKeys
+    if (selectedRowKeys && this.props.selectedRowKeys !== selectedRowKeys) {
+      this.setState({
+        selectedRowKeys
+      })
+    }
   }
   public componentDidMount () {
     this.fetchData()

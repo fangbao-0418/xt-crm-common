@@ -8,6 +8,7 @@ interface Props {
   readonly?: boolean
   value?: any
   onChange?: (value: any) => void
+  channel: 1 | 2
 }
 interface State {
   selectedRowKeys: any[]
@@ -75,11 +76,12 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { selectedRowKeys, dataSource } = this.state
-    const { readonly } = this.props
+    const { readonly, channel } = this.props
     return (
       <div>
         <GoodsModal
           fetchNode='open'
+          channel={channel}
           selectedRowKeys={selectedRowKeys}
           ref='goodsmodal'
           onOk={(keys, rows) => {

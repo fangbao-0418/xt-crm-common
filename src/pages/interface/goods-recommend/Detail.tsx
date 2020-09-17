@@ -55,9 +55,19 @@ class Main extends React.Component<Props, State> {
         }
       );
       values.id = this.id === "-1" ? undefined : this.id;
+
+
+      // 喜团好店
       if (values.channel === 2) {
-        values.relationIdList = (values.relationList || []).map((item: any) => item.id);
-        delete values.relationList
+        // 关联商品
+        if (values.relationType === 10) {
+
+        }
+        // 关联店铺
+        if (values.relationType === 20) {
+          values.relationIdList = (values.relationShop || []).map((item: any) => item.shopId);
+          delete values.relationShop
+        }
       }
       if (this.id === "-1") {
         api.add(values).then(() => {
@@ -182,7 +192,7 @@ class Main extends React.Component<Props, State> {
                               },
                             ],
                           }
-                        )(<RelevanceGoods readonly={readonly} />);
+                        )(<RelevanceGoods channel={1} readonly={readonly} />);
                       }}
                     />
                   ) : (
@@ -227,7 +237,7 @@ class Main extends React.Component<Props, State> {
                                       },
                                     ],
                                   }
-                                )(<RelevanceGoods readonly={readonly} />);
+                                )(<RelevanceGoods channel={2} readonly={readonly} />);
                               }}
                             />
                           ) : (

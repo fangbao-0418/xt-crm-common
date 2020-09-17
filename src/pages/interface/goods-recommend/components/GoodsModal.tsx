@@ -30,6 +30,8 @@ interface Props {
   onSelect?: (record: Item, selected: boolean) => void
   onSelectAll?: (selected: boolean, selectedRows: Item[], changeRows: Item[]) => void
   fetchNode?: 'open' | 'initial'
+  // 渠道，1-优选，2-好店，默认优选
+  channel: 1 | 2
 }
 interface State extends PageProps<Item> {
   records: Item[]
