@@ -5,6 +5,7 @@ import ShopModal from './ShopModal';
 
 interface Props {
   readonly: boolean
+  value?: any
   onChange?: (value: any) => void
 }
 interface State {
@@ -13,6 +14,12 @@ interface State {
 class Main extends React.Component<Props, State> {
   public state = {
     dataSource: []
+  }
+  public componentWillReceiveProps(nextProps: any) {
+    const value = nextProps.value
+    if (value && this.props.value !== value) {
+      this.setState({ dataSource: value })
+    }
   }
   public onChange () {
     if (this.props.onChange) {

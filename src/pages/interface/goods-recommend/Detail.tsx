@@ -30,7 +30,7 @@ class Main extends React.Component<Props, State> {
         res.location = locationMap.value[res.location];
         res.displayFrom = displayFromMap.value[res.displayFrom];
         res.productRecommendSpuList = res.productRecommendSpuVOList || [];
-        console.log('res', res)
+        console.log('res.relationShop', res.relationShop)
         this.form.setValues(res);
         this.setState({ detail: res })
         this.setState({
@@ -211,7 +211,7 @@ class Main extends React.Component<Props, State> {
                         required
                         inner={(form) => {
                           return form.getFieldDecorator("relationType", {
-                            initialValue: 10,
+                            initialValue: detail.relationType,
                           })(
                             <Radio.Group>
                               <Radio value={10}>关联商品</Radio>
