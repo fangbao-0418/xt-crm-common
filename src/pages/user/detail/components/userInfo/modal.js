@@ -47,7 +47,7 @@ export default class extends Component {
       const payload = {
         ...values,
         id: currentData.id,
-        tab: this.props.tab
+        // tab: this.props.tab
       };
       dispatch['user.userinfo'].updateUserInfo(payload);
     })
