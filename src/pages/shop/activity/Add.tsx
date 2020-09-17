@@ -9,7 +9,7 @@ import StoreModal from './StoreModal'
 import { FormInstance } from '@/packages/common/components/form'
 import { parseQuery } from '@/util/utils'
 import moment from 'moment'
-import { disabledDate } from '@/util/antdUtil'
+import { disabledDate, disabledDateTime } from '@/util/antdUtil'
 
 const { RangePicker } = DatePicker
 interface Props extends AlertComponentProps {}
@@ -93,6 +93,13 @@ class Main extends React.Component<Props> {
       }
     })
   }
+  public disabledTime = (dates: [moment.Moment, moment.Moment], type: 'start'|'end') => {
+    if (type === 'start' && dates) {
+      return disabledDateTime(dates[0], new Date())
+    }
+    return {
+    }
+  }
   public render () {
     return (
       <Form
@@ -144,6 +151,7 @@ class Main extends React.Component<Props> {
               })(
                 <RangePicker
                   disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
+                  // disabledTime={this.disabledTime as any}
                   showTime={{
                     hideDisabledOptions: true,
                     defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],

@@ -27,6 +27,7 @@ export function disabledDate(current: moment.Moment | null, date: any) {
  * @params date 禁用时间与什么时间做比较
  */
 export function disabledDateTime(current: any, date: any) {
+  console.log('disabledDateTime current', current)
   current = current || moment();
   const y = date.getFullYear();
   const M = date.getMonth();
