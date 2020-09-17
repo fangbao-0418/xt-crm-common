@@ -129,6 +129,10 @@ export default {
           bizSource,
           memberId: payload.id
         });
+        dispatch['user.userinfo'].getGoodStoreUserInfo({
+          bizSource,
+          memberId: payload.id
+        });
         message.success('编辑成功!');
       }
     },
