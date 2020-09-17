@@ -192,10 +192,12 @@ class TabItem extends React.Component<Props, TabItemState> {
             dataIndex: 'property'
           }, {
             title: '活动价',
-            dataIndex: 'salePrice'
+            dataIndex: 'salePrice',
+            render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
           }, {
             title: '活动供货价',
-            dataIndex: 'promotionCostPrice'
+            dataIndex: 'promotionCostPrice',
+            render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
           }, {
             title: '活动库存',
             dataIndex: 'inventory'
