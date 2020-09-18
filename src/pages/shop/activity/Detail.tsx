@@ -84,56 +84,63 @@ class Main extends React.Component<{}, State> {
   public render () {
     const { activeKey, productCount, skuCount, passSkuCount, rejectSkuCount, totalStock } = this.state
     return (
-      <Card title='前端会场设置'>
-        <Form
-          getInstance={(ref) => {
-            this.formRef = ref
-          }}
-          namespace='detailFormConfig'
-          config={getDefaultConfig()}
+      <Form
+        getInstance={(ref) => {
+          this.formRef = ref
+        }}
+        config={getDefaultConfig()}
+      >
+        <Card title='活动介绍'>
+          <FormItem name='title' type='text' />
+          <FormItem name='description' type='text' />
+          <FormItem name='applyTime' />
+          <FormItem name='' />
+          <FormItem />
+        </Card>
+        <Card title='活动规则和要求'></Card>
+        <Card title='前端会场设置'>
+        <FormItem name='name' />
+        <FormItem label='会场图标'>
+          <Image src={this.state.iconUrl} />
+        </FormItem>
+        <FormItem label='会场背景图'>
+          <Image src={this.state.bgUrl} />
+        </FormItem>
+        <FormItem name='tags' />
+        <FormItem name='venueDescription' />
+        <Tabs
+          activeKey={activeKey}
+          onChange={this.onTabChange}
         >
-          <FormItem name='name' />
-          <FormItem label='会场图标'>
-            <Image src={this.state.iconUrl} />
-          </FormItem>
-          <FormItem label='会场背景图'>
-            <Image src={this.state.bgUrl} />
-          </FormItem>
-          <FormItem name='tags' />
-          <FormItem name='venueDescription' />
-          <Tabs
-            activeKey={activeKey}
-            onChange={this.onTabChange}
-          >
-            {tabConfig.map((item: any) => {
-              return (
-                <TabPane tab={item.label} key={item.value}>
-                  <div>
-                    已报名商品列表 （ 已报名
-                    <span style={{ color: 'red' }}>{productCount}</span>
-                    款 sku
-                    <span style={{ color: 'red' }}>{skuCount}</span>
-                    款 审核通过sku
-                    <span style={{ color: 'red' }}>{passSkuCount}</span>
-                    款 审核拒绝sku
-                    <span style={{ color: 'red' }}>{rejectSkuCount}</span>
-                    款 可供总库存：
-                    <span style={{ color: 'red' }}>{totalStock}</span>
-                    个）
-                  </div>
-                  <AlertTabItem
-                    getInstance={(tabItem: any) => this.tabItem = tabItem }
-                    promotionId={this.promotionId}
-                    refresh={this.fetchData}
-                    auditStatus={activeKey}
-                    status={this.state.status}
-                  />
-                </TabPane>
-              )
-            })}
-          </Tabs>
-        </Form>
-      </Card>
+          {tabConfig.map((item: any) => {
+            return (
+              <TabPane tab={item.label} key={item.value}>
+                <div>
+                  已报名商品列表 （ 已报名
+                  <span style={{ color: 'red' }}>{productCount}</span>
+                  款 sku
+                  <span style={{ color: 'red' }}>{skuCount}</span>
+                  款 审核通过sku
+                  <span style={{ color: 'red' }}>{passSkuCount}</span>
+                  款 审核拒绝sku
+                  <span style={{ color: 'red' }}>{rejectSkuCount}</span>
+                  款 可供总库存：
+                  <span style={{ color: 'red' }}>{totalStock}</span>
+                  个）
+                </div>
+                <AlertTabItem
+                  getInstance={(tabItem: any) => this.tabItem = tabItem }
+                  promotionId={this.promotionId}
+                  refresh={this.fetchData}
+                  auditStatus={activeKey}
+                  status={this.state.status}
+                />
+              </TabPane>
+            )
+          })}
+        </Tabs>
+        </Card>
+      </Form>
     )
   }
 }

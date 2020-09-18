@@ -110,17 +110,7 @@ export function getDefaultConfig () {
       },
       operator: {
         label: '创建人'
-      }
-    },
-    addFormConfig: {
-      shopId: {
-        label: '店铺id'
       },
-      shopName: {
-        label: '店铺名称'
-      }
-    },
-    detailFormConfig: {
       name: {
         label: '会场名称',
         type: 'text'
@@ -132,7 +122,17 @@ export function getDefaultConfig () {
       venueDescription: {
         label: '会场介绍',
         type: 'text'
+      }
+    },
+    addFormConfig: {
+      shopId: {
+        label: '店铺id'
       },
+      shopName: {
+        label: '店铺名称'
+      }
+    },
+    detailFormConfig: {
       productId: {
         label: '商品id',
         controlProps: {
