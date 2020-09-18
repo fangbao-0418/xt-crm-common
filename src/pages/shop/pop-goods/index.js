@@ -110,7 +110,7 @@ class Main extends React.Component {
   }
 
   /** 操作：通过商品审核 */
-  handlePass = (record) => {
+  handlePass = (record, ids) => {
     let form
     const hide = this.props.alert({
       title: '渠道选择',
@@ -143,12 +143,28 @@ class Main extends React.Component {
           if (err) {
             return
           }
+          // passGoods({
+          //   ids: selectedRowKeys
+          // }).then(() => {
+          //   message.success(`共${selectedRowKeys.length}件商品审核通过成功！`)
+          //   this.setState({
+          //     selectedRowKeys: []
+          //   })
+          //   this.listRef.fetchData()
+          // })
           passGoods({
-            ids: [record.id],
+            ids: ids || [record.id],
             channel: values.channel
           }).then(() => {
             hide?.()
-            message.success('审核通过成功!')
+            if (ids) {
+              APP.success(`共${ids.length}件商品审核通过成功！`)
+              this.setState({
+                selectedRowKeys: []
+              })
+            } else {
+              APP.success('审核通过成功!')
+            }
             this.listRef.fetchData()
           })
         })
@@ -186,17 +202,19 @@ class Main extends React.Component {
     this.setState({ selectedRowKeys })
   }
 
+  /** 批量通过 */
   handleBatchPass = () => {
     const { selectedRowKeys } = this.state
-    passGoods({
-      ids: selectedRowKeys
-    }).then(() => {
-      message.success(`共${selectedRowKeys.length}件商品审核通过成功！`)
-      this.setState({
-        selectedRowKeys: []
-      })
-      this.listRef.fetchData()
-    })
+    this.handlePass(null, selectedRowKeys)
+    // passGoods({
+    //   ids: selectedRowKeys
+    // }).then(() => {
+    //   message.success(`共${selectedRowKeys.length}件商品审核通过成功！`)
+    //   this.setState({
+    //     selectedRowKeys: []
+    //   })
+    //   this.listRef.fetchData()
+    // })
   }
 
   handleBatchReject = () => {

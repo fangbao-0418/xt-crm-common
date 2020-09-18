@@ -122,12 +122,12 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   }, {
     title: '建议供货价',
     dataIndex: 'adviseCostPrice',
-    hidden: (auditStatus !== 2),
+    hidden: !(auditStatus === 2 && confirmStatus !== 0),
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '建议销售价',
     dataIndex: 'adviseSalePrice',
-    hidden: (auditStatus !== 2),
+    hidden: !(auditStatus === 2 && confirmStatus !== 0),
     render: (value) => (formatMoneyWithSign(value))
   }, {
     title: '总库存',
