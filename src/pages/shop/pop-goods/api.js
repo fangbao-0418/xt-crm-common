@@ -81,7 +81,7 @@ export function unPassGoods(data) {
     auditStatus: 3,
     /** requestType 1-小店（不校验channel） 2-pop */
     requestType: 2,
-    channel: 2
+    channel: 0
   });
 }
 
