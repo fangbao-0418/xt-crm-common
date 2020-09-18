@@ -7,6 +7,7 @@ import { formatDate, formatMoneyWithSign } from '../../helper'
 import { getOrderList, newExportOrder, importLogistics, getShopTypes, getPhoneById, supplierSearch } from '../api'
 import GoodCell from '../../../components/good-cell'
 import SearchFetch from '@/packages/common/components/search-fetch'
+import SuppilerSelector from '@/components/supplier-selector'
 import RefundCell from '../components/refund-cell'
 import RemarkModal from '../components/modal/remark-modal'
 import RefundModal from '../components/refund-modal'
@@ -418,21 +419,22 @@ class OrderList extends React.Component {
               <Col span={6}>
                 <FormItem label='供应商'>
                   {getFieldDecorator('store')(
-                    <SearchFetch
-                      selectProps={{
-                        labelInValue: true
-                      }}
-                      api={(name) => {
-                        return supplierSearch(name).then(res => {
-                          return res.map(item => ({
-                            text: item.name,
-                            value: item.id
-                          }))
-                        })
-                      }}
-                      style={{ width: 172 }}
-                      placeholder='请输入店铺名称'
-                    />
+                    <SuppilerSelector type='yx' style={{ width: 172 }} />
+                    // <SearchFetch
+                    //   selectProps={{
+                    //     labelInValue: true
+                    //   }}
+                    //   api={(name) => {
+                    //     return supplierSearch(name).then(res => {
+                    //       return res.map(item => ({
+                    //         text: item.name,
+                    //         value: item.id
+                    //       }))
+                    //     })
+                    //   }}
+                    //   style={{ width: 172 }}
+                    //   placeholder='请输入店铺名称'
+                    // />
                   )}
                 </FormItem>
               </Col>

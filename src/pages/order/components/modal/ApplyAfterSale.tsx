@@ -56,6 +56,11 @@ class ApplyAfterSale extends React.Component<Props, State> {
     return undefined
   }
   componentDidMount () {
+    const { modalInfo } = this.props
+    if (modalInfo?.orderType === 56) {
+      // 56：直播红包类型
+      return
+    }
     this.fetchDetail()
   }
   handleOk = () => {
