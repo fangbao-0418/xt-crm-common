@@ -297,9 +297,11 @@ class TabItem extends React.Component<Props, TabItemState> {
    * 导出
    */
   public handleExport = async () => {
+    const vals = this.listRef.form.getValues()
     const res = await exportVenue({
       promotionId: this.props.promotionId,
-      status: this.props.status
+      auditStatus: this.props.status,
+      ...vals
     })
     if (res) {
       APP.success('导出成功')
