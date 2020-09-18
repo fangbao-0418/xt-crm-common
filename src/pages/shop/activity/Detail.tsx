@@ -200,7 +200,7 @@ class TabItem extends React.Component<Props, TabItemState> {
           APP.success(`${msg}成功`)
           this.listRef.refresh()
           this.props.refresh()
-
+          this.forceUpdate()
         }
       }
     })
@@ -293,7 +293,9 @@ class TabItem extends React.Component<Props, TabItemState> {
    */
   public handleExport = async () => {
     const res = await exportVenue(this.props.promotionId)
-    console.log('res', res)
+    if (res) {
+      APP.success('导出成功')
+    }
   }
   public render() {
     return (

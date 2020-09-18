@@ -95,14 +95,14 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
-  public disabledTime = (dates: [moment.Moment, moment.Moment], type: 'start'|'end') => {
-    if (type === 'start' && dates) {
-      let result = disabledDateTime(dates[0], new Date());
-      return result
-    }
-    return {
-    }
-  }
+  // public disabledTime = (dates: [moment.Moment, moment.Moment], type: 'start'|'end') => {
+  //   if (type === 'start' && dates) {
+  //     let result = disabledDateTime(dates[0], new Date());
+  //     return result
+  //   }
+  //   return {
+  //   }
+  // }
   public render () {
     return (
       <>
