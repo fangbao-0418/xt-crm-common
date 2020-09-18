@@ -297,7 +297,10 @@ class TabItem extends React.Component<Props, TabItemState> {
    * 导出
    */
   public handleExport = async () => {
-    const res = await exportVenue(this.props.promotionId)
+    const res = await exportVenue({
+      promotionId: this.props.promotionId,
+      status: this.props.status
+    })
     if (res) {
       APP.success('导出成功')
     }
@@ -305,6 +308,13 @@ class TabItem extends React.Component<Props, TabItemState> {
   public render() {
     return (
       <ListPage
+        onSubmit={(value, form) => {
+          if (!(/^\d+$/.test(value.productId))) {
+            return void APP.error('商品ID只能是数字')
+          }
+          this.listRef.refresh()
+          console.log('value, form', value, form)
+        }}
         autoFetch={false}
         getInstance={(ref) => {
           this.listRef = ref

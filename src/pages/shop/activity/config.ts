@@ -151,7 +151,8 @@ export function getDefaultConfig () {
         controlProps: {
           style: {
             width: 220
-          }
+          },
+          maxLength: 20
         }
       },
       productName: {

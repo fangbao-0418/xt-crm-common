@@ -67,8 +67,7 @@ export function auditSku (payload: {
 }
 
 /** 导出会场商品 */
-export function exportVenue (promotionId: string) {
-  const data = { promotionId }
+export function exportVenue (data: any) {
   return exportFileStream('/mcweb/product/promotion/venue/export', data, '会场商品信息.xlsx', {
     method: 'get',
     data: undefined,
