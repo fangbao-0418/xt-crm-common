@@ -110,14 +110,6 @@ export function getDefaultConfig () {
       },
       operator: {
         label: '创建人'
-      },
-      tags: {
-        label: '会场标签',
-        type: 'text'
-      },
-      venueDescription: {
-        label: '会场介绍',
-        type: 'text'
       }
     },
     addFormConfig: {
@@ -129,6 +121,18 @@ export function getDefaultConfig () {
       }
     },
     detailFormConfig: {
+      name: {
+        label: '会场名称',
+        type: 'text'
+      },
+      tags: {
+        label: '会场标签',
+        type: 'text'
+      },
+      venueDescription: {
+        label: '会场介绍',
+        type: 'text'
+      },
       productId: {
         label: '商品id',
         controlProps: {

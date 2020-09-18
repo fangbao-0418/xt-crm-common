@@ -89,9 +89,10 @@ class Main extends React.Component<{}, State> {
           getInstance={(ref) => {
             this.formRef = ref
           }}
+          namespace='detailFormConfig'
           config={getDefaultConfig()}
         >
-          <FormItem name='title' type='text' />
+          <FormItem name='name' />
           <FormItem label='会场图标'>
             <Image src={this.state.iconUrl} />
           </FormItem>
@@ -144,6 +145,7 @@ interface Props extends AlertComponentProps {
   auditStatus: string,
   refresh: () => void
   getInstance: (ref: any) => void
+  /**  全部 = 0, 待发布 = 1, 已发布 = 2, 报名中 = 3, 预热中 = 4, 进行中 = 5, 已结束 = 6, 已关闭 = 7, 未开始 = 8 */
   status?: number
 }
 interface TabItemState {
@@ -228,6 +230,9 @@ class TabItem extends React.Component<Props, TabItemState> {
           }, {
             title: '操作',
             render: (record) => {
+              if (!!this.props.status && [6, 7].includes(this.props.status)) {
+                return '-'
+              }
               switch(record.auditStatus) {
                 case statusEnum['审核拒绝']:
                   return '-'
@@ -239,6 +244,7 @@ class TabItem extends React.Component<Props, TabItemState> {
                     >拒绝</span>
                   )
                 case statusEnum['待审核']:
+                  // 已结束、已关闭状态不能审核，拒绝操作
                   return (
                     <>
                       <span
@@ -295,10 +301,11 @@ class TabItem extends React.Component<Props, TabItemState> {
               type='primary'
               ghost
               className='ml10'
+              // 已结束、已关闭状态不能导入审核
               disabled={!!this.props.status && [6, 7].includes(this.props.status)}
               onClick={() => {
                 this.props.alert({
-                  title: '导入商品',
+                  title: '导入审核',
                   content: (
                     <Form
                       getInstance={(ref) => {
@@ -345,7 +352,7 @@ class TabItem extends React.Component<Props, TabItemState> {
                           promotionId: this.props.promotionId
                         })
                         if (res) {
-                          APP.success('导入商品成功')
+                          APP.success('导入成功')
                           hide()
                           this.listRef.refresh()
                         }
@@ -355,7 +362,7 @@ class TabItem extends React.Component<Props, TabItemState> {
                 })
               }}
             >
-              导入商品
+              导入审核
             </Button>
           </>
         )}
