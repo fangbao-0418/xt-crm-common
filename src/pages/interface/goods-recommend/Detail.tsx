@@ -173,7 +173,30 @@ class Main extends React.Component<Props, State> {
           />
 
           <FormItem verifiable name="date" />
-          <FormItem name="displayFrom" verifiable />
+          <FormItem
+            labelCol={{ span: 0 }}
+            wrapperCol={{ span: 24 }}
+            style={{ marginBottom: 0 }}
+            inner={(form) => {
+              const channel = form.getFieldValue("channel");
+              console.log('channel', channel)
+              // channel = 1 喜团优选 channel = 2喜团好店 
+              return channel === 1 ? (
+                <FormItem name="displayFrom" verifiable />
+              ): (
+                <FormItem
+                  name="displayFrom"
+                  verifiable
+                  options={[
+                    { label: '全部', value: 0 },
+                    { label: '小程序', value: 2 },
+                    { label: 'H5', value: 1 }
+                  ]}
+                />
+              )
+            }}
+          />
+          
           <FormItem
             labelCol={{ span: 0 }}
             wrapperCol={{ span: 24 }}
