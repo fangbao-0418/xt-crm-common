@@ -71,6 +71,9 @@ class Main extends React.Component<Props, State> {
     this.formRef.props.form.validateFields(async (err) => {
       if (!err) {
         const vals = this.formRef.getValues()
+        if (vals.applyStartTime < Date.now()) {
+          return void APP.error('活动报名开始时间不能小于当前时间')
+        }
         if (vals.startTime <= vals.applyEndTime) {
           return void APP.error('报名时间不能大于活动时间')
         }
@@ -159,7 +162,7 @@ class Main extends React.Component<Props, State> {
                 })(
                   <RangePicker
                     disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
-                    disabledTime={this.disabledTime as any}
+                    // disabledTime={this.disabledTime as any}
                     showTime={{
                       hideDisabledOptions: true,
                       defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],
