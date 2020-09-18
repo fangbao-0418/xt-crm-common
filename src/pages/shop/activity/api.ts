@@ -128,7 +128,7 @@ export function closePromotion (promotionId: number) {
 export function getShopList (payload: {
   bizType?: number,
   shopName?: string,
-  shopId?: string,
+  shopId?: string[],
   shopStatusList?: number[],
   page: number,
   pageSize: number

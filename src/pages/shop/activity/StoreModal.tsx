@@ -62,6 +62,9 @@ class Main extends React.Component<Props, State> {
           processPayload={(payload) => {
             payload.bizType = 2
             payload.shopStatusList = [2]
+            if (payload.shopId) {
+              payload.shopIdList = [payload.shopId]
+            }
             return payload
           }}
           columns={this.columns}
