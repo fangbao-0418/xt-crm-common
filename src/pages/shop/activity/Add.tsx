@@ -95,14 +95,6 @@ class Main extends React.Component<Props, State> {
       }
     })
   }
-  // public disabledTime = (dates: [moment.Moment, moment.Moment], type: 'start'|'end') => {
-  //   if (type === 'start' && dates) {
-  //     let result = disabledDateTime(dates[0], new Date());
-  //     return result
-  //   }
-  //   return {
-  //   }
-  // }
   public render () {
     return (
       <>
@@ -162,7 +154,6 @@ class Main extends React.Component<Props, State> {
                 })(
                   <RangePicker
                     disabledDate={(current: moment.Moment | null) => disabledDate(current, moment())}
-                    // disabledTime={this.disabledTime as any}
                     showTime={{
                       hideDisabledOptions: true,
                       defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')],

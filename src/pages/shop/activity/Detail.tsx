@@ -39,6 +39,7 @@ interface State {
   bgUrl: string
   status?: number
   costPriceDiscount?: number
+  preheat: 1 | 0
 }
 class Main extends React.Component<{}, State> {
   public formRef: FormInstance
@@ -52,7 +53,8 @@ class Main extends React.Component<{}, State> {
     status: undefined,
     iconUrl: '',
     bgUrl: '',
-    costPriceDiscount: undefined
+    costPriceDiscount: undefined,
+    preheat: 1
   }
   public tabItem: TabItem
   public promotionId = (parseQuery() as any).promotionId
@@ -74,7 +76,8 @@ class Main extends React.Component<{}, State> {
         rejectSkuCount: res.rejectSkuCount,
         totalStock: res.totalStock,
         status: res.status,
-        costPriceDiscount: res.costPriceDiscount
+        costPriceDiscount: res.costPriceDiscount,
+        preheat: res.preheat
       })
     }
   }
@@ -86,7 +89,7 @@ class Main extends React.Component<{}, State> {
     })
   }
   public render () {
-    const { activeKey, productCount, skuCount, passSkuCount, rejectSkuCount, totalStock, costPriceDiscount } = this.state
+    const { activeKey, productCount, skuCount, passSkuCount, rejectSkuCount, totalStock, costPriceDiscount, preheat, status } = this.state
     return (
       <Form
         rangeMap={{
@@ -109,52 +112,54 @@ class Main extends React.Component<{}, State> {
           <FormItem name='title' type='text' />
           <FormItem name='description' type='text' />
           <FormItem name='applyTime' label='报名时间' controlProps={{ disabled: true }} />
-          <FormItem name='preheatTime' label='线上预热时间' controlProps={{ disabled: true }} />
+          {preheat === 1 && <FormItem name='preheatTime' label='线上预热时间' controlProps={{ disabled: true }} />}
           <FormItem name='activityTime' label='活动时间' controlProps={{ disabled: true }} />
         </Card>
         <Card title='活动规则和要求'>供货价要求：不得高于日常供货价的{costPriceDiscount}%</Card>
-        <Card title='前端会场设置'>
-        <FormItem name='name' />
-        <FormItem label='会场图标'>
-          {this.state.iconUrl && <Image src={this.state.iconUrl} />}
-        </FormItem>
-        <FormItem label='会场背景图'>
-          <Image src={this.state.bgUrl || 'https://assets.hzxituan.com/upload/2020-09-18/57dbcbfb-4c28-4053-a595-cd550cd59244-kf7y3ru9.png'} />
-        </FormItem>
-        <FormItem name='tags' />
-        <FormItem name='venueDescription' />
-        <Tabs
-          activeKey={activeKey}
-          onChange={this.onTabChange}
-        >
-          {tabConfig.map((item: any) => {
-            return (
-              <TabPane tab={item.label} key={item.value}>
-                <div>
-                  已报名商品列表 （ 已报名
-                  <span style={{ color: 'red' }}>{productCount}</span>
-                  款 sku
-                  <span style={{ color: 'red' }}>{skuCount}</span>
-                  款 审核通过sku
-                  <span style={{ color: 'red' }}>{passSkuCount}</span>
-                  款 审核拒绝sku
-                  <span style={{ color: 'red' }}>{rejectSkuCount}</span>
-                  款 可供总库存：
-                  <span style={{ color: 'red' }}>{totalStock}</span>
-                  个）
-                </div>
-                <AlertTabItem
-                  getInstance={(tabItem: any) => this.tabItem = tabItem }
-                  promotionId={this.promotionId}
-                  refresh={this.fetchData}
-                  auditStatus={activeKey}
-                  status={this.state.status}
-                />
-              </TabPane>
-            )
-          })}
-        </Tabs>
-        </Card>
+        {status !== 1 && (
+          <Card title='前端会场设置'>
+            <FormItem name='name' />
+            <FormItem label='会场图标'>
+              {this.state.iconUrl && <Image src={this.state.iconUrl} />}
+            </FormItem>
+            <FormItem label='会场背景图'>
+              <Image src={this.state.bgUrl || 'https://assets.hzxituan.com/upload/2020-09-18/57dbcbfb-4c28-4053-a595-cd550cd59244-kf7y3ru9.png'} />
+            </FormItem>
+            <FormItem name='tags' />
+            <FormItem name='venueDescription' />
+            <Tabs
+              activeKey={activeKey}
+              onChange={this.onTabChange}
+            >
+              {tabConfig.map((item: any) => {
+                return (
+                  <TabPane tab={item.label} key={item.value}>
+                    <div>
+                      已报名商品列表 （ 已报名
+                      <span style={{ color: 'red' }}>{productCount}</span>
+                      款 sku
+                      <span style={{ color: 'red' }}>{skuCount}</span>
+                      款 审核通过sku
+                      <span style={{ color: 'red' }}>{passSkuCount}</span>
+                      款 审核拒绝sku
+                      <span style={{ color: 'red' }}>{rejectSkuCount}</span>
+                      款 可供总库存：
+                      <span style={{ color: 'red' }}>{totalStock}</span>
+                      个）
+                    </div>
+                    <AlertTabItem
+                      getInstance={(tabItem: any) => this.tabItem = tabItem }
+                      promotionId={this.promotionId}
+                      refresh={this.fetchData}
+                      auditStatus={activeKey}
+                      status={this.state.status}
+                    />
+                  </TabPane>
+                )
+              })}
+            </Tabs>
+          </Card>
+        )}
       </Form>
     )
   }
