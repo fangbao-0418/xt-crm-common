@@ -92,6 +92,19 @@ export function getDefaultConfig () {
           value: 8
         }]
       },
+      preheatTime: {
+        label: '线上预热时间',
+        type: 'rangepicker',
+        controlProps: {
+          showTime: true
+        },
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请选择活动排期时间'
+          }]
+        }
+      },
       activityTime: {
         label: '活动排期时间',
         type: 'rangepicker',

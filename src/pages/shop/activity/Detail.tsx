@@ -12,6 +12,7 @@ import Image from '@/components/Image'
 import Modal from 'antd/es/modal'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Upload from '@/components/upload/file'
+import detail from '@/pages/goods/detail'
 const { TabPane } = Tabs
 
 const tabConfig = [{
@@ -37,10 +38,11 @@ interface State {
   iconUrl: string
   bgUrl: string
   status?: number
+  costPriceDiscount?: number
 }
 class Main extends React.Component<{}, State> {
   public formRef: FormInstance
-  public state = {
+  public state: State = {
     activeKey: '-1',
     productCount: 0,
     skuCount: 0,
@@ -49,7 +51,8 @@ class Main extends React.Component<{}, State> {
     totalStock: 0,
     status: undefined,
     iconUrl: '',
-    bgUrl: ''
+    bgUrl: '',
+    costPriceDiscount: undefined
   }
   public tabItem: TabItem
   public promotionId = (parseQuery() as any).promotionId
@@ -60,7 +63,7 @@ class Main extends React.Component<{}, State> {
   /** 会场活动详情 */
   public fetchData = async () => {
     if (this.promotionId) {
-      const res = await getPromotionDetail(this.promotionId)
+      const res: any = await getPromotionDetail(this.promotionId)
       this.formRef.setValues(res)
       this.setState({
         iconUrl: res.iconUrl,
@@ -70,7 +73,8 @@ class Main extends React.Component<{}, State> {
         passSkuCount: res.passSkuCount,
         rejectSkuCount: res.rejectSkuCount,
         totalStock: res.totalStock,
-        status: res.status
+        status: res.status,
+        costPriceDiscount: res.costPriceDiscount
       })
     }
   }
@@ -82,9 +86,20 @@ class Main extends React.Component<{}, State> {
     })
   }
   public render () {
-    const { activeKey, productCount, skuCount, passSkuCount, rejectSkuCount, totalStock } = this.state
+    const { activeKey, productCount, skuCount, passSkuCount, rejectSkuCount, totalStock, costPriceDiscount } = this.state
     return (
       <Form
+        rangeMap={{
+          applyTime: {
+            fields: ['applyStartTime', 'applyEndTime']
+          },
+          preheatTime: {
+            fields: ['preheatStartTime', 'preheatEndTime']
+          },
+          activityTime: {
+            fields: ['startTime', 'endTime']
+          }
+        }}
         getInstance={(ref) => {
           this.formRef = ref
         }}
@@ -93,18 +108,18 @@ class Main extends React.Component<{}, State> {
         <Card title='活动介绍'>
           <FormItem name='title' type='text' />
           <FormItem name='description' type='text' />
-          <FormItem name='applyTime' />
-          <FormItem name='' />
-          <FormItem />
+          <FormItem name='applyTime' label='报名时间' controlProps={{ disabled: true }} />
+          <FormItem name='preheatTime' label='线上预热时间' controlProps={{ disabled: true }} />
+          <FormItem name='activityTime' label='活动时间' controlProps={{ disabled: true }} />
         </Card>
-        <Card title='活动规则和要求'></Card>
+        <Card title='活动规则和要求'>供货价要求：不得高于日常供货价的{costPriceDiscount}%</Card>
         <Card title='前端会场设置'>
         <FormItem name='name' />
         <FormItem label='会场图标'>
-          <Image src={this.state.iconUrl} />
+          {this.state.iconUrl && <Image src={this.state.iconUrl} />}
         </FormItem>
         <FormItem label='会场背景图'>
-          <Image src={this.state.bgUrl} />
+          <Image src={this.state.bgUrl || 'https://assets.hzxituan.com/upload/2020-09-18/57dbcbfb-4c28-4053-a595-cd550cd59244-kf7y3ru9.png'} />
         </FormItem>
         <FormItem name='tags' />
         <FormItem name='venueDescription' />
