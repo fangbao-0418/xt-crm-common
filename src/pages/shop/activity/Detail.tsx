@@ -311,7 +311,7 @@ class TabItem extends React.Component<Props, TabItemState> {
     return (
       <ListPage
         onSubmit={(value, form) => {
-          if (!(/^\d+$/.test(value.productId))) {
+          if (value.productId && !(/^\d+$/.test(value.productId))) {
             return void APP.error('商品ID只能是数字')
           }
           this.listRef.refresh()
