@@ -11,7 +11,7 @@ export const getAnchorList = (payload: any) => {
   } else {
     return newPost('/mmweb/pop/query/sort/v1', {
       ...payload,
-      bizType: 4,
+      bizType: 2,
       bizSource: undefined
     })
   }
