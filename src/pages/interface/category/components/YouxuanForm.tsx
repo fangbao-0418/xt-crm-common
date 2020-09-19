@@ -641,16 +641,18 @@ class Main extends React.Component<Props, State> {
               ],
             })(
               <div>
-                <Checkbox
-                  checked={this.state.checkCate}
-                  onChange={(e) => {
-                    this.setState({
-                      checkCate: e.target.checked,
-                    });
-                  }}
-                >
-                  关联类目
-                </Checkbox>
+                <div>
+                  <Checkbox
+                    checked={this.state.checkCate}
+                    onChange={(e) => {
+                      this.setState({
+                        checkCate: e.target.checked,
+                      });
+                    }}
+                  >
+                    关联类目
+                  </Checkbox>
+                </div>
                 {this.state.checkCate ? (
                   <div className="intf-cat-rebox">
                     {this.state.cateText.map((val, i) => {
@@ -677,16 +679,18 @@ class Main extends React.Component<Props, State> {
                 ) : (
                   ""
                 )}
-                <Checkbox
-                  checked={this.state.checkAct}
-                  onChange={(e) => {
-                    this.setState({
-                      checkAct: e.target.checked,
-                    });
-                  }}
-                >
-                  关联活动
-                </Checkbox>
+                <div>
+                  <Checkbox
+                    checked={this.state.checkAct}
+                    onChange={(e) => {
+                      this.setState({
+                        checkAct: e.target.checked,
+                      });
+                    }}
+                  >
+                    关联活动
+                  </Checkbox>
+                </div>
                 {this.state.checkAct ? (
                   <div className="intf-cat-rebox">
                     {this.state.actText.map((val, i) => {
