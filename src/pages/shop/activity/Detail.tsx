@@ -300,7 +300,7 @@ class TabItem extends React.Component<Props, TabItemState> {
     const vals = this.listRef.form.getValues()
     const res = await exportVenue({
       promotionId: this.props.promotionId,
-      auditStatus: this.props.status,
+      auditStatus: this.props.auditStatus,
       ...vals
     })
     if (res) {
