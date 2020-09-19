@@ -10,7 +10,7 @@ interface ItemProps {
 interface Props {
   value?: any[]
   onChange?: (value?: any[]) => void
-  bizSource?: any
+  bizSource?: number
 }
 interface State {
   options: ItemProps[]
@@ -23,7 +23,7 @@ class Main extends React.Component<Props> {
     this.fetchData(this.props.bizSource)
   }
   // 喜团优选需要请求category接口，好店不需要
-  public fetchData (bizSource: number) {
+  public fetchData (bizSource?: number) {
     api.getSeatList(bizSource).then((res: ItemProps[]) => {
       if (bizSource === 20) {
         this.setState({ options: res })

@@ -55,14 +55,14 @@ class BannerModal extends Component {
   }
   state = {
     renderKey: 0,
-    bizSource: '0',
+    bizSource: 0,
     visible: false,
     data: {
       platformArray: [],
       sort: 0,
       status: 1,
       seat: 1,
-      bizSource: '0'
+      bizSource: 0
     }
   }
 
@@ -115,7 +115,7 @@ class BannerModal extends Component {
       })
       this.formRef.props.form.setFieldsValue({
         title: data.title,
-        bizSource: String(data.bizSource),
+        bizSource: data.bizSource,
         seat: [data.newSeat, data.childSeat],
         onlineTime: moment(data.onlineTime),
         offlineTime: moment(data.offlineTime),
@@ -275,7 +275,7 @@ class BannerModal extends Component {
                     bizSource={this.state.bizSource}
                     onChange={(val) => {
                       if([val[0], seat[0]].includes(10)){
-                        setFieldsValue({
+                        this.formRef.setValues({
                           imgList:undefined,
                           imgList1:undefined,
                           platformArray:undefined
@@ -360,7 +360,7 @@ class BannerModal extends Component {
             <FormItem name='onlineTime' />
             <FormItem name='offlineTime' />
             <FormItem name='sort' verifiable />
-            {this.state.bizSource === '0' && (
+            {this.state.bizSource === 0 && (
               <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
                 <FormItem
                   label='平台'
@@ -379,7 +379,7 @@ class BannerModal extends Component {
                 }}/>
               </If>
             )}
-            {this.state.bizSource === '20' && (<>
+            {this.state.bizSource === 20 && (<>
               <FormItem
                 label='平台'
                 inner={(form) => {
