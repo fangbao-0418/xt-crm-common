@@ -26,7 +26,12 @@ export function updateInviteUser(params) {
 }
 
 export function checkInvited(params) {
-  return Fetch.request(`/member/invited/info?${qs.stringify(params)}`);
+  const query = qs.stringify({
+    ...params,
+    tab: undefined
+  })
+  const url = params.tab === 2 ? '/mcweb/memberm/pop/phone' : '/member/invited/info'
+  return get(`${url}?${query}`);
 }
 
 // 推荐

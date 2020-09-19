@@ -4,7 +4,7 @@ import { Modal, Form, Input, Col, Row, Select } from 'antd';
 import { connect } from '@/util/utils';
 import { MemberTypeTextMap } from '../../../../order/constant'
 import styles from './index.module.scss';
-import memberType from '@/enum/memberType';
+import memberType, { HDMemberType } from '@/enum/memberType';
 const FormItem = Form.Item;
 const { Search } = Input;
 const memberTypes = [];
@@ -48,16 +48,18 @@ export default class extends Component {
   search(value) {
     const { dispatch } = this.props;
     dispatch['user.userinfo'].checkInvited({
-      phone: value
+      phone: value,
+      tab: this.props.tab
     });
   }
 
   renderForm = () => {
-    const { currentData, inviteInfo } = this.props;
+    const { currentData, inviteInfo, tab } = this.props;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 18 },
     };
+    const levelEnum = tab !== 2 ? memberType : HDMemberType
     return (
       <Form layout="horizontal" {...formItemLayout} className={styles['user-edit-box']}>
         <Row>
@@ -94,7 +96,7 @@ export default class extends Component {
             手机：{inviteInfo.phone}&nbsp;&nbsp;&nbsp;
             用户名：{inviteInfo.userName}&nbsp;&nbsp;&nbsp;
             昵称：{inviteInfo.nickName}&nbsp;&nbsp;&nbsp;
-            用户等级：{memberType.getValue(inviteInfo.memberType)}
+            用户等级：{levelEnum.getValue(inviteInfo.memberType)}
           </Col>) : ''}
         </Row>
       </Form>
