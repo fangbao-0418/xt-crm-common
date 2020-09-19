@@ -33,7 +33,7 @@ class Main extends React.Component<Props> {
     })
   }
   public componentWillReceiveProps(nextProps: any) {
-    if (this.props.bizSource !== nextProps.bizSource) {
+    if (this.props.bizSource !== nextProps.bizSource || this.props.value !== nextProps.value) {
       this.fetchData(nextProps.bizSource)
     }
   }

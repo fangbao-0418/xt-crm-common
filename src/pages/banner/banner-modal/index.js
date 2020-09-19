@@ -384,6 +384,7 @@ class BannerModal extends Component {
                 label='平台'
                 inner={(form) => {
                   return form.getFieldDecorator('platformArray', {
+                    initialValue: data.platformArray,
                     rules: [{
                       required: true,
                       message: '请选择平台'
@@ -395,7 +396,12 @@ class BannerModal extends Component {
                   )
                 }}
               />
-              <FormItem name='memberRestrictArray' />
+              <FormItem
+                name='memberRestrictArray'
+                fieldDecoratorOptions={{
+                  initialValue: data.memberRestrictArray
+                }}
+              />
             </>)}
             <If condition={seat[0] === 7}>
               <FormItem
