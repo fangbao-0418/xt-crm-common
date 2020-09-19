@@ -91,7 +91,14 @@ class Main extends React.Component<Props, State> {
     dataIndex: 'endTime',
     render: (text) => APP.fn.formatDate(text)
   }, {
-    title: '活动类型'
+    title: '活动类型',
+    dataIndex: 'type',
+    render: (text) => {
+      const statusMap: Record<string, string> = {
+        '60': '品牌会场'
+      }
+      return statusMap[text]
+    }
   }, {
     title: '活动状态',
     dataIndex: 'status',
@@ -125,6 +132,10 @@ class Main extends React.Component<Props, State> {
       >
         <ListPage
           formConfig={formConfig}
+          processPayload={(payload) => {
+            payload.status = '2,3,4,5,8'
+            return payload
+          }}
           rangeMap={{
             effectiveTime: {
               fields: ['startTime', 'endTime']
