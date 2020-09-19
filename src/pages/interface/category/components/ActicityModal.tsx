@@ -2,7 +2,7 @@ import { isMoment } from 'moment'
 import React from 'react'
 import { Modal } from 'antd'
 import ListPage from '@/packages/common/components/list-page'
-import { getPromotionList } from '@/pages/shop/activity/api'
+import { getPromotionMagicList } from '@/pages/shop/activity/api'
 import { ColumnProps } from 'antd/lib/table'
 import { promotionStatusEnum } from '@/pages/shop/activity/config'
 import { FieldsConfig } from '@/packages/common/components/form/config'
@@ -127,7 +127,8 @@ class Main extends React.Component<Props, State> {
         <ListPage
           formConfig={formConfig}
           processPayload={(payload) => {
-            payload.status = '2,3,4,5,8'
+            // 全部状态0
+            payload.status = '0'
             return payload
           }}
           rangeMap={{
@@ -143,7 +144,7 @@ class Main extends React.Component<Props, State> {
             }
           }}
           columns={this.columns}
-          api={getPromotionList}
+          api={getPromotionMagicList}
         />
       </Modal>
     )
