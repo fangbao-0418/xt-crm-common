@@ -18,7 +18,14 @@ export interface Item {
   status: number
 }
 interface Props extends AlertComponentProps {}
-class Main extends React.Component<Props> {
+// 商品渠道，0-全部，1-优选，2-好店，默认全部
+interface State {
+  channel: 0 | 1 | 2
+}
+class Main extends React.Component<Props, State> {
+  public state: State = {
+    channel: 0
+  }
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Item>[] = [
     {
@@ -129,12 +136,7 @@ class Main extends React.Component<Props> {
     })
   }
   public render () {
-    let channel
-    if (this.listpage) {
-      const vals = this.listpage.form.getValues()
-      channel = vals.channel
-    }
-    
+    const { channel } = this.state
     return (
       <div
         style={{
@@ -150,12 +152,33 @@ class Main extends React.Component<Props> {
           }}
           formItemLayout={(
             <>
-              <FormItem name='channel' />
+              <FormItem
+                name='channel'
+                controlProps={{
+                  onChange: (channel: any) => {
+                    console.log('channel', channel, typeof channel)
+                    this.setState({ channel })
+                  }
+                }}
+              />
               <FormItem name='name' />
-              {channel !== 0 && (
+              {channel === 1 && (
                 <FormItem
                   name='location'
                   type='select'
+                />
+              )}
+              {channel === 2 && (
+                <FormItem
+                  name='location'
+                  type='select'
+                  options={[
+                    { label: "全部", value: 0 },
+                    { label: "支付结果页", value: 8 },
+                    { label: "个人中心", value: 4 },
+                    { label: "购物车", value: 2 },
+                    { label: "搜索空页面", value: 64 }
+                  ]}
                 />
               )}
               <FormItem name='status' />

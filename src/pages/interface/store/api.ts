@@ -1,5 +1,5 @@
-const { post, get, newPost, newPut, del } = APP.http
-import { handleApiUrl } from '@/util/app/config'
+const { get, newPost } = APP.http
+
 export const getAnchorList = (payload: any) => {
   if(payload.shopType===0){
     delete payload.shopType

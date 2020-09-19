@@ -222,7 +222,7 @@ class Main extends React.Component<Props, State> {
                 )
                }}
              />
-                <FormItem label='选择店铺'
+            <FormItem label='选择店铺'
                required
                inner={(form) => {
                 return this.isEdit?detailData&&detailData.shopName :form.getFieldDecorator('shopId', {
