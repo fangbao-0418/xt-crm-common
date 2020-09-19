@@ -39,6 +39,7 @@ class Main extends React.Component<Props> {
     {
       title: '位置渠道',
       dataIndex: 'channel',
+      width: 100,
       render(text) {
         return text === 2 ? '喜团好店' : '喜团优选'
       }
@@ -128,6 +129,12 @@ class Main extends React.Component<Props> {
     })
   }
   public render () {
+    let channel
+    if (this.listpage) {
+      const vals = this.listpage.form.getValues()
+      channel = vals.channel
+    }
+    
     return (
       <div
         style={{
@@ -145,7 +152,12 @@ class Main extends React.Component<Props> {
             <>
               <FormItem name='channel' />
               <FormItem name='name' />
-              <FormItem name='location' type='select' />
+              {channel !== 0 && (
+                <FormItem
+                  name='location'
+                  type='select'
+                />
+              )}
               <FormItem name='status' />
               <FormItem label='创建时间' name='date' />
             </>
@@ -169,6 +181,7 @@ class Main extends React.Component<Props> {
           processPayload={(payload) => {
             return {
               ...payload,
+              channel: payload.channel === undefined ? 0 : payload.channel,
               pageNo: payload.page,
               page: undefined
             }
