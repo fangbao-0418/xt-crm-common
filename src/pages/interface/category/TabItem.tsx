@@ -5,7 +5,6 @@ import _ from "lodash";
 import "./category.scss";
 import HaodianForm from "./components/HaodianForm";
 import YouxuanForm from "./components/YouxuanForm";
-import { If } from "@/packages/common/components";
 interface State {
   cateList: any[];
   currId: number;
@@ -21,7 +20,6 @@ class InterFaceCategory extends Component<any, State> {
   };
 
   public componentDidMount() {
-    console.log('componentDidMountcomponentDidMountcomponentDidMountcomponentDidMount')
     this.getCategorys();
   }
 
@@ -41,10 +39,7 @@ class InterFaceCategory extends Component<any, State> {
     });
   }
   render() {
-    const {
-      channel,
-      form: { getFieldValue },
-    } = this.props;
+    const { channel } = this.props;
     const { detail } = this.state;
     console.log('this.state.currId', this.state.currId)
     return (

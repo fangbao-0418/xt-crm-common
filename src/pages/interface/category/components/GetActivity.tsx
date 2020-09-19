@@ -59,6 +59,7 @@ class Main extends React.Component<GetActivityProps, {}> {
       },
       {
         title: "活动名称",
+        width: 300,
         dataIndex: "title",
       },
       {
@@ -181,6 +182,7 @@ class Main extends React.Component<GetActivityProps, {}> {
             selectedRowKeys: selectedRowKeys,
             onChange: handlenChanageSelectio,
           }}
+          scroll={{ x: true }}
           columns={this.actColumns()}
           dataSource={actList}
           pagination={modalPage}
