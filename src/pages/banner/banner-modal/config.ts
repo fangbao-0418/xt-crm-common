@@ -25,10 +25,10 @@ export function getDefaultConfig () {
         },
         options: [{
           label: '喜团优选',
-          value: '0'
+          value: 0
         }, {
           label: '喜团好店',
-          value: '20'
+          value: 20
         }]
       },
       platformArray: {
