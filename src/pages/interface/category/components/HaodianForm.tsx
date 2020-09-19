@@ -202,93 +202,76 @@ class Main extends React.Component<Props, State> {
               ],
             }}
           />
-          <FormItem
-            name="relationShop"
-            label="关联店铺"
-            verifiable
-            fieldDecoratorOptions={{
-              rules: [
-                {
-                  required: true,
-                  message: "请输入关联店铺",
-                },
-              ],
-            }}
-            inner={(form) => {
-              return (
-                <div>
-                  <Checkbox
-                    checked={this.state.checkCate}
-                    onChange={(e) => {
-                      this.setState({
-                        checkCate: e.target.checked,
-                      });
-                    }}
-                  >
-                    关联类目
-                  </Checkbox>
-                  {this.state.checkCate ? (
-                    <div className="intf-cat-rebox">
-                      {this.state.cateText.map((val: any, i: number) => {
-                        return (
-                          <div className="intf-cat-reitem" key={i}>
-                            {val.categoryName}
-                            <span
-                              className="close"
-                              onClick={() => {
-                                const cateText = this.state.cateText;
-                                cateText.splice(i, 1);
-                                this.setState({ cateText });
-                              }}
-                            >
-                              <Icon type="close" />
-                            </span>
-                          </div>
-                        );
-                      })}
-                      <Button type="link" onClick={this.handleAdd}>+添加类目</Button>
+          <FormItem label="关联店铺">
+            <Checkbox
+              checked={this.state.checkCate}
+              onChange={(e) => {
+                this.setState({
+                  checkCate: e.target.checked,
+                });
+              }}
+            >
+              关联类目
+            </Checkbox>
+            {this.state.checkCate ? (
+              <div className="intf-cat-rebox">
+                {this.state.cateText.map((val: any, i: number) => {
+                  return (
+                    <div className="intf-cat-reitem" key={i}>
+                      {val.categoryName}
+                      <span
+                        className="close"
+                        onClick={() => {
+                          const cateText = this.state.cateText;
+                          cateText.splice(i, 1);
+                          this.setState({ cateText });
+                        }}
+                      >
+                        <Icon type="close" />
+                      </span>
                     </div>
-                  ) : (
-                    ""
-                  )}
-                  <Checkbox
-                    checked={this.state.checkAct}
-                    onChange={(e) => {
-                      this.setState({
-                        checkAct: e.target.checked,
-                      });
-                    }}
-                  >
-                    关联活动
-                  </Checkbox>
-                  {this.state.checkAct ? (
-                    <div className="intf-cat-rebox">
-                      {this.state.actText.map((val: any, i: number) => {
-                        return (
-                          <div className="intf-cat-reitem" key={i}>
-                            {val.title}
-                            <span
-                              className="close"
-                              onClick={() => {
-                                const actText = this.state.actText;
-                                actText.splice(i, 1);
-                                this.setState({ actText });
-                              }}
-                            >
-                              <Icon type="close" />
-                            </span>
-                          </div>
-                        );
-                      })}
-                      <Button type="link" onClick={this.handleAddActivity}>+添加活动</Button>
+                  );
+                })}
+                <Button type="link" onClick={this.handleAdd}>+添加类目</Button>
+              </div>
+            ) : (
+              ""
+            )}
+            <Checkbox
+              checked={this.state.checkAct}
+              onChange={(e) => {
+                this.setState({
+                  checkAct: e.target.checked,
+                });
+              }}
+            >
+              关联活动
+            </Checkbox>
+            {this.state.checkAct ? (
+              <div className="intf-cat-rebox">
+                {this.state.actText.map((val: any, i: number) => {
+                  return (
+                    <div className="intf-cat-reitem" key={i}>
+                      {val.title}
+                      <span
+                        className="close"
+                        onClick={() => {
+                          const actText = this.state.actText;
+                          actText.splice(i, 1);
+                          this.setState({ actText });
+                        }}
+                      >
+                        <Icon type="close" />
+                      </span>
                     </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              );
-            }}
-          />
+                  );
+                })}
+                <Button type="link" onClick={this.handleAddActivity}>+添加活动</Button>
+              </div>
+            ) : (
+              ""
+            )}
+          </FormItem>
           <FormItem
             label="类目开关"
             required
