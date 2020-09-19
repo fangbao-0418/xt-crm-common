@@ -162,10 +162,7 @@ class Main extends React.Component<Props, State> {
                     { label: "支付结果页", value: 8 },
                     { label: "个人中心", value: 4 },
                     { label: "购物车", value: 2 },
-                    { label: "商品详情", value: 1 },
-                    { label: "拼团详情", value: 16 },
-                    { label: "升级团长页", value: 32 },
-                    { label: "商品搜索页", value: 64 },
+                    { label: "搜索空页面", value: 64 },
                   ]}
                 />
               );
