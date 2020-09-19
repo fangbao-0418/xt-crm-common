@@ -39,12 +39,9 @@ class InterFaceCategory extends Component<any, State> {
     });
   }
   render() {
-    const {
-      channel,
-      form: { getFieldValue },
-    } = this.props;
+    const { channel } = this.props;
     const { detail } = this.state;
-    getFieldValue("styleType");
+    console.log('this.state.currId', this.state.currId)
     return (
       <div className="intf-cat-box">
         <Card>
@@ -70,7 +67,7 @@ class InterFaceCategory extends Component<any, State> {
             <Col
               span={3}
               onClick={() => {
-                this.setState({ isShow: true, currId: -1 });
+                this.setState({ isShow: true, currId: -1, detail: {} });
               }}
             >
               +添加类目
@@ -78,20 +75,20 @@ class InterFaceCategory extends Component<any, State> {
           </Row>
         </Card>
         <Card style={{ display: this.state.isShow ? "block" : "none" }}>
-          {channel === "1" && (
+          <div style={{display: channel === "1" ? "block" : "none" }}>
             <YouxuanForm
               detail={detail}
               currId={this.state.currId}
               getCategorys={this.getCategorys}
             />
-          )}
-          {channel === "2" && (
+          </div>
+          <div style={{ display: channel === "2" ? "block" : "none" }}>
             <HaodianForm
               detail={detail}
               currId={this.state.currId}
               getCategorys={this.getCategorys}
             />
-          )}
+          </div>
         </Card>
       </div>
     );

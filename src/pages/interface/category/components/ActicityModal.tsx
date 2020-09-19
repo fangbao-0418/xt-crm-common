@@ -2,7 +2,7 @@ import { isMoment } from 'moment'
 import React from 'react'
 import { Modal } from 'antd'
 import ListPage from '@/packages/common/components/list-page'
-import { getPromotionList } from '@/pages/shop/activity/api'
+import { getPromotionMagicList } from '@/pages/shop/activity/api'
 import { ColumnProps } from 'antd/lib/table'
 import { promotionStatusEnum } from '@/pages/shop/activity/config'
 import { FieldsConfig } from '@/packages/common/components/form/config'
@@ -30,26 +30,20 @@ const formConfig: FieldsConfig = {
         label: '全部',
         value: 0
       }, {
-        label: '待发布',
-        value: 1
-      }, {
         label: '已发布',
         value: 2
       }, {
         label: '报名中',
         value: 3
       }, {
+        label: '未开始',
+        value: 8
+      }, {
         label: '预热中',
         value: 4
       }, {
         label: '进行中',
         value: 5
-      }, {
-        label: '已结束',
-        value: 6
-      }, {
-        label: '已关闭',
-        value: 7
       }]
     },
     effectiveTime: {
@@ -91,7 +85,14 @@ class Main extends React.Component<Props, State> {
     dataIndex: 'endTime',
     render: (text) => APP.fn.formatDate(text)
   }, {
-    title: '活动类型'
+    title: '活动类型',
+    dataIndex: 'type',
+    render: (text) => {
+      const statusMap: Record<string, string> = {
+        '60': '品牌会场'
+      }
+      return statusMap[text]
+    }
   }, {
     title: '活动状态',
     dataIndex: 'status',
@@ -125,6 +126,11 @@ class Main extends React.Component<Props, State> {
       >
         <ListPage
           formConfig={formConfig}
+          processPayload={(payload) => {
+            // 全部状态0
+            payload.status = '0'
+            return payload
+          }}
           rangeMap={{
             effectiveTime: {
               fields: ['startTime', 'endTime']
@@ -138,7 +144,7 @@ class Main extends React.Component<Props, State> {
             }
           }}
           columns={this.columns}
-          api={getPromotionList}
+          api={getPromotionMagicList}
         />
       </Modal>
     )

@@ -90,7 +90,8 @@ class Main extends React.Component<Props, State> {
 
   public componentWillReceiveProps(nextProps: any) {
     const detail = nextProps.detail;
-    if (detail && this.props.detail !== detail) {
+    console.log('nextProps.currId', detail, nextProps.currId)
+    if (this.props.detail !== detail) {
       if (nextProps.currId === -1) {
         // 新增
         this.addCategory();

@@ -34,6 +34,22 @@ export function getPromotionList (payload: {
   return get('/mcweb/product/promotion/venue/list', payload)
 }
 
+/** 会场活动列表，只查询2,3,4,5,8状态的 */
+export function getPromotionMagicList (payload: {
+  title?: string,
+  status?: StatusType,
+  startTime?: number,
+  endTime?: number,
+  promotionId?: string,
+  shopId?: string,
+  shopName?: string,
+  page: number,
+  pageSize: number
+}) {
+  return get('/mcweb/product/promotion/venue/magicList', payload)
+}
+
+
 /** 设置会场排序 */
 export function setSort (payload: {
   promotionId: number,
