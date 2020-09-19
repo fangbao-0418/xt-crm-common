@@ -37,7 +37,7 @@ export const newSetRanking = (payload: {
 }) => {
   return newPost('/mmweb/pop/editSort/v1', {
     ...payload,
-    bizType: 4
+    bizType: 2
   })
 }
 
