@@ -128,7 +128,7 @@ class Main extends React.Component<Props, State> {
           formConfig={formConfig}
           processPayload={(payload) => {
             // 全部状态0
-            payload.status = '0'
+            payload.status = payload.status || '0'
             return payload
           }}
           rangeMap={{

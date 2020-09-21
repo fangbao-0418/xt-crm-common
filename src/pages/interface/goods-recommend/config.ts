@@ -10,7 +10,13 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
       channel: {
         type: 'select',
         label: '推荐渠道',
+        fieldDecoratorOptions: {
+          initialValue: 0
+        },
         options: [{
+          label: '全部',
+          value: 0
+        }, {
           label: '喜团优选',
           value: 1
         }, {

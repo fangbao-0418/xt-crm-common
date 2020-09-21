@@ -46,6 +46,12 @@ export function getDefaultConfig () {
       onlineTime: {
         label: '上线时间',
         type: 'date',
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请选择上线时间'
+          }]
+        },
         controlProps: {
           showTime: true,
           style: {
@@ -56,6 +62,12 @@ export function getDefaultConfig () {
       offlineTime: {
         label: '下线时间',
         type: 'date',
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请选择下线时间'
+          }]
+        },
         controlProps: {
           showTime: true,
           style: {
