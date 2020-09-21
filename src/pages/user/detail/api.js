@@ -49,15 +49,33 @@ export function getTeam(params) {
 
 // 收益
 export function getIncome(param) {
-  const url = param.tab === '2' ? '/mcweb/account/pop/settlement/list' : '/crm/member/settlement/v1/query'
-  return post(
-    url,
-    {},
-    { data: {
-      ...param,
-      tab: undefined
-    }, headers: {} }
-  );
+  // const url = param.tab === '2' ? '/mcweb/account/pop/settlement/list' : ''
+  if (param.tab === '2') {
+    return post(
+      '/mcweb/account/pop/settlement/list',
+      {},
+      { data: {
+        ...param,
+        tab: undefined
+      }, headers: {} }
+    ).then((res) => {
+      return {
+        ...res,
+        list: res.records,
+        pageNum: res.page,
+        pageSize: res.size
+      }
+    })
+  } else {
+    return post(
+      '/crm/member/settlement/v1/query',
+      {},
+      { data: {
+        ...param,
+        tab: undefined
+      }, headers: {} }
+    )
+  }
 }
 
 //提现记录
