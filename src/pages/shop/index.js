@@ -16,6 +16,8 @@ const PopCommission = loadable(() => import('./pop-commission'))
 const SmallShopCommission = loadable(() => import('./small-shop-commission'))
 /** pop商品 */
 const POPGoods = loadable(() => import('./pop-goods/Routes'))
+/** pop优惠券 */
+const POPCoupon = loadable(() => import('./pop-coupon/index'))
 class Main extends React.Component {
   render () {
     const { match } = this.props
@@ -30,6 +32,7 @@ class Main extends React.Component {
         <Route path={`${match.url}/popcommission`} component={PopCommission} />
         <Route path={`${match.url}/smallshopcommission`} component={SmallShopCommission} />
         <Route path={`${match.url}/pop-goods`} component={POPGoods} />
+        <Route path={`${match.url}/pop-coupon`} component={POPCoupon} />
       </Switch>
     )
   }
