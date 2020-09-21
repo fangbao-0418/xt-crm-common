@@ -1,0 +1,27 @@
+.item {
+  display: flex;
+  .item-title {
+    text-align: right;
+    flex: 0 0 128px;
+  }
+  .item-box {
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.img {
+  .item {
+    .item-title {
+      text-align: right;
+      flex: 0 0 200px;
+    }
+    :global {
+      .ant-upload-list-picture-card .ant-upload-list-item-actions .anticon-delete {
+        display: none;
+      }
+    }
+  }
+}

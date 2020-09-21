@@ -20,6 +20,8 @@ const ShopActivity = loadable(() => import('./activity'))
 const ShopActivityAdd = loadable(() => import('./activity/Add'))
 /** 前端会场设置 */
 const ShopActivityDetail = loadable(() => import('./activity/Detail'))
+/** pop商品 */
+const POPGoods = loadable(() => import('./pop-goods/Routes'))
 class Main extends React.Component {
   render () {
     const { match } = this.props
@@ -37,6 +39,7 @@ class Main extends React.Component {
         <Route path={`${match.url}/activity/add`} exact component={ShopActivityAdd} />
         <Route path={`${match.url}/activity/edit`} exact component={ShopActivityAdd} />
         <Route path={`${match.url}/activity/detail`} exact component={ShopActivityDetail} />
+        <Route path={`${match.url}/pop-goods`} component={POPGoods} />
       </Switch>
     )
   }

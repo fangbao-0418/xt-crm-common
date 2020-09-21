@@ -1,6 +1,7 @@
 import moment from 'moment'
 import Decimal from 'decimal.js'
 import { omit } from 'lodash'
+import { prefix } from '@/util/utils'
 
 export function getH5Origin () {
   let origin = 'https://daily-myouxuan.hzxituan.com/';
@@ -344,3 +345,29 @@ export function wrapApi (fn, omits = [], value = {
     return fn(res);
   }
 }
+
+export function exportFile (url, filename) {
+  url = prefix(url)
+  return fetch(url, {
+    method: 'get',
+    headers: {
+      'authorization': APP.token
+    }
+  }).then((res) => {
+    return res.blob().then((blob) => {
+      const attachment = res.headers.get('Content-Disposition') || ''
+      return blob.text().then((text) => {
+        console.log(text)
+        try {
+          const data = JSON.parse(text) || {}
+          APP.error(data?.message || '导出文件失败')
+          return Promise.reject(data)
+        } catch (e) {
+          saveAs(blob, filename)
+        }
+      })
+    })
+  })
+}
+
+
