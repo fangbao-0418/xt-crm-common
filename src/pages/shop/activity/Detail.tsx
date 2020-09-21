@@ -12,6 +12,7 @@ import Image from '@/components/Image'
 import Modal from 'antd/es/modal'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import Upload from '@/components/upload/file'
+import detail from '@/pages/goods/detail'
 const { TabPane } = Tabs
 
 const tabConfig = [{
@@ -36,27 +37,35 @@ interface State {
   totalStock: number
   iconUrl: string
   bgUrl: string
+  status?: number
+  costPriceDiscount?: number
+  preheat: 1 | 0
 }
 class Main extends React.Component<{}, State> {
   public formRef: FormInstance
-  public state = {
+  public state: State = {
     activeKey: '-1',
     productCount: 0,
     skuCount: 0,
     passSkuCount: 0,
     rejectSkuCount: 0,
     totalStock: 0,
+    status: undefined,
     iconUrl: '',
-    bgUrl: ''
+    bgUrl: '',
+    costPriceDiscount: undefined,
+    preheat: 1
   }
+  public tabItem: TabItem
   public promotionId = (parseQuery() as any).promotionId
   public componentDidMount() {
     this.fetchData()
+    this.tabItem.listRef.refresh()
   }
   /** 会场活动详情 */
   public fetchData = async () => {
     if (this.promotionId) {
-      const res = await getPromotionDetail(this.promotionId)
+      const res: any = await getPromotionDetail(this.promotionId)
       this.formRef.setValues(res)
       this.setState({
         iconUrl: res.iconUrl,
@@ -65,65 +74,93 @@ class Main extends React.Component<{}, State> {
         skuCount: res.skuCount,
         passSkuCount: res.passSkuCount,
         rejectSkuCount: res.rejectSkuCount,
-        totalStock: res.totalStock
+        totalStock: res.totalStock,
+        status: res.status,
+        costPriceDiscount: res.costPriceDiscount,
+        preheat: res.preheat
       })
     }
   }
   public onTabChange = (key: string) => {
     this.setState({
       activeKey: key
+    }, () => {
+      this.tabItem.listRef.refresh()
     })
   }
   public render () {
-    const { activeKey, productCount, skuCount, passSkuCount, rejectSkuCount, totalStock } = this.state
+    const { activeKey, productCount, skuCount, passSkuCount, rejectSkuCount, totalStock, costPriceDiscount, preheat, status } = this.state
     return (
-      <Card title='前端会场设置'>
-        <Form
-          getInstance={(ref) => {
-            this.formRef = ref
-          }}
-          config={getDefaultConfig()}
-        >
+      <Form
+        rangeMap={{
+          applyTime: {
+            fields: ['applyStartTime', 'applyEndTime']
+          },
+          preheatTime: {
+            fields: ['preheatStartTime', 'preheatEndTime']
+          },
+          activityTime: {
+            fields: ['startTime', 'endTime']
+          }
+        }}
+        getInstance={(ref) => {
+          this.formRef = ref
+        }}
+        config={getDefaultConfig()}
+      >
+        <Card title='活动介绍'>
           <FormItem name='title' type='text' />
-          <FormItem label='会场图标'>
-            <Image src={this.state.iconUrl} />
-          </FormItem>
-          <FormItem label='会场背景图'>
-            <Image src={this.state.bgUrl} />
-          </FormItem>
-          <FormItem name='tags' />
-          <FormItem name='venueDescription' />
-          <Tabs
-            activeKey={activeKey}
-            onChange={this.onTabChange}
-          >
-            {tabConfig.map((item: any) => {
-              return (
-                <TabPane tab={item.label} key={item.value}>
-                  <div>
-                    已报名商品列表 （ 已报名
-                    <span style={{ color: 'red' }}>{productCount}</span>
-                    款 sku
-                    <span style={{ color: 'red' }}>{skuCount}</span>
-                    款 审核通过sku
-                    <span style={{ color: 'red' }}>{passSkuCount}</span>
-                    款 审核拒绝sku
-                    <span style={{ color: 'red' }}>{rejectSkuCount}</span>
-                    款 可供总库存：
-                    <span style={{ color: 'red' }}>{totalStock}</span>
-                    个）
-                  </div>
-                  <AlertTabItem
-                    promotionId={this.promotionId}
-                    refresh={this.fetchData}
-                    auditStatus={activeKey}
-                  />
-                </TabPane>
-              )
-            })}
-          </Tabs>
-        </Form>
-      </Card>
+          <FormItem name='description' type='text' />
+          <FormItem name='applyTime' label='报名时间' controlProps={{ disabled: true }} />
+          {preheat === 1 && <FormItem name='preheatTime' label='线上预热时间' controlProps={{ disabled: true }} />}
+          <FormItem name='activityTime' label='活动时间' controlProps={{ disabled: true }} />
+        </Card>
+        <Card title='活动规则和要求'>供货价要求：不得高于日常供货价的{costPriceDiscount}%</Card>
+        {status !== 1 && (
+          <Card title='前端会场设置'>
+            <FormItem name='name' />
+            <FormItem label='会场图标'>
+              {this.state.iconUrl && <Image src={this.state.iconUrl} />}
+            </FormItem>
+            <FormItem label='会场背景图'>
+              <Image src={this.state.bgUrl || 'https://assets.hzxituan.com/upload/2020-09-18/57dbcbfb-4c28-4053-a595-cd550cd59244-kf7y3ru9.png'} />
+            </FormItem>
+            <FormItem name='tags' />
+            <FormItem name='venueDescription' />
+            <Tabs
+              activeKey={activeKey}
+              onChange={this.onTabChange}
+            >
+              {tabConfig.map((item: any) => {
+                return (
+                  <TabPane tab={item.label} key={item.value}>
+                    <div>
+                      已报名商品列表 （ 已报名
+                      <span style={{ color: 'red' }}>{productCount}</span>
+                      款 sku
+                      <span style={{ color: 'red' }}>{skuCount}</span>
+                      款 审核通过sku
+                      <span style={{ color: 'red' }}>{passSkuCount}</span>
+                      款 审核拒绝sku
+                      <span style={{ color: 'red' }}>{rejectSkuCount}</span>
+                      款 可供总库存：
+                      <span style={{ color: 'red' }}>{totalStock}</span>
+                      个）
+                    </div>
+                    <AlertTabItem
+                      getInstance={(tabItem: any) => this.tabItem = tabItem }
+                      promotionId={this.promotionId}
+                      refresh={this.fetchData}
+                      auditStatus={activeKey}
+                      status={this.state.status}
+                    />
+                  </TabPane>
+                )
+              })}
+            </Tabs>
+          </Card>
+        )}
+      </Form>
     )
   }
 }
@@ -134,12 +171,19 @@ interface Props extends AlertComponentProps {
   promotionId: string,
   auditStatus: string,
   refresh: () => void
+  getInstance: (ref: any) => void
+  /**  全部 = 0, 待发布 = 1, 已发布 = 2, 报名中 = 3, 预热中 = 4, 进行中 = 5, 已结束 = 6, 已关闭 = 7, 未开始 = 8 */
+  status?: number
 }
 interface TabItemState {
   fileList: any[]
 }
 class TabItem extends React.Component<Props, TabItemState> {
   public listRef: ListPageInstanceProps
+  public constructor(props: Props) {
+    super(props)
+    props.getInstance(this)
+  }
   public state = {
     fileList: []
   }
@@ -161,7 +205,7 @@ class TabItem extends React.Component<Props, TabItemState> {
           APP.success(`${msg}成功`)
           this.listRef.refresh()
           this.props.refresh()
-
+          this.forceUpdate()
         }
       }
     })
@@ -213,6 +257,9 @@ class TabItem extends React.Component<Props, TabItemState> {
           }, {
             title: '操作',
             render: (record) => {
+              if (!!this.props.status && [6, 7].includes(this.props.status)) {
+                return '-'
+              }
               switch(record.auditStatus) {
                 case statusEnum['审核拒绝']:
                   return '-'
@@ -224,6 +271,7 @@ class TabItem extends React.Component<Props, TabItemState> {
                     >拒绝</span>
                   )
                 case statusEnum['待审核']:
+                  // 已结束、已关闭状态不能审核，拒绝操作
                   return (
                     <>
                       <span
@@ -249,12 +297,27 @@ class TabItem extends React.Component<Props, TabItemState> {
    * 导出
    */
   public handleExport = async () => {
-    const res = await exportVenue(this.props.promotionId)
-    console.log('res', res)
+    const vals = this.listRef.form.getValues()
+    const res = await exportVenue({
+      promotionId: this.props.promotionId,
+      auditStatus: this.props.auditStatus,
+      ...vals
+    })
+    if (res) {
+      APP.success('导出成功')
+    }
   }
   public render() {
     return (
       <ListPage
+        onSubmit={(value, form) => {
+          if (value.productId && !(/^\d+$/.test(value.productId))) {
+            return void APP.error('商品ID只能是数字')
+          }
+          this.listRef.refresh()
+          console.log('value, form', value, form)
+        }}
+        autoFetch={false}
         getInstance={(ref) => {
           this.listRef = ref
         }}
@@ -279,9 +342,11 @@ class TabItem extends React.Component<Props, TabItemState> {
               type='primary'
               ghost
               className='ml10'
+              // 已结束、已关闭状态不能导入审核
+              disabled={!!this.props.status && [6, 7].includes(this.props.status)}
               onClick={() => {
                 this.props.alert({
-                  title: '导入商品',
+                  title: '导入审核',
                   content: (
                     <Form
                       getInstance={(ref) => {
@@ -328,7 +393,7 @@ class TabItem extends React.Component<Props, TabItemState> {
                           promotionId: this.props.promotionId
                         })
                         if (res) {
-                          APP.success('导入商品成功')
+                          APP.success('导入成功')
                           hide()
                           this.listRef.refresh()
                         }
@@ -338,7 +403,7 @@ class TabItem extends React.Component<Props, TabItemState> {
                 })
               }}
             >
-              导入商品
+              导入审核
             </Button>
           </>
         )}

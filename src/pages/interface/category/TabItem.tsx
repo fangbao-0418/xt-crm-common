@@ -60,7 +60,7 @@ class InterFaceCategory extends Component<any, State> {
                       style={{ paddingRight: "10px", color: "red" }}
                     />
                   )}
-                  {val.name}
+                  {val.name} {val.shopCount}
                 </Col>
               );
             })}
