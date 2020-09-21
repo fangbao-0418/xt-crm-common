@@ -12,5 +12,9 @@ export function getFreightTemplate(id) {
 
 /** 审核商品 */
 export function auditGoods(data) {
-  return newPost('/shop/product/audit', data);
+  return newPost('/shop/product/audit', {
+    ...data,
+    /** requestType 1-小店（不校验channel） 2-pop */
+    requestType: 1
+  });
 }

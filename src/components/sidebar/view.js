@@ -39,47 +39,6 @@ class Sidebar extends React.Component {
       current: ''
     }
   }
-  setCurrent = (key) => {
-    this.setState({
-      current: key
-    })
-  }
-  findPath (data = this.props.data, pathname = this.props.pathname) {
-    data = data || []
-    let selectedItem
-    let selectedGroup = []
-    function loop (arr, group = [], isPattern = false) {
-      return arr.find((item) => {
-        const pattern = new RegExp('^' + item.path + '/(\\w|-)+$')
-        // console.log(routesMapRule, item.path, 'routesMapRule')
-        // console.log(routesMapRule[item.path], 'routesMapRule[pathname]')
-        if (routesMapRule[item.path]?.find?.((rule) => {
-          return rule.test(pathname)
-        })) {
-          selectedItem = item
-          selectedGroup = group.concat([item])
-          return true
-        } else if (!isPattern && item.type === 0 && item.path === pathname) {
-          selectedItem = item
-          selectedGroup = group.concat([item])
-          return true
-        } else if (isPattern && item.path && item.type === 0 && pattern.test(pathname)) {
-          selectedItem = item
-          selectedGroup = group.concat([item])
-          return true
-        } else {
-          if (item.subMenus) {
-            return !!loop(item.subMenus, group.concat([item]), isPattern)
-          }
-        }
-      })
-    }
-    loop(data)
-    if (selectedGroup.length === 0) {
-      loop(data, [], true)
-    }
-    return selectedGroup
-  }
   componentWillReceiveProps (props) {
     let currentKey = ''
     const selectedGroup = this.findPath(props.data, props.pathname)
@@ -108,6 +67,51 @@ class Sidebar extends React.Component {
         }
       }
     })
+  }
+  setCurrent = (key) => {
+    this.setState({
+      current: key
+    })
+  }
+  findPath (data = this.props.data, pathname = this.props.pathname) {
+    data = data || []
+    let selectedItem
+    let selectedGroup = []
+    function loop (arr, group = [], isPattern = false) {
+      return arr.find((item) => {
+        const pattern = new RegExp('^' + item.path + '/(\\w|-|\/)+?$')
+        // 首先查询正则映射表
+        if (routesMapRule[item.path]?.find?.((rule) => {
+          return rule.test(pathname)
+        })) {
+          selectedItem = item
+          selectedGroup = group.concat([item])
+          return true
+        // 查询路由是否存在
+        } else if (!isPattern && item.type === 0 && item.path === pathname) {
+          selectedItem = item
+          selectedGroup = group.concat([item])
+          return true
+        // 正则匹配前部分相同 
+        } else if (isPattern && item.path && item.type === 0 && pattern.test(pathname)) {
+          selectedItem = item
+          selectedGroup = group.concat([item])
+          if (item.subMenus) {
+            !!loop(item.subMenus, group.concat([item]), isPattern)
+          }
+          return true
+        } else {
+          if (item.subMenus) {
+            return !!loop(item.subMenus, group.concat([item]), isPattern)
+          }
+        }
+      })
+    }
+    loop(data)
+    if (selectedGroup.length === 0) {
+      loop(data, [], true)
+    }
+    return selectedGroup
   }
   renderMenulist (data) {
     // type等于0是菜单权限，等于1是功能权限
@@ -147,6 +151,7 @@ class Sidebar extends React.Component {
         return (
           <Menu.Item
             key={item.id}
+            id={`${item.id}$Menu`}
             onClick={(e) => {
               if (outside) {
                 window.open(outside[1])
