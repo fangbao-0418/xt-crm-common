@@ -5,6 +5,7 @@
  * @FilePath: /eslint-plugin-xt-react/Users/fangbao/Documents/xituan/xt-crm/src/pages/order/download-list/config.ts
  */
 export enum TypeEnum {
+  区长及区长以上会员提现 = 205,
   订单导出 = 1,
   订单列表导出 = 100,
   售后订单导出 = 2,
