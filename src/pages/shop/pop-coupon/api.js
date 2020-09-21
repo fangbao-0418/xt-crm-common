@@ -5,7 +5,7 @@
  * @LastEditTime: 2020-04-15 15:40:16
  * @FilePath: /supplier/Users/fangbao/Documents/xituan/xt-crm/src/pages/coupon/api.js
  */
-import { newPost, newGet, newPut, get } from '../../util/fetch'
+import { newPost, newGet, newPut, get } from '.@/util/fetch'
 const { post } = APP.http
 import * as adapter from './adapter'
 

@@ -20,6 +20,10 @@ const config = [
 
 export default class RouteApp extends React.Component {
   render () {
+    alert(111)
+    return (
+      <div>111111</div>
+    )
     const { match } = this.props
     return (
       <RouteComponent
@@ -29,4 +33,4 @@ export default class RouteApp extends React.Component {
   }
 }
 
-RouteApp.propTypes
+// RouteApp.propTypes
