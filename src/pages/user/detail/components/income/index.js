@@ -22,13 +22,14 @@ const ChildOrderTable = (props) => {
   const {
     record: { mainOrderNo },
     memberId,
+    tab
   } = props;
   const [isFirstLoaded, useIsFirstLoaded] = useState(true);
   const [dataSource, useDataSource] = useState([]);
 
   useEffect(() => {
     if (isFirstLoaded) {
-      getProceedsListByOrderIdAndMemberId({ mainOrderNo, memberId }).then(
+      getProceedsListByOrderIdAndMemberId({ mainOrderNo, memberId, tab }).then(
         (result) => {
           useDataSource(result);
         }
@@ -205,6 +206,7 @@ export default class extends Component {
     const obj = parseQuery();
     return expanded ? (
       <ChildOrderTable
+        tab={this.state.activeKey}
         record={record}
         memberId={obj.memberId}
         showModal={this.showModal}

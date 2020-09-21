@@ -100,7 +100,11 @@ export function updateUserInfo(params) {
  * @param {object} data
  */
 export function getProceedsListByOrderIdAndMemberId(param) {
-  return get(`/crm/member/settlement/v1/order/skuSummaryByMember`, param);
+  const url = param.tab === '2' ? '/mcweb/account/pop/order/skuSummaryByMember' : '/crm/member/settlement/v1/order/skuSummaryByMember'
+  return get(url, {
+    ...param,
+    tab: undefined
+  });
 }
 
 /**
