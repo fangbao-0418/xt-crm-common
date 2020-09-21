@@ -92,6 +92,19 @@ export function getDefaultConfig () {
           value: 8
         }]
       },
+      preheatTime: {
+        label: '线上预热时间',
+        type: 'rangepicker',
+        controlProps: {
+          showTime: true
+        },
+        fieldDecoratorOptions: {
+          rules: [{
+            required: true,
+            message: '请选择活动排期时间'
+          }]
+        }
+      },
       activityTime: {
         label: '活动排期时间',
         type: 'rangepicker',
@@ -110,6 +123,10 @@ export function getDefaultConfig () {
       },
       operator: {
         label: '创建人'
+      },
+      name: {
+        label: '会场名称',
+        type: 'text'
       },
       tags: {
         label: '会场标签',
@@ -134,7 +151,8 @@ export function getDefaultConfig () {
         controlProps: {
           style: {
             width: 220
-          }
+          },
+          maxLength: 20
         }
       },
       productName: {
@@ -181,7 +199,7 @@ export const statusArray = [{
 
 /**
  * 活动状态枚举
- * 0-全部/1-待发布/2-已发布/3-报名中/4-预热中/5-进行中/6-已结束/7-已关闭
+ * 0-全部/1-待发布/2-已发布/3-报名中/4-预热中/5-进行中/6-已结束/7-已关闭/8-未开始
  */
 export enum promotionStatusEnum {
   全部 = 0,

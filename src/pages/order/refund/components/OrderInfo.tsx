@@ -12,7 +12,7 @@ import {
   logisticsInformationColumns,
   storeTypeMap
 } from '../config'
-import memberType from '@/enum/memberType'
+import memberType, { HDMemberType } from '@/enum/memberType'
 import moment from 'moment'
 type OrderInfoVO = AfterSalesInfo.OrderInfoVO
 type OrderServerVO = AfterSalesInfo.OrderServerVO
@@ -93,9 +93,10 @@ const OrderInfo: React.FC<Props> = (props: Props) => {
       <Row gutter={24}>
         <Col span={8}>用户备注：{orderInfoVO.remark}</Col>
         <Col span={8}>
-          会员等级：{memberType.getValue(
+        {/* bizType：10喜团优选 bizType：30喜团好店 */}
+          会员等级：{Number(orderServerVO.bizType) === 10 ? memberType.getValue(
             orderInfoVO.orderMemberType
-          )}
+          ) : HDMemberType.getValue(orderInfoVO.orderMemberType)}
         </Col>
       </Row>
       <Row gutter={24}>

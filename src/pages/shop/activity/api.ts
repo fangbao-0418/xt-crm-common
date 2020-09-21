@@ -83,8 +83,7 @@ export function auditSku (payload: {
 }
 
 /** 导出会场商品 */
-export function exportVenue (promotionId: string) {
-  const data = { promotionId }
+export function exportVenue (data: any) {
   return exportFileStream('/mcweb/product/promotion/venue/export', data, '会场商品信息.xlsx', {
     method: 'get',
     data: undefined,
@@ -135,7 +134,7 @@ export function closePromotion (promotionId: number) {
 
 /**
  * 店铺列表
- * payload.bizType 1:优选,2:好店,4:买菜
+ * payload.bizType 0:优选,1:好店 默认前段选1 号店
  * payload.shopName 店铺名称
  * payload.shopId shopId
  * payload.page 当前页
@@ -144,7 +143,7 @@ export function closePromotion (promotionId: number) {
 export function getShopList (payload: {
   bizType?: number,
   shopName?: string,
-  shopId?: string,
+  shopId?: string[],
   shopStatusList?: number[],
   page: number,
   pageSize: number
