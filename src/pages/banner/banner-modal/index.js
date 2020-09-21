@@ -129,7 +129,6 @@ class BannerModal extends Component {
 
   handleOk = () => {
     const { onSuccess, id, isEdit } = this.props
-    console.log('this.formRef.props.form.validateFields', this.formRef.props.form.validateFields)
     this.formRef.props.form.validateFields((err, values) => {
       if (!err) {
         const api = isEdit ? updateBanner : addBanner
@@ -357,8 +356,8 @@ class BannerModal extends Component {
               <FormItem name='content' />
             </If>
             <FormItem name='jumpUrlWap' />
-            <FormItem name='onlineTime' />
-            <FormItem name='offlineTime' />
+            <FormItem name='onlineTime' verifiable />
+            <FormItem name='offlineTime' verifiable />
             <FormItem name='sort' verifiable />
             {this.state.bizSource === 0 && (
               <If condition={([1, 2, 3, 4, 6, 7, 8, 9, 10].includes(seat[0])) || ((seat[0] === 5) && (seat[1] === 2))}>
