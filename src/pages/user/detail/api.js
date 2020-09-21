@@ -100,7 +100,7 @@ export function updateUserInfo(params) {
  * @param {object} data
  */
 export function getProceedsListByOrderIdAndMemberId(param) {
-  const url = param.tab === '2' ? '/mcweb/account/pop/order/skuSummaryByMember' : '/crm/member/settlement/v1/order/skuSummaryByMember'
+  const url = param.tab === '2'  ? '/mcweb/account/pop/order/skuSummaryByMember' : '/crm/member/settlement/v1/order/skuSummaryByMember'
   return get(url, {
     ...param,
     tab: undefined
@@ -112,7 +112,17 @@ export function getProceedsListByOrderIdAndMemberId(param) {
  * @param {object} data
  */
 export function getProceedsListByOrderIdAndMemberIdAndSkuId(param) {
-  return get(`/crm/member/settlement/v1/detail`, param);
+  if (param.tab === '2') {
+    return get(`/mcweb/account/pop/settlement/detail`, {
+      ...param,
+      tab: undefined
+    });
+  }
+  return get(`/crm/member/settlement/v1/detail`, {
+    ...param,
+    orderId: undefined,
+    tab: undefined
+  });
 }
 
 //操作会员身份

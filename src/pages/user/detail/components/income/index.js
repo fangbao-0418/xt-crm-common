@@ -217,11 +217,13 @@ export default class extends Component {
   showModal = (mainOrder, childOrder) => {
     const { memberId } = parseQuery();
     const { mainOrderNo } = mainOrder;
-    const { skuId } = childOrder;
+    const { skuId, childOrderNo } = childOrder;
     getProceedsListByOrderIdAndMemberIdAndSkuId({
       mainOrderNo,
       memberId,
       skuId,
+      tab: this.state.activeKey,
+      orderId: childOrderNo
     }).then((result) => {
       this.setState({
         detailList: result,
