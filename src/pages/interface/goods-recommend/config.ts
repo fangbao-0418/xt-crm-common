@@ -135,6 +135,7 @@ export enum StatusEnum {
 }
 
 export enum LocationEnum {
+  搜索空白页 = 64,
   升级团长页 = 32,
   拼团详情 = 16,
   支付结果页 = 8,
