@@ -17,22 +17,24 @@ const SmallShopCommission = loadable(() => import('./small-shop-commission'))
 /** pop商品 */
 const POPGoods = loadable(() => import('./pop-goods/Routes'))
 /** pop优惠券 */
-const POPCoupon = loadable(() => import('./pop-coupon/index'))
+const POPCoupon = loadable(() => import('./pop-coupon/list/index'))
+/** pop优惠券详情 */
+const POPCouponDetail = loadable(() => import('./pop-coupon/list/coupon-detail'))
 class Main extends React.Component {
   render () {
     const { match } = this.props
-    console.log('match', match.url)
     return (
       <Switch>
-        {/* <Route exact path={`${match.url}`} component={Boss} />
+        <Route exact path={`${match.url}`} component={Boss} />
         <Route exact path={`${match.url}/boss`} component={Boss} />
         <Route exact path={`${match.url}/boss/detail/:id/:auditResult`} component={BossDetail} />
         <Route exact path={`${match.url}/goods`} component={Goods} />
         <Route exact path={`${match.url}/goods/detail/:id`} component={GoodsDetail} />
         <Route path={`${match.url}/popcommission`} component={PopCommission} />
-        <Route path={`${match.url}/smallshopcommission`} component={SmallShopCommission} /> */}
-        {/* <Route path={`${match.url}/pop-goods`} component={POPGoods} /> */}
+        <Route path={`${match.url}/smallshopcommission`} component={SmallShopCommission} /> 
+        <Route path={`${match.url}/pop-goods`} component={POPGoods} />
         <Route exact path={`${match.url}/pop-coupon`} component={POPCoupon} />
+        <Route exact path={`${match.url}/pop-coupon/detail/:id`} component={POPCouponDetail} />
       </Switch>
     )
   }

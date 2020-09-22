@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-import { Form, Row, Card, Button, Input } from 'antd'
-import { XtSelect, CommonTable } from '@/components'
+import { Form } from 'antd'
 import { getCouponlist, getCouponDetail } from '../api'
 import { getListColumns } from '../config'
-import receiveStatus from '@/enum/receiveStatus'
 import emitter from '@/util/events'
-import { defaultConfig, statusEnums } from './config'
+import { defaultConfig } from './config'
 import CouponCardModal from '../coupon-card-modal'
-import { ListPage, FormItem, If, SelectFetch } from '@/packages/common/components'
+import { ListPage, FormItem } from '@/packages/common/components'
 import './index.scss'
 
 function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields }, history, match }) {
@@ -35,12 +33,6 @@ function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields },
       emitter.removeListener('coupon.list.fetchData', () => listRef.list.refresh())
     }
   }, [pagination.page, pagination.pageSize])
-  const handleAddCoupon = () => {
-    history.push({
-      pathname: `${match.url}/couponinfo`,
-      search: 'type=add'
-    })
-  }
   return (
     <>
       {info && <CouponCardModal info={info} visible={visible} setVisible={setVisible} />}
@@ -59,11 +51,6 @@ function CouponList ({ form: { getFieldDecorator, getFieldsValue, resetFields },
             x: true
           }
         }}
-        addonAfterSearch={(
-          <div>
-            <Button type='primary' icon='plus' onClick={handleAddCoupon}>新增优惠券</Button>
-          </div>
-        )}
         getInstance={ref => listRef.list = ref}
         formConfig={defaultConfig}
         api={getCouponlist}

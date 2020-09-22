@@ -1,6 +1,6 @@
-import { Decimal } from 'decimal.js';
-import moment from 'moment';
-import { uniq } from 'lodash';
+import { Decimal } from 'decimal.js'
+import moment from 'moment'
+import { uniq } from 'lodash'
 
 type Description = {
   [key: string]: any;
@@ -8,13 +8,13 @@ type Description = {
 
 type DataType = 'baseVO' | 'ruleVO'
 
-const initialValue = { baseVO: {}, ruleVO: {}}
+const initialValue = { baseVO: {}, ruleVO: {} }
 
 /** 满减条件 */
 const parseFaceValue = (faceValue: string | null) => {
   let discountConditions: number | undefined
   let discountPrice: number | undefined
-  let faceValueArr = (faceValue || '').split(':')
+  const faceValueArr = (faceValue || '').split(':')
   if (faceValueArr.length === 2) {
     [discountConditions, discountPrice] = faceValueArr.map((val: string) => val ? +val / 100 : 0)
   }
@@ -26,7 +26,7 @@ interface RangeVOItem {
   name: string;
 }
 // 指定活动表格数据
-function getActivityList(data: RangeVOItem[]) {
+function getActivityList (data: RangeVOItem[]) {
   return data.map((item: RangeVOItem) => ({
     id: item.id,
     title: item.name,
@@ -35,7 +35,7 @@ function getActivityList(data: RangeVOItem[]) {
 }
 
 // 已选择商品/排除商品
-function getProductList(data: RangeVOItem[]) {
+function getProductList (data: RangeVOItem[]) {
   return (data || []).map((item: RangeVOItem) => ({
     id: item.id,
     productName: item.name
@@ -43,25 +43,27 @@ function getProductList(data: RangeVOItem[]) {
 }
 
 // 获取类目
-function getCategorys(data: RangeVOItem[]) {
+function getCategorys (data: RangeVOItem[]) {
   return data.map((item: RangeVOItem) => String(item.id))
 }
 
-function translate({ rangeVOList, avlRange }: Description) {
-  let categorys: any[] = [];
-  let chosenProduct: any[] = [];
-  let activityList: any[] = [];
-  if (Array.isArray(!rangeVOList)) rangeVOList = [];
-  switch(avlRange) {
+function translate ({ rangeVOList, avlRange }: Description) {
+  let categorys: any[] = []
+  let chosenProduct: any[] = []
+  let activityList: any[] = []
+  if (Array.isArray(!rangeVOList)) {
+    rangeVOList = []
+  }
+  switch (avlRange) {
     case 1:
-      categorys = getCategorys(rangeVOList);
-      break;
+      categorys = getCategorys(rangeVOList)
+      break
     case 2:
-      chosenProduct = getProductList(rangeVOList);
-      break;
+      chosenProduct = getProductList(rangeVOList)
+      break
     case 4:
-      activityList = getActivityList(rangeVOList);
-      break;
+      activityList = getActivityList(rangeVOList)
+      break
   }
   return {
     categorys,
@@ -71,18 +73,18 @@ function translate({ rangeVOList, avlRange }: Description) {
 }
 
 /** 优惠券详情响应 */
-export function couponDetailResponse(res: Record<DataType, Description>) {
+export function couponDetailResponse (res: Record<DataType, Description>) {
   const { baseVO, ruleVO } = res || initialValue
   const { discountConditions, discountPrice } = parseFaceValue(ruleVO.faceValue)
 
   let useTimeRange: any[] = []
   let availableDays: any
   let days=''
-  if(ruleVO.useTimeType === 2){
+  if (ruleVO.useTimeType === 2) {
     availableDays = ruleVO?.useTimeValue+''
     days=availableDays&&availableDays.split(',')
-  }else if (ruleVO.useTimeType === 1) {
-    availableDays = parseFloat(ruleVO.useTimeValue) 
+  } else if (ruleVO.useTimeType === 1) {
+    availableDays = parseFloat(ruleVO.useTimeValue)
     availableDays = isNaN(availableDays) ? undefined : + availableDays
   } else if (ruleVO.useTimeType === 0) {
     const useTimeArr = (ruleVO.useTimeValue || '').split(',').map((num: string) => +num)
@@ -120,7 +122,7 @@ export function couponDetailResponse(res: Record<DataType, Description>) {
 
   console.log('useTimeRange ---------------------', useTimeRange)
   const useTimeType=ruleVO?.useTimeType
- 
+
   return {
     name: baseVO.name,
     inventory: baseVO.inventory,
@@ -136,9 +138,9 @@ export function couponDetailResponse(res: Record<DataType, Description>) {
     showFlag: ruleVO.showFlag,
     useTimeType,
     useTimeRange,
-    availableDays:useTimeType===1?availableDays:'',
-    startDays:useTimeType===2&&days?days[0]:'',
-    endDays:useTimeType===2&&days?days[1]:'',
+    availableDays: useTimeType===1?availableDays:'',
+    startDays: useTimeType===2&&days?days[0]:'',
+    endDays: useTimeType===2&&days?days[1]:'',
     restrictNum: ruleVO.restrictNum,
     dailyRestrict: ruleVO.dailyRestrict,
     dailyRestrictChecked: !!ruleVO.dailyRestrict,
@@ -158,57 +160,57 @@ const getAvlValues = (vals: any) => {
   let result = ''
   switch (vals.avlRange) {
     case 0:
-      break;
+      break
     // 已选择类目
     case 1:
-      result = vals.categorys.join(',');
-      break;
+      result = vals.categorys.join(',')
+      break
     // 已选择商品id
     case 2:
       result = Array.isArray(vals.chosenProduct) ? vals.chosenProduct.map((v: any) => v.id).join(',') : null
-      break;
+      break
     // 已选择活动id
     case 4:
       result = Array.isArray(vals.activityList) ? vals.activityList.map((v: any) => v.id).join(',') : null
-      break;
+      break
     default:
-      break;
+      break
   }
-  return result;
-};
+  return result
+}
 
 const getExcludeValues = (vals: any) => {
-  let avlRangeStr = Array.isArray(vals.excludeProduct) ? vals.excludeProduct.map((v: any) => v.id).join(',') : null;
-  return vals.avlRange !== 2 ? avlRangeStr : null;
-};
+  const avlRangeStr = Array.isArray(vals.excludeProduct) ? vals.excludeProduct.map((v: any) => v.id).join(',') : null
+  return vals.avlRange !== 2 ? avlRangeStr : null
+}
 
 const getFaceValue = (vals: any) => {
-  vals.discountConditions = new Decimal(vals.discountConditions || 0).mul(100).toNumber();
-  vals.discountPrice = new Decimal(vals.discountPrice || 0).mul(100).toNumber();
-  console.log(`${vals.discountConditions}:${vals.discountPrice}`);
+  vals.discountConditions = new Decimal(vals.discountConditions || 0).mul(100).toNumber()
+  vals.discountPrice = new Decimal(vals.discountPrice || 0).mul(100).toNumber()
+  console.log(`${vals.discountConditions}:${vals.discountPrice}`)
   switch (vals.useSill) {
     case 0:
-      return vals.discountPrice;
+      return vals.discountPrice
     case 1:
-      return `${vals.discountConditions}:${vals.discountPrice}`;
+      return `${vals.discountConditions}:${vals.discountPrice}`
     default:
-      return '';
+      return ''
   }
-};
+}
 
 const getReceiveRestrictValues = (vals: any) => {
   // 不限制
   if (vals.recipientLimit === 0) {
-    return 'all';
+    return 'all'
   } else if (vals.recipientLimit === 1) {
-    let result = vals.receiveRestrictValues.includes(30)
+    const result = vals.receiveRestrictValues.includes(30)
       ? [...vals.receiveRestrictValues, 40]
-      : vals.receiveRestrictValues;
-    return uniq(result).join(',');
+      : vals.receiveRestrictValues
+    return uniq(result).join(',')
   } else {
-    return vals.recipientLimit;
+    return vals.recipientLimit
   }
-};
+}
 
 const getPlatformRestrictValues = (vals: any) => vals.platformType === 0 ? 'all' : vals.platformRestrictValues.join(',')
 
@@ -216,15 +218,15 @@ const getDailyRestrict = (vals: any) => vals.dailyRestrictChecked ? vals.dailyRe
 
 const getUseTimeValue = (vals: any) => {
   if (vals.useTimeType === 0) {
-    let result = Array.isArray(vals.useTimeRange) ? vals.useTimeRange.map((v: any) => v && v.valueOf()) : [];
-    return result.join(',');
+    const result = Array.isArray(vals.useTimeRange) ? vals.useTimeRange.map((v: any) => v && v.valueOf()) : []
+    return result.join(',')
   } else {
-    return vals.availableDays;
+    return vals.availableDays
   }
-};
+}
 
 /** 优惠券详情入参 */
-export function couponDetailParams(params: any) {
+export function couponDetailParams (params: any) {
   return {
     baseVO: {
       // 名称
@@ -266,5 +268,5 @@ export function couponDetailParams(params: any) {
       // 使用时间值
       useTimeValue: getUseTimeValue(params)
     }
-  };
+  }
 }

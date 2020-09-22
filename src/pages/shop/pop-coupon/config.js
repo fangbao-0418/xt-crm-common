@@ -106,7 +106,8 @@ export const releaseRecordsColumns = [{
         node = record.userGroupValue
         break
       case 3:
-        const [href, name] = record.userGroupValue.split(',')
+        // eslint-disable-next-line no-case-declarations
+        const [href, name] = record?.userGroupValue?.split(',')
         node = (
           <span className='href' onClick={() => {
             download(href, name)
