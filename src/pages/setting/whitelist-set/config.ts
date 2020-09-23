@@ -7,9 +7,14 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
-      supplierId: {
-        type: 'input',
+      storeId: {
+        type: 'number',
         label: '供应商ID',
+        controlProps: {
+          style: {
+            width: '100%'
+          }
+        },
         fieldDecoratorOptions: {
           rules: [
             {
@@ -19,7 +24,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      goodsId: {
+      productIds: {
         type: 'textarea',
         label: '商品ID',
         controlProps: {
@@ -44,7 +49,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           ]
         }
       },
-      phones: {
+      memberPhones: {
         type: 'textarea',
         label: '下单手机号',
         controlProps: {

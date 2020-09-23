@@ -15,29 +15,33 @@ class Main extends React.Component<Props> {
         return
       }
 
+      api.submit(values).then(() => {
+        APP.success('处理成功')
+        this.form.reset()
+      })
       console.log(values)
     })
   }
   public check = () => {
-    this.form.props.form.validateFields(['supplierId'], (err, values) => {
+    this.form.props.form.validateFields(['storeId'], (err, values) => {
       if (err) {
         return
       }
 
-      api.supplierVerify(values).then(res => {
+      api.check(values).then(res => {
         this.props.alert({
           title: '查询',
           footer: null,
           content: (
             <div>
               <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label='供应商ID'>
-                {res.supplierId}
+                {res.storeId || '-'}
               </FormItem>
               <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label='商品ID'>
-                {res.goodsId}
+                {res.productIds || '-'}
               </FormItem>
               <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label='下单手机号'>
-                {res.phones}
+                {res.memberPhones || '-'}
               </FormItem>
             </div>
           )
@@ -63,7 +67,7 @@ class Main extends React.Component<Props> {
             wrapperCol={{
               span: 8
             }}
-            name='supplierId'
+            name='storeId'
             addonAfter={(
               <Button className='ml8' onClick={this.check}>
                 查询
@@ -76,7 +80,7 @@ class Main extends React.Component<Props> {
             wrapperCol={{
               span: 8
             }}
-            name='goodsId'
+            name='productIds'
             required
             verifiable
           />
@@ -84,7 +88,7 @@ class Main extends React.Component<Props> {
             wrapperCol={{
               span: 8
             }}
-            name='phones'
+            name='memberPhones'
             required
             verifiable
           />
