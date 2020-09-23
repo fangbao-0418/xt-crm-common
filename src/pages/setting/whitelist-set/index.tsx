@@ -1,70 +1,51 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import Alert, { AlertComponentProps } from '@/packages/common/components/alert'
 import { Button } from 'antd'
 import { getFieldsConfig } from './config'
 import * as api from './api'
 
-interface Props {}
+interface Props extends AlertComponentProps {}
 
-interface State {
-  phonesValidate: boolean
-}
-
-class Main extends React.Component<Props, State> {
+class Main extends React.Component<Props> {
   public form: FormInstance
-  public state:State = {
-    phonesValidate: false
-  }
   public handleSubmit = () => {
     this.form.props.form.validateFields((err, values) => {
       if (err) {
         return
       }
 
-      const { phonesValidate } = this.state
-      if (!phonesValidate) {
-        APP.error('请先校验手机号')
-        return
-      }
-
       console.log(values)
     })
   }
-  public handleSupplierVerify = () => {
+  public check = () => {
     this.form.props.form.validateFields(['supplierId'], (err, values) => {
       if (err) {
         return
       }
 
       api.supplierVerify(values).then(res => {
-        this.form.setValues(res)
+        this.props.alert({
+          title: '查询',
+          footer: null,
+          content: (
+            <div>
+              <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label='供应商ID'>
+                {res.supplierId}
+              </FormItem>
+              <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label='商品ID'>
+                {res.goodsId}
+              </FormItem>
+              <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label='下单手机号'>
+                {res.phones}
+              </FormItem>
+            </div>
+          )
+        })
       })
     })
-  }
-  public handlePhonesVerify = () => {
-    this.form.props.form.validateFields(['phones'], (err, values) => {
-      if (err) {
-        return
-      }
-
-      api.supplierVerify(values).then(res => {
-        if (res) {
-          this.setState({
-            phonesValidate: true
-          })
-        }
-      })
-    })
-  }
-  public formChange = (field: any, values: any) => {
-    if (field === 'phones') {
-      this.setState({
-        phonesValidate: false
-      })
-    }
   }
   public render () {
-    const { phonesValidate } = this.state
     return (
       <div
         style={{
@@ -77,7 +58,6 @@ class Main extends React.Component<Props, State> {
           getInstance={(ref) => {
             this.form = ref
           }}
-          onChange={this.formChange}
         >
           <FormItem
             wrapperCol={{
@@ -85,8 +65,8 @@ class Main extends React.Component<Props, State> {
             }}
             name='supplierId'
             addonAfter={(
-              <Button className='ml8' onClick={this.handleSupplierVerify}>
-                校验供应商
+              <Button className='ml8' onClick={this.check}>
+                查询
               </Button>
             )}
             required
@@ -105,11 +85,6 @@ class Main extends React.Component<Props, State> {
               span: 8
             }}
             name='phones'
-            addonAfter={(
-              <Button className='ml8' onClick={this.handlePhonesVerify}>
-                校验手机号
-              </Button>
-            )}
             required
             verifiable
           />
@@ -121,11 +96,6 @@ class Main extends React.Component<Props, State> {
             >
               提交
             </Button>
-            {
-              phonesValidate
-                ? '(已校验手机号)'
-                : '(提交前请先校验手机号)'
-            }
           </FormItem>
         </Form>
       </div>
@@ -133,4 +103,4 @@ class Main extends React.Component<Props, State> {
   }
 }
 
-export default Main
+export default Alert(Main)

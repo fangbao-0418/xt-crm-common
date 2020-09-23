@@ -31,8 +31,15 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
         fieldDecoratorOptions: {
           rules: [
             {
-              required: true,
-              message: '商品ID不能为空'
+              validator: (rule, value, cb) => {
+                const reg = /^\d+(,\d+)*$/
+                if (!reg.test(value)) {
+                  cb('请添加准确的商品ID')
+                  // return
+                } else {
+                  cb()
+                }
+              }
             }
           ]
         }
@@ -52,7 +59,7 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
               validator: (rule, value, cb) => {
                 const reg = /^[1]([0-9])[0-9]{9}(,[1]([0-9])[0-9]{9})*$/
                 if (!reg.test(value)) {
-                  cb('请添加准确的手机号~')
+                  cb('请添加准确的手机号')
                   // return
                 } else {
                   cb()
