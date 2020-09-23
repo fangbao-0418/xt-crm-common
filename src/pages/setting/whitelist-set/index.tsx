@@ -16,6 +16,7 @@ class Main extends React.Component<Props> {
       }
 
       memberPhones = (memberPhones || '').split(',').map((item: string) => item.trim()).join(',')
+      productIds = (productIds || '').split(',').map((item: string) => item.trim()).join(',')
 
       if (!productIds && !memberPhones) {
         APP.error('商品ID和下单手机号至少填入一项')
@@ -37,7 +38,7 @@ class Main extends React.Component<Props> {
 
       const params = {
         storeId,
-        productIds: (productIds || '').split(',').map((item: string) => item.trim()).join(','),
+        productIds,
         memberPhones
       }
       console.log(params)
