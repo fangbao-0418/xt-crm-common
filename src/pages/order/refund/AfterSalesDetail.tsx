@@ -5,8 +5,7 @@ import OrderInfo from './components/OrderInfo'
 import PendingReview from './PendingReview'
 import { namespace } from './model'
 import { Card, Row, Col } from 'antd'
-import { If } from '@/packages/common/components'
-import { enumRefundStatus, enumRefundType } from '../constant'
+import { enumRefundStatus } from '../constant'
 interface AfterSalesDetailProps {
   data: AfterSalesInfo.data;
 }

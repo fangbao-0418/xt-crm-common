@@ -126,6 +126,7 @@ declare module AfterSalesInfo {
     refundAutoDisposeNo?: string;
     bizTypeStr: string
     bizType: number
+    supplierOperateVoucherS: string[]
   }
 
   export interface ProductVO {
