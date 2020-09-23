@@ -10,16 +10,31 @@ interface Props extends AlertComponentProps {}
 class Main extends React.Component<Props> {
   public form: FormInstance
   public handleSubmit = () => {
-    this.form.props.form.validateFields((err, values) => {
+    this.form.props.form.validateFields((err, { storeId, productIds, memberPhones }) => {
       if (err) {
         return
       }
 
-      api.submit(values).then(() => {
+      if (!productIds && !memberPhones) {
+        APP.error('商品ID和下单手机号至少填入一项')
+        return
+      }
+
+      const ids = /^\d+(,\d+)*$/
+      const phoneReg = /^[1]([0-9])[0-9]{9}(,[1]([0-9])[0-9]{9})*$/
+      if (productIds && !ids.test(productIds)) {
+        APP.error('商品ID格式有误')
+        return
+      }
+      if (memberPhones && !phoneReg.test(memberPhones)) {
+        APP.error('手机号码格式有误')
+        return
+      }
+
+      api.submit({ storeId, productIds, memberPhones }).then(() => {
         APP.success('处理成功')
         this.form.reset()
       })
-      console.log(values)
     })
   }
   public check = () => {
@@ -81,16 +96,12 @@ class Main extends React.Component<Props> {
               span: 8
             }}
             name='productIds'
-            required
-            verifiable
           />
           <FormItem
             wrapperCol={{
               span: 8
             }}
             name='memberPhones'
-            required
-            verifiable
           />
           <FormItem>
             <Button
