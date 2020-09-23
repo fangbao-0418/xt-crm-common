@@ -15,23 +15,33 @@ class Main extends React.Component<Props> {
         return
       }
 
+      memberPhones = (memberPhones || '').split(',').map((item: string) => item.trim()).join(',')
+
       if (!productIds && !memberPhones) {
         APP.error('商品ID和下单手机号至少填入一项')
         return
       }
 
-      const ids = /^\d+(,\d+)*$/
-      const phoneReg = /^[1]([0-9])[0-9]{9}(,[1]([0-9])[0-9]{9})*$/
+      const ids = /^\s*\d+\s*(,\s*\d+\s*)*$/
+      const phoneReg = /^\s*[1]([0-9])[0-9]{9}\s*(,\s*[1]([0-9])[0-9]{9}\s*)*$/
       if (productIds && !ids.test(productIds)) {
         APP.error('商品ID格式有误')
         return
       }
       if (memberPhones && !phoneReg.test(memberPhones)) {
-        APP.error('手机号码格式有误')
+        const memberPhonesArr = memberPhones.split(',')
+        const index = memberPhonesArr.findIndex((item: string) => !phoneReg.test(item))
+        APP.error(`第 ${index + 1} 个手机号码格式有误`)
         return
       }
 
-      api.submit({ storeId, productIds, memberPhones }).then(() => {
+      const params = {
+        storeId,
+        productIds: (productIds || '').split(',').map((item: string) => item.trim()).join(','),
+        memberPhones
+      }
+      console.log(params)
+      api.submit(params).then(() => {
         APP.success('处理成功')
         this.form.reset()
       })
