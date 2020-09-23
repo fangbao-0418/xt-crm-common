@@ -33,7 +33,7 @@ export const HAODIAN_LEVEL_OPTIONS = [{
   label: '所有用户',
   value: ''
 }, {
-  label: '普通会员',
+  label: '普通用户',
   value: '0'
 }, {
   label: '正式店主',
