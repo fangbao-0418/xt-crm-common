@@ -184,10 +184,11 @@ class Main extends React.Component<Props, State> {
   }
   // 设置排序
   public onOk = async () => {
+    debugger
     if (!this.promotionId) {
       return
     }
-    if (!this.state.sort) {
+    if (this.state.sort === undefined || this.state.sort === null) {
       APP.error('排序不能为空')
       return
     }
@@ -223,7 +224,7 @@ class Main extends React.Component<Props, State> {
         >
           <InputNumber
             precision={0}
-            min={1}
+            min={0}
             max={100000}
             value={this.state.sort}
             onChange={(sort) => this.setState({ sort })}
