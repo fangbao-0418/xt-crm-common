@@ -515,14 +515,14 @@ class Main extends React.Component {
                   >
                     建议价格导入
                   </Button>
-                  <span
+                  {/* <span
                     className='href'
                     onClick={() => {
                       APP.fn.download(require('./assets/建议价格导入模板.xlsx'), '建议价格导入模板.xlsx')
                     }}
                   >
                     下载模板
-                  </span>
+                  </span> */}
                 </>
               )}
             </>
