@@ -7,6 +7,28 @@ export interface FieldsConfig {
 export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
   const defaultConfig: FieldsConfig = {
     common: {
+      channel: {
+        type: 'select',
+        label: '推荐渠道',
+        fieldDecoratorOptions: {
+          initialValue: 0
+        },
+        options: [{
+          label: '全部',
+          value: 0
+        }, {
+          label: '喜团优选',
+          value: 1
+        }, {
+          label: '喜团好店',
+          value: 2
+        }],
+        controlProps: {
+          style: {
+            width: 172
+          }
+        }
+      },
       name: {
         type: 'input',
         label: '名称',
@@ -113,6 +135,7 @@ export enum StatusEnum {
 }
 
 export enum LocationEnum {
+  搜索空白页 = 64,
   升级团长页 = 32,
   拼团详情 = 16,
   支付结果页 = 8,
@@ -129,7 +152,7 @@ export enum DisplayFromEnum {
 }
 
 export const locationMap: any = {
-  value: getAllGroupMap([1, 2, 4, 8, 16, 32]),
+  value: getAllGroupMap([1, 2, 4, 8, 16, 32, 64]),
   get label () {
     const value = this.value
     const result: any = {}

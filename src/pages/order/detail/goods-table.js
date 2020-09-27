@@ -195,8 +195,8 @@ class GoodsTable extends Component {
                 </Button>
               )}
             </div>
-            {
-              childOrder.canApplyOrderCompensate && record.orderType !== 56 && (
+            { // 喜团好店没有发起补偿
+              childOrder.canApplyOrderCompensate && record.orderType !== 56 && Number(orderInfo.orderBizType) !== 30 && (
                 <div>
                   <Button
                     style={{ padding: 0 }}

@@ -5,8 +5,7 @@ import OrderInfo from './components/OrderInfo'
 import PendingReview from './PendingReview'
 import { namespace } from './model'
 import { Card, Row, Col } from 'antd'
-import { If } from '@/packages/common/components'
-import { enumRefundStatus, enumRefundType } from '../constant'
+import { enumRefundStatus } from '../constant'
 interface AfterSalesDetailProps {
   data: AfterSalesInfo.data;
 }
@@ -33,7 +32,7 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
   }
   render () {
     const { data } = this.props
-    const { orderInfoVO, shopDTO, ...restData } = data
+    const { orderInfoVO, shopDTO, orderServerVO, ...restData } = data
     const info = this.getInfo(data)
     console.log('info', info, typeof info)
     return (
@@ -60,7 +59,7 @@ class AfterSalesDetail extends React.Component<AfterSalesDetailProps, AfterSales
             )}
           </>
         )}
-        <OrderInfo orderInfoVO={orderInfoVO} shopDTO={shopDTO} restData={restData} />
+        <OrderInfo orderInfoVO={orderInfoVO} orderServerVO={orderServerVO} shopDTO={shopDTO} restData={restData} />
       </>
     )
   }

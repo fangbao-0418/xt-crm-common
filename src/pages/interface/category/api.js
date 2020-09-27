@@ -1,10 +1,12 @@
 const { get, del, post, put } = APP.http
 
-export function getFrontCategorys () {
+/** 查询前台一级类目列表 */
+export function getFrontCategorys (channel) {
   return get('/mcweb/product/category_menu/list', {
     status: 0,
     pageNo: 1,
-    pageSize: 20
+    pageSize: 20,
+    channel
   })
 }
 
@@ -25,4 +27,9 @@ export function saveFrontCategory (data) {
 
 export function updateFrontCategory (data) {
   return put('/mcweb/product/category_menu/update', {}, { data, headers: {} })
+}
+
+/** POP主营类目列表 */
+export function getPopList () {
+  return get('/mcweb/product/category/pop/list')
 }

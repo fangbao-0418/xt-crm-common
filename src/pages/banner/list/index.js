@@ -5,6 +5,7 @@ import BannerModal from '../banner-modal'
 import { formatDate } from '../../helper'
 import { TextMapPosition } from '../constant'
 import Image from '../../../components/Image'
+import { bizSourceMap } from '../config'
 import Search from './Search'
 import { namespace } from '../config'
 
@@ -36,6 +37,7 @@ class OrderList extends React.Component {
 
   query = () => {
     const payload = APP.fn.getPayload(namespace) || {}
+    console.log('payload--------------2', payload)
     this.setState({
       page: this.payload.page,
       pageSize: this.payload.pageSize
@@ -129,6 +131,15 @@ class OrderList extends React.Component {
         }
       },
       {
+        title: 'banner渠道',
+        dataIndex: 'bizSource',
+        render(text) {
+          return (
+            <span>{bizSourceMap[text]}</span>
+          )
+        }
+      },
+      {
         title: '位置',
         dataIndex: 'seat',
         render (seat, record) {
@@ -196,6 +207,7 @@ class OrderList extends React.Component {
               pageSize,
               onChange: this.handlePageChange
             }}
+            scroll={{ x: true }}
             rowKey={record => record.id}
           />
         </Card>
