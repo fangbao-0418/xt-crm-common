@@ -12,6 +12,7 @@ interface SearchPayload {
 interface Props {
   onOk?: (ids: any[], rows: any[]) => void
   selectedRowKeys?: any[]
+  selectedRows?: any[]
 }
 interface State {
   visible: boolean
@@ -64,10 +65,14 @@ class Main extends React.Component<Props, State> {
   }
   public componentWillReceiveProps (nextProps: Props) {
     const selectedRowKeys = nextProps.selectedRowKeys
-    if (selectedRowKeys && this.props.selectedRowKeys !== selectedRowKeys) {
+    const selectedRows = nextProps.selectedRows
+    if ((selectedRowKeys && this.props.selectedRowKeys !== selectedRowKeys)) {
       this.setState({
         selectedRowKeys
       })
+    }
+    if (selectedRows && this.props.selectedRows !== selectedRows) {
+      this.selectedRows = selectedRows
     }
   }
   public componentDidMount () {

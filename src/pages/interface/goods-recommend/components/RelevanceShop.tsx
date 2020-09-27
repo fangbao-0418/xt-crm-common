@@ -64,12 +64,14 @@ class Main extends React.Component<Props, State> {
       <div>
         <ShopModal
           ref='shopmodal'
+          selectedRows={dataSource.map((item: any) => ({ ...item, onlineProductCount: item.productCount }))}
           selectedRowKeys={dataSource.map((item: any) => item.shopId)}
           onOk={(keys, rows) => {
             console.log('keys, rows', keys, rows)
             const result = rows.map((item) => {
               return {
-                ...item
+                ...item,
+                productCount: item.onlineProductCount
               }
             })
             this.setState({
