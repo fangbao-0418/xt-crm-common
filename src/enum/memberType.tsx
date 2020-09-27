@@ -11,7 +11,7 @@ export default new Enum([
 
 /** 好店用户等级枚举 */
 export const HDMemberType = new Enum([
-  { key: 0, val: '普通会员' },
+  { key: 0, val: '普通用户' },
   { key: 10, val: '正式店主' },
   { key: 20, val: '高级店主' },
   { key: 30, val: '服务商' },
