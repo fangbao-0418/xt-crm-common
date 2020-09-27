@@ -52,6 +52,7 @@ class Main extends React.Component<{}, State> {
           <Route path='/merchant-accounts' component={modules.MerchantAccounts} />
           <Route path='/shop' component={modules.Shop} />
           <Route path='/system' component={modules.System} />
+          <Route path='/haodian-business-school' component={modules.HaodianBusinessSchool} />
         </Layout>
       </Switch>
     )

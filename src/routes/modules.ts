@@ -17,3 +17,4 @@ export const MerchantAccounts = Loadable(() => import('@/pages/merchant-accounts
 export const Shop = Loadable(() => import('@/pages/shop'))
 export const System = Loadable(() => import('@/pages/system'))
 export const Download = Loadable(() => import('@/pages/download'))
+export const HaodianBusinessSchool = Loadable(() => import('@/pages/haodian-business-school'))
