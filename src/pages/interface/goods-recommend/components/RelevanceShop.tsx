@@ -37,7 +37,7 @@ class Main extends React.Component<Props, State> {
     },
     {
       title: "在架商品",
-      dataIndex: "onlineProductCount",
+      dataIndex: "productCount",
     },
     {
       title: "操作",
