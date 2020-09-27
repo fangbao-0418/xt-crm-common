@@ -1,46 +1,50 @@
-import format from 'date-fns/format';
-import moment from 'moment';
-import receiveRestrictType from '@/enum/receiveRestrictType';
-import platformType from '@/enum/platformType';
-import { isNil } from 'lodash';
+import format from 'date-fns/format'
+import moment from 'moment'
+import receiveRestrictType from '@/enum/receiveRestrictType'
+import platformType from '@/enum/platformType'
+import { isNil } from 'lodash'
 
-export function formatDate(date, dateFormat = 'YYYY-MM-DD HH:mm:ss') {
-  if (!date) return '';
-  return format(date, dateFormat);
+export function formatDate (date, dateFormat = 'YYYY-MM-DD HH:mm:ss') {
+  if (!date) {
+    return ''
+  }
+  return format(date, dateFormat)
 }
 
-export function formatMoney(money) {
-  if (!money) return 0;
-  return money / 100;
+export function formatMoney (money) {
+  if (!money) {
+    return 0
+  }
+  return money / 100
 }
 
-export function formatMoneyWithSign(money, decimal = 2, sign = '￥') {
+export function formatMoneyWithSign (money, decimal = 2, sign = '￥') {
   // return `￥${formatMoney(money).toFixed(decimal)}`;
   return APP.fn.formatMoney(money)
 }
 
-export function unionAddress(args) {
-  const { province = '', city = '', district = '', street = '' } = args || {};
-  return `${province}${city}${district}${street}`;
+export function unionAddress (args) {
+  const { province = '', city = '', district = '', street = '' } = args || {}
+  return `${province}${city}${district}${street}`
 }
 
 export const formatMoneyBeforeRequest = price => {
   if (isNil(price)) {
-    return price;
+    return price
   }
 
-  const pasred = parseFloat(price);
+  const pasred = parseFloat(price)
   if (isNaN(pasred)) {
-    return undefined;
+    return undefined
   }
 
-  return (pasred * 100).toFixed();
-};
+  return (pasred * 100).toFixed()
+}
 
 // 格式化退货信息
 export const joinFilterEmpty = arr => {
   return arr.filter(Boolean).join(' ')
-};
+}
 
 // 格式化面值
 export function formatFaceValue (record) {
@@ -62,77 +66,90 @@ export function formatFaceValue (record) {
   }
 }
 
-export function formatRangeTime(val = [], pattern = 'YYYY-MM-DD HH:mm', separator = ' ~ ') {
-  return val.map(v => moment(+v).format(pattern)).join(separator);
+export function formatRangeTime (val = [], pattern = 'YYYY-MM-DD HH:mm', separator = ' ~ ') {
+  return val.map(v => moment(+v).format(pattern)).join(separator)
 }
 
 // 领取时间
-export function formatDateRange({ startReceiveTime, overReceiveTime }, pattern, separator) {
-  return formatRangeTime([startReceiveTime, overReceiveTime], pattern, separator);
+export function formatDateRange ({ startReceiveTime, overReceiveTime }, pattern, separator) {
+  return formatRangeTime([startReceiveTime, overReceiveTime], pattern, separator)
 }
 
 // 用券时间
-export function formatUseTime({ useTimeType, useTimeValue }, pattern, separator) {
+export function formatUseTime ({ useTimeType, useTimeValue }, pattern, separator) {
   switch (useTimeType) {
     case 0:
-      return formatRangeTime(useTimeValue.split(','), pattern, separator);
+      return formatRangeTime(useTimeValue.split(','), pattern, separator)
     case 1:
-      return `领取当日起${useTimeValue}天内可用`;
+      return `领取当日起${useTimeValue}天内可用`
     default:
-      break;
+      break
   }
 }
 
+// 格式化渠道
+export function formatbizType (val = 0) {
+  const applicationScope = {
+    0: '优选',
+    1: '买菜',
+    2: '好店'
+  }
+  return applicationScope[val]
+}
 // 格式化适用范围
-export function formatAvlRange(val = 0) {
+export function formatAvlRange (val = 0) {
   const applicationScope = {
     0: '全场通用',
     1: '类目商品',
     2: '指定商品',
-    4: '指定活动'
-  };
-  return applicationScope[val];
+    4: '指定活动',
+    5: '全店通用'
+  }
+  return applicationScope[val]||'未知'
 }
 
 // 领取人限制
-export function formatReceiveRestrict(val = '') {
-  if (val === 'all') return '不限制';
-  else if (val === '3') {
-    return '平台未下单用户';
+export function formatReceiveRestrict (val = '') {
+  if (val === 'all') {
+    return '不限制'
+  } else if (val === '3') {
+    return '平台未下单用户'
   }
   return val
     .split(',')
     .map(v => receiveRestrictType.getValue(v))
-    .join('，');
+    .join('，')
 }
 
 // 格式化使用平台
 export const formatPlatformRestrict = (val = '') => {
-  if (val === 'all') return '不限制';
+  if (val === 'all') {
+    return '不限制'
+  }
   return val
     .split(',')
     .map(v => platformType.getValue(v))
-    .join('，');
-};
+    .join('，')
+}
 
 // 今天之前不可选
-export function disabledDate(current) {
+export function disabledDate (current) {
   return (
-    current &&
-    current <
-      moment()
+    current
+    && current
+      < moment()
         .endOf('day')
         .subtract(1, 'days')
-  );
+  )
 }
 
 // 一个月之后不可选
-export function afterDisabledDate(current) {
+export function afterDisabledDate (current) {
   return (
-    current &&
-    current >
-      moment()
+    current
+    && current
+      > moment()
         .startOf('day')
         .add(31, 'days')
-  );
+  )
 }

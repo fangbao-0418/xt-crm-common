@@ -4,7 +4,7 @@ import { formLeftButtonLayout, formItemLayout } from '@/config'
 import { getCouponDetail } from '@/pages/shop/pop-coupon/api'
 import { withRouter } from 'react-router-dom'
 import { param } from '@/packages/common/utils'
-import { formatFaceValue, formatDateRange, formatUseTime, formatAvlRange, formatReceiveRestrict, formatPlatformRestrict } from '@/pages/helper'
+import { formatFaceValue, formatbizType, formatDateRange, formatUseTime, formatAvlRange, formatReceiveRestrict, formatPlatformRestrict } from '@/pages/helper'
 import { parseQuery } from '@/util/utils'
 const { TabPane } = Tabs
 const { confirm } = Modal
@@ -46,6 +46,7 @@ function CouponDetail ({ match, history }) {
       <Tabs onChange={onChange} activeKey={activeKey}>
         <TabPane tab='优惠详情' key='1'>
           <Form {...formItemLayout}>
+            <Form.Item label='渠道'>{formatbizType(data?.bizType)}</Form.Item>
             <Form.Item label='优惠券名称'>{baseVO.name}</Form.Item>
             <Form.Item label='适用范围'>{formatAvlRange(ruleVO.avlRange)}</Form.Item>
             {ruleVO.rangeVOList && ruleVO.rangeVOList.length > 0 && (

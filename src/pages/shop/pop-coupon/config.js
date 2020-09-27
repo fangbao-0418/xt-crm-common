@@ -178,6 +178,11 @@ export const getListColumns = () => [
     key: 'code'
   },
   {
+    title: '店铺编号',
+    dataIndex: 'shopCode',
+    key: 'shopCode'
+  },
+  {
     title: '名称',
     dataIndex: 'name',
     key: 'name'
@@ -187,6 +192,36 @@ export const getListColumns = () => [
     dataIndex: 'receiveTime',
     key: 'receiveTime',
     render: (text, record) => formatDateRange(record)
+  },
+  {
+    title: '店铺名称',
+    dataIndex: 'shopName',
+    key: 'shopName'
+  },
+  {
+    title: '供应商',
+    dataIndex: 'storeName',
+    key: 'storeName'
+  },
+  {
+    title: '渠道',
+    dataIndex: 'bizType',
+    key: 'bizType',
+    render: (text, record) => {
+      let str=''
+      switch (text) {
+        case 0:
+          str='优选'
+          break
+        case 1:
+          str='买菜'
+          break
+        case 2:
+          str='好店'
+          break
+      }
+      return str
+    }
   },
   {
     title: '优惠券价值',
