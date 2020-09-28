@@ -7,6 +7,7 @@ import { levelName } from '../utils'
 import styles from './index.module.scss'
 import Modal from './modal'
 import { namespace } from './model'
+import { HAODIAN_LEVEL_OPTIONS } from '../config'
 const FormItem = Form.Item
 const { Option } = Select
 
@@ -37,6 +38,10 @@ function getColumns (scope) {
       title: '等级',
       dataIndex: 'memberLevel',
       render (v, rec) {
+        const { bizSource } = scope.props
+        if (bizSource === '2') {
+          return rec?.memberTypeDO?.value
+        }
         return <span>{levelName({ memberType: rec.memberTypeDO.key, memberTypeLevel: rec.memberTypeLevel })}</span>
       }
     }, {
@@ -65,7 +70,7 @@ function getColumns (scope) {
         return (
           <>
             {
-              record.memberTypeDO.key >= 10 // 团长以上才可以发码
+              record.memberTypeDO.key >= 10 && scope.props.bizSource === '0' // 喜团优选业务，团长以上才可以发码
                 ? (
                   <>
                     <span
@@ -122,7 +127,10 @@ const defaultPayload = {
   // }
 })
 export default class extends Component {
-
+    constructor(props) {
+      super(props)
+      this.props.getInstance(this)
+    }
     payload = Object.assign({}, defaultPayload, APP.fn.getPayload(namespace))
 
     // componentDidMount () {
@@ -191,7 +199,7 @@ export default class extends Component {
           payload.invitePhone = payload.invitePhone ? payload.invitePhone : undefined
           this.payload = payload
           APP.fn.setPayload(namespace, payload)
-          dispatch['user.userlist'].getData(payload)
+          dispatch['user.userlist'].getData({ ...payload, bizSource: this.props.bizSource })
         }
       })
     }
@@ -212,7 +220,7 @@ export default class extends Component {
       })
     }
     renderForm = () => {
-      const { form: { getFieldDecorator } } = this.props
+      const { form: { getFieldDecorator }, bizSource } = this.props
       const values = { ...this.payload }
       values.time = values.registerStartDate && [moment(values.registerStartDate), moment(values.registerEndDate)]
       return (
@@ -230,19 +238,35 @@ export default class extends Component {
               )
             }
           </FormItem>
-          <FormItem label='等级' className={styles.level}>
-            {
-              getFieldDecorator('memberType', {
-                initialValue: values.memberType
-              })(
-                <Select>
-                  {
-                    levelArr.map(item => (<Option value={item.value} key={item.value}>{item.key}</Option>))
-                  }
-                </Select>
-              )
-            }
-          </FormItem>
+          { bizSource === '2' ? (
+            <FormItem label='等级' className={styles.level}>
+              {
+                getFieldDecorator('memberType', {
+                  initialValue: values.memberType
+                })(
+                  <Select>
+                    {
+                      HAODIAN_LEVEL_OPTIONS.map(item => (<Option value={item.value} key={item.value}>{item.label}</Option>))
+                    }
+                  </Select>
+                )
+              }
+            </FormItem>
+          ) : (
+            <FormItem label='等级' className={styles.level}>
+              {
+                getFieldDecorator('memberType', {
+                  initialValue: values.memberType
+                })(
+                  <Select>
+                    {
+                      levelArr.map(item => (<Option value={item.value} key={item.value}>{item.key}</Option>))
+                    }
+                  </Select>
+                )
+              }
+            </FormItem>
+          )}
           <FormItem label='手机号'>
             {
               getFieldDecorator('phone', {

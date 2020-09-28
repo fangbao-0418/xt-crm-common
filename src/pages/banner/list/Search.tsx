@@ -3,11 +3,13 @@ import { Form, Input, Button, Select } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import BannerPosition from '@/components/banner-position'
 import { namespace } from '../config'
+import { GetFieldDecoratorOptions } from 'antd/lib/form/Form'
 
 interface PayloadProps {
   title?: string
   seat?: any[]
   status?: number
+  bizSource?: number
 }
 interface Props extends FormComponentProps {
   className?: string
@@ -36,8 +38,9 @@ class Main extends React.Component<Props> {
     })
   }
   public render () {
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, getFieldValue } = this.props.form
     const values = this.payload
+    const bizSource = getFieldValue('bizSource')
     return (
       <div
         style={{
@@ -55,17 +58,35 @@ class Main extends React.Component<Props> {
             )}
           </Form.Item>
           <Form.Item
-            label='位置'
+            label='banner渠道'
           >
-            {getFieldDecorator('seat', { initialValue: values.seat })(
-              <BannerPosition />
+            {getFieldDecorator('bizSource', {
+              initialValue: values.bizSource,
+              onChange: (bizSource: number) => {
+                this.props.form.setFieldsValue({ seat: [] })
+              }
+            } as GetFieldDecoratorOptions)(
+              <Select placeholder='请选择banner渠道' allowClear style={{ width: 172 }}>
+                <Select.Option value={-1}>全部</Select.Option>
+                <Select.Option value={0}>喜团优选</Select.Option>
+                <Select.Option value={20}>喜团好店</Select.Option>
+              </Select>
             )}
           </Form.Item>
+          {[0, 20].includes(bizSource) && (
+            <Form.Item
+              label='位置'
+            >
+              {getFieldDecorator('seat', { initialValue: values.seat })(
+                <BannerPosition bizSource={bizSource} />
+              )}
+            </Form.Item>
+          )}
           <Form.Item
             label='状态'
           >
             {getFieldDecorator('status', { initialValue: values.status })(
-              <Select allowClear style={{ width: 100 }}>
+              <Select placeholder='请选择状态' allowClear style={{ width: 172 }}>
                 <Select.Option value={1}>开启</Select.Option>
                 <Select.Option value={0}>关闭</Select.Option>
               </Select>
@@ -83,9 +104,12 @@ class Main extends React.Component<Props> {
               onClick={() => {
                 this.payload = {}
                 APP.fn.setPayload(namespace, {})
+                console.log('payload--------------1', APP.fn.getPayload(namespace))
                 const params = {
                   title: undefined,
-                  seat: undefined,
+                  newSeat: undefined,
+                  childSeat: undefined,
+                  bizSource: undefined,
                   status: undefined
                 }
                 this.props.form.setFields(params)
