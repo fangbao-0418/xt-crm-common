@@ -5,6 +5,8 @@ import SkuItem from './skuItem'
 import { formatMoneyWithSign } from '@/util/helper'
 import { namespace } from '../model'
 import { parseQuery } from '@/util/utils'
+import ArrowContain from './arrow-contain'
+import Decimaljs from 'decimal.js'
 
 const ConfirmStatusEnum = {
   0: '未导入价格',
@@ -31,13 +33,69 @@ const SpecKeysCards = ({ specKeys }) => {
   </div>
 }
 
+  // 快速填充
+function speedyInput(
+    form,
+    field,
+    text,
+    record,
+    index,
+    dataSource,
+    cb,
+    agencyRate
+  ) {
+    // const { pageSize = 10, current = 1 } = this.pagination;
+    // const realIndex = dataSource.length <= pageSize ? index : pageSize * (current - 1) + index;
+    const realIndex = index
+    return (node) => {
+      return (
+        <Form.Item wrapperCol={{ span: 24 }}>
+          <ArrowContain
+            disabled={dataSource.length <= 1}
+            type={(realIndex === 0 && 'down') || (realIndex === dataSource.length - 1 && 'up') || undefined}
+            onClick={type => {
+              let currentIndex = 0;
+              let end = realIndex;
+              if (type === 'down') {
+                currentIndex = realIndex;
+                end = dataSource.length - 1;
+              }
+              let fields = [];
+              const values = {}
+              while (currentIndex <= end) {
+                let key = `${field}-${currentIndex}`
+                fields.push(key);
+                const record = dataSource[currentIndex]
+                const min = -Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10)
+                const max = record.salePrice
+                const currentText = text > max ? max : ((text < min) ? min : text)
+                dataSource[currentIndex][field] = currentText
+                currentIndex++
+                values[key] = text
+              }
+              form.resetFields(fields)
+              cb(dataSource)
+            }}
+          >
+            {form.getFieldDecorator(`${field}-${realIndex}`, {
+              initialValue: APP.fn.formatMoneyNumber(text, 'm2u')
+            })(node)}
+          </ArrowContain>
+        </Form.Item>
+      );
+    };
+}
+
 /** 商品Sku组合 */
 const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
   const query = parseQuery()
   const readonly = !!query.readonly
   const { specVals, specKeys } = data;
   const { auditStatus  } = goodsInfo
-  // console.log(goodsInfo, 'goodsInfogoodsInfogoodsInfogoodsInfo')
+  const handleChangeValue = (dataSource) => {
+    goodsInfo.skuList = dataSource
+    APP.dispatch[namespace].saveDefault({ goodsInfo: {...goodsInfo} });
+  };
   // 动态表头
   const dynaColums = specKeys.map(sitem => ({
     title: sitem.name,
@@ -77,40 +135,67 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
     hidden: !(status === 1 && confirmStatus === 1),
     // hidden: true,
     dataIndex: 'commissionIncreasePrice',
-    render: (value, record, index) => {
+    render: (text, record, index) => {
       if (readonly || (status !== 1 || confirmStatus !== 1)) {
-        return (formatMoneyWithSign(value))
+        return (formatMoneyWithSign(text))
       }
-      value = APP.fn.formatMoneyNumber(value, 'm2u')
-      const min = APP.fn.formatMoneyNumber(Math.floor(record.salePrice * agencyRate / 1000) * 10, 'm2u')
-      // const min = 1.58
-      return (
-        <Form.Item>
-          {
-            form.getFieldDecorator(`commissionIncreasePrice[${index}]`, {
-              initialValue: value
-            })(
-              <InputNumber
-                value={value}
-                onChange={(e) => {
-                  const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
-                  const current = APP.fn.formatMoneyNumber(e > max ? max : e)
-                  const skuList = goodsInfo.skuList
-                  skuList[index] = {
-                    ...skuList[index],
-                    commissionIncreasePrice: current,
-                    increaseSalePrice: current + record.salePrice
-                  }
-                  APP.dispatch[namespace].saveDefault({ goodsInfo });
-                }}
-                min={-min}
-                max={APP.fn.formatMoneyNumber(record.salePrice, 'm2u')}
-                precision={1}
-              />
-            )
-          }
-        </Form.Item>
+      const value = APP.fn.formatMoneyNumber(text, 'm2u')
+      const min = -APP.fn.formatMoneyNumber(Math.floor(record.salePrice * agencyRate / 1000) * 10, 'm2u')
+      const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
+      return speedyInput(
+        form,
+        `commissionIncreasePrice`,
+        text,
+        record,
+        index,
+        specVals,
+        handleChangeValue,
+        agencyRate
+      )(
+        <InputNumber
+          // value={value}
+          onChange={(e) => {
+            const current = APP.fn.formatMoneyNumber(e > max ? max : ((e < min) ? min : e))
+            const skuList = goodsInfo.skuList
+            skuList[index] = {
+              ...skuList[index],
+              commissionIncreasePrice: current,
+              increaseSalePrice: current + record.salePrice
+            }
+            APP.dispatch[namespace].saveDefault({ goodsInfo });
+          }}
+          min={min}
+          max={max}
+          precision={1}
+        />
       )
+      // return (
+      //   <Form.Item>
+      //     {
+      //       form.getFieldDecorator(`commissionIncreasePrice[${index}]`, {
+      //         initialValue: value
+      //       })(
+      //         <InputNumber
+      //           value={value}
+      //           onChange={(e) => {
+      //             const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
+      //             const current = APP.fn.formatMoneyNumber(e > max ? max : e)
+      //             const skuList = goodsInfo.skuList
+      //             skuList[index] = {
+      //               ...skuList[index],
+      //               commissionIncreasePrice: current,
+      //               increaseSalePrice: current + record.salePrice
+      //             }
+      //             APP.dispatch[namespace].saveDefault({ goodsInfo });
+      //           }}
+      //           min={-min}
+      //           max={APP.fn.formatMoneyNumber(record.salePrice, 'm2u')}
+      //           precision={1}
+      //         />
+      //       )
+      //     }
+      //   </Form.Item>
+      // )
     }
   }, {
     title: '上浮后销售价',
