@@ -1,8 +1,8 @@
 [submodule "common"]
 	path = src/packages/common
-	url = git@192.168.20.7:front-end/xt-youxan/platform-library.git
+	url = git@xtgit.hzxituan.com:front-end/xt-youxan/platform-library.git
 	branch = release/v2.0.1
 [submodule "portal"]
 	path = src/packages/portal
-	url = git@192.168.20.7:front-end/xt-youxan/xt-crm-microservice/portal.git
+	url = git@xtgit.hzxituan.com:front-end/xt-youxan/xt-crm-microservice/portal.git
 	branch = release/v0826-1700
