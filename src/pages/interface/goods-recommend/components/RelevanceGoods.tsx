@@ -1,13 +1,14 @@
 import React from 'react'
 import { Table } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
-import ShopModal, { Item } from './ShopModal'
+import GoodsModal, { Item } from './GoodsModal'
 import Image from '@/components/Image'
 
 interface Props {
   readonly?: boolean
   value?: any
   onChange?: (value: any) => void
+  channel: 1 | 2
 }
 interface State {
   selectedRowKeys: any[]
@@ -75,13 +76,14 @@ class Main extends React.Component<Props, State> {
   }
   public render () {
     const { selectedRowKeys, dataSource } = this.state
-    const { readonly } = this.props
+    const { readonly, channel } = this.props
     return (
       <div>
-        <ShopModal
+        <GoodsModal
           fetchNode='open'
+          channel={channel}
           selectedRowKeys={selectedRowKeys}
-          ref='shopmodal'
+          ref='goodsmodal'
           onOk={(keys, rows) => {
             const result = rows.map((item) => {
               return {
@@ -109,7 +111,7 @@ class Main extends React.Component<Props, State> {
             <span
               className='href'
               onClick={() => {
-                const ref: any = this.refs.shopmodal
+                const ref: any = this.refs.goodsmodal
                 ref.open(this.state.dataSource)
               }}
             >

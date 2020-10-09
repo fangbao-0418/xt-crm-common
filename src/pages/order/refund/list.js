@@ -39,6 +39,11 @@ const getListColumns = ({ query, history }) => [
     }
   },
   {
+    title: '订单渠道',
+    width: 100,
+    dataIndex: 'bizTypeStr'
+  },
+  {
     title: '售后状态',
     dataIndex: 'refundStatusStr',
     width: 100
@@ -362,7 +367,7 @@ export default class extends React.Component {
             }}
             onChange={this.handlePageChange}
             rowKey={record => record.orderCode}
-            scroll={{ x: 1800 }}
+            scroll={{ x: 1900 }}
           />
         ) : null}
       </div>

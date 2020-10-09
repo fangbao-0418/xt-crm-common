@@ -38,7 +38,7 @@ const FreightInfo = ({ data: freightTemplate }) => {
   return <div>
     <p>
       模板名称: {freightTemplate.templateName}{' '}
-      默认运费: {freightTemplate.defaultNumber}
+      默认运费: {APP.fn.formatMoney(freightTemplate.commonCost)}
     </p>
     <Table
       pagination={false}

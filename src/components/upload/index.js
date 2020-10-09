@@ -230,7 +230,7 @@ class UploadView extends Component {
   }
 
   beforeUpload = async (file, fileList) => {
-    console.log(fileList, 'file')
+    console.log(fileList, 'beforeUpload file')
     const { fileType, size = 10, pxSize, listNum, fileTypeErrorText } = this.props
 
     /** 判断文件扩展名是否支持 不传就不限制 */
@@ -305,6 +305,7 @@ class UploadView extends Component {
   };
   customRequest (e) {
     const file = e.file
+    console.log('file', file)
     const { onChange, formatOrigin, ossDir, ossType } = this.props
 
     ossUpload(file, ossDir, ossType).then((urlList) => {

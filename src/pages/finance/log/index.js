@@ -189,6 +189,7 @@ export default class extends Component {
               APP.fn.setPayload(namespace, {})
               resetFields()
               this.forceUpdate()
+              this.handleSearch()
             }}
           >清除条件</Button>
           <Button type="primary" onClick={() => this.exportFile()}>导出</Button>

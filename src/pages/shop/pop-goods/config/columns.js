@@ -33,28 +33,31 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
       title: '商品主图',
       dataIndex: 'coverUrl',
       width: 120,
-      render: (val, record) => (
-        <>
-          <Image
-            style={{
-              height: 100,
-              width: 100,
-              minWidth: 100
-            }}
-            src={replaceHttpUrl(val)}
-            onClick={() => onPreview(record)}
-            alt='主图'
-          />
-          {
-            record.imageViolationReasons && (
-              <div style={{ color: 'red', textAlign: 'center' }}>
-                <Icon style={{ color: 'red' }} type='info-circle' />{' '}
-                {record.imageViolationReasons}
-              </div>
-            )
-          }
-        </>
-      )
+      render: (val, record) => {
+        const color = record.imageViolationReasons === '检测正常' ? 'green' : 'red'
+        return (
+          <>
+            <Image
+              style={{
+                height: 100,
+                width: 100,
+                minWidth: 100
+              }}
+              src={replaceHttpUrl(val)}
+              onClick={() => onPreview(record)}
+              alt='主图'
+            />
+            {
+              record.imageViolationReasons && (
+                <div style={{ color, textAlign: 'center' }}>
+                  <Icon style={{ color }} type='info-circle' />{' '}
+                  {record.imageViolationReasons}
+                </div>
+              )
+            }
+          </>
+        )
+      }
     },
     {
       title: '商品名称',
@@ -92,7 +95,7 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
     },
     {
       title: '商品状态',
-      width: 100,
+      width: 120,
       dataIndex: 'status',
       render: (val, record) => {
         // status 1: 上架 0 下架
@@ -104,6 +107,13 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
         }
         if (auditStatus === 1) {
           return '待审核'
+        } else if (auditStatus === 2) {
+          if (record.confirmStatus === 2) {
+            return '待商家确认'
+          }
+          if (record.confirmStatus === 0) {
+            return '待导入价格'
+          }
         } else if (auditStatus === 3) {
           return '不通过'
         } else if (withdrawalType === 0) {
@@ -175,13 +185,21 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
           return (
             <div style={{ marginTop: 40 }}>
               <span
-                className='href'
-                onClick={() => onDetail(record)}
+                className='href mr8'
+                onClick={() => onDetail(record, { readonly: true })}
               >
                 查看
               </span>
+              {record.confirmStatus === 1 && (
+                <span
+                  className='href mr8'
+                  onClick={() => onDetail(record)}
+                >
+                  编辑
+                </span>
+              )}
               <span
-                className='href ml10'
+                className='href'
                 onClick={() => onLower(record)}
               >
                 下架
@@ -194,19 +212,19 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
           return (
             <div style={{ marginTop: 40 }}>
               <span
-                className='href'
-                onClick={() => onDetail(record)}
+                className='href mr8'
+                onClick={() => onDetail(record, { readonly: true })}
               >
                 查看
               </span>
               <span
-                className='href ml10'
+                className='href mr8'
                 onClick={() => onPass(record)}
               >
                 通过
               </span>
               <span
-                className='href ml10'
+                className='href'
                 onClick={() => onUnpass(record)}
               >
                 不通过
@@ -218,7 +236,7 @@ const getColumns = ({ onPreview, onViolation, onDetail, onLower, onPass, onUnpas
             <div style={{ marginTop: 40 }}>
               <span
                 className='href'
-                onClick={() => onDetail(record)}
+                onClick={() => onDetail(record, { readonly: true })}
               >
                 查看
               </span>

@@ -6,7 +6,7 @@ import SelectFetch from '@/components/select-fetch'
 import { ListPage, If } from '@/packages/common/components'
 import Form, { FormItem } from '@/packages/common/components/form'
 import SuppilerSelector from '@/components/supplier-selector'
-import SearchFetch from '@/packages/common/components/search-fetch'
+import SearchFetch from './components/search-fetch'
 import { replaceHttpUrl } from '@/util/utils'
 import CarouselPreview from '@/components/carousel-preview'
 import UnpassModal from './components/unpassModal'
@@ -15,6 +15,7 @@ import ViolationModal from './components/violationModal'
 import { combinationStatusList, formConfig } from './config/config'
 import getColumns from './config/columns'
 import Alert from '@/packages/common/components/alert'
+import { param } from '@/packages/common/utils'
 
 const { TabPane } = Tabs
 
@@ -91,8 +92,12 @@ class Main extends React.Component {
   }
 
   /** 操作：查看商品详情-打开新标签页面 */
-  handleDetail = (record) => {
-    APP.open(`/shop/pop-goods/detail/${record.id}`)
+  handleDetail = (record, query) => {
+    let qs = ''
+    if (query) {
+      qs = '?' + param(query)
+    }
+    APP.open(`/shop/pop-goods/detail/${record.id}${qs}`)
   }
 
   /** 操作：下架商品-显示下架理由模态框 */
@@ -105,7 +110,7 @@ class Main extends React.Component {
   }
 
   /** 操作：通过商品审核 */
-  handlePass = (record) => {
+  handlePass = (record, ids) => {
     let form
     const hide = this.props.alert({
       title: '渠道选择',
@@ -138,12 +143,28 @@ class Main extends React.Component {
           if (err) {
             return
           }
+          // passGoods({
+          //   ids: selectedRowKeys
+          // }).then(() => {
+          //   message.success(`共${selectedRowKeys.length}件商品审核通过成功！`)
+          //   this.setState({
+          //     selectedRowKeys: []
+          //   })
+          //   this.listRef.fetchData()
+          // })
           passGoods({
-            ids: [record.id],
+            ids: ids || [record.id],
             channel: values.channel
           }).then(() => {
             hide?.()
-            message.success('审核通过成功!')
+            if (ids) {
+              APP.success(`共${ids.length}件商品审核通过成功！`)
+              this.setState({
+                selectedRowKeys: []
+              })
+            } else {
+              APP.success('审核通过成功!')
+            }
             this.listRef.fetchData()
           })
         })
@@ -181,17 +202,19 @@ class Main extends React.Component {
     this.setState({ selectedRowKeys })
   }
 
+  /** 批量通过 */
   handleBatchPass = () => {
     const { selectedRowKeys } = this.state
-    passGoods({
-      ids: selectedRowKeys
-    }).then(() => {
-      message.success(`共${selectedRowKeys.length}件商品审核通过成功！`)
-      this.setState({
-        selectedRowKeys: []
-      })
-      this.listRef.fetchData()
-    })
+    this.handlePass(null, selectedRowKeys)
+    // passGoods({
+    //   ids: selectedRowKeys
+    // }).then(() => {
+    //   message.success(`共${selectedRowKeys.length}件商品审核通过成功！`)
+    //   this.setState({
+    //     selectedRowKeys: []
+    //   })
+    //   this.listRef.fetchData()
+    // })
   }
 
   handleBatchReject = () => {
@@ -315,9 +338,15 @@ class Main extends React.Component {
             } else {
               payload.auditStatus = undefined
             }
+            /** 清除选择 */
+            this.setState({
+              selectedRowKeys: []
+            })
+            console.log(payload, 'payload')
             return {
               ...payload,
               storeId: payload.store?.key,
+              shopId: payload.shopId?.key,
               store: undefined
             }
           }}
@@ -399,12 +428,13 @@ class Main extends React.Component {
                   showTime: true
                 }}
               />
-              <FormItem name='phone' />
+              {/* <FormItem name='phone' /> */}
               <FormItem
                 label='店铺名称'
                 inner={(form) => {
                   return form.getFieldDecorator('shopId')(
                     <SearchFetch
+                      selectProps={{labelInValue: true}}
                       api={getShopList}
                       style={{ width: 172 }}
                       placeholder='请输入店铺名称'
@@ -471,18 +501,18 @@ class Main extends React.Component {
               >
                 清除
               </Button>
-              <Button
-                type='primary'
-                className='mr8'
-                onClick={() => {
-                  const payload = this.listRef.getPayload()
-                  exportGoods(payload)
-                }}
-              >
-                商品导出
-              </Button>
               {['1', '4', '5'].includes(tabStatus) && (
                 <>
+                  <Button
+                    type='primary'
+                    className='mr8'
+                    onClick={() => {
+                      const payload = this.listRef.getPayload()
+                      exportGoods(payload)
+                    }}
+                  >
+                    商品导出
+                  </Button>
                   <Button
                     type='primary'
                     className='mr8'
@@ -492,14 +522,14 @@ class Main extends React.Component {
                   >
                     建议价格导入
                   </Button>
-                  <span
+                  {/* <span
                     className='href'
                     onClick={() => {
                       APP.fn.download(require('./assets/建议价格导入模板.xlsx'), '建议价格导入模板.xlsx')
                     }}
                   >
                     下载模板
-                  </span>
+                  </span> */}
                 </>
               )}
             </>

@@ -18,6 +18,7 @@ for (const key in MemberTypeTextMap) {
   currentData: state['user.userinfo'].currentData,
   inviteInfo: state['user.userinfo'].inviteInfo,
   visible: state['user.userinfo'].visible,
+  tab: state['user.userinfo'].memberType
 }))
 @Form.create()
 export default class extends Component {
@@ -45,7 +46,8 @@ export default class extends Component {
     validateFields((errors, values) => {
       const payload = {
         ...values,
-        id: currentData.id
+        id: currentData.id,
+        // tab: this.props.tab
       };
       dispatch['user.userinfo'].updateUserInfo(payload);
     })
@@ -61,6 +63,7 @@ export default class extends Component {
       }
     })
   }
+
   renderHeadImage = (data) => {
     if (data.headImage) {
       const src = data.headImage.indexOf('http') === 0 ? `${data.headImage}` : `https://assets.hzxituan.com/${data.headImage}`;
@@ -81,12 +84,12 @@ export default class extends Component {
     const { form: { getFieldDecorator }, currentData } = this.props;
     let memberType = 0;
     if (currentData.id) {
-      memberType = currentData.memberTypeDO.key
+      memberType = currentData.memberTypeDO?.key
     }
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 18 },
-    };
+    }
     return (
       <Form layout="horizontal" {...formItemLayout} className={styles['user-edit-box']}>
         <Row>

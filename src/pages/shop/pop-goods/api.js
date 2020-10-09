@@ -80,7 +80,8 @@ export function unPassGoods(data) {
     ...data,
     auditStatus: 3,
     /** requestType 1-小店（不校验channel） 2-pop */
-    requestType: 2
+    requestType: 2,
+    channel: 0
   });
 }
 
@@ -92,7 +93,7 @@ export function lowerGoods(data) {
 /** 商品导出 */
 export function exportGoods(data) {
   const query = param(data)
-  return APP.fn.exportFile('/mcweb/product/shop/pop/export?' + query, 'pop商品数据.xlsx');
+  return APP.fn.exportFile('/mcweb/product/shop/pop/export?' + query, 'pop商品数据.xls');
 }
 
 /** 导入商品建议供应价 */

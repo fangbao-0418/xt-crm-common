@@ -16,6 +16,12 @@ const PopCommission = loadable(() => import('./pop-commission'))
 const HDCommission = loadable(() => import('./hd-commission'))
 /** 小店佣金配置 */
 const SmallShopCommission = loadable(() => import('./small-shop-commission'))
+/** POP店管理活动管理 */
+const ShopActivity = loadable(() => import('./activity'))
+/** POP店管理活动管理详情 */
+const ShopActivityAdd = loadable(() => import('./activity/Add'))
+/** 前端会场设置 */
+const ShopActivityDetail = loadable(() => import('./activity/Detail'))
 /** pop商品 */
 const POPGoods = loadable(() => import('./pop-goods/Routes'))
 class Main extends React.Component {
@@ -32,6 +38,10 @@ class Main extends React.Component {
         <Route path={`${match.url}/popcommission`} component={PopCommission} />
         <Route path={`${match.url}/hdcommission`} component={HDCommission} />
         <Route path={`${match.url}/smallshopcommission`} component={SmallShopCommission} />
+        <Route path={`${match.url}/activity`} exact component={ShopActivity} />
+        <Route path={`${match.url}/activity/add`} exact component={ShopActivityAdd} />
+        <Route path={`${match.url}/activity/edit`} exact component={ShopActivityAdd} />
+        <Route path={`${match.url}/activity/detail`} exact component={ShopActivityDetail} />
         <Route path={`${match.url}/pop-goods`} component={POPGoods} />
       </Switch>
     )

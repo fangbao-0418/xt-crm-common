@@ -1,10 +1,20 @@
-const { post, get, newPost, newPut, del } = APP.http
-import { handleApiUrl } from '@/util/app/config'
+const { get, newPost } = APP.http
+
 export const getAnchorList = (payload: any) => {
   if(payload.shopType===0){
     delete payload.shopType
   }
-  return newPost('/mmweb/supplier/shop/V1/sort/page', payload)
+  if (payload.bizSource !== '20') {
+    return newPost('/mmweb/supplier/shop/V1/sort/page', {
+      ...payload
+    })
+  } else {
+    return newPost('/mmweb/pop/query/sort/v1', {
+      ...payload,
+      bizType: 2,
+      bizSource: undefined
+    })
+  }
 }
 
 export const searchfuzzy = (payload: any) => {
@@ -15,9 +25,23 @@ export const searchfuzzy = (payload: any) => {
     return res.map((v: { shopName: string, shopId: string }) => ({ text: v.shopName, value: v.shopId }))
   })
 }
+
 export const ranking = (payload: any) => {
   return newPost('/mmweb/supplier/shop/V1/top/ranking', payload)
 }
+
+/** 好店设置权重 */
+export const newSetRanking = (payload: {
+  shopId: any
+  bizSort: any
+}) => {
+  return newPost('/mmweb/pop/editSort/v1', {
+    ...payload,
+    bizType: 2
+  })
+}
+
+
 // 获取店铺类型
 export function getShopTypes () {
   return get('/shop/v1/query/type').then((res: any) => {

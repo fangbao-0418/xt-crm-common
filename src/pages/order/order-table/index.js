@@ -7,6 +7,7 @@ import { formatDate, formatMoneyWithSign } from '../../helper'
 import { getOrderList, newExportOrder, importLogistics, getShopTypes, getPhoneById, supplierSearch } from '../api'
 import GoodCell from '../../../components/good-cell'
 import SearchFetch from '@/packages/common/components/search-fetch'
+import SuppilerSelector from '@/components/supplier-selector'
 import RefundCell from '../components/refund-cell'
 import RemarkModal from '../components/modal/remark-modal'
 import RefundModal from '../components/refund-modal'
@@ -189,7 +190,7 @@ class OrderList extends React.Component {
       {
         title: '订单编号',
         dataIndex: 'orderCode',
-        width: '400px',
+        width: 300,
         render: (operate, { orderStatus, orderCode }) => (
           <span
             className='href'
@@ -204,8 +205,20 @@ class OrderList extends React.Component {
       {
         title: '下单时间',
         dataIndex: 'createTime',
-        width: '300px',
+        width: 250,
         render: (createTime, row) => <div>下单时间：{formatDate(createTime)}</div>
+      },
+      {
+        title: '订单渠道',
+        dataIndex: 'orderBizType',
+        width: 100,
+        render(text) {
+          const orderBizTypeMap = {
+            '0':  '喜团优选',
+            '30': '喜团好店'
+          }
+          return orderBizTypeMap[text]
+        },
       },
       {
         title: '订单状态',
@@ -418,21 +431,22 @@ class OrderList extends React.Component {
               <Col span={6}>
                 <FormItem label='供应商'>
                   {getFieldDecorator('store')(
-                    <SearchFetch
-                      selectProps={{
-                        labelInValue: true
-                      }}
-                      api={(name) => {
-                        return supplierSearch(name).then(res => {
-                          return res.map(item => ({
-                            text: item.name,
-                            value: item.id
-                          }))
-                        })
-                      }}
-                      style={{ width: 172 }}
-                      placeholder='请输入店铺名称'
-                    />
+                    <SuppilerSelector type='yx' style={{ width: 172 }} />
+                    // <SearchFetch
+                    //   selectProps={{
+                    //     labelInValue: true
+                    //   }}
+                    //   api={(name) => {
+                    //     return supplierSearch(name).then(res => {
+                    //       return res.map(item => ({
+                    //         text: item.name,
+                    //         value: item.id
+                    //       }))
+                    //     })
+                    //   }}
+                    //   style={{ width: 172 }}
+                    //   placeholder='请输入店铺名称'
+                    // />
                   )}
                 </FormItem>
               </Col>
@@ -494,6 +508,19 @@ class OrderList extends React.Component {
                       style={{ width: 172 }}
                       fetchData={getShopTypes}
                     />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <FormItem label='订单渠道'>
+                  {getFieldDecorator('bizType', {
+                    initialValue: '-1'
+                  })(
+                    <Select placeholder='请选择订单渠道'>
+                      <Select.Option value='-1'>全部</Select.Option>
+                      <Select.Option value='0'>喜团优选</Select.Option>
+                      <Select.Option value='30'>喜团好店</Select.Option>
+                    </Select>
                   )}
                 </FormItem>
               </Col>
