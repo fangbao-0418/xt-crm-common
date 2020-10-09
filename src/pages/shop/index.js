@@ -12,6 +12,8 @@ const Goods = loadable(() => import('./goods'))
 const GoodsDetail = loadable(() => import('./goods-detail'))
 /** pop佣金配置 */
 const PopCommission = loadable(() => import('./pop-commission'))
+/** 好店佣金配置 */
+const HDCommission = loadable(() => import('./hd-commission'))
 /** 小店佣金配置 */
 const SmallShopCommission = loadable(() => import('./small-shop-commission'))
 /** POP店管理活动管理 */
@@ -34,6 +36,7 @@ class Main extends React.Component {
         <Route exact path={`${match.url}/goods`} component={Goods} />
         <Route exact path={`${match.url}/goods/detail/:id`} component={GoodsDetail} />
         <Route path={`${match.url}/popcommission`} component={PopCommission} />
+        <Route path={`${match.url}/hdcommission`} component={HDCommission} />
         <Route path={`${match.url}/smallshopcommission`} component={SmallShopCommission} />
         <Route path={`${match.url}/activity`} exact component={ShopActivity} />
         <Route path={`${match.url}/activity/add`} exact component={ShopActivityAdd} />

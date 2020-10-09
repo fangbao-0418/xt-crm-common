@@ -66,7 +66,7 @@ function speedyInput(
                 let key = `${field}-${currentIndex}`
                 fields.push(key);
                 const record = dataSource[currentIndex]
-                const min = -Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10)
+                const min = -Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10).toNumber()
                 const max = record.salePrice
                 const currentText = text > max ? max : ((text < min) ? min : text)
                 dataSource[currentIndex][field] = currentText
@@ -140,7 +140,7 @@ const SpecValsCard = ({ form, status, goodsInfo, data, confirmStatus }) => {
         return (formatMoneyWithSign(text))
       }
       const value = APP.fn.formatMoneyNumber(text, 'm2u')
-      const min = -APP.fn.formatMoneyNumber(Math.floor(record.salePrice * agencyRate / 1000) * 10, 'm2u')
+      const min = -APP.fn.formatMoneyNumber(Decimaljs(record.salePrice).mul(agencyRate).div(1000).floor().mul(10).toNumber(), 'm2u')
       const max = APP.fn.formatMoneyNumber(record.salePrice, 'm2u')
       return speedyInput(
         form,
