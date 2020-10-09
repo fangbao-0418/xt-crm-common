@@ -5,4 +5,4 @@
 [submodule "portal"]
 	path = src/packages/portal
 	url = git@xtgit.hzxituan.com:front-end/xt-youxan/xt-crm-microservice/portal.git
-	branch = release/v1009-1700
+	branch = master
