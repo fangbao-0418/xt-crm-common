@@ -179,8 +179,8 @@ export const getListColumns = () => [
   },
   {
     title: '店铺编号',
-    dataIndex: 'shopCode',
-    key: 'shopCode'
+    dataIndex: 'shopId',
+    key: 'shopId'
   },
   {
     title: '名称',
@@ -200,8 +200,8 @@ export const getListColumns = () => [
   },
   {
     title: '供应商',
-    dataIndex: 'storeName',
-    key: 'storeName'
+    dataIndex: 'supplierName',
+    key: 'supplierName'
   },
   {
     title: '渠道',
