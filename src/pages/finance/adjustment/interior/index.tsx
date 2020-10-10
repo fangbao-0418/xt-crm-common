@@ -7,16 +7,20 @@ import { getFieldsConfig } from './config'
 
 class Main extends React.Component {
   public columns: ColumnProps<RecordProps>[] = [
-    { title: '申请单ID', dataIndex: 'supplierCashOutId' },
-    { title: '金额', dataIndex: 'cashOutMoney', render: (text) => APP.fn.formatMoneyNumber(text, 'u2m') },
-    { title: '供应商ID', dataIndex: 'storeId' },
-    { title: '供应商名称', dataIndex: 'storeName' },
-    { title: '提现方式', dataIndex: 'payType' },
-    { title: '提现账户', dataIndex: 'accountName' },
-    { title: '状态', dataIndex: 'status' },
-    { title: '申请时间', dataIndex: '提现时间', render: (text) => APP.fn.formatDate(text) },
-    { title: '操作人', dataIndex: 'operator' },
-    { title: '操作时间', dataIndex: 'operateTime', render: (text) => APP.fn.formatDate(text) },
+    { title: '账务结算ID', dataIndex: 'supplierCashOutId', width: 150 },
+    { title: '收支类型', dataIndex: 'cashOutMoney', width: 100, render: (text) => APP.fn.formatMoneyNumber(text, 'u2m') },
+    { title: '账务金额', dataIndex: 'storeId', width: 100 },
+    { title: '账务对象类型', dataIndex: 'storeName', width: 150 },
+    { title: '账务对象ID', dataIndex: 'payType', width: 150 },
+    { title: '账务对象名称', dataIndex: 'accountName', width: 150 },
+    { title: '原因', dataIndex: 'status', width: 100 },
+    { title: '创建方式', dataIndex: '提现时间', width: 100, render: (text) => APP.fn.formatDate(text) },
+    { title: '审核状态', dataIndex: 'operator', width: 100 },
+    { title: '结算状态', dataIndex: 'operator', width: 100 },
+    { title: '创建时间', dataIndex: 'operateTime', width: 200, render: (text) => APP.fn.formatDate(text) },
+    { title: '创建人', dataIndex: 'operator', width: 100 },
+    { title: '审核完成时间', dataIndex: 'operateTime', width: 200, render: (text) => APP.fn.formatDate(text) },
+    { title: '操作人', dataIndex: 'operator', width: 100 },
     {
       title: '操作',
       width: 140,
@@ -24,18 +28,7 @@ class Main extends React.Component {
       render: () => {
         return (
           <div>
-            <Button
-              type='primary'
-              size='small'
-              className='mb8'
-            >
-              提现成功
-            </Button>
-            <Button
-              size='small'
-            >
-              提现失败
-            </Button>
+            <span className='href'>审核</span>
           </div>
         )
       }
@@ -112,6 +105,11 @@ class Main extends React.Component {
             })
           }}
           formConfig={getFieldsConfig()}
+          tableProps={{
+            scroll: {
+              x: 1000
+            }
+          }}
         />
       </div>
     )

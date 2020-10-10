@@ -25,6 +25,7 @@ import InvoiceAudit from './external-manage/invioce-audit' //发票管理
 import ExternalXituanBalance from './external-manage/xituan-balance' //外部账户余额查询-喜团
 import Download from './download-list' //导出
 import DistrictChiefAndAbove from './district-chief-and-above' // 区长及以上会员提现明细
+import AdjustmentInterior from './adjustment/interior' // 财务调整-内部
 
 export default class extends Component {
   render () {
@@ -53,6 +54,7 @@ export default class extends Component {
         <Route path='/finance/externalinvoiceaudit' component={InvoiceAudit} />
         <Route path='/finance/externalxituanbalance' component={ExternalXituanBalance} />
         <Route path='/finance/district-chief-and-above' component={DistrictChiefAndAbove} />
+        <Route path='/finance/adjustment/interior' component={AdjustmentInterior} />
       </Switch>
     )
   }
