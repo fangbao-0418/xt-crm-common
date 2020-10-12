@@ -1,5 +1,5 @@
 /**
- * 一次性财务结算外部明细
+ * 账户调整-外部
  */
 import React from 'react'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
@@ -13,13 +13,13 @@ interface Props extends AlertComponentProps {
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
   public columns: any = [{
-    title: '财务结算ID',
-    dataIndex: 'nickName',
-    width: 300
-  }, {
     title: '财务结算流水',
     dataIndex: 'fansTotal',
     width: 200
+  }, {
+    title: '财务结算ID',
+    dataIndex: 'nickName',
+    width: 300
   }, {
     dataIndex: 'anchorIdentityType',
     title: '收支类型',

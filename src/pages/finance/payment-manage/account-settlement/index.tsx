@@ -1,5 +1,5 @@
 /**
- * 账务结算（一次性账务结算）
+ * 账务调整-内部
  */
 import React from 'react'
 import Image from '@/components/Image'
@@ -10,6 +10,7 @@ import { ListPage, Alert } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { Tooltip, Select, Button, Radio, Upload } from 'antd'
+import { ColumnProps } from 'antd/lib/table'
 import TextArea from 'antd/lib/input/TextArea'
 import BatchModal from './components/uploadModal'
 import UploadView from '@/components/upload'
@@ -19,6 +20,9 @@ import If from '@/packages/common/components/if'
 import { getFieldsConfig } from './config'
 import * as api from './api'
 import moment from 'moment'
+import Payment from './components/payment'
+import { ListRecordProps } from './interface'
+
 interface Props extends AlertComponentProps {
 }
 const dateFormat = 'YYYY-MM-DD HH:mm'
@@ -33,7 +37,7 @@ class Main extends React.Component<Props> {
   }
   public id: any
   public listpage: ListPageInstanceProps
-  public columns: any = [{
+  public columns: ColumnProps<ListRecordProps>[] = [{
     title: '账务结算ID',
     dataIndex: 'id',
     width: 150,
@@ -115,20 +119,43 @@ class Main extends React.Component<Props> {
     fixed: 'right',
     align: 'center',
     render: (text: any, record: any) => {
-      return record.auditStatus===0 ? <span
-        className='href'
-        onClick={
-          this.getDetailData(2, record.id)
-        }>审核
-      </span>: <span
-        className='href'
-        onClick={
-          this.getDetailData(3, record.id)
-        }
-      > 查看
-      </span>
+      return (
+        <>
+          {record.auditStatus === 0 && (
+            <span
+              className='href mr8'
+              onClick={
+                this.getDetailData(2, record.id)
+              }
+            >
+              审核
+            </span>
+          )}
+          {record.auditStatus !== 0 && (
+            <span
+              className='href mr8'
+              onClick={
+                this.getDetailData(3, record.id)
+              }
+            >
+              查看
+            </span>
+          )}
+          {(
+            <span
+              className='href'
+              onClick={this.toPay.bind(this, record.id)}
+            >
+              支付
+            </span>
+          )}
+        </>
+      )
     }
   }]
+  public componentDidMount () {
+    this.toPay('1310146542382280754')
+  }
   public refresh () {
     this.listpage.form.setValues({
       startTime: moment().subtract(30, 'days').startOf('d'),
@@ -517,89 +544,110 @@ class Main extends React.Component<Props> {
       })
     }
   }
-   public handleSelectionChange = (selectedRowKeys: any) => {
-     this.setState({
-       selectedRowKeys
-     })
-   }
-   public render () {
-     const { selectedRowKeys } = this.state
-     const rowSelection = {
-       selectedRowKeys,
-       onChange: this.handleSelectionChange,
-       getCheckboxProps: (record: any) => ({
-         disabled: record.status === 1
-       })
-     }
-     return (
-       <div
-         style={{
-           background: '#FFFFFF'
-         }}
-       >
-         <ListPage
-           getInstance={(ref) => this.listpage = ref}
-           columns={this.columns}
-           rowSelection={rowSelection}
-           mounted={() => {
-             this.listpage.form.setValues({
-               startTime: moment().subtract(30, 'days').startOf('d'),
-               endTime: moment().endOf('d')
-             })
-           }}
-           tableProps={{
-             rowKey: 'anchorId',
-             scroll: {
-               x: this.columns.reduce((a: any, b:any) => {
-                 return (typeof a === 'object' ? a.width : a) as any + b.width
-               }) as number
-             }
-           }}
-           onReset={() => {
-             this.listpage.form.setValues({
-               id: undefined,
-               subjectId: undefined,
-               subjectName: undefined,
-               auditStatus: undefined,
-               subjectType: undefined,
-               inOrOutType: undefined,
-               settlementStatus: undefined,
-               settlementType: undefined
-             })
-             this.refresh()
-           }}
-           rangeMap={{
-             time: {
-               fields: ['startTime', 'endTime']
-             }
-           }}
-           addonAfterSearch={(
-             <div>
-               <Button
-                 type='primary'
-                 onClick={()=>{
-                   this.operation(1, null)
-                 }}
-               >
-                创建账务结算单
-               </Button>
-               <Button
-                 type='primary'
-                 className='ml8 mr8'
-                 onClick={this.handleBatchShow.bind(this, 'visible')}
-               >
-                批量创建账务结算单
-               </Button>
-               {/* <Button
-                 type='primary'
-                 onClick={this.toOperate()}
-               >
-                批量审核
-               </Button> */}
-             </div>
-           )}
-           formConfig={getFieldsConfig()}
-           formItemLayout={(
+  public handleSelectionChange = (selectedRowKeys: any) => {
+    this.setState({
+      selectedRowKeys
+    })
+  }
+  public toPay (id: any) {
+    const hide = this.props.alert({
+      width: 1000,
+      title: '支付账单',
+      footer: false,
+      content: (
+        <Payment
+          id={id}
+          onClose={() => {
+            hide()
+          }}
+        />
+      )
+    })
+  }
+  public render () {
+    const { selectedRowKeys } = this.state
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.handleSelectionChange,
+      getCheckboxProps: (record: any) => ({
+        disabled: record.status === 1
+      })
+    }
+    return (
+      <div
+        style={{
+          background: '#FFFFFF'
+        }}
+      >
+        <ListPage
+          getInstance={(ref) => this.listpage = ref}
+          columns={this.columns}
+          rowSelection={rowSelection}
+          mounted={() => {
+            this.listpage.form.setValues({
+              startTime: moment().subtract(30, 'days').startOf('d'),
+              endTime: moment().endOf('d')
+            })
+          }}
+          tableProps={{
+            rowKey: 'id',
+            scroll: {
+              x: this.columns.reduce((a: any, b:any) => {
+                return (typeof a === 'object' ? a.width : a) as any + b.width
+              }) as number
+            }
+          }}
+          onReset={() => {
+            this.listpage.form.setValues({
+              id: undefined,
+              subjectId: undefined,
+              subjectName: undefined,
+              auditStatus: undefined,
+              subjectType: undefined,
+              inOrOutType: undefined,
+              settlementStatus: undefined,
+              settlementType: undefined
+            })
+            this.refresh()
+          }}
+          rangeMap={{
+            time: {
+              fields: ['startTime', 'endTime']
+            }
+          }}
+          addonAfterSearch={(
+            <div>
+              <Button
+                type='primary'
+                onClick={()=>{
+                  this.operation(1, null)
+                }}
+              >
+              创建账务结算单
+              </Button>
+              <Button
+                type='primary'
+                className='ml8 mr8'
+                onClick={this.handleBatchShow.bind(this, 'visible')}
+              >
+              批量创建账务结算单
+              </Button>
+              {/* <Button
+                type='primary'
+                onClick={this.toOperate()}
+              >
+              批量审核
+              </Button> */}
+              <Button
+                type='primary'
+                // onClick={this.toPay.bind(this, re)}
+              >
+              发起支付
+              </Button>
+            </div>
+          )}
+          formConfig={getFieldsConfig()}
+          formItemLayout={(
             <>
               <FormItem name='id' />
               <FormItem name='subjectId' />
@@ -611,18 +659,18 @@ class Main extends React.Component<Props> {
               <FormItem name='time' />
               <FormItem name='settlementType' />
             </>
-           )}
-           api={api.getList}
-         />
-         <BatchModal
-           modalProps={{
-             visible: this.state.visible,
-             onCancel: this.handleCancel.bind(this, 'visible')
-           }}
-         />
-       </div>
-     )
-   }
+          )}
+          api={api.getList}
+        />
+        <BatchModal
+          modalProps={{
+            visible: this.state.visible,
+            onCancel: this.handleCancel.bind(this, 'visible')
+          }}
+        />
+      </div>
+    )
+  }
 
   // 模态框取消操作
   handleCancel = (key: any) => {
