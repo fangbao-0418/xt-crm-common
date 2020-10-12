@@ -124,6 +124,18 @@ export function getDefaultConfig () {
       operator: {
         label: '创建人'
       },
+      productName: {
+        label: '商品名称'
+      },
+      productId: {
+        label: '商品ID',
+        type: 'number',
+        controlProps: {
+          style: {
+            width: 172
+          }
+        }
+      },
       name: {
         label: '会场名称',
         type: 'text'

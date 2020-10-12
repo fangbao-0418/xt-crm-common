@@ -6,6 +6,7 @@ import BuyerInfo from './buyer-info'
 import OrderInfo from './order-info'
 import GoodsTable from './goods-table'
 import BenefitInfo from './benefit-info'
+import HaodianBenefitInfo from './HaodianBenefitInfo'
 import StepInfo from './step-info'
 import { enumOrderStatus, OrderStatusTextMap } from '../constant'
 import DeliveryModal from './components/delivery-modal'
@@ -375,6 +376,7 @@ class Detail extends Component {
         </Card>
         <Card title='整单收益信息'>
           <BenefitInfo key={`benefit-${goodsTableKey}`} data={data.orderYield} orderInfo={data.orderInfo} proceedsList={userProceedsListByOrderId} refresh={this.queryProceeds} />
+          <HaodianBenefitInfo />
         </Card>
         <DeliveryModal
           type='add'

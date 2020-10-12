@@ -1,4 +1,4 @@
-const { get } = APP.http
+const { get, newPost } = APP.http
 
 /** 收益类型 */
 export enum EarningsType {
@@ -24,4 +24,19 @@ export function getEarningsDetail(payload: {
     ]
     return res
   })
+}
+
+/** 整单收益信息 */
+export function getOrderSettlement () {
+  return get('/mweb/account/order/settlement')
+}
+
+/** 收益订单详情 */
+export function getSettlementOrderDetail (payload: {
+  /** 子订单id */
+  childOrderId: number
+  /** 会员id */
+  memberId: number
+}) {
+  return newPost('/mcweb/account/pop/sale/settlement/order/detail', payload)
 }

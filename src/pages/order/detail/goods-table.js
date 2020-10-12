@@ -7,6 +7,7 @@ import { withRouter } from 'react-router'
 import { getDetailColumns } from '../constant'
 import LogisticsInfo from './logistics-info'
 import ChildOrderBenefitInfo from './child-order-benefit-info'
+import HaodianSkuIncome from './HaodianSkuIncome'
 import { formatDate } from '../../helper'
 import { setOrderRemark, setRefundOrderRemark, getProceedsListByOrderIdAndSkuId } from '../api'
 import alert from '@/packages/common/components/alert'
@@ -195,8 +196,8 @@ class GoodsTable extends Component {
                 </Button>
               )}
             </div>
-            { // 喜团好店没有发起补偿
-              childOrder.canApplyOrderCompensate && record.orderType !== 56 && Number(orderInfo.orderBizType) !== 30 && (
+            { // 喜团好店没有发起补偿 && Number(orderInfo.orderBizType) !== 30
+              childOrder.canApplyOrderCompensate && record.orderType !== 56 && (
                 <div>
                   <Button
                     style={{ padding: 0 }}
@@ -251,12 +252,15 @@ class GoodsTable extends Component {
             modalInfo={this.state.modalInfo} />}
         {
           this.state.modalInfo.orderInfo
-          && <Compensate
-            onCancel={() => this.setState({ compensateVisible: false })}
-            successCb={() => this.setState({ compensateVisible: false }, this.props.query)}
-            visible={this.state.compensateVisible}
-            modalInfo={this.state.modalInfo}
-          />
+          && (
+            <Compensate
+              orderBizType={Number(orderInfo.orderBizType)}
+              onCancel={() => this.setState({ compensateVisible: false })}
+              successCb={() => this.setState({ compensateVisible: false }, this.props.query)}
+              visible={this.state.compensateVisible}
+              modalInfo={this.state.modalInfo}
+            />
+          )
         }
         <Modal
           title='添加备注'
@@ -296,6 +300,7 @@ class GoodsTable extends Component {
                           <Col>
                             <span style={{ fontWeight: 'bold' }}>SKU收益：</span>
                             <ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />
+                            {/* <HaodianSkuIncome /> */}
                           </Col>
                         </Row>
                       )
