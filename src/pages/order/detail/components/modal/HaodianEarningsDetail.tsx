@@ -7,6 +7,13 @@ interface State {
   detail: any
 }
 class Main extends React.Component<{}, State> {
+  public state = {
+    detail: {
+      priceDetail: [],
+      afterSaleList: [],
+      afterSaleProportion: 0
+    }
+  }
   public form: FormInstance
   public render () {
     const { detail } = this.state

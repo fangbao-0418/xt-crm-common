@@ -40,3 +40,8 @@ export function getSettlementOrderDetail (payload: {
 }) {
   return newPost('/mcweb/account/pop/sale/settlement/order/detail', payload)
 }
+
+/** SKU收益列表 */
+export function getSaleSettlementSku (childOrderId: number) {
+  return get(`/mcweb/account/pop/sale/settlement/sku?childOrderId=${childOrderId}`)
+}

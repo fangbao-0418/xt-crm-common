@@ -207,7 +207,7 @@ class Detail extends Component {
     const orderStatusLogList = get(data, 'orderStatusLogList', [])
     const showFlag = !!data.orderGlobalExtendVO
     const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
-    console.log(childOrderList, 'childOrderListchildOrderListchildOrderListchildOrderList')
+    console.log(data.orderInfo, 'data.orderInfo')
     return (
       <>
         <StepInfo
@@ -375,8 +375,17 @@ class Detail extends Component {
           })}
         </Card>
         <Card title='整单收益信息'>
-          <BenefitInfo key={`benefit-${goodsTableKey}`} data={data.orderYield} orderInfo={data.orderInfo} proceedsList={userProceedsListByOrderId} refresh={this.queryProceeds} />
-          <HaodianBenefitInfo />
+          {data?.orderInfo && Number(data.orderInfo.orderBizType) !== 30 ? (
+            <BenefitInfo
+              key={`benefit-${goodsTableKey}`}
+              data={data.orderYield}
+              orderInfo={data.orderInfo}
+              proceedsList={userProceedsListByOrderId}
+              refresh={this.queryProceeds}
+            />
+          ): (
+            <HaodianBenefitInfo />
+          )}
         </Card>
         <DeliveryModal
           type='add'

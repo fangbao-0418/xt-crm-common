@@ -147,11 +147,10 @@ class GoodsTable extends Component {
     const { proceedsVisible, childOrderProceeds, skuInfo } = this.state
     const orderInfo = this.props.orderInfo || {}
     const childOrder = this.props.childOrder || {}
+    console.log('childOrder', childOrder)
     const list = this.props.list || []
     const logistics = this.props.logistics || {}
     const orderVirtualInfoVO= this.props.orderVirtualInfoVO || {}
-    console.log('orderInfo')
-    console.log(orderInfo)
     const columns = [
       ...(getDetailColumns(0, orderInfo.isShop === 1).filter(item => item.key !== 'storeName')),
       {
@@ -299,8 +298,7 @@ class GoodsTable extends Component {
                         <Row style={{ marginBottom: 20 }}>
                           <Col>
                             <span style={{ fontWeight: 'bold' }}>SKU收益：</span>
-                            <ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />
-                            {/* <HaodianSkuIncome /> */}
+                            {Number(orderInfo.orderBizType) !== 30 ?<ChildOrderBenefitInfo skuInfo={skuInfo} proceedsList={childOrderProceeds} />: <HaodianSkuIncome childOrder={childOrder}/>}
                           </Col>
                         </Row>
                       )

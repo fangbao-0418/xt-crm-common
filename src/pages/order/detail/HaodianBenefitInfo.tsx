@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Button, Table } from 'antd'
+import { Row, Button, Table, AutoComplete } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import { Alert } from '@/packages/common/components'
 import { AlertComponentProps } from '@/packages/common/components/alert'
@@ -87,19 +87,23 @@ class Main extends React.Component<AlertComponentProps, State> {
     dataIndex: 'settlementTypeDesc'
   }, {
     title: '已结算收益',
-    dataIndex: 'settledAmount'
+    dataIndex: 'settledAmount',
+    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
   }, {
     title: '未结算收益',
-    dataIndex: 'unbalancedAmount'
+    dataIndex: 'unbalancedAmount',
+    render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
   }]
   public showModal = () => {
     this.props.alert({
       title: '收益详情',
+      width: 900,
       content: <HaodianEarningsDetail />
     })
   }
   public componentDidMount () {
     this.fetchData()
+    this.showModal()
   }
   public async fetchData () {
     const detail = await getOrderSettlement()
