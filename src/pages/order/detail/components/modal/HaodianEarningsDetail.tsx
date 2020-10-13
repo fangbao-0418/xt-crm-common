@@ -95,9 +95,7 @@ class Main extends React.Component<Props, {}> {
               }, {
                 title: '售后金额',
                 dataIndex: 'afterSaleAmount',
-                render: (text) => {
-                  return APP.fn.formatMoneyNumber(text, 'm2u')
-                }
+                render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
               }]}
               dataSource={detail.priceSnapShotVO.afterSaleList}
               pagination={false}
