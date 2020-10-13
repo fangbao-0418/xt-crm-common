@@ -27,8 +27,8 @@ export function getEarningsDetail(payload: {
 }
 
 /** 整单收益信息 */
-export function getOrderSettlement () {
-  return get('/mweb/account/order/settlement')
+export function getOrderSettlement (mainOrderId: number) {
+  return get(`/mcweb/account/pop/sale/settlement/order?mainOrderId=${mainOrderId}`)
 }
 
 /** 收益订单详情 */

@@ -384,7 +384,7 @@ class Detail extends Component {
               refresh={this.queryProceeds}
             />
           ): (
-            <HaodianBenefitInfo />
+            <HaodianBenefitInfo orderInfo={data.orderInfo}/>
           )}
         </Card>
         <DeliveryModal

@@ -3,10 +3,13 @@ import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
 import styles from './styles.module.styl'
 import { Row, Col, Table } from 'antd'
 
+interface Props {
+  detail: any
+}
 interface State {
   detail: any
 }
-class Main extends React.Component<{}, State> {
+class Main extends React.Component<Props, State> {
   public state = {
     detail: {
       priceDetail: [],
@@ -15,6 +18,12 @@ class Main extends React.Component<{}, State> {
     }
   }
   public form: FormInstance
+  public componentDidUpdate(prevProps: Props, prevState: State) {
+    debugger
+    if (prevProps.detail && prevProps.detail !== this.props.detail) {
+      console.log('prevProps.detail', prevProps.detail)
+    }
+  }
   public render () {
     const { detail } = this.state
     const formItemLayout = {
