@@ -1,13 +1,19 @@
 import React from 'react'
 import { Card } from 'antd'
+import Page from '@/components/page'
+import CapitalInfo from './components/CapitalInfo'
+import BalanceTable from './components/BalanceTable'
 class Main extends React.Component {
   public render () {
     return (
-      <div>
-        <Card>
-          
+      <Page>
+        <Card bordered>
+          <CapitalInfo />
         </Card>
-      </div>
+        <Card className='mt10' bordered>
+          <BalanceTable />
+        </Card>
+      </Page>
     )
   }
 }
