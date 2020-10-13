@@ -187,10 +187,10 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           label: '全部',
           value: -1
         }, {
-          label: '喜团好店',
+          label: '喜团优选',
           value: 0
         }, {
-          label: '喜团优选',
+          label: '喜团好店',
           value: 30
         }]
       }

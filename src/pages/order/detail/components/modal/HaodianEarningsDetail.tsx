@@ -1,5 +1,6 @@
 import React from 'react'
 import Form, { FormItem, FormInstance } from '@/packages/common/components/form'
+import HaodianTier from '../haodian-tier'
 import styles from './styles.module.styl'
 import { Row, Col, Table } from 'antd'
 
@@ -102,6 +103,7 @@ class Main extends React.Component<Props, {}> {
             />
           </div>
           <div className='mt10 mb10'><b>层级关系图</b></div>
+          <HaodianTier dataSource={detail.memberSimpleVO} />
         </Form>
       </div>
     )

@@ -158,6 +158,7 @@ class Main extends React.Component<Props> {
           }
         }}
         processPayload={({ compensateAmount, compensateStatus, compensatePayType, store, shop, ...payload }) => {
+          console.log('payload', payload)
           if (this.childOrderCode) {
             this.listPage?.form.setValues({
               childOrderCode: this.childOrderCode
