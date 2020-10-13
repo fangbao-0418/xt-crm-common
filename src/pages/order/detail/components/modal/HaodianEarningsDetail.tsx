@@ -6,26 +6,16 @@ import { Row, Col, Table } from 'antd'
 interface Props {
   detail: any
 }
-interface State {
-  detail: any
-}
-class Main extends React.Component<Props, State> {
-  public state = {
-    detail: {
-      priceDetail: [],
-      afterSaleList: [],
-      afterSaleProportion: 0
-    }
-  }
+class Main extends React.Component<Props, {}> {
   public form: FormInstance
-  public componentDidUpdate(prevProps: Props, prevState: State) {
-    debugger
-    if (prevProps.detail && prevProps.detail !== this.props.detail) {
-      console.log('prevProps.detail', prevProps.detail)
-    }
+  public componentDidMount () {
+    const { detail } = this.props
+    console.log('detail', detail)
+    this.form.setValues(detail.orderDetailVO)
   }
   public render () {
-    const { detail } = this.state
+    const { detail } = this.props
+    const { afterSaleProportion, ...item } = detail.priceSnapShotVO
     const formItemLayout = {
       labelCol: {span: 8},
       wrapperCol: {span: 16}
@@ -73,21 +63,24 @@ class Main extends React.Component<Props, State> {
               }}
               columns={[{
                 title: '售价',
-                dataIndex: 'amount'
+                dataIndex: 'amount',
+                render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
               }, {
                 title: '结算价',
-                dataIndex: 'amount'
+                dataIndex: 'amount',
+                render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
               }, {
                 title: '代理总佣金',
-                dataIndex: 'amount'
+                dataIndex: 'amount',
+                render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
               }]}
-              dataSource={detail.priceDetail}
+              dataSource={[item]}
               pagination={false}
             />
           </div>
           <div>
             <div className='mt10 mb10'>
-              <b>售后信息：收益售后扣除比例{APP.fn.formatMoneyNumber(detail.afterSaleProportion)}%</b>
+              <b>售后信息：收益售后扣除比例{APP.fn.formatMoneyNumber(afterSaleProportion)}%</b>
             </div>
             <Table
               rowKey={(record, index) => {
@@ -106,7 +99,7 @@ class Main extends React.Component<Props, State> {
                   return APP.fn.formatMoneyNumber(text, 'm2u')
                 }
               }]}
-              dataSource={detail.afterSaleList}
+              dataSource={detail.priceSnapShotVO.afterSaleList}
               pagination={false}
             />
           </div>

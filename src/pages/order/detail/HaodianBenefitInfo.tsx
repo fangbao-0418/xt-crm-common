@@ -1,10 +1,10 @@
 import React from 'react'
-import { Row, Button, Table, AutoComplete } from 'antd'
+import { Row, Button, Table, AutoComplete, Modal } from 'antd'
 import { ColumnProps } from 'antd/es/table'
 import { Alert } from '@/packages/common/components'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import HaodianEarningsDetail from './components/modal/HaodianEarningsDetail'
-import { getOrderSettlement, getSettlementOrderDetail } from './api'
+import { getOrderSettlement, getSettlementOrderDetail, saleSettlementRecalculate } from './api'
 
 interface Detail {
   /** 供应商结算 */
@@ -83,19 +83,39 @@ class Main extends React.Component<Props, State> {
     this.props.alert({
       title: '收益详情',
       width: 900,
-      content: <HaodianEarningsDetail detail={detail} />
+      content: <HaodianEarningsDetail detail={detail} />,
+      footer: null
     })
   }
   public componentDidUpdate (prevProps: Props) {
     const id = prevProps?.orderInfo?.id
-    if (id && id !== this.props?.orderInfo?.id) {
+    const nextId = this.props?.orderInfo?.id
+    if (nextId && id !== nextId) {
       this.fetchData()
     }
   }
+  // 查询整单收益信息
   public async fetchData () {
     const orderInfo = this.props.orderInfo || {}
     const detail = await getOrderSettlement(orderInfo.id)
     this.setState({ detail })
+  }
+  /** pop订单收益重算 */
+  public recalculate = async () => {
+    const orderInfo = this.props.orderInfo || {}
+    Modal.confirm({
+      title: '系统提示',
+      content: '确定要收益重跑吗？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: async () => {
+        const res = await saleSettlementRecalculate(orderInfo.id)
+        if (res) {
+          APP.success('操作成功');
+          this.fetchData()
+        }
+      }
+    });
   }
   public render () {
     const { detail } =  this.state
@@ -103,7 +123,7 @@ class Main extends React.Component<Props, State> {
       <>
         <Row type='flex' justify='space-between' align='middle'>
           <span>预计盈利信息</span>
-          <Button type='primary'>收益重跑</Button>
+          <Button type='primary' onClick={this.recalculate}>收益重跑</Button>
         </Row>
         <Row>成交金额：{ APP.fn.formatMoneyNumber(detail.payAmount!, 'm2u') }</Row>
         <Row>成本金额：{ APP.fn.formatMoneyNumber(detail.supplierSettlementAmount!, 'm2u') }</Row>

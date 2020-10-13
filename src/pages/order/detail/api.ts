@@ -45,3 +45,8 @@ export function getSettlementOrderDetail (payload: {
 export function getSaleSettlementSku (childOrderId: number) {
   return get(`/mcweb/account/pop/sale/settlement/sku?childOrderId=${childOrderId}`)
 }
+
+/** pop订单收益重算 */
+export function saleSettlementRecalculate (mainOrderId: number) {
+  return get(`/mcweb/account/pop/sale/settlement/recalculate?mainOrderId=${mainOrderId}`)
+}
