@@ -17,6 +17,7 @@ class Main extends React.Component<Props, {}> {
   public render () {
     const { detail } = this.props
     const { afterSaleProportion, ...item } = detail.priceSnapShotVO
+    const childOrderSettlementSummaryVO = detail.childOrderSettlementSummaryVO || {}
     const formItemLayout = {
       labelCol: {span: 8},
       wrapperCol: {span: 16}
@@ -104,6 +105,35 @@ class Main extends React.Component<Props, {}> {
           </div>
           <div className='mt10 mb10'><b>层级关系图</b></div>
           <HaodianTier dataSource={detail.memberSimpleVO} />
+          <div className='mt10 mb10'>
+            <b>收益汇总信息</b>
+            <div>
+              总收益 {APP.fn.formatMoneyNumber(childOrderSettlementSummaryVO.summaryAmount, 'm2u')} 已到账 {APP.fn.formatMoneyNumber(childOrderSettlementSummaryVO.settledAmount, 'm2u')} 未到账 {APP.fn.formatMoneyNumber(childOrderSettlementSummaryVO.unbalancedAmount, 'm2u')}
+            </div>
+          </div>
+          <Table
+            rowKey={(record: any) => record.id}
+            columns={[{
+              title: '时间',
+              dataIndex: 'createTime',
+              render: (text) => APP.fn.formatDate(text)
+            }, {
+              title: '收益类型',
+              dataIndex: 'settlementTypeDesc'
+            }, {
+              title: '事件',
+              dataIndex: 'event'
+            }, {
+              title: '结算状态',
+              dataIndex: 'syncType'
+            }, {
+              title: '结算时间',
+              render: (text) => APP.fn.formatDate(text)
+            }]}
+            dataSource={childOrderSettlementSummaryVO.logList}
+            pagination={false}
+            scroll={{ y: 540 }}
+          />
         </Form>
       </div>
     )

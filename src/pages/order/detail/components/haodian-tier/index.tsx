@@ -28,15 +28,20 @@ class Main extends React.Component<Props, {}> {
       const inviter = node.inviter
       const isInviter = !!inviter
       nodes.push(
-        <div key={node.memberId} className={classNames(styles['tier-item'], isInviter && styles['tier-item-right'])}>
+        <div key={node.memberId} className={classNames(styles['tier-item'])}>
           <div className={styles['tier-label']}>
             <div title={node.nickName}>{node.nickName}【{node.popMemberTypeDesc}】</div>
             <div>{node.remark}</div>
           </div>
-          <div><div style={keyIndex > 0 ? undefined : {background: 'transparent'}} className={styles['tier-line']}></div></div>
+          <div className={styles['tier-line-box']}>
+            <div style={keyIndex > 0 ? undefined : {background: 'transparent'}} className={styles['tier-line']}></div>
+          </div>
         </div>
       )
       if (isInviter) {
+        nodes.push(
+          <div className={styles['tier-right-line']}></div>
+        )
         nodes.push(
           <div key={inviter.memberId} className={styles['tier-item']}>
             <div className={styles['tier-label']}>
