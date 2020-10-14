@@ -1,23 +1,23 @@
 import { FieldsConfig } from "@/packages/common/components/form";
 
 export enum statusEnum {
-  显示 = 0,
-  隐藏 = 1
+  显示 = 1,
+  隐藏 = 2
 }
 
-export enum channelEnum {
-  喜团优选 = 10,
-  喜团好店 = 30
+export enum platformEnum {
+  喜团优选 = 1,
+  喜团好店 = 2
 }
 
 export enum statusMapColorEnum {
-  'green' = 0,
-  'orange' = 1
+  'green' = 1,
+  'orange' = 2
 }
 
 export const defaultFormConfig: FieldsConfig = {
   common: {
-    name: {
+    columnName: {
       label: '栏目名称',
       fieldDecoratorOptions: {
         rules: [{
@@ -26,7 +26,7 @@ export const defaultFormConfig: FieldsConfig = {
         }]
       }
     },
-    desc: {
+    description: {
       label: '描述',
       type: 'textarea',
       controlProps: {
