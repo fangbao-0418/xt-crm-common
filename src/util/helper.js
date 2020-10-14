@@ -88,7 +88,7 @@ export function formatAvlRange(val = 0) {
     0: '全场通用',
     1: '类目商品',
     2: '指定商品',
-    4: '指定活动'
+    4: '指定会场'
   };
   return applicationScope[val];
 }
