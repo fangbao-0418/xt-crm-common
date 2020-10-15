@@ -125,7 +125,8 @@ class Main extends React.Component<Props, {}> {
               dataIndex: 'event'
             }, {
               title: '结算金额',
-              dataIndex: 'settlementAmount'
+              dataIndex: 'settlementAmount',
+              render: (text) => APP.fn.formatMoneyNumber(text, 'm2u') 
             }, {
               title: '结算状态',
               dataIndex: 'syncType',
