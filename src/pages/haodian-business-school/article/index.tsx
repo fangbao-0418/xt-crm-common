@@ -1,5 +1,5 @@
 import React from 'react'
-import { FormItem, SelectFetch } from '@/packages/common/components'
+import { FormItem, If, SelectFetch } from '@/packages/common/components'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { defaultFormConfig, statusEnums, columnEnums } from './config'
 import { Button, Icon, Switch, Popconfirm } from 'antd'
@@ -66,16 +66,18 @@ class Main extends React.Component {
           <span className='href'>复制</span>
           <span className='href ml10'>复制链接</span>
           <span className='href ml10' onClick={this.handleEdit.bind(null, records.id)}>编辑</span>
-          <Popconfirm
-            placement='top'
-            title='你确定要删除这篇内容吗？'
-            onConfirm={this.handleDelete}
-            okText='确认'
-            cancelText='取消'
-            className='ml10'
-          >
-            <span style={{ color: 'red', cursor: 'pointer' }}>删除</span>
-          </Popconfirm>
+          {/* <If> */}
+            <Popconfirm
+              placement='top'
+              title='你确定要删除这篇内容吗？'
+              onConfirm={this.handleDelete}
+              okText='确认'
+              cancelText='取消'
+              className='ml10'
+            >
+              <span style={{ color: 'red', cursor: 'pointer' }}>删除</span>
+            </Popconfirm>
+          {/* </If> */}
         </>
       )
     }
