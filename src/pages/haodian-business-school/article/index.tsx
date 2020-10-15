@@ -3,7 +3,7 @@ import { FormItem } from '@/packages/common/components'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { defaultFormConfig, statusEnums, columnEnums } from './config'
 import { Button, Icon, Switch, Popconfirm } from 'antd'
-import { topOperate } from './api'
+import { getArticleList, topOperate } from './api'
 
 class Main extends React.Component {
   public listRef: ListPageInstanceProps
@@ -14,21 +14,21 @@ class Main extends React.Component {
   }, {
     title: '',
     width: 560,
-    render: (records: any) => {
+    render: (record: any) => {
       return (
         <div>
-          <div>{records.title}</div>
+          <div>{record.title}</div>
           <div>
             <span>
               <Icon type='user' />
-              浏览量：{records.pv}
+              浏览量：{record.articlePv}
             </span>
             <span style={{ marginLeft: 50 }}>
               <Icon type='like' />
-              <span>有用：{records.like}</span>
+              <span>有用：{record.usefulNum}</span>
             </span>
-            <span style={{ marginLeft: 50 }}>分享：{records.share}</span>
-            <span style={{ marginLeft: 50 }}>2020-06-18发布</span>
+            <span style={{ marginLeft: 50 }}>分享：{record.shareNum}</span>
+            <span style={{ marginLeft: 50 }}>{APP.fn.formatDate(record.releaseTime, 'YYYY-MM-DD')}发布</span>
           </div>
           <div>摘要我是内容我是内容我是内容，我是内容我是内容我是内容我是。内容我是内容我是内，容我是内容我是内容我是内容我。我是内容我是内容我是内容我是内容</div>
         </div>
@@ -91,23 +91,10 @@ class Main extends React.Component {
   public handleTopOperate = (vals: any) => {
 
   }
-  public fetchData = async () => {
-    return Promise.resolve({
-      records: [{
-        id: 1,
-        status: 0,
-        title: '此处是标题',
-        pv: 8488,
-        like: 7454,
-        share: 7454,
-        column: 1
-      }]
-    })
-  }
   public render () {
     return (
       <ListPage
-        api={this.fetchData}
+        api={getArticleList}
         formItemLayout={(
           <>
             <FormItem name='title' />
