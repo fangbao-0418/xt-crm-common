@@ -58,3 +58,11 @@ export function getAllColumn () {
     return res.map((item: any) => ({ label: item.columnName, value: item.id }))
   })
 }
+
+/**
+ * 获取商品列表
+ */
+export function getProductList () {
+  return newPost('/mcweb/product/list')
+}
+

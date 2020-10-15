@@ -2,7 +2,7 @@ import React from 'react'
 import { Modal } from 'antd'
 import ListPage from '@/packages/common/components/list-page'
 import { ColumnProps } from 'antd/lib/table'
-
+import { getProductList } from './api'
 interface State {
   visible: boolean
 }
