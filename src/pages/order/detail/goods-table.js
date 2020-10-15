@@ -303,7 +303,10 @@ class GoodsTable extends Component {
                     <Row>
                       <Col style={{ fontWeight: 'bold' }}>订单客服备注：</Col>
                       {Array.isArray(childOrder.orderLogs) && childOrder.orderLogs.map(v => (
-                        <Col key={v.createTime}>{v.info} （{formatDate(v.createTime)} {v.operator}）</Col>
+                        <Col key={v.createTime}>
+                          <span dangerouslySetInnerHTML = {{ __html: v.info }} />
+                        （{formatDate(v.createTime)} {v.operator}）
+                        </Col>
                       ))}
                       {Array.isArray(childOrder.orderChildServerVOS) && childOrder.orderChildServerVOS.map(v => (
                         <Col key={v.orderCode}>
