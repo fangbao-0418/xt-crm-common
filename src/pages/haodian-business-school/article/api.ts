@@ -1,4 +1,5 @@
 import { newPost } from "@/util/fetch";
+import { queryString } from "@/util/utils";
 
 
 /** 查询文章列表 */
@@ -61,8 +62,16 @@ export function getAllColumn () {
 
 /**
  * 获取商品列表
+ * productId: 商品ID
+ * productName: 商品名称
+ * 渠道 1-优选,2-好店
  */
-export function getProductList () {
-  return newPost('/mcweb/product/list')
+export function getProductList (payload: {
+  productId: string
+  productName: string
+  channel: 1 | 2
+}) {
+  const search = queryString(payload)
+  return newPost(`/mcweb/product/list${search}`)
 }
 

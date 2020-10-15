@@ -1,19 +1,30 @@
 import React from 'react'
 import { Form, FormItem, SelectFetch } from '@/packages/common/components'
 import { defaultFormConfig } from './config'
-import { Button, Card, Input, InputNumber, Switch } from 'antd'
+import { Button, Card, Input, InputNumber, Switch, Table } from 'antd'
 import UploadView from '@/components/upload'
 import BraftEditor from 'braft-editor'
 import GoodsModal from './GoodsModal'
 import 'braft-editor/dist/index.css'
 import { getAllColumn } from './api'
 
-class Main extends React.Component {
+interface State {
+  prodocts: any[]
+}
+class Main extends React.Component<{}, State> {
+  public state = {
+    prodocts: []
+  }
   public modalRef: React.RefObject<GoodsModal> = React.createRef<GoodsModal>()
   public render () {
     return (
       <Card>
-        <GoodsModal ref={this.modalRef} />
+        <GoodsModal
+          ref={this.modalRef}
+          onOk={(prodocts: any[]) => {
+            this.setState({ prodocts })
+          }}
+        />
         <Form config={defaultFormConfig}>
         <FormItem
           required
@@ -133,7 +144,32 @@ class Main extends React.Component {
           />
           <FormItem name='releaseTime' />
           <FormItem label='添加商品'>
-            <span className='href' onClick={this.modalRef.current?.open}>选择商品</span>
+            <div>
+              <span
+                className='href'
+                onClick={() => {
+                  this.modalRef.current?.open()
+                }}
+              >
+                选择商品
+              </span>
+              <Table
+                dataSource={this.state.prodocts}
+                columns={[{
+                  title: '商品ID',
+                  dataIndex: 'id'
+                }, {
+                  title: '商品名称',
+                  dataIndex: 'productName'
+                }, {
+                  title: '库存',
+                  dataIndex: 'stock',
+                  render: (text) => {
+                    return text > 10000 ? text / 10000 + '万' : text
+                  }
+                }]}
+              />
+            </div>
           </FormItem>
           <FormItem name='virtualRead' />
           <FormItem>
