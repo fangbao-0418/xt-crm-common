@@ -1,9 +1,9 @@
 import React from 'react'
-import { FormItem } from '@/packages/common/components'
+import { FormItem, SelectFetch } from '@/packages/common/components'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { defaultFormConfig, statusEnums, columnEnums } from './config'
 import { Button, Icon, Switch, Popconfirm } from 'antd'
-import { getArticleList, topOperate } from './api'
+import { getAllColumn, getArticleList, modifyDiscoverArticle } from './api'
 
 class Main extends React.Component {
   public listRef: ListPageInstanceProps
@@ -30,31 +30,29 @@ class Main extends React.Component {
             <span style={{ marginLeft: 50 }}>分享：{record.shareNum}</span>
             <span style={{ marginLeft: 50 }}>{APP.fn.formatDate(record.releaseTime, 'YYYY-MM-DD')}发布</span>
           </div>
-          <div>摘要我是内容我是内容我是内容，我是内容我是内容我是内容我是。内容我是内容我是内，容我是内容我是内容我是内容我。我是内容我是内容我是内容我是内容</div>
+          <div>{record.context}</div>
         </div>
       )
     }
   }, {
     title: '栏目',
-    dataIndex: 'column',
-    render: (text: any) => {
-      return columnEnums[text]
-    }
+    dataIndex: 'columnName'
   }, {
     title: '状态',
-    dataIndex: 'status',
+    dataIndex: 'releaseStatus',
     render: (text: any) => statusEnums[text]
   }, {
     title: '置顶',
-    dataIndex: 'top',
-    render: (text: boolean, records: any) => {
+    dataIndex: 'topStatus',
+    // 1 未置顶 2 已置顶
+    render: (text: 1 | 2, records: any) => {
       return (
         <Switch
           checkedChildren='开'
           unCheckedChildren='关'
-          checked={text}
+          checked={text === 2}
           onChange={(checked) => {
-            this.handleTopOperate({ checked, id: records.id })
+            this.handleTopOperate({ topStatus: checked ? 2 : 1, id: records.id })
           }}
         />
       )
@@ -88,21 +86,36 @@ class Main extends React.Component {
   // 删除
   public handleDelete = () => {}
   // 置顶
-  public handleTopOperate = (vals: any) => {
-
+  public handleTopOperate = async (vals: any) => {
+    const res = await modifyDiscoverArticle(vals)
+    if (res) {
+      APP.success('操作成功')
+      this.listRef.refresh()
+    }
+  }
+  // 发布文章
+  public publishArticle = () => {
+    APP.history.push('/haodian-business-school/article/-1')
   }
   public render () {
     return (
       <ListPage
         api={getArticleList}
+        getInstance={ref => this.listRef = ref}
         formItemLayout={(
           <>
             <FormItem name='title' />
-            <FormItem name='column' />
-            <FormItem name='channel' />
+            <FormItem
+              label='栏目'
+              inner={(form) => {
+                return form.getFieldDecorator('columnId')(
+                  <SelectFetch fetchData={getAllColumn} />
+                )
+              }}
+            />
           </>
         )}
-        addonAfterSearch={<Button type='primary'>发布文章</Button>}
+        addonAfterSearch={<Button type='primary' onClick={this.publishArticle}>发布文章</Button>}
         formConfig={defaultFormConfig}
         columns={this.columns}
       />
