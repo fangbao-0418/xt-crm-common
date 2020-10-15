@@ -43,10 +43,11 @@ export function getCompensateRecord (data: any) {
 
 /* 补偿单导出 */
 export function exportCompensate (data: any) {
-  return newPost('/mcweb/sale-after/order/compensate/exportCompensate', {
-    ...data,
-    orderBizType: 0
-  })
+  // 不传默认全部
+  if (data.orderBizType === undefined) {
+    data.orderBizType = -1
+  }
+  return newPost('/mcweb/sale-after/order/compensate/exportCompensate', data)
 }
 
 /* 补偿单审核 */
