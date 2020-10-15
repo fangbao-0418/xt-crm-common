@@ -3,6 +3,7 @@ import { Form, FormItem, SelectFetch } from '@/packages/common/components'
 import { defaultFormConfig } from './config'
 import { Button, Card, Input, InputNumber, Switch, Table } from 'antd'
 import UploadView from '@/components/upload'
+import VideoUpload from '@/components/upload/VodVideo'
 import BraftEditor from 'braft-editor'
 import GoodsModal from './GoodsModal'
 import 'braft-editor/dist/index.css'
@@ -87,12 +88,9 @@ class Main extends React.Component<{}, State> {
                       listNum={1}
                       size={0.3}
                     />
-                    <UploadView
-                      ossType='cos'
+                    <VideoUpload
                       placeholder='上传视频/音频'
-                      listType='picture-card'
-                      listNum={1}
-                      size={0.3}
+                      maxSize={5 * 1024 * 1024}
                     />
                   </div>
                   <div>图片格式要求：png、jpeg、gif 尺寸建议：320px*180px，视频/音频上传，支持mkv、mp4、avi、mp3，（音视频发布有一定转码时间</div>

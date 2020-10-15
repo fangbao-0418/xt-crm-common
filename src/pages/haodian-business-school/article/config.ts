@@ -62,7 +62,8 @@ export enum statusEnums {
   草稿 = 10,
   音视频处理 = 20,
   待发布 = 30,
-  已发布 = 40
+  已发布 = 40,
+  已下架 = 50
 }
 
 export enum columnEnums {

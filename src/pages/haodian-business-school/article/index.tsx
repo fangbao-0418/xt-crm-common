@@ -60,33 +60,69 @@ class Main extends React.Component {
   }, {
     title: '操作',
     width: 220,
-    render: (records: any) => {
+    render: (record: any) => {
       return (
         <>
           <span className='href'>复制</span>
           <span className='href ml10'>复制链接</span>
-          <span className='href ml10' onClick={this.handleEdit.bind(null, records.id)}>编辑</span>
-          {/* <If> */}
+          <span className='href ml10' onClick={this.handleEdit.bind(null, record.id)}>编辑</span>
+          
+          {/* 10 草稿 20 视音频处理 30 待发布(未到发布时间) 40 已发布 50 已下架 */}
+          {/* 已下架才可以删除 */}
+          <If condition={[10, 50].includes(record.releaseStatus)}>
             <Popconfirm
               placement='top'
               title='你确定要删除这篇内容吗？'
-              onConfirm={this.handleDelete}
+              onConfirm={() => this.handleDelete(record.id)}
               okText='确认'
               cancelText='取消'
               className='ml10'
             >
               <span style={{ color: 'red', cursor: 'pointer' }}>删除</span>
             </Popconfirm>
-          {/* </If> */}
+          </If>
+          <If condition={[20, 30, 40].includes(record.releaseStatus)}>
+            <Popconfirm
+                placement='top'
+                title='你确定要下架这篇内容吗？'
+                onConfirm={() => this.down(record.id)}
+                okText='确认'
+                cancelText='取消'
+                className='ml10'
+              >
+                <span style={{ color: 'red', cursor: 'pointer' }} className='ml10'>下架</span>
+              </Popconfirm>
+          </If>
         </>
       )
     }
   }]
+  // 编辑
   public handleEdit = (id: number) => {
     APP.history.push(`/haodian-business-school/article/${id}`)
   }
-  // 删除
-  public handleDelete = () => {}
+  // 删除 isDelete为1是删除
+  public handleDelete = async (id: number) => {
+    const res = await modifyDiscoverArticle({
+      id,
+      isDelete: 1
+    })
+    if (res) {
+      APP.success('操作成功')
+      this.listRef.refresh()
+    }
+  }
+  // 下架
+  public down = async (id: number) => {
+    const res = await modifyDiscoverArticle({
+      id,
+      releaseStatus: 50
+    })
+    if (res) {
+      APP.success('操作成功')
+      this.listRef.refresh()
+    }
+  }
   // 置顶
   public handleTopOperate = async (vals: any) => {
     const res = await modifyDiscoverArticle(vals)

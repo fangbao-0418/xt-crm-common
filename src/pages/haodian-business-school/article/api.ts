@@ -17,22 +17,23 @@ export function getArticleList (payload: {
 
 interface Payload {
   id?: number
-  title: string
-  coverImage: string
-  columnId: number
-  columnName: string
-  releaseStatus: 10 | 20 | 30 | 40
-  topStatus: 1 | 2
-  context: string
-  contextType: 1 | 2
-  releaseTime: number
-  memberLimit: 1 | 2 | 3 | 4
-  virtualRead: number
-  productIds: number[]
-  resourceUrl: string
-  fileSize: number
-  resourceType: number
-  createUid: number
+  title?: string
+  coverImage?: string
+  columnId?: number
+  columnName?: string
+  isDelete?: 1 | 0
+  releaseStatus?: 10 | 20 | 30 | 40 | 50
+  topStatus?: 1 | 2
+  context?: string
+  contextType?: 1 | 2
+  releaseTime?: number
+  memberLimit?: 1 | 2 | 3 | 4
+  virtualRead?: number
+  productIds?: number[]
+  resourceUrl?: string
+  fileSize?: number
+  resourceType?: number
+  createUid?: number
 }
 
 /**
