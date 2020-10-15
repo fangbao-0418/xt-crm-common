@@ -165,8 +165,8 @@ class Main extends React.Component<Props, State> {
     {
       title: '修改内容',
       dataIndex: 'modifyInfos',
-      render: (text: any) => {
-        if (!text) {
+      render: (text: any, record: any) => {
+        if (!text||record.operateType===2) {
           return '-'
         }
         try {

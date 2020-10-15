@@ -27,6 +27,9 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
           placeholder: '请输入创建人名称'
         }
       },
+      accountSettleId: {
+        label: '账户结算ID'
+      },
       // compensatePayType: {
       //   label: '补偿类型',
       //   inner: (form) => {
