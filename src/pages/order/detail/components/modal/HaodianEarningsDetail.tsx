@@ -82,7 +82,7 @@ class Main extends React.Component<Props, {}> {
           </div>
           <div>
             <div className='mt10 mb10'>
-              <b>售后信息：收益售后扣除比例{APP.fn.formatMoneyNumber(afterSaleProportion)}%</b>
+              <b>售后信息：收益售后扣除比例{afterSaleProportion}%</b>
             </div>
             <Table
               rowKey={(record, index) => {
@@ -123,6 +123,9 @@ class Main extends React.Component<Props, {}> {
             }, {
               title: '事件',
               dataIndex: 'event'
+            }, {
+              title: '结算金额',
+              dataIndex: 'settlementAmount'
             }, {
               title: '结算状态',
               dataIndex: 'syncType',
