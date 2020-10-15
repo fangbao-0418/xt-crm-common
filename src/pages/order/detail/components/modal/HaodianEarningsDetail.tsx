@@ -69,11 +69,11 @@ class Main extends React.Component<Props, {}> {
                 render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
               }, {
                 title: '结算价',
-                dataIndex: 'amount',
+                dataIndex: 'settlementAmount',
                 render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
               }, {
                 title: '代理总佣金',
-                dataIndex: 'amount',
+                dataIndex: 'agencyAmount',
                 render: (text) => APP.fn.formatMoneyNumber(text, 'm2u')
               }]}
               dataSource={[item]}
@@ -125,7 +125,15 @@ class Main extends React.Component<Props, {}> {
               dataIndex: 'event'
             }, {
               title: '结算状态',
-              dataIndex: 'syncType'
+              dataIndex: 'syncType',
+              render: (text) => {
+                enum syncTypeEnum {
+                  '未结算' = 0,
+                  '结算中' = 1,
+                  '已结算' = 2
+                }
+                return syncTypeEnum[text]
+              }
             }, {
               title: '结算时间',
               render: (text) => APP.fn.formatDate(text)

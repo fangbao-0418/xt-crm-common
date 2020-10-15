@@ -38,7 +38,10 @@ export function getSettlementOrderDetail (payload: {
   /** 会员id */
   memberId: number
 }) {
-  return newPost('/mcweb/account/pop/sale/settlement/order/detail', payload)
+  return newPost('/mcweb/account/pop/sale/settlement/order/detail', payload).then(res => {
+    res.orderDetailVO.childPayAmount = APP.fn.formatMoneyNumber(res.orderDetailVO.childPayAmount, 'm2u')
+    return res
+  })
 }
 
 /** SKU收益列表 */
