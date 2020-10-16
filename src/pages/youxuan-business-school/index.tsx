@@ -7,7 +7,7 @@ import Article from './article'
 import ArticleDetail from './article/Detail'
 
 const config = [
-  { paht: '', exact: true, render: () => <Redirect to='/haodian-business-school/icon' /> },
+  { paht: '', exact: true, render: () => <Redirect to='/youxuan-business-school/icon' /> },
   { path: '/icon', component: Icon },
   { path: '/column', component: Column },
   { path: '/article', exact: true, component: Article },
