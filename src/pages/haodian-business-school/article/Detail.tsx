@@ -1,22 +1,53 @@
 import React from 'react'
 import { Form, FormItem, SelectFetch } from '@/packages/common/components'
-import { defaultFormConfig } from './config'
-import { Button, Card, Input, InputNumber, Switch, Table } from 'antd'
-import UploadView from '@/components/upload'
+import { FormInstance } from '@/packages/common/components/form'
+import { Button, Card, Input, Switch, Table } from 'antd'
+import { getAllColumn, saveDiscoverArticle, getDiscoverArticle, modifyDiscoverArticle } from './api'
 import VideoUpload from '@/components/upload/VodVideo'
+import { defaultFormConfig } from './config'
+import UploadView from '@/components/upload'
 import BraftEditor from 'braft-editor'
 import GoodsModal from './GoodsModal'
 import 'braft-editor/dist/index.css'
-import { getAllColumn } from './api'
-
+import { RouteComponentProps} from 'react-router'
 interface State {
   prodocts: any[]
 }
-class Main extends React.Component<{}, State> {
+class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
   public state = {
     prodocts: []
   }
+  public formRef: FormInstance
   public modalRef: React.RefObject<GoodsModal> = React.createRef<GoodsModal>()
+  public componentDidMount () {
+    this.fetchData()
+  }
+  public async fetchData () {
+    const id = this.props.match.params.id
+    // 编辑
+    if (id !== '-1') {
+      const res = await getDiscoverArticle(id)
+      this.formRef.setValues(res)
+    }
+  }
+  public handleSubmit = (releaseStatus: number) => {
+    const id = this.props.match.params.id
+    this.formRef.props.form.validateFields(async (errs, vals) => {
+      let res
+      if (!errs) {
+        // 新增
+        if (id === '-1') {
+          res = await saveDiscoverArticle({ ...vals, releaseStatus })
+        } else {
+          res = await modifyDiscoverArticle({ ...vals, id, releaseStatus })
+        }
+        if (res) {
+          APP.success('操作成功')
+          APP.history.goBack()
+        }
+      }
+    })
+  }
   public render () {
     return (
       <Card>
@@ -26,24 +57,27 @@ class Main extends React.Component<{}, State> {
             this.setState({ prodocts })
           }}
         />
-        <Form config={defaultFormConfig}>
-        <FormItem
-          required
-          label='栏目'
-          inner={(form) => {
-            return form.getFieldDecorator('columnId', {
-              rules: [{
-                required: true,
-                message: '请选择栏目'
-              }]
-            })(
-              <SelectFetch
-                fetchData={getAllColumn}
-                style={{ width: 196 }}
-              />
-            )
-          }}
-        />
+        <Form
+          getInstance={ref => this.formRef = ref}
+          config={defaultFormConfig}
+        >
+          <FormItem
+            required
+            label='栏目'
+            inner={(form) => {
+              return form.getFieldDecorator('columnId', {
+                rules: [{
+                  required: true,
+                  message: '请选择栏目'
+                }]
+              })(
+                <SelectFetch
+                  fetchData={getAllColumn}
+                  style={{ width: 196 }}
+                />
+              )
+            }}
+          />
           <FormItem name='memberLimit' />
           <FormItem
             name='title'
@@ -76,29 +110,51 @@ class Main extends React.Component<{}, State> {
           />
           <FormItem
             required
-            label='图片/视频'
+            label='图片'
             inner={(form) => {
               return (
                 <div>
-                  <div style={{ display: 'flex', width: '250px' }}>
+                  {form.getFieldDecorator('coverImage')(
                     <UploadView
                       ossType='cos'
                       placeholder='上传首图'
                       listType='picture-card'
+                      accept='image/png,image/jpeg,image/gif'
                       listNum={1}
                       size={0.3}
                     />
-                    <VideoUpload
-                      placeholder='上传视频/音频'
-                      maxSize={5 * 1024 * 1024}
-                    />
-                  </div>
-                  <div>图片格式要求：png、jpeg、gif 尺寸建议：320px*180px，视频/音频上传，支持mkv、mp4、avi、mp3，（音视频发布有一定转码时间</div>
+                  )}
+                  <div>图片格式要求：png、jpeg、gif 尺寸建议：375px*211px</div>
                 </div>
               )
             }}
           />
-          <FormItem label='正文内容' name='contextType' />
+          <FormItem
+            label='视频'
+            inner={(form) => {
+              return (
+                <div>
+                  {form.getFieldDecorator('resourceUrl')(
+                    <VideoUpload
+                      placeholder='上传视频/音频'
+                      accept='video/x-matroska,video/mp4,video/x-msvideo,audio/mpeg'
+                      maxSize={1000 * 1024 * 1024}
+                    />
+                  )}
+                  <div>视频/音频上传，支持mkv、mp4、avi、mp3，（音视频发布有一定转码时间）</div>
+                </div>
+              )
+            }}
+          />
+          <FormItem
+            label='正文内容'
+            name='contextType'
+            controlProps={{
+              onChange: () => {
+                this.formRef.setValues({ context: undefined })
+              }
+            }}
+          />
           <FormItem
             style={{ margin: 0 }}
             labelCol={{ span: 0 }}
@@ -171,9 +227,9 @@ class Main extends React.Component<{}, State> {
           </FormItem>
           <FormItem name='virtualRead' />
           <FormItem>
-            <Button type='primary'>提交</Button>
-            <Button className='ml10'>保存草稿</Button>
-            <Button className='ml10'>取消</Button>
+            <Button type='primary' onClick={() => this.handleSubmit(30)}>提交</Button>
+            <Button className='ml10' onClick={() => this.handleSubmit(10)}>保存草稿</Button>
+            <Button className='ml10' onClick={() => APP.history.goBack()}>取消</Button>
           </FormItem>
         </Form>
       </Card>

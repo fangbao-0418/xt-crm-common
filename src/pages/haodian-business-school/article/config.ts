@@ -10,16 +10,16 @@ export const defaultFormConfig: FieldsConfig = {
       type: 'radio',
       options: [{
         label: '全部用户',
-        value: 1
+        value: 0
       }, {
         label: '团长以上',
-        value: 2
+        value: 10
       }, {
         label: '区长以上',
-        value: 3
+        value: 20
       }, {
         label: '合伙人以上',
-        value: 4
+        value: 30
       }]
     },
     share: {

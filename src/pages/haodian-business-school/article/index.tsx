@@ -30,7 +30,7 @@ class Main extends React.Component {
             <span style={{ marginLeft: 50 }}>分享：{record.shareNum}</span>
             <span style={{ marginLeft: 50 }}>{APP.fn.formatDate(record.releaseTime, 'YYYY-MM-DD')}发布</span>
           </div>
-          <div>{record.context}</div>
+          <div dangerouslySetInnerHTML={{ __html: record.context}}></div>
         </div>
       )
     }

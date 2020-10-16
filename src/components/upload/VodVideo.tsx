@@ -85,7 +85,7 @@ class VodVideoUpload extends React.Component<Props, State> {
     const tcVod = new (window as any).TcVod.default({
       getSignature: getSignature // 前文中所述的获取上传签名的函数
     })
-
+    console.log('customRequest file', file)
     const uploader = tcVod.upload({
       mediaFile: file, // 媒体文件（视频或音频或图片），类型为 File
     })
@@ -100,14 +100,17 @@ class VodVideoUpload extends React.Component<Props, State> {
       console.log('doneResult', doneResult)
       file.url = doneResult.video.url
       fileList.push({
-        ...file,
+        lastModified: file.lastModified,
+        lastModifiedDate: file.lastModifiedDate,
+        name: file.name,
         size: file.size,
+        type: file.type,
+        url: file.url,
         uid: getUniqueId()
       })
       this.setState({
         value: this.initValue(fileList)
       })
-      console.log('customRequest', this.initValue(fileList))
       onChange?.([...fileList])
     }).catch(function (err: Error) {
       // deal with error
@@ -180,7 +183,7 @@ class VodVideoUpload extends React.Component<Props, State> {
       <>
         <Upload
           accept={accept}
-          listType={'picture-card'}
+          listType='picture-card'
           beforeUpload={this.beforeUpload}
           customRequest={this.customRequest}
           onRemove={this.handleRemove}

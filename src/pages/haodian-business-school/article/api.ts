@@ -1,6 +1,6 @@
 import { newPost } from "@/util/fetch";
 import { queryString } from "@/util/utils";
-
+import { adapterArticleParams, adapterArticleResponse } from './adapter'
 
 /** 查询文章列表 */
 export function getArticleList (payload: {
@@ -41,14 +41,21 @@ interface Payload {
  * @param payload
  */
 export function saveDiscoverArticle (payload: Payload) {
-  return newPost('/mcweb/octupus/discover/article/save', payload)
+  return newPost('/mcweb/octupus/discover/article/save', adapterArticleParams(payload))
 }
 
 /**
  * 更新文章内容
  */
 export function modifyDiscoverArticle (payload: Payload) {
-  return newPost('/mcweb/octupus/discover/article/modify', payload)
+  return newPost('/mcweb/octupus/discover/article/modify', adapterArticleParams(payload))
+}
+
+/**
+ * 查询单个文章
+ */
+export function getDiscoverArticle (id: string) {
+  return newPost(`/mcweb/octupus/discover/article/detail?id=${id}`).then(adapterArticleResponse)
 }
 
 /**
