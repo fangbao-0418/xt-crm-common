@@ -6,6 +6,7 @@ import BuyerInfo from './buyer-info'
 import OrderInfo from './order-info'
 import GoodsTable from './goods-table'
 import BenefitInfo from './benefit-info'
+import HaodianBenefitInfo from './HaodianBenefitInfo'
 import StepInfo from './step-info'
 import { enumOrderStatus, OrderStatusTextMap } from '../constant'
 import DeliveryModal from './components/delivery-modal'
@@ -206,7 +207,7 @@ class Detail extends Component {
     const orderStatusLogList = get(data, 'orderStatusLogList', [])
     const showFlag = !!data.orderGlobalExtendVO
     const orderGlobalExtendVO = Object.assign({}, data.orderGlobalExtendVO)
-    console.log(childOrderList, 'childOrderListchildOrderListchildOrderListchildOrderList')
+    console.log(data.orderInfo, 'data.orderInfo')
     return (
       <>
         <StepInfo
@@ -374,7 +375,17 @@ class Detail extends Component {
           })}
         </Card>
         <Card title='整单收益信息'>
-          <BenefitInfo key={`benefit-${goodsTableKey}`} data={data.orderYield} orderInfo={data.orderInfo} proceedsList={userProceedsListByOrderId} refresh={this.queryProceeds} />
+          {data?.orderInfo && Number(data.orderInfo.orderBizType) !== 30 ? (
+            <BenefitInfo
+              key={`benefit-${goodsTableKey}`}
+              data={data.orderYield}
+              orderInfo={data.orderInfo}
+              proceedsList={userProceedsListByOrderId}
+              refresh={this.queryProceeds}
+            />
+          ): (
+            <HaodianBenefitInfo orderInfo={data.orderInfo}/>
+          )}
         </Card>
         <DeliveryModal
           type='add'
