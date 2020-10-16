@@ -44,6 +44,9 @@ function string2Arr (str: string) {
 export function adapterArticleResponse (res: any) {
   res.coverImage = string2Arr(res.coverImage)
   res.resourceUrl = string2Arr(res.resourceUrl)
-  res.context = BraftEditor.createEditorState(res.context)
+  // 富文本 contextType: 1、富文本 2、链接
+  if (res.contextType === '1') {
+    res.context = BraftEditor.createEditorState(res.context)
+  }
   return res
 }
