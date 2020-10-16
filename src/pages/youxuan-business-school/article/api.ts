@@ -12,7 +12,7 @@ export function getArticleList (payload: {
   pageSize: number
 }) {
   // 平台渠道: 1优选/2好店
-  return newPost('/mcweb/octupus/discover/article/list', { ...payload, platform: 2 })
+  return newPost('/mcweb/octupus/discover/article/list', { ...payload, platform: 1 })
 }
 
 interface Payload {
@@ -63,7 +63,7 @@ export function getDiscoverArticle (id: string) {
  * 平台渠道: 1优选/2好店
  */
 export function getAllColumn () {
-  return newPost('/mcweb/octupus/discover/column/all?platform=2').then((res: any) => {
+  return newPost('/mcweb/octupus/discover/column/all?platform=1').then((res: any) => {
     return res.map((item: any) => ({ label: item.columnName, value: item.id }))
   })
 }

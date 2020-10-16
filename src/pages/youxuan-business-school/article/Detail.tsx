@@ -33,13 +33,14 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
   public handleSubmit = (releaseStatus: number) => {
     const id = this.props.match.params.id
     this.formRef.props.form.validateFields(async (errs, vals) => {
+      const productIds = this.state.prodocts.map((item: any) => item.id)
       let res
       if (!errs) {
         // 新增
         if (id === '-1') {
-          res = await saveDiscoverArticle({ ...vals, releaseStatus })
+          res = await saveDiscoverArticle({ ...vals, productIds, releaseStatus })
         } else {
-          res = await modifyDiscoverArticle({ ...vals, id, releaseStatus })
+          res = await modifyDiscoverArticle({ ...vals, id, productIds, releaseStatus })
         }
         if (res) {
           APP.success('操作成功')
@@ -220,6 +221,22 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                   dataIndex: 'stock',
                   render: (text) => {
                     return text > 10000 ? text / 10000 + '万' : text
+                  }
+                }, {
+                  title: '操作',
+                  render: (record, index) => {
+                    return (
+                      <span
+                        className='href'
+                        onClick={() => {
+                          const { prodocts } = this.state
+                          prodocts.splice(index, 1)
+                          this.setState({ prodocts })
+                        }}
+                      >
+                        删除
+                      </span>
+                    )
                   }
                 }]}
               />

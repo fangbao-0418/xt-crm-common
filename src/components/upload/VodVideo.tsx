@@ -143,11 +143,11 @@ class VodVideoUpload extends React.Component<Props, State> {
       return Promise.reject()
     }
     /** 校验视频格式 */
-    const fileRealType = await getRealFileType(file)
-    if (!extnames.includes(fileRealType?.ext || '')) {
-      APP.error(`视频格式仅支持${extnames.join('、')}`)
-      return Promise.reject()
-    }
+    // const fileRealType = await getRealFileType(file)
+    // if (!extnames.includes(fileRealType?.ext || '')) {
+    //   APP.error(`视频格式仅支持${extnames.join('、')}`)
+    //   return Promise.reject()
+    // }
     return Promise.resolve()
   }
   public handleRemove = (e: UploadFile) => {

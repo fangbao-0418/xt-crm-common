@@ -130,7 +130,7 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
             }}
           />
           <FormItem
-            label='视频'
+            label='视频/音频'
             inner={(form) => {
               return (
                 <div>

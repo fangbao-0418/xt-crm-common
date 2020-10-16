@@ -2,7 +2,7 @@ const { post, get } = APP.http
 
 // 业务源:0-优选，10-买菜，20-好店,21-优选商学院，22-好店商学院
 export function getIconList () {
-  return get('/mcweb/homeicon/list?bizSource=22')
+  return get('/mcweb/homeicon/list?bizSource=21')
 }
 
 export function saveIcon (payload: HomeIcon.ItemProps) {
@@ -10,7 +10,7 @@ export function saveIcon (payload: HomeIcon.ItemProps) {
 }
 
 export function addIcon (payload: HomeIcon.ItemProps) {
-  return post('/mcweb/homeicon/add?bizSource=22', payload)
+  return post('/mcweb/homeicon/add?bizSource=21', payload)
 }
 
 export function deleteIcon (id: any) {
@@ -18,5 +18,5 @@ export function deleteIcon (id: any) {
 }
 
 export function publishIcon () {
-  return post('/mcweb/homeicon/publish')
+  return post('/mcweb/homeicon/publish?bizSource=21')
 }

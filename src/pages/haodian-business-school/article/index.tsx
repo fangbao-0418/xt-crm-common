@@ -63,7 +63,7 @@ class Main extends React.Component {
     render: (record: any) => {
       return (
         <>
-          <span className='href'>复制</span>
+          <span className='href' onClick={this.handlePrivew}>预览</span>
           <span className='href ml10'>复制链接</span>
           <span className='href ml10' onClick={this.handleEdit.bind(null, record.id)}>编辑</span>
           
@@ -97,6 +97,9 @@ class Main extends React.Component {
       )
     }
   }]
+  // 预览
+  public handlePrivew = () => {
+  }
   // 编辑
   public handleEdit = (id: number) => {
     APP.history.push(`/haodian-business-school/article/${id}`)

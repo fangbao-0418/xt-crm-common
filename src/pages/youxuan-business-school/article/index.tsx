@@ -99,7 +99,7 @@ class Main extends React.Component {
   }]
   // 编辑
   public handleEdit = (id: number) => {
-    APP.history.push(`/haodian-business-school/article/${id}`)
+    APP.history.push(`/youxuan-business-school/article/${id}`)
   }
   // 删除 isDelete为1是删除
   public handleDelete = async (id: number) => {
@@ -133,7 +133,7 @@ class Main extends React.Component {
   }
   // 发布文章
   public publishArticle = () => {
-    APP.history.push('/haodian-business-school/article/-1')
+    APP.history.push('/youxuan-business-school/article/-1')
   }
   public render () {
     return (

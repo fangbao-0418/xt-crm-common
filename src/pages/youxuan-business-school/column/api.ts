@@ -14,12 +14,12 @@ interface postPayload {
  * 平台渠道: 1优选/2好店
  */
 export function getColumnList (payload: { page: number, pageSize: number }) {
-  return newPost('/mcweb/octupus/discover/column/list', { ...payload, platform: 2 })
+  return newPost('/mcweb/octupus/discover/column/list', { ...payload, platform: 1 })
 }
 
 /** 添加栏目 */
 export async function addColumn (payload: postPayload) {
-  return newPost('/mcweb/octupus/discover/column/save', { ...adpaterFormParams(payload), platform: 2 })
+  return newPost('/mcweb/octupus/discover/column/save', { ...adpaterFormParams(payload), platform: 1 })
 }
 /** 修改栏目 */
 export async function updateColumn(payload: postPayload) {

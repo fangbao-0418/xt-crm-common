@@ -18,5 +18,5 @@ export function deleteIcon (id: any) {
 }
 
 export function publishIcon () {
-  return post('/mcweb/homeicon/publish')
+  return post('/mcweb/homeicon/publish?bizSource=22')
 }
