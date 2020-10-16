@@ -1,11 +1,12 @@
 import React from 'react'
 import { FormItem, If, SelectFetch } from '@/packages/common/components'
 import ListPage, { ListPageInstanceProps } from '@/packages/common/components/list-page'
+import { AlertComponentProps } from '@/packages/common/components/alert'
 import { defaultFormConfig, statusEnums, columnEnums } from './config'
 import { Button, Icon, Switch, Popconfirm } from 'antd'
 import { getAllColumn, getArticleList, modifyDiscoverArticle } from './api'
-
-class Main extends React.Component {
+import { Alert } from '@/packages/common/components'
+class Main extends React.Component<AlertComponentProps, {}> {
   public listRef: ListPageInstanceProps
   public columns = [{
     title: 'ID',
@@ -45,14 +46,14 @@ class Main extends React.Component {
     title: '置顶',
     dataIndex: 'topStatus',
     // 1 未置顶 2 已置顶
-    render: (text: 1 | 2, records: any) => {
+    render: (text: 1 | 2, record: any) => {
       return (
         <Switch
           checkedChildren='开'
           unCheckedChildren='关'
           checked={text === 2}
           onChange={(checked) => {
-            this.handleTopOperate({ topStatus: checked ? 2 : 1, id: records.id })
+            this.handleTopOperate({ topStatus: checked ? 2 : 1, id: record.id })
           }}
         />
       )
@@ -63,7 +64,7 @@ class Main extends React.Component {
     render: (record: any) => {
       return (
         <>
-          <span className='href'>复制</span>
+          <span className='href' onClick={this.handlePrivew.bind(null, record.id)}>预览</span>
           <span className='href ml10'>复制链接</span>
           <span className='href ml10' onClick={this.handleEdit.bind(null, record.id)}>编辑</span>
           
@@ -97,6 +98,20 @@ class Main extends React.Component {
       )
     }
   }]
+  public handlePrivew = (id: string) => {
+    this.props.alert({
+      title: null,
+      content: (
+        <iframe
+          style={{ border: '1px solid #ccc'}}
+          width={375}
+          height={667}
+          src={`https://daily-myouxuan.hzxituan.com/promotion/college/index.html#/detail?id=${id}`}
+        />
+      ),
+      footer: null
+    })
+  }
   // 编辑
   public handleEdit = (id: number) => {
     APP.history.push(`/youxuan-business-school/article/${id}`)
@@ -161,4 +176,4 @@ class Main extends React.Component {
   }
 }
 
-export default Main
+export default Alert(Main)

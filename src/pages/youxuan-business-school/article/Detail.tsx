@@ -11,11 +11,11 @@ import GoodsModal from './GoodsModal'
 import 'braft-editor/dist/index.css'
 import { RouteComponentProps} from 'react-router'
 interface State {
-  prodocts: any[]
+  products: any[]
 }
 class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
   public state = {
-    prodocts: []
+    products: []
   }
   public formRef: FormInstance
   public modalRef: React.RefObject<GoodsModal> = React.createRef<GoodsModal>()
@@ -28,12 +28,13 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
     if (id !== '-1') {
       const res = await getDiscoverArticle(id)
       this.formRef.setValues(res)
+      this.setState({ products: res.products })
     }
   }
   public handleSubmit = (releaseStatus: number) => {
     const id = this.props.match.params.id
     this.formRef.props.form.validateFields(async (errs, vals) => {
-      const productIds = this.state.prodocts.map((item: any) => item.id)
+      const productIds = this.state.products.map((item: any) => item.id)
       let res
       if (!errs) {
         // 新增
@@ -50,12 +51,14 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
     })
   }
   public render () {
+    const productIds = this.state.products.map((item: any) => item.id)
     return (
       <Card>
         <GoodsModal
           ref={this.modalRef}
-          onOk={(prodocts: any[]) => {
-            this.setState({ prodocts })
+          selectedRowKeys={productIds}
+          onOk={(products: any[]) => {
+            this.setState({ products })
           }}
         />
         <Form
@@ -209,7 +212,7 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                 选择商品
               </span>
               <Table
-                dataSource={this.state.prodocts}
+                dataSource={this.state.products}
                 columns={[{
                   title: '商品ID',
                   dataIndex: 'id'
@@ -229,9 +232,9 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                       <span
                         className='href'
                         onClick={() => {
-                          const { prodocts } = this.state
-                          prodocts.splice(index, 1)
-                          this.setState({ prodocts })
+                          const { products } = this.state
+                          products.splice(index, 1)
+                          this.setState({ products })
                         }}
                       >
                         删除

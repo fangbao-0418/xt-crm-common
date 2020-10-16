@@ -6,6 +6,7 @@ import { unionBy } from 'lodash'
 import { getProductList } from './api'
 interface Props {
   onOk: (selectRows: any[]) => void
+  selectedRowKeys: string[] | number[] 
 }
 interface State {
   visible: boolean
@@ -16,6 +17,13 @@ class Main extends React.Component<Props, State> {
   public state = {
     visible: false,
     selectedRowKeys: []
+  }
+  public componentDidUpdate (prevProps: Props) {
+    if (this.props.selectedRowKeys !== prevProps.selectedRowKeys) {
+      this.setState({
+        selectedRowKeys: this.props.selectedRowKeys
+      })
+    }
   }
   public columns: ColumnProps<any>[] = [{
     title: '商品ID',

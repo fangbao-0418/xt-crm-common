@@ -4,8 +4,10 @@ import ListPage, { ListPageInstanceProps } from '@/packages/common/components/li
 import { defaultFormConfig, statusEnums, columnEnums } from './config'
 import { Button, Icon, Switch, Popconfirm } from 'antd'
 import { getAllColumn, getArticleList, modifyDiscoverArticle } from './api'
+import { AlertComponentProps } from '@/packages/common/components/alert'
+import { Alert } from '@/packages/common/components'
 
-class Main extends React.Component {
+class Main extends React.Component<AlertComponentProps, {}> {
   public listRef: ListPageInstanceProps
   public columns = [{
     title: 'ID',
@@ -45,14 +47,14 @@ class Main extends React.Component {
     title: '置顶',
     dataIndex: 'topStatus',
     // 1 未置顶 2 已置顶
-    render: (text: 1 | 2, records: any) => {
+    render: (text: 1 | 2, record: any) => {
       return (
         <Switch
           checkedChildren='开'
           unCheckedChildren='关'
           checked={text === 2}
           onChange={(checked) => {
-            this.handleTopOperate({ topStatus: checked ? 2 : 1, id: records.id })
+            this.handleTopOperate({ topStatus: checked ? 2 : 1, id: record.id })
           }}
         />
       )
@@ -63,7 +65,7 @@ class Main extends React.Component {
     render: (record: any) => {
       return (
         <>
-          <span className='href' onClick={this.handlePrivew}>预览</span>
+          <span className='href' onClick={this.handlePrivew.bind(null, record.id)}>预览</span>
           <span className='href ml10'>复制链接</span>
           <span className='href ml10' onClick={this.handleEdit.bind(null, record.id)}>编辑</span>
           
@@ -98,7 +100,19 @@ class Main extends React.Component {
     }
   }]
   // 预览
-  public handlePrivew = () => {
+  public handlePrivew = (id: string) => {
+    this.props.alert({
+      title: null,
+      content: (
+        <iframe
+          style={{ border: '1px solid #ccc'}}
+          width={375}
+          height={667}
+          src={`https://daily-myouxuan.hzxituan.com/promotion/college/index.html#/preview?id=${id}`}
+        />
+      ),
+      footer: null
+    })
   }
   // 编辑
   public handleEdit = (id: number) => {
@@ -164,4 +178,4 @@ class Main extends React.Component {
   }
 }
 
-export default Main
+export default Alert(Main)

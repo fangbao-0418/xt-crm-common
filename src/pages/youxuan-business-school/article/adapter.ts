@@ -3,8 +3,13 @@ import BraftEditor from 'braft-editor'
 
 // 适配发布文章入参
 export function adapterArticleParams (payload: any) {
-  const context = payload.context?.toHTML()
-  payload.coverImage = payload.coverImage.map((item: any) => APP.fn.deleteOssDomainUrl(item.url)).join(',')
+  if (payload.context?.toHTML) {
+    payload.context = payload.context?.toHTML()
+  }
+  
+  if (payload.coverImage) {
+    payload.coverImage = payload.coverImage.map((item: any) => APP.fn.deleteOssDomainUrl(item.url)).join(',')
+  }
   if (payload.resourceUrl && payload.resourceUrl.length > 0) {
     const file = payload.resourceUrl[0]
     /**
@@ -30,7 +35,7 @@ export function adapterArticleParams (payload: any) {
   if (!payload.releaseTime) {
     payload.releaseTime = Date.now()
   }
-  return { ...payload, context }
+  return payload
 }
 
 function string2Arr (str: string) {
