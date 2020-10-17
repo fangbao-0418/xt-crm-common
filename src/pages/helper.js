@@ -77,11 +77,15 @@ export function formatDateRange ({ startReceiveTime, overReceiveTime }, pattern,
 
 // 用券时间
 export function formatUseTime ({ useTimeType, useTimeValue }, pattern, separator) {
+  useTimeValue=useTimeValue+''
+  const value=useTimeValue&&useTimeValue.split(',')
   switch (useTimeType) {
     case 0:
       return formatRangeTime(useTimeValue.split(','), pattern, separator)
     case 1:
       return `领取当日起${useTimeValue}天内可用`
+    case 2:
+      return `领取后第${value&&value[0]}至${value&&value[1]}天之间可用`;
     default:
       break
   }
