@@ -18,6 +18,7 @@ interface Props {
   onChange?: (value?: UploadFile[]) => void
   value?: UploadFile[]
   disabled?: boolean
+  listType?: 'text' | 'picture' | 'picture-card'
 }
 
 interface State {
@@ -114,22 +115,8 @@ class VodVideoUpload extends React.Component<Props, State> {
       onChange?.([...fileList])
     }).catch(function (err: Error) {
       // deal with error
+      console.error('upload error', err)
     })
-
-    // ossUpload(file).then((urlList) => {
-    //   let fileList = this.state.value || []
-    //   file.url = APP.fn.deleteOssDomainUrl(urlList?.[0])
-    //   fileList.push({
-    //     ...file,
-    //     size: file.size,
-    //     uid: getUniqueId()
-    //   })
-
-    //   this.setState({
-    //     value: this.initValue(fileList)
-    //   })
-    //   onChange?.([...fileList])
-    // })
   }
   beforeUpload = async (file: RcFile, fileList: RcFile[]) => {
     const fileSize = file.size
@@ -173,8 +160,9 @@ class VodVideoUpload extends React.Component<Props, State> {
   public render () {
     const {
       children,
-      disabled
+      disabled,
     } = this.props
+    const listType = this.props.listType || 'picture-card'
     const placeholder = this.props.placeholder || '上传视频'
     const maxCount = this.props.maxCount || 1
     const { value } = this.state
@@ -183,7 +171,7 @@ class VodVideoUpload extends React.Component<Props, State> {
       <>
         <Upload
           accept={accept}
-          listType='picture-card'
+          listType={listType}
           beforeUpload={this.beforeUpload}
           customRequest={this.customRequest}
           onRemove={this.handleRemove}
@@ -191,7 +179,7 @@ class VodVideoUpload extends React.Component<Props, State> {
           fileList={this.state.value}
           disabled={disabled}
         >
-          {children ? children : (value.length >= maxCount ? null : uploadButton(placeholder))}
+          {(value.length >= maxCount ? null : children ? children : uploadButton(placeholder))}
         </Upload>
         <Modal
           title='预览'

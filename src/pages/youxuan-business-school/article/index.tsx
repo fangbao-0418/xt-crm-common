@@ -6,8 +6,20 @@ import { defaultFormConfig, statusEnums, columnEnums } from './config'
 import { Button, Icon, Switch, Popconfirm } from 'antd'
 import { getAllColumn, getArticleList, modifyDiscoverArticle } from './api'
 import { Alert } from '@/packages/common/components'
+import ClipboardJS from 'clipboard'
+
 class Main extends React.Component<AlertComponentProps, {}> {
   public listRef: ListPageInstanceProps
+  public clipboard: any
+  public componentDidMount () {
+    this.clipboard = new ClipboardJS('.copy-btn')
+    this.clipboard.on('success', () => {
+      APP.success('复制链接成功')
+    })
+  }
+  public componentWillUnmount () {
+    this.clipboard.destroy()
+  }
   public columns = [{
     title: 'ID',
     width: 50,
@@ -65,7 +77,12 @@ class Main extends React.Component<AlertComponentProps, {}> {
       return (
         <>
           <span className='href' onClick={this.handlePrivew.bind(null, record.id)}>预览</span>
-          <span className='href ml10'>复制链接</span>
+          <span
+            className='href ml10 copy-btn'
+            data-clipboard-text={`https://daily-myouxuan.hzxituan.com/promotion/college/index.html#/detail?id=${record.id}`}
+          >
+            复制链接
+          </span>
           <span className='href ml10' onClick={this.handleEdit.bind(null, record.id)}>编辑</span>
           
           {/* 10 草稿 20 视音频处理 30 待发布(未到发布时间) 40 已发布 50 已下架 */}
@@ -106,7 +123,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
           style={{ border: '1px solid #ccc'}}
           width={375}
           height={667}
-          src={`https://daily-myouxuan.hzxituan.com/promotion/college/index.html#/detail?id=${id}`}
+          src={`https://daily-myouxuan.hzxituan.com/promotion/college/index.html#/preview?id=${id}`}
         />
       ),
       footer: null

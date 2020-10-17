@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form, FormItem, SelectFetch } from '@/packages/common/components'
 import { FormInstance } from '@/packages/common/components/form'
-import { Button, Card, Input, Switch, Table } from 'antd'
+import { Button, Card, Icon, Input, Switch, Table } from 'antd'
 import { getAllColumn, saveDiscoverArticle, getDiscoverArticle, modifyDiscoverArticle } from './api'
 import VideoUpload from '@/components/upload/VodVideo'
 import { defaultFormConfig } from './config'
@@ -139,10 +139,14 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                 <div>
                   {form.getFieldDecorator('resourceUrl')(
                     <VideoUpload
-                      placeholder='上传视频/音频'
+                      listType='text'
                       accept='video/x-matroska,video/mp4,video/x-msvideo,audio/mpeg'
                       maxSize={1000 * 1024 * 1024}
-                    />
+                    >
+                      <Button>
+                        <Icon type='upload' />上传视频/音频
+                      </Button>
+                    </VideoUpload>
                   )}
                   <div>视频/音频上传，支持mkv、mp4、avi、mp3，（音视频发布有一定转码时间）</div>
                 </div>
