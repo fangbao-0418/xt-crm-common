@@ -2,10 +2,11 @@ const { newPost, get } = APP.http
 
 /* 获取补偿订单列表 */
 export function getOrderlist (data: any) {
-  return newPost('/mcweb/sale-after/order/compensate/getCompensateList', {
-    ...data,
-    orderBizType: 0
-  })
+  // 不传默认全部
+  if (data.orderBizType === undefined) {
+    data.orderBizType = -1
+  }
+  return newPost('/mcweb/sale-after/order/compensate/getCompensateList', data)
 }
 
 /* 获取补偿方式或补偿类型列表 */
@@ -42,10 +43,11 @@ export function getCompensateRecord (data: any) {
 
 /* 补偿单导出 */
 export function exportCompensate (data: any) {
-  return newPost('/mcweb/sale-after/order/compensate/exportCompensate', {
-    ...data,
-    orderBizType: 0
-  })
+  // 不传默认全部
+  if (data.orderBizType === undefined) {
+    data.orderBizType = -1
+  }
+  return newPost('/mcweb/sale-after/order/compensate/exportCompensate', data)
 }
 
 /* 补偿单审核 */

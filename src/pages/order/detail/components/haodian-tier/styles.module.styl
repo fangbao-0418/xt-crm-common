@@ -1,0 +1,30 @@
+.tier
+  display: flex
+  &:before,&:after
+    clear: both
+    content: ''
+    display: block
+  .tier-item
+    flex: 1
+    .tier-label
+      text-align: center
+      width: 200px
+      display: inline-block
+      padding: 5px 10px
+      border: 1px solid #999999
+      border-radius 10px
+      &.tier-label-current
+        color: #1890ff
+    .tier-line-box
+      width: 200px
+      height: 20px
+      text-align center
+    .tier-line
+      display: inline-block
+      height: 20px
+      width: 1px
+      background: #999999
+      vertical-align: top
+  .tier-right-line
+    width: 20px
+    flex: 0
