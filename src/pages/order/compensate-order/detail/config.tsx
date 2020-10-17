@@ -2,7 +2,7 @@ import React from 'react'
 import SelectFetch from '@/packages/common/components/select-fetch'
 import UploadView from '@/components/upload'
 import { OptionProps } from '@/packages/common/components/form/index'
-import { OrderStatusEnum, MemberTypeEnum, PayTypeEnum, CompensatePayTypeEnum } from '../config'
+import { OrderStatusEnum, MemberTypeEnum, PayTypeEnum, CompensatePayTypeEnum, orderBizTypeEnums } from '../config'
 import * as api from '../api'
 export interface FieldsConfig {
   [namespace: string]: {[field: string]: OptionProps}
@@ -153,6 +153,12 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
 /* 申请信息 */
 export function getApplInfo (detail: any) {
   return [
+    {
+      label: '补偿渠道',
+      value: orderBizTypeEnums[detail.orderBizType] || '-',
+      span: 1,
+      type: 'text'
+    },
     {
       label: '补偿原因',
       value: detail.reasonName || '-',

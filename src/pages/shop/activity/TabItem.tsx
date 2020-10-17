@@ -262,6 +262,8 @@ class Main extends React.Component<Props, State> {
               <FormItem name='activityTime' />
               <FormItem name='promotionId' />
               <FormItem name='operator' />
+              <FormItem name='productName' />
+              <FormItem name='productId' />
             </>
           )}
           addonAfterSearch={(
