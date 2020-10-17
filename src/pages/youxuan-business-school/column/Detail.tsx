@@ -1,6 +1,5 @@
 import React from 'react'
-import { Modal, Switch } from 'antd'
-import { addColumn, updateColumn } from './api'
+import { Switch } from 'antd'
 import { Form, FormItem } from '@/packages/common/components'
 import { defaultFormConfig, formLayoutConfig } from './config'
 import { FormInstance } from '@/packages/common/components/form'

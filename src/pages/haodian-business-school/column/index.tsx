@@ -6,12 +6,14 @@ import { Button, Popconfirm } from 'antd'
 import { platformEnum } from './config'
 import Color from './Color'
 import Detail from './Detail'
-import { getColumnList, deleteColumn } from './api'
+import { Alert } from '@/packages/common/components'
+import { AlertComponentProps } from '@/packages/common/components/alert'
+import { getColumnList, deleteColumn, addColumn, updateColumn } from './api'
 
 interface State {
   dataSource: any
 }
-class Main extends React.Component<{}, State> {
+class Main extends React.Component<AlertComponentProps, State> {
   public state = {
     dataSource: undefined
   }
@@ -55,14 +57,53 @@ class Main extends React.Component<{}, State> {
       )
     } 
   }]
-  public handleView = (record: any) => {
-    this.setState({ dataSource: record })
-    this.detailRef.current?.open(true)
-  }
-  public handleEdit = (record: number) => {
-    this.setState({ dataSource: record })
-    this.detailRef.current?.open()
-  }
+// 查看栏目
+public handleView = (data: any) => {
+  this.props.alert({
+    title: '查看栏目',
+    width: 600,
+    footer: null,
+    content: (
+      <Detail
+        readonly={true}
+        mounted={(ref: Detail) => {
+          ref.formRef.setValues({ ...data, showStatus: data.showStatus === 1 })
+        }}
+      />
+    )
+  })
+}
+// 编辑栏目
+public handleEdit = (data: any) => {
+  let detailRef = React.createRef<Detail>()
+  this.props.alert({
+    title: '编辑栏目',
+    width: 600,
+    content: (
+      <Detail
+        ref={detailRef}
+        mounted={(ref: Detail) => {
+          ref.formRef.setValues({ ...data, showStatus: data.showStatus === 1})
+        }}
+      />
+    ),
+    onOk: async (hide) => {
+      const form = detailRef?.current?.formRef.props.form
+      if (form) {
+        form.validateFields(async (errs, vals) => {
+          if (!errs) {
+            let res = await updateColumn({ ...vals, id: data.id })
+            if (res) {
+              APP.success('操作成功')
+              hide()
+              this.listRef.refresh()
+            }
+          }
+        })
+      }
+    }
+  })
+}
   public handleDelete = async (id: number) => {
     const res = await deleteColumn(id)
     if (res) {
@@ -71,28 +112,41 @@ class Main extends React.Component<{}, State> {
     }
   }
   public handleAdd = () => {
-    this.detailRef.current?.open()
+    let detailRef = React.createRef<Detail>()
+    this.props.alert({
+      title: '新增栏目',
+      width: 600,
+      content: (
+        <Detail ref={detailRef} />
+      ),
+      onOk: (hide) => {
+        const form = detailRef?.current?.formRef.props.form
+        if (form) {
+          form.validateFields(async (errs, vals) => {
+            if (!errs) {
+              let res = await addColumn(vals)
+              if (res) {
+                APP.success('操作成功')
+                hide()
+                this.listRef.refresh()
+              }
+            }
+          })
+        }
+      }
+    })
   }
   public render () {
     const { dataSource } = this.state
     return (
-      <>
-        <Detail
-          dataSource={dataSource}
-          ref={this.detailRef}
-          refresh={() => {
-            this.listRef.refresh()
-          }}
-        />
-        <ListPage
-          getInstance={(ref) => this.listRef = ref}
-          addonAfterSearch={<Button icon='plus' type='primary' onClick={this.handleAdd}>新建栏目</Button>}
-          columns={this.columns}
-          api={getColumnList}
-        />
-      </>
+      <ListPage
+        getInstance={(ref) => this.listRef = ref}
+        addonAfterSearch={<Button icon='plus' type='primary' onClick={this.handleAdd}>新建栏目</Button>}
+        columns={this.columns}
+        api={getColumnList}
+      />
     )
   }
 }
 
-export default Main
+export default Alert(Main)
