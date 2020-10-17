@@ -61,7 +61,6 @@ class Main extends React.Component<AlertComponentProps, {}> {
         <Detail
           readonly={true}
           mounted={(ref: Detail) => {
-            console.log('查看栏目', { ...data, showStatus: data.showStatus === 1 })
             ref.formRef.setValues({ ...data, showStatus: data.showStatus === 1 })
           }}
         />
