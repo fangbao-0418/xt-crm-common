@@ -29,7 +29,7 @@ class PageViewer extends React.Component<Props> {
               e.preventDefault?.()
               e.stopPropagation?.()
               const viewer = new Viewer(el, {
-                filter(image: HTMLImageElement) {
+                filter (image: HTMLImageElement) {
                   return pattern.test(image.src)
                 },
                 hide () {

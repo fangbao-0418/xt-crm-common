@@ -182,6 +182,20 @@ export function getFieldsConfig (partial?: FieldsConfig): FieldsConfig {
             />
           )
         }
+      },
+      orderBizType: {
+        label: '补偿渠道',
+        type: 'select',
+        options: [{
+          label: '全部',
+          value: -1
+        }, {
+          label: '喜团优选',
+          value: 0
+        }, {
+          label: '喜团好店',
+          value: 30
+        }]
       }
     }
   }
@@ -239,4 +253,11 @@ export enum CustomerRoleEnums {
   '客服组长' = 2,
   '客服主管' = 3,
   '客服经理' = 4,
+}
+
+// 补偿渠道
+export enum orderBizTypeEnums {
+  '喜团优选' = 0,
+  '喜团买菜' = 10,
+  '喜团好店' = 30
 }

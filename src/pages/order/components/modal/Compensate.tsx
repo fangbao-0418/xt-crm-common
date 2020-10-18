@@ -23,6 +23,7 @@ interface Props extends FormComponentProps {
   successCb: () => void;
   onCancel: () => void;
   visible: boolean;
+  orderBizType: number
 }
 interface State {
   /* 一级补偿原因 */
@@ -198,7 +199,8 @@ class Compensate extends React.Component<Props, State> {
   }
   render () {
     const {
-      form: { getFieldDecorator, getFieldValue, setFieldsValue }
+      form: { getFieldDecorator, getFieldValue, setFieldsValue },
+      orderBizType
     } = this.props
     const { oneReasons, quota, wxAccountList, wxDisable } = this.state
     const compensatePayType = getFieldValue('compensatePayType')
@@ -237,10 +239,10 @@ class Compensate extends React.Component<Props, State> {
               ]
             })(
               <Select onChange={this.handleCompensatePayTypeChange} placeholder='请选择' style={{ width: '100%' }}>
-                <Option value={11}>喜团账户余额</Option>
+                {orderBizType !== 30 && <Option value={11}>喜团账户余额</Option>}
                 <Option value={12}>支付宝转账</Option>
                 <Option disabled={wxDisable} value={13}>微信转账</Option>
-                <Option value={10}>优惠券</Option>
+                {orderBizType !== 30 && <Option value={10}>优惠券</Option>}
               </Select>
             )}
           </Form.Item>
