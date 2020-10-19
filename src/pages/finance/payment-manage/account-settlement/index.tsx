@@ -22,6 +22,7 @@ import * as api from './api'
 import moment from 'moment'
 import Payment from './components/payment'
 import { ListRecordProps } from './interface'
+import AntTableRowSelection from '@/util/AntTableRowSelection'
 
 interface Props extends AlertComponentProps {
 }
@@ -29,12 +30,22 @@ const dateFormat = 'YYYY-MM-DD HH:mm'
 const getFormatDate = (s: any, e: any) => {
   return e ? [moment(s, dateFormat), moment(e, dateFormat)] : []
 }
-class Main extends React.Component<Props> {
-  state = {
+
+interface State {
+  errorUrl: string | null
+  selectedRowKeys: any[]
+  visible: boolean
+  selectedRows: any[]
+}
+
+class Main extends AntTableRowSelection<Props, State> {
+  public state: State = {
+    selectedRows: [],
     errorUrl: null,
-    selectedRowKeys: null,
+    selectedRowKeys: [],
     visible: false
   }
+  public rowSelectionKey = 'id'
   public id: any
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<ListRecordProps>[] = [{
@@ -253,7 +264,7 @@ class Main extends React.Component<Props> {
   }
   public getDetailData = (type: any, id: any) => () => {
     api.getDetail(id).then((res: any) => {
-      res.amount=res.amount/100
+      res.amount = APP.fn.formatMoneyNumber(res.amount, 'm2u')
       this.operation(type, res)
     })
   }
@@ -264,7 +275,7 @@ class Main extends React.Component<Props> {
     if (this.props.alert) {
       let form: FormInstance
       const hide = this.props.alert({
-        title: type===1?'创建账务结算单':(type===2?'审核账务结算单':'查看账务结算单'),
+        title: type===1 ? '创建账务结算单' : (type===2 ? '审核账务结算单' : '查看账务结算单'),
         width: 700,
         content: (
           <Form
@@ -493,7 +504,7 @@ class Main extends React.Component<Props> {
           </Form>
         ),
         onOk: () => {
-          if (form&&type!==3) {
+          if (form && type !== 3) {
             form.props.form.validateFields((err, value) => {
               if (err) {
                 return
@@ -564,14 +575,31 @@ class Main extends React.Component<Props> {
       )
     })
   }
+  public toMultiPay () {
+    console.log(this.selectedRows, 'xxxxx')
+    const hide = this.props.alert({
+      width: 1000,
+      title: '支付账单',
+      footer: false,
+      content: (
+        <Payment
+          // id={id}
+          rows={this.selectedRows}
+          onClose={() => {
+            hide()
+          }}
+        />
+      )
+    })
+  }
   public render () {
     const { selectedRowKeys } = this.state
     const rowSelection = {
-      selectedRowKeys,
-      onChange: this.handleSelectionChange,
-      getCheckboxProps: (record: any) => ({
-        disabled: record.status === 1
-      })
+      ...this.rowSelection,
+      // onChange: this.handleSelectionChange,
+      // getCheckboxProps: (record: ListRecordProps) => ({
+      //   disabled: record.status === 1
+      // })
     }
     return (
       <div
@@ -630,19 +658,19 @@ class Main extends React.Component<Props> {
                 className='ml8 mr8'
                 onClick={this.handleBatchShow.bind(this, 'visible')}
               >
-              批量创建账务结算单
+                批量创建账务结算单
               </Button>
               {/* <Button
                 type='primary'
                 onClick={this.toOperate()}
               >
-              批量审核
+                批量审核
               </Button> */}
               <Button
                 type='primary'
-                // onClick={this.toPay.bind(this, re)}
+                onClick={this.toMultiPay.bind(this)}
               >
-              发起支付
+                发起支付
               </Button>
             </div>
           )}
@@ -673,13 +701,13 @@ class Main extends React.Component<Props> {
   }
 
   // 模态框取消操作
-  handleCancel = (key: any) => {
+  handleCancel = (key: 'visible') => {
     this.setState({
       [key]: false
     })
   }
   // 显示批量模态框
-  handleBatchShow = (key: any) => {
+  handleBatchShow = (key: 'visible') => {
     this.setState({
       [key]: true
     })

@@ -5,6 +5,7 @@ import React from 'react'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
+import { ColumnProps } from 'antd/lib/table'
 import { Button } from 'antd'
 import { getFieldsConfig } from './config'
 import * as api from './api'
@@ -12,52 +13,57 @@ interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
-  public columns: any = [{
-    title: '财务结算流水',
-    dataIndex: 'fansTotal',
+  public columns: ColumnProps<any>[] = [{
+    title: '财务结算流水号',
+    dataIndex: 'flowNo',
     width: 200
   }, {
     title: '财务结算ID',
-    dataIndex: 'nickName',
+    dataIndex: 'id',
     width: 300
   }, {
-    dataIndex: 'anchorIdentityType',
+    dataIndex: 'inOrOutTypeDesc',
     title: '收支类型',
     width: 150
   }, {
-    dataIndex: 'anchorId',
+    dataIndex: 'amount',
     title: '账务金额',
-    width: 120
+    width: 120,
+    render: (text) => APP.fn.formatMoney(text)
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'subjectTypeDesc',
     title: '账务对象类型',
     width: 100
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'subjectId',
     title: '账务对象ID',
     width: 100
   }, {
-    dataIndex: 'anchorLevel',
-    title: '分账对象名称',
+    dataIndex: 'subjectName',
+    title: '账务对象名称',
     width: 100
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'applicationRemark',
     title: '原因',
     width: 100
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'createTime',
     title: '创建时间',
     width: 100
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'creator',
+    title: '创建人',
+    width: 100
+  }, {
+    dataIndex: 'outFlowNo',
     title: '三方处理流水',
     width: 100
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'outProcessStatusDesc',
     title: '三方处理结果',
     width: 100
   }, {
-    dataIndex: 'anchorLevel',
+    dataIndex: 'outFinishedTime',
     title: '三方处理完成时间',
     width: 100
   }]
@@ -99,7 +105,7 @@ class Main extends React.Component<Props> {
               <FormItem name='status2' />
             </>
           )}
-          api={api.getAnchorList}
+          api={api.fetchList}
         />
       </div>
     )

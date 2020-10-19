@@ -17,4 +17,5 @@ export interface ListRecordProps {
   applicationRemark: string
   /** 财务对象类型 */
   subjectTypeDesc: string
+  status: number
 }

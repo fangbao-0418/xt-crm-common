@@ -8,7 +8,8 @@ import Upload from '@/components/upload'
 import { ListRecordProps } from '../../interface'
 
 interface Props {
-  id: any
+  id?: any
+  rows?: any[]
   goNext?: () => void
 }
 
@@ -16,49 +17,67 @@ class Main extends React.Component<Props> {
   public form: FormInstance
   public columns: ColumnProps<ListRecordProps>[] = [
     {
-      title: '编号'
+      title: '编号',
+      width: 80,
+      align: 'center',
+      render: (text, record, index) => {
+        return index + 1
+      }
     },
     {
       title: '账务结算ID',
-      dataIndex: 'id'
+      dataIndex: 'id',
+      width: 200
     },
     {
       title: '账务对象类型',
+      width: 180,
       dataIndex: 'subjectTypeDesc'
     },
     {
       title: '账务对象ID',
-      dataIndex: 'subjectId'
+      dataIndex: 'subjectId',
+      width: 180
     },
     {
       title: '账务对象名称',
-      dataIndex: 'subjectName'
+      dataIndex: 'subjectName',
+      width: 180
     },
     {
       title: '账务金额',
-      dataIndex: 'amount'
+      dataIndex: 'amount',
+      width: 150
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime'
+      dataIndex: 'createTime',
+      width: 250,
+      render: (text) => APP.fn.formatDate(text)
     },
     {
       title: '审核完成时间',
-      dataIndex: 'auditFinishTime'
+      dataIndex: 'auditFinishTime',
+      width: 250,
+      render: (text) => APP.fn.formatDate(text)
     }
   ]
   public componentDidMount () {
-    api.getDetail(this.props.id).then((res) => {
-      // res.evidenceImgUrlList = res?.evidenceImgUrlList?.map(() =>)
-      this.form.setValues(res)
-    })
+    const { id, rows } = this.props
+    if (id) {
+      api.getDetail(this.props.id).then((res) => {
+        // res.evidenceImgUrlList = res?.evidenceImgUrlList?.map(() =>)
+        this.form.setValues(res)
+      })
+    }
   }
   public render () {
-    const single = false
+    // const single = false
+    const { id, rows } = this.props
     return (
       <>
         <div style={{ width: 600, margin: '0 auto' }}>
-          {single && (
+          {id !== undefined && (
             <Form
               getInstance={(ref) => this.form = ref}
               config={getFieldsConfig()}
@@ -90,23 +109,26 @@ class Main extends React.Component<Props> {
               <FormItem name='settlementTypeDesc' label='单据类型' />
               <FormItem name='createTime' type='date' label='创建时间' />
               <FormItem name='auditFinishTime' type='date' label='审核完成时间' />
-              <div className='text-center mt20'>
-                <Button
-                  type='primary'
-                  onClick={this.props?.goNext}
-                >
-                  确认无误，下一步
-                </Button>
-              </div>
             </Form>
           )}
         </div>
-        {!single && (
+        {rows && (
           <Table
             columns={this.columns}
-            dataSource={[]}
+            dataSource={rows}
+            pagination={{
+              pageSize: 2
+            }}
           />
         )}
+        <div className='text-center mt20'>
+          <Button
+            type='primary'
+            onClick={this.props?.goNext}
+          >
+            确认无误，下一步
+          </Button>
+        </div>
       </>
     )
   }

@@ -5,15 +5,18 @@ import React from 'react'
 import { ListPage, Alert, FormItem } from '@/packages/common/components'
 import { ListPageInstanceProps } from '@/packages/common/components/list-page'
 import { AlertComponentProps } from '@/packages/common/components/alert'
-import { Tag, Popconfirm, Button } from 'antd'
+import { Tag, Popconfirm, Button, Select, Input } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { getFieldsConfig, SupplierTypeEnum } from '../config'
 import * as api from '../api'
+import MultiSearch from './MultiSearch'
+import { SupplierBalanceProfile } from '../interface'
+
 interface Props extends AlertComponentProps {
 }
 class Main extends React.Component<Props> {
   public listpage: ListPageInstanceProps
-  public columns: ColumnProps<Anchor.ItemProps>[] = [{
+  public columns: ColumnProps<SupplierBalanceProfile>[] = [{
     title: '商家ID',
     dataIndex: 'supplierId',
     width: 80
@@ -22,30 +25,29 @@ class Main extends React.Component<Props> {
     dataIndex: 'supplierName',
     width: 150
   }, {
-    dataIndex: 'supplierType',
+    dataIndex: 'supplierTypeDesc',
     title: '商家类型',
-    width: 180,
-    render: (text: any, record: any) => <>{SupplierTypeEnum[text]}</>
+    width: 180
   }, {
-    dataIndex: 'merchantAcctAvailBal',
+    dataIndex: 'cashableAmount',
     title: '可提现余额',
     width: 120,
-    render: (text: any, record: any) => <>{record?.merchantsSubAccount?.acctAvailBal/100}</>
+    render: (text) => APP.fn.formatMoney(text)
   }, {
-    dataIndex: 'plainAcctAvailBal',
+    dataIndex: 'unsettledAmount',
     title: '待结算金额',
     width: 120,
-    render: (text: any, record: any) => <>{record?.plainSubAccount?.acctAvailBal/100}</>
+    render: (text) => APP.fn.formatMoney(text)
   }, {
-    dataIndex: 'merchantCashAmt',
+    dataIndex: 'frozenAmount',
     title: '冻结金额',
     width: 120,
-    render: (text: any, record: any) => <>{record?.merchantsSubAccount?.cashAmt/100}</>
+    render: (text) =>  APP.fn.formatMoney(text)
   }, {
-    dataIndex: 'plainCashAmt',
+    dataIndex: 'presentedAmount',
     title: '已提现金额',
     width: 120,
-    render: (text: any, record: any) => <>{record?.plainSubAccount?.cashAmt/100}</>
+    render: (text) => APP.fn.formatMoney(text)
   }]
   public refresh () {
     this.listpage.refresh()
@@ -79,7 +81,8 @@ class Main extends React.Component<Props> {
           }}
           onSubmit={()=>{
             const values=this.listpage.form.getValues()
-            if (!values.supperId&&!values.supplierName) {
+            console.log(values, 'values')
+            if (!values.supperId && !values.supplierName) {
               APP.error('供应商ID和名称至少有一项不能为空')
               return
             }
@@ -96,7 +99,14 @@ class Main extends React.Component<Props> {
           formItemLayout={(
             <>
               <FormItem name='supperId' />
-              <FormItem name='supplierName' />
+              <FormItem
+                label='供应商'
+                inner={(form) => {
+                  return form.getFieldDecorator('supplier')(
+                    <MultiSearch />
+                  )
+                }}
+              />
             </>
           )}
           api={api.supplierBalance}

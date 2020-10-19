@@ -6,7 +6,8 @@ import Result from './Result'
 const { Step } = Steps
 
 interface Props {
-  id: any
+  id?: any
+  rows?: any[]
   onClose?: () => void
 }
 
@@ -33,6 +34,7 @@ class Main extends React.Component<Props, State> {
           {current === 0 && (
             <Info
               id={this.props.id}
+              rows={this.props.rows}
               goNext={() => {
                 this.setState({
                   current: 1
