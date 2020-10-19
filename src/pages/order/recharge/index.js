@@ -144,6 +144,14 @@ class Recharge extends Component {
         dataIndex: 'rechargeTypeDesc'
       },
       {
+        title: '供应商ID',
+        dataIndex: 'storeId'
+      },
+      {
+        title: '供应商名称',
+        dataIndex: 'storeName'
+      },
+      {
         title: '创建时间',
         dataIndex: 'createTime',
         render: (createTime, row) => <div>{formatDate(createTime)}</div>
@@ -162,8 +170,7 @@ class Recharge extends Component {
         dataIndex: 'remark'
       }
     ].filter(column => !column.hide)
-    console.log('page')
-    console.log(page)
+
     return (
       <div>
         <Card>
