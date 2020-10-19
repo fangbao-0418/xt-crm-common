@@ -34,7 +34,7 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
   public handleSubmit = (releaseStatus: number) => {
     const id = this.props.match.params.id
     this.formRef.props.form.validateFields(async (errs, vals) => {
-      const productIds = this.state.products.map((item: any) => item.id)
+      const productIds = (this.state.products || []).map((item: any) => item.id)
       let res
       if (!errs) {
         // 新增
@@ -51,7 +51,7 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
     })
   }
   public render () {
-    const productIds = this.state.products.map((item: any) => item.id)
+    const productIds = (this.state.products || []).map((item: any) => item.id)
     return (
       <Card>
         <GoodsModal
@@ -222,7 +222,7 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                 选择商品
               </span>
               <Table
-                dataSource={this.state.products}
+                dataSource={this.state.products || []}
                 columns={[{
                   title: '商品ID',
                   dataIndex: 'id'
