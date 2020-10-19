@@ -3,8 +3,10 @@ import BraftEditor from 'braft-editor'
 
 // 适配发布文章入参
 export function adapterArticleParams (payload: any) {
-  if (payload.context?.toHTML) {
-    payload.context = payload.context?.toHTML()
+  if (payload.contextType === '1') {
+    payload.context = payload.context?.toHTML?.()
+  } else {
+    payload.context = `<a href="${payload.context}">${payload.context}</a>`
   }
   
   if (payload.coverImage) {
@@ -48,6 +50,10 @@ export function adapterArticleResponse (res: any) {
   // 富文本 contextType: 1、富文本 2、链接
   if (res.contextType === '1') {
     res.context = BraftEditor.createEditorState(res.context)
+  } else {
+    var reg = /<a .*?href=['"](.*?)['"].*?>(.*?)<\/a>/;
+    (res.context || '').match(reg);
+    res.context = RegExp.$1
   }
   return res
 }
