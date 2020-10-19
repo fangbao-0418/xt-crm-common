@@ -10,7 +10,7 @@ import dateFns from 'date-fns'
 import * as api from './api'
 import Add from './add'
 import AuditAndDetail from './audit'
-import { defaultConfig } from './config'
+import { defaultConfig, channels } from './config'
 import styles from './style.module.scss'
 
 // 审核状态文案
@@ -75,6 +75,14 @@ class MaterialTabItem extends React.Component<Props, State> {
       title: '商品名称',
       width: 120,
       dataIndex: 'productName'
+    },
+    {
+      title: '商品渠道',
+      width: 120,
+      dataIndex: 'channel',
+      render(text: any) {
+        return channels[text]
+      }
     },
     {
       title: '内容',
@@ -338,6 +346,7 @@ class MaterialTabItem extends React.Component<Props, State> {
               <FormItem name='productId' />
               <FormItem name='authorPhone' />
               <FormItem name='startCreate' />
+              <FormItem name='channel' />
             </>
           )}
           processPayload={(payload) => {

@@ -18,6 +18,7 @@ for (const key in MemberTypeTextMap) {
   currentData: state['user.userinfo'].currentData,
   inviteInfo: state['user.userinfo'].inviteInfo,
   visible: state['user.userinfo'].visiblePhone,
+  tab: state['user.userinfo'].memberType
 }))
 @Form.create()
 export default class extends Component {
@@ -28,7 +29,8 @@ export default class extends Component {
     if (!this.phone) return;
     dispatch['user.userinfo'].exchangePhone({
       memberId: currentData.id,
-      phone: this.phone
+      phone: this.phone,
+      tab: this.props.tab
     });
   }
 

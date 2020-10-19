@@ -331,7 +331,7 @@ class PendingReview extends React.Component<Props, State> {
   }
   render () {
     const { getFieldDecorator } = this.props.form
-    const { refundTypeValue } = this.state
+    let { refundTypeValue } = this.state
     const { orderInterceptRecordVO, shopDTO } = this.props
       .data as any
     const isHaiTao
@@ -342,7 +342,8 @@ class PendingReview extends React.Component<Props, State> {
     const refundTypeOptions = isHaiTao
       ? options.filter((v) => v.key !== 30)
       : options
-
+      refundTypeValue = refundTypeValue || this.checkVO.refundType
+    console.log('refundTypeValue', refundTypeValue, typeof refundTypeValue)
     return (
       <div>
         <Card title={<AfterSaleDetailTitle />}>

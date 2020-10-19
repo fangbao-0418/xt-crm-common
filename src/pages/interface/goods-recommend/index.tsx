@@ -18,7 +18,14 @@ export interface Item {
   status: number
 }
 interface Props extends AlertComponentProps {}
-class Main extends React.Component<Props> {
+// 商品渠道，0-全部，1-优选，2-好店，默认全部
+interface State {
+  channel: 0 | 1 | 2
+}
+class Main extends React.Component<Props, State> {
+  public state: State = {
+    channel: 0
+  }
   public listpage: ListPageInstanceProps
   public columns: ColumnProps<Item>[] = [
     {
@@ -34,6 +41,14 @@ class Main extends React.Component<Props> {
       dataIndex: 'location',
       render: (text) => {
         return locationMap.label[text]
+      }
+    },
+    {
+      title: '位置渠道',
+      dataIndex: 'channel',
+      width: 100,
+      render(text) {
+        return text === 2 ? '喜团好店' : '喜团优选'
       }
     },
     {
@@ -121,6 +136,7 @@ class Main extends React.Component<Props> {
     })
   }
   public render () {
+    const { channel } = this.state
     return (
       <div
         style={{
@@ -136,8 +152,35 @@ class Main extends React.Component<Props> {
           }}
           formItemLayout={(
             <>
+              <FormItem
+                name='channel'
+                controlProps={{
+                  onChange: (channel: any) => {
+                    console.log('channel', channel, typeof channel)
+                    this.setState({ channel })
+                  }
+                }}
+              />
               <FormItem name='name' />
-              <FormItem name='location' type='select' />
+              {channel === 1 && (
+                <FormItem
+                  name='location'
+                  type='select'
+                />
+              )}
+              {channel === 2 && (
+                <FormItem
+                  name='location'
+                  type='select'
+                  options={[
+                    { label: "全部", value: 0 },
+                    { label: "支付结果页", value: 8 },
+                    { label: "个人中心", value: 4 },
+                    { label: "购物车", value: 2 },
+                    { label: "搜索空页面", value: 64 }
+                  ]}
+                />
+              )}
               <FormItem name='status' />
               <FormItem label='创建时间' name='date' />
             </>
@@ -161,6 +204,7 @@ class Main extends React.Component<Props> {
           processPayload={(payload) => {
             return {
               ...payload,
+              channel: payload.channel === undefined ? 0 : payload.channel,
               pageNo: payload.page,
               page: undefined
             }
