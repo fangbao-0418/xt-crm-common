@@ -239,7 +239,7 @@ class Main extends React.Component<Props, State> {
   logisticsColums = [
     {
       title: '物流公司',
-      dataIndex: 'expressCompanyName'
+      dataIndex: 'expressName'
     },
     {
       title: '物流单号',
