@@ -37,9 +37,12 @@ class Main extends React.Component<AlertComponentProps, {}> {
     title: '操作',
     width: 200,
     render: (record) => {
+      const text = record.showStatus === 2 ? '显示': '隐藏'
       return (
         <>
-          <span className='href'>{record.showStatus === 2 ? '显示': '隐藏'}</span>
+          <Popconfirm className='href' placement="top" title={`你确定要${text}此栏目吗`} onConfirm={this.toggleDisplay.bind(null, record)}>
+            <span>{text}</span>
+          </Popconfirm>
           <span className='href ml10' onClick={this.handleView.bind(null, record)}>查看</span>
           <span className='href ml10' onClick={this.handleEdit.bind(null, record)}>编辑</span>
           {/* 是否删除 0 能删除 1 不能删除 */}
@@ -52,6 +55,20 @@ class Main extends React.Component<AlertComponentProps, {}> {
       )
     } 
   }]
+  // 切换显示隐藏
+  // 显示 = 1, 隐藏 = 2
+  public toggleDisplay = async (record: any) => {
+    console.log('record', record)
+    const res = await updateColumn({
+      id: record.id,
+      showStatus: record.showStatus === 1 ? 2 : 1,
+      platform: 2
+    })
+    if (res) {
+      APP.success('操作成功')
+      this.listRef.refresh()
+    }
+  }
   // 查看栏目
   public handleView = (data: any) => {
     this.props.alert({

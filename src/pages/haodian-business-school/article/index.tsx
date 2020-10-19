@@ -44,7 +44,16 @@ class Main extends React.Component<AlertComponentProps, {}> {
             <span style={{ marginLeft: 50 }}>分享：{record.shareNum}</span>
             <span style={{ marginLeft: 50 }}>{APP.fn.formatDate(record.releaseTime, 'YYYY-MM-DD')}发布</span>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: record.context}}></div>
+          <div
+            style={{
+              overflow: 'hidden',
+              display: '-webkit-box',
+              textOverflow:'ellipsis',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical'
+            }}
+            dangerouslySetInnerHTML={{ __html: record.context}}
+          ></div>
         </div>
       )
     }
