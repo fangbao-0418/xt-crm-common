@@ -7,7 +7,7 @@ import Upload from '@/components/upload'
 import If from '@/packages/common/components/if'
 import styles from './style.module.sass'
 import platformType from '@/enum/platformType'
-const _platformType = platformType.getArray({ key: 'value', val: 'label' })
+const _platformType = platformType.getArray({ key: 'value', val: 'label' }).filter(v => ['8', '16'].includes(v.value))
 
 interface Props extends FormComponentProps { }
 interface State {

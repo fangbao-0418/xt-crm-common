@@ -30,7 +30,8 @@ export const defaultFormConfig: FieldsConfig = {
       label: '描述',
       type: 'textarea',
       controlProps: {
-        placeholder: '栏目含义，栏目文章标准'
+        placeholder: '栏目含义，栏目文章标准',
+        maxLength: 20
       }
     },
     sort: {
