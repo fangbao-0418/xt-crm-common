@@ -28,9 +28,6 @@ export const defaultFormConfig: FieldsConfig = {
         }]
       }
     },
-    share: {
-      label: '支持分享'
-    },
     contextType: {
       type: 'radio',
       options: [{
