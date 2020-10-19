@@ -20,6 +20,7 @@ import { refundType, customerFollowType } from '@/enum'
 import { XtSelect } from '@/components'
 import { formatPrice, formatRMB } from '@/util/format'
 import ReturnShippingSelect from '../components/ReturnShippingSelect'
+import ReturnCouponSelect from '../components/ReturnCouponSelect'
 import AfterSaleSelect from '../components/after-sale-select'
 import ModifyShippingAddress from '../components/modal/ModifyShippingAddress'
 import AfterSaleDetailTitle from './components/AfterSaleDetailTitle'
@@ -513,6 +514,15 @@ class PendingReview extends React.Component<Props, State> {
                 />
               </Form.Item>
             )}
+            <Form.Item label='是否回收优惠券金额'>
+              {getFieldDecorator('isRefundCoupon', {
+                initialValue: this.checkVO.isRefundFreight
+              })(
+                <ReturnCouponSelect
+                  checkVO={this.checkVO}
+                />
+              )}
+            </Form.Item>
             <Form.Item label='快捷说明'>
               <Select
                 placeholder='请选择一级'

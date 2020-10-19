@@ -4,7 +4,16 @@ import { userInfoResponse } from "./components/userInfo/adapter";
 var qs = require("qs");
 
 export function getCouponList(memberId, data) {
-  return Fetch.post(`/member/get/getCouponList/${memberId}`, data);
+  return Fetch.post(`/mcweb/coupon/member/memberList`, {
+    ...data,
+    memberId
+  });
+}
+
+export function invalidCoupon(id) {
+  return Fetch.post(`/mcweb/coupon/member/invalid`, {
+    id
+  });
 }
 
 export async function getUserInfo(params) {
