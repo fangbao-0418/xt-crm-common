@@ -39,7 +39,8 @@ class Main extends React.Component<AlertComponentProps, {}> {
     render: (record) => {
       return (
         <>
-          <span className='href' onClick={this.handleView.bind(null, record)}>查看</span>
+          <span className='href'>{record.showStatus === 2 ? '显示': '隐藏'}</span>
+          <span className='href ml10' onClick={this.handleView.bind(null, record)}>查看</span>
           <span className='href ml10' onClick={this.handleEdit.bind(null, record)}>编辑</span>
           {/* 是否删除 0 能删除 1 不能删除 */}
           <If condition={record.canDelete === 0}>

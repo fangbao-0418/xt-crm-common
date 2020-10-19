@@ -106,7 +106,10 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
           <FormItem
             label='支持分享'
             inner={(form) => {
-              return form.getFieldDecorator('shareStatus')(
+              return form.getFieldDecorator('shareStatus', {
+                initialValue: true,
+                valuePropName: 'checked'
+              })(
                 <Switch
                   checkedChildren='开'
                   unCheckedChildren='关'
