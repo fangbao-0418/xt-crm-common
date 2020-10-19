@@ -29,13 +29,14 @@ export function adapterArticleParams (payload: any) {
     else if (audioMimeTypes.includes(file.type)) {
       payload.resourceType = 2
     }
-    payload.shareStatus = payload.shareStatus ?  1 : 2
     payload.fileSize = file.size
     payload.resourceUrl = file.url
   }
+  payload.shareStatus = payload.shareStatus ?  1 : 2
   if (!payload.releaseTime) {
     payload.releaseTime = Date.now()
   }
+  console.log('payload', payload)
   return payload
 }
 
