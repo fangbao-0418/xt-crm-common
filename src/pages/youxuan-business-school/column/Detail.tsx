@@ -36,7 +36,7 @@ class Main extends React.Component<Props, {}> {
         <FormItem
           label='加入喜团情报站(资讯标题滚动显示)'
           inner={(form) => {
-            return form.getFieldDecorator('showStatus', {
+            return form.getFieldDecorator('addStation', {
               valuePropName: 'checked'
             })(<Switch disabled={readonly} />)
           }}

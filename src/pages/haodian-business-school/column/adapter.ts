@@ -1,11 +1,12 @@
-/**
- * 适配表单入参
- * @param payload
- */
-export function adpaterFormParams (payload: any) {
-  const showStatus = payload.showStatus ? 1 : 2
-  return {
-    ...payload,
-    showStatus
-  }
+import { func } from "prop-types";
+
+export function adapterPostParams (req: any) {
+  // 是否加入喜团情报站 1 否 2 是
+  req.addStation = req.addStation ? 2 : 1
+  return req
+}
+
+export function adapterPostDetail (res: any) {
+  res.addStation = res.addStation === 2
+  return res
 }

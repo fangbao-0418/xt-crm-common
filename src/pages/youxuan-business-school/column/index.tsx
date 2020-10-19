@@ -62,7 +62,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
         <Detail
           readonly={true}
           mounted={(ref: Detail) => {
-            ref.formRef.setValues({ ...data, showStatus: data.showStatus === 1 })
+            ref.formRef.setValues(data)
           }}
         />
       )
@@ -78,7 +78,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
         <Detail
           ref={detailRef}
           mounted={(ref: Detail) => {
-            ref.formRef.setValues({ ...data, showStatus: data.showStatus === 1})
+            ref.formRef.setValues(data)
           }}
         />
       ),

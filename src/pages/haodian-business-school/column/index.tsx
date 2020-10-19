@@ -43,9 +43,13 @@ class Main extends React.Component<AlertComponentProps, State> {
     title: '操作',
     width: 200,
     render: (record) => {
+      const text = record.showStatus === 2 ? '显示': '隐藏'
       return (
         <>
-          <span className='href' onClick={this.handleView.bind(null, record)}>查看</span>
+          <Popconfirm className='href' placement="top" title={`你确定要${text}此栏目吗`} onConfirm={this.toggleDisplay.bind(null, record)}>
+            <span>{text}</span>
+          </Popconfirm>
+          <span className='href ml10' onClick={this.handleView.bind(null, record)}>查看</span>
           <span className='href ml10' onClick={this.handleEdit.bind(null, record)}>编辑</span>
           {/* 是否删除 0 能删除 1 不能删除 */}
           <If condition={record.canDelete === 0}>
@@ -57,53 +61,67 @@ class Main extends React.Component<AlertComponentProps, State> {
       )
     } 
   }]
-// 查看栏目
-public handleView = (data: any) => {
-  this.props.alert({
-    title: '查看栏目',
-    width: 600,
-    footer: null,
-    content: (
-      <Detail
-        readonly={true}
-        mounted={(ref: Detail) => {
-          ref.formRef.setValues({ ...data, showStatus: data.showStatus === 1 })
-        }}
-      />
-    )
-  })
-}
-// 编辑栏目
-public handleEdit = (data: any) => {
-  let detailRef = React.createRef<Detail>()
-  this.props.alert({
-    title: '编辑栏目',
-    width: 600,
-    content: (
-      <Detail
-        ref={detailRef}
-        mounted={(ref: Detail) => {
-          ref.formRef.setValues({ ...data, showStatus: data.showStatus === 1})
-        }}
-      />
-    ),
-    onOk: async (hide) => {
-      const form = detailRef?.current?.formRef.props.form
-      if (form) {
-        form.validateFields(async (errs, vals) => {
-          if (!errs) {
-            let res = await updateColumn({ ...vals, id: data.id })
-            if (res) {
-              APP.success('操作成功')
-              hide()
-              this.listRef.refresh()
-            }
-          }
-        })
-      }
+  // 切换显示隐藏
+  // 显示 = 1, 隐藏 = 2
+  public toggleDisplay = async (record: any) => {
+    console.log('record', record)
+    const res = await updateColumn({
+      id: record.id,
+      showStatus: record.showStatus === 1 ? 2 : 1,
+      platform: 2
+    })
+    if (res) {
+      APP.success('操作成功')
+      this.listRef.refresh()
     }
-  })
-}
+  }
+  // 查看栏目
+  public handleView = (data: any) => {
+    this.props.alert({
+      title: '查看栏目',
+      width: 600,
+      footer: null,
+      content: (
+        <Detail
+          readonly={true}
+          mounted={(ref: Detail) => {
+            ref.formRef.setValues(data)
+          }}
+        />
+      )
+    })
+  }
+  // 编辑栏目
+  public handleEdit = (data: any) => {
+    let detailRef = React.createRef<Detail>()
+    this.props.alert({
+      title: '编辑栏目',
+      width: 600,
+      content: (
+        <Detail
+          ref={detailRef}
+          mounted={(ref: Detail) => {
+            ref.formRef.setValues(data)
+          }}
+        />
+      ),
+      onOk: async (hide) => {
+        const form = detailRef?.current?.formRef.props.form
+        if (form) {
+          form.validateFields(async (errs, vals) => {
+            if (!errs) {
+              let res = await updateColumn({ ...vals, id: data.id })
+              if (res) {
+                APP.success('操作成功')
+                hide()
+                this.listRef.refresh()
+              }
+            }
+          })
+        }
+      }
+    })
+  }
   public handleDelete = async (id: number) => {
     const res = await deleteColumn(id)
     if (res) {

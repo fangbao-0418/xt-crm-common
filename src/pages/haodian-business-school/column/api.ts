@@ -1,9 +1,9 @@
-import { adpaterFormParams } from './adapter'
-const { get, newPost } = APP.http
+import { adapterPostParams, adapterPostDetail } from './adapter'
+const { newPost } = APP.http
 
 interface postPayload {
   id?: number
-  columnName: string	
+  columnName?: string	
   describe?: string	
   platform: 1 | 2
   sort?: number
@@ -14,16 +14,20 @@ interface postPayload {
  * 平台渠道: 1优选/2好店
  */
 export function getColumnList (payload: { page: number, pageSize: number }) {
-  return newPost('/mcweb/octupus/discover/column/list', { ...payload, platform: 2 })
+  return newPost('/mcweb/octupus/discover/column/list', { ...payload, platform: 2 }).then(res => {    
+    res.records = (res.records || []).map((item: any) => adapterPostDetail(item))
+    console.log('res', res)
+    return res
+  })
 }
 
 /** 添加栏目 */
 export async function addColumn (payload: postPayload) {
-  return newPost('/mcweb/octupus/discover/column/save', { ...adpaterFormParams(payload), platform: 2 })
+  return newPost('/mcweb/octupus/discover/column/save', { ...adapterPostParams(payload), platform: 2 })
 }
 /** 修改栏目 */
 export async function updateColumn(payload: postPayload) {
-  return newPost('/mcweb/octupus/discover/column/update', adpaterFormParams(payload))
+  return newPost('/mcweb/octupus/discover/column/update', adapterPostParams(payload))
 }
 
 /** 删除栏目 */
