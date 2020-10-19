@@ -328,6 +328,7 @@ class BannerModal extends Component {
                 }}
               />
             </If>
+            {/* 11是商学院，显示图片不显示文案 */}
             <If condition={[1, 2, 3, 4, 6, 7, 8, 9, 11].includes(seat[0])}>
               <FormItem
                 key={renderKey}

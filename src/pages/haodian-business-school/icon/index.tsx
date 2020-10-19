@@ -195,7 +195,7 @@ class Main extends React.Component<Props, State> {
             >
               +新增icon
             </div>
-            <If condition={dataSource.length >= 10}>
+            {/* <If condition={dataSource.length >= 10}> */}
               <Popconfirm
                 title='确认发布icon吗'
                 onConfirm={this.toPublish}
@@ -207,8 +207,8 @@ class Main extends React.Component<Props, State> {
                   发布
                 </Button>
               </Popconfirm>
-            </If>
-            <If condition={dataSource.length < 10}>
+            {/* </If> */}
+            {/* <If condition={dataSource.length < 10}>
               <Button
                 type='primary'
                 className={styles.release}
@@ -221,7 +221,7 @@ class Main extends React.Component<Props, State> {
               >
                 发布
               </Button>
-            </If>
+            </If> */}
           </div>
         </div>
         <div className={styles.content} style={{ display: selectIndex > -2 ? '' :'none' }}>
