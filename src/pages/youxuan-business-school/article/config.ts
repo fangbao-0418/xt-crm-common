@@ -20,7 +20,13 @@ export const defaultFormConfig: FieldsConfig = {
       }, {
         label: '合伙人以上',
         value: 30
-      }]
+      }],
+      fieldDecoratorOptions: {
+        rules: [{
+          required: true,
+          message: '请选择指定用户可见'
+        }]
+      }
     },
     share: {
       label: '支持分享'

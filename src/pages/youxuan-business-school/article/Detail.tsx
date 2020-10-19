@@ -82,7 +82,10 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
               )
             }}
           />
-          <FormItem name='memberLimit' />
+          <FormItem
+            name='memberLimit'
+            verifiable
+          />
           <FormItem
             name='title'
             label='标题'
