@@ -42,6 +42,9 @@ class Main extends React.Component<Props, State> {
     this.setState({ visible: true })
   }
   public onOk = () => {
+    if (this.selectedRows.length > 10) {
+      return void APP.error('最多添加10个商品')
+    }
     this.setState({
       visible: false
     }, () => {
@@ -71,6 +74,16 @@ class Main extends React.Component<Props, State> {
         onCancel={this.onCancel}
       >
         <ListPage
+          formConfig={{
+            'common': {
+              productId: {
+                label: '商品ID'
+              },
+              productName: {
+                label: '商品名称'
+              }
+            }
+          }}
           tableProps={{
             rowSelection: {
               onChange: this.onRowSelectionChange,

@@ -50,7 +50,8 @@ class Main extends React.Component<AlertComponentProps, {}> {
               display: '-webkit-box',
               textOverflow:'ellipsis',
               WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical'
+              WebkitBoxOrient: 'vertical',
+              lineHeight: '21px'
             }}
             dangerouslySetInnerHTML={{ __html: record.context}}
           ></div>

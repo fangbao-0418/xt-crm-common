@@ -228,6 +228,7 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
               </span>
               <Table
                 dataSource={this.state.products || []}
+                pagination={false}
                 columns={[{
                   title: '商品ID',
                   dataIndex: 'id'
