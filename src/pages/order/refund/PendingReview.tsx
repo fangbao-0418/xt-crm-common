@@ -127,6 +127,7 @@ class PendingReview extends React.Component<Props, State> {
           payload.returnAddress = checkVO.returnAddress
           payload.contactVO = orderServerVO.contactVO
         }
+        console.log(payload, 'payload 130')
         APP.dispatch({
           type: `${namespace}/auditOperate`,
           payload
@@ -166,18 +167,21 @@ class PendingReview extends React.Component<Props, State> {
     const result = this.props.form.getFieldValue(
       'refundAmount'
     )
-    return mul(result, 100)
+    return mul(Number(result || 0), 100)
   }
   /**
    * 最终售后金额
    */
   get maxRefundAmount (): number {
-    const a
+    const refundCouponAmount = this.props.form.getFieldValue('refundCouponAmount')
+    let maxRefundAmount
       = this.serverNum === this.checkVO.maxServerNum
         ? this.checkVO.maxRefundAmount
         : this.relatedAmount
-    console.log('maxRefundAmount', a)
-    return a
+    if (refundCouponAmount === 1) {
+      maxRefundAmount = maxRefundAmount - this.orderServerVO.deductionAmount
+    }
+    return maxRefundAmount
   }
   /**
    * 运费是否大于0
@@ -343,8 +347,9 @@ class PendingReview extends React.Component<Props, State> {
     const refundTypeOptions = isHaiTao
       ? options.filter((v) => v.key !== 30)
       : options
-      refundTypeValue = refundTypeValue || this.checkVO.refundType
-    console.log('refundTypeValue', refundTypeValue, typeof refundTypeValue)
+    refundTypeValue = refundTypeValue || this.checkVO.refundType
+    const deductionAmount = this.orderServerVO.deductionAmount
+    console.log('refundTypeValue', refundTypeValue, typeof refundTypeValue, this.checkVO)
     return (
       <div>
         <Card title={<AfterSaleDetailTitle />}>
@@ -450,36 +455,6 @@ class PendingReview extends React.Component<Props, State> {
                 </span>
               </Form.Item>
             </Row>
-            {(refundTypeValue !== enumRefundType.Exchange) && (
-              <Form.Item label='退款金额'>
-                {getFieldDecorator('refundAmount', {
-                  initialValue: formatPrice(
-                    this.checkVO.refundAmount
-                  ),
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入退款金额'
-                    }
-                  ]
-                })(
-                  <InputNumber
-                    disabled={isHaiTao || isXiaoDian}
-                    min={0}
-                    max={formatPrice(this.maxRefundAmount)}
-                    formatter={formatRMB}
-                    onChange={
-                      this.handleChangeMaxRefundAmount
-                    }
-                  />
-                )}
-                <span>
-                  （最多可退￥{`${formatPrice(
-                    this.maxRefundAmount
-                  )}${isHaiTao ? '，已包含税费' : ''}`}）
-                </span>
-              </Form.Item>
-            )}
             {this.isReturnShipping && (
               <Form.Item label='退运费'>
                 {getFieldDecorator('isRefundFreight', {
@@ -514,15 +489,64 @@ class PendingReview extends React.Component<Props, State> {
                 />
               </Form.Item>
             )}
-            <Form.Item label='是否回收优惠券金额'>
-              {getFieldDecorator('isRefundCoupon', {
-                initialValue: this.checkVO.isRefundFreight
-              })(
-                <ReturnCouponSelect
-                  checkVO={this.checkVO}
-                />
-              )}
-            </Form.Item>
+            {
+              deductionAmount && (
+                <Form.Item label='是否回收优惠券金额'>
+                  {getFieldDecorator('refundCouponAmount', {
+                    initialValue: this.orderServerVO.refundCouponAmount,
+                    rules: [
+                      {
+                        required: true,
+                        message: '请选择'
+                      }
+                    ]
+                  })(
+                    <ReturnCouponSelect
+                      orderServerVO={this.orderServerVO}
+                      onChange={() => {
+                        let timer = 0
+                        clearTimeout(timer)
+                        timer = setTimeout(() => {
+                          this.props.form.setFieldsValue({
+                            refundAmount: this.maxRefundAmount
+                          })
+                        })
+                      }}
+                    />
+                  )}
+                </Form.Item>
+              )
+            }
+            {(refundTypeValue !== enumRefundType.Exchange) && (
+              <Form.Item label='退款金额'>
+                {getFieldDecorator('refundAmount', {
+                  initialValue: formatPrice(
+                    this.checkVO.refundAmount
+                  ),
+                  rules: [
+                    {
+                      required: true,
+                      message: '请输入退款金额'
+                    }
+                  ]
+                })(
+                  <InputNumber
+                    disabled={isHaiTao || isXiaoDian}
+                    min={0}
+                    max={formatPrice(this.maxRefundAmount)}
+                    formatter={formatRMB}
+                    onChange={
+                      this.handleChangeMaxRefundAmount
+                    }
+                  />
+                )}
+                <span>
+                  （最多可退￥{`${formatPrice(
+                    this.maxRefundAmount
+                  )}${isHaiTao ? '，已包含税费' : ''}`}）
+                </span>
+              </Form.Item>
+            )}
             <Form.Item label='快捷说明'>
               <Select
                 placeholder='请选择一级'

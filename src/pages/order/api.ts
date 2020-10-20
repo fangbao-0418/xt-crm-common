@@ -59,8 +59,8 @@ export const getOrderList = APP.fn.wrapApi((data: any) => {
 }, ['orderStatus'])
 
 // 客服代申请售后单个商品详情
-export function getProductDetail ({ mainOrderId, skuId }: any) {
-  return get(`/order/afterSale/applyOrderSKuDetail/${mainOrderId}/${skuId}`)
+export function getProductDetail (childOrderId: any) {
+  return get(`/order/afterSale/applyOrderSKuDetail?childOrderId=${childOrderId}`)
 }
 // 获取售后原因
 export function customerUpdate (data: any) {

@@ -36,7 +36,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
   }
   isHaiTao: boolean
   async fetchDetail () {
-    let skuDetail: Partial<ApplyOrderSkuDetail.data> = await getProductDetail(this.props.modalInfo)
+    let skuDetail: Partial<ApplyOrderSkuDetail.data> = await getProductDetail(this.props.modalInfo?.childOrder?.id)
     if (!skuDetail) {
       APP.moon.error({
         label: '订单申请售后',
@@ -197,6 +197,7 @@ class ApplyAfterSale extends React.Component<Props, State> {
     const options = refundType.getArray()
     /** 海淘订单请选择售后类型没有换货 */
     const refundTypeOptions = this.isHaiTao ? options.filter(v => v.key !== 30) : options
+    console.log(skuDetail, 200)
     return (
       <Modal
         width='80%'
@@ -209,6 +210,11 @@ class ApplyAfterSale extends React.Component<Props, State> {
         <Table dataSource={[modalInfo]} columns={getDetailColumns()} pagination={false}></Table>
         <Card bordered={false} bodyStyle={{ paddingBottom: 0 }}>
           <Form {...formItemLayout}>
+            <If condition={!!skuDetail.deductionAmountStr}>
+              <Form.Item label='提示'>
+                <span style={{ color: 'red' }}>{skuDetail.deductionAmountStr}</span>
+              </Form.Item>
+            </If>
             <Form.Item label='售后类型'>
               {/* 海淘子订单售后类型不显示换货 */}
               {getFieldDecorator('refundType', {

@@ -96,11 +96,12 @@ class AfterSaleDetailTitle extends React.Component<Props, State> {
             </h3>
           </Col>
           <Col style={{display: 'flex'}}>
-            {orderServerVO.refundStatus === 15 && (
+            {/* 待商家审核 */}
+            {/* {orderServerVO.refundStatus === 15 && (
               <Button type="primary" onClick={this.onAudit.bind(null, orderServerVO.orderCode)}>审核</Button>
-            )}
+            )} */}
             {/* 待审核 */}
-            {this.isRefundStatusOf(enumRefundStatus.WaitConfirm) && (
+            {(this.isRefundStatusOf(enumRefundStatus.WaitConfirm) || this.isRefundStatusOf(enumRefundStatus.WaitBossConfirm)) && (
               <RemarkModal
                 onSuccess={this.onSuccess}
                 refundId={this.props.match.params.id}
