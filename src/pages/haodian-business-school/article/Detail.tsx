@@ -126,8 +126,13 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
                 <div>
                   {form.getFieldDecorator('coverImage', {
                     rules: [{
-                      required: true,
-                      message: '请选择图片'
+                      validator: (rule, value, callback) => {
+                        if (!value || Array.isArray(value) && value.length === 0) {
+                          callback('请选择图片')
+                        } else {
+                          callback()
+                        }
+                      }
                     }]
                   })(
                     <UploadView

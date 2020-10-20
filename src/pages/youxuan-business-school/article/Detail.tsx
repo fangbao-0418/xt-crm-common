@@ -124,7 +124,17 @@ class Main extends React.Component<RouteComponentProps<{id: string}>, State> {
             inner={(form) => {
               return (
                 <div>
-                  {form.getFieldDecorator('coverImage')(
+                  {form.getFieldDecorator('coverImage', {
+                    rules: [{
+                      validator: (rule, value, callback) => {
+                        if (!value || Array.isArray(value) && value.length === 0) {
+                          callback('请选择图片')
+                        } else {
+                          callback()
+                        }
+                      }
+                    }]
+                  })(
                     <UploadView
                       ossType='cos'
                       placeholder='上传首图'
