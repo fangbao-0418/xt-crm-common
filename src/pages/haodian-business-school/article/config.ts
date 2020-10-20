@@ -12,13 +12,13 @@ export const defaultFormConfig: FieldsConfig = {
         label: '全部用户',
         value: 0
       }, {
-        label: '团长以上',
+        label: '正式店长以上',
         value: 10
       }, {
-        label: '区长以上',
+        label: '高级店长以上',
         value: 20
       }, {
-        label: '合伙人以上',
+        label: '服务商',
         value: 30
       }],
       fieldDecoratorOptions: {

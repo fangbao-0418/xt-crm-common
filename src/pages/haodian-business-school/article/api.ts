@@ -52,6 +52,18 @@ export function modifyDiscoverArticle (payload: Payload) {
 }
 
 /**
+ * 文章上下架操作
+ * id: 文章ID
+ * status: 1、下架 2、下架
+ */
+export function modifyArticleStatus (payload: {
+  id: number,
+  status: 1 | 2
+}) {
+  return newPost('/mcweb/octupus/discover/article/modify/status')
+}
+
+/**
  * 查询单个文章
  */
 export function getDiscoverArticle (id: string) {

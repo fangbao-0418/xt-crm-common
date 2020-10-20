@@ -4,7 +4,7 @@ import ListPage, { ListPageInstanceProps } from '@/packages/common/components/li
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import { defaultFormConfig, statusEnums, columnEnums } from './config'
 import { Button, Icon, Switch, Popconfirm } from 'antd'
-import { getAllColumn, getArticleList, modifyDiscoverArticle } from './api'
+import { getAllColumn, getArticleList, modifyArticleStatus, modifyDiscoverArticle } from './api'
 import { Alert } from '@/packages/common/components'
 import ClipboardJS from 'clipboard'
 import { h5Host } from '@/util/baseHost'
@@ -157,9 +157,9 @@ class Main extends React.Component<AlertComponentProps, {}> {
   }
   // 下架
   public down = async (id: number) => {
-    const res = await modifyDiscoverArticle({
+    const res = await modifyArticleStatus({
       id,
-      releaseStatus: 50
+      status: 2
     })
     if (res) {
       APP.success('操作成功')

@@ -32,5 +32,13 @@ export async function updateColumn(payload: postPayload) {
 
 /** 删除栏目 */
 export async function deleteColumn (id: number) {
-  return newPost('/mcweb/octupus/discover/column/update', { id, isDelete: 1 })
+  return newPost('/mcweb/octupus/discover/column/delete', { id })
+}
+
+/** 栏目是否展示 */
+export function showColumn (payload: {
+  id: number,
+  showStatus: 1 | 2
+}) {
+  return newPost('/mcweb/octupus/discover/column/show', payload)
 }

@@ -5,7 +5,7 @@ import { ColumnProps } from 'antd/es/table'
 import { Button, Popconfirm } from 'antd'
 import { platformEnum } from './config'
 import Color from './Color'
-import { getColumnList, deleteColumn, addColumn, updateColumn } from './api'
+import { getColumnList, deleteColumn, addColumn, updateColumn, showColumn } from './api'
 import { Alert } from '@/packages/common/components'
 import { AlertComponentProps } from '@/packages/common/components/alert'
 import Detail from './Detail'
@@ -58,11 +58,9 @@ class Main extends React.Component<AlertComponentProps, {}> {
   // 切换显示隐藏
   // 显示 = 1, 隐藏 = 2
   public toggleDisplay = async (record: any) => {
-    console.log('record', record)
-    const res = await updateColumn({
+    const res = await showColumn({
       id: record.id,
-      showStatus: record.showStatus === 1 ? 2 : 1,
-      platform: 2
+      showStatus: record.showStatus === 1 ? 2 : 1
     })
     if (res) {
       APP.success('操作成功')
