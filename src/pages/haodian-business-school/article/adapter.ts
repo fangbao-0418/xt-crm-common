@@ -36,7 +36,6 @@ export function adapterArticleParams (payload: any) {
   if (!payload.releaseTime) {
     payload.releaseTime = Date.now()
   }
-  console.log('payload', payload)
   return payload
 }
 

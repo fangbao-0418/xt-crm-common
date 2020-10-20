@@ -83,7 +83,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
     }
   }, {
     title: '操作',
-    width: 220,
+    width: 280,
     render: (record: any) => {
       return (
         <>
@@ -114,12 +114,24 @@ class Main extends React.Component<AlertComponentProps, {}> {
             <Popconfirm
                 placement='top'
                 title='你确定要下架这篇内容吗？'
-                onConfirm={() => this.down(record.id)}
+                onConfirm={() => this.modifyStatus({ id: record.id, status: 2 })}
                 okText='确认'
                 cancelText='取消'
                 className='ml10'
               >
                 <span style={{ color: 'red', cursor: 'pointer' }} className='ml10'>下架</span>
+              </Popconfirm>
+          </If>
+          <If condition={50 === record.releaseStatus}>
+            <Popconfirm
+                placement='top'
+                title='你确定要上架这篇内容吗？'
+                onConfirm={() => this.modifyStatus({ id: record.id, status: 1 })}
+                okText='确认'
+                cancelText='取消'
+                className='ml10'
+              >
+                <span style={{ color: 'red', cursor: 'pointer' }} className='ml10'>上架</span>
               </Popconfirm>
           </If>
         </>
@@ -144,7 +156,7 @@ class Main extends React.Component<AlertComponentProps, {}> {
   public handleEdit = (id: number) => {
     APP.history.push(`/youxuan-business-school/article/${id}`)
   }
-  // 删除 isDelete为1是删除
+  // 删除
   public handleDelete = async (id: number) => {
     const res = await deleteArticle({
       id
@@ -154,12 +166,12 @@ class Main extends React.Component<AlertComponentProps, {}> {
       this.listRef.refresh()
     }
   }
-  // 下架
-  public down = async (id: number) => {
-    const res = await modifyArticleStatus({
-      id,
-      status: 2
-    })
+  // 修改文章上下架状态
+  public modifyStatus = async (payload: {
+    id: number,
+    status: 1 | 2
+  }) => {
+    const res = await modifyArticleStatus(payload)
     if (res) {
       APP.success('操作成功')
       this.listRef.refresh()
