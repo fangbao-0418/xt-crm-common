@@ -5,8 +5,6 @@ import BraftEditor from 'braft-editor'
 export function adapterArticleParams (payload: any) {
   if (payload.contextType === '1') {
     payload.context = payload.context?.toHTML?.()
-  } else {
-    payload.context = `<a href="${payload.context}">${payload.context}</a>`
   }
   
   if (payload.coverImage) {
@@ -32,6 +30,8 @@ export function adapterArticleParams (payload: any) {
     }
     payload.fileSize = file.size
     payload.resourceUrl = file.url
+  } else {
+    payload.resourceUrl = ''
   }
   payload.shareStatus = payload.shareStatus ?  1 : 2
   if (!payload.releaseTime) {
@@ -50,10 +50,6 @@ export function adapterArticleResponse (res: any) {
   // 富文本 contextType: 1、富文本 2、链接
   if (res.contextType === '1') {
     res.context = BraftEditor.createEditorState(res.context)
-  } else {
-    var reg = /<a .*?href=['"](.*?)['"].*?>(.*?)<\/a>/;
-    (res.context || '').match(reg);
-    res.context = RegExp.$1
   }
   return res
 }
